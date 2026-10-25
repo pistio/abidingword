@@ -178,6 +178,8 @@ export function PassagePanel({
 function MarkedRow({ place, onShow, onRemoved }: { place: MarkedPlace; onShow: (target: DocumentTarget) => void; onRemoved: () => void }) {
   const { t } = useTranslation();
   const api = useApi();
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
   const { bookByCode } = useScripture();
   const ref = refFromCanonical(place.reference, bookByCode);
   const where = place.page !== null ? t("scripture.document.passages.onPage", { page: formatNumber(place.page) }) : t("scripture.document.passages.inText");
@@ -189,14 +191,27 @@ function MarkedRow({ place, onShow, onRemoved }: { place: MarkedPlace; onShow: (
       {place.quote && <span className="type-meta">“{place.quote}”</span>}
       <Button
         variant="quiet"
+        disabled={busy}
         aria-label={t("scripture.document.passages.unmark", { passage: ref ? referenceLabel(ref) : place.reference })}
         onClick={async () => {
-          await api.bibleLocationRemove(place.id);
-          onRemoved();
+          setBusy(true);
+          setFailed(null);
+          try {
+            await api.bibleLocationRemove(place.id);
+            onRemoved();
+          } catch (e) {
+            setFailed(toApiError(e).message);
+            setBusy(false);
+          }
         }}
       >
         {t("scripture.document.passages.unmarkShort")}
       </Button>
+      {failed && (
+        <span role="alert" className="text-danger">
+          {failed}
+        </span>
+      )}
     </li>
   );
 }
@@ -229,11 +244,13 @@ export function MarkPassage({
   const [text, setText] = useState(initial ? referenceLabel(initial) : "");
   const [quote] = useState(() => (typeof window === "undefined" ? "" : (window.getSelection()?.toString() ?? "").trim().slice(0, 500)));
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const document = documents.find((d) => d.id === place?.documentId);
   const where = !place ? null : place.page !== null ? t("scripture.document.passages.onPage", { page: formatNumber(place.page) }) : t("scripture.document.passages.inText");
   const save = async (e: FormEvent) => {
     e.preventDefault();
-    if (!place) return;
+    if (!place || saving) return;
+    setSaving(true);
     try {
       const parsed = await api.referenceParse(text, bible.id);
       const ref = refFromCanonical(parsed.canonical, bookByCode) ?? parsed;
@@ -241,6 +258,7 @@ export function MarkPassage({
       onDone();
     } catch (err) {
       setError(toApiError(err).message);
+      setSaving(false);
     }
   };
   return (
@@ -272,7 +290,7 @@ export function MarkPassage({
         </p>
       )}
       <div className="flex gap-2">
-        <Button type="submit" variant="primary" disabled={!place || !text.trim()}>
+        <Button type="submit" variant="primary" disabled={!place || !text.trim() || saving}>
           {t("scripture.document.passages.markSave")}
         </Button>
         <Button onClick={onCancel}>{t("common.cancel")}</Button>

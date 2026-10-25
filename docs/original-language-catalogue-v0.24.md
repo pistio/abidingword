@@ -41,7 +41,11 @@ Verified downloads (`scripture::catalogue`, `resources/scripture/catalogue.json`
   Bible; the copyright notice and licence are filled in and kept in the
   Bible's details; once added the Bible works offline;
 - no redirects are followed; the request goes through the app's single HTTP
-  client.
+  client;
+- one download at a time (a second is refused with *A download is already
+  under way*); the verified files stay in the app's cache folder until the
+  Bible is added (the add step copies them), and the next download of the
+  same edition replaces them.
 
 Never claimed: Strong's for MorphGNT, grammar for SBLGNT/TR, dictionary
 forms for OSHB (its `lemma` field holds lexical numbers), or any

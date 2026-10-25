@@ -585,7 +585,24 @@ pub async fn bible_catalogue_download(
     state: State<'_, AppState>,
     id: String,
 ) -> CommandResult<ImportPreview> {
+    use std::sync::atomic::{AtomicBool, Ordering};
     use tauri::Emitter;
+    // One download at a time: a second would write into the same folder.
+    static BUSY: AtomicBool = AtomicBool::new(false);
+    struct Busy;
+    impl Drop for Busy {
+        fn drop(&mut self) {
+            BUSY.store(false, Ordering::SeqCst);
+        }
+    }
+    if BUSY.swap(true, Ordering::SeqCst) {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "catalogue.busy",
+            "A download is already under way. Wait for it to finish.",
+        ))
+        .into());
+    }
+    let _busy = Busy;
     let core = state.core()?;
     let download = catalogue::by_id(&id)?;
     let dir = core.dirs.cache().join("downloads").join(&download.id);

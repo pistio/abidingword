@@ -68,8 +68,10 @@ describe("Passages in document Bibles", () => {
     const find = within(pane).getByRole("textbox", { name: "Passage to find in this document" });
     await user.type(find, "Psalm 23");
     await user.click(within(pane).getByRole("button", { name: "Find" }));
-    const panel = await within(pane).findByRole("region", { name: "Psalm 23 in this document" });
-    await user.click(within(panel).getByRole("button", { name: "Mark where it is" }));
+    await within(pane).findByRole("region", { name: "Psalm 23 in this document" });
+    // The place is the paragraph clicked: never a guess at what is on screen.
+    await user.click(within(pane).getAllByText(/Invented words of Psalms/)[0]!);
+    await user.click(within(await within(pane).findByRole("region", { name: "Psalm 23 in this document" })).getByRole("button", { name: "Mark where it is" }));
     const form = within(pane).getByRole("form", { name: "Mark where a passage is" });
     expect(within(form).getByText(/The place: in the text in psalms-unclear\.md\./)).toBeInTheDocument();
     expect(within(form).getByRole("textbox", { name: "Passage at this place" })).toHaveValue("Psalm 23");
@@ -77,7 +79,8 @@ describe("Passages in document Bibles", () => {
     const marked = await within(pane).findByRole("list", { name: "Places marked by hand" });
     expect(within(marked).getByRole("button", { name: "Psalm 23, in the text" })).toBeInTheDocument();
     expect(api.state.places.get(bible.id)).toHaveLength(1);
-    expect(api.state.places.get(bible.id)![0]).toMatchObject({ reference: "PSA.23", page: null, segment: 0 });
+    expect(api.state.places.get(bible.id)![0]).toMatchObject({ reference: "PSA.23", page: null });
+    expect(api.state.places.get(bible.id)![0]!.segment).not.toBeNull();
     expect(await within(pane).findByText(/1 place marked by hand/)).toBeInTheDocument();
     // Nothing else changed: the Bible is still a document with no verses.
     expect(bible.kind).toBe("document");
@@ -85,10 +88,16 @@ describe("Passages in document Bibles", () => {
     await waitFor(() => expect(api.state.places.get(bible.id)).toHaveLength(0));
   });
 
-  it("a mark needs a passage that can be read", async () => {
+  it("a mark needs a place and a passage that can be read", async () => {
     const { user, pane } = await documentBible("psalms-unclear.md");
     await user.click(within(pane).getByRole("button", { name: "Mark a passage here" }));
-    const form = within(pane).getByRole("form", { name: "Mark where a passage is" });
+    let form = within(pane).getByRole("form", { name: "Mark where a passage is" });
+    // No paragraph chosen yet: nothing can be marked.
+    expect(within(form).getByText(/click the paragraph/)).toBeInTheDocument();
+    await user.click(within(form).getByRole("button", { name: "Cancel" }));
+    await user.click(within(pane).getAllByText(/Invented words of Psalms/)[0]!);
+    await user.click(within(pane).getByRole("button", { name: "Mark a passage here" }));
+    form = within(pane).getByRole("form", { name: "Mark where a passage is" });
     expect(within(form).getByRole("button", { name: "Save the mark" })).toBeDisabled();
     await user.type(within(form).getByRole("textbox", { name: "Passage at this place" }), "not a passage");
     await user.click(within(form).getByRole("button", { name: "Save the mark" }));

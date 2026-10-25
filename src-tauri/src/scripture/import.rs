@@ -237,8 +237,68 @@ pub fn edition_label(source: &str) -> Option<String> {
         .filter(|w| *w != code)
         .filter(|w| !w.contains('.'))
         .filter(|w| !w.chars().all(|c| c.is_ascii_digit()))
+        // A date or time stamp ("Wed Mar 3 2021 GMT") says nothing about the edition.
+        .filter(|w| !DATE_WORDS.contains(w) && !w.contains(':'))
         .collect();
     (!kept.is_empty()).then(|| kept.join(" "))
+}
+
+/// Weekday, month and time-zone words of the stamps some tools write on the
+/// `\id` line.
+const DATE_WORDS: &[&str] = &[
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat",
+    "sun",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "sept",
+    "oct",
+    "nov",
+    "dec",
+    "january",
+    "february",
+    "march",
+    "april",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+    "utc",
+    "gmt",
+    "cet",
+    "cest",
+    "est",
+    "edt",
+    "pst",
+    "pdt",
+    "am",
+    "pm",
+];
+
+fn shares_a_word(a: &str, b: &str) -> bool {
+    a.split_whitespace()
+        .any(|w| b.split_whitespace().any(|v| v == w))
 }
 
 /// Files naming different Bibles are refused together: each is added on its
@@ -252,11 +312,25 @@ fn different_editions(editions: &[(String, String)], staged: &mut StagedContent)
         counts.entry(label).or_insert((0, file)).0 += 1;
     }
     let needed = 2.max(editions.len().div_ceil(4));
-    let seen: Vec<(&str, &str)> = counts
+    let mut seen: Vec<(&str, &str)> = counts
         .iter()
         .filter(|(_, (n, _))| *n >= needed)
         .map(|(label, (_, file))| (*file, *label))
         .collect();
+    // Beside a recurring name, another one in two files or more that has no
+    // word in common with it is a second Bible too, however few its files
+    // (three books of another Bible among sixty-six).
+    if let [(_, dominant)] = seen.as_slice() {
+        let dominant = *dominant;
+        seen.extend(
+            counts
+                .iter()
+                .filter(|(label, (n, _))| {
+                    *n >= 2 && **label != dominant && !shares_a_word(label, dominant)
+                })
+                .map(|(label, (_, file))| (*file, *label)),
+        );
+    }
     if seen.len() < 2 {
         return;
     }

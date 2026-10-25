@@ -190,6 +190,59 @@ fn files_naming_different_bibles_are_never_combined() {
 }
 
 #[test]
+fn a_few_files_of_another_bible_among_many_are_refused_and_date_stamps_are_no_evidence() {
+    // v0.24 review: below a quarter of the files, two of another Bible are
+    // still another Bible; a time stamp on the `\id` line names none.
+    let temp = tempfile::tempdir().unwrap();
+    let books = [
+        "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA",
+    ];
+    let mut web = Vec::new();
+    for (i, code) in books.iter().enumerate() {
+        let path = temp.path().join(format!("{i:02}-{code}.usfm"));
+        let stamp = if i % 2 == 0 {
+            "Wed Mar 3 2021 10:15 GMT"
+        } else {
+            "Fri Oct 1 2021 08:00 UTC"
+        };
+        std::fs::write(
+            &path,
+            format!("\\id {code} World English Bible {stamp}\n\\c 1\n\\v 1 Invented.\n"),
+        )
+        .unwrap();
+        web.push(path);
+    }
+    let same = import::stage(&web, ImportOrigin::UserFiles).unwrap();
+    let preview = same.preview(Default::default());
+    assert!(preview.can_import, "{:?}", preview.issues);
+
+    let mut mixed = web.clone();
+    for code in ["MAT", "MRK"] {
+        let path = temp.path().join(format!("{code}-kjv.usfm"));
+        std::fs::write(
+            &path,
+            format!("\\id {code} King James Version\n\\c 1\n\\v 1 Invented.\n"),
+        )
+        .unwrap();
+        mixed.push(path);
+    }
+    let preview = import::stage(&mixed, ImportOrigin::UserFiles)
+        .unwrap()
+        .preview(Default::default());
+    assert!(!preview.can_import);
+    let issue = preview
+        .issues
+        .iter()
+        .find(|i| i.code.as_deref() == Some("bibleImport.differentEditions"))
+        .expect("refused");
+    assert!(
+        issue.params["list"].contains("king james version"),
+        "{}",
+        issue.params["list"]
+    );
+}
+
+#[test]
 fn deuterocanonical_books_are_named_and_left_out_without_renumbering_anything() {
     // v0.24: a Bible's Tobit and Greek Esther are named, not "unknown"; the
     // 66 books import as before, with their own references.

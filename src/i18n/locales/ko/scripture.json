@@ -205,7 +205,6 @@
         "strong": "어휘 번호",
         "morph": "문법"
       },
-      "partial_other": "66권 중 {{count}}권",
       "added": "추가됨",
       "download": "{{name}} 내려받기…",
       "confirmTitle": "{{name}}을(를) 내려받을까요?",
@@ -214,7 +213,9 @@
       "technical": "라이선스와 버전",
       "offline": "추가한 뒤에는 인터넷 연결 없이 사용할 수 있습니다.",
       "progress": "파일 {{total}}개 중 {{done}}번째를 내려받아 확인하는 중…",
-      "starting": "내려받는 중…"
+      "starting": "내려받는 중…",
+      "partial_other": "66권 중 {{count}}권",
+      "confirmBody_other": "GitHub에서 파일 {{files}}개({{size}})를 내려받고 각각을 검증된 사본과 비교합니다. 그다음 평소처럼 성경을 검토하며, 확인하기 전에는 아무것도 추가되지 않습니다."
     },
     "partialBooks_other": "66권 중 {{count}}권"
   },
@@ -282,6 +283,7 @@
       "keptText": "메모, 강조 표시, 성경공부의 성경 구절은 특정 성경이 아니라 절에 속하므로 그대로 남습니다. 원본 파일은 건드리지 않습니다.",
       "deleteQuestion": "{{name}}을(를) 영구 삭제할까요?",
       "deleteText": "본문과 Abiding Word에 보관된 파일 사본이 삭제됩니다. 다시 읽으려면 새로 추가해야 합니다.",
+      "deleteTextMany": "본문과 Abiding Word에 보관된 파일 사본이 삭제됩니다. 다시 읽으려면 다시 추가해야 합니다.",
       "deleted_other": "성경 {{formatted}}개를 영구 삭제했습니다.",
       "archivedTitle_other": "보관됨({{formatted}})",
       "trashTitle_other": "휴지통({{formatted}})",
@@ -672,7 +674,7 @@
       "mark": "여기에 본문 표시",
       "markTitle": "본문 위치 표시",
       "markWhere": "위치: {{name}}의 {{where}}",
-      "markNoPlace": "먼저 해당 쪽이나 문단으로 이동한 다음 표시하세요.",
+      "markNoPlace": "먼저 해당 쪽으로 가거나 본문이 있는 문단을 클릭한 다음 표시하세요.",
       "markQuote": "확인용으로 함께 저장: “{{quote}}”",
       "markPassage": "이 위치의 본문",
       "markHint": "위치만 기록합니다. 문서, 메모, 메모의 성경 구절은 그대로입니다.",

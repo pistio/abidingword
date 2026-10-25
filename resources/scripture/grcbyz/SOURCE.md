@@ -14,7 +14,15 @@
 
 From `copr.htm` inside the archive (kept alongside it, unchanged):
 
-> 1904 Patriarchal Greek New Testament with 20 corrections from later editions. Public Domain.
+> 1904 Patriarchal Greek New Testament with 20 correcctions from later editions
+> Public Domain
+
+(quoted as written, spelling included). The count differs inside the archive
+itself: the `\id` lines of 31 book files say "21 corrections from later
+editions", one says 19, and the introduction (`01-INTgrcbyz.usfm`) lists the
+corrections, each also footnoted in the text. Abiding Word does not choose
+between these numbers; it shows the copyright line above and the text as
+written. The numbers do not affect the licence.
 
 
 The audit behind this entry (every edition considered, and why some were

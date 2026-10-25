@@ -35,7 +35,7 @@
     "changedElsewhere": "편집하는 동안 다른 곳에서 바뀌었습니다. 취소한 뒤 다시 열어 현재 내용을 확인하세요."
   },
   "confirm": {
-    "typeCount_other": "확인하려면 {{value}}(항목 수)을 입력하세요."
+    "typeCount_other": "확인하려면 항목 수({{value}})를 입력하세요."
   },
   "lifecycle": {
     "archive": "보관하기",

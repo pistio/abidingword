@@ -548,8 +548,7 @@ pub fn locate(
     reference: &crate::scripture::reference::ScriptureRef,
 ) -> AppResult<DocumentPassage> {
     let text = bibles::passage(conn, translation_id, reference)?;
-    let expected = expected_verses(reference);
-    let complete = expected > 0 && text.verses.len() >= expected;
+    let complete = covers_every_verse(reference, &text.verses);
     let origin = match text.verses.first() {
         Some(first) => {
             let key = crate::scripture::reference::ScriptureRef::from_canonical(&first.canonical)?
@@ -577,27 +576,47 @@ pub fn locate(
     })
 }
 
-/// How many verses the standard count gives the passage (0 when unknown).
-fn expected_verses(reference: &crate::scripture::reference::ScriptureRef) -> usize {
+/// Whether every verse the standard count gives the passage has its text:
+/// each one by its own number, a bridged verse ("4-5") counting for each
+/// verse it holds. False when the count is unknown.
+fn covers_every_verse(
+    reference: &crate::scripture::reference::ScriptureRef,
+    verses: &[crate::scripture::VerseText],
+) -> bool {
     use crate::scripture::canon;
-    use crate::scripture::reference::split_key;
+    use crate::scripture::reference::{split_key, verse_key, ScriptureRef};
+    let mut found = std::collections::HashSet::new();
+    for verse in verses {
+        let Ok(r) = ScriptureRef::from_canonical(&verse.canonical) else {
+            continue;
+        };
+        let (start, end) = (r.start_key(), r.end_key());
+        // Within one chapter (verse keys are consecutive there).
+        if end >= start && end - start < 1000 {
+            found.extend(start..=end);
+        }
+    }
     let (o, c1, v1) = split_key(reference.start_key());
     let (_, c2, v2) = split_key(reference.end_key());
     let Some(book) = canon::by_ordinal(o) else {
-        return 0;
+        return false;
     };
-    let mut total = 0usize;
+    let mut any = false;
     for chapter in c1..=c2 {
         let Some(count) = canon::verse_count(book, chapter) else {
-            return 0;
+            return false;
         };
         let from = if chapter == c1 { v1.max(1) } else { 1 };
         let to = if chapter == c2 { v2.min(count) } else { count };
-        if to >= from {
-            total += usize::from(to - from + 1);
+        for verse in from..=to {
+            any = true;
+            let key = verse_key(o, chapter, verse);
+            if !found.contains(&key) {
+                return false;
+            }
         }
     }
-    total
+    any
 }
 
 #[derive(Debug, Clone, serde::Deserialize)]
@@ -633,7 +652,8 @@ pub fn add_location(conn: &Connection, input: &AddLocation) -> AppResult<Passage
             [&input.document_id],
             |r| r.get(0),
         )?;
-        if page < 1 || pages.is_some_and(|p| page > p) {
+        // A document without pages (EPUB, Word) has no page to mark.
+        if page < 1 || pages.is_none_or(|p| page > p) {
             return Err(AppError::InvalidInput(UserMessage::new(
                 "bibles.locationPage",
                 "That page is not in the document.",

@@ -292,15 +292,20 @@
     "question": "„{{title}}“ in den Papierkorb verschieben?",
     "kept": "Deine Markierungen darin und die Zitate in deinen Studien bleiben erhalten und kommen zurück, wenn du sie wiederherstellst.",
     "done": "„{{title}}“ wurde in den Papierkorb verschoben.",
+    "keptMany": "Deine Markierungen darin und die Zitate in deinen Studien bleiben erhalten und kommen zurück, wenn du sie wiederherstellst.",
     "text_one": "Sie verschwindet aus deiner Bibliothek, dem Quellenbereich und der Suche. Du kannst sie {{count}} Tag lang aus dem Papierkorb wiederherstellen (Einstellungen → Quellen); danach wird sie endgültig gelöscht.",
     "text_other": "Sie verschwindet aus deiner Bibliothek, dem Quellenbereich und der Suche. Du kannst sie {{count}} Tage lang aus dem Papierkorb wiederherstellen (Einstellungen → Quellen); danach wird sie endgültig gelöscht.",
     "marks_one": "Deine {{count}} Markierung darin (Hervorhebung, Notiz oder Lesezeichen) ist ausgeblendet, solange die Quelle im Papierkorb liegt.",
-    "marks_other": "Deine {{count}} Markierungen darin (Hervorhebungen, Notizen und Lesezeichen) sind ausgeblendet, solange die Quelle im Papierkorb liegt."
+    "marks_other": "Deine {{count}} Markierungen darin (Hervorhebungen, Notizen und Lesezeichen) sind ausgeblendet, solange die Quelle im Papierkorb liegt.",
+    "textMany_one": "Sie verschwinden aus deiner Bibliothek, dem Quellenbereich und der Suche. Du kannst sie {{count}} Tag lang aus dem Papierkorb wiederherstellen (Einstellungen → Quellen); danach werden sie endgültig gelöscht.",
+    "textMany_other": "Sie verschwinden aus deiner Bibliothek, dem Quellenbereich und der Suche. Du kannst sie {{count}} Tage lang aus dem Papierkorb wiederherstellen (Einstellungen → Quellen); danach werden sie endgültig gelöscht."
   },
   "delete": {
     "question": "„{{title}}“ endgültig löschen?",
     "text": "Der Text der Quelle, deine Markierungen darin und die Kopie der Datei in Abiding Word werden gelöscht.",
     "kept": "Zitate in deinen Studien behalten einen Vermerk, was sie zitiert haben. Deine Originaldatei bleibt unberührt.",
+    "textMany": "Der Text dieser Quellen, deine Markierungen darin und die Kopien der Dateien in Abiding Word werden gelöscht.",
+    "keptMany": "Zitate in deinen Studien behalten einen Vermerk, was sie zitiert haben. Deine Originaldateien bleiben unberührt.",
     "questionMany_one": "{{formatted}} Quelle endgültig löschen?",
     "questionMany_other": "{{formatted}} Quellen endgültig löschen?",
     "done_one": "{{formatted}} Quelle wurde endgültig gelöscht.",
@@ -353,8 +358,8 @@
     "read": "Lesen",
     "badge": {
       "noText": "Gescannt: kein Text",
-      "duplicate_one": "Noch {{formatted}}-mal hinzugefügt",
-      "duplicate_other": "Noch {{formatted}}-mal hinzugefügt"
+      "duplicate_one": "{{formatted}} weiteres Mal hinzugefügt",
+      "duplicate_other": "{{formatted}} weitere Male hinzugefügt"
     },
     "empty": "Noch keine Quellen. Füge deine Bücher, Artikel und Notizen hinzu, um sie neben der Bibel zu lesen.",
     "noMatches": "Keine passenden Quellen. Versuch es mit anderen Wörtern oder weniger Filtern.",
@@ -402,8 +407,8 @@
       "text": "Text",
       "pages": "Seiten",
       "duplicates": "Gleiche Datei",
-      "duplicatesText_one": "Noch {{formatted}}-mal hinzugefügt (zu finden mit „Nur mehrfach hinzugefügte Dateien“).",
-      "duplicatesText_other": "Noch {{formatted}}-mal hinzugefügt (zu finden mit „Nur mehrfach hinzugefügte Dateien“)."
+      "duplicatesText_one": "{{formatted}} weiteres Mal hinzugefügt (zu finden mit „Nur mehrfach hinzugefügte Dateien“).",
+      "duplicatesText_other": "{{formatted}} weitere Male hinzugefügt (zu finden mit „Nur mehrfach hinzugefügte Dateien“)."
     },
     "extraction": {
       "scanned": "Gescannte Seiten: im Original lesbar, nicht durchsuchbar (keine Texterkennung).",
@@ -457,7 +462,7 @@
     "recursive": "Dateien in Unterordnern einbeziehen",
     "limits": "Bis zu {{max}} Dateien auf einmal: PDF, EPUB, Word, Markdown und Text. Versteckte Ordner und andere Dateiarten werden ausgelassen.",
     "stop": "Anhalten",
-    "continueReading": "Weiterlesen",
+    "continueReading": "Weiter prüfen",
     "retry": "Erneut versuchen",
     "reading": "{{done}} von {{total}} gelesen…",
     "adding": "{{done}} von {{total}} hinzugefügt…",
@@ -504,6 +509,8 @@
     "unfinished": "Ein Import vieler Quellen wurde nicht abgeschlossen ({{added}} von {{total}} hinzugefügt).",
     "resume": "Fortsetzen",
     "discard": "Verwerfen",
+    "discardImport": "Diesen Import verwerfen",
+    "scanning": "Dateien werden gesucht…",
     "add_one": "{{formatted}} Quelle hinzufügen",
     "add_other": "{{formatted}} Quellen hinzufügen",
     "done_one": "{{formatted}} Quelle wurde hinzugefügt.",

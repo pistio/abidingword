@@ -136,7 +136,7 @@ export function BibleTexts({ onAddBible }: { onAddBible: () => void }) {
             await api.bibleSetState(asking.bibles.map((b) => b.id), "trashed");
             setAsking(null);
             await refresh();
-            setDone({ message: t("scripture.bibles.lifecycle.trashed", { name: one(asking.bibles) }), undo: { ids: asking.bibles.map((b) => b.id), to: "active" } });
+            setDone({ message: t("scripture.bibles.lifecycle.trashed", { name: one(asking.bibles) }), undo: { ids: asking.bibles.map((b) => b.id), to: asking.bibles[0]?.state ?? "active" } });
           }}
         >
           <p className="m-0">{t("scripture.bibles.lifecycle.trashText", { count: TRASH_RETENTION_DAYS })}</p>
@@ -162,7 +162,7 @@ export function BibleTexts({ onAddBible }: { onAddBible: () => void }) {
             setDone({ message: t("scripture.bibles.lifecycle.deleted", { count, formatted: formatNumber(count) }) });
           }}
         >
-          <p className="m-0">{t("scripture.bibles.lifecycle.deleteText")}</p>
+          <p className="m-0">{asking.bibles.length === 1 ? t("scripture.bibles.lifecycle.deleteText") : t("scripture.bibles.lifecycle.deleteTextMany")}</p>
           <p className="m-0">{t("scripture.bibles.lifecycle.keptText")}</p>
           <p className="m-0 font-medium">{t("common.lifecycle.cannotUndo")}</p>
         </ConfirmDialog>

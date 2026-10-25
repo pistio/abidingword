@@ -112,9 +112,11 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
         {step.kind === "checking" && (
           <p role="status" className="m-0 text-text-muted">
             {downloading
-              ? downloading.total > 0 && downloading.done < downloading.total
-                ? t("scripture.addBible.available.progress", { done: downloading.done, total: downloading.total })
-                : t("scripture.addBible.available.starting")
+              ? downloading.total === 0
+                ? t("scripture.addBible.available.starting")
+                : downloading.done < downloading.total
+                  ? t("scripture.addBible.available.progress", { done: formatNumber(downloading.done), total: formatNumber(downloading.total) })
+                  : t("scripture.addBible.checking")
               : t("scripture.addBible.checking")}
           </p>
         )}
@@ -324,7 +326,7 @@ function CatalogueSection({ onDownload }: { onDownload: (id: string) => void }) 
             </>
           }
         >
-          <p className="m-0">{t("scripture.addBible.available.confirmBody", { files: formatNumber(confirming.files), size: size(confirming.size) })}</p>
+          <p className="m-0">{t("scripture.addBible.available.confirmBody", { count: confirming.files, files: formatNumber(confirming.files), size: size(confirming.size) })}</p>
           <p className="m-0">{t("scripture.addBible.licence", { licence: confirming.licenseType })}</p>
           <details className="text-[0.9375rem]">
             <summary className="cursor-pointer">{t("scripture.addBible.available.technical")}</summary>

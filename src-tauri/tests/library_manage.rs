@@ -516,7 +516,14 @@ fn on_restart_expired_trash_and_leftover_folders_go_and_live_files_stay() {
     let core = state.core().unwrap();
     assert!(keep_file.exists());
     assert!(!old_file.exists());
+    // A folder this database does not know is moved aside, never deleted
+    // (it may belong to a database a restore replaced).
     assert!(!core.dirs.sources().join("notes/0000-orphan").exists());
+    assert!(core
+        .dirs
+        .root()
+        .join("leftovers/notes/0000-orphan/left.md")
+        .exists());
     core.db
         .with_conn(|conn| {
             assert_eq!(library::get(conn, &keep)?.title, "Keep");

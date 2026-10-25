@@ -65,7 +65,8 @@ and asks it) calls `bible_document_locate`:
 - verses found are shown with the edition's own text, and *Show it on page N*
   opens the document where the first verse begins;
 - `complete` is true only when every verse of the standard count for the range
-  has its text. Otherwise the panel says only part has been found and offers
+  has its text, checked verse by verse (a bridged verse "4–5" counts for both;
+  extra or repeated verses never make up for a missing one). Otherwise the panel says only part has been found and offers
   *Read it in WEB* (the Bible read by passage); it never mixes the two;
 - places marked by hand are listed (*Psalm 23, page 412*) and open the
   document there;
@@ -82,7 +83,8 @@ and asks it) calls `bible_document_locate`:
 
 The person types the passage there (read with the same reference parser and
 language rules as everywhere else). The core checks that the document belongs
-to that Bible, that the page exists, and that the paragraph exists
+to that Bible, that the page exists (a page can be marked only in a document
+that has pages: never in an EPUB or Word file), and that the paragraph exists
 (`db::bible_documents::add_location`). Marks can be removed from the panel.
 
 ## 5. Recognition: what improved, and what cannot be
@@ -92,10 +94,58 @@ The recogniser reads text in reading order. PDF text comes from `pdf_extract`
 each other cannot be put back in order — it can only be detected. v0.24 adds
 that detection: a verse number well ahead of the count (`> expected + 1`,
 within the chapter's standard verse count) that appears **inside** a verse,
-after punctuation, refuses the chapter with
+**and from which the count goes on** (its next number follows within the
+next three numbers: "3 … 18 …", "4 … 19 …"), refuses the chapter with
 `bibleImport.documentSequence` (*verse 12 appears inside an earlier verse
 (perhaps two columns were read across each other). This chapter is not used.*).
+A lone number in the text ("… of the field. 12 men came") is not refused.
 With partial use, the other chapters can still be used.
+
+Also added in v0.24, from a test on real typeset Bibles (below):
+
+- **Running heads naming a passage** ("249 Josua 2:1", "Josua 4:1 252 Josua
+  4:23") on the first or last line of 30 % of the pages or more are page
+  furniture, left out and counted.
+- **Footnotes at the foot of a page** (from the first line that starts with a
+  note sign and a chapter and verse, "† 1:5 …", to the page end) are left out
+  and reported (`bibleImport.documentFootnotes`).
+- **Note signs** († ‡ § ¶ \*) raised against a word, set apart as a word of
+  their own, or at the start of a verse are taken out of the verse text. They
+  are never letters of the text.
+- **The next chapter's number at the end of a line**, once the chapter has
+  all its verses and verse 1 is numbered next ("… wandelten. 9" then
+  "1 Und …"), begins the chapter; the number is not kept as verse text.
+- **A book title printed over two lines** ("The Good News According to" /
+  "Matthew") is the title: the first line, a whole short line after a verse
+  that ended its sentence, is taken back out of that verse.
+
+### Accuracy on real editions
+
+`tests/real_document_editions.rs` (ignored by default; set
+`AW_DOCUMENT_EDITIONS` to a folder holding the PDFs) reads two complete
+typeset PDF Bibles from eBible.org, two columns per page, and compares every
+recognised verse with the same edition's USFM bundled with Abiding Word. The
+PDFs are not in the repository (about 9 MB each).
+
+| Edition (eBible PDF) | Verses in the edition | Recognised | Identical to the edition | Usable by partial use | Usable but different |
+|---|---|---|---|---|---|
+| World English Bible, `engwebp_all.pdf` | 31 103 | 3 486 | 3 430 (36 of them differ only by a thin space between quotation marks) | 3 353 | **1** |
+| Luther 1912, `deu1912_all.pdf` | 31 102 | 7 316 | 7 060 | 6 910 | **0** |
+
+Before the v0.24 changes above, 391 (WEB) and 1 494 (Luther) usable verses
+differed from the edition (running heads, note signs and footnotes inside
+verses). The one difference left: Mark 9:44 keeps a trailing "\*" that the
+PDF's text places after the verse.
+
+Coverage is low (11 % and 23 % of the verses): most chapters are refused, not
+guessed. The reasons, in order: the two columns of a page are read across
+each other by the PDF text layer (chapters refused, `documentSequence`);
+book titles the dictionaries do not recognise in the printed form; and the
+table of contents ("Exodus 60") read as a chapter number out of range.
+**What is accepted is accurate; much is not accepted.** A PDF reader that
+keeps the positions of words (to read columns in order) is the change that
+would raise coverage; it is not in v0.24. Marking places by hand works for
+every page.
 
 Already in v0.23 and still true: page headers and page numbers repeated
 across pages are left out and reported; footnotes in DOCX are notes, not verse
@@ -188,8 +238,12 @@ German wording audit: every German string was searched for formal address
 - Rust: `tests/bible_documents.rs` (partial use keeps doubtful chapters out
   and the Bible a document; verse text equals document text with provenance;
   manual mark validation; two columns refused; a short second column refused;
-  Malachi numbering), `tests/scripture.rs` (deuterocanonical books named and
-  left out), `scripture::canons` unit tests (ordinals never reused, every
+  Malachi numbering; a lone number after a sentence end is not a column read
+  across), `scripture::structure` unit test (note signs),
+  `tests/real_document_editions.rs` (ignored; real editions, above),
+  `tests/scripture.rs` (deuterocanonical books named and
+  left out; a few files of another Bible among many refused; date stamps on
+  `\id` lines are no evidence), `scripture::canons` unit tests (ordinals never reused, every
   tradition keeps the 66 books, NT order), `tests/reference_languages.rs`
   (German aliases), `tests/database.rs` (schema).
 - Interface: `tests/ui/document-passages.test.tsx` (partial use, finding a

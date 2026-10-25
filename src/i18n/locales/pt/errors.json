@@ -124,7 +124,10 @@
     "unknownBookCode": "Livro desconhecido.",
     "documentSequence": "{{book}} {{chapter}}: o versículo {{verse}} aparece dentro de um versículo anterior (talvez duas colunas tenham sido lidas misturadas). Este capítulo não é usado.",
     "additionalBook": "“{{fileName}}” contém {{book}}, que o Abiding Word ainda não consegue mostrar. Ele foi deixado de fora; os outros livros não são afetados.",
-    "differentEditions": "Estes arquivos dizem vir de Bíblias diferentes: {{list}}. Bíblias diferentes nunca são combinadas: adicione cada uma separadamente."
+    "differentEditions": "Estes arquivos dizem vir de Bíblias diferentes: {{list}}. Bíblias diferentes nunca são combinadas: adicione cada uma separadamente.",
+    "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
+    "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
+    "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",
@@ -300,6 +303,7 @@
   },
   "catalogue": {
     "notVerified": "“{{fileName}}” não correspondia à cópia verificada, então nada foi guardado. Tente novamente mais tarde.",
-    "unreachable": "Não foi possível concluir o download. Verifique a conexão com a internet e tente novamente."
+    "unreachable": "Não foi possível concluir o download. Verifique a conexão com a internet e tente novamente.",
+    "busy": "Já há um download em andamento. Aguarde até que termine."
   }
 }

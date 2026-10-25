@@ -10,7 +10,7 @@ import { useApi } from "@/lib/ApiContext";
 import { SOURCE_TYPES, type ImportItemEdit, type ImportJob, type ImportJobItem, type SourceCollection, type SourceType } from "@/types/library";
 import { sourceTypeLabel } from "./labels";
 
-type Phase = "choose" | "reading" | "review" | "adding" | "done";
+type Phase = "choose" | "scanning" | "reading" | "review" | "adding" | "done";
 
 /**
  * Adding many sources at once (v0.24): choose files or a folder, let
@@ -31,6 +31,28 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
   const [newCollection, setNewCollection] = useState("");
   const [tags, setTags] = useState("");
   const stop = useRef(false);
+  // One loop at a time; corrections still being saved are awaited before adding.
+  const [working, setWorking] = useState(false);
+  const running = useRef(false);
+  const edits = useRef(new Set<Promise<unknown>>());
+  // Closing the dialog stops any loop at the next file; the job stays (it can be continued).
+  useEffect(
+    () => () => {
+      stop.current = true;
+    },
+    [],
+  );
+  const exclusive = async (work: () => Promise<void>) => {
+    if (running.current) return;
+    running.current = true;
+    setWorking(true);
+    try {
+      await work();
+    } finally {
+      running.current = false;
+      setWorking(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -56,7 +78,6 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
   }, [api, resume]);
 
   const read = async (start: ImportJob) => {
-    stop.current = false;
     setPhase("reading");
     let current = start;
     setJob(current);
@@ -71,22 +92,33 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
     setPhase("review");
   };
 
-  const begin = async (paths: string[] | null) => {
-    if (!paths || paths.length === 0) return;
-    setError(null);
-    try {
-      await read(await api.libraryBatchScan(paths, recursive));
-    } catch (e) {
-      setError(toApiError(e).message);
-      setPhase("choose");
-    }
-  };
+  const begin = (paths: string[] | null) =>
+    exclusive(async () => {
+      if (!paths || paths.length === 0) return;
+      setError(null);
+      stop.current = false;
+      setPhase("scanning");
+      try {
+        const found = await api.libraryBatchScan(paths, recursive);
+        if (stop.current) {
+          setJob(found);
+          setPhase("review");
+          return;
+        }
+        await read(found);
+      } catch (e) {
+        setError(toApiError(e).message);
+        setPhase("choose");
+      }
+    });
 
-  const add = async () => {
+  const add = () =>
+    exclusive(async () => {
     if (!job) return;
     setError(null);
     stop.current = false;
     try {
+      await Promise.all([...edits.current]);
       let current = await api.libraryBatchShared(job.id, {
         collectionId: collectionChoice && collectionChoice !== "new" ? collectionChoice : null,
         newCollection: collectionChoice === "new" ? newCollection : null,
@@ -111,20 +143,31 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
       setError(toApiError(e).message);
       setPhase("review");
     }
-  };
+    });
 
-  const retry = async () => {
-    if (!job) return;
-    const failed = job.items.filter((i) => i.status === "failed" || i.status === "problem").map((i) => i.id);
-    try {
-      await read(await api.libraryBatchRetry(job.id, failed));
-    } catch (e) {
-      setError(toApiError(e).message);
-    }
-  };
+  const retry = () =>
+    exclusive(async () => {
+      if (!job) return;
+      const failed = job.items.filter((i) => i.status === "failed" || i.status === "problem").map((i) => i.id);
+      stop.current = false;
+      try {
+        await read(await api.libraryBatchRetry(job.id, failed));
+      } catch (e) {
+        setError(toApiError(e).message);
+      }
+    });
 
+  const continueReading = () =>
+    exclusive(async () => {
+      if (!job) return;
+      stop.current = false;
+      await read(job);
+    });
+
+  // Closing keeps the job: it is offered again in Settings → Sources.
+  const close = () => onClose(job?.counts.imported ?? 0);
   const discard = async () => {
-    if (job && (phase === "review" || phase === "choose")) await api.libraryBatchDiscard(job.id).catch(() => undefined);
+    if (job) await api.libraryBatchDiscard(job.id).catch(() => undefined);
     onClose(job?.counts.imported ?? 0);
   };
 
@@ -141,11 +184,10 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
 
   const edit = async (itemId: string, change: Omit<ImportItemEdit, "id">) => {
     if (!job) return;
-    try {
-      updateItem(await api.libraryBatchEdit(job.id, { ...change, id: itemId }));
-    } catch (e) {
-      setError(toApiError(e).message);
-    }
+    const saving = api.libraryBatchEdit(job.id, { ...change, id: itemId }).then(updateItem, (e) => setError(toApiError(e).message));
+    edits.current.add(saving);
+    await saving;
+    edits.current.delete(saving);
   };
 
   const n = (value: number) => ({
@@ -158,24 +200,31 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
   const actions =
     phase === "choose" ? (
       <Button onClick={() => onClose(0)}>{t("common.cancel")}</Button>
-    ) : phase === "reading" || phase === "adding" ? (
+    ) : phase === "scanning" || phase === "reading" || phase === "adding" ? (
       <Button onClick={() => (stop.current = true)}>{t("library.batch.stop")}</Button>
     ) : phase === "review" ? (
       <>
-        <Button onClick={discard}>{t("common.cancel")}</Button>
+        <Button variant="quiet" onClick={discard} disabled={working}>
+          {t("library.batch.discardImport")}
+        </Button>
+        <Button onClick={close}>{t("common.close")}</Button>
         {counts && counts.waiting > 0 ? (
-          <Button variant="primary" onClick={() => job && read(job)}>
+          <Button variant="primary" onClick={continueReading} disabled={working}>
             {t("library.batch.continueReading")}
           </Button>
         ) : (
-          <Button variant="primary" onClick={add} disabled={!counts || counts.toAdd === 0}>
+          <Button variant="primary" onClick={add} disabled={working || !counts || counts.toAdd === 0}>
             {t("library.batch.add", n(counts?.toAdd ?? 0))}
           </Button>
         )}
       </>
     ) : (
       <>
-        {counts && counts.failed + counts.problem > 0 && job?.state !== "cancelled" && <Button onClick={retry}>{t("library.batch.retry")}</Button>}
+        {counts && counts.failed + counts.problem > 0 && job?.state !== "cancelled" && (
+          <Button onClick={retry} disabled={working}>
+            {t("library.batch.retry")}
+          </Button>
+        )}
         <Button variant="primary" onClick={() => onClose(counts?.imported ?? 0)}>
           {t("common.close")}
         </Button>
@@ -183,14 +232,23 @@ export function BatchImport({ resume, onClose }: { resume?: string; onClose: (ad
     );
 
   return (
-    <Dialog wide title={t("library.batch.title")} onClose={phase === "reading" || phase === "adding" ? () => (stop.current = true) : discard} actions={actions}>
+    <Dialog wide title={t("library.batch.title")} onClose={phase === "scanning" || phase === "reading" || phase === "adding" ? () => (stop.current = true) : close} actions={actions}>
       {error && <Notice tone="error">{error}</Notice>}
+      {phase === "scanning" && (
+        <p role="status" className="m-0">
+          {t("library.batch.scanning")}
+        </p>
+      )}
       {phase === "choose" && (
         <div className="flex flex-col gap-3">
           <p className="m-0">{t("library.batch.intro")}</p>
           <div className="flex flex-wrap gap-2">
-            <Button onClick={async () => begin(await api.chooseSourceFiles())}>{t("library.batch.chooseFiles")}</Button>
-            <Button onClick={async () => begin(await api.chooseSourceFolder().then((f) => (f ? [f] : null)))}>{t("library.batch.chooseFolder")}</Button>
+            <Button disabled={working} onClick={async () => begin(await api.chooseSourceFiles())}>
+              {t("library.batch.chooseFiles")}
+            </Button>
+            <Button disabled={working} onClick={async () => begin(await api.chooseSourceFolder().then((f) => (f ? [f] : null)))}>
+              {t("library.batch.chooseFolder")}
+            </Button>
           </div>
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={recursive} onChange={(e) => setRecursive(e.target.checked)} />
@@ -353,7 +411,7 @@ function ItemRow({ item, onEdit }: { item: ImportJobItem; onEdit: (change: { tit
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <label htmlFor={`${id}-title`} className="flex flex-col gap-1 text-[0.9375rem]">
             <span>{t("library.manage.field.title")}</span>
-            <input id={`${id}-title`} value={title} onChange={(e) => setTitle(e.target.value)} onBlur={() => title.trim() && title !== item.title && onEdit({ title })} className="h-9 aw-input px-3" />
+            <input id={`${id}-title`} value={title} onChange={(e) => setTitle(e.target.value)} onBlur={() => (title.trim() ? title !== item.title && onEdit({ title }) : setTitle(item.title ?? ""))} className="h-9 aw-input px-3" />
           </label>
           <label htmlFor={`${id}-author`} className="flex flex-col gap-1 text-[0.9375rem]">
             <span>{t("library.manage.field.author")}</span>

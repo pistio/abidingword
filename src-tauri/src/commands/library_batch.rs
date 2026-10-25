@@ -48,7 +48,16 @@ pub fn library_batch_step(state: State<'_, AppState>, job_id: String) -> Command
     Ok(read_next(core, &job_id)?)
 }
 
+/// One step of any batch at a time: two overlapping steps (a double click,
+/// two windows) would otherwise pick the same file.
+static STEP: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+fn one_step() -> std::sync::MutexGuard<'static, ()> {
+    STEP.lock().unwrap_or_else(|poisoned| poisoned.into_inner())
+}
+
 pub fn read_next(core: &Core, job_id: &str) -> AppResult<Job> {
+    let _step = one_step();
     let Some(item) = core
         .db
         .with_conn(|conn| import_jobs::next_waiting(conn, job_id))?
@@ -179,6 +188,7 @@ pub fn library_batch_import_step(state: State<'_, AppState>, job_id: String) -> 
 }
 
 pub fn import_next(core: &Core, job_id: &str) -> AppResult<Job> {
+    let _step = one_step();
     let job = core.db.with_conn(|conn| import_jobs::get(conn, job_id))?;
     if matches!(job.state.as_str(), "finished" | "cancelled") {
         return Ok(job);
@@ -215,7 +225,7 @@ fn add_one(core: &Core, job: &Job, item: &JobItem) -> Result<(), Problem> {
     if let Some(sha) = &item.sha256 {
         if let Some(existing) = core
             .db
-            .with_conn(|conn| import_jobs::added_since(conn, job, sha))
+            .with_conn(|conn| import_jobs::added_since(conn, job, sha, &item.file_name))
             .map_err(fail)?
         {
             return finish(core, job, item, &existing).map_err(fail);
@@ -251,9 +261,16 @@ fn add_one(core: &Core, job: &Job, item: &JobItem) -> Result<(), Problem> {
     finish(core, job, item, &source.id).map_err(fail)
 }
 
-/// Marks the item added and gives the source the job's collection and tags.
+/// Marks the item added, then gives the source the job's collection and
+/// tags. The source is in the library from the moment it was saved: if the
+/// collection or tags cannot be given (checked when they were chosen, so only
+/// if something changed meanwhile), that is logged, never reported as the
+/// file not being added.
 fn finish(core: &Core, job: &Job, item: &JobItem, source_id: &str) -> AppResult<()> {
-    core.db.with_conn(|conn| {
+    core.db
+        .with_conn(|conn| import_jobs::record_imported(conn, &job.id, &item.id, source_id))?;
+    // Each of these is one transaction of its own.
+    let organised = core.db.with_conn(|conn| {
         let ids = [source_id.to_string()];
         if let Some(collection) = &job.collection_id {
             library_manage::collect(conn, collection, &ids, true)?;
@@ -261,8 +278,12 @@ fn finish(core: &Core, job: &Job, item: &JobItem, source_id: &str) -> AppResult<
         if !job.tags.is_empty() {
             library_manage::retag(conn, &ids, &job.tags, &[])?;
         }
-        import_jobs::record_imported(conn, &job.id, &item.id, source_id)
-    })
+        Ok(())
+    });
+    if let Err(error) = organised {
+        log::warn!("an added source could not be given the import's collection or tags: {error}");
+    }
+    Ok(())
 }
 
 /// Stops the job: nothing more is added; what was added stays.

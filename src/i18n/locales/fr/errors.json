@@ -124,7 +124,10 @@
     "unknownBookCode": "Livre inconnu.",
     "documentSequence": "{{book}} {{chapter}} : le verset {{verse}} apparaît à l’intérieur d’un verset précédent (deux colonnes ont peut-être été lues l’une dans l’autre). Ce chapitre n’est pas utilisé.",
     "additionalBook": "« {{fileName}} » contient {{book}}, qu’Abiding Word ne peut pas encore afficher. Ce livre a été laissé de côté ; les autres livres ne sont pas concernés.",
-    "differentEditions": "Ces fichiers indiquent venir de Bibles différentes : {{list}}. Des Bibles différentes ne sont jamais combinées : ajoutez chacune séparément."
+    "differentEditions": "Ces fichiers indiquent venir de Bibles différentes : {{list}}. Des Bibles différentes ne sont jamais combinées : ajoutez chacune séparément.",
+    "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
+    "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
+    "documentFootnotes_many": "{{count}} lignes de notes en bas de page ont été laissées de côté."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",
@@ -300,6 +303,7 @@
   },
   "catalogue": {
     "notVerified": "« {{fileName}} » ne correspondait pas à la copie vérifiée ; rien n’a été conservé. Réessayez plus tard.",
-    "unreachable": "Le téléchargement n’a pas pu aboutir. Vérifiez la connexion internet et réessayez."
+    "unreachable": "Le téléchargement n’a pas pu aboutir. Vérifiez la connexion internet et réessayez.",
+    "busy": "Un téléchargement est déjà en cours. Attendez qu’il se termine."
   }
 }

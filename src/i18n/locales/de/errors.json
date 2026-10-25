@@ -114,7 +114,9 @@
     "unknownBookCode": "Unbekanntes Buch.",
     "documentSequence": "{{book}} {{chapter}}: Vers {{verse}} erscheint innerhalb eines früheren Verses (vielleicht wurden zwei Spalten durcheinander gelesen). Dieses Kapitel wird nicht verwendet.",
     "additionalBook": "„{{fileName}}“ enthält {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Es wurde ausgelassen; die übrigen Bücher sind nicht betroffen.",
-    "differentEditions": "Diese Dateien stammen nach eigener Angabe aus verschiedenen Bibeln: {{list}}. Verschiedene Bibeln werden nie zusammengeführt: Füge jede einzeln hinzu."
+    "differentEditions": "Diese Dateien stammen nach eigener Angabe aus verschiedenen Bibeln: {{list}}. Verschiedene Bibeln werden nie zusammengeführt: Füge jede einzeln hinzu.",
+    "documentFootnotes_one": "{{count}} Zeile mit Fußnoten unten auf den Seiten wurde ausgelassen.",
+    "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen."
   },
   "library": {
     "notUtf8": "„{{fileName}}“ ist nicht als UTF-8-Text gespeichert und konnte daher nicht gelesen werden.",
@@ -290,6 +292,7 @@
   },
   "catalogue": {
     "notVerified": "„{{fileName}}“ stimmte nicht mit der geprüften Kopie überein, daher wurde nichts behalten. Versuche es später erneut.",
-    "unreachable": "Der Download konnte nicht abgeschlossen werden. Prüfe die Internetverbindung und versuche es erneut."
+    "unreachable": "Der Download konnte nicht abgeschlossen werden. Prüfe die Internetverbindung und versuche es erneut.",
+    "busy": "Ein Download läuft bereits. Warte, bis er abgeschlossen ist."
   }
 }

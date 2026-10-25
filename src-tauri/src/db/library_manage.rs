@@ -195,8 +195,9 @@ pub struct RemovedBible {
 /// anything is removed.
 pub fn remove_bibles(conn: &Connection, ids: &[String]) -> AppResult<Vec<RemovedBible>> {
     check_batch(ids)?;
+    let tx = conn.unchecked_transaction()?;
     for id in ids {
-        let state: Option<String> = conn
+        let state: Option<String> = tx
             .query_row(
                 "SELECT state FROM bible_translations WHERE id = ?1",
                 [id],
@@ -211,12 +212,14 @@ pub fn remove_bibles(conn: &Connection, ids: &[String]) -> AppResult<Vec<Removed
     }
     let mut removed = Vec::new();
     for id in ids {
-        let bible = bibles::remove(conn, id)?;
+        let bible = bibles::remove_in(&tx, id)?;
         removed.push(RemovedBible {
             id: bible.id,
             managed_copy: bible.source_origin == "managed_copy",
         });
     }
+    tx.commit()?;
+    log::info!("{} Bible(s) removed for good", removed.len());
     Ok(removed)
 }
 
@@ -571,6 +574,11 @@ pub struct Collection {
     pub name: String,
     /// Live sources in it, not counting Trash.
     pub count: i64,
+}
+
+/// Whether a tag name would be accepted (1 to 120 characters).
+pub fn check_tag_name(value: &str) -> AppResult<()> {
+    name(value, "tag").map(|_| ())
 }
 
 fn name(value: &str, what: &str) -> AppResult<String> {

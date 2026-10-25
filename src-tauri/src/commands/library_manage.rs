@@ -21,6 +21,14 @@ fn delete_source_folder(core: &Core, id: &str, relative: Option<&str>) {
     let Some(relative) = relative else {
         return;
     };
+    // Only plain names: a stored path with "..", a root or a drive is refused.
+    let plain = std::path::Path::new(relative)
+        .components()
+        .all(|c| matches!(c, std::path::Component::Normal(_)));
+    if !plain {
+        log::warn!("a stored file path was not a plain path; nothing was deleted");
+        return;
+    }
     if let Some(folder) = core.dirs.sources().join(relative).parent() {
         // Only ever the source's own folder inside sources/.
         if folder.starts_with(core.dirs.sources()) && folder.ends_with(id) {
@@ -49,26 +57,27 @@ pub(crate) fn empty_expired_trash(core: &Core) {
             return;
         }
     };
-    if !sources.is_empty() {
+    // One item at a time: one that cannot be removed never holds back the rest.
+    for id in sources {
         match core
             .db
-            .with_conn(|conn| library_manage::remove_sources(conn, &sources))
+            .with_conn(|conn| library_manage::remove_sources(conn, std::slice::from_ref(&id)))
         {
             Ok(files) => {
                 for (id, file) in files {
                     delete_source_folder(core, &id, file.as_deref());
                 }
             }
-            Err(error) => log::warn!("expired sources could not be removed: {error}"),
+            Err(error) => log::warn!("an expired source could not be removed: {error}"),
         }
     }
-    if !bibles.is_empty() {
+    for id in bibles {
         match core
             .db
-            .with_conn(|conn| library_manage::remove_bibles(conn, &bibles))
+            .with_conn(|conn| library_manage::remove_bibles(conn, std::slice::from_ref(&id)))
         {
             Ok(removed) => removed.iter().for_each(|b| delete_bible_folder(core, b)),
-            Err(error) => log::warn!("expired Bibles could not be removed: {error}"),
+            Err(error) => log::warn!("an expired Bible could not be removed: {error}"),
         }
     }
     sweep_leftovers(core);
@@ -76,9 +85,16 @@ pub(crate) fn empty_expired_trash(core: &Core) {
 
 /// Folders left behind when deleting a file failed, or the app stopped
 /// between copying a file and saving its record, or between the database
-/// commit and the file deletion: a source or Bible folder with no live
-/// source or Bible of that id. Only such folders, directly inside Abiding
-/// Word's own category folders, are deleted.
+/// commit and the file deletion. Only folders directly inside Abiding Word's
+/// own category folders are looked at:
+///
+/// - a source this database removed for good (its tombstone is there): the
+///   folder is deleted, as the removal meant to;
+/// - a source or Bible this database does not know at all (a crash before its
+///   record was saved — or a backup restored from before it was added, whose
+///   safety copy still refers to it): the folder is **moved** to
+///   `leftovers/` in the data folder, never deleted, so undoing a restore
+///   loses nothing.
 pub(crate) fn sweep_leftovers(core: &Core) {
     let root = core.dirs.sources();
     let Ok(categories) = std::fs::read_dir(&root) else {
@@ -102,17 +118,39 @@ pub(crate) fn sweep_leftovers(core: &Core) {
             if !folder.path().is_dir() {
                 continue;
             }
+            // (known at all, live)
             let sql = if bibles {
-                "SELECT EXISTS (SELECT 1 FROM bible_translations WHERE id = ?1)"
+                "SELECT COUNT(*) > 0, COUNT(*) > 0 FROM bible_translations WHERE id = ?1"
             } else {
-                "SELECT EXISTS (SELECT 1 FROM sources WHERE id = ?1 AND deleted_at IS NULL)"
+                "SELECT COUNT(*) > 0, COALESCE(MAX(deleted_at IS NULL), 0) FROM sources WHERE id = ?1"
             };
-            let live = core
-                .db
-                .with_conn(|conn| Ok(conn.query_row(sql, [&id], |r| r.get::<_, bool>(0))?));
-            if matches!(live, Ok(false)) {
-                log::info!("removing a leftover folder of a removed item");
-                filesystem::remove_managed(&folder.path());
+            let found = core.db.with_conn(|conn| {
+                Ok(conn.query_row(sql, [&id], |r| {
+                    Ok((r.get::<_, bool>(0)?, r.get::<_, bool>(1)?))
+                })?)
+            });
+            match found {
+                Ok((true, false)) => {
+                    log::info!("removing a leftover folder of a removed source");
+                    filesystem::remove_managed(&folder.path());
+                }
+                Ok((false, _)) => {
+                    let target = core.dirs.root().join("leftovers").join(&name).join(&id);
+                    let moved = target
+                        .parent()
+                        .map(std::fs::create_dir_all)
+                        .transpose()
+                        .and_then(|_| std::fs::rename(folder.path(), &target));
+                    match moved {
+                        Ok(()) => {
+                            log::info!("moved a folder this library does not know to leftovers/")
+                        }
+                        Err(error) => {
+                            log::warn!("an unknown library folder could not be moved: {error}")
+                        }
+                    }
+                }
+                _ => {}
             }
         }
     }

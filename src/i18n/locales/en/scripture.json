@@ -224,8 +224,6 @@
         "strong": "lexical numbers",
         "morph": "grammar"
       },
-      "partial_one": "{{count}} of the 66 books",
-      "partial_other": "{{count}} of the 66 books",
       "added": "Added",
       "download": "Download {{name}}…",
       "confirmTitle": "Download {{name}}?",
@@ -234,7 +232,11 @@
       "technical": "Licence and version",
       "offline": "Once added, it works without an internet connection.",
       "progress": "Downloading and checking file {{done}} of {{total}}…",
-      "starting": "Downloading…"
+      "starting": "Downloading…",
+      "partial_one": "{{count}} of the 66 books",
+      "partial_other": "{{count}} of the 66 books",
+      "confirmBody_one": "{{files}} file ({{size}}) is downloaded from GitHub and checked against its verified copy. Then you review the Bible as usual; nothing is added before you confirm.",
+      "confirmBody_other": "{{files}} files ({{size}}) are downloaded from GitHub and each is checked against its verified copy. Then you review the Bible as usual; nothing is added before you confirm."
     },
     "partialBooks_one": "{{count}} of the 66 books",
     "partialBooks_other": "{{count}} of the 66 books"
@@ -306,6 +308,7 @@
       "keptText": "Your notes, highlights and the passages in your studies belong to the verses, not to one Bible: they stay. Your own files are never touched.",
       "deleteQuestion": "Delete {{name}} permanently?",
       "deleteText": "Its text and Abiding Word’s copy of its files are deleted. To read it again you would have to add it again.",
+      "deleteTextMany": "Their text and Abiding Word’s copies of their files are deleted. To read them again you would have to add them again.",
       "deleted_one": "{{formatted}} Bible was deleted permanently.",
       "deleted_other": "{{formatted}} Bibles were deleted permanently.",
       "archivedTitle_one": "Archived ({{formatted}})",
@@ -713,7 +716,7 @@
       "mark": "Mark a passage here",
       "markTitle": "Mark where a passage is",
       "markWhere": "The place: {{where}} in {{name}}.",
-      "markNoPlace": "Go to the page or paragraph first, then mark it.",
+      "markNoPlace": "Go to the page, or click the paragraph where the passage is, then mark it.",
       "markQuote": "Kept with it as a check: “{{quote}}”",
       "markPassage": "Passage at this place",
       "markHint": "Only the place is recorded. The document, your notes and their references stay as they are.",

@@ -224,8 +224,6 @@
         "strong": "lexikalische Nummern",
         "morph": "Grammatik"
       },
-      "partial_one": "{{count}} der 66 Bücher",
-      "partial_other": "{{count}} der 66 Bücher",
       "added": "Hinzugefügt",
       "download": "{{name}} herunterladen…",
       "confirmTitle": "{{name}} herunterladen?",
@@ -234,7 +232,11 @@
       "technical": "Lizenz und Version",
       "offline": "Einmal hinzugefügt, funktioniert sie ohne Internetverbindung.",
       "progress": "Datei {{done}} von {{total}} wird heruntergeladen und geprüft…",
-      "starting": "Wird heruntergeladen…"
+      "starting": "Wird heruntergeladen…",
+      "partial_one": "{{count}} der 66 Bücher",
+      "partial_other": "{{count}} der 66 Bücher",
+      "confirmBody_one": "{{files}} Datei ({{size}}) wird von GitHub heruntergeladen und gegen ihre geprüfte Kopie geprüft. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt.",
+      "confirmBody_other": "{{files}} Dateien ({{size}}) werden von GitHub heruntergeladen und jede wird gegen ihre geprüfte Kopie geprüft. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt."
     },
     "partialBooks_one": "{{count}} der 66 Bücher",
     "partialBooks_other": "{{count}} der 66 Bücher"
@@ -306,6 +308,7 @@
       "keptText": "Deine Notizen, Markierungen und die Bibelstellen in deinen Studien gehören zu den Versen, nicht zu einer Bibel: Sie bleiben erhalten. Deine eigenen Dateien werden nie angetastet.",
       "deleteQuestion": "{{name}} endgültig löschen?",
       "deleteText": "Der Text der Bibel und die Kopie ihrer Dateien in Abiding Word werden gelöscht. Um sie wieder zu lesen, müsstest du sie erneut hinzufügen.",
+      "deleteTextMany": "Der Text dieser Bibeln und die Kopien ihrer Dateien in Abiding Word werden gelöscht. Um sie wieder zu lesen, müsstest du sie erneut hinzufügen.",
       "deleted_one": "{{formatted}} Bibel wurde endgültig gelöscht.",
       "deleted_other": "{{formatted}} Bibeln wurden endgültig gelöscht.",
       "archivedTitle_one": "Archiviert ({{formatted}})",
@@ -713,7 +716,7 @@
       "mark": "Hier eine Stelle markieren",
       "markTitle": "Markieren, wo eine Stelle steht",
       "markWhere": "Die Stelle: {{where}} in {{name}}.",
-      "markNoPlace": "Gehe zuerst zur Seite oder zum Absatz und markiere ihn dann.",
+      "markNoPlace": "Gehe zur Seite oder klicke auf den Absatz, in dem die Stelle steht, und markiere sie dann.",
       "markQuote": "Zur Kontrolle mit gespeichert: „{{quote}}“",
       "markPassage": "Stelle an diesem Ort",
       "markHint": "Nur der Ort wird gespeichert. Das Dokument, deine Notizen und ihre Bibelstellen bleiben unverändert.",

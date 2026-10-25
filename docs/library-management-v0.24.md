@@ -11,7 +11,7 @@ place to be looked after: **Settings → Sources**. User guide pages:
 | State | In the lists, Sources pane, search, passage sources | Marks and citations | How to leave it |
 |---|---|---|---|
 | **In use** (`active`) | yes | shown | Archive, Move to Trash |
-| **Archived** | no (still found in Settings → Sources, marked *Archived* when found by search there) | kept, shown when restored | Restore, Move to Trash |
+| **Archived** | not in the lists, the Sources pane or passage sources; **still found by search**, marked *Archived* | kept and still shown in Marks | Restore, Move to Trash |
 | **In Trash** | no | kept, hidden | Restore, Delete permanently, or after 30 days |
 | **Deleted permanently** | — | a source becomes the citation tombstone it always became (studies keep a record of what they cited); a Bible's text rows go | — |
 
@@ -21,10 +21,11 @@ passage (the setting is cleared; another Bible is chosen as before). Notes,
 Scripture marks and references belong to canonical verses, not to a Bible:
 they are untouched by any of this.
 
-`library_remove_source` and `bible_remove` (the older *Remove* actions) now
-move to Trash; permanent deletion is only possible **from Trash**
-(`remove_sources` / `remove_bibles` refuse anything else, and a refused batch
-removes nothing).
+`library_remove_source` and `bible_remove` (the older *Remove* commands) are
+now the same as **Delete permanently** for one item, and like it they work
+only **from Trash**: `remove_sources` / `remove_bibles` refuse an item that is
+in use or archived, and a refused batch removes nothing. The interface no
+longer offers a direct *Remove*; it offers Archive and Move to Trash.
 
 ## 2. Deleting safely
 
@@ -35,12 +36,18 @@ removes nothing).
   person's original — is never touched.**
 - **Interrupted or failed deletion.** If a file cannot be deleted (locked,
   permissions) or the app stops between commit and deletion, the folder is
-  left behind. At start-up `sweep_leftovers` removes folders inside the
-  category folders whose id has **no live item**; folders of live items stay.
+  left behind. At start-up `sweep_leftovers` looks at the folders inside the
+  category folders: the folder of an item **deleted permanently** (its
+  record kept as a citation tombstone) is deleted; a folder the database does
+  not know at all is **not deleted but moved** to
+  `leftovers/<category>/<id>` in the data folder, so nothing that might be
+  the person's is lost to a database restored from an older backup. Folders
+  of live items, archived or in Trash, stay. Only plain folders are touched
+  (never a link), and only inside Abiding Word's own storage.
 - **Retention.** At start-up `empty_expired_trash` deletes for good what has
-  been in Trash for more than `TRASH_RETENTION_DAYS` (30). A failure is logged
-  and retried next start; nothing is half-removed (each item is its own
-  transaction plus file step).
+  been in Trash for more than `TRASH_RETENTION_DAYS` (30), **one item at a
+  time** (its own transaction, then its files), so one item that fails does
+  not hold back the others. A failure is logged and retried next start.
 - **Stale references.** A study citing a deleted source keeps its tombstone
   (title, author, excerpt) as before; marks of a trashed source are hidden,
   not deleted, and come back on restore.
@@ -126,11 +133,15 @@ list, never the sources added.
 **Bibles of several files.** A USFM Bible's files are one edition when
 chosen together. What a file's `\id` line says is used as evidence: after
 removing the book's own names (`\h`, `\toc`, `\mt` lines and the English
-name), its code, file names and numbers, a label that recurs (in at least two
+name), its code, file names, numbers and date or time stamps ("Wed Mar 3
+2021 10:15 GMT": weekday, month and time-zone words), a label that recurs (in at least two
 files and a quarter of the files that have one) is taken as a Bible's name.
 Two different recurring names refuse the import (*These files say they come
 from different Bibles … add each one on its own*): different translations are
-never combined. Some editions put a different title per book on the `\id`
+never combined. Beside one recurring name, another name found in two files or
+more that has **no word in common** with it refuses the import too, however
+few its files (two books of the King James Version among ten of the World
+English Bible). Some editions put a different title per book on the `\id`
 line; such labels do not recur and are not evidence. Duplicate books (two
 files for John) and conflicting chapters were already refused; missing
 chapters are reported per book. All bundled Bibles import unchanged with this

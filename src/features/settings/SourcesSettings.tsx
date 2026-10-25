@@ -90,7 +90,7 @@ export function SourcesSettings() {
     });
   const [editing, setEditing] = useState<string | null>(null);
   const [asking, setAsking] = useState<null | { kind: "trash" | "delete" | "collect" | "tag" | "untag"; ids: string[] }>(null);
-  const [done, setDone] = useState<{ message: string; undo?: { ids: string[]; to: ItemState } } | null>(null);
+  const [done, setDone] = useState<{ message: string; undo?: Map<ItemState, string[]> } | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const languages = useLoad(useCallback(() => api.libraryLanguages(), [api]));
   const [collections, setCollections] = useState<SourceCollection[]>([]);
@@ -114,9 +114,14 @@ export function SourcesSettings() {
     return () => window.clearTimeout(timer);
   }, [typed]);
 
+  // Titles and states of sources seen on any page: a selection can span pages,
+  // and Undo puts each item back where it was.
+  const [known, setKnown] = useState<ReadonlyMap<string, { title: string; state: ItemState }>>(new Map());
+  const asked = useRef(0);
   const load = useCallback(
-    () =>
-      api
+    () => {
+      const call = ++asked.current;
+      return api
         .libraryManageList({
         text: text || null,
         state,
@@ -134,11 +139,19 @@ export function SourcesSettings() {
         })
         .then(
           (found) => {
+            // An older reply (filters changed meanwhile) is not shown.
+            if (call !== asked.current) return;
             setPage(found);
+            setKnown((current) => {
+              const next = new Map(current);
+              for (const s of found.items) next.set(s.id, { title: s.title, state: s.state });
+              return next;
+            });
             setError(null);
           },
-          (e) => setError(toApiError(e).message),
-        ),
+          (e) => call === asked.current && setError(toApiError(e).message),
+        );
+    },
     [api, text, state, sourceType, language, format, collectionId, tagId, withoutText, duplicates, sort, descending, offset],
   );
 
@@ -164,19 +177,39 @@ export function SourcesSettings() {
       return next;
     });
 
-  const move = async (targets: string[], to: ItemState, message: string, undo?: ItemState) => {
+  // Each item's state before a change, grouped: what Undo restores.
+  const before = (targets: string[]) => {
+    const groups = new Map<ItemState, string[]>();
+    for (const id of targets) {
+      const was = known.get(id)?.state ?? "active";
+      groups.set(was, [...(groups.get(was) ?? []), id]);
+    }
+    return groups;
+  };
+  const move = async (targets: string[], to: ItemState, message: string, undoable = true) => {
     setError(null);
+    const previous = before(targets);
     try {
       await api.librarySetState(targets, to);
       setSelected(new Set());
       await refresh();
-      setDone({ message, undo: undo ? { ids: targets, to: undo } : undefined });
+      setDone({ message, undo: undoable ? previous : undefined });
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
+  const undo = async (groups: Map<ItemState, string[]>) => {
+    setError(null);
+    try {
+      for (const [to, targets] of groups) await api.librarySetState(targets, to);
+      await refresh();
+      setDone({ message: t("common.lifecycle.undone") });
     } catch (e) {
       setError(toApiError(e).message);
     }
   };
   const count = (n: number) => ({ count: n, formatted: formatNumber(n) });
-  const titleOf = (sourceId: string) => items.find((s) => s.id === sourceId)?.title ?? "";
+  const titleOf = (sourceId: string) => known.get(sourceId)?.title ?? items.find((s) => s.id === sourceId)?.title ?? "";
   const viewing: ItemState = state ?? "active";
 
   const filtersOn = [sourceType, language, format, collectionId, tagId].some(Boolean) || withoutText || duplicates;
@@ -363,12 +396,12 @@ export function SourcesSettings() {
             />
           )}
           {viewing === "active" && (
-            <Button variant="quiet" onClick={() => move(ids, "archived", t("library.manage.done.archived", count(ids.length)), "active")}>
+            <Button variant="quiet" onClick={() => move(ids, "archived", t("library.manage.done.archived", count(ids.length)))}>
               {t("common.lifecycle.archive")}
             </Button>
           )}
           {viewing !== "active" && (
-            <Button variant="quiet" onClick={() => move(ids, "active", t("library.manage.done.restored", count(ids.length)))}>
+            <Button variant="quiet" onClick={() => move(ids, "active", t("library.manage.done.restored", count(ids.length)), false)}>
               {t("common.lifecycle.restore")}
             </Button>
           )}
@@ -392,7 +425,7 @@ export function SourcesSettings() {
           <>
             {done.message}{" "}
             {done.undo && (
-              <Button variant="quiet" onClick={() => move(done.undo!.ids, done.undo!.to, t("common.lifecycle.undone"))}>
+              <Button variant="quiet" onClick={() => undo(done.undo!)}>
                 {t("common.lifecycle.undo")}
               </Button>
             )}
@@ -435,8 +468,8 @@ export function SourcesSettings() {
                   onOpen={() => setEditing(editing === s.id ? null : s.id)}
                   onRead={() => openSource(s.id)}
                   onSaved={refresh}
-                  onArchive={() => move([s.id], "archived", t("library.manage.done.archivedOne", { title: s.title }), "active")}
-                  onRestore={() => move([s.id], "active", t("library.manage.done.restoredOne", { title: s.title }))}
+                  onArchive={() => move([s.id], "archived", t("library.manage.done.archivedOne", { title: s.title }))}
+                  onRestore={() => move([s.id], "active", t("library.manage.done.restoredOne", { title: s.title }), false)}
                   onTrash={() => setAsking({ kind: "trash", ids: [s.id] })}
                   onDelete={() => setAsking({ kind: "delete", ids: [s.id] })}
                 />
@@ -468,18 +501,19 @@ export function SourcesSettings() {
           onCancel={() => setAsking(null)}
           onConfirm={async () => {
             const targets = asking.ids;
+            const previous = before(targets);
             await api.librarySetState(targets, "trashed");
             setAsking(null);
             setSelected(new Set());
             await refresh();
             setDone({
               message: targets.length === 1 ? t("library.trash.done", { title: titleOf(targets[0]!) }) : t("library.manage.done.trashed", count(targets.length)),
-              undo: { ids: targets, to: viewing },
+              undo: previous,
             });
           }}
         >
-          <p className="m-0">{t("library.trash.text", { count: TRASH_RETENTION_DAYS })}</p>
-          <p className="m-0">{t("library.trash.kept")}</p>
+          <p className="m-0">{asking.ids.length === 1 ? t("library.trash.text", { count: TRASH_RETENTION_DAYS }) : t("library.trash.textMany", { count: TRASH_RETENTION_DAYS })}</p>
+          <p className="m-0">{asking.ids.length === 1 ? t("library.trash.kept") : t("library.trash.keptMany")}</p>
         </ConfirmDialog>
       )}
       {asking?.kind === "delete" && (
@@ -498,8 +532,8 @@ export function SourcesSettings() {
             setDone({ message: t("library.delete.done", count(n)) });
           }}
         >
-          <p className="m-0">{t("library.delete.text")}</p>
-          <p className="m-0">{t("library.delete.kept")}</p>
+          <p className="m-0">{asking.ids.length === 1 ? t("library.delete.text") : t("library.delete.textMany")}</p>
+          <p className="m-0">{asking.ids.length === 1 ? t("library.delete.kept") : t("library.delete.keptMany")}</p>
           <p className="m-0 font-medium">{t("common.lifecycle.cannotUndo")}</p>
         </ConfirmDialog>
       )}

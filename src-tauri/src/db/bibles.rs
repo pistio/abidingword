@@ -304,11 +304,20 @@ pub fn insert_verses_where(
 /// Removes a translation's own data. Returns what was removed so the caller
 /// can delete Abiding Word's managed copy of the source files.
 pub fn remove(conn: &Connection, id: &str) -> AppResult<BibleTranslation> {
-    let translation = get(conn, id)?;
     let tx = conn.unchecked_transaction()?;
+    let translation = remove_in(&tx, id)?;
+    tx.commit()?;
+    log::info!("Bible removed: {}", translation.short_name);
+    Ok(translation)
+}
+
+/// Removes a Bible inside a transaction the caller commits (v0.24: several
+/// at once are removed together or not at all).
+pub fn remove_in(tx: &rusqlite::Transaction, id: &str) -> AppResult<BibleTranslation> {
+    let translation = get(tx, id)?;
     // Its word index first, in bulk (v0.21): left to the cascade, each entry
     // removed would look up its words one by one.
-    crate::db::bible_words::remove(&tx, id)?;
+    crate::db::bible_words::remove(tx, id)?;
     // A document Bible's text and its search entries (v0.23), explicitly.
     tx.execute(
         "DELETE FROM bible_document_segments
@@ -321,8 +330,6 @@ pub fn remove(conn: &Connection, id: &str) -> AppResult<BibleTranslation> {
         "DELETE FROM settings WHERE key = 'scripture.translation' AND value = ?1",
         [serde_json::to_string(id).unwrap_or_default()],
     )?;
-    tx.commit()?;
-    log::info!("Bible removed: {}", translation.short_name);
     Ok(translation)
 }
 
@@ -505,6 +512,7 @@ pub fn search(conn: &Connection, input: &SearchScripture) -> AppResult<SearchRes
          JOIN bible_verse_texts t ON t.id = s.rowid
          JOIN bible_translations tr ON tr.id = t.translation_id
          WHERE bible_verse_search MATCH ?1
+           AND tr.state = 'active'
            AND (?2 IS NULL OR t.translation_id = ?2)
            AND (?3 IS NULL OR t.verse_id BETWEEN ?3 AND ?4)
          ORDER BY t.verse_id, tr.short_name

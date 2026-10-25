@@ -394,14 +394,20 @@ pub fn record_imported(conn: &Connection, job: &str, item: &str, source_id: &str
 
 /// A source with this content added since the job began: a file added just
 /// before a crash, before its item was marked (so it is not added twice).
-pub fn added_since(conn: &Connection, job: &Job, sha256: &str) -> AppResult<Option<String>> {
+pub fn added_since(
+    conn: &Connection,
+    job: &Job,
+    sha256: &str,
+    file_name: &str,
+) -> AppResult<Option<String>> {
     Ok(conn
         .query_row(
             "SELECT s.id FROM source_files f JOIN sources s ON s.id = f.source_id
-             WHERE f.sha256 = ?1 AND s.deleted_at IS NULL AND s.created_at >= ?2
+             WHERE f.sha256 = ?1 AND f.original_filename = ?3 AND s.deleted_at IS NULL
+               AND s.state <> 'trashed' AND s.created_at >= ?2
                AND NOT EXISTS (SELECT 1 FROM import_job_items i WHERE i.source_id = s.id)
              ORDER BY s.created_at LIMIT 1",
-            params![sha256, job.created_at],
+            params![sha256, job.created_at, file_name],
             |r| r.get(0),
         )
         .optional()?)
@@ -472,6 +478,20 @@ pub fn set_shared(
         .map(|t| t.trim().to_string())
         .filter(|t| !t.is_empty())
         .collect();
+    // Checked now, as tags are when given to one source: a tag refused later
+    // would fail every file after it was added.
+    for tag in &tags {
+        crate::db::library_manage::check_tag_name(tag)?;
+    }
+    if let Some(collection) = collection {
+        conn.query_row(
+            "SELECT 1 FROM source_collections WHERE id = ?1",
+            [collection],
+            |_| Ok(()),
+        )
+        .optional()?
+        .ok_or_else(|| AppError::not_found("collection", collection))?;
+    }
     conn.execute(
         "UPDATE import_jobs SET collection_id = ?2, tags = ?3, updated_at = ?4 WHERE id = ?1",
         params![
@@ -502,13 +522,19 @@ pub fn retry(conn: &Connection, job: &str, items: &[String]) -> AppResult<usize>
     Ok(changed)
 }
 
+/// Moves a job on. An ended job (finished or cancelled) stays ended: a cancel
+/// that lands while a step runs is never undone by the step.
 pub fn set_state(conn: &Connection, job: &str, state: &str) -> AppResult<()> {
     let changed = conn.execute(
-        "UPDATE import_jobs SET state = ?2, updated_at = ?3 WHERE id = ?1",
+        "UPDATE import_jobs SET state = ?2, updated_at = ?3
+         WHERE id = ?1 AND state NOT IN ('finished', 'cancelled')",
         params![job, state, now()],
     )?;
     if changed == 0 {
-        return Err(AppError::not_found("import", job));
+        // Unknown, or already ended (then nothing to do).
+        conn.query_row("SELECT 1 FROM import_jobs WHERE id = ?1", [job], |_| Ok(()))
+            .optional()?
+            .ok_or_else(|| AppError::not_found("import", job))?;
     }
     Ok(())
 }

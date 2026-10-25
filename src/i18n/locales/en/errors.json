@@ -114,7 +114,9 @@
     "unknownBookCode": "Unknown book.",
     "documentSequence": "{{book}} {{chapter}}: verse {{verse}} appears inside an earlier verse (perhaps two columns were read across each other). This chapter is not used.",
     "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected.",
-    "differentEditions": "These files say they come from different Bibles: {{list}}. Different Bibles are never combined: add each one on its own."
+    "differentEditions": "These files say they come from different Bibles: {{list}}. Different Bibles are never combined: add each one on its own.",
+    "documentFootnotes_one": "{{count}} line of footnotes at the foot of pages was left out.",
+    "documentFootnotes_other": "{{count}} lines of footnotes at the foot of pages were left out."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",
@@ -290,6 +292,7 @@
   },
   "catalogue": {
     "notVerified": "“{{fileName}}” did not match the verified copy, so nothing was kept. Try again later.",
-    "unreachable": "The download could not be completed. Check the internet connection and try again."
+    "unreachable": "The download could not be completed. Check the internet connection and try again.",
+    "busy": "A download is already under way. Wait for it to finish."
   }
 }

@@ -297,7 +297,7 @@ fn numbers_inside_the_text_are_not_verse_numbers() {
         )
         .replace(
             "\n9 Invented words of Ruth 1:9 for testing.\n",
-            "\n9 Ruth 1:9 invented words; it was 2,000 cubits and 40% of the field.\n",
+            "\n9 Ruth 1:9 invented words; it was 2,000 cubits and 40% of the field. 12 men came.\n",
         );
     let r = recognise(&read("ruth.txt", text.as_bytes()));
     assert!(errors(&r).is_empty(), "{:?}", errors(&r));
@@ -311,7 +311,9 @@ fn numbers_inside_the_text_are_not_verse_numbers() {
     );
     assert_eq!(
         verse(&r, "RUT", 1, 9).as_deref(),
-        Some("Ruth 1:9 invented words; it was 2,000 cubits and 40% of the field.")
+        // A number after a sentence end, ahead of the count, is not a
+        // second column read across: the count does not go on from it.
+        Some("Ruth 1:9 invented words; it was 2,000 cubits and 40% of the field. 12 men came.")
     );
 }
 

@@ -368,12 +368,13 @@ function DocumentText({ document, jump, here }: { document: BibleDocument; jump:
   }, [api, document.id, offset]);
   useEffect(() => {
     if (target === null || !segments) return;
-    scroller.current?.querySelector(`[data-position="${target}"]`)?.scrollIntoView({ block: "center" });
+    scroller.current?.querySelector(`[data-position="${target}"]`)?.scrollIntoView?.({ block: "center" });
   }, [target, segments]);
-  // The paragraph chosen (clicked, or gone to) is where a passage is marked; else the first shown.
+  // The paragraph chosen (clicked, or gone to) is where a passage is marked;
+  // without one there is no place yet (never a guess at what is on screen).
   useEffect(() => {
     here(() => {
-      const at = target ?? segments?.[0]?.position ?? null;
+      const at = target;
       if (at === null) return null;
       const segment = segments?.find((x) => x.position === at);
       return { documentId: document.id, page: segment?.pageNumber ?? null, segment: at, item: null };

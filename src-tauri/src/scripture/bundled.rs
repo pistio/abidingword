@@ -179,7 +179,7 @@ pub static BUNDLED: &[BundledBible] = &[
         language_code: "grc",
         publisher: "eBible.org",
         license_type: "Public Domain",
-        copyright_notice: "The 1904 Patriarchal Greek New Testament (with 20 corrections from later editions) is in the Public Domain. Imported from eBible.org's USFM edition (grcbyz); the wording is unchanged. New Testament only.",
+        copyright_notice: "The 1904 Patriarchal Greek New Testament, with corrections from later editions (listed in its introduction), is in the Public Domain. Imported from eBible.org's USFM edition (grcbyz); the wording is unchanged. New Testament only.",
         books: 27,
     },
 ];

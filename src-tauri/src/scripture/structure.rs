@@ -101,6 +101,8 @@ pub struct LeftOut {
 pub struct Stats {
     /// Lines taken out as page headers or page numbers (PDF).
     pub page_lines: usize,
+    /// Lines of footnotes at the foot of pages, left out (v0.24).
+    pub footnote_lines: usize,
     /// Headings inside chapters left out of the text.
     pub headings: usize,
     /// Characters of text left out (all reasons).
@@ -990,7 +992,29 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         .filter(|(_, n)| *n >= needed)
         .map(|(o, _)| o)
         .collect();
+    // Running heads that name the passage on the page ("249 Josua 2:1",
+    // "Matthew 1:25 968", "GENESIS 3:4–4:2"): their book and numbers change on
+    // every page, so they are counted by their form. Only a page's first or
+    // last line, and only when that form runs through the pages.
+    let reference_heads = pages
+        .values()
+        .filter(|lines| {
+            lines
+                .iter()
+                .take(1)
+                .chain(lines.iter().rev().take(1))
+                .any(|&i| reference_head(&units[i].text))
+        })
+        .count();
+    let reference_pages = reference_heads >= needed;
     for ((_, page), lines) in &pages {
+        if reference_pages {
+            for &i in lines.iter().take(1).chain(lines.iter().rev().take(1)) {
+                if reference_head(&units[i].text) {
+                    out.insert(i);
+                }
+            }
+        }
         let edge: Vec<usize> = lines
             .iter()
             .take(2)
@@ -1013,6 +1037,94 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         }
     }
     out
+}
+
+/// Footnotes printed at the foot of a page ("† 1:1 Messiah (Hebrew) …",
+/// "* 2:6 Micah 5:2"): from the first line that starts with a note sign and a
+/// chapter and verse to the end of that page. They are notes, not verses.
+fn page_footnotes(units: &[Unit]) -> HashSet<usize> {
+    use std::sync::OnceLock;
+    static NOTE: OnceLock<regex::Regex> = OnceLock::new();
+    let note = NOTE.get_or_init(|| {
+        regex::Regex::new(r"^[†‡§¶*]\s*\d{1,3}[:,.]\d{1,3}(?:\s|$)").expect("valid pattern")
+    });
+    let mut out = HashSet::new();
+    let mut in_notes: Option<(u16, u32)> = None;
+    for (i, unit) in units.iter().enumerate() {
+        let Some(page) = unit.place.page else {
+            in_notes = None;
+            continue;
+        };
+        let here = (unit.place.document, page);
+        if in_notes != Some(here) {
+            in_notes = None;
+            if !unit.heading && note.is_match(unit.text.trim_start()) {
+                in_notes = Some(here);
+            }
+        }
+        if in_notes.is_some() {
+            out.insert(i);
+        }
+    }
+    out
+}
+
+/// Note references printed after a word ("Jesus,§ who", "behold,† an"): they
+/// point to footnotes and are not words of the verse, so they are left out of
+/// it, as the notes themselves are. Only these signs, and only straight after
+/// a letter or punctuation; nothing else is changed. A space left before the
+/// next word stays as it was.
+fn without_note_callers(text: &str) -> std::borrow::Cow<'_, str> {
+    const CALLERS: [char; 5] = ['†', '‡', '§', '¶', '*'];
+    if !text.contains(CALLERS) {
+        return std::borrow::Cow::Borrowed(text);
+    }
+    let mut out = String::with_capacity(text.len());
+    let mut previous: Option<char> = None;
+    let mut chars = text.chars().peekable();
+    while let Some(c) = chars.next() {
+        if CALLERS.contains(&c) {
+            // Raised against the word ("cause†"), or set apart as its own
+            // word when the raised run is read with a space ("cause † will").
+            // At the very start ("§Now …") it belongs to the word after it.
+            if previous.is_none() {
+                continue;
+            }
+            let alone = previous.is_none_or(char::is_whitespace)
+                && chars.peek().is_none_or(|n| n.is_whitespace());
+            if previous.is_some_and(|p| !p.is_whitespace()) || alone {
+                if alone {
+                    while chars.peek().is_some_and(|n| n.is_whitespace()) {
+                        chars.next();
+                    }
+                }
+                continue;
+            }
+        }
+        out.push(c);
+        previous = Some(c);
+    }
+    let trimmed = out.trim_end().len();
+    out.truncate(trimmed);
+    std::borrow::Cow::Owned(out)
+}
+
+/// Whether a line has the form of a running head naming a passage: an
+/// optional page number, at most four words, a chapter and verse (or a range),
+/// an optional page number and optionally a second such reference — nothing
+/// else ("249 Josua 2:1", "Matthew 1:25 968", "Josua 4:1 252 Josua 4:23").
+fn reference_head(text: &str) -> bool {
+    use std::sync::OnceLock;
+    static FORM: OnceLock<regex::Regex> = OnceLock::new();
+    let form = FORM.get_or_init(|| {
+        let reference = r"(?:\d\.?\s?)?[\p{L}][\p{L}'’.\-]*(?:\s+[\p{L}][\p{L}'’.\-]*){0,3}\s+\d{1,3}[:,.]\d{1,3}(?:\s*[-–—]\s*(?:\d{1,3}[:,.])?\d{1,3})?";
+        regex::Regex::new(&format!(
+            r"^(?:\d{{1,4}}\s+)?{reference}(?:\s+\d{{1,4}})?(?:\s+{reference})?(?:\s+\d{{1,4}})?$"
+        ))
+        .expect("valid pattern")
+    });
+    let text = text.trim();
+    text.chars().count() <= 80 && form.is_match(text)
 }
 
 /// Whether a line could be a running head ("GENESIS 1", "THE BOOK OF RUTH",
@@ -1138,6 +1250,31 @@ impl Builder<'_> {
         false
     }
 
+    /// A book's title printed over two lines ("The Good News According to",
+    /// then "Matthew"): the first line, a whole short line standing after a
+    /// verse that ended its sentence, is part of the title, not of that verse.
+    /// Taken back out of the text and returned.
+    fn title_start(&mut self, marked: bool) -> Option<String> {
+        if marked {
+            return None;
+        }
+        let n = self.items.len();
+        let Event::Text(line) = &self.items.get(n.checked_sub(1)?)?.event else {
+            return None;
+        };
+        let prev = &self.items[n - 1];
+        let before = &self.items.get(n.checked_sub(2)?)?;
+        let ended = matches!(&before.event, Event::Text(t)
+            if t.trim_end().ends_with(['.', '!', '?', '”', '’', '"', ')']));
+        let whole = clean(&self.units[prev.unit].text).trim() == line.trim();
+        if before.unit == prev.unit || !ended || !whole || !book_line_shape(line) {
+            return None;
+        }
+        let line = line.trim().to_string();
+        self.items.pop();
+        Some(line)
+    }
+
     fn push(&mut self, event: Event, unit: usize) {
         self.items.push(Item { event, unit });
     }
@@ -1185,7 +1322,11 @@ impl Builder<'_> {
                 if (unit.heading || !bare) && line_book_ok {
                     match heading {
                         Heading::Book(book) => {
-                            let entry = self.book_entry(text, book, index);
+                            let title = match self.title_start(unit.heading) {
+                                Some(start) => format!("{start} {text}"),
+                                None => text.to_string(),
+                            };
+                            let entry = self.book_entry(&title, book, index);
                             self.push(
                                 Event::Book {
                                     entry,
@@ -1590,6 +1731,27 @@ impl Reader<'_> {
         None
     }
 
+    /// Whether `value + 1` is among the next three numbers of this chapter.
+    fn count_goes_on(&self, at: usize, value: u16) -> bool {
+        let mut seen = 0;
+        for item in self.items.iter().skip(at + 1).take(LOOKAHEAD) {
+            match &item.event {
+                Event::Book { .. } | Event::Chapter(_) => return false,
+                Event::Marker(m) => {
+                    if m.value == value + 1 {
+                        return true;
+                    }
+                    seen += 1;
+                    if seen == 3 {
+                        return false;
+                    }
+                }
+                _ => {}
+            }
+        }
+        false
+    }
+
     fn ambiguous_issue(&mut self, verse: u16) {
         let (Some(book), Some(chapter)) = (self.book, self.chapter) else {
             return;
@@ -1677,7 +1839,28 @@ impl Reader<'_> {
             && m.value == chapter
             && self.next_value(at) != Some(chapter + 1)
         {
+            // "4" on its own, then "1 Da nun …": the chapter's number, and verse 1
+            // has its own. The number is not verse text.
+            if self.next_value(at) == Some(1) && m.end.is_none() {
+                return true;
+            }
             self.drop_cap(unit, m.end);
+            return true;
+        }
+        // The next chapter's number at the end of a line, once this chapter
+        // has all its verses, with its verse 1 numbered next ("… wandelten. 9"
+        // then "1 Und …", a two-column page): the chapter begins; the number is
+        // not verse text.
+        if strong
+            && !m.unit_start
+            && m.end.is_none()
+            && self.chapter_complete()
+            && m.value == chapter + 1
+            && chapter < book.chapter_count
+            && self.next_value(at) == Some(1)
+        {
+            self.start_chapter(chapter + 1, unit);
+            self.out.stats.numbered_chapters += 1;
             return true;
         }
         // The next chapter's number, or verse 1 again, at the start of a paragraph once
@@ -1690,6 +1873,10 @@ impl Reader<'_> {
         {
             self.start_chapter(chapter + 1, unit);
             self.out.stats.numbered_chapters += 1;
+            // The chapter's number, then its verse 1 with its own number.
+            if m.value == chapter + 1 && m.end.is_none() && self.next_value(at) == Some(1) {
+                return true;
+            }
             let end = if m.value == 1 { m.end } else { None };
             self.open_verse(1, end, unit);
             return true;
@@ -1724,6 +1911,10 @@ impl Reader<'_> {
             && m.end.is_none()
             && m.value > expect + 1
             && canon::verse_count(book, chapter).is_some_and(|count| m.value <= count)
+            // … and the count goes on from it within the next few numbers
+            // (a second column: "3 … 18 …", "4 … 19 …"): a lone number in
+            // the text ("Moab, 10 years") is not a verse out of place.
+            && self.count_goes_on(at, m.value)
             && self.sequence_flagged.insert((book.ordinal, chapter))
         {
             self.out.content.issue(
@@ -1828,7 +2019,8 @@ impl Reader<'_> {
         let place = self.place(unit);
         let glue = std::mem::take(&mut self.glue);
         if let Some(open) = self.open.as_mut() {
-            Self::append(open, words, unit, place, glue);
+            let words = without_note_callers(words);
+            Self::append(open, &words, unit, place, glue);
             return;
         }
         if self.chapter.is_some() {
@@ -2009,6 +2201,21 @@ impl Reader<'_> {
                 .with("count", s.psalm_titles),
             );
         }
+        if s.footnote_lines > 0 {
+            self.out.content.issue(
+                Severity::Note,
+                None,
+                None,
+                UserMessage::new(
+                    "bibleImport.documentFootnotes",
+                    format!(
+                        "{} lines of footnotes at the foot of pages were left out.",
+                        s.footnote_lines
+                    ),
+                )
+                .with("count", s.footnote_lines),
+            );
+        }
         if s.page_lines > 0 {
             self.out.content.issue(
                 Severity::Note,
@@ -2102,7 +2309,10 @@ impl Reader<'_> {
 /// books that share a name across languages).
 pub fn recognise(units: &[Unit], language: Option<&str>, corrections: &Corrections) -> Recognition {
     let language = language.and_then(ReferenceLanguage::from_label);
-    let furniture = page_furniture(units);
+    let mut furniture = page_furniture(units);
+    let footnotes = page_footnotes(units);
+    let footnote_lines = footnotes.difference(&furniture).count();
+    furniture.extend(footnotes);
     let builder = Builder {
         units,
         language,
@@ -2118,7 +2328,8 @@ pub fn recognise(units: &[Unit], language: Option<&str>, corrections: &Correctio
         out: Recognition {
             books,
             stats: Stats {
-                page_lines: furniture.len(),
+                page_lines: furniture.len() - footnote_lines,
+                footnote_lines,
                 ..Default::default()
             },
             ..Default::default()
@@ -2141,4 +2352,18 @@ pub fn recognise(units: &[Unit], language: Option<&str>, corrections: &Correctio
         sequence_flagged: HashSet::new(),
     };
     reader.run()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::without_note_callers;
+
+    #[test]
+    fn note_callers_are_taken_out_and_nothing_else() {
+        assert_eq!(without_note_callers("quenched.’ *"), "quenched.’");
+        assert_eq!(without_note_callers("a cause † will"), "a cause will");
+        assert_eq!(without_note_callers("Christ.§ Then"), "Christ. Then");
+        assert_eq!(without_note_callers("§Now when"), "Now when");
+        assert_eq!(without_note_callers("no callers"), "no callers");
+    }
 }

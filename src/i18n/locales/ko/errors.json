@@ -104,7 +104,8 @@
     "unknownBookCode": "알 수 없는 책입니다.",
     "documentSequence": "{{book}} {{chapter}}장: {{verse}}절이 앞 절 안에 나타납니다(두 단이 섞여 읽혔을 수 있습니다). 이 장은 사용하지 않습니다.",
     "additionalBook": "“{{fileName}}”에는 {{book}}이(가) 들어 있으며, Abiding Word에서는 아직 이 책을 표시할 수 없습니다. 이 책은 제외되었고 다른 책에는 영향이 없습니다.",
-    "differentEditions": "이 파일들은 서로 다른 성경에서 왔다고 적혀 있습니다: {{list}}. 서로 다른 성경은 합치지 않으니 하나씩 따로 추가하세요."
+    "differentEditions": "이 파일들은 서로 다른 성경에서 왔다고 적혀 있습니다: {{list}}. 서로 다른 성경은 합치지 않으니 하나씩 따로 추가하세요.",
+    "documentFootnotes_other": "쪽 아래의 각주 {{count}}줄은 제외했습니다."
   },
   "library": {
     "notUtf8": "“{{fileName}}”은(는) UTF-8 텍스트로 저장되어 있지 않아 읽을 수 없습니다.",
@@ -280,6 +281,7 @@
   },
   "catalogue": {
     "notVerified": "“{{fileName}}”이(가) 검증된 사본과 일치하지 않아 아무것도 보관하지 않았습니다. 나중에 다시 시도하세요.",
-    "unreachable": "내려받기를 마치지 못했습니다. 인터넷 연결을 확인하고 다시 시도하세요."
+    "unreachable": "내려받기를 마치지 못했습니다. 인터넷 연결을 확인하고 다시 시도하세요.",
+    "busy": "이미 내려받는 중입니다. 끝날 때까지 기다리세요."
   }
 }
