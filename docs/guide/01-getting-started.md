@@ -8,7 +8,7 @@
 
 Abiding Word is currently available as a **test version for Windows**.
 
-1. Open the [download page](https://github.com/jc-universe87/abidingword-updates/releases)
+1. Open the [download page](https://github.com/pistio/abidingword-updates/releases)
    and choose the newest test version at the top.
 2. Download the file whose name ends in **`_x64-setup.exe`**, for example
    `Abiding-Word_0.5.0-dev.26_x64-setup.exe`.

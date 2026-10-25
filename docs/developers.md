@@ -86,7 +86,7 @@ which is Debian-based, so the Linux instructions below apply there too.
 ### Clone, install, run
 
 ```sh
-git clone https://github.com/jc-universe87/abidingword.git
+git clone https://github.com/pistio/abidingword.git
 cd abidingword
 npm ci                                   # exact versions from package-lock.json
 ABIDING_WORD_DATA_DIR="$PWD/.aw-data" npm run tauri dev

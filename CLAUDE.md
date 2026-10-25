@@ -29,9 +29,9 @@ Every report after a merge must include:
 2. the `main` CI result for that exact SHA;
 3. the *Publish Windows test update* run result for that SHA;
 4. the published dev version (`X.Y.Z-dev.N`);
-5. whether `test-channel/latest.json` in `jc-universe87/abidingword-updates`
+5. whether `test-channel/latest.json` in `pistio/abidingword-updates`
    points to that version
-   (`https://github.com/jc-universe87/abidingword-updates/releases/download/test-channel/latest.json`).
+   (`https://github.com/pistio/abidingword-updates/releases/download/test-channel/latest.json`).
 
 If the publish run failed, say so with the reason, retry it with *Run
 workflow* once the cause is fixed, and report the retry. A merge is not

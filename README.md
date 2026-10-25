@@ -102,7 +102,7 @@ teaching, and it shows where everything comes from.
 ## Get started
 
 1. **Download** the newest Windows test version from the
-   [download page](https://github.com/jc-universe87/abidingword-updates/releases)
+   [download page](https://github.com/pistio/abidingword-updates/releases)
    (the file ending in `_x64-setup.exe`) and install it.
 2. **Add a Bible:** click **Add a Bible…** and choose one of the free Bibles
    that come with it: the Berean Standard Bible or World English Bible

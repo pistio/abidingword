@@ -133,4 +133,4 @@ somewhere safe. See [Backups](08-settings-updates-backups.md#backups).
 [← Settings, updates and backups](08-settings-updates-backups.md) · [Contents](README.md) · Next: [Preparing to teach →](10-teaching.md)
 
 *Something unclear or missing in this guide? Please
-[open an issue](https://github.com/jc-universe87/abidingword/issues) and tell us.*
+[open an issue](https://github.com/pistio/abidingword/issues) and tell us.*
