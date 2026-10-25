@@ -15,6 +15,7 @@ pub mod epub_view;
 mod html_entities;
 pub mod markdown;
 pub mod pdf;
+pub mod pdf_layout;
 pub mod text;
 
 use crate::error::AppResult;

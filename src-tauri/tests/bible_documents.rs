@@ -1343,30 +1343,26 @@ fn two_columns(across: bool) -> Vec<u8> {
 }
 
 #[test]
-fn a_two_column_pdf_is_read_in_column_order_and_never_shifted_when_its_lines_cross_columns() {
-    // Written column by column: read as printed.
-    let r = recognise(&read("columns.pdf", &two_columns(false)));
-    for v in 1..=22 {
-        assert_eq!(verse(&r, "RUT", 1, v), Some(words("Ruth", 1, v)), "1:{v}");
+fn a_two_column_pdf_is_read_in_column_order_however_its_lines_are_drawn() {
+    // v0.24.1: the reading order comes from where the text stands on the page,
+    // not from the order it is drawn in. Drawn column by column, or line by
+    // line across both columns: the same verses, each with its own words.
+    for across in [false, true] {
+        let r = recognise(&read("columns.pdf", &two_columns(across)));
+        assert!(r.usable(), "across {across}: {:?}", codes(&r));
+        for v in 1..=22 {
+            assert_eq!(
+                verse(&r, "RUT", 1, v),
+                Some(words("Ruth", 1, v)),
+                "across {across}, 1:{v}"
+            );
+        }
     }
-    // Written line by line across the columns: whatever is accepted is the
-    // verse's own text; nothing is moved into another verse.
-    // Written line by line across the columns: the chapter is refused, so
-    // no verse with another verse's words in it can be used.
-    let r = recognise(&read("across.pdf", &two_columns(true)));
-    assert!(!r.usable());
-    assert!(
-        codes(&r).contains(&"bibleImport.documentSequence".to_string()),
-        "{:?}",
-        codes(&r)
-    );
-    assert!(r.content.usable_chapters().is_some_and(|u| u.is_empty()));
 }
 
 #[test]
-fn a_short_second_column_read_across_is_refused_too() {
-    // Left column 1–17, right column 18–22: only five verses would be missing,
-    // which alone is a warning, but the out-of-sequence numbers refuse it.
+fn a_short_second_column_drawn_across_is_read_in_order() {
+    // Left column 1–17, right column 18–22, drawn line by line across.
     let mut left: Vec<String> = vec!["Ruth".into(), "Chapter 1".into()];
     left.extend((1..=17).map(|v| format!("{v} {}", words("Ruth", 1, v))));
     let right: Vec<String> = (18..=22)
@@ -1380,11 +1376,129 @@ fn a_short_second_column_read_across_is_refused_too() {
         }
     }
     let r = recognise(&read("short.pdf", &fixtures::pdf_placed(&[lines])));
+    assert!(r.usable(), "{:?}", codes(&r));
+    for v in 1..=22 {
+        assert_eq!(verse(&r, "RUT", 1, v), Some(words("Ruth", 1, v)), "1:{v}");
+    }
+}
+
+#[test]
+fn text_read_across_two_columns_without_positions_is_still_refused() {
+    // A text file has no positions: two columns run into each other line by
+    // line can only be detected, and the chapter is refused, never guessed.
+    // Each line holds a line of the left column, then one of the right.
+    let mut text = String::from("Ruth\n\nChapter 1\n\n");
+    for v in 1..=11u16 {
+        text.push_str(&format!(
+            "{v} {}     {} {}\n",
+            words("Ruth", 1, v),
+            v + 11,
+            words("Ruth", 1, v + 11)
+        ));
+    }
+    let r = recognise(&read("across.txt", text.as_bytes()));
     assert!(!r.usable());
     assert!(
         codes(&r).contains(&"bibleImport.documentSequence".to_string()),
         "{:?}",
         codes(&r)
+    );
+}
+
+#[test]
+fn a_page_whose_reading_order_cannot_be_established_is_not_used() {
+    // Two columns, and a line in the middle running across the gutter with
+    // column text beside it: the order of that page is uncertain, so its
+    // chapter is refused (and reported), never read in a guessed order.
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![
+        (40.0, 800.0, 9.0, "Ruth".into()),
+        (40.0, 786.0, 9.0, "Chapter 1".into()),
+    ];
+    for v in 1..=11u16 {
+        lines.push((
+            40.0,
+            772.0 - 14.0 * f64::from(v - 1),
+            9.0,
+            format!("{v} {}", words("Ruth", 1, v)),
+        ));
+        lines.push((
+            310.0,
+            772.0 - 14.0 * f64::from(v - 1),
+            9.0,
+            format!("{} {}", v + 11, words("Ruth", 1, v + 11)),
+        ));
+    }
+    // On the same height as the fifth line of each column.
+    lines.push((
+        200.0,
+        716.0,
+        9.0,
+        "a line that runs over the gutter between the columns".into(),
+    ));
+    let r = recognise(&read("uncertain.pdf", &fixtures::pdf_sized(&[lines])));
+    assert!(!r.usable());
+    assert!(
+        codes(&r).contains(&"bibleImport.documentReadingOrder".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+    assert!(r
+        .content
+        .usable_chapters()
+        .is_some_and(|u| !u.contains(&(8, 1))));
+}
+
+#[test]
+fn notes_at_the_foot_of_a_column_are_not_read_between_the_columns() {
+    // A note in smaller type at the foot of the left column, below all the
+    // running text: the right column follows the left directly, and the note
+    // is left out (its sign taken out of the verse that refers to it).
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![
+        (40.0, 800.0, 10.0, "Ruth".into()),
+        (40.0, 786.0, 10.0, "Chapter 1".into()),
+    ];
+    for v in 1..=11u16 {
+        let text = if v == 3 {
+            format!("{v} Invented words of Ruth 1:3* for testing.")
+        } else {
+            format!("{v} {}", words("Ruth", 1, v))
+        };
+        lines.push((40.0, 772.0 - 14.0 * f64::from(v - 1), 10.0, text));
+        lines.push((
+            310.0,
+            772.0 - 14.0 * f64::from(v - 1),
+            10.0,
+            format!("{} {}", v + 11, words("Ruth", 1, v + 11)),
+        ));
+    }
+    lines.push((40.0, 560.0, 7.0, "* 1:3 A note about this verse.".into()));
+    let r = recognise(&read("notes.pdf", &fixtures::pdf_sized(&[lines])));
+    assert!(r.usable(), "{:?}", codes(&r));
+    for v in 1..=22 {
+        assert_eq!(verse(&r, "RUT", 1, v), Some(words("Ruth", 1, v)), "1:{v}");
+    }
+}
+
+#[test]
+fn a_sign_with_no_note_on_its_page_stays_in_the_text() {
+    // "*" is taken out of a verse only when a note on the page begins with
+    // it: here no note does, so it is text, kept as written.
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![
+        (40.0, 800.0, 10.0, "Ruth".into()),
+        (40.0, 786.0, 10.0, "Chapter 1".into()),
+    ];
+    for v in 1..=22u16 {
+        let text = if v == 3 {
+            format!("{v} Invented words * of Ruth 1:3 for testing.")
+        } else {
+            format!("{v} {}", words("Ruth", 1, v))
+        };
+        lines.push((40.0, 772.0 - 14.0 * f64::from(v - 1), 10.0, text));
+    }
+    let r = recognise(&read("sign.pdf", &fixtures::pdf_sized(&[lines])));
+    assert_eq!(
+        verse(&r, "RUT", 1, 3).as_deref(),
+        Some("Invented words * of Ruth 1:3 for testing.")
     );
 }
 
@@ -1403,4 +1517,290 @@ fn an_editions_own_numbering_is_kept_as_written_and_reported() {
     assert_eq!(verse(&r, "MAL", 3, 24), Some(words("Malachi", 3, 24)));
     assert_eq!(verse(&r, "MAL", 4, 1), None);
     assert!(!r.content.issues.is_empty(), "the difference is reported");
+}
+
+// --- v0.24.1: patterns found on real typeset Bibles --------------------------------
+
+/// A one-page PDF: `title`, then Ruth 1 in one column (10 pt), with `edit`
+/// changing a verse's line and `extra` lines added (x, y, size, text).
+fn ruth_page(edit: impl Fn(u16, String) -> String, extra: &[(f64, f64, f64, &str)]) -> Vec<u8> {
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![
+        (40.0, 800.0, 10.0, "Ruth".into()),
+        (40.0, 786.0, 10.0, "Chapter 1".into()),
+    ];
+    for v in 1..=22u16 {
+        lines.push((
+            40.0,
+            772.0 - 14.0 * f64::from(v - 1),
+            10.0,
+            edit(v, format!("{v} {}", words("Ruth", 1, v))),
+        ));
+    }
+    lines.extend(extra.iter().map(|(x, y, s, t)| (*x, *y, *s, t.to_string())));
+    fixtures::pdf_sized(&[lines])
+}
+
+#[test]
+fn mark_9_44_a_cluster_of_note_signs_is_taken_out_when_the_notes_name_the_verse() {
+    // WEB Mark 9:44 ends "…not quenched.’ *‡", and the page's notes begin
+    // "* 9:44 Isaiah 66:24" and "‡ 9:44 NU omits verse 44.": both signs are
+    // references there, so both are taken out; nothing else changes.
+    let pdf = ruth_page(
+        |v, line| {
+            if v == 3 {
+                "3 the fire is not quenched.’ *‡".to_string()
+            } else {
+                line
+            }
+        },
+        &[
+            (40.0, 420.0, 7.0, "* 1:3 Isaiah 66:24"),
+            (40.0, 410.0, 7.0, "‡ 1:3 NU omits verse 44."),
+        ],
+    );
+    let r = recognise(&read("signs.pdf", &pdf));
+    assert!(r.usable(), "{:?}", codes(&r));
+    assert_eq!(
+        verse(&r, "RUT", 1, 3).as_deref(),
+        Some("the fire is not quenched.’")
+    );
+    assert_eq!(verse(&r, "RUT", 1, 4), Some(words("Ruth", 1, 4)));
+}
+
+#[test]
+fn a_note_sign_is_taken_out_only_where_a_note_names_its_verse() {
+    // "†" with a note naming verse 3 goes from verse 3; the same sign in verse
+    // 5, whose verse no note names, stays as written.
+    let pdf = ruth_page(
+        |v, line| match v {
+            3 => "3 Invented words of Ruth† 1:3 for testing.".into(),
+            5 => "5 Invented words of Ruth† 1:5 for testing.".into(),
+            _ => line,
+        },
+        &[(40.0, 420.0, 7.0, "† 1:3 A note on verse three.")],
+    );
+    let r = recognise(&read("one-note.pdf", &pdf));
+    assert_eq!(
+        verse(&r, "RUT", 1, 3).as_deref(),
+        Some("Invented words of Ruth 1:3 for testing.")
+    );
+    assert_eq!(
+        verse(&r, "RUT", 1, 5).as_deref(),
+        Some("Invented words of Ruth† 1:5 for testing.")
+    );
+}
+
+#[test]
+fn a_large_heading_between_verses_is_left_out() {
+    // "BOOK 2" set larger than the text, between two verses: a heading.
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![
+        (40.0, 800.0, 10.0, "Ruth".into()),
+        (40.0, 786.0, 10.0, "Chapter 1".into()),
+    ];
+    let mut y = 772.0;
+    for v in 1..=22u16 {
+        if v == 12 {
+            lines.push((120.0, y, 16.0, "BOOK 2".into()));
+            y -= 22.0;
+        }
+        lines.push((40.0, y, 10.0, format!("{v} {}", words("Ruth", 1, v))));
+        y -= 14.0;
+    }
+    let r = recognise(&read("heading.pdf", &fixtures::pdf_sized(&[lines])));
+    assert!(r.usable(), "{:?}", codes(&r));
+    assert_eq!(verse(&r, "RUT", 1, 11), Some(words("Ruth", 1, 11)));
+}
+
+#[test]
+fn a_repeated_speaker_label_inside_a_verse_refuses_the_chapter() {
+    // "Beloved" stands as a line of its own three times, once between two
+    // sentences of a verse: perhaps a speaker's name, perhaps words of the
+    // verse — not known without its style. The chapter is not used.
+    let mut text = String::from("Ruth\n\nChapter 1\n\n");
+    for v in 1..=22u16 {
+        if v == 4 {
+            text.push_str("4 Invented words of Ruth 1:4.\nBeloved\nMore invented words.\n");
+            continue;
+        }
+        text.push_str(&format!("{v} {}\n", words("Ruth", 1, v)));
+    }
+    text.push_str("\nChapter 2\n\nBeloved\n1 Invented.\nBeloved\n");
+    let r = recognise(&read("labels.txt", text.as_bytes()));
+    assert!(
+        codes(&r).contains(&"bibleImport.documentLabel".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+    assert!(r
+        .content
+        .usable_chapters()
+        .is_some_and(|u| !u.contains(&(8, 1))));
+}
+
+#[test]
+fn a_contents_page_with_dot_leaders_is_not_read_as_headings() {
+    // "Ruth . . . . . 5" in a table of contents is not "Ruth, chapter 5"; the
+    // book is then found once, where it begins.
+    let text = format!(
+        "Contents\n\nGenesis . . . . . . . 1\nRuth . . . . . . . 5\n\n{}",
+        ruth_lines(|c| format!("Chapter {c}"))
+    );
+    let r = recognise(&read("contents.txt", text.as_bytes()));
+    assert!(r.usable(), "{:?}", codes(&r));
+    assert_eq!(verse(&r, "RUT", 1, 1), Some(words("Ruth", 1, 1)));
+}
+
+#[test]
+fn a_chapter_number_alone_on_its_line_starts_that_chapter_even_after_a_short_chapter() {
+    // Revelation 12 in Luther 1912 has 17 verses where the standard count has
+    // 18: the printed "13" with verse 1 next still begins chapter 13, so the
+    // chapters after it are not shifted; the missing verse is reported.
+    let mut text = String::from("Ruth\n\n1\n\n");
+    for v in 1..=21u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 1, v)));
+    }
+    text.push_str("\n2\n\n");
+    for v in 1..=23u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 2, v)));
+    }
+    let r = recognise(&read("short.txt", text.as_bytes()));
+    assert_eq!(verse(&r, "RUT", 2, 1), Some(words("Ruth", 2, 1)));
+    assert_eq!(verse(&r, "RUT", 2, 23), Some(words("Ruth", 2, 23)));
+    assert_eq!(verse(&r, "RUT", 1, 22), None, "never filled");
+    // A chapter whose number was lost: the next printed number puts the count right.
+    let mut text = String::from("Ruth\n\n1\n\n");
+    for v in 1..=22u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 1, v)));
+    }
+    text.push_str("\n3\n\n");
+    for v in 1..=18u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 3, v)));
+    }
+    let r = recognise(&read("jump.txt", text.as_bytes()));
+    assert_eq!(verse(&r, "RUT", 3, 1), Some(words("Ruth", 3, 1)));
+    assert_eq!(verse(&r, "RUT", 2, 1), None);
+    assert!(
+        codes(&r).contains(&"bibleImport.documentChapterJump".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+}
+
+#[test]
+fn a_suspended_hyphen_at_a_line_end_is_kept() {
+    // "Lob-" at the end of a line, "und Dankopfer" on the next: the hyphen is
+    // the word's own (Luther 1912, Leviticus 7:13); "Dankop-" / "fer" is a
+    // word broken at the line's end.
+    let text = ruth_lines(|c| format!("Chapter {c}"))
+        .replace(
+            "\n3 Invented words of Ruth 1:3 for testing.\n",
+            "\n3 mit ihrem Lob-\nund Dankopfer.\n",
+        )
+        .replace(
+            "\n4 Invented words of Ruth 1:4 for testing.\n",
+            "\n4 ein Dankop-\nfer bringen.\n",
+        );
+    let r = recognise(&read("hyphen.txt", text.as_bytes()));
+    assert_eq!(
+        verse(&r, "RUT", 1, 3).as_deref(),
+        Some("mit ihrem Lob- und Dankopfer.")
+    );
+    assert_eq!(
+        verse(&r, "RUT", 1, 4).as_deref(),
+        Some("ein Dankopfer bringen.")
+    );
+}
+
+#[test]
+fn a_title_over_two_lines_with_a_possessive_names_its_book() {
+    // "Paul’s Second Letter to" / "the Corinthians" (WEB), then chapter 1.
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![
+        (60.0, 800.0, 16.0, "Paul’s Second Letter to".into()),
+        (80.0, 782.0, 16.0, "the Corinthians".into()),
+    ];
+    for v in 1..=24u16 {
+        lines.push((
+            40.0,
+            760.0 - 14.0 * f64::from(v - 1),
+            10.0,
+            format!("{v} {}", words("2 Corinthians", 1, v)),
+        ));
+    }
+    let r = recognise(&read("2co.pdf", &fixtures::pdf_sized(&[lines])));
+    assert_eq!(
+        verse(&r, "2CO", 1, 1),
+        Some(words("2 Corinthians", 1, 1)),
+        "{:?}",
+        codes(&r)
+    );
+}
+
+#[test]
+fn raised_letters_are_taken_out_only_where_the_notes_explain_them() {
+    // Louis Segond 1910 sets cross-reference letters small and raised against
+    // the next word ("ᶜEt la contrée"). With a note "c 1:3 …" on the page the
+    // letter goes; without one, the chapter is not used (never kept as a word
+    // of the verse, never dropped on a guess).
+    let with_note = |note: bool| {
+        let mut lines: Vec<(f64, f64, f64, String)> = vec![
+            (40.0, 800.0, 10.0, "Ruth".into()),
+            (40.0, 786.0, 10.0, "Chapter 1".into()),
+        ];
+        for v in 1..=22u16 {
+            let y = 772.0 - 14.0 * f64::from(v - 1);
+            if v == 3 {
+                lines.push((40.0, y, 10.0, "3 Invented words".into()));
+                lines.push((126.0, y + 3.5, 6.0, "c".into()));
+                lines.push((130.0, y, 10.0, "Et of Ruth 1:3 for testing.".into()));
+            } else {
+                lines.push((40.0, y, 10.0, format!("{v} {}", words("Ruth", 1, v))));
+            }
+        }
+        if note {
+            lines.push((40.0, 420.0, 7.0, "c 1:3 Ge 1:1.".into()));
+        }
+        fixtures::pdf_sized(&[lines])
+    };
+    let r = recognise(&read("letters.pdf", &with_note(true)));
+    assert!(r.usable(), "{:?}", codes(&r));
+    assert_eq!(
+        verse(&r, "RUT", 1, 3).as_deref(),
+        Some("Invented words Et of Ruth 1:3 for testing.")
+    );
+    let r = recognise(&read("letters.pdf", &with_note(false)));
+    assert!(
+        codes(&r).contains(&"bibleImport.documentRaisedLetters".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+    assert!(r
+        .content
+        .usable_chapters()
+        .is_some_and(|u| !u.contains(&(8, 1))));
+}
+
+#[test]
+fn a_preface_line_naming_a_passage_is_not_a_bible_line() {
+    // "Luke 17:36 and Acts 15:34, which are …" in a preface (WEB) is prose:
+    // only a document written in such lines has its verses named that way.
+    let text = format!(
+        "Preface\n\nLuke 17:36 and Acts 15:34, which are not in some manuscripts.\n\n{}",
+        ruth_lines(|c| format!("Chapter {c}"))
+    );
+    let r = recognise(&read("preface.txt", text.as_bytes()));
+    assert!(r.usable(), "{:?}", codes(&r));
+    assert!(r.books.iter().all(|b| b.book != Some("LUK")));
+}
+
+#[test]
+fn a_psalm_number_alone_on_its_line_is_not_verse_text() {
+    // "Psalms", then "1" alone, then "1 Blessed is the man …".
+    let text = "Psalms\n\n1\n\n1 Invented words of Psalms 1:1 for testing.\n2 Invented words of Psalms 1:2 for testing.\n3 Invented words of Psalms 1:3 for testing.\n4 Invented words of Psalms 1:4 for testing.\n5 Invented words of Psalms 1:5 for testing.\n6 Invented words of Psalms 1:6 for testing.\n";
+    let r = recognise(&read("psalm.txt", text.as_bytes()));
+    assert_eq!(
+        verse(&r, "PSA", 1, 1),
+        Some(words("Psalms", 1, 1)),
+        "{:?}",
+        codes(&r)
+    );
 }

@@ -105,7 +105,12 @@
     "documentSequence": "{{book}} {{chapter}}장: {{verse}}절이 앞 절 안에 나타납니다(두 단이 섞여 읽혔을 수 있습니다). 이 장은 사용하지 않습니다.",
     "additionalBook": "“{{fileName}}”에는 {{book}}이(가) 들어 있으며, Abiding Word에서는 아직 이 책을 표시할 수 없습니다. 이 책은 제외되었고 다른 책에는 영향이 없습니다.",
     "differentEditions": "이 파일들은 서로 다른 성경에서 왔다고 적혀 있습니다: {{list}}. 서로 다른 성경은 합치지 않으니 하나씩 따로 추가하세요.",
-    "documentFootnotes_other": "쪽 아래의 각주 {{count}}줄은 제외했습니다."
+    "documentFootnotes_other": "쪽 아래의 각주 {{count}}줄은 제외했습니다.",
+    "documentReadingOrder": "{{book}} {{chapter}}장: {{page}}쪽은 읽는 순서를 확실히 알 수 없는 배치입니다. 이 장은 사용하지 않습니다.",
+    "documentChapterJump": "{{book}} {{chapter}}장: 문서는 {{previous}}장 다음에 이 장으로 이어집니다. 그 사이의 장은 찾지 못했습니다.",
+    "documentRunningHead": "{{book}} {{chapter}}장: {{page}}쪽은 {{found}}절로 끝나지만, 면주({{head}})에는 {{named}}로 적혀 있습니다. 이 장은 사용하지 않습니다.",
+    "documentLabel": "{{book}} {{chapter}}장: “{{line}}” 줄이 한 절의 두 문장 사이에 있고 다른 곳에서도 따로 한 줄로 되풀이됩니다(말하는 사람의 이름이나 소제목일 수 있음). 이 장은 사용하지 않습니다.",
+    "documentRaisedLetters": "{{book}} {{chapter}}장: 어떤 절에 쪽의 각주로 설명되지 않는 작은 위첨자 글자가 있습니다(관주 표시일 수 있음). 이 장은 사용하지 않습니다."
   },
   "library": {
     "notUtf8": "“{{fileName}}”은(는) UTF-8 텍스트로 저장되어 있지 않아 읽을 수 없습니다.",

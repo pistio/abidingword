@@ -6,6 +6,8 @@ use std::panic::{catch_unwind, AssertUnwindSafe};
 
 use lopdf::{decode_text_string, Document, Object};
 
+use super::pdf_layout::{Collector, PageLayout, PageOrder};
+
 use super::{
     paragraphs, split_long, ExtractionStatus, FoundMetadata, ImportedDocument, NewSegment,
     SourceImportAdapter,
@@ -33,6 +35,7 @@ impl SourceImportAdapter for PdfImporter {
             metadata,
             pages,
             scanned,
+            ..
         } = read_pages(bytes, file_name)?;
         let page_count = pages.len() as u32;
         if scanned {
@@ -57,11 +60,18 @@ impl SourceImportAdapter for PdfImporter {
     }
 }
 
-/// A PDF's text layer, page by page, as the text extractor gives it (lines
-/// kept), and whether it is too thin to be anything but scanned images.
+/// A PDF's text layer, page by page, in reading order (lines kept; v0.24.1:
+/// put in order from where the text is drawn, `pdf_layout`), and whether it is
+/// too thin to be anything but scanned images.
 pub struct PdfText {
     pub metadata: FoundMetadata,
     pub pages: Vec<String>,
+    /// How each page's reading order was established (same length as `pages`).
+    pub orders: Vec<PageOrder>,
+    /// Each page laid out: its lines with their positions.
+    pub layouts: Vec<PageLayout>,
+    /// Pages whose text could not be read at all (left empty, reported).
+    pub failed_pages: Vec<u32>,
     pub scanned: bool,
 }
 
@@ -90,16 +100,9 @@ pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
         ));
     }
     let metadata = metadata(&document);
-    // The text extractor can panic on unusual files; that must never
-    // take the app down.
-    let pages = catch_unwind(AssertUnwindSafe(|| {
-        pdf_extract::extract_text_from_mem_by_pages(bytes)
-    }))
-    .map_err(|_| unreadable())?
-    .map_err(|e| {
-        log::warn!("pdf text extraction failed for {file_name}: {e}");
-        unreadable()
-    })?;
+    let (layouts, failed_pages) = read_layouts(&document, file_name).ok_or_else(unreadable)?;
+    let pages: Vec<String> = layouts.iter().map(PageLayout::text).collect();
+    let orders = layouts.iter().map(|l| l.order).collect();
     let letters: usize = pages
         .iter()
         .map(|p| p.chars().filter(|c| c.is_alphanumeric()).count())
@@ -108,8 +111,59 @@ pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
     Ok(PdfText {
         metadata,
         pages,
+        orders,
+        layouts,
+        failed_pages,
         scanned,
     })
+}
+
+/// Every page laid out in reading order (`pdf_layout`), in page order. The
+/// text extractor can panic or fail on unusual files; that must never take
+/// the app down: the whole document is read at once, and if that fails each
+/// page is read on its own, so one bad page leaves only that page empty
+/// (listed in the second value). None when no page can be read.
+fn read_layouts(document: &Document, file_name: &str) -> Option<(Vec<PageLayout>, Vec<u32>)> {
+    let numbers: Vec<u32> = document.get_pages().keys().copied().collect();
+    if numbers.is_empty() {
+        return None;
+    }
+    let whole = catch_unwind(AssertUnwindSafe(|| {
+        let mut collector = Collector::default();
+        pdf_extract::output_doc(document, &mut collector).map(|_| collector)
+    }));
+    if let Ok(Ok(collector)) = whole {
+        let layouts = collector.layouts();
+        if layouts.len() == numbers.len() {
+            return Some((layouts, Vec::new()));
+        }
+    }
+    log::warn!("pdf text extraction failed for {file_name}; reading page by page");
+    let mut layouts = Vec::with_capacity(numbers.len());
+    let mut failed = Vec::new();
+    for number in numbers {
+        let page = catch_unwind(AssertUnwindSafe(|| {
+            let mut collector = Collector::default();
+            pdf_extract::output_doc_page(document, &mut collector, number).map(|_| collector)
+        }));
+        match page {
+            Ok(Ok(collector)) => match collector.layouts().pop() {
+                Some(mut layout) => {
+                    layout.number = layouts.len() as u32 + 1;
+                    layouts.push(layout);
+                }
+                None => {
+                    failed.push(number);
+                    layouts.push(PageLayout::empty(layouts.len() as u32 + 1));
+                }
+            },
+            _ => {
+                failed.push(number);
+                layouts.push(PageLayout::empty(layouts.len() as u32 + 1));
+            }
+        }
+    }
+    (failed.len() < layouts.len()).then_some((layouts, failed))
 }
 
 /// The segments of a PDF's pages: paragraphs, with their page and their

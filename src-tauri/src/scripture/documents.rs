@@ -24,7 +24,12 @@ use serde::Serialize;
 
 use crate::error::{AppError, AppResult, UserMessage};
 use crate::library::adapters::{
-    docx::DocxImporter, epub::EpubImporter, markdown::MarkdownImporter, pdf, text::TextImporter,
+    docx::DocxImporter,
+    epub::EpubImporter,
+    markdown::MarkdownImporter,
+    pdf,
+    pdf_layout::{LineRole, PageOrder},
+    text::TextImporter,
     ExtractionStatus, FoundMetadata, NewSegment, SourceImportAdapter,
 };
 use crate::library::files::content_hash;
@@ -58,6 +63,15 @@ pub struct Unit {
     /// by what they say, not by how they look.
     pub heading: bool,
     pub place: Place,
+    /// On a PDF page whose reading order could not be established from the
+    /// positions of its text (v0.24.1): verses read from it are not used.
+    pub uncertain_order: bool,
+    /// Notes at the foot of a PDF page, known from where and how they are set
+    /// (smaller text below all of the page's running text; v0.24.1).
+    pub note: bool,
+    /// A PDF line set noticeably larger than the page's running text (a
+    /// title or heading; v0.24.1).
+    pub large: bool,
 }
 
 /// Where a unit is in the original document.
@@ -90,6 +104,8 @@ pub struct DocumentFile {
     pub units: Vec<Unit>,
     /// Footnotes and endnotes kept apart from the body (DOCX).
     pub notes: usize,
+    /// How each PDF page's reading order was established (empty otherwise).
+    pub page_orders: Vec<PageOrder>,
 }
 
 impl DocumentFile {
@@ -166,13 +182,38 @@ pub fn read_bytes(
                     segments: Vec::new(),
                     units: Vec::new(),
                     notes: 0,
+                    page_orders: text.orders.clone(),
                 }
             } else {
                 let segments = pdf::page_segments(&text.pages);
                 let mut units = Vec::new();
                 for (index, page) in text.pages.iter().enumerate() {
                     let number = index as u32 + 1;
+                    let from = units.len();
                     line_units(page, Some(number), &segments, document, &mut units);
+                    let uncertain = text.orders.get(index) == Some(&PageOrder::Uncertain);
+                    // The page's lines and its units are in the same order
+                    // (one unit per non-empty line of the page's text).
+                    let layout = &text.layouts[index];
+                    let body = layout.body_size();
+                    let lines: Vec<(LineRole, f64, Option<&String>)> = layout
+                        .lines
+                        .iter()
+                        .filter(|l| !l.text.trim().is_empty())
+                        .map(|l| (l.role, l.size, l.marked.as_ref()))
+                        .collect();
+                    let aligned = lines.len() == units.len() - from;
+                    for (i, unit) in units[from..].iter_mut().enumerate() {
+                        unit.uncertain_order = uncertain;
+                        if aligned {
+                            unit.note = lines[i].0 == LineRole::Note;
+                            unit.large = lines[i].0 == LineRole::Text && lines[i].1 >= 1.15 * body;
+                            // Raised letters marked for the recogniser.
+                            if let Some(marked) = lines[i].2 {
+                                unit.text = marked.trim().to_string();
+                            }
+                        }
+                    }
                 }
                 DocumentFile {
                     path: path.to_path_buf(),
@@ -187,6 +228,7 @@ pub fn read_bytes(
                     segments,
                     units,
                     notes: 0,
+                    page_orders: text.orders,
                 }
             }
         }
@@ -208,6 +250,7 @@ pub fn read_bytes(
                 segments: doc.segments,
                 units,
                 notes: 0,
+                page_orders: Vec::new(),
             }
         }
         "epub" | "docx" | "md" | "markdown" => {
@@ -231,6 +274,7 @@ pub fn read_bytes(
                 segments: doc.segments,
                 units,
                 notes,
+                page_orders: Vec::new(),
             }
         }
         _ => {
@@ -295,6 +339,9 @@ fn line_units(
                 page,
                 segment,
             },
+            uncertain_order: false,
+            note: false,
+            large: false,
         });
     }
 }
@@ -336,6 +383,9 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     text: (*heading).to_string(),
                     heading: true,
                     place,
+                    uncertain_order: false,
+                    note: false,
+                    large: false,
                 });
             }
         }
@@ -344,6 +394,9 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             text: segment.text.clone(),
             heading: false,
             place,
+            uncertain_order: false,
+            note: false,
+            large: false,
         });
     }
     (out, notes)

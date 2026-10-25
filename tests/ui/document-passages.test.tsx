@@ -106,3 +106,12 @@ describe("Passages in document Bibles", () => {
     expect(within(pane).queryByRole("form")).not.toBeInTheDocument();
   });
 });
+
+describe("openingWords (v0.24.1)", () => {
+  it("takes the first words of a verse to mark where it begins on its page", async () => {
+    const { openingWords } = await import("@/features/scripture/DocumentPassages");
+    expect(openingWords("In the beginning, God created the heavens and the earth.")).toBe("In the beginning, God");
+    expect(openingWords("  Jesus   wept. ")).toBe("Jesus wept.");
+    expect(openingWords("")).toBe("");
+  });
+});

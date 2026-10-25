@@ -127,7 +127,12 @@
     "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: agrega cada una por separado.",
     "documentFootnotes_one": "Se omitió {{count}} línea de notas al pie de las páginas.",
     "documentFootnotes_other": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
-    "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas."
+    "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
+    "documentReadingOrder": "{{book}} {{chapter}}: no se pudo determinar el orden de lectura de la página {{page}} a partir de su diseño. Este capítulo no se usa.",
+    "documentChapterJump": "{{book}} {{chapter}}: el documento continúa con este capítulo después del capítulo {{previous}}; no se encontraron los capítulos intermedios.",
+    "documentRunningHead": "{{book}} {{chapter}}: la página {{page}} termina con el versículo {{found}}, pero su encabezado ({{head}}) indica {{named}}. Este capítulo no se usa.",
+    "documentLabel": "{{book}} {{chapter}}: la línea «{{line}}» está entre dos oraciones de un versículo y se repite en otros lugares como línea propia (quizá el nombre de quien habla o un título). Este capítulo no se usa.",
+    "documentRaisedLetters": "{{book}} {{chapter}}: un versículo tiene letras pequeñas en superíndice que ninguna nota de la página explica (quizá llamadas de referencias). Este capítulo no se usa."
   },
   "library": {
     "notUtf8": "«{{fileName}}» no está guardado como texto UTF-8, así que no se pudo leer.",

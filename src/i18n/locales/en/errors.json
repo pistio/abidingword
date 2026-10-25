@@ -116,7 +116,12 @@
     "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected.",
     "differentEditions": "These files say they come from different Bibles: {{list}}. Different Bibles are never combined: add each one on its own.",
     "documentFootnotes_one": "{{count}} line of footnotes at the foot of pages was left out.",
-    "documentFootnotes_other": "{{count}} lines of footnotes at the foot of pages were left out."
+    "documentFootnotes_other": "{{count}} lines of footnotes at the foot of pages were left out.",
+    "documentReadingOrder": "{{book}} {{chapter}}: page {{page}} is laid out in a way whose reading order could not be established. This chapter is not used.",
+    "documentChapterJump": "{{book}} {{chapter}}: the document goes on with this chapter after chapter {{previous}}; the chapters between were not found.",
+    "documentRunningHead": "{{book}} {{chapter}}: page {{page}} ends with verse {{found}}, but its running head ({{head}}) says {{named}}. This chapter is not used.",
+    "documentLabel": "{{book}} {{chapter}}: the line “{{line}}” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "documentRaisedLetters": "{{book}} {{chapter}}: a verse has small raised letters that no note on the page explains (perhaps cross-reference letters). This chapter is not used."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",

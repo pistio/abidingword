@@ -25,6 +25,13 @@ export interface DocumentTarget {
   documentId: string;
   page: number | null;
   position: number | null;
+  /** The first words of the verse there: marked on the page where its own text shows them once (v0.24.1). */
+  quote?: string;
+}
+
+/** The first words of a verse, to mark where it begins on its page. */
+export function openingWords(text: string, count = 4): string {
+  return text.split(/\s+/).filter(Boolean).slice(0, count).join(" ");
 }
 
 /**
@@ -143,7 +150,7 @@ export function PassagePanel({
           {!data.complete && <Notice>{t("scripture.document.passages.restUnknown")}</Notice>}
           {data.origin && (
             <div>
-              <Button variant="quiet" onClick={() => onShow({ documentId: data.origin!.documentId, page: data.origin!.firstPage, position: data.origin!.firstSegment })}>
+              <Button variant="quiet" onClick={() => onShow({ documentId: data.origin!.documentId, page: data.origin!.firstPage, position: data.origin!.firstSegment, quote: openingWords(data.verses[0]?.text ?? "") })}>
                 {data.origin.firstPage !== null ? t("scripture.document.passages.showPage", { page: formatNumber(data.origin.firstPage) }) : t("scripture.document.passages.show")}
               </Button>
             </div>

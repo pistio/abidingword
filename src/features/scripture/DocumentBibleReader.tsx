@@ -47,7 +47,7 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
   const scanned = document?.extractionStatus === "ocr_required";
   const [view, setView] = useState<"original" | "text">("original");
   const shown: "original" | "text" = !document?.view ? "text" : scanned ? "original" : view;
-  const [jump, setJump] = useState<{ document: string; position: number; page: number | null; nonce: number } | null>(null);
+  const [jump, setJump] = useState<{ document: string; position: number; page: number | null; nonce: number; quote?: string } | null>(null);
   const selectId = useId();
   // The passage looked for here (v0.24): asked for from anywhere in the app, or typed here.
   const [passage, setPassage] = useState<ScriptureRef | null>(documentPassage?.reference ?? null);
@@ -66,7 +66,7 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
     const index = list.findIndex((d) => d.id === target.documentId);
     if (index >= 0) setChosen(index);
     if (target.page === null && view === "original" && list[index]?.view === "pdf") setView("text");
-    setJump({ document: target.documentId, position: target.position ?? 0, page: target.page, nonce: Date.now() });
+    setJump({ document: target.documentId, position: target.position ?? 0, page: target.page, nonce: Date.now(), quote: target.quote });
   };
 
   return (
@@ -262,13 +262,13 @@ function DocumentSearch({ bible, documents, onOpen }: { bible: BibleTranslation;
 type HereRef = (fn: () => DocumentHere | null) => void;
 
 /** The document's original: PDF pages or EPUB/Word formatting, in the library's viewers. */
-function DocumentOriginal({ document, jump, here }: { document: BibleDocument; jump: { position: number; page: number | null; nonce: number } | null; here: HereRef }) {
+function DocumentOriginal({ document, jump, here }: { document: BibleDocument; jump: { position: number; page: number | null; nonce: number; quote?: string } | null; here: HereRef }) {
   const api = useApi();
   const reading = useMemo(() => documentApi(api), [api]);
   return <ApiProvider api={reading}>{document.view === "pdf" ? <PdfOriginal document={document} jump={jump} here={here} /> : <FormattedOriginal document={document} jump={jump} here={here} />}</ApiProvider>;
 }
 
-function PdfOriginal({ document, jump, here }: { document: BibleDocument; jump: { page: number | null; nonce: number } | null; here: HereRef }) {
+function PdfOriginal({ document, jump, here }: { document: BibleDocument; jump: { page: number | null; nonce: number; quote?: string } | null; here: HereRef }) {
   const [start] = useState(() => readLocal<Progress>(progressKey(document.id), {}).page ?? 1);
   const now = useRef<(() => PdfPlace) | null>(null);
   useEffect(() => {
@@ -279,8 +279,11 @@ function PdfOriginal({ document, jump, here }: { document: BibleDocument; jump: 
   }, [here, document.id, start]);
   const [link, setLink] = useState<{ page: number; nonce: number; fraction?: number } | null>(null);
   const target = jump?.page ? { page: jump.page, nonce: jump.nonce } : link;
+  // Where the verse begins on its page: its first words, marked only where the page's own text shows them once.
+  const find = jump?.page && jump.quote ? { page: jump.page, query: jump.quote, index: 0, count: 1 } : null;
   return (
     <PdfViewer
+      find={find}
       sourceId={document.id}
       initialPage={start}
       onPageChange={(page) => writeLocal(progressKey(document.id), { page })}

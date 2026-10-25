@@ -2234,6 +2234,31 @@ pub struct PreviewBook {
 }
 
 impl StagedImport {
+    /// Where each verse read from documents begins: its page, if the
+    /// document has pages (audits and tests).
+    pub fn document_origins(&self) -> BTreeMap<(u8, u16, u16), Option<u32>> {
+        self.documents
+            .as_ref()
+            .map(|d| d.origins.iter().map(|(k, o)| (*k, o.start.page)).collect())
+            .unwrap_or_default()
+    }
+
+    /// PDF pages read, and how many of them had an uncertain reading order.
+    pub fn document_page_orders(&self) -> (usize, usize) {
+        let Some(d) = self.documents.as_ref() else {
+            return (0, 0);
+        };
+        let orders = d.files.iter().flat_map(|f| f.page_orders.iter());
+        let (mut all, mut uncertain) = (0, 0);
+        for order in orders {
+            all += 1;
+            if *order == crate::library::adapters::pdf_layout::PageOrder::Uncertain {
+                uncertain += 1;
+            }
+        }
+        (all, uncertain)
+    }
+
     pub fn preview(&self, mut suggested: SuggestedMetadata) -> ImportPreview {
         // What the files themselves state (v0.22), when nothing better is known.
         if let Some(name) = &self.content.hints.name {
