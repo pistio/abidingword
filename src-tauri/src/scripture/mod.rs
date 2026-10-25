@@ -8,6 +8,7 @@ pub mod aliases;
 pub mod annotation_data;
 pub mod bundled;
 pub mod canon;
+pub mod canons;
 pub mod concordance;
 pub mod data_packs;
 pub mod documents;

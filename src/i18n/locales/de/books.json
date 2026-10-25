@@ -1,10 +1,10 @@
 {
   "name": {
-    "GEN": "Genesis",
-    "EXO": "Exodus",
-    "LEV": "Levitikus",
-    "NUM": "Numeri",
-    "DEU": "Deuteronomium",
+    "GEN": "1. Mose (Genesis)",
+    "EXO": "2. Mose (Exodus)",
+    "LEV": "3. Mose (Levitikus)",
+    "NUM": "4. Mose (Numeri)",
+    "DEU": "5. Mose (Deuteronomium)",
     "JOS": "Josua",
     "JDG": "Richter",
     "RUT": "Rut",

@@ -91,6 +91,25 @@ impl BibleImportAdapter for UsfmAdapter {
             let Some(book) = canon::by_code(&code) else {
                 if NON_CANONICAL_USFM_CODES.contains(&code.as_str()) {
                     staged.skipped_files.push(file.name.clone());
+                    // A deuterocanonical book or Greek addition is named (v0.24):
+                    // its text cannot be kept yet, and nothing else depends on it.
+                    if let Some(extra) = crate::scripture::canons::additional(&code) {
+                        staged.issue(
+                            Severity::Note,
+                            None,
+                            None,
+                            UserMessage::new(
+                                "bibleImport.additionalBook",
+                                format!(
+                                    "“{}” holds {}, which Abiding Word cannot show yet. It was left out; the other books are not affected.",
+                                    file.name, extra.name
+                                ),
+                            )
+                            .with("fileName", &file.name)
+                            .with("book", extra.name)
+                            .with("code", &code),
+                        );
+                    }
                 } else {
                     staged.issue(
                         Severity::Warning,
@@ -1166,6 +1185,48 @@ impl StagedContent {
         self.issues.iter().any(|i| i.severity == Severity::Error)
     }
 
+    /// The chapters whose verses can be used on their own (v0.24): no error
+    /// names the chapter or its book. None when an error concerns the whole
+    /// text (then nothing can be trusted).
+    pub fn usable_chapters(&self) -> Option<BTreeSet<(u8, u16)>> {
+        let errors: Vec<&ImportIssue> = self
+            .issues
+            .iter()
+            .filter(|i| i.severity == Severity::Error)
+            .collect();
+        if errors.iter().any(|i| i.book.is_none()) {
+            return None;
+        }
+        let mut usable = BTreeSet::new();
+        for (ordinal, book) in &self.books {
+            let code = canon::by_ordinal(*ordinal).map(|b| b.code);
+            if errors.iter().any(|i| i.book == code && i.chapter.is_none()) {
+                continue;
+            }
+            for (chapter, text) in &book.chapters {
+                let doubtful = errors
+                    .iter()
+                    .any(|i| i.book == code && i.chapter == Some(*chapter));
+                if !doubtful && !text.verses.is_empty() {
+                    usable.insert((*ordinal, *chapter));
+                }
+            }
+        }
+        Some(usable)
+    }
+
+    /// Verses in the chapters that can be used on their own.
+    pub fn usable_verse_count(&self) -> usize {
+        let Some(usable) = self.usable_chapters() else {
+            return 0;
+        };
+        usable
+            .iter()
+            .filter_map(|(o, c)| self.books.get(o)?.chapters.get(c))
+            .map(|c| c.verses.len())
+            .sum()
+    }
+
     pub fn verse_count(&self) -> usize {
         self.books
             .values()
@@ -1954,6 +2015,12 @@ pub struct DocumentPreview {
     pub verses_usable: bool,
     /// Characters of readable text in all the files.
     pub text_chars: usize,
+    /// Where some chapters are doubtful (v0.24): the verses of the others,
+    /// which can be used on their own while the rest stays unverified.
+    pub partial_verses: usize,
+    pub partial_chapters: usize,
+    /// Chapters found but held back because of a doubt.
+    pub held_chapters: usize,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -2070,6 +2137,22 @@ impl StagedImport {
                 stats: stage.stats.clone(),
                 verses_usable: self.content.verse_count() > 0 && !self.content.has_errors(),
                 text_chars: stage.files.iter().map(|f| f.text_chars()).sum(),
+                partial_verses: if self.content.has_errors() {
+                    self.content.usable_verse_count()
+                } else {
+                    0
+                },
+                partial_chapters: if self.content.has_errors() {
+                    self.content.usable_chapters().map_or(0, |u| u.len())
+                } else {
+                    0
+                },
+                held_chapters: if self.content.has_errors() {
+                    let all: usize = self.content.books.values().map(|b| b.chapters.len()).sum();
+                    all - self.content.usable_chapters().map_or(0, |u| u.len())
+                } else {
+                    0
+                },
             }),
         }
     }

@@ -288,10 +288,39 @@ from your library.
 
 ## Removing a book
 
-On the Library page, click **Remove…** beside the book. Citations in your
-studies keep the title and author, so your notes still make sense. Your marks
-in that book are removed with it; Abiding Word tells you how many before you
-confirm.
+On the Library page, choose **Move to Trash…** beside the book. It leaves your
+library, the Sources pane and search at once, and **Undo** brings it straight
+back. From Trash (Settings → Sources) you can restore it for 30 days; after
+that it is deleted for good. While it is in Trash your marks in it are hidden,
+not deleted, and come back with it.
+
+Deleting permanently is done from Trash. Citations in your studies keep the
+title and author, so your notes still make sense. Only Abiding Word's own copy
+of the file is deleted — **your original file is never touched**.
+
+## Looking after your library (Settings → Sources)
+
+**Settings → Sources** lists every book and document you have added:
+
+- **Find** by title, author or file name; **Filters** narrow the list by
+  category, language, file type, collection, tag, scanned files, or files
+  added more than once; **Sort by** title, author, category, date added,
+  language or status.
+- Click a source to see its file, how its text was read and any duplicates,
+  and to correct its **details** (title, author, category, year, publisher,
+  licence …). Its text and your marks are not changed.
+- **Collections** are your own folders, and can sit inside each other. A
+  source can be in several; its file is never copied. **Tags** work the same
+  way, and many can go on one source.
+- Tick several sources (or **Select all on this page**) to **Archive**,
+  **Move to Trash…**, add them to a collection or tag them all at once.
+- **Archived** sources are kept but stay out of your everyday lists; show them
+  with **Show → Archived** and **Restore** them any time.
+- In **Trash**, **Restore** or **Delete permanently**. Deleting several at
+  once asks you to type their number first, so it cannot happen by accident.
+
+Every confirmation starts on **Cancel**: pressing Enter, Escape or clicking
+outside it never deletes anything.
 
 ---
 

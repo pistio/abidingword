@@ -56,6 +56,37 @@ verses…**: Abiding Word reads the document again for books, chapters and
 verses, shows you what it found, and — once you confirm — the Bible can be
 read by book, chapter and verse.
 
+If only some chapters are clear, Abiding Word offers **Use the … verses found
+without doubt**. Those passages can then be found in the document; the
+doubtful chapters stay readable in the document as they are, and the Bible
+stays a document.
+
+#### Finding a passage in a document Bible
+
+Type a passage in **Find**, for example `John 3:16`, or click a reference
+anywhere while the document Bible is open:
+
+- if its verses were found, they are shown in the edition's own words, with
+  **Show it on page …** to open the document there;
+- if you marked where it is (below), the marked place is listed — click it;
+- otherwise Abiding Word says plainly **where it is in this document has not
+  been identified yet**. It never shows another Bible's words in its place;
+  **Read it in …** opens the Bible you read by passage instead.
+
+The line under the title tells you how much can be found this way.
+
+#### Marking where a passage is
+
+Go to the page (PDF) or paragraph (click it in **Text**) where a passage is,
+then choose **Mark a passage here** (or **Mark where it is** from a passage),
+type the passage and **Save the mark**. Words you selected first are kept
+with it as a check. Only the place is recorded: the document, your notes and
+their references stay exactly as they are. Remove a mark from the passage's
+list.
+
+This works for scanned PDFs too: their pages can be read and marked, though
+their words cannot be searched.
+
 ## Searching the Bible
 
 1. In the app bar at the top, make sure the search menu says **Scripture**.

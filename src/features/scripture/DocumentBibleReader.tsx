@@ -15,7 +15,9 @@ import { readLocal, writeLocal } from "@/lib/storage";
 import type { EpubStructureItem } from "@/types/library";
 import type { BibleDocument, BibleTranslation, DocumentHit, DocumentSegment } from "@/types/scripture";
 import { documentApi } from "./documentApi";
+import { CoverageLine, GoToPassage, MarkPassage, PassagePanel, type DocumentHere, type DocumentTarget } from "./DocumentPassages";
 import { useScripture } from "./ScriptureContext";
+import type { ScriptureRef } from "@/types/scripture";
 
 /** Where a person was in a document, remembered on this device only. */
 interface Progress {
@@ -28,15 +30,15 @@ const progressKey = (documentId: string) => `bibleDocument.${documentId}`;
 /**
  * A Bible kept as a document (v0.23), read in the Scripture pane: its PDF
  * pages or its EPUB/Word formatting in the library's own viewers, or its
- * text, with search where there is text. It has no verses: passages opened
- * from studies go on showing in the Bible read by passage, and this view
- * closes for them. Nothing here changes the Bible read by passage, the
- * passage or its history.
+ * text, with search where there is text. Passages (v0.24) are found in it
+ * where they are established: verses recognised and confirmed, or places
+ * marked by hand; anything else is said to be not yet identified. Nothing
+ * here changes the Bible read by passage.
  */
 export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTranslation; onFindVerses: () => void }) {
   const { t } = useTranslation();
   const api = useApi();
-  const { translation, openDocumentBible } = useScripture();
+  const { translation, openDocumentBible, documentPassage } = useScripture();
   const documents = useLoad(useCallback(() => api.bibleDocuments(bible.id), [api, bible.id]));
   const [chosen, setChosen] = useState(0);
   const list = documents.data ?? [];
@@ -47,6 +49,25 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
   const shown: "original" | "text" = !document?.view ? "text" : scanned ? "original" : view;
   const [jump, setJump] = useState<{ document: string; position: number; page: number | null; nonce: number } | null>(null);
   const selectId = useId();
+  // The passage looked for here (v0.24): asked for from anywhere in the app, or typed here.
+  const [passage, setPassage] = useState<ScriptureRef | null>(documentPassage?.reference ?? null);
+  const [seenPassage, setSeenPassage] = useState(documentPassage?.nonce ?? 0);
+  if (documentPassage && documentPassage.nonce !== seenPassage) {
+    setSeenPassage(documentPassage.nonce);
+    setPassage(documentPassage.reference);
+  }
+  const [marking, setMarking] = useState(false);
+  const [version, setVersion] = useState(0);
+  const here = useRef<() => DocumentHere | null>(() => null);
+  const register = useCallback((fn: () => DocumentHere | null) => {
+    here.current = fn;
+  }, []);
+  const show = (target: DocumentTarget) => {
+    const index = list.findIndex((d) => d.id === target.documentId);
+    if (index >= 0) setChosen(index);
+    if (target.page === null && view === "original" && list[index]?.view === "pdf") setView("text");
+    setJump({ document: target.documentId, position: target.position ?? 0, page: target.page, nonce: Date.now() });
+  };
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -77,6 +98,11 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
             )}
           </div>
         </details>
+        <CoverageLine bible={bible} version={version} />
+        <GoToPassage bible={bible} onGo={(ref) => {
+            setPassage(ref);
+            setMarking(false);
+          }} />
         {list.length > 1 && (
           <label htmlFor={selectId} className="flex flex-col gap-1 text-[0.9375rem]">
             <span className="font-medium">{t("scripture.document.part")}</span>
@@ -111,12 +137,44 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
         )}
         {scanned && <Notice>{t("scripture.document.scanned")}</Notice>}
         {documents.error && <Notice tone="error">{documents.error.message}</Notice>}
+        {!passage && !marking && document && (
+          <div>
+            <Button variant="quiet" onClick={() => setMarking(true)}>
+              {t("scripture.document.passages.mark")}
+            </Button>
+          </div>
+        )}
       </div>
+      {marking ? (
+        <MarkPassage
+          bible={bible}
+          documents={list}
+          here={() => here.current()}
+          initial={passage}
+          onCancel={() => setMarking(false)}
+          onDone={() => {
+            setMarking(false);
+            setVersion((v) => v + 1);
+          }}
+        />
+      ) : (
+        passage && (
+          <PassagePanel
+            bible={bible}
+            reference={passage}
+            version={version}
+            onShow={show}
+            onClose={() => setPassage(null)}
+            onMark={() => setMarking(true)}
+            onChanged={() => setVersion((v) => v + 1)}
+          />
+        )
+      )}
       {document &&
         (shown === "text" ? (
-          <DocumentText key={document.id} document={document} jump={jump && jump.document === document.id ? jump : null} />
+          <DocumentText key={document.id} document={document} jump={jump && jump.document === document.id ? jump : null} here={register} />
         ) : (
-          <DocumentOriginal key={document.id} document={document} jump={jump && jump.document === document.id ? jump : null} />
+          <DocumentOriginal key={document.id} document={document} jump={jump && jump.document === document.id ? jump : null} here={register} />
         ))}
     </div>
   );
@@ -200,16 +258,25 @@ function DocumentSearch({ bible, documents, onOpen }: { bible: BibleTranslation;
   );
 }
 
+/** A viewer says how to find where the reader is in it. */
+type HereRef = (fn: () => DocumentHere | null) => void;
+
 /** The document's original: PDF pages or EPUB/Word formatting, in the library's viewers. */
-function DocumentOriginal({ document, jump }: { document: BibleDocument; jump: { position: number; page: number | null; nonce: number } | null }) {
+function DocumentOriginal({ document, jump, here }: { document: BibleDocument; jump: { position: number; page: number | null; nonce: number } | null; here: HereRef }) {
   const api = useApi();
   const reading = useMemo(() => documentApi(api), [api]);
-  return <ApiProvider api={reading}>{document.view === "pdf" ? <PdfOriginal document={document} jump={jump} /> : <FormattedOriginal document={document} jump={jump} />}</ApiProvider>;
+  return <ApiProvider api={reading}>{document.view === "pdf" ? <PdfOriginal document={document} jump={jump} here={here} /> : <FormattedOriginal document={document} jump={jump} here={here} />}</ApiProvider>;
 }
 
-function PdfOriginal({ document, jump }: { document: BibleDocument; jump: { page: number | null; nonce: number } | null }) {
+function PdfOriginal({ document, jump, here }: { document: BibleDocument; jump: { page: number | null; nonce: number } | null; here: HereRef }) {
   const [start] = useState(() => readLocal<Progress>(progressKey(document.id), {}).page ?? 1);
   const now = useRef<(() => PdfPlace) | null>(null);
+  useEffect(() => {
+    here(() => {
+      const place = now.current?.();
+      return { documentId: document.id, page: place?.page ?? start, segment: null, item: null };
+    });
+  }, [here, document.id, start]);
   const [link, setLink] = useState<{ page: number; nonce: number; fraction?: number } | null>(null);
   const target = jump?.page ? { page: jump.page, nonce: jump.nonce } : link;
   return (
@@ -224,7 +291,7 @@ function PdfOriginal({ document, jump }: { document: BibleDocument; jump: { page
   );
 }
 
-function FormattedOriginal({ document, jump }: { document: BibleDocument; jump: { position: number; nonce: number } | null }) {
+function FormattedOriginal({ document, jump, here }: { document: BibleDocument; jump: { position: number; nonce: number } | null; here: HereRef }) {
   const { t } = useTranslation();
   const api = useApi();
   const kind = document.view === "docx" ? "docx" : "epub";
@@ -233,6 +300,13 @@ function FormattedOriginal({ document, jump }: { document: BibleDocument; jump: 
   const [link, setLink] = useState<(EpubPlace & { nonce: number }) | null>(null);
   const items: EpubStructureItem[] = structure.data ?? [];
   const [start] = useState(() => readLocal<Progress>(progressKey(document.id), {}).position ?? 0);
+  useEffect(() => {
+    here(() => {
+      const place = now.current?.();
+      const item = structure.data?.find((i) => i.id === place?.item);
+      return item ? { documentId: document.id, page: null, segment: item.startSegment, item: item.id } : null;
+    });
+  }, [here, document.id, structure.data]);
   // Where the reader is, remembered on leaving (this device only).
   useEffect(
     () => () => {
@@ -264,7 +338,7 @@ function FormattedOriginal({ document, jump }: { document: BibleDocument; jump: 
 const TEXT_PAGE = 200;
 
 /** The document's text, paragraph by paragraph, with its pages or sections. */
-function DocumentText({ document, jump }: { document: BibleDocument; jump: { position: number; nonce: number } | null }) {
+function DocumentText({ document, jump, here }: { document: BibleDocument; jump: { position: number; nonce: number } | null; here: HereRef }) {
   const { t } = useTranslation();
   const api = useApi();
   const [offset, setOffset] = useState(() => {
@@ -296,6 +370,15 @@ function DocumentText({ document, jump }: { document: BibleDocument; jump: { pos
     if (target === null || !segments) return;
     scroller.current?.querySelector(`[data-position="${target}"]`)?.scrollIntoView({ block: "center" });
   }, [target, segments]);
+  // The paragraph chosen (clicked, or gone to) is where a passage is marked; else the first shown.
+  useEffect(() => {
+    here(() => {
+      const at = target ?? segments?.[0]?.position ?? null;
+      if (at === null) return null;
+      const segment = segments?.find((x) => x.position === at);
+      return { documentId: document.id, page: segment?.pageNumber ?? null, segment: at, item: null };
+    });
+  }, [here, document.id, target, segments]);
   if (document.segmentCount === 0) return <p className="m-5 text-text-muted">{t("scripture.document.noText")}</p>;
   const last = offset + TEXT_PAGE >= document.segmentCount;
   return (
@@ -312,7 +395,7 @@ function DocumentText({ document, jump }: { document: BibleDocument; jump: { pos
           const before = all[i - 1];
           const newPlace = !before || before.pageNumber !== s.pageNumber || before.sectionPath !== s.sectionPath;
           return (
-            <div key={s.position} data-position={s.position} className={target === s.position ? "-mx-2 rounded-aw bg-hover px-2" : undefined}>
+            <div key={s.position} data-position={s.position} onClick={() => setTarget(s.position)} className={target === s.position ? "-mx-2 rounded-aw bg-hover px-2" : undefined}>
               {newPlace && place && <p className="m-0 mb-1 type-meta">{place}</p>}
               <p className="reading m-0">{s.text}</p>
             </div>

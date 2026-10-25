@@ -46,7 +46,9 @@
     "hasProblems": "This Bible has problems that must be resolved before it can be added.",
     "shortNameTooLong": "Please keep the short name under {{max}} characters.",
     "badLanguage": "“{{text}}” is not a language Abiding Word knows.",
-    "alreadyVerses": "This Bible can already be read by book, chapter and verse."
+    "alreadyVerses": "This Bible can already be read by book, chapter and verse.",
+    "locationPlace": "Choose the place in the document first.",
+    "locationPage": "That page is not in the document."
   },
   "bibleImport": {
     "noBookId": "The file “{{fileName}}” does not say which book it contains.",
@@ -109,7 +111,9 @@
     "documentTooMany": "Too many documents were chosen to be one Bible.",
     "documentFormat": "“{{fileName}}” is not a kind of document Abiding Word can read as a Bible.",
     "documentEmpty": "No text was found in “{{fileName}}”.",
-    "unknownBookCode": "Unknown book."
+    "unknownBookCode": "Unknown book.",
+    "documentSequence": "{{book}} {{chapter}}: verse {{verse}} appears inside an earlier verse (perhaps two columns were read across each other). This chapter is not used.",
+    "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",

@@ -23,7 +23,7 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState<"whole" | "partial" | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -45,13 +45,15 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
     onClose();
   };
 
-  const use = async () => {
+  // `partial` (v0.24): only the chapters found without doubt; the Bible stays
+  // a document, and those passages can be found in it.
+  const use = async (partial: boolean) => {
     if (!preview) return;
     setBusy(true);
     setError(null);
     try {
-      await api.bibleDocumentAddVerses(preview.previewId);
-      setDone(true);
+      await api.bibleDocumentAddVerses(preview.previewId, partial);
+      setDone(partial ? "partial" : "whole");
       await reloadTranslations();
       setTranslation(bible.id);
     } catch (e) {
@@ -65,6 +67,7 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
   const errors = preview?.issues.filter((i) => i.severity === "error") ?? [];
   const warnings = preview?.issues.filter((i) => i.severity === "warning") ?? [];
   const notes = preview?.issues.filter((i) => i.severity === "note") ?? [];
+  const partial = !!doc && !doc.versesUsable && doc.partialVerses > 0;
 
   return (
     <Dialog
@@ -79,16 +82,22 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
         ) : (
           <>
             <Button onClick={close}>{t("scripture.document.recognise.keep")}</Button>
-            <Button variant="primary" onClick={use} disabled={!doc?.versesUsable || busy}>
-              {t("scripture.document.recognise.use")}
-            </Button>
+            {partial ? (
+              <Button variant="primary" onClick={() => use(true)} disabled={busy}>
+                {t("scripture.document.recognise.usePartial", { count: doc!.partialVerses, formatted: formatNumber(doc!.partialVerses) })}
+              </Button>
+            ) : (
+              <Button variant="primary" onClick={() => use(false)} disabled={!doc?.versesUsable || busy}>
+                {t("scripture.document.recognise.use")}
+              </Button>
+            )}
           </>
         )
       }
     >
       {error && <Notice tone="error">{error}</Notice>}
       {done ? (
-        <p className="m-0">{t("scripture.document.recognise.done", { name: bible.name })}</p>
+        <p className="m-0">{t(done === "partial" ? "scripture.document.recognise.partialDone" : "scripture.document.recognise.done", { name: bible.name })}</p>
       ) : !preview ? (
         !error && (
           <p role="status" className="m-0 text-text-muted">
@@ -99,6 +108,8 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
         <div className="flex flex-col gap-4">
           {doc?.versesUsable ? (
             <p className="m-0">{t("scripture.addBible.document.usable")}</p>
+          ) : partial ? (
+            <Notice>{t("scripture.document.recognise.partial", { count: doc!.heldChapters, formatted: formatNumber(doc!.heldChapters) })}</Notice>
           ) : (
             <Notice>{doc?.books.some((b) => b.verses > 0) ? t("scripture.addBible.document.unusable") : t("scripture.addBible.document.noneFound")}</Notice>
           )}

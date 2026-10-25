@@ -261,6 +261,17 @@ pub fn insert_translation(
 
 /// Inserts a structured Bible's verses and Psalm titles.
 pub fn insert_verses(tx: &Connection, id: &str, content: &StagedContent) -> AppResult<()> {
+    insert_verses_where(tx, id, content, |_, _| true)
+}
+
+/// Inserts the verses of the chapters `keep` accepts (v0.24: a document
+/// Bible's chapters recognised without doubt).
+pub fn insert_verses_where(
+    tx: &Connection,
+    id: &str,
+    content: &StagedContent,
+    keep: impl Fn(u8, u16) -> bool,
+) -> AppResult<()> {
     let mut add_verse = tx.prepare(
         "INSERT OR IGNORE INTO bible_verses (id, book_id, chapter, verse) VALUES (?1, ?2, ?3, ?4)",
     )?;
@@ -274,6 +285,9 @@ pub fn insert_verses(tx: &Connection, id: &str, content: &StagedContent) -> AppR
     )?;
     for (ordinal, book) in &content.books {
         for (chapter, text) in &book.chapters {
+            if !keep(*ordinal, *chapter) {
+                continue;
+            }
             for (verse, words) in &text.verses {
                 let key = verse_key(*ordinal, *chapter, *verse);
                 add_verse.execute(params![key, ordinal, chapter, verse])?;

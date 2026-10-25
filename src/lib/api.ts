@@ -64,7 +64,7 @@ import type {
   SearchResults,
   SearchScripture,
   StudyPassage,
-  UpdateAnnotation, MaterialScripture, BibleDocument, DocumentWindow, DocumentHit, VerseOrigin } from "@/types/scripture";
+  UpdateAnnotation, MaterialScripture, BibleDocument, DocumentWindow, DocumentHit, VerseOrigin, DocumentPassage, MarkedPlace, DocumentCoverage, AddLocation } from "@/types/scripture";
 import type {
   CreateFinding,
   Finding,
@@ -465,7 +465,14 @@ export interface Api {
   bibleVerseOrigin(translationId: string, book: string, chapter: number, verse: number): Promise<VerseOrigin | null>;
   /** Reads a document Bible's kept files again for verses (no new import). */
   bibleDocumentRecognise(translationId: string): Promise<ImportPreview>;
-  bibleDocumentAddVerses(previewId: string): Promise<BibleTranslation>;
+  /** With `partial` (v0.24), only the chapters recognised without doubt are used. */
+  bibleDocumentAddVerses(previewId: string, partial?: boolean): Promise<BibleTranslation>;
+  /** A passage in a Bible kept as a document (v0.24). */
+  bibleDocumentLocate(translationId: string, reference: string): Promise<DocumentPassage>;
+  bibleLocationAdd(input: AddLocation): Promise<MarkedPlace>;
+  bibleLocationRemove(id: string): Promise<void>;
+  bibleLocations(translationId: string): Promise<MarkedPlace[]>;
+  bibleDocumentCoverage(translationId: string): Promise<DocumentCoverage>;
   bibleRemove(id: string): Promise<void>;
   /** Every Bible, archived and trashed ones too (v0.24, Settings). */
   bibleListAll(): Promise<BibleTranslation[]>;
@@ -801,7 +808,12 @@ export const tauriApi: Api = {
   bibleDocumentSearch: (translationId, query) => call("bible_document_search", { translationId, query }),
   bibleVerseOrigin: (translationId, book, chapter, verse) => call("bible_verse_origin", { translationId, book, chapter, verse }),
   bibleDocumentRecognise: (translationId) => call("bible_document_recognise", { translationId }),
-  bibleDocumentAddVerses: (previewId) => call("bible_document_add_verses", { previewId }),
+  bibleDocumentAddVerses: (previewId, partial) => call("bible_document_add_verses", { previewId, partial: partial ?? false }),
+  bibleDocumentLocate: (translationId, reference) => call("bible_document_locate", { translationId, reference }),
+  bibleLocationAdd: (input) => call("bible_location_add", { input }),
+  bibleLocationRemove: (id) => call("bible_location_remove", { id }),
+  bibleLocations: (translationId) => call("bible_locations", { translationId }),
+  bibleDocumentCoverage: (translationId) => call("bible_document_coverage", { translationId }),
   bibleRemove: (id) => call("bible_remove", { id }),
   bibleListAll: () => call("bible_list_all"),
   bibleSetState: (ids, to) => call("bible_set_state", { ids, to }),

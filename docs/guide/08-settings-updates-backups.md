@@ -101,9 +101,19 @@ order and size. Your studies and library are not touched.
 - A Bible added from a PDF, EPUB or Word document shows **Read as a
   document** until its verses are recognised; **Details** says how many files
   it has. Such a Bible has no word information.
-- **Remove…** removes a Bible. Your notes and highlights are kept with their
-  verses. Removing a Bible added from documents also removes Abiding Word's
+- The **⋯** menu beside a Bible offers **Archive** (kept, but out of the
+  translation menu) and **Move to Trash…**; both can be undone, and the
+  **Archived** and **Trash** groups below the list offer **Restore**. From
+  Trash, **Delete permanently** removes the Bible's text (after 30 days this
+  happens by itself). Your notes and highlights are always kept with their
+  verses. Deleting a Bible added from documents also deletes Abiding Word's
   copies of them (your own files are not touched).
+
+## Sources
+
+Your books and documents: find, sort, correct their details, organise them in
+collections and tags, archive them, and restore or delete them from Trash.
+See [Looking after your library](05-library.md#looking-after-your-library-settings--sources).
 
 ## Templates
 

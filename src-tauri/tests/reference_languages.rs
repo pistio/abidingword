@@ -104,6 +104,27 @@ fn german_numbered_books() {
     assert_eq!(canon(De, "1. Mose 1,1"), ["GEN.1.1"]);
     assert_eq!(canon(De, "2. Mose 20,1-17"), ["EXO.20.1-EXO.20.17"]);
     assert_eq!(canon(De, "5 Mose 6,4"), ["DEU.6.4"]);
+    // v0.24: the books are shown as "1. Mose (Genesis)"; the Greek-derived
+    // names and their abbreviations are still found.
+    assert_eq!(canon(De, "3. Mose 19,18"), ["LEV.19.18"]);
+    assert_eq!(canon(De, "4 Mo 6,24"), ["NUM.6.24"]);
+    assert_eq!(canon(De, "Genesis 1,1 und Gen 2,7"), ["GEN.1.1", "GEN.2.7"]);
+    assert_eq!(
+        canon(De, "Exodus 3,14 und Ex 20,2"),
+        ["EXO.3.14", "EXO.20.2"]
+    );
+    assert_eq!(
+        canon(De, "Levitikus 19,18 und Lev 19,2"),
+        ["LEV.19.18", "LEV.19.2"]
+    );
+    assert_eq!(
+        canon(De, "Numeri 6,24 und Num 6,25"),
+        ["NUM.6.24", "NUM.6.25"]
+    );
+    assert_eq!(
+        canon(De, "Deuteronomium 6,4 und Dtn 6,5"),
+        ["DEU.6.4", "DEU.6.5"]
+    );
     // Johannes and 1. Johannes are different books
     assert_eq!(canon(De, "Joh 1,1 und 1. Joh 1,1"), ["JHN.1.1", "1JN.1.1"]);
 }

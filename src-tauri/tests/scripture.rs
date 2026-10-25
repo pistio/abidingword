@@ -133,6 +133,44 @@ fn the_database_canon_matches_the_registry() {
 // --- import ----------------------------------------------------------------
 
 #[test]
+fn deuterocanonical_books_are_named_and_left_out_without_renumbering_anything() {
+    // v0.24: a Bible's Tobit and Greek Esther are named, not "unknown"; the
+    // 66 books import as before, with their own references.
+    let temp = tempfile::tempdir().unwrap();
+    let mut files = fixture_files("usfm-a");
+    for (name, body) in [
+        ("67-TOB.usfm", "\\id TOB\n\\c 1\n\\v 1 Invented words.\n"),
+        ("69-ESG.usfm", "\\id ESG\n\\c 1\n\\v 1 Invented words.\n"),
+    ] {
+        let path = temp.path().join(name);
+        std::fs::write(&path, body).unwrap();
+        files.push(path);
+    }
+    let staged = import::stage(&files, ImportOrigin::UserFiles).unwrap();
+    let preview = staged.preview(Default::default());
+    assert!(preview.can_import, "{:?}", preview.issues);
+    let books: Vec<_> = preview.books.iter().map(|b| b.code).collect();
+    assert_eq!(books, vec!["PSA", "JHN", "ROM"]);
+    let named: Vec<_> = preview
+        .issues
+        .iter()
+        .filter(|i| i.code.as_deref() == Some("bibleImport.additionalBook"))
+        .map(|i| (i.severity, i.params["book"].clone()))
+        .collect();
+    assert_eq!(
+        named,
+        vec![
+            (Severity::Note, "Tobit".to_string()),
+            (Severity::Note, "Esther (Greek)".to_string())
+        ]
+    );
+    assert!(preview
+        .issues
+        .iter()
+        .all(|i| i.code.as_deref() != Some("bibleImport.unknownBook")));
+}
+
+#[test]
 fn a_valid_fixture_imports_with_a_clear_preview() {
     let staged = import::stage(&fixture_files("usfm-a"), ImportOrigin::UserFiles).unwrap();
     let preview = staged.preview(Default::default());

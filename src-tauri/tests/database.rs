@@ -24,6 +24,7 @@ const EXPECTED_TABLES: &[&str] = &[
     "bible_documents",
     "bible_entry_ids",
     "bible_lemma_entries",
+    "bible_passage_locations",
     "bible_superscriptions",
     "bible_translations",
     "bible_verse_origins",

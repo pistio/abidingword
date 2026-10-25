@@ -126,12 +126,25 @@ fn insert_origins(
     stage: &DocumentStage,
     kept: &[KeptFile],
 ) -> AppResult<()> {
+    insert_origins_where(tx, id, stage, kept, |_, _| true)
+}
+
+fn insert_origins_where(
+    tx: &Connection,
+    id: &str,
+    stage: &DocumentStage,
+    kept: &[KeptFile],
+    keep: impl Fn(u8, u16) -> bool,
+) -> AppResult<()> {
     let mut add = tx.prepare(
         "INSERT INTO bible_verse_origins
              (translation_id, verse_id, document_id, first_segment, last_segment, first_page, last_page)
          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
     )?;
     for ((ordinal, chapter, verse), origin) in &stage.origins {
+        if !keep(*ordinal, *chapter) {
+            continue;
+        }
         let Some(document) = kept.get(usize::from(origin.start.document)) else {
             continue;
         };
@@ -151,12 +164,16 @@ fn insert_origins(
 }
 
 /// Gives a Bible read as a document the verses found in it later (v0.23):
-/// the documents and their text stay as they are.
+/// the documents and their text stay as they are. With `partial` (v0.24),
+/// when some chapters are doubtful, only the chapters recognised without any
+/// doubt are kept, and the Bible stays a document whose other places are not
+/// yet identified. Verses found before are replaced by this reading.
 pub fn add_verses(
     conn: &Connection,
     id: &str,
     content: &StagedContent,
     stage: &DocumentStage,
+    partial: bool,
 ) -> AppResult<BibleTranslation> {
     let translation = bibles::get(conn, id)?;
     if translation.kind != "document" {
@@ -165,12 +182,17 @@ pub fn add_verses(
             "This Bible can already be read by book, chapter and verse.",
         )));
     }
-    if content.has_errors() || content.verse_count() == 0 {
-        return Err(AppError::Import(UserMessage::new(
-            "bibles.hasProblems",
-            "This Bible has problems that must be resolved before it can be added.",
-        )));
-    }
+    let whole = !content.has_errors() && content.verse_count() > 0;
+    let usable = if whole {
+        None
+    } else if partial {
+        match content.usable_chapters() {
+            Some(chapters) if !chapters.is_empty() => Some(chapters),
+            _ => return Err(problems()),
+        }
+    } else {
+        return Err(problems());
+    };
     let kept: Vec<KeptFile> = list(conn, id)?
         .into_iter()
         .map(|d| KeptFile {
@@ -183,28 +205,64 @@ pub fn add_verses(
             "document files and records differ".into(),
         ));
     }
+    let keep = |ordinal: u8, chapter: u16| {
+        usable
+            .as_ref()
+            .is_none_or(|u| u.contains(&(ordinal, chapter)))
+    };
     let tx = conn.unchecked_transaction()?;
-    bibles::insert_verses(&tx, id, content)?;
-    insert_origins(&tx, id, stage, &kept)?;
+    // A new reading replaces an earlier one.
+    tx.execute(
+        "DELETE FROM bible_verse_origins WHERE translation_id = ?1",
+        [id],
+    )?;
+    tx.execute(
+        "DELETE FROM bible_verse_texts WHERE translation_id = ?1",
+        [id],
+    )?;
+    tx.execute(
+        "DELETE FROM bible_superscriptions WHERE translation_id = ?1",
+        [id],
+    )?;
+    bibles::insert_verses_where(&tx, id, content, keep)?;
+    insert_origins_where(&tx, id, stage, &kept, keep)?;
+    let verses: i64 = tx.query_row(
+        "SELECT COUNT(*) FROM bible_verse_texts WHERE translation_id = ?1",
+        [id],
+        |r| r.get(0),
+    )?;
+    let books: i64 = tx.query_row(
+        "SELECT COUNT(DISTINCT v.book_id) FROM bible_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+         WHERE t.translation_id = ?1",
+        [id],
+        |r| r.get(0),
+    )?;
+    let (kind, status) = if whole {
+        ("structured", "ready")
+    } else {
+        ("document", "document_only")
+    };
     tx.execute(
         "UPDATE bible_translations
-         SET kind = 'structured', import_status = 'ready', book_count = ?2, verse_count = ?3,
-             updated_at = ?4, revision = revision + 1
+         SET kind = ?2, import_status = ?3, book_count = ?4, verse_count = ?5,
+             updated_at = ?6, revision = revision + 1
          WHERE id = ?1",
-        params![
-            id,
-            content.books.len() as i64,
-            content.verse_count() as i64,
-            now()
-        ],
+        params![id, kind, status, books, verses, now()],
     )?;
     tx.commit()?;
     log::info!(
-        "Bible document given verses: {} ({} verses)",
+        "Bible document given verses: {} ({verses} verses{})",
         translation.short_name,
-        content.verse_count()
+        if whole { "" } else { ", partly" }
     );
     bibles::get(conn, id)
+}
+
+fn problems() -> AppError {
+    AppError::Import(UserMessage::new(
+        "bibles.hasProblems",
+        "This Bible has problems that must be resolved before it can be added.",
+    ))
 }
 
 /// One of a Bible's documents, as the reader sees it.
@@ -413,4 +471,282 @@ pub fn origin(
             },
         )
         .optional()?)
+}
+
+// --- passages in a document Bible (v0.24) -------------------------------------------
+
+/// A place marked by the person: a passage and where it is in a document.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PassageLocation {
+    pub id: String,
+    /// Canonical, e.g. "LUK.19.1-LUK.19.10".
+    pub reference: String,
+    pub document_id: String,
+    pub document_name: String,
+    pub page: Option<i64>,
+    pub segment: Option<i64>,
+    pub item: Option<String>,
+    pub quote: Option<String>,
+    pub created_at: String,
+}
+
+/// What is known of a passage in a document Bible: its verses where they
+/// were recognised and confirmed (with where they begin in the document),
+/// and the places marked by hand. `complete` says every verse of the passage
+/// has its text; otherwise the rest has not been identified yet.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DocumentPassage {
+    pub reference: String,
+    pub verses: Vec<crate::scripture::VerseText>,
+    pub complete: bool,
+    /// Where the first verse found begins in the document.
+    pub origin: Option<VerseOrigin>,
+    pub locations: Vec<PassageLocation>,
+}
+
+const LOCATION_SELECT: &str =
+    "SELECT l.id, l.start_key, l.end_key, l.document_id, d.original_file_name,
+        l.page, l.segment, l.item, l.quote, l.created_at
+     FROM bible_passage_locations l JOIN bible_documents d ON d.id = l.document_id";
+
+fn location_from_row(r: &rusqlite::Row) -> rusqlite::Result<PassageLocation> {
+    let start: i64 = r.get(1)?;
+    let end: i64 = r.get(2)?;
+    Ok(PassageLocation {
+        id: r.get(0)?,
+        reference: range_canonical(start, end),
+        document_id: r.get(3)?,
+        document_name: r.get(4)?,
+        page: r.get(5)?,
+        segment: r.get(6)?,
+        item: r.get(7)?,
+        quote: r.get(8)?,
+        created_at: r.get(9)?,
+    })
+}
+
+fn range_canonical(start: i64, end: i64) -> String {
+    use crate::scripture::reference::split_key;
+    let code = |k: i64| {
+        let (o, c, v) = split_key(k);
+        let book = crate::scripture::canon::by_ordinal(o).map_or("", |b| b.code);
+        format!("{book}.{c}.{v}")
+    };
+    if start == end {
+        code(start)
+    } else {
+        format!("{}-{}", code(start), code(end))
+    }
+}
+
+/// A passage in a document Bible: verses found, and places marked.
+pub fn locate(
+    conn: &Connection,
+    translation_id: &str,
+    reference: &crate::scripture::reference::ScriptureRef,
+) -> AppResult<DocumentPassage> {
+    let text = bibles::passage(conn, translation_id, reference)?;
+    let expected = expected_verses(reference);
+    let complete = expected > 0 && text.verses.len() >= expected;
+    let origin = match text.verses.first() {
+        Some(first) => {
+            let key = crate::scripture::reference::ScriptureRef::from_canonical(&first.canonical)?
+                .start_key();
+            origin(conn, translation_id, key)?
+        }
+        None => None,
+    };
+    let mut stmt = conn.prepare(&format!(
+        "{LOCATION_SELECT} WHERE l.translation_id = ?1 AND l.start_key <= ?3 AND l.end_key >= ?2
+         ORDER BY l.start_key, l.created_at"
+    ))?;
+    let locations = stmt
+        .query_map(
+            params![translation_id, reference.start_key(), reference.end_key()],
+            location_from_row,
+        )?
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(DocumentPassage {
+        reference: reference.canonical(),
+        verses: text.verses,
+        complete,
+        origin,
+        locations,
+    })
+}
+
+/// How many verses the standard count gives the passage (0 when unknown).
+fn expected_verses(reference: &crate::scripture::reference::ScriptureRef) -> usize {
+    use crate::scripture::canon;
+    use crate::scripture::reference::split_key;
+    let (o, c1, v1) = split_key(reference.start_key());
+    let (_, c2, v2) = split_key(reference.end_key());
+    let Some(book) = canon::by_ordinal(o) else {
+        return 0;
+    };
+    let mut total = 0usize;
+    for chapter in c1..=c2 {
+        let Some(count) = canon::verse_count(book, chapter) else {
+            return 0;
+        };
+        let from = if chapter == c1 { v1.max(1) } else { 1 };
+        let to = if chapter == c2 { v2.min(count) } else { count };
+        if to >= from {
+            total += usize::from(to - from + 1);
+        }
+    }
+    total
+}
+
+#[derive(Debug, Clone, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddLocation {
+    pub translation_id: String,
+    /// Canonical, e.g. "LUK.19.1-LUK.19.10".
+    pub reference: String,
+    pub document_id: String,
+    pub page: Option<i64>,
+    pub segment: Option<i64>,
+    pub item: Option<String>,
+    pub quote: Option<String>,
+}
+
+/// Marks where a passage is in one of a Bible's documents. Nothing else
+/// changes: notes and references keep their canonical verses.
+pub fn add_location(conn: &Connection, input: &AddLocation) -> AppResult<PassageLocation> {
+    let reference = crate::scripture::reference::ScriptureRef::from_canonical(&input.reference)?;
+    let document = record(conn, &input.document_id)?;
+    if document.translation_id != input.translation_id {
+        return Err(AppError::not_found("document", &input.document_id));
+    }
+    if input.page.is_none() && input.segment.is_none() && input.item.is_none() {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "bibles.locationPlace",
+            "Choose the place in the document first.",
+        )));
+    }
+    if let Some(page) = input.page {
+        let pages: Option<i64> = conn.query_row(
+            "SELECT page_count FROM bible_documents WHERE id = ?1",
+            [&input.document_id],
+            |r| r.get(0),
+        )?;
+        if page < 1 || pages.is_some_and(|p| page > p) {
+            return Err(AppError::InvalidInput(UserMessage::new(
+                "bibles.locationPage",
+                "That page is not in the document.",
+            )));
+        }
+    }
+    if let Some(segment) = input.segment {
+        let known: bool = conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM bible_document_segments WHERE document_id = ?1 AND position = ?2)",
+            params![input.document_id, segment],
+            |r| r.get(0),
+        )?;
+        if !known {
+            return Err(AppError::not_found("paragraph", segment.to_string()));
+        }
+    }
+    let quote = crate::domain::validate::optional_text(input.quote.as_deref(), 500, "selection")?;
+    let item = crate::domain::validate::optional_text(input.item.as_deref(), 300, "part")?;
+    let id = crate::db::new_id();
+    conn.execute(
+        "INSERT INTO bible_passage_locations
+             (id, translation_id, document_id, start_key, end_key, origin, page, segment, item, quote, created_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, 'manual', ?6, ?7, ?8, ?9, ?10)",
+        params![
+            id,
+            input.translation_id,
+            input.document_id,
+            reference.start_key(),
+            reference.end_key(),
+            input.page,
+            input.segment,
+            item,
+            quote,
+            now()
+        ],
+    )?;
+    conn.query_row(
+        &format!("{LOCATION_SELECT} WHERE l.id = ?1"),
+        [&id],
+        location_from_row,
+    )
+    .map_err(Into::into)
+}
+
+pub fn remove_location(conn: &Connection, id: &str) -> AppResult<()> {
+    if conn.execute("DELETE FROM bible_passage_locations WHERE id = ?1", [id])? == 0 {
+        return Err(AppError::not_found("place", id));
+    }
+    Ok(())
+}
+
+pub fn locations(conn: &Connection, translation_id: &str) -> AppResult<Vec<PassageLocation>> {
+    let mut stmt = conn.prepare(&format!(
+        "{LOCATION_SELECT} WHERE l.translation_id = ?1 ORDER BY l.start_key, l.created_at LIMIT 5000"
+    ))?;
+    let rows = stmt.query_map([translation_id], location_from_row)?;
+    Ok(rows.collect::<Result<_, _>>()?)
+}
+
+/// What of a document Bible can be found by passage (v0.24).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Coverage {
+    /// Verses recognised and confirmed.
+    pub verses: i64,
+    /// Books with verses, with how many of their chapters have them.
+    pub books: Vec<BookCoverage>,
+    /// Places marked by hand.
+    pub marked: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BookCoverage {
+    pub book: &'static str,
+    pub chapters: i64,
+    pub of: i64,
+}
+
+pub fn coverage(conn: &Connection, translation_id: &str) -> AppResult<Coverage> {
+    let verses: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM bible_verse_texts WHERE translation_id = ?1",
+        [translation_id],
+        |r| r.get(0),
+    )?;
+    let mut stmt = conn.prepare(
+        "SELECT v.book_id, COUNT(DISTINCT v.chapter) FROM bible_verse_texts t
+         JOIN bible_verses v ON v.id = t.verse_id
+         WHERE t.translation_id = ?1 GROUP BY v.book_id ORDER BY v.book_id",
+    )?;
+    let books = stmt
+        .query_map([translation_id], |r| {
+            Ok((r.get::<_, u8>(0)?, r.get::<_, i64>(1)?))
+        })?
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .filter_map(|(ordinal, chapters)| {
+            let book = crate::scripture::canon::by_ordinal(ordinal)?;
+            Some(BookCoverage {
+                book: book.code,
+                chapters,
+                of: i64::from(book.chapter_count),
+            })
+        })
+        .collect();
+    let marked: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM bible_passage_locations WHERE translation_id = ?1",
+        [translation_id],
+        |r| r.get(0),
+    )?;
+    Ok(Coverage {
+        verses,
+        books,
+        marked,
+    })
 }

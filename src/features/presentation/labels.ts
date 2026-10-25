@@ -4,7 +4,7 @@ import i18n from "i18next";
 import themes from "../../../resources/presentation/themes.json";
 import englishBooks from "@/i18n/locales/en/books.json";
 import englishPresentation from "@/i18n/locales/en/presentation.json";
-import { referenceLabel } from "@/i18n/scripture";
+import { passageBookName, referenceLabel } from "@/i18n/scripture";
 import type { ExportLocale, ItemKind, ItemSource, PresentationItem, PresentationTheme, RefInfo } from "@/types/presentation";
 import type { TeachingPreparation } from "@/types/teaching";
 
@@ -104,7 +104,7 @@ const LANGUAGE_TAGS: Record<string, string> = { en: "en-US", de: "de-DE", ko: "k
 /** The words the exports need, in the interface language. */
 export function exportLocale(t: TFunction): ExportLocale {
   const bookNames: Record<string, string> = {};
-  for (const code of Object.keys(englishBooks.name)) bookNames[code] = t(`books.name.${code}`, { defaultValue: code });
+  for (const code of Object.keys(englishBooks.name)) bookNames[code] = passageBookName(t(`books.name.${code}`, { defaultValue: code }));
   const label = (key: keyof typeof englishPresentation.export.labels) => t(`presentation.export.labels.${key}`);
   return {
     language: LANGUAGE_TAGS[i18n.language] ?? "en-US",

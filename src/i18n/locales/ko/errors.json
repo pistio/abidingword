@@ -46,7 +46,9 @@
     "hasProblems": "이 성경에는 추가하기 전에 해결해야 할 문제가 있습니다.",
     "shortNameTooLong": "약칭은 {{max}}자 이내로 입력해 주세요.",
     "badLanguage": "“{{text}}”은(는) Abiding Word가 아는 언어가 아닙니다.",
-    "alreadyVerses": "이 성경은 이미 책·장·절로 읽을 수 있습니다."
+    "alreadyVerses": "이 성경은 이미 책·장·절로 읽을 수 있습니다.",
+    "locationPlace": "먼저 문서에서 위치를 고르세요.",
+    "locationPage": "문서에 없는 쪽입니다."
   },
   "bibleImport": {
     "noBookId": "“{{fileName}}” 파일에 어떤 책이 들어 있는지 표시되어 있지 않습니다.",
@@ -99,7 +101,9 @@
     "documentTooMany": "한 성경으로 보기에는 너무 많은 문서를 선택했습니다.",
     "documentFormat": "“{{fileName}}”은(는) Abiding Word가 성경으로 읽을 수 있는 문서 종류가 아닙니다.",
     "documentEmpty": "“{{fileName}}”에서 텍스트를 찾지 못했습니다.",
-    "unknownBookCode": "알 수 없는 책입니다."
+    "unknownBookCode": "알 수 없는 책입니다.",
+    "documentSequence": "{{book}} {{chapter}}장: {{verse}}절이 앞 절 안에 나타납니다(두 단이 섞여 읽혔을 수 있습니다). 이 장은 사용하지 않습니다.",
+    "additionalBook": "“{{fileName}}”에는 {{book}}이(가) 들어 있으며, Abiding Word에서는 아직 이 책을 표시할 수 없습니다. 이 책은 제외되었고 다른 책에는 영향이 없습니다."
   },
   "library": {
     "notUtf8": "“{{fileName}}”은(는) UTF-8 텍스트로 저장되어 있지 않아 읽을 수 없습니다.",

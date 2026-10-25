@@ -623,7 +623,41 @@
       "reading": "문서를 읽는 중…",
       "use": "이 절 사용",
       "keep": "문서로 유지",
-      "done": "이제 {{name}}을(를) 책·장·절로 읽을 수 있습니다."
+      "done": "이제 {{name}}을(를) 책·장·절로 읽을 수 있습니다.",
+      "partialDone": "찾은 절은 이제 {{name}}에서 본문으로 찾아볼 수 있습니다. 문서의 나머지는 그대로 읽을 수 있습니다.",
+      "usePartial_other": "확실히 찾은 절 {{formatted}}개 사용",
+      "partial_other": "문제가 있는 {{formatted}}장은 보류합니다. 나머지는 지금 본문으로 찾을 수 있습니다. 문서는 그대로이며 보류한 장도 문서에서 계속 읽을 수 있습니다."
+    },
+    "passages": {
+      "none": "이 문서에서는 아직 본문을 찾을 수 없습니다. 절을 찾거나 본문 위치를 표시하세요.",
+      "partOf": "{{book}} ({{of}}장 중 {{chapters}}장)",
+      "goLabel": "이 문서에서 찾을 본문",
+      "goPlaceholder": "예: 요 3:16",
+      "go": "찾기",
+      "panel": "이 문서의 {{passage}}",
+      "close": "본문 닫기",
+      "restUnknown": "지금까지 문서에서 이 본문의 일부만 찾았습니다. 나머지는 표시하지 않습니다.",
+      "showPage": "{{page}}쪽에서 보기",
+      "show": "문서에서 보기",
+      "markedTitle": "직접 표시한 위치",
+      "unknown": "이 문서에서 {{passage}}의 위치는 아직 확인되지 않았습니다.",
+      "markHere": "위치 표시",
+      "readIn": "{{name}}에서 읽기",
+      "onPage": "{{page}}쪽",
+      "inText": "본문 안",
+      "markedPlace": "{{passage}}, {{where}}",
+      "unmark": "{{passage}} 표시 지우기",
+      "unmarkShort": "지우기",
+      "mark": "여기에 본문 표시",
+      "markTitle": "본문 위치 표시",
+      "markWhere": "위치: {{name}}의 {{where}}",
+      "markNoPlace": "먼저 해당 쪽이나 문단으로 이동한 다음 표시하세요.",
+      "markQuote": "확인용으로 함께 저장: “{{quote}}”",
+      "markPassage": "이 위치의 본문",
+      "markHint": "위치만 기록합니다. 문서, 메모, 메모의 성경 구절은 그대로입니다.",
+      "markSave": "표시 저장",
+      "verified_other": "본문으로 찾을 수 있는 절 {{formatted}}개: {{books}}",
+      "marked_other": "직접 표시한 위치 {{formatted}}곳"
     }
   }
 }

@@ -46,7 +46,9 @@
     "hasProblems": "Cette Bible présente des problèmes qui doivent être résolus avant qu’elle puisse être ajoutée.",
     "shortNameTooLong": "Veuillez ne pas dépasser {{max}} caractères pour le nom court.",
     "badLanguage": "« {{text}} » n’est pas une langue connue d’Abiding Word.",
-    "alreadyVerses": "Cette Bible se lit déjà par livre, chapitre et verset."
+    "alreadyVerses": "Cette Bible se lit déjà par livre, chapitre et verset.",
+    "locationPlace": "Choisissez d’abord l’emplacement dans le document.",
+    "locationPage": "Cette page ne figure pas dans le document."
   },
   "bibleImport": {
     "noBookId": "Le fichier « {{fileName}} » n’indique pas quel livre il contient.",
@@ -119,7 +121,9 @@
     "documentTooMany": "Trop de documents ont été choisis pour former une seule Bible.",
     "documentFormat": "« {{fileName}} » n’est pas un type de document qu’Abiding Word sait lire comme Bible.",
     "documentEmpty": "Aucun texte n’a été trouvé dans « {{fileName}} ».",
-    "unknownBookCode": "Livre inconnu."
+    "unknownBookCode": "Livre inconnu.",
+    "documentSequence": "{{book}} {{chapter}} : le verset {{verse}} apparaît à l’intérieur d’un verset précédent (deux colonnes ont peut-être été lues l’une dans l’autre). Ce chapitre n’est pas utilisé.",
+    "additionalBook": "« {{fileName}} » contient {{book}}, qu’Abiding Word ne peut pas encore afficher. Ce livre a été laissé de côté ; les autres livres ne sont pas concernés."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",

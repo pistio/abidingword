@@ -13,9 +13,18 @@ export function bookName(code: string, fallback = code): string {
   return translate(`books.name.${code}`, fallback);
 }
 
-/** One psalm is "Psalm 23" (in each language's form); several use the book name. */
+/** A book's name as a passage uses it: without a name added in brackets ("1. Mose (Genesis)" → "1. Mose"). */
+export function passageBookName(name: string): string {
+  return name.replace(/\s*\([^)]*\)$/, "");
+}
+
+/**
+ * The book's name in a passage: one psalm is "Psalm 23" (in each language's
+ * form); several use the book name, without a name added in brackets
+ * ("1. Mose (Genesis)" is "1. Mose 1,1" in a passage, v0.24).
+ */
 export function bookLabel(code: string, singleChapter: boolean, fallback = code): string {
-  return code === "PSA" && singleChapter ? translate("books.psalm", "Psalm") : bookName(code, fallback);
+  return code === "PSA" && singleChapter ? translate("books.psalm", "Psalm") : passageBookName(bookName(code, fallback));
 }
 
 /**

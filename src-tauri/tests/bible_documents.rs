@@ -875,6 +875,7 @@ fn added_as_a_document_it_has_no_verses_and_can_be_given_them_later() {
             &id,
             &again.content,
             again.documents.as_ref().unwrap(),
+            false,
         )
         .unwrap();
         assert_eq!(translation.kind, "structured");
@@ -1029,7 +1030,10 @@ fn a_dev42_database_upgrades_and_keeps_everything() {
         .unwrap()
         .starts_with("abiding-word-v18-"));
     db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn).unwrap(), 19);
+        assert_eq!(
+            migrations::current_version(conn).unwrap(),
+            MIGRATIONS.last().unwrap().version
+        );
         let bible = bibles::get(conn, "tr-1").unwrap();
         assert_eq!((bible.kind.as_str(), bible.verse_count), ("structured", 1));
         assert_eq!(
@@ -1135,4 +1139,266 @@ fn a_chapter_cut_short_is_refused_and_a_few_verses_short_is_a_warning() {
     let r = recognise(&read("ruth.txt", text.as_bytes()));
     assert!(codes(&r).contains(&"bibleImport.documentChapterShort".to_string()));
     assert!(errors(&r).is_empty(), "{:?}", errors(&r));
+}
+
+// --- v0.24: document Bibles made navigable ------------------------------------------
+
+/// Ruth with its chapter 2 doubtful (verse 5 could begin in two places).
+fn ruth_with_a_doubtful_chapter() -> String {
+    ruth_lines(|c| format!("Chapter {c}")).replacen(
+        &format!("4 {}\n5 {}\n", words("Ruth", 2, 4), words("Ruth", 2, 5)),
+        "4 and he gave them 5 loaves 5 and so on\n",
+        1,
+    )
+}
+
+fn as_document(conn: &Connection, temp: &Path, text: &str, short: &str) -> (String, StagedImport) {
+    let path = write(temp, &format!("{short}.txt"), text.as_bytes());
+    let staged = import::stage(&[path], ImportOrigin::UserFiles).unwrap();
+    let id = add(conn, &staged, short, true).unwrap();
+    (id, staged)
+}
+
+fn passage(conn: &Connection, id: &str, reference: &str) -> kept_documents::DocumentPassage {
+    let reference =
+        abiding_word_lib::scripture::reference::ScriptureRef::from_canonical(reference).unwrap();
+    kept_documents::locate(conn, id, &reference).unwrap()
+}
+
+#[test]
+fn the_chapters_recognised_without_doubt_can_be_used_while_the_rest_stays_unverified() {
+    let temp = tempfile::tempdir().unwrap();
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|conn| {
+        let (id, staged) = as_document(conn, temp.path(), &ruth_with_a_doubtful_chapter(), "PART");
+        let preview = staged.preview(Default::default()).document.unwrap();
+        assert!(!preview.verses_usable);
+        assert_eq!(preview.partial_chapters, 3);
+        assert_eq!(preview.partial_verses, 22 + 18 + 22);
+        assert_eq!(preview.held_chapters, 1);
+        // Refused without asking for the partial use.
+        assert!(kept_documents::add_verses(
+            conn,
+            &id,
+            &staged.content,
+            staged.documents.as_ref().unwrap(),
+            false
+        )
+        .is_err());
+        let bible = kept_documents::add_verses(
+            conn,
+            &id,
+            &staged.content,
+            staged.documents.as_ref().unwrap(),
+            true,
+        )?;
+        assert_eq!((bible.kind.as_str(), bible.verse_count), ("document", 62));
+        // A verified passage reads as written, and says where it is in the document.
+        let found = passage(conn, &id, "RUT.1.3-RUT.1.5");
+        assert!(found.complete);
+        assert_eq!(found.verses[0].text, words("Ruth", 1, 3));
+        assert!(found.origin.as_ref().unwrap().first_segment.is_some());
+        // The doubtful chapter has no text at all: never something unrelated.
+        let doubtful = passage(conn, &id, "RUT.2");
+        assert!(!doubtful.complete);
+        assert!(doubtful.verses.is_empty());
+        let coverage = kept_documents::coverage(conn, &id)?;
+        assert_eq!(coverage.verses, 62);
+        assert_eq!(coverage.books[0].chapters, 3);
+        assert_eq!(coverage.books[0].of, 4);
+        Ok(())
+    })
+    .unwrap();
+}
+
+#[test]
+fn every_verse_kept_is_exactly_the_documents_own_text_and_traces_back_to_it() {
+    let temp = tempfile::tempdir().unwrap();
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|conn| {
+        let (id, staged) = as_document(conn, temp.path(), &ruth_lines(|c| format!("Chapter {c}")), "EXACT");
+        kept_documents::add_verses(conn, &id, &staged.content, staged.documents.as_ref().unwrap(), false)?;
+        let normalise = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ");
+        let document = kept_documents::list(conn, &id)?.remove(0);
+        let segments = kept_documents::segments(conn, &document.id, 0, 10_000, None)?.segments;
+        let mut stmt = conn.prepare(
+            "SELECT t.text, o.first_segment, o.last_segment FROM bible_verse_texts t
+             JOIN bible_verse_origins o ON o.translation_id = t.translation_id AND o.verse_id = t.verse_id
+             WHERE t.translation_id = ?1",
+        )?;
+        let rows: Vec<(String, i64, i64)> = stmt
+            .query_map([&id], |r| Ok((r.get(0)?, r.get(1)?, r.get::<_, Option<i64>>(2)?.unwrap_or(r.get(1)?))))?
+            .collect::<Result<_, _>>()?;
+        assert_eq!(rows.len(), 85);
+        for (text, first, last) in rows {
+            let original: String = segments
+                .iter()
+                .filter(|s| s.position >= first && s.position <= last)
+                .map(|s| s.text.as_str())
+                .collect::<Vec<_>>()
+                .join(" ");
+            assert!(normalise(&original).contains(&normalise(&text)), "{text:?} not in {original:?}");
+        }
+        Ok(())
+    })
+    .unwrap();
+}
+
+#[test]
+fn a_place_marked_by_hand_is_found_by_passage_and_changes_nothing_else() {
+    let temp = tempfile::tempdir().unwrap();
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|conn| {
+        // A scanned PDF Bible: no text, only pages.
+        let bytes = fixtures::pdf(&[&[], &[], &[]], Some("Scanned"), None);
+        let path = write(temp.path(), "scanned.pdf", &bytes);
+        let staged = import::stage(&[path], ImportOrigin::UserFiles).unwrap();
+        let id = add(conn, &staged, "SCAN", true)?;
+        let other = as_document(
+            conn,
+            temp.path(),
+            &ruth_lines(|c| format!("Chapter {c}")),
+            "OTHER",
+        )
+        .0;
+        let document = kept_documents::list(conn, &id)?.remove(0);
+        let input = |reference: &str, page: Option<i64>, document_id: &str, translation: &str| {
+            kept_documents::AddLocation {
+                translation_id: translation.into(),
+                reference: reference.into(),
+                document_id: document_id.into(),
+                page,
+                segment: None,
+                item: None,
+                quote: None,
+            }
+        };
+        let annotations_before = count(conn, "SELECT COUNT(*) FROM annotations");
+        let marked = kept_documents::add_location(
+            conn,
+            &input("LUK.19.1-LUK.19.10", Some(2), &document.id, &id),
+        )?;
+        assert_eq!(marked.reference, "LUK.19.1-LUK.19.10");
+        // Found for any passage it overlaps; not for others.
+        let found = passage(conn, &id, "LUK.19.5");
+        assert_eq!(found.locations.len(), 1);
+        assert_eq!(found.locations[0].page, Some(2));
+        assert!(found.verses.is_empty() && !found.complete);
+        assert!(passage(conn, &id, "LUK.20.1").locations.is_empty());
+        // A page the document lacks, no place, or another Bible's document: refused.
+        assert!(
+            kept_documents::add_location(conn, &input("LUK.19.1", Some(9), &document.id, &id))
+                .is_err()
+        );
+        assert!(
+            kept_documents::add_location(conn, &input("LUK.19.1", None, &document.id, &id))
+                .is_err()
+        );
+        assert!(kept_documents::add_location(
+            conn,
+            &input("LUK.19.1", Some(1), &document.id, &other)
+        )
+        .is_err());
+        // Removing it changes nothing else.
+        kept_documents::remove_location(conn, &marked.id)?;
+        assert!(passage(conn, &id, "LUK.19.5").locations.is_empty());
+        assert_eq!(
+            count(conn, "SELECT COUNT(*) FROM annotations"),
+            annotations_before
+        );
+        Ok(())
+    })
+    .unwrap();
+}
+
+/// Ruth 1 on a two-column page: verses 1–11 in the left column, 12–22 in the
+/// right, written column by column or line by line across the columns.
+fn two_columns(across: bool) -> Vec<u8> {
+    let mut left: Vec<String> = vec!["Ruth".into(), "Chapter 1".into()];
+    left.extend((1..=11).map(|v| format!("{v} {}", words("Ruth", 1, v))));
+    let right: Vec<String> = (12..=22)
+        .map(|v| format!("{v} {}", words("Ruth", 1, v)))
+        .collect();
+    let mut lines = Vec::new();
+    if across {
+        for (i, l) in left.iter().enumerate() {
+            lines.push((40, 780 - 14 * i as i64, l.clone()));
+            if i >= 2 {
+                if let Some(r) = right.get(i - 2) {
+                    lines.push((310, 780 - 14 * i as i64, r.clone()));
+                }
+            }
+        }
+    } else {
+        for (i, l) in left.iter().enumerate() {
+            lines.push((40, 780 - 14 * i as i64, l.clone()));
+        }
+        for (i, r) in right.iter().enumerate() {
+            lines.push((310, 780 - 14 * (i as i64 + 2), r.clone()));
+        }
+    }
+    fixtures::pdf_placed(&[lines])
+}
+
+#[test]
+fn a_two_column_pdf_is_read_in_column_order_and_never_shifted_when_its_lines_cross_columns() {
+    // Written column by column: read as printed.
+    let r = recognise(&read("columns.pdf", &two_columns(false)));
+    for v in 1..=22 {
+        assert_eq!(verse(&r, "RUT", 1, v), Some(words("Ruth", 1, v)), "1:{v}");
+    }
+    // Written line by line across the columns: whatever is accepted is the
+    // verse's own text; nothing is moved into another verse.
+    // Written line by line across the columns: the chapter is refused, so
+    // no verse with another verse's words in it can be used.
+    let r = recognise(&read("across.pdf", &two_columns(true)));
+    assert!(!r.usable());
+    assert!(
+        codes(&r).contains(&"bibleImport.documentSequence".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+    assert!(r.content.usable_chapters().is_some_and(|u| u.is_empty()));
+}
+
+#[test]
+fn a_short_second_column_read_across_is_refused_too() {
+    // Left column 1–17, right column 18–22: only five verses would be missing,
+    // which alone is a warning, but the out-of-sequence numbers refuse it.
+    let mut left: Vec<String> = vec!["Ruth".into(), "Chapter 1".into()];
+    left.extend((1..=17).map(|v| format!("{v} {}", words("Ruth", 1, v))));
+    let right: Vec<String> = (18..=22)
+        .map(|v| format!("{v} {}", words("Ruth", 1, v)))
+        .collect();
+    let mut lines = Vec::new();
+    for (i, l) in left.iter().enumerate() {
+        lines.push((40, 800 - 14 * i as i64, l.clone()));
+        if let Some(r) = i.checked_sub(2).and_then(|j| right.get(j)) {
+            lines.push((310, 800 - 14 * i as i64, r.clone()));
+        }
+    }
+    let r = recognise(&read("short.pdf", &fixtures::pdf_placed(&[lines])));
+    assert!(!r.usable());
+    assert!(
+        codes(&r).contains(&"bibleImport.documentSequence".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+}
+
+#[test]
+fn an_editions_own_numbering_is_kept_as_written_and_reported() {
+    // Malachi as Hebrew Bibles number it: chapter 3 has 24 verses, no chapter 4.
+    let mut text = String::from("Malachi\n\n");
+    for (chapter, count) in [(1u16, 14u16), (2, 17), (3, 24)] {
+        text.push_str(&format!("Chapter {chapter}\n\n"));
+        for v in 1..=count {
+            text.push_str(&format!("{v} {}\n", words("Malachi", chapter, v)));
+        }
+    }
+    let r = recognise(&read("malachi.txt", text.as_bytes()));
+    // 3:19–24 stay 3:19–24: never renumbered to 4:1–6.
+    assert_eq!(verse(&r, "MAL", 3, 24), Some(words("Malachi", 3, 24)));
+    assert_eq!(verse(&r, "MAL", 4, 1), None);
+    assert!(!r.content.issues.is_empty(), "the difference is reported");
 }

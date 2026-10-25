@@ -27,6 +27,7 @@ import type {
   DocumentFileInfo,
   DocumentSegment,
   ImportPreview,
+  MarkedPlace,
   LemmaResult,
   MorphDescribed,
   MorphScheme,
@@ -130,6 +131,8 @@ export interface MemoryApi extends Api {
     bibleDocuments: Map<string, { documents: BibleDocument[]; segments: Map<string, DocumentSegment[]>; bytes: Map<string, Uint8Array> }>;
     /** What looking for verses in a document Bible finds next (v0.23); null: as when it was added. */
     nextRecognition: ImportPreview | null;
+    /** Places marked by hand in document Bibles (v0.24), by Bible. */
+    places: Map<string, MarkedPlace[]>;
     /** Looking after the library (v0.24): each source's state, collections and tags. */
     manage: {
       states: Map<string, { state: ItemState; changedAt: string | null }>;
@@ -428,6 +431,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     bibleDocuments: new Map(),
     nextRecognition: null,
     manage: { states: new Map(), collections: [], members: new Map(), tags: [], tagged: new Map() },
+    places: new Map(),
     library: { sources: [], segments: [], mentions: [], links: [], nextChosenFile: null, openedLinks: [], openLinkFails: false, pending: null, annotations: [] },
     findings: [],
     relations: [],
@@ -619,6 +623,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         stats: { pageLines: format === "pdf" ? 10 : 0, headings: 1, leftOutChars: scanned ? 0 : 120, psalmTitles: 0, unnumberedFirst: 0, numberedChapters: 0 },
         versesUsable: usable,
         textChars: scanned ? 0 : 4200,
+        // An unclear heading holds back its own chapters only (v0.24).
+        partialVerses: usable || scanned ? 0 : books.filter((b) => b.book !== null).reduce((n, b) => n + b.verses, 0),
+        partialChapters: usable || scanned ? 0 : books.filter((b) => b.book !== null).reduce((n, b) => n + b.chapters, 0),
+        heldChapters: usable || scanned ? 0 : FOUND.filter((_, i) => books[i]?.book === null).reduce((n, f) => n + f.chapters, 0),
       },
     };
   };
@@ -1634,20 +1642,79 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       state.pendingPreview = { id: result.previewId, bundled: false, document: { paths, preview: { ...result, suggested: { ...result.suggested, name: bible.name } } } };
       return result;
     },
-    bibleDocumentAddVerses: async (previewId) => {
+    bibleDocumentAddVerses: async (previewId, partial) => {
       const pending = state.pendingPreview;
       if (pending?.id !== previewId || !pending.document) throw new ApiError("invalidInput", "This import has expired.");
       const found = pending.document.preview;
-      if (!found.document?.versesUsable) throw new ApiError("invalidInput", "This Bible has problems that must be resolved before it can be added.", "bibles.hasProblems");
+      const whole = !!found.document?.versesUsable;
+      if (!whole && !(partial && (found.document?.partialVerses ?? 0) > 0)) throw new ApiError("invalidInput", "This Bible has problems that must be resolved before it can be added.", "bibles.hasProblems");
       const bible = state.bibles.find((b) => [...state.bibleDocuments.entries()].some(([id, kept]) => id === b.id && kept.documents.map((d) => d.name).join("|") === pending.document!.paths.join("|")) && b.kind === "document");
       if (!bible) throw new ApiError("notFound", "Bible not found");
-      bible.kind = "structured";
-      bible.importStatus = "ready";
-      bible.bookCount = found.bookCount;
-      bible.verseCount = found.verseCount;
-      state.text.set(bible.id, fixtureChapters("document"));
+      const chapters = fixtureChapters("document");
+      // Held back: the unclear book (Psalms in the fixture).
+      if (!whole) for (const key of [...chapters.keys()]) if (key.startsWith("PSA|")) chapters.delete(key);
+      if (whole) {
+        bible.kind = "structured";
+        bible.importStatus = "ready";
+        bible.bookCount = found.bookCount;
+      }
+      bible.verseCount = [...chapters.values()].reduce((n, v) => n + v.length, 0);
+      state.text.set(bible.id, chapters);
       state.pendingPreview = null;
       return { ...bible };
+    },
+    bibleDocumentLocate: async (translationId, reference) => {
+      const range = refFromCanonical(reference, bookByCode);
+      if (!range) throw new ApiError("invalidInput", "Not a passage.");
+      const chapters = state.text.get(translationId) ?? new Map<string, VerseText[]>();
+      const verses: VerseText[] = [];
+      for (let c = range.startChapter; c <= range.endChapter; c++) {
+        for (const v of chapters.get(`${range.book}|${c}`) ?? []) {
+          if (c === range.startChapter && range.startVerse && v.verse < range.startVerse) continue;
+          if (c === range.endChapter && range.endVerse && v.verse > range.endVerse) continue;
+          verses.push(v);
+        }
+      }
+      const wanted = range.startVerse && range.endVerse && range.startChapter === range.endChapter ? range.endVerse - range.startVerse + 1 : null;
+      const complete = verses.length > 0 && (wanted === null || verses.length === wanted);
+      const doc = state.bibleDocuments.get(translationId)?.documents[0];
+      const locations = (state.places.get(translationId) ?? []).filter((p) => {
+        const r = refFromCanonical(p.reference, bookByCode);
+        return r && overlaps(r, range);
+      });
+      return {
+        reference,
+        verses,
+        complete,
+        origin: verses.length > 0 && doc ? { documentId: doc.id, documentName: doc.name, firstSegment: 0, lastSegment: 0, firstPage: doc.format === "pdf" ? 2 : null, lastPage: null } : null,
+        locations,
+      };
+    },
+    bibleLocationAdd: async (input) => {
+      const doc = state.bibleDocuments.get(input.translationId)?.documents.find((d) => d.id === input.documentId);
+      if (!doc) throw new ApiError("notFound", "document not found");
+      if (input.page == null && input.segment == null && input.item == null) throw new ApiError("invalidInput", "Choose the place in the document first.", "bibles.locationPlace");
+      if (input.page != null && doc.pageCount !== null && (input.page < 1 || input.page > doc.pageCount)) throw new ApiError("invalidInput", "That page is not in the document.", "bibles.locationPage");
+      const place: MarkedPlace = {
+        id: id(), reference: input.reference, documentId: doc.id, documentName: doc.name,
+        page: input.page ?? null, segment: input.segment ?? null, item: input.item ?? null, quote: input.quote ?? null, createdAt: now(),
+      };
+      state.places.set(input.translationId, [...(state.places.get(input.translationId) ?? []), place]);
+      return { ...place };
+    },
+    bibleLocationRemove: async (placeId) => {
+      for (const [key, list] of state.places) state.places.set(key, list.filter((p) => p.id !== placeId));
+    },
+    bibleLocations: async (translationId) => [...(state.places.get(translationId) ?? [])],
+    bibleDocumentCoverage: async (translationId) => {
+      const chapters = state.text.get(translationId) ?? new Map<string, VerseText[]>();
+      const byBook = new Map<string, number>();
+      for (const key of chapters.keys()) byBook.set(key.split("|")[0]!, (byBook.get(key.split("|")[0]!) ?? 0) + 1);
+      return {
+        verses: [...chapters.values()].reduce((n, v) => n + v.length, 0),
+        books: [...byBook].map(([book, n]) => ({ book, chapters: n, of: bookByCode.get(book)?.chapterCount ?? n })),
+        marked: (state.places.get(translationId) ?? []).length,
+      };
     },
     // As the core (scripture::data_packs): a few of the 100, enough for tests.
     bibleLanguageOptions: async () => [

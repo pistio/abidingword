@@ -1306,6 +1306,8 @@ struct Reader<'a> {
     unplaced: usize,
     /// The next words follow the last ones with no space (a number put back).
     glue: bool,
+    /// Chapters refused for a verse number out of sequence (v0.24).
+    sequence_flagged: HashSet<(u8, u16)>,
 }
 
 impl Reader<'_> {
@@ -1713,6 +1715,33 @@ impl Reader<'_> {
             self.open_verse(m.value, m.end, unit);
             return true;
         }
+        // A verse number well ahead of the count, after a sentence end inside
+        // a verse: a second column read across the first, or a lost passage.
+        // The verses around it cannot be trusted: the chapter is refused,
+        // never guessed (a short tail would otherwise only be a warning).
+        if strong
+            && !m.unit_start
+            && m.end.is_none()
+            && m.value > expect + 1
+            && canon::verse_count(book, chapter).is_some_and(|count| m.value <= count)
+            && self.sequence_flagged.insert((book.ordinal, chapter))
+        {
+            self.out.content.issue(
+                Severity::Error,
+                Some(book),
+                Some(chapter),
+                UserMessage::new(
+                    "bibleImport.documentSequence",
+                    format!(
+                        "{} {chapter}: verse {} appears inside an earlier verse (perhaps two columns were read across each other). This chapter is not used.",
+                        book.name, m.value
+                    ),
+                )
+                .with("bookCode", book.code)
+                .with("chapter", chapter)
+                .with("verse", m.value),
+            );
+        }
         // Anything else is a number in the text.
         false
     }
@@ -2109,6 +2138,7 @@ pub fn recognise(units: &[Unit], language: Option<&str>, corrections: &Correctio
         skip_chapter: false,
         unplaced: 0,
         glue: false,
+        sequence_flagged: HashSet::new(),
     };
     reader.run()
 }

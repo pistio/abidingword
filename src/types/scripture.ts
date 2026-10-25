@@ -382,6 +382,11 @@ export interface DocumentPreview {
   /** Verses were found and nothing contradicts itself. */
   versesUsable: boolean;
   textChars: number;
+  /** Where some chapters are doubtful (v0.24): the verses of the others, usable on their own. */
+  partialVerses: number;
+  partialChapters: number;
+  /** Chapters held back because of a doubt. */
+  heldChapters: number;
 }
 
 /** One of the documents a Bible was added from (v0.23). */
@@ -427,6 +432,46 @@ export interface VerseOrigin {
   lastSegment: number | null;
   firstPage: number | null;
   lastPage: number | null;
+}
+
+/** A place marked by the person in a document Bible (v0.24): a passage and where it is. */
+export interface MarkedPlace {
+  id: string;
+  /** Canonical, e.g. "LUK.19.1-LUK.19.10". */
+  reference: string;
+  documentId: string;
+  documentName: string;
+  page: number | null;
+  segment: number | null;
+  item: string | null;
+  quote: string | null;
+  createdAt: string;
+}
+
+/** A passage in a document Bible (v0.24): its verses where established, and the places marked. */
+export interface DocumentPassage {
+  reference: string;
+  verses: VerseText[];
+  /** Every verse of the passage has its text. */
+  complete: boolean;
+  origin: VerseOrigin | null;
+  locations: MarkedPlace[];
+}
+
+export interface DocumentCoverage {
+  verses: number;
+  books: { book: string; chapters: number; of: number }[];
+  marked: number;
+}
+
+export interface AddLocation {
+  translationId: string;
+  reference: string;
+  documentId: string;
+  page?: number | null;
+  segment?: number | null;
+  item?: string | null;
+  quote?: string | null;
 }
 
 /** The import preview's summary of word annotations (v0.21). */

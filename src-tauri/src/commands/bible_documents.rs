@@ -240,6 +240,7 @@ pub fn bible_document_recognise(
 pub fn bible_document_add_verses(
     state: State<'_, AppState>,
     preview_id: String,
+    partial: Option<bool>,
 ) -> CommandResult<BibleTranslation> {
     let core = state.core()?;
     let mut pending = state.pending_import()?;
@@ -262,8 +263,59 @@ pub fn bible_document_add_verses(
         .into());
     };
     let translation = core.db.with_conn(|conn| {
-        bible_documents::add_verses(conn, translation_id, &staged.content, stage)
+        bible_documents::add_verses(
+            conn,
+            translation_id,
+            &staged.content,
+            stage,
+            partial.unwrap_or(false),
+        )
     })?;
     *pending = None;
     Ok(translation)
+}
+
+/// A passage in a Bible kept as a document (v0.24): its verses where they
+/// were recognised and confirmed, and the places marked by hand.
+#[tauri::command(async)]
+pub fn bible_document_locate(
+    state: State<'_, AppState>,
+    translation_id: String,
+    reference: String,
+) -> CommandResult<bible_documents::DocumentPassage> {
+    state.db(|conn| {
+        let reference = crate::scripture::reference::ScriptureRef::from_canonical(&reference)?;
+        bible_documents::locate(conn, &translation_id, &reference)
+    })
+}
+
+/// Marks where a passage is in one of a Bible's documents (v0.24).
+#[tauri::command(async)]
+pub fn bible_location_add(
+    state: State<'_, AppState>,
+    input: bible_documents::AddLocation,
+) -> CommandResult<bible_documents::PassageLocation> {
+    state.db(|conn| bible_documents::add_location(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn bible_location_remove(state: State<'_, AppState>, id: String) -> CommandResult<()> {
+    state.db(|conn| bible_documents::remove_location(conn, &id))
+}
+
+#[tauri::command(async)]
+pub fn bible_locations(
+    state: State<'_, AppState>,
+    translation_id: String,
+) -> CommandResult<Vec<bible_documents::PassageLocation>> {
+    state.db(|conn| bible_documents::locations(conn, &translation_id))
+}
+
+/// What of a document Bible can be found by passage (v0.24).
+#[tauri::command(async)]
+pub fn bible_document_coverage(
+    state: State<'_, AppState>,
+    translation_id: String,
+) -> CommandResult<bible_documents::Coverage> {
+    state.db(|conn| bible_documents::coverage(conn, &translation_id))
 }
