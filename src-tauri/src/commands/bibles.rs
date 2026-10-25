@@ -15,6 +15,7 @@ use crate::db::bibles::{self, SourceRecord};
 use crate::error::{AppError, ErrorPayload, UserMessage};
 use crate::filesystem;
 use crate::scripture::bundled::{self, BUNDLED};
+use crate::scripture::catalogue;
 use crate::scripture::import::{self, ImportOrigin, ImportPreview, SuggestedMetadata, WordReport};
 use crate::scripture::{
     BibleTranslation, BundledBibleInfo, CommitImport, ImportRequest, WordAnnotations, WordChoice,
@@ -45,6 +46,7 @@ pub fn bible_bundled_list(state: State<'_, AppState>) -> CommandResult<Vec<Bundl
                     language: b.language,
                     language_code: b.language_code,
                     license_type: b.license_type,
+                    books: b.books,
                     installed: bibles::find_builtin(conn, &bundled_resource_name(b.resource))?
                         .is_some(),
                 })
@@ -536,4 +538,78 @@ pub fn bible_words_cancel(state: State<'_, AppState>, preview_id: String) -> Com
         *pending = None;
     }
     Ok(())
+}
+
+/// A Bible that can be downloaded (v0.24), with its size and whether a
+/// Bible of the same short name is already added.
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CatalogueInfo {
+    #[serde(flatten)]
+    pub download: catalogue::Download,
+    pub size: u64,
+    pub files: usize,
+    pub installed: bool,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+struct CatalogueProgress {
+    id: String,
+    done: usize,
+    total: usize,
+}
+
+#[tauri::command(async)]
+pub fn bible_catalogue_list(state: State<'_, AppState>) -> CommandResult<Vec<CatalogueInfo>> {
+    state.db(|conn| {
+        let added = crate::db::library_manage::bible_short_names(conn)?;
+        Ok(catalogue::downloads()
+            .into_iter()
+            .map(|d| CatalogueInfo {
+                size: d.size(),
+                files: d.files.len(),
+                installed: added.iter().any(|s| s.eq_ignore_ascii_case(&d.short_name)),
+                download: d,
+            })
+            .collect())
+    })
+}
+
+/// Downloads a listed Bible after the person chose it, keeps it only if
+/// every file is the verified one, and reads it for the usual review screen.
+/// Nothing is added until the review is confirmed.
+#[tauri::command]
+pub async fn bible_catalogue_download(
+    app: tauri::AppHandle,
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<ImportPreview> {
+    use tauri::Emitter;
+    let core = state.core()?;
+    let download = catalogue::by_id(&id)?;
+    let dir = core.dirs.cache().join("downloads").join(&download.id);
+    let paths = catalogue::fetch(&download, &dir, state.transport()?, |done, total| {
+        let _ = app.emit(
+            "bible-catalogue-progress",
+            CatalogueProgress {
+                id: download.id.clone(),
+                done,
+                total,
+            },
+        );
+    })
+    .await?;
+    let staged = import::stage(&paths, ImportOrigin::UserFiles)?;
+    let preview = staged.preview(SuggestedMetadata {
+        name: download.name.clone(),
+        short_name: download.short_name.clone(),
+        language: download.language.clone(),
+        language_code: download.language_code.clone(),
+        publisher: Some(download.publisher.clone()),
+        copyright_notice: Some(download.copyright_notice.clone()),
+        license_type: Some(download.license_type.clone()),
+    });
+    *state.pending_import()? = Some(staged);
+    Ok(preview)
 }

@@ -113,7 +113,8 @@
     "documentEmpty": "In „{{fileName}}“ wurde kein Text gefunden.",
     "unknownBookCode": "Unbekanntes Buch.",
     "documentSequence": "{{book}} {{chapter}}: Vers {{verse}} erscheint innerhalb eines früheren Verses (vielleicht wurden zwei Spalten durcheinander gelesen). Dieses Kapitel wird nicht verwendet.",
-    "additionalBook": "„{{fileName}}“ enthält {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Es wurde ausgelassen; die übrigen Bücher sind nicht betroffen."
+    "additionalBook": "„{{fileName}}“ enthält {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Es wurde ausgelassen; die übrigen Bücher sind nicht betroffen.",
+    "differentEditions": "Diese Dateien stammen nach eigener Angabe aus verschiedenen Bibeln: {{list}}. Verschiedene Bibeln werden nie zusammengeführt: Füge jede einzeln hinzu."
   },
   "library": {
     "notUtf8": "„{{fileName}}“ ist nicht als UTF-8-Text gespeichert und konnte daher nicht gelesen werden.",
@@ -278,5 +279,17 @@
     "textDiffers": "Die aufbewahrten Dateien ergeben nicht mehr genau den Text dieser Bibel, daher können ihre Wörter nicht hinzugefügt werden. Entferne die Bibel und füge sie erneut hinzu, um sie zu erhalten.",
     "noSource": "Die Dateien, aus denen diese Bibel hinzugefügt wurde, werden nicht mehr aufbewahrt, daher können ihre Wörter nicht erneut gelesen werden. Entferne die Bibel und füge sie erneut hinzu, um sie zu erhalten.",
     "nothingToIndex": "Diese Dateien enthalten keine Wortangaben, die indexiert werden können."
+  },
+  "batch": {
+    "noFiles": "Dort wurden keine Dateien gefunden, die die Bibliothek lesen kann.",
+    "tooMany": "Höchstens {{max}} Dateien können auf einmal hinzugefügt werden.",
+    "cannotChoose": "Diese Datei kann nicht hinzugefügt werden.",
+    "closed": "Dieser Import ist beendet. Starte einen neuen, um weitere Dateien hinzuzufügen.",
+    "notRead": "Einige Dateien wurden noch nicht gelesen.",
+    "changed": "„{{fileName}}“ wurde nach der Prüfung geändert. Lies die Datei erneut ein."
+  },
+  "catalogue": {
+    "notVerified": "„{{fileName}}“ stimmte nicht mit der geprüften Kopie überein, daher wurde nichts behalten. Versuche es später erneut.",
+    "unreachable": "Der Download konnte nicht abgeschlossen werden. Prüfe die Internetverbindung und versuche es erneut."
   }
 }

@@ -10,6 +10,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { formatDate, formatNumber } from "@/i18n/format";
+import { BatchImport } from "@/features/library/BatchImport";
 import { useLibraryNav } from "@/features/library/LibraryNav";
 import { formatLabel, sourceTypeLabel } from "@/features/library/labels";
 import {
@@ -55,6 +56,13 @@ export function SourcesSettings() {
   const { t } = useTranslation();
   const api = useApi();
   const { addSource, openSource } = useLibraryNav();
+  // Adding many at once (v0.24), and imports left unfinished.
+  const [batch, setBatch] = useState<{ resume: string | undefined } | null>(null);
+  const [jobsVersion, setJobsVersion] = useState(0);
+  const openJobs = useLoad(
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- jobsVersion asks again after an import closes.
+    useCallback(() => api.libraryBatchJobs(), [api, jobsVersion]),
+  );
   const id = useId();
   const [text, setText] = useState("");
   const [typed, setTyped] = useState("");
@@ -179,11 +187,43 @@ export function SourcesSettings() {
         <p className="m-0 text-text-muted">
           {page ? t("library.manage.counts", { active: formatNumber(page.active), archived: formatNumber(page.archived), trashed: formatNumber(page.trashed) }) : " "}
         </p>
-        <Button onClick={addSource}>
-          <Plus className="size-4" aria-hidden="true" />
-          {t("library.manage.add")}
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={addSource}>
+            <Plus className="size-4" aria-hidden="true" />
+            {t("library.manage.add")}
+          </Button>
+          <Button onClick={() => setBatch({ resume: undefined })}>{t("library.batch.open")}</Button>
+        </div>
       </div>
+      {openJobs.data?.map((job) => (
+        <Notice key={job.id}>
+          <span className="flex flex-wrap items-center gap-2">
+            {t("library.batch.unfinished", { added: formatNumber(job.counts.imported), total: formatNumber(job.counts.total) })}
+            <Button variant="quiet" onClick={() => setBatch({ resume: job.id })}>
+              {t("library.batch.resume")}
+            </Button>
+            <Button
+              variant="quiet"
+              onClick={async () => {
+                await api.libraryBatchDiscard(job.id);
+                setJobsVersion((v) => v + 1);
+              }}
+            >
+              {t("library.batch.discard")}
+            </Button>
+          </span>
+        </Notice>
+      ))}
+      {batch && (
+        <BatchImport
+          resume={batch.resume}
+          onClose={(added) => {
+            setBatch(null);
+            setJobsVersion((v) => v + 1);
+            if (added > 0) void refresh();
+          }}
+        />
+      )}
 
       <div className="flex flex-col gap-3">
         <label htmlFor={`${id}-search`} className="sr-only">

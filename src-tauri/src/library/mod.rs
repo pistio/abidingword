@@ -4,6 +4,7 @@
 
 pub mod adapters;
 pub mod annotations;
+pub mod batch;
 pub mod contents;
 pub mod files;
 pub mod find;

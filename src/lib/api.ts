@@ -10,7 +10,7 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { safeExternalUrl } from "./externalLink";
 import type { InquiryInput, InquiryPreview, InquiryReply, KeepInsight } from "@/types/inquiry";
-import type { ItemState, ManagePage, ManageQuery, SourceCollection, SourceTag, UpdateSource } from "@/types/library";
+import type { ImportItemEdit, ImportJob, ImportJobItem, ItemState, ManagePage, ManageQuery, SourceCollection, SourceTag, UpdateSource } from "@/types/library";
 import type { BackupPreview, BackupReport, ProjectExportReport, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import type {
   AppInfo,
@@ -41,6 +41,8 @@ import type {
   BibleTranslation,
   BookInfo,
   BundledBibleInfo,
+  CatalogueEntry,
+  CatalogueProgress,
   ChapterText,
   CommitImport,
   ConcordanceQuery,
@@ -221,6 +223,27 @@ export interface Api {
   libraryImportPreview(path: string): Promise<SourceImportPreview>;
   libraryImportCommit(input: CommitSourceImport): Promise<Source>;
   libraryImportCancel(previewId: string): Promise<void>;
+  /** Adding many sources at once (v0.24). The system's dialog for several files; null when cancelled. */
+  chooseSourceFiles(): Promise<string[] | null>;
+  /** The system's dialog for a folder; null when cancelled. */
+  chooseSourceFolder(): Promise<string | null>;
+  /** Lists the readable files among the chosen files and folders, as a new import job. */
+  libraryBatchScan(paths: string[], recursive: boolean): Promise<ImportJob>;
+  /** Reads and checks the next waiting file of a job. */
+  libraryBatchStep(jobId: string): Promise<ImportJob>;
+  libraryBatchGet(jobId: string): Promise<ImportJob>;
+  /** Jobs still open (in review, adding, or interrupted). */
+  libraryBatchJobs(): Promise<ImportJob[]>;
+  libraryBatchEdit(jobId: string, edit: ImportItemEdit): Promise<ImportJobItem>;
+  /** The collection (existing or new) and tags every added source gets. */
+  libraryBatchShared(jobId: string, shared: { collectionId: string | null; newCollection: string | null; tags: string[] }): Promise<ImportJob>;
+  libraryBatchRetry(jobId: string, itemIds: string[]): Promise<ImportJob>;
+  /** Adds the next chosen file; the job is finished when none is left. */
+  libraryBatchImportStep(jobId: string): Promise<ImportJob>;
+  /** Stops the job; what was added stays. */
+  libraryBatchCancel(jobId: string): Promise<ImportJob>;
+  /** Forgets the job (its added sources stay). */
+  libraryBatchDiscard(jobId: string): Promise<void>;
   libraryRemoveSource(id: string): Promise<void>;
   /** Looking after the library (v0.24): one page of the Sources list in Settings. */
   libraryManageList(query: ManageQuery): Promise<ManagePage>;
@@ -449,6 +472,11 @@ export interface Api {
   bibleBundledList(): Promise<BundledBibleInfo[]>;
   /** Opens the system file dialog; null when the user cancels. */
   chooseBibleFiles(): Promise<string[] | null>;
+  /** Available Bibles to download (v0.24): editions checked file by file against a verified copy. */
+  bibleCatalogueList(): Promise<CatalogueEntry[]>;
+  /** Downloads and verifies one, then reads it for the review screen; nothing is added yet. */
+  bibleCatalogueDownload(id: string): Promise<ImportPreview>;
+  onCatalogueProgress(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
   bibleImportPreview(input: ImportRequest): Promise<ImportPreview>;
   bibleImportCommit(input: CommitImport): Promise<BibleTranslation>;
   bibleImportCancel(previewId: string): Promise<void>;
@@ -621,6 +649,30 @@ export const tauriApi: Api = {
   libraryImportPreview: (path) => call("library_import_preview", { path }),
   libraryImportCommit: (input) => call("library_import_commit", { input }),
   libraryImportCancel: (previewId) => call("library_import_cancel", { previewId }),
+  chooseSourceFiles: async () => {
+    const chosen = await open({
+      multiple: true,
+      directory: false,
+      title: "Choose files to add to your library",
+      filters: [{ name: "Books and notes (PDF, EPUB, Word, Markdown, text)", extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] }],
+    });
+    if (chosen === null) return null;
+    return Array.isArray(chosen) ? chosen : [chosen];
+  },
+  chooseSourceFolder: async () => {
+    const chosen = await open({ multiple: false, directory: true, title: "Choose a folder to add to your library" });
+    return typeof chosen === "string" ? chosen : null;
+  },
+  libraryBatchScan: (paths, recursive) => call("library_batch_scan", { paths, recursive }),
+  libraryBatchStep: (jobId) => call("library_batch_step", { jobId }),
+  libraryBatchGet: (jobId) => call("library_batch_get", { jobId }),
+  libraryBatchJobs: () => call("library_batch_jobs"),
+  libraryBatchEdit: (jobId, edit) => call("library_batch_edit", { jobId, edit }),
+  libraryBatchShared: (jobId, shared) => call("library_batch_shared", { jobId, ...shared }),
+  libraryBatchRetry: (jobId, itemIds) => call("library_batch_retry", { jobId, itemIds }),
+  libraryBatchImportStep: (jobId) => call("library_batch_import_step", { jobId }),
+  libraryBatchCancel: (jobId) => call("library_batch_cancel", { jobId }),
+  libraryBatchDiscard: (jobId) => call("library_batch_discard", { jobId }),
   libraryRemoveSource: (id) => call("library_remove_source", { id }),
   libraryManageList: (query) => call("library_manage_list", { query }),
   librarySetState: (ids, to) => call("library_set_state", { ids, to }),
@@ -779,6 +831,9 @@ export const tauriApi: Api = {
 
   bibleList: () => call("bible_list"),
   bibleBundledList: () => call("bible_bundled_list"),
+  bibleCatalogueList: () => call("bible_catalogue_list"),
+  bibleCatalogueDownload: (id) => call("bible_catalogue_download", { id }),
+  onCatalogueProgress: (handler) => listen<CatalogueProgress>("bible-catalogue-progress", (event) => handler(event.payload)),
   chooseBibleFiles: async () => {
     const chosen = await open({
       multiple: true,

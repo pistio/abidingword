@@ -507,3 +507,63 @@ export interface UpdateSource {
   licence: string | null;
   notes: string | null;
 }
+
+/** Adding many sources at once (v0.24): one file of an import job. */
+export interface ImportJobItem {
+  id: string;
+  position: number;
+  path: string;
+  fileName: string;
+  size: number;
+  /** waiting (not read yet), ready, duplicate, problem, imported, failed. */
+  status: "waiting" | "ready" | "duplicate" | "problem" | "imported" | "failed";
+  /** To be added (the person's choice; duplicates start unchosen). */
+  chosen: boolean;
+  format: string | null;
+  title: string | null;
+  author: string | null;
+  language: string | null;
+  sourceType: SourceType | null;
+  /** Why the category was proposed: title, fileName, folder, fileType or person. */
+  typeEvidence: string | null;
+  pageCount: number | null;
+  duplicateOf: string | null;
+  duplicateTitle: string | null;
+  problemCode: string | null;
+  problem: string | null;
+  problemParams: Record<string, string> | null;
+  sourceId: string | null;
+}
+
+export interface ImportJobCounts {
+  total: number;
+  waiting: number;
+  ready: number;
+  duplicate: number;
+  problem: number;
+  imported: number;
+  failed: number;
+  toAdd: number;
+}
+
+export interface ImportJob {
+  id: string;
+  /** review, importing, interrupted, finished, cancelled. */
+  state: "review" | "importing" | "interrupted" | "finished" | "cancelled";
+  collectionId: string | null;
+  tags: string[];
+  unsupportedCount: number;
+  overLimitCount: number;
+  createdAt: string;
+  counts: ImportJobCounts;
+  items: ImportJobItem[];
+}
+
+export interface ImportItemEdit {
+  id: string;
+  title?: string;
+  author?: string;
+  language?: string;
+  sourceType?: SourceType;
+  chosen?: boolean;
+}

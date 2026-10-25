@@ -123,7 +123,8 @@
     "documentEmpty": "Aucun texte n’a été trouvé dans « {{fileName}} ».",
     "unknownBookCode": "Livre inconnu.",
     "documentSequence": "{{book}} {{chapter}} : le verset {{verse}} apparaît à l’intérieur d’un verset précédent (deux colonnes ont peut-être été lues l’une dans l’autre). Ce chapitre n’est pas utilisé.",
-    "additionalBook": "« {{fileName}} » contient {{book}}, qu’Abiding Word ne peut pas encore afficher. Ce livre a été laissé de côté ; les autres livres ne sont pas concernés."
+    "additionalBook": "« {{fileName}} » contient {{book}}, qu’Abiding Word ne peut pas encore afficher. Ce livre a été laissé de côté ; les autres livres ne sont pas concernés.",
+    "differentEditions": "Ces fichiers indiquent venir de Bibles différentes : {{list}}. Des Bibles différentes ne sont jamais combinées : ajoutez chacune séparément."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",
@@ -288,5 +289,17 @@
     "textDiffers": "Les fichiers conservés ne donnent plus exactement le texte de cette Bible : ses mots ne peuvent donc pas être ajoutés. Retirez la Bible et ajoutez-la de nouveau pour les obtenir.",
     "noSource": "Les fichiers à partir desquels cette Bible a été ajoutée ne sont plus conservés : ses mots ne peuvent donc pas être relus. Retirez la Bible et ajoutez-la de nouveau pour les obtenir.",
     "nothingToIndex": "Ces fichiers ne contiennent aucune information sur les mots qui puisse être indexée."
+  },
+  "batch": {
+    "noFiles": "Aucun fichier lisible par la bibliothèque n’a été trouvé à cet endroit.",
+    "tooMany": "Au plus {{max}} fichiers peuvent être ajoutés à la fois.",
+    "cannotChoose": "Ce fichier ne peut pas être ajouté.",
+    "closed": "Cette importation est terminée. Commencez-en une nouvelle pour ajouter d’autres fichiers.",
+    "notRead": "Certains fichiers n’ont pas encore été lus.",
+    "changed": "« {{fileName}} » a changé après sa vérification. Relisez-le."
+  },
+  "catalogue": {
+    "notVerified": "« {{fileName}} » ne correspondait pas à la copie vérifiée ; rien n’a été conservé. Réessayez plus tard.",
+    "unreachable": "Le téléchargement n’a pas pu aboutir. Vérifiez la connexion internet et réessayez."
   }
 }

@@ -76,6 +76,25 @@ These Bibles come with Abiding Word. All of them are free for everyone to use:
 | **Louis Segond 1910** | Français | Public domain |
 | **Reina-Valera 1909** | Español | Public domain |
 | **Bíblia Livre** | Português | Creative Commons (free, with credit to its translators) |
+| **SBL Greek New Testament** (SBLGNT) | Ελληνικά (Koine Greek) | Creative Commons (free, with credit to the SBL and Logos) |
+| **Robinson–Pierpont 2018** (RP2018) | Ελληνικά (Koine Greek) | Public domain |
+| **Textus Receptus** (Boyd 2022) | Ελληνικά (Koine Greek) | Public domain |
+| **1904 Patriarchal Greek New Testament** | Ελληνικά (Koine Greek) | Public domain |
+
+The four Greek editions hold the New Testament only (27 of the 66 books).
+They carry a lexical number for every word, and Robinson–Pierpont also its
+grammar; its Greek is printed without accents, as in its source.
+
+### Available to download
+
+Under **Available to download** are two study editions too large to include:
+the **Open Scriptures Hebrew Bible** (Hebrew Old Testament with a lexical
+number and grammar for every word, 28.6 MB) and **MorphGNT** (Greek New
+Testament with every word's dictionary form and grammar, 8.9 MB).
+**Download…** first tells you how many files and how large; Abiding Word then
+checks every file against its verified copy and keeps nothing that differs.
+You review the Bible as usual before it is added, and afterwards it works
+without an internet connection.
 
 You can add as many as you like and switch between them at any time.
 

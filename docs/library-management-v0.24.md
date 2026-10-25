@@ -83,7 +83,60 @@ After Archive or Move to Trash, a notice offers **Undo**.
   to Trash, Restore, Delete permanently, Add to a collection, Tag, Untag.
   `MAX_BATCH` = 5 000 per action.
 
-## 5. Migration 0020
+## 5. Adding many sources at once (Part C)
+
+**Settings → Sources → Add many…** adds several files, or a folder:
+
+1. **Scan** (`library::batch::scan`): lists PDF, EPUB, Word, Markdown and
+   text files, with or without subfolders. It reads no file's contents,
+   follows no symbolic links, skips hidden and system folders, goes at most
+   8 folder levels down and lists at most 2 000 files; files of other kinds
+   and files beyond the limit are **counted and shown**, not silently dropped.
+2. **Read and check, one file per step** (`library_batch_step`): the same
+   extraction as a single import, then only what the review needs is kept
+   (title, author, language, page count, content hash); the text is let go.
+   So memory stays bounded for thousands of files, the interface shows
+   progress, and **Stop** works between any two files.
+3. **One review screen**: every file with its status — *Ready*, *Same file*
+   (already in the library, or the same content earlier in this list; found
+   by **content hash**; not chosen unless ticked), *Cannot be added* (with the
+   reason, e.g. scanned PDF) — and per-file corrections of title, author and
+   category. A **shared collection** (existing or new) and **tags** apply to
+   every source added.
+4. **Categories only from evidence**: a word in the title, the file name or
+   the folder's name that says what it is (*commentary, sermon, lecture,
+   article, notes* in the six languages, whole words only). Otherwise the
+   file type's usual category is proposed and labelled *The usual category
+   for this kind of file: check it*. A correction is labelled *Chosen by you*.
+5. **Add, one file per step** (`library_batch_import_step`): exactly the
+   single-file path (`commands::library::add_staged`: copy, then one database
+   transaction, nothing kept on failure). The file is read again and must
+   still have the reviewed hash; a file **changed since its check** is not
+   added (*changed after it was checked*) and can be read again with **Try
+   again**. **Stop** ends the job: files already added stay.
+
+**Jobs persist** (migration 0022, `import_jobs`, `import_job_items`): a job
+in progress when the app stops is marked *interrupted* at the next start and
+shown in Settings → Sources (*Continue* / *Discard*). A file whose source was
+saved just before the crash, before its item was marked, is recognised (a
+source with the same content hash created since the job began and not linked
+to any item) and linked rather than added twice. Discarding a job forgets the
+list, never the sources added.
+
+**Bibles of several files.** A USFM Bible's files are one edition when
+chosen together. What a file's `\id` line says is used as evidence: after
+removing the book's own names (`\h`, `\toc`, `\mt` lines and the English
+name), its code, file names and numbers, a label that recurs (in at least two
+files and a quarter of the files that have one) is taken as a Bible's name.
+Two different recurring names refuse the import (*These files say they come
+from different Bibles … add each one on its own*): different translations are
+never combined. Some editions put a different title per book on the `\id`
+line; such labels do not recur and are not evidence. Duplicate books (two
+files for John) and conflicting chapters were already refused; missing
+chapters are reported per book. All bundled Bibles import unchanged with this
+check (`tests/scripture.rs::every_bundled_bible_is_recorded_and_imports_cleanly`).
+
+## 6. Migrations 0020 and 0022
 
 Additive: `sources.state` (`CHECK` active/archived/trashed, default active)
 and `state_changed_at`; the same two columns on `bible_translations`;
@@ -92,8 +145,9 @@ and `state_changed_at`; the same two columns on `bible_translations`;
 `sources_state`, `sources_content_hash`. Every existing row stays *in use*.
 An older version of the app opening this database ignores the new columns and
 tables (rollback is covered by `tests/windows_rollback.rs`).
+Migration 0022 adds the two import-job tables (additive).
 
-## 6. Tests
+## 7. Tests
 
 - Rust `tests/library_manage.rs`: archive/Trash/restore keeps everything;
   only trashed sources are removed and a refused batch removes nothing;
@@ -105,3 +159,10 @@ tables (rollback is covered by `tests/windows_rollback.rs`).
   archive and Undo, Trash and typed confirmation, keyboard safety, details,
   collections), plus Bibles, library and passage-sources tests updated for
   Trash.
+- Batch import: Rust `tests/library_batch.rs` (folder read one file per
+  step, evidence-based categories, duplicates by content, problems, shared
+  collection and tags, cancel, changed file and retry, crash recovery without
+  adding twice, nothing readable), `library::batch` unit tests (scan scope,
+  evidence words); `tests/scripture.rs` (different editions refused, one
+  edition with and without labels accepted); interface
+  `tests/ui/batch-import.test.tsx`.

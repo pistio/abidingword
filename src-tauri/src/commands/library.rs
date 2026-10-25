@@ -116,6 +116,19 @@ pub fn library_import_commit(
                 "This import has expired. Please choose the file again.",
             ))
         })?;
+    let source = add_staged(core, staged, &input)?;
+    *pending = None;
+    Ok(source)
+}
+
+/// Copies a read file into the library and saves its source in one step (one
+/// file at a time, also for batch imports). On any failure nothing is kept,
+/// not even the copied file.
+pub fn add_staged(
+    core: &crate::state::Core,
+    staged: &import::StagedSource,
+    input: &CommitSourceImport,
+) -> Result<Source, ErrorPayload> {
     if let Some(problem) = staged.problem() {
         return Err(AppError::Import(problem).into());
     }
@@ -137,12 +150,9 @@ pub fn library_import_commit(
     }
     match core
         .db
-        .with_conn(|conn| library::commit_import(conn, &source_id, staged, &input, &relative))
+        .with_conn(|conn| library::commit_import(conn, &source_id, staged, input, &relative))
     {
-        Ok(source) => {
-            *pending = None;
-            Ok(source)
-        }
+        Ok(source) => Ok(source),
         Err(error) => {
             filesystem::remove_managed(&folder);
             Err(ErrorPayload::from(error))

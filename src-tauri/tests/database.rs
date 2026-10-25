@@ -40,6 +40,8 @@ const EXPECTED_TABLES: &[&str] = &[
     "finding_sources",
     "finding_tags",
     "findings",
+    "import_job_items",
+    "import_jobs",
     "library_search",
     "library_search_config",
     "library_search_data",

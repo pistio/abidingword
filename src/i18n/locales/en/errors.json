@@ -113,7 +113,8 @@
     "documentEmpty": "No text was found in “{{fileName}}”.",
     "unknownBookCode": "Unknown book.",
     "documentSequence": "{{book}} {{chapter}}: verse {{verse}} appears inside an earlier verse (perhaps two columns were read across each other). This chapter is not used.",
-    "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected."
+    "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected.",
+    "differentEditions": "These files say they come from different Bibles: {{list}}. Different Bibles are never combined: add each one on its own."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",
@@ -278,5 +279,17 @@
     "textDiffers": "The kept files no longer give exactly this Bible’s text, so its words cannot be added. Remove the Bible and add it again to get them.",
     "noSource": "The files this Bible was added from are no longer kept, so its words cannot be read again. Remove the Bible and add it again to get them.",
     "nothingToIndex": "These files have no word information that can be indexed."
+  },
+  "batch": {
+    "noFiles": "No files the library can read were found there.",
+    "tooMany": "At most {{max}} files can be added at once.",
+    "cannotChoose": "This file cannot be added.",
+    "closed": "This import has ended. Start a new one to add more files.",
+    "notRead": "Some files have not been read yet.",
+    "changed": "“{{fileName}}” changed after it was checked. Read it again."
+  },
+  "catalogue": {
+    "notVerified": "“{{fileName}}” did not match the verified copy, so nothing was kept. Try again later.",
+    "unreachable": "The download could not be completed. Check the internet connection and try again."
   }
 }

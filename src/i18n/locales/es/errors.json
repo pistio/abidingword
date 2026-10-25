@@ -123,7 +123,8 @@
     "documentEmpty": "No se encontró texto en «{{fileName}}».",
     "unknownBookCode": "Libro desconocido.",
     "documentSequence": "{{book}} {{chapter}}: el versículo {{verse}} aparece dentro de un versículo anterior (quizá se leyeron dos columnas mezcladas). Este capítulo no se usa.",
-    "additionalBook": "«{{fileName}}» contiene {{book}}, que Abiding Word todavía no puede mostrar. Se dejó fuera; los demás libros no se ven afectados."
+    "additionalBook": "«{{fileName}}» contiene {{book}}, que Abiding Word todavía no puede mostrar. Se dejó fuera; los demás libros no se ven afectados.",
+    "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: agrega cada una por separado."
   },
   "library": {
     "notUtf8": "«{{fileName}}» no está guardado como texto UTF-8, así que no se pudo leer.",
@@ -288,5 +289,17 @@
     "textDiffers": "Los archivos guardados ya no dan exactamente el texto de esta Biblia, así que no se pueden añadir sus palabras. Quita la Biblia y vuelve a añadirla para obtenerlas.",
     "noSource": "Los archivos desde los que se añadió esta Biblia ya no se guardan, así que sus palabras no se pueden volver a leer. Quita la Biblia y vuelve a añadirla para obtenerlas.",
     "nothingToIndex": "Estos archivos no tienen información de palabras que se pueda indexar."
+  },
+  "batch": {
+    "noFiles": "No se encontraron allí archivos que la biblioteca pueda leer.",
+    "tooMany": "Se pueden agregar como máximo {{max}} archivos a la vez.",
+    "cannotChoose": "Este archivo no se puede agregar.",
+    "closed": "Esta importación ha terminado. Inicia una nueva para agregar más archivos.",
+    "notRead": "Algunos archivos aún no se han leído.",
+    "changed": "«{{fileName}}» cambió después de revisarse. Vuelve a leerlo."
+  },
+  "catalogue": {
+    "notVerified": "«{{fileName}}» no coincidía con la copia verificada, así que no se guardó nada. Inténtalo más tarde.",
+    "unreachable": "No se pudo completar la descarga. Comprueba la conexión a internet e inténtalo de nuevo."
   }
 }

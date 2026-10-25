@@ -77,6 +77,12 @@ impl AppState {
             let core = Core { dirs, db };
             // What has been in Trash longer than the retention period (v0.24).
             crate::commands::library_manage::empty_expired_trash(&core);
+            // A batch import stopped by a crash or a closed app (v0.24).
+            match core.db.with_conn(crate::db::import_jobs::mark_interrupted) {
+                Ok(0) => {}
+                Ok(n) => log::info!("{n} import job(s) were interrupted and can be continued"),
+                Err(error) => log::warn!("import jobs could not be checked: {error}"),
+            }
             Ok(core)
         });
         match &core {

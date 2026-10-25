@@ -12,6 +12,7 @@ pub mod bibles;
 pub mod blocks;
 pub mod findings;
 pub mod fts;
+pub mod import_jobs;
 pub mod integrity;
 pub mod library;
 pub mod library_manage;

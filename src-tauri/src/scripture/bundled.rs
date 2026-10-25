@@ -16,6 +16,8 @@ pub struct BundledBible {
     pub publisher: &'static str,
     pub license_type: &'static str,
     pub copyright_notice: &'static str,
+    /// How many of the 66 books it holds (27: a New Testament only).
+    pub books: u8,
 }
 
 /// Listed in the order they are offered (the interface language's Bibles come
@@ -31,6 +33,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "Public Domain",
         copyright_notice: "The Berean Standard Bible is in the Public Domain. Imported from eBible.org's USFM edition (engbsb); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "engwebp",
@@ -45,6 +48,7 @@ pub static BUNDLED: &[BundledBible] = &[
         \u{201c}World English Bible\u{201d} is a trademark of eBible.org. \
         Imported from eBible.org's USFM edition (engwebp); footnotes, \
         cross-references and Strong's numbers are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "deu1912",
@@ -56,6 +60,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "Public Domain",
         copyright_notice: "Die Lutherbibel 1912 ist gemeinfrei (Public Domain). Imported from eBible.org's USFM edition (deu1912); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "deu1951",
@@ -67,6 +72,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "CC BY 4.0",
         copyright_notice: "Die Schlachter-Bibel 1951, copyright © 1951 Genfer Bibelgesellschaft. Lizenz: Creative Commons Namensnennung 4.0 (CC BY 4.0). Imported from eBible.org's USFM edition (deu1951); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "deuelo",
@@ -78,6 +84,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "Public Domain",
         copyright_notice: "Die unrevidierte Elberfelder Bibel 1905 ist gemeinfrei (Public Domain). Imported from eBible.org's USFM edition (deuelo); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "kor1961",
@@ -89,6 +96,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "대한성서공회 (Korean Bible Society)",
         license_type: "Public Domain",
         copyright_notice: "성경전서 개역한글판 © 대한성서공회 1961. 저작재산권 보호기간이 지나 자유롭게 사용할 수 있습니다 (대한성서공회 저작권 FAQ); 본문은 변경 없이 수록했습니다. Text from the Korean Bible Society's online edition, wording unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "fraLSG",
@@ -100,6 +108,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "Public Domain",
         copyright_notice: "Cette Bible est dans le domaine public. This Bible is in the Public Domain. Imported from eBible.org's USFM edition (fraLSG); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "spaRV1909",
@@ -111,6 +120,7 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "Public Domain",
         copyright_notice: "Reina Valera 1909: dominio público (Public Domain). Imported from eBible.org's USFM edition (spaRV1909); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
     },
     BundledBible {
         id: "porbr2018",
@@ -122,6 +132,55 @@ pub static BUNDLED: &[BundledBible] = &[
         publisher: "eBible.org",
         license_type: "CC BY 4.0",
         copyright_notice: "Bíblia Livre (BLIVRE), Copyright © Diego Santos, Mario Sérgio, e Marco Teles, http://sites.google.com/site/biblialivre/ - fevereiro de 2018. Licença Creative Commons Atribuição 4.0 Brasil (http://creativecommons.org/licenses/by/4.0/br/). Imported from eBible.org's USFM edition (porbr2018); footnotes and cross-references are omitted, the wording is unchanged.",
+        books: 66,
+    },
+    BundledBible {
+        id: "grcsbl",
+        resource: "grcsbl_usfm.zip",
+        name: "SBL Greek New Testament",
+        short_name: "SBLGNT",
+        language: "Ελληνικά (Koine Greek)",
+        language_code: "grc",
+        publisher: "Society of Biblical Literature and Logos Bible Software (via eBible.org)",
+        license_type: "CC BY 4.0",
+        copyright_notice: "The Greek New Testament: SBL Edition, copyright © 2010 Society of Biblical Literature and Logos Bible Software. Licensed under Creative Commons Attribution 4.0 (CC BY 4.0). Source: eBible.org's USFM edition (grcsbl), updated to the source dated 2023-07-10 from github.com/LogosBible/SBLGNT. New Testament only; footnotes are omitted, the wording is unchanged.",
+        books: 27,
+    },
+    BundledBible {
+        id: "grcmt",
+        resource: "grcmt_usfm.zip",
+        name: "Robinson–Pierpont Byzantine Textform 2018",
+        short_name: "RP2018",
+        language: "Ελληνικά (Koine Greek)",
+        language_code: "grc",
+        publisher: "Maurice A. Robinson and William G. Pierpont (via eBible.org)",
+        license_type: "Public Domain",
+        copyright_notice: "The Greek New Testament according to the Byzantine Textform, Robinson–Pierpont 2018 edition: Public Domain. Imported from eBible.org's USFM edition (grcmt). The text is unaccented and in lower case, as in Robinson's parsed source. New Testament only.",
+        books: 27,
+    },
+    BundledBible {
+        id: "grctr",
+        resource: "grctr_usfm.zip",
+        name: "Textus Receptus (Boyd 2022)",
+        short_name: "TR",
+        language: "Ελληνικά (Koine Greek)",
+        language_code: "grc",
+        publisher: "R. Adam Boyd (via eBible.org)",
+        license_type: "Public Domain",
+        copyright_notice: "The Greek Textus Receptus New Testament is in the Public Domain due to its age; manuscript comparison notes dedicated to the Public Domain by Adam Boyd. Imported from eBible.org's USFM edition (grctr); footnotes are omitted, the wording is unchanged. New Testament only.",
+        books: 27,
+    },
+    BundledBible {
+        id: "grcbyz",
+        resource: "grcbyz_usfm.zip",
+        name: "1904 Patriarchal Greek New Testament",
+        short_name: "PT1904",
+        language: "Ελληνικά (Koine Greek)",
+        language_code: "grc",
+        publisher: "eBible.org",
+        license_type: "Public Domain",
+        copyright_notice: "The 1904 Patriarchal Greek New Testament (with 20 corrections from later editions) is in the Public Domain. Imported from eBible.org's USFM edition (grcbyz); the wording is unchanged. New Testament only.",
+        books: 27,
     },
 ];
 

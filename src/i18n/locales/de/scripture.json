@@ -135,7 +135,7 @@
     },
     "guide": {
       "title": "Hebräische und griechische Ausgaben für die Arbeit am Grundtext",
-      "intro": "Manche Ausgaben geben jedem Wort seine Grundform, seine Grammatik oder eine lexikalische Nummer mit. Diese freien Ausgaben kannst du bei ihren Herausgebern herunterladen und dann hier auswählen. Abiding Word lädt selbst nichts herunter und enthält keine davon.",
+      "intro": "Manche Ausgaben geben jedem Wort seine Wörterbuchform, seine Grammatik oder eine lexikalische Nummer. Einige sind oben enthalten oder als geprüfter Download verfügbar; andere kannst du bei ihren Herausgebern herunterladen und dann hier wählen.",
       "open": "{{host}} öffnen",
       "note": "Prüfe auf der Seite jeder Ausgabe ihre Lizenz, bevor du etwas teilst, das daraus entstanden ist. Wenn eine Ausgabe die Verszählung der Hebräischen Bibel verwendet, wähle ihre Verszuordnung zusammen mit ihren Dateien aus (bei der Open Scriptures Hebrew Bible: wlc/VerseMap.xml).",
       "oshb": {
@@ -214,7 +214,30 @@
       "licenceHint": "So, wie das Dokument es angibt, für deine eigenen Unterlagen.",
       "addDocument": "Als Dokument zum Lesen hinzufügen"
     },
-    "doneDocument": "<strong>{{name}}</strong> wurde als Dokument zum Lesen hinzugefügt."
+    "doneDocument": "<strong>{{name}}</strong> wurde als Dokument zum Lesen hinzugefügt.",
+    "available": {
+      "title": "Zum Herunterladen verfügbar",
+      "intro": "Freie Ausgaben in den Ursprachen, mit Angaben zu jedem Wort. Abiding Word lädt eine Ausgabe nur auf deinen Wunsch herunter, prüft jede Datei gegen ihre geprüfte Kopie und behält nichts, was abweicht.",
+      "size": "{{size}} MB",
+      "contains": {
+        "lemma": "Wörterbuchformen",
+        "strong": "lexikalische Nummern",
+        "morph": "Grammatik"
+      },
+      "partial_one": "{{count}} der 66 Bücher",
+      "partial_other": "{{count}} der 66 Bücher",
+      "added": "Hinzugefügt",
+      "download": "{{name}} herunterladen…",
+      "confirmTitle": "{{name}} herunterladen?",
+      "confirm": "Herunterladen ({{size}})",
+      "confirmBody": "{{files}} Dateien ({{size}}) werden von GitHub heruntergeladen und jede wird gegen ihre geprüfte Kopie geprüft. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt.",
+      "technical": "Lizenz und Version",
+      "offline": "Einmal hinzugefügt, funktioniert sie ohne Internetverbindung.",
+      "progress": "Datei {{done}} von {{total}} wird heruntergeladen und geprüft…",
+      "starting": "Wird heruntergeladen…"
+    },
+    "partialBooks_one": "{{count}} der 66 Bücher",
+    "partialBooks_other": "{{count}} der 66 Bücher"
   },
   "bibles": {
     "empty": "Es wurde noch keine Bibel hinzugefügt.",

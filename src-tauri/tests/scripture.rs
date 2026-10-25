@@ -133,6 +133,63 @@ fn the_database_canon_matches_the_registry() {
 // --- import ----------------------------------------------------------------
 
 #[test]
+fn files_naming_different_bibles_are_never_combined() {
+    // v0.24: two editions chosen together are refused, each named; files
+    // that name no Bible, or the same one, are one Bible as chosen.
+    let temp = tempfile::tempdir().unwrap();
+    let write = |name: &str, body: &str| {
+        let path = temp.path().join(name);
+        std::fs::write(&path, body).unwrap();
+        path
+    };
+    let web = write(
+        "43-JHN.usfm",
+        "\\id JHN 43-JHN-web.sfm World English Bible\n\\h John\n\\c 1\n\\v 1 Invented one.\n",
+    );
+    let web2 = write(
+        "45-ROM.usfm",
+        "\\id ROM - World English Bible\n\\h Romans\n\\c 1\n\\v 1 Invented two.\n",
+    );
+    let kjv = write(
+        "45-ROM-kjv.usfm",
+        "\\id ROM King James Version\n\\h Romans\n\\c 1\n\\v 1 Invented three.\n",
+    );
+    let plain = write("66-REV.usfm", "\\id REV\n\\c 1\n\\v 1 Invented four.\n");
+    let kjv2 = write(
+        "46-1CO-kjv.usfm",
+        "\\id 1CO King James Version\n\\h 1 Corinthians\n\\c 1\n\\v 1 Invented five.\n",
+    );
+    let web3 = write(
+        "46-1CO.usfm",
+        "\\id 1CO World English Bible\n\\c 1\n\\v 1 Invented six.\n",
+    );
+
+    let same = import::stage(&[web.clone(), web2.clone(), plain], ImportOrigin::UserFiles).unwrap();
+    let preview = same.preview(Default::default());
+    assert!(preview.can_import, "{:?}", preview.issues);
+
+    // One file of another Bible is no evidence on its own; two are.
+    let mixed = import::stage(&[web, web3, kjv, kjv2], ImportOrigin::UserFiles).unwrap();
+    let preview = mixed.preview(Default::default());
+    assert!(!preview.can_import);
+    let issue = preview
+        .issues
+        .iter()
+        .find(|i| i.code.as_deref() == Some("bibleImport.differentEditions"))
+        .expect("refused");
+    assert!(
+        issue.params["list"].contains("world english bible"),
+        "{}",
+        issue.params["list"]
+    );
+    assert!(
+        issue.params["list"].contains("king james version"),
+        "{}",
+        issue.params["list"]
+    );
+}
+
+#[test]
 fn deuterocanonical_books_are_named_and_left_out_without_renumbering_anything() {
     // v0.24: a Bible's Tobit and Greek Esther are named, not "unknown"; the
     // 66 books import as before, with their own references.
@@ -748,10 +805,16 @@ fn every_bundled_bible_is_recorded_and_imports_cleanly() {
             .filter(|i| i.severity == Severity::Error)
             .collect();
         assert!(errors.is_empty(), "{}: {errors:#?}", bible.id);
-        assert_eq!(preview.book_count, 66, "{}", bible.id);
-        assert_eq!(preview.chapter_count, 1189, "{}", bible.id);
+        assert_eq!(preview.book_count, usize::from(bible.books), "{}", bible.id);
+        let (chapters, verses) = if bible.books == 27 {
+            // The New Testament (v0.24: Greek editions).
+            (260, 7_900..7_970)
+        } else {
+            (1189, 30_900..31_250)
+        };
+        assert_eq!(preview.chapter_count, chapters, "{}", bible.id);
         assert!(
-            (30_900..31_250).contains(&preview.verse_count),
+            verses.contains(&preview.verse_count),
             "{}: {}",
             bible.id,
             preview.verse_count

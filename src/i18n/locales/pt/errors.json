@@ -123,7 +123,8 @@
     "documentEmpty": "Nenhum texto foi encontrado em “{{fileName}}”.",
     "unknownBookCode": "Livro desconhecido.",
     "documentSequence": "{{book}} {{chapter}}: o versículo {{verse}} aparece dentro de um versículo anterior (talvez duas colunas tenham sido lidas misturadas). Este capítulo não é usado.",
-    "additionalBook": "“{{fileName}}” contém {{book}}, que o Abiding Word ainda não consegue mostrar. Ele foi deixado de fora; os outros livros não são afetados."
+    "additionalBook": "“{{fileName}}” contém {{book}}, que o Abiding Word ainda não consegue mostrar. Ele foi deixado de fora; os outros livros não são afetados.",
+    "differentEditions": "Estes arquivos dizem vir de Bíblias diferentes: {{list}}. Bíblias diferentes nunca são combinadas: adicione cada uma separadamente."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",
@@ -288,5 +289,17 @@
     "textDiffers": "Os arquivos guardados já não dão exatamente o texto desta Bíblia, por isso as palavras dela não podem ser adicionadas. Remova a Bíblia e adicione-a novamente para obtê-las.",
     "noSource": "Os arquivos a partir dos quais esta Bíblia foi adicionada já não estão guardados, por isso as palavras dela não podem ser lidas novamente. Remova a Bíblia e adicione-a novamente para obtê-las.",
     "nothingToIndex": "Estes arquivos não têm informações de palavras que possam ser indexadas."
+  },
+  "batch": {
+    "noFiles": "Nenhum arquivo que a biblioteca consiga ler foi encontrado ali.",
+    "tooMany": "No máximo {{max}} arquivos podem ser adicionados de uma vez.",
+    "cannotChoose": "Este arquivo não pode ser adicionado.",
+    "closed": "Esta importação terminou. Inicie uma nova para adicionar mais arquivos.",
+    "notRead": "Alguns arquivos ainda não foram lidos.",
+    "changed": "“{{fileName}}” mudou depois de verificado. Leia-o de novo."
+  },
+  "catalogue": {
+    "notVerified": "“{{fileName}}” não correspondia à cópia verificada, então nada foi guardado. Tente novamente mais tarde.",
+    "unreachable": "Não foi possível concluir o download. Verifique a conexão com a internet e tente novamente."
   }
 }

@@ -9,6 +9,7 @@ pub mod annotation_data;
 pub mod bundled;
 pub mod canon;
 pub mod canons;
+pub mod catalogue;
 pub mod concordance;
 pub mod data_packs;
 pub mod documents;
@@ -134,6 +135,8 @@ pub struct BundledBibleInfo {
     pub language: &'static str,
     pub language_code: &'static str,
     pub license_type: &'static str,
+    /// How many of the 66 books it holds (27: a New Testament only).
+    pub books: u8,
     pub installed: bool,
 }
 

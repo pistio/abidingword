@@ -109,7 +109,36 @@ export interface BundledBibleInfo {
   /** e.g. "de": the interface language's Bibles are offered first. */
   languageCode: string;
   licenseType: string;
+  /** How many of the 66 books it holds (27: a New Testament only, v0.24). */
+  books: number;
   installed: boolean;
+}
+
+/** A Bible that can be downloaded and checked against its verified copy (v0.24). */
+export interface CatalogueEntry {
+  id: string;
+  name: string;
+  shortName: string;
+  language: string;
+  languageCode: string;
+  publisher: string;
+  licenseType: string;
+  copyrightNotice: string;
+  /** How many of the 66 books it holds. */
+  books: number;
+  /** Word information it carries: "lemma", "strong", "morph". */
+  contains: string[];
+  version: string;
+  /** Bytes to download. */
+  size: number;
+  files: number;
+  installed: boolean;
+}
+
+export interface CatalogueProgress {
+  id: string;
+  done: number;
+  total: number;
 }
 
 export interface VerseText {

@@ -10,7 +10,7 @@ import { useApi } from "@/lib/ApiContext";
 import { formatNumber } from "@/i18n/format";
 import { localizeMessage } from "@/i18n/messages";
 import { bookName } from "@/i18n/scripture";
-import type { BibleTranslation, BundledBibleInfo, DocumentFileInfo, DocumentPreview, ImportIssue, ImportPreview, WordChoice } from "@/types/scripture";
+import type { BibleTranslation, BundledBibleInfo, CatalogueEntry, DocumentFileInfo, DocumentPreview, ImportIssue, ImportPreview, WordChoice } from "@/types/scripture";
 import { NO_CHOICE, WordResearch, hasWordResearch } from "./WordResearch";
 import { useScripture } from "./ScriptureContext";
 import { LanguageChoice, type LanguageValue } from "./LanguageChoice";
@@ -42,6 +42,24 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
     } catch (e) {
       setError(toApiError(e).message);
       setStep({ kind: "choose" });
+    }
+  };
+
+  // Available Bibles to download (v0.24): checked file by file, then the same review.
+  const [downloading, setDownloading] = useState<{ done: number; total: number } | null>(null);
+  const download = async (id: string) => {
+    setError(null);
+    setStep({ kind: "checking" });
+    setDownloading({ done: 0, total: 0 });
+    const stop = await api.onCatalogueProgress((p) => p.id === id && setDownloading({ done: p.done, total: p.total }));
+    try {
+      setStep({ kind: "review", preview: await api.bibleCatalogueDownload(id) });
+    } catch (e) {
+      setError(toApiError(e).message);
+      setStep({ kind: "choose" });
+    } finally {
+      stop();
+      setDownloading(null);
     }
   };
 
@@ -90,10 +108,14 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
 
         {error && <Notice tone="error">{error}</Notice>}
 
-        {step.kind === "choose" && <ChooseStep onBundled={(id) => preview({ bundled: id })} onFiles={chooseFiles} />}
+        {step.kind === "choose" && <ChooseStep onBundled={(id) => preview({ bundled: id })} onFiles={chooseFiles} onDownload={download} />}
         {step.kind === "checking" && (
           <p role="status" className="m-0 text-text-muted">
-            {t("scripture.addBible.checking")}
+            {downloading
+              ? downloading.total > 0 && downloading.done < downloading.total
+                ? t("scripture.addBible.available.progress", { done: downloading.done, total: downloading.total })
+                : t("scripture.addBible.available.starting")
+              : t("scripture.addBible.checking")}
           </p>
         )}
         {step.kind === "review" && (
@@ -150,7 +172,7 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   );
 }
 
-function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; onFiles: () => void }) {
+function ChooseStep({ onBundled, onFiles, onDownload }: { onBundled: (id: string) => void; onFiles: () => void; onDownload: (id: string) => void }) {
   const { t, i18n } = useTranslation();
   const api = useApi();
   const selectId = useId();
@@ -224,12 +246,14 @@ function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; o
                 <strong>{chosen.name}</strong> ({chosen.shortName})
               </p>
               <p className="m-0">{t("scripture.addBible.confirmLanguage", { language: chosen.language })}</p>
+              {chosen.books < 66 && <p className="m-0">{t("scripture.addBible.partialBooks", { count: chosen.books })}</p>}
               <p className="m-0">{t("scripture.addBible.licence", { licence: chosen.licenseType })}</p>
               <p className="m-0 text-text-muted">{t("scripture.addBible.confirmBody")}</p>
             </Dialog>
           )}
         </section>
       )}
+      <CatalogueSection onDownload={onDownload} />
       <section className="flex flex-col items-start gap-2 border-t border-border-subtle pt-6">
         <h2 className="type-section m-0">{t("scripture.addBible.ownTitle")}</h2>
         <p className="m-0 text-text-muted">
@@ -243,9 +267,81 @@ function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; o
 }
 
 /**
+ * Available Bibles to download (v0.24): each listed with what it contains, its
+ * licence and its size. Nothing is fetched until the person confirms; every
+ * file is then checked against its verified copy, and the Bible goes through
+ * the usual review before anything is added. Once added it works offline.
+ */
+function CatalogueSection({ onDownload }: { onDownload: (id: string) => void }) {
+  const { t } = useTranslation();
+  const api = useApi();
+  const list = useLoad(useCallback(() => api.bibleCatalogueList(), [api]));
+  const [confirming, setConfirming] = useState<CatalogueEntry | null>(null);
+  const entries = list.data ?? [];
+  if (entries.length === 0) return null;
+  const size = (bytes: number) => t("scripture.addBible.available.size", { size: formatNumber(Math.round(bytes / 100_000) / 10) });
+  const contains = (entry: CatalogueEntry) =>
+    entry.contains.map((c) => t(`scripture.addBible.available.contains.${c as "lemma" | "strong" | "morph"}`)).join(t("common.listSeparator"));
+  return (
+    <section className="flex flex-col items-start gap-3 border-t border-border-subtle pt-6">
+      <h2 className="type-section m-0">{t("scripture.addBible.available.title")}</h2>
+      <p className="m-0 text-text-muted">{t("scripture.addBible.available.intro")}</p>
+      <ul aria-label={t("scripture.addBible.available.title")} className="m-0 flex w-full list-none flex-col gap-3 p-0">
+        {entries.map((entry) => (
+          <li key={entry.id} className="flex flex-col gap-1 rounded-aw border border-border-subtle p-3">
+            <span className="font-medium text-text-strong">
+              {entry.name} ({entry.shortName})
+            </span>
+            <span className="text-[0.9375rem]">{[entry.language, entry.books < 66 && t("scripture.addBible.available.partial", { count: entry.books }), contains(entry)].filter(Boolean).join(t("common.listSeparator"))}</span>
+            <span className="text-[0.9375rem] text-text-muted">{[entry.licenseType, size(entry.size)].join(t("common.listSeparator"))}</span>
+            <span>
+              {entry.installed ? (
+                <span className="type-meta">{t("scripture.addBible.available.added")}</span>
+              ) : (
+                <Button onClick={() => setConfirming(entry)}>{t("scripture.addBible.available.download", { name: entry.shortName })}</Button>
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {confirming && (
+        <Dialog
+          title={t("scripture.addBible.available.confirmTitle", { name: confirming.name })}
+          onClose={() => setConfirming(null)}
+          actions={
+            <>
+              <Button onClick={() => setConfirming(null)}>{t("common.cancel")}</Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  const id = confirming.id;
+                  setConfirming(null);
+                  onDownload(id);
+                }}
+              >
+                {t("scripture.addBible.available.confirm", { size: size(confirming.size) })}
+              </Button>
+            </>
+          }
+        >
+          <p className="m-0">{t("scripture.addBible.available.confirmBody", { files: formatNumber(confirming.files), size: size(confirming.size) })}</p>
+          <p className="m-0">{t("scripture.addBible.licence", { licence: confirming.licenseType })}</p>
+          <details className="text-[0.9375rem]">
+            <summary className="cursor-pointer">{t("scripture.addBible.available.technical")}</summary>
+            <p className="m-0 mt-2 break-words text-text-muted">{confirming.copyrightNotice}</p>
+            <p className="m-0 text-text-muted">{confirming.version}</p>
+          </details>
+          <p className="m-0 text-text-muted">{t("scripture.addBible.available.offline")}</p>
+        </Dialog>
+      )}
+    </section>
+  );
+}
+
+/**
  * Where Hebrew and Greek editions with word information can be found (v0.22):
- * links only, opened in the browser. Abiding Word downloads nothing itself
- * and ships none of these editions; the person chooses the files afterwards.
+ * links to the publishers, opened in the browser. Some of them are also
+ * included or offered as verified downloads above (v0.24).
  */
 const EDITIONS = [
   { key: "oshb", url: "https://github.com/openscriptures/morphhb" },

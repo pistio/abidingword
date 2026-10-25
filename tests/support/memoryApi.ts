@@ -24,6 +24,7 @@ import type {
   AnnotationAnchor,
   BibleDocument,
   BibleTranslation,
+  CatalogueProgress,
   DocumentFileInfo,
   DocumentSegment,
   ImportPreview,
@@ -63,6 +64,8 @@ import type {
   ManagePage,
   ManageQuery,
   SourceCollection,
+  ImportJob,
+  ImportJobItem,
 } from "@/types/library";
 import type {
   Finding,
@@ -116,6 +119,9 @@ export interface MemoryApi extends Api {
     passages: StudyPassage[];
     /** What the next "choose files" dialog returns (null = cancelled). */
     nextChosenFiles: string[] | null;
+    /** Available Bibles (v0.24): progress listeners, and whether the next download fails its check. */
+    catalogueProgress: Set<(p: CatalogueProgress) => void>;
+    catalogueFails: boolean;
     /** The word annotations the next Bible import preview reports (v0.21). */
     nextPreviewWords: WordReport | null;
     /** What the person chose for the words of the last Bible added (v0.22). */
@@ -134,6 +140,15 @@ export interface MemoryApi extends Api {
     /** Places marked by hand in document Bibles (v0.24), by Bible. */
     places: Map<string, MarkedPlace[]>;
     /** Looking after the library (v0.24): each source's state, collections and tags. */
+    /** Batch imports (v0.24): what the dialogs return, and the jobs. */
+    batch: {
+      nextFiles: string[] | null;
+      /** A folder: its path and the files found in it (with subfolders: paths containing "/sub/"). */
+      nextFolder: { path: string; files: string[] } | null;
+      jobs: Map<string, ImportJob>;
+      /** Paths whose content changes after being read (the import step fails). */
+      changed: Set<string>;
+    };
     manage: {
       states: Map<string, { state: ItemState; changedAt: string | null }>;
       collections: SourceCollection[];
@@ -423,6 +438,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     annotations: [],
     passages: [],
     nextChosenFiles: null,
+    catalogueProgress: new Set(),
+    catalogueFails: false,
     nextPreviewWords: null,
     lastCommitWords: null,
     nextWordsPreview: null,
@@ -430,6 +447,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     pendingPreview: null,
     bibleDocuments: new Map(),
     nextRecognition: null,
+    batch: { nextFiles: null, nextFolder: null, jobs: new Map(), changed: new Set() },
     manage: { states: new Map(), collections: [], members: new Map(), tags: [], tagged: new Map() },
     places: new Map(),
     library: { sources: [], segments: [], mentions: [], links: [], nextChosenFile: null, openedLinks: [], openLinkFails: false, pending: null, annotations: [] },
@@ -811,6 +829,23 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     return { total: items.length, offset, items: items.slice(offset, offset + (query.limit ?? 100)), active: count("active"), archived: count("archived"), trashed: count("trashed") };
   };
 
+  // Batch imports (v0.24): the same content is the same title without "copy".
+  const batchHash = (path: string) => `hash-${fixtureForPath(path).title.replace(/\s*copy$/i, "")}`;
+  const batchJob = (jobId: string) => {
+    const job = state.batch.jobs.get(jobId);
+    if (!job) throw new ApiError("notFound", "import not found");
+    return job;
+  };
+  const batchView = (job: ImportJob): ImportJob => {
+    const count = (s: ImportJobItem["status"]) => job.items.filter((i) => i.status === s).length;
+    return structuredClone({
+      ...job,
+      counts: {
+        total: job.items.length, waiting: count("waiting"), ready: count("ready"), duplicate: count("duplicate"), problem: count("problem"),
+        imported: count("imported"), failed: count("failed"), toAdd: job.items.filter((i) => i.chosen && (i.status === "ready" || i.status === "duplicate")).length,
+      },
+    });
+  };
   const addSource = (fixture: SourceFixture, extra: Partial<Source> = {}): Source => {
     const t = now();
     const sourceId = id();
@@ -1503,7 +1538,31 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         { id: "fraLSG", name: "Louis Segond 1910", shortName: "LSG", language: "Français", languageCode: "fr", licenseType: "Public Domain" },
         { id: "spaRV1909", name: "Santa Biblia — Reina Valera 1909", shortName: "RV1909", language: "Español", languageCode: "es", licenseType: "Public Domain" },
         { id: "porbr2018", name: "Bíblia Livre", shortName: "BLIVRE", language: "Português", languageCode: "pt", licenseType: "CC BY 4.0" },
-      ].map((b) => ({ ...b, installed: state.bibles.some((i) => i.isBuiltin && i.shortName === b.shortName) })),
+        { id: "grcsbl", name: "SBL Greek New Testament", shortName: "SBLGNT", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "CC BY 4.0", books: 27 },
+        { id: "grcmt", name: "Robinson–Pierpont Byzantine Textform 2018", shortName: "RP2018", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "Public Domain", books: 27 },
+        { id: "grctr", name: "Textus Receptus (Boyd 2022)", shortName: "TR", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "Public Domain", books: 27 },
+        { id: "grcbyz", name: "1904 Patriarchal Greek New Testament", shortName: "PT1904", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "Public Domain", books: 27 },
+      ].map((b) => ({ books: 66, ...b, installed: state.bibles.some((i) => i.isBuiltin && i.shortName === b.shortName) })),
+    // Available Bibles to download (v0.24), as resources/scripture/catalogue.json lists them.
+    bibleCatalogueList: async () =>
+      [
+        { id: "oshb", name: "Open Scriptures Hebrew Bible (Westminster Leningrad Codex)", shortName: "OSHB", language: "עברית (Biblical Hebrew)", languageCode: "hbo", publisher: "Open Scriptures Hebrew Bible Project", licenseType: "Public Domain text; CC BY 4.0 word data", copyrightNotice: "Westminster Leningrad Codex: Public Domain. Lemma and morphology data: CC BY 4.0.", books: 39, contains: ["strong", "morph"], version: "morphhb 3d15126", size: 28634502, files: 40 },
+        { id: "morphgnt", name: "MorphGNT: SBLGNT Edition", shortName: "MorphGNT", language: "Ελληνικά (Koine Greek)", languageCode: "grc", publisher: "James K. Tauber (MorphGNT)", licenseType: "CC BY 4.0 text; CC BY-SA 3.0 word data", copyrightNotice: "SBLGNT (CC BY 4.0); MorphGNT parsing (CC BY-SA 3.0).", books: 27, contains: ["lemma", "morph"], version: "morphgnt/sblgnt aaed91e", size: 8936874, files: 27 },
+      ].map((entry) => ({ ...entry, installed: state.bibles.some((b) => b.shortName.toLowerCase() === entry.shortName.toLowerCase()) })),
+    bibleCatalogueDownload: async (catalogueId) => {
+      const entry = (await api.bibleCatalogueList()).find((e) => e.id === catalogueId);
+      if (!entry) throw new ApiError("notFound", "Bible not found");
+      for (let done = 1; done <= 3; done++) state.catalogueProgress.forEach((h) => h({ id: catalogueId, done, total: 3 }));
+      if (state.catalogueFails) throw new ApiError("importFailed", "“Gen.xml” did not match the verified copy, so nothing was kept. Try again later.", "catalogue.notVerified");
+      const preview = await api.bibleImportPreview({ paths: [`/downloads/${catalogueId}/files.usfm`] });
+      const suggested = { ...preview.suggested, name: entry.name, shortName: entry.shortName, language: entry.language, languageCode: entry.languageCode, publisher: entry.publisher, copyrightNotice: entry.copyrightNotice, licenseType: entry.licenseType };
+      if (state.pendingPreview) state.pendingPreview = { ...state.pendingPreview };
+      return { ...preview, suggested };
+    },
+    onCatalogueProgress: async (handler) => {
+      state.catalogueProgress.add(handler);
+      return () => void state.catalogueProgress.delete(handler);
+    },
     chooseBibleFiles: async () => state.nextChosenFiles,
     bibleImportPreview: async ({ bundled, paths }) => {
       if (paths && isDocumentChoice(paths)) {
@@ -1933,6 +1992,130 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       [...new Set(library.sources.filter((s) => !s.deleted && s.language).map((s) => s.language as string))].sort(),
     libraryGetSource: async (sourceId) => ({ ...liveSource(sourceId) }),
     chooseSourceFile: async () => library.nextChosenFile,
+    chooseSourceFiles: async () => state.batch.nextFiles,
+    chooseSourceFolder: async () => state.batch.nextFolder?.path ?? null,
+    libraryBatchScan: async (paths, recursive) => {
+      const found: string[] = [];
+      for (const p of paths) {
+        const folder = state.batch.nextFolder?.path === p ? state.batch.nextFolder : null;
+        if (folder) found.push(...folder.files.filter((f) => recursive || !f.slice(folder.path.length + 1).includes("/")));
+        else found.push(p);
+      }
+      const readable = found.filter((f) => /\.(pdf|epub|docx|md|markdown|txt)$/i.test(f));
+      if (readable.length === 0) throw new ApiError("invalidInput", "No files the library can read were found there.", "batch.noFiles");
+      const job: ImportJob = {
+        id: id(), state: "review", collectionId: null, tags: [], unsupportedCount: found.length - readable.length, overLimitCount: 0, createdAt: now(),
+        counts: { total: 0, waiting: 0, ready: 0, duplicate: 0, problem: 0, imported: 0, failed: 0, toAdd: 0 },
+        items: readable.map((path, position) => ({
+          id: id(), position, path, fileName: path.split("/").pop() ?? path, size: 1000, status: "waiting", chosen: true, format: null, title: null, author: null, language: null,
+          sourceType: null, typeEvidence: null, pageCount: null, duplicateOf: null, duplicateTitle: null, problemCode: null, problem: null, problemParams: null, sourceId: null,
+        })),
+      };
+      state.batch.jobs.set(job.id, job);
+      return batchView(job);
+    },
+    libraryBatchStep: async (jobId) => {
+      const job = batchJob(jobId);
+      const item = job.items.find((i) => i.status === "waiting");
+      if (item) {
+        const fixture = fixtureForPath(item.path);
+        const hash = batchHash(item.path);
+        item.format = fixture.format ?? "pdf";
+        item.title = fixture.title;
+        item.author = fixture.author ?? null;
+        item.language = fixture.language ?? null;
+        const evidence = /commentary/i.test(item.fileName) ? "commentary" : null;
+        item.sourceType = evidence ? "commentary" : item.format === "pdf" || item.format === "epub" ? "book" : item.format === "docx" ? "document" : "notes";
+        item.typeEvidence = evidence ? "fileName" : "fileType";
+        if (fixture.segments.length === 0) {
+          Object.assign(item, { status: "problem", chosen: false, problemCode: "library.scannedPdf", problem: "This PDF appears to contain scanned pages. OCR support is not available yet, so its text cannot be added." });
+        } else {
+          const inLibrary = library.sources.find((s) => !s.deleted && s.contentHash === hash);
+          const earlier = job.items.find((i) => i !== item && i.status !== "waiting" && batchHash(i.path) === hash);
+          const dup = inLibrary ? { id: inLibrary.id, title: inLibrary.title } : earlier ? { id: null, title: earlier.title ?? earlier.fileName } : null;
+          Object.assign(item, { status: dup ? "duplicate" : "ready", chosen: !dup, duplicateOf: dup?.id ?? null, duplicateTitle: dup?.title ?? null, problemCode: null, problem: null });
+        }
+      }
+      return batchView(job);
+    },
+    libraryBatchGet: async (jobId) => batchView(batchJob(jobId)),
+    libraryBatchJobs: async () => [...state.batch.jobs.values()].filter((j) => ["review", "importing", "interrupted"].includes(j.state)).map(batchView),
+    libraryBatchEdit: async (jobId, edit) => {
+      const job = batchJob(jobId);
+      if (job.state === "finished" || job.state === "cancelled") throw new ApiError("conflict", "This import has ended. Start a new one to add more files.", "batch.closed");
+      const item = job.items.find((i) => i.id === edit.id);
+      if (!item) throw new ApiError("notFound", "item not found");
+      if (edit.chosen && !["ready", "duplicate"].includes(item.status)) throw new ApiError("invalidInput", "This file cannot be added.", "batch.cannotChoose");
+      if (edit.title !== undefined) item.title = requireTitle(edit.title, "source");
+      if (edit.author !== undefined) item.author = edit.author.trim() || null;
+      if (edit.language !== undefined) item.language = edit.language.trim() || null;
+      if (edit.sourceType !== undefined) Object.assign(item, { sourceType: edit.sourceType, typeEvidence: "person" });
+      if (edit.chosen !== undefined) item.chosen = edit.chosen;
+      return { ...item };
+    },
+    libraryBatchShared: async (jobId, shared) => {
+      const job = batchJob(jobId);
+      let collectionId = shared.collectionId;
+      if (shared.newCollection?.trim()) {
+        const created: SourceCollection = { id: id(), parentId: shared.collectionId, name: shared.newCollection.trim(), count: 0 };
+        manage.collections.push(created);
+        collectionId = created.id;
+      }
+      job.collectionId = collectionId;
+      job.tags = shared.tags.map((t) => t.trim()).filter(Boolean);
+      return batchView(job);
+    },
+    libraryBatchRetry: async (jobId, itemIds) => {
+      const job = batchJob(jobId);
+      for (const item of job.items) {
+        if (itemIds.includes(item.id) && (item.status === "problem" || item.status === "failed")) {
+          Object.assign(item, { status: "waiting", chosen: true, problemCode: null, problem: null });
+          state.batch.changed.delete(item.path);
+        }
+      }
+      if (job.state === "finished") job.state = "review";
+      return batchView(job);
+    },
+    libraryBatchImportStep: async (jobId) => {
+      const job = batchJob(jobId);
+      if (job.state === "finished" || job.state === "cancelled") return batchView(job);
+      const item = job.items.find((i) => i.chosen && (i.status === "ready" || i.status === "duplicate"));
+      if (!item) {
+        job.state = "finished";
+        return batchView(job);
+      }
+      job.state = "importing";
+      if (state.batch.changed.has(item.path)) {
+        Object.assign(item, { status: "failed", chosen: false, problemCode: "batch.changed", problem: `“${item.fileName}” changed after it was checked. Read it again.`, problemParams: { fileName: item.fileName } });
+        return batchView(job);
+      }
+      const source = addSource(
+        { ...fixtureForPath(item.path), title: item.title ?? item.fileName, author: item.author ?? undefined, language: item.language ?? undefined, sourceType: item.sourceType ?? undefined },
+        { licenceStatus: "unknown", originalFilename: item.fileName, contentHash: batchHash(item.path) },
+      );
+      if (job.collectionId) {
+        const members = manage.members.get(job.collectionId) ?? new Set<string>();
+        members.add(source.id);
+        manage.members.set(job.collectionId, members);
+      }
+      for (const name of job.tags) {
+        let tag = manage.tags.find((x) => x.name.toLowerCase() === name.toLowerCase());
+        if (!tag) manage.tags.push((tag = { id: id(), name }));
+        const set = manage.tagged.get(tag.id) ?? new Set<string>();
+        set.add(source.id);
+        manage.tagged.set(tag.id, set);
+      }
+      Object.assign(item, { status: "imported", sourceId: source.id });
+      return batchView(job);
+    },
+    libraryBatchCancel: async (jobId) => {
+      const job = batchJob(jobId);
+      job.state = "cancelled";
+      return batchView(job);
+    },
+    libraryBatchDiscard: async (jobId) => {
+      state.batch.jobs.delete(jobId);
+    },
     libraryImportPreview: async (path) => {
       if (!/\.(pdf|epub|docx|md|markdown|txt)$/i.test(path)) {
         throw new ApiError("unsupportedFormat", "This kind of file can’t be added to the library. Supported: PDF, EPUB, Word (.docx), Markdown (.md) and text (.txt).");

@@ -416,12 +416,12 @@ describe("Word information in Settings → Bibles (v0.22)", () => {
 });
 
 describe("Add a Bible guidance (v0.22)", () => {
-  it("links to the editions' own pages and downloads nothing itself", async () => {
+  it("links to the editions' own pages, and points to the included and verified ones (v0.24)", async () => {
     const api = createMemoryApi();
     const { user } = await renderApp(api);
     await user.click(screen.getByRole("button", { name: "Add a Bible…" }));
     await user.click(await screen.findByText("Hebrew and Greek editions for original-language research"));
-    expect(screen.getByText(/Abiding Word downloads nothing itself and includes none of them/)).toBeInTheDocument();
+    expect(screen.getByText(/Some are included or offered as verified downloads above/)).toBeInTheDocument();
     await user.click(screen.getAllByRole("button", { name: "Open github.com" })[0]!);
     expect(api.state.library.openedLinks).toEqual(["https://github.com/openscriptures/morphhb"]);
   });

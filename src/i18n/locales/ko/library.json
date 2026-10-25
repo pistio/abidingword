@@ -416,5 +416,60 @@
     "collectTitle_other": "자료 {{formatted}}개를 모음에 추가",
     "tagTitle_other": "자료 {{formatted}}개에 태그 추가",
     "untagTitle_other": "자료 {{formatted}}개에서 태그 제거"
+  },
+  "batch": {
+    "open": "여러 개 추가…",
+    "title": "자료 여러 개 추가",
+    "intro": "파일 여러 개나 폴더 하나를 고르세요. Abiding Word가 각 파일을 읽고 확인하며, 추가하기 전에 목록을 검토할 수 있습니다.",
+    "chooseFiles": "파일 고르기…",
+    "chooseFolder": "폴더 고르기…",
+    "recursive": "하위 폴더의 파일 포함",
+    "limits": "한 번에 최대 {{max}}개: PDF, EPUB, Word, Markdown, 텍스트. 숨김 폴더와 다른 종류의 파일은 제외됩니다.",
+    "stop": "멈추기",
+    "continueReading": "계속 읽기",
+    "retry": "다시 시도",
+    "reading": "{{total}}개 중 {{done}}개 읽는 중…",
+    "adding": "{{total}}개 중 {{done}}개 추가 중…",
+    "progress": "진행 상황",
+    "interrupted": "이 가져오기는 끝나기 전에 멈췄습니다({{added}}개 추가됨). 나머지를 지금 추가할 수 있습니다.",
+    "shared": "추가하는 모든 자료에",
+    "collection": "모음",
+    "noCollection": "(없음)",
+    "files": "찾은 파일",
+    "failedTitle": "추가하지 못함",
+    "summary": {
+      "found_other": "파일 {{formatted}}개 찾음",
+      "duplicates_other": "{{formatted}}개는 이미 자료실에 있거나 중복",
+      "problems_other": "{{formatted}}개는 추가할 수 없음",
+      "imported_other": "{{formatted}}개는 이미 추가됨",
+      "unsupported_other": "다른 종류의 파일 {{formatted}}개 제외",
+      "overLimit_other": "한도를 넘은 {{formatted}}개 제외"
+    },
+    "choose": "{{name}} 추가",
+    "status": {
+      "waiting": "아직 읽지 않음",
+      "ready": "준비됨",
+      "duplicate": "같은 파일",
+      "problem": "추가할 수 없음",
+      "imported": "추가됨",
+      "failed": "추가하지 못함"
+    },
+    "duplicateLibrary": "이미 자료실에 “{{title}}”(으)로 있습니다. 그래도 다시 추가하려면 선택하세요.",
+    "duplicateHere": "이 목록의 “{{title}}”과(와) 같은 파일입니다.",
+    "evidence": {
+      "title": "제목의 단어로 제안함",
+      "fileName": "파일 이름의 단어로 제안함",
+      "folder": "폴더 이름으로 제안함",
+      "fileType": "이 종류의 파일에 흔한 분류입니다. 확인하세요",
+      "person": "직접 고름"
+    },
+    "details": "파일 정보",
+    "unfinished": "여러 자료 가져오기가 끝나지 않았습니다({{total}}개 중 {{added}}개 추가됨).",
+    "resume": "계속하기",
+    "discard": "버리기",
+    "add_other": "자료 {{formatted}}개 추가",
+    "done_other": "자료 {{formatted}}개를 추가했습니다.",
+    "stopped_other": "멈췄습니다. 자료 {{formatted}}개를 추가했고 나머지는 추가하지 않았습니다.",
+    "pages_other": "{{formatted}}쪽"
   }
 }

@@ -47,7 +47,11 @@
       "../resources/scripture/kor1961/kor1961_usfm.zip": "scripture/kor1961_usfm.zip",
       "../resources/scripture/fraLSG/fraLSG_usfm.zip": "scripture/fraLSG_usfm.zip",
       "../resources/scripture/spaRV1909/spaRV1909_usfm.zip": "scripture/spaRV1909_usfm.zip",
-      "../resources/scripture/porbr2018/porbr2018_usfm.zip": "scripture/porbr2018_usfm.zip"
+      "../resources/scripture/porbr2018/porbr2018_usfm.zip": "scripture/porbr2018_usfm.zip",
+      "../resources/scripture/grcsbl/grcsbl_usfm.zip": "scripture/grcsbl_usfm.zip",
+      "../resources/scripture/grcmt/grcmt_usfm.zip": "scripture/grcmt_usfm.zip",
+      "../resources/scripture/grctr/grctr_usfm.zip": "scripture/grctr_usfm.zip",
+      "../resources/scripture/grcbyz/grcbyz_usfm.zip": "scripture/grcbyz_usfm.zip"
     }
   }
 }

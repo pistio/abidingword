@@ -896,3 +896,11 @@ pub fn retag(
     tx.commit()?;
     Ok(())
 }
+
+/// The short names of every Bible kept (in use, archived or in Trash).
+pub fn bible_short_names(conn: &Connection) -> AppResult<Vec<String>> {
+    Ok(conn
+        .prepare("SELECT short_name FROM bible_translations")?
+        .query_map([], |r| r.get(0))?
+        .collect::<Result<_, _>>()?)
+}

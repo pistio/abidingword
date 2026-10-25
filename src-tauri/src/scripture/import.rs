@@ -63,8 +63,19 @@ impl BibleImportAdapter for UsfmAdapter {
     }
 
     fn read(&self, files: &[SourceText], staged: &mut StagedContent) {
+        // Which Bible each file says it is from (v0.24): files that name
+        // different Bibles are never combined.
+        let mut editions: Vec<(String, String)> = Vec::new();
         for file in files {
             let doc = usfm::parse(&file.text);
+            // Front matter and other non-book files name themselves, not the Bible.
+            let is_book = doc
+                .book_code
+                .as_deref()
+                .is_some_and(|c| canon::by_code(c).is_some());
+            if let Some(label) = edition_label(&file.text).filter(|_| is_book) {
+                editions.push((file.name.clone(), label));
+            }
             if !doc.unknown_markers.is_empty() {
                 log::info!(
                     "import: {} uses unrecognised markers (ignored): {}",
@@ -178,7 +189,94 @@ impl BibleImportAdapter for UsfmAdapter {
             }
             staged.books.insert(book.ordinal, content);
         }
+        different_editions(&editions, staged);
     }
+}
+
+/// What a USFM file's `\id` line says about the Bible it belongs to, with
+/// the book's own names (its `\h` and `\toc` lines), its code, file names
+/// and numbers taken out: "GEN 01-GEN-web.sfm World English Bible" and
+/// "EXO Exodus - World English Bible" both give "world english bible".
+/// None when nothing is left (no evidence either way).
+pub fn edition_label(source: &str) -> Option<String> {
+    let text = source.trim_start_matches('\u{feff}');
+    let id = text
+        .lines()
+        .find_map(|l| l.trim_start().strip_prefix("\\id "))?;
+    let mut words = id.split_whitespace();
+    let code = words.next()?.to_lowercase();
+    let mut names: Vec<String> = text
+        .lines()
+        .take(40)
+        .filter_map(|l| {
+            let l = l.trim_start();
+            ["\\h ", "\\toc1 ", "\\toc2 ", "\\toc3 ", "\\mt ", "\\mt1 "]
+                .iter()
+                .find_map(|m| l.strip_prefix(m))
+                .map(|n| n.trim().to_lowercase())
+        })
+        .filter(|n| !n.is_empty())
+        .collect();
+    // The book's English name too ("\id GEN Genesis" in a Spanish Bible).
+    if let Some(book) = canon::by_code(&code.to_uppercase()) {
+        names.push(book.name.to_lowercase());
+    }
+    names.sort_by_key(|n| std::cmp::Reverse(n.len()));
+    let mut rest = words.collect::<Vec<_>>().join(" ").to_lowercase();
+    for name in &names {
+        rest = rest.replace(name.as_str(), " ");
+    }
+    let kept: Vec<&str> = rest
+        .split(|c: char| {
+            c.is_whitespace()
+                || matches!(c, '-' | '–' | '—' | ',' | ':' | ';' | '(' | ')' | '[' | ']')
+        })
+        // "1World" (a number run into the name) is "world".
+        .map(|w| w.trim_start_matches(|c: char| c.is_ascii_digit()))
+        .filter(|w| !w.is_empty())
+        .filter(|w| *w != code)
+        .filter(|w| !w.contains('.'))
+        .filter(|w| !w.chars().all(|c| c.is_ascii_digit()))
+        .collect();
+    (!kept.is_empty()).then(|| kept.join(" "))
+}
+
+/// Files naming different Bibles are refused together: each is added on its
+/// own. A label is taken as a Bible's name only when it recurs (in at least
+/// two files and a quarter of the files that have one): some editions put a
+/// different title for each book on the `\id` line, which says nothing about
+/// the edition.
+fn different_editions(editions: &[(String, String)], staged: &mut StagedContent) {
+    let mut counts: BTreeMap<&str, (usize, &str)> = BTreeMap::new();
+    for (file, label) in editions {
+        counts.entry(label).or_insert((0, file)).0 += 1;
+    }
+    let needed = 2.max(editions.len().div_ceil(4));
+    let seen: Vec<(&str, &str)> = counts
+        .iter()
+        .filter(|(_, (n, _))| *n >= needed)
+        .map(|(label, (_, file))| (*file, *label))
+        .collect();
+    if seen.len() < 2 {
+        return;
+    }
+    let list = seen
+        .iter()
+        .map(|(file, label)| format!("“{label}” ({file})"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    staged.issue(
+        Severity::Error,
+        None,
+        None,
+        UserMessage::new(
+            "bibleImport.differentEditions",
+            format!(
+                "These files say they come from different Bibles: {list}. Different Bibles are never combined: add each one on its own."
+            ),
+        )
+        .with("list", &list),
+    );
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]

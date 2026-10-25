@@ -135,7 +135,7 @@
     },
     "guide": {
       "title": "Hebrew and Greek editions for original-language research",
-      "intro": "Some editions give each word its dictionary form, its grammar or a lexical number. These free editions can be downloaded from their publishers and then chosen here. Abiding Word downloads nothing itself and includes none of them.",
+      "intro": "Some editions give each word its dictionary form, its grammar or a lexical number. Some are included or offered as verified downloads above; others can be downloaded from their publishers and then chosen here.",
       "open": "Open {{host}}",
       "note": "Check each edition’s licence on its page before sharing anything made from it. If an edition uses the Hebrew Bible’s verse numbers, choose its verse map together with its files (for the Open Scriptures Hebrew Bible: wlc/VerseMap.xml).",
       "oshb": {
@@ -214,7 +214,30 @@
       "licenceHint": "As the document states it, for your own reference.",
       "addDocument": "Add to read as a document"
     },
-    "doneDocument": "<strong>{{name}}</strong> was added to read as a document."
+    "doneDocument": "<strong>{{name}}</strong> was added to read as a document.",
+    "available": {
+      "title": "Available to download",
+      "intro": "Free editions in the original languages, with information about each word. Abiding Word downloads one only when you ask, checks every file against its verified copy, and keeps nothing that differs.",
+      "size": "{{size}} MB",
+      "contains": {
+        "lemma": "dictionary forms",
+        "strong": "lexical numbers",
+        "morph": "grammar"
+      },
+      "partial_one": "{{count}} of the 66 books",
+      "partial_other": "{{count}} of the 66 books",
+      "added": "Added",
+      "download": "Download {{name}}…",
+      "confirmTitle": "Download {{name}}?",
+      "confirm": "Download ({{size}})",
+      "confirmBody": "{{files}} files ({{size}}) are downloaded from GitHub and each is checked against its verified copy. Then you review the Bible as usual; nothing is added before you confirm.",
+      "technical": "Licence and version",
+      "offline": "Once added, it works without an internet connection.",
+      "progress": "Downloading and checking file {{done}} of {{total}}…",
+      "starting": "Downloading…"
+    },
+    "partialBooks_one": "{{count}} of the 66 books",
+    "partialBooks_other": "{{count}} of the 66 books"
   },
   "bibles": {
     "empty": "No Bible has been added yet.",

@@ -220,7 +220,7 @@ describe("what each mark says", () => {
     await waitFor(() => expect(document.querySelector('[data-verse-text="JHN.15.1"]')).not.toBeNull());
     await user.click(screen.getByRole("button", { name: "Anmerkungen" }));
     expect(await screen.findByText("Johannes 15,4")).toBeInTheDocument();
-    expect(screen.getByText("Genesis 1,1")).toBeInTheDocument();
+    expect(screen.getByText("1. Mose 1,1")).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/JHN\.|GEN\./);
   });
 

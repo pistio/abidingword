@@ -150,7 +150,7 @@
     },
     "guide": {
       "title": "Edições hebraicas e gregas para o estudo das línguas originais",
-      "intro": "Algumas edições dão a cada palavra a sua forma de dicionário, a sua gramática ou um número léxico. Estas edições gratuitas podem ser baixadas dos seus editores e depois escolhidas aqui. O Abiding Word não baixa nada por conta própria e não inclui nenhuma delas.",
+      "intro": "Algumas edições dão a cada palavra sua forma de dicionário, sua gramática ou um número léxico. Algumas estão incluídas ou oferecidas acima como downloads verificados; as outras podem ser baixadas dos editores e depois escolhidas aqui.",
       "open": "Abrir {{host}}",
       "note": "Verifique a licença de cada edição na página dela antes de compartilhar qualquer coisa feita a partir dela. Se uma edição usar a numeração de versículos da Bíblia hebraica, escolha a tabela de correspondência de versículos dela junto com os arquivos (para a Open Scriptures Hebrew Bible: wlc/VerseMap.xml).",
       "oshb": {
@@ -233,7 +233,32 @@
       "licenceHint": "Como o documento informa, para sua própria referência.",
       "addDocument": "Adicionar para ler como documento"
     },
-    "doneDocument": "<strong>{{name}}</strong> foi adicionada para ler como documento."
+    "doneDocument": "<strong>{{name}}</strong> foi adicionada para ler como documento.",
+    "available": {
+      "title": "Disponíveis para baixar",
+      "intro": "Edições livres nas línguas originais, com informações sobre cada palavra. O Abiding Word só baixa uma quando você pede, confere cada arquivo com a cópia verificada e não guarda nada que seja diferente.",
+      "size": "{{size}} MB",
+      "contains": {
+        "lemma": "formas de dicionário",
+        "strong": "números léxicos",
+        "morph": "gramática"
+      },
+      "partial_one": "{{count}} dos 66 livros",
+      "partial_other": "{{count}} dos 66 livros",
+      "partial_many": "{{count}} dos 66 livros",
+      "added": "Adicionada",
+      "download": "Baixar {{name}}…",
+      "confirmTitle": "Baixar {{name}}?",
+      "confirm": "Baixar ({{size}})",
+      "confirmBody": "{{files}} arquivos ({{size}}) são baixados do GitHub e cada um é conferido com a cópia verificada. Depois você revisa a Bíblia como de costume; nada é adicionado antes da sua confirmação.",
+      "technical": "Licença e versão",
+      "offline": "Depois de adicionada, funciona sem conexão com a internet.",
+      "progress": "Baixando e conferindo o arquivo {{done}} de {{total}}…",
+      "starting": "Baixando…"
+    },
+    "partialBooks_one": "{{count}} dos 66 livros",
+    "partialBooks_other": "{{count}} dos 66 livros",
+    "partialBooks_many": "{{count}} dos 66 livros"
   },
   "bibles": {
     "empty": "Nenhuma Bíblia foi adicionada ainda.",

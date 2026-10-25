@@ -1,0 +1,446 @@
+{
+ "format": "abiding-word-bible-catalogue",
+ "version": 1,
+ "checked": "2026-10-25",
+ "note": "Verified downloads: every file is pinned to a commit and its SHA-256; a file that differs is refused and nothing is kept. Audit: docs/original-language-catalogue-v0.24.md.",
+ "downloads": [
+  {
+   "id": "oshb",
+   "name": "Open Scriptures Hebrew Bible (Westminster Leningrad Codex)",
+   "shortName": "OSHB",
+   "language": "עברית (Biblical Hebrew)",
+   "languageCode": "hbo",
+   "publisher": "Open Scriptures Hebrew Bible Project",
+   "licenseType": "Public Domain text; CC BY 4.0 word data",
+   "copyrightNotice": "Westminster Leningrad Codex: Public Domain. Lemma and morphology data: the Open Scriptures Hebrew Bible Project, Creative Commons Attribution 4.0 (CC BY 4.0), https://creativecommons.org/licenses/by/4.0/. Source: github.com/openscriptures/morphhb, commit 3d15126 (2024-08-27); verse numbers mapped to the English numbering with the project's VerseMap.xml.",
+   "books": 39,
+   "contains": [
+    "strong",
+    "morph"
+   ],
+   "version": "morphhb 3d15126fb1ef74867fc1434be1942e837932691f",
+   "files": [
+    {
+     "name": "1Chr.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/1Chr.xml",
+     "sha256": "8b59992b6607c6ca0fc423813be8cc244f011c1da32bc8485c0c0f581a897ed4",
+     "size": 1014881
+    },
+    {
+     "name": "1Kgs.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/1Kgs.xml",
+     "sha256": "832ba10f605dce34c4888ee0a795d91edc2b293391d6ae9c36c36c6350761a3e",
+     "size": 1189874
+    },
+    {
+     "name": "1Sam.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/1Sam.xml",
+     "sha256": "960432732c22286b82d80b6b25af8d10dc5f2e82a4e5e48b2e3a1b1eea17f3cb",
+     "size": 1206608
+    },
+    {
+     "name": "2Chr.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/2Chr.xml",
+     "sha256": "507294e8ca0fcf31ec25fe62fa24a7f2581f53116519bf08cfe96ff85e9c99fb",
+     "size": 1222694
+    },
+    {
+     "name": "2Kgs.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/2Kgs.xml",
+     "sha256": "056db5393beaef0a1159d9bcaac7dfd865df9bab2eb240ea90e9fa3f0c0e7449",
+     "size": 1115537
+    },
+    {
+     "name": "2Sam.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/2Sam.xml",
+     "sha256": "e7793e141ed94eadbd2dfb23936abbb4062e81a7dcd41114a6e36644f50b8333",
+     "size": 1013552
+    },
+    {
+     "name": "Amos.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Amos.xml",
+     "sha256": "6ad94c6a18076762f1a458720c62156d354e5111ee25719b7792b70792d0084d",
+     "size": 201588
+    },
+    {
+     "name": "Dan.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Dan.xml",
+     "sha256": "bc69d0fa9708dacb11ea6d587509250bf1bcc1b4343eac2d6e97f8b41518fc0d",
+     "size": 569236
+    },
+    {
+     "name": "Deut.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Deut.xml",
+     "sha256": "04f8087442a1e67a631cd70f2ac4e42fe0a780ae132edb165a3a29f3f290358f",
+     "size": 1315399
+    },
+    {
+     "name": "Eccl.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Eccl.xml",
+     "sha256": "2dfc858d19048f6479eca33b9fe781c2d7e9059e9ae3ab0b37b802d3afec02bb",
+     "size": 285122
+    },
+    {
+     "name": "Esth.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Esth.xml",
+     "sha256": "f9b5b8adaf504dcac409bb6a27c9328967f47eeb4e920070cd53ef5301299019",
+     "size": 292184
+    },
+    {
+     "name": "Exod.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Exod.xml",
+     "sha256": "04868367cdacb6ccdc61488e923e20f918172042e6437842a0621f63ac5b847f",
+     "size": 1524391
+    },
+    {
+     "name": "Ezek.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ezek.xml",
+     "sha256": "90bf8adfa66b2f6695c702263fe668755c99c6afc386202c12de4f704f5d4e46",
+     "size": 1724378
+    },
+    {
+     "name": "Ezra.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ezra.xml",
+     "sha256": "fb28ff697d0ee17eba5b4db47fb7261ee1870cea0d5701bfc77c9e28d4138129",
+     "size": 369918
+    },
+    {
+     "name": "Gen.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Gen.xml",
+     "sha256": "0526e5c9a5fb4d907847645f954ed3d1268fa69decbd872056cedd2668d86449",
+     "size": 1859928
+    },
+    {
+     "name": "Hab.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Hab.xml",
+     "sha256": "2592b212d816775adc8dac46bd0c46263982c308a186dde64dfb8239c57bd2d1",
+     "size": 79467
+    },
+    {
+     "name": "Hag.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Hag.xml",
+     "sha256": "26ebbae4fe491cf89ce70e1264cbcbf66a562b497cb214b677e67a9a43ad545c",
+     "size": 71754
+    },
+    {
+     "name": "Hos.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Hos.xml",
+     "sha256": "f38ae44a3a97d142768bd5f4d40e77b69265184f9a5aec9e6af1b9b226e8daae",
+     "size": 236712
+    },
+    {
+     "name": "Isa.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Isa.xml",
+     "sha256": "0807678de609bdef284bed5400b94ddab570d101b593c7f59ae1939015572fa2",
+     "size": 1548674
+    },
+    {
+     "name": "Jer.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Jer.xml",
+     "sha256": "1a7ad7bc26a2cae1d3964230e8eb73043bc1f32505cb86cd69a25261dc39f493",
+     "size": 1977728
+    },
+    {
+     "name": "Job.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Job.xml",
+     "sha256": "7db3311184122f37a8fd52f3c7c0c4a6d2da7b77ee82f4fdb26bcba9171d297f",
+     "size": 813715
+    },
+    {
+     "name": "Joel.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Joel.xml",
+     "sha256": "c0fefc6881afe949b023968106cdccc05a690734b8bb6e9aa48914d77e5369af",
+     "size": 105277
+    },
+    {
+     "name": "Jonah.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Jonah.xml",
+     "sha256": "1e1afcc3aaba1399d5c884ee106894c6bfca87c8c81fa57783ab75a923eee17d",
+     "size": 80534
+    },
+    {
+     "name": "Josh.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Josh.xml",
+     "sha256": "a066200ab2269c0a86a2e9ba119a3d0fce8c5f7ecc44bb53ec134b83dffc6006",
+     "size": 919916
+    },
+    {
+     "name": "Judg.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Judg.xml",
+     "sha256": "3b3a909f04041dbd52dc6b7293a96ce75d94db8a90fdeda878943db7b8fac57f",
+     "size": 904347
+    },
+    {
+     "name": "Lam.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Lam.xml",
+     "sha256": "be68fc6a913313367280c2596e28733ee8cf877c12a65227237733b40d0248c4",
+     "size": 167766
+    },
+    {
+     "name": "Lev.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Lev.xml",
+     "sha256": "e21e70265c9ef500182f8ccb4f4e1186e5a79e1169d24cef23cc479baf07b191",
+     "size": 1085066
+    },
+    {
+     "name": "Mal.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Mal.xml",
+     "sha256": "1583e6a701406dce7b8c2bf85e3522ec31383756de130685fc7c2eb6df8964b2",
+     "size": 95722
+    },
+    {
+     "name": "Mic.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Mic.xml",
+     "sha256": "267e111adc1b941e32444816af07aa136ecde02cb315cd42597f78b393e67a01",
+     "size": 145482
+    },
+    {
+     "name": "Nah.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Nah.xml",
+     "sha256": "5993b28bdbee3c922e3e93002d343a655493e8bd45e3472f3b62d77beadcb62c",
+     "size": 69823
+    },
+    {
+     "name": "Neh.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Neh.xml",
+     "sha256": "be082e95c206469122455b9849d4dd08da50c817732d8198c1beece90402801a",
+     "size": 512876
+    },
+    {
+     "name": "Num.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Num.xml",
+     "sha256": "02e4febfcc027d10b3e35e4f091eae67a40d26f37b6254faac6b4af053fe4896",
+     "size": 1496830
+    },
+    {
+     "name": "Obad.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Obad.xml",
+     "sha256": "1e893e552a7ed7e2e6d4048637ff5da8a2853a9e4432f4095cede80b959d850c",
+     "size": 44626
+    },
+    {
+     "name": "Prov.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Prov.xml",
+     "sha256": "964f99c00239b53b854c4686c99490c8d1ac7664784a30afdfc23781a3abb161",
+     "size": 678669
+    },
+    {
+     "name": "Ps.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ps.xml",
+     "sha256": "fe55eef316a65fb0f46d833d526ca2fd722e86ff7339f1a39f0c5b7f9062ced2",
+     "size": 1925086
+    },
+    {
+     "name": "Ruth.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Ruth.xml",
+     "sha256": "fb6a2660383c7176941cb87b2be182ef634b66d49d057635869f4d9cb1f0a11e",
+     "size": 136188
+    },
+    {
+     "name": "Song.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Song.xml",
+     "sha256": "5cd6ae36d32c059aaf794af5a5eaed914ac643486db3e412eb0b969760db82ca",
+     "size": 138554
+    },
+    {
+     "name": "VerseMap.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/VerseMap.xml",
+     "sha256": "6cd269ca3dccef2cb944b9d9dd8afc950f929dab53a534f1268d23affa983163",
+     "size": 106885
+    },
+    {
+     "name": "Zech.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Zech.xml",
+     "sha256": "2e287c8d0e0abd3bf601eb8ef9b4ee6ca3ae12cf36c0ed1612a7dcca54a2e777",
+     "size": 300202
+    },
+    {
+     "name": "Zeph.xml",
+     "url": "https://raw.githubusercontent.com/openscriptures/morphhb/3d15126fb1ef74867fc1434be1942e837932691f/wlc/Zeph.xml",
+     "sha256": "eb5bd2a745fba1ffeed31dfafd834ce7c290929c992390be1a2b9451d22dea2e",
+     "size": 87313
+    }
+   ]
+  },
+  {
+   "id": "morphgnt",
+   "name": "MorphGNT: SBLGNT Edition",
+   "shortName": "MorphGNT",
+   "language": "Ελληνικά (Koine Greek)",
+   "languageCode": "grc",
+   "publisher": "James K. Tauber (MorphGNT)",
+   "licenseType": "CC BY 4.0 text; CC BY-SA 3.0 word data",
+   "copyrightNotice": "The Greek New Testament: SBL Edition, copyright © 2010 Society of Biblical Literature and Logos Bible Software (CC BY 4.0). Morphological parsing and lemmatization: Tauber, J. K., ed. (2017) MorphGNT: SBLGNT Edition, doi:10.5281/zenodo.376200, Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0). Source: github.com/morphgnt/sblgnt, commit aaed91e (2024-01-21).",
+   "books": 27,
+   "contains": [
+    "lemma",
+    "morph"
+   ],
+   "version": "morphgnt/sblgnt aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d",
+   "files": [
+    {
+     "name": "61-Mt-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/61-Mt-morphgnt.txt",
+     "sha256": "95b360228bedd1c2d06655469111d3f028a4ce1d46939d440ed549feee8b73ec",
+     "size": 1188216
+    },
+    {
+     "name": "62-Mk-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/62-Mk-morphgnt.txt",
+     "sha256": "4a2d2365cfe3e8d6c20b7c130c2c46363fa4459c3a6004992eba0a18231b183e",
+     "size": 742563
+    },
+    {
+     "name": "63-Lk-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/63-Lk-morphgnt.txt",
+     "sha256": "a6f10ccf27a905f21ecbec96c3c01f220c39dd37aae118022113a52dfeb7528e",
+     "size": 1265076
+    },
+    {
+     "name": "64-Jn-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/64-Jn-morphgnt.txt",
+     "sha256": "1b1de3e48e3f3d212ba19c76e5b2f1749833f888f5b52513099ec13cc01b619c",
+     "size": 964787
+    },
+    {
+     "name": "65-Ac-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/65-Ac-morphgnt.txt",
+     "sha256": "04349afeba263d667698b37d39465d746530434b455fb6ac2941ec5c59fb85ca",
+     "size": 1228900
+    },
+    {
+     "name": "66-Ro-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/66-Ro-morphgnt.txt",
+     "sha256": "364b3b57c70e731920c7fa8a61f09ecd53eed858f7f3590596066484d0638cc6",
+     "size": 452306
+    },
+    {
+     "name": "67-1Co-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/67-1Co-morphgnt.txt",
+     "sha256": "5233a5b099e2499baed34ec2d6f53ae44545d532a7e2fb12acafcf39ff6fdbf3",
+     "size": 435113
+    },
+    {
+     "name": "68-2Co-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/68-2Co-morphgnt.txt",
+     "sha256": "1742d5076780a5338a858f2d83e615c87b2412cbefa56a4b8e14aa2c0ce326c4",
+     "size": 291615
+    },
+    {
+     "name": "69-Ga-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/69-Ga-morphgnt.txt",
+     "sha256": "ec249897464e8e8992e4869645471d6f3372e7373ba3a5d429516946d8cffada",
+     "size": 145242
+    },
+    {
+     "name": "70-Eph-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/70-Eph-morphgnt.txt",
+     "sha256": "9f6444d3aff9791817c2ad84d8ff5b1c229d18a4e9ab07e5066ceb0068dee397",
+     "size": 156655
+    },
+    {
+     "name": "71-Php-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/71-Php-morphgnt.txt",
+     "sha256": "6e6133fba46c164c16264c4d9563b30d5634effba5792419f8ed5d5ec08961a4",
+     "size": 105215
+    },
+    {
+     "name": "72-Col-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/72-Col-morphgnt.txt",
+     "sha256": "21e18b4310ce953cd786f8466824f24795cb46ef149dc501a330d55a05f7346a",
+     "size": 102848
+    },
+    {
+     "name": "73-1Th-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/73-1Th-morphgnt.txt",
+     "sha256": "e322ec075748e81897dc0a2b87a821ee78e200f6ba833bbba07607e55a3c68d5",
+     "size": 96313
+    },
+    {
+     "name": "74-2Th-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/74-2Th-morphgnt.txt",
+     "sha256": "309ba3338e0ccf2219bea7ee49f1e63bbefc1edcceedc5527c79395fd6b0bc19",
+     "size": 53237
+    },
+    {
+     "name": "75-1Ti-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/75-1Ti-morphgnt.txt",
+     "sha256": "b4a6a446d163b8b651ba11119bbc211b4e14cb12871b48df175adb88d4f9db97",
+     "size": 110719
+    },
+    {
+     "name": "76-2Ti-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/76-2Ti-morphgnt.txt",
+     "sha256": "8af532322a0693ecb8d34b75c544c3b6a57e76e266be750d62d42bc07385376e",
+     "size": 83507
+    },
+    {
+     "name": "77-Tit-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/77-Tit-morphgnt.txt",
+     "sha256": "16e9204306d616795f53f8627ff6ea05a80f572d7a21ed23ac7df99c6e00324d",
+     "size": 46382
+    },
+    {
+     "name": "78-Phm-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/78-Phm-morphgnt.txt",
+     "sha256": "e302779406b5405e8ff82a0dc2ded5ab49951f0d6245fe86894100bd83c51e33",
+     "size": 21103
+    },
+    {
+     "name": "79-Heb-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/79-Heb-morphgnt.txt",
+     "sha256": "de7d5c7efe4cdb5e9023c8571c322c3b1a5a817de1d97c3275aef5e154b2756b",
+     "size": 333352
+    },
+    {
+     "name": "80-Jas-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/80-Jas-morphgnt.txt",
+     "sha256": "205d4cdbb4c89aabd51ebf599fcfa622001af6e64dcd4e5ad487298ee4b7a204",
+     "size": 114622
+    },
+    {
+     "name": "81-1Pe-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/81-1Pe-morphgnt.txt",
+     "sha256": "7eeeecddae91a5d103576f629e4fa536fa2217381f4a83eaa904b63d81ffc0b8",
+     "size": 114392
+    },
+    {
+     "name": "82-2Pe-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/82-2Pe-morphgnt.txt",
+     "sha256": "41c1bb93726bf66e46653bb369850f2e319869375f31746d120276dff73a310a",
+     "size": 75995
+    },
+    {
+     "name": "83-1Jn-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/83-1Jn-morphgnt.txt",
+     "sha256": "99fb0d33100f9df25697e9b9ecaa04c599a277b5f2f65f8ed28e97902fed4df9",
+     "size": 130821
+    },
+    {
+     "name": "84-2Jn-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/84-2Jn-morphgnt.txt",
+     "sha256": "bb90002d6b9bbbc43977a59c85ad04de873750b5e24187da064a319c2acd7fec",
+     "size": 15330
+    },
+    {
+     "name": "85-3Jn-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/85-3Jn-morphgnt.txt",
+     "sha256": "a75df82d9007bb673e7d27bcb86681e011befc24cbaef1c658965803d7ae490a",
+     "size": 14477
+    },
+    {
+     "name": "86-Jud-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/86-Jud-morphgnt.txt",
+     "sha256": "93c64857b492812544f1c5903bb63b5ec63ee5f32f69dd4c02d9d9c84b84624d",
+     "size": 31986
+    },
+    {
+     "name": "87-Re-morphgnt.txt",
+     "url": "https://raw.githubusercontent.com/morphgnt/sblgnt/aaed91e57c8e4a8dc9a2383e129ca5e75fe6393d/87-Re-morphgnt.txt",
+     "sha256": "5386b17ab6e3a8a68478cb0f4644009f6ad5322f379327629407ffd46a0e6dd3",
+     "size": 616102
+    }
+   ]
+  }
+ ]
+}

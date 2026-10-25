@@ -34,7 +34,7 @@ describe("adding and managing Bibles", () => {
     await user.click(screen.getByRole("button", { name: "Add a Bible…" }));
     const select = await screen.findByRole("combobox", { name: "Choose a Bible" });
     const groups = within(select).getAllByRole("group").map((g) => g.getAttribute("label"));
-    expect(groups).toEqual(["English", "Deutsch", "한국어", "Français", "Español", "Português"]);
+    expect(groups).toEqual(["English", "Deutsch", "한국어", "Français", "Español", "Português", "Ελληνικά (Koine Greek)"]);
     expect(within(select).getAllByRole("option").map((o) => o.textContent)).toEqual([
       "Berean Standard Bible (BSB)",
       "World English Bible (WEB)",
@@ -45,6 +45,10 @@ describe("adding and managing Bibles", () => {
       "Louis Segond 1910 (LSG)",
       "Santa Biblia — Reina Valera 1909 (RV1909)",
       "Bíblia Livre (BLIVRE)",
+      "SBL Greek New Testament (SBLGNT)",
+      "Robinson–Pierpont Byzantine Textform 2018 (RP2018)",
+      "Textus Receptus (Boyd 2022) (TR)",
+      "1904 Patriarchal Greek New Testament (PT1904)",
     ]);
     // the first Bible in the interface language is chosen; its language and licence are shown
     expect(select).toHaveDisplayValue("Berean Standard Bible (BSB)");
@@ -176,5 +180,48 @@ describe("adding and managing Bibles", () => {
     await user.click(within(section).getByRole("button", { name: "Undo" }));
     await waitFor(() => expect(api.state.bibles[0]?.state).toBe("active"));
     await expect(api.bibleRemovePermanently([fxa.id])).rejects.toThrow(/Only items in Trash/);
+  });
+
+  it("offers the Greek New Testaments as included Bibles, saying they hold 27 of the 66 books", async () => {
+    const { user } = await renderApp();
+    await user.click(screen.getByRole("button", { name: "Add a Bible…" }));
+    await user.selectOptions(await screen.findByRole("combobox", { name: "Choose a Bible" }), "SBL Greek New Testament (SBLGNT)");
+    await user.click(screen.getByRole("button", { name: "Add…" }));
+    const dialog = screen.getByRole("dialog", { name: "Add SBL Greek New Testament?" });
+    expect(within(dialog).getByText("27 of the 66 books")).toBeInTheDocument();
+  });
+
+  it("downloads an available Bible only after confirming its size, then reviews it as usual", async () => {
+    const { api, user } = await renderApp();
+    await user.click(screen.getByRole("button", { name: "Add a Bible…" }));
+    const list = await screen.findByRole("list", { name: "Available to download" });
+    const oshb = within(list).getByText(/Open Scriptures Hebrew Bible/).closest("li")!;
+    expect(within(oshb).getByText("עברית (Biblical Hebrew) · 39 of the 66 books · lexical numbers · grammar")).toBeInTheDocument();
+    expect(within(oshb).getByText("Public Domain text; CC BY 4.0 word data · 28.6 MB")).toBeInTheDocument();
+    await user.click(within(oshb).getByRole("button", { name: "Download OSHB…" }));
+    const dialog = screen.getByRole("dialog", { name: "Download Open Scriptures Hebrew Bible (Westminster Leningrad Codex)?" });
+    expect(within(dialog).getByText(/40 files \(28.6 MB\) are downloaded from GitHub and each is checked/)).toBeInTheDocument();
+    // Cancel downloads nothing.
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    expect(api.state.pendingPreview).toBeNull();
+    await user.click(within(oshb).getByRole("button", { name: "Download OSHB…" }));
+    await user.click(within(screen.getByRole("dialog", { name: /^Download Open Scriptures/ })).getByRole("button", { name: "Download (28.6 MB)" }));
+    expect(await screen.findByRole("heading", { level: 1, name: "New Bible" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Name")).toHaveValue("Open Scriptures Hebrew Bible (Westminster Leningrad Codex)");
+    expect(screen.getByLabelText("Short name")).toHaveValue("OSHB");
+    expect(api.state.bibles).toHaveLength(0);
+  });
+
+  it("a download that fails its check keeps nothing and says why", async () => {
+    const api = createMemoryApi();
+    api.state.catalogueFails = true;
+    const { user } = await renderApp(api);
+    await user.click(screen.getByRole("button", { name: "Add a Bible…" }));
+    const list = await screen.findByRole("list", { name: "Available to download" });
+    await user.click(within(list).getByRole("button", { name: "Download MorphGNT…" }));
+    await user.click(within(screen.getByRole("dialog", { name: "Download MorphGNT: SBLGNT Edition?" })).getByRole("button", { name: "Download (8.9 MB)" }));
+    expect(await screen.findByText(/did not match the verified copy, so nothing was kept/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Add a Bible" })).toBeInTheDocument();
+    expect(api.state.bibles).toHaveLength(0);
   });
 });

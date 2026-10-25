@@ -312,6 +312,13 @@ of the file is deleted — **your original file is never touched**.
 - **Collections** are your own folders, and can sit inside each other. A
   source can be in several; its file is never copied. **Tags** work the same
   way, and many can go on one source.
+- **Add many…** adds several files or a whole folder (with its subfolders if
+  you like). Abiding Word reads and checks each file, then shows one list:
+  files already in your library or listed twice are not ticked, files that
+  cannot be added say why, and you can correct titles, authors and
+  categories, and put them all in a collection or give them tags, before
+  **Add**. **Stop** works at any point; what was added stays. If the app is
+  closed in the middle, Settings → Sources offers to **Continue**.
 - Tick several sources (or **Select all on this page**) to **Archive**,
   **Move to Trash…**, add them to a collection or tag them all at once.
 - **Archived** sources are kept but stay out of your everyday lists; show them
