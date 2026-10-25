@@ -23,6 +23,7 @@ use crate::scripture::{
 const COLUMNS: &str = "id, name, short_name, language, language_code, publisher, \
     copyright_notice, license_type, kind, source_type, source_origin, source_path, \
     original_file_name, import_status, is_builtin, book_count, verse_count, created_at, updated_at, \
+    state, state_changed_at, \
     (SELECT json_object('wordCount', a.word_count, 'verseCount', a.verse_count, \
         'lemmas', json(CASE WHEN a.lemma_count > 0 THEN 'true' ELSE 'false' END), \
         'lexicalIds', json(CASE WHEN a.strong_count > 0 THEN 'true' ELSE 'false' END), \
@@ -56,13 +57,26 @@ fn from_row(row: &Row) -> rusqlite::Result<BibleTranslation> {
         verse_count: row.get(16)?,
         created_at: row.get(17)?,
         updated_at: row.get(18)?,
+        state: row.get(19)?,
+        state_changed_at: row.get(20)?,
         words: row
-            .get::<_, Option<String>>(19)?
+            .get::<_, Option<String>>(21)?
             .and_then(|json| serde_json::from_str(&json).ok()),
     })
 }
 
+/// The Bibles read and chosen from (v0.24: not archived or in Trash).
 pub fn list(conn: &Connection) -> AppResult<Vec<BibleTranslation>> {
+    let mut stmt = conn.prepare(&format!(
+        "SELECT {COLUMNS} FROM bible_translations WHERE state = 'active'
+         ORDER BY name COLLATE NOCASE, short_name"
+    ))?;
+    let rows = stmt.query_map([], from_row)?;
+    Ok(rows.collect::<Result<_, _>>()?)
+}
+
+/// Every Bible, archived and trashed ones included (Settings, v0.24).
+pub fn list_all(conn: &Connection) -> AppResult<Vec<BibleTranslation>> {
     let mut stmt = conn.prepare(&format!(
         "SELECT {COLUMNS} FROM bible_translations ORDER BY name COLLATE NOCASE, short_name"
     ))?;

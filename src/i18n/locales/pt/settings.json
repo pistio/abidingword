@@ -10,7 +10,8 @@
     "planned": "Nas próximas versões",
     "assistant": "Assistente de IA",
     "updates": "Atualizações",
-    "data": "Dados e cópia de segurança"
+    "data": "Dados e cópia de segurança",
+    "sources": "Fontes"
   },
   "language": {
     "label": "Idioma da interface",
@@ -215,7 +216,8 @@
     "assistantOff": "Desligado",
     "assistantOn": "Ligado · {{service}}",
     "about": "Versão {{version}} · onde ficam seus dados",
-    "data": "Exportar, importar e fazer cópia de segurança do seu trabalho"
+    "data": "Exportar, importar e fazer cópia de segurança do seu trabalho",
+    "sources": "Seus livros e anotações: encontrar, organizar, arquivar"
   },
   "help": {
     "about": "Saiba mais: {{topic}}"

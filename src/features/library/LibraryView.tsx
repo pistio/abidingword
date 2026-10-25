@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
+import { ConfirmDialog } from "@/design-system/ConfirmDialog";
 import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { highlighted } from "@/lib/highlight";
 import { formatDate, formatNumber } from "@/i18n/format";
-import { SOURCE_TYPES, type LibraryResults, type SourceType } from "@/types/library";
+import { SOURCE_TYPES, TRASH_RETENTION_DAYS, type LibraryResults, type SourceType } from "@/types/library";
 import { formatLabel, locatorLabel, sourceTypeLabel } from "./labels";
 import { useLibraryNav } from "./LibraryNav";
 
@@ -72,18 +73,28 @@ export function LibraryView({ initialQuery, onSearched, onClose, onRemoved }: { 
     );
   };
 
-  const remove = async (sourceId: string) => {
+  // Moved to Trash (v0.24): recoverable, so the confirmation says so and an Undo follows.
+  const [trashed, setTrashed] = useState<{ id: string; title: string } | null>(null);
+  const trash = async (sourceId: string, title: string) => {
+    await api.librarySetState([sourceId], "trashed");
+    setConfirming(null);
+    onRemoved?.(sourceId);
+    sources.reload();
+    setResults(null);
+    setTrashed({ id: sourceId, title });
+  };
+  const undo = async () => {
+    if (!trashed) return;
     setError(null);
     try {
-      await api.libraryRemoveSource(sourceId);
-      setConfirming(null);
-      onRemoved?.(sourceId);
+      await api.librarySetState([trashed.id], "active");
+      setTrashed(null);
       sources.reload();
-      setResults(null);
     } catch (e) {
       setError(toApiError(e).message);
     }
   };
+  const listRef = useRef<HTMLUListElement>(null);
 
   const select = "aw-input";
   return (
@@ -170,11 +181,21 @@ export function LibraryView({ initialQuery, onSearched, onClose, onRemoved }: { 
           </div>
           {sources.error && <Notice tone="error">{sources.error.message}</Notice>}
           {error && <Notice tone="error">{error}</Notice>}
+          <p role="status" className="m-0 empty:hidden">
+            {trashed && (
+              <>
+                {t("library.trash.done", { title: trashed.title })}{" "}
+                <Button variant="quiet" onClick={undo}>
+                  {t("common.lifecycle.undo")}
+                </Button>
+              </>
+            )}
+          </p>
           {sources.data?.length === 0 && (
             <p className="m-0 text-text-muted">{sourceType || language ? t("library.filter.noMatch") : t("library.filter.empty")}</p>
           )}
           {sources.data && sources.data.length > 0 && (
-            <ul aria-label={t("library.filter.listLabel")} className="m-0 list-none border-t border-border-subtle p-0">
+            <ul ref={listRef} tabIndex={-1} aria-label={t("library.filter.listLabel")} className="m-0 list-none border-t border-border-subtle p-0 outline-none">
               {sources.data.map((s) => (
                 <li key={s.id} className="flex flex-col gap-2 border-b border-border-subtle py-2.5">
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -196,24 +217,25 @@ export function LibraryView({ initialQuery, onSearched, onClose, onRemoved }: { 
                     <button
                       type="button"
                       onClick={() => confirm(s.id)}
-                      aria-label={t("library.remove.label", { title: s.title })}
-                      title={t("library.remove.label", { title: s.title })}
+                      aria-label={t("library.trash.label", { title: s.title })}
+                      title={t("library.trash.label", { title: s.title })}
                       className="aw-icon-button size-11 hover:!text-danger"
                     >
                       <Trash2 className="size-4" aria-hidden="true" />
                     </button>
                   </div>
                   {confirming === s.id && (
-                    <div role="alertdialog" aria-label={t("library.remove.dialogLabel", { title: s.title })} className="flex flex-col gap-3 border-l-[3px] border-danger bg-hover px-4 py-3">
-                      <p className="m-0">
-                        <Trans i18nKey="library.remove.message" values={{ title: s.title }} components={{ strong: <strong /> }} />
-                      </p>
-                      {markCount?.sourceId === s.id && markCount.count > 0 && <p className="m-0">{t("library.remove.marks", { count: markCount.count })}</p>}
-                      <div className="flex gap-2">
-                        <Button variant="danger" onClick={() => remove(s.id)}>{t("library.remove.confirm")}</Button>
-                        <Button autoFocus onClick={() => setConfirming(null)}>{t("library.remove.keep")}</Button>
-                      </div>
-                    </div>
+                    <ConfirmDialog
+                      title={t("library.trash.question", { title: s.title })}
+                      confirmLabel={t("common.lifecycle.moveToTrash")}
+                      returnFocus={() => listRef.current}
+                      onCancel={() => setConfirming(null)}
+                      onConfirm={() => trash(s.id, s.title)}
+                    >
+                      <p className="m-0">{t("library.trash.text", { count: TRASH_RETENTION_DAYS })}</p>
+                      <p className="m-0">{t("library.trash.kept")}</p>
+                      {markCount?.sourceId === s.id && markCount.count > 0 && <p className="m-0">{t("library.trash.marks", { count: markCount.count })}</p>}
+                    </ConfirmDialog>
                   )}
                 </li>
               ))}

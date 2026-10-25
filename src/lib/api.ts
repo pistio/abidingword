@@ -10,6 +10,7 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { safeExternalUrl } from "./externalLink";
 import type { InquiryInput, InquiryPreview, InquiryReply, KeepInsight } from "@/types/inquiry";
+import type { ItemState, ManagePage, ManageQuery, SourceCollection, SourceTag, UpdateSource } from "@/types/library";
 import type { BackupPreview, BackupReport, ProjectExportReport, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import type {
   AppInfo,
@@ -221,6 +222,24 @@ export interface Api {
   libraryImportCommit(input: CommitSourceImport): Promise<Source>;
   libraryImportCancel(previewId: string): Promise<void>;
   libraryRemoveSource(id: string): Promise<void>;
+  /** Looking after the library (v0.24): one page of the Sources list in Settings. */
+  libraryManageList(query: ManageQuery): Promise<ManagePage>;
+  /** Archive, move to Trash or restore sources. */
+  librarySetState(ids: string[], to: ItemState): Promise<number>;
+  /** Deletes sources that are in Trash, for good. */
+  libraryRemovePermanently(ids: string[]): Promise<number>;
+  libraryUpdateSource(input: UpdateSource): Promise<Source>;
+  libraryCollections(): Promise<SourceCollection[]>;
+  libraryCollectionCreate(name: string, parentId: string | null): Promise<SourceCollection>;
+  libraryCollectionRename(id: string, name: string): Promise<void>;
+  libraryCollectionMove(id: string, parentId: string | null): Promise<void>;
+  libraryCollectionRemove(id: string): Promise<void>;
+  libraryCollect(collectionId: string, ids: string[], add: boolean): Promise<number>;
+  libraryTags(): Promise<SourceTag[]>;
+  libraryTagRename(id: string, name: string): Promise<void>;
+  libraryTagRemove(id: string): Promise<void>;
+  /** Adds tags (by name, created if new) and takes others (by id) off. */
+  libraryRetag(ids: string[], add: string[], remove: string[]): Promise<void>;
   librarySearch(input: { query: string; offset?: number }): Promise<LibraryResults>;
   libraryOpenSegment(segmentId: string): Promise<SegmentWindow>;
   sourceGetSegments(input: { sourceId: string; offset?: number; limit?: number; aroundPage?: number }): Promise<SegmentWindow>;
@@ -448,6 +467,11 @@ export interface Api {
   bibleDocumentRecognise(translationId: string): Promise<ImportPreview>;
   bibleDocumentAddVerses(previewId: string): Promise<BibleTranslation>;
   bibleRemove(id: string): Promise<void>;
+  /** Every Bible, archived and trashed ones too (v0.24, Settings). */
+  bibleListAll(): Promise<BibleTranslation[]>;
+  bibleSetState(ids: string[], to: ItemState): Promise<number>;
+  /** Deletes Bibles that are in Trash, for good. */
+  bibleRemovePermanently(ids: string[]): Promise<number>;
   /** Reads an installed Bible's kept files again for its words; nothing is saved (v0.22). */
   bibleWordsPreview(id: string): Promise<WordsPreview>;
   /** Saves that word index, replacing the old one. */
@@ -591,6 +615,20 @@ export const tauriApi: Api = {
   libraryImportCommit: (input) => call("library_import_commit", { input }),
   libraryImportCancel: (previewId) => call("library_import_cancel", { previewId }),
   libraryRemoveSource: (id) => call("library_remove_source", { id }),
+  libraryManageList: (query) => call("library_manage_list", { query }),
+  librarySetState: (ids, to) => call("library_set_state", { ids, to }),
+  libraryRemovePermanently: (ids) => call("library_remove_permanently", { ids }),
+  libraryUpdateSource: (input) => call("library_update_source", { input }),
+  libraryCollections: () => call("library_collections"),
+  libraryCollectionCreate: (name, parentId) => call("library_collection_create", { name, parentId }),
+  libraryCollectionRename: (id, name) => call("library_collection_rename", { id, name }),
+  libraryCollectionMove: (id, parentId) => call("library_collection_move", { id, parentId }),
+  libraryCollectionRemove: (id) => call("library_collection_remove", { id }),
+  libraryCollect: (collectionId, ids, add) => call("library_collect", { collectionId, ids, add }),
+  libraryTags: () => call("library_tags"),
+  libraryTagRename: (id, name) => call("library_tag_rename", { id, name }),
+  libraryTagRemove: (id) => call("library_tag_remove", { id }),
+  libraryRetag: (ids, add, remove) => call("library_retag", { ids, add, remove }),
   librarySearch: (input) => call("library_search", { input }),
   libraryOpenSegment: (segmentId) => call("library_open_segment", { segmentId }),
   sourceGetSegments: (input) => call("source_get_segments", { input }),
@@ -765,6 +803,9 @@ export const tauriApi: Api = {
   bibleDocumentRecognise: (translationId) => call("bible_document_recognise", { translationId }),
   bibleDocumentAddVerses: (previewId) => call("bible_document_add_verses", { previewId }),
   bibleRemove: (id) => call("bible_remove", { id }),
+  bibleListAll: () => call("bible_list_all"),
+  bibleSetState: (ids, to) => call("bible_set_state", { ids, to }),
+  bibleRemovePermanently: (ids) => call("bible_remove_permanently", { ids }),
   bibleWordsPreview: (id) => call("bible_words_preview", { id }),
   bibleWordsApply: (previewId, words) => call("bible_words_apply", { previewId, words }),
   bibleWordsRemove: (id) => call("bible_words_remove", { id }),

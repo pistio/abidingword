@@ -249,7 +249,24 @@
       "confirmRemove": "{{name}}의 단어 색인을 제거할까요? 본문, 메모, 일반 용례 찾기는 그대로 유지됩니다. 단어 정보는 나중에 다시 읽을 수 있습니다."
     },
     "contentsDocument_other": "읽을 문서(파일 {{formatted}}개), 절 없음",
-    "wordsDocument": "없음: 문서에는 단어 정보가 없습니다."
+    "wordsDocument": "없음: 문서에는 단어 정보가 없습니다.",
+    "lifecycle": {
+      "menu": "{{name}} 더 보기",
+      "archiveHint": "번역본 목록에서 빠지지만 보관되며 언제든 되살릴 수 있습니다.",
+      "archived": "{{name}}을(를) 보관했습니다.",
+      "restored": "{{name}}이(가) 번역본 목록으로 돌아왔습니다.",
+      "trashed": "{{name}}을(를) 휴지통으로 옮겼습니다.",
+      "archivedText": "보관한 성경은 읽기 목록에 나타나지 않습니다. 해당 절에 단 메모는 그대로 남습니다.",
+      "trashQuestion": "{{name}}을(를) 휴지통으로 옮길까요?",
+      "keptText": "메모, 강조 표시, 성경공부의 성경 구절은 특정 성경이 아니라 절에 속하므로 그대로 남습니다. 원본 파일은 건드리지 않습니다.",
+      "deleteQuestion": "{{name}}을(를) 영구 삭제할까요?",
+      "deleteText": "본문과 Abiding Word에 보관된 파일 사본이 삭제됩니다. 다시 읽으려면 새로 추가해야 합니다.",
+      "deleted_other": "성경 {{formatted}}개를 영구 삭제했습니다.",
+      "archivedTitle_other": "보관됨({{formatted}})",
+      "trashTitle_other": "휴지통({{formatted}})",
+      "trashText_other": "번역본 목록에서 빠지며, {{count}}일 동안 휴지통에서 복원할 수 있습니다. 그 뒤에는 영구 삭제됩니다.",
+      "deleteManyQuestion_other": "성경 {{formatted}}개를 영구 삭제할까요?"
+    }
   },
   "colors": {
     "label": "강조 색",

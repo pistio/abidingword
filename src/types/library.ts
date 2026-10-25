@@ -1,7 +1,7 @@
 // TypeScript mirror of the native library types (src-tauri/src/library).
 import type { HighlightColor, ScriptureRef } from "./scripture";
 
-export const SOURCE_TYPES = ["book", "article", "notes", "sermon", "lecture", "document"] as const;
+export const SOURCE_TYPES = ["book", "commentary", "article", "notes", "sermon", "lecture", "document"] as const;
 export type SourceType = (typeof SOURCE_TYPES)[number];
 
 export const LICENCE_STATUSES = ["private", "distributable", "unknown"] as const;
@@ -89,6 +89,8 @@ export interface LibraryHit {
   locator: string;
   /** Matches wrapped in U+0002 … U+0003. */
   snippet: string;
+  /** The source is archived (v0.24): found by search, not in the lists. */
+  archived: boolean;
 }
 
 export interface LibraryResults {
@@ -414,4 +416,94 @@ export interface MarkedSource {
   sourceId: string;
   title: string;
   count: number;
+}
+
+// --- Looking after the library (v0.24) ---------------------------------------
+
+/** Active (as always), archived (kept, searchable, out of the lists) or in Trash (recoverable for a while). */
+export type ItemState = "active" | "archived" | "trashed";
+
+export const TRASH_RETENTION_DAYS = 30;
+
+export type ManageSort = "title" | "author" | "category" | "added" | "language" | "state";
+
+export interface ManageQuery {
+  text?: string | null;
+  sourceType?: SourceType | null;
+  language?: string | null;
+  format?: string | null;
+  /** Leave empty for active and archived together. */
+  state?: ItemState | null;
+  collectionId?: string | null;
+  tagId?: string | null;
+  withoutText?: boolean;
+  duplicates?: boolean;
+  sort?: ManageSort;
+  descending?: boolean;
+  offset?: number;
+  limit?: number;
+}
+
+export interface TagRef {
+  id: string;
+  name: string;
+}
+
+export interface ManagedSource {
+  id: string;
+  title: string;
+  author: string | null;
+  sourceType: SourceType;
+  format: string | null;
+  language: string | null;
+  publicationYear: number | null;
+  createdAt: string;
+  state: ItemState;
+  stateChangedAt: string | null;
+  extractionStatus: string | null;
+  pageCount: number | null;
+  originalFilename: string | null;
+  /** Other sources with the same file. */
+  duplicates: number;
+  tags: TagRef[];
+  collections: string[];
+}
+
+export interface ManagePage {
+  total: number;
+  offset: number;
+  items: ManagedSource[];
+  active: number;
+  archived: number;
+  trashed: number;
+}
+
+export interface SourceCollection {
+  id: string;
+  parentId: string | null;
+  name: string;
+  count: number;
+}
+
+export interface SourceTag {
+  id: string;
+  name: string;
+  count: number;
+}
+
+export interface UpdateSource {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  author: string | null;
+  publisher: string | null;
+  edition: string | null;
+  publicationYear: number | null;
+  isbn: string | null;
+  doi: string | null;
+  language: string | null;
+  sourceType: SourceType;
+  licenceStatus: LicenceStatus;
+  licence: string | null;
+  notes: string | null;
 }

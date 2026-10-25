@@ -159,21 +159,12 @@ pub fn library_import_cancel(state: State<'_, AppState>, preview_id: String) -> 
     Ok(())
 }
 
-/// Removes a source's text and Abiding Word's copy of the file. Findings
-/// that cite it keep a record of the citation.
+/// Deletes a source permanently (v0.24: only from Trash): its text and
+/// Abiding Word's copy of the file. Findings that cite it keep a record of
+/// the citation.
 #[tauri::command(async)]
 pub fn library_remove_source(state: State<'_, AppState>, id: String) -> CommandResult<()> {
-    let core = state.core()?;
-    let file = core.db.with_conn(|conn| library::remove(conn, &id))?;
-    if let Some(relative) = file {
-        if let Some(folder) = core.dirs.sources().join(relative).parent() {
-            // Only ever the source's own folder inside sources/.
-            if folder.starts_with(core.dirs.sources()) && folder.ends_with(&id) {
-                filesystem::remove_managed(folder);
-            }
-        }
-    }
-    Ok(())
+    super::library_manage::library_remove_permanently(state, vec![id]).map(|_| ())
 }
 
 #[tauri::command(async)]

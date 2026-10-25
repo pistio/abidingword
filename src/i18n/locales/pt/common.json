@@ -33,5 +33,30 @@
     "discarded": "As alterações não salvas foram descartadas.",
     "unsaved": "Ainda não salvo",
     "changedElsewhere": "Isto foi alterado em outro lugar enquanto você editava. Cancele e abra de novo para ver a versão atual."
+  },
+  "confirm": {
+    "typeCount_one": "Para confirmar, digite {{value}} (o número de itens).",
+    "typeCount_other": "Para confirmar, digite {{value}} (o número de itens).",
+    "typeCount_many": "Para confirmar, digite {{value}} (o número de itens)."
+  },
+  "lifecycle": {
+    "archive": "Arquivar",
+    "moveToTrash": "Mover para a lixeira",
+    "moveToTrashEllipsis": "Mover para a lixeira…",
+    "restore": "Restaurar",
+    "deletePermanently": "Excluir definitivamente",
+    "emptyTrash": "Excluir tudo da lixeira…",
+    "trashedOn": "Movido para a lixeira em {{date}}",
+    "cannotUndo": "Isso não pode ser desfeito.",
+    "undo": "Desfazer",
+    "undone": "Desfeito.",
+    "state": {
+      "active": "Em uso",
+      "archived": "Arquivado",
+      "trashed": "Na lixeira"
+    },
+    "trashText_one": "Os itens na lixeira ficam guardados por {{count}} dia e depois são excluídos definitivamente. Até lá, você pode restaurá-los.",
+    "trashText_other": "Os itens na lixeira ficam guardados por {{count}} dias e depois são excluídos definitivamente. Até lá, você pode restaurá-los.",
+    "trashText_many": "Os itens na lixeira ficam guardados por {{count}} dias e depois são excluídos definitivamente. Até lá, você pode restaurá-los."
   }
 }

@@ -1,0 +1,271 @@
+//! Looking after sources and Bibles (v0.24): archive, Trash, restore and
+//! removal for good; the Sources list in Settings; metadata; collections
+//! and tags. Files are deleted only inside Abiding Word's own folders, and
+//! only once the database has committed: a failure leaves a recoverable
+//! item (still in Trash), never a database row without its file.
+
+use tauri::State;
+
+use super::CommandResult;
+use crate::db::library_manage::{
+    self, Collection, ItemState, ManagePage, ManageQuery, Tag, UpdateSource,
+};
+use crate::db::{bibles, now};
+use crate::filesystem;
+use crate::library::Source;
+use crate::scripture::BibleTranslation;
+use crate::state::{AppState, Core};
+
+/// Deletes a removed source's own folder (`sources/<category>/<id>/`).
+fn delete_source_folder(core: &Core, id: &str, relative: Option<&str>) {
+    let Some(relative) = relative else {
+        return;
+    };
+    if let Some(folder) = core.dirs.sources().join(relative).parent() {
+        // Only ever the source's own folder inside sources/.
+        if folder.starts_with(core.dirs.sources()) && folder.ends_with(id) {
+            filesystem::remove_managed(folder);
+        }
+    }
+}
+
+fn delete_bible_folder(core: &Core, removed: &library_manage::RemovedBible) {
+    if removed.managed_copy {
+        filesystem::remove_managed(&core.dirs.bible_sources(&removed.id));
+    }
+}
+
+/// Removes for good what has been in Trash longer than the retention period
+/// (run when the app starts). Failures are logged; nothing is lost by
+/// trying again next time.
+pub(crate) fn empty_expired_trash(core: &Core) {
+    let expired = core
+        .db
+        .with_conn(|conn| library_manage::expired(conn, &now()));
+    let (sources, bibles) = match expired {
+        Ok(found) => found,
+        Err(error) => {
+            log::warn!("Trash could not be checked: {error}");
+            return;
+        }
+    };
+    if !sources.is_empty() {
+        match core
+            .db
+            .with_conn(|conn| library_manage::remove_sources(conn, &sources))
+        {
+            Ok(files) => {
+                for (id, file) in files {
+                    delete_source_folder(core, &id, file.as_deref());
+                }
+            }
+            Err(error) => log::warn!("expired sources could not be removed: {error}"),
+        }
+    }
+    if !bibles.is_empty() {
+        match core
+            .db
+            .with_conn(|conn| library_manage::remove_bibles(conn, &bibles))
+        {
+            Ok(removed) => removed.iter().for_each(|b| delete_bible_folder(core, b)),
+            Err(error) => log::warn!("expired Bibles could not be removed: {error}"),
+        }
+    }
+    sweep_leftovers(core);
+}
+
+/// Folders left behind when deleting a file failed, or the app stopped
+/// between copying a file and saving its record, or between the database
+/// commit and the file deletion: a source or Bible folder with no live
+/// source or Bible of that id. Only such folders, directly inside Abiding
+/// Word's own category folders, are deleted.
+pub(crate) fn sweep_leftovers(core: &Core) {
+    let root = core.dirs.sources();
+    let Ok(categories) = std::fs::read_dir(&root) else {
+        return;
+    };
+    for category in categories.flatten() {
+        let Ok(name) = category.file_name().into_string() else {
+            continue;
+        };
+        let bibles = name == "bibles";
+        if !(bibles || ["books", "notes", "documents"].contains(&name.as_str())) {
+            continue;
+        }
+        let Ok(folders) = std::fs::read_dir(category.path()) else {
+            continue;
+        };
+        for folder in folders.flatten() {
+            let Ok(id) = folder.file_name().into_string() else {
+                continue;
+            };
+            if !folder.path().is_dir() {
+                continue;
+            }
+            let sql = if bibles {
+                "SELECT EXISTS (SELECT 1 FROM bible_translations WHERE id = ?1)"
+            } else {
+                "SELECT EXISTS (SELECT 1 FROM sources WHERE id = ?1 AND deleted_at IS NULL)"
+            };
+            let live = core
+                .db
+                .with_conn(|conn| Ok(conn.query_row(sql, [&id], |r| r.get::<_, bool>(0))?));
+            if matches!(live, Ok(false)) {
+                log::info!("removing a leftover folder of a removed item");
+                filesystem::remove_managed(&folder.path());
+            }
+        }
+    }
+}
+
+// --- sources ---------------------------------------------------------------------
+
+#[tauri::command(async)]
+pub fn library_manage_list(
+    state: State<'_, AppState>,
+    query: ManageQuery,
+) -> CommandResult<ManagePage> {
+    state.db(|conn| library_manage::list(conn, &query))
+}
+
+#[tauri::command(async)]
+pub fn library_set_state(
+    state: State<'_, AppState>,
+    ids: Vec<String>,
+    to: ItemState,
+) -> CommandResult<usize> {
+    state.db(|conn| library_manage::set_source_state(conn, &ids, to))
+}
+
+/// Deletes trashed sources permanently: their text and Abiding Word's copy
+/// of their files. Citations keep their record of what they cited.
+#[tauri::command(async)]
+pub fn library_remove_permanently(
+    state: State<'_, AppState>,
+    ids: Vec<String>,
+) -> CommandResult<usize> {
+    let core = state.core()?;
+    let files = core
+        .db
+        .with_conn(|conn| library_manage::remove_sources(conn, &ids))?;
+    for (id, file) in &files {
+        delete_source_folder(core, id, file.as_deref());
+    }
+    Ok(files.len())
+}
+
+#[tauri::command(async)]
+pub fn library_update_source(
+    state: State<'_, AppState>,
+    input: UpdateSource,
+) -> CommandResult<Source> {
+    state.db(|conn| library_manage::update_source(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn library_collections(state: State<'_, AppState>) -> CommandResult<Vec<Collection>> {
+    state.db(library_manage::collections)
+}
+
+#[tauri::command(async)]
+pub fn library_collection_create(
+    state: State<'_, AppState>,
+    name: String,
+    parent_id: Option<String>,
+) -> CommandResult<Collection> {
+    state.db(|conn| library_manage::create_collection(conn, &name, parent_id.as_deref()))
+}
+
+#[tauri::command(async)]
+pub fn library_collection_rename(
+    state: State<'_, AppState>,
+    id: String,
+    name: String,
+) -> CommandResult<()> {
+    state.db(|conn| library_manage::rename_collection(conn, &id, &name))
+}
+
+#[tauri::command(async)]
+pub fn library_collection_move(
+    state: State<'_, AppState>,
+    id: String,
+    parent_id: Option<String>,
+) -> CommandResult<()> {
+    state.db(|conn| library_manage::move_collection(conn, &id, parent_id.as_deref()))
+}
+
+#[tauri::command(async)]
+pub fn library_collection_remove(state: State<'_, AppState>, id: String) -> CommandResult<()> {
+    state.db(|conn| library_manage::remove_collection(conn, &id))
+}
+
+#[tauri::command(async)]
+pub fn library_collect(
+    state: State<'_, AppState>,
+    collection_id: String,
+    ids: Vec<String>,
+    add: bool,
+) -> CommandResult<usize> {
+    state.db(|conn| library_manage::collect(conn, &collection_id, &ids, add))
+}
+
+#[tauri::command(async)]
+pub fn library_tags(state: State<'_, AppState>) -> CommandResult<Vec<Tag>> {
+    state.db(library_manage::tags)
+}
+
+#[tauri::command(async)]
+pub fn library_tag_rename(
+    state: State<'_, AppState>,
+    id: String,
+    name: String,
+) -> CommandResult<()> {
+    state.db(|conn| library_manage::rename_tag(conn, &id, &name))
+}
+
+#[tauri::command(async)]
+pub fn library_tag_remove(state: State<'_, AppState>, id: String) -> CommandResult<()> {
+    state.db(|conn| library_manage::remove_tag(conn, &id))
+}
+
+#[tauri::command(async)]
+pub fn library_retag(
+    state: State<'_, AppState>,
+    ids: Vec<String>,
+    add: Vec<String>,
+    remove: Vec<String>,
+) -> CommandResult<()> {
+    state.db(|conn| library_manage::retag(conn, &ids, &add, &remove))
+}
+
+// --- Bibles ----------------------------------------------------------------------
+
+/// Every Bible, archived and trashed ones included (Settings).
+#[tauri::command(async)]
+pub fn bible_list_all(state: State<'_, AppState>) -> CommandResult<Vec<BibleTranslation>> {
+    state.db(bibles::list_all)
+}
+
+#[tauri::command(async)]
+pub fn bible_set_state(
+    state: State<'_, AppState>,
+    ids: Vec<String>,
+    to: ItemState,
+) -> CommandResult<usize> {
+    state.db(|conn| library_manage::set_bible_state(conn, &ids, to))
+}
+
+/// Deletes trashed Bibles permanently with Abiding Word's copy of their
+/// files. Study passages, notes and highlights stay with their verses.
+#[tauri::command(async)]
+pub fn bible_remove_permanently(
+    state: State<'_, AppState>,
+    ids: Vec<String>,
+) -> CommandResult<usize> {
+    let core = state.core()?;
+    let removed = core
+        .db
+        .with_conn(|conn| library_manage::remove_bibles(conn, &ids))?;
+    removed.iter().for_each(|b| delete_bible_folder(core, b));
+    Ok(removed.len())
+}

@@ -33,5 +33,30 @@
     "discarded": "Les modifications non enregistrées ont été abandonnées.",
     "unsaved": "Pas encore enregistré",
     "changedElsewhere": "Cela a été modifié ailleurs pendant votre saisie. Annulez et rouvrez pour voir la version actuelle."
+  },
+  "confirm": {
+    "typeCount_one": "Pour confirmer, tapez {{value}} (le nombre d’éléments).",
+    "typeCount_other": "Pour confirmer, tapez {{value}} (le nombre d’éléments).",
+    "typeCount_many": "Pour confirmer, tapez {{value}} (le nombre d’éléments)."
+  },
+  "lifecycle": {
+    "archive": "Archiver",
+    "moveToTrash": "Mettre à la corbeille",
+    "moveToTrashEllipsis": "Mettre à la corbeille…",
+    "restore": "Restaurer",
+    "deletePermanently": "Supprimer définitivement",
+    "emptyTrash": "Tout supprimer dans la corbeille…",
+    "trashedOn": "Mis à la corbeille le {{date}}",
+    "cannotUndo": "Cette action est irréversible.",
+    "undo": "Annuler",
+    "undone": "Annulé.",
+    "state": {
+      "active": "En usage",
+      "archived": "Archivé",
+      "trashed": "Dans la corbeille"
+    },
+    "trashText_one": "Les éléments de la corbeille sont conservés {{count}} jour, puis supprimés définitivement. D’ici là, vous pouvez les restaurer.",
+    "trashText_other": "Les éléments de la corbeille sont conservés {{count}} jours, puis supprimés définitivement. D’ici là, vous pouvez les restaurer.",
+    "trashText_many": "Les éléments de la corbeille sont conservés {{count}} jours, puis supprimés définitivement. D’ici là, vous pouvez les restaurer."
   }
 }

@@ -14,6 +14,7 @@ pub mod findings;
 pub mod fts;
 pub mod integrity;
 pub mod library;
+pub mod library_manage;
 pub mod migrations;
 pub mod presentation_templates;
 pub mod presentations;

@@ -10,7 +10,8 @@
     "planned": "Coming in later versions",
     "assistant": "AI Assistant",
     "updates": "Updates",
-    "data": "Data and backup"
+    "data": "Data and backup",
+    "sources": "Sources"
   },
   "language": {
     "label": "Interface language",
@@ -215,7 +216,8 @@
     "assistantOff": "Off",
     "assistantOn": "On · {{service}}",
     "about": "Version {{version}} · where your data is kept",
-    "data": "Export, import and back up your work"
+    "data": "Export, import and back up your work",
+    "sources": "Your books and notes: find, organise, archive"
   },
   "help": {
     "about": "More about: {{topic}}"

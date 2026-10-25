@@ -271,7 +271,29 @@
     },
     "contentsDocument_one": "Ein Dokument zum Lesen ({{formatted}} Datei), ohne Verse",
     "contentsDocument_other": "Ein Dokument zum Lesen ({{formatted}} Dateien), ohne Verse",
-    "wordsDocument": "Keine: Dokumente enthalten keine Wortinformationen."
+    "wordsDocument": "Keine: Dokumente enthalten keine Wortinformationen.",
+    "lifecycle": {
+      "menu": "Mehr zu {{name}}",
+      "archiveHint": "Aus der Übersetzungsliste genommen; bleibt erhalten und kann jederzeit zurückgeholt werden.",
+      "archived": "{{name}} wurde archiviert.",
+      "restored": "{{name}} ist wieder bei deinen Übersetzungen.",
+      "trashed": "{{name}} wurde in den Papierkorb verschoben.",
+      "archivedText": "Archivierte Bibeln werden nicht zum Lesen angeboten. Deine Notizen zu ihren Versen bleiben erhalten.",
+      "trashQuestion": "{{name}} in den Papierkorb verschieben?",
+      "keptText": "Deine Notizen, Markierungen und die Bibelstellen in deinen Studien gehören zu den Versen, nicht zu einer Bibel: Sie bleiben erhalten. Deine eigenen Dateien werden nie angetastet.",
+      "deleteQuestion": "{{name}} endgültig löschen?",
+      "deleteText": "Der Text der Bibel und die Kopie ihrer Dateien in Abiding Word werden gelöscht. Um sie wieder zu lesen, müsstest du sie erneut hinzufügen.",
+      "deleted_one": "{{formatted}} Bibel wurde endgültig gelöscht.",
+      "deleted_other": "{{formatted}} Bibeln wurden endgültig gelöscht.",
+      "archivedTitle_one": "Archiviert ({{formatted}})",
+      "archivedTitle_other": "Archiviert ({{formatted}})",
+      "trashTitle_one": "Papierkorb ({{formatted}})",
+      "trashTitle_other": "Papierkorb ({{formatted}})",
+      "trashText_one": "Sie verschwindet aus deinen Übersetzungen und kann {{count}} Tag lang aus dem Papierkorb wiederhergestellt werden; danach wird sie endgültig gelöscht.",
+      "trashText_other": "Sie verschwindet aus deinen Übersetzungen und kann {{count}} Tage lang aus dem Papierkorb wiederhergestellt werden; danach wird sie endgültig gelöscht.",
+      "deleteManyQuestion_one": "{{formatted}} Bibel endgültig löschen?",
+      "deleteManyQuestion_other": "{{formatted}} Bibeln endgültig löschen?"
+    }
   },
   "colors": {
     "label": "Farbe der Markierung",

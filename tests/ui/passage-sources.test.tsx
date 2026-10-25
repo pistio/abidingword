@@ -142,14 +142,14 @@ describe("Sources for the passage being read", () => {
     expect(await within(sourcesPane()).findByText("No source in your library is linked to this passage.")).toBeInTheDocument();
   });
 
-  it("never offers a removed source", async () => {
+  it("never offers a source in Trash", async () => {
     const api = withLibrary(COMMENTARY);
     const { user } = await renderApp(api);
     await readJohn15(user, 5);
     await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     const id = api.state.library.sources[0]!.id;
     await act(async () => {
-      await api.libraryRemoveSource(id);
+      await api.librarySetState([id], "trashed");
     });
     await user.click(within(scripture()).getByRole("button", { name: /^Verse 6\. Show verse tools/ }));
     expect(await within(sourcesPane()).findByText("No source in your library is linked to this passage.")).toBeInTheDocument();

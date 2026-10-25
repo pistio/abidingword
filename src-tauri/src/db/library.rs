@@ -103,7 +103,7 @@ pub fn list(conn: &Connection, filter: &ListSources) -> AppResult<Vec<SourceSumm
         "SELECT s.id, s.title, s.author, s.source_type, f.format, s.language, s.created_at
          FROM sources s
          LEFT JOIN source_files f ON f.source_id = s.id AND f.is_primary = 1 AND f.deleted_at IS NULL
-         WHERE s.deleted_at IS NULL
+         WHERE s.deleted_at IS NULL AND s.state = 'active'
            AND (?1 IS NULL OR s.source_type = ?1)
            AND (?2 IS NULL OR s.language = ?2)
          ORDER BY s.created_at DESC, s.title COLLATE NOCASE",
@@ -372,12 +372,21 @@ pub fn managed_file(conn: &Connection, source_id: &str) -> AppResult<Option<Stri
 /// Removes a source's text and keeps a tombstone for citations. Returns the
 /// managed file path (relative to `sources/`) for the caller to delete.
 pub fn remove(conn: &Connection, id: &str) -> AppResult<Option<String>> {
-    get(conn, id)?;
-    let file = managed_file(conn, id)?;
-    let now = now();
     let tx = conn.unchecked_transaction()?;
+    let file = remove_in(&tx, id, &now())?;
+    tx.commit()?;
+    log::info!("source removed from library (citations kept as records)");
+    Ok(file)
+}
+
+/// Removes a source for good inside the caller's transaction (v0.24: one
+/// transaction for several). Returns its managed file, to delete once the
+/// transaction has committed.
+pub(crate) fn remove_in(tx: &Connection, id: &str, now: &str) -> AppResult<Option<String>> {
+    get(tx, id)?;
+    let file = managed_file(tx, id)?;
     // Its marks go with it (soft-deleted, their words kept in the file).
-    crate::db::source_annotations::remove_with_source(&tx, id, &now)?;
+    crate::db::source_annotations::remove_with_source(tx, id, now)?;
     // Segments go (search entries by trigger, Scripture links by cascade,
     // citation segment links set to NULL by the foreign key).
     tx.execute("DELETE FROM source_segments WHERE source_id = ?1", [id])?;
@@ -385,12 +394,16 @@ pub fn remove(conn: &Connection, id: &str) -> AppResult<Option<String>> {
         "UPDATE source_files SET deleted_at = ?2, updated_at = ?2, revision = revision + 1 WHERE source_id = ?1",
         params![id, now],
     )?;
+    // Collections and tags no longer hold it (v0.24).
+    tx.execute(
+        "DELETE FROM source_collection_items WHERE source_id = ?1",
+        [id],
+    )?;
+    tx.execute("DELETE FROM source_tag_items WHERE source_id = ?1", [id])?;
     tx.execute(
         "UPDATE sources SET deleted_at = ?2, updated_at = ?2, revision = revision + 1 WHERE id = ?1",
         params![id, now],
     )?;
-    tx.commit()?;
-    log::info!("source removed from library (citations kept as records)");
     Ok(file)
 }
 
@@ -507,10 +520,10 @@ pub fn search(conn: &Connection, input: &SearchLibrary) -> AppResult<LibraryResu
     let offset = input.offset.unwrap_or(0).max(0);
     let mut stmt = conn.prepare(
         "SELECT s.id, s.title, s.author, g.id, g.position, g.page_number, g.locator,
-                snippet(library_search, 0, char(2), char(3), '…', 20)
+                snippet(library_search, 0, char(2), char(3), '…', 20), s.state
          FROM library_search
          JOIN source_segments g ON g.seq = library_search.rowid
-         JOIN sources s ON s.id = g.source_id AND s.deleted_at IS NULL
+         JOIN sources s ON s.id = g.source_id AND s.deleted_at IS NULL AND s.state <> 'trashed'
          WHERE library_search MATCH ?1
          ORDER BY rank
          LIMIT ?2 OFFSET ?3",
@@ -526,6 +539,7 @@ pub fn search(conn: &Connection, input: &SearchLibrary) -> AppResult<LibraryResu
                 page_number: r.get(5)?,
                 locator: r.get::<_, Option<String>>(6)?.unwrap_or_default(),
                 snippet: r.get(7)?,
+                archived: r.get::<_, String>(8)? == "archived",
             })
         })?
         .collect::<Result<Vec<_>, _>>()?;
@@ -546,7 +560,7 @@ pub fn mentions(conn: &Connection, reference: &ScriptureRef) -> AppResult<Vec<Pa
         "SELECT s.id, s.title, s.author, g.id, g.locator, p.matched_text, p.passage
          FROM source_passages p
          JOIN source_segments g ON g.id = p.segment_id
-         JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL
+         JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL AND s.state = 'active'
          WHERE p.origin = 'explicit' AND p.start_key <= ?2 AND p.end_key >= ?1
          ORDER BY s.title COLLATE NOCASE, g.position
          LIMIT ?3",
@@ -1058,7 +1072,7 @@ fn collect_places(
                 p.start_key, p.end_key, p.matched_text, p.section_heading
          FROM source_passages p
          JOIN source_segments g ON g.id = p.segment_id
-         JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL
+         JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL AND s.state = 'active'
          WHERE p.origin IN ('explicit', 'section', 'manual')
            AND p.start_key >= ?1 AND p.start_key <= ?3 AND p.end_key >= ?2{one_source}"
     ))?;

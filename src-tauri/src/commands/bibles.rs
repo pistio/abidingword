@@ -325,16 +325,12 @@ pub fn bible_import_cancel(state: State<'_, AppState>, preview_id: String) -> Co
     Ok(())
 }
 
-/// Removes a Bible's text and Abiding Word's copy of its files. Study
-/// passages, notes and other translation-independent data stay.
+/// Deletes a Bible permanently (v0.24: only from Trash): its text and
+/// Abiding Word's copy of its files. Study passages, notes and other
+/// translation-independent data stay.
 #[tauri::command(async)]
 pub fn bible_remove(state: State<'_, AppState>, id: String) -> CommandResult<()> {
-    let core = state.core()?;
-    let removed = core.db.with_conn(|conn| bibles::remove(conn, &id))?;
-    if removed.source_origin == "managed_copy" {
-        filesystem::remove_managed(&core.dirs.bible_sources(&removed.id));
-    }
-    Ok(())
+    super::library_manage::bible_remove_permanently(state, vec![id]).map(|_| ())
 }
 
 /// Corrects the language of an installed Bible (v0.18.3): the name shown and

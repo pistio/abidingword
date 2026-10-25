@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { openSettingsSection, renderApp } from "../support/render";
 
 // All library text here is invented for the tests.
 const VINE_NOTES: SourceFixture = {
@@ -245,8 +245,8 @@ describe("Library", () => {
 
     await user.selectOptions(screen.getByLabelText("Search in"), "library");
     await user.type(screen.getByLabelText("Search the library"), "pruning{Enter}");
-    await user.click(await screen.findByRole("button", { name: "Remove Notes on the Vine" }));
-    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Remove from library" }));
+    await user.click(await screen.findByRole("button", { name: "Move Notes on the Vine to Trash" }));
+    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Move to Trash" }));
     await screen.findByText(/Nothing in your library yet/);
     await user.click(screen.getByRole("button", { name: "Back to workspace" }));
     expect(await within(sourcesPane()).findByText(/No sources yet/)).toBeInTheDocument();
@@ -330,16 +330,30 @@ describe("finding citations", () => {
     await within(findings).findByRole("button", { name: "J. Example, Notes on the Vine, p. 2" });
 
     await openLibrary(user);
-    await user.click(await screen.findByRole("button", { name: "Remove Notes on the Vine" }));
-    const confirm = screen.getByRole("alertdialog", { name: "Remove Notes on the Vine?" });
-    expect(confirm).toHaveTextContent("Study notes that cite it keep a record of the citation.");
-    expect(confirm).toHaveTextContent("your original file is not touched");
-    await user.click(within(confirm).getByRole("button", { name: "Keep it" }));
+    await user.click(await screen.findByRole("button", { name: "Move Notes on the Vine to Trash" }));
+    const confirm = screen.getByRole("alertdialog", { name: "Move “Notes on the Vine” to Trash?" });
+    expect(confirm).toHaveTextContent("You can restore it from Trash");
+    expect(within(confirm).getByRole("button", { name: "Cancel" })).toHaveFocus();
+    await user.click(within(confirm).getByRole("button", { name: "Cancel" }));
     expect(api.state.library.sources[0]?.deleted).toBe(false);
 
-    await user.click(screen.getByRole("button", { name: "Remove Notes on the Vine" }));
-    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Remove from library" }));
+    await user.click(screen.getByRole("button", { name: "Move Notes on the Vine to Trash" }));
+    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Move to Trash" }));
     expect(await screen.findByText(/Nothing in your library yet/)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("“Notes on the Vine” was moved to Trash.");
+    // In Trash the citation is still whole.
+    expect(api.state.library.sources[0]?.deleted).toBe(false);
+
+    // Deleted for good from Trash, in Settings → Sources.
+    await user.click(screen.getByRole("button", { name: "Back to workspace" }));
+    const sources = await openSettingsSection(user, "Sources");
+    await user.click(await within(sources).findByRole("radio", { name: /^Trash/ }));
+    await user.click(await within(sources).findByRole("button", { name: "More for Notes on the Vine" }));
+    await user.click(screen.getByRole("menuitem", { name: "Delete permanently" }));
+    const really = screen.getByRole("alertdialog", { name: "Delete “Notes on the Vine” permanently?" });
+    expect(really).toHaveTextContent("Citations in your studies keep a record of what they cited. Your original file is not touched.");
+    await user.click(within(really).getByRole("button", { name: "Delete permanently" }));
+    expect(await within(sources).findByText("Trash is empty.")).toBeInTheDocument();
 
     // The finding still says what it cited, marked as removed, not as a link.
     await user.click(screen.getByRole("button", { name: "Back to workspace" }));

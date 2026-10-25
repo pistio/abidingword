@@ -10,7 +10,8 @@
     "planned": "향후 버전에서 제공 예정",
     "assistant": "AI 도우미",
     "updates": "업데이트",
-    "data": "데이터와 백업"
+    "data": "데이터와 백업",
+    "sources": "자료"
   },
   "language": {
     "label": "화면 언어",
@@ -215,7 +216,8 @@
     "assistantOff": "꺼짐",
     "assistantOn": "켜짐 · {{service}}",
     "about": "버전 {{version}} · 데이터 저장 위치",
-    "data": "작업 내보내기, 가져오기, 백업"
+    "data": "작업 내보내기, 가져오기, 백업",
+    "sources": "책과 메모: 찾기, 정리, 보관"
   },
   "help": {
     "about": "자세히: {{topic}}"

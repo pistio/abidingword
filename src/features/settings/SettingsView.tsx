@@ -10,6 +10,7 @@ import type { AppInfo, Theme } from "@/types/domain";
 import type { AssistantSettings as AssistantStatus } from "@/types/teaching";
 import { AssistantSettings } from "./AssistantSettings";
 import { BibleTexts } from "./BibleTexts";
+import { SourcesSettings } from "./SourcesSettings";
 import { DataSettings } from "@/features/portability/DataSettings";
 import { StudyTemplates } from "./StudyTemplates";
 import { UpdateSettings } from "@/features/updates/UpdateSettings";
@@ -27,6 +28,7 @@ export const SETTINGS_SECTIONS = [
   "updates",
   "appearance",
   "bible-texts",
+  "sources",
   "study-templates",
   "language",
   "assistant",
@@ -40,6 +42,7 @@ const TITLE_KEY = {
   updates: "settings.sections.updates",
   appearance: "settings.sections.appearance",
   "bible-texts": "settings.sections.bibleTexts",
+  sources: "settings.sections.sources",
   "study-templates": "settings.sections.templates",
   language: "settings.sections.language",
   assistant: "settings.sections.assistant",
@@ -119,6 +122,8 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
         return theme === "dark" ? t("settings.theme.dark") : `${t(`settings.theme.${theme}`)} · ${t(`settings.background.${background}`)}`;
       case "bible-texts":
         return t("settings.summary.bibleTexts");
+      case "sources":
+        return t("settings.summary.sources");
       case "study-templates":
         return t("settings.summary.templates");
       case "language":
@@ -150,6 +155,8 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
         );
       case "bible-texts":
         return <BibleTexts onAddBible={onAddBible} />;
+      case "sources":
+        return <SourcesSettings />;
       case "study-templates":
         return <StudyTemplates onEdit={onEditTemplate} version={templatesVersion} onEditTeaching={onEditTeachingTemplate} teachingVersion={teachingTemplatesVersion} />;
       case "language":

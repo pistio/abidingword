@@ -81,6 +81,9 @@ pub struct BibleTranslation {
     pub verse_count: i64,
     pub created_at: String,
     pub updated_at: String,
+    /// "active", "archived" or "trashed" (v0.24).
+    pub state: String,
+    pub state_changed_at: Option<String>,
     /// The Bible's word annotations (v0.21), when it has indexed ones.
     pub words: Option<WordAnnotations>,
 }

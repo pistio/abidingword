@@ -74,7 +74,10 @@ impl AppState {
             {
                 log::warn!("imported EPUB text could not be refreshed: {error}");
             }
-            Ok(Core { dirs, db })
+            let core = Core { dirs, db };
+            // What has been in Trash longer than the retention period (v0.24).
+            crate::commands::library_manage::empty_expired_trash(&core);
+            Ok(core)
         });
         match &core {
             Ok(_) => log::info!("startup complete"),

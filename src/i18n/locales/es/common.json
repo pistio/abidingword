@@ -33,5 +33,30 @@
     "discarded": "Se descartaron los cambios sin guardar.",
     "unsaved": "Sin guardar",
     "changedElsewhere": "Esto se cambió en otro lugar mientras lo editabas. Cancela y vuelve a abrirlo para ver la versión actual."
+  },
+  "confirm": {
+    "typeCount_one": "Para confirmar, escribe {{value}} (el número de elementos).",
+    "typeCount_other": "Para confirmar, escribe {{value}} (el número de elementos).",
+    "typeCount_many": "Para confirmar, escribe {{value}} (el número de elementos)."
+  },
+  "lifecycle": {
+    "archive": "Archivar",
+    "moveToTrash": "Mover a la papelera",
+    "moveToTrashEllipsis": "Mover a la papelera…",
+    "restore": "Restaurar",
+    "deletePermanently": "Eliminar definitivamente",
+    "emptyTrash": "Eliminar todo lo de la papelera…",
+    "trashedOn": "Movido a la papelera el {{date}}",
+    "cannotUndo": "Esto no se puede deshacer.",
+    "undo": "Deshacer",
+    "undone": "Deshecho.",
+    "state": {
+      "active": "En uso",
+      "archived": "Archivado",
+      "trashed": "En la papelera"
+    },
+    "trashText_one": "Los elementos de la papelera se conservan {{count}} día y luego se eliminan definitivamente. Hasta entonces puedes restaurarlos.",
+    "trashText_other": "Los elementos de la papelera se conservan {{count}} días y luego se eliminan definitivamente. Hasta entonces puedes restaurarlos.",
+    "trashText_many": "Los elementos de la papelera se conservan {{count}} días y luego se eliminan definitivamente. Hasta entonces puedes restaurarlos."
   }
 }

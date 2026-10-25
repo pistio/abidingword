@@ -11,6 +11,12 @@ interface DialogProps {
   onClose: () => void;
   /** A larger dialog that scrolls (a review or an editor), not a confirmation. */
   wide?: boolean;
+  /** "alertdialog" for a confirmation that interrupts (v0.24). */
+  role?: "dialog" | "alertdialog";
+  /** The id of the text that says what is asked (read with the title). */
+  describedBy?: string;
+  /** Where focus goes when the dialog closes if the element that opened it is gone. */
+  returnFocus?: () => HTMLElement | null;
 }
 
 /**
@@ -19,13 +25,15 @@ interface DialogProps {
  * `autoFocus`), keeps Tab inside, closes on Escape, and gives focus back to
  * whatever had it before. The page behind is dimmed and cannot be used.
  */
-export function Dialog({ title, children, actions, onClose, wide = false }: DialogProps) {
+export function Dialog({ title, children, actions, onClose, wide = false, role = "dialog", describedBy, returnFocus }: DialogProps) {
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
+  const returnFocusRef = useRef(returnFocus);
   useEffect(() => {
     onCloseRef.current = onClose;
-  }, [onClose]);
+    returnFocusRef.current = returnFocus;
+  }, [onClose, returnFocus]);
 
   useEffect(() => {
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -59,7 +67,8 @@ export function Dialog({ title, children, actions, onClose, wide = false }: Dial
     document.addEventListener("keydown", onKey, true);
     return () => {
       document.removeEventListener("keydown", onKey, true);
-      opener?.focus();
+      if (opener?.isConnected) opener.focus();
+      else returnFocusRef.current?.()?.focus();
     };
   }, []);
 
@@ -67,9 +76,10 @@ export function Dialog({ title, children, actions, onClose, wide = false }: Dial
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--aw-backdrop)] p-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div
         ref={panel}
-        role="dialog"
+        role={role}
         aria-modal="true"
         aria-labelledby={titleId}
+        aria-describedby={describedBy}
         // One dialog look (v0.18.5): raised surface, a task title, the body, actions at the foot on the right
         // (the primary one last); a confirmation is narrow, a review or an editor wide and scrolling.
         className={`flex w-full flex-col gap-4 rounded-[var(--aw-radius-lg)] border border-border bg-raised p-6 text-text shadow-xl ${wide ? "max-h-[calc(100vh-2rem)] max-w-5xl overflow-y-auto" : "max-w-lg"}`}

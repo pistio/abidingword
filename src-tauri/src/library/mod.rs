@@ -42,6 +42,7 @@ macro_rules! text_enum {
 
 text_enum!(SourceType, "source type" {
     Book => "book",
+    Commentary => "commentary",
     Article => "article",
     Notes => "notes",
     Sermon => "sermon",
@@ -182,6 +183,8 @@ pub struct LibraryHit {
     pub locator: String,
     /// Matches wrapped in U+0002 … U+0003.
     pub snippet: String,
+    /// The source is archived (v0.24): still searchable, out of the lists.
+    pub archived: bool,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]

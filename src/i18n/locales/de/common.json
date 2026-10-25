@@ -33,5 +33,28 @@
     "discarded": "Nicht gespeicherte Änderungen wurden verworfen.",
     "unsaved": "Noch nicht gespeichert",
     "changedElsewhere": "Das wurde inzwischen an anderer Stelle geändert. Brich ab und öffne es erneut, um den aktuellen Stand zu sehen."
+  },
+  "confirm": {
+    "typeCount_one": "Gib zur Bestätigung {{value}} ein (die Anzahl der Einträge).",
+    "typeCount_other": "Gib zur Bestätigung {{value}} ein (die Anzahl der Einträge)."
+  },
+  "lifecycle": {
+    "archive": "Archivieren",
+    "moveToTrash": "In den Papierkorb",
+    "moveToTrashEllipsis": "In den Papierkorb…",
+    "restore": "Wiederherstellen",
+    "deletePermanently": "Endgültig löschen",
+    "emptyTrash": "Alles im Papierkorb löschen…",
+    "trashedOn": "Am {{date}} in den Papierkorb verschoben",
+    "cannotUndo": "Das kann nicht rückgängig gemacht werden.",
+    "undo": "Rückgängig",
+    "undone": "Rückgängig gemacht.",
+    "state": {
+      "active": "In Gebrauch",
+      "archived": "Archiviert",
+      "trashed": "Im Papierkorb"
+    },
+    "trashText_one": "Einträge im Papierkorb bleiben {{count}} Tag erhalten und werden dann endgültig gelöscht. Bis dahin kannst du sie wiederherstellen.",
+    "trashText_other": "Einträge im Papierkorb bleiben {{count}} Tage erhalten und werden dann endgültig gelöscht. Bis dahin kannst du sie wiederherstellen."
   }
 }

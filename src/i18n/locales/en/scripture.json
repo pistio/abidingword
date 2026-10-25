@@ -271,7 +271,29 @@
     },
     "contentsDocument_one": "A document to read ({{formatted}} file); no verses",
     "contentsDocument_other": "A document to read ({{formatted}} files); no verses",
-    "wordsDocument": "None: documents carry no word information."
+    "wordsDocument": "None: documents carry no word information.",
+    "lifecycle": {
+      "menu": "More for {{name}}",
+      "archiveHint": "Out of the translation list; kept and can be brought back any time.",
+      "archived": "{{name}} was archived.",
+      "restored": "{{name}} is back in your translations.",
+      "trashed": "{{name}} was moved to Trash.",
+      "archivedText": "Archived Bibles are not offered for reading. Your notes on their verses stay.",
+      "trashQuestion": "Move {{name}} to Trash?",
+      "keptText": "Your notes, highlights and the passages in your studies belong to the verses, not to one Bible: they stay. Your own files are never touched.",
+      "deleteQuestion": "Delete {{name}} permanently?",
+      "deleteText": "Its text and Abiding Word’s copy of its files are deleted. To read it again you would have to add it again.",
+      "deleted_one": "{{formatted}} Bible was deleted permanently.",
+      "deleted_other": "{{formatted}} Bibles were deleted permanently.",
+      "archivedTitle_one": "Archived ({{formatted}})",
+      "archivedTitle_other": "Archived ({{formatted}})",
+      "trashTitle_one": "Trash ({{formatted}})",
+      "trashTitle_other": "Trash ({{formatted}})",
+      "trashText_one": "It leaves your translations and can be restored from Trash for {{count}} day; after that it is deleted for good.",
+      "trashText_other": "It leaves your translations and can be restored from Trash for {{count}} days; after that it is deleted for good.",
+      "deleteManyQuestion_one": "Delete {{formatted}} Bible permanently?",
+      "deleteManyQuestion_other": "Delete {{formatted}} Bibles permanently?"
+    }
   },
   "colors": {
     "label": "Highlight colour",

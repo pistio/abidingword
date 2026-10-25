@@ -314,7 +314,7 @@ describe("source marks in the Marks view", () => {
 });
 
 describe("removing a source with marks", () => {
-  it("says how many marks go with it before it is removed", async () => {
+  it("says its marks are kept, hidden, while it is in Trash", async () => {
     const api = createMemoryApi();
     api.installFixtureBible("FXA", "alpha");
     api.state.settings.scripturePassage = "PSA.23";
@@ -322,11 +322,13 @@ describe("removing a source with marks", () => {
     await seedMarks(api);
     const { user } = await renderApp(api);
     await user.click(await within(screen.getByRole("complementary", { name: "Sources" })).findByRole("button", { name: "Open library" }));
-    await user.click(await within(await screen.findByRole("main")).findByRole("button", { name: "Remove The True Vine" }));
-    const dialog = await screen.findByRole("alertdialog", { name: "Remove The True Vine?" });
-    expect(await within(dialog).findByText("Your 2 marks in it (highlights, notes and bookmarks) are removed with it.")).toBeInTheDocument();
-    await user.click(within(dialog).getByRole("button", { name: "Remove from library" }));
-    await waitFor(() => expect(live(api)).toHaveLength(0));
+    await user.click(await within(await screen.findByRole("main")).findByRole("button", { name: "Move The True Vine to Trash" }));
+    const dialog = await screen.findByRole("alertdialog", { name: "Move “The True Vine” to Trash?" });
+    expect(await within(dialog).findByText("Its 2 marks (highlights, notes and bookmarks) are hidden while it is in Trash.")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Move to Trash" }));
+    await waitFor(() => expect(api.state.manage.states.get(api.state.library.sources[0]!.id)?.state).toBe("trashed"));
+    // Kept, to come back with the source.
+    expect(live(api)).toHaveLength(2);
   });
 });
 

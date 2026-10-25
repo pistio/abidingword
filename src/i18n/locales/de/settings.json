@@ -10,7 +10,8 @@
     "planned": "In späteren Versionen",
     "assistant": "KI-Assistent",
     "updates": "Updates",
-    "data": "Daten und Sicherung"
+    "data": "Daten und Sicherung",
+    "sources": "Quellen"
   },
   "language": {
     "label": "Sprache der Oberfläche",
@@ -215,7 +216,8 @@
     "assistantOff": "Aus",
     "assistantOn": "An · {{service}}",
     "about": "Version {{version}} · wo deine Daten liegen",
-    "data": "Arbeit exportieren, importieren und sichern"
+    "data": "Arbeit exportieren, importieren und sichern",
+    "sources": "Deine Bücher und Notizen: finden, ordnen, archivieren"
   },
   "help": {
     "about": "Mehr dazu: {{topic}}"

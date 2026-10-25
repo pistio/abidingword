@@ -419,7 +419,8 @@ describe("a source-backed finding in the Study", () => {
 
   it("keeps the finding, its quote and citation when the source is removed, and offers no way to open it", async () => {
     const { api, branch } = await withFinding("Fruit needs the vine.");
-    await api.libraryRemoveSource(branch.sourceId);
+    await api.librarySetState([branch.sourceId], "trashed");
+    await api.libraryRemovePermanently([branch.sourceId]);
     const { user } = await renderApp(api);
     await openStudy(user, "Abiding");
     const study = studyPane();

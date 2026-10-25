@@ -130,21 +130,51 @@ describe("adding and managing Bibles", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent("Word files can’t be imported");
   });
 
-  it("lists installed Bibles in Settings and removes one after confirmation", async () => {
+  it("lists installed Bibles in Settings, moves one to Trash after confirmation, and deletes it for good from Trash", async () => {
     const api = createMemoryApi();
     api.installFixtureBible("FXA", "alpha");
     api.installFixtureBible("FXB", "beta");
     const { user } = await renderApp(api);
-    await openSettingsSection(user, "Bible texts");
+    const section = await openSettingsSection(user, "Bible texts");
 
     const list = await screen.findByRole("list", { name: "Installed Bibles" });
     expect(within(list).getAllByRole("listitem")).toHaveLength(2);
-    await user.click(within(list).getByRole("button", { name: "Remove Fixture FXA" }));
-    const confirm = screen.getByRole("alertdialog");
-    expect(confirm).toHaveTextContent("Your studies, passage links and notes are kept.");
-    await user.click(within(confirm).getByRole("button", { name: "Remove FXA" }));
+    await user.click(within(list).getByRole("button", { name: "More for Fixture FXA" }));
+    await user.click(screen.getByRole("menuitem", { name: /^Move to Trash/ }));
+    const confirm = screen.getByRole("alertdialog", { name: "Move Fixture FXA to Trash?" });
+    expect(confirm).toHaveTextContent("Your notes, highlights and the passages in your studies belong to the verses");
+    // Focus starts on Cancel; Escape cancels.
+    expect(within(confirm).getByRole("button", { name: "Cancel" })).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(api.state.bibles.find((b) => b.shortName === "FXA")?.state).toBe("active");
 
+    await user.click(within(list).getByRole("button", { name: "More for Fixture FXA" }));
+    await user.click(screen.getByRole("menuitem", { name: /^Move to Trash/ }));
+    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Move to Trash" }));
     await waitFor(() => expect(within(list).getAllByRole("listitem")).toHaveLength(1));
-    expect(api.state.bibles.map((b) => b.shortName)).toEqual(["FXB"]);
+    expect(within(section).getByRole("status")).toHaveTextContent("Fixture FXA was moved to Trash.");
+
+    // From Trash: restore is possible; deleting for good asks again.
+    await user.click(within(section).getByText("Trash (1)"));
+    await user.click(within(section).getByRole("button", { name: "Delete permanently" }));
+    const really = screen.getByRole("alertdialog", { name: "Delete Fixture FXA permanently?" });
+    expect(really).toHaveTextContent("This cannot be undone.");
+    await user.click(within(really).getByRole("button", { name: "Delete permanently" }));
+    await waitFor(() => expect(api.state.bibles.map((b) => b.shortName)).toEqual(["FXB"]));
+  });
+
+  it("archives a Bible and restores it, and never deletes one that is not in Trash", async () => {
+    const api = createMemoryApi();
+    const fxa = api.installFixtureBible("FXA", "alpha");
+    const { user } = await renderApp(api);
+    const section = await openSettingsSection(user, "Bible texts");
+    await user.click(within(section).getByRole("button", { name: "More for Fixture FXA" }));
+    await user.click(screen.getByRole("menuitem", { name: /^Archive/ }));
+    await within(section).findByText("Archived (1)");
+    expect((await api.bibleList()).map((b) => b.shortName)).toEqual([]);
+    await user.click(within(section).getByRole("button", { name: "Undo" }));
+    await waitFor(() => expect(api.state.bibles[0]?.state).toBe("active"));
+    await expect(api.bibleRemovePermanently([fxa.id])).rejects.toThrow(/Only items in Trash/);
   });
 });

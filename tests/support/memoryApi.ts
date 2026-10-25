@@ -57,6 +57,11 @@ import type {
   CitationPlace,
   CreateFindingFromSource,
   TextPoint,
+  ItemState,
+  ManagedSource,
+  ManagePage,
+  ManageQuery,
+  SourceCollection,
 } from "@/types/library";
 import type {
   Finding,
@@ -125,6 +130,14 @@ export interface MemoryApi extends Api {
     bibleDocuments: Map<string, { documents: BibleDocument[]; segments: Map<string, DocumentSegment[]>; bytes: Map<string, Uint8Array> }>;
     /** What looking for verses in a document Bible finds next (v0.23); null: as when it was added. */
     nextRecognition: ImportPreview | null;
+    /** Looking after the library (v0.24): each source's state, collections and tags. */
+    manage: {
+      states: Map<string, { state: ItemState; changedAt: string | null }>;
+      collections: SourceCollection[];
+      members: Map<string, Set<string>>;
+      tags: { id: string; name: string }[];
+      tagged: Map<string, Set<string>>;
+    };
     library: {
       /** Removed sources stay (deleted: true) as citation tombstones. */
       sources: (Source & { deleted: boolean })[];
@@ -414,6 +427,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     pendingPreview: null,
     bibleDocuments: new Map(),
     nextRecognition: null,
+    manage: { states: new Map(), collections: [], members: new Map(), tags: [], tagged: new Map() },
     library: { sources: [], segments: [], mentions: [], links: [], nextChosenFile: null, openedLinks: [], openLinkFails: false, pending: null, annotations: [] },
     findings: [],
     relations: [],
@@ -505,6 +519,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       verseCount: FIXTURE_VERSE_COUNT,
       createdAt: t,
       updatedAt: t,
+      state: "active",
+      stateChangedAt: null,
       ...fields,
     };
     state.bibles.push(bible);
@@ -720,6 +736,73 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
   const generatedOf = new Map<string, ContentsItem[]>();
   const linksOf = new Map<string, SourceLink[]>();
   const formattedOf = new Map<string, NonNullable<SourceFixture["formatted"]>>();
+  const manage = state.manage;
+  const stateOf = (sourceId: string): ItemState => manage.states.get(sourceId)?.state ?? "active";
+  const liveOrNull = (sourceId: string) => state.library.sources.find((x) => x.id === sourceId && !x.deleted) ?? null;
+  const removeSources = (ids: string[]): number => {
+    ids.forEach((sourceId) => {
+      liveSource(sourceId);
+      if (stateOf(sourceId) !== "trashed") throw new ApiError("conflict", "Only items in Trash can be deleted permanently. Move them to Trash first.", "library.notInTrash");
+    });
+    for (const sourceId of ids) {
+      const library = state.library;
+      const source = liveSource(sourceId);
+      source.deleted = true;
+      library.segments = library.segments.filter((x) => x.sourceId !== sourceId);
+      library.mentions = library.mentions.filter((m) => m.sourceId !== sourceId);
+      library.links = library.links.filter((l) => l.sourceId !== sourceId);
+      for (const a of library.annotations) if (a.sourceId === sourceId) a.deleted = true;
+      for (const f of state.findings) {
+        for (const c of f.sources) if (c.sourceId === sourceId) Object.assign(c, { removed: true, segmentId: null });
+      }
+      manage.members.forEach((set) => set.delete(sourceId));
+      manage.tagged.forEach((set) => set.delete(sourceId));
+    }
+    return ids.length;
+  };
+  const removeBibles = (ids: string[]): number => {
+    for (const bibleId of ids) {
+      const bible = state.bibles.find((b) => b.id === bibleId);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      if (bible.state !== "trashed") throw new ApiError("conflict", "Only items in Trash can be deleted permanently. Move them to Trash first.", "library.notInTrash");
+    }
+    for (const bibleId of ids) {
+      state.bibles = state.bibles.filter((b) => b.id !== bibleId);
+      state.text.delete(bibleId);
+      for (const a of state.annotations) if (a.translationId === bibleId) a.translationId = null;
+    }
+    return ids.length;
+  };
+  const manageList = (query: ManageQuery): ManagePage => {
+    const live = state.library.sources.filter((x) => !x.deleted);
+    const needle = query.text?.trim().toLowerCase();
+    const items: ManagedSource[] = live
+      .filter((x) => (query.state ? stateOf(x.id) === query.state : stateOf(x.id) !== "trashed"))
+      .filter((x) => !needle || x.title.toLowerCase().includes(needle) || (x.author ?? "").toLowerCase().includes(needle))
+      .filter((x) => !query.sourceType || x.sourceType === query.sourceType)
+      .filter((x) => !query.language || x.language === query.language)
+      .filter((x) => !query.format || x.format === query.format)
+      .filter((x) => !query.collectionId || manage.members.get(query.collectionId)?.has(x.id))
+      .filter((x) => !query.tagId || manage.tagged.get(query.tagId)?.has(x.id))
+      .filter((x) => !query.withoutText || x.extractionStatus === "ocr_required")
+      .map((x) => ({
+        id: x.id, title: x.title, author: x.author, sourceType: x.sourceType, format: x.format, language: x.language,
+        publicationYear: x.publicationYear, createdAt: x.createdAt, state: stateOf(x.id), stateChangedAt: manage.states.get(x.id)?.changedAt ?? null,
+        extractionStatus: x.extractionStatus, pageCount: x.pageCount, originalFilename: x.originalFilename,
+        duplicates: live.filter((o) => o.id !== x.id && o.contentHash && o.contentHash === x.contentHash).length,
+        tags: manage.tags.filter((tag) => manage.tagged.get(tag.id)?.has(x.id)).map(({ id: tagId, name }) => ({ id: tagId, name })),
+        collections: manage.collections.filter((c) => manage.members.get(c.id)?.has(x.id)).map((c) => c.id),
+      }))
+      .filter((x) => !query.duplicates || x.duplicates > 0);
+    const key = (x: ManagedSource): string =>
+      ({ title: x.title, author: x.author ?? "", category: x.sourceType, added: x.createdAt, language: x.language ?? "", state: x.state })[query.sort ?? "added"];
+    items.sort((a, b) => key(a).localeCompare(key(b)) || a.id.localeCompare(b.id));
+    if (query.descending ?? (query.sort ?? "added") === "added") items.reverse();
+    const offset = query.offset ?? 0;
+    const count = (wanted: ItemState) => live.filter((x) => stateOf(x.id) === wanted).length;
+    return { total: items.length, offset, items: items.slice(offset, offset + (query.limit ?? 100)), active: count("active"), archived: count("archived"), trashed: count("trashed") };
+  };
+
   const addSource = (fixture: SourceFixture, extra: Partial<Source> = {}): Source => {
     const t = now();
     const sourceId = id();
@@ -804,6 +887,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         ...library.mentions.map((m) => ({ sourceId: m.sourceId, segmentId: m.segmentId, origin: "explicit" as const, reference: m.reference, matchedText: m.matchedText, heading: null as string | null })),
         ...library.links.filter((l) => l.origin === "section").map((l) => ({ sourceId: l.sourceId, segmentId: l.segmentId, origin: "section" as const, reference: l.reference, matchedText: l.matchedText, heading: l.heading as string | null })),
       ];
+      // Archived and trashed sources are not offered (v0.24).
+      places.splice(0, places.length, ...places.filter((p) => stateOf(p.sourceId) === "active"));
       const sectionLinksOf = (segmentId: string) => library.links.filter((l) => l.segmentId === segmentId);
       const openerOf = (p: Place) => (p.origin === "section" ? p.segmentId : (sectionLinksOf(p.segmentId).at(-1)?.openerSegmentId ?? p.segmentId));
       const scored = places.flatMap((p) => {
@@ -1382,7 +1467,22 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       return found;
     },
 
-    bibleList: async () => [...state.bibles].sort((a, b) => a.name.localeCompare(b.name)),
+    bibleList: async () => state.bibles.filter((b) => b.state === "active").sort((a, b) => a.name.localeCompare(b.name)),
+    bibleListAll: async () => [...state.bibles].sort((a, b) => a.name.localeCompare(b.name)),
+    bibleSetState: async (ids, to) => {
+      const found = ids.map((bibleId) => state.bibles.find((b) => b.id === bibleId));
+      if (found.some((b) => !b)) throw new ApiError("notFound", "Bible not found");
+      let changed = 0;
+      for (const bible of found as BibleTranslation[]) {
+        if (bible.state === to) continue;
+        bible.state = to;
+        bible.stateChangedAt = now();
+        if (to !== "active" && state.settings.scriptureTranslationId === bible.id) state.settings = { ...state.settings, scriptureTranslationId: null };
+        changed++;
+      }
+      return changed;
+    },
+    bibleRemovePermanently: async (ids) => removeBibles(ids),
     // As the core lists them (src-tauri/src/scripture/bundled.rs).
     bibleBundledList: async () =>
       [
@@ -1610,9 +1710,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       return { ...bible };
     },
     bibleRemove: async (bibleId) => {
-      state.bibles = state.bibles.filter((b) => b.id !== bibleId);
-      state.text.delete(bibleId);
-      for (const a of state.annotations) if (a.translationId === bibleId) a.translationId = null;
+      removeBibles([bibleId]);
     },
 
     annotationList: async (reference, translationId) => {
@@ -1761,7 +1859,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
 
     libraryList: async ({ sourceType, language }) =>
       library.sources
-        .filter((s) => !s.deleted && (!sourceType || s.sourceType === sourceType) && (!language || s.language === language))
+        .filter((s) => !s.deleted && stateOf(s.id) === "active" && (!sourceType || s.sourceType === sourceType) && (!language || s.language === language))
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id))
         .map(toSummary),
     libraryLanguages: async () =>
@@ -1809,24 +1907,100 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       library.pending = null;
     },
     libraryRemoveSource: async (sourceId) => {
-      const source = liveSource(sourceId);
-      source.deleted = true;
-      library.segments = library.segments.filter((x) => x.sourceId !== sourceId);
-      library.mentions = library.mentions.filter((m) => m.sourceId !== sourceId);
-      library.links = library.links.filter((l) => l.sourceId !== sourceId);
-      for (const a of library.annotations) if (a.sourceId === sourceId) a.deleted = true;
-      for (const f of state.findings) {
-        for (const c of f.sources) if (c.sourceId === sourceId) Object.assign(c, { removed: true, segmentId: null });
+      removeSources([sourceId]);
+    },
+    libraryManageList: async (query) => manageList(query),
+    librarySetState: async (ids, to) => {
+      ids.forEach((sourceId) => liveSource(sourceId));
+      let changed = 0;
+      for (const sourceId of ids) {
+        if (stateOf(sourceId) === to) continue;
+        manage.states.set(sourceId, { state: to, changedAt: now() });
+        changed++;
       }
+      return changed;
+    },
+    libraryRemovePermanently: async (ids) => removeSources(ids),
+    libraryUpdateSource: async (input) => {
+      const source = liveSource(input.id);
+      const title = requireTitle(input.title, "source");
+      Object.assign(source, { ...input, title, updatedAt: now() });
+      return { ...source };
+    },
+    libraryCollections: async () =>
+      manage.collections.map((c) => ({ ...c, count: [...(manage.members.get(c.id) ?? [])].filter((x) => liveOrNull(x) && stateOf(x) !== "trashed").length })),
+    libraryCollectionCreate: async (name, parentId) => {
+      const trimmed = name.trim();
+      if (!trimmed) throw new ApiError("invalidInput", "A collection needs a name.", "library.badName");
+      if (manage.collections.some((c) => c.parentId === parentId && c.name.toLowerCase() === trimmed.toLowerCase())) {
+        throw new ApiError("conflict", `There is already a collection called “${trimmed}” here.`, "library.collectionExists");
+      }
+      const made = { id: id(), parentId, name: trimmed, count: 0 };
+      manage.collections.push(made);
+      return { ...made };
+    },
+    libraryCollectionRename: async (collectionId, name) => {
+      find(manage.collections, collectionId, "collection").name = name.trim();
+    },
+    libraryCollectionMove: async (collectionId, parentId) => {
+      let at: string | null = parentId;
+      while (at) {
+        if (at === collectionId) throw new ApiError("invalidInput", "A collection cannot be moved into itself or into one of its own collections.", "library.collectionCycle");
+        at = manage.collections.find((c) => c.id === at)?.parentId ?? null;
+      }
+      find(manage.collections, collectionId, "collection").parentId = parentId;
+    },
+    libraryCollectionRemove: async (collectionId) => {
+      const gone = new Set([collectionId]);
+      let grew = true;
+      while (grew) {
+        grew = false;
+        for (const c of manage.collections) {
+          if (c.parentId && gone.has(c.parentId) && !gone.has(c.id)) {
+            gone.add(c.id);
+            grew = true;
+          }
+        }
+      }
+      manage.collections = manage.collections.filter((c) => !gone.has(c.id));
+      gone.forEach((g) => manage.members.delete(g));
+    },
+    libraryCollect: async (collectionId, ids, add) => {
+      find(manage.collections, collectionId, "collection");
+      const members = manage.members.get(collectionId) ?? new Set<string>();
+      ids.forEach((x) => (add ? members.add(x) : members.delete(x)));
+      manage.members.set(collectionId, members);
+      return ids.length;
+    },
+    libraryTags: async () =>
+      [...manage.tags]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((tag) => ({ ...tag, count: [...(manage.tagged.get(tag.id) ?? [])].filter((x) => liveOrNull(x) && stateOf(x) !== "trashed").length })),
+    libraryTagRename: async (tagId, name) => {
+      find(manage.tags, tagId, "tag").name = name.trim();
+    },
+    libraryTagRemove: async (tagId) => {
+      manage.tags = manage.tags.filter((tag) => tag.id !== tagId);
+      manage.tagged.delete(tagId);
+    },
+    libraryRetag: async (ids, add, remove) => {
+      for (const name of add) {
+        let tag = manage.tags.find((x) => x.name.toLowerCase() === name.trim().toLowerCase());
+        if (!tag) manage.tags.push((tag = { id: id(), name: name.trim() }));
+        const set = manage.tagged.get(tag.id) ?? new Set<string>();
+        ids.forEach((x) => set.add(x));
+        manage.tagged.set(tag.id, set);
+      }
+      for (const tagId of remove) ids.forEach((x) => manage.tagged.get(tagId)?.delete(x));
     },
     librarySearch: async ({ query, offset = 0 }) => {
       const words = query.toLowerCase().replace(/["“”]/g, "").split(/\s+/).filter(Boolean);
-      const matches = library.segments.filter((x) => words.every((w) => x.text.toLowerCase().includes(w)));
+      const matches = library.segments.filter((x) => stateOf(x.sourceId) !== "trashed" && words.every((w) => x.text.toLowerCase().includes(w)));
       const hits: LibraryHit[] = matches.slice(offset, offset + 50).map((x) => {
         const source = liveSource(x.sourceId);
         let snippet = x.text;
         for (const w of words) snippet = snippet.replace(new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "i"), "\u0002$1\u0003");
-        return { sourceId: source.id, sourceTitle: source.title, author: source.author, segmentId: x.id, position: x.position, pageNumber: x.pageNumber, locator: x.locator, snippet };
+        return { sourceId: source.id, sourceTitle: source.title, author: source.author, segmentId: x.id, position: x.position, pageNumber: x.pageNumber, locator: x.locator, snippet, archived: stateOf(source.id) === "archived" };
       });
       return { hits, offset, hasMore: matches.length > offset + 50 };
     },

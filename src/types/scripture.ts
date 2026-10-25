@@ -51,6 +51,9 @@ export interface BibleTranslation {
   verseCount: number;
   createdAt: string;
   updatedAt: string;
+  /** "active", "archived" or "trashed" (v0.24). */
+  state: "active" | "archived" | "trashed";
+  stateChangedAt: string | null;
   /** Word annotations from the Bible's own markup (v0.21); absent when it has none. */
   words?: WordAnnotations | null;
 }

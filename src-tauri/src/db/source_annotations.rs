@@ -333,7 +333,8 @@ const MARKS_PAGE_MAX: i64 = 100;
 /// walking the ordered rows, as the Bible's marks are). Marks are shown as
 /// last found; they are found again when their source is opened.
 pub fn marks(conn: &Connection, query: &SourceMarksQuery) -> AppResult<SourceMarksPage> {
-    let mut clauses = vec!["a.deleted_at IS NULL AND s.deleted_at IS NULL".to_string()];
+    let mut clauses =
+        vec!["a.deleted_at IS NULL AND s.deleted_at IS NULL AND s.state <> 'trashed'".to_string()];
     let mut values: Vec<rusqlite::types::Value> = Vec::new();
     let needle = query
         .query
@@ -419,7 +420,7 @@ pub fn marked_sources(conn: &Connection) -> AppResult<Vec<MarkedSource>> {
     let mut stmt = conn.prepare(
         "SELECT s.id, s.title, COUNT(*) FROM source_annotations a
          JOIN sources s ON s.id = a.source_id
-         WHERE a.deleted_at IS NULL AND s.deleted_at IS NULL
+         WHERE a.deleted_at IS NULL AND s.deleted_at IS NULL AND s.state <> 'trashed'
          GROUP BY s.id ORDER BY s.title COLLATE NOCASE, s.id",
     )?;
     let rows = stmt.query_map([], |r| {

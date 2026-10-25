@@ -33,5 +33,28 @@
     "discarded": "Unsaved changes were discarded.",
     "unsaved": "Not saved yet",
     "changedElsewhere": "This was changed somewhere else while you were editing. Cancel and open it again to see the current version."
+  },
+  "confirm": {
+    "typeCount_one": "To confirm, type {{value}} (the number of items).",
+    "typeCount_other": "To confirm, type {{value}} (the number of items)."
+  },
+  "lifecycle": {
+    "archive": "Archive",
+    "moveToTrash": "Move to Trash",
+    "moveToTrashEllipsis": "Move to Trash…",
+    "restore": "Restore",
+    "deletePermanently": "Delete permanently",
+    "emptyTrash": "Delete everything in Trash…",
+    "trashedOn": "Moved to Trash on {{date}}",
+    "cannotUndo": "This cannot be undone.",
+    "undo": "Undo",
+    "undone": "Undone.",
+    "state": {
+      "active": "In use",
+      "archived": "Archived",
+      "trashed": "In Trash"
+    },
+    "trashText_one": "Items in Trash are kept for {{count}} day and then deleted for good. Until then you can restore them.",
+    "trashText_other": "Items in Trash are kept for {{count}} days and then deleted for good. Until then you can restore them."
   }
 }

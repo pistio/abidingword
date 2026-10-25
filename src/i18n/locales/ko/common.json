@@ -33,5 +33,26 @@
     "discarded": "저장하지 않은 변경 내용을 버렸습니다.",
     "unsaved": "아직 저장하지 않음",
     "changedElsewhere": "편집하는 동안 다른 곳에서 바뀌었습니다. 취소한 뒤 다시 열어 현재 내용을 확인하세요."
+  },
+  "confirm": {
+    "typeCount_other": "확인하려면 {{value}}(항목 수)을 입력하세요."
+  },
+  "lifecycle": {
+    "archive": "보관하기",
+    "moveToTrash": "휴지통으로 이동",
+    "moveToTrashEllipsis": "휴지통으로 이동…",
+    "restore": "복원",
+    "deletePermanently": "영구 삭제",
+    "emptyTrash": "휴지통의 모든 항목 삭제…",
+    "trashedOn": "{{date}}에 휴지통으로 이동함",
+    "cannotUndo": "이 작업은 되돌릴 수 없습니다.",
+    "undo": "실행 취소",
+    "undone": "되돌렸습니다.",
+    "state": {
+      "active": "사용 중",
+      "archived": "보관됨",
+      "trashed": "휴지통에 있음"
+    },
+    "trashText_other": "휴지통의 항목은 {{count}}일 동안 보관된 뒤 영구 삭제됩니다. 그 전까지는 복원할 수 있습니다."
   }
 }
