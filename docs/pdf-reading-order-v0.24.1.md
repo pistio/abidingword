@@ -50,13 +50,24 @@ drawing order.
    column stands beside it, the gutter is not a gutter there and the page is
    **uncertain** (below). Smaller text on the crossing line's own baseline
    (the sign before a footnote, a second footnote) belongs to it.
-6. **Lines.** Within a column, spans whose baselines are within half a text
-   size of each other form a line (a raised verse number stays in its line),
+6. **Lines.** Within a column, spans whose baselines are within a fifth of
+   a text size of each other form a line; a raised verse number, a raised
+   note sign or a chapter number centred in the line stays in its line when
+   it lies within the line's height,
    read left to right; lines are read top to bottom. A large initial (a
    chapter number set over two lines) opens the first line beside it. A wide
    space above a line starts a new block (paragraph).
 7. **Nested columns.** A column is examined once more for a gutter (three
    columns), never deeper.
+8. **The document's gutter.** A page with too little text to show its
+   gutter (the last page of a book, half empty) uses the gutter that the
+   document's other pages of the same side (odd or even) share, when at least
+   five pages agree on it. A one-column line with a gap wider than two and a
+   half characters inside it is never accepted as a line: the page is
+   uncertain instead (this is what kept 1 Samuel 31:13 from losing words).
+9. **Raised small letters** (one or two lower-case letters set smaller and
+   higher than the text: cross-reference callers) are marked in a second
+   copy of the line (`Line::marked`), never removed from the document text.
 
 ### Uncertain pages
 
@@ -84,20 +95,77 @@ Nothing is rearranged speculatively.
 
 ## 3. What the recogniser does with it (`scripture/structure.rs`)
 
-The recogniser is unchanged in its rules; it reads better-ordered text.
-v0.24.1 adds:
+The recogniser keeps its v0.24 rules: it never guesses, and refuses a chapter
+whose structure it cannot read. What v0.24.1 adds is **evidence** it may use
+— always from the document itself:
 
 - **Notes known from the layout** (`Unit::note`) are left out with the
   pattern-found page footnotes and counted (`documentFootnotes`).
-- **Note signs** (`†`, `‡`, `§`, `¶`, `*`) are taken out of a verse on a PDF
-  page **only when a note on the same page begins with that sign** — the
-  document's own structure shows it is a reference there. A sign with no
-  note on its page stays in the text as written. (Other formats keep the
-  v0.24 rule.)
-- **Uncertain pages** refuse their chapters (above).
+- **Note signs** (`†`, `‡`, `§`, `¶`, `*`) are taken out of a verse **only when
+  a note on the same page, or the page before or after, names that sign and
+  that verse** ("‡ 9:44 …"). A run of signs (`*‡`) is one unit. A sign with no
+  such note stays in the text as written. This fixes Mark 9:44 (regression
+  test `mark_9_44_a_cluster_of_note_signs_is_taken_out_when_the_notes_name_the_verse`).
+- **Raised letters** are taken out only when a note names the letter and the
+  verse ("a 3:16 …"); a raised letter without one refuses its chapter
+  (`documentRaisedLetters`) — it is never left glued to a word.
+- **Uncertain pages** refuse their chapters (`documentReadingOrder`).
 - **Tables of contents.** A line with dot leaders to a page number
-  ("Exodus . . . . . 60") is never a heading; v0.24 read it as "Exodus,
-  chapter 60" and then refused the real Exodus as a book that begins twice.
+  ("Exodus . . . . . 60") is never a heading.
+- **Large type** (1.15 × the page's body size or more) is a heading, never
+  verse text ("BOOK 2" in the Psalms).
+- **Running heads** naming a passage are checked against what was read: a
+  page whose head says Revelation 17 while the recogniser is in chapter 16
+  shows a lost chapter, and the chapter is refused (`documentRunningHead`).
+  eBible's known head slip (the head keeps the previous chapter at a chapter
+  start) is tolerated, and heads that run backwards are ignored.
+- **Chapter resynchronisation.** A number alone on its line, followed by
+  verse 1, greater than the current chapter and within the book, begins that
+  chapter even when the previous chapter is short (an edition with 17 verses
+  where the standard count is 18); a jump of more than one chapter is
+  reported (`documentChapterJump`).
+- **Labels inside verses.** Short capitalised words repeated as lines of
+  their own (speaker labels "Beloved", "Lover"; acrostic headings
+  "ALEPH") refuse the chapter (`documentLabel`): they are not Scripture and
+  cannot be told apart from it safely.
+- **Book titles** are matched in their printed forms: "The Second Book of
+  Samuel", "Paul's Letter to the Romans", "The Acts of the Apostles", "Das
+  erste Buch Mose (Genesis)", two-line titles with a lower-case second line,
+  and a one-letter misprint of a name of six letters or more ("Chonik").
+  Lines naming a book and a chapter count as Bible lines only when the
+  document is written that way (a preface citing "Luke 17:36" is not).
+- **Hyphenation.** "Lob- und Dankopfer" keeps its hyphen and space: a hyphen
+  before *und / oder / and / or …* is a suspended compound, not a line-end
+  break.
+
+### Results (`docs/audit/v0.24.1/`)
+
+Each edition's PDF compared with the USFM of the **same revision** (audit
+only; see 4):
+
+| | World English Bible | Luther 1912 |
+|---|---|---|
+| Verses in the edition | 31 103 | 31 102 |
+| Usable v0.24 | 3 353 (10.8 %) | 6 910 (22.2 %) |
+| **Usable v0.24.1** | **30 782 (99.0 %)** | **31 102 (100 %)** |
+| Exact | 30 185 | 31 102 |
+| Differ only by whitespace (thin spaces, line ends) | 864 | 0 |
+| Genuine differences in usable verses | **0** | **0** |
+| Genuine differences in refused chapters (never shown) | 49 | 0 |
+| Pages with uncertain order | 0 | 0 |
+
+WEB book-layout PDF (`engwebp_book.pdf`): the same figures. Compared with the
+older WEB USFM bundled with Abiding Word instead, three usable verses differ
+(Exodus 24:3, Deuteronomy 6:10, 28:29): the PDF has the newer wording.
+
+**Gaps (WEB):** Psalm 119 (176 verses, acrostic headings), Song of Songs 1, 2,
+4–8 (106 verses, speaker labels), Revelation 8 and 22 (34 verses: a chapter
+number read twice; the glossary printed after 22:21), and five verses never
+found (Luke 17:36, Acts 8:37, 15:34, 24:7, Romans 16:24: verses this edition
+does not print in its text). **French LSG** (`fraLSG_all.pdf`) is refused as a whole: book
+introductions stand between each title and its first chapter and verses carry
+cross-reference letters and "V. …" notes; nothing wrong is accepted. Seven of
+its pages are uncertain.
 
 ## 4. Independence from reference texts
 

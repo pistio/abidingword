@@ -782,6 +782,22 @@ fn split(
             return None;
         }
     }
+    // Which column a span belongs to. A span reaching into the gutter (but
+    // not across it) belongs to the column it starts or ends in; none is
+    // ever left out.
+    let on_left = |s: &Span| {
+        if s.x1 <= middle {
+            true
+        } else if s.x0 >= middle {
+            false
+        } else if s.x0 < gutter.from {
+            true
+        } else if s.x1 > gutter.to {
+            false
+        } else {
+            s.x0 + s.x1 <= 2.0 * middle
+        }
+    };
     // Bands between the crossing lines; in each, the left column, then the right.
     let mut out = Vec::new();
     let mut columns = 2u8;
@@ -797,12 +813,12 @@ fn split(
         let left: Vec<&Span> = inside
             .iter()
             .copied()
-            .filter(|s| s.x1 <= middle && in_band(s))
+            .filter(|s| on_left(s) && in_band(s))
             .collect();
         let right: Vec<&Span> = inside
             .iter()
             .copied()
-            .filter(|s| s.x0 >= middle && in_band(s))
+            .filter(|s| !on_left(s) && in_band(s))
             .collect();
         for (index, side) in [left, right].into_iter().enumerate() {
             if side.is_empty() {
@@ -830,7 +846,12 @@ fn split(
             band_top = bottom;
         }
     }
-    Some((out, columns))
+    // Every character drawn must be read exactly once; if not, the order is
+    // not known.
+    let letters = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();
+    let drawn: usize = spans.iter().map(|s| letters(&s.text)).sum();
+    let read: usize = out.iter().map(|l| letters(&l.text)).sum();
+    (drawn == read).then_some((out, columns))
 }
 
 /// Lines standing apart at the very top or bottom of the page (a running
@@ -1112,6 +1133,22 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
         }
         lines.extend(extra);
     }
+    // The last safeguard: every character drawn is read exactly once, or the
+    // page keeps its drawing order and is uncertain.
+    let letters = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();
+    let drawn: usize = glyphs.iter().map(|g| letters(&g.text)).sum();
+    let read: usize = lines.iter().map(|l| letters(&l.text)).sum();
+    if drawn != read {
+        return PageLayout {
+            number,
+            width,
+            height,
+            order: PageOrder::Uncertain,
+            lines: drawing_order(&glyphs, width),
+            rotated_chars,
+            chars,
+        };
+    }
     PageLayout {
         number,
         width,
@@ -1309,6 +1346,38 @@ mod tests {
         want.sort_unstable();
         assert_eq!(got, want);
         assert_eq!(got.len(), p.chars);
+    }
+
+    #[test]
+    fn a_line_reaching_into_the_gutter_stays_in_its_column() {
+        // One left-column line runs on into the space between the columns;
+        // it was once neither left nor right and was lost.
+        let mut glyphs = Vec::new();
+        for i in 0..10 {
+            let y = 100.0 + 14.0 * i as f64;
+            let left = if i == 4 {
+                "a long left line reaching into gap"
+            } else {
+                "left words here ok"
+            };
+            glyphs.extend(g(left, 40.0, y, 10.0));
+            if i < 8 {
+                glyphs.extend(g("right words here", 240.0, y, 10.0));
+            }
+        }
+        let drawn: usize = glyphs.iter().map(|g| g.text.chars().count()).sum();
+        let p = page(glyphs);
+        let read: usize = p
+            .lines
+            .iter()
+            .map(|l| l.text.chars().filter(|c| !c.is_whitespace()).count())
+            .sum();
+        assert_eq!(read, drawn);
+        assert_eq!(p.order, PageOrder::Columns(2));
+        let t = texts(&p);
+        let long = t.iter().position(|l| l.starts_with("a long")).unwrap();
+        let right = t.iter().position(|l| l == "right words here").unwrap();
+        assert!(long < right, "{t:?}");
     }
 
     #[test]

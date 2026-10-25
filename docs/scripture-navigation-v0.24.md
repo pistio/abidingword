@@ -137,15 +137,23 @@ differed from the edition (running heads, note signs and footnotes inside
 verses). The one difference left: Mark 9:44 keeps a trailing "\*" that the
 PDF's text places after the verse.
 
-Coverage is low (11 % and 23 % of the verses): most chapters are refused, not
-guessed. The reasons, in order: the two columns of a page are read across
-each other by the PDF text layer (chapters refused, `documentSequence`);
-book titles the dictionaries do not recognise in the printed form; and the
-table of contents ("Exodus 60") read as a chapter number out of range.
-**What is accepted is accurate; much is not accepted.** A PDF reader that
-keeps the positions of words (to read columns in order) is the change that
-would raise coverage; it is not in v0.24. Marking places by hand works for
-every page.
+**v0.24.1** reads PDFs in reading order from where their text is drawn
+(`docs/pdf-reading-order-v0.24.1.md`). On the same two PDFs, compared with
+the USFM of the same revision as the PDF (`docs/audit/v0.24.1/`):
+
+| Edition | Usable verses v0.24 | Usable verses v0.24.1 | Exact | Differ only by whitespace | Usable but different |
+|---|---|---|---|---|---|
+| World English Bible | 3 353 (10.8 %) | 30 782 (99.0 %) | 30 185 | 864 | **0** |
+| Luther 1912 | 6 910 (22.2 %) | 31 102 (100 %) | 31 102 | 0 | **0** |
+
+The Mark 9:44 "\*" is gone: a note sign is taken out only where a note on its
+page (or the page beside it) names that sign and that verse. Chapters still
+refused in the WEB: Psalm 119 (acrostic headings *ALEPH*, *BETH*… inside the
+chapter), Song of Songs 1, 2, 4–8 (speaker labels *Beloved*, *Lover*,
+*Friends*), Revelation 8 (a chapter number read twice) and 22 (the glossary
+printed after the last verse). They are refused, not guessed, and can be
+marked by hand. A French LSG PDF (book introductions between title and text,
+cross-reference letters) is refused as a whole.
 
 Already in v0.23 and still true: page headers and page numbers repeated
 across pages are left out and reported; footnotes in DOCX are notes, not verse
@@ -161,7 +169,9 @@ every verse text occurs verbatim in its origin paragraph.
 
 Known limits:
 
-- multi-column PDFs read across columns are refused per chapter, not repaired;
+- (v0.24) multi-column PDFs read across columns are refused per chapter —
+  v0.24.1 puts columns in order; a page whose order cannot be established
+  is still refused;
 - a verse number printed without anything that marks it as a number (no
   superscript information survives PDF extraction) may be read as text, or a
   number in the text as a verse: the sequence checks catch most, not all;
