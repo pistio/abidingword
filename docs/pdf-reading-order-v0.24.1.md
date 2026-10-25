@@ -32,8 +32,12 @@ drawing order.
    wider than a narrow space. A span never crosses a column gutter.
 2. **Running head and page number.** The first and last line of a page are
    taken apart when they lie in the outer eighth of the page with a clear
-   space between them and the text (role `Head` / `Foot`).
-3. **Notes.** Text smaller than the body's that stands entirely below all of
+   space between them and the text (role `Head` / `Foot`). A heading at the
+   top of one column only ("Psalm 24"), body-size, with no passage reference
+   or page number, stays in its column.
+3. **Notes.** The body size is the page's most common size — unless a larger
+   size makes up a good part of the page and stands wholly above it (a page
+   dense with notes). Text smaller than the body's that stands entirely below all of
    the page's body-size text, with a little space above it, is the page's
    notes (role `Note`). It is read after the columns — never between them —
    whether it sits under one column or across the page.
@@ -89,7 +93,17 @@ Nothing is rearranged speculatively.
 - The whole document is read at once; if `pdf_extract` fails or panics, each
   page is read on its own, so one bad page leaves only that page empty
   (reported), instead of — as before — losing every page after it.
-- At most 40 million characters per file are examined.
+- At most 40 million characters per file are examined; pages past that
+  limit, and pages that could not be read, are listed in the Bible import's
+  review (`documentPagesUnread`) and their chapters are not used.
+- A page laid out with more than 50 000 pieces of text, or mostly in a
+  right-to-left script (Hebrew, Arabic — possibly drawn right to left), keeps
+  its drawing order (uncertain).
+- Every page checks that each drawn character is read exactly once;
+  otherwise it keeps its drawing order (uncertain).
+- Memory: characters are held compactly, and a page that shows its own
+  gutter is laid out as soon as it ends. Reading the 1 273-page WEB PDF and
+  recognising it peaks at about 395 MB (was about 600 MB).
 - Encrypted and malformed files are refused with a message, as before; a PDF
   without a text layer is still read page by page and can be marked by hand.
 
@@ -112,18 +126,26 @@ whose structure it cannot read. What v0.24.1 adds is **evidence** it may use
 - **Uncertain pages** refuse their chapters (`documentReadingOrder`).
 - **Tables of contents.** A line with dot leaders to a page number
   ("Exodus . . . . . 60") is never a heading.
-- **Large type** (1.15 × the page's body size or more) is a heading, never
-  verse text ("BOOK 2" in the Psalms).
+- **Large type** (a line whose main text is 1.15 × the page's body size or
+  more) is a heading, never verse text ("BOOK 2" in the Psalms) — but never a
+  line that begins with a number (a chapter number set a little larger
+  beside verse 1), nor a line inside a sentence. When larger type is more
+  than a fifth of a page's text, which text is Scripture is not known and
+  the page is uncertain.
 - **Running heads** naming a passage are checked against what was read: a
   page whose head says Revelation 17 while the recogniser is in chapter 16
   shows a lost chapter, and the chapter is refused (`documentRunningHead`).
   eBible's known head slip (the head keeps the previous chapter at a chapter
-  start) is tolerated, and heads that run backwards are ignored.
+  start) is tolerated only when the next chapter's verse 1 is read on that
+  page or the chapter before it was read complete; heads that run backwards
+  are ignored. A head of two passages naming another book than the page's
+  verses refuses them (a section heading read as a book).
 - **Chapter resynchronisation.** A number alone on its line, followed by
   verse 1, greater than the current chapter and within the book, begins that
   chapter even when the previous chapter is short (an edition with 17 verses
-  where the standard count is 18); a jump of more than one chapter is
-  reported (`documentChapterJump`).
+  where the standard count is 18). A jump over chapters is never followed
+  blindly: the chapter jumped to is refused (`documentChapterJump`) — the
+  number may be a page number standing alone.
 - **Labels inside verses.** Short capitalised words repeated as lines of
   their own (speaker labels "Beloved", "Lover"; acrostic headings
   "ALEPH") refuse the chapter (`documentLabel`): they are not Scripture and
@@ -132,11 +154,16 @@ whose structure it cannot read. What v0.24.1 adds is **evidence** it may use
   Samuel", "Paul's Letter to the Romans", "The Acts of the Apostles", "Das
   erste Buch Mose (Genesis)", two-line titles with a lower-case second line,
   and a one-letter misprint of a name of six letters or more ("Chonik").
+  Only *Acts*, *Revelation* and *Lamentations* (and their German names) are
+  named by their first word; otherwise the whole rest of the title must be
+  the name, so "The Song of Deborah", "The Mark of the Beast" and "The Job
+  Speaks" name no book. A short heading just before a chapter heading is a
+  heading, never words of the verse before it.
   Lines naming a book and a chapter count as Bible lines only when the
   document is written that way (a preface citing "Luke 17:36" is not).
 - **Hyphenation.** "Lob- und Dankopfer" keeps its hyphen and space: a hyphen
-  before *und / oder / and / or …* is a suspended compound, not a line-end
-  break.
+  before *und*, *oder* or *sowie* is a suspended compound, not a line-end
+  break. Endings such as "hon- / or", "gover- / nor" are joined as words.
 
 ### Results (`docs/audit/v0.24.1/`)
 

@@ -70,7 +70,8 @@ pub struct PdfText {
     pub orders: Vec<PageOrder>,
     /// Each page laid out: its lines with their positions.
     pub layouts: Vec<PageLayout>,
-    /// Pages whose text could not be read at all (left empty, reported).
+    /// Pages whose text could not be read, or only in part (past the
+    /// character limit); reported in a Bible import's review.
     pub failed_pages: Vec<u32>,
     pub scanned: bool,
 }
@@ -133,9 +134,18 @@ fn read_layouts(document: &Document, file_name: &str) -> Option<(Vec<PageLayout>
         pdf_extract::output_doc(document, &mut collector).map(|_| collector)
     }));
     if let Ok(Ok(collector)) = whole {
+        // Pages cut off at the character limit are listed as not read.
+        let truncated = collector.truncated_from;
         let layouts = collector.layouts();
         if layouts.len() == numbers.len() {
-            return Some((layouts, Vec::new()));
+            let failed: Vec<u32> = match truncated {
+                Some(from) => {
+                    log::warn!("pdf text of {file_name} cut off from page {from}");
+                    (from..=layouts.len() as u32).collect()
+                }
+                None => Vec::new(),
+            };
+            return Some((layouts, failed));
         }
     }
     log::warn!("pdf text extraction failed for {file_name}; reading page by page");

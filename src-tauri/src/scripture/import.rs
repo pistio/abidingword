@@ -1854,7 +1854,35 @@ fn recognise(stage: &mut DocumentStage) -> StagedContent {
     stage.books = found.books;
     stage.left_out = found.left_out;
     stage.stats = found.stats;
-    found.content
+    let mut content = found.content;
+    // PDF pages whose text could not be read (or only in part): their verses
+    // are missing, never guessed; the review says which pages.
+    for file in &stage.files {
+        if file.failed_pages.is_empty() {
+            continue;
+        }
+        let pages = file
+            .failed_pages
+            .iter()
+            .map(u32::to_string)
+            .collect::<Vec<_>>()
+            .join(", ");
+        content.issue(
+            Severity::Warning,
+            None,
+            None,
+            UserMessage::new(
+                "bibleImport.documentPagesUnread",
+                format!(
+                    "“{}”: the text of page(s) {pages} could not be read in full. Verses on them are missing.",
+                    file.file_name
+                ),
+            )
+            .with("fileName", file.file_name.as_str())
+            .with("pages", pages.as_str()),
+        );
+    }
+    content
 }
 
 impl StagedImport {

@@ -1684,6 +1684,180 @@ fn a_chapter_number_alone_on_its_line_starts_that_chapter_even_after_a_short_cha
         "{:?}",
         codes(&r)
     );
+    // The jumped-to chapter is refused: the number may not be its number.
+    let ruth = canon::by_code("RUT").unwrap().ordinal;
+    let usable = r.content.usable_chapters().unwrap();
+    assert!(!usable.contains(&(ruth, 3)), "{usable:?}");
+    assert!(usable.contains(&(ruth, 1)));
+}
+
+/// Every verse of a usable chapter is the text it should be: whatever the
+/// recogniser cannot read is refused, never accepted wrong.
+fn assert_no_wrong_usable_verse(
+    r: &Recognition,
+    code: &str,
+    expected: impl Fn(u16, u16) -> String,
+) {
+    let book = canon::by_code(code).unwrap();
+    let Some(usable) = r.content.usable_chapters() else {
+        return;
+    };
+    for &(ordinal, chapter) in &usable {
+        assert_eq!(ordinal, book.ordinal, "{usable:?}");
+        let verses = &r.content.books[&ordinal].chapters[&chapter].verses;
+        for (&v, text) in verses {
+            assert_eq!(
+                text,
+                &expected(chapter, v),
+                "{code} {chapter}:{v} accepted wrong"
+            );
+        }
+    }
+}
+
+#[test]
+fn a_stray_number_on_its_own_line_never_renumbers_a_chapter_silently() {
+    // A page number "3" standing alone after Ruth 1:22, then Ruth 2's verses.
+    let mut text = String::from("Ruth\n\n1\n\n");
+    for v in 1..=22u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 1, v)));
+    }
+    text.push_str("3\n");
+    for v in 1..=23u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 2, v)));
+    }
+    let r = recognise(&read("stray.txt", text.as_bytes()));
+    // Ruth 2's words must never be usable as Ruth 3.
+    let ruth = canon::by_code("RUT").unwrap().ordinal;
+    let usable = r.content.usable_chapters().unwrap_or_default();
+    assert!(!usable.contains(&(ruth, 3)), "{usable:?}");
+    assert_no_wrong_usable_verse(&r, "RUT", |c, v| words("Ruth", c, v));
+}
+
+#[test]
+fn a_word_broken_at_a_line_end_before_or_and_nor_is_joined() {
+    let text = ruth_lines(|c| format!("Chapter {c}")).replace(
+        "\n3 Invented words of Ruth 1:3 for testing.\n",
+        "\n3 Give glory and hon-\nor to the gover-\nnor of the land.\n",
+    );
+    let r = recognise(&read("hyphen.txt", text.as_bytes()));
+    assert_eq!(
+        verse(&r, "RUT", 1, 3).as_deref(),
+        Some("Give glory and honor to the governor of the land.")
+    );
+}
+
+#[test]
+fn a_section_heading_naming_a_book_word_is_not_a_book() {
+    // Judges 5 begins with "The Song of Deborah": never the Song of Songs.
+    let mut text = String::from("Judges\n\n");
+    for (chapter, count) in [(1u16, 36u16), (2, 23), (3, 31), (4, 24), (5, 31), (6, 40)] {
+        if chapter == 5 {
+            text.push_str("The Song of Deborah\n\n");
+        }
+        text.push_str(&format!("Chapter {chapter}\n\n"));
+        for v in 1..=count {
+            text.push_str(&format!("{v} {}\n", words("Judges", chapter, v)));
+        }
+    }
+    let r = recognise(&read("judges.txt", text.as_bytes()));
+    let song = canon::by_code("SNG").unwrap().ordinal;
+    assert!(!r.content.books.contains_key(&song));
+    assert_no_wrong_usable_verse(&r, "JDG", |c, v| words("Judges", c, v));
+    assert_eq!(verse(&r, "JDG", 5, 1), Some(words("Judges", 5, 1)));
+}
+
+/// Ruth on PDF pages, each chapter's number printed at `size` at the start
+/// of its first line (chapter 1's as a large initial).
+fn ruth_inline_numbers(size: f64) -> Vec<u8> {
+    let mut pages: Vec<Vec<(f64, f64, f64, String)>> = Vec::new();
+    let mut lines: Vec<(f64, f64, f64, String)> = vec![(40.0, 800.0, 16.0, "Ruth".into())];
+    let mut y = 770.0;
+    for (chapter, count) in [(1u16, 22u16), (2, 23), (3, 18), (4, 22)] {
+        for v in 1..=count {
+            if y < 80.0 {
+                pages.push(std::mem::take(&mut lines));
+                y = 800.0;
+            }
+            if v == 1 {
+                let (at, sz) = if chapter == 1 {
+                    (y - 10.0, 28.0)
+                } else {
+                    (y, size)
+                };
+                lines.push((40.0, at, sz, format!("{chapter}")));
+                lines.push((
+                    54.0,
+                    y,
+                    10.0,
+                    format!("Invented first line of Ruth {chapter}:1"),
+                ));
+                y -= 14.0;
+                lines.push((40.0, y, 10.0, "and its second line here.".into()));
+            } else {
+                lines.push((40.0, y, 10.0, format!("{v} {}", words("Ruth", chapter, v))));
+            }
+            y -= 14.0;
+        }
+    }
+    pages.push(lines);
+    fixtures::pdf_sized(&pages)
+}
+
+#[test]
+fn a_chapter_number_set_a_little_larger_in_its_line_does_not_make_it_a_heading() {
+    for size in [12.0, 14.0] {
+        let r = recognise(&read("inline.pdf", &ruth_inline_numbers(size)));
+        assert_no_wrong_usable_verse(&r, "RUT", |c, v| {
+            if v == 1 {
+                format!("Invented first line of Ruth {c}:1 and its second line here.")
+            } else {
+                words("Ruth", c, v)
+            }
+        });
+        assert_eq!(
+            verse(&r, "RUT", 2, 1).as_deref(),
+            Some("Invented first line of Ruth 2:1 and its second line here."),
+            "size {size}"
+        );
+    }
+}
+
+#[test]
+fn a_page_dense_with_smaller_notes_is_not_read_as_scripture() {
+    let mut p1: Vec<(f64, f64, f64, String)> = vec![
+        (40.0, 800.0, 10.0, "Ruth".into()),
+        (40.0, 786.0, 10.0, "Chapter 1".into()),
+    ];
+    let mut y = 772.0;
+    for v in 1..=11u16 {
+        p1.push((40.0, y, 10.0, format!("{v} {}", words("Ruth", 1, v))));
+        y -= 14.0;
+    }
+    let mut p2: Vec<(f64, f64, f64, String)> = Vec::new();
+    let mut y = 800.0;
+    for v in 12..=22u16 {
+        p2.push((40.0, y, 10.0, format!("{v} {}", words("Ruth", 1, v))));
+        y -= 14.0;
+    }
+    y -= 20.0;
+    for i in 0..40 {
+        p2.push((
+            40.0,
+            y,
+            8.0,
+            format!("note {i} explaining at length the meaning of a word in it"),
+        ));
+        y -= 10.0;
+    }
+    let mut p3: Vec<(f64, f64, f64, String)> = vec![(40.0, 800.0, 10.0, "Chapter 2".into())];
+    let mut y = 786.0;
+    for v in 1..=23u16 {
+        p3.push((40.0, y, 10.0, format!("{v} {}", words("Ruth", 2, v))));
+        y -= 14.0;
+    }
+    let r = recognise(&read("heavy.pdf", &fixtures::pdf_sized(&[p1, p2, p3])));
+    assert_no_wrong_usable_verse(&r, "RUT", |c, v| words("Ruth", c, v));
 }
 
 #[test]

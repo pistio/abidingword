@@ -125,14 +125,15 @@
     "documentSequence": "{{book}} {{chapter}} : le verset {{verse}} apparaît à l’intérieur d’un verset précédent (deux colonnes ont peut-être été lues l’une dans l’autre). Ce chapitre n’est pas utilisé.",
     "additionalBook": "« {{fileName}} » contient {{book}}, qu’Abiding Word ne peut pas encore afficher. Ce livre a été laissé de côté ; les autres livres ne sont pas concernés.",
     "differentEditions": "Ces fichiers indiquent venir de Bibles différentes : {{list}}. Des Bibles différentes ne sont jamais combinées : ajoutez chacune séparément.",
+    "documentReadingOrder": "{{book}} {{chapter}} : l’ordre de lecture de la page {{page}} n’a pas pu être établi d’après sa mise en page. Ce chapitre n’est pas utilisé.",
+    "documentChapterJump": "{{book}} {{chapter}} : le document continue avec ce chapitre après le chapitre {{previous}} ; les chapitres intermédiaires n’ont pas été trouvés. Ce chapitre n’est pas utilisé.",
+    "documentRunningHead": "{{book}} {{chapter}} : la page {{page}} se termine par le verset {{found}}, mais son titre courant ({{head}}) indique {{named}}. Ce chapitre n’est pas utilisé.",
+    "documentLabel": "{{book}} {{chapter}} : la ligne « {{line}} » se trouve entre deux phrases d’un verset et revient ailleurs comme ligne à part (peut-être le nom de celui qui parle ou un intertitre). Ce chapitre n’est pas utilisé.",
+    "documentRaisedLetters": "{{book}} {{chapter}} : un verset contient de petites lettres en exposant qu’aucune note de la page n’explique (peut-être des appels de renvoi). Ce chapitre n’est pas utilisé.",
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
     "documentFootnotes_many": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
-    "documentReadingOrder": "{{book}} {{chapter}} : l’ordre de lecture de la page {{page}} n’a pas pu être établi d’après sa mise en page. Ce chapitre n’est pas utilisé.",
-    "documentChapterJump": "{{book}} {{chapter}} : le document continue avec ce chapitre après le chapitre {{previous}} ; les chapitres intermédiaires n’ont pas été trouvés.",
-    "documentRunningHead": "{{book}} {{chapter}} : la page {{page}} se termine par le verset {{found}}, mais son titre courant ({{head}}) indique {{named}}. Ce chapitre n’est pas utilisé.",
-    "documentLabel": "{{book}} {{chapter}} : la ligne « {{line}} » se trouve entre deux phrases d’un verset et revient ailleurs comme ligne à part (peut-être le nom de celui qui parle ou un intertitre). Ce chapitre n’est pas utilisé.",
-    "documentRaisedLetters": "{{book}} {{chapter}} : un verset contient de petites lettres en exposant qu’aucune note de la page n’explique (peut-être des appels de renvoi). Ce chapitre n’est pas utilisé."
+    "documentPagesUnread": "« {{fileName}} » : le texte de la ou des pages {{pages}} n’a pas pu être lu entièrement. Les versets qui s’y trouvent manquent."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",

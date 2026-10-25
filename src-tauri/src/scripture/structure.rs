@@ -416,9 +416,28 @@ fn title_forms(key: &str) -> Vec<String> {
         Some(n) => out.push(format!("{n} {rest}")),
         None => {
             // "The Acts of the Apostles", "The Revelation to John", "The
-            // Lamentations of Jeremiah": the first word is the book's name.
-            if let Some(first) = rest.split(' ').next().filter(|f| f.len() < rest.len()) {
-                out.push(first.to_string());
+            // Lamentations of Jeremiah": only these books are named by their
+            // first word. Otherwise the whole rest must be the name: "The
+            // Song of Moses", "The Mark of the Beast", "The Job Speaks" name
+            // no book.
+            const FIRST_WORD: &[&str] = &[
+                "acts",
+                "revelation",
+                "lamentations",
+                "apostelgeschichte",
+                "offenbarung",
+                "klagelieder",
+            ];
+            let mut parts = rest.splitn(2, ' ');
+            if let (Some(first), Some(after)) = (parts.next(), parts.next()) {
+                let linked = after.starts_with("of ")
+                    || after.starts_with("to ")
+                    || after.starts_with("des ")
+                    || after.starts_with("der ")
+                    || after.starts_with("an ");
+                if FIRST_WORD.contains(&first) && linked {
+                    out.push(first.to_string());
+                }
             }
             out.insert(0, rest);
         }
@@ -1588,12 +1607,14 @@ fn repeated_labels(units: &[Unit], furniture: &HashSet<usize>) -> HashSet<String
 }
 
 /// Whether a line begins with a conjunction that follows a suspended hyphen
-/// ("Lob- und Dankopfer", "Vor- oder Nachteil", "pre- and post-"): the hyphen
+/// ("Lob- und Dankopfer", "Vor- oder Nachteil"): the hyphen
 /// at the end of the line before is the word's own, not a line break.
 fn suspended_hyphen(words: &str) -> bool {
-    const JOINING: &[&str] = &[
-        "und", "oder", "bis", "sowie", "noch", "and", "or", "nor", "to", "et", "ou", "y", "o", "e",
-    ];
+    // German only, and only conjunctions that no word ends in at a correct
+    // hyphenation point ("Lob- und Dankopfer"). English "-or", "-nor", "-to"
+    // and Romance "-et", "-o", "-e" are ordinary word endings ("hon- or",
+    // "gover- nor"): those line ends are joined as one word.
+    const JOINING: &[&str] = &["und", "oder", "sowie"];
     let first = words
         .split_whitespace()
         .next()
@@ -1602,6 +1623,8 @@ fn suspended_hyphen(words: &str) -> bool {
     JOINING.contains(&first)
 }
 
+/// A verse: book ordinal, chapter, verse.
+type VerseKey = (u8, u16, u16);
 /// A passage a running head names: book name as printed, chapter, verse.
 type HeadReference = (String, u16, u16);
 /// A note's letter and the chapter and verse it names ("c 13:6").
@@ -1674,34 +1697,62 @@ fn check_running_heads(
     if heads.is_empty() {
         return;
     }
-    // The last verse begun on each page.
-    let mut last: BTreeMap<(u16, u32), (u8, u16, u16)> = BTreeMap::new();
+    // The first and last verse begun on each page.
+    let mut begun: BTreeMap<(u16, u32), (VerseKey, VerseKey)> = BTreeMap::new();
     for (&(ordinal, chapter, verse), origin) in &out.origins {
         let Some(page) = origin.start.page else {
             continue;
         };
-        let entry = last
+        let here = (ordinal, chapter, verse);
+        let entry = begun
             .entry((origin.start.document, page))
-            .or_insert((ordinal, chapter, verse));
-        if (ordinal, chapter, verse) > *entry {
-            *entry = (ordinal, chapter, verse);
-        }
+            .or_insert((here, here));
+        entry.0 = entry.0.min(here);
+        entry.1 = entry.1.max(here);
     }
+    let begins_on = |key: &(u16, u32), at: (u8, u16, u16)| {
+        out.origins
+            .get(&at)
+            .is_some_and(|o| o.start.document == key.0 && o.start.page == Some(key.1))
+    };
     let mut flagged: HashSet<(u8, u16)> = HashSet::new();
     for (key, (book, first, chapter, verse, text)) in &heads {
-        let Some(&(ordinal, found_chapter, found_verse)) = last.get(key) else {
+        let Some(&(first_found, (ordinal, found_chapter, found_verse))) = begun.get(key) else {
             continue;
         };
-        if ordinal != book.ordinal {
-            continue;
-        }
-        // Some typesetting keeps the first passage's chapter for the last one
-        // when a chapter begins on the page ("3:7 … 3:9" over 3:7–4:9): the
-        // next chapter with the head's own verse number agrees with it.
-        let kept_chapter =
-            first.0 == *chapter && found_chapter == chapter + 1 && found_verse == *verse;
-        let agrees =
-            (found_chapter == *chapter && found_verse.abs_diff(*verse) <= 1) || kept_chapter;
+        let agrees = if ordinal != book.ordinal {
+            // A running head of two passages naming another book: the page
+            // must hold that book's verses too (a page where one book ends
+            // and the next begins); otherwise a heading was read as a book
+            // that is not there. One passage alone may be a cross-reference
+            // ("Psalms 110:4") and proves nothing.
+            first_found.0 == book.ordinal || (first.0, first.1) == (*chapter, *verse)
+        } else {
+            // Some typesetting keeps an earlier chapter in the head ("3:7 …
+            // 3:9" over 3:7–4:9, or "49:8 … 49:26" over 50:8–50:26):
+            // accepted only when the next chapter's verse 1 is read on this
+            // page, or the chapter before it was read complete — a chapter
+            // shifted by one would leave it short.
+            let previous_complete = || {
+                let Some(counted) = canon::by_ordinal(ordinal)
+                    .and_then(|b| canon::verse_count(b, found_chapter - 1))
+                else {
+                    return false;
+                };
+                out.content
+                    .books
+                    .get(&ordinal)
+                    .and_then(|b| b.chapters.get(&(found_chapter - 1)))
+                    .is_some_and(|c| (1..=counted).all(|v| c.verses.contains_key(&v)))
+            };
+            let kept_chapter = first.0 == *chapter
+                && found_chapter == chapter + 1
+                && found_verse == *verse
+                && (begins_on(key, (ordinal, found_chapter, 1)) || previous_complete());
+            // (The head's first passage is not compared: eBible's heads get
+            // it wrong at chapter starts, "John 7:10" over John 8.)
+            (found_chapter == *chapter && found_verse.abs_diff(*verse) <= 1) || kept_chapter
+        };
         if agrees || !flagged.insert((ordinal, found_chapter)) {
             continue;
         }
@@ -1777,7 +1828,7 @@ impl Builder<'_> {
     fn found_book(&mut self, heading: &str, detected: Option<&'static Book>, unit: usize) -> usize {
         self.books.push(FoundBook {
             index: self.books.len(),
-            heading: heading.to_string(),
+            heading: unmark_raised(heading),
             detected: detected.map(|b| b.code),
             book: detected.map(|b| b.code),
             left_out: false,
@@ -1896,7 +1947,8 @@ impl Builder<'_> {
         let lines: Vec<String> = self.items[n - taken..]
             .iter()
             .filter_map(|i| match &i.event {
-                Event::Text(t) => Some(t.trim().to_string()),
+                // Never with the raised-letter marks: this is a title.
+                Event::Text(t) => Some(unmark_raised(t.trim()).trim().to_string()),
                 _ => None,
             })
             .collect();
@@ -1905,7 +1957,40 @@ impl Builder<'_> {
     }
 
     fn push(&mut self, event: Event, unit: usize) {
+        if matches!(event, Event::Chapter(_)) {
+            self.heading_before_chapter();
+        }
         self.items.push(Item { event, unit });
+    }
+
+    /// A section heading just before a chapter heading ("The Song of
+    /// Deborah", then "Chapter 5"): a short whole line of its own, beginning
+    /// in capitals and not ending as a sentence does, after a verse that
+    /// ended its sentence. It is a heading, never words of the verse before.
+    fn heading_before_chapter(&mut self) {
+        let n = self.items.len();
+        if n < 2 {
+            return;
+        }
+        let last = &self.items[n - 1];
+        let Event::Text(line) = &last.event else {
+            return;
+        };
+        let line = line.trim();
+        let whole =
+            unmark_raised(&clean(&self.units[last.unit].text)).trim() == unmark_raised(line);
+        let alone = self.items[n - 2].unit != last.unit;
+        let shape = line.chars().count() <= 60
+            && line.chars().next().is_some_and(char::is_uppercase)
+            && !line.ends_with(['.', '!', '?', ';', ':', ',', '”', '’', '"']);
+        let after_sentence = match &self.items[n - 2].event {
+            Event::Text(t) => t.trim_end().ends_with(['.', '!', '?', '”', '’', '"', ')']),
+            _ => true,
+        };
+        if whole && alone && shape && after_sentence {
+            let text = unmark_raised(line);
+            self.items[n - 1].event = Event::Other { notes: false, text };
+        }
     }
 
     /// The found-book entry for this book: a new one when the book changes.
@@ -1963,7 +2048,7 @@ impl Builder<'_> {
                 if let Some(next) = (index + 1..self.units.len())
                     .find(|i| !skip.contains(i) && !clean(&self.units[*i].text).trim().is_empty())
                 {
-                    let second = clean(&self.units[next].text);
+                    let second = unmark_raised(&clean(&self.units[next].text));
                     let second = second.trim();
                     let same_page = self.units[next].place.page == unit.place.page;
                     let both = format!("{text} {second}");
@@ -2058,11 +2143,35 @@ impl Builder<'_> {
             // or chapter ("BOOK 2", "BETH", "The Good News According to") is a
             // heading: never words of a verse. Numbers alone stay numbers
             // (a chapter's number is set large).
-            if unit.large
-                && !text
-                    .chars()
-                    .all(|c| c.is_ascii_digit() || c.is_whitespace())
-            {
+            // A line that begins with a number (a verse or chapter marker) is
+            // never a heading, nor is a line inside a sentence: the line
+            // before ends without a sentence end and the next goes on in
+            // lower case.
+            let mid_sentence = || {
+                let before = (0..index)
+                    .rev()
+                    .map(|i| {
+                        unmark_raised(&clean(&self.units[i].text))
+                            .trim()
+                            .to_string()
+                    })
+                    .find(|t| !t.is_empty());
+                let after = (index + 1..self.units.len())
+                    .map(|i| {
+                        unmark_raised(&clean(&self.units[i].text))
+                            .trim()
+                            .to_string()
+                    })
+                    .find(|t| !t.is_empty());
+                let open = before.is_some_and(|b| {
+                    !b.ends_with(['.', '!', '?', ':', ';', '’', '”', '"', '\'', '»', '«'])
+                });
+                let goes_on = after
+                    .and_then(|a| a.chars().next())
+                    .is_some_and(char::is_lowercase);
+                open && goes_on
+            };
+            if unit.large && !text.starts_with(|c: char| c.is_ascii_digit()) && !mid_sentence() {
                 self.push(
                     Event::Other {
                         notes: false,
@@ -2752,15 +2861,18 @@ impl Reader<'_> {
             && m.value != expect
             && self.next_value(at) == Some(1)
         {
+            // A jump over chapters is never followed blindly: the number may
+            // be a page number or a stray figure on its own line. The text is
+            // kept apart as this chapter, and the chapter is refused.
             if m.value > chapter + 1 {
                 self.out.content.issue(
-                    Severity::Warning,
+                    Severity::Error,
                     Some(book),
                     Some(m.value),
                     UserMessage::new(
                         "bibleImport.documentChapterJump",
                         format!(
-                            "{} {}: the document goes on with this chapter after chapter {chapter}; the chapters between were not found.",
+                            "{} {}: the document goes on with this chapter after chapter {chapter}; the chapters between were not found. This chapter is not used.",
                             book.name, m.value
                         ),
                     )
@@ -3410,6 +3522,20 @@ mod tests {
         // A subtitle is never a title by itself.
         assert_eq!(named("of Jeremiah", Some("en")), None);
         assert_eq!(named("The Good News According to", Some("en")), None);
+        // Section headings that begin with a book's name are not titles.
+        for heading in [
+            "The Song of Moses",
+            "The Song of Deborah",
+            "The Number of the Beast",
+            "The Mark of the Beast",
+            "The Job Speaks",
+            "The Hebrew Midwives",
+            "The Romans Arrest Paul",
+            "The Lamentation over Saul",
+        ] {
+            assert_eq!(named(heading, Some("en")), None, "{heading}");
+        }
+        assert_eq!(named("The Song of Solomon", Some("en")), Some("SNG"));
     }
 
     #[test]
@@ -3446,6 +3572,8 @@ mod tests {
         );
         assert!(suspended_hyphen("und Dankopfer,"));
         assert!(!suspended_hyphen("fer bringen"));
+        assert!(!suspended_hyphen("or to the governor"));
+        assert!(!suspended_hyphen("nor of the land."));
     }
 
     #[test]

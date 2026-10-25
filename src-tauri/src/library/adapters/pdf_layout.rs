@@ -35,6 +35,8 @@ use std::cmp::Ordering;
 /// More characters than this in one file are not examined (a very long
 /// document is read as far as this; the rest is reported, not guessed).
 pub const MAX_CHARS: usize = 40_000_000;
+/// Pieces of text on one page beyond which it is not put in order.
+const MAX_SPANS: usize = 50_000;
 
 /// How a page's reading order was established.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -197,14 +199,49 @@ impl PageLayout {
 
 // --- collecting characters ----------------------------------------------------
 
+/// A glyph's text without a heap allocation in the usual case (one character,
+/// or a short ligature): a whole Bible is millions of glyphs.
+#[derive(Debug, Clone)]
+enum GlyphText {
+    Inline(u8, [u8; 14]),
+    Heap(Box<str>),
+}
+
+impl From<&str> for GlyphText {
+    fn from(text: &str) -> Self {
+        if text.len() <= 14 {
+            let mut bytes = [0u8; 14];
+            bytes[..text.len()].copy_from_slice(text.as_bytes());
+            GlyphText::Inline(text.len() as u8, bytes)
+        } else {
+            GlyphText::Heap(text.into())
+        }
+    }
+}
+
+impl std::ops::Deref for GlyphText {
+    type Target = str;
+    fn deref(&self) -> &str {
+        match self {
+            // Always whole UTF-8 copied from a &str.
+            GlyphText::Inline(len, bytes) => {
+                std::str::from_utf8(&bytes[..*len as usize]).unwrap_or("")
+            }
+            GlyphText::Heap(text) => text,
+        }
+    }
+}
+
+/// One character as drawn. Positions are kept in single precision (exact to
+/// well under a thousandth of a point at page scale): millions are held.
 #[derive(Debug, Clone)]
 struct Glyph {
-    text: String,
-    x: f64,
+    text: GlyphText,
+    x: f32,
     /// Baseline from the top of the page.
-    y: f64,
-    end: f64,
-    size: f64,
+    y: f32,
+    end: f32,
+    size: f32,
     upright: bool,
 }
 
@@ -220,16 +257,29 @@ struct PageGlyphs {
 #[derive(Default)]
 pub struct Collector {
     pages: Vec<PageGlyphs>,
+    /// Each page's own gutter, and its layout when that gutter made it
+    /// final at the page's end (its characters are then let go: a whole
+    /// Bible is millions of them).
+    found: Vec<(Option<Gutter>, Option<PageLayout>)>,
     top: f64,
     left: f64,
     chars: usize,
     /// Characters past [`MAX_CHARS`] (not examined).
     pub skipped: usize,
+    /// The first page (1-based, in drawing order) whose text was cut off at
+    /// [`MAX_CHARS`]: it and every page after it are incomplete.
+    pub truncated_from: Option<u32>,
 }
 
 impl Collector {
     /// Pages laid out, in the order they were drawn.
-    pub fn layouts(self) -> Vec<PageLayout> {
+    pub fn layouts(mut self) -> Vec<PageLayout> {
+        // Pages whose end was never reported (an error part-way): their
+        // gutter is found now.
+        while self.found.len() < self.pages.len() {
+            let gutter = body_gutter(&self.pages[self.found.len()]);
+            self.found.push((gutter, None));
+        }
         // The gutter the document's pages share (odd and even pages apart: a
         // book's margins alternate). A page with too little text to show its
         // own gutter (a last page whose right column holds one line) is read
@@ -237,7 +287,8 @@ impl Collector {
         let found: Vec<(u32, Option<Gutter>)> = self
             .pages
             .iter()
-            .map(|p| (p.number, body_gutter(p)))
+            .zip(&self.found)
+            .map(|(p, (g, _))| (p.number, *g))
             .collect();
         let shared = |parity: u32| -> Option<Gutter> {
             let mut from: Vec<f64> = Vec::new();
@@ -262,9 +313,13 @@ impl Collector {
         let hints = [shared(0), shared(1)];
         self.pages
             .into_iter()
-            .map(|p| {
-                let hint = hints[(p.number % 2) as usize];
-                layout_page(p, hint)
+            .zip(self.found)
+            .map(|(p, (_, done))| match done {
+                Some(layout) => layout,
+                None => {
+                    let hint = hints[(p.number % 2) as usize];
+                    layout_page(p, hint)
+                }
             })
             .collect()
     }
@@ -289,6 +344,26 @@ impl pdf_extract::OutputDev for Collector {
     }
 
     fn end_page(&mut self) -> Result<(), pdf_extract::OutputError> {
+        let Some(page) = self.pages.last_mut() else {
+            return Ok(());
+        };
+        // A page that shows its own gutter is laid out the same whatever the
+        // other pages share (the shared gutter only serves pages without
+        // one): it is laid out now and its characters let go.
+        let gutter = body_gutter(page);
+        let done = gutter.map(|_| {
+            let glyphs = std::mem::take(&mut page.glyphs);
+            layout_page(
+                PageGlyphs {
+                    number: page.number,
+                    width: page.width,
+                    height: page.height,
+                    glyphs,
+                },
+                None,
+            )
+        });
+        self.found.push((gutter, done));
         Ok(())
     }
 
@@ -302,6 +377,9 @@ impl pdf_extract::OutputDev for Collector {
     ) -> Result<(), pdf_extract::OutputError> {
         if self.chars >= MAX_CHARS {
             self.skipped += char.chars().count();
+            if self.truncated_from.is_none() {
+                self.truncated_from = Some(self.pages.len().max(1) as u32);
+            }
             return Ok(());
         }
         self.chars += char.chars().count();
@@ -323,12 +401,13 @@ impl pdf_extract::OutputDev for Collector {
         let x = trm.m31 - self.left;
         let y = self.top - trm.m32;
         let advance = (width * font_size + spacing) * trm.m11;
+        let end = x + if advance.is_finite() { advance } else { 0.0 };
         page.glyphs.push(Glyph {
-            text: char.to_string(),
-            x,
-            y,
-            end: x + if advance.is_finite() { advance } else { 0.0 },
-            size,
+            text: GlyphText::from(char),
+            x: x as f32,
+            y: y as f32,
+            end: end as f32,
+            size: size as f32,
             upright: upright && size > 0.0 && x.is_finite() && y.is_finite(),
         });
         Ok(())
@@ -372,11 +451,11 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
         }
         let blank = g.text.trim().is_empty();
         let continues = current.as_ref().is_some_and(|(span, next)| {
-            let ratio = g.size / span.size;
-            (g.y - span.y).abs() <= 0.15 * span.size.max(g.size)
+            let ratio = f64::from(g.size) / span.size;
+            (f64::from(g.y) - span.y).abs() <= 0.15 * span.size.max(f64::from(g.size))
                 && (0.8..=1.25).contains(&ratio)
-                && g.x >= *next - 0.6 * span.size
-                && g.x - *next <= 0.9 * span.size
+                && f64::from(g.x) >= *next - 0.6 * span.size
+                && f64::from(g.x) - *next <= 0.9 * span.size
         });
         if !continues {
             finish(&mut out, current.take());
@@ -386,13 +465,13 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
             current = Some((
                 Span {
                     text: String::new(),
-                    x0: g.x,
-                    x1: g.x,
-                    y: g.y,
-                    size: g.size,
+                    x0: f64::from(g.x),
+                    x1: f64::from(g.x),
+                    y: f64::from(g.y),
+                    size: f64::from(g.size),
                     first_char: index,
                 },
-                g.x,
+                f64::from(g.x),
             ));
         }
         let (span, next) = current.as_mut().expect("a span is being built");
@@ -401,13 +480,13 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
                 span.text.push(' ');
             }
         } else {
-            if g.x - *next > 0.18 * span.size && !span.text.ends_with(' ') {
+            if f64::from(g.x) - *next > 0.18 * span.size && !span.text.ends_with(' ') {
                 span.text.push(' ');
             }
             span.text.push_str(&g.text);
-            span.x1 = span.x1.max(g.end.max(g.x));
+            span.x1 = span.x1.max(f64::from(g.end).max(f64::from(g.x)));
         }
-        *next = g.end.max(g.x);
+        *next = f64::from(g.end).max(f64::from(g.x));
     }
     finish(&mut out, current.take());
     out
@@ -430,6 +509,40 @@ fn body_size(spans: &[&Span]) -> f64 {
         .into_iter()
         .max_by_key(|(_, n)| *n)
         .map_or(10.0, |(k, _)| k)
+}
+
+/// The page's running-text size. Usually its most common size; but on a page
+/// dense with notes the notes' smaller size can be the most common. When a
+/// larger size makes up a good part of the page and stands wholly above the
+/// most common size's text, the larger is the running text and the smaller
+/// the notes below it.
+fn page_body_size(spans: &[&Span]) -> f64 {
+    let common = body_size(spans);
+    let letters = |s: &Span| s.text.chars().filter(|c| !c.is_whitespace()).count();
+    let total: usize = spans.iter().map(|s| letters(s)).sum();
+    let larger: Vec<&Span> = spans
+        .iter()
+        .copied()
+        .filter(|s| s.size >= 1.1 * common && s.size < 1.6 * common && s.text.chars().count() > 2)
+        .collect();
+    let larger_letters: usize = larger.iter().map(|s| letters(s)).sum();
+    if larger.is_empty() || larger_letters < 200.max(total / 10) {
+        return common;
+    }
+    let larger_bottom = larger
+        .iter()
+        .map(|s| s.bottom())
+        .fold(f64::NEG_INFINITY, f64::max);
+    let common_top = spans
+        .iter()
+        .filter(|s| (s.size - common).abs() <= 0.1 * common)
+        .map(|s| s.top())
+        .fold(f64::INFINITY, f64::min);
+    if common_top > larger_bottom {
+        body_size(&larger)
+    } else {
+        common
+    }
 }
 
 /// Spans of one column put into lines, top to bottom, each left to right. A
@@ -476,12 +589,14 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
     for mut group in groups {
         group.sort_by(|a, b| a.x0.partial_cmp(&b.x0).unwrap_or(Ordering::Equal));
         let y = main_baseline(&group);
+        // The line's size is its main text's (most characters), not that of
+        // a larger chapter number or initial beside it.
         let size = group
             .iter()
+            .copied()
             .filter(|s| s.size < 1.6 * body)
-            .map(|s| s.size)
-            .fold(0.0, f64::max);
-        let size = if size > 0.0 { size } else { group[0].size };
+            .max_by_key(|s| s.text.chars().count())
+            .map_or(group[0].size, |s| s.size);
         // A wide space above the line starts a new block (paragraph).
         if let Some((py, ps)) = previous {
             if y - py > 1.9 * ps.max(size) {
@@ -917,6 +1032,37 @@ fn peel(spans: &mut Vec<&Span>, body: f64, height: f64, top: bool) -> Vec<Span> 
     if !outer || (gap < 0.6 * body && !(smaller && gap >= 0.2 * body)) {
         return Vec::new();
     }
+    // A heading at the top of one column ("Psalm 24" over the right column,
+    // set a little higher than the left column's first line) is not a
+    // running head: body-size, on one side of the page's middle, with words
+    // and no passage reference ("1:5") or page number in it.
+    if top && !smaller {
+        let left = spans.iter().map(|s| s.x0).fold(f64::INFINITY, f64::min);
+        let right = spans.iter().map(|s| s.x1).fold(f64::NEG_INFINITY, f64::max);
+        let centre = (left + right) / 2.0;
+        let x0 = line
+            .iter()
+            .map(|&i| spans[i].x0)
+            .fold(f64::INFINITY, f64::min);
+        let x1 = line
+            .iter()
+            .map(|&i| spans[i].x1)
+            .fold(f64::NEG_INFINITY, f64::max);
+        let text: String = line
+            .iter()
+            .map(|&i| spans[i].text.as_str())
+            .collect::<Vec<_>>()
+            .join(" ");
+        let numbers = text
+            .split_whitespace()
+            .filter(|w| w.chars().all(|c| c.is_ascii_digit()))
+            .count();
+        let one_side = x1 < centre || x0 > centre;
+        let words = text.chars().any(char::is_alphabetic);
+        if one_side && words && numbers < 2 && !text.contains(':') {
+            return Vec::new();
+        }
+    }
     let mut taken: Vec<Span> = line.iter().map(|&i| spans[i].clone()).collect();
     taken.sort_by(|a, b| a.x0.partial_cmp(&b.x0).unwrap_or(Ordering::Equal));
     let mut keep = vec![true; spans.len()];
@@ -996,12 +1142,15 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
         if let Some(p) = last {
             let new_line = !g.upright
                 || !p.upright
-                || (g.y - p.y).abs() > 0.5 * p.size.max(g.size).max(1.0)
-                || g.x < p.x - p.size.max(1.0);
+                || (f64::from(g.y) - f64::from(p.y)).abs()
+                    > 0.5 * f64::from(p.size).max(f64::from(g.size)).max(1.0)
+                || f64::from(g.x) < f64::from(p.x) - f64::from(p.size).max(1.0);
             if new_line {
-                flush(&mut text, first_char, p.y, p.size);
+                flush(&mut text, first_char, f64::from(p.y), f64::from(p.size));
                 first_char = index;
-            } else if g.x - p.end > 0.18 * g.size && !text.ends_with(' ') {
+            } else if f64::from(g.x) - f64::from(p.end) > 0.18 * f64::from(g.size)
+                && !text.ends_with(' ')
+            {
                 text.push(' ');
             }
         }
@@ -1009,7 +1158,7 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
         last = Some(g);
     }
     if let Some(p) = last {
-        flush(&mut text, first_char, p.y, p.size);
+        flush(&mut text, first_char, f64::from(p.y), f64::from(p.size));
     }
     lines
 }
@@ -1022,7 +1171,7 @@ fn body_gutter(page: &PageGlyphs) -> Option<Gutter> {
     if refs.is_empty() {
         return None;
     }
-    let body = body_size(&refs);
+    let body = page_body_size(&refs);
     let _ = peel(&mut refs, body, page.height, true);
     let _ = notes(&mut refs, body);
     let _ = peel(&mut refs, body, page.height, false);
@@ -1053,7 +1202,18 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
     }
     // Text set at an angle beyond a few characters (a sideways table, a
     // margin note): the page is not read by position.
-    if rotated_chars > 20.max(chars / 50) {
+    // Right-to-left text (Hebrew, Arabic) may be drawn in logical order,
+    // right to left; spans assume left to right. Such a page keeps its
+    // drawing order. So does a page with an unreasonable number of pieces
+    // (the steps below are quadratic in places).
+    let right_to_left = glyphs
+        .iter()
+        .flat_map(|g| g.text.chars())
+        .filter(|&c| {
+            matches!(c, '\u{0590}'..='\u{08FF}' | '\u{FB1D}'..='\u{FDFF}' | '\u{FE70}'..='\u{FEFF}')
+        })
+        .count();
+    if rotated_chars > 20.max(chars / 50) || right_to_left * 5 > chars || all.len() > MAX_SPANS {
         return PageLayout {
             number,
             width,
@@ -1065,7 +1225,7 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
         };
     }
     let mut refs: Vec<&Span> = all.iter().collect();
-    let body = body_size(&refs);
+    let body = page_body_size(&refs);
     let mut block = 0u32;
     let mut lines = Vec::new();
     let head = peel(&mut refs, body, height, true);
@@ -1171,11 +1331,11 @@ mod tests {
         for c in text.chars() {
             if c != ' ' {
                 out.push(Glyph {
-                    text: c.to_string(),
-                    x: at,
-                    y,
-                    end: at + 0.5 * size,
-                    size,
+                    text: GlyphText::from(c.to_string().as_str()),
+                    x: at as f32,
+                    y: y as f32,
+                    end: (at + 0.5 * size) as f32,
+                    size: size as f32,
                     upright: true,
                 });
             }
@@ -1346,6 +1506,34 @@ mod tests {
         want.sort_unstable();
         assert_eq!(got, want);
         assert_eq!(got.len(), p.chars);
+    }
+
+    #[test]
+    fn a_heading_at_the_top_of_one_column_stays_in_that_column() {
+        let mut glyphs = g("Psalm 24", 250.0, 60.0, 10.0);
+        for i in 0..12 {
+            let y = 80.0 + 14.0 * i as f64;
+            glyphs.extend(g(&format!("{} end of psalm 23 left", i + 1), 40.0, y, 10.0));
+            glyphs.extend(g(&format!("{} psalm 24 right text", i + 1), 250.0, y, 10.0));
+        }
+        let p = page(glyphs);
+        let t = texts(&p);
+        let heading = t.iter().position(|l| l == "Psalm 24").unwrap();
+        let left_end = t
+            .iter()
+            .position(|l| l == "12 end of psalm 23 left")
+            .unwrap();
+        assert!(left_end < heading, "{t:?}");
+        assert!(p.lines.iter().all(|l| l.role != LineRole::Head));
+    }
+
+    #[test]
+    fn right_to_left_text_keeps_its_drawing_order() {
+        let mut glyphs = Vec::new();
+        for i in 0..20 {
+            glyphs.extend(g("בראשית ברא אלהים", 300.0, 100.0 + 14.0 * i as f64, 10.0));
+        }
+        assert_eq!(page(glyphs).order, PageOrder::Uncertain);
     }
 
     #[test]

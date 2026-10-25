@@ -106,6 +106,8 @@ pub struct DocumentFile {
     pub notes: usize,
     /// How each PDF page's reading order was established (empty otherwise).
     pub page_orders: Vec<PageOrder>,
+    /// PDF pages whose text could not be read, or only in part.
+    pub failed_pages: Vec<u32>,
 }
 
 impl DocumentFile {
@@ -183,6 +185,7 @@ pub fn read_bytes(
                     units: Vec::new(),
                     notes: 0,
                     page_orders: text.orders.clone(),
+                    failed_pages: text.failed_pages.clone(),
                 }
             } else {
                 let segments = pdf::page_segments(&text.pages);
@@ -203,6 +206,29 @@ pub fn read_bytes(
                         .map(|l| (l.role, l.size, l.marked.as_ref()))
                         .collect();
                     let aligned = lines.len() == units.len() - from;
+                    // Larger text is a heading only where it is little of the
+                    // page. When much of the page is larger than its most
+                    // common size (a page dense with smaller notes, where the
+                    // notes' size looks like the body's), which text is
+                    // Scripture is not known: the page is uncertain.
+                    let letters = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();
+                    let text_letters: usize = layout
+                        .lines
+                        .iter()
+                        .filter(|l| l.role == LineRole::Text)
+                        .map(|l| letters(&l.text))
+                        .sum();
+                    let large_letters: usize = layout
+                        .lines
+                        .iter()
+                        .filter(|l| l.role == LineRole::Text && l.size >= 1.15 * body)
+                        .map(|l| letters(&l.text))
+                        .sum();
+                    // A page read only in part (cut off at the character limit)
+                    // may end in the middle of a verse.
+                    let uncertain = uncertain
+                        || large_letters * 5 > text_letters
+                        || text.failed_pages.contains(&number);
                     for (i, unit) in units[from..].iter_mut().enumerate() {
                         unit.uncertain_order = uncertain;
                         if aligned {
@@ -229,6 +255,7 @@ pub fn read_bytes(
                     units,
                     notes: 0,
                     page_orders: text.orders,
+                    failed_pages: text.failed_pages,
                 }
             }
         }
@@ -251,6 +278,7 @@ pub fn read_bytes(
                 units,
                 notes: 0,
                 page_orders: Vec::new(),
+                failed_pages: Vec::new(),
             }
         }
         "epub" | "docx" | "md" | "markdown" => {
@@ -275,6 +303,7 @@ pub fn read_bytes(
                 units,
                 notes,
                 page_orders: Vec::new(),
+                failed_pages: Vec::new(),
             }
         }
         _ => {

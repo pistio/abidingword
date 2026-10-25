@@ -125,14 +125,15 @@
     "documentSequence": "{{book}} {{chapter}}: o versículo {{verse}} aparece dentro de um versículo anterior (talvez duas colunas tenham sido lidas misturadas). Este capítulo não é usado.",
     "additionalBook": "“{{fileName}}” contém {{book}}, que o Abiding Word ainda não consegue mostrar. Ele foi deixado de fora; os outros livros não são afetados.",
     "differentEditions": "Estes arquivos dizem vir de Bíblias diferentes: {{list}}. Bíblias diferentes nunca são combinadas: adicione cada uma separadamente.",
+    "documentReadingOrder": "{{book}} {{chapter}}: não foi possível determinar a ordem de leitura da página {{page}} a partir do seu layout. Este capítulo não é usado.",
+    "documentChapterJump": "{{book}} {{chapter}}: o documento continua com este capítulo depois do capítulo {{previous}}; os capítulos intermediários não foram encontrados. Este capítulo não é usado.",
+    "documentRunningHead": "{{book}} {{chapter}}: a página {{page}} termina com o versículo {{found}}, mas o cabeçalho ({{head}}) indica {{named}}. Este capítulo não é usado.",
+    "documentLabel": "{{book}} {{chapter}}: a linha “{{line}}” fica entre duas frases de um versículo e se repete em outros lugares como linha própria (talvez o nome de quem fala ou um título). Este capítulo não é usado.",
+    "documentRaisedLetters": "{{book}} {{chapter}}: um versículo tem letras pequenas sobrescritas que nenhuma nota da página explica (talvez chamadas de referências). Este capítulo não é usado.",
     "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
     "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
     "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
-    "documentReadingOrder": "{{book}} {{chapter}}: não foi possível determinar a ordem de leitura da página {{page}} a partir do seu layout. Este capítulo não é usado.",
-    "documentChapterJump": "{{book}} {{chapter}}: o documento continua com este capítulo depois do capítulo {{previous}}; os capítulos intermediários não foram encontrados.",
-    "documentRunningHead": "{{book}} {{chapter}}: a página {{page}} termina com o versículo {{found}}, mas o cabeçalho ({{head}}) indica {{named}}. Este capítulo não é usado.",
-    "documentLabel": "{{book}} {{chapter}}: a linha “{{line}}” fica entre duas frases de um versículo e se repete em outros lugares como linha própria (talvez o nome de quem fala ou um título). Este capítulo não é usado.",
-    "documentRaisedLetters": "{{book}} {{chapter}}: um versículo tem letras pequenas sobrescritas que nenhuma nota da página explica (talvez chamadas de referências). Este capítulo não é usado."
+    "documentPagesUnread": "“{{fileName}}”: não foi possível ler por completo o texto da(s) página(s) {{pages}}. Faltam os versículos que elas contêm."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",
