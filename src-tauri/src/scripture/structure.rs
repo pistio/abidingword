@@ -1998,14 +1998,23 @@ fn note_letters_in(text: &str) -> Vec<NoteLetter> {
         regex::Regex::new(r"(?:^|\s)(\p{Ll}{1,2})\s+(\d{1,3})[:,.](\d{1,3})")
             .expect("valid pattern")
     });
+    // "g 9:542R1:10" (the space before "2 R" lost in the text): every
+    // reading of the digits that can be a verse number, as for note signs.
     form.captures_iter(text)
         .filter_map(|c| {
-            Some((
-                c.get(1)?.as_str().to_string(),
-                c.get(2)?.as_str().parse().ok()?,
-                c.get(3)?.as_str().parse().ok()?,
-            ))
+            let label = c.get(1)?.as_str().to_string();
+            let chapter: u16 = c.get(2)?.as_str().parse().ok()?;
+            let digits = c.get(3)?.as_str();
+            Some(
+                (1..=digits.len())
+                    .rev()
+                    .filter_map(|len| digits[..len].parse::<u16>().ok())
+                    .filter(|v| (1..=176).contains(v))
+                    .map(|v| (label.clone(), chapter, v))
+                    .collect::<Vec<_>>(),
+            )
         })
+        .flatten()
         .collect()
 }
 
@@ -5504,6 +5513,8 @@ mod tests {
             note_letters_in("c 13:6 Ge 36:7. d 13:7 Ge 12:6."),
             vec![("c".into(), 13, 6), ("d".into(), 13, 7)]
         );
+        // "g 9:542R1:10": 9:54 is among the readings.
+        assert!(note_letters_in("f 9:53Jn4:9. g 9:542R1:10,").contains(&("g".into(), 9, 54)));
         assert!(suspended_hyphen("und Dankopfer,"));
         assert!(!suspended_hyphen("fer bringen"));
         assert!(!suspended_hyphen("or to the governor"));
