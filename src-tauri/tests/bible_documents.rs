@@ -614,37 +614,42 @@ fn books_outside_the_66_are_named_and_left_out() {
 }
 
 #[test]
-fn a_name_s_hyphen_at_a_line_s_end_is_kept_a_broken_word_is_joined() {
-    // "Hazezón-" / "tamar": a name joined by a hyphen, written nowhere else;
-    // "gover-" / "nor": the document writes "governor" whole elsewhere.
-    let text = ruth_lines(|c| format!("Chapter {c}"))
-        .replacen(
-            &format!("7 {}", words("Ruth", 1, 7)),
-            "7 and they went to Hazezón-\ntamar.",
-            1,
-        )
-        .replacen(
-            &format!("8 {}", words("Ruth", 1, 8)),
-            "8 And the governor went out.",
-            1,
-        )
-        .replacen(
-            &format!("9 {}", words("Ruth", 1, 9)),
-            "9 And the gover-\nnor came back.",
-            1,
-        );
+fn a_hyphen_at_a_line_s_end_is_kept_only_on_the_document_s_evidence() {
+    // "Hazezón-" / "tamar": the document writes "Hazezón-tamar" inside a
+    // line elsewhere; "Beerot-bene-" / "jacaam": a chain of hyphens;
+    // "Notwith-" / "standing" and "gover-" / "nor": broken words (a capital
+    // proves nothing), joined.
+    let lines = [
+        (6u16, "6 and they went to Hazezón-\ntamar."),
+        (7, "7 Hazezón-tamar was far."),
+        (8, "8 And the governor went out to Beerot-bene-\njacaam."),
+        (9, "9 And the gover-\nnor came back."),
+        (10, "10 Notwith-\nstanding all this they went."),
+    ];
+    let mut text = ruth_lines(|c| format!("Chapter {c}"));
+    for (v, line) in lines {
+        text = text.replacen(&format!("{v} {}", words("Ruth", 1, v)), line, 1);
+    }
     let r = structure::recognise(
         &read("hyphens.txt", text.as_bytes()).units,
         Some("en"),
         &Corrections::default(),
     );
     assert_eq!(
-        verse(&r, "RUT", 1, 7).as_deref(),
+        verse(&r, "RUT", 1, 6).as_deref(),
         Some("and they went to Hazezón-tamar.")
+    );
+    assert_eq!(
+        verse(&r, "RUT", 1, 8).as_deref(),
+        Some("And the governor went out to Beerot-bene-jacaam.")
     );
     assert_eq!(
         verse(&r, "RUT", 1, 9).as_deref(),
         Some("And the governor came back.")
+    );
+    assert_eq!(
+        verse(&r, "RUT", 1, 10).as_deref(),
+        Some("Notwithstanding all this they went.")
     );
 }
 
@@ -670,6 +675,60 @@ fn selah_closing_a_psalm_stays_in_its_verse() {
     assert_eq!(
         verse(&r, "PSA", 2, 12),
         Some(format!("{} Selah", words("Psalm", 2, 12)))
+    );
+}
+
+#[test]
+fn styled_paragraphs_of_poetry_stay_in_their_verses() {
+    // Italic or bold paragraphs inside a verse (EPUB, Word): poetry and
+    // quotations, never headings, even when they end as sentences do.
+    let file = read(
+        "ruth.txt",
+        ruth_lines(|c| format!("Chapter {c}")).as_bytes(),
+    );
+    let mut units = file.units.clone();
+    let styled = |text: &str, like: &documents::Unit| documents::Unit {
+        text: text.to_string(),
+        styled: true,
+        ..like.clone()
+    };
+    for (verse, line) in [
+        (5u16, "My God, in whom I trust!”"),
+        (7, "Far from my deliverance are the words of my groaning."),
+        (9, "Praise ye the LORD, all ye nations."),
+    ] {
+        let at = units
+            .iter()
+            .position(|u| u.text == format!("{verse} {}", words("Ruth", 1, verse)))
+            .expect("the verse's line");
+        let unit = styled(line, &units[at]);
+        units.insert(at + 1, unit);
+    }
+    let r = structure::recognise(&units, Some("en"), &Corrections::default());
+    for (v, line) in [
+        (5u16, "My God, in whom I trust!”"),
+        (7, "Far from my deliverance are the words of my groaning."),
+        (9, "Praise ye the LORD, all ye nations."),
+    ] {
+        assert_eq!(
+            verse(&r, "RUT", 1, v),
+            Some(format!("{} {line}", words("Ruth", 1, v)))
+        );
+    }
+    // "A Song" over a psalm is its superscription, never a book's title.
+    assert_eq!(
+        structure::recognise(
+            &read(
+                "song.txt",
+                b"Psalms\n\nChapter 1\n\n1 Words.\n\nA Song\n\n2 More words.\n"
+            )
+            .units,
+            Some("en"),
+            &Corrections::default(),
+        )
+        .books
+        .len(),
+        1
     );
 }
 

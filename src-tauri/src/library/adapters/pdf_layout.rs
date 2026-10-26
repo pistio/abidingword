@@ -1539,7 +1539,7 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
     // not which letter it belongs to (a holam drawn before its vav, an accent
     // between two letters), so the words are not the edition's as encoded
     // and no verse is taken from them.
-    if right_to_left * 5 > chars && rotated_chars <= 20.max(chars / 50) {
+    if right_to_left * 5 > chars && rotated_chars <= 20.max(chars / 50) && all.len() <= MAX_SPANS {
         if let Some(lines) = right_to_left_lines(&glyphs, width) {
             return PageLayout {
                 number,

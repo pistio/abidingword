@@ -35,8 +35,10 @@ built by `scripts/build-derived-editions.py`.
   recogniser is not tuned to one producer's layout.
 * **Hidden editions** (role `hidden`): six editions — German Textbibel, French
   Darby (PDF and EPUB), Spanish Free Bible, Young's Literal Translation and the
-  Byzantine Greek New Testament — that are not looked at while the recogniser
-  is developed. The audit leaves them out unless `AW_INCLUDE_HIDDEN=1`; they
+  Byzantine Greek New Testament — and four converted layouts of them
+  (LibreOffice Word and PDF made from their USFM: Textbibel Word and PDF,
+  Free Bible Word, Darby PDF), structurally unlike eBible's own files, that
+  are not looked at while the recogniser is developed. The audit leaves them out unless `AW_INCLUDE_HIDDEN=1`; they
   are read once, for the final evaluation.
 
 ## Licences
@@ -72,7 +74,15 @@ Per edition and per book:
 * **unmapped** — verses not found or in refused chapters;
 * **exact / whitespace only / case only / different** — usable verses whose
   text is identical, differs only in spacing, only in letter case (small
-  capitals), or differs otherwise (a **genuine mismatch**);
+  capitals), or differs otherwise;
+* every **different** usable verse by kind (`difference_kind`):
+  **Unicode** (canonically the same characters, encoded differently: a CJK
+  compatibility ideograph), **typography** (the same letters and digits;
+  punctuation or quotes differ), **extra** (the edition's words and more —
+  a heading, note, reference or a note's sign read in: apparatus
+  contamination), **cut** (part of the edition's words only), **wrong
+  reference** (another verse's words) and **changed** (the words
+  themselves differ);
 * **false positives** — usable verses the edition does not have;
 * refused chapters with their reason (reading order, verse numbers, other);
 * books not found, time and peak memory.

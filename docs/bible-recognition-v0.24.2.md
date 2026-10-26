@@ -74,20 +74,53 @@ verses are not used. Partial use (v0.24) lets the other chapters be used.
   widths, slanted italics), a block styled bold, italic or centred (EPUB CSS,
   Word paragraph properties), capitals, a line centred in its column (PDF),
   or the passage's cross-references right under it. A heading may run over
-  two lines, end with a full stop when it has several parts, or end with its
-  parallel passage in brackets ("…재판하다(신 1:9-18)"). A line that only
-  *could* be a heading (no style, ending without punctuation) stays in its
-  verse: "… vor Gott" may be the verse's last line.
+  up to four lines in another typeface, its later lines going on in lower
+  case and its last one perhaps a single word too short for its style to
+  show ("… Un démoniaque" / "guéri"); it may end with a full stop when it
+  has several parts, or with its parallel passage in brackets
+  ("…재판하다(신 1:9-18)", "셈의 후예(대상 1:24-27)" — such a bracket alone sets
+  a line apart, as Scripture never writes one). A paragraph of its own that
+  the document marks as a heading (an EPUB or Word heading style) is a
+  heading however long and whatever its last mark, and also inside a verse,
+  between two of its sentences ("… changé l’eau en vin." / "Guérison du fils
+  d’un officier du roi" / "Il y avait …"). A paragraph merely bold, italic
+  or centred is one only when the passage's cross-references follow it:
+  italic poetry and quotations are styled paragraphs too, and stay in their
+  verses ("My God, in whom I trust!”"). A line in another typeface that ends as a sentence does
+  stays Scripture: poetry and spoken words are set in other typefaces too
+  ("Bénissez l’Éternel!", "Escúchenlo."). A line that only *could* be a
+  heading (no style, ending without punctuation) stays in its verse: "… vor
+  Gott" may be the verse's last line.
+* **Closing words stay.** "Selah" is never a heading; a note's sign after a
+  psalm's closing words ("Praise the LORD!†") does not hide that they end
+  a sentence.
+* **Books outside the 66** (Tobit, Judith, Wisdom, Sirach, Baruch, the
+  Maccabees, 1–2 Esdras, the Prayer of Manasseh, Psalm 151, and the Greek
+  text of Esther or Daniel printed as a book of its own) are named by their
+  titles in the interface languages, Latin and Korean, and their text is
+  left out with a note (`bibleImport.documentAdditionalBook`), as the USFM
+  importer already does: their chapters no longer run on into the
+  canonical book before them (Tobit into Malachi).
+* **Subscriptions.** An epistle's subscription after its last verse ("Πρὸς
+  Ῥωμαίους ἐγράφη ἀπὸ Κορίνθου …", "Written to the Romans from Corinthus …")
+  is set aside even without a style, read over the lines it is wrapped on;
+  a verse that merely begins "Πρὸς" is kept.
 * **Cross-reference lines** ("V. 18-24: cf. (1 Co 11:7-10.)", "Ps 70; 142.",
   "Ch. 31 à 34.") are never Scripture; nor are references to the source of a
   quotation that an edition sets after it, at a verse's end or inside it
   ("… sacrifício. Oseías 6:6 Porque eu não vim …", "… sequer. Salmos 14:1-3;
   53:1-3; Eclesiastes 7:20 Todos …"): a book with chapter and verse right
   after closing punctuation. Scripture never writes "book chapter:verse".
+  A reference line wrapped onto a line of bare numbers ("… Jé 6:6-15," /
+  "27-30.") is part of it. In Hangul, Chinese and Japanese a word of two
+  syllables is prose, never a reference abbreviation, so a Korean line such
+  as "7:28) 너는 가증한 것을 …" stays in its verse.
 * **Notes** are recognised by their place (smaller text at the foot of a PDF
   page), by their form (a sign and a chapter:verse, even printed without
-  spaces: "† 2:6there…") and by EPUB note links; a note's sign is taken out of
-  the verse only where a note on the page names that verse.
+  spaces: "† 2:6there…", "g 9:542R1:10" for note g of 9:54) and by EPUB note
+  links; a note's sign or raised letter is taken out of the verse only where
+  a note on the page names that verse — after the word it marks or before
+  it ("Χριστοῦ, †ᾧ").
 * **Chapter labels.** A number alone in a block set apart by its look is that
   chapter's label, whatever the chapter's length — editions number some
   chapters differently (Louis Segond Job 38 has 38 verses, the standard
@@ -111,6 +144,21 @@ language as written. A title that is one letter or syllable is no title
 language (OpenBible data, after the 100 population-ranked languages) for the
 Vulgate and scholarly editions; medieval spellings (SAMUHELIS, ISAIÆ) are
 read as such.
+
+* **The document's language.** A document that states no language, or one
+  that its own titles contradict (LibreOffice writes its interface language,
+  "en-US", into the PDF of a Korean Bible), is read again in the language
+  whose own book names its titles use — when that language names at least
+  three titles and three in five, more than any other, and the stated one
+  fewer than one in five. The running text is never used to guess.
+  Names that differ only by an accent are decided on the title's name ("O
+  Livro de Jó" is Job, not João).
+* **The Vulgate's own titles** that general rules cannot read — Hebrew
+  names (MALACHIM, DABREIAMIN), the old numbering of the four books of Kings
+  ("REGUM TERTIUS"), inflected spellings (HIEZECHIELIS, ACTUUM) — are read
+  from an explicit, edition-aware table, for Latin and for whole titles
+  only. "Regum primus" alone is not in it: 1 Samuel in the Vulgate,
+  1 Kings in the Nova Vulgata, and nothing in such a title tells them apart.
 
 ## 5. Stage C — sequence
 
@@ -149,23 +197,42 @@ for verses…") needs no new import.
   A centred line that ends as a sentence does (a poem's line) is not.
 * **Word paragraphs** centred, or bold or italic throughout, carry style
   evidence (`NewSegment.styled`), as EPUB blocks do from their CSS.
+* **Hyphens at a line's end.** A word broken at a line's end is joined
+  ("gover-" / "nor"). The hyphen is kept only on the document's own
+  evidence: the document writes the hyphenated word inside a line elsewhere
+  ("Hazezón-tamar"), or the word already carries a hyphen before the break.
+  A hyphen written nowhere inside a line is taken for the line break's and
+  dropped; where a name's hyphen is lost this way it shows as a typography
+  difference in the audit (rv1909-lopdf: 6), never as changed words.
+* **Right-to-left pages** whose glyphs a PDF draws in visual order (eBible's
+  Hebrew Bible) are put back in reading order from the glyphs' places, so
+  they can be read and searched; see §8 for why no verse is taken from
+  them.
 
 ## 8. What is not done
 
-* **Right-to-left PDFs** (Hebrew): pdf_extract gives right-to-left text in an
-  order that cannot be established, so those pages stay uncertain and their
-  chapters are refused. The Hebrew Bible reads correctly from EPUB.
+* **Right-to-left PDFs** (Hebrew) — a limit of the source document, not of
+  the reading: eBible's Hebrew PDF draws its glyphs in visual order, and
+  reading them back right to left finds the books, chapters and verses
+  (88.9 % of verses in chapters that would be usable, no false positive),
+  but such a PDF records where each vowel point and accent is drawn, not
+  which letter it belongs to (a holam drawn before its vav, an accent
+  between two letters, U+034F joiners added): only 426 of 20 623 verses
+  match the edition even after Unicode normalisation, 60 % on their
+  consonants alone. Those pages stay uncertain and their chapters are
+  refused. The Hebrew Bible reads correctly from EPUB (98.8 %).
 * **OCR.** Scanned Bibles have no text layer. A local, consented OCR path
   (an OCR engine installed by the person, its text marked unverified until
   checked) was investigated but not built in this milestone; scanned PDFs can
   still be added to read page by page.
-* **Jerome's Latin titles** in the Vulgate ("INCIPIT LIBER MALACHIM ID EST
-  REGUM TERTIUS ET QUARTUS", "LIBER DABREIAMIN", "HIEZECHIELIS",
-  "ACTUUM APOSTOLORUM") are not read: Hebrew names, the old numbering of
-  the four books of Kings (which clashes with the modern Latin names, where
-  "1 Regum" is 1 Kings) and inflected spellings would need guessing. The
-  chapters of those books are refused, never given to another book. The
-  deuterocanonical books have no reference data yet.
+* **The Vulgate's numbering.** Its psalms (and some chapters elsewhere)
+  follow the Greek numbering, which the standard verse counts do not: those
+  chapters are refused, never renumbered. Its deuterocanonical books are
+  named and left out (no reference data yet).
+* **Psalm titles inside a verse's own line.** A one-verse-per-line export
+  ("PSA 3:1 A Psalm by David, when he fled … LORD, how my adversaries …")
+  gives no mark between the title and the verse: the line is kept as the
+  document writes it (138 such verses in the World English Bible export).
 * **Unstyled headings in scripts without sentence punctuation** cannot be
   told from a verse's last line; they stay in the verse.
 * **Preserved corrections.** A re-run reads the kept files again; book

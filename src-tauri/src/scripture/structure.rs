@@ -686,8 +686,11 @@ fn title_forms(key: &str) -> Vec<String> {
                 continue;
             }
         }
+        // (The Portuguese "a" only in a title of three words or more: "A
+        // Revelação a João", "A Carta de Tiago"; "A Song", "A Psalm" over a
+        // psalm are its superscription, never Song of Songs or Psalms.)
         let take = NOUNS.contains(&first)
-            || (at_start && ARTICLES.contains(&first))
+            || (at_start && ARTICLES.contains(&first) && (first != "a" || words.len() >= 3))
             || (noun && LINKING.contains(&first));
         if take {
             noun |= NOUNS.contains(&first);
@@ -1048,6 +1051,8 @@ fn book_named_once(
                 .lookup_entries()
                 .filter(|(name, _)| written.contains(&normalise(name)))
                 .map(|(_, b)| b)
+                // (Only among the books the title can name.)
+                .filter(|b| books.iter().any(|c| c.code == b.code))
                 .collect();
             if let [one, rest @ ..] = exact.as_slice() {
                 if rest.iter().all(|b| b.code == one.code) {
@@ -1956,7 +1961,7 @@ fn note_signs_in(text: &str) -> Vec<NoteSign> {
     use std::sync::OnceLock;
     static NOTE: OnceLock<regex::Regex> = OnceLock::new();
     let form = NOTE.get_or_init(|| {
-        regex::Regex::new(r#"(?:^|\s)([^\p{L}\p{N}\s.,;:!?'"()\[\]«»„“”‘’\-–—/\x{E000}\x{E001}])[^\p{L}\p{N}\s.,;:!?'"()\[\]«»„“”‘’\-–—/\x{E000}\x{E001}]*\s*(\d{1,3})[:,.](\d{1,3})"#).expect("valid pattern")
+        regex::Regex::new(r#"(?:^|\s)([^\p{L}\p{N}\s.,;:!?'"()\[\]«»„“”‘’\-–—/\x{E000}\x{E001}])[^\p{L}\p{N}\s.,;:!?'"()\[\]«»„“”‘’\-–—/\x{E000}\x{E001}]*\s*([0-9]{1,3})[:,.]([0-9]{1,3})"#).expect("valid pattern")
     });
     let mut out: Vec<NoteSign> = Vec::new();
     for c in form.captures_iter(text.trim_start()) {
@@ -1995,7 +2000,7 @@ fn note_letters_in(text: &str) -> Vec<NoteLetter> {
     use std::sync::OnceLock;
     static NOTE: OnceLock<regex::Regex> = OnceLock::new();
     let form = NOTE.get_or_init(|| {
-        regex::Regex::new(r"(?:^|\s)(\p{Ll}{1,2})\s+(\d{1,3})[:,.](\d{1,3})")
+        regex::Regex::new(r"(?:^|\s)(\p{Ll}{1,2})\s+([0-9]{1,3})[:,.]([0-9]{1,3})")
             .expect("valid pattern")
     });
     // "g 9:542R1:10" (the space before "2 R" lost in the text): every
@@ -2503,7 +2508,10 @@ impl Builder<'_> {
             .map(|i| key(&clean(&self.units[i].text)))
             .filter(|t| !t.is_empty())
             .take(2)
-            .any(|t| GREEK_MARKS.iter().any(|m| t.contains(m)));
+            .any(|t| {
+                t.split(|c: char| !c.is_alphanumeric())
+                    .any(|w| GREEK_MARKS.iter().any(|m| w.starts_with(m)))
+            });
         greek.then_some(code)
     }
 
@@ -3311,7 +3319,14 @@ impl Builder<'_> {
                 // poem's last line ("Moi, l'Éternel, je crée ces choses.") can
                 // stand right over the cross-references too.
                 let words = line.split_whitespace().count();
-                let block = unit.place.page.is_none() && (unit.heading || unit.styled);
+                // A paragraph the document styles (EPUB, Word) may be long and
+                // end as it likes only where the document calls it a heading
+                // (a heading style) or the passage's cross-references follow
+                // it: italic poetry and quotations are styled paragraphs too
+                // ("My God, in whom I trust!”").
+                let block = unit.place.page.is_none()
+                    && (unit.heading || unit.styled)
+                    && (unit.heading || references_follow);
                 whole
                     && alone
                     && !is_selah(line)
@@ -3343,7 +3358,7 @@ impl Builder<'_> {
             let book_ends = next.is_none_or(|i| matches!(self.items[i].event, Event::Book { .. }));
             if book_ends {
                 let (mut j, mut total, mut styled) = (k, 0usize, false);
-                let mut start = None;
+                let (mut start, mut run) = (None, String::new());
                 while j >= 1 && k - j < 4 {
                     let Some((line, st)) = whole_alone(self, j) else {
                         break;
@@ -3351,8 +3366,10 @@ impl Builder<'_> {
                     total += line.chars().count();
                     // The subscription of an epistle reads as one even
                     // without a style ("Πρὸς Ῥωμαίους ἐγράφη ἀπὸ Κορίνθου …",
-                    // "Written to the Romans from Corinthus …").
-                    styled |= st || subscription(&line);
+                    // "Written to the Romans from Corinthus …"), read over
+                    // the lines it is wrapped on.
+                    run = format!("{line} {run}");
+                    styled |= st || subscription(&run);
                     if total > 300 {
                         break;
                     }
@@ -3433,14 +3450,14 @@ impl Builder<'_> {
                             }
                     )
             });
-            // A styled paragraph inside a verse (EPUB, Word): a heading where
+            // A paragraph in a heading style inside a verse (EPUB, Word): a heading where
             // the verse before it ended its sentence and the text after it
             // begins one ("… changé l’eau en vin." / "Guérison du fils d’un
             // officier du roi" / "Il y avait à Capernaüm …").
             let inside_verse = {
                 let unit = &self.units[self.items[k].unit];
                 unit.place.page.is_none()
-                    && (unit.heading || unit.styled)
+                    && unit.heading
                     && k >= 1
                     && ended(&self.items[k - 1])
                     && next.is_some_and(|i| match &self.items[i].event {
@@ -3482,6 +3499,8 @@ impl Builder<'_> {
                     .trim_end()
                     .trim_end_matches(is_sign)
                     .trim_end()
+                    // (past closing quotes: "… trust!”")
+                    .trim_end_matches(['”', '’', '"', '»', '\'', ')'])
                     .ends_with(['.', '!', '?', ',', ';', ':']),
                 _ => false,
             };
@@ -3551,7 +3570,11 @@ fn chapter_indexes(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
 /// written from Philippi …").
 fn subscription(line: &str) -> bool {
     let k = key(line);
-    k.contains("εγραφη") || k.starts_with("written to ") || k.contains(" was written from ")
+    let words: Vec<&str> = k.split_whitespace().collect();
+    // (Πρὸς, its final sigma as the key writes it, as the first word.)
+    (words.first().is_some_and(|w| ["προς", "προσ"].contains(w)) && words.contains(&"εγραφη"))
+        || k.starts_with("written to ")
+        || k.contains(" was written from ")
 }
 
 /// "Selah" (a word of the psalms themselves, often set on a line of its own,
@@ -3908,13 +3931,14 @@ impl Reader<'_> {
                 .collect();
             let right: String = words.chars().take_while(|c| c.is_alphabetic()).collect();
             let compound = format!("{left}-{right}").to_lowercase();
-            // Without either evidence, a name's hyphen stays ("Hazezón-" /
-            // "tamar", "Beerot-bene-" / "jacaam": names joined by hyphens);
-            // a common word's is a break.
+            // Without that evidence the hyphen stays only in a chain of
+            // hyphens ("Beerot-bene-" / "jacaam") the joined word is nowhere
+            // written whole; elsewhere it is a break ("Notwith-" / "standing",
+            // "Sündopfer-" / "bock": a capital proves nothing).
             let before = open.text[..open.text.len() - 1 - left.len()].chars().last();
-            let name = left.chars().next().is_some_and(char::is_uppercase) || before == Some('-');
+            let chained = before == Some('-');
             let keep = hyphenated.contains(&compound)
-                || (!whole.contains(&format!("{left}{right}").to_lowercase()) && name);
+                || (!whole.contains(&format!("{left}{right}").to_lowercase()) && chained);
             if !keep {
                 open.text.pop();
             }
@@ -4822,9 +4846,9 @@ impl Reader<'_> {
                 None => found.outside.is_some(),
             };
             self.skip = found.left_out;
-            if let (Some(code), false) =
-                (found.outside, self.corrections.books.contains_key(&entry))
-            {
+            // (The note stays while the book is left out, whatever else the
+            // person corrected.)
+            if let (Some(code), true) = (found.outside, found.left_out) {
                 let name = crate::scripture::canons::additional(code).map_or(code, |b| b.name);
                 let heading = found.heading.clone();
                 self.out.content.issue(
@@ -5467,6 +5491,18 @@ mod tests {
         assert!(book_line_shape("GENESIS."));
         assert!(book_line_shape("Ecclesiastes or, the Preacher"));
         let pt = ReferenceLanguage::from_label("pt");
+        let en = ReferenceLanguage::from_label("en");
+        assert_eq!(read_heading("A Song", en), None);
+        // An epistle's subscription, read whole or over its wrapped lines;
+        // a verse that merely begins "Πρὸς" is none.
+        assert!(subscription("Πρὸς Γαλάτας ἐγράφη ἀπὸ Ῥώμης."));
+        assert!(subscription(
+            "Πρὸς Τίτον τῆς Κρητῶν ἐκκλησίας πρῶτον ἐπίσκοπον χειροτονηθέντα ἐγράφη ἀπὸ Νικοπόλεως"
+        ));
+        assert!(!subscription("Πρὸς τὸν Θεὸν ἐγράφησαν."));
+        assert!(!subscription("Πρὸς ταῦτα τίς ἱκανός;"));
+        assert!(subscription("Written to the Romans from Corinthus."));
+        assert_eq!(read_heading("A PSALM", en), None);
         assert_eq!(
             read_heading("A Revelação a João", pt),
             Some(Heading::Book(canon::by_code("REV").unwrap()))
@@ -5513,6 +5549,10 @@ mod tests {
             note_letters_in("c 13:6 Ge 36:7. d 13:7 Ge 12:6."),
             vec![("c".into(), 13, 6), ("d".into(), 13, 7)]
         );
+        // Digits of other scripts are not read as numbers (and never cut).
+        assert!(note_letters_in("a 1:1\u{0661}").contains(&("a".into(), 1, 1)));
+        let _ = note_letters_in("ａ 1:１２");
+        let _ = note_signs_in("* 1:\u{0661}\u{0662}");
         // "g 9:542R1:10": 9:54 is among the readings.
         assert!(note_letters_in("f 9:53Jn4:9. g 9:542R1:10,").contains(&("g".into(), 9, 54)));
         assert!(suspended_hyphen("und Dankopfer,"));
