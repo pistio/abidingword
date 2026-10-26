@@ -262,6 +262,8 @@ struct Glyph {
     /// the same letter has another width in another typeface.
     width: u16,
     upright: bool,
+    /// Slanted (a sheared text matrix: italic made from an upright face).
+    slanted: bool,
 }
 
 #[derive(Default)]
@@ -405,10 +407,15 @@ impl pdf_extract::OutputDev for Collector {
         let Some(page) = self.pages.last_mut() else {
             return Ok(());
         };
-        let upright =
-            trm.m12.abs() <= 1e-3 && trm.m21.abs() <= 1e-3 && trm.m11 > 0.0 && trm.m22 > 0.0;
+        // Upright: not rotated. A shear alone (`m21`) is italic made by
+        // slanting an upright face (LibreOffice, Word): still upright text.
+        let slanted = trm.m21.abs() > 1e-3 && trm.m21.abs() <= 0.5 * trm.m22.abs();
+        let upright = trm.m12.abs() <= 1e-3
+            && (trm.m21.abs() <= 1e-3 || slanted)
+            && trm.m11 > 0.0
+            && trm.m22 > 0.0;
         let size = if upright {
-            font_size * (trm.m11 * trm.m22).sqrt()
+            font_size * (trm.m11 * trm.m22).abs().sqrt()
         } else {
             font_size * (trm.m11 * trm.m22 - trm.m12 * trm.m21).abs().sqrt()
         };
@@ -434,6 +441,7 @@ impl pdf_extract::OutputDev for Collector {
             size: size as f32,
             width: glyph_width,
             upright: upright && size > 0.0 && x.is_finite() && y.is_finite(),
+            slanted,
         });
         Ok(())
     }
@@ -541,7 +549,11 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
             }
             span.text.push_str(&g.text);
             span.x1 = span.x1.max(f64::from(g.end).max(f64::from(g.x)));
-            if let Some(other) = compare(g) {
+            if g.slanted {
+                // Slanted glyphs are italic: another style by themselves.
+                span.compared += 1;
+                span.styled += 1;
+            } else if let Some(other) = compare(g) {
                 span.compared += 1;
                 span.styled += u32::from(other);
             }
@@ -1410,6 +1422,7 @@ mod tests {
                     size: size as f32,
                     width: 500,
                     upright: true,
+                    slanted: false,
                 });
             }
             at += 0.5 * size;
@@ -1748,5 +1761,20 @@ mod tests {
         let p = page(glyphs);
         assert_eq!(p.order, PageOrder::Single);
         assert_eq!(p.lines[0].text, "1 the words of verse 1 in a psalm");
+    }
+
+    #[test]
+    fn slanted_glyphs_make_one_styled_line() {
+        // Italic made by slanting an upright face: one line, set apart by
+        // its style, never one line per glyph.
+        let mut glyphs = g("A heading in italics", 40.0, 100.0, 12.0);
+        for glyph in &mut glyphs {
+            glyph.slanted = true;
+        }
+        glyphs.extend(g("1 the words of verse one go on here", 40.0, 120.0, 12.0));
+        let p = page(glyphs);
+        assert_eq!(p.lines[0].text, "A heading in italics");
+        assert!(p.lines[0].styled);
+        assert!(!p.lines[1].styled);
     }
 }

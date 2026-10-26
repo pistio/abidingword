@@ -768,6 +768,11 @@ fn book_named_once(
     near: bool,
 ) -> Option<&'static Book> {
     let mut k = key(text);
+    // A title is a name, never one letter or syllable ("마", "시": Korean
+    // abbreviations used in references only).
+    if k.chars().filter(|c| c.is_alphabetic()).count() < 2 {
+        return None;
+    }
     for prefix in TITLE_PREFIXES {
         if let Some(rest) = k.strip_prefix(prefix) {
             k = rest.to_string();
