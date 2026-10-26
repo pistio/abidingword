@@ -2444,6 +2444,14 @@ impl Builder<'_> {
         }
     }
 
+    /// Whether a book has begun (a chapter's label before any book is no
+    /// chapter of anything).
+    fn book_open(&self) -> bool {
+        self.items
+            .iter()
+            .any(|i| matches!(i.event, Event::Book { .. }))
+    }
+
     /// A title naming one of numbered books without its number
     /// ("Crónicas" over each book of Chronicles): the one that follows the
     /// book before it in the canon's order, if one does. Otherwise none.
@@ -2582,6 +2590,24 @@ impl Builder<'_> {
                 }
             }
             // Headings: the document's own, or a line that is nothing but a book or chapter.
+            // A number alone in a block set apart by its look (EPUB, Word:
+            // bold, larger, centred; PDF: large) is its chapter's label, never a
+            // verse number, even where the chapter has fewer verses than the
+            // standard numbering's (LSG Job 38 has 38, not 41).
+            let number_only =
+                !text.is_empty() && text.len() <= 3 && text.chars().all(|c| c.is_ascii_digit());
+            if number_only
+                && !unit.note
+                && ((unit.place.page.is_none() && unit.styled) || unit.large)
+                && self.book_open()
+            {
+                if let Ok(n) = text.parse::<u16>() {
+                    if n > 0 {
+                        self.push(Event::Chapter(n), index);
+                        continue;
+                    }
+                }
+            }
             if let Some(heading) =
                 read_heading(text, self.language).or_else(|| self.next_in_sequence(text))
             {
@@ -2599,10 +2625,7 @@ impl Builder<'_> {
                         Heading::BookChapter(..) => book_line_shape(text),
                         Heading::Chapter(_) => true,
                     };
-                // A number in a block of its own set apart by its look (EPUB,
-                // Word: bold, larger, centred) is its chapter's label.
-                let label = bare && unit.place.page.is_none() && unit.styled;
-                if (unit.heading || label || !bare) && line_book_ok {
+                if (unit.heading || !bare) && line_book_ok {
                     match heading {
                         Heading::Book(book) => {
                             let title = match self.title_start(unit.heading) {
