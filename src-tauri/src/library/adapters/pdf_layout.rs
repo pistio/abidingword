@@ -723,6 +723,38 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
     out
 }
 
+/// Lines set in the middle of their column, short of it on both sides by
+/// about as much (a heading, a chapter's label): set apart by their look,
+/// in any script, even where bold letters are as wide as the others
+/// (Korean, Chinese, Japanese).
+fn mark_centred(lines: &mut [Line]) {
+    let columns: Vec<u8> = {
+        let mut c: Vec<u8> = lines.iter().map(|l| l.column).collect();
+        c.sort_unstable();
+        c.dedup();
+        c
+    };
+    for column in columns {
+        let in_column = || lines.iter().filter(|l| l.column == column);
+        if in_column().count() < 4 {
+            continue;
+        }
+        let left = in_column().map(|l| l.x0).fold(f64::INFINITY, f64::min);
+        let right = in_column().map(|l| l.x1).fold(f64::NEG_INFINITY, f64::max);
+        let width = right - left;
+        if !(width > 50.0) {
+            continue;
+        }
+        for line in lines.iter_mut().filter(|l| l.column == column) {
+            let (before, after) = (line.x0 - left, right - line.x1);
+            if before > 0.1 * width && after > 0.1 * width && (before - after).abs() < 0.06 * width
+            {
+                line.styled = true;
+            }
+        }
+    }
+}
+
 /// The span of a line with the most characters (its main text).
 fn main_span<'a>(group: &[&'a Span]) -> Option<&'a Span> {
     group.iter().copied().max_by_key(|s| s.text.chars().count())
@@ -1326,7 +1358,8 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
         lines.extend(head_lines);
     }
     let order = match arrange_page(&refs, body, &mut block, hint) {
-        Some((body_lines, columns)) => {
+        Some((mut body_lines, columns)) => {
+            mark_centred(&mut body_lines);
             lines.extend(body_lines);
             if columns > 1 {
                 PageOrder::Columns(columns)
@@ -1776,5 +1809,39 @@ mod tests {
         assert_eq!(p.lines[0].text, "A heading in italics");
         assert!(p.lines[0].styled);
         assert!(!p.lines[1].styled);
+    }
+
+    #[test]
+    fn a_centred_line_is_set_apart() {
+        let mut glyphs = Vec::new();
+        for (i, text) in [
+            "1 the words of verse one run across the column to its end",
+            "and go on here across the whole width of the column again",
+        ]
+        .iter()
+        .enumerate()
+        {
+            glyphs.extend(g(text, 40.0, 100.0 + 14.0 * i as f64, 10.0));
+        }
+        // Centred under the lines (from 40 to about 335).
+        let widest = 5.0 * 59.0;
+        glyphs.extend(g("A heading", 40.0 + (widest - 45.0) / 2.0, 140.0, 10.0));
+        for (i, text) in [
+            "2 the next verse runs across the column to its end as well",
+            "and its second line goes across the whole column width too",
+        ]
+        .iter()
+        .enumerate()
+        {
+            glyphs.extend(g(text, 40.0, 154.0 + 14.0 * i as f64, 10.0));
+        }
+        // A short last line of a paragraph, at the left: not centred.
+        glyphs.extend(g("and it ends.", 40.0, 182.0, 10.0));
+        let p = page(glyphs);
+        let heading = p.lines.iter().find(|l| l.text == "A heading").unwrap();
+        assert!(heading.styled);
+        let end = p.lines.iter().find(|l| l.text == "and it ends.").unwrap();
+        assert!(!end.styled);
+        assert!(!p.lines[0].styled);
     }
 }

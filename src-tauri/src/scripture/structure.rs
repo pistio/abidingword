@@ -2794,8 +2794,19 @@ impl Builder<'_> {
         // or a comma ("Défense à Aaron … tabernacle." over "Portions des
         // offrandes …"; "Le territoire conquis distribué aux Rubénites," over
         // its second line).
+        let language = self.language;
         let shape = |line: &str, set_apart: bool, more: bool| {
             let line = line.trim();
+            // A parallel passage in brackets after a heading ("… 재판하다(신
+            // 1:9-18)", "(Mt 5:1-12)") is part of the heading.
+            let line = match line.strip_suffix(')').and_then(|l| l.rsplit_once('(')) {
+                Some((head, inside))
+                    if !head.trim().is_empty() && reference_line(inside, language) =>
+                {
+                    head.trim()
+                }
+                _ => line,
+            };
             let ends = line.ends_with([
                 '.', '!', '?', ';', ':', ',', '”', '’', '"', '»', '\'', ')', '-', '‐', '–',
             ]);
@@ -2807,10 +2818,20 @@ impl Builder<'_> {
                     || (set_apart && capitals(line) && line.ends_with('.'))
                     || (set_apart && more && line.ends_with(['.', ','])))
         };
+        // Korean sentences end with a final ending, not a full stop
+        // ("… 안식하셨음이더라", "… 하시니라", "… 하소서").
+        let korean_end = |t: &str| {
+            t.chars().last().is_some_and(|c| {
+                matches!(
+                    c,
+                    '다' | '라' | '요' | '까' | '니' | '서' | '오' | '네' | '지' | '세' | '자'
+                )
+            })
+        };
         let ended = |item: &Item| match &item.event {
             Event::Text(t) => {
                 let t = t.trim_end();
-                t.ends_with(['.', '!', '?', '”', '’', '"', '»', ')'])
+                t.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。']) || korean_end(t)
             }
             _ => true,
         };
@@ -3419,6 +3440,13 @@ impl Reader<'_> {
     fn check_label(&mut self, words: &str, unit: usize) {
         let whole = clean(&self.units[unit].text);
         let whole = whole.trim();
+        // "Selah" (a word of the psalms themselves, often set on a line of
+        // its own) is part of its verse in every edition.
+        const SELAH: &[&str] = &["selah", "sela", "pausa", "셀라", "סלה", "διαψαλμα"];
+        if SELAH.contains(&key(whole.trim_end_matches(['.', ')']).trim_start_matches('(')).as_str())
+        {
+            return;
+        }
         // One word in capitals alone on a line ("BETH", "BOOK"): a heading in
         // another style, or a word of the verse — not known without the style.
         let capitals = !whole.contains(' ')
