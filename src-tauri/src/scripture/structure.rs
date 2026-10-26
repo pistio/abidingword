@@ -2219,7 +2219,17 @@ fn book_line_shape(text: &str) -> bool {
     // "Das 1. Buch Mose (Genesis)": a name in brackets may end the title.
     let bracketed = text.ends_with(')') && text.contains('(');
     let limit = if gives_second_name(text) { 100 } else { 60 };
-    text.chars().count() <= limit
+    // A sentence ending inside the line ("Moïse. Ce dernier changea son nom
+    // Osée ou …") is a wrapped line of prose, never a title.
+    let sentence_inside = text.split(". ").collect::<Vec<_>>().windows(2).any(|w| {
+        let word = w[0].rsplit(' ').next().unwrap_or("");
+        word.chars().count() >= 3
+            && word.chars().all(|c| c.is_alphabetic())
+            && word.chars().skip(1).all(char::is_lowercase)
+            && w[1].chars().next().is_some_and(char::is_uppercase)
+    });
+    !sentence_inside
+        && text.chars().count() <= limit
         && (bracketed
             || !text.ends_with([
                 '.', ',', ';', ':', '!', '?', '׃', '。', '"', '”', '’', '\'', ')',
@@ -2292,6 +2302,10 @@ impl Builder<'_> {
             && title.chars().any(char::is_uppercase);
         let strong = self.units[index].heading || self.units[index].large || capitals;
         let limit = if strong { 3000 } else { 3 };
+        let own = match read_heading(title.trim(), self.language) {
+            Some(Heading::Book(book)) => Some(book.code),
+            _ => None,
+        };
         let lines = self
             .units
             .iter()
@@ -2310,6 +2324,11 @@ impl Builder<'_> {
             if let Some(heading) = read_heading(&line, self.language)
                 .filter(|h| !matches!(h, Heading::Book(_)) || book_line_shape(&line))
             {
+                // A section heading that begins with the title's own book
+                // ("Josué à la tête du peuple" under "JOSUÉ") is not another title.
+                if strong && matches!(heading, Heading::Book(book) if Some(book.code) == own) {
+                    continue;
+                }
                 return matches!(heading, Heading::Chapter(1) | Heading::BookChapter(_, 1));
             }
             let digits: String = line
@@ -2336,6 +2355,18 @@ impl Builder<'_> {
                     "–",
                 ];
                 let first_word = rest.split_whitespace().next().unwrap_or("");
+                // A sentence of an introduction that opens with a numbered
+                // book's name ("2 Samuel présente …") is not verse 2. (Verse 1
+                // may begin with one: "1 Pierre, apôtre de Jésus-Christ".)
+                let names_book = digits != "1"
+                    && rest.starts_with(char::is_whitespace)
+                    && matches!(
+                        read_heading(&format!("{digits} {first_word}"), self.language),
+                        Some(Heading::Book(book)) if book.code.starts_with(|c: char| c.is_ascii_digit())
+                    );
+                if strong && names_book {
+                    continue;
+                }
                 let verse_like = rest.is_empty()
                     || (rest.starts_with(char::is_whitespace)
                         && first_word.chars().next().is_some_and(char::is_alphabetic)
@@ -2881,7 +2912,9 @@ impl Builder<'_> {
         // its second line).
         let language = self.language;
         let shape = |line: &str, set_apart: bool, more: bool| {
-            let line = line.trim();
+            // A note's sign after the last word does not end the line
+            // ("Her steps lead straight to Sheol.†" ends as a sentence).
+            let line = line.trim().trim_end_matches(is_sign).trim_end();
             // A parallel passage in brackets after a heading ("… 재판하다(신
             // 1:9-18)", "(Mt 5:1-12)") is part of the heading.
             let line = match line.strip_suffix(')').and_then(|l| l.rsplit_once('(')) {
@@ -2915,7 +2948,8 @@ impl Builder<'_> {
         };
         let ended = |item: &Item| match &item.event {
             Event::Text(t) => {
-                let t = t.trim_end();
+                // (Note signs after the last word do not count: "counsellors.§".)
+                let t = t.trim_end().trim_end_matches(is_sign).trim_end();
                 t.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。']) || korean_end(t)
             }
             _ => true,
@@ -2974,14 +3008,37 @@ impl Builder<'_> {
             // A styled passage after a book's last verse, with only the next
             // book (or nothing) after it: a colophon ("Written to the Romans
             // from Corinthus …"), not words of the verse.
+            // It may run over a few lines, not all of them long enough for
+            // their style to show ("Written to the Romans … servant of the" /
+            // "church at Cenchrea.").
             let book_ends = next.is_none_or(|i| matches!(self.items[i].event, Event::Book { .. }));
-            if book_ends && k >= 1 && ended(&self.items[k - 1]) {
-                if let Some((line, true)) = whole_alone(self, k) {
-                    if line.chars().count() <= 300 {
-                        let text = unmark_raised(line.trim());
-                        self.items[k].event = Event::Other { notes: false, text };
-                        continue;
+            if book_ends {
+                let (mut j, mut total, mut styled) = (k, 0usize, false);
+                let mut start = None;
+                while j >= 1 && k - j < 4 {
+                    let Some((line, st)) = whole_alone(self, j) else {
+                        break;
+                    };
+                    total += line.chars().count();
+                    styled |= st;
+                    if total > 300 {
+                        break;
                     }
+                    if styled && ended(&self.items[j - 1]) {
+                        start = Some(j);
+                        break;
+                    }
+                    j -= 1;
+                }
+                if let Some(start) = start {
+                    for i in start..=k {
+                        if let Event::Text(line) = &self.items[i].event {
+                            let text = unmark_raised(line.trim());
+                            self.items[i].event = Event::Other { notes: false, text };
+                        }
+                    }
+                    k = start;
+                    continue;
                 }
             }
             // The passage's cross-references right under a line ("Léa et
@@ -3108,6 +3165,69 @@ fn hyphenated_words(units: &[Unit]) -> HashSet<String> {
 /// Where a passage reference closing a verse begins ("… Deus conosco.
 /// Isaías 7:14", "… (Ps 2:7)"): after the verse's last sentence, and nothing
 /// after it but closing punctuation. None when the verse does not end so.
+/// Passage references inside a verse, right after a quotation or a
+/// sentence ("… não sacrifício’. Oseías 6:6 Porque eu não vim …"): the
+/// source of the quotation, set in the text by the edition. Scripture
+/// itself never writes "book chapter:verse", so only such a reference — a
+/// book and a chapter and verse, with any list after it ("Salmos 14:1-3;
+/// 53:1-3; Eclesiastes 7:20") — standing after closing punctuation is
+/// taken out. Byte ranges, in order.
+fn inline_references(text: &str, language: Option<ReferenceLanguage>) -> Vec<(usize, usize)> {
+    let languages: Vec<ReferenceLanguage> = match language {
+        Some(l) => vec![l],
+        None => name_languages(),
+    };
+    let mut matches: Vec<(usize, usize)> = languages
+        .iter()
+        .flat_map(|l| ReferenceParser::for_language(*l).matches(text))
+        .filter(|m| m.written_verse)
+        .map(|m| (m.start, m.end))
+        .collect();
+    matches.sort_unstable();
+    matches.dedup();
+    let mut out: Vec<(usize, usize)> = Vec::new();
+    let mut i = 0;
+    while i < matches.len() {
+        let (start, mut end) = matches[i];
+        let before = text[..start].trim_end();
+        let after_quote = before.ends_with(['.', '!', '?', '»', '”', '’', '"', ',', ';']);
+        if before.is_empty() || !after_quote || out.last().is_some_and(|(_, e)| *e > start) {
+            i += 1;
+            continue;
+        }
+        // The list going on: more verses ("…12-13; 32:6-9"), more references.
+        loop {
+            let rest = &text[end..];
+            let more = rest
+                .char_indices()
+                .take_while(|(_, c)| {
+                    c.is_ascii_digit() || matches!(c, ',' | ';' | '-' | '–' | ':' | ' ')
+                })
+                .last()
+                .map_or(0, |(at, c)| at + c.len_utf8());
+            let mut extended = end + rest[..more].trim_end().len();
+            // A reference to another book next in the list.
+            if let Some(&(s, e)) = matches.get(i + 1) {
+                // (The next reference may begin inside the numbers just read.)
+                if s < extended
+                    || text[extended..s].trim().is_empty()
+                    || text[end..s].trim_matches([';', ',', ' ']).is_empty()
+                {
+                    extended = extended.max(e);
+                    i += 1;
+                }
+            }
+            if extended == end {
+                break;
+            }
+            end = extended;
+        }
+        out.push((start, end));
+        i += 1;
+    }
+    out
+}
+
 fn trailing_reference(text: &str, language: Option<ReferenceLanguage>) -> Option<usize> {
     let languages: Vec<ReferenceLanguage> = match language {
         Some(l) => vec![l],
@@ -3369,6 +3489,17 @@ impl Reader<'_> {
             let kept = text.trim_end().len();
             text.truncate(kept);
             self.leave_out(&tail, open.last_unit, "crossReference");
+        }
+        for (start, end) in inline_references(&text, self.language).into_iter().rev() {
+            let reference = text[start..end].trim().to_string();
+            let before = text[..start].trim_end().to_string();
+            let after = text[end..].trim_start().to_string();
+            text = if after.is_empty() {
+                before
+            } else {
+                format!("{before} {after}")
+            };
+            self.leave_out(&reference, open.last_unit, "crossReference");
         }
         let key = (open.ordinal, open.chapter, open.verse);
         let book = canon::by_ordinal(open.ordinal).expect("a staged book is canonical");
@@ -4707,6 +4838,42 @@ mod tests {
         // A reference inside the verse, or without a sentence before it, stays.
         assert_eq!(trailing_reference("como diz Salmos 91:11 hoje", pt), None);
         assert_eq!(trailing_reference("Salmos 91:11", pt), None);
+        // Inside the verse, after the quotation it is the source of.
+        let text = "Mas ide aprender o que significa: ‘Quero misericórdia, e não sacrifício’. Oseías 6:6 Porque eu não vim chamar os justos.";
+        let found = inline_references(text, pt);
+        assert_eq!(found.len(), 1);
+        assert_eq!(text[found[0].0..found[0].1].trim(), "Oseías 6:6");
+        let text = "não há quem faça o bem, nem um sequer. Salmos 14:1-3; 53:1-3; Eclesiastes 7:20 Todos se desviaram.";
+        let found = inline_references(text, pt);
+        assert_eq!(found.len(), 1);
+        assert_eq!(
+            text[found[0].0..found[0].1].trim(),
+            "Salmos 14:1-3; 53:1-3; Eclesiastes 7:20"
+        );
+        // A list whose numbers run into the next book's ordinal ("14:1, 2 Reis").
+        let text = "assim está escrito. Salmos 14:1, 2 Reis 3:4 E depois disto.";
+        let found = inline_references(text, pt);
+        assert_eq!(found.len(), 1);
+        assert_eq!(
+            text[found[0].0..found[0].1].trim(),
+            "Salmos 14:1, 2 Reis 3:4"
+        );
+        // Never a reference the verse's own words lead into.
+        assert!(inline_references("como diz Salmos 91:11 hoje", pt).is_empty());
+    }
+
+    #[test]
+    fn a_wrapped_line_of_prose_is_never_a_title() {
+        let fr = ReferenceLanguage::from_label("fr");
+        let line = "Moïse. Ce dernier changea son nom Osée ou Hoshéa (il sauve, il donne la victoire ou il";
+        assert!(!book_line_shape(line));
+        assert!(book_line_shape("St. Matthew"));
+        assert!(book_line_shape("GENESIS."));
+        assert!(book_line_shape("Ecclesiastes or, the Preacher"));
+        assert_eq!(
+            read_heading("LE SECOND LIVRE DE SAMUEL", fr),
+            Some(Heading::Book(canon::by_code("2SA").unwrap()))
+        );
     }
 
     #[test]

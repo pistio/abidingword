@@ -749,9 +749,10 @@ fn mark_centred(lines: &mut [Line]) {
             let (before, after) = (line.x0 - left, right - line.x1);
             // (A line ending as a sentence does is a line of verse that
             // happens to stand in the middle: a poem's line.)
+            // (Note signs after the last word do not count: "Sheol.†".)
             let sentence = line
                 .text
-                .trim_end()
+                .trim_end_matches(|c: char| c.is_whitespace() || "†‡§¶*".contains(c))
                 .ends_with(['.', ',', ';', ':', '!', '?', '"', '”', '’', '»']);
             if !sentence
                 && before > 0.1 * width

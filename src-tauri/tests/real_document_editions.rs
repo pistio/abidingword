@@ -202,6 +202,50 @@ fn peak_mb() -> Option<f64> {
     Some(kb / 1024.0)
 }
 
+/// The reference USFM read as the USFM standard defines it where the app's
+/// importer does not (yet): an acrostic heading (`\qa BETH`) is a heading,
+/// not words of the verse before it. The importer keeps the bundled Bibles'
+/// text as it was (see docs/bible-recognition-v0.24.2.md); the comparison
+/// must not count the heading a document rightly leaves out as a difference.
+fn as_usfm_defines(path: &Path) -> PathBuf {
+    use std::io::{Read, Write};
+    let Ok(file) = std::fs::File::open(path) else {
+        return path.to_path_buf();
+    };
+    let Ok(mut zip) = zip::ZipArchive::new(file) else {
+        return path.to_path_buf();
+    };
+    let out = std::env::temp_dir().join(format!(
+        "aw-reference-{}-{}",
+        std::process::id(),
+        path.file_name().unwrap().to_string_lossy()
+    ));
+    let mut writer = zip::ZipWriter::new(std::fs::File::create(&out).unwrap());
+    let options: zip::write::SimpleFileOptions = zip::write::SimpleFileOptions::default();
+    for i in 0..zip.len() {
+        let mut entry = zip.by_index(i).unwrap();
+        let name = entry.name().to_string();
+        let mut bytes = Vec::new();
+        entry.read_to_end(&mut bytes).unwrap();
+        let lower = name.to_ascii_lowercase();
+        if lower.ends_with(".usfm") || lower.ends_with(".sfm") {
+            let text = String::from_utf8_lossy(&bytes)
+                .lines()
+                .map(|l| match l.strip_prefix("\\qa ") {
+                    Some(rest) => format!("\\s1 {rest}"),
+                    None => l.to_string(),
+                })
+                .collect::<Vec<_>>()
+                .join("\n");
+            bytes = text.into_bytes();
+        }
+        writer.start_file(name, options).unwrap();
+        writer.write_all(&bytes).unwrap();
+    }
+    writer.finish().unwrap();
+    out
+}
+
 fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let files: Vec<PathBuf> = edition.files.iter().map(|f| dir.join(f)).collect();
     if let Some(missing) = files.iter().find(|f| !f.exists()) {
@@ -219,6 +263,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let seconds = started.elapsed().as_secs_f64();
     let peak_memory_mb = peak_mb();
     // Only now is the publisher's text read, for the comparison.
+    let reference_file = as_usfm_defines(&reference_file);
     let reference = import::stage(
         std::slice::from_ref(&reference_file),
         ImportOrigin::UserFiles,

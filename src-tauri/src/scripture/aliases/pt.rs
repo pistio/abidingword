@@ -51,7 +51,7 @@ const ROWS: &[Row] = &[
     ("LAM", &["lamentações", "lm"]),
     ("EZK", &["ezequiel", "ez"]),
     ("DAN", &["daniel", "dn"]),
-    ("HOS", &["oseias"]),
+    ("HOS", &["oseias", "oséias", "oseías"]),
     ("JOL", &["joel", "jl"]),
     ("AMO", &["amós", "am"]),
     ("OBA", &["obadias", "ob"]),
