@@ -742,7 +742,7 @@ fn mark_centred(lines: &mut [Line]) {
         let left = in_column().map(|l| l.x0).fold(f64::INFINITY, f64::min);
         let right = in_column().map(|l| l.x1).fold(f64::NEG_INFINITY, f64::max);
         let width = right - left;
-        if !(width > 50.0) {
+        if width.is_nan() || width <= 50.0 {
             continue;
         }
         for line in lines.iter_mut().filter(|l| l.column == column) {
