@@ -191,6 +191,53 @@ const GREEK_TITLES: &[(&str, &str)] = &[
     ("ΑΠΟΚΑΛΥΨΙΣ", "REV"),
 ];
 
+/// A Greek title brought to the forms of [`GREEK_TITLES`]: the words that
+/// describe the book (Paul the apostle's, the letter, catholic, the gospel)
+/// left out, an ordinal word as its letter ("ΠΡΩΤΗ" → "α"), with and
+/// without "προς".
+fn greek_forms(k: &str) -> Vec<String> {
+    if !k.chars().any(|c| ('\u{0370}'..='\u{03FF}').contains(&c)) {
+        return Vec::new();
+    }
+    const FILLER: &[&str] = &[
+        "παυλου",
+        "του",
+        "αποστολου",
+        "η",
+        "το",
+        "ο",
+        "επιστολη",
+        "καθολικη",
+        "ευαγγελιον",
+        "αγιου",
+        "θεολογου",
+    ];
+    let mut letter = None;
+    let mut rest: Vec<&str> = Vec::new();
+    for word in k.split(' ') {
+        match word {
+            "πρωτη" | "α" => letter = Some("α"),
+            "δευτερα" | "β" => letter = Some("β"),
+            "τριτη" | "γ" => letter = Some("γ"),
+            w if FILLER.contains(&w) => {}
+            w => rest.push(w),
+        }
+    }
+    if rest.is_empty() {
+        return Vec::new();
+    }
+    let name = rest.join(" ");
+    let bare = name.strip_prefix("προς ").unwrap_or(&name).to_string();
+    let mut out = Vec::new();
+    for base in [bare.clone(), format!("προς {bare}")] {
+        match letter {
+            Some(l) => out.push(format!("{base} {l}")),
+            None => out.push(base),
+        }
+    }
+    out
+}
+
 /// Words in front of a book's name in a title, dropped before looking it up.
 const TITLE_PREFIXES: &[&str] = &[
     "the book of ",
@@ -800,6 +847,10 @@ fn book_named_once(
             .collect();
         forms.extend(latin);
     }
+    // Greek titles in their traditional shape ("ΚΟΡΙΝΘΙΟΥΣ ΕΠΙΣΤΟΛΗ ΠΡΩΤΗ",
+    // "ΠΕΤΡΟΥ ΕΠΙΣΤΟΛΗ ΚΑΘΟΛΙΚΗ ΠΡΩΤΗ", "ΕΥΑΓΓΕΛΙΟΝ ΤΟ ΚΑΤΑ ΜΑΤΘΑΙΟΝ"):
+    // the forms of the Greek titles table.
+    forms.extend(greek_forms(&k));
     let found = match names().get(&k) {
         Some(found) => found,
         None => match forms.iter().find_map(|f| names().get(f)) {
@@ -4505,6 +4556,22 @@ mod tests {
 
     fn named(title: &str, language: Option<&str>) -> Option<&'static str> {
         book_named(title, language.and_then(ReferenceLanguage::from_label)).map(|b| b.code)
+    }
+
+    #[test]
+    fn greek_titles_in_their_traditional_shape() {
+        let el = ReferenceLanguage::from_label("el");
+        let book = |t: &str| match read_heading(t, el) {
+            Some(Heading::Book(b)) => Some(b.code),
+            _ => None,
+        };
+        assert_eq!(book("ΚΟΡΙΝΘΙΟΥΣ ΕΠΙΣΤΟΛΗ ΠΡΩΤΗ"), Some("1CO"));
+        assert_eq!(book("ΠΕΤΡΟΥ ΕΠΙΣΤΟΛΗ ΚΑΘΟΛΙΚΗ ΠΡΩΤΗ"), Some("1PE"));
+        assert_eq!(book("ΕΥΑΓΓΕΛΙΟΝ ΤΟ ΚΑΤΑ ΜΑΤΘΑΙΟΝ"), Some("MAT"));
+        assert_eq!(book("ΙΩΑΝΝΟΥ ΕΠΙΣΤΟΛΗ ΤΡΙΤΗ"), Some("3JN"));
+        assert_eq!(book("Η ΠΡΟΣ ΕΒΡΑΙΟΥΣ"), Some("HEB"));
+        // Without its number, Corinthians names neither letter.
+        assert_eq!(book("ΚΟΡΙΝΘΙΟΥΣ"), None);
     }
 
     #[test]
