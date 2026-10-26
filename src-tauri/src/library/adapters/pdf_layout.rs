@@ -1289,6 +1289,198 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
     lines
 }
 
+/// A combining mark (a Hebrew vowel point or accent, an Arabic vowel, a
+/// combining diacritic, the combining grapheme joiner): it belongs to the
+/// letter it is drawn on, not to a place of its own in the line.
+fn combining(c: char) -> bool {
+    matches!(c,
+        '\u{0300}'..='\u{036F}'
+        | '\u{0591}'..='\u{05BD}'
+        | '\u{05BF}'
+        | '\u{05C1}'..='\u{05C2}'
+        | '\u{05C4}'..='\u{05C5}'
+        | '\u{05C7}'
+        | '\u{064B}'..='\u{065F}'
+        | '\u{0670}'
+        | '\u{06D6}'..='\u{06ED}'
+        | '\u{FB1E}')
+}
+
+/// Whether a letter is written left to right inside right-to-left text
+/// (digits, Latin letters and the punctuation between them: "19", "18:30").
+fn left_to_right(c: char) -> bool {
+    c.is_ascii_alphanumeric() || matches!(c, ':' | '.' | ',' | '-' | '–')
+}
+
+/// The lines of a page written right to left, from its glyphs drawn in
+/// visual order: per baseline, the letters read from right to left, each
+/// mark with the letter it is drawn on, runs of digits and Latin letters
+/// ("19", "18:30") kept left to right, brackets turned the right way. None
+/// when many lines have a gap as wide as a column's gutter (two columns are
+/// not read this way).
+fn right_to_left_lines(glyphs: &[Glyph], width: f64) -> Option<Vec<Line>> {
+    let first = |g: &Glyph| g.text.chars().next();
+    let base: Vec<usize> = (0..glyphs.len())
+        .filter(|&i| {
+            glyphs[i].upright
+                && first(&glyphs[i]).is_some_and(|c| !c.is_whitespace() && !combining(c))
+        })
+        .collect();
+    let marks: Vec<usize> = (0..glyphs.len())
+        .filter(|&i| glyphs[i].upright && first(&glyphs[i]).is_some_and(combining))
+        .collect();
+    // Lines: the letters by baseline, top to bottom.
+    let mut sorted = base.clone();
+    sorted.sort_by(|&a, &b| glyphs[a].y.total_cmp(&glyphs[b].y));
+    let mut rows: Vec<Vec<usize>> = Vec::new();
+    for i in sorted {
+        let g = &glyphs[i];
+        match rows.last_mut() {
+            Some(row)
+                if (g.y - glyphs[row[0]].y).abs()
+                    <= 0.5 * g.size.max(glyphs[row[0]].size).max(1.0) =>
+            {
+                row.push(i)
+            }
+            _ => rows.push(vec![i]),
+        }
+    }
+    let centre = |g: &Glyph| (g.x + g.end) / 2.0;
+    // Each mark with the letter of its line it is drawn on (or nearest).
+    let mut with: std::collections::HashMap<usize, Vec<usize>> = Default::default();
+    for &m in &marks {
+        let g = &glyphs[m];
+        let Some(row) = rows.iter().min_by(|a, b| {
+            (glyphs[a[0]].y - g.y)
+                .abs()
+                .total_cmp(&(glyphs[b[0]].y - g.y).abs())
+        }) else {
+            continue;
+        };
+        let on = row
+            .iter()
+            .filter(|&&b| g.x >= glyphs[b].x - 0.5 && g.end <= glyphs[b].end + 0.5)
+            .chain(row.iter())
+            .min_by(|&&a, &&b| {
+                (centre(&glyphs[a]) - centre(g))
+                    .abs()
+                    .total_cmp(&(centre(&glyphs[b]) - centre(g)).abs())
+            });
+        if let Some(&b) = on {
+            with.entry(b).or_default().push(m);
+        }
+    }
+    let mut lines = Vec::new();
+    let mut block = 0u32;
+    let mut last_y: Option<f32> = None;
+    // Lines with a gap as wide as a gutter (a running head spread across the
+    // page has one; two columns give one to most lines).
+    let mut gutters = 0usize;
+    let row_count = rows.len();
+    for mut row in rows {
+        // Right to left.
+        row.sort_by(|&a, &b| glyphs[b].x.total_cmp(&glyphs[a].x));
+        let size = {
+            let mut sizes: Vec<f32> = row.iter().map(|&i| glyphs[i].size).collect();
+            sizes.sort_by(f32::total_cmp);
+            sizes[sizes.len() / 2]
+        };
+        // Words, each a list of letters (with their marks), in reading order.
+        let mut words: Vec<Vec<String>> = vec![Vec::new()];
+        for (n, &i) in row.iter().enumerate() {
+            let g = &glyphs[i];
+            if n > 0 {
+                let before = &glyphs[row[n - 1]];
+                let gap = before.x - g.end;
+                if f64::from(gap) > 4.0 * f64::from(size.max(1.0)) {
+                    gutters += 1;
+                }
+                if gap > 0.18 * g.size {
+                    words.push(Vec::new());
+                }
+            }
+            let mut letter = g.text.to_string();
+            let mut own = with.remove(&i).unwrap_or_default();
+            own.sort_unstable();
+            for m in own {
+                letter.push_str(&glyphs[m].text);
+            }
+            words.last_mut().expect("a word").push(letter);
+        }
+        let ltr = |w: &Vec<String>| {
+            !w.is_empty()
+                && w.iter()
+                    .all(|l| l.chars().next().is_some_and(left_to_right))
+        };
+        // Within a word written left to right, the letters as drawn; and a
+        // run of such words in their own order.
+        for w in &mut words {
+            if ltr(w) {
+                w.reverse();
+            } else {
+                for l in w.iter_mut() {
+                    *l = l
+                        .chars()
+                        .map(|c| match c {
+                            '(' => ')',
+                            ')' => '(',
+                            '[' => ']',
+                            ']' => '[',
+                            other => other,
+                        })
+                        .collect();
+                }
+            }
+        }
+        let mut i = 0;
+        while i < words.len() {
+            let mut j = i;
+            while j < words.len() && ltr(&words[j]) {
+                j += 1;
+            }
+            if j > i + 1 {
+                words[i..j].reverse();
+            }
+            i = j.max(i + 1);
+        }
+        let text = words
+            .iter()
+            .filter(|w| !w.is_empty())
+            .map(|w| w.concat())
+            .collect::<Vec<_>>()
+            .join(" ");
+        if text.is_empty() {
+            continue;
+        }
+        let y = glyphs[row[0]].y;
+        if last_y.is_some_and(|ly| y - ly > 1.8 * size) {
+            block += 1;
+        }
+        last_y = Some(y);
+        lines.push(Line {
+            text,
+            x0: row
+                .iter()
+                .map(|&i| f64::from(glyphs[i].x))
+                .fold(f64::INFINITY, f64::min),
+            x1: row
+                .iter()
+                .map(|&i| f64::from(glyphs[i].end))
+                .fold(0.0, f64::max)
+                .min(width),
+            y: f64::from(y),
+            size: f64::from(size),
+            column: 0,
+            block,
+            first_char: row.iter().copied().min().unwrap_or(0),
+            role: LineRole::Text,
+            marked: None,
+            styled: false,
+        });
+    }
+    (gutters < 3 || gutters * 4 <= row_count).then_some(lines)
+}
+
 /// The gutter of a page's running text, found from the page alone (the same
 /// steps as [`layout_page`] up to the columns).
 fn body_gutter(page: &PageGlyphs) -> Option<Gutter> {
@@ -1339,6 +1531,27 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
             matches!(c, '\u{0590}'..='\u{08FF}' | '\u{FB1D}'..='\u{FDFF}' | '\u{FE70}'..='\u{FEFF}')
         })
         .count();
+    // A page written right to left whose glyphs the PDF draws in visual
+    // order, left to right (eBible's Hebrew Bible): its lines are put back
+    // in reading order from the glyphs' places, when the page is one column,
+    // so that it can be read and searched. Its order stays uncertain all the
+    // same: such a PDF records where each vowel point and accent is drawn,
+    // not which letter it belongs to (a holam drawn before its vav, an accent
+    // between two letters), so the words are not the edition's as encoded
+    // and no verse is taken from them.
+    if right_to_left * 5 > chars && rotated_chars <= 20.max(chars / 50) {
+        if let Some(lines) = right_to_left_lines(&glyphs, width) {
+            return PageLayout {
+                number,
+                width,
+                height,
+                order: PageOrder::Uncertain,
+                lines,
+                rotated_chars,
+                chars,
+            };
+        }
+    }
     if rotated_chars > 20.max(chars / 50) || right_to_left * 5 > chars || all.len() > MAX_SPANS {
         return PageLayout {
             number,
@@ -1487,6 +1700,18 @@ mod tests {
 
     fn texts(p: &PageLayout) -> Vec<String> {
         p.lines.iter().map(|l| l.text.clone()).collect()
+    }
+
+    #[test]
+    fn hebrew_drawn_in_visual_order_is_read_right_to_left_and_kept_uncertain() {
+        // "בראשית 12" shown right to left; the PDF draws it left to right:
+        // "12", then the word's letters from its last to its first.
+        let mut glyphs = g("12 תישארב", 100.0, 100.0, 10.0);
+        glyphs.extend(g("ץראה תאו", 100.0, 114.0, 10.0));
+        let p = page(glyphs);
+        assert_eq!(texts(&p), vec!["בראשית 12", "ואת הארץ"]);
+        // The words are readable, but no verse is taken from such a page.
+        assert_eq!(p.order, PageOrder::Uncertain);
     }
 
     /// Two columns of `n` lines each, drawn line by line across the page.
