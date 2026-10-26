@@ -62,5 +62,9 @@ Derived documents (converted layouts), with LibreOffice installed:
   scripts/build-derived-editions.py <folder> porbrbsl docx
   scripts/build-derived-editions.py <folder> kor docx
   scripts/build-derived-editions.py <folder> kor1961 docx,pdf --usfm="제 {n} 장"
+Hidden (final evaluation only):
+  scripts/build-derived-editions.py <folder> deutkw docx,pdf --usfm="Kapitel {n}"
+  scripts/build-derived-editions.py <folder> spablm docx --usfm="Capítulo {n}"
+  scripts/build-derived-editions.py <folder> frajnd pdf --usfm="Chapitre {n}"
 NEXT
 exit $status

@@ -3009,9 +3009,19 @@ impl Builder<'_> {
                 );
                 continue;
             }
+            // The end of a line of references wrapped onto a line of its own
+            // ("… Jé 6:6-15," / "27-30."): numbers only, with a range or a
+            // chapter and verse, after a line of references that goes on.
+            let wrapped_references = text.chars().any(|c| c.is_ascii_digit())
+                && text.contains(['-', '–', ':'])
+                && text
+                    .chars()
+                    .all(|c| c.is_ascii_digit() || " -–,;:.".contains(c))
+                && matches!(self.items.last(), Some(Item { event: Event::Other { notes: false, text: before }, .. })
+                    if before.trim_end().ends_with([',', ';']) && reference_line(before, self.language));
             // A line of passage references ("V. 18-24: cf. (1 Co 11:7-10.)",
             // "(Ps 103:7. Né 9:9-20.)"): cross-references, not Scripture.
-            if reference_line(text, self.language) {
+            if wrapped_references || reference_line(text, self.language) {
                 self.push(
                     Event::Other {
                         notes: false,
@@ -3298,7 +3308,10 @@ impl Builder<'_> {
                     && !is_selah(line)
                     && set_apart
                     && shape(line, typographic, more || block, block, styled, continued)
-                    && (words >= 2 || styled)
+                    // (The last line of a heading, too short for its style
+                    // to show, may be one word: "Un démoniaque" / "guéri",
+                    // with the passage's cross-references under it.)
+                    && (words >= 2 || styled || (continued && references_follow))
             };
         let candidate = |b: &Self, i: usize, references_follow: bool, more: bool| {
             candidate_line(b, i, references_follow, more, false)
@@ -3363,16 +3376,41 @@ impl Builder<'_> {
                 .items
                 .get(k + 1)
                 .is_some_and(|n| matches!(&n.event, Event::Other { notes: false, .. }));
-            // The second line of a heading over two lines, going on from the
-            // first in lower case.
-            let continuation = k >= 2
-                && !candidate(self, k, references_follow, heading_follows)
-                && candidate_line(self, k, references_follow, heading_follows, true)
-                && candidate(self, k - 1, false, true)
-                && ended(&self.items[k - 2]);
-            if !continuation && !candidate(self, k, references_follow, heading_follows) {
+            // A heading over several lines (up to four, each in another
+            // typeface but perhaps the last), its later lines going on in lower
+            // case ("Jésus à Capernaüm. Enseignement dans la" / "synagogue.
+            // Guérison d’un démoniaque, de la" / …): from line `k` back to the
+            // one that begins it, after a verse that ended its sentence.
+            let styled_at = |b: &Self, i: usize| {
+                let unit = &b.units[b.items[i].unit];
+                unit.heading || unit.large || unit.styled
+            };
+            let chain = |b: &Self, k: usize| -> Option<usize> {
+                let mut j = k;
+                while j >= 2 && k - j < 3 {
+                    j -= 1;
+                    if !candidate_line(b, j, false, true, true) {
+                        return None;
+                    }
+                    if candidate(b, j, false, true) && ended(&b.items[j - 1]) {
+                        return Some(j);
+                    }
+                    if !styled_at(b, j) {
+                        return None;
+                    }
+                }
+                None
+            };
+            let continuation = if candidate(self, k, references_follow, heading_follows) {
+                None
+            } else if candidate_line(self, k, references_follow, heading_follows, true) {
+                match chain(self, k) {
+                    Some(first) => Some(first),
+                    None => continue,
+                }
+            } else {
                 continue;
-            }
+            };
             // A verse or chapter number, or a chapter heading, comes next.
             let starts_verse = next.is_some_and(|i| {
                 matches!(&self.items[i].event,
@@ -3408,10 +3446,18 @@ impl Builder<'_> {
             if !starts_verse && !references_follow && !inside_verse {
                 continue;
             }
-            // One line, or two (a heading wrapped over two lines).
-            let two = continuation
-                || (k >= 2 && candidate(self, k - 1, false, true) && ended(&self.items[k - 2]));
-            let first = if two { k - 1 } else { k };
+            // One line, or two (a heading wrapped over two lines), or more.
+            let two = k >= 2 && candidate(self, k - 1, false, true) && ended(&self.items[k - 2]);
+            let mut first = match continuation {
+                Some(first) => first,
+                None if two => k - 1,
+                None => k,
+            };
+            if !ended(&self.items[first - 1]) && styled_at(self, first) {
+                if let Some(start) = chain(self, first) {
+                    first = start;
+                }
+            }
             // A paragraph of its own set apart by its look (EPUB, Word), with
             // a verse number starting the next: never the end of the verse
             // before, even where verses end without a full stop (Korean

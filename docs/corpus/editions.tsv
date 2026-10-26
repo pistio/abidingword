@@ -41,3 +41,7 @@ grctr-epub	grctr.epub	grctr_usfm.zip	grc	Greek	epub	eBible EPUB, New Testament	i
 latVUC-epub	latVUC.epub	latVUC_usfm.zip	la	Latin	epub	eBible EPUB, deuterocanon	impl	Clementine Vulgate 1598 (eBible.org); public domain
 kor1961-docx	kor1961_usfm_lo.docx	kor1961_usfm.zip	ko	Hangul	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "제 N 장", section headings	impl	성경전서 개역한글판 1961 (Korean Bible Society; bundled with Abiding Word); economic copyright expired, integrity and attribution respected
 kor1961-lopdf	kor1961_usfm_lo.pdf	kor1961_usfm.zip	ko	Hangul	pdf	converted: LibreOffice Writer PDF from the edition's USFM, superscript verse numbers	impl	성경전서 개역한글판 1961 (Korean Bible Society; bundled with Abiding Word); economic copyright expired, integrity and attribution respected
+deutkw-docx	deutkw_usfm_lo.docx	deutkw_usfm.zip	de	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Kapitel N"	hidden	Textbibel 1906 (eBible.org); public domain
+deutkw-lopdf	deutkw_usfm_lo.pdf	deutkw_usfm.zip	de	Latin	pdf	converted: LibreOffice Writer PDF from the edition's USFM	hidden	Textbibel 1906 (eBible.org); public domain
+spablm-docx	spablm_usfm_lo.docx	spablm_usfm.zip	es	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Capítulo N"	hidden	Spanish Free Bible for the World (eBible.org); public domain
+frajnd-lopdf	frajnd_usfm_lo.pdf	frajnd_usfm.zip	fr	Latin	pdf	converted: LibreOffice Writer PDF from the edition's USFM	hidden	Darby 1885 French (eBible.org); public domain
