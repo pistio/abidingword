@@ -2498,7 +2498,10 @@ impl Builder<'_> {
                         Heading::BookChapter(..) => book_line_shape(text),
                         Heading::Chapter(_) => true,
                     };
-                if (unit.heading || !bare) && line_book_ok {
+                // A number in a block of its own set apart by its look (EPUB,
+                // Word: bold, larger, centred) is its chapter's label.
+                let label = bare && unit.place.page.is_none() && unit.styled;
+                if (unit.heading || label || !bare) && line_book_ok {
                     match heading {
                         Heading::Book(book) => {
                             let title = match self.title_start(unit.heading) {
@@ -2654,7 +2657,7 @@ impl Builder<'_> {
     /// 19."), or a numbered list that starts again at 1 before chapter 1
     /// has all its verses ("1. la guérison d'un démoniaque 4:33-36", …,
     /// then "1 Plusieurs ayant entrepris …"): a list's numbers end with a
-    /// full stop, or its items cite chapters and verses.
+    /// full stop or their line, or its items cite chapters and verses.
     fn introduction_before_chapter_one(&mut self) {
         use std::sync::OnceLock;
         static CITED: OnceLock<regex::Regex> = OnceLock::new();
@@ -2687,7 +2690,14 @@ impl Builder<'_> {
                             }
                         }
                         *markers += 1;
-                        if m.raw.trim_end().ends_with('.') {
+                        // "1.", or a number ending its line ("Adresse et
+                        // salutations 1-2"): a verse's number comes before
+                        // its words.
+                        let ends_line = self
+                            .items
+                            .get(i + 1)
+                            .is_none_or(|n| n.unit != self.items[i].unit);
+                        if m.raw.trim_end().ends_with('.') || (ends_line && !m.unit_start) {
                             *listed += 1;
                         }
                         let text = match self.items.get(i + 1).map(|n| &n.event) {
@@ -2797,11 +2807,15 @@ impl Builder<'_> {
             let styled = unit.heading || unit.large || unit.styled;
             // (A line with its passage's cross-references right under it is
             // set apart by them.)
-            let set_apart = styled || capitals(line) || references_follow;
+            let typographic = styled || capitals(line);
+            let set_apart = typographic || references_follow;
             // A single word only when its style sets it apart (a styled block
-            // or line is never the wrapped end of a verse).
+            // or line is never the wrapped end of a verse). A full stop or a
+            // comma at the end only where the look sets the line apart: a
+            // poem's last line ("Moi, l'Éternel, je crée ces choses.") can
+            // stand right over the cross-references too.
             let words = line.split_whitespace().count();
-            whole && alone && set_apart && shape(line, set_apart, more) && (words >= 2 || styled)
+            whole && alone && set_apart && shape(line, typographic, more) && (words >= 2 || styled)
         };
         // From the end, so that a heading over another heading (a section
         // title over a subtitle) is seen once the later one is set aside.
@@ -3021,11 +3035,12 @@ fn trailing_reference(text: &str, language: Option<ReferenceLanguage>) -> Option
 fn reference_line(text: &str, language: Option<ReferenceLanguage>) -> bool {
     use std::sync::OnceLock;
     static PAIR: OnceLock<regex::Regex> = OnceLock::new();
-    // A chapter and verse ("21:9"), or a passage's verses named as such
-    // ("V. 1-28: cf. De 33.").
+    // A chapter and verse ("21:9"), a list of chapters ("Ps 70; 142."), or
+    // a passage's verses or chapters named as such ("V. 1-28: cf. De 33.",
+    // "Ch. 31 à 34.").
     let pair = PAIR.get_or_init(|| {
         regex::Regex::new(
-            r"\d{1,3}\s?[:,.]\s?\d{1,3}|^\s*[Vv]{1,2}\.\s?\d{1,3}(\s?[-–]\s?\d{1,3})?\s?:",
+            r"\d{1,3}\s?[:,.]\s?\d{1,3}|\d{1,3}\s?;\s?\d{1,3}|^\s*[Vv]{1,2}\.\s?\d{1,3}(\s?[-–]\s?\d{1,3})?\s?:|^\s*[Cc]h(ap)?\.\s?\d{1,3}",
         )
         .expect("valid")
     });
