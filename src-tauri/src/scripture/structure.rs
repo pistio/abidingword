@@ -395,6 +395,8 @@ fn title_forms(key: &str) -> Vec<String> {
         "apostolo",
         "sao",
         "paulo",
+        // "Carta Universal de Tiago", "Epístola Universal de Pedro"
+        "universal",
         // Latin ("Incipit liber …": "here begins the book …")
         "incipit",
         "liber",
@@ -1189,9 +1191,26 @@ fn line_reference(text: &str, language: Option<ReferenceLanguage>) -> Option<Lin
     let mut book = None;
     let mut rest = text;
     let mut taken = 0usize;
-    if !text.starts_with(|c: char| c.is_ascii_digit())
-        || text.starts_with(|c: char| c.is_ascii_digit())
-            && text.chars().nth(1).is_some_and(|c| c == ' ')
+    // A book's code as USFM writes it, in capitals ("1SA 1:1 …", "SNG 2:3
+    // …"), as Bible exports one verse per line do.
+    let code = text.split(' ').next().filter(|w| {
+        w.len() == 3
+            && w.chars()
+                .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit())
+            && w.chars().any(|c| c.is_ascii_uppercase())
+    });
+    if let Some(found) = code.and_then(canon::by_code) {
+        let after = &text[3..];
+        if after.starts_with(' ') && after[1..].starts_with(|c: char| c.is_ascii_digit()) {
+            book = Some(found);
+            rest = &after[1..];
+            taken = 4;
+        }
+    }
+    if book.is_none()
+        && (!text.starts_with(|c: char| c.is_ascii_digit())
+            || text.starts_with(|c: char| c.is_ascii_digit())
+                && text.chars().nth(1).is_some_and(|c| c == ' '))
     {
         // A book name of one to four words first ("1 Mose" starts with a digit too).
         let words: Vec<(usize, &str)> = text
@@ -2374,6 +2393,24 @@ impl Builder<'_> {
         }
     }
 
+    /// A title naming one of numbered books without its number
+    /// ("Crónicas" over each book of Chronicles): the one that follows the
+    /// book before it in the canon's order, if one does. Otherwise none.
+    fn next_in_sequence(&self, text: &str) -> Option<Heading> {
+        if !book_line_shape(text) || text.chars().count() > 40 {
+            return None;
+        }
+        let last = canon::by_code(self.last_detected?)?;
+        (1..=3u8).find_map(
+            |n| match read_heading(&format!("{n} {text}"), self.language) {
+                Some(Heading::Book(book)) if book.ordinal == last.ordinal + 1 => {
+                    Some(Heading::Book(book))
+                }
+                _ => None,
+            },
+        )
+    }
+
     /// The found-book entry for this book: a new one when the book changes.
     fn book_entry(&mut self, heading: &str, book: &'static Book, unit: usize) -> usize {
         if self.last_detected == Some(book.code) {
@@ -2483,7 +2520,9 @@ impl Builder<'_> {
                 }
             }
             // Headings: the document's own, or a line that is nothing but a book or chapter.
-            if let Some(heading) = read_heading(text, self.language) {
+            if let Some(heading) =
+                read_heading(text, self.language).or_else(|| self.next_in_sequence(text))
+            {
                 // A line that is only a number is a verse number in poetry layout,
                 // never a chapter, unless the document marks it as a heading.
                 let bare = text.chars().all(|c| c.is_ascii_digit());

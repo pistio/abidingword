@@ -515,6 +515,55 @@ fn a_chapter_far_longer_than_usual_is_refused() {
 }
 
 #[test]
+fn a_title_without_its_number_follows_the_book_before_it() {
+    // "Crónicas" over both books of Chronicles (Reina-Valera): the first
+    // after 2 Kings is 1 Chronicles, the next 2 Chronicles.
+    let mut text = String::from("2 Reyes\n\n");
+    for v in 1..=18u16 {
+        text.push_str(&format!("{v} {}\n", words("2 Reyes", 1, v)));
+    }
+    for (book, count) in [("1 Crónicas", 54u16), ("2 Crónicas", 17)] {
+        text.push_str("\nCrónicas\n\n");
+        for v in 1..=count {
+            text.push_str(&format!("{v} {}\n", words(book, 1, v)));
+        }
+    }
+    let r = structure::recognise(
+        &read("cronicas.txt", text.as_bytes()).units,
+        Some("es"),
+        &Corrections::default(),
+    );
+    let books: Vec<_> = r.books.iter().map(|b| b.book).collect();
+    assert_eq!(books, vec![Some("2KI"), Some("1CH"), Some("2CH")]);
+    assert_eq!(
+        verse(&r, "2CH", 1, 17).as_deref(),
+        Some(words("2 Crónicas", 1, 17).as_str())
+    );
+}
+
+#[test]
+fn lines_named_by_usfm_codes() {
+    // One verse per line, each named by the book's USFM code ("1SA 1:1 …"),
+    // as Bible exports write them.
+    let mut text = String::new();
+    for v in 1..=28u16 {
+        text.push_str(&format!("1SA 1:{v} {}\n", words("1 Samuel", 1, v)));
+    }
+    for v in 1..=17u16 {
+        text.push_str(&format!("SNG 1:{v} {}\n", words("Song", 1, v)));
+    }
+    let r = recognise(&read("export.txt", text.as_bytes()));
+    assert_eq!(
+        verse(&r, "1SA", 1, 28).as_deref(),
+        Some(words("1 Samuel", 1, 28).as_str())
+    );
+    assert_eq!(
+        verse(&r, "SNG", 1, 17).as_deref(),
+        Some(words("Song", 1, 17).as_str())
+    );
+}
+
+#[test]
 fn corrections_choose_or_leave_out_a_book() {
     // A title the dictionaries do not know, before "Chapter 1".
     let text = ruth_lines(|c| format!("Chapter {c}")).replacen(
