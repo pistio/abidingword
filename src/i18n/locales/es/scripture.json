@@ -231,7 +231,19 @@
       "pdfLimit": "En un PDF, un título impreso entre dos versículos no siempre se puede distinguir del versículo anterior. Revisa algunos pasajes después de agregarla.",
       "licenceField": "Derechos de autor o licencia (opcional)",
       "licenceHint": "Tal como lo indica el documento, como referencia propia.",
-      "addDocument": "Agregar para leer como documento"
+      "addDocument": "Agregar para leer como documento",
+      "ready": {
+        "some_one": "{{books}} está listo para usar.",
+        "some_other": "{{books}} están listos para usar.",
+        "some_many": "{{books}} están listos para usar.",
+        "many_one": "{{count}} libro está listo para usar.",
+        "many_other": "{{count}} libros están listos para usar.",
+        "many_many": "{{count}} libros están listos para usar.",
+        "check_one": "Hay que revisar {{count}} capítulo.",
+        "check_other": "Hay que revisar {{count}} capítulos.",
+        "check_many": "Hay que revisar {{count}} capítulos.",
+        "none": "Todavía no se puede usar ningún libro por sus versículos."
+      }
     },
     "doneDocument": "<strong>{{name}}</strong> se agregó para leerla como documento.",
     "available": {

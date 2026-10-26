@@ -466,6 +466,8 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
         </section>
       )}
 
+      {doc && preview.verseCount > 0 && <Readiness preview={preview} />}
+
       {doc && <DocumentChoice preview={doc} byVerse={byVerse} onByVerse={setByVerse} />}
 
       {doc ? (
@@ -587,6 +589,39 @@ function DocumentFiles({ preview }: { preview: DocumentPreview }) {
 }
 
 /** By book, chapter and verse, or as a document to read: the one choice the person makes (v0.23). */
+/**
+ * In a sentence or two (v0.24.2): which books can be used by their verses as
+ * they are, and how many chapters need checking ("Genesis and Exodus are
+ * ready to use. 3 chapters need checking."). The details stay in the lists
+ * below.
+ */
+export function Readiness({ preview }: { preview: ImportPreview }) {
+  const { t, i18n } = useTranslation();
+  const held = new Set(
+    preview.issues
+      .filter((i) => i.severity === "error" && i.book !== null && i.chapter !== null)
+      .map((i) => `${i.book}:${i.chapter}`),
+  );
+  const heldBooks = new Set([...held].map((k) => k.split(":")[0]));
+  const ready = preview.books.filter((b) => b.verses > 0 && b.status !== "error" && !heldBooks.has(b.code));
+  let first: string;
+  if (ready.length === 0) {
+    first = t("scripture.addBible.document.ready.none");
+  } else if (ready.length <= 3) {
+    const names = ready.map((b) => bookName(b.code, b.name));
+    const books = new Intl.ListFormat(i18n.language, { type: "conjunction" }).format(names);
+    first = t("scripture.addBible.document.ready.some", { books, count: ready.length });
+  } else {
+    first = t("scripture.addBible.document.ready.many", { count: ready.length });
+  }
+  return (
+    <p className="reading m-0" data-testid="readiness">
+      {first}
+      {held.size > 0 && <> {t("scripture.addBible.document.ready.check", { count: held.size })}</>}
+    </p>
+  );
+}
+
 function DocumentChoice({ preview, byVerse, onByVerse }: { preview: DocumentPreview; byVerse: boolean; onByVerse: (v: boolean) => void }) {
   const { t } = useTranslation();
   const name = useId();

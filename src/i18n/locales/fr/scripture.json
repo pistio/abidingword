@@ -231,7 +231,19 @@
       "pdfLimit": "Dans un PDF, un titre imprimé entre deux versets ne peut pas toujours être distingué du verset qui le précède. Vérifiez quelques passages après l’ajout.",
       "licenceField": "Droits d’auteur ou licence (facultatif)",
       "licenceHint": "Tel que le document l’indique, pour votre propre référence.",
-      "addDocument": "Ajouter pour lire comme document"
+      "addDocument": "Ajouter pour lire comme document",
+      "ready": {
+        "some_one": "{{books}} est prêt à l’emploi.",
+        "some_other": "{{books}} sont prêts à l’emploi.",
+        "some_many": "{{books}} sont prêts à l’emploi.",
+        "many_one": "{{count}} livre est prêt à l’emploi.",
+        "many_other": "{{count}} livres sont prêts à l’emploi.",
+        "many_many": "{{count}} livres sont prêts à l’emploi.",
+        "check_one": "{{count}} chapitre est à vérifier.",
+        "check_other": "{{count}} chapitres sont à vérifier.",
+        "check_many": "{{count}} chapitres sont à vérifier.",
+        "none": "Aucun livre ne peut encore être utilisé par ses versets."
+      }
     },
     "doneDocument": "<strong>{{name}}</strong> a été ajoutée pour être lue comme un document.",
     "available": {

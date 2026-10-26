@@ -7,7 +7,7 @@ import { formatNumber } from "@/i18n/format";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { BibleTranslation, ImportPreview } from "@/types/scripture";
-import { FoundBooks, IssueGroup, LeftOut } from "./AddBibleView";
+import { FoundBooks, IssueGroup, LeftOut, Readiness } from "./AddBibleView";
 import { useScripture } from "./ScriptureContext";
 
 /**
@@ -120,6 +120,7 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
               <p className="m-0">{t("scripture.addBible.versesDetected", { count: preview.verseCount, number: formatNumber(preview.verseCount) })}</p>
             </div>
           )}
+          {preview.verseCount > 0 && <Readiness preview={preview} />}
           {doc && doc.books.length > 0 && (
             <FoundBooks
               preview={doc}

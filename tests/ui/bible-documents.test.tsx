@@ -36,6 +36,8 @@ describe("Bibles from documents", () => {
     expect(screen.getByText("PDF, 5 pages, their text can be read")).toBeInTheDocument();
     expect(screen.getByText("Its original layout stays available for reading.")).toBeInTheDocument();
     expect(screen.getByText("15 verses detected")).toBeInTheDocument();
+    // In a sentence (v0.24.2): which books can be used as they are.
+    expect(screen.getByTestId("readiness")).toHaveTextContent("Psalms, John, and Romans are ready to use.");
     expect(screen.getByRole("radio", { name: /By book, chapter and verse/ })).toBeChecked();
     expect(screen.getByText(/Word information \(dictionary forms, grammar, lexical numbers\): none/)).toBeInTheDocument();
     await fillDetails(user, "INV");
@@ -135,9 +137,36 @@ describe("Bibles from documents", () => {
     await user.click(within(pane).getByRole("button", { name: "Look for verses…" }));
     const dialog = await screen.findByRole("dialog", { name: "Look for verses in PDF Bible" });
     expect(await within(dialog).findByText("15 verses detected")).toBeInTheDocument();
+    expect(within(dialog).getByTestId("readiness")).toHaveTextContent("Psalms, John, and Romans are ready to use.");
     await user.click(within(dialog).getByRole("button", { name: "Use these verses" }));
     expect(await within(dialog).findByText("PDF Bible can now be read by book, chapter and verse.")).toBeInTheDocument();
     expect(api.state.bibles.find((b) => b.shortName === "PDFB")?.kind).toBe("structured");
+  });
+
+  it("says in a sentence which books are ready and how many chapters need checking", async () => {
+    const api = createMemoryApi();
+    api.installFixtureBible("WEB", "web");
+    const preview = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.pdf"] });
+    await api.bibleImportCommit({ previewId: preview.previewId, name: "PDF Bible", shortName: "PDFB", language: "English", asDocument: true });
+    const again = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.pdf"] });
+    const held = (chapter: number) => ({
+      severity: "error" as const,
+      book: "JHN",
+      chapter,
+      message: `John ${chapter}: page 3 is laid out in a way whose reading order could not be established. This chapter is not used.`,
+      code: "bibleImport.documentReadingOrder",
+      params: { book: "John", bookCode: "JHN", chapter: String(chapter), page: "3" },
+    });
+    api.state.nextRecognition = { ...again, issues: [...again.issues, held(2), held(3)] };
+    const { user } = await renderApp(api);
+    const pane = screen.getByRole("complementary", { name: "Scripture" });
+    await user.selectOptions(within(pane).getByRole("combobox", { name: "Translation" }), "PDFB");
+    await user.click(await within(pane).findByText("What can I do with this Bible?"));
+    await user.click(within(pane).getByRole("button", { name: "Look for verses…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Look for verses in PDF Bible" });
+    expect(await within(dialog).findByTestId("readiness")).toHaveTextContent(
+      "Psalms and Romans are ready to use. 2 chapters need checking.",
+    );
   });
 
   it("Settings says what a document Bible is and offers no word information", async () => {

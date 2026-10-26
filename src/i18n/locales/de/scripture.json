@@ -212,7 +212,16 @@
       "pdfLimit": "In einer PDF lässt sich eine zwischen zwei Versen gedruckte Überschrift nicht immer vom Vers davor unterscheiden. Prüfe nach dem Hinzufügen einige Stellen.",
       "licenceField": "Urheberrecht oder Lizenz (optional)",
       "licenceHint": "So, wie das Dokument es angibt, für deine eigenen Unterlagen.",
-      "addDocument": "Als Dokument zum Lesen hinzufügen"
+      "addDocument": "Als Dokument zum Lesen hinzufügen",
+      "ready": {
+        "some_one": "{{books}} ist bereit.",
+        "some_other": "{{books}} sind bereit.",
+        "many_one": "{{count}} Buch ist bereit.",
+        "many_other": "{{count}} Bücher sind bereit.",
+        "check_one": "{{count}} Kapitel muss geprüft werden.",
+        "check_other": "{{count}} Kapitel müssen geprüft werden.",
+        "none": "Noch kein Buch lässt sich nach Versen verwenden."
+      }
     },
     "doneDocument": "<strong>{{name}}</strong> wurde als Dokument zum Lesen hinzugefügt.",
     "available": {

@@ -122,9 +122,9 @@
     "documentRaisedLetters": "{{book}} {{chapter}}: a verse has small raised letters that no note on the page explains (perhaps cross-reference letters). This chapter is not used.",
     "documentPagesUnread": "“{{fileName}}”: the text of page(s) {{pages}} could not be read in full. Verses on them are missing.",
     "documentNumberInVerse": "{{book}} {{chapter}}: verse {{verse}} was not found, but the number {{verse}} stands in the verse before it; the two may run together. This chapter is not used.",
+    "documentChapterLong": "{{book}} {{chapter}} goes on to verse {{last}}; it usually has {{expected}} verses. Another chapter or book may have been read into it. This chapter is not used.",
     "documentFootnotes_one": "{{count}} line of footnotes at the foot of pages was left out.",
-    "documentFootnotes_other": "{{count}} lines of footnotes at the foot of pages were left out.",
-    "documentChapterLong": "{{book}} {{chapter}} goes on to verse {{last}}; it usually has {{expected}} verses. Another chapter or book may have been read into it. This chapter is not used."
+    "documentFootnotes_other": "{{count}} lines of footnotes at the foot of pages were left out."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",

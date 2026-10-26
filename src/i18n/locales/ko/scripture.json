@@ -193,7 +193,13 @@
       "pdfLimit": "PDF에서는 두 절 사이에 인쇄된 소제목을 앞 절과 항상 구별할 수는 없습니다. 추가한 뒤 몇 구절을 확인해 보세요.",
       "licenceField": "저작권 또는 라이선스(선택)",
       "licenceHint": "문서에 적힌 대로, 참고용으로 적어 두세요.",
-      "addDocument": "문서로 읽도록 추가"
+      "addDocument": "문서로 읽도록 추가",
+      "ready": {
+        "some_other": "{{books}}을(를) 바로 사용할 수 있습니다.",
+        "many_other": "{{count}}권을 바로 사용할 수 있습니다.",
+        "check_other": "{{count}}개 장은 확인이 필요합니다.",
+        "none": "아직 절 단위로 사용할 수 있는 책이 없습니다."
+      }
     },
     "doneDocument": "<strong>{{name}}</strong>을(를) 읽을 문서로 추가했습니다.",
     "available": {

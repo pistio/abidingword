@@ -132,10 +132,10 @@
     "documentRaisedLetters": "{{book}} {{chapter}}: um versículo tem letras pequenas sobrescritas que nenhuma nota da página explica (talvez chamadas de referências). Este capítulo não é usado.",
     "documentPagesUnread": "“{{fileName}}”: não foi possível ler por completo o texto da(s) página(s) {{pages}}. Faltam os versículos que elas contêm.",
     "documentNumberInVerse": "{{book}} {{chapter}}: o versículo {{verse}} não foi encontrado, mas o número {{verse}} aparece no versículo anterior; os dois podem estar unidos. Este capítulo não é usado.",
+    "documentChapterLong": "{{book}} {{chapter}} vai até o versículo {{last}}; normalmente tem {{expected}} versículos. Talvez outro capítulo ou outro livro tenha sido lido nele. Este capítulo não é usado.",
     "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
     "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
-    "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
-    "documentChapterLong": "{{book}} {{chapter}} vai até o versículo {{last}}; normalmente tem {{expected}} versículos. Talvez outro capítulo ou outro livro tenha sido lido nele. Este capítulo não é usado."
+    "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",
