@@ -30,7 +30,7 @@
 //! Accepted (usable) verses and refused ones are counted apart: the accuracy
 //! that matters is that of the verses the app would show.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
@@ -50,6 +50,51 @@ fn squash(text: &str) -> String {
 /// punctuation in order.
 fn dense(text: &str) -> String {
     text.chars().filter(|c| !c.is_whitespace()).collect()
+}
+
+/// Letters and digits only, in lower case: what is left when punctuation,
+/// typography (quotes, dashes, apostrophes), spacing and case are set aside.
+fn letters(text: &str) -> String {
+    text.chars()
+        .filter(|c| c.is_alphanumeric())
+        .flat_map(char::to_lowercase)
+        .collect()
+}
+
+/// What kind of difference a found verse has from the edition's own text
+/// (only for verses that differ beyond spacing and letter case):
+/// - `unicode`: canonically the same characters (Unicode NFC): the document
+///   encodes them differently (a CJK compatibility ideograph, 靈 U+F9B3,
+///   written as the unified one, U+9748), the words are the same;
+/// - `typography`: the same letters and digits; punctuation or quotes differ;
+/// - `extra`: the edition's words and more (a heading, note, reference or
+///   another verse read into it: apparatus contamination);
+/// - `missing`: part of the edition's words only (the verse is cut short);
+/// - `wrong_reference`: the words of another verse of the book (a verse
+///   given the wrong number or chapter);
+/// - `changed`: anything else (the words themselves differ).
+fn difference_kind(want: &str, found: &str, book: &HashSet<String>) -> &'static str {
+    use unicode_normalization::UnicodeNormalization;
+    let nfc = |t: &str| {
+        t.split_whitespace()
+            .collect::<String>()
+            .nfc()
+            .collect::<String>()
+    };
+    let (w, f) = (letters(want), letters(found));
+    if nfc(want) == nfc(found) {
+        "unicode"
+    } else if w == f {
+        "typography"
+    } else if !w.is_empty() && f.contains(&w) {
+        "extra"
+    } else if !f.is_empty() && w.contains(&f) {
+        "missing"
+    } else if book.contains(&f) {
+        "wrong_reference"
+    } else {
+        "changed"
+    }
 }
 
 /// One edition of the corpus (a row of `docs/corpus/editions.tsv`).
@@ -111,6 +156,12 @@ struct BookAudit {
     /// printed as capitals: "LORD’S" for "LORD’s").
     usable_case_only: usize,
     usable_different: usize,
+    /// Of the genuine differences, by kind (see `difference_kind`).
+    usable_typography: usize,
+    usable_extra_text: usize,
+    usable_missing_text: usize,
+    usable_wrong_reference: usize,
+    usable_changed: usize,
     /// Among refused verses (never shown).
     refused_exact: usize,
     refused_normalised: usize,
@@ -138,6 +189,11 @@ impl BookAudit {
         self.usable_normalised += b.usable_normalised;
         self.usable_case_only += b.usable_case_only;
         self.usable_different += b.usable_different;
+        self.usable_typography += b.usable_typography;
+        self.usable_extra_text += b.usable_extra_text;
+        self.usable_missing_text += b.usable_missing_text;
+        self.usable_wrong_reference += b.usable_wrong_reference;
+        self.usable_changed += b.usable_changed;
         self.refused_exact += b.refused_exact;
         self.refused_normalised += b.refused_normalised;
         self.refused_different += b.refused_different;
@@ -150,6 +206,7 @@ impl BookAudit {
 struct Difference {
     reference: String,
     usable: bool,
+    kind: &'static str,
     page: Option<u32>,
     found: String,
     edition: String,
@@ -318,6 +375,15 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
             ..Default::default()
         };
         let found = content.books.get(ordinal);
+        // Every verse of the edition's book, by its letters: a found verse
+        // with another verse's words has the wrong reference.
+        let book_verses: HashSet<String> = rbook
+            .chapters
+            .values()
+            .flat_map(|c| c.verses.values())
+            .map(|t| letters(t))
+            .filter(|t| !t.is_empty())
+            .collect();
         for (chapter, rch) in &rbook.chapters {
             let fch = found.and_then(|b| b.chapters.get(chapter));
             if fch.is_some() {
@@ -372,10 +438,21 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                     (false, 1) => a.refused_normalised += 1,
                     (false, _) => a.refused_different += 1,
                 }
+                let kind = difference_kind(want, text, &book_verses);
+                if ok && class == 2 {
+                    match kind {
+                        "typography" | "unicode" => a.usable_typography += 1,
+                        "extra" => a.usable_extra_text += 1,
+                        "missing" => a.usable_missing_text += 1,
+                        "wrong_reference" => a.usable_wrong_reference += 1,
+                        _ => a.usable_changed += 1,
+                    }
+                }
                 if class == 2 && (ok || differences.len() < 60) {
                     differences.push(Difference {
                         reference: format!("{} {chapter}:{verse}", book.code),
                         usable: ok,
+                        kind,
                         page: origins
                             .get(&(*ordinal, *chapter, *verse))
                             .copied()
@@ -549,6 +626,23 @@ fn markdown(a: &EditionAudit) -> String {
     );
     let _ = writeln!(
         s,
+        "| … punctuation, typography or Unicode encoding only | {} | |",
+        t.usable_typography
+    );
+    let _ = writeln!(
+        s,
+        "| … extra text read into the verse (heading, note, reference) | {} | |",
+        t.usable_extra_text
+    );
+    let _ = writeln!(s, "| … verse cut short | {} | |", t.usable_missing_text);
+    let _ = writeln!(
+        s,
+        "| … another verse's words (wrong reference) | {} | |",
+        t.usable_wrong_reference
+    );
+    let _ = writeln!(s, "| … words changed | {} | |", t.usable_changed);
+    let _ = writeln!(
+        s,
         "| **Usable verses the edition does not have (false positives)** | **{}** | |",
         t.usable_extra
     );
@@ -622,9 +716,10 @@ fn markdown(a: &EditionAudit) -> String {
     for d in &a.differences {
         let _ = writeln!(
             s,
-            "- {}{} (page {}): found «{}» — edition «{}»",
+            "- {}{} [{}] (page {}): found «{}» — edition «{}»",
             d.reference,
             if d.usable { " **usable**" } else { "" },
+            d.kind,
             d.page.map_or("?".into(), |p| p.to_string()),
             d.found,
             d.edition
@@ -637,7 +732,7 @@ fn summary_row(a: &EditionAudit) -> String {
     let t = &a.totals;
     let e = &a.edition;
     format!(
-        "| {} | {} | {} | {} | {} | {} ({}) | {} | {} | {} | {} | {:.0} s | {} |",
+        "| {} | {} | {} | {} | {} | {} ({}) | {} | {} | {} | {} / {} / {} / {} / {} | {} | {:.0} s | {} |",
         e.key,
         e.language,
         e.format,
@@ -648,6 +743,11 @@ fn summary_row(a: &EditionAudit) -> String {
         t.usable_exact,
         t.usable_normalised,
         t.usable_different,
+        t.usable_typography,
+        t.usable_extra_text,
+        t.usable_missing_text,
+        t.usable_wrong_reference,
+        t.usable_changed,
         t.usable_extra,
         a.seconds,
         a.peak_memory_mb
@@ -692,7 +792,7 @@ fn real_document_editions_report() {
         }
     }
     let table = format!(
-        "| Edition | Lang | Format | Layout | Printed | Usable | Exact | WS only | Different | False pos. | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
+        "| Edition | Lang | Format | Layout | Printed | Usable | Exact | WS only | Different | Typography / extra / cut / wrong ref. / changed | False pos. | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
         rows.join("\n")
     );
     eprintln!("{table}");

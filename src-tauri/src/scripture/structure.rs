@@ -2653,14 +2653,21 @@ impl Builder<'_> {
         let whole =
             unmark_raised(&clean(&self.units[last.unit].text)).trim() == unmark_raised(line);
         let alone = self.items[n - 2].unit != last.unit;
+        // (A note's sign after the last word does not hide how the line
+        // ends: "Praise the LORD!†" closing a psalm is a sentence.)
+        let bare = line.trim_end_matches(is_sign).trim_end();
         let shape = line.chars().count() <= 60
             && line.chars().next().is_some_and(char::is_uppercase)
-            && !line.ends_with(['.', '!', '?', ';', ':', ',', '”', '’', '"']);
+            && !bare.ends_with(['.', '!', '?', ';', ':', ',', '”', '’', '"']);
         let after_sentence = match &self.items[n - 2].event {
-            Event::Text(t) => t.trim_end().ends_with(['.', '!', '?', '”', '’', '"', ')']),
+            Event::Text(t) => t
+                .trim_end()
+                .trim_end_matches(is_sign)
+                .trim_end()
+                .ends_with(['.', '!', '?', '”', '’', '"', ')']),
             _ => true,
         };
-        if whole && alone && shape && after_sentence {
+        if whole && alone && shape && after_sentence && !is_selah(line) {
             let text = unmark_raised(line);
             self.items[n - 1].event = Event::Other { notes: false, text };
         }
@@ -3118,7 +3125,22 @@ impl Builder<'_> {
         // offrandes …"; "Le territoire conquis distribué aux Rubénites," over
         // its second line).
         let language = self.language;
-        let shape = |line: &str, set_apart: bool, more: bool| {
+        // `block`: a paragraph of its own that the document styles (EPUB,
+        // Word): a heading there may be long, of several parts ("Défense à
+        // Aaron … tabernacle. Portions des offrandes …").
+        // `continued`: the second line of a heading may go on in lower case
+        // ("Prédiction de la naissance de Jean-Baptiste, et de" / "celle de
+        // Jésus-Christ").
+        // `styled`: a line in another typeface, bold or italic, may be as
+        // wide as the column ("Défense à Aaron … tabernacle. Portions des").
+        // It still may not end as a sentence does: poetry and spoken words
+        // are set in another typeface too ("Bénissez l’Éternel!").
+        let shape = |line: &str,
+                     set_apart: bool,
+                     more: bool,
+                     block: bool,
+                     styled: bool,
+                     continued: bool| {
             // A note's sign after the last word does not end the line
             // ("Her steps lead straight to Sheol.†" ends as a sentence).
             let line = line.trim().trim_end_matches(is_sign).trim_end();
@@ -3135,11 +3157,20 @@ impl Builder<'_> {
             let ends = line.ends_with([
                 '.', '!', '?', ';', ':', ',', '”', '’', '"', '»', '\'', ')', '-', '‐', '–',
             ]);
-            line.chars().count() <= 70
-                && line.chars().find(|c| c.is_alphabetic()).is_some_and(|c| !c.is_lowercase())
+            line.chars().count()
+                <= if block {
+                    400
+                } else if styled {
+                    110
+                } else {
+                    70
+                }
+                && (continued
+                    || line.chars().find(|c| c.is_alphabetic()).is_some_and(|c| !c.is_lowercase()))
                 // A heading set apart and in capitals may end with a full
                 // stop ("ב BETH."); any other must not end as a sentence.
                 && (!ends
+                    || block
                     || (set_apart && capitals(line) && line.ends_with('.'))
                     || (set_apart && more && line.ends_with(['.', ','])))
         };
@@ -3174,34 +3205,54 @@ impl Builder<'_> {
             let styled = unit.heading || unit.large || unit.styled;
             (whole && alone).then(|| (line.clone(), styled))
         };
-        let candidate = |b: &Self, i: usize, references_follow: bool, more: bool| -> bool {
-            let item = &b.items[i];
-            let Event::Text(line) = &item.event else {
-                return false;
+        let candidate_line =
+            |b: &Self, i: usize, references_follow: bool, more: bool, continued: bool| -> bool {
+                let item = &b.items[i];
+                let Event::Text(line) = &item.event else {
+                    return false;
+                };
+                let whole = unmark_raised(&clean(&b.units[item.unit].text)).trim()
+                    == unmark_raised(line.trim());
+                let alone = (i == 0 || b.items[i - 1].unit != item.unit)
+                    && b.items.get(i + 1).is_none_or(|n| n.unit != item.unit);
+                // The document must show it is set apart: a heading style
+                // (EPUB, Word, Markdown), large type, another typeface (PDF), or
+                // capitals. Text alone cannot tell a heading from a verse's last
+                // line ending without punctuation ("… vor Gott", the sentence
+                // going on in the next verse). One word alone may be the last
+                // word of the verse, wrapped ("Ruth").
+                let unit = &b.units[item.unit];
+                let styled = unit.heading || unit.large || unit.styled;
+                // (A line with its passage's cross-references right under it is
+                // set apart by them.)
+                let typographic = styled || capitals(line);
+                // A parallel passage in brackets at the line's end ("셈의
+                // 후예(대상 1:24-27)", "… (Mt 5:1-12)") sets a heading apart as
+                // its cross-references do: Scripture never writes one.
+                let parallel = line
+                    .trim_end()
+                    .strip_suffix(')')
+                    .and_then(|l| l.rsplit_once('('))
+                    .is_some_and(|(head, inside)| {
+                        !head.trim().is_empty() && reference_line(inside, language)
+                    });
+                let set_apart = typographic || references_follow || parallel;
+                // A single word only when its style sets it apart (a styled block
+                // or line is never the wrapped end of a verse). A full stop or a
+                // comma at the end only where the look sets the line apart: a
+                // poem's last line ("Moi, l'Éternel, je crée ces choses.") can
+                // stand right over the cross-references too.
+                let words = line.split_whitespace().count();
+                let block = unit.place.page.is_none() && (unit.heading || unit.styled);
+                whole
+                    && alone
+                    && !is_selah(line)
+                    && set_apart
+                    && shape(line, typographic, more || block, block, styled, continued)
+                    && (words >= 2 || styled)
             };
-            let whole = unmark_raised(&clean(&b.units[item.unit].text)).trim()
-                == unmark_raised(line.trim());
-            let alone = (i == 0 || b.items[i - 1].unit != item.unit)
-                && b.items.get(i + 1).is_none_or(|n| n.unit != item.unit);
-            // The document must show it is set apart: a heading style
-            // (EPUB, Word, Markdown), large type, another typeface (PDF), or
-            // capitals. Text alone cannot tell a heading from a verse's last
-            // line ending without punctuation ("… vor Gott", the sentence
-            // going on in the next verse). One word alone may be the last
-            // word of the verse, wrapped ("Ruth").
-            let unit = &b.units[item.unit];
-            let styled = unit.heading || unit.large || unit.styled;
-            // (A line with its passage's cross-references right under it is
-            // set apart by them.)
-            let typographic = styled || capitals(line);
-            let set_apart = typographic || references_follow;
-            // A single word only when its style sets it apart (a styled block
-            // or line is never the wrapped end of a verse). A full stop or a
-            // comma at the end only where the look sets the line apart: a
-            // poem's last line ("Moi, l'Éternel, je crée ces choses.") can
-            // stand right over the cross-references too.
-            let words = line.split_whitespace().count();
-            whole && alone && set_apart && shape(line, typographic, more) && (words >= 2 || styled)
+        let candidate = |b: &Self, i: usize, references_follow: bool, more: bool| {
+            candidate_line(b, i, references_follow, more, false)
         };
         // From the end, so that a heading over another heading (a section
         // title over a subtitle) is seen once the later one is set aside.
@@ -3260,7 +3311,14 @@ impl Builder<'_> {
                 .items
                 .get(k + 1)
                 .is_some_and(|n| matches!(&n.event, Event::Other { notes: false, .. }));
-            if !candidate(self, k, references_follow, heading_follows) {
+            // The second line of a heading over two lines, going on from the
+            // first in lower case.
+            let continuation = k >= 2
+                && !candidate(self, k, references_follow, heading_follows)
+                && candidate_line(self, k, references_follow, heading_follows, true)
+                && candidate(self, k - 1, false, true)
+                && ended(&self.items[k - 2]);
+            if !continuation && !candidate(self, k, references_follow, heading_follows) {
                 continue;
             }
             // A verse or chapter number, or a chapter heading, comes next.
@@ -3276,11 +3334,31 @@ impl Builder<'_> {
                             }
                     )
             });
-            if !starts_verse && !references_follow {
+            // A styled paragraph inside a verse (EPUB, Word): a heading where
+            // the verse before it ended its sentence and the text after it
+            // begins one ("… changé l’eau en vin." / "Guérison du fils d’un
+            // officier du roi" / "Il y avait à Capernaüm …").
+            let inside_verse = {
+                let unit = &self.units[self.items[k].unit];
+                unit.place.page.is_none()
+                    && (unit.heading || unit.styled)
+                    && k >= 1
+                    && ended(&self.items[k - 1])
+                    && next.is_some_and(|i| match &self.items[i].event {
+                        Event::Text(t) => t
+                            .trim_start()
+                            .chars()
+                            .find(|c| c.is_alphabetic())
+                            .is_some_and(char::is_uppercase),
+                        _ => false,
+                    })
+            };
+            if !starts_verse && !references_follow && !inside_verse {
                 continue;
             }
             // One line, or two (a heading wrapped over two lines).
-            let two = k >= 2 && candidate(self, k - 1, false, true) && ended(&self.items[k - 2]);
+            let two = continuation
+                || (k >= 2 && candidate(self, k - 1, false, true) && ended(&self.items[k - 2]));
             let first = if two { k - 1 } else { k };
             // A paragraph of its own set apart by its look (EPUB, Word), with
             // a verse number starting the next: never the end of the verse
@@ -3290,7 +3368,17 @@ impl Builder<'_> {
                 let unit = &self.units[self.items[k].unit];
                 unit.place.page.is_none() && (unit.heading || unit.styled) && starts_verse
             };
-            if paragraph || ended(&self.items[first - 1]) {
+            // (A styled paragraph that ends as a sentence does, "Qui est le
+            // plus grand?", only after a verse that ended its own.)
+            let sentence = match &self.items[k].event {
+                Event::Text(t) => t
+                    .trim_end()
+                    .trim_end_matches(is_sign)
+                    .trim_end()
+                    .ends_with(['.', '!', '?', ',', ';', ':']),
+                _ => false,
+            };
+            if (paragraph && !sentence) || ended(&self.items[first - 1]) {
                 for i in first..=k {
                     if let Event::Text(line) = &self.items[i].event {
                         let text = unmark_raised(line.trim());
@@ -3350,6 +3438,15 @@ fn chapter_indexes(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
     out
 }
 
+/// "Selah" (a word of the psalms themselves, often set on a line of its own,
+/// in italics, at a psalm's end): part of its verse in every edition, never a
+/// heading or a label.
+fn is_selah(line: &str) -> bool {
+    const SELAH: &[&str] = &["selah", "sela", "pausa", "셀라", "סלה", "διαψαλμα"];
+    let line = line.trim().trim_end_matches(is_sign).trim_end();
+    SELAH.contains(&key(line.trim_end_matches(['.', ')']).trim_start_matches('(')).as_str())
+}
+
 /// Words written with a hyphen inside a line of the documents ("Padan-aram",
 /// "El-Beth-el"), in lower case: each joined pair.
 fn hyphenated_words(units: &[Unit]) -> HashSet<String> {
@@ -3363,6 +3460,21 @@ fn hyphenated_words(units: &[Unit]) -> HashSet<String> {
             let parts: Vec<&str> = m.as_str().split('-').collect();
             for pair in parts.windows(2) {
                 out.insert(format!("{}-{}", pair[0], pair[1]).to_lowercase());
+            }
+        }
+    }
+    out
+}
+
+/// Every word the documents write whole (letters only, in lower case): a
+/// word broken at a line's end ("Jéru-" / "salem") that is found whole
+/// elsewhere is joined without its hyphen.
+fn whole_words(units: &[Unit]) -> HashSet<String> {
+    let mut out = HashSet::new();
+    for unit in units {
+        for word in clean(&unit.text).split(|c: char| !c.is_alphabetic()) {
+            if word.chars().count() > 2 {
+                out.insert(word.to_lowercase());
             }
         }
     }
@@ -3397,7 +3509,7 @@ fn inline_references(text: &str, language: Option<ReferenceLanguage>) -> Vec<(us
     while i < matches.len() {
         let (start, mut end) = matches[i];
         let before = text[..start].trim_end();
-        let after_quote = before.ends_with(['.', '!', '?', '»', '”', '’', '"', ',', ';']);
+        let after_quote = before.ends_with(['.', '!', '?', '»', '”', '’', '"', ',', ';', ')']);
         if before.is_empty() || !after_quote || out.last().is_some_and(|(_, e)| *e > start) {
             i += 1;
             continue;
@@ -3542,7 +3654,13 @@ fn reference_line(text: &str, language: Option<ReferenceLanguage>) -> bool {
         if covered.iter().any(|(a, b)| start >= *a && start < *b) {
             continue;
         }
-        if word.chars().count() > 3 {
+        // In Hangul, Chinese and Japanese a word of two syllables is a word,
+        // not an abbreviation (Korean references abbreviate a book to one:
+        // "마", "창"); "너는 가증한 것을" is prose.
+        let syllabic = word.chars().any(|c| {
+            matches!(c as u32, 0xAC00..=0xD7AF | 0x3040..=0x30FF | 0x4E00..=0x9FFF | 0xF900..=0xFAFF)
+        });
+        if word.chars().count() > 3 || (syllabic && word.chars().count() >= 2) {
             long_words += 1;
         } else {
             short_words += 1;
@@ -3571,6 +3689,8 @@ struct Reader<'a> {
     /// Words the document writes with a hyphen inside a line ("padan-aram"):
     /// at a line's end such a hyphen is the word's own, not a break.
     hyphenated: HashSet<String>,
+    /// Words the document writes whole (see `whole_words`).
+    whole: HashSet<String>,
     corrections: &'a Corrections,
     out: Recognition,
     book: Option<&'static Book>,
@@ -3648,6 +3768,7 @@ impl Reader<'_> {
         place: Place,
         glue: bool,
         hyphenated: &HashSet<String>,
+        whole: &HashSet<String>,
     ) {
         if open.text.is_empty() || glue {
             open.text.push_str(words);
@@ -3671,7 +3792,14 @@ impl Reader<'_> {
                 .collect();
             let right: String = words.chars().take_while(|c| c.is_alphabetic()).collect();
             let compound = format!("{left}-{right}").to_lowercase();
-            if !hyphenated.contains(&compound) {
+            // Without either evidence, a name's hyphen stays ("Hazezón-" /
+            // "tamar", "Beerot-bene-" / "jacaam": names joined by hyphens);
+            // a common word's is a break.
+            let before = open.text[..open.text.len() - 1 - left.len()].chars().last();
+            let name = left.chars().next().is_some_and(char::is_uppercase) || before == Some('-');
+            let keep = hyphenated.contains(&compound)
+                || (!whole.contains(&format!("{left}{right}").to_lowercase()) && name);
+            if !keep {
                 open.text.pop();
             }
             open.text.push_str(words);
@@ -3863,11 +3991,7 @@ impl Reader<'_> {
     fn check_label(&mut self, words: &str, unit: usize) {
         let whole = clean(&self.units[unit].text);
         let whole = whole.trim();
-        // "Selah" (a word of the psalms themselves, often set on a line of
-        // its own) is part of its verse in every edition.
-        const SELAH: &[&str] = &["selah", "sela", "pausa", "셀라", "סלה", "διαψαλμα"];
-        if SELAH.contains(&key(whole.trim_end_matches(['.', ')']).trim_start_matches('(')).as_str())
-        {
+        if is_selah(whole) {
             return;
         }
         // One word in capitals alone on a line ("BETH", "BOOK"): a heading in
@@ -4525,7 +4649,15 @@ impl Reader<'_> {
             };
             let words = without_signs(words, &signs).into_owned();
             let open = self.open.as_mut().expect("a verse is open");
-            Self::append(open, &words, unit, place, glue, &self.hyphenated);
+            Self::append(
+                open,
+                &words,
+                unit,
+                place,
+                glue,
+                &self.hyphenated,
+                &self.whole,
+            );
             return;
         }
         if self.chapter.is_some() {
@@ -4861,24 +4993,32 @@ impl Reader<'_> {
 pub fn recognise(units: &[Unit], language: Option<&str>, corrections: &Corrections) -> Recognition {
     let stated = language.and_then(ReferenceLanguage::from_label);
     let first = recognise_in(units, stated, corrections);
-    if stated.is_some() {
-        return first;
-    }
-    // No language stated (a PDF without metadata): the book titles the
-    // document prints say which language it is in, when one language names
-    // clearly more of them than any other. Read again in it: names that
-    // differ only by an accent ("Jó", Job; "Jo", João) and the language's
-    // own title rules then apply. The running text is never used to guess.
+    // No language stated (a PDF without metadata), or one the document's own
+    // titles contradict (LibreOffice writes its interface language, "en-US",
+    // into a Korean Bible's PDF): the book titles the document prints say
+    // which language it is in, when one language names clearly more of them
+    // than any other and the stated one names fewer than one in five. Read
+    // again in it: names that differ only by an accent ("Jó", Job; "Jo",
+    // João) and the language's own rules then apply. The running text is
+    // never used to guess.
     match titles_language(&first.books) {
-        Some(language) => recognise_in(units, Some(language), corrections),
-        None => first,
+        Some(language)
+            if stated.is_none_or(|s| {
+                s != language && {
+                    let (hits, titles) = title_hits(&first.books, s);
+                    hits * 5 < titles
+                }
+            }) =>
+        {
+            recognise_in(units, Some(language), corrections)
+        }
+        _ => first,
     }
 }
 
-/// The language whose own book names the found titles use, when it names at
-/// least three of them and three in five, and more than any other language.
-fn titles_language(books: &[FoundBook]) -> Option<ReferenceLanguage> {
-    let titles: Vec<(Vec<String>, &str)> = books
+/// The found titles, each as the forms its name may take, with its book.
+fn title_names(books: &[FoundBook]) -> Vec<(Vec<String>, &'static str)> {
+    books
         .iter()
         .filter_map(|b| {
             let code = b.detected?;
@@ -4887,27 +5027,39 @@ fn titles_language(books: &[FoundBook]) -> Option<ReferenceLanguage> {
             forms.push(k);
             Some((forms, code))
         })
+        .collect()
+}
+
+/// How many of the found titles a language's own book names give, of all.
+fn title_hits(books: &[FoundBook], language: ReferenceLanguage) -> (usize, usize) {
+    let titles = title_names(books);
+    let own: HashSet<(String, &str)> = ReferenceParser::for_language(language)
+        .lookup_entries()
+        .map(|(name, book)| (key(name), book.code))
         .collect();
+    let hits = titles
+        .iter()
+        .filter(|(forms, code)| forms.iter().any(|f| own.contains(&(f.clone(), *code))))
+        .count();
+    (hits, titles.len())
+}
+
+/// The language whose own book names the found titles use, when it names at
+/// least three of them and three in five, and more than any other language.
+fn titles_language(books: &[FoundBook]) -> Option<ReferenceLanguage> {
     let mut candidates = name_languages();
     candidates.extend(ReferenceLanguage::from_label("la"));
-    let mut counts: Vec<(usize, ReferenceLanguage)> = candidates
+    let mut counts: Vec<(usize, usize, ReferenceLanguage)> = candidates
         .into_iter()
         .map(|language| {
-            let own: HashSet<(String, &str)> = ReferenceParser::for_language(language)
-                .lookup_entries()
-                .map(|(name, book)| (key(name), book.code))
-                .collect();
-            let hits = titles
-                .iter()
-                .filter(|(forms, code)| forms.iter().any(|f| own.contains(&(f.clone(), *code))))
-                .count();
-            (hits, language)
+            let (hits, titles) = title_hits(books, language);
+            (hits, titles, language)
         })
         .collect();
     counts.sort_by_key(|c| std::cmp::Reverse(c.0));
-    let (best, language) = *counts.first()?;
+    let (best, titles, language) = *counts.first()?;
     let second = counts.get(1).map_or(0, |c| c.0);
-    (best >= 3 && best * 5 >= titles.len() * 3 && best > second).then_some(language)
+    (best >= 3 && best * 5 >= titles * 3 && best > second).then_some(language)
 }
 
 fn recognise_in(
@@ -4960,6 +5112,7 @@ fn recognise_in(
         items: &items,
         language,
         hyphenated: hyphenated_words(units),
+        whole: whole_words(units),
         corrections,
         out: Recognition {
             books,
@@ -5143,6 +5296,16 @@ mod tests {
         );
         // Never a reference the verse's own words lead into.
         assert!(inline_references("como diz Salmos 91:11 hoje", pt).is_empty());
+    }
+
+    #[test]
+    fn korean_prose_is_never_a_line_of_references() {
+        let ko = ReferenceLanguage::from_label("ko");
+        assert!(!reference_line(
+            "7:28) 너는 가증한 것을 네 집에 들이지 말라 너도",
+            ko
+        ));
+        assert!(reference_line("(마 5:3; 눅 6:20)", ko));
     }
 
     #[test]

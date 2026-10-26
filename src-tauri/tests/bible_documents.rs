@@ -614,6 +614,66 @@ fn books_outside_the_66_are_named_and_left_out() {
 }
 
 #[test]
+fn a_name_s_hyphen_at_a_line_s_end_is_kept_a_broken_word_is_joined() {
+    // "Hazezón-" / "tamar": a name joined by a hyphen, written nowhere else;
+    // "gover-" / "nor": the document writes "governor" whole elsewhere.
+    let text = ruth_lines(|c| format!("Chapter {c}"))
+        .replacen(
+            &format!("7 {}", words("Ruth", 1, 7)),
+            "7 and they went to Hazezón-\ntamar.",
+            1,
+        )
+        .replacen(
+            &format!("8 {}", words("Ruth", 1, 8)),
+            "8 And the governor went out.",
+            1,
+        )
+        .replacen(
+            &format!("9 {}", words("Ruth", 1, 9)),
+            "9 And the gover-\nnor came back.",
+            1,
+        );
+    let r = structure::recognise(
+        &read("hyphens.txt", text.as_bytes()).units,
+        Some("en"),
+        &Corrections::default(),
+    );
+    assert_eq!(
+        verse(&r, "RUT", 1, 7).as_deref(),
+        Some("and they went to Hazezón-tamar.")
+    );
+    assert_eq!(
+        verse(&r, "RUT", 1, 9).as_deref(),
+        Some("And the governor came back.")
+    );
+}
+
+#[test]
+fn selah_closing_a_psalm_stays_in_its_verse() {
+    // "Selah" on a line of its own, right before the next psalm's number.
+    let mut text = String::from("Psalms\n\n");
+    for (psalm, count) in [(1u16, 6u16), (2, 12), (3, 8)] {
+        text.push_str(&format!("Chapter {psalm}\n\n"));
+        for v in 1..=count {
+            text.push_str(&format!("{v} {}\n", words("Psalm", psalm, v)));
+        }
+        if psalm == 2 {
+            text.push_str("Selah\n");
+        }
+        text.push('\n');
+    }
+    let r = structure::recognise(
+        &read("selah.txt", text.as_bytes()).units,
+        Some("en"),
+        &Corrections::default(),
+    );
+    assert_eq!(
+        verse(&r, "PSA", 2, 12),
+        Some(format!("{} Selah", words("Psalm", 2, 12)))
+    );
+}
+
+#[test]
 fn lines_named_by_usfm_codes() {
     // One verse per line, each named by the book's USFM code ("1SA 1:1 …"),
     // as Bible exports write them.
