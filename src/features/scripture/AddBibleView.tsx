@@ -662,7 +662,7 @@ export function FoundBooks({ preview, onCorrect }: { preview: DocumentPreview; o
   const { t } = useTranslation();
   const { books: canon } = useScripture();
   const [busy, setBusy] = useState(false);
-  const attention = !preview.versesUsable && preview.books.some((b) => b.detected === null || b.verses > 0);
+  const attention = !preview.versesUsable && preview.books.some((b) => (b.detected === null && b.outside === null) || b.verses > 0);
   const choose = async (index: number, value: string) => {
     const corrections: Correction[] = preview.books
       .filter((b) => b.index !== index && (b.leftOut || b.book !== b.detected))

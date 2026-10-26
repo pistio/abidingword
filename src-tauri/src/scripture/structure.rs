@@ -86,6 +86,9 @@ pub struct FoundBook {
     /// none, or left out).
     pub book: Option<&'static str>,
     pub left_out: bool,
+    /// A book outside the 66 (its USFM code: "TOB", "1MA", "ESG"): named,
+    /// and its text left out (v0.24.2).
+    pub outside: Option<&'static str>,
     pub chapters: usize,
     pub verses: usize,
     pub place: Place,
@@ -156,6 +159,91 @@ fn key(text: &str) -> String {
     let text = text.replace(['Æ', 'æ'], "ae").replace(['Œ', 'œ'], "oe");
     normalise(&fold_marks(&text))
 }
+
+/// Titles of the books outside the 66 (`canons::ADDITIONAL_BOOKS`) as
+/// editions print them, after a title is brought down to its name (articles,
+/// "book of", ordinals as figures). Their text is left out, never read into
+/// the book before (v0.24.2). `after`: only once that book has begun ("1
+/// Esdras" after Nehemiah; in the Vulgate "Liber primus Esdrae" is Ezra).
+const OUTSIDE_TITLES: &[(&str, &str, Option<&str>)] = &[
+    ("tobit", "TOB", None),
+    ("tobias", "TOB", None),
+    ("tobie", "TOB", None),
+    ("tobia", "TOB", None),
+    ("judith", "JDT", None),
+    ("judite", "JDT", None),
+    ("judit", "JDT", None),
+    ("sabedoria de salomao", "WIS", None),
+    ("wisdom of solomon", "WIS", None),
+    ("sagesse de salomon", "WIS", None),
+    ("sabiduria de salomon", "WIS", None),
+    ("weisheit salomos", "WIS", None),
+    ("sapientia salomonis", "WIS", None),
+    ("sapientiae", "WIS", None),
+    ("sirach", "SIR", None),
+    ("jesus sirach", "SIR", None),
+    ("sirac", "SIR", None),
+    ("siracide", "SIR", None),
+    ("siracida", "SIR", None),
+    ("eclesiastico", "SIR", None),
+    ("ecclesiasticus", "SIR", None),
+    ("ecclesiastique", "SIR", None),
+    ("ecclesiastici", "SIR", None),
+    ("baruc", "BAR", None),
+    ("baruch", "BAR", None),
+    ("baruque", "BAR", None),
+    ("carta de jeremias", "LJE", None),
+    ("epistle of jeremy", "LJE", None),
+    ("letter of jeremiah", "LJE", None),
+    ("lettre de jeremie", "LJE", None),
+    ("brief des jeremia", "LJE", None),
+    ("susanna", "SUS", None),
+    ("susana", "SUS", None),
+    ("suzanne", "SUS", None),
+    ("bel and the dragon", "BEL", None),
+    ("bel e o dragao", "BEL", None),
+    ("bel y el dragon", "BEL", None),
+    ("bel et le dragon", "BEL", None),
+    ("1 macabeus", "1MA", None),
+    ("2 macabeus", "2MA", None),
+    ("3 macabeus", "3MA", None),
+    ("4 macabeus", "4MA", None),
+    ("1 maccabees", "1MA", None),
+    ("2 maccabees", "2MA", None),
+    ("3 maccabees", "3MA", None),
+    ("4 maccabees", "4MA", None),
+    ("1 macabeos", "1MA", None),
+    ("2 macabeos", "2MA", None),
+    ("1 makkabaer", "1MA", None),
+    ("2 makkabaer", "2MA", None),
+    ("1 machabaeorum", "1MA", None),
+    ("2 machabaeorum", "2MA", None),
+    ("1 maccabei", "1MA", None),
+    ("2 maccabei", "2MA", None),
+    ("1 esdras", "1ES", Some("NEH")),
+    ("2 esdras", "2ES", Some("NEH")),
+    ("3 esdras", "1ES", Some("NEH")),
+    ("4 esdras", "2ES", Some("NEH")),
+    ("oracao de manasses", "MAN", None),
+    ("prayer of manasseh", "MAN", None),
+    ("prayer of manasses", "MAN", None),
+    ("priere de manasse", "MAN", None),
+    ("oracion de manases", "MAN", None),
+    ("gebet manasses", "MAN", None),
+    ("oratio manassae", "MAN", None),
+    ("토빗기", "TOB", None),
+    ("유딧기", "JDT", None),
+    ("지혜서", "WIS", None),
+    ("집회서", "SIR", None),
+    ("바룩서", "BAR", None),
+    ("마카베오기 상권", "1MA", None),
+    ("마카베오기 하권", "2MA", None),
+];
+
+/// Words in the subtitle of the Greek text of Esther or Daniel printed as
+/// a book of its own ("Ester / traduzido da Septuaginta grega", "Daniel /
+/// com as Porções Gregas", "Esther (Greek)").
+const GREEK_MARKS: &[&str] = &["grec", "greg", "griech", "greek", "septuag", "lxx"];
 
 /// Greek titles of the New Testament books (as printed in Greek editions).
 const GREEK_TITLES: &[(&str, &str)] = &[
@@ -395,6 +483,7 @@ fn title_forms(key: &str) -> Vec<String> {
     ];
     const ARTICLES: &[&str] = &[
         "das", "der", "die", "the", "le", "la", "les", "l'", "el", "los", "las", "o", "os", "as",
+        "a",
     ];
     const NOUNS: &[&str] = &[
         // German and English
@@ -528,6 +617,7 @@ fn title_forms(key: &str) -> Vec<String> {
         "apocalipsis",
         "lamentaciones",
         "atos",
+        "revelacao",
         "apocalipse",
         "lamentacoes",
         "apocalypsis",
@@ -811,6 +901,38 @@ fn book_named(text: &str, language: Option<ReferenceLanguage>) -> Option<&'stati
     book_named_once(text, language, true)
 }
 
+/// The book outside the 66 a title names ("O Primeiro Livro dos Macabeus" →
+/// 1MA), and the book that must have begun before it counts as one.
+fn outside_named(text: &str) -> Option<(&'static str, Option<&'static str>)> {
+    let mut k = key(text);
+    for prefix in TITLE_PREFIXES {
+        if let Some(rest) = k.strip_prefix(prefix) {
+            k = rest.to_string();
+            break;
+        }
+    }
+    let mut forms = title_forms(&k);
+    forms.insert(0, k);
+    // "A Sabedoria de Salomão", "The Wisdom of Solomon".
+    let bare: Vec<String> = forms
+        .iter()
+        .filter_map(|f| {
+            [
+                "a ", "o ", "the ", "la ", "le ", "el ", "die ", "das ", "der ",
+            ]
+            .iter()
+            .find_map(|article| f.strip_prefix(article).map(str::to_string))
+        })
+        .collect();
+    forms.extend(bare);
+    forms.iter().find_map(|form| {
+        OUTSIDE_TITLES
+            .iter()
+            .find(|(name, _, _)| key(name) == *form)
+            .map(|(_, code, after)| (*code, *after))
+    })
+}
+
 fn book_named_once(
     text: &str,
     language: Option<ReferenceLanguage>,
@@ -872,10 +994,14 @@ fn book_named_once(
             let language = language?;
             // Names that differ only by an accent ("Jó", Job; "Jo", João):
             // the document's language as written decides.
-            let written = normalise(text.trim());
+            // The name is the title's last words ("O Livro de Jó" → "Jó").
+            let words: Vec<&str> = text.split_whitespace().collect();
+            let written: Vec<String> = (1..=words.len())
+                .map(|n| normalise(&words[words.len() - n..].join(" ")))
+                .collect();
             let exact: Vec<&'static Book> = ReferenceParser::for_language(language)
                 .lookup_entries()
-                .filter(|(name, _)| normalise(name) == written)
+                .filter(|(name, _)| written.contains(&normalise(name)))
                 .map(|(_, b)| b)
                 .collect();
             if let [one, rest @ ..] = exact.as_slice() {
@@ -2256,12 +2382,77 @@ impl Builder<'_> {
             detected: detected.map(|b| b.code),
             book: detected.map(|b| b.code),
             left_out: false,
+            outside: None,
             chapters: 0,
             verses: 0,
             place: self.units[unit].place,
         });
         self.last_detected = detected.map(|b| b.code);
         self.books.len() - 1
+    }
+
+    /// A book outside the 66 that a title names: one of `OUTSIDE_TITLES`,
+    /// Psalm 151, or the Greek text of Esther or Daniel printed as a book of
+    /// its own (see `greek_part`). A line that is not set apart as a title
+    /// must open its chapter 1, as any book's title must.
+    fn outside_title(
+        &self,
+        unit: &Unit,
+        text: &str,
+        index: usize,
+        skip: &HashSet<usize>,
+    ) -> Option<&'static str> {
+        if !book_line_shape(text) {
+            return None;
+        }
+        let code = match outside_named(text) {
+            Some((code, after)) => {
+                if after.is_some_and(|after| !self.books.iter().any(|b| b.detected == Some(after)))
+                {
+                    return None;
+                }
+                code
+            }
+            None => match read_heading(text, self.language)? {
+                Heading::BookChapter(book, 151) if book.code == "PSA" => "PS2",
+                Heading::Book(book) => self.greek_part(book, index, skip)?,
+                _ => return None,
+            },
+        };
+        (unit.heading || self.opens_chapter(index, skip)).then_some(code)
+    }
+
+    /// Esther or Daniel once more, after the book has begun, with "Greek"
+    /// in the lines under the title ("Ester / traduzido da Septuaginta
+    /// grega", "Daniel / com as Porções Gregas"): the Greek text, a book
+    /// outside the 66.
+    fn greek_part(
+        &self,
+        book: &'static Book,
+        index: usize,
+        skip: &HashSet<usize>,
+    ) -> Option<&'static str> {
+        let code = match book.code {
+            "EST" => "ESG",
+            "DAN" => "DAG",
+            _ => return None,
+        };
+        if !self.books.iter().any(|b| b.detected == Some(book.code)) {
+            return None;
+        }
+        let greek = (index + 1..self.units.len())
+            .filter(|i| !skip.contains(i))
+            .map(|i| key(&clean(&self.units[i].text)))
+            .filter(|t| !t.is_empty())
+            .take(2)
+            .any(|t| GREEK_MARKS.iter().any(|m| t.contains(m)));
+        greek.then_some(code)
+    }
+
+    fn outside_book(&mut self, heading: &str, code: &'static str, unit: usize) -> usize {
+        let entry = self.found_book(heading, None, unit);
+        self.books[entry].outside = Some(code);
+        entry
     }
 
     /// A heading (or a short line on its own) right before "Chapter 1"
@@ -2605,7 +2796,10 @@ impl Builder<'_> {
                             if read_heading(second, self.language) != Some(Heading::Book(book))
                                 && self.opens_chapter(next, skip)
                             {
-                                let entry = self.book_entry(&both, book, index);
+                                let entry = match self.greek_part(book, next, skip) {
+                                    Some(code) => self.outside_book(&both, code, index),
+                                    None => self.book_entry(&both, book, index),
+                                };
                                 self.push(
                                     Event::Book {
                                         entry,
@@ -2638,6 +2832,19 @@ impl Builder<'_> {
                         continue;
                     }
                 }
+            }
+            // A book outside the 66 (Tobit, 1 Maccabees, Esther in Greek):
+            // named, and its text left out, never read into the book before.
+            if let Some(code) = self.outside_title(unit, text, index, skip) {
+                let entry = self.outside_book(text, code, index);
+                self.push(
+                    Event::Book {
+                        entry,
+                        chapter: None,
+                    },
+                    index,
+                );
+                continue;
             }
             if let Some(heading) =
                 read_heading(text, self.language).or_else(|| self.next_in_sequence(text))
@@ -4360,12 +4567,33 @@ impl Reader<'_> {
             self.skip_chapter = false;
             let found = &mut self.out.books[entry];
             found.book = chosen.map(|b| b.code);
-            found.left_out = self
-                .corrections
-                .books
-                .get(&entry)
-                .is_some_and(Option::is_none);
+            // A book outside the 66 is left out unless the person chose a
+            // book for it.
+            found.left_out = match self.corrections.books.get(&entry) {
+                Some(choice) => choice.is_none(),
+                None => found.outside.is_some(),
+            };
             self.skip = found.left_out;
+            if let (Some(code), false) =
+                (found.outside, self.corrections.books.contains_key(&entry))
+            {
+                let name = crate::scripture::canons::additional(code).map_or(code, |b| b.name);
+                let heading = found.heading.clone();
+                self.out.content.issue(
+                    Severity::Note,
+                    None,
+                    None,
+                    UserMessage::new(
+                        "bibleImport.documentAdditionalBook",
+                        format!(
+                            "“{heading}” is {name}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected."
+                        ),
+                    )
+                    .with("heading", &heading)
+                    .with("book", name)
+                    .with("code", code),
+                );
+            }
             self.book = chosen;
             if let Some(book) = chosen {
                 if !self.seen_books.insert(book.ordinal) {
@@ -4631,7 +4859,62 @@ impl Reader<'_> {
 /// `language` is the document's language when known (it decides between
 /// books that share a name across languages).
 pub fn recognise(units: &[Unit], language: Option<&str>, corrections: &Corrections) -> Recognition {
-    let language = language.and_then(ReferenceLanguage::from_label);
+    let stated = language.and_then(ReferenceLanguage::from_label);
+    let first = recognise_in(units, stated, corrections);
+    if stated.is_some() {
+        return first;
+    }
+    // No language stated (a PDF without metadata): the book titles the
+    // document prints say which language it is in, when one language names
+    // clearly more of them than any other. Read again in it: names that
+    // differ only by an accent ("Jó", Job; "Jo", João) and the language's
+    // own title rules then apply. The running text is never used to guess.
+    match titles_language(&first.books) {
+        Some(language) => recognise_in(units, Some(language), corrections),
+        None => first,
+    }
+}
+
+/// The language whose own book names the found titles use, when it names at
+/// least three of them and three in five, and more than any other language.
+fn titles_language(books: &[FoundBook]) -> Option<ReferenceLanguage> {
+    let titles: Vec<(Vec<String>, &str)> = books
+        .iter()
+        .filter_map(|b| {
+            let code = b.detected?;
+            let k = key(&b.heading);
+            let mut forms = title_forms(&k);
+            forms.push(k);
+            Some((forms, code))
+        })
+        .collect();
+    let mut candidates = name_languages();
+    candidates.extend(ReferenceLanguage::from_label("la"));
+    let mut counts: Vec<(usize, ReferenceLanguage)> = candidates
+        .into_iter()
+        .map(|language| {
+            let own: HashSet<(String, &str)> = ReferenceParser::for_language(language)
+                .lookup_entries()
+                .map(|(name, book)| (key(name), book.code))
+                .collect();
+            let hits = titles
+                .iter()
+                .filter(|(forms, code)| forms.iter().any(|f| own.contains(&(f.clone(), *code))))
+                .count();
+            (hits, language)
+        })
+        .collect();
+    counts.sort_by_key(|c| std::cmp::Reverse(c.0));
+    let (best, language) = *counts.first()?;
+    let second = counts.get(1).map_or(0, |c| c.0);
+    (best >= 3 && best * 5 >= titles.len() * 3 && best > second).then_some(language)
+}
+
+fn recognise_in(
+    units: &[Unit],
+    language: Option<ReferenceLanguage>,
+    corrections: &Corrections,
+) -> Recognition {
     let mut furniture = page_furniture(units);
     let mut footnotes = page_footnotes(units);
     // Notes known from the page's layout (smaller text below the running text).
@@ -4870,6 +5153,15 @@ mod tests {
         assert!(book_line_shape("St. Matthew"));
         assert!(book_line_shape("GENESIS."));
         assert!(book_line_shape("Ecclesiastes or, the Preacher"));
+        let pt = ReferenceLanguage::from_label("pt");
+        assert_eq!(
+            read_heading("A Revelação a João", pt),
+            Some(Heading::Book(canon::by_code("REV").unwrap()))
+        );
+        assert_eq!(
+            read_heading("O Livro de Jó", pt),
+            Some(Heading::Book(canon::by_code("JOB").unwrap()))
+        );
         assert_eq!(
             read_heading("LE SECOND LIVRE DE SAMUEL", fr),
             Some(Heading::Book(canon::by_code("2SA").unwrap()))

@@ -214,13 +214,13 @@
       "licenceHint": "As the document states it, for your own reference.",
       "addDocument": "Add to read as a document",
       "ready": {
+        "none": "No book can be used by its verses yet.",
         "some_one": "{{books}} is ready to use.",
         "some_other": "{{books}} are ready to use.",
         "many_one": "{{count}} book is ready to use.",
         "many_other": "{{count}} books are ready to use.",
         "check_one": "{{count}} chapter needs checking.",
-        "check_other": "{{count}} chapters need checking.",
-        "none": "No book can be used by its verses yet."
+        "check_other": "{{count}} chapters need checking."
       }
     },
     "doneDocument": "<strong>{{name}}</strong> was added to read as a document.",

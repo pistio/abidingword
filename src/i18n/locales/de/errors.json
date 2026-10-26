@@ -124,7 +124,8 @@
     "documentNumberInVerse": "{{book}} {{chapter}}: Vers {{verse}} wurde nicht gefunden, aber die Zahl {{verse}} steht im Vers davor; die beiden könnten ineinander übergehen. Dieses Kapitel wird nicht verwendet.",
     "documentChapterLong": "{{book}} {{chapter}} reicht bis Vers {{last}}; das Kapitel hat üblicherweise {{expected}} Verse. Vielleicht wurde ein anderes Kapitel oder Buch hineingelesen. Dieses Kapitel wird nicht verwendet.",
     "documentFootnotes_one": "{{count}} Zeile mit Fußnoten unten auf den Seiten wurde ausgelassen.",
-    "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen."
+    "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen.",
+    "documentAdditionalBook": "„{{heading}}“ ist {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Sein Text wurde ausgelassen; die anderen Bücher sind davon nicht betroffen."
   },
   "library": {
     "notUtf8": "„{{fileName}}“ ist nicht als UTF-8-Text gespeichert und konnte daher nicht gelesen werden.",

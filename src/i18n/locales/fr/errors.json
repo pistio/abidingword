@@ -135,7 +135,8 @@
     "documentChapterLong": "{{book}} {{chapter}} va jusqu’au verset {{last}} ; ce chapitre compte habituellement {{expected}} versets. Un autre chapitre ou un autre livre y a peut-être été lu. Ce chapitre n’est pas utilisé.",
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
-    "documentFootnotes_many": "{{count}} lignes de notes en bas de page ont été laissées de côté."
+    "documentFootnotes_many": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
+    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",

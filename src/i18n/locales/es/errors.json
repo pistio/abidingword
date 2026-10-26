@@ -135,7 +135,8 @@
     "documentChapterLong": "{{book}} {{chapter}} llega hasta el versículo {{last}}; normalmente tiene {{expected}} versículos. Quizá se leyó en él otro capítulo u otro libro. Este capítulo no se usa.",
     "documentFootnotes_one": "Se omitió {{count}} línea de notas al pie de las páginas.",
     "documentFootnotes_other": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
-    "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas."
+    "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
+    "documentAdditionalBook": "«{{heading}}» es {{book}}, que Abiding Word todavía no puede mostrar. Su texto se dejó fuera; los demás libros no se ven afectados."
   },
   "library": {
     "notUtf8": "«{{fileName}}» no está guardado como texto UTF-8, así que no se pudo leer.",

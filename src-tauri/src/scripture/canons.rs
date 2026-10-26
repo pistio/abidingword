@@ -80,6 +80,7 @@ pub const ADDITIONAL_BOOKS: &[AdditionalBook] = &[
     book("MAN", "Prayer of Manasseh", S, 82),
     book("PS2", "Psalm 151", S, 83),
     book("DAG", "Daniel (Greek)", G, 84),
+    book("2ES", "2 Esdras (Latin)", S, 85),
 ];
 
 pub fn additional(code: &str) -> Option<&'static AdditionalBook> {

@@ -557,6 +557,63 @@ fn a_title_without_its_number_follows_the_book_before_it() {
 }
 
 #[test]
+fn books_outside_the_66_are_named_and_left_out() {
+    // A Bible with the deuterocanon (Bíblia Portuguesa Mundial): Tobit and
+    // the Greek text of Esther are named and left out, never read into
+    // the book before them.
+    let chapter = |book: &str, title: &str, count: u16| {
+        let mut text = format!("{title}\n\n");
+        for v in 1..=count {
+            text.push_str(&format!("{v} {}\n", words(book, 1, v)));
+        }
+        text.push('\n');
+        text
+    };
+    let text = [
+        chapter("Ester", "ESTER", 22),
+        chapter("Tobit", "TOBIT", 22),
+        chapter("Ester grega", "ESTER\ntraduzido da Septuaginta grega", 22),
+        chapter("Mateus", "MATEUS", 25),
+    ]
+    .concat();
+    let r = structure::recognise(
+        &read("deuterocanon.txt", text.as_bytes()).units,
+        Some("pt"),
+        &Corrections::default(),
+    );
+    let books: Vec<_> = r
+        .books
+        .iter()
+        .map(|b| (b.book, b.outside, b.left_out))
+        .collect();
+    assert_eq!(
+        books,
+        vec![
+            (Some("EST"), None, false),
+            (None, Some("TOB"), true),
+            (None, Some("ESG"), true),
+            (Some("MAT"), None, false)
+        ]
+    );
+    assert_eq!(
+        verse(&r, "EST", 1, 22).as_deref(),
+        Some(words("Ester", 1, 22).as_str())
+    );
+    assert_eq!(
+        verse(&r, "MAT", 1, 25).as_deref(),
+        Some(words("Mateus", 1, 25).as_str())
+    );
+    assert!(r.usable(), "{:?}", codes(&r));
+    assert_eq!(
+        codes(&r)
+            .iter()
+            .filter(|c| *c == "bibleImport.documentAdditionalBook")
+            .count(),
+        2
+    );
+}
+
+#[test]
 fn lines_named_by_usfm_codes() {
     // One verse per line, each named by the book's USFM code ("1SA 1:1 …"),
     // as Bible exports write them.

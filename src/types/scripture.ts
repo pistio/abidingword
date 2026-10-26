@@ -369,6 +369,8 @@ export interface FoundBook {
   /** The book used (detected or chosen); null when none or left out. */
   book: string | null;
   leftOut: boolean;
+  /** A book outside the 66 ("TOB", "1MA", "ESG"): named, its text left out (v0.24.2). */
+  outside: string | null;
   chapters: number;
   verses: number;
   place: DocumentPlace;

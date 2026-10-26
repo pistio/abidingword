@@ -233,6 +233,7 @@
       "licenceHint": "Tel que le document l’indique, pour votre propre référence.",
       "addDocument": "Ajouter pour lire comme document",
       "ready": {
+        "none": "Aucun livre ne peut encore être utilisé par ses versets.",
         "some_one": "{{books}} est prêt à l’emploi.",
         "some_other": "{{books}} sont prêts à l’emploi.",
         "some_many": "{{books}} sont prêts à l’emploi.",
@@ -241,8 +242,7 @@
         "many_many": "{{count}} livres sont prêts à l’emploi.",
         "check_one": "{{count}} chapitre est à vérifier.",
         "check_other": "{{count}} chapitres sont à vérifier.",
-        "check_many": "{{count}} chapitres sont à vérifier.",
-        "none": "Aucun livre ne peut encore être utilisé par ses versets."
+        "check_many": "{{count}} chapitres sont à vérifier."
       }
     },
     "doneDocument": "<strong>{{name}}</strong> a été ajoutée pour être lue comme un document.",

@@ -610,6 +610,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
             detected,
             book: leftOut ? null : choice,
             leftOut,
+            outside: null,
             chapters: choice ? f.chapters : 0,
             verses: choice ? f.verses : 0,
             place: { document: 0, page: format === "pdf" ? index + 1 : null, segment: index * 4 },

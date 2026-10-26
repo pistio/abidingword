@@ -233,6 +233,7 @@
       "licenceHint": "Como o documento informa, para sua própria referência.",
       "addDocument": "Adicionar para ler como documento",
       "ready": {
+        "none": "Ainda não é possível usar nenhum livro por seus versículos.",
         "some_one": "{{books}} está pronto para usar.",
         "some_other": "{{books}} estão prontos para usar.",
         "some_many": "{{books}} estão prontos para usar.",
@@ -241,8 +242,7 @@
         "many_many": "{{count}} livros estão prontos para usar.",
         "check_one": "{{count}} capítulo precisa ser verificado.",
         "check_other": "{{count}} capítulos precisam ser verificados.",
-        "check_many": "{{count}} capítulos precisam ser verificados.",
-        "none": "Ainda não é possível usar nenhum livro por seus versículos."
+        "check_many": "{{count}} capítulos precisam ser verificados."
       }
     },
     "doneDocument": "<strong>{{name}}</strong> foi adicionada para ler como documento.",
