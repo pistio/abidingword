@@ -231,6 +231,15 @@ const OUTSIDE_TITLES: &[(&str, &str, Option<&str>)] = &[
     ("oracion de manases", "MAN", None),
     ("gebet manasses", "MAN", None),
     ("oratio manassae", "MAN", None),
+    // The Vulgate's own titles (Jerome's, as in the Stuttgart edition).
+    ("tobiae", "TOB", None),
+    ("iudith", "JDT", None),
+    ("sapientiae solomonis", "WIS", None),
+    ("sapientiae salomonis", "WIS", None),
+    ("iesu filii sirach", "SIR", None),
+    ("primus macchabeorum", "1MA", None),
+    ("macchabeorum incipit liber secundus", "2MA", None),
+    ("secundus macchabeorum", "2MA", None),
     ("토빗기", "TOB", None),
     ("유딧기", "JDT", None),
     ("지혜서", "WIS", None),
@@ -885,7 +894,43 @@ fn second_name(text: &str) -> bool {
 /// decides between books that share a name). A title that gives two names
 /// ("… Otherwise Called …", "… id est …") is read by the first when it
 /// names a book, else by the second.
+/// The Vulgate's titles that its Hebrew names, its numbering of the four
+/// books of Kings or its inflected spellings make unreadable by the general
+/// rules, as the edition prints them (after "Incipit" and "Liber"): an
+/// explicit table, read only for Latin, whole titles only. "Regum primus"
+/// alone is not here: in the Vulgate it is 1 Samuel, in the Nova Vulgata
+/// 1 Kings, and the title names no other book to tell them apart.
+const VULGATE_TITLES: &[(&str, &str)] = &[
+    ("iosue bennun id est iesu nave", "JOS"),
+    ("malachim id est regum tertius et quartus", "1KI"),
+    ("malachim id est regum tertius", "1KI"),
+    ("malachim id est regum quartus", "2KI"),
+    ("dabreiamin", "1CH"),
+    ("secundus paralipomenon", "2CH"),
+    ("hiezechielis prophetae", "EZK"),
+    ("actuum apostolorum", "ACT"),
+];
+
+/// A title of the Vulgate's own (see `VULGATE_TITLES`).
+fn vulgate_title(text: &str) -> Option<&'static Book> {
+    let mut k = key(text);
+    for word in ["incipit ", "liber "] {
+        if let Some(rest) = k.strip_prefix(word) {
+            k = rest.to_string();
+        }
+    }
+    VULGATE_TITLES
+        .iter()
+        .find(|(title, _)| *title == k)
+        .and_then(|(_, code)| canon::by_code(code))
+}
+
 fn book_named(text: &str, language: Option<ReferenceLanguage>) -> Option<&'static Book> {
+    if language.is_some_and(|l| l.code() == "la") {
+        if let Some(book) = vulgate_title(text) {
+            return Some(book);
+        }
+    }
     let padded = joint_key(text);
     for joint in ALSO_CALLED {
         let pattern = format!(" {joint} ");
@@ -2053,7 +2098,11 @@ fn without_signs<'a>(text: &'a str, signs: &[char]) -> std::borrow::Cow<'a, str>
         let alone =
             previous.is_none_or(char::is_whitespace) && next.is_none_or(char::is_whitespace);
         let start = previous.is_none();
-        if raised || alone || start {
+        // Or set before the word it marks ("Χριστοῦ, †ᾧ ἡ δόξα", Textus
+        // Receptus): the note on the page names this verse either way.
+        let before_word =
+            previous.is_some_and(char::is_whitespace) && next.is_some_and(|n| !n.is_whitespace());
+        if raised || alone || start || before_word {
             let kept: String = chars[i..end]
                 .iter()
                 .filter(|c| !signs.contains(c))
@@ -3278,7 +3327,10 @@ impl Builder<'_> {
                         break;
                     };
                     total += line.chars().count();
-                    styled |= st;
+                    // The subscription of an epistle reads as one even
+                    // without a style ("Πρὸς Ῥωμαίους ἐγράφη ἀπὸ Κορίνθου …",
+                    // "Written to the Romans from Corinthus …").
+                    styled |= st || subscription(&line);
                     if total > 300 {
                         break;
                     }
@@ -3436,6 +3488,15 @@ fn chapter_indexes(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
         k += 1;
     }
     out
+}
+
+/// The wording of an epistle's subscription, which some editions print
+/// after its last verse ("Πρὸς Ῥωμαίους ἐγράφη ἀπὸ Κορίνθου …", "Written to
+/// the Romans from Corinthus …", "The first epistle to the Corinthians was
+/// written from Philippi …").
+fn subscription(line: &str) -> bool {
+    let k = key(line);
+    k.contains("εγραφη") || k.starts_with("written to ") || k.contains(" was written from ")
 }
 
 /// "Selah" (a word of the psalms themselves, often set on a line of its own,
@@ -5299,6 +5360,40 @@ mod tests {
     }
 
     #[test]
+    fn the_vulgate_s_own_titles_are_read_by_its_table() {
+        let la = ReferenceLanguage::from_label("la");
+        let code = |t: &str, l| match read_heading(t, l) {
+            Some(Heading::Book(b)) => Some(b.code),
+            _ => None,
+        };
+        assert_eq!(
+            code("INCIPIT LIBER MALACHIM ID EST REGUM TERTIUS ET QUARTUS", la),
+            Some("1KI")
+        );
+        assert_eq!(
+            code("INCIPIT LIBER MALACHIM ID EST REGUM QUARTUS", la),
+            Some("2KI")
+        );
+        assert_eq!(code("INCIPIT LIBER HIEZECHIELIS PROPHETÆ", la), Some("EZK"));
+        assert_eq!(code("INCIPIT LIBER ACTUUM APOSTOLORUM", la), Some("ACT"));
+        assert_eq!(code("INCIPIT LIBER DABREIAMIN", la), Some("1CH"));
+        // Only for Latin; and never "Regum primus" alone (1 Samuel in the
+        // Vulgate, 1 Kings in the Nova Vulgata).
+        assert_eq!(
+            code(
+                "INCIPIT LIBER DABREIAMIN",
+                ReferenceLanguage::from_label("en")
+            ),
+            None
+        );
+        assert_ne!(code("REGUM PRIMUS", la), Some("1SA"));
+        assert_eq!(
+            outside_named("INCIPIT LIBER TOBIÆ").map(|o| o.0),
+            Some("TOB")
+        );
+    }
+
+    #[test]
     fn korean_prose_is_never_a_line_of_references() {
         let ko = ReferenceLanguage::from_label("ko");
         assert!(!reference_line(
@@ -5391,5 +5486,9 @@ mod tests {
         assert_eq!(without_note_callers("Christ.§ Then"), "Christ. Then");
         assert_eq!(without_note_callers("§Now when"), "Now when");
         assert_eq!(without_note_callers("no callers"), "no callers");
+        assert_eq!(
+            without_signs("Χριστοῦ, †ᾧ ἡ δόξα", &['†']),
+            "Χριστοῦ, ᾧ ἡ δόξα"
+        );
     }
 }

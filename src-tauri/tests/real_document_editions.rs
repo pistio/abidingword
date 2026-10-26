@@ -66,6 +66,8 @@ fn letters(text: &str) -> String {
 /// - `unicode`: canonically the same characters (Unicode NFC): the document
 ///   encodes them differently (a CJK compatibility ideograph, 靈 U+F9B3,
 ///   written as the unified one, U+9748), the words are the same;
+/// - `sign`: the same letters, with a note's sign the edition does not have
+///   left in the verse ("†ᾧ"): apparatus, counted with `extra`;
 /// - `typography`: the same letters and digits; punctuation or quotes differ;
 /// - `extra`: the edition's words and more (a heading, note, reference or
 ///   another verse read into it: apparatus contamination);
@@ -85,7 +87,12 @@ fn difference_kind(want: &str, found: &str, book: &HashSet<String>) -> &'static 
     if nfc(want) == nfc(found) {
         "unicode"
     } else if w == f {
-        "typography"
+        let signs = |t: &str| t.chars().filter(|c| "*†‡§¶".contains(*c)).count();
+        if signs(found) > signs(want) {
+            "sign"
+        } else {
+            "typography"
+        }
     } else if !w.is_empty() && f.contains(&w) {
         "extra"
     } else if !f.is_empty() && w.contains(&f) {
@@ -442,7 +449,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                 if ok && class == 2 {
                     match kind {
                         "typography" | "unicode" => a.usable_typography += 1,
-                        "extra" => a.usable_extra_text += 1,
+                        "extra" | "sign" => a.usable_extra_text += 1,
                         "missing" => a.usable_missing_text += 1,
                         "wrong_reference" => a.usable_wrong_reference += 1,
                         _ => a.usable_changed += 1,
@@ -631,7 +638,7 @@ fn markdown(a: &EditionAudit) -> String {
     );
     let _ = writeln!(
         s,
-        "| … extra text read into the verse (heading, note, reference) | {} | |",
+        "| … extra text read into the verse (heading, note, reference, a note's sign) | {} | |",
         t.usable_extra_text
     );
     let _ = writeln!(s, "| … verse cut short | {} | |", t.usable_missing_text);
