@@ -535,6 +535,21 @@ fn a_title_without_its_number_follows_the_book_before_it() {
     );
     let books: Vec<_> = r.books.iter().map(|b| b.book).collect();
     assert_eq!(books, vec![Some("2KI"), Some("1CH"), Some("2CH")]);
+    // A subtitle right under a title ("1 Crónicas" / "Crónicas") is never
+    // the next book.
+    let text = format!(
+        "1 Crónicas\n\nCrónicas\n\n{}",
+        (1..=54u16)
+            .map(|v| format!("{v} {}\n", words("1 Crónicas", 1, v)))
+            .collect::<String>()
+    );
+    let subtitle = structure::recognise(
+        &read("cronicas.txt", text.as_bytes()).units,
+        Some("es"),
+        &Corrections::default(),
+    );
+    let books: Vec<_> = subtitle.books.iter().map(|b| b.book).collect();
+    assert_eq!(books, vec![Some("1CH")]);
     assert_eq!(
         verse(&r, "2CH", 1, 17).as_deref(),
         Some(words("2 Crónicas", 1, 17).as_str())

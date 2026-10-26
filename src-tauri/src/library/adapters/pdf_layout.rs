@@ -747,7 +747,16 @@ fn mark_centred(lines: &mut [Line]) {
         }
         for line in lines.iter_mut().filter(|l| l.column == column) {
             let (before, after) = (line.x0 - left, right - line.x1);
-            if before > 0.1 * width && after > 0.1 * width && (before - after).abs() < 0.06 * width
+            // (A line ending as a sentence does is a line of verse that
+            // happens to stand in the middle: a poem's line.)
+            let sentence = line
+                .text
+                .trim_end()
+                .ends_with(['.', ',', ';', ':', '!', '?', '"', '”', '’', '»']);
+            if !sentence
+                && before > 0.1 * width
+                && after > 0.1 * width
+                && (before - after).abs() < 0.06 * width
             {
                 line.styled = true;
             }

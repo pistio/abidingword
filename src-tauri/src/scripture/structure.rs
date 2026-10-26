@@ -2452,6 +2452,17 @@ impl Builder<'_> {
             return None;
         }
         let last = canon::by_code(self.last_detected?)?;
+        // Only once the book before has some of its text: a line right under
+        // its title ("1 Crónicas" / "Crónicas") is a subtitle of it.
+        let since_title = self
+            .items
+            .iter()
+            .rev()
+            .take_while(|i| !matches!(i.event, Event::Book { .. }))
+            .any(|i| matches!(i.event, Event::Chapter(_) | Event::Marker(_)));
+        if !since_title {
+            return None;
+        }
         (1..=3u8).find_map(
             |n| match read_heading(&format!("{n} {text}"), self.language) {
                 Some(Heading::Book(book)) if book.ordinal == last.ordinal + 1 => {
