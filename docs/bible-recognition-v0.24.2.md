@@ -9,7 +9,10 @@ Vulgate). v0.24.2 makes recognition work across translations, languages,
 editions and document layouts, and measures it on a corpus of real editions
 (`docs/corpus/`).
 
-The numbers before and after are in `docs/audit/v0.24.2/`.
+The numbers before and after are in `docs/audit/v0.24.2/` (§9, §10). On the
+development corpus no usable verse is one the edition does not have; on the
+hidden editions, which were not used to write any rule, **three are** (§9):
+recognition is not ready to be trusted without the person's review.
 
 ## 1. Why the Louis Segond was 0 %
 
@@ -237,3 +240,71 @@ for verses…") needs no new import.
   told from a verse's last line; they stay in the verse.
 * **Preserved corrections.** A re-run reads the kept files again; book
   corrections chosen earlier are not yet stored, so they are chosen again.
+
+## 9. Hidden editions
+
+Ten documents of five editions in five languages were kept out of
+development (role `hidden` in `docs/corpus/editions.tsv`): no rule was
+written or tuned on them, and their results were read only after the
+development corpus was final (`docs/audit/v0.24.2/hidden/`). They are the
+Textbibel 1906, the French Darby 1885, the Spanish Free Bible (with its
+deuterocanon), Young's Literal Translation and the Byzantine Greek New
+Testament, in eBible page sizes and typesetting not in the development
+corpus (A4, book size), one EPUB, and four LibreOffice Word and PDF
+conversions made from the editions' USFM. One subscription fix (§3, a
+2 Timothy subscription wrapped over five lines) was made on the
+development corpus after the hidden run; it does not touch the rules the
+hidden results below depend on.
+
+| Edition | Usable | Different (typography / extra / cut / wrong ref. / changed) | False positives |
+|---|---|---|---|
+| deutkw-pdf | 97.7 % | 294 (0 / 281 / 1 / 0 / 12) | 0 |
+| frajnd-pdf | 80.1 % | 921 (359 / 482 / 5 / 0 / 75) | **3** |
+| frajnd-epub | 78.1 % | 0 | 0 |
+| spablm-pdf | 94.8 % | 2 (0 / 1 / 1 / 0 / 0) | 0 |
+| engylt-pdf | 100 % | 1 (0 / 0 / 1 / 0 / 0) | 0 |
+| grcbyz-pdf | 99.7 % | 20 (0 / 15 / 0 / 0 / 5) | 0 |
+| deutkw-docx | 54.4 % | 1679 (0 / 1667 / 1 / 0 / 11) | 0 |
+| deutkw-lopdf | 54.3 % | 1669 (0 / 1657 / 1 / 0 / 11) | 0 |
+| spablm-docx | 67.6 % | 1285 (0 / 1278 / 6 / 0 / 1) | 0 |
+| frajnd-lopdf | 35.4 % | 1151 (107 / 1042 / 1 / 0 / 1) | 0 |
+
+What they show, by cause (parser limitations unless said otherwise):
+
+* **Footnotes taken as verses (false positives).** The Darby PDF prints
+  three verses only in its footnotes ("a 23:14 Le « Texte reçu » ajoute le
+  v. 14 : Malheur à vous …"; Acts 8:37 and 15:34 likewise); its notes are not
+  set smaller, and the recogniser accepted them as Matthew 23:14 and Acts
+  8:37 and 15:34. Apparatus accepted as Scripture: the most serious result
+  of this milestone.
+* **Running heads inside verses** ("Le premier livre de Samuel 1:1 364 Le
+  premier livre de Samuel 1:17", "ΠΡΟΣ ΤΙΜΟΘΕΟΝ Α΄ 4:13 232 …"): a page's
+  head with its page number, joined to the verse that runs over the page.
+  Most of the "extra" and all the "changed" in frajnd-pdf and grcbyz-pdf.
+* **Unstyled section headings ending in a full stop** ("Das Paradies und
+  der Sündenfall.", "Davids Volkszählung. (Vergl. …") stay in the verse
+  before them or take verse 1's place (deutkw-pdf).
+* **Verse numbers written against the word** ("5auf Kain", "15y sean"): the
+  LibreOffice conversions from USFM run two verses together (most of the
+  "extra" in the four converted documents).
+* **Small capitals** (the Darby's "ÉTERNEL" for "Éternel"): the PDF draws
+  capitals; 5876 verses differ only in case (counted usable; a property of
+  the source).
+* **Pentateuch titles** of the Darby are not recognised in any of its three
+  formats, so Genesis to Deuteronomy are not found (frajnd-epub's 78 %).
+
+## 10. Audit evidence
+
+`docs/audit/v0.24.2/` holds:
+
+* `summary-baseline.md` — the corpus at the start of this work;
+* `final/summary.md` — the development corpus at its end, every edition;
+* `final/differences.md` — every difference in a usable verse, with its kind,
+  page, and the found text beside the edition's own;
+* `hidden/summary.md`, `hidden/differences.md` — the same for the hidden
+  editions (the first 40 differences of each, with the counts by kind).
+
+The false-positive count is the audit's own check (a usable verse whose
+reference the edition's USFM does not have), listed at the end of each
+`differences.md`.
+

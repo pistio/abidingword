@@ -3352,14 +3352,15 @@ impl Builder<'_> {
             // A styled passage after a book's last verse, with only the next
             // book (or nothing) after it: a colophon ("Written to the Romans
             // from Corinthus …"), not words of the verse.
-            // It may run over a few lines, not all of them long enough for
-            // their style to show ("Written to the Romans … servant of the" /
+            // It may run over a few lines (up to six in a narrow column, 300
+            // characters at most), not all of them long enough for their
+            // style to show ("Written to the Romans … servant of the" /
             // "church at Cenchrea.").
             let book_ends = next.is_none_or(|i| matches!(self.items[i].event, Event::Book { .. }));
             if book_ends {
                 let (mut j, mut total, mut styled) = (k, 0usize, false);
                 let (mut start, mut run) = (None, String::new());
-                while j >= 1 && k - j < 4 {
+                while j >= 1 && k - j < 6 {
                     let Some((line, st)) = whole_alone(self, j) else {
                         break;
                     };
