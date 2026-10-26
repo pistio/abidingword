@@ -121,9 +121,10 @@
     "documentLabel": "{{book}} {{chapter}}: Die Zeile „{{line}}“ steht zwischen zwei Sätzen eines Verses und kommt anderswo als eigene Zeile wieder vor (vielleicht der Name eines Sprechers oder eine Überschrift). Dieses Kapitel wird nicht verwendet.",
     "documentRaisedLetters": "{{book}} {{chapter}}: Ein Vers enthält kleine hochgestellte Buchstaben, die keine Anmerkung auf der Seite erklärt (vielleicht Verweisbuchstaben). Dieses Kapitel wird nicht verwendet.",
     "documentPagesUnread": "„{{fileName}}“: Der Text der Seite(n) {{pages}} ließ sich nicht vollständig lesen. Verse darauf fehlen.",
+    "documentNumberInVerse": "{{book}} {{chapter}}: Vers {{verse}} wurde nicht gefunden, aber die Zahl {{verse}} steht im Vers davor; die beiden könnten ineinander übergehen. Dieses Kapitel wird nicht verwendet.",
     "documentFootnotes_one": "{{count}} Zeile mit Fußnoten unten auf den Seiten wurde ausgelassen.",
     "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen.",
-    "documentNumberInVerse": "{{book}} {{chapter}}: Vers {{verse}} wurde nicht gefunden, aber die Zahl {{verse}} steht im Vers davor; die beiden könnten ineinander übergehen. Dieses Kapitel wird nicht verwendet."
+    "documentChapterLong": "{{book}} {{chapter}} reicht bis Vers {{last}}; das Kapitel hat üblicherweise {{expected}} Verse. Vielleicht wurde ein anderes Kapitel oder Buch hineingelesen. Dieses Kapitel wird nicht verwendet."
   },
   "library": {
     "notUtf8": "„{{fileName}}“ ist nicht als UTF-8-Text gespeichert und konnte daher nicht gelesen werden.",

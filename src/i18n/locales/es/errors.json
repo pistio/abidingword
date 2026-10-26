@@ -131,10 +131,11 @@
     "documentLabel": "{{book}} {{chapter}}: la línea «{{line}}» está entre dos oraciones de un versículo y se repite en otros lugares como línea propia (quizá el nombre de quien habla o un título). Este capítulo no se usa.",
     "documentRaisedLetters": "{{book}} {{chapter}}: un versículo tiene letras pequeñas en superíndice que ninguna nota de la página explica (quizá llamadas de referencias). Este capítulo no se usa.",
     "documentPagesUnread": "«{{fileName}}»: no se pudo leer por completo el texto de la(s) página(s) {{pages}}. Faltan los versículos que contienen.",
+    "documentNumberInVerse": "{{book}} {{chapter}}: no se encontró el versículo {{verse}}, pero el número {{verse}} aparece en el versículo anterior; los dos podrían estar unidos. Este capítulo no se usa.",
     "documentFootnotes_one": "Se omitió {{count}} línea de notas al pie de las páginas.",
     "documentFootnotes_other": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
     "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
-    "documentNumberInVerse": "{{book}} {{chapter}}: no se encontró el versículo {{verse}}, pero el número {{verse}} aparece en el versículo anterior; los dos podrían estar unidos. Este capítulo no se usa."
+    "documentChapterLong": "{{book}} {{chapter}} llega hasta el versículo {{last}}; normalmente tiene {{expected}} versículos. Quizá se leyó en él otro capítulo u otro libro. Este capítulo no se usa."
   },
   "library": {
     "notUtf8": "«{{fileName}}» no está guardado como texto UTF-8, así que no se pudo leer.",

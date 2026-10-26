@@ -57,6 +57,10 @@ const LOOKAHEAD: usize = 400;
 /// (Joel 2 has 27 verses in Hebrew Bibles, 32 in English ones); more, and
 /// its end was not found.
 const SHORT_TOLERANCE: u16 = 6;
+/// A chapter with this many verses more than usual (or half as many again,
+/// for a long chapter) is not another numbering of it: another chapter, or
+/// another book, was read into it.
+const LONG_TOLERANCE: u16 = 6;
 /// Samples of left-out text kept for the review.
 const SAMPLES: usize = 12;
 
@@ -447,6 +451,8 @@ fn title_forms(key: &str) -> Vec<String> {
         "salomos",
         "salomo",
         "of solomon",
+        "de salomao",
+        "de salomon",
         "de jesus-christ",
         "de jesucristo",
         "de jesus cristo",
@@ -544,18 +550,23 @@ fn title_forms(key: &str) -> Vec<String> {
         }
         break;
     }
-    // A number after the name ("Ad Corinthios I", "Regum primus").
+    // A number after the name ("Ad Corinthios I", "Regum primus"): a word
+    // or a Roman numeral, never a figure ("Jó 1" is Job's chapter 1).
     if number.is_none() && words.len() >= 2 {
-        if let Some((_, n)) = words
-            .last()
-            .and_then(|last| ORDINALS.iter().find(|(w, _)| w == last))
-        {
+        if let Some((_, n)) = words.last().and_then(|last| {
+            ORDINALS
+                .iter()
+                .find(|(w, _)| w == last && !w.chars().all(|c| c.is_ascii_digit()))
+        }) {
             number = Some(*n);
             words.pop();
             changed = true;
         }
     }
-    if !changed || words.is_empty() {
+    // (Nothing taken off: the first-word books and the words after a name
+    // are still looked at, "Lamentações de Jeremias".)
+    let _ = changed;
+    if words.is_empty() {
         return extra;
     }
     let mut rest = words.join(" ");
@@ -801,6 +812,19 @@ fn book_named_once(
         [one] => Some(one),
         _ => {
             let language = language?;
+            // Names that differ only by an accent ("Jó", Job; "Jo", João):
+            // the document's language as written decides.
+            let written = normalise(text.trim());
+            let exact: Vec<&'static Book> = ReferenceParser::for_language(language)
+                .lookup_entries()
+                .filter(|(name, _)| normalise(name) == written)
+                .map(|(_, b)| b)
+                .collect();
+            if let [one, rest @ ..] = exact.as_slice() {
+                if rest.iter().all(|b| b.code == one.code) {
+                    return Some(one);
+                }
+            }
             let own: Vec<&'static Book> = found
                 .iter()
                 .filter(|(_, l)| *l == language)
@@ -1333,6 +1357,17 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             } else {
                 return None;
             };
+            // A line that is only a word in capitals and a number ("BOOK 2",
+            // "LIVRO 3", "PART 1"): a label of the book's divisions.
+            if strength == Strength::Medium
+                && chars[next_index..].iter().all(|(_, c)| c.is_whitespace())
+                && {
+                    let word = before.trim();
+                    word.chars().count() >= 2 && word.chars().all(char::is_uppercase)
+                }
+            {
+                return None;
+            }
             if strength == Strength::Medium {
                 // "chapter 3", "John 3", "page 12": a reference or a count, not a verse.
                 let word = before
@@ -1607,14 +1642,15 @@ fn page_footnotes(units: &[Unit]) -> HashSet<usize> {
     use std::sync::OnceLock;
     static NOTE: OnceLock<regex::Regex> = OnceLock::new();
     let note = NOTE.get_or_init(|| {
-        regex::Regex::new(r#"^[^\p{L}\p{N}\s.,;:!?'"()\[\]«»„“”‘’\-–—/\x{E000}\x{E001}]+\s*\d{1,3}[:,.]\d{1,3}(?:\s|$)"#).expect("valid pattern")
+        regex::Regex::new(r#"^[^\p{L}\p{N}\s.,;:!?'"()\[\]«»„“”‘’\-–—/\x{E000}\x{E001}]+\s*\d{1,3}[:,.]\d{1,3}(?:\s|$|\p{L})"#).expect("valid pattern")
     });
     let mut out = HashSet::new();
     let mut in_notes: Option<(u16, u32)> = None;
     for (i, unit) in units.iter().enumerate() {
         let Some(page) = unit.place.page else {
             // Without pages (EPUB, Word, text): a passage that begins as a
-            // note does ("*1:1 A palavra …") is one.
+            // note does ("*1:1 A palavra …") is one. (Some PDFs print notes
+            // without spaces: "† 2:6there…: or, amist…".)
             in_notes = None;
             if !unit.heading && note.is_match(unit.text.trim_start()) {
                 out.insert(i);
@@ -2409,7 +2445,9 @@ impl Builder<'_> {
                     let same_page = self.units[next].place.page == unit.place.page;
                     let both = format!("{text} {second}");
                     // The second line may begin in lower case ("the Corinthians").
+                    // (Never a number alone: "Jó" over its chapter's "1" is not "Jó 1".)
                     let second_ok = second.chars().count() <= 60
+                        && second.chars().any(char::is_alphabetic)
                         && !second.ends_with(['.', ',', ';', ':', '!', '?', '"', '”', '’']);
                     // (A title with a second name may be longer than a heading.)
                     let named = if dangling {
@@ -4212,6 +4250,8 @@ impl Reader<'_> {
     /// gaps the common checks see: compared with the standard verse counts.
     /// A few fewer is another numbering (a warning); many fewer means the
     /// chapter's end was not found, and its verses are not used (an error).
+    /// Far more than usual means another chapter or book was read into it
+    /// (an error too).
     fn short_chapters(&mut self) {
         let mut found = Vec::new();
         for (ordinal, staged) in &self.out.content.books {
@@ -4229,6 +4269,10 @@ impl Reader<'_> {
                     .copied()
                     .max()
                     .unwrap_or(0);
+                if last > expected + LONG_TOLERANCE.max(expected / 2) {
+                    found.push((Severity::Error, book, *chapter, last, expected));
+                    continue;
+                }
                 if last == 0 || last >= expected {
                     continue;
                 }
@@ -4241,6 +4285,25 @@ impl Reader<'_> {
             }
         }
         for (severity, book, chapter, last, expected) in found {
+            if last > expected {
+                self.out.content.issue(
+                    severity,
+                    Some(book),
+                    Some(chapter),
+                    UserMessage::new(
+                        "bibleImport.documentChapterLong",
+                        format!(
+                            "{} {chapter} goes on to verse {last}; it usually has {expected} verses. Another chapter or book may have been read into it. This chapter is not used.",
+                            book.name
+                        ),
+                    )
+                    .with("bookCode", book.code)
+                    .with("chapter", chapter)
+                    .with("last", last)
+                    .with("expected", expected),
+                );
+                continue;
+            }
             self.out.content.issue(
                 severity,
                 Some(book),

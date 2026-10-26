@@ -489,6 +489,32 @@ fn a_title_that_gives_a_second_name_names_its_own_book() {
 }
 
 #[test]
+fn a_chapter_far_longer_than_usual_is_refused() {
+    // Ruth 1 has 22 verses; 40 numbered verses under it mean another chapter
+    // or book was read into it (a missed title). Never used as Ruth 1.
+    let mut text = String::from("Ruth\n\nChapter 1\n\n");
+    for v in 1..=40u16 {
+        text.push_str(&format!("{v} {}\n", words("Ruth", 1, v)));
+    }
+    let r = recognise(&read("ruth.txt", text.as_bytes()));
+    assert!(
+        codes(&r).contains(&"bibleImport.documentChapterLong".to_string()),
+        "{:?}",
+        codes(&r)
+    );
+    // An error on Ruth 1: the chapter is not used.
+    assert!(r
+        .content
+        .issues
+        .iter()
+        .any(|i| i.severity == Severity::Error
+            && i.code.as_deref() == Some("bibleImport.documentChapterLong")
+            && i.book == Some("RUT")
+            && i.chapter == Some(1)));
+    assert!(!r.usable());
+}
+
+#[test]
 fn corrections_choose_or_leave_out_a_book() {
     // A title the dictionaries do not know, before "Chapter 1".
     let text = ruth_lines(|c| format!("Chapter {c}")).replacen(
