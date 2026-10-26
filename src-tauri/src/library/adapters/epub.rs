@@ -198,6 +198,17 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
         return Err(bad("no reading order"));
     }
 
+    // The classes the book's stylesheets set apart (bold, italic, centred,
+    // larger): evidence of headings where the book does not use h1–h6.
+    let mut emphasised = std::collections::HashSet::new();
+    for item in package.manifest.values() {
+        if item.media_type == "text/css" {
+            let path = normalise(&format!("{base}{}", item.href));
+            if let Some(css) = read_entry(&mut archive, &path) {
+                emphasised.extend(emphasised_classes(&css));
+            }
+        }
+    }
     let mut segments = Vec::new();
     let mut pending: Vec<PendingLink> = Vec::new();
     let mut layout = Layout::default();
@@ -268,6 +279,7 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
                     heading: heading.clone(),
                     section_path: section_path.clone().or_else(|| chapter.clone()),
                     paragraph_index: Some(paragraph),
+                    styled: block.classes.iter().any(|c| emphasised.contains(c)),
                     ..Default::default()
                 });
                 paragraph += 1;
@@ -518,6 +530,8 @@ pub(super) fn percent_decode(value: &str) -> String {
 struct Block {
     text: String,
     heading_level: Option<usize>,
+    /// The class names of the element the block is (`class="s"`).
+    classes: Vec<String>,
     /// Links in the text, as character ranges of `text`.
     links: Vec<RawLink>,
 }
@@ -608,15 +622,22 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
     let mut acc = Acc::default();
     let mut heading: Option<usize> = None;
     let mut skip_depth = 0usize;
-    let flush = |out: &mut Vec<Block>, acc: &mut Acc, heading: Option<usize>| {
+    let mut classes: Vec<String> = Vec::new();
+    let flush = |out: &mut Vec<Block>, acc: &mut Acc, heading: Option<usize>, classes: &[String]| {
         let (text, links) = acc.take();
         if !text.is_empty() {
             out.push(Block {
                 text,
                 heading_level: heading,
+                classes: classes.to_vec(),
                 links,
             });
         }
+    };
+    let class_of = |e: &quick_xml::events::BytesStart| -> Vec<String> {
+        attr_value(e, "class")
+            .map(|c| c.split_whitespace().map(str::to_string).collect())
+            .unwrap_or_default()
     };
     loop {
         match reader.read_event() {
@@ -625,11 +646,13 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth += 1,
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading);
+                        flush(&mut out, &mut acc, heading, &classes);
                         heading = Some((name.as_bytes()[1] - b'0') as usize);
+                        classes = class_of(&e);
                     }
                     "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr" => {
-                        flush(&mut out, &mut acc, heading);
+                        flush(&mut out, &mut acc, heading, &classes);
+                        classes = class_of(&e);
                     }
                     "a" if skip_depth == 0 => {
                         if let Some(href) = attr_value(&e, "href") {
@@ -645,11 +668,13 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth = skip_depth.saturating_sub(1),
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading);
+                        flush(&mut out, &mut acc, heading, &classes);
                         heading = None;
+                        classes.clear();
                     }
                     "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr" => {
-                        flush(&mut out, &mut acc, heading);
+                        flush(&mut out, &mut acc, heading, &classes);
+                        classes.clear();
                     }
                     "a" => acc.close_link(),
                     _ => {}
@@ -670,8 +695,63 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
             _ => {}
         }
     }
-    flush(&mut out, &mut acc, heading);
+    flush(&mut out, &mut acc, heading, &classes);
     (out, anchors)
+}
+
+/// The classes a book's stylesheets set apart: bold, italic, centred or
+/// larger than the text (`.s {font-weight:bold; text-align:center}`). Simple
+/// class selectors only ("`.s`", "`div.s`", "`html[dir=ltr] .q`"); anything
+/// the reader cannot follow simply sets nothing apart.
+pub(super) fn emphasised_classes(css: &str) -> std::collections::HashSet<String> {
+    let mut out = std::collections::HashSet::new();
+    let mut text = String::with_capacity(css.len());
+    // Comments out.
+    let mut rest = css;
+    while let Some(start) = rest.find("/*") {
+        text.push_str(&rest[..start]);
+        rest = rest[start + 2..].find("*/").map_or("", |end| &rest[start + 2 + end + 2..]);
+    }
+    text.push_str(rest);
+    for rule in text.split('}') {
+        let Some((selectors, declarations)) = rule.split_once('{') else {
+            continue;
+        };
+        let declarations = declarations.to_ascii_lowercase();
+        let value = |property: &str| -> Option<String> {
+            declarations.split(';').find_map(|d| {
+                let (k, v) = d.split_once(':')?;
+                (k.trim() == property).then(|| v.trim().to_string())
+            })
+        };
+        let bold = value("font-weight").is_some_and(|v| {
+            v.starts_with("bold") || v.starts_with('6') || v.starts_with('7') || v.starts_with('8') || v.starts_with('9')
+        });
+        let italic = value("font-style").is_some_and(|v| v.starts_with("italic") || v.starts_with("oblique"));
+        let centred = value("text-align").is_some_and(|v| v.starts_with("center"));
+        let larger = value("font-size").is_some_and(|v| {
+            let number: String = v.chars().take_while(|c| c.is_ascii_digit() || *c == '.').collect();
+            let n: f64 = number.parse().unwrap_or(0.0);
+            (v.ends_with("em") && n > 1.05) || (v.ends_with('%') && n > 105.0) || v.starts_with("larger")
+        });
+        if !(bold || italic || centred || larger) {
+            continue;
+        }
+        for selector in selectors.split(',') {
+            let last = selector.split_whitespace().last().unwrap_or("");
+            // "div.s", ".s", ".s:first-child" → "s".
+            if let Some((_, class)) = last.rsplit_once('.') {
+                let class: String = class
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_')
+                    .collect();
+                if !class.is_empty() {
+                    out.insert(class);
+                }
+            }
+        }
+    }
+    out
 }
 
 fn note_anchor(

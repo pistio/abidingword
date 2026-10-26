@@ -110,8 +110,9 @@
     "documentRunningHead": "{{book}} {{chapter}}장: {{page}}쪽은 {{found}}절로 끝나지만, 면주({{head}})에는 {{named}}로 적혀 있습니다. 이 장은 사용하지 않습니다.",
     "documentLabel": "{{book}} {{chapter}}장: “{{line}}” 줄이 한 절의 두 문장 사이에 있고 다른 곳에서도 따로 한 줄로 되풀이됩니다(말하는 사람의 이름이나 소제목일 수 있음). 이 장은 사용하지 않습니다.",
     "documentRaisedLetters": "{{book}} {{chapter}}장: 어떤 절에 쪽의 각주로 설명되지 않는 작은 위첨자 글자가 있습니다(관주 표시일 수 있음). 이 장은 사용하지 않습니다.",
+    "documentPagesUnread": "“{{fileName}}”: {{pages}}쪽의 텍스트를 모두 읽을 수 없었습니다. 그 쪽의 절은 빠져 있습니다.",
     "documentFootnotes_other": "쪽 아래의 각주 {{count}}줄은 제외했습니다.",
-    "documentPagesUnread": "“{{fileName}}”: {{pages}}쪽의 텍스트를 모두 읽을 수 없었습니다. 그 쪽의 절은 빠져 있습니다."
+    "documentNumberInVerse": "{{book}} {{chapter}}장: {{verse}}절을 찾지 못했지만 숫자 {{verse}}가 앞 절 안에 있습니다. 두 절이 이어져 있을 수 있습니다. 이 장은 사용하지 않습니다."
   },
   "library": {
     "notUtf8": "“{{fileName}}”은(는) UTF-8 텍스트로 저장되어 있지 않아 읽을 수 없습니다.",

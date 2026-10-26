@@ -31,6 +31,7 @@
 //! as their provenance.
 
 use std::cmp::Ordering;
+use std::collections::HashMap;
 
 /// More characters than this in one file are not examined (a very long
 /// document is read as far as this; the rest is reported, not guessed).
@@ -64,6 +65,11 @@ pub struct Span {
     pub size: f64,
     /// The index of its first character in the page's drawing order.
     pub first_char: usize,
+    /// Of its characters whose usual width on the page is known, how many
+    /// are drawn with another width (`styled`): set in another typeface
+    /// (bold, italic) than the page's running text.
+    pub compared: u32,
+    pub styled: u32,
 }
 
 impl Span {
@@ -115,6 +121,10 @@ pub struct Line {
     /// [`RAISED_CLOSE`]; None when it has none. For readers that need to know
     /// (the Scripture recogniser); the stored text is `text`.
     pub marked: Option<String>,
+    /// Most of the line is set in another typeface than the page's running
+    /// text (bold or italic: a heading, a label), judged from the widths
+    /// its font gives its letters.
+    pub styled: bool,
 }
 
 /// Around raised small letters in [`Line::marked`] (private-use characters,
@@ -130,8 +140,14 @@ fn raised_letters(s: &Span, main: &Span) -> bool {
         && s.text
             .chars()
             .all(|c| c.is_alphabetic() && c.is_lowercase())
-        && s.size < 0.85 * main.size
-        && main.y - s.y > 0.2 * main.size
+        && {
+            let lift = main.y - s.y;
+            // Smaller and raised (a superscript letter), or as large as the
+            // text but clearly lifted off its baseline (some editions set
+            // their reference letters so). Never so high it is another line.
+            (s.size < 0.85 * main.size && lift > 0.2 * main.size)
+                || (lift > 0.12 * main.size && lift < 0.7 * main.size)
+        }
 }
 
 /// A page put in reading order.
@@ -242,6 +258,9 @@ struct Glyph {
     y: f32,
     end: f32,
     size: f32,
+    /// The width the font gives the glyph (thousandths of the text size):
+    /// the same letter has another width in another typeface.
+    width: u16,
     upright: bool,
 }
 
@@ -402,12 +421,18 @@ impl pdf_extract::OutputDev for Collector {
         let y = self.top - trm.m32;
         let advance = (width * font_size + spacing) * trm.m11;
         let end = x + if advance.is_finite() { advance } else { 0.0 };
+        let glyph_width = if width.is_finite() {
+            (width * 1000.0).round().clamp(0.0, 60000.0) as u16
+        } else {
+            0
+        };
         page.glyphs.push(Glyph {
             text: GlyphText::from(char),
             x: x as f32,
             y: y as f32,
             end: end as f32,
             size: size as f32,
+            width: glyph_width,
             upright: upright && size > 0.0 && x.is_finite() && y.is_finite(),
         });
         Ok(())
@@ -432,6 +457,35 @@ impl pdf_extract::OutputDev for Collector {
 /// become a span. A space is put where the gap between two characters is
 /// wider than a narrow space.
 fn spans(glyphs: &[Glyph]) -> Vec<Span> {
+    // The usual width of each letter on the page (its running text's
+    // typeface): the width most of its occurrences have.
+    let mut widths: HashMap<char, HashMap<u16, u32>> = HashMap::new();
+    for g in glyphs.iter().filter(|g| g.upright && g.width > 0) {
+        let mut chars = g.text.chars();
+        if let (Some(c), None) = (chars.next(), chars.next()) {
+            if c.is_alphabetic() {
+                *widths.entry(c).or_default().entry(g.width).or_default() += 1;
+            }
+        }
+    }
+    let usual: HashMap<char, u16> = widths
+        .into_iter()
+        .filter_map(|(c, counts)| {
+            let total: u32 = counts.values().sum();
+            let (w, n) = counts.into_iter().max_by_key(|(_, n)| *n)?;
+            // Only letters seen often enough for "usual" to mean something.
+            (total >= 8 && n * 2 > total).then_some((c, w))
+        })
+        .collect();
+    let compare = |g: &Glyph| -> Option<bool> {
+        let mut chars = g.text.chars();
+        let (Some(c), None) = (chars.next(), chars.next()) else {
+            return None;
+        };
+        let w = *usual.get(&c)?;
+        // Another width by more than 3 % (rounding aside).
+        Some((i32::from(g.width) - i32::from(w)).abs() * 100 > i32::from(w) * 3 + 100)
+    };
     let mut out: Vec<Span> = Vec::new();
     let mut current: Option<(Span, f64)> = None; // span, x where the next character would go
     let finish = |out: &mut Vec<Span>, span: Option<(Span, f64)>| {
@@ -470,6 +524,8 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
                     y: f64::from(g.y),
                     size: f64::from(g.size),
                     first_char: index,
+                    compared: 0,
+                    styled: 0,
                 },
                 f64::from(g.x),
             ));
@@ -485,6 +541,10 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
             }
             span.text.push_str(&g.text);
             span.x1 = span.x1.max(f64::from(g.end).max(f64::from(g.x)));
+            if let Some(other) = compare(g) {
+                span.compared += 1;
+                span.styled += u32::from(other);
+            }
         }
         *next = f64::from(g.end).max(f64::from(g.x));
     }
@@ -638,6 +698,14 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
             block: *block,
             first_char: group.iter().map(|s| s.first_char).min().unwrap_or(0),
             role: LineRole::Text,
+            styled: {
+                let compared: u32 = group.iter().map(|s| s.compared).sum();
+                let styled: u32 = group.iter().map(|s| s.styled).sum();
+                // Lines of running text reach a third or so (accented
+                // letters, a word in italics); a heading line set in another
+                // face, well over half.
+                compared >= 6 && styled * 100 >= compared * 55
+            },
         });
     }
     out
@@ -1021,14 +1089,17 @@ fn peel(spans: &mut Vec<&Span>, body: f64, height: f64, top: bool) -> Vec<Span> 
     } else {
         line_edge - next_edge
     };
-    let outer = if top {
-        first <= height / 8.0
-    } else {
-        first >= height * 7.0 / 8.0
-    };
     // Set apart by a clear space, or — a smaller head or footer on a compact
     // page — by a narrower one.
     let smaller = line.iter().all(|&i| spans[i].size <= 0.9 * body);
+    // In the outer eighth of the page — or, set smaller than the text, in
+    // its outer quarter (a book-size page with wide margins).
+    let reach = if smaller { 4.0 } else { 8.0 };
+    let outer = if top {
+        first <= height / reach
+    } else {
+        first >= height * (reach - 1.0) / reach
+    };
     if !outer || (gap < 0.6 * body && !(smaller && gap >= 0.2 * body)) {
         return Vec::new();
     }
@@ -1134,6 +1205,7 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
                 first_char,
                 role: LineRole::Drawn,
                 marked: None,
+                styled: false,
             });
         }
         text.clear();
@@ -1336,6 +1408,7 @@ mod tests {
                     y: y as f32,
                     end: (at + 0.5 * size) as f32,
                     size: size as f32,
+                    width: 500,
                     upright: true,
                 });
             }
@@ -1675,5 +1748,64 @@ mod tests {
         let p = page(glyphs);
         assert_eq!(p.order, PageOrder::Single);
         assert_eq!(p.lines[0].text, "1 the words of verse 1 in a psalm");
+    }
+}
+
+#[cfg(test)]
+mod glyph_probe {
+    // Temporary: AW_GLYPH_PDF=file AW_GLYPH_PAGE=n AW_GLYPH_WORD=text
+    use super::*;
+    #[test]
+    #[ignore]
+    fn glyphs() {
+        let path = std::env::var("AW_GLYPH_PDF").unwrap();
+        let page: usize = std::env::var("AW_GLYPH_PAGE").unwrap().parse().unwrap();
+        let word = std::env::var("AW_GLYPH_WORD").unwrap();
+        let bytes = std::fs::read(&path).unwrap();
+        let doc = lopdf::Document::load_mem(&bytes).unwrap();
+        let mut c = Collector::default();
+        pdf_extract::output_doc_page(&doc, &mut c, page as u32).unwrap();
+        let p = &c.pages[0];
+        if std::env::var("AW_GLYPH_LAYOUT").is_ok() {
+            let letters = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();
+            let drawn: usize = p.glyphs.iter().map(|g| letters(&g.text)).sum();
+            let rotated = p.glyphs.iter().filter(|g| !g.upright).count();
+            let page = PageGlyphs { number: 1, width: p.width, height: p.height, glyphs: p.glyphs.clone() };
+            let l = layout_page(page, None);
+            let read: usize = l.lines.iter().map(|x| letters(&x.text)).sum();
+            eprintln!("order {:?} drawn {drawn} read {read} rotated {rotated} spans {}", l.order, spans(&p.glyphs).len());
+            let all = spans(&p.glyphs);
+            let in_spans: usize = all.iter().map(|s| letters(&s.text)).sum();
+            eprintln!("letters in spans {in_spans}");
+            let mut refs: Vec<&Span> = all.iter().collect();
+            let body = page_body_size(&refs);
+            let _ = peel(&mut refs, body, p.height, true);
+            let _ = notes(&mut refs, body);
+            let _ = peel(&mut refs, body, p.height, false);
+            eprintln!("body {body} gutter {:?}", find_gutter(&refs, body));
+            let mut block = 0;
+            eprintln!("column_lines ok {}", column_lines(&refs, body, 0, &mut block).is_some());
+            for line in lines_of(&refs, body, 0, &mut block) {
+                let pieces: Vec<&Span> = refs.iter().copied().filter(|s| (s.y - line.y).abs() <= 0.5 * line.size && s.x0 >= line.x0 - 1e-6 && s.x1 <= line.x1 + 1e-6).filter(|s| s.size < 1.6 * body).collect();
+                let g = widest_gap(&pieces);
+                if g > 2.5 { eprintln!("wide {g:.2} {}", line.text); }
+            }
+            for g in p.glyphs.iter().filter(|g| g.text.chars().count() != 1) .take(10) {
+                eprintln!("multi {:?}", g.text.to_string());
+            }
+            return;
+        }
+        if std::env::var("AW_GLYPH_SPANS").is_ok() {
+            for sp in spans(&p.glyphs) {
+                eprintln!("SPAN {}/{} y{:.1} s{:.1} {}", sp.styled, sp.compared, sp.y, sp.size, sp.text);
+            }
+            return;
+        }
+        let text: String = p.glyphs.iter().map(|g| g.text.to_string()).collect();
+        let at = text.find(&word).unwrap();
+        let start = text[..at].chars().count();
+        for g in p.glyphs.iter().skip(start.saturating_sub(4)).take(word.chars().count() + 8) {
+            eprintln!("{:?} x{:.1} y{:.1} end{:.1} size{:.2} w{}", g.text.to_string(), g.x, g.y, g.end, g.size, g.width);
+        }
     }
 }

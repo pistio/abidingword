@@ -1,28 +1,39 @@
-//! Accuracy of Bibles read from documents on real, typeset editions (v0.24,
-//! audit v0.24.1). Not run by default: set `AW_DOCUMENT_EDITIONS` to a folder
-//! holding eBible.org PDFs of editions whose USFM Abiding Word ships
-//! (`scripts/fetch-real-editions.sh` downloads and checks them), then
+//! Accuracy of Bibles read from documents, on a corpus of real editions
+//! (v0.24; corpus and accepted-verse audit v0.24.2). Not run by default.
+//!
+//! The corpus is listed in `docs/corpus/editions.tsv`: each edition's files
+//! (PDF, EPUB, Word, Markdown, plain text; one or more), its language and
+//! layout, and the publisher's USFM of the same revision to compare with.
+//! `scripts/fetch-real-editions.sh <folder>` downloads them and checks their
+//! checksums; `scripts/build-derived-editions.py` writes the converted ones.
+//! Then
 //!
 //! ```text
-//! cargo test --release --test real_document_editions -- --ignored --nocapture
+//! AW_DOCUMENT_EDITIONS=<folder> AW_AUDIT_OUT=<folder>/audit \
+//!   cargo test --release --test real_document_editions -- --ignored --nocapture
 //! ```
 //!
-//! Set `AW_AUDIT_OUT` to a folder to also write `<edition>.json` (machine-
-//! readable) and `<edition>.md` (human-readable) audits there.
+//! `AW_EDITIONS=key,key` audits only those; editions marked `hidden` (kept
+//! out of sight while the recogniser was being developed, for an
+//! independent final evaluation) are audited only with
+//! `AW_INCLUDE_HIDDEN=1`.
 //!
-//! The PDF is read exactly as a person's file would be: the recogniser never
-//! sees the USFM. Only afterwards is every verse recognised compared with the
-//! publisher's own USFM text of the same edition, and classified:
+//! Each document is read exactly as a person's file would be: the recogniser
+//! never sees the USFM. Only afterwards is every verse compared with the
+//! publisher's text of the same edition, and classified:
 //!
 //! * **exact** — the same characters (outer whitespace aside);
 //! * **normalised** — equal once whitespace is collapsed and removed between
-//!   punctuation (a thin space printed between two quotation marks) — the
-//!   same letters, digits and punctuation in the same order;
+//!   punctuation (a thin space printed between two quotation marks);
 //! * **different** — anything else: a genuine textual difference.
+//!
+//! Accepted (usable) verses and refused ones are counted apart: the accuracy
+//! that matters is that of the verses the app would show.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 use abiding_word_lib::scripture::canon;
 use abiding_word_lib::scripture::import::{self, ImportOrigin, Severity};
@@ -41,10 +52,50 @@ fn dense(text: &str) -> String {
     text.chars().filter(|c| !c.is_whitespace()).collect()
 }
 
+/// One edition of the corpus (a row of `docs/corpus/editions.tsv`).
+#[derive(Clone, serde::Serialize)]
+struct Edition {
+    key: String,
+    files: Vec<String>,
+    reference: Option<String>,
+    language: String,
+    script: String,
+    format: String,
+    layout: String,
+    hidden: bool,
+}
+
+fn corpus() -> Vec<Edition> {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs/corpus/editions.tsv");
+    let text = std::fs::read_to_string(&path).expect("docs/corpus/editions.tsv");
+    let mut out = Vec::new();
+    for line in text.lines().skip(1) {
+        let cols: Vec<&str> = line.split('\t').collect();
+        if cols.len() < 9 || line.starts_with('#') {
+            continue;
+        }
+        // key, files, reference, language, script, format, layout, role, source
+        out.push(Edition {
+            key: cols[0].into(),
+            files: cols[1].split(',').map(str::to_string).collect(),
+            reference: (cols[2] != "-").then(|| cols[2].to_string()),
+            language: cols[3].into(),
+            script: cols[4].into(),
+            format: cols[5].into(),
+            layout: cols[6].into(),
+            hidden: cols[7] == "hidden",
+        });
+    }
+    out
+}
+
 #[derive(Default, Clone, serde::Serialize)]
 struct BookAudit {
     code: String,
+    /// Verses with text in the edition's own USFM: what the edition prints.
     expected: usize,
+    /// Verses the USFM numbers but leaves empty (omitted in this edition).
+    absent_in_edition: usize,
     detected: usize,
     usable: usize,
     unmapped: usize,
@@ -53,10 +104,42 @@ struct BookAudit {
     refused_reading_order: usize,
     refused_verse_numbers: usize,
     refused_other: usize,
-    exact: usize,
-    normalised: usize,
-    different: usize,
+    /// Among usable (accepted) verses.
+    usable_exact: usize,
+    usable_normalised: usize,
     usable_different: usize,
+    /// Among refused verses (never shown).
+    refused_exact: usize,
+    refused_normalised: usize,
+    refused_different: usize,
+    /// Usable verses the edition does not have at all (a wrong number or
+    /// boundary): false positives.
+    usable_extra: usize,
+    /// Verses missing from a chapter that is otherwise usable.
+    missing_in_usable_chapter: usize,
+}
+
+impl BookAudit {
+    fn add(&mut self, b: &BookAudit) {
+        self.expected += b.expected;
+        self.absent_in_edition += b.absent_in_edition;
+        self.detected += b.detected;
+        self.usable += b.usable;
+        self.unmapped += b.unmapped;
+        self.chapters += b.chapters;
+        self.usable_chapters += b.usable_chapters;
+        self.refused_reading_order += b.refused_reading_order;
+        self.refused_verse_numbers += b.refused_verse_numbers;
+        self.refused_other += b.refused_other;
+        self.usable_exact += b.usable_exact;
+        self.usable_normalised += b.usable_normalised;
+        self.usable_different += b.usable_different;
+        self.refused_exact += b.refused_exact;
+        self.refused_normalised += b.refused_normalised;
+        self.refused_different += b.refused_different;
+        self.usable_extra += b.usable_extra;
+        self.missing_in_usable_chapter += b.missing_in_usable_chapter;
+    }
 }
 
 #[derive(serde::Serialize)]
@@ -70,20 +153,22 @@ struct Difference {
 
 #[derive(serde::Serialize)]
 struct EditionAudit {
-    file: String,
-    edition: String,
+    edition: Edition,
     reference: String,
     totals: BookAudit,
     books: Vec<BookAudit>,
+    /// Books of the edition of which no verse was found.
+    books_not_found: Vec<String>,
     issues: BTreeMap<String, usize>,
     refused_chapters: Vec<String>,
     differences: Vec<Difference>,
+    extra_verses: Vec<String>,
     pages_uncertain: usize,
     pages: usize,
-    /// Book headings found: (heading, book, page).
     found_books: Vec<(String, Option<String>, Option<u32>)>,
-    /// Errors naming no chapter, and the first errors naming one.
     errors: Vec<String>,
+    seconds: f64,
+    peak_memory_mb: Option<f64>,
 }
 
 /// Why a chapter was refused, from the codes of the errors naming it.
@@ -100,28 +185,45 @@ fn reason(code: &str) -> &'static str {
     }
 }
 
-fn audit(pdf: &Path, id: &str) -> EditionAudit {
-    let resources = Path::new(env!("CARGO_MANIFEST_DIR")).join("../resources/scripture");
-    // The USFM to compare with: the same revision as the PDF when one is
-    // given (`AW_REFERENCE_USFM/<id>_usfm.zip`, from eBible.org on the day the
-    // PDF was downloaded), else the copy shipped with Abiding Word.
-    let same_revision = std::env::var_os("AW_REFERENCE_USFM")
-        .map(|d| PathBuf::from(d).join(format!("{id}_usfm.zip")))
-        .filter(|p| p.exists());
-    let reference_file = same_revision
-        .clone()
-        .unwrap_or_else(|| resources.join(id).join(format!("{id}_usfm.zip")));
+/// Resets the process's peak resident memory (Linux), so the next reading
+/// of it covers one edition.
+fn reset_peak() {
+    let _ = std::fs::write("/proc/self/clear_refs", "5");
+}
+
+fn peak_mb() -> Option<f64> {
+    let status = std::fs::read_to_string("/proc/self/status").ok()?;
+    let line = status.lines().find(|l| l.starts_with("VmHWM:"))?;
+    let kb: f64 = line.split_whitespace().nth(1)?.parse().ok()?;
+    Some(kb / 1024.0)
+}
+
+fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
+    let files: Vec<PathBuf> = edition.files.iter().map(|f| dir.join(f)).collect();
+    if let Some(missing) = files.iter().find(|f| !f.exists()) {
+        eprintln!("{}: {} missing, skipped", edition.key, missing.display());
+        return None;
+    }
+    let reference_file = dir.join(edition.reference.as_deref()?);
+    if !reference_file.exists() {
+        eprintln!("{}: reference missing, skipped", edition.key);
+        return None;
+    }
+    reset_peak();
+    let started = Instant::now();
+    let staged = import::stage_documents(&files, ImportOrigin::UserFiles).unwrap();
+    let seconds = started.elapsed().as_secs_f64();
+    let peak_memory_mb = peak_mb();
+    // Only now is the publisher's text read, for the comparison.
     let reference = import::stage(
         std::slice::from_ref(&reference_file),
         ImportOrigin::UserFiles,
     )
     .unwrap();
-    let staged = import::stage_documents(&[pdf.to_path_buf()], ImportOrigin::UserFiles).unwrap();
     let content = &staged.content;
     let usable = content.usable_chapters().unwrap_or_default();
     let origins = staged.document_origins();
 
-    // Errors by chapter, for the refusal reasons.
     let mut refused: BTreeMap<(String, u16), &'static str> = BTreeMap::new();
     let mut issues: BTreeMap<String, usize> = BTreeMap::new();
     for issue in &content.issues {
@@ -145,7 +247,11 @@ fn audit(pdf: &Path, id: &str) -> EditionAudit {
 
     let mut books: Vec<BookAudit> = Vec::new();
     let mut differences = Vec::new();
+    let mut extra_verses = Vec::new();
+    let mut books_not_found = Vec::new();
+    let mut seen_books: BTreeSet<u8> = BTreeSet::new();
     for (ordinal, rbook) in &reference.content.books {
+        seen_books.insert(*ordinal);
         let book = canon::by_ordinal(*ordinal).unwrap();
         let mut a = BookAudit {
             code: book.code.to_string(),
@@ -153,7 +259,6 @@ fn audit(pdf: &Path, id: &str) -> EditionAudit {
         };
         let found = content.books.get(ordinal);
         for (chapter, rch) in &rbook.chapters {
-            a.expected += rch.verses.len();
             let fch = found.and_then(|b| b.chapters.get(chapter));
             if fch.is_some() {
                 a.chapters += 1;
@@ -169,8 +274,16 @@ fn audit(pdf: &Path, id: &str) -> EditionAudit {
                 }
             }
             for (verse, want) in &rch.verses {
+                if want.trim().is_empty() {
+                    a.absent_in_edition += 1;
+                    continue;
+                }
+                a.expected += 1;
                 let Some(text) = fch.and_then(|c| c.verses.get(verse)) else {
                     a.unmapped += 1;
+                    if ok {
+                        a.missing_in_usable_chapter += 1;
+                    }
                     continue;
                 };
                 a.detected += 1;
@@ -179,51 +292,72 @@ fn audit(pdf: &Path, id: &str) -> EditionAudit {
                 } else {
                     a.unmapped += 1;
                 }
-                if want.trim() == text.trim() {
-                    a.exact += 1;
+                let class = if want.trim() == text.trim() {
+                    0
                 } else if squash(want) == squash(text) || dense(want) == dense(text) {
-                    a.normalised += 1;
+                    1
                 } else {
-                    a.different += 1;
-                    if ok {
-                        a.usable_different += 1;
-                    }
-                    if ok || differences.len() < 60 {
-                        differences.push(Difference {
-                            reference: format!("{} {chapter}:{verse}", book.code),
-                            usable: ok,
-                            page: origins
-                                .get(&(*ordinal, *chapter, *verse))
-                                .copied()
-                                .flatten(),
-                            found: squash(text),
-                            edition: squash(want),
-                        });
+                    2
+                };
+                match (ok, class) {
+                    (true, 0) => a.usable_exact += 1,
+                    (true, 1) => a.usable_normalised += 1,
+                    (true, _) => a.usable_different += 1,
+                    (false, 0) => a.refused_exact += 1,
+                    (false, 1) => a.refused_normalised += 1,
+                    (false, _) => a.refused_different += 1,
+                }
+                if class == 2 && (ok || differences.len() < 60) {
+                    differences.push(Difference {
+                        reference: format!("{} {chapter}:{verse}", book.code),
+                        usable: ok,
+                        page: origins
+                            .get(&(*ordinal, *chapter, *verse))
+                            .copied()
+                            .flatten(),
+                        found: squash(text),
+                        edition: squash(want),
+                    });
+                }
+            }
+            // Accepted verses the edition does not have.
+            if let (true, Some(fch)) = (ok, fch) {
+                for (verse, text) in &fch.verses {
+                    let present = rch.verses.get(verse).is_some_and(|w| !w.trim().is_empty());
+                    if !present && !text.trim().is_empty() {
+                        a.usable_extra += 1;
+                        extra_verses.push(format!("{} {chapter}:{verse}", book.code));
                     }
                 }
             }
         }
+        if a.detected == 0 && a.expected > 0 {
+            books_not_found.push(book.code.to_string());
+        }
         books.push(a);
+    }
+    // Accepted chapters of books the edition does not contain at all.
+    for (ordinal, fbook) in &content.books {
+        if seen_books.contains(ordinal) {
+            continue;
+        }
+        let code = canon::by_ordinal(*ordinal).map_or("?", |b| b.code);
+        for (chapter, ch) in &fbook.chapters {
+            if usable.contains(&(*ordinal, *chapter)) {
+                for verse in ch.verses.keys() {
+                    extra_verses.push(format!("{code} {chapter}:{verse}"));
+                }
+            }
+        }
     }
     let mut totals = BookAudit {
         code: "ALL".into(),
         ..Default::default()
     };
     for b in &books {
-        totals.expected += b.expected;
-        totals.detected += b.detected;
-        totals.usable += b.usable;
-        totals.unmapped += b.unmapped;
-        totals.chapters += b.chapters;
-        totals.usable_chapters += b.usable_chapters;
-        totals.refused_reading_order += b.refused_reading_order;
-        totals.refused_verse_numbers += b.refused_verse_numbers;
-        totals.refused_other += b.refused_other;
-        totals.exact += b.exact;
-        totals.normalised += b.normalised;
-        totals.different += b.different;
-        totals.usable_different += b.usable_different;
+        totals.add(b);
     }
+    totals.usable_extra = extra_verses.len();
     let refused_chapters = refused
         .iter()
         .map(|((b, c), r)| format!("{b} {c} ({r})"))
@@ -246,30 +380,28 @@ fn audit(pdf: &Path, id: &str) -> EditionAudit {
         .map(|i| i.message.clone())
         .take(200)
         .collect();
-    EditionAudit {
-        file: pdf.file_name().unwrap().to_string_lossy().into_owned(),
-        edition: id.into(),
-        reference: if same_revision.is_some() {
-            format!(
-                "{} (same revision as the PDF)",
-                reference_file.file_name().unwrap().to_string_lossy()
-            )
-        } else {
-            format!(
-                "{} (bundled with Abiding Word)",
-                reference_file.file_name().unwrap().to_string_lossy()
-            )
-        },
+    extra_verses.truncate(200);
+    Some(EditionAudit {
+        edition: edition.clone(),
+        reference: reference_file
+            .file_name()
+            .unwrap()
+            .to_string_lossy()
+            .into_owned(),
         totals,
         books,
+        books_not_found,
         issues,
         refused_chapters,
         differences,
+        extra_verses,
         pages_uncertain,
         pages,
         found_books,
         errors,
-    }
+        seconds,
+        peak_memory_mb,
+    })
 }
 
 fn pct(a: usize, b: usize) -> String {
@@ -283,83 +415,74 @@ fn pct(a: usize, b: usize) -> String {
 fn markdown(a: &EditionAudit) -> String {
     let mut s = String::new();
     let t = &a.totals;
-    let _ = writeln!(s, "# {} ({})\n", a.file, a.edition);
-    let _ = writeln!(s, "Compared with: {}.\n", a.reference);
+    let e = &a.edition;
+    let _ = writeln!(s, "# {} — {}\n", e.key, e.files.join(", "));
     let _ = writeln!(
         s,
-        "Pages: {} ({} with an uncertain reading order).\n",
-        a.pages, a.pages_uncertain
+        "Language {} ({}), format {}, layout: {}. Compared with {} (same revision).\n",
+        e.language, e.script, e.format, e.layout, a.reference
+    );
+    let _ = writeln!(
+        s,
+        "Pages: {} ({} with an uncertain reading order). Read in {:.1} s, peak memory {}.\n",
+        a.pages,
+        a.pages_uncertain,
+        a.seconds,
+        a.peak_memory_mb
+            .map_or("—".into(), |m| format!("{m:.0} MB"))
     );
     let _ = writeln!(s, "| | Verses | Share |\n|---|---|---|");
-    let _ = writeln!(s, "| Expected (edition's USFM) | {} | |", t.expected);
+    let _ = writeln!(s, "| Printed in the edition (its USFM) | {} | |", t.expected);
+    let _ = writeln!(s, "| Numbered but empty in the edition | {} | |", t.absent_in_edition);
+    let _ = writeln!(s, "| Detected | {} | {} |", t.detected, pct(t.detected, t.expected));
+    let _ = writeln!(s, "| **Usable (accepted)** | **{}** | **{}** |", t.usable, pct(t.usable, t.expected));
+    let _ = writeln!(s, "| Unmapped or refused | {} | {} |", t.unmapped, pct(t.unmapped, t.expected));
+    let _ = writeln!(s, "| Usable: exact | {} | {} |", t.usable_exact, pct(t.usable_exact, t.usable));
+    let _ = writeln!(s, "| Usable: whitespace only | {} | {} |", t.usable_normalised, pct(t.usable_normalised, t.usable));
+    let _ = writeln!(s, "| **Usable: genuine differences** | **{}** | |", t.usable_different);
+    let _ = writeln!(s, "| **Usable verses the edition does not have (false positives)** | **{}** | |", t.usable_extra);
+    let _ = writeln!(s, "| Missing from usable chapters | {} | |", t.missing_in_usable_chapter);
     let _ = writeln!(
         s,
-        "| Detected | {} | {} |",
-        t.detected,
-        pct(t.detected, t.expected)
-    );
-    let _ = writeln!(
-        s,
-        "| Usable (partial use) | {} | {} |",
-        t.usable,
-        pct(t.usable, t.expected)
-    );
-    let _ = writeln!(
-        s,
-        "| Unmapped | {} | {} |",
-        t.unmapped,
-        pct(t.unmapped, t.expected)
-    );
-    let _ = writeln!(s, "| Exact | {} | |", t.exact);
-    let _ = writeln!(s, "| Normalised only (whitespace) | {} | |", t.normalised);
-    let _ = writeln!(
-        s,
-        "| Genuine differences (all detected) | {} | |",
-        t.different
-    );
-    let _ = writeln!(
-        s,
-        "| Genuine differences in usable verses | {} | |",
-        t.usable_different
+        "| Refused verses: exact / whitespace / different | {} / {} / {} | |",
+        t.refused_exact, t.refused_normalised, t.refused_different
     );
     let _ = writeln!(
         s,
         "\nChapters: {} found, {} usable; refused for reading order {}, for verse numbers {}, other {}.\n",
         t.chapters, t.usable_chapters, t.refused_reading_order, t.refused_verse_numbers, t.refused_other
     );
+    if !a.books_not_found.is_empty() {
+        let _ = writeln!(s, "Books not found: {}.\n", a.books_not_found.join(", "));
+    }
     let _ = writeln!(s, "## Per book\n");
     let _ = writeln!(
         s,
-        "| Book | Expected | Detected | Usable | Unmapped | Refused (order / numbers / other) | Exact | Normalised | Different (usable) |\n|---|---|---|---|---|---|---|---|---|"
+        "| Book | Printed | Usable | Refused chapters (order / numbers / other) | Usable exact / ws / different | False positives | Missing in usable |\n|---|---|---|---|---|---|---|"
     );
     for b in &a.books {
         let _ = writeln!(
             s,
-            "| {} | {} | {} | {} ({}) | {} | {} / {} / {} | {} | {} | {} ({}) |",
+            "| {} | {} | {} ({}) | {} / {} / {} | {} / {} / {} | {} | {} |",
             b.code,
             b.expected,
-            b.detected,
             b.usable,
             pct(b.usable, b.expected),
-            b.unmapped,
             b.refused_reading_order,
             b.refused_verse_numbers,
             b.refused_other,
-            b.exact,
-            b.normalised,
-            b.different,
-            b.usable_different
+            b.usable_exact,
+            b.usable_normalised,
+            b.usable_different,
+            b.usable_extra,
+            b.missing_in_usable_chapter
         );
     }
     let _ = writeln!(s, "\n## Issues\n");
     for (k, n) in &a.issues {
         let _ = writeln!(s, "- {n} × {k}");
     }
-    let _ = writeln!(
-        s,
-        "\n## Refused chapters\n\n{}",
-        a.refused_chapters.join(", ")
-    );
+    let _ = writeln!(s, "\n## Refused chapters\n\n{}", a.refused_chapters.join(", "));
     let _ = writeln!(s, "\n## Book headings found\n");
     for (heading, book, page) in &a.found_books {
         let _ = writeln!(
@@ -369,9 +492,12 @@ fn markdown(a: &EditionAudit) -> String {
             page.map_or("?".into(), |p| p.to_string())
         );
     }
-    let _ = writeln!(s, "\n## Errors\n");
+    let _ = writeln!(s, "\n## Errors (first 200)\n");
     for e in &a.errors {
         let _ = writeln!(s, "- {e}");
+    }
+    if !a.extra_verses.is_empty() {
+        let _ = writeln!(s, "\n## False positives\n\n{}", a.extra_verses.join(", "));
     }
     let _ = writeln!(s, "\n## Differences\n");
     for d in &a.differences {
@@ -388,6 +514,28 @@ fn markdown(a: &EditionAudit) -> String {
     s
 }
 
+fn summary_row(a: &EditionAudit) -> String {
+    let t = &a.totals;
+    let e = &a.edition;
+    format!(
+        "| {} | {} | {} | {} | {} | {} ({}) | {} | {} | {} | {} | {:.0} s | {} |",
+        e.key,
+        e.language,
+        e.format,
+        e.layout,
+        t.expected,
+        t.usable,
+        pct(t.usable, t.expected),
+        t.usable_exact,
+        t.usable_normalised,
+        t.usable_different,
+        t.usable_extra,
+        a.seconds,
+        a.peak_memory_mb
+            .map_or("—".into(), |m| format!("{m:.0} MB"))
+    )
+}
+
 #[test]
 #[ignore]
 fn real_document_editions_report() {
@@ -396,34 +544,40 @@ fn real_document_editions_report() {
         return;
     };
     let out = std::env::var_os("AW_AUDIT_OUT").map(PathBuf::from);
-    for (pdf, id) in [
-        ("engwebp_all.pdf", "engwebp"),
-        ("deu1912_all.pdf", "deu1912"),
-        ("engwebp_book.pdf", "engwebp"),
-        ("fraLSG_all.pdf", "fraLSG"),
-    ] {
-        let path = dir.join(pdf);
-        if !path.exists() {
-            eprintln!("{pdf}: missing, skipped");
+    let only: Option<BTreeSet<String>> = std::env::var("AW_EDITIONS")
+        .ok()
+        .map(|v| v.split(',').map(str::to_string).collect());
+    let hidden = std::env::var_os("AW_INCLUDE_HIDDEN").is_some();
+    let mut rows = Vec::new();
+    for edition in corpus() {
+        if only.as_ref().is_some_and(|o| !o.contains(&edition.key)) {
             continue;
         }
-        let resources = Path::new(env!("CARGO_MANIFEST_DIR")).join("../resources/scripture");
-        if !resources.join(id).exists() {
-            eprintln!("{pdf}: no bundled USFM for {id}, skipped");
+        if edition.hidden && !hidden && only.is_none() {
             continue;
         }
-        let a = audit(&path, id);
+        let Some(a) = audit(&dir, &edition) else {
+            continue;
+        };
         let md = markdown(&a);
-        eprintln!("{md}");
+        eprintln!("{}", summary_row(&a));
+        rows.push(summary_row(&a));
         if let Some(out) = &out {
             std::fs::create_dir_all(out).unwrap();
-            let stem = pdf.trim_end_matches(".pdf");
-            std::fs::write(out.join(format!("{stem}.md")), &md).unwrap();
+            std::fs::write(out.join(format!("{}.md", edition.key)), &md).unwrap();
             std::fs::write(
-                out.join(format!("{stem}.json")),
+                out.join(format!("{}.json", edition.key)),
                 serde_json::to_string_pretty(&a).unwrap(),
             )
             .unwrap();
         }
+    }
+    let table = format!(
+        "| Edition | Lang | Format | Layout | Printed | Usable | Exact | WS only | Different | False pos. | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
+        rows.join("\n")
+    );
+    eprintln!("{table}");
+    if let Some(out) = &out {
+        std::fs::write(out.join("summary.md"), table).unwrap();
     }
 }

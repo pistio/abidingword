@@ -72,6 +72,9 @@ pub struct Unit {
     /// A PDF line set noticeably larger than the page's running text (a
     /// title or heading; v0.24.1).
     pub large: bool,
+    /// A PDF line set in another typeface than the page's running text
+    /// (bold, italic): with other evidence, a heading.
+    pub styled: bool,
 }
 
 /// Where a unit is in the original document.
@@ -199,11 +202,11 @@ pub fn read_bytes(
                     // (one unit per non-empty line of the page's text).
                     let layout = &text.layouts[index];
                     let body = layout.body_size();
-                    let lines: Vec<(LineRole, f64, Option<&String>)> = layout
+                    let lines: Vec<(LineRole, f64, Option<&String>, bool)> = layout
                         .lines
                         .iter()
                         .filter(|l| !l.text.trim().is_empty())
-                        .map(|l| (l.role, l.size, l.marked.as_ref()))
+                        .map(|l| (l.role, l.size, l.marked.as_ref(), l.styled))
                         .collect();
                     let aligned = lines.len() == units.len() - from;
                     // Larger text is a heading only where it is little of the
@@ -234,6 +237,7 @@ pub fn read_bytes(
                         if aligned {
                             unit.note = lines[i].0 == LineRole::Note;
                             unit.large = lines[i].0 == LineRole::Text && lines[i].1 >= 1.15 * body;
+                            unit.styled = lines[i].3;
                             // Raised letters marked for the recogniser.
                             if let Some(marked) = lines[i].2 {
                                 unit.text = marked.trim().to_string();
@@ -287,7 +291,10 @@ pub fn read_bytes(
                 "docx" => &DocxImporter,
                 _ => &MarkdownImporter,
             };
-            let doc = adapter.extract(bytes, name)?;
+            let mut doc = adapter.extract(bytes, name)?;
+            if extension == "epub" {
+                take_out_note_links(bytes, &mut doc.segments);
+            }
             let (units, notes) = structured_units(&doc.segments, document);
             DocumentFile {
                 path: path.to_path_buf(),
@@ -371,6 +378,7 @@ fn line_units(
             uncertain_order: false,
             note: false,
             large: false,
+            styled: false,
         });
     }
 }
@@ -379,20 +387,118 @@ fn line_units(
 /// put back between them: the adapters keep headings as each paragraph's
 /// section path ("Genesis › Chapter 1"), so a heading starts wherever that
 /// path changes. Footnotes and endnotes (DOCX) are left out and counted.
+/// An EPUB's note references (v0.24.2): a link inside the book whose text is
+/// a letter or a sign ("a", "†", "*"), leading to another passage, is a
+/// reference to a note — the book's own markup says so. Its text is taken
+/// out of the passage (for reading verses only; the library keeps the text
+/// as published) and the passage it leads to is a note. A link of digits
+/// is left alone: it may be a verse's number.
+fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
+    use crate::library::adapters::epub;
+    let links = epub::links(bytes, segments.len());
+    // A passage that is nothing but links to other places (a list of the
+    // book's chapters, "1 Samuel" leading to the book's index) is the
+    // book's navigation, not its text.
+    let mut linked: std::collections::BTreeMap<usize, usize> = Default::default();
+    for link in &links {
+        if let Ok(at) = usize::try_from(link.position) {
+            *linked.entry(at).or_default() += link.end.saturating_sub(link.start);
+        }
+    }
+    for (at, covered) in linked {
+        if let Some(segment) = segments.get_mut(at) {
+            let length: usize = segment.text.chars().map(char::len_utf16).sum();
+            let spaces = segment.text.chars().filter(|c| c.is_whitespace()).count();
+            if covered + spaces >= length && length > 0 {
+                segment.text.clear();
+            }
+        }
+    }
+    let mut cuts: std::collections::BTreeMap<usize, Vec<(usize, usize)>> = Default::default();
+    let mut notes: std::collections::BTreeSet<usize> = Default::default();
+    for link in &links {
+        let (Ok(at), Ok(target)) = (usize::try_from(link.position), usize::try_from(link.target))
+        else {
+            continue;
+        };
+        if at == target || at >= segments.len() || target >= segments.len() {
+            continue;
+        }
+        let text = &segments[at].text;
+        // UTF-16 offsets, as the links count them, to byte offsets.
+        let byte = |utf16: usize| -> Option<usize> {
+            let mut units = 0usize;
+            for (i, c) in text.char_indices() {
+                if units >= utf16 {
+                    return Some(i);
+                }
+                units += c.len_utf16();
+            }
+            (units >= utf16).then_some(text.len())
+        };
+        let (Some(start), Some(end)) = (byte(link.start), byte(link.end)) else {
+            continue;
+        };
+        let label = text[start..end].trim();
+        let short = !label.is_empty() && label.chars().count() <= 3;
+        let no_digits = !label.chars().any(|c| c.is_ascii_digit());
+        if short && no_digits && !label.chars().all(char::is_whitespace) {
+            cuts.entry(at).or_default().push((start, end));
+            // The passage it leads to is a note when it begins with the
+            // same label ("a 1:1 …", "† 1:1 …"); a link to a verse never
+            // makes the verse a note.
+            if segments[target].text.trim_start().starts_with(label) {
+                notes.insert(target);
+            }
+        }
+    }
+    for (at, mut ranges) in cuts {
+        ranges.sort_unstable();
+        let text = &segments[at].text;
+        let mut out = String::with_capacity(text.len());
+        let mut from = 0;
+        for (start, end) in ranges {
+            if start < from {
+                continue;
+            }
+            out.push_str(&text[from..start]);
+            from = end;
+        }
+        out.push_str(&text[from..]);
+        segments[at].text = out;
+    }
+    for target in notes {
+        if let Some(segment) = segments.get_mut(target) {
+            segment.note = true;
+        }
+    }
+}
+
 fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize) {
     let mut out = Vec::new();
     let mut notes = 0usize;
     let mut previous: Vec<&str> = Vec::new();
     for (index, segment) in segments.iter().enumerate() {
-        if segment.note {
-            notes += 1;
-            continue;
-        }
         let place = Place {
             document,
             page: segment.page_number,
             segment: Some(index as u32),
         };
+        if segment.note {
+            // Kept as a note (never verse text): its sign and verse show
+            // which signs in the verses are references to it.
+            notes += 1;
+            out.push(Unit {
+                text: segment.text.clone(),
+                heading: false,
+                place,
+                uncertain_order: false,
+                note: true,
+                large: false,
+                styled: false,
+            });
+            continue;
+        }
         let path: Vec<&str> = segment
             .section_path
             .as_deref()
@@ -415,6 +521,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     uncertain_order: false,
                     note: false,
                     large: false,
+            styled: false,
                 });
             }
         }
@@ -426,6 +533,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             uncertain_order: false,
             note: false,
             large: false,
+            styled: segment.styled,
         });
     }
     (out, notes)

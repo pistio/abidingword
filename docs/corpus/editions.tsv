@@ -1,0 +1,38 @@
+key	files	reference	language	script	format	layout	role	source and licence
+engwebp-pdf	engwebp_all.pdf	engwebp_usfm.zip	en	Latin	pdf	eBible letter, two columns, footnotes	impl	World English Bible (eBible.org); public domain
+engwebp-book	engwebp_book.pdf	engwebp_usfm.zip	en	Latin	pdf	eBible book size, two columns	impl	World English Bible (eBible.org); public domain
+engwebp-epub	engwebp.epub	engwebp_usfm.zip	en	Latin	epub	eBible EPUB, chapter files	impl	World English Bible (eBible.org); public domain
+engwebp-vpl	engwebp_vpl.txt	engwebp_usfm.zip	en	Latin	txt	one verse per line, "GEN 1:1 text"	impl	World English Bible (eBible.org); public domain
+kjv-pdf	eng-kjv2006_a4.pdf	eng-kjv2006_usfm.zip	en	Latin	pdf	eBible A4, two columns	impl	King James Version 1769 (eBible.org); public domain
+kjv-epub	eng-kjv2006.epub	eng-kjv2006_usfm.zip	en	Latin	epub	eBible EPUB	impl	King James Version 1769 (eBible.org); public domain
+deu1912-pdf	deu1912_all.pdf	deu1912_usfm.zip	de	Latin	pdf	eBible letter, two columns	impl	Luther 1912 (eBible.org); public domain
+deu1912-epub	deu1912.epub	deu1912_usfm.zip	de	Latin	epub	eBible EPUB	impl	Luther 1912 (eBible.org); public domain
+deu1912-md	deu1912.md	deu1912_usfm.zip	de	Latin	md	converted: Markdown, paragraphs with inline verse numbers	impl	Luther 1912 (eBible.org HTML, converted); public domain
+deuelo-pdf	deuelo_book.pdf	deuelo_usfm.zip	de	Latin	pdf	eBible book size	impl	Unrevidierte Elberfelder 1905 (eBible.org); public domain
+fraLSG-pdf	fraLSG_all.pdf	fraLSG_usfm.zip	fr	Latin	pdf	eBible letter, one column, book introductions, cross-reference lines and letters	impl	Louis Segond 1910 (eBible.org); public domain
+fraLSG-luk	fraLSG_LUK.pdf	fraLSG_usfm.zip	fr	Latin	pdf	single book (Luke)	impl	Louis Segond 1910 (eBible.org); public domain
+fraLSG-epub	fraLSG.epub	fraLSG_usfm.zip	fr	Latin	epub	eBible EPUB	impl	Louis Segond 1910 (eBible.org); public domain
+fob-pdf	fra_fob_all.pdf	fra_fob_usfm.zip	fr	Latin	pdf	eBible letter	impl	Ostervald 1744 (eBible.org); public domain
+fob-epub	fra_fob.epub	fra_fob_usfm.zip	fr	Latin	epub	eBible EPUB	impl	Ostervald 1744 (eBible.org); public domain
+rv1909-pdf	spaRV1909_all.pdf	spaRV1909_usfm.zip	es	Latin	pdf	eBible letter	impl	Reina-Valera 1909 (eBible.org); public domain
+rv1909-epub	spaRV1909.epub	spaRV1909_usfm.zip	es	Latin	epub	eBible EPUB	impl	Reina-Valera 1909 (eBible.org); public domain
+rv1909-docx	spaRV1909_lo.docx	spaRV1909_usfm.zip	es	Latin	docx	converted: LibreOffice Writer from eBible HTML, paragraphs, superscript verse numbers	impl	Reina-Valera 1909 (eBible.org HTML, converted); public domain
+rv1909-lopdf	spaRV1909_lo.pdf	spaRV1909_usfm.zip	es	Latin	pdf	converted: LibreOffice Writer PDF, paragraphs, superscript verse numbers	impl	Reina-Valera 1909 (eBible.org HTML, converted); public domain
+rv1909-md	spaRV1909.md	spaRV1909_usfm.zip	es	Latin	md	converted: Markdown, paragraphs with inline verse numbers	impl	Reina-Valera 1909 (eBible.org HTML, converted); public domain
+spabes-pdf	spabes_a4.pdf	spabes_usfm.zip	es	Latin	pdf	eBible A4	impl	La Biblia en Español Sencillo (eBible.org); public domain
+porbrbsl-pdf	porbrbsl_all.pdf	porbrbsl_usfm.zip	pt	Latin	pdf	eBible letter	impl	World Portuguese Bible (eBible.org); public domain
+porbrbsl-docx	porbrbsl_lo.docx	porbrbsl_usfm.zip	pt	Latin	docx	converted: LibreOffice Writer from eBible HTML	impl	World Portuguese Bible (eBible.org HTML, converted); public domain
+porbr2018-pdf	porbr2018_book.pdf	porbr2018_usfm.zip	pt	Latin	pdf	eBible book size	impl	Bíblia Livre 2018, Almeida revision (eBible.org); CC BY 4.0
+porbr2018-epub	porbr2018.epub	porbr2018_usfm.zip	pt	Latin	epub	eBible EPUB	impl	Bíblia Livre 2018 (eBible.org); CC BY 4.0
+kor-pdf	kor_all.pdf	kor_usfm.zip	ko	Hangul	pdf	eBible letter	impl	Korean Bible 1910 (eBible.org); public domain
+kor-epub	kor.epub	kor_usfm.zip	ko	Hangul	epub	eBible EPUB	impl	Korean Bible 1910 (eBible.org); public domain
+kor-docx	kor_lo.docx	kor_usfm.zip	ko	Hangul	docx	converted: LibreOffice Writer from eBible HTML	impl	Korean Bible 1910 (eBible.org HTML, converted); public domain
+grctr-pdf	grctr_all.pdf	grctr_usfm.zip	grc	Greek	pdf	eBible letter, New Testament	impl	Textus Receptus (eBible.org); public domain
+hboWLC-pdf	hboWLC_all.pdf	hboWLC_usfm.zip	hbo	Hebrew	pdf	eBible letter, right to left	impl	Westminster Leningrad Codex (eBible.org); public domain
+latVUC-pdf	latVUC_all.pdf	latVUC_usfm.zip	la	Latin	pdf	eBible letter, deuterocanon	impl	Clementine Vulgate 1598 (eBible.org); public domain
+deutkw-pdf	deutkw_all.pdf	deutkw_usfm.zip	de	Latin	pdf	eBible letter	hidden	Textbibel 1906 (eBible.org); public domain
+frajnd-pdf	frajnd_a4.pdf	frajnd_usfm.zip	fr	Latin	pdf	eBible A4	hidden	Darby 1885 French (eBible.org); public domain
+frajnd-epub	frajnd.epub	frajnd_usfm.zip	fr	Latin	epub	eBible EPUB	hidden	Darby 1885 French (eBible.org); public domain
+spablm-pdf	spablm_all.pdf	spablm_usfm.zip	es	Latin	pdf	eBible letter, deuterocanon	hidden	Spanish Free Bible for the World (eBible.org); public domain
+engylt-pdf	engylt_book.pdf	engylt_usfm.zip	en	Latin	pdf	eBible book size	hidden	Young's Literal Translation 1898 (eBible.org); public domain
+grcbyz-pdf	grcbyz_a4.pdf	grcbyz_usfm.zip	grc	Greek	pdf	eBible A4, New Testament	hidden	Byzantine Greek NT 1904 (eBible.org); public domain

@@ -130,10 +130,11 @@
     "documentRunningHead": "{{book}} {{chapter}}: a página {{page}} termina com o versículo {{found}}, mas o cabeçalho ({{head}}) indica {{named}}. Este capítulo não é usado.",
     "documentLabel": "{{book}} {{chapter}}: a linha “{{line}}” fica entre duas frases de um versículo e se repete em outros lugares como linha própria (talvez o nome de quem fala ou um título). Este capítulo não é usado.",
     "documentRaisedLetters": "{{book}} {{chapter}}: um versículo tem letras pequenas sobrescritas que nenhuma nota da página explica (talvez chamadas de referências). Este capítulo não é usado.",
+    "documentPagesUnread": "“{{fileName}}”: não foi possível ler por completo o texto da(s) página(s) {{pages}}. Faltam os versículos que elas contêm.",
     "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
     "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
     "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
-    "documentPagesUnread": "“{{fileName}}”: não foi possível ler por completo o texto da(s) página(s) {{pages}}. Faltam os versículos que elas contêm."
+    "documentNumberInVerse": "{{book}} {{chapter}}: o versículo {{verse}} não foi encontrado, mas o número {{verse}} aparece no versículo anterior; os dois podem estar unidos. Este capítulo não é usado."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",

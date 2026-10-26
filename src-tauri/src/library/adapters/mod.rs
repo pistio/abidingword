@@ -67,6 +67,9 @@ pub struct NewSegment {
     pub char_end: Option<u32>,
     /// A footnote or endnote kept after the body (DOCX), not body text.
     pub note: bool,
+    /// Set apart by its style (EPUB: a class its stylesheet makes bold,
+    /// italic, centred or larger): with other evidence, a heading.
+    pub styled: bool,
 }
 
 impl NewSegment {

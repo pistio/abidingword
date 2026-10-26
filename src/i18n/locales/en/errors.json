@@ -120,9 +120,10 @@
     "documentRunningHead": "{{book}} {{chapter}}: page {{page}} ends with verse {{found}}, but its running head ({{head}}) says {{named}}. This chapter is not used.",
     "documentLabel": "{{book}} {{chapter}}: the line “{{line}}” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
     "documentRaisedLetters": "{{book}} {{chapter}}: a verse has small raised letters that no note on the page explains (perhaps cross-reference letters). This chapter is not used.",
+    "documentPagesUnread": "“{{fileName}}”: the text of page(s) {{pages}} could not be read in full. Verses on them are missing.",
     "documentFootnotes_one": "{{count}} line of footnotes at the foot of pages was left out.",
     "documentFootnotes_other": "{{count}} lines of footnotes at the foot of pages were left out.",
-    "documentPagesUnread": "“{{fileName}}”: the text of page(s) {{pages}} could not be read in full. Verses on them are missing."
+    "documentNumberInVerse": "{{book}} {{chapter}}: verse {{verse}} was not found, but the number {{verse}} stands in the verse before it; the two may run together. This chapter is not used."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",
