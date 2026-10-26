@@ -439,6 +439,36 @@ fn greek_book_title() {
 }
 
 #[test]
+fn a_title_that_gives_a_second_name_names_its_own_book() {
+    // "The First Book of Samuel Otherwise Called the First Book of the Kings"
+    // is 1 Samuel; "Commonly Called the Third Book of the Kings" under 1 Kings
+    // is another name for it, not a new book.
+    let mut text = String::from(
+        "The First Book of Samuel Otherwise Called the\n\nFirst Book of the Kings\n\n",
+    );
+    for v in 1..=28u16 {
+        text.push_str(&format!("{v} {}\n", words("1 Samuel", 1, v)));
+    }
+    text.push_str(
+        "\nThe First Book of the Kings\n\nCommonly Called the Third Book of the Kings\n\n",
+    );
+    for v in 1..=53u16 {
+        text.push_str(&format!("{v} {}\n", words("1 Kings", 1, v)));
+    }
+    let r = recognise(&read("kings.txt", text.as_bytes()));
+    let books: Vec<_> = r.books.iter().map(|b| b.book).collect();
+    assert_eq!(books, vec![Some("1SA"), Some("1KI")]);
+    assert_eq!(
+        verse(&r, "1SA", 1, 28).as_deref(),
+        Some(words("1 Samuel", 1, 28).as_str())
+    );
+    assert_eq!(
+        verse(&r, "1KI", 1, 53).as_deref(),
+        Some(words("1 Kings", 1, 53).as_str())
+    );
+}
+
+#[test]
 fn corrections_choose_or_leave_out_a_book() {
     // A title the dictionaries do not know, before "Chapter 1".
     let text = ruth_lines(|c| format!("Chapter {c}")).replacen(

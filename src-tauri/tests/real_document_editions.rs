@@ -107,6 +107,9 @@ struct BookAudit {
     /// Among usable (accepted) verses.
     usable_exact: usize,
     usable_normalised: usize,
+    /// Of the normalised: letters in another case only (small capitals
+    /// printed as capitals: "LORD’S" for "LORD’s").
+    usable_case_only: usize,
     usable_different: usize,
     /// Among refused verses (never shown).
     refused_exact: usize,
@@ -133,6 +136,7 @@ impl BookAudit {
         self.refused_other += b.refused_other;
         self.usable_exact += b.usable_exact;
         self.usable_normalised += b.usable_normalised;
+        self.usable_case_only += b.usable_case_only;
         self.usable_different += b.usable_different;
         self.refused_exact += b.refused_exact;
         self.refused_normalised += b.refused_normalised;
@@ -292,13 +296,18 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                 } else {
                     a.unmapped += 1;
                 }
+                let case_only = dense(want) != dense(text)
+                    && dense(want).to_lowercase() == dense(text).to_lowercase();
                 let class = if want.trim() == text.trim() {
                     0
-                } else if squash(want) == squash(text) || dense(want) == dense(text) {
+                } else if squash(want) == squash(text) || dense(want) == dense(text) || case_only {
                     1
                 } else {
                     2
                 };
+                if ok && case_only {
+                    a.usable_case_only += 1;
+                }
                 match (ok, class) {
                     (true, 0) => a.usable_exact += 1,
                     (true, 1) => a.usable_normalised += 1,
@@ -432,16 +441,66 @@ fn markdown(a: &EditionAudit) -> String {
             .map_or("—".into(), |m| format!("{m:.0} MB"))
     );
     let _ = writeln!(s, "| | Verses | Share |\n|---|---|---|");
-    let _ = writeln!(s, "| Printed in the edition (its USFM) | {} | |", t.expected);
-    let _ = writeln!(s, "| Numbered but empty in the edition | {} | |", t.absent_in_edition);
-    let _ = writeln!(s, "| Detected | {} | {} |", t.detected, pct(t.detected, t.expected));
-    let _ = writeln!(s, "| **Usable (accepted)** | **{}** | **{}** |", t.usable, pct(t.usable, t.expected));
-    let _ = writeln!(s, "| Unmapped or refused | {} | {} |", t.unmapped, pct(t.unmapped, t.expected));
-    let _ = writeln!(s, "| Usable: exact | {} | {} |", t.usable_exact, pct(t.usable_exact, t.usable));
-    let _ = writeln!(s, "| Usable: whitespace only | {} | {} |", t.usable_normalised, pct(t.usable_normalised, t.usable));
-    let _ = writeln!(s, "| **Usable: genuine differences** | **{}** | |", t.usable_different);
-    let _ = writeln!(s, "| **Usable verses the edition does not have (false positives)** | **{}** | |", t.usable_extra);
-    let _ = writeln!(s, "| Missing from usable chapters | {} | |", t.missing_in_usable_chapter);
+    let _ = writeln!(
+        s,
+        "| Printed in the edition (its USFM) | {} | |",
+        t.expected
+    );
+    let _ = writeln!(
+        s,
+        "| Numbered but empty in the edition | {} | |",
+        t.absent_in_edition
+    );
+    let _ = writeln!(
+        s,
+        "| Detected | {} | {} |",
+        t.detected,
+        pct(t.detected, t.expected)
+    );
+    let _ = writeln!(
+        s,
+        "| **Usable (accepted)** | **{}** | **{}** |",
+        t.usable,
+        pct(t.usable, t.expected)
+    );
+    let _ = writeln!(
+        s,
+        "| Unmapped or refused | {} | {} |",
+        t.unmapped,
+        pct(t.unmapped, t.expected)
+    );
+    let _ = writeln!(
+        s,
+        "| Usable: exact | {} | {} |",
+        t.usable_exact,
+        pct(t.usable_exact, t.usable)
+    );
+    let _ = writeln!(
+        s,
+        "| Usable: whitespace or typography only | {} | {} |",
+        t.usable_normalised,
+        pct(t.usable_normalised, t.usable)
+    );
+    let _ = writeln!(
+        s,
+        "| … of which letter case only (small capitals) | {} | |",
+        t.usable_case_only
+    );
+    let _ = writeln!(
+        s,
+        "| **Usable: genuine differences** | **{}** | |",
+        t.usable_different
+    );
+    let _ = writeln!(
+        s,
+        "| **Usable verses the edition does not have (false positives)** | **{}** | |",
+        t.usable_extra
+    );
+    let _ = writeln!(
+        s,
+        "| Missing from usable chapters | {} | |",
+        t.missing_in_usable_chapter
+    );
     let _ = writeln!(
         s,
         "| Refused verses: exact / whitespace / different | {} / {} / {} | |",
@@ -482,7 +541,11 @@ fn markdown(a: &EditionAudit) -> String {
     for (k, n) in &a.issues {
         let _ = writeln!(s, "- {n} × {k}");
     }
-    let _ = writeln!(s, "\n## Refused chapters\n\n{}", a.refused_chapters.join(", "));
+    let _ = writeln!(
+        s,
+        "\n## Refused chapters\n\n{}",
+        a.refused_chapters.join(", ")
+    );
     let _ = writeln!(s, "\n## Book headings found\n");
     for (heading, book, page) in &a.found_books {
         let _ = writeln!(

@@ -14,6 +14,10 @@ A Markdown variant is written by this script itself: "# Book", "## Chapter n"
 and paragraphs with the verse numbers inline.
 
     build-derived-editions.py <folder> <id> docx,pdf,md [BOOK,BOOK…]
+    build-derived-editions.py <folder> <id> docx,pdf --usfm="제 {n} 장"
+
+The second form lays out an edition's USFM (<id>_usfm.zip) instead, with
+chapter labels in the edition's language; the outputs are <id>_usfm_lo.*.
 
 <folder> must hold <id>_html.zip (fetched by scripts/fetch-real-editions.sh).
 The outputs are <id>_lo.docx, <id>_lo.pdf and <id>.md (or with a _<BOOKS>
@@ -72,7 +76,82 @@ def plain(fragment):
     return re.sub(r"\s+", " ", html.unescape(text)).strip()
 
 
+def from_usfm(folder, ident, formats, chapter_label):
+    """A document from an edition's USFM (`<id>_usfm.zip`): book titles
+    (\\h), chapter labels in the edition's language (`chapter_label`, e.g.
+    "제 {n} 장"), section headings (\\s), psalm titles (\\d) and verses with
+    their numbers; footnotes and cross-references are left out. The words are
+    the edition's own."""
+    z = zipfile.ZipFile(os.path.join(folder, f"{ident}_usfm.zip"))
+    files = {}
+    for name in z.namelist():
+        text = z.read(name).decode("utf-8-sig", errors="replace")
+        m = re.search(r"\\id\s+([A-Z0-9]{3})", text)
+        if m and m.group(1) in ORDER:
+            files[m.group(1)] = text
+    parts = ['<!DOCTYPE html><html><head><meta charset="UTF-8"/>'
+             "<style>h1{page-break-before:always;text-align:center}"
+             "h2{text-align:center}.s{font-weight:bold;text-align:center}"
+             ".d{font-style:italic}</style></head><body>"]
+    for code in ORDER:
+        text = files.get(code)
+        if not text:
+            continue
+        text = re.sub(r"\\f .*?\\f\*", "", text, flags=re.S)
+        text = re.sub(r"\\x .*?\\x\*", "", text, flags=re.S)
+        text = re.sub(r"\\\+?w ([^|\\]*)\|[^\\]*\\\+?w\*", r"\1", text)
+        text = re.sub(r"\\\+?[a-z]+[0-9]?\*", "", text)
+        title = re.search(r"\\h\s+(.+)", text)
+        parts.append(f"<h1>{html.escape(title.group(1).strip() if title else code)}</h1>")
+        paragraph = []
+        def flush():
+            if paragraph:
+                parts.append("<p>" + " ".join(paragraph) + "</p>")
+                paragraph.clear()
+        for line in text.splitlines():
+            m = re.match(r"\\(\w+)\s*(.*)", line.strip())
+            if not m:
+                if line.strip():
+                    paragraph.append(html.escape(line.strip()))
+                continue
+            tag, rest = m.group(1), m.group(2)
+            if tag == "c":
+                flush()
+                parts.append(f"<h2>{html.escape(chapter_label.format(n=rest.split()[0]))}</h2>")
+            elif tag in ("s", "s1", "s2"):
+                flush()
+                parts.append(f'<p class="s">{html.escape(rest)}</p>')
+            elif tag == "d":
+                flush()
+                parts.append(f'<p class="d">{html.escape(rest)}</p>')
+            elif tag in ("p", "m", "q", "q1", "q2", "pi", "nb", "li", "li1"):
+                flush()
+                if rest:
+                    paragraph.append(html.escape(re.sub(r"\\\w+\s?", "", rest)))
+            elif tag == "v":
+                number, _, verse = rest.partition(" ")
+                clean_verse = html.escape(re.sub(r"\\\w+\s?", "", verse))
+                paragraph.append(f"<sup>{html.escape(number)}</sup>{clean_verse}")
+        flush()
+    parts.append("</body></html>")
+    with tempfile.TemporaryDirectory() as tmp:
+        src = os.path.join(tmp, f"{ident}_usfm.html")
+        with open(src, "w", encoding="utf-8") as f:
+            f.write("".join(parts))
+        for fmt in formats:
+            filt = {"docx": "docx:MS Word 2007 XML", "pdf": "pdf:writer_pdf_Export"}[fmt]
+            subprocess.run(
+                ["soffice", "--headless", "--infilter=HTML (StarWriter)", "--convert-to", filt, "--outdir", tmp, src],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=3600,
+            )
+            os.replace(os.path.join(tmp, f"{ident}_usfm.{fmt}"),
+                       os.path.join(folder, f"{ident}_usfm_lo.{fmt}"))
+
+
 def main():
+    if len(sys.argv) > 4 and sys.argv[4].startswith("--usfm="):
+        from_usfm(sys.argv[1], sys.argv[2], sys.argv[3].split(","), sys.argv[4][len("--usfm="):])
+        return
     folder, ident, formats = sys.argv[1], sys.argv[2], sys.argv[3].split(",")
     books = sys.argv[4].split(",") if len(sys.argv) > 4 else ORDER
     suffix = "" if books is ORDER else "_" + "-".join(books)
