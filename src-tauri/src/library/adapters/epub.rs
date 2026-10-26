@@ -623,17 +623,18 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
     let mut heading: Option<usize> = None;
     let mut skip_depth = 0usize;
     let mut classes: Vec<String> = Vec::new();
-    let flush = |out: &mut Vec<Block>, acc: &mut Acc, heading: Option<usize>, classes: &[String]| {
-        let (text, links) = acc.take();
-        if !text.is_empty() {
-            out.push(Block {
-                text,
-                heading_level: heading,
-                classes: classes.to_vec(),
-                links,
-            });
-        }
-    };
+    let flush =
+        |out: &mut Vec<Block>, acc: &mut Acc, heading: Option<usize>, classes: &[String]| {
+            let (text, links) = acc.take();
+            if !text.is_empty() {
+                out.push(Block {
+                    text,
+                    heading_level: heading,
+                    classes: classes.to_vec(),
+                    links,
+                });
+            }
+        };
     let class_of = |e: &quick_xml::events::BytesStart| -> Vec<String> {
         attr_value(e, "class")
             .map(|c| c.split_whitespace().map(str::to_string).collect())
@@ -710,7 +711,9 @@ pub(super) fn emphasised_classes(css: &str) -> std::collections::HashSet<String>
     let mut rest = css;
     while let Some(start) = rest.find("/*") {
         text.push_str(&rest[..start]);
-        rest = rest[start + 2..].find("*/").map_or("", |end| &rest[start + 2 + end + 2..]);
+        rest = rest[start + 2..]
+            .find("*/")
+            .map_or("", |end| &rest[start + 2 + end + 2..]);
     }
     text.push_str(rest);
     for rule in text.split('}') {
@@ -725,14 +728,24 @@ pub(super) fn emphasised_classes(css: &str) -> std::collections::HashSet<String>
             })
         };
         let bold = value("font-weight").is_some_and(|v| {
-            v.starts_with("bold") || v.starts_with('6') || v.starts_with('7') || v.starts_with('8') || v.starts_with('9')
+            v.starts_with("bold")
+                || v.starts_with('6')
+                || v.starts_with('7')
+                || v.starts_with('8')
+                || v.starts_with('9')
         });
-        let italic = value("font-style").is_some_and(|v| v.starts_with("italic") || v.starts_with("oblique"));
+        let italic = value("font-style")
+            .is_some_and(|v| v.starts_with("italic") || v.starts_with("oblique"));
         let centred = value("text-align").is_some_and(|v| v.starts_with("center"));
         let larger = value("font-size").is_some_and(|v| {
-            let number: String = v.chars().take_while(|c| c.is_ascii_digit() || *c == '.').collect();
+            let number: String = v
+                .chars()
+                .take_while(|c| c.is_ascii_digit() || *c == '.')
+                .collect();
             let n: f64 = number.parse().unwrap_or(0.0);
-            (v.ends_with("em") && n > 1.05) || (v.ends_with('%') && n > 105.0) || v.starts_with("larger")
+            (v.ends_with("em") && n > 1.05)
+                || (v.ends_with('%') && n > 105.0)
+                || v.starts_with("larger")
         });
         if !(bold || italic || centred || larger) {
             continue;

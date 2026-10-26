@@ -456,10 +456,14 @@ fn a_bibles_language_comes_from_its_stored_tag_only() {
         Some("Deutsch"),
         Some("Lutherbibel"),
         Some("xx"),
-        Some("la"),
     ] {
         assert_eq!(language_of_tag(tag), None, "{tag:?}");
     }
+    // Latin (v0.24.2), for the Vulgate and scholarly editions.
+    assert!(matches!(
+        language_of_tag(Some("la")),
+        Some(ReferenceLanguage::Data(_))
+    ));
 }
 
 #[test]
@@ -490,7 +494,8 @@ fn every_generated_pack_reads_each_of_its_books() {
 
 #[test]
 fn the_hundred_languages_cover_the_scripts() {
-    assert_eq!(ReferenceLanguage::all().count(), 100);
+    // The 100 by population, and Latin.
+    assert_eq!(ReferenceLanguage::all().count(), 101);
     let mut scripts: Vec<Script> = packs::all()
         .iter()
         .flat_map(|p| p.scripts.iter().copied())

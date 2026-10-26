@@ -346,6 +346,9 @@ pub(super) struct Para {
     pub segment: usize,
     /// The element id it carries, when it has one.
     pub id: Option<String>,
+    /// Set apart from running text by its look: centred, or bold or italic
+    /// throughout (a section heading made without a heading style).
+    pub styled: bool,
     // Parsing only: the pending list reference, resolved by the layout.
     num: Option<(i64, usize)>,
 }
@@ -1635,7 +1638,19 @@ fn build_para(
         && text.is_empty()
         && !inlines.iter().any(|i| matches!(i, Inline::Image(_)));
     let section_break = props.section.as_deref().is_some_and(|t| t != "continuous");
+    let runs: Vec<&Fmt> = inlines
+        .iter()
+        .filter_map(|i| match i {
+            Inline::Text(t, f) if !t.trim().is_empty() => Some(f),
+            _ => None,
+        })
+        .collect();
+    let styled = !runs.is_empty()
+        && (props.jc.as_deref() == Some("center")
+            || runs.iter().all(|f| f.bold)
+            || runs.iter().all(|f| f.italic));
     Para {
+        styled,
         heading,
         kind,
         css: css.join(";"),
@@ -2035,6 +2050,7 @@ impl Layout<'_> {
                 section_path: section_path.clone().or_else(|| chapter.clone()),
                 paragraph_index: Some(self.paragraph),
                 note: self.in_notes,
+                styled: p.styled,
                 ..Default::default()
             });
             self.paragraph += 1;

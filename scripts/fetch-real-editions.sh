@@ -1,31 +1,66 @@
 #!/usr/bin/env sh
-# Downloads the real PDF Bibles the document-recognition audit reads
-# (src-tauri/tests/real_document_editions.rs) and checks each against the
-# SHA-256 recorded when the audit was run. Nothing is committed to Git.
+# Downloads the real-edition corpus the document-recognition audit reads
+# (src-tauri/tests/real_document_editions.rs) and checks every file against
+# the SHA-256 recorded in docs/corpus/sources.tsv. Nothing is committed to Git.
 #
 #   scripts/fetch-real-editions.sh <folder>
 #   AW_DOCUMENT_EDITIONS=<folder> AW_AUDIT_OUT=<folder>/audit \
 #     cargo test --release --test real_document_editions -- --ignored --nocapture
 #
-# eBible.org rebuilds its PDFs from time to time: a checksum mismatch means a
-# newer build, not necessarily a problem. The audit compares each PDF with the
-# USFM of the same edition shipped in resources/scripture/.
+# docs/corpus/editions.tsv lists the editions (and which are kept hidden until
+# the final evaluation); docs/corpus/sources.tsv says where each file comes
+# from. Sources marked "derived" are built afterwards by
+# scripts/build-derived-editions.py (LibreOffice writes a fresh date into each,
+# so their checksums are for reference only).
+#
+# eBible.org rebuilds its files from time to time: a checksum mismatch means a
+# newer build, not necessarily a problem, but the audit's figures are for the
+# recorded builds. A file that is not a PDF, EPUB, ZIP or text as expected is
+# removed rather than kept.
 set -eu
 dir="${1:?folder to download into}"
+root="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$dir"
 cd "$dir"
-while read -r file sha; do
-  id="${file%%_*}"
-  [ -f "$file" ] || curl -sSfL -o "$file" "https://ebible.org/pdf/$id/$file"
+status=0
+list="$(mktemp)"
+trap 'rm -f "$list"' EXIT
+tail -n +2 "$root/docs/corpus/sources.tsv" > "$list"
+while IFS="$(printf '\t')" read -r file source sha; do
+  case "$source" in
+    derived) continue ;;
+    repo:*) [ -f "$file" ] || cp "$root/${source#repo:}" "$file" ;;
+    *'#'*)
+      # A file inside a ZIP archive.
+      if [ ! -f "$file" ]; then
+        archive="$(basename "${source%%#*}")"
+        [ -f "$archive" ] || curl -sSfL --max-filesize 400000000 -o "$archive" "${source%%#*}"
+        unzip -o -q "$archive" "${source#*#}"
+      fi
+      ;;
+    https://*) [ -f "$file" ] || curl -sSfL --max-filesize 400000000 -o "$file" "$source" ;;
+    *) echo "$file: unknown source $source" >&2; continue ;;
+  esac
+  # The file must be what its name says.
+  kind="$(file -bL --mime-type "$file")"
+  case "$file:$kind" in
+    *.pdf:application/pdf | *.epub:application/epub+zip | *.epub:application/zip | \
+      *.zip:application/zip | *.txt:text/*) ;;
+    *) echo "$file: unexpected content ($kind); removed" >&2; rm -f "$file"; status=1; continue ;;
+  esac
   got="$(sha256sum "$file" | cut -d' ' -f1)"
   if [ "$got" = "$sha" ]; then
     echo "$file: ok"
   else
-    echo "$file: checksum differs (a newer eBible build?): $got" >&2
+    echo "$file: checksum differs (a newer build?): $got" >&2
   fi
-done <<'LIST'
-engwebp_all.pdf 4c36e4008a65d568c6f8ad0ab0483b268db59e2afff98f3f194bccef7aae8d2e
-deu1912_all.pdf 7a7cdc3f4db5a94ef2d5043149a05a8deaf658fcc794e2ae978b76d9a37f0fd9
-engwebp_book.pdf cb7e17798a1e042a6e729c7f43a61837d6f6a7c450288c411e3400c7c55cf943
-fraLSG_all.pdf c6463fdc8679e13575b9b8d0891f2fe4db324e193bd68b57b6f62caffa2388f2
-LIST
+done < "$list"
+cat <<'NEXT'
+Derived documents (converted layouts), with LibreOffice installed:
+  scripts/build-derived-editions.py <folder> spaRV1909 docx,pdf,md
+  scripts/build-derived-editions.py <folder> deu1912 md
+  scripts/build-derived-editions.py <folder> porbrbsl docx
+  scripts/build-derived-editions.py <folder> kor docx
+  scripts/build-derived-editions.py <folder> kor1961 docx,pdf --usfm="제 {n} 장"
+NEXT
+exit $status

@@ -148,7 +148,9 @@ impl Recognition {
 
 /// A heading's text made comparable: marks folded, lower case, no full stops.
 fn key(text: &str) -> String {
-    normalise(&fold_marks(text))
+    // The ligatures of Latin titles: "ISAIÆ" is "isaiae".
+    let text = text.replace(['Æ', 'æ'], "ae").replace(['Œ', 'œ'], "oe");
+    normalise(&fold_marks(&text))
 }
 
 /// Greek titles of the New Testament books (as printed in Greek editions).
@@ -246,6 +248,16 @@ fn names() -> &'static HashMap<String, Vec<(&'static Book, ReferenceLanguage)>> 
                 add(name, book, language);
             }
         }
+        // Latin, for the Vulgate and scholarly editions: its full names
+        // only (its short forms, "In", "Ap", "Can", would name books where
+        // a line is something else).
+        if let Some(latin) = ReferenceLanguage::from_label("la") {
+            for (name, book) in ReferenceParser::for_language(latin).lookup_entries() {
+                if key(name).chars().filter(|c| c.is_alphabetic()).count() >= 5 {
+                    add(name, book, latin);
+                }
+            }
+        }
         for (title, code) in GREEK_TITLES {
             if let (Some(book), Some(greek)) =
                 (canon::by_code(code), ReferenceLanguage::from_label("el"))
@@ -308,6 +320,16 @@ fn title_forms(key: &str) -> Vec<String> {
         ("terceiro", 3),
         ("terceira", 3),
         ("quarto", 4),
+        // Latin
+        ("primus", 1),
+        ("prima", 1),
+        ("secundus", 2),
+        ("secunda", 2),
+        ("secundis", 2),
+        ("tertius", 3),
+        ("tertia", 3),
+        ("quartus", 4),
+        ("quarta", 4),
         // Figures and Roman numerals
         ("1", 1),
         ("2", 2),
@@ -369,6 +391,11 @@ fn title_forms(key: &str) -> Vec<String> {
         "apostolo",
         "sao",
         "paulo",
+        // Latin ("Incipit liber …": "here begins the book …")
+        "incipit",
+        "liber",
+        "epistula",
+        "evangelium",
     ];
     // Only after one of the words above ("Book of", "Brief an die", "Épître
     // aux"): a line that begins "of Jeremiah" is a subtitle, never a title.
@@ -411,6 +438,8 @@ fn title_forms(key: &str) -> Vec<String> {
         "segundo",
         "o",
         "os", // Portuguese
+        "secundum",
+        "ad", // Latin
     ];
     const AFTER: &[&str] = &[
         "jesu christi",
@@ -421,6 +450,12 @@ fn title_forms(key: &str) -> Vec<String> {
         "de jesus-christ",
         "de jesucristo",
         "de jesus cristo",
+        // Latin: "Isaiae prophetae", "Amos propheta", "Apocalypsis Iohannis apostoli"
+        "prophetae",
+        "propheta",
+        "apostoli",
+        "salomonis",
+        "solomonis",
     ];
     // The books named by their first word alone: "The Acts of the Apostles",
     // "Les Actes des Apôtres", "The Revelation to John", "The Lamentations of
@@ -440,6 +475,8 @@ fn title_forms(key: &str) -> Vec<String> {
         "atos",
         "apocalipse",
         "lamentacoes",
+        "apocalypsis",
+        "lamentationes",
     ];
     // "l'evangile" → "l' evangile", "d'esaie" → "d' esaie".
     let key = key.replace('’', "'");
@@ -452,7 +489,7 @@ fn title_forms(key: &str) -> Vec<String> {
     if let Some(at) = all.iter().position(|w| {
         matches!(
             *w,
-            "letter" | "epistle" | "brief" | "epitre" | "epistola" | "carta"
+            "letter" | "epistle" | "brief" | "epitre" | "epistola" | "carta" | "epistula"
         )
     }) {
         let n = all[..at]
@@ -507,6 +544,17 @@ fn title_forms(key: &str) -> Vec<String> {
         }
         break;
     }
+    // A number after the name ("Ad Corinthios I", "Regum primus").
+    if number.is_none() && words.len() >= 2 {
+        if let Some((_, n)) = words
+            .last()
+            .and_then(|last| ORDINALS.iter().find(|(w, _)| w == last))
+        {
+            number = Some(*n);
+            words.pop();
+            changed = true;
+        }
+    }
     if !changed || words.is_empty() {
         return extra;
     }
@@ -549,6 +597,24 @@ fn title_forms(key: &str) -> Vec<String> {
         }
     }
     out
+}
+
+/// A word without the h between two vowels ("samuhelis" → "samuelis").
+fn without_medial_h(text: &str) -> String {
+    let chars: Vec<char> = text.chars().collect();
+    let vowel = |c: char| "aeiouy".contains(c);
+    chars
+        .iter()
+        .enumerate()
+        .filter(|&(i, &c)| {
+            !(c == 'h'
+                && i > 0
+                && i + 1 < chars.len()
+                && vowel(chars[i - 1])
+                && vowel(chars[i + 1]))
+        })
+        .map(|(_, &c)| c)
+        .collect()
 }
 
 /// A title with one letter wrong, missing or extra ("Chonik" for "Chronik"):
@@ -632,8 +698,29 @@ const ALSO_CALLED: &[&str] = &[
     "comunmente llamado",
     "llamado",
     "chamado",
+    "chamada",
+    "llamada",
+    "appelee",
+    "called",
     "id est",
+    "or",
+    "oder",
+    "ou",
 ];
+
+/// Whether a title joins two names ("… Otherwise Called …", "… or, the
+/// Preacher").
+fn gives_second_name(text: &str) -> bool {
+    let k = joint_key(text);
+    ALSO_CALLED.iter().any(|j| k.contains(&format!(" {j} ")))
+}
+
+/// A title's key with commas as spaces, padded, for finding the words
+/// that join two names ("Ecclesiastes or, the Preacher").
+fn joint_key(text: &str) -> String {
+    let k = key(text).replace([',', ';'], " ");
+    format!(" {} ", k.split_whitespace().collect::<Vec<_>>().join(" "))
+}
 
 /// A subtitle giving a book another name ("Commonly Called the Third Book
 /// of the Kings").
@@ -649,20 +736,26 @@ fn second_name(text: &str) -> bool {
 /// ("… Otherwise Called …", "… id est …") is read by the first when it
 /// names a book, else by the second.
 fn book_named(text: &str, language: Option<ReferenceLanguage>) -> Option<&'static Book> {
-    let k = key(text);
+    let padded = joint_key(text);
     for joint in ALSO_CALLED {
         let pattern = format!(" {joint} ");
-        if let Some(at) = format!(" {k} ").find(&pattern) {
-            let padded = format!(" {k} ");
+        if let Some(at) = padded.find(&pattern) {
             let (before, after) = (&padded[..at], &padded[at + pattern.len()..]);
-            return book_named_once(before.trim(), language)
-                .or_else(|| book_named_once(after.trim(), language));
+            // Exact names only: a name one letter away ("Malachim", the
+            // Hebrew name of Kings, is not "Malachi") is never taken when
+            // the title has another name to read.
+            return book_named_once(before.trim(), language, false)
+                .or_else(|| book_named_once(after.trim(), language, false));
         }
     }
-    book_named_once(text, language)
+    book_named_once(text, language, true)
 }
 
-fn book_named_once(text: &str, language: Option<ReferenceLanguage>) -> Option<&'static Book> {
+fn book_named_once(
+    text: &str,
+    language: Option<ReferenceLanguage>,
+    near: bool,
+) -> Option<&'static Book> {
     let mut k = key(text);
     for prefix in TITLE_PREFIXES {
         if let Some(rest) = k.strip_prefix(prefix) {
@@ -670,13 +763,32 @@ fn book_named_once(text: &str, language: Option<ReferenceLanguage>) -> Option<&'
             break;
         }
     }
-    let forms = title_forms(&k);
+    let mut forms = title_forms(&k);
+    // Latin titles name a book in another case than the dictionary's
+    // ("Secundum Iohannem", "Danihelis prophetae"): the dictionary has it
+    // with its noun ("Evangelium secundum Ioannem", "Prophetia Danielis").
+    // Medieval spelling writes an h between vowels ("Samuhelis",
+    // "Iohannis").
+    if language.is_some_and(|l| l.code() == "la") {
+        let plain: Vec<String> = forms.iter().map(|f| without_medial_h(f)).collect();
+        forms.extend(plain);
+        let latin: Vec<String> = forms
+            .iter()
+            .flat_map(|f| {
+                ["evangelium secundum", "prophetia", "epistula", "liber"]
+                    .iter()
+                    .map(move |noun| format!("{noun} {f}"))
+            })
+            .collect();
+        forms.extend(latin);
+    }
     let found = match names().get(&k) {
         Some(found) => found,
         None => match forms.iter().find_map(|f| names().get(f)) {
             Some(found) => found,
             // Only for a line printed as a title ("Das erste Buch der …").
-            None => forms.iter().find_map(|f| near_name(f))?,
+            None if near => forms.iter().find_map(|f| near_name(f))?,
+            None => return None,
         },
     };
     let mut books: Vec<&'static Book> = Vec::new();
@@ -843,7 +955,9 @@ fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Headi
         return None;
     }
     let text = text.trim().trim_end_matches(['.', ':', '·']).trim();
-    if text.is_empty() || text.chars().count() > 60 {
+    // A title that gives a second name may be longer.
+    let limit = if gives_second_name(text) { 100 } else { 60 };
+    if text.is_empty() || text.chars().count() > limit {
         return None;
     }
     let lower = key(text);
@@ -1993,7 +2107,8 @@ fn book_line_shape(text: &str) -> bool {
     };
     // "Das 1. Buch Mose (Genesis)": a name in brackets may end the title.
     let bracketed = text.ends_with(')') && text.contains('(');
-    text.chars().count() <= 60
+    let limit = if gives_second_name(text) { 100 } else { 60 };
+    text.chars().count() <= limit
         && (bracketed
             || !text.ends_with([
                 '.', ',', ';', ':', '!', '?', '׃', '。', '"', '”', '’', '\'', ')',
@@ -2079,7 +2194,11 @@ impl Builder<'_> {
             if strong && reference_line(&line, self.language) {
                 continue;
             }
-            if let Some(heading) = read_heading(&line, self.language) {
+            // (A sentence of an introduction that names a book, "les Actes
+            // des Apôtres, relate la vie …", is not a heading.)
+            if let Some(heading) = read_heading(&line, self.language)
+                .filter(|h| !matches!(h, Heading::Book(_)) || book_line_shape(&line))
+            {
                 return matches!(heading, Heading::Chapter(1) | Heading::BookChapter(_, 1));
             }
             let digits: String = line
@@ -2272,12 +2391,11 @@ impl Builder<'_> {
             // the two together name the book, and a chapter or verse 1 follows.
             // (A first line that ends in the middle of a second name, "… Samuel
             // Otherwise Called the", is joined with the next too.)
-            let dangling = {
-                let k = format!(" {} ", key(text));
-                ALSO_CALLED.iter().any(|j| k.contains(&format!(" {j} ")))
-                    && ["the", "der", "die", "das", "le", "la", "el", "o", "a"]
-                        .iter()
-                        .any(|w| k.trim_end().ends_with(&format!(" {w}")))
+            let dangling = gives_second_name(text) && {
+                let k = key(text);
+                ["the", "der", "die", "das", "le", "la", "el", "o", "a"]
+                    .iter()
+                    .any(|w| k.ends_with(&format!(" {w}")))
             };
             if !unit.heading
                 && (dangling || read_heading(text, self.language).is_none())
@@ -2487,35 +2605,82 @@ impl Builder<'_> {
         (self.items, self.books)
     }
 
-    /// Numbered text between a book's title and its chapter 1 heading is
-    /// the book's introduction (a numbered list: "1 Les hymnes … : Ps 8;
-    /// 19."), never verses of a chapter 1 that has not begun yet.
+    /// Numbered text between a book's title and its chapter 1 is the book's
+    /// introduction, never verses of a chapter 1 that has not begun yet:
+    /// numbered text before the chapter 1 heading ("1 Les hymnes … : Ps 8;
+    /// 19."), or a numbered list that starts again at 1 before chapter 1
+    /// has all its verses ("1. la guérison d'un démoniaque 4:33-36", …,
+    /// then "1 Plusieurs ayant entrepris …"): a list's numbers end with a
+    /// full stop, or its items cite chapters and verses.
     fn introduction_before_chapter_one(&mut self) {
-        let mut start: Option<usize> = None;
-        let mut markers = 0usize;
-        for i in 0..self.items.len() {
+        use std::sync::OnceLock;
+        static CITED: OnceLock<regex::Regex> = OnceLock::new();
+        let cited = CITED.get_or_init(|| regex::Regex::new(r"\d{1,3}[:.]\d{1,3}").expect("valid"));
+        // From the book's title: (title, markers, listed, citing).
+        let mut run: Option<(usize, usize, usize, usize)> = None;
+        let mut first_chapter_verses = 0u16;
+        let mut i = 0;
+        while i < self.items.len() {
+            let mut cut = None;
             match &self.items[i].event {
-                Event::Book { chapter: None, .. } => {
-                    start = Some(i);
-                    markers = 0;
+                Event::Book {
+                    chapter: None,
+                    entry,
+                } => {
+                    run = Some((i, 0, 0, 0));
+                    first_chapter_verses = self.books[*entry]
+                        .detected
+                        .and_then(canon::by_code)
+                        .and_then(|b| canon::verse_count(b, 1))
+                        .unwrap_or(0);
                 }
-                Event::Book { .. } => start = None,
-                Event::Marker(_) if start.is_some() => markers += 1,
-                Event::Chapter(n) => {
-                    if let (Some(from), 1, true) = (start, *n, markers > 0) {
-                        for item in &mut self.items[from + 1..i] {
-                            let text = match &item.event {
-                                Event::Text(t) => t.trim().to_string(),
-                                Event::Marker(m) => m.raw.clone(),
-                                _ => continue,
-                            };
-                            item.event = Event::Other { notes: false, text };
+                Event::Book { .. } => run = None,
+                Event::Marker(m) => {
+                    if let Some((from, markers, listed, citing)) = run.as_mut() {
+                        if m.value == 1 && m.unit_start && *markers > 0 {
+                            let list = *listed * 2 >= *markers || *citing * 2 >= *markers;
+                            if list && (*markers as u16) < first_chapter_verses {
+                                cut = Some(*from);
+                            }
+                        }
+                        *markers += 1;
+                        if m.raw.trim_end().ends_with('.') {
+                            *listed += 1;
+                        }
+                        let text = match self.items.get(i + 1).map(|n| &n.event) {
+                            Some(Event::Text(t)) => cited.is_match(t),
+                            _ => false,
+                        };
+                        if text {
+                            *citing += 1;
                         }
                     }
-                    start = None;
+                }
+                Event::Chapter(n) => {
+                    if let (Some((from, markers, ..)), 1) = (run, *n) {
+                        if markers > 0 {
+                            cut = Some(from);
+                        }
+                    }
+                    run = None;
                 }
                 _ => {}
             }
+            if let Some(from) = cut {
+                for item in &mut self.items[from + 1..i] {
+                    let text = match &item.event {
+                        Event::Text(t) => t.trim().to_string(),
+                        Event::Marker(m) => m.raw.clone(),
+                        _ => continue,
+                    };
+                    item.event = Event::Other { notes: false, text };
+                }
+                // The numbering that starts here is counted afresh.
+                if let Some(r) = run.as_mut() {
+                    *r = (i - 1, 1, 0, 0);
+                }
+            }
+            i += 1;
         }
     }
 
@@ -2532,7 +2697,12 @@ impl Builder<'_> {
                 && !line.chars().any(char::is_lowercase)
                 && line.chars().any(char::is_uppercase)
         };
-        let shape = |line: &str, set_apart: bool| {
+        // `more`: another heading line, or the passage's cross-references,
+        // follows; a heading of several parts may then end with a full stop
+        // or a comma ("Défense à Aaron … tabernacle." over "Portions des
+        // offrandes …"; "Le territoire conquis distribué aux Rubénites," over
+        // its second line).
+        let shape = |line: &str, set_apart: bool, more: bool| {
             let line = line.trim();
             let ends = line.ends_with([
                 '.', '!', '?', ';', ':', ',', '”', '’', '"', '»', '\'', ')', '-', '‐', '–',
@@ -2541,7 +2711,9 @@ impl Builder<'_> {
                 && line.chars().find(|c| c.is_alphabetic()).is_some_and(|c| !c.is_lowercase())
                 // A heading set apart and in capitals may end with a full
                 // stop ("ב BETH."); any other must not end as a sentence.
-                && (!ends || (set_apart && capitals(line) && line.ends_with('.')))
+                && (!ends
+                    || (set_apart && capitals(line) && line.ends_with('.'))
+                    || (set_apart && more && line.ends_with(['.', ','])))
         };
         let ended = |item: &Item| match &item.event {
             Event::Text(t) => {
@@ -2563,7 +2735,7 @@ impl Builder<'_> {
             let styled = unit.heading || unit.large || unit.styled;
             (whole && alone).then(|| (line.clone(), styled))
         };
-        let candidate = |b: &Self, i: usize, references_follow: bool| -> bool {
+        let candidate = |b: &Self, i: usize, references_follow: bool, more: bool| -> bool {
             let item = &b.items[i];
             let Event::Text(line) = &item.event else {
                 return false;
@@ -2586,7 +2758,7 @@ impl Builder<'_> {
             // A single word only when its style sets it apart (a styled block
             // or line is never the wrapped end of a verse).
             let words = line.split_whitespace().count();
-            whole && alone && set_apart && shape(line, set_apart) && (words >= 2 || styled)
+            whole && alone && set_apart && shape(line, set_apart, more) && (words >= 2 || styled)
         };
         // From the end, so that a heading over another heading (a section
         // title over a subtitle) is seen once the later one is set aside.
@@ -2617,7 +2789,12 @@ impl Builder<'_> {
                 matches!(&n.event, Event::Other { notes: false, text }
                     if reference_line(text, self.language))
             });
-            if !candidate(self, k, references_follow) {
+            // A heading already set aside right after this line.
+            let heading_follows = self
+                .items
+                .get(k + 1)
+                .is_some_and(|n| matches!(&n.event, Event::Other { notes: false, .. }));
+            if !candidate(self, k, references_follow, heading_follows) {
                 continue;
             }
             // A verse or chapter number, or a chapter heading, comes next.
@@ -2637,9 +2814,17 @@ impl Builder<'_> {
                 continue;
             }
             // One line, or two (a heading wrapped over two lines).
-            let two = k >= 2 && candidate(self, k - 1, false) && ended(&self.items[k - 2]);
+            let two = k >= 2 && candidate(self, k - 1, false, true) && ended(&self.items[k - 2]);
             let first = if two { k - 1 } else { k };
-            if ended(&self.items[first - 1]) {
+            // A paragraph of its own set apart by its look (EPUB, Word), with
+            // a verse number starting the next: never the end of the verse
+            // before, even where verses end without a full stop (Korean
+            // "… 안식하셨음이더라").
+            let paragraph = {
+                let unit = &self.units[self.items[k].unit];
+                unit.place.page.is_none() && (unit.heading || unit.styled) && starts_verse
+            };
+            if paragraph || ended(&self.items[first - 1]) {
                 for i in first..=k {
                     if let Event::Text(line) = &self.items[i].event {
                         let text = unmark_raised(line.trim());
@@ -2793,7 +2978,14 @@ fn trailing_reference(text: &str, language: Option<ReferenceLanguage>) -> Option
 fn reference_line(text: &str, language: Option<ReferenceLanguage>) -> bool {
     use std::sync::OnceLock;
     static PAIR: OnceLock<regex::Regex> = OnceLock::new();
-    let pair = PAIR.get_or_init(|| regex::Regex::new(r"\d{1,3}\s?[:,.]\s?\d{1,3}").expect("valid"));
+    // A chapter and verse ("21:9"), or a passage's verses named as such
+    // ("V. 1-28: cf. De 33.").
+    let pair = PAIR.get_or_init(|| {
+        regex::Regex::new(
+            r"\d{1,3}\s?[:,.]\s?\d{1,3}|^\s*[Vv]{1,2}\.\s?\d{1,3}(\s?[-–]\s?\d{1,3})?\s?:",
+        )
+        .expect("valid")
+    });
     if !pair.is_match(text) {
         return false;
     }

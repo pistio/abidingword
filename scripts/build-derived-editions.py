@@ -118,12 +118,13 @@ def from_usfm(folder, ident, formats, chapter_label):
             if tag == "c":
                 flush()
                 parts.append(f"<h2>{html.escape(chapter_label.format(n=rest.split()[0]))}</h2>")
+            # Inline styles: LibreOffice's HTML import does not apply class rules.
             elif tag in ("s", "s1", "s2"):
                 flush()
-                parts.append(f'<p class="s">{html.escape(rest)}</p>')
+                parts.append(f'<p style="font-weight:bold;text-align:center">{html.escape(rest)}</p>')
             elif tag == "d":
                 flush()
-                parts.append(f'<p class="d">{html.escape(rest)}</p>')
+                parts.append(f'<p style="font-style:italic">{html.escape(rest)}</p>')
             elif tag in ("p", "m", "q", "q1", "q2", "pi", "nb", "li", "li1"):
                 flush()
                 if rest:

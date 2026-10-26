@@ -4,7 +4,7 @@ import { useApi } from "@/lib/ApiContext";
 import type { BibleLanguageOption } from "@/types/scripture";
 
 /**
- * A Bible's language: one of the 100 reference languages (stored as its tag,
+ * A Bible's language: one of the 100 reference languages, or Latin (stored as its tag,
  * which typed references use first), or another language by name only (no
  * tag). Starts unchosen unless the Bible's own metadata named it — nothing is
  * guessed from file names, titles or text (docs/correctness-hardening-v0.18.3.md).

@@ -392,7 +392,8 @@ mod tests {
             assert!(matches!(language, ReferenceLanguage::Data(_)), "{label}");
             assert_eq!(language.code(), code, "{label}");
         }
-        assert_eq!(ReferenceLanguage::all().count(), 100);
+        // The 100 by population, and Latin.
+        assert_eq!(ReferenceLanguage::all().count(), 101);
     }
 
     #[test]

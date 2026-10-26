@@ -254,7 +254,18 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let mut extra_verses = Vec::new();
     let mut books_not_found = Vec::new();
     let mut seen_books: BTreeSet<u8> = BTreeSet::new();
+    // A file of one book ("fraLSG_LUK.pdf") is measured against that book.
+    let only_book = edition
+        .files
+        .first()
+        .and_then(|f| f.rsplit_once('_'))
+        .and_then(|(_, rest)| rest.split('.').next())
+        .and_then(canon::by_code)
+        .map(|b| b.ordinal);
     for (ordinal, rbook) in &reference.content.books {
+        if only_book.is_some_and(|o| o != *ordinal) {
+            continue;
+        }
         seen_books.insert(*ordinal);
         let book = canon::by_ordinal(*ordinal).unwrap();
         let mut a = BookAudit {

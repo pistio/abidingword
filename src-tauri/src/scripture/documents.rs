@@ -521,7 +521,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     uncertain_order: false,
                     note: false,
                     large: false,
-            styled: false,
+                    styled: false,
                 });
             }
         }

@@ -466,6 +466,26 @@ fn a_title_that_gives_a_second_name_names_its_own_book() {
         verse(&r, "1KI", 1, 53).as_deref(),
         Some(words("1 Kings", 1, 53).as_str())
     );
+    // On one line, longer than a heading usually is; "called", "or".
+    let detected = |title: &str| {
+        let mut text = format!("{title}\n\n");
+        for v in 1..=20u16 {
+            text.push_str(&format!("{v} {}\n", words("Book", 1, v)));
+        }
+        recognise(&read("t.txt", text.as_bytes()))
+            .books
+            .first()
+            .and_then(|b| b.detected)
+    };
+    assert_eq!(
+        detected("The First Book of Samuel Otherwise Called the First Book of the Kings"),
+        Some("1SA")
+    );
+    assert_eq!(
+        detected("The First Book of Moses, called Genesis"),
+        Some("GEN")
+    );
+    assert_eq!(detected("Ecclesiastes or, the Preacher"), Some("ECC"));
 }
 
 #[test]

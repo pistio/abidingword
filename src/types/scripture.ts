@@ -20,7 +20,7 @@ export interface BookInfo {
   chapterCount: number;
 }
 
-/** A language a Bible can be marked as (one of the 100 reference languages). */
+/** A language a Bible can be marked as (one of the 100 reference languages, or Latin). */
 export interface BibleLanguageOption {
   code: string;
   /** English name. */

@@ -15,7 +15,9 @@ Sources (recorded in the output's "provenance"):
   each language per territory, summed over territories). Spoken varieties
   whose Bible references are written in another pack's standard form are
   merged into it (MERGE); languages without published book-name data are
-  skipped (recorded). The first 100 that remain are the set.
+  skipped (recorded). The first 100 that remain are the set. Latin, the
+  language of the Vulgate and of many scholarly editions, is added after
+  them (EXTRA), whatever its population.
 * Book names and abbreviations: the per-language data of the OpenBible.info
   Bible Passage Reference Parser (MIT licence),
   github.com/openbibleinfo/Bible-Passage-Reference-Parser-Languages, data/*.yaml.
@@ -139,6 +141,10 @@ def rank(cache):
     return total
 
 
+# Languages added after the 100 for the Bibles people study in them: (code, ISO 639-3).
+EXTRA = [("la", "lat")]
+
+
 def available(cache, iso3):
     return os.path.exists(os.path.join(cache, "yaml", iso3 + ".yaml"))
 
@@ -243,6 +249,12 @@ def main():
     chosen, merged, skipped = select(cache, args.fetch)
     if len(chosen) != 100:
         sys.exit(f"only {len(chosen)} languages have data")
+    for code, iso3 in EXTRA:
+        if args.fetch and not available(cache, iso3):
+            fetch(f"{DATA_REPO}/data/{iso3}.yaml", os.path.join(cache, "yaml", iso3 + ".yaml"))
+        if not available(cache, iso3):
+            sys.exit(f"no data for {iso3}")
+        chosen.append({"code": code, "iso3": iso3, "millions": 0.0, "rank": len(chosen) + 1})
     names = json.load(open(os.path.join(cache, "languages-en.json")))["main"]["en"]["localeDisplayNames"]["languages"]
 
     packs = []
@@ -313,7 +325,7 @@ def main():
         "format": "abiding-word/reference-packs",
         "version": 1,
         "provenance": {
-            "languages": "Unicode CLDR 48 supplemental territoryInfo: language population summed over territories; spoken varieties merged into their written standard; languages without published book-name data skipped; first 100 kept.",
+            "languages": "Unicode CLDR 48 supplemental territoryInfo: language population summed over territories; spoken varieties merged into their written standard; languages without published book-name data skipped; first 100 kept. Latin added after them for the editions studied in it.",
             "bookNames": "OpenBible.info Bible Passage Reference Parser language data (data/<iso639-3>.yaml), MIT licence, Copyright (c) Stephen Smith; https://github.com/openbibleinfo/Bible-Passage-Reference-Parser-Languages",
             "curated": "English, German, Korean, French, Spanish and Portuguese use the hand-reviewed dictionaries in src-tauri/src/scripture/aliases (not generated).",
             "merged": merged,

@@ -1770,10 +1770,19 @@ mod glyph_probe {
             let letters = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();
             let drawn: usize = p.glyphs.iter().map(|g| letters(&g.text)).sum();
             let rotated = p.glyphs.iter().filter(|g| !g.upright).count();
-            let page = PageGlyphs { number: 1, width: p.width, height: p.height, glyphs: p.glyphs.clone() };
+            let page = PageGlyphs {
+                number: 1,
+                width: p.width,
+                height: p.height,
+                glyphs: p.glyphs.clone(),
+            };
             let l = layout_page(page, None);
             let read: usize = l.lines.iter().map(|x| letters(&x.text)).sum();
-            eprintln!("order {:?} drawn {drawn} read {read} rotated {rotated} spans {}", l.order, spans(&p.glyphs).len());
+            eprintln!(
+                "order {:?} drawn {drawn} read {read} rotated {rotated} spans {}",
+                l.order,
+                spans(&p.glyphs).len()
+            );
             let all = spans(&p.glyphs);
             let in_spans: usize = all.iter().map(|s| letters(&s.text)).sum();
             eprintln!("letters in spans {in_spans}");
@@ -1784,28 +1793,63 @@ mod glyph_probe {
             let _ = peel(&mut refs, body, p.height, false);
             eprintln!("body {body} gutter {:?}", find_gutter(&refs, body));
             let mut block = 0;
-            eprintln!("column_lines ok {}", column_lines(&refs, body, 0, &mut block).is_some());
+            eprintln!(
+                "column_lines ok {}",
+                column_lines(&refs, body, 0, &mut block).is_some()
+            );
             for line in lines_of(&refs, body, 0, &mut block) {
-                let pieces: Vec<&Span> = refs.iter().copied().filter(|s| (s.y - line.y).abs() <= 0.5 * line.size && s.x0 >= line.x0 - 1e-6 && s.x1 <= line.x1 + 1e-6).filter(|s| s.size < 1.6 * body).collect();
+                let pieces: Vec<&Span> = refs
+                    .iter()
+                    .copied()
+                    .filter(|s| {
+                        (s.y - line.y).abs() <= 0.5 * line.size
+                            && s.x0 >= line.x0 - 1e-6
+                            && s.x1 <= line.x1 + 1e-6
+                    })
+                    .filter(|s| s.size < 1.6 * body)
+                    .collect();
                 let g = widest_gap(&pieces);
-                if g > 2.5 { eprintln!("wide {g:.2} {}", line.text); }
+                if g > 2.5 {
+                    eprintln!("wide {g:.2} {}", line.text);
+                }
             }
-            for g in p.glyphs.iter().filter(|g| g.text.chars().count() != 1) .take(10) {
+            for g in p
+                .glyphs
+                .iter()
+                .filter(|g| g.text.chars().count() != 1)
+                .take(10)
+            {
                 eprintln!("multi {:?}", g.text.to_string());
             }
             return;
         }
         if std::env::var("AW_GLYPH_SPANS").is_ok() {
             for sp in spans(&p.glyphs) {
-                eprintln!("SPAN {}/{} y{:.1} s{:.1} {}", sp.styled, sp.compared, sp.y, sp.size, sp.text);
+                eprintln!(
+                    "SPAN {}/{} y{:.1} s{:.1} {}",
+                    sp.styled, sp.compared, sp.y, sp.size, sp.text
+                );
             }
             return;
         }
         let text: String = p.glyphs.iter().map(|g| g.text.to_string()).collect();
         let at = text.find(&word).unwrap();
         let start = text[..at].chars().count();
-        for g in p.glyphs.iter().skip(start.saturating_sub(4)).take(word.chars().count() + 8) {
-            eprintln!("{:?} x{:.1} y{:.1} end{:.1} size{:.2} w{}", g.text.to_string(), g.x, g.y, g.end, g.size, g.width);
+        for g in p
+            .glyphs
+            .iter()
+            .skip(start.saturating_sub(4))
+            .take(word.chars().count() + 8)
+        {
+            eprintln!(
+                "{:?} x{:.1} y{:.1} end{:.1} size{:.2} w{}",
+                g.text.to_string(),
+                g.x,
+                g.y,
+                g.end,
+                g.size,
+                g.width
+            );
         }
     }
 }

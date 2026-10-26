@@ -3,7 +3,8 @@
 //! `resources/scripture/reference-packs.json` is written by
 //! `scripts/scripture/build_reference_packs.py` from published sources (see
 //! its provenance block and `docs/reference-language-packs.md`): which 100
-//! languages (Unicode CLDR population data), and their book names and
+//! languages (Unicode CLDR population data, then Latin for the Vulgate and
+//! scholarly editions), and their book names and
 //! abbreviations (OpenBible.info Bible Passage Reference Parser data, MIT).
 //! Six of the 100 — English, German, Korean, French, Spanish, Portuguese —
 //! keep their hand-reviewed dictionaries (`scripture::aliases`); the other 94
@@ -292,11 +293,13 @@ mod tests {
 
     #[test]
     fn the_file_lists_one_hundred_languages_by_rank_with_the_reviewed_six_among_them() {
+        // The 100 by population, then Latin (for the Vulgate and scholarly editions).
         let listed = listed();
-        assert_eq!(listed.len(), 100);
-        assert_eq!(packs().len(), 94);
+        assert_eq!(listed.len(), 101);
+        assert_eq!(packs().len(), 95);
         let ranks: Vec<u32> = listed.iter().map(|l| l.rank).collect();
-        assert_eq!(ranks, (1..=100).collect::<Vec<_>>());
+        assert_eq!(ranks, (1..=101).collect::<Vec<_>>());
+        assert_eq!(listed[100].code, "la");
         for reviewed in ReferenceLanguage::REVIEWED {
             assert!(
                 listed.iter().any(|l| l.language == reviewed),
