@@ -781,7 +781,7 @@
       },
       "apparatusTitle_one": "{{formatted}} Anmerkung oder Überschrift, hier ausgesondert",
       "apparatusTitle_other": "{{formatted}} Anmerkungen und Überschriften, hier ausgesondert",
-      "apparatusIntro": "Sie gehören zum Dokument, nicht zu den Versen. Sie werden so gezeigt, wie das Dokument sie hat.",
+      "apparatusIntro": "Diese Einträge gehören zum Dokument, nicht zu den Versen, und stehen hier so, wie das Dokument sie zeigt.",
       "apparatusKind": {
         "footnote": "Anmerkung",
         "crossReference": "Querverweis",
