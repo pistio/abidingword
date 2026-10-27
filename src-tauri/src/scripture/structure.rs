@@ -1315,6 +1315,17 @@ fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Headi
     }
     let lower = key(text);
     let words: Vec<&str> = lower.split(' ').collect();
+    // "Psaume 118 (Vulg. CXVII)": a chapter's label with another numbering
+    // in brackets after it (v0.24.3).
+    if let Some((head, _)) = text.strip_suffix(')').and_then(|t| t.rsplit_once('(')) {
+        let head = head.trim();
+        let hw: Vec<String> = key(head).split(' ').map(str::to_string).collect();
+        if hw.len() == 2 && CHAPTER_WORDS.contains(&hw[0].as_str()) {
+            if let Some(n) = head.split_whitespace().last().and_then(chapter_number) {
+                return Some(Heading::Chapter(n));
+            }
+        }
+    }
     // "Chapter 3", "פרק ג", "Κεφάλαιο 3".
     if words.len() == 2 && CHAPTER_WORDS.contains(&words[0]) {
         let raw: Vec<&str> = text.split_whitespace().collect();
@@ -2298,6 +2309,18 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
         }
     }
     if let [.., before, last] = words[..] {
+        // (Or with a closing bracket: "… dividing up the land. 14)", the end
+        // of a reference read in.)
+        let bracketed = last.ends_with(')')
+            && last.len() <= 4
+            && last
+                .trim_end_matches(')')
+                .chars()
+                .all(|c| c.is_ascii_digit())
+            && last.len() > 1;
+        if bracketed && sentence_end(before) {
+            return Some("reference");
+        }
         let number = last.ends_with('.')
             && last.len() <= 4
             && last
@@ -2694,10 +2717,14 @@ fn repeated_labels(units: &[Unit], furniture: &HashSet<usize>) -> HashSet<String
         let text = clean(&unit.text);
         let text = text.trim();
         let words = text.split_whitespace().count();
-        let shape = (1..=2).contains(&words)
-            && text.chars().count() <= 24
-            && text.chars().next().is_some_and(|c| c.is_uppercase())
-            && text.chars().all(|c| c.is_alphabetic() || c == ' ');
+        // (Or a speaker's label of up to three words with its colon:
+        // "Mujer:", "Mujeres de Jerusalén:", v0.24.3.)
+        let colon = text.ends_with(':');
+        let bare = text.trim_end_matches(':');
+        let shape = (1..=if colon { 3 } else { 2 }).contains(&words)
+            && bare.chars().count() <= 24
+            && bare.chars().next().is_some_and(|c| c.is_uppercase())
+            && bare.chars().all(|c| c.is_alphabetic() || c == ' ');
         if shape {
             *counts.entry(text.to_string()).or_default() += 1;
         }
@@ -4561,6 +4588,9 @@ struct Reader<'a> {
     block_starts: HashSet<usize>,
     /// Words the document uses as labels inside its lines (see `inline_labels`).
     inline_labels: HashSet<String>,
+    /// A heading was left out since the open verse began: words after it
+    /// without a verse number may not be that verse's (v0.24.3).
+    heading_in_verse: bool,
 }
 
 impl Reader<'_> {
@@ -5224,6 +5254,7 @@ impl Reader<'_> {
         self.check_order(unit);
         self.doubt_skipped_edges(unit);
         self.close();
+        self.heading_in_verse = false;
         let (Some(book), Some(chapter)) = (self.book, self.chapter) else {
             return;
         };
@@ -5446,20 +5477,20 @@ impl Reader<'_> {
             && matches!(self.items.get(at - 1).map(|i| &i.event),
                 Some(Event::Text(t)) if t.trim_end().chars().last().is_some_and(char::is_alphabetic));
         let quantity = beyond && m.strength == Strength::Medium && (lower_after || word_before);
-        // A chapter's number set as a drop numeral against verse 1's first
-        // word ("17Lorsque Abram …", an EPUB's floated initial) at a
-        // paragraph's start, once this chapter has all its verses: the next
+        // A chapter's number set as a drop numeral before verse 1 ("17When
+        // Abram …", "17Lorsque Abram …"), at a paragraph's start once this
+        // chapter has all its verses, with verse 2 numbered next: the next
         // chapter begins, even where its number is also the next verse's
         // (Genesis 16 has 16 verses), v0.24.3.
         if strong
             && m.unit_start
-            && m.glued
             && !m.raised
             && beyond
             && m.end.is_none()
             && m.value == chapter + 1
             && chapter < book.chapter_count
             && self.chapter_complete()
+            && self.next_value(at) == Some(2)
         {
             self.start_chapter(chapter + 1, unit);
             self.out.stats.numbered_chapters += 1;
@@ -5898,6 +5929,12 @@ impl Reader<'_> {
             if set_apart {
                 open.doubt = open.doubt.or(Some("possibleHeading"));
             }
+            // Words after a heading, before any verse number ("Psaume 118
+            // (Vulg. CXVII)" read as a heading / "Au départ de la
+            // procession."): not known to be this verse's.
+            if self.heading_in_verse && !open.text.trim().is_empty() {
+                open.doubt = open.doubt.or(Some("boundary"));
+            }
             Self::append(
                 open,
                 &words,
@@ -6051,6 +6088,9 @@ impl Reader<'_> {
                             self.items.get(at + 1).map(|i| &i.event),
                             Some(Event::Chapter(_))
                         );
+                        if self.open.is_some() {
+                            self.heading_in_verse = true;
+                        }
                         if let Some(open) = self.open.as_mut() {
                             if open.fresh_last_line {
                                 open.doubt = open.doubt.or(Some("possibleHeading"));
@@ -6552,6 +6592,7 @@ fn recognise_in(
         apparatus_chars: 0,
         block_starts: starts,
         inline_labels: inline_labels(units),
+        heading_in_verse: false,
     };
     let mut out = reader.run();
     check_running_heads(units, &furniture, language, &mut out);
