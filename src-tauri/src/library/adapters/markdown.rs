@@ -80,7 +80,15 @@ impl SourceImportAdapter for MarkdownImporter {
                     block_start = range.start;
                 }
                 // A tight list item has text but no paragraph of its own.
-                Event::End(TagEnd::Paragraph | TagEnd::CodeBlock | TagEnd::Item) => {
+                // A hard line break ends a line of its own ("1:1 …  " / "1:2
+                // …", a verse per line, v0.24.3).
+                Event::End(TagEnd::Paragraph | TagEnd::CodeBlock | TagEnd::Item)
+                | Event::HardBreak => {
+                    let hard = matches!(event, Event::HardBreak);
+                    if hard && in_heading.is_some() {
+                        buffer.push(' ');
+                        continue;
+                    }
                     let text = collapse(&buffer);
                     buffer.clear();
                     if text.is_empty() {
@@ -101,9 +109,12 @@ impl SourceImportAdapter for MarkdownImporter {
                         });
                         paragraph_in_section += 1;
                     }
+                    if hard {
+                        block_start = range.end;
+                    }
                 }
                 Event::Text(t) | Event::Code(t) => buffer.push_str(&t),
-                Event::SoftBreak | Event::HardBreak => buffer.push(' '),
+                Event::SoftBreak => buffer.push(' '),
                 // Raw HTML is ignored: never rendered, never executed.
                 Event::Html(_) | Event::InlineHtml(_) => {}
                 _ => {}

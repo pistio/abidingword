@@ -1617,6 +1617,19 @@ fn build_para(
                 any_raised = true;
                 raised.push_str(&super::pdf_layout::superscript(t));
             }
+            // Raised small letters (a note's caller, "Cristoᵃ"): marked as
+            // the PDF reader marks them, for the recogniser to take out
+            // where a note explains them (v0.24.3).
+            Inline::Text(t, f)
+                if (f.sup || f.raised)
+                    && (1..=3).contains(&t.trim().chars().count())
+                    && t.trim().chars().all(char::is_lowercase) =>
+            {
+                any_raised = true;
+                raised.push(super::pdf_layout::RAISED_OPEN);
+                raised.push_str(t.trim());
+                raised.push(super::pdf_layout::RAISED_CLOSE);
+            }
             Inline::Text(t, _) => raised.push_str(t),
             Inline::Br => raised.push(' '),
             _ => {}

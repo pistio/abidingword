@@ -2045,7 +2045,38 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         })
         .count();
     let reference_pages = reference_heads >= needed;
+    // A line the layout sets at a page's edge, not large, with the same
+    // wording on three pages or more ("GÉNESIS" over each page of Genesis):
+    // a running head, however few of the document's pages it runs through
+    // (v0.24.3).
+    let mut edge_counts: HashMap<String, usize> = HashMap::new();
+    for lines in pages.values() {
+        let mut seen = HashSet::new();
+        for &i in lines {
+            let u = &units[i];
+            // (Without numbers: those are counted by their form above, and a
+            // chapter's label, "Capítulo 3", may open a page.)
+            if u.edge
+                && !u.large
+                && head_like(&u.text)
+                && numbered_name_only(&u.text)
+                && seen.insert(shape(&u.text))
+            {
+                *edge_counts.entry(shape(&u.text)).or_default() += 1;
+            }
+        }
+    }
     for ((_, page), lines) in &pages {
+        for &i in lines {
+            let u = &units[i];
+            if u.edge
+                && !u.large
+                && head_like(&u.text)
+                && edge_counts.get(&shape(&u.text)).is_some_and(|n| *n >= 3)
+            {
+                out.insert(i);
+            }
+        }
         // A line the page's layout sets apart at its top or bottom edge that
         // names a passage (v0.24.3): the running head or page
         // number, whatever its wording ("Le premier livre de Samuel 1:1 364
@@ -2085,6 +2116,17 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         }
     }
     out
+}
+
+/// Whether a line has no number but a book's own ("1 SAMUEL", "GÉNESIS";
+/// not "Capítulo 3").
+fn numbered_name_only(text: &str) -> bool {
+    let text = text.trim();
+    let rest = match text.split_once(char::is_whitespace) {
+        Some((n, rest)) if matches!(n, "1" | "2" | "3" | "4") => rest,
+        _ => text,
+    };
+    !rest.chars().any(|c| c.is_ascii_digit())
 }
 
 /// What a line set apart at a page's edge says when it is page furniture: a
@@ -2233,7 +2275,10 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     let run = words.iter().rev().take_while(|w| capitals(w)).count();
     if run >= 1 && run < words.len() && sentence_end(words[words.len() - run - 1]) {
         let last = words[words.len() - 1];
-        let one = last.chars().all(|c| c.is_alphabetic() && !c.is_lowercase());
+        let one = last
+            .trim_end_matches(['.', ',', ';', ':'])
+            .chars()
+            .all(|c| c.is_alphabetic() && !c.is_lowercase());
         if run >= 2 || one {
             return Some("possibleHeading");
         }
@@ -2308,8 +2353,17 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     // A raised number left in the verse (a note's number) or a sign.
     // A note's letter left against the sentence's end ("Louez Jah.a b
     // Bienheureux"): a label whose raised type the page lost.
+    // An editor's note in square brackets, opened by an abbreviation ("zehn[O.
+    // zehn seiner]Knechte": "oder", "wörtlich", "eigentlich").
+    static EDITORIAL: OnceLock<regex::Regex> = OnceLock::new();
+    let editorial =
+        EDITORIAL.get_or_init(|| regex::Regex::new(r"\[\p{Lu}\p{Ll}{0,3}\.\s").expect("valid"));
+    if editorial.is_match(text) {
+        return Some("noteSign");
+    }
     static LETTER: OnceLock<regex::Regex> = OnceLock::new();
-    let letter = LETTER.get_or_init(|| regex::Regex::new(r"[.!?;:]\p{Ll}(?:\s|$)").expect("valid"));
+    let letter =
+        LETTER.get_or_init(|| regex::Regex::new(r#"[.!?;:,”")]\p{Ll}(?:\s|$)"#).expect("valid"));
     if text.chars().any(|c| superscript_digit(c).is_some())
         || text.contains('*')
         || letter.is_match(text)
@@ -2703,7 +2757,27 @@ fn head_references(text: &str) -> Option<(HeadReference, HeadReference)> {
             })
         })
         .collect();
-    Some((found.first()?.clone(), found.last()?.clone()))
+    let first = found.first()?.clone();
+    let mut last = found.last()?.clone();
+    // A range whose end names no book ("GENESIS 8:13–9:15", "Ruth 2:4-23"):
+    // the same book, to the chapter and verse after the dash (v0.24.3).
+    static RANGE_END: OnceLock<regex::Regex> = OnceLock::new();
+    let range_end = RANGE_END.get_or_init(|| {
+        regex::Regex::new(
+            r"\d[:,.]\d{1,3}\s*[–-]\s*(\d{1,3})(?:[:,.](\d{1,3}))?(?:\s+\d{1,4})?\s*$",
+        )
+        .expect("valid pattern")
+    });
+    if let Some(c) = range_end.captures(text.trim()) {
+        let a: Option<u16> = c.get(1).and_then(|m| m.as_str().parse().ok());
+        let b: Option<u16> = c.get(2).and_then(|m| m.as_str().parse().ok());
+        match (a, b) {
+            (Some(chapter), Some(verse)) => last = (last.0, chapter, verse),
+            (Some(verse), None) => last = (last.0.clone(), last.1, verse),
+            _ => {}
+        }
+    }
+    Some((first, last))
 }
 
 /// The running heads of typeset Bibles name the first and last verse of
@@ -5366,7 +5440,33 @@ impl Reader<'_> {
         let beyond = canon::verse_count(book, chapter).is_some_and(|count| m.value > count);
         let lower_after = matches!(self.items.get(at + 1).map(|i| &i.event),
             Some(Event::Text(t)) if t.trim_start().chars().next().is_some_and(char::is_lowercase));
-        if m.value == expect && !(beyond && m.strength == Strength::Medium && lower_after) {
+        // (Or after a word, in a language that writes its nouns with a
+        // capital: "… das ganze Haus Israel Aaron 30 Tage".)
+        let word_before = at > 0
+            && matches!(self.items.get(at - 1).map(|i| &i.event),
+                Some(Event::Text(t)) if t.trim_end().chars().last().is_some_and(char::is_alphabetic));
+        let quantity = beyond && m.strength == Strength::Medium && (lower_after || word_before);
+        // A chapter's number set as a drop numeral against verse 1's first
+        // word ("17Lorsque Abram …", an EPUB's floated initial) at a
+        // paragraph's start, once this chapter has all its verses: the next
+        // chapter begins, even where its number is also the next verse's
+        // (Genesis 16 has 16 verses), v0.24.3.
+        if strong
+            && m.unit_start
+            && m.glued
+            && !m.raised
+            && beyond
+            && m.end.is_none()
+            && m.value == chapter + 1
+            && chapter < book.chapter_count
+            && self.chapter_complete()
+        {
+            self.start_chapter(chapter + 1, unit);
+            self.out.stats.numbered_chapters += 1;
+            self.open_verse(1, None, unit);
+            return true;
+        }
+        if m.value == expect && !quantity {
             match self.best_place(at, m.value, m.strength) {
                 Some(true) => {}
                 Some(false) => return false,
@@ -5707,12 +5807,27 @@ impl Reader<'_> {
             resolved = match self.open.as_ref() {
                 Some(open) => {
                     let place = self.units[unit].place;
-                    let known = place
-                        .page
-                        .map(|page| {
+                    // (A document without pages: its notes anywhere, by the
+                    // verse they name, v0.24.3.)
+                    let known = match place.page {
+                        Some(page) => {
                             self.referenced_letters(place.document, page, open.chapter, open.verse)
-                        })
-                        .unwrap_or_default();
+                        }
+                        None => {
+                            let mut out: Vec<String> = Vec::new();
+                            for (label, c, v) in self
+                                .note_letters
+                                .get(&(place.document, WHOLE_DOCUMENT))
+                                .into_iter()
+                                .flatten()
+                            {
+                                if (*c, *v) == (open.chapter, open.verse) && !out.contains(label) {
+                                    out.push(label.clone());
+                                }
+                            }
+                            out
+                        }
+                    };
                     let (text, unexplained) = resolve_raised(words, &known);
                     if unexplained {
                         self.raised_issue();
@@ -6133,7 +6248,15 @@ impl Reader<'_> {
                     .copied()
                     .max()
                     .unwrap_or(0);
-                if last > expected + LONG_TOLERANCE.max(expected / 2) {
+                // Beyond the usual count while the next chapter was never found
+                // (2 Timothy 1 running on to "verse 22"): the next chapter's
+                // number was missed and its verses read into this one, however
+                // few (v0.24.3).
+                let next_missing =
+                    *chapter < book.chapter_count && !staged.chapters.contains_key(&(chapter + 1));
+                if last > expected + LONG_TOLERANCE.max(expected / 2)
+                    || (last > expected && next_missing)
+                {
                     found.push((Severity::Error, book, *chapter, last, expected));
                     continue;
                 }
@@ -6302,6 +6425,24 @@ fn recognise_in(
             .filter(|(_, u)| u.note)
             .map(|(i, _)| i),
     );
+    // A note in a document without pages written as a paragraph of its own,
+    // opened by its letter and the verse it names ("a 1:1 Ou “Cristo.” …",
+    // gathered under "Notas"): a note (v0.24.3).
+    {
+        use std::sync::OnceLock;
+        static LETTER_NOTE: OnceLock<regex::Regex> = OnceLock::new();
+        let letter_note = LETTER_NOTE.get_or_init(|| {
+            regex::Regex::new(r"^\p{Ll}{1,2}\s+\d{1,3}[:.,]\d{1,3}\s").expect("valid")
+        });
+        for (i, u) in units.iter().enumerate() {
+            if u.place.page.is_none()
+                && !u.heading
+                && letter_note.is_match(clean(&u.text).trim_start())
+            {
+                footnotes.insert(i);
+            }
+        }
+    }
     // A note's further paragraphs in a document without pages (an EPUB's
     // note over several paragraphs, the first marked as a note): a plain
     // paragraph right after a note, with no number at its start, before
@@ -6732,6 +6873,15 @@ mod tests {
         assert_eq!(
             head_references("1 Samuel 3:7 295 1 Samuel 3:9"),
             Some((("1 Samuel".into(), 3, 7), ("1 Samuel".into(), 3, 9)))
+        );
+        // A range that does not name its book again.
+        assert_eq!(
+            head_references("20 GENESIS 8:13–9:15"),
+            Some((("GENESIS".into(), 8, 13), ("GENESIS".into(), 9, 15)))
+        );
+        assert_eq!(
+            head_references("GENESIS 1:22–2:13 13"),
+            Some((("GENESIS".into(), 1, 22), ("GENESIS".into(), 2, 13)))
         );
         let notes = note_signs_in("“הוהי”). ‡ 2:12 or, aromatic resin § 2:18 or, suitable");
         assert!(notes.contains(&NoteSign {

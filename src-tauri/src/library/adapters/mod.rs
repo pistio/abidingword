@@ -208,6 +208,10 @@ pub fn split_long(paragraph: &str, max: usize) -> Vec<String> {
 /// characters in the same places (a marked text, `NewSegment::marked`).
 /// None when they do not line up.
 pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
+    // (The marks around raised letters, `pdf_layout::RAISED_OPEN` and
+    // `RAISED_CLOSE`, stand in the marked text only: they are not counted,
+    // and a part keeps the mark that closes its last letters.)
+    let mark = |c: char| c == pdf_layout::RAISED_OPEN || c == pdf_layout::RAISED_CLOSE;
     let chars: Vec<char> = other.chars().collect();
     let mut at = 0usize;
     let mut out = Vec::with_capacity(parts.len());
@@ -216,13 +220,24 @@ pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
             at += 1;
         }
         let n = part.chars().count();
-        if at + n > chars.len() {
-            return None;
+        let start = at;
+        let mut counted = 0usize;
+        while counted < n {
+            let c = *chars.get(at)?;
+            if !mark(c) {
+                counted += 1;
+            }
+            at += 1;
         }
-        out.push(chars[at..at + n].iter().collect());
-        at += n;
+        if chars.get(at) == Some(&pdf_layout::RAISED_CLOSE) {
+            at += 1;
+        }
+        out.push(chars[start..at].iter().collect());
     }
-    chars[at..].iter().all(|c| c.is_whitespace()).then_some(out)
+    chars[at..]
+        .iter()
+        .all(|c| c.is_whitespace() || mark(*c))
+        .then_some(out)
 }
 
 /// The language name to suggest for a language tag found in a file's
