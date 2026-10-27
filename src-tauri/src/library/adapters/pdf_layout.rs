@@ -537,8 +537,10 @@ fn spans_cut(glyphs: &[Glyph], cut: Option<f64>) -> Vec<Span> {
             return None;
         };
         let w = *usual.get(&c)?;
-        // Another width by more than 3 % (rounding aside).
-        Some((i32::from(g.width) - i32::from(w)).abs() * 100 > i32::from(w) * 3 + 100)
+        // Another width by more than 1.5 % (rounding aside): an italic cut
+        // of the same family differs from the upright one by 2–8 % in most
+        // letters (Noto Serif), the same face not at all.
+        Some((i32::from(g.width) - i32::from(w)).abs() * 1000 > i32::from(w) * 15 + 1000)
     };
     let mut out: Vec<Span> = Vec::new();
     let mut current: Option<(Span, f64)> = None; // span, x where the next character would go

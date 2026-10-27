@@ -5126,6 +5126,7 @@ impl Reader<'_> {
 
     fn open_verse(&mut self, verse: u16, end: Option<u16>, unit: usize) {
         self.check_order(unit);
+        self.doubt_skipped_edges(unit);
         self.close();
         let (Some(book), Some(chapter)) = (self.book, self.chapter) else {
             return;
@@ -5361,7 +5362,9 @@ impl Reader<'_> {
                 let u = &self.units[unit];
                 u.place.page.is_some()
                     && !u.large
-                    && unmark_raised(&clean(&u.text)).trim() == unmark_raised(m.raw.trim())
+                    && unmark_raised(&clean(&u.text))
+                        .chars()
+                        .all(|c| c.is_ascii_digit() || c.is_whitespace() || matches!(c, '-' | '–'))
             };
             let doubt = m.against_word || alone;
             if doubt {
@@ -5613,6 +5616,23 @@ impl Reader<'_> {
     }
 
     /// The open verse's end is not certain (v0.24.3): its text is not verified.
+    /// Lines at a page's edge left out as furniture between the open verse's
+    /// last line and `unit`, while its sentence has not ended ("… 인함이니라"
+    /// / "하시니라" at the foot): the verse's last words may be among them.
+    fn doubt_skipped_edges(&mut self, unit: usize) {
+        let Some(open) = self.open.as_ref() else {
+            return;
+        };
+        if open.text.trim().is_empty() || ends_as_sentence(&open.text) {
+            return;
+        }
+        let between = (open.last_unit + 1..unit.min(self.units.len()))
+            .any(|j| self.units[j].edge && !self.units[j].text.chars().any(|c| c.is_ascii_digit()));
+        if between {
+            self.doubt_boundary();
+        }
+    }
+
     fn doubt_boundary(&mut self) {
         if let Some(open) = self.open.as_mut() {
             open.doubt = open.doubt.or(Some("boundary"));
@@ -5685,6 +5705,7 @@ impl Reader<'_> {
         if self.open.is_some() {
             self.check_order(unit);
             self.check_label(words, unit);
+            self.doubt_skipped_edges(unit);
         }
         if let Some(open) = self.open.as_ref() {
             // A PDF page: only the signs the document shows are note
