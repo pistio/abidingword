@@ -207,7 +207,10 @@
         "beforeVerses": "Vor dem ersten Vers",
         "noBook": "Vor jedem Buch",
         "notes": "Anmerkungen",
-        "leftOutBook": "In einem weggelassenen Teil"
+        "leftOutBook": "In einem weggelassenen Teil",
+        "crossReference": "Querverweis",
+        "noteOnly": "Nur in einer Anmerkung",
+        "subscription": "Schlussworte eines Buches"
       },
       "pdfLimit": "In einer PDF lässt sich eine zwischen zwei Versen gedruckte Überschrift nicht immer vom Vers davor unterscheiden. Prüfe nach dem Hinzufügen einige Stellen.",
       "licenceField": "Urheberrecht oder Lizenz (optional)",
@@ -221,6 +224,30 @@
         "many_other": "{{count}} Bücher sind bereit.",
         "check_one": "{{count}} Kapitel muss geprüft werden.",
         "check_other": "{{count}} Kapitel müssen geprüft werden."
+      },
+      "unverified_one": "{{formatted}} Vers wurde gefunden, sein Text ließ sich aber nicht prüfen. Er bleibt im Dokument, wo er sich öffnen lässt, und wird nicht als Bibeltext verwendet.",
+      "unverified_other": "{{formatted}} Verse wurden gefunden, ihr Text ließ sich aber nicht prüfen. Sie bleiben im Dokument, wo sie sich öffnen lassen, und werden nicht als Bibeltext verwendet.",
+      "unverifiedWhy": "Warum sich ihr Text nicht prüfen ließ",
+      "unverifiedReason": {
+        "possibleHeading_one": "{{formatted}} Vers endet mit einer Zeile, die eine Überschrift sein könnte.",
+        "possibleHeading_other": "{{formatted}} Verse enden mit einer Zeile, die eine Überschrift sein könnte.",
+        "reference_one": "{{formatted}} Vers enthält eine Bibelstellenangabe, vielleicht eine Kopfzeile oder einen Querverweis.",
+        "reference_other": "{{formatted}} Verse enthalten eine Bibelstellenangabe, vielleicht eine Kopfzeile oder einen Querverweis.",
+        "noteSign_one": "{{formatted}} Vers enthält ein Anmerkungszeichen, das keine Anmerkung erklärt.",
+        "noteSign_other": "{{formatted}} Verse enthalten ein Anmerkungszeichen, das keine Anmerkung erklärt.",
+        "unnumbered_one": "In {{formatted}} Kapitel hat Vers 1 keine Nummer; wo er endet, ist nicht sicher.",
+        "unnumbered_other": "In {{formatted}} Kapiteln hat Vers 1 keine Nummer; wo er endet, ist nicht sicher."
+      },
+      "yourCorrection": "Deine Korrektur",
+      "saved": {
+        "title_one": "{{formatted}} frühere Korrektur",
+        "title_other": "{{formatted}} frühere Korrekturen",
+        "choice": "„{{heading}}“ → {{book}}",
+        "applied": "Übernommen.",
+        "earlier": "Übernommen: Du hast sie gemacht, als du diese Dokumente schon einmal hinzugefügt hast.",
+        "documentChanged": "Das Dokument hat sich seit dieser Korrektur geändert. Sie wurde übernommen: Bitte prüfe sie.",
+        "detectionChanged": "Abiding Word liest diese Überschrift jetzt als {{book}}. Deine Wahl wurde beibehalten: Bitte prüfe sie.",
+        "notFound": "Diese Überschrift wurde nicht wiedergefunden; es wurde nichts geändert. Deine Korrektur bleibt gespeichert."
       }
     },
     "doneDocument": "<strong>{{name}}</strong> wurde als Dokument zum Lesen hinzugefügt.",
@@ -733,7 +760,19 @@
       "verified_one": "{{formatted}} Vers lässt sich nach Stelle finden: {{books}}",
       "verified_other": "{{formatted}} Verse lassen sich nach Stelle finden: {{books}}",
       "marked_one": "{{formatted}} Stelle von Hand markiert",
-      "marked_other": "{{formatted}} Stellen von Hand markiert"
+      "marked_other": "{{formatted}} Stellen von Hand markiert",
+      "unverified_one": "{{formatted}} Vers gefunden, Text nicht geprüft",
+      "unverified_other": "{{formatted}} Verse gefunden, Text nicht geprüft",
+      "placesIntro_one": "Im Dokument gefunden, aber der Text ließ sich nicht prüfen:",
+      "placesIntro_other": "Im Dokument gefunden, aber ihr Text ließ sich nicht prüfen:",
+      "placesTitle": "Gefundene Stellen, Text nicht geprüft",
+      "foundPlace": "{{passage}} {{where}}",
+      "placeReason": {
+        "possibleHeading": "Er endet vielleicht mit einer Überschrift.",
+        "reference": "Er enthält eine Bibelstellenangabe.",
+        "noteSign": "Er enthält ein Anmerkungszeichen.",
+        "unnumbered": "Sein Ende ist nicht sicher."
+      }
     }
   }
 }

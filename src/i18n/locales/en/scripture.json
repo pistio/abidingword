@@ -207,7 +207,10 @@
         "beforeVerses": "Before the first verse",
         "noBook": "Before any book",
         "notes": "Notes",
-        "leftOutBook": "In a part left out"
+        "leftOutBook": "In a part left out",
+        "crossReference": "Cross-reference",
+        "noteOnly": "Only in a note",
+        "subscription": "Closing words of a book"
       },
       "pdfLimit": "In a PDF, a heading printed between two verses can’t always be told apart from the verse before it. Check a few passages after adding it.",
       "licenceField": "Copyright or licence (optional)",
@@ -221,6 +224,30 @@
         "many_other": "{{count}} books are ready to use.",
         "check_one": "{{count}} chapter needs checking.",
         "check_other": "{{count}} chapters need checking."
+      },
+      "unverified_one": "{{formatted}} verse was found, but its text could not be checked. It stays in the document, where it can be opened, and is not used as Bible text.",
+      "unverified_other": "{{formatted}} verses were found, but their text could not be checked. They stay in the document, where they can be opened, and are not used as Bible text.",
+      "unverifiedWhy": "Why their text could not be checked",
+      "unverifiedReason": {
+        "possibleHeading_one": "{{formatted}} verse ends with a line that could be a heading.",
+        "possibleHeading_other": "{{formatted}} verses end with a line that could be a heading.",
+        "reference_one": "{{formatted}} verse contains a Bible reference, perhaps a page header or a cross-reference.",
+        "reference_other": "{{formatted}} verses contain a Bible reference, perhaps a page header or a cross-reference.",
+        "noteSign_one": "{{formatted}} verse contains a note sign that no note explains.",
+        "noteSign_other": "{{formatted}} verses contain a note sign that no note explains.",
+        "unnumbered_one": "In {{formatted}} chapter, verse 1 has no number, so where it ends is not certain.",
+        "unnumbered_other": "In {{formatted}} chapters, verse 1 has no number, so where it ends is not certain."
+      },
+      "yourCorrection": "Your correction",
+      "saved": {
+        "title_one": "{{formatted}} earlier correction",
+        "title_other": "{{formatted}} earlier corrections",
+        "choice": "“{{heading}}” → {{book}}",
+        "applied": "Applied.",
+        "earlier": "Applied: you made it when you added these documents before.",
+        "documentChanged": "The document has changed since you made this correction. It was applied: please check it.",
+        "detectionChanged": "Abiding Word now reads this heading as {{book}}. Your choice was kept: please check it.",
+        "notFound": "This heading was not found again, so nothing was changed. Your correction is kept."
       }
     },
     "doneDocument": "<strong>{{name}}</strong> was added to read as a document.",
@@ -733,7 +760,19 @@
       "verified_one": "{{formatted}} verse can be found by passage: {{books}}",
       "verified_other": "{{formatted}} verses can be found by passage: {{books}}",
       "marked_one": "{{formatted}} place marked by hand",
-      "marked_other": "{{formatted}} places marked by hand"
+      "marked_other": "{{formatted}} places marked by hand",
+      "unverified_one": "{{formatted}} verse found, text not checked",
+      "unverified_other": "{{formatted}} verses found, text not checked",
+      "placesIntro_one": "Found in the document, but its text could not be checked:",
+      "placesIntro_other": "Found in the document, but their text could not be checked:",
+      "placesTitle": "Places found, text not checked",
+      "foundPlace": "{{passage}} {{where}}",
+      "placeReason": {
+        "possibleHeading": "It may end with a heading.",
+        "reference": "It contains a Bible reference.",
+        "noteSign": "It contains a note sign.",
+        "unnumbered": "Its end is not certain."
+      }
     }
   }
 }

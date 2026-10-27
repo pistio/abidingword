@@ -9,7 +9,7 @@ import { bookName, referenceLabel } from "@/i18n/scripture";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { refFromCanonical } from "@/lib/scripture";
-import type { BibleDocument, BibleTranslation, DocumentPassage, MarkedPlace, ScriptureRef } from "@/types/scripture";
+import type { BibleDocument, BibleTranslation, DocumentPassage, MarkedPlace, ScriptureRef, VersePlace } from "@/types/scripture";
 import { useScripture } from "./ScriptureContext";
 
 /** Where the reader is in a document: what a mark is made from. */
@@ -47,13 +47,15 @@ export function CoverageLine({ bible, version }: { bible: BibleTranslation; vers
   );
   const data = coverage.data;
   if (!data) return null;
-  if (data.verses === 0 && data.marked === 0) return <p className="m-0 type-meta">{t("scripture.document.passages.none")}</p>;
+  if (data.verses === 0 && data.marked === 0 && data.unverified === 0) return <p className="m-0 type-meta">{t("scripture.document.passages.none")}</p>;
   const books = data.books.map((b) => (b.chapters >= b.of ? bookName(b.book) : t("scripture.document.passages.partOf", { book: bookName(b.book), chapters: formatNumber(b.chapters), of: formatNumber(b.of) })));
   return (
     <p className="m-0 type-meta">
       {data.verses > 0 && t("scripture.document.passages.verified", { count: data.verses, formatted: formatNumber(data.verses), books: books.join(t("common.listSeparator")) })}
       {data.verses > 0 && data.marked > 0 && " · "}
       {data.marked > 0 && t("scripture.document.passages.marked", { count: data.marked, formatted: formatNumber(data.marked) })}
+      {data.unverified > 0 && (data.verses > 0 || data.marked > 0) && " · "}
+      {data.unverified > 0 && t("scripture.document.passages.unverified", { count: data.unverified, formatted: formatNumber(data.unverified) })}
     </p>
   );
 }
@@ -164,7 +166,17 @@ export function PassagePanel({
           ))}
         </ul>
       )}
-      {data && data.verses.length === 0 && data.locations.length === 0 && <p className="m-0">{t("scripture.document.passages.unknown", { passage: label })}</p>}
+      {data && data.places.length > 0 && (
+        <div className="flex flex-col gap-1">
+          <p className="m-0 text-[0.9375rem]">{t("scripture.document.passages.placesIntro", { count: data.places.length })}</p>
+          <ul aria-label={t("scripture.document.passages.placesTitle")} className="m-0 flex list-none flex-col gap-1 p-0">
+            {data.places.map((place) => (
+              <PlaceRow key={place.reference} place={place} onShow={onShow} />
+            ))}
+          </ul>
+        </div>
+      )}
+      {data && data.verses.length === 0 && data.locations.length === 0 && data.places.length === 0 && <p className="m-0">{t("scripture.document.passages.unknown", { passage: label })}</p>}
       {data && (
         <div className="flex flex-wrap gap-2">
           <Button variant="quiet" onClick={onMark}>
@@ -179,6 +191,22 @@ export function PassagePanel({
         </div>
       )}
     </section>
+  );
+}
+
+/** A verse found in the document whose text could not be checked (v0.24.3): opened there, never shown as text. */
+function PlaceRow({ place, onShow }: { place: VersePlace; onShow: (target: DocumentTarget) => void }) {
+  const { t } = useTranslation();
+  const { bookByCode } = useScripture();
+  const ref = refFromCanonical(place.reference, bookByCode);
+  const where = place.firstPage !== null ? t("scripture.document.passages.onPage", { page: formatNumber(place.firstPage) }) : t("scripture.document.passages.inText");
+  return (
+    <li className="flex flex-wrap items-center gap-2">
+      <Button variant="quiet" onClick={() => onShow({ documentId: place.documentId, page: place.firstPage, position: place.firstSegment })}>
+        {t("scripture.document.passages.foundPlace", { passage: ref ? referenceLabel(ref) : place.reference, where })}
+      </Button>
+      <span className="type-meta">{t(`scripture.document.passages.placeReason.${place.reason}`)}</span>
+    </li>
   );
 }
 

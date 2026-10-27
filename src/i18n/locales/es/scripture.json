@@ -226,7 +226,10 @@
         "beforeVerses": "Antes del primer versículo",
         "noBook": "Antes de cualquier libro",
         "notes": "Notas",
-        "leftOutBook": "En una parte dejada fuera"
+        "leftOutBook": "En una parte dejada fuera",
+        "crossReference": "Referencia cruzada",
+        "noteOnly": "Solo en una nota",
+        "subscription": "Palabras finales de un libro"
       },
       "pdfLimit": "En un PDF, un título impreso entre dos versículos no siempre se puede distinguir del versículo anterior. Revisa algunos pasajes después de agregarla.",
       "licenceField": "Derechos de autor o licencia (opcional)",
@@ -243,7 +246,37 @@
         "check_one": "Hay que revisar {{count}} capítulo.",
         "check_other": "Hay que revisar {{count}} capítulos.",
         "check_many": "Hay que revisar {{count}} capítulos."
-      }
+      },
+      "unverified_one": "Se encontró {{formatted}} versículo, pero no se pudo comprobar su texto. Queda en el documento, donde se puede abrir, y no se usa como texto bíblico.",
+      "unverified_other": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. Quedan en el documento, donde se pueden abrir, y no se usan como texto bíblico.",
+      "unverifiedWhy": "Por qué no se pudo comprobar su texto",
+      "unverifiedReason": {
+        "possibleHeading_one": "{{formatted}} versículo termina con una línea que podría ser un título.",
+        "possibleHeading_other": "{{formatted}} versículos terminan con una línea que podría ser un título.",
+        "reference_one": "{{formatted}} versículo contiene una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
+        "reference_other": "{{formatted}} versículos contienen una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
+        "noteSign_one": "{{formatted}} versículo contiene un signo de nota que ninguna nota explica.",
+        "noteSign_other": "{{formatted}} versículos contienen un signo de nota que ninguna nota explica.",
+        "unnumbered_one": "En {{formatted}} capítulo, el versículo 1 no tiene número; dónde termina no es seguro.",
+        "unnumbered_other": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro.",
+        "possibleHeading_many": "{{formatted}} versículos terminan con una línea que podría ser un título.",
+        "reference_many": "{{formatted}} versículos contienen una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
+        "noteSign_many": "{{formatted}} versículos contienen un signo de nota que ninguna nota explica.",
+        "unnumbered_many": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro."
+      },
+      "yourCorrection": "Tu corrección",
+      "saved": {
+        "title_one": "{{formatted}} corrección anterior",
+        "title_other": "{{formatted}} correcciones anteriores",
+        "choice": "«{{heading}}» → {{book}}",
+        "applied": "Aplicada.",
+        "earlier": "Aplicada: la hiciste cuando añadiste estos documentos antes.",
+        "documentChanged": "El documento ha cambiado desde esta corrección. Se aplicó: revísala, por favor.",
+        "detectionChanged": "Abiding Word ahora lee este título como {{book}}. Se mantuvo tu elección: revísala, por favor.",
+        "notFound": "No se volvió a encontrar este título, así que no se cambió nada. Tu corrección se conserva.",
+        "title_many": "{{formatted}} correcciones anteriores"
+      },
+      "unverified_many": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. Quedan en el documento, donde se pueden abrir, y no se usan como texto bíblico."
     },
     "doneDocument": "<strong>{{name}}</strong> se agregó para leerla como documento.",
     "available": {
@@ -780,7 +813,21 @@
       "verified_many": "{{formatted}} versículos se pueden encontrar por pasaje: {{books}}",
       "marked_one": "{{formatted}} lugar marcado a mano",
       "marked_other": "{{formatted}} lugares marcados a mano",
-      "marked_many": "{{formatted}} lugares marcados a mano"
+      "marked_many": "{{formatted}} lugares marcados a mano",
+      "unverified_one": "{{formatted}} versículo encontrado, texto no comprobado",
+      "unverified_other": "{{formatted}} versículos encontrados, texto no comprobado",
+      "placesIntro_one": "Encontrado en el documento, pero no se pudo comprobar su texto:",
+      "placesIntro_other": "Encontrados en el documento, pero no se pudo comprobar su texto:",
+      "placesTitle": "Lugares encontrados, texto no comprobado",
+      "foundPlace": "{{passage}} {{where}}",
+      "placeReason": {
+        "possibleHeading": "Quizá termina con un título.",
+        "reference": "Contiene una referencia bíblica.",
+        "noteSign": "Contiene un signo de nota.",
+        "unnumbered": "Su final no es seguro."
+      },
+      "unverified_many": "{{formatted}} versículos encontrados, texto no comprobado",
+      "placesIntro_many": "Encontrados en el documento, pero no se pudo comprobar su texto:"
     }
   }
 }

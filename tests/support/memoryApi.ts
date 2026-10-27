@@ -614,6 +614,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
             chapters: choice ? f.chapters : 0,
             verses: choice ? f.verses : 0,
             place: { document: 0, page: format === "pdf" ? index + 1 : null, segment: index * 4 },
+            corrected: corrected.has(index) && corrected.get(index) !== detected,
           };
         });
     const kept = books.filter((b) => b.book !== null);
@@ -646,6 +647,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         partialVerses: usable || scanned ? 0 : books.filter((b) => b.book !== null).reduce((n, b) => n + b.verses, 0),
         partialChapters: usable || scanned ? 0 : books.filter((b) => b.book !== null).reduce((n, b) => n + b.chapters, 0),
         heldChapters: usable || scanned ? 0 : FOUND.filter((_, i) => books[i]?.book === null).reduce((n, f) => n + f.chapters, 0),
+        unverifiedVerses: 0,
+        unverifiedReasons: {},
+        apparatus: scanned ? 0 : 3,
+        saved: [],
       },
     };
   };
@@ -1691,7 +1696,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const bible = state.bibles.find((b) => b.id === translationId);
       if (!kept || bible?.kind !== "structured") return null;
       const page = FOUND.findIndex((f) => f.code === book);
-      return { documentId: kept.documents[0]!.id, documentName: kept.documents[0]!.name, firstSegment: page * 4 + verse, lastSegment: page * 4 + verse, firstPage: kept.documents[0]!.format === "pdf" ? page + 1 : null, lastPage: kept.documents[0]!.format === "pdf" ? page + 1 : null };
+      return { documentId: kept.documents[0]!.id, documentName: kept.documents[0]!.name, firstSegment: page * 4 + verse, lastSegment: page * 4 + verse, firstPage: kept.documents[0]!.format === "pdf" ? page + 1 : null, lastPage: kept.documents[0]!.format === "pdf" ? page + 1 : null, basis: "automatic" as const, firstOffset: 0 };
     },
     bibleDocumentRecognise: async (translationId) => {
       const bible = state.bibles.find((b) => b.id === translationId);
@@ -1746,8 +1751,9 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         reference,
         verses,
         complete,
-        origin: verses.length > 0 && doc ? { documentId: doc.id, documentName: doc.name, firstSegment: 0, lastSegment: 0, firstPage: doc.format === "pdf" ? 2 : null, lastPage: null } : null,
+        origin: verses.length > 0 && doc ? { documentId: doc.id, documentName: doc.name, firstSegment: 0, lastSegment: 0, firstPage: doc.format === "pdf" ? 2 : null, lastPage: null, basis: "automatic" as const, firstOffset: 0 } : null,
         locations,
+        places: [],
       };
     },
     bibleLocationAdd: async (input) => {
@@ -1774,6 +1780,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         verses: [...chapters.values()].reduce((n, v) => n + v.length, 0),
         books: [...byBook].map(([book, n]) => ({ book, chapters: n, of: bookByCode.get(book)?.chapterCount ?? n })),
         marked: (state.places.get(translationId) ?? []).length,
+        unverified: 0,
+        corrected: 0,
       };
     },
     // As the core (scripture::data_packs): a few of the 100, enough for tests.

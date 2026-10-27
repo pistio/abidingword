@@ -10,7 +10,7 @@ import { useApi } from "@/lib/ApiContext";
 import { formatNumber } from "@/i18n/format";
 import { localizeMessage } from "@/i18n/messages";
 import { bookName } from "@/i18n/scripture";
-import type { BibleTranslation, BundledBibleInfo, CatalogueEntry, DocumentFileInfo, DocumentPreview, ImportIssue, ImportPreview, WordChoice } from "@/types/scripture";
+import type { BibleTranslation, BundledBibleInfo, CatalogueEntry, DocumentFileInfo, DocumentPreview, ImportIssue, ImportPreview, UnverifiedReason, WordChoice } from "@/types/scripture";
 import { NO_CHOICE, WordResearch, hasWordResearch } from "./WordResearch";
 import { useScripture } from "./ScriptureContext";
 import { LanguageChoice, type LanguageValue } from "./LanguageChoice";
@@ -468,6 +468,10 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
 
       {doc && preview.verseCount > 0 && <Readiness preview={preview} />}
 
+      {doc && <Verification preview={doc} />}
+
+      {doc && <SavedCorrections preview={doc} />}
+
       {doc && <DocumentChoice preview={doc} byVerse={byVerse} onByVerse={setByVerse} />}
 
       {doc ? (
@@ -654,6 +658,57 @@ function DocumentChoice({ preview, byVerse, onByVerse }: { preview: DocumentPrev
 }
 
 /**
+ * Verses found whose text could not be checked (v0.24.3): where their
+ * place is known but their exact words are in doubt. Said plainly, with why,
+ * so that "found" is never mistaken for "checked".
+ */
+export function Verification({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  if (preview.unverifiedVerses === 0) return null;
+  const reasons = Object.entries(preview.unverifiedReasons).filter(([, n]) => (n ?? 0) > 0) as [UnverifiedReason, number][];
+  return (
+    <section className="flex flex-col gap-1" data-testid="verification">
+      <Notice>{t("scripture.addBible.document.unverified", { count: preview.unverifiedVerses, formatted: formatNumber(preview.unverifiedVerses) })}</Notice>
+      <details className="border-l-[3px] border-border pl-4 text-[0.9375rem]">
+        <summary className="cursor-pointer">{t("scripture.addBible.document.unverifiedWhy")}</summary>
+        <ul className="m-0 mt-1 flex list-disc flex-col gap-0.5 pl-5">
+          {reasons.map(([reason, n]) => (
+            <li key={reason}>{t(`scripture.addBible.document.unverifiedReason.${reason}`, { count: n, formatted: formatNumber(n) })}</li>
+          ))}
+        </ul>
+      </details>
+    </section>
+  );
+}
+
+/**
+ * The person's corrections kept from an earlier reading (v0.24.3), and how
+ * each fits now. Nothing is decided for the person: a correction that no
+ * longer fits, or fits a changed document, is shown to be checked.
+ */
+export function SavedCorrections({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  if (preview.saved.length === 0) return null;
+  const attention = preview.saved.some((c) => c.status !== "applied" && c.status !== "earlier");
+  const book = (code: string | null) => (code ? bookName(code) : t("scripture.addBible.document.leaveOut"));
+  return (
+    <details open={attention} className="border-l-[3px] border-border pl-4" data-testid="saved-corrections">
+      <summary className="type-subhead cursor-pointer">{t("scripture.addBible.document.saved.title", { count: preview.saved.length, formatted: formatNumber(preview.saved.length) })}</summary>
+      <ul className="m-0 mt-2 flex list-none flex-col gap-2 p-0 text-[0.9375rem]">
+        {preview.saved.map((c, i) => (
+          <li key={i} className="flex flex-col">
+            <span className="font-medium">{t("scripture.addBible.document.saved.choice", { heading: c.heading, book: book(c.chosen) })}</span>
+            <span className={c.status === "applied" || c.status === "earlier" ? "type-meta" : "text-warning"}>
+              {t(`scripture.addBible.document.saved.${c.status}`, { book: book(c.detectedNow) })}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+/**
  * The books found, each at its heading in the document (v0.23). A heading read
  * as the wrong book, or naming none, is corrected here; the documents are then
  * read again. Folded unless something needs attention.
@@ -705,6 +760,7 @@ export function FoundBooks({ preview, onCorrect }: { preview: DocumentPreview; o
               {!book.leftOut && book.book && (
                 <span className="type-meta">{t("scripture.addBible.document.bookCounts", { chapters: formatNumber(book.chapters), verses: formatNumber(book.verses) })}</span>
               )}
+              {book.corrected && <span className="type-meta">{t("scripture.addBible.document.yourCorrection")}</span>}
             </li>
           ))}
         </ul>

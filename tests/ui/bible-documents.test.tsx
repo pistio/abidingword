@@ -169,6 +169,44 @@ describe("Bibles from documents", () => {
     );
   });
 
+  it("keeps found from checked: unverified verses and earlier corrections are shown, never hidden (v0.24.3)", async () => {
+    const api = createMemoryApi();
+    api.installFixtureBible("WEB", "web");
+    const preview = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.pdf"] });
+    await api.bibleImportCommit({ previewId: preview.previewId, name: "PDF Bible", shortName: "PDFB", language: "English", asDocument: true });
+    const again = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.pdf"] });
+    api.state.nextRecognition = {
+      ...again,
+      document: {
+        ...again.document!,
+        books: again.document!.books.map((b, i) => (i === 0 ? { ...b, corrected: true } : b)),
+        unverifiedVerses: 3,
+        unverifiedReasons: { possibleHeading: 2, reference: 1 },
+        saved: [
+          { heading: "The Book of Praises", page: 1, chosen: "PSA", detectedNow: null, index: 0, status: "applied" },
+          { heading: "Letters", page: 4, chosen: "ROM", detectedNow: null, index: null, status: "notFound" },
+        ],
+      },
+    };
+    const { user } = await renderApp(api);
+    const pane = screen.getByRole("complementary", { name: "Scripture" });
+    await user.selectOptions(within(pane).getByRole("combobox", { name: "Translation" }), "PDFB");
+    await user.click(await within(pane).findByText("What can I do with this Bible?"));
+    await user.click(within(pane).getByRole("button", { name: "Look for verses…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Look for verses in PDF Bible" });
+    expect(await within(dialog).findByTestId("verification")).toHaveTextContent(
+      "3 verses were found, but their text could not be checked. They stay in the document, where they can be opened, and are not used as Bible text.",
+    );
+    await user.click(within(dialog).getByText("Why their text could not be checked"));
+    expect(within(dialog).getByText("2 verses end with a line that could be a heading.")).toBeInTheDocument();
+    // A correction that no longer fits opens the list by itself.
+    const saved = within(dialog).getByTestId("saved-corrections");
+    expect(saved).toHaveAttribute("open");
+    expect(within(saved).getByText("“Letters” → Romans")).toBeInTheDocument();
+    expect(within(saved).getByText("This heading was not found again, so nothing was changed. Your correction is kept.")).toBeInTheDocument();
+    expect(within(dialog).getAllByText("Your correction").length).toBeGreaterThan(0);
+  });
+
   it("Settings says what a document Bible is and offers no word information", async () => {
     const api = createMemoryApi();
     const preview = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.epub"] });

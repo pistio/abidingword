@@ -226,7 +226,10 @@
         "beforeVerses": "Avant le premier verset",
         "noBook": "Avant tout livre",
         "notes": "Notes",
-        "leftOutBook": "Dans une partie laissée de côté"
+        "leftOutBook": "Dans une partie laissée de côté",
+        "crossReference": "Renvoi",
+        "noteOnly": "Seulement dans une note",
+        "subscription": "Mots de conclusion d’un livre"
       },
       "pdfLimit": "Dans un PDF, un titre imprimé entre deux versets ne peut pas toujours être distingué du verset qui le précède. Vérifiez quelques passages après l’ajout.",
       "licenceField": "Droits d’auteur ou licence (facultatif)",
@@ -243,7 +246,37 @@
         "check_one": "{{count}} chapitre est à vérifier.",
         "check_other": "{{count}} chapitres sont à vérifier.",
         "check_many": "{{count}} chapitres sont à vérifier."
-      }
+      },
+      "unverified_one": "{{formatted}} verset a été trouvé, mais son texte n’a pas pu être vérifié. Il reste dans le document, où il peut être ouvert, et n’est pas utilisé comme texte biblique.",
+      "unverified_other": "{{formatted}} versets ont été trouvés, mais leur texte n’a pas pu être vérifié. Ils restent dans le document, où ils peuvent être ouverts, et ne sont pas utilisés comme texte biblique.",
+      "unverifiedWhy": "Pourquoi leur texte n’a pas pu être vérifié",
+      "unverifiedReason": {
+        "possibleHeading_one": "{{formatted}} verset se termine par une ligne qui pourrait être un titre.",
+        "possibleHeading_other": "{{formatted}} versets se terminent par une ligne qui pourrait être un titre.",
+        "reference_one": "{{formatted}} verset contient une référence biblique, peut-être un en-tête de page ou un renvoi.",
+        "reference_other": "{{formatted}} versets contiennent une référence biblique, peut-être un en-tête de page ou un renvoi.",
+        "noteSign_one": "{{formatted}} verset contient un signe de note qu’aucune note n’explique.",
+        "noteSign_other": "{{formatted}} versets contiennent un signe de note qu’aucune note n’explique.",
+        "unnumbered_one": "Dans {{formatted}} chapitre, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
+        "unnumbered_other": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
+        "possibleHeading_many": "{{formatted}} versets se terminent par une ligne qui pourrait être un titre.",
+        "reference_many": "{{formatted}} versets contiennent une référence biblique, peut-être un en-tête de page ou un renvoi.",
+        "noteSign_many": "{{formatted}} versets contiennent un signe de note qu’aucune note n’explique.",
+        "unnumbered_many": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine."
+      },
+      "yourCorrection": "Votre correction",
+      "saved": {
+        "title_one": "{{formatted}} correction antérieure",
+        "title_other": "{{formatted}} corrections antérieures",
+        "choice": "« {{heading}} » → {{book}}",
+        "applied": "Appliquée.",
+        "earlier": "Appliquée : vous l’aviez faite en ajoutant ces documents auparavant.",
+        "documentChanged": "Le document a changé depuis cette correction. Elle a été appliquée : veuillez la vérifier.",
+        "detectionChanged": "Abiding Word lit maintenant ce titre comme {{book}}. Votre choix a été conservé : veuillez le vérifier.",
+        "notFound": "Ce titre n’a pas été retrouvé ; rien n’a été modifié. Votre correction est conservée.",
+        "title_many": "{{formatted}} corrections antérieures"
+      },
+      "unverified_many": "{{formatted}} versets ont été trouvés, mais leur texte n’a pas pu être vérifié. Ils restent dans le document, où ils peuvent être ouverts, et ne sont pas utilisés comme texte biblique."
     },
     "doneDocument": "<strong>{{name}}</strong> a été ajoutée pour être lue comme un document.",
     "available": {
@@ -780,7 +813,21 @@
       "verified_many": "{{formatted}} versets peuvent être trouvés par passage : {{books}}",
       "marked_one": "{{formatted}} emplacement marqué à la main",
       "marked_other": "{{formatted}} emplacements marqués à la main",
-      "marked_many": "{{formatted}} emplacements marqués à la main"
+      "marked_many": "{{formatted}} emplacements marqués à la main",
+      "unverified_one": "{{formatted}} verset trouvé, texte non vérifié",
+      "unverified_other": "{{formatted}} versets trouvés, texte non vérifié",
+      "placesIntro_one": "Trouvé dans le document, mais son texte n’a pas pu être vérifié :",
+      "placesIntro_other": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :",
+      "placesTitle": "Emplacements trouvés, texte non vérifié",
+      "foundPlace": "{{passage}} {{where}}",
+      "placeReason": {
+        "possibleHeading": "Il se termine peut-être par un titre.",
+        "reference": "Il contient une référence biblique.",
+        "noteSign": "Il contient un signe de note.",
+        "unnumbered": "Sa fin n’est pas certaine."
+      },
+      "unverified_many": "{{formatted}} versets trouvés, texte non vérifié",
+      "placesIntro_many": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :"
     }
   }
 }

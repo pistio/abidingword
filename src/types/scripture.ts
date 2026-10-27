@@ -374,6 +374,23 @@ export interface FoundBook {
   chapters: number;
   verses: number;
   place: DocumentPlace;
+  /** The book used is the person's choice, not what was found (v0.24.3). */
+  corrected: boolean;
+}
+
+/** Why a verse found in a document is not used as text (v0.24.3). */
+export type UnverifiedReason = "possibleHeading" | "reference" | "noteSign" | "unnumbered";
+
+/** How a correction kept from before fits the documents read now (v0.24.3). */
+export interface SavedCorrection {
+  heading: string;
+  page: number | null;
+  /** The book chosen; null: left out. */
+  chosen: string | null;
+  /** What the heading is read as now; null: no book. */
+  detectedNow: string | null;
+  index: number | null;
+  status: "applied" | "earlier" | "documentChanged" | "detectionChanged" | "notFound";
 }
 
 /** Text left out of the verses (v0.23). */
@@ -381,7 +398,7 @@ export interface LeftOutText {
   sample: string;
   chars: number;
   place: DocumentPlace;
-  reason: "heading" | "beforeVerses" | "noBook" | "notes" | "leftOutBook";
+  reason: "heading" | "beforeVerses" | "noBook" | "notes" | "leftOutBook" | "crossReference" | "noteOnly" | "subscription";
 }
 
 export interface DocumentStats {
@@ -418,6 +435,13 @@ export interface DocumentPreview {
   partialChapters: number;
   /** Chapters held back because of a doubt. */
   heldChapters: number;
+  /** Verses found whose text could not be checked (v0.24.3): kept as places in the document, never used as text. */
+  unverifiedVerses: number;
+  unverifiedReasons: Partial<Record<UnverifiedReason, number>>;
+  /** Pieces of notes, headings and other apparatus set apart and kept. */
+  apparatus: number;
+  /** The person's corrections kept from before, and how each fits now. */
+  saved: SavedCorrection[];
 }
 
 /** One of the documents a Bible was added from (v0.23). */
@@ -463,6 +487,21 @@ export interface VerseOrigin {
   lastSegment: number | null;
   firstPage: number | null;
   lastPage: number | null;
+  /** "corrected": found under the person's correction of the book (v0.24.3). */
+  basis: "automatic" | "corrected";
+  firstOffset: number | null;
+}
+
+/** A verse found in a document whose text could not be checked (v0.24.3): its place only. */
+export interface VersePlace {
+  reference: string;
+  documentId: string;
+  documentName: string;
+  firstSegment: number | null;
+  firstPage: number | null;
+  firstOffset: number | null;
+  basis: "automatic" | "corrected";
+  reason: UnverifiedReason;
 }
 
 /** A place marked by the person in a document Bible (v0.24): a passage and where it is. */
@@ -487,12 +526,18 @@ export interface DocumentPassage {
   complete: boolean;
   origin: VerseOrigin | null;
   locations: MarkedPlace[];
+  /** Verses of the passage found in the document whose text could not be checked (v0.24.3). */
+  places: VersePlace[];
 }
 
 export interface DocumentCoverage {
   verses: number;
   books: { book: string; chapters: number; of: number }[];
   marked: number;
+  /** Verses found whose text could not be checked: places only (v0.24.3). */
+  unverified: number;
+  /** Verses found under a book the person chose (v0.24.3). */
+  corrected: number;
 }
 
 export interface AddLocation {
