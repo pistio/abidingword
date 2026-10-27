@@ -755,6 +755,28 @@ fn lines_named_by_usfm_codes() {
 }
 
 #[test]
+fn lines_named_by_the_older_vpl_codes() {
+    // eBible's verse-per-line export writes "SOL", "JOE", "1JO" … (v0.24.3):
+    // the Song of Songs is not read into Ecclesiastes 12:14.
+    let mut text = String::new();
+    for v in 1..=14u16 {
+        text.push_str(&format!("ECC 12:{v} {}\n", words("Ecclesiastes", 12, v)));
+    }
+    for v in 1..=17u16 {
+        text.push_str(&format!("SOL 1:{v} {}\n", words("Song", 1, v)));
+    }
+    let r = recognise(&read("export.txt", text.as_bytes()));
+    assert_eq!(
+        verse(&r, "ECC", 12, 14).as_deref(),
+        Some(words("Ecclesiastes", 12, 14).as_str())
+    );
+    assert_eq!(
+        verse(&r, "SNG", 1, 17).as_deref(),
+        Some(words("Song", 1, 17).as_str())
+    );
+}
+
+#[test]
 fn corrections_choose_or_leave_out_a_book() {
     // A title the dictionaries do not know, before "Chapter 1".
     let text = ruth_lines(|c| format!("Chapter {c}")).replacen(

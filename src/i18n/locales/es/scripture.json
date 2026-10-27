@@ -265,7 +265,10 @@
         "unnumbered_many": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro.",
         "length_one": "{{formatted}} versículo es mucho más largo que los demás de su capítulo.",
         "length_other": "{{formatted}} versículos son mucho más largos que los demás de su capítulo.",
-        "length_many": "{{formatted}} versículos son mucho más largos que los demás de su capítulo."
+        "length_many": "{{formatted}} versículos son mucho más largos que los demás de su capítulo.",
+        "psalmTitle_one": "En {{formatted}} salmo, el versículo 1 puede incluir el título del salmo.",
+        "psalmTitle_other": "En {{formatted}} salmos, el versículo 1 puede incluir el título del salmo.",
+        "psalmTitle_many": "En {{formatted}} salmos, el versículo 1 puede incluir el título del salmo."
       },
       "yourCorrection": "Tu corrección",
       "saved": {
@@ -828,7 +831,8 @@
         "reference": "Contiene una referencia bíblica.",
         "noteSign": "Contiene un signo de nota.",
         "unnumbered": "Su final no es seguro.",
-        "length": "Es mucho más largo que los versículos que lo rodean."
+        "length": "Es mucho más largo que los versículos que lo rodean.",
+        "psalmTitle": "Puede incluir el título del salmo."
       },
       "unverified_many": "{{formatted}} versículos encontrados, texto no comprobado",
       "placesIntro_many": "Encontrados en el documento, pero no se pudo comprobar su texto:"

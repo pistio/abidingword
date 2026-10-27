@@ -505,6 +505,12 @@ impl pdf_extract::OutputDev for Collector {
 /// become a span. A space is put where the gap between two characters is
 /// wider than a narrow space.
 fn spans(glyphs: &[Glyph]) -> Vec<Span> {
+    spans_cut(glyphs, None)
+}
+
+/// [`spans`], never running across `cut` (an x position): a column's left
+/// edge that justified lines of the column before it nearly touch (v0.24.3).
+fn spans_cut(glyphs: &[Glyph], cut: Option<f64>) -> Vec<Span> {
     // The usual width of each letter on the page (its running text's
     // typeface): the width most of its occurrences have.
     let mut widths: HashMap<char, HashMap<u16, u32>> = HashMap::new();
@@ -558,6 +564,11 @@ fn spans(glyphs: &[Glyph]) -> Vec<Span> {
                 && (0.8..=1.25).contains(&ratio)
                 && f64::from(g.x) >= *next - 0.6 * span.size
                 && f64::from(g.x) - *next <= 0.9 * span.size
+                && cut.is_none_or(|x| {
+                    !(f64::from(g.x) >= x - 0.1 * span.size
+                        && *next <= x + 0.1 * span.size
+                        && span.x0 < x - span.size)
+                })
         });
         if !continues {
             finish(&mut out, current.take());
@@ -980,6 +991,11 @@ fn widest_gap(line: &[&Span]) -> f64 {
 /// than any word space: two columns run together (the order is uncertain).
 fn column_lines(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Option<Vec<Line>> {
     let lines = lines_of(spans, body, column, block);
+    let right_edge = spans
+        .iter()
+        .filter(|s| s.size < 1.6 * body)
+        .map(|s| s.x1)
+        .fold(f64::NEG_INFINITY, f64::max);
     for line in &lines {
         let pieces: Vec<&Span> = spans
             .iter()
@@ -991,11 +1007,53 @@ fn column_lines(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Opti
             })
             .filter(|s| s.size < 1.6 * body)
             .collect();
-        if widest_gap(&pieces) > 2.5 {
+        if widest_gap(&pieces) > 2.5 && !flush_right_reference(&pieces, right_edge) {
             return None;
         }
     }
     Some(lines)
+}
+
+/// A line whose widest space sets off a short piece flush with the column's
+/// right edge, after a sentence's closing mark ("… Deus conosco.     Isaías
+/// 7:14"): the source of a quotation set at the line's end, as some editions
+/// print it (v0.24.3), not a second column. Two columns run together never
+/// end the left one's line with closing punctuation and the right one's
+/// within a few letters of the edge.
+fn flush_right_reference(pieces: &[&Span], right_edge: f64) -> bool {
+    let mut sorted: Vec<&Span> = pieces.to_vec();
+    sorted.sort_by(|a, b| a.x0.partial_cmp(&b.x0).unwrap_or(Ordering::Equal));
+    let Some(at) = sorted
+        .windows(2)
+        .enumerate()
+        .max_by(|(_, a), (_, b)| {
+            let gap = |w: &[&Span]| (w[1].x0 - w[0].x1) / w[0].size.max(w[1].size).max(1.0);
+            gap(a).partial_cmp(&gap(b)).unwrap_or(Ordering::Equal)
+        })
+        .map(|(i, _)| i + 1)
+    else {
+        return false;
+    };
+    let (left, right) = sorted.split_at(at);
+    let right_text: String = right
+        .iter()
+        .map(|s| s.text.as_str())
+        .collect::<Vec<_>>()
+        .join(" ");
+    let right_text = right_text.trim();
+    let left_end = left
+        .last()
+        .map(|s| s.text.trim_end().to_string())
+        .unwrap_or_default();
+    let size = right.iter().map(|s| s.size).fold(1.0, f64::max);
+    !right_text.is_empty()
+        && right_text.chars().count() <= 24
+        && right_text
+            .chars()
+            .next()
+            .is_some_and(|c| c.is_uppercase() || c.is_ascii_digit())
+        && right.iter().map(|s| s.x1).fold(f64::NEG_INFINITY, f64::max) >= right_edge - 2.0 * size
+        && left_end.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', ';', ':'])
 }
 
 fn arrange(spans: &[&Span], body: f64, depth: u8, block: &mut u32) -> Option<(Vec<Line>, u8)> {
@@ -1542,6 +1600,115 @@ fn body_gutter(page: &PageGlyphs) -> Option<Gutter> {
     find_gutter(&refs, body)
 }
 
+/// A page's running text, head, notes and foot read in order from its runs,
+/// or None when the order cannot be established.
+fn read_page(
+    all: &[Span],
+    height: f64,
+    hint: Option<Gutter>,
+    rotated: &[Glyph],
+    width: f64,
+) -> Option<(Vec<Line>, PageOrder)> {
+    let mut refs: Vec<&Span> = all.iter().collect();
+    let body = page_body_size(&refs);
+    let mut block = 0u32;
+    let mut lines = Vec::new();
+    let head = peel(&mut refs, body, height, true);
+    // Notes before the page number: a single note line at the foot of the
+    // page is a note, not a footer.
+    let notes = notes(&mut refs, body);
+    let foot = peel(&mut refs, body, height, false);
+    if !head.is_empty() {
+        let h: Vec<&Span> = head.iter().collect();
+        let mut head_lines = lines_of(&h, body, 0, &mut block);
+        for line in &mut head_lines {
+            line.role = LineRole::Head;
+        }
+        lines.extend(head_lines);
+    }
+    let order = match arrange_page(&refs, body, &mut block, hint) {
+        Some((mut body_lines, columns)) => {
+            mark_centred(&mut body_lines);
+            lines.extend(body_lines);
+            if columns > 1 {
+                PageOrder::Columns(columns)
+            } else {
+                PageOrder::Single
+            }
+        }
+        None => return None,
+    };
+    if !notes.is_empty() {
+        block += 1;
+        let note_size = body_size(&notes);
+        // Notes line by line across the page: a note's sign and the verse it
+        // names stay on one line even when a gap between notes happens to
+        // fall where the columns' gutter is. Notes are never Scripture text,
+        // so their order never makes the page uncertain.
+        let mut note_lines = lines_of(&notes, note_size, 0, &mut block);
+        for line in &mut note_lines {
+            line.role = LineRole::Note;
+        }
+        lines.extend(note_lines);
+    }
+    if !foot.is_empty() {
+        block += 1;
+        let f: Vec<&Span> = foot.iter().collect();
+        let mut foot_lines = lines_of(&f, body, 0, &mut block);
+        for line in &mut foot_lines {
+            line.role = LineRole::Foot;
+        }
+        lines.extend(foot_lines);
+    }
+    if !rotated.is_empty() {
+        // A few characters at an angle: kept, after the page's text.
+        let mut extra = drawing_order(rotated, width);
+        for line in &mut extra {
+            line.block = block + 1;
+            line.role = LineRole::Rotated;
+        }
+        lines.extend(extra);
+    }
+    Some((lines, order))
+}
+
+/// Where a second column begins on a page whose columns nearly touch: an x
+/// position in the middle of the text where at least six runs begin (the
+/// second column's lines without an indent), with runs reaching across it
+/// that keep the page from being divided.
+fn column_edge(spans: &[Span]) -> Option<f64> {
+    let left = spans.iter().map(|s| s.x0).fold(f64::INFINITY, f64::min);
+    let right = spans.iter().map(|s| s.x1).fold(f64::NEG_INFINITY, f64::max);
+    let width = right - left;
+    if width <= 0.0 || spans.len() < 12 {
+        return None;
+    }
+    let mut starts: HashMap<i64, usize> = HashMap::new();
+    for s in spans {
+        if s.x0 > left + 0.3 * width && s.x0 < left + 0.7 * width {
+            *starts.entry((s.x0 * 2.0).round() as i64).or_default() += 1;
+        }
+    }
+    let (&at, &n) = starts.iter().max_by_key(|(_, n)| **n)?;
+    let x = at as f64 / 2.0;
+    let crossing: Vec<&Span> = spans
+        .iter()
+        .filter(|s| s.x0 < x - 1.0 && s.x1 > x + 1.0)
+        .collect();
+    // A run that holds both columns' text stands alone on its baseline; a
+    // line crossing the gutter beside column text does not, and the page's
+    // order stays uncertain.
+    let alone = crossing.iter().all(|c| {
+        !spans.iter().any(|t| {
+            !std::ptr::eq(*c, t)
+                && (t.y - c.y).abs() <= 0.5 * c.size
+                && (t.size - c.size).abs() <= 0.1 * c.size
+                && t.text.chars().count() > 2
+        })
+    });
+    (n >= 6 && !crossing.is_empty() && alone).then_some(x)
+}
+
 fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
     let PageGlyphs {
         number,
@@ -1609,76 +1776,25 @@ fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {
             chars,
         };
     }
-    let mut refs: Vec<&Span> = all.iter().collect();
-    let body = page_body_size(&refs);
-    let mut block = 0u32;
-    let mut lines = Vec::new();
-    let head = peel(&mut refs, body, height, true);
-    // Notes before the page number: a single note line at the foot of the
-    // page is a note, not a footer.
-    let notes = notes(&mut refs, body);
-    let foot = peel(&mut refs, body, height, false);
-    if !head.is_empty() {
-        let h: Vec<&Span> = head.iter().collect();
-        let mut head_lines = lines_of(&h, body, 0, &mut block);
-        for line in &mut head_lines {
-            line.role = LineRole::Head;
-        }
-        lines.extend(head_lines);
-    }
-    let order = match arrange_page(&refs, body, &mut block, hint) {
-        Some((mut body_lines, columns)) => {
-            mark_centred(&mut body_lines);
-            lines.extend(body_lines);
-            if columns > 1 {
-                PageOrder::Columns(columns)
-            } else {
-                PageOrder::Single
-            }
-        }
-        None => {
-            return PageLayout {
-                number,
-                width,
-                height,
-                order: PageOrder::Uncertain,
-                lines: drawing_order(&glyphs, width),
-                rotated_chars,
-                chars,
-            };
-        }
+    let read = read_page(&all, height, hint, &rotated, width).or_else(|| {
+        // Two columns set so close that the lines of the first run into the
+        // second (the Clementine Vulgate): the second column's edge, where
+        // many of its lines begin, cuts the page's runs (v0.24.3).
+        let cut = column_edge(&all)?;
+        let again = spans_cut(&glyphs, Some(cut));
+        read_page(&again, height, hint, &rotated, width)
+    });
+    let Some((lines, order)) = read else {
+        return PageLayout {
+            number,
+            width,
+            height,
+            order: PageOrder::Uncertain,
+            lines: drawing_order(&glyphs, width),
+            rotated_chars,
+            chars,
+        };
     };
-    if !notes.is_empty() {
-        block += 1;
-        let note_size = body_size(&notes);
-        // Notes line by line across the page: a note's sign and the verse it
-        // names stay on one line even when a gap between notes happens to
-        // fall where the columns' gutter is. Notes are never Scripture text,
-        // so their order never makes the page uncertain.
-        let mut note_lines = lines_of(&notes, note_size, 0, &mut block);
-        for line in &mut note_lines {
-            line.role = LineRole::Note;
-        }
-        lines.extend(note_lines);
-    }
-    if !foot.is_empty() {
-        block += 1;
-        let f: Vec<&Span> = foot.iter().collect();
-        let mut foot_lines = lines_of(&f, body, 0, &mut block);
-        for line in &mut foot_lines {
-            line.role = LineRole::Foot;
-        }
-        lines.extend(foot_lines);
-    }
-    if !rotated.is_empty() {
-        // A few characters at an angle: kept, after the page's text.
-        let mut extra = drawing_order(&rotated, width);
-        for line in &mut extra {
-            line.block = block + 1;
-            line.role = LineRole::Rotated;
-        }
-        lines.extend(extra);
-    }
     // The last safeguard: every character drawn is read exactly once, or the
     // page keeps its drawing order and is uncertain.
     let letters = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();

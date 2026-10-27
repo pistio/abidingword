@@ -265,7 +265,10 @@
         "unnumbered_many": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
         "length_one": "{{formatted}} verset est bien plus long que les autres de son chapitre.",
         "length_other": "{{formatted}} versets sont bien plus longs que les autres de leur chapitre.",
-        "length_many": "{{formatted}} versets sont bien plus longs que les autres de leur chapitre."
+        "length_many": "{{formatted}} versets sont bien plus longs que les autres de leur chapitre.",
+        "psalmTitle_one": "Dans {{formatted}} psaume, le verset 1 peut contenir le titre du psaume.",
+        "psalmTitle_other": "Dans {{formatted}} psaumes, le verset 1 peut contenir le titre du psaume.",
+        "psalmTitle_many": "Dans {{formatted}} psaumes, le verset 1 peut contenir le titre du psaume."
       },
       "yourCorrection": "Votre correction",
       "saved": {
@@ -828,7 +831,8 @@
         "reference": "Il contient une référence biblique.",
         "noteSign": "Il contient un signe de note.",
         "unnumbered": "Sa fin n’est pas certaine.",
-        "length": "Il est bien plus long que les versets qui l’entourent."
+        "length": "Il est bien plus long que les versets qui l’entourent.",
+        "psalmTitle": "Il peut contenir le titre du psaume."
       },
       "unverified_many": "{{formatted}} versets trouvés, texte non vérifié",
       "placesIntro_many": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :"

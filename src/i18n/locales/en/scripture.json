@@ -238,7 +238,9 @@
         "unnumbered_one": "In {{formatted}} chapter, verse 1 has no number, so where it ends is not certain.",
         "unnumbered_other": "In {{formatted}} chapters, verse 1 has no number, so where it ends is not certain.",
         "length_one": "{{formatted}} verse is far longer than the others in its chapter.",
-        "length_other": "{{formatted}} verses are far longer than the others in their chapters."
+        "length_other": "{{formatted}} verses are far longer than the others in their chapters.",
+        "psalmTitle_one": "{{formatted}} psalm’s verse 1 may include the psalm’s title.",
+        "psalmTitle_other": "{{formatted}} psalms’ verse 1 may include the psalm’s title."
       },
       "yourCorrection": "Your correction",
       "saved": {
@@ -774,7 +776,8 @@
         "reference": "It contains a Bible reference.",
         "noteSign": "It contains a note sign.",
         "unnumbered": "Its end is not certain.",
-        "length": "It is far longer than the verses around it."
+        "length": "It is far longer than the verses around it.",
+        "psalmTitle": "It may include the psalm’s title."
       }
     }
   }

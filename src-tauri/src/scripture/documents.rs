@@ -84,6 +84,8 @@ pub struct Unit {
     /// A PDF line set in the middle of its column (v0.24.3): with a gap
     /// above it, a heading even in the body's own type.
     pub centred: bool,
+    /// The column of its PDF page it stands in (0 = the left or only one).
+    pub column: u8,
 }
 
 /// Where a unit is in the original document.
@@ -215,11 +217,10 @@ pub fn read_bytes(
                     // (one unit per non-empty line of the page's text).
                     let layout = &text.layouts[index];
                     let body = layout.body_size();
-                    let lines: Vec<(LineRole, f64, Option<&String>, bool, bool)> = layout
+                    let lines: Vec<&crate::library::adapters::pdf_layout::Line> = layout
                         .lines
                         .iter()
                         .filter(|l| !l.text.trim().is_empty())
-                        .map(|l| (l.role, l.size, l.marked.as_ref(), l.styled, l.centred))
                         .collect();
                     let aligned = lines.len() == units.len() - from;
                     // Larger text is a heading only where it is little of the
@@ -248,13 +249,15 @@ pub fn read_bytes(
                     for (i, unit) in units[from..].iter_mut().enumerate() {
                         unit.uncertain_order = uncertain;
                         if aligned {
-                            unit.note = lines[i].0 == LineRole::Note;
-                            unit.large = lines[i].0 == LineRole::Text && lines[i].1 >= 1.15 * body;
-                            unit.styled = lines[i].3;
-                            unit.edge = matches!(lines[i].0, LineRole::Head | LineRole::Foot);
-                            unit.centred = lines[i].4;
+                            let line = lines[i];
+                            unit.note = line.role == LineRole::Note;
+                            unit.large = line.role == LineRole::Text && line.size >= 1.15 * body;
+                            unit.styled = line.styled;
+                            unit.edge = matches!(line.role, LineRole::Head | LineRole::Foot);
+                            unit.centred = line.centred;
+                            unit.column = line.column;
                             // Raised letters marked for the recogniser.
-                            if let Some(marked) = lines[i].2 {
+                            if let Some(marked) = &line.marked {
                                 unit.text = marked.trim().to_string();
                             }
                         }
@@ -457,6 +460,7 @@ fn line_units(
             styled: false,
             edge: false,
             centred: false,
+            column: 0,
         });
     }
 }
@@ -577,6 +581,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                 styled: false,
                 edge: false,
                 centred: false,
+                column: 0,
             });
             continue;
         }
@@ -605,6 +610,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     styled: false,
                     edge: false,
                     centred: false,
+                    column: 0,
                 });
             }
         }
@@ -622,6 +628,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             styled: segment.styled,
             edge: false,
             centred: false,
+            column: 0,
         });
     }
     (out, notes)

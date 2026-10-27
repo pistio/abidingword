@@ -43,6 +43,7 @@ fn line(text: &str, page: u32) -> Unit {
         styled: false,
         edge: false,
         centred: false,
+        column: 0,
     }
 }
 

@@ -30,6 +30,11 @@ fn document_units_dump() {
     };
     let doc = documents::read(&file, 0).expect("readable document");
     let pages = range("AW_DUMP_PAGES");
+    if let Some((a, b)) = pages {
+        for p in a..=b {
+            println!("page {p}: {:?}", doc.page_orders.get(p.saturating_sub(1)));
+        }
+    }
     let units = range("AW_DUMP_UNITS");
     let find = std::env::var("AW_DUMP_FIND").ok();
     let wanted: Vec<usize> = match &find {

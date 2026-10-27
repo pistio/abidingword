@@ -210,7 +210,8 @@
         "reference_other": "{{formatted}}개 절에 성경 구절 표시가 들어 있습니다. 쪽 머리말이나 관주일 수 있습니다.",
         "noteSign_other": "{{formatted}}개 절에 어떤 주석도 설명하지 않는 주석 기호가 들어 있습니다.",
         "unnumbered_other": "{{formatted}}개 장에서 1절에 번호가 없어 어디서 끝나는지 확실하지 않습니다.",
-        "length_other": "{{formatted}}개 절이 같은 장의 다른 절보다 훨씬 깁니다."
+        "length_other": "{{formatted}}개 절이 같은 장의 다른 절보다 훨씬 깁니다.",
+        "psalmTitle_other": "{{formatted}}개 시편에서 1절에 시편 표제가 들어 있을 수 있습니다."
       },
       "yourCorrection": "직접 고친 항목",
       "saved": {
@@ -718,7 +719,8 @@
         "reference": "성경 구절 표시가 들어 있습니다.",
         "noteSign": "주석 기호가 들어 있습니다.",
         "unnumbered": "끝나는 곳이 확실하지 않습니다.",
-        "length": "주변 절보다 훨씬 깁니다."
+        "length": "주변 절보다 훨씬 깁니다.",
+        "psalmTitle": "시편 표제가 들어 있을 수 있습니다."
       }
     }
   }
