@@ -2077,7 +2077,30 @@ fn edge_furniture(text: &str) -> bool {
 /// ("Samuel 1:17": Scripture never writes book, chapter and verse; a running
 /// head or a cross-reference read in), or a note's sign that no note on its
 /// page explained ("†", "‡", "§").
-fn verse_doubt(text: &str) -> Option<&'static str> {
+fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
+    // A heading or a speaker's name the document writes inside the verse's
+    // line: a word in capitals closing it after a sentence's end ("… forsake
+    // me. BETH"), or a label of the document's own after one ("… rooms.
+    // Friends We will be glad …"; see `inline_labels`).
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let sentence_end = |w: &str| w.ends_with(['.', '!', '?', ';', ':', '”', '’', '"', '»']);
+    if let [.., before, last] = words[..] {
+        let capitals = last.chars().count() >= 2
+            && last.chars().all(|c| c.is_alphabetic() && !c.is_lowercase())
+            && last.chars().any(char::is_uppercase);
+        if capitals && sentence_end(before) {
+            return Some("possibleHeading");
+        }
+    }
+    if !labels.is_empty()
+        && words.windows(3).any(|w| {
+            sentence_end(w[0])
+                && labels.contains(w[1])
+                && w[2].chars().next().is_some_and(char::is_uppercase)
+        })
+    {
+        return Some("possibleHeading");
+    }
     use std::sync::OnceLock;
     static REFERENCE: OnceLock<regex::Regex> = OnceLock::new();
     let reference = REFERENCE.get_or_init(|| {
@@ -3846,6 +3869,46 @@ fn block_starts(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
     out
 }
 
+/// Words a document writes as labels inside its lines (v0.24.3): after a
+/// sentence's end, a word starting with a capital, without punctuation, then
+/// another starting with a capital ("… rooms. Friends We will be glad …",
+/// speakers' names in the Song of Songs) — at least three times, and never
+/// followed by a word in lower case, as a sentence's first word is somewhere
+/// ("Then he said", "Jesus answered"). Not "I".
+fn inline_labels(units: &[Unit]) -> HashSet<String> {
+    let mut label: HashMap<String, usize> = HashMap::new();
+    let mut sentence: HashSet<String> = HashSet::new();
+    for unit in units {
+        let text = clean(&unit.text);
+        let words: Vec<&str> = text.split_whitespace().collect();
+        for w in words.windows(3) {
+            if !w[0].ends_with(['.', '!', '?', ';', ':', '”', '’', '"', '»']) {
+                continue;
+            }
+            let word = w[1];
+            let shaped = word.chars().count() >= 2
+                && word.chars().all(char::is_alphabetic)
+                && word.chars().next().is_some_and(char::is_uppercase)
+                && word.chars().skip(1).all(char::is_lowercase);
+            if !shaped {
+                continue;
+            }
+            match w[2].chars().next() {
+                Some(c) if c.is_uppercase() => *label.entry(word.to_string()).or_default() += 1,
+                Some(c) if c.is_lowercase() => {
+                    sentence.insert(word.to_string());
+                }
+                _ => {}
+            }
+        }
+    }
+    label
+        .into_iter()
+        .filter(|(w, n)| *n >= 3 && !sentence.contains(w))
+        .map(|(w, _)| w)
+        .collect()
+}
+
 /// Runs of three or more lines that are nothing but consecutive numbers
 /// from 1 ("1", "2", "3" …), or a line of such numbers ("1 2 3 4 5"): a
 /// chapter index (an EPUB's navigation, a book's list of chapters), never
@@ -4209,6 +4272,8 @@ struct Reader<'a> {
     apparatus_chars: usize,
     /// PDF lines that begin a block of their own (see `block_starts`).
     block_starts: HashSet<usize>,
+    /// Words the document uses as labels inside its lines (see `inline_labels`).
+    inline_labels: HashSet<String>,
 }
 
 impl Reader<'_> {
@@ -4396,7 +4461,7 @@ impl Reader<'_> {
         let doubt = open
             .doubt
             .or_else(|| open.heading_like_end.then_some("possibleHeading"))
-            .or_else(|| verse_doubt(&text));
+            .or_else(|| verse_doubt(&text, &self.inline_labels));
         chapter.verses.insert(open.verse, text);
         if let Some(end) = open.end {
             chapter.bridges.insert(open.verse, end);
@@ -5852,6 +5917,7 @@ fn recognise_in(
         apparatus_unit: None,
         apparatus_chars: 0,
         block_starts: starts,
+        inline_labels: inline_labels(units),
     };
     let mut out = reader.run();
     check_running_heads(units, &furniture, language, &mut out);
