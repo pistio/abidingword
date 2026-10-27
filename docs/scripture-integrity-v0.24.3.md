@@ -116,12 +116,25 @@ text has none of these signs (`Recognition::unverified`):
 | `unnumbered` | Verse 1 without a number of its own |
 | `length` | More than five times its chapter's median length and over 500 characters |
 | `psalmTitle` | A psalm's verse 1 on a line that names book, chapter and verse: an export may write the title into it |
+| `boundary` | Where the verse begins or ends rests on weak evidence: a raised number against a word, a number alone on a PDF line, the next verse's number missing |
+
+Further evidence for `possibleHeading`, added after the first full audit
+showed headings left in verified verses: a heading over two lines (the lines
+after a heading-like one never end a sentence before the verse ends); the
+first line of running text on a page after a sentence's end; a short line,
+flush with the column's left edge, after a short line that ended a sentence
+(a paragraph of its own without a verse number, not indented as poetry); a
+whole line just before a heading or a line of cross-references; several
+words in capitals, or a number alone ("30."), closing a verse after a
+sentence's end; a book's name alone closing it ("… mandou. Zacarias", a
+quotation's source); a styled paragraph of a Word or EPUB file split by a
+number ("맺는 말(1)").
 
 Unverified verses are stored as places (`bible_verse_places`): the review
 says how many and why; a passage in a document Bible lists them with their
-page and a button to open them. A Bible with any unverified verse stays a
-document whose verified passages can be found, rather than a Bible read
-wholly by its verses.
+page and a button to open them. A Bible read by its verses stays one: its
+unverified verses are left out of its verses and shown in the chapter
+reader in their place, marked as not checked, with their page.
 
 ## 6. Apparatus kept
 
