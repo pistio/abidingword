@@ -30,18 +30,18 @@ kor-docx	kor_lo.docx	kor_usfm.zip	ko	Hangul	docx	converted: LibreOffice Writer f
 grctr-pdf	grctr_all.pdf	grctr_usfm.zip	grc	Greek	pdf	eBible letter, New Testament	impl	Textus Receptus (eBible.org); public domain
 hboWLC-pdf	hboWLC_all.pdf	hboWLC_usfm.zip	hbo	Hebrew	pdf	eBible letter, right to left	impl	Westminster Leningrad Codex (eBible.org); public domain
 latVUC-pdf	latVUC_all.pdf	latVUC_usfm.zip	la	Latin	pdf	eBible letter, deuterocanon	impl	Clementine Vulgate 1598 (eBible.org); public domain
-deutkw-pdf	deutkw_all.pdf	deutkw_usfm.zip	de	Latin	pdf	eBible letter	hidden	Textbibel 1906 (eBible.org); public domain
-frajnd-pdf	frajnd_a4.pdf	frajnd_usfm.zip	fr	Latin	pdf	eBible A4	hidden	Darby 1885 French (eBible.org); public domain
-frajnd-epub	frajnd.epub	frajnd_usfm.zip	fr	Latin	epub	eBible EPUB	hidden	Darby 1885 French (eBible.org); public domain
-spablm-pdf	spablm_all.pdf	spablm_usfm.zip	es	Latin	pdf	eBible letter, deuterocanon	hidden	Spanish Free Bible for the World (eBible.org); public domain
-engylt-pdf	engylt_book.pdf	engylt_usfm.zip	en	Latin	pdf	eBible book size	hidden	Young's Literal Translation 1898 (eBible.org); public domain
-grcbyz-pdf	grcbyz_a4.pdf	grcbyz_usfm.zip	grc	Greek	pdf	eBible A4, New Testament	hidden	Byzantine Greek NT 1904 (eBible.org); public domain
+deutkw-pdf	deutkw_all.pdf	deutkw_usfm.zip	de	Latin	pdf	eBible letter	regression	Textbibel 1906 (eBible.org); public domain
+frajnd-pdf	frajnd_a4.pdf	frajnd_usfm.zip	fr	Latin	pdf	eBible A4	regression	Darby 1885 French (eBible.org); public domain
+frajnd-epub	frajnd.epub	frajnd_usfm.zip	fr	Latin	epub	eBible EPUB	regression	Darby 1885 French (eBible.org); public domain
+spablm-pdf	spablm_all.pdf	spablm_usfm.zip	es	Latin	pdf	eBible letter, deuterocanon	regression	Spanish Free Bible for the World (eBible.org); public domain
+engylt-pdf	engylt_book.pdf	engylt_usfm.zip	en	Latin	pdf	eBible book size	regression	Young's Literal Translation 1898 (eBible.org); public domain
+grcbyz-pdf	grcbyz_a4.pdf	grcbyz_usfm.zip	grc	Greek	pdf	eBible A4, New Testament	regression	Byzantine Greek NT 1904 (eBible.org); public domain
 hboWLC-epub	hboWLC.epub	hboWLC_usfm.zip	hbo	Hebrew	epub	eBible EPUB, right to left, pointed	impl	Westminster Leningrad Codex (eBible.org); public domain
 grctr-epub	grctr.epub	grctr_usfm.zip	grc	Greek	epub	eBible EPUB, New Testament	impl	Textus Receptus (eBible.org); public domain
 latVUC-epub	latVUC.epub	latVUC_usfm.zip	la	Latin	epub	eBible EPUB, deuterocanon	impl	Clementine Vulgate 1598 (eBible.org); public domain
 kor1961-docx	kor1961_usfm_lo.docx	kor1961_usfm.zip	ko	Hangul	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "제 N 장", section headings	impl	성경전서 개역한글판 1961 (Korean Bible Society; bundled with Abiding Word); economic copyright expired, integrity and attribution respected
 kor1961-lopdf	kor1961_usfm_lo.pdf	kor1961_usfm.zip	ko	Hangul	pdf	converted: LibreOffice Writer PDF from the edition's USFM, superscript verse numbers	impl	성경전서 개역한글판 1961 (Korean Bible Society; bundled with Abiding Word); economic copyright expired, integrity and attribution respected
-deutkw-docx	deutkw_usfm_lo.docx	deutkw_usfm.zip	de	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Kapitel N"	hidden	Textbibel 1906 (eBible.org); public domain
-deutkw-lopdf	deutkw_usfm_lo.pdf	deutkw_usfm.zip	de	Latin	pdf	converted: LibreOffice Writer PDF from the edition's USFM	hidden	Textbibel 1906 (eBible.org); public domain
-spablm-docx	spablm_usfm_lo.docx	spablm_usfm.zip	es	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Capítulo N"	hidden	Spanish Free Bible for the World (eBible.org); public domain
-frajnd-lopdf	frajnd_usfm_lo.pdf	frajnd_usfm.zip	fr	Latin	pdf	converted: LibreOffice Writer PDF from the edition's USFM	hidden	Darby 1885 French (eBible.org); public domain
+deutkw-docx	deutkw_usfm_lo.docx	deutkw_usfm.zip	de	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Kapitel N"	regression	Textbibel 1906 (eBible.org); public domain
+deutkw-lopdf	deutkw_usfm_lo.pdf	deutkw_usfm.zip	de	Latin	pdf	converted: LibreOffice Writer PDF from the edition's USFM	regression	Textbibel 1906 (eBible.org); public domain
+spablm-docx	spablm_usfm_lo.docx	spablm_usfm.zip	es	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Capítulo N"	regression	Spanish Free Bible for the World (eBible.org); public domain
+frajnd-lopdf	frajnd_usfm_lo.pdf	frajnd_usfm.zip	fr	Latin	pdf	converted: LibreOffice Writer PDF from the edition's USFM	regression	Darby 1885 French (eBible.org); public domain

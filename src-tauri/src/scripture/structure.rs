@@ -92,6 +92,9 @@ pub struct FoundBook {
     pub chapters: usize,
     pub verses: usize,
     pub place: Place,
+    /// The book used is the person's choice, not what was found (v0.24.3):
+    /// verses under it are mapped by a manual correction.
+    pub corrected: bool,
 }
 
 /// Text left out of the verses, as the review shows it.
@@ -137,6 +140,90 @@ pub struct Recognition {
     pub books: Vec<FoundBook>,
     pub left_out: Vec<LeftOut>,
     pub stats: Stats,
+    /// Verses whose place, book, chapter and verse were found but whose text
+    /// is not verified (v0.24.3), with why: "possibleHeading" (its last line
+    /// could be a heading in the body's own type), "reference" (a passage
+    /// reference stands in it: a running head or a cross-reference read
+    /// in), "noteSign" (a note's sign no note explains), "unnumbered" (verse
+    /// 1 without a number: its end was inferred). Such a verse can be found
+    /// in the document; its text never becomes the Bible's verse.
+    pub unverified: BTreeMap<(u8, u16, u16), &'static str>,
+    /// What was set apart from the verses, with where it stands (v0.24.3).
+    pub apparatus: Vec<Apparatus>,
+}
+
+/// A piece of the document's apparatus set apart from the verses (v0.24.3):
+/// a footnote, a cross-reference, a heading, a running head, an
+/// introduction … with its place, so that nothing excluded is lost.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Apparatus {
+    /// "footnote", "crossReference", "heading", "subscription",
+    /// "runningHead", "introduction", "frontMatter", "notes", "otherBook".
+    pub kind: &'static str,
+    pub text: String,
+    pub place: Place,
+    /// The verse it stands with, when one was open.
+    pub verse: Option<(u8, u16, u16)>,
+}
+
+/// Most characters kept of one piece of apparatus, and of all of it.
+const APPARATUS_PIECE_CHARS: usize = 4_000;
+const APPARATUS_TOTAL_CHARS: usize = 40_000_000;
+
+/// The kind of apparatus a reason for leaving text out stands for.
+fn apparatus_kind(reason: &str) -> &'static str {
+    match reason {
+        "heading" => "heading",
+        "subscription" => "subscription",
+        "crossReference" => "crossReference",
+        "noteOnly" => "footnote",
+        "notes" => "notes",
+        "noBook" => "frontMatter",
+        "leftOutBook" => "otherBook",
+        _ => "introduction",
+    }
+}
+
+/// Adds text to the apparatus, joined to the piece before when it is of the
+/// same kind and goes on from the unit before it.
+#[allow(clippy::too_many_arguments)]
+fn add_apparatus(
+    list: &mut Vec<Apparatus>,
+    last_unit: &mut Option<usize>,
+    total: &mut usize,
+    kind: &'static str,
+    text: &str,
+    place: Place,
+    unit: usize,
+    verse: Option<(u8, u16, u16)>,
+) {
+    let text = text.trim();
+    if text.is_empty() || *total >= APPARATUS_TOTAL_CHARS {
+        return;
+    }
+    let follows = last_unit.is_some_and(|u| unit == u || unit == u + 1);
+    *last_unit = Some(unit);
+    if let Some(last) = list.last_mut() {
+        if follows
+            && last.kind == kind
+            && last.place.document == place.document
+            && last.text.chars().count() + text.chars().count() < APPARATUS_PIECE_CHARS
+        {
+            last.text.push(' ');
+            last.text.push_str(text);
+            *total += text.len() + 1;
+            return;
+        }
+    }
+    let text: String = text.chars().take(APPARATUS_PIECE_CHARS).collect();
+    *total += text.len();
+    list.push(Apparatus {
+        kind,
+        text,
+        place,
+        verse,
+    });
 }
 
 impl Recognition {
@@ -863,6 +950,10 @@ const ALSO_CALLED: &[&str] = &[
     "chamada",
     "llamada",
     "appelee",
+    "nomme",
+    "nommee",
+    "dit",
+    "dite",
     "called",
     "id est",
     "or",
@@ -1580,8 +1671,13 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             let prev = before.chars().last();
             let opened = prev.is_some_and(|p| matches!(p, '(' | '['));
             let prev_solid = before.trim_end().chars().last();
-            if prev.is_some_and(|p| p.is_alphanumeric()) {
-                // Glued to a word: "God1", "v2", a raised footnote mark after a word.
+            // A raised number against the word before it ("Kain,⁵Und",
+            // "Erde⁶Und"): a verse number written without a space (v0.24.3),
+            // or a note's number — only ever the very next verse, and a
+            // better place for the same verse wins (`best_place`).
+            let raised_after_word = raised && prev.is_some_and(|p| p.is_alphanumeric());
+            if prev.is_some_and(|p| p.is_alphanumeric()) && !raised {
+                // Glued to a word: "God1", "v2".
                 return None;
             }
             let number_before = prev
@@ -1600,8 +1696,9 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                 .trim_start_matches(['(', '[', '“', '"', '‘', '\'', '¶'])
                 .trim()
                 .is_empty();
-            let strength = if at_start || raised || prev_solid.is_some_and(ends_sentence) || opened
-            {
+            let strength = if raised_after_word {
+                Strength::Medium
+            } else if at_start || raised || prev_solid.is_some_and(ends_sentence) || opened {
                 Strength::Strong
             } else if prev.is_some_and(char::is_whitespace) {
                 Strength::Medium
@@ -1651,7 +1748,26 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             // What comes after.
             let mut k = next_index;
             let mut end = None;
-            if !raised {
+            if raised {
+                // A raised bridge: "⁴-⁵", "⁴–⁵".
+                if chars.get(k).is_some_and(|(_, d)| matches!(d, '-' | '–')) {
+                    let mut m = k + 1;
+                    while m < chars.len() && superscript_digit(chars[m].1).is_some() {
+                        m += 1;
+                    }
+                    if m > k + 1 && m - (k + 1) <= 3 {
+                        let last = chars[k + 1..m]
+                            .iter()
+                            .filter_map(|(_, c)| superscript_digit(*c))
+                            .fold(0u32, |v, d| v * 10 + d)
+                            as u16;
+                        if last > value && last - value <= 10 {
+                            end = Some(last);
+                            k = m;
+                        }
+                    }
+                }
+            } else {
                 if let Some(&(_, dash)) = chars.get(k).filter(|(_, d)| matches!(d, '-' | '–' | '—'))
                 {
                     let _ = dash;
@@ -1694,6 +1810,9 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                 Some('%' | '°' | '/' | ':' | ',' | '.' | '€' | '$' | '£') => return None,
                 // Korean units: "3장", "4절", "23편" are references, not verse numbers.
                 Some('장' | '절' | '편') => return None,
+                // A raised number is set off from the word after it by its
+                // look, not by a space ("⁵auf Kain").
+                Some(c) if c.is_alphabetic() && raised => {}
                 Some(c) if c.is_alphabetic() => {
                     // "5th", "3rd", "10km": a Latin small letter glued on is a word.
                     if c.is_ascii_lowercase() {
@@ -1855,6 +1974,16 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         .count();
     let reference_pages = reference_heads >= needed;
     for ((_, page), lines) in &pages {
+        // A line the page's layout sets apart at its top or bottom edge that
+        // names a passage (v0.24.3): the running head or page
+        // number, whatever its wording ("Le premier livre de Samuel 1:1 364
+        // Le premier livre de Samuel 1:17"). A title set at a page's top
+        // names no chapter and verse, and stays.
+        for &i in lines {
+            if units[i].edge && edge_furniture(&units[i].text) {
+                out.insert(i);
+            }
+        }
         if reference_pages {
             for &i in lines.iter().take(1).chain(lines.iter().rev().take(1)) {
                 if reference_head(&units[i].text) {
@@ -1884,6 +2013,66 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         }
     }
     out
+}
+
+/// What a line set apart at a page's edge says when it is page furniture: a
+/// passage reference with at most a few words and numbers around it (a
+/// running head), never a sentence.
+fn edge_furniture(text: &str) -> bool {
+    use std::sync::OnceLock;
+    static PAIR: OnceLock<regex::Regex> = OnceLock::new();
+    // A name, then a chapter and verse ("Samuel 1:17", "Α΄ 4:13").
+    let pair = PAIR.get_or_init(|| {
+        regex::Regex::new(r"\p{L}[\p{L}'’.\-΄ʹ]*\s+\d{1,3}[:.]\d{1,3}").expect("valid")
+    });
+    // (A number alone is a page number only when it runs with the pages:
+    // a chapter's number may open a page; see `page_furniture`.)
+    let text = text.trim();
+    // A running head has no clause punctuation and ends with a number (its
+    // last passage or the page's number).
+    if text.chars().count() > 120
+        || !pair.is_match(text)
+        || head_sentence(text)
+        || text.contains([',', ';', '!', '?', '«', '»', '“', '”'])
+        || !text.ends_with(|c: char| c.is_ascii_digit())
+    {
+        return false;
+    }
+    let words = text
+        .split_whitespace()
+        .filter(|w| w.chars().any(char::is_alphabetic))
+        .count();
+    words <= 14
+}
+
+/// What in a verse's text puts it in doubt (v0.24.3): a passage reference
+/// ("Samuel 1:17": Scripture never writes book, chapter and verse; a running
+/// head or a cross-reference read in), or a note's sign that no note on its
+/// page explained ("†", "‡", "§").
+fn verse_doubt(text: &str) -> Option<&'static str> {
+    use std::sync::OnceLock;
+    static REFERENCE: OnceLock<regex::Regex> = OnceLock::new();
+    let reference = REFERENCE.get_or_init(|| {
+        regex::Regex::new(r"(?:^|\s)\p{L}[\p{L}.΄ʹ]*\s\d{1,3}:\d{1,3}(?:\D|$)").expect("valid")
+    });
+    if reference.is_match(text) {
+        return Some("reference");
+    }
+    if text.contains(['†', '‡', '§']) {
+        return Some("noteSign");
+    }
+    None
+}
+
+/// Whether a line reads as a sentence: a word of three letters or more
+/// ending with sentence punctuation before more words.
+fn head_sentence(text: &str) -> bool {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    words.windows(2).any(|w| {
+        w[0].ends_with(['.', '!', '?', ';'])
+            && w[0].chars().filter(|c| c.is_alphabetic()).count() >= 3
+            && w[1].chars().next().is_some_and(char::is_alphabetic)
+    })
 }
 
 /// Footnotes printed at the foot of a page ("† 1:1 Messiah (Hebrew) …",
@@ -2152,7 +2341,7 @@ fn reference_head(text: &str) -> bool {
     use std::sync::OnceLock;
     static FORM: OnceLock<regex::Regex> = OnceLock::new();
     let form = FORM.get_or_init(|| {
-        let reference = r"(?:\d\.?\s?)?[\p{L}][\p{L}'’.\-]*(?:\s+[\p{L}][\p{L}'’.\-]*){0,3}\s+\d{1,3}[:,.]\d{1,3}(?:\s*[-–—]\s*(?:\d{1,3}[:,.])?\d{1,3})?";
+        let reference = r"(?:\d\.?\s?)?[\p{L}][\p{L}'’.\-΄ʹ]*(?:\s+[\p{L}][\p{L}'’.\-΄ʹ]*){0,6}\s+\d{1,3}[:,.]\d{1,3}(?:\s*[-–—]\s*(?:\d{1,3}[:,.])?\d{1,3})?";
         regex::Regex::new(&format!(
             r"^(?:\d{{1,4}}\s+)?{reference}(?:\s+\d{{1,4}})?(?:\s+{reference})?(?:\s+\d{{1,4}})?$"
         ))
@@ -2162,14 +2351,14 @@ fn reference_head(text: &str) -> bool {
     // page number between ("Obadja 1 972 Obadja 19", "Judas 21 1320 Judas 25").
     static SINGLE: OnceLock<regex::Regex> = OnceLock::new();
     let single = SINGLE.get_or_init(|| {
-        let name = r"((?:\d\.?\s?)?[\p{L}][\p{L}'’.\-]*(?:\s+[\p{L}][\p{L}'’.\-]*){0,3})";
+        let name = r"((?:\d\.?\s?)?[\p{L}][\p{L}'’.\-΄ʹ]*(?:\s+[\p{L}][\p{L}'’.\-΄ʹ]*){0,6})";
         regex::Regex::new(&format!(
             r"^{name}\s+\d{{1,3}}\s+\d{{1,4}}\s+{name}\s+\d{{1,3}}$"
         ))
         .expect("valid pattern")
     });
     let text = text.trim();
-    if text.chars().count() > 80 {
+    if text.chars().count() > 120 {
         return false;
     }
     form.is_match(text)
@@ -2242,7 +2431,7 @@ fn head_references(text: &str) -> Option<(HeadReference, HeadReference)> {
     use std::sync::OnceLock;
     static REF: OnceLock<regex::Regex> = OnceLock::new();
     let form = REF.get_or_init(|| {
-        regex::Regex::new(r"(?:^|\s)((?:\d\.?\s?)?[\p{L}][\p{L}'’.\-]*(?:\s+[\p{L}][\p{L}'’.\-]*){0,3})\s+(\d{1,3})(?:[:,.](\d{1,3}))?")
+        regex::Regex::new(r"(?:^|\s)((?:\d\.?\s?)?[\p{L}][\p{L}'’.\-΄ʹ]*(?:\s+[\p{L}][\p{L}'’.\-΄ʹ]*){0,6})\s+(\d{1,3})(?:[:,.](\d{1,3}))?")
             .expect("valid pattern")
     });
     let found: Vec<HeadReference> = form
@@ -2435,6 +2624,9 @@ struct Builder<'a> {
     items: Vec<Item>,
     books: Vec<FoundBook>,
     last_detected: Option<&'static str>,
+    /// PDF lines that begin a block of text of their own after a gap, not
+    /// at the top of their page (see `block_starts`).
+    block_starts: HashSet<usize>,
 }
 
 impl Builder<'_> {
@@ -2449,6 +2641,7 @@ impl Builder<'_> {
             chapters: 0,
             verses: 0,
             place: self.units[unit].place,
+            corrected: false,
         });
         self.last_detected = detected.map(|b| b.code);
         self.books.len() - 1
@@ -3312,7 +3505,17 @@ impl Builder<'_> {
                     .is_some_and(|(head, inside)| {
                         !head.trim().is_empty() && reference_line(inside, language)
                     });
-                let set_apart = typographic || references_follow || parallel;
+                // A PDF line that begins a block of its own, after space
+                // (v0.24.3): set apart by the page's layout even in the
+                // body's type ("Das Paradies und der Sündenfall."). Never one
+                // ending as a clause does (a poem's line after a stanza's gap).
+                // (Centred: the first line of a column, or of a poem's
+                // stanza, begins a block too, at the column's edge.)
+                let block_start = b.block_starts.contains(&item.unit)
+                    && unit.centred
+                    && !line.trim_end().ends_with([',', ';', ':'])
+                    && line.chars().count() <= 80;
+                let set_apart = typographic || references_follow || parallel || block_start;
                 // A single word only when its style sets it apart (a styled block
                 // or line is never the wrapped end of a verse). A full stop or a
                 // comma at the end only where the look sets the line apart: a
@@ -3331,7 +3534,14 @@ impl Builder<'_> {
                     && alone
                     && !is_selah(line)
                     && set_apart
-                    && shape(line, typographic, more || block, block, styled, continued)
+                    && shape(
+                        line,
+                        typographic || block_start,
+                        more || block || block_start,
+                        block,
+                        styled,
+                        continued,
+                    )
                     // (The last line of a heading, too short for its style
                     // to show, may be one word: "Un démoniaque" / "guéri",
                     // with the passage's cross-references under it.)
@@ -3516,6 +3726,31 @@ impl Builder<'_> {
             }
         }
     }
+}
+
+/// PDF lines that begin a new block of text (a paragraph set off by space
+/// above it, as the page's layout reads it) below other running text of the
+/// same page (v0.24.3). A verse's last line never begins a block of its own;
+/// a heading set off by space does, even in the body's own type.
+fn block_starts(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
+    let mut out = HashSet::new();
+    let mut previous: Option<&Unit> = None;
+    for (i, unit) in units.iter().enumerate() {
+        if skip.contains(&i) || unit.heading || unit.note {
+            continue;
+        }
+        if let (Some(p), Some(page)) = (previous, unit.place.page) {
+            if p.place.page == Some(page)
+                && p.place.document == unit.place.document
+                && p.place.segment.is_some()
+                && p.place.segment != unit.place.segment
+            {
+                out.insert(i);
+            }
+        }
+        previous = Some(unit);
+    }
+    out
 }
 
 /// Runs of three or more lines that are nothing but consecutive numbers
@@ -3820,6 +4055,12 @@ struct Open {
     start: Place,
     last: Place,
     last_unit: usize,
+    /// Why the verse's text cannot be verified, when something is in doubt
+    /// (v0.24.3; see [`Recognition::unverified`]).
+    doubt: Option<&'static str>,
+    /// Its last line is a whole line that could be a heading in the body's
+    /// own type (see `Reader::text`).
+    heading_like_end: bool,
 }
 
 struct Reader<'a> {
@@ -3869,6 +4110,10 @@ struct Reader<'a> {
     labels: HashSet<String>,
     /// Chapters reported for such a line inside a verse.
     label_flagged: HashSet<(u8, u16)>,
+    /// The unit the last piece of apparatus came from, and the characters of
+    /// apparatus kept (see `add_apparatus`).
+    apparatus_unit: Option<usize>,
+    apparatus_chars: usize,
 }
 
 impl Reader<'_> {
@@ -3879,6 +4124,26 @@ impl Reader<'_> {
     fn leave_out(&mut self, text: &str, unit: usize, reason: &'static str) {
         let chars = text.chars().count();
         self.out.stats.left_out_chars += chars;
+        let verse = self
+            .open
+            .as_ref()
+            .map(|o| (o.ordinal, o.chapter, o.verse))
+            .or_else(|| {
+                let (book, chapter) = (self.book?, self.chapter?);
+                Some((book.ordinal, chapter, self.expect.saturating_sub(1)))
+            })
+            .filter(|v| v.2 > 0);
+        let place = self.place(unit);
+        add_apparatus(
+            &mut self.out.apparatus,
+            &mut self.apparatus_unit,
+            &mut self.apparatus_chars,
+            apparatus_kind(reason),
+            text,
+            place,
+            unit,
+            verse,
+        );
         if self.out.left_out.len() < SAMPLES {
             self.out.left_out.push(LeftOut {
                 sample: text.chars().take(80).collect(),
@@ -3979,6 +4244,15 @@ impl Reader<'_> {
         }
         let key = (open.ordinal, open.chapter, open.verse);
         let book = canon::by_ordinal(open.ordinal).expect("a staged book is canonical");
+        // A verse the edition prints only in its apparatus: its number, then
+        // nothing but the labels of notes that name this very verse ("14 a",
+        // the note "a 23:14 Le « Texte reçu » ajoute le v. 14 : …"). The
+        // label is no word of Scripture and the note's text is no verse: the
+        // verse has no text in this edition (v0.24.3).
+        if !text.is_empty() && self.only_note_labels(&text, &open) {
+            self.leave_out(&text, open.last_unit, "noteOnly");
+            text.clear();
+        }
         if text.is_empty() {
             self.out.content.issue(
                 Severity::Warning,
@@ -4024,9 +4298,16 @@ impl Reader<'_> {
             );
             return;
         }
+        let doubt = open
+            .doubt
+            .or_else(|| open.heading_like_end.then_some("possibleHeading"))
+            .or_else(|| verse_doubt(&text));
         chapter.verses.insert(open.verse, text);
         if let Some(end) = open.end {
             chapter.bridges.insert(open.verse, end);
+        }
+        if let Some(doubt) = doubt {
+            self.out.unverified.insert(key, doubt);
         }
         self.out.origins.insert(
             key,
@@ -4038,6 +4319,72 @@ impl Reader<'_> {
         if let Some(entry) = self.entry {
             self.out.books[entry].verses += 1;
         }
+    }
+
+    /// A whole line added to an open verse that could be a section heading
+    /// set in the body's own type (v0.24.3): it is the whole unit, after a
+    /// sentence's end, beginning with a capital and not ending as a sentence
+    /// or clause does ("… vor Gott" cannot be told from "Die Sintflut"
+    /// without its look). Kept in the verse, as the document shows no
+    /// difference, but when it is the verse's last line the verse's text is
+    /// not verified.
+    fn heading_like_line(&self, words: &str, unit: usize) -> bool {
+        let Some(open) = self.open.as_ref() else {
+            return false;
+        };
+        let whole = unmark_raised(&clean(&self.units[unit].text));
+        let line = words.trim();
+        if whole.trim() != line || open.text.trim().is_empty() || is_selah(line) {
+            return false;
+        }
+        let bare = line.trim_end_matches(is_sign).trim_end();
+        let before = open.text.trim_end().trim_end_matches(is_sign).trim_end();
+        let korean_end = before.chars().last().is_some_and(|c| {
+            matches!(
+                c,
+                '다' | '라' | '요' | '까' | '니' | '서' | '오' | '네' | '지' | '세' | '자'
+            )
+        });
+        bare.chars().count() <= 70
+            && bare
+                .chars()
+                .find(|c| c.is_alphabetic())
+                .is_some_and(char::is_uppercase)
+            && !bare.ends_with([
+                '.', '!', '?', ';', ':', ',', '”', '’', '"', '»', ')', '-', '–', '—', '。',
+            ])
+            && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。']) || korean_end)
+    }
+
+    /// Whether a verse's whole text is labels of notes that name this verse
+    /// (letters or signs, each a word of its own): on its page or the next
+    /// for a PDF, anywhere in a document without pages.
+    fn only_note_labels(&self, text: &str, open: &Open) -> bool {
+        let place = open.start;
+        let (letters, signs): (Vec<String>, Vec<char>) = match place.page {
+            Some(page) => (
+                self.referenced_letters(place.document, page, open.chapter, open.verse),
+                self.referenced_signs(place.document, page, open.chapter, open.verse),
+            ),
+            None => (
+                self.note_letters
+                    .get(&(place.document, WHOLE_DOCUMENT))
+                    .into_iter()
+                    .flatten()
+                    .filter(|(_, c, v)| (*c, *v) == (open.chapter, open.verse))
+                    .map(|(l, _, _)| l.clone())
+                    .collect(),
+                self.referenced_signs_anywhere(place.document, open.chapter, open.verse),
+            ),
+        };
+        if letters.is_empty() && signs.is_empty() {
+            return false;
+        }
+        text.split_whitespace().all(|word| {
+            let word = word.trim_matches(|c: char| matches!(c, ',' | ';' | '.'));
+            letters.iter().any(|l| l == word)
+                || (!word.is_empty() && word.chars().all(|c| signs.contains(&c)))
+        })
     }
 
     /// Text gathered before the chapter's first verse: a Psalm's title, or
@@ -4307,6 +4654,8 @@ impl Reader<'_> {
             start: place,
             last: place,
             last_unit: unit,
+            doubt: None,
+            heading_like_end: false,
         });
         self.expect = end.unwrap_or(verse) + 1;
         self.fresh = false;
@@ -4705,6 +5054,10 @@ impl Reader<'_> {
             start: place,
             last: place,
             last_unit: at,
+            // Where verse 1 ends was inferred from verse 2's number: what
+            // stands between the heading and it may not all be verse 1.
+            doubt: Some("unnumbered"),
+            heading_like_end: false,
         });
         self.close();
     }
@@ -4789,7 +5142,9 @@ impl Reader<'_> {
                 None => self.referenced_signs_anywhere(place.document, open.chapter, open.verse),
             };
             let words = without_signs(words, &signs).into_owned();
+            let heading_like = self.heading_like_line(&words, unit);
             let open = self.open.as_mut().expect("a verse is open");
+            open.heading_like_end = heading_like;
             Self::append(
                 open,
                 &words,
@@ -4840,6 +5195,7 @@ impl Reader<'_> {
             self.skip_chapter = false;
             let found = &mut self.out.books[entry];
             found.book = chosen.map(|b| b.code);
+            found.corrected = self.corrections.books.contains_key(&entry);
             // A book outside the 66 is left out unless the person chose a
             // book for it.
             found.left_out = match self.corrections.books.get(&entry) {
@@ -4913,7 +5269,14 @@ impl Reader<'_> {
                     } else if !self.skip {
                         // A heading inside a chapter is not Scripture text.
                         self.out.stats.headings += 1;
-                        self.leave_out(text, item.unit, "heading");
+                        let reason = if subscription(text) {
+                            "subscription"
+                        } else if reference_line(text, self.language) {
+                            "crossReference"
+                        } else {
+                            "heading"
+                        };
+                        self.leave_out(text, item.unit, reason);
                     }
                 }
                 Event::Text(words) => self.text(words, item.unit),
@@ -5239,6 +5602,11 @@ fn recognise_in(
             .or_default()
             .extend(note_letters_in(&unmark_raised(&unit.text)));
     }
+    let note_units: Vec<usize> = {
+        let mut v: Vec<usize> = footnotes.iter().copied().collect();
+        v.sort_unstable();
+        v
+    };
     furniture.extend(footnotes);
     let builder = Builder {
         units,
@@ -5246,6 +5614,7 @@ fn recognise_in(
         items: Vec::new(),
         books: Vec::new(),
         last_detected: None,
+        block_starts: block_starts(units, &furniture),
     };
     let (items, books) = builder.build(&furniture);
     let reader = Reader {
@@ -5286,9 +5655,44 @@ fn recognise_in(
         raised_flagged: HashSet::new(),
         labels: repeated_labels(units, &furniture),
         label_flagged: HashSet::new(),
+        apparatus_unit: None,
+        apparatus_chars: 0,
     };
     let mut out = reader.run();
     check_running_heads(units, &furniture, language, &mut out);
+    // The page furniture and the notes, kept with their places as the rest
+    // of the apparatus is (v0.24.3), in the document's order.
+    let notes: HashSet<usize> = note_units.iter().copied().collect();
+    let mut edge: Vec<usize> = furniture.difference(&notes).copied().collect();
+    edge.sort_unstable();
+    let (mut last, mut total) = (None, out.apparatus.iter().map(|a| a.text.len()).sum());
+    let mut extra = Vec::new();
+    for (kind, list) in [("footnote", &note_units), ("runningHead", &edge)] {
+        last = None;
+        for &i in list.iter() {
+            let unit = &units[i];
+            add_apparatus(
+                &mut extra,
+                &mut last,
+                &mut total,
+                kind,
+                &unmark_raised(&clean(&unit.text)),
+                unit.place,
+                i,
+                None,
+            );
+        }
+    }
+    let _ = last;
+    out.apparatus.extend(extra);
+    out.apparatus.sort_by_key(|a| {
+        (
+            a.place.document,
+            a.place.page.unwrap_or(0),
+            a.place.segment.unwrap_or(0),
+            a.place.offset.unwrap_or(0),
+        )
+    });
     out
 }
 
@@ -5318,6 +5722,16 @@ mod tests {
 
     #[test]
     fn printed_titles_name_their_books() {
+        // Darby 1885: the Pentateuch's titles give the book's second name
+        // after "dit" (v0.24.3).
+        assert_eq!(
+            named("Le premier livre de Moïse dit la Genèse", Some("fr")),
+            Some("GEN")
+        );
+        assert_eq!(
+            named("Le cinquième livre de Moïse dit le Deutéronome", Some("fr")),
+            Some("DEU")
+        );
         // Luther 1912
         assert_eq!(named("Das 1. Buch Mose (Genesis)", Some("de")), Some("GEN"));
         assert_eq!(named("Das erste Buch Samuel", Some("de")), Some("1SA"));

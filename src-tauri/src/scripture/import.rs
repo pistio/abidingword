@@ -1511,9 +1511,64 @@ pub struct DocumentStage {
     pub books: Vec<structure::FoundBook>,
     pub left_out: Vec<structure::LeftOut>,
     pub stats: structure::Stats,
+    /// Verses found whose text is not verified, and why (v0.24.3): their
+    /// places are kept, their text never becomes the Bible's verses.
+    pub unverified: BTreeMap<(u8, u16, u16), &'static str>,
+    /// What was set apart from the verses, with its places (v0.24.3).
+    pub apparatus: Vec<structure::Apparatus>,
+    /// The person's corrections kept from before, and how each fits this
+    /// reading of the documents (v0.24.3).
+    pub saved: Vec<SavedState>,
+}
+
+/// A correction the person made to how a Bible's documents were read, as
+/// kept (v0.24.3): which book a heading stands for (None: leave it out),
+/// anchored to the document's content and the heading's place.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SavedCorrection {
+    pub id: String,
+    pub document_position: u16,
+    pub document_sha256: String,
+    pub heading: String,
+    pub page: Option<u32>,
+    pub segment: Option<u32>,
+    /// What the recogniser read the heading as when the correction was made.
+    pub detected_book: Option<String>,
+    pub chosen_book: Option<String>,
+}
+
+/// How a kept correction fits the documents read now (v0.24.3).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SavedState {
+    #[serde(skip)]
+    pub correction: SavedCorrection,
+    pub heading: String,
+    pub page: Option<u32>,
+    /// The book the person chose (None: left out).
+    pub chosen: Option<String>,
+    /// What the recogniser reads the heading as now (None: no book).
+    pub detected_now: Option<String>,
+    /// The found heading it applies to.
+    pub index: Option<usize>,
+    /// "applied": the same document, the same heading in the same place;
+    /// "earlier": made for the same document when it was added before;
+    /// "documentChanged": the document is not the same file any more, and
+    /// the heading was found again (the correction is applied: check it);
+    /// "detectionChanged": the recogniser now reads the heading otherwise
+    /// than when the correction was made (the person's choice is applied:
+    /// check it); "notFound": no heading fits any more (nothing applied;
+    /// the correction is kept).
+    pub status: &'static str,
 }
 
 impl DocumentStage {
+    /// Whether a verse found can be used as the Bible's text: in a chapter
+    /// recognised without doubt (`usable`) and with its text verified.
+    pub fn verified(&self, usable: Option<&BTreeSet<(u8, u16)>>, key: (u8, u16, u16)) -> bool {
+        usable.is_none_or(|u| u.contains(&(key.0, key.1))) && !self.unverified.contains_key(&key)
+    }
+
     fn units(&self) -> Vec<documents::Unit> {
         self.files
             .iter()
@@ -1819,6 +1874,9 @@ pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<Sta
         books: Vec::new(),
         left_out: Vec::new(),
         stats: structure::Stats::default(),
+        unverified: BTreeMap::new(),
+        apparatus: Vec::new(),
+        saved: Vec::new(),
     };
     let content = recognise(&mut stage);
     let name = stage
@@ -1854,6 +1912,8 @@ fn recognise(stage: &mut DocumentStage) -> StagedContent {
     stage.books = found.books;
     stage.left_out = found.left_out;
     stage.stats = found.stats;
+    stage.unverified = found.unverified;
+    stage.apparatus = found.apparatus;
     let mut content = found.content;
     // PDF pages whose text could not be read (or only in part): their verses
     // are missing, never guessed; the review says which pages.
@@ -1886,6 +1946,122 @@ fn recognise(stage: &mut DocumentStage) -> StagedContent {
 }
 
 impl StagedImport {
+    /// Applies corrections kept from before (v0.24.3): each is matched to a
+    /// heading found now, by its document, its wording and its place (and,
+    /// when the document changed, by its wording alone if that is found only
+    /// once); the documents are then read again with them. `earlier`: they
+    /// were made when the same documents were added as another Bible. None
+    /// is dropped: a correction that fits nothing is reported.
+    pub fn apply_saved(&mut self, saved: Vec<SavedCorrection>, earlier: bool) -> AppResult<()> {
+        let Some(stage) = self.documents.as_mut() else {
+            return Ok(());
+        };
+        if saved.is_empty() {
+            return Ok(());
+        }
+        let mut corrections = stage.corrections.clone();
+        let mut states = Vec::new();
+        for correction in saved {
+            let same_file = stage
+                .files
+                .get(usize::from(correction.document_position))
+                .is_some_and(|f| f.hash == correction.document_sha256);
+            let in_document = |b: &&structure::FoundBook| {
+                b.place.document == correction.document_position && b.heading == correction.heading
+            };
+            let exact =
+                stage.books.iter().filter(in_document).find(|b| {
+                    b.place.page == correction.page && b.place.segment == correction.segment
+                });
+            let found = match exact {
+                Some(b) if same_file => Some(b),
+                _ => {
+                    let candidates: Vec<&structure::FoundBook> =
+                        stage.books.iter().filter(in_document).collect();
+                    match (exact, candidates.as_slice()) {
+                        (Some(b), _) => Some(b),
+                        (None, [one]) => Some(*one),
+                        _ => None,
+                    }
+                }
+            };
+            let chosen = match correction.chosen_book.as_deref() {
+                Some(code) => match canon::by_code(code) {
+                    Some(book) => Some(book),
+                    None => continue,
+                },
+                None => None,
+            };
+            let state = match found {
+                Some(book) => {
+                    corrections.books.insert(book.index, chosen);
+                    let status = if !same_file {
+                        "documentChanged"
+                    } else if book.detected.map(str::to_string) != correction.detected_book {
+                        "detectionChanged"
+                    } else if earlier {
+                        "earlier"
+                    } else {
+                        "applied"
+                    };
+                    SavedState {
+                        heading: correction.heading.clone(),
+                        page: book.place.page,
+                        chosen: correction.chosen_book.clone(),
+                        detected_now: book.detected.map(str::to_string),
+                        index: Some(book.index),
+                        status,
+                        correction,
+                    }
+                }
+                None => SavedState {
+                    heading: correction.heading.clone(),
+                    page: correction.page,
+                    chosen: correction.chosen_book.clone(),
+                    detected_now: None,
+                    index: None,
+                    status: "notFound",
+                    correction,
+                },
+            };
+            states.push(state);
+        }
+        stage.corrections = corrections;
+        stage.saved = states;
+        self.content = recognise(stage);
+        Ok(())
+    }
+
+    /// The corrections in force, to keep (v0.24.3): one for each found
+    /// heading whose book the person chose, with what the recogniser read.
+    pub fn corrections_to_keep(&self) -> Vec<SavedCorrection> {
+        let Some(stage) = self.documents.as_ref() else {
+            return Vec::new();
+        };
+        stage
+            .books
+            .iter()
+            .filter(|b| b.corrected)
+            .filter_map(|b| {
+                let file = stage.files.get(usize::from(b.place.document))?;
+                Some(SavedCorrection {
+                    id: String::new(),
+                    document_position: b.place.document,
+                    document_sha256: file.hash.clone(),
+                    heading: b.heading.clone(),
+                    page: b.place.page,
+                    segment: b.place.segment,
+                    detected_book: b.detected.map(str::to_string),
+                    chosen_book: if b.left_out {
+                        None
+                    } else {
+                        b.book.map(str::to_string)
+                    },
+                })
+            })
+            .collect()
+    }
+
     /// Reads the documents again with the person's corrections (v0.23):
     /// for each found book (by index), another book or none.
     pub fn correct(&mut self, books: &[(usize, Option<String>)]) -> AppResult<()> {
@@ -1911,6 +2087,17 @@ impl StagedImport {
             };
             corrections.books.insert(*index, book);
         }
+        // A kept correction the person has now changed is theirs to keep
+        // as changed: its state no longer stands.
+        stage.saved.retain(|s| {
+            s.index.is_none_or(|i| {
+                corrections
+                    .books
+                    .get(&i)
+                    .map(|b| b.map(|b| b.code.to_string()))
+                    == Some(s.chosen.clone())
+            })
+        });
         stage.corrections = corrections;
         self.content = recognise(stage);
         Ok(())
@@ -2221,6 +2408,16 @@ pub struct DocumentPreview {
     pub partial_chapters: usize,
     /// Chapters found but held back because of a doubt.
     pub held_chapters: usize,
+    /// Verses whose place was found but whose text could not be verified
+    /// (v0.24.3): they stay in the document, findable, never used as text.
+    pub unverified_verses: usize,
+    /// Of those, how many for each reason ("possibleHeading", "reference",
+    /// "noteSign", "unnumbered").
+    pub unverified_reasons: BTreeMap<&'static str, usize>,
+    /// Pieces of apparatus set apart and kept (notes, headings, running heads…).
+    pub apparatus: usize,
+    /// The person's corrections kept from before and how each fits now.
+    pub saved: Vec<SavedState>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -2378,6 +2575,13 @@ impl StagedImport {
                 } else {
                     0
                 },
+                unverified_verses: stage.unverified.len(),
+                unverified_reasons: stage.unverified.values().fold(BTreeMap::new(), |mut m, r| {
+                    *m.entry(*r).or_default() += 1;
+                    m
+                }),
+                apparatus: stage.apparatus.len(),
+                saved: stage.saved.clone(),
             }),
         }
     }

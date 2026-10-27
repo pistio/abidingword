@@ -125,6 +125,10 @@ pub struct Line {
     /// text (bold or italic: a heading, a label), judged from the widths
     /// its font gives its letters.
     pub styled: bool,
+    /// Set in the middle of its column, short of it on both sides by about
+    /// as much, whatever it ends with (v0.24.3; `styled` leaves out a centred
+    /// line that ends as a sentence does, as a poem's line may).
+    pub centred: bool,
 }
 
 /// Around raised small letters in [`Line::marked`] (private-use characters,
@@ -148,6 +152,42 @@ fn raised_letters(s: &Span, main: &Span) -> bool {
             (s.size < 0.85 * main.size && lift > 0.2 * main.size)
                 || (lift > 0.12 * main.size && lift < 0.7 * main.size)
         }
+}
+
+/// One to three digits (perhaps a bridge, "4-5") set smaller and raised above
+/// the line's baseline: a verse number set as a superscript (v0.24.3), which
+/// some producers write against the next word with no space ("⁵auf Kain").
+fn raised_digits(s: &Span, main: &Span) -> bool {
+    let t = s.text.trim();
+    let n = t.chars().count();
+    (1..=7).contains(&n)
+        && t.chars().next().is_some_and(|c| c.is_ascii_digit())
+        && t.chars()
+            .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–'))
+        && t.chars().filter(char::is_ascii_digit).count() <= 6
+        && s.size < 0.85 * main.size
+        && main.y - s.y > 0.2 * main.size
+        && main.y - s.y < 0.8 * main.size
+}
+
+/// Digits written as superscript digits ("12" → "¹²"); other characters as
+/// they are. How a raised verse number reaches the verse recogniser.
+pub fn superscript(text: &str) -> String {
+    text.chars()
+        .map(|c| match c {
+            '0' => '⁰',
+            '1' => '¹',
+            '2' => '²',
+            '3' => '³',
+            '4' => '⁴',
+            '5' => '⁵',
+            '6' => '⁶',
+            '7' => '⁷',
+            '8' => '⁸',
+            '9' => '⁹',
+            other => other,
+        })
+        .collect()
 }
 
 /// A page put in reading order.
@@ -694,6 +734,9 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
                 marked.push(RAISED_OPEN);
                 marked.push_str(&s.text);
                 marked.push(RAISED_CLOSE);
+            } else if main.is_some_and(|m| !std::ptr::eq(*s, m) && raised_digits(s, m)) {
+                any_raised = true;
+                marked.push_str(&superscript(&s.text));
             } else {
                 marked.push_str(&s.text);
             }
@@ -710,6 +753,7 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
             block: *block,
             first_char: group.iter().map(|s| s.first_char).min().unwrap_or(0),
             role: LineRole::Text,
+            centred: false,
             styled: {
                 let compared: u32 = group.iter().map(|s| s.compared).sum();
                 let styled: u32 = group.iter().map(|s| s.styled).sum();
@@ -754,11 +798,11 @@ fn mark_centred(lines: &mut [Line]) {
                 .text
                 .trim_end_matches(|c: char| c.is_whitespace() || "†‡§¶*".contains(c))
                 .ends_with(['.', ',', ';', ':', '!', '?', '"', '”', '’', '»']);
-            if !sentence
-                && before > 0.1 * width
+            let centred = before > 0.1 * width
                 && after > 0.1 * width
-                && (before - after).abs() < 0.06 * width
-            {
+                && (before - after).abs() < 0.06 * width;
+            line.centred = centred;
+            if !sentence && centred {
                 line.styled = true;
             }
         }
@@ -1260,6 +1304,7 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
                 role: LineRole::Drawn,
                 marked: None,
                 styled: false,
+                centred: false,
             });
         }
         text.clear();
@@ -1476,6 +1521,7 @@ fn right_to_left_lines(glyphs: &[Glyph], width: f64) -> Option<Vec<Line>> {
             role: LineRole::Text,
             marked: None,
             styled: false,
+            centred: false,
         });
     }
     (gutters < 3 || gutters * 4 <= row_count).then_some(lines)

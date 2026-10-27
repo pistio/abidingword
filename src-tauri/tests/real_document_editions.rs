@@ -114,29 +114,48 @@ struct Edition {
     script: String,
     format: String,
     layout: String,
-    hidden: bool,
+    /// "impl" (development), "regression" (disclosed evaluation sets),
+    /// "withheld-b", "withheld-c" (independent, evaluated once each).
+    role: String,
+    /// The books the document holds (None: the whole edition).
+    books: Option<Vec<String>>,
 }
 
+/// The corpus manifests: the development and regression editions, and the
+/// withheld sets (v0.24.3), each a TSV with the same first nine columns
+/// (the withheld sets add the books each document holds, its checksum and
+/// the program that made it).
 fn corpus() -> Vec<Edition> {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs/corpus/editions.tsv");
-    let text = std::fs::read_to_string(&path).expect("docs/corpus/editions.tsv");
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs/corpus");
     let mut out = Vec::new();
-    for line in text.lines().skip(1) {
-        let cols: Vec<&str> = line.split('\t').collect();
-        if cols.len() < 9 || line.starts_with('#') {
+    for name in ["editions.tsv", "withheld-b.tsv", "withheld-c.tsv"] {
+        let Ok(text) = std::fs::read_to_string(dir.join(name)) else {
             continue;
+        };
+        for line in text.lines().skip(1) {
+            let cols: Vec<&str> = line.split('\t').collect();
+            if cols.len() < 9 || line.starts_with('#') {
+                continue;
+            }
+            // key, files, reference, language, script, format, layout, role,
+            // source [, books, sha256, generator]
+            let books = cols
+                .get(9)
+                .map(|b| b.trim())
+                .filter(|b| !b.is_empty() && *b != "all")
+                .map(|b| b.split(',').map(|c| c.trim().to_string()).collect());
+            out.push(Edition {
+                key: cols[0].into(),
+                files: cols[1].split(',').map(str::to_string).collect(),
+                reference: (cols[2] != "-").then(|| cols[2].to_string()),
+                language: cols[3].into(),
+                script: cols[4].into(),
+                format: cols[5].into(),
+                layout: cols[6].into(),
+                role: cols[7].into(),
+                books,
+            });
         }
-        // key, files, reference, language, script, format, layout, role, source
-        out.push(Edition {
-            key: cols[0].into(),
-            files: cols[1].split(',').map(str::to_string).collect(),
-            reference: (cols[2] != "-").then(|| cols[2].to_string()),
-            language: cols[3].into(),
-            script: cols[4].into(),
-            format: cols[5].into(),
-            layout: cols[6].into(),
-            hidden: cols[7] == "hidden",
-        });
     }
     out
 }
@@ -178,6 +197,25 @@ struct BookAudit {
     usable_extra: usize,
     /// Verses missing from a chapter that is otherwise usable.
     missing_in_usable_chapter: usize,
+    /// Of the usable verses (structurally accepted), those whose text is
+    /// verified (v0.24.3): what the app uses as the Bible's text.
+    verified: usize,
+    verified_exact: usize,
+    verified_normalised: usize,
+    verified_different: usize,
+    verified_typography: usize,
+    verified_extra_text: usize,
+    verified_missing_text: usize,
+    verified_wrong_reference: usize,
+    verified_changed: usize,
+    verified_extra: usize,
+    /// Usable verses held back as unverified: the text was in fact the
+    /// edition's (caution's cost) or was not (contamination caught).
+    unverified_clean: usize,
+    unverified_caught: usize,
+    /// Verified verses whose kept place in the document holds their words.
+    located: usize,
+    location_checked: usize,
 }
 
 impl BookAudit {
@@ -206,6 +244,20 @@ impl BookAudit {
         self.refused_different += b.refused_different;
         self.usable_extra += b.usable_extra;
         self.missing_in_usable_chapter += b.missing_in_usable_chapter;
+        self.verified += b.verified;
+        self.verified_exact += b.verified_exact;
+        self.verified_normalised += b.verified_normalised;
+        self.verified_different += b.verified_different;
+        self.verified_typography += b.verified_typography;
+        self.verified_extra_text += b.verified_extra_text;
+        self.verified_missing_text += b.verified_missing_text;
+        self.verified_wrong_reference += b.verified_wrong_reference;
+        self.verified_changed += b.verified_changed;
+        self.verified_extra += b.verified_extra;
+        self.unverified_clean += b.unverified_clean;
+        self.unverified_caught += b.unverified_caught;
+        self.located += b.located;
+        self.location_checked += b.location_checked;
     }
 }
 
@@ -213,6 +265,8 @@ impl BookAudit {
 struct Difference {
     reference: String,
     usable: bool,
+    verified: bool,
+    unverified_reason: Option<&'static str>,
     kind: &'static str,
     page: Option<u32>,
     found: String,
@@ -231,6 +285,10 @@ struct EditionAudit {
     refused_chapters: Vec<String>,
     differences: Vec<Difference>,
     extra_verses: Vec<String>,
+    /// False positives among the verified verses.
+    verified_extra_verses: Vec<String>,
+    unverified_reasons: BTreeMap<String, usize>,
+    apparatus: usize,
     pages_uncertain: usize,
     pages: usize,
     found_books: Vec<(String, Option<String>, Option<u32>)>,
@@ -336,6 +394,31 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let content = &staged.content;
     let usable = content.usable_chapters().unwrap_or_default();
     let origins = staged.document_origins();
+    let stage = staged.documents.as_ref().expect("a document stage");
+    let mut unverified_reasons: BTreeMap<String, usize> = BTreeMap::new();
+    for reason in stage.unverified.values() {
+        *unverified_reasons.entry((*reason).to_string()).or_default() += 1;
+    }
+    // Whether a verse's kept place (its first to last paragraph) holds its
+    // words: the original location the app shows for it.
+    let located = |key: (u8, u16, u16), text: &str| -> Option<bool> {
+        let origin = stage.origins.get(&key)?;
+        let file = stage.files.get(usize::from(origin.start.document))?;
+        let first = origin.start.segment? as usize;
+        let last = if origin.end.document == origin.start.document {
+            origin.end.segment.map_or(first, |s| s as usize)
+        } else {
+            file.segments.len().saturating_sub(1)
+        };
+        let held: String = file
+            .segments
+            .get(first..=last.min(file.segments.len().saturating_sub(1)).max(first))?
+            .iter()
+            .map(|s| letters(&s.text))
+            .collect();
+        let start: String = letters(text).chars().take(24).collect();
+        Some(start.is_empty() || held.contains(&start))
+    };
 
     let mut refused: BTreeMap<(String, u16), &'static str> = BTreeMap::new();
     let mut issues: BTreeMap<String, usize> = BTreeMap::new();
@@ -361,18 +444,29 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let mut books: Vec<BookAudit> = Vec::new();
     let mut differences = Vec::new();
     let mut extra_verses = Vec::new();
+    let mut verified_extra_verses = Vec::new();
     let mut books_not_found = Vec::new();
     let mut seen_books: BTreeSet<u8> = BTreeSet::new();
-    // A file of one book ("fraLSG_LUK.pdf") is measured against that book.
-    let only_book = edition
-        .files
-        .first()
-        .and_then(|f| f.rsplit_once('_'))
-        .and_then(|(_, rest)| rest.split('.').next())
-        .and_then(canon::by_code)
-        .map(|b| b.ordinal);
+    // A file of one book ("fraLSG_LUK.pdf") is measured against that book;
+    // a document holding some books (the manifest's `books`), against those.
+    let only_books: Option<BTreeSet<u8>> = match &edition.books {
+        Some(codes) => Some(
+            codes
+                .iter()
+                .filter_map(|c| canon::by_code(c))
+                .map(|b| b.ordinal)
+                .collect(),
+        ),
+        None => edition
+            .files
+            .first()
+            .and_then(|f| f.rsplit_once('_'))
+            .and_then(|(_, rest)| rest.split('.').next())
+            .and_then(canon::by_code)
+            .map(|b| BTreeSet::from([b.ordinal])),
+    };
     for (ordinal, rbook) in &reference.content.books {
-        if only_book.is_some_and(|o| o != *ordinal) {
+        if only_books.as_ref().is_some_and(|o| !o.contains(ordinal)) {
             continue;
         }
         seen_books.insert(*ordinal);
@@ -446,6 +540,40 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                     (false, _) => a.refused_different += 1,
                 }
                 let kind = difference_kind(want, text, &book_verses);
+                let key = (*ordinal, *chapter, *verse);
+                let unverified = stage.unverified.get(&key).copied();
+                let verified = ok && unverified.is_none();
+                let contaminated = class == 2 && !matches!(kind, "typography" | "unicode");
+                if ok && unverified.is_some() {
+                    if contaminated {
+                        a.unverified_caught += 1;
+                    } else {
+                        a.unverified_clean += 1;
+                    }
+                }
+                if verified {
+                    a.verified += 1;
+                    match class {
+                        0 => a.verified_exact += 1,
+                        1 => a.verified_normalised += 1,
+                        _ => {
+                            a.verified_different += 1;
+                            match kind {
+                                "typography" | "unicode" => a.verified_typography += 1,
+                                "extra" | "sign" => a.verified_extra_text += 1,
+                                "missing" => a.verified_missing_text += 1,
+                                "wrong_reference" => a.verified_wrong_reference += 1,
+                                _ => a.verified_changed += 1,
+                            }
+                        }
+                    }
+                    if let Some(found_here) = located(key, text) {
+                        a.location_checked += 1;
+                        if found_here {
+                            a.located += 1;
+                        }
+                    }
+                }
                 if ok && class == 2 {
                     match kind {
                         "typography" | "unicode" => a.usable_typography += 1,
@@ -459,6 +587,8 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                     differences.push(Difference {
                         reference: format!("{} {chapter}:{verse}", book.code),
                         usable: ok,
+                        verified,
+                        unverified_reason: unverified,
                         kind,
                         page: origins
                             .get(&(*ordinal, *chapter, *verse))
@@ -476,6 +606,10 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                     if !present && !text.trim().is_empty() {
                         a.usable_extra += 1;
                         extra_verses.push(format!("{} {chapter}:{verse}", book.code));
+                        if !stage.unverified.contains_key(&(*ordinal, *chapter, *verse)) {
+                            a.verified_extra += 1;
+                            verified_extra_verses.push(format!("{} {chapter}:{verse}", book.code));
+                        }
                     }
                 }
             }
@@ -495,6 +629,9 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
             if usable.contains(&(*ordinal, *chapter)) {
                 for verse in ch.verses.keys() {
                     extra_verses.push(format!("{code} {chapter}:{verse}"));
+                    if !stage.unverified.contains_key(&(*ordinal, *chapter, *verse)) {
+                        verified_extra_verses.push(format!("{code} {chapter}:{verse}"));
+                    }
                 }
             }
         }
@@ -507,6 +644,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         totals.add(b);
     }
     totals.usable_extra = extra_verses.len();
+    totals.verified_extra = verified_extra_verses.len();
     let refused_chapters = refused
         .iter()
         .map(|((b, c), r)| format!("{b} {c} ({r})"))
@@ -544,6 +682,9 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         refused_chapters,
         differences,
         extra_verses,
+        verified_extra_verses,
+        unverified_reasons,
+        apparatus: stage.apparatus.len(),
         pages_uncertain,
         pages,
         found_books,
@@ -660,6 +801,56 @@ fn markdown(a: &EditionAudit) -> String {
     );
     let _ = writeln!(
         s,
+        "| **Text-verified (used as the Bible's text)** | **{}** | **{}** |",
+        t.verified,
+        pct(t.verified, t.expected)
+    );
+    let _ = writeln!(
+        s,
+        "| Verified: exact / whitespace or case only / different | {} / {} / {} | |",
+        t.verified_exact, t.verified_normalised, t.verified_different
+    );
+    let _ = writeln!(
+        s,
+        "| Verified differences: typography / extra (apparatus) / cut / wrong reference / changed | {} / {} / {} / {} / {} | |",
+        t.verified_typography,
+        t.verified_extra_text,
+        t.verified_missing_text,
+        t.verified_wrong_reference,
+        t.verified_changed
+    );
+    let _ = writeln!(
+        s,
+        "| **Verified verses the edition does not have** | **{}** | |",
+        t.verified_extra
+    );
+    let _ = writeln!(
+        s,
+        "| Held back as unverified: text was clean / contamination caught | {} / {} | |",
+        t.unverified_clean, t.unverified_caught
+    );
+    let _ = writeln!(
+        s,
+        "| Original location holds the verse (verified verses checked) | {} of {} | {} |",
+        t.located,
+        t.location_checked,
+        pct(t.located, t.location_checked)
+    );
+    let _ = writeln!(
+        s,
+        "| Pieces of apparatus kept with their places | {} | |",
+        a.apparatus
+    );
+    if !a.unverified_reasons.is_empty() {
+        let reasons: Vec<String> = a
+            .unverified_reasons
+            .iter()
+            .map(|(r, n)| format!("{r} {n}"))
+            .collect();
+        let _ = writeln!(s, "\nUnverified by reason: {}.", reasons.join(", "));
+    }
+    let _ = writeln!(
+        s,
         "| Refused verses: exact / whitespace / different | {} / {} / {} | |",
         t.refused_exact, t.refused_normalised, t.refused_different
     );
@@ -719,13 +910,29 @@ fn markdown(a: &EditionAudit) -> String {
     if !a.extra_verses.is_empty() {
         let _ = writeln!(s, "\n## False positives\n\n{}", a.extra_verses.join(", "));
     }
+    if !a.verified_extra_verses.is_empty() {
+        let _ = writeln!(
+            s,
+            "\n## False positives among verified verses\n\n{}",
+            a.verified_extra_verses.join(", ")
+        );
+    }
     let _ = writeln!(s, "\n## Differences\n");
     for d in &a.differences {
         let _ = writeln!(
             s,
-            "- {}{} [{}] (page {}): found «{}» — edition «{}»",
+            "- {}{}{} [{}] (page {}): found «{}» — edition «{}»",
             d.reference,
-            if d.usable { " **usable**" } else { "" },
+            if d.verified {
+                " **verified**"
+            } else if d.usable {
+                " usable"
+            } else {
+                ""
+            },
+            d.unverified_reason
+                .map(|r| format!(" (unverified: {r})"))
+                .unwrap_or_default(),
             d.kind,
             d.page.map_or("?".into(), |p| p.to_string()),
             d.found,
@@ -739,7 +946,7 @@ fn summary_row(a: &EditionAudit) -> String {
     let t = &a.totals;
     let e = &a.edition;
     format!(
-        "| {} | {} | {} | {} | {} | {} ({}) | {} | {} | {} | {} / {} / {} / {} / {} | {} | {:.0} s | {} |",
+        "| {} | {} | {} | {} | {} | {} ({}) | {} ({}) | {} | {} | {} | {} / {} / {} / {} / {} | {} / {} | {} / {} | {} | {:.0} s | {} |",
         e.key,
         e.language,
         e.format,
@@ -747,15 +954,21 @@ fn summary_row(a: &EditionAudit) -> String {
         t.expected,
         t.usable,
         pct(t.usable, t.expected),
-        t.usable_exact,
-        t.usable_normalised,
-        t.usable_different,
-        t.usable_typography,
-        t.usable_extra_text,
-        t.usable_missing_text,
-        t.usable_wrong_reference,
-        t.usable_changed,
+        t.verified,
+        pct(t.verified, t.expected),
+        t.verified_exact,
+        t.verified_normalised,
+        t.verified_different,
+        t.verified_typography,
+        t.verified_extra_text,
+        t.verified_missing_text,
+        t.verified_wrong_reference,
+        t.verified_changed,
         t.usable_extra,
+        t.verified_extra,
+        t.unverified_clean,
+        t.unverified_caught,
+        pct(t.located, t.location_checked),
         a.seconds,
         a.peak_memory_mb
             .map_or("—".into(), |m| format!("{m:.0} MB"))
@@ -773,13 +986,20 @@ fn real_document_editions_report() {
     let only: Option<BTreeSet<String>> = std::env::var("AW_EDITIONS")
         .ok()
         .map(|v| v.split(',').map(str::to_string).collect());
-    let hidden = std::env::var_os("AW_INCLUDE_HIDDEN").is_some();
+    // Which sets: AW_ROLES=impl,regression (the default), or withheld-b,
+    // withheld-c (each evaluated once). AW_INCLUDE_HIDDEN=1 (v0.24.2) adds
+    // the regression set, once the hidden one.
+    let roles: BTreeSet<String> = std::env::var("AW_ROLES")
+        .unwrap_or_else(|_| "impl,regression".into())
+        .split(',')
+        .map(|r| r.trim().to_string())
+        .collect();
     let mut rows = Vec::new();
     for edition in corpus() {
         if only.as_ref().is_some_and(|o| !o.contains(&edition.key)) {
             continue;
         }
-        if edition.hidden && !hidden && only.is_none() {
+        if !roles.contains(&edition.role) && only.is_none() {
             continue;
         }
         let Some(a) = audit(&dir, &edition) else {
@@ -799,7 +1019,7 @@ fn real_document_editions_report() {
         }
     }
     let table = format!(
-        "| Edition | Lang | Format | Layout | Printed | Usable | Exact | WS only | Different | Typography / extra / cut / wrong ref. / changed | False pos. | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
+        "| Edition | Lang | Format | Layout | Printed | Detected (structure accepted) | Text-verified | Verified exact | WS / case only | Verified different | Typography / extra / cut / wrong ref. / changed (verified) | False pos. detected / verified | Unverified: clean / caught | Location | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
         rows.join("\n")
     );
     eprintln!("{table}");

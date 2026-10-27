@@ -75,6 +75,14 @@ pub struct Unit {
     /// A PDF line set in another typeface than the page's running text
     /// (bold, italic): with other evidence, a heading.
     pub styled: bool,
+    /// A PDF line the page's layout sets apart at its top or bottom edge
+    /// (`LineRole::Head` / `LineRole::Foot`: a running head, a page number,
+    /// sometimes a title at a page's top): with what it says, page furniture
+    /// (v0.24.3).
+    pub edge: bool,
+    /// A PDF line set in the middle of its column (v0.24.3): with a gap
+    /// above it, a heading even in the body's own type.
+    pub centred: bool,
 }
 
 /// Where a unit is in the original document.
@@ -87,6 +95,10 @@ pub struct Place {
     pub page: Option<u32>,
     /// The kept segment the unit lies in (its position in the document).
     pub segment: Option<u32>,
+    /// Where the unit begins in that segment's text, in characters (v0.24.3);
+    /// None when not known.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub offset: Option<u32>,
 }
 
 /// A document read and ready to be kept.
@@ -202,11 +214,11 @@ pub fn read_bytes(
                     // (one unit per non-empty line of the page's text).
                     let layout = &text.layouts[index];
                     let body = layout.body_size();
-                    let lines: Vec<(LineRole, f64, Option<&String>, bool)> = layout
+                    let lines: Vec<(LineRole, f64, Option<&String>, bool, bool)> = layout
                         .lines
                         .iter()
                         .filter(|l| !l.text.trim().is_empty())
-                        .map(|l| (l.role, l.size, l.marked.as_ref(), l.styled))
+                        .map(|l| (l.role, l.size, l.marked.as_ref(), l.styled, l.centred))
                         .collect();
                     let aligned = lines.len() == units.len() - from;
                     // Larger text is a heading only where it is little of the
@@ -238,6 +250,8 @@ pub fn read_bytes(
                             unit.note = lines[i].0 == LineRole::Note;
                             unit.large = lines[i].0 == LineRole::Text && lines[i].1 >= 1.15 * body;
                             unit.styled = lines[i].3;
+                            unit.edge = matches!(lines[i].0, LineRole::Head | LineRole::Foot);
+                            unit.centred = lines[i].4;
                             // Raised letters marked for the recogniser.
                             if let Some(marked) = lines[i].2 {
                                 unit.text = marked.trim().to_string();
@@ -362,11 +376,19 @@ fn line_units(
         if trimmed.is_empty() {
             continue;
         }
-        let segment = ranges
+        let found = ranges
             .iter()
             .find(|(s, e, _)| start + 1 > *s && start < *e + 1)
-            .or_else(|| ranges.iter().find(|(s, _, _)| *s >= start))
-            .map(|(_, _, i)| *i);
+            .or_else(|| ranges.iter().find(|(s, _, _)| *s >= start));
+        let segment = found.map(|(_, _, i)| *i);
+        // Where the line's words begin in its paragraph (characters).
+        let lead = (line.len() - line.trim_start().len()) as u32;
+        let offset = found.and_then(|(s, _, _)| {
+            let from = (*s as usize).min(text.len());
+            let to = ((start + lead) as usize).min(text.len());
+            (from <= to && text.is_char_boundary(from) && text.is_char_boundary(to))
+                .then(|| text[from..to].chars().count() as u32)
+        });
         out.push(Unit {
             text: trimmed.to_string(),
             heading: false,
@@ -374,11 +396,14 @@ fn line_units(
                 document,
                 page,
                 segment,
+                offset,
             },
             uncertain_order: false,
             note: false,
             large: false,
             styled: false,
+            edge: false,
+            centred: false,
         });
     }
 }
@@ -483,6 +508,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             document,
             page: segment.page_number,
             segment: Some(index as u32),
+            offset: Some(0),
         };
         if segment.note {
             // Kept as a note (never verse text): its sign and verse show
@@ -496,6 +522,8 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                 note: true,
                 large: false,
                 styled: false,
+                edge: false,
+                centred: false,
             });
             continue;
         }
@@ -522,18 +550,25 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     note: false,
                     large: false,
                     styled: false,
+                    edge: false,
+                    centred: false,
                 });
             }
         }
         previous = path;
         out.push(Unit {
-            text: segment.text.clone(),
+            text: segment
+                .marked
+                .clone()
+                .unwrap_or_else(|| segment.text.clone()),
             heading: false,
             place,
             uncertain_order: false,
             note: false,
             large: false,
             styled: segment.styled,
+            edge: false,
+            centred: false,
         });
     }
     (out, notes)

@@ -172,6 +172,9 @@ pub(super) struct Fmt {
     pub strike: bool,
     pub sup: bool,
     pub sub: bool,
+    /// Lifted off the baseline by a position (`w:position` above 0), as
+    /// LibreOffice writes a superscript it was given as raised text.
+    pub raised: bool,
     pub caps: bool,
     pub small_caps: bool,
     pub highlight: bool,
@@ -196,6 +199,8 @@ struct RProps {
     hidden: Option<bool>,
     /// 1 superscript, -1 subscript, 0 baseline.
     vert: Option<i8>,
+    /// `w:position`, half-points (positive: raised).
+    position: Option<i32>,
     size: Option<u32>,
     /// Empty: automatic.
     color: Option<String>,
@@ -208,8 +213,8 @@ impl RProps {
             ($($f:ident),*) => { $( if o.$f.is_some() { self.$f = o.$f.clone(); } )* };
         }
         take!(
-            bold, italic, underline, strike, caps, small_caps, highlight, mono, hidden, vert, size,
-            color
+            bold, italic, underline, strike, caps, small_caps, highlight, mono, hidden, vert,
+            position, size, color
         );
     }
 
@@ -221,6 +226,7 @@ impl RProps {
             strike: self.strike.unwrap_or(false),
             sup: self.vert == Some(1),
             sub: self.vert == Some(-1),
+            raised: self.position.is_some_and(|p| p > 0),
             caps: self.caps.unwrap_or(false),
             small_caps: self.small_caps.unwrap_or(false),
             highlight: self.highlight.unwrap_or(false),
@@ -349,6 +355,10 @@ pub(super) struct Para {
     /// Set apart from running text by its look: centred, or bold or italic
     /// throughout (a section heading made without a heading style).
     pub styled: bool,
+    /// The plain text with digits set as superscripts written as superscript
+    /// digits ("Kain,⁵Und"), when it has any (v0.24.3): a verse number set
+    /// against the next word shows itself by its look only.
+    pub marked: Option<String>,
     // Parsing only: the pending list reference, resolved by the layout.
     num: Option<(i64, usize)>,
 }
@@ -586,6 +596,7 @@ fn parse_rpr(reader: &mut Reader<&[u8]>) -> RProps {
                     })
                 }
                 "w:sz" => p.size = attr(&e, "w:val").and_then(|v| v.parse().ok()),
+                "w:position" => p.position = attr(&e, "w:val").and_then(|v| v.parse().ok()),
                 "w:color" => {
                     p.color = Some(match attr(&e, "w:val") {
                         Some(v) if is_hex(&v) => v.to_ascii_lowercase(),
@@ -1592,6 +1603,26 @@ fn build_para(
         }
     }
     let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let mut raised = String::new();
+    let mut any_raised = false;
+    for i in &inlines {
+        match i {
+            Inline::Text(t, f)
+                if (f.sup || f.raised)
+                    && !t.trim().is_empty()
+                    && t.trim()
+                        .chars()
+                        .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–')) =>
+            {
+                any_raised = true;
+                raised.push_str(&super::pdf_layout::superscript(t));
+            }
+            Inline::Text(t, _) => raised.push_str(t),
+            Inline::Br => raised.push(' '),
+            _ => {}
+        }
+    }
+    let marked = any_raised.then(|| raised.split_whitespace().collect::<Vec<_>>().join(" "));
 
     // The paragraph's own look: alignment, indentation, spacing, kept inside the page.
     let mut css = Vec::new();
@@ -1651,6 +1682,7 @@ fn build_para(
             || runs.iter().all(|f| f.italic));
     Para {
         styled,
+        marked,
         heading,
         kind,
         css: css.join(";"),
@@ -2042,8 +2074,15 @@ impl Layout<'_> {
         let id = format!("p{at}");
         self.marks.push((id.clone(), at, top, None));
         p.id = Some(id);
-        for part in split_long(&p.text, MAX_SEGMENT) {
+        let parts = split_long(&p.text, MAX_SEGMENT);
+        let mut marked = p
+            .marked
+            .as_deref()
+            .and_then(|m| super::split_like(m, &parts))
+            .map(Vec::into_iter);
+        for part in parts {
             self.segments.push(NewSegment {
+                marked: marked.as_mut().and_then(Iterator::next),
                 text: part,
                 chapter: chapter.clone(),
                 heading: heading.clone(),

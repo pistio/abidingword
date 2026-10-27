@@ -70,6 +70,10 @@ pub struct NewSegment {
     /// Set apart by its style (EPUB: a class its stylesheet makes bold,
     /// italic, centred or larger): with other evidence, a heading.
     pub styled: bool,
+    /// The text as the Scripture recogniser reads it, when the look of some
+    /// of it matters there (v0.24.3: digits set as superscripts, written as
+    /// superscript digits); the text kept and shown is always `text`.
+    pub marked: Option<String>,
 }
 
 impl NewSegment {
@@ -197,6 +201,28 @@ pub fn split_long(paragraph: &str, max: usize) -> Vec<String> {
         parts.push(current.trim().to_string());
     }
     parts
+}
+
+/// A second version of a paragraph cut where [`split_long`] cut the first
+/// (`parts`), character for character: the two must have the same
+/// characters in the same places (a marked text, `NewSegment::marked`).
+/// None when they do not line up.
+pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
+    let chars: Vec<char> = other.chars().collect();
+    let mut at = 0usize;
+    let mut out = Vec::with_capacity(parts.len());
+    for part in parts {
+        while at < chars.len() && chars[at].is_whitespace() {
+            at += 1;
+        }
+        let n = part.chars().count();
+        if at + n > chars.len() {
+            return None;
+        }
+        out.push(chars[at..at + n].iter().collect());
+        at += n;
+    }
+    chars[at..].iter().all(|c| c.is_whitespace()).then_some(out)
 }
 
 /// The language name to suggest for a language tag found in a file's
