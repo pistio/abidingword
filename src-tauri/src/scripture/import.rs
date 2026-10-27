@@ -1519,6 +1519,9 @@ pub struct DocumentStage {
     /// The person's corrections kept from before, and how each fits this
     /// reading of the documents (v0.24.3).
     pub saved: Vec<SavedState>,
+    /// The ids of kept corrections applied to a heading of this reading:
+    /// replaced by what is in force when the reading is kept.
+    pub matched: Vec<String>,
 }
 
 /// A correction the person made to how a Bible's documents were read, as
@@ -1877,6 +1880,7 @@ pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<Sta
         unverified: BTreeMap::new(),
         apparatus: Vec::new(),
         saved: Vec::new(),
+        matched: Vec::new(),
     };
     let content = recognise(&mut stage);
     let name = stage
@@ -1988,12 +1992,27 @@ impl StagedImport {
             let chosen = match correction.chosen_book.as_deref() {
                 Some(code) => match canon::by_code(code) {
                     Some(book) => Some(book),
-                    None => continue,
+                    // A book this version does not know: shown, not applied.
+                    None => {
+                        states.push(SavedState {
+                            heading: correction.heading.clone(),
+                            page: correction.page,
+                            chosen: correction.chosen_book.clone(),
+                            detected_now: None,
+                            index: None,
+                            status: "notFound",
+                            correction,
+                        });
+                        continue;
+                    }
                 },
                 None => None,
             };
             let state = match found {
                 Some(book) => {
+                    if !earlier && !correction.id.is_empty() {
+                        stage.matched.push(correction.id.clone());
+                    }
                     corrections.books.insert(book.index, chosen);
                     let status = if !same_file {
                         "documentChanged"
@@ -2057,8 +2076,26 @@ impl StagedImport {
             };
             corrections.books.insert(*index, book);
         }
-        // A kept correction the person has now changed is theirs to keep
-        // as changed: its state no longer stands.
+        // A kept correction the review no longer sends because the
+        // recogniser now reads the heading as the person chose stays in force
+        // (it is the person's, should the reading change again); one the
+        // person has changed is theirs to keep as changed.
+        for state in &stage.saved {
+            let Some(i) = state.index else { continue };
+            let detected = stage
+                .books
+                .get(i)
+                .and_then(|b| b.detected)
+                .map(str::to_string);
+            if !corrections.books.contains_key(&i)
+                && state.chosen.is_some()
+                && state.chosen == detected
+            {
+                corrections
+                    .books
+                    .insert(i, state.chosen.as_deref().and_then(canon::by_code));
+            }
+        }
         stage.saved.retain(|s| {
             s.index.is_none_or(|i| {
                 corrections

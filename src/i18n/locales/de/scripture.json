@@ -34,7 +34,9 @@
       "notes_one": "{{count}} Notiz",
       "notes_other": "{{count}} Notizen",
       "highlightedColor": "{{color}} markiert"
-    }
+    },
+    "unchecked": "Im Dokument dieser Bibel gefunden, aber sein Text ließ sich nicht prüfen; er wird hier nicht gezeigt.",
+    "uncheckedOnPage": "Auf Seite {{page}} im Dokument dieser Bibel gefunden, aber sein Text ließ sich nicht prüfen; er wird hier nicht gezeigt."
   },
   "verseTools": {
     "toolsFor": "Werkzeuge für Vers {{verse}}",
@@ -225,12 +227,12 @@
         "check_one": "{{count}} Kapitel muss geprüft werden.",
         "check_other": "{{count}} Kapitel müssen geprüft werden."
       },
-      "unverified_one": "{{formatted}} Vers wurde gefunden, sein Text ließ sich aber nicht prüfen. Er bleibt im Dokument, wo er sich öffnen lässt, und wird nicht als Bibeltext verwendet.",
-      "unverified_other": "{{formatted}} Verse wurden gefunden, ihr Text ließ sich aber nicht prüfen. Sie bleiben im Dokument, wo sie sich öffnen lassen, und werden nicht als Bibeltext verwendet.",
+      "unverified_one": "{{formatted}} Vers wurde gefunden, sein Text ließ sich aber nicht prüfen. Er wird nicht als Bibeltext verwendet, bleibt im Dokument und wird als gefunden, aber nicht geprüft gezeigt.",
+      "unverified_other": "{{formatted}} Verse wurden gefunden, ihr Text ließ sich aber nicht prüfen. Diese Verse werden nicht als Bibeltext verwendet, bleiben im Dokument und werden als gefunden, aber nicht geprüft gezeigt.",
       "unverifiedWhy": "Warum sich ihr Text nicht prüfen ließ",
       "unverifiedReason": {
-        "possibleHeading_one": "{{formatted}} Vers endet mit einer Zeile, die eine Überschrift sein könnte.",
-        "possibleHeading_other": "{{formatted}} Verse enden mit einer Zeile, die eine Überschrift sein könnte.",
+        "possibleHeading_one": "{{formatted}} Vers enthält eine Zeile, die eine Überschrift oder Bezeichnung sein könnte.",
+        "possibleHeading_other": "{{formatted}} Verse enthalten eine Zeile, die eine Überschrift oder Bezeichnung sein könnte.",
         "reference_one": "{{formatted}} Vers enthält eine Bibelstellenangabe, vielleicht eine Kopfzeile oder einen Querverweis.",
         "reference_other": "{{formatted}} Verse enthalten eine Bibelstellenangabe, vielleicht eine Kopfzeile oder einen Querverweis.",
         "noteSign_one": "{{formatted}} Vers enthält ein Anmerkungszeichen, das keine Anmerkung erklärt.",
@@ -240,7 +242,9 @@
         "length_one": "{{formatted}} Vers ist weit länger als die anderen seines Kapitels.",
         "length_other": "{{formatted}} Verse sind weit länger als die anderen ihres Kapitels.",
         "psalmTitle_one": "Bei {{formatted}} Psalm kann Vers 1 die Psalmüberschrift enthalten.",
-        "psalmTitle_other": "Bei {{formatted}} Psalmen kann Vers 1 die Psalmüberschrift enthalten."
+        "psalmTitle_other": "Bei {{formatted}} Psalmen kann Vers 1 die Psalmüberschrift enthalten.",
+        "boundary_one": "Bei {{formatted}} Vers ist nicht sicher, wo er beginnt oder endet.",
+        "boundary_other": "Bei {{formatted}} Versen ist nicht sicher, wo sie beginnen oder enden."
       },
       "yourCorrection": "Deine Korrektur",
       "saved": {
@@ -772,12 +776,13 @@
       "placesTitle": "Gefundene Stellen, Text nicht geprüft",
       "foundPlace": "{{passage}} {{where}}",
       "placeReason": {
-        "possibleHeading": "Er endet vielleicht mit einer Überschrift.",
+        "possibleHeading": "Er enthält vielleicht eine Überschrift oder Bezeichnung.",
         "reference": "Er enthält eine Bibelstellenangabe.",
         "noteSign": "Er enthält ein Anmerkungszeichen.",
         "unnumbered": "Sein Ende ist nicht sicher.",
         "length": "Er ist weit länger als die Verse um ihn herum.",
-        "psalmTitle": "Er kann die Psalmüberschrift enthalten."
+        "psalmTitle": "Er kann die Psalmüberschrift enthalten.",
+        "boundary": "Wo er beginnt oder endet, ist nicht sicher."
       },
       "apparatusTitle_one": "{{formatted}} Anmerkung oder Überschrift, hier ausgesondert",
       "apparatusTitle_other": "{{formatted}} Anmerkungen und Überschriften, hier ausgesondert",

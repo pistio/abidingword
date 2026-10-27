@@ -479,10 +479,16 @@ fn unverified_verses_keep_their_place_but_never_become_the_bible_s_text() {
     db.with_conn(|conn| {
         let id = add(conn, &staged, true);
         let translation = bibles::get(conn, &id)?;
-        // A document whose verified passages can be found, not a Bible read
-        // wholly by its verses.
-        assert_eq!(translation.kind, "document");
+        // Read by its verses, with the one verse in doubt left out of its
+        // text and shown as found but unchecked.
+        assert_eq!(translation.kind, "structured");
         assert_eq!(translation.verse_count, 84);
+        let chapter = bibles::chapter(conn, &id, "RUT", 1)?;
+        assert_eq!(chapter.verses.len(), 21);
+        assert!(chapter.verses.iter().all(|v| v.verse != 7));
+        assert_eq!(chapter.unchecked.len(), 1);
+        assert_eq!(chapter.unchecked[0].verse, 7);
+        assert_eq!(chapter.unchecked[0].reason, "possibleHeading");
         assert_eq!(
             count(
                 conn,
@@ -635,6 +641,209 @@ fn headings_set_apart_are_kept_with_the_passage_they_stand_in() {
             .apparatus
             .iter()
             .any(|a| a.kind == "heading" && a.text == "Naomi Turns Homeward"));
+        Ok(())
+    })
+    .unwrap();
+}
+
+// --- the independent review's cases (v0.24.3) -----------------------------------
+
+fn key(v: u16) -> (u8, u16, u16) {
+    (canon::by_code("PHM").unwrap().ordinal, 1, v)
+}
+
+#[test]
+fn a_heading_in_the_middle_of_a_verse_leaves_it_unverified() {
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
+    let page = units[at].place.page.unwrap();
+    units[at].text = "7 Invented words, first part.".into();
+    units.insert(at + 1, line("Paul Pleads for Onesimus", page));
+    units.insert(at + 2, line("and the rest of verse seven.", page));
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 7).unwrap().contains("Onesimus"));
+    assert_eq!(r.unverified.get(&key(7)), Some(&"possibleHeading"));
+}
+
+#[test]
+fn the_verse_before_a_missing_number_is_not_verified() {
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units[at].text = units[at].text.trim_start_matches("8 ").to_string();
+    let r = recognise(&units);
+    assert_eq!(verse(&r, "PHM", 1, 8), None);
+    assert_eq!(r.unverified.get(&key(7)), Some(&"boundary"));
+}
+
+#[test]
+fn a_raised_number_against_a_word_does_not_make_a_verified_boundary() {
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units.remove(at);
+    let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
+    units[at].text = "7 Invented words⁸ of verse seven continues.".into();
+    let r = recognise(&units);
+    // Read as verse 8 (the next verse expected), but never as verified.
+    assert!(r.unverified.contains_key(&key(7)));
+    assert!(r.unverified.contains_key(&key(8)));
+    // A raised number left in a verse is a note's: not verified either.
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
+    units[at].text = "7 Invented words⁴ of verse seven.".into();
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 7).unwrap().contains('⁴'));
+    assert_eq!(r.unverified.get(&key(7)), Some(&"noteSign"));
+}
+
+#[test]
+fn references_with_a_full_stop_or_comma_are_not_verified_text() {
+    for head in [
+        "Philemon 1.12 304 Philemon 1.19",
+        "Philemon 1,12 304 Philemon 1,19",
+    ] {
+        let mut units = philemon(|_, _, _| {});
+        let at = units
+            .iter()
+            .position(|u| u.text.starts_with("12 "))
+            .unwrap();
+        units[at].text = format!("12 Invented words {head} and more.");
+        let r = recognise(&units);
+        assert_eq!(r.unverified.get(&key(12)), Some(&"reference"), "{head}");
+    }
+    // A number such as "1.000" is not a reference.
+    let mut units = philemon(|_, _, _| {});
+    let at = units
+        .iter()
+        .position(|u| u.text.starts_with("12 "))
+        .unwrap();
+    units[at].text = "12 There were de 1.000 men, and 2,500 more.".into();
+    let r = recognise(&units);
+    assert_eq!(r.unverified.get(&key(12)), None);
+}
+
+#[test]
+fn a_verse_per_line_psalter_stays_a_bible_read_by_its_verses() {
+    let db = Database::open_in_memory().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let mut text = String::new();
+    for (psalm, count) in [(1u16, 6u16), (2, 12), (3, 8)] {
+        for v in 1..=count {
+            text.push_str(&format!("PSA {psalm}:{v} {}\n", words("Psalm", psalm, v)));
+        }
+    }
+    let path = write(temp.path(), "psalms.txt", &text);
+    let staged = import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    let stage = staged.documents.as_ref().unwrap();
+    // Only Psalm 3 has a title in the Hebrew text: only its verse 1 is in doubt.
+    assert_eq!(stage.unverified.len(), 1);
+    assert_eq!(
+        stage
+            .unverified
+            .get(&(canon::by_code("PSA").unwrap().ordinal, 3, 1)),
+        Some(&"psalmTitle")
+    );
+    db.with_conn(|conn| {
+        let id = add(conn, &staged, true);
+        let bible = bibles::get(conn, &id)?;
+        assert_eq!(bible.kind, "structured");
+        assert_eq!(bible.verse_count, 25);
+        let chapter = bibles::chapter(conn, &id, "PSA", 3)?;
+        assert_eq!(chapter.unchecked.len(), 1);
+        assert_eq!(chapter.unchecked[0].verse, 1);
+        Ok(())
+    })
+    .unwrap();
+}
+
+#[test]
+fn an_undone_correction_found_elsewhere_now_does_not_come_back() {
+    let db = Database::open_in_memory().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let path = write(temp.path(), "moabitess.txt", &moabitess(""));
+    let mut staged = import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    staged.correct(&[(0, Some("RUT".into()))]).unwrap();
+    db.with_conn(|conn| {
+        let id = add(conn, &staged, true);
+        // The kept correction's place no longer matches (as when segments are
+        // numbered otherwise by a newer version): found by its wording.
+        conn.execute("UPDATE bible_recognition_corrections SET segment = 999", [])?;
+        let mut read = again(&path, &id);
+        read.apply_saved(kept_documents::corrections(conn, &id)?, false)?;
+        assert_eq!(read.documents.as_ref().unwrap().saved[0].status, "applied");
+        // The person sets it back to what was found.
+        read.correct(&[])?;
+        kept_documents::keep_corrections(conn, &id, read.documents.as_ref().unwrap())?;
+        assert_eq!(
+            count(conn, "SELECT COUNT(*) FROM bible_recognition_corrections"),
+            0
+        );
+        Ok(())
+    })
+    .unwrap();
+}
+
+#[test]
+fn a_correction_the_recogniser_now_agrees_with_is_kept() {
+    let db = Database::open_in_memory().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let path = write(
+        temp.path(),
+        "ruth.txt",
+        &moabitess("").replace("The Moabitess", "Ruth"),
+    );
+    let staged = import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    db.with_conn(|conn| {
+        let id = add(conn, &staged, true);
+        // A correction made when the heading was read as no book.
+        let doc: String = conn.query_row("SELECT sha256 FROM bible_documents", [], |r| r.get(0))?;
+        conn.execute(
+            "INSERT INTO bible_recognition_corrections (id, translation_id, document_sha256, document_position,
+                 kind, heading, page, segment, detected_book, chosen_book, created_at, updated_at)
+             VALUES ('c-1', ?1, ?2, 0, 'book', 'Ruth', NULL, 0, NULL, 'RUT', 'x', 'x')",
+            rusqlite::params![id, doc],
+        )?;
+        let mut read = again(&path, &id);
+        read.apply_saved(kept_documents::corrections(conn, &id)?, false)?;
+        assert_eq!(read.documents.as_ref().unwrap().saved[0].status, "detectionChanged");
+        // The review sends no correction for it (book = detected), and
+        // another change is made elsewhere: the person's choice stays kept.
+        read.correct(&[])?;
+        kept_documents::keep_corrections(conn, &id, read.documents.as_ref().unwrap())?;
+        assert_eq!(
+            count(conn, "SELECT COUNT(*) FROM bible_recognition_corrections WHERE chosen_book = 'RUT'"),
+            1
+        );
+        Ok(())
+    })
+    .unwrap();
+}
+
+#[test]
+fn corrections_that_fit_nothing_are_carried_to_the_bible_added_again() {
+    let db = Database::open_in_memory().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let path = write(temp.path(), "moabitess.txt", &moabitess(""));
+    let mut staged = import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    staged.correct(&[(0, Some("RUT".into()))]).unwrap();
+    db.with_conn(|conn| {
+        let first = add(conn, &staged, true);
+        // A second correction, for a heading not in the document.
+        let doc: String = conn.query_row("SELECT sha256 FROM bible_documents", [], |r| r.get(0))?;
+        conn.execute(
+            "INSERT INTO bible_recognition_corrections (id, translation_id, document_sha256, document_position,
+                 kind, heading, page, segment, detected_book, chosen_book, created_at, updated_at)
+             VALUES ('c-2', ?1, ?2, 0, 'book', 'Elsewhere', NULL, 5, NULL, 'GEN', 'x', 'x')",
+            rusqlite::params![first, doc],
+        )?;
+        let mut second =
+            import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+        let hashes = vec![doc.clone()];
+        second.apply_saved(kept_documents::corrections_for_documents(conn, &hashes)?, true)?;
+        let id = add(conn, &second, true);
+        assert_eq!(
+            count(conn, &format!("SELECT COUNT(*) FROM bible_recognition_corrections WHERE translation_id = '{id}'")),
+            2
+        );
         Ok(())
     })
     .unwrap();

@@ -21,6 +21,21 @@ describe("Scripture pane", () => {
     expect(within(pane()).getByRole("combobox", { name: "Translation" })).toHaveDisplayValue("FXA");
   });
 
+  it("shows a verse found in its document but not checked as such, never with text (v0.24.3)", async () => {
+    const api = createMemoryApi();
+    const bible = api.installFixtureBible("FXA", "alpha");
+    api.state.settings.scripturePassage = "JHN.15";
+    // Its verse 3 was found but not checked: no text, a place.
+    const chapter = api.state.text.get(bible.id)!;
+    chapter.set("JHN|15", (chapter.get("JHN|15") ?? []).filter((v) => v.verse !== 3));
+    api.state.unchecked.set(`${bible.id}|JHN|15`, [{ verse: 3, page: 412, reason: "possibleHeading" }]);
+    await renderApp(api);
+    expect(await heading()).toHaveTextContent("John 15");
+    expect(await within(pane()).findByTestId("unchecked-verse")).toHaveTextContent(
+      "3Found on page 412 of this Bible’s document, but its text could not be checked, so it is not shown here.",
+    );
+  });
+
   it("moves by chapter and by book", async () => {
     const { user } = await renderApp(withBible());
     await heading();

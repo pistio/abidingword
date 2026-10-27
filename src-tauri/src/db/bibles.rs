@@ -460,6 +460,23 @@ pub fn chapter(
             |r| r.get(0),
         )
         .optional()?;
+    let mut stmt = conn.prepare(
+        "SELECT verse_id, first_page, reason FROM bible_verse_places
+         WHERE translation_id = ?1 AND verse_id BETWEEN ?2 AND ?3 ORDER BY verse_id",
+    )?;
+    let unchecked = stmt
+        .query_map(
+            params![translation_id, reference.start_key(), reference.end_key()],
+            |r| {
+                let key: i64 = r.get(0)?;
+                Ok(crate::scripture::UncheckedVerse {
+                    verse: crate::scripture::reference::split_key(key).2,
+                    page: r.get(1)?,
+                    reason: r.get(2)?,
+                })
+            },
+        )?
+        .collect::<Result<Vec<_>, _>>()?;
     Ok(ChapterText {
         translation_id: translation_id.to_string(),
         book: book.code,
@@ -467,6 +484,7 @@ pub fn chapter(
         chapter,
         chapter_count: book.chapter_count,
         superscription,
+        unchecked,
         verses: verses_between(
             conn,
             translation_id,

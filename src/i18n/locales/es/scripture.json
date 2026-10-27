@@ -35,7 +35,9 @@
       "notes_other": "{{count}} notas",
       "notes_many": "{{count}} notas",
       "highlightedColor": "resaltado en {{color}}"
-    }
+    },
+    "unchecked": "Encontrado en el documento de esta Biblia, pero no se pudo comprobar su texto, así que no se muestra aquí.",
+    "uncheckedOnPage": "Encontrado en la página {{page}} del documento de esta Biblia, pero no se pudo comprobar su texto, así que no se muestra aquí."
   },
   "verseTools": {
     "toolsFor": "Herramientas para el versículo {{verse}}",
@@ -247,19 +249,19 @@
         "check_other": "Hay que revisar {{count}} capítulos.",
         "check_many": "Hay que revisar {{count}} capítulos."
       },
-      "unverified_one": "Se encontró {{formatted}} versículo, pero no se pudo comprobar su texto. Queda en el documento, donde se puede abrir, y no se usa como texto bíblico.",
-      "unverified_other": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. Quedan en el documento, donde se pueden abrir, y no se usan como texto bíblico.",
+      "unverified_one": "Se encontró {{formatted}} versículo, pero no se pudo comprobar su texto. No se usa como texto bíblico: queda en el documento y se muestra como encontrado pero no comprobado.",
+      "unverified_other": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. No se usan como texto bíblico: quedan en el documento y se muestran como encontrados pero no comprobados.",
       "unverifiedWhy": "Por qué no se pudo comprobar su texto",
       "unverifiedReason": {
-        "possibleHeading_one": "{{formatted}} versículo termina con una línea que podría ser un título.",
-        "possibleHeading_other": "{{formatted}} versículos terminan con una línea que podría ser un título.",
+        "possibleHeading_one": "{{formatted}} versículo contiene una línea que podría ser un título o una indicación.",
+        "possibleHeading_other": "{{formatted}} versículos contienen una línea que podría ser un título o una indicación.",
         "reference_one": "{{formatted}} versículo contiene una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
         "reference_other": "{{formatted}} versículos contienen una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
         "noteSign_one": "{{formatted}} versículo contiene un signo de nota que ninguna nota explica.",
         "noteSign_other": "{{formatted}} versículos contienen un signo de nota que ninguna nota explica.",
         "unnumbered_one": "En {{formatted}} capítulo, el versículo 1 no tiene número; dónde termina no es seguro.",
         "unnumbered_other": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro.",
-        "possibleHeading_many": "{{formatted}} versículos terminan con una línea que podría ser un título.",
+        "possibleHeading_many": "{{formatted}} versículos contienen una línea que podría ser un título o una indicación.",
         "reference_many": "{{formatted}} versículos contienen una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
         "noteSign_many": "{{formatted}} versículos contienen un signo de nota que ninguna nota explica.",
         "unnumbered_many": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro.",
@@ -268,7 +270,10 @@
         "length_many": "{{formatted}} versículos son mucho más largos que los demás de su capítulo.",
         "psalmTitle_one": "En {{formatted}} salmo, el versículo 1 puede incluir el título del salmo.",
         "psalmTitle_other": "En {{formatted}} salmos, el versículo 1 puede incluir el título del salmo.",
-        "psalmTitle_many": "En {{formatted}} salmos, el versículo 1 puede incluir el título del salmo."
+        "psalmTitle_many": "En {{formatted}} salmos, el versículo 1 puede incluir el título del salmo.",
+        "boundary_one": "En {{formatted}} versículo no es seguro dónde empieza o termina.",
+        "boundary_other": "En {{formatted}} versículos no es seguro dónde empiezan o terminan.",
+        "boundary_many": "En {{formatted}} versículos no es seguro dónde empiezan o terminan."
       },
       "yourCorrection": "Tu corrección",
       "saved": {
@@ -282,7 +287,7 @@
         "notFound": "No se volvió a encontrar este título, así que no se cambió nada. Tu corrección se conserva.",
         "title_many": "{{formatted}} correcciones anteriores"
       },
-      "unverified_many": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. Quedan en el documento, donde se pueden abrir, y no se usan como texto bíblico."
+      "unverified_many": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. No se usan como texto bíblico: quedan en el documento y se muestran como encontrados pero no comprobados."
     },
     "doneDocument": "<strong>{{name}}</strong> se agregó para leerla como documento.",
     "available": {
@@ -827,12 +832,13 @@
       "placesTitle": "Lugares encontrados, texto no comprobado",
       "foundPlace": "{{passage}} {{where}}",
       "placeReason": {
-        "possibleHeading": "Quizá termina con un título.",
+        "possibleHeading": "Quizá contiene un título o una indicación.",
         "reference": "Contiene una referencia bíblica.",
         "noteSign": "Contiene un signo de nota.",
         "unnumbered": "Su final no es seguro.",
         "length": "Es mucho más largo que los versículos que lo rodean.",
-        "psalmTitle": "Puede incluir el título del salmo."
+        "psalmTitle": "Puede incluir el título del salmo.",
+        "boundary": "No es seguro dónde empieza o termina."
       },
       "unverified_many": "{{formatted}} versículos encontrados, texto no comprobado",
       "placesIntro_many": "Encontrados en el documento, pero no se pudo comprobar su texto:",

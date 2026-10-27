@@ -1046,7 +1046,20 @@ fn flush_right_reference(pieces: &[&Span], right_edge: f64) -> bool {
         .map(|s| s.text.trim_end().to_string())
         .unwrap_or_default();
     let size = right.iter().map(|s| s.size).fold(1.0, f64::max);
+    // A book's name, perhaps numbered, perhaps with chapter and verse
+    // ("Isaías 7:14", "Miqueias 5:2", "1 Coríntios 10:4", "Isaías"); a
+    // numbered one only with its chapter and verse ("16 For God so loved"
+    // is a verse, not a source).
+    use std::sync::OnceLock;
+    static SOURCE: OnceLock<regex::Regex> = OnceLock::new();
+    let source = SOURCE.get_or_init(|| {
+        regex::Regex::new(
+            r"^(?:[1-3]\s?\p{Lu}[\p{L}'’.]*(?:\s+\p{L}[\p{L}'’.]*){0,2}\s+\d{1,3}[:.,]\d{1,3}(?:[-–]\d{1,3})?|\p{Lu}[\p{L}'’.]*(?:\s+\p{L}[\p{L}'’.]*){0,2}(?:\s+\d{1,3}(?:[:.,]\d{1,3}(?:[-–]\d{1,3})?)?)?)$",
+        )
+        .expect("valid pattern")
+    });
     !right_text.is_empty()
+        && source.is_match(right_text)
         && right_text.chars().count() <= 24
         && right_text
             .chars()
@@ -1706,7 +1719,20 @@ fn column_edge(spans: &[Span]) -> Option<f64> {
                 && t.text.chars().count() > 2
         })
     });
-    (n >= 6 && !crossing.is_empty() && alone).then_some(x)
+    // Each such run is a justified line of the first column joined to one of
+    // the second: it reaches both margins and stands among the second
+    // column's own lines. A centred title, or notes set across the page
+    // below the columns, is never cut.
+    let second: Vec<&Span> = spans.iter().filter(|s| s.x0 >= x - 1.0).collect();
+    let (top, bottom) = second
+        .iter()
+        .fold((f64::INFINITY, f64::NEG_INFINITY), |(t, b), s| {
+            (t.min(s.y), b.max(s.y))
+        });
+    let joined = crossing.iter().all(|c| {
+        c.x0 <= left + 2.0 * c.size && c.x1 >= right - 2.0 * c.size && c.y >= top && c.y <= bottom
+    });
+    (n >= 6 && !crossing.is_empty() && alone && joined).then_some(x)
 }
 
 fn layout_page(page: PageGlyphs, hint: Option<Gutter>) -> PageLayout {

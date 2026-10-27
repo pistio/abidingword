@@ -195,10 +195,10 @@ describe("Bibles from documents", () => {
     await user.click(within(pane).getByRole("button", { name: "Look for verses…" }));
     const dialog = await screen.findByRole("dialog", { name: "Look for verses in PDF Bible" });
     expect(await within(dialog).findByTestId("verification")).toHaveTextContent(
-      "3 verses were found, but their text could not be checked. They stay in the document, where they can be opened, and are not used as Bible text.",
+      "3 verses were found, but their text could not be checked. They are not used as Bible text: they stay in the document and are shown as found but not checked.",
     );
     await user.click(within(dialog).getByText("Why their text could not be checked"));
-    expect(within(dialog).getByText("2 verses end with a line that could be a heading.")).toBeInTheDocument();
+    expect(within(dialog).getByText("2 verses contain a line that could be a heading or a label.")).toBeInTheDocument();
     // A correction that no longer fits opens the list by itself.
     const saved = within(dialog).getByTestId("saved-corrections");
     expect(saved).toHaveAttribute("open");

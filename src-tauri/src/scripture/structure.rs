@@ -147,7 +147,9 @@ pub struct Recognition {
     /// in), "noteSign" (a note's sign no note explains), "unnumbered" (verse
     /// 1 without a number: its end was inferred), "length" (far longer than
     /// the other verses of its chapter), "psalmTitle" (a psalm's verse 1 on
-    /// a line of its own that may hold the psalm's title). Such a verse can be found
+    /// a line of its own that may hold the psalm's title), "boundary" (where
+    /// it ends or begins is not certain: a verse after it is missing, or the
+    /// number between them is raised against a word). Such a verse can be found
     /// in the document; its text never becomes the Bible's verse.
     pub unverified: BTreeMap<(u8, u16, u16), &'static str>,
     /// What was set apart from the verses, with where it stands (v0.24.3).
@@ -1428,6 +1430,9 @@ struct Marker {
     glued: bool,
     /// Whether it follows the text before it with no space ("away.3").
     joined: bool,
+    /// A raised number set against the word before it ("Erde⁶Und"): a verse
+    /// number or a note's number; the boundary it makes is not verified.
+    against_word: bool,
 }
 
 /// Punctuation a verse can end with, before the next verse's number.
@@ -1645,6 +1650,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             raw: text[..taken].to_string(),
             glued: false,
             joined: false,
+            against_word: false,
         }));
         from = taken;
     }
@@ -1864,6 +1870,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                     strength,
                     unit_start: at_start,
                     raw: String::new(),
+                    against_word: raised_after_word,
                     glued: chars.get(k).is_some_and(|(_, c)| !c.is_whitespace()),
                     joined: !at_start && {
                         let lead = if opened {
@@ -2051,7 +2058,10 @@ fn edge_furniture(text: &str) -> bool {
     static PAIR: OnceLock<regex::Regex> = OnceLock::new();
     // A name, then a chapter and verse ("Samuel 1:17", "Α΄ 4:13").
     let pair = PAIR.get_or_init(|| {
-        regex::Regex::new(r"\p{L}[\p{L}'’.\-΄ʹ]*\s+\d{1,3}[:.]\d{1,3}").expect("valid")
+        // (With a full stop, a verse of one or two digits: "Judah 74.600" is
+        // a number.)
+        regex::Regex::new(r"\p{L}[\p{L}'’.\-΄ʹ]*\s+\d{1,3}(?::\d{1,3}|\.\d{1,2}(?:\D|$))")
+            .expect("valid")
     });
     // (A number alone is a page number only when it runs with the pages:
     // a chapter's number may open a page; see `page_furniture`.)
@@ -2111,8 +2121,20 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     let range = RANGE.get_or_init(|| {
         regex::Regex::new(r"(?:^|\s)\(?\d{1,3}\s?[-–]\s?\d{1,3}\.?\)").expect("valid")
     });
-    if reference.is_match(text) || range.is_match(text) {
+    // With a full stop or a comma ("Isaías 7.14", "Samuel 1,17"): a name
+    // with a capital and a verse of one or two digits, never a number such as
+    // "de 1.000".
+    static DOTTED: OnceLock<regex::Regex> = OnceLock::new();
+    let dotted = DOTTED.get_or_init(|| {
+        regex::Regex::new(r"(?:^|\s)\p{Lu}[\p{L}.΄ʹ]*\s\d{1,3}[.,]\d{1,2}(?:[^\d]|$)")
+            .expect("valid")
+    });
+    if reference.is_match(text) || range.is_match(text) || dotted.is_match(text) {
         return Some("reference");
+    }
+    // A raised number left in the verse (a note's number) or a sign.
+    if text.chars().any(|c| superscript_digit(c).is_some()) || text.contains('*') {
+        return Some("noteSign");
     }
     if text.contains(['†', '‡', '§']) {
         return Some("noteSign");
@@ -4989,18 +5011,30 @@ impl Reader<'_> {
                 if self.expect == 1 {
                     self.settle_before(m.value == 1);
                 }
+                if m.value == self.expect + 1 && self.expect > 1 {
+                    self.doubt_boundary();
+                }
                 self.open_verse(m.value, m.end, unit);
                 // A line naming book, chapter and verse 1 of a psalm ("PSA
                 // 3:1 A Psalm by David … LORD, how …"): an export that writes
                 // the psalm's title into its verse 1 cannot be told from one
                 // that does not (v0.24.3). Found, not verified.
-                if m.book.is_some_and(|b| b.code == "PSA") && m.value == 1 {
+                // (Only the psalms that have a title in the Hebrew text.)
+                const UNTITLED: &[u16] = &[
+                    1, 2, 10, 33, 43, 71, 91, 93, 94, 95, 96, 97, 99, 104, 105, 106, 107, 111, 112,
+                    113, 114, 115, 116, 117, 118, 119, 135, 136, 137, 146, 147, 148, 149, 150,
+                ];
+                if m.book.is_some_and(|b| b.code == "PSA")
+                    && m.value == 1
+                    && m.chapter.is_some_and(|c| !UNTITLED.contains(&c))
+                {
                     if let Some(open) = self.open.as_mut() {
                         open.doubt = Some("psalmTitle");
                     }
                 }
             } else {
                 // Counting back, or jumping ahead, within a chapter: out of order.
+                self.doubt_boundary();
                 self.order_issue(book, m.value);
                 self.open_verse(m.value, m.end, unit);
             }
@@ -5038,7 +5072,15 @@ impl Reader<'_> {
             if expect == 1 {
                 self.settle_before(true);
             }
+            // A raised number against a word: where the verse before ends and
+            // this one begins rests on a number that could be a note's.
+            if m.against_word {
+                self.doubt_boundary();
+            }
             self.open_verse(m.value, m.end, unit);
+            if m.against_word {
+                self.doubt_boundary();
+            }
             return true;
         }
         // The chapter's own number where its verse 1 starts (printed Bibles):
@@ -5162,6 +5204,9 @@ impl Reader<'_> {
                         == missing
                 })
             });
+            // The missing verse's words may stand at the end of the verse
+            // before it: that verse's text is not verified (v0.24.3).
+            self.doubt_boundary();
             if inside && self.sequence_flagged.insert((book.ordinal, chapter)) {
                 self.out.content.issue(
                     Severity::Error,
@@ -5266,6 +5311,13 @@ impl Reader<'_> {
         self.close();
     }
 
+    /// The open verse's end is not certain (v0.24.3): its text is not verified.
+    fn doubt_boundary(&mut self) {
+        if let Some(open) = self.open.as_mut() {
+            open.doubt = open.doubt.or(Some("boundary"));
+        }
+    }
+
     fn order_issue(&mut self, book: &'static Book, verse: u16) {
         let Some(chapter) = self.chapter else {
             return;
@@ -5349,7 +5401,9 @@ impl Reader<'_> {
             let heading_like = self.heading_like_line(&words, unit);
             let set_apart = self.set_apart_line(&words, unit);
             let open = self.open.as_mut().expect("a verse is open");
-            open.heading_like_end = heading_like;
+            // Anywhere in the verse, not only as its last line: a heading in
+            // the middle of a verse is as much not Scripture as one at its end.
+            open.heading_like_end |= heading_like;
             if set_apart {
                 open.doubt = open.doubt.or(Some("possibleHeading"));
             }
@@ -5913,10 +5967,10 @@ fn recognise_in(
     let notes: HashSet<usize> = note_units.iter().copied().collect();
     let mut edge: Vec<usize> = furniture.difference(&notes).copied().collect();
     edge.sort_unstable();
-    let (mut last, mut total) = (None, out.apparatus.iter().map(|a| a.text.len()).sum());
+    let mut total = out.apparatus.iter().map(|a| a.text.len()).sum();
     let mut extra = Vec::new();
     for (kind, list) in [("footnote", &note_units), ("runningHead", &edge)] {
-        last = None;
+        let mut last = None;
         for &i in list.iter() {
             let unit = &units[i];
             add_apparatus(
@@ -5931,7 +5985,6 @@ fn recognise_in(
             );
         }
     }
-    let _ = last;
     // A note names the verse it is on ("a 23:14 …"): the verse of that
     // chapter and number begun on the note's page, or the page before.
     {
@@ -5939,7 +5992,7 @@ fn recognise_in(
         let cited = CITED.get_or_init(|| {
             regex::Regex::new(r"^\W{0,3}\p{L}{0,2}\s*(\d{1,3})[:.,](\d{1,3})").expect("valid")
         });
-        let mut on_page: HashMap<(u16, u32), Vec<(u8, u16, u16)>> = HashMap::new();
+        let mut on_page: HashMap<(u16, u32), Vec<VerseKey>> = HashMap::new();
         for (&key, origin) in &out.origins {
             if let Some(page) = origin.start.page {
                 on_page

@@ -34,7 +34,9 @@
       "notes_one": "{{count}} note",
       "notes_other": "{{count}} notes",
       "highlightedColor": "highlighted {{color}}"
-    }
+    },
+    "unchecked": "Found in this Bible’s document, but its text could not be checked, so it is not shown here.",
+    "uncheckedOnPage": "Found on page {{page}} of this Bible’s document, but its text could not be checked, so it is not shown here."
   },
   "verseTools": {
     "toolsFor": "Tools for verse {{verse}}",
@@ -225,12 +227,12 @@
         "check_one": "{{count}} chapter needs checking.",
         "check_other": "{{count}} chapters need checking."
       },
-      "unverified_one": "{{formatted}} verse was found, but its text could not be checked. It stays in the document, where it can be opened, and is not used as Bible text.",
-      "unverified_other": "{{formatted}} verses were found, but their text could not be checked. They stay in the document, where they can be opened, and are not used as Bible text.",
+      "unverified_one": "{{formatted}} verse was found, but its text could not be checked. It is not used as Bible text: it stays in the document and is shown as found but not checked.",
+      "unverified_other": "{{formatted}} verses were found, but their text could not be checked. They are not used as Bible text: they stay in the document and are shown as found but not checked.",
       "unverifiedWhy": "Why their text could not be checked",
       "unverifiedReason": {
-        "possibleHeading_one": "{{formatted}} verse ends with a line that could be a heading.",
-        "possibleHeading_other": "{{formatted}} verses end with a line that could be a heading.",
+        "possibleHeading_one": "{{formatted}} verse contains a line that could be a heading or a label.",
+        "possibleHeading_other": "{{formatted}} verses contain a line that could be a heading or a label.",
         "reference_one": "{{formatted}} verse contains a Bible reference, perhaps a page header or a cross-reference.",
         "reference_other": "{{formatted}} verses contain a Bible reference, perhaps a page header or a cross-reference.",
         "noteSign_one": "{{formatted}} verse contains a note sign that no note explains.",
@@ -240,7 +242,9 @@
         "length_one": "{{formatted}} verse is far longer than the others in its chapter.",
         "length_other": "{{formatted}} verses are far longer than the others in their chapters.",
         "psalmTitle_one": "{{formatted}} psalm’s verse 1 may include the psalm’s title.",
-        "psalmTitle_other": "{{formatted}} psalms’ verse 1 may include the psalm’s title."
+        "psalmTitle_other": "{{formatted}} psalms’ verse 1 may include the psalm’s title.",
+        "boundary_one": "In {{formatted}} verse, where it begins or ends is not certain.",
+        "boundary_other": "In {{formatted}} verses, where they begin or end is not certain."
       },
       "yourCorrection": "Your correction",
       "saved": {
@@ -772,12 +776,13 @@
       "placesTitle": "Places found, text not checked",
       "foundPlace": "{{passage}} {{where}}",
       "placeReason": {
-        "possibleHeading": "It may end with a heading.",
+        "possibleHeading": "It may contain a heading or a label.",
         "reference": "It contains a Bible reference.",
         "noteSign": "It contains a note sign.",
         "unnumbered": "Its end is not certain.",
         "length": "It is far longer than the verses around it.",
-        "psalmTitle": "It may include the psalm’s title."
+        "psalmTitle": "It may include the psalm’s title.",
+        "boundary": "Where it begins or ends is not certain."
       },
       "apparatusTitle_one": "{{formatted}} note or heading set apart here",
       "apparatusTitle_other": "{{formatted}} notes and headings set apart here",

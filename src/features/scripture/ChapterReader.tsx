@@ -6,6 +6,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import { PHRASE_CLASS, VERSE_CLASS, highlightPaint, phraseSegments, verseMarks } from "@/lib/annotationRender";
 import { contains } from "@/lib/scripture";
+import { formatNumber } from "@/i18n/format";
 import { referenceLabel } from "@/i18n/scripture";
 import type { Annotation, BibleTranslation, ScriptureRef, VerseText } from "@/types/scripture";
 import { SelectionToolbar } from "./SelectionToolbar";
@@ -124,24 +125,36 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
         </p>
       </header>
 
-      {data.verses.length === 0 ? (
+      {data.verses.length === 0 && data.unchecked.length === 0 ? (
         <p className="text-text-muted">
           {t("scripture.reader.noText", { name: translation.name, passage })}
         </p>
       ) : (
         <div className="reading flex flex-col gap-1">
           {data.superscription && <p className="m-0 mb-1 italic text-text-muted">{data.superscription}</p>}
-          {data.verses.map((verse) => (
-            <Verse
-              key={verse.canonical}
-              verse={verse}
-              annotations={on(verse.verse)}
-              current={!!selection && contains(selection, book, chapter, verse.verse)}
-              selected={selected === verse.verse}
-              inspectorOpen={inspector?.verse === verse.canonical}
-              inspectorId={inspectorId}
-              onToggleInspector={(opener) => toggleInspector(verse.canonical, opener)}
-            />
+          {data.unchecked
+            .filter((u) => !data.verses.some((v) => v.verse < u.verse))
+            .map((u) => (
+              <Unchecked key={`u${u.verse}`} verse={u.verse} page={u.page} />
+            ))}
+          {data.verses.map((verse, n) => (
+            <Fragment key={verse.canonical}>
+              <Verse
+                verse={verse}
+                annotations={on(verse.verse)}
+                current={!!selection && contains(selection, book, chapter, verse.verse)}
+                selected={selected === verse.verse}
+                inspectorOpen={inspector?.verse === verse.canonical}
+                inspectorId={inspectorId}
+                onToggleInspector={(opener) => toggleInspector(verse.canonical, opener)}
+              />
+              {/* Verses found in the document but not checked (v0.24.3), in their place. */}
+              {data.unchecked
+                .filter((u) => u.verse > verse.verse && (data.verses[n + 1]?.verse ?? Infinity) > u.verse)
+                .map((u) => (
+                  <Unchecked key={`u${u.verse}`} verse={u.verse} page={u.page} />
+                ))}
+            </Fragment>
           ))}
         </div>
       )}
@@ -164,6 +177,20 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
       )}
       {SELECTION_SPIKE && data.verses.length > 0 && <SelectionSpike root={container} translationId={translation.id} />}
     </div>
+  );
+}
+
+/**
+ * A verse found in the Bible's document whose text could not be checked
+ * (v0.24.3): said plainly, with where it is, never shown with text.
+ */
+function Unchecked({ verse, page }: { verse: number; page: number | null }) {
+  const { t } = useTranslation();
+  return (
+    <p className="m-0 text-[0.9375rem] text-text-muted" data-testid="unchecked-verse">
+      <sup className="mr-1">{verse}</sup>
+      {page !== null ? t("scripture.reader.uncheckedOnPage", { page: formatNumber(page) }) : t("scripture.reader.unchecked")}
+    </p>
   );
 }
 

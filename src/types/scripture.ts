@@ -156,6 +156,8 @@ export interface ChapterText {
   chapterCount: number;
   superscription: string | null;
   verses: VerseText[];
+  /** Verses found in a Bible's documents whose text could not be checked (v0.24.3): shown as such, never with text. */
+  unchecked: { verse: number; page: number | null; reason: UnverifiedReason }[];
 }
 
 export interface PassageText {
@@ -379,7 +381,7 @@ export interface FoundBook {
 }
 
 /** Why a verse found in a document is not used as text (v0.24.3). */
-export type UnverifiedReason = "possibleHeading" | "reference" | "noteSign" | "unnumbered" | "length" | "psalmTitle";
+export type UnverifiedReason = "possibleHeading" | "reference" | "noteSign" | "unnumbered" | "length" | "psalmTitle" | "boundary";
 
 /** How a correction kept from before fits the documents read now (v0.24.3). */
 export interface SavedCorrection {

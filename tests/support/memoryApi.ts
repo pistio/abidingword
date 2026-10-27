@@ -38,6 +38,7 @@ import type {
   VerseText,
   WordChoice,
   WordReport,
+  ChapterText,
 } from "@/types/scripture";
 import { contains, refFromCanonical } from "@/lib/scripture";
 import { minimalPdf } from "./minimalPdf";
@@ -139,6 +140,8 @@ export interface MemoryApi extends Api {
     nextRecognition: ImportPreview | null;
     /** Places marked by hand in document Bibles (v0.24), by Bible. */
     places: Map<string, MarkedPlace[]>;
+    /** Verses found but unchecked, by "translation|book|chapter" (v0.24.3). */
+    unchecked: Map<string, ChapterText["unchecked"]>;
     /** Looking after the library (v0.24): each source's state, collections and tags. */
     /** Batch imports (v0.24): what the dialogs return, and the jobs. */
     batch: {
@@ -450,6 +453,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     batch: { nextFiles: null, nextFolder: null, jobs: new Map(), changed: new Set() },
     manage: { states: new Map(), collections: [], members: new Map(), tags: [], tagged: new Map() },
     places: new Map(),
+    unchecked: new Map(),
     library: { sources: [], segments: [], mentions: [], links: [], nextChosenFile: null, openedLinks: [], openLinkFails: false, pending: null, annotations: [] },
     findings: [],
     relations: [],
@@ -1344,6 +1348,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         chapterCount: info.chapterCount,
         superscription: book === "PSA" && chapter === 23 ? "Fixture psalm title." : null,
         verses: text.get(`${book}|${chapter}`) ?? [],
+        unchecked: state.unchecked.get(`${translationId}|${book}|${chapter}`) ?? [],
       };
     },
     // As the core (db::bibles::material_passages): only the chosen Bible; a verse it lacks is named.

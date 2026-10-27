@@ -35,7 +35,9 @@
       "notes_other": "{{count}} notes",
       "notes_many": "{{count}} notes",
       "highlightedColor": "surligné en {{color}}"
-    }
+    },
+    "unchecked": "Trouvé dans le document de cette Bible, mais son texte n’a pas pu être vérifié ; il n’est donc pas affiché ici.",
+    "uncheckedOnPage": "Trouvé page {{page}} du document de cette Bible, mais son texte n’a pas pu être vérifié ; il n’est donc pas affiché ici."
   },
   "verseTools": {
     "toolsFor": "Outils pour le verset {{verse}}",
@@ -247,19 +249,19 @@
         "check_other": "{{count}} chapitres sont à vérifier.",
         "check_many": "{{count}} chapitres sont à vérifier."
       },
-      "unverified_one": "{{formatted}} verset a été trouvé, mais son texte n’a pas pu être vérifié. Il reste dans le document, où il peut être ouvert, et n’est pas utilisé comme texte biblique.",
-      "unverified_other": "{{formatted}} versets ont été trouvés, mais leur texte n’a pas pu être vérifié. Ils restent dans le document, où ils peuvent être ouverts, et ne sont pas utilisés comme texte biblique.",
+      "unverified_one": "{{formatted}} verset a été trouvé, mais son texte n’a pas pu être vérifié. Il n’est pas utilisé comme texte biblique : il reste dans le document et est montré comme trouvé mais non vérifié.",
+      "unverified_other": "{{formatted}} versets ont été trouvés, mais leur texte n’a pas pu être vérifié. Ils ne sont pas utilisés comme texte biblique : ils restent dans le document et sont montrés comme trouvés mais non vérifiés.",
       "unverifiedWhy": "Pourquoi leur texte n’a pas pu être vérifié",
       "unverifiedReason": {
-        "possibleHeading_one": "{{formatted}} verset se termine par une ligne qui pourrait être un titre.",
-        "possibleHeading_other": "{{formatted}} versets se terminent par une ligne qui pourrait être un titre.",
+        "possibleHeading_one": "{{formatted}} verset contient une ligne qui pourrait être un titre ou une indication.",
+        "possibleHeading_other": "{{formatted}} versets contiennent une ligne qui pourrait être un titre ou une indication.",
         "reference_one": "{{formatted}} verset contient une référence biblique, peut-être un en-tête de page ou un renvoi.",
         "reference_other": "{{formatted}} versets contiennent une référence biblique, peut-être un en-tête de page ou un renvoi.",
         "noteSign_one": "{{formatted}} verset contient un signe de note qu’aucune note n’explique.",
         "noteSign_other": "{{formatted}} versets contiennent un signe de note qu’aucune note n’explique.",
         "unnumbered_one": "Dans {{formatted}} chapitre, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
         "unnumbered_other": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
-        "possibleHeading_many": "{{formatted}} versets se terminent par une ligne qui pourrait être un titre.",
+        "possibleHeading_many": "{{formatted}} versets contiennent une ligne qui pourrait être un titre ou une indication.",
         "reference_many": "{{formatted}} versets contiennent une référence biblique, peut-être un en-tête de page ou un renvoi.",
         "noteSign_many": "{{formatted}} versets contiennent un signe de note qu’aucune note n’explique.",
         "unnumbered_many": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
@@ -268,7 +270,10 @@
         "length_many": "{{formatted}} versets sont bien plus longs que les autres de leur chapitre.",
         "psalmTitle_one": "Dans {{formatted}} psaume, le verset 1 peut contenir le titre du psaume.",
         "psalmTitle_other": "Dans {{formatted}} psaumes, le verset 1 peut contenir le titre du psaume.",
-        "psalmTitle_many": "Dans {{formatted}} psaumes, le verset 1 peut contenir le titre du psaume."
+        "psalmTitle_many": "Dans {{formatted}} psaumes, le verset 1 peut contenir le titre du psaume.",
+        "boundary_one": "Pour {{formatted}} verset, son début ou sa fin n’est pas certain.",
+        "boundary_other": "Pour {{formatted}} versets, leur début ou leur fin n’est pas certain.",
+        "boundary_many": "Pour {{formatted}} versets, leur début ou leur fin n’est pas certain."
       },
       "yourCorrection": "Votre correction",
       "saved": {
@@ -282,7 +287,7 @@
         "notFound": "Ce titre n’a pas été retrouvé ; rien n’a été modifié. Votre correction est conservée.",
         "title_many": "{{formatted}} corrections antérieures"
       },
-      "unverified_many": "{{formatted}} versets ont été trouvés, mais leur texte n’a pas pu être vérifié. Ils restent dans le document, où ils peuvent être ouverts, et ne sont pas utilisés comme texte biblique."
+      "unverified_many": "{{formatted}} versets ont été trouvés, mais leur texte n’a pas pu être vérifié. Ils ne sont pas utilisés comme texte biblique : ils restent dans le document et sont montrés comme trouvés mais non vérifiés."
     },
     "doneDocument": "<strong>{{name}}</strong> a été ajoutée pour être lue comme un document.",
     "available": {
@@ -827,12 +832,13 @@
       "placesTitle": "Emplacements trouvés, texte non vérifié",
       "foundPlace": "{{passage}} {{where}}",
       "placeReason": {
-        "possibleHeading": "Il se termine peut-être par un titre.",
+        "possibleHeading": "Il contient peut-être un titre ou une indication.",
         "reference": "Il contient une référence biblique.",
         "noteSign": "Il contient un signe de note.",
         "unnumbered": "Sa fin n’est pas certaine.",
         "length": "Il est bien plus long que les versets qui l’entourent.",
-        "psalmTitle": "Il peut contenir le titre du psaume."
+        "psalmTitle": "Il peut contenir le titre du psaume.",
+        "boundary": "Son début ou sa fin n’est pas certain."
       },
       "unverified_many": "{{formatted}} versets trouvés, texte non vérifié",
       "placesIntro_many": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :",

@@ -396,6 +396,7 @@ fn line_units(
     // The paragraph being read, and the letters from its start to the line.
     let mut paragraph: Option<(u32, u32)> = None;
     let mut before = 0usize;
+    let mut cursor = 0usize;
     let mut offset = 0u32;
     for line in text.split_inclusive('\n') {
         let start = offset;
@@ -404,10 +405,19 @@ fn line_units(
         if trimmed.is_empty() {
             continue;
         }
-        let found = ranges
+        // Lines come in order: the search goes on from the last paragraph
+        // found (a long file is not searched from its start for every line).
+        let holds = |(s, e, _): &(u32, u32, u32)| start + 1 > *s && start < *e + 1;
+        let found = ranges[cursor..]
             .iter()
-            .find(|(s, e, _)| start + 1 > *s && start < *e + 1)
-            .or_else(|| ranges.iter().find(|(s, _, _)| *s >= start));
+            .position(holds)
+            .map(|p| cursor + p)
+            .or_else(|| ranges.iter().position(holds))
+            .or_else(|| ranges.iter().position(|(s, _, _)| *s >= start));
+        if let Some(at) = found {
+            cursor = at;
+        }
+        let found = found.map(|at| &ranges[at]);
         let lead = (line.len() - line.trim_start().len()) as u32;
         let (segment, offset_in) = match found {
             Some(&(s, e, first)) => {

@@ -468,11 +468,11 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
 
       {doc && preview.verseCount > 0 && <Readiness preview={preview} />}
 
-      {doc && <Verification preview={doc} />}
-
       {doc && <SavedCorrections preview={doc} />}
 
       {doc && <DocumentChoice preview={doc} byVerse={byVerse} onByVerse={setByVerse} />}
+
+      {doc && !asDocument && <Verification preview={doc} />}
 
       {doc ? (
         <p className="m-0 text-[0.9375rem] text-text-muted">{t("scripture.addBible.document.noWords")}</p>

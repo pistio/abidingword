@@ -159,6 +159,19 @@ pub struct ChapterText {
     pub chapter_count: u16,
     pub superscription: Option<String>,
     pub verses: Vec<VerseText>,
+    /// Verses of a Bible read from documents that were found in its
+    /// documents but whose text could not be verified (v0.24.3): shown as
+    /// such, never with text taken from elsewhere.
+    pub unchecked: Vec<UncheckedVerse>,
+}
+
+/// A verse found in a document whose text could not be verified (v0.24.3).
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UncheckedVerse {
+    pub verse: u16,
+    pub page: Option<i64>,
+    pub reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]

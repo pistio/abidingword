@@ -61,7 +61,8 @@ CREATE TABLE bible_verse_places (
     first_offset    INTEGER,
     basis           TEXT NOT NULL DEFAULT 'automatic' CHECK (basis IN ('automatic', 'corrected')),
     -- Why the text is not verified (a code the interface explains).
-    reason          TEXT NOT NULL,
+    reason          TEXT NOT NULL CHECK (reason IN ('possibleHeading', 'reference', 'noteSign',
+                        'unnumbered', 'length', 'psalmTitle', 'boundary')),
     PRIMARY KEY (translation_id, verse_id)
 ) WITHOUT ROWID;
 
@@ -69,9 +70,9 @@ CREATE TABLE bible_document_apparatus (
     id              INTEGER PRIMARY KEY,
     translation_id  TEXT NOT NULL REFERENCES bible_translations (id) ON DELETE CASCADE,
     document_id     TEXT NOT NULL REFERENCES bible_documents (id) ON DELETE CASCADE,
-    -- 'footnote', 'crossReference', 'heading', 'runningHead', 'introduction',
-    -- 'subscription', 'notes', 'other'.
-    kind            TEXT NOT NULL,
+    kind            TEXT NOT NULL CHECK (kind IN ('footnote', 'crossReference', 'heading',
+                        'subscription', 'runningHead', 'introduction', 'frontMatter', 'notes',
+                        'otherBook')),
     page            INTEGER,
     segment         INTEGER,
     -- The verse it stands with, when known.
@@ -81,3 +82,5 @@ CREATE TABLE bible_document_apparatus (
 
 CREATE INDEX bible_document_apparatus_place
     ON bible_document_apparatus (translation_id, document_id, segment);
+CREATE INDEX bible_document_apparatus_verse
+    ON bible_document_apparatus (translation_id, verse_id);

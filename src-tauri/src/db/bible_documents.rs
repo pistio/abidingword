@@ -51,10 +51,10 @@ pub fn commit(
     let checked = bibles::check_details(conn, meta)?;
     let now = now();
     let tx = conn.unchecked_transaction()?;
-    // Every verse found with its text verified (v0.24.3): a Bible read by its
-    // verses only when there is no other; otherwise it stays a document whose
-    // verified passages can be found, the rest by their places.
-    let whole = as_verses && stage.unverified.is_empty();
+    // Read by its verses (v0.24.3): only the verses whose text is verified
+    // are its text; the others are kept as places in its documents, and the
+    // reader says which they are.
+    let whole = as_verses;
     let shape = if whole {
         Shape::Structured(content)
     } else {
@@ -66,9 +66,7 @@ pub fn commit(
     save_corrections(&tx, id, stage, &stage_corrections(stage), &now)?;
     if as_verses {
         store_verses(&tx, id, content, stage, kept, None)?;
-        if !whole {
-            update_counts(&tx, id, false)?;
-        }
+        update_counts(&tx, id, true)?;
     }
     tx.commit()?;
     log::info!(
@@ -281,12 +279,15 @@ fn insert_apparatus(
     Ok(())
 }
 
-/// The corrections in force in a stage (see `StagedImport::corrections_to_keep`).
+/// The corrections in force in a stage: every heading whose book the person
+/// chose, including a kept choice the recogniser now agrees with.
 fn stage_corrections(stage: &DocumentStage) -> Vec<SavedCorrection> {
+    let kept: std::collections::HashSet<usize> =
+        stage.saved.iter().filter_map(|s| s.index).collect();
     stage
         .books
         .iter()
-        .filter(|b| b.corrected)
+        .filter(|b| b.corrected || kept.contains(&b.index))
         .filter_map(|b| {
             let file = stage.files.get(usize::from(b.place.document))?;
             Some(SavedCorrection {
@@ -334,18 +335,32 @@ pub fn save_corrections(
             book.place.segment
         ])?;
     }
-    // A kept correction applied to a heading found elsewhere now (the
-    // document changed) is replaced by the one for its new place.
-    for state in &stage.saved {
-        if state.index.is_some() && !state.correction.id.is_empty() {
-            tx.execute(
-                "DELETE FROM bible_recognition_corrections WHERE id = ?1 AND translation_id = ?2",
-                params![state.correction.id, id],
-            )?;
+    // A kept correction applied to a heading of this reading (found where
+    // it was, or elsewhere now) is replaced by what is in force — removed if
+    // the person set it back.
+    for matched in &stage.matched {
+        tx.execute(
+            "DELETE FROM bible_recognition_corrections WHERE id = ?1 AND translation_id = ?2",
+            params![matched, id],
+        )?;
+    }
+    // Corrections of the same documents added before as another Bible that
+    // fit nothing now: kept for this Bible too, never dropped.
+    let mut carry = tx.prepare(
+        "INSERT OR IGNORE INTO bible_recognition_corrections
+             (id, translation_id, document_sha256, document_position, kind, heading, page, segment,
+              detected_book, chosen_book, created_at, updated_at)
+         SELECT ?1, ?2, document_sha256, document_position, kind, heading, page, segment,
+                detected_book, chosen_book, created_at, ?3
+         FROM bible_recognition_corrections WHERE id = ?4 AND translation_id <> ?2",
+    )?;
+    for state in stage.saved.iter().filter(|s| s.index.is_none()) {
+        if !state.correction.id.is_empty() {
+            carry.execute(params![crate::db::new_id(), id, now, state.correction.id])?;
         }
     }
     let mut add = tx.prepare(
-        "INSERT INTO bible_recognition_corrections
+        "INSERT OR REPLACE INTO bible_recognition_corrections
              (id, translation_id, document_sha256, document_position, kind, heading, page, segment,
               detected_book, chosen_book, created_at, updated_at)
          VALUES (?1, ?2, ?3, ?4, 'book', ?5, ?6, ?7, ?8, ?9, ?10, ?10)",
@@ -462,8 +477,9 @@ pub fn add_verses(
     } else {
         return Err(problems());
     };
-    // Read by its verses only when every verse found has verified text.
-    let whole = sound && stage.unverified.is_empty();
+    // Read by its verses when nothing contradicts itself; unverified verses
+    // stay places either way (v0.24.3).
+    let whole = sound;
     let kept: Vec<KeptFile> = list(conn, id)?
         .into_iter()
         .map(|d| KeptFile {
