@@ -184,7 +184,51 @@ completely and leaves 0023 intact.
 
 ## 10. Limitations and their effect on ordinary users
 
-*To be completed.*
+What remains, and what a person using the app sees because of it:
+
+* **Hebrew Bible as PDF** (§7): refused; the person is told the pages'
+  reading order or letters could not be established and is offered to keep
+  it as a document. The EPUB of the same edition reads in full.
+* **Clementine Vulgate PDF** (22 % of verses): its pages set two columns so
+  close, with a commentary beneath, that most pages' reading order cannot be
+  established; their chapters are refused, never guessed. The EPUB reads
+  95 %. The PDF stays readable as a document.
+* **Headings in the body's own type with nothing to set them apart.** Where
+  a heading differs from Scripture only by its words (no other typeface the
+  file records, no space, not centred, not short after prose), it can be
+  read as the end of the verse before it. Every rule in §5 narrows this; the
+  remaining cases in the corpora are listed in `docs/audit/v0.24.3/` (two
+  italic headings in the Textbibel PDF whose italic face has the same
+  character widths as its upright face). The verse is then shown with the
+  heading's words; the document view shows where it stands.
+* **Source files that encode Scripture as headings.** The Textbibel's USFM
+  marks some continuations of verses as section headings (`\s1`); the
+  audit's reference text therefore lacks those words and counts the verses
+  as "extra". They are the edition's printed text, not headings; they are
+  listed separately in the audit and not counted as contamination.
+* **Speaker labels written inline once** in a verse-per-line export of the
+  Song of Songs ("… Lover Why do you desire …") cannot be told from a
+  sentence's first word when a label occurs only once; one verse in the
+  corpus keeps such a label.
+* **Subscriptions** (colophons after a letter's last verse, "Escrita de
+  Roma …") are kept as apparatus, not verse text; the audit's reference
+  includes them in the verse, so these verses show as "missing" words. This
+  is deliberate.
+* **Words a converter left out.** LibreOffice's Word export of the Reina
+  Valera 1960 lacks some letters' openings (Ezra 4–7, Daniel 4): the verses
+  hold what the file holds; nothing is substituted.
+* **Verification costs coverage.** Verses whose text is in doubt are kept
+  as places, not as the Bible's text: 0–4 % of verses in the corpora. They
+  remain readable in the document and in the chapter reader, marked as not
+  checked.
+* **Corrections are anchored to a document's place among the Bible's
+  documents.** Re-ordering the documents when adding them again makes a
+  correction "not found" (shown, kept), not silently misapplied.
+* **Apparatus kept per Bible is capped** (4,000 characters per piece, 40
+  million in all) so a commentary-heavy edition cannot exhaust the
+  database. Beyond the cap the apparatus is not kept (the document's own
+  text, which holds it, always is); the review does not yet say so.
+* **OCR is not built**: scanned PDFs are kept as documents only.
 
 ## 11. Verdict
 
