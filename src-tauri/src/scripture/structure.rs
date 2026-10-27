@@ -145,7 +145,8 @@ pub struct Recognition {
     /// could be a heading in the body's own type), "reference" (a passage
     /// reference stands in it: a running head or a cross-reference read
     /// in), "noteSign" (a note's sign no note explains), "unnumbered" (verse
-    /// 1 without a number: its end was inferred). Such a verse can be found
+    /// 1 without a number: its end was inferred), "length" (far longer than
+    /// the other verses of its chapter). Such a verse can be found
     /// in the document; its text never becomes the Bible's verse.
     pub unverified: BTreeMap<(u8, u16, u16), &'static str>,
     /// What was set apart from the verses, with where it stands (v0.24.3).
@@ -2055,7 +2056,12 @@ fn verse_doubt(text: &str) -> Option<&'static str> {
     let reference = REFERENCE.get_or_init(|| {
         regex::Regex::new(r"(?:^|\s)\p{L}[\p{L}.΄ʹ]*\s\d{1,3}:\d{1,3}(?:\D|$)").expect("valid")
     });
-    if reference.is_match(text) {
+    // The end of a line of references read into a verse ("… sabbat. 11-15.)").
+    static RANGE: OnceLock<regex::Regex> = OnceLock::new();
+    let range = RANGE.get_or_init(|| {
+        regex::Regex::new(r"(?:^|\s)\(?\d{1,3}\s?[-–]\s?\d{1,3}\.?\)").expect("valid")
+    });
+    if reference.is_match(text) || range.is_match(text) {
         return Some("reference");
     }
     if text.contains(['†', '‡', '§']) {
@@ -3300,8 +3306,11 @@ impl Builder<'_> {
         use std::sync::OnceLock;
         static CITED: OnceLock<regex::Regex> = OnceLock::new();
         let cited = CITED.get_or_init(|| regex::Regex::new(r"\d{1,3}[:.]\d{1,3}").expect("valid"));
-        // From the book's title: (title, markers, listed, citing).
-        let mut run: Option<(usize, usize, usize, usize)> = None;
+        // From the book's title: (title, markers, listed, citing, strong).
+        // Only strong numbers (at a line's start, after a sentence) are
+        // compared with chapter 1's verses: an introduction's prose is full
+        // of other numbers ("3 Jean", "(9-10)") that are no list (v0.24.3).
+        let mut run: Option<(usize, usize, usize, usize, usize)> = None;
         let mut first_chapter_verses = 0u16;
         let mut i = 0;
         while i < self.items.len() {
@@ -3311,7 +3320,7 @@ impl Builder<'_> {
                     chapter: None,
                     entry,
                 } => {
-                    run = Some((i, 0, 0, 0));
+                    run = Some((i, 0, 0, 0, 0));
                     first_chapter_verses = self.books[*entry]
                         .detected
                         .and_then(canon::by_code)
@@ -3320,14 +3329,17 @@ impl Builder<'_> {
                 }
                 Event::Book { .. } => run = None,
                 Event::Marker(m) => {
-                    if let Some((from, markers, listed, citing)) = run.as_mut() {
+                    if let Some((from, markers, listed, citing, strong)) = run.as_mut() {
                         if m.value == 1 && m.unit_start && *markers > 0 {
                             let list = *listed * 2 >= *markers || *citing * 2 >= *markers;
-                            if list && (*markers as u16) < first_chapter_verses {
+                            if list && (*strong as u16) < first_chapter_verses {
                                 cut = Some(*from);
                             }
                         }
                         *markers += 1;
+                        if m.strength == Strength::Strong {
+                            *strong += 1;
+                        }
                         // "1.", or a number ending its line ("Adresse et
                         // salutations 1-2"): a verse's number comes before
                         // its words.
@@ -3368,7 +3380,15 @@ impl Builder<'_> {
                 }
                 // The numbering that starts here is counted afresh.
                 if let Some(r) = run.as_mut() {
-                    *r = (i - 1, 1, 0, 0);
+                    *r = (
+                        i - 1,
+                        1,
+                        0,
+                        0,
+                        usize::from(
+                            matches!(&self.items[i].event, Event::Marker(m) if m.strength == Strength::Strong),
+                        ),
+                    );
                 }
             }
             i += 1;
@@ -4356,6 +4376,30 @@ impl Reader<'_> {
             && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。']) || korean_end)
     }
 
+    /// A whole PDF line set apart by its look (another typeface, larger, or
+    /// centred) added to a verse after a sentence's end (v0.24.3): a section
+    /// heading that ends as a sentence does ("Qui est le plus grand?",
+    /// "Comment il se venge et meurt.") cannot be told from a line of poetry
+    /// set in italics; it stays where the document puts it, but the verse's
+    /// text is not verified.
+    fn set_apart_line(&self, words: &str, unit: usize) -> bool {
+        let Some(open) = self.open.as_ref() else {
+            return false;
+        };
+        let u = &self.units[unit];
+        if u.place.page.is_none() || !(u.styled || u.large || u.centred) {
+            return false;
+        }
+        let whole = unmark_raised(&clean(&u.text));
+        let line = words.trim();
+        if whole.trim() != line || open.text.trim().is_empty() || is_selah(line) {
+            return false;
+        }
+        let before = open.text.trim_end().trim_end_matches(is_sign).trim_end();
+        line.chars().count() <= 200
+            && before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。'])
+    }
+
     /// Whether a verse's whole text is labels of notes that name this verse
     /// (letters or signs, each a word of its own): on its page or the next
     /// for a PDF, anywhere in a document without pages.
@@ -5143,8 +5187,12 @@ impl Reader<'_> {
             };
             let words = without_signs(words, &signs).into_owned();
             let heading_like = self.heading_like_line(&words, unit);
+            let set_apart = self.set_apart_line(&words, unit);
             let open = self.open.as_mut().expect("a verse is open");
             open.heading_like_end = heading_like;
+            if set_apart {
+                open.doubt = open.doubt.or(Some("possibleHeading"));
+            }
             Self::append(
                 open,
                 &words,
@@ -5417,8 +5465,37 @@ impl Reader<'_> {
             );
         }
         self.short_chapters();
+        self.long_verses();
         self.out.content.check_structure();
         self.out
+    }
+
+    /// A verse far longer than the others of its chapter (v0.24.3): more
+    /// than five times their median and over 500 characters. The longest
+    /// verses of Scripture are about three times their chapter's median
+    /// (Esther 8:9); one beyond that has something else read into it (an
+    /// introduction, a heading, a column), so its text is not verified.
+    fn long_verses(&mut self) {
+        for (ordinal, book) in &self.out.content.books {
+            for (chapter, text) in &book.chapters {
+                if text.verses.len() < 5 {
+                    continue;
+                }
+                let mut lengths: Vec<usize> =
+                    text.verses.values().map(|t| t.chars().count()).collect();
+                lengths.sort_unstable();
+                let median = lengths[lengths.len() / 2];
+                for (verse, words) in &text.verses {
+                    let n = words.chars().count();
+                    if n > 500 && n > 5 * median {
+                        self.out
+                            .unverified
+                            .entry((*ordinal, *chapter, *verse))
+                            .or_insert("length");
+                    }
+                }
+            }
+        }
     }
 
     /// Verses missing at the end of a chapter (a chapter cut short) are not

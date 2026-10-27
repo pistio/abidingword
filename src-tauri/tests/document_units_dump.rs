@@ -54,6 +54,29 @@ fn document_units_dump() {
             })
             .collect(),
     };
+    // AW_DUMP_RECOGNISE=BOOK: read the selected units for verses and print
+    // that book's verses and the issues.
+    if let Ok(code) = std::env::var("AW_DUMP_RECOGNISE") {
+        let units: Vec<_> = wanted.iter().map(|&i| doc.units[i].clone()).collect();
+        let r = abiding_word_lib::scripture::structure::recognise(
+            &units,
+            std::env::var("AW_DUMP_LANGUAGE").ok().as_deref(),
+            &Default::default(),
+        );
+        let book = abiding_word_lib::scripture::canon::by_code(&code).expect("a book code");
+        if let Some(b) = r.content.books.get(&book.ordinal) {
+            for (c, ch) in &b.chapters {
+                for (v, t) in &ch.verses {
+                    let doubt = r.unverified.get(&(book.ordinal, *c, *v));
+                    println!("{code} {c}:{v} {doubt:?} «{t}»");
+                }
+            }
+        }
+        for issue in &r.content.issues {
+            println!("{:?} {}", issue.severity, issue.message);
+        }
+        return;
+    }
     for i in wanted {
         let u = &doc.units[i];
         let flags: String = [
@@ -68,6 +91,15 @@ fn document_units_dump() {
         .iter()
         .map(|(on, c)| if *on { *c } else { '.' })
         .collect();
+        if std::env::var_os("AW_DUMP_SEGMENTS").is_some() {
+            if let Some(seg) = u.place.segment.and_then(|s| doc.segments.get(s as usize)) {
+                println!(
+                    "        segment @{:?}: {}",
+                    u.place.offset,
+                    seg.text.chars().take(90).collect::<String>()
+                );
+            }
+        }
         println!(
             "{i:>7} p{:<5} s{:<6} {flags} {}",
             u.place.page.map_or("-".into(), |p| p.to_string()),

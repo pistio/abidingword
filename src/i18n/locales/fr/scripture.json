@@ -262,7 +262,10 @@
         "possibleHeading_many": "{{formatted}} versets se terminent par une ligne qui pourrait être un titre.",
         "reference_many": "{{formatted}} versets contiennent une référence biblique, peut-être un en-tête de page ou un renvoi.",
         "noteSign_many": "{{formatted}} versets contiennent un signe de note qu’aucune note n’explique.",
-        "unnumbered_many": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine."
+        "unnumbered_many": "Dans {{formatted}} chapitres, le verset 1 n’a pas de numéro : sa fin n’est pas certaine.",
+        "length_one": "{{formatted}} verset est bien plus long que les autres de son chapitre.",
+        "length_other": "{{formatted}} versets sont bien plus longs que les autres de leur chapitre.",
+        "length_many": "{{formatted}} versets sont bien plus longs que les autres de leur chapitre."
       },
       "yourCorrection": "Votre correction",
       "saved": {
@@ -824,7 +827,8 @@
         "possibleHeading": "Il se termine peut-être par un titre.",
         "reference": "Il contient une référence biblique.",
         "noteSign": "Il contient un signe de note.",
-        "unnumbered": "Sa fin n’est pas certaine."
+        "unnumbered": "Sa fin n’est pas certaine.",
+        "length": "Il est bien plus long que les versets qui l’entourent."
       },
       "unverified_many": "{{formatted}} versets trouvés, texte non vérifié",
       "placesIntro_many": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :"

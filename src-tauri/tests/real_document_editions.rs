@@ -288,6 +288,7 @@ struct EditionAudit {
     /// False positives among the verified verses.
     verified_extra_verses: Vec<String>,
     unverified_reasons: BTreeMap<String, usize>,
+    location_misses: Vec<String>,
     apparatus: usize,
     pages_uncertain: usize,
     pages: usize,
@@ -445,6 +446,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let mut differences = Vec::new();
     let mut extra_verses = Vec::new();
     let mut verified_extra_verses = Vec::new();
+    let mut location_misses: Vec<String> = Vec::new();
     let mut books_not_found = Vec::new();
     let mut seen_books: BTreeSet<u8> = BTreeSet::new();
     // A file of one book ("fraLSG_LUK.pdf") is measured against that book;
@@ -571,6 +573,15 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                         a.location_checked += 1;
                         if found_here {
                             a.located += 1;
+                        } else if location_misses.len() < 20 {
+                            location_misses.push(format!(
+                                "{} {chapter}:{verse} (page {:?}, segments {:?}–{:?}): «{}»",
+                                book.code,
+                                stage.origins.get(&key).and_then(|o| o.start.page),
+                                stage.origins.get(&key).and_then(|o| o.start.segment),
+                                stage.origins.get(&key).and_then(|o| o.end.segment),
+                                text.chars().take(60).collect::<String>()
+                            ));
                         }
                     }
                 }
@@ -684,6 +695,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         extra_verses,
         verified_extra_verses,
         unverified_reasons,
+        location_misses,
         apparatus: stage.apparatus.len(),
         pages_uncertain,
         pages,
@@ -909,6 +921,15 @@ fn markdown(a: &EditionAudit) -> String {
     }
     if !a.extra_verses.is_empty() {
         let _ = writeln!(s, "\n## False positives\n\n{}", a.extra_verses.join(", "));
+    }
+    if !a.location_misses.is_empty() {
+        let _ = writeln!(
+            s,
+            "\n## Verified verses whose kept place does not hold them (first 20)\n"
+        );
+        for m in &a.location_misses {
+            let _ = writeln!(s, "- {m}");
+        }
     }
     if !a.verified_extra_verses.is_empty() {
         let _ = writeln!(

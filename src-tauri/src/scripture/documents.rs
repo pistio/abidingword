@@ -17,6 +17,7 @@
 //! no units: it can be read page by page in the original, never searched or
 //! divided into verses. No OCR is done and nothing leaves the computer.
 
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -361,13 +362,27 @@ fn line_units(
     document: u16,
     out: &mut Vec<Unit>,
 ) {
-    // The segments of this page (or the file), by where their paragraph starts.
+    // The segments of this page (or the file), by where their paragraph
+    // starts. A long paragraph is kept as several segments that all carry
+    // the paragraph's range (v0.24.3): which of them holds a line is found
+    // by counting the letters (not the spaces, which the segments collapse)
+    // from the paragraph's start.
     let ranges: Vec<(u32, u32, u32)> = segments
         .iter()
         .enumerate()
         .filter(|(_, s)| s.page_number == page)
         .filter_map(|(i, s)| Some((s.char_start?, s.char_end?, i as u32)))
         .collect();
+    let solid = |t: &str| t.chars().filter(|c| !c.is_whitespace()).count();
+    // Each paragraph's parts, in order, with their letters.
+    let mut parts: HashMap<(u32, u32), Vec<(u32, usize)>> = HashMap::new();
+    for &(s, e, i) in &ranges {
+        let len = segments.get(i as usize).map_or(0, |seg| solid(&seg.text));
+        parts.entry((s, e)).or_default().push((i, len));
+    }
+    // The paragraph being read, and the letters from its start to the line.
+    let mut paragraph: Option<(u32, u32)> = None;
+    let mut before = 0usize;
     let mut offset = 0u32;
     for line in text.split_inclusive('\n') {
         let start = offset;
@@ -380,15 +395,53 @@ fn line_units(
             .iter()
             .find(|(s, e, _)| start + 1 > *s && start < *e + 1)
             .or_else(|| ranges.iter().find(|(s, _, _)| *s >= start));
-        let segment = found.map(|(_, _, i)| *i);
-        // Where the line's words begin in its paragraph (characters).
         let lead = (line.len() - line.trim_start().len()) as u32;
-        let offset = found.and_then(|(s, _, _)| {
-            let from = (*s as usize).min(text.len());
-            let to = ((start + lead) as usize).min(text.len());
-            (from <= to && text.is_char_boundary(from) && text.is_char_boundary(to))
-                .then(|| text[from..to].chars().count() as u32)
-        });
+        let (segment, offset_in) = match found {
+            Some(&(s, e, first)) => {
+                if paragraph != Some((s, e)) {
+                    paragraph = Some((s, e));
+                    let from = (s as usize).min(text.len());
+                    let to = ((start + lead) as usize).min(text.len());
+                    before =
+                        if from <= to && text.is_char_boundary(from) && text.is_char_boundary(to) {
+                            solid(&text[from..to])
+                        } else {
+                            0
+                        };
+                }
+                let list = parts.get(&(s, e)).map(Vec::as_slice).unwrap_or(&[]);
+                let mut seen = 0usize;
+                let mut chosen = (Some(first), None);
+                for (n, &(part, len)) in list.iter().enumerate() {
+                    if before < seen + len || n + 1 == list.len() {
+                        // Characters into the part up to the line's first letter.
+                        let mut letters = before.saturating_sub(seen);
+                        let mut at = 0u32;
+                        if let Some(seg) = segments.get(part as usize) {
+                            for c in seg.text.chars() {
+                                if letters == 0 && !c.is_whitespace() {
+                                    break;
+                                }
+                                if !c.is_whitespace() {
+                                    letters -= 1;
+                                }
+                                at += 1;
+                            }
+                        }
+                        chosen = (Some(part), Some(at));
+                        break;
+                    }
+                    seen += len;
+                }
+                before += solid(line);
+                chosen
+            }
+            None => {
+                paragraph = None;
+                (None, None)
+            }
+        };
+        let offset = offset_in;
         out.push(Unit {
             text: trimmed.to_string(),
             heading: false,
@@ -614,6 +667,29 @@ mod tests {
         assert_eq!(file.units[0].place.segment, Some(0));
         assert_eq!(file.units[2].place.segment, Some(2));
         assert!(file.units.iter().all(|u| !u.heading));
+    }
+
+    #[test]
+    fn lines_of_a_long_paragraph_point_at_the_part_that_holds_them() {
+        // One paragraph of 400 lines is kept as several segments of the same
+        // paragraph: each line's segment and offset are where it really is
+        // (v0.24.3; before, every line pointed at the first part).
+        let text: String = (1..=400)
+            .map(|n| format!("GEN 1:{n} Invented line number {n} of one long paragraph.\n"))
+            .collect();
+        let file = read_named("lines.txt", text.as_bytes());
+        assert!(file.segments.len() > 5);
+        for unit in &file.units {
+            let segment = &file.segments[unit.place.segment.unwrap() as usize];
+            let at = unit.place.offset.unwrap() as usize;
+            let held: String = segment.text.chars().skip(at).collect();
+            assert!(
+                held.starts_with(&unit.text),
+                "{} not at {at} of «{}»",
+                unit.text,
+                segment.text
+            );
+        }
     }
 
     #[test]

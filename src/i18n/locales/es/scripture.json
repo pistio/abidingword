@@ -262,7 +262,10 @@
         "possibleHeading_many": "{{formatted}} versículos terminan con una línea que podría ser un título.",
         "reference_many": "{{formatted}} versículos contienen una referencia bíblica, quizá un encabezado de página o una referencia cruzada.",
         "noteSign_many": "{{formatted}} versículos contienen un signo de nota que ninguna nota explica.",
-        "unnumbered_many": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro."
+        "unnumbered_many": "En {{formatted}} capítulos, el versículo 1 no tiene número; dónde termina no es seguro.",
+        "length_one": "{{formatted}} versículo es mucho más largo que los demás de su capítulo.",
+        "length_other": "{{formatted}} versículos son mucho más largos que los demás de su capítulo.",
+        "length_many": "{{formatted}} versículos son mucho más largos que los demás de su capítulo."
       },
       "yourCorrection": "Tu corrección",
       "saved": {
@@ -824,7 +827,8 @@
         "possibleHeading": "Quizá termina con un título.",
         "reference": "Contiene una referencia bíblica.",
         "noteSign": "Contiene un signo de nota.",
-        "unnumbered": "Su final no es seguro."
+        "unnumbered": "Su final no es seguro.",
+        "length": "Es mucho más largo que los versículos que lo rodean."
       },
       "unverified_many": "{{formatted}} versículos encontrados, texto no comprobado",
       "placesIntro_many": "Encontrados en el documento, pero no se pudo comprobar su texto:"

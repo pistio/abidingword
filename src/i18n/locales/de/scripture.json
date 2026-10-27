@@ -236,7 +236,9 @@
         "noteSign_one": "{{formatted}} Vers enthält ein Anmerkungszeichen, das keine Anmerkung erklärt.",
         "noteSign_other": "{{formatted}} Verse enthalten ein Anmerkungszeichen, das keine Anmerkung erklärt.",
         "unnumbered_one": "In {{formatted}} Kapitel hat Vers 1 keine Nummer; wo er endet, ist nicht sicher.",
-        "unnumbered_other": "In {{formatted}} Kapiteln hat Vers 1 keine Nummer; wo er endet, ist nicht sicher."
+        "unnumbered_other": "In {{formatted}} Kapiteln hat Vers 1 keine Nummer; wo er endet, ist nicht sicher.",
+        "length_one": "{{formatted}} Vers ist weit länger als die anderen seines Kapitels.",
+        "length_other": "{{formatted}} Verse sind weit länger als die anderen ihres Kapitels."
       },
       "yourCorrection": "Deine Korrektur",
       "saved": {
@@ -771,7 +773,8 @@
         "possibleHeading": "Er endet vielleicht mit einer Überschrift.",
         "reference": "Er enthält eine Bibelstellenangabe.",
         "noteSign": "Er enthält ein Anmerkungszeichen.",
-        "unnumbered": "Sein Ende ist nicht sicher."
+        "unnumbered": "Sein Ende ist nicht sicher.",
+        "length": "Er ist weit länger als die Verse um ihn herum."
       }
     }
   }

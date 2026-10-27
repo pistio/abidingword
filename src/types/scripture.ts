@@ -379,7 +379,7 @@ export interface FoundBook {
 }
 
 /** Why a verse found in a document is not used as text (v0.24.3). */
-export type UnverifiedReason = "possibleHeading" | "reference" | "noteSign" | "unnumbered";
+export type UnverifiedReason = "possibleHeading" | "reference" | "noteSign" | "unnumbered" | "length";
 
 /** How a correction kept from before fits the documents read now (v0.24.3). */
 export interface SavedCorrection {
