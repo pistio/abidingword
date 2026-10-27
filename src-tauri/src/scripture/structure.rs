@@ -3848,25 +3848,12 @@ impl Builder<'_> {
 /// start). A verse's last line never begins a block of its own;
 /// a heading set off by space does, even in the body's own type.
 fn block_starts(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
-    let mut out = HashSet::new();
-    let mut previous: Option<&Unit> = None;
-    for (i, unit) in units.iter().enumerate() {
-        if skip.contains(&i) || unit.heading || unit.note {
-            continue;
-        }
-        if let (Some(p), Some(page)) = (previous, unit.place.page) {
-            if p.place.page == Some(page)
-                && p.place.document == unit.place.document
-                && p.column == unit.column
-                && p.place.segment.is_some()
-                && p.place.segment != unit.place.segment
-            {
-                out.insert(i);
-            }
-        }
-        previous = Some(unit);
-    }
-    out
+    units
+        .iter()
+        .enumerate()
+        .filter(|(i, u)| u.gap_before && !skip.contains(i) && !u.heading && !u.note)
+        .map(|(i, _)| i)
+        .collect()
 }
 
 /// Words a document writes as labels inside its lines (v0.24.3): after a

@@ -44,6 +44,7 @@ fn line(text: &str, page: u32) -> Unit {
         edge: false,
         centred: false,
         column: 0,
+        gap_before: false,
     }
 }
 
@@ -207,6 +208,7 @@ fn a_centred_line_after_a_gap_is_a_heading_even_with_a_full_stop() {
         let mut heading = line("Paul's Plea for Onesimus.", units[at].place.page.unwrap());
         heading.place.segment = Some(100);
         heading.centred = centred;
+        heading.gap_before = true;
         units.insert(at, heading);
         for u in units.iter_mut().skip(at + 1) {
             if let Some(s) = u.place.segment.as_mut() {

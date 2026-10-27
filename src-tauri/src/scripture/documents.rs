@@ -86,6 +86,9 @@ pub struct Unit {
     pub centred: bool,
     /// The column of its PDF page it stands in (0 = the left or only one).
     pub column: u8,
+    /// A PDF line of running text with clear space above it, below another
+    /// line of the same column (the layout starts a new block there; v0.24.3).
+    pub gap_before: bool,
 }
 
 /// Where a unit is in the original document.
@@ -256,6 +259,13 @@ pub fn read_bytes(
                             unit.edge = matches!(line.role, LineRole::Head | LineRole::Foot);
                             unit.centred = line.centred;
                             unit.column = line.column;
+                            unit.gap_before = i > 0 && {
+                                let above = lines[i - 1];
+                                above.role == LineRole::Text
+                                    && line.role == LineRole::Text
+                                    && above.column == line.column
+                                    && above.block != line.block
+                            };
                             // Raised letters marked for the recogniser.
                             if let Some(marked) = &line.marked {
                                 unit.text = marked.trim().to_string();
@@ -461,6 +471,7 @@ fn line_units(
             edge: false,
             centred: false,
             column: 0,
+            gap_before: false,
         });
     }
 }
@@ -582,6 +593,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                 edge: false,
                 centred: false,
                 column: 0,
+                gap_before: false,
             });
             continue;
         }
@@ -611,6 +623,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     edge: false,
                     centred: false,
                     column: 0,
+                    gap_before: false,
                 });
             }
         }
@@ -629,6 +642,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             edge: false,
             centred: false,
             column: 0,
+            gap_before: false,
         });
     }
     (out, notes)

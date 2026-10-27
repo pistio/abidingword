@@ -91,6 +91,7 @@ fn document_units_dump() {
             (u.styled, 'S'),
             (u.edge, 'E'),
             (u.centred, 'C'),
+            (u.gap_before, 'G'),
             (u.uncertain_order, '?'),
         ]
         .iter()
