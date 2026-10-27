@@ -1047,20 +1047,21 @@ fn flush_right_reference(pieces: &[&Span], right_edge: f64) -> bool {
         .unwrap_or_default();
     let size = right.iter().map(|s| s.size).fold(1.0, f64::max);
     // A book's name, perhaps numbered, perhaps with chapter and verse
-    // ("Isaías 7:14", "Miqueias 5:2", "1 Coríntios 10:4", "Isaías"); a
+    // ("Isaías 7:14", "Miqueias 5:2", "1 Coríntios 10:4", "Isaías",
+    // "Salmos 91:11,12", "Isaías 57:15; 66:2"); a
     // numbered one only with its chapter and verse ("16 For God so loved"
     // is a verse, not a source).
     use std::sync::OnceLock;
     static SOURCE: OnceLock<regex::Regex> = OnceLock::new();
     let source = SOURCE.get_or_init(|| {
         regex::Regex::new(
-            r"^(?:[1-3]\s?\p{Lu}[\p{L}'’.]*(?:\s+\p{L}[\p{L}'’.]*){0,2}\s+\d{1,3}[:.,]\d{1,3}(?:[-–]\d{1,3})?|\p{Lu}[\p{L}'’.]*(?:\s+\p{L}[\p{L}'’.]*){0,2}(?:\s+\d{1,3}(?:[:.,]\d{1,3}(?:[-–]\d{1,3})?)?)?)$",
+            r"^(?:[1-3]\s?\p{Lu}[\p{L}'’.]*(?:\s+\p{L}[\p{L}'’.]*){0,2}\s+\d{1,3}[:.,]\d{1,3}(?:[-–,]\d{1,3})*(?:;\s?\d{1,3}[:.]\d{1,3}(?:[-–,]\d{1,3})*)?|\p{Lu}[\p{L}'’.]*(?:\s+\p{L}[\p{L}'’.]*){0,2}(?:\s+\d{1,3}(?:[:.,]\d{1,3}(?:[-–,]\d{1,3})*(?:;\s?\d{1,3}[:.]\d{1,3}(?:[-–,]\d{1,3})*)?)?)?)$",
         )
         .expect("valid pattern")
     });
     !right_text.is_empty()
         && source.is_match(right_text)
-        && right_text.chars().count() <= 24
+        && right_text.chars().count() <= 30
         && right_text
             .chars()
             .next()

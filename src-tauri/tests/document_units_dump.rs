@@ -77,6 +77,14 @@ fn document_units_dump() {
                 }
             }
         }
+        if std::env::var_os("AW_DUMP_BOOKS").is_some() {
+            for b in &r.books {
+                println!(
+                    "book {:?} {:?} {:?} p{:?}",
+                    b.heading, b.detected, b.outside, b.place.page
+                );
+            }
+        }
         for issue in &r.content.issues {
             println!("{:?} {}", issue.severity, issue.message);
         }

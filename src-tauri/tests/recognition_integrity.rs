@@ -45,6 +45,7 @@ fn line(text: &str, page: u32) -> Unit {
         centred: false,
         column: 0,
         gap_before: false,
+        short: false,
     }
 }
 
@@ -658,7 +659,9 @@ fn a_heading_in_the_middle_of_a_verse_leaves_it_unverified() {
     let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
     let page = units[at].place.page.unwrap();
     units[at].text = "7 Invented words, first part.".into();
-    units.insert(at + 1, line("Paul Pleads for Onesimus", page));
+    let mut heading = line("Paul Pleads for Onesimus", page);
+    heading.short = true;
+    units.insert(at + 1, heading);
     units.insert(at + 2, line("and the rest of verse seven.", page));
     let r = recognise(&units);
     assert!(verse(&r, "PHM", 1, 7).unwrap().contains("Onesimus"));

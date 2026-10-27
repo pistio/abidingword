@@ -89,6 +89,10 @@ pub struct Unit {
     /// A PDF line of running text with clear space above it, below another
     /// line of the same column (the layout starts a new block there; v0.24.3).
     pub gap_before: bool,
+    /// A PDF line of running text well short of its column's width (under
+    /// seven tenths): a heading or a paragraph's last line, never a line of
+    /// prose wrapped in the middle (v0.24.3).
+    pub short: bool,
 }
 
 /// Where a unit is in the original document.
@@ -226,6 +230,15 @@ pub fn read_bytes(
                         .filter(|l| !l.text.trim().is_empty())
                         .collect();
                     let aligned = lines.len() == units.len() - from;
+                    // Each column's width, from its lines of running text.
+                    let mut widths: HashMap<u8, (f64, f64)> = HashMap::new();
+                    for l in lines.iter().filter(|l| l.role == LineRole::Text) {
+                        let w = widths
+                            .entry(l.column)
+                            .or_insert((f64::INFINITY, f64::NEG_INFINITY));
+                        w.0 = w.0.min(l.x0);
+                        w.1 = w.1.max(l.x1);
+                    }
                     // Larger text is a heading only where it is little of the
                     // page. When much of the page is larger than its most
                     // common size (a page dense with smaller notes, where the
@@ -259,6 +272,9 @@ pub fn read_bytes(
                             unit.edge = matches!(line.role, LineRole::Head | LineRole::Foot);
                             unit.centred = line.centred;
                             unit.column = line.column;
+                            unit.short = widths.get(&line.column).is_some_and(|(a, b)| {
+                                b - a > 0.0 && line.x1 - line.x0 < 0.7 * (b - a)
+                            });
                             unit.gap_before = i > 0 && {
                                 let above = lines[i - 1];
                                 above.role == LineRole::Text
@@ -482,6 +498,7 @@ fn line_units(
             centred: false,
             column: 0,
             gap_before: false,
+            short: false,
         });
     }
 }
@@ -604,6 +621,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                 centred: false,
                 column: 0,
                 gap_before: false,
+                short: false,
             });
             continue;
         }
@@ -634,6 +652,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     centred: false,
                     column: 0,
                     gap_before: false,
+                    short: false,
                 });
             }
         }
@@ -653,6 +672,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             centred: false,
             column: 0,
             gap_before: false,
+            short: false,
         });
     }
     (out, notes)
