@@ -925,3 +925,25 @@ fn a_verb_that_is_also_an_abbreviation_still_ends_a_sentence() {
     let r = recognise(&units);
     assert!(verse(&r, "PHM", 1, 8).is_some(), "{:?}", errors(&r));
 }
+
+#[test]
+fn a_styled_heading_after_an_ellipsis_is_not_verified_text() {
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    let page = units[at].place.page.unwrap();
+    units[at - 1].text = "7 Then he said to me: Go, I will send you far away…".into();
+    let mut heading = line(
+        "New Tumult. About to Be Flogged, Paul Claims to Be a Roman",
+        page,
+    );
+    heading.styled = true;
+    units.insert(at, heading);
+    units.insert(at + 1, line("V. 8-14: cf. Col 4:9, 10.", page));
+    let r = recognise(&units);
+    assert_eq!(
+        r.unverified.get(&key(7)),
+        Some(&"possibleHeading"),
+        "{:?}",
+        verse(&r, "PHM", 1, 7)
+    );
+}

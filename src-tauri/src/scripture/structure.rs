@@ -2387,7 +2387,7 @@ fn is_sign(c: char) -> bool {
             || c.is_control()
             || c == RAISED_OPEN
             || c == RAISED_CLOSE
-            || ".,;:!?'\"()[]«»„“”‘’-–—/".contains(c))
+            || ".,;:!?'\"()[]«»„“”‘’-–—/…".contains(c))
 }
 
 /// The "page" of the notes of a document without pages.
@@ -6308,11 +6308,19 @@ fn recognise_in(
     // anything set apart as a heading — never verse text (v0.24.3).
     for i in 1..units.len() {
         let u = &units[i];
-        let starts_numbered = clean(&u.text)
-            .trim_start()
-            .chars()
-            .next()
-            .is_some_and(|c| c.is_ascii_digit() || superscript_digit(c).is_some());
+        // (A verse's number: digits alone before the words; "24: Væ …", a
+        // reference continuing the note, is not one.)
+        let text = clean(&u.text);
+        let first = text.split_whitespace().next().unwrap_or("");
+        let starts_numbered = !first.is_empty()
+            && first
+                .chars()
+                .all(|c| c.is_ascii_digit() || superscript_digit(c).is_some())
+            || text
+                .trim_start()
+                .chars()
+                .next()
+                .is_some_and(|c| superscript_digit(c).is_some());
         if u.place.page.is_none()
             && footnotes.contains(&(i - 1))
             && !u.note
