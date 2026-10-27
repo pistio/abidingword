@@ -2166,13 +2166,13 @@ fn numbered_reference() -> &'static regex::Regex {
 }
 
 /// The line a verse's words come from, when they are the whole line, or the
-/// first piece of a short line (60 characters at most) that a number in it
+/// first piece of a short line (100 characters at most) that a number in it
 /// splits (`first`: the verse has had nothing from this line yet).
 fn whole_line<'a>(whole: &'a str, words: &'a str, first: bool) -> Option<&'a str> {
     let (whole, words) = (whole.trim(), words.trim());
     if whole == words {
         Some(words)
-    } else if first && !words.is_empty() && whole.chars().count() <= 60 && whole.starts_with(words)
+    } else if first && !words.is_empty() && whole.chars().count() <= 100 && whole.starts_with(words)
     {
         Some(whole)
     } else {
@@ -2236,6 +2236,20 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
         let one = last.chars().all(|c| c.is_alphabetic() && !c.is_lowercase());
         if run >= 2 || one {
             return Some("possibleHeading");
+        }
+    }
+    // A short abbreviation closing the verse after a sentence's end ("… que
+    // Deus me deu. Ref."): a note's or cross-reference's label.
+    if let [.., before, last] = words[..] {
+        let letters = last.trim_end_matches('.');
+        if last.ends_with('.')
+            && (2..=3).contains(&letters.chars().count())
+            && letters.chars().all(char::is_alphabetic)
+            && letters.chars().next().is_some_and(char::is_uppercase)
+            && letters.chars().skip(1).all(char::is_lowercase)
+            && sentence_end(before)
+        {
+            return Some("reference");
         }
     }
     if let [.., before, last] = words[..] {
@@ -4758,7 +4772,7 @@ impl Reader<'_> {
             && !bare.ends_with([
                 '.', '!', '?', ';', ':', ',', '”', '’', '"', '»', ')', '-', '–', '—', '。',
             ])
-            && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。']) || korean_end)
+            && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。', '…']) || korean_end)
     }
 
     /// Whether a unit is the first line of running text on its PDF page
@@ -4837,9 +4851,17 @@ impl Reader<'_> {
             return false;
         }
         let before = open.text.trim_end().trim_end_matches(is_sign).trim_end();
+        // (A short line in another typeface beginning with a capital, even
+        // where the sentence before it did not end: "³⁸ Dort war er drei
+        // Jahre" / "Absaloms Begnadigung".)
+        let capital = line
+            .chars()
+            .find(|c| c.is_alphabetic())
+            .is_some_and(char::is_uppercase);
         line.chars().count() <= 200
-            && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。'])
-                || korean_end(before))
+            && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。', '…'])
+                || korean_end(before)
+                || (u.short && u.styled && capital))
     }
 
     /// Whether a verse's whole text is labels of notes that name this verse
@@ -5626,8 +5648,23 @@ impl Reader<'_> {
         if open.text.trim().is_empty() || ends_as_sentence(&open.text) {
             return;
         }
-        let between = (open.last_unit + 1..unit.min(self.units.len()))
-            .any(|j| self.units[j].edge && !self.units[j].text.chars().any(|c| c.is_ascii_digit()));
+        // (Or a number alone left out between them: "… beliefen sich auf" /
+        // "53.400.".)
+        let between = (open.last_unit + 1..unit.min(self.units.len())).any(|j| {
+            let u = &self.units[j];
+            let text = clean(&u.text);
+            let number = !text.trim().is_empty()
+                && text
+                    .trim()
+                    .chars()
+                    .all(|c| c.is_ascii_digit() || matches!(c, '.' | ',' | '\''))
+                // (Not a page's number: written with a separator.)
+                && text.trim().trim_end_matches('.').contains(['.', ',', '\'']);
+            // (A line at the edge only when it ends as a sentence does, as
+            // no running head does: "하시니라".)
+            let ending = ends_as_sentence(&text) || korean_end(text.trim_end());
+            (u.edge && ending && !text.chars().any(|c| c.is_ascii_digit())) || (number && !u.edge)
+        });
         if between {
             self.doubt_boundary();
         }
