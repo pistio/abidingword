@@ -46,6 +46,7 @@ fn line(text: &str, page: u32) -> Unit {
         column: 0,
         gap_before: false,
         short: false,
+        indented: false,
     }
 }
 
@@ -859,7 +860,10 @@ fn a_heading_over_two_lines_at_a_verse_s_end_leaves_it_unverified() {
     let mut units = philemon(|_, _, _| {});
     let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
     let page = units[at].place.page.unwrap();
-    units.insert(at + 1, line("Paul Asks a Favour for Onesimus, His Son in the", page));
+    units.insert(
+        at + 1,
+        line("Paul Asks a Favour for Onesimus, His Son in the", page),
+    );
     units.insert(at + 2, line("faith, Now Useful to Him", page));
     let r = recognise(&units);
     assert_eq!(r.unverified.get(&key(7)), Some(&"possibleHeading"));
@@ -868,7 +872,10 @@ fn a_heading_over_two_lines_at_a_verse_s_end_leaves_it_unverified() {
     let mut units = philemon(|_, _, _| {});
     let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
     units[at].text = "7 Invented words, first part.".into();
-    units.insert(at + 1, line("The next sentence of verse seven goes on", page));
+    units.insert(
+        at + 1,
+        line("The next sentence of verse seven goes on", page),
+    );
     units.insert(at + 2, line("and ends here.", page));
     let r = recognise(&units);
     assert_eq!(r.unverified.get(&key(7)), None);
@@ -905,4 +912,16 @@ fn a_verse_ending_with_capitals_or_a_book_s_name_is_not_verified() {
         let r = recognise(&units);
         assert!(r.unverified.contains_key(&key(9)), "{tail}");
     }
+}
+
+#[test]
+fn a_verb_that_is_also_an_abbreviation_still_ends_a_sentence() {
+    // "ver" (Spanish, Portuguese "to see") before the next verse's number.
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units.remove(at);
+    let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
+    units[at].text = format!("7 Mirad para ver. 8 {}", words("Philemon", 1, 8));
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 8).is_some(), "{:?}", errors(&r));
 }

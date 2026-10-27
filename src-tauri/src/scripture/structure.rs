@@ -1738,7 +1738,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                     .rsplit(|c: char| c.is_whitespace() || c == '(')
                     .next()
                     .unwrap_or("");
-                ["v", "vv", "ver", "vgl", "cf", "ps", "p", "s"].contains(&key(word).as_str())
+                ["v", "vv", "vgl", "cf"].contains(&key(word).as_str())
             };
             if abbreviation {
                 return None;
@@ -1790,24 +1790,6 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                     {
                         return None;
                     }
-                }
-            }
-            // A numbered book's name ("1 Corinthiens rapporte …", in an
-            // introduction): the number is part of the name, never a verse,
-            // when the word alone names no book (as "Samuel" or "Jean" do).
-            if !raised && (1..=3).contains(&value) {
-                let word: String = chars[next_index..]
-                    .iter()
-                    .map(|(_, c)| *c)
-                    .skip_while(|c| c.is_whitespace())
-                    .take_while(|c| c.is_alphabetic() || *c == '\'' || *c == '’')
-                    .collect();
-                if word.chars().next().is_some_and(char::is_uppercase)
-                    && book_named(&word, language).is_none()
-                    && book_named(&format!("{value} {word}"), language)
-                        .is_some_and(|b| b.code.starts_with(|c: char| c.is_ascii_digit()))
-                {
-                    return None;
                 }
             }
             // What comes after.
@@ -4006,14 +3988,15 @@ fn block_starts(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
 /// Words a document writes as labels inside its lines (v0.24.3): after a
 /// sentence's end, a word starting with a capital, without punctuation, then
 /// another starting with a capital ("… rooms. Friends We will be glad …",
-/// speakers' names in the Song of Songs) — at least three times, and at
-/// least four times as often as it is followed by a word in lower case, as a
-/// sentence's first word is ("Then he said", "Jesus answered"; "Beloved"
-/// begins sentences elsewhere in the Bible, rarely). Not "I".
+/// speakers' names in the Song of Songs) — at least three times, and never
+/// followed by a word in lower case between its first and last use as a
+/// label, as a sentence's first word is ("Then he said", "Jesus answered";
+/// "Beloved" begins sentences elsewhere in the Bible, not in the Song). Not
+/// "I".
 fn inline_labels(units: &[Unit]) -> HashSet<String> {
-    let mut label: HashMap<String, usize> = HashMap::new();
-    let mut sentence: HashMap<String, usize> = HashMap::new();
-    for unit in units {
+    let mut label: HashMap<String, Vec<usize>> = HashMap::new();
+    let mut sentence: HashMap<String, Vec<usize>> = HashMap::new();
+    for (i, unit) in units.iter().enumerate() {
         let text = clean(&unit.text);
         let words: Vec<&str> = text.split_whitespace().collect();
         for w in words.windows(3) {
@@ -4029,15 +4012,23 @@ fn inline_labels(units: &[Unit]) -> HashSet<String> {
                 continue;
             }
             match w[2].chars().next() {
-                Some(c) if c.is_uppercase() => *label.entry(word.to_string()).or_default() += 1,
-                Some(c) if c.is_lowercase() => *sentence.entry(word.to_string()).or_default() += 1,
+                Some(c) if c.is_uppercase() => label.entry(word.to_string()).or_default().push(i),
+                Some(c) if c.is_lowercase() => {
+                    sentence.entry(word.to_string()).or_default().push(i)
+                }
                 _ => {}
             }
         }
     }
     label
         .into_iter()
-        .filter(|(w, n)| *n >= 3 && *n >= 4 * sentence.get(w).copied().unwrap_or(0))
+        .filter(|(w, at)| {
+            let (first, last) = (at[0], at[at.len() - 1]);
+            at.len() >= 3
+                && !sentence
+                    .get(w)
+                    .is_some_and(|s| s.iter().any(|i| (first..=last).contains(i)))
+        })
         .map(|(w, _)| w)
         .collect()
 }
@@ -4354,6 +4345,8 @@ struct Open {
     /// ended (whatever ends it): set apart if a heading or a line of
     /// references follows it.
     fresh_last_line: bool,
+    /// Whether its last line was a short one (a paragraph's end).
+    last_short: bool,
 }
 
 struct Reader<'a> {
@@ -4648,6 +4641,24 @@ impl Reader<'_> {
         // that the layout can see.
         if open.last_unit != unit
             && self.page_top(unit)
+            && ends_as_sentence(&open.text)
+            && line
+                .chars()
+                .find(|c| c.is_alphabetic())
+                .is_some_and(char::is_uppercase)
+        {
+            return true;
+        }
+        // A short line, flush with its column's left edge, after a short
+        // line that ended a sentence ("… solange sie" / "lebten." / "Baesa,
+        // König von Israel." / "³³ Im dritten …"): a paragraph of its own
+        // that begins without a verse number and is not indented as poetry
+        // is — a heading in the body's type.
+        let u = &self.units[unit];
+        if open.last_unit != unit
+            && u.short
+            && !u.indented
+            && open.last_short
             && ends_as_sentence(&open.text)
             && line
                 .chars()
@@ -5054,6 +5065,7 @@ impl Reader<'_> {
             doubt: None,
             heading_like_end: false,
             fresh_last_line: false,
+            last_short: false,
         });
         self.expect = end.unwrap_or(verse) + 1;
         self.fresh = false;
@@ -5457,10 +5469,11 @@ impl Reader<'_> {
                 .with("verse", m.value),
             );
         }
-        // A raised verse number counting back within the chapter ("¹Hierauf
-        // …" read after verse 2 began in a heading's reference): the verses
-        // were counted wrongly before it. The chapter is refused, never
-        // guessed (v0.24.3).
+        // A raised verse number counting back within the chapter ("⁴" read
+        // after verse 6 began): the verses were counted wrongly before it.
+        // The chapter is refused, never guessed (v0.24.3) — also for verse 1
+        // again: an introduction's "1 Corinthiens …" read as verse 1 before
+        // the chapter's own "¹" would give verse 1 the introduction's words.
         if m.raised && !m.against_word && m.value < expect && m.value >= 1 {
             self.order_issue(book, m.value);
         }
@@ -5514,6 +5527,7 @@ impl Reader<'_> {
             doubt: Some("unnumbered"),
             heading_like_end: false,
             fresh_last_line: false,
+            last_short: false,
         });
         self.close();
     }
@@ -5620,6 +5634,7 @@ impl Reader<'_> {
             open.heading_like_end =
                 heading_like || (open.heading_like_end && !ends_as_sentence(&words));
             open.fresh_last_line = fresh;
+            open.last_short = self.units[unit].short;
             let u = &self.units[unit];
             if heading_like && (u.short || u.gap_before) {
                 open.doubt = open.doubt.or(Some("possibleHeading"));

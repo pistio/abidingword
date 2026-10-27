@@ -93,6 +93,9 @@ pub struct Unit {
     /// seven tenths): a heading or a paragraph's last line, never a line of
     /// prose wrapped in the middle (v0.24.3).
     pub short: bool,
+    /// A PDF line of running text that begins to the right of its column's
+    /// left edge (poetry, a paragraph's indented first line), v0.24.3.
+    pub indented: bool,
 }
 
 /// Where a unit is in the original document.
@@ -275,6 +278,9 @@ pub fn read_bytes(
                             unit.short = widths.get(&line.column).is_some_and(|(a, b)| {
                                 b - a > 0.0 && line.x1 - line.x0 < 0.7 * (b - a)
                             });
+                            unit.indented = widths
+                                .get(&line.column)
+                                .is_some_and(|(a, _)| line.x0 - a > 4.0);
                             unit.gap_before = i > 0 && {
                                 let above = lines[i - 1];
                                 above.role == LineRole::Text
@@ -499,6 +505,7 @@ fn line_units(
             column: 0,
             gap_before: false,
             short: false,
+            indented: false,
         });
     }
 }
@@ -622,6 +629,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                 column: 0,
                 gap_before: false,
                 short: false,
+                indented: false,
             });
             continue;
         }
@@ -653,6 +661,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     column: 0,
                     gap_before: false,
                     short: false,
+                    indented: false,
                 });
             }
         }
@@ -673,6 +682,7 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             column: 0,
             gap_before: false,
             short: false,
+            indented: false,
         });
     }
     (out, notes)
