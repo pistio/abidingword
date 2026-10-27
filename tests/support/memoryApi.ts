@@ -1754,6 +1754,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         origin: verses.length > 0 && doc ? { documentId: doc.id, documentName: doc.name, firstSegment: 0, lastSegment: 0, firstPage: doc.format === "pdf" ? 2 : null, lastPage: null, basis: "automatic" as const, firstOffset: 0 } : null,
         locations,
         places: [],
+        apparatus: [],
       };
     },
     bibleLocationAdd: async (input) => {

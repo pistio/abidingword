@@ -5879,6 +5879,38 @@ fn recognise_in(
         }
     }
     let _ = last;
+    // A note names the verse it is on ("a 23:14 …"): the verse of that
+    // chapter and number begun on the note's page, or the page before.
+    {
+        static CITED: OnceLock<regex::Regex> = OnceLock::new();
+        let cited = CITED.get_or_init(|| {
+            regex::Regex::new(r"^\W{0,3}\p{L}{0,2}\s*(\d{1,3})[:.,](\d{1,3})").expect("valid")
+        });
+        let mut on_page: HashMap<(u16, u32), Vec<(u8, u16, u16)>> = HashMap::new();
+        for (&key, origin) in &out.origins {
+            if let Some(page) = origin.start.page {
+                on_page
+                    .entry((origin.start.document, page))
+                    .or_default()
+                    .push(key);
+            }
+        }
+        for piece in extra.iter_mut().filter(|p| p.kind == "footnote") {
+            let (Some(page), Some(c)) = (piece.place.page, cited.captures(piece.text.trim_start()))
+            else {
+                continue;
+            };
+            let (Ok(chapter), Ok(verse)) = (c[1].parse::<u16>(), c[2].parse::<u16>()) else {
+                continue;
+            };
+            piece.verse = [page, page.saturating_sub(1)]
+                .iter()
+                .filter_map(|p| on_page.get(&(piece.place.document, *p)))
+                .flatten()
+                .find(|k| k.1 == chapter && k.2 == verse)
+                .copied();
+        }
+    }
     out.apparatus.extend(extra);
     out.apparatus.sort_by_key(|a| {
         (

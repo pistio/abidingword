@@ -835,7 +835,18 @@
         "psalmTitle": "Puede incluir el título del salmo."
       },
       "unverified_many": "{{formatted}} versículos encontrados, texto no comprobado",
-      "placesIntro_many": "Encontrados en el documento, pero no se pudo comprobar su texto:"
+      "placesIntro_many": "Encontrados en el documento, pero no se pudo comprobar su texto:",
+      "apparatusTitle_one": "{{formatted}} nota o título apartado aquí",
+      "apparatusTitle_other": "{{formatted}} notas y títulos apartados aquí",
+      "apparatusTitle_many": "{{formatted}} notas y títulos apartados aquí",
+      "apparatusIntro": "Pertenecen al documento, no a los versículos. Se muestran tal como el documento los tiene.",
+      "apparatusKind": {
+        "footnote": "Nota",
+        "crossReference": "Referencia cruzada",
+        "heading": "Título",
+        "subscription": "Palabras finales",
+        "notes": "Notas"
+      }
     }
   }
 }

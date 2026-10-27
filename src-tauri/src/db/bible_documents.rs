@@ -807,6 +807,52 @@ pub struct DocumentPassage {
     /// Verses of the passage found in the document whose text was not
     /// verified (v0.24.3): their places only.
     pub places: Vec<VersePlace>,
+    /// What the recogniser set apart from these verses (notes, headings,
+    /// cross-references), with where it stands (v0.24.3).
+    pub apparatus: Vec<ApparatusPiece>,
+}
+
+/// A piece of a document's apparatus kept beside its verses (v0.24.3).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ApparatusPiece {
+    /// "footnote", "crossReference", "heading", "subscription", "notes",
+    /// "introduction", "runningHead", "frontMatter", "otherBook".
+    pub kind: String,
+    pub text: String,
+    pub document_id: String,
+    pub page: Option<i64>,
+    pub segment: Option<i64>,
+    /// The verse it stood with (canonical), when known.
+    pub reference: Option<String>,
+}
+
+/// The apparatus kept with a passage's verses: notes, headings and
+/// cross-references, at most 100.
+pub fn apparatus(
+    conn: &Connection,
+    translation_id: &str,
+    start_key: i64,
+    end_key: i64,
+) -> AppResult<Vec<ApparatusPiece>> {
+    let mut stmt = conn.prepare(
+        "SELECT kind, content, document_id, page, segment, verse_id FROM bible_document_apparatus
+         WHERE translation_id = ?1 AND verse_id BETWEEN ?2 AND ?3
+           AND kind IN ('footnote', 'crossReference', 'heading', 'subscription', 'notes')
+         ORDER BY verse_id, id LIMIT 100",
+    )?;
+    let rows = stmt.query_map(params![translation_id, start_key, end_key], |r| {
+        let verse: Option<i64> = r.get(5)?;
+        Ok(ApparatusPiece {
+            kind: r.get(0)?,
+            text: r.get(1)?,
+            document_id: r.get(2)?,
+            page: r.get(3)?,
+            segment: r.get(4)?,
+            reference: verse.map(|k| range_canonical(k, k)),
+        })
+    })?;
+    Ok(rows.collect::<Result<_, _>>()?)
 }
 
 const LOCATION_SELECT: &str =
@@ -876,6 +922,12 @@ pub fn locate(
         reference.start_key(),
         reference.end_key(),
     )?;
+    let apparatus = apparatus(
+        conn,
+        translation_id,
+        reference.start_key(),
+        reference.end_key(),
+    )?;
     Ok(DocumentPassage {
         reference: reference.canonical(),
         verses: text.verses,
@@ -883,6 +935,7 @@ pub fn locate(
         origin,
         locations,
         places,
+        apparatus,
     })
 }
 

@@ -835,7 +835,18 @@
         "psalmTitle": "Il peut contenir le titre du psaume."
       },
       "unverified_many": "{{formatted}} versets trouvés, texte non vérifié",
-      "placesIntro_many": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :"
+      "placesIntro_many": "Trouvés dans le document, mais leur texte n’a pas pu être vérifié :",
+      "apparatusTitle_one": "{{formatted}} note ou titre mis à part ici",
+      "apparatusTitle_other": "{{formatted}} notes et titres mis à part ici",
+      "apparatusTitle_many": "{{formatted}} notes et titres mis à part ici",
+      "apparatusIntro": "Ils appartiennent au document, pas aux versets. Ils sont montrés tels que le document les présente.",
+      "apparatusKind": {
+        "footnote": "Note",
+        "crossReference": "Renvoi",
+        "heading": "Titre",
+        "subscription": "Mots de conclusion",
+        "notes": "Notes"
+      }
     }
   }
 }

@@ -778,6 +778,16 @@
         "unnumbered": "Sein Ende ist nicht sicher.",
         "length": "Er ist weit länger als die Verse um ihn herum.",
         "psalmTitle": "Er kann die Psalmüberschrift enthalten."
+      },
+      "apparatusTitle_one": "{{formatted}} Anmerkung oder Überschrift, hier ausgesondert",
+      "apparatusTitle_other": "{{formatted}} Anmerkungen und Überschriften, hier ausgesondert",
+      "apparatusIntro": "Sie gehören zum Dokument, nicht zu den Versen. Sie werden so gezeigt, wie das Dokument sie hat.",
+      "apparatusKind": {
+        "footnote": "Anmerkung",
+        "crossReference": "Querverweis",
+        "heading": "Überschrift",
+        "subscription": "Schlussworte",
+        "notes": "Anmerkungen"
       }
     }
   }

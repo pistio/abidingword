@@ -778,6 +778,16 @@
         "unnumbered": "Its end is not certain.",
         "length": "It is far longer than the verses around it.",
         "psalmTitle": "It may include the psalm’s title."
+      },
+      "apparatusTitle_one": "{{formatted}} note or heading set apart here",
+      "apparatusTitle_other": "{{formatted}} notes and headings set apart here",
+      "apparatusIntro": "These belong to the document, not to the verses. They are shown as the document has them.",
+      "apparatusKind": {
+        "footnote": "Note",
+        "crossReference": "Cross-reference",
+        "heading": "Heading",
+        "subscription": "Closing words",
+        "notes": "Notes"
       }
     }
   }

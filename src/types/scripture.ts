@@ -528,6 +528,18 @@ export interface DocumentPassage {
   locations: MarkedPlace[];
   /** Verses of the passage found in the document whose text could not be checked (v0.24.3). */
   places: VersePlace[];
+  /** Notes, headings and cross-references set apart from these verses, kept with their places (v0.24.3). */
+  apparatus: ApparatusPiece[];
+}
+
+/** A piece of a document's apparatus kept beside its verses (v0.24.3). */
+export interface ApparatusPiece {
+  kind: "footnote" | "crossReference" | "heading" | "subscription" | "notes";
+  text: string;
+  documentId: string;
+  page: number | null;
+  segment: number | null;
+  reference: string | null;
 }
 
 export interface DocumentCoverage {

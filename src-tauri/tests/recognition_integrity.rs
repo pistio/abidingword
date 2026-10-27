@@ -599,3 +599,41 @@ fn a_failing_migration_after_0023_rolls_back_and_leaves_0023_intact() {
         1
     );
 }
+
+#[test]
+fn headings_set_apart_are_kept_with_the_passage_they_stand_in() {
+    let db = Database::open_in_memory().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    // A Markdown Ruth with a section heading of its own between 1:7 and 1:8.
+    let mut text = String::from("# Ruth\n\n");
+    for (chapter, count) in [(1u16, 22u16), (2, 23), (3, 18), (4, 22)] {
+        text.push_str(&format!("## Chapter {chapter}\n\n"));
+        for v in 1..=count {
+            if (chapter, v) == (1, 8) {
+                text.push_str("### Naomi Turns Homeward\n\n");
+            }
+            text.push_str(&format!("{v} {}\n\n", words("Ruth", chapter, v)));
+        }
+    }
+    let path = write(temp.path(), "ruth.md", &text);
+    let staged = import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    db.with_conn(|conn| {
+        let id = add(conn, &staged, true);
+        let passage = kept_documents::locate(
+            conn,
+            &id,
+            &abiding_word_lib::scripture::reference::ScriptureRef::from_canonical(
+                "RUT.1.6-RUT.1.8",
+            )?,
+        )?;
+        assert_eq!(passage.verses.len(), 3);
+        // The heading is in no verse, and is kept beside them.
+        assert!(passage.verses.iter().all(|v| !v.text.contains("Homeward")));
+        assert!(passage
+            .apparatus
+            .iter()
+            .any(|a| a.kind == "heading" && a.text == "Naomi Turns Homeward"));
+        Ok(())
+    })
+    .unwrap();
+}

@@ -176,6 +176,22 @@ export function PassagePanel({
           </ul>
         </div>
       )}
+      {data && data.apparatus.length > 0 && (
+        <details className="text-[0.9375rem]">
+          <summary className="cursor-pointer">{t("scripture.document.passages.apparatusTitle", { count: data.apparatus.length, formatted: formatNumber(data.apparatus.length) })}</summary>
+          <p className="m-0 mt-1 type-meta">{t("scripture.document.passages.apparatusIntro")}</p>
+          <ul className="m-0 mt-1 flex list-none flex-col gap-1 p-0">
+            {data.apparatus.map((piece, i) => (
+              <li key={i} className="flex flex-col">
+                <span className="type-meta">
+                  {[t(`scripture.document.passages.apparatusKind.${piece.kind}`), piece.page !== null ? t("scripture.document.page", { page: formatNumber(piece.page) }) : null].filter(Boolean).join(t("common.listSeparator"))}
+                </span>
+                <span className="break-words">{piece.text}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
       {data && data.verses.length === 0 && data.locations.length === 0 && data.places.length === 0 && <p className="m-0">{t("scripture.document.passages.unknown", { passage: label })}</p>}
       {data && (
         <div className="flex flex-wrap gap-2">
