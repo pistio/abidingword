@@ -1433,6 +1433,8 @@ struct Marker {
     /// A raised number set against the word before it ("Erde⁶Und"): a verse
     /// number or a note's number; the boundary it makes is not verified.
     against_word: bool,
+    /// Set as a superscript (raised digits).
+    raised: bool,
 }
 
 /// Punctuation a verse can end with, before the next verse's number.
@@ -1651,6 +1653,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             glued: false,
             joined: false,
             against_word: false,
+            raised: false,
         }));
         from = taken;
     }
@@ -1834,6 +1837,8 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                 Some('.') if chars.get(k + 1).is_some_and(|(_, d)| d.is_ascii_digit()) => {
                     return None
                 }
+                // "¹⁵...Katath": a raised number before an ellipsis.
+                Some('.' | ',' | ':' | ';') if raised => {}
                 // "1. In the beginning": a numbered verse.
                 Some('.') if chars.get(k + 1).is_none_or(|(_, d)| d.is_whitespace()) => k += 1,
                 Some('%' | '°' | '/' | ':' | ',' | '.' | '€' | '$' | '£') => return None,
@@ -1871,6 +1876,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                     unit_start: at_start,
                     raw: String::new(),
                     against_word: raised_after_word,
+                    raised,
                     glued: chars.get(k).is_some_and(|(_, c)| !c.is_whitespace()),
                     joined: !at_start && {
                         let lead = if opened {
@@ -2129,7 +2135,18 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
         regex::Regex::new(r"(?:^|\s)\p{Lu}[\p{L}.΄ʹ]*\s\d{1,3}[.,]\d{1,2}(?:[^\d]|$)")
             .expect("valid")
     });
-    if reference.is_match(text) || range.is_match(text) || dotted.is_match(text) {
+    // A bracket holding a chapter and verse ("(Vergl. ff. 96,1b-13a …)",
+    // "(Auszug aus 1 Mos. 36,1 ff.)"): a cross-reference read in. ("2,000"
+    // has three digits after its comma, and is a number.)
+    static BRACKET: OnceLock<regex::Regex> = OnceLock::new();
+    let bracket = BRACKET.get_or_init(|| {
+        regex::Regex::new(r"\([^()]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^()]*)?\)").expect("valid")
+    });
+    if reference.is_match(text)
+        || range.is_match(text)
+        || dotted.is_match(text)
+        || bracket.is_match(text)
+    {
         return Some("reference");
     }
     // A raised number left in the verse (a note's number) or a sign.
@@ -3627,7 +3644,9 @@ impl Builder<'_> {
                 // going on in the next verse). One word alone may be the last
                 // word of the verse, wrapped ("Ruth").
                 let unit = &b.units[item.unit];
-                let styled = unit.heading || unit.large || unit.styled;
+                // (A line the page sets apart at its top or bottom edge that
+                // is no running head is set apart by its space, v0.24.3.)
+                let styled = unit.heading || unit.large || unit.styled || unit.edge;
                 // (A line with its passage's cross-references right under it is
                 // set apart by them.)
                 let typographic = styled || capitals(line);
@@ -3756,7 +3775,7 @@ impl Builder<'_> {
             // one that begins it, after a verse that ended its sentence.
             let styled_at = |b: &Self, i: usize| {
                 let unit = &b.units[b.items[i].unit];
-                unit.heading || unit.large || unit.styled
+                unit.heading || unit.large || unit.styled || unit.edge
             };
             let chain = |b: &Self, k: usize| -> Option<usize> {
                 let mut j = k;
@@ -4545,7 +4564,7 @@ impl Reader<'_> {
         let u = &self.units[unit];
         // (Centred alone is not enough: an indented line of poetry can stand
         // in the middle of its column.)
-        if !(u.styled || u.large || u.heading) {
+        if !(u.styled || u.large || u.heading || u.edge) {
             return false;
         }
         // A paragraph of its own that an EPUB or Word document styles (bold,
@@ -5059,11 +5078,14 @@ impl Reader<'_> {
         };
         let expect = self.expect;
         // A number in the middle of a sentence beyond the chapter's standard
-        // count is a quantity ("… pleura Aaron 30 jours.", Numbers 20 has 29
-        // verses), never a verse (v0.24.3): only a number the document sets
-        // apart (a line's start, after punctuation, raised) may go beyond it.
+        // count, followed by a word in lower case, is a quantity ("… pleura
+        // Aaron 30 jours.", Numbers 20 has 29 verses), never a verse
+        // (v0.24.3). In scripts without capitals the text cannot tell, and
+        // other numberings go beyond the count (Jonah 2:11 in Hebrew Bibles).
         let beyond = canon::verse_count(book, chapter).is_some_and(|count| m.value > count);
-        if m.value == expect && !(beyond && m.strength == Strength::Medium) {
+        let lower_after = matches!(self.items.get(at + 1).map(|i| &i.event),
+            Some(Event::Text(t)) if t.trim_start().chars().next().is_some_and(char::is_lowercase));
+        if m.value == expect && !(beyond && m.strength == Strength::Medium && lower_after) {
             match self.best_place(at, m.value, m.strength) {
                 Some(true) => {}
                 Some(false) => return false,
@@ -5257,6 +5279,13 @@ impl Reader<'_> {
                 .with("chapter", chapter)
                 .with("verse", m.value),
             );
+        }
+        // A raised verse number counting back within the chapter ("¹Hierauf
+        // …" read after verse 2 began in a heading's reference): the verses
+        // were counted wrongly before it. The chapter is refused, never
+        // guessed (v0.24.3).
+        if m.raised && !m.against_word && m.value < expect && m.value >= 1 {
+            self.order_issue(book, m.value);
         }
         // Anything else is a number in the text.
         false
