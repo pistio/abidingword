@@ -2032,36 +2032,6 @@ impl StagedImport {
         Ok(())
     }
 
-    /// The corrections in force, to keep (v0.24.3): one for each found
-    /// heading whose book the person chose, with what the recogniser read.
-    pub fn corrections_to_keep(&self) -> Vec<SavedCorrection> {
-        let Some(stage) = self.documents.as_ref() else {
-            return Vec::new();
-        };
-        stage
-            .books
-            .iter()
-            .filter(|b| b.corrected)
-            .filter_map(|b| {
-                let file = stage.files.get(usize::from(b.place.document))?;
-                Some(SavedCorrection {
-                    id: String::new(),
-                    document_position: b.place.document,
-                    document_sha256: file.hash.clone(),
-                    heading: b.heading.clone(),
-                    page: b.place.page,
-                    segment: b.place.segment,
-                    detected_book: b.detected.map(str::to_string),
-                    chosen_book: if b.left_out {
-                        None
-                    } else {
-                        b.book.map(str::to_string)
-                    },
-                })
-            })
-            .collect()
-    }
-
     /// Reads the documents again with the person's corrections (v0.23):
     /// for each found book (by index), another book or none.
     pub fn correct(&mut self, books: &[(usize, Option<String>)]) -> AppResult<()> {

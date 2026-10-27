@@ -94,7 +94,17 @@ pub fn bible_import_preview(
             (paths, ImportOrigin::UserFiles, SuggestedMetadata::default())
         }
     };
-    let staged = import::stage(&paths, origin)?;
+    let mut staged = import::stage(&paths, origin)?;
+    // Documents added before as another Bible (v0.24.3): the corrections the
+    // person made then are applied again, and shown as such.
+    if let Some(stage) = staged.documents.as_ref() {
+        let hashes: Vec<String> = stage.files.iter().map(|f| f.hash.clone()).collect();
+        let core = state.core()?;
+        let saved = core.db.with_conn(|conn| {
+            crate::db::bible_documents::corrections_for_documents(conn, &hashes)
+        })?;
+        staged.apply_saved(saved, true)?;
+    }
     let suggested = SuggestedMetadata {
         name: if suggested.name.is_empty() {
             staged.suggested_name.clone()
@@ -311,6 +321,15 @@ pub fn bible_import_correct(
     let choices: Vec<(usize, Option<String>)> =
         books.into_iter().map(|c| (c.index, c.book)).collect();
     staged.correct(&choices)?;
+    // A Bible already added keeps the person's corrections at once (v0.24.3).
+    if let (ImportOrigin::Existing { translation_id }, Some(stage)) =
+        (&staged.origin, staged.documents.as_ref())
+    {
+        let core = state.core()?;
+        core.db.with_conn(|conn| {
+            crate::db::bible_documents::keep_corrections(conn, translation_id, stage)
+        })?;
+    }
     let suggested = SuggestedMetadata {
         name: staged.suggested_name.clone(),
         ..SuggestedMetadata::default()

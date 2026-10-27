@@ -221,12 +221,18 @@ pub fn bible_document_recognise(
             &relative,
         )?);
     }
-    let staged = import::stage_documents(
+    let mut staged = import::stage_documents(
         &paths,
         ImportOrigin::Existing {
             translation_id: translation_id.clone(),
         },
     )?;
+    // The person's corrections kept for this Bible (v0.24.3), each applied
+    // where it still fits; how each fits is shown.
+    let saved = core
+        .db
+        .with_conn(|conn| bible_documents::corrections(conn, &translation_id))?;
+    staged.apply_saved(saved, false)?;
     let preview = staged.preview(SuggestedMetadata {
         name: translation.name.clone(),
         ..SuggestedMetadata::default()

@@ -1,7 +1,7 @@
 //! Bible documents (v0.23): PDF, EPUB, DOCX, Markdown and plain text read as
 //! Bibles, with their verses found (or not) and traced to the original.
 //!
-//! Every text here is invented for the tests ("Ruth 1:3 — invented words"):
+//! Every text here is invented for the tests ("Ruth c1v3 — invented words"):
 //! no Bible text is used. The books and their verse counts are real, because
 //! the recogniser checks chapters against the standard counts.
 
@@ -38,7 +38,7 @@ fn recognise(file: &DocumentFile) -> Recognition {
 
 /// The invented text of a verse.
 fn words(book: &str, chapter: u16, verse: u16) -> String {
-    format!("Invented words of {book} {chapter}:{verse} for testing.")
+    format!("Invented words of {book} c{chapter}v{verse} for testing.")
 }
 
 fn verse(r: &Recognition, code: &str, chapter: u16, verse: u16) -> Option<String> {
@@ -216,8 +216,8 @@ fn a_psalm_title_before_verse_1_stays_its_title() {
 fn a_psalm_whose_verse_1_has_no_number_is_refused_not_guessed() {
     // Title and verse 1 run together with no number between them.
     let text = psalms_text(true).replace(
-        "\n1 Invented words of Psalm 3:1",
-        "\nInvented words of Psalm 3:1",
+        "\n1 Invented words of Psalm c3v1",
+        "\nInvented words of Psalm c3v1",
     );
     let r = recognise(&read("psalms.txt", text.as_bytes()));
     assert!(
@@ -231,8 +231,8 @@ fn a_psalm_whose_verse_1_has_no_number_is_refused_not_guessed() {
 #[test]
 fn verse_1_without_a_number_after_a_heading_is_reported() {
     let text = ruth_lines(|c| format!("Chapter {c}")).replace(
-        "\n1 Invented words of Ruth 2:1",
-        "\nInvented words of Ruth 2:1",
+        "\n1 Invented words of Ruth c2v1",
+        "\nInvented words of Ruth c2v1",
     );
     let r = recognise(&read("ruth.txt", text.as_bytes()));
     assert_eq!(
@@ -248,8 +248,8 @@ fn verse_1_without_a_number_after_a_heading_is_reported() {
 fn a_missing_verse_is_reported_and_its_neighbours_keep_their_text() {
     // Ruth 2:7's number is missing from the text: its words stay with 2:6 (reported).
     let text = ruth_lines(|c| format!("Chapter {c}")).replace(
-        "\n7 Invented words of Ruth 2:7",
-        "\nInvented words of Ruth 2:7",
+        "\n7 Invented words of Ruth c2v7",
+        "\nInvented words of Ruth c2v7",
     );
     let r = recognise(&read("ruth.txt", text.as_bytes()));
     assert!(errors(&r).is_empty(), "{:?}", errors(&r));
@@ -275,8 +275,8 @@ fn a_missing_verse_is_reported_and_its_neighbours_keep_their_text() {
 fn two_equal_places_for_one_verse_refuse_the_chapter() {
     // "… away. 3 And" twice before verse 4: which is verse 3 cannot be known.
     let text = ruth_lines(|c| format!("Chapter {c}")).replace(
-        "\n3 Invented words of Ruth 1:3 for testing.\n",
-        "\n3 Invented words of Ruth 1:3. 3 More invented words.\n",
+        "\n3 Invented words of Ruth c1v3 for testing.\n",
+        "\n3 Invented words of Ruth c1v3. 3 More invented words.\n",
     );
     let r = recognise(&read("ruth.txt", text.as_bytes()));
     assert!(
@@ -292,11 +292,11 @@ fn numbers_inside_the_text_are_not_verse_numbers() {
     // Counts, references and ordinals in verse text stay text.
     let text = ruth_lines(|c| format!("Chapter {c}"))
         .replace(
-            "\n4 Invented words of Ruth 1:4 for testing.\n",
+            "\n4 Invented words of Ruth c1v4 for testing.\n",
             "\n4 Ruth 1:4 lived there 10 years, see chapter 5 and John 5 and the 5th day, 3:5 too.\n",
         )
         .replace(
-            "\n9 Invented words of Ruth 1:9 for testing.\n",
+            "\n9 Invented words of Ruth c1v9 for testing.\n",
             "\n9 Ruth 1:9 invented words; it was 2,000 cubits and 40% of the field. 12 men came.\n",
         );
     let r = recognise(&read("ruth.txt", text.as_bytes()));
@@ -810,9 +810,9 @@ fn ruth_pdf() -> Vec<u8> {
     // Ruth 2:5 is broken over a page end.
     let at = lines
         .iter()
-        .position(|l| l.starts_with("5 Invented words of Ruth 2:5"))
+        .position(|l| l.starts_with("5 Invented words of Ruth c2v5"))
         .unwrap();
-    lines[at] = "5 Invented words of Ruth 2:5".into();
+    lines[at] = "5 Invented words of Ruth c2v5".into();
     lines.insert(at + 1, "for testing.".into());
     let mut pages: Vec<Vec<String>> = Vec::new();
     let mut page: Vec<String> = Vec::new();
@@ -948,7 +948,7 @@ fn epub_with_book_and_chapter_headings() {
     // Origins point at kept segments (paragraphs) of the EPUB.
     let origin = r.origins[&(8, 4, 22)];
     let segment = origin.start.segment.unwrap() as usize;
-    assert!(file.segments[segment].text.contains("Ruth 4:22"));
+    assert!(file.segments[segment].text.contains("Ruth c4v22"));
 }
 
 #[test]
@@ -1128,7 +1128,7 @@ fn added_by_verse_it_reads_as_any_bible_and_remembers_where_each_verse_was() {
         assert_eq!(documents.len(), 1);
         assert_eq!(documents[0].view, Some("pdf"));
         assert!(documents[0].segment_count > 80);
-        let hits = kept_documents::search(conn, &id, "Ruth 3:7").unwrap();
+        let hits = kept_documents::search(conn, &id, "Ruth c3v7").unwrap();
         assert!(!hits.is_empty());
         assert!(hits.iter().all(|h| h.page_number.is_some()));
         // Ruth 2:5 runs over two pages.
@@ -1775,7 +1775,7 @@ fn notes_at_the_foot_of_a_column_are_not_read_between_the_columns() {
     ];
     for v in 1..=11u16 {
         let text = if v == 3 {
-            format!("{v} Invented words of Ruth 1:3* for testing.")
+            format!("{v} Invented words of Ruth c1v3* for testing.")
         } else {
             format!("{v} {}", words("Ruth", 1, v))
         };
@@ -1805,7 +1805,7 @@ fn a_sign_with_no_note_on_its_page_stays_in_the_text() {
     ];
     for v in 1..=22u16 {
         let text = if v == 3 {
-            format!("{v} Invented words * of Ruth 1:3 for testing.")
+            format!("{v} Invented words * of Ruth c1v3 for testing.")
         } else {
             format!("{v} {}", words("Ruth", 1, v))
         };
@@ -1814,7 +1814,7 @@ fn a_sign_with_no_note_on_its_page_stays_in_the_text() {
     let r = recognise(&read("sign.pdf", &fixtures::pdf_sized(&[lines])));
     assert_eq!(
         verse(&r, "RUT", 1, 3).as_deref(),
-        Some("Invented words * of Ruth 1:3 for testing.")
+        Some("Invented words * of Ruth c1v3 for testing.")
     );
 }
 
@@ -1889,8 +1889,8 @@ fn a_note_sign_is_taken_out_only_where_a_note_names_its_verse() {
     // 5, whose verse no note names, stays as written.
     let pdf = ruth_page(
         |v, line| match v {
-            3 => "3 Invented words of Ruth† 1:3 for testing.".into(),
-            5 => "5 Invented words of Ruth† 1:5 for testing.".into(),
+            3 => "3 Invented words of Ruth† c1v3 for testing.".into(),
+            5 => "5 Invented words of Ruth† c1v5 for testing.".into(),
             _ => line,
         },
         &[(40.0, 420.0, 7.0, "† 1:3 A note on verse three.")],
@@ -1898,11 +1898,11 @@ fn a_note_sign_is_taken_out_only_where_a_note_names_its_verse() {
     let r = recognise(&read("one-note.pdf", &pdf));
     assert_eq!(
         verse(&r, "RUT", 1, 3).as_deref(),
-        Some("Invented words of Ruth 1:3 for testing.")
+        Some("Invented words of Ruth c1v3 for testing.")
     );
     assert_eq!(
         verse(&r, "RUT", 1, 5).as_deref(),
-        Some("Invented words of Ruth† 1:5 for testing.")
+        Some("Invented words of Ruth† c1v5 for testing.")
     );
 }
 
@@ -1935,7 +1935,7 @@ fn a_repeated_speaker_label_inside_a_verse_refuses_the_chapter() {
     let mut text = String::from("Ruth\n\nChapter 1\n\n");
     for v in 1..=22u16 {
         if v == 4 {
-            text.push_str("4 Invented words of Ruth 1:4.\nBeloved\nMore invented words.\n");
+            text.push_str("4 Invented words of Ruth c1v4.\nBeloved\nMore invented words.\n");
             continue;
         }
         text.push_str(&format!("{v} {}\n", words("Ruth", 1, v)));
@@ -2053,7 +2053,7 @@ fn a_stray_number_on_its_own_line_never_renumbers_a_chapter_silently() {
 #[test]
 fn a_word_broken_at_a_line_end_before_or_and_nor_is_joined() {
     let text = ruth_lines(|c| format!("Chapter {c}")).replace(
-        "\n3 Invented words of Ruth 1:3 for testing.\n",
+        "\n3 Invented words of Ruth c1v3 for testing.\n",
         "\n3 Give glory and hon-\nor to the gover-\nnor of the land.\n",
     );
     let r = recognise(&read("hyphen.txt", text.as_bytes()));
@@ -2183,11 +2183,11 @@ fn a_suspended_hyphen_at_a_line_end_is_kept() {
     // word broken at the line's end.
     let text = ruth_lines(|c| format!("Chapter {c}"))
         .replace(
-            "\n3 Invented words of Ruth 1:3 for testing.\n",
+            "\n3 Invented words of Ruth c1v3 for testing.\n",
             "\n3 mit ihrem Lob-\nund Dankopfer.\n",
         )
         .replace(
-            "\n4 Invented words of Ruth 1:4 for testing.\n",
+            "\n4 Invented words of Ruth c1v4 for testing.\n",
             "\n4 ein Dankop-\nfer bringen.\n",
         );
     let r = recognise(&read("hyphen.txt", text.as_bytes()));
@@ -2285,7 +2285,7 @@ fn a_preface_line_naming_a_passage_is_not_a_bible_line() {
 #[test]
 fn a_psalm_number_alone_on_its_line_is_not_verse_text() {
     // "Psalms", then "1" alone, then "1 Blessed is the man …".
-    let text = "Psalms\n\n1\n\n1 Invented words of Psalms 1:1 for testing.\n2 Invented words of Psalms 1:2 for testing.\n3 Invented words of Psalms 1:3 for testing.\n4 Invented words of Psalms 1:4 for testing.\n5 Invented words of Psalms 1:5 for testing.\n6 Invented words of Psalms 1:6 for testing.\n";
+    let text = "Psalms\n\n1\n\n1 Invented words of Psalms c1v1 for testing.\n2 Invented words of Psalms c1v2 for testing.\n3 Invented words of Psalms c1v3 for testing.\n4 Invented words of Psalms c1v4 for testing.\n5 Invented words of Psalms c1v5 for testing.\n6 Invented words of Psalms c1v6 for testing.\n";
     let r = recognise(&read("psalm.txt", text.as_bytes()));
     assert_eq!(
         verse(&r, "PSA", 1, 1),

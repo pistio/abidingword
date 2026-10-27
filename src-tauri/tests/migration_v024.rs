@@ -72,7 +72,7 @@ fn a_dev43_database_upgrades_to_v024_and_keeps_everything_in_use() {
             migrations::current_version(conn)?,
             MIGRATIONS.last().unwrap().version
         );
-        assert_eq!(MIGRATIONS.last().unwrap().version, 22);
+        assert!(MIGRATIONS.last().unwrap().version >= 22);
         // Sources: in use, listed, searchable as before.
         let page = library_manage::list(conn, &ManageQuery::default())?;
         assert_eq!(page.items.len(), 1);

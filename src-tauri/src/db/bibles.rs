@@ -272,6 +272,17 @@ pub fn insert_verses_where(
     content: &StagedContent,
     keep: impl Fn(u8, u16) -> bool,
 ) -> AppResult<()> {
+    insert_verses_matching(tx, id, content, |o, c, _| keep(o, c))
+}
+
+/// Inserts the verses `keep` accepts (v0.24.3: of a document Bible, those
+/// whose text is verified); a chapter's superscription with any of them.
+pub fn insert_verses_matching(
+    tx: &Connection,
+    id: &str,
+    content: &StagedContent,
+    keep: impl Fn(u8, u16, u16) -> bool,
+) -> AppResult<()> {
     let mut add_verse = tx.prepare(
         "INSERT OR IGNORE INTO bible_verses (id, book_id, chapter, verse) VALUES (?1, ?2, ?3, ?4)",
     )?;
@@ -285,13 +296,18 @@ pub fn insert_verses_where(
     )?;
     for (ordinal, book) in &content.books {
         for (chapter, text) in &book.chapters {
-            if !keep(*ordinal, *chapter) {
-                continue;
-            }
+            let mut any = false;
             for (verse, words) in &text.verses {
+                if !keep(*ordinal, *chapter, *verse) {
+                    continue;
+                }
+                any = true;
                 let key = verse_key(*ordinal, *chapter, *verse);
                 add_verse.execute(params![key, ordinal, chapter, verse])?;
                 add_text.execute(params![id, key, words, text.bridges.get(verse)])?;
+            }
+            if !any {
+                continue;
             }
             if let Some(title) = &text.superscription {
                 add_title.execute(params![id, ordinal, chapter, title])?;

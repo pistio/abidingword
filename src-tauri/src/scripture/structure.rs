@@ -5195,7 +5195,15 @@ impl Reader<'_> {
             self.skip_chapter = false;
             let found = &mut self.out.books[entry];
             found.book = chosen.map(|b| b.code);
-            found.corrected = self.corrections.books.contains_key(&entry);
+            // Corrected only where the choice differs from what was found
+            // (a book outside the 66 is left out unless chosen).
+            found.corrected = self.corrections.books.get(&entry).is_some_and(|choice| {
+                let default_left_out = found.outside.is_some();
+                match choice {
+                    Some(book) => Some(book.code) != found.detected || default_left_out,
+                    None => !default_left_out,
+                }
+            });
             // A book outside the 66 is left out unless the person chose a
             // book for it.
             found.left_out = match self.corrections.books.get(&entry) {
