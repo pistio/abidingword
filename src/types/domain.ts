@@ -211,6 +211,8 @@ export interface CreateStudySection {
 }
 
 export interface CreateStudyBlock {
+  /** Optional entry values or evidence provenance, committed with the content. */
+  data?: string;
   sectionId: string;
   blockType: BlockType;
   content?: string;

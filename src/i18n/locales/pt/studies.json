@@ -2666,6 +2666,7 @@
       "search": "Buscar conceito ou pessoa",
       "text": "Campo de texto anterior",
       "entries": "Entradas estruturadas anteriores"
-    }
+    },
+    "passageNote": "Somente os versículos disponíveis na edição selecionada são exibidos e citados. Podem faltar versículos da passagem solicitada."
   }
 }

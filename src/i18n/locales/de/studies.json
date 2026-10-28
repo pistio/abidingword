@@ -2651,6 +2651,7 @@
       "search": "Begriff oder Person suchen",
       "text": "Bisheriges Textfeld",
       "entries": "Bisherige strukturierte Einträge"
-    }
+    },
+    "passageNote": "Angezeigt und zitiert werden nur die Verse, die in der gewählten Ausgabe verfügbar sind. In der angefragten Bibelstelle können Verse fehlen."
   }
 }

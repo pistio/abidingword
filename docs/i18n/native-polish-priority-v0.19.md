@@ -85,15 +85,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | presentación (17), Presentación (7), (none of these) (4) |
 | Portuguese | apresentação (17), Apresentação (7), (none of these) (4) |
 
-**passage** — 229 strings use it in English.
+**passage** — 230 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Bibelstelle (87), Stelle (21), Bibeltext (17), Abschnitt (37), (none of these) (67) |
-| Korean | 본문 (147), 구절 (29), (none of these) (53) |
-| French | passage (183), Passage (26), (none of these) (20) |
-| Spanish | pasaje (159), Pasaje (26), (none of these) (44) |
-| Portuguese | passagem (90), Passagem (14), (none of these) (125) |
+| German | Bibelstelle (88), Stelle (21), Bibeltext (17), Abschnitt (37), (none of these) (67) |
+| Korean | 본문 (148), 구절 (29), (none of these) (53) |
+| French | passage (184), Passage (26), (none of these) (20) |
+| Spanish | pasaje (160), Pasaje (26), (none of these) (44) |
+| Portuguese | passagem (91), Passagem (14), (none of these) (125) |
 
 **source** — 115 strings use it in English.
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1553 strings changed in at least one language since v0.18.10. Spot-check these.
+1554 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -903,6 +903,7 @@ _No open linguistic questions._
 |  | `studies.builder.kinds.word_lookup` | Word lookup | Wort nachschlagen | 원어 찾기 | Recherche lexicale | Consulta léxica | Consulta lexical |
 |  | `studies.builder.kinds.writing` | Writing | Schreiben | 글쓰기 | Rédaction | Escritura | Escrita |
 | screen-reader/label | `studies.builder.label` | Block title | Titel des Bausteins | 구성 요소 제목 | Titre du bloc | Título del bloque | Título do bloco |
+|  | `studies.builder.passageNote` | Only the verses available in the selected edition are shown and cited. The requested passage may contain missing verses. | Angezeigt und zitiert werden nur die Verse, die in der gewählten Ausgabe verfügbar sind. In der angefragten Bibelstelle können Verse fehlen. | 선택한 성경에 있는 구절만 표시하고 인용합니다. 요청한 본문 중 일부 구절은 없을 수 있습니다. | Seuls les versets disponibles dans l’édition choisie sont affichés et cités. Certains versets du passage demandé peuvent manquer. | Solo se muestran y citan los versículos disponibles en la edición elegida. Pueden faltar versículos del pasaje solicitado. | Somente os versículos disponíveis na edição selecionada são exibidos e citados. Podem faltar versículos da passagem solicitada. |
 |  | `studies.builder.query` | Search text or passage | Suchtext oder Bibelstelle | 검색어 또는 성경 구절 | Texte à rechercher ou passage | Texto de búsqueda o pasaje | Texto de busca ou passagem |
 |  | `studies.builder.run` | Look up | Nachschlagen | 찾아보기 | Rechercher | Buscar | Buscar |
 |  | `studies.builder.title` | Template blocks | Vorlagenbausteine | 공부 틀 구성 요소 | Blocs du modèle | Bloques de la plantilla | Blocos do modelo |

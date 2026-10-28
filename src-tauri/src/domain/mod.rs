@@ -448,6 +448,18 @@ pub struct CreateStudyBlock {
     pub field_key: Option<String>,
 }
 
+/// Command payload accepts provenance in the same write as the quotation.
+/// Flattening keeps every historical create payload valid without changing
+/// internal callers that only need a plain writing block.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateStudyBlockRequest {
+    #[serde(flatten)]
+    pub block: CreateStudyBlock,
+    #[serde(default)]
+    pub data: Option<String>,
+}
+
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UpdateStudyBlock {

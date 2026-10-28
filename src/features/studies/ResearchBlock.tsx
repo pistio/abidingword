@@ -60,7 +60,8 @@ export function ResearchBlock({ section, field, onChange, onError }: {
           const parsed = await api.referenceParse(reference, translation.id);
           const passage = await api.scriptureGetPassage({ translationId: translation.id, reference: parsed.canonical });
           if (passage.translationId !== translation.id) throw new Error(t("studies.builder.editionMismatch"));
-          if (passage.verses.length) results.push(evidence(passage.reference.canonical, passage.verses.map(v => `${v.verse} ${v.text}`).join("\n")));
+          // Cite only verses actually returned; an unavailable verse must never be implied by a requested range.
+          results.push(...passage.verses.map(verse => evidence(verse.canonical, `${verse.verse} ${verse.text}`)));
         }
         setHits(results);
       } else if (field.kind === "concordance") {
@@ -78,7 +79,8 @@ export function ResearchBlock({ section, field, onChange, onError }: {
         }
       } else {
         const result = await api.scriptureSearch({ translationId: translation.id, query });
-        setHits(result.hits.filter(hit => hit.translationId === translation.id).map(hit => evidence(hit.reference.canonical, hit.text)));
+        if (result.hits.some(hit => hit.translationId !== translation.id)) throw new Error(t("studies.builder.editionMismatch"));
+        setHits(result.hits.map(hit => evidence(hit.reference.canonical, hit.text)));
         setIncomplete(result.truncated);
       }
       setSearched(true);
@@ -88,12 +90,9 @@ export function ResearchBlock({ section, field, onChange, onError }: {
   const keep = async (evidence: ResearchEvidence) => {
     setSaving(true); onError(null);
     try {
-      const block = await api.studyBlockCreate({ sectionId: section.id, blockType: "quotation", fieldKey: field.key });
-      // Show the created block even if its subsequent write fails; a retry never hides it.
-      const blocks = [...section.blocks, block];
-      onChange({ ...section, blocks });
-      const saved = await api.studyBlockUpdate({ id: block.id, content: evidenceContent(evidence), data: JSON.stringify(evidence) });
-      onChange({ ...section, blocks: blocks.map(item => item.id === saved.id ? saved : item) });
+      await api.studyBlockCreate({ sectionId: section.id, blockType: "quotation", fieldKey: field.key, content: evidenceContent(evidence), data: JSON.stringify(evidence) });
+      const current = (await api.studySectionList(section.studyId)).find(part => part.id === section.id);
+      if (current) onChange(current);
     } catch (error) { onError(toApiError(error).message); }
     finally { setSaving(false); }
   };
@@ -107,6 +106,7 @@ export function ResearchBlock({ section, field, onChange, onError }: {
     <h3 className="m-0 font-medium">{label}</h3>
     {guidance && <details><summary>{t("studies.flow.guidance")}</summary><p>{guidance}</p></details>}
     <p className="text-text-muted">{t(field.kind === "cross_references" ? "studies.builder.crossReferenceNote" : "studies.builder.evidenceNote")}</p>
+    {(field.kind === "passage" || field.kind === "cross_references") && <p className="text-text-muted">{t("studies.builder.passageNote")}</p>}
     <label className="flex flex-col">{t("studies.builder.edition")}<select className="aw-input" disabled={busy} value={edition} onChange={e => { setEdition(e.target.value); setEntries([]); }}><option value="">{t("studies.builder.chooseEdition")}</option>{editions.data?.filter(item => item.kind === "structured").map(item => <option key={item.id} value={item.id}>{item.name} ({item.shortName})</option>)}</select></label>
     {editions.error && <p role="alert">{editions.error.message}</p>}
     <label className="flex flex-col">{t("studies.builder.query")}<input className="aw-input px-2" disabled={busy} value={query} onChange={e => { setQuery(e.target.value); setEntries([]); }} /></label>

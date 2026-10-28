@@ -1343,6 +1343,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     },
     studyBlockCreate: async (input) => {
       find(state.sections, input.sectionId, "section");
+      if (input.data !== undefined) {
+        const data: unknown = JSON.parse(input.data);
+        if (!input.fieldKey || !data || typeof data !== "object" || Array.isArray(data) || !Object.values(data).every(value => typeof value === "string")) throw new Error("Invalid entry data");
+      }
       const t = now();
       const block: StudyBlock = {
         id: id(),
@@ -1351,7 +1355,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         position: state.blocks.filter((b) => b.sectionId === input.sectionId).length,
         content: input.content ?? "",
         fieldKey: input.fieldKey ?? null,
-        data: null,
+        data: input.data ?? null,
         createdAt: t,
         updatedAt: t,
         revision: 1,

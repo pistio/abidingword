@@ -2666,6 +2666,7 @@
       "search": "Recherche de concept ou de personne",
       "text": "Ancien champ de texte",
       "entries": "Anciennes entrées structurées"
-    }
+    },
+    "passageNote": "Seuls les versets disponibles dans l’édition choisie sont affichés et cités. Certains versets du passage demandé peuvent manquer."
   }
 }

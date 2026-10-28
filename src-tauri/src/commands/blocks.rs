@@ -2,15 +2,15 @@ use tauri::State;
 
 use super::CommandResult;
 use crate::db::blocks;
-use crate::domain::{CreateStudyBlock, Reorder, StudyBlock, UpdateStudyBlock};
+use crate::domain::{CreateStudyBlockRequest, Reorder, StudyBlock, UpdateStudyBlock};
 use crate::state::AppState;
 
 #[tauri::command(async)]
 pub fn study_block_create(
     state: State<'_, AppState>,
-    input: CreateStudyBlock,
+    input: CreateStudyBlockRequest,
 ) -> CommandResult<StudyBlock> {
-    state.db(|conn| blocks::create(conn, &input))
+    state.db(|conn| blocks::create_with_data(conn, &input.block, input.data.as_deref()))
 }
 
 #[tauri::command(async)]

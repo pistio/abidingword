@@ -2651,6 +2651,7 @@
       "search": "Concept or person search",
       "text": "Earlier text field",
       "entries": "Earlier structured entries"
-    }
+    },
+    "passageNote": "Only the verses available in the selected edition are shown and cited. The requested passage may contain missing verses."
   }
 }
