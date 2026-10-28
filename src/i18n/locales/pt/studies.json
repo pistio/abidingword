@@ -806,6 +806,82 @@
             }
           }
         }
+      },
+      "biblical-character-study": {
+        "name": "Estudo de personagem bíblico",
+        "description": "Estude a vida e o caráter de uma pessoa com base nas passagens bíblicas relevantes.",
+        "sections": {
+          "person": {
+            "title": "Pessoa e passagens",
+            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name."
+          },
+          "setting": {
+            "title": "Contexto histórico e bíblico",
+            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain."
+          },
+          "life": {
+            "title": "Vida, palavras e ações",
+            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography."
+          },
+          "character": {
+            "title": "Caráter e decisões",
+            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives."
+          },
+          "god": {
+            "title": "A ação de Deus e a avaliação bíblica",
+            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary."
+          },
+          "conclusion": {
+            "title": "Principais conclusões",
+            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions."
+          },
+          "application": {
+            "title": "Aplicação",
+            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action."
+          },
+          "comparisons": {
+            "title": "Pessoas e passagens relacionadas",
+            "guidance": "Compare relevant people or passages only where the connections illuminate the text."
+          }
+        }
+      },
+      "whole-book-study": {
+        "name": "Estudo de um livro da Bíblia",
+        "description": "Leia um livro bíblico inteiro, compreenda sua estrutura e mensagem e aplique seus ensinamentos.",
+        "sections": {
+          "reading": {
+            "title": "Leia o livro inteiro",
+            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries."
+          },
+          "setting": {
+            "title": "Autor, destinatários e contexto",
+            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions."
+          },
+          "overview": {
+            "title": "Visão geral e questões centrais",
+            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme."
+          },
+          "outline": {
+            "title": "Estrutura e conteúdo",
+            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole."
+          },
+          "argument": {
+            "title": "Mensagem e desenvolvimento",
+            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening."
+          },
+          "synthesis": {
+            "title": "Mensagem central",
+            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text."
+          },
+          "application": {
+            "title": "Aplicação",
+            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible."
+          },
+          "further": {
+            "title": "Aprofundamento",
+            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
+          }
+        }
       }
     },
     "defaultSection": "Notas",
@@ -818,7 +894,9 @@
     "biblical_theology": "Estudo de teologia bíblica",
     "systematic_theology": "Estudo de teologia sistemática",
     "teaching": "Ensino / Sermão",
-    "custom": "Estudo personalizado"
+    "custom": "Estudo personalizado",
+    "character": "Estudo de personagem bíblico",
+    "book": "Estudo de um livro bíblico"
   },
   "status": {
     "active": "Ativo",
