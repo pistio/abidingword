@@ -258,7 +258,7 @@
         }
       },
       "pozetek-study": {
-        "name": "POZETEK — 성경 본문 살펴보기",
+        "name": "성경 본문 연구",
         "description": "어떤 본문에도 쓸 수 있는 안내형 공부: 관찰(인물, 장소, 시간, 사건, 문맥), 해석(설명), 중심 메시지(핵심), 그리고 별도의 개인 적용.",
         "sections": {
           "persons": {
@@ -495,7 +495,7 @@
         }
       },
       "ten-step-exegesis": {
-        "name": "열 단계로 성경 본문 해석하기",
+        "name": "10단계 성경 연구",
         "description": "Helge Stadelmann과 Thomas Richter가 제시한 열 단계 해석 방법을 따르는 심층 성경 연구입니다. 안내문과 마태복음 8:18–27의 펼쳐 볼 수 있는 예시는 독자적으로 작성되었습니다.",
         "sections": {
           "step-01-familiarity": {
