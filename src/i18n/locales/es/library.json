@@ -30,12 +30,13 @@
     "backToWorkspace": "Volver al espacio de trabajo",
     "title": "Biblioteca",
     "intro": "Tus propios libros, apuntes y documentos, guardados en este ordenador. Cada resultado de búsqueda muestra exactamente de dónde procede.",
-    "addedOn": "se añadió el {{date}}"
+    "addedOn": "se añadió el {{date}}",
+    "manage": "Gestionar en Configuración"
   },
   "search": {
     "heading": "Buscar en la biblioteca",
     "label": "Buscar en la biblioteca",
-    "placeholder": "Palabras o \"frase exacta\"",
+    "placeholder": "Título, autor, palabras o \"frase exacta\"",
     "nothingFound": "No se encontró nada en tu biblioteca.",
     "resultCount_one": "Se encontró {{number}} pasaje.",
     "resultCount_many": "Se encontraron {{number}} pasajes.",
@@ -44,7 +45,10 @@
     "resultCountMore_many": "Se encontraron {{number}} o más pasajes.",
     "resultCountMore_other": "Se encontraron {{number}} o más pasajes.",
     "resultsLabel": "Resultados de la búsqueda en la biblioteca",
-    "showMore": "Mostrar más resultados"
+    "showMore": "Mostrar más resultados",
+    "byName": "Título, autor o nombre de archivo",
+    "byNameLabel": "Fuentes que coinciden con el título, el autor o el nombre de archivo",
+    "inText": "En el texto"
   },
   "filter": {
     "heading": "Todas las fuentes",
@@ -55,7 +59,11 @@
     "allLanguages": "Todos los idiomas",
     "noMatch": "Ninguna fuente coincide con estos filtros.",
     "empty": "Tu biblioteca todavía está vacía. Añade un archivo PDF, EPUB, Word, Markdown o de texto.",
-    "listLabel": "Fuentes"
+    "listLabel": "Fuentes",
+    "archive": "Estado",
+    "inUse": "En uso",
+    "both": "En uso y archivado",
+    "archiveHelp": "Las fuentes en uso aparecen junto a tu estudio. Las fuentes archivadas siguen en la biblioteca y fuera del panel de fuentes hasta que las restaures."
   },
   "remove": {
     "label": "Quitar {{title}}",
@@ -104,6 +112,13 @@
     "sharing": "Uso compartido",
     "isbn": "ISBN {{isbn}}",
     "fromFile": "de «{{fileName}}»"
+  },
+  "about": {
+    "summary": "Acerca de esta fuente",
+    "fileHere": "La copia del archivo que guarda Abiding Word está en este ordenador.",
+    "fileMissing": "No se encuentra la copia del archivo que guarda Abiding Word. El registro de esta fuente se conserva.",
+    "citation": "Referencia",
+    "archivedNote": "Archivado. Esta fuente sigue fuera del panel de fuentes hasta que la restaures en Configuración."
   },
   "reader": {
     "showEarlier": "Mostrar texto anterior",

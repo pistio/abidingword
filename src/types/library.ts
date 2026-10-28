@@ -46,6 +46,14 @@ export interface Source {
   contentHash: string | null;
   createdAt: string;
   updatedAt: string;
+  /** "active", "archived" or "trashed". */
+  state: ItemState;
+  /** Names of the collections this source belongs to. */
+  collectionNames: string[];
+  /** Names of the tags on this source. */
+  tagNames: string[];
+  /** Whether Abiding Word's copy of the file is on this computer. */
+  filePresent: boolean;
 }
 
 export interface SourceSummary {

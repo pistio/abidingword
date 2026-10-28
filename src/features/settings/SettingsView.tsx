@@ -68,6 +68,8 @@ interface SettingsViewProps {
   templatesVersion?: number;
   onEditTeachingTemplate: (templateId: string | null) => void;
   teachingTemplatesVersion?: number;
+  /** Open this section on arrival (Library → Settings → Sources). */
+  initialSection?: SectionName | null;
 }
 
 /**
@@ -75,7 +77,7 @@ interface SettingsViewProps {
  * where things stand, opened only when wanted. The header with "Back" and a
  * jump list stays at the top while the page scrolls.
  */
-export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditTemplate, templatesVersion = 0, onEditTeachingTemplate, teachingTemplatesVersion = 0 }: SettingsViewProps) {
+export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditTemplate, templatesVersion = 0, onEditTeachingTemplate, teachingTemplatesVersion = 0, initialSection = null }: SettingsViewProps) {
   const { t, i18n } = useTranslation();
   const { theme, background } = useTheme();
   const updates = useUpdates();
@@ -84,9 +86,11 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
   const toggles = useRef(new Map<SectionName, HTMLButtonElement>());
   useEffect(() => heading.current?.focus(), []);
 
-  const [open, setOpen] = useState<ReadonlySet<SectionName>>(
-    () => new Set(readLocal<string[]>(OPEN_KEY, []).filter((n): n is SectionName => (SETTINGS_SECTIONS as readonly string[]).includes(n))),
-  );
+  const [open, setOpen] = useState<ReadonlySet<SectionName>>(() => {
+    const stored = new Set(readLocal<string[]>(OPEN_KEY, []).filter((n): n is SectionName => (SETTINGS_SECTIONS as readonly string[]).includes(n)));
+    if (initialSection) stored.add(initialSection);
+    return stored;
+  });
   // Closed by the person while an update needed them: stays closed for that state only.
   const [updatesClosedFor, setUpdatesClosedFor] = useState<string | null>(null);
   const updateKey = updates.state.kind === "available" || updates.state.kind === "installing" ? `${updates.state.kind}:${updates.state.update.version}` : updates.state.kind;
@@ -103,6 +107,18 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
       return next;
     });
   };
+
+  // A direct visit opens that section (its state starts open) and moves focus there.
+  useEffect(() => {
+    if (!initialSection) return;
+    const name = initialSection;
+    writeLocal(OPEN_KEY, [...new Set([...readLocal<string[]>(OPEN_KEY, []), name])]);
+    requestAnimationFrame(() => {
+      const toggle = toggles.current.get(name);
+      toggle?.closest("section")?.scrollIntoView?.({ block: "start" });
+      toggle?.focus({ preventScroll: true });
+    });
+  }, [initialSection]);
 
   /** From the jump list: open the section, bring it into view and move focus to it. */
   const jump = (name: SectionName) => {

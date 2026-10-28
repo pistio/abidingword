@@ -30,19 +30,23 @@
     "backToWorkspace": "Zurück zum Arbeitsbereich",
     "title": "Bibliothek",
     "intro": "Deine eigenen Bücher, Notizen und Dokumente, gespeichert auf diesem Computer. Jedes Suchergebnis zeigt genau, woher es stammt.",
-    "addedOn": "hinzugefügt am {{date}}"
+    "addedOn": "hinzugefügt am {{date}}",
+    "manage": "In den Einstellungen verwalten"
   },
   "search": {
     "heading": "Bibliothek durchsuchen",
     "label": "Bibliothek durchsuchen",
-    "placeholder": "Wörter oder \"genauer Wortlaut\"",
+    "placeholder": "Titel, Autor, Wörter oder \"genauer Wortlaut\"",
     "nothingFound": "In deiner Bibliothek wurde nichts gefunden.",
     "resultCount_one": "{{number}} Fundstelle gefunden.",
     "resultCount_other": "{{number}} Fundstellen gefunden.",
     "resultCountMore_one": "{{number}}+ Fundstelle gefunden.",
     "resultCountMore_other": "{{number}}+ Fundstellen gefunden.",
     "resultsLabel": "Suchergebnisse in der Bibliothek",
-    "showMore": "Weitere Ergebnisse anzeigen"
+    "showMore": "Weitere Ergebnisse anzeigen",
+    "byName": "Titel, Autor oder Dateiname",
+    "byNameLabel": "Quellen zu Titel, Autor oder Dateiname",
+    "inText": "Im Text"
   },
   "filter": {
     "heading": "Alle Quellen",
@@ -53,7 +57,11 @@
     "allLanguages": "Alle Sprachen",
     "noMatch": "Keine Quellen entsprechen diesen Filtern.",
     "empty": "Deine Bibliothek ist noch leer. Füge eine PDF-, EPUB-, Word-, Markdown- oder Textdatei hinzu.",
-    "listLabel": "Quellen"
+    "listLabel": "Quellen",
+    "archive": "Status",
+    "inUse": "In Gebrauch",
+    "both": "In Gebrauch und archiviert",
+    "archiveHelp": "Quellen in Gebrauch erscheinen neben deiner Studie. Archivierte Quellen bleiben in der Bibliothek und außerhalb des Quellenbereichs, bis du sie wiederherstellst."
   },
   "remove": {
     "label": "{{title}} entfernen",
@@ -96,6 +104,13 @@
     "sharing": "Weitergabe",
     "isbn": "ISBN {{isbn}}",
     "fromFile": "aus „{{fileName}}“"
+  },
+  "about": {
+    "summary": "Über diese Quelle",
+    "fileHere": "Die Kopie, die Abiding Word von der Datei angelegt hat, liegt auf diesem Computer.",
+    "fileMissing": "Die Kopie, die Abiding Word von der Datei angelegt hat, ist nicht zu finden. Der Eintrag dieser Quelle bleibt erhalten.",
+    "citation": "Quellenangabe",
+    "archivedNote": "Archiviert. Sie bleibt außerhalb des Quellenbereichs, bis du sie unter Einstellungen → Quellen wiederherstellst."
   },
   "reader": {
     "showEarlier": "Früheren Text anzeigen",

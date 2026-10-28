@@ -129,6 +129,9 @@ fn a_text_pdf_keeps_page_provenance() {
             &SearchLibrary {
                 query: "costly".into(),
                 offset: None,
+                source_type: None,
+                language: None,
+                state: None,
             },
         )?;
         assert_eq!(hits.hits.len(), 1);
@@ -422,6 +425,9 @@ fn search_pages_results_and_stays_consistent_after_removal() {
             &SearchLibrary {
                 query: "grace".into(),
                 offset: None,
+                source_type: None,
+                language: None,
+                state: None,
             },
         )?;
         assert_eq!(first.hits.len(), 50);
@@ -431,6 +437,9 @@ fn search_pages_results_and_stays_consistent_after_removal() {
             &SearchLibrary {
                 query: "grace".into(),
                 offset: Some(50),
+                source_type: None,
+                language: None,
+                state: None,
             },
         )?;
         assert_eq!((second.hits.len(), second.has_more), (10, false));
@@ -441,7 +450,10 @@ fn search_pages_results_and_stays_consistent_after_removal() {
             conn,
             &SearchLibrary {
                 query: "grace".into(),
-                offset: None
+                offset: None,
+                source_type: None,
+                language: None,
+                state: None,
             }
         )?
         .hits
@@ -567,6 +579,9 @@ fn findings_cite_segments_and_survive_restart_and_removal() {
                 &SearchLibrary {
                     query: "union".into(),
                     offset: None,
+                    source_type: None,
+                    language: None,
+                    state: None,
                 },
             )?
             .hits

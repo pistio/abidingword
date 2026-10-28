@@ -26,6 +26,8 @@ type Overlay = { kind: "addBible" } | { kind: "template"; templateId: string | n
 export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace }) {
   const { t } = useTranslation();
   const [view, setView] = useState<View>("workspace");
+  /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
+  const [settingsSection, setSettingsSection] = useState<"sources" | null>(null);
   const [returnTo, setReturnTo] = useState<View>("workspace");
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [templatesVersion, setTemplatesVersion] = useState(0);
@@ -113,7 +115,13 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         sourcesSide={sideOf("sources")}
         onToggleScripture={() => setOpen("scripture", !open.scripture)}
         onToggleSources={() => setOpen("sources", !open.sources)}
-        onOpenSettings={() => setView(view === "settings" ? "workspace" : "settings")}
+        onOpenSettings={() => {
+          if (view === "settings") setView("workspace");
+          else {
+            setSettingsSection(null);
+            setView("settings");
+          }
+        }}
         onSearch={revealScripture}
         onSearchStudies={setStudySearch}
         onSearchLibrary={libraryNav.openLibrary}
@@ -122,6 +130,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
       {view === "settings" && (
         <SettingsView
           info={info}
+          initialSection={settingsSection}
           onClose={() => setView("workspace")}
           onResetLayout={layout.reset}
           onAddBible={addBible}
@@ -137,6 +146,10 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
           initialQuery={library.query}
           onSearched={(query) => setLibrary((current) => ({ ...current, query }))}
           onClose={() => setView("workspace")}
+          onManage={() => {
+            setSettingsSection("sources");
+            setView("settings");
+          }}
           onRemoved={(sourceId) => setPaneSource((current) => (current?.sourceId === sourceId ? null : current))}
         />
       )}
