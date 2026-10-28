@@ -1,44 +1,49 @@
 {
   "key": "word-study",
-  "name": "Word Study",
-  "description": "One word traced through Scripture, from its uses to its meaning and weight.",
+  "name": "Biblical Word Study",
+  "description": "Investigate a biblical word in its original language and contexts without assuming one meaning in every occurrence.",
   "studyType": "word",
   "sections": [
     {
       "key": "word",
-      "title": "Word",
-      "guidance": "The word being studied, its original form and how translations render it."
+      "title": "Word and question",
+      "guidance": "Identify the Hebrew or Greek lemma, spelling and the particular passage or question. A translated English word may represent several different original words."
     },
     {
       "key": "occurrences",
-      "title": "Occurrences",
-      "guidance": "Where the word appears. (Automatic occurrence lists arrive with the concordance.)"
+      "title": "Occurrences and translations",
+      "guidance": "Find representative occurrences of this lemma and note how translators render it. Distinguish the lemma from inflected forms and other words with similar translations."
     },
     {
       "key": "semantic-range",
-      "title": "Semantic Range",
-      "guidance": "The range of meanings the word carries, and what decides between them."
+      "title": "Range of meanings",
+      "guidance": "Describe possible meanings from contextual evidence. Do not derive meaning solely from etymology or import every possible sense into one occurrence."
     },
     {
       "key": "key-passages",
-      "title": "Key Passages",
-      "guidance": "The passages where the word matters most."
+      "title": "Passages in context",
+      "guidance": "Read each significant occurrence in its sentence, paragraph, genre and historical setting. Record which sense best fits and why."
     },
     {
       "key": "conclusions",
-      "title": "Conclusions",
-      "guidance": "What you have concluded, and what remains open."
+      "title": "Meaning and conclusion",
+      "guidance": "Explain what the word means in the passage under study, citing textual evidence. State uncertainties and avoid making the word carry more theology than the passage supports."
     },
     {
-      "key": "immediate-contexts",
-      "title": "Immediate Contexts",
-      "guidance": "How each important use is shaped by its sentence and paragraph.",
+      "key": "application",
+      "title": "Application",
+      "guidance": "What follows for belief and life from the passage's teaching, rather than from a dictionary definition alone?"
+    },
+    {
+      "key": "grammar",
+      "title": "Grammar and syntax",
+      "guidance": "Where helpful, examine grammatical form, syntax and discourse function. Use reputable linguistic tools; original-language expertise is optional.",
       "optional": true
     },
     {
       "key": "theological-significance",
-      "title": "Theological Significance",
-      "guidance": "What the word contributes to the Bible's teaching.",
+      "title": "Biblical-theological connections",
+      "guidance": "Compare related biblical teaching while keeping each passage's own meaning distinct.",
       "optional": true
     }
   ]
