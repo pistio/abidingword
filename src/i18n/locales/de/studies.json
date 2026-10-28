@@ -186,54 +186,62 @@
         }
       },
       "topical-study": {
-        "name": "Themenstudium",
-        "description": "Eine Frage oder ein Thema, verfolgt durch die ganze Schrift.",
+        "name": "Thematische Bibelstudie",
+        "description": "Eine konkrete biblische Frage beantworten, indem relevante Texte zuerst in ihrem Zusammenhang ausgelegt werden.",
         "sections": {
           "topic": {
-            "title": "Frage / Thema",
-            "guidance": "Die Frage, die du stellst, so klar wie möglich formuliert."
+            "title": "Thema und Fragen",
+            "guidance": "Formuliere das Thema, seine Grenzen und die Fragen, die beantwortet werden sollen. Beginne nicht mit einem fertigen Ergebnis."
           },
           "key-passages": {
-            "title": "Zentrale Bibelstellen",
-            "guidance": "Die Bibelstellen, die am direktesten davon sprechen."
+            "title": "Relevante Bibelstellen",
+            "guidance": "Sammle aussagekräftige Bibelstellen, auch solche, die eine erste Annahme einschränken oder infrage stellen. Halte fest, warum jede Stelle wichtig ist."
           },
           "biblical-context": {
             "title": "Biblischer Kontext",
             "guidance": "Wo und wie das Thema in der Bibel vorkommt."
           },
           "main-themes": {
-            "title": "Hauptlinien",
-            "guidance": "Die wichtigsten Linien der Lehre, die sich zeigen."
+            "title": "Erkenntnisse vergleichen und ordnen",
+            "guidance": "Ordne die Bibelstellen nach ihrer tatsächlichen Aussage. Beachte Übereinstimmungen, Unterschiede, Entwicklungen und offene Fragen."
           },
           "difficult-passages": {
-            "title": "Schwierige Bibelstellen",
-            "guidance": "Texte, die in eine andere Richtung zu weisen scheinen, und wie sie zu lesen sind."
+            "title": "Schwierige oder ergänzende Texte",
+            "guidance": "Untersuche scheinbar widersprüchliche Stellen, ohne ihren Zusammenhang zu übergehen oder vorschnell alles gleichzusetzen."
           },
           "theology": {
             "title": "Theologie",
             "guidance": "Wie sich die Bibelstellen zu einer stimmigen Lehre zusammenfügen."
           },
           "conclusions": {
-            "title": "Schlussfolgerungen",
-            "guidance": "Deine Schlussfolgerungen, mit den Bibelstellen, die sie tragen."
+            "title": "Biblische Schlussfolgerungen",
+            "guidance": "Beantworte die Ausgangsfragen mit Bibelstellen. Unterscheide klare Aussagen der Schrift von begründeten Schlussfolgerungen und ungeklärten Fragen."
           },
           "application": {
             "title": "Anwendung",
-            "guidance": "Was dies für Glauben, Anbetung und Leben bedeutet."
+            "guidance": "Leite konkrete Folgen für Glauben, Anbetung, Beziehungen und Handeln aus den Ergebnissen ab."
+          },
+          "passage-study": {
+            "title": "Bibelstellen untersuchen",
+            "guidance": "Lies jeden Text in seinem literarischen, geschichtlichen und heilsgeschichtlichen Zusammenhang. Unterscheide ausdrückliche Lehre, erzählte Ereignisse, Schlussfolgerungen und Anwendung."
+          },
+          "biblical-theology": {
+            "title": "Einordnung in die ganze Bibel",
+            "guidance": "Berücksichtige gegebenenfalls, wie sich die Lehre im Verlauf der Bündnisse entfaltet und auf Christus und das Evangelium bezieht, ohne einen Bezug zu erzwingen."
           }
         }
       },
       "word-study": {
-        "name": "Wortstudium",
-        "description": "Ein Wort, durch die Schrift verfolgt – von seinem Gebrauch bis zu seiner Bedeutung und seinem Gewicht.",
+        "name": "Biblische Wortstudie",
+        "description": "Ein biblisches Wort in seiner Ursprungssprache und seinen Zusammenhängen untersuchen, ohne überall dieselbe Bedeutung vorauszusetzen.",
         "sections": {
           "word": {
-            "title": "Wort",
-            "guidance": "Das untersuchte Wort oder der Ausdruck, und wie Übersetzungen es wiedergeben."
+            "title": "Wort und Fragestellung",
+            "guidance": "Bestimme das hebräische oder griechische Grundwort, seine Schreibweise und die betreffende Bibelstelle oder Frage. Ein deutsches Übersetzungswort kann mehrere unterschiedliche Grundwörter wiedergeben."
           },
           "occurrences": {
-            "title": "Vorkommen",
-            "guidance": "Wo das Wort vorkommt; die Konkordanz kann seine Vorkommen auflisten."
+            "title": "Vorkommen und Übersetzungen",
+            "guidance": "Suche aussagekräftige Vorkommen dieses Grundworts und vergleiche die Übersetzungen. Unterscheide das Grundwort von seinen gebeugten Formen und anderen Wörtern mit ähnlicher Übersetzung."
           },
           "immediate-contexts": {
             "title": "Unmittelbarer Kontext",
@@ -241,19 +249,653 @@
           },
           "semantic-range": {
             "title": "Bedeutungen",
-            "guidance": "Die Bandbreite der Bedeutungen des Wortes und was zwischen ihnen entscheidet."
+            "guidance": "Beschreibe mögliche Bedeutungen anhand des Zusammenhangs. Leite die Bedeutung nicht allein aus der Wortherkunft ab und übertrage nicht alle möglichen Bedeutungen auf eine einzelne Stelle."
           },
           "key-passages": {
-            "title": "Zentrale Bibelstellen",
-            "guidance": "Die Bibelstellen, an denen das Wort das größte Gewicht hat."
+            "title": "Bibelstellen im Zusammenhang",
+            "guidance": "Lies jedes wichtige Vorkommen im Satz-, Abschnitts-, Gattungs- und geschichtlichen Zusammenhang. Halte fest, welche Bedeutung am besten passt und warum."
           },
           "theological-significance": {
-            "title": "Theologische Bedeutung",
-            "guidance": "Was das Wort zur Lehre der Bibel beiträgt."
+            "title": "Biblisch-theologische Bezüge",
+            "guidance": "Vergleiche verwandte biblische Aussagen, ohne die jeweilige Bedeutung der einzelnen Texte zu verwischen."
           },
           "conclusions": {
-            "title": "Schlussfolgerungen",
-            "guidance": "Was du gefolgert hast und was offen bleibt."
+            "title": "Bedeutung und Ergebnis",
+            "guidance": "Erkläre anhand des Textes, was das Wort in der untersuchten Stelle bedeutet. Benenne Unsicherheiten und leite aus dem Wort nicht mehr Theologie ab, als der Text trägt."
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Welche Folgen für Glauben und Leben ergeben sich aus der Aussage des Textes, nicht nur aus einer Wörterbuchdefinition?"
+          },
+          "grammar": {
+            "title": "Grammatik und Satzbau",
+            "guidance": "Untersuche bei Bedarf Wortform, Satzbau und Funktion im Gedankengang. Nutze zuverlässige sprachwissenschaftliche Hilfsmittel; Kenntnisse der Ursprachen sind keine Voraussetzung."
+          }
+        }
+      },
+      "pozetek-study": {
+        "name": "POZETEK – Bibeltext untersuchen",
+        "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
+        "sections": {
+          "persons": {
+            "title": "P — Personen",
+            "guidance": "Wer kommt im Text vor, wer spricht, wer handelt und an wen richtet sich die Botschaft?",
+            "goal": "Alle Beteiligten kennenlernen, bevor etwas gedeutet wird. Nur festhalten, was der Text selbst sagt.",
+            "example": "Hosea verkündet Gottes Wort an Israel/Ephraim; im Mittelpunkt steht Gottes Beziehung zu seinem Volk. Ägypten und Assyrien gehören zum angesprochenen historischen Hintergrund.",
+            "fields": {
+              "author": {
+                "label": "Verfasser",
+                "help": "Wer hat diesen Text verfasst oder gesprochen, soweit der Text oder sein Buch es sagt?"
+              },
+              "speaker": {
+                "label": "Sprecher",
+                "help": "Wer spricht in diesem Abschnitt? Wechselt der Sprecher?"
+              },
+              "addressees": {
+                "label": "Adressaten",
+                "help": "An wen richtet sich die Botschaft?"
+              },
+              "people": {
+                "label": "Personen oder Gruppen",
+                "help": "Jede genannte oder gemeinte Person oder Gruppe eintragen, mit Vers und Rolle.",
+                "parts": {
+                  "name": "Name oder Gruppe",
+                  "verse": "Vers",
+                  "role": "Rolle"
+                },
+                "add": "Person oder Gruppe hinzufügen"
+              },
+              "relationships": {
+                "label": "Beziehungen der Beteiligten",
+                "help": "Wie stehen die Beteiligten zueinander? Wer steht über, bei oder gegen wen?"
+              },
+              "open-questions": {
+                "label": "Offene Fragen",
+                "help": "Was ist an den Personen dieses Textes noch unklar?"
+              }
+            }
+          },
+          "place": {
+            "title": "O — Ort",
+            "guidance": "Welche Orte und räumlichen oder kulturellen Beziehungen sind für den Text wichtig?",
+            "goal": "Wahrnehmen, wo etwas geschieht oder wovon die Rede ist. Textbefund und externe Recherche getrennt halten.",
+            "example": "Nordreich Israel als Kontext; Ägypten erinnert an Israels Befreiung, Assyrien steht für politische Bedrohung.",
+            "fields": {
+              "places": {
+                "label": "Im Text genannte Orte",
+                "help": "Jeden im Text genannten Ort eintragen, mit Vers und Rolle.",
+                "parts": {
+                  "place": "Ort",
+                  "verse": "Vers",
+                  "role": "Rolle"
+                },
+                "add": "Ort hinzufügen"
+              },
+              "background": {
+                "label": "Geografische und kulturelle Hintergrundinformationen",
+                "help": "Was ergibt externe Recherche? Die Quelle angeben, damit es vom Textbefund unterscheidbar bleibt."
+              },
+              "unclear": {
+                "label": "Ungeklärte Ortsbezüge",
+                "help": "Welche Ortsbezüge sind noch unsicher?"
+              }
+            }
+          },
+          "time": {
+            "title": "Z — Zeit",
+            "guidance": "Wann spielt der Text, und welche historischen Umstände sind wichtig?",
+            "goal": "Den Text zeitlich einordnen. Kennzeichnen, was der Text selbst nennt und was eine historische Einordnung ist, die unsicher sein kann.",
+            "example": "Hoseas Wirken im 8. Jahrhundert v. Chr. und der wachsende assyrische Einfluss bilden relevante Hintergrundinformationen.",
+            "fields": {
+              "stated": {
+                "label": "Zeitangaben im Text",
+                "help": "Welche Daten, Zeiten oder Wendungen wie „damals“ und „in jenen Tagen“ nennt der Text?"
+              },
+              "historical": {
+                "label": "Historische Einordnung",
+                "help": "Was ist über die Zeit bekannt? Unsicheres als unsicher kennzeichnen."
+              },
+              "source": {
+                "label": "Quelle der historischen Einordnung",
+                "help": "Woher stammt diese Information?"
+              },
+              "sequence": {
+                "label": "Zeitliche Entwicklung und Abfolge",
+                "help": "Wie verläuft die Zeit im Abschnitt? Was kommt davor, dabei und danach?"
+              },
+              "prophecy": {
+                "label": "Bei Prophetie: Vergangenheit, Gegenwart, Zukunft",
+                "help": "Wenn der Text prophetisch ist: Was blickt zurück, was beschreibt die gegenwärtige Lage, was kündigt Zukünftiges an?"
+              }
+            }
+          },
+          "events": {
+            "title": "E — Ereignisse",
+            "guidance": "Was geschieht? Wie entfalten sich Ereignisse oder Aussagen?",
+            "goal": "Dem Verlauf des Textes Abschnitt für Abschnitt folgen. Die Gliederung ist ein Vorschlag, den man ändern darf.",
+            "example": "Mögliche Gliederung von Hosea 11: V. 1–4 Fürsorge; V. 5–7 Untreue und Gericht; V. 8–9 Erbarmen; V. 10–11 Rückkehr und Wiederherstellung.",
+            "fields": {
+              "passages": {
+                "label": "Textabschnitte",
+                "help": "Den Text in Abschnitte gliedern: Verse, was geschieht oder gesagt wird und welche Bedeutung das im Verlauf hat.",
+                "parts": {
+                  "verses": "Versbereich",
+                  "event": "Ereignis oder Aussage",
+                  "meaning": "Bedeutung im Verlauf"
+                },
+                "add": "Abschnitt hinzufügen"
+              },
+              "turning-points": {
+                "label": "Wendepunkte",
+                "help": "Wo ändert sich die Richtung des Textes?"
+              },
+              "contrasts": {
+                "label": "Gegensätze",
+                "help": "Welche Gegensätze oder Spannungen stellt der Text einander gegenüber?"
+              }
+            }
+          },
+          "context": {
+            "title": "T — Textzusammenhang",
+            "guidance": "Wie fügt sich der Abschnitt in das Kapitel, das ganze Buch und die übrige Schrift ein?",
+            "goal": "Den Abschnitt in seiner Umgebung sehen, von den nächsten Versen nach außen, und erkennen, wo er endet.",
+            "example": "Die Untreue Israels und die Bundesbeziehung prägen Hosea; Kap. 11 verwendet zusätzlich das Bild des fürsorglichen Vaters und seines Kindes.",
+            "fields": {
+              "immediate": {
+                "label": "Unmittelbarer Kontext",
+                "help": "Was steht unmittelbar davor und danach, und wie hängt es zusammen?"
+              },
+              "book": {
+                "label": "Buchkontext",
+                "help": "Worum geht es im Buch, und wo steht der Abschnitt in dessen Gedankengang oder Erzählung?"
+              },
+              "canon": {
+                "label": "Gesamtbiblischer Zusammenhang",
+                "help": "Wie verhält sich der Abschnitt zur übrigen Schrift und ihrer Geschichte?"
+              },
+              "parallels": {
+                "label": "Parallelstellen",
+                "help": "Verwandte Stellen eintragen und sagen, was sie zum Verständnis beitragen.",
+                "parts": {
+                  "reference": "Referenz",
+                  "relevance": "Relevanz"
+                },
+                "add": "Parallelstelle hinzufügen"
+              },
+              "limits": {
+                "label": "Grenzen der Textstelle",
+                "help": "Wo beginnt und endet die Texteinheit, und warum dort?"
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Erklärungen",
+            "guidance": "Welche Begriffe, Aussagen oder Auslegungsprobleme verlangen Klärung?",
+            "goal": "Fragen aus dem Text sammeln, an Belegen prüfen und die begründbaren Antworten festhalten. Offenes darf offen bleiben.",
+            "example": "Welche Rolle haben Ägypten und Assyrien? Wie gehören Gericht und Erbarmen zusammen? Was bedeutet „Gott und nicht Mensch“ (Hos 11,9)?",
+            "fields": {
+              "questions": {
+                "label": "Fragenprotokoll",
+                "help": "Jede Frage eintragen mit Vers, geprüften Belegen, überprüfter Antwort und Status.",
+                "parts": {
+                  "question": "Frage",
+                  "verse": "Vers",
+                  "evidence": "Belege",
+                  "answer": "Überprüfte Antwort",
+                  "status": "Status"
+                },
+                "options": {
+                  "open": "Offen",
+                  "answered": "Geklärt"
+                },
+                "add": "Frage hinzufügen"
+              },
+              "terms": {
+                "label": "Wichtige Begriffe",
+                "help": "Welche Wörter brauchen Erklärung? Was bedeuten sie hier, in diesem Zusammenhang?"
+              },
+              "explanations": {
+                "label": "Begründete mögliche Erklärungen",
+                "help": "Wo mehrere Erklärungen möglich sind, jede mit ihren Gründen nennen."
+              },
+              "sources": {
+                "label": "Quellenhinweise",
+                "help": "Welche Quellen wurden genutzt? Festhalten, um sie wiederzufinden."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Kern",
+            "guidance": "Was ist die zentrale Aussage genau dieses Abschnitts?",
+            "goal": "Den Kern in drei Schritten benennen: Worum es geht, was der Text darüber sagt und ein prägnanter Satz. Die Reihenfolge beim Ausfüllen ist frei.",
+            "example": "Gegenstand: Gottes Verhältnis zu seinem untreuen Volk. Aussage: Gottes Fürsorge, gerechtes Gericht und Erbarmen. Thema: Gottes Liebe zu Israel zeigt sich in seiner Fürsorge, im gerechten Gericht und in einem Erbarmen, das Zukunft eröffnet.",
+            "fields": {
+              "subject": {
+                "label": "Textgegenstand — Worum geht es?",
+                "help": "Den Gegenstand in wenigen Worten benennen, ohne schon zu sagen, was der Text darüber behauptet."
+              },
+              "statement": {
+                "label": "Textaussage — Was sagt der Text darüber?",
+                "help": "Zusammenfassen, was der Abschnitt über seinen Gegenstand sagt, so wie er es sagt."
+              },
+              "theme": {
+                "label": "Textthema — Ein prägnanter Satz",
+                "help": "Gegenstand und Aussage in einem Satz zusammenführen, der sich an jedem Vers prüfen lässt."
+              }
+            }
+          },
+          "application": {
+            "title": "Persönliche Anwendung",
+            "guidance": "Was bedeutet die erkannte Wahrheit für dich? Getrennt halten von Beobachtung und Auslegung oben.",
+            "goal": "Auf den Text so antworten, dass die Anwendung an seiner Aussage gebunden bleibt. Ein eigener Abschluss, kein weiterer Buchstabe von POZETEK.",
+            "example": "Gottes Liebe zu seinem Volk gründet in seinem Wesen, nicht in Israels Treue. Obwohl Israel sich abwendet, erweist Gott auch mitten im Gericht sein Erbarmen. Das fordert dazu heraus, eigene Ersatzsicherheiten zu erkennen und neu auf Gott zu vertrauen. Empfangene Liebe soll auch den Umgang mit Menschen prägen, die Liebe und Fürsorge nicht erwidern (vgl. 1 Joh 4,8.19).",
+            "fields": {
+              "truth": {
+                "label": "Erkannte Wahrheit",
+                "help": "Welche Wahrheit des Textes bleibt für alle Leser gültig?"
+              },
+              "examination": {
+                "label": "Persönliche Prüfung",
+                "help": "Wo fordert, tröstet oder korrigiert diese Wahrheit das eigene Denken und Leben?"
+              },
+              "response": {
+                "label": "Konkrete Reaktion",
+                "help": "Was wird konkret geschehen: Glaube, Umkehr, Vertrauen, Gehorsam, Gebet, Liebe? So konkret wie möglich."
+              },
+              "limits": {
+                "label": "Grenze der Übertragung von damals auf heute",
+                "help": "Was unterscheidet die damalige von der heutigen Lage? Was darf nicht unmittelbar übertragen werden?"
+              }
+            }
+          }
+        }
+      },
+      "ten-step-exegesis": {
+        "name": "Die Zehn-Schritte-Methode",
+        "description": "Eine gründliche Auslegung nach den zehn Schritten von Helge Stadelmann und Thomas Richter. Erläuterungen und das aufklappbare Beispiel zu Mt 8,18–27 sind eigenständig formuliert.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Mit dem Text vertraut werden",
+            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben.",
+            "goal": "Erste Beobachtungen und offene Fragen, noch keine fertige Auslegung.",
+            "example": "Mt 8,18–27 enthält zwei Gespräche zur Nachfolge und danach die Sturmstillung. Erste Fragen betreffen den Preis der Nachfolge, das Begraben der Toten, Kleinglauben und Jesu Vollmacht.",
+            "fields": {
+              "first-impression": {
+                "label": "Erster Eindruck",
+                "help": "Was scheint die Hauptaussage zu sein?"
+              },
+              "movement": {
+                "label": "Gedanklicher Verlauf",
+                "help": "Welche Szenen und Übergänge sind erkennbar?"
+              },
+              "questions": {
+                "label": "Fragen zum Text",
+                "help": "Fragen zunächst sammeln.",
+                "parts": {
+                  "verse": "Vers",
+                  "question": "Frage",
+                  "status": "Stand"
+                },
+                "add": "Frage hinzufügen",
+                "options": {
+                  "open": "Offen",
+                  "answered": "Geklärt"
+                }
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Die Textgrundlage feststellen",
+            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden.",
+            "goal": "Eine begründete Textgrundlage mit benannten Unsicherheiten.",
+            "example": "Mt 8,24 berichtet von einem heftigen Sturm auf dem See. Das griechische Wort betont die Intensität; zusätzliche Ereignisse, die nicht im Text stehen, dürfen daraus nicht abgeleitet werden.",
+            "fields": {
+              "comparisons": {
+                "label": "Übersetzungsvergleich",
+                "help": "Wortlaut und Bedeutung vergleichen.",
+                "parts": {
+                  "verse": "Vers",
+                  "renderings": "Übersetzungen",
+                  "significance": "Bedeutung"
+                },
+                "add": "Vergleich hinzufügen"
+              },
+              "manuscripts": {
+                "label": "Handschriftenhinweise",
+                "help": "Nur belegte Varianten festhalten."
+              },
+              "basis": {
+                "label": "Arbeitsgrundlage",
+                "help": "Welche Textausgabe oder Übersetzung wird verwendet?"
+              },
+              "uncertainties": {
+                "label": "Offene Textfragen",
+                "help": "Was lässt sich nicht sicher entscheiden?"
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Die ursprüngliche Kommunikationssituation klären",
+            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen.",
+            "goal": "Der geschichtliche Rahmen, der für diesen Abschnitt nötig ist.",
+            "example": "Matthäus zeigt Jesus als den verheißenen Messias. Das Geschehen liegt in Galiläa. Nachfolge bedeutete mehr als Unterricht: Jesus ruft Menschen, ihm persönlich zu folgen.",
+            "fields": {
+              "author-audience": {
+                "label": "Verfasser und Empfänger",
+                "help": "Was ist über Verfasser und Leser bekannt?"
+              },
+              "time-place": {
+                "label": "Zeit und Ort",
+                "help": "Handlungszeit und Entstehungszeit unterscheiden."
+              },
+              "purpose": {
+                "label": "Anlass und Absicht",
+                "help": "Wozu wurde geschrieben oder gesprochen?"
+              },
+              "background": {
+                "label": "Geschichtlicher und kultureller Hintergrund",
+                "help": "Nur für den Text relevante Tatsachen aufnehmen."
+              },
+              "sources": {
+                "label": "Quellen",
+                "help": "Woher stammen diese Angaben?"
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Den Zusammenhang erfassen",
+            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang.",
+            "goal": "Die Rolle des Textes im Buch und seine begründeten Grenzen.",
+            "example": "Auf die Bergpredigt (Mt 5–7) folgen Berichte über Jesu Vollmacht. Mt 8,23 verbindet den Ruf zur Nachfolge mit dem Boot: Die Jünger folgen Jesus. Die Episoden können auch einzeln ausgelegt werden.",
+            "fields": {
+              "boundaries": {
+                "label": "Textgrenzen",
+                "help": "Wo beginnt und endet die Einheit?"
+              },
+              "nearby": {
+                "label": "Unmittelbarer Zusammenhang",
+                "help": "Was steht davor und danach?"
+              },
+              "book": {
+                "label": "Zusammenhang im Buch",
+                "help": "Wie fügt sich der Abschnitt ein?"
+              },
+              "parallels": {
+                "label": "Vergleichsstellen",
+                "help": "Parallelen mit Unterschieden nennen.",
+                "parts": {
+                  "reference": "Bibelstelle",
+                  "contribution": "Beitrag zum Verständnis"
+                },
+                "add": "Stelle hinzufügen"
+              },
+              "whole-bible": {
+                "label": "Gesamtbiblischer Zusammenhang",
+                "help": "Was trägt die übrige Schrift bei?"
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Die Textart untersuchen",
+            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen.",
+            "goal": "Verstehen, wie die Form die Botschaft vermittelt.",
+            "example": "Mt 8,18–22 sind kurze Gespräche, Mt 8,23–27 ein Wunderbericht. Jesu Ruhe steht der Angst der Jünger gegenüber; dem Sturm folgt Stille; menschlicher Hilflosigkeit begegnet Jesu Vollmacht.",
+            "fields": {
+              "genre": {
+                "label": "Literarische Gattung",
+                "help": "Erzählung, Gedicht, Prophetie, Brief oder anderes?"
+              },
+              "form": {
+                "label": "Konkrete Textform",
+                "help": "Welche Form innerhalb der Gattung?"
+              },
+              "features": {
+                "label": "Sprachliche Merkmale",
+                "help": "Beobachtbare Mittel und ihre Wirkung.",
+                "parts": {
+                  "verse": "Vers",
+                  "feature": "Merkmal",
+                  "effect": "Bedeutung"
+                },
+                "add": "Merkmal hinzufügen"
+              },
+              "interpretation": {
+                "label": "Folgen für die Auslegung",
+                "help": "Wie beeinflusst die Form das Verständnis?"
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Wörter und Sätze untersuchen",
+            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung.",
+            "goal": "Begriffe und Gedankengänge nachvollziehbar erklären.",
+            "example": "Mt 8,20 stellt die Ruheplätze der Tiere Jesu fehlender Ruhestätte gegenüber. Mt 8,21–22 betont den Vorrang seines Rufes; der genaue Zustand des Vaters lässt sich aus dem Text nicht sicher bestimmen.",
+            "fields": {
+              "terms": {
+                "label": "Wörter und Ausdrücke",
+                "help": "Bedeutung im Zusammenhang prüfen.",
+                "parts": {
+                  "term": "Begriff",
+                  "verse": "Vers",
+                  "context": "Gebrauch und Kontext",
+                  "finding": "Ergebnis"
+                },
+                "add": "Begriff hinzufügen"
+              },
+              "connections": {
+                "label": "Satzbeziehungen",
+                "help": "Gegensätze, Gründe und Bedingungen markieren.",
+                "parts": {
+                  "verse": "Vers",
+                  "link": "Verbindung",
+                  "meaning": "Bedeutung"
+                },
+                "add": "Verbindung hinzufügen"
+              },
+              "questions": {
+                "label": "Offene Sprachfragen",
+                "help": "Was bleibt unklar?"
+              },
+              "sources": {
+                "label": "Sprachliche Hilfen",
+                "help": "Übersetzungen, Lexika und Grammatiken notieren."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Den Gedankengang entfalten",
+            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln.",
+            "goal": "Eine Gliederung, die aus dem Text hervorgeht.",
+            "example": "Mt 8,18–20: Kosten der Nachfolge; V. 21–22: Vorrang von Jesu Ruf; V. 23–25: Nachfolge in Gefahr; V. 26–27: Jesu Vollmacht über Wind und See.",
+            "fields": {
+              "flow": {
+                "label": "Verlauf und Verbindungen",
+                "help": "Wie entwickelt sich die Aussage?"
+              },
+              "outline": {
+                "label": "Textgliederung",
+                "help": "Verse und Überschriften begründet zuordnen.",
+                "parts": {
+                  "verses": "Verse",
+                  "heading": "Überschrift",
+                  "connection": "Zusammenhang"
+                },
+                "add": "Gliederungspunkt hinzufügen"
+              },
+              "diagram": {
+                "label": "Textschaubild",
+                "help": "Optional den Aufbau skizzieren."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Theologische Fragen klären",
+            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben.",
+            "goal": "Textgemäße und schriftgemäße Antworten.",
+            "example": "Mt 8,22 ist im Licht von Jesu Bekräftigung des Elterngebotes (Mt 15,4–6) zu verstehen. Die Sturmstillung erinnert an Gottes Herrschaft über das Meer (Ps 89,10; 107,23–30) und stellt die Frage nach Jesu Identität.",
+            "fields": {
+              "questions": {
+                "label": "Theologische Fragen",
+                "help": "Belege und begründete Antwort festhalten.",
+                "parts": {
+                  "question": "Frage",
+                  "verse": "Vers",
+                  "evidence": "Biblische Belege",
+                  "conclusion": "Ergebnis",
+                  "status": "Stand"
+                },
+                "add": "Frage hinzufügen",
+                "options": {
+                  "open": "Offen",
+                  "answered": "Geklärt"
+                }
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Den Beitrag der Stelle erklären.",
+                "parts": {
+                  "reference": "Bibelstelle",
+                  "relevance": "Bedeutung"
+                },
+                "add": "Verweis hinzufügen"
+              },
+              "coherence": {
+                "label": "Theologischer Zusammenhang",
+                "help": "Stimmt die Auslegung mit der Schrift überein?"
+              },
+              "unresolved": {
+                "label": "Ungelöste Fragen",
+                "help": "Was bleibt noch offen?"
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Die zentrale Aussage formulieren",
+            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen.",
+            "goal": "Eine präzise, überprüfbare Hauptaussage.",
+            "example": "Textgegenstand: Nachfolge Jesu angesichts seiner Ansprüche und Vollmacht. Textaussage: Jesus fordert Vorrang vor Sicherheiten und Vertrauen auch in Gefahr. Textthema: Nachfolge verlangt Hingabe und Vertrauen auf den Herrn, dessen Vollmacht größer ist als jede Gefahr.",
+            "fields": {
+              "subject": {
+                "label": "Textgegenstand — Worum geht es?",
+                "help": "Das Thema in wenigen Worten benennen."
+              },
+              "statement": {
+                "label": "Textaussage — Was wird gesagt?",
+                "help": "Die Aussage über den Gegenstand festhalten."
+              },
+              "theme": {
+                "label": "Textthema — Ein Satz",
+                "help": "Gegenstand und Aussage verbinden."
+              },
+              "text-check": {
+                "label": "Prüfung am Text",
+                "help": "Tragen alle Verse die Formulierung?"
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Die Bedeutung für heute erkennen und anwenden",
+            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen.",
+            "goal": "Eine treue, konkrete und begrenzte Anwendung.",
+            "example": "Mt 8 fordert zur Prüfung auf, ob Sicherheit und Bequemlichkeit vor Vertrauen auf Christus stehen. Die damalige Situation der Jünger lässt sich nicht einfach wiederholen. Jesu Anspruch auf Nachfolge bleibt, und Zuversicht gründet in seiner Vollmacht.",
+            "fields": {
+              "enduring-truth": {
+                "label": "Bleibende Wahrheit",
+                "help": "Was gilt über die damalige Situation hinaus?"
+              },
+              "differences": {
+                "label": "Unterschiede zu heute",
+                "help": "Heilsgeschichtliche und kulturelle Unterschiede benennen."
+              },
+              "examination": {
+                "label": "Persönliche Prüfung",
+                "help": "Wo fordert oder tröstet die Aussage?"
+              },
+              "response": {
+                "label": "Konkrete Antwort",
+                "help": "Was ist ein bestimmter Schritt des Glaubens oder Gehorsams?"
+              },
+              "limits": {
+                "label": "Grenzen der Anwendung",
+                "help": "Was darf nicht direkt übertragen werden?"
+              }
+            }
+          }
+        }
+      },
+      "biblical-character-study": {
+        "name": "Biblische Personenstudie",
+        "description": "Leben und Charakter einer biblischen Person anhand der einschlägigen Bibeltexte untersuchen.",
+        "sections": {
+          "person": {
+            "title": "Person und Bibelstellen",
+            "guidance": "Bestimme die Person, mögliche Namensvarianten und die wichtigsten Bibelstellen. Unterscheide sie von anderen Personen gleichen Namens."
+          },
+          "setting": {
+            "title": "Geschichtlicher und biblischer Hintergrund",
+            "guidance": "Ordne die Person in die biblische Geschichte ein: Familie, Beziehungen, Aufgaben und Lebensumstände. Kennzeichne umstrittene Datierungen oder Zuordnungen als unsicher."
+          },
+          "life": {
+            "title": "Leben, Worte und Taten",
+            "guidance": "Verfolge wichtige Ereignisse möglichst in zeitlicher Reihenfolge. Halte mit Bibelstellen fest, was der Text tatsächlich berichtet; er bietet keine lückenlose Biografie."
+          },
+          "character": {
+            "title": "Charakter und Entscheidungen",
+            "guidance": "Untersuche Taten, Worte, Stärken, Schwächen und wiederkehrende Verhaltensweisen. Unterscheide das ausdrückliche Urteil des Textes von Vermutungen über Motive."
+          },
+          "god": {
+            "title": "Gottes Wirken und die biblische Beurteilung",
+            "guidance": "Wie handelt Gott im Leben dieser Person, und wie beurteilt die Schrift ihre Entscheidungen? Beachte ihre Bedeutung im biblischen Gesamtzusammenhang, ohne jedes Verhalten zum Vorbild zu erklären."
+          },
+          "conclusion": {
+            "title": "Wichtigste Erkenntnisse",
+            "guidance": "Fasse die Bedeutung der Person anhand der Bibeltexte zusammen. Halte auch Unsicherheiten und Spannungen fest."
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Was lehrt die Schrift durch dieses Leben über Glauben, Gehorsam, Sünde, Gnade und Beziehungen? Wende die Aussage des Textes an, statt jede Handlung nachzuahmen."
+          },
+          "comparisons": {
+            "title": "Verwandte Personen und Bibelstellen",
+            "guidance": "Vergleiche andere Personen oder Bibelstellen nur, wenn der Zusammenhang den Text wirklich erhellt."
+          }
+        }
+      },
+      "whole-book-study": {
+        "name": "Studium eines Bibelbuchs",
+        "description": "Ein ganzes Bibelbuch lesen, seinen Aufbau und seine Botschaft erschließen und die Lehre anwenden.",
+        "sections": {
+          "reading": {
+            "title": "Das ganze Buch lesen",
+            "guidance": "Lies das ganze Buch, möglichst mehrmals und in verschiedenen Übersetzungen. Notiere erste Eindrücke, wiederkehrende Begriffe, Tonfall, Textgattung und Fragen, bevor du Kommentare hinzuziehst."
+          },
+          "setting": {
+            "title": "Verfasser, Adressaten und Hintergrund",
+            "guidance": "Untersuche Verfasser, Adressaten, geschichtlichen und geografischen Hintergrund, Anlass und Absicht. Unterscheide Aussagen des Buches von Forschungshypothesen und offenen Fragen."
+          },
+          "overview": {
+            "title": "Überblick und zentrale Anliegen",
+            "guidance": "Halte wichtige Personen, Ereignisse, Themen, Schlüsselverse und den groben Verlauf fest. Nicht jedes häufige Wort ist automatisch das Hauptthema."
+          },
+          "outline": {
+            "title": "Aufbau und Inhalt",
+            "guidance": "Gliedere das Buch anhand erkennbarer Textabschnitte mit Bibelstellen und kurzen Überschriften. Erkläre den Beitrag jedes Abschnitts zum Ganzen."
+          },
+          "argument": {
+            "title": "Botschaft und Gedankengang",
+            "guidance": "Verfolge Erzählverlauf oder Gedankengang. Achte auf Textgattung, Gegensätze, Verheißungen, Gebote und den Bezug des Schlusses zum Anfang."
+          },
+          "synthesis": {
+            "title": "Kernaussage",
+            "guidance": "Formuliere den Gegenstand des Buches, seine Aussage darüber und die übergreifende Botschaft. Begründe dies am Text."
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Überlege, welche Folgerungen für Glauben, Anbetung und Leben aus der Botschaft des Buches und seinem Platz in der ganzen Schrift entstehen."
+          },
+          "further": {
+            "title": "Weiterführende Fragen",
+            "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung."
           }
         }
       }
@@ -268,7 +910,9 @@
     "biblical_theology": "Biblisch-theologisches Studium",
     "systematic_theology": "Systematisch-theologisches Studium",
     "teaching": "Lehr- / Predigtvorbereitung",
-    "custom": "Eigenes Bibelstudium"
+    "custom": "Eigenes Bibelstudium",
+    "character": "Biblische Personenstudie",
+    "book": "Bibelbuchstudium"
   },
   "status": {
     "active": "Aktiv",
@@ -384,7 +1028,9 @@
       "topical": "z. B. Vergebung",
       "biblical_theology": "z. B. der Tempel",
       "systematic_theology": "z. B. die Lehre von der Gnade",
-      "custom": "Was studierst du?"
+      "custom": "Was studierst du?",
+      "character": "z. B. Rut",
+      "book": "z. B. der Philipperbrief"
     },
     "approach": {
       "passage": "Bibeltextstudium",
@@ -394,7 +1040,9 @@
       "biblical_theology": "Biblische Theologie",
       "systematic_theology": "Systematische Theologie",
       "custom": "Keine Vorlage",
-      "mine": "Meine Vorlage"
+      "mine": "Meine Vorlage",
+      "character": "Biblische Personenstudie",
+      "book": "Bibelbuchstudium"
     },
     "startsWith": "Beginnt mit: {{parts}}."
   },
@@ -1365,5 +2013,27 @@
       "selection": "Die markierten Worte: „{{words}}“",
       "note": "Deine Notiz ({{kind}}): „{{start}}“"
     }
+  },
+  "fields": {
+    "example": "Beispiel: Hosea 11",
+    "exampleMatthew": "Beispiel: Matthäus 8,18–27",
+    "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deiner Studie und wird nie als deine Antwort gespeichert.",
+    "goal": "Ziel",
+    "status": "Bearbeitungsstand von „{{title}}“",
+    "statusNotStarted": "Nicht begonnen",
+    "statusInProgress": "In Arbeit",
+    "statusComplete": "Abgeschlossen",
+    "fieldGroup": "Felder von „{{title}}“",
+    "entryLabel": "{{field}}, Eintrag {{number}}",
+    "entryHeading": "Eintrag {{number}}",
+    "entryPart": "{{part}} ({{field}}, Eintrag {{number}})",
+    "noEntries": "Noch keine Einträge.",
+    "removeEntry": "Eintrag {{number}} von {{field}} löschen",
+    "confirmRemove": "Diesen Eintrag samt Inhalt löschen?",
+    "removeFailed": "Der Eintrag konnte nicht gelöscht werden.",
+    "addFailed": "Der Eintrag konnte nicht hinzugefügt werden.",
+    "moveEntryUp": "Eintrag {{number}} von {{field}} nach oben",
+    "moveEntryDown": "Eintrag {{number}} von {{field}} nach unten",
+    "otherWriting": "Weitere Notizen"
   }
 }

@@ -17,6 +17,8 @@ beforeEach(() => window.localStorage.clear());
 const part = (key: string | null, title = key ?? "Mine", phase: Phase | null = null): StudySection => ({
   id: `${key ?? "own"}-${title}`,
   studyId: "s",
+  status: "not_started",
+  fields: null,
   key,
   title,
   guidance: null,

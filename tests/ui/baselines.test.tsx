@@ -3,6 +3,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { BUILTIN_TEACHING_TEMPLATES } from "@/features/teaching/teachingTemplates";
 import { STEP_KINDS, TEACHING_KINDS } from "@/types/teaching";
+import { sectionTitle } from "@/features/studies/builtinText";
 import { STUDY_PHASES, STUDY_TYPES } from "@/types/studies";
 import { createMemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderApp } from "../support/render";
@@ -19,8 +20,8 @@ const studyTemplates = readdirSync("resources/templates")
 
 describe("the built-in Bible Study templates", () => {
   it("are well formed: a kind, unique stable keys, a known phase for every part, at least one part to start with", () => {
-    expect(studyTemplates.length).toBe(6);
-    expect(new Set(studyTemplates.map((t) => t.key)).size).toBe(6);
+    expect(studyTemplates.length).toBe(10);
+    expect(new Set(studyTemplates.map((t) => t.key)).size).toBe(10);
     for (const template of studyTemplates) {
       expect(STUDY_TYPES, template.key).toContain(template.studyType);
       const keys = template.sections.map((s) => s.key);
@@ -45,12 +46,12 @@ describe("the built-in Bible Study templates", () => {
 
   it("never force all six phases: each uses the ones that fit it, in its own order", () => {
     const used = (key: string) => new Set(studyTemplates.find((t) => t.key === key)!.sections.filter((s) => !s.optional && !s.retired).map((s) => s.phase));
-    expect(used("word-study")).toEqual(new Set(["text", "understanding"]));
+    expect(used("word-study")).toEqual(new Set(["text", "understanding", "application"]));
     expect(used("passage-study")).toEqual(new Set(["text", "understanding", "theology", "application"]));
   });
 
   it("say once in the data whether they are offered for new work", () => {
-    expect(studyTemplates.filter((t) => t.offered === false).map((t) => t.key)).toEqual(["teaching-study"]);
+    expect(studyTemplates.filter((t) => t.offered === false).map((t) => t.key)).toEqual(["biblical-theology-study", "passage-study", "systematic-theology-study", "teaching-study"]);
   });
 });
 
@@ -78,14 +79,14 @@ describe("what a template starts with", () => {
     await api.projectCreate({ workspaceId: api.state.workspace.id, title: "John" });
     const { user } = await renderApp(api);
     const form = await screen.findByRole("form", { name: "New study" });
-    const passage = studyTemplates.find((t) => t.key === "passage-study")!;
-    const starts = `Starts with: ${passage.sections.filter((s) => !s.optional && !s.retired).map((s) => s.title).join(" · ")}.`;
+    const passage = studyTemplates.find((t) => t.key === "pozetek-study")!;
+    const starts = `Starts with: ${passage.sections.filter((s) => !s.optional && !s.retired).map((s) => sectionTitle(s)).join(" · ")}.`;
     await waitFor(() => expect(form).toHaveTextContent(starts));
     expect(form).not.toHaveTextContent("Starts with: Notes");
     await user.click(within(form).getByRole("button", { name: "Word study" }));
-    expect(form).toHaveTextContent("Starts with: Word · Occurrences · Range of Meaning · Key Passages · Conclusions.");
+    expect(form).toHaveTextContent("Starts with: Word and question · Occurrences and translations · Range of meanings · Passages in context · Meaning and conclusion · Application.");
     const templates = await openSettingsSection(user, "Templates");
-    const row = within(within(templates).getByRole("list", { name: "Study templates" })).getByText("Passage Study").closest("li")!;
+    const row = within(within(templates).getByRole("list", { name: "Study templates" })).getByText("Guided Passage Study").closest("li")!;
     expect(row).toHaveTextContent(starts);
   });
 
@@ -156,7 +157,7 @@ describe("refining a baseline (v0.18.9)", () => {
     try {
       // A word study made in v0.18.8 stored the English it was made with.
       expect(sectionTitle({ key: "semantic-range", title: "Semantic Range" })).toBe("Bedeutungen");
-      expect(sectionGuidance({ key: "occurrences", guidance: "Where the word appears. (Automatic occurrence lists arrive with the concordance.)" })).toBe("Wo das Wort vorkommt; die Konkordanz kann seine Vorkommen auflisten.");
+      expect(sectionGuidance({ key: "occurrences", guidance: "Where the word appears. (Automatic occurrence lists arrive with the concordance.)" })).toBe(i18n.t("studies.builtin.templates.word-study.sections.occurrences.guidance"));
       // The person's own wording stays theirs.
       expect(sectionTitle({ key: "semantic-range", title: "Was das Wort heißt" })).toBe("Was das Wort heißt");
     } finally {
@@ -199,7 +200,7 @@ describe("what each baseline makes (v0.18.9)", () => {
       const builtin = api.state.templates.find((t) => t.key === template.key)!;
       const detail = await api.studyCreate({ projectId: project.id, title: template.name, templateId: builtin.id });
       expect(detail.sections.map((s) => s.key), template.key).toEqual(template.sections.filter((s) => !s.optional && !s.retired).map((s) => s.key));
-      expect(detail.sections.length, template.key).toBeLessThanOrEqual(8);
+      expect(detail.sections.length, template.key).toBeLessThanOrEqual(10);
       // The guidance is a hint beside the part, never writing in it.
       expect(detail.sections.flatMap((s) => s.blocks).every((b) => b.content === ""), template.key).toBe(true);
     }

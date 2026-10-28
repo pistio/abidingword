@@ -124,6 +124,8 @@ fn blocks_can_be_added_edited_and_removed() {
                 section_id: section.id.clone(),
                 block_type: BlockType::Note,
                 content: None,
+
+                field_key: None,
             },
         )?;
         assert_eq!(note.position, 1);
@@ -133,6 +135,8 @@ fn blocks_can_be_added_edited_and_removed() {
             &UpdateStudyBlock {
                 id: note.id.clone(),
                 content: Some("“No condemnation” — note the therefore.".into()),
+
+                data: None,
             },
         )?;
         assert_eq!(edited.revision, 2);
@@ -254,7 +258,7 @@ fn builtin_templates_are_installed_once() {
         templates::ensure_builtin(conn)?;
         let count: i64 =
             conn.query_row("SELECT COUNT(*) FROM study_templates", [], |r| r.get(0))?;
-        assert_eq!(count, 6, "the six built-in templates");
+        assert_eq!(count, 10, "six current and four legacy built-in templates");
         let rewritten: i64 = conn.query_row(
             "SELECT COUNT(*) FROM study_templates WHERE revision <> 1",
             [],

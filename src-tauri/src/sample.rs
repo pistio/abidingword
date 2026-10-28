@@ -165,6 +165,8 @@ fn fill(tx: &Connection, sample: &Sample, project_id: &str) -> AppResult<()> {
             &UpdateStudyBlock {
                 id: block.id.clone(),
                 content: Some(text.clone()),
+
+                data: None,
             },
         )?;
     }

@@ -1067,6 +1067,14 @@ fn a_restore_that_fails_part_way_puts_the_safety_copy_back() {
     }
     {
         let c = Connection::open(&staged).unwrap();
+        // Do not collide with the new pre-24 lineage preflight: this test
+        // specifically exercises rollback after a later restore-stage failure.
+        c.execute_batch(
+            "ALTER TABLE study_sections DROP COLUMN status;
+                         ALTER TABLE study_sections DROP COLUMN fields;
+                         ALTER TABLE study_blocks DROP COLUMN field_key;",
+        )
+        .unwrap();
         c.execute("DELETE FROM schema_versions WHERE version >= 15", [])
             .unwrap();
         c.execute_batch("PRAGMA journal_mode = DELETE; VACUUM;")

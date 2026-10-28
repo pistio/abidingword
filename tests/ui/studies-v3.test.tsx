@@ -54,9 +54,9 @@ describe("creating studies", () => {
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Remain (μένω)");
     // the kind of study is not in the everyday header; it is in Bible Study information
     expect(screen.queryByText("Word Study", { selector: "span" })).not.toBeInTheDocument();
-    expect(sectionHeadings()).toEqual(["Word", "Occurrences", "Range of Meaning", "Key Passages", "Conclusions"]);
+    expect(sectionHeadings()).toEqual(["Word and question", "Occurrences and translations", "Range of meanings", "Passages in context", "Meaning and conclusion", "Application"]);
     await user.click(screen.getByRole("button", { name: "Bible Study information" }));
-    expect(await screen.findByRole("group", { name: "Word Study details" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Word Study details" })).toBeInTheDocument();
     expect(screen.getByText(/Type: Word Study/)).toBeInTheDocument();
     expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === "word-study")!.id);
     expect(api.state.passages).toHaveLength(0);
@@ -70,7 +70,7 @@ describe("creating studies", () => {
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
-    expect(sectionHeadings()[0]).toBe("Text");
+    expect(sectionHeadings()[0]).toBe("Persons");
     const passages = screen.getByRole("region", { name: "Passages" });
     expect(within(passages).queryByText("Primary")).not.toBeInTheDocument();
     // the title is the passage: it is not repeated beneath it, and there is still a way to open it
@@ -274,22 +274,23 @@ describe("templates", () => {
     await openSettingsSection(user, "Templates");
     const templates = await screen.findByRole("list", { name: "Study templates" });
     // The old "Teaching / Sermon" study template is not offered: teaching is prepared in Bible Teaching.
-    expect(within(templates).getAllByRole("listitem")).toHaveLength(5);
+    // Six current methods are offered; legacy definitions remain installed.
+    expect(within(templates).getAllByRole("listitem")).toHaveLength(6);
     expect(within(templates).queryByText("Teaching / Sermon Preparation")).not.toBeInTheDocument();
     const formats = screen.getByRole("list", { name: "Bible Teaching templates" });
     expect(within(formats).getByText(/Starts with: Welcome · Bible story · Question · Activity · Prayer/)).toBeInTheDocument();
-    const passage = within(templates).getByText("Passage Study").closest("li")!;
-    await user.click(within(passage as HTMLElement).getByRole("button", { name: "Save Passage Study as my template" }));
+    const passage = within(templates).getByText("Biblical Character Study").closest("li")!;
+    await user.click(within(passage as HTMLElement).getByRole("button", { name: "Save Biblical Character Study as my template" }));
 
     expect(await screen.findByRole("heading", { level: 1, name: "Edit template" })).toBeInTheDocument();
     const name = screen.getByLabelText("Name");
     await user.clear(name);
-    await user.type(name, "Short Passage Study");
+    await user.type(name, "Short Character Study");
     const sections = screen.getByRole("list", { name: "Parts of the template" });
     // The copy has the parts a study starts with and those to add later, not the retired ones.
-    expect(within(sections).getAllByRole("listitem")).toHaveLength(10);
-    expect(screen.getByRole("checkbox", { name: "Offer part 7 later instead of starting with it" })).toBeChecked();
-    for (const title of ["Application", "Theology", "Meaning", "Structure", "Key Words", "Related Scripture", "Open Questions"]) {
+    expect(within(sections).getAllByRole("listitem")).toHaveLength(8);
+    expect(screen.getByRole("checkbox", { name: "Offer part 8 later instead of starting with it" })).toBeChecked();
+    for (const title of ["Character and decisions", "God's work and the biblical evaluation", "Main findings", "Application", "Related figures and passages"]) {
       await user.click(within(sections).getByRole("button", { name: `Remove ${title}` }));
     }
     await user.click(screen.getByRole("button", { name: "Add a part" }));
@@ -297,8 +298,8 @@ describe("templates", () => {
     await user.click(screen.getByRole("button", { name: "Move Prayer up" }));
     await user.click(screen.getByRole("button", { name: "Save template" }));
 
-    const mine = api.state.templates.find((t) => t.name === "Short Passage Study")!;
-    expect(mine.sections.map((s) => s.title)).toEqual(["Text", "Observations", "Prayer", "Context"]);
+    const mine = api.state.templates.find((t) => t.name === "Short Character Study")!;
+    expect(mine.sections.map((s) => s.title)).toEqual(["Person and passages", "Historical and biblical setting", "Prayer", "Life, words and actions"]);
     expect(api.state.templates.find((t) => t.key === "passage-study")!.sections).toHaveLength(13);
 
     await user.click(await screen.findByRole("button", { name: "Back to workspace" }));
@@ -308,7 +309,7 @@ describe("templates", () => {
     await user.selectOptions(newStudy().getByLabelText("Template"), mine.id);
     await user.click(screen.getByRole("button", { name: "Create study" }));
     await screen.findByRole("textbox", { name: "Study title" });
-    expect(sectionHeadings()).toEqual(["Text", "Observations", "Prayer", "Context"]);
+    expect(sectionHeadings()).toEqual(["Person and passages", "Historical and biblical setting", "Prayer", "Life, words and actions"]);
   });
 });
 

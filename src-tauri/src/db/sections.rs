@@ -2,18 +2,29 @@ use std::collections::HashMap;
 
 use rusqlite::{params, Connection, OptionalExtension, Row};
 
-use crate::db::{blocks, new_id, now, studies};
+use crate::db::{blocks, new_id, now, studies, templates};
 use crate::domain::validate::{self, DESCRIPTION_MAX_CHARS};
 use crate::domain::{
-    BlockType, CreateStudySection, DeleteStudySection, Reorder, StudyPhase, StudySection,
-    UpdateStudySection,
+    BlockType, CreateStudySection, DeleteStudySection, FieldKind, Reorder, SectionFields,
+    SectionStatus, StudyPhase, StudySection, UpdateStudySection,
 };
 use crate::error::{AppError, AppResult, UserMessage};
 
 const COLUMNS: &str =
-    "id, study_id, key, title, guidance, position, created_at, updated_at, revision, phase";
+    "id, study_id, key, title, guidance, position, created_at, updated_at, revision, status, fields, phase";
 
 fn from_row(row: &Row) -> rusqlite::Result<StudySection> {
+    let conversion = |index: usize, e: AppError| {
+        rusqlite::Error::FromSqlConversionFailure(index, rusqlite::types::Type::Text, e.into())
+    };
+    let status: String = row.get(9)?;
+    let fields: Option<String> = row.get(10)?;
+    let fields = fields
+        .map(|json| {
+            serde_json::from_str::<SectionFields>(&json)
+                .map_err(|e| conversion(10, AppError::Unexpected(format!("part fields: {e}"))))
+        })
+        .transpose()?;
     Ok(StudySection {
         id: row.get(0)?,
         study_id: row.get(1)?,
@@ -21,14 +32,15 @@ fn from_row(row: &Row) -> rusqlite::Result<StudySection> {
         title: row.get(3)?,
         guidance: row.get(4)?,
         position: row.get(5)?,
+        status: status.parse().map_err(|e| conversion(9, e))?,
+        fields,
+        phase: row
+            .get::<_, Option<String>>(11)?
+            .and_then(|p| StudyPhase::parse(&p).ok()),
         blocks: Vec::new(),
         created_at: row.get(6)?,
         updated_at: row.get(7)?,
         revision: row.get(8)?,
-        // An unknown stored value reads as no phase: the part stays, unplaced.
-        phase: row
-            .get::<_, Option<String>>(9)?
-            .and_then(|p| StudyPhase::parse(&p).ok()),
     })
 }
 
@@ -69,7 +81,7 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<StudySection> {
     Ok(section)
 }
 
-/// A part as stored: where it comes from, its words and where it belongs.
+/// Existing phase-aware section API, also used by project import.
 pub(crate) struct NewSection<'a> {
     pub key: Option<&'a str>,
     pub title: &'a str,
@@ -77,38 +89,118 @@ pub(crate) struct NewSection<'a> {
     pub phase: Option<StudyPhase>,
 }
 
-pub(crate) fn insert(
+/// Inserts a part with an optional snapshot of structured fields. The part
+/// starts without blocks: see [`seed_blocks`].
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn insert_structured(
     conn: &Connection,
     study_id: &str,
     section: NewSection,
     position: i64,
+    fields: Option<&SectionFields>,
     now: &str,
 ) -> AppResult<String> {
     let id = new_id();
+    let fields = fields
+        .map(|f| serde_json::to_string(f).map_err(|e| AppError::Unexpected(e.to_string())))
+        .transpose()?;
     conn.execute(
         "INSERT INTO study_sections
-             (id, study_id, key, title, guidance, phase, position, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)",
+             (id, study_id, key, title, guidance, position, fields, phase, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)",
         params![
             id,
             study_id,
             section.key,
             section.title,
             section.guidance,
-            section.phase.map(StudyPhase::as_str),
             position,
+            fields,
+            section.phase.map(StudyPhase::as_str),
             now
         ],
     )?;
     Ok(id)
 }
 
-/// Adds a section at the end of a study, with one empty paragraph.
+/// The empty blocks a new part starts with: one paragraph, or, for a part
+/// with fields, one empty block for each single-text field (entries start
+/// with none; the person adds them).
+pub(crate) fn seed_blocks(
+    conn: &Connection,
+    section_id: &str,
+    fields: Option<&SectionFields>,
+    now: &str,
+) -> AppResult<()> {
+    let Some(snapshot) = fields else {
+        blocks::insert(conn, section_id, BlockType::Paragraph, 0, "", now)?;
+        return Ok(());
+    };
+    for (position, field) in snapshot
+        .fields
+        .iter()
+        .filter(|f| f.kind == FieldKind::Text)
+        .enumerate()
+    {
+        blocks::insert_answer(
+            conn,
+            section_id,
+            BlockType::Paragraph,
+            position as i64,
+            "",
+            Some(&field.key),
+            None,
+            now,
+        )?;
+    }
+    Ok(())
+}
+
+/// Adds a section at the end of a study. Suggested template parts keep their
+/// structured fields; an ordinary new section starts with one empty paragraph.
 pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudySection> {
-    studies::get(conn, &input.study_id)?;
+    let study = studies::get(conn, &input.study_id)?;
     let title = validate::title(&input.title, "section")?;
     let guidance =
         validate::optional_text(input.guidance.as_deref(), DESCRIPTION_MAX_CHARS, "guidance")?;
+    // Optional template parts must be resolved from the study's actual
+    // template, never from field definitions supplied by the caller.
+    let template_part = if let Some(key) = input.template_section_key.as_ref() {
+        if list(conn, &input.study_id)?
+            .iter()
+            .any(|section| section.key.as_deref() == Some(key))
+        {
+            return Err(AppError::InvalidInput(UserMessage::new(
+                "templates.partAlreadyAdded",
+                "This template part is already in the study.",
+            )));
+        }
+        let template_id = study.template_id.as_deref().ok_or_else(|| {
+            AppError::InvalidInput(UserMessage::new(
+                "templates.unknownPart",
+                "This template part is no longer available.",
+            ))
+        })?;
+        let template = templates::get(conn, template_id)?;
+        let part = template
+            .sections
+            .into_iter()
+            .find(|part| part.key.as_deref() == Some(key) && part.optional && !part.retired)
+            .ok_or_else(|| {
+                AppError::InvalidInput(UserMessage::new(
+                    "templates.unknownPart",
+                    "This template part is no longer available.",
+                ))
+            })?;
+        let snapshot = (!part.fields.is_empty()).then_some(SectionFields {
+            template: part.fields_source.clone().unwrap_or(template.key),
+            version: part.fields_version,
+            fields: part.fields,
+        });
+        Some((key.clone(), snapshot, part.phase))
+    } else {
+        None
+    };
     let position: i64 = conn.query_row(
         "SELECT COALESCE(MAX(position), -1) + 1 FROM study_sections
          WHERE study_id = ?1 AND deleted_at IS NULL",
@@ -117,36 +209,41 @@ pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudyS
     )?;
     let now = now();
     let tx = conn.unchecked_transaction()?;
-    // A part the template offers for later keeps its identity and its place in the movement;
-    // a study never has two live parts with one key.
     let key = validate::part_key(input.key.as_deref())?;
-    if let Some(key) = key.as_deref() {
-        let taken: bool = tx.query_row(
-            "SELECT EXISTS (SELECT 1 FROM study_sections
-             WHERE study_id = ?1 AND key = ?2 AND deleted_at IS NULL)",
-            params![input.study_id, key],
-            |r| r.get(0),
-        )?;
-        if taken {
+    let key = template_part
+        .as_ref()
+        .map(|(key, _, _)| key.as_str())
+        .or(key.as_deref());
+    if let Some(key) = key {
+        if list(&tx, &input.study_id)?
+            .iter()
+            .any(|s| s.key.as_deref() == Some(key))
+        {
             return Err(AppError::Conflict(UserMessage::new(
                 "sections.duplicateKey",
                 "This study already has that part.",
             )));
         }
     }
-    let id = insert(
+    let fields = template_part
+        .as_ref()
+        .and_then(|(_, fields, _)| fields.as_ref());
+    let id = insert_structured(
         &tx,
         &input.study_id,
         NewSection {
-            key: key.as_deref(),
+            key,
             title: &title,
             guidance: guidance.as_deref(),
-            phase: input.phase,
+            phase: input
+                .phase
+                .or(template_part.as_ref().and_then(|(_, _, phase)| *phase)),
         },
         position,
+        fields,
         &now,
     )?;
-    blocks::insert(&tx, &id, BlockType::Paragraph, 0, "", &now)?;
+    seed_blocks(&tx, &id, fields, &now)?;
     studies::touch(&tx, &input.study_id, &now)?;
     tx.commit()?;
     get(conn, &id)
@@ -155,13 +252,25 @@ pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudyS
 /// Whether a section holds anything worth keeping: text in a block, or a
 /// finding assigned to it.
 pub fn has_content(conn: &Connection, id: &str) -> AppResult<bool> {
-    Ok(conn.query_row(
-        "SELECT EXISTS (SELECT 1 FROM study_blocks
-                        WHERE section_id = ?1 AND deleted_at IS NULL AND trim(content) <> '')
-             OR EXISTS (SELECT 1 FROM findings WHERE section_id = ?1 AND deleted_at IS NULL)",
-        [id],
-        |r| r.get(0),
-    )?)
+    let writing = blocks::list_for_section(conn, id)?.iter().any(|block| {
+        !block.content.trim().is_empty()
+            || (block.field_key.is_some()
+                && block.data.as_ref().is_some_and(|data| {
+                    match serde_json::from_str::<serde_json::Value>(data) {
+                        Ok(serde_json::Value::Object(values)) => values
+                            .values()
+                            .any(|value| value.as_str().is_none_or(|text| !text.trim().is_empty())),
+                        // Unknown saved data must never be treated as disposable.
+                        _ => !data.trim().is_empty(),
+                    }
+                }))
+    });
+    Ok(writing
+        || conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM findings WHERE section_id = ?1 AND deleted_at IS NULL)",
+            [id],
+            |r| r.get(0),
+        )?)
 }
 
 /// Removes a section (soft). One that still has content is only removed
@@ -237,18 +346,13 @@ pub fn update(conn: &Connection, input: &UpdateStudySection) -> AppResult<StudyS
         Some(value) => Some(StudyPhase::parse(value)?),
         None => current.phase,
     };
+    let status: SectionStatus = input.status.unwrap_or(current.status);
     let now = now();
     conn.execute(
-        "UPDATE study_sections SET title = ?2, guidance = ?3, phase = ?4, updated_at = ?5,
+        "UPDATE study_sections SET title = ?2, guidance = ?3, status = ?4, phase = ?5, updated_at = ?6,
              revision = revision + 1
          WHERE id = ?1",
-        params![
-            input.id,
-            title,
-            guidance,
-            phase.map(StudyPhase::as_str),
-            now
-        ],
+        params![input.id, title, guidance, status.as_str(), phase.map(StudyPhase::as_str), now],
     )?;
     studies::touch(conn, &current.study_id, &now)?;
     get(conn, &input.id)

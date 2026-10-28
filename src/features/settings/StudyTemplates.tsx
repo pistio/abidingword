@@ -5,7 +5,8 @@ import { HelpTip } from "@/design-system/HelpTip";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import { isOffered, localizedSections, studyStartSummary, templateDescription, templateName } from "@/features/studies/builtinText";
+import { localizedSections, studyStartSummary, templateDescription, templateName } from "@/features/studies/builtinText";
+import { inStudyCatalogue } from "@/features/studies/catalogue";
 import { studyTypeLabel } from "@/features/studies/labels";
 import type { StudyTemplate } from "@/types/studies";
 import { TeachingTemplates } from "./TeachingTemplates";
@@ -119,7 +120,7 @@ export function StudyTemplates({
   };
 
   // A built-in template no longer offered (its file says "offered": false) is kept for old studies only.
-  const list = (templates.data ?? []).filter(isOffered);
+  const list = (templates.data ?? []).filter(inStudyCatalogue);
   const heading = "type-group m-0";
   return (
     <div className="flex flex-col gap-5">

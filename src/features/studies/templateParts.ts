@@ -23,6 +23,8 @@ export function partsFromStudy(sections: readonly StudySection[]): TemplateSecti
     if (!key || used.has(key)) key = ownPartKey();
     used.add(key);
     const guidance = sectionGuidance(section);
-    return { key, title: sectionTitle(section), guidance: guidance || null, phase: section.phase ?? null };
+    return { key, title: sectionTitle(section), guidance: guidance || null, phase: section.phase ?? null,
+      ...(section.fields ? { fields: section.fields.fields, fieldsVersion: section.fields.version, fieldsSource: section.fields.template } : {}),
+    };
   });
 }

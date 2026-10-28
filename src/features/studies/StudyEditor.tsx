@@ -240,7 +240,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     setError(null);
     try {
       // A part the template keeps for later comes with its key and phase; one of the person's own with neither.
-      const created = await api.studySectionCreate({ studyId: study.id, title: part.title, guidance: part.guidance, key: part.key ?? null, phase: part.phase ?? null });
+      const created = await api.studySectionCreate({ studyId: study.id, title: part.title, guidance: part.guidance, templateSectionKey: part.templateSectionKey, key: part.key ?? null, phase: part.phase ?? null });
       setNewSection(created.id);
       detail.reload();
     } catch (e) {
@@ -380,6 +380,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           where a phase begins is marked on its first part (v0.18.6 review). */}
       {sections.map((section) => (
         <SectionEditor
+          templateKey={template?.key}
           key={section.id}
           section={section}
           isFirst={section.id === sections[0]?.id}

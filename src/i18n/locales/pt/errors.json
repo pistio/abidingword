@@ -158,7 +158,9 @@
     "tooManySections": "Um modelo pode ter no máximo {{max}} partes.",
     "builtinReadOnly": "Os modelos incluídos não podem ser alterados. Use “Salvar como meu modelo” para criar sua própria versão.",
     "duplicateKey": "Duas partes do modelo são a mesma parte. Remova uma delas.",
-    "invalidKey": "O identificador desta parte não é válido."
+    "invalidKey": "O identificador desta parte não é válido.",
+    "unknownPart": "Esta parte do modelo não está mais disponível.",
+    "partAlreadyAdded": "Esta parte do modelo já foi adicionada ao estudo."
   },
   "sections": {
     "hasContent": "“{{title}}” ainda tem texto ou anotações.",

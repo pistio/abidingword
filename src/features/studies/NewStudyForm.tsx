@@ -9,13 +9,18 @@ import { toApiError } from "@/lib/api";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useApi } from "@/lib/ApiContext";
 import type { StudyType } from "@/types/studies";
-import { studyStartSummary } from "./builtinText";
+import { templateName, studyStartSummary } from "./builtinText";
+import { inStudyCatalogue } from "./catalogue";
 import { isPassageCentred } from "./labels";
 import { openInTeaching } from "./studyView";
 
 /** An example of what to type, for the kind of study. */
 function placeholderFor(t: TFunction, type: StudyType): string {
   switch (type) {
+    case "character":
+      return t("studies.newStudy.placeholder.character");
+    case "book":
+      return t("studies.newStudy.placeholder.book");
     case "word":
       return t("studies.newStudy.placeholder.word");
     case "topical":
@@ -40,8 +45,8 @@ function placeholderFor(t: TFunction, type: StudyType): string {
 type Approach = StudyType | "mine";
 
 /** Offered straight away; the rest are under "More options". */
-const COMMON: StudyType[] = ["passage", "word", "topical", "teaching"];
-const MORE: StudyType[] = ["biblical_theology", "systematic_theology", "custom"];
+const COMMON: StudyType[] = ["passage", "character", "word", "book", "topical", "teaching"];
+const MORE: StudyType[] = ["custom"];
 
 const field = "h-10 min-w-0 aw-input px-3 text-base placeholder:text-text-muted";
 // The kind of study is an option among several: the shared choice chip (v0.18.5).
@@ -73,6 +78,7 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
   const [subject, setSubject] = useState("");
   const [approach, setApproach] = useState<Approach>("passage");
   const [customTitle, setCustomTitle] = useState("");
+  const [passageMethod, setPassageMethod] = useState("pozetek-study");
   const [mine, setMine] = useState<string | null>(null);
   const [more, setMore] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -84,9 +90,15 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
   // A study of one's own template is the kind of study that template is for.
   const type: StudyType = approach === "mine" ? (chosenOwn?.studyType ?? "custom") : approach === "teaching" ? "passage" : approach;
   const aboutAPassage = isPassageCentred(type);
+  const passageTemplates = list.filter((template) => template.isBuiltin && template.studyType === "passage" && inStudyCatalogue(template));
+  const selected = approach === "passage"
+    ? passageTemplates.find((template) => template.key === passageMethod)
+    : list.find((template) => template.isBuiltin && template.studyType === type &&
+        (approach === "teaching" ? template.key === "passage-study" : inStudyCatalogue(template)));
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
+    if (!templates.data || (approach !== "mine" && approach !== "custom" && !selected)) return;
     const text = subject.trim();
     if (!text) {
       setError(t("studies.newStudy.subjectRequired"));
@@ -110,7 +122,7 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
           ? chosenOwn?.id
           : approach === "custom"
             ? undefined
-            : list.find((template) => template.isBuiltin && template.studyType === type)?.id;
+            : selected?.id;
       const detail = await api.studyCreate({
         projectId: typeof projectId === "string" ? projectId : await projectId(),
         title: customTitle.trim() || derived,
@@ -146,7 +158,7 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
 
   // Said only once the templates are known, so it never names a part a study will not have.
   const startsWith = templates.data
-    ? studyStartSummary(t, approach === "custom" ? null : approach === "mine" ? (chosenOwn ?? null) : (list.find((template) => template.isBuiltin && template.studyType === type) ?? null))
+    ? studyStartSummary(t, approach === "custom" ? null : approach === "mine" ? (chosenOwn ?? null) : (selected ?? null))
     : undefined;
 
   return (
@@ -175,6 +187,16 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
       <p id={`${id}-starts`} className="type-meta m-0 min-h-5 line-clamp-2" title={startsWith}>
         {startsWith}
       </p>
+      {approach === "passage" && passageTemplates.length > 0 && (
+        <label className="flex flex-col gap-1">
+          <span className="text-[0.9375rem] font-medium text-text-strong">{t("studies.newStudy.template")}</span>
+          <select value={passageMethod} onChange={(e) => setPassageMethod(e.target.value)} className={field}>
+            {passageTemplates.map((template) => (
+              <option key={template.id} value={template.key}>{templateName(template)}</option>
+            ))}
+          </select>
+        </label>
+      )}
 
       {approach === "mine" && own.length > 0 && (
         <label className="flex flex-col gap-1">
@@ -208,13 +230,13 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
         )}
       </div>
 
-      {error && (
+      {(error || templates.error) && (
         <p role="alert" className="m-0 text-[0.9375rem] text-danger">
-          {error}
+          {error || templates.error?.message}
         </p>
       )}
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" variant="primary" disabled={busy}>
+        <Button type="submit" variant="primary" disabled={busy || !templates.data || (approach !== "mine" && approach !== "custom" && !selected)}>
           <Plus className="size-4" aria-hidden="true" />
           {t("studies.newStudy.create")}
         </Button>

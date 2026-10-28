@@ -262,6 +262,7 @@ fn open_checked(path: &Path, newest: i64) -> AppResult<Connection> {
     if version > newest {
         return Err(newer(&format!("schema {version}")));
     }
+    migrations::validate_existing_history(&conn)?;
     Ok(conn)
 }
 

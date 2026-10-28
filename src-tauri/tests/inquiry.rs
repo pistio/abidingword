@@ -283,6 +283,8 @@ fn world() -> World {
                     section_id: part.clone(),
                     block_type: BlockType::Paragraph,
                     content: Some("Remaining is about effort. We must try harder.".into()),
+
+                    field_key: None,
                 },
             )?
             .id;

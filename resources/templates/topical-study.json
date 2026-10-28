@@ -1,59 +1,92 @@
 {
   "key": "topical-study",
-  "name": "Topical Study",
-  "description": "A question or topic followed through the whole of Scripture.",
+  "name": "Topical Bible Study",
+  "description": "Answer a focused biblical question by interpreting relevant passages in context before drawing conclusions.",
   "studyType": "topical",
   "sections": [
     {
       "key": "topic",
-      "title": "Question / Topic",
-      "guidance": "The question you are asking, stated as clearly as you can.",
-      "phase": "text"
+      "title": "Topic and questions",
+      "guidance": "State the topic, its boundaries and the questions the study should answer. Avoid starting with a conclusion.",
+      "phase": "text",
+      "formerTitles": [
+        "Question / Topic"
+      ],
+      "formerGuidance": [
+        "The question you are asking, stated as clearly as you can."
+      ]
     },
     {
       "key": "key-passages",
-      "title": "Key Passages",
-      "guidance": "The passages that speak most directly to it.",
+      "title": "Relevant Scripture",
+      "guidance": "Gather representative passages, including those that qualify or appear to challenge an initial view. Note why each is relevant.",
+      "phase": "text",
+      "formerTitles": [
+        "Key Passages"
+      ],
+      "formerGuidance": [
+        "The passages that speak most directly to it."
+      ]
+    },
+    {
+      "key": "passage-study",
+      "title": "Examine the passages",
+      "guidance": "Read each text in its literary, historical and covenantal context. Distinguish direct teaching, narrative description, inference and application.",
       "phase": "text"
     },
     {
       "key": "main-themes",
-      "title": "Main Themes",
-      "guidance": "The main lines of teaching that emerge.",
-      "phase": "understanding"
+      "title": "Compare and group findings",
+      "guidance": "Group the passages by their actual teaching, noting agreements, differences, development and remaining questions.",
+      "phase": "understanding",
+      "formerTitles": [
+        "Main Themes"
+      ],
+      "formerGuidance": [
+        "The main lines of teaching that emerge."
+      ]
     },
     {
       "key": "conclusions",
-      "title": "Conclusions",
-      "guidance": "Your conclusions, with the passages that carry them.",
-      "phase": "understanding"
+      "title": "Biblical conclusions",
+      "guidance": "Answer the opening questions with references. Distinguish what Scripture clearly teaches from reasonable inference and unresolved issues.",
+      "phase": "understanding",
+      "formerTitles": [
+        "Conclusions"
+      ],
+      "formerGuidance": [
+        "Your conclusions, with the passages that carry them."
+      ]
     },
     {
       "key": "application",
       "title": "Application",
-      "guidance": "What this means for belief, worship and life.",
-      "phase": "application"
-    },
-    {
-      "key": "biblical-context",
-      "title": "Biblical Context",
-      "guidance": "Where and how the topic arises across the Bible.",
-      "phase": "understanding",
-      "optional": true
+      "guidance": "Identify concrete implications for belief, worship, relationships and action, grounded in the conclusions.",
+      "phase": "application",
+      "formerGuidance": [
+        "What this means for belief, worship and life."
+      ]
     },
     {
       "key": "difficult-passages",
-      "title": "Difficult Passages",
-      "guidance": "Texts that seem to point another way, and how to read them.",
+      "title": "Difficult or balancing texts",
+      "guidance": "Examine apparently conflicting passages without ignoring their context or forcing a superficial harmonisation.",
+      "optional": true,
       "phase": "understanding",
-      "optional": true
+      "formerTitles": [
+        "Difficult Passages"
+      ],
+      "formerGuidance": [
+        "Texts that seem to point another way, and how to read them."
+      ]
     },
     {
-      "key": "theology",
-      "title": "Theology",
-      "guidance": "How the passages fit together into coherent teaching.",
-      "phase": "theology",
-      "optional": true
+      "key": "biblical-theology",
+      "title": "Place in the whole Bible",
+      "guidance": "Where relevant, consider how the teaching unfolds through the covenants and relates to Christ and the gospel without imposing a connection.",
+      "optional": true,
+      "phase": "text"
     }
-  ]
+  ],
+  "offered": true
 }

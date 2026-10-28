@@ -128,6 +128,17 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+      - name: Verify Windows source and migration catalogue
+        shell: pwsh
+        env:
+          EXPECTED_SOURCE_SHA: ${{ needs.gate.outputs.sha }}
+        run: node scripts/build-provenance.mjs --expected-sha "$env:EXPECTED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/build-provenance.json"
+      - name: Retain Windows source evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-source-provenance
+          path: ${{ runner.temp }}/build-provenance.json
+          retention-days: 14
       - name: Choose the version
         id: version
         shell: bash

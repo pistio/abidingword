@@ -1,10 +1,13 @@
 // TypeScript mirror of the Studies v0.3 native types
 // (src-tauri/src/domain/studies.rs). Keep both sides in step.
+import type { TemplateField } from "./domain";
 import type { FindingCitation } from "./library";
 import type { ScriptureRef } from "./scripture";
 
 export const STUDY_TYPES = [
   "passage",
+  "character",
+  "book",
   "word",
   "topical",
   "biblical_theology",
@@ -155,6 +158,11 @@ export interface TemplateSection {
   retired?: boolean;
   /** Where the part belongs in the study's movement; none for a part that stands on its own. */
   phase?: StudyPhase | null;
+  /** Structured answer fields; retained in customised copies of built-ins. */
+  fields?: TemplateField[];
+  fieldsVersion?: number;
+  /** Built-in template supplying translated labels for these fields. */
+  fieldsSource?: string;
 }
 
 /** A part a new study starts with (not optional, not retired). */

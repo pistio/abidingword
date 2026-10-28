@@ -102,7 +102,7 @@ describe("creating a study", () => {
     const more = screen.getByRole("button", { name: "More options" });
     await user.click(more);
     expect(more).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("button", { name: "Biblical theology" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "No template" })).toBeInTheDocument();
     await user.type(ask(), "x{Escape}");
     expect(more).toHaveAttribute("aria-expanded", "false");
     expect(api.state.studies).toHaveLength(0);

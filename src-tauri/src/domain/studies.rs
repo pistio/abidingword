@@ -45,6 +45,8 @@ text_enum!(
     /// details and wording; never a fixed workflow.
     StudyType, "study type" {
         Passage => "passage",
+        Character => "character",
+        Book => "book",
         Word => "word",
         Topical => "topical",
         BiblicalTheology => "biblical_theology",
@@ -172,6 +174,9 @@ pub struct CreateStudySection {
     /// Where it belongs in the study's movement, if anywhere.
     #[serde(default)]
     pub phase: Option<StudyPhase>,
+    /// When adding an optional template part, retain its key and fields.
+    #[serde(default)]
+    pub template_section_key: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

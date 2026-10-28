@@ -67,6 +67,7 @@ impl Database {
     ) -> AppResult<Self> {
         // Integrity first: even setting the journal mode writes to the file.
         integrity::check(&conn)?;
+        migrations::validate_existing_history(&conn)?;
         configure(&conn)?;
         let report = migrations::upgrade(&mut conn, migrations::MIGRATIONS, backup_dir)?;
         log::info!(

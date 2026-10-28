@@ -147,7 +147,9 @@
     "tooManySections": "Eine Vorlage kann höchstens {{max}} Teile haben.",
     "builtinReadOnly": "Mitgelieferte Vorlagen können nicht geändert werden. Nutze „Als meine Vorlage speichern“, um eine eigene Fassung zu erstellen.",
     "duplicateKey": "Zwei Teile der Vorlage sind derselbe Teil. Entferne einen davon.",
-    "invalidKey": "Die Kennung dieses Teils ist ungültig."
+    "invalidKey": "Die Kennung dieses Teils ist ungültig.",
+    "unknownPart": "Dieser Vorlagenteil ist nicht mehr verfügbar.",
+    "partAlreadyAdded": "Dieser Vorlagenteil ist bereits im Bibelstudium enthalten."
   },
   "sections": {
     "hasContent": "„{{title}}“ enthält noch Text oder Notizen.",

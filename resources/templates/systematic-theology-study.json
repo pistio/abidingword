@@ -55,5 +55,6 @@
       "phase": "theology",
       "optional": true
     }
-  ]
+  ],
+  "offered": false
 }

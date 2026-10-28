@@ -2,7 +2,11 @@
 // It mirrors the behaviour the Rust layer guarantees (validation messages,
 // template sections, soft delete), not its storage.
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
+import characterStudy from "../../resources/templates/biblical-character-study.json";
+import bookStudy from "../../resources/templates/whole-book-study.json";
 import passageStudy from "../../resources/templates/passage-study.json";
+import pozetekStudy from "../../resources/templates/pozetek-study.json";
+import tenStepExegesis from "../../resources/templates/ten-step-exegesis.json";
 import systematicTheology from "../../resources/templates/systematic-theology-study.json";
 import teachingStudy from "../../resources/templates/teaching-study.json";
 import topicalStudy from "../../resources/templates/topical-study.json";
@@ -13,6 +17,7 @@ import type {
   AppInfo,
   AppSettings,
   Project,
+  SectionFields,
   Study,
   StudyBlock,
   StudySection,
@@ -74,8 +79,8 @@ import type {
   StudySearchHit,
   StudySummary,
   StudyTemplate,
-  StudyType,
   TemplateSection,
+  StudyType,
 } from "@/types/studies";
 
 import { assistantFacts, newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
@@ -83,7 +88,7 @@ import { inquiryApi, newInquiryState, type InquiryState } from "./memoryInquiry"
 import { newPresentationState, presentationApi, type PresentationState } from "./memoryPresentation";
 import { newPortabilityState, portabilityApi, type PortabilityState } from "./memoryPortability";
 
-const BUILTIN_TEMPLATES = [passageStudy, wordStudy, topicalStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -483,14 +488,18 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     const keys = sections.map((sec) => sec.key?.trim()).filter(Boolean);
     if (new Set(keys).size !== keys.length) throw new ApiError("invalidInput", "Two parts of the template are the same part. Remove one of them.");
   };
-  const addSection = (studyId: string, section: TemplateSection, position: number) => {
+  const addSection = (studyId: string, section: Pick<TemplateSection, "key" | "title" | "guidance" | "phase">, position: number, fields: SectionFields | null = null) => {
     const t = now();
     const sectionId = id();
     state.sections.push({
-      id: sectionId, studyId, key: section.key ?? null, title: section.title, guidance: section.guidance ?? null, phase: section.phase ?? null,
-      position, blocks: [], createdAt: t, updatedAt: t, revision: 1,
+      id: sectionId, studyId, key: section.key ?? null, title: section.title, guidance: section.guidance ?? null,
+      phase: section.phase ?? null, position, status: "not_started", fields, blocks: [], createdAt: t, updatedAt: t, revision: 1,
     });
-    state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: 0, content: "", createdAt: t, updatedAt: t, revision: 1 });
+    // As the core: a part with fields starts with one empty block per single-text field, otherwise one paragraph.
+    const starts = fields ? fields.fields.filter((f) => f.kind === "text").map((f) => f.key) : [null];
+    starts.forEach((fieldKey, index) =>
+      state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: index, content: "", fieldKey, data: null, createdAt: t, updatedAt: t, revision: 1 }),
+    );
     return sectionId;
   };
   const summary = (study: Study): StudySummary => ({
@@ -1079,10 +1088,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyCreate: async (input) => {
       find(state.projects, input.projectId, "project");
       const title = requireTitle(input.title, "study");
-      const studyType = input.studyType ?? "passage";
+      const requestedType = input.studyType ?? "passage";
       const template = input.templateId
         ? find(state.templates, input.templateId, "template")
-        : state.templates.find((t) => t.isBuiltin && t.studyType === studyType) ?? null;
+        : state.templates.find((t) => t.isBuiltin && t.studyType === requestedType) ?? null;
+      const studyType = input.studyType ?? template?.studyType ?? "passage";
       const primary = input.primaryPassage ? refFromCanonical(input.primaryPassage, bookByCode) : null;
       const t = now();
       const study: Study = {
@@ -1091,7 +1101,12 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       };
       state.studies.push(study);
       // As the core: optional parts are offered later, retired ones are kept only for old studies.
-      (template?.sections.filter((sec) => !sec.optional && !sec.retired) ?? [{ title: "Notes" }]).forEach((section, position) => addSection(study.id, section, position));
+      (template?.sections.filter((sec) => !sec.optional && !sec.retired) ?? [{ title: "Notes" }]).forEach((section, position) => {
+        const fields = "fields" in section && section.fields?.length && template
+          ? { template: section.fieldsSource ?? template.key, version: section.fieldsVersion ?? 0, fields: section.fields }
+          : null;
+        addSection(study.id, section, position, fields);
+      });
       if (primary) state.passages.push({ id: id(), studyId: study.id, reference: primary, role: "primary", createdAt: t });
       return detail(study.id);
     },
@@ -1112,10 +1127,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const copy: Study = { ...original, id: id(), title: `${original.title} (copy)`, status: "active", createdAt: t, updatedAt: t, revision: 1 };
       state.studies.push(copy);
       for (const section of sectionsOf(studyId)) {
-        const newId = addSection(copy.id, section, section.position);
+        const newId = addSection(copy.id, section, section.position, section.fields);
         if (includeContent) {
           state.blocks = state.blocks.filter((b) => b.sectionId !== newId);
           for (const block of section.blocks) state.blocks.push({ ...block, id: id(), sectionId: newId });
+          find(state.sections, newId, "section").status = section.status;
         }
       }
       if (includeContent) {
@@ -1151,13 +1167,30 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       if (input.title !== undefined) section.title = requireTitle(input.title, "section");
       if (input.guidance !== undefined) section.guidance = input.guidance || null;
       if (input.phase !== undefined) section.phase = input.phase || null;
+      if (input.status) section.status = input.status;
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === section.id) };
     },
-    studySectionCreate: async ({ studyId, title, guidance, key, phase }) => {
-      // As the core: a key is a plain word, and a study never has the same part twice.
+    studySectionCreate: async ({ studyId, title, guidance, templateSectionKey, key, phase }) => {
       if (key?.trim() && !/^[a-z0-9-]{1,64}$/.test(key.trim())) throw new ApiError("invalidInput", "This part's key is not valid.");
       if (key?.trim() && sectionsOf(studyId).some((sec) => sec.key === key.trim())) throw new ApiError("conflict", "This study already has that part.");
-      const sectionId = addSection(studyId, { title: requireTitle(title, "section"), guidance, key: key?.trim() || null, phase: phase ?? null }, sectionsOf(studyId).length);
+      const study = find(state.studies, studyId, "study");
+      if (templateSectionKey && sectionsOf(studyId).some((section) => section.key === templateSectionKey)) {
+        throw new ApiError("invalidInput", "This template part is already in the study.");
+      }
+      const template = study.templateId ? find(state.templates, study.templateId, "template") : null;
+      const fromTemplate = templateSectionKey
+        ? template?.sections.find((part) => part.key === templateSectionKey && part.optional && !part.retired)
+        : null;
+      if (templateSectionKey && !fromTemplate) throw new ApiError("invalidInput", "This template part is no longer available.");
+      const fields = fromTemplate?.fields?.length && template
+        ? { template: fromTemplate.fieldsSource ?? template.key, version: fromTemplate.fieldsVersion ?? 0, fields: fromTemplate.fields }
+        : null;
+      const sectionId = addSection(
+        studyId,
+        { key: fromTemplate?.key ?? key, phase: phase ?? fromTemplate?.phase, title: requireTitle(title, "section"), guidance },
+        sectionsOf(studyId).length,
+        fields,
+      );
       touch(studyId);
       const section = find(state.sections, sectionId, "section");
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === sectionId) };
@@ -1292,7 +1325,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const original = find(state.templates, templateId, "template");
       return api.templateCreate({
         name: `${original.name} (copy)`, description: original.description ?? undefined,
-        studyType: original.studyType, sections: original.sections.filter((sec) => !sec.retired).map((sec) => ({ ...sec })),
+        studyType: original.studyType, sections: original.sections.filter((sec) => !sec.retired).map((sec) => ({
+          ...sec,
+          ...(sec.fields?.length ? { fieldsSource: sec.fieldsSource ?? original.key } : {}),
+        })),
       });
     },
     templateDelete: async (templateId) => {
@@ -1308,6 +1344,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         blockType: input.blockType,
         position: state.blocks.filter((b) => b.sectionId === input.sectionId).length,
         content: input.content ?? "",
+        fieldKey: input.fieldKey ?? null,
+        data: null,
         createdAt: t,
         updatedAt: t,
         revision: 1,
@@ -1318,6 +1356,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyBlockUpdate: async (input) => {
       const block = find(state.blocks, input.id, "block");
       if (input.content !== undefined) block.content = input.content;
+      if (input.data !== undefined) block.data = input.data;
       block.revision += 1;
       return { ...block };
     },

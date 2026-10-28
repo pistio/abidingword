@@ -1,0 +1,58 @@
+{
+  "key": "biblical-character-study",
+  "name": "Biblical Character Study",
+  "description": "Study a biblical person's life and character through the relevant passages.",
+  "studyType": "character",
+  "sections": [
+    {
+      "key": "person",
+      "title": "Person and passages",
+      "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name.",
+      "phase": "text"
+    },
+    {
+      "key": "setting",
+      "title": "Historical and biblical setting",
+      "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain.",
+      "phase": "text"
+    },
+    {
+      "key": "life",
+      "title": "Life, words and actions",
+      "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography.",
+      "phase": "text"
+    },
+    {
+      "key": "character",
+      "title": "Character and decisions",
+      "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives.",
+      "phase": "understanding"
+    },
+    {
+      "key": "god",
+      "title": "God's work and the biblical evaluation",
+      "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary.",
+      "phase": "theology"
+    },
+    {
+      "key": "conclusion",
+      "title": "Main findings",
+      "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions.",
+      "phase": "understanding"
+    },
+    {
+      "key": "application",
+      "title": "Application",
+      "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action.",
+      "phase": "application"
+    },
+    {
+      "key": "comparisons",
+      "title": "Related figures and passages",
+      "guidance": "Compare relevant people or passages only where the connections illuminate the text.",
+      "optional": true,
+      "phase": "understanding"
+    }
+  ],
+  "offered": true
+}

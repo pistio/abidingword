@@ -5,16 +5,18 @@ import { Button } from "@/design-system/Button";
 import { useSaveTracker } from "@/hooks/SaveTracker";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import type { StudySection } from "@/types/domain";
 import type { Finding, FindingType, StudyPhase } from "@/types/studies";
 import { BlockEditor, type BlockHandle } from "./BlockEditor";
-import { sectionGuidance, sectionTitle } from "./builtinText";
+import { SECTION_STATUSES, type SectionStatus, type StudySection } from "@/types/domain";
+import { sectionGuidance, sectionTitle, structuredOptional } from "./builtinText";
+import { FieldsEditor } from "./FieldsEditor";
 import { PartAdd } from "./PartAdd";
 import { PhaseSelect } from "./PhaseSelect";
 import { StudyHelp } from "./StudyHelp";
 
 interface SectionEditorProps {
   section: StudySection;
+  templateKey?: string;
   isFirst: boolean;
   isLast: boolean;
   /** Whether findings are assigned to this section. */
@@ -55,7 +57,7 @@ interface SectionEditorProps {
 const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
 
 export function SectionEditor(props: SectionEditorProps) {
-  const { section, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
+  const { section, templateKey, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
   const { t } = useTranslation();
   const api = useApi();
   const { track, settled } = useSaveTracker();
@@ -82,9 +84,36 @@ export function SectionEditor(props: SectionEditorProps) {
   const [error, setError] = useState<string | null>(null);
   const headingId = `section-${section.id}`;
   const bodyId = `section-body-${section.id}`;
-  const title = sectionTitle(section);
+  const origin = section.fields?.template ?? templateKey;
+  const title = sectionTitle(section, origin);
   // Guidance is for a section with nothing in it yet; once there is writing it is out of the way.
-  const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section);
+  const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section, origin);
+
+  const structured = section.fields !== null;
+  const goal = structured ? structuredOptional(section, "goal") : null;
+  const example = structured ? structuredOptional(section, "example") : null;
+  const exampleLabel = section.fields?.template === "ten-step-exegesis"
+    ? t("studies.fields.exampleMatthew")
+    : t("studies.fields.example");
+  const exampleId = useId();
+  const [showExample, setShowExample] = useState(false);
+  const free = structured ? section.blocks.filter((b) => b.fieldKey === null) : section.blocks;
+  const statusLabels: Record<SectionStatus, string> = {
+    not_started: t("studies.fields.statusNotStarted"),
+    in_progress: t("studies.fields.statusInProgress"),
+    complete: t("studies.fields.statusComplete"),
+  };
+  const setStatus = async (status: SectionStatus) => {
+    const saving = api.studySectionUpdate({ id: section.id, status });
+    track(saving);
+    try {
+      await saving;
+      onChange({ ...section, status });
+      setError(null);
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
 
   const removeBlock = (blockId: string) =>
     onChange({ ...section, blocks: section.blocks.filter((b) => b.id !== blockId) });
@@ -289,21 +318,66 @@ export function SectionEditor(props: SectionEditorProps) {
         </div>
       )}
       <div id={bodyId} hidden={collapsed}>
-      {guidance && <p className="type-meta mb-2 mt-0">{guidance}</p>}
+      {structured && (
+        <div className="mb-3 flex flex-col gap-2">
+          <p className="m-0 text-[1rem] font-medium text-text-strong">{sectionGuidance(section, origin)}</p>
+          {goal && (
+            <p className="m-0 text-[0.9375rem] text-text-muted">
+              <span className="font-medium">{t("studies.fields.goal")}: </span>
+              {goal}
+            </p>
+          )}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+            <label className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
+              <span>{t("studies.fields.status", { title })}</span>
+              <select
+                value={section.status}
+                onChange={(e) => void setStatus(e.target.value as SectionStatus)}
+                className="min-h-11 rounded-aw border border-border bg-bg px-2 text-text"
+              >
+                {SECTION_STATUSES.map((status) => (
+                  <option key={status} value={status}>{statusLabels[status]}</option>
+                ))}
+              </select>
+            </label>
+            {example && (
+              <button
+                type="button"
+                aria-expanded={showExample}
+                aria-controls={exampleId}
+                onClick={() => setShowExample(!showExample)}
+                className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-link hover:bg-hover"
+              >
+                <ChevronRight className={`size-4 transition-transform ${showExample ? "rotate-90" : ""}`} aria-hidden="true" />
+                {exampleLabel}
+              </button>
+            )}
+          </div>
+          {example && (
+            <div id={exampleId} hidden={!showExample} className="border-l-[3px] border-border bg-bg-secondary px-4 py-3">
+              <p className="m-0 mb-1 text-[0.875rem] text-text-muted">{t("studies.fields.exampleNote")}</p>
+              <p className="m-0 reading">{example}</p>
+            </div>
+          )}
+          <FieldsEditor section={section} onChange={onChange} onError={setError} />
+        </div>
+      )}
+      {!structured && guidance && <p className="mb-2 mt-0 text-[0.9375rem] text-text-muted">{guidance}</p>}
 
+      {structured && free.length > 0 && <h3 className="m-0 mt-2 text-[1rem] font-medium text-text-strong">{t("studies.fields.otherWriting")}</h3>}
       <div className="flex flex-col gap-1">
-        {section.blocks.map((block, index) => (
+        {free.map((block, index) => (
           <BlockEditor
             key={block.id}
             block={block}
             sectionTitle={title}
-            placeholder={index === 0 ? t("studies.blocks.placeholder") : ""}
+            placeholder={index === 0 && !structured ? t("studies.blocks.placeholder") : ""}
             onDeleted={removeBlock}
             onContent={onContent}
             onRevealScripture={onRevealScripture}
             autoFocus={block.id === newBlockId}
             isFirst={index === 0}
-            isLast={index === section.blocks.length - 1}
+            isLast={index === free.length - 1}
             onMove={(delta) => moveBlock(block.id, delta)}
             register={register}
             onFocused={setLastBlock}

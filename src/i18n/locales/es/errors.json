@@ -158,7 +158,9 @@
     "tooManySections": "Una plantilla puede tener como máximo {{max}} partes.",
     "builtinReadOnly": "Las plantillas integradas no se pueden modificar. Usa «Guardar como mi plantilla» para crear tu propia versión.",
     "duplicateKey": "Dos partes de la plantilla son la misma parte. Quita una de ellas.",
-    "invalidKey": "El identificador de esta parte no es válido."
+    "invalidKey": "El identificador de esta parte no es válido.",
+    "unknownPart": "Esta sección de la plantilla ya no está disponible.",
+    "partAlreadyAdded": "Esta sección de la plantilla ya forma parte del estudio."
   },
   "sections": {
     "hasContent": "«{{title}}» todavía contiene texto o apuntes.",

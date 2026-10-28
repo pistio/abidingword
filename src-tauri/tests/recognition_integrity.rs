@@ -542,7 +542,7 @@ fn a_v022_database_upgrades_and_keeps_its_verse_origins_as_automatic() {
     }
     let db = Database::open(&path, &backups).unwrap();
     db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn)?, 23);
+        assert_eq!(migrations::current_version(conn)?, MIGRATIONS.last().unwrap().version);
         assert_eq!(count(conn, "SELECT COUNT(*) FROM bible_verse_texts"), 1);
         let origin = kept_documents::origin(conn, "tr-1", 8_001_001)?.unwrap();
         assert_eq!(origin.basis, "automatic");
@@ -577,8 +577,8 @@ fn a_v022_database_upgrades_and_keeps_its_verse_origins_as_automatic() {
 #[test]
 fn a_failing_migration_after_0023_rolls_back_and_leaves_0023_intact() {
     let mut conn = Connection::open_in_memory().unwrap();
-    migrations::run_with(&mut conn, MIGRATIONS).unwrap();
-    let mut list: Vec<Migration> = MIGRATIONS
+    migrations::run_with(&mut conn, &MIGRATIONS[..23]).unwrap();
+    let mut list: Vec<Migration> = MIGRATIONS[..23]
         .iter()
         .map(|m| Migration {
             version: m.version,

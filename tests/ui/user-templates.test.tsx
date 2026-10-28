@@ -199,7 +199,7 @@ describe("Save as my template", () => {
   });
 
   it("gives every part one key of its own, keeping a built-in part's", () => {
-    const base = { studyId: "s", guidance: null, position: 0, blocks: [], createdAt: "", updatedAt: "", revision: 1 };
+    const base = { status: "not_started" as const, fields: null, studyId: "s", guidance: null, position: 0, blocks: [], createdAt: "", updatedAt: "", revision: 1 };
     const parts = partsFromStudy([
       { ...base, id: "1", key: "text", title: "Text", phase: "text" },
       { ...base, id: "2", key: null, title: "Mine", phase: null },

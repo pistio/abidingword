@@ -51,10 +51,39 @@ export interface StudySection {
   /** Where the part belongs in the study's movement, copied from its template (v0.18.7); null: none. */
   phase: StudyPhase | null;
   position: number;
+  /** How far the person has got with this part. */
+  status: SectionStatus;
+  /** The structured fields the part was created with (a snapshot); null for plain parts. */
+  fields: SectionFields | null;
   blocks: StudyBlock[];
   createdAt: string;
   updatedAt: string;
   revision: number;
+}
+
+export const SECTION_STATUSES = ["not_started", "in_progress", "complete"] as const;
+export type SectionStatus = (typeof SECTION_STATUSES)[number];
+
+export type FieldKind = "text" | "entries";
+export type PartKind = "line" | "text" | "choice";
+
+export interface EntryPart {
+  key: string;
+  kind: PartKind;
+  /** For a choice: stable option keys; the first is the default. */
+  options?: string[];
+}
+
+export interface TemplateField {
+  key: string;
+  kind: FieldKind;
+  parts?: EntryPart[];
+}
+
+export interface SectionFields {
+  template: string;
+  version: number;
+  fields: TemplateField[];
 }
 
 /** Block types available in this version. Later: quotation, word_study, ... */
@@ -67,6 +96,10 @@ export interface StudyBlock {
   blockType: BlockType;
   position: number;
   content: string;
+  /** The field of the part's snapshot this block answers; null for free writing. */
+  fieldKey: string | null;
+  /** An entry of a repeatable field: JSON object of its parts' values. */
+  data: string | null;
   createdAt: string;
   updatedAt: string;
   revision: number;
@@ -162,9 +195,11 @@ export interface UpdateStudySection {
   guidance?: string;
   /** "" clears it. */
   phase?: StudyPhase | "";
+  status?: SectionStatus;
 }
 
 export interface CreateStudySection {
+  templateSectionKey?: string;
   studyId: string;
   title: string;
   guidance?: string;
@@ -177,11 +212,15 @@ export interface CreateStudyBlock {
   sectionId: string;
   blockType: BlockType;
   content?: string;
+  /** The field of the part's snapshot the block answers. */
+  fieldKey?: string;
 }
 
 export interface UpdateStudyBlock {
   id: string;
   content?: string;
+  /** An entry's values as a JSON object. */
+  data?: string;
 }
 
 export interface UpdateSettings {

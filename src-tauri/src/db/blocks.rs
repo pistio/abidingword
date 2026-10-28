@@ -5,7 +5,8 @@ use crate::domain::{validate, CreateStudyBlock, StudyBlock, UpdateStudyBlock};
 use crate::error::{AppError, AppResult};
 
 const COLUMNS: &str =
-    "b.id, b.section_id, b.block_type, b.position, b.content, b.created_at, b.updated_at, b.revision";
+    "b.id, b.section_id, b.block_type, b.position, b.content, b.field_key, b.data, \
+     b.created_at, b.updated_at, b.revision";
 
 fn from_row(row: &Row) -> rusqlite::Result<StudyBlock> {
     let block_type: String = row.get(2)?;
@@ -17,9 +18,11 @@ fn from_row(row: &Row) -> rusqlite::Result<StudyBlock> {
         })?,
         position: row.get(3)?,
         content: row.get(4)?,
-        created_at: row.get(5)?,
-        updated_at: row.get(6)?,
-        revision: row.get(7)?,
+        field_key: row.get(5)?,
+        data: row.get(6)?,
+        created_at: row.get(7)?,
+        updated_at: row.get(8)?,
+        revision: row.get(9)?,
     })
 }
 
@@ -63,14 +66,52 @@ pub(crate) fn insert(
     content: &str,
     now: &str,
 ) -> AppResult<String> {
+    insert_answer(
+        conn, section_id, block_type, position, content, None, None, now,
+    )
+}
+
+/// Inserts a block that may answer a field of its section's snapshot.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn insert_answer(
+    conn: &Connection,
+    section_id: &str,
+    block_type: crate::domain::BlockType,
+    position: i64,
+    content: &str,
+    field_key: Option<&str>,
+    data: Option<&str>,
+    now: &str,
+) -> AppResult<String> {
     let id = new_id();
     conn.execute(
         "INSERT INTO study_blocks
-             (id, section_id, block_type, position, content, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6)",
-        params![id, section_id, block_type.as_str(), position, content, now],
+             (id, section_id, block_type, position, content, field_key, data, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)",
+        params![
+            id,
+            section_id,
+            block_type.as_str(),
+            position,
+            content,
+            field_key,
+            data,
+            now
+        ],
     )?;
     Ok(id)
+}
+
+/// A block's entry values must be a JSON object of text values.
+fn validated_data(data: &str) -> AppResult<()> {
+    validate::block_content(data)?;
+    match serde_json::from_str::<serde_json::Value>(data) {
+        Ok(serde_json::Value::Object(map)) if map.values().all(|v| v.is_string()) => Ok(()),
+        _ => Err(AppError::InvalidInput(crate::error::UserMessage::new(
+            "validation.entryInvalid",
+            "This entry could not be saved.",
+        ))),
+    }
 }
 
 /// Appends a block to the end of a section.
@@ -78,6 +119,19 @@ pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlo
     let content = input.content.as_deref().unwrap_or("");
     validate::block_content(content)?;
     let section = sections::get(conn, &input.section_id)?;
+    let field_key = input.field_key.as_deref().filter(|k| !k.is_empty());
+    if let Some(key) = field_key {
+        let known = section
+            .fields
+            .as_ref()
+            .is_some_and(|f| f.fields.iter().any(|field| field.key == key));
+        if !known {
+            return Err(AppError::InvalidInput(crate::error::UserMessage::new(
+                "validation.unknownField",
+                "This part has no such field.",
+            )));
+        }
+    }
     let position: i64 = conn.query_row(
         "SELECT COALESCE(MAX(position), -1) + 1 FROM study_blocks
          WHERE section_id = ?1 AND deleted_at IS NULL",
@@ -85,22 +139,42 @@ pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlo
         |row| row.get(0),
     )?;
     let now = now();
-    let id = insert(conn, &section.id, input.block_type, position, content, &now)?;
+    let id = insert_answer(
+        conn,
+        &section.id,
+        input.block_type,
+        position,
+        content,
+        field_key,
+        None,
+        &now,
+    )?;
     studies::touch(conn, &section.study_id, &now)?;
     get(conn, &id)
 }
 
 pub fn update(conn: &Connection, input: &UpdateStudyBlock) -> AppResult<StudyBlock> {
     let current = get(conn, &input.id)?;
-    let Some(content) = &input.content else {
+    if input.content.is_none() && input.data.is_none() {
         return Ok(current);
-    };
+    }
+    let content = input.content.as_ref().unwrap_or(&current.content);
     validate::block_content(content)?;
+    if let Some(data) = &input.data {
+        if current.field_key.is_none() {
+            return Err(AppError::InvalidInput(crate::error::UserMessage::new(
+                "validation.entryInvalid",
+                "This entry could not be saved.",
+            )));
+        }
+        validated_data(data)?;
+    }
+    let data = input.data.as_ref().or(current.data.as_ref());
     let now = now();
     conn.execute(
-        "UPDATE study_blocks SET content = ?2, updated_at = ?3, revision = revision + 1
+        "UPDATE study_blocks SET content = ?2, data = ?3, updated_at = ?4, revision = revision + 1
          WHERE id = ?1",
-        params![input.id, content, now],
+        params![input.id, content, data, now],
     )?;
     touch_study_of_section(conn, &current.section_id, &now)?;
     get(conn, &input.id)

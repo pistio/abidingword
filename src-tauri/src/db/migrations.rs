@@ -141,6 +141,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "recognition_corrections",
         sql: include_str!("../../migrations/0023_recognition_corrections.sql"),
     },
+    Migration {
+        version: 24,
+        name: "section_status_and_fields",
+        sql: include_str!("../../migrations/0024_section_status_and_fields.sql"),
+    },
 ];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -174,6 +179,7 @@ pub fn upgrade(
     integrity::check(conn)?;
     ensure_versions_table(conn)?;
     let from_version = current_version(conn)?;
+    validate_history(conn, migrations)?;
     let pending = migrations
         .iter()
         .filter(|m| m.version > from_version)
@@ -228,6 +234,7 @@ pub fn run_with(conn: &mut Connection, migrations: &[Migration]) -> AppResult<Mi
         });
     }
 
+    validate_history(conn, migrations)?;
     let mut applied = Vec::new();
     for migration in migrations.iter().filter(|m| m.version > from_version) {
         apply(conn, migration).map_err(|e| AppError::Migration {
@@ -258,6 +265,63 @@ pub fn current_version(conn: &Connection) -> AppResult<i64> {
     )?)
 }
 
+/// Read-only preflight, also used before accepting a backup or configuring WAL.
+pub fn validate_existing_history(conn: &Connection) -> AppResult<()> {
+    let exists: bool = conn.query_row("SELECT EXISTS (SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'schema_versions')", [], |r| r.get(0))?;
+    if !exists {
+        return Ok(());
+    }
+    let current = current_version(conn)?;
+    let latest = MIGRATIONS.last().map_or(0, |m| m.version);
+    if current > latest {
+        return Err(AppError::Migration { version: current, name: "unknown".into(), message: format!("database schema version {current} is newer than this app supports ({latest}); refusing to open it") });
+    }
+    validate_history(conn, MIGRATIONS)
+}
+
+/// A version number alone is not a lineage: migration 10 shipped with two
+/// incompatible meanings. Validate every recorded row before doing any upgrade.
+fn validate_history(conn: &Connection, migrations: &[Migration]) -> AppResult<()> {
+    let mut stmt = conn.prepare("SELECT version, name FROM schema_versions ORDER BY version")?;
+    let recorded = stmt
+        .query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?)))?
+        .collect::<Result<Vec<_>, _>>()?;
+    let current = recorded.last().map_or(0, |(v, _)| *v);
+    let expected: Vec<_> = migrations.iter().filter(|m| m.version <= current).collect();
+    if recorded.len() != expected.len()
+        || recorded
+            .iter()
+            .zip(expected)
+            .any(|((version, name), m)| *version != m.version || name != m.name)
+    {
+        return Err(AppError::Migration { version: current, name: "incompatible_history".into(),
+            message: "This database has a different migration history. No migrations were applied. Keep the database and its backups; a reviewed lineage-specific repair is required.".into() });
+    }
+    // A copied/relabelled history does not authorise overwriting columns from
+    // another lineage. Report the collision before even earlier pending work.
+    if current > 0
+        && current < 24
+        && migrations
+            .iter()
+            .any(|m| m.version == 24 && m.name == "section_status_and_fields")
+    {
+        for (table, column) in [
+            ("study_sections", "status"),
+            ("study_sections", "fields"),
+            ("study_blocks", "field_key"),
+        ] {
+            let mut stmt = conn.prepare(&format!("PRAGMA table_info({table})"))?;
+            let columns = stmt
+                .query_map([], |r| r.get::<_, String>(1))?
+                .collect::<Result<Vec<_>, _>>()?;
+            if columns.iter().any(|name| name == column) {
+                return Err(AppError::Migration { version: current, name: "incompatible_schema".into(), message: format!("Unexpected existing column {table}.{column} before migration 24. No migrations were applied; a reviewed schema-specific repair is required.") });
+            }
+        }
+    }
+    Ok(())
+}
+
 fn apply(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
     let tx = conn.transaction()?;
     tx.execute_batch(migration.sql)?;
@@ -280,7 +344,6 @@ fn check_order(migrations: &[Migration]) -> AppResult<()> {
         ))
     }
 }
-
 
 #[cfg(test)]
 mod schema_compatibility_tests {
@@ -305,8 +368,8 @@ mod schema_compatibility_tests {
         assert_eq!(upgrade.to_version, MIGRATIONS.last().unwrap().version);
         assert_eq!(current_version(&conn).unwrap(), upgrade.to_version);
 
-        let reopened = run_with(&mut conn, MIGRATIONS)
-            .expect("reopening upgraded database must be safe");
+        let reopened =
+            run_with(&mut conn, MIGRATIONS).expect("reopening upgraded database must be safe");
         assert!(reopened.applied.is_empty());
     }
 }
