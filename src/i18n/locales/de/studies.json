@@ -258,7 +258,7 @@
         }
       },
       "pozetek-study": {
-        "name": "POZETEK — Einen Bibeltext untersuchen",
+        "name": "POZETEK – Bibeltext untersuchen",
         "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
         "sections": {
           "persons": {
@@ -495,7 +495,7 @@
         }
       },
       "ten-step-exegesis": {
-        "name": "Zehn Schritte — Einen Bibeltext auslegen",
+        "name": "Die Zehn-Schritte-Methode",
         "description": "Eine gründliche Auslegung nach den zehn Schritten von Helge Stadelmann und Thomas Richter. Erläuterungen und das aufklappbare Beispiel zu Mt 8,18–27 sind eigenständig formuliert.",
         "sections": {
           "step-01-familiarity": {
