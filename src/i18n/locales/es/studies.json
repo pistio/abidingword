@@ -186,74 +186,78 @@
         }
       },
       "topical-study": {
-        "name": "Estudio temático",
-        "description": "Una pregunta o un tema seguidos a través de toda la Escritura.",
+        "name": "Estudio bíblico temático",
+        "description": "Responder a una pregunta bíblica concreta interpretando primero los pasajes pertinentes en su contexto.",
         "sections": {
           "topic": {
-            "title": "Pregunta / Tema",
-            "guidance": "La pregunta que te haces, formulada con la mayor claridad posible."
+            "title": "Tema y preguntas",
+            "guidance": "Define el tema, sus límites y las preguntas que quieres responder. No empieces con una conclusión predeterminada."
           },
           "key-passages": {
-            "title": "Pasajes clave",
-            "guidance": "Los pasajes que hablan de ello más directamente."
+            "title": "Pasajes pertinentes",
+            "guidance": "Reúne pasajes representativos, incluidos los que matizan o parecen cuestionar una primera idea. Anota por qué importa cada uno."
           },
-          "biblical-context": {
-            "title": "Contexto bíblico",
-            "guidance": "Dónde y cómo aparece el tema a lo largo de la Biblia."
+          "passage-study": {
+            "title": "Examinar los pasajes",
+            "guidance": "Lee cada texto en su contexto literario, histórico y de los pactos. Distingue la enseñanza directa, la descripción narrativa, la inferencia y la aplicación."
           },
           "main-themes": {
-            "title": "Temas principales",
-            "guidance": "Las líneas principales de enseñanza que surgen."
-          },
-          "difficult-passages": {
-            "title": "Pasajes difíciles",
-            "guidance": "Textos que parecen apuntar en otra dirección y cómo leerlos."
-          },
-          "theology": {
-            "title": "Teología",
-            "guidance": "Cómo encajan los pasajes en una enseñanza coherente."
+            "title": "Comparar y agrupar los hallazgos",
+            "guidance": "Agrupa los pasajes según lo que realmente enseñan, señalando coincidencias, diferencias, desarrollo y cuestiones pendientes."
           },
           "conclusions": {
-            "title": "Conclusiones",
-            "guidance": "Tus conclusiones, con los pasajes que las sostienen."
+            "title": "Conclusiones bíblicas",
+            "guidance": "Responde a las preguntas iniciales con referencias. Distingue lo que la Escritura enseña claramente de las inferencias razonables y las cuestiones no resueltas."
           },
           "application": {
             "title": "Aplicación",
-            "guidance": "Lo que esto significa para la fe, la adoración y la vida."
+            "guidance": "Extrae consecuencias concretas para la fe, la adoración, las relaciones y la conducta, basadas en las conclusiones."
+          },
+          "difficult-passages": {
+            "title": "Textos difíciles o complementarios",
+            "guidance": "Examina los pasajes aparentemente contradictorios sin ignorar su contexto ni forzar una armonización superficial."
+          },
+          "biblical-theology": {
+            "title": "Lugar en toda la Biblia",
+            "guidance": "Cuando proceda, considera cómo se desarrolla la enseñanza a través de los pactos y cómo se relaciona con Cristo y el evangelio, sin imponer conexiones."
           }
         }
       },
       "word-study": {
-        "name": "Estudio de palabra",
-        "description": "Una palabra seguida a través de la Escritura, desde sus usos hasta su significado y su peso.",
+        "name": "Estudio de una palabra bíblica",
+        "description": "Estudiar una palabra en su lengua original y en sus contextos sin suponer que siempre tiene el mismo significado.",
         "sections": {
           "word": {
-            "title": "Palabra",
-            "guidance": "La palabra que se estudia, su forma original y cómo la vierten las traducciones."
+            "title": "Palabra y pregunta",
+            "guidance": "Identifica el lema hebreo o griego, su escritura y el pasaje o la pregunta que vas a estudiar. Una palabra española puede traducir varias palabras originales."
           },
           "occurrences": {
-            "title": "Apariciones",
-            "guidance": "Dónde aparece la palabra. (Las listas automáticas de apariciones llegarán con la concordancia.)"
-          },
-          "immediate-contexts": {
-            "title": "Contextos inmediatos",
-            "guidance": "Cómo cada uso importante está determinado por su oración y su párrafo."
+            "title": "Usos y traducciones",
+            "guidance": "Busca usos representativos del lema y compara sus traducciones. Distingue el lema de sus formas flexionadas y de otras palabras con traducciones similares."
           },
           "semantic-range": {
-            "title": "Campo semántico",
-            "guidance": "La gama de significados que tiene la palabra y qué permite decidir entre ellos."
+            "title": "Variedad de significados",
+            "guidance": "Describe los posibles significados según el contexto. No deduzcas el sentido solo de la etimología ni atribuyas todos los sentidos posibles a una misma aparición."
           },
           "key-passages": {
-            "title": "Pasajes clave",
-            "guidance": "Los pasajes donde la palabra tiene más importancia."
-          },
-          "theological-significance": {
-            "title": "Importancia teológica",
-            "guidance": "Lo que la palabra aporta a la enseñanza de la Biblia."
+            "title": "Pasajes en contexto",
+            "guidance": "Lee cada uso importante dentro de su oración, párrafo, género literario y contexto histórico. Explica qué significado encaja mejor y por qué."
           },
           "conclusions": {
-            "title": "Conclusiones",
-            "guidance": "Lo que has concluido y lo que sigue abierto."
+            "title": "Significado y conclusión",
+            "guidance": "Explica con pruebas del texto qué significa la palabra en el pasaje estudiado. Señala las dudas y no atribuyas a una palabra más contenido teológico del que respalda el pasaje."
+          },
+          "application": {
+            "title": "Aplicación",
+            "guidance": "¿Qué consecuencias para la fe y la vida se desprenden de la enseñanza del pasaje, y no solo de una definición de diccionario?"
+          },
+          "grammar": {
+            "title": "Gramática y sintaxis",
+            "guidance": "Cuando sea útil, examina la forma gramatical, la sintaxis y la función en el discurso. Usa recursos lingüísticos fiables; no es imprescindible dominar las lenguas originales."
+          },
+          "theological-significance": {
+            "title": "Relaciones con la teología bíblica",
+            "guidance": "Compara las enseñanzas bíblicas relacionadas sin perder de vista el sentido propio de cada pasaje."
           }
         }
       },
