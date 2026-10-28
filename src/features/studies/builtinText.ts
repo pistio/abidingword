@@ -1,3 +1,7 @@
+import research0 from "../../../resources/templates/word-research-study.json";
+import research1 from "../../../resources/templates/topical-research-study.json";
+import research2 from "../../../resources/templates/character-research-study.json";
+import research3 from "../../../resources/templates/book-research-study.json";
 // Built-in study templates are application text, shown in the interface
 // language; what a study copied from one is the user's own text from then
 // on. The database keeps the English the templates were installed with, so
@@ -5,6 +9,8 @@
 // English wording. Once the user renames it, their wording is shown as it
 // is. No stored text is ever rewritten (docs/i18n.md, "Built-in templates").
 import i18n, { type TFunction } from "i18next";
+import pozetekWriting from "../../../resources/templates/pozetek-writing-study.json";
+import tenStepWriting from "../../../resources/templates/ten-step-writing-study.json";
 import biblicalCharacter from "../../../resources/templates/biblical-character-study.json";
 import wholeBook from "../../../resources/templates/whole-book-study.json";
 import biblicalTheology from "../../../resources/templates/biblical-theology-study.json";
@@ -15,6 +21,7 @@ import systematicTheology from "../../../resources/templates/systematic-theology
 import teaching from "../../../resources/templates/teaching-study.json";
 import topical from "../../../resources/templates/topical-study.json";
 import word from "../../../resources/templates/word-study.json";
+import { inStudyCatalogue } from "./catalogue";
 import type { StudyTemplate, TemplateSection } from "@/types/studies";
 
 interface BuiltinDefinition {
@@ -40,7 +47,7 @@ interface BuiltinDefinition {
   }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [ passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching, pozetekWriting, tenStepWriting, research0, research1, research2, research3];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */
@@ -118,7 +125,7 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
 
 /** Whether a built-in template is offered for new work (its resource file says so); a user's own always is. */
 export function isOffered(template: Pick<StudyTemplate, "key" | "isBuiltin">): boolean {
-  return !template.isBuiltin || BY_KEY.get(template.key)?.offered !== false;
+  return inStudyCatalogue(template);
 }
 
 /**

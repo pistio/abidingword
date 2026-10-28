@@ -160,7 +160,9 @@
     "duplicateKey": "Le modèle contient deux fois la même partie. Retirez-en une.",
     "invalidKey": "L’identifiant de cette partie n’est pas valide.",
     "unknownPart": "Cette partie du modèle n’est plus disponible.",
-    "partAlreadyAdded": "Cette partie du modèle figure déjà dans l’étude."
+    "partAlreadyAdded": "Cette partie du modèle figure déjà dans l’étude.",
+    "tooManyBlocks": "Une partie peut contenir au maximum {{max}} blocs.",
+    "duplicateBlockKey": "Chaque bloc doit avoir un identifiant unique et non vide."
   },
   "sections": {
     "hasContent": "« {{title}} » contient encore du texte ou des notes.",
@@ -233,6 +235,10 @@
     "searchNoKey": "Ce service de recherche n’utilise pas de clé."
   },
   "teaching": {
+    "blockType": "Ce type de bloc ne peut pas être utilisé dans cette préparation.",
+    "blockParent": "Un bloc peut être placé dans une section de cette préparation.",
+    "blockRole": "Ce bloc ne peut pas être associé à cette partie de la préparation.",
+    "blockReference": "Choisissez un bloc de texte biblique existant dans cette préparation.",
     "tooLong": "Cette partie de l’enseignement est trop longue pour être enregistrée.",
     "otherPoint": "Ce point appartient à un autre enseignement.",
     "otherStudyFinding": "Cette note appartient à une autre étude.",

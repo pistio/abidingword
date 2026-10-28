@@ -55,37 +55,39 @@ describe("the three formats", () => {
     expect(formatStarts("lesson", "sermon", mine).map((s) => s.id)).toEqual(["builtin:lesson", "builtin:children", "k"]);
   });
 
-  it("are offered when a teaching starts, a message as a sermon or a talk", async () => {
+  it("offers three teaching formats without a second sermon-or-talk question", async () => {
     const { api } = await setup();
     const user = await openTeaching(api);
     const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
     const formats = within(form).getAllByRole("radio").filter((r) => r.getAttribute("name")?.endsWith("-format"));
-    expect(formats.map((r) => r.getAttribute("aria-label"))).toEqual(["Message", "Group Bible study", "Interactive lesson"]);
-    expect(within(form).getByRole("radio", { name: "Message" })).toBeChecked();
-    await user.click(within(form).getByRole("radio", { name: "Talk" }));
+    expect(formats.map((r) => r.getAttribute("aria-label"))).toEqual(["Bible Study — EVA", "Sermon / Talk", "Bible Lesson — Children / Youth", "Blank template"]);
+    expect(within(form).getByRole("radio", { name: "Sermon / Talk" })).toBeChecked();
+    expect(within(form).queryByRole("radio", { name: "Talk" })).toBeNull();
+    await user.click(within(form).getByRole("radio", { name: "Sermon / Talk" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
-    await within(studyPane()).findByRole("article", { name: "Talk · Abiding" });
-    expect(api.state.teaching.preparations[0]!.kind).toBe("talk");
+    await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
+    expect(api.state.teaching.preparations[0]!.kind).toBe("sermon");
+    expect(api.state.teaching.preparations[0]!.templateKey).toBe("sermon-talk");
   });
 
-  it("names the group format Hauskreis in German and 소그룹 성경공부 in Korean", async () => {
+  it("uses the simplified German and Korean format names while keeping legacy labels", async () => {
     await act(async () => {
       await i18n.changeLanguage("de");
     });
-    expect(i18n.t("studies.teaching.formats.group.name")).toBe("Hauskreis");
+    expect(i18n.t("studies.teaching.formats.group.name")).toBe("Bibelstudium");
     expect(i18n.t("studies.teaching.kind.bible_study")).toBe("Hauskreis");
     expect(i18n.t("studies.teaching.formats.lesson.name")).toBe("Bibelunterricht");
     expect(i18n.t("studies.teaching.newTeaching")).toBe("Neue Bibellehre");
     await act(async () => {
       await i18n.changeLanguage("ko");
     });
-    expect(i18n.t("studies.teaching.formats.group.name")).toBe("소그룹 성경공부");
+    expect(i18n.t("studies.teaching.formats.group.name")).toBe("성경공부");
   });
 });
 
 describe("older teachings", () => {
   it("open as they were, whatever their kind, and keep their kind in the information panel", async () => {
-    const { api } = await setup(["youth", "children", "other"]);
+    const { api } = await setup([...TEACHING_KINDS]);
     const before = JSON.stringify(api.state.teaching.preparations);
     const user = await openTeaching(api);
     await within(studyPane()).findByRole("combobox", { name: "Teaching:" });
@@ -102,18 +104,15 @@ describe("older teachings", () => {
     expect(JSON.stringify(api.state.teaching.preparations)).toBe(before);
   });
 
-  it("can still be given any kind, grouped under its format", async () => {
+  it("offers three formats when editing, preserving the existing stored kind", async () => {
     const { api } = await setup(["sermon"]);
     const user = await openTeaching(api);
     const article = await within(studyPane()).findByRole("article", { name: "Old sermon" });
     await user.click(within(article).getByRole("button", { name: "Bible Teaching information" }));
     const panel = await screen.findByRole("dialog", { name: "Bible Teaching information" });
     const kind = within(panel).getByRole("combobox", { name: "Kind of teaching" });
-    const groups = [...kind.querySelectorAll("optgroup")].map((g) => [g.label, [...g.querySelectorAll("option")].map((o) => o.value)]);
-    expect(groups).toEqual([
-      ["Message", ["sermon", "talk", "youth", "other"]],
-      ["Group Bible study", ["bible_study"]],
-      ["Interactive lesson", ["lesson", "children"]],
+    expect(within(kind).getAllByRole("option").map(option => [option.textContent, (option as HTMLOptionElement).value])).toEqual([
+      ["Sermon / Talk", "sermon"], ["Bible Study", "bible_study"], ["Bible Teaching", "lesson"],
     ]);
   });
 });

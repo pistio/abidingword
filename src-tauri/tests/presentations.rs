@@ -126,6 +126,9 @@ fn sermon(conn: &Connection) -> AppResult<Sermon> {
                     kind: None,
                 },
             ],
+            template_key: None,
+            template_version: None,
+            blocks: Vec::new(),
         },
     )?;
     teaching::update(
@@ -155,6 +158,7 @@ fn sermon(conn: &Connection) -> AppResult<Sermon> {
             preparation_id: prep.id.clone(),
             point_id: None,
             reference: "JHN.15.1-JHN.15.5".into(),
+            block_id: None,
         },
     )?;
     teaching::add_passage(
@@ -163,6 +167,7 @@ fn sermon(conn: &Connection) -> AppResult<Sermon> {
             preparation_id: prep.id.clone(),
             point_id: Some(points[0].clone()),
             reference: "JHN.15.7".into(),
+            block_id: None,
         },
     )?;
     teaching::keep_material(
@@ -294,6 +299,9 @@ fn bible_study_questions_and_lesson_steps_get_their_own_slides() {
                     title: "What does the vine give the branch?".into(),
                     kind: None,
                 }],
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         )?;
         let p = propose(conn, &group.id)?;
@@ -312,6 +320,9 @@ fn bible_study_questions_and_lesson_steps_get_their_own_slides() {
                         kind: Some((*k).into()),
                     })
                     .collect(),
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         )?;
         teaching::add_passage(
@@ -320,6 +331,7 @@ fn bible_study_questions_and_lesson_steps_get_their_own_slides() {
                 preparation_id: lesson.id.clone(),
                 point_id: Some(lesson.points[0].id.clone()),
                 reference: "JHN.15.1".into(),
+                block_id: None,
             },
         )?;
         let p = propose(conn, &lesson.id)?;

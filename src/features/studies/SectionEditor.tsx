@@ -90,6 +90,8 @@ export function SectionEditor(props: SectionEditorProps) {
   const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section, origin);
 
   const structured = section.fields !== null;
+  const legacy = section.fields?.fields.some(field => field.kind === "text" || field.kind === "entries") ?? false;
+  const writing = section.fields?.fields.every((field) => field.kind === "writing") ?? false;
   const goal = structured ? structuredOptional(section, "goal") : null;
   const example = structured ? structuredOptional(section, "example") : null;
   const exampleLabel = section.fields?.template === "ten-step-exegesis"
@@ -320,14 +322,15 @@ export function SectionEditor(props: SectionEditorProps) {
       <div id={bodyId} hidden={collapsed}>
       {structured && (
         <div className="mb-3 flex flex-col gap-2">
-          <p className="m-0 text-[1rem] font-medium text-text-strong">{sectionGuidance(section, origin)}</p>
-          {goal && (
+          <details><summary className="cursor-pointer text-text-muted">{t("studies.flow.guidance")}</summary><p className="mt-2">{sectionGuidance(section, origin)}</p></details>
+          {legacy && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
+          {!writing && goal && (
             <p className="m-0 text-[0.9375rem] text-text-muted">
               <span className="font-medium">{t("studies.fields.goal")}: </span>
               {goal}
             </p>
           )}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          <div hidden={writing} className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <label className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
               <span>{t("studies.fields.status", { title })}</span>
               <select
@@ -359,7 +362,7 @@ export function SectionEditor(props: SectionEditorProps) {
               <p className="m-0 reading">{example}</p>
             </div>
           )}
-          <FieldsEditor section={section} onChange={onChange} onError={setError} />
+          {legacy ? <details open><summary className="cursor-pointer font-medium">{t("studies.flow.legacy")}</summary><FieldsEditor section={section} onChange={onChange} onError={setError} /></details> : <FieldsEditor section={section} onChange={onChange} onError={setError} />}
         </div>
       )}
       {!structured && guidance && <p className="mb-2 mt-0 text-[0.9375rem] text-text-muted">{guidance}</p>}

@@ -1,30 +1,260 @@
 {
   "comment": "The built-in Bible Teaching templates (v0.18.7): one starting structure per format, from the formats of v0.17. A template is a format and the points, questions or steps a new teaching starts with; the titles are application text (studies.teaching.starts.<kind>.<key> in every language). They cannot be changed in the app; the person saves a copy to make one their own. To refine a baseline, change it here: teachings already made are never affected. See docs/user-templates-v0.18.7.md.",
   "templates": [
-    { "key": "sermon", "kind": "sermon", "points": [] },
-    { "key": "bible_study", "kind": "bible_study", "points": [] },
-    { "key": "youth", "kind": "youth", "points": [] },
+    {
+      "key": "sermon",
+      "kind": "sermon",
+      "points": []
+    },
+    {
+      "key": "bible_study",
+      "kind": "bible_study",
+      "points": []
+    },
+    {
+      "key": "youth",
+      "kind": "youth",
+      "points": []
+    },
     {
       "key": "children",
       "kind": "children",
       "points": [
-        { "key": "welcome", "kind": "text" },
-        { "key": "story", "kind": "scripture" },
-        { "key": "question", "kind": "question" },
-        { "key": "activity", "kind": "activity" },
-        { "key": "prayer", "kind": "text" }
+        {
+          "key": "welcome",
+          "kind": "text"
+        },
+        {
+          "key": "story",
+          "kind": "scripture"
+        },
+        {
+          "key": "question",
+          "kind": "question"
+        },
+        {
+          "key": "activity",
+          "kind": "activity"
+        },
+        {
+          "key": "prayer",
+          "kind": "text"
+        }
       ]
     },
     {
       "key": "lesson",
       "kind": "lesson",
       "points": [
-        { "key": "teaching", "kind": "text" },
-        { "key": "discussion", "kind": "question" },
-        { "key": "activity", "kind": "activity" }
+        {
+          "key": "teaching",
+          "kind": "text"
+        },
+        {
+          "key": "discussion",
+          "kind": "question"
+        },
+        {
+          "key": "activity",
+          "kind": "activity"
+        }
       ]
     },
-    { "key": "talk", "kind": "talk", "points": [] },
-    { "key": "other", "kind": "other", "points": [] }
+    {
+      "key": "talk",
+      "kind": "talk",
+      "points": []
+    },
+    {
+      "key": "other",
+      "kind": "other",
+      "points": []
+    },
+    {
+      "key": "eva",
+      "version": 2,
+      "legacyKind": "bible_study",
+      "blocks": [
+        {
+          "key": "erkennen",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.eva.blocks.erkennen.guidance"
+        },
+        {
+          "key": "erkennen-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "erkennen",
+          "participantFacing": false
+        },
+        {
+          "key": "verstehen",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.eva.blocks.verstehen.guidance"
+        },
+        {
+          "key": "verstehen-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "verstehen",
+          "participantFacing": false
+        },
+        {
+          "key": "anwenden",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.eva.blocks.anwenden.guidance"
+        },
+        {
+          "key": "anwenden-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "anwenden",
+          "participantFacing": false
+        }
+      ]
+    },
+    {
+      "key": "sermon-talk",
+      "version": 2,
+      "legacyKind": "sermon",
+      "blocks": [
+        {
+          "key": "introduction",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.sermonTalk.blocks.introduction.guidance"
+        },
+        {
+          "key": "introduction-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "introduction",
+          "role": "introduction",
+          "participantFacing": true
+        },
+        {
+          "key": "main",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.sermonTalk.blocks.main.guidance"
+        },
+        {
+          "key": "main-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "main",
+          "participantFacing": false
+        },
+        {
+          "key": "conclusion",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.sermonTalk.blocks.conclusion.guidance"
+        },
+        {
+          "key": "conclusion-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "conclusion",
+          "role": "conclusion",
+          "participantFacing": true
+        }
+      ]
+    },
+    {
+      "key": "bible-lesson",
+      "version": 2,
+      "legacyKind": "lesson",
+      "blocks": [
+        {
+          "key": "prepare",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.prepare.guidance"
+        },
+        {
+          "key": "story",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.story.guidance"
+        },
+        {
+          "key": "story-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "story",
+          "participantFacing": false
+        },
+        {
+          "key": "story-passage",
+          "type": "scripture",
+          "title": "",
+          "parentKey": "story",
+          "participantFacing": true
+        },
+        {
+          "key": "explain",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.explain.guidance"
+        },
+        {
+          "key": "explain-writing",
+          "type": "writing",
+          "title": "",
+          "parentKey": "explain",
+          "participantFacing": false
+        },
+        {
+          "key": "questions",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.questions.guidance"
+        },
+        {
+          "key": "questions-ask",
+          "type": "discussion_questions",
+          "title": "",
+          "parentKey": "questions",
+          "participantFacing": true
+        },
+        {
+          "key": "questions-notes",
+          "type": "teaching_notes",
+          "title": "",
+          "parentKey": "questions",
+          "participantFacing": false
+        },
+        {
+          "key": "activity",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.activity.guidance"
+        },
+        {
+          "key": "activity-do",
+          "type": "activity",
+          "title": "",
+          "parentKey": "activity",
+          "participantFacing": false
+        },
+        {
+          "key": "reflect",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.reflect.guidance"
+        },
+        {
+          "key": "reflect-writing",
+          "type": "application",
+          "title": "",
+          "parentKey": "reflect",
+          "participantFacing": false
+        }
+      ]
+    }
   ]
 }

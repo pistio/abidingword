@@ -898,6 +898,580 @@
             "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung."
           }
         }
+      },
+      "pozetek-writing-study": {
+        "name": "POZETEK – Bibeltext untersuchen",
+        "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
+        "sections": {
+          "persons": {
+            "title": "Personen",
+            "guidance": "Wer spricht, handelt oder wird angesprochen? Unterscheide Textbeobachtung und Vermutung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "place": {
+            "title": "Ort",
+            "guidance": "Welche Orte und räumlichen Beziehungen sind für den Text wichtig?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "time": {
+            "title": "Zeit",
+            "guidance": "Wann spielt der Text? Kennzeichne unsichere geschichtliche Annahmen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "events": {
+            "title": "Ereignisse",
+            "guidance": "Verfolge Ereignisse, Aufbau, Gedankengang und Argumentation. Das gilt auch für Briefe, Gedichte und Lehrtexte.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "theme": {
+            "title": "Thema",
+            "guidance": "Wovon handelt der Text, und was sagt er darüber aus?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "understanding": {
+            "title": "Erkenntnisse",
+            "guidance": "Erkläre die Bedeutung im Zusammenhang. Unterscheide Beobachtung, Auslegung und offene Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "consequences": {
+            "title": "Konsequenzen",
+            "guidance": "Was folgt daraus für Glauben, Liebe und Leben? Leite die Anwendung aus der Bedeutung des Textes ab.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "ten-step-writing-study": {
+        "name": "Die Zehn-Schritte-Methode",
+        "description": "Eine gründliche Auslegung nach den zehn Schritten von Helge Stadelmann und Thomas Richter. Erläuterungen und das aufklappbare Beispiel zu Mt 8,18–27 sind eigenständig formuliert.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Mit dem Text vertraut werden",
+            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Die Textgrundlage feststellen",
+            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Die ursprüngliche Kommunikationssituation klären",
+            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Den Zusammenhang erfassen",
+            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Die Textart untersuchen",
+            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Wörter und Sätze untersuchen",
+            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Den Gedankengang entfalten",
+            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Theologische Fragen klären",
+            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Die zentrale Aussage formulieren",
+            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Die Bedeutung für heute erkennen und anwenden",
+            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "word-research-study": {
+        "name": "Biblische Wortstudie",
+        "description": "Ein biblisches Wort in seiner Ursprungssprache und seinen Zusammenhängen untersuchen, ohne überall dieselbe Bedeutung vorauszusetzen.",
+        "sections": {
+          "word": {
+            "title": "Wort und Fragestellung",
+            "guidance": "Bestimme das hebräische oder griechische Grundwort, seine Schreibweise und die betreffende Bibelstelle oder Frage. Ein deutsches Übersetzungswort kann mehrere unterschiedliche Grundwörter wiedergeben.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "occurrences": {
+            "title": "Vorkommen und Übersetzungen",
+            "guidance": "Suche aussagekräftige Vorkommen dieses Grundworts und vergleiche die Übersetzungen. Unterscheide das Grundwort von seinen gebeugten Formen und anderen Wörtern mit ähnlicher Übersetzung.",
+            "fields": {
+              "word-lookup": {
+                "label": "Wort nachschlagen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "concordance": {
+                "label": "Konkordanz",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "semantic-range": {
+            "title": "Bedeutungen",
+            "guidance": "Beschreibe mögliche Bedeutungen anhand des Zusammenhangs. Leite die Bedeutung nicht allein aus der Wortherkunft ab und übertrage nicht alle möglichen Bedeutungen auf eine einzelne Stelle.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Bibelstellen im Zusammenhang",
+            "guidance": "Lies jedes wichtige Vorkommen im Satz-, Abschnitts-, Gattungs- und geschichtlichen Zusammenhang. Halte fest, welche Bedeutung am besten passt und warum.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Bedeutung und Ergebnis",
+            "guidance": "Erkläre anhand des Textes, was das Wort in der untersuchten Stelle bedeutet. Benenne Unsicherheiten und leite aus dem Wort nicht mehr Theologie ab, als der Text trägt.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Welche Folgen für Glauben und Leben ergeben sich aus der Aussage des Textes, nicht nur aus einer Wörterbuchdefinition?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "grammar": {
+            "title": "Grammatik und Satzbau",
+            "guidance": "Untersuche bei Bedarf Wortform, Satzbau und Funktion im Gedankengang. Nutze zuverlässige sprachwissenschaftliche Hilfsmittel; Kenntnisse der Ursprachen sind keine Voraussetzung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "theological-significance": {
+            "title": "Biblisch-theologische Bezüge",
+            "guidance": "Vergleiche verwandte biblische Aussagen, ohne die jeweilige Bedeutung der einzelnen Texte zu verwischen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "topical-research-study": {
+        "name": "Thematische Bibelstudie",
+        "description": "Eine konkrete biblische Frage beantworten, indem relevante Texte zuerst in ihrem Zusammenhang ausgelegt werden.",
+        "sections": {
+          "topic": {
+            "title": "Thema und Fragen",
+            "guidance": "Formuliere das Thema, seine Grenzen und die Fragen, die beantwortet werden sollen. Beginne nicht mit einem fertigen Ergebnis.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Relevante Bibelstellen",
+            "guidance": "Sammle aussagekräftige Bibelstellen, auch solche, die eine erste Annahme einschränken oder infrage stellen. Halte fest, warum jede Stelle wichtig ist.",
+            "fields": {
+              "search": {
+                "label": "Begriff oder Person suchen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "passage-study": {
+            "title": "Bibelstellen untersuchen",
+            "guidance": "Lies jeden Text in seinem literarischen, geschichtlichen und heilsgeschichtlichen Zusammenhang. Unterscheide ausdrückliche Lehre, erzählte Ereignisse, Schlussfolgerungen und Anwendung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "main-themes": {
+            "title": "Erkenntnisse vergleichen und ordnen",
+            "guidance": "Ordne die Bibelstellen nach ihrer tatsächlichen Aussage. Beachte Übereinstimmungen, Unterschiede, Entwicklungen und offene Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Biblische Schlussfolgerungen",
+            "guidance": "Beantworte die Ausgangsfragen mit Bibelstellen. Unterscheide klare Aussagen der Schrift von begründeten Schlussfolgerungen und ungeklärten Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Leite konkrete Folgen für Glauben, Anbetung, Beziehungen und Handeln aus den Ergebnissen ab.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "difficult-passages": {
+            "title": "Schwierige oder ergänzende Texte",
+            "guidance": "Untersuche scheinbar widersprüchliche Stellen, ohne ihren Zusammenhang zu übergehen oder vorschnell alles gleichzusetzen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "biblical-theology": {
+            "title": "Einordnung in die ganze Bibel",
+            "guidance": "Berücksichtige gegebenenfalls, wie sich die Lehre im Verlauf der Bündnisse entfaltet und auf Christus und das Evangelium bezieht, ohne einen Bezug zu erzwingen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "character-research-study": {
+        "name": "Biblische Personenstudie",
+        "description": "Leben und Charakter einer biblischen Person anhand der einschlägigen Bibeltexte untersuchen.",
+        "sections": {
+          "person": {
+            "title": "Person und Bibelstellen",
+            "guidance": "Bestimme die Person, mögliche Namensvarianten und die wichtigsten Bibelstellen. Unterscheide sie von anderen Personen gleichen Namens.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "setting": {
+            "title": "Geschichtlicher und biblischer Hintergrund",
+            "guidance": "Ordne die Person in die biblische Geschichte ein: Familie, Beziehungen, Aufgaben und Lebensumstände. Kennzeichne umstrittene Datierungen oder Zuordnungen als unsicher.",
+            "fields": {
+              "search": {
+                "label": "Begriff oder Person suchen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "life": {
+            "title": "Leben, Worte und Taten",
+            "guidance": "Verfolge wichtige Ereignisse möglichst in zeitlicher Reihenfolge. Halte mit Bibelstellen fest, was der Text tatsächlich berichtet; er bietet keine lückenlose Biografie.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "character": {
+            "title": "Charakter und Entscheidungen",
+            "guidance": "Untersuche Taten, Worte, Stärken, Schwächen und wiederkehrende Verhaltensweisen. Unterscheide das ausdrückliche Urteil des Textes von Vermutungen über Motive.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "god": {
+            "title": "Gottes Wirken und die biblische Beurteilung",
+            "guidance": "Wie handelt Gott im Leben dieser Person, und wie beurteilt die Schrift ihre Entscheidungen? Beachte ihre Bedeutung im biblischen Gesamtzusammenhang, ohne jedes Verhalten zum Vorbild zu erklären.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "conclusion": {
+            "title": "Wichtigste Erkenntnisse",
+            "guidance": "Fasse die Bedeutung der Person anhand der Bibeltexte zusammen. Halte auch Unsicherheiten und Spannungen fest.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Was lehrt die Schrift durch dieses Leben über Glauben, Gehorsam, Sünde, Gnade und Beziehungen? Wende die Aussage des Textes an, statt jede Handlung nachzuahmen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "comparisons": {
+            "title": "Verwandte Personen und Bibelstellen",
+            "guidance": "Vergleiche andere Personen oder Bibelstellen nur, wenn der Zusammenhang den Text wirklich erhellt.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "book-research-study": {
+        "name": "Studium eines Bibelbuchs",
+        "description": "Ein ganzes Bibelbuch lesen, seinen Aufbau und seine Botschaft erschließen und die Lehre anwenden.",
+        "sections": {
+          "reading": {
+            "title": "Das ganze Buch lesen",
+            "guidance": "Lies das ganze Buch, möglichst mehrmals und in verschiedenen Übersetzungen. Notiere erste Eindrücke, wiederkehrende Begriffe, Tonfall, Textgattung und Fragen, bevor du Kommentare hinzuziehst.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "setting": {
+            "title": "Verfasser, Adressaten und Hintergrund",
+            "guidance": "Untersuche Verfasser, Adressaten, geschichtlichen und geografischen Hintergrund, Anlass und Absicht. Unterscheide Aussagen des Buches von Forschungshypothesen und offenen Fragen.",
+            "fields": {
+              "search": {
+                "label": "Begriff oder Person suchen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "overview": {
+            "title": "Überblick und zentrale Anliegen",
+            "guidance": "Halte wichtige Personen, Ereignisse, Themen, Schlüsselverse und den groben Verlauf fest. Nicht jedes häufige Wort ist automatisch das Hauptthema.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "outline": {
+            "title": "Aufbau und Inhalt",
+            "guidance": "Gliedere das Buch anhand erkennbarer Textabschnitte mit Bibelstellen und kurzen Überschriften. Erkläre den Beitrag jedes Abschnitts zum Ganzen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "argument": {
+            "title": "Botschaft und Gedankengang",
+            "guidance": "Verfolge Erzählverlauf oder Gedankengang. Achte auf Textgattung, Gegensätze, Verheißungen, Gebote und den Bezug des Schlusses zum Anfang.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "synthesis": {
+            "title": "Kernaussage",
+            "guidance": "Formuliere den Gegenstand des Buches, seine Aussage darüber und die übergreifende Botschaft. Begründe dies am Text.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Überlege, welche Folgerungen für Glauben, Anbetung und Leben aus der Botschaft des Buches und seinem Platz in der ganzen Schrift entstehen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "further": {
+            "title": "Weiterführende Fragen",
+            "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notizen",
@@ -1697,11 +2271,13 @@
         "points": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
         "generalPoints": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
         "questions": "Die Vorlage übernimmt die Form und so viele Fragen, wie diese Bibellehre hat. Die Fragen beginnen leer.",
-        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art."
+        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art.",
+        "blocks": "Die Vorlage übernimmt die Form und die Abschnitte und Blöcke, mit denen diese Bibellehre beginnt, in ihrer Reihenfolge. Was in den Blöcken steht, kommt nicht mit."
       },
       "notKept": "Nichts von dem, was du geschrieben hast, kommt mit: nicht Zielgruppe, Ziel, Botschaft, Einleitung, Schluss oder Notizen; nichts, was unter einem Punkt, einer Frage oder einem Schritt steht; keine Bibelstellen, kein aufbewahrtes Material und keine Notizen aus deinem Bibelstudium.",
       "saved": "Als deine Vorlage „{{name}}“ gespeichert. Du kannst sie für deine nächste Bibellehre wählen und unter Einstellungen → Vorlagen ändern.",
-      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
+      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen.",
+      "tooManyBlocks": "Eine Vorlage kann mit höchstens {{max}} Blöcken beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
     },
     "addStepMenu": "Art des neuen Schritts",
     "newTeaching": "Neue Bibellehre",
@@ -1712,7 +2288,7 @@
         "hint": "Eine Predigt, ein Vortrag oder eine Andacht: Kernbotschaft, Einleitung, Hauptpunkte und Schluss."
       },
       "group": {
-        "name": "Hauskreis",
+        "name": "Bibelstudium",
         "hint": "Vom Gespräch getragen: Einstieg, Bibeltext, Fragen und Antworten und ein Abschluss."
       },
       "lesson": {
@@ -1723,7 +2299,120 @@
     "messageKind": "Art der Botschaft",
     "passagesLine": "Bibeltext",
     "notesHasText": "enthält Notizen",
-    "notesPrivate": "Nur für dich: nie Teil der Unterlagen für Zuhörer oder Gruppe."
+    "notesPrivate": "Nur für dich: nie Teil der Unterlagen für Zuhörer oder Gruppe.",
+    "blocks": {
+      "add": "Block hinzufügen",
+      "addIn": "Block in {{section}} hinzufügen",
+      "guidance": "Hilfen",
+      "placeholder": "Hier schreiben…",
+      "leaderOnly": "Nur für dich als Leitung. Es erscheint nicht auf Blättern oder Folien, außer du gibst es für die Teilnehmenden frei.",
+      "participant": "Den Teilnehmenden zeigen",
+      "settings": "Dieser Block",
+      "empty": "Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du soweit bist.",
+      "viewLabel": "Schreibansicht",
+      "viewContinuous": "Fortlaufend",
+      "viewOutline": "Gliederung",
+      "headingLabel": "Überschrift",
+      "templateHeading": "Blöcke",
+      "templateHint": "Abschnitte und Blöcke hinzufügen, umordnen, verdoppeln und umbenennen. Was du in einer Bibellehre schreibst, bleibt nicht in der Vorlage.",
+      "titleOf": "Überschrift von {{name}}",
+      "typeOf": "Art des Blocks: {{name}}",
+      "section": "Im Abschnitt",
+      "sectionOf": "Abschnitt für {{name}}",
+      "noSection": "Kein Abschnitt",
+      "moveUp": "„{{name}}“ nach oben",
+      "moveDown": "„{{name}}“ nach unten",
+      "duplicate": "„{{name}}“ verdoppeln",
+      "remove": "„{{name}}“ entfernen",
+      "types": {
+        "section": "Abschnitt",
+        "writing": "Schreibfeld",
+        "scripture": "Bibelstelle",
+        "teaching_notes": "Notizen für die Leitung",
+        "discussion_questions": "Gesprächsfragen",
+        "explanation": "Erklärung",
+        "illustration": "Beispiel",
+        "activity": "Gruppenaktion",
+        "application": "Anwendung und Besinnung",
+        "objectives": "Lernziele",
+        "time": "Zeit",
+        "presentation_notes": "Notizen zur Präsentation",
+        "handout": "Arbeitsblatt",
+        "outline_point": "Gliederungspunkt"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Bibelstudium — EVA",
+        "hint": "Für eine Gruppe: den Text wahrnehmen, ihn verstehen, dann fragen, was daraus folgt.",
+        "blocks": {
+          "erkennen": {
+            "title": "Erkennen",
+            "guidance": "Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Campus Connect 3×3-Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen."
+          },
+          "verstehen": {
+            "title": "Verstehen",
+            "guidance": "Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Campus Connect 3×3-Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft."
+          },
+          "anwenden": {
+            "title": "Anwenden",
+            "guidance": "Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Campus Connect 3×3-Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Predigt oder Vortrag",
+        "hint": "Einleitung, Hauptteil und Schluss. Durchgehend schreiben oder Gliederungspunkte ergänzen.",
+        "blocks": {
+          "introduction": {
+            "title": "Einleitung",
+            "guidance": "Wie du beginnst. Kernbotschaft, Hörerschaft und Ziel kannst du als Blöcke ergänzen, wenn du sie brauchst."
+          },
+          "main": {
+            "title": "Hauptteil",
+            "guidance": "Der Hauptteil der Predigt oder des Vortrags. Gliederungspunkte kannst du neben dem fortlaufenden Text hinzufügen."
+          },
+          "conclusion": {
+            "title": "Schluss",
+            "guidance": "Wie du schließt und welche Antwort passt."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Bibelstunde — Kinder und Jugendliche",
+        "hint": "Eine Stunde für Kinder oder Jugendliche. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes.",
+        "blocks": {
+          "prepare": {
+            "title": "Vorbereitung",
+            "guidance": "Wahlweise: das Alter, die Zeit und was sie mitnehmen sollen. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes. Zeit- oder Lernzielblöcke fügst du nur hinzu, wenn du sie brauchst."
+          },
+          "story": {
+            "title": "Erzählung",
+            "guidance": "Erzähle die Stelle so, dass das Alter mitkommt. Die Bedeutung bleibt die des Textes."
+          },
+          "explain": {
+            "title": "Erklärung",
+            "guidance": "Sag, was die Stelle bedeutet, in Worten, denen sie folgen können. Ersetze die Bedeutung nicht durch eine einfachere Idee."
+          },
+          "questions": {
+            "title": "Fragen",
+            "guidance": "Fragen, die die Gruppe hört, und deine Notizen zu Antworten, auf die du achtest. Die Notizen bleiben bei dir."
+          },
+          "activity": {
+            "title": "Aktion",
+            "guidance": "Etwas, das sie mit dem Gehörten tun."
+          },
+          "reflect": {
+            "title": "Besinnung",
+            "guidance": "Was sie in Glauben, Entscheidungen und Beziehungen mitnehmen können."
+          }
+        }
+      },
+      "blank": {
+        "name": "Leere Vorlage",
+        "hint": "Noch keine Abschnitte. Füge hinzu, was diese Bibellehre braucht."
+      }
+    }
   },
   "parts": {
     "add": "Teil hinzufügen",
@@ -2035,5 +2724,49 @@
     "moveEntryUp": "Eintrag {{number}} von {{field}} nach oben",
     "moveEntryDown": "Eintrag {{number}} von {{field}} nach unten",
     "otherWriting": "Weitere Notizen"
+  },
+  "flow": {
+    "answer": "Deine Antwort",
+    "guidance": "Hinweise (optional)",
+    "legacy": "Bisherige strukturierte Antworten",
+    "legacyNote": "Diese Antworten bleiben in ihren ursprünglichen Feldern. Nichts wurde zusammengefügt oder ersetzt.",
+    "continuous": "Fortlaufend schreiben",
+    "outline": "Schrittansicht"
+  },
+  "builder": {
+    "title": "Vorlagenbausteine",
+    "label": "Titel des Bausteins",
+    "guidance": "Optionale Hinweise",
+    "query": "Suchtext oder Bibelstelle",
+    "editionDefault": "Voreingestellte Bibelausgabe (optional)",
+    "up": "Nach oben",
+    "down": "Nach unten",
+    "duplicate": "Baustein duplizieren",
+    "kind": "Art des Bausteins",
+    "add": "Baustein hinzufügen",
+    "edition": "Bibelausgabe",
+    "chooseEdition": "Installierte Ausgabe auswählen",
+    "editionMismatch": "Die gelieferte Ausgabe entspricht nicht der ausgewählten Ausgabe.",
+    "crossReferenceNote": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen.",
+    "evidenceNote": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest.",
+    "run": "Nachschlagen",
+    "incomplete": "Die Ergebnisse sind unvollständig. Grenze die Suche in den Bibelwerkzeugen weiter ein.",
+    "empty": "Keine Ergebnisse. Möglicherweise enthält diese Ausgabe die benötigten Wortangaben nicht.",
+    "keep": "Als Beleg übernehmen",
+    "evidence": "Übernommene Quellenbelege",
+    "kinds": {
+      "writing": "Schreiben",
+      "guidance": "Hinweise",
+      "heading": "Überschrift",
+      "divider": "Trennlinie",
+      "passage": "Bibelstelle",
+      "concordance": "Konkordanz",
+      "cross_references": "Querverweise",
+      "word_lookup": "Wort nachschlagen",
+      "search": "Begriff oder Person suchen",
+      "text": "Bisheriges Textfeld",
+      "entries": "Bisherige strukturierte Einträge"
+    },
+    "passageNote": "Angezeigt und zitiert werden nur die Verse, die in der gewählten Ausgabe verfügbar sind. In der angefragten Bibelstelle können Verse fehlen."
   }
 }

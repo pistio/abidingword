@@ -149,7 +149,9 @@
     "duplicateKey": "Two parts of the template are the same part. Remove one of them.",
     "invalidKey": "This part’s key is not valid.",
     "unknownPart": "This template part is no longer available.",
-    "partAlreadyAdded": "This template part is already in the study."
+    "partAlreadyAdded": "This template part is already in the study.",
+    "tooManyBlocks": "A part can have at most {{max}} blocks.",
+    "duplicateBlockKey": "Blocks need distinct, nonempty keys."
   },
   "sections": {
     "hasContent": "“{{title}}” still has writing or notes in it.",
@@ -222,6 +224,10 @@
     "searchNoKey": "This search service does not use a key."
   },
   "teaching": {
+    "blockType": "That is not a kind of block this teaching can hold.",
+    "blockParent": "A block can sit in a section of this teaching.",
+    "blockRole": "That block cannot be tied to that part of the teaching.",
+    "blockReference": "Choose a live Scripture block in this teaching.",
     "tooLong": "This part of the teaching is too long to save.",
     "otherPoint": "That point belongs to another teaching.",
     "otherStudyFinding": "That note belongs to another study.",

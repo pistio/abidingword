@@ -178,9 +178,34 @@ export function presentationApi(state: PresentationState, h: Helpers): Presentat
     skipped: false,
   });
 
+  const visible = (prep: TeachingPreparation, id: string, seen = new Set<string>()): boolean => {
+    const block = prep.blocks?.find((b) => b.id === id);
+    if (!block || !block.participantFacing || seen.has(id)) return false;
+    seen.add(id);
+    return !block.parentId || visible(prep, block.parentId, seen);
+  };
+  const passageVisible = (prep: TeachingPreparation, passage: TeachingPreparation["passages"][number]) => !passage.blockId || visible(prep, passage.blockId);
+
   /** The same fixed rules as the core (db/presentations.rs `propose`). */
   const propose = (prep: TeachingPreparation, labels: { introduction: string; conclusion: string }): PresentationItem[] => {
     const items = [item("title", { kind: "preparation", id: prep.id, field: "title" })];
+    if ((prep.templateVersion ?? 0) >= 2 || prep.blocks?.length) {
+      for (const p of prep.passages.filter((p) => !p.blockId && !p.pointId)) items.push(item("scripture", { kind: "passage", id: p.id, field: null }));
+      const walk = (parent: string | null) => {
+        for (const block of (prep.blocks ?? []).filter((b) => b.parentId === parent).sort((a, b) => a.position - b.position)) {
+          if (!visible(prep, block.id)) continue;
+          const source: ItemSource = { kind: "block", id: block.id, field: null };
+          if (block.blockType === "scripture") {
+            for (const p of prep.passages.filter((p) => p.blockId === block.id)) items.push(item("scripture", { kind: "passage", id: p.id, field: null }));
+          } else if (block.blockType === "outline_point" && block.pointId) items.push(item("heading", { kind: "point", id: block.pointId, field: null }));
+          else if (block.role === "introduction" || block.role === "conclusion") items.push(item("heading", { ...source, field: block.role }, text(labels[block.role])));
+          else if (block.blockType !== "teaching_notes" && block.blockType !== "presentation_notes") items.push(item(block.blockType === "section" ? "section" : block.blockType === "discussion_questions" ? "question" : "text", source));
+          walk(block.id);
+        }
+      };
+      walk(null);
+      return items;
+    }
     if (prep.introduction.trim()) items.push(item("heading", { kind: "preparation", id: prep.id, field: "introduction" }, text(labels.introduction)));
     for (const p of prep.passages.filter((x) => x.pointId === null)) items.push(item("scripture", { kind: "passage", id: p.id, field: null }));
     if (text(prep.centralMessage)) items.push(item("text", { kind: "preparation", id: prep.id, field: "central_message" }));
@@ -210,7 +235,7 @@ export function presentationApi(state: PresentationState, h: Helpers): Presentat
     const warnings: PresentationDocument["warnings"] = [];
     const images = new Map<string, PresentationDocument["images"][number]>();
     if (!bible) warnings.push({ slideId: null, code: "noBible" });
-    const primary = prep.passages.find((x) => x.pointId === null)?.reference.canonical ?? null;
+    const primary = prep.passages.find((x) => x.pointId === null && passageVisible(prep, x))?.reference.canonical ?? null;
     for (const it of p.items.filter((i) => !i.skipped)) {
       let heading: string | null = null;
       let body: string | null = null;
@@ -219,6 +244,8 @@ export function presentationApi(state: PresentationState, h: Helpers): Presentat
       const manuscript: Slide["speaker"]["manuscript"] = [];
       let image: AudienceSlide["image"] = null;
       const s = it.source;
+      if (s?.kind === "block" && !visible(prep, s.id)) continue;
+      if (s?.kind === "passage" && ((prep.templateVersion ?? 0) >= 2 || prep.blocks?.length) && !prep.passages.some((p) => p.id === s.id && passageVisible(prep, p))) continue;
       if (s?.kind === "preparation") {
         if (s.field === "title") {
           heading = text(prep.title);
@@ -226,6 +253,13 @@ export function presentationApi(state: PresentationState, h: Helpers): Presentat
         } else if (s.field === "central_message") body = text(prep.centralMessage);
         else if (s.field === "introduction" && text(prep.introduction)) manuscript.push({ field: "introduction", text: prep.introduction.trim() });
         else if (s.field === "conclusion" && text(prep.conclusion)) manuscript.push({ field: "conclusion", text: prep.conclusion.trim() });
+      } else if (s?.kind === "block") {
+        const block = prep.blocks?.find((b) => b.id === s.id);
+        if (block) {
+          heading = text(block.title);
+          if (s.field !== "introduction" && s.field !== "conclusion") body = text(block.body);
+          if (text(block.body)) manuscript.push({ field: s.field === "introduction" || s.field === "conclusion" ? s.field : "explanation", text: block.body.trim() });
+        }
       } else if (s?.kind === "point") {
         const point = prep.points.find((x) => x.id === s.id);
         if (!point) missing = true;

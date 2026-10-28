@@ -58,7 +58,7 @@ describe("creating studies", () => {
     await user.click(screen.getByRole("button", { name: "Bible Study information" }));
     expect(screen.getByRole("group", { name: "Word Study details" })).toBeInTheDocument();
     expect(screen.getByText(/Type: Word Study/)).toBeInTheDocument();
-    expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === "word-study")!.id);
+    expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === "word-research-study")!.id);
     expect(api.state.passages).toHaveLength(0);
   });
 
@@ -70,7 +70,7 @@ describe("creating studies", () => {
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
-    expect(sectionHeadings()[0]).toBe("Persons");
+    expect(sectionHeadings()[0]).toBe("People");
     const passages = screen.getByRole("region", { name: "Passages" });
     expect(within(passages).queryByText("Primary")).not.toBeInTheDocument();
     // the title is the passage: it is not repeated beneath it, and there is still a way to open it
@@ -288,7 +288,7 @@ describe("templates", () => {
     await user.type(name, "Short Character Study");
     const sections = screen.getByRole("list", { name: "Parts of the template" });
     // The copy has the parts a study starts with and those to add later, not the retired ones.
-    expect(within(sections).getAllByRole("listitem")).toHaveLength(8);
+    expect(Array.from(sections.children)).toHaveLength(8);
     expect(screen.getByRole("checkbox", { name: "Offer part 8 later instead of starting with it" })).toBeChecked();
     for (const title of ["Character and decisions", "God's work and the biblical evaluation", "Main findings", "Application", "Related figures and passages"]) {
       await user.click(within(sections).getByRole("button", { name: `Remove ${title}` }));

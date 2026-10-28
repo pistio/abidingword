@@ -39,6 +39,10 @@ export function sourceLabel(t: TFunction, source: ItemSource | null, prep: Teach
   switch (source.kind) {
     case "preparation":
       return t(`presentation.source.field.${source.field ?? "title"}`);
+    case "block": {
+      const block = prep.blocks?.find((b) => b.id === source.id);
+      return block ? block.title.trim() || t(`studies.teaching.blocks.types.${block.blockType}` as never) : t("presentation.source.missing");
+    }
     case "point": {
       const index = prep.points.findIndex((p) => p.id === source.id);
       if (index < 0) return t("presentation.source.missing");
@@ -71,6 +75,12 @@ export function teachingText(item: PresentationItem, prep: TeachingPreparation, 
     if (s.field === "title" && part === "heading") return clean(prep.title);
     if (s.field === "central_message" && part === "body") return clean(prep.centralMessage);
     return null;
+  }
+  if (s.kind === "block") {
+    const block = prep.blocks?.find((b) => b.id === s.id);
+    if (!block || !block.participantFacing) return null;
+    if (part === "heading") return clean(block.title);
+    return s.field === "introduction" || s.field === "conclusion" ? null : clean(block.body);
   }
   if (s.kind === "point") {
     const point = prep.points.find((p) => p.id === s.id);

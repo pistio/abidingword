@@ -184,6 +184,13 @@ fn has_text(value: Option<&str>) -> bool {
 /// conclusion are spoken: their text is the speaker's, under a heading in
 /// the person's language. The person then keeps, leaves out or changes any of it.
 pub fn propose(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<NewItem> {
+    if prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty() {
+        return propose_blocks(prep, labels);
+    }
+    propose_legacy(prep, labels)
+}
+
+fn propose_legacy(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<NewItem> {
     let item = |kind: &str, source| NewItem {
         kind: kind.to_string(),
         source,
@@ -256,6 +263,115 @@ pub fn propose(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<NewIt
             )
         });
     }
+    items.truncate(ITEMS_MAX);
+    items
+}
+
+/// A first presentation from a block teaching. Private leader notes are left
+/// out: they reach a slide only when the person adds one. Roles that the
+/// existing slides already know (`introduction`, a point) keep those sources,
+/// so an older presentation resolver still follows them.
+fn propose_blocks(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<NewItem> {
+    let item = |kind: &str, source| NewItem {
+        kind: kind.to_string(),
+        source,
+        heading: None,
+        skipped: false,
+    };
+    let mut items = vec![item(
+        "title",
+        source("preparation", &prep.id, Some("title")),
+    )];
+    fn children<'a>(
+        blocks: &'a [crate::domain::TeachingBlock],
+        parent: Option<&str>,
+    ) -> Vec<&'a crate::domain::TeachingBlock> {
+        let mut rows: Vec<_> = blocks
+            .iter()
+            .filter(|b| b.parent_id.as_deref() == parent)
+            .collect();
+        rows.sort_by_key(|b| b.position);
+        rows
+    }
+    fn walk(
+        prep: &TeachingPreparation,
+        parent: Option<&str>,
+        items: &mut Vec<NewItem>,
+        labels: &ProposalLabels,
+    ) {
+        let item = |kind: &str, source| NewItem {
+            kind: kind.to_string(),
+            source,
+            heading: None,
+            skipped: false,
+        };
+        for block in children(&prep.blocks, parent) {
+            if crate::db::teaching_blocks::participant_visible(prep, &block.id) {
+                match block.block_type.as_str() {
+                    "section" if !block.title.trim().is_empty() => {
+                        items.push(item("section", source("block", &block.id, None)))
+                    }
+                    "outline_point" => {
+                        if let Some(point_id) = &block.point_id {
+                            items.push(item("heading", source("point", point_id, None)));
+                        }
+                    }
+                    "scripture" => {
+                        for passage in prep
+                            .passages
+                            .iter()
+                            .filter(|p| p.block_id.as_deref() == Some(block.id.as_str()))
+                        {
+                            items.push(item("scripture", source("passage", &passage.id, None)));
+                        }
+                    }
+                    _ if block.role.as_deref() == Some("introduction")
+                        && !block.body.trim().is_empty() =>
+                    {
+                        items.push(NewItem {
+                            heading: Some(labels.introduction.trim().to_string())
+                                .filter(|l| !l.is_empty()),
+                            ..item("heading", source("block", &block.id, Some("introduction")))
+                        });
+                    }
+                    _ if block.role.as_deref() == Some("conclusion")
+                        && !block.body.trim().is_empty() =>
+                    {
+                        items.push(NewItem {
+                            heading: Some(labels.conclusion.trim().to_string())
+                                .filter(|l| !l.is_empty()),
+                            ..item("heading", source("block", &block.id, Some("conclusion")))
+                        });
+                    }
+                    _ if block.role.as_deref() == Some("central_message")
+                        && !block.body.trim().is_empty() =>
+                    {
+                        items.push(item(
+                            "text",
+                            source("block", &block.id, Some("central_message")),
+                        ));
+                    }
+                    "discussion_questions" if !block.body.trim().is_empty() => {
+                        items.push(item("question", source("block", &block.id, None)));
+                    }
+                    "teaching_notes" | "presentation_notes" => {}
+                    _ if !block.body.trim().is_empty() || !block.title.trim().is_empty() => {
+                        items.push(item("text", source("block", &block.id, None)));
+                    }
+                    _ => {}
+                }
+            }
+            walk(prep, Some(&block.id), items, labels);
+        }
+    }
+    for passage in prep
+        .passages
+        .iter()
+        .filter(|p| p.block_id.is_none() && p.point_id.is_none())
+    {
+        items.push(item("scripture", source("passage", &passage.id, None)));
+    }
+    walk(prep, None, &mut items, labels);
     items.truncate(ITEMS_MAX);
     items
 }
@@ -442,11 +558,28 @@ fn check_source(
                 "part of the teaching",
             )?);
         }
-        "point" if !prep.points.iter().any(|p| p.id == id) => return Err(other()),
-        "passage" if !prep.passages.iter().any(|p| p.id == id) => return Err(other()),
+        "block" if !crate::db::teaching_blocks::participant_visible(prep, id) => {
+            return Err(other())
+        }
+        "point" if !crate::db::teaching_blocks::point_visible(prep, id) => return Err(other()),
+        "passage"
+            if !prep
+                .passages
+                .iter()
+                .any(|p| p.id == id && crate::db::teaching_blocks::passage_visible(prep, p)) =>
+        {
+            return Err(other())
+        }
         "material" if !prep.materials.iter().any(|m| m.id == id) => return Err(other()),
         "finding" if findings::get(conn, id)?.study_id != prep.study_id => return Err(other()),
         _ => {}
+    }
+    if kind == "block" {
+        field = source
+            .field
+            .as_deref()
+            .filter(|f| matches!(*f, "introduction" | "conclusion" | "central_message"))
+            .map(str::to_string);
     }
     Ok(ItemSource {
         kind,

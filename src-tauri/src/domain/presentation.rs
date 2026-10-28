@@ -34,7 +34,14 @@ pub const ITEM_KINDS: &[&str] = &[
 ];
 
 /// The parts of a teaching a slide can follow.
-pub const SOURCE_KINDS: &[&str] = &["preparation", "point", "passage", "material", "finding"];
+pub const SOURCE_KINDS: &[&str] = &[
+    "preparation",
+    "point",
+    "passage",
+    "material",
+    "finding",
+    "block",
+];
 
 /// The fields of the teaching itself a slide can follow.
 pub const PREPARATION_FIELDS: &[&str] = &["title", "central_message", "introduction", "conclusion"];
