@@ -2,7 +2,7 @@
   "key": "biblical-character-study",
   "name": "Biblical Character Study",
   "description": "Study a biblical person's life and character through the relevant passages.",
-  "studyType": "custom",
+  "studyType": "character",
   "sections": [
     {
       "key": "person",
