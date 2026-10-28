@@ -7,6 +7,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { studyTypeLabel } from "@/features/studies/labels";
 import { PhaseSelect } from "@/features/studies/PhaseSelect";
+import { BlockBuilder } from "./BlockBuilder";
 import { ownPartKey } from "@/features/studies/templateParts";
 import { STUDY_TYPES, type StudyType, type TemplateSection } from "@/types/studies";
 
@@ -186,6 +187,7 @@ function Form({ templateId, initial, onClose }: FormProps) {
                   </label>
                   <PhaseSelect value={section.phase} onChange={(phase) => update(index, { phase })} label={t("studies.phase.ofTemplatePart", { number })} />
                 </div>
+                <BlockBuilder section={section} onChange={(changes) => update(index, changes)} />
               </li>
               );
             })}

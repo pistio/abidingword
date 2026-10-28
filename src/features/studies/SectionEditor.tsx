@@ -322,7 +322,7 @@ export function SectionEditor(props: SectionEditorProps) {
       {structured && (
         <div className="mb-3 flex flex-col gap-2">
           <details><summary className="cursor-pointer text-text-muted">{t("studies.flow.guidance")}</summary><p className="mt-2">{sectionGuidance(section, origin)}</p></details>
-          {!writing && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
+          {section.fields?.fields.some(field => field.kind === "text" || field.kind === "entries") && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
           {!writing && goal && (
             <p className="m-0 text-[0.9375rem] text-text-muted">
               <span className="font-medium">{t("studies.fields.goal")}: </span>

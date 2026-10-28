@@ -1080,6 +1080,398 @@
             }
           }
         }
+      },
+      "word-research-study": {
+        "name": "Étude d’un mot biblique",
+        "description": "Étudier un mot dans sa langue d’origine et ses contextes sans supposer qu’il a partout le même sens.",
+        "sections": {
+          "word": {
+            "title": "Mot et question",
+            "guidance": "Identifiez le lemme hébreu ou grec, son orthographe et le passage ou la question étudiés. Un même mot français peut traduire plusieurs mots originaux.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "occurrences": {
+            "title": "Occurrences et traductions",
+            "guidance": "Repérez des occurrences représentatives du lemme et comparez leurs traductions. Distinguez le lemme de ses formes fléchies et d’autres mots traduits de façon similaire.",
+            "fields": {
+              "word-lookup": {
+                "label": "Recherche lexicale",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "concordance": {
+                "label": "Concordance",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "semantic-range": {
+            "title": "Sens possibles",
+            "guidance": "Décrivez les sens possibles à partir du contexte. Ne déduisez pas le sens de la seule étymologie et n’attribuez pas tous les sens possibles à une occurrence.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Passages en contexte",
+            "guidance": "Lisez chaque occurrence importante dans sa phrase, son paragraphe, son genre littéraire et son contexte historique. Expliquez quel sens convient le mieux et pourquoi.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Sens et conclusion",
+            "guidance": "Expliquez, à partir du texte, le sens du mot dans le passage étudié. Signalez les incertitudes et n’attribuez pas au mot plus de portée théologique que le passage ne le permet.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "application": {
+            "title": "Mise en pratique",
+            "guidance": "Quelles conséquences pour la foi et la vie découlent de l’enseignement du passage, et non de la seule définition d’un dictionnaire ?",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "grammar": {
+            "title": "Grammaire et syntaxe",
+            "guidance": "Si cela aide, examinez la forme grammaticale, la syntaxe et la fonction dans le discours. Utilisez des outils linguistiques fiables ; la maîtrise des langues anciennes n’est pas indispensable.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "theological-significance": {
+            "title": "Liens avec la théologie biblique",
+            "guidance": "Comparez les enseignements bibliques apparentés en respectant le sens propre de chaque passage.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          }
+        }
+      },
+      "topical-research-study": {
+        "name": "Étude biblique thématique",
+        "description": "Répondre à une question biblique précise en interprétant d’abord les passages pertinents dans leur contexte.",
+        "sections": {
+          "topic": {
+            "title": "Thème et questions",
+            "guidance": "Définissez le thème, ses limites et les questions auxquelles l’étude doit répondre. Ne partez pas d’une conclusion déjà arrêtée.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Passages pertinents",
+            "guidance": "Rassemblez des passages représentatifs, y compris ceux qui nuancent ou semblent contredire une première idée. Notez la pertinence de chacun.",
+            "fields": {
+              "search": {
+                "label": "Recherche de concept ou de personne",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "cross-references": {
+                "label": "Références croisées",
+                "help": "Saisissez les passages connexes séparés par des points-virgules. Vous fournissez ces références ; aucun lien n’est déduit automatiquement."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "passage-study": {
+            "title": "Examiner les passages",
+            "guidance": "Lisez chaque texte dans son contexte littéraire, historique et lié aux alliances. Distinguez enseignement explicite, récit descriptif, déduction et application.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "main-themes": {
+            "title": "Comparer et regrouper les observations",
+            "guidance": "Regroupez les passages selon leur enseignement réel, en notant accords, différences, développements et questions ouvertes.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Conclusions bibliques",
+            "guidance": "Répondez aux questions initiales avec des références bibliques. Distinguez ce que l’Écriture enseigne clairement des déductions raisonnables et des questions non résolues.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "application": {
+            "title": "Mise en pratique",
+            "guidance": "Dégagez des conséquences concrètes pour la foi, l’adoration, les relations et les actes, à partir des conclusions.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "difficult-passages": {
+            "title": "Textes difficiles ou complémentaires",
+            "guidance": "Étudiez les passages apparemment contradictoires sans négliger leur contexte ni imposer une harmonisation superficielle.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "biblical-theology": {
+            "title": "Place dans l’ensemble de la Bible",
+            "guidance": "Lorsque cela est pertinent, examinez comment l’enseignement se déploie au fil des alliances et se rapporte au Christ et à l’Évangile, sans forcer le rapprochement.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          }
+        }
+      },
+      "character-research-study": {
+        "name": "Étude d’un personnage biblique",
+        "description": "Étudier la vie et le caractère d’une personne à partir des passages bibliques pertinents.",
+        "sections": {
+          "person": {
+            "title": "Personnage et passages",
+            "guidance": "Identifiez la personne, les variantes de son nom et les principaux passages bibliques. Distinguez-la des autres personnes portant le même nom.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "setting": {
+            "title": "Contexte historique et biblique",
+            "guidance": "Situez cette personne dans l’histoire biblique : famille, relations, responsabilités et circonstances. Signalez les dates ou identifications discutées comme incertaines.",
+            "fields": {
+              "search": {
+                "label": "Recherche de concept ou de personne",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "cross-references": {
+                "label": "Références croisées",
+                "help": "Saisissez les passages connexes séparés par des points-virgules. Vous fournissez ces références ; aucun lien n’est déduit automatiquement."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "life": {
+            "title": "Vie, paroles et actes",
+            "guidance": "Retracez autant que possible les événements importants dans l’ordre chronologique. Notez ce que dit réellement le texte, références à l’appui, sans supposer qu’il fournit une biographie complète.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "character": {
+            "title": "Caractère et décisions",
+            "guidance": "Examinez les actes, les paroles, les forces, les faiblesses et les comportements récurrents. Distinguez le jugement explicite du récit de vos hypothèses sur les motivations.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "god": {
+            "title": "Action de Dieu et appréciation biblique",
+            "guidance": "Comment Dieu agit-il dans la vie de cette personne, et comment l’Écriture juge-t-elle ses choix ? Situez-la dans l’ensemble du récit biblique sans considérer chacun de ses actes comme exemplaire.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "conclusion": {
+            "title": "Principales conclusions",
+            "guidance": "Résumez la portée de cette personne à l’aide de passages précis, en mentionnant les incertitudes et les tensions.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "application": {
+            "title": "Mise en pratique",
+            "guidance": "Que nous enseigne l’Écriture, à travers cette vie, sur la foi, l’obéissance, le péché, la grâce et les relations ? Appliquez le message du texte plutôt que d’imiter tous les actes rapportés.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "comparisons": {
+            "title": "Personnages et passages associés",
+            "guidance": "Comparez d’autres personnages ou passages uniquement lorsque le rapprochement éclaire réellement le texte.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          }
+        }
+      },
+      "book-research-study": {
+        "name": "Étude d’un livre de la Bible",
+        "description": "Lire un livre biblique en entier, en dégager la structure et le message, puis en appliquer l’enseignement.",
+        "sections": {
+          "reading": {
+            "title": "Lire le livre entier",
+            "guidance": "Lisez le livre entier, si possible plusieurs fois et dans différentes traductions. Avant de consulter des commentaires, notez vos premières impressions, les mots récurrents, le ton, le genre littéraire et vos questions.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "setting": {
+            "title": "Auteur, destinataires et contexte",
+            "guidance": "Étudiez l’auteur, les destinataires, le contexte historique et géographique, les circonstances et le but du livre. Distinguez les indications du texte des hypothèses de recherche et des questions ouvertes.",
+            "fields": {
+              "search": {
+                "label": "Recherche de concept ou de personne",
+                "help": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction."
+              },
+              "cross-references": {
+                "label": "Références croisées",
+                "help": "Saisissez les passages connexes séparés par des points-virgules. Vous fournissez ces références ; aucun lien n’est déduit automatiquement."
+              },
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "overview": {
+            "title": "Vue d’ensemble et enjeux principaux",
+            "guidance": "Relevez les personnages, événements, thèmes, versets clés et grandes étapes du livre. Un mot fréquent n’est pas nécessairement son thème principal.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "outline": {
+            "title": "Structure et contenu",
+            "guidance": "Découpez le livre en unités littéraires naturelles, avec leurs références et de courts titres. Expliquez la contribution de chaque partie à l’ensemble.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "argument": {
+            "title": "Message et progression",
+            "guidance": "Suivez le déroulement du récit ou du raisonnement. Observez le genre, les contrastes, les promesses, les commandements et le lien entre la fin et le début.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "synthesis": {
+            "title": "Message central",
+            "guidance": "Formulez le sujet du livre, ce qu’il en dit et son message d’ensemble, en vous appuyant sur le texte.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "application": {
+            "title": "Mise en pratique",
+            "guidance": "Examinez les conséquences pour la foi, l’adoration et la vie, à partir du message du livre et de sa place dans l’ensemble de la Bible.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          },
+          "further": {
+            "title": "Approfondissement",
+            "guidance": "Notez les passages difficiles, les questions historiques, les renvois bibliques et les sources à approfondir.",
+            "fields": {
+              "answer": {
+                "label": "Votre réponse",
+                "help": "Écrivez avec vos propres mots. Développez ici vos observations et vos conclusions."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -2240,5 +2632,40 @@
     "legacyNote": "Ces réponses restent dans leurs champs d’origine. Rien n’a été regroupé ni remplacé.",
     "continuous": "Écriture continue",
     "outline": "Vue par étape"
+  },
+  "builder": {
+    "title": "Blocs du modèle",
+    "label": "Titre du bloc",
+    "guidance": "Indications facultatives",
+    "query": "Texte à rechercher ou passage",
+    "editionDefault": "Identifiant de l’édition par défaut (facultatif)",
+    "up": "Monter",
+    "down": "Descendre",
+    "duplicate": "Dupliquer le bloc",
+    "kind": "Type de bloc",
+    "add": "Ajouter un bloc",
+    "edition": "Édition biblique",
+    "chooseEdition": "Choisir une édition installée",
+    "editionMismatch": "L’édition reçue ne correspond pas à l’édition choisie.",
+    "crossReferenceNote": "Saisissez les passages connexes séparés par des points-virgules. Vous fournissez ces références ; aucun lien n’est déduit automatiquement.",
+    "evidenceNote": "Les résultats sont des éléments de source. Une correspondance textuelle ne démontre pas à elle seule un sens ou un lien. Notez vos conclusions dans un bloc de rédaction.",
+    "run": "Rechercher",
+    "incomplete": "Les résultats sont incomplets. Affinez la recherche dans les outils bibliques.",
+    "empty": "Aucun résultat. Cette édition ne contient peut-être pas les annotations demandées.",
+    "keep": "Conserver comme source",
+    "evidence": "Sources conservées",
+    "kinds": {
+      "writing": "Rédaction",
+      "guidance": "Indications",
+      "heading": "Titre",
+      "divider": "Séparateur",
+      "passage": "Passage",
+      "concordance": "Concordance",
+      "cross_references": "Références croisées",
+      "word_lookup": "Recherche lexicale",
+      "search": "Recherche de concept ou de personne",
+      "text": "Ancien champ de texte",
+      "entries": "Anciennes entrées structurées"
+    }
   }
 }

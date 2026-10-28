@@ -227,6 +227,14 @@ pub struct TemplateSection {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum FieldKind {
+    Guidance,
+    Heading,
+    Divider,
+    Passage,
+    Concordance,
+    CrossReferences,
+    WordLookup,
+    Search,
     Writing,
     Text,
     Entries,
@@ -257,6 +265,10 @@ pub struct EntryPart {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TemplateField {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub config: std::collections::BTreeMap<String, String>,
     pub key: String,
     pub kind: FieldKind,
     /// For entries: the parts of one entry, in order.

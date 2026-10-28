@@ -1,0 +1,106 @@
+//! Synthetic fixtures: reusable blocks must survive personalisation, restart and full backup.
+use abiding_word_lib::db::{
+    blocks, migrations, projects, studies, templates, workspaces, Database,
+};
+use abiding_word_lib::domain::{
+    BlockType, CreateProject, CreateStudy, CreateStudyBlock, TemplateInput, UpdateStudyBlock,
+    UpdateTemplate,
+};
+use abiding_word_lib::filesystem::DataDirs;
+use abiding_word_lib::portability::backup;
+
+#[test]
+fn personal_blocks_and_evidence_survive_template_changes_restart_and_backup() {
+    let temp = tempfile::tempdir().unwrap();
+    let dirs = DataDirs::ensure(temp.path().join("original")).unwrap();
+    let db = Database::open(&dirs.database_file(), &dirs.pre_migration_backups()).unwrap();
+    let (saved, personal) = db.with_conn(|conn| {
+        let project = projects::create(conn, &CreateProject { workspace_id: workspaces::get_default(conn)?.id, title: "Synthetic".into(), description: None })?;
+        let mut definition = templates::get_by_key(conn, "word-research-study")?.sections;
+        let kinds = ["guidance", "heading", "divider", "passage", "concordance", "cross_references", "word_lookup", "search", "writing"];
+        definition[0].fields = kinds.iter().enumerate().map(|(i, kind)| serde_json::from_value(serde_json::json!({"key":format!("block-{i}"),"kind":kind,"label":format!("My {kind}"),"config":{"query":"vine","translationId":"edition-a","guidance":"My unchanged guidance"}})).unwrap()).collect();
+        let personal = templates::create(conn, &TemplateInput { name: "My research".into(), description: None, study_type: abiding_word_lib::domain::StudyType::Word, sections: definition })?;
+        let study = studies::create(conn, &CreateStudy { project_id: project.id, title: "Kept research".into(), template_id: Some(personal.id.clone()), ..Default::default() })?;
+        let part = &study.sections[0];
+        assert_eq!(part.blocks.len(), 1, "only writing creates an empty answer");
+        blocks::update(conn, &UpdateStudyBlock { id: part.blocks[0].id.clone(), content: Some("My own conclusion — 한글".into()), data: None })?;
+        let evidence = blocks::create(conn, &CreateStudyBlock { section_id: part.id.clone(), block_type: BlockType::Quotation, field_key: Some("block-7".into()), content: None })?;
+        blocks::update(conn, &UpdateStudyBlock { id: evidence.id, content: Some("JHN 15:5 (SRC)\nKept source text".into()), data: Some(r#"{"kind":"search","query":"vine","translationId":"edition-a","translationName":"Source edition (SRC)","reference":"JHN 15:5","text":"Kept source text"}"#.into()) })?;
+        let saved = studies::get_detail(conn, &study.study.id)?;
+        let mut changed = personal.sections.clone();
+        changed[0].fields.reverse();
+        changed[0].fields[0].label = Some("Changed only for future studies".into());
+        let personal = templates::update(conn, &UpdateTemplate { id: personal.id, template: TemplateInput { name: personal.name, description: personal.description, study_type: personal.study_type, sections: changed } })?;
+        templates::ensure_builtin(conn)?;
+        templates::ensure_builtin(conn)?;
+        assert_eq!(studies::get_detail(conn, &saved.study.id)?, saved);
+        assert_eq!(templates::get(conn, &personal.id)?, personal);
+        assert_eq!(migrations::current_version(conn)?, 24);
+        migrations::validate_existing_history(conn)?;
+        Ok((saved, personal))
+    }).unwrap();
+    let archive = temp.path().join("blocks.awbackup");
+    backup::create(&db, &dirs, &archive).unwrap();
+    drop(db);
+    let reopened = Database::open(&dirs.database_file(), &dirs.pre_migration_backups()).unwrap();
+    reopened
+        .with_conn(|conn| {
+            assert_eq!(studies::get_detail(conn, &saved.study.id)?, saved);
+            Ok(())
+        })
+        .unwrap();
+    let target_dirs = DataDirs::ensure(temp.path().join("restored")).unwrap();
+    let target = Database::open(
+        &target_dirs.database_file(),
+        &target_dirs.pre_migration_backups(),
+    )
+    .unwrap();
+    backup::restore(&target, &target_dirs, &archive).unwrap();
+    target
+        .with_conn(|conn| {
+            assert_eq!(studies::get_detail(conn, &saved.study.id)?, saved);
+            assert_eq!(templates::get(conn, &personal.id)?, personal);
+            assert_eq!(migrations::current_version(conn)?, 24);
+            migrations::validate_existing_history(conn)?;
+            Ok(())
+        })
+        .unwrap();
+}
+
+#[test]
+fn legacy_definitions_and_new_writing_templates_coexist_and_reject_ambiguous_blocks() {
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|conn| {
+        for (key, count) in [
+            ("pozetek-study", 8),
+            ("ten-step-exegesis", 10),
+            ("pozetek-writing-study", 7),
+            ("ten-step-writing-study", 10),
+        ] {
+            let template = templates::get_by_key(conn, key)?;
+            assert_eq!(template.sections.len(), count);
+            if key.contains("writing") {
+                assert!(template
+                    .sections
+                    .iter()
+                    .all(|section| section.fields.len() == 1));
+            }
+        }
+        let source = templates::get_by_key(conn, "word-research-study")?;
+        let mut sections = source.sections;
+        let duplicate = sections[0].fields[0].clone();
+        sections[0].fields.push(duplicate);
+        assert!(templates::create(
+            conn,
+            &TemplateInput {
+                name: "Ambiguous".into(),
+                description: None,
+                study_type: source.study_type,
+                sections
+            }
+        )
+        .is_err());
+        Ok(())
+    })
+    .unwrap();
+}

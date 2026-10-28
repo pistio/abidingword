@@ -1,3 +1,7 @@
+import research0 from "../../resources/templates/word-research-study.json";
+import research1 from "../../resources/templates/topical-research-study.json";
+import research2 from "../../resources/templates/character-research-study.json";
+import research3 from "../../resources/templates/book-research-study.json";
 // An in-memory implementation of the native API for interface tests.
 // It mirrors the behaviour the Rust layer guarantees (validation messages,
 // template sections, soft delete), not its storage.
@@ -90,7 +94,7 @@ import { inquiryApi, newInquiryState, type InquiryState } from "./memoryInquiry"
 import { newPresentationState, presentationApi, type PresentationState } from "./memoryPresentation";
 import { newPortabilityState, portabilityApi, type PortabilityState } from "./memoryPortability";
 
-const BUILTIN_TEMPLATES = [pozetekWriting, tenStepWriting, passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [ passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy, pozetekWriting, tenStepWriting, research0, research1, research2, research3];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();

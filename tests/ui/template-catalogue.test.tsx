@@ -67,7 +67,7 @@ for (const { code } of LANGUAGES) {
         const study = api.state.studies[0]!;
         expect(study.studyType).toBe(type);
         const template = api.state.templates.find((t) => t.id === study.templateId)!;
-        expect(template.key).toBe(type === "character" ? "biblical-character-study" : "whole-book-study");
+        expect(template.key).toBe(type === "character" ? "character-research-study" : "book-research-study");
         const parts = await api.studySectionList(study.id);
         expect(parts).toHaveLength(7);
         expect(parts.every((s) => s.blocks.every((b) => b.content === ""))).toBe(true);

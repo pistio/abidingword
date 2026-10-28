@@ -1,3 +1,7 @@
+import research0 from "../../../resources/templates/word-research-study.json";
+import research1 from "../../../resources/templates/topical-research-study.json";
+import research2 from "../../../resources/templates/character-research-study.json";
+import research3 from "../../../resources/templates/book-research-study.json";
 // Built-in study templates are application text, shown in the interface
 // language; what a study copied from one is the user's own text from then
 // on. The database keeps the English the templates were installed with, so
@@ -43,7 +47,7 @@ interface BuiltinDefinition {
   }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [pozetekWriting, tenStepWriting, passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [ passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching, pozetekWriting, tenStepWriting, research0, research1, research2, research3];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */

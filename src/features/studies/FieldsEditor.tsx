@@ -6,6 +6,7 @@ import { useAutosave } from "@/hooks/useAutosave";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { EntryPart, StudyBlock, StudySection, TemplateField } from "@/types/domain";
+import { ResearchBlock } from "./ResearchBlock";
 import { structuredText } from "./builtinText";
 
 const input =
@@ -46,9 +47,9 @@ export function FieldsEditor({ section, onChange, onError }: FieldsEditorProps) 
       {fields.map((field) =>
         field.kind === "text" || field.kind === "writing" ? (
           <TextField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
-        ) : (
+        ) : field.kind === "entries" ? (
           <EntriesField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
-        ),
+        ) : <ResearchBlock key={field.key} section={section} field={field} onChange={onChange} onError={onError} />,
       )}
     </div>
   );
@@ -62,7 +63,7 @@ interface FieldProps {
 }
 
 function labelOf(section: StudySection, field: TemplateField) {
-  return structuredText(section, `fields.${field.key}.label`, field.key);
+  return field.label ?? structuredText(section, `fields.${field.key}.label`, field.key);
 }
 
 function TextField({ section, field, onChange, onError }: FieldProps) {
@@ -112,7 +113,7 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
         {labelOf(section, field)}
       </label>
       <p id={helpId} className="m-0 text-[0.9375rem] text-text-muted">
-        {structuredText(section, `fields.${field.key}.help`, "")}
+        {field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}
       </p>
       <textarea
         id={id}
@@ -182,7 +183,7 @@ function EntriesField({ section, field, onChange, onError }: FieldProps) {
     <div role="group" aria-labelledby={headingId} className="flex flex-col gap-2">
       <div>
         <h3 id={headingId} className="m-0 text-[1rem] font-medium text-text-strong">{label}</h3>
-        <p className="m-0 text-[0.9375rem] text-text-muted">{structuredText(section, `fields.${field.key}.help`, "")}</p>
+        <p className="m-0 text-[0.9375rem] text-text-muted">{field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}</p>
       </div>
       {entries.length === 0 && <p className="m-0 text-[0.9375rem] text-text-muted">{t("studies.fields.noEntries")}</p>}
       {entries.map((block, index) => (
