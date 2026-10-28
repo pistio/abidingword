@@ -186,74 +186,78 @@
         }
       },
       "topical-study": {
-        "name": "Themenstudium",
-        "description": "Eine Frage oder ein Thema, verfolgt durch die ganze Schrift.",
+        "name": "Thematische Bibelstudie",
+        "description": "Eine konkrete biblische Frage beantworten, indem relevante Texte zuerst in ihrem Zusammenhang ausgelegt werden.",
         "sections": {
           "topic": {
-            "title": "Frage / Thema",
-            "guidance": "Die Frage, die du stellst, so klar wie möglich formuliert."
+            "title": "Thema und Fragen",
+            "guidance": "Formuliere das Thema, seine Grenzen und die Fragen, die beantwortet werden sollen. Beginne nicht mit einem fertigen Ergebnis."
           },
           "key-passages": {
-            "title": "Zentrale Bibelstellen",
-            "guidance": "Die Bibelstellen, die am direktesten davon sprechen."
+            "title": "Relevante Bibelstellen",
+            "guidance": "Sammle aussagekräftige Bibelstellen, auch solche, die eine erste Annahme einschränken oder infrage stellen. Halte fest, warum jede Stelle wichtig ist."
           },
-          "biblical-context": {
-            "title": "Biblischer Kontext",
-            "guidance": "Wo und wie das Thema in der Bibel vorkommt."
+          "passage-study": {
+            "title": "Bibelstellen untersuchen",
+            "guidance": "Lies jeden Text in seinem literarischen, geschichtlichen und heilsgeschichtlichen Zusammenhang. Unterscheide ausdrückliche Lehre, erzählte Ereignisse, Schlussfolgerungen und Anwendung."
           },
           "main-themes": {
-            "title": "Hauptlinien",
-            "guidance": "Die wichtigsten Linien der Lehre, die sich zeigen."
-          },
-          "difficult-passages": {
-            "title": "Schwierige Bibelstellen",
-            "guidance": "Texte, die in eine andere Richtung zu weisen scheinen, und wie sie zu lesen sind."
-          },
-          "theology": {
-            "title": "Theologie",
-            "guidance": "Wie sich die Bibelstellen zu einer stimmigen Lehre zusammenfügen."
+            "title": "Erkenntnisse vergleichen und ordnen",
+            "guidance": "Ordne die Bibelstellen nach ihrer tatsächlichen Aussage. Beachte Übereinstimmungen, Unterschiede, Entwicklungen und offene Fragen."
           },
           "conclusions": {
-            "title": "Schlussfolgerungen",
-            "guidance": "Deine Schlussfolgerungen, mit den Bibelstellen, die sie tragen."
+            "title": "Biblische Schlussfolgerungen",
+            "guidance": "Beantworte die Ausgangsfragen mit Bibelstellen. Unterscheide klare Aussagen der Schrift von begründeten Schlussfolgerungen und ungeklärten Fragen."
           },
           "application": {
             "title": "Anwendung",
-            "guidance": "Was dies für Glauben, Anbetung und Leben bedeutet."
+            "guidance": "Leite konkrete Folgen für Glauben, Anbetung, Beziehungen und Handeln aus den Ergebnissen ab."
+          },
+          "difficult-passages": {
+            "title": "Schwierige oder ergänzende Texte",
+            "guidance": "Untersuche scheinbar widersprüchliche Stellen, ohne ihren Zusammenhang zu übergehen oder vorschnell alles gleichzusetzen."
+          },
+          "biblical-theology": {
+            "title": "Einordnung in die ganze Bibel",
+            "guidance": "Berücksichtige gegebenenfalls, wie sich die Lehre im Verlauf der Bündnisse entfaltet und auf Christus und das Evangelium bezieht, ohne einen Bezug zu erzwingen."
           }
         }
       },
       "word-study": {
-        "name": "Wortstudium",
-        "description": "Ein Wort, durch die Schrift verfolgt – von seinem Gebrauch bis zu seiner Bedeutung und seinem Gewicht.",
+        "name": "Biblische Wortstudie",
+        "description": "Ein biblisches Wort in seiner Ursprungssprache und seinen Zusammenhängen untersuchen, ohne überall dieselbe Bedeutung vorauszusetzen.",
         "sections": {
           "word": {
-            "title": "Wort",
-            "guidance": "Das untersuchte Wort, seine ursprüngliche Form und wie Übersetzungen es wiedergeben."
+            "title": "Wort und Fragestellung",
+            "guidance": "Bestimme das hebräische oder griechische Grundwort, seine Schreibweise und die betreffende Bibelstelle oder Frage. Ein deutsches Übersetzungswort kann mehrere unterschiedliche Grundwörter wiedergeben."
           },
           "occurrences": {
-            "title": "Vorkommen",
-            "guidance": "Wo das Wort vorkommt. (Automatische Listen der Vorkommen folgen mit der Konkordanz.)"
-          },
-          "immediate-contexts": {
-            "title": "Unmittelbarer Kontext",
-            "guidance": "Wie jede wichtige Verwendung von ihrem Satz und Absatz geprägt ist."
+            "title": "Vorkommen und Übersetzungen",
+            "guidance": "Suche aussagekräftige Vorkommen dieses Grundworts und vergleiche die Übersetzungen. Unterscheide das Grundwort von seinen gebeugten Formen und anderen Wörtern mit ähnlicher Übersetzung."
           },
           "semantic-range": {
             "title": "Bedeutungsspektrum",
-            "guidance": "Die Bandbreite der Bedeutungen des Wortes und was zwischen ihnen entscheidet."
+            "guidance": "Beschreibe mögliche Bedeutungen anhand des Zusammenhangs. Leite die Bedeutung nicht allein aus der Wortherkunft ab und übertrage nicht alle möglichen Bedeutungen auf eine einzelne Stelle."
           },
           "key-passages": {
-            "title": "Zentrale Bibelstellen",
-            "guidance": "Die Bibelstellen, an denen das Wort das größte Gewicht hat."
-          },
-          "theological-significance": {
-            "title": "Theologische Bedeutung",
-            "guidance": "Was das Wort zur Lehre der Bibel beiträgt."
+            "title": "Bibelstellen im Zusammenhang",
+            "guidance": "Lies jedes wichtige Vorkommen im Satz-, Abschnitts-, Gattungs- und geschichtlichen Zusammenhang. Halte fest, welche Bedeutung am besten passt und warum."
           },
           "conclusions": {
-            "title": "Schlussfolgerungen",
-            "guidance": "Was du gefolgert hast und was offen bleibt."
+            "title": "Bedeutung und Ergebnis",
+            "guidance": "Erkläre anhand des Textes, was das Wort in der untersuchten Stelle bedeutet. Benenne Unsicherheiten und leite aus dem Wort nicht mehr Theologie ab, als der Text trägt."
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Welche Folgen für Glauben und Leben ergeben sich aus der Aussage des Textes, nicht nur aus einer Wörterbuchdefinition?"
+          },
+          "grammar": {
+            "title": "Grammatik und Satzbau",
+            "guidance": "Untersuche bei Bedarf Wortform, Satzbau und Funktion im Gedankengang. Nutze zuverlässige sprachwissenschaftliche Hilfsmittel; Kenntnisse der Ursprachen sind keine Voraussetzung."
+          },
+          "theological-significance": {
+            "title": "Biblisch-theologische Bezüge",
+            "guidance": "Vergleiche verwandte biblische Aussagen, ohne die jeweilige Bedeutung der einzelnen Texte zu verwischen."
           }
         }
       },
