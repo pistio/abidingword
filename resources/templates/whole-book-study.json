@@ -2,7 +2,7 @@
   "key": "whole-book-study",
   "name": "Whole-Book Bible Study",
   "description": "Read an entire biblical book, trace its structure and message, and apply its teaching.",
-  "studyType": "custom",
+  "studyType": "book",
   "sections": [
     {
       "key": "reading",
