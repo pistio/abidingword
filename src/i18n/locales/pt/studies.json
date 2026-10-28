@@ -1734,7 +1734,112 @@
     "messageKind": "Tipo de mensagem",
     "passagesLine": "Texto bíblico",
     "notesHasText": "tem anotações",
-    "notesPrivate": "Só para você: nunca faz parte dos materiais para os ouvintes ou o grupo."
+    "notesPrivate": "Só para você: nunca faz parte dos materiais para os ouvintes ou o grupo.",
+    "blocks": {
+      "add": "Adicionar um bloco",
+      "addIn": "Adicionar um bloco em {{section}}",
+      "guidance": "Orientação",
+      "placeholder": "Escreva aqui…",
+      "leaderOnly": "Só para quem conduz. Fica fora das folhas e dos slides, a menos que você marque para os participantes verem.",
+      "participant": "Mostrar aos participantes",
+      "settings": "Este bloco",
+      "empty": "Este ensino ainda está vazio. Acrescente uma seção ou um espaço para escrever quando quiser.",
+      "templateHeading": "Blocos",
+      "templateHint": "Adicione, reordene, duplique e renomeie as seções e os blocos com que um ensino novo começa. O que você escreve num ensino não fica no modelo.",
+      "titleOf": "Título de {{name}}",
+      "typeOf": "Tipo de bloco: {{name}}",
+      "section": "Na seção",
+      "sectionOf": "Seção de {{name}}",
+      "noSection": "Sem seção",
+      "moveUp": "Mover “{{name}}” para cima",
+      "moveDown": "Mover “{{name}}” para baixo",
+      "duplicate": "Duplicar “{{name}}”",
+      "remove": "Remover “{{name}}”",
+      "types": {
+        "section": "Seção",
+        "writing": "Escrita",
+        "scripture": "Passagem bíblica",
+        "teaching_notes": "Notas de quem conduz",
+        "discussion_questions": "Perguntas para conversar",
+        "explanation": "Explicação",
+        "illustration": "Exemplo",
+        "activity": "Atividade",
+        "application": "Aplicação e reflexão",
+        "objectives": "Objetivos",
+        "time": "Tempo",
+        "presentation_notes": "Notas da apresentação",
+        "handout": "Folha",
+        "outline_point": "Ponto do esboço"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Estudo bíblico",
+        "hint": "Para um grupo: observar a passagem, compreendê-la e perguntar o que se segue.",
+        "blocks": {
+          "erkennen": {
+            "title": "Observar",
+            "guidance": "O que a passagem realmente diz, e o que o grupo pode descobrir? Dá para ler juntos, ouvir de novo e recontar com as próprias palavras."
+          },
+          "verstehen": {
+            "title": "Compreender",
+            "guidance": "O sentido no contexto literário, histórico e bíblico, e a mensagem central. O que ficou importante, o que o texto diz sobre Deus e sobre as pessoas, e como o contexto ajuda."
+          },
+          "anwenden": {
+            "title": "Aplicar",
+            "guidance": "O que se segue para a fé, a compreensão, as decisões, o comportamento e os relacionamentos. O que muda, o que faremos e quem isso pode encorajar."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Pregação ou palestra",
+        "hint": "Introdução, parte principal e conclusão. Escreva de uma vez ou acrescente pontos do esboço.",
+        "blocks": {
+          "introduction": {
+            "title": "Introdução",
+            "guidance": "Como você começa. A mensagem central, os ouvintes e o propósito podem entrar como blocos, se você quiser."
+          },
+          "main": {
+            "title": "Parte principal",
+            "guidance": "O corpo da pregação ou da palestra. Dá para acrescentar pontos do esboço ao lado do texto contínuo."
+          },
+          "conclusion": {
+            "title": "Conclusão",
+            "guidance": "Como você encerra e que resposta cabe."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Aula bíblica — crianças e jovens",
+        "hint": "Uma aula só, para crianças ou jovens. A idade muda o modo de contar, não o sentido da passagem.",
+        "blocks": {
+          "story": {
+            "title": "História",
+            "guidance": "Conte a passagem de um jeito que sirva à idade. O sentido continua sendo o do texto."
+          },
+          "explain": {
+            "title": "Explicação",
+            "guidance": "Diga o que a passagem significa, com palavras que eles acompanhem. Não troque esse sentido por uma ideia mais simples."
+          },
+          "questions": {
+            "title": "Perguntas",
+            "guidance": "As perguntas que o grupo ouve e as suas anotações sobre as respostas a escutar. Essas anotações ficam com você."
+          },
+          "activity": {
+            "title": "Atividade",
+            "guidance": "Algo que eles façam com o que ouviram."
+          },
+          "reflect": {
+            "title": "Reflexão",
+            "guidance": "O que podem levar para a fé, as decisões e os relacionamentos."
+          }
+        }
+      },
+      "blank": {
+        "name": "Modelo em branco",
+        "hint": "Ainda não há seções. Acrescente as que este ensino precisa."
+      }
+    }
   },
   "parts": {
     "add": "Adicionar uma parte",

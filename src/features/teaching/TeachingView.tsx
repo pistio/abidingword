@@ -15,7 +15,8 @@ import { AssistPanel } from "./AssistPanel";
 import { FloatingPanel, AssistDockProvider, useAssistDock } from "./FloatingPanel";
 import { assistLabel, canvasShape, pointFields, shapeText, showsFrame, stepFieldLabel, teachingKindLabel, type ShapeText } from "./labels";
 import { TeachingInfo } from "./TeachingInfo";
-import { TEACHING_FORMATS, formatStarts, startKind, startSummary, startingPoints, type TeachingFormat, type TeachingStart } from "./teachingTemplates";
+import { BlockCanvas } from "./BlockCanvas";
+import { BUILTIN_BLOCK_TEMPLATES, blocksFromBuiltin, usesBlocks } from "./teachingTemplates";
 import { TeachingField, type AssistantHooks } from "./TeachingField";
 import { TeachingLinks } from "./TeachingLinks";
 import { PresentationView } from "@/features/presentation/PresentationView";
@@ -183,23 +184,19 @@ function NewTeaching({
   useEffect(() => {
     if (!first) heading.current?.focus();
   }, [first]);
-  // What to prepare (v0.19): one of three formats — a message, a group Bible study, an
-  // interactive lesson — then, where there is more than one, where to start: the format's
-  // built-in starting point(s) or one of the person's own templates made for it. The kinds
-  // stored stay those of v0.16 (sermon, talk, bible_study, lesson, children, youth, other).
+  // Three built-in block templates, a blank one, then any template of the person's own.
+  // A version-1 template still starts the earlier editor. Nothing links a teaching to its template afterwards.
   const mine = useLoad(useCallback(() => api.teachingTemplateList(), [api]));
-  const [format, setFormat] = useState<TeachingFormat>("message");
-  const [messageKind, setMessageKind] = useState<"sermon" | "talk">("sermon");
-  const [chosen, setChosen] = useState<string | null>(null);
-  const starts = formatStarts(format, messageKind, mine.data ?? []);
-  const picked = starts.find((s) => s.id === chosen) ?? starts[0]!;
-  const start: TeachingStart = picked.start;
-  const kind = startKind(start);
+  const [chosen, setChosen] = useState("sermon-talk");
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const startLabel = (s: TeachingStart) => ("mine" in s ? s.mine.name : t("studies.teaching.templates.builtinChoice", { format: teachingKindLabel(t, s.builtin.kind) }));
-  const suggested = `${"mine" in start ? start.mine.name : teachingKindLabel(t, kind)} · ${studyTitle}`;
+  const personal = mine.data ?? [];
+  const builtin = BUILTIN_BLOCK_TEMPLATES.find((b) => b.key === chosen);
+  const own = personal.find((m) => m.id === chosen);
+  const i18nKey = chosen === "sermon-talk" ? "sermonTalk" : chosen === "bible-lesson" ? "bibleLesson" : chosen === "blank" ? "blank" : "eva";
+  const choiceName = own ? own.name : t(`studies.teaching.builtin.${i18nKey}.name`);
+  const suggested = `${builtin ? teachingKindLabel(t, builtin.legacyKind) : choiceName} · ${studyTitle}`;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -207,8 +204,16 @@ function NewTeaching({
     setBusy(true);
     setError(null);
     try {
-      // The template's points become the teaching's own, named in the person's language; nothing links them afterwards.
-      onCreated(await api.teachingCreate({ studyId, title: title.trim() || suggested, kind, points: startingPoints(t, start) }));
+      const name = title.trim() || suggested;
+      if (builtin) {
+        onCreated(await api.teachingCreate({ studyId, title: name, kind: builtin.legacyKind, templateKey: builtin.key, templateVersion: 2, blocks: blocksFromBuiltin(t, builtin) }));
+      } else if (own && (own.version ?? 1) >= 2) {
+        onCreated(await api.teachingCreate({ studyId, title: name, kind: own.kind, templateKey: own.id, templateVersion: 2, blocks: own.blocks ?? [] }));
+      } else if (chosen === "blank") {
+        onCreated(await api.teachingCreate({ studyId, title: name, kind: "other", templateKey: "blank", templateVersion: 2, blocks: [] }));
+      } else if (own) {
+        onCreated(await api.teachingCreate({ studyId, title: name, kind: own.kind, points: own.points.map((p) => ({ title: p.title, kind: p.kind ?? null })) }));
+      }
     } catch (err) {
       setError(toApiError(err).message);
     } finally {
@@ -234,61 +239,44 @@ function NewTeaching({
       <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
         <legend className="type-subhead mb-1">{t("studies.teaching.formatLegend")}</legend>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-2">
-          {TEACHING_FORMATS.map((f) => (
-            <label key={f} className="aw-choice cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
-              <input
-                type="radio"
-                name={`${id}-format`}
-                value={f}
-                aria-label={t(`studies.teaching.formats.${f}.name`)}
-                aria-describedby={`${id}-${f}-hint`}
-                checked={format === f}
-                onChange={() => {
-                  setFormat(f);
-                  setChosen(null);
-                }}
-                className="sr-only"
-              />
-              <span className="font-medium text-text-strong">{t(`studies.teaching.formats.${f}.name`)}</span>
-              <span id={`${id}-${f}-hint`} className="text-[0.875rem] text-text-muted">{t(`studies.teaching.formats.${f}.hint`)}</span>
-            </label>
-          ))}
-        </div>
-        {format === "message" && (
-          <div role="radiogroup" aria-label={t("studies.teaching.messageKind")} className="flex flex-wrap items-center gap-2">
-            {(["sermon", "talk"] as const).map((k) => (
-              <label key={k} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
+          {BUILTIN_BLOCK_TEMPLATES.map((template) => {
+            const group = template.key === "sermon-talk" ? "sermonTalk" : template.key === "bible-lesson" ? "bibleLesson" : "eva";
+            return (
+              <label key={template.key} className="aw-choice cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
                 <input
                   type="radio"
-                  name={`${id}-message`}
-                  checked={messageKind === k}
-                  onChange={() => {
-                    setMessageKind(k);
-                    setChosen(null);
-                  }}
+                  name={`${id}-format`}
+                  value={template.key}
+                  aria-label={t(`studies.teaching.builtin.${group}.name`)}
+                  aria-describedby={`${id}-${template.key}-hint`}
+                  checked={chosen === template.key}
+                  onChange={() => setChosen(template.key)}
                   className="sr-only"
                 />
-                {teachingKindLabel(t, k)}
+                <span className="font-medium text-text-strong">{t(`studies.teaching.builtin.${group}.name`)}</span>
+                <span id={`${id}-${template.key}-hint`} className="text-[0.875rem] text-text-muted">{t(`studies.teaching.builtin.${group}.hint`)}</span>
               </label>
-            ))}
-          </div>
-        )}
-        {starts.length > 1 && (
+            );
+          })}
+          <label className="aw-choice cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
+            <input type="radio" name={`${id}-format`} value="blank" aria-label={t("studies.teaching.builtin.blank.name")} checked={chosen === "blank"} onChange={() => setChosen("blank")} className="sr-only" />
+            <span className="font-medium text-text-strong">{t("studies.teaching.builtin.blank.name")}</span>
+            <span className="text-[0.875rem] text-text-muted">{t("studies.teaching.builtin.blank.hint")}</span>
+          </label>
+        </div>
+        {personal.length > 0 && (
           <div role="radiogroup" aria-label={t("studies.teaching.templates.startFrom")} className="flex flex-wrap items-center gap-2">
             <span aria-hidden="true" className="type-meta">{t("studies.teaching.templates.startFrom")}</span>
-            {starts.map((s) => (
-              <label key={s.id} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
-                <input type="radio" name={`${id}-start`} checked={s.id === picked.id} onChange={() => setChosen(s.id)} className="sr-only" aria-describedby={`${id}-format-summary`} />
-                {startLabel(s.start)}
+            {personal.map((template) => (
+              <label key={template.id} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
+                <input type="radio" name={`${id}-start`} checked={chosen === template.id} onChange={() => setChosen(template.id)} className="sr-only" />
+                {template.name}
               </label>
             ))}
           </div>
         )}
         {mine.error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{t("studies.teaching.templates.loadFailed")}</p>}
-        {/* What the chosen start gives to work in: its format and what it starts with. */}
-        <p id={`${id}-format-summary`} className="m-0 text-[0.9375rem] text-text">
-          {startSummary(t, start)}
-        </p>
+        <p className="m-0 text-[0.9375rem] text-text">{choiceName}</p>
       </fieldset>
       <label className="flex flex-col gap-1">
         <span className="type-subhead">{t("studies.teaching.titleLabel")}</span>
@@ -457,7 +445,7 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
     }
   };
   // The teaching's own passages (not a point's): its Bible text, shown with the teaching as context.
-  const wholePassages = prep.passages.filter((p) => p.pointId === null);
+  const wholePassages = prep.passages.filter((p) => p.pointId === null && !p.blockId);
 
   const backToTeaching = () => {
     setDelivering(false);
@@ -579,6 +567,10 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
         </div>
       </header>
 
+      {usesBlocks(prep) ? (
+        <BlockCanvas prep={prep} findings={findings} assistant={hooks} onChanged={setPrep} onRevealScripture={onRevealScripture} />
+      ) : (
+      <>
       {/* What it says on a line of its own; what it is for waits in the empty field. */}
       <TeachingField
         key={`message-${prep.id}`}
@@ -795,6 +787,8 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
           <TeachingField key={`notes-${prep.id}`} label={t("studies.teaching.notes")} placeholder={t("studies.teaching.notesHint")} value={prep.notes} save={save("notes")} part="notes" rows={3} assistant={hooks} labelHidden />
         </div>
       </section>
+      </>
+      )}
 
       {error && (
         <p role="alert" className="m-0 text-danger">

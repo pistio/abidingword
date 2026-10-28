@@ -423,6 +423,15 @@ impl Builder<'_> {
                 }
                 _ => missing(),
             },
+            "block" => match prep.blocks.iter().find(|b| b.id == source.id) {
+                Some(block) => Resolved {
+                    heading: text(&block.title),
+                    body: text(&block.body),
+                    manuscript: part("body", &block.body).into_iter().collect(),
+                    ..Resolved::default()
+                },
+                None => missing(),
+            },
             "point" => match prep.points.iter().find(|p| p.id == source.id) {
                 Some(point) => {
                     let manuscript = [

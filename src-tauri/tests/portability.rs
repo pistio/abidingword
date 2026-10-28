@@ -133,6 +133,9 @@ fn make_project(conn: &Connection, images: &Path, title: &str) -> AppResult<Made
             title: "Abide in me".into(),
             kind: Some("sermon".into()),
             points: Vec::new(),
+            template_key: None,
+            template_version: None,
+            blocks: Vec::new(),
         },
     )?
     .id;
@@ -162,6 +165,7 @@ fn make_project(conn: &Connection, images: &Path, title: &str) -> AppResult<Made
             preparation_id: prep.clone(),
             point_id: Some(point.clone()),
             reference: "JHN.15.1-JHN.15.8".into(),
+            block_id: None,
         },
     )?;
     fs::create_dir_all(images).unwrap();

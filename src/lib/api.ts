@@ -94,6 +94,7 @@ import type {
   TeachingKind,
   TeachingPreparation,
   TeachingTemplate,
+  TeachingTemplateBlock,
   TeachingTemplateInput,
   TeachingSummary,
   UpdateTeaching,
@@ -328,17 +329,22 @@ export interface Api {
   teachingTemplateCreate(input: TeachingTemplateInput): Promise<TeachingTemplate>;
   teachingTemplateUpdate(input: TeachingTemplateInput & { id: string }): Promise<TeachingTemplate>;
   teachingTemplateDelete(id: string): Promise<void>;
-  teachingCreate(input: { studyId: string; title: string; kind?: TeachingKind | null; points?: { title: string; kind?: StepKind | null }[] }): Promise<TeachingPreparation>;
+  teachingCreate(input: { studyId: string; title: string; kind?: TeachingKind | null; points?: { title: string; kind?: StepKind | null }[]; templateKey?: string | null; templateVersion?: number | null; blocks?: TeachingTemplateBlock[] }): Promise<TeachingPreparation>;
   teachingUpdate(input: UpdateTeaching): Promise<TeachingPreparation>;
   teachingDelete(id: string): Promise<void>;
   teachingPointCreate(input: { preparationId: string; title?: string; kind?: StepKind | null; afterPointId?: string | null }): Promise<TeachingPreparation>;
   teachingPointUpdate(input: UpdateTeachingPoint): Promise<TeachingPreparation>;
   teachingPointDelete(id: string): Promise<TeachingPreparation>;
   teachingPointReorder(input: Reorder): Promise<TeachingPreparation>;
+  teachingBlockCreate(input: { preparationId: string; parentId?: string | null; afterBlockId?: string | null; blockType: string; title?: string; body?: string; participantFacing?: boolean | null; role?: string | null; guidanceKey?: string | null }): Promise<TeachingPreparation>;
+  teachingBlockUpdate(input: { id: string; title?: string; body?: string; blockType?: string; participantFacing?: boolean; role?: string; guidanceKey?: string; parentId?: string }): Promise<TeachingPreparation>;
+  teachingBlockDelete(id: string): Promise<TeachingPreparation>;
+  teachingBlockReorder(input: { preparationId: string; parentId?: string | null; ids: string[] }): Promise<TeachingPreparation>;
+  teachingBlockDuplicate(id: string): Promise<TeachingPreparation>;
   /** Uses a study finding here (a live link; the finding stays the study's). */
   teachingFindingLink(input: { preparationId: string; pointId?: string | null; findingId: string }): Promise<TeachingPreparation>;
   teachingFindingUnlink(linkId: string): Promise<TeachingPreparation>;
-  teachingPassageAdd(input: { preparationId: string; pointId?: string | null; reference: string }): Promise<TeachingPreparation>;
+  teachingPassageAdd(input: { preparationId: string; pointId?: string | null; blockId?: string | null; reference: string }): Promise<TeachingPreparation>;
   teachingPassageRemove(id: string): Promise<TeachingPreparation>;
   /** Keeps something from the assistant, with its standing and sources. */
   teachingMaterialKeep(input: KeepTeachingMaterial): Promise<TeachingPreparation>;
@@ -736,6 +742,11 @@ export const tauriApi: Api = {
   teachingPointUpdate: (input) => call("teaching_point_update", { input }),
   teachingPointDelete: (id) => call("teaching_point_delete", { id }),
   teachingPointReorder: (input) => call("teaching_point_reorder", { input }),
+  teachingBlockCreate: (input) => call("teaching_block_create", { input }),
+  teachingBlockUpdate: (input) => call("teaching_block_update", { input }),
+  teachingBlockDelete: (id) => call("teaching_block_delete", { id }),
+  teachingBlockReorder: (input) => call("teaching_block_reorder", { input }),
+  teachingBlockDuplicate: (id) => call("teaching_block_duplicate", { id }),
   teachingFindingLink: (input) => call("teaching_finding_link", { input }),
   teachingFindingUnlink: (id) => call("teaching_finding_unlink", { id }),
   teachingPassageAdd: (input) => call("teaching_passage_add", { input }),

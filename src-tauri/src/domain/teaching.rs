@@ -30,6 +30,44 @@ pub const STEP_KINDS: &[&str] = &[
     "audio",
 ];
 
+/// Blocks a template or a teaching may be made of. A kind the application
+/// does not know yet is still stored; the editor shows it as writing.
+pub const TEACHING_BLOCK_TYPES: &[&str] = &[
+    "section",
+    "writing",
+    "scripture",
+    "teaching_notes",
+    "discussion_questions",
+    "explanation",
+    "illustration",
+    "activity",
+    "application",
+    "objectives",
+    "time",
+    "presentation_notes",
+    "handout",
+    "outline_point",
+];
+
+/// A block whose body is also one of the columns presentations already read.
+pub const BLOCK_ROLES: &[&str] = &[
+    "introduction",
+    "conclusion",
+    "central_message",
+    "notes",
+    "explanation",
+    "application",
+    "illustration",
+];
+
+/// Leader-only unless the person explicitly marks the block for participants.
+pub fn block_is_private_by_default(block_type: &str) -> bool {
+    !matches!(
+        block_type,
+        "discussion_questions" | "handout" | "section" | "scripture" | "outline_point"
+    )
+}
+
 /// What the person kept from the assistant.
 pub const MATERIAL_KINDS: &[&str] = &["story", "illustration", "image", "visual"];
 
@@ -78,9 +116,35 @@ pub struct TeachingPreparation {
     pub findings: Vec<TeachingFindingLink>,
     pub passages: Vec<TeachingPassage>,
     pub materials: Vec<TeachingMaterial>,
+    /// The template this teaching was started from, when it uses blocks.
+    /// Absent for a teaching written in the earlier editor.
+    pub template_key: Option<String>,
+    /// 2: block editor. Absent: the editor this teaching was written in.
+    pub template_version: Option<i64>,
+    pub blocks: Vec<TeachingBlock>,
     pub created_at: String,
     pub updated_at: String,
     pub revision: i64,
+}
+
+/// One block of a teaching. `participant_facing` is false for private leader
+/// notes: handouts, worksheets and a proposed presentation leave them out
+/// unless the person has marked the block for participants.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TeachingBlock {
+    pub id: String,
+    pub parent_id: Option<String>,
+    pub position: i64,
+    pub block_type: String,
+    pub block_key: Option<String>,
+    pub title: String,
+    pub body: String,
+    pub participant_facing: bool,
+    pub role: Option<String>,
+    pub guidance_key: Option<String>,
+    /// The outline point this block keeps in step with, when it is one.
+    pub point_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -110,6 +174,8 @@ pub struct TeachingFindingLink {
 pub struct TeachingPassage {
     pub id: String,
     pub point_id: Option<String>,
+    /// The block this passage belongs to; absent for the whole teaching or a point.
+    pub block_id: Option<String>,
     pub reference: ScriptureRefDto,
 }
 
@@ -154,7 +220,7 @@ pub struct TeachingMaterial {
     pub created_at: String,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateTeaching {
     pub study_id: String,
@@ -165,6 +231,68 @@ pub struct CreateTeaching {
     /// named in the person's language by the interface.
     #[serde(default)]
     pub points: Vec<StartingPoint>,
+    /// Set when the teaching is made from a block template. Absent: the
+    /// earlier editor, unchanged.
+    #[serde(default)]
+    pub template_key: Option<String>,
+    #[serde(default)]
+    pub template_version: Option<i64>,
+    #[serde(default)]
+    pub blocks: Vec<NewTeachingBlock>,
+}
+
+/// A block copied from a template into a new teaching. Structure, not a link
+/// back to the template.
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct NewTeachingBlock {
+    pub key: Option<String>,
+    pub parent_key: Option<String>,
+    pub block_type: String,
+    pub title: String,
+    pub body: String,
+    pub participant_facing: Option<bool>,
+    pub role: Option<String>,
+    pub guidance_key: Option<String>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct CreateTeachingBlock {
+    pub preparation_id: String,
+    pub parent_id: Option<String>,
+    /// Insert after this sibling; at the end of the group when absent.
+    pub after_block_id: Option<String>,
+    pub block_type: String,
+    pub title: String,
+    pub body: String,
+    pub participant_facing: Option<bool>,
+    pub role: Option<String>,
+    pub guidance_key: Option<String>,
+}
+
+/// Each field: `None` leaves it as it is.
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct UpdateTeachingBlock {
+    pub id: String,
+    pub title: Option<String>,
+    pub body: Option<String>,
+    pub block_type: Option<String>,
+    pub participant_facing: Option<bool>,
+    pub role: Option<String>,
+    pub guidance_key: Option<String>,
+    /// `Some("")` moves the block to the top level.
+    pub parent_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct ReorderTeachingBlocks {
+    pub preparation_id: String,
+    /// The section these blocks sit in; empty for the top level.
+    pub parent_id: Option<String>,
+    pub ids: Vec<String>,
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]
@@ -224,6 +352,7 @@ pub struct LinkTeachingFinding {
 pub struct AddTeachingPassage {
     pub preparation_id: String,
     pub point_id: Option<String>,
+    pub block_id: Option<String>,
     /// Canonical reference, e.g. "JHN.15.1-JHN.15.8".
     pub reference: String,
 }
@@ -253,6 +382,11 @@ pub struct TeachingTemplate {
     /// One of [`TEACHING_KINDS`].
     pub kind: String,
     pub points: Vec<TeachingTemplatePoint>,
+    /// 2 when the template is a block template. Absent for a points template.
+    #[serde(default, skip_serializing_if = "is_legacy_template_version")]
+    pub version: i64,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub blocks: Vec<TeachingTemplateBlock>,
     pub created_at: String,
     pub updated_at: String,
     pub revision: i64,
@@ -272,13 +406,41 @@ pub struct TeachingTemplatePoint {
     pub kind: Option<String>,
 }
 
+fn is_legacy_template_version(version: &i64) -> bool {
+    *version < 2
+}
+
+/// One block a new teaching starts with. Titles are the person's words.
+/// Nothing they would write in a session is kept here.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase", default)]
+pub struct TeachingTemplateBlock {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub key: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub parent_key: Option<String>,
+    pub block_type: String,
+    pub title: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub participant_facing: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub role: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub guidance_key: Option<String>,
+}
+
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct TeachingTemplateInput {
     pub name: String,
     pub description: Option<String>,
     pub kind: String,
+    #[serde(default)]
     pub points: Vec<TeachingTemplatePoint>,
+    #[serde(default)]
+    pub version: i64,
+    #[serde(default)]
+    pub blocks: Vec<TeachingTemplateBlock>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

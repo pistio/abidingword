@@ -7,12 +7,14 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { canvasShape, shapeText, shapeWords, teachingKindLabel, type ShapeText } from "@/features/teaching/labels";
 import { templatePointTitle } from "@/features/teaching/teachingTemplates";
-import { STEP_KINDS, TEACHING_KINDS, type StepKind, type TeachingKind, type TeachingTemplate, type TeachingTemplatePoint } from "@/types/teaching";
+import { STEP_KINDS, TEACHING_BLOCK_TYPES, TEACHING_KINDS, type StepKind, type TeachingKind, type TeachingTemplate, type TeachingTemplateBlock, type TeachingTemplatePoint } from "@/types/teaching";
 
 /** A point being edited: its row keeps one identity while it moves, so focus moves with it. */
 type Row = TeachingTemplatePoint & { row: string };
+type BlockRow = TeachingTemplateBlock & { row: string };
 let rows = 0;
 const asRow = (point: TeachingTemplatePoint): Row => ({ ...point, row: `row-${++rows}` });
+const asBlock = (block: TeachingTemplateBlock): BlockRow => ({ ...block, row: `row-${++rows}` });
 
 /**
  * Create or edit a Bible Teaching template of the person's own (v0.18.7):
@@ -52,9 +54,11 @@ function Form({ templateId, initial, onClose }: { templateId: string | null; ini
   const heading = useRef<HTMLHeadingElement>(null);
   const [name, setName] = useState(initial?.name ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
-  const [kind, setKind] = useState<TeachingKind>(initial?.kind ?? "sermon");
+  const blockMode = !initial || (initial.version ?? 1) >= 2;
+  const [kind, setKind] = useState<TeachingKind>(initial?.kind ?? (blockMode ? "other" : "sermon"));
   // Built-in steps are shown in the person's language; once changed they are the person's own words.
-  const [points, setPoints] = useState<Row[]>(() => (initial?.points ?? []).map((p) => asRow({ ...p, title: templatePointTitle(t, initial!.kind, p) })));
+  const [points, setPoints] = useState<Row[]>(() => (initial?.points ?? []).map((p) => asRow({ ...p, title: initial ? templatePointTitle(t, initial.kind, p) : p.title })));
+  const [blocks, setBlocks] = useState<BlockRow[]>(() => (initial?.blocks ?? []).map((b) => asBlock(b)));
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [moved, setMoved] = useState<{ row: string; up: boolean } | null>(null);
@@ -91,7 +95,9 @@ function Form({ templateId, initial, onClose }: { templateId: string | null; ini
   const save = async () => {
     setError(null);
     // A step's kind belongs to a lesson in steps; the other formats keep none.
-    const input = { name, description, kind, points: points.map(({ row: _row, ...p }) => ({ ...p, kind: steps ? (p.kind ?? null) : null })) };
+    const input = blockMode
+      ? { name, description, kind, points: [], version: 2 as const, blocks: blocks.map(({ row: _row, ...b }) => b) }
+      : { name, description, kind, points: points.map(({ row: _row, ...p }) => ({ ...p, kind: steps ? (p.kind ?? null) : null })) };
     try {
       if (templateId) await api.teachingTemplateUpdate({ id: templateId, ...input });
       else await api.teachingTemplateCreate(input);
@@ -144,6 +150,9 @@ function Form({ templateId, initial, onClose }: { templateId: string | null; ini
           <p id={`${id}-format`} className="m-0 text-[0.9375rem] text-text-muted">{t(`studies.teaching.format.${shapeWords(kind)}`)}</p>
         </div>
 
+        {blockMode ? (
+          <BlockTemplateFields id={id} blocks={blocks} setBlocks={setBlocks} />
+        ) : (
         <section aria-labelledby={`${id}-points`} className="flex flex-col gap-3">
           <h2 id={`${id}-points`} className="type-section m-0">{shape("title")}</h2>
           <p className="m-0 text-[0.9375rem] text-text-muted">{points.length === 0 ? t("studies.teaching.templates.none") : t("studies.teaching.templates.pointsHint")}</p>
@@ -195,6 +204,7 @@ function Form({ templateId, initial, onClose }: { templateId: string | null; ini
             </Button>
           </div>
         </section>
+        )}
 
         {error && <p role="alert" className="m-0 text-danger">{error}</p>}
         <div className="flex gap-3 border-t border-border-subtle pt-6">
@@ -203,5 +213,85 @@ function Form({ templateId, initial, onClose }: { templateId: string | null; ini
         </div>
       </div>
     </div>
+  );
+}
+
+/** The block template builder: sections and blocks in any order, each configurable. */
+function BlockTemplateFields({ id, blocks, setBlocks }: { id: string; blocks: BlockRow[]; setBlocks: (rows: BlockRow[]) => void }) {
+  const { t } = useTranslation();
+  const sections = blocks.filter((b) => b.blockType === "section");
+  const move = (index: number, delta: -1 | 1) => {
+    const next = [...blocks];
+    const target = index + delta;
+    if (target < 0 || target >= next.length) return;
+    [next[index], next[target]] = [next[target]!, next[index]!];
+    const row = next[target]!.row;
+    setBlocks(next);
+    requestAnimationFrame(() => {
+      const up = document.getElementById(`${id}-${row}-up`) as HTMLButtonElement | null;
+      const down = document.getElementById(`${id}-${row}-down`) as HTMLButtonElement | null;
+      (up && !up.disabled ? up : down)?.focus();
+    });
+  };
+  const duplicate = (index: number) => {
+    const source = blocks[index]!;
+    const copy = asBlock({ ...source, key: null, title: source.title });
+    copy.key = copy.row;
+    const next = [...blocks];
+    next.splice(index + 1, 0, copy);
+    setBlocks(next);
+  };
+  const field = "aw-input h-10 px-3 text-base";
+  const tool = "inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover disabled:opacity-40";
+  return (
+    <section aria-labelledby={`${id}-blocks`} className="flex flex-col gap-3">
+      <h2 id={`${id}-blocks`} className="type-section m-0">{t("studies.teaching.blocks.templateHeading")}</h2>
+      <p className="m-0 text-[0.9375rem] text-text-muted">{t("studies.teaching.blocks.templateHint")}</p>
+      <ol aria-label={t("studies.teaching.blocks.templateHeading")} className="m-0 flex list-none flex-col gap-3 p-0">
+        {blocks.map((block, index) => {
+          const name = block.title.trim() || (t as unknown as (key: string) => string)(`studies.teaching.blocks.types.${block.blockType}`);
+          return (
+            <li key={block.row} className="flex flex-col gap-2 border-l-[3px] border-border pl-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <input id={`${id}-${block.row}-title`} value={block.title} onChange={(e) => setBlocks(blocks.map((b) => (b.row === block.row ? { ...b, title: e.target.value } : b)))} aria-label={t("studies.teaching.blocks.titleOf", { name })} placeholder={(t as unknown as (key: string) => string)(`studies.teaching.blocks.types.${block.blockType}`)} className={`${field} min-w-0 flex-1 basis-56`} />
+                <select value={block.blockType} aria-label={t("studies.teaching.blocks.typeOf", { name })} onChange={(e) => setBlocks(blocks.map((b) => (b.row === block.row ? { ...b, blockType: e.target.value } : b)))} className="aw-input h-10 px-2 text-[0.9375rem]">
+                  {TEACHING_BLOCK_TYPES.map((type) => (
+                    <option key={type} value={type}>{t(`studies.teaching.blocks.types.${type}`)}</option>
+                  ))}
+                </select>
+                <button type="button" id={`${id}-${block.row}-up`} disabled={index === 0} onClick={() => move(index, -1)} aria-label={t("studies.templateEditor.moveUp", { title: name })} className={tool}><ArrowUp className="size-4" aria-hidden="true" /></button>
+                <button type="button" id={`${id}-${block.row}-down`} disabled={index === blocks.length - 1} onClick={() => move(index, 1)} aria-label={t("studies.templateEditor.moveDown", { title: name })} className={tool}><ArrowDown className="size-4" aria-hidden="true" /></button>
+                <button type="button" onClick={() => duplicate(index)} aria-label={t("studies.teaching.blocks.duplicate", { name })} className={tool}><Plus className="size-4" aria-hidden="true" /></button>
+                <button type="button" onClick={() => setBlocks(blocks.filter((b) => b.row !== block.row))} aria-label={t("studies.templateEditor.remove", { title: name })} className={`${tool} hover:text-danger`}><Trash2 className="size-4" aria-hidden="true" /></button>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                {block.blockType !== "section" && (
+                  <label className="flex items-center gap-2 text-[0.9375rem]">
+                    <span>{t("studies.teaching.blocks.section")}</span>
+                    <select value={block.parentKey ?? ""} aria-label={t("studies.teaching.blocks.sectionOf", { name })} onChange={(e) => setBlocks(blocks.map((b) => (b.row === block.row ? { ...b, parentKey: e.target.value || null } : b)))} className="aw-input h-10 px-2">
+                      <option value="">{t("studies.teaching.blocks.noSection")}</option>
+                      {sections.filter((s) => s.row !== block.row).map((s) => (
+                        <option key={s.row} value={s.key ?? s.row}>{s.title.trim() || t("studies.teaching.blocks.types.section")}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+                <label className="flex min-h-11 items-center gap-2 text-[0.9375rem]">
+                  <input type="checkbox" checked={block.participantFacing !== false} onChange={(e) => setBlocks(blocks.map((b) => (b.row === block.row ? { ...b, participantFacing: e.target.checked } : b)))} />
+                  {t("studies.teaching.blocks.participant")}
+                </label>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      <Button id={`${id}-add`} onClick={() => {
+        const row = asBlock({ blockType: "section", title: "", participantFacing: true });
+        row.key = row.row;
+        setBlocks([...blocks, row]);
+      }}>
+        <Plus className="size-4" aria-hidden="true" /> {t("studies.teaching.blocks.add")}
+      </Button>
+    </section>
   );
 }

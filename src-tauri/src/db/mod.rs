@@ -28,6 +28,7 @@ pub mod studies;
 pub mod study_passages;
 pub mod study_search;
 pub mod teaching;
+pub mod teaching_blocks;
 pub mod teaching_templates;
 pub mod templates;
 pub mod text_refresh;

@@ -41,6 +41,8 @@ export interface TeachingFindingLink {
 export interface TeachingPassage {
   id: string;
   pointId: string | null;
+  /** The block this passage belongs to, when it is not the whole teaching or a point. */
+  blockId?: string | null;
   reference: ScriptureRef;
 }
 
@@ -96,9 +98,47 @@ export interface TeachingPreparation {
   findings: TeachingFindingLink[];
   passages: TeachingPassage[];
   materials: TeachingMaterial[];
+  /** Set when this teaching was started from a block template. Absent: the earlier editor. */
+  templateKey?: string | null;
+  /** 2: the block editor. Absent: the editor this teaching was written in. */
+  templateVersion?: number | null;
+  blocks?: TeachingBlock[];
   createdAt: string;
   updatedAt: string;
   revision: number;
+}
+
+/** Kinds of block a teaching template can hold. */
+export const TEACHING_BLOCK_TYPES = [
+  "section",
+  "writing",
+  "scripture",
+  "teaching_notes",
+  "discussion_questions",
+  "explanation",
+  "illustration",
+  "activity",
+  "application",
+  "objectives",
+  "time",
+  "presentation_notes",
+  "handout",
+  "outline_point",
+] as const;
+export type TeachingBlockType = (typeof TEACHING_BLOCK_TYPES)[number];
+
+export interface TeachingBlock {
+  id: string;
+  parentId: string | null;
+  position: number;
+  blockType: string;
+  blockKey: string | null;
+  title: string;
+  body: string;
+  participantFacing: boolean;
+  role: string | null;
+  guidanceKey: string | null;
+  pointId: string | null;
 }
 
 /** Fields left out are unchanged; "" clears an optional one. */
@@ -297,12 +337,25 @@ export interface TeachingTemplatePoint {
   kind?: StepKind | null;
 }
 
+export interface TeachingTemplateBlock {
+  key?: string | null;
+  parentKey?: string | null;
+  blockType: string;
+  title: string;
+  participantFacing?: boolean | null;
+  role?: string | null;
+  guidanceKey?: string | null;
+}
+
 export interface TeachingTemplate {
   id: string;
   name: string;
   description: string | null;
   kind: TeachingKind;
   points: TeachingTemplatePoint[];
+  /** 2: a block template. Absent: a points template. */
+  version?: number;
+  blocks?: TeachingTemplateBlock[];
   createdAt: string;
   updatedAt: string;
   revision: number;
@@ -313,4 +366,6 @@ export interface TeachingTemplateInput {
   description?: string | null;
   kind: TeachingKind;
   points: TeachingTemplatePoint[];
+  version?: number;
+  blocks?: TeachingTemplateBlock[];
 }

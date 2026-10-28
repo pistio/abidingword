@@ -184,7 +184,10 @@ fn world() -> World {
                     title: "Sunday sermon".into(),
                     kind: Some("sermon".into()),
                     points: Vec::new(),
-                },
+                            template_key: None,
+            template_version: None,
+            blocks: Vec::new(),
+        },
             )?;
             // Another teaching of the same study: never part of this one's context.
             let second = teaching::create(
@@ -194,7 +197,10 @@ fn world() -> World {
                     title: "Youth night".into(),
                     kind: None,
                     points: Vec::new(),
-                },
+                            template_key: None,
+            template_version: None,
+            blocks: Vec::new(),
+        },
             )?;
             teaching::update(
                 conn,
@@ -667,6 +673,9 @@ fn a_question_needs_the_persons_own_material_not_just_a_request() {
                     title: "Blank".into(),
                     kind: None,
                     points: Vec::new(),
+                    template_key: None,
+                    template_version: None,
+                    blocks: Vec::new(),
                 },
             )?;
             let p = teaching::create_point(

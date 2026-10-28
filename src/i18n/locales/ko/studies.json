@@ -1712,7 +1712,112 @@
     "messageKind": "메시지 종류",
     "passagesLine": "본문",
     "notesHasText": "메모 있음",
-    "notesPrivate": "나만 보는 메모입니다. 듣는 이나 모임을 위한 가르침 자료에는 들어가지 않습니다."
+    "notesPrivate": "나만 보는 메모입니다. 듣는 이나 모임을 위한 가르침 자료에는 들어가지 않습니다.",
+    "blocks": {
+      "add": "칸 더하기",
+      "addIn": "{{section}}에 칸 더하기",
+      "guidance": "도움말",
+      "placeholder": "여기에 적습니다…",
+      "leaderOnly": "인도자만 보는 내용입니다. 참가자에게 보이도록 표시하기 전에는 유인물과 슬라이드에 들어가지 않습니다.",
+      "participant": "참가자에게 보이기",
+      "settings": "이 칸",
+      "empty": "아직 비어 있습니다. 준비가 되면 단락이나 글을 더하세요.",
+      "templateHeading": "칸",
+      "templateHint": "새 가르침이 시작할 단락과 칸을 더하고, 순서를 바꾸고, 복제하고, 이름을 바꿉니다. 가르침에 쓴 글은 틀에 남지 않습니다.",
+      "titleOf": "{{name}}의 제목",
+      "typeOf": "칸의 종류: {{name}}",
+      "section": "단락",
+      "sectionOf": "{{name}}의 단락",
+      "noSection": "단락 없음",
+      "moveUp": "“{{name}}” 위로",
+      "moveDown": "“{{name}}” 아래로",
+      "duplicate": "“{{name}}” 복제",
+      "remove": "“{{name}}” 지우기",
+      "types": {
+        "section": "단락",
+        "writing": "글",
+        "scripture": "성경 본문",
+        "teaching_notes": "인도자 메모",
+        "discussion_questions": "나눔 질문",
+        "explanation": "설명",
+        "illustration": "예화",
+        "activity": "활동",
+        "application": "적용과 묵상",
+        "objectives": "배울 점",
+        "time": "시간",
+        "presentation_notes": "발표 메모",
+        "handout": "유인물",
+        "outline_point": "개요 항목"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "성경공부",
+        "hint": "모임을 위해: 본문을 살피고, 뜻을 이해하고, 삶에 무엇을 묻는지 적습니다.",
+        "blocks": {
+          "erkennen": {
+            "title": "살피기",
+            "guidance": "이 본문이 실제로 말하는 것은 무엇이며, 모임의 사람들이 스스로 찾을 수 있는 것은 무엇입니까? 함께 읽고, 다시 듣고, 자기 말로 말해 보는 질문을 곁들일 수 있습니다."
+          },
+          "verstehen": {
+            "title": "이해하기",
+            "guidance": "문학적·역사적·성경적 맥락 안의 뜻과 중심 메시지입니다. 무엇이 중요해졌는지, 하나님과 사람에 대해 무엇을 말하는지, 맥락이 어떻게 돕는지 물을 수 있습니다."
+          },
+          "anwenden": {
+            "title": "적용하기",
+            "guidance": "믿음, 이해, 결정, 행동, 관계에 무엇이 따르는가. 생각과 삶이 어떻게 달라지는지, 무엇을 할지, 누구에게 격려가 될지를 적을 수 있습니다."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "설교·강연",
+        "hint": "도입, 본론, 마무리. 이어 쓰거나 개요 항목을 더할 수 있습니다.",
+        "blocks": {
+          "introduction": {
+            "title": "도입",
+            "guidance": "어떻게 시작할지. 중심 메시지, 듣는 사람, 목적은 필요할 때 칸으로 더합니다."
+          },
+          "main": {
+            "title": "본론",
+            "guidance": "설교나 강연의 중심입니다. 이어 쓰는 글 옆에 개요 항목을 둘 수 있습니다."
+          },
+          "conclusion": {
+            "title": "마무리",
+            "guidance": "어떻게 맺고, 어떤 응답이 맞는지."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "어린이·청소년 성경 시간",
+        "hint": "어린이와 청소년을 위한 하나의 시간입니다. 나이는 전달 방식을 바꾸지, 본문의 뜻을 바꾸지 않습니다.",
+        "blocks": {
+          "story": {
+            "title": "이야기",
+            "guidance": "나이에 맞게 본문을 전합니다. 뜻은 본문이 가진 뜻 그대로입니다."
+          },
+          "explain": {
+            "title": "설명",
+            "guidance": "본문의 뜻을 그들이 따라올 말로 말합니다. 더 쉬운 다른 뜻으로 바꾸지 않습니다."
+          },
+          "questions": {
+            "title": "질문",
+            "guidance": "모둠이 듣는 질문과, 들을 대답에 대한 인도자의 메모. 메모는 인도자에게 남습니다."
+          },
+          "activity": {
+            "title": "활동",
+            "guidance": "들은 것을 가지고 하는 활동."
+          },
+          "reflect": {
+            "title": "돌아보기",
+            "guidance": "믿음과 선택과 관계 속으로 가져갈 것."
+          }
+        }
+      },
+      "blank": {
+        "name": "빈 틀",
+        "hint": "아직 단락이 없습니다. 이 가르침에 필요한 것을 더하세요."
+      }
+    }
   },
   "parts": {
     "add": "부분 추가",

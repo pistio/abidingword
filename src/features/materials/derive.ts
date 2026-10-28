@@ -2,7 +2,8 @@ import type { TFunction } from "i18next";
 import { referenceLabel } from "@/i18n/scripture";
 import { canvasShape, pointFields, shapeText, showsFrame, stepFieldLabel, type ShapeText } from "@/features/teaching/labels";
 import type { MaterialScripture } from "@/types/scripture";
-import type { TeachingKind, TeachingPoint, TeachingPreparation } from "@/types/teaching";
+import type { TeachingBlock, TeachingKind, TeachingPoint, TeachingPreparation } from "@/types/teaching";
+import { usesBlocks } from "@/features/teaching/teachingTemplates";
 
 /**
  * What a Bible Teaching becomes (Materials, v0.18.6). A material is something
@@ -155,6 +156,7 @@ export function outputHint(t: TFunction, kind: OutputKind, teaching: TeachingKin
  * guide) and a lesson (a teacher's guide) every part keeps its name.
  */
 export function manuscript(t: TFunction, prep: TeachingPreparation, options: MaterialOptions = {}, scripture?: MaterialScripture | null): MaterialDocument {
+  if (usesBlocks(prep)) return blockManuscript(t, prep, options, scripture);
   const o = { ...DEFAULT_OPTIONS, ...options };
   const shape = canvasShape(prep.kind);
   const s = kindText(t, prep.kind);
@@ -202,6 +204,7 @@ export function manuscript(t: TFunction, prep: TeachingPreparation, options: Mat
  * leader's words too, and are on the group's sheet only when chosen.
  */
 export function questionSheet(t: TFunction, prep: TeachingPreparation, options: MaterialOptions = {}, scripture?: MaterialScripture | null): MaterialDocument {
+  if (usesBlocks(prep)) return blockQuestions(t, prep, options, scripture);
   const o = { ...DEFAULT_OPTIONS, ...options };
   const s = kindText(t, "bible_study");
   const blocks: Block[] = [];
@@ -249,6 +252,7 @@ export function questionSheet(t: TFunction, prep: TeachingPreparation, options: 
  * room for the listener's own notes. Only what the teaching holds is shown.
  */
 export function worksheet(t: TFunction, prep: TeachingPreparation, options: MaterialOptions = {}, scripture?: MaterialScripture | null): MaterialDocument {
+  if (usesBlocks(prep)) return blockWorksheet(t, prep, options, scripture);
   const o = { ...DEFAULT_OPTIONS, ...options };
   const shape = canvasShape(prep.kind);
   const s = kindText(t, prep.kind);
@@ -286,6 +290,91 @@ export function worksheet(t: TFunction, prep: TeachingPreparation, options: Mate
     if (blocks.length > before && o.writingSpace) blocks.push({ type: "space", style: "box", label: t("studies.materials.worksheet.ownNotes") });
   }
   return finish("worksheet", prep, blocks, before);
+}
+
+function blockLabel(t: TFunction, blockType: string): string {
+  return (t as unknown as (key: string) => string)(`studies.teaching.blocks.types.${blockType}`);
+}
+
+function orderedBlocks(blocks: TeachingBlock[], parent: string | null): TeachingBlock[] {
+  return blocks
+    .filter((b) => (b.parentId ?? null) === parent)
+    .sort((a, b) => a.position - b.position)
+    .flatMap((b) => [b, ...orderedBlocks(blocks, b.id)]);
+}
+
+/** Private leader notes stay off participant sheets unless the person asks for the leader's version or their own notes. */
+function blockManuscript(t: TFunction, prep: TeachingPreparation, options: MaterialOptions, scripture?: MaterialScripture | null): MaterialDocument {
+  const o = { ...DEFAULT_OPTIONS, ...options };
+  const blocks: Block[] = [...passageBlocks(prep), ...scriptureBlocks(t, prep, o, scripture)];
+  const frame = blocks.length;
+  for (const block of orderedBlocks(prep.blocks ?? [], null)) {
+    if (!block.participantFacing && !o.includeNotes) continue;
+    if (!block.title.trim() && !block.body.trim()) continue;
+    if (block.blockType === "section") blocks.push({ type: "heading", text: block.title.trim() || blockLabel(t, block.blockType) });
+    else if (block.body.trim()) blocks.push({ type: "text", text: block.body.trim() });
+    else if (block.title.trim()) blocks.push({ type: "heading", text: block.title.trim() });
+  }
+  return finish("manuscript", prep, blocks, frame);
+}
+
+function blockQuestions(t: TFunction, prep: TeachingPreparation, options: MaterialOptions, scripture?: MaterialScripture | null): MaterialDocument {
+  const o = { ...DEFAULT_OPTIONS, ...options };
+  const blocks: Block[] = [];
+  if (o.leader) blocks.push({ type: "notice", text: t("studies.materials.questions.leaderNotice") });
+  blocks.push(...passageBlocks(prep), ...scriptureBlocks(t, prep, o, scripture));
+  const frame = blocks.length;
+  let number = 0;
+  for (const block of orderedBlocks(prep.blocks ?? [], null)) {
+    const show = block.participantFacing || o.leader;
+    if (!show || block.blockType === "section" || block.blockType === "scripture") continue;
+    if (block.blockType === "discussion_questions" && block.body.trim()) {
+      for (const line of block.body.split("\n").map((l) => l.trim()).filter(Boolean)) {
+        number += 1;
+        blocks.push({ type: "question", number, text: line });
+        if (!o.leader && o.writingSpace) blocks.push({ type: "space", style: "lines" });
+      }
+    } else if (block.participantFacing && block.blockType === "handout" && block.body.trim()) {
+      blocks.push({ type: "text", text: block.body.trim() });
+    } else if (o.leader && block.body.trim()) {
+      blocks.push({ type: "field", label: block.title.trim() || blockLabel(t, block.blockType), text: block.body.trim() });
+    }
+  }
+  return finish("questions", prep, blocks, frame);
+}
+
+function blockWorksheet(t: TFunction, prep: TeachingPreparation, options: MaterialOptions, scripture?: MaterialScripture | null): MaterialDocument {
+  const o = { ...DEFAULT_OPTIONS, ...options };
+  const blocks: Block[] = [...passageBlocks(prep), ...scriptureBlocks(t, prep, o, scripture)];
+  const frame = blocks.length;
+  let number = 0;
+  for (const block of orderedBlocks(prep.blocks ?? [], null)) {
+    if (!block.participantFacing) continue;
+    if (block.blockType === "discussion_questions" && block.body.trim()) {
+      for (const line of block.body.split("\n").map((l) => l.trim()).filter(Boolean)) {
+        number += 1;
+        blocks.push({ type: "question", number, text: line });
+        if (o.writingSpace) blocks.push({ type: "space", style: "lines" });
+      }
+    } else if (block.blockType === "outline_point" && block.title.trim()) {
+      number += 1;
+      blocks.push({ type: "question", number, text: block.title.trim() });
+      if (o.writingSpace) blocks.push({ type: "space", style: "lines" });
+    } else if (block.blockType === "activity" && block.title.trim()) {
+      blocks.push({ type: "heading", text: block.title.trim() });
+      if (o.writingSpace) blocks.push({ type: "space", style: "box" });
+    } else if (block.blockType === "handout" && block.body.trim()) {
+      blocks.push({ type: "text", text: block.body.trim() });
+    } else if (block.blockType === "section" && block.title.trim()) {
+      blocks.push({ type: "heading", text: block.title.trim() });
+    }
+  }
+  return finish("worksheet", prep, blocks, frame);
+}
+
+function passageBlocks(prep: TeachingPreparation): Block[] {
+  const passages = passagesLine(prep);
+  return passages ? [{ type: "passages", text: passages }] : [];
 }
 
 function finish(kind: MaterialDocument["kind"], prep: TeachingPreparation, blocks: Block[], frame: number): MaterialDocument {

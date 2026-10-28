@@ -18,9 +18,14 @@ use crate::domain::{
 };
 use crate::error::{AppError, AppResult, UserMessage};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, Default)]
 struct StoredDefinition {
+    #[serde(default)]
+    version: i64,
+    #[serde(default)]
     points: Vec<TeachingTemplatePoint>,
+    #[serde(default)]
+    blocks: Vec<crate::domain::TeachingTemplateBlock>,
 }
 
 const COLUMNS: &str = "id, name, description, kind, definition, created_at, updated_at, revision";
@@ -40,6 +45,8 @@ fn from_row(row: &Row) -> rusqlite::Result<TeachingTemplate> {
         description: row.get(2)?,
         kind: row.get(3)?,
         points: stored.points,
+        version: if stored.version >= 2 { 2 } else { 1 },
+        blocks: stored.blocks,
         created_at: row.get(5)?,
         updated_at: row.get(6)?,
         revision: row.get(7)?,
@@ -101,8 +108,30 @@ fn validated(input: &TeachingTemplateInput) -> AppResult<(String, Option<String>
             })
         })
         .collect::<AppResult<Vec<_>>>()?;
-    let definition = serde_json::to_string(&StoredDefinition { points })
-        .map_err(|e| AppError::Unexpected(format!("teaching template JSON: {e}")))?;
+    let blocks = if input.version >= 2 || !input.blocks.is_empty() {
+        if input.blocks.len() > crate::db::teaching::STARTING_POINTS_MAX.max(40) {
+            return Err(AppError::InvalidInput(
+                UserMessage::new(
+                    "teachingTemplates.tooManyPoints",
+                    "A template can start with at most 40 blocks.",
+                )
+                .with("max", 40),
+            ));
+        }
+        input
+            .blocks
+            .iter()
+            .map(crate::db::teaching_blocks::check_template_block)
+            .collect::<AppResult<Vec<_>>>()?
+    } else {
+        Vec::new()
+    };
+    let definition = if input.version >= 2 || !blocks.is_empty() {
+        serde_json::to_string(&serde_json::json!({ "version": 2, "blocks": blocks }))
+    } else {
+        serde_json::to_string(&serde_json::json!({ "points": points }))
+    }
+    .map_err(|e| AppError::Unexpected(format!("teaching template JSON: {e}")))?;
     Ok((name, description, kind, definition))
 }
 

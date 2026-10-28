@@ -78,6 +78,9 @@ fn a_v7_database_is_backed_up_and_gains_empty_teaching_tables() {
                 title: "Sunday".into(),
                 kind: None,
                 points: Vec::new(),
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         )?;
         let prep = teaching::link_finding(

@@ -1734,7 +1734,112 @@
     "messageKind": "Tipo de mensaje",
     "passagesLine": "Texto bíblico",
     "notesHasText": "tiene notas",
-    "notesPrivate": "Solo para ti: nunca forma parte de los materiales para tus oyentes o tu grupo."
+    "notesPrivate": "Solo para ti: nunca forma parte de los materiales para tus oyentes o tu grupo.",
+    "blocks": {
+      "add": "Añadir un bloque",
+      "addIn": "Añadir un bloque en {{section}}",
+      "guidance": "Orientación",
+      "placeholder": "Escribe aquí…",
+      "leaderOnly": "Solo para quien dirige. No entra en las hojas ni en las diapositivas, salvo que lo marques para los participantes.",
+      "participant": "Mostrar a los participantes",
+      "settings": "Este bloque",
+      "empty": "Esta enseñanza está vacía. Añade una sección o un espacio para escribir cuando quieras.",
+      "templateHeading": "Bloques",
+      "templateHint": "Añade, reordena, duplica y cambia el nombre de las secciones y los bloques con los que empieza una enseñanza. Lo que escribes en una enseñanza no se guarda en la plantilla.",
+      "titleOf": "Título de {{name}}",
+      "typeOf": "Tipo de bloque: {{name}}",
+      "section": "En la sección",
+      "sectionOf": "Sección de {{name}}",
+      "noSection": "Sin sección",
+      "moveUp": "Subir «{{name}}»",
+      "moveDown": "Bajar «{{name}}»",
+      "duplicate": "Duplicar «{{name}}»",
+      "remove": "Quitar «{{name}}»",
+      "types": {
+        "section": "Sección",
+        "writing": "Escritura",
+        "scripture": "Pasaje bíblico",
+        "teaching_notes": "Notas del líder",
+        "discussion_questions": "Preguntas para conversar",
+        "explanation": "Explicación",
+        "illustration": "Ejemplo",
+        "activity": "Actividad",
+        "application": "Aplicación y reflexión",
+        "objectives": "Objetivos",
+        "time": "Tiempo",
+        "presentation_notes": "Notas de la presentación",
+        "handout": "Hoja",
+        "outline_point": "Punto del bosquejo"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Estudio bíblico",
+        "hint": "Para un grupo: observar el pasaje, comprenderlo y preguntar qué se sigue.",
+        "blocks": {
+          "erkennen": {
+            "title": "Observar",
+            "guidance": "Qué dice de veras el pasaje y qué puede descubrir el grupo. Se puede leer juntos, volver a escuchar y contarlo con palabras propias."
+          },
+          "verstehen": {
+            "title": "Comprender",
+            "guidance": "El sentido en el contexto literario, histórico y bíblico, y el mensaje central. Qué se volvió importante, qué dice de Dios y de las personas, y cómo ayuda el contexto."
+          },
+          "anwenden": {
+            "title": "Aplicar",
+            "guidance": "Qué se sigue para la fe, la comprensión, las decisiones, la conducta y las relaciones. Qué cambia, qué haremos y a quién puede animar."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Sermón o charla",
+        "hint": "Introducción, cuerpo y conclusión. Escribe seguido o añade puntos del bosquejo.",
+        "blocks": {
+          "introduction": {
+            "title": "Introducción",
+            "guidance": "Cómo empiezas. El mensaje central, los oyentes y el propósito se pueden añadir como bloques si los necesitas."
+          },
+          "main": {
+            "title": "Cuerpo",
+            "guidance": "El cuerpo del sermón o de la charla. Puedes añadir puntos del bosquejo junto al texto seguido."
+          },
+          "conclusion": {
+            "title": "Conclusión",
+            "guidance": "Cómo cierras y qué respuesta conviene."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Lección bíblica — niños y jóvenes",
+        "hint": "Una sola lección para niños o jóvenes. La edad cambia el modo de contarlo, no el sentido del pasaje.",
+        "blocks": {
+          "story": {
+            "title": "Relato",
+            "guidance": "Cuenta el pasaje de un modo que sirva a la edad. El sentido sigue siendo el del texto."
+          },
+          "explain": {
+            "title": "Explicación",
+            "guidance": "Di lo que significa el pasaje, con palabras que puedan seguir. No sustituyas ese sentido por una idea más simple."
+          },
+          "questions": {
+            "title": "Preguntas",
+            "guidance": "Las preguntas que oye el grupo y tus notas sobre las respuestas que quieres escuchar. Esas notas se quedan contigo."
+          },
+          "activity": {
+            "title": "Actividad",
+            "guidance": "Algo que hacen con lo que han oído."
+          },
+          "reflect": {
+            "title": "Reflexión",
+            "guidance": "Lo que pueden llevar a la fe, las decisiones y las relaciones."
+          }
+        }
+      },
+      "blank": {
+        "name": "Plantilla en blanco",
+        "hint": "Todavía no hay secciones. Añade las que esta enseñanza necesite."
+      }
+    }
   },
   "parts": {
     "add": "Añadir una parte",

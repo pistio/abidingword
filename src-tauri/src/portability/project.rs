@@ -258,12 +258,22 @@ const TABLES: &[Table] = &[
         refs: &[("preparation_id", Ref::Own("teaching_preparations"))],
     },
     Table {
+        name: "teaching_blocks",
+        has_id: true,
+        refs: &[
+            ("preparation_id", Ref::Own("teaching_preparations")),
+            ("parent_id", Ref::OwnOrEmpty("teaching_blocks")),
+            ("point_id", Ref::OwnOrEmpty("teaching_points")),
+        ],
+    },
+    Table {
         name: "teaching_finding_links",
         has_id: true,
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
             ("finding_id", Ref::Own("findings")),
+            ("block_id", Ref::OwnOrEmpty("teaching_blocks")),
         ],
     },
     Table {
@@ -272,6 +282,7 @@ const TABLES: &[Table] = &[
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
+            ("block_id", Ref::OwnOrEmpty("teaching_blocks")),
         ],
     },
     Table {
@@ -280,6 +291,7 @@ const TABLES: &[Table] = &[
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
+            ("block_id", Ref::OwnOrEmpty("teaching_blocks")),
         ],
     },
     Table {
@@ -327,6 +339,10 @@ fn selection(table: &str) -> String {
         ),
         "teaching_preparations" => format!(
             "SELECT * FROM teaching_preparations WHERE id IN ({})",
+            preparations()
+        ),
+        "teaching_blocks" => format!(
+            "SELECT * FROM teaching_blocks WHERE preparation_id IN ({}) AND deleted_at IS NULL ORDER BY (parent_id IS NOT NULL), position",
             preparations()
         ),
         "teaching_points" | "teaching_finding_links" | "teaching_passages" | "teaching_materials" => {
@@ -1262,6 +1278,7 @@ fn external_refs(
                 return Ok(false);
             }
         }
+        "teaching_blocks" => json_column(row, "config")?,
         "teaching_materials" => {
             json_column(row, "sources")?;
             json_column(row, "image")?;

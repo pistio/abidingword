@@ -1,7 +1,7 @@
 import i18n, { type TFunction } from "i18next";
 import { LANGUAGES } from "@/i18n/languages";
 import builtin from "../../../resources/teaching-templates.json";
-import type { StepKind, TeachingKind, TeachingPreparation, TeachingTemplate, TeachingTemplatePoint } from "@/types/teaching";
+import type { StepKind, TeachingKind, TeachingPreparation, TeachingTemplate, TeachingTemplateBlock, TeachingTemplatePoint } from "@/types/teaching";
 import { canvasShape, shapeText, shapeWords, startingStepTitle } from "./labels";
 
 /**
@@ -18,7 +18,62 @@ export interface BuiltinTeachingTemplate {
   points: { key: string; kind: StepKind }[];
 }
 
-export const BUILTIN_TEACHING_TEMPLATES: readonly BuiltinTeachingTemplate[] = builtin.templates as BuiltinTeachingTemplate[];
+interface RawTeachingTemplate {
+  key: string;
+  kind?: TeachingKind;
+  version?: number;
+  legacyKind?: TeachingKind;
+  points?: { key: string; kind: StepKind }[];
+  blocks?: { key: string; type: string; parentKey?: string; role?: string; participantFacing?: boolean; guidanceKey?: string }[];
+}
+
+const RAW_TEMPLATES = builtin.templates as RawTeachingTemplate[];
+
+export const BUILTIN_TEACHING_TEMPLATES: readonly BuiltinTeachingTemplate[] = RAW_TEMPLATES.filter((t) => t.version !== 2).map((t) => ({
+  key: t.key,
+  kind: t.kind!,
+  points: t.points ?? [],
+}));
+
+/** The three built-in block templates. The earlier formats stay in the file for teachings already made. */
+export interface BuiltinBlockTemplate {
+  key: string;
+  legacyKind: TeachingKind;
+  blocks: NonNullable<RawTeachingTemplate["blocks"]>;
+}
+
+export const BUILTIN_BLOCK_TEMPLATES: readonly BuiltinBlockTemplate[] = RAW_TEMPLATES.filter((t) => t.version === 2).map((t) => ({
+  key: t.key,
+  legacyKind: t.legacyKind!,
+  blocks: t.blocks ?? [],
+}));
+
+const BLOCK_I18N: Record<string, string> = { eva: "eva", "sermon-talk": "sermonTalk", "bible-lesson": "bibleLesson" };
+
+/** A built-in block's heading in the person's language. */
+export function builtinBlockTitle(t: TFunction, templateKey: string, blockKey: string): string {
+  const group = BLOCK_I18N[templateKey] ?? templateKey;
+  return (t as unknown as (key: string) => string)(`studies.teaching.builtin.${group}.blocks.${blockKey}.title`);
+}
+
+/** The blocks a new teaching copies from a built-in template, titled in the person's language. */
+export function blocksFromBuiltin(t: TFunction, template: BuiltinBlockTemplate): TeachingTemplateBlock[] {
+  const sectionTitle = new Map(template.blocks.filter((b) => b.type === "section").map((b) => [b.key, builtinBlockTitle(t, template.key, b.key)]));
+  return template.blocks.map((block) => ({
+    key: block.key,
+    parentKey: block.parentKey ?? null,
+    blockType: block.type,
+    title: block.type === "section" ? (sectionTitle.get(block.key) ?? "") : block.parentKey ? (sectionTitle.get(block.parentKey) ?? "") : "",
+    ...(block.participantFacing === undefined ? {} : { participantFacing: block.participantFacing }),
+    ...(block.role ? { role: block.role } : {}),
+    ...(block.guidanceKey ? { guidanceKey: block.guidanceKey } : {}),
+  }));
+}
+
+/** True when this teaching is edited as blocks. A teaching with neither a version nor blocks keeps the earlier editor. */
+export function usesBlocks(prep: Pick<TeachingPreparation, "templateVersion" | "blocks">): boolean {
+  return (prep.templateVersion ?? 0) >= 2 || (prep.blocks?.length ?? 0) > 0;
+}
 
 /** A template to start from: a built-in one, or one of the person's own. */
 export type TeachingStart = { builtin: BuiltinTeachingTemplate } | { mine: TeachingTemplate };

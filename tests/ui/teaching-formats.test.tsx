@@ -60,12 +60,13 @@ describe("the three formats", () => {
     const user = await openTeaching(api);
     const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
     const formats = within(form).getAllByRole("radio").filter((r) => r.getAttribute("name")?.endsWith("-format"));
-    expect(formats.map((r) => r.getAttribute("aria-label"))).toEqual(["Message", "Group Bible study", "Interactive lesson"]);
-    expect(within(form).getByRole("radio", { name: "Message" })).toBeChecked();
-    await user.click(within(form).getByRole("radio", { name: "Talk" }));
+    expect(formats.map((r) => r.getAttribute("aria-label"))).toEqual(["Bible Study — EVA", "Sermon / Talk", "Bible Lesson — Children / Youth", "Blank template"]);
+    expect(within(form).getByRole("radio", { name: "Sermon / Talk" })).toBeChecked();
+    await user.click(within(form).getByRole("radio", { name: "Sermon / Talk" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
-    await within(studyPane()).findByRole("article", { name: "Talk · Abiding" });
-    expect(api.state.teaching.preparations[0]!.kind).toBe("talk");
+    await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
+    expect(api.state.teaching.preparations[0]!.kind).toBe("sermon");
+    expect(api.state.teaching.preparations[0]!.templateKey).toBe("sermon-talk");
   });
 
   it("names the group format Hauskreis in German and 소그룹 성경공부 in Korean", async () => {
