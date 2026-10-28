@@ -429,4 +429,36 @@ fn a_v9_database_upgrades_without_loss() {
         Ok(())
     })
     .unwrap();
+    // The automatically created pre-migration backup keeps the old schema
+    // and data. Restoring it elsewhere upgrades safely without touching live data.
+    let backup_path = std::fs::read_dir(temp.path().join("bk"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    let old = Connection::open_with_flags(&backup_path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+        .unwrap();
+    assert_eq!(migrations::current_version(&old).unwrap(), 9);
+    assert_eq!(
+        old.query_row("SELECT content FROM study_blocks WHERE id = 'b'", [], |r| r
+            .get::<_, String>(0))
+            .unwrap(),
+        "Old text"
+    );
+    drop(old);
+    let restored_path = temp.path().join("restored.db");
+    std::fs::copy(backup_path, &restored_path).unwrap();
+    let restored = Database::open(&restored_path, &temp.path().join("restored-backups")).unwrap();
+    restored
+        .with_conn(|conn| {
+            assert_eq!(migrations::current_version(conn)?, 10);
+            assert_eq!(
+                studies::get_detail(conn, "s")?.sections[0].blocks[0].content,
+                "Old text"
+            );
+            assert_eq!(templates::get(conn, "t")?.sections[0].title, "Prayer");
+            Ok(())
+        })
+        .unwrap();
 }

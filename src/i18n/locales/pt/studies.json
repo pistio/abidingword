@@ -266,7 +266,7 @@
         "description": "Um estudo guiado para qualquer passagem: observação (pessoas, lugar, tempo, acontecimentos, contexto do texto), interpretação (explicações), mensagem central (núcleo) e, à parte, uma aplicação pessoal.",
         "sections": {
           "persons": {
-            "title": "P — Pessoas (Personen)",
+            "title": "Pessoas",
             "guidance": "Quem aparece no texto, quem fala, quem age e a quem a mensagem se dirige?",
             "goal": "Conhecer todos os envolvidos antes de interpretar. Registrar apenas o que o próprio texto diz.",
             "example": "Oseias proclama a palavra de Deus a Israel/Efraim; o centro é a relação de Deus com o seu povo. O Egito e a Assíria fazem parte do pano de fundo histórico mencionado.",
@@ -304,7 +304,7 @@
             }
           },
           "place": {
-            "title": "O — Lugar (Ort)",
+            "title": "Lugar",
             "guidance": "Quais lugares e relações espaciais ou culturais são importantes para o texto?",
             "goal": "Perceber onde as coisas acontecem ou de que lugares se fala. Separar o que o texto diz do que vem de fontes externas.",
             "example": "O reino do norte, Israel, é o contexto; o Egito lembra a libertação de Israel e a Assíria representa a ameaça política.",
@@ -330,7 +330,7 @@
             }
           },
           "time": {
-            "title": "Z — Tempo (Zeit)",
+            "title": "Tempo",
             "guidance": "Quando o texto se passa e quais circunstâncias históricas importam?",
             "goal": "Situar o texto no tempo. Distinguir o que o texto indica do que é uma localização histórica possivelmente incerta.",
             "example": "O ministério de Oseias no século VIII a.C. e a crescente influência assíria são informações de pano de fundo relevantes.",
@@ -358,7 +358,7 @@
             }
           },
           "events": {
-            "title": "E — Acontecimentos (Ereignisse)",
+            "title": "Acontecimentos",
             "guidance": "O que acontece? Como os acontecimentos ou as afirmações se desenvolvem?",
             "goal": "Acompanhar o movimento do texto seção por seção. O esboço é uma proposta que você pode alterar.",
             "example": "Um possível esboço de Oseias 11: vv. 1–4 cuidado; vv. 5–7 infidelidade e juízo; vv. 8–9 compaixão; vv. 10–11 retorno e restauração.",
@@ -384,7 +384,7 @@
             }
           },
           "context": {
-            "title": "T — Contexto do texto (Textzusammenhang)",
+            "title": "Contexto do texto",
             "guidance": "Como a passagem se encaixa no capítulo, no livro inteiro e no restante da Escritura?",
             "goal": "Ver a passagem em seu entorno, dos versículos mais próximos para fora, e notar onde ela termina.",
             "example": "A infidelidade de Israel e a relação de aliança marcam Oseias; o capítulo 11 acrescenta a imagem do pai cuidadoso e do seu filho.",
@@ -417,7 +417,7 @@
             }
           },
           "explanations": {
-            "title": "E — Explicações (Erklärungen)",
+            "title": "Explicações",
             "guidance": "Quais termos, afirmações ou problemas de interpretação precisam de esclarecimento?",
             "goal": "Reunir as perguntas do texto, conferi-las com evidências e registrar as respostas que podem ser sustentadas. Deixar em aberto o que ainda está aberto.",
             "example": "Que papel têm o Egito e a Assíria? Como juízo e compaixão andam juntos? O que significa “Deus sou e não homem” (Os 11.9)?",
@@ -453,7 +453,7 @@
             }
           },
           "core": {
-            "title": "K — Núcleo (Kern)",
+            "title": "Núcleo",
             "guidance": "Qual é a mensagem central exatamente desta passagem?",
             "goal": "Formular o núcleo em três passos: sobre o que o texto trata, o que diz a respeito e uma frase concisa. Você pode preenchê-los em qualquer ordem.",
             "example": "Assunto: a relação de Deus com o seu povo infiel. Afirmação: o cuidado de Deus, o juízo justo e a compaixão. Tema: o amor de Deus por Israel se mostra em seu cuidado, no juízo justo e numa compaixão que abre um futuro.",
@@ -1018,7 +1018,9 @@
       "topical": "ex.: perdão",
       "biblical_theology": "ex.: o templo",
       "systematic_theology": "ex.: a doutrina da graça",
-      "custom": "O que você está estudando?"
+      "custom": "O que você está estudando?",
+      "character": "ex.: Rute",
+      "book": "ex.: Filipenses"
     },
     "approach": {
       "passage": "Estudo de passagem",
@@ -1028,7 +1030,9 @@
       "biblical_theology": "Teologia bíblica",
       "systematic_theology": "Teologia sistemática",
       "custom": "Sem modelo",
-      "mine": "Meu modelo"
+      "mine": "Meu modelo",
+      "character": "Estudo de personagem bíblico",
+      "book": "Estudo de um livro bíblico"
     }
   },
   "list": {

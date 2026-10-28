@@ -6,17 +6,11 @@ import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { localizedSections, templateDescription, templateName } from "@/features/studies/builtinText";
+import { inStudyCatalogue } from "@/features/studies/catalogue";
 import { studyTypeLabel } from "@/features/studies/labels";
 import { startsWith, type StudyTemplate } from "@/types/studies";
 import { TEACHING_KINDS } from "@/types/teaching";
 import { STARTING_STEPS, canvasShape, startingStepTitle, teachingKindLabel } from "@/features/teaching/labels";
-
-/**
- * Built-in templates no longer offered: the old "Teaching / Sermon" study is
- * now Bible Teaching. Kept installed so older studies keep their translated
- * headings; not listed.
- */
-export const RETIRED_TEMPLATES = new Set(["teaching-study"]);
 
 /**
  * Settings → Templates: reusable starting structures, for a Bible study
@@ -118,7 +112,7 @@ export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: s
     );
   };
 
-  const list = (templates.data ?? []).filter((template) => !(template.isBuiltin && RETIRED_TEMPLATES.has(template.key)));
+  const list = (templates.data ?? []).filter(inStudyCatalogue);
   const heading = "m-0 text-[1rem] font-semibold text-text-strong";
   return (
     <div className="flex flex-col gap-5">

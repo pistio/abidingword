@@ -1016,7 +1016,9 @@
       "topical": "z. B. Vergebung",
       "biblical_theology": "z. B. der Tempel",
       "systematic_theology": "z. B. die Lehre von der Gnade",
-      "custom": "Was studierst du?"
+      "custom": "Was studierst du?",
+      "character": "z. B. Rut",
+      "book": "z. B. der Philipperbrief"
     },
     "approach": {
       "passage": "Textstudium",
@@ -1026,7 +1028,9 @@
       "biblical_theology": "Biblische Theologie",
       "systematic_theology": "Systematische Theologie",
       "custom": "Keine Vorlage",
-      "mine": "Meine Vorlage"
+      "mine": "Meine Vorlage",
+      "character": "Biblische Personenstudie",
+      "book": "Bibelbuchstudium"
     }
   },
   "list": {

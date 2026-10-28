@@ -64,8 +64,8 @@ describe("a new POZETEK study", () => {
 
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Deferred place/ }));
-    await user.click(screen.getByRole("button", { name: "Add a part" }));
-    await user.click(screen.getByRole("button", { name: /^O — Place/ }));
+    await user.click(await screen.findByRole("button", { name: "Add a part" }));
+    await user.click(screen.getByRole("button", { name: /^Place$/ }));
 
     await waitFor(async () => {
       const sections = await api.studySectionList(study.id);
@@ -73,7 +73,7 @@ describe("a new POZETEK study", () => {
       expect(place?.fields?.template).toBe("pozetek-study");
       expect(place?.fields?.fields).toEqual(pozetek.sections[1]!.fields);
     });
-    expect(await screen.findByRole("region", { name: /^O — Place/ })).toBeInTheDocument();
+    expect(await screen.findByRole("region", { name: /^Place$/ })).toBeInTheDocument();
   });
 
   it("has the parts in the order P-O-Z-E-T-E-K and then the personal application, all empty", async () => {
@@ -97,7 +97,7 @@ describe("a new POZETEK study", () => {
     const { api, studyId } = await withPozetek();
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Any passage/ }));
-    const part = await screen.findByRole("region", { name: /P — Persons/ });
+    const part = await screen.findByRole("region", { name: /^Persons$/ });
     expect(within(part).getByLabelText("Author")).toHaveValue("");
     const toggle = within(part).getByRole("button", { name: "Example: Hosea 11" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
@@ -112,12 +112,12 @@ describe("a new POZETEK study", () => {
     const { api, studyId } = await withPozetek();
     const first = await renderApp(api);
     await first.user.click(await screen.findByRole("button", { name: /Any passage/ }));
-    const persons = await screen.findByRole("region", { name: /P — Persons/ });
+    const persons = await screen.findByRole("region", { name: /^Persons$/ });
     await first.user.type(within(persons).getByLabelText("Author"), "The prophet");
     await first.user.click(within(persons).getByRole("button", { name: /Add person or group/ }));
     await first.user.type(await within(persons).findByLabelText(/Name or group \(People and groups, entry 1\)/), "Ephraim");
     await first.user.selectOptions(within(persons).getByRole("combobox", { name: /Progress of/ }), "in_progress");
-    const explanations = screen.getByRole("region", { name: /E — Explanations/ });
+    const explanations = screen.getByRole("region", { name: /^Explanations$/ });
     await first.user.click(within(explanations).getByRole("button", { name: /Add question/ }));
     await first.user.selectOptions(await within(explanations).findByLabelText(/Status \(Question log, entry 1\)/), "answered");
     await waitFor(async () => {
@@ -133,10 +133,23 @@ describe("a new POZETEK study", () => {
 
     // The workspace reopens on the study that was open.
     await renderApp(api);
-    const reopened = await screen.findByRole("region", { name: /P — Persons/ });
+    const reopened = await screen.findByRole("region", { name: /^Persons$/ });
     expect(within(reopened).getByLabelText("Author")).toHaveValue("The prophet");
     expect(within(reopened).getByLabelText(/Name or group \(People and groups, entry 1\)/)).toHaveValue("Ephraim");
     expect(within(reopened).getByRole("combobox", { name: /Progress of/ })).toHaveValue("in_progress");
+  });
+
+  it("asks before deleting an entry whose only answer is a changed choice", async () => {
+    const { api } = await withPozetek();
+    const { user } = await renderApp(api);
+    await user.click(await screen.findByRole("button", { name: /Any passage/ }));
+    const part = await screen.findByRole("region", { name: /^Explanations$/ });
+    await user.click(within(part).getByRole("button", { name: /Add question/ }));
+    await user.selectOptions(await within(part).findByLabelText(/Status \(Question log, entry 1\)/), "answered");
+    await user.click(within(part).getByRole("button", { name: "Delete entry 1 of Question log" }));
+    const confirm = within(part).getByRole("alertdialog");
+    await user.click(within(confirm).getByRole("button", { name: "Keep" }));
+    expect(within(part).getByLabelText(/Status \(Question log, entry 1\)/)).toHaveValue("answered");
   });
 
   it("deletes one entry without changing its neighbours", async () => {
@@ -150,7 +163,7 @@ describe("a new POZETEK study", () => {
     const [a, b, c] = [await make("one"), await make("two"), await make("three")];
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Any passage/ }));
-    const part = await screen.findByRole("region", { name: /E — Explanations/ });
+    const part = await screen.findByRole("region", { name: /^Explanations$/ });
     await user.click(within(part).getByRole("button", { name: "Delete entry 2 of Question log" }));
     await user.click(within(part).getAllByRole("button", { name: "Delete" }).at(-1)!);
     await waitFor(async () => {

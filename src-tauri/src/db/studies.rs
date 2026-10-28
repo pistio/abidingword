@@ -137,8 +137,11 @@ pub fn create(conn: &Connection, input: &CreateStudy) -> AppResult<StudyDetail> 
         "purpose",
     )?;
     projects::get(conn, &input.project_id)?;
-    let study_type = input.study_type.unwrap_or(StudyType::Passage);
-    let template = resolve_template(conn, input, study_type)?;
+    let template = resolve_template(conn, input, input.study_type.unwrap_or(StudyType::Passage))?;
+    let study_type = input
+        .study_type
+        .or_else(|| template.as_ref().map(|template| template.study_type))
+        .unwrap_or(StudyType::Passage);
     let primary = match input
         .primary_passage
         .as_deref()
@@ -285,7 +288,7 @@ pub fn duplicate(conn: &Connection, input: &DuplicateStudy) -> AppResult<StudyDe
             section.fields.as_ref(),
             &now,
         )?;
-        if input.include_content && !section.blocks.is_empty() {
+        if input.include_content {
             for block in &section.blocks {
                 blocks::insert_answer(
                     &tx,
@@ -298,12 +301,14 @@ pub fn duplicate(conn: &Connection, input: &DuplicateStudy) -> AppResult<StudyDe
                     &now,
                 )?;
             }
+        } else {
+            sections::seed_blocks(&tx, &new_section, section.fields.as_ref(), &now)?;
+        }
+        if input.include_content {
             tx.execute(
                 "UPDATE study_sections SET status = ?2 WHERE id = ?1",
                 params![new_section, section.status.as_str()],
             )?;
-        } else {
-            sections::seed_blocks(&tx, &new_section, section.fields.as_ref(), &now)?;
         }
         section_map.push((section.id.clone(), new_section));
     }

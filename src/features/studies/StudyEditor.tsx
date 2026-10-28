@@ -352,6 +352,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       <>
       {sections.map((section, index) => (
         <SectionEditor
+          templateKey={template?.key}
           key={section.id}
           section={section}
           isFirst={index === 0}

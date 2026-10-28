@@ -218,13 +218,25 @@ pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudyS
 /// Whether a section holds anything worth keeping: text in a block, or a
 /// finding assigned to it.
 pub fn has_content(conn: &Connection, id: &str) -> AppResult<bool> {
-    Ok(conn.query_row(
-        "SELECT EXISTS (SELECT 1 FROM study_blocks
-                        WHERE section_id = ?1 AND deleted_at IS NULL AND trim(content) <> '')
-             OR EXISTS (SELECT 1 FROM findings WHERE section_id = ?1 AND deleted_at IS NULL)",
-        [id],
-        |r| r.get(0),
-    )?)
+    let writing = blocks::list_for_section(conn, id)?.iter().any(|block| {
+        !block.content.trim().is_empty()
+            || (block.field_key.is_some()
+                && block.data.as_ref().is_some_and(|data| {
+                    match serde_json::from_str::<serde_json::Value>(data) {
+                        Ok(serde_json::Value::Object(values)) => values
+                            .values()
+                            .any(|value| value.as_str().is_none_or(|text| !text.trim().is_empty())),
+                        // Unknown saved data must never be treated as disposable.
+                        _ => !data.trim().is_empty(),
+                    }
+                }))
+    });
+    Ok(writing
+        || conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM findings WHERE section_id = ?1 AND deleted_at IS NULL)",
+            [id],
+            |r| r.get(0),
+        )?)
 }
 
 /// Removes a section (soft). One that still has content is only removed

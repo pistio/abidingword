@@ -255,7 +255,7 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
     setValues(next);
     schedule(JSON.stringify(next));
   };
-  const empty = (field.parts ?? []).every((p) => !(values[p.key] ?? "").trim() || p.kind === "choice");
+  const empty = (field.parts ?? []).every((p) => !(values[p.key] ?? "").trim());
   const tool =
     "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong disabled:opacity-40";
   const params = { field: label, number };

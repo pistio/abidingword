@@ -35,9 +35,9 @@ function translate(key: string, fallback: string): string {
 }
 
 /** Finds the built-in section a stored section was copied from, by key and unchanged English. */
-function builtinSection(key: string | null | undefined, field: "title" | "guidance", english: string) {
+function builtinSection(key: string | null | undefined, field: "title" | "guidance", english: string, templateKey?: string) {
   if (!key) return null;
-  for (const template of BUILTIN) {
+  for (const template of BUILTIN.filter((t) => !templateKey || t.key === templateKey)) {
     const section = template.sections.find((s) => s.key === key && (s[field] ?? "") === english);
     if (section) return { template: template.key, section: section.key };
   }
@@ -45,18 +45,18 @@ function builtinSection(key: string | null | undefined, field: "title" | "guidan
 }
 
 /** A section's title: translated while it is the built-in English, otherwise as written. */
-export function sectionTitle(section: { key?: string | null; title: string }): string {
+export function sectionTitle(section: { key?: string | null; title: string }, templateKey?: string): string {
   if (!section.key && section.title === DEFAULT_SECTION) return translate("studies.builtin.defaultSection", section.title);
-  const found = builtinSection(section.key, "title", section.title);
+  const found = builtinSection(section.key, "title", section.title, templateKey);
   return found
     ? translate(`studies.builtin.templates.${found.template}.sections.${found.section}.title`, section.title)
     : section.title;
 }
 
 /** A section's guidance, by the same rule as its title. */
-export function sectionGuidance(section: { key?: string | null; guidance?: string | null }): string | null {
+export function sectionGuidance(section: { key?: string | null; guidance?: string | null }, templateKey?: string): string | null {
   if (!section.guidance) return section.guidance ?? null;
-  const found = builtinSection(section.key, "guidance", section.guidance);
+  const found = builtinSection(section.key, "guidance", section.guidance, templateKey);
   return found
     ? translate(`studies.builtin.templates.${found.template}.sections.${found.section}.guidance`, section.guidance)
     : section.guidance;
@@ -86,8 +86,8 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
     .filter((s) => !s.retired)
     .map((s) => ({
       key: s.key ?? null,
-      title: sectionTitle({ key: s.key, title: s.title }),
-      guidance: sectionGuidance({ key: s.key, guidance: s.guidance }),
+      title: sectionTitle(s, template.key),
+      guidance: sectionGuidance(s, template.key),
       ...(s.optional ? { optional: true } : {}),
       ...(s.fields?.length ? {
         fields: s.fields,

@@ -65,8 +65,10 @@ fn every_study_type_gets_its_scaffold_and_persists() {
         let p = project(conn, "All kinds")?;
         let expected = [
             (StudyType::Passage, "Text", 6),
-            (StudyType::Word, "Word", 5),
-            (StudyType::Topical, "Question / Topic", 5),
+            (StudyType::Character, "Person and passages", 7),
+            (StudyType::Book, "Read the whole book", 7),
+            (StudyType::Word, "Word and question", 6),
+            (StudyType::Topical, "Topic and questions", 6),
             (StudyType::BiblicalTheology, "Theme", 5),
             (StudyType::SystematicTheology, "Doctrine", 5),
             (StudyType::Teaching, "Text", 10),
@@ -81,7 +83,7 @@ fn every_study_type_gets_its_scaffold_and_persists() {
             assert_eq!(titles.len(), count, "{study_type:?}");
             assert_eq!(titles[0], first_section, "{study_type:?}");
         }
-        assert_eq!(StudyType::ALL.len(), 7);
+        assert_eq!(StudyType::ALL.len(), 9);
         assert!(matches!(
             StudyType::parse("sermonic"),
             Err(AppError::InvalidInput(_))
@@ -347,7 +349,7 @@ fn blocks_support_quotations_and_questions_and_can_be_reordered() {
 // --- templates -------------------------------------------------------------
 
 #[test]
-fn eight_built_in_templates_exist_and_are_protected() {
+fn catalogue_and_legacy_built_in_templates_exist_and_are_protected() {
     with_db(|conn| {
         let all = templates::list(conn)?;
         let names: Vec<_> = all
@@ -361,8 +363,10 @@ fn eight_built_in_templates_exist_and_are_protected() {
                 "Passage Study",
                 "POZETEK — Examine a Bible text",
                 "Ten steps — Interpret a Bible passage",
-                "Word Study",
-                "Topical Study",
+                "Biblical Word Study",
+                "Topical Bible Study",
+                "Biblical Character Study",
+                "Whole-Book Bible Study",
                 "Biblical Theology Study",
                 "Systematic Theology Study",
                 "Teaching / Sermon Preparation",
@@ -444,7 +448,14 @@ fn built_in_templates_start_small_and_offer_the_rest_later() {
                 && t.key != "ten-step-exegesis"
         }) {
             let count = template.sections.iter().filter(|s| s.starts()).count();
-            assert!((4..=6).contains(&count), "{}: {count}", template.key);
+            if matches!(
+                template.key.as_str(),
+                "biblical-character-study" | "whole-book-study"
+            ) {
+                assert_eq!(count, 7, "{}", template.key);
+            } else {
+                assert!((4..=6).contains(&count), "{}: {count}", template.key);
+            }
         }
         // A copy keeps the optional parts and leaves the retired ones behind.
         let copy = templates::duplicate(conn, &passage.id)?;

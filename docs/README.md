@@ -16,6 +16,7 @@
 
 | Document | What it is |
 |---|---|
+| [bible-study-templates.md](bible-study-templates.md) | The six study methods, localisation, compatibility and regression coverage. |
 | [developers.md](developers.md) | Building, testing and releasing; repository layout; milestone status |
 | [concept.md](concept.md) | The original vision: why Abiding Word exists and what it should become. |
 | [architecture.md](architecture.md) | How the program is built: the desktop shell, the data store and how the parts talk to each other. |

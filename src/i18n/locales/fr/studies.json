@@ -266,7 +266,7 @@
         "description": "Une étude guidée pour n’importe quel passage : observation (personnes, lieu, temps, événements, contexte du texte), interprétation (explications), message central (noyau), puis une application personnelle distincte.",
         "sections": {
           "persons": {
-            "title": "P — Personnes (Personen)",
+            "title": "Personnes",
             "guidance": "Qui apparaît dans le texte, qui parle, qui agit, et à qui le message s’adresse-t-il ?",
             "goal": "Faire connaissance avec toutes les personnes concernées avant d’interpréter. Ne noter que ce que dit le texte lui-même.",
             "example": "Osée proclame la parole de Dieu à Israël/Éphraïm ; au centre se trouve la relation de Dieu avec son peuple. L’Égypte et l’Assyrie font partie du contexte historique évoqué.",
@@ -304,7 +304,7 @@
             }
           },
           "place": {
-            "title": "O — Lieu (Ort)",
+            "title": "Lieu",
             "guidance": "Quels lieux et quelles relations spatiales ou culturelles comptent pour le texte ?",
             "goal": "Repérer où les choses se passent ou dont on parle. Distinguer ce que dit le texte de ce qu’apportent des sources extérieures.",
             "example": "Le royaume du Nord, Israël, forme le contexte ; l’Égypte rappelle la délivrance d’Israël, l’Assyrie représente la menace politique.",
@@ -330,7 +330,7 @@
             }
           },
           "time": {
-            "title": "Z — Temps (Zeit)",
+            "title": "Temps",
             "guidance": "Quand le texte se situe-t-il, et quelles circonstances historiques comptent ?",
             "goal": "Situer le texte dans le temps. Distinguer ce que le texte indique et ce qui est un classement historique, parfois incertain.",
             "example": "Le ministère d’Osée au VIIIe siècle av. J.-C. et l’influence croissante de l’Assyrie constituent des informations de contexte pertinentes.",
@@ -358,7 +358,7 @@
             }
           },
           "events": {
-            "title": "E — Événements (Ereignisse)",
+            "title": "Événements",
             "guidance": "Que se passe-t-il ? Comment les événements ou les affirmations se déploient-ils ?",
             "goal": "Suivre le mouvement du texte section par section. Le plan est une proposition que vous pouvez modifier.",
             "example": "Plan possible d’Osée 11 : v. 1-4 sollicitude ; v. 5-7 infidélité et jugement ; v. 8-9 compassion ; v. 10-11 retour et restauration.",
@@ -384,7 +384,7 @@
             }
           },
           "context": {
-            "title": "T — Contexte du texte (Textzusammenhang)",
+            "title": "Contexte du texte",
             "guidance": "Comment le passage s’insère-t-il dans le chapitre, dans tout le livre et dans le reste de l’Écriture ?",
             "goal": "Voir le passage dans son environnement, des versets voisins vers l’extérieur, et repérer où il s’arrête.",
             "example": "L’infidélité d’Israël et la relation d’alliance marquent Osée ; le chapitre 11 y ajoute l’image du père attentionné et de son enfant.",
@@ -417,7 +417,7 @@
             }
           },
           "explanations": {
-            "title": "E — Explications (Erklärungen)",
+            "title": "Explications",
             "guidance": "Quels termes, affirmations ou problèmes d’interprétation demandent à être éclaircis ?",
             "goal": "Rassembler les questions du texte, les vérifier à la lumière des preuves et noter les réponses que l’on peut étayer. Laisser ouvert ce qui l’est encore.",
             "example": "Quel rôle jouent l’Égypte et l’Assyrie ? Comment le jugement et la compassion vont-ils ensemble ? Que signifie « je suis Dieu et non pas homme » (Os 11,9) ?",
@@ -453,7 +453,7 @@
             }
           },
           "core": {
-            "title": "K — Noyau (Kern)",
+            "title": "Noyau",
             "guidance": "Quel est le message central de ce passage précisément ?",
             "goal": "Formuler le noyau en trois temps : de quoi parle le texte, ce qu’il en dit, et une phrase concise. L’ordre de saisie est libre.",
             "example": "Objet : la relation de Dieu avec son peuple infidèle. Énoncé : la sollicitude de Dieu, son jugement juste et sa compassion. Thème : l’amour de Dieu pour Israël se manifeste dans sa sollicitude, dans un jugement juste et dans une compassion qui ouvre un avenir.",
@@ -1018,7 +1018,9 @@
       "topical": "p. ex. le pardon",
       "biblical_theology": "p. ex. le temple",
       "systematic_theology": "p. ex. la doctrine de la grâce",
-      "custom": "Qu’étudiez-vous ?"
+      "custom": "Qu’étudiez-vous ?",
+      "character": "p. ex. Ruth",
+      "book": "p. ex. l’épître aux Philippiens"
     },
     "approach": {
       "passage": "Étude de passage",
@@ -1028,7 +1030,9 @@
       "biblical_theology": "Théologie biblique",
       "systematic_theology": "Théologie systématique",
       "custom": "Sans modèle",
-      "mine": "Mon modèle"
+      "mine": "Mon modèle",
+      "character": "Étude d’un personnage biblique",
+      "book": "Étude d’un livre biblique"
     }
   },
   "list": {

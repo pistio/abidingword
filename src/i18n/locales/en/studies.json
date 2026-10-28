@@ -266,7 +266,7 @@
         "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "P — Persons (Personen)",
+            "title": "Persons",
             "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
             "goal": "Get to know everyone involved before interpreting anything. Record only what the text itself says.",
             "example": "Hosea proclaims God’s word to Israel/Ephraim; the focus is God’s relationship with his people. Egypt and Assyria belong to the historical background that is addressed.",
@@ -304,7 +304,7 @@
             }
           },
           "place": {
-            "title": "O — Place (Ort)",
+            "title": "Place",
             "guidance": "Which places and spatial or cultural relationships matter for the text?",
             "goal": "Notice where things happen or are spoken of. Keep what the text says apart from what you learn from outside sources.",
             "example": "The northern kingdom of Israel is the context; Egypt recalls Israel’s deliverance, Assyria stands for political threat.",
@@ -330,7 +330,7 @@
             }
           },
           "time": {
-            "title": "Z — Time (Zeit)",
+            "title": "Time",
             "guidance": "When does the text take place, and which historical circumstances matter?",
             "goal": "Place the text in time. Mark what the text states and what is a historical placement that may be uncertain.",
             "example": "Hosea’s ministry in the 8th century BC and the growing Assyrian influence are relevant background information.",
@@ -358,7 +358,7 @@
             }
           },
           "events": {
-            "title": "E — Events (Ereignisse)",
+            "title": "Events",
             "guidance": "What happens? How do events or statements unfold?",
             "goal": "Follow the movement of the text section by section. The outline is yours to propose and to change.",
             "example": "A possible outline of Hosea 11: vv. 1–4 care; vv. 5–7 unfaithfulness and judgment; vv. 8–9 compassion; vv. 10–11 return and restoration.",
@@ -384,7 +384,7 @@
             }
           },
           "context": {
-            "title": "T — Text context (Textzusammenhang)",
+            "title": "Text context",
             "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture?",
             "goal": "See the passage in its surroundings, from the nearest verses outward, and notice where it ends.",
             "example": "Israel’s unfaithfulness and the covenant relationship shape Hosea; chapter 11 adds the image of the caring father and his child.",
@@ -417,7 +417,7 @@
             }
           },
           "explanations": {
-            "title": "E — Explanations (Erklärungen)",
+            "title": "Explanations",
             "guidance": "Which terms, statements or interpretive problems need clarifying?",
             "goal": "Collect questions from the text, check them against evidence, and record the answers you can support. Leave open what is still open.",
             "example": "What role do Egypt and Assyria play? How do judgment and compassion belong together? What does “God and not man” (Hos 11:9) mean?",
@@ -453,7 +453,7 @@
             }
           },
           "core": {
-            "title": "K — Core (Kern)",
+            "title": "Core",
             "guidance": "What is the central message of exactly this passage?",
             "goal": "Name the core in three steps: what the text is about, what it says about that, and one concise sentence. You may fill them in any order.",
             "example": "Subject: God’s relationship to his unfaithful people. Statement: God’s care, just judgment and compassion. Theme: God’s love for Israel shows itself in his care, in just judgment, and in a compassion that opens a future.",
@@ -1016,7 +1016,9 @@
       "topical": "e.g. forgiveness",
       "biblical_theology": "e.g. the temple",
       "systematic_theology": "e.g. the doctrine of grace",
-      "custom": "What are you studying?"
+      "custom": "What are you studying?",
+      "character": "e.g. Ruth",
+      "book": "e.g. Philippians"
     },
     "approach": {
       "passage": "Passage study",
@@ -1026,7 +1028,9 @@
       "biblical_theology": "Biblical theology",
       "systematic_theology": "Systematic theology",
       "custom": "No template",
-      "mine": "My template"
+      "mine": "My template",
+      "character": "Biblical Character Study",
+      "book": "Whole-Book Study"
     }
   },
   "list": {

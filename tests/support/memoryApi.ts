@@ -2,6 +2,8 @@
 // It mirrors the behaviour the Rust layer guarantees (validation messages,
 // template sections, soft delete), not its storage.
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
+import characterStudy from "../../resources/templates/biblical-character-study.json";
+import bookStudy from "../../resources/templates/whole-book-study.json";
 import passageStudy from "../../resources/templates/passage-study.json";
 import pozetekStudy from "../../resources/templates/pozetek-study.json";
 import tenStepExegesis from "../../resources/templates/ten-step-exegesis.json";
@@ -61,7 +63,7 @@ import type {
 
 import { newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
 
-const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -700,10 +702,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyCreate: async (input) => {
       find(state.projects, input.projectId, "project");
       const title = requireTitle(input.title, "study");
-      const studyType = input.studyType ?? "passage";
+      const requestedType = input.studyType ?? "passage";
       const template = input.templateId
         ? find(state.templates, input.templateId, "template")
-        : state.templates.find((t) => t.isBuiltin && t.studyType === studyType) ?? null;
+        : state.templates.find((t) => t.isBuiltin && t.studyType === requestedType) ?? null;
+      const studyType = input.studyType ?? template?.studyType ?? "passage";
       const primary = input.primaryPassage ? refFromCanonical(input.primaryPassage, bookByCode) : null;
       const t = now();
       const study: Study = {

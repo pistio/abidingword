@@ -14,6 +14,7 @@ import { PartAdd } from "./PartAdd";
 
 interface SectionEditorProps {
   section: StudySection;
+  templateKey?: string;
   isFirst: boolean;
   isLast: boolean;
   /** Whether findings are assigned to this section. */
@@ -48,7 +49,7 @@ interface SectionEditorProps {
 const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong disabled:opacity-40";
 
 export function SectionEditor(props: SectionEditorProps) {
-  const { section, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, onActive, newBlockId, typed, onContent } = props;
+  const { section, templateKey, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, onActive, newBlockId, typed, onContent } = props;
   const { t } = useTranslation();
   const api = useApi();
   const { track, settled } = useSaveTracker();
@@ -66,9 +67,10 @@ export function SectionEditor(props: SectionEditorProps) {
   const [error, setError] = useState<string | null>(null);
   const headingId = `section-${section.id}`;
   const bodyId = `section-body-${section.id}`;
-  const title = sectionTitle(section);
+  const origin = section.fields?.template ?? templateKey;
+  const title = sectionTitle(section, origin);
   // Guidance is for a section with nothing in it yet; once there is writing it is out of the way.
-  const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section);
+  const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section, origin);
 
   const structured = section.fields !== null;
   const goal = structured ? structuredOptional(section, "goal") : null;
@@ -235,7 +237,7 @@ export function SectionEditor(props: SectionEditorProps) {
       <div id={bodyId} hidden={collapsed}>
       {structured && (
         <div className="mb-3 flex flex-col gap-2">
-          <p className="m-0 text-[1rem] font-medium text-text-strong">{sectionGuidance(section)}</p>
+          <p className="m-0 text-[1rem] font-medium text-text-strong">{sectionGuidance(section, origin)}</p>
           {goal && (
             <p className="m-0 text-[0.9375rem] text-text-muted">
               <span className="font-medium">{t("studies.fields.goal")}: </span>
