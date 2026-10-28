@@ -280,3 +280,33 @@ fn check_order(migrations: &[Migration]) -> AppResult<()> {
         ))
     }
 }
+
+
+#[cfg(test)]
+mod schema_compatibility_tests {
+    use super::*;
+
+    #[test]
+    fn current_build_accepts_database_at_version_19() {
+        // The user's dev.43 installation already created schema 19.
+        // Never ship a newer Windows installer with a truncated catalogue.
+        assert!(MIGRATIONS.last().is_some_and(|m| m.version >= 19));
+        assert_eq!(MIGRATIONS[18].version, 19);
+        assert_eq!(MIGRATIONS[18].name, "bible_documents");
+
+        let mut conn = Connection::open_in_memory().expect("SQLite");
+        let historical = &MIGRATIONS[..19];
+        let initial = run_with(&mut conn, historical).expect("create version-19 database");
+        assert_eq!(initial.to_version, 19);
+
+        let upgrade = run_with(&mut conn, MIGRATIONS)
+            .expect("current build must accept and upgrade version-19 data");
+        assert_eq!(upgrade.from_version, 19);
+        assert_eq!(upgrade.to_version, MIGRATIONS.last().unwrap().version);
+        assert_eq!(current_version(&conn).unwrap(), upgrade.to_version);
+
+        let reopened = run_with(&mut conn, MIGRATIONS)
+            .expect("reopening upgraded database must be safe");
+        assert!(reopened.applied.is_empty());
+    }
+}
