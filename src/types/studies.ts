@@ -6,6 +6,8 @@ import type { ScriptureRef } from "./scripture";
 
 export const STUDY_TYPES = [
   "passage",
+  "character",
+  "book",
   "word",
   "topical",
   "biblical_theology",
