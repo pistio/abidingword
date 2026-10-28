@@ -813,35 +813,35 @@
         "sections": {
           "person": {
             "title": "Personnage et passages",
-            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name."
+            "guidance": "Identifiez la personne, les variantes de son nom et les principaux passages bibliques. Distinguez-la des autres personnes portant le même nom."
           },
           "setting": {
             "title": "Contexte historique et biblique",
-            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain."
+            "guidance": "Situez cette personne dans l’histoire biblique : famille, relations, responsabilités et circonstances. Signalez les dates ou identifications discutées comme incertaines."
           },
           "life": {
             "title": "Vie, paroles et actes",
-            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography."
+            "guidance": "Retracez autant que possible les événements importants dans l’ordre chronologique. Notez ce que dit réellement le texte, références à l’appui, sans supposer qu’il fournit une biographie complète."
           },
           "character": {
             "title": "Caractère et décisions",
-            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives."
+            "guidance": "Examinez les actes, les paroles, les forces, les faiblesses et les comportements récurrents. Distinguez le jugement explicite du récit de vos hypothèses sur les motivations."
           },
           "god": {
             "title": "Action de Dieu et appréciation biblique",
-            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary."
+            "guidance": "Comment Dieu agit-il dans la vie de cette personne, et comment l’Écriture juge-t-elle ses choix ? Situez-la dans l’ensemble du récit biblique sans considérer chacun de ses actes comme exemplaire."
           },
           "conclusion": {
             "title": "Principales conclusions",
-            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions."
+            "guidance": "Résumez la portée de cette personne à l’aide de passages précis, en mentionnant les incertitudes et les tensions."
           },
           "application": {
             "title": "Mise en pratique",
-            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action."
+            "guidance": "Que nous enseigne l’Écriture, à travers cette vie, sur la foi, l’obéissance, le péché, la grâce et les relations ? Appliquez le message du texte plutôt que d’imiter tous les actes rapportés."
           },
           "comparisons": {
             "title": "Personnages et passages associés",
-            "guidance": "Compare relevant people or passages only where the connections illuminate the text."
+            "guidance": "Comparez d’autres personnages ou passages uniquement lorsque le rapprochement éclaire réellement le texte."
           }
         }
       },
@@ -851,35 +851,35 @@
         "sections": {
           "reading": {
             "title": "Lire le livre entier",
-            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries."
+            "guidance": "Lisez le livre entier, si possible plusieurs fois et dans différentes traductions. Avant de consulter des commentaires, notez vos premières impressions, les mots récurrents, le ton, le genre littéraire et vos questions."
           },
           "setting": {
             "title": "Auteur, destinataires et contexte",
-            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions."
+            "guidance": "Étudiez l’auteur, les destinataires, le contexte historique et géographique, les circonstances et le but du livre. Distinguez les indications du texte des hypothèses de recherche et des questions ouvertes."
           },
           "overview": {
             "title": "Vue d’ensemble et enjeux principaux",
-            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme."
+            "guidance": "Relevez les personnages, événements, thèmes, versets clés et grandes étapes du livre. Un mot fréquent n’est pas nécessairement son thème principal."
           },
           "outline": {
             "title": "Structure et contenu",
-            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole."
+            "guidance": "Découpez le livre en unités littéraires naturelles, avec leurs références et de courts titres. Expliquez la contribution de chaque partie à l’ensemble."
           },
           "argument": {
             "title": "Message et progression",
-            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening."
+            "guidance": "Suivez le déroulement du récit ou du raisonnement. Observez le genre, les contrastes, les promesses, les commandements et le lien entre la fin et le début."
           },
           "synthesis": {
             "title": "Message central",
-            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text."
+            "guidance": "Formulez le sujet du livre, ce qu’il en dit et son message d’ensemble, en vous appuyant sur le texte."
           },
           "application": {
             "title": "Mise en pratique",
-            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible."
+            "guidance": "Examinez les conséquences pour la foi, l’adoration et la vie, à partir du message du livre et de sa place dans l’ensemble de la Bible."
           },
           "further": {
             "title": "Approfondissement",
-            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
+            "guidance": "Notez les passages difficiles, les questions historiques, les renvois bibliques et les sources à approfondir."
           }
         }
       }
