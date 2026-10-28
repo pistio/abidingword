@@ -216,6 +216,11 @@ function SourcePicker({ finding, onQuote, onDone }: { finding: Finding; onQuote?
                 <span className="font-medium text-text-strong">
                   {t("library.citations.cite", { citation: citationText(t, { author: hit.author, title: hit.sourceTitle, locator: hit.locator }) })}
                 </span>
+                {hit.archived && (
+                  <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.8125rem] text-text-muted">
+                    {t("common.lifecycle.state.archived")}
+                  </span>
+                )}
                 <span className="reading">{highlighted(hit.snippet)}</span>
               </button>
             </li>

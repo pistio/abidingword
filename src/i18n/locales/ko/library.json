@@ -30,17 +30,21 @@
     "backToWorkspace": "작업 공간으로 돌아가기",
     "title": "자료실",
     "intro": "이 컴퓨터에 저장된 나의 책, 노트, 문서입니다. 모든 검색 결과에는 정확한 출처가 표시됩니다.",
-    "addedOn": "{{date}} 추가"
+    "addedOn": "{{date}} 추가",
+    "manage": "설정에서 관리"
   },
   "search": {
     "heading": "자료실 검색",
     "label": "자료실 검색",
-    "placeholder": "단어 또는 \"정확한 구절\"",
+    "placeholder": "제목, 저자, 단어 또는 \"정확한 구절\"",
     "nothingFound": "자료실에서 찾은 내용이 없습니다.",
     "resultCount_other": "{{number}}개 구절을 찾았습니다.",
     "resultCountMore_other": "{{number}}개 이상의 구절을 찾았습니다.",
     "resultsLabel": "자료실 검색 결과",
-    "showMore": "결과 더 보기"
+    "showMore": "결과 더 보기",
+    "byName": "제목, 저자 또는 파일 이름",
+    "byNameLabel": "제목, 저자 또는 파일 이름이 맞는 자료",
+    "inText": "본문에서"
   },
   "filter": {
     "heading": "모든 자료",
@@ -51,7 +55,11 @@
     "allLanguages": "모든 언어",
     "noMatch": "이 조건에 맞는 자료가 없습니다.",
     "empty": "자료실이 아직 비어 있습니다. PDF, EPUB, Word, Markdown 또는 텍스트 파일을 추가하세요.",
-    "listLabel": "자료"
+    "listLabel": "자료",
+    "archive": "상태",
+    "inUse": "사용 중",
+    "both": "사용 중 및 보관됨",
+    "archiveHelp": "사용 중인 자료는 공부 옆에 나타납니다. 보관된 자료는 자료실에 남고, 설정에서 복원할 때까지 자료 창에는 나오지 않습니다."
   },
   "remove": {
     "label": "{{title}} 제거",
@@ -88,6 +96,13 @@
     "sharing": "공유",
     "isbn": "ISBN {{isbn}}",
     "fromFile": "“{{fileName}}”에서 가져옴"
+  },
+  "about": {
+    "summary": "이 자료에 대하여",
+    "fileHere": "Abiding Word가 보관하는 파일 사본이 이 컴퓨터에 있습니다.",
+    "fileMissing": "Abiding Word가 보관하던 파일 사본을 찾을 수 없습니다. 자료 기록은 그대로 둡니다.",
+    "citation": "출처",
+    "archivedNote": "보관됨. 설정에서 복원할 때까지 자료 창에 나오지 않습니다."
   },
   "reader": {
     "showEarlier": "앞부분 더 보기",

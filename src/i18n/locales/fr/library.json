@@ -30,12 +30,13 @@
     "backToWorkspace": "Retour à l’espace de travail",
     "title": "Bibliothèque",
     "intro": "Vos propres livres, notes et documents, conservés sur cet ordinateur. Chaque résultat de recherche indique précisément sa provenance.",
-    "addedOn": "ajoutée le {{date}}"
+    "addedOn": "ajoutée le {{date}}",
+    "manage": "Gérer dans Paramètres"
   },
   "search": {
     "heading": "Rechercher dans la bibliothèque",
     "label": "Rechercher dans la bibliothèque",
-    "placeholder": "Mots ou \"expression exacte\"",
+    "placeholder": "Titre, auteur, mots ou \"expression exacte\"",
     "nothingFound": "Rien n’a été trouvé dans votre bibliothèque.",
     "resultCount_one": "{{number}} passage trouvé.",
     "resultCount_many": "{{number}} passages trouvés.",
@@ -44,7 +45,10 @@
     "resultCountMore_many": "{{number}}+ passages trouvés.",
     "resultCountMore_other": "{{number}}+ passages trouvés.",
     "resultsLabel": "Résultats de la recherche dans la bibliothèque",
-    "showMore": "Afficher plus de résultats"
+    "showMore": "Afficher plus de résultats",
+    "byName": "Titre, auteur ou nom de fichier",
+    "byNameLabel": "Sources correspondant au titre, à l’auteur ou au nom de fichier",
+    "inText": "Dans le texte"
   },
   "filter": {
     "heading": "Toutes les sources",
@@ -55,7 +59,11 @@
     "allLanguages": "Toutes les langues",
     "noMatch": "Aucune source ne correspond à ces filtres.",
     "empty": "Votre bibliothèque est encore vide. Ajoutez un fichier PDF, EPUB, Word, Markdown ou texte.",
-    "listLabel": "Sources"
+    "listLabel": "Sources",
+    "archive": "État",
+    "inUse": "En usage",
+    "both": "En usage et archivé",
+    "archiveHelp": "Les sources en usage apparaissent à côté de votre étude. Les sources archivées restent dans la bibliothèque, hors du volet Sources, jusqu’à ce que vous les restauriez."
   },
   "remove": {
     "label": "Retirer {{title}}",
@@ -104,6 +112,13 @@
     "sharing": "Partage",
     "isbn": "ISBN {{isbn}}",
     "fromFile": "depuis « {{fileName}} »"
+  },
+  "about": {
+    "summary": "À propos de cette source",
+    "fileHere": "La copie du fichier conservée par Abiding Word est sur cet ordinateur.",
+    "fileMissing": "La copie du fichier conservée par Abiding Word est introuvable. La fiche de cette source est conservée.",
+    "citation": "Référence",
+    "archivedNote": "Archivé. Cette source reste hors du volet Sources jusqu’à ce que vous la restauriez dans Paramètres."
   },
   "reader": {
     "showEarlier": "Afficher le texte précédent",

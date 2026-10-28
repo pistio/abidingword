@@ -30,19 +30,23 @@
     "backToWorkspace": "Back to workspace",
     "title": "Library",
     "intro": "Your own books, notes and documents, stored on this computer. Every search result shows exactly where it comes from.",
-    "addedOn": "added {{date}}"
+    "addedOn": "added {{date}}",
+    "manage": "Manage in Settings"
   },
   "search": {
     "heading": "Search the library",
     "label": "Search the library",
-    "placeholder": "Words or \"exact phrase\"",
+    "placeholder": "Title, author, words or \"exact phrase\"",
     "nothingFound": "Nothing found in your library.",
     "resultCount_one": "{{number}} passage found.",
     "resultCount_other": "{{number}} passages found.",
     "resultCountMore_one": "{{number}}+ passage found.",
     "resultCountMore_other": "{{number}}+ passages found.",
     "resultsLabel": "Library search results",
-    "showMore": "Show more results"
+    "showMore": "Show more results",
+    "byName": "Title, author or file name",
+    "byNameLabel": "Sources matching the title, author or file name",
+    "inText": "In the text"
   },
   "filter": {
     "heading": "All sources",
@@ -53,7 +57,11 @@
     "allLanguages": "All languages",
     "noMatch": "No sources match these filters.",
     "empty": "Nothing in your library yet. Add a PDF, EPUB, Word, Markdown or text file.",
-    "listLabel": "Sources"
+    "listLabel": "Sources",
+    "archive": "Status",
+    "inUse": "In use",
+    "both": "In use and archived",
+    "archiveHelp": "In use sources appear beside your study. Archived sources stay in the library and out of the Sources pane until you restore them."
   },
   "remove": {
     "label": "Remove {{title}}",
@@ -96,6 +104,13 @@
     "sharing": "Sharing",
     "isbn": "ISBN {{isbn}}",
     "fromFile": "from “{{fileName}}”"
+  },
+  "about": {
+    "summary": "About this source",
+    "fileHere": "Abiding Word’s copy is on this computer.",
+    "fileMissing": "Abiding Word’s copy of this file can’t be found. The record of this source is kept.",
+    "citation": "Citation",
+    "archivedNote": "Archived. It stays out of the Sources pane until you restore it in Settings."
   },
   "reader": {
     "showEarlier": "Show earlier text",

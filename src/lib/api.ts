@@ -263,7 +263,14 @@ export interface Api {
   libraryTagRemove(id: string): Promise<void>;
   /** Adds tags (by name, created if new) and takes others (by id) off. */
   libraryRetag(ids: string[], add: string[], remove: string[]): Promise<void>;
-  librarySearch(input: { query: string; offset?: number }): Promise<LibraryResults>;
+  librarySearch(input: {
+    query: string;
+    offset?: number;
+    sourceType?: SourceType;
+    language?: string;
+    /** "active" or "archived". Omit for both, and never Trash. */
+    state?: "active" | "archived";
+  }): Promise<LibraryResults>;
   libraryOpenSegment(segmentId: string): Promise<SegmentWindow>;
   sourceGetSegments(input: { sourceId: string; offset?: number; limit?: number; aroundPage?: number }): Promise<SegmentWindow>;
   /** Size and kind of a source's original file, found by source id only. */

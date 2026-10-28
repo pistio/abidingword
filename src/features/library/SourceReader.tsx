@@ -12,7 +12,8 @@ import type { PdfPlace } from "@/lib/pdfEngine";
 import type { ContentsItem, SegmentWindow, SourceAnnotation, SourceLink, SourceMatch, SourceReference, SourceSegment } from "@/types/library";
 import { PHRASE_CLASS } from "@/lib/annotationRender";
 import type { ScriptureRef } from "@/types/scripture";
-import { formatLabel, licenceLabel, locatorLabel, quotationWithCitation, sourceTypeLabel } from "./labels";
+import { citationText, formatLabel, locatorLabel, quotationWithCitation, sourceTypeLabel } from "./labels";
+import { SourceAbout } from "./SourceAbout";
 import { useLibraryNav, type QuotedWords } from "./LibraryNav";
 import { PassageLinkNote } from "./PassageLinkNote";
 import { ScriptureReference } from "./ScriptureReference";
@@ -857,14 +858,8 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
               s.format ? formatLabel(t, s.format) : null,
               s.pageCount ? t("library.size.pages", { count: s.pageCount, number: formatNumber(s.pageCount) }) : null,
               s.language,
-              s.publisher,
-              s.isbn ? t("library.metadata.isbn", { isbn: s.isbn }) : null,
+              s.publicationYear,
             ]
-              .filter(Boolean)
-              .join(t("common.listSeparator"))}
-          </p>
-          <p className="m-0 text-[0.9375rem] text-text-muted">
-            {[licenceLabel(t, s.licenceStatus), s.originalFilename ? t("library.metadata.fromFile", { fileName: s.originalFilename }) : null]
               .filter(Boolean)
               .join(t("common.listSeparator"))}
           </p>
@@ -1095,6 +1090,26 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       {notice ?? ""}
     </p>
   );
+  const citedSegmentId = window?.targetSegmentId ?? window?.segments[0]?.id ?? null;
+  const provenance = s ? (
+    <div className="flex shrink-0 flex-col gap-1 border-b border-border-subtle px-4 py-2">
+      {(s.state === "archived" || !s.filePresent) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {s.state === "archived" && (
+            <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.8125rem] text-text-muted">
+              {t("common.lifecycle.state.archived")}
+            </span>
+          )}
+          {!s.filePresent && <p className="m-0 text-danger">{t("library.about.fileMissing")}</p>}
+        </div>
+      )}
+      {s.state === "archived" && <p className="m-0 text-[0.9375rem] text-text-muted">{t("library.about.archivedNote")}</p>}
+      <details>
+        <summary className="cursor-pointer text-[0.9375rem] text-text-muted">{t("library.about.summary")}</summary>
+        <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
+      </details>
+    </div>
+  ) : null;
   const findBar = finding ? (
     <FindBar find={finder.find} focusKey={findFocus} onType={finder.type} onSubmit={finder.submit} onStep={finder.step} onClose={closeFind} />
   ) : null;
@@ -1179,6 +1194,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
             {marksButton}
           </div>
         </div>
+        {provenance}
         {findBar}
         {noticeLine}
         {tray}
@@ -1227,6 +1243,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         {contentsButton}
         {marksButton}
       </div>
+      {provenance}
       {findBar}
       {noticeLine}
         {tray}

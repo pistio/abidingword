@@ -235,6 +235,8 @@ export interface SourceFixture {
   links?: SourceLink[];
   /** A formatted view (an EPUB's documents or a DOCX's parts, by id); a source without it has no Original view. */
   formatted?: { kind?: "epub" | "docx"; structure: EpubStructureItem[]; items: Record<string, EpubItem> };
+  /** When false, the reader says Abiding Word's copy of the file is missing. */
+  filePresent?: boolean;
 }
 
 /**
@@ -823,7 +825,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     const needle = query.text?.trim().toLowerCase();
     const items: ManagedSource[] = live
       .filter((x) => (query.state ? stateOf(x.id) === query.state : stateOf(x.id) !== "trashed"))
-      .filter((x) => !needle || x.title.toLowerCase().includes(needle) || (x.author ?? "").toLowerCase().includes(needle))
+      .filter((x) => !needle || [x.title, x.author, x.originalFilename].some((part) => (part ?? "").toLowerCase().includes(needle)))
       .filter((x) => !query.sourceType || x.sourceType === query.sourceType)
       .filter((x) => !query.language || x.language === query.language)
       .filter((x) => !query.format || x.format === query.format)
@@ -903,6 +905,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       pageCount: format === "pdf" ? Math.max(0, ...pages) : null,
       originalView: format === "pdf" ? { kind: "pdf" } : fixture.formatted ? { kind: fixture.formatted.kind ?? "epub" } : null, segmentCount: fixture.segments.length,
       passageCount: fixture.mentions?.length ?? 0, contentHash: `hash-${fixture.title}`, createdAt: t, updatedAt: t,
+      state: "active", collectionNames: [], tagNames: [], filePresent: fixture.filePresent !== false,
       deleted: false, ...extra,
     };
     library.sources.push(source);
@@ -2044,7 +2047,18 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         .map(toSummary),
     libraryLanguages: async () =>
       [...new Set(library.sources.filter((s) => !s.deleted && s.language).map((s) => s.language as string))].sort(),
-    libraryGetSource: async (sourceId) => ({ ...liveSource(sourceId) }),
+    libraryGetSource: async (sourceId) => {
+      const source = liveSource(sourceId);
+      const collectionNames = manage.collections
+        .filter((c) => manage.members.get(c.id)?.has(sourceId))
+        .map((c) => c.name)
+        .sort((a, b) => a.localeCompare(b));
+      const tagNames = manage.tags
+        .filter((tag) => manage.tagged.get(tag.id)?.has(sourceId))
+        .map((tag) => tag.name)
+        .sort((a, b) => a.localeCompare(b));
+      return { ...source, state: stateOf(sourceId), collectionNames, tagNames, filePresent: source.filePresent !== false };
+    },
     chooseSourceFile: async () => library.nextChosenFile,
     chooseSourceFiles: async () => state.batch.nextFiles,
     chooseSourceFolder: async () => state.batch.nextFolder?.path ?? null,
@@ -2297,9 +2311,17 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       }
       for (const tagId of remove) ids.forEach((x) => manage.tagged.get(tagId)?.delete(x));
     },
-    librarySearch: async ({ query, offset = 0 }) => {
+    librarySearch: async ({ query, offset = 0, sourceType, language, state }) => {
       const words = query.toLowerCase().replace(/["“”]/g, "").split(/\s+/).filter(Boolean);
-      const matches = library.segments.filter((x) => stateOf(x.sourceId) !== "trashed" && words.every((w) => x.text.toLowerCase().includes(w)));
+      const matches = library.segments.filter((x) => {
+        const source = library.sources.find((s) => s.id === x.sourceId && !s.deleted);
+        if (!source) return false;
+        const current = stateOf(source.id);
+        if (current === "trashed" || (state && current !== state)) return false;
+        if (sourceType && source.sourceType !== sourceType) return false;
+        if (language && source.language !== language) return false;
+        return words.every((w) => x.text.toLowerCase().includes(w));
+      });
       const hits: LibraryHit[] = matches.slice(offset, offset + 50).map((x) => {
         const source = liveSource(x.sourceId);
         let snippet = x.text;
