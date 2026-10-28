@@ -30,6 +30,8 @@ interface PdfViewerProps {
   sourceId: string;
   /** Physical page to open at (1-based). */
   initialPage: number;
+  /** Fraction down the initial page (0–1), when resuming a reading session. */
+  initialFraction?: number;
   /** Told whenever the page in view changes, so Reading can return to it. */
   onPageChange: (page: number) => void;
   /** The outline, read from this viewer's own open document (a second chance for Contents, with no second opening). */
@@ -83,7 +85,7 @@ export interface PdfFind {
  * inspect the source; search, citations and Scripture links stay with the
  * extracted text.
  */
-export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef }: PdfViewerProps) {
+export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef }: PdfViewerProps) {
   const { t } = useTranslation();
   const api = useApi();
   const engine = usePdfEngine();
@@ -300,8 +302,8 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
   useEffect(() => {
     if (!doc || !sizes[1] || placed.current) return;
     placed.current = true;
-    requestAnimationFrame(() => goTo(initialPage));
-  }, [doc, sizes, initialPage, goTo]);
+    requestAnimationFrame(() => goTo(initialPage, initialFraction));
+  }, [doc, sizes, initialPage, initialFraction, goTo]);
 
   useEffect(() => {
     onPageChange(page);

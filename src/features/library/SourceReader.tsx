@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Bookmark, Highlighter, List, Maximize2, Redo2, Search, StickyNote, Undo2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
@@ -66,7 +66,7 @@ export interface ReaderPosition {
   page: number | null;
   /** The Back / Forward history of this reading session, kept while moving between the pane and the full reader. */
   history?: ReaderHistory;
-  /** An EPUB's formatted view: where it is (document and element), to continue there. */
+  /** Exact text offset, PDF page fraction or formatted document place, to continue there. */
   place?: SourceLocation;
 }
 
@@ -87,6 +87,8 @@ interface SourceReaderProps {
   initialPosition?: ReaderPosition;
   /** Cited words to show marked in Reading (a Study finding's citation, found exactly). */
   quotedWords?: QuotedWords;
+  onPositionReader?: (sourceId: string, read: (() => ReaderPosition | null) | null) => void;
+  backLabel?: string;
 }
 
 /**
@@ -94,7 +96,7 @@ interface SourceReaderProps {
  * extracted text with page markers (PDF) or section headings (EPUB,
  * Markdown). Opens at an exact segment and loads more around it on demand.
  */
-export function SourceReader({ sourceId, segmentId, onClose, variant = "page", onExpand, initialPosition, quotedWords }: SourceReaderProps) {
+export function SourceReader({ sourceId, segmentId, onClose, variant = "page", onExpand, initialPosition, quotedWords, onPositionReader, backLabel }: SourceReaderProps) {
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
@@ -112,9 +114,10 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   const target = useRef<HTMLElement | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const [mode, setMode] = useState<ReaderMode>(() => initialPosition?.mode ?? rememberedMode(sourceId) ?? "reading");
+  const [mode, setMode] = useState<ReaderMode>(() => initialPosition?.mode ?? (quotedWords ? "reading" : rememberedMode(sourceId)) ?? "reading");
   // The page this reader was told to open at (continuing from another reader).
   const [initialPage] = useState(initialPosition?.page ?? null);
+  const [initialPlace] = useState(initialPosition?.place);
   const startedInOriginal = initialPosition?.mode === "original";
   // The physical page the original is showing, kept for the way back to Reading.
   const originalPage = useRef<number | null>(null);
@@ -185,7 +188,13 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   useEffect(() => {
     let active = true;
     let load: Promise<SegmentWindow>;
-    if (initialPage !== null) {
+    if (!startedInOriginal && initialPlace?.position !== null && initialPlace?.position !== undefined) {
+      const position = initialPlace.position;
+      landingPosition.current = { position, offset: initialPlace.offset };
+      load = api.sourceGetSegments({ sourceId, offset: Math.max(0, position - 20), limit: 150 }).then((w) => ({
+        ...w, targetSegmentId: segmentId && w.segments.some((segment) => segment.id === segmentId) ? segmentId : null,
+      }));
+    } else if (initialPage !== null) {
       // Continuing from another reader: open the text where that page begins.
       // The marked passage stays marked only if it is on that page.
       load = api.sourceGetSegments({ sourceId, aroundPage: initialPage }).then((w) => {
@@ -201,7 +210,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     return () => {
       active = false;
     };
-  }, [api, sourceId, segmentId, initialPage, startedInOriginal]);
+  }, [api, sourceId, segmentId, initialPage, startedInOriginal, initialPlace]);
 
   // Opened at a place: show and focus that paragraph. Otherwise focus the
   // title, so keyboard and screen-reader users know the reader opened.
@@ -242,12 +251,12 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   };
 
   /** Where this reader is now, for the next reader to continue from. */
-  const positionNow = (): ReaderPosition =>
-    showOriginal && isEpubView
-      ? { mode: "original", page: null, history: historyRef.current, place: placeNow() }
-      : showOriginal
-        ? { mode: "original", page: originalPage.current ?? startPage, history: historyRef.current }
-        : { mode: "reading", page: isPdf && window ? readingPage() : null, history: historyRef.current };
+  const positionNow = (): ReaderPosition => ({
+    mode: showOriginal ? "original" : "reading",
+    page: showOriginal ? (isEpubView ? null : (originalPage.current ?? startPage)) : (isPdf && window ? readingPage() : null),
+    history: historyRef.current,
+    place: placeNow(),
+  });
 
   const choose = async (next: ReaderMode) => {
     if (next === mode) return;
@@ -673,6 +682,15 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     };
   };
 
+  // The shell reads this while the DOM is still mounted, before a route or pane changes.
+  // In particular, a PDF's own cleanup must not replace its exact place with page-top.
+  const readPosition = useRef<(() => ReaderPosition | null) | null>(null);
+  useLayoutEffect(() => { readPosition.current = () => loaded ? positionNow() : null; });
+  useLayoutEffect(() => {
+    onPositionReader?.(sourceId, () => readPosition.current?.() ?? null);
+    return () => onPositionReader?.(sourceId, null);
+  }, [sourceId, onPositionReader]);
+
   /** Moves the view to a place, in the mode the reader is in (the mode is never changed by a jump). */
   const goTo = (place: SourceLocation) => {
     if (showOriginal && isEpubView) {
@@ -908,6 +926,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         key={`${sourceId}-${startPage}`}
         sourceId={sourceId}
         initialPage={startPage}
+        initialFraction={initialPlace?.fraction ?? 0}
         onPageChange={(page) => {
           originalPage.current = page;
           setPdfPage(page);
@@ -1104,7 +1123,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         </div>
       )}
       {s.state === "archived" && <p className="m-0 text-[0.9375rem] text-text-muted">{t("library.about.archivedNote")}</p>}
-      <details>
+      <details className="max-h-[35vh] overflow-y-auto">
         <summary className="cursor-pointer text-[0.9375rem] text-text-muted">{t("library.about.summary")}</summary>
         <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
       </details>
@@ -1174,7 +1193,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       <section aria-label={s?.title} className="flex min-h-0 flex-1 flex-col" onKeyDown={onReaderKey}>
         <div data-testid="reader-header" className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-border-subtle px-3 py-2">
           <Button variant="quiet" onClick={() => onClose(positionNow())}>
-            <ArrowLeft className="size-4" aria-hidden="true" /> {t("library.reader.backToSources")}
+            <ArrowLeft className="size-4" aria-hidden="true" /> {backLabel ?? t("library.reader.backToSources")}
           </Button>
           {onExpand && (
             <Button variant="quiet" onClick={() => onExpand(positionNow())} title={t("library.reader.openFullTitle")}>

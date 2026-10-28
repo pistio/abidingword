@@ -49,6 +49,55 @@ fn ids(list: &[&str]) -> Vec<String> {
     list.iter().map(|s| s.to_string()).collect()
 }
 
+#[test]
+fn collection_text_search_pages_members_once_and_respects_archive_and_trash() {
+    let temp = tempfile::tempdir().unwrap();
+    let staged = stage(temp.path(), "orchard.md", "An invented orchard paragraph.");
+    with_db(|conn| {
+        let shelf = library_manage::create_collection(conn, "Garden shelf", None)?;
+        let other = library_manage::create_collection(conn, "Other shelf", None)?;
+        let mut members = Vec::new();
+        for n in 0..55 {
+            members.push(add(conn, &staged, &format!("Orchard {n}"))?);
+        }
+        library_manage::collect(conn, &shelf.id, &members, true)?;
+        library_manage::collect(conn, &other.id, &members[..1], true)?;
+        let outside = add(conn, &staged, "Outside the garden shelf")?;
+        library_manage::collect(conn, &other.id, std::slice::from_ref(&outside), true)?;
+        library_manage::set_source_state(conn, &members[..1], ItemState::Archived)?;
+        library_manage::set_source_state(conn, &members[1..2], ItemState::Trashed)?;
+        // Older callers may omit the new filter entirely.
+        let mut query: SearchLibrary = serde_json::from_str(r#"{"query":"orchard"}"#).unwrap();
+        assert!(query.collection_id.is_none());
+        query.collection_id = Some(shelf.id.clone());
+        let first = library::search(conn, &query)?;
+        assert_eq!(first.hits.len(), 50);
+        assert!(first.has_more);
+        query.offset = Some(50);
+        let second = library::search(conn, &query)?;
+        assert_eq!(second.hits.len(), 4);
+        assert!(!second.has_more);
+        let unique: std::collections::HashSet<_> = first
+            .hits
+            .iter()
+            .chain(&second.hits)
+            .map(|hit| &hit.source_id)
+            .collect();
+        assert_eq!(unique.len(), 54);
+        assert!(!unique.contains(&outside));
+        assert!(!unique.contains(&members[1]));
+        query.offset = None;
+        query.state = Some("archived".into());
+        let archived = library::search(conn, &query)?;
+        assert_eq!(archived.hits.len(), 1);
+        assert_eq!(archived.hits[0].source_id, members[0]);
+        assert!(archived.hits[0].archived);
+        query.collection_id = Some("missing-collection".into());
+        assert!(library::search(conn, &query)?.hits.is_empty());
+        Ok(())
+    });
+}
+
 fn code<T: std::fmt::Debug>(result: AppResult<T>) -> String {
     match result {
         Err(AppError::Conflict(m)) | Err(AppError::InvalidInput(m)) => {
@@ -86,6 +135,7 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
                     offset: None,
                     source_type: None,
                     language: None,
+                    collection_id: None,
                     state: None,
                 },
             )
@@ -106,6 +156,7 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
                 offset: None,
                 source_type: None,
                 language: None,
+                collection_id: None,
                 state: Some("active".into()),
             },
         )?;
@@ -117,6 +168,7 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
                 offset: None,
                 source_type: Some(SourceType::Notes),
                 language: Some("no-such-language".into()),
+                collection_id: None,
                 state: Some("archived".into()),
             },
         )?;
@@ -128,6 +180,7 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
                 offset: None,
                 source_type: Some(SourceType::Notes),
                 language: None,
+                collection_id: None,
                 state: Some("archived".into()),
             },
         )?;

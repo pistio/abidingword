@@ -684,6 +684,7 @@ fn adding_exactly_the_cited_file_to_the_library_reconnects_kept_citations() {
                     offset: None,
                     source_type: None,
                     language: None,
+                    collection_id: None,
                     state: None,
                 },
             )?
