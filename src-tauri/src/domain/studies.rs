@@ -152,6 +152,9 @@ pub struct CreateStudySection {
     pub title: String,
     #[serde(default)]
     pub guidance: Option<String>,
+    /// When adding an optional template part, retain its key and fields.
+    #[serde(default)]
+    pub template_section_key: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

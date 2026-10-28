@@ -11,7 +11,7 @@ interface AddPartProps {
   template: StudyTemplate | null;
   /** The study's parts now: a suggestion already there is not offered again. */
   sections: StudySection[];
-  onAdd: (part: { title: string; guidance?: string }) => Promise<void>;
+  onAdd: (part: { title: string; guidance?: string; templateSectionKey?: string }) => Promise<void>;
 }
 
 /**
@@ -30,7 +30,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
   const present = new Set(sections.flatMap((s) => [s.key ?? "", sectionTitle(s).toLocaleLowerCase()]));
   const suggestions = (template?.sections ?? [])
     .filter((s) => s.optional && !s.retired)
-    .map((s) => ({ key: s.key ?? "", title: sectionTitle(s), guidance: sectionGuidance(s) ?? undefined }))
+    .map((s) => ({ key: s.key ?? "", title: sectionTitle(s), guidance: sectionGuidance(s) ?? undefined, templateSectionKey: s.key ?? undefined }))
     .filter((s) => !present.has(s.key) && !present.has(s.title.toLocaleLowerCase()));
 
   const close = () => {
@@ -38,7 +38,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
     setTitle("");
     toggle.current?.focus();
   };
-  const add = async (part: { title: string; guidance?: string }) => {
+  const add = async (part: { title: string; guidance?: string; templateSectionKey?: string }) => {
     if (busy || !part.title.trim()) return;
     setBusy(true);
     try {

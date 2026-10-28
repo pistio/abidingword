@@ -181,7 +181,10 @@ pub fn create(conn: &Connection, input: &CreateStudy) -> AppResult<StudyDetail> 
         // even if the built-in template changes in a later version.
         let snapshot = match (&template, section.fields.is_empty()) {
             (Some(t), false) => Some(SectionFields {
-                template: t.key.clone(),
+                template: section
+                    .fields_source
+                    .clone()
+                    .unwrap_or_else(|| t.key.clone()),
                 version: section.fields_version,
                 fields: section.fields.clone(),
             }),

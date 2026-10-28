@@ -201,13 +201,17 @@ pub struct TemplateSection {
     /// its title and guidance in the interface language.
     #[serde(default, skip_serializing_if = "is_false")]
     pub retired: bool,
-    /// Structured answer fields (built-in templates only). A study copies
-    /// them as a snapshot when it is created.
+    /// Structured answer fields. A study copies them as a snapshot when it
+    /// is created; customised copies of built-ins retain their fields.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub fields: Vec<TemplateField>,
     /// Bumped when `fields` change in a way a snapshot should be able to tell.
     #[serde(default, skip_serializing_if = "is_zero")]
     pub fields_version: u32,
+    /// The built-in that supplies translated field labels and examples.
+    /// Set when the user customises a structured built-in template.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fields_source: Option<String>,
 }
 
 /// How a field is answered: one text, or a list of entries made of parts.

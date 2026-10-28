@@ -493,6 +493,319 @@
             }
           }
         }
+      },
+      "ten-step-exegesis": {
+        "name": "Zehn Schritte — Einen Bibeltext auslegen",
+        "description": "Eine gründliche Auslegung nach den zehn Schritten von Helge Stadelmann und Thomas Richter. Erläuterungen und das aufklappbare Beispiel zu Mt 8,18–27 sind eigenständig formuliert.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Mit dem Text vertraut werden",
+            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben.",
+            "goal": "Erste Beobachtungen und offene Fragen, noch keine fertige Auslegung.",
+            "example": "Mt 8,18–27 enthält zwei Gespräche zur Nachfolge und danach die Sturmstillung. Erste Fragen betreffen den Preis der Nachfolge, das Begraben der Toten, Kleinglauben und Jesu Vollmacht.",
+            "fields": {
+              "first-impression": {
+                "label": "Erster Eindruck",
+                "help": "Was scheint die Hauptaussage zu sein?"
+              },
+              "movement": {
+                "label": "Gedanklicher Verlauf",
+                "help": "Welche Szenen und Übergänge sind erkennbar?"
+              },
+              "questions": {
+                "label": "Fragen zum Text",
+                "help": "Fragen zunächst sammeln.",
+                "parts": {
+                  "verse": "Vers",
+                  "question": "Frage",
+                  "status": "Stand"
+                },
+                "add": "Frage hinzufügen",
+                "options": {
+                  "open": "Offen",
+                  "answered": "Geklärt"
+                }
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Die Textgrundlage feststellen",
+            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden.",
+            "goal": "Eine begründete Textgrundlage mit benannten Unsicherheiten.",
+            "example": "Mt 8,24 berichtet von einem heftigen Sturm auf dem See. Das griechische Wort betont die Intensität; zusätzliche Ereignisse, die nicht im Text stehen, dürfen daraus nicht abgeleitet werden.",
+            "fields": {
+              "comparisons": {
+                "label": "Übersetzungsvergleich",
+                "help": "Wortlaut und Bedeutung vergleichen.",
+                "parts": {
+                  "verse": "Vers",
+                  "renderings": "Übersetzungen",
+                  "significance": "Bedeutung"
+                },
+                "add": "Vergleich hinzufügen"
+              },
+              "manuscripts": {
+                "label": "Handschriftenhinweise",
+                "help": "Nur belegte Varianten festhalten."
+              },
+              "basis": {
+                "label": "Arbeitsgrundlage",
+                "help": "Welche Textausgabe oder Übersetzung wird verwendet?"
+              },
+              "uncertainties": {
+                "label": "Offene Textfragen",
+                "help": "Was lässt sich nicht sicher entscheiden?"
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Die ursprüngliche Kommunikationssituation klären",
+            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen.",
+            "goal": "Der geschichtliche Rahmen, der für diesen Abschnitt nötig ist.",
+            "example": "Matthäus zeigt Jesus als den verheißenen Messias. Das Geschehen liegt in Galiläa. Nachfolge bedeutete mehr als Unterricht: Jesus ruft Menschen, ihm persönlich zu folgen.",
+            "fields": {
+              "author-audience": {
+                "label": "Verfasser und Empfänger",
+                "help": "Was ist über Verfasser und Leser bekannt?"
+              },
+              "time-place": {
+                "label": "Zeit und Ort",
+                "help": "Handlungszeit und Entstehungszeit unterscheiden."
+              },
+              "purpose": {
+                "label": "Anlass und Absicht",
+                "help": "Wozu wurde geschrieben oder gesprochen?"
+              },
+              "background": {
+                "label": "Geschichtlicher und kultureller Hintergrund",
+                "help": "Nur für den Text relevante Tatsachen aufnehmen."
+              },
+              "sources": {
+                "label": "Quellen",
+                "help": "Woher stammen diese Angaben?"
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Den Zusammenhang erfassen",
+            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang.",
+            "goal": "Die Rolle des Textes im Buch und seine begründeten Grenzen.",
+            "example": "Auf die Bergpredigt (Mt 5–7) folgen Berichte über Jesu Vollmacht. Mt 8,23 verbindet den Ruf zur Nachfolge mit dem Boot: Die Jünger folgen Jesus. Die Episoden können auch einzeln ausgelegt werden.",
+            "fields": {
+              "boundaries": {
+                "label": "Textgrenzen",
+                "help": "Wo beginnt und endet die Einheit?"
+              },
+              "nearby": {
+                "label": "Unmittelbarer Zusammenhang",
+                "help": "Was steht davor und danach?"
+              },
+              "book": {
+                "label": "Zusammenhang im Buch",
+                "help": "Wie fügt sich der Abschnitt ein?"
+              },
+              "parallels": {
+                "label": "Vergleichsstellen",
+                "help": "Parallelen mit Unterschieden nennen.",
+                "parts": {
+                  "reference": "Bibelstelle",
+                  "contribution": "Beitrag zum Verständnis"
+                },
+                "add": "Stelle hinzufügen"
+              },
+              "whole-bible": {
+                "label": "Gesamtbiblischer Zusammenhang",
+                "help": "Was trägt die übrige Schrift bei?"
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Die Textart untersuchen",
+            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen.",
+            "goal": "Verstehen, wie die Form die Botschaft vermittelt.",
+            "example": "Mt 8,18–22 sind kurze Gespräche, Mt 8,23–27 ein Wunderbericht. Jesu Ruhe steht der Angst der Jünger gegenüber; dem Sturm folgt Stille; menschlicher Hilflosigkeit begegnet Jesu Vollmacht.",
+            "fields": {
+              "genre": {
+                "label": "Literarische Gattung",
+                "help": "Erzählung, Gedicht, Prophetie, Brief oder anderes?"
+              },
+              "form": {
+                "label": "Konkrete Textform",
+                "help": "Welche Form innerhalb der Gattung?"
+              },
+              "features": {
+                "label": "Sprachliche Merkmale",
+                "help": "Beobachtbare Mittel und ihre Wirkung.",
+                "parts": {
+                  "verse": "Vers",
+                  "feature": "Merkmal",
+                  "effect": "Bedeutung"
+                },
+                "add": "Merkmal hinzufügen"
+              },
+              "interpretation": {
+                "label": "Folgen für die Auslegung",
+                "help": "Wie beeinflusst die Form das Verständnis?"
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Wörter und Sätze untersuchen",
+            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung.",
+            "goal": "Begriffe und Gedankengänge nachvollziehbar erklären.",
+            "example": "Mt 8,20 stellt die Ruheplätze der Tiere Jesu fehlender Ruhestätte gegenüber. Mt 8,21–22 betont den Vorrang seines Rufes; der genaue Zustand des Vaters lässt sich aus dem Text nicht sicher bestimmen.",
+            "fields": {
+              "terms": {
+                "label": "Wörter und Ausdrücke",
+                "help": "Bedeutung im Zusammenhang prüfen.",
+                "parts": {
+                  "term": "Begriff",
+                  "verse": "Vers",
+                  "context": "Gebrauch und Kontext",
+                  "finding": "Ergebnis"
+                },
+                "add": "Begriff hinzufügen"
+              },
+              "connections": {
+                "label": "Satzbeziehungen",
+                "help": "Gegensätze, Gründe und Bedingungen markieren.",
+                "parts": {
+                  "verse": "Vers",
+                  "link": "Verbindung",
+                  "meaning": "Bedeutung"
+                },
+                "add": "Verbindung hinzufügen"
+              },
+              "questions": {
+                "label": "Offene Sprachfragen",
+                "help": "Was bleibt unklar?"
+              },
+              "sources": {
+                "label": "Sprachliche Hilfen",
+                "help": "Übersetzungen, Lexika und Grammatiken notieren."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Den Gedankengang entfalten",
+            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln.",
+            "goal": "Eine Gliederung, die aus dem Text hervorgeht.",
+            "example": "Mt 8,18–20: Kosten der Nachfolge; V. 21–22: Vorrang von Jesu Ruf; V. 23–25: Nachfolge in Gefahr; V. 26–27: Jesu Vollmacht über Wind und See.",
+            "fields": {
+              "flow": {
+                "label": "Verlauf und Verbindungen",
+                "help": "Wie entwickelt sich die Aussage?"
+              },
+              "outline": {
+                "label": "Textgliederung",
+                "help": "Verse und Überschriften begründet zuordnen.",
+                "parts": {
+                  "verses": "Verse",
+                  "heading": "Überschrift",
+                  "connection": "Zusammenhang"
+                },
+                "add": "Gliederungspunkt hinzufügen"
+              },
+              "diagram": {
+                "label": "Textschaubild",
+                "help": "Optional den Aufbau skizzieren."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Theologische Fragen klären",
+            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben.",
+            "goal": "Textgemäße und schriftgemäße Antworten.",
+            "example": "Mt 8,22 ist im Licht von Jesu Bekräftigung des Elterngebotes (Mt 15,4–6) zu verstehen. Die Sturmstillung erinnert an Gottes Herrschaft über das Meer (Ps 89,10; 107,23–30) und stellt die Frage nach Jesu Identität.",
+            "fields": {
+              "questions": {
+                "label": "Theologische Fragen",
+                "help": "Belege und begründete Antwort festhalten.",
+                "parts": {
+                  "question": "Frage",
+                  "verse": "Vers",
+                  "evidence": "Biblische Belege",
+                  "conclusion": "Ergebnis",
+                  "status": "Stand"
+                },
+                "add": "Frage hinzufügen",
+                "options": {
+                  "open": "Offen",
+                  "answered": "Geklärt"
+                }
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Den Beitrag der Stelle erklären.",
+                "parts": {
+                  "reference": "Bibelstelle",
+                  "relevance": "Bedeutung"
+                },
+                "add": "Verweis hinzufügen"
+              },
+              "coherence": {
+                "label": "Theologischer Zusammenhang",
+                "help": "Stimmt die Auslegung mit der Schrift überein?"
+              },
+              "unresolved": {
+                "label": "Ungelöste Fragen",
+                "help": "Was bleibt noch offen?"
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Die zentrale Aussage formulieren",
+            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen.",
+            "goal": "Eine präzise, überprüfbare Hauptaussage.",
+            "example": "Textgegenstand: Nachfolge Jesu angesichts seiner Ansprüche und Vollmacht. Textaussage: Jesus fordert Vorrang vor Sicherheiten und Vertrauen auch in Gefahr. Textthema: Nachfolge verlangt Hingabe und Vertrauen auf den Herrn, dessen Vollmacht größer ist als jede Gefahr.",
+            "fields": {
+              "subject": {
+                "label": "Textgegenstand — Worum geht es?",
+                "help": "Das Thema in wenigen Worten benennen."
+              },
+              "statement": {
+                "label": "Textaussage — Was wird gesagt?",
+                "help": "Die Aussage über den Gegenstand festhalten."
+              },
+              "theme": {
+                "label": "Textthema — Ein Satz",
+                "help": "Gegenstand und Aussage verbinden."
+              },
+              "text-check": {
+                "label": "Prüfung am Text",
+                "help": "Tragen alle Verse die Formulierung?"
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Die Bedeutung für heute erkennen und anwenden",
+            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen.",
+            "goal": "Eine treue, konkrete und begrenzte Anwendung.",
+            "example": "Mt 8 fordert zur Prüfung auf, ob Sicherheit und Bequemlichkeit vor Vertrauen auf Christus stehen. Die damalige Situation der Jünger lässt sich nicht einfach wiederholen. Jesu Anspruch auf Nachfolge bleibt, und Zuversicht gründet in seiner Vollmacht.",
+            "fields": {
+              "enduring-truth": {
+                "label": "Bleibende Wahrheit",
+                "help": "Was gilt über die damalige Situation hinaus?"
+              },
+              "differences": {
+                "label": "Unterschiede zu heute",
+                "help": "Heilsgeschichtliche und kulturelle Unterschiede benennen."
+              },
+              "examination": {
+                "label": "Persönliche Prüfung",
+                "help": "Wo fordert oder tröstet die Aussage?"
+              },
+              "response": {
+                "label": "Konkrete Antwort",
+                "help": "Was ist ein bestimmter Schritt des Glaubens oder Gehorsams?"
+              },
+              "limits": {
+                "label": "Grenzen der Anwendung",
+                "help": "Was darf nicht direkt übertragen werden?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notizen",
@@ -1238,6 +1551,7 @@
   },
   "fields": {
     "example": "Beispiel: Hosea 11",
+    "exampleMatthew": "Beispiel: Matthäus 8,18–27",
     "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deiner Studie und wird nie als deine Antwort gespeichert.",
     "goal": "Ziel",
     "status": "Bearbeitungsstand von „{{title}}“",

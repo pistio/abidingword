@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use rusqlite::{params, Connection, OptionalExtension, Row};
 
-use crate::db::{blocks, new_id, now, studies};
+use crate::db::{blocks, new_id, now, studies, templates};
 use crate::domain::validate::{self, DESCRIPTION_MAX_CHARS};
 use crate::domain::{
     BlockType, CreateStudySection, DeleteStudySection, FieldKind, Reorder, SectionFields,
@@ -78,18 +78,6 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<StudySection> {
     Ok(section)
 }
 
-pub(crate) fn insert(
-    conn: &Connection,
-    study_id: &str,
-    key: Option<&str>,
-    title: &str,
-    guidance: Option<&str>,
-    position: i64,
-    now: &str,
-) -> AppResult<String> {
-    insert_structured(conn, study_id, key, title, guidance, position, None, now)
-}
-
 /// Inserts a part with an optional snapshot of structured fields. The part
 /// starts without blocks: see [`seed_blocks`].
 #[allow(clippy::too_many_arguments)]
@@ -149,12 +137,51 @@ pub(crate) fn seed_blocks(
     Ok(())
 }
 
-/// Adds a section at the end of a study, with one empty paragraph.
+/// Adds a section at the end of a study. Suggested template parts keep their
+/// structured fields; an ordinary new section starts with one empty paragraph.
 pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudySection> {
-    studies::get(conn, &input.study_id)?;
+    let study = studies::get(conn, &input.study_id)?;
     let title = validate::title(&input.title, "section")?;
     let guidance =
         validate::optional_text(input.guidance.as_deref(), DESCRIPTION_MAX_CHARS, "guidance")?;
+    // Optional template parts must be resolved from the study's actual
+    // template, never from field definitions supplied by the caller.
+    let template_part = if let Some(key) = input.template_section_key.as_ref() {
+        if list(conn, &input.study_id)?
+            .iter()
+            .any(|section| section.key.as_deref() == Some(key))
+        {
+            return Err(AppError::InvalidInput(UserMessage::new(
+                "templates.partAlreadyAdded",
+                "This template part is already in the study.",
+            )));
+        }
+        let template_id = study.template_id.as_deref().ok_or_else(|| {
+            AppError::InvalidInput(UserMessage::new(
+                "templates.unknownPart",
+                "This template part is no longer available.",
+            ))
+        })?;
+        let template = templates::get(conn, template_id)?;
+        let part = template
+            .sections
+            .into_iter()
+            .find(|part| part.key.as_deref() == Some(key) && part.optional && !part.retired)
+            .ok_or_else(|| {
+                AppError::InvalidInput(UserMessage::new(
+                    "templates.unknownPart",
+                    "This template part is no longer available.",
+                ))
+            })?;
+        let snapshot = (!part.fields.is_empty()).then_some(SectionFields {
+            template: part.fields_source.clone().unwrap_or(template.key),
+            version: part.fields_version,
+            fields: part.fields,
+        });
+        Some((key.clone(), snapshot))
+    } else {
+        None
+    };
     let position: i64 = conn.query_row(
         "SELECT COALESCE(MAX(position), -1) + 1 FROM study_sections
          WHERE study_id = ?1 AND deleted_at IS NULL",
@@ -163,16 +190,26 @@ pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudyS
     )?;
     let now = now();
     let tx = conn.unchecked_transaction()?;
-    let id = insert(
+    let id = insert_structured(
         &tx,
         &input.study_id,
-        None,
+        template_part.as_ref().map(|(key, _)| key.as_str()),
         &title,
         guidance.as_deref(),
         position,
+        template_part
+            .as_ref()
+            .and_then(|(_, fields)| fields.as_ref()),
         &now,
     )?;
-    blocks::insert(&tx, &id, BlockType::Paragraph, 0, "", &now)?;
+    seed_blocks(
+        &tx,
+        &id,
+        template_part
+            .as_ref()
+            .and_then(|(_, fields)| fields.as_ref()),
+        &now,
+    )?;
     studies::touch(&tx, &input.study_id, &now)?;
     tx.commit()?;
     get(conn, &id)

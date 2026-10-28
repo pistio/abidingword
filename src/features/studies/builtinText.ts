@@ -8,6 +8,7 @@ import i18n from "i18next";
 import biblicalTheology from "../../../resources/templates/biblical-theology-study.json";
 import passage from "../../../resources/templates/passage-study.json";
 import pozetek from "../../../resources/templates/pozetek-study.json";
+import tenStep from "../../../resources/templates/ten-step-exegesis.json";
 import systematicTheology from "../../../resources/templates/systematic-theology-study.json";
 import teaching from "../../../resources/templates/teaching-study.json";
 import topical from "../../../resources/templates/topical-study.json";
@@ -21,7 +22,7 @@ interface BuiltinDefinition {
   sections: { key: string; title: string; guidance?: string | null; optional?: boolean; retired?: boolean }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [passage, pozetek, word, topical, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [passage, pozetek, tenStep, word, topical, biblicalTheology, systematicTheology, teaching];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */
@@ -86,6 +87,11 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
       title: sectionTitle({ key: s.key, title: s.title }),
       guidance: sectionGuidance({ key: s.key, guidance: s.guidance }),
       ...(s.optional ? { optional: true } : {}),
+      ...(s.fields?.length ? {
+        fields: s.fields,
+        fieldsVersion: s.fieldsVersion,
+        fieldsSource: s.fieldsSource ?? template.key,
+      } : {}),
     }));
 }
 

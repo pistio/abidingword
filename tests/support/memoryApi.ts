@@ -4,6 +4,7 @@
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
 import passageStudy from "../../resources/templates/passage-study.json";
 import pozetekStudy from "../../resources/templates/pozetek-study.json";
+import tenStepExegesis from "../../resources/templates/ten-step-exegesis.json";
 import systematicTheology from "../../resources/templates/systematic-theology-study.json";
 import teachingStudy from "../../resources/templates/teaching-study.json";
 import topicalStudy from "../../resources/templates/topical-study.json";
@@ -60,7 +61,7 @@ import type {
 
 import { newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
 
-const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, wordStudy, topicalStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, biblicalTheology, systematicTheology, teachingStudy];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -713,7 +714,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       // As the core: optional parts are offered later, retired ones are kept only for old studies.
       (template?.sections.filter((sec) => !sec.optional && !sec.retired) ?? [{ title: "Notes" }]).forEach((section, position) => {
         const fields = "fields" in section && section.fields?.length && template
-          ? { template: template.key, version: section.fieldsVersion ?? 0, fields: section.fields }
+          ? { template: section.fieldsSource ?? template.key, version: section.fieldsVersion ?? 0, fields: section.fields }
           : null;
         addSection(study.id, section, position, fields);
       });
@@ -779,8 +780,25 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       if (input.status) section.status = input.status;
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === section.id) };
     },
-    studySectionCreate: async ({ studyId, title, guidance }) => {
-      const sectionId = addSection(studyId, { title: requireTitle(title, "section"), guidance }, sectionsOf(studyId).length);
+    studySectionCreate: async ({ studyId, title, guidance, templateSectionKey }) => {
+      const study = find(state.studies, studyId, "study");
+      if (templateSectionKey && sectionsOf(studyId).some((section) => section.key === templateSectionKey)) {
+        throw new ApiError("invalidInput", "This template part is already in the study.");
+      }
+      const template = study.templateId ? find(state.templates, study.templateId, "template") : null;
+      const fromTemplate = templateSectionKey
+        ? template?.sections.find((part) => part.key === templateSectionKey && part.optional && !part.retired)
+        : null;
+      if (templateSectionKey && !fromTemplate) throw new ApiError("invalidInput", "This template part is no longer available.");
+      const fields = fromTemplate?.fields?.length && template
+        ? { template: fromTemplate.fieldsSource ?? template.key, version: fromTemplate.fieldsVersion ?? 0, fields: fromTemplate.fields }
+        : null;
+      const sectionId = addSection(
+        studyId,
+        { key: fromTemplate?.key, title: requireTitle(title, "section"), guidance },
+        sectionsOf(studyId).length,
+        fields,
+      );
       touch(studyId);
       const section = find(state.sections, sectionId, "section");
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === sectionId) };
@@ -913,7 +931,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const original = find(state.templates, templateId, "template");
       return api.templateCreate({
         name: `${original.name} (copy)`, description: original.description ?? undefined,
-        studyType: original.studyType, sections: original.sections.filter((sec) => !sec.retired).map((sec) => ({ ...sec })),
+        studyType: original.studyType, sections: original.sections.filter((sec) => !sec.retired).map((sec) => ({
+          ...sec,
+          ...(sec.fields?.length ? { fieldsSource: sec.fieldsSource ?? original.key } : {}),
+        })),
       });
     },
     templateDelete: async (templateId) => {

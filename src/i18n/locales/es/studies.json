@@ -493,6 +493,319 @@
             }
           }
         }
+      },
+      "ten-step-exegesis": {
+        "name": "Diez pasos — Interpretar un pasaje bíblico",
+        "description": "Estudio detallado basado en los diez pasos expuestos por Helge Stadelmann y Thomas Richter. Las explicaciones y el ejemplo opcional de Mateo 8:18–27 son de redacción independiente.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Familiarizarse con el texto",
+            "guidance": "Leer varias veces todo el pasaje, también en distintas traducciones. Observar su desarrollo y anotar preguntas sin responderlas precipitadamente.",
+            "goal": "Primeras observaciones y preguntas pendientes, no una interpretación definitiva.",
+            "example": "Mateo 8:18–27 presenta dos conversaciones sobre seguir a Jesús y después la calma de la tempestad. Surgen preguntas sobre el coste del discipulado, enterrar a los muertos, la poca fe y quién tiene autoridad sobre el viento y el mar.",
+            "fields": {
+              "first-impression": {
+                "label": "Primera impresión",
+                "help": "¿Cuál parece ser el asunto principal?"
+              },
+              "movement": {
+                "label": "Desarrollo del pasaje",
+                "help": "¿Qué escenas y transiciones se observan?"
+              },
+              "questions": {
+                "label": "Preguntas por investigar",
+                "help": "Anotarlas antes de buscar respuestas.",
+                "parts": {
+                  "verse": "Versículo",
+                  "question": "Pregunta",
+                  "status": "Estado"
+                },
+                "add": "Añadir pregunta",
+                "options": {
+                  "open": "Abierta",
+                  "answered": "Resuelta"
+                }
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Establecer la base textual",
+            "guidance": "Comparar traducciones y notas textuales. Diferenciar decisiones de traducción y variantes de manuscritos; señalar lo incierto.",
+            "goal": "Una base textual razonada con dudas de traducción documentadas.",
+            "example": "Mateo 8:24 describe una violenta tempestad en el lago. La expresión griega destaca su intensidad, pero no permite deducir hechos que el relato no menciona.",
+            "fields": {
+              "comparisons": {
+                "label": "Comparación de traducciones",
+                "help": "Registrar diferencias y su importancia.",
+                "parts": {
+                  "verse": "Versículo",
+                  "renderings": "Versiones",
+                  "significance": "Consecuencia para el sentido"
+                },
+                "add": "Añadir comparación"
+              },
+              "manuscripts": {
+                "label": "Notas sobre manuscritos",
+                "help": "Incluir solo variantes documentadas."
+              },
+              "basis": {
+                "label": "Texto de trabajo",
+                "help": "¿Qué edición o traducción sirve de base?"
+              },
+              "uncertainties": {
+                "label": "Dudas textuales pendientes",
+                "help": "¿Qué no puede decidirse con seguridad?"
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Aclarar la situación original de comunicación",
+            "guidance": "Preguntar quién escribió a quién, cuándo, dónde y por qué. Investigar el contexto histórico y cultural pertinente, distinguiendo datos de hipótesis.",
+            "goal": "Determinar el entorno histórico que ayuda a comprender el pasaje.",
+            "example": "Mateo presenta a Jesús como el Mesías prometido. Los hechos suceden durante su ministerio en Galilea. Seguir a un maestro implicaba mucho más que recibir enseñanza; Jesús llama a las personas a seguirlo personalmente.",
+            "fields": {
+              "author-audience": {
+                "label": "Autor y destinatarios",
+                "help": "¿Qué sabemos con fundamento sobre ellos?"
+              },
+              "time-place": {
+                "label": "Fecha y lugar",
+                "help": "Separar la época del suceso de la redacción."
+              },
+              "purpose": {
+                "label": "Propósito de la comunicación",
+                "help": "¿Por qué se dijo o escribió esto?"
+              },
+              "background": {
+                "label": "Contexto histórico y cultural",
+                "help": "¿Qué datos relevantes aclaran este texto?"
+              },
+              "sources": {
+                "label": "Fuentes consultadas",
+                "help": "Anotar referencias y grado de certeza."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Comprender el contexto",
+            "guidance": "Estudiar los límites del pasaje, los versículos cercanos, la estructura del libro, los relatos paralelos y el conjunto de la Biblia. Empezar por el contexto inmediato.",
+            "goal": "Entender la función y los límites de la unidad dentro del libro.",
+            "example": "Tras el Sermón del Monte (Mt 5–7), Mateo 8 muestra la autoridad de Jesús. Antes de la escena de la barca aparecen dos llamadas al discipulado; en 8:23 los discípulos siguen a Jesús a la barca. Las escenas también pueden estudiarse por separado.",
+            "fields": {
+              "boundaries": {
+                "label": "Límites del pasaje",
+                "help": "¿Dónde empieza y termina la unidad?"
+              },
+              "nearby": {
+                "label": "Contexto inmediato",
+                "help": "¿Qué ocurre antes y después?"
+              },
+              "book": {
+                "label": "Lugar dentro del libro",
+                "help": "¿Qué función cumple la unidad?"
+              },
+              "parallels": {
+                "label": "Pasajes paralelos",
+                "help": "Anotar aportes y diferencias.",
+                "parts": {
+                  "reference": "Referencia",
+                  "contribution": "Aporte a la comprensión"
+                },
+                "add": "Añadir pasaje"
+              },
+              "whole-bible": {
+                "label": "Contexto de toda la Biblia",
+                "help": "¿Qué aporta el resto de la Escritura?"
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Examinar el tipo de texto",
+            "guidance": "Identificar género, forma y recursos literarios como contraste, repetición y diálogo. No imponer una estructura ajena al texto.",
+            "goal": "Interpretar de acuerdo con la manera en que el pasaje comunica.",
+            "example": "Mateo 8:18–22 presenta dos diálogos centrados en las respuestas de Jesús; 8:23–27 es un relato de milagro. El miedo contrasta con el descanso de Jesús, la tempestad con la calma y la impotencia humana con su autoridad.",
+            "fields": {
+              "genre": {
+                "label": "Género literario",
+                "help": "¿Narración, poesía, profecía, carta, ley u otro?"
+              },
+              "form": {
+                "label": "Forma concreta",
+                "help": "¿Qué tipo de relato o discurso?"
+              },
+              "features": {
+                "label": "Recursos literarios",
+                "help": "Señalar los recursos realmente presentes.",
+                "parts": {
+                  "verse": "Versículo",
+                  "feature": "Recurso o contraste",
+                  "effect": "Efecto en el sentido"
+                },
+                "add": "Añadir recurso"
+              },
+              "interpretation": {
+                "label": "Consecuencias interpretativas",
+                "help": "¿Cómo orienta la forma la lectura?"
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Examinar palabras y oraciones",
+            "guidance": "Estudiar vocablos importantes y relaciones entre frases dentro del contexto. Una entrada de diccionario no demuestra por sí sola un significado.",
+            "goal": "Explicar las palabras y conexiones decisivas.",
+            "example": "En Mateo 8:20, los animales tienen refugio y el Hijo del Hombre no tiene dónde recostar la cabeza. En 8:21–22, la prioridad de la llamada de Jesús queda clara; no puede determinarse con certeza si el padre ya había muerto.",
+            "fields": {
+              "terms": {
+                "label": "Términos importantes",
+                "help": "Buscar su significado dentro de esta oración.",
+                "parts": {
+                  "term": "Palabra o expresión",
+                  "verse": "Versículo",
+                  "context": "Contexto y uso",
+                  "finding": "Conclusión fundamentada"
+                },
+                "add": "Añadir término"
+              },
+              "connections": {
+                "label": "Relaciones entre oraciones",
+                "help": "Observar contrastes, razones, condiciones y acciones.",
+                "parts": {
+                  "verse": "Versículo",
+                  "link": "Relación",
+                  "meaning": "Sentido"
+                },
+                "add": "Añadir relación"
+              },
+              "questions": {
+                "label": "Dudas lingüísticas",
+                "help": "¿Qué queda por aclarar?"
+              },
+              "sources": {
+                "label": "Herramientas lingüísticas",
+                "help": "Registrar traducciones, léxicos y gramáticas."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Desarrollar el hilo de pensamiento",
+            "guidance": "Volver al pasaje completo. Observar quién habla o actúa, cómo se enlazan las partes y dónde cambia el desarrollo. Elaborar un esquema justificado.",
+            "goal": "Un bosquejo que nazca del texto.",
+            "example": "Mateo 8:18–20: el coste de seguir a Jesús; vv. 21–22: la prioridad de su llamada; vv. 23–25: los discípulos lo siguen hacia el peligro; vv. 26–27: su autoridad sobre el viento y el mar.",
+            "fields": {
+              "flow": {
+                "label": "Secuencia y conexiones",
+                "help": "¿Cómo conduce cada parte a la siguiente?"
+              },
+              "outline": {
+                "label": "Bosquejo del pasaje",
+                "help": "Poner un título breve a cada segmento.",
+                "parts": {
+                  "verses": "Versículos",
+                  "heading": "Título",
+                  "connection": "Relación"
+                },
+                "add": "Añadir punto"
+              },
+              "diagram": {
+                "label": "Esquema visual del texto",
+                "help": "Opcional: dibujar o enlazar un esquema."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Aclarar cuestiones teológicas",
+            "guidance": "Examinar primero el pasaje y luego el contexto cercano y toda la Escritura. La Escritura interpreta la Escritura; mantener visibles las preguntas abiertas.",
+            "goal": "Conclusiones fieles al texto y al conjunto bíblico.",
+            "example": "Mateo 8:22 debe leerse junto con la confirmación del deber hacia los padres (Mt 15:4–6). El dominio de Dios sobre el mar (Sal 89:9; 107:23–30) da profundidad a la pregunta por la identidad de Jesús.",
+            "fields": {
+              "questions": {
+                "label": "Cuestiones teológicas",
+                "help": "Registrar pruebas, conclusiones y estado.",
+                "parts": {
+                  "question": "Pregunta",
+                  "verse": "Versículo",
+                  "evidence": "Evidencia bíblica",
+                  "conclusion": "Conclusión",
+                  "status": "Estado"
+                },
+                "add": "Añadir pregunta",
+                "options": {
+                  "open": "Abierta",
+                  "answered": "Resuelta"
+                }
+              },
+              "cross-references": {
+                "label": "Referencias cruzadas",
+                "help": "Explicar qué aporta cada texto.",
+                "parts": {
+                  "reference": "Referencia",
+                  "relevance": "Pertinencia"
+                },
+                "add": "Añadir referencia"
+              },
+              "coherence": {
+                "label": "Coherencia teológica",
+                "help": "¿Cómo encaja con la enseñanza bíblica?"
+              },
+              "unresolved": {
+                "label": "Cuestiones pendientes",
+                "help": "¿Qué sigue sin resolverse?"
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Formular el mensaje central",
+            "guidance": "Distinguir el asunto (de qué trata), la afirmación (qué dice acerca de ello) y el tema (una frase que los reúna). Comprobarlo con todo el pasaje.",
+            "goal": "Una síntesis central precisa y comprobable.",
+            "example": "Asunto: seguir a Jesús ante sus exigencias y autoridad. Afirmación: Jesús reclama prioridad sobre la seguridad y es digno de confianza en el peligro. Tema: seguir a Jesús exige entrega y confianza en el Señor cuya autoridad supera los peligros.",
+            "fields": {
+              "subject": {
+                "label": "Asunto del texto — ¿De qué trata?",
+                "help": "Nombrar el asunto sin adelantar la conclusión."
+              },
+              "statement": {
+                "label": "Afirmación — ¿Qué dice?",
+                "help": "Resumir lo que afirma sobre ese asunto."
+              },
+              "theme": {
+                "label": "Tema — Una sola frase",
+                "help": "Unir asunto y afirmación."
+              },
+              "text-check": {
+                "label": "Revisión de todo el pasaje",
+                "help": "¿Todas las partes respaldan la frase?"
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Comprender y aplicar hoy",
+            "guidance": "Pasar del sentido original a una aplicación responsable. Tener en cuenta la muerte y resurrección de Cristo y el derramamiento del Espíritu Santo; no trasladar automáticamente los detalles históricos.",
+            "goal": "Una respuesta concreta, fiel al texto y a su contexto.",
+            "example": "Mateo 8 invita a examinar si la comodidad y la seguridad desplazan la confianza en Cristo. No podemos reproducir la situación de los discípulos durante el ministerio terrenal de Jesús, pero su llamada permanece. La confianza descansa en su autoridad y no en la ausencia de dificultades.",
+            "fields": {
+              "enduring-truth": {
+                "label": "Verdad permanente",
+                "help": "¿Qué sigue siendo verdadero hoy?"
+              },
+              "differences": {
+                "label": "Diferencias entre entonces y ahora",
+                "help": "Considerar diferencias culturales y de la historia de la redención."
+              },
+              "examination": {
+                "label": "Examen personal",
+                "help": "¿Dónde desafía, corrige o consuela?"
+              },
+              "response": {
+                "label": "Respuesta concreta",
+                "help": "¿Qué paso específico de fe u obediencia corresponde?"
+              },
+              "limits": {
+                "label": "Límites de la aplicación",
+                "help": "¿Qué no debe trasladarse directamente?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notas",
@@ -1248,6 +1561,7 @@
   },
   "fields": {
     "example": "Ejemplo: Oseas 11",
+    "exampleMatthew": "Ejemplo: Mateo 8:18–27",
     "exampleNote": "Solo un ejemplo. No forma parte de su estudio y nunca se guarda como su respuesta.",
     "goal": "Objetivo",
     "status": "Progreso de «{{title}}»",

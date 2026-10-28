@@ -256,7 +256,7 @@ fn builtin_templates_are_installed_once() {
         templates::ensure_builtin(conn)?;
         let count: i64 =
             conn.query_row("SELECT COUNT(*) FROM study_templates", [], |r| r.get(0))?;
-        assert_eq!(count, 7, "the seven built-in templates");
+        assert_eq!(count, 8, "the eight built-in templates");
         let rewritten: i64 = conn.query_row(
             "SELECT COUNT(*) FROM study_templates WHERE revision <> 1",
             [],

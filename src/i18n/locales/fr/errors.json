@@ -89,7 +89,9 @@
   "templates": {
     "noSections": "Un modèle doit comporter au moins une partie de départ.",
     "tooManySections": "Un modèle peut comporter au plus {{max}} parties.",
-    "builtinReadOnly": "Les modèles intégrés ne peuvent pas être modifiés. Dupliquez-le pour créer votre propre version."
+    "builtinReadOnly": "Les modèles intégrés ne peuvent pas être modifiés. Dupliquez-le pour créer votre propre version.",
+    "unknownPart": "Cette partie du modèle n’est plus disponible.",
+    "partAlreadyAdded": "Cette partie du modèle figure déjà dans l’étude."
   },
   "sections": {
     "hasContent": "« {{title}} » contient encore du texte ou des notes."

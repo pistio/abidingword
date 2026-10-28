@@ -203,6 +203,7 @@ fn sections_can_be_added_renamed_reordered_and_removed() {
                 study_id: s.clone(),
                 title: "Questions".into(),
                 guidance: Some("Open questions".into()),
+                template_section_key: None,
             },
         )?;
         assert_eq!(extra.blocks.len(), 1);
@@ -346,7 +347,7 @@ fn blocks_support_quotations_and_questions_and_can_be_reordered() {
 // --- templates -------------------------------------------------------------
 
 #[test]
-fn seven_built_in_templates_exist_and_are_protected() {
+fn eight_built_in_templates_exist_and_are_protected() {
     with_db(|conn| {
         let all = templates::list(conn)?;
         let names: Vec<_> = all
@@ -359,6 +360,7 @@ fn seven_built_in_templates_exist_and_are_protected() {
             [
                 "Passage Study",
                 "POZETEK — Examine a Bible text",
+                "Ten steps — Interpret a Bible passage",
                 "Word Study",
                 "Topical Study",
                 "Biblical Theology Study",
@@ -434,11 +436,13 @@ fn built_in_templates_start_small_and_offer_the_rest_later() {
             .iter()
             .any(|s| s.retired && s.key.as_deref() == Some("exegesis")));
         // No built-in study template starts with more than six parts (the
-        // teaching template and the eight-part POZETEK method are the exceptions).
-        for template in templates::list(conn)?
-            .iter()
-            .filter(|t| t.is_builtin && t.key != "teaching-study" && t.key != "pozetek-study")
-        {
+        // teaching template and the POZETEK and Ten-Step methods are exceptions).
+        for template in templates::list(conn)?.iter().filter(|t| {
+            t.is_builtin
+                && t.key != "teaching-study"
+                && t.key != "pozetek-study"
+                && t.key != "ten-step-exegesis"
+        }) {
             let count = template.sections.iter().filter(|s| s.starts()).count();
             assert!((4..=6).contains(&count), "{}: {count}", template.key);
         }

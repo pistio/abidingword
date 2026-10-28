@@ -493,6 +493,319 @@
             }
           }
         }
+      },
+      "ten-step-exegesis": {
+        "name": "Dix étapes — Interpréter un passage biblique",
+        "description": "Une étude approfondie selon les dix étapes exposées par Helge Stadelmann et Thomas Richter. Les explications et l'exemple facultatif de Matthieu 8,18–27 sont rédigés indépendamment.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Se familiariser avec le texte",
+            "guidance": "Lire plusieurs fois le passage entier, y compris dans différentes traductions. Relever son mouvement et ses questions sans répondre trop vite.",
+            "goal": "Conserver les premières observations et les questions encore ouvertes.",
+            "example": "Matthieu 8,18–27 présente deux échanges sur la suite de Jésus, puis l'apaisement de la tempête. Les questions portent sur le prix de la vie de disciple, l'ensevelissement des morts, le peu de foi et l'identité de celui qui commande au vent et à la mer.",
+            "fields": {
+              "first-impression": {
+                "label": "Première impression",
+                "help": "Quel semble être le sujet principal à la première lecture ?"
+              },
+              "movement": {
+                "label": "Déroulement du passage",
+                "help": "Quelles scènes et transitions se distinguent ?"
+              },
+              "questions": {
+                "label": "Questions à examiner",
+                "help": "Les noter sans exiger de réponse immédiate.",
+                "parts": {
+                  "verse": "Verset",
+                  "question": "Question",
+                  "status": "État"
+                },
+                "add": "Ajouter une question",
+                "options": {
+                  "open": "Ouverte",
+                  "answered": "Résolue"
+                }
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Établir la base textuelle",
+            "guidance": "Comparer les traductions et les notes textuelles. Distinguer les choix de traduction des variantes de manuscrits et reconnaître les incertitudes.",
+            "goal": "Une base textuelle justifiée et les principales difficultés de traduction.",
+            "example": "En Matthieu 8,24, une violente tempête bouleverse le lac. Le terme grec souligne l'intensité de la scène, sans autoriser à ajouter des événements absents du récit.",
+            "fields": {
+              "comparisons": {
+                "label": "Comparaison des traductions",
+                "help": "Noter les différences réelles et leur portée.",
+                "parts": {
+                  "verse": "Verset",
+                  "renderings": "Formulations",
+                  "significance": "Portée pour le sens"
+                },
+                "add": "Ajouter une comparaison"
+              },
+              "manuscripts": {
+                "label": "Notes sur les manuscrits",
+                "help": "Ne relever que les variantes attestées."
+              },
+              "basis": {
+                "label": "Texte de travail",
+                "help": "Quelle édition ou traduction sert de base, et pourquoi ?"
+              },
+              "uncertainties": {
+                "label": "Questions textuelles ouvertes",
+                "help": "Que reste-t-il impossible à trancher ?"
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Clarifier la situation de communication initiale",
+            "guidance": "Se demander qui écrit à qui, quand, où et pourquoi. Étudier le contexte historique et culturel pertinent, en séparant faits et hypothèses.",
+            "goal": "Situer le passage dans son cadre historique utile.",
+            "example": "Matthieu présente Jésus comme le Messie promis. La scène se déroule pendant son ministère en Galilée. Suivre un maître impliquait bien plus qu'écouter des leçons ; Jésus appelle à le suivre personnellement.",
+            "fields": {
+              "author-audience": {
+                "label": "Auteur et destinataires",
+                "help": "Que peut-on établir à leur sujet ?"
+              },
+              "time-place": {
+                "label": "Date et lieu",
+                "help": "Distinguer le moment de l'événement de celui de la rédaction."
+              },
+              "purpose": {
+                "label": "But de la communication",
+                "help": "Pourquoi cette parole ou ce récit ?"
+              },
+              "background": {
+                "label": "Contexte historique et culturel",
+                "help": "Quels faits éclairent précisément ce passage ?"
+              },
+              "sources": {
+                "label": "Sources consultées",
+                "help": "Mentionner les références et leur fiabilité."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Comprendre le contexte",
+            "guidance": "Définir les limites du passage et sa place dans les versets voisins, le livre, les récits parallèles et l'ensemble de la Bible. Partir du contexte proche.",
+            "goal": "Comprendre la fonction de cette unité dans le livre.",
+            "example": "Après le Sermon sur la montagne (Mt 5–7), Matthieu 8 montre l'autorité de Jésus. Deux appels à le suivre précèdent la barque : en 8,23, les disciples suivent Jésus. Ces épisodes peuvent aussi être étudiés séparément.",
+            "fields": {
+              "boundaries": {
+                "label": "Limites du passage",
+                "help": "Où commence et finit l'unité ?"
+              },
+              "nearby": {
+                "label": "Contexte immédiat",
+                "help": "Que précède et suit ce passage ?"
+              },
+              "book": {
+                "label": "Place dans le livre",
+                "help": "Quelle fonction l'unité remplit-elle ?"
+              },
+              "parallels": {
+                "label": "Passages parallèles",
+                "help": "Comparer aussi les différences.",
+                "parts": {
+                  "reference": "Référence",
+                  "contribution": "Apport à la compréhension"
+                },
+                "add": "Ajouter un passage"
+              },
+              "whole-bible": {
+                "label": "Contexte biblique élargi",
+                "help": "Qu'apportent les autres Écritures ?"
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Examiner le genre du texte",
+            "guidance": "Identifier le genre, la forme et les procédés littéraires : contraste, répétition, dialogue ou parallélisme. Ne pas imposer de structure artificielle.",
+            "goal": "Lire le passage selon sa manière de communiquer.",
+            "example": "Matthieu 8,18–22 comporte deux brefs dialogues centrés sur les réponses de Jésus ; 8,23–27 est un récit de miracle. La peur des disciples contraste avec le repos de Jésus, la tempête avec le calme, l'impuissance humaine avec son autorité.",
+            "fields": {
+              "genre": {
+                "label": "Genre littéraire",
+                "help": "Récit, poésie, prophétie, lettre, loi ou autre ?"
+              },
+              "form": {
+                "label": "Forme précise",
+                "help": "De quel type de récit ou de discours s'agit-il ?"
+              },
+              "features": {
+                "label": "Procédés littéraires",
+                "help": "Noter les indices observables.",
+                "parts": {
+                  "verse": "Verset",
+                  "feature": "Procédé ou contraste",
+                  "effect": "Effet sur le sens"
+                },
+                "add": "Ajouter un procédé"
+              },
+              "interpretation": {
+                "label": "Conséquences pour l'interprétation",
+                "help": "Comment cette forme guide-t-elle la lecture ?"
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Examiner les mots et les phrases",
+            "guidance": "Étudier les termes importants et les liens entre phrases dans leur contexte. Une définition de dictionnaire ne prouve pas à elle seule le sens.",
+            "goal": "Comprendre les expressions et leurs relations dans le texte.",
+            "example": "En Matthieu 8,20, les animaux ont un abri, mais le Fils de l'homme n'a pas où reposer sa tête. En 8,21–22, Jésus montre la priorité de son appel ; le passage ne permet pas de savoir avec certitude si le père était déjà mort.",
+            "fields": {
+              "terms": {
+                "label": "Termes importants",
+                "help": "Étudier leur emploi dans ce contexte.",
+                "parts": {
+                  "term": "Mot ou expression",
+                  "verse": "Verset",
+                  "context": "Contexte et usage",
+                  "finding": "Conclusion justifiée"
+                },
+                "add": "Ajouter un terme"
+              },
+              "connections": {
+                "label": "Relations entre phrases",
+                "help": "Observer contrastes, raisons, conditions et actions.",
+                "parts": {
+                  "verse": "Verset",
+                  "link": "Lien",
+                  "meaning": "Portée"
+                },
+                "add": "Ajouter un lien"
+              },
+              "questions": {
+                "label": "Questions linguistiques ouvertes",
+                "help": "Que reste-t-il incertain ?"
+              },
+              "sources": {
+                "label": "Outils linguistiques",
+                "help": "Noter traductions, lexiques ou grammaires."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Déployer le fil de pensée",
+            "guidance": "Revenir à l'ensemble du passage : qui parle et agit, comment les parties s'enchaînent, où se produisent les changements ? Faire un schéma et un plan justifié.",
+            "goal": "Un plan fondé sur le texte, non imposé.",
+            "example": "Matthieu 8,18–20 : le prix de suivre Jésus ; v. 21–22 : la priorité de son appel ; v. 23–25 : les disciples le suivent dans le danger ; v. 26–27 : son autorité sur le vent et la mer.",
+            "fields": {
+              "flow": {
+                "label": "Progression et liens",
+                "help": "Comment les parties se suivent-elles ?"
+              },
+              "outline": {
+                "label": "Plan du passage",
+                "help": "Donner à chaque unité un titre fidèle au texte.",
+                "parts": {
+                  "verses": "Versets",
+                  "heading": "Titre",
+                  "connection": "Lien avec le reste"
+                },
+                "add": "Ajouter une partie"
+              },
+              "diagram": {
+                "label": "Schéma textuel",
+                "help": "Facultatif : dessiner la structure ou renvoyer à un schéma."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Éclaircir les questions théologiques",
+            "guidance": "Examiner d'abord le passage, puis le contexte proche et l'ensemble des Écritures. L'Écriture interprète l'Écriture ; laisser visibles les questions ouvertes.",
+            "goal": "Des conclusions fidèles au passage et au témoignage biblique.",
+            "example": "Matthieu 8,22 doit être lu avec l'affirmation de Jésus sur l'honneur dû aux parents (Mt 15,4–6). La domination de Dieu sur la mer (Ps 89,10 ; 107,23–30) approfondit la question de l'identité de Jésus.",
+            "fields": {
+              "questions": {
+                "label": "Questions théologiques",
+                "help": "Noter les preuves, la conclusion et son état.",
+                "parts": {
+                  "question": "Question",
+                  "verse": "Verset",
+                  "evidence": "Indices bibliques",
+                  "conclusion": "Conclusion",
+                  "status": "État"
+                },
+                "add": "Ajouter une question",
+                "options": {
+                  "open": "Ouverte",
+                  "answered": "Résolue"
+                }
+              },
+              "cross-references": {
+                "label": "Références croisées",
+                "help": "Expliquer l'apport du passage cité.",
+                "parts": {
+                  "reference": "Référence",
+                  "relevance": "Pertinence"
+                },
+                "add": "Ajouter une référence"
+              },
+              "coherence": {
+                "label": "Cohérence théologique",
+                "help": "Comment l'explication s'accorde-t-elle avec l'Écriture ?"
+              },
+              "unresolved": {
+                "label": "Questions non résolues",
+                "help": "Que faut-il encore examiner ?"
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Formuler le message central",
+            "guidance": "Distinguer le sujet (de quoi parle le texte), l'affirmation (ce qu'il en dit) et le thème (une phrase réunissant les deux). Vérifier l'ensemble.",
+            "goal": "Une proposition centrale précise et vérifiable.",
+            "example": "Sujet : suivre Jésus face à ses exigences et à son autorité. Affirmation : il demande la priorité sur la sécurité humaine et mérite la confiance même dans le danger. Thème : suivre Jésus exige engagement et confiance envers le Seigneur dont l'autorité dépasse tout danger.",
+            "fields": {
+              "subject": {
+                "label": "Sujet du texte — De quoi s'agit-il ?",
+                "help": "Nommer le sujet sans tirer déjà la conclusion."
+              },
+              "statement": {
+                "label": "Affirmation — Que dit le texte ?",
+                "help": "Résumer ce qu'il affirme du sujet."
+              },
+              "theme": {
+                "label": "Thème — Une phrase",
+                "help": "Unir le sujet et l'affirmation."
+              },
+              "text-check": {
+                "label": "Vérification dans tout le passage",
+                "help": "Chaque partie soutient-elle cette phrase ?"
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Comprendre et appliquer aujourd'hui",
+            "guidance": "Passer du sens initial à une application responsable. Tenir compte de la mort et de la résurrection du Christ et de l'effusion du Saint-Esprit ; ne pas transposer mécaniquement les détails historiques.",
+            "goal": "Une réponse concrète, fidèle au texte et à son cadre initial.",
+            "example": "Matthieu 8 invite à examiner la place du confort et de la sécurité face à la confiance en Christ. On ne peut pas reproduire exactement la situation des disciples pendant le ministère terrestre de Jésus. Son appel demeure, et la confiance repose sur son autorité, non sur l'absence d'épreuves.",
+            "fields": {
+              "enduring-truth": {
+                "label": "Vérité durable",
+                "help": "Qu'est-ce qui reste valable aujourd'hui ?"
+              },
+              "differences": {
+                "label": "Différences entre hier et aujourd'hui",
+                "help": "Noter les différences historiques et celles de l'histoire du salut."
+              },
+              "examination": {
+                "label": "Examen personnel",
+                "help": "Où ce texte interpelle-t-il, corrige-t-il ou console-t-il ?"
+              },
+              "response": {
+                "label": "Réponse concrète",
+                "help": "Quel pas précis de foi ou d'obéissance envisager ?"
+              },
+              "limits": {
+                "label": "Limites de l'application",
+                "help": "Que ne faut-il pas transposer directement ?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -1248,6 +1561,7 @@
   },
   "fields": {
     "example": "Exemple : Osée 11",
+    "exampleMatthew": "Exemple : Matthieu 8,18–27",
     "exampleNote": "Simple exemple. Il ne fait pas partie de votre étude et n’est jamais enregistré comme votre réponse.",
     "goal": "But",
     "status": "Avancement de « {{title}} »",

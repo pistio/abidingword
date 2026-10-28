@@ -493,6 +493,133 @@
             }
           }
         }
+      },
+      "ten-step-exegesis": {
+        "name": "Ten steps — Interpret a Bible passage",
+        "description": "A thorough passage study following the ten interpretive steps presented by Helge Stadelmann and Thomas Richter. Guidance and the optional Matthew 8:18–27 example are independently written.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Become familiar with the text",
+            "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely.",
+            "goal": "First impressions and unresolved questions, not a finished interpretation.",
+            "example": "Matthew 8:18–27 contains two encounters about following Jesus, followed by the calming of the storm. Initial questions include the cost of discipleship, the command to let the dead bury their dead, the disciples’ little faith, and the identity of the one who commands wind and sea.",
+            "fields": {
+              "first-impression": { "label": "First impression", "help": "What seems to be the passage's main concern on an initial reading?" },
+              "movement": { "label": "How the text develops", "help": "What scenes, changes or lines of thought are visible?" },
+              "questions": { "label": "Questions to investigate", "help": "Record questions now; do not force an early answer.", "parts": { "verse": "Verse", "question": "Question", "status": "Status" }, "options": { "open": "Open", "answered": "Answered" }, "add": "Add question" }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Establish the textual basis",
+            "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty.",
+            "goal": "A documented basis for reading this text, with important translation questions marked.",
+            "example": "In Matthew 8:24, translations describe a violent storm or disturbance on the lake. The Greek wording emphasises its intensity. Its precise force must be weighed in context, not expanded into events the passage does not report.",
+            "fields": {
+              "comparisons": { "label": "Translation comparisons", "help": "Note actual wording differences and whether they matter.", "parts": { "verse": "Verse", "renderings": "Different renderings", "significance": "Effect on understanding" }, "add": "Add comparison" },
+              "manuscripts": { "label": "Relevant manuscript notes", "help": "Record only variants supported by a trustworthy textual source." },
+              "basis": { "label": "Working text", "help": "Which text or translation will you primarily examine, and why?" },
+              "uncertainties": { "label": "Unsettled questions", "help": "What cannot yet be decided from the available evidence?" }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Clarify the original communication situation",
+            "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference.",
+            "goal": "The relevant historical setting, not a collection of unrelated background facts.",
+            "example": "Matthew presents Jesus as the promised Messiah. The events occur during his ministry in Galilee. Following a teacher then meant more than attending lessons; Jesus calls people to follow him personally and without treating comfort as the highest good.",
+            "fields": {
+              "author-audience": { "label": "Author and intended audience", "help": "What can reasonably be established about writer and readers?" },
+              "time-place": { "label": "Time and location", "help": "Distinguish the setting of the reported event from the time of writing." },
+              "purpose": { "label": "Purpose of communication", "help": "Why was the book or passage written or spoken?" },
+              "background": { "label": "Relevant historical and cultural background", "help": "What facts clarify this passage, and which are only hypotheses?" },
+              "sources": { "label": "Sources and degree of confidence", "help": "Cite the Bible passage, introduction or reference work you consulted." }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Understand the context",
+            "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons.",
+            "goal": "Explain how the passage contributes to its book and how its limits were chosen.",
+            "example": "After the Sermon on the Mount (Matthew 5–7), Matthew 8 portrays Jesus' authority through healings. Two calls to discipleship precede the boat scene: in 8:23 the disciples follow Jesus into the boat. The episodes can also be studied separately.",
+            "fields": {
+              "boundaries": { "label": "Passage boundaries", "help": "Where does this unit begin and end? What indicates the boundaries?" },
+              "nearby": { "label": "Immediate context", "help": "What comes directly before and after?" },
+              "book": { "label": "Place in the book", "help": "How does this unit contribute to the book's flow?" },
+              "parallels": { "label": "Related passages", "help": "List parallels without assuming they are identical.", "parts": { "reference": "Reference", "contribution": "What it clarifies" }, "add": "Add parallel" },
+              "whole-bible": { "label": "Wider biblical context", "help": "How does the unit relate to Scripture's wider testimony?" }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Examine the type of text",
+            "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern.",
+            "goal": "An interpretation shaped by the way this passage communicates.",
+            "example": "Matthew 8:18–22 contains two short dialogues centred on Jesus' replies; verses 23–27 form a miracle narrative. The disciples fear while Jesus sleeps; the fierce storm gives way to calm; helpless people face Jesus' authority.",
+            "fields": {
+              "genre": { "label": "Literary genre", "help": "Is it narrative, poetry, prophecy, letter, law, parable or another genre?" },
+              "form": { "label": "Form within the genre", "help": "What kind of narrative, speech or argument is it?" },
+              "features": { "label": "Literary features", "help": "What can actually be observed in the wording?", "parts": { "verse": "Verse", "feature": "Feature or contrast", "effect": "Contribution to meaning" }, "add": "Add feature" },
+              "interpretation": { "label": "Implications for interpretation", "help": "How should this literary form shape your reading?" }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Examine words and sentences",
+            "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning.",
+            "goal": "Explain significant wording and relationships within the passage.",
+            "example": "In Matthew 8:20, animals have resting places but the Son of Man has nowhere to lay his head: the contrast challenges expectations of secure comfort. In 8:21–22, the issue is the priority of Jesus' call. The father's circumstances cannot be established with certainty from these verses.",
+            "fields": {
+              "terms": { "label": "Important terms", "help": "Determine meaning from use in this sentence and context.", "parts": { "term": "Word or expression", "verse": "Verse", "context": "Context and usage", "finding": "Supported conclusion" }, "add": "Add term" },
+              "connections": { "label": "Sentence relationships", "help": "Look for contrasts, reasons, conditions, actions and their objects.", "parts": { "verse": "Verse", "link": "Connection", "meaning": "Effect on meaning" }, "add": "Add connection" },
+              "questions": { "label": "Open linguistic questions", "help": "Which uncertainties remain?" },
+              "sources": { "label": "Language tools consulted", "help": "Record translations, lexicons or grammatical sources." }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Trace the train of thought",
+            "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline.",
+            "goal": "A clear outline drawn from the text, not imposed on it.",
+            "example": "One possible outline of Matthew 8:18–27: vv. 18–20, the cost of following Jesus; vv. 21–22, the priority of his call; vv. 23–25, disciples follow him into danger; vv. 26–27, Jesus reveals his authority over wind and sea.",
+            "fields": {
+              "flow": { "label": "Sequence and connections", "help": "How does each part lead into the next?" },
+              "outline": { "label": "Outline of the passage", "help": "Give each segment a short, text-supported heading.", "parts": { "verses": "Verses", "heading": "Heading", "connection": "How it connects" }, "add": "Add outline point" },
+              "diagram": { "label": "Text diagram or structural notes", "help": "Optional: sketch the logic or refer to a diagram in the study workspace." }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Clarify theological questions",
+            "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible.",
+            "goal": "Interpret theological claims in a way that is faithful to this text and the whole Bible.",
+            "example": "Matthew 8:22 raises the question of honouring parents: Jesus affirms that duty elsewhere (Matthew 15:4–6), so his words cannot abolish it universally. The storm narrative invites comparison with God's rule over the sea (Psalm 89:10; 107:23–30), sharpening the question of Jesus' identity.",
+            "fields": {
+              "questions": { "label": "Theological questions", "help": "Give evidence, a reasoned answer and a clear status.", "parts": { "question": "Question", "verse": "Verse", "evidence": "Textual evidence", "conclusion": "Conclusion", "status": "Status" }, "options": { "open": "Open", "answered": "Answered" }, "add": "Add question" },
+              "cross-references": { "label": "Cross-references", "help": "Explain their contribution, not merely their similarity.", "parts": { "reference": "Reference", "relevance": "Relevance" }, "add": "Add reference" },
+              "coherence": { "label": "Theological coherence", "help": "How does the reading fit the Bible's testimony without silencing this passage?" },
+              "unresolved": { "label": "Questions still open", "help": "Which questions require more study or remain uncertain?" }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Formulate the central message",
+            "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage.",
+            "goal": "A brief and defensible statement of the passage's central message.",
+            "example": "Subject: following Jesus in view of his demands and authority. Statement: Jesus calls for priority over security and other obligations; his followers may trust his authority even in danger. Theme: Following Jesus requires wholehearted commitment and trust in the Lord whose authority is greater than the dangers his disciples face.",
+            "fields": {
+              "subject": { "label": "Text subject — What is it about?", "help": "Name the topic without yet making the text's claim." },
+              "statement": { "label": "Text statement — What does it say?", "help": "Summarise the passage's claim about this subject." },
+              "theme": { "label": "Text theme — One sentence", "help": "Combine subject and statement in a concise proposition." },
+              "text-check": { "label": "Check against the whole passage", "help": "Does every part support this theme? What may need refinement?" }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Understand and apply the meaning today",
+            "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today.",
+            "goal": "A faithful, concrete response grounded in the text and attentive to its original setting.",
+            "example": "Matthew 8 calls readers to examine where comfort or security outranks trust in Christ. The disciples' circumstances during Jesus' earthly ministry cannot simply be reproduced today, but his claim on discipleship remains. Confidence rests in Christ's authority, not in the absence of difficulty.",
+            "fields": {
+              "enduring-truth": { "label": "Enduring truth", "help": "Which truth applies beyond the original situation?" },
+              "differences": { "label": "Differences between then and now", "help": "Consider covenant and redemptive-historical differences as well as culture." },
+              "examination": { "label": "Personal examination", "help": "Where does this text challenge, correct, encourage or comfort?" },
+              "response": { "label": "Concrete response", "help": "What is an honest, specific next response of faith or obedience?" },
+              "limits": { "label": "Limits of application", "help": "What must not be transferred directly or promised without warrant?" }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -1238,6 +1365,7 @@
   },
   "fields": {
     "example": "Example: Hosea 11",
+    "exampleMatthew": "Example: Matthew 8:18–27",
     "exampleNote": "An example only. It is not part of your study and is never saved as your answer.",
     "goal": "Goal",
     "status": "Progress of “{{title}}”",

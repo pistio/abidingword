@@ -203,10 +203,10 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     }
   };
 
-  const addSection = async (part: { title: string; guidance?: string }) => {
+  const addSection = async (part: { title: string; guidance?: string; templateSectionKey?: string }) => {
     setError(null);
     try {
-      const created = await api.studySectionCreate({ studyId: study.id, title: part.title, guidance: part.guidance });
+      const created = await api.studySectionCreate({ studyId: study.id, ...part });
       setNewSection(created.id);
       detail.reload();
     } catch (e) {

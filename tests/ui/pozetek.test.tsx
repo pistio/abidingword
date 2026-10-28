@@ -6,6 +6,7 @@ import pozetek from "../../resources/templates/pozetek-study.json";
 import { setLanguage } from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderApp } from "../support/render";
+import { localizedSections } from "@/features/studies/builtinText";
 
 // The POZETEK built-in template (Phase 1). All text is invented.
 
@@ -21,6 +22,60 @@ async function withPozetek() {
 }
 
 describe("a new POZETEK study", () => {
+  it("keeps structured fields, status and examples when its template is customised", async () => {
+    const api = createMemoryApi();
+    const builtin = api.state.templates.find((t) => t.key === "pozetek-study")!;
+    const personalised = await api.templateCreate({
+      name: "My POZETEK",
+      studyType: "passage",
+      sections: localizedSections(builtin).map((section, index) =>
+        index === 0 ? { ...section, title: "My people" } : section),
+    });
+    const duplicate = await api.templateDuplicate(personalised.id);
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Study" });
+    const { study } = await api.studyCreate({ projectId: project.id, title: "Hosea 11", templateId: duplicate.id });
+    const sections = await api.studySectionList(study.id);
+    expect(sections).toHaveLength(8);
+    expect(sections[0]!.title).toBe("My people");
+    expect(sections[0]!.fields).toEqual({
+      template: "pozetek-study",
+      version: pozetek.sections[0]!.fieldsVersion,
+      fields: pozetek.sections[0]!.fields,
+    });
+    const { user } = await renderApp(api);
+    await user.click(await screen.findByRole("button", { name: /Hosea 11/ }));
+    const part = await screen.findByRole("region", { name: "My people" });
+    expect(within(part).getByLabelText("Author")).toHaveValue("");
+    expect(within(part).getByRole("button", { name: "Example: Hosea 11" })).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("adds an optional structured part later without losing its fields", async () => {
+    const api = createMemoryApi();
+    const builtin = api.state.templates.find((t) => t.key === "pozetek-study")!;
+    const personalised = await api.templateCreate({
+      name: "Optional place",
+      studyType: "passage",
+      sections: localizedSections(builtin).map((part) =>
+        part.key === "place" ? { ...part, optional: true } : part),
+    });
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Study" });
+    const { study } = await api.studyCreate({ projectId: project.id, title: "Deferred place", templateId: personalised.id });
+    expect((await api.studySectionList(study.id)).map((s) => s.key)).not.toContain("place");
+
+    const { user } = await renderApp(api);
+    await user.click(await screen.findByRole("button", { name: /Deferred place/ }));
+    await user.click(screen.getByRole("button", { name: "Add a part" }));
+    await user.click(screen.getByRole("button", { name: /^O — Place/ }));
+
+    await waitFor(async () => {
+      const sections = await api.studySectionList(study.id);
+      const place = sections.find((s) => s.key === "place");
+      expect(place?.fields?.template).toBe("pozetek-study");
+      expect(place?.fields?.fields).toEqual(pozetek.sections[1]!.fields);
+    });
+    expect(await screen.findByRole("region", { name: /^O — Place/ })).toBeInTheDocument();
+  });
+
   it("has the parts in the order P-O-Z-E-T-E-K and then the personal application, all empty", async () => {
     const { api, studyId } = await withPozetek();
     const sections = await api.studySectionList(studyId);

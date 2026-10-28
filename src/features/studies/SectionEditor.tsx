@@ -73,6 +73,9 @@ export function SectionEditor(props: SectionEditorProps) {
   const structured = section.fields !== null;
   const goal = structured ? structuredOptional(section, "goal") : null;
   const example = structured ? structuredOptional(section, "example") : null;
+  const exampleLabel = section.fields?.template === "ten-step-exegesis"
+    ? t("studies.fields.exampleMatthew")
+    : t("studies.fields.example");
   const exampleId = useId();
   const [showExample, setShowExample] = useState(false);
   const free = structured ? section.blocks.filter((b) => b.fieldKey === null) : section.blocks;
@@ -261,7 +264,7 @@ export function SectionEditor(props: SectionEditorProps) {
                 className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-link hover:bg-bg-secondary"
               >
                 <ChevronRight className={`size-4 transition-transform ${showExample ? "rotate-90" : ""}`} aria-hidden="true" />
-                {t("studies.fields.example")}
+                {exampleLabel}
               </button>
             )}
           </div>

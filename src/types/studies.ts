@@ -144,9 +144,11 @@ export interface TemplateSection {
   optional?: boolean;
   /** Built-in only: no longer offered; kept so that older studies still show it translated. */
   retired?: boolean;
-  /** Structured answer fields (built-in templates only). */
+  /** Structured answer fields; retained in customised copies of built-ins. */
   fields?: TemplateField[];
   fieldsVersion?: number;
+  /** Built-in template supplying translated labels for these fields. */
+  fieldsSource?: string;
 }
 
 /** A part a new study starts with (not optional, not retired). */

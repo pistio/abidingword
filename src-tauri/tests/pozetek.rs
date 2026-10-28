@@ -7,8 +7,9 @@ use std::path::Path;
 use abiding_word_lib::db::migrations::{self, MIGRATIONS};
 use abiding_word_lib::db::{blocks, projects, sections, studies, templates, workspaces, Database};
 use abiding_word_lib::domain::{
-    BlockType, CreateProject, CreateStudy, CreateStudyBlock, DuplicateStudy, FieldKind,
-    SectionStatus, StudyDetail, UpdateStudyBlock, UpdateStudySection,
+    BlockType, CreateProject, CreateStudy, CreateStudyBlock, CreateStudySection, DuplicateStudy,
+    FieldKind, SectionStatus, StudyDetail, TemplateInput, UpdateStudyBlock, UpdateStudySection,
+    UpdateTemplate,
 };
 use abiding_word_lib::error::{AppError, AppResult};
 use rusqlite::Connection;
@@ -23,6 +24,114 @@ const KEYS: [&str; 8] = [
     "core",
     "application",
 ];
+
+#[test]
+fn a_customised_template_retains_fields_and_their_translation_source() {
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|conn| {
+        let builtin = templates::get_by_key(conn, "pozetek-study")?;
+        let copy = templates::duplicate(conn, &builtin.id)?;
+        assert!(!copy.is_builtin);
+        assert_eq!(copy.sections.len(), KEYS.len());
+        assert!(copy.sections.iter().all(|section| {
+            !section.fields.is_empty() && section.fields_source.as_deref() == Some("pozetek-study")
+        }));
+
+        let mut edited = copy.sections.clone();
+        edited[0].title = "People (customised)".into();
+        let updated = templates::update(
+            conn,
+            &UpdateTemplate {
+                id: copy.id.clone(),
+                template: TemplateInput {
+                    name: "POZETEK (personal)".into(),
+                    description: None,
+                    study_type: copy.study_type,
+                    sections: edited,
+                },
+            },
+        )?;
+        assert_eq!(updated.sections[0].fields, builtin.sections[0].fields);
+
+        let workspace = workspaces::get_default(conn)?;
+        let project = projects::create(
+            conn,
+            &CreateProject {
+                workspace_id: workspace.id,
+                title: "Customised study".into(),
+                description: None,
+            },
+        )?;
+        let study = studies::create(
+            conn,
+            &CreateStudy {
+                project_id: project.id.clone(),
+                title: "Hosea 11".into(),
+                template_id: Some(copy.id),
+                ..Default::default()
+            },
+        )?;
+        assert_eq!(study.sections[0].title, "People (customised)");
+        let snapshot = study.sections[0].fields.as_ref().unwrap();
+        assert_eq!(snapshot.template, "pozetek-study");
+        assert_eq!(snapshot.version, builtin.sections[0].fields_version);
+        assert_eq!(snapshot.fields, builtin.sections[0].fields);
+
+        // Mark one structured part as optional in the customised template.
+        // Adding it later must retain its fields and origin too.
+        let mut later = updated.sections.clone();
+        later[1].optional = true;
+        templates::update(
+            conn,
+            &UpdateTemplate {
+                id: updated.id.clone(),
+                template: TemplateInput {
+                    name: updated.name,
+                    description: updated.description,
+                    study_type: updated.study_type,
+                    sections: later,
+                },
+            },
+        )?;
+        let deferred = studies::create(
+            conn,
+            &CreateStudy {
+                project_id: project.id,
+                title: "Hosea 11 (deferred)".into(),
+                template_id: Some(updated.id),
+                ..Default::default()
+            },
+        )?;
+        assert_eq!(deferred.sections.len(), 7);
+        let place = sections::create(
+            conn,
+            &CreateStudySection {
+                study_id: deferred.study.id,
+                title: "Place".into(),
+                guidance: None,
+                template_section_key: Some("place".into()),
+            },
+        )?;
+        assert_eq!(place.key.as_deref(), Some("place"));
+        assert_eq!(place.fields.as_ref().unwrap().template, "pozetek-study");
+        assert!(!place.blocks.is_empty());
+        for invalid_key in ["place", "core", "does-not-exist"] {
+            let rejected = sections::create(
+                conn,
+                &CreateStudySection {
+                    study_id: place.study_id.clone(),
+                    title: "Not allowed".into(),
+                    guidance: None,
+                    template_section_key: Some(invalid_key.into()),
+                },
+            );
+            assert!(matches!(rejected, Err(AppError::InvalidInput(_))));
+        }
+        assert_eq!(sections::list(conn, &place.study_id)?.len(), 8);
+        Ok(())
+    })
+    .unwrap();
+}
 
 fn make(conn: &Connection) -> AppResult<StudyDetail> {
     let workspace = workspaces::get_default(conn)?;
