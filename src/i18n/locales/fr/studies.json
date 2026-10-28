@@ -2293,15 +2293,15 @@
     "formatLegend": "Que voulez-vous préparer ?",
     "formats": {
       "message": {
-        "name": "Message",
+        "name": "Prédication / Exposé",
         "hint": "Une prédication, un exposé ou une méditation : un message central, une introduction, des points principaux et une conclusion."
       },
       "group": {
-        "name": "Étude biblique en groupe",
+        "name": "Étude biblique",
         "hint": "Guidée par l’échange : une ouverture, le texte biblique, des questions et des réponses, une conclusion."
       },
       "lesson": {
-        "name": "Leçon interactive",
+        "name": "Enseignement biblique",
         "hint": "Pour enfants, jeunes ou adultes : des étapes comme la lecture biblique, une explication, des questions, une activité ou une image."
       }
     },
@@ -2638,7 +2638,7 @@
     "label": "Titre du bloc",
     "guidance": "Indications facultatives",
     "query": "Texte à rechercher ou passage",
-    "editionDefault": "Identifiant de l’édition par défaut (facultatif)",
+    "editionDefault": "Édition biblique par défaut (facultative)",
     "up": "Monter",
     "down": "Descendre",
     "duplicate": "Dupliquer le bloc",

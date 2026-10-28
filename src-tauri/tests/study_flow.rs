@@ -3,8 +3,8 @@ use abiding_word_lib::db::{
     blocks, migrations, projects, studies, templates, workspaces, Database,
 };
 use abiding_word_lib::domain::{
-    BlockType, CreateProject, CreateStudy, CreateStudyBlock, TemplateInput, UpdateStudyBlock,
-    UpdateTemplate,
+    BlockType, CreateProject, CreateStudy, CreateStudyBlock, DuplicateStudy, TemplateInput,
+    UpdateStudyBlock, UpdateTemplate,
 };
 use abiding_word_lib::filesystem::DataDirs;
 use abiding_word_lib::portability::backup;
@@ -27,6 +27,13 @@ fn personal_blocks_and_evidence_survive_template_changes_restart_and_backup() {
         let evidence = blocks::create(conn, &CreateStudyBlock { section_id: part.id.clone(), block_type: BlockType::Quotation, field_key: Some("block-7".into()), content: None })?;
         blocks::update(conn, &UpdateStudyBlock { id: evidence.id, content: Some("JHN 15:5 (SRC)\nKept source text".into()), data: Some(r#"{"kind":"search","query":"vine","translationId":"edition-a","translationName":"Source edition (SRC)","reference":"JHN 15:5","text":"Kept source text"}"#.into()) })?;
         let saved = studies::get_detail(conn, &study.study.id)?;
+        let full = studies::duplicate(conn, &DuplicateStudy { study_id: saved.study.id.clone(), include_content: true })?;
+        assert_eq!(full.sections[0].fields, saved.sections[0].fields);
+        assert_eq!(full.sections[0].blocks.iter().map(|block| (&block.content, &block.data)).collect::<Vec<_>>(), saved.sections[0].blocks.iter().map(|block| (&block.content, &block.data)).collect::<Vec<_>>());
+        let structure = studies::duplicate(conn, &DuplicateStudy { study_id: saved.study.id.clone(), include_content: false })?;
+        assert_eq!(structure.sections[0].fields, saved.sections[0].fields);
+        assert_eq!(structure.sections[0].blocks.len(), 1);
+        assert!(structure.sections.iter().flat_map(|section| &section.blocks).all(|block| block.content.is_empty() && block.data.is_none()));
         let mut changed = personal.sections.clone();
         changed[0].fields.reverse();
         changed[0].fields[0].label = Some("Changed only for future studies".into());
@@ -87,6 +94,18 @@ fn legacy_definitions_and_new_writing_templates_coexist_and_reject_ambiguous_blo
             }
         }
         let source = templates::get_by_key(conn, "word-research-study")?;
+        let mut legacy_sections = source.sections.clone();
+        legacy_sections[0].fields[0].key = "legacy_identifier_한글".into();
+        let preserved = templates::create(
+            conn,
+            &TemplateInput {
+                name: "Legacy identifiers".into(),
+                description: None,
+                study_type: source.study_type,
+                sections: legacy_sections.clone(),
+            },
+        )?;
+        assert_eq!(preserved.sections, legacy_sections);
         let mut sections = source.sections;
         let duplicate = sections[0].fields[0].clone();
         sections[0].fields.push(duplicate);

@@ -31,12 +31,12 @@ const BUILTIN: &[&str] = &[
     include_str!("../../../resources/templates/biblical-theology-study.json"),
     include_str!("../../../resources/templates/systematic-theology-study.json"),
     include_str!("../../../resources/templates/teaching-study.json"),
+    include_str!("../../../resources/templates/pozetek-writing-study.json"),
+    include_str!("../../../resources/templates/ten-step-writing-study.json"),
     include_str!("../../../resources/templates/word-research-study.json"),
     include_str!("../../../resources/templates/topical-research-study.json"),
     include_str!("../../../resources/templates/character-research-study.json"),
     include_str!("../../../resources/templates/book-research-study.json"),
-    include_str!("../../../resources/templates/pozetek-writing-study.json"),
-    include_str!("../../../resources/templates/ten-step-writing-study.json"),
 ];
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -219,18 +219,18 @@ fn validated(input: &TemplateInput) -> AppResult<(String, Option<String>, Vec<Te
         if section.fields.len() > 40 {
             return Err(AppError::InvalidInput(
                 UserMessage::new(
-                    "templates.tooManySections",
+                    "templates.tooManyBlocks",
                     "A part can have at most 40 blocks.",
                 )
                 .with("max", 40),
             ));
         }
         for field in &section.fields {
-            let key = validate::part_key(Some(&field.key))?;
-            if key.as_deref() != Some(field.key.as_str()) || !field_keys.insert(&field.key) {
+            // Legacy field identities were arbitrary strings; do not normalise or restrict them.
+            if field.key.is_empty() || !field_keys.insert(&field.key) {
                 return Err(AppError::InvalidInput(
                     UserMessage::new(
-                        "templates.duplicateKey",
+                        "templates.duplicateBlockKey",
                         "Blocks need distinct, nonempty keys.",
                     )
                     .with("key", &field.key),

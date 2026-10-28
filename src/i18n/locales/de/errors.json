@@ -149,7 +149,9 @@
     "duplicateKey": "Zwei Teile der Vorlage sind derselbe Teil. Entferne einen davon.",
     "invalidKey": "Die Kennung dieses Teils ist ungültig.",
     "unknownPart": "Dieser Vorlagenteil ist nicht mehr verfügbar.",
-    "partAlreadyAdded": "Dieser Vorlagenteil ist bereits im Bibelstudium enthalten."
+    "partAlreadyAdded": "Dieser Vorlagenteil ist bereits im Bibelstudium enthalten.",
+    "tooManyBlocks": "Ein Teil kann höchstens {{max}} Bausteine enthalten.",
+    "duplicateBlockKey": "Bausteine brauchen unterschiedliche, nicht leere Kennungen."
   },
   "sections": {
     "hasContent": "„{{title}}“ enthält noch Text oder Notizen.",

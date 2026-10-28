@@ -91,12 +91,15 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
   const save = useCallback(
     async (content: string) => {
       try {
-        await api.studyBlockUpdate({ id: await ensure(), content });
+        const saved = await api.studyBlockUpdate({ id: await ensure(), content });
+        const current = (await api.studySectionList(section.studyId)).find(part => part.id === section.id);
+        if (current) onChange(current);
+        else onChange({ ...section, blocks: section.blocks.map(block => block.id === saved.id ? saved : block) });
       } catch (e) {
         onError(toApiError(e).message);
       }
     },
-    [api, ensure, onError],
+    [api, ensure, onError, onChange, section],
   );
   const { schedule, flush } = useAutosave(save);
   const area = useRef<HTMLTextAreaElement>(null);

@@ -50,6 +50,7 @@ interface FormProps {
 function Form({ templateId, initial, onClose }: FormProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const editions = useLoad(useCallback(() => api.bibleList(), [api]));
   const id = useId();
   const heading = useRef<HTMLHeadingElement>(null);
   const [name, setName] = useState(initial?.name ?? "");
@@ -187,7 +188,7 @@ function Form({ templateId, initial, onClose }: FormProps) {
                   </label>
                   <PhaseSelect value={section.phase} onChange={(phase) => update(index, { phase })} label={t("studies.phase.ofTemplatePart", { number })} />
                 </div>
-                <BlockBuilder section={section} onChange={(changes) => update(index, changes)} />
+                <BlockBuilder editions={editions.data ?? []} section={section} onChange={(changes) => update(index, changes)} />
               </li>
               );
             })}

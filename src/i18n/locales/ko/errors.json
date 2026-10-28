@@ -138,7 +138,9 @@
     "duplicateKey": "공부 틀의 두 부분이 같은 부분입니다. 하나를 지우세요.",
     "invalidKey": "이 부분의 식별값이 올바르지 않습니다.",
     "unknownPart": "이 공부 틀의 항목은 더 이상 사용할 수 없습니다.",
-    "partAlreadyAdded": "이 공부 틀의 항목은 이미 성경 공부에 추가되어 있습니다."
+    "partAlreadyAdded": "이 공부 틀의 항목은 이미 성경 공부에 추가되어 있습니다.",
+    "tooManyBlocks": "한 부분에는 구성 요소를 최대 {{max}}개까지 넣을 수 있습니다.",
+    "duplicateBlockKey": "구성 요소마다 비어 있지 않은 고유한 식별자가 필요합니다."
   },
   "sections": {
     "hasContent": "“{{title}}”에 아직 글이나 기록이 남아 있습니다.",

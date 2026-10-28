@@ -376,6 +376,12 @@ fn six_built_in_templates_exist_and_are_protected() {
                 "Biblical Theology Study",
                 "Systematic Theology Study",
                 "Teaching / Sermon Preparation",
+                "Guided Passage Study",
+                "Ten-Step Bible Study",
+                "Biblical Word Study",
+                "Topical Bible Study",
+                "Biblical Character Study",
+                "Whole-Book Bible Study",
             ]
         );
         let passage = &all[0];
@@ -450,7 +456,11 @@ fn built_in_templates_start_small_and_offer_the_rest_later() {
             t.is_builtin
                 && !matches!(
                     t.key.as_str(),
-                    "teaching-study" | "pozetek-study" | "ten-step-exegesis"
+                    "teaching-study"
+                        | "pozetek-study"
+                        | "ten-step-exegesis"
+                        | "pozetek-writing-study"
+                        | "ten-step-writing-study"
                 )
         }) {
             let count = template.sections.iter().filter(|s| s.starts()).count();

@@ -20,8 +20,8 @@ const studyTemplates = readdirSync("resources/templates")
 
 describe("the built-in Bible Study templates", () => {
   it("are well formed: a kind, unique stable keys, a known phase for every part, at least one part to start with", () => {
-    expect(studyTemplates.length).toBe(10);
-    expect(new Set(studyTemplates.map((t) => t.key)).size).toBe(10);
+    expect(studyTemplates.length).toBe(16);
+    expect(new Set(studyTemplates.map((t) => t.key)).size).toBe(16);
     for (const template of studyTemplates) {
       expect(STUDY_TYPES, template.key).toContain(template.studyType);
       const keys = template.sections.map((s) => s.key);
@@ -79,7 +79,7 @@ describe("what a template starts with", () => {
     await api.projectCreate({ workspaceId: api.state.workspace.id, title: "John" });
     const { user } = await renderApp(api);
     const form = await screen.findByRole("form", { name: "New study" });
-    const passage = studyTemplates.find((t) => t.key === "pozetek-study")!;
+    const passage = studyTemplates.find((t) => t.key === "pozetek-writing-study")!;
     const starts = `Starts with: ${passage.sections.filter((s) => !s.optional && !s.retired).map((s) => sectionTitle(s)).join(" · ")}.`;
     await waitFor(() => expect(form).toHaveTextContent(starts));
     expect(form).not.toHaveTextContent("Starts with: Notes");
@@ -137,9 +137,9 @@ describe("from a study to a teaching", () => {
     await user.click(within(startFrom).getByRole("radio", { name: "Sunday sermon" }));
     expect(form).toHaveTextContent("Starts with: Point 1 · Point 2.");
     // A format without templates of one's own asks nothing more.
-    await user.click(within(form).getByRole("radio", { name: "Group Bible study" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Study" }));
     expect(within(form).queryByRole("radiogroup", { name: "Start from" })).toBeNull();
-    await user.click(within(form).getByRole("radio", { name: "Message" }));
+    await user.click(within(form).getByRole("radio", { name: "Sermon / Talk" }));
     await user.click(within(await within(form).findByRole("radiogroup", { name: "Start from" })).getByRole("radio", { name: "Sunday sermon" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     await waitFor(() => expect(api.state.teaching.preparations).toHaveLength(1));

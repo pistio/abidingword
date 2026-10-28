@@ -5,9 +5,9 @@ import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import { canvasShape, shapeText, shapeWords, teachingKindLabel, type ShapeText } from "@/features/teaching/labels";
-import { templatePointTitle } from "@/features/teaching/teachingTemplates";
-import { STEP_KINDS, TEACHING_KINDS, type StepKind, type TeachingKind, type TeachingTemplate, type TeachingTemplatePoint } from "@/types/teaching";
+import { canvasShape, shapeText, shapeWords, type ShapeText } from "@/features/teaching/labels";
+import { TEACHING_FORMATS, FORMAT_KINDS, formatOf, type TeachingFormat, templatePointTitle } from "@/features/teaching/teachingTemplates";
+import { STEP_KINDS, type StepKind, type TeachingKind, type TeachingTemplate, type TeachingTemplatePoint } from "@/types/teaching";
 
 /** A point being edited: its row keeps one identity while it moves, so focus moves with it. */
 type Row = TeachingTemplatePoint & { row: string };
@@ -135,9 +135,9 @@ function Form({ templateId, initial, onClose }: { templateId: string | null; ini
         <div className="flex flex-col gap-1">
           <label className="flex flex-col gap-1">
             <span className="font-medium text-text-strong">{t("studies.teaching.templates.format")}</span>
-            <select value={kind} onChange={(e) => setKind(e.target.value as TeachingKind)} className={field} aria-describedby={`${id}-format`}>
-              {TEACHING_KINDS.map((k) => (
-                <option key={k} value={k}>{teachingKindLabel(t, k)}</option>
+            <select value={formatOf(kind)} onChange={(e) => { const format = e.target.value as TeachingFormat; if (format !== formatOf(kind)) setKind(FORMAT_KINDS[format][0]!); }} className={field} aria-describedby={`${id}-format`}>
+              {TEACHING_FORMATS.map((k) => (
+                <option key={k} value={k}>{t(`studies.teaching.formats.${k}.name`)}</option>
               ))}
             </select>
           </label>

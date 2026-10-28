@@ -201,7 +201,7 @@ describe("teaching preparation", () => {
     await user.keyboard("{Enter}");
     const form = await within(studyPane()).findByRole("form", { name: "New Bible Teaching" });
     expect(within(form).getByRole("heading", { name: "New Bible Teaching" })).toHaveFocus();
-    await user.click(within(form).getByRole("radio", { name: "Group Bible study" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Study" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
 
@@ -1207,7 +1207,7 @@ describe("the teaching canvas", () => {
     await openTeaching(user);
     const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
     // An interactive lesson (v0.19), started from the children's built-in steps.
-    await user.click(within(form).getByRole("radio", { name: "Interactive lesson" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Teaching" }));
     await user.click(within(form).getByRole("radio", { name: "Children (built-in)" }));
     // The start says what it gives to work in, and what it starts with.
     expect(within(form).getByText(/A lesson in steps: teaching, Bible reading, questions, activities and pictures/)).toBeInTheDocument();
@@ -1256,7 +1256,7 @@ describe("the teaching canvas", () => {
     await user.type(field(article, "Introduction"), "Have you pruned a rose?");
     await settle();
     const info = await openAbout(user, article);
-    await user.selectOptions(within(info).getByRole("combobox", { name: "Kind of teaching" }), "children");
+    await user.selectOptions(within(info).getByRole("combobox", { name: "Kind of teaching" }), "lesson");
     await user.click(within(info).getByRole("button", { name: "Save" }));
     // A lesson has no separate introduction, but what was written there is never hidden.
     expect(await within(article).findByRole("textbox", { name: "Opening" })).toHaveValue("Have you pruned a rose?");
@@ -1268,7 +1268,7 @@ describe("the teaching canvas", () => {
     const { user } = await renderApp(api);
     await openTeaching(user);
     const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
-    await user.click(within(form).getByRole("radio", { name: "Group Bible study" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Study" }));
     expect(within(form).getByText(/Questions for the group, each with where it may lead/)).toBeInTheDocument();
     expect(within(form).queryByText(/^Starts with/)).toBeNull();
     await user.click(within(form).getByRole("button", { name: "Start" }));

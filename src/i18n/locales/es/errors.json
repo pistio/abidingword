@@ -160,7 +160,9 @@
     "duplicateKey": "Dos partes de la plantilla son la misma parte. Quita una de ellas.",
     "invalidKey": "El identificador de esta parte no es válido.",
     "unknownPart": "Esta sección de la plantilla ya no está disponible.",
-    "partAlreadyAdded": "Esta sección de la plantilla ya forma parte del estudio."
+    "partAlreadyAdded": "Esta sección de la plantilla ya forma parte del estudio.",
+    "tooManyBlocks": "Una parte puede contener como máximo {{max}} bloques.",
+    "duplicateBlockKey": "Cada bloque necesita un identificador único y no vacío."
   },
   "sections": {
     "hasContent": "«{{title}}» todavía contiene texto o apuntes.",

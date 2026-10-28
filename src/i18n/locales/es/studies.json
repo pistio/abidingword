@@ -2293,15 +2293,15 @@
     "formatLegend": "¿Qué quieres preparar?",
     "formats": {
       "message": {
-        "name": "Mensaje",
+        "name": "Predicación / Charla",
         "hint": "Un sermón, una charla o un devocional: un mensaje central, una introducción, puntos principales y una conclusión."
       },
       "group": {
-        "name": "Estudio bíblico en grupo",
+        "name": "Estudio bíblico",
         "hint": "Guiado por la conversación: una apertura, el texto bíblico, preguntas y respuestas, y un cierre."
       },
       "lesson": {
-        "name": "Lección interactiva",
+        "name": "Enseñanza bíblica",
         "hint": "Para niños, jóvenes o adultos: pasos como la lectura bíblica, una explicación, preguntas, una actividad o una imagen."
       }
     },
@@ -2638,7 +2638,7 @@
     "label": "Título del bloque",
     "guidance": "Orientación opcional",
     "query": "Texto de búsqueda o pasaje",
-    "editionDefault": "ID de la edición predeterminada (opcional)",
+    "editionDefault": "Edición bíblica predeterminada (opcional)",
     "up": "Subir",
     "down": "Bajar",
     "duplicate": "Duplicar bloque",

@@ -12,7 +12,6 @@ import type { StudyType } from "@/types/studies";
 import { templateName, studyStartSummary } from "./builtinText";
 import { inStudyCatalogue } from "./catalogue";
 import { isPassageCentred } from "./labels";
-import { openInTeaching } from "./studyView";
 
 /** An example of what to type, for the kind of study. */
 function placeholderFor(t: TFunction, type: StudyType): string {
@@ -36,17 +35,12 @@ function placeholderFor(t: TFunction, type: StudyType): string {
   }
 }
 
-/**
- * How the user chooses to begin: a built-in kind of study, one of their own
- * templates, or preparing a teaching. A teaching is prepared from a study of
- * its passage (Bible Teaching is derived from Bible Study): "teaching" makes
- * a passage study and opens its Bible Teaching side.
- */
-type Approach = StudyType | "mine";
+/** Begin with Bible Study; Teaching is an optional next step within the study. */
+type Approach = Exclude<StudyType, "teaching"> | "mine";
 
 /** Offered straight away; the rest are under "More options". */
-const COMMON: StudyType[] = ["passage", "character", "word", "book", "topical", "teaching"];
-const MORE: StudyType[] = ["custom"];
+const COMMON: Approach[] = ["passage", "character", "word", "book", "topical"];
+const MORE: Approach[] = ["custom"];
 
 const field = "h-10 min-w-0 aw-input px-3 text-base placeholder:text-text-muted";
 // The kind of study is an option among several: the shared choice chip (v0.18.5).
@@ -88,13 +82,13 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
   const own = list.filter((template) => !template.isBuiltin);
   const chosenOwn = own.find((template) => template.id === (mine ?? own[0]?.id));
   // A study of one's own template is the kind of study that template is for.
-  const type: StudyType = approach === "mine" ? (chosenOwn?.studyType ?? "custom") : approach === "teaching" ? "passage" : approach;
+  const type: StudyType = approach === "mine" ? (chosenOwn?.studyType ?? "custom") : approach;
   const aboutAPassage = isPassageCentred(type);
   const passageTemplates = list.filter((template) => template.isBuiltin && template.studyType === "passage" && inStudyCatalogue(template));
   const selected = approach === "passage"
     ? passageTemplates.find((template) => template.key === passageMethod)
     : list.find((template) => template.isBuiltin && template.studyType === type &&
-        (approach === "teaching" ? template.key === "passage-study" : inStudyCatalogue(template)));
+        inStudyCatalogue(template));
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -132,7 +126,6 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
       });
       setSubject("");
       setCustomTitle("");
-      if (approach === "teaching") openInTeaching(detail.study.id);
       onCreated({ id: detail.study.id, projectId: detail.study.projectId });
     } catch (e) {
       setError(toApiError(e).message);

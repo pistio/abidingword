@@ -2282,15 +2282,15 @@
     "formatLegend": "What would you like to prepare?",
     "formats": {
       "message": {
-        "name": "Message",
+        "name": "Sermon / Talk",
         "hint": "A sermon, talk or devotion: a central message, an introduction, main points and a conclusion."
       },
       "group": {
-        "name": "Group Bible study",
+        "name": "Bible Study",
         "hint": "Led by discussion: an opening, the Bible text, questions and answers, and a closing."
       },
       "lesson": {
-        "name": "Interactive lesson",
+        "name": "Bible Teaching",
         "hint": "For children, youth or adults: steps such as Bible reading, explanation, questions, an activity or a picture."
       }
     },
@@ -2623,7 +2623,7 @@
     "label": "Block title",
     "guidance": "Optional guidance",
     "query": "Search text or passage",
-    "editionDefault": "Default edition ID (optional)",
+    "editionDefault": "Default Bible edition (optional)",
     "up": "Move up",
     "down": "Move down",
     "duplicate": "Duplicate block",

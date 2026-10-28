@@ -63,3 +63,42 @@ it("keeps source provenance from the result even after the query changes and ret
   render(<ApiProvider api={api}><Harness /></ApiProvider>);
   expect(screen.getByText(/I am the vine/)).toBeInTheDocument();
 });
+
+for (const kind of ["passage", "cross_references", "concordance", "word_lookup"] as const) {
+  it(`uses the selected edition and keeps provenance for ${kind}`, async () => {
+    const api = createMemoryApi();
+    const reference = { canonical: "JHN.15.5", display: "John 15:5" } as never;
+    vi.spyOn(api, "bibleList").mockResolvedValue([{ id: "src", name: "My Bible", shortName: "SRC", kind: "structured" }] as Awaited<ReturnType<typeof api.bibleList>>);
+    const parse = vi.spyOn(api, "referenceParse").mockResolvedValue(reference);
+    const passage = vi.spyOn(api, "scriptureGetPassage").mockResolvedValue({ translationId: "src", reference, verses: [{ canonical: "JHN.15.5", chapter: 15, verse: 5, text: "Source wording" }] });
+    const concordance = vi.spyOn(api, "scriptureConcordance").mockResolvedValue({ hits: [{ reference, text: "Source wording", matches: [] }], hitsComplete: false, translationId: "src", query: "vine", mode: "phrase", verses: 1, occurrences: 1, books: [] });
+    vi.spyOn(api, "scriptureLemmaEntries").mockResolvedValue([{ lemma: "ἄμπελος", strong: "G288", occurrences: 1, forms: [] }]);
+    const lemma = vi.spyOn(api, "scriptureLemmaSearch").mockResolvedValue({ translationId: "src", hits: [{ reference, text: "Source wording", matches: [] }], hitsComplete: true, selection: { kind: "lemma", lemma: "ἄμπελος" }, occurrences: 1, verses: 1, books: [], forms: [], morphology: [], withoutMorphology: 1, morphScheme: "raw", morphAttribute: null });
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Evidence" });
+    const template = await api.templateCreate({ name: "My block", studyType: "custom", sections: [{ key: "part", title: "Research", fields: [{ key: "tool", kind, config: { query: "vine", translationId: "src", mode: "phrase" } }], fieldsVersion: 1 }] });
+    const study = await api.studyCreate({ projectId: project.id, title: "Research", templateId: template.id });
+    let saved = study.sections[0]!;
+    function Harness() {
+      const [section, setSection] = useState(saved);
+      return <FieldsEditor section={section} onChange={next => { saved = next; setSection(next); }} onError={message => { if (message) throw Error(message); }} />;
+    }
+    render(<ApiProvider api={api}><Harness /></ApiProvider>);
+    const user = userEvent.setup();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Look up" })).toBeEnabled());
+    await user.click(screen.getByRole("button", { name: "Look up" }));
+    if (kind === "word_lookup") await user.click(await screen.findByRole("button", { name: /ἄμπελος/ }));
+    await user.click(await screen.findByRole("button", { name: "Keep as evidence" }));
+    await waitFor(() => expect(saved.blocks[0]?.data).toBeTruthy());
+    expect(JSON.parse(saved.blocks[0]!.data!)).toMatchObject({ kind, query: "vine", translationId: "src", reference: "JHN.15.5" });
+    if (kind === "passage" || kind === "cross_references") {
+      expect(parse).toHaveBeenCalledWith("vine", "src");
+      expect(passage).toHaveBeenCalledWith({ reference: "JHN.15.5", translationId: "src" });
+    } else if (kind === "concordance") {
+      expect(concordance).toHaveBeenCalledWith({ query: "vine", translationId: "src", mode: "phrase" });
+      expect(screen.getByRole("status")).toHaveTextContent("Results are incomplete");
+    } else {
+      expect(lemma).toHaveBeenCalledWith({ translationId: "src", selection: { kind: "entry", lemma: "ἄμπελος", strong: "G288" } });
+      expect(JSON.parse(saved.blocks[0]!.data!)).toMatchObject({ lemma: "ἄμπελος", strong: "G288" });
+    }
+  });
+}

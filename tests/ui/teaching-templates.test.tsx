@@ -78,11 +78,11 @@ describe("a Bible Teaching template of one's own", () => {
     await user.click(within(templates).getByRole("button", { name: "New Bible Teaching template…" }));
     const sheet = await screen.findByRole("dialog", { name: "New Bible Teaching template" });
     await user.type(within(sheet).getByRole("textbox", { name: "Name" }), "Youth evening");
-    await user.selectOptions(within(sheet).getByRole("combobox", { name: "Format" }), "youth");
+    await user.selectOptions(within(sheet).getByRole("combobox", { name: "Format" }), "message");
     // A youth teaching is in points: no step kinds offered.
     await user.click(within(sheet).getByRole("button", { name: "Add a point" }));
     expect(within(sheet).queryByRole("combobox", { name: /Kind of step/ })).toBeNull();
-    await user.selectOptions(within(sheet).getByRole("combobox", { name: "Format" }), "children");
+    await user.selectOptions(within(sheet).getByRole("combobox", { name: "Format" }), "lesson");
     await user.type(within(sheet).getByRole("textbox", { name: "Title of step 1" }), "Game");
     await user.selectOptions(within(sheet).getByRole("combobox", { name: "Kind of step: Game" }), "activity");
     await user.click(within(sheet).getByRole("button", { name: "Add a step" }));
@@ -94,7 +94,7 @@ describe("a Bible Teaching template of one's own", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
 
     const mine = api.state.teaching.templates[0]!;
-    expect(mine).toMatchObject({ name: "Youth evening", kind: "children" });
+    expect(mine).toMatchObject({ name: "Youth evening", kind: "lesson" });
     expect(mine.points.map((p) => [p.title, p.kind])).toEqual([["Bible story", "scripture"], ["Game", "activity"]]);
     const row = within(within(templates).getByRole("list", { name: "Bible Teaching templates" })).getByText("Youth evening").closest("li")!;
     expect(row).toHaveTextContent("Starts with: Bible story · Game.");
@@ -111,7 +111,7 @@ describe("a Bible Teaching template of one's own", () => {
     // one's own is offered only for the format it is made for, with the format's built-in starts.
     await waitFor(() => expect(api.state.teaching.templates).toHaveLength(1));
     expect(within(form).queryByRole("radiogroup", { name: "Start from" })).toBeNull();
-    await user.click(within(form).getByRole("radio", { name: "Interactive lesson" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Teaching" }));
     const own = await within(form).findByRole("radiogroup", { name: "Start from" });
     expect(within(own).getAllByRole("radio").map((r) => r.getAttribute("aria-describedby") && (r.parentElement?.textContent ?? ""))).toEqual(["Lesson (built-in)", "Children (built-in)", "Youth evening"]);
     expect(within(own).getByRole("radio", { name: "Lesson (built-in)" })).toBeChecked();
@@ -135,7 +135,7 @@ describe("a Bible Teaching template of one's own", () => {
   it("starts as before from a built-in one: a lesson with its steps in the person's language", async () => {
     const { api } = await setup();
     const user = await openTeaching(api);
-    await user.click(within(newForm()).getByRole("radio", { name: "Interactive lesson" }));
+    await user.click(within(newForm()).getByRole("radio", { name: "Bible Teaching" }));
     expect(newForm()).toHaveTextContent("Starts with: Teaching · Discussion · Activity.");
     await user.click(within(newForm()).getByRole("button", { name: "Start" }));
     await within(studyPane()).findByRole("article", { name: "Lesson · Abiding" });

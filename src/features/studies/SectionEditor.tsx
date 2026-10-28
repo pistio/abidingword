@@ -90,6 +90,7 @@ export function SectionEditor(props: SectionEditorProps) {
   const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section, origin);
 
   const structured = section.fields !== null;
+  const legacy = section.fields?.fields.some(field => field.kind === "text" || field.kind === "entries") ?? false;
   const writing = section.fields?.fields.every((field) => field.kind === "writing") ?? false;
   const goal = structured ? structuredOptional(section, "goal") : null;
   const example = structured ? structuredOptional(section, "example") : null;
@@ -322,7 +323,7 @@ export function SectionEditor(props: SectionEditorProps) {
       {structured && (
         <div className="mb-3 flex flex-col gap-2">
           <details><summary className="cursor-pointer text-text-muted">{t("studies.flow.guidance")}</summary><p className="mt-2">{sectionGuidance(section, origin)}</p></details>
-          {section.fields?.fields.some(field => field.kind === "text" || field.kind === "entries") && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
+          {legacy && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
           {!writing && goal && (
             <p className="m-0 text-[0.9375rem] text-text-muted">
               <span className="font-medium">{t("studies.fields.goal")}: </span>
@@ -361,7 +362,7 @@ export function SectionEditor(props: SectionEditorProps) {
               <p className="m-0 reading">{example}</p>
             </div>
           )}
-          <FieldsEditor section={section} onChange={onChange} onError={setError} />
+          {legacy ? <details open><summary className="cursor-pointer font-medium">{t("studies.flow.legacy")}</summary><FieldsEditor section={section} onChange={onChange} onError={setError} /></details> : <FieldsEditor section={section} onChange={onChange} onError={setError} />}
         </div>
       )}
       {!structured && guidance && <p className="mb-2 mt-0 text-[0.9375rem] text-text-muted">{guidance}</p>}

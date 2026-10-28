@@ -189,9 +189,8 @@ function NewTeaching({
   // stored stay those of v0.16 (sermon, talk, bible_study, lesson, children, youth, other).
   const mine = useLoad(useCallback(() => api.teachingTemplateList(), [api]));
   const [format, setFormat] = useState<TeachingFormat>("message");
-  const [messageKind, setMessageKind] = useState<"sermon" | "talk">("sermon");
   const [chosen, setChosen] = useState<string | null>(null);
-  const starts = formatStarts(format, messageKind, mine.data ?? []);
+  const starts = formatStarts(format, "sermon", mine.data ?? []);
   const picked = starts.find((s) => s.id === chosen) ?? starts[0]!;
   const start: TeachingStart = picked.start;
   const kind = startKind(start);
@@ -254,25 +253,6 @@ function NewTeaching({
             </label>
           ))}
         </div>
-        {format === "message" && (
-          <div role="radiogroup" aria-label={t("studies.teaching.messageKind")} className="flex flex-wrap items-center gap-2">
-            {(["sermon", "talk"] as const).map((k) => (
-              <label key={k} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
-                <input
-                  type="radio"
-                  name={`${id}-message`}
-                  checked={messageKind === k}
-                  onChange={() => {
-                    setMessageKind(k);
-                    setChosen(null);
-                  }}
-                  className="sr-only"
-                />
-                {teachingKindLabel(t, k)}
-              </label>
-            ))}
-          </div>
-        )}
         {starts.length > 1 && (
           <div role="radiogroup" aria-label={t("studies.teaching.templates.startFrom")} className="flex flex-wrap items-center gap-2">
             <span aria-hidden="true" className="type-meta">{t("studies.teaching.templates.startFrom")}</span>

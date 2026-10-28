@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { BibleTranslation } from "@/types/scripture";
 import type { FieldKind, TemplateField } from "@/types/domain";
 import type { TemplateSection } from "@/types/studies";
 import { ownPartKey } from "@/features/studies/templateParts";
@@ -8,7 +9,7 @@ import { Button } from "@/design-system/Button";
 export const BUILDER_KINDS: FieldKind[] = ["writing", "guidance", "heading", "divider", "passage", "concordance", "cross_references", "word_lookup", "search"];
 
 /** The editor changes definitions only; studies retain their independent snapshots. */
-export function BlockBuilder({ section, onChange }: { section: TemplateSection; onChange: (changes: Partial<TemplateSection>) => void }) {
+export function BlockBuilder({ section, onChange, editions = [] }: { section: TemplateSection; onChange: (changes: Partial<TemplateSection>) => void; editions?: BibleTranslation[] }) {
   const { t } = useTranslation();
   const [kind, setKind] = useState<FieldKind>("writing");
   const fields = section.fields ?? [];
@@ -28,8 +29,9 @@ export function BlockBuilder({ section, onChange }: { section: TemplateSection; 
         <label className="flex flex-col">{t("studies.builder.guidance")}<textarea className="aw-input px-2" value={field.config?.guidance ?? ""} onChange={e => update(index, { config: { ...field.config, guidance: e.target.value } })} /></label>
         {!["text", "entries", "writing", "guidance", "heading", "divider"].includes(field.kind) && <>
           <label className="flex flex-col">{t("studies.builder.query")}<input className="aw-input px-2" value={field.config?.query ?? ""} onChange={e => update(index, { config: { ...field.config, query: e.target.value } })} /></label>
-          <label className="flex flex-col">{t("studies.builder.editionDefault")}<input className="aw-input px-2" value={field.config?.translationId ?? ""} onChange={e => update(index, { config: { ...field.config, translationId: e.target.value } })} /></label>
+          <label className="flex flex-col">{t("studies.builder.editionDefault")}<select className="aw-input" value={field.config?.translationId ?? ""} onChange={e => update(index, { config: { ...field.config, translationId: e.target.value } })}><option value="">{t("studies.builder.chooseEdition")}</option>{field.config?.translationId && !editions.some(edition => edition.id === field.config?.translationId) && <option value={field.config.translationId}>{field.config.translationId}</option>}{editions.filter(edition => edition.kind === "structured").map(edition => <option key={edition.id} value={edition.id}>{edition.name} ({edition.shortName})</option>)}</select></label>
         </>}
+        {field.kind === "concordance" && <label>{t("scripture.concordance.modeLabel")} <select className="aw-input" value={field.config?.mode ?? "word"} onChange={e => update(index, { config: { ...field.config, mode: e.target.value } })}>{(["word", "phrase"] as const).map(mode => <option key={mode} value={mode}>{t(`scripture.concordance.mode.${mode}`)}</option>)}</select></label>}
         <div className="flex flex-wrap gap-2">
           <Button disabled={index === 0} onClick={() => move(index, -1)}>{t("studies.builder.up")}</Button>
           <Button disabled={index === fields.length - 1} onClick={() => move(index, 1)}>{t("studies.builder.down")}</Button>

@@ -2286,7 +2286,7 @@
         "hint": "Eine Predigt, ein Vortrag oder eine Andacht: Kernbotschaft, Einleitung, Hauptpunkte und Schluss."
       },
       "group": {
-        "name": "Hauskreis",
+        "name": "Bibelstudium",
         "hint": "Vom Gespräch getragen: Einstieg, Bibeltext, Fragen und Antworten und ein Abschluss."
       },
       "lesson": {
@@ -2623,7 +2623,7 @@
     "label": "Titel des Bausteins",
     "guidance": "Optionale Hinweise",
     "query": "Suchtext oder Bibelstelle",
-    "editionDefault": "Voreingestellte Ausgaben-ID (optional)",
+    "editionDefault": "Voreingestellte Bibelausgabe (optional)",
     "up": "Nach oben",
     "down": "Nach unten",
     "duplicate": "Baustein duplizieren",

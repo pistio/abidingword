@@ -7,9 +7,8 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { Finding } from "@/types/studies";
 import type { TeachingKind, TeachingPreparation } from "@/types/teaching";
-import { teachingKindLabel } from "./labels";
 import { SaveTeachingTemplate } from "./SaveTeachingTemplate";
-import { FORMAT_KINDS, TEACHING_FORMATS } from "./teachingTemplates";
+import { FORMAT_KINDS, TEACHING_FORMATS, formatOf } from "./teachingTemplates";
 import { TeachingLinks } from "./TeachingLinks";
 
 /** What the Bible Teaching information panel edits as one draft (v0.19). */
@@ -71,15 +70,8 @@ export function TeachingInfo({
             <span className={label}>{t("studies.teaching.kindLabel")}</span>
             <select value={draft.kind} onChange={(e) => setDraft({ ...draft, kind: e.target.value as TeachingKind | "" })} className="h-11 aw-input px-2 text-text-strong">
               {draft.kind === "" && <option value="">{t("studies.teaching.kindNone")}</option>}
-              {/* Every kind, older ones too, under the format it belongs to. */}
               {TEACHING_FORMATS.map((format) => (
-                <optgroup key={format} label={t(`studies.teaching.formats.${format}.name`)}>
-                  {FORMAT_KINDS[format].map((k) => (
-                    <option key={k} value={k}>
-                      {teachingKindLabel(t, k)}
-                    </option>
-                  ))}
-                </optgroup>
+                <option key={format} value={draft.kind && formatOf(draft.kind) === format ? draft.kind : FORMAT_KINDS[format][0]}>{t(`studies.teaching.formats.${format}.name`)}</option>
               ))}
             </select>
           </label>

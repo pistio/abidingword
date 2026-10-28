@@ -17,6 +17,7 @@ export interface ResearchEvidence {
   text: string;
   lemma?: string;
   strong?: string;
+  mode?: string;
 }
 
 /** All retained evidence carries the edition and query used to obtain it, independently of current controls. */
@@ -49,26 +50,29 @@ export function ResearchBlock({ section, field, onChange, onError }: {
     const translation = editions.data?.find(item => item.id === edition && item.kind === "structured");
     if (!translation || !query.trim()) return;
     setBusy(true); setHits([]); setEntries([]); setIncomplete(false); setSearched(false); onError(null);
-    const evidence = (reference: string, text: string): ResearchEvidence => ({ kind: field.kind, query, translationId: translation.id, translationName: `${translation.name} (${translation.shortName})`, reference, text, ...(entry ? { lemma: entry.lemma ?? "", strong: entry.strong ?? "" } : {}) });
+    const evidence = (reference: string, text: string): ResearchEvidence => ({ kind: field.kind, query, translationId: translation.id, translationName: `${translation.name} (${translation.shortName})`, reference, text, ...(field.kind === "concordance" ? { mode: field.config?.mode === "phrase" ? "phrase" : "word" } : {}), ...(entry ? { lemma: entry.lemma ?? "", strong: entry.strong ?? "" } : {}) });
     try {
       if (field.kind === "passage" || field.kind === "cross_references") {
         // Cross-references are passages explicitly supplied by the reader, never inferred connections.
         const references = field.kind === "cross_references" ? query.split(";").map(s => s.trim()).filter(Boolean) : [query];
         const results: ResearchEvidence[] = [];
         for (const reference of references) {
-          const passage = await api.scriptureGetPassage({ translationId: translation.id, reference });
+          const parsed = await api.referenceParse(reference, translation.id);
+          const passage = await api.scriptureGetPassage({ translationId: translation.id, reference: parsed.canonical });
           if (passage.translationId !== translation.id) throw new Error(t("studies.builder.editionMismatch"));
           if (passage.verses.length) results.push(evidence(passage.reference.canonical, passage.verses.map(v => `${v.verse} ${v.text}`).join("\n")));
         }
         setHits(results);
       } else if (field.kind === "concordance") {
         const result = await api.scriptureConcordance({ translationId: translation.id, query, mode: field.config?.mode === "phrase" ? "phrase" : "word" });
+        if (result.translationId !== translation.id) throw new Error(t("studies.builder.editionMismatch"));
         setHits(result.hits.map(hit => evidence(hit.reference.canonical, hit.text)));
         setIncomplete(!result.hitsComplete);
       } else if (field.kind === "word_lookup") {
         if (!entry) setEntries(await api.scriptureLemmaEntries({ translationId: translation.id, text: query }));
         else {
           const result = await api.scriptureLemmaSearch({ translationId: translation.id, selection: { kind: "entry", lemma: entry.lemma, strong: entry.strong } });
+          if (result.translationId !== translation.id) throw new Error(t("studies.builder.editionMismatch"));
           setHits(result.hits.map(hit => evidence(hit.reference.canonical, hit.text)));
           setIncomplete(!result.hitsComplete);
         }
