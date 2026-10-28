@@ -55,15 +55,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | Enseñanza bíblica (1), enseñanza (15), (none of these) (1) |
 | Portuguese | Ensino bíblico (1), ensino (15), (none of these) (1) |
 
-**template** — 90 strings use it in English.
+**template** — 92 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Vorlage (83), Gemeindevorlage (7) |
-| Korean | 틀 (54), 서식 (34), (none of these) (2) |
-| French | modèle (81), Modèle (9) |
-| Spanish | plantilla (81), Plantilla (9) |
-| Portuguese | modelo (81), Modelo (9) |
+| German | Vorlage (85), Gemeindevorlage (7) |
+| Korean | 틀 (56), 서식 (34), (none of these) (2) |
+| French | modèle (83), Modèle (9) |
+| Spanish | plantilla (83), Plantilla (9) |
+| Portuguese | modelo (83), Modelo (9) |
 
 **Materials** — 3 strings use it in English.
 
@@ -85,15 +85,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | presentación (18), Presentación (7), (none of these) (4) |
 | Portuguese | apresentação (18), Apresentação (7), (none of these) (4) |
 
-**passage** — 194 strings use it in English.
+**passage** — 195 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Bibelstelle (67), Stelle (22), Bibeltext (14), Abschnitt (32), (none of these) (59) |
-| Korean | 본문 (126), 구절 (17), (none of these) (51) |
-| French | passage (159), Passage (21), (none of these) (14) |
-| Spanish | pasaje (134), Pasaje (21), (none of these) (39) |
-| Portuguese | passagem (83), Passagem (10), (none of these) (101) |
+| German | Bibelstelle (67), Stelle (22), Bibeltext (14), Abschnitt (32), (none of these) (60) |
+| Korean | 본문 (127), 구절 (17), (none of these) (51) |
+| French | passage (160), Passage (21), (none of these) (14) |
+| Spanish | pasaje (135), Pasaje (21), (none of these) (39) |
+| Portuguese | passagem (84), Passagem (10), (none of these) (101) |
 
 **source** — 103 strings use it in English.
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1345 strings changed in at least one language since v0.18.10. Spot-check these.
+1353 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -1389,6 +1389,7 @@ _No open linguistic questions._
 | {{name}} | `studies.teaching.blocks.duplicate` | Duplicate “{{name}}” | „{{name}}“ verdoppeln | “{{name}}” 복제 | Dupliquer « {{name}} » | Duplicar «{{name}}» | Duplicar “{{name}}” |
 |  | `studies.teaching.blocks.empty` | This teaching is empty. Add a section or a writing area when you are ready. | Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du soweit bist. | 아직 비어 있습니다. 준비가 되면 단락이나 글을 더하세요. | Cet enseignement est encore vide. Ajoutez une section ou un espace d’écriture quand vous voulez. | Esta enseñanza está vacía. Añade una sección o un espacio para escribir cuando quieras. | Este ensino ainda está vazio. Acrescente uma seção ou um espaço para escrever quando quiser. |
 |  | `studies.teaching.blocks.guidance` | Guidance | Hilfen | 도움말 | Repères | Orientación | Orientação |
+| screen-reader/label | `studies.teaching.blocks.headingLabel` | Heading | Überschrift | 제목 | Titre | Título | Título |
 |  | `studies.teaching.blocks.leaderOnly` | For you as the leader. It is left out of handouts and slides unless you mark it for participants. | Nur für dich als Leitung. Es erscheint nicht auf Blättern oder Folien, außer du gibst es für die Teilnehmenden frei. | 인도자만 보는 내용입니다. 참가자에게 보이도록 표시하기 전에는 유인물과 슬라이드에 들어가지 않습니다. | Pour vous qui conduisez. Ce texte reste hors des feuilles et des diapositives, sauf si vous le montrez aux participants. | Solo para quien dirige. No entra en las hojas ni en las diapositivas, salvo que lo marques para los participantes. | Só para quem conduz. Fica fora das folhas e dos slides, a menos que você marque para os participantes verem. |
 | {{name}} | `studies.teaching.blocks.moveDown` | Move “{{name}}” down | „{{name}}“ nach unten | “{{name}}” 아래로 | Descendre « {{name}} » | Bajar «{{name}}» | Mover “{{name}}” para baixo |
 | {{name}} | `studies.teaching.blocks.moveUp` | Move “{{name}}” up | „{{name}}“ nach oben | “{{name}}” 위로 | Monter « {{name}} » | Subir «{{name}}» | Mover “{{name}}” para cima |
@@ -1417,10 +1418,15 @@ _No open linguistic questions._
 |  | `studies.teaching.blocks.types.teaching_notes` | Leader notes | Notizen für die Leitung | 인도자 메모 | Notes de l’animateur | Notas del líder | Notas de quem conduz |
 |  | `studies.teaching.blocks.types.time` | Time | Zeit | 시간 | Durée | Tiempo | Tempo |
 |  | `studies.teaching.blocks.types.writing` | Writing | Schreibfeld | 글 | Écriture | Escritura | Escrita |
+|  | `studies.teaching.blocks.viewContinuous` | Continuous | Fortlaufend | 이어서 쓰기 | Texte suivi | Texto seguido | Texto contínuo |
+| screen-reader/label | `studies.teaching.blocks.viewLabel` | How you write | Schreibansicht | 쓰는 방식 | Façon d’écrire | Cómo escribes | Como você escreve |
+|  | `studies.teaching.blocks.viewOutline` | Outline | Gliederung | 개요 | Plan | Bosquejo | Esboço |
 |  | `studies.teaching.builtin.bibleLesson.blocks.activity.guidance` | Something they do with what they have heard. | Etwas, das sie mit dem Gehörten tun. | 들은 것을 가지고 하는 활동. | Quelque chose qu’ils font avec ce qu’ils ont entendu. | Algo que hacen con lo que han oído. | Algo que eles façam com o que ouviram. |
 |  | `studies.teaching.builtin.bibleLesson.blocks.activity.title` | Activity | Aktion | 활동 | Activité | Actividad | Atividade |
 |  | `studies.teaching.builtin.bibleLesson.blocks.explain.guidance` | Say what the passage means, in words they can follow. Do not replace the text’s meaning with a simpler idea. | Sag, was die Stelle bedeutet, in Worten, denen sie folgen können. Ersetze die Bedeutung nicht durch eine einfachere Idee. | 본문의 뜻을 그들이 따라올 말로 말합니다. 더 쉬운 다른 뜻으로 바꾸지 않습니다. | Dites ce que le passage signifie, avec des mots qu’ils peuvent suivre. Ne remplacez pas ce sens par une idée plus simple. | Di lo que significa el pasaje, con palabras que puedan seguir. No sustituyas ese sentido por una idea más simple. | Diga o que a passagem significa, com palavras que eles acompanhem. Não troque esse sentido por uma ideia mais simples. |
 |  | `studies.teaching.builtin.bibleLesson.blocks.explain.title` | Explanation | Erklärung | 설명 | Explication | Explicación | Explicação |
+|  | `studies.teaching.builtin.bibleLesson.blocks.prepare.guidance` | Optional: note the age you are preparing for, how long you have, and what you hope they take away. Age changes how you tell the story, not what the passage means. Add time or learning-objective blocks only if you want them. | Wahlweise: das Alter, die Zeit und was sie mitnehmen sollen. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes. Zeit- oder Lernzielblöcke fügst du nur hinzu, wenn du sie brauchst. | 선택: 어느 나이를 위해 준비하는지, 시간이 얼마나 있는지, 무엇을 가져가기를 바라는지. 나이는 전하는 방식을 바꾸지, 본문의 뜻을 바꾸지 않습니다. 시간이나 배울 점 칸은 필요할 때만 더하세요. | Facultatif : l’âge pour lequel vous préparez, le temps dont vous disposez, et ce que vous souhaitez qu’ils emportent. L’âge change la façon de raconter, pas le sens du passage. Ajoutez des blocs de durée ou d’objectifs seulement si vous les voulez. | Opcional: la edad para la que preparas, el tiempo que tienes y lo que esperas que se lleven. La edad cambia el modo de contarlo, no el sentido del pasaje. Añade bloques de tiempo o de objetivos solo si los quieres. | Opcional: a idade para a qual você prepara, o tempo que tem e o que espera que levem. A idade muda o modo de contar, não o sentido da passagem. Acrescente blocos de tempo ou de objetivos só se quiser. |
+|  | `studies.teaching.builtin.bibleLesson.blocks.prepare.title` | Preparation | Vorbereitung | 준비 | Préparation | Preparación | Preparação |
 |  | `studies.teaching.builtin.bibleLesson.blocks.questions.guidance` | Questions the group hears, and your own notes about answers to listen for. Those notes stay with you. | Fragen, die die Gruppe hört, und deine Notizen zu Antworten, auf die du achtest. Die Notizen bleiben bei dir. | 모둠이 듣는 질문과, 들을 대답에 대한 인도자의 메모. 메모는 인도자에게 남습니다. | Les questions que le groupe entend, et vos notes sur les réponses à écouter. Ces notes restent avec vous. | Las preguntas que oye el grupo y tus notas sobre las respuestas que quieres escuchar. Esas notas se quedan contigo. | As perguntas que o grupo ouve e as suas anotações sobre as respostas a escutar. Essas anotações ficam com você. |
 |  | `studies.teaching.builtin.bibleLesson.blocks.questions.title` | Questions | Fragen | 질문 | Questions | Preguntas | Perguntas |
 |  | `studies.teaching.builtin.bibleLesson.blocks.reflect.guidance` | What they can take into faith, choices and relationships. | Was sie in Glauben, Entscheidungen und Beziehungen mitnehmen können. | 믿음과 선택과 관계 속으로 가져갈 것. | Ce qu’ils peuvent emporter dans la foi, les choix et les relations. | Lo que pueden llevar a la fe, las decisiones y las relaciones. | O que podem levar para a fé, as decisões e os relacionamentos. |
@@ -1431,11 +1437,11 @@ _No open linguistic questions._
 |  | `studies.teaching.builtin.bibleLesson.name` | Bible Lesson — Children / Youth | Bibelstunde — Kinder und Jugendliche | 어린이·청소년 성경 시간 | Leçon biblique — enfants et jeunes | Lección bíblica — niños y jóvenes | Aula bíblica — crianças e jovens |
 |  | `studies.teaching.builtin.blank.hint` | No sections yet. Add the ones this teaching needs. | Noch keine Abschnitte. Füge hinzu, was diese Bibellehre braucht. | 아직 단락이 없습니다. 이 가르침에 필요한 것을 더하세요. | Pas encore de sections. Ajoutez celles dont cet enseignement a besoin. | Todavía no hay secciones. Añade las que esta enseñanza necesite. | Ainda não há seções. Acrescente as que este ensino precisa. |
 |  | `studies.teaching.builtin.blank.name` | Blank template | Leere Vorlage | 빈 틀 | Modèle vide | Plantilla en blanco | Modelo em branco |
-|  | `studies.teaching.builtin.eva.blocks.anwenden.guidance` | What follows for faith, understanding, decisions, behaviour and relationships. Optional prompts: what changes in how we think and live, what we will do, whom this could encourage. | Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte. | 믿음, 이해, 결정, 행동, 관계에 무엇이 따르는가. 생각과 삶이 어떻게 달라지는지, 무엇을 할지, 누구에게 격려가 될지를 적을 수 있습니다. | Ce qui suit pour la foi, la compréhension, les décisions, la conduite et les relations. Ce qui change, ce que l’on fera, qui cela peut encourager. | Qué se sigue para la fe, la comprensión, las decisiones, la conducta y las relaciones. Qué cambia, qué haremos y a quién puede animar. | O que se segue para a fé, a compreensão, as decisões, o comportamento e os relacionamentos. O que muda, o que faremos e quem isso pode encorajar. |
+|  | `studies.teaching.builtin.eva.blocks.anwenden.guidance` | What follows for faith, understanding, decisions, behaviour and relationships. Optional Campus Connect 3×3 prompts: what changes in how we think and live, what we will do, whom this could encourage. | Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Campus Connect 3×3-Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte. | 믿음, 이해, 결정, 행동, 관계에 무엇이 따르는가. Campus Connect 3×3 도움 질문(선택): 생각과 삶이 어떻게 달라지는지, 무엇을 할지, 누구에게 격려가 될지. | Ce qui suit pour la foi, la compréhension, les décisions, la conduite et les relations. Suggestions facultatives Campus Connect 3×3 : ce qui change, ce que l’on fera, qui cela peut encourager. | Qué se sigue para la fe, la comprensión, las decisiones, la conducta y las relaciones. Sugerencias opcionales de Campus Connect 3×3: qué cambia, qué haremos y a quién puede animar. | O que se segue para a fé, a compreensão, as decisões, o comportamento e os relacionamentos. Sugestões opcionais do Campus Connect 3×3: o que muda, o que faremos e quem isso pode encorajar. |
 |  | `studies.teaching.builtin.eva.blocks.anwenden.title` | Application | Anwenden | 적용하기 | Appliquer | Aplicar | Aplicar |
-|  | `studies.teaching.builtin.eva.blocks.erkennen.guidance` | What does the passage actually say, and what can the group discover for themselves? Optional prompts: read it together, listen as it is read again, retell it in your own words. | Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen. | 이 본문이 실제로 말하는 것은 무엇이며, 모임의 사람들이 스스로 찾을 수 있는 것은 무엇입니까? 함께 읽고, 다시 듣고, 자기 말로 말해 보는 질문을 곁들일 수 있습니다. | Que dit vraiment le passage, et que peut découvrir le groupe ? On peut lire ensemble, réécouter, puis redire avec ses mots. | Qué dice de veras el pasaje y qué puede descubrir el grupo. Se puede leer juntos, volver a escuchar y contarlo con palabras propias. | O que a passagem realmente diz, e o que o grupo pode descobrir? Dá para ler juntos, ouvir de novo e recontar com as próprias palavras. |
+|  | `studies.teaching.builtin.eva.blocks.erkennen.guidance` | What does the passage actually say, and what can the group discover for themselves? Optional Campus Connect 3×3 prompts: read it together, listen as it is read again, retell it in your own words. | Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Campus Connect 3×3-Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen. | 이 본문이 실제로 말하는 것은 무엇이며, 모임의 사람들이 스스로 찾을 수 있는 것은 무엇입니까? Campus Connect 3×3 도움 질문(선택): 함께 읽고, 다시 듣고, 자기 말로 말해 보기. | Que dit vraiment le passage, et que peut découvrir le groupe ? Suggestions facultatives Campus Connect 3×3 : lire ensemble, réécouter, puis redire avec ses mots. | Qué dice de veras el pasaje y qué puede descubrir el grupo. Sugerencias opcionales de Campus Connect 3×3: leer juntos, volver a escuchar y contarlo con palabras propias. | O que a passagem realmente diz, e o que o grupo pode descobrir? Sugestões opcionais do Campus Connect 3×3: ler juntos, ouvir de novo e recontar com as próprias palavras. |
 |  | `studies.teaching.builtin.eva.blocks.erkennen.title` | Observation | Erkennen | 살피기 | Observer | Observar | Observar |
-|  | `studies.teaching.builtin.eva.blocks.verstehen.guidance` | Meaning in the literary, historical and biblical context, and the central message. Optional prompts: what became important, what this says about God and about people, how the context helps. | Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft. | 문학적·역사적·성경적 맥락 안의 뜻과 중심 메시지입니다. 무엇이 중요해졌는지, 하나님과 사람에 대해 무엇을 말하는지, 맥락이 어떻게 돕는지 물을 수 있습니다. | Le sens dans le contexte littéraire, historique et biblique, et le message central. Ce qui est devenu important, ce que le texte dit de Dieu et des humains, et comment le contexte aide. | El sentido en el contexto literario, histórico y bíblico, y el mensaje central. Qué se volvió importante, qué dice de Dios y de las personas, y cómo ayuda el contexto. | O sentido no contexto literário, histórico e bíblico, e a mensagem central. O que ficou importante, o que o texto diz sobre Deus e sobre as pessoas, e como o contexto ajuda. |
+|  | `studies.teaching.builtin.eva.blocks.verstehen.guidance` | Meaning in the literary, historical and biblical context, and the central message. Optional Campus Connect 3×3 prompts: what became important, what this says about God and about people, how the context helps. | Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Campus Connect 3×3-Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft. | 문학적·역사적·성경적 맥락 안의 뜻과 중심 메시지입니다. Campus Connect 3×3 도움 질문(선택): 무엇이 중요해졌는지, 하나님과 사람에 대해 무엇을 말하는지, 맥락이 어떻게 돕는지. | Le sens dans le contexte littéraire, historique et biblique, et le message central. Suggestions facultatives Campus Connect 3×3 : ce qui est devenu important, ce que le texte dit de Dieu et des humains, comment le contexte aide. | El sentido en el contexto literario, histórico y bíblico, y el mensaje central. Sugerencias opcionales de Campus Connect 3×3: qué se volvió importante, qué dice de Dios y de las personas, cómo ayuda el contexto. | O sentido no contexto literário, histórico e bíblico, e a mensagem central. Sugestões opcionais do Campus Connect 3×3: o que ficou importante, o que o texto diz sobre Deus e sobre as pessoas, como o contexto ajuda. |
 |  | `studies.teaching.builtin.eva.blocks.verstehen.title` | Comprehension | Verstehen | 이해하기 | Comprendre | Comprender | Compreender |
 |  | `studies.teaching.builtin.eva.hint` | For a group: observe the passage, understand it, then ask what follows. | Für eine Gruppe: den Text wahrnehmen, ihn verstehen, dann fragen, was daraus folgt. | 모임을 위해: 본문을 살피고, 뜻을 이해하고, 삶에 무엇을 묻는지 적습니다. | Pour un groupe : observer le passage, le comprendre, puis demander ce qui en découle. | Para un grupo: observar el pasaje, comprenderlo y preguntar qué se sigue. | Para um grupo: observar a passagem, compreendê-la e perguntar o que se segue. |
 |  | `studies.teaching.builtin.eva.name` | Bible Study — EVA | Bibelstudium — EVA | 성경공부 | Étude biblique | Estudio bíblico | Estudo bíblico |
@@ -1460,6 +1466,8 @@ _No open linguistic questions._
 |  | `studies.teaching.notesHasText` | has notes | enthält Notizen | 메모 있음 | contient des notes | tiene notas | tem anotações |
 |  | `studies.teaching.notesPrivate` | Only for you: never part of the Materials for your listeners or group. | Nur für dich: nie Teil der Unterlagen für Zuhörer oder Gruppe. | 나만 보는 메모입니다. 듣는 이나 모임을 위한 가르침 자료에는 들어가지 않습니다. | Pour vous seul : jamais dans les supports destinés à l’auditoire ou au groupe. | Solo para ti: nunca forma parte de los materiales para tus oyentes o tu grupo. | Só para você: nunca faz parte dos materiais para os ouvintes ou o grupo. |
 |  | `studies.teaching.passagesLine` | Bible text | Bibeltext | 본문 | Texte biblique | Texto bíblico | Texto bíblico |
+|  | `studies.teaching.saveTemplate.keeps.blocks` | The template keeps the format and the sections and blocks this teaching starts with, in order. Nothing written in the blocks comes with it. | Die Vorlage übernimmt die Form und die Abschnitte und Blöcke, mit denen diese Bibellehre beginnt, in ihrer Reihenfolge. Was in den Blöcken steht, kommt nicht mit. | 가르침 틀에는 형식과 이 가르침이 시작하는 단락과 칸이 순서대로 담깁니다. 칸에 쓴 글은 담기지 않습니다. | Le modèle reprend la forme et les sections et blocs avec lesquels cet enseignement commence, dans l’ordre. Rien de ce qui est écrit dans les blocs n’est repris. | La plantilla conserva el formato y las secciones y bloques con los que empieza esta enseñanza, en orden. Lo escrito en los bloques no se incluye. | O modelo guarda o formato e as seções e blocos com que este ensino começa, em ordem. O que está escrito nos blocos não vem junto. |
+| {{max}} | `studies.teaching.saveTemplate.tooManyBlocks` | A template can start with at most {{max}} blocks, and this teaching has more. Make the template in Settings → Templates instead. | Eine Vorlage kann mit höchstens {{max}} Blöcken beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen. | 가르침 틀은 칸을 최대 {{max}}개까지 담을 수 있는데, 이 가르침은 그보다 많습니다. 설정 → 공부·가르침 틀에서 직접 만드세요. | Un modèle peut commencer avec {{max}} blocs au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles. | Una plantilla puede empezar con {{max}} bloques como máximo, y esta enseñanza tiene más. Crea la plantilla en Configuración → Plantillas. | Um modelo pode começar com no máximo {{max}} blocos, e este ensino tem mais. Crie o modelo em Configurações → Modelos. |
 
 ## 4. Automatic audit findings
 

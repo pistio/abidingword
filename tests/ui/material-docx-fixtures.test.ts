@@ -70,6 +70,11 @@ const GERMAN = prep({
   points: [point(1, { title: "Was bedeutet „bleiben“ für Glaubensgeschwisterverhältnisse in unserer Gemeindewirklichkeit?", explanation: "LEADER: kann zu Vers 9 führen." })],
 });
 
+const BLOCK_SERMON = prep({ templateVersion: 2, blocks: [
+  { id: "point", parentId: null, position: 0, blockType: "outline_point", blockKey: null, title: "Block heading", body: "Block paragraph", participantFacing: true, role: null, guidanceKey: null, pointId: null },
+  { id: "private-reading", parentId: null, position: 1, blockType: "scripture", blockKey: null, title: "Private reading", body: "", participantFacing: false, role: null, guidanceKey: null, pointId: null },
+], passages: [{ id: "private-pass", pointId: null, blockId: "private-reading", reference: ref }] });
+
 const t = i18n.t.bind(i18n);
 const make = (name: string, p: TeachingPreparation, kind: MaterialDocument["kind"], options: MaterialOptions, text: MaterialScripture | null, language = "en") => {
   const fixed = i18n.getFixedT(language);
@@ -78,6 +83,9 @@ const make = (name: string, p: TeachingPreparation, kind: MaterialDocument["kind
 
 function documents() {
   return [
+    make("block-manuscript", BLOCK_SERMON, "manuscript", {}, null),
+    make("block-private-sheet", BLOCK_SERMON, "questions", { includePassage: true }, scripture("FX", ["PRIVATE passage words"])),
+    make("block-leader-sheet", BLOCK_SERMON, "questions", { leader: true, includePassage: true }, scripture("FX", ["PRIVATE passage words"])),
     make("group-sheet", GROUP, "questions", { includePassage: true }, scripture("BSB", ["I am the true vine.", "Every branch in me…", "You are already clean."])),
     make("group-sheet-with-frame", GROUP, "questions", { includeFrame: true }, null),
     make("leader-version", GROUP, "questions", { leader: true }, null),

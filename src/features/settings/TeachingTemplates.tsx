@@ -6,7 +6,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { teachingKindLabel } from "@/features/teaching/labels";
-import { BUILTIN_TEACHING_TEMPLATES, builtinPoints, startSummary, type BuiltinTeachingTemplate } from "@/features/teaching/teachingTemplates";
+import { BUILTIN_BLOCK_TEMPLATES, BUILTIN_TEACHING_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, builtinBlockStartSummary, builtinPoints, startSummary, type BuiltinBlockTemplate, type BuiltinTeachingTemplate } from "@/features/teaching/teachingTemplates";
 import type { TeachingTemplate } from "@/types/teaching";
 
 /**
@@ -43,12 +43,24 @@ export function TeachingTemplates({ onEdit, version = 0 }: { onEdit: (templateId
     });
     onEdit(copy.id);
   };
+  const saveAsMineBlock = async (template: BuiltinBlockTemplate) => {
+    const name = t(`studies.teaching.builtin.${blockTemplateGroup(template.key)}.name`);
+    const copy = await api.teachingTemplateCreate({
+      name: t("studies.builtin.copyTitle", { title: name }),
+      kind: template.legacyKind,
+      points: [],
+      version: 2,
+      blocks: blocksFromBuiltin(t, template),
+    });
+    onEdit(copy.id);
+  };
   const duplicate = (template: TeachingTemplate) =>
     api.teachingTemplateCreate({
       name: t("studies.builtin.copyTitle", { title: template.name }),
       description: template.description,
       kind: template.kind,
       points: template.points.map((p) => ({ ...p })),
+      ...((template.version ?? 1) >= 2 ? { version: 2 as const, blocks: (template.blocks ?? []).map((b) => ({ ...b })) } : {}),
     });
 
   const meta = "m-0 text-[0.9375rem] text-text-muted";
@@ -59,6 +71,25 @@ export function TeachingTemplates({ onEdit, version = 0 }: { onEdit: (templateId
         <HelpTip name={t("settings.help.about", { topic: t("studies.teaching.templates.listLabel") })}>{t("studies.teaching.templates.intro")}</HelpTip>
       </div>
       <ul aria-label={t("studies.teaching.templates.listLabel")} className="m-0 list-none border-t border-border-subtle p-0">
+        {BUILTIN_BLOCK_TEMPLATES.map((template) => {
+          const name = t(`studies.teaching.builtin.${blockTemplateGroup(template.key)}.name`);
+          const summary = builtinBlockStartSummary(t, template);
+          return (
+            <li key={template.key} className="flex flex-wrap items-start justify-between gap-2 border-b border-border-subtle py-3">
+              <div className="min-w-0 flex-1 basis-64">
+                <p className="type-item m-0">{name}</p>
+                <p className={`${meta} line-clamp-2`} title={`${t("studies.templates.builtIn")}${t("common.listSeparator")}${summary}`}>
+                  {t("studies.templates.builtIn")}
+                  {t("common.listSeparator")}
+                  {summary}
+                </p>
+              </div>
+              <Button variant="quiet" onClick={() => act(() => saveAsMineBlock(template))} aria-label={t("studies.teaching.templates.saveAsMineLabel", { name })}>
+                {t("studies.teaching.templates.saveAsMine")}
+              </Button>
+            </li>
+          );
+        })}
         {BUILTIN_TEACHING_TEMPLATES.map((template) => {
           const name = teachingKindLabel(t, template.kind);
           return (

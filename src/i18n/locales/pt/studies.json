@@ -1708,11 +1708,13 @@
         "points": "O modelo guarda o formato e tantos pontos principais quanto este ensino tem, em ordem. Os pontos começam sem título.",
         "generalPoints": "O modelo guarda o formato e tantos pontos principais quanto este ensino tem, em ordem. Os pontos começam sem título.",
         "questions": "O modelo guarda o formato e tantas perguntas quanto este ensino tem. As perguntas começam vazias.",
-        "steps": "O modelo guarda o formato e as etapas em ordem, cada uma com seu título e tipo."
+        "steps": "O modelo guarda o formato e as etapas em ordem, cada uma com seu título e tipo.",
+        "blocks": "O modelo guarda o formato e as seções e blocos com que este ensino começa, em ordem. O que está escrito nos blocos não vem junto."
       },
       "notKept": "Nada do que você escreveu vem junto: nem o público, o propósito, a mensagem, a introdução, a conclusão ou as notas; nada escrito sob um ponto, uma pergunta ou uma etapa; nenhuma passagem, material guardado ou anotação do seu estudo.",
       "saved": "Salvo como seu modelo “{{name}}”. Você pode escolhê-lo para seu próximo ensino e alterá-lo em Configurações → Modelos.",
-      "tooMany": "Um modelo pode começar com no máximo {{max}} pontos, perguntas ou etapas, e este ensino tem mais. Crie o modelo em Configurações → Modelos."
+      "tooMany": "Um modelo pode começar com no máximo {{max}} pontos, perguntas ou etapas, e este ensino tem mais. Crie o modelo em Configurações → Modelos.",
+      "tooManyBlocks": "Um modelo pode começar com no máximo {{max}} blocos, e este ensino tem mais. Crie o modelo em Configurações → Modelos."
     },
     "addStepMenu": "Tipo de etapa a adicionar",
     "newTeaching": "Novo ensino bíblico",
@@ -1744,6 +1746,10 @@
       "participant": "Mostrar aos participantes",
       "settings": "Este bloco",
       "empty": "Este ensino ainda está vazio. Acrescente uma seção ou um espaço para escrever quando quiser.",
+      "viewLabel": "Como você escreve",
+      "viewContinuous": "Texto contínuo",
+      "viewOutline": "Esboço",
+      "headingLabel": "Título",
       "templateHeading": "Blocos",
       "templateHint": "Adicione, reordene, duplique e renomeie as seções e os blocos com que um ensino novo começa. O que você escreve num ensino não fica no modelo.",
       "titleOf": "Título de {{name}}",
@@ -1779,15 +1785,15 @@
         "blocks": {
           "erkennen": {
             "title": "Observar",
-            "guidance": "O que a passagem realmente diz, e o que o grupo pode descobrir? Dá para ler juntos, ouvir de novo e recontar com as próprias palavras."
+            "guidance": "O que a passagem realmente diz, e o que o grupo pode descobrir? Sugestões opcionais do Campus Connect 3×3: ler juntos, ouvir de novo e recontar com as próprias palavras."
           },
           "verstehen": {
             "title": "Compreender",
-            "guidance": "O sentido no contexto literário, histórico e bíblico, e a mensagem central. O que ficou importante, o que o texto diz sobre Deus e sobre as pessoas, e como o contexto ajuda."
+            "guidance": "O sentido no contexto literário, histórico e bíblico, e a mensagem central. Sugestões opcionais do Campus Connect 3×3: o que ficou importante, o que o texto diz sobre Deus e sobre as pessoas, como o contexto ajuda."
           },
           "anwenden": {
             "title": "Aplicar",
-            "guidance": "O que se segue para a fé, a compreensão, as decisões, o comportamento e os relacionamentos. O que muda, o que faremos e quem isso pode encorajar."
+            "guidance": "O que se segue para a fé, a compreensão, as decisões, o comportamento e os relacionamentos. Sugestões opcionais do Campus Connect 3×3: o que muda, o que faremos e quem isso pode encorajar."
           }
         }
       },
@@ -1813,6 +1819,10 @@
         "name": "Aula bíblica — crianças e jovens",
         "hint": "Uma aula só, para crianças ou jovens. A idade muda o modo de contar, não o sentido da passagem.",
         "blocks": {
+          "prepare": {
+            "title": "Preparação",
+            "guidance": "Opcional: a idade para a qual você prepara, o tempo que tem e o que espera que levem. A idade muda o modo de contar, não o sentido da passagem. Acrescente blocos de tempo ou de objetivos só se quiser."
+          },
           "story": {
             "title": "História",
             "guidance": "Conte a passagem de um jeito que sirva à idade. O sentido continua sendo o do texto."

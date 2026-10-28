@@ -108,7 +108,7 @@ fn validated(input: &TeachingTemplateInput) -> AppResult<(String, Option<String>
             })
         })
         .collect::<AppResult<Vec<_>>>()?;
-    let blocks = if input.version >= 2 || !input.blocks.is_empty() {
+    let mut blocks = if input.version >= 2 || !input.blocks.is_empty() {
         if input.blocks.len() > crate::db::teaching::STARTING_POINTS_MAX.max(40) {
             return Err(AppError::InvalidInput(
                 UserMessage::new(
@@ -126,6 +126,18 @@ fn validated(input: &TeachingTemplateInput) -> AppResult<(String, Option<String>
     } else {
         Vec::new()
     };
+    let mut roles = std::collections::HashSet::new();
+    for block in &mut blocks {
+        if let Some(role) = block
+            .role
+            .as_deref()
+            .filter(|r| crate::db::teaching_blocks::SINGLETON_ROLES.contains(r))
+        {
+            if !roles.insert(role.to_string()) {
+                block.role = None;
+            }
+        }
+    }
     let definition = if input.version >= 2 || !blocks.is_empty() {
         serde_json::to_string(&serde_json::json!({ "version": 2, "blocks": blocks }))
     } else {

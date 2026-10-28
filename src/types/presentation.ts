@@ -9,7 +9,7 @@ export type PresentationTheme = (typeof PRESENTATION_THEMES)[number];
 export const ITEM_KINDS = ["title", "section", "heading", "text", "scripture", "image", "quote", "question", "activity", "pause"] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
 
-export type SourceKind = "preparation" | "point" | "passage" | "material" | "finding";
+export type SourceKind = "preparation" | "point" | "passage" | "material" | "finding" | "block";
 export type PreparationField = "title" | "central_message" | "introduction" | "conclusion";
 
 export interface ItemSource {

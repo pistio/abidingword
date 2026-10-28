@@ -262,7 +262,7 @@ const TABLES: &[Table] = &[
         has_id: true,
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
-            ("parent_id", Ref::OwnOrEmpty("teaching_blocks")),
+            ("parent_id", Ref::OwnIfSet("teaching_blocks")),
             ("point_id", Ref::OwnOrEmpty("teaching_points")),
         ],
     },
@@ -273,7 +273,7 @@ const TABLES: &[Table] = &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
             ("finding_id", Ref::Own("findings")),
-            ("block_id", Ref::OwnOrEmpty("teaching_blocks")),
+            ("block_id", Ref::OwnIfSet("teaching_blocks")),
         ],
     },
     Table {
@@ -282,7 +282,7 @@ const TABLES: &[Table] = &[
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
-            ("block_id", Ref::OwnOrEmpty("teaching_blocks")),
+            ("block_id", Ref::OwnIfSet("teaching_blocks")),
         ],
     },
     Table {
@@ -291,7 +291,7 @@ const TABLES: &[Table] = &[
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
-            ("block_id", Ref::OwnOrEmpty("teaching_blocks")),
+            ("block_id", Ref::OwnIfSet("teaching_blocks")),
         ],
     },
     Table {
@@ -405,6 +405,24 @@ fn rows(conn: &Connection, table: &str, project_id: &str) -> AppResult<Vec<Map<S
         let mut map = Map::new();
         for (i, name) in names.iter().enumerate() {
             map.insert(name.clone(), to_json(row.get::<_, Value>(i)?)?);
+        }
+        if table == "teaching_blocks" {
+            if let (Some(prep), Some(id)) = (text(&map, "preparation_id"), text(&map, "id")) {
+                if let Some(block) = crate::db::teaching_blocks::list(conn, prep)?
+                    .into_iter()
+                    .find(|b| b.id == id)
+                {
+                    let mut config: Json =
+                        serde_json::from_str(text(&map, "config").unwrap_or("{}"))
+                            .map_err(|_| not_a_package())?;
+                    let object = config.as_object_mut().ok_or_else(not_a_package)?;
+                    object.remove("role");
+                    if let Some(role) = block.role {
+                        object.insert("role".into(), Json::String(role));
+                    }
+                    map.insert("config".into(), Json::String(config.to_string()));
+                }
+            }
         }
         out.push(map);
     }
@@ -982,6 +1000,23 @@ pub fn import(
             }
         }
     }
+    if let Some(preps) = job.ids.get("teaching_preparations") {
+        for id in preps.values() {
+            let prep = crate::db::teaching::get(&tx, id)?;
+            if prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty() {
+                crate::db::teaching_blocks::reconcile_roles(&tx, id)?;
+            }
+            for passage in &prep.passages {
+                if let Some(block) = &passage.block_id {
+                    if passage.point_id.is_some() {
+                        return Err(not_a_package());
+                    }
+                    crate::db::teaching_blocks::check_passage_target(&tx, id, block)
+                        .map_err(|_| not_a_package())?;
+                }
+            }
+        }
+    }
     let left_out = job.left_out;
     let (citations_kept, citations_reconnected) = (job.citations_kept, job.citations_reconnected);
     // Nothing the import wrote points anywhere it should not. (Each insert
@@ -1262,6 +1297,17 @@ fn external_refs(
                 None => Ok(true),
             }
         };
+    if matches!(table, "teaching_finding_links" | "teaching_materials") {
+        if let Some(block) = text(row, "block_id") {
+            let prep = text(row, "preparation_id").ok_or_else(not_a_package)?;
+            if !crate::db::teaching_blocks::list(job.conn, prep)?
+                .iter()
+                .any(|b| b.id == block)
+            {
+                return Err(not_a_package());
+            }
+        }
+    }
     match table {
         "studies" => {
             json_column(row, "details")?;
@@ -1278,7 +1324,46 @@ fn external_refs(
                 return Ok(false);
             }
         }
-        "teaching_blocks" => json_column(row, "config")?,
+        "teaching_blocks" => {
+            let prep = text(row, "preparation_id").ok_or_else(not_a_package)?;
+            if !crate::domain::TEACHING_BLOCK_TYPES.contains(&text(row, "block_type").unwrap_or(""))
+            {
+                return Err(not_a_package());
+            }
+            if let Some(parent) = text(row, "parent_id") {
+                if !crate::db::teaching_blocks::list(job.conn, prep)?
+                    .iter()
+                    .any(|b| b.id == parent && b.block_type == "section" && b.parent_id.is_none())
+                {
+                    return Err(not_a_package());
+                }
+            }
+            if let Some(point) = text(row, "point_id") {
+                let valid: bool = job.conn.query_row("SELECT EXISTS(SELECT 1 FROM teaching_points WHERE id = ?1 AND preparation_id = ?2 AND deleted_at IS NULL)", params![point, prep], |r| r.get(0))?;
+                if !valid {
+                    return Err(not_a_package());
+                }
+            }
+            json_column(row, "config")?;
+            let mut config: Json = serde_json::from_str(text(row, "config").unwrap_or("{}"))
+                .map_err(|_| not_a_package())?;
+            let object = config.as_object_mut().ok_or_else(not_a_package)?;
+            if let Some(role) = object.get("role").and_then(Json::as_str) {
+                if !crate::domain::BLOCK_ROLES.contains(&role) {
+                    return Err(not_a_package());
+                }
+                if crate::db::teaching_blocks::SINGLETON_ROLES.contains(&role) {
+                    let prep = text(row, "preparation_id").ok_or_else(not_a_package)?;
+                    if crate::db::teaching_blocks::list(job.conn, prep)?
+                        .iter()
+                        .any(|b| b.role.as_deref() == Some(role))
+                    {
+                        object.remove("role");
+                    }
+                }
+            }
+            row.insert("config".into(), Json::String(config.to_string()));
+        }
         "teaching_materials" => {
             json_column(row, "sources")?;
             json_column(row, "image")?;

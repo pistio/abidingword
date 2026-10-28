@@ -222,6 +222,10 @@
     "searchNoKey": "Dieser Suchdienst braucht keinen Schlüssel."
   },
   "teaching": {
+    "blockType": "Dieser Blocktyp kann in dieser Lehrvorbereitung nicht verwendet werden.",
+    "blockParent": "Ein Block kann in einem Abschnitt dieser Lehrvorbereitung stehen.",
+    "blockRole": "Dieser Block kann diesem Teil der Lehrvorbereitung nicht zugeordnet werden.",
+    "blockReference": "Wählen Sie einen vorhandenen Bibeltextblock in dieser Lehrvorbereitung.",
     "tooLong": "Dieser Teil der Bibellehre ist zu lang zum Speichern.",
     "otherPoint": "Dieser Punkt gehört zu einer anderen Bibellehre.",
     "otherStudyFinding": "Diese Notiz gehört zu einem anderen Bibelstudium.",

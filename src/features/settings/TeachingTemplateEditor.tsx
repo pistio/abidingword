@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowLeft, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUp, Copy, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { canvasShape, shapeText, shapeWords, teachingKindLabel, type ShapeText } from "@/features/teaching/labels";
 import { templatePointTitle } from "@/features/teaching/teachingTemplates";
-import { STEP_KINDS, TEACHING_BLOCK_TYPES, TEACHING_KINDS, type StepKind, type TeachingKind, type TeachingTemplate, type TeachingTemplateBlock, type TeachingTemplatePoint } from "@/types/teaching";
+import { blockParticipantDefault, STEP_KINDS, TEACHING_BLOCK_TYPES, TEACHING_KINDS, type StepKind, type TeachingKind, type TeachingTemplate, type TeachingTemplateBlock, type TeachingTemplatePoint } from "@/types/teaching";
+import { AddBlock } from "@/features/teaching/BlockCanvas";
 
 /** A point being edited: its row keeps one identity while it moves, so focus moves with it. */
 type Row = TeachingTemplatePoint & { row: string };
@@ -261,7 +262,7 @@ function BlockTemplateFields({ id, blocks, setBlocks }: { id: string; blocks: Bl
                 </select>
                 <button type="button" id={`${id}-${block.row}-up`} disabled={index === 0} onClick={() => move(index, -1)} aria-label={t("studies.templateEditor.moveUp", { title: name })} className={tool}><ArrowUp className="size-4" aria-hidden="true" /></button>
                 <button type="button" id={`${id}-${block.row}-down`} disabled={index === blocks.length - 1} onClick={() => move(index, 1)} aria-label={t("studies.templateEditor.moveDown", { title: name })} className={tool}><ArrowDown className="size-4" aria-hidden="true" /></button>
-                <button type="button" onClick={() => duplicate(index)} aria-label={t("studies.teaching.blocks.duplicate", { name })} className={tool}><Plus className="size-4" aria-hidden="true" /></button>
+                <button type="button" onClick={() => duplicate(index)} aria-label={t("studies.teaching.blocks.duplicate", { name })} className={tool}><Copy className="size-4" aria-hidden="true" /></button>
                 <button type="button" onClick={() => setBlocks(blocks.filter((b) => b.row !== block.row))} aria-label={t("studies.templateEditor.remove", { title: name })} className={`${tool} hover:text-danger`}><Trash2 className="size-4" aria-hidden="true" /></button>
               </div>
               <div className="flex flex-wrap items-center gap-3">
@@ -285,13 +286,22 @@ function BlockTemplateFields({ id, blocks, setBlocks }: { id: string; blocks: Bl
           );
         })}
       </ol>
-      <Button id={`${id}-add`} onClick={() => {
-        const row = asBlock({ blockType: "section", title: "", participantFacing: true });
-        row.key = row.row;
-        setBlocks([...blocks, row]);
-      }}>
-        <Plus className="size-4" aria-hidden="true" /> {t("studies.teaching.blocks.add")}
-      </Button>
+      <AddBlock
+        id={`${id}-add`}
+        label={t("studies.teaching.blocks.add")}
+        onAdd={(type) => {
+          const parent = type === "section" ? null : [...blocks].reverse().find((b) => b.blockType === "section");
+          const row = asBlock({
+            blockType: type,
+            title: "",
+            participantFacing: blockParticipantDefault(type),
+            parentKey: parent?.key ?? parent?.row ?? null,
+          });
+          row.key = row.row;
+          setBlocks([...blocks, row]);
+          requestAnimationFrame(() => document.getElementById(`${id}-${row.row}-title`)?.focus());
+        }}
+      />
     </section>
   );
 }
