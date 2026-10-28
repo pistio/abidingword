@@ -806,6 +806,82 @@
             }
           }
         }
+      },
+      "biblical-character-study": {
+        "name": "Étude d’un personnage biblique",
+        "description": "Étudier la vie et le caractère d’une personne à partir des passages bibliques pertinents.",
+        "sections": {
+          "person": {
+            "title": "Personnage et passages",
+            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name."
+          },
+          "setting": {
+            "title": "Contexte historique et biblique",
+            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain."
+          },
+          "life": {
+            "title": "Vie, paroles et actes",
+            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography."
+          },
+          "character": {
+            "title": "Caractère et décisions",
+            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives."
+          },
+          "god": {
+            "title": "Action de Dieu et appréciation biblique",
+            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary."
+          },
+          "conclusion": {
+            "title": "Principales conclusions",
+            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions."
+          },
+          "application": {
+            "title": "Mise en pratique",
+            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action."
+          },
+          "comparisons": {
+            "title": "Personnages et passages associés",
+            "guidance": "Compare relevant people or passages only where the connections illuminate the text."
+          }
+        }
+      },
+      "whole-book-study": {
+        "name": "Étude d’un livre de la Bible",
+        "description": "Lire un livre biblique en entier, en dégager la structure et le message, puis en appliquer l’enseignement.",
+        "sections": {
+          "reading": {
+            "title": "Lire le livre entier",
+            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries."
+          },
+          "setting": {
+            "title": "Auteur, destinataires et contexte",
+            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions."
+          },
+          "overview": {
+            "title": "Vue d’ensemble et enjeux principaux",
+            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme."
+          },
+          "outline": {
+            "title": "Structure et contenu",
+            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole."
+          },
+          "argument": {
+            "title": "Message et progression",
+            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening."
+          },
+          "synthesis": {
+            "title": "Message central",
+            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text."
+          },
+          "application": {
+            "title": "Mise en pratique",
+            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible."
+          },
+          "further": {
+            "title": "Approfondissement",
+            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -818,7 +894,9 @@
     "biblical_theology": "Étude de théologie biblique",
     "systematic_theology": "Étude de théologie systématique",
     "teaching": "Enseignement / Prédication",
-    "custom": "Étude personnalisée"
+    "custom": "Étude personnalisée",
+    "character": "Étude d’un personnage biblique",
+    "book": "Étude d’un livre biblique"
   },
   "status": {
     "active": "En cours",
