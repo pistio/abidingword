@@ -1,7 +1,7 @@
 import i18n, { type TFunction } from "i18next";
 import { LANGUAGES } from "@/i18n/languages";
 import builtin from "../../../resources/teaching-templates.json";
-import type { StepKind, TeachingKind, TeachingPreparation, TeachingTemplate, TeachingTemplatePoint } from "@/types/teaching";
+import type { StepKind, TeachingBlock, TeachingKind, TeachingPreparation, TeachingTemplate, TeachingTemplateBlock, TeachingTemplatePoint } from "@/types/teaching";
 import { canvasShape, shapeText, shapeWords, startingStepTitle } from "./labels";
 
 /**
@@ -18,7 +18,68 @@ export interface BuiltinTeachingTemplate {
   points: { key: string; kind: StepKind }[];
 }
 
-export const BUILTIN_TEACHING_TEMPLATES: readonly BuiltinTeachingTemplate[] = builtin.templates as BuiltinTeachingTemplate[];
+interface RawTeachingTemplate {
+  key: string;
+  kind?: TeachingKind;
+  version?: number;
+  legacyKind?: TeachingKind;
+  points?: { key: string; kind: StepKind }[];
+  blocks?: { key: string; type: string; parentKey?: string; role?: string; participantFacing?: boolean; guidanceKey?: string }[];
+}
+
+const RAW_TEMPLATES = builtin.templates as RawTeachingTemplate[];
+
+export const BUILTIN_TEACHING_TEMPLATES: readonly BuiltinTeachingTemplate[] = RAW_TEMPLATES.filter((t) => t.version !== 2).map((t) => ({
+  key: t.key,
+  kind: t.kind!,
+  points: t.points ?? [],
+}));
+
+/** The three built-in block templates. The earlier formats stay in the file for teachings already made. */
+export interface BuiltinBlockTemplate {
+  key: string;
+  legacyKind: TeachingKind;
+  blocks: NonNullable<RawTeachingTemplate["blocks"]>;
+}
+
+export const BUILTIN_BLOCK_TEMPLATES: readonly BuiltinBlockTemplate[] = RAW_TEMPLATES.filter((t) => t.version === 2).map((t) => ({
+  key: t.key,
+  legacyKind: t.legacyKind!,
+  blocks: t.blocks ?? [],
+}));
+
+/** The i18n group under studies.teaching.builtin for a built-in block template. */
+export function blockTemplateGroup(key: string): "eva" | "sermonTalk" | "bibleLesson" | "blank" {
+  if (key === "sermon-talk") return "sermonTalk";
+  if (key === "bible-lesson") return "bibleLesson";
+  if (key === "blank") return "blank";
+  return "eva";
+}
+
+/** A built-in block's heading in the person's language. */
+export function builtinBlockTitle(t: TFunction, templateKey: string, blockKey: string): string {
+  const group = blockTemplateGroup(templateKey);
+  return (t as unknown as (key: string) => string)(`studies.teaching.builtin.${group}.blocks.${blockKey}.title`);
+}
+
+/** The blocks a new teaching copies from a built-in template, titled in the person's language. */
+export function blocksFromBuiltin(t: TFunction, template: BuiltinBlockTemplate): TeachingTemplateBlock[] {
+  const sectionTitle = new Map(template.blocks.filter((b) => b.type === "section").map((b) => [b.key, builtinBlockTitle(t, template.key, b.key)]));
+  return template.blocks.map((block) => ({
+    key: block.key,
+    parentKey: block.parentKey ?? null,
+    blockType: block.type,
+    title: block.type === "section" ? (sectionTitle.get(block.key) ?? "") : block.parentKey ? (sectionTitle.get(block.parentKey) ?? "") : "",
+    ...(block.participantFacing === undefined ? {} : { participantFacing: block.participantFacing }),
+    ...(block.role ? { role: block.role } : {}),
+    ...(block.guidanceKey ? { guidanceKey: block.guidanceKey } : {}),
+  }));
+}
+
+/** True when this teaching is edited as blocks. A teaching with neither a version nor blocks keeps the earlier editor. */
+export function usesBlocks(prep: Pick<TeachingPreparation, "templateVersion" | "blocks">): boolean {
+  return (prep.templateVersion ?? 0) >= 2 || (prep.blocks?.length ?? 0) > 0;
+}
 
 /** A template to start from: a built-in one, or one of the person's own. */
 export type TeachingStart = { builtin: BuiltinTeachingTemplate } | { mine: TeachingTemplate };
@@ -96,7 +157,17 @@ export function builtinPoints(t: TFunction, template: BuiltinTeachingTemplate): 
  * introduction, conclusion, notes, explanation, application, illustration,
  * passages, findings or kept material.
  */
-export function templateFromTeaching(prep: Pick<TeachingPreparation, "kind" | "points">): { kind: TeachingKind; points: TeachingTemplatePoint[] } {
+export function templateFromTeaching(
+  prep: Pick<TeachingPreparation, "kind" | "points" | "templateVersion" | "blocks">,
+): { kind: TeachingKind; points: TeachingTemplatePoint[]; version?: number; blocks?: TeachingTemplateBlock[] } {
+  if (usesBlocks(prep)) {
+    return {
+      kind: prep.kind ?? "other",
+      points: [],
+      version: 2,
+      blocks: templateBlocksFromTeaching(prep.blocks ?? []),
+    };
+  }
   const kind = prep.kind ?? "other";
   const steps = canvasShape(kind) === "steps";
   return {
@@ -108,8 +179,44 @@ export function templateFromTeaching(prep: Pick<TeachingPreparation, "kind" | "p
   };
 }
 
+/** A teaching's blocks as a template: headings, kinds and privacy, never the writing. */
+export function templateBlocksFromTeaching(blocks: TeachingBlock[]): TeachingTemplateBlock[] {
+  const keyOf = (block: TeachingBlock) => block.blockKey || block.id;
+  const byId = new Map(blocks.map((block) => [block.id, block]));
+  return [...blocks]
+    .sort((a, b) => a.position - b.position)
+    .map((block) => {
+      const parent = block.parentId ? byId.get(block.parentId) : undefined;
+      return {
+        key: keyOf(block),
+        parentKey: parent ? keyOf(parent) : null,
+        blockType: block.blockType,
+        title: block.title,
+        ...(block.participantFacing === undefined ? {} : { participantFacing: block.participantFacing }),
+        ...(block.role ? { role: block.role } : {}),
+        ...(block.guidanceKey ? { guidanceKey: block.guidanceKey } : {}),
+      };
+    });
+}
+
+/** What a built-in block template starts with, in the person's language. */
+export function builtinBlockStartSummary(t: TFunction, template: BuiltinBlockTemplate): string {
+  const format = t(`studies.teaching.format.${shapeWords(template.legacyKind)}`);
+  const names = template.blocks.filter((b) => b.type === "section").map((b) => builtinBlockTitle(t, template.key, b.key));
+  if (names.length === 0) return format;
+  return `${format} ${t("studies.teaching.startsWith", { steps: names.join(t("common.listSeparator")) })}`;
+}
+
 /** What a template gives to work in: its format, and what it starts with ("Starts with: Welcome · Game · Step 3."). */
 export function startSummary(t: TFunction, start: TeachingStart): string {
+  if ("mine" in start && (start.mine.version ?? 1) >= 2) {
+    const format = t(`studies.teaching.format.${shapeWords(start.mine.kind)}`);
+    const names = (start.mine.blocks ?? [])
+      .filter((b) => b.blockType === "section" || !b.parentKey)
+      .map((b) => b.title.trim() || (t as unknown as (key: string) => string)(`studies.teaching.blocks.types.${b.blockType}`));
+    if (names.length === 0) return format;
+    return `${format} ${t("studies.teaching.startsWith", { steps: names.join(t("common.listSeparator")) })}`;
+  }
   const kind = startKind(start);
   const format = t(`studies.teaching.format.${shapeWords(kind)}`);
   const points = startingPoints(t, start);

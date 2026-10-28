@@ -18,7 +18,8 @@ use crate::error::{AppError, AppResult, UserMessage};
 use crate::scripture::reference::ScriptureRef;
 
 const COLUMNS: &str = "id, study_id, title, kind, audience, purpose, central_message, \
-                       introduction, conclusion, notes, created_at, updated_at, revision";
+                       introduction, conclusion, notes, created_at, updated_at, revision, \
+                       template_key, template_version";
 
 /// How many sources a kept item may carry, and how long each part may be.
 const SOURCES_MAX: usize = 10;
@@ -40,6 +41,9 @@ fn from_row(row: &Row) -> rusqlite::Result<TeachingPreparation> {
         findings: Vec::new(),
         passages: Vec::new(),
         materials: Vec::new(),
+        template_key: row.get(13)?,
+        template_version: row.get(14)?,
+        blocks: Vec::new(),
         created_at: row.get(10)?,
         updated_at: row.get(11)?,
         revision: row.get(12)?,
@@ -125,7 +129,7 @@ pub fn list(conn: &Connection, study_id: &str) -> AppResult<Vec<TeachingSummary>
     Ok(rows.collect::<Result<_, _>>()?)
 }
 
-fn row(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
+pub(crate) fn row(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     conn.query_row(
         &format!(
             "SELECT {COLUMNS} FROM teaching_preparations WHERE id = ?1 AND deleted_at IS NULL"
@@ -145,6 +149,20 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     prep.findings = findings_for(conn, id)?;
     prep.passages = passages_for(conn, id)?;
     prep.materials = materials_for(conn, id)?;
+    prep.blocks = crate::db::teaching_blocks::list(conn, id)?;
+    if prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty() {
+        let body = |role: &str| {
+            prep.blocks
+                .iter()
+                .find(|b| b.role.as_deref() == Some(role))
+                .map(|b| b.body.clone())
+                .unwrap_or_default()
+        };
+        prep.introduction = body("introduction");
+        prep.conclusion = body("conclusion");
+        prep.notes = body("notes");
+        prep.central_message = Some(body("central_message")).filter(|s| !s.is_empty());
+    }
     Ok(prep)
 }
 
@@ -181,6 +199,15 @@ pub fn create(conn: &Connection, input: &CreateTeaching) -> AppResult<TeachingPr
             params![new_id(), id, index as i64, step, point, now],
         )?;
     }
+    let block_session = input.template_version.unwrap_or(0) >= 2 || !input.blocks.is_empty();
+    if block_session {
+        let version = input.template_version.unwrap_or(2);
+        tx.execute(
+            "UPDATE teaching_preparations SET template_key = ?2, template_version = ?3 WHERE id = ?1",
+            params![id, input.template_key, version],
+        )?;
+        crate::db::teaching_blocks::insert_starting(&tx, &id, &input.blocks, &now)?;
+    }
     studies::touch(&tx, &input.study_id, &now)?;
     tx.commit()?;
     get(conn, &id)
@@ -211,7 +238,8 @@ pub fn update(conn: &Connection, input: &UpdateTeaching) -> AppResult<TeachingPr
     let conclusion = long(&input.conclusion, current.conclusion)?;
     let notes = long(&input.notes, current.notes)?;
     let now = now();
-    conn.execute(
+    let tx = conn.unchecked_transaction()?;
+    tx.execute(
         "UPDATE teaching_preparations SET title = ?2, kind = ?3, audience = ?4, purpose = ?5,
              central_message = ?6, introduction = ?7, conclusion = ?8, notes = ?9,
              updated_at = ?10, revision = revision + 1
@@ -229,7 +257,37 @@ pub fn update(conn: &Connection, input: &UpdateTeaching) -> AppResult<TeachingPr
             now
         ],
     )?;
-    studies::touch(conn, &current.study_id, &now)?;
+    // A block that wears one of these roles follows the column, so the block
+    // editor and a presentation that reads the column stay on the same words.
+    if input.introduction.is_some() {
+        crate::db::teaching_blocks::mirror_column_into_blocks(
+            &tx,
+            &input.id,
+            "introduction",
+            &introduction,
+        )?;
+    }
+    if input.conclusion.is_some() {
+        crate::db::teaching_blocks::mirror_column_into_blocks(
+            &tx,
+            &input.id,
+            "conclusion",
+            &conclusion,
+        )?;
+    }
+    if input.notes.is_some() {
+        crate::db::teaching_blocks::mirror_column_into_blocks(&tx, &input.id, "notes", &notes)?;
+    }
+    if input.central_message.is_some() {
+        crate::db::teaching_blocks::mirror_column_into_blocks(
+            &tx,
+            &input.id,
+            "central_message",
+            central_message.as_deref().unwrap_or(""),
+        )?;
+    }
+    studies::touch(&tx, &current.study_id, &now)?;
+    tx.commit()?;
     get(conn, &input.id)
 }
 
@@ -248,7 +306,7 @@ pub fn delete(conn: &Connection, id: &str) -> AppResult<()> {
     Ok(())
 }
 
-fn touch(conn: &Connection, prep: &TeachingPreparation, now: &str) -> AppResult<()> {
+pub(crate) fn touch(conn: &Connection, prep: &TeachingPreparation, now: &str) -> AppResult<()> {
     conn.execute(
         "UPDATE teaching_preparations SET updated_at = ?2, revision = revision + 1 WHERE id = ?1",
         params![prep.id, now],
@@ -543,7 +601,7 @@ pub fn unlink_finding(conn: &Connection, link_id: &str) -> AppResult<TeachingPre
 
 fn passages_for(conn: &Connection, prep_id: &str) -> AppResult<Vec<TeachingPassage>> {
     let mut stmt = conn.prepare(
-        "SELECT t.id, t.point_id, t.book, t.start_chapter, t.start_verse, t.end_chapter, t.end_verse
+        "SELECT t.id, t.point_id, t.block_id, t.book, t.start_chapter, t.start_verse, t.end_chapter, t.end_verse
          FROM teaching_passages t LEFT JOIN teaching_points p ON p.id = t.point_id
          WHERE t.preparation_id = ?1 AND t.deleted_at IS NULL
            AND (t.point_id IS NULL OR p.deleted_at IS NULL)
@@ -551,6 +609,7 @@ fn passages_for(conn: &Connection, prep_id: &str) -> AppResult<Vec<TeachingPassa
     )?;
     type Raw = (
         String,
+        Option<String>,
         Option<String>,
         String,
         u16,
@@ -568,15 +627,17 @@ fn passages_for(conn: &Connection, prep_id: &str) -> AppResult<Vec<TeachingPassa
                 r.get(4)?,
                 r.get(5)?,
                 r.get(6)?,
+                r.get(7)?,
             ))
         })?
         .collect::<Result<_, _>>()?;
     rows.into_iter()
-        .map(|(id, point_id, book, sc, sv, ec, ev)| {
+        .map(|(id, point_id, block_id, book, sc, sv, ec, ev)| {
             let reference = reference_from_columns(&id, &book, (sc, sv), (ec, ev))?;
             Ok(TeachingPassage {
                 id,
                 point_id,
+                block_id,
                 reference: reference.to_dto(),
             })
         })
@@ -591,13 +652,24 @@ pub fn add_passage(
 ) -> AppResult<TeachingPreparation> {
     let prep = row(conn, &input.preparation_id)?;
     let point_id = input.point_id.as_deref().filter(|p| !p.is_empty());
+    let block_id = input.block_id.as_deref().filter(|p| !p.is_empty());
     check_point(conn, &prep.id, point_id)?;
+    if let Some(block) = block_id {
+        if point_id.is_some() {
+            return Err(invalid(
+                "teaching.blockReference",
+                "Choose a live Scripture block in this teaching.",
+            ));
+        }
+        crate::db::teaching_blocks::check_passage_target(conn, &prep.id, block)?;
+    }
     let reference = ScriptureRef::from_canonical(&input.reference)?;
     let canonical = reference.canonical();
-    if passages_for(conn, &prep.id)?
-        .iter()
-        .any(|p| p.point_id.as_deref() == point_id && p.reference.canonical == canonical)
-    {
+    if passages_for(conn, &prep.id)?.iter().any(|p| {
+        p.point_id.as_deref() == point_id
+            && p.block_id.as_deref() == block_id
+            && p.reference.canonical == canonical
+    }) {
         return get(conn, &prep.id);
     }
     let (end_chapter, end_verse) = columns_for(&reference);
@@ -610,13 +682,14 @@ pub fn add_passage(
     let now = now();
     let tx = conn.unchecked_transaction()?;
     tx.execute(
-        "INSERT INTO teaching_passages (id, preparation_id, point_id, book, start_chapter,
+        "INSERT INTO teaching_passages (id, preparation_id, point_id, block_id, book, start_chapter,
              start_verse, end_chapter, end_verse, position, created_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
         params![
             new_id(),
             prep.id,
             point_id,
+            block_id,
             reference.book.code,
             reference.start.chapter,
             reference.start.verse,

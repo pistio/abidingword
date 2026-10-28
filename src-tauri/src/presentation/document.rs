@@ -295,7 +295,7 @@ pub fn build(conn: &Connection, id: &str, store: &ImageStore) -> AppResult<Prese
     let primary_passage = prep
         .passages
         .iter()
-        .find(|p| p.point_id.is_none())
+        .find(|p| p.point_id.is_none() && crate::db::teaching_blocks::passage_visible(&prep, p))
         .and_then(|p| RefInfo::of_canonical(&p.reference.canonical));
     Ok(PresentationDocument {
         format: FORMAT.to_string(),
@@ -395,6 +395,20 @@ impl Builder<'_> {
             missing: true,
             ..Resolved::default()
         };
+        if source.kind == "preparation"
+            && (prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty())
+        {
+            if let Some(field @ ("introduction" | "conclusion" | "central_message")) =
+                source.field.as_deref()
+            {
+                if !prep.blocks.iter().any(|b| {
+                    b.role.as_deref() == Some(field)
+                        && crate::db::teaching_blocks::participant_visible(prep, &b.id)
+                }) {
+                    return Ok(missing());
+                }
+            }
+        }
         Ok(match source.kind.as_str() {
             "preparation" => match source.field.as_deref().unwrap_or("title") {
                 "title" => Resolved {
@@ -402,7 +416,10 @@ impl Builder<'_> {
                     reference: prep
                         .passages
                         .iter()
-                        .find(|p| p.point_id.is_none())
+                        .find(|p| {
+                            p.point_id.is_none()
+                                && crate::db::teaching_blocks::passage_visible(prep, p)
+                        })
                         .map(|p| p.reference.canonical.clone()),
                     ..Resolved::default()
                 },
@@ -418,6 +435,28 @@ impl Builder<'_> {
                     };
                     Resolved {
                         manuscript: part(field, value).into_iter().collect(),
+                        ..Resolved::default()
+                    }
+                }
+                _ => missing(),
+            },
+            "block" => match prep.blocks.iter().find(|b| b.id == source.id) {
+                Some(block) if crate::db::teaching_blocks::participant_visible(prep, &block.id) => {
+                    let spoken =
+                        matches!(source.field.as_deref(), Some("introduction" | "conclusion"));
+                    Resolved {
+                        heading: text(&block.title),
+                        body: if spoken { None } else { text(&block.body) },
+                        manuscript: part(
+                            if spoken {
+                                source.field.as_deref().unwrap_or("explanation")
+                            } else {
+                                "explanation"
+                            },
+                            &block.body,
+                        )
+                        .into_iter()
+                        .collect(),
                         ..Resolved::default()
                     }
                 }
@@ -451,11 +490,13 @@ impl Builder<'_> {
                 None => missing(),
             },
             "passage" => match prep.passages.iter().find(|p| p.id == source.id) {
-                Some(passage) => Resolved {
-                    reference: Some(passage.reference.canonical.clone()),
-                    ..Resolved::default()
-                },
-                None => missing(),
+                Some(passage) if crate::db::teaching_blocks::passage_visible(prep, passage) => {
+                    Resolved {
+                        reference: Some(passage.reference.canonical.clone()),
+                        ..Resolved::default()
+                    }
+                }
+                _ => missing(),
             },
             "material" => match prep.materials.iter().find(|m| m.id == source.id) {
                 Some(material) => self.material(material),
@@ -532,6 +573,46 @@ impl Builder<'_> {
     }
 
     fn item(&mut self, item: &PresentationItem) -> AppResult<()> {
+        // Linked audience output fails closed, including saved overrides, when a block
+        // was made private or deleted after the presentation was first proposed.
+        if let Some(source) = &item.source {
+            if source.kind == "point"
+                && !crate::db::teaching_blocks::point_visible(self.prep, &source.id)
+                && (self.prep.template_version.unwrap_or(0) >= 2 || !self.prep.blocks.is_empty())
+            {
+                return Ok(());
+            }
+
+            if source.kind == "block"
+                && !crate::db::teaching_blocks::participant_visible(self.prep, &source.id)
+            {
+                return Ok(());
+            }
+            if source.kind == "passage"
+                && (self.prep.template_version.unwrap_or(0) >= 2 || !self.prep.blocks.is_empty())
+                && !self.prep.passages.iter().any(|p| {
+                    p.id == source.id && crate::db::teaching_blocks::passage_visible(self.prep, p)
+                })
+            {
+                return Ok(());
+            }
+            if source.kind == "preparation" {
+                if let Some(role @ ("introduction" | "conclusion" | "central_message")) =
+                    source.field.as_deref()
+                {
+                    if (self.prep.template_version.unwrap_or(0) >= 2
+                        || !self.prep.blocks.is_empty())
+                        && !self.prep.blocks.iter().any(|b| {
+                            b.role.as_deref() == Some(role)
+                                && crate::db::teaching_blocks::participant_visible(self.prep, &b.id)
+                        })
+                    {
+                        return Ok(());
+                    }
+                }
+            }
+        }
+
         let resolved = self.resolve(item)?;
         let heading = match &item.heading {
             Some(own) => text(own),

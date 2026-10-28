@@ -197,6 +197,9 @@ fn fill(tx: &Connection, sample: &Sample, project_id: &str) -> AppResult<()> {
                         kind: p.kind.clone(),
                     })
                     .collect(),
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         )?;
         teaching::update(
@@ -229,6 +232,7 @@ fn fill(tx: &Connection, sample: &Sample, project_id: &str) -> AppResult<()> {
                         preparation_id: prep.id.clone(),
                         point_id: Some(point.id.clone()),
                         reference: reference.clone(),
+                        block_id: None,
                     },
                 )?;
             }

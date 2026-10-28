@@ -34,6 +34,7 @@ fn youth_evening() -> TeachingTemplateInput {
             step(Some("story"), "Bible story", Some("scripture")),
             step(None, "", Some("question")),
         ],
+        ..Default::default()
     }
 }
 
@@ -145,6 +146,7 @@ fn editing_or_deleting_a_template_never_changes_a_teaching_made_from_it() {
                         kind: p.kind.clone(),
                     })
                     .collect(),
+                ..Default::default()
             },
         )?;
         let shape = |id: &str| -> AppResult<Vec<(String, Option<String>)>> {

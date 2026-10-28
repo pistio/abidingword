@@ -21,12 +21,12 @@ try {
     const sql = readFileSync(resolve(root, "src-tauri/migrations", match[3]));
     return { version: Number(match[1]), name: match[2], file: match[3], sha256: createHash("sha256").update(sql).digest("hex") };
   });
-  if (migrations.length !== 24 || migrations.some((m, i) => m.version !== i + 1) || migrations[9].name !== "presentations" || migrations[23].name !== "section_status_and_fields") throw new Error("the Windows source does not contain the complete compatible 1–24 migration catalogue");
-  const result = { commit, dirty, schemaVersion: 24, migrations };
+  if (migrations.length !== 25 || migrations.some((m, i) => m.version !== i + 1) || migrations[9].name !== "presentations" || migrations[23].name !== "section_status_and_fields" || migrations[24].name !== "teaching_blocks") throw new Error("the Windows source does not contain the compatible 1–24 migration catalogue followed by teaching blocks");
+  const result = { commit, dirty, schemaVersion: 25, migrations };
   const out = value("--out");
   if (!out) throw new Error("--out is required");
   writeFileSync(out, `${JSON.stringify(result, null, 2)}\n`);
-  console.log(`Verified source ${commit}, schema 24, 24 migrations${dirty ? " (local changes present)" : ""}`);
+  console.log(`Verified source ${commit}, schema 25, 25 migrations${dirty ? " (local changes present)" : ""}`);
 } catch (error) {
   console.error(`build provenance: ${error.message}`);
   process.exitCode = 1;

@@ -13,7 +13,7 @@ use abiding_word_lib::db::{
 use abiding_word_lib::domain::{
     AddTeachingPassage, CreateFinding, CreateProject, CreateStudy, CreateStudyRelation,
     CreateTeaching, CreateTeachingPoint, FindingType, ImageInfo, KeepTeachingMaterial,
-    LinkTeachingFinding, RelationType,
+    LinkTeachingFinding, NewTeachingBlock, RelationType,
 };
 use abiding_word_lib::error::{AppError, AppResult};
 use abiding_word_lib::filesystem::DataDirs;
@@ -133,6 +133,9 @@ fn make_project(conn: &Connection, images: &Path, title: &str) -> AppResult<Made
             title: "Abide in me".into(),
             kind: Some("sermon".into()),
             points: Vec::new(),
+            template_key: None,
+            template_version: None,
+            blocks: Vec::new(),
         },
     )?
     .id;
@@ -162,6 +165,7 @@ fn make_project(conn: &Connection, images: &Path, title: &str) -> AppResult<Made
             preparation_id: prep.clone(),
             point_id: Some(point.clone()),
             reference: "JHN.15.1-JHN.15.8".into(),
+            block_id: None,
         },
     )?;
     fs::create_dir_all(images).unwrap();
@@ -249,6 +253,9 @@ fn shape(conn: &Connection, project: &str) -> Vec<String> {
         "SELECT 'slide ' || i.heading || ' from ' || COALESCE(pt.title, 'nothing') FROM presentation_items i LEFT JOIN teaching_points pt ON pt.id = i.source_id
          WHERE i.presentation_id IN (SELECT id FROM presentations WHERE preparation_id IN (SELECT id FROM teaching_preparations WHERE study_id IN {S}))"
     )));
+    out.extend(q(&format!(
+        "SELECT 'block ' || p.title || '/' || b.block_type || '/' || COALESCE(b.block_key, '') || '/' || b.title || '/' || b.body FROM teaching_blocks b JOIN teaching_preparations p ON p.id = b.preparation_id WHERE p.study_id IN {S} AND b.deleted_at IS NULL"
+    )));
     out
 }
 
@@ -270,6 +277,84 @@ fn code<T: std::fmt::Debug>(result: AppResult<T>) -> String {
         }
         other => format!("{other:?}"),
     }
+}
+
+#[test]
+fn a_block_teaching_keeps_its_blocks_when_the_project_moves() {
+    let out = tempfile::tempdir().unwrap();
+    let here = folder();
+    let project = here
+        .db
+        .with_conn(|c| {
+            let made = make_project(c, &here.dirs.teaching_images(), "John")?;
+            let study: String = c.query_row(
+                "SELECT id FROM studies WHERE project_id = ?1 AND title = 'Abiding'",
+                [&made.project],
+                |r| r.get(0),
+            )?;
+            teaching::create(
+                c,
+                &CreateTeaching {
+                    study_id: study,
+                    title: "EVA Sunday".into(),
+                    kind: Some("bible_study".into()),
+                    template_key: Some("eva".into()),
+                    template_version: Some(2),
+                    blocks: vec![
+                        NewTeachingBlock {
+                            key: Some("erkennen".into()),
+                            block_type: "section".into(),
+                            title: "Observation".into(),
+                            guidance_key: Some(
+                                "studies.teaching.builtin.eva.blocks.erkennen.guidance".into(),
+                            ),
+                            participant_facing: Some(true),
+                            ..Default::default()
+                        },
+                        NewTeachingBlock {
+                            key: Some("erkennen-writing".into()),
+                            parent_key: Some("erkennen".into()),
+                            block_type: "writing".into(),
+                            title: "Observation".into(),
+                            body: "The vine is the Lord.".into(),
+                            participant_facing: Some(false),
+                            ..Default::default()
+                        },
+                    ],
+                    ..Default::default()
+                },
+            )?;
+            Ok(made.project)
+        })
+        .unwrap();
+    let before = here.db.with_conn(|c| Ok(shape(c, &project))).unwrap();
+    assert!(before.iter().any(
+        |l| l == "block EVA Sunday/writing/erkennen-writing/Observation/The vine is the Lord."
+    ));
+    let path = export(&here, &project, out.path());
+    let there = folder();
+    let report = import(&there, &path).unwrap();
+    let after = there
+        .db
+        .with_conn(|c| Ok(shape(c, &report.project_id)))
+        .unwrap();
+    assert_eq!(after, before);
+    let (key, version, body): (String, i64, String) = there
+        .db
+        .with_conn(|c| {
+            Ok(c.query_row(
+                "SELECT p.template_key, p.template_version, b.body
+                 FROM teaching_preparations p
+                 JOIN teaching_blocks b ON b.preparation_id = p.id
+                 WHERE p.title = 'EVA Sunday' AND b.block_key = 'erkennen-writing'",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+            )?)
+        })
+        .unwrap();
+    assert_eq!(key, "eva");
+    assert_eq!(version, 2);
+    assert_eq!(body, "The vine is the Lord.");
 }
 
 #[test]
@@ -1238,4 +1323,77 @@ fn bible_words_stay_out_of_project_packages_and_come_back_with_a_backup() {
     let elsewhere = folder();
     backup::restore(&elsewhere.db, &elsewhere.dirs, &path).unwrap();
     assert_eq!(elsewhere.db.with_conn(|c| Ok(words_in(c))).unwrap(), before);
+}
+
+#[test]
+fn imported_conflicting_roles_preserve_writing_slides_and_backup_restore() {
+    let out = tempfile::tempdir().unwrap();
+    let path = out.path().join("roles.awproject");
+    let project_row = serde_json::json!({ "id": "p", "workspace_id": "w", "title": "Invented roles", "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let study_row = serde_json::json!({ "id": "s", "project_id": "p", "title": "S", "study_type": "custom", "status": "active", "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let prep_row = serde_json::json!({ "id": "t", "study_id": "s", "title": "Sunday", "template_version": 2, "position": 0, "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let block = |id: &str, n: i64, body: &str| serde_json::json!({ "id": id, "preparation_id": "t", "block_type": "writing", "body": body, "position": n, "config": "{\"role\":\"introduction\",\"participantFacing\":true}", "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let data = serde_json::json!({ "tables": {
+        "projects": [project_row], "studies": [study_row], "teaching_preparations": [prep_row],
+        "teaching_blocks": [block("a", 0, "OWNER IMPORT"), block("b", 1, "COPY IMPORT")],
+        "presentations": [{"id":"pres", "preparation_id":"t", "title":"Slides", "position":0, "created_at":"2026-01-01", "updated_at":"2026-01-01"}],
+        "presentation_items": [{"id":"slide", "presentation_id":"pres", "kind":"text", "source_kind":"block", "source_id":"b", "position":0, "created_at":"2026-01-01", "updated_at":"2026-01-01"}]
+    } });
+    handmade(&path, &data);
+    let here = folder();
+    let imported = import(&here, &path).unwrap();
+    let check = |c: &Connection| -> AppResult<()> {
+        let id: String = c.query_row(
+            "SELECT id FROM teaching_preparations WHERE title='Sunday'",
+            [],
+            |r| r.get(0),
+        )?;
+        let prep = teaching::get(c, &id)?;
+        assert_eq!(prep.introduction, "OWNER IMPORT");
+        assert_eq!(
+            prep.blocks
+                .iter()
+                .filter(|b| b.role.as_deref() == Some("introduction"))
+                .count(),
+            1
+        );
+        assert!(prep
+            .blocks
+            .iter()
+            .any(|b| b.body == "COPY IMPORT" && b.role.is_none()));
+        let source: String = c.query_row(
+            "SELECT source_id FROM presentation_items WHERE source_kind='block'",
+            [],
+            |r| r.get(0),
+        )?;
+        assert_eq!(
+            prep.blocks.iter().find(|b| b.id == source).unwrap().body,
+            "COPY IMPORT"
+        );
+        assert_ne!(source, "b");
+        Ok(())
+    };
+    here.db.with_conn(check).unwrap();
+    let exported = export(&here, &imported.project_id, out.path());
+    let there = folder();
+    import(&there, &exported).unwrap();
+    there.db.with_conn(check).unwrap();
+    let backup = backup_to(&here, out.path());
+    let restored = folder();
+    backup::restore(&restored.db, &restored.dirs, &backup).unwrap();
+    restored.db.with_conn(check).unwrap();
+
+    // A crafted cross-preparation block link rolls back the whole project import.
+    let mut invalid = data;
+    invalid["tables"]["teaching_preparations"].as_array_mut().unwrap().push(serde_json::json!({ "id":"other", "study_id":"s", "title":"Other", "position":1, "created_at":"2026-01-01", "updated_at":"2026-01-01" }));
+    invalid["tables"]["teaching_blocks"][0]["block_type"] = serde_json::json!("scripture");
+    invalid["tables"]["teaching_passages"] = serde_json::json!([{ "id":"pass", "preparation_id":"other", "block_id":"a", "book":"JHN", "start_chapter":15, "start_verse":1, "position":0, "created_at":"2026-01-01" }]);
+    let bad = out.path().join("cross.awproject");
+    handmade(&bad, &invalid);
+    let before = there.db.with_conn(|c| Ok(rows_everywhere(c))).unwrap();
+    assert!(import(&there, &bad).is_err());
+    assert_eq!(
+        there.db.with_conn(|c| Ok(rows_everywhere(c))).unwrap(),
+        before
+    );
 }

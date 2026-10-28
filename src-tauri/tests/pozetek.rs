@@ -413,7 +413,7 @@ fn a_v9_database_upgrades_without_loss() {
     database_v9(&path);
     let db = Database::open(&path, &temp.path().join("bk")).unwrap();
     db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn)?, 24);
+        assert_eq!(migrations::current_version(conn)?, 25);
         let detail = studies::get_detail(conn, "s")?;
         let section = &detail.sections[0];
         assert_eq!(section.status, SectionStatus::NotStarted);
@@ -458,7 +458,7 @@ fn a_v9_database_upgrades_without_loss() {
     let restored = Database::open(&restored_path, &temp.path().join("restored-backups")).unwrap();
     restored
         .with_conn(|conn| {
-            assert_eq!(migrations::current_version(conn)?, 24);
+            assert_eq!(migrations::current_version(conn)?, 25);
             assert_eq!(
                 studies::get_detail(conn, "s")?.sections[0].blocks[0].content,
                 "Old text"

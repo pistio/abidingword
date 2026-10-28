@@ -1697,11 +1697,13 @@
         "points": "The template keeps the format and as many main points as this teaching has, in order. The points start without titles.",
         "generalPoints": "The template keeps the format and as many main points as this teaching has, in order. The points start without titles.",
         "questions": "The template keeps the format and as many questions as this teaching has. The questions start empty.",
-        "steps": "The template keeps the format and the steps in order, each with its title and kind."
+        "steps": "The template keeps the format and the steps in order, each with its title and kind.",
+        "blocks": "The template keeps the format and the sections and blocks this teaching starts with, in order. Nothing written in the blocks comes with it."
       },
       "notKept": "Nothing you wrote comes with it: not the audience, purpose, message, introduction, conclusion or notes; nothing written under a point, question or step; no passages, kept material or notes from your study.",
       "saved": "Saved as your template “{{name}}”. You can choose it for your next Bible Teaching, and change it in Settings → Templates.",
-      "tooMany": "A template can start with at most {{max}} points, questions or steps, and this teaching has more. Make the template in Settings → Templates instead."
+      "tooMany": "A template can start with at most {{max}} points, questions or steps, and this teaching has more. Make the template in Settings → Templates instead.",
+      "tooManyBlocks": "A template can start with at most {{max}} blocks, and this teaching has more. Make the template in Settings → Templates instead."
     },
     "addStepMenu": "Kind of step to add",
     "newTeaching": "New Bible Teaching",
@@ -1723,7 +1725,120 @@
     "messageKind": "Kind of message",
     "passagesLine": "Bible text",
     "notesHasText": "has notes",
-    "notesPrivate": "Only for you: never part of the Materials for your listeners or group."
+    "notesPrivate": "Only for you: never part of the Materials for your listeners or group.",
+    "blocks": {
+      "add": "Add a block",
+      "addIn": "Add a block in {{section}}",
+      "guidance": "Guidance",
+      "placeholder": "Write here…",
+      "leaderOnly": "For you as the leader. It is left out of handouts and slides unless you mark it for participants.",
+      "participant": "Show this to participants",
+      "settings": "This block",
+      "empty": "This teaching is empty. Add a section or a writing area when you are ready.",
+      "viewLabel": "How you write",
+      "viewContinuous": "Continuous",
+      "viewOutline": "Outline",
+      "headingLabel": "Heading",
+      "templateHeading": "Blocks",
+      "templateHint": "Add, reorder, duplicate and rename the sections and blocks a new teaching starts with. What you write in a teaching is not kept in the template.",
+      "titleOf": "Heading of {{name}}",
+      "typeOf": "Kind of block: {{name}}",
+      "section": "In section",
+      "sectionOf": "Section for {{name}}",
+      "noSection": "No section",
+      "moveUp": "Move “{{name}}” up",
+      "moveDown": "Move “{{name}}” down",
+      "duplicate": "Duplicate “{{name}}”",
+      "remove": "Remove “{{name}}”",
+      "types": {
+        "section": "Section",
+        "writing": "Writing",
+        "scripture": "Bible passage",
+        "teaching_notes": "Leader notes",
+        "discussion_questions": "Discussion questions",
+        "explanation": "Explanation",
+        "illustration": "Illustration or example",
+        "activity": "Group activity",
+        "application": "Application and reflection",
+        "objectives": "Learning objectives",
+        "time": "Time",
+        "presentation_notes": "Presentation notes",
+        "handout": "Handout",
+        "outline_point": "Outline point"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Bible Study — EVA",
+        "hint": "For a group: observe the passage, understand it, then ask what follows.",
+        "blocks": {
+          "erkennen": {
+            "title": "Observation",
+            "guidance": "What does the passage actually say, and what can the group discover for themselves? Optional Campus Connect 3×3 prompts: read it together, listen as it is read again, retell it in your own words."
+          },
+          "verstehen": {
+            "title": "Comprehension",
+            "guidance": "Meaning in the literary, historical and biblical context, and the central message. Optional Campus Connect 3×3 prompts: what became important, what this says about God and about people, how the context helps."
+          },
+          "anwenden": {
+            "title": "Application",
+            "guidance": "What follows for faith, understanding, decisions, behaviour and relationships. Optional Campus Connect 3×3 prompts: what changes in how we think and live, what we will do, whom this could encourage."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Sermon / Talk",
+        "hint": "Introduction, the main part, and a conclusion. Write it straight through, or add outline points.",
+        "blocks": {
+          "introduction": {
+            "title": "Introduction",
+            "guidance": "How you will begin. A central message, the people you are speaking to, and the purpose can be added as blocks if you want them."
+          },
+          "main": {
+            "title": "Main part",
+            "guidance": "The body of the sermon or talk. Add outline points if you want a structure beside the continuous writing."
+          },
+          "conclusion": {
+            "title": "Conclusion",
+            "guidance": "How you will close, and what response is fitting."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Bible Lesson — Children / Youth",
+        "hint": "One lesson for children or young people. Age changes how you tell it, not what the passage means.",
+        "blocks": {
+          "prepare": {
+            "title": "Preparation",
+            "guidance": "Optional: note the age you are preparing for, how long you have, and what you hope they take away. Age changes how you tell the story, not what the passage means. Add time or learning-objective blocks only if you want them."
+          },
+          "story": {
+            "title": "Story",
+            "guidance": "Tell the passage in a way that fits the age. The meaning stays the one the text has."
+          },
+          "explain": {
+            "title": "Explanation",
+            "guidance": "Say what the passage means, in words they can follow. Do not replace the text’s meaning with a simpler idea."
+          },
+          "questions": {
+            "title": "Questions",
+            "guidance": "Questions the group hears, and your own notes about answers to listen for. Those notes stay with you."
+          },
+          "activity": {
+            "title": "Activity",
+            "guidance": "Something they do with what they have heard."
+          },
+          "reflect": {
+            "title": "Reflection",
+            "guidance": "What they can take into faith, choices and relationships."
+          }
+        }
+      },
+      "blank": {
+        "name": "Blank template",
+        "hint": "No sections yet. Add the ones this teaching needs."
+      }
+    }
   },
   "parts": {
     "add": "Add a part",

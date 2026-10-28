@@ -1697,11 +1697,13 @@
         "points": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
         "generalPoints": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
         "questions": "Die Vorlage übernimmt die Form und so viele Fragen, wie diese Bibellehre hat. Die Fragen beginnen leer.",
-        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art."
+        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art.",
+        "blocks": "Die Vorlage übernimmt die Form und die Abschnitte und Blöcke, mit denen diese Bibellehre beginnt, in ihrer Reihenfolge. Was in den Blöcken steht, kommt nicht mit."
       },
       "notKept": "Nichts von dem, was du geschrieben hast, kommt mit: nicht Zielgruppe, Ziel, Botschaft, Einleitung, Schluss oder Notizen; nichts, was unter einem Punkt, einer Frage oder einem Schritt steht; keine Bibelstellen, kein aufbewahrtes Material und keine Notizen aus deinem Bibelstudium.",
       "saved": "Als deine Vorlage „{{name}}“ gespeichert. Du kannst sie für deine nächste Bibellehre wählen und unter Einstellungen → Vorlagen ändern.",
-      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
+      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen.",
+      "tooManyBlocks": "Eine Vorlage kann mit höchstens {{max}} Blöcken beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
     },
     "addStepMenu": "Art des neuen Schritts",
     "newTeaching": "Neue Bibellehre",
@@ -1723,7 +1725,120 @@
     "messageKind": "Art der Botschaft",
     "passagesLine": "Bibeltext",
     "notesHasText": "enthält Notizen",
-    "notesPrivate": "Nur für dich: nie Teil der Unterlagen für Zuhörer oder Gruppe."
+    "notesPrivate": "Nur für dich: nie Teil der Unterlagen für Zuhörer oder Gruppe.",
+    "blocks": {
+      "add": "Block hinzufügen",
+      "addIn": "Block in {{section}} hinzufügen",
+      "guidance": "Hilfen",
+      "placeholder": "Hier schreiben…",
+      "leaderOnly": "Nur für dich als Leitung. Es erscheint nicht auf Blättern oder Folien, außer du gibst es für die Teilnehmenden frei.",
+      "participant": "Den Teilnehmenden zeigen",
+      "settings": "Dieser Block",
+      "empty": "Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du soweit bist.",
+      "viewLabel": "Schreibansicht",
+      "viewContinuous": "Fortlaufend",
+      "viewOutline": "Gliederung",
+      "headingLabel": "Überschrift",
+      "templateHeading": "Blöcke",
+      "templateHint": "Abschnitte und Blöcke hinzufügen, umordnen, verdoppeln und umbenennen. Was du in einer Bibellehre schreibst, bleibt nicht in der Vorlage.",
+      "titleOf": "Überschrift von {{name}}",
+      "typeOf": "Art des Blocks: {{name}}",
+      "section": "Im Abschnitt",
+      "sectionOf": "Abschnitt für {{name}}",
+      "noSection": "Kein Abschnitt",
+      "moveUp": "„{{name}}“ nach oben",
+      "moveDown": "„{{name}}“ nach unten",
+      "duplicate": "„{{name}}“ verdoppeln",
+      "remove": "„{{name}}“ entfernen",
+      "types": {
+        "section": "Abschnitt",
+        "writing": "Schreibfeld",
+        "scripture": "Bibelstelle",
+        "teaching_notes": "Notizen für die Leitung",
+        "discussion_questions": "Gesprächsfragen",
+        "explanation": "Erklärung",
+        "illustration": "Beispiel",
+        "activity": "Gruppenaktion",
+        "application": "Anwendung und Besinnung",
+        "objectives": "Lernziele",
+        "time": "Zeit",
+        "presentation_notes": "Notizen zur Präsentation",
+        "handout": "Arbeitsblatt",
+        "outline_point": "Gliederungspunkt"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Bibelstudium — EVA",
+        "hint": "Für eine Gruppe: den Text wahrnehmen, ihn verstehen, dann fragen, was daraus folgt.",
+        "blocks": {
+          "erkennen": {
+            "title": "Erkennen",
+            "guidance": "Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Campus Connect 3×3-Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen."
+          },
+          "verstehen": {
+            "title": "Verstehen",
+            "guidance": "Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Campus Connect 3×3-Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft."
+          },
+          "anwenden": {
+            "title": "Anwenden",
+            "guidance": "Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Campus Connect 3×3-Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Predigt oder Vortrag",
+        "hint": "Einleitung, Hauptteil und Schluss. Durchgehend schreiben oder Gliederungspunkte ergänzen.",
+        "blocks": {
+          "introduction": {
+            "title": "Einleitung",
+            "guidance": "Wie du beginnst. Kernbotschaft, Hörerschaft und Ziel kannst du als Blöcke ergänzen, wenn du sie brauchst."
+          },
+          "main": {
+            "title": "Hauptteil",
+            "guidance": "Der Hauptteil der Predigt oder des Vortrags. Gliederungspunkte kannst du neben dem fortlaufenden Text hinzufügen."
+          },
+          "conclusion": {
+            "title": "Schluss",
+            "guidance": "Wie du schließt und welche Antwort passt."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Bibelstunde — Kinder und Jugendliche",
+        "hint": "Eine Stunde für Kinder oder Jugendliche. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes.",
+        "blocks": {
+          "prepare": {
+            "title": "Vorbereitung",
+            "guidance": "Wahlweise: das Alter, die Zeit und was sie mitnehmen sollen. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes. Zeit- oder Lernzielblöcke fügst du nur hinzu, wenn du sie brauchst."
+          },
+          "story": {
+            "title": "Erzählung",
+            "guidance": "Erzähle die Stelle so, dass das Alter mitkommt. Die Bedeutung bleibt die des Textes."
+          },
+          "explain": {
+            "title": "Erklärung",
+            "guidance": "Sag, was die Stelle bedeutet, in Worten, denen sie folgen können. Ersetze die Bedeutung nicht durch eine einfachere Idee."
+          },
+          "questions": {
+            "title": "Fragen",
+            "guidance": "Fragen, die die Gruppe hört, und deine Notizen zu Antworten, auf die du achtest. Die Notizen bleiben bei dir."
+          },
+          "activity": {
+            "title": "Aktion",
+            "guidance": "Etwas, das sie mit dem Gehörten tun."
+          },
+          "reflect": {
+            "title": "Besinnung",
+            "guidance": "Was sie in Glauben, Entscheidungen und Beziehungen mitnehmen können."
+          }
+        }
+      },
+      "blank": {
+        "name": "Leere Vorlage",
+        "hint": "Noch keine Abschnitte. Füge hinzu, was diese Bibellehre braucht."
+      }
+    }
   },
   "parts": {
     "add": "Teil hinzufügen",

@@ -17,6 +17,8 @@ interface LinksProps {
   preparation: TeachingPreparation;
   /** null: the teaching as a whole. */
   pointId: string | null;
+  /** When set, passages belong to this block rather than to a point. */
+  blockId?: string | null;
   /** Where this is, for labels: "this point" / the point's name. */
   scope: string;
   studyFindings: Finding[];
@@ -29,7 +31,7 @@ interface LinksProps {
  * they stay the study's and show as they are now), Scripture passages, and
  * what the person kept from the assistant, each with its standing.
  */
-export function TeachingLinks({ preparation, pointId, scope, studyFindings, onChanged, onRevealScripture }: LinksProps) {
+export function TeachingLinks({ preparation, pointId, blockId = null, scope, studyFindings, onChanged, onRevealScripture }: LinksProps) {
   const { t } = useTranslation();
   const api = useApi();
   const { goTo, translation } = useScripture();
@@ -41,7 +43,7 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
   const [error, setError] = useState<string | null>(null);
 
   const links = preparation.findings.filter((l) => l.pointId === pointId);
-  const passages = preparation.passages.filter((p) => p.pointId === pointId);
+  const passages = preparation.passages.filter((p) => (blockId ? p.blockId === blockId : p.pointId === pointId && !p.blockId));
   const materials = preparation.materials.filter((m) => m.pointId === pointId);
   const available = studyFindings.filter((f) => !links.some((l) => l.finding.id === f.id));
 
@@ -206,7 +208,7 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
         <form
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
-            void act(async () => api.teachingPassageAdd({ preparationId: preparation.id, pointId, reference: (await api.referenceParse(reference, translation?.id)).canonical })).then((ok) => {
+            void act(async () => api.teachingPassageAdd({ preparationId: preparation.id, pointId, blockId, reference: (await api.referenceParse(reference, translation?.id)).canonical })).then((ok) => {
               if (ok) {
                 setReference("");
                 setAdding(false);

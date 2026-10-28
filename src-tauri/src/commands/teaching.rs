@@ -4,9 +4,9 @@ use super::CommandResult;
 use crate::assistant::images;
 use crate::db::teaching;
 use crate::domain::{
-    AddTeachingPassage, CreateTeaching, CreateTeachingPoint, KeepTeachingMaterial,
-    LinkTeachingFinding, Reorder, TeachingPreparation, TeachingSummary, UpdateTeaching,
-    UpdateTeachingPoint,
+    AddTeachingPassage, CreateTeaching, CreateTeachingBlock, CreateTeachingPoint,
+    KeepTeachingMaterial, LinkTeachingFinding, Reorder, ReorderTeachingBlocks, TeachingPreparation,
+    TeachingSummary, UpdateTeaching, UpdateTeachingBlock, UpdateTeachingPoint,
 };
 use crate::error::{AppError, UserMessage};
 use crate::state::AppState;
@@ -67,6 +67,46 @@ pub fn teaching_point_delete(
     id: String,
 ) -> CommandResult<TeachingPreparation> {
     state.db(|conn| teaching::delete_point(conn, &id))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_create(
+    state: State<'_, AppState>,
+    input: CreateTeachingBlock,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::create(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_update(
+    state: State<'_, AppState>,
+    input: UpdateTeachingBlock,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::update(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_delete(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::delete(conn, &id))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_reorder(
+    state: State<'_, AppState>,
+    input: ReorderTeachingBlocks,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::reorder(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_duplicate(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::duplicate(conn, &id))
 }
 
 #[tauri::command(async)]

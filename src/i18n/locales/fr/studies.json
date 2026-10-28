@@ -1708,11 +1708,13 @@
         "points": "Le modèle reprend la forme et autant de points principaux que cet enseignement, dans l’ordre. Les points commencent sans titre.",
         "generalPoints": "Le modèle reprend la forme et autant de points principaux que cet enseignement, dans l’ordre. Les points commencent sans titre.",
         "questions": "Le modèle reprend la forme et autant de questions que cet enseignement. Les questions commencent vides.",
-        "steps": "Le modèle reprend la forme et les étapes dans l’ordre, chacune avec son titre et son type."
+        "steps": "Le modèle reprend la forme et les étapes dans l’ordre, chacune avec son titre et son type.",
+        "blocks": "Le modèle reprend la forme et les sections et blocs avec lesquels cet enseignement commence, dans l’ordre. Rien de ce qui est écrit dans les blocs n’est repris."
       },
       "notKept": "Rien de ce que vous avez écrit n’est repris : ni le public, ni le but, ni le message, ni l’introduction, ni la conclusion, ni les notes ; rien de ce qui est écrit sous un point, une question ou une étape ; aucun passage, aucun élément conservé, aucune note de votre étude.",
       "saved": "Enregistré comme votre modèle « {{name}} ». Vous pouvez le choisir pour votre prochain enseignement, et le modifier dans Paramètres → Modèles.",
-      "tooMany": "Un modèle peut commencer avec {{max}} points, questions ou étapes au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles."
+      "tooMany": "Un modèle peut commencer avec {{max}} points, questions ou étapes au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles.",
+      "tooManyBlocks": "Un modèle peut commencer avec {{max}} blocs au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles."
     },
     "addStepMenu": "Type d’étape à ajouter",
     "newTeaching": "Nouvel enseignement biblique",
@@ -1734,7 +1736,120 @@
     "messageKind": "Type de message",
     "passagesLine": "Texte biblique",
     "notesHasText": "contient des notes",
-    "notesPrivate": "Pour vous seul : jamais dans les supports destinés à l’auditoire ou au groupe."
+    "notesPrivate": "Pour vous seul : jamais dans les supports destinés à l’auditoire ou au groupe.",
+    "blocks": {
+      "add": "Ajouter un bloc",
+      "addIn": "Ajouter un bloc dans {{section}}",
+      "guidance": "Repères",
+      "placeholder": "Écrire ici…",
+      "leaderOnly": "Pour vous qui conduisez. Ce texte reste hors des feuilles et des diapositives, sauf si vous le montrez aux participants.",
+      "participant": "Montrer aux participants",
+      "settings": "Ce bloc",
+      "empty": "Cet enseignement est encore vide. Ajoutez une section ou un espace d’écriture quand vous voulez.",
+      "viewLabel": "Façon d’écrire",
+      "viewContinuous": "Texte suivi",
+      "viewOutline": "Plan",
+      "headingLabel": "Titre",
+      "templateHeading": "Blocs",
+      "templateHint": "Ajoutez, réordonnez, dupliquez et renommez les sections et les blocs d’un nouvel enseignement. Ce que vous écrivez dans un enseignement ne reste pas dans le modèle.",
+      "titleOf": "Titre de {{name}}",
+      "typeOf": "Type de bloc : {{name}}",
+      "section": "Dans la section",
+      "sectionOf": "Section de {{name}}",
+      "noSection": "Aucune section",
+      "moveUp": "Monter « {{name}} »",
+      "moveDown": "Descendre « {{name}} »",
+      "duplicate": "Dupliquer « {{name}} »",
+      "remove": "Retirer « {{name}} »",
+      "types": {
+        "section": "Section",
+        "writing": "Écriture",
+        "scripture": "Passage biblique",
+        "teaching_notes": "Notes de l’animateur",
+        "discussion_questions": "Questions de discussion",
+        "explanation": "Explication",
+        "illustration": "Exemple",
+        "activity": "Activité",
+        "application": "Application et réflexion",
+        "objectives": "Objectifs",
+        "time": "Durée",
+        "presentation_notes": "Notes de présentation",
+        "handout": "Feuille",
+        "outline_point": "Point du plan"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Étude biblique",
+        "hint": "Pour un groupe : observer le passage, le comprendre, puis demander ce qui en découle.",
+        "blocks": {
+          "erkennen": {
+            "title": "Observer",
+            "guidance": "Que dit vraiment le passage, et que peut découvrir le groupe ? Suggestions facultatives Campus Connect 3×3 : lire ensemble, réécouter, puis redire avec ses mots."
+          },
+          "verstehen": {
+            "title": "Comprendre",
+            "guidance": "Le sens dans le contexte littéraire, historique et biblique, et le message central. Suggestions facultatives Campus Connect 3×3 : ce qui est devenu important, ce que le texte dit de Dieu et des humains, comment le contexte aide."
+          },
+          "anwenden": {
+            "title": "Appliquer",
+            "guidance": "Ce qui suit pour la foi, la compréhension, les décisions, la conduite et les relations. Suggestions facultatives Campus Connect 3×3 : ce qui change, ce que l’on fera, qui cela peut encourager."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Prédication ou exposé",
+        "hint": "Introduction, développement et conclusion. Écrivez d’une traite, ou ajoutez des points de plan.",
+        "blocks": {
+          "introduction": {
+            "title": "Introduction",
+            "guidance": "Comment vous commencez. Le message central, les auditeurs et le but peuvent être ajoutés en blocs si vous en avez besoin."
+          },
+          "main": {
+            "title": "Développement",
+            "guidance": "Le corps de la prédication ou de l’exposé. Vous pouvez ajouter des points de plan à côté du texte continu."
+          },
+          "conclusion": {
+            "title": "Conclusion",
+            "guidance": "Comment vous terminez, et quelle réponse convient."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Leçon biblique — enfants et jeunes",
+        "hint": "Une seule leçon pour les enfants ou les jeunes. L’âge change la façon de raconter, pas le sens du passage.",
+        "blocks": {
+          "prepare": {
+            "title": "Préparation",
+            "guidance": "Facultatif : l’âge pour lequel vous préparez, le temps dont vous disposez, et ce que vous souhaitez qu’ils emportent. L’âge change la façon de raconter, pas le sens du passage. Ajoutez des blocs de durée ou d’objectifs seulement si vous les voulez."
+          },
+          "story": {
+            "title": "Récit",
+            "guidance": "Racontez le passage d’une façon qui convient à l’âge. Le sens reste celui du texte."
+          },
+          "explain": {
+            "title": "Explication",
+            "guidance": "Dites ce que le passage signifie, avec des mots qu’ils peuvent suivre. Ne remplacez pas ce sens par une idée plus simple."
+          },
+          "questions": {
+            "title": "Questions",
+            "guidance": "Les questions que le groupe entend, et vos notes sur les réponses à écouter. Ces notes restent avec vous."
+          },
+          "activity": {
+            "title": "Activité",
+            "guidance": "Quelque chose qu’ils font avec ce qu’ils ont entendu."
+          },
+          "reflect": {
+            "title": "Réflexion",
+            "guidance": "Ce qu’ils peuvent emporter dans la foi, les choix et les relations."
+          }
+        }
+      },
+      "blank": {
+        "name": "Modèle vide",
+        "hint": "Pas encore de sections. Ajoutez celles dont cet enseignement a besoin."
+      }
+    }
   },
   "parts": {
     "add": "Ajouter une partie",

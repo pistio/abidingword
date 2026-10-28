@@ -222,6 +222,10 @@
     "searchNoKey": "This search service does not use a key."
   },
   "teaching": {
+    "blockType": "That is not a kind of block this teaching can hold.",
+    "blockParent": "A block can sit in a section of this teaching.",
+    "blockRole": "That block cannot be tied to that part of the teaching.",
+    "blockReference": "Choose a live Scripture block in this teaching.",
     "tooLong": "This part of the teaching is too long to save.",
     "otherPoint": "That point belongs to another teaching.",
     "otherStudyFinding": "That note belongs to another study.",

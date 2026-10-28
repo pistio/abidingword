@@ -1708,11 +1708,13 @@
         "points": "O modelo guarda o formato e tantos pontos principais quanto este ensino tem, em ordem. Os pontos começam sem título.",
         "generalPoints": "O modelo guarda o formato e tantos pontos principais quanto este ensino tem, em ordem. Os pontos começam sem título.",
         "questions": "O modelo guarda o formato e tantas perguntas quanto este ensino tem. As perguntas começam vazias.",
-        "steps": "O modelo guarda o formato e as etapas em ordem, cada uma com seu título e tipo."
+        "steps": "O modelo guarda o formato e as etapas em ordem, cada uma com seu título e tipo.",
+        "blocks": "O modelo guarda o formato e as seções e blocos com que este ensino começa, em ordem. O que está escrito nos blocos não vem junto."
       },
       "notKept": "Nada do que você escreveu vem junto: nem o público, o propósito, a mensagem, a introdução, a conclusão ou as notas; nada escrito sob um ponto, uma pergunta ou uma etapa; nenhuma passagem, material guardado ou anotação do seu estudo.",
       "saved": "Salvo como seu modelo “{{name}}”. Você pode escolhê-lo para seu próximo ensino e alterá-lo em Configurações → Modelos.",
-      "tooMany": "Um modelo pode começar com no máximo {{max}} pontos, perguntas ou etapas, e este ensino tem mais. Crie o modelo em Configurações → Modelos."
+      "tooMany": "Um modelo pode começar com no máximo {{max}} pontos, perguntas ou etapas, e este ensino tem mais. Crie o modelo em Configurações → Modelos.",
+      "tooManyBlocks": "Um modelo pode começar com no máximo {{max}} blocos, e este ensino tem mais. Crie o modelo em Configurações → Modelos."
     },
     "addStepMenu": "Tipo de etapa a adicionar",
     "newTeaching": "Novo ensino bíblico",
@@ -1734,7 +1736,120 @@
     "messageKind": "Tipo de mensagem",
     "passagesLine": "Texto bíblico",
     "notesHasText": "tem anotações",
-    "notesPrivate": "Só para você: nunca faz parte dos materiais para os ouvintes ou o grupo."
+    "notesPrivate": "Só para você: nunca faz parte dos materiais para os ouvintes ou o grupo.",
+    "blocks": {
+      "add": "Adicionar um bloco",
+      "addIn": "Adicionar um bloco em {{section}}",
+      "guidance": "Orientação",
+      "placeholder": "Escreva aqui…",
+      "leaderOnly": "Só para quem conduz. Fica fora das folhas e dos slides, a menos que você marque para os participantes verem.",
+      "participant": "Mostrar aos participantes",
+      "settings": "Este bloco",
+      "empty": "Este ensino ainda está vazio. Acrescente uma seção ou um espaço para escrever quando quiser.",
+      "viewLabel": "Como você escreve",
+      "viewContinuous": "Texto contínuo",
+      "viewOutline": "Esboço",
+      "headingLabel": "Título",
+      "templateHeading": "Blocos",
+      "templateHint": "Adicione, reordene, duplique e renomeie as seções e os blocos com que um ensino novo começa. O que você escreve num ensino não fica no modelo.",
+      "titleOf": "Título de {{name}}",
+      "typeOf": "Tipo de bloco: {{name}}",
+      "section": "Na seção",
+      "sectionOf": "Seção de {{name}}",
+      "noSection": "Sem seção",
+      "moveUp": "Mover “{{name}}” para cima",
+      "moveDown": "Mover “{{name}}” para baixo",
+      "duplicate": "Duplicar “{{name}}”",
+      "remove": "Remover “{{name}}”",
+      "types": {
+        "section": "Seção",
+        "writing": "Escrita",
+        "scripture": "Passagem bíblica",
+        "teaching_notes": "Notas de quem conduz",
+        "discussion_questions": "Perguntas para conversar",
+        "explanation": "Explicação",
+        "illustration": "Exemplo",
+        "activity": "Atividade",
+        "application": "Aplicação e reflexão",
+        "objectives": "Objetivos",
+        "time": "Tempo",
+        "presentation_notes": "Notas da apresentação",
+        "handout": "Folha",
+        "outline_point": "Ponto do esboço"
+      }
+    },
+    "builtin": {
+      "eva": {
+        "name": "Estudo bíblico",
+        "hint": "Para um grupo: observar a passagem, compreendê-la e perguntar o que se segue.",
+        "blocks": {
+          "erkennen": {
+            "title": "Observar",
+            "guidance": "O que a passagem realmente diz, e o que o grupo pode descobrir? Sugestões opcionais do Campus Connect 3×3: ler juntos, ouvir de novo e recontar com as próprias palavras."
+          },
+          "verstehen": {
+            "title": "Compreender",
+            "guidance": "O sentido no contexto literário, histórico e bíblico, e a mensagem central. Sugestões opcionais do Campus Connect 3×3: o que ficou importante, o que o texto diz sobre Deus e sobre as pessoas, como o contexto ajuda."
+          },
+          "anwenden": {
+            "title": "Aplicar",
+            "guidance": "O que se segue para a fé, a compreensão, as decisões, o comportamento e os relacionamentos. Sugestões opcionais do Campus Connect 3×3: o que muda, o que faremos e quem isso pode encorajar."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Pregação ou palestra",
+        "hint": "Introdução, parte principal e conclusão. Escreva de uma vez ou acrescente pontos do esboço.",
+        "blocks": {
+          "introduction": {
+            "title": "Introdução",
+            "guidance": "Como você começa. A mensagem central, os ouvintes e o propósito podem entrar como blocos, se você quiser."
+          },
+          "main": {
+            "title": "Parte principal",
+            "guidance": "O corpo da pregação ou da palestra. Dá para acrescentar pontos do esboço ao lado do texto contínuo."
+          },
+          "conclusion": {
+            "title": "Conclusão",
+            "guidance": "Como você encerra e que resposta cabe."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Aula bíblica — crianças e jovens",
+        "hint": "Uma aula só, para crianças ou jovens. A idade muda o modo de contar, não o sentido da passagem.",
+        "blocks": {
+          "prepare": {
+            "title": "Preparação",
+            "guidance": "Opcional: a idade para a qual você prepara, o tempo que tem e o que espera que levem. A idade muda o modo de contar, não o sentido da passagem. Acrescente blocos de tempo ou de objetivos só se quiser."
+          },
+          "story": {
+            "title": "História",
+            "guidance": "Conte a passagem de um jeito que sirva à idade. O sentido continua sendo o do texto."
+          },
+          "explain": {
+            "title": "Explicação",
+            "guidance": "Diga o que a passagem significa, com palavras que eles acompanhem. Não troque esse sentido por uma ideia mais simples."
+          },
+          "questions": {
+            "title": "Perguntas",
+            "guidance": "As perguntas que o grupo ouve e as suas anotações sobre as respostas a escutar. Essas anotações ficam com você."
+          },
+          "activity": {
+            "title": "Atividade",
+            "guidance": "Algo que eles façam com o que ouviram."
+          },
+          "reflect": {
+            "title": "Reflexão",
+            "guidance": "O que podem levar para a fé, as decisões e os relacionamentos."
+          }
+        }
+      },
+      "blank": {
+        "name": "Modelo em branco",
+        "hint": "Ainda não há seções. Acrescente as que este ensino precisa."
+      }
+    }
   },
   "parts": {
     "add": "Adicionar uma parte",
