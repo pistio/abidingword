@@ -45,6 +45,8 @@ text_enum!(
     /// details and wording; never a fixed workflow.
     StudyType, "study type" {
         Passage => "passage",
+        Character => "character",
+        Book => "book",
         Word => "word",
         Topical => "topical",
         BiblicalTheology => "biblical_theology",
