@@ -25,7 +25,7 @@ for (const { code } of LANGUAGES) {
         const path = `studies.builtin.templates.${template.key}`;
         expect(templateName(template)).toBe(i18n.getResource(code, "translation", `${path}.name`));
         expect(templateDescription(template)).toBe(i18n.getResource(code, "translation", `${path}.description`));
-        expect(templateName(template).includes("POZETEK")).toBe(code === "de" && template.key === "pozetek-study");
+        expect(templateName(template).includes("POZETEK")).toBe(code === "de" && template.key === "pozetek-writing-study");
         for (const section of template.sections) {
           const base = `${path}.sections.${section.key}`;
           expect(i18n.getResource(code, "translation", `${base}.title`)).toBeTruthy();
@@ -78,7 +78,7 @@ for (const { code } of LANGUAGES) {
 }
 
 it("offers both passage methods and uses the selected template", async () => {
-  for (const key of ["pozetek-study", "ten-step-exegesis"]) {
+  for (const key of ["pozetek-writing-study", "ten-step-writing-study"]) {
     const api = createMemoryApi();
     const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Passages" });
     const user = userEvent.setup();

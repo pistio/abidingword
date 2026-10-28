@@ -44,7 +44,7 @@ export function FieldsEditor({ section, onChange, onError }: FieldsEditorProps) 
   return (
     <div className="flex flex-col gap-5">
       {fields.map((field) =>
-        field.kind === "text" ? (
+        field.kind === "text" || field.kind === "writing" ? (
           <TextField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
         ) : (
           <EntriesField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
@@ -103,8 +103,8 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
     const el = area.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${Math.max(el.scrollHeight, 72)}px`;
-  }, [text]);
+    el.style.height = `${Math.max(el.scrollHeight, field.kind === "writing" ? 288 : 72)}px`;
+  }, [text, field.kind]);
 
   return (
     <div className="flex flex-col gap-1">
@@ -117,7 +117,7 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
       <textarea
         id={id}
         ref={area}
-        rows={3}
+        rows={field.kind === "writing" ? 10 : 3}
         value={text}
         aria-describedby={helpId}
         onChange={(e) => {

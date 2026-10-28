@@ -2,7 +2,7 @@ import type { StudyTemplate } from "@/types/studies";
 
 /** New-study catalogue only. Legacy definitions remain installed for saved studies. */
 export const STUDY_TEMPLATE_KEYS = [
-  "pozetek-study", "ten-step-exegesis", "biblical-character-study",
+  "pozetek-writing-study", "ten-step-writing-study", "biblical-character-study",
   "word-study", "whole-book-study", "topical-study",
 ] as const;
 

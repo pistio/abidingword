@@ -898,6 +898,188 @@
             "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung."
           }
         }
+      },
+      "pozetek-writing-study": {
+        "name": "POZETEK – Bibeltext untersuchen",
+        "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
+        "sections": {
+          "persons": {
+            "title": "Personen",
+            "guidance": "Wer spricht, handelt oder wird angesprochen? Unterscheide Textbeobachtung und Vermutung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "place": {
+            "title": "Ort",
+            "guidance": "Welche Orte und räumlichen Beziehungen sind für den Text wichtig?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "time": {
+            "title": "Zeit",
+            "guidance": "Wann spielt der Text? Kennzeichne unsichere geschichtliche Annahmen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "events": {
+            "title": "Ereignisse",
+            "guidance": "Verfolge Ereignisse, Aufbau, Gedankengang und Argumentation. Das gilt auch für Briefe, Gedichte und Lehrtexte.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "theme": {
+            "title": "Thema",
+            "guidance": "Wovon handelt der Text, und was sagt er darüber aus?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "understanding": {
+            "title": "Erkenntnisse",
+            "guidance": "Erkläre die Bedeutung im Zusammenhang. Unterscheide Beobachtung, Auslegung und offene Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "consequences": {
+            "title": "Konsequenzen",
+            "guidance": "Was folgt daraus für Glauben, Liebe und Leben? Leite die Anwendung aus der Bedeutung des Textes ab.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "ten-step-writing-study": {
+        "name": "Die Zehn-Schritte-Methode",
+        "description": "Eine gründliche Auslegung nach den zehn Schritten von Helge Stadelmann und Thomas Richter. Erläuterungen und das aufklappbare Beispiel zu Mt 8,18–27 sind eigenständig formuliert.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Mit dem Text vertraut werden",
+            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Die Textgrundlage feststellen",
+            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Die ursprüngliche Kommunikationssituation klären",
+            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Den Zusammenhang erfassen",
+            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Die Textart untersuchen",
+            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Wörter und Sätze untersuchen",
+            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Den Gedankengang entfalten",
+            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Theologische Fragen klären",
+            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Die zentrale Aussage formulieren",
+            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Die Bedeutung für heute erkennen und anwenden",
+            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notizen",
@@ -2035,5 +2217,13 @@
     "moveEntryUp": "Eintrag {{number}} von {{field}} nach oben",
     "moveEntryDown": "Eintrag {{number}} von {{field}} nach unten",
     "otherWriting": "Weitere Notizen"
+  },
+  "flow": {
+    "answer": "Deine Antwort",
+    "guidance": "Hinweise (optional)",
+    "legacy": "Bisherige strukturierte Antworten",
+    "legacyNote": "Diese Antworten bleiben in ihren ursprünglichen Feldern. Nichts wurde zusammengefügt oder ersetzt.",
+    "continuous": "Fortlaufend schreiben",
+    "outline": "Schrittansicht"
   }
 }

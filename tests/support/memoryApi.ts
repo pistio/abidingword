@@ -1,6 +1,8 @@
 // An in-memory implementation of the native API for interface tests.
 // It mirrors the behaviour the Rust layer guarantees (validation messages,
 // template sections, soft delete), not its storage.
+import pozetekWriting from "../../resources/templates/pozetek-writing-study.json";
+import tenStepWriting from "../../resources/templates/ten-step-writing-study.json";
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
 import characterStudy from "../../resources/templates/biblical-character-study.json";
 import bookStudy from "../../resources/templates/whole-book-study.json";
@@ -88,7 +90,7 @@ import { inquiryApi, newInquiryState, type InquiryState } from "./memoryInquiry"
 import { newPresentationState, presentationApi, type PresentationState } from "./memoryPresentation";
 import { newPortabilityState, portabilityApi, type PortabilityState } from "./memoryPortability";
 
-const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [pozetekWriting, tenStepWriting, passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -496,7 +498,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       phase: section.phase ?? null, position, status: "not_started", fields, blocks: [], createdAt: t, updatedAt: t, revision: 1,
     });
     // As the core: a part with fields starts with one empty block per single-text field, otherwise one paragraph.
-    const starts = fields ? fields.fields.filter((f) => f.kind === "text").map((f) => f.key) : [null];
+    const starts = fields ? fields.fields.filter((f) => (f.kind === "text" || f.kind === "writing")).map((f) => f.key) : [null];
     starts.forEach((fieldKey, index) =>
       state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: index, content: "", fieldKey, data: null, createdAt: t, updatedAt: t, revision: 1 }),
     );

@@ -898,6 +898,188 @@
             "guidance": "Anota los pasajes difíciles, las preguntas históricas, las referencias relacionadas y las fuentes que quieras estudiar después."
           }
         }
+      },
+      "pozetek-writing-study": {
+        "name": "Estudio guiado de un pasaje bíblico",
+        "description": "Un estudio guiado para cualquier pasaje: observación (personas, lugar, tiempo, sucesos, contexto del texto), interpretación (explicaciones), mensaje central (núcleo) y, aparte, una aplicación personal.",
+        "sections": {
+          "persons": {
+            "title": "Personas",
+            "guidance": "¿Quién habla, actúa o recibe el mensaje? Distingue el texto de tus suposiciones.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "place": {
+            "title": "Lugar",
+            "guidance": "¿Qué lugares y relaciones geográficas ayudan a comprender el pasaje?",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "time": {
+            "title": "Tiempo",
+            "guidance": "¿Cuándo sucede? Señala las hipótesis históricas inciertas.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "events": {
+            "title": "Desarrollo del pasaje",
+            "guidance": "Sigue los acontecimientos, la estructura, el razonamiento y el desarrollo del pasaje, también en cartas y poesía.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "theme": {
+            "title": "Tema",
+            "guidance": "¿De qué trata el texto y qué afirma sobre ese asunto?",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "understanding": {
+            "title": "Comprensión",
+            "guidance": "Explica el sentido en su contexto. Distingue observaciones, interpretación y preguntas abiertas.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "consequences": {
+            "title": "Consecuencias",
+            "guidance": "¿Qué consecuencias para la fe, el amor y la vida se desprenden del sentido del texto?",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          }
+        }
+      },
+      "ten-step-writing-study": {
+        "name": "Estudio bíblico en diez pasos",
+        "description": "Estudio detallado basado en los diez pasos expuestos por Helge Stadelmann y Thomas Richter. Las explicaciones y el ejemplo opcional de Mateo 8:18–27 son de redacción independiente.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Familiarizarse con el texto",
+            "guidance": "Leer varias veces todo el pasaje, también en distintas traducciones. Observar su desarrollo y anotar preguntas sin responderlas precipitadamente.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Establecer la base textual",
+            "guidance": "Comparar traducciones y notas textuales. Diferenciar decisiones de traducción y variantes de manuscritos; señalar lo incierto.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Aclarar la situación original de comunicación",
+            "guidance": "Preguntar quién escribió a quién, cuándo, dónde y por qué. Investigar el contexto histórico y cultural pertinente, distinguiendo datos de hipótesis.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Comprender el contexto",
+            "guidance": "Estudiar los límites del pasaje, los versículos cercanos, la estructura del libro, los relatos paralelos y el conjunto de la Biblia. Empezar por el contexto inmediato.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Examinar el tipo de texto",
+            "guidance": "Identificar género, forma y recursos literarios como contraste, repetición y diálogo. No imponer una estructura ajena al texto.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Examinar palabras y oraciones",
+            "guidance": "Estudiar vocablos importantes y relaciones entre frases dentro del contexto. Una entrada de diccionario no demuestra por sí sola un significado.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Desarrollar el hilo de pensamiento",
+            "guidance": "Volver al pasaje completo. Observar quién habla o actúa, cómo se enlazan las partes y dónde cambia el desarrollo. Elaborar un esquema justificado.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Aclarar cuestiones teológicas",
+            "guidance": "Examinar primero el pasaje y luego el contexto cercano y toda la Escritura. La Escritura interpreta la Escritura; mantener visibles las preguntas abiertas.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Formular el mensaje central",
+            "guidance": "Distinguir el asunto (de qué trata), la afirmación (qué dice acerca de ello) y el tema (una frase que los reúna). Comprobarlo con todo el pasaje.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Comprender y aplicar hoy",
+            "guidance": "Pasar del sentido original a una aplicación responsable. Tener en cuenta la muerte y resurrección de Cristo y el derramamiento del Espíritu Santo; no trasladar automáticamente los detalles históricos.",
+            "fields": {
+              "answer": {
+                "label": "Tu respuesta",
+                "help": "Escribe con tus propias palabras. Aquí puedes desarrollar tus observaciones y conclusiones."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notas",
@@ -2050,5 +2232,13 @@
     "moveEntryUp": "Subir la entrada {{number}} de {{field}}",
     "moveEntryDown": "Bajar la entrada {{number}} de {{field}}",
     "otherWriting": "Otras notas"
+  },
+  "flow": {
+    "answer": "Tu respuesta",
+    "guidance": "Orientación (opcional)",
+    "legacy": "Respuestas estructuradas anteriores",
+    "legacyNote": "Las respuestas se conservan en sus campos originales. No se han combinado ni sustituido.",
+    "continuous": "Escritura continua",
+    "outline": "Vista por pasos"
   }
 }

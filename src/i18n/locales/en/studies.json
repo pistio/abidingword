@@ -898,6 +898,188 @@
             "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
           }
         }
+      },
+      "pozetek-writing-study": {
+        "name": "Guided Passage Study",
+        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "sections": {
+          "persons": {
+            "title": "People",
+            "guidance": "Who speaks, acts or receives the message? Distinguish what the text says from your assumptions.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "place": {
+            "title": "Place",
+            "guidance": "Which places and relationships matter to this passage?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "time": {
+            "title": "Time",
+            "guidance": "When does this happen? Mark uncertain historical proposals as uncertain.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "events": {
+            "title": "Flow of the Passage",
+            "guidance": "Follow the events, structure, reasoning and movement of the passage. This also applies to letters, poetry and arguments.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "theme": {
+            "title": "Theme",
+            "guidance": "What is the passage about, and what does it say about that subject?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "understanding": {
+            "title": "Understanding",
+            "guidance": "Explain the meaning in context. Distinguish observations, interpretation and questions still open.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "consequences": {
+            "title": "Consequences",
+            "guidance": "What follows for faith, love and life? Let application follow the meaning of the passage.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
+      },
+      "ten-step-writing-study": {
+        "name": "Ten-Step Bible Study",
+        "description": "A thorough passage study following the ten interpretive steps presented by Helge Stadelmann and Thomas Richter. Guidance and the optional Matthew 8:18–27 example are independently written.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Become familiar with the text",
+            "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Establish the textual basis",
+            "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Clarify the original communication situation",
+            "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Understand the context",
+            "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Examine the type of text",
+            "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Examine words and sentences",
+            "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Trace the train of thought",
+            "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Clarify theological questions",
+            "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Formulate the central message",
+            "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Understand and apply the meaning today",
+            "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -2035,5 +2217,13 @@
     "moveEntryUp": "Move entry {{number}} of {{field}} up",
     "moveEntryDown": "Move entry {{number}} of {{field}} down",
     "otherWriting": "Other notes"
+  },
+  "flow": {
+    "answer": "Your answer",
+    "guidance": "Guidance (optional)",
+    "legacy": "Earlier structured answers",
+    "legacyNote": "These answers are kept in their original fields. Nothing has been combined or replaced.",
+    "continuous": "Continuous writing",
+    "outline": "Step view"
   }
 }

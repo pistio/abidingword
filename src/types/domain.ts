@@ -64,7 +64,7 @@ export interface StudySection {
 export const SECTION_STATUSES = ["not_started", "in_progress", "complete"] as const;
 export type SectionStatus = (typeof SECTION_STATUSES)[number];
 
-export type FieldKind = "text" | "entries";
+export type FieldKind = "text" | "entries" | "writing";
 export type PartKind = "line" | "text" | "choice";
 
 export interface EntryPart {

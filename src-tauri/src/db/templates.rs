@@ -21,6 +21,8 @@ pub const DEFAULT_TEMPLATE_KEY: &str = "passage-study";
 const MAX_SECTIONS: usize = 40;
 
 const BUILTIN: &[&str] = &[
+    include_str!("../../../resources/templates/pozetek-writing-study.json"),
+    include_str!("../../../resources/templates/ten-step-writing-study.json"),
     include_str!("../../../resources/templates/passage-study.json"),
     include_str!("../../../resources/templates/pozetek-study.json"),
     include_str!("../../../resources/templates/ten-step-exegesis.json"),
