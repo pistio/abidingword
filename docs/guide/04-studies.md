@@ -19,24 +19,31 @@ sermon, a group study, a lesson) is **Bible Teaching**: see
 
 1. Click **New study** (or use the form you see on the start page).
 2. Type what you want to study: a passage (`John 15:1-11`), a word (`abide`) or
-   a topic (`prayer`).
+   a topic (`prayer`), a biblical person (`Ruth`) or a whole book (`Philippians`).
 3. Choose the kind of study:
 
    | Kind | Starts with |
    |---|---|
-   | **Passage study** | Text · Observations · Context · Meaning · Theology · Application |
-   | **Word study** | Word · Occurrences · Semantic Range · Key Passages · Conclusions |
-   | **Topic** | Question / Topic · Key Passages · Main Themes · Conclusions · Application |
+   | **Passage study** | Choose **Guided Passage Study** or **Ten-Step Bible Study** in the Template list |
+   | **Biblical Character Study** | Person and passages · Setting · Life, words and actions · Character and decisions · God's work · Main findings · Application |
+   | **Word study** | Word and question · Occurrences and translations · Range of meanings · Passages in context · Meaning and conclusion · Application |
+   | **Whole-Book Study** | Read the whole book · Setting · Overview · Structure · Message and development · Central message · Application |
+   | **Topic** | Topic and questions · Relevant Scripture · Examine the passages · Compare and group findings · Biblical conclusions · Application |
    | **Teaching preparation** | A passage study, opened straight on its **Bible Teaching** side, ready to choose a sermon, group study or lesson |
 
-   Under **More options** you find more kinds (biblical theology, systematic
-   theology, no template, your own templates) and a title of your own.
+   **More options** offers no template and a title of your own. Saved personal
+   templates remain available under **My template**, including older kinds.
 4. Click **Create study**.
 
-Each kind starts from a small **template**: a few headed parts, each with a
-short hint until you write in it. Parts you may want later (for a passage
-study: *Structure, Key Words, Related Scripture, Open Questions*) are offered
-when you click **Add a part** at the end of the study.
+Each kind starts from a **template** with headed parts and short guidance.
+The two passage methods also have labelled answer fields and progress for each
+part. Their examples (Hosea 11 and Matthew 8:18–27) stay collapsed until opened
+and are never copied into your answers. The guided method is named **POZETEK**
+only in German.
+
+Parts you may want later are offered under **Add a part**. A Character Study
+can add *Related figures and passages*; a Book Study can add *Further study*.
+Existing studies keep their original parts and writing.
 
 ## Projects: keeping studies together
 

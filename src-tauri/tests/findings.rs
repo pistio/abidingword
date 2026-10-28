@@ -405,6 +405,7 @@ fn study_search_covers_titles_sections_blocks_and_findings() {
             &UpdateStudyBlock {
                 id: vine_sections[2].blocks[0].id.clone(),
                 content: Some("Spoken on the way to Gethsemane.".into()),
+                data: None,
             },
         )?;
         sections::update(
@@ -490,6 +491,7 @@ fn study_search_covers_titles_sections_blocks_and_findings() {
             &UpdateStudyBlock {
                 id: vine_sections[2].blocks[0].id.clone(),
                 content: Some("Now about the garden.".into()),
+                data: None,
             },
         )?;
         assert!(hit("gethsemane")?.is_empty());

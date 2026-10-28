@@ -127,7 +127,7 @@ export interface Api {
   studyUpdate(input: UpdateStudy): Promise<Study>;
   studySectionList(studyId: string): Promise<StudySection[]>;
   studySectionUpdate(input: UpdateStudySection): Promise<StudySection>;
-  studySectionCreate(input: { studyId: string; title: string; guidance?: string }): Promise<StudySection>;
+  studySectionCreate(input: { studyId: string; title: string; guidance?: string; templateSectionKey?: string }): Promise<StudySection>;
   studySectionDelete(input: { id: string; force: boolean }): Promise<void>;
   studySectionReorder(input: Reorder): Promise<StudySection[]>;
   studyBlockReorder(input: Reorder): Promise<StudyBlock[]>;

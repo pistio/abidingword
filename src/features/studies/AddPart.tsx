@@ -11,7 +11,7 @@ interface AddPartProps {
   template: StudyTemplate | null;
   /** The study's parts now: a suggestion already there is not offered again. */
   sections: StudySection[];
-  onAdd: (part: { title: string; guidance?: string }) => Promise<void>;
+  onAdd: (part: { title: string; guidance?: string; templateSectionKey?: string }) => Promise<void>;
 }
 
 /**
@@ -27,18 +27,18 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
   const [title, setTitle] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const present = new Set(sections.flatMap((s) => [s.key ?? "", sectionTitle(s).toLocaleLowerCase()]));
+  const present = new Set(sections.flatMap((s) => [s.key ?? "", sectionTitle(s, template?.key).toLocaleLowerCase()]));
   const suggestions = (template?.sections ?? [])
     .filter((s) => s.optional && !s.retired)
-    .map((s) => ({ key: s.key ?? "", title: sectionTitle(s), guidance: sectionGuidance(s) ?? undefined }))
-    .filter((s) => !present.has(s.key) && !present.has(s.title.toLocaleLowerCase()));
+    .map((s) => ({ key: s.key ?? "", title: sectionTitle(s, template?.key), guidance: sectionGuidance(s, template?.key) ?? undefined, templateSectionKey: s.key ?? undefined }))
+    .filter((s) => (!s.key || !present.has(s.key)) && !present.has(s.title.toLocaleLowerCase()));
 
   const close = () => {
     setOpen(false);
     setTitle("");
     toggle.current?.focus();
   };
-  const add = async (part: { title: string; guidance?: string }) => {
+  const add = async (part: { title: string; guidance?: string; templateSectionKey?: string }) => {
     if (busy || !part.title.trim()) return;
     setBusy(true);
     try {
@@ -74,7 +74,11 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
                   type="button"
                   autoFocus={index === 0}
                   disabled={busy}
-                  onClick={() => void add(s)}
+                  onClick={() => {
+                    // Keep unchanged built-in text recognisable after a language switch.
+                    const source = template?.isBuiltin ? template.sections.find((part) => part.key === s.key) : null;
+                    void add(source ? { ...s, title: source.title, guidance: source.guidance ?? undefined } : s);
+                  }}
                   className="min-h-11 rounded-full border border-border px-4 text-[0.9375rem] text-text-strong hover:bg-bg-secondary"
                 >
                   {s.title}

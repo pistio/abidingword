@@ -5,8 +5,12 @@
 // English wording. Once the user renames it, their wording is shown as it
 // is. No stored text is ever rewritten (docs/i18n.md, "Built-in templates").
 import i18n from "i18next";
+import biblicalCharacter from "../../../resources/templates/biblical-character-study.json";
+import wholeBook from "../../../resources/templates/whole-book-study.json";
 import biblicalTheology from "../../../resources/templates/biblical-theology-study.json";
 import passage from "../../../resources/templates/passage-study.json";
+import pozetek from "../../../resources/templates/pozetek-study.json";
+import tenStep from "../../../resources/templates/ten-step-exegesis.json";
 import systematicTheology from "../../../resources/templates/systematic-theology-study.json";
 import teaching from "../../../resources/templates/teaching-study.json";
 import topical from "../../../resources/templates/topical-study.json";
@@ -20,7 +24,7 @@ interface BuiltinDefinition {
   sections: { key: string; title: string; guidance?: string | null; optional?: boolean; retired?: boolean }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [passage, word, topical, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */
@@ -31,9 +35,9 @@ function translate(key: string, fallback: string): string {
 }
 
 /** Finds the built-in section a stored section was copied from, by key and unchanged English. */
-function builtinSection(key: string | null | undefined, field: "title" | "guidance", english: string) {
+function builtinSection(key: string | null | undefined, field: "title" | "guidance", english: string, templateKey?: string) {
   if (!key) return null;
-  for (const template of BUILTIN) {
+  for (const template of BUILTIN.filter((t) => !templateKey || t.key === templateKey)) {
     const section = template.sections.find((s) => s.key === key && (s[field] ?? "") === english);
     if (section) return { template: template.key, section: section.key };
   }
@@ -41,18 +45,18 @@ function builtinSection(key: string | null | undefined, field: "title" | "guidan
 }
 
 /** A section's title: translated while it is the built-in English, otherwise as written. */
-export function sectionTitle(section: { key?: string | null; title: string }): string {
+export function sectionTitle(section: { key?: string | null; title: string }, templateKey?: string): string {
   if (!section.key && section.title === DEFAULT_SECTION) return translate("studies.builtin.defaultSection", section.title);
-  const found = builtinSection(section.key, "title", section.title);
+  const found = builtinSection(section.key, "title", section.title, templateKey);
   return found
     ? translate(`studies.builtin.templates.${found.template}.sections.${found.section}.title`, section.title)
     : section.title;
 }
 
 /** A section's guidance, by the same rule as its title. */
-export function sectionGuidance(section: { key?: string | null; guidance?: string | null }): string | null {
+export function sectionGuidance(section: { key?: string | null; guidance?: string | null }, templateKey?: string): string | null {
   if (!section.guidance) return section.guidance ?? null;
-  const found = builtinSection(section.key, "guidance", section.guidance);
+  const found = builtinSection(section.key, "guidance", section.guidance, templateKey);
   return found
     ? translate(`studies.builtin.templates.${found.template}.sections.${found.section}.guidance`, section.guidance)
     : section.guidance;
@@ -82,8 +86,35 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
     .filter((s) => !s.retired)
     .map((s) => ({
       key: s.key ?? null,
-      title: sectionTitle({ key: s.key, title: s.title }),
-      guidance: sectionGuidance({ key: s.key, guidance: s.guidance }),
+      title: sectionTitle(s, template.key),
+      guidance: sectionGuidance(s, template.key),
       ...(s.optional ? { optional: true } : {}),
+      ...(s.fields?.length ? {
+        fields: s.fields,
+        fieldsVersion: s.fieldsVersion,
+        fieldsSource: s.fieldsSource ?? template.key,
+      } : {}),
     }));
+}
+
+interface StructuredPart {
+  key?: string | null;
+  fields?: { template: string } | null;
+}
+
+function structuredPath(section: StructuredPart): string | null {
+  return section.fields && section.key ? `studies.builtin.templates.${section.fields.template}.sections.${section.key}` : null;
+}
+
+/** Text of a structured part (label, help, goal ...) in the interface language; the fallback when it has none. */
+export function structuredText(section: StructuredPart, path: string, fallback: string): string {
+  const base = structuredPath(section);
+  return base ? translate(`${base}.${path}`, fallback) : fallback;
+}
+
+/** The text at `path`, or null when the interface language has none (an example or goal is optional help). */
+export function structuredOptional(section: StructuredPart, path: string): string | null {
+  const base = structuredPath(section);
+  const key = base ? `${base}.${path}` : null;
+  return key && i18n.exists(key) ? translate(key, "") : null;
 }

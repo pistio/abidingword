@@ -186,74 +186,704 @@
         }
       },
       "topical-study": {
-        "name": "Topical Study",
-        "description": "A question or topic followed through the whole of Scripture.",
+        "name": "Topical Bible Study",
+        "description": "Answer a focused biblical question by interpreting relevant passages in context before drawing conclusions.",
         "sections": {
           "topic": {
-            "title": "Question / Topic",
-            "guidance": "The question you are asking, stated as clearly as you can."
+            "title": "Topic and questions",
+            "guidance": "State the topic, its boundaries and the questions the study should answer. Avoid starting with a conclusion."
           },
           "key-passages": {
-            "title": "Key Passages",
-            "guidance": "The passages that speak most directly to it."
+            "title": "Relevant Scripture",
+            "guidance": "Gather representative passages, including those that qualify or appear to challenge an initial view. Note why each is relevant."
           },
-          "biblical-context": {
-            "title": "Biblical Context",
-            "guidance": "Where and how the topic arises across the Bible."
+          "passage-study": {
+            "title": "Examine the passages",
+            "guidance": "Read each text in its literary, historical and covenantal context. Distinguish direct teaching, narrative description, inference and application."
           },
           "main-themes": {
-            "title": "Main Themes",
-            "guidance": "The main lines of teaching that emerge."
-          },
-          "difficult-passages": {
-            "title": "Difficult Passages",
-            "guidance": "Texts that seem to point another way, and how to read them."
-          },
-          "theology": {
-            "title": "Theology",
-            "guidance": "How the passages fit together into coherent teaching."
+            "title": "Compare and group findings",
+            "guidance": "Group the passages by their actual teaching, noting agreements, differences, development and remaining questions."
           },
           "conclusions": {
-            "title": "Conclusions",
-            "guidance": "Your conclusions, with the passages that carry them."
+            "title": "Biblical conclusions",
+            "guidance": "Answer the opening questions with references. Distinguish what Scripture clearly teaches from reasonable inference and unresolved issues."
           },
           "application": {
             "title": "Application",
-            "guidance": "What this means for belief, worship and life."
+            "guidance": "Identify concrete implications for belief, worship, relationships and action, grounded in the conclusions."
+          },
+          "difficult-passages": {
+            "title": "Difficult or balancing texts",
+            "guidance": "Examine apparently conflicting passages without ignoring their context or forcing a superficial harmonisation."
+          },
+          "biblical-theology": {
+            "title": "Place in the whole Bible",
+            "guidance": "Where relevant, consider how the teaching unfolds through the covenants and relates to Christ and the gospel without imposing a connection."
           }
         }
       },
       "word-study": {
-        "name": "Word Study",
-        "description": "One word traced through Scripture, from its uses to its meaning and weight.",
+        "name": "Biblical Word Study",
+        "description": "Investigate a biblical word in its original language and contexts without assuming one meaning in every occurrence.",
         "sections": {
           "word": {
-            "title": "Word",
-            "guidance": "The word being studied, its original form and how translations render it."
+            "title": "Word and question",
+            "guidance": "Identify the Hebrew or Greek lemma, spelling and the particular passage or question. A translated English word may represent several different original words."
           },
           "occurrences": {
-            "title": "Occurrences",
-            "guidance": "Where the word appears. (Automatic occurrence lists arrive with the concordance.)"
-          },
-          "immediate-contexts": {
-            "title": "Immediate Contexts",
-            "guidance": "How each important use is shaped by its sentence and paragraph."
+            "title": "Occurrences and translations",
+            "guidance": "Find representative occurrences of this lemma and note how translators render it. Distinguish the lemma from inflected forms and other words with similar translations."
           },
           "semantic-range": {
-            "title": "Semantic Range",
-            "guidance": "The range of meanings the word carries, and what decides between them."
+            "title": "Range of meanings",
+            "guidance": "Describe possible meanings from contextual evidence. Do not derive meaning solely from etymology or import every possible sense into one occurrence."
           },
           "key-passages": {
-            "title": "Key Passages",
-            "guidance": "The passages where the word matters most."
-          },
-          "theological-significance": {
-            "title": "Theological Significance",
-            "guidance": "What the word contributes to the Bible's teaching."
+            "title": "Passages in context",
+            "guidance": "Read each significant occurrence in its sentence, paragraph, genre and historical setting. Record which sense best fits and why."
           },
           "conclusions": {
-            "title": "Conclusions",
-            "guidance": "What you have concluded, and what remains open."
+            "title": "Meaning and conclusion",
+            "guidance": "Explain what the word means in the passage under study, citing textual evidence. State uncertainties and avoid making the word carry more theology than the passage supports."
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "What follows for belief and life from the passage's teaching, rather than from a dictionary definition alone?"
+          },
+          "grammar": {
+            "title": "Grammar and syntax",
+            "guidance": "Where helpful, examine grammatical form, syntax and discourse function. Use reputable linguistic tools; original-language expertise is optional."
+          },
+          "theological-significance": {
+            "title": "Biblical-theological connections",
+            "guidance": "Compare related biblical teaching while keeping each passage's own meaning distinct."
+          }
+        }
+      },
+      "pozetek-study": {
+        "name": "Guided Passage Study",
+        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "sections": {
+          "persons": {
+            "title": "Persons",
+            "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
+            "goal": "Get to know everyone involved before interpreting anything. Record only what the text itself says.",
+            "example": "Hosea proclaims God’s word to Israel/Ephraim; the focus is God’s relationship with his people. Egypt and Assyria belong to the historical background that is addressed.",
+            "fields": {
+              "author": {
+                "label": "Author",
+                "help": "Who wrote or spoke this text, as far as the text or its book says?"
+              },
+              "speaker": {
+                "label": "Speaker(s)",
+                "help": "Who is speaking in this passage? Does the speaker change?"
+              },
+              "addressees": {
+                "label": "Addressees",
+                "help": "To whom is the message directed?"
+              },
+              "people": {
+                "label": "People and groups",
+                "help": "Add each person or group named or implied. Note the verse and what each one does or is.",
+                "parts": {
+                  "name": "Name or group",
+                  "verse": "Verse",
+                  "role": "Role"
+                },
+                "add": "Add person or group"
+              },
+              "relationships": {
+                "label": "Relationships",
+                "help": "How are those involved related to one another? Who stands over, with or against whom?"
+              },
+              "open-questions": {
+                "label": "Open questions",
+                "help": "What about the people in this text is still unclear?"
+              }
+            }
+          },
+          "place": {
+            "title": "Place",
+            "guidance": "Which places and spatial or cultural relationships matter for the text?",
+            "goal": "Notice where things happen or are spoken of. Keep what the text says apart from what you learn from outside sources.",
+            "example": "The northern kingdom of Israel is the context; Egypt recalls Israel’s deliverance, Assyria stands for political threat.",
+            "fields": {
+              "places": {
+                "label": "Places named in the text",
+                "help": "List each place the text names. Note the verse and what role it plays.",
+                "parts": {
+                  "place": "Place",
+                  "verse": "Verse",
+                  "role": "Role"
+                },
+                "add": "Add place"
+              },
+              "background": {
+                "label": "Geographic and cultural background",
+                "help": "What does outside research add? Say where each piece of information comes from, so it stays distinct from the text."
+              },
+              "unclear": {
+                "label": "Unclear places",
+                "help": "Which place references are still uncertain?"
+              }
+            }
+          },
+          "time": {
+            "title": "Time",
+            "guidance": "When does the text take place, and which historical circumstances matter?",
+            "goal": "Place the text in time. Mark what the text states and what is a historical placement that may be uncertain.",
+            "example": "Hosea’s ministry in the 8th century BC and the growing Assyrian influence are relevant background information.",
+            "fields": {
+              "stated": {
+                "label": "Time stated in the text",
+                "help": "Which dates, seasons, sequences or phrases such as “then” and “in those days” does the text give?"
+              },
+              "historical": {
+                "label": "Historical setting",
+                "help": "What do you know about the period? Mark uncertain points as uncertain."
+              },
+              "source": {
+                "label": "Source for the historical setting",
+                "help": "Where does this information come from?"
+              },
+              "sequence": {
+                "label": "Course of time",
+                "help": "How does time move within the passage? What comes before, during and after?"
+              },
+              "prophecy": {
+                "label": "Prophecy: past, present, future",
+                "help": "If the text is prophetic: what looks back, what describes the present situation, what announces the future?"
+              }
+            }
+          },
+          "events": {
+            "title": "Events",
+            "guidance": "What happens? How do events or statements unfold?",
+            "goal": "Follow the movement of the text section by section. The outline is yours to propose and to change.",
+            "example": "A possible outline of Hosea 11: vv. 1–4 care; vv. 5–7 unfaithfulness and judgment; vv. 8–9 compassion; vv. 10–11 return and restoration.",
+            "fields": {
+              "passages": {
+                "label": "Sections of the text",
+                "help": "Divide the text into sections. For each, give the verses, what happens or is said, and what it means for the course of the whole.",
+                "parts": {
+                  "verses": "Verses",
+                  "event": "Event or statement",
+                  "meaning": "Meaning in the course of the text"
+                },
+                "add": "Add section"
+              },
+              "turning-points": {
+                "label": "Turning points",
+                "help": "Where does the direction of the text change?"
+              },
+              "contrasts": {
+                "label": "Contrasts",
+                "help": "Which opposites or tensions does the text set against each other?"
+              }
+            }
+          },
+          "context": {
+            "title": "Text context",
+            "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture?",
+            "goal": "See the passage in its surroundings, from the nearest verses outward, and notice where it ends.",
+            "example": "Israel’s unfaithfulness and the covenant relationship shape Hosea; chapter 11 adds the image of the caring father and his child.",
+            "fields": {
+              "immediate": {
+                "label": "Immediate context",
+                "help": "What comes directly before and after the passage, and how does it connect?"
+              },
+              "book": {
+                "label": "Context in the book",
+                "help": "What is the book about, and where does the passage stand in its argument or story?"
+              },
+              "canon": {
+                "label": "Context in the whole Bible",
+                "help": "How does the passage relate to the rest of Scripture and its storyline?"
+              },
+              "parallels": {
+                "label": "Parallel passages",
+                "help": "Add related passages. Say what each contributes to understanding this text.",
+                "parts": {
+                  "reference": "Reference",
+                  "relevance": "Relevance"
+                },
+                "add": "Add parallel passage"
+              },
+              "limits": {
+                "label": "Limits of the passage",
+                "help": "Where does the unit begin and end, and why there?"
+              }
+            }
+          },
+          "explanations": {
+            "title": "Explanations",
+            "guidance": "Which terms, statements or interpretive problems need clarifying?",
+            "goal": "Collect questions from the text, check them against evidence, and record the answers you can support. Leave open what is still open.",
+            "example": "What role do Egypt and Assyria play? How do judgment and compassion belong together? What does “God and not man” (Hos 11:9) mean?",
+            "fields": {
+              "questions": {
+                "label": "Question log",
+                "help": "Add each question. Record the verse, the evidence you checked, your answer, and whether the question is still open.",
+                "parts": {
+                  "question": "Question",
+                  "verse": "Verse",
+                  "evidence": "Evidence",
+                  "answer": "Checked answer",
+                  "status": "Status"
+                },
+                "options": {
+                  "open": "Open",
+                  "answered": "Settled"
+                },
+                "add": "Add question"
+              },
+              "terms": {
+                "label": "Important terms",
+                "help": "Which words need explaining? What do they mean here, in this context?"
+              },
+              "explanations": {
+                "label": "Possible explanations",
+                "help": "Where more than one explanation is possible, state each with its reasons."
+              },
+              "sources": {
+                "label": "Sources",
+                "help": "Which sources did you use? Note them so you can find them again."
+              }
+            }
+          },
+          "core": {
+            "title": "Core",
+            "guidance": "What is the central message of exactly this passage?",
+            "goal": "Name the core in three steps: what the text is about, what it says about that, and one concise sentence. You may fill them in any order.",
+            "example": "Subject: God’s relationship to his unfaithful people. Statement: God’s care, just judgment and compassion. Theme: God’s love for Israel shows itself in his care, in just judgment, and in a compassion that opens a future.",
+            "fields": {
+              "subject": {
+                "label": "Text subject — What is it about?",
+                "help": "Name the subject in a few words, without yet saying what the text claims about it."
+              },
+              "statement": {
+                "label": "Text statement — What does the text say about it?",
+                "help": "Summarise what the passage says about its subject, as it says it."
+              },
+              "theme": {
+                "label": "Text theme — One concise sentence",
+                "help": "Join subject and statement in one sentence that you could test against every verse."
+              }
+            }
+          },
+          "application": {
+            "title": "Personal application",
+            "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above.",
+            "goal": "Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK.",
+            "example": "God’s love for his people rests in his nature, not in Israel’s faithfulness. Even though Israel turns away, God shows compassion in the midst of judgment. That challenges us to recognise our own substitute securities and to trust God anew. Love received should also shape how we treat people who do not return love and care (cf. 1 John 4:8, 19).",
+            "fields": {
+              "truth": {
+                "label": "Truth recognised",
+                "help": "Which truth of the text stays valid for every reader?"
+              },
+              "examination": {
+                "label": "Personal examination",
+                "help": "Where does this truth challenge, comfort or correct your own thinking and life?"
+              },
+              "response": {
+                "label": "Concrete response",
+                "help": "What will you do: believe, repent, trust, obey, pray, love? Make it specific."
+              },
+              "limits": {
+                "label": "Limits of the transfer",
+                "help": "What differs between the original situation and today? What must not be carried over directly?"
+              }
+            }
+          }
+        }
+      },
+      "ten-step-exegesis": {
+        "name": "Ten-Step Bible Study",
+        "description": "A thorough passage study following the ten interpretive steps presented by Helge Stadelmann and Thomas Richter. Guidance and the optional Matthew 8:18–27 example are independently written.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Become familiar with the text",
+            "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely.",
+            "goal": "First impressions and unresolved questions, not a finished interpretation.",
+            "example": "Matthew 8:18–27 contains two encounters about following Jesus, followed by the calming of the storm. Initial questions include the cost of discipleship, the command to let the dead bury their dead, the disciples’ little faith, and the identity of the one who commands wind and sea.",
+            "fields": {
+              "first-impression": {
+                "label": "First impression",
+                "help": "What seems to be the passage's main concern on an initial reading?"
+              },
+              "movement": {
+                "label": "How the text develops",
+                "help": "What scenes, changes or lines of thought are visible?"
+              },
+              "questions": {
+                "label": "Questions to investigate",
+                "help": "Record questions now; do not force an early answer.",
+                "parts": {
+                  "verse": "Verse",
+                  "question": "Question",
+                  "status": "Status"
+                },
+                "options": {
+                  "open": "Open",
+                  "answered": "Answered"
+                },
+                "add": "Add question"
+              }
+            }
+          },
+          "step-02-text": {
+            "title": "2 — Establish the textual basis",
+            "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty.",
+            "goal": "A documented basis for reading this text, with important translation questions marked.",
+            "example": "In Matthew 8:24, translations describe a violent storm or disturbance on the lake. The Greek wording emphasises its intensity. Its precise force must be weighed in context, not expanded into events the passage does not report.",
+            "fields": {
+              "comparisons": {
+                "label": "Translation comparisons",
+                "help": "Note actual wording differences and whether they matter.",
+                "parts": {
+                  "verse": "Verse",
+                  "renderings": "Different renderings",
+                  "significance": "Effect on understanding"
+                },
+                "add": "Add comparison"
+              },
+              "manuscripts": {
+                "label": "Relevant manuscript notes",
+                "help": "Record only variants supported by a trustworthy textual source."
+              },
+              "basis": {
+                "label": "Working text",
+                "help": "Which text or translation will you primarily examine, and why?"
+              },
+              "uncertainties": {
+                "label": "Unsettled questions",
+                "help": "What cannot yet be decided from the available evidence?"
+              }
+            }
+          },
+          "step-03-situation": {
+            "title": "3 — Clarify the original communication situation",
+            "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference.",
+            "goal": "The relevant historical setting, not a collection of unrelated background facts.",
+            "example": "Matthew presents Jesus as the promised Messiah. The events occur during his ministry in Galilee. Following a teacher then meant more than attending lessons; Jesus calls people to follow him personally and without treating comfort as the highest good.",
+            "fields": {
+              "author-audience": {
+                "label": "Author and intended audience",
+                "help": "What can reasonably be established about writer and readers?"
+              },
+              "time-place": {
+                "label": "Time and location",
+                "help": "Distinguish the setting of the reported event from the time of writing."
+              },
+              "purpose": {
+                "label": "Purpose of communication",
+                "help": "Why was the book or passage written or spoken?"
+              },
+              "background": {
+                "label": "Relevant historical and cultural background",
+                "help": "What facts clarify this passage, and which are only hypotheses?"
+              },
+              "sources": {
+                "label": "Sources and degree of confidence",
+                "help": "Cite the Bible passage, introduction or reference work you consulted."
+              }
+            }
+          },
+          "step-04-context": {
+            "title": "4 — Understand the context",
+            "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons.",
+            "goal": "Explain how the passage contributes to its book and how its limits were chosen.",
+            "example": "After the Sermon on the Mount (Matthew 5–7), Matthew 8 portrays Jesus' authority through healings. Two calls to discipleship precede the boat scene: in 8:23 the disciples follow Jesus into the boat. The episodes can also be studied separately.",
+            "fields": {
+              "boundaries": {
+                "label": "Passage boundaries",
+                "help": "Where does this unit begin and end? What indicates the boundaries?"
+              },
+              "nearby": {
+                "label": "Immediate context",
+                "help": "What comes directly before and after?"
+              },
+              "book": {
+                "label": "Place in the book",
+                "help": "How does this unit contribute to the book's flow?"
+              },
+              "parallels": {
+                "label": "Related passages",
+                "help": "List parallels without assuming they are identical.",
+                "parts": {
+                  "reference": "Reference",
+                  "contribution": "What it clarifies"
+                },
+                "add": "Add parallel"
+              },
+              "whole-bible": {
+                "label": "Wider biblical context",
+                "help": "How does the unit relate to Scripture's wider testimony?"
+              }
+            }
+          },
+          "step-05-genre": {
+            "title": "5 — Examine the type of text",
+            "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern.",
+            "goal": "An interpretation shaped by the way this passage communicates.",
+            "example": "Matthew 8:18–22 contains two short dialogues centred on Jesus' replies; verses 23–27 form a miracle narrative. The disciples fear while Jesus sleeps; the fierce storm gives way to calm; helpless people face Jesus' authority.",
+            "fields": {
+              "genre": {
+                "label": "Literary genre",
+                "help": "Is it narrative, poetry, prophecy, letter, law, parable or another genre?"
+              },
+              "form": {
+                "label": "Form within the genre",
+                "help": "What kind of narrative, speech or argument is it?"
+              },
+              "features": {
+                "label": "Literary features",
+                "help": "What can actually be observed in the wording?",
+                "parts": {
+                  "verse": "Verse",
+                  "feature": "Feature or contrast",
+                  "effect": "Contribution to meaning"
+                },
+                "add": "Add feature"
+              },
+              "interpretation": {
+                "label": "Implications for interpretation",
+                "help": "How should this literary form shape your reading?"
+              }
+            }
+          },
+          "step-06-language": {
+            "title": "6 — Examine words and sentences",
+            "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning.",
+            "goal": "Explain significant wording and relationships within the passage.",
+            "example": "In Matthew 8:20, animals have resting places but the Son of Man has nowhere to lay his head: the contrast challenges expectations of secure comfort. In 8:21–22, the issue is the priority of Jesus' call. The father's circumstances cannot be established with certainty from these verses.",
+            "fields": {
+              "terms": {
+                "label": "Important terms",
+                "help": "Determine meaning from use in this sentence and context.",
+                "parts": {
+                  "term": "Word or expression",
+                  "verse": "Verse",
+                  "context": "Context and usage",
+                  "finding": "Supported conclusion"
+                },
+                "add": "Add term"
+              },
+              "connections": {
+                "label": "Sentence relationships",
+                "help": "Look for contrasts, reasons, conditions, actions and their objects.",
+                "parts": {
+                  "verse": "Verse",
+                  "link": "Connection",
+                  "meaning": "Effect on meaning"
+                },
+                "add": "Add connection"
+              },
+              "questions": {
+                "label": "Open linguistic questions",
+                "help": "Which uncertainties remain?"
+              },
+              "sources": {
+                "label": "Language tools consulted",
+                "help": "Record translations, lexicons or grammatical sources."
+              }
+            }
+          },
+          "step-07-flow": {
+            "title": "7 — Trace the train of thought",
+            "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline.",
+            "goal": "A clear outline drawn from the text, not imposed on it.",
+            "example": "One possible outline of Matthew 8:18–27: vv. 18–20, the cost of following Jesus; vv. 21–22, the priority of his call; vv. 23–25, disciples follow him into danger; vv. 26–27, Jesus reveals his authority over wind and sea.",
+            "fields": {
+              "flow": {
+                "label": "Sequence and connections",
+                "help": "How does each part lead into the next?"
+              },
+              "outline": {
+                "label": "Outline of the passage",
+                "help": "Give each segment a short, text-supported heading.",
+                "parts": {
+                  "verses": "Verses",
+                  "heading": "Heading",
+                  "connection": "How it connects"
+                },
+                "add": "Add outline point"
+              },
+              "diagram": {
+                "label": "Text diagram or structural notes",
+                "help": "Optional: sketch the logic or refer to a diagram in the study workspace."
+              }
+            }
+          },
+          "step-08-theology": {
+            "title": "8 — Clarify theological questions",
+            "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible.",
+            "goal": "Interpret theological claims in a way that is faithful to this text and the whole Bible.",
+            "example": "Matthew 8:22 raises the question of honouring parents: Jesus affirms that duty elsewhere (Matthew 15:4–6), so his words cannot abolish it universally. The storm narrative invites comparison with God's rule over the sea (Psalm 89:10; 107:23–30), sharpening the question of Jesus' identity.",
+            "fields": {
+              "questions": {
+                "label": "Theological questions",
+                "help": "Give evidence, a reasoned answer and a clear status.",
+                "parts": {
+                  "question": "Question",
+                  "verse": "Verse",
+                  "evidence": "Textual evidence",
+                  "conclusion": "Conclusion",
+                  "status": "Status"
+                },
+                "options": {
+                  "open": "Open",
+                  "answered": "Answered"
+                },
+                "add": "Add question"
+              },
+              "cross-references": {
+                "label": "Cross-references",
+                "help": "Explain their contribution, not merely their similarity.",
+                "parts": {
+                  "reference": "Reference",
+                  "relevance": "Relevance"
+                },
+                "add": "Add reference"
+              },
+              "coherence": {
+                "label": "Theological coherence",
+                "help": "How does the reading fit the Bible's testimony without silencing this passage?"
+              },
+              "unresolved": {
+                "label": "Questions still open",
+                "help": "Which questions require more study or remain uncertain?"
+              }
+            }
+          },
+          "step-09-message": {
+            "title": "9 — Formulate the central message",
+            "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage.",
+            "goal": "A brief and defensible statement of the passage's central message.",
+            "example": "Subject: following Jesus in view of his demands and authority. Statement: Jesus calls for priority over security and other obligations; his followers may trust his authority even in danger. Theme: Following Jesus requires wholehearted commitment and trust in the Lord whose authority is greater than the dangers his disciples face.",
+            "fields": {
+              "subject": {
+                "label": "Text subject — What is it about?",
+                "help": "Name the topic without yet making the text's claim."
+              },
+              "statement": {
+                "label": "Text statement — What does it say?",
+                "help": "Summarise the passage's claim about this subject."
+              },
+              "theme": {
+                "label": "Text theme — One sentence",
+                "help": "Combine subject and statement in a concise proposition."
+              },
+              "text-check": {
+                "label": "Check against the whole passage",
+                "help": "Does every part support this theme? What may need refinement?"
+              }
+            }
+          },
+          "step-10-application": {
+            "title": "10 — Understand and apply the meaning today",
+            "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today.",
+            "goal": "A faithful, concrete response grounded in the text and attentive to its original setting.",
+            "example": "Matthew 8 calls readers to examine where comfort or security outranks trust in Christ. The disciples' circumstances during Jesus' earthly ministry cannot simply be reproduced today, but his claim on discipleship remains. Confidence rests in Christ's authority, not in the absence of difficulty.",
+            "fields": {
+              "enduring-truth": {
+                "label": "Enduring truth",
+                "help": "Which truth applies beyond the original situation?"
+              },
+              "differences": {
+                "label": "Differences between then and now",
+                "help": "Consider covenant and redemptive-historical differences as well as culture."
+              },
+              "examination": {
+                "label": "Personal examination",
+                "help": "Where does this text challenge, correct, encourage or comfort?"
+              },
+              "response": {
+                "label": "Concrete response",
+                "help": "What is an honest, specific next response of faith or obedience?"
+              },
+              "limits": {
+                "label": "Limits of application",
+                "help": "What must not be transferred directly or promised without warrant?"
+              }
+            }
+          }
+        }
+      },
+      "biblical-character-study": {
+        "name": "Biblical Character Study",
+        "description": "Study a biblical person's life and character through the relevant passages.",
+        "sections": {
+          "person": {
+            "title": "Person and passages",
+            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name."
+          },
+          "setting": {
+            "title": "Historical and biblical setting",
+            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain."
+          },
+          "life": {
+            "title": "Life, words and actions",
+            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography."
+          },
+          "character": {
+            "title": "Character and decisions",
+            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives."
+          },
+          "god": {
+            "title": "God's work and the biblical evaluation",
+            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary."
+          },
+          "conclusion": {
+            "title": "Main findings",
+            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions."
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action."
+          },
+          "comparisons": {
+            "title": "Related figures and passages",
+            "guidance": "Compare relevant people or passages only where the connections illuminate the text."
+          }
+        }
+      },
+      "whole-book-study": {
+        "name": "Whole-Book Bible Study",
+        "description": "Read an entire biblical book, trace its structure and message, and apply its teaching.",
+        "sections": {
+          "reading": {
+            "title": "Read the whole book",
+            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries."
+          },
+          "setting": {
+            "title": "Author, audience and setting",
+            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions."
+          },
+          "overview": {
+            "title": "Overview and central concerns",
+            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme."
+          },
+          "outline": {
+            "title": "Structure and content",
+            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole."
+          },
+          "argument": {
+            "title": "Message and development",
+            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening."
+          },
+          "synthesis": {
+            "title": "Central message",
+            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text."
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible."
+          },
+          "further": {
+            "title": "Further study",
+            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
           }
         }
       }
@@ -268,7 +898,9 @@
     "biblical_theology": "Biblical Theology Study",
     "systematic_theology": "Systematic Theology Study",
     "teaching": "Teaching / Sermon",
-    "custom": "Custom Study"
+    "custom": "Custom Study",
+    "character": "Biblical Character Study",
+    "book": "Whole-Book Study"
   },
   "status": {
     "active": "Active",
@@ -384,7 +1016,9 @@
       "topical": "e.g. forgiveness",
       "biblical_theology": "e.g. the temple",
       "systematic_theology": "e.g. the doctrine of grace",
-      "custom": "What are you studying?"
+      "custom": "What are you studying?",
+      "character": "e.g. Ruth",
+      "book": "e.g. Philippians"
     },
     "approach": {
       "passage": "Passage study",
@@ -394,7 +1028,9 @@
       "biblical_theology": "Biblical theology",
       "systematic_theology": "Systematic theology",
       "custom": "No template",
-      "mine": "My template"
+      "mine": "My template",
+      "character": "Biblical Character Study",
+      "book": "Whole-Book Study"
     }
   },
   "list": {
@@ -998,5 +1634,27 @@
     "own": "Your own heading",
     "collapseAll": "Fold all",
     "expandAll": "Unfold all"
+  },
+  "fields": {
+    "example": "Example: Hosea 11",
+    "exampleMatthew": "Example: Matthew 8:18–27",
+    "exampleNote": "An example only. It is not part of your study and is never saved as your answer.",
+    "goal": "Goal",
+    "status": "Progress of “{{title}}”",
+    "statusNotStarted": "Not started",
+    "statusInProgress": "In progress",
+    "statusComplete": "Complete",
+    "fieldGroup": "Fields of “{{title}}”",
+    "entryLabel": "{{field}}, entry {{number}}",
+    "entryHeading": "Entry {{number}}",
+    "entryPart": "{{part}} ({{field}}, entry {{number}})",
+    "noEntries": "No entries yet.",
+    "removeEntry": "Delete entry {{number}} of {{field}}",
+    "confirmRemove": "Delete this entry and what is written in it?",
+    "removeFailed": "The entry could not be deleted.",
+    "addFailed": "The entry could not be added.",
+    "moveEntryUp": "Move entry {{number}} of {{field}} up",
+    "moveEntryDown": "Move entry {{number}} of {{field}} down",
+    "otherWriting": "Other notes"
   }
 }

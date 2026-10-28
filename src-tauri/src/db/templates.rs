@@ -22,8 +22,12 @@ const MAX_SECTIONS: usize = 40;
 
 const BUILTIN: &[&str] = &[
     include_str!("../../../resources/templates/passage-study.json"),
+    include_str!("../../../resources/templates/pozetek-study.json"),
+    include_str!("../../../resources/templates/ten-step-exegesis.json"),
     include_str!("../../../resources/templates/word-study.json"),
     include_str!("../../../resources/templates/topical-study.json"),
+    include_str!("../../../resources/templates/biblical-character-study.json"),
+    include_str!("../../../resources/templates/whole-book-study.json"),
     include_str!("../../../resources/templates/biblical-theology-study.json"),
     include_str!("../../../resources/templates/systematic-theology-study.json"),
     include_str!("../../../resources/templates/teaching-study.json"),
@@ -73,6 +77,8 @@ pub fn builtin_definitions() -> AppResult<Vec<TemplateDefinition>> {
 pub fn builtin_key_for(study_type: StudyType) -> Option<&'static str> {
     match study_type {
         StudyType::Passage => Some("passage-study"),
+        StudyType::Character => Some("biblical-character-study"),
+        StudyType::Book => Some("whole-book-study"),
         StudyType::Word => Some("word-study"),
         StudyType::Topical => Some("topical-study"),
         StudyType::BiblicalTheology => Some("biblical-theology-study"),
@@ -200,6 +206,11 @@ fn validated(input: &TemplateInput) -> AppResult<(String, Option<String>, Vec<Te
                 // A person's own template may hold parts to add later; retiring is for built-ins.
                 optional: s.optional,
                 retired: false,
+                // A customised copy retains its structured fields. The
+                // definitions are copied into each new study, not linked.
+                fields: s.fields.clone(),
+                fields_version: s.fields_version,
+                fields_source: s.fields_source.clone(),
             })
         })
         .collect::<AppResult<Vec<_>>>()?;
@@ -259,6 +270,7 @@ pub fn update(conn: &Connection, input: &UpdateTemplate) -> AppResult<StudyTempl
 /// Copies any template (built-in or not) into a new user template.
 pub fn duplicate(conn: &Connection, id: &str) -> AppResult<StudyTemplate> {
     let original = get(conn, id)?;
+    let original_key = original.key.clone();
     let mut name = format!("{} (copy)", original.name);
     if name.chars().count() > validate::TITLE_MAX_CHARS {
         name = original.name.clone();
@@ -274,6 +286,12 @@ pub fn duplicate(conn: &Connection, id: &str) -> AppResult<StudyTemplate> {
                 .sections
                 .into_iter()
                 .filter(|s| !s.retired)
+                .map(|mut s| {
+                    if !s.fields.is_empty() && s.fields_source.is_none() {
+                        s.fields_source = Some(original_key.clone());
+                    }
+                    s
+                })
                 .collect(),
         },
     )

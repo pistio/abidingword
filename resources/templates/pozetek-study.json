@@ -1,0 +1,282 @@
+{
+  "key": "pozetek-study",
+  "name": "POZETEK — Examine a Bible text",
+  "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+  "studyType": "passage",
+  "sections": [
+    {
+      "key": "persons",
+      "title": "P — Persons (Personen)",
+      "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
+      "fields": [
+        {
+          "key": "author",
+          "kind": "text"
+        },
+        {
+          "key": "speaker",
+          "kind": "text"
+        },
+        {
+          "key": "addressees",
+          "kind": "text"
+        },
+        {
+          "key": "people",
+          "kind": "entries",
+          "parts": [
+            {
+              "key": "name",
+              "kind": "line"
+            },
+            {
+              "key": "verse",
+              "kind": "line"
+            },
+            {
+              "key": "role",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "key": "relationships",
+          "kind": "text"
+        },
+        {
+          "key": "open-questions",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "place",
+      "title": "O — Place (Ort)",
+      "guidance": "Which places and spatial or cultural relationships matter for the text?",
+      "fields": [
+        {
+          "key": "places",
+          "kind": "entries",
+          "parts": [
+            {
+              "key": "place",
+              "kind": "line"
+            },
+            {
+              "key": "verse",
+              "kind": "line"
+            },
+            {
+              "key": "role",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "key": "background",
+          "kind": "text"
+        },
+        {
+          "key": "unclear",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "time",
+      "title": "Z — Time (Zeit)",
+      "guidance": "When does the text take place, and which historical circumstances matter?",
+      "fields": [
+        {
+          "key": "stated",
+          "kind": "text"
+        },
+        {
+          "key": "historical",
+          "kind": "text"
+        },
+        {
+          "key": "source",
+          "kind": "text"
+        },
+        {
+          "key": "sequence",
+          "kind": "text"
+        },
+        {
+          "key": "prophecy",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "events",
+      "title": "E — Events (Ereignisse)",
+      "guidance": "What happens? How do events or statements unfold?",
+      "fields": [
+        {
+          "key": "passages",
+          "kind": "entries",
+          "parts": [
+            {
+              "key": "verses",
+              "kind": "line"
+            },
+            {
+              "key": "event",
+              "kind": "text"
+            },
+            {
+              "key": "meaning",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "key": "turning-points",
+          "kind": "text"
+        },
+        {
+          "key": "contrasts",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "context",
+      "title": "T — Text context (Textzusammenhang)",
+      "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture?",
+      "fields": [
+        {
+          "key": "immediate",
+          "kind": "text"
+        },
+        {
+          "key": "book",
+          "kind": "text"
+        },
+        {
+          "key": "canon",
+          "kind": "text"
+        },
+        {
+          "key": "parallels",
+          "kind": "entries",
+          "parts": [
+            {
+              "key": "reference",
+              "kind": "line"
+            },
+            {
+              "key": "relevance",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "key": "limits",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "explanations",
+      "title": "E — Explanations (Erklärungen)",
+      "guidance": "Which terms, statements or interpretive problems need clarifying?",
+      "fields": [
+        {
+          "key": "questions",
+          "kind": "entries",
+          "parts": [
+            {
+              "key": "question",
+              "kind": "text"
+            },
+            {
+              "key": "verse",
+              "kind": "line"
+            },
+            {
+              "key": "evidence",
+              "kind": "text"
+            },
+            {
+              "key": "answer",
+              "kind": "text"
+            },
+            {
+              "key": "status",
+              "kind": "choice",
+              "options": [
+                "open",
+                "answered"
+              ]
+            }
+          ]
+        },
+        {
+          "key": "terms",
+          "kind": "text"
+        },
+        {
+          "key": "explanations",
+          "kind": "text"
+        },
+        {
+          "key": "sources",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "core",
+      "title": "K — Core (Kern)",
+      "guidance": "What is the central message of exactly this passage?",
+      "fields": [
+        {
+          "key": "subject",
+          "kind": "text"
+        },
+        {
+          "key": "statement",
+          "kind": "text"
+        },
+        {
+          "key": "theme",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "application",
+      "title": "Personal application",
+      "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above.",
+      "fields": [
+        {
+          "key": "truth",
+          "kind": "text"
+        },
+        {
+          "key": "examination",
+          "kind": "text"
+        },
+        {
+          "key": "response",
+          "kind": "text"
+        },
+        {
+          "key": "limits",
+          "kind": "text"
+        }
+      ],
+      "fieldsVersion": 1
+    }
+  ]
+}

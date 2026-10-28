@@ -97,9 +97,9 @@ order and size. Your studies and library are not touched.
 
 A template is a reusable **starting structure**. Settings shows two kinds:
 
-- **Bible Study** templates: the parts a new study starts with (a passage
-  study: *Text, Observations, Context, Meaning, Theology, Application*). The
-  built-in ones can't be changed, but you can **duplicate and customise** one:
+- **Bible Study** templates: Guided Passage Study (POZETEK in German),
+  Ten-Step Bible Study, Biblical Character Study, Word Study, Whole-Book Study
+  and Topical Study, plus your saved personal templates. The built-in ones can't be changed, but you can **duplicate and customise** one:
   rename parts, add hints, change the order, remove parts, and tick
   **Add later** for a part you want offered under *Add a part* rather than
   made at once.

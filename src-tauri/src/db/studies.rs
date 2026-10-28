@@ -3,7 +3,7 @@ use rusqlite::{params, Connection, OptionalExtension, Row};
 use crate::db::{blocks, findings, new_id, now, projects, sections, study_passages, templates};
 use crate::domain::validate::{self, DESCRIPTION_MAX_CHARS};
 use crate::domain::{
-    BlockType, CreateStudy, DuplicateStudy, ListStudies, Study, StudyDetail, StudyDetails,
+    CreateStudy, DuplicateStudy, ListStudies, SectionFields, Study, StudyDetail, StudyDetails,
     StudyStatus, StudySummary, StudyTemplate, StudyType, TemplateSection, UpdateStudy,
 };
 use crate::error::{AppError, AppResult};
@@ -137,8 +137,11 @@ pub fn create(conn: &Connection, input: &CreateStudy) -> AppResult<StudyDetail> 
         "purpose",
     )?;
     projects::get(conn, &input.project_id)?;
-    let study_type = input.study_type.unwrap_or(StudyType::Passage);
-    let template = resolve_template(conn, input, study_type)?;
+    let template = resolve_template(conn, input, input.study_type.unwrap_or(StudyType::Passage))?;
+    let study_type = input
+        .study_type
+        .or_else(|| template.as_ref().map(|template| template.study_type))
+        .unwrap_or(StudyType::Passage);
     let primary = match input
         .primary_passage
         .as_deref()
@@ -154,8 +157,7 @@ pub fn create(conn: &Connection, input: &CreateStudy) -> AppResult<StudyDetail> 
             key: None,
             title: "Notes".into(),
             guidance: None,
-            optional: false,
-            retired: false,
+            ..TemplateSection::default()
         }],
     };
 
@@ -178,16 +180,30 @@ pub fn create(conn: &Connection, input: &CreateStudy) -> AppResult<StudyDetail> 
         ],
     )?;
     for (index, section) in section_list.iter().enumerate() {
-        let section_id = sections::insert(
+        // Structured fields are copied as a snapshot: the study keeps them
+        // even if the built-in template changes in a later version.
+        let snapshot = match (&template, section.fields.is_empty()) {
+            (Some(t), false) => Some(SectionFields {
+                template: section
+                    .fields_source
+                    .clone()
+                    .unwrap_or_else(|| t.key.clone()),
+                version: section.fields_version,
+                fields: section.fields.clone(),
+            }),
+            _ => None,
+        };
+        let section_id = sections::insert_structured(
             &tx,
             &id,
             section.key.as_deref(),
             &section.title,
             section.guidance.as_deref(),
             index as i64,
+            snapshot.as_ref(),
             &now,
         )?;
-        blocks::insert(&tx, &section_id, BlockType::Paragraph, 0, "", &now)?;
+        sections::seed_blocks(&tx, &section_id, snapshot.as_ref(), &now)?;
     }
     if let Some(reference) = primary {
         study_passages::add(
@@ -262,28 +278,37 @@ pub fn duplicate(conn: &Connection, input: &DuplicateStudy) -> AppResult<StudyDe
     )?;
     let mut section_map = Vec::new();
     for section in &original.sections {
-        let new_section = sections::insert(
+        let new_section = sections::insert_structured(
             &tx,
             &id,
             section.key.as_deref(),
             &section.title,
             section.guidance.as_deref(),
             section.position,
+            section.fields.as_ref(),
             &now,
         )?;
-        if input.include_content && !section.blocks.is_empty() {
+        if input.include_content {
             for block in &section.blocks {
-                blocks::insert(
+                blocks::insert_answer(
                     &tx,
                     &new_section,
                     block.block_type,
                     block.position,
                     &block.content,
+                    block.field_key.as_deref(),
+                    block.data.as_deref(),
                     &now,
                 )?;
             }
         } else {
-            blocks::insert(&tx, &new_section, BlockType::Paragraph, 0, "", &now)?;
+            sections::seed_blocks(&tx, &new_section, section.fields.as_ref(), &now)?;
+        }
+        if input.include_content {
+            tx.execute(
+                "UPDATE study_sections SET status = ?2 WHERE id = ?1",
+                params![new_section, section.status.as_str()],
+            )?;
         }
         section_map.push((section.id.clone(), new_section));
     }

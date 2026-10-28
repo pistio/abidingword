@@ -261,6 +261,7 @@ fn a_finding_goes_into_the_chosen_part_and_bad_input_creates_nothing() {
                 study_id: study.clone(),
                 title: "Observations".into(),
                 guidance: None,
+                template_section_key: None,
             },
         )?;
         let mut input = to_study(&study, "quotation", "", words(seg(&s, "Abide"), "Abide"));

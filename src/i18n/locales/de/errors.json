@@ -86,7 +86,9 @@
   "templates": {
     "noSections": "Eine Vorlage braucht mindestens einen Teil, mit dem sie beginnt.",
     "tooManySections": "Eine Vorlage kann höchstens {{max}} Teile haben.",
-    "builtinReadOnly": "Mitgelieferte Vorlagen können nicht geändert werden. Dupliziere die Vorlage, um eine eigene Fassung zu erstellen."
+    "builtinReadOnly": "Mitgelieferte Vorlagen können nicht geändert werden. Dupliziere die Vorlage, um eine eigene Fassung zu erstellen.",
+    "unknownPart": "Dieser Vorlagenteil ist nicht mehr verfügbar.",
+    "partAlreadyAdded": "Dieser Vorlagenteil ist bereits im Bibelstudium enthalten."
   },
   "sections": {
     "hasContent": "„{{title}}“ enthält noch Text oder Notizen."
