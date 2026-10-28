@@ -1,5 +1,7 @@
 # Study flow and reusable template blocks
 
+**Current decision: integration on hold.** See [Latest integration readiness](#latest-integration-readiness). Study implementation is complete; Teaching correctness repairs and owner approval are still required. Earlier integration orders below are conditional historical proposals, not authorisation to execute them.
+
 The implementation and first validation below are historical records for `199f4ad958a0c946cf82df990edeeb51bfd95267`. See [Independent review and integration preparation](#independent-review-and-integration-preparation) for the subsequent verified state, confirmed defects, fixes, and unmerged integration risks.
 
 The study-flow redesign starts at `d2d2c283`. Historical schema migrations 1–24 and the original ten built-in template resources remain unchanged. New template identities separate new defaults from legacy definitions. Studies keep independent JSON snapshots; changing or duplicating a template never transforms answers already written.
@@ -186,3 +188,92 @@ No Windows visual/acceptance run, installer build, production data check, paid s
 5. Reconcile schema-25 guards/source attestation and expected-version tests; regenerate localisation documents; run complete frontend/Rust/i18n/portability checks on the actual combined tree. Exercise fresh, v19, v24 and existing v25 synthetic databases, legacy structured studies and legacy teachings, v2 personal templates, saved evidence, restore, handouts and presentation/privacy behavior. Obtain separate approval before Windows acceptance, any main merge or publication.
 
 No integration branch was created. No Teaching Stage 3 or additional Library feature was implemented. Only this designated Study branch receives the review/fix commit, with `[skip ci]`; no merge, PR creation, workflow dispatch, deployment, release or installer publication is part of delivery.
+
+
+## Latest integration readiness
+
+**Decision: HOLD — stop for owner approval; do not create an integration branch or merge.**
+
+Checked 28 October 2026, 21:35 GMT in Codex Cloud/GitHub. This is a documentation-only readiness refresh of the reviewed Study source `3bb6dc02ec141adf3b2448bb5b4d9847c70dc593`. No Study redesign, Teaching repair, Library feature, migration edit, deployment, release, installer build or paid Action was performed. The Study and Teaching block models must remain separate.
+
+### Pushed Study history confirmed
+
+The local reviewed commit and fetched remote `feature/study-flow-and-teaching-simplification` both resolve to `3bb6dc02ec141adf3b2448bb5b4d9847c70dc593`. All five commits below are reachable from that remote head, so the design, implementation and final correctness review are pushed:
+
+| Commit | Content |
+| --- | --- |
+| `d2d2c283bb05ab0b9f165d643b0e46d10369e790` | Accepted Study-flow design. |
+| `b2345e06987dc206bbcb66f34b322f563438c30a` | Seven-step POZETEK / Ten-Step writing, continuous view and legacy answers. |
+| `429f29e99e2ed02b9fe6857fe1b13db82086a351` | Personal Study builder, reusable research blocks and provenance. |
+| `199f4ad958a0c946cf82df990edeeb51bfd95267` | Original simplified Teaching entry choices and compatibility checks. Its older Teaching editor code must not replace the newer editor during integration. |
+| `3bb6dc02ec141adf3b2448bb5b4d9847c70dc593` | Final Study correctness review: atomic retained evidence, exact returned-verse citations and explicit edition-mismatch errors. |
+
+The documentation commit containing this refresh is additional to that unchanged, completed Study source history.
+
+### Latest remote and PR state
+
+| Item | Current advertised head / state | Readiness meaning |
+| --- | --- | --- |
+| Library / Windows-compatible baseline | `fix/windows-dev44-schema-compatibility` → `b3120f54b0dcece6c078727c97240828680dd63c` | Includes Library Stage 2 via PR #5 squash; schema 24. Preserve it as the compatible baseline. |
+| Teaching foundation | Implementation `4e41542067b5635bfab611467bcdbc9cb5873599`; `feature/teaching-three-templates` tip `66ae2df6dd9a86958e323ffbc704514df51d1bcd` | The two later commits are handover documentation; schema 25 with the new block editor. |
+| Teaching completion / PR #6 | `cursor/teaching-stage-2-completion-9953` and `refs/pull/6/head` → `756d0097a07cf7105ce7c12313c0a380503b707e` | GitHub page reports **OPEN**, no merged time or merge commit. Targets `feature/teaching-three-templates`; page records base SHA `4e41542…`. The completion is still not in the foundation branch tip. |
+| Teaching correctness repair | **No newer repair branch or PR head is advertised by this repository.** | The visible completion head is unchanged; it is not a replacement correctness repair. Unpushed/private work elsewhere cannot be inferred. No approved correction commit is established. |
+| Separate integration/correctness assessment | `review/codex-integration-report-2026-10-28` → `4b2552e250eff1e8ad65e948cec438e9db998056` | Adds only `docs/implementation/codex-integration-review-2026-10-28.md` to the Library baseline. It is a report, not a repair. Its earlier Study head `199f4ad…` predates the now-pushed `3bb6dc0` fixes. |
+
+PR status was read from the GitHub page's embedded structured payload: `state=OPEN`, `headSha=756d009…`, `baseBranch=feature/teaching-three-templates`, `mergeCommitSha=null`, `mergedTime=null`. The GraphQL request from `gh pr view` returned **Forbidden**; the available page payload did not establish current reviewer approval. Neither an open PR nor a fetched head is approval. `git ls-remote` advertised PR heads 1–6 and no later correctness PR. Do not interpret this as proof about unpublished work or as permission to integrate.
+
+The separate assessment [at its exact report commit](https://github.com/pistio/abidingword/blob/4b2552e250eff1e8ad65e948cec438e9db998056/docs/implementation/codex-integration-review-2026-10-28.md) explicitly says not to integrate Teaching yet. Its pending output/model findings still apply to the unchanged published Teaching head. This refresh inspected the relevant source paths and branch identity; it did not repeat that assessment's runtime reproductions or repair those workstreams.
+
+### Correctness gates that precede integration approval
+
+- [ ] **Private Scripture output:** approved Teaching repairs must distinguish truly teaching-wide passages (`blockId == null`) from block-scoped passages, applying participant/leader visibility consistently to references and quoted text, including missing/deleted blocks. The assessment reproduced private block Scripture leaking into participant output through `passagesLine` / `scriptureBlocks` in `src/features/materials/derive.ts`.
+- [ ] **Written headings:** block manuscripts must preserve a written outline heading together with its body. The assessment reproduced the non-section title being dropped when body text is present. Require preview/export regressions for the corrected source.
+- [ ] **Role ownership and live sources:** the approved Teaching fix must define and test singleton-role duplication/deletion and mirrored preparation columns, or a consistent block-ID source-link policy. Editing duplicate introductions/conclusions must not make separate live slides follow whichever copy was saved last. The assessment's role finding was a static trace, not a fresh native reproduction in this readiness check.
+- [ ] **Block-link provenance/ownership:** validate that linked blocks exist, are live and belong to the same preparation; test deletion and import/remapping. The assessment identified a command-boundary gap for `passage_add(block_id)`; no ordinary-UI cross-project leak was demonstrated. Keep Study evidence provenance distinct from Teaching block links.
+- [ ] **Library Undo follow-up:** record a separately scoped fix or explicit owner disposition for archived → Trash → Undo restoring the original archived state rather than forcing active. The assessment identified this by static trace. Do not erase Library Stage 2 or implement that fix in the Study readiness task.
+- [ ] **Approve the exact corrected Teaching source and its evidence.** Pin the correction branch/head, PR status and owner approval before authorising any integration branch or merge. None is pinned as approved by this refresh. Standalone Teaching Stage 3 and its proposed rebuild remain out of scope.
+
+### Current pairwise conflict inventory
+
+Fresh read-only comparisons used `git merge-tree <common-base> <left> <right>` and path intersections. They created no branch, index merge or combined application. Counts describe the pinned trees above; a future correctness branch requires comparison again.
+
+| Pair | Common base | Overlapping paths / direct textual conflicts |
+| --- | --- | --- |
+| Library ↔ Teaching foundation | `0551f22…` | 3 / 2: `src/lib/api.ts` auto-merges textually; both generated localisation documents conflict. |
+| Library ↔ Teaching completion | `0551f22…` | Same 3 / 2. |
+| Library ↔ reviewed Study | `0551f22…` | 3 / 2: `tests/support/memoryApi.ts` auto-merges textually; both generated documents conflict. |
+| Teaching foundation ↔ completion | `4e41542…` | 0 / 0: completion and foundation handover documents are separate deltas. This says nothing about correctness of their combined behavior. |
+| Teaching foundation ↔ reviewed Study | `0551f22…` | 14 / 8; exact paths below. |
+| Teaching completion ↔ reviewed Study | `0551f22…` | Same 14 / 8. |
+
+The eight direct Teaching/Study conflicts are `src/features/teaching/TeachingView.tsx`, `src/features/settings/TeachingTemplateEditor.tsx`, `tests/ui/{baselines,teaching-formats,teaching-templates,teaching}.test.tsx`, and `docs/i18n/native-polish-{priority,review}-v0.19.md`. The other six overlaps are all `src/i18n/locales/{en,de,ko,fr,es,pt}/studies.json` files. A textual auto-merge is not a semantic approval.
+
+### Concrete semantic resolution checklist — for a later approved integration
+
+- [ ] **Preserve the complete Study change set.** Retain `pozetek-writing-study` (seven steps), `ten-step-writing-study` (ten), their shared spacious answer renderer, collapsed optional guidance, device-local continuous/step views, personal builder and reusable research fields. Keep all original structured template resources and saved field snapshots/answers; never concatenate, convert, drop or replace them with the new method definitions.
+- [ ] **`TeachingView.tsx`: keep the newer implementation.** Retain `usesBlocks(prep)` → `BlockCanvas`, modern creation with `templateKey`, `templateVersion: 2` and copied `blocks`, plus legacy point-editor fallback. Do not take the Study side's entire file or restore its point-only `formatStarts` creation path. Carry only the compatible Study → optional Teaching entry intent into the newer workflow.
+- [ ] **Keep all three v2 built-ins.** Map Sermon / Talk → `sermon-talk` / legacy `sermon`; Bible Study discussion → `eva` / `bible_study`; Bible Teaching lesson → `bible-lesson` / `lesson`. Preserve the modern Blank starting option and personal templates without inventing a fourth semantic Teaching type. Preserve all seven old stored kinds. Blank placement and any wording decision must be resolved on the approved Teaching design, not by reverting the editor.
+- [ ] **`TeachingTemplateEditor.tsx`: preserve both versions.** Keep modern `blockMode`, the version-2 block builder, parent keys, privacy, roles and guidance; retain v1 point-template editing. Apply any compatible three-choice labeling without forcing every template through the Study side's older points-only form.
+- [ ] **Serialization and guidance: retain PR #6.** Keep `templateFromTeaching` branching on `usesBlocks`, `version: 2`, `templateBlocksFromTeaching`, ordered stable keys/parent remapping, participant-facing/role/guidance configuration and omission of answer bodies from personal templates. Preserve `SaveTeachingTemplate`, `TeachingTemplates`, `BlockCanvas` guidance/view behavior and duplication support. Verify v2 Save → reopen stays v2; old templates remain v1. Never choose the older points serializer to clear a conflict.
+- [ ] **Separate block models.** Study fields remain JSON snapshots with keyed `study_blocks`; Teaching remains its own `teaching_blocks` hierarchy with roles/participant configuration. Do not coerce either model into the other's schema, convert existing answers/sessions, or introduce a shared serialized block union during integration.
+- [ ] **Study evidence API and persistence:** retain `CreateStudyBlockRequest`'s backward-compatible flat payload with optional metadata, `blocks::create_with_data`'s single transaction, validation and rollback, and the frontend's single create call. Keep exact returned-verse canonical references, original query, edition ID/name, source text and lexical/mode metadata, explicit edition-mismatch errors and unavailable-source behavior. Do not restore split create/update saves or cite an incomplete returned range as complete. Integrate the frontend and native atomic-save changes together.
+- [ ] **`src/lib/api.ts`: retain both workstreams' signatures.** Keep Library search `sourceType`, `language`, `state` and pagination; also retain Teaching `templateKey`/`templateVersion`/`blocks` inputs, all five block CRUD/reorder/duplicate methods, `teachingPassageAdd.blockId` and its corrected ownership behavior. Study `CreateStudyBlock.data` remains a separate imported input type. A clean textual merge must not remove any command mapping.
+- [ ] **`tests/support/memoryApi.ts`: preserve combined parity.** Keep all 16 installed Study definitions with the six-method new-study catalogue, snapshots and atomic metadata create; retain Library source state/collections/tags/file-presence and filtered search/reader provenance. Keep or supply modern Teaching block/v2 template fixtures consistent with actual native commands. Do not take a whole older fixture file to fix a type error.
+- [ ] **UI and native tests: reconcile behavior, not assertions alone.** Retain Study `writing-templates`, `pozetek`, `ten-step`, `template-blocks`, `research-review`, `study_flow` and schema-19/backup tests. Resolve the four conflicting Teaching/baseline UI files using the modern three templates plus legacy compatibility; retain PR #6's block-view, guidance, v2 Save/Duplicate and portability coverage. Add the approved correctness regressions for private Scripture, headings, role copies/deletion and source links. Do not delete tests or restore outdated point-only UI expectations merely to obtain green results.
+- [ ] **Six languages:** combine Study `flow`, `builder` and new Study-template keys with modern Teaching `builtin`, `blocks`, views and guidance keys in every language. Preserve purpose-based POZETEK names (German acronym only for the German built-in name), established Korean terms and user-authored wording. Resolve `Bibelstudium`/EVA, `Bibelunterricht`, `Predigt / Vortrag`, legacy `Hauskreis` and `Bibellehre` by context. Regenerate both native-polish documents from the final merged locale files; do not choose either generated side wholesale. Run six-language parity, terminology, fallback and corpus checks.
+- [ ] **Schema and provenance attestation:** preserve 0001–0025 byte-for-byte and register version 25, name `teaching_blocks`, from `0025_teaching_blocks.sql` exactly once. Keep 1–24 history validation and reject divergent `main` migration 10; change only combined-version expectations/source-attestation logic that currently requires exactly 24. Require fresh/v19/v24/v25 synthetic migration, repeated startup, full backup/restore and project export/import coverage. Never alter SQL, renumber versions, falsify applied history or introduce standalone Stage 3 as a conflict resolution.
+- [ ] **Outputs and preserved source links:** retain the corrected Teaching handout/manuscript/presentation pipeline, Library source/citation metadata and stable/remapped IDs. Verify participant versus leader output and live source links after edit/duplicate/delete/restore; source and edition absence must not cause silent substitution. Study text matches remain evidence, not asserted historical/theological connections.
+
+### Migration and check evidence for this readiness snapshot
+
+Fresh byte comparisons confirm migrations 0001–0024 on Library, Teaching foundation and completion match `0551f22` and reviewed Study. The foundation and completion both have exactly the same 0025 bytes, SHA-256 `68fd35adfff4af4d57ad5687249fd26442a72f470d6dbec54bb10caca6d29e36`. Study adds no competing migration. No migration 0001–0025 was modified. The preceding independent review contains the 24-file hash manifest and schema-19 evidence; it remains valid for unchanged Study application code.
+
+Checks performed here: clean starting tree; fetch/prune and advertised branch/PR refs; all five Study commits reachable on the remote branch; live PR-page state/head/base/merge fields; exact review-report and source comparisons; all six pairwise path/three-way text comparisons; migration-byte/hash equality; documentation-only diff and whitespace checks. Artifacts are in `/workspace/.onboarding/study-readiness/`.
+
+No application test suite or build was rerun for this documentation-only refresh. The previous source-specific results at unchanged `3bb6dc0` remain **1,103 frontend tests; 1,009 Rust tests with eight pre-existing ignores; typecheck/lint/i18n/Clippy/build passed**. Those are not fresh Teaching-correctness or combined-application results. PR reviewer approval is not verified; published correction commits are not available; neither is treated as a pass. No Windows acceptance or paid workflow was run.
+
+### Owner approval stop
+
+The earlier proposed merge order is superseded by this gate: **first obtain and review the published correctness fixes and their approved exact SHAs** (including PR #6's functional completion and the separate Library Undo disposition). Only after owner approval may a separate task create an integration branch from the latest approved Windows-compatible baseline, integrate the corrected Teaching stream, then integrate reviewed Study with the checklist above and validate the actual combined tree. Re-fetch all heads and PR status at that time.
+
+This task stops with the readiness report. It creates no integration branch and performs no merge, repair implementation, deployment, release, paid Action or Windows installer build. The only new deliverable is a documentation commit on the designated Study branch, pushed with `[skip ci]`. **Await owner approval; do not proceed automatically.**
