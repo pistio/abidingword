@@ -21,6 +21,127 @@ use crate::error::{AppError, AppResult, UserMessage};
 /// bounded so a damaged request cannot fill the database.
 pub const BLOCKS_MAX: usize = 80;
 
+pub const SINGLETON_ROLES: &[&str] = &["introduction", "conclusion", "central_message", "notes"];
+
+fn role_available(
+    conn: &Connection,
+    prep: &str,
+    except: Option<&str>,
+    role: Option<&str>,
+) -> AppResult<()> {
+    if let Some(role) = role.filter(|r| SINGLETON_ROLES.contains(r)) {
+        if list(conn, prep)?
+            .iter()
+            .any(|b| b.role.as_deref() == Some(role) && Some(b.id.as_str()) != except)
+        {
+            return Err(invalid(
+                "teaching.blockRole",
+                "That block cannot be tied to that part of the teaching.",
+            ));
+        }
+    }
+    Ok(())
+}
+
+/// Explicit passage attachment is only supported on a live Scripture block of this teaching.
+/// Ancestors must be live sections; malformed/cyclic structures fail closed.
+pub fn check_passage_target(conn: &Connection, prep: &str, id: &str) -> AppResult<()> {
+    let block = load(conn, id)?;
+    if block.preparation_id != prep || block.block_type != "scripture" {
+        return Err(invalid(
+            "teaching.blockReference",
+            "Choose a live Scripture block in this teaching.",
+        ));
+    }
+    let mut seen = std::collections::HashSet::from([id.to_string()]);
+    let mut parent = block.parent_id;
+    while let Some(id) = parent {
+        let block = load(conn, &id)?;
+        if !seen.insert(id) || block.preparation_id != prep || block.block_type != "section" {
+            return Err(invalid(
+                "teaching.blockReference",
+                "Choose a live Scripture block in this teaching.",
+            ));
+        }
+        parent = block.parent_id;
+    }
+    Ok(())
+}
+
+/// Stable, first-created owner wins when reading old conflicting sessions. No text is lost.
+pub fn participant_visible(prep: &TeachingPreparation, id: &str) -> bool {
+    let mut seen = std::collections::HashSet::new();
+    let mut next = Some(id);
+    let mut parent = false;
+    while let Some(id) = next {
+        let Some(block) = prep.blocks.iter().find(|b| b.id == id) else {
+            return false;
+        };
+        if !seen.insert(id)
+            || !block.participant_facing
+            || (parent && block.block_type != "section")
+        {
+            return false;
+        }
+        next = block.parent_id.as_deref();
+        parent = true;
+    }
+    true
+}
+
+pub fn point_visible(prep: &TeachingPreparation, id: &str) -> bool {
+    if prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty() {
+        prep.blocks
+            .iter()
+            .any(|b| b.point_id.as_deref() == Some(id) && participant_visible(prep, &b.id))
+    } else {
+        prep.points.iter().any(|p| p.id == id)
+    }
+}
+
+pub fn passage_visible(
+    prep: &TeachingPreparation,
+    passage: &crate::domain::TeachingPassage,
+) -> bool {
+    if let Some(id) = &passage.block_id {
+        return passage.point_id.is_none()
+            && prep
+                .blocks
+                .iter()
+                .any(|b| b.id == *id && b.block_type == "scripture")
+            && participant_visible(prep, id);
+    }
+    passage
+        .point_id
+        .as_ref()
+        .is_none_or(|id| point_visible(prep, id))
+}
+
+/// Reconcile persisted role metadata and compatibility columns on block writes/imports.
+/// list() deterministically demotes extra singleton claimants without deleting their writing.
+pub fn reconcile_roles(conn: &Connection, prep: &str) -> AppResult<()> {
+    let blocks = list(conn, prep)?;
+    for block in &blocks {
+        let mut stored = load(conn, &block.id)?;
+        if stored.config.role != block.role {
+            stored.config.role = block.role.clone();
+            conn.execute(
+                "UPDATE teaching_blocks SET config = ?2 WHERE id = ?1",
+                params![block.id, config_json(&stored.config)?],
+            )?;
+        }
+    }
+    for role in SINGLETON_ROLES {
+        let body = blocks
+            .iter()
+            .find(|b| b.role.as_deref() == Some(*role))
+            .map(|b| b.body.as_str())
+            .unwrap_or("");
+        set_column(conn, prep, role, body)?;
+    }
+    Ok(())
+}
+
 #[derive(serde::Serialize, serde::Deserialize, Default)]
 #[serde(rename_all = "camelCase")]
 struct BlockConfig {
@@ -134,7 +255,7 @@ pub fn list(conn: &Connection, preparation_id: &str) -> AppResult<Vec<TeachingBl
         "SELECT id, parent_id, position, block_type, block_key, title, body, config, point_id
          FROM teaching_blocks
          WHERE preparation_id = ?1 AND deleted_at IS NULL
-         ORDER BY position, created_at, rowid",
+         ORDER BY created_at, rowid",
     )?;
     let rows = stmt
         .query_map([preparation_id], |row| {
@@ -152,7 +273,21 @@ pub fn list(conn: &Connection, preparation_id: &str) -> AppResult<Vec<TeachingBl
             })
         })?
         .collect::<Result<Vec<_>, _>>()?;
-    Ok(rows.into_iter().map(into_block).collect())
+    let mut claimed = std::collections::HashSet::new();
+    let mut blocks: Vec<_> = rows.into_iter().map(into_block).collect();
+    for block in &mut blocks {
+        if let Some(role) = block
+            .role
+            .as_deref()
+            .filter(|r| SINGLETON_ROLES.contains(r))
+        {
+            if !claimed.insert(role.to_string()) {
+                block.role = None;
+            }
+        }
+    }
+    blocks.sort_by_key(|b| b.position);
+    Ok(blocks)
 }
 
 fn into_block(stored: StoredBlock) -> TeachingBlock {
@@ -218,13 +353,15 @@ pub fn insert_starting(
             "This teaching has too many blocks.",
         ));
     }
+    let mut roles = std::collections::HashSet::new();
     let mut ids_by_key: Vec<(String, String)> = Vec::new();
     let mut pending: Vec<(String, NewTeachingBlock, BlockConfig, Option<String>)> = Vec::new();
     for (index, block) in blocks.iter().enumerate() {
         let block_type = check_type(&block.block_type)?;
         let title = point_title(&block.title)?;
         let body = body_text(&block.body)?;
-        let role = check_role(block.role.as_deref())?;
+        let role = check_role(block.role.as_deref())?
+            .filter(|r| !SINGLETON_ROLES.contains(&r.as_str()) || roles.insert(r.clone()));
         let guidance = guidance_key(block.guidance_key.as_deref())?;
         let key = validate::part_key(block.key.as_deref())?;
         if let Some(key) = &key {
@@ -437,6 +574,12 @@ fn renumber(conn: &Connection, ids: &[String], now: &str) -> AppResult<()> {
 
 pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<TeachingPreparation> {
     let prep = teaching::row(conn, &input.preparation_id)?;
+    if prep.template_version.unwrap_or(0) < 2 && list(conn, &prep.id)?.is_empty() {
+        return Err(invalid(
+            "teaching.blockType",
+            "That is not a kind of block this teaching can hold.",
+        ));
+    }
     if count(conn, &prep.id)? >= BLOCKS_MAX {
         return Err(invalid(
             "teaching.tooManyBlocks",
@@ -447,11 +590,16 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
     let title = point_title(&input.title)?;
     let body = body_text(&input.body)?;
     let role = check_role(input.role.as_deref())?;
+    role_available(conn, &prep.id, None, role.as_deref())?;
     let guidance = guidance_key(input.guidance_key.as_deref())?;
     let parent_id = input.parent_id.as_deref().filter(|p| !p.is_empty());
     if let Some(parent) = parent_id {
         let parent = load(conn, parent)?;
-        if parent.preparation_id != prep.id || parent.block_type != "section" {
+        if parent.preparation_id != prep.id
+            || parent.block_type != "section"
+            || parent.parent_id.is_some()
+            || block_type == "section"
+        {
             return Err(invalid(
                 "teaching.blockParent",
                 "A block can sit in a section of this teaching.",
@@ -477,6 +625,7 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
     };
     let stamp = now();
     let tx = conn.unchecked_transaction()?;
+    reconcile_roles(&tx, &prep.id)?;
     let point_id = if block_type == "outline_point" {
         Some(insert_point(
             &tx, &prep.id, at as i64, &title, &body, &stamp,
@@ -504,6 +653,7 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
         "UPDATE teaching_preparations SET template_version = COALESCE(template_version, 2), updated_at = ?2, revision = revision + 1 WHERE id = ?1",
         params![prep.id, stamp],
     )?;
+    reconcile_roles(&tx, &prep.id)?;
     teaching::touch(&tx, &prep, &stamp)?;
     tx.commit()?;
     teaching::get(conn, &prep.id)
@@ -514,8 +664,37 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
     let prep = teaching::row(conn, &current.preparation_id)?;
     let block_type = match &input.block_type {
         Some(t) => check_type(t)?,
-        None => current.block_type,
+        None => current.block_type.clone(),
     };
+    if block_type != "scripture" {
+        let attached: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM teaching_passages WHERE block_id = ?1 AND deleted_at IS NULL",
+            [&current.id],
+            |r| r.get(0),
+        )?;
+        if attached > 0 {
+            return Err(invalid(
+                "teaching.blockType",
+                "That is not a kind of block this teaching can hold.",
+            ));
+        }
+    }
+    if block_type != current.block_type {
+        let children: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM teaching_blocks WHERE parent_id = ?1 AND deleted_at IS NULL",
+            [&current.id],
+            |r| r.get(0),
+        )?;
+        if current.point_id.is_some()
+            || block_type == "outline_point"
+            || (block_type != "section" && children > 0)
+        {
+            return Err(invalid(
+                "teaching.blockType",
+                "That is not a kind of block this teaching can hold.",
+            ));
+        }
+    }
     let title = match &input.title {
         Some(t) => point_title(t)?,
         None => current.title,
@@ -526,8 +705,12 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
     };
     let role = match &input.role {
         Some(r) => check_role(Some(r))?,
-        None => current.config.role,
+        None => list(conn, &prep.id)?
+            .into_iter()
+            .find(|b| b.id == current.id)
+            .and_then(|b| b.role),
     };
+    role_available(conn, &prep.id, Some(&current.id), role.as_deref())?;
     let guidance = match &input.guidance_key {
         Some(k) => guidance_key(Some(k))?,
         None => current.config.guidance_key,
@@ -543,6 +726,8 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
             if parent.preparation_id != prep.id
                 || parent.id == current.id
                 || parent.block_type != "section"
+                || parent.parent_id.is_some()
+                || block_type == "section"
             {
                 return Err(invalid(
                     "teaching.blockParent",
@@ -560,6 +745,7 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
     };
     let stamp = now();
     let tx = conn.unchecked_transaction()?;
+    reconcile_roles(&tx, &prep.id)?;
     tx.execute(
         "UPDATE teaching_blocks
          SET parent_id = ?2, block_type = ?3, title = ?4, body = ?5, config = ?6, updated_at = ?7, revision = revision + 1
@@ -586,6 +772,7 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
         renumber(&tx, &old, &stamp)?;
         renumber(&tx, &new_siblings, &stamp)?;
     }
+    reconcile_roles(&tx, &prep.id)?;
     teaching::touch(&tx, &prep, &stamp)?;
     tx.commit()?;
     teaching::get(conn, &prep.id)
@@ -595,7 +782,22 @@ pub fn delete(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     let current = load(conn, id)?;
     let prep = teaching::row(conn, &current.preparation_id)?;
     let stamp = now();
+    let inherited_private = !participant_visible(&teaching::get(conn, &prep.id)?, id);
     let tx = conn.unchecked_transaction()?;
+    reconcile_roles(&tx, &prep.id)?;
+    if inherited_private {
+        for child in list(&tx, &prep.id)?
+            .iter()
+            .filter(|b| b.parent_id.as_deref() == Some(id))
+        {
+            let mut stored = load(&tx, &child.id)?;
+            stored.config.participant_facing = false;
+            tx.execute(
+                "UPDATE teaching_blocks SET config = ?2 WHERE id = ?1",
+                params![child.id, config_json(&stored.config)?],
+            )?;
+        }
+    }
     // A section goes away; what was written under it stays, one level up.
     tx.execute(
         "UPDATE teaching_blocks SET parent_id = ?2, updated_at = ?3, revision = revision + 1
@@ -608,12 +810,25 @@ pub fn delete(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     )?;
     if let Some(point_id) = &current.point_id {
         tx.execute(
-            "UPDATE teaching_points SET deleted_at = ?2, updated_at = ?2, revision = revision + 1 WHERE id = ?1",
-            params![point_id, stamp],
+            "UPDATE teaching_points SET deleted_at = ?2, updated_at = ?2, revision = revision + 1 WHERE id = ?1 AND preparation_id = ?3",
+            params![point_id, stamp, prep.id],
+        )?;
+    }
+    for table in [
+        "teaching_passages",
+        "teaching_finding_links",
+        "teaching_materials",
+    ] {
+        tx.execute(
+            &format!(
+                "UPDATE {table} SET deleted_at = ?2 WHERE block_id = ?1 AND deleted_at IS NULL"
+            ),
+            params![current.id, stamp],
         )?;
     }
     let left = siblings(&tx, &prep.id, current.parent_id.as_deref())?;
     renumber(&tx, &left, &stamp)?;
+    reconcile_roles(&tx, &prep.id)?;
     teaching::touch(&tx, &prep, &stamp)?;
     tx.commit()?;
     teaching::get(conn, &prep.id)
@@ -626,7 +841,9 @@ pub fn reorder(conn: &Connection, input: &ReorderTeachingBlocks) -> AppResult<Te
     crate::db::check_same_members(&current, &input.ids, "blocks")?;
     let stamp = now();
     let tx = conn.unchecked_transaction()?;
+    reconcile_roles(&tx, &prep.id)?;
     renumber(&tx, &input.ids, &stamp)?;
+    reconcile_roles(&tx, &prep.id)?;
     teaching::touch(&tx, &prep, &stamp)?;
     tx.commit()?;
     teaching::get(conn, &prep.id)
@@ -644,8 +861,61 @@ pub fn duplicate(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> 
             title: current.title,
             body: current.body,
             participant_facing: Some(current.config.participant_facing),
-            role: current.config.role,
+            role: None,
             guidance_key: current.config.guidance_key,
         },
     )
+}
+
+/// Restoring a deleted block never steals a live singleton role. Its writing and point
+/// return; removed links stay tombstoned (they require an explicit new attachment).
+/// Whole-database backup restore retains its own complete snapshot instead.
+pub fn restore(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
+    let (prep_id, raw, parent, point): (String, Option<String>, Option<String>, Option<String>) = conn.query_row(
+        "SELECT preparation_id, config, parent_id, point_id FROM teaching_blocks WHERE id = ?1 AND deleted_at IS NOT NULL", [id],
+        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+    )?;
+    let prep = teaching::row(conn, &prep_id)?;
+    if let Some(parent) = parent {
+        let block = load(conn, &parent)?;
+        if block.preparation_id != prep_id
+            || block.block_type != "section"
+            || block.parent_id.is_some()
+        {
+            return Err(invalid(
+                "teaching.blockParent",
+                "A block can sit in a section of this teaching.",
+            ));
+        }
+    }
+    if count(conn, &prep_id)? >= BLOCKS_MAX {
+        return Err(invalid(
+            "teaching.tooManyBlocks",
+            "This teaching has too many blocks.",
+        ));
+    }
+    let mut config = parse_config(raw);
+    if let Some(role) = config
+        .role
+        .as_deref()
+        .filter(|r| SINGLETON_ROLES.contains(r))
+    {
+        if list(conn, &prep_id)?
+            .iter()
+            .any(|b| b.role.as_deref() == Some(role))
+        {
+            config.role = None;
+        }
+    }
+    let stamp = now();
+    let tx = conn.unchecked_transaction()?;
+    reconcile_roles(&tx, &prep_id)?;
+    tx.execute("UPDATE teaching_blocks SET deleted_at = NULL, config = ?2, updated_at = ?3, revision = revision + 1 WHERE id = ?1", params![id, config_json(&config)?, stamp])?;
+    if let Some(point) = point {
+        tx.execute("UPDATE teaching_points SET deleted_at = NULL, updated_at = ?2 WHERE id = ?1 AND preparation_id = ?3", params![point, stamp, prep_id])?;
+    }
+    reconcile_roles(&tx, &prep_id)?;
+    teaching::touch(&tx, &prep, &stamp)?;
+    tx.commit()?;
+    teaching::get(conn, &prep_id)
 }

@@ -1,5 +1,84 @@
 [
  {
+  "name": "block-manuscript",
+  "participant": false,
+  "document": {
+   "kind": "manuscript",
+   "title": "Remain in the vine",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Remain in the vine"
+    },
+    {
+     "type": "heading",
+     "text": "Block heading"
+    },
+    {
+     "type": "text",
+     "text": "Block paragraph"
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
+  "name": "block-private-sheet",
+  "participant": true,
+  "document": {
+   "kind": "questions",
+   "title": "Remain in the vine",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Remain in the vine"
+    }
+   ],
+   "empty": true
+  }
+ },
+ {
+  "name": "block-leader-sheet",
+  "participant": false,
+  "document": {
+   "kind": "questions",
+   "title": "Remain in the vine",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Remain in the vine"
+    },
+    {
+     "type": "notice",
+     "text": "Leader’s version: with notes for leading. Not for handing out."
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1–3"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1–3 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PRIVATE passage words"
+      }
+     ],
+     "attribution": "Bible text: FX."
+    },
+    {
+     "type": "field",
+     "label": "Block heading",
+     "text": "Block paragraph"
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
   "name": "group-sheet",
   "participant": true,
   "document": {

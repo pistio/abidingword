@@ -1324,3 +1324,76 @@ fn bible_words_stay_out_of_project_packages_and_come_back_with_a_backup() {
     backup::restore(&elsewhere.db, &elsewhere.dirs, &path).unwrap();
     assert_eq!(elsewhere.db.with_conn(|c| Ok(words_in(c))).unwrap(), before);
 }
+
+#[test]
+fn imported_conflicting_roles_preserve_writing_slides_and_backup_restore() {
+    let out = tempfile::tempdir().unwrap();
+    let path = out.path().join("roles.awproject");
+    let project_row = serde_json::json!({ "id": "p", "workspace_id": "w", "title": "Invented roles", "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let study_row = serde_json::json!({ "id": "s", "project_id": "p", "title": "S", "study_type": "custom", "status": "active", "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let prep_row = serde_json::json!({ "id": "t", "study_id": "s", "title": "Sunday", "template_version": 2, "position": 0, "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let block = |id: &str, n: i64, body: &str| serde_json::json!({ "id": id, "preparation_id": "t", "block_type": "writing", "body": body, "position": n, "config": "{\"role\":\"introduction\",\"participantFacing\":true}", "created_at": "2026-01-01", "updated_at": "2026-01-01" });
+    let data = serde_json::json!({ "tables": {
+        "projects": [project_row], "studies": [study_row], "teaching_preparations": [prep_row],
+        "teaching_blocks": [block("a", 0, "OWNER IMPORT"), block("b", 1, "COPY IMPORT")],
+        "presentations": [{"id":"pres", "preparation_id":"t", "title":"Slides", "position":0, "created_at":"2026-01-01", "updated_at":"2026-01-01"}],
+        "presentation_items": [{"id":"slide", "presentation_id":"pres", "kind":"text", "source_kind":"block", "source_id":"b", "position":0, "created_at":"2026-01-01", "updated_at":"2026-01-01"}]
+    } });
+    handmade(&path, &data);
+    let here = folder();
+    let imported = import(&here, &path).unwrap();
+    let check = |c: &Connection| -> AppResult<()> {
+        let id: String = c.query_row(
+            "SELECT id FROM teaching_preparations WHERE title='Sunday'",
+            [],
+            |r| r.get(0),
+        )?;
+        let prep = teaching::get(c, &id)?;
+        assert_eq!(prep.introduction, "OWNER IMPORT");
+        assert_eq!(
+            prep.blocks
+                .iter()
+                .filter(|b| b.role.as_deref() == Some("introduction"))
+                .count(),
+            1
+        );
+        assert!(prep
+            .blocks
+            .iter()
+            .any(|b| b.body == "COPY IMPORT" && b.role.is_none()));
+        let source: String = c.query_row(
+            "SELECT source_id FROM presentation_items WHERE source_kind='block'",
+            [],
+            |r| r.get(0),
+        )?;
+        assert_eq!(
+            prep.blocks.iter().find(|b| b.id == source).unwrap().body,
+            "COPY IMPORT"
+        );
+        assert_ne!(source, "b");
+        Ok(())
+    };
+    here.db.with_conn(check).unwrap();
+    let exported = export(&here, &imported.project_id, out.path());
+    let there = folder();
+    import(&there, &exported).unwrap();
+    there.db.with_conn(check).unwrap();
+    let backup = backup_to(&here, out.path());
+    let restored = folder();
+    backup::restore(&restored.db, &restored.dirs, &backup).unwrap();
+    restored.db.with_conn(check).unwrap();
+
+    // A crafted cross-preparation block link rolls back the whole project import.
+    let mut invalid = data;
+    invalid["tables"]["teaching_preparations"].as_array_mut().unwrap().push(serde_json::json!({ "id":"other", "study_id":"s", "title":"Other", "position":1, "created_at":"2026-01-01", "updated_at":"2026-01-01" }));
+    invalid["tables"]["teaching_blocks"][0]["block_type"] = serde_json::json!("scripture");
+    invalid["tables"]["teaching_passages"] = serde_json::json!([{ "id":"pass", "preparation_id":"other", "block_id":"a", "book":"JHN", "start_chapter":15, "start_verse":1, "position":0, "created_at":"2026-01-01" }]);
+    let bad = out.path().join("cross.awproject");
+    handmade(&bad, &invalid);
+    let before = there.db.with_conn(|c| Ok(rows_everywhere(c))).unwrap();
+    assert!(import(&there, &bad).is_err());
+    assert_eq!(
+        there.db.with_conn(|c| Ok(rows_everywhere(c))).unwrap(),
+        before
+    );
+}

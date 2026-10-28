@@ -26,7 +26,7 @@ import { STEP_KINDS, TEACHING_KINDS } from "@/types/teaching";
 
 interface StoredPrep extends Omit<TeachingPreparation, "findings" | "passages" | "materials"> {
   links: { id: string; pointId: string | null; findingId: string }[];
-  passages: { id: string; pointId: string | null; reference: ScriptureRef }[];
+  passages: { id: string; pointId: string | null; blockId?: string | null; reference: ScriptureRef }[];
   materials: TeachingMaterial[];
 }
 
@@ -215,7 +215,14 @@ function materialise(h: { id: () => string }, blocks: TeachingTemplateBlock[]) {
 }
 
 function applyRoles(p: { introduction: string; conclusion: string; notes: string; centralMessage: string | null; blocks?: TeachingBlock[] }) {
+  if (!(p.blocks?.length)) return;
+  p.introduction = ""; p.conclusion = ""; p.notes = ""; p.centralMessage = null;
+  const claimed = new Set<string>();
   for (const block of p.blocks ?? []) {
+    if (block.role && ["introduction", "conclusion", "central_message", "notes"].includes(block.role)) {
+      if (claimed.has(block.role)) block.role = null;
+      else claimed.add(block.role);
+    }
     if (block.role === "introduction") p.introduction = block.body;
     if (block.role === "conclusion") p.conclusion = block.body;
     if (block.role === "notes") p.notes = block.body;
@@ -419,6 +426,8 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
     },
     teachingBlockCreate: async ({ preparationId, parentId, afterBlockId, blockType, title, body, participantFacing, role, guidanceKey }) => {
       const p = prep(preparationId);
+      if ((p.templateVersion ?? 0) < 2 && !p.blocks?.length) throw new ApiError("invalidInput", "That is not a kind of block this teaching can hold.");
+      if (role && ["introduction", "conclusion", "central_message", "notes"].includes(role) && p.blocks?.some((b) => b.role === role)) throw new ApiError("invalidInput", "That block cannot be tied to that part of the teaching.");
       const block = makeBlock(h, { blockType, title: title ?? "", body: body ?? "", parentKey: null, participantFacing, role, guidanceKey });
       block.parentId = parentId ?? null;
       const siblings = (p.blocks ?? []).filter((b) => (b.parentId ?? null) === (parentId ?? null));
@@ -441,6 +450,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       const p = state.preparations.find((x) => (x.blocks ?? []).some((b) => b.id === input.id));
       if (!p) throw new ApiError("notFound", "This block could not be found.");
       const block = p.blocks!.find((b) => b.id === input.id)!;
+      if (input.role && ["introduction", "conclusion", "central_message", "notes"].includes(input.role) && p.blocks?.some((b) => b.id !== block.id && b.role === input.role)) throw new ApiError("invalidInput", "That block cannot be tied to that part of the teaching.");
       if (input.title !== undefined) block.title = input.title;
       if (input.body !== undefined) block.body = input.body;
       if (input.blockType !== undefined) block.blockType = input.blockType;
@@ -463,8 +473,14 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       const p = state.preparations.find((x) => (x.blocks ?? []).some((b) => b.id === id));
       if (!p) throw new ApiError("notFound", "This block could not be found.");
       const block = p.blocks!.find((b) => b.id === id)!;
-      p.blocks = p.blocks!.filter((b) => b.id !== id).map((b) => (b.parentId === id ? { ...b, parentId: block.parentId } : b));
+      p.blocks = p.blocks!.filter((b) => b.id !== id).map((b) => (b.parentId === id ? { ...b, parentId: block.parentId, participantFacing: b.participantFacing && block.participantFacing } : b));
       if (block.pointId) p.points = p.points.filter((pt) => pt.id !== block.pointId);
+      p.passages = p.passages.filter((passage) => passage.blockId !== id);
+      if (block.role === "introduction") p.introduction = "";
+      if (block.role === "conclusion") p.conclusion = "";
+      if (block.role === "central_message") p.centralMessage = null;
+      if (block.role === "notes") p.notes = "";
+      applyRoles(p);
       touch(p);
       return view(p);
     },
@@ -482,7 +498,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       const p = state.preparations.find((x) => (x.blocks ?? []).some((b) => b.id === id));
       if (!p) throw new ApiError("notFound", "This block could not be found.");
       const block = p.blocks!.find((b) => b.id === id)!;
-      const copy = { ...block, id: h.id(), pointId: null as string | null };
+      const copy = { ...block, id: h.id(), role: null, pointId: null as string | null };
       if (block.blockType === "outline_point") {
         const point = { id: h.id(), position: p.points.length, kind: null, title: copy.title, explanation: copy.body, application: "", illustration: "" };
         p.points.push(point);
@@ -519,12 +535,16 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       touch(p);
       return view(p);
     },
-    teachingPassageAdd: async ({ preparationId, pointId, reference }) => {
+    teachingPassageAdd: async ({ preparationId, pointId, blockId, reference }) => {
       const p = prep(preparationId);
+      if (blockId) {
+        const block = p.blocks?.find((b) => b.id === blockId);
+        if (pointId || !block || block.blockType !== "scripture") throw new ApiError("invalidInput", "That block cannot be used here.");
+      }
       const ref = h.ref(reference);
       if (!ref) throw new ApiError("invalidReference", "Invalid reference.");
       const where = pointId ?? null;
-      if (!p.passages.some((x) => x.pointId === where && x.reference.canonical === ref.canonical)) p.passages.push({ id: h.id(), pointId: where, reference: ref });
+      if (!p.passages.some((x) => x.pointId === where && (x.blockId ?? null) === (blockId ?? null) && x.reference.canonical === ref.canonical)) p.passages.push({ id: h.id(), pointId: where, blockId: blockId ?? null, reference: ref });
       touch(p);
       return view(p);
     },

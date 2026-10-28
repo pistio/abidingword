@@ -306,7 +306,7 @@ fn propose_blocks(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<Ne
             skipped: false,
         };
         for block in children(&prep.blocks, parent) {
-            if block.participant_facing {
+            if crate::db::teaching_blocks::participant_visible(prep, &block.id) {
                 match block.block_type.as_str() {
                     "section" if !block.title.trim().is_empty() => {
                         items.push(item("section", source("block", &block.id, None)))
@@ -331,10 +331,7 @@ fn propose_blocks(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<Ne
                         items.push(NewItem {
                             heading: Some(labels.introduction.trim().to_string())
                                 .filter(|l| !l.is_empty()),
-                            ..item(
-                                "heading",
-                                source("preparation", &prep.id, Some("introduction")),
-                            )
+                            ..item("heading", source("block", &block.id, Some("introduction")))
                         });
                     }
                     _ if block.role.as_deref() == Some("conclusion")
@@ -343,10 +340,7 @@ fn propose_blocks(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<Ne
                         items.push(NewItem {
                             heading: Some(labels.conclusion.trim().to_string())
                                 .filter(|l| !l.is_empty()),
-                            ..item(
-                                "heading",
-                                source("preparation", &prep.id, Some("conclusion")),
-                            )
+                            ..item("heading", source("block", &block.id, Some("conclusion")))
                         });
                     }
                     _ if block.role.as_deref() == Some("central_message")
@@ -354,7 +348,7 @@ fn propose_blocks(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<Ne
                     {
                         items.push(item(
                             "text",
-                            source("preparation", &prep.id, Some("central_message")),
+                            source("block", &block.id, Some("central_message")),
                         ));
                     }
                     "discussion_questions" if !block.body.trim().is_empty() => {
@@ -369,6 +363,13 @@ fn propose_blocks(prep: &TeachingPreparation, labels: &ProposalLabels) -> Vec<Ne
             }
             walk(prep, Some(&block.id), items, labels);
         }
+    }
+    for passage in prep
+        .passages
+        .iter()
+        .filter(|p| p.block_id.is_none() && p.point_id.is_none())
+    {
+        items.push(item("scripture", source("passage", &passage.id, None)));
     }
     walk(prep, None, &mut items, labels);
     items.truncate(ITEMS_MAX);
@@ -557,11 +558,28 @@ fn check_source(
                 "part of the teaching",
             )?);
         }
-        "point" if !prep.points.iter().any(|p| p.id == id) => return Err(other()),
-        "passage" if !prep.passages.iter().any(|p| p.id == id) => return Err(other()),
+        "block" if !crate::db::teaching_blocks::participant_visible(prep, id) => {
+            return Err(other())
+        }
+        "point" if !crate::db::teaching_blocks::point_visible(prep, id) => return Err(other()),
+        "passage"
+            if !prep
+                .passages
+                .iter()
+                .any(|p| p.id == id && crate::db::teaching_blocks::passage_visible(prep, p)) =>
+        {
+            return Err(other())
+        }
         "material" if !prep.materials.iter().any(|m| m.id == id) => return Err(other()),
         "finding" if findings::get(conn, id)?.study_id != prep.study_id => return Err(other()),
         _ => {}
+    }
+    if kind == "block" {
+        field = source
+            .field
+            .as_deref()
+            .filter(|f| matches!(*f, "introduction" | "conclusion" | "central_message"))
+            .map(str::to_string);
     }
     Ok(ItemSource {
         kind,
