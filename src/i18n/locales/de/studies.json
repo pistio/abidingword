@@ -813,35 +813,35 @@
         "sections": {
           "person": {
             "title": "Person und Bibelstellen",
-            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name."
+            "guidance": "Bestimme die Person, mögliche Namensvarianten und die wichtigsten Bibelstellen. Unterscheide sie von anderen Personen gleichen Namens."
           },
           "setting": {
             "title": "Geschichtlicher und biblischer Hintergrund",
-            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain."
+            "guidance": "Ordne die Person in die biblische Geschichte ein: Familie, Beziehungen, Aufgaben und Lebensumstände. Kennzeichne umstrittene Datierungen oder Zuordnungen als unsicher."
           },
           "life": {
             "title": "Leben, Worte und Taten",
-            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography."
+            "guidance": "Verfolge wichtige Ereignisse möglichst in zeitlicher Reihenfolge. Halte mit Bibelstellen fest, was der Text tatsächlich berichtet; er bietet keine lückenlose Biografie."
           },
           "character": {
             "title": "Charakter und Entscheidungen",
-            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives."
+            "guidance": "Untersuche Taten, Worte, Stärken, Schwächen und wiederkehrende Verhaltensweisen. Unterscheide das ausdrückliche Urteil des Textes von Vermutungen über Motive."
           },
           "god": {
             "title": "Gottes Wirken und die biblische Beurteilung",
-            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary."
+            "guidance": "Wie handelt Gott im Leben dieser Person, und wie beurteilt die Schrift ihre Entscheidungen? Beachte ihre Bedeutung im biblischen Gesamtzusammenhang, ohne jedes Verhalten zum Vorbild zu erklären."
           },
           "conclusion": {
             "title": "Wichtigste Erkenntnisse",
-            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions."
+            "guidance": "Fasse die Bedeutung der Person anhand der Bibeltexte zusammen. Halte auch Unsicherheiten und Spannungen fest."
           },
           "application": {
             "title": "Anwendung",
-            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action."
+            "guidance": "Was lehrt die Schrift durch dieses Leben über Glauben, Gehorsam, Sünde, Gnade und Beziehungen? Wende die Aussage des Textes an, statt jede Handlung nachzuahmen."
           },
           "comparisons": {
             "title": "Verwandte Personen und Bibelstellen",
-            "guidance": "Compare relevant people or passages only where the connections illuminate the text."
+            "guidance": "Vergleiche andere Personen oder Bibelstellen nur, wenn der Zusammenhang den Text wirklich erhellt."
           }
         }
       },
@@ -851,35 +851,35 @@
         "sections": {
           "reading": {
             "title": "Das ganze Buch lesen",
-            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries."
+            "guidance": "Lies das ganze Buch, möglichst mehrmals und in verschiedenen Übersetzungen. Notiere erste Eindrücke, wiederkehrende Begriffe, Tonfall, Textgattung und Fragen, bevor du Kommentare hinzuziehst."
           },
           "setting": {
             "title": "Verfasser, Adressaten und Hintergrund",
-            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions."
+            "guidance": "Untersuche Verfasser, Adressaten, geschichtlichen und geografischen Hintergrund, Anlass und Absicht. Unterscheide Aussagen des Buches von Forschungshypothesen und offenen Fragen."
           },
           "overview": {
             "title": "Überblick und zentrale Anliegen",
-            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme."
+            "guidance": "Halte wichtige Personen, Ereignisse, Themen, Schlüsselverse und den groben Verlauf fest. Nicht jedes häufige Wort ist automatisch das Hauptthema."
           },
           "outline": {
             "title": "Aufbau und Inhalt",
-            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole."
+            "guidance": "Gliedere das Buch anhand erkennbarer Textabschnitte mit Bibelstellen und kurzen Überschriften. Erkläre den Beitrag jedes Abschnitts zum Ganzen."
           },
           "argument": {
             "title": "Botschaft und Gedankengang",
-            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening."
+            "guidance": "Verfolge Erzählverlauf oder Gedankengang. Achte auf Textgattung, Gegensätze, Verheißungen, Gebote und den Bezug des Schlusses zum Anfang."
           },
           "synthesis": {
             "title": "Kernaussage",
-            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text."
+            "guidance": "Formuliere den Gegenstand des Buches, seine Aussage darüber und die übergreifende Botschaft. Begründe dies am Text."
           },
           "application": {
             "title": "Anwendung",
-            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible."
+            "guidance": "Überlege, welche Folgerungen für Glauben, Anbetung und Leben aus der Botschaft des Buches und seinem Platz in der ganzen Schrift entstehen."
           },
           "further": {
             "title": "Weiterführende Fragen",
-            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
+            "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung."
           }
         }
       }
