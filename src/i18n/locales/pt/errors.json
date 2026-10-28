@@ -233,6 +233,10 @@
     "searchNoKey": "Este serviço de busca não usa chave."
   },
   "teaching": {
+    "blockType": "Este tipo de bloco não pode ser usado nesta preparação.",
+    "blockParent": "Um bloco pode ser colocado numa secção desta preparação.",
+    "blockRole": "Este bloco não pode ser associado a essa parte da preparação.",
+    "blockReference": "Escolha um bloco de texto bíblico existente nesta preparação.",
     "tooLong": "Esta parte do ensino é longa demais para salvar.",
     "otherPoint": "Esse ponto pertence a outro ensino.",
     "otherStudyFinding": "Essa anotação pertence a outro estudo.",

@@ -150,6 +150,19 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     prep.passages = passages_for(conn, id)?;
     prep.materials = materials_for(conn, id)?;
     prep.blocks = crate::db::teaching_blocks::list(conn, id)?;
+    if prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty() {
+        let body = |role: &str| {
+            prep.blocks
+                .iter()
+                .find(|b| b.role.as_deref() == Some(role))
+                .map(|b| b.body.clone())
+                .unwrap_or_default()
+        };
+        prep.introduction = body("introduction");
+        prep.conclusion = body("conclusion");
+        prep.notes = body("notes");
+        prep.central_message = Some(body("central_message")).filter(|s| !s.is_empty());
+    }
     Ok(prep)
 }
 
@@ -225,7 +238,8 @@ pub fn update(conn: &Connection, input: &UpdateTeaching) -> AppResult<TeachingPr
     let conclusion = long(&input.conclusion, current.conclusion)?;
     let notes = long(&input.notes, current.notes)?;
     let now = now();
-    conn.execute(
+    let tx = conn.unchecked_transaction()?;
+    tx.execute(
         "UPDATE teaching_preparations SET title = ?2, kind = ?3, audience = ?4, purpose = ?5,
              central_message = ?6, introduction = ?7, conclusion = ?8, notes = ?9,
              updated_at = ?10, revision = revision + 1
@@ -247,7 +261,7 @@ pub fn update(conn: &Connection, input: &UpdateTeaching) -> AppResult<TeachingPr
     // editor and a presentation that reads the column stay on the same words.
     if input.introduction.is_some() {
         crate::db::teaching_blocks::mirror_column_into_blocks(
-            conn,
+            &tx,
             &input.id,
             "introduction",
             &introduction,
@@ -255,24 +269,25 @@ pub fn update(conn: &Connection, input: &UpdateTeaching) -> AppResult<TeachingPr
     }
     if input.conclusion.is_some() {
         crate::db::teaching_blocks::mirror_column_into_blocks(
-            conn,
+            &tx,
             &input.id,
             "conclusion",
             &conclusion,
         )?;
     }
     if input.notes.is_some() {
-        crate::db::teaching_blocks::mirror_column_into_blocks(conn, &input.id, "notes", &notes)?;
+        crate::db::teaching_blocks::mirror_column_into_blocks(&tx, &input.id, "notes", &notes)?;
     }
     if input.central_message.is_some() {
         crate::db::teaching_blocks::mirror_column_into_blocks(
-            conn,
+            &tx,
             &input.id,
             "central_message",
             central_message.as_deref().unwrap_or(""),
         )?;
     }
-    studies::touch(conn, &current.study_id, &now)?;
+    studies::touch(&tx, &current.study_id, &now)?;
+    tx.commit()?;
     get(conn, &input.id)
 }
 
@@ -639,6 +654,15 @@ pub fn add_passage(
     let point_id = input.point_id.as_deref().filter(|p| !p.is_empty());
     let block_id = input.block_id.as_deref().filter(|p| !p.is_empty());
     check_point(conn, &prep.id, point_id)?;
+    if let Some(block) = block_id {
+        if point_id.is_some() {
+            return Err(invalid(
+                "teaching.blockReference",
+                "Choose a live Scripture block in this teaching.",
+            ));
+        }
+        crate::db::teaching_blocks::check_passage_target(conn, &prep.id, block)?;
+    }
     let reference = ScriptureRef::from_canonical(&input.reference)?;
     let canonical = reference.canonical();
     if passages_for(conn, &prep.id)?.iter().any(|p| {

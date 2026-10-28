@@ -470,3 +470,25 @@ fn room_to_write_is_three_ruled_lines_and_the_page_and_language_are_the_persons(
         .1
         .contains("w:val=\"en-GB\""));
 }
+
+#[test]
+fn block_manuscript_heading_precedes_its_body_in_the_actual_docx() {
+    let (_, paras) = document_of(&fixture("block-manuscript"));
+    let heading = paras
+        .iter()
+        .position(|p| p.text == "Block heading")
+        .unwrap();
+    let body = paras
+        .iter()
+        .position(|p| p.text == "Block paragraph")
+        .unwrap();
+    assert_eq!(body, heading + 1);
+    let (_, participant) = document_of(&fixture("block-private-sheet"));
+    assert!(participant
+        .iter()
+        .all(|p| !p.text.contains("PRIVATE") && !p.text.contains("15:1")));
+    let (_, leader) = document_of(&fixture("block-leader-sheet"));
+    assert!(leader
+        .iter()
+        .any(|p| p.text.contains("PRIVATE passage words")));
+}
