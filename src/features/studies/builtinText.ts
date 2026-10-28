@@ -5,6 +5,8 @@
 // English wording. Once the user renames it, their wording is shown as it
 // is. No stored text is ever rewritten (docs/i18n.md, "Built-in templates").
 import i18n from "i18next";
+import biblicalCharacter from "../../../resources/templates/biblical-character-study.json";
+import wholeBook from "../../../resources/templates/whole-book-study.json";
 import biblicalTheology from "../../../resources/templates/biblical-theology-study.json";
 import passage from "../../../resources/templates/passage-study.json";
 import pozetek from "../../../resources/templates/pozetek-study.json";
@@ -22,7 +24,7 @@ interface BuiltinDefinition {
   sections: { key: string; title: string; guidance?: string | null; optional?: boolean; retired?: boolean }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [passage, pozetek, tenStep, word, topical, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */
