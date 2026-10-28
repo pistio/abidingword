@@ -1,50 +1,49 @@
 {
   "key": "topical-study",
-  "name": "Topical Study",
-  "description": "A question or topic followed through the whole of Scripture.",
+  "name": "Topical Bible Study",
+  "description": "Answer a focused biblical question by interpreting relevant passages in context before drawing conclusions.",
   "studyType": "topical",
   "sections": [
     {
       "key": "topic",
-      "title": "Question / Topic",
-      "guidance": "The question you are asking, stated as clearly as you can."
+      "title": "Topic and questions",
+      "guidance": "State the topic, its boundaries and the questions the study should answer. Avoid starting with a conclusion."
     },
     {
       "key": "key-passages",
-      "title": "Key Passages",
-      "guidance": "The passages that speak most directly to it."
+      "title": "Relevant Scripture",
+      "guidance": "Gather representative passages, including those that qualify or appear to challenge an initial view. Note why each is relevant."
+    },
+    {
+      "key": "passage-study",
+      "title": "Examine the passages",
+      "guidance": "Read each text in its literary, historical and covenantal context. Distinguish direct teaching, narrative description, inference and application."
     },
     {
       "key": "main-themes",
-      "title": "Main Themes",
-      "guidance": "The main lines of teaching that emerge."
+      "title": "Compare and group findings",
+      "guidance": "Group the passages by their actual teaching, noting agreements, differences, development and remaining questions."
     },
     {
       "key": "conclusions",
-      "title": "Conclusions",
-      "guidance": "Your conclusions, with the passages that carry them."
+      "title": "Biblical conclusions",
+      "guidance": "Answer the opening questions with references. Distinguish what Scripture clearly teaches from reasonable inference and unresolved issues."
     },
     {
       "key": "application",
       "title": "Application",
-      "guidance": "What this means for belief, worship and life."
-    },
-    {
-      "key": "biblical-context",
-      "title": "Biblical Context",
-      "guidance": "Where and how the topic arises across the Bible.",
-      "optional": true
+      "guidance": "Identify concrete implications for belief, worship, relationships and action, grounded in the conclusions."
     },
     {
       "key": "difficult-passages",
-      "title": "Difficult Passages",
-      "guidance": "Texts that seem to point another way, and how to read them.",
+      "title": "Difficult or balancing texts",
+      "guidance": "Examine apparently conflicting passages without ignoring their context or forcing a superficial harmonisation.",
       "optional": true
     },
     {
-      "key": "theology",
-      "title": "Theology",
-      "guidance": "How the passages fit together into coherent teaching.",
+      "key": "biblical-theology",
+      "title": "Place in the whole Bible",
+      "guidance": "Where relevant, consider how the teaching unfolds through the covenants and relates to Christ and the gospel without imposing a connection.",
       "optional": true
     }
   ]
