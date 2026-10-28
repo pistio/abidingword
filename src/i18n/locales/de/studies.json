@@ -256,6 +256,243 @@
             "guidance": "Was du gefolgert hast und was offen bleibt."
           }
         }
+      },
+      "pozetek-study": {
+        "name": "POZETEK — Einen Bibeltext untersuchen",
+        "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
+        "sections": {
+          "persons": {
+            "title": "P — Personen",
+            "guidance": "Wer kommt im Text vor, wer spricht, wer handelt und an wen richtet sich die Botschaft?",
+            "goal": "Alle Beteiligten kennenlernen, bevor etwas gedeutet wird. Nur festhalten, was der Text selbst sagt.",
+            "example": "Hosea verkündet Gottes Wort an Israel/Ephraim; im Mittelpunkt steht Gottes Beziehung zu seinem Volk. Ägypten und Assyrien gehören zum angesprochenen historischen Hintergrund.",
+            "fields": {
+              "author": {
+                "label": "Verfasser",
+                "help": "Wer hat diesen Text verfasst oder gesprochen, soweit der Text oder sein Buch es sagt?"
+              },
+              "speaker": {
+                "label": "Sprecher",
+                "help": "Wer spricht in diesem Abschnitt? Wechselt der Sprecher?"
+              },
+              "addressees": {
+                "label": "Adressaten",
+                "help": "An wen richtet sich die Botschaft?"
+              },
+              "people": {
+                "label": "Personen oder Gruppen",
+                "help": "Jede genannte oder gemeinte Person oder Gruppe eintragen, mit Vers und Rolle.",
+                "parts": {
+                  "name": "Name oder Gruppe",
+                  "verse": "Vers",
+                  "role": "Rolle"
+                },
+                "add": "Person oder Gruppe hinzufügen"
+              },
+              "relationships": {
+                "label": "Beziehungen der Beteiligten",
+                "help": "Wie stehen die Beteiligten zueinander? Wer steht über, bei oder gegen wen?"
+              },
+              "open-questions": {
+                "label": "Offene Fragen",
+                "help": "Was ist an den Personen dieses Textes noch unklar?"
+              }
+            }
+          },
+          "place": {
+            "title": "O — Ort",
+            "guidance": "Welche Orte und räumlichen oder kulturellen Beziehungen sind für den Text wichtig?",
+            "goal": "Wahrnehmen, wo etwas geschieht oder wovon die Rede ist. Textbefund und externe Recherche getrennt halten.",
+            "example": "Nordreich Israel als Kontext; Ägypten erinnert an Israels Befreiung, Assyrien steht für politische Bedrohung.",
+            "fields": {
+              "places": {
+                "label": "Im Text genannte Orte",
+                "help": "Jeden im Text genannten Ort eintragen, mit Vers und Rolle.",
+                "parts": {
+                  "place": "Ort",
+                  "verse": "Vers",
+                  "role": "Rolle"
+                },
+                "add": "Ort hinzufügen"
+              },
+              "background": {
+                "label": "Geografische und kulturelle Hintergrundinformationen",
+                "help": "Was ergibt externe Recherche? Die Quelle angeben, damit es vom Textbefund unterscheidbar bleibt."
+              },
+              "unclear": {
+                "label": "Ungeklärte Ortsbezüge",
+                "help": "Welche Ortsbezüge sind noch unsicher?"
+              }
+            }
+          },
+          "time": {
+            "title": "Z — Zeit",
+            "guidance": "Wann spielt der Text, und welche historischen Umstände sind wichtig?",
+            "goal": "Den Text zeitlich einordnen. Kennzeichnen, was der Text selbst nennt und was eine historische Einordnung ist, die unsicher sein kann.",
+            "example": "Hoseas Wirken im 8. Jahrhundert v. Chr. und der wachsende assyrische Einfluss bilden relevante Hintergrundinformationen.",
+            "fields": {
+              "stated": {
+                "label": "Zeitangaben im Text",
+                "help": "Welche Daten, Zeiten oder Wendungen wie „damals“ und „in jenen Tagen“ nennt der Text?"
+              },
+              "historical": {
+                "label": "Historische Einordnung",
+                "help": "Was ist über die Zeit bekannt? Unsicheres als unsicher kennzeichnen."
+              },
+              "source": {
+                "label": "Quelle der historischen Einordnung",
+                "help": "Woher stammt diese Information?"
+              },
+              "sequence": {
+                "label": "Zeitliche Entwicklung und Abfolge",
+                "help": "Wie verläuft die Zeit im Abschnitt? Was kommt davor, dabei und danach?"
+              },
+              "prophecy": {
+                "label": "Bei Prophetie: Vergangenheit, Gegenwart, Zukunft",
+                "help": "Wenn der Text prophetisch ist: Was blickt zurück, was beschreibt die gegenwärtige Lage, was kündigt Zukünftiges an?"
+              }
+            }
+          },
+          "events": {
+            "title": "E — Ereignisse",
+            "guidance": "Was geschieht? Wie entfalten sich Ereignisse oder Aussagen?",
+            "goal": "Dem Verlauf des Textes Abschnitt für Abschnitt folgen. Die Gliederung ist ein Vorschlag, den man ändern darf.",
+            "example": "Mögliche Gliederung von Hosea 11: V. 1–4 Fürsorge; V. 5–7 Untreue und Gericht; V. 8–9 Erbarmen; V. 10–11 Rückkehr und Wiederherstellung.",
+            "fields": {
+              "passages": {
+                "label": "Textabschnitte",
+                "help": "Den Text in Abschnitte gliedern: Verse, was geschieht oder gesagt wird und welche Bedeutung das im Verlauf hat.",
+                "parts": {
+                  "verses": "Versbereich",
+                  "event": "Ereignis oder Aussage",
+                  "meaning": "Bedeutung im Verlauf"
+                },
+                "add": "Abschnitt hinzufügen"
+              },
+              "turning-points": {
+                "label": "Wendepunkte",
+                "help": "Wo ändert sich die Richtung des Textes?"
+              },
+              "contrasts": {
+                "label": "Gegensätze",
+                "help": "Welche Gegensätze oder Spannungen stellt der Text einander gegenüber?"
+              }
+            }
+          },
+          "context": {
+            "title": "T — Textzusammenhang",
+            "guidance": "Wie fügt sich der Abschnitt in das Kapitel, das ganze Buch und die übrige Schrift ein?",
+            "goal": "Den Abschnitt in seiner Umgebung sehen, von den nächsten Versen nach außen, und erkennen, wo er endet.",
+            "example": "Die Untreue Israels und die Bundesbeziehung prägen Hosea; Kap. 11 verwendet zusätzlich das Bild des fürsorglichen Vaters und seines Kindes.",
+            "fields": {
+              "immediate": {
+                "label": "Unmittelbarer Kontext",
+                "help": "Was steht unmittelbar davor und danach, und wie hängt es zusammen?"
+              },
+              "book": {
+                "label": "Buchkontext",
+                "help": "Worum geht es im Buch, und wo steht der Abschnitt in dessen Gedankengang oder Erzählung?"
+              },
+              "canon": {
+                "label": "Gesamtbiblischer Zusammenhang",
+                "help": "Wie verhält sich der Abschnitt zur übrigen Schrift und ihrer Geschichte?"
+              },
+              "parallels": {
+                "label": "Parallelstellen",
+                "help": "Verwandte Stellen eintragen und sagen, was sie zum Verständnis beitragen.",
+                "parts": {
+                  "reference": "Referenz",
+                  "relevance": "Relevanz"
+                },
+                "add": "Parallelstelle hinzufügen"
+              },
+              "limits": {
+                "label": "Grenzen der Textstelle",
+                "help": "Wo beginnt und endet die Texteinheit, und warum dort?"
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Erklärungen",
+            "guidance": "Welche Begriffe, Aussagen oder Auslegungsprobleme verlangen Klärung?",
+            "goal": "Fragen aus dem Text sammeln, an Belegen prüfen und die begründbaren Antworten festhalten. Offenes darf offen bleiben.",
+            "example": "Welche Rolle haben Ägypten und Assyrien? Wie gehören Gericht und Erbarmen zusammen? Was bedeutet „Gott und nicht Mensch“ (Hos 11,9)?",
+            "fields": {
+              "questions": {
+                "label": "Fragenprotokoll",
+                "help": "Jede Frage eintragen mit Vers, geprüften Belegen, überprüfter Antwort und Status.",
+                "parts": {
+                  "question": "Frage",
+                  "verse": "Vers",
+                  "evidence": "Belege",
+                  "answer": "Überprüfte Antwort",
+                  "status": "Status"
+                },
+                "options": {
+                  "open": "Offen",
+                  "answered": "Geklärt"
+                },
+                "add": "Frage hinzufügen"
+              },
+              "terms": {
+                "label": "Wichtige Begriffe",
+                "help": "Welche Wörter brauchen Erklärung? Was bedeuten sie hier, in diesem Zusammenhang?"
+              },
+              "explanations": {
+                "label": "Begründete mögliche Erklärungen",
+                "help": "Wo mehrere Erklärungen möglich sind, jede mit ihren Gründen nennen."
+              },
+              "sources": {
+                "label": "Quellenhinweise",
+                "help": "Welche Quellen wurden genutzt? Festhalten, um sie wiederzufinden."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Kern",
+            "guidance": "Was ist die zentrale Aussage genau dieses Abschnitts?",
+            "goal": "Den Kern in drei Schritten benennen: Worum es geht, was der Text darüber sagt und ein prägnanter Satz. Die Reihenfolge beim Ausfüllen ist frei.",
+            "example": "Gegenstand: Gottes Verhältnis zu seinem untreuen Volk. Aussage: Gottes Fürsorge, gerechtes Gericht und Erbarmen. Thema: Gottes Liebe zu Israel zeigt sich in seiner Fürsorge, im gerechten Gericht und in einem Erbarmen, das Zukunft eröffnet.",
+            "fields": {
+              "subject": {
+                "label": "Textgegenstand — Worum geht es?",
+                "help": "Den Gegenstand in wenigen Worten benennen, ohne schon zu sagen, was der Text darüber behauptet."
+              },
+              "statement": {
+                "label": "Textaussage — Was sagt der Text darüber?",
+                "help": "Zusammenfassen, was der Abschnitt über seinen Gegenstand sagt, so wie er es sagt."
+              },
+              "theme": {
+                "label": "Textthema — Ein prägnanter Satz",
+                "help": "Gegenstand und Aussage in einem Satz zusammenführen, der sich an jedem Vers prüfen lässt."
+              }
+            }
+          },
+          "application": {
+            "title": "Persönliche Anwendung",
+            "guidance": "Was bedeutet die erkannte Wahrheit für dich? Getrennt halten von Beobachtung und Auslegung oben.",
+            "goal": "Auf den Text so antworten, dass die Anwendung an seiner Aussage gebunden bleibt. Ein eigener Abschluss, kein weiterer Buchstabe von POZETEK.",
+            "example": "Gottes Liebe zu seinem Volk gründet in seinem Wesen, nicht in Israels Treue. Obwohl Israel sich abwendet, erweist Gott auch mitten im Gericht sein Erbarmen. Das fordert dazu heraus, eigene Ersatzsicherheiten zu erkennen und neu auf Gott zu vertrauen. Empfangene Liebe soll auch den Umgang mit Menschen prägen, die Liebe und Fürsorge nicht erwidern (vgl. 1 Joh 4,8.19).",
+            "fields": {
+              "truth": {
+                "label": "Erkannte Wahrheit",
+                "help": "Welche Wahrheit des Textes bleibt für alle Leser gültig?"
+              },
+              "examination": {
+                "label": "Persönliche Prüfung",
+                "help": "Wo fordert, tröstet oder korrigiert diese Wahrheit das eigene Denken und Leben?"
+              },
+              "response": {
+                "label": "Konkrete Reaktion",
+                "help": "Was wird konkret geschehen: Glaube, Umkehr, Vertrauen, Gehorsam, Gebet, Liebe? So konkret wie möglich."
+              },
+              "limits": {
+                "label": "Grenze der Übertragung von damals auf heute",
+                "help": "Was unterscheidet die damalige von der heutigen Lage? Was darf nicht unmittelbar übertragen werden?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notizen",
@@ -998,5 +1235,26 @@
     "own": "Eigene Überschrift",
     "collapseAll": "Alle zuklappen",
     "expandAll": "Alle aufklappen"
+  },
+  "fields": {
+    "example": "Beispiel: Hosea 11",
+    "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deiner Studie und wird nie als deine Antwort gespeichert.",
+    "goal": "Ziel",
+    "status": "Bearbeitungsstand von „{{title}}“",
+    "statusNotStarted": "Nicht begonnen",
+    "statusInProgress": "In Arbeit",
+    "statusComplete": "Abgeschlossen",
+    "fieldGroup": "Felder von „{{title}}“",
+    "entryLabel": "{{field}}, Eintrag {{number}}",
+    "entryHeading": "Eintrag {{number}}",
+    "entryPart": "{{part}} ({{field}}, Eintrag {{number}})",
+    "noEntries": "Noch keine Einträge.",
+    "removeEntry": "Eintrag {{number}} von {{field}} löschen",
+    "confirmRemove": "Diesen Eintrag samt Inhalt löschen?",
+    "removeFailed": "Der Eintrag konnte nicht gelöscht werden.",
+    "addFailed": "Der Eintrag konnte nicht hinzugefügt werden.",
+    "moveEntryUp": "Eintrag {{number}} von {{field}} nach oben",
+    "moveEntryDown": "Eintrag {{number}} von {{field}} nach unten",
+    "otherWriting": "Weitere Notizen"
   }
 }

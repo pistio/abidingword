@@ -3,6 +3,7 @@
 // template sections, soft delete), not its storage.
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
 import passageStudy from "../../resources/templates/passage-study.json";
+import pozetekStudy from "../../resources/templates/pozetek-study.json";
 import systematicTheology from "../../resources/templates/systematic-theology-study.json";
 import teachingStudy from "../../resources/templates/teaching-study.json";
 import topicalStudy from "../../resources/templates/topical-study.json";
@@ -12,6 +13,7 @@ import type {
   AppInfo,
   AppSettings,
   Project,
+  SectionFields,
   Study,
   StudyBlock,
   StudySection,
@@ -54,12 +56,11 @@ import type {
   StudySummary,
   StudyTemplate,
   StudyType,
-  TemplateSection,
 } from "@/types/studies";
 
 import { newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
 
-const BUILTIN_TEMPLATES = [passageStudy, wordStudy, topicalStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, wordStudy, topicalStudy, biblicalTheology, systematicTheology, teachingStudy];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -343,14 +344,18 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     const study = state.studies.find((s) => s.id === studyId);
     if (study) study.updatedAt = now();
   };
-  const addSection = (studyId: string, section: TemplateSection, position: number) => {
+  const addSection = (studyId: string, section: { key?: string | null; title: string; guidance?: string | null }, position: number, fields: SectionFields | null = null) => {
     const t = now();
     const sectionId = id();
     state.sections.push({
       id: sectionId, studyId, key: section.key ?? null, title: section.title, guidance: section.guidance ?? null,
-      position, blocks: [], createdAt: t, updatedAt: t, revision: 1,
+      position, status: "not_started", fields, blocks: [], createdAt: t, updatedAt: t, revision: 1,
     });
-    state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: 0, content: "", createdAt: t, updatedAt: t, revision: 1 });
+    // As the core: a part with fields starts with one empty block per single-text field, otherwise one paragraph.
+    const starts = fields ? fields.fields.filter((f) => f.kind === "text").map((f) => f.key) : [null];
+    starts.forEach((fieldKey, index) =>
+      state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: index, content: "", fieldKey, data: null, createdAt: t, updatedAt: t, revision: 1 }),
+    );
     return sectionId;
   };
   const summary = (study: Study): StudySummary => ({
@@ -706,7 +711,12 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       };
       state.studies.push(study);
       // As the core: optional parts are offered later, retired ones are kept only for old studies.
-      (template?.sections.filter((sec) => !sec.optional && !sec.retired) ?? [{ title: "Notes" }]).forEach((section, position) => addSection(study.id, section, position));
+      (template?.sections.filter((sec) => !sec.optional && !sec.retired) ?? [{ title: "Notes" }]).forEach((section, position) => {
+        const fields = "fields" in section && section.fields?.length && template
+          ? { template: template.key, version: section.fieldsVersion ?? 0, fields: section.fields }
+          : null;
+        addSection(study.id, section, position, fields);
+      });
       if (primary) state.passages.push({ id: id(), studyId: study.id, reference: primary, role: "primary", createdAt: t });
       return detail(study.id);
     },
@@ -727,10 +737,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const copy: Study = { ...original, id: id(), title: `${original.title} (copy)`, status: "active", createdAt: t, updatedAt: t, revision: 1 };
       state.studies.push(copy);
       for (const section of sectionsOf(studyId)) {
-        const newId = addSection(copy.id, section, section.position);
+        const newId = addSection(copy.id, section, section.position, section.fields);
         if (includeContent) {
           state.blocks = state.blocks.filter((b) => b.sectionId !== newId);
           for (const block of section.blocks) state.blocks.push({ ...block, id: id(), sectionId: newId });
+          find(state.sections, newId, "section").status = section.status;
         }
       }
       if (includeContent) {
@@ -765,6 +776,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const section = find(state.sections, input.id, "section");
       if (input.title !== undefined) section.title = requireTitle(input.title, "section");
       if (input.guidance !== undefined) section.guidance = input.guidance || null;
+      if (input.status) section.status = input.status;
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === section.id) };
     },
     studySectionCreate: async ({ studyId, title, guidance }) => {
@@ -917,6 +929,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         blockType: input.blockType,
         position: state.blocks.filter((b) => b.sectionId === input.sectionId).length,
         content: input.content ?? "",
+        fieldKey: input.fieldKey ?? null,
+        data: null,
         createdAt: t,
         updatedAt: t,
         revision: 1,
@@ -927,6 +941,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyBlockUpdate: async (input) => {
       const block = find(state.blocks, input.id, "block");
       if (input.content !== undefined) block.content = input.content;
+      if (input.data !== undefined) block.data = input.data;
       block.revision += 1;
       return { ...block };
     },

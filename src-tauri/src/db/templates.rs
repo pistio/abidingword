@@ -22,6 +22,7 @@ const MAX_SECTIONS: usize = 40;
 
 const BUILTIN: &[&str] = &[
     include_str!("../../../resources/templates/passage-study.json"),
+    include_str!("../../../resources/templates/pozetek-study.json"),
     include_str!("../../../resources/templates/word-study.json"),
     include_str!("../../../resources/templates/topical-study.json"),
     include_str!("../../../resources/templates/biblical-theology-study.json"),
@@ -200,6 +201,9 @@ fn validated(input: &TemplateInput) -> AppResult<(String, Option<String>, Vec<Te
                 // A person's own template may hold parts to add later; retiring is for built-ins.
                 optional: s.optional,
                 retired: false,
+                // Structured fields belong to built-in templates only.
+                fields: Vec::new(),
+                fields_version: 0,
             })
         })
         .collect::<AppResult<Vec<_>>>()?;

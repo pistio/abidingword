@@ -274,7 +274,7 @@ describe("templates", () => {
     await openSettingsSection(user, "Templates");
     const templates = await screen.findByRole("list", { name: "Study templates" });
     // The old "Teaching / Sermon" study template is not offered: teaching is prepared in Bible Teaching.
-    expect(within(templates).getAllByRole("listitem")).toHaveLength(5);
+    expect(within(templates).getAllByRole("listitem")).toHaveLength(6);
     expect(within(templates).queryByText("Teaching / Sermon Preparation")).not.toBeInTheDocument();
     const formats = screen.getByRole("list", { name: "Bible Teaching formats" });
     expect(within(formats).getByText(/Starts with: Welcome · Bible story · Question · Activity · Prayer/)).toBeInTheDocument();

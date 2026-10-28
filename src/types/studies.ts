@@ -1,5 +1,6 @@
 // TypeScript mirror of the Studies v0.3 native types
 // (src-tauri/src/domain/studies.rs). Keep both sides in step.
+import type { TemplateField } from "./domain";
 import type { FindingCitation } from "./library";
 import type { ScriptureRef } from "./scripture";
 
@@ -143,6 +144,9 @@ export interface TemplateSection {
   optional?: boolean;
   /** Built-in only: no longer offered; kept so that older studies still show it translated. */
   retired?: boolean;
+  /** Structured answer fields (built-in templates only). */
+  fields?: TemplateField[];
+  fieldsVersion?: number;
 }
 
 /** A part a new study starts with (not optional, not retired). */

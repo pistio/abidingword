@@ -7,6 +7,7 @@
 import i18n from "i18next";
 import biblicalTheology from "../../../resources/templates/biblical-theology-study.json";
 import passage from "../../../resources/templates/passage-study.json";
+import pozetek from "../../../resources/templates/pozetek-study.json";
 import systematicTheology from "../../../resources/templates/systematic-theology-study.json";
 import teaching from "../../../resources/templates/teaching-study.json";
 import topical from "../../../resources/templates/topical-study.json";
@@ -20,7 +21,7 @@ interface BuiltinDefinition {
   sections: { key: string; title: string; guidance?: string | null; optional?: boolean; retired?: boolean }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [passage, word, topical, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [passage, pozetek, word, topical, biblicalTheology, systematicTheology, teaching];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */
@@ -86,4 +87,26 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
       guidance: sectionGuidance({ key: s.key, guidance: s.guidance }),
       ...(s.optional ? { optional: true } : {}),
     }));
+}
+
+interface StructuredPart {
+  key?: string | null;
+  fields?: { template: string } | null;
+}
+
+function structuredPath(section: StructuredPart): string | null {
+  return section.fields && section.key ? `studies.builtin.templates.${section.fields.template}.sections.${section.key}` : null;
+}
+
+/** Text of a structured part (label, help, goal ...) in the interface language; the fallback when it has none. */
+export function structuredText(section: StructuredPart, path: string, fallback: string): string {
+  const base = structuredPath(section);
+  return base ? translate(`${base}.${path}`, fallback) : fallback;
+}
+
+/** The text at `path`, or null when the interface language has none (an example or goal is optional help). */
+export function structuredOptional(section: StructuredPart, path: string): string | null {
+  const base = structuredPath(section);
+  const key = base ? `${base}.${path}` : null;
+  return key && i18n.exists(key) ? translate(key, "") : null;
 }

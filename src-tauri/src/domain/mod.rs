@@ -79,6 +79,11 @@ pub struct StudySection {
     pub title: String,
     pub guidance: Option<String>,
     pub position: i64,
+    /// How far the person has got with this part.
+    pub status: SectionStatus,
+    /// The structured fields this part was created with (a snapshot, so a
+    /// later template change never alters the study); none for plain parts.
+    pub fields: Option<SectionFields>,
     pub blocks: Vec<StudyBlock>,
     pub created_at: String,
     pub updated_at: String,
@@ -93,6 +98,10 @@ pub struct StudyBlock {
     pub block_type: BlockType,
     pub position: i64,
     pub content: String,
+    /// The field of the part's snapshot this block answers; none for free writing.
+    pub field_key: Option<String>,
+    /// An entry of a repeatable field: JSON object of its parts' values.
+    pub data: Option<String>,
     pub created_at: String,
     pub updated_at: String,
     pub revision: i64,
@@ -175,7 +184,7 @@ pub struct TemplateDefinition {
     pub sections: Vec<TemplateSection>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct TemplateSection {
     /// Stable machine key for built-in sections; absent for sections the
@@ -192,6 +201,97 @@ pub struct TemplateSection {
     /// its title and guidance in the interface language.
     #[serde(default, skip_serializing_if = "is_false")]
     pub retired: bool,
+    /// Structured answer fields (built-in templates only). A study copies
+    /// them as a snapshot when it is created.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub fields: Vec<TemplateField>,
+    /// Bumped when `fields` change in a way a snapshot should be able to tell.
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub fields_version: u32,
+}
+
+/// How a field is answered: one text, or a list of entries made of parts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum FieldKind {
+    Text,
+    Entries,
+}
+
+/// How one part of an entry is answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum PartKind {
+    /// A short single line.
+    Line,
+    /// Longer text.
+    Text,
+    /// One of the field's `options`.
+    Choice,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct EntryPart {
+    pub key: String,
+    pub kind: PartKind,
+    /// For a choice: the stable keys of its options; the first is the default.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub options: Vec<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TemplateField {
+    pub key: String,
+    pub kind: FieldKind,
+    /// For entries: the parts of one entry, in order.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub parts: Vec<EntryPart>,
+}
+
+/// The snapshot a study part keeps of its template's fields.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SectionFields {
+    /// Key of the built-in template the study was made from.
+    pub template: String,
+    pub version: u32,
+    pub fields: Vec<TemplateField>,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SectionStatus {
+    #[default]
+    NotStarted,
+    InProgress,
+    Complete,
+}
+
+impl SectionStatus {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::NotStarted => "not_started",
+            Self::InProgress => "in_progress",
+            Self::Complete => "complete",
+        }
+    }
+}
+
+impl FromStr for SectionStatus {
+    type Err = AppError;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            "not_started" => Ok(Self::NotStarted),
+            "in_progress" => Ok(Self::InProgress),
+            "complete" => Ok(Self::Complete),
+            other => Err(AppError::Unexpected(format!(
+                "unknown section status in database: {other}"
+            ))),
+        }
+    }
 }
 
 impl TemplateSection {
@@ -203,6 +303,10 @@ impl TemplateSection {
 
 fn is_false(value: &bool) -> bool {
     !value
+}
+
+fn is_zero(value: &u32) -> bool {
+    *value == 0
 }
 
 // ---------------------------------------------------------------------------
@@ -299,6 +403,8 @@ pub struct UpdateStudySection {
     /// An empty string clears it.
     #[serde(default)]
     pub guidance: Option<String>,
+    #[serde(default)]
+    pub status: Option<SectionStatus>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -308,6 +414,9 @@ pub struct CreateStudyBlock {
     pub block_type: BlockType,
     #[serde(default)]
     pub content: Option<String>,
+    /// The field of the part's snapshot the block answers.
+    #[serde(default)]
+    pub field_key: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -316,6 +425,9 @@ pub struct UpdateStudyBlock {
     pub id: String,
     #[serde(default)]
     pub content: Option<String>,
+    /// An entry's values as a JSON object (entries of a repeatable field only).
+    #[serde(default)]
+    pub data: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, Deserialize)]

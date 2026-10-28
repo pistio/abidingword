@@ -256,6 +256,243 @@
             "guidance": "Lo que has concluido y lo que sigue abierto."
           }
         }
+      },
+      "pozetek-study": {
+        "name": "POZETEK — Examinar un texto bíblico",
+        "description": "Un estudio guiado para cualquier pasaje: observación (personas, lugar, tiempo, sucesos, contexto del texto), interpretación (explicaciones), mensaje central (núcleo) y, aparte, una aplicación personal.",
+        "sections": {
+          "persons": {
+            "title": "P — Personas (Personen)",
+            "guidance": "¿Quién aparece en el texto, quién habla, quién actúa y a quién se dirige el mensaje?",
+            "goal": "Conocer a todos los implicados antes de interpretar nada. Anotar solo lo que dice el propio texto.",
+            "example": "Oseas proclama la palabra de Dios a Israel/Efraín; el centro es la relación de Dios con su pueblo. Egipto y Asiria forman parte del trasfondo histórico al que se alude.",
+            "fields": {
+              "author": {
+                "label": "Autor",
+                "help": "¿Quién escribió o dijo este texto, en la medida en que el texto o su libro lo indican?"
+              },
+              "speaker": {
+                "label": "Quien o quienes hablan",
+                "help": "¿Quién habla en este pasaje? ¿Cambia quien habla?"
+              },
+              "addressees": {
+                "label": "Destinatarios",
+                "help": "¿A quién se dirige el mensaje?"
+              },
+              "people": {
+                "label": "Personas y grupos",
+                "help": "Añada cada persona o grupo nombrado o implícito, con el versículo y su papel.",
+                "parts": {
+                  "name": "Nombre o grupo",
+                  "verse": "Versículo",
+                  "role": "Papel"
+                },
+                "add": "Añadir persona o grupo"
+              },
+              "relationships": {
+                "label": "Relaciones entre los implicados",
+                "help": "¿Cómo se relacionan entre sí los implicados? ¿Quién está por encima, junto a o contra quién?"
+              },
+              "open-questions": {
+                "label": "Preguntas abiertas",
+                "help": "¿Qué sigue sin estar claro sobre las personas de este texto?"
+              }
+            }
+          },
+          "place": {
+            "title": "O — Lugar (Ort)",
+            "guidance": "¿Qué lugares y qué relaciones espaciales o culturales son importantes para el texto?",
+            "goal": "Fijarse en dónde sucede o de qué lugares se habla. Separar lo que dice el texto de lo que aportan fuentes externas.",
+            "example": "El reino del norte, Israel, es el contexto; Egipto recuerda la liberación de Israel y Asiria representa la amenaza política.",
+            "fields": {
+              "places": {
+                "label": "Lugares nombrados en el texto",
+                "help": "Anote cada lugar nombrado, con el versículo y su papel.",
+                "parts": {
+                  "place": "Lugar",
+                  "verse": "Versículo",
+                  "role": "Papel"
+                },
+                "add": "Añadir lugar"
+              },
+              "background": {
+                "label": "Trasfondo geográfico y cultural",
+                "help": "¿Qué añade la investigación externa? Indique la fuente para distinguirlo del texto."
+              },
+              "unclear": {
+                "label": "Referencias a lugares sin aclarar",
+                "help": "¿Qué referencias a lugares siguen siendo inciertas?"
+              }
+            }
+          },
+          "time": {
+            "title": "Z — Tiempo (Zeit)",
+            "guidance": "¿Cuándo transcurre el texto y qué circunstancias históricas importan?",
+            "goal": "Situar el texto en el tiempo. Distinguir lo que el texto indica de una ubicación histórica que puede ser incierta.",
+            "example": "El ministerio de Oseas en el siglo VIII a. C. y la creciente influencia asiria son información de trasfondo relevante.",
+            "fields": {
+              "stated": {
+                "label": "Indicaciones de tiempo en el texto",
+                "help": "¿Qué fechas, épocas o expresiones como «entonces» o «en aquellos días» da el texto?"
+              },
+              "historical": {
+                "label": "Ubicación histórica",
+                "help": "¿Qué se sabe de la época? Señale como incierto lo que lo sea."
+              },
+              "source": {
+                "label": "Fuente de la ubicación histórica",
+                "help": "¿De dónde procede esta información?"
+              },
+              "sequence": {
+                "label": "Desarrollo y sucesión en el tiempo",
+                "help": "¿Cómo avanza el tiempo en el pasaje? ¿Qué viene antes, durante y después?"
+              },
+              "prophecy": {
+                "label": "Si es profecía: pasado, presente, futuro",
+                "help": "Si el texto es profético: ¿qué mira al pasado, qué describe la situación presente y qué anuncia el futuro?"
+              }
+            }
+          },
+          "events": {
+            "title": "E — Sucesos (Ereignisse)",
+            "guidance": "¿Qué sucede? ¿Cómo se desarrollan los sucesos o las afirmaciones?",
+            "goal": "Seguir el movimiento del texto sección por sección. El esquema es una propuesta que puede cambiar.",
+            "example": "Un posible esquema de Oseas 11: vv. 1–4 cuidado; vv. 5–7 infidelidad y juicio; vv. 8–9 compasión; vv. 10–11 regreso y restauración.",
+            "fields": {
+              "passages": {
+                "label": "Secciones del texto",
+                "help": "Divida el texto en secciones: versículos, qué sucede o se dice y qué significa en el desarrollo del conjunto.",
+                "parts": {
+                  "verses": "Versículos",
+                  "event": "Suceso o afirmación",
+                  "meaning": "Significado en el desarrollo"
+                },
+                "add": "Añadir sección"
+              },
+              "turning-points": {
+                "label": "Puntos de inflexión",
+                "help": "¿Dónde cambia la dirección del texto?"
+              },
+              "contrasts": {
+                "label": "Contrastes",
+                "help": "¿Qué opuestos o tensiones contrapone el texto?"
+              }
+            }
+          },
+          "context": {
+            "title": "T — Contexto del texto (Textzusammenhang)",
+            "guidance": "¿Cómo encaja el pasaje en el capítulo, en todo el libro y en el resto de la Escritura?",
+            "goal": "Ver el pasaje en su entorno, desde los versículos más cercanos hacia fuera, y notar dónde termina.",
+            "example": "La infidelidad de Israel y la relación de pacto marcan Oseas; el capítulo 11 añade la imagen del padre cuidadoso y su hijo.",
+            "fields": {
+              "immediate": {
+                "label": "Contexto inmediato",
+                "help": "¿Qué hay justo antes y después, y cómo se conecta?"
+              },
+              "book": {
+                "label": "Contexto en el libro",
+                "help": "¿De qué trata el libro y dónde se sitúa el pasaje en su argumento o relato?"
+              },
+              "canon": {
+                "label": "Contexto en toda la Biblia",
+                "help": "¿Cómo se relaciona el pasaje con el resto de la Escritura y su historia?"
+              },
+              "parallels": {
+                "label": "Pasajes paralelos",
+                "help": "Añada pasajes relacionados y diga qué aporta cada uno a la comprensión.",
+                "parts": {
+                  "reference": "Referencia",
+                  "relevance": "Relevancia"
+                },
+                "add": "Añadir pasaje paralelo"
+              },
+              "limits": {
+                "label": "Límites del pasaje",
+                "help": "¿Dónde empieza y termina la unidad, y por qué ahí?"
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Explicaciones (Erklärungen)",
+            "guidance": "¿Qué términos, afirmaciones o problemas de interpretación necesitan aclaración?",
+            "goal": "Reunir las preguntas del texto, contrastarlas con evidencias y anotar las respuestas que se pueden sostener. Dejar abierto lo que siga abierto.",
+            "example": "¿Qué papel tienen Egipto y Asiria? ¿Cómo van juntos el juicio y la compasión? ¿Qué significa «Dios soy y no hombre» (Os 11:9)?",
+            "fields": {
+              "questions": {
+                "label": "Registro de preguntas",
+                "help": "Añada cada pregunta con el versículo, las evidencias comprobadas, la respuesta y el estado.",
+                "parts": {
+                  "question": "Pregunta",
+                  "verse": "Versículo",
+                  "evidence": "Evidencias",
+                  "answer": "Respuesta comprobada",
+                  "status": "Estado"
+                },
+                "options": {
+                  "open": "Abierta",
+                  "answered": "Aclarada"
+                },
+                "add": "Añadir pregunta"
+              },
+              "terms": {
+                "label": "Términos importantes",
+                "help": "¿Qué palabras necesitan explicación? ¿Qué significan aquí, en este contexto?"
+              },
+              "explanations": {
+                "label": "Posibles explicaciones fundamentadas",
+                "help": "Donde sean posibles varias explicaciones, exponga cada una con sus razones."
+              },
+              "sources": {
+                "label": "Fuentes",
+                "help": "¿Qué fuentes utilizó? Anótelas para poder encontrarlas de nuevo."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Núcleo (Kern)",
+            "guidance": "¿Cuál es el mensaje central de este pasaje en concreto?",
+            "goal": "Formular el núcleo en tres pasos: de qué trata el texto, qué dice sobre ello y una frase concisa. Puede rellenarlos en cualquier orden.",
+            "example": "Asunto: la relación de Dios con su pueblo infiel. Afirmación: el cuidado de Dios, su juicio justo y su compasión. Tema: el amor de Dios por Israel se muestra en su cuidado, en un juicio justo y en una compasión que abre un futuro.",
+            "fields": {
+              "subject": {
+                "label": "Asunto del texto — ¿De qué trata?",
+                "help": "Nombre el asunto en pocas palabras, sin decir aún lo que el texto afirma sobre él."
+              },
+              "statement": {
+                "label": "Afirmación del texto — ¿Qué dice el texto al respecto?",
+                "help": "Resuma lo que el pasaje dice sobre su asunto, tal como lo dice."
+              },
+              "theme": {
+                "label": "Tema del texto — Una frase concisa",
+                "help": "Una el asunto y la afirmación en una frase que pueda contrastarse con cada versículo."
+              }
+            }
+          },
+          "application": {
+            "title": "Aplicación personal",
+            "guidance": "¿Qué significa para usted la verdad hallada? Manténgala separada de la observación y la interpretación anteriores.",
+            "goal": "Responder al texto manteniéndose ligado a lo que dice. Es un cierre aparte, no otra letra de POZETEK.",
+            "example": "El amor de Dios por su pueblo se basa en su naturaleza, no en la fidelidad de Israel. Aunque Israel se aparte, Dios muestra compasión en medio del juicio. Eso invita a reconocer las propias seguridades sustitutivas y a confiar de nuevo en Dios. El amor recibido debe marcar también el trato con quienes no corresponden al amor y al cuidado (cf. 1 Jn 4:8, 19).",
+            "fields": {
+              "truth": {
+                "label": "Verdad reconocida",
+                "help": "¿Qué verdad del texto sigue siendo válida para todo lector?"
+              },
+              "examination": {
+                "label": "Examen personal",
+                "help": "¿Dónde esta verdad desafía, consuela o corrige el propio pensar y vivir?"
+              },
+              "response": {
+                "label": "Respuesta concreta",
+                "help": "¿Qué hará: creer, arrepentirse, confiar, obedecer, orar, amar? Sea concreto."
+              },
+              "limits": {
+                "label": "Límites del traslado de entonces a hoy",
+                "help": "¿Qué distingue la situación de entonces de la de hoy? ¿Qué no debe trasladarse directamente?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notas",
@@ -1008,5 +1245,26 @@
     "own": "Tu propio título",
     "collapseAll": "Plegar todo",
     "expandAll": "Desplegar todo"
+  },
+  "fields": {
+    "example": "Ejemplo: Oseas 11",
+    "exampleNote": "Solo un ejemplo. No forma parte de su estudio y nunca se guarda como su respuesta.",
+    "goal": "Objetivo",
+    "status": "Progreso de «{{title}}»",
+    "statusNotStarted": "Sin empezar",
+    "statusInProgress": "En curso",
+    "statusComplete": "Completo",
+    "fieldGroup": "Campos de «{{title}}»",
+    "entryLabel": "{{field}}, entrada {{number}}",
+    "entryHeading": "Entrada {{number}}",
+    "entryPart": "{{part}} ({{field}}, entrada {{number}})",
+    "noEntries": "Aún no hay entradas.",
+    "removeEntry": "Eliminar la entrada {{number}} de {{field}}",
+    "confirmRemove": "¿Eliminar esta entrada y lo que contiene?",
+    "removeFailed": "No se pudo eliminar la entrada.",
+    "addFailed": "No se pudo añadir la entrada.",
+    "moveEntryUp": "Subir la entrada {{number}} de {{field}}",
+    "moveEntryDown": "Bajar la entrada {{number}} de {{field}}",
+    "otherWriting": "Otras notas"
   }
 }

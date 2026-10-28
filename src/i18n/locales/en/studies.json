@@ -256,6 +256,243 @@
             "guidance": "What you have concluded, and what remains open."
           }
         }
+      },
+      "pozetek-study": {
+        "name": "POZETEK — Examine a Bible text",
+        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "sections": {
+          "persons": {
+            "title": "P — Persons (Personen)",
+            "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
+            "goal": "Get to know everyone involved before interpreting anything. Record only what the text itself says.",
+            "example": "Hosea proclaims God’s word to Israel/Ephraim; the focus is God’s relationship with his people. Egypt and Assyria belong to the historical background that is addressed.",
+            "fields": {
+              "author": {
+                "label": "Author",
+                "help": "Who wrote or spoke this text, as far as the text or its book says?"
+              },
+              "speaker": {
+                "label": "Speaker(s)",
+                "help": "Who is speaking in this passage? Does the speaker change?"
+              },
+              "addressees": {
+                "label": "Addressees",
+                "help": "To whom is the message directed?"
+              },
+              "people": {
+                "label": "People and groups",
+                "help": "Add each person or group named or implied. Note the verse and what each one does or is.",
+                "parts": {
+                  "name": "Name or group",
+                  "verse": "Verse",
+                  "role": "Role"
+                },
+                "add": "Add person or group"
+              },
+              "relationships": {
+                "label": "Relationships",
+                "help": "How are those involved related to one another? Who stands over, with or against whom?"
+              },
+              "open-questions": {
+                "label": "Open questions",
+                "help": "What about the people in this text is still unclear?"
+              }
+            }
+          },
+          "place": {
+            "title": "O — Place (Ort)",
+            "guidance": "Which places and spatial or cultural relationships matter for the text?",
+            "goal": "Notice where things happen or are spoken of. Keep what the text says apart from what you learn from outside sources.",
+            "example": "The northern kingdom of Israel is the context; Egypt recalls Israel’s deliverance, Assyria stands for political threat.",
+            "fields": {
+              "places": {
+                "label": "Places named in the text",
+                "help": "List each place the text names. Note the verse and what role it plays.",
+                "parts": {
+                  "place": "Place",
+                  "verse": "Verse",
+                  "role": "Role"
+                },
+                "add": "Add place"
+              },
+              "background": {
+                "label": "Geographic and cultural background",
+                "help": "What does outside research add? Say where each piece of information comes from, so it stays distinct from the text."
+              },
+              "unclear": {
+                "label": "Unclear places",
+                "help": "Which place references are still uncertain?"
+              }
+            }
+          },
+          "time": {
+            "title": "Z — Time (Zeit)",
+            "guidance": "When does the text take place, and which historical circumstances matter?",
+            "goal": "Place the text in time. Mark what the text states and what is a historical placement that may be uncertain.",
+            "example": "Hosea’s ministry in the 8th century BC and the growing Assyrian influence are relevant background information.",
+            "fields": {
+              "stated": {
+                "label": "Time stated in the text",
+                "help": "Which dates, seasons, sequences or phrases such as “then” and “in those days” does the text give?"
+              },
+              "historical": {
+                "label": "Historical setting",
+                "help": "What do you know about the period? Mark uncertain points as uncertain."
+              },
+              "source": {
+                "label": "Source for the historical setting",
+                "help": "Where does this information come from?"
+              },
+              "sequence": {
+                "label": "Course of time",
+                "help": "How does time move within the passage? What comes before, during and after?"
+              },
+              "prophecy": {
+                "label": "Prophecy: past, present, future",
+                "help": "If the text is prophetic: what looks back, what describes the present situation, what announces the future?"
+              }
+            }
+          },
+          "events": {
+            "title": "E — Events (Ereignisse)",
+            "guidance": "What happens? How do events or statements unfold?",
+            "goal": "Follow the movement of the text section by section. The outline is yours to propose and to change.",
+            "example": "A possible outline of Hosea 11: vv. 1–4 care; vv. 5–7 unfaithfulness and judgment; vv. 8–9 compassion; vv. 10–11 return and restoration.",
+            "fields": {
+              "passages": {
+                "label": "Sections of the text",
+                "help": "Divide the text into sections. For each, give the verses, what happens or is said, and what it means for the course of the whole.",
+                "parts": {
+                  "verses": "Verses",
+                  "event": "Event or statement",
+                  "meaning": "Meaning in the course of the text"
+                },
+                "add": "Add section"
+              },
+              "turning-points": {
+                "label": "Turning points",
+                "help": "Where does the direction of the text change?"
+              },
+              "contrasts": {
+                "label": "Contrasts",
+                "help": "Which opposites or tensions does the text set against each other?"
+              }
+            }
+          },
+          "context": {
+            "title": "T — Text context (Textzusammenhang)",
+            "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture?",
+            "goal": "See the passage in its surroundings, from the nearest verses outward, and notice where it ends.",
+            "example": "Israel’s unfaithfulness and the covenant relationship shape Hosea; chapter 11 adds the image of the caring father and his child.",
+            "fields": {
+              "immediate": {
+                "label": "Immediate context",
+                "help": "What comes directly before and after the passage, and how does it connect?"
+              },
+              "book": {
+                "label": "Context in the book",
+                "help": "What is the book about, and where does the passage stand in its argument or story?"
+              },
+              "canon": {
+                "label": "Context in the whole Bible",
+                "help": "How does the passage relate to the rest of Scripture and its storyline?"
+              },
+              "parallels": {
+                "label": "Parallel passages",
+                "help": "Add related passages. Say what each contributes to understanding this text.",
+                "parts": {
+                  "reference": "Reference",
+                  "relevance": "Relevance"
+                },
+                "add": "Add parallel passage"
+              },
+              "limits": {
+                "label": "Limits of the passage",
+                "help": "Where does the unit begin and end, and why there?"
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Explanations (Erklärungen)",
+            "guidance": "Which terms, statements or interpretive problems need clarifying?",
+            "goal": "Collect questions from the text, check them against evidence, and record the answers you can support. Leave open what is still open.",
+            "example": "What role do Egypt and Assyria play? How do judgment and compassion belong together? What does “God and not man” (Hos 11:9) mean?",
+            "fields": {
+              "questions": {
+                "label": "Question log",
+                "help": "Add each question. Record the verse, the evidence you checked, your answer, and whether the question is still open.",
+                "parts": {
+                  "question": "Question",
+                  "verse": "Verse",
+                  "evidence": "Evidence",
+                  "answer": "Checked answer",
+                  "status": "Status"
+                },
+                "options": {
+                  "open": "Open",
+                  "answered": "Settled"
+                },
+                "add": "Add question"
+              },
+              "terms": {
+                "label": "Important terms",
+                "help": "Which words need explaining? What do they mean here, in this context?"
+              },
+              "explanations": {
+                "label": "Possible explanations",
+                "help": "Where more than one explanation is possible, state each with its reasons."
+              },
+              "sources": {
+                "label": "Sources",
+                "help": "Which sources did you use? Note them so you can find them again."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Core (Kern)",
+            "guidance": "What is the central message of exactly this passage?",
+            "goal": "Name the core in three steps: what the text is about, what it says about that, and one concise sentence. You may fill them in any order.",
+            "example": "Subject: God’s relationship to his unfaithful people. Statement: God’s care, just judgment and compassion. Theme: God’s love for Israel shows itself in his care, in just judgment, and in a compassion that opens a future.",
+            "fields": {
+              "subject": {
+                "label": "Text subject — What is it about?",
+                "help": "Name the subject in a few words, without yet saying what the text claims about it."
+              },
+              "statement": {
+                "label": "Text statement — What does the text say about it?",
+                "help": "Summarise what the passage says about its subject, as it says it."
+              },
+              "theme": {
+                "label": "Text theme — One concise sentence",
+                "help": "Join subject and statement in one sentence that you could test against every verse."
+              }
+            }
+          },
+          "application": {
+            "title": "Personal application",
+            "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above.",
+            "goal": "Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK.",
+            "example": "God’s love for his people rests in his nature, not in Israel’s faithfulness. Even though Israel turns away, God shows compassion in the midst of judgment. That challenges us to recognise our own substitute securities and to trust God anew. Love received should also shape how we treat people who do not return love and care (cf. 1 John 4:8, 19).",
+            "fields": {
+              "truth": {
+                "label": "Truth recognised",
+                "help": "Which truth of the text stays valid for every reader?"
+              },
+              "examination": {
+                "label": "Personal examination",
+                "help": "Where does this truth challenge, comfort or correct your own thinking and life?"
+              },
+              "response": {
+                "label": "Concrete response",
+                "help": "What will you do: believe, repent, trust, obey, pray, love? Make it specific."
+              },
+              "limits": {
+                "label": "Limits of the transfer",
+                "help": "What differs between the original situation and today? What must not be carried over directly?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -998,5 +1235,26 @@
     "own": "Your own heading",
     "collapseAll": "Fold all",
     "expandAll": "Unfold all"
+  },
+  "fields": {
+    "example": "Example: Hosea 11",
+    "exampleNote": "An example only. It is not part of your study and is never saved as your answer.",
+    "goal": "Goal",
+    "status": "Progress of “{{title}}”",
+    "statusNotStarted": "Not started",
+    "statusInProgress": "In progress",
+    "statusComplete": "Complete",
+    "fieldGroup": "Fields of “{{title}}”",
+    "entryLabel": "{{field}}, entry {{number}}",
+    "entryHeading": "Entry {{number}}",
+    "entryPart": "{{part}} ({{field}}, entry {{number}})",
+    "noEntries": "No entries yet.",
+    "removeEntry": "Delete entry {{number}} of {{field}}",
+    "confirmRemove": "Delete this entry and what is written in it?",
+    "removeFailed": "The entry could not be deleted.",
+    "addFailed": "The entry could not be added.",
+    "moveEntryUp": "Move entry {{number}} of {{field}} up",
+    "moveEntryDown": "Move entry {{number}} of {{field}} down",
+    "otherWriting": "Other notes"
   }
 }

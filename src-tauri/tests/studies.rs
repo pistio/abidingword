@@ -254,6 +254,7 @@ fn a_section_with_content_needs_confirmation_and_its_findings_are_kept() {
             &UpdateStudyBlock {
                 id: context.blocks[0].id.clone(),
                 content: Some("Upper room discourse.".into()),
+                data: None,
             },
         )?;
         let finding = findings::create(
@@ -305,6 +306,7 @@ fn blocks_support_quotations_and_questions_and_can_be_reordered() {
                 section_id: section.id.clone(),
                 block_type: BlockType::Quotation,
                 content: Some("“Abide in me.”".into()),
+                field_key: None,
             },
         )?;
         let question = blocks::create(
@@ -313,6 +315,7 @@ fn blocks_support_quotations_and_questions_and_can_be_reordered() {
                 section_id: section.id.clone(),
                 block_type: BlockType::Question,
                 content: Some("What is fruit?".into()),
+                field_key: None,
             },
         )?;
         let order = vec![
@@ -343,7 +346,7 @@ fn blocks_support_quotations_and_questions_and_can_be_reordered() {
 // --- templates -------------------------------------------------------------
 
 #[test]
-fn six_built_in_templates_exist_and_are_protected() {
+fn seven_built_in_templates_exist_and_are_protected() {
     with_db(|conn| {
         let all = templates::list(conn)?;
         let names: Vec<_> = all
@@ -355,6 +358,7 @@ fn six_built_in_templates_exist_and_are_protected() {
             names,
             [
                 "Passage Study",
+                "POZETEK — Examine a Bible text",
                 "Word Study",
                 "Topical Study",
                 "Biblical Theology Study",
@@ -429,10 +433,11 @@ fn built_in_templates_start_small_and_offer_the_rest_later() {
             .sections
             .iter()
             .any(|s| s.retired && s.key.as_deref() == Some("exegesis")));
-        // No built-in study template starts with more than six parts.
+        // No built-in study template starts with more than six parts (the
+        // teaching template and the eight-part POZETEK method are the exceptions).
         for template in templates::list(conn)?
             .iter()
-            .filter(|t| t.is_builtin && t.key != "teaching-study")
+            .filter(|t| t.is_builtin && t.key != "teaching-study" && t.key != "pozetek-study")
         {
             let count = template.sections.iter().filter(|s| s.starts()).count();
             assert!((4..=6).contains(&count), "{}: {count}", template.key);
@@ -454,6 +459,7 @@ fn built_in_templates_start_small_and_offer_the_rest_later() {
                     guidance: None,
                     optional: true,
                     retired: false,
+                    ..TemplateSection::default()
                 }],
             },
         );
@@ -471,6 +477,7 @@ fn user_templates_can_be_created_duplicated_edited_and_deleted() {
             guidance: None,
             optional: false,
             retired: false,
+            ..TemplateSection::default()
         };
         let mine = templates::create(
             conn,
@@ -545,6 +552,7 @@ fn a_study_copies_its_template_and_does_not_follow_later_changes() {
             guidance: Some(format!("About {title}")),
             optional: false,
             retired: false,
+            ..TemplateSection::default()
         };
         let template = templates::create(
             conn,
@@ -616,6 +624,7 @@ fn duplicating_copies_structure_by_default_and_content_on_request() {
             &UpdateStudyBlock {
                 id: text,
                 content: Some("I am the true vine.".into()),
+                data: None,
             },
         )?;
         findings::create(

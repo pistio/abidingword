@@ -256,6 +256,243 @@
             "guidance": "Ce que vous avez conclu, et ce qui reste ouvert."
           }
         }
+      },
+      "pozetek-study": {
+        "name": "POZETEK — Examiner un texte biblique",
+        "description": "Une étude guidée pour n’importe quel passage : observation (personnes, lieu, temps, événements, contexte du texte), interprétation (explications), message central (noyau), puis une application personnelle distincte.",
+        "sections": {
+          "persons": {
+            "title": "P — Personnes (Personen)",
+            "guidance": "Qui apparaît dans le texte, qui parle, qui agit, et à qui le message s’adresse-t-il ?",
+            "goal": "Faire connaissance avec toutes les personnes concernées avant d’interpréter. Ne noter que ce que dit le texte lui-même.",
+            "example": "Osée proclame la parole de Dieu à Israël/Éphraïm ; au centre se trouve la relation de Dieu avec son peuple. L’Égypte et l’Assyrie font partie du contexte historique évoqué.",
+            "fields": {
+              "author": {
+                "label": "Auteur",
+                "help": "Qui a écrit ou prononcé ce texte, autant que le texte ou son livre le dit ?"
+              },
+              "speaker": {
+                "label": "Locuteur(s)",
+                "help": "Qui parle dans ce passage ? Le locuteur change-t-il ?"
+              },
+              "addressees": {
+                "label": "Destinataires",
+                "help": "À qui le message est-il adressé ?"
+              },
+              "people": {
+                "label": "Personnes et groupes",
+                "help": "Ajoutez chaque personne ou groupe nommé ou sous-entendu, avec le verset et son rôle.",
+                "parts": {
+                  "name": "Nom ou groupe",
+                  "verse": "Verset",
+                  "role": "Rôle"
+                },
+                "add": "Ajouter une personne ou un groupe"
+              },
+              "relationships": {
+                "label": "Relations entre les personnes",
+                "help": "Comment les personnes sont-elles liées entre elles ? Qui est au-dessus, avec ou contre qui ?"
+              },
+              "open-questions": {
+                "label": "Questions ouvertes",
+                "help": "Qu’est-ce qui reste peu clair au sujet des personnes de ce texte ?"
+              }
+            }
+          },
+          "place": {
+            "title": "O — Lieu (Ort)",
+            "guidance": "Quels lieux et quelles relations spatiales ou culturelles comptent pour le texte ?",
+            "goal": "Repérer où les choses se passent ou dont on parle. Distinguer ce que dit le texte de ce qu’apportent des sources extérieures.",
+            "example": "Le royaume du Nord, Israël, forme le contexte ; l’Égypte rappelle la délivrance d’Israël, l’Assyrie représente la menace politique.",
+            "fields": {
+              "places": {
+                "label": "Lieux nommés dans le texte",
+                "help": "Notez chaque lieu nommé, avec le verset et son rôle.",
+                "parts": {
+                  "place": "Lieu",
+                  "verse": "Verset",
+                  "role": "Rôle"
+                },
+                "add": "Ajouter un lieu"
+              },
+              "background": {
+                "label": "Arrière-plan géographique et culturel",
+                "help": "Qu’apportent les recherches extérieures ? Indiquez la source pour les distinguer du texte."
+              },
+              "unclear": {
+                "label": "Références de lieu non élucidées",
+                "help": "Quelles mentions de lieux restent incertaines ?"
+              }
+            }
+          },
+          "time": {
+            "title": "Z — Temps (Zeit)",
+            "guidance": "Quand le texte se situe-t-il, et quelles circonstances historiques comptent ?",
+            "goal": "Situer le texte dans le temps. Distinguer ce que le texte indique et ce qui est un classement historique, parfois incertain.",
+            "example": "Le ministère d’Osée au VIIIe siècle av. J.-C. et l’influence croissante de l’Assyrie constituent des informations de contexte pertinentes.",
+            "fields": {
+              "stated": {
+                "label": "Indications de temps dans le texte",
+                "help": "Quelles dates, périodes ou expressions comme « alors » ou « en ces jours-là » le texte donne-t-il ?"
+              },
+              "historical": {
+                "label": "Situation historique",
+                "help": "Que sait-on de l’époque ? Signalez ce qui reste incertain."
+              },
+              "source": {
+                "label": "Source de la situation historique",
+                "help": "D’où vient cette information ?"
+              },
+              "sequence": {
+                "label": "Déroulement dans le temps",
+                "help": "Comment le temps avance-t-il dans le passage ? Qu’y a-t-il avant, pendant, après ?"
+              },
+              "prophecy": {
+                "label": "Prophétie : passé, présent, avenir",
+                "help": "Si le texte est prophétique : qu’est-ce qui regarde en arrière, décrit la situation présente, annonce l’avenir ?"
+              }
+            }
+          },
+          "events": {
+            "title": "E — Événements (Ereignisse)",
+            "guidance": "Que se passe-t-il ? Comment les événements ou les affirmations se déploient-ils ?",
+            "goal": "Suivre le mouvement du texte section par section. Le plan est une proposition que vous pouvez modifier.",
+            "example": "Plan possible d’Osée 11 : v. 1-4 sollicitude ; v. 5-7 infidélité et jugement ; v. 8-9 compassion ; v. 10-11 retour et restauration.",
+            "fields": {
+              "passages": {
+                "label": "Sections du texte",
+                "help": "Divisez le texte en sections : versets, ce qui se passe ou se dit, et ce que cela signifie dans le déroulement.",
+                "parts": {
+                  "verses": "Versets",
+                  "event": "Événement ou affirmation",
+                  "meaning": "Signification dans le déroulement"
+                },
+                "add": "Ajouter une section"
+              },
+              "turning-points": {
+                "label": "Points de bascule",
+                "help": "Où la direction du texte change-t-elle ?"
+              },
+              "contrasts": {
+                "label": "Contrastes",
+                "help": "Quels contrastes ou tensions le texte met-il en regard ?"
+              }
+            }
+          },
+          "context": {
+            "title": "T — Contexte du texte (Textzusammenhang)",
+            "guidance": "Comment le passage s’insère-t-il dans le chapitre, dans tout le livre et dans le reste de l’Écriture ?",
+            "goal": "Voir le passage dans son environnement, des versets voisins vers l’extérieur, et repérer où il s’arrête.",
+            "example": "L’infidélité d’Israël et la relation d’alliance marquent Osée ; le chapitre 11 y ajoute l’image du père attentionné et de son enfant.",
+            "fields": {
+              "immediate": {
+                "label": "Contexte immédiat",
+                "help": "Qu’y a-t-il juste avant et après, et comment cela se relie-t-il ?"
+              },
+              "book": {
+                "label": "Contexte dans le livre",
+                "help": "De quoi parle le livre, et où le passage se place-t-il dans son raisonnement ou son récit ?"
+              },
+              "canon": {
+                "label": "Contexte dans toute la Bible",
+                "help": "Quel est le rapport du passage avec le reste de l’Écriture et son histoire ?"
+              },
+              "parallels": {
+                "label": "Passages parallèles",
+                "help": "Ajoutez des passages liés et dites ce que chacun apporte à la compréhension.",
+                "parts": {
+                  "reference": "Référence",
+                  "relevance": "Pertinence"
+                },
+                "add": "Ajouter un passage parallèle"
+              },
+              "limits": {
+                "label": "Limites du passage",
+                "help": "Où l’unité commence-t-elle et finit-elle, et pourquoi là ?"
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Explications (Erklärungen)",
+            "guidance": "Quels termes, affirmations ou problèmes d’interprétation demandent à être éclaircis ?",
+            "goal": "Rassembler les questions du texte, les vérifier à la lumière des preuves et noter les réponses que l’on peut étayer. Laisser ouvert ce qui l’est encore.",
+            "example": "Quel rôle jouent l’Égypte et l’Assyrie ? Comment le jugement et la compassion vont-ils ensemble ? Que signifie « je suis Dieu et non pas homme » (Os 11,9) ?",
+            "fields": {
+              "questions": {
+                "label": "Journal des questions",
+                "help": "Ajoutez chaque question avec le verset, les preuves vérifiées, la réponse et l’état.",
+                "parts": {
+                  "question": "Question",
+                  "verse": "Verset",
+                  "evidence": "Éléments de preuve",
+                  "answer": "Réponse vérifiée",
+                  "status": "État"
+                },
+                "options": {
+                  "open": "Ouverte",
+                  "answered": "Éclaircie"
+                },
+                "add": "Ajouter une question"
+              },
+              "terms": {
+                "label": "Termes importants",
+                "help": "Quels mots demandent une explication ? Que signifient-ils ici, dans ce contexte ?"
+              },
+              "explanations": {
+                "label": "Explications possibles et motivées",
+                "help": "Là où plusieurs explications sont possibles, énoncez chacune avec ses raisons."
+              },
+              "sources": {
+                "label": "Sources",
+                "help": "Quelles sources avez-vous utilisées ? Notez-les pour les retrouver."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Noyau (Kern)",
+            "guidance": "Quel est le message central de ce passage précisément ?",
+            "goal": "Formuler le noyau en trois temps : de quoi parle le texte, ce qu’il en dit, et une phrase concise. L’ordre de saisie est libre.",
+            "example": "Objet : la relation de Dieu avec son peuple infidèle. Énoncé : la sollicitude de Dieu, son jugement juste et sa compassion. Thème : l’amour de Dieu pour Israël se manifeste dans sa sollicitude, dans un jugement juste et dans une compassion qui ouvre un avenir.",
+            "fields": {
+              "subject": {
+                "label": "Objet du texte — De quoi s’agit-il ?",
+                "help": "Nommez le sujet en quelques mots, sans dire encore ce que le texte en affirme."
+              },
+              "statement": {
+                "label": "Énoncé du texte — Qu’en dit le texte ?",
+                "help": "Résumez ce que le passage dit de son objet, comme il le dit."
+              },
+              "theme": {
+                "label": "Thème du texte — Une phrase concise",
+                "help": "Réunissez l’objet et l’énoncé en une phrase que l’on peut vérifier sur chaque verset."
+              }
+            }
+          },
+          "application": {
+            "title": "Application personnelle",
+            "guidance": "Que signifie pour vous la vérité découverte ? Gardez-la distincte de l’observation et de l’interprétation ci-dessus.",
+            "goal": "Répondre au texte en restant lié à ce qu’il dit. C’est une étape de clôture à part, pas une lettre de plus de POZETEK.",
+            "example": "L’amour de Dieu pour son peuple repose sur sa nature, non sur la fidélité d’Israël. Même quand Israël se détourne, Dieu manifeste sa compassion au cœur du jugement. Cela invite à reconnaître ses propres sécurités de substitution et à se confier de nouveau en Dieu. L’amour reçu doit aussi marquer la manière de traiter ceux qui ne rendent ni amour ni attention (cf. 1 Jn 4,8.19).",
+            "fields": {
+              "truth": {
+                "label": "Vérité reconnue",
+                "help": "Quelle vérité du texte reste valable pour tous les lecteurs ?"
+              },
+              "examination": {
+                "label": "Examen personnel",
+                "help": "Où cette vérité interpelle-t-elle, console-t-elle ou corrige-t-elle votre pensée et votre vie ?"
+              },
+              "response": {
+                "label": "Réponse concrète",
+                "help": "Que ferez-vous : croire, se repentir, se confier, obéir, prier, aimer ? Soyez précis."
+              },
+              "limits": {
+                "label": "Limites du transfert d’hier à aujourd’hui",
+                "help": "Qu’est-ce qui distingue la situation d’alors de celle d’aujourd’hui ? Que ne faut-il pas transposer directement ?"
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -1008,5 +1245,26 @@
     "own": "Votre propre titre",
     "collapseAll": "Tout replier",
     "expandAll": "Tout déplier"
+  },
+  "fields": {
+    "example": "Exemple : Osée 11",
+    "exampleNote": "Simple exemple. Il ne fait pas partie de votre étude et n’est jamais enregistré comme votre réponse.",
+    "goal": "But",
+    "status": "Avancement de « {{title}} »",
+    "statusNotStarted": "Pas commencé",
+    "statusInProgress": "En cours",
+    "statusComplete": "Terminé",
+    "fieldGroup": "Champs de « {{title}} »",
+    "entryLabel": "{{field}}, entrée {{number}}",
+    "entryHeading": "Entrée {{number}}",
+    "entryPart": "{{part}} ({{field}}, entrée {{number}})",
+    "noEntries": "Aucune entrée pour l’instant.",
+    "removeEntry": "Supprimer l’entrée {{number}} de {{field}}",
+    "confirmRemove": "Supprimer cette entrée et son contenu ?",
+    "removeFailed": "L’entrée n’a pas pu être supprimée.",
+    "addFailed": "L’entrée n’a pas pu être ajoutée.",
+    "moveEntryUp": "Monter l’entrée {{number}} de {{field}}",
+    "moveEntryDown": "Descendre l’entrée {{number}} de {{field}}",
+    "otherWriting": "Autres notes"
   }
 }
