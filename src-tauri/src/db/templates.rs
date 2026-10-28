@@ -26,6 +26,8 @@ const BUILTIN: &[&str] = &[
     include_str!("../../../resources/templates/ten-step-exegesis.json"),
     include_str!("../../../resources/templates/word-study.json"),
     include_str!("../../../resources/templates/topical-study.json"),
+    include_str!("../../../resources/templates/biblical-character-study.json"),
+    include_str!("../../../resources/templates/whole-book-study.json"),
     include_str!("../../../resources/templates/biblical-theology-study.json"),
     include_str!("../../../resources/templates/systematic-theology-study.json"),
     include_str!("../../../resources/templates/teaching-study.json"),
