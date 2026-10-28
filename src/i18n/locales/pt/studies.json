@@ -258,7 +258,7 @@
         }
       },
       "pozetek-study": {
-        "name": "POZETEK — Examinar um texto bíblico",
+        "name": "Estudo guiado de uma passagem bíblica",
         "description": "Um estudo guiado para qualquer passagem: observação (pessoas, lugar, tempo, acontecimentos, contexto do texto), interpretação (explicações), mensagem central (núcleo) e, à parte, uma aplicação pessoal.",
         "sections": {
           "persons": {
@@ -495,7 +495,7 @@
         }
       },
       "ten-step-exegesis": {
-        "name": "Dez passos — Interpretar uma passagem bíblica",
+        "name": "Estudo bíblico em dez etapas",
         "description": "Estudo aprofundado conforme os dez passos apresentados por Helge Stadelmann e Thomas Richter. As orientações e o exemplo opcional de Mateus 8:18–27 foram escritos de forma independente.",
         "sections": {
           "step-01-familiarity": {
