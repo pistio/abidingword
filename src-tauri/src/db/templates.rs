@@ -77,6 +77,8 @@ pub fn builtin_definitions() -> AppResult<Vec<TemplateDefinition>> {
 pub fn builtin_key_for(study_type: StudyType) -> Option<&'static str> {
     match study_type {
         StudyType::Passage => Some("passage-study"),
+        StudyType::Character => Some("biblical-character-study"),
+        StudyType::Book => Some("whole-book-study"),
         StudyType::Word => Some("word-study"),
         StudyType::Topical => Some("topical-study"),
         StudyType::BiblicalTheology => Some("biblical-theology-study"),
