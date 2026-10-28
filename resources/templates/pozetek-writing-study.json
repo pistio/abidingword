@@ -1,0 +1,100 @@
+{
+  "key": "pozetek-writing-study",
+  "name": "Guided Passage Study",
+  "description": "Seven steps, with one free-text answer per step.",
+  "studyType": "passage",
+  "offered": true,
+  "sections": [
+    {
+      "key": "persons",
+      "title": "People",
+      "guidance": "Who speaks, acts or receives the message? Distinguish what the text says from your assumptions.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "place",
+      "title": "Place",
+      "guidance": "Which places and relationships matter to this passage?",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "time",
+      "title": "Time",
+      "guidance": "When does this happen? Mark uncertain historical proposals as uncertain.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "events",
+      "title": "Flow of the Passage",
+      "guidance": "Follow the events, structure, reasoning and movement of the passage. This also applies to letters, poetry and arguments.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "theme",
+      "title": "Theme",
+      "guidance": "What is the passage about, and what does it say about that subject?",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "understanding",
+      "title": "Understanding",
+      "guidance": "Explain the meaning in context. Distinguish observations, interpretation and questions still open.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "consequences",
+      "title": "Consequences",
+      "guidance": "What follows for faith, love and life? Let application follow the meaning of the passage.",
+      "phase": "application",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    }
+  ]
+}

@@ -51,20 +51,23 @@ describe("project page", () => {
 });
 
 describe("creating a study", () => {
-  it("prepares a teaching from a study of its passage, and opens it on the Bible Teaching side", async () => {
+  it("starts with Bible Study and offers Teaching as an optional next step", async () => {
     const { api } = await withProject();
     const { user } = await renderApp(api);
     await openProject(user);
-    await user.click(screen.getByRole("button", { name: "Teaching preparation" }));
+    expect(screen.queryByRole("button", { name: "Teaching preparation" })).toBeNull();
     await user.type(ask(), "John 15:1-11");
     await user.click(screen.getByRole("button", { name: "Create study" }));
     // Bible Teaching is derived from Bible Study: a passage study, with its simple template…
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
     const study = api.state.studies[0]!;
     expect(study.studyType).toBe("passage");
-    expect(study.templateId).toBe(api.state.templates.find((t) => t.key === "passage-study")!.id);
+    expect(study.templateId).toBe(api.state.templates.find((t) => t.key === "pozetek-writing-study")!.id);
     expect(api.state.passages).toHaveLength(1);
     // …opened where the teaching is prepared: choose a format and start.
+    expect(screen.getByRole("button", { name: "Bible Study", pressed: true })).toBeInTheDocument();
+    expect(api.state.teaching.preparations).toHaveLength(0);
+    await user.click(screen.getByRole("button", { name: "Bible Teaching" }));
     expect(screen.getByRole("button", { name: "Bible Teaching", pressed: true })).toBeInTheDocument();
     expect(await screen.findByRole("form", { name: "Prepare a teaching from this study" })).toBeInTheDocument();
   });

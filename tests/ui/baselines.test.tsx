@@ -20,8 +20,8 @@ const studyTemplates = readdirSync("resources/templates")
 
 describe("the built-in Bible Study templates", () => {
   it("are well formed: a kind, unique stable keys, a known phase for every part, at least one part to start with", () => {
-    expect(studyTemplates.length).toBe(10);
-    expect(new Set(studyTemplates.map((t) => t.key)).size).toBe(10);
+    expect(studyTemplates.length).toBe(16);
+    expect(new Set(studyTemplates.map((t) => t.key)).size).toBe(16);
     for (const template of studyTemplates) {
       expect(STUDY_TYPES, template.key).toContain(template.studyType);
       const keys = template.sections.map((s) => s.key);
@@ -79,7 +79,7 @@ describe("what a template starts with", () => {
     await api.projectCreate({ workspaceId: api.state.workspace.id, title: "John" });
     const { user } = await renderApp(api);
     const form = await screen.findByRole("form", { name: "New study" });
-    const passage = studyTemplates.find((t) => t.key === "pozetek-study")!;
+    const passage = studyTemplates.find((t) => t.key === "pozetek-writing-study")!;
     const starts = `Starts with: ${passage.sections.filter((s) => !s.optional && !s.retired).map((s) => sectionTitle(s)).join(" · ")}.`;
     await waitFor(() => expect(form).toHaveTextContent(starts));
     expect(form).not.toHaveTextContent("Starts with: Notes");

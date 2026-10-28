@@ -64,7 +64,7 @@ export interface StudySection {
 export const SECTION_STATUSES = ["not_started", "in_progress", "complete"] as const;
 export type SectionStatus = (typeof SECTION_STATUSES)[number];
 
-export type FieldKind = "text" | "entries";
+export type FieldKind = "text" | "entries" | "writing" | "guidance" | "heading" | "divider" | "passage" | "concordance" | "cross_references" | "word_lookup" | "search";
 export type PartKind = "line" | "text" | "choice";
 
 export interface EntryPart {
@@ -75,6 +75,8 @@ export interface EntryPart {
 }
 
 export interface TemplateField {
+  label?: string;
+  config?: Record<string, string>;
   key: string;
   kind: FieldKind;
   parts?: EntryPart[];
@@ -209,6 +211,8 @@ export interface CreateStudySection {
 }
 
 export interface CreateStudyBlock {
+  /** Optional entry values or evidence provenance, committed with the content. */
+  data?: string;
   sectionId: string;
   blockType: BlockType;
   content?: string;

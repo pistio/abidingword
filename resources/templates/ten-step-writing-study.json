@@ -1,0 +1,139 @@
+{
+  "key": "ten-step-writing-study",
+  "name": "Ten-Step Bible Study",
+  "description": "A thorough passage study following the ten interpretive steps presented by Helge Stadelmann and Thomas Richter. Guidance and the optional Matthew 8:18–27 example are independently written.",
+  "studyType": "passage",
+  "sections": [
+    {
+      "key": "step-01-familiarity",
+      "title": "1 — Become familiar with the text",
+      "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-02-text",
+      "title": "2 — Establish the textual basis",
+      "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-03-situation",
+      "title": "3 — Clarify the original communication situation",
+      "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-04-context",
+      "title": "4 — Understand the context",
+      "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-05-genre",
+      "title": "5 — Examine the type of text",
+      "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-06-language",
+      "title": "6 — Examine words and sentences",
+      "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-07-flow",
+      "title": "7 — Trace the train of thought",
+      "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-08-theology",
+      "title": "8 — Clarify theological questions",
+      "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-09-message",
+      "title": "9 — Formulate the central message",
+      "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "step-10-application",
+      "title": "10 — Understand and apply the meaning today",
+      "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today.",
+      "phase": "application",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    }
+  ],
+  "offered": true
+}

@@ -116,6 +116,16 @@ fn validated_data(data: &str) -> AppResult<()> {
 
 /// Appends a block to the end of a section.
 pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlock> {
+    create_with_data(conn, input, None)
+}
+
+/// Evidence and its provenance are one transaction: a failed save leaves no
+/// empty quotation behind, and never reports a quotation without its source.
+pub fn create_with_data(
+    conn: &Connection,
+    input: &CreateStudyBlock,
+    data: Option<&str>,
+) -> AppResult<StudyBlock> {
     let content = input.content.as_deref().unwrap_or("");
     validate::block_content(content)?;
     let section = sections::get(conn, &input.section_id)?;
@@ -132,7 +142,17 @@ pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlo
             )));
         }
     }
-    let position: i64 = conn.query_row(
+    if let Some(data) = data {
+        if field_key.is_none() {
+            return Err(AppError::InvalidInput(crate::error::UserMessage::new(
+                "validation.entryInvalid",
+                "This entry could not be saved.",
+            )));
+        }
+        validated_data(data)?;
+    }
+    let tx = conn.unchecked_transaction()?;
+    let position: i64 = tx.query_row(
         "SELECT COALESCE(MAX(position), -1) + 1 FROM study_blocks
          WHERE section_id = ?1 AND deleted_at IS NULL",
         [&section.id],
@@ -140,17 +160,19 @@ pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlo
     )?;
     let now = now();
     let id = insert_answer(
-        conn,
+        &tx,
         &section.id,
         input.block_type,
         position,
         content,
         field_key,
-        None,
+        data,
         &now,
     )?;
-    studies::touch(conn, &section.study_id, &now)?;
-    get(conn, &id)
+    studies::touch(&tx, &section.study_id, &now)?;
+    let block = get(&tx, &id)?;
+    tx.commit()?;
+    Ok(block)
 }
 
 pub fn update(conn: &Connection, input: &UpdateStudyBlock) -> AppResult<StudyBlock> {

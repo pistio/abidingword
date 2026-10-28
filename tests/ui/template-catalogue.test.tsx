@@ -25,7 +25,7 @@ for (const { code } of LANGUAGES) {
         const path = `studies.builtin.templates.${template.key}`;
         expect(templateName(template)).toBe(i18n.getResource(code, "translation", `${path}.name`));
         expect(templateDescription(template)).toBe(i18n.getResource(code, "translation", `${path}.description`));
-        expect(templateName(template).includes("POZETEK")).toBe(code === "de" && template.key === "pozetek-study");
+        expect(templateName(template).includes("POZETEK")).toBe(code === "de" && template.key === "pozetek-writing-study");
         for (const section of template.sections) {
           const base = `${path}.sections.${section.key}`;
           expect(i18n.getResource(code, "translation", `${base}.title`)).toBeTruthy();
@@ -67,7 +67,7 @@ for (const { code } of LANGUAGES) {
         const study = api.state.studies[0]!;
         expect(study.studyType).toBe(type);
         const template = api.state.templates.find((t) => t.id === study.templateId)!;
-        expect(template.key).toBe(type === "character" ? "biblical-character-study" : "whole-book-study");
+        expect(template.key).toBe(type === "character" ? "character-research-study" : "book-research-study");
         const parts = await api.studySectionList(study.id);
         expect(parts).toHaveLength(7);
         expect(parts.every((s) => s.blocks.every((b) => b.content === ""))).toBe(true);
@@ -78,7 +78,7 @@ for (const { code } of LANGUAGES) {
 }
 
 it("offers both passage methods and uses the selected template", async () => {
-  for (const key of ["pozetek-study", "ten-step-exegesis"]) {
+  for (const key of ["pozetek-writing-study", "ten-step-writing-study"]) {
     const api = createMemoryApi();
     const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Passages" });
     const user = userEvent.setup();

@@ -160,7 +160,9 @@
     "duplicateKey": "Le modèle contient deux fois la même partie. Retirez-en une.",
     "invalidKey": "L’identifiant de cette partie n’est pas valide.",
     "unknownPart": "Cette partie du modèle n’est plus disponible.",
-    "partAlreadyAdded": "Cette partie du modèle figure déjà dans l’étude."
+    "partAlreadyAdded": "Cette partie du modèle figure déjà dans l’étude.",
+    "tooManyBlocks": "Une partie peut contenir au maximum {{max}} blocs.",
+    "duplicateBlockKey": "Chaque bloc doit avoir un identifiant unique et non vide."
   },
   "sections": {
     "hasContent": "« {{title}} » contient encore du texte ou des notes.",

@@ -31,6 +31,12 @@ const BUILTIN: &[&str] = &[
     include_str!("../../../resources/templates/biblical-theology-study.json"),
     include_str!("../../../resources/templates/systematic-theology-study.json"),
     include_str!("../../../resources/templates/teaching-study.json"),
+    include_str!("../../../resources/templates/pozetek-writing-study.json"),
+    include_str!("../../../resources/templates/ten-step-writing-study.json"),
+    include_str!("../../../resources/templates/word-research-study.json"),
+    include_str!("../../../resources/templates/topical-research-study.json"),
+    include_str!("../../../resources/templates/character-research-study.json"),
+    include_str!("../../../resources/templates/book-research-study.json"),
 ];
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -206,6 +212,37 @@ fn validated(input: &TemplateInput) -> AppResult<(String, Option<String>, Vec<Te
             )
             .with("key", key),
         ));
+    }
+    // Block keys identify persisted answers. Never accept ambiguous or empty identities.
+    for section in &input.sections {
+        let mut field_keys = std::collections::HashSet::new();
+        if section.fields.len() > 40 {
+            return Err(AppError::InvalidInput(
+                UserMessage::new(
+                    "templates.tooManyBlocks",
+                    "A part can have at most 40 blocks.",
+                )
+                .with("max", 40),
+            ));
+        }
+        for field in &section.fields {
+            // Legacy field identities were arbitrary strings; do not normalise or restrict them.
+            if field.key.is_empty() || !field_keys.insert(&field.key) {
+                return Err(AppError::InvalidInput(
+                    UserMessage::new(
+                        "templates.duplicateBlockKey",
+                        "Blocks need distinct, nonempty keys.",
+                    )
+                    .with("key", &field.key),
+                ));
+            }
+            if let Some(label) = &field.label {
+                validate::title(label, "block")?;
+            }
+            for value in field.config.values() {
+                validate::optional_text(Some(value), DESCRIPTION_MAX_CHARS, "guidance")?;
+            }
+        }
     }
     let sections = input
         .sections

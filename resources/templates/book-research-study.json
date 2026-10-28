@@ -1,0 +1,126 @@
+{
+  "key": "book-research-study",
+  "name": "Whole-Book Bible Study",
+  "description": "Read an entire biblical book, trace its structure and message, and apply its teaching.",
+  "studyType": "book",
+  "sections": [
+    {
+      "key": "reading",
+      "title": "Read the whole book",
+      "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "passage",
+          "kind": "passage"
+        },
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "setting",
+      "title": "Author, audience and setting",
+      "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "search",
+          "kind": "search"
+        },
+        {
+          "key": "cross-references",
+          "kind": "cross_references"
+        },
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "overview",
+      "title": "Overview and central concerns",
+      "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "outline",
+      "title": "Structure and content",
+      "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "argument",
+      "title": "Message and development",
+      "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "synthesis",
+      "title": "Central message",
+      "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "application",
+      "title": "Application",
+      "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible.",
+      "phase": "application",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "further",
+      "title": "Further study",
+      "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit.",
+      "optional": true,
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    }
+  ],
+  "offered": true
+}

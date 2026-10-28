@@ -258,7 +258,10 @@ fn builtin_templates_are_installed_once() {
         templates::ensure_builtin(conn)?;
         let count: i64 =
             conn.query_row("SELECT COUNT(*) FROM study_templates", [], |r| r.get(0))?;
-        assert_eq!(count, 10, "six current and four legacy built-in templates");
+        assert_eq!(
+            count, 16,
+            "six current and ten preserved legacy built-in templates"
+        );
         let rewritten: i64 = conn.query_row(
             "SELECT COUNT(*) FROM study_templates WHERE revision <> 1",
             [],

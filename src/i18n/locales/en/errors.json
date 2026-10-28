@@ -149,7 +149,9 @@
     "duplicateKey": "Two parts of the template are the same part. Remove one of them.",
     "invalidKey": "This part’s key is not valid.",
     "unknownPart": "This template part is no longer available.",
-    "partAlreadyAdded": "This template part is already in the study."
+    "partAlreadyAdded": "This template part is already in the study.",
+    "tooManyBlocks": "A part can have at most {{max}} blocks.",
+    "duplicateBlockKey": "Blocks need distinct, nonempty keys."
   },
   "sections": {
     "hasContent": "“{{title}}” still has writing or notes in it.",

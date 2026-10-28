@@ -139,7 +139,7 @@ pub(crate) fn seed_blocks(
     for (position, field) in snapshot
         .fields
         .iter()
-        .filter(|f| f.kind == FieldKind::Text)
+        .filter(|f| matches!(f.kind, FieldKind::Text | FieldKind::Writing))
         .enumerate()
     {
         blocks::insert_answer(

@@ -1,6 +1,12 @@
+import research0 from "../../resources/templates/word-research-study.json";
+import research1 from "../../resources/templates/topical-research-study.json";
+import research2 from "../../resources/templates/character-research-study.json";
+import research3 from "../../resources/templates/book-research-study.json";
 // An in-memory implementation of the native API for interface tests.
 // It mirrors the behaviour the Rust layer guarantees (validation messages,
 // template sections, soft delete), not its storage.
+import pozetekWriting from "../../resources/templates/pozetek-writing-study.json";
+import tenStepWriting from "../../resources/templates/ten-step-writing-study.json";
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
 import characterStudy from "../../resources/templates/biblical-character-study.json";
 import bookStudy from "../../resources/templates/whole-book-study.json";
@@ -88,7 +94,7 @@ import { inquiryApi, newInquiryState, type InquiryState } from "./memoryInquiry"
 import { newPresentationState, presentationApi, type PresentationState } from "./memoryPresentation";
 import { newPortabilityState, portabilityApi, type PortabilityState } from "./memoryPortability";
 
-const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [ passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy, pozetekWriting, tenStepWriting, research0, research1, research2, research3];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -498,7 +504,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       phase: section.phase ?? null, position, status: "not_started", fields, blocks: [], createdAt: t, updatedAt: t, revision: 1,
     });
     // As the core: a part with fields starts with one empty block per single-text field, otherwise one paragraph.
-    const starts = fields ? fields.fields.filter((f) => f.kind === "text").map((f) => f.key) : [null];
+    const starts = fields ? fields.fields.filter((f) => (f.kind === "text" || f.kind === "writing")).map((f) => f.key) : [null];
     starts.forEach((fieldKey, index) =>
       state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: index, content: "", fieldKey, data: null, createdAt: t, updatedAt: t, revision: 1 }),
     );
@@ -1340,6 +1346,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     },
     studyBlockCreate: async (input) => {
       find(state.sections, input.sectionId, "section");
+      if (input.data !== undefined) {
+        const data: unknown = JSON.parse(input.data);
+        if (!input.fieldKey || !data || typeof data !== "object" || Array.isArray(data) || !Object.values(data).every(value => typeof value === "string")) throw new Error("Invalid entry data");
+      }
       const t = now();
       const block: StudyBlock = {
         id: id(),
@@ -1348,7 +1358,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         position: state.blocks.filter((b) => b.sectionId === input.sectionId).length,
         content: input.content ?? "",
         fieldKey: input.fieldKey ?? null,
-        data: null,
+        data: input.data ?? null,
         createdAt: t,
         updatedAt: t,
         revision: 1,

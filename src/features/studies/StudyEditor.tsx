@@ -68,6 +68,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
   };
   const noteButton = useRef<HTMLButtonElement>(null);
   // Parts folded away, remembered for this study on this computer (a convenience, never study data).
+  const [continuous, setContinuous] = useState(() => readLocal<boolean>(`study.continuous.${studyId}`, false));
   const [collapsed, setCollapsedState] = useState<ReadonlySet<string>>(() => new Set(readLocal<string[]>(collapsedKey(studyId), [])));
   const setCollapsed = useCallback(
     (next: ReadonlySet<string>) => {
@@ -346,7 +347,8 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           )}
           {view === "study" && <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />}
           {view === "study" && <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />}
-          {view === "study" && sections.length > 1 && (
+          {view === "study" && <button type="button" className="min-h-11 px-2" aria-pressed={continuous} onClick={() => { setContinuous(!continuous); writeLocal(`study.continuous.${studyId}`, !continuous); }}>{t(continuous ? "studies.flow.outline" : "studies.flow.continuous")}</button>}
+          {view === "study" && !continuous && sections.length > 1 && (
             <button
               type="button"
               onClick={() => setCollapsed(allCollapsed ? new Set() : new Set(sections.map((sec) => sec.id)))}
@@ -389,7 +391,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           notes={sectionNotes(section.id)}
           noteCount={(findings.data ?? []).filter((f) => f.sectionId === section.id).length}
           capture={capture(section)}
-          collapsed={collapsed.has(section.id)}
+          collapsed={!continuous && collapsed.has(section.id)}
           onCollapsedChange={(fold) => setCollapsed(fold ? new Set([...collapsed, section.id]) : new Set([...collapsed].filter((id) => id !== section.id)))}
           onAddWriting={() => void addWriting(section)}
           onAddNote={(kind) => {

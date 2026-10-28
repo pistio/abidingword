@@ -259,3 +259,69 @@ node scripts/build-provenance.mjs \
 The delivered source-evidence JSON records the final full commit SHA and all
 24 SQL hashes. It is not a Windows binary attestation. No dependency lockfile or
 historical migration 1–23 was changed. The only new migration is 24.
+
+
+## Next development track: study-flow and teaching simplification
+
+The follow-on branch `feature/study-flow-and-teaching-simplification` is based on the
+validated schema-24 repair commit `0551f22061b3b3219315930c5061be501e94f350`.
+This section records the owner's accepted product requirements; it does not
+claim the features have been implemented.
+
+### Study methods and interaction
+
+- POZETEK: retain the seven German mnemonic steps Personen, Ort, Zeit,
+  Ereignisse, Thema, Erkenntnisse, Konsequenzen. Exactly one spacious editable
+  free-text answer per step, no mandatory nested subfields. Explain each step
+  behind a collapsed hint or information control. Support a continuous view.
+- Ten-Step Exegesis: exactly one free-text answer per step, optional collapsed
+  guidance, no required subquestions. The user chooses their own organisation.
+- Other locales should translate the *purpose* rather than mechanically
+  transliterate the German acronym. The Ereignisse concept covers narrative
+  events, passage structure, logical flow, and argument progression. Suggested
+  labels: EN Flow of the Passage; KO 본문의 흐름; FR Déroulement du passage;
+  ES Desarrollo del pasaje; pt-BR Desenvolvimento do texto. Keep German
+  Ereignisse to preserve POZETEK.
+- Preserve every existing study answer and old template definition. Never
+  silently concatenate, drop, or overwrite legacy structured-field answers.
+  Provide a visible legacy detail view if needed.
+
+### Reusable research tools and template builder
+
+- Provide optional concordance, Scripture cross-reference, original-language
+  word lookup, and concept/word/person searches in study contexts, especially
+  Word, Topical, and Character studies. Results must preserve passage and
+  edition provenance when inserted or cited.
+- Implement these as reusable, configurable blocks accessible to user-created
+  templates, not built-in-only special cases. Other blocks include passage
+  selector, free text, headings/dividers and optional collapsed guidance.
+- User can add, remove, rename, reorder, duplicate, and configure blocks.
+  Built-ins remain recoverable defaults; duplicating one creates a personal
+  editable template. Avoid introducing AI dependency for research.
+- Reuse existing search and concordance services where possible, and clearly
+  distinguish search evidence from personal conclusions.
+
+### Two-stage workflow
+
+1. Bible Study: investigate Scripture and write conclusions.
+2. Optional Teaching: create one or more sessions from a study.
+
+Remove the redundant user-facing `Lehrvorbereitung` stage, **not** existing
+teaching materials or underlying capabilities. Teaching types:
+`Predigt / Vortrag` (one combined type), `Bibelstudium` (group discussion;
+Hauskreis is an example), `Bibelunterricht`. All share one editor and
+presentation pipeline, with suggested outlines rather than incompatible
+storage systems. Existing teaching sessions must remain accessible.
+
+### Delivery order and safeguards
+
+1. Simplify POZETEK and Ten-Step views and locale guidance.
+2. Generalise reusable research blocks and the template builder.
+3. Consolidate teaching navigation/types and study-to-teaching creation.
+
+Use cloud development and disposable databases only. Preserve migrations
+1–24 and append new migrations only if truly required. Do not modify Claude's
+recognition branch. Run frontend/Rust/i18n/portability/regression suites,
+including legacy-study and teaching preservation checks. Do not merge,
+publish, deploy, run paid workflows or modify Windows user data without
+separate owner approval.

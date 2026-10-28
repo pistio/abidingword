@@ -160,7 +160,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine);
     await original(user, reader);
-    await user.click(within(reader).getByRole("button", { name: "Contents" }));
+    await user.click(await within(reader).findByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: /^Chapter Two/ }));
     await waitFor(() => expect(part(reader)).toBe("Part 2 of 3"));
     expect(within(await page(reader)).getByRole("heading", { name: "Chapter Two" })).toBeInTheDocument();
@@ -209,7 +209,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine);
     await original(user, reader);
-    await user.click(within(reader).getByRole("button", { name: "Contents" }));
+    await user.click(await within(reader).findByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: /^Chapter Two/ }));
     await waitFor(() => expect(part(reader)).toBe("Part 2 of 3"));
     await user.click(within(await page(reader)).getByRole("link", { name: "the marker" }));
@@ -302,7 +302,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
   it("keeps the place when switching: Reading's text on top is where Original opens, and back again", async () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine);
-    await user.click(within(reader).getByRole("button", { name: "Contents" }));
+    await user.click(await within(reader).findByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: /^Chapter Two/ }));
     await waitFor(() => expect(readingTop).toBe(4));
     await original(user, reader);

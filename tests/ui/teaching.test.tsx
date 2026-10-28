@@ -1265,7 +1265,7 @@ describe("the teaching canvas", () => {
     await user.type(field(article, "Introduction"), "Have you pruned a rose?");
     await settle();
     const info = await openAbout(user, article);
-    await user.selectOptions(within(info).getByRole("combobox", { name: "Kind of teaching" }), "children");
+    await user.selectOptions(within(info).getByRole("combobox", { name: "Kind of teaching" }), "lesson");
     await user.click(within(info).getByRole("button", { name: "Save" }));
     // A lesson has no separate introduction, but what was written there is never hidden.
     expect(await within(article).findByRole("textbox", { name: "Opening" })).toHaveValue("Have you pruned a rose?");
