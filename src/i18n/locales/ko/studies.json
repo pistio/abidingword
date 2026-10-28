@@ -806,6 +806,82 @@
             }
           }
         }
+      },
+      "biblical-character-study": {
+        "name": "성경 인물 연구",
+        "description": "관련 성경 본문을 통해 한 인물의 삶과 성품을 살펴봅니다.",
+        "sections": {
+          "person": {
+            "title": "인물과 관련 본문",
+            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name."
+          },
+          "setting": {
+            "title": "역사적·성경적 배경",
+            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain."
+          },
+          "life": {
+            "title": "삶과 말과 행동",
+            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography."
+          },
+          "character": {
+            "title": "성품과 선택",
+            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives."
+          },
+          "god": {
+            "title": "하나님의 역사와 성경의 평가",
+            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary."
+          },
+          "conclusion": {
+            "title": "핵심 발견",
+            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions."
+          },
+          "application": {
+            "title": "적용",
+            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action."
+          },
+          "comparisons": {
+            "title": "관련 인물과 본문",
+            "guidance": "Compare relevant people or passages only where the connections illuminate the text."
+          }
+        }
+      },
+      "whole-book-study": {
+        "name": "성경 한 권 연구",
+        "description": "성경 한 권 전체를 읽고 구조와 핵심 메시지를 파악하여 삶에 적용합니다.",
+        "sections": {
+          "reading": {
+            "title": "책 전체 읽기",
+            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries."
+          },
+          "setting": {
+            "title": "저자와 독자 및 배경",
+            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions."
+          },
+          "overview": {
+            "title": "전체 개관과 주요 관심사",
+            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme."
+          },
+          "outline": {
+            "title": "구조와 내용",
+            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole."
+          },
+          "argument": {
+            "title": "메시지의 전개",
+            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening."
+          },
+          "synthesis": {
+            "title": "핵심 메시지",
+            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text."
+          },
+          "application": {
+            "title": "적용",
+            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible."
+          },
+          "further": {
+            "title": "추가 연구",
+            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
+          }
+        }
       }
     },
     "defaultSection": "노트",
@@ -818,7 +894,9 @@
     "biblical_theology": "성경신학",
     "systematic_theology": "조직신학",
     "teaching": "가르침 / 설교",
-    "custom": "직접 구성한 성경공부"
+    "custom": "직접 구성한 성경공부",
+    "character": "성경 인물 연구",
+    "book": "성경 한 권 연구"
   },
   "status": {
     "active": "진행 중",
