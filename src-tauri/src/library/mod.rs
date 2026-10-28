@@ -188,6 +188,9 @@ pub struct SearchLibrary {
     /// "active" or "archived". Empty: both, and never Trash.
     #[serde(default)]
     pub state: Option<String>,
+    /// Restrict text results to members of this collection, without duplicating hits.
+    #[serde(default)]
+    pub collection_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]

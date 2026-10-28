@@ -534,5 +534,11 @@
     "stopped_other": "Stopped. {{formatted}} sources were added; the others were not.",
     "pages_one": "{{formatted}} page",
     "pages_other": "{{formatted}} pages"
+  },
+  "navigation": {
+    "collection": "Collection",
+    "allCollections": "All collections",
+    "openCollection": "Open collection: {{name}}",
+    "backToLibrary": "Back to Library"
   }
 }

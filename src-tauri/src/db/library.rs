@@ -604,12 +604,23 @@ pub fn search(conn: &Connection, input: &SearchLibrary) -> AppResult<LibraryResu
            AND (?4 IS NULL OR s.source_type = ?4)
            AND (?5 IS NULL OR s.language = ?5)
            AND (?6 IS NULL OR s.state = ?6)
+           AND (?7 IS NULL OR EXISTS (
+             SELECT 1 FROM source_collection_items ci WHERE ci.source_id = s.id AND ci.collection_id = ?7
+           ))
          ORDER BY rank
          LIMIT ?2 OFFSET ?3",
     )?;
     let mut hits = stmt
         .query_map(
-            params![query, SEARCH_PAGE + 1, offset, source_type, language, state],
+            params![
+                query,
+                SEARCH_PAGE + 1,
+                offset,
+                source_type,
+                language,
+                state,
+                input.collection_id
+            ],
             |r| {
                 Ok(LibraryHit {
                     source_id: r.get(0)?,

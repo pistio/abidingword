@@ -15,6 +15,7 @@ import { SourceReader, type ReaderPosition } from "./SourceReader";
 /** A source open inside the Sources pane (kept by the shell, so it survives leaving the workspace). */
 export interface PaneSource {
   sourceId: string;
+  returnToLibrary?: boolean;
   segmentId?: string;
   /** Changes on every open, so opening the same place again re-targets it. */
   key: number;
@@ -29,6 +30,7 @@ export interface PaneSource {
 interface SourcesPaneProps {
   reading?: PaneSource | null;
   onCloseReader?: () => void;
+  onPositionReader?: (sourceId: string, read: (() => ReaderPosition | null) | null) => void;
   onExpandReader?: (position: ReaderPosition) => void;
 }
 
@@ -40,7 +42,7 @@ interface SourcesPaneProps {
  * sources, and the way into the full Library. A source opened from the
  * workspace is read here, beside Scripture and the Study.
  */
-export function SourcesPane({ reading, onCloseReader, onExpandReader }: SourcesPaneProps = {}) {
+export function SourcesPane({ reading, onCloseReader, onExpandReader, onPositionReader }: SourcesPaneProps = {}) {
   const { t } = useTranslation();
   const api = useApi();
   const { openLibrary, openSource, addSource } = useLibraryNav();
@@ -92,6 +94,8 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader }: SourcesP
           segmentId={reading.segmentId}
           initialPosition={reading.position}
           quotedWords={reading.words}
+          onPositionReader={onPositionReader}
+          backLabel={reading.returnToLibrary ? t("library.navigation.backToLibrary") : undefined}
           onClose={() => {
             returning.current = { opener: reading.opener };
             onCloseReader?.();

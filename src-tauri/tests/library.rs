@@ -131,6 +131,7 @@ fn a_text_pdf_keeps_page_provenance() {
                 offset: None,
                 source_type: None,
                 language: None,
+                collection_id: None,
                 state: None,
             },
         )?;
@@ -427,6 +428,7 @@ fn search_pages_results_and_stays_consistent_after_removal() {
                 offset: None,
                 source_type: None,
                 language: None,
+                collection_id: None,
                 state: None,
             },
         )?;
@@ -439,6 +441,7 @@ fn search_pages_results_and_stays_consistent_after_removal() {
                 offset: Some(50),
                 source_type: None,
                 language: None,
+                collection_id: None,
                 state: None,
             },
         )?;
@@ -453,6 +456,7 @@ fn search_pages_results_and_stays_consistent_after_removal() {
                 offset: None,
                 source_type: None,
                 language: None,
+                collection_id: None,
                 state: None,
             }
         )?
@@ -581,6 +585,7 @@ fn findings_cite_segments_and_survive_restart_and_removal() {
                     offset: None,
                     source_type: None,
                     language: None,
+                    collection_id: None,
                     state: None,
                 },
             )?

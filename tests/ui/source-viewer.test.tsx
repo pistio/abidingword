@@ -68,6 +68,52 @@ afterEach(() => {
 });
 
 describe("Reading and Original", () => {
+  it("opens cited words in Reading even when that PDF was last read in Original", async () => {
+    const { api, engine } = setup();
+    const source = api.state.library.sources.find((item) => item.title === VINE.title)!;
+    const segment = api.state.library.segments.find((item) => item.sourceId === source.id && item.position === 2)!;
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Garden series" });
+    const study = await api.studyCreate({ projectId: project.id, title: "Pruning study" });
+    await api.findingCreateFromSource({ studyId: study.study.id, findingType: "observation", content: "My own thought.",
+      sourceId: source.id, start: { segmentId: segment.id, offset: 0 }, end: { segmentId: segment.id, offset: 7 }, quote: "Pruning" });
+    const { user } = await renderApp(api, { pdfEngine: engine });
+    await openFromLibrary(user);
+    await user.click(screen.getByRole("button", { name: "Original" }));
+    await screen.findByTestId("pdf-canvas");
+    await user.click(within(header()).getByRole("button", { name: "Back" }));
+    await screen.findByRole("heading", { level: 1, name: "Library" });
+    await user.click(screen.getByRole("button", { name: "Back to workspace" }));
+    await user.click(await screen.findByRole("button", { name: /Pruning study/ }));
+    await user.click(await screen.findByTitle("Open this source at the cited place"));
+    const reader = await within(sourcesPane()).findByRole("region", { name: VINE.title });
+    await waitFor(() => expect(reader.querySelector("[data-quoted]")).toHaveTextContent("Pruning"));
+    expect(within(reader).getByRole("button", { name: "Reading" })).toHaveAttribute("aria-pressed", "true");
+    expect(within(reader).queryByTestId("pdf-viewer")).toBeNull();
+  });
+
+  it("resumes an Original PDF at the same fraction of its page after returning to the Library", async () => {
+    vi.spyOn(HTMLElement.prototype, "scrollHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLElement.prototype, "offsetHeight", "get").mockImplementation(function (this: HTMLElement) {
+      return this.dataset.page ? 1000 : 0;
+    });
+    vi.spyOn(HTMLElement.prototype, "offsetTop", "get").mockImplementation(function (this: HTMLElement) {
+      return this.dataset.page ? 12 + (Number(this.dataset.page) - 1) * 1012 : 0;
+    });
+    const { api, engine } = setup({ pages: 1 });
+    const { user } = await renderApp(api, { pdfEngine: engine });
+    await openFromLibrary(user);
+    await user.click(screen.getByRole("button", { name: "Original" }));
+    await screen.findByTestId("pdf-canvas");
+    await act(async () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+    (screen.getByTestId("pdf-canvas").parentElement as HTMLElement).scrollTop = 425;
+    await user.click(within(header()).getByRole("button", { name: "Back" }));
+    await screen.findByRole("heading", { level: 1, name: "Library" });
+    await user.click(await within(screen.getByRole("list", { name: "Sources" })).findByRole("button", { name: /^Notes on the Vine/ }));
+    await screen.findByTestId("pdf-canvas");
+    await waitFor(() => expect(screen.getByTestId("pdf-canvas").parentElement!.scrollTop).toBe(425));
+    expect(pageBox()).toHaveValue("1");
+  });
+
   it("opens in Reading, the existing extracted-text reader", async () => {
     const { api, engine } = setup();
     const { user } = await renderApp(api, { pdfEngine: engine });
