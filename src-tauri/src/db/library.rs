@@ -84,17 +84,64 @@ fn source_from_row(row: &Row) -> rusqlite::Result<Source> {
         content_hash: row.get(20)?,
         created_at: row.get(21)?,
         updated_at: row.get(22)?,
+        state: String::new(),
+        collection_names: Vec::new(),
+        tag_names: Vec::new(),
+        file_present: false,
     })
 }
 
+/// Collections, tags and state already stored for a source. Names only:
+/// the reader shows them and never writes them.
+fn organisation(conn: &Connection, id: &str) -> AppResult<(String, Vec<String>, Vec<String>)> {
+    // A database from before v0.24 (schema 19) has no state, collections or tags.
+    // Import still reads the source back before that database is upgraded.
+    let ready: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM pragma_table_info('sources') WHERE name = 'state'",
+        [],
+        |r| r.get(0),
+    )?;
+    if ready == 0 {
+        return Ok(("active".into(), Vec::new(), Vec::new()));
+    }
+    let state: String = conn.query_row("SELECT state FROM sources WHERE id = ?1", [id], |r| {
+        r.get(0)
+    })?;
+    let mut collections = conn.prepare(
+        "SELECT c.name FROM source_collection_items i
+         JOIN source_collections c ON c.id = i.collection_id
+         WHERE i.source_id = ?1 ORDER BY c.name COLLATE NOCASE",
+    )?;
+    let collection_names = collections
+        .query_map([id], |r| r.get(0))?
+        .collect::<Result<Vec<String>, _>>()?;
+    let mut tags = conn.prepare(
+        "SELECT t.name FROM source_tag_items i
+         JOIN source_tags t ON t.id = i.tag_id
+         WHERE i.source_id = ?1 ORDER BY t.name COLLATE NOCASE",
+    )?;
+    let tag_names = tags
+        .query_map([id], |r| r.get(0))?
+        .collect::<Result<Vec<String>, _>>()?;
+    Ok((state, collection_names, tag_names))
+}
+
 pub fn get(conn: &Connection, id: &str) -> AppResult<Source> {
-    conn.query_row(
-        &format!("{SOURCE_SELECT} WHERE s.id = ?1 AND s.deleted_at IS NULL"),
-        [id],
-        source_from_row,
-    )
-    .optional()?
-    .ok_or_else(|| AppError::not_found("source", id))
+    let mut source = conn
+        .query_row(
+            &format!("{SOURCE_SELECT} WHERE s.id = ?1 AND s.deleted_at IS NULL"),
+            [id],
+            source_from_row,
+        )
+        .optional()?
+        .ok_or_else(|| AppError::not_found("source", id))?;
+    let (state, collections, tags) = organisation(conn, id)?;
+    source.state = state;
+    source.collection_names = collections;
+    source.tag_names = tags;
+    // The row says a file was stored. The command checks that the file is still on disk.
+    source.file_present = source.format.is_some();
+    Ok(source)
 }
 
 /// Library list: live sources, newest first, lightweight rows.
@@ -510,6 +557,10 @@ pub fn segment(conn: &Connection, id: &str) -> AppResult<(String, SourceSegment)
 }
 
 /// Full-text search over segment text, best matches first, paged.
+///
+/// Title and author search stays on the Sources list (`library_manage::list`).
+/// This query only reads the existing segment index, with the same type,
+/// language and archive limits the Library page applies to that list.
 pub fn search(conn: &Connection, input: &SearchLibrary) -> AppResult<LibraryResults> {
     let Some(query) = crate::db::fts::query(&input.query) else {
         return Err(AppError::InvalidInput(UserMessage::new(
@@ -517,6 +568,31 @@ pub fn search(conn: &Connection, input: &SearchLibrary) -> AppResult<LibraryResu
             "Type a word or phrase to search for.",
         )));
     };
+    let state = match input
+        .state
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+    {
+        None => None,
+        Some(state @ ("active" | "archived")) => Some(state.to_string()),
+        Some(other) => {
+            return Err(AppError::InvalidInput(
+                UserMessage::new(
+                    "invalidChoice",
+                    format!("“{other}” is not a valid source state."),
+                )
+                .with("value", other),
+            ));
+        }
+    };
+    let source_type = input.source_type.map(|kind| kind.as_str().to_string());
+    let language = input
+        .language
+        .as_deref()
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(str::to_string);
     let offset = input.offset.unwrap_or(0).max(0);
     let mut stmt = conn.prepare(
         "SELECT s.id, s.title, s.author, g.id, g.position, g.page_number, g.locator,
@@ -525,23 +601,29 @@ pub fn search(conn: &Connection, input: &SearchLibrary) -> AppResult<LibraryResu
          JOIN source_segments g ON g.seq = library_search.rowid
          JOIN sources s ON s.id = g.source_id AND s.deleted_at IS NULL AND s.state <> 'trashed'
          WHERE library_search MATCH ?1
+           AND (?4 IS NULL OR s.source_type = ?4)
+           AND (?5 IS NULL OR s.language = ?5)
+           AND (?6 IS NULL OR s.state = ?6)
          ORDER BY rank
          LIMIT ?2 OFFSET ?3",
     )?;
     let mut hits = stmt
-        .query_map(params![query, SEARCH_PAGE + 1, offset], |r| {
-            Ok(LibraryHit {
-                source_id: r.get(0)?,
-                source_title: r.get(1)?,
-                author: r.get(2)?,
-                segment_id: r.get(3)?,
-                position: r.get(4)?,
-                page_number: r.get(5)?,
-                locator: r.get::<_, Option<String>>(6)?.unwrap_or_default(),
-                snippet: r.get(7)?,
-                archived: r.get::<_, String>(8)? == "archived",
-            })
-        })?
+        .query_map(
+            params![query, SEARCH_PAGE + 1, offset, source_type, language, state],
+            |r| {
+                Ok(LibraryHit {
+                    source_id: r.get(0)?,
+                    source_title: r.get(1)?,
+                    author: r.get(2)?,
+                    segment_id: r.get(3)?,
+                    position: r.get(4)?,
+                    page_number: r.get(5)?,
+                    locator: r.get::<_, Option<String>>(6)?.unwrap_or_default(),
+                    snippet: r.get(7)?,
+                    archived: r.get::<_, String>(8)? == "archived",
+                })
+            },
+        )?
         .collect::<Result<Vec<_>, _>>()?;
     let has_more = hits.len() as i64 > SEARCH_PAGE;
     hits.truncate(SEARCH_PAGE as usize);

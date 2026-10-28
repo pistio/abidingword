@@ -682,6 +682,9 @@ fn adding_exactly_the_cited_file_to_the_library_reconnects_kept_citations() {
                 &SearchLibrary {
                     query: "branch".into(),
                     offset: None,
+                    source_type: None,
+                    language: None,
+                    state: None,
                 },
             )?
             .hits

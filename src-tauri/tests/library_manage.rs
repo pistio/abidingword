@@ -69,6 +69,14 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
     );
     with_db(|conn| {
         let id = add(conn, &staged, "Abide")?;
+        let collection = library_manage::create_collection(conn, "Commentaries", None)?;
+        library_manage::collect(conn, &collection.id, std::slice::from_ref(&id), true)?;
+        library_manage::retag(conn, std::slice::from_ref(&id), &["grace".into()], &[])?;
+        let placed = library::get(conn, &id)?;
+        assert_eq!(placed.state, "active");
+        assert_eq!(placed.collection_names, vec!["Commentaries".to_string()]);
+        assert_eq!(placed.tag_names, vec!["grace".to_string()]);
+        assert!(placed.file_present);
         let john = ScriptureRef::from_canonical("JHN.15.5").unwrap();
         let search = |conn: &Connection| {
             library::search(
@@ -76,6 +84,9 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
                 &SearchLibrary {
                     query: "vine".into(),
                     offset: None,
+                    source_type: None,
+                    language: None,
+                    state: None,
                 },
             )
         };
@@ -88,6 +99,39 @@ fn archive_trash_and_restore_move_a_source_between_lists_without_losing_anything
         let hits = search(conn)?.hits;
         assert_eq!(hits.len(), 1);
         assert!(hits[0].archived);
+        let active_only = library::search(
+            conn,
+            &SearchLibrary {
+                query: "vine".into(),
+                offset: None,
+                source_type: None,
+                language: None,
+                state: Some("active".into()),
+            },
+        )?;
+        assert!(active_only.hits.is_empty());
+        let archived_only = library::search(
+            conn,
+            &SearchLibrary {
+                query: "vine".into(),
+                offset: None,
+                source_type: Some(SourceType::Notes),
+                language: Some("no-such-language".into()),
+                state: Some("archived".into()),
+            },
+        )?;
+        assert!(archived_only.hits.is_empty());
+        let archived_notes = library::search(
+            conn,
+            &SearchLibrary {
+                query: "vine".into(),
+                offset: None,
+                source_type: Some(SourceType::Notes),
+                language: None,
+                state: Some("archived".into()),
+            },
+        )?;
+        assert_eq!(archived_notes.hits.len(), 1);
 
         // In Trash: hidden everywhere, text and links kept.
         library_manage::set_source_state(conn, &ids(&[&id]), ItemState::Trashed)?;

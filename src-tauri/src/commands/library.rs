@@ -50,7 +50,20 @@ pub fn library_languages(state: State<'_, AppState>) -> CommandResult<Vec<String
 
 #[tauri::command(async)]
 pub fn library_get_source(state: State<'_, AppState>, id: String) -> CommandResult<Source> {
-    state.db(|conn| library::get(conn, &id))
+    let mut source = state.db(|conn| library::get(conn, &id))?;
+    // A file row can outlive the managed copy. The reader says so, and no path leaves the core.
+    if let Ok(core) = state.core() {
+        source.file_present = match core
+            .db
+            .with_conn(|conn| library::original_record(conn, &id))
+        {
+            Ok((relative, _)) => {
+                original::verified_path(&core.dirs.sources(), &id, &relative).is_ok()
+            }
+            Err(_) => false,
+        };
+    }
+    Ok(source)
 }
 
 /// Reads and checks one chosen file; nothing is saved yet.

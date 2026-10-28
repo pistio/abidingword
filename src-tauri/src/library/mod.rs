@@ -98,6 +98,15 @@ pub struct Source {
     pub content_hash: Option<String>,
     pub created_at: String,
     pub updated_at: String,
+    /// "active", "archived" or "trashed".
+    pub state: String,
+    /// Names of the collections this source belongs to.
+    pub collection_names: Vec<String>,
+    /// Names of the tags on this source.
+    pub tag_names: Vec<String>,
+    /// Whether a primary file row exists. The get-source command sets this
+    /// false when that managed file is not on disk.
+    pub file_present: bool,
 }
 
 /// One row of the library list.
@@ -170,6 +179,15 @@ pub struct SearchLibrary {
     pub query: String,
     #[serde(default)]
     pub offset: Option<i64>,
+    /// Limit hits to one source type. Empty: every type.
+    #[serde(default)]
+    pub source_type: Option<SourceType>,
+    /// Limit hits to one stored language. Empty: every language.
+    #[serde(default)]
+    pub language: Option<String>,
+    /// "active" or "archived". Empty: both, and never Trash.
+    #[serde(default)]
+    pub state: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
