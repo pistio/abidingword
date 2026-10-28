@@ -1708,11 +1708,13 @@
         "points": "Le modèle reprend la forme et autant de points principaux que cet enseignement, dans l’ordre. Les points commencent sans titre.",
         "generalPoints": "Le modèle reprend la forme et autant de points principaux que cet enseignement, dans l’ordre. Les points commencent sans titre.",
         "questions": "Le modèle reprend la forme et autant de questions que cet enseignement. Les questions commencent vides.",
-        "steps": "Le modèle reprend la forme et les étapes dans l’ordre, chacune avec son titre et son type."
+        "steps": "Le modèle reprend la forme et les étapes dans l’ordre, chacune avec son titre et son type.",
+        "blocks": "Le modèle reprend la forme et les sections et blocs avec lesquels cet enseignement commence, dans l’ordre. Rien de ce qui est écrit dans les blocs n’est repris."
       },
       "notKept": "Rien de ce que vous avez écrit n’est repris : ni le public, ni le but, ni le message, ni l’introduction, ni la conclusion, ni les notes ; rien de ce qui est écrit sous un point, une question ou une étape ; aucun passage, aucun élément conservé, aucune note de votre étude.",
       "saved": "Enregistré comme votre modèle « {{name}} ». Vous pouvez le choisir pour votre prochain enseignement, et le modifier dans Paramètres → Modèles.",
-      "tooMany": "Un modèle peut commencer avec {{max}} points, questions ou étapes au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles."
+      "tooMany": "Un modèle peut commencer avec {{max}} points, questions ou étapes au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles.",
+      "tooManyBlocks": "Un modèle peut commencer avec {{max}} blocs au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles."
     },
     "addStepMenu": "Type d’étape à ajouter",
     "newTeaching": "Nouvel enseignement biblique",
@@ -1744,6 +1746,10 @@
       "participant": "Montrer aux participants",
       "settings": "Ce bloc",
       "empty": "Cet enseignement est encore vide. Ajoutez une section ou un espace d’écriture quand vous voulez.",
+      "viewLabel": "Façon d’écrire",
+      "viewContinuous": "Texte suivi",
+      "viewOutline": "Plan",
+      "headingLabel": "Titre",
       "templateHeading": "Blocs",
       "templateHint": "Ajoutez, réordonnez, dupliquez et renommez les sections et les blocs d’un nouvel enseignement. Ce que vous écrivez dans un enseignement ne reste pas dans le modèle.",
       "titleOf": "Titre de {{name}}",
@@ -1779,15 +1785,15 @@
         "blocks": {
           "erkennen": {
             "title": "Observer",
-            "guidance": "Que dit vraiment le passage, et que peut découvrir le groupe ? On peut lire ensemble, réécouter, puis redire avec ses mots."
+            "guidance": "Que dit vraiment le passage, et que peut découvrir le groupe ? Suggestions facultatives Campus Connect 3×3 : lire ensemble, réécouter, puis redire avec ses mots."
           },
           "verstehen": {
             "title": "Comprendre",
-            "guidance": "Le sens dans le contexte littéraire, historique et biblique, et le message central. Ce qui est devenu important, ce que le texte dit de Dieu et des humains, et comment le contexte aide."
+            "guidance": "Le sens dans le contexte littéraire, historique et biblique, et le message central. Suggestions facultatives Campus Connect 3×3 : ce qui est devenu important, ce que le texte dit de Dieu et des humains, comment le contexte aide."
           },
           "anwenden": {
             "title": "Appliquer",
-            "guidance": "Ce qui suit pour la foi, la compréhension, les décisions, la conduite et les relations. Ce qui change, ce que l’on fera, qui cela peut encourager."
+            "guidance": "Ce qui suit pour la foi, la compréhension, les décisions, la conduite et les relations. Suggestions facultatives Campus Connect 3×3 : ce qui change, ce que l’on fera, qui cela peut encourager."
           }
         }
       },
@@ -1813,6 +1819,10 @@
         "name": "Leçon biblique — enfants et jeunes",
         "hint": "Une seule leçon pour les enfants ou les jeunes. L’âge change la façon de raconter, pas le sens du passage.",
         "blocks": {
+          "prepare": {
+            "title": "Préparation",
+            "guidance": "Facultatif : l’âge pour lequel vous préparez, le temps dont vous disposez, et ce que vous souhaitez qu’ils emportent. L’âge change la façon de raconter, pas le sens du passage. Ajoutez des blocs de durée ou d’objectifs seulement si vous les voulez."
+          },
           "story": {
             "title": "Récit",
             "guidance": "Racontez le passage d’une façon qui convient à l’âge. Le sens reste celui du texte."

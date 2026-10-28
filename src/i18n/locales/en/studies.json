@@ -1697,11 +1697,13 @@
         "points": "The template keeps the format and as many main points as this teaching has, in order. The points start without titles.",
         "generalPoints": "The template keeps the format and as many main points as this teaching has, in order. The points start without titles.",
         "questions": "The template keeps the format and as many questions as this teaching has. The questions start empty.",
-        "steps": "The template keeps the format and the steps in order, each with its title and kind."
+        "steps": "The template keeps the format and the steps in order, each with its title and kind.",
+        "blocks": "The template keeps the format and the sections and blocks this teaching starts with, in order. Nothing written in the blocks comes with it."
       },
       "notKept": "Nothing you wrote comes with it: not the audience, purpose, message, introduction, conclusion or notes; nothing written under a point, question or step; no passages, kept material or notes from your study.",
       "saved": "Saved as your template “{{name}}”. You can choose it for your next Bible Teaching, and change it in Settings → Templates.",
-      "tooMany": "A template can start with at most {{max}} points, questions or steps, and this teaching has more. Make the template in Settings → Templates instead."
+      "tooMany": "A template can start with at most {{max}} points, questions or steps, and this teaching has more. Make the template in Settings → Templates instead.",
+      "tooManyBlocks": "A template can start with at most {{max}} blocks, and this teaching has more. Make the template in Settings → Templates instead."
     },
     "addStepMenu": "Kind of step to add",
     "newTeaching": "New Bible Teaching",
@@ -1733,6 +1735,10 @@
       "participant": "Show this to participants",
       "settings": "This block",
       "empty": "This teaching is empty. Add a section or a writing area when you are ready.",
+      "viewLabel": "How you write",
+      "viewContinuous": "Continuous",
+      "viewOutline": "Outline",
+      "headingLabel": "Heading",
       "templateHeading": "Blocks",
       "templateHint": "Add, reorder, duplicate and rename the sections and blocks a new teaching starts with. What you write in a teaching is not kept in the template.",
       "titleOf": "Heading of {{name}}",
@@ -1768,15 +1774,15 @@
         "blocks": {
           "erkennen": {
             "title": "Observation",
-            "guidance": "What does the passage actually say, and what can the group discover for themselves? Optional prompts: read it together, listen as it is read again, retell it in your own words."
+            "guidance": "What does the passage actually say, and what can the group discover for themselves? Optional Campus Connect 3×3 prompts: read it together, listen as it is read again, retell it in your own words."
           },
           "verstehen": {
             "title": "Comprehension",
-            "guidance": "Meaning in the literary, historical and biblical context, and the central message. Optional prompts: what became important, what this says about God and about people, how the context helps."
+            "guidance": "Meaning in the literary, historical and biblical context, and the central message. Optional Campus Connect 3×3 prompts: what became important, what this says about God and about people, how the context helps."
           },
           "anwenden": {
             "title": "Application",
-            "guidance": "What follows for faith, understanding, decisions, behaviour and relationships. Optional prompts: what changes in how we think and live, what we will do, whom this could encourage."
+            "guidance": "What follows for faith, understanding, decisions, behaviour and relationships. Optional Campus Connect 3×3 prompts: what changes in how we think and live, what we will do, whom this could encourage."
           }
         }
       },
@@ -1802,6 +1808,10 @@
         "name": "Bible Lesson — Children / Youth",
         "hint": "One lesson for children or young people. Age changes how you tell it, not what the passage means.",
         "blocks": {
+          "prepare": {
+            "title": "Preparation",
+            "guidance": "Optional: note the age you are preparing for, how long you have, and what you hope they take away. Age changes how you tell the story, not what the passage means. Add time or learning-objective blocks only if you want them."
+          },
           "story": {
             "title": "Story",
             "guidance": "Tell the passage in a way that fits the age. The meaning stays the one the text has."

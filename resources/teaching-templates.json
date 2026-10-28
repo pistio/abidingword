@@ -79,7 +79,7 @@
           "key": "erkennen",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.eva.erkennen.guidance"
+          "guidanceKey": "studies.teaching.builtin.eva.blocks.erkennen.guidance"
         },
         {
           "key": "erkennen-writing",
@@ -92,7 +92,7 @@
           "key": "verstehen",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.eva.verstehen.guidance"
+          "guidanceKey": "studies.teaching.builtin.eva.blocks.verstehen.guidance"
         },
         {
           "key": "verstehen-writing",
@@ -105,7 +105,7 @@
           "key": "anwenden",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.eva.anwenden.guidance"
+          "guidanceKey": "studies.teaching.builtin.eva.blocks.anwenden.guidance"
         },
         {
           "key": "anwenden-writing",
@@ -125,7 +125,7 @@
           "key": "introduction",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.sermonTalk.introduction.guidance"
+          "guidanceKey": "studies.teaching.builtin.sermonTalk.blocks.introduction.guidance"
         },
         {
           "key": "introduction-writing",
@@ -139,7 +139,7 @@
           "key": "main",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.sermonTalk.main.guidance"
+          "guidanceKey": "studies.teaching.builtin.sermonTalk.blocks.main.guidance"
         },
         {
           "key": "main-writing",
@@ -152,7 +152,7 @@
           "key": "conclusion",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.sermonTalk.conclusion.guidance"
+          "guidanceKey": "studies.teaching.builtin.sermonTalk.blocks.conclusion.guidance"
         },
         {
           "key": "conclusion-writing",
@@ -170,10 +170,16 @@
       "legacyKind": "lesson",
       "blocks": [
         {
+          "key": "prepare",
+          "type": "section",
+          "title": "",
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.prepare.guidance"
+        },
+        {
           "key": "story",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.bibleLesson.story.guidance"
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.story.guidance"
         },
         {
           "key": "story-writing",
@@ -193,7 +199,7 @@
           "key": "explain",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.bibleLesson.explain.guidance"
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.explain.guidance"
         },
         {
           "key": "explain-writing",
@@ -206,7 +212,7 @@
           "key": "questions",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.bibleLesson.questions.guidance"
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.questions.guidance"
         },
         {
           "key": "questions-ask",
@@ -226,7 +232,7 @@
           "key": "activity",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.bibleLesson.activity.guidance"
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.activity.guidance"
         },
         {
           "key": "activity-do",
@@ -239,7 +245,7 @@
           "key": "reflect",
           "type": "section",
           "title": "",
-          "guidanceKey": "studies.teaching.builtin.bibleLesson.reflect.guidance"
+          "guidanceKey": "studies.teaching.builtin.bibleLesson.blocks.reflect.guidance"
         },
         {
           "key": "reflect-writing",

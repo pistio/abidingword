@@ -6,7 +6,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { TeachingPreparation } from "@/types/teaching";
 import { shapeWords } from "./labels";
-import { templateFromTeaching } from "./teachingTemplates";
+import { templateFromTeaching, usesBlocks } from "./teachingTemplates";
 
 /**
  * "Save as my template" for a Bible Teaching (v0.18.7): its structure, never
@@ -16,6 +16,8 @@ import { templateFromTeaching } from "./teachingTemplates";
  */
 /** The most points or steps a template starts with (the core's limit). */
 const MAX_STARTING_POINTS = 20;
+/** The most blocks a template starts with (the core's limit). */
+const MAX_STARTING_BLOCKS = 40;
 
 export function SaveTeachingTemplate({ preparation }: { preparation: TeachingPreparation }) {
   const { t } = useTranslation();
@@ -27,8 +29,11 @@ export function SaveTeachingTemplate({ preparation }: { preparation: TeachingPre
     setOpen(false);
     toggle.current?.focus();
   };
-  // As the core allows (db/teaching_templates.rs): a template starts with at most 20 points or steps.
-  const fits = preparation.points.length <= MAX_STARTING_POINTS;
+  // As the core allows (db/teaching_templates.rs): a template starts with at most 20 points or 40 blocks.
+  const blockTeaching = usesBlocks(preparation);
+  const fits = blockTeaching
+    ? (preparation.blocks?.length ?? 0) <= MAX_STARTING_BLOCKS
+    : preparation.points.length <= MAX_STARTING_POINTS;
   const [name, setName] = useState(preparation.title);
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
@@ -88,7 +93,11 @@ export function SaveTeachingTemplate({ preparation }: { preparation: TeachingPre
             <input autoFocus value={name} onChange={(e) => setName(e.target.value)} className="h-11 aw-input px-3 text-text-strong" />
           </label>
           <p className="m-0 text-[0.9375rem] text-text">
-            {fits ? t(`studies.teaching.saveTemplate.keeps.${shape}`) : t("studies.teaching.saveTemplate.tooMany", { max: MAX_STARTING_POINTS })}
+            {fits
+              ? t(blockTeaching ? "studies.teaching.saveTemplate.keeps.blocks" : `studies.teaching.saveTemplate.keeps.${shape}`)
+              : t(blockTeaching ? "studies.teaching.saveTemplate.tooManyBlocks" : "studies.teaching.saveTemplate.tooMany", {
+                  max: blockTeaching ? MAX_STARTING_BLOCKS : MAX_STARTING_POINTS,
+                })}
           </p>
           <p className="m-0 text-[0.9375rem] text-text-muted">{t("studies.teaching.saveTemplate.notKept")}</p>
           <div className="flex flex-wrap gap-2">

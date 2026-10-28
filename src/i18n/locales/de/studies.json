@@ -1697,11 +1697,13 @@
         "points": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
         "generalPoints": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
         "questions": "Die Vorlage übernimmt die Form und so viele Fragen, wie diese Bibellehre hat. Die Fragen beginnen leer.",
-        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art."
+        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art.",
+        "blocks": "Die Vorlage übernimmt die Form und die Abschnitte und Blöcke, mit denen diese Bibellehre beginnt, in ihrer Reihenfolge. Was in den Blöcken steht, kommt nicht mit."
       },
       "notKept": "Nichts von dem, was du geschrieben hast, kommt mit: nicht Zielgruppe, Ziel, Botschaft, Einleitung, Schluss oder Notizen; nichts, was unter einem Punkt, einer Frage oder einem Schritt steht; keine Bibelstellen, kein aufbewahrtes Material und keine Notizen aus deinem Bibelstudium.",
       "saved": "Als deine Vorlage „{{name}}“ gespeichert. Du kannst sie für deine nächste Bibellehre wählen und unter Einstellungen → Vorlagen ändern.",
-      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
+      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen.",
+      "tooManyBlocks": "Eine Vorlage kann mit höchstens {{max}} Blöcken beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
     },
     "addStepMenu": "Art des neuen Schritts",
     "newTeaching": "Neue Bibellehre",
@@ -1733,6 +1735,10 @@
       "participant": "Den Teilnehmenden zeigen",
       "settings": "Dieser Block",
       "empty": "Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du soweit bist.",
+      "viewLabel": "Schreibansicht",
+      "viewContinuous": "Fortlaufend",
+      "viewOutline": "Gliederung",
+      "headingLabel": "Überschrift",
       "templateHeading": "Blöcke",
       "templateHint": "Abschnitte und Blöcke hinzufügen, umordnen, verdoppeln und umbenennen. Was du in einer Bibellehre schreibst, bleibt nicht in der Vorlage.",
       "titleOf": "Überschrift von {{name}}",
@@ -1768,15 +1774,15 @@
         "blocks": {
           "erkennen": {
             "title": "Erkennen",
-            "guidance": "Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen."
+            "guidance": "Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Campus Connect 3×3-Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen."
           },
           "verstehen": {
             "title": "Verstehen",
-            "guidance": "Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft."
+            "guidance": "Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Campus Connect 3×3-Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft."
           },
           "anwenden": {
             "title": "Anwenden",
-            "guidance": "Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte."
+            "guidance": "Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Campus Connect 3×3-Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte."
           }
         }
       },
@@ -1802,6 +1808,10 @@
         "name": "Bibelstunde — Kinder und Jugendliche",
         "hint": "Eine Stunde für Kinder oder Jugendliche. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes.",
         "blocks": {
+          "prepare": {
+            "title": "Vorbereitung",
+            "guidance": "Wahlweise: das Alter, die Zeit und was sie mitnehmen sollen. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes. Zeit- oder Lernzielblöcke fügst du nur hinzu, wenn du sie brauchst."
+          },
           "story": {
             "title": "Erzählung",
             "guidance": "Erzähle die Stelle so, dass das Alter mitkommt. Die Bedeutung bleibt die des Textes."

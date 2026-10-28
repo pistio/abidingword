@@ -127,6 +127,11 @@ export const TEACHING_BLOCK_TYPES = [
 ] as const;
 export type TeachingBlockType = (typeof TEACHING_BLOCK_TYPES)[number];
 
+/** True when a new block of this kind is for participants unless the person says otherwise. */
+export function blockParticipantDefault(blockType: string): boolean {
+  return blockType === "discussion_questions" || blockType === "handout" || blockType === "section" || blockType === "scripture" || blockType === "outline_point";
+}
+
 export interface TeachingBlock {
   id: string;
   parentId: string | null;

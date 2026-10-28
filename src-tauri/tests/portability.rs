@@ -13,7 +13,7 @@ use abiding_word_lib::db::{
 use abiding_word_lib::domain::{
     AddTeachingPassage, CreateFinding, CreateProject, CreateStudy, CreateStudyRelation,
     CreateTeaching, CreateTeachingPoint, FindingType, ImageInfo, KeepTeachingMaterial,
-    LinkTeachingFinding, RelationType,
+    LinkTeachingFinding, NewTeachingBlock, RelationType,
 };
 use abiding_word_lib::error::{AppError, AppResult};
 use abiding_word_lib::filesystem::DataDirs;
@@ -253,6 +253,9 @@ fn shape(conn: &Connection, project: &str) -> Vec<String> {
         "SELECT 'slide ' || i.heading || ' from ' || COALESCE(pt.title, 'nothing') FROM presentation_items i LEFT JOIN teaching_points pt ON pt.id = i.source_id
          WHERE i.presentation_id IN (SELECT id FROM presentations WHERE preparation_id IN (SELECT id FROM teaching_preparations WHERE study_id IN {S}))"
     )));
+    out.extend(q(&format!(
+        "SELECT 'block ' || p.title || '/' || b.block_type || '/' || COALESCE(b.block_key, '') || '/' || b.title || '/' || b.body FROM teaching_blocks b JOIN teaching_preparations p ON p.id = b.preparation_id WHERE p.study_id IN {S} AND b.deleted_at IS NULL"
+    )));
     out
 }
 
@@ -274,6 +277,84 @@ fn code<T: std::fmt::Debug>(result: AppResult<T>) -> String {
         }
         other => format!("{other:?}"),
     }
+}
+
+#[test]
+fn a_block_teaching_keeps_its_blocks_when_the_project_moves() {
+    let out = tempfile::tempdir().unwrap();
+    let here = folder();
+    let project = here
+        .db
+        .with_conn(|c| {
+            let made = make_project(c, &here.dirs.teaching_images(), "John")?;
+            let study: String = c.query_row(
+                "SELECT id FROM studies WHERE project_id = ?1 AND title = 'Abiding'",
+                [&made.project],
+                |r| r.get(0),
+            )?;
+            teaching::create(
+                c,
+                &CreateTeaching {
+                    study_id: study,
+                    title: "EVA Sunday".into(),
+                    kind: Some("bible_study".into()),
+                    template_key: Some("eva".into()),
+                    template_version: Some(2),
+                    blocks: vec![
+                        NewTeachingBlock {
+                            key: Some("erkennen".into()),
+                            block_type: "section".into(),
+                            title: "Observation".into(),
+                            guidance_key: Some(
+                                "studies.teaching.builtin.eva.blocks.erkennen.guidance".into(),
+                            ),
+                            participant_facing: Some(true),
+                            ..Default::default()
+                        },
+                        NewTeachingBlock {
+                            key: Some("erkennen-writing".into()),
+                            parent_key: Some("erkennen".into()),
+                            block_type: "writing".into(),
+                            title: "Observation".into(),
+                            body: "The vine is the Lord.".into(),
+                            participant_facing: Some(false),
+                            ..Default::default()
+                        },
+                    ],
+                    ..Default::default()
+                },
+            )?;
+            Ok(made.project)
+        })
+        .unwrap();
+    let before = here.db.with_conn(|c| Ok(shape(c, &project))).unwrap();
+    assert!(before.iter().any(
+        |l| l == "block EVA Sunday/writing/erkennen-writing/Observation/The vine is the Lord."
+    ));
+    let path = export(&here, &project, out.path());
+    let there = folder();
+    let report = import(&there, &path).unwrap();
+    let after = there
+        .db
+        .with_conn(|c| Ok(shape(c, &report.project_id)))
+        .unwrap();
+    assert_eq!(after, before);
+    let (key, version, body): (String, i64, String) = there
+        .db
+        .with_conn(|c| {
+            Ok(c.query_row(
+                "SELECT p.template_key, p.template_version, b.body
+                 FROM teaching_preparations p
+                 JOIN teaching_blocks b ON b.preparation_id = p.id
+                 WHERE p.title = 'EVA Sunday' AND b.block_key = 'erkennen-writing'",
+                [],
+                |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+            )?)
+        })
+        .unwrap();
+    assert_eq!(key, "eva");
+    assert_eq!(version, 2);
+    assert_eq!(body, "The vine is the Lord.");
 }
 
 #[test]

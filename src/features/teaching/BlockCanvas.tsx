@@ -21,10 +21,19 @@ function assistPart(role: string | null): TeachingPart {
 import { TeachingLinks } from "./TeachingLinks";
 import type { Finding } from "@/types/studies";
 
+type CanvasView = "continuous" | "outline";
+
+function writingRows(blockType: string, view: CanvasView): number {
+  const spacious = blockType === "teaching_notes" || blockType === "discussion_questions" ? 4 : 8;
+  if (view === "outline") return blockType === "outline_point" ? 6 : 3;
+  return blockType === "outline_point" ? 3 : spacious;
+}
+
 /**
  * The block editor for a teaching started from a block template. Teachings
  * with no blocks keep the earlier canvas. Private leader notes are marked
  * as such; a handout includes a block only when it is for participants.
+ * Continuous and outline views show the same stored blocks.
  */
 export function BlockCanvas({
   prep,
@@ -42,6 +51,7 @@ export function BlockCanvas({
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
+  const [view, setView] = useState<CanvasView>("continuous");
   const [error, setError] = useState<string | null>(null);
   const blocks = prep.blocks ?? [];
   const act = async (run: () => Promise<TeachingPreparation>) => {
@@ -110,17 +120,30 @@ export function BlockCanvas({
                 <TeachingLinks preparation={prep} pointId={null} blockId={block.id} scope={name} studyFindings={findings} onChanged={onChanged} onRevealScripture={onRevealScripture} />
               </div>
             ) : (
-              <TeachingField
-                label={name}
-                labelHidden={sameAsSection}
-                value={block.body}
-                save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
-                part={assistPart(block.role)}
-                rows={block.blockType === "teaching_notes" || block.blockType === "discussion_questions" ? 4 : 6}
-                placeholder={t("studies.teaching.blocks.placeholder")}
-                assistant={assistant}
-                onRevealScripture={onRevealScripture}
-              />
+              <>
+                {block.blockType === "outline_point" && (
+                  <TeachingField
+                    label={t("studies.teaching.blocks.headingLabel")}
+                    value={block.title}
+                    save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
+                    part={assistPart(block.role)}
+                    multiline={false}
+                    assistant={null}
+                    onRevealScripture={onRevealScripture}
+                  />
+                )}
+                <TeachingField
+                  label={name}
+                  labelHidden={sameAsSection && block.blockType !== "outline_point"}
+                  value={block.body}
+                  save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
+                  part={assistPart(block.role)}
+                  rows={writingRows(block.blockType, view)}
+                  placeholder={t("studies.teaching.blocks.placeholder")}
+                  assistant={assistant}
+                  onRevealScripture={onRevealScripture}
+                />
+              </>
             )}
           </div>
           <BlockTools id={id} block={block} name={name} onMove={move} onDuplicate={() => void act(() => api.teachingBlockDuplicate(block.id))} onDelete={() => void act(() => api.teachingBlockDelete(block.id))} />
@@ -128,6 +151,15 @@ export function BlockCanvas({
         {!block.participantFacing && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.teaching.blocks.leaderOnly")}</p>}
         <details className="text-[0.9375rem]">
           <summary className="cursor-pointer text-text-muted">{t("studies.teaching.blocks.settings")}</summary>
+          <label className="mt-2 flex flex-col gap-1">
+            <span>{t("studies.teaching.blocks.headingLabel")}</span>
+            <input
+              value={block.title}
+              aria-label={t("studies.teaching.blocks.titleOf", { name })}
+              onChange={(e) => void act(() => api.teachingBlockUpdate({ id: block.id, title: e.target.value }))}
+              className="aw-input h-10 px-3 text-base"
+            />
+          </label>
           <label className="mt-2 flex min-h-11 items-center gap-2">
             <input
               type="checkbox"
@@ -144,6 +176,14 @@ export function BlockCanvas({
   const top = children(null);
   return (
     <div className="flex flex-col gap-6">
+      <div role="radiogroup" aria-label={t("studies.teaching.blocks.viewLabel")} className="flex flex-wrap gap-2">
+        {(["continuous", "outline"] as const).map((mode) => (
+          <label key={mode} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
+            <input type="radio" name={`${id}-view`} checked={view === mode} onChange={() => setView(mode)} className="sr-only" />
+            {t(mode === "continuous" ? "studies.teaching.blocks.viewContinuous" : "studies.teaching.blocks.viewOutline")}
+          </label>
+        ))}
+      </div>
       {top.length === 0 && <p className="m-0 text-text-muted">{t("studies.teaching.blocks.empty")}</p>}
       {top.map((block) => renderBlock(block, null))}
       <AddBlock label={t("studies.teaching.blocks.add")} onAdd={(type) => add(type, null)} />
@@ -187,13 +227,13 @@ function BlockTools({
   );
 }
 
-function AddBlock({ label, onAdd }: { label: string; onAdd: (type: string) => void }) {
+export function AddBlock({ label, onAdd, id: buttonId }: { label: string; onAdd: (type: string) => void; id?: string }) {
   const { t } = useTranslation();
   const id = useId();
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <Button type="button" variant="quiet" aria-expanded={open} aria-controls={`${id}-menu`} onClick={() => setOpen((v) => !v)}>
+      <Button type="button" id={buttonId} variant="quiet" aria-expanded={open} aria-haspopup="menu" aria-controls={`${id}-menu`} onClick={() => setOpen((v) => !v)}>
         <Plus className="size-4" aria-hidden="true" />
         {label}
       </Button>

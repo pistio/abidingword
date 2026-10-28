@@ -16,7 +16,7 @@ import { FloatingPanel, AssistDockProvider, useAssistDock } from "./FloatingPane
 import { assistLabel, canvasShape, pointFields, shapeText, showsFrame, stepFieldLabel, teachingKindLabel, type ShapeText } from "./labels";
 import { TeachingInfo } from "./TeachingInfo";
 import { BlockCanvas } from "./BlockCanvas";
-import { BUILTIN_BLOCK_TEMPLATES, blocksFromBuiltin, usesBlocks } from "./teachingTemplates";
+import { BUILTIN_BLOCK_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, usesBlocks } from "./teachingTemplates";
 import { TeachingField, type AssistantHooks } from "./TeachingField";
 import { TeachingLinks } from "./TeachingLinks";
 import { PresentationView } from "@/features/presentation/PresentationView";
@@ -194,7 +194,7 @@ function NewTeaching({
   const personal = mine.data ?? [];
   const builtin = BUILTIN_BLOCK_TEMPLATES.find((b) => b.key === chosen);
   const own = personal.find((m) => m.id === chosen);
-  const i18nKey = chosen === "sermon-talk" ? "sermonTalk" : chosen === "bible-lesson" ? "bibleLesson" : chosen === "blank" ? "blank" : "eva";
+  const i18nKey = blockTemplateGroup(chosen);
   const choiceName = own ? own.name : t(`studies.teaching.builtin.${i18nKey}.name`);
   const suggested = `${builtin ? teachingKindLabel(t, builtin.legacyKind) : choiceName} · ${studyTitle}`;
 
@@ -240,7 +240,7 @@ function NewTeaching({
         <legend className="type-subhead mb-1">{t("studies.teaching.formatLegend")}</legend>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-2">
           {BUILTIN_BLOCK_TEMPLATES.map((template) => {
-            const group = template.key === "sermon-talk" ? "sermonTalk" : template.key === "bible-lesson" ? "bibleLesson" : "eva";
+            const group = blockTemplateGroup(template.key);
             return (
               <label key={template.key} className="aw-choice cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
                 <input

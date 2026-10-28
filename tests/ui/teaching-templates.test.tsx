@@ -68,6 +68,22 @@ describe("the built-in Bible Teaching templates", () => {
     expect(api.state.teaching.templates[0]!.points.map((p) => p.title)).toEqual(["Welcome", "Bible story", "Question", "Activity", "Prayer"]);
     expect(BUILTIN_TEACHING_TEMPLATES.find((b) => b.kind === "children")!.points).toHaveLength(5);
   });
+
+  it("lists the three block templates and saves one as the person's own with its blocks", async () => {
+    const { api } = await setup();
+    const { user } = await renderApp(api);
+    const templates = await openSettingsSection(user, "Templates");
+    const list = within(templates).getByRole("list", { name: "Bible Teaching templates" });
+    expect(within(list).getByText("Bible Study — EVA")).toBeInTheDocument();
+    expect(within(list).getByText("Sermon / Talk")).toBeInTheDocument();
+    expect(within(list).getByText("Bible Lesson — Children / Youth")).toBeInTheDocument();
+    await user.click(within(list).getByRole("button", { name: "Save Bible Study — EVA as my template" }));
+    const sheet = await screen.findByRole("dialog", { name: "Edit Bible Teaching template" });
+    expect(within(sheet).getByRole("textbox", { name: "Name" })).toHaveValue("Bible Study — EVA (copy)");
+    expect(api.state.teaching.templates[0]!.version).toBe(2);
+    expect(api.state.teaching.templates[0]!.blocks?.some((b) => b.blockType === "section" && b.title === "Observation")).toBe(true);
+    expect(api.state.teaching.templates[0]!.blocks?.some((b) => b.guidanceKey?.includes("erkennen"))).toBe(true);
+  });
 });
 
 describe("a Bible Teaching template of one's own", () => {
@@ -80,8 +96,10 @@ describe("a Bible Teaching template of one's own", () => {
     await user.type(within(sheet).getByRole("textbox", { name: "Name" }), "Youth evening");
     await user.selectOptions(within(sheet).getByRole("combobox", { name: "Format" }), "lesson");
     await user.click(within(sheet).getByRole("button", { name: "Add a block" }));
+    await user.click(within(sheet).getByRole("menuitem", { name: "Section" }));
     await user.type(within(sheet).getByRole("textbox", { name: "Heading of Section" }), "Game");
     await user.click(within(sheet).getByRole("button", { name: "Add a block" }));
+    await user.click(within(sheet).getByRole("menuitem", { name: "Section" }));
     const headings = within(sheet).getAllByRole("textbox", { name: /Heading of/ });
     await user.type(headings[1]!, "Bible story");
     await user.selectOptions(within(sheet).getAllByRole("combobox", { name: /Kind of block/ })[1]!, "scripture");
@@ -131,6 +149,30 @@ describe("a Bible Teaching template of one's own", () => {
     expect(api.state.teaching.preparations[0]!.kind).toBe("lesson");
     expect(api.state.teaching.preparations[0]!.templateKey).toBe("bible-lesson");
     expect(api.state.teaching.preparations[0]!.blocks?.some((b) => b.title === "Story")).toBe(true);
+  });
+
+  it("duplicates a block template with its sections, not as an empty points template", async () => {
+    const { api } = await setup();
+    await api.teachingTemplateCreate({
+      name: "My EVA",
+      kind: "bible_study",
+      points: [],
+      version: 2,
+      blocks: [
+        { key: "erkennen", blockType: "section", title: "Observation", participantFacing: true },
+        { key: "erkennen-writing", parentKey: "erkennen", blockType: "writing", title: "Observation", participantFacing: false },
+      ],
+    });
+    const { user } = await renderApp(api);
+    const templates = await openSettingsSection(user, "Templates");
+    await user.click(within(templates).getByRole("button", { name: "Duplicate My EVA" }));
+    await waitFor(() => expect(api.state.teaching.templates.map((x) => x.name).sort()).toEqual(["My EVA", "My EVA (copy)"]));
+    const copy = api.state.teaching.templates.find((x) => x.name === "My EVA (copy)")!;
+    expect(copy.version).toBe(2);
+    expect(copy.blocks?.map((b) => [b.title, b.blockType, b.parentKey ?? null])).toEqual([
+      ["Observation", "section", null],
+      ["Observation", "writing", "erkennen"],
+    ]);
   });
 
   it("can be duplicated and deleted in Settings, with a confirmation that says teachings stay", async () => {
