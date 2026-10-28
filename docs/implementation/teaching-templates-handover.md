@@ -9,7 +9,7 @@ Checked 28 October 2026, 20:52–20:56 GMT. The working tree was clean before th
 | Line | Branch | Commit | What it contains |
 | --- | --- | --- | --- |
 | Teaching templates | `feature/teaching-three-templates` | `4e41542067b5635bfab611467bcdbc9cb5873599` | Three block templates, migration 0025, block editor, handout and slide filtering. Parent is `0551f22061b3b3219315930c5061be501e94f350`. |
-| This handover | `feature/teaching-three-templates` | The commit that adds this file. Its parent is `4e41542`. After push, that commit is the branch tip. | This document only. |
+| This handover | `feature/teaching-three-templates` | `05332bf64b758d618e4056ddee2432d4a74ee399` | This document. Parent is `4e41542`. Resume from the branch tip if a later commit only records this hash. |
 | Library Stage 2 | `feature/library-sources-workflow` | `9d3d92a6ac24ce1cc69a155a31fcb05fb1233c8d` (parent `6adf1d3`) | Collections, tags, archive state, paged library, grouped search, reader provenance. |
 | Windows compatibility line | `fix/windows-dev44-schema-compatibility` | `b3120f54b0dcece6c078727c97240828680dd63c` | Library Stage 2, merged from pull request [#5](https://github.com/pistio/abidingword/pull/5) at 20:48 GMT on 28 October 2026. It does not contain migration 0025. |
 
@@ -22,7 +22,7 @@ Links:
 - Library branch: https://github.com/pistio/abidingword/tree/feature/library-sources-workflow
 - Windows compatibility branch: https://github.com/pistio/abidingword/tree/fix/windows-dev44-schema-compatibility
 
-There is no open pull request for the teaching branch. Do not merge it into `main`.
+Do not merge this branch into `main`. A review pull request against `fix/windows-dev44-schema-compatibility` is a place to read the diff. Integrating the two lines later has to be a merge that keeps Library Stage 2 and migration 0025. The histories diverged at `0551f22`.
 
 ## What is implemented
 
