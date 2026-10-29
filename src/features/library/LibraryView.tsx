@@ -9,7 +9,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { highlighted } from "@/lib/highlight";
 import { formatDate, formatNumber } from "@/i18n/format";
-import { SOURCE_TYPES, TRASH_RETENTION_DAYS, type LibraryResults, type ManagePage, type SourceFormat, type SourceType } from "@/types/library";
+import { SOURCE_TYPES, TRASH_RETENTION_DAYS, type LibraryResults, type ManagePage, type ItemState, type SourceFormat, type SourceType } from "@/types/library";
 import { formatLabel, locatorLabel, sourceTypeLabel } from "./labels";
 import { useLibraryNav } from "./LibraryNav";
 
@@ -241,20 +241,20 @@ export function LibraryView({
   };
 
   // Moved to Trash (v0.24): recoverable, so the confirmation says so and an Undo follows.
-  const [trashed, setTrashed] = useState<{ id: string; title: string } | null>(null);
-  const trash = async (sourceId: string, title: string) => {
+  const [trashed, setTrashed] = useState<{ id: string; title: string; previousState: ItemState } | null>(null);
+  const trash = async (sourceId: string, title: string, previousState: ItemState) => {
     await api.librarySetState([sourceId], "trashed");
     setConfirming(null);
     onRemoved?.(sourceId);
     page.reload();
     setOutcome(null);
-    setTrashed({ id: sourceId, title });
+    setTrashed({ id: sourceId, title, previousState });
   };
   const undo = async () => {
     if (!trashed) return;
     setError(null);
     try {
-      await api.librarySetState([trashed.id], "active");
+      await api.librarySetState([trashed.id], trashed.previousState);
       setTrashed(null);
       page.reload();
     } catch (e) {
@@ -491,7 +491,7 @@ export function LibraryView({
                         confirmLabel={t("common.lifecycle.moveToTrash")}
                         returnFocus={() => listRef.current}
                         onCancel={() => setConfirming(null)}
-                        onConfirm={() => trash(s.id, s.title)}
+                        onConfirm={() => trash(s.id, s.title, s.state)}
                       >
                         <p className="m-0">{t("library.trash.text", { count: TRASH_RETENTION_DAYS })}</p>
                         <p className="m-0">{t("library.trash.kept")}</p>
