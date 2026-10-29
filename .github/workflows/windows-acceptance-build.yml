@@ -1,0 +1,119 @@
+# Acceptance artifacts only. No updater overlay, signing, releases or dispatches.
+name: Windows schema 26 acceptance build
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Approved full application source SHA (not the workflow branch SHA)
+        required: true
+        type: choice
+        options:
+          - 6da1ea3d757d76b1072338f36c331dffc764b8ff
+        default: 6da1ea3d757d76b1072338f36c331dffc764b8ff
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: windows-2025
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      EXPECTED_SOURCE_SHA: ${{ inputs.source_sha }}
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
+    steps:
+      - name: Reject unapproved source selection
+        run: |
+          if ($env:EXPECTED_SOURCE_SHA -cne '6da1ea3d757d76b1072338f36c331dffc764b8ff') {
+            throw 'Only the reviewed schema-26 source is approved for this workflow.'
+          }
+      - name: Preserve historical SQL bytes on Windows checkout
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+      - name: Verify exact source and historical migrations before compilation
+        run: |
+          node scripts/build-provenance.mjs --expected-sha "$env:EXPECTED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/build-provenance.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Source provenance failed.' }
+          @'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { join } from 'node:path';
+          const proof = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'build-provenance.json'), 'utf8'));
+          const digest = createHash('sha256').update(JSON.stringify(proof.migrations)).digest('hex');
+          // Pins every historical name, version, filename and SQL hash to the approved source.
+          if (digest !== '3a2159765b0c77874143ef3143b6b97bd785d26d5372aa9250dae590be30bded') {
+            throw new Error('Historical migration catalogue differs from the approved schema-26 source');
+          }
+          const files = readdirSync('src-tauri/migrations').filter(f => f.endsWith('.sql')).sort();
+          if (JSON.stringify(files) !== JSON.stringify(proof.migrations.map(m => m.file).sort())) {
+            throw new Error('Migration directory contains missing or unregistered SQL files');
+          }
+          const config = JSON.parse(readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+          if (config.plugins?.updater || config.bundle?.createUpdaterArtifacts) {
+            throw new Error('Acceptance builds must not configure the updater');
+          }
+          console.log(`Approved historical catalogue SHA-256: ${digest}`);
+          '@ | node --input-type=module
+          if ($LASTEXITCODE -ne 0) { throw 'Historical catalogue/configuration verification failed.' }
+      - name: Record build environment
+        env:
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          @(
+            "Source SHA: $env:EXPECTED_SOURCE_SHA"
+            "Workflow SHA: $env:WORKFLOW_SHA"
+            "Run: $env:RUN_ID attempt $env:RUN_ATTEMPT"
+            "Runner: $env:RUNNER_OS $env:RUNNER_ARCH"
+            "Windows image: $env:ImageOS $env:ImageVersion"
+            "Node: $(node --version)"
+            "npm: $(npm --version)"
+            "Rust: $(rustc --version)"
+            "Cargo: $(cargo --version)"
+          ) | Set-Content "$env:RUNNER_TEMP/build-environment.txt"
+      - run: npm ci
+      - name: Build unsigned NSIS installer without updater configuration
+        run: npx tauri build --bundles nsis --no-sign --ci -- --locked
+      - name: Stage installer and checksum
+        run: |
+          $installers = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
+          if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) {
+            throw 'Expected exactly one nonempty NSIS installer.'
+          }
+          New-Item -ItemType Directory -Path staged | Out-Null
+          $name = "Abiding-Word-schema26-$env:EXPECTED_SOURCE_SHA-x64-setup.exe"
+          Copy-Item -LiteralPath $installers[0].FullName -Destination "staged/$name"
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "staged/$name").Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content "$env:RUNNER_TEMP/installer-sha256.txt"
+      - name: Upload acceptance installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Abiding-Word-schema26-${{ inputs.source_sha }}-Windows-x64
+          path: staged/*.exe
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source and installer evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Abiding-Word-schema26-${{ inputs.source_sha }}-provenance
+          path: |
+            ${{ runner.temp }}/build-provenance.json
+            ${{ runner.temp }}/build-environment.txt
+            ${{ runner.temp }}/installer-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
