@@ -534,5 +534,11 @@
     "stopped_other": "Angehalten. {{formatted}} Quellen wurden hinzugefügt, die übrigen nicht.",
     "pages_one": "{{formatted}} Seite",
     "pages_other": "{{formatted}} Seiten"
+  },
+  "navigation": {
+    "collection": "Sammlung",
+    "allCollections": "Alle Sammlungen",
+    "openCollection": "Sammlung öffnen: {{name}}",
+    "backToLibrary": "Zurück zur Bibliothek"
   }
 }

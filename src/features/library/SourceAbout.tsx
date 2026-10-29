@@ -15,6 +15,7 @@ export function SourceAbout({ source, citation }: { source: Source; citation: st
     ? t("library.size.pages", { count: source.pageCount, number: formatNumber(source.pageCount) })
     : null;
   return (
+    <>
     <dl className="m-0 mt-3 flex flex-col gap-3 text-[0.9375rem]">
       <Row term={t("library.manage.field.author")}>{source.author}</Row>
       <Row term={t("library.manage.field.year")}>{source.publicationYear}</Row>
@@ -36,8 +37,9 @@ export function SourceAbout({ source, citation }: { source: Source; citation: st
         {source.state === "archived" ? t("common.lifecycle.state.archived") : t("library.filter.inUse")}
       </Row>
       {citation && <Row term={t("library.about.citation")}>{citation}</Row>}
-      <p className="m-0 text-text-muted">{source.filePresent ? t("library.about.fileHere") : t("library.about.fileMissing")}</p>
     </dl>
+    <p className="mb-0 mt-3 text-[0.9375rem] text-text-muted">{source.filePresent ? t("library.about.fileHere") : t("library.about.fileMissing")}</p>
+    </>
   );
 }
 

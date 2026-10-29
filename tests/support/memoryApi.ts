@@ -2321,13 +2321,14 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       }
       for (const tagId of remove) ids.forEach((x) => manage.tagged.get(tagId)?.delete(x));
     },
-    librarySearch: async ({ query, offset = 0, sourceType, language, state }) => {
+    librarySearch: async ({ query, offset = 0, sourceType, language, state, collectionId }) => {
       const words = query.toLowerCase().replace(/["“”]/g, "").split(/\s+/).filter(Boolean);
       const matches = library.segments.filter((x) => {
         const source = library.sources.find((s) => s.id === x.sourceId && !s.deleted);
         if (!source) return false;
         const current = stateOf(source.id);
         if (current === "trashed" || (state && current !== state)) return false;
+        if (collectionId && !manage.members.get(collectionId)?.has(source.id)) return false;
         if (sourceType && source.sourceType !== sourceType) return false;
         if (language && source.language !== language) return false;
         return words.every((w) => x.text.toLowerCase().includes(w));

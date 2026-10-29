@@ -271,6 +271,7 @@ export interface Api {
     language?: string;
     /** "active" or "archived". Omit for both, and never Trash. */
     state?: "active" | "archived";
+    collectionId?: string;
   }): Promise<LibraryResults>;
   libraryOpenSegment(segmentId: string): Promise<SegmentWindow>;
   sourceGetSegments(input: { sourceId: string; offset?: number; limit?: number; aroundPage?: number }): Promise<SegmentWindow>;
