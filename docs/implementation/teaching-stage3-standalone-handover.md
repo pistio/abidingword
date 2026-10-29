@@ -95,9 +95,35 @@ Detailed local evidence is retained under `/workspace/.cloud-setup/teaching3/`: 
 
 ## Delivery
 
-The implementation is prepared for the authorised feature branch and owner review. The source/delivery commit and actual draft-PR outcome are recorded after the push. At validation completion, a GitHub API probe returned `Forbidden` for `api.github.com`. The running enforced network policy does not allow that host; the environment configuration draft (revision 4) already includes it, but available tools cannot activate that draft. Git transport remains available. No credential values are needed or requested.
+- Application/test implementation commit: **`795d482222ad014d1140835acc27f7bfabac382f`**.
+- Implementation tree: `d0ba48151aae8a9fd66a98bbab43d3f644725644`.
+- Pushed to `origin/feature/teaching-stage3-standalone`; the remote SHA was verified after the push.
+- The target remained exactly **`2cb7cb9483d305f10a3e8ad18ec5c6573c439722`** at delivery verification. No merge was performed.
+- A following documentation-only commit records this delivery outcome; the completion report supplies its final pushed SHA. It changes no application, migration or test source.
+- Clean-source provenance verification passed for the implementation commit: schema 26, exactly 26 migrations, compatible historical catalogue.
+- Commits use `[skip ci]`; no Actions workflow was manually started, and no paid Actions, installer publication, deployment or real user-data changes were performed.
 
-The intended draft PR targets `integration/windows-library-stage3-teaching-study`. Its description must disclose the full-run timing failure and link this handover. Do not merge it or start a release workflow during this task.
+**Draft PR creation is blocked.** After the source push, the authorised command below returned `Post "https://api.github.com/graphql": Forbidden`. This attempt did not create a new PR. The running enforced network policy excludes `api.github.com`. The environment configuration draft (revision 4) already includes that host, but the available tools cannot activate the draft. No credential values were displayed or requested. Resolve the network restriction before retrying.
+
+```sh
+gh pr create --repo pistio/abidingword \
+  --base integration/windows-library-stage3-teaching-study \
+  --head feature/teaching-stage3-standalone --draft \
+  --title "Teaching Stage 3: independent project workspace" \
+  --body-file /workspace/.cloud-setup/teaching3/pr-body.md
+```
+
+[Manual PR creation link](https://github.com/pistio/abidingword/compare/integration/windows-library-stage3-teaching-study...feature/teaching-stage3-standalone?expand=1). Keep it a draft targeting the integration branch. The prepared description is retained in the local body file and reproduced here for review:
+
+> Teaching can now start independently in a project or link to a Study in that project. Study deletion retains the Teaching manuscript, blocks, materials, presentation references and saved citation provenance. Both routes use the existing editor, three built-in templates, blank/personal templates and participant-privacy pipeline.
+>
+> Migration 0026 performs an FK-off exclusive rebuild with populated preservation/rollback checks; migrations 0001–0025 remain byte-for-byte unchanged. Project packages now include standalone Teaching, optional links and saved provenance.
+>
+> Validation: 1,143 frontend tests passed; typecheck, lint, six-language checks, formatting, Clippy and frontend/native builds passed. The complete Rust run recorded 1,031 passed, one unchanged Library timing assertion failure, and eight pre-existing ignored tests. The timing case passed unchanged in isolation on both the original base and final candidate; the full-run timing margin still requires owner review. All 23 migration/portability/standalone tests passed.
+>
+> Complete handover: `docs/implementation/teaching-stage3-standalone-handover.md`. Draft for owner review. No merge, installer publication, deployment, paid Actions or real user-data changes.
+
+Owner review is the stopping point. Do not merge or release until the remaining timing margin and Windows acceptance requirements are reviewed.
 
 ## Boundaries and operational notes
 
