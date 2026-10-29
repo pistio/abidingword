@@ -6,7 +6,7 @@
 - Existing review branch: `review/schema26-recognition-handover`.
 - Exact starting review and integration baseline: **`5f4edc0f8906df9bc1db9437f4cb4a30561eff22`** (PR #12 merge). Remote tips were independently verified before checkout. The local tracking checkout uses that existing remote branch; no replacement remote branch was created.
 - Target for review only: `integration/windows-library-stage3-teaching-study`. No merge to that branch or divergent `main` is performed.
-- Final validated implementation and delivery SHAs: recorded in the delivery section after validation and commit.
+- Final validated implementation SHA: **`a4980a22f8ed4ae2efc3c16f8928f406c8e4f6c1`**. The subsequent delivery commit changes this handover only; its exact pushed SHA is reported with delivery and resolves as `git rev-parse origin/review/schema26-recognition-handover`.
 
 The required `CLAUDE.md`, Teaching Stage 3 handover, Library Stage 3 combined handover, Windows/Library/Teaching/Study integration handover, Study-flow redesign and Windows v0.24 acceptance guide were read. Their earlier holds, schema-22/25 descriptions and publication instructions are historical. This task authorises schema-26 review and non-recognition repairs, not any publication or recognition development.
 
@@ -162,3 +162,11 @@ The targeted Rust command generates its own synthetic historical databases and c
 ## Installer recommendation and delivery
 
 The integrated schema-26 source is ready for controlled Windows acceptance and owner review. All available automated checks passed, migrations are unchanged and the one reproduced non-recognition defect is corrected. This is **not approval to publish the next development installer**: complete the real Windows checklist and obtain the separate recognition/owner decision first. Windows acceptance and Claude's recognition acceptance remain separate gates. This task never authorises publication, automatic updates, deployment, a main merge or paid Actions/services.
+
+### Delivery record
+
+Implementation/test commit `a4980a22f8ed4ae2efc3c16f8928f406c8e4f6c1` was committed and pushed to the existing review branch. Clean-tree build provenance verified that exact source, schema 26 and 26 migrations. Immediately before delivery, the integration target was still `5f4edc0f8906df9bc1db9437f4cb4a30561eff22`. No integration/main branch was pushed or merged. Commit messages include `[skip ci]`; no Actions run was requested.
+
+Creating a draft PR using `gh pr create --repo pistio/abidingword --head review/schema26-recognition-handover --base integration/windows-library-stage3-teaching-study --draft` failed with `Post "https://api.github.com/graphql": Forbidden`. The effective cloud network allowlist omits `api.github.com`; Git HTTPS push works. No PR number or created-PR URL can therefore be claimed. The prepared body is retained at `/workspace/.cloud-setup/schema26-review/pr-body.md`.
+
+Owner can create the draft manually from [this comparison](https://github.com/pistio/abidingword/compare/integration/windows-library-stage3-teaching-study...review/schema26-recognition-handover?expand=1), targeting the integration branch explicitly. This is a comparison/creation link, not an existing PR. Stop for owner review; the API/network limitation is the remaining delivery blocker, alongside the explicitly separate Windows and recognition acceptance gates.
