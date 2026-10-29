@@ -502,8 +502,17 @@ impl Builder<'_> {
                 Some(material) => self.material(material),
                 None => missing(),
             },
-            "finding" => match findings::get(self.conn, &source.id) {
-                Ok(finding) if finding.study_id == prep.study_id => Resolved {
+            "finding" => match prep
+                .findings
+                .iter()
+                .find(|l| l.finding.id == source.id)
+                .map(|l| l.finding.clone())
+                .or_else(|| {
+                    findings::get(self.conn, &source.id)
+                        .ok()
+                        .filter(|f| prep.study_id.as_deref() == Some(f.study_id.as_str()))
+                }) {
+                Some(finding) => Resolved {
                     body: text(&finding.content),
                     ..Resolved::default()
                 },

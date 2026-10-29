@@ -129,6 +129,7 @@ fn make_project(conn: &Connection, images: &Path, title: &str) -> AppResult<Made
     let prep = teaching::create(
         conn,
         &CreateTeaching {
+            project_id: None,
             study_id: abide.clone(),
             title: "Abide in me".into(),
             kind: Some("sermon".into()),
@@ -295,6 +296,7 @@ fn a_block_teaching_keeps_its_blocks_when_the_project_moves() {
             teaching::create(
                 c,
                 &CreateTeaching {
+                    project_id: None,
                     study_id: study,
                     title: "EVA Sunday".into(),
                     kind: Some("bible_study".into()),
@@ -1396,4 +1398,58 @@ fn imported_conflicting_roles_preserve_writing_slides_and_backup_restore() {
         there.db.with_conn(|c| Ok(rows_everywhere(c))).unwrap(),
         before
     );
+}
+
+#[test]
+fn legacy_study_owned_teaching_package_backfills_project_owner() {
+    use std::io::Read;
+    let out = tempfile::tempdir().unwrap();
+    let here = folder();
+    let p = here
+        .db
+        .with_conn(|c| {
+            Ok(make_project(c, &here.dirs.teaching_images(), "Legacy teaching")?.project)
+        })
+        .unwrap();
+    let original = export(&here, &p, out.path());
+    let mut zip = zip::ZipArchive::new(fs::File::open(&original).unwrap()).unwrap();
+    let mut bytes = Vec::new();
+    zip.by_name("project.json")
+        .unwrap()
+        .read_to_end(&mut bytes)
+        .unwrap();
+    let mut data: serde_json::Value = serde_json::from_slice(&bytes).unwrap();
+    for row in data["tables"]["teaching_preparations"]
+        .as_array_mut()
+        .unwrap()
+    {
+        row.as_object_mut().unwrap().remove("project_id");
+    }
+    for row in data["tables"]["teaching_finding_links"]
+        .as_array_mut()
+        .unwrap()
+    {
+        row.as_object_mut().unwrap().remove("snapshot");
+    }
+    let legacy = out.path().join("legacy.awproject");
+    handmade(&legacy, &data);
+    let there = folder();
+    let report = import(&there, &legacy).unwrap();
+    there
+        .db
+        .with_conn(|c| {
+            let list = teaching::list_project(c, &report.project_id)?;
+            assert_eq!(list.len(), 1);
+            let t = teaching::get(c, &list[0].id)?;
+            let s = studies::get(c, t.study_id.as_deref().unwrap())?;
+            assert_eq!(t.project_id, s.project_id);
+            assert_eq!(t.project_id, report.project_id);
+            assert_ne!(t.project_id, p);
+            assert_eq!(t.points.len(), 1);
+            assert_eq!(t.findings.len(), 1);
+            assert_eq!(t.passages.len(), 1);
+            assert_eq!(t.materials.len(), 1);
+            Ok(())
+        })
+        .unwrap();
 }

@@ -26,7 +26,7 @@ const point = (n: number, fields: Partial<TeachingPoint>): TeachingPoint => ({
 });
 const prep = (fields: Partial<TeachingPreparation>): TeachingPreparation => ({
   id: "prep",
-  studyId: "study",
+  projectId: "fixture-project", studyId: "study",
   title: "Remain in the vine",
   kind: "sermon",
   audience: "Young families",

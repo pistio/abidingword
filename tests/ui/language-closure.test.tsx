@@ -39,7 +39,7 @@ afterEach(async () => {
 describe("Korean main points: 대지 for a sermon, 주요 내용 for other teaching", () => {
   const prep = (kind: TeachingKind | null): TeachingPreparation => ({
     id: "prep",
-    studyId: "study",
+    projectId: "fixture-project", studyId: "study",
     title: "Remain in the vine",
     kind,
     audience: "",

@@ -2423,6 +2423,19 @@
         "name": "Modèle vide",
         "hint": "Pas encore de sections. Ajoutez celles dont cet enseignement a besoin."
       }
+    },
+    "workspace": {
+      "title": "Enseignement",
+      "intro": "Préparez un enseignement, avec ou sans étude biblique.",
+      "sessions": "Préparations d’enseignement",
+      "empty": "Aucune préparation pour le moment.",
+      "back": "Retour aux enseignements",
+      "study": "Étude biblique (facultative)",
+      "independent": "Enseignement indépendant",
+      "keepNotes": "En changeant ou retirant le lien, les notes déjà utilisées et leurs sources restent conservées comme copies. Les modifications ultérieures de l’étude ne changent pas ces copies.",
+      "saveLink": "Enregistrer le lien",
+      "savedNote": "Note d’étude conservée",
+      "project": "Retour au projet"
     }
   },
   "parts": {

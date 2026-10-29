@@ -60,7 +60,7 @@ fn a_schema_24_teaching_is_kept_and_gains_no_blocks() {
         .starts_with("abiding-word-v24-"));
 
     db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn)?, 25);
+        assert_eq!(migrations::current_version(conn)?, 26);
         let prep = teaching::get(conn, "tp")?;
         assert_eq!(prep.template_key, None);
         assert_eq!(prep.template_version, None);

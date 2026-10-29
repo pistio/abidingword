@@ -572,7 +572,13 @@ fn passages(
     point_id: Option<&str>,
 ) -> AppResult<Vec<PassageContext>> {
     let mut refs: Vec<ScriptureRef> = Vec::new();
-    if let Some(primary) = study_passages::primary(conn, &prep.study_id)? {
+    if let Some(primary) = prep
+        .study_id
+        .as_deref()
+        .map(|id| study_passages::primary(conn, id))
+        .transpose()?
+        .flatten()
+    {
         refs.push(ScriptureRef::from_canonical(&primary.reference.canonical)?);
     }
     for p in &prep.passages {
@@ -674,8 +680,12 @@ fn findings_for(
     let linked = prep
         .findings
         .iter()
-        .filter(|l| point_id.is_some() && l.point_id.as_deref() == point_id)
-        .chain(prep.findings.iter().filter(|l| l.point_id.is_none()));
+        .filter(|l| !l.presentation_only && point_id.is_some() && l.point_id.as_deref() == point_id)
+        .chain(
+            prep.findings
+                .iter()
+                .filter(|l| !l.presentation_only && l.point_id.is_none()),
+        );
     for link in linked {
         if !ids.contains(&link.finding.id.as_str()) {
             ids.push(&link.finding.id);
@@ -683,12 +693,22 @@ fn findings_for(
         }
     }
     // The study's parts, so a note says where in the study it was written.
-    let parts: Vec<(String, String)> = sections::list(conn, &prep.study_id)?
+    let parts: Vec<(String, String)> = prep
+        .study_id
+        .as_deref()
+        .map(|id| sections::list(conn, id))
+        .transpose()?
+        .unwrap_or_default()
         .into_iter()
         .map(|s| (s.id, s.title))
         .collect();
     let mut out: Vec<FindingContext> = if chosen.is_empty() && action.wants_study_findings() {
-        let all = findings::list(conn, &prep.study_id)?;
+        let all = prep
+            .study_id
+            .as_deref()
+            .map(|id| findings::list(conn, id))
+            .transpose()?
+            .unwrap_or_default();
         all.iter()
             .take(FINDINGS_MAX)
             .map(|f| finding_context(f, &parts))

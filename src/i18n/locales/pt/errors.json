@@ -244,7 +244,10 @@
     "otherStudyFinding": "Essa anotação pertence a outro estudo.",
     "badMaterial": "Este item não pode ser guardado.",
     "notVerified": "Uma história só é guardada como verificada com duas fontes independentes.",
-    "imageGone": "Esta imagem não está mais disponível. Crie de novo."
+    "imageGone": "Esta imagem não está mais disponível. Crie de novo.",
+    "projectRequired": "Escolhe um projeto para este ensino.",
+    "otherProject": "Escolhe um estudo deste projeto.",
+    "badSnapshot": "Não foi possível ler esta nota de estudo guardada."
   },
   "presentation": {
     "imageGone": "Esta imagem não está neste computador.",

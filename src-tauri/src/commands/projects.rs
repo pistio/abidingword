@@ -27,3 +27,16 @@ pub fn project_create(state: State<'_, AppState>, input: CreateProject) -> Comma
 pub fn project_update(state: State<'_, AppState>, input: UpdateProject) -> CommandResult<Project> {
     state.db(|conn| projects::update(conn, &input))
 }
+
+#[tauri::command(async)]
+pub fn project_delete(
+    state: State<'_, AppState>,
+    id: String,
+    permanent: Option<bool>,
+) -> CommandResult<()> {
+    state.db(|c| projects::delete(c, &id, permanent.unwrap_or(false)))
+}
+#[tauri::command(async)]
+pub fn project_restore(state: State<'_, AppState>, id: String) -> CommandResult<Project> {
+    state.db(|c| projects::restore(c, &id))
+}

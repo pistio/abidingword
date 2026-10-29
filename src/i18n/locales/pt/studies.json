@@ -2423,6 +2423,19 @@
         "name": "Modelo em branco",
         "hint": "Ainda não há seções. Acrescente as que este ensino precisa."
       }
+    },
+    "workspace": {
+      "title": "Ensino",
+      "intro": "Prepara um ensino com ou sem estudo bíblico.",
+      "sessions": "Sessões de ensino",
+      "empty": "Ainda não há sessões de ensino.",
+      "back": "Voltar à lista de ensinos",
+      "study": "Estudo bíblico (opcional)",
+      "independent": "Ensino independente",
+      "keepNotes": "Ao alterar ou remover a ligação, as notas utilizadas e as suas fontes ficam guardadas como cópias. Alterações posteriores no estudo não modificam essas cópias.",
+      "saveLink": "Guardar ligação",
+      "savedNote": "Nota de estudo guardada",
+      "project": "Voltar ao projeto"
     }
   },
   "parts": {

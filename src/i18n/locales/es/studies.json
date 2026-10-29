@@ -2423,6 +2423,19 @@
         "name": "Plantilla en blanco",
         "hint": "Todavía no hay secciones. Añade las que esta enseñanza necesite."
       }
+    },
+    "workspace": {
+      "title": "Enseñanza",
+      "intro": "Prepara una enseñanza con o sin estudio bíblico.",
+      "sessions": "Sesiones de enseñanza",
+      "empty": "Todavía no hay sesiones de enseñanza.",
+      "back": "Volver a las enseñanzas",
+      "study": "Estudio bíblico (opcional)",
+      "independent": "Enseñanza independiente",
+      "keepNotes": "Al cambiar o quitar el vínculo, las notas utilizadas y sus fuentes se conservan como copias. Los cambios posteriores en el estudio no modifican esas copias.",
+      "saveLink": "Guardar vínculo",
+      "savedNote": "Nota de estudio conservada",
+      "project": "Volver al proyecto"
     }
   },
   "parts": {

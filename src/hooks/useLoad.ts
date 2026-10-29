@@ -14,7 +14,7 @@ export interface Loaded<T> {
   /** Loads again, keeping the current data visible until the new data arrives. */
   reload: () => void;
   /** Replaces the data locally, e.g. after a successful save. */
-  setData: (data: T) => void;
+  setData: (data: T | ((current: T | undefined) => T)) => void;
 }
 
 /**
@@ -38,7 +38,10 @@ export function useLoad<T>(load: () => Promise<T>): Loaded<T> {
 
   const current = state.source === load;
   const reload = useCallback(() => setVersion((v) => v + 1), []);
-  const setData = useCallback((data: T) => setState({ source: load, data }), [load]);
+  const setData = useCallback((data: T | ((current: T | undefined) => T)) => setState((current) => ({
+    source: load,
+    data: typeof data === "function" ? (data as (current: T | undefined) => T)(current.source === load ? current.data : undefined) : data,
+  })), [load]);
 
   return {
     data: current ? state.data : undefined,

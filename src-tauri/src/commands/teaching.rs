@@ -210,3 +210,26 @@ pub fn teaching_image(state: State<'_, AppState>, file: String) -> CommandResult
     let png = std::fs::read(&path).map_err(|_| gone())?;
     Ok(images::data_url(&png))
 }
+
+#[tauri::command(async)]
+pub fn teaching_list_project(
+    state: State<'_, AppState>,
+    project_id: String,
+) -> CommandResult<Vec<TeachingSummary>> {
+    state.db(|c| teaching::list_project(c, &project_id))
+}
+#[tauri::command(async)]
+pub fn teaching_set_study(
+    state: State<'_, AppState>,
+    id: String,
+    study_id: Option<String>,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|c| teaching::set_study(c, &id, study_id.as_deref()))
+}
+#[tauri::command(async)]
+pub fn teaching_restore(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|c| teaching::restore(c, &id))
+}

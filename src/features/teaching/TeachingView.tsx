@@ -26,21 +26,21 @@ import { outputHint, outputName, outputsFor, type OutputKind } from "@/features/
 import type { PresentationDocument } from "@/types/presentation";
 
 interface TeachingViewProps {
-  studyId: string;
-  studyTitle: string;
-  findings: Finding[];
+  projectId?: string;
+  studyId?: string;
+  studyTitle?: string;
+  findings?: Finding[];
   onRevealScripture: () => void;
 }
 
 /**
- * The Teaching view of a study (v0.16): one or more teaching preparations —
- * a sermon, a group study, a lesson — written by the person from what they
- * found. Nothing is filled in for them; every field may stay empty.
+ * Shared editor for project Teaching and the legacy Study entry. An optional
+ * Study can provide findings; every Teaching remains owned by its project.
  */
-export function TeachingView({ studyId, studyTitle, findings, onRevealScripture }: TeachingViewProps) {
+export function TeachingView({ projectId, studyId, studyTitle = "", findings = [], onRevealScripture }: TeachingViewProps) {
   const { t } = useTranslation();
   const api = useApi();
-  const list = useLoad(useCallback(() => api.teachingList(studyId), [api, studyId]));
+  const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId) : api.teachingList(studyId!), [api, projectId, studyId]));
   const settings = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
   const [chosen, setChosen] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -57,7 +57,7 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
   });
 
   const preparations = list.data ?? [];
-  const currentId = chosen && preparations.some((p) => p.id === chosen) ? chosen : (preparations[0]?.id ?? null);
+  const currentId = chosen && preparations.some((p) => p.id === chosen) ? chosen : (projectId ? null : (preparations[0]?.id ?? null));
 
   if (list.error) return <p role="alert" className="m-0 text-danger">{list.error.message}</p>;
   if (!list.data) return <p className="m-0 text-text-muted">{t("studies.teaching.loading")}</p>;
@@ -68,15 +68,24 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
     list.reload();
   };
 
-  if (preparations.length === 0 || creating) {
+  if (projectId && !currentId && !creating) {
+    return <section className="flex flex-col gap-4" aria-label={t("studies.teaching.workspace.title")}>
+      <h1 className="type-title m-0">{t("studies.teaching.workspace.title")}</h1>
+      <p className="m-0 text-text-muted">{t("studies.teaching.workspace.intro")}</p>
+      <Button variant="primary" onClick={() => setCreating(true)}>{t("studies.teaching.newTeaching")}</Button>
+      {preparations.length ? <ul aria-label={t("studies.teaching.workspace.sessions")} className="m-0 list-none space-y-2 p-0">{preparations.map(p => <li key={p.id}><Button onClick={() => setChosen(p.id)}>{p.title}</Button></li>)}</ul> : <p className="m-0 text-text-muted">{t("studies.teaching.workspace.empty")}</p>}
+    </section>;
+  }
+  if ((!projectId && preparations.length === 0) || creating) {
     return (
       <NewTeaching
+        projectId={projectId}
         studyId={studyId}
         studyTitle={studyTitle}
         first={preparations.length === 0}
         onCreated={created}
         onCancel={
-          preparations.length > 0
+          preparations.length > 0 || projectId
             ? () => {
                 setCreating(false);
                 focusAnother.current = true;
@@ -91,6 +100,7 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
   // choice between them once there is more than one. Quiet, in the open teaching's details line.
   const switcher = (
     <span className="flex flex-wrap items-center gap-x-2">
+      {projectId && <Button variant="quiet" onClick={() => setChosen(null)}>{t("studies.teaching.workspace.back")}</Button>}
       {preparations.length > 1 && (
         <>
           <label htmlFor={`${id}-which`} className="type-meta">
@@ -164,13 +174,15 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
 }
 
 function NewTeaching({
+  projectId,
   studyId,
   studyTitle,
   first,
   onCreated,
   onCancel,
 }: {
-  studyId: string;
+  projectId?: string;
+  studyId?: string;
   studyTitle: string;
   first: boolean;
   onCreated: (prep: TeachingPreparation) => void;
@@ -187,6 +199,8 @@ function NewTeaching({
   // Three built-in block templates, a blank one, then any template of the person's own.
   // A version-1 template still starts the earlier editor. Nothing links a teaching to its template afterwards.
   const mine = useLoad(useCallback(() => api.teachingTemplateList(), [api]));
+  const studies = useLoad(useCallback(() => projectId ? api.studyList({ projectId }) : Promise.resolve([]), [api, projectId]));
+  const [linkedStudy, setLinkedStudy] = useState(studyId ?? "");
   const [chosen, setChosen] = useState("sermon-talk");
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -196,7 +210,7 @@ function NewTeaching({
   const own = personal.find((m) => m.id === chosen);
   const i18nKey = blockTemplateGroup(chosen);
   const choiceName = own ? own.name : t(`studies.teaching.builtin.${i18nKey}.name`);
-  const suggested = `${builtin ? teachingKindLabel(t, builtin.legacyKind) : choiceName} · ${studyTitle}`;
+  const suggested = `${builtin ? teachingKindLabel(t, builtin.legacyKind) : choiceName}${studyTitle ? ` · ${studyTitle}` : ""}`;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -206,13 +220,13 @@ function NewTeaching({
     try {
       const name = title.trim() || suggested;
       if (builtin) {
-        onCreated(await api.teachingCreate({ studyId, title: name, kind: builtin.legacyKind, templateKey: builtin.key, templateVersion: 2, blocks: blocksFromBuiltin(t, builtin) }));
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: builtin.legacyKind, templateKey: builtin.key, templateVersion: 2, blocks: blocksFromBuiltin(t, builtin) }));
       } else if (own && (own.version ?? 1) >= 2) {
-        onCreated(await api.teachingCreate({ studyId, title: name, kind: own.kind, templateKey: own.id, templateVersion: 2, blocks: own.blocks ?? [] }));
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: own.kind, templateKey: own.id, templateVersion: 2, blocks: own.blocks ?? [] }));
       } else if (chosen === "blank") {
-        onCreated(await api.teachingCreate({ studyId, title: name, kind: "other", templateKey: "blank", templateVersion: 2, blocks: [] }));
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: "other", templateKey: "blank", templateVersion: 2, blocks: [] }));
       } else if (own) {
-        onCreated(await api.teachingCreate({ studyId, title: name, kind: own.kind, points: own.points.map((p) => ({ title: p.title, kind: p.kind ?? null })) }));
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: own.kind, points: own.points.map((p) => ({ title: p.title, kind: p.kind ?? null })) }));
       }
     } catch (err) {
       setError(toApiError(err).message);
@@ -233,9 +247,11 @@ function NewTeaching({
       className="flex flex-col gap-4 rounded-aw border border-border-subtle bg-bg-secondary px-5 py-4"
     >
       <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="type-worktitle m-0">
-        {first ? t("studies.teaching.empty.title") : t("studies.teaching.newTeaching")}
+        {first && !projectId ? t("studies.teaching.empty.title") : t("studies.teaching.newTeaching")}
       </h3>
-      {first && <p className="m-0 max-w-prose text-text">{t("studies.teaching.empty.text")}</p>}
+      {first && <p className="m-0 max-w-prose text-text">{t(projectId ? "studies.teaching.workspace.intro" : "studies.teaching.empty.text")}</p>}
+      {projectId && <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={linkedStudy} onChange={e => setLinkedStudy(e.target.value)}><option value="">{t("studies.teaching.workspace.independent")}</option>{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}</select></label>}
+      {projectId && studies.error && <p role="alert">{studies.error.message}</p>}
       <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
         <legend className="type-subhead mb-1">{t("studies.teaching.formatLegend")}</legend>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-2">
@@ -321,7 +337,7 @@ interface EditorProps {
   switcher: ReactNode;
 }
 
-function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDeleted, onRevealScripture, switcher }: EditorProps) {
+function TeachingEditor({ preparationId, findings: initialFindings, assistant, onRenamed, onDeleted, onRevealScripture, switcher }: EditorProps) {
   const { t } = useTranslation();
   const api = useApi();
   const { goTo } = useScripture();
@@ -329,7 +345,14 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
   // The preparation as last returned by the core (links, points, kept material). Each field keeps
   // its own text while the person types, so a reload never overwrites what is being written.
   const prep = loaded.data ?? null;
-  const setPrep = loaded.setData;
+  const linkedStudyId = prep?.studyId;
+  const studyNotes = useLoad(useCallback(() => linkedStudyId ? api.findingList(linkedStudyId) : Promise.resolve([]), [api, linkedStudyId]));
+  const findings = (studyNotes.data ?? initialFindings).filter(f => f.studyId === prep?.studyId);
+  const storePrep = loaded.setData;
+  const setPrep = useCallback((next: TeachingPreparation) => {
+    // Independent saves and link changes can return out of order.
+    storePrep(current => current && current.revision > next.revision ? current : next);
+  }, [storePrep]);
   const [newPoint, setNewPoint] = useState<string | null>(null);
   // Notes for oneself (v0.19): the person's own writing, folded away after the teaching unless opened.
   const [notesOpen, setNotesOpen] = useState(false);
@@ -544,6 +567,7 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
         {/* One quiet line (v0.19): the teaching's information on request, the way to another
             teaching (and the choice between them), and its Bible text as links. */}
         <div className="flex flex-wrap items-center gap-x-2">
+          <StudyLink key={prep.studyId ?? "independent"} preparation={prep} onChanged={setPrep} />
           <TeachingInfo prep={prep} findings={findings} onChanged={setPrep} onDeleted={onDeleted} onRevealScripture={onRevealScripture} />
           {switcher}
           {wholePassages.length > 0 && (
@@ -827,4 +851,20 @@ function DeletePoint({ name, confirm, hasContent, onDelete }: { name: string; co
       <Trash2 className="size-4" aria-hidden="true" />
     </button>
   );
+}
+
+function StudyLink({ preparation, onChanged }: { preparation: TeachingPreparation; onChanged: (p: TeachingPreparation) => void }) {
+  const { t } = useTranslation(); const api = useApi();
+  const projectId = preparation.projectId;
+  const studies = useLoad(useCallback(() => api.studyList({ projectId }), [api, projectId]));
+  const [choice, setChoice] = useState(preparation.studyId ?? "");
+  const [error, setError] = useState<string | null>(null); const [busy, setBusy] = useState(false);
+  return <div className="flex basis-full flex-col gap-2 py-2">
+    <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={choice} disabled={busy} onChange={e => setChoice(e.target.value)}>
+      <option value="">{t("studies.teaching.workspace.independent")}</option>{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+    </select></label>
+    <p className="m-0 text-text-muted">{t("studies.teaching.workspace.keepNotes")}</p>
+    <Button disabled={busy || choice === (preparation.studyId ?? "")} onClick={async () => { setBusy(true); setError(null); try { onChanged(await api.teachingSetStudy(preparation.id, choice || null)); } catch (e) { setError(toApiError(e).message); } finally { setBusy(false); } }}>{t("studies.teaching.workspace.saveLink")}</Button>
+    {(error || studies.error) && <p role="alert">{error ?? studies.error?.message}</p>}
+  </div>;
 }

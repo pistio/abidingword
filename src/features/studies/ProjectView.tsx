@@ -14,6 +14,7 @@ import { StudyList } from "./StudyList";
 
 interface ProjectViewProps {
   project: Project;
+  onOpenTeaching?: () => void;
   /** The only project: shown as "Studies", with nothing about projects at all. */
   plain?: boolean;
   /** A way to the project list, for someone who wants to organise (plain view only). */
@@ -22,7 +23,7 @@ interface ProjectViewProps {
   onOpenStudy: (study: { id: string; projectId: string }) => void;
 }
 
-export function ProjectView({ project, plain = false, onProjects, onProjectChanged, onOpenStudy }: ProjectViewProps) {
+export function ProjectView({ project, onOpenTeaching, plain = false, onProjects, onProjectChanged, onOpenStudy }: ProjectViewProps) {
   const { t } = useTranslation();
   const api = useApi();
   const rename = useCallback(
@@ -54,6 +55,7 @@ export function ProjectView({ project, plain = false, onProjects, onProjectChang
         </div>
       )}
 
+      {onOpenTeaching && <Button onClick={onOpenTeaching}>{t("studies.teaching.workspace.title")}</Button>}
       {empty || asked ? (
         <NewStudyForm
           projectId={project.id}

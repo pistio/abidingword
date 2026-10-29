@@ -27,8 +27,8 @@ interface LinksProps {
 }
 
 /**
- * What is used in a point (or the whole teaching): study findings (live links:
- * they stay the study's and show as they are now), Scripture passages, and
+ * What is used in a point (or the whole teaching): live Study findings or saved
+ * notes retained after unlinking, Scripture passages, and
  * what the person kept from the assistant, each with its standing.
  */
 export function TeachingLinks({ preparation, pointId, blockId = null, scope, studyFindings, onChanged, onRevealScripture }: LinksProps) {
@@ -42,7 +42,7 @@ export function TeachingLinks({ preparation, pointId, blockId = null, scope, stu
   const [reference, setReference] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const links = preparation.findings.filter((l) => l.pointId === pointId);
+  const links = preparation.findings.filter((l) => !l.presentationOnly && l.pointId === pointId);
   const passages = preparation.passages.filter((p) => (blockId ? p.blockId === blockId : p.pointId === pointId && !p.blockId));
   const materials = preparation.materials.filter((m) => m.pointId === pointId);
   const available = studyFindings.filter((f) => !links.some((l) => l.finding.id === f.id));
@@ -102,7 +102,7 @@ export function TeachingLinks({ preparation, pointId, blockId = null, scope, stu
               <div className="flex items-start justify-between gap-2">
                 <p className="reading m-0 whitespace-pre-wrap text-text">
                   <span className="type-meta mr-1 font-medium">{findingLabel(t, link.finding.findingType)}</span>
-                  {link.finding.content}
+                  {link.snapshot && <span className="type-meta mr-1">{t("studies.teaching.workspace.savedNote")}</span>}{link.finding.content}
                 </p>
                 <button
                   type="button"
@@ -131,7 +131,7 @@ export function TeachingLinks({ preparation, pointId, blockId = null, scope, stu
                   ))}
                 </div>
               )}
-              <FindingSources finding={link.finding} canAdd={false} onChanged={() => void act(() => api.teachingGet(preparation.id))} />
+              <FindingSources finding={link.finding} canAdd={false} canRemove={!link.snapshot} onChanged={() => void act(() => api.teachingGet(preparation.id))} />
             </li>
           ))}
         </ul>

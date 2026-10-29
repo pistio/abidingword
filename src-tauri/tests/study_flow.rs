@@ -41,7 +41,7 @@ fn personal_blocks_and_evidence_survive_template_changes_restart_and_backup() {
         templates::ensure_builtin(conn)?;
         assert_eq!(studies::get_detail(conn, &saved.study.id)?, saved);
         assert_eq!(templates::get(conn, &personal.id)?, personal);
-        assert_eq!(migrations::current_version(conn)?, 25);
+        assert_eq!(migrations::current_version(conn)?, 26);
         migrations::validate_existing_history(conn)?;
         Ok((saved, personal))
     }).unwrap();
@@ -66,7 +66,7 @@ fn personal_blocks_and_evidence_survive_template_changes_restart_and_backup() {
         .with_conn(|conn| {
             assert_eq!(studies::get_detail(conn, &saved.study.id)?, saved);
             assert_eq!(templates::get(conn, &personal.id)?, personal);
-            assert_eq!(migrations::current_version(conn)?, 25);
+            assert_eq!(migrations::current_version(conn)?, 26);
             migrations::validate_existing_history(conn)?;
             Ok(())
         })

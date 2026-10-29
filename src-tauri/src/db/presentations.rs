@@ -571,7 +571,14 @@ fn check_source(
             return Err(other())
         }
         "material" if !prep.materials.iter().any(|m| m.id == id) => return Err(other()),
-        "finding" if findings::get(conn, id)?.study_id != prep.study_id => return Err(other()),
+        "finding"
+            if !prep.findings.iter().any(|l| l.finding.id == id)
+                && !prep.study_id.as_deref().is_some_and(|study| {
+                    findings::get(conn, id).is_ok_and(|f| f.study_id == study)
+                }) =>
+        {
+            return Err(other())
+        }
         _ => {}
     }
     if kind == "block" {
