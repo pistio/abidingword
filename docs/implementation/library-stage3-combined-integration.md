@@ -143,6 +143,24 @@ No application test failure remains. The existing bundle-size advisory, Windows 
 
 Git fetch works through the supplied HTTPS route. GitHub API preflight returned `Forbidden`; current runtime status confirms restricted/enforced networking without `api.github.com`. The existing configuration draft already contains the required domain addition, verified during this task, but it has not been applied to the running policy. Saving a draft alone does not grant runtime access. No missing API credential has been established and no new secret was requested.
 
-The new draft PR must use the exact head/base above, never main. Its title/body are prepared in `/workspace/.cloud-setup/stage3-pr-body.md`; actual creation is attempted after pushing the complete branch. A prepared body or compare URL is not an actual PR. The final task report records the resulting PR or concrete creation blocker.
+The new draft PR must use the exact head/base above, never main. Its body is prepared in `/workspace/.cloud-setup/stage3-pr-body.md`; the title is `Integrate Library Stage 3 navigation with combined Teaching and Study`. Creation is attempted after pushing the complete branch. A prepared body or compare URL is not an actual PR. The final task report records the resulting PR or concrete creation blocker.
 
 Stop for owner review. No PR merge, main merge, installer publication, deployment, paid Actions dispatch, real user data access or Teaching Stage 3 work is authorized or performed by this delivery.
+
+## Observed push and PR-creation outcome
+
+The merge and handover were pushed successfully. The first verified delivery tip was `51d5f90fa6c7d159eb4fe4f1b987905778806189`; this final addendum is documentation only, with the final pushed tip recorded in the task delivery message. The requested PR base remained exactly `fa4e1f9ddec01f91d5137884ee399b8f198ff069`.
+
+The actual authorized draft-creation command was:
+
+```sh
+gh pr create --repo pistio/abidingword --draft \
+  --base integration/windows-library-teaching-study-review \
+  --head integration/windows-library-stage3-teaching-study \
+  --title 'Integrate Library Stage 3 navigation with combined Teaching and Study' \
+  --body-file /workspace/.cloud-setup/stage3-pr-body.md
+```
+
+It failed with `Post "https://api.github.com/graphql": Forbidden`, returning no PR URL. No PR creation or PR merge is claimed. **Draft creation remains outstanding due to the enforced runtime network policy**, not an application/test failure. Apply the already-saved `api.github.com` allowance to the running environment and retry the prepared command; destination authentication can only be assessed after that access is available. Do not replace this with a main-targeted PR or claim a compare link is a created PR.
+
+The pushed code and handover are available for owner review while that external prerequisite is resolved. All required local validation is complete; Windows acceptance remains pending as documented above.
