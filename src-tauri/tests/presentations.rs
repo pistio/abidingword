@@ -113,6 +113,7 @@ fn sermon(conn: &Connection) -> AppResult<Sermon> {
     let prep = teaching::create(
         conn,
         &CreateTeaching {
+            project_id: None,
             study_id: study,
             title: "Remain in the vine".into(),
             kind: Some("sermon".into()),
@@ -292,6 +293,7 @@ fn bible_study_questions_and_lesson_steps_get_their_own_slides() {
         let group = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study.clone(),
                 title: "Group".into(),
                 kind: Some("bible_study".into()),
@@ -310,6 +312,7 @@ fn bible_study_questions_and_lesson_steps_get_their_own_slides() {
         let lesson = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study,
                 title: "Lesson".into(),
                 kind: Some("children".into()),

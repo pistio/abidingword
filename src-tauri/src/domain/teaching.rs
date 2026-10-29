@@ -92,7 +92,8 @@ pub const MATERIAL_STANDINGS: &[&str] = &[
 #[serde(rename_all = "camelCase")]
 pub struct TeachingSummary {
     pub id: String,
-    pub study_id: String,
+    pub project_id: String,
+    pub study_id: Option<String>,
     pub title: String,
     pub kind: Option<String>,
     pub updated_at: String,
@@ -102,7 +103,8 @@ pub struct TeachingSummary {
 #[serde(rename_all = "camelCase")]
 pub struct TeachingPreparation {
     pub id: String,
-    pub study_id: String,
+    pub project_id: String,
+    pub study_id: Option<String>,
     pub title: String,
     pub kind: Option<String>,
     pub audience: Option<String>,
@@ -163,6 +165,8 @@ pub struct TeachingPoint {
 #[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TeachingFindingLink {
+    pub snapshot: bool,
+    pub presentation_only: bool,
     pub id: String,
     /// The point it is used under; `None` for the preparation as a whole.
     pub point_id: Option<String>,
@@ -223,6 +227,9 @@ pub struct TeachingMaterial {
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateTeaching {
+    #[serde(default)]
+    pub project_id: Option<String>,
+    #[serde(default, deserialize_with = "optional_study_id")]
     pub study_id: String,
     pub title: String,
     #[serde(default)]
@@ -449,4 +456,8 @@ pub struct UpdateTeachingTemplate {
     pub id: String,
     #[serde(flatten)]
     pub template: TeachingTemplateInput,
+}
+
+fn optional_study_id<'de, D: serde::Deserializer<'de>>(d: D) -> Result<String, D::Error> {
+    Ok(Option::<String>::deserialize(d)?.unwrap_or_default())
 }

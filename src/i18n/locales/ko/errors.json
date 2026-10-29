@@ -222,7 +222,10 @@
     "otherStudyFinding": "그 기록은 다른 성경공부에 속합니다.",
     "badMaterial": "이 항목은 보관할 수 없습니다.",
     "notVerified": "실화는 서로 다른 출처 두 곳이 있어야 확인된 것으로 보관됩니다.",
-    "imageGone": "이 그림을 더 이상 쓸 수 없습니다. 다시 만들어 주세요."
+    "imageGone": "이 그림을 더 이상 쓸 수 없습니다. 다시 만들어 주세요.",
+    "projectRequired": "이 가르침의 성경공부 모음을 선택하세요.",
+    "otherProject": "같은 성경공부 모음에 있는 성경공부를 선택하세요.",
+    "badSnapshot": "보관한 성경공부 기록을 읽을 수 없습니다."
   },
   "presentation": {
     "imageGone": "이 이미지는 이 컴퓨터에 없습니다.",

@@ -1,0 +1,21 @@
+-- Invented schema-25 fixture in foreign-key insertion order.
+INSERT INTO "workspaces" VALUES('w','Synthetic',0,'T','T',NULL,1);
+INSERT INTO "projects" VALUES('p','w','P',NULL,'T','T',NULL,1);
+INSERT INTO "studies" VALUES('s','p',NULL,'S','T','T',NULL,1,'passage','active',NULL,NULL);
+INSERT INTO "findings" VALUES('f','s',NULL,'observation','Exact quotation',NULL,'T','T',NULL,1,0,NULL);
+INSERT INTO "teaching_preparations" VALUES('t','s','t',NULL,NULL,NULL,NULL,'','','',0,'T','T',NULL,9,'sermon-talk',2);
+INSERT INTO "teaching_preparations" VALUES('t-deleted','s','t-deleted',NULL,NULL,NULL,NULL,'','','',0,'T','T','T',9,'sermon-talk',2);
+INSERT INTO "teaching_points" VALUES('pt','t',0,'Point','','','','T','T',NULL,1,NULL);
+INSERT INTO "teaching_points" VALUES('pt-deleted','t-deleted',0,'Point','','','','T','T',NULL,1,NULL);
+INSERT INTO "teaching_blocks" VALUES('b','t',NULL,0,'outline_point',NULL,'','Exact body',NULL,'pt','T','T',NULL,1);
+INSERT INTO "teaching_blocks" VALUES('b-deleted','t-deleted',NULL,0,'outline_point',NULL,'','Exact body',NULL,'pt-deleted','T','T',NULL,1);
+INSERT INTO "teaching_passages" VALUES('ps','t','pt','JHN',15,NULL,NULL,NULL,0,'T',NULL,'b');
+INSERT INTO "teaching_passages" VALUES('ps-deleted','t-deleted','pt-deleted','JHN',15,NULL,NULL,NULL,0,'T',NULL,'b-deleted');
+INSERT INTO "teaching_finding_links" VALUES('fl','t','pt','f',0,'T',NULL,'b');
+INSERT INTO "teaching_finding_links" VALUES('fl-deleted','t-deleted','pt-deleted','f',0,'T',NULL,'b-deleted');
+INSERT INTO "teaching_materials" VALUES('m','t','pt','illustration','hypothetical','Invented','Exact material',NULL,NULL,NULL,0,'T',NULL,'b');
+INSERT INTO "teaching_materials" VALUES('m-deleted','t-deleted','pt-deleted','illustration','hypothetical','Invented','Exact material',NULL,NULL,NULL,0,'T',NULL,'b-deleted');
+INSERT INTO "presentations" VALUES('pr','t','Slides','light',NULL,0,'T','T',NULL,1,NULL,NULL);
+INSERT INTO "presentations" VALUES('pr-deleted','t-deleted','Slides','light',NULL,0,'T','T',NULL,1,NULL,NULL);
+INSERT INTO "presentation_items" VALUES('pi','pr',0,'text','block','b',NULL,NULL,NULL,NULL,'',0,'T','T',NULL);
+INSERT INTO "presentation_items" VALUES('pi-deleted','pr-deleted',0,'text','block','b-deleted',NULL,NULL,NULL,NULL,'',0,'T','T',NULL);

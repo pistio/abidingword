@@ -166,6 +166,8 @@ export interface Api {
   projectGet(id: string): Promise<Project>;
   projectCreate(input: CreateProject): Promise<Project>;
   projectUpdate(input: UpdateProject): Promise<Project>;
+  projectDelete(id: string, permanent?: boolean): Promise<void>;
+  projectRestore(id: string): Promise<Project>;
   /** Saves one project as a package (.awproject) where the save dialog said; where it went. */
   projectExport(input: { projectId: string; path: string }): Promise<[string, ProjectExportReport]>;
   /** What a project package holds and what it refers to that is not here; nothing changes. */
@@ -185,6 +187,8 @@ export interface Api {
   /** The system's save dialog for a project package or a backup; null when cancelled. */
   choosePortableSaveFile(input: { kind: "project" | "backup"; defaultName: string; filterName: string }): Promise<string | null>;
   studyList(filter: ListStudies): Promise<StudySummary[]>;
+  studyDelete(id: string, permanent?: boolean): Promise<void>;
+  studyRestore(id: string): Promise<Study>;
   studyDuplicate(input: { studyId: string; includeContent: boolean }): Promise<StudyDetail>;
   studySearch(query: string): Promise<StudySearchHit[]>;
   studyGet(id: string): Promise<StudyDetail>;
@@ -330,6 +334,9 @@ export interface Api {
 
   /** Teaching Preparation (v0.16): what a study leads to, written by the person. */
   teachingList(studyId: string): Promise<TeachingSummary[]>;
+  teachingListProject(projectId: string): Promise<TeachingSummary[]>;
+  teachingSetStudy(id: string, studyId: string | null): Promise<TeachingPreparation>;
+  teachingRestore(id: string): Promise<TeachingPreparation>;
   teachingGet(id: string): Promise<TeachingPreparation>;
   /** `points`: the steps or points it starts with (a format's starting structure), in the person's language. */
   /** The person's own Bible Teaching templates (v0.18.7); the built-in ones are in the interface. */
@@ -337,7 +344,7 @@ export interface Api {
   teachingTemplateCreate(input: TeachingTemplateInput): Promise<TeachingTemplate>;
   teachingTemplateUpdate(input: TeachingTemplateInput & { id: string }): Promise<TeachingTemplate>;
   teachingTemplateDelete(id: string): Promise<void>;
-  teachingCreate(input: { studyId: string; title: string; kind?: TeachingKind | null; points?: { title: string; kind?: StepKind | null }[]; templateKey?: string | null; templateVersion?: number | null; blocks?: TeachingTemplateBlock[] }): Promise<TeachingPreparation>;
+  teachingCreate(input: { projectId?: string; studyId?: string | null; title: string; kind?: TeachingKind | null; points?: { title: string; kind?: StepKind | null }[]; templateKey?: string | null; templateVersion?: number | null; blocks?: TeachingTemplateBlock[] }): Promise<TeachingPreparation>;
   teachingUpdate(input: UpdateTeaching): Promise<TeachingPreparation>;
   teachingDelete(id: string): Promise<void>;
   teachingPointCreate(input: { preparationId: string; title?: string; kind?: StepKind | null; afterPointId?: string | null }): Promise<TeachingPreparation>;
@@ -602,6 +609,8 @@ export const tauriApi: Api = {
   projectGet: (id) => call("project_get", { id }),
   projectCreate: (input) => call("project_create", { input }),
   projectUpdate: (input) => call("project_update", { input }),
+  projectDelete: (id, permanent) => call("project_delete", { id, permanent }),
+  projectRestore: (id) => call("project_restore", { id }),
   projectExport: ({ projectId, path }) => call("project_export", { projectId, path }),
   projectPackageInspect: (path) => call("project_package_inspect", { path }),
   projectImport: (path) => call("project_import", { path }),
@@ -616,6 +625,8 @@ export const tauriApi: Api = {
   choosePortableSaveFile: async ({ kind, defaultName, filterName }) => save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: [PORTABLE_EXTENSION[kind]] }] }),
   studyList: (input) => call("study_list", { input }),
   studyDuplicate: (input) => call("study_duplicate", { input }),
+  studyDelete: (id, permanent) => call("study_delete", { id, permanent }),
+  studyRestore: (id) => call("study_restore", { id }),
   studySearch: (query) => call("study_search", { query }),
   studyGet: (id) => call("study_get", { id }),
   studyCreate: (input) => call("study_create", { input }),
@@ -738,6 +749,9 @@ export const tauriApi: Api = {
   findingCreateFromSource: (input) => call("finding_create_from_source", { input }),
   findingSourceLocate: (citationId) => call("finding_source_locate", { citationId }),
   teachingList: (studyId) => call("teaching_list", { studyId }),
+  teachingListProject: (projectId) => call("teaching_list_project", { projectId }),
+  teachingSetStudy: (id, studyId) => call("teaching_set_study", { id, studyId }),
+  teachingRestore: (id) => call("teaching_restore", { id }),
   teachingGet: (id) => call("teaching_get", { id }),
   teachingTemplateList: () => call("teaching_template_list"),
   teachingTemplateCreate: (input) => call("teaching_template_create", { input }),

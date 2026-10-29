@@ -1,3 +1,4 @@
+import { Button } from "@/design-system/Button";
 import { useStudyFocus } from "./StudyFocus";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,6 +12,7 @@ import { readLocal, writeLocal } from "@/lib/storage";
 import type { Project, Workspace } from "@/types/domain";
 import { ProjectList } from "./ProjectList";
 import { StudyHome } from "./StudyHome";
+import { TeachingView } from "@/features/teaching/TeachingView";
 import { ProjectView } from "./ProjectView";
 import { StudyEditor } from "./StudyEditor";
 import { rememberProject } from "./projects";
@@ -22,6 +24,7 @@ export type StudyLocation =
   // The project list, for organising.
   | { kind: "projectList" }
   | { kind: "project"; projectId: string }
+  | { kind: "teaching"; projectId: string }
   | { kind: "study"; projectId: string; studyId: string };
 
 const LOCATION_KEY = "studyPane.location";
@@ -89,6 +92,7 @@ export function StudyPane({ workspace, onRevealScripture, search, onCloseSearch 
                 onOpenProject={(id) => setLocation({ kind: "project", projectId: id })}
                 onOpenStudy={openStudy}
                 onProjectList={() => setLocation({ kind: "projectList" })}
+                onOpenTeaching={(projectId) => setLocation({ kind: "teaching", projectId })}
               />
             ) : (
               <ProjectScope
@@ -166,8 +170,10 @@ function ProjectScope({ workspaceId, projectId, location, setLocation, onMissing
           onOpenStudy={onOpenStudy}
           onRevealScripture={onRevealScripture}
         />
+      ) : location.kind === "teaching" ? (
+        <><Button variant="quiet" onClick={openProject}>{t("studies.teaching.workspace.project")}</Button><TeachingView projectId={projectId} onRevealScripture={onRevealScripture} /></>
       ) : (
-        <ProjectView project={project.data} onProjectChanged={project.setData} onOpenStudy={onOpenStudy} />
+        <ProjectView project={project.data} onOpenTeaching={() => setLocation({ kind: "teaching", projectId })} onProjectChanged={project.setData} onOpenStudy={onOpenStudy} />
       )}
     </>
   );

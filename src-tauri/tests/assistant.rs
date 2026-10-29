@@ -180,6 +180,7 @@ fn world() -> World {
             let prep = teaching::create(
                 conn,
                 &CreateTeaching {
+            project_id: None,
                     study_id: s.clone(),
                     title: "Sunday sermon".into(),
                     kind: Some("sermon".into()),
@@ -193,6 +194,7 @@ fn world() -> World {
             let second = teaching::create(
                 conn,
                 &CreateTeaching {
+            project_id: None,
                     study_id: s.clone(),
                     title: "Youth night".into(),
                     kind: None,
@@ -669,6 +671,7 @@ fn a_question_needs_the_persons_own_material_not_just_a_request() {
             let p = teaching::create(
                 conn,
                 &CreateTeaching {
+                    project_id: None,
                     study_id: s,
                     title: "Blank".into(),
                     kind: None,

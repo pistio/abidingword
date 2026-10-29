@@ -151,6 +151,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "teaching_blocks",
         sql: include_str!("../../migrations/0025_teaching_blocks.sql"),
     },
+    Migration {
+        version: 26,
+        name: "project_teaching",
+        sql: include_str!("../../migrations/0026_project_teaching.sql"),
+    },
 ];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -328,6 +333,9 @@ fn validate_history(conn: &Connection, migrations: &[Migration]) -> AppResult<()
 }
 
 fn apply(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
+    if migration.version == 26 && migration.name == "project_teaching" {
+        return rebuild_teaching(conn, migration);
+    }
     let tx = conn.transaction()?;
     tx.execute_batch(migration.sql)?;
     tx.execute(
@@ -335,6 +343,97 @@ fn apply(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
         params![migration.version, migration.name, now()],
     )?;
     tx.commit()
+}
+
+/// SQLite parent rebuilds must disable cascading FK actions before BEGIN.
+/// Every old column/row is checked inside the exclusive transaction, followed
+/// by foreign_key_check and the history row. Dropping tx rolls everything back.
+fn rebuild_teaching(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
+    use rusqlite::{types::Value, TransactionBehavior};
+    if !conn.is_autocommit() {
+        return Err(rusqlite::Error::InvalidQuery);
+    }
+    conn.pragma_update(None, "foreign_keys", false)?;
+    let result = (|| {
+        if conn.pragma_query_value(None, "foreign_keys", |r| r.get::<_, bool>(0))? {
+            return Err(rusqlite::Error::InvalidQuery);
+        }
+        let tx = conn.transaction_with_behavior(TransactionBehavior::Exclusive)?;
+        let mut before = Vec::new();
+        for table in [
+            "teaching_preparations",
+            "teaching_points",
+            "teaching_blocks",
+            "teaching_passages",
+            "teaching_finding_links",
+            "teaching_materials",
+            "presentations",
+            "presentation_items",
+        ] {
+            let mut info = tx.prepare(&format!("PRAGMA table_info({table})"))?;
+            let names = info
+                .query_map([], |r| r.get::<_, String>(1))?
+                .collect::<Result<Vec<_>, _>>()?;
+            let select = format!(
+                "SELECT {} FROM {table} ORDER BY rowid",
+                names
+                    .iter()
+                    .map(|n| format!("\"{n}\""))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+            let mut stmt = tx.prepare(&select)?;
+            let rows = stmt
+                .query_map([], |r| {
+                    (0..names.len())
+                        .map(|i| r.get::<_, Value>(i))
+                        .collect::<Result<Vec<_>, _>>()
+                })?
+                .collect::<Result<Vec<_>, _>>()?;
+            before.push((select, names.len(), rows));
+        }
+        tx.execute_batch(migration.sql)?;
+        for (select, len, expected) in before {
+            let mut stmt = tx.prepare(&select)?;
+            let rows = stmt
+                .query_map([], |r| {
+                    (0..len)
+                        .map(|i| r.get::<_, Value>(i))
+                        .collect::<Result<Vec<_>, _>>()
+                })?
+                .collect::<Result<Vec<_>, _>>()?;
+            if rows != expected {
+                return Err(rusqlite::Error::SqliteFailure(
+                    rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_CONSTRAINT),
+                    Some("Teaching rebuild changed existing records".into()),
+                ));
+            }
+        }
+        super::teaching::initialise_finding_snapshots(&tx).map_err(|e| {
+            rusqlite::Error::SqliteFailure(
+                rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_CONSTRAINT),
+                Some(e.to_string()),
+            )
+        })?;
+        let invalid = tx.prepare("PRAGMA foreign_key_check")?.exists([])?;
+        if invalid {
+            return Err(rusqlite::Error::SqliteFailure(
+                rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_CONSTRAINT_FOREIGNKEY),
+                Some("Teaching rebuild failed foreign-key integrity check".into()),
+            ));
+        }
+        tx.execute(
+            "INSERT INTO schema_versions (version,name,applied_at) VALUES (?1,?2,?3)",
+            params![migration.version, migration.name, now()],
+        )?;
+        tx.commit()
+    })();
+    // The transaction has committed or dropped before restoring enforcement.
+    conn.pragma_update(None, "foreign_keys", true)?;
+    if !conn.pragma_query_value(None, "foreign_keys", |r| r.get::<_, bool>(0))? {
+        return Err(rusqlite::Error::InvalidQuery);
+    }
+    result
 }
 
 fn check_order(migrations: &[Migration]) -> AppResult<()> {

@@ -35,15 +35,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Marks | `scripture.marks.title` | Marks | Anmerkungen | 표시 | Marques | Marcas | Marcas | Notes, highlights and bookmarks on verses. |
 | Passage | `presentation.editor.passage` | Passage | Bibelstelle | 본문 | Passage | Pasaje | Passagem | A Bible reference. |
 
-**Bible Study** — 30 strings use it in English.
+**Bible Study** — 32 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Bibelstudium (19), Bibelstudien (4), Studium (2), (none of these) (5) |
-| Korean | 성경공부 (24), 공부 (4), 연구 (2) |
-| French | Étude biblique (8), étude biblique (15), étude (4), Étude (3) |
-| Spanish | Estudio bíblico (8), estudio bíblico (16), estudio (3), Estudio (3) |
-| Portuguese | Estudo bíblico (8), estudo bíblico (15), estudo (4), Estudo (3) |
+| German | Bibelstudium (21), Bibelstudien (4), Studium (2), (none of these) (5) |
+| Korean | 성경공부 (26), 공부 (4), 연구 (2) |
+| French | Étude biblique (9), étude biblique (16), étude (4), Étude (3) |
+| Spanish | Estudio bíblico (9), estudio bíblico (17), estudio (3), Estudio (3) |
+| Portuguese | Estudo bíblico (9), estudo bíblico (16), estudo (4), Estudo (3) |
 
 **Bible Teaching** — 18 strings use it in English.
 
@@ -95,15 +95,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | pasaje (166), Pasaje (27), (none of these) (44) |
 | Portuguese | passagem (97), Passagem (15), (none of these) (125) |
 
-**source** — 120 strings use it in English.
+**source** — 121 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Quelle (117), (none of these) (3) |
-| Korean | 자료 (104), 출처 (15), (none of these) (1) |
-| French | source (97), Source (21), (none of these) (2) |
-| Spanish | fuente (100), Fuente (18), (none of these) (2) |
-| Portuguese | fonte (101), Fonte (17), (none of these) (2) |
+| German | Quelle (118), (none of these) (3) |
+| Korean | 자료 (104), 출처 (16), (none of these) (1) |
+| French | source (98), Source (21), (none of these) (2) |
+| Spanish | fuente (101), Fuente (18), (none of these) (2) |
+| Portuguese | fonte (102), Fonte (17), (none of these) (2) |
 
 ## 2. Questions left
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1647 strings changed in at least one language since v0.18.10. Spot-check these.
+1661 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -218,10 +218,13 @@ _No open linguistic questions._
 |  | `errors.portability.restoreFailed` | The backup could not be restored. Your work was put back as it was. | Die Sicherung konnte nicht wiederhergestellt werden. Deine Arbeit wurde wieder so hergestellt, wie sie war. | 백업을 복원하지 못했습니다. 작업은 원래 상태로 되돌려 두었습니다. | La sauvegarde n’a pas pu être restaurée. Votre travail a été remis tel qu’il était. | No se pudo restaurar la copia de seguridad. Tu trabajo volvió a quedar como estaba. | Não foi possível restaurar a cópia de segurança. O seu trabalho voltou a ficar como estava. |
 | {{path}} | `errors.portability.rollbackFailed` | The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {{path}}. | Die Sicherung konnte nicht wiederhergestellt werden, und deine vorherige Arbeit konnte nicht automatisch zurückgeholt werden. Eine Kopie davon liegt unter {{path}}. | 백업을 복원하지 못했고, 이전 작업도 자동으로 되돌리지 못했습니다. 이전 작업의 사본은 {{path}}에 보관되어 있습니다. | La sauvegarde n’a pas pu être restaurée, et votre travail précédent n’a pas pu être remis automatiquement. Une copie en est conservée dans {{path}}. | No se pudo restaurar la copia de seguridad, y tu trabajo anterior no se pudo recuperar automáticamente. Hay una copia en {{path}}. | Não foi possível restaurar a cópia de segurança, e o seu trabalho anterior não pôde ser recuperado automaticamente. Há uma cópia dele em {{path}}. |
 |  | `errors.portability.tooLarge` | This file holds more than Abiding Word reads from one file. | Diese Datei enthält mehr, als Abiding Word aus einer Datei liest. | 이 파일에는 Abiding Word가 한 파일에서 읽을 수 있는 것보다 많은 내용이 있습니다. | Ce fichier contient plus qu’Abiding Word ne lit dans un seul fichier. | Este archivo contiene más de lo que Abiding Word lee de un solo archivo. | Este arquivo contém mais do que o Abiding Word lê de um só arquivo. |
+|  | `errors.teaching.badSnapshot` | This saved study note cannot be read. | Diese gespeicherte Studiennotiz kann nicht gelesen werden. | 보관한 성경공부 기록을 읽을 수 없습니다. | Cette note d’étude conservée ne peut pas être lue. | No se puede leer esta nota de estudio conservada. | Não foi possível ler esta nota de estudo guardada. |
 |  | `errors.teaching.blockParent` | A block can sit in a section of this teaching. | Ein Block kann in einem Abschnitt dieser Lehrvorbereitung stehen. | 이 가르침 준비의 구역 안에 부분을 배치할 수 있습니다. | Un bloc peut être placé dans une section de cette préparation. | Un bloque puede colocarse en una sección de esta preparación. | Um bloco pode ser colocado numa secção desta preparação. |
 |  | `errors.teaching.blockReference` | Choose a live Scripture block in this teaching. | Wähle einen vorhandenen Bibeltextblock in dieser Lehrvorbereitung. | 이 가르침 준비에 있는 삭제되지 않은 성경 본문 부분을 선택하세요. | Choisissez un bloc de texte biblique existant dans cette préparation. | Elija un bloque de texto bíblico existente en esta preparación. | Escolha um bloco de texto bíblico existente nesta preparação. |
 |  | `errors.teaching.blockRole` | That block cannot be tied to that part of the teaching. | Dieser Block kann diesem Teil der Lehrvorbereitung nicht zugeordnet werden. | 이 내용을 가르침 준비의 해당 부분에 연결할 수 없습니다. | Ce bloc ne peut pas être associé à cette partie de la préparation. | Este bloque no se puede vincular a esa parte de la preparación. | Este bloco não pode ser associado a essa parte da preparação. |
 |  | `errors.teaching.blockType` | That is not a kind of block this teaching can hold. | Dieser Blocktyp kann in dieser Lehrvorbereitung nicht verwendet werden. | 이 가르침 준비에서는 이 종류의 부분을 사용할 수 없습니다. | Ce type de bloc ne peut pas être utilisé dans cette préparation. | Este tipo de bloque no se puede usar en esta preparación. | Este tipo de bloco não pode ser usado nesta preparação. |
+|  | `errors.teaching.otherProject` | Choose a study in this project. | Wähle ein Bibelstudium in diesem Projekt. | 같은 성경공부 모음에 있는 성경공부를 선택하세요. | Choisissez une étude dans ce projet. | Elige un estudio de este proyecto. | Escolhe um estudo deste projeto. |
+|  | `errors.teaching.projectRequired` | Choose a project for this teaching. | Wähle ein Projekt für diese Bibellehre. | 이 가르침의 성경공부 모음을 선택하세요. | Choisissez un projet pour cet enseignement. | Elige un proyecto para esta enseñanza. | Escolhe um projeto para este ensino. |
 |  | `errors.templates.duplicateBlockKey` | Blocks need distinct, nonempty keys. | Bausteine brauchen unterschiedliche, nicht leere Kennungen. | 구성 요소마다 비어 있지 않은 고유한 식별자가 필요합니다. | Chaque bloc doit avoir un identifiant unique et non vide. | Cada bloque necesita un identificador único y no vacío. | Cada bloco precisa de um identificador único e não vazio. |
 |  | `errors.templates.partAlreadyAdded` | This template part is already in the study. | Dieser Vorlagenteil ist bereits im Bibelstudium enthalten. | 이 공부 틀의 항목은 이미 성경 공부에 추가되어 있습니다. | Cette partie du modèle figure déjà dans l’étude. | Esta sección de la plantilla ya forma parte del estudio. | Esta parte do modelo já foi adicionada ao estudo. |
 | {{max}} | `errors.templates.tooManyBlocks` | A part can have at most {{max}} blocks. | Ein Teil kann höchstens {{max}} Bausteine enthalten. | 한 부분에는 구성 요소를 최대 {{max}}개까지 넣을 수 있습니다. | Une partie peut contenir au maximum {{max}} blocs. | Una parte puede contener como máximo {{max}} bloques. | Uma parte pode conter no máximo {{max}} blocos. |
@@ -1762,6 +1765,17 @@ _No open linguistic questions._
 |  | `studies.teaching.passagesLine` | Bible text | Bibeltext | 본문 | Texte biblique | Texto bíblico | Texto bíblico |
 |  | `studies.teaching.saveTemplate.keeps.blocks` | The template keeps the format and the sections and blocks this teaching starts with, in order. Nothing written in the blocks comes with it. | Die Vorlage übernimmt die Form und die Abschnitte und Blöcke, mit denen diese Bibellehre beginnt, in ihrer Reihenfolge. Was in den Blöcken steht, kommt nicht mit. | 가르침 틀에는 형식과 이 가르침이 시작하는 단락과 칸이 순서대로 담깁니다. 칸에 쓴 글은 담기지 않습니다. | Le modèle reprend la forme et les sections et blocs avec lesquels cet enseignement commence, dans l’ordre. Rien de ce qui est écrit dans les blocs n’est repris. | La plantilla conserva el formato y las secciones y bloques con los que empieza esta enseñanza, en orden. Lo escrito en los bloques no se incluye. | O modelo guarda o formato e as seções e blocos com que este ensino começa, em ordem. O que está escrito nos blocos não vem junto. |
 | {{max}} | `studies.teaching.saveTemplate.tooManyBlocks` | A template can start with at most {{max}} blocks, and this teaching has more. Make the template in Settings → Templates instead. | Eine Vorlage kann mit höchstens {{max}} Blöcken beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen. | 가르침 틀은 칸을 최대 {{max}}개까지 담을 수 있는데, 이 가르침은 그보다 많습니다. 설정 → 공부·가르침 틀에서 직접 만드세요. | Un modèle peut commencer avec {{max}} blocs au plus, et cet enseignement en a davantage. Créez plutôt le modèle dans Paramètres → Modèles. | Una plantilla puede empezar con {{max}} bloques como máximo, y esta enseñanza tiene más. Crea la plantilla en Configuración → Plantillas. | Um modelo pode começar com no máximo {{max}} blocos, e este ensino tem mais. Crie o modelo em Configurações → Modelos. |
+|  | `studies.teaching.workspace.back` | Back to Teaching list | Zurück zur Lehrübersicht | 가르침 목록으로 | Retour aux enseignements | Volver a las enseñanzas | Voltar à lista de ensinos |
+|  | `studies.teaching.workspace.empty` | No teaching sessions yet. | Noch keine Lehrvorbereitung. | 아직 가르침 준비가 없습니다. | Aucune préparation pour le moment. | Todavía no hay sesiones de enseñanza. | Ainda não há sessões de ensino. |
+|  | `studies.teaching.workspace.independent` | Independent teaching | Eigenständige Bibellehre | 독립적인 가르침 | Enseignement indépendant | Enseñanza independiente | Ensino independente |
+|  | `studies.teaching.workspace.intro` | Prepare a teaching here, with or without a Bible Study. | Bereite hier eine Bibellehre vor – mit oder ohne Bibelstudium. | 성경공부와 연결하거나 독립적으로 가르침을 준비하세요. | Préparez un enseignement, avec ou sans étude biblique. | Prepara una enseñanza con o sin estudio bíblico. | Prepara um ensino com ou sem estudo bíblico. |
+|  | `studies.teaching.workspace.keepNotes` | Keep previously used notes and their sources as saved copies when changing or removing the study link. Future study edits will not change those copies. | Wenn du die Verknüpfung änderst oder aufhebst, bleiben bereits verwendete Notizen mit ihren Quellen als Kopien erhalten. Spätere Änderungen im Bibelstudium ändern diese Kopien nicht. | 연결을 바꾸거나 해제해도 사용한 기록과 출처는 사본으로 남습니다. 이후 성경공부를 수정해도 이 사본은 바뀌지 않습니다. | En changeant ou retirant le lien, les notes déjà utilisées et leurs sources restent conservées comme copies. Les modifications ultérieures de l’étude ne changent pas ces copies. | Al cambiar o quitar el vínculo, las notas utilizadas y sus fuentes se conservan como copias. Los cambios posteriores en el estudio no modifican esas copias. | Ao alterar ou remover a ligação, as notas utilizadas e as suas fontes ficam guardadas como cópias. Alterações posteriores no estudo não modificam essas cópias. |
+|  | `studies.teaching.workspace.project` | Back to project | Zurück zum Projekt | 성경공부 모음으로 | Retour au projet | Volver al proyecto | Voltar ao projeto |
+|  | `studies.teaching.workspace.saveLink` | Save study link | Verknüpfung speichern | 연결 저장 | Enregistrer le lien | Guardar vínculo | Guardar ligação |
+|  | `studies.teaching.workspace.savedNote` | Saved study note | Gespeicherte Studiennotiz | 보관한 성경공부 기록 | Note d’étude conservée | Nota de estudio conservada | Nota de estudo guardada |
+|  | `studies.teaching.workspace.sessions` | Teaching sessions | Lehrvorbereitungen | 가르침 준비 목록 | Préparations d’enseignement | Sesiones de enseñanza | Sessões de ensino |
+|  | `studies.teaching.workspace.study` | Bible Study (optional) | Bibelstudium (wahlweise) | 성경공부 연결 (선택) | Étude biblique (facultative) | Estudio bíblico (opcional) | Estudo bíblico (opcional) |
+|  | `studies.teaching.workspace.title` | Teaching | Bibellehre | 성경 가르침 | Enseignement | Enseñanza | Ensino |
 
 ## 4. Automatic audit findings
 

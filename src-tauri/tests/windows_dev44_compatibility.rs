@@ -152,9 +152,9 @@ fn dev43_v19_objects_rows_history_and_backup_survive_upgrade_and_restart() {
     drop(historical);
     let db = Database::open(&path, &backups).unwrap();
     let installed=db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn)?,25); assert_preserved(conn,&startup_before);
+        assert_eq!(migrations::current_version(conn)?,26); assert_preserved(conn,&startup_before);
         assert_eq!(&history(conn)[..19],original_history.as_slice());
-        assert_eq!(history(conn)[19..].iter().map(|r|r.0).collect::<Vec<_>>(),vec![20,21,22,23,24,25]);
+        assert_eq!(history(conn)[19..].iter().map(|r|r.0).collect::<Vec<_>>(),vec![20,21,22,23,24,25,26]);
         for (kind,name) in &objects { assert!(conn.query_row("SELECT EXISTS(SELECT 1 FROM sqlite_schema WHERE type=?1 AND name=?2)",[kind,name],|r|r.get::<_,bool>(0))?); }
         assert_eq!(conn.query_row("SELECT status || ':' || COALESCE(fields,'NULL') FROM study_sections WHERE id='sec'",[],|r|r.get::<_,String>(0))?,"not_started:NULL");
         templates::list(conn)
@@ -201,7 +201,7 @@ fn dev43_v19_objects_rows_history_and_backup_survive_upgrade_and_restart() {
 fn fresh_schema_contains_both_presentations_and_structured_templates() {
     let db = Database::open_in_memory().unwrap();
     db.with_conn(|conn| {
-        assert_eq!(history(conn).iter().map(|r|r.0).collect::<Vec<_>>(),(1..=25).collect::<Vec<_>>());
+        assert_eq!(history(conn).iter().map(|r|r.0).collect::<Vec<_>>(),(1..=26).collect::<Vec<_>>());
         assert_eq!(history(conn)[9].1,"presentations");
         assert_eq!(history(conn)[23].1,"section_status_and_fields");
         assert_eq!(history(conn)[24].1,"teaching_blocks");
@@ -371,7 +371,7 @@ fn full_app_backup_restores_template_fields_answers_phases_and_files() {
         .with_conn(|conn| {
             let restored = studies::get_detail(conn, &saved.study.id)?;
             assert_eq!(restored, saved);
-            assert_eq!(migrations::current_version(conn)?, 25);
+            assert_eq!(migrations::current_version(conn)?, 26);
             migrations::validate_existing_history(conn)?;
             Ok(())
         })

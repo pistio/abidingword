@@ -40,7 +40,7 @@ fn from_row(row: &Row) -> rusqlite::Result<Study> {
 
 pub fn get(conn: &Connection, id: &str) -> AppResult<Study> {
     conn.query_row(
-        &format!("SELECT {COLUMNS} FROM studies WHERE id = ?1 AND deleted_at IS NULL"),
+        &format!("SELECT {COLUMNS} FROM studies WHERE id = ?1 AND deleted_at IS NULL AND EXISTS(SELECT 1 FROM projects WHERE projects.id=studies.project_id AND projects.deleted_at IS NULL)"),
         [id],
         from_row,
     )
@@ -343,4 +343,31 @@ pub(crate) fn touch(conn: &Connection, id: &str, now: &str) -> AppResult<()> {
         params![id, now],
     )?;
     Ok(())
+}
+
+/// Soft deletion immediately detaches Teaching; restoring a Study never
+/// silently changes the Teaching's independently chosen relationship.
+pub fn delete(conn: &Connection, id: &str, permanent: bool) -> AppResult<()> {
+    let exists: bool = conn.query_row(
+        "SELECT EXISTS(SELECT 1 FROM studies WHERE id=?1)",
+        [id],
+        |r| r.get(0),
+    )?;
+    if !exists {
+        return Err(AppError::not_found("study", id));
+    }
+    let tx = conn.unchecked_transaction()?;
+    let at = now();
+    crate::db::teaching::detach_study(&tx, id, &at)?;
+    if permanent {
+        tx.execute("DELETE FROM studies WHERE id=?1", [id])?;
+    } else {
+        tx.execute("UPDATE studies SET deleted_at=?2,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NULL",params![id,at])?;
+    }
+    tx.commit()?;
+    Ok(())
+}
+pub fn restore(conn: &Connection, id: &str) -> AppResult<Study> {
+    conn.execute("UPDATE studies SET deleted_at=NULL,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NOT NULL AND EXISTS(SELECT 1 FROM projects WHERE id=project_id AND deleted_at IS NULL)",params![id,now()])?;
+    get(conn, id)
 }

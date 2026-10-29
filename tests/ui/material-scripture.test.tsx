@@ -18,7 +18,7 @@ const t = i18n.t.bind(i18n);
 
 const ref = (canonical: string, display: string, start: number, end: number) => ({ book: "JHN", startChapter: 15, startVerse: start, endChapter: 15, endVerse: end, canonical, display });
 const prep = (fields: Partial<TeachingPreparation> = {}): TeachingPreparation => ({
-  id: "prep", studyId: "s", title: "Remain in the vine", kind: "bible_study", audience: null, purpose: null, centralMessage: "LEADER ONLY",
+  id: "prep", projectId: "fixture-project", studyId: "s", title: "Remain in the vine", kind: "bible_study", audience: null, purpose: null, centralMessage: "LEADER ONLY",
   introduction: "", conclusion: "", notes: "", findings: [], materials: [], createdAt: "", updatedAt: "", revision: 1,
   points: [{ id: "q1", position: 0, kind: null, title: "What does remain mean?", explanation: "LEADER: it may lead to v9", application: "", illustration: "" }],
   passages: [{ id: "a", pointId: null, reference: ref("JHN.15.1-JHN.15.3", "John 15:1-3", 1, 3) }, { id: "b", pointId: "q1", reference: ref("JHN.15.9", "John 15:9", 9, 9) }],

@@ -1,6 +1,6 @@
 // In-memory Teaching Preparation and assistant (v0.16) for interface tests.
 // Mirrors the core's rules (db/teaching.rs, assistant/): findings are linked
-// live and never copied; Scripture is named without touching the study;
+// live while linked, saved with provenance on unlink; Scripture is named without touching the study;
 // kept material has an honest standing; the assistant never changes text,
 // refuses to write without the person's material, and is scripted by the test.
 import { ApiError, type Api } from "@/lib/api";
@@ -25,13 +25,14 @@ import type {
 import { STEP_KINDS, TEACHING_KINDS } from "@/types/teaching";
 
 interface StoredPrep extends Omit<TeachingPreparation, "findings" | "passages" | "materials"> {
-  links: { id: string; pointId: string | null; findingId: string }[];
+  links: { id: string; pointId: string | null; findingId: string | null; saved?: Finding; presentationOnly?: boolean }[];
   passages: { id: string; pointId: string | null; blockId?: string | null; reference: ScriptureRef }[];
   materials: TeachingMaterial[];
 }
 
 export interface TeachingState {
   preparations: StoredPrep[];
+  deletedPreparations: Map<string, StoredPrep>;
   /** The person's own Bible Teaching templates (v0.18.7). */
   templates: TeachingTemplate[];
   assistant: {
@@ -72,6 +73,7 @@ export function defaultAssistantConfig(): AssistantConfig {
 export function newTeachingState(): TeachingState {
   return {
     preparations: [],
+    deletedPreparations: new Map(),
     templates: [],
     assistant: {
       config: defaultAssistantConfig(),
@@ -94,6 +96,10 @@ interface Helpers {
   now: () => string;
   findings: () => Finding[];
   studyExists: (studyId: string) => void;
+  studyProject: (studyId: string) => string;
+  projectExists: (projectId: string) => void;
+  presentationFindings: (id: string) => string[];
+  copyCitation: (original: string, saved: string) => void;
   studyPassages: () => StudyPassage[];
   ref: (canonical: string) => ScriptureRef | null;
 }
@@ -104,6 +110,9 @@ type TeachingApi = Pick<
   | "teachingTemplateCreate"
   | "teachingTemplateUpdate"
   | "teachingTemplateDelete"
+  | "teachingListProject"
+  | "teachingSetStudy"
+  | "teachingRestore"
   | "teachingList"
   | "teachingGet"
   | "teachingCreate"
@@ -232,10 +241,30 @@ function applyRoles(p: { introduction: string; conclusion: string; notes: string
 
 type StoredPoint = { id: string; position: number; kind: null; title: string; explanation: string; application: string; illustration: string };
 
+export function detachMemoryFindings(p: StoredPrep, findings: Finding[], presentationIds: string[], id: () => string, copyCitation: (original: string, saved: string) => void) {
+  const copy = (finding: Finding) => {
+    const saved = structuredClone(finding);
+    for (const citation of saved.sources) { const original = citation.id; citation.id = id(); copyCitation(original, citation.id); }
+    return saved;
+  };
+  for (const source of presentationIds) {
+    if (p.links.some(l => l.findingId === source || l.saved?.id === source)) continue;
+    const finding = findings.find(f => f.id === source);
+    if (finding) p.links.push({id:id(), pointId:null, findingId:null, saved:copy(finding), presentationOnly:true});
+  }
+  for (const link of p.links) {
+    const finding = findings.find(f => f.id === link.findingId);
+    if (finding) link.saved = copy(finding);
+    link.findingId = null;
+  }
+}
+
 export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
+  const trash = state.deletedPreparations;
   const prep = (prepId: string): StoredPrep => {
     const p = state.preparations.find((x) => x.id === prepId);
     if (!p) throw new ApiError("notFound", "This teaching preparation could not be found. It may have been deleted.");
+    h.projectExists(p.projectId);
     return p;
   };
   const owner = (pointId: string): StoredPrep => {
@@ -253,7 +282,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
     return {
       ...p,
       points,
-      findings: p.links.filter((l) => live.has(l.findingId)).map((l) => ({ id: l.id, pointId: l.pointId, finding: { ...live.get(l.findingId)! } })),
+      findings: p.links.filter((l) => l.findingId ? live.has(l.findingId) : !!l.saved).map((l) => ({ id: l.id, pointId: l.pointId, finding: structuredClone(l.findingId ? live.get(l.findingId)! : l.saved!), snapshot: !l.findingId, presentationOnly: l.presentationOnly ?? false })),
       passages: p.passages.map((x) => ({ ...x })),
       materials: p.materials.map((x) => ({ ...x })),
     };
@@ -341,17 +370,39 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
     },
     teachingList: async (studyId) => {
       h.studyExists(studyId);
-      return state.preparations.filter((p) => p.studyId === studyId).map((p) => ({ id: p.id, studyId, title: p.title, kind: p.kind, updatedAt: p.updatedAt }));
+      return state.preparations.filter((p) => p.studyId === studyId).map((p) => ({ id: p.id, projectId: p.projectId, studyId, title: p.title, kind: p.kind, updatedAt: p.updatedAt }));
     },
     teachingGet: async (prepId) => view(prep(prepId)),
-    teachingCreate: async ({ studyId, title, kind, points = [], templateKey, templateVersion, blocks = [] }) => {
-      h.studyExists(studyId);
+    teachingListProject: async (projectId) => {
+      h.projectExists(projectId);
+      return state.preparations.filter(p => p.projectId === projectId).map(p => ({ id: p.id, projectId, studyId: p.studyId, title: p.title, kind: p.kind, updatedAt: p.updatedAt }));
+    },
+    teachingSetStudy: async (id, studyId) => {
+      const p = prep(id);
+      if (studyId && h.studyProject(studyId) !== p.projectId) throw new ApiError("invalidInput", "Choose a study in this project.");
+      if (p.studyId === studyId) return view(p);
+      detachMemoryFindings(p, h.findings(), h.presentationFindings(id), h.id, h.copyCitation);
+
+      p.studyId = studyId;
+      touch(p); return view(p);
+    },
+    teachingRestore: async (id) => {
+      const p = trash.get(id);
+      if (!p) return view(prep(id));
+      h.projectExists(p.projectId); trash.delete(id); state.preparations.push(p); touch(p); return view(p);
+    },
+    teachingCreate: async ({ projectId, studyId, title, kind, points = [], templateKey, templateVersion, blocks = [] }) => {
+      if (studyId) h.studyExists(studyId);
+      const owner = projectId ?? (studyId ? h.studyProject(studyId) : null);
+      if (!owner) throw new ApiError("invalidInput", "Choose a project for this teaching.");
+      h.projectExists(owner);
+      if (studyId && h.studyProject(studyId) !== owner) throw new ApiError("invalidInput", "Choose a study in this project.");
       const name = title.trim();
       if (!name) throw new ApiError("invalidInput", "Please give the teaching a title.");
       const t = h.now();
       const made = materialise(h, blocks);
       const p: StoredPrep = {
-        id: h.id(), studyId, title: name, kind: kind ?? null, audience: null, purpose: null, centralMessage: null,
+        id: h.id(), projectId: owner, studyId: studyId || null, title: name, kind: kind ?? null, audience: null, purpose: null, centralMessage: null,
         introduction: "", conclusion: "", notes: "",
         points: [
           ...points.map((x) => ({ id: h.id(), position: 0, kind: x.kind ?? null, title: x.title.trim(), explanation: "", application: "", illustration: "" })),
@@ -393,7 +444,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       return view(p);
     },
     teachingDelete: async (prepId) => {
-      prep(prepId);
+      const p = prep(prepId); touch(p); trash.set(prepId,p);
       state.preparations = state.preparations.filter((p) => p.id !== prepId);
     },
     teachingPointCreate: async ({ preparationId, title, kind, afterPointId }) => {
@@ -613,7 +664,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       if (p.centralMessage || p.audience || p.purpose) shared.push({ kind: "teaching", label: p.title, reference: null });
       const primary = h.studyPassages().find((x) => x.studyId === p.studyId && x.role === "primary");
       if (primary) shared.push({ kind: "passage", label: primary.reference.display, reference: primary.reference });
-      const linked = p.links.filter((l) => l.pointId === null || l.pointId === input.pointId).length;
+      const linked = p.links.filter((l) => !l.presentationOnly && (l.pointId === null || l.pointId === input.pointId)).length;
       if (linked) shared.push({ kind: "finding", label: String(linked), reference: null });
       return { remote: remote(state.assistant.config), assistant: label(), shared, searches: input.action === "story" };
     },

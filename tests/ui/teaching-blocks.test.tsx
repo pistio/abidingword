@@ -9,7 +9,7 @@ import { renderApp } from "../support/render";
 
 const prep = (): TeachingPreparation => ({
   id: "p",
-  studyId: "s",
+  projectId: "fixture-project", studyId: "s",
   title: "Sunday",
   kind: "bible_study",
   audience: null,

@@ -1,12 +1,11 @@
-//! Teaching preparations (v0.16): the person's own teaching written from a
-//! study. Findings are linked, never copied; Scripture is named by canonical
-//! reference and never added to the study's passages; what is kept from the
-//! assistant is stored apart, with its standing and sources.
+//! Project-owned Teaching with optional Study links. Findings stay live while
+//! linked; unlinking keeps snapshots with exact citation provenance. Scripture
+//! is named by canonical reference, without changing the Study passages.
 
 use rusqlite::{params, Connection, OptionalExtension, Row};
 
 use crate::db::study_passages::{columns_for, reference_from_columns};
-use crate::db::{findings, new_id, now, studies};
+use crate::db::{findings, new_id, now, projects, studies};
 use crate::domain::validate::{self, BLOCK_MAX_CHARS, DESCRIPTION_MAX_CHARS};
 use crate::domain::{
     AddTeachingPassage, CreateTeaching, CreateTeachingPoint, ExternalSource, ImageInfo,
@@ -19,7 +18,7 @@ use crate::scripture::reference::ScriptureRef;
 
 const COLUMNS: &str = "id, study_id, title, kind, audience, purpose, central_message, \
                        introduction, conclusion, notes, created_at, updated_at, revision, \
-                       template_key, template_version";
+                       template_key, template_version, project_id";
 
 /// How many sources a kept item may carry, and how long each part may be.
 const SOURCES_MAX: usize = 10;
@@ -28,6 +27,7 @@ const SOURCE_TEXT_MAX: usize = 2_000;
 fn from_row(row: &Row) -> rusqlite::Result<TeachingPreparation> {
     Ok(TeachingPreparation {
         id: row.get(0)?,
+        project_id: row.get(15)?,
         study_id: row.get(1)?,
         title: row.get(2)?,
         kind: row.get(3)?,
@@ -114,12 +114,13 @@ fn long_text(value: &str) -> AppResult<String> {
 pub fn list(conn: &Connection, study_id: &str) -> AppResult<Vec<TeachingSummary>> {
     studies::get(conn, study_id)?;
     let mut stmt = conn.prepare(
-        "SELECT id, study_id, title, kind, updated_at FROM teaching_preparations
+        "SELECT id, study_id, title, kind, updated_at, project_id FROM teaching_preparations
          WHERE study_id = ?1 AND deleted_at IS NULL ORDER BY position, created_at, rowid",
     )?;
     let rows = stmt.query_map([study_id], |row| {
         Ok(TeachingSummary {
             id: row.get(0)?,
+            project_id: row.get(5)?,
             study_id: row.get(1)?,
             title: row.get(2)?,
             kind: row.get(3)?,
@@ -132,7 +133,7 @@ pub fn list(conn: &Connection, study_id: &str) -> AppResult<Vec<TeachingSummary>
 pub(crate) fn row(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     conn.query_row(
         &format!(
-            "SELECT {COLUMNS} FROM teaching_preparations WHERE id = ?1 AND deleted_at IS NULL"
+            "SELECT {COLUMNS} FROM teaching_preparations WHERE id = ?1 AND deleted_at IS NULL AND EXISTS (SELECT 1 FROM projects p WHERE p.id=project_id AND p.deleted_at IS NULL)"
         ),
         [id],
         from_row,
@@ -167,7 +168,31 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
 }
 
 pub fn create(conn: &Connection, input: &CreateTeaching) -> AppResult<TeachingPreparation> {
-    studies::get(conn, &input.study_id)?;
+    let study_id = input.study_id.trim();
+    let linked = if study_id.is_empty() {
+        None
+    } else {
+        Some(studies::get(conn, study_id)?)
+    };
+    let project_id = input
+        .project_id
+        .as_deref()
+        .filter(|s| !s.is_empty())
+        .or_else(|| linked.as_ref().map(|s| s.project_id.as_str()))
+        .ok_or_else(|| {
+            invalid(
+                "teaching.projectRequired",
+                "Choose a project for this teaching.",
+            )
+        })?;
+    projects::get(conn, project_id)?;
+    if linked.as_ref().is_some_and(|s| s.project_id != project_id) {
+        return Err(invalid(
+            "teaching.otherProject",
+            "Choose a study in this project.",
+        ));
+    }
+    let study_id = linked.as_ref().map(|s| s.id.as_str());
     let title = validate::title(&input.title, "teaching")?;
     let kind = check_kind(input.kind.as_deref())?;
     if input.points.len() > STARTING_POINTS_MAX {
@@ -180,17 +205,17 @@ pub fn create(conn: &Connection, input: &CreateTeaching) -> AppResult<TeachingPr
         .collect::<AppResult<Vec<_>>>()?;
     let position: i64 = conn.query_row(
         "SELECT COALESCE(MAX(position), -1) + 1 FROM teaching_preparations
-         WHERE study_id = ?1 AND deleted_at IS NULL",
-        [&input.study_id],
+         WHERE project_id = ?1 AND deleted_at IS NULL",
+        [project_id],
         |r| r.get(0),
     )?;
     let id = new_id();
     let now = now();
     let tx = conn.unchecked_transaction()?;
     tx.execute(
-        "INSERT INTO teaching_preparations (id, study_id, title, kind, position, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6)",
-        params![id, input.study_id, title, kind, position, now],
+        "INSERT INTO teaching_preparations (id, study_id, title, kind, position, created_at, updated_at, project_id)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, ?7)",
+        params![id, study_id, title, kind, position, now, project_id],
     )?;
     for (index, (point, step)) in starting.iter().enumerate() {
         tx.execute(
@@ -208,7 +233,9 @@ pub fn create(conn: &Connection, input: &CreateTeaching) -> AppResult<TeachingPr
         )?;
         crate::db::teaching_blocks::insert_starting(&tx, &id, &input.blocks, &now)?;
     }
-    studies::touch(&tx, &input.study_id, &now)?;
+    if let Some(study) = study_id {
+        studies::touch(&tx, study, &now)?;
+    }
     tx.commit()?;
     get(conn, &id)
 }
@@ -286,7 +313,9 @@ pub fn update(conn: &Connection, input: &UpdateTeaching) -> AppResult<TeachingPr
             central_message.as_deref().unwrap_or(""),
         )?;
     }
-    studies::touch(&tx, &current.study_id, &now)?;
+    if let Some(study) = &current.study_id {
+        studies::touch(&tx, study, &now)?;
+    }
     tx.commit()?;
     get(conn, &input.id)
 }
@@ -301,7 +330,9 @@ pub fn delete(conn: &Connection, id: &str) -> AppResult<()> {
          WHERE id = ?1",
         params![id, now],
     )?;
-    studies::touch(&tx, &current.study_id, &now)?;
+    if let Some(study) = &current.study_id {
+        studies::touch(&tx, study, &now)?;
+    }
     tx.commit()?;
     Ok(())
 }
@@ -311,7 +342,10 @@ pub(crate) fn touch(conn: &Connection, prep: &TeachingPreparation, now: &str) ->
         "UPDATE teaching_preparations SET updated_at = ?2, revision = revision + 1 WHERE id = ?1",
         params![prep.id, now],
     )?;
-    studies::touch(conn, &prep.study_id, now)
+    if let Some(study) = &prep.study_id {
+        studies::touch(conn, study, now)?;
+    }
+    Ok(())
 }
 
 // ---------------------------------------------------------------------------
@@ -506,24 +540,48 @@ pub fn reorder_points(conn: &Connection, input: &Reorder) -> AppResult<TeachingP
 // ---------------------------------------------------------------------------
 
 fn findings_for(conn: &Connection, prep_id: &str) -> AppResult<Vec<TeachingFindingLink>> {
-    // Links to findings deleted in the study, or under deleted points, are not shown.
     let mut stmt = conn.prepare(
-        "SELECT l.id, l.point_id, l.finding_id FROM teaching_finding_links l
-         JOIN findings f ON f.id = l.finding_id AND f.deleted_at IS NULL
-         LEFT JOIN teaching_points p ON p.id = l.point_id
-         WHERE l.preparation_id = ?1 AND l.deleted_at IS NULL
-           AND (l.point_id IS NULL OR p.deleted_at IS NULL)
-         ORDER BY l.position, l.created_at, l.rowid",
+        "SELECT l.id,l.point_id,l.finding_id,l.snapshot FROM teaching_finding_links l
+        LEFT JOIN findings f ON f.id=l.finding_id
+        LEFT JOIN teaching_points p ON p.id=l.point_id
+        WHERE l.preparation_id=?1 AND l.deleted_at IS NULL
+        AND (l.point_id IS NULL OR p.deleted_at IS NULL)
+        AND ((l.finding_id IS NOT NULL AND f.id IS NOT NULL AND f.deleted_at IS NULL)
+             OR (l.finding_id IS NULL AND l.snapshot IS NOT NULL))
+        ORDER BY l.position,l.created_at,l.rowid",
     )?;
-    let rows: Vec<(String, Option<String>, String)> = stmt
-        .query_map([prep_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
-        .collect::<Result<_, _>>()?;
+    let rows = stmt
+        .query_map([prep_id], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, Option<String>>(1)?,
+                r.get::<_, Option<String>>(2)?,
+                r.get::<_, Option<String>>(3)?,
+            ))
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
     rows.into_iter()
-        .map(|(id, point_id, finding_id)| {
+        .map(|(id, point_id, finding_id, snapshot)| {
+            let kept = finding_id.is_none();
+            let presentation_only = snapshot
+                .as_deref()
+                .and_then(|s| serde_json::from_str::<serde_json::Value>(s).ok())
+                .and_then(|v| v.get("presentationOnly").and_then(|v| v.as_bool()))
+                .unwrap_or(false);
+            let finding = match finding_id {
+                Some(f) => findings::get(conn, &f)?,
+                None => read_saved_finding(snapshot.as_deref().unwrap_or(""))?,
+            };
+            let mut finding = finding;
+            if kept {
+                hydrate_saved_citations(conn, snapshot.as_deref().unwrap_or(""), &mut finding)?;
+            }
             Ok(TeachingFindingLink {
                 id,
                 point_id,
-                finding: findings::get(conn, &finding_id)?,
+                finding,
+                snapshot: kept,
+                presentation_only,
             })
         })
         .collect()
@@ -539,7 +597,7 @@ pub fn link_finding(
     let point_id = input.point_id.as_deref().filter(|p| !p.is_empty());
     check_point(conn, &prep.id, point_id)?;
     let finding = findings::get(conn, &input.finding_id)?;
-    if finding.study_id != prep.study_id {
+    if prep.study_id.as_deref() != Some(finding.study_id.as_str()) {
         return Err(invalid(
             "teaching.otherStudyFinding",
             "That finding belongs to another study.",
@@ -564,9 +622,9 @@ pub fn link_finding(
     let now = now();
     let tx = conn.unchecked_transaction()?;
     tx.execute(
-        "INSERT INTO teaching_finding_links (id, preparation_id, point_id, finding_id, position, created_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-        params![new_id(), prep.id, point_id, finding.id, position, now],
+        "INSERT INTO teaching_finding_links (id, preparation_id, point_id, finding_id, position, created_at, snapshot)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+        params![new_id(), prep.id, point_id, finding.id, position, now, saved_finding(conn,&finding)?],
     )?;
     touch(&tx, &prep, &now)?;
     tx.commit()?;
@@ -968,4 +1026,389 @@ pub fn remove_material(conn: &Connection, material_id: &str) -> AppResult<Teachi
     touch(&tx, &prep, &now)?;
     tx.commit()?;
     get(conn, &prep.id)
+}
+
+/// Project ownership is independent of the optional study relationship.
+pub fn list_project(conn: &Connection, project_id: &str) -> AppResult<Vec<TeachingSummary>> {
+    projects::get(conn, project_id)?;
+    let mut stmt=conn.prepare("SELECT id,project_id,study_id,title,kind,updated_at FROM teaching_preparations WHERE project_id=?1 AND deleted_at IS NULL ORDER BY position,created_at,rowid")?;
+    let result = stmt
+        .query_map([project_id], |r| {
+            Ok(TeachingSummary {
+                id: r.get(0)?,
+                project_id: r.get(1)?,
+                study_id: r.get(2)?,
+                title: r.get(3)?,
+                kind: r.get(4)?,
+                updated_at: r.get(5)?,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(result)
+}
+
+pub fn set_study(
+    conn: &Connection,
+    id: &str,
+    study_id: Option<&str>,
+) -> AppResult<TeachingPreparation> {
+    let prep = row(conn, id)?;
+    let study_id = study_id.filter(|s| !s.is_empty());
+    if let Some(study) = study_id {
+        if studies::get(conn, study)?.project_id != prep.project_id {
+            return Err(invalid(
+                "teaching.otherProject",
+                "Choose a study in this project.",
+            ));
+        }
+    }
+    if prep.study_id.as_deref() == study_id {
+        return get(conn, id);
+    }
+    let tx = conn.unchecked_transaction()?;
+    detach_findings(&tx, id)?;
+    let at = now();
+    tx.execute("UPDATE teaching_preparations SET study_id=?2,updated_at=?3,revision=revision+1 WHERE id=?1",params![id,study_id,at])?;
+    tx.commit()?;
+    get(conn, id)
+}
+
+/// Captures current writing AND raw citation provenance before severing live
+/// finding FKs. Existing link IDs, positions, points, blocks and tombstones stay.
+pub(crate) fn detach_findings(conn: &Connection, preparation_id: &str) -> AppResult<()> {
+    let mut sources=conn.prepare("SELECT DISTINCT i.source_id FROM presentation_items i JOIN presentations p ON p.id=i.presentation_id WHERE p.preparation_id=?1 AND i.source_kind='finding' AND i.source_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM teaching_finding_links l WHERE l.preparation_id=?1 AND l.finding_id=i.source_id AND l.deleted_at IS NULL)")?;
+    let source_ids = sources
+        .query_map([preparation_id], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    for source in source_ids {
+        let saved: bool = conn.query_row("SELECT EXISTS(SELECT 1 FROM teaching_finding_links WHERE preparation_id=?1 AND deleted_at IS NULL AND json_extract(snapshot,'$.finding.id')=?2)", params![preparation_id, source], |r|r.get(0))?;
+        if saved {
+            continue;
+        }
+        {
+            let finding = match findings::get(conn, &source) {
+                Ok(finding) => finding,
+                Err(AppError::NotFound { .. }) => continue,
+                Err(error) => return Err(error),
+            };
+            let mut snapshot: serde_json::Value =
+                serde_json::from_str(&saved_finding(conn, &finding)?)
+                    .map_err(|e| AppError::Unexpected(e.to_string()))?;
+            snapshot["presentationOnly"] = serde_json::json!(true);
+            conn.execute("INSERT INTO teaching_finding_links(id,preparation_id,finding_id,position,created_at,snapshot) VALUES(?1,?2,NULL,0,?3,?4)",params![new_id(),preparation_id,now(),snapshot.to_string()])?;
+        }
+    }
+    let mut stmt=conn.prepare("SELECT id,finding_id FROM teaching_finding_links WHERE preparation_id=?1 AND finding_id IS NOT NULL")?;
+    let rows = stmt
+        .query_map([preparation_id], |r| {
+            Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?))
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    for (link, id) in rows {
+        match findings::get(conn, &id) {
+            Ok(finding) => {
+                conn.execute(
+                    "UPDATE teaching_finding_links SET snapshot=?2 WHERE id=?1",
+                    params![link, saved_finding(conn, &finding)?],
+                )?;
+            }
+            Err(AppError::NotFound { .. }) => {
+                // A deleted live Finding must not reappear from its cache
+                // when clearing the FK. Keep the link as a tombstone.
+                conn.execute("UPDATE teaching_finding_links SET deleted_at=COALESCE(deleted_at,?2) WHERE id=?1",params![link,now()])?;
+            }
+            Err(error) => return Err(error),
+        }
+    }
+    conn.execute(
+        "UPDATE teaching_finding_links SET finding_id=NULL WHERE preparation_id=?1",
+        [preparation_id],
+    )?;
+    Ok(())
+}
+
+pub(crate) fn detach_study(conn: &Connection, study: &str, at: &str) -> AppResult<()> {
+    let mut stmt = conn.prepare("SELECT id FROM teaching_preparations WHERE study_id=?1")?;
+    let ids = stmt
+        .query_map([study], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    for id in ids {
+        detach_findings(conn, &id)?;
+    }
+    conn.execute("UPDATE teaching_preparations SET study_id=NULL,updated_at=?2,revision=revision+1 WHERE study_id=?1",params![study,at])?;
+    Ok(())
+}
+
+pub fn restore(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
+    let tx = conn.unchecked_transaction()?;
+    let at = now();
+    let count=tx.execute("UPDATE teaching_preparations SET deleted_at=NULL,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NOT NULL AND EXISTS(SELECT 1 FROM projects WHERE id=project_id AND deleted_at IS NULL)",params![id,at])?;
+    if count == 0 {
+        row(&tx, id)?;
+    }
+    tx.commit()?;
+    get(conn, id)
+}
+
+pub(crate) fn saved_finding(
+    conn: &Connection,
+    finding: &crate::domain::Finding,
+) -> AppResult<String> {
+    use rusqlite::types::ValueRef;
+    let mut stmt = conn.prepare(
+        "SELECT * FROM finding_sources WHERE finding_id=?1 AND deleted_at IS NULL ORDER BY rowid",
+    )?;
+    let names = stmt
+        .column_names()
+        .iter()
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>();
+    let mut citations = stmt
+        .query_map([&finding.id], |r| {
+            let mut out = serde_json::Map::new();
+            for (i, name) in names.iter().enumerate() {
+                let v = match r.get_ref(i)? {
+                    ValueRef::Null => serde_json::Value::Null,
+                    ValueRef::Integer(n) => serde_json::json!(n),
+                    ValueRef::Real(n) => serde_json::json!(n),
+                    ValueRef::Text(s) => {
+                        serde_json::Value::String(String::from_utf8_lossy(s).into_owned())
+                    }
+                    ValueRef::Blob(_) => return Err(rusqlite::Error::InvalidQuery),
+                };
+                out.insert(name.clone(), v);
+            }
+            Ok(serde_json::Value::Object(out))
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+    // A saved citation must not reopen the mutable live Study citation with
+    // the same ID. Give the copy its own locator ID and retain the original
+    // ID explicitly as provenance; Finding and presentation source IDs stay.
+    let mut finding = finding.clone();
+    for raw in &mut citations {
+        let original = raw["id"]
+            .as_str()
+            .ok_or_else(|| {
+                invalid(
+                    "teaching.badSnapshot",
+                    "This saved study note cannot be read.",
+                )
+            })?
+            .to_string();
+        // Older citations may predate stored display/hash snapshots. Capture
+        // the known source metadata now without changing any historical row.
+        if let Some(citation) = finding.sources.iter().find(|c| c.id == original) {
+            for (key, value) in [
+                ("cited_title", Some(citation.title.as_str())),
+                ("cited_author", citation.author.as_deref()),
+                ("cited_section", citation.section.as_deref()),
+            ] {
+                if raw[key].is_null() {
+                    raw[key] = serde_json::json!(value);
+                }
+            }
+        }
+        if let Some(source) = raw["source_id"].as_str().map(String::from) {
+            if raw["cited_source_id"].is_null() {
+                raw["cited_source_id"] = serde_json::json!(source);
+            }
+            if raw["cited_content_hash"].is_null() {
+                let hash: Option<String> = conn
+                    .query_row(
+                        "SELECT content_hash FROM sources WHERE id=?1",
+                        [source],
+                        |r| r.get(0),
+                    )
+                    .optional()?
+                    .flatten();
+                raw["cited_content_hash"] = serde_json::json!(hash);
+            }
+        }
+        let id = new_id();
+        raw["originCitationId"] = serde_json::json!(original);
+        raw["id"] = serde_json::json!(id);
+        if let Some(citation) = finding.sources.iter_mut().find(|c| c.id == original) {
+            citation.id = id;
+        }
+    }
+    serde_json::to_string(&serde_json::json!({"version":1,"finding":finding,"citations":citations}))
+        .map_err(|e| AppError::Unexpected(e.to_string()))
+}
+
+/// Validate a saved note without deserializing a &'static book-code field.
+/// References are reconstructed only from their checked canonical form.
+pub(crate) fn read_saved_finding(snapshot: &str) -> AppResult<crate::domain::Finding> {
+    use crate::domain::{Finding, FindingPassage};
+    let value: serde_json::Value =
+        serde_json::from_str(snapshot).map_err(|e| AppError::Unexpected(e.to_string()))?;
+    if value.get("version").and_then(|v| v.as_i64()) != Some(1) {
+        return Err(invalid(
+            "teaching.badSnapshot",
+            "This saved study note cannot be read.",
+        ));
+    }
+    #[derive(serde::Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Saved {
+        id: String,
+        study_id: String,
+        section_id: Option<String>,
+        finding_type: crate::domain::FindingType,
+        content: String,
+        sort_order: i64,
+        parent_id: Option<String>,
+        passages: Vec<Passage>,
+        tags: Vec<String>,
+        sources: Vec<crate::library::FindingCitation>,
+        assisted_by: Option<String>,
+        created_at: String,
+        updated_at: String,
+        revision: i64,
+    }
+    #[derive(serde::Deserialize)]
+    struct Passage {
+        id: String,
+        reference: Reference,
+    }
+    #[derive(serde::Deserialize)]
+    struct Reference {
+        canonical: String,
+    }
+    let f: Saved = serde_json::from_value(value.get("finding").cloned().unwrap_or_default())
+        .map_err(|e| AppError::Unexpected(e.to_string()))?;
+    let passages = f
+        .passages
+        .into_iter()
+        .map(|p| {
+            Ok(FindingPassage {
+                id: p.id,
+                reference: ScriptureRef::from_canonical(&p.reference.canonical)?.to_dto(),
+            })
+        })
+        .collect::<AppResult<Vec<_>>>()?;
+    Ok(Finding {
+        id: f.id,
+        study_id: f.study_id,
+        section_id: f.section_id,
+        finding_type: f.finding_type,
+        content: f.content,
+        sort_order: f.sort_order,
+        parent_id: f.parent_id,
+        passages,
+        tags: f.tags,
+        sources: f.sources,
+        assisted_by: f.assisted_by,
+        created_at: f.created_at,
+        updated_at: f.updated_at,
+        revision: f.revision,
+    })
+}
+
+/// Seed snapshots for existing live links at the schema-26 boundary, before
+/// raw ON DELETE SET NULL actions could make their old Study unavailable.
+pub(crate) fn initialise_finding_snapshots(conn: &Connection) -> AppResult<()> {
+    let mut stmt=conn.prepare("SELECT DISTINCT l.finding_id FROM teaching_finding_links l JOIN findings f ON f.id=l.finding_id WHERE l.snapshot IS NULL AND f.deleted_at IS NULL")?;
+    let ids = stmt
+        .query_map([], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    for id in ids {
+        let finding = findings::get(conn, &id)?;
+        conn.execute("UPDATE teaching_finding_links SET snapshot=?2 WHERE finding_id=?1 AND snapshot IS NULL",params![id,saved_finding(conn,&finding)?])?;
+    }
+    Ok(())
+}
+
+fn saved_source(conn: &Connection, c: &serde_json::Value) -> AppResult<Option<String>> {
+    let id = c
+        .get("source_id")
+        .and_then(|v| v.as_str())
+        .or_else(|| c.get("cited_source_id").and_then(|v| v.as_str()));
+    if let Some(id) = id {
+        if conn.query_row(
+            "SELECT EXISTS(SELECT 1 FROM sources WHERE id=?1)",
+            [id],
+            |r| r.get::<_, bool>(0),
+        )? {
+            return Ok(Some(id.to_string()));
+        }
+    }
+    let Some(hash) = c
+        .get("cited_content_hash")
+        .and_then(|v| v.as_str())
+        .filter(|h| h.len() == 64 && h.bytes().all(|b| b.is_ascii_hexdigit()))
+    else {
+        return Ok(None);
+    };
+    let mut stmt = conn.prepare("SELECT id FROM sources WHERE content_hash=?1 AND deleted_at IS NULL ORDER BY rowid LIMIT 2")?;
+    let ids = stmt
+        .query_map([hash], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(if ids.len() == 1 {
+        ids.into_iter().next()
+    } else {
+        None
+    })
+}
+fn hydrate_saved_citations(
+    conn: &Connection,
+    snapshot: &str,
+    finding: &mut crate::domain::Finding,
+) -> AppResult<()> {
+    let v: serde_json::Value =
+        serde_json::from_str(snapshot).map_err(|e| AppError::Unexpected(e.to_string()))?;
+    for citation in &mut finding.sources {
+        if let Some(raw) = v["citations"].as_array().and_then(|a| {
+            a.iter()
+                .find(|c| c["id"].as_str() == Some(citation.id.as_str()))
+        }) {
+            let source = saved_source(conn, raw)?;
+            if source != citation.source_id {
+                citation.segment_id = None;
+                citation.annotation_id = None;
+            }
+            citation.source_id = source;
+        }
+        citation.unavailable = citation.source_id.is_none();
+        citation.removed = match &citation.source_id {
+            Some(id) => !conn.query_row(
+                "SELECT EXISTS(SELECT 1 FROM sources WHERE id=?1 AND deleted_at IS NULL)",
+                [id],
+                |r| r.get::<_, bool>(0),
+            )?,
+            None => true,
+        };
+    }
+    Ok(())
+}
+pub(crate) fn locate_saved_citation(
+    conn: &Connection,
+    id: &str,
+) -> AppResult<Option<crate::library::CitationPlace>> {
+    let mut stmt=conn.prepare("SELECT l.snapshot FROM teaching_finding_links l JOIN teaching_preparations p ON p.id=l.preparation_id JOIN projects j ON j.id=p.project_id WHERE l.finding_id IS NULL AND l.deleted_at IS NULL AND p.deleted_at IS NULL AND j.deleted_at IS NULL AND l.snapshot IS NOT NULL")?;
+    let snapshots = stmt
+        .query_map([], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    for snapshot in snapshots {
+        let v: serde_json::Value =
+            serde_json::from_str(&snapshot).map_err(|e| AppError::Unexpected(e.to_string()))?;
+        if let Some(raw) = v["citations"]
+            .as_array()
+            .and_then(|a| a.iter().find(|c| c["id"].as_str() == Some(id)))
+        {
+            let Some(source) = saved_source(conn, raw)? else {
+                return Ok(None);
+            };
+            let text = |k: &str| raw.get(k).and_then(|v| v.as_str());
+            let anchor = crate::library::annotations::CitationAnchor::read(text("anchor"));
+            return crate::db::source_annotations::locate_citation(
+                conn,
+                &source,
+                text("source_segment_id"),
+                text("quote"),
+                text("cited_section"),
+                anchor.as_ref(),
+            );
+        }
+    }
+    Err(AppError::not_found("citation", id))
 }

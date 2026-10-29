@@ -89,7 +89,7 @@ import type {
   StudyType,
 } from "@/types/studies";
 
-import { assistantFacts, newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
+import { detachMemoryFindings, assistantFacts, newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
 import { inquiryApi, newInquiryState, type InquiryState } from "./memoryInquiry";
 import { newPresentationState, presentationApi, type PresentationState } from "./memoryPresentation";
 import { newPortabilityState, portabilityApi, type PortabilityState } from "./memoryPortability";
@@ -716,6 +716,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     throw new ApiError("notFound", "This Bible document could not be found.");
   };
 
+  const deletedStudies = new Map<string, Study>();
+  const deletedProjects = new Map<string, Project>();
   const find = <T extends { id: string }>(list: T[], key: string, entity: string): T => {
     const item = list.find((x) => x.id === key);
     if (!item) throw new ApiError("notFound", `This ${entity} could not be found. It may have been deleted.`);
@@ -775,7 +777,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       .filter((s) => s.studyId === studyId)
       .sort((a, b) => a.position - b.position)
       .map((s) => ({ ...s, blocks: state.blocks.filter((b) => b.sectionId === s.id) }));
-  const detail = (studyId: string) => ({ study: find(state.studies, studyId, "study"), sections: sectionsOf(studyId) });
+  const detail = (studyId: string) => {
+    const study = find(state.studies, studyId, "study"); find(state.projects, study.projectId, "project");
+    return {study, sections:sectionsOf(studyId)};
+  };
 
   const library = state.library;
   const liveSource = (sourceId: string) => {
@@ -1025,7 +1030,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         const ids = new Set(studies.map((s) => s.id));
         return {
           studies: studies.length,
-          teachings: state.teaching.preparations.filter((p) => ids.has(p.studyId)).length,
+          teachings: state.teaching.preparations.filter((p) => p.projectId === projectId).length,
           notes: state.findings.filter((f) => ids.has(f.studyId)).length,
         };
       },
@@ -1035,7 +1040,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       id,
       now,
       findings: () => state.findings,
-      studyExists: (studyId) => void find(state.studies, studyId, "study"),
+      studyExists: (studyId) => { const study = find(state.studies, studyId, "study"); find(state.projects, study.projectId, "project"); },
+      studyProject: (studyId) => find(state.studies, studyId, "study").projectId,
+      projectExists: (projectId) => void find(state.projects, projectId, "project"),
+      copyCitation: (original, saved) => { const place = citationPlaces.get(original); if (place) citationPlaces.set(saved, structuredClone(place)); },
+      presentationFindings: (id) => state.presentation.presentations.filter(p => p.preparationId === id).flatMap(p => p.items.filter(i => i.source?.kind === "finding").map(i => i.source!.id)),
       studyPassages: () => state.passages,
       ref: (canonical) => refFromCanonical(canonical, bookByCode),
     }),
@@ -1081,6 +1090,51 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       state.projects.push(project);
       return project;
     },
+    projectDelete: async (projectId, permanent = false) => {
+      const project = state.projects.find(p => p.id === projectId) ?? deletedProjects.get(projectId);
+      if (!project) throw new ApiError("notFound", "Project not found.");
+      if (!permanent && !state.projects.some(p => p.id === projectId)) return;
+      if (permanent) {
+        const studyIds = new Set(state.studies.filter(s => s.projectId === projectId).map(s => s.id));
+        for (const [id, study] of deletedStudies) if (study.projectId === projectId) studyIds.add(id);
+        const teachingIds = new Set([...state.teaching.preparations, ...state.teaching.deletedPreparations.values()].filter(p => p.projectId === projectId).map(p => p.id));
+        state.teaching.preparations = state.teaching.preparations.filter(p => p.projectId !== projectId);
+        for (const id of teachingIds) state.teaching.deletedPreparations.delete(id);
+        state.presentation.presentations = state.presentation.presentations.filter(p => !teachingIds.has(p.preparationId));
+        for (const id of studyIds) { if (state.studies.some(s => s.id === id) || deletedStudies.has(id)) await api.studyDelete(id, true); }
+        deletedProjects.delete(projectId);
+      } else { project.revision++; project.updatedAt = now(); deletedProjects.set(projectId, project); }
+      state.projects = state.projects.filter(p => p.id !== projectId);
+    },
+    projectRestore: async (projectId) => {
+      const project = deletedProjects.get(projectId);
+      if (project) { deletedProjects.delete(projectId); project.revision++; project.updatedAt = now(); state.projects.push(project); }
+      return withCount(find(state.projects, projectId, "project"));
+    },
+    studyDelete: async (studyId, permanent = false) => {
+      const study = state.studies.find(s => s.id === studyId) ?? deletedStudies.get(studyId);
+      if (!study) throw new ApiError("notFound", "Study not found.");
+      if (!permanent && !state.studies.some(s => s.id === studyId)) return;
+      for (const p of state.teaching.preparations) if (p.studyId === studyId) await api.teachingSetStudy(p.id, null);
+      for (const p of state.teaching.deletedPreparations.values()) if (p.studyId === studyId) {
+        const sourceIds = state.presentation.presentations.filter(pres => pres.preparationId === p.id).flatMap(pres => pres.items.filter(i => i.source?.kind === "finding").map(i => i.source!.id));
+        detachMemoryFindings(p, state.findings, sourceIds, id, (original, saved) => { const place = citationPlaces.get(original); if (place) citationPlaces.set(saved, structuredClone(place)); }); p.studyId = null; p.revision++; p.updatedAt = now();
+      }
+      if (permanent) {
+        const sections = new Set(state.sections.filter(s => s.studyId === studyId).map(s => s.id));
+        state.blocks = state.blocks.filter(b => !sections.has(b.sectionId));
+        state.sections = state.sections.filter(s => s.studyId !== studyId);
+        state.findings = state.findings.filter(f => f.studyId !== studyId);
+        state.passages = state.passages.filter(p => p.studyId !== studyId);
+        deletedStudies.delete(studyId);
+      } else { study.revision++; study.updatedAt = now(); deletedStudies.set(studyId, study); }
+      state.studies = state.studies.filter(s => s.id !== studyId);
+    },
+    studyRestore: async (studyId) => {
+      const study = deletedStudies.get(studyId);
+      if (study) { find(state.projects, study.projectId, "project"); deletedStudies.delete(studyId); study.revision++; study.updatedAt = now(); state.studies.push(study); }
+      return detail(studyId).study;
+    },
     projectUpdate: async (input) => {
       const project = find(state.projects, input.id, "project");
       if (input.title !== undefined) project.title = requireTitle(input.title, "project");
@@ -1091,7 +1145,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     },
     studyList: async ({ projectId, studyType, status }) =>
       state.studies
-        .filter((st) => (!projectId || st.projectId === projectId) && (!studyType || st.studyType === studyType) && (!status || st.status === status))
+        .filter((st) => state.projects.some(p => p.id === st.projectId) && (!projectId || st.projectId === projectId) && (!studyType || st.studyType === studyType) && (!status || st.status === status))
         .map(summary),
     studyGet: async (key) => detail(key),
     studyCreate: async (input) => {
@@ -2701,7 +2755,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       return { ...finding, sources: [...finding.sources] };
     },
     findingSourceLocate: async (citationId) => {
-      const finding = state.findings.find((f) => f.sources.some((c) => c.id === citationId));
+      const finding = state.findings.find((f) => f.sources.some((c) => c.id === citationId)) ?? state.teaching.preparations.flatMap(p => p.links.flatMap(l => l.saved ? [l.saved] : [])).find(f => f.sources.some(c => c.id === citationId));
       const citation = finding?.sources.find((c) => c.id === citationId);
       if (!citation) throw new ApiError("notFound", "This citation could not be found.");
       if (citation.removed || citation.sourceId === null || library.sources.find((x) => x.id === citation.sourceId)?.deleted) return null;

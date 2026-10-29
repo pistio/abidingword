@@ -186,6 +186,7 @@ fn fill(tx: &Connection, sample: &Sample, project_id: &str) -> AppResult<()> {
         let prep = teaching::create(
             tx,
             &CreateTeaching {
+                project_id: None,
                 study_id: detail.study.id.clone(),
                 title: t.title.clone(),
                 kind: Some(t.kind.clone()),

@@ -135,6 +135,7 @@ fn editing_or_deleting_a_template_never_changes_a_teaching_made_from_it() {
         let made = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study.study.id.clone(),
                 title: "Sunday kids".into(),
                 kind: Some(mine.kind.clone()),

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
@@ -12,6 +12,7 @@ import { ensureStudyProject } from "./projects";
 
 interface StudyHomeProps {
   workspace: Workspace;
+  onOpenTeaching: (projectId: string) => void;
   onOpenProject: (projectId: string) => void;
   onOpenStudy: (study: { id: string; projectId: string }) => void;
   /** The project list, for someone who wants to organise (a way in, never a step). */
@@ -28,9 +29,10 @@ interface StudyHomeProps {
  * - several: the project list, with New study that goes into the project last
  *   worked in (see `projects.ts`).
  */
-export function StudyHome({ workspace, onOpenProject, onOpenStudy, onProjectList }: StudyHomeProps) {
+export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStudy, onProjectList }: StudyHomeProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const [error, setError] = useState<string | null>(null);
   const projects = useLoad(useCallback(() => api.projectList(workspace.id), [api, workspace.id]));
 
   if (projects.error) return <Notice tone="error">{projects.error.message}</Notice>;
@@ -44,6 +46,7 @@ export function StudyHome({ workspace, onOpenProject, onOpenStudy, onProjectList
     return (
       <ProjectView
         project={list[0]!}
+        onOpenTeaching={() => onOpenTeaching(list[0]!.id)}
         plain
         onProjects={onProjectList}
         onProjectChanged={() => projects.reload()}
@@ -54,6 +57,8 @@ export function StudyHome({ workspace, onOpenProject, onOpenStudy, onProjectList
   return (
     <div className="flex flex-col gap-8">
       <h1 className="type-title m-0">{t("studies.home.title")}</h1>
+      <Button onClick={async () => { try { onOpenTeaching(await ensureStudyProject(api, workspace.id, t)); } catch (e) { setError(e instanceof Error ? e.message : String(e)); } }}>{t("studies.teaching.workspace.title")}</Button>
+      {error && <p role="alert">{error}</p>}
       <NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} onCreated={onOpenStudy} />
       <div>
         <Button variant="quiet" onClick={onProjectList}>

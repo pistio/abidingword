@@ -121,6 +121,7 @@ fn a_lesson_starts_with_its_steps_and_each_step_can_say_its_kind() {
         let lesson = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: "s-1".into(),
                 title: "Kids' church".into(),
                 kind: Some("children".into()),
@@ -196,6 +197,7 @@ fn a_lesson_starts_with_its_steps_and_each_step_can_say_its_kind() {
         let too_many = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: "s-1".into(),
                 title: "Long".into(),
                 kind: Some("lesson".into()),

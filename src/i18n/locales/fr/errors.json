@@ -244,7 +244,10 @@
     "otherStudyFinding": "Cette note appartient à une autre étude.",
     "badMaterial": "Cet élément ne peut pas être conservé.",
     "notVerified": "Une histoire n’est conservée comme vérifiée qu’avec deux sources indépendantes.",
-    "imageGone": "Cette image n’est plus disponible. Recréez-la."
+    "imageGone": "Cette image n’est plus disponible. Recréez-la.",
+    "projectRequired": "Choisissez un projet pour cet enseignement.",
+    "otherProject": "Choisissez une étude dans ce projet.",
+    "badSnapshot": "Cette note d’étude conservée ne peut pas être lue."
   },
   "presentation": {
     "imageGone": "Cette image n’est pas sur cet ordinateur.",

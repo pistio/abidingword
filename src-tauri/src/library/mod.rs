@@ -368,7 +368,7 @@ pub struct CommitSourceImport {
 }
 
 /// A finding's citation of a library source.
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct FindingCitation {
     pub id: String,

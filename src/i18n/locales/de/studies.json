@@ -2412,6 +2412,19 @@
         "name": "Leere Vorlage",
         "hint": "Noch keine Abschnitte. Füge hinzu, was diese Bibellehre braucht."
       }
+    },
+    "workspace": {
+      "title": "Bibellehre",
+      "intro": "Bereite hier eine Bibellehre vor – mit oder ohne Bibelstudium.",
+      "sessions": "Lehrvorbereitungen",
+      "empty": "Noch keine Lehrvorbereitung.",
+      "back": "Zurück zur Lehrübersicht",
+      "study": "Bibelstudium (wahlweise)",
+      "independent": "Eigenständige Bibellehre",
+      "keepNotes": "Wenn du die Verknüpfung änderst oder aufhebst, bleiben bereits verwendete Notizen mit ihren Quellen als Kopien erhalten. Spätere Änderungen im Bibelstudium ändern diese Kopien nicht.",
+      "saveLink": "Verknüpfung speichern",
+      "savedNote": "Gespeicherte Studiennotiz",
+      "project": "Zurück zum Projekt"
     }
   },
   "parts": {

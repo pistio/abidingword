@@ -421,8 +421,10 @@ pub fn locate_source(conn: &Connection, citation_id: &str) -> AppResult<Option<C
                 ))
             },
         )
-        .optional()?
-        .ok_or_else(|| AppError::not_found("citation", citation_id))?;
+        .optional()?;
+    let Some(row) = row else {
+        return crate::db::teaching::locate_saved_citation(conn, citation_id);
+    };
     let (source_id, segment_id, quote, section, anchor) = row;
     // Not on this computer: there is nothing to open.
     let Some(source_id) = source_id else {
