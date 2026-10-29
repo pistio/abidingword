@@ -169,7 +169,7 @@ fn findings() -> String {
     format!("SELECT id FROM findings WHERE study_id IN ({S}) AND deleted_at IS NULL")
 }
 fn preparations() -> String {
-    format!("SELECT id FROM teaching_preparations WHERE study_id IN ({S}) AND deleted_at IS NULL")
+    "SELECT id FROM teaching_preparations WHERE project_id = ?1 AND deleted_at IS NULL".to_string()
 }
 fn presentations() -> String {
     format!(
@@ -250,7 +250,10 @@ const TABLES: &[Table] = &[
     Table {
         name: "teaching_preparations",
         has_id: true,
-        refs: &[("study_id", Ref::Own("studies"))],
+        refs: &[
+            ("project_id", Ref::Own("projects")),
+            ("study_id", Ref::OwnOrEmpty("studies")),
+        ],
     },
     Table {
         name: "teaching_points",
@@ -272,7 +275,7 @@ const TABLES: &[Table] = &[
         refs: &[
             ("preparation_id", Ref::Own("teaching_preparations")),
             ("point_id", Ref::OwnIfSet("teaching_points")),
-            ("finding_id", Ref::Own("findings")),
+            ("finding_id", Ref::OwnIfSet("findings")),
             ("block_id", Ref::OwnIfSet("teaching_blocks")),
         ],
     },
@@ -574,10 +577,9 @@ fn externals(conn: &Connection, project_id: &str) -> AppResult<Externals> {
         })?;
         Ok(rows.collect::<Result<_, _>>()?)
     };
-    Ok(Externals {
-        sources: list(format!(
-            // Cited sources, here or (kept without their source) from where the project was made.
-            "SELECT COALESCE(fs.source_id, fs.cited_source_id) AS ref,
+    let mut sources = list(format!(
+        // Cited sources, here or (kept without their source) from where the project was made.
+        "SELECT COALESCE(fs.source_id, fs.cited_source_id) AS ref,
                     MAX(COALESCE(s.title, fs.cited_title)) AS name,
                     MAX(COALESCE(s.content_hash, fs.cited_content_hash))
              FROM finding_sources fs LEFT JOIN sources s ON s.id = fs.source_id
@@ -585,8 +587,39 @@ fn externals(conn: &Connection, project_id: &str) -> AppResult<Externals> {
                AND COALESCE(fs.source_id, fs.cited_source_id) IS NOT NULL
                AND COALESCE(s.title, fs.cited_title) IS NOT NULL
              GROUP BY ref ORDER BY name",
-            findings()
-        ))?,
+        findings()
+    ))?;
+    // Unlinked Teaching owns saved citation provenance even when its Study is gone.
+    let mut stmt = conn.prepare(&format!("SELECT snapshot FROM teaching_finding_links WHERE preparation_id IN ({}) AND deleted_at IS NULL AND snapshot IS NOT NULL", preparations()))?;
+    let saved = stmt
+        .query_map([project_id], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    for saved in saved {
+        let saved: Json = serde_json::from_str(&saved).map_err(|_| not_a_package())?;
+        if let Some(citations) = saved["citations"].as_array() {
+            for c in citations {
+                let Some(id) = c["source_id"]
+                    .as_str()
+                    .or_else(|| c["cited_source_id"].as_str())
+                else {
+                    continue;
+                };
+                let Some(name) = c["cited_title"].as_str() else {
+                    continue;
+                };
+                if !sources.iter().any(|s| s.id == id) {
+                    sources.push(External {
+                        id: id.into(),
+                        name: name.into(),
+                        content_hash: c["cited_content_hash"].as_str().map(String::from),
+                    });
+                }
+            }
+        }
+    }
+    sources.sort_by(|a, b| a.name.cmp(&b.name).then(a.id.cmp(&b.id)));
+    Ok(Externals {
+        sources,
         presentation_templates: list(format!(
             "SELECT DISTINCT t.id, t.name FROM presentations p JOIN presentation_templates t ON t.id = p.template_id
              WHERE p.id IN ({}) ORDER BY t.name",
@@ -926,6 +959,7 @@ pub fn import(
         citations_kept: 0,
         citations_reconnected: 0,
     };
+    let legacy_teaching = opened.manifest.schema_version < 26;
     let data = &mut opened.data;
     let stamp = now();
 
@@ -962,6 +996,19 @@ pub fn import(
         let rows = data.tables.remove(spec.name).unwrap_or_default();
         let mut parents = Vec::new();
         'rows: for mut row in rows {
+            if spec.name == "teaching_preparations" && !row.contains_key("project_id") {
+                if !legacy_teaching {
+                    return Err(not_a_package());
+                }
+                let original = job
+                    .ids
+                    .get("projects")
+                    .and_then(|m| m.keys().next())
+                    .cloned()
+                    .ok_or_else(not_a_package)?;
+                row.insert("project_id".into(), Json::String(original));
+            }
+
             for (column, reference) in spec.refs {
                 if !job.follow(&mut row, column, *reference)? {
                     job.left_out += 1;
@@ -1005,6 +1052,11 @@ pub fn import(
             let prep = crate::db::teaching::get(&tx, id)?;
             if prep.template_version.unwrap_or(0) >= 2 || !prep.blocks.is_empty() {
                 crate::db::teaching_blocks::reconcile_roles(&tx, id)?;
+            }
+            if prep.findings.iter().any(|link| {
+                !link.snapshot && prep.study_id.as_deref() != Some(link.finding.study_id.as_str())
+            }) {
+                return Err(not_a_package());
             }
             for passage in &prep.passages {
                 if let Some(block) = &passage.block_id {
@@ -1055,13 +1107,13 @@ pub fn import(
         studies: job_count(conn, "SELECT COUNT(*) FROM studies WHERE project_id = ?1", &project_id)?,
         teachings: job_count(
             conn,
-            "SELECT COUNT(*) FROM teaching_preparations WHERE study_id IN (SELECT id FROM studies WHERE project_id = ?1)",
+            "SELECT COUNT(*) FROM teaching_preparations WHERE project_id = ?1",
             &project_id,
         )?,
         presentations: job_count(
             conn,
             "SELECT COUNT(*) FROM presentations WHERE preparation_id IN (SELECT id FROM teaching_preparations
-             WHERE study_id IN (SELECT id FROM studies WHERE project_id = ?1))",
+             WHERE project_id = ?1)",
             &project_id,
         )?,
         notes: job_count(
@@ -1309,6 +1361,73 @@ fn external_refs(
         }
     }
     match table {
+        "teaching_finding_links" => {
+            let live = text(row, "finding_id").is_some();
+            let counts = (job.citations_kept, job.citations_reconnected);
+            if let Some(snapshot) = text(row, "snapshot").map(String::from) {
+                let mut saved: Json =
+                    serde_json::from_str(&snapshot).map_err(|_| not_a_package())?;
+                crate::db::teaching::read_saved_finding(&snapshot).map_err(|_| not_a_package())?;
+                let old = saved["finding"]["id"]
+                    .as_str()
+                    .ok_or_else(not_a_package)?
+                    .to_string();
+                let new = job
+                    .ids
+                    .entry("findings")
+                    .or_default()
+                    .entry(old.clone())
+                    .or_insert_with(new_id)
+                    .clone();
+                saved["originFindingId"] = saved
+                    .get("originFindingId")
+                    .cloned()
+                    .unwrap_or(Json::String(old));
+                saved["originStudyId"] = saved
+                    .get("originStudyId")
+                    .cloned()
+                    .unwrap_or(saved["finding"]["studyId"].clone());
+                saved["finding"]["id"] = Json::String(new.clone());
+                for (key, target) in [
+                    ("studyId", "studies"),
+                    ("sectionId", "study_sections"),
+                    ("parentId", "findings"),
+                ] {
+                    if let Some(old) = saved["finding"][key].as_str().map(String::from) {
+                        if let Some(id) = job.new_id_of(target, &old) {
+                            saved["finding"][key] = Json::String(id.clone());
+                        } else if key != "studyId" {
+                            saved["finding"][key] = Json::Null;
+                        }
+                    }
+                }
+                let mut sources = Vec::new();
+                if let Some(citations) = saved["citations"].as_array_mut() {
+                    for citation in citations {
+                        let map = citation.as_object_mut().ok_or_else(not_a_package)?;
+                        let old_id = text(map, "id").ok_or_else(not_a_package)?.to_string();
+                        // Saved locators have their own identity, even if a
+                        // legacy/tampered snapshot names a live citation ID.
+                        map.entry("originCitationId")
+                            .or_insert(Json::String(old_id));
+                        let id = new_id();
+                        map.insert("id".into(), Json::String(id.clone()));
+                        map.insert("finding_id".into(), Json::String(new.clone()));
+                        if !resolve_citation(job, map)? {
+                            return Err(not_a_package());
+                        }
+                        sources.push(serde_json::json!({"id":id,"findingId":new,"sourceId":map.get("source_id"),"segmentId":map.get("source_segment_id"),"title":map.get("cited_title").and_then(|v|v.as_str()).unwrap_or(""),"author":map.get("cited_author"),"locator":map.get("locator"),"quote":map.get("quote"),"section":map.get("cited_section"),"annotationId":map.get("annotation_id"),"removed":map.get("source_id").is_none_or(|v|v.is_null()),"unavailable":map.get("source_id").is_none_or(|v|v.is_null())}));
+                    }
+                }
+                saved["finding"]["sources"] = Json::Array(sources);
+                row.insert("snapshot".into(), Json::String(saved.to_string()));
+            }
+            // A live link's cache is not another visible citation. Retain
+            // the established report counts while preparing its provenance.
+            if live {
+                (job.citations_kept, job.citations_reconnected) = counts;
+            }
+        }
         "studies" => {
             json_column(row, "details")?;
             let template =

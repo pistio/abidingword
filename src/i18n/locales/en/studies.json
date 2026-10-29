@@ -2412,6 +2412,19 @@
         "name": "Blank template",
         "hint": "No sections yet. Add the ones this teaching needs."
       }
+    },
+    "workspace": {
+      "title": "Teaching",
+      "intro": "Prepare a teaching here, with or without a Bible Study.",
+      "sessions": "Teaching sessions",
+      "empty": "No teaching sessions yet.",
+      "back": "Back to Teaching list",
+      "study": "Bible Study (optional)",
+      "independent": "Independent teaching",
+      "keepNotes": "Keep previously used notes and their sources as saved copies when changing or removing the study link. Future study edits will not change those copies.",
+      "saveLink": "Save study link",
+      "savedNote": "Saved study note",
+      "project": "Back to project"
     }
   },
   "parts": {

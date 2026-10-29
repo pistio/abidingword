@@ -9,7 +9,7 @@ import type { MaterialScripture } from "@/types/scripture";
 // Invented text only. Missing blocks represent deleted blocks as returned by the API.
 const block = (id: string, participantFacing = true): TeachingBlock => ({ id, parentId: null, position: 0, blockType: "scripture", blockKey: null, title: id, body: "", participantFacing, role: null, guidanceKey: null, pointId: null });
 const reference = (verse: number) => ({ book: "JHN", startChapter: 15, startVerse: verse, endChapter: 15, endVerse: verse, canonical: `JHN.15.${verse}`, display: `John 15:${verse}` });
-const outputPrep = (): TeachingPreparation => ({ id: "prep", studyId: "study", title: "Invented teaching", kind: "sermon", audience: null, purpose: null, centralMessage: null, introduction: "", conclusion: "", notes: "", points: [], findings: [], passages: [], materials: [], templateVersion: 2, blocks: [], createdAt: "", updatedAt: "", revision: 1 });
+const outputPrep = (): TeachingPreparation => ({ id: "prep", projectId: "fixture-project", studyId: "study", title: "Invented teaching", kind: "sermon", audience: null, purpose: null, centralMessage: null, introduction: "", conclusion: "", notes: "", points: [], findings: [], passages: [], materials: [], templateVersion: 2, blocks: [], createdAt: "", updatedAt: "", revision: 1 });
 const t = i18n.t.bind(i18n);
 
 describe("Teaching output integrity", () => {

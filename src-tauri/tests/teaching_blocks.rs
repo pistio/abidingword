@@ -67,6 +67,7 @@ fn a_block_teaching_dual_writes_roles_and_leaves_a_legacy_sermon_alone() {
         let legacy = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study.clone(),
                 title: "Old sermon".into(),
                 kind: Some("sermon".into()),
@@ -84,6 +85,7 @@ fn a_block_teaching_dual_writes_roles_and_leaves_a_legacy_sermon_alone() {
         let sermon = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study,
                 title: "Sunday".into(),
                 kind: Some("sermon".into()),
@@ -200,6 +202,7 @@ fn blocks_reorder_exactly_and_a_section_delete_keeps_what_was_written() {
         let prep = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study,
                 title: "EVA".into(),
                 kind: Some("bible_study".into()),
@@ -290,6 +293,7 @@ fn role_copies_keep_independent_live_slides_and_deletion_clears_the_mirror() {
         let prep = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study(conn)?,
                 title: "Invented sermon".into(),
                 template_version: Some(2),
@@ -383,6 +387,7 @@ fn scripture_links_reject_unknown_cross_preparation_and_ineligible_blocks_withou
             teaching::create(
                 conn,
                 &CreateTeaching {
+                    project_id: None,
                     study_id: study(conn)?,
                     title: "Invented".into(),
                     template_version: Some(2),
@@ -442,6 +447,7 @@ fn conflicting_starting_roles_keep_all_writing_and_restore_never_steals_ownershi
         let prep = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study(conn)?,
                 title: "Invented conflicts".into(),
                 template_version: Some(2),
@@ -534,6 +540,7 @@ fn presentations_exclude_private_scripture_even_after_public_slides_were_saved()
         let prep = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study(conn)?,
                 title: "Private reading".into(),
                 template_version: Some(2),
@@ -617,6 +624,7 @@ fn deleting_a_private_section_keeps_lifted_children_private_and_legacy_sessions_
         let legacy = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study(conn)?,
                 title: "Legacy".into(),
                 ..Default::default()
@@ -646,6 +654,7 @@ fn deleting_a_private_section_keeps_lifted_children_private_and_legacy_sessions_
         let prep = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study(conn)?,
                 title: "Private section".into(),
                 template_version: Some(2),

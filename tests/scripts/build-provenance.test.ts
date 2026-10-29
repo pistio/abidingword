@@ -13,11 +13,12 @@ it("attests the exact local source and complete compatible migration catalogue",
     expect(run.status, run.stderr).toBe(0);
     const proof = JSON.parse(readFileSync(out, "utf8"));
     expect(proof.commit).toBe(commit);
-    expect(proof.schemaVersion).toBe(25);
-    expect(proof.migrations.map((m: { version: number }) => m.version)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1));
+    expect(proof.schemaVersion).toBe(26);
+    expect(proof.migrations.map((m: { version: number }) => m.version)).toEqual(Array.from({ length: 26 }, (_, i) => i + 1));
     expect(proof.migrations[9].file).toBe("0010_presentations.sql");
     expect(proof.migrations[23].file).toBe("0024_section_status_and_fields.sql");
     expect(proof.migrations[24].file).toBe("0025_teaching_blocks.sql");
+    expect(proof.migrations[25].file).toBe("0026_project_teaching.sql");
     expect(proof.migrations.every((m: { sha256: string }) => /^[a-f0-9]{64}$/.test(m.sha256))).toBe(true);
     const wrong = spawnSync(process.execPath, ["scripts/build-provenance.mjs", "--expected-sha", "0".repeat(40), "--out", out], { encoding: "utf8" });
     expect(wrong.status).toBe(1);

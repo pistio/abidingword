@@ -9,7 +9,8 @@ export type TeachingKind = (typeof TEACHING_KINDS)[number];
 
 export interface TeachingSummary {
   id: string;
-  studyId: string;
+  projectId: string;
+  studyId: string | null;
   title: string;
   kind: TeachingKind | null;
   updatedAt: string;
@@ -31,6 +32,8 @@ export interface TeachingPoint {
 }
 
 export interface TeachingFindingLink {
+  snapshot?: boolean;
+  presentationOnly?: boolean;
   id: string;
   /** null: used for the teaching as a whole. */
   pointId: string | null;
@@ -85,7 +88,8 @@ export interface TeachingMaterial {
 
 export interface TeachingPreparation {
   id: string;
-  studyId: string;
+  projectId: string;
+  studyId: string | null;
   title: string;
   kind: TeachingKind | null;
   audience: string | null;

@@ -16,6 +16,8 @@ interface FindingSourcesProps {
   finding: Finding;
   /** Offer "Add source" (a finding's details are open); its sources always show. */
   canAdd?: boolean;
+  /** Saved Teaching provenance is read-only; its whole saved note can be removed. */
+  canRemove?: boolean;
   onChanged: () => void;
   /**
    * Quotation findings only: puts the cited passage's text into the finding.
@@ -25,7 +27,7 @@ interface FindingSourcesProps {
 }
 
 /** A finding's library citations, and "Add source" to cite a passage. */
-export function FindingSources({ finding, canAdd = true, onChanged, onQuote }: FindingSourcesProps) {
+export function FindingSources({ finding, canAdd = true, canRemove = true, onChanged, onQuote }: FindingSourcesProps) {
   const { t } = useTranslation();
   const api = useApi();
   const { openSource } = useLibraryNav();
@@ -114,14 +116,14 @@ export function FindingSources({ finding, canAdd = true, onChanged, onQuote }: F
                 <Copy className="size-3.5" aria-hidden="true" />
               </button>
             )}
-            <button
+            {canRemove && <button
               type="button"
               onClick={() => remove(c.id)}
               aria-label={t("library.citations.removeLabel", { citation: citationText(t, c) })}
               className="inline-flex size-8 shrink-0 items-center justify-center border-l border-border text-text-muted hover:bg-hover"
             >
               <X className="size-3.5" aria-hidden="true" />
-            </button>
+            </button>}
           </span>
         ))}
         {!picking && canAdd && (

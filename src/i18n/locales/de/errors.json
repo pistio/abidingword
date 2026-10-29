@@ -233,7 +233,10 @@
     "otherStudyFinding": "Diese Notiz gehört zu einem anderen Bibelstudium.",
     "badMaterial": "Dieses Element kann nicht aufbewahrt werden.",
     "notVerified": "Eine Begebenheit gilt nur mit zwei unabhängigen Quellen als geprüft.",
-    "imageGone": "Dieses Bild ist nicht mehr verfügbar. Bitte erstelle es erneut."
+    "imageGone": "Dieses Bild ist nicht mehr verfügbar. Bitte erstelle es erneut.",
+    "projectRequired": "Wähle ein Projekt für diese Bibellehre.",
+    "otherProject": "Wähle ein Bibelstudium in diesem Projekt.",
+    "badSnapshot": "Diese gespeicherte Studiennotiz kann nicht gelesen werden."
   },
   "presentation": {
     "imageGone": "Dieses Bild ist nicht auf diesem Computer.",

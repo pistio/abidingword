@@ -235,6 +235,7 @@ export function presentationApi(state: PresentationState, h: Helpers): Presentat
     const warnings: PresentationDocument["warnings"] = [];
     const images = new Map<string, PresentationDocument["images"][number]>();
     if (!bible) warnings.push({ slideId: null, code: "noBible" });
+    const studyFindings = prep.studyId ? await api.findingList(prep.studyId) : [];
     const primary = prep.passages.find((x) => x.pointId === null && passageVisible(prep, x))?.reference.canonical ?? null;
     for (const it of p.items.filter((i) => !i.skipped)) {
       let heading: string | null = null;
@@ -273,6 +274,10 @@ export function presentationApi(state: PresentationState, h: Helpers): Presentat
         const passage = prep.passages.find((x) => x.id === s.id);
         if (!passage) missing = true;
         else reference = passage.reference.canonical;
+      } else if (s?.kind === "finding") {
+        const finding = prep.findings.find(l => l.finding.id === s.id)?.finding ?? studyFindings.find(f => f.id === s.id);
+        if (!finding) missing = true;
+        else { body = text(finding.content); reference = finding.passages[0]?.reference.canonical ?? null; }
       } else if (s?.kind === "material") {
         const m = prep.materials.find((x) => x.id === s.id);
         if (!m) missing = true;

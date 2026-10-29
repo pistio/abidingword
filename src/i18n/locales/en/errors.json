@@ -233,7 +233,10 @@
     "otherStudyFinding": "That note belongs to another study.",
     "badMaterial": "This item cannot be kept.",
     "notVerified": "A story can be kept as checked only when two independent sources report it.",
-    "imageGone": "This image is no longer available. Please make it again."
+    "imageGone": "This image is no longer available. Please make it again.",
+    "projectRequired": "Choose a project for this teaching.",
+    "otherProject": "Choose a study in this project.",
+    "badSnapshot": "This saved study note cannot be read."
   },
   "presentation": {
     "imageGone": "This image is not available on this computer.",

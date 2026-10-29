@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
@@ -9,7 +9,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { highlighted } from "@/lib/highlight";
 import { formatDate, formatNumber } from "@/i18n/format";
-import { SOURCE_TYPES, TRASH_RETENTION_DAYS, type LibraryResults, type ManagePage, type SourceFormat, type SourceType } from "@/types/library";
+import { SOURCE_TYPES, TRASH_RETENTION_DAYS, type LibraryResults, type ManagePage, type ItemState, type SourceFormat, type SourceType } from "@/types/library";
 import { formatLabel, locatorLabel, sourceTypeLabel } from "./labels";
 import { useLibraryNav } from "./LibraryNav";
 
@@ -23,15 +23,33 @@ interface SearchOutcome {
   passages: LibraryResults;
 }
 
+/** Session-only browsing state: returning from a reader keeps the same shelf and place. */
+export interface LibraryBrowseState {
+  sourceType: SourceType | "";
+  language: string;
+  archive: ArchiveFilter;
+  collectionId: string;
+  offset: number;
+  query: string;
+  submitted: string;
+  passageCount: number;
+  scrollTop: number;
+  focus: string | null;
+}
+
 /** The library: every source, filters, search by name and by the text, add and remove. */
 export function LibraryView({
   initialQuery,
+  initialState,
+  onRemember,
   onSearched,
   onClose,
   onRemoved,
   onManage,
 }: {
   initialQuery?: string;
+  initialState?: LibraryBrowseState;
+  onRemember?: (state: LibraryBrowseState) => void;
   onSearched?: (query: string) => void;
   onClose: () => void;
   onRemoved?: (sourceId: string) => void;
@@ -42,16 +60,20 @@ export function LibraryView({
   const api = useApi();
   const { openSource, addSource } = useLibraryNav();
   const id = useId();
+  const main = useRef<HTMLElement>(null);
+  const lastOpened = useRef<string | null>(initialState?.focus ?? null);
+  const [collectionId, setCollectionId] = useState(initialState?.collectionId ?? "");
   const heading = useRef<HTMLHeadingElement>(null);
-  const [sourceType, setSourceType] = useState<SourceType | "">("");
-  const [language, setLanguage] = useState("");
-  const [archive, setArchive] = useState<ArchiveFilter>("both");
-  const [offset, setOffset] = useState(0);
+  const [sourceType, setSourceType] = useState<SourceType | "">(initialState?.sourceType ?? "");
+  const [language, setLanguage] = useState(initialState?.language ?? "");
+  const [archive, setArchive] = useState<ArchiveFilter>(initialState?.archive ?? "both");
+  const [offset, setOffset] = useState(initialState?.offset ?? 0);
   const state = archive === "both" ? undefined : archive;
   const page = useLoad(
     useCallback(
       () =>
         api.libraryManageList({
+          collectionId: collectionId || null,
           sourceType: sourceType || null,
           language: language || null,
           state: state ?? null,
@@ -60,18 +82,40 @@ export function LibraryView({
           offset,
           limit: PAGE,
         }),
-      [api, sourceType, language, state, offset],
+      [api, sourceType, language, state, collectionId, offset],
     ),
   );
   const languages = useLoad(useCallback(() => api.libraryLanguages(), [api]));
   const collections = useLoad(useCallback(() => api.libraryCollections(), [api]));
-  const [query, setQuery] = useState(initialQuery ?? "");
-  const [submitted, setSubmitted] = useState(initialQuery ?? "");
+  const [query, setQuery] = useState(initialState?.query ?? initialQuery ?? "");
+  const [submitted, setSubmitted] = useState(initialState?.submitted ?? initialQuery ?? "");
   const [outcome, setOutcome] = useState<SearchOutcome | null>(null);
+  const searchEpoch = useRef(0);
+  const [morePending, setMorePending] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => heading.current?.focus(), []);
+  useEffect(() => { if (!initialState) heading.current?.focus(); }, [initialState]);
+  const snapshot = useRef<(() => LibraryBrowseState) | null>(null);
+  useLayoutEffect(() => {
+    snapshot.current = () => ({ sourceType, language, archive, collectionId, offset, query, submitted,
+      passageCount: outcome?.passages.hits.length ?? initialState?.passageCount ?? PAGE,
+      scrollTop: main.current?.scrollTop ?? 0, focus: lastOpened.current });
+  });
+  useLayoutEffect(() => () => { if (snapshot.current) onRemember?.(snapshot.current()); }, [onRemember]);
+  const restored = useRef(false);
+  useEffect(() => {
+    if (restored.current || !initialState || (!page.data && !page.error) || (submitted && !outcome && !searchError)) return;
+    restored.current = true;
+    const button = [...(main.current?.querySelectorAll<HTMLElement>("[data-library-focus]") ?? [])]
+      .find((element) => element.dataset.libraryFocus === initialState.focus);
+    (button ?? heading.current)?.focus({ preventScroll: true });
+    if (main.current) main.current.scrollTop = initialState.scrollTop;
+  }, [initialState, page.data, page.error, submitted, outcome, searchError]);
+  const read = (sourceId: string, segmentId?: string) => {
+    lastOpened.current = `${sourceId}:${segmentId ?? ""}`;
+    openSource(sourceId, segmentId);
+  };
 
   const fetchSearch = useCallback(
     (text: string, passageOffset = 0) =>
@@ -82,10 +126,12 @@ export function LibraryView({
           sourceType: sourceType || undefined,
           language: language || undefined,
           state,
+          collectionId: collectionId || undefined,
         }),
         passageOffset === 0
           ? api.libraryManageList({
               text,
+              collectionId: collectionId || null,
               sourceType: sourceType || null,
               language: language || null,
               state: state ?? null,
@@ -96,7 +142,7 @@ export function LibraryView({
             })
           : Promise.resolve(null),
       ]),
-    [api, sourceType, language, state],
+    [api, sourceType, language, state, collectionId],
   );
   const acceptSearch = (passageOffset: number, passages: LibraryResults, names: ManagePage | null) => {
     setSearchError(null);
@@ -115,32 +161,73 @@ export function LibraryView({
   useEffect(() => {
     if (!submitted.trim()) return;
     let active = true;
-    fetchSearch(submitted, 0).then(
+    const epoch = searchEpoch.current;
+    const search = async () => {
+      const [first, names] = await fetchSearch(submitted, 0);
+      let passages = first;
+      const restoring = initialState?.submitted === submitted && initialState.collectionId === collectionId &&
+        initialState.sourceType === sourceType && initialState.language === language && initialState.archive === archive;
+      const wanted = restoring ? initialState.passageCount : PAGE;
+      while (active && passages.hasMore && passages.hits.length < wanted) {
+        const [next] = await fetchSearch(submitted, passages.hits.length);
+        if (next.hits.length === 0) break;
+        passages = { ...next, hits: [...passages.hits, ...next.hits] };
+      }
+      return [passages, names] as const;
+    };
+    search().then(
       ([passages, names]) => {
-        if (active) acceptSearch(0, passages, names);
+        if (active && epoch === searchEpoch.current) acceptSearch(0, passages, names);
       },
       (e: unknown) => {
-        if (active) failSearch(e, 0);
+        if (active && epoch === searchEpoch.current) failSearch(e, 0);
       },
     );
     return () => {
       active = false;
     };
-  }, [fetchSearch, submitted]);
+  }, [fetchSearch, submitted, initialState, collectionId, sourceType, language, archive]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (!query.trim()) return;
+    const epoch = ++searchEpoch.current;
+    setMorePending(false);
     onSearched?.(query);
     if (query === submitted) {
       fetchSearch(query, 0).then(
-        ([passages, names]) => acceptSearch(0, passages, names),
-        (e: unknown) => failSearch(e, 0),
+        ([passages, names]) => { if (epoch === searchEpoch.current) acceptSearch(0, passages, names); },
+        (e: unknown) => { if (epoch === searchEpoch.current) failSearch(e, 0); },
       );
     } else setSubmitted(query);
   };
 
-  const collectionName = (collectionId: string) => collections.data?.find((c) => c.id === collectionId)?.name;
+  const loadMore = async () => {
+    if (!outcome || morePending) return;
+    setMorePending(true);
+    const epoch = searchEpoch.current;
+    const offset = outcome.passages.hits.length;
+    try {
+      const [found] = await fetchSearch(submitted, offset);
+      if (epoch === searchEpoch.current) acceptSearch(offset, found, null);
+    } catch (error) {
+      if (epoch === searchEpoch.current) failSearch(error, offset);
+    } finally {
+      if (epoch === searchEpoch.current) setMorePending(false);
+    }
+  };
+
+  const collectionPath = (collectionId: string) => {
+    const names: string[] = [];
+    const seen = new Set<string>();
+    let collection = collections.data?.find((item) => item.id === collectionId);
+    while (collection && !seen.has(collection.id)) {
+      seen.add(collection.id);
+      names.unshift(collection.name);
+      collection = collections.data?.find((item) => item.id === collection?.parentId);
+    }
+    return names.join(" / ");
+  };
 
   // How many marks the source being removed has (v0.14): said in the confirmation, so nothing is lost unawares.
   const [markCount, setMarkCount] = useState<{ sourceId: string; count: number } | null>(null);
@@ -154,20 +241,20 @@ export function LibraryView({
   };
 
   // Moved to Trash (v0.24): recoverable, so the confirmation says so and an Undo follows.
-  const [trashed, setTrashed] = useState<{ id: string; title: string } | null>(null);
-  const trash = async (sourceId: string, title: string) => {
+  const [trashed, setTrashed] = useState<{ id: string; title: string; previousState: ItemState } | null>(null);
+  const trash = async (sourceId: string, title: string, previousState: ItemState) => {
     await api.librarySetState([sourceId], "trashed");
     setConfirming(null);
     onRemoved?.(sourceId);
     page.reload();
     setOutcome(null);
-    setTrashed({ id: sourceId, title });
+    setTrashed({ id: sourceId, title, previousState });
   };
   const undo = async () => {
     if (!trashed) return;
     setError(null);
     try {
-      await api.librarySetState([trashed.id], "active");
+      await api.librarySetState([trashed.id], trashed.previousState);
       setTrashed(null);
       page.reload();
     } catch (e) {
@@ -176,18 +263,21 @@ export function LibraryView({
   };
   const listRef = useRef<HTMLUListElement>(null);
   const narrow = (value: string) => {
+    searchEpoch.current += 1;
+    setMorePending(false);
     setOffset(0);
+    setOutcome(null);
     return value;
   };
 
   const select = "aw-input";
   const items = page.data?.items ?? [];
-  const filtered = Boolean(sourceType || language || archive !== "both");
+  const filtered = Boolean(sourceType || language || collectionId || archive !== "both");
   const names = outcome?.names.items ?? [];
   const passages = outcome?.passages;
   const nothing = outcome !== null && names.length === 0 && (passages?.hits.length ?? 0) === 0;
   return (
-    <main aria-labelledby={`${id}-title`} className="min-h-0 flex-1 overflow-y-auto bg-bg">
+    <main ref={main} aria-labelledby={`${id}-title`} className="min-h-0 flex-1 overflow-y-auto bg-bg">
       {/* Back stays in reach while the page scrolls: the same full-width bar as Settings (v0.18.5). */}
       <div className="sticky top-0 z-10 border-b border-border-subtle bg-bg">
         <div className="mx-auto max-w-[52rem] px-4 py-2 sm:px-8">
@@ -229,7 +319,7 @@ export function LibraryView({
               <ul aria-label={t("library.search.byNameLabel")} className="m-0 flex list-none flex-col p-0">
                 {names.map((hit) => (
                   <li key={hit.id} className="border-t border-border-subtle">
-                    <button type="button" onClick={() => openSource(hit.id)} className="flex w-full flex-col items-start gap-1 px-1 py-3 text-left hover:bg-hover">
+                    <button type="button" data-library-focus={`${hit.id}:`} onClick={() => read(hit.id)} className="flex w-full flex-col items-start gap-1 px-1 py-3 text-left hover:bg-hover">
                       <span className="font-medium text-text-strong">
                         {hit.author ? `${hit.author}, ` : ""}
                         <cite className="not-italic">{hit.title}</cite>
@@ -262,7 +352,7 @@ export function LibraryView({
               <ol aria-label={t("library.search.resultsLabel")} className="m-0 flex list-none flex-col p-0">
                 {passages.hits.map((hit) => (
                   <li key={hit.segmentId} className="border-t border-border-subtle">
-                    <button type="button" onClick={() => openSource(hit.sourceId, hit.segmentId)} className="flex w-full flex-col items-start gap-1 px-1 py-3 text-left hover:bg-hover">
+                    <button type="button" data-library-focus={`${hit.sourceId}:${hit.segmentId}`} onClick={() => read(hit.sourceId, hit.segmentId)} className="flex w-full flex-col items-start gap-1 px-1 py-3 text-left hover:bg-hover">
                       <span className="font-medium text-text-strong">
                         {hit.author ? `${hit.author}, ` : ""}
                         <cite className="not-italic">{hit.sourceTitle}</cite>
@@ -276,10 +366,7 @@ export function LibraryView({
               </ol>
               {passages.hasMore && (
                 <div>
-                  <Button onClick={() => fetchSearch(submitted, passages.hits.length).then(
-                    ([found]) => acceptSearch(passages.hits.length, found, null),
-                    (e: unknown) => failSearch(e, passages.hits.length),
-                  )}>{t("library.search.showMore")}</Button>
+                  <Button disabled={morePending} onClick={() => void loadMore()}>{t("library.search.showMore")}</Button>
                 </div>
               )}
             </div>
@@ -317,6 +404,16 @@ export function LibraryView({
               </select>
             </label>
           </div>
+          <label className="flex items-center gap-2 text-[0.9375rem]">
+            {t("library.navigation.collection")}
+            <select value={collectionId} onChange={(e) => setCollectionId(narrow(e.target.value))} className={select}>
+              <option value="">{t("library.navigation.allCollections")}</option>
+              {(collections.data ?? []).map((collection) => (
+                <option key={collection.id} value={collection.id}>{collectionPath(collection.id)}</option>
+              ))}
+            </select>
+          </label>
+          {collections.error && <Notice tone="error">{collections.error.message}</Notice>}
           <p id={`${id}-archive-help`} className="m-0 max-w-[40rem] text-[0.9375rem] text-text-muted">{t("library.filter.archiveHelp")}</p>
           {page.error && <Notice tone="error">{page.error.message}</Notice>}
           {error && <Notice tone="error">{error}</Notice>}
@@ -336,12 +433,11 @@ export function LibraryView({
           {items.length > 0 && (
             <ul ref={listRef} tabIndex={-1} aria-label={t("library.filter.listLabel")} className="m-0 list-none border-t border-border-subtle p-0 outline-none">
               {items.map((s) => {
-                const collectionNames = s.collections.map(collectionName).filter((name): name is string => Boolean(name));
                 const tagNames = s.tags.map((tag) => tag.name);
                 return (
                   <li key={s.id} className="flex flex-col gap-2 border-b border-border-subtle py-2.5">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <button type="button" onClick={() => openSource(s.id)} className="min-w-0 text-left">
+                      <button type="button" data-library-focus={`${s.id}:`} onClick={() => read(s.id)} className="min-w-0 text-left">
                         <span className="type-item block hover:underline">{s.title}</span>
                         <span className="type-meta block">
                           {[
@@ -354,16 +450,9 @@ export function LibraryView({
                             .filter(Boolean)
                             .join(t("common.listSeparator"))}
                         </span>
-                        {(collectionNames.length > 0 || tagNames.length > 0 || s.state === "archived") && (
+                        {(tagNames.length > 0 || s.state === "archived") && (
                           <span className="mt-1 flex flex-wrap items-center gap-1">
                             {s.state === "archived" && <ArchiveBadge label={t("common.lifecycle.state.archived")} />}
-                            {collectionNames.length > 0 && (
-                              <span className="type-meta">
-                                {t("library.manage.field.collections")}
-                                {t("common.listSeparator")}
-                                {collectionNames.join(t("common.listSeparator"))}
-                              </span>
-                            )}
                             {tagNames.length > 0 && (
                               <span className="type-meta">
                                 {t("library.manage.field.tags")}
@@ -385,13 +474,24 @@ export function LibraryView({
                         <Trash2 className="size-4" aria-hidden="true" />
                       </button>
                     </div>
+                    {s.collections.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="type-meta">{t("library.manage.field.collections")}{t("common.listSeparator")}</span>
+                        {s.collections.map((collection) => {
+                          const name = collectionPath(collection);
+                          return name ? <button key={collection} type="button" className="min-h-10 text-left text-[0.9375rem] text-primary underline underline-offset-2"
+                            aria-label={t("library.navigation.openCollection", { name })}
+                            onClick={() => { if (collectionId !== collection) setCollectionId(narrow(collection)); }}>{name}</button> : null;
+                        })}
+                      </div>
+                    )}
                     {confirming === s.id && (
                       <ConfirmDialog
                         title={t("library.trash.question", { title: s.title })}
                         confirmLabel={t("common.lifecycle.moveToTrash")}
                         returnFocus={() => listRef.current}
                         onCancel={() => setConfirming(null)}
-                        onConfirm={() => trash(s.id, s.title)}
+                        onConfirm={() => trash(s.id, s.title, s.state)}
                       >
                         <p className="m-0">{t("library.trash.text", { count: TRASH_RETENTION_DAYS })}</p>
                         <p className="m-0">{t("library.trash.kept")}</p>

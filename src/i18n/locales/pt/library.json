@@ -576,5 +576,11 @@
     "pages_one": "{{formatted}} página",
     "pages_other": "{{formatted}} páginas",
     "pages_many": "{{formatted}} páginas"
+  },
+  "navigation": {
+    "collection": "Coleção",
+    "allCollections": "Todas as coleções",
+    "openCollection": "Abrir coleção: {{name}}",
+    "backToLibrary": "Voltar à biblioteca"
   }
 }

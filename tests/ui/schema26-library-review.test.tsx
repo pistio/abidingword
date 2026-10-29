@@ -1,0 +1,30 @@
+import { screen, waitFor, within } from "@testing-library/react";
+import { expect, it } from "vitest";
+import i18n from "@/i18n";
+import { createMemoryApi } from "../support/memoryApi";
+import { renderApp } from "../support/render";
+
+it.each(["active", "archived"] as const)("Trash → Undo restores a previously %s source with its organisation", async (state) => {
+  const api = createMemoryApi();
+  api.installFixtureBible("FXA","alpha");
+  api.installFixtureSource({title:"Active review source",segments:[{text:"Synthetic text."}]});
+  const source = api.installFixtureSource({title:"Review notebook",author:"Invented author",segments:[{text:"Synthetic words only."}]});
+  const collection = await api.libraryCollectionCreate("Review shelf",null);
+  await api.libraryCollect(collection.id,[source.id],true);
+  await api.libraryRetag([source.id],["review"],[]);
+  await api.librarySetState([source.id],state);
+  const before = await api.libraryGetSource(source.id);
+  const {user} = await renderApp(api);
+  await user.click(await within(screen.getByRole("complementary",{name:"Sources"})).findByRole("button",{name:"Open library"}));
+  await screen.findByRole("heading",{name:"Library",level:1});
+  await user.click(await screen.findByRole("button",{name:i18n.t("library.trash.label",{title:source.title})}));
+  await user.click(within(await screen.findByRole("alertdialog")).getByRole("button",{name:"Move to Trash"}));
+  await waitFor(async () => expect((await api.libraryGetSource(source.id)).state).toBe("trashed"));
+  await user.click(await screen.findByRole("button",{name:"Undo"}));
+  await waitFor(async () => expect((await api.libraryGetSource(source.id)).state).toBe(state));
+  const after = await api.libraryGetSource(source.id);
+  expect(after.collectionNames).toEqual(before.collectionNames);
+  expect(after.tagNames).toEqual(before.tagNames);
+  expect(after.contentHash).toEqual(before.contentHash);
+  expect(after.segmentCount).toEqual(before.segmentCount);
+});

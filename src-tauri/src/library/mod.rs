@@ -188,6 +188,9 @@ pub struct SearchLibrary {
     /// "active" or "archived". Empty: both, and never Trash.
     #[serde(default)]
     pub state: Option<String>,
+    /// Restrict text results to members of this collection, without duplicating hits.
+    #[serde(default)]
+    pub collection_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -365,7 +368,7 @@ pub struct CommitSourceImport {
 }
 
 /// A finding's citation of a library source.
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct FindingCitation {
     pub id: String,

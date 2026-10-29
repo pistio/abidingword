@@ -17,7 +17,7 @@ const FIXTURE = "src-tauri/tests/fixtures/materials/documents.json";
 
 const point = (n: number, fields: Partial<TeachingPoint>): TeachingPoint => ({ id: `p${n}`, position: n, kind: null, title: "", explanation: "", application: "", illustration: "", ...fields });
 const prep = (fields: Partial<TeachingPreparation>): TeachingPreparation => ({
-  id: "prep", studyId: "study", title: "Remain in the vine", kind: "sermon", audience: "PRIVATE audience", purpose: "PRIVATE purpose",
+  id: "prep", projectId: "fixture-project", studyId: "study", title: "Remain in the vine", kind: "sermon", audience: "PRIVATE audience", purpose: "PRIVATE purpose",
   centralMessage: null, introduction: "", conclusion: "", notes: "", points: [], findings: [], passages: [], materials: [], createdAt: "", updatedAt: "", revision: 1, ...fields,
 });
 const ref = { book: "JHN", startChapter: 15, startVerse: 1, endChapter: 15, endVerse: 3, canonical: "JHN.15.1-JHN.15.3", display: "John 15:1-3" };

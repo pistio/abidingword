@@ -74,6 +74,7 @@ fn a_v7_database_is_backed_up_and_gains_empty_teaching_tables() {
         let prep = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: "s-1".into(),
                 title: "Sunday".into(),
                 kind: None,

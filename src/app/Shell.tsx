@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useTranslation } from "react-i18next";
 import { AddBibleView } from "@/features/scripture/AddBibleView";
 import { ScripturePane } from "@/features/scripture/ScripturePane";
 import { AddSourceView } from "@/features/library/AddSourceView";
 import { LibraryNavProvider, type LibraryNav, type QuotedWords } from "@/features/library/LibraryNav";
-import { LibraryView } from "@/features/library/LibraryView";
+import { LibraryView, type LibraryBrowseState } from "@/features/library/LibraryView";
 import { SourceReader, type ReaderPosition } from "@/features/library/SourceReader";
 import { SourcesPane, type PaneSource } from "@/features/library/SourcesPane";
 import { UpdateNotice } from "@/features/updates/UpdateNotice";
@@ -28,6 +28,23 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   const [view, setView] = useState<View>("workspace");
   /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
   const [settingsSection, setSettingsSection] = useState<"sources" | null>(null);
+  const positions = useRef(new Map<string, ReaderPosition>());
+  const positionReaders = useRef(new Map<string, () => ReaderPosition | null>());
+  const registerPositionReader = useCallback((sourceId: string, read: (() => ReaderPosition | null) | null) => {
+    if (read) positionReaders.current.set(sourceId, read);
+    else positionReaders.current.delete(sourceId);
+  }, []);
+  const capturePositions = useCallback(() => {
+    for (const [sourceId, read] of positionReaders.current) {
+      const position = read();
+      if (position) positions.current.set(sourceId, position);
+    }
+  }, []);
+  const rememberPosition = useCallback((sourceId: string, position: ReaderPosition) => {
+    positions.current.set(sourceId, position);
+  }, []);
+  const [browseState, setBrowseState] = useState<LibraryBrowseState>();
+  const [settingsFrom, setSettingsFrom] = useState<View>("workspace");
   const [returnTo, setReturnTo] = useState<View>("workspace");
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [templatesVersion, setTemplatesVersion] = useState(0);
@@ -36,13 +53,20 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   // Each request to open the library (id) remembers its latest search.
   const [library, setLibrary] = useState<{ id: number; query?: string }>({ id: 0 });
   // The full-width reader, and where its Back returns to.
-  const [reading, setReading] = useState<{ sourceId: string; segmentId?: string; from: View; position?: ReaderPosition; words?: QuotedWords } | null>(null);
+  const [reading, setReading] = useState<{ sourceId: string; segmentId?: string; from: View; position?: ReaderPosition; words?: QuotedWords; libraryOrigin?: boolean } | null>(null);
   // A source read inside the Sources pane. Kept here, not in the pane, so it
   // is still open after a visit to the full reader, Settings or the Library.
   const [paneSource, setPaneSource] = useState<PaneSource | null>(null);
   const layout = useWorkspaceLayout();
   const { goTo } = useScripture();
   const { open, setOpen } = layout;
+
+  const showView = (next: View) => {
+    capturePositions();
+    if (next === "workspace") setPaneSource((current) => current ? { ...current, position: positions.current.get(current.sourceId) ?? current.position } : current);
+    if (next === "source") setReading((current) => current ? { ...current, position: positions.current.get(current.sourceId) ?? current.position } : current);
+    setView(next);
+  };
 
   const addBible = () => setOverlay({ kind: "addBible" });
   const revealScripture = () => {
@@ -53,6 +77,8 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   const libraryNav = useMemo<LibraryNav>(
     () => ({
       openLibrary: (query) => {
+        capturePositions();
+        if (query !== undefined) setBrowseState(undefined);
         setLibrary((current) => ({ id: current.id + 1, query }));
         setView("library");
       },
@@ -62,6 +88,11 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
       // whose Back returns to where it was opened from (after adding a
       // source: the library).
       openSource: (sourceId, segmentId, position, words) => {
+        capturePositions();
+        // A citation/search target always wins over a remembered reading place.
+        if (!position && !segmentId && !words) position = positions.current.get(sourceId);
+        if (position) positions.current.set(sourceId, position);
+        else positions.current.delete(sourceId);
         if (view === "workspace" && (open.sources || window.innerWidth >= NARROW_WIDTH)) {
           if (!open.sources) setOpen("sources", true);
           const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -69,10 +100,11 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
           return;
         }
         const from = view === "addSource" ? "library" : view === "source" ? (reading?.from ?? "workspace") : view;
-        setReading({ sourceId, segmentId, from, position, words });
+        setReading({ sourceId, segmentId, from, position, words, libraryOrigin: from === "library" || (view === "source" && reading?.libraryOrigin) });
         setView("source");
       },
       addSource: () => {
+        capturePositions();
         setReturnTo(view);
         setView("addSource");
       },
@@ -83,12 +115,12 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         if (!open.scripture) setOpen("scripture", true);
         if (view === "source" && reading) {
           if (!open.sources) setOpen("sources", true);
-          setPaneSource((current) => ({ sourceId: reading.sourceId, segmentId: reading.segmentId, position, opener: null, key: (current?.key ?? 0) + 1 }));
+          setPaneSource((current) => ({ sourceId: reading.sourceId, segmentId: reading.segmentId, position, words: reading.words, returnToLibrary: reading.libraryOrigin ?? reading.from === "library", opener: null, key: (current?.key ?? 0) + 1 }));
           setView("workspace");
         }
       },
     }),
-    [view, reading, open.sources, open.scripture, setOpen, goTo],
+    [view, reading, open.sources, open.scripture, setOpen, goTo, capturePositions],
   );
 
   return (
@@ -113,12 +145,18 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         sourcesOpen={open.sources}
         scriptureSide={sideOf("scripture")}
         sourcesSide={sideOf("sources")}
-        onToggleScripture={() => setOpen("scripture", !open.scripture)}
-        onToggleSources={() => setOpen("sources", !open.sources)}
+        onToggleScripture={() => { capturePositions(); setOpen("scripture", !open.scripture); }}
+        onToggleSources={() => {
+          capturePositions();
+          setPaneSource((current) => current ? { ...current, position: positions.current.get(current.sourceId) ?? current.position } : current);
+          setOpen("sources", !open.sources);
+        }}
         onOpenSettings={() => {
-          if (view === "settings") setView("workspace");
+          capturePositions();
+          if (view === "settings") showView(settingsFrom);
           else {
             setSettingsSection(null);
+            setSettingsFrom(view);
             setView("settings");
           }
         }}
@@ -131,7 +169,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         <SettingsView
           info={info}
           initialSection={settingsSection}
-          onClose={() => setView("workspace")}
+          onClose={() => showView(settingsFrom)}
           onResetLayout={layout.reset}
           onAddBible={addBible}
           onEditTemplate={(templateId) => setOverlay({ kind: "template", templateId })}
@@ -144,16 +182,19 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         <LibraryView
           key={library.id}
           initialQuery={library.query}
+          initialState={browseState}
+          onRemember={setBrowseState}
           onSearched={(query) => setLibrary((current) => ({ ...current, query }))}
-          onClose={() => setView("workspace")}
+          onClose={() => showView("workspace")}
           onManage={() => {
             setSettingsSection("sources");
+            setSettingsFrom("library");
             setView("settings");
           }}
           onRemoved={(sourceId) => setPaneSource((current) => (current?.sourceId === sourceId ? null : current))}
         />
       )}
-      {view === "addSource" && <AddSourceView onClose={() => setView(returnTo)} />}
+      {view === "addSource" && <AddSourceView onClose={() => showView(returnTo)} />}
       {view === "source" && reading && (
         <SourceReader
           key={`${reading.sourceId}-${reading.segmentId ?? ""}`}
@@ -161,6 +202,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
           segmentId={reading.segmentId}
           initialPosition={reading.position}
           quotedWords={reading.words}
+          onPositionReader={registerPositionReader}
           onClose={(position) => {
             // Back to the workspace: the pane continues where this reader was.
             if (reading.from === "workspace") {
@@ -168,6 +210,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
                 current?.sourceId === reading.sourceId ? { ...current, position, key: current.key + 1 } : current,
               );
             }
+            rememberPosition(reading.sourceId, position);
             setView(reading.from);
           }}
         />
@@ -214,10 +257,16 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
           sources={
             <SourcesPane
               reading={paneSource}
-              onCloseReader={() => setPaneSource(null)}
+              onPositionReader={registerPositionReader}
+              onCloseReader={() => {
+                capturePositions();
+                if (paneSource?.returnToLibrary) setView("library");
+                setPaneSource(null);
+              }}
               onExpandReader={(position) => {
                 if (!paneSource) return;
-                setReading({ sourceId: paneSource.sourceId, segmentId: paneSource.segmentId, from: "workspace", position });
+                rememberPosition(paneSource.sourceId, position);
+                setReading({ sourceId: paneSource.sourceId, segmentId: paneSource.segmentId, from: "workspace", position, words: paneSource.words, libraryOrigin: paneSource.returnToLibrary });
                 setView("source");
               }}
             />

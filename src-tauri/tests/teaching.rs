@@ -66,6 +66,7 @@ fn prep(conn: &Connection, study: &str, title: &str) -> AppResult<String> {
     Ok(teaching::create(
         conn,
         &CreateTeaching {
+            project_id: None,
             study_id: study.into(),
             title: title.into(),
             kind: Some("sermon".into()),
@@ -96,6 +97,7 @@ fn a_study_has_several_preparations_each_saved_and_deleted_on_its_own() {
         let group = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study.clone(),
                 title: "  Small group  ".into(),
                 kind: None,
@@ -162,6 +164,7 @@ fn a_study_has_several_preparations_each_saved_and_deleted_on_its_own() {
             code(teaching::create(
                 conn,
                 &CreateTeaching {
+                    project_id: None,
                     study_id: study.clone(),
                     title: "   ".into(),
                     kind: None,

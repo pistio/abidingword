@@ -80,3 +80,26 @@ pub fn update(conn: &Connection, input: &UpdateProject) -> AppResult<Project> {
     )?;
     get(conn, &input.id)
 }
+
+pub fn delete(conn: &Connection, id: &str, permanent: bool) -> AppResult<()> {
+    let exists: bool = conn.query_row(
+        "SELECT EXISTS(SELECT 1 FROM projects WHERE id=?1)",
+        [id],
+        |r| r.get(0),
+    )?;
+    if !exists {
+        return Err(AppError::not_found("project", id));
+    }
+    let tx = conn.unchecked_transaction()?;
+    if permanent {
+        tx.execute("DELETE FROM projects WHERE id=?1", [id])?;
+    } else {
+        tx.execute("UPDATE projects SET deleted_at=?2,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NULL",params![id,now()])?;
+    }
+    tx.commit()?;
+    Ok(())
+}
+pub fn restore(conn: &Connection, id: &str) -> AppResult<Project> {
+    conn.execute("UPDATE projects SET deleted_at=NULL,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NOT NULL",params![id,now()])?;
+    get(conn, id)
+}
