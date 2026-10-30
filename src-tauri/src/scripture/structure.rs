@@ -2387,11 +2387,11 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     static LETTER: OnceLock<regex::Regex> = OnceLock::new();
     let letter =
         LETTER.get_or_init(|| regex::Regex::new(r#"[.!?;:,”")]\p{Ll}(?:\s|$)"#).expect("valid"));
-    // (After a closing single quote too, but not a contraction: "’s", "’t",
-    // "’d", "’m".)
+    // (After a single quote closing a sentence too, "… adultery.’i"; never
+    // an elision, "il l’a dit".)
     static QUOTE_LETTER: OnceLock<regex::Regex> = OnceLock::new();
-    let quote_letter = QUOTE_LETTER
-        .get_or_init(|| regex::Regex::new(r"’[a-ce-lnoqruv-z](?:\s|$)").expect("valid"));
+    let quote_letter =
+        QUOTE_LETTER.get_or_init(|| regex::Regex::new(r"[.!?,;:]’\p{Ll}(?:\s|$)").expect("valid"));
     // (Or a lone letter closing the verse after its sentence's end, "… si
     // me equivoco?” b", that no language writes as a word there.)
     let lone_letter = matches!(words[..], [.., before, last]
