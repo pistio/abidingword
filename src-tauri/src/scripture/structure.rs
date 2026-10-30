@@ -2826,7 +2826,12 @@ fn check_running_heads(
         let Some(page) = unit.place.page else {
             continue;
         };
-        if heads.contains_key(&(unit.place.document, page)) || !reference_head(&unit.text) {
+        // (A passage in brackets at a page's top is a parallel reference
+        // under a heading, "(Isaiah 66:1-2)", not the page's head.)
+        if heads.contains_key(&(unit.place.document, page))
+            || !reference_head(&unit.text)
+            || unit.text.trim_start().starts_with('(')
+        {
             continue;
         }
         let Some(((first_name, fc, fv), (name, chapter, verse))) = head_references(&unit.text)
@@ -5472,10 +5477,12 @@ impl Reader<'_> {
         let lower_after = matches!(self.items.get(at + 1).map(|i| &i.event),
             Some(Event::Text(t)) if t.trim_start().chars().next().is_some_and(char::is_lowercase));
         // (Or after a word, in a language that writes its nouns with a
-        // capital: "… das ganze Haus Israel Aaron 30 Tage".)
+        // capital: "… das ganze Haus Israel Aaron 30 Tage". Only in scripts
+        // with letter case: Hebrew editions number some chapters beyond the
+        // standard count after a paragraph mark, "… ס 11 …".)
         let word_before = at > 0
             && matches!(self.items.get(at - 1).map(|i| &i.event),
-                Some(Event::Text(t)) if t.trim_end().chars().last().is_some_and(char::is_alphabetic));
+                Some(Event::Text(t)) if t.trim_end().chars().last().is_some_and(|c| c.is_uppercase() || c.is_lowercase()));
         let quantity = beyond && m.strength == Strength::Medium && (lower_after || word_before);
         // A chapter's number set as a drop numeral before verse 1 ("17When
         // Abram …", "17Lorsque Abram …"), at a paragraph's start once this
@@ -6292,8 +6299,12 @@ impl Reader<'_> {
                 // (2 Timothy 1 running on to "verse 22"): the next chapter's
                 // number was missed and its verses read into this one, however
                 // few (v0.24.3).
-                let next_missing =
-                    *chapter < book.chapter_count && !staged.chapters.contains_key(&(chapter + 1));
+                // (Only when a later chapter was found: a book whose last
+                // chapter runs on, Malachi 3 to verse 24 in the Hebrew
+                // numbering, has no next chapter to miss.)
+                let next_missing = *chapter < book.chapter_count
+                    && !staged.chapters.contains_key(&(chapter + 1))
+                    && staged.chapters.keys().any(|c| *c > chapter + 1);
                 if last > expected + LONG_TOLERANCE.max(expected / 2)
                     || (last > expected && next_missing)
                 {
