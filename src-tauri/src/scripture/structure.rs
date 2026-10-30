@@ -2387,9 +2387,23 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     static LETTER: OnceLock<regex::Regex> = OnceLock::new();
     let letter =
         LETTER.get_or_init(|| regex::Regex::new(r#"[.!?;:,”")]\p{Ll}(?:\s|$)"#).expect("valid"));
+    // (After a closing single quote too, but not a contraction: "’s", "’t",
+    // "’d", "’m".)
+    static QUOTE_LETTER: OnceLock<regex::Regex> = OnceLock::new();
+    let quote_letter = QUOTE_LETTER
+        .get_or_init(|| regex::Regex::new(r"’[a-ce-lnoqruv-z](?:\s|$)").expect("valid"));
+    // (Or a lone letter closing the verse after its sentence's end, "… si
+    // me equivoco?” b", that no language writes as a word there.)
+    let lone_letter = matches!(words[..], [.., before, last]
+        if sentence_end(before)
+            && last.chars().count() == 1
+            && last.chars().all(|c| c.is_lowercase())
+            && !matches!(last, "a" | "à" | "e" | "é" | "o" | "y" | "u" | "i"));
     if text.chars().any(|c| superscript_digit(c).is_some())
         || text.contains('*')
         || letter.is_match(text)
+        || quote_letter.is_match(text)
+        || lone_letter
     {
         return Some("noteSign");
     }
@@ -3079,6 +3093,23 @@ impl Builder<'_> {
         entry
     }
 
+    /// Whether a heading has the form of two or more titles already read as
+    /// books, all but their last word ("Le livre du prophète …").
+    fn title_form(&self, text: &str) -> bool {
+        let k = key(text);
+        let Some((form, _)) = k.rsplit_once(' ') else {
+            return false;
+        };
+        if form.split(' ').count() < 2 {
+            return false;
+        }
+        self.books
+            .iter()
+            .filter(|b| b.detected.is_some() && key(&b.heading).starts_with(&format!("{form} ")))
+            .count()
+            >= 2
+    }
+
     /// A heading (or a short line on its own) right before "Chapter 1"
     /// that names no book: perhaps a book's title the dictionaries do not
     /// know ("The First Book of Moses"). Offered for correction.
@@ -3512,6 +3543,23 @@ impl Builder<'_> {
             // named, and its text left out, never read into the book before.
             if let Some(code) = self.outside_title(unit, text, index, skip) {
                 let entry = self.outside_book(text, code, index);
+                self.push(
+                    Event::Book {
+                        entry,
+                        chapter: None,
+                    },
+                    index,
+                );
+                continue;
+            }
+            // A heading in the document's own form for its books' titles ("Le
+            // livre du prophète Habaquq", after "Le livre du prophète Nahum"
+            // and others) whose name no dictionary knows: a book the
+            // recogniser cannot name. Its text is never read into the book
+            // before; it is offered for correction (v0.24.3).
+            if unit.heading && read_heading(text, self.language).is_none() && self.title_form(text)
+            {
+                let entry = self.found_book(text, None, index);
                 self.push(
                     Event::Book {
                         entry,
