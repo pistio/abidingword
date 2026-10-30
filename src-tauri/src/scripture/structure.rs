@@ -2881,7 +2881,8 @@ fn check_running_heads(
             // and the next begins); otherwise a heading was read as a book
             // that is not there. One passage alone may be a cross-reference
             // ("Psalms 110:4") and proves nothing.
-            first_found.0 == book.ordinal || (first.0, first.1) == (*chapter, *verse)
+            // (A range within one chapter, "Isaiah 66:1-2", is one passage.)
+            first_found.0 == book.ordinal || first.0 == *chapter
         } else {
             // Some typesetting keeps an earlier chapter in the head ("3:7 …
             // 3:9" over 3:7–4:9, or "49:8 … 49:26" over 50:8–50:26):
@@ -5476,13 +5477,19 @@ impl Reader<'_> {
         let beyond = canon::verse_count(book, chapter).is_some_and(|count| m.value > count);
         let lower_after = matches!(self.items.get(at + 1).map(|i| &i.event),
             Some(Event::Text(t)) if t.trim_start().chars().next().is_some_and(char::is_lowercase));
-        // (Or after a word, in a language that writes its nouns with a
-        // capital: "… das ganze Haus Israel Aaron 30 Tage". Only in scripts
-        // with letter case: Hebrew editions number some chapters beyond the
-        // standard count after a paragraph mark, "… ס 11 …".)
+        // (Or after a word, with no more than two words after it before the
+        // next number or heading: "… das ganze Haus Israel Aaron 30 Tage."
+        // A verse runs on: "… car 13 En Dieu nous combattrons …" is verse 13
+        // in a numbering with the psalm's title as verse 1.)
         let word_before = at > 0
             && matches!(self.items.get(at - 1).map(|i| &i.event),
-                Some(Event::Text(t)) if t.trim_end().chars().last().is_some_and(|c| c.is_uppercase() || c.is_lowercase()));
+                Some(Event::Text(t)) if t.trim_end().chars().last().is_some_and(|c| c.is_uppercase() || c.is_lowercase()))
+            && matches!(self.items.get(at + 1).map(|i| &i.event),
+                Some(Event::Text(t)) if t.split_whitespace().count() <= 2)
+            && !matches!(
+                self.items.get(at + 2).map(|i| &i.event),
+                Some(Event::Text(_))
+            );
         let quantity = beyond && m.strength == Strength::Medium && (lower_after || word_before);
         // A chapter's number set as a drop numeral before verse 1 ("17When
         // Abram …", "17Lorsque Abram …"), at a paragraph's start once this
@@ -6299,12 +6306,13 @@ impl Reader<'_> {
                 // (2 Timothy 1 running on to "verse 22"): the next chapter's
                 // number was missed and its verses read into this one, however
                 // few (v0.24.3).
-                // (Only when a later chapter was found: a book whose last
-                // chapter runs on, Malachi 3 to verse 24 in the Hebrew
-                // numbering, has no next chapter to miss.)
+                // (Not where only the book's last chapter is missing: some
+                // numberings fold it into the one before, Malachi 3 running
+                // to verse 24 in the Hebrew Bible.)
                 let next_missing = *chapter < book.chapter_count
                     && !staged.chapters.contains_key(&(chapter + 1))
-                    && staged.chapters.keys().any(|c| *c > chapter + 1);
+                    && (chapter + 1 < book.chapter_count
+                        || staged.chapters.keys().any(|c| *c > chapter + 1));
                 if last > expected + LONG_TOLERANCE.max(expected / 2)
                     || (last > expected && next_missing)
                 {
