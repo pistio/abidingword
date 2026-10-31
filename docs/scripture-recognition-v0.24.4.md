@@ -40,6 +40,26 @@ Branch: `claude/scripture-recognition-v0.24.4`, from v0.24.3's verified head
   place that is rare in the whole document (twice at most) and never begins a
   sentence is a label too.
 
+### Set B's remaining contaminations, and a reading that varied
+
+Set B's regression run at the first freeze (8a61c55) still verified four
+contaminated verses in the Berean two-column PDF: three with the page's own
+number read into the line ("… a disaster 761 from which …", on page 761) and
+one with a note's letter whose raising the page lost ("… in their seasons e
+or lead out …"). Two general rules now leave such verses unverified: a line
+holding the number of its own page (`boundary`), and a single lowercase letter
+standing as a word mid-verse that is not one of the language's one-letter
+words — "a" in English, "e"/"o" in Portuguese, every vowel where the
+language is unknown (`noteSign`).
+
+Running the same PDF twice with the same build then gave different refused
+chapters. The running-head check gathered the page furniture from a hash set,
+so the "first head" chosen for a page varied, and a cross-reference note at a
+page's foot ("d 9:9 Deuteronomy 25:4") could be taken for the head and refuse
+the chapter. The lines are now read in the document's order and notes are
+never heads; the same document reads the same every time (checked by running
+the PDF twice at the frozen commit, §5).
+
 ## 3. Fail closed
 
 Every rule above moves a verse from verified to found-but-unverified, or a
