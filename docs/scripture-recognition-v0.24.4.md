@@ -80,9 +80,113 @@ on the integration branch; nothing of it is on this branch.
 
 ## 5. Evaluation
 
-*To be completed: regression runs on the development corpus, set B and set C
-at the frozen commit; set D built after the freeze and run once; checks.*
+Recogniser frozen at **17398c6** (`src-tauri/src/scripture/structure.rs`,
+`library/adapters/{pdf_layout,epub,mod}.rs`; later commits touch only
+`tests/` and `docs/`). Evidence in `docs/audit/v0.24.4/`.
+
+### Checks at the frozen commit
+
+`cargo fmt -- --check`, `cargo clippy --all-targets --locked -- -D warnings`
+and `cargo test --locked --no-fail-fast` (every suite, migrations included)
+pass; `npm run typecheck`, `lint`, `i18n:check`, `test` (1 053 tests) and
+`build` pass. One timing-sensitive front-end test failed once while the Rust
+suite and the audit chain were loading the machine and passed on a clean
+re-run of the same code. Reading the same document twice gives the same
+result (the Berean PDF, read twice at 771f40e and again at 17398c6:
+identical refused chapters, counts and verses).
+
+### Regression sets (disclosed; not independent)
+
+* **Set C** (`set-c-regression.md`; blind figures from v0.24.3 beside each):
+  no verified false positive in any document (blind: 73). Verified verses with
+  wrong text: 1, the shorter ending of Mark appended to 16:20 in the OEB PDF
+  (a reference artefact; blind: 6 032). The KJV margin PDF: 56.5 % detected,
+  0 % verified — every verse found is left unverified because its boundaries
+  cannot be settled from the layout (blind: 38.3 % detected, 37.2 % verified,
+  4 886 wrong). pandoc EPUB 89.5 / 89.3 % clean (blind 84.5 %, 929 wrong);
+  Portuguese A5 PDF 99.4 / 97.7 % clean (blind 75.5 %, 199 wrong). Two
+  documents stay at 0 % (no verse numbers; Hebrew-letter numerals): refused,
+  nothing invented.
+* **Set B** (`set-b-regression.md`): no verified false positive (first
+  evaluation: 23); 28 verified differences, all classified in
+  `verified-differences.md` as reference artefacts (acrostic headings and
+  "Selah" placement in the USFM, headings inside verse text), two numbers the
+  PDF generator dropped, and the ASV's closing rubric of Habakkuk 3:19 — no
+  contamination (the four of 8a61c55 — page numbers and a note letter read
+  into Berean verses — are gone, §2). Berean PDF 77.3 / 71.2 % (first
+  evaluation 62.9 / 59.3 %, 41 wrong).
+* **Development corpus** (`dev-regression.md`, 46 documents): DEV-CORPUS-LINE
+
+The seven remaining verified differences of the development corpus are the
+Textbibel's USFM encoding Scripture as headings (reference artefacts), the
+subscriptions kept apart by design and the words a converter dropped; the two
+contaminations v0.24.3 left there (Textbibel headings in the body's type, the
+Song of Songs label) are gone.
+
+### Withheld set D (independent; blind; run once)
+
+`withheld-d/summary.md`. Twelve documents built after the freeze by an agent
+that saw neither the recogniser nor sets B and C: new generators (fpdf2,
+LibreOffice from HTML, MuPDF Story, pandoc DOCX, hand-written EPUB 2,
+Markdown with bold chapter-verse, verse-per-line text), new languages for the
+sets (Septuagint Greek, Hebrew) and new layouts (drop caps, running heads
+with the chapter, right-to-left). Three editions reuse source texts of the
+development corpus (Luther 1912, Segond, Korean) in new layouts; the set's
+generator relaxed its own sanity checks for two two-column PDFs; one PDF the
+app refuses outright.
+
+Result: **NOT clean.**
+
+| | |
+|---|---|
+| Documents | 12 (11 read; 1 refused by the app as unreadable) |
+| Clean or honestly rejected | 5: pandoc Word 99.3 / 99.2 %; ReportLab A5 PDF 37.3 / 36.4 %; margin-number PDF 0 % (every chapter refused); Hebrew booklet 0 %; MuPDF PDF refused |
+| Verified verses with wrong text | 1 196 in 6 documents |
+| Verified verses under a book code the edition's reference does not use | 898 (Greek Esther and Daniel filed as `EST`/`DAN`, two Brenton editions) |
+
+The causes are few and general: **running heads not set apart** (1 028: a
+long book title in capitals, a Korean "book chapter–book chapter" head, a
+work title on every page), **a verse number set against its first word**
+("23que", "27»La", "28ahe": 120 verses merged with the next), **footnotes
+read as verse text** (11), **inline theme labels** (31), and **Septuagint
+books outside the canon table** (898, with chapters longer than the canon
+not refused). The margin-number evidence from set C generalised (fpdf2 PDF:
+0 % with no false positive); the A5 ReportLab PDF is clean at low coverage.
+
+The first evaluation of each withheld set has now failed hard safety three
+times in a row (B: 23 false positives, 1 734 wrong; C: 73 and 6 032; D: 898
+and 1 196). Each round fixed its set's causes generally and left the earlier
+sets clean, and each new set found new layouts. That is the pattern §4's
+safety architecture exists for.
 
 ## 6. Verdict
 
-*To be completed.*
+**NOT READY** for text read from documents to enter a Bible as verified
+Scripture without the product-level safeguard.
+
+Supporting evidence: zero verified false positives and zero contamination in
+the development corpus and in sets B and C at 17398c6, with coverage
+unchanged or higher except where fail-closed rules were added deliberately;
+but the independent set D verifies wrong text in six of eleven documents
+read, and files Septuagint books under Hebrew-canon codes.
+
+What this milestone delivers, and what is recommended:
+
+1. **Merge-ready recognition improvements** on
+   `claude/scripture-recognition-v0.24.4` (17398c6 code; `856a81b`+ docs):
+   general evidence for margin numbers, declared note callers, stacked
+   titles, letter-spaced labels, running heads by book name, the Textbibel
+   and Song of Songs contaminations, page numbers and note letters in a
+   verse, deterministic running-head reading. Every rule fails closed. The
+   owner decides when to merge; nothing has been merged or published.
+2. **The provisional-import architecture** (`docs/design/`) should be
+   implemented by Codex on the schema-26 integration branch before any Bible
+   read from a document is offered as verified: set D shows that new layouts
+   keep arriving faster than general rules can be proven on them, and the
+   product must hold such text as *provisional* until a person has reviewed
+   it.
+3. **Next recognition round, if the owner wants one**: the set D causes are
+   general and small in number (running-head forms; a number set against a
+   word; notes in the LibreOffice PDF; theme labels; Septuagint canon
+   codes), to be addressed on general layout evidence and proven on a set E
+   built after that freeze. Set D is a regression set from now on.
