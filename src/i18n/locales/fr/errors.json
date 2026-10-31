@@ -133,6 +133,7 @@
     "documentPagesUnread": "« {{fileName}} » : le texte de la ou des pages {{pages}} n’a pas pu être lu entièrement. Les versets qui s’y trouvent manquent.",
     "documentNumberInVerse": "{{book}} {{chapter}} : le verset {{verse}} n’a pas été trouvé, mais le nombre {{verse}} figure dans le verset précédent ; les deux pourraient se confondre. Ce chapitre n’est pas utilisé.",
     "documentChapterLong": "{{book}} {{chapter}} va jusqu’au verset {{last}} ; ce chapitre compte habituellement {{expected}} versets. Un autre chapitre ou un autre livre y a peut-être été lu. Ce chapitre n’est pas utilisé.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}} : ce document est une Septante, qui numérote ce chapitre autrement que la numérotation de la Bible hébraïque utilisée par Abiding Word. Ce chapitre n’est pas utilisé.",
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
     "documentFootnotes_many": "{{count}} lignes de notes en bas de page ont été laissées de côté.",

@@ -1365,7 +1365,17 @@ fn peel(spans: &mut Vec<&Span>, body: f64, height: f64, top: bool) -> Vec<Span> 
 /// Taken out of `spans` and returned, so they are never read between the
 /// columns (a note at the foot of the left column before the right column).
 fn notes<'a>(spans: &mut Vec<&'a Span>, body: f64) -> Vec<&'a Span> {
-    let is_body = |s: &Span| (s.size - body).abs() <= 0.1 * body && s.text.chars().count() > 2;
+    // Text, not a page number or a sign: more than two characters, or two
+    // letters (a Korean line's last syllables, "더라", v0.24.5).
+    // (Or one syllable of a script that writes whole syllables, Korean or
+    // Chinese: "서", "니" — never a note's letter.)
+    let syllable = |c: char| matches!(c, '\u{AC00}'..='\u{D7AF}' | '\u{1100}'..='\u{11FF}' | '\u{3130}'..='\u{318F}' | '\u{4E00}'..='\u{9FFF}');
+    let wordy = |s: &Span| {
+        s.text.chars().count() > 2
+            || s.text.chars().filter(|c| c.is_alphabetic()).count() >= 2
+            || s.text.chars().any(syllable)
+    };
+    let is_body = |s: &Span| (s.size - body).abs() <= 0.1 * body && wordy(s);
     let Some(body_bottom) = spans
         .iter()
         .filter(|s| is_body(s))
@@ -1380,7 +1390,7 @@ fn notes<'a>(spans: &mut Vec<&'a Span>, body: f64) -> Vec<&'a Span> {
     if below.is_empty()
         || below
             .iter()
-            .any(|&i| spans[i].size > 0.9 * body && spans[i].text.chars().count() > 2)
+            .any(|&i| spans[i].size > 0.9 * body && wordy(spans[i]))
     {
         return Vec::new();
     }
@@ -2230,6 +2240,19 @@ mod tests {
         let last = p.lines.last().unwrap();
         assert_eq!(last.role, LineRole::Note);
         assert!(last.text.starts_with("† 15:2"), "{}", last.text);
+    }
+
+    #[test]
+    fn a_short_line_of_body_text_at_the_foot_is_text_not_a_note() {
+        // A Korean verse's last syllables alone on the column's last line
+        // ("더라", "서"), in the body's size: text, never a note.
+        for tail in ["더라", "서"] {
+            let mut glyphs = two_columns(10, 20.0);
+            glyphs.extend(g(tail, 190.0, 100.0 + 14.0 * 10.0 + 4.0, 10.0));
+            let p = page(glyphs);
+            let last = p.lines.iter().find(|l| l.text == tail).unwrap();
+            assert_ne!(last.role, LineRole::Note, "{tail}");
+        }
     }
 
     #[test]

@@ -46,6 +46,12 @@ impl SourceImportAdapter for MarkdownImporter {
         let mut in_heading: Option<usize> = None;
         let mut block_start = 0usize;
         let mut paragraph_in_section = 0u32;
+        // Emphasis open now, and whether every piece of the block's text so
+        // far stood inside it: a paragraph written wholly in italics or bold
+        // ("*TEMA: …*", "*Mateus 1:1–16*") is set apart by the document's own
+        // markup, as an EPUB's styled class is (v0.24.5).
+        let mut emphasis = 0usize;
+        let mut all_emphasised = true;
 
         let path = |headings: &[Option<String>]| -> Option<String> {
             let parts: Vec<&str> = headings.iter().flatten().map(String::as_str).collect();
@@ -78,6 +84,11 @@ impl SourceImportAdapter for MarkdownImporter {
                 Event::Start(Tag::Paragraph | Tag::CodeBlock(_) | Tag::Item) => {
                     buffer.clear();
                     block_start = range.start;
+                    all_emphasised = true;
+                }
+                Event::Start(Tag::Emphasis | Tag::Strong) => emphasis += 1,
+                Event::End(TagEnd::Emphasis | TagEnd::Strong) => {
+                    emphasis = emphasis.saturating_sub(1);
                 }
                 // A tight list item has text but no paragraph of its own.
                 // A hard line break ends a line of its own ("1:1 …  " / "1:2
@@ -91,6 +102,8 @@ impl SourceImportAdapter for MarkdownImporter {
                     }
                     let text = collapse(&buffer);
                     buffer.clear();
+                    let styled =
+                        std::mem::replace(&mut all_emphasised, true) && in_heading.is_none();
                     if text.is_empty() {
                         continue;
                     }
@@ -105,6 +118,7 @@ impl SourceImportAdapter for MarkdownImporter {
                             paragraph_index: Some(paragraph_in_section),
                             char_start: Some(block_start as u32),
                             char_end: Some(range.end as u32),
+                            styled,
                             ..Default::default()
                         });
                         paragraph_in_section += 1;
@@ -113,7 +127,12 @@ impl SourceImportAdapter for MarkdownImporter {
                         block_start = range.end;
                     }
                 }
-                Event::Text(t) | Event::Code(t) => buffer.push_str(&t),
+                Event::Text(t) | Event::Code(t) => {
+                    if emphasis == 0 && !t.trim().is_empty() {
+                        all_emphasised = false;
+                    }
+                    buffer.push_str(&t);
+                }
                 Event::SoftBreak => buffer.push(' '),
                 // Raw HTML is ignored: never rendered, never executed.
                 Event::Html(_) | Event::InlineHtml(_) => {}
@@ -170,5 +189,26 @@ mod tests {
             .all(|s| !s.text.contains("script") && !s.text.contains("alert")));
         assert_eq!(doc.segments[3].heading.as_deref(), Some("Imputation"));
         assert!(doc.segments.iter().all(|s| s.page_number.is_none()));
+    }
+
+    #[test]
+    fn a_paragraph_wholly_in_emphasis_is_set_apart() {
+        // "*TEMA: …*" between "**1:1** …" verse lines: the whole paragraph
+        // in italics is styled; a verse line with a bold number is not.
+        let md = "## Filemom\n\n**1:1** Paulo, prisioneiro.\n\n*TEMA: Sempre dou graças.*\n\n**1:2** E à irmã *Áfia*.\n";
+        let doc = MarkdownImporter.extract(md.as_bytes(), "f.md").unwrap();
+        let styled: Vec<(&str, bool)> = doc
+            .segments
+            .iter()
+            .map(|s| (s.text.as_str(), s.styled))
+            .collect();
+        assert_eq!(
+            styled,
+            [
+                ("1:1 Paulo, prisioneiro.", false),
+                ("TEMA: Sempre dou graças.", true),
+                ("1:2 E à irmã Áfia.", false),
+            ]
+        );
     }
 }

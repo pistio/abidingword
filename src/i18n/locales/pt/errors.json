@@ -133,6 +133,7 @@
     "documentPagesUnread": "“{{fileName}}”: não foi possível ler por completo o texto da(s) página(s) {{pages}}. Faltam os versículos que elas contêm.",
     "documentNumberInVerse": "{{book}} {{chapter}}: o versículo {{verse}} não foi encontrado, mas o número {{verse}} aparece no versículo anterior; os dois podem estar unidos. Este capítulo não é usado.",
     "documentChapterLong": "{{book}} {{chapter}} vai até o versículo {{last}}; normalmente tem {{expected}} versículos. Talvez outro capítulo ou outro livro tenha sido lido nele. Este capítulo não é usado.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: este documento é uma Septuaginta, que numera este capítulo de outro modo que a numeração da Bíblia hebraica usada pelo Abiding Word. Este capítulo não é usado.",
     "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
     "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
     "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
