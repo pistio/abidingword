@@ -1741,9 +1741,21 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             } else {
                 &text[..at]
             };
+            // (Marks around raised letters and declared note callers are not
+            // text: "year.⟨‡⟩ 18" is "year. 18", v0.24.4.)
+            let before_unmarked = unmark_raised(before);
+            let before = before_unmarked.as_str();
             let prev = before.chars().last();
             let opened = prev.is_some_and(|p| matches!(p, '(' | '['));
-            let prev_solid = before.trim_end().chars().last();
+            // (A note's sign hung on the sentence's end, "year.‡ 18", does
+            // not hide the end, v0.24.4.)
+            let prev_solid = {
+                let trimmed = before.trim_end();
+                let unsigned = trimmed
+                    .trim_end_matches(|c| NOTE_SIGNS.contains(&c))
+                    .trim_end();
+                unsigned.chars().last().or(trimmed.chars().last())
+            };
             // A raised number against the word before it ("Kain,⁵Und",
             // "Erde⁶Und"): a verse number written without a space (v0.24.3),
             // or a note's number — only ever the very next verse, and a

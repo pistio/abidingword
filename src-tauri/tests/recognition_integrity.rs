@@ -1060,3 +1060,37 @@ fn a_rare_capitalised_word_in_a_label_s_place_is_a_label_where_labels_are_writte
     assert_eq!(r.unverified.get(&key(12)), Some(&"possibleHeading"));
     assert_eq!(r.unverified.get(&key(14)), None);
 }
+
+#[test]
+fn a_verse_number_after_a_sentence_ending_in_a_counting_word_is_a_verse_number() {
+    // "… for all their cattle for that year. 18 When that year was ended":
+    // "year" before a number is a count only inside a sentence.
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units.remove(at);
+    let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
+    units[at].text = format!(
+        "7 He fed them for that year.‡ 8 {}",
+        words("Philemon", 1, 8)
+    );
+    let r = recognise(&units);
+    assert_eq!(
+        verse(&r, "PHM", 1, 8),
+        Some(words("Philemon", 1, 8)),
+        "{:?}",
+        errors(&r)
+    );
+    // The same with the sign a note caller the document declares.
+    use abiding_word_lib::library::adapters::pdf_layout::{NOTE_CLOSE, NOTE_OPEN};
+    units[at].text = format!(
+        "7 He fed them for that year.{NOTE_OPEN}‡{NOTE_CLOSE} 8 {}",
+        words("Philemon", 1, 8)
+    );
+    let r = recognise(&units);
+    assert_eq!(
+        verse(&r, "PHM", 1, 8),
+        Some(words("Philemon", 1, 8)),
+        "{:?}",
+        errors(&r)
+    );
+}
