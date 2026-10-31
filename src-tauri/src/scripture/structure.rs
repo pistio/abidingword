@@ -2330,6 +2330,22 @@ fn korean_end(text: &str) -> bool {
     })
 }
 
+/// Whether two pieces of a page were read into one line: a sentence's end
+/// run straight into an opening quotation mark, a letter run into an
+/// opening quotation mark, or a word's end run into a capital with no space
+/// ("volaban.“¡Santo", "estrellas“Y escribe", "Yahvé!Ana elevó",
+/// "Hadrac,Esta es"), v0.24.4. Where the verse's words end is then not known,
+/// nor where the next verse's begin.
+fn runs_together(text: &str) -> bool {
+    use std::sync::OnceLock;
+    static RUN_TOGETHER: OnceLock<regex::Regex> = OnceLock::new();
+    let run_together = RUN_TOGETHER.get_or_init(|| {
+        regex::Regex::new(r#"[.!?;:,]["“«‘¡¿]+\p{L}|\p{L}["“«]\p{L}|\p{Ll}{2}[.!?;:,]\p{Lu}"#)
+            .expect("valid")
+    });
+    run_together.is_match(text)
+}
+
 /// Whether a line ends as a sentence does (closing marks aside).
 fn ends_as_sentence(line: &str) -> bool {
     line.trim_end()
@@ -2466,13 +2482,7 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     // A sentence's end run straight into an opening quotation mark with no
     // space ("… volaban.“¡Santo, santo …"): two pieces of a page read into one
     // line; where the verse's words end is not known (v0.24.4).
-    // (Or a letter run straight into an opening quotation mark and a letter,
-    // "estrellas“Y escribe": the same.)
-    static RUN_TOGETHER: OnceLock<regex::Regex> = OnceLock::new();
-    let run_together = RUN_TOGETHER.get_or_init(|| {
-        regex::Regex::new(r#"[.!?;:,]["“«‘¡¿]+\p{L}|\p{L}["“«]\p{L}"#).expect("valid")
-    });
-    if run_together.is_match(text) {
+    if runs_together(text) {
         return Some("boundary");
     }
     // An editor's note in brackets quoting readings ("[… le texte NU lit
@@ -4896,6 +4906,9 @@ struct Reader<'a> {
     /// margin: on its other pages too (poetry, where every line is indented
     /// past the numbers), v0.24.4.
     margin_document: bool,
+    /// The line just added ran two pieces of the page together: the verse
+    /// opened next begins where that is not known (v0.24.4).
+    next_boundary: bool,
 }
 
 impl Reader<'_> {
@@ -5593,6 +5606,7 @@ impl Reader<'_> {
         self.doubt_skipped_edges(unit);
         self.close();
         self.heading_in_verse = false;
+        let carried = std::mem::take(&mut self.next_boundary);
         let (Some(book), Some(chapter)) = (self.book, self.chapter) else {
             return;
         };
@@ -5612,6 +5626,9 @@ impl Reader<'_> {
             last_short: self.units[unit].short,
             before_last_short: None,
         });
+        if carried {
+            self.doubt_boundary();
+        }
         self.expect = end.unwrap_or(verse) + 1;
         self.fresh = false;
     }
@@ -6297,6 +6314,10 @@ impl Reader<'_> {
             if set_apart {
                 open.doubt = open.doubt.or(Some("possibleHeading"));
             }
+            if runs_together(&words) {
+                open.doubt = open.doubt.or(Some("boundary"));
+                self.next_boundary = true;
+            }
             // Words after a heading, before any verse number ("Psaume 118
             // (Vulg. CXVII)" read as a heading / "Au départ de la
             // procession."): not known to be this verse's.
@@ -6979,6 +7000,7 @@ fn recognise_in(
                 .map(|(k, _)| k)
                 .collect()
         },
+        next_boundary: false,
         margin_document: {
             let pages: HashSet<(u16, u32)> = units
                 .iter()
