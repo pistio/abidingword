@@ -2358,7 +2358,11 @@ fn ends_as_sentence(line: &str) -> bool {
 /// ("Samuel 1:17": Scripture never writes book, chapter and verse; a running
 /// head or a cross-reference read in), or a note's sign that no note on its
 /// page explained ("†", "‡", "§").
-fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
+fn verse_doubt(
+    text: &str,
+    labels: &HashSet<String>,
+    language: Option<ReferenceLanguage>,
+) -> Option<&'static str> {
     // A heading or a speaker's name the document writes inside the verse's
     // line: a word in capitals closing it after a sentence's end ("… forsake
     // me. BETH"), or a label of the document's own after one ("… rooms.
@@ -2527,11 +2531,33 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
             && last.chars().count() == 1
             && last.chars().all(|c| c.is_lowercase())
             && !matches!(last, "a" | "à" | "e" | "é" | "o" | "y" | "u" | "i"));
+    // (Or a single lowercase letter standing as a word in the middle of the
+    // verse, "… in their seasons e or lead out …": a note's letter the page
+    // lost the raising of. Not the letters that are the language's own
+    // one-letter words, "a" in English, "e" and "o" in Portuguese; an unknown
+    // language keeps every vowel.)
+    let letter_words = match language {
+        Some(ReferenceLanguage::En) => "a",
+        Some(ReferenceLanguage::De | ReferenceLanguage::Ko) => "",
+        Some(ReferenceLanguage::Fr) => "ay",
+        Some(ReferenceLanguage::Es) => "aeouy",
+        Some(ReferenceLanguage::Pt) => "aeo",
+        Some(ReferenceLanguage::Data(_)) | None => "aeiouy",
+    };
+    let mid_letter = words.windows(3).any(|w| {
+        w[1].chars().count() == 1
+            && w[1]
+                .chars()
+                .all(|c| c.is_ascii_lowercase() && !letter_words.contains(c))
+            && w[0].chars().last().is_some_and(char::is_alphabetic)
+            && w[2].chars().next().is_some_and(char::is_lowercase)
+    });
     if text.chars().any(|c| superscript_digit(c).is_some())
         || text.contains('*')
         || letter.is_match(text)
         || quote_letter.is_match(text)
         || lone_letter
+        || mid_letter
     {
         return Some("noteSign");
     }
@@ -5096,7 +5122,7 @@ impl Reader<'_> {
         let doubt = open
             .doubt
             .or_else(|| open.heading_like_end.then_some("possibleHeading"))
-            .or_else(|| verse_doubt(&text, &self.inline_labels))
+            .or_else(|| verse_doubt(&text, &self.inline_labels, self.language))
             .or_else(|| trailing_book_name(&text, self.language).then_some("reference"));
         chapter.verses.insert(open.verse, text);
         if let Some(end) = open.end {
@@ -6317,6 +6343,18 @@ impl Reader<'_> {
             if runs_together(&words) {
                 open.doubt = open.doubt.or(Some("boundary"));
                 self.next_boundary = true;
+            }
+            // The page's own number standing in the line ("… a disaster 761
+            // from which …"): page furniture the layout did not set apart;
+            // the verse's words are not known (v0.24.4).
+            if let Some(page) = self.units[unit].place.page {
+                let number = page.to_string();
+                if words
+                    .split_whitespace()
+                    .any(|w| w.trim_matches(|c: char| !c.is_ascii_digit()) == number && w == number)
+                {
+                    open.doubt = open.doubt.or(Some("boundary"));
+                }
             }
             // Words after a heading, before any verse number ("Psaume 118
             // (Vulg. CXVII)" read as a heading / "Au départ de la

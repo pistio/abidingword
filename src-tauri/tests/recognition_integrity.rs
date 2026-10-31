@@ -1094,3 +1094,35 @@ fn a_verse_number_after_a_sentence_ending_in_a_counting_word_is_a_verse_number()
         errors(&r)
     );
 }
+
+#[test]
+fn a_lone_lowercase_letter_mid_verse_is_a_note_s_letter() {
+    // "… in their seasons e or lead out …": the letter of a note whose
+    // raising the page lost. The verse keeps its place, unverified; vowels
+    // that are words ("a", "I") stay innocent.
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units[at].text = "8 Invented words in their seasons e or lead out for testing.".into();
+    let at9 = units.iter().position(|u| u.text.starts_with("9 ")).unwrap();
+    units[at9].text = "9 Invented words of a verse that is a sentence for testing.".into();
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 8).is_some(), "{:?}", errors(&r));
+    assert_eq!(r.unverified.get(&key(8)), Some(&"noteSign"));
+    assert_eq!(r.unverified.get(&key(9)), None);
+}
+
+#[test]
+fn the_page_s_own_number_standing_in_a_verse_leaves_it_unverified() {
+    // "… a disaster 761 from which …": the page number of page 761 read into
+    // the line. Another number is a verse's words.
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    let page = units[at].place.page.unwrap();
+    units[at].text = format!("8 Invented words of a disaster {page} from which for testing.");
+    let at9 = units.iter().position(|u| u.text.starts_with("9 ")).unwrap();
+    units[at9].text = "9 Invented words of about 300 men for testing.".into();
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 8).is_some(), "{:?}", errors(&r));
+    assert_eq!(r.unverified.get(&key(8)), Some(&"boundary"));
+    assert_eq!(r.unverified.get(&key(9)), None);
+}
