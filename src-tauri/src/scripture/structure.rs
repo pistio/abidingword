@@ -4873,10 +4873,11 @@ struct Reader<'a> {
     /// A heading was left out since the open verse began: words after it
     /// without a verse number may not be that verse's (v0.24.3).
     heading_in_verse: bool,
-    /// The document sets its verse numbers in the margin (ten lines or more
-    /// marked so): every raised number opening a line marks the line the
-    /// verse begins in, not where (v0.24.4).
-    margin_layout: bool,
+    /// Pages that set verse numbers in the margin (two lines or more marked
+    /// so): on them every raised number opening a line marks the line the
+    /// verse begins in, not where — poetry indents the text past the numbers
+    /// (v0.24.4). By (document, page).
+    margin_pages: HashSet<(u16, u32)>,
 }
 
 impl Reader<'_> {
@@ -5849,7 +5850,12 @@ impl Reader<'_> {
             let doubt = m.against_word
                 || alone
                 || m.margin
-                || (self.margin_layout && m.raised && m.unit_start);
+                || (m.raised
+                    && m.unit_start
+                    && self.units[unit].place.page.is_some_and(|p| {
+                        self.margin_pages
+                            .contains(&(self.units[unit].place.document, p))
+                    }));
             if doubt {
                 self.doubt_boundary();
             }
@@ -6941,7 +6947,19 @@ fn recognise_in(
         block_starts: starts,
         inline_labels: inline_labels(units),
         heading_in_verse: false,
-        margin_layout: units.iter().filter(|u| u.text.contains(MARGIN)).count() >= 10,
+        margin_pages: {
+            let mut counts: HashMap<(u16, u32), usize> = HashMap::new();
+            for u in units.iter().filter(|u| u.text.contains(MARGIN)) {
+                if let Some(page) = u.place.page {
+                    *counts.entry((u.place.document, page)).or_default() += 1;
+                }
+            }
+            counts
+                .into_iter()
+                .filter(|(_, n)| *n >= 2)
+                .map(|(k, _)| k)
+                .collect()
+        },
     };
     let mut out = reader.run();
     check_running_heads(units, &furniture, language, &mut out);
