@@ -2361,10 +2361,12 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     let run = words.iter().rev().take_while(|w| capitals(w)).count();
     if run >= 1 && run < words.len() && sentence_end(words[words.len() - run - 1]) {
         let last = words[words.len() - 1];
+        // ("L’ÉPOUSE.", "BEN-HADAD": apostrophes and hyphens inside count as
+        // letters of the word.)
         let one = last
             .trim_end_matches(['.', ',', ';', ':'])
             .chars()
-            .all(|c| c.is_alphabetic() && !c.is_lowercase());
+            .all(|c| (c.is_alphabetic() && !c.is_lowercase()) || matches!(c, '’' | '\'' | '-'));
         if run >= 2 || one {
             return Some("possibleHeading");
         }
@@ -2426,12 +2428,12 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     let range = RANGE.get_or_init(|| {
         regex::Regex::new(r"(?:^|\s)\(?\d{1,3}\s?[-–]\s?\d{1,3}\.?\)").expect("valid")
     });
-    // With a full stop or a comma ("Isaías 7.14", "Samuel 1,17"): a name
+    // With a full stop or a comma ("Isaías 7.14", "Samuel 1,17", "Est 13, 1-7"): a name
     // with a capital and a verse of one or two digits, never a number such as
     // "de 1.000".
     static DOTTED: OnceLock<regex::Regex> = OnceLock::new();
     let dotted = DOTTED.get_or_init(|| {
-        regex::Regex::new(r"(?:^|\s)\p{Lu}[\p{L}.΄ʹ]*\s\d{1,3}[.,]\d{1,2}(?:[^\d]|$)")
+        regex::Regex::new(r"(?:^|\s)\p{Lu}[\p{L}.΄ʹ]*\s\d{1,3}[.,]\s?\d{1,2}(?:[^\d]|$)")
             .expect("valid")
     });
     // A bracket holding a chapter and verse ("(Vergl. ff. 96,1b-13a …)",
