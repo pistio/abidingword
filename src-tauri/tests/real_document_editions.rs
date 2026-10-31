@@ -133,6 +133,7 @@ fn corpus() -> Vec<Edition> {
         "withheld-b.tsv",
         "withheld-c.tsv",
         "withheld-d.tsv",
+        "recon-d.tsv",
     ] {
         let Ok(text) = std::fs::read_to_string(dir.join(name)) else {
             continue;
