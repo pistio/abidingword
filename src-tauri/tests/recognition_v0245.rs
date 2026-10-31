@@ -475,3 +475,64 @@ fn numbered_titles_of_several_books_are_never_one_repeated_running_head() {
     assert!(verse(&r, "2JN", 1, 13).is_some(), "{:?}", r.books);
     assert!(verse(&r, "3JN", 1, 15).is_some(), "{:?}", r.books);
 }
+
+#[test]
+fn a_letter_spaced_chapter_number_is_read_whole() {
+    // "C A P Í T U L O 1 3": chapter 13, never chapter 1 with a stray 3.
+    let mut units = book_pages("Apocalipse", "REV", 1..=14, 1, 30);
+    for u in units.iter_mut() {
+        if let Some(n) = u.text.strip_prefix("Chapter ") {
+            let spaced: Vec<String> = n.chars().map(|c| c.to_string()).collect();
+            u.text = format!("C A P Í T U L O {}", spaced.join(" "));
+        }
+    }
+    let r = recognise(&units, "pt");
+    assert_eq!(
+        verse(&r, "REV", 13, 1),
+        Some(words(canon::by_code("REV").unwrap().name, 13, 1)),
+        "{:?} {:?}",
+        r.books,
+        r.content
+            .issues
+            .iter()
+            .map(|i| &i.message)
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(
+        verse(&r, "REV", 14, 1),
+        Some(words(canon::by_code("REV").unwrap().name, 14, 1))
+    );
+}
+
+#[test]
+fn a_bracketed_note_or_a_bare_reference_in_a_verse_leaves_it_unverified() {
+    for inside in ["[1:7 O. zehn seiner]", "` 1:8 엘리사가"] {
+        let mut units = book_pages("Philemon", "PHM", 1..=1, 1, 10);
+        let at = units.iter().position(|u| u.text.starts_with("7 ")).unwrap();
+        units[at].text = format!("7 Invented words of the verse {inside} and more.");
+        let r = recognise(&units, "en");
+        assert!(verse(&r, "PHM", 1, 7).is_some(), "{inside}");
+        assert!(!verified(&r, "PHM", 1, 7), "{inside}");
+        assert!(verified(&r, "PHM", 1, 6));
+    }
+}
+
+#[test]
+fn an_edge_line_after_the_page_s_notes_is_never_verse_text() {
+    let mut units = book_pages("Philemon", "PHM", 1..=1, 1, 10);
+    let at = units.iter().position(|u| u.text.starts_with("9 ")).unwrap();
+    units[at].text = "9 Invented words of the verse as an inherit\u{2010}".into();
+    let page = units[at].place.page.unwrap();
+    let mut note = line("j 1:3 Or strange", page);
+    note.note = true;
+    let mut tail = line("The Gershonite clan from Gershon,", page);
+    tail.edge = true;
+    units.insert(at + 1, note);
+    units.insert(at + 2, tail);
+    units.insert(at + 3, line("ance for testing.", page + 1));
+    let r = recognise(&units, "en");
+    assert_eq!(
+        verse(&r, "PHM", 1, 9).as_deref(),
+        Some("Invented words of the verse as an inheritance for testing.")
+    );
+}

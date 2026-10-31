@@ -1553,14 +1553,26 @@ fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Headi
     let words: Vec<&str> = lower.split(' ').collect();
     // A chapter's label set with letter-spacing that broke its word ("C A PÍ
     // TU LO 20", v0.24.4): the pieces before the number, joined, are the word.
+    // (Its number may be letter-spaced too, "C A P Í T U L O 1 3": single
+    // digits after the word, joined, v0.24.5. Read as "1", chapter 13
+    // would take chapter 14's verses.)
     if words.len() >= 3 {
-        let joined: String = words[..words.len() - 1].concat();
-        if words[..words.len() - 1]
+        let raw: Vec<&str> = text.split_whitespace().collect();
+        let digits = raw
             .iter()
-            .all(|w| w.chars().all(char::is_alphabetic))
-            && (CHAPTER_WORDS.contains(&joined.as_str()) || PSALM_WORDS.contains(&joined.as_str()))
-        {
-            if let Some(number) = text.split_whitespace().last() {
+            .rev()
+            .take_while(|w| w.chars().count() == 1 && w.chars().all(|c| c.is_ascii_digit()))
+            .count();
+        let tail = if digits >= 2 { digits } else { 1 };
+        if words.len() > tail + 1 {
+            let joined: String = words[..words.len() - tail].concat();
+            if words[..words.len() - tail]
+                .iter()
+                .all(|w| w.chars().all(char::is_alphabetic))
+                && (CHAPTER_WORDS.contains(&joined.as_str())
+                    || PSALM_WORDS.contains(&joined.as_str()))
+            {
+                let number: String = raw[raw.len() - tail..].concat();
                 return read_heading(&format!("{joined} {number}"), language);
             }
         }
@@ -2911,14 +2923,27 @@ fn verse_doubt(
     // A bracket holding a chapter and verse ("(Vergl. ff. 96,1b-13a …)",
     // "(Auszug aus 1 Mos. 36,1 ff.)"): a cross-reference read in. ("2,000"
     // has three digits after its comma, and is a number.)
+    // (Or square brackets: "[19:13 O. zehn seiner]", a note set inline,
+    // v0.24.5.)
     static BRACKET: OnceLock<regex::Regex> = OnceLock::new();
     let bracket = BRACKET.get_or_init(|| {
-        regex::Regex::new(r"\([^()]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^()]*)?\)").expect("valid")
+        regex::Regex::new(
+            r"\([^()]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^()]*)?\)|\[[^\[\]]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^\[\]]*)?\]",
+        )
+        .expect("valid")
+    });
+    // A chapter and verse standing alone as a word ("… diz` 7:1 엘리사가 …"):
+    // a line's reference read into the verse before it; Scripture never
+    // writes one (v0.24.5).
+    static BARE: OnceLock<regex::Regex> = OnceLock::new();
+    let bare = BARE.get_or_init(|| {
+        regex::Regex::new(r#"(?:^|[\s“"'`‘(])\d{1,3}:\d{1,3}(?:\s|$)"#).expect("valid")
     });
     if reference.is_match(text)
         || range.is_match(text)
         || dotted.is_match(text)
         || bracket.is_match(text)
+        || bare.is_match(text)
     {
         return Some("reference");
     }
@@ -3044,7 +3069,22 @@ fn page_footnotes(units: &[Unit]) -> HashSet<usize> {
     let mut out = HashSet::new();
     let mut in_notes: Option<(u16, u32)> = None;
     let mut in_column_notes: Option<(u16, u32, u8)> = None;
+    // After a line the layout set as a note at a page's foot, a line at the
+    // page's edge belongs to the notes too ("j 26:61 Or strange" / "The
+    // Gershonite clan from Gershon,", a note's last line set at the very
+    // edge), never to a verse (v0.24.5).
+    let mut after_layout_note: Option<(u16, u32)> = None;
     for (i, unit) in units.iter().enumerate() {
+        if let Some(page) = unit.place.page {
+            let here = (unit.place.document, page);
+            if unit.note {
+                after_layout_note = Some(here);
+            } else if after_layout_note == Some(here) && unit.edge && !unit.heading {
+                out.insert(i);
+            } else if after_layout_note != Some(here) {
+                after_layout_note = None;
+            }
+        }
         if let Some(page) = unit.place.page {
             let here = (unit.place.document, page, unit.column);
             if in_column_notes != Some(here) {
@@ -5577,6 +5617,19 @@ impl Reader<'_> {
         hyphenated: &HashSet<String>,
         whole: &HashSet<String>,
     ) {
+        // A word broken at a line's end with the typographic hyphen (U+2010,
+        // as WeasyPrint and LibreOffice set it) or a soft hyphen is broken as
+        // with "-" ("inherit‐" / "ance"), never kept as "inherit‐ ance"
+        // (v0.24.5).
+        if unit != open.last_unit && !glue {
+            if open.text.ends_with('\u{00AD}') {
+                open.text.pop();
+                open.text.push('-');
+            } else if open.text.ends_with('\u{2010}') {
+                open.text.pop();
+                open.text.push('-');
+            }
+        }
         if open.text.is_empty() || glue {
             open.text.push_str(words);
         } else if unit != open.last_unit
