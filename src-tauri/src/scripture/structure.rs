@@ -2947,7 +2947,9 @@ fn repeated_labels(units: &[Unit], furniture: &HashSet<usize>) -> HashSet<String
         let shape = (1..=if colon { 3 } else { 2 }).contains(&words)
             && bare.chars().count() <= 24
             && bare.chars().next().is_some_and(|c| c.is_uppercase())
-            && bare.chars().all(|c| c.is_alphabetic() || c == ' ');
+            && bare
+                .chars()
+                .all(|c| c.is_alphabetic() || matches!(c, ' ' | '-' | '‐' | '’' | '\''));
         if shape {
             *counts.entry(text.to_string()).or_default() += 1;
         }
@@ -5522,7 +5524,15 @@ impl Reader<'_> {
         let (Some(book), Some(chapter)) = (self.book, self.chapter) else {
             return;
         };
-        if !ended || !self.label_flagged.insert((book.ordinal, chapter)) {
+        // Mid-sentence ("… comme un vin excellent," / "La Bien-aimée" / "qui
+        // coule aisément …"): the verse keeps its place, unverified (v0.24.4).
+        if !ended {
+            if let Some(open) = self.open.as_mut() {
+                open.doubt = open.doubt.or(Some("possibleHeading"));
+            }
+            return;
+        }
+        if !self.label_flagged.insert((book.ordinal, chapter)) {
             return;
         }
         self.out.content.issue(

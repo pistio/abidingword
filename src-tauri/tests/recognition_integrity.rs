@@ -1178,3 +1178,24 @@ fn a_verse_s_last_line_with_a_note_s_letter_before_the_next_title_stays_in_the_v
     );
     assert_eq!(verse(&r, "HEB", 1, 14), Some(words("Hebrews", 1, 14)));
 }
+
+#[test]
+fn a_repeated_label_line_mid_sentence_leaves_the_verse_unverified() {
+    // "La Bien-aimée" on a line of its own, repeated through the book, and
+    // once in the middle of a verse's sentence: the verse is found, not
+    // verified; the label's hyphen does not hide it.
+    let mut units = philemon(|v, page, units| {
+        if v % 6 == 0 {
+            units.push(line("La Bien-aimée", page));
+        }
+    });
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units[at].text = "8 Invented words of a verse, as sweet as wine,".into();
+    let page = units[at].place.page.unwrap();
+    units.insert(at + 1, line("La Bien-aimée", page));
+    units.insert(at + 2, line("that flows gently for my beloved.", page));
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 8).is_some(), "{:?}", errors(&r));
+    assert_eq!(r.unverified.get(&key(8)), Some(&"possibleHeading"));
+    assert_eq!(r.unverified.get(&key(9)), None);
+}
