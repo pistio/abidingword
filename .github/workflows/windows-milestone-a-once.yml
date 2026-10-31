@@ -1,0 +1,105 @@
+# One-time owner-requested Windows review installer only.
+# Branch-scoped push trigger; no main, release, updater, signing or deployment.
+name: Windows Milestone A owner review
+
+on:
+  push:
+    branches:
+      - build/windows-milestone-a-20261031
+    paths:
+      - .github/workflows/windows-milestone-a-once.yml
+
+permissions:
+  contents: read
+
+jobs:
+  windows-review-installer:
+    if: ${{ github.event_name == 'push' && github.repository == 'pistio/abidingword' && github.ref == 'refs/heads/build/windows-milestone-a-20261031' }}
+    runs-on: windows-2025
+    timeout-minutes: 65
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      APPROVED_SOURCE_SHA: f6e7c209ea4e14775368beee30e54dad3754ab4d
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
+    steps:
+      - name: Keep historical SQL files byte-identical
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+        with:
+          ref: f6e7c209ea4e14775368beee30e54dad3754ab4d
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+      - name: Verify pinned application and unchanged schema 26
+        run: |
+          node scripts/build-provenance.mjs --expected-sha "$env:APPROVED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/build-provenance.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Source provenance failed' }
+          @'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { join } from 'node:path';
+          const proof = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'build-provenance.json'), 'utf8'));
+          if (proof.schemaVersion !== 26 || proof.migrations.length !== 26) throw new Error('Expected schema 26');
+          const digest = createHash('sha256').update(JSON.stringify(proof.migrations)).digest('hex');
+          if (digest !== '3a2159765b0c77874143ef3143b6b97bd785d26d5372aa9250dae590be30bded') throw new Error('Historical migration catalogue mismatch');
+          const files = readdirSync('src-tauri/migrations').filter(f => f.endsWith('.sql')).sort();
+          if (JSON.stringify(files) !== JSON.stringify(proof.migrations.map(m => m.file).sort())) throw new Error('Migration directory mismatch');
+          const conf = JSON.parse(readFileSync('src-tauri/tauri.conf.json','utf8'));
+          if (conf.plugins?.updater || conf.bundle?.createUpdaterArtifacts) throw new Error('Updater configuration not allowed in review build');
+          console.log('Source, schema-26 migrations and non-updater build verified');
+          '@ | node --input-type=module
+          if ($LASTEXITCODE -ne 0) { throw 'Migration verification failed' }
+      - name: Record build environment
+        env:
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          @(
+            "Approved application SHA: $env:APPROVED_SOURCE_SHA"
+            "Workflow SHA: $env:WORKFLOW_SHA"
+            "Run: $env:RUN_ID attempt $env:RUN_ATTEMPT"
+            "Runner: $env:RUNNER_OS $env:RUNNER_ARCH"
+            "Windows image: $env:ImageOS $env:ImageVersion"
+            "Node: $(node --version)"
+            "npm: $(npm --version)"
+            "Rust: $(rustc --version)"
+            "Cargo: $(cargo --version)"
+          ) | Set-Content "$env:RUNNER_TEMP/build-environment.txt"
+      - run: npm ci
+      - name: Build Windows NSIS installer (unsigned, no updater publication)
+        run: |
+          npx tauri build --bundles nsis --no-sign --ci -- --locked
+          if ($LASTEXITCODE -ne 0) { throw 'NSIS build failed' }
+      - name: Stage exactly one installer and its checksum
+        run: |
+          $installers = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
+          if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) { throw 'Expected one nonempty NSIS installer' }
+          New-Item -ItemType Directory -Path staged | Out-Null
+          $name = "Abiding-Word-Milestone-A-f6e7c209-x64-setup.exe"
+          Copy-Item -LiteralPath $installers[0].FullName -Destination "staged/$name"
+          $hash = (Get-FileHash -LiteralPath "staged/$name" -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content "$env:RUNNER_TEMP/installer-sha256.txt"
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Abiding-Word-Milestone-A-Windows-x64
+          path: staged/*.exe
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source and checksum evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Abiding-Word-Milestone-A-provenance
+          path: |
+            ${{ runner.temp }}/build-provenance.json
+            ${{ runner.temp }}/build-environment.txt
+            ${{ runner.temp }}/installer-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
