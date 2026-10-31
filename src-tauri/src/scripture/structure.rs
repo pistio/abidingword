@@ -2296,7 +2296,9 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
     for lines in pages.values() {
         let mut seen = HashSet::new();
         for &i in lines.iter().take(2).chain(lines.iter().rev().take(2)) {
-            if !head_like(&units[i].text) && !long_head(&units[i].text) {
+            if (!head_like(&units[i].text) && !long_head(&units[i].text))
+                || is_selah(&units[i].text)
+            {
                 continue;
             }
             let s = shape(&units[i].text);
@@ -2404,8 +2406,11 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
             // chapter's label, "Capítulo 3", may open a page. A book's name
             // with its figures counts word for word, figures included: "1.
             // Mose" and "2. Mose" are two titles, v0.24.5.)
+            // ("Selah" ends a verse at a page's edge often enough; it is a
+            // word of the text, never a head, v0.24.5.)
             if u.edge
                 && !u.large
+                && !is_selah(&u.text)
                 && (head_like(&u.text) || long_head(&u.text))
                 && (numbered_name_only(&u.text) || names_book_only(&u.text, language))
                 && seen.insert(key(&u.text))
@@ -2495,6 +2500,7 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
             let u = &units[i];
             if u.edge
                 && !u.large
+                && !is_selah(&u.text)
                 && (head_like(&u.text) || long_head(&u.text))
                 && edge_counts.get(&key(&u.text)).is_some_and(|n| *n >= 3)
             {
@@ -2820,6 +2826,11 @@ fn verse_doubt(
     // me. BETH"), or a label of the document's own after one ("… rooms.
     // Friends We will be glad …"; see `inline_labels`).
     let words: Vec<&str> = text.split_whitespace().collect();
+    // "Selah" closes a verse, never opens one: a verse beginning with it
+    // took the verse before's last word (v0.24.5).
+    if words.first().is_some_and(|w| is_selah(w)) && words.len() > 1 {
+        return Some("boundary");
+    }
     let sentence_end = |w: &str| w.ends_with(['.', '!', '?', ';', ':', '”', '’', '"', '»']);
     // (Several words in capitals too: "… à sa place. LES ROIS DE JUDA ET
     // LES ROIS D’ISRAËL,"; and a number alone after a sentence's end, "…

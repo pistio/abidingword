@@ -561,3 +561,30 @@ fn a_verse_s_last_line_read_after_the_page_s_notes_leaves_it_unverified() {
     assert!(!verified(&r, "PHM", 1, 10));
     assert!(verified(&r, "PHM", 1, 12));
 }
+
+#[test]
+fn selah_at_a_page_s_edge_is_text_and_never_opens_a_verse() {
+    // "Selah" closing verses at the top of several pages is a word of the
+    // text, not a running head; a verse that begins with it is not verified.
+    let mut units = book_pages("Philemon", "PHM", 1..=1, 1, 5);
+    for page in 2..=5u32 {
+        let at = units
+            .iter()
+            .position(|u| u.place.page == Some(page))
+            .unwrap();
+        let mut selah = line("Selah", page);
+        selah.edge = true;
+        units.insert(at, selah);
+    }
+    let r = recognise(&units, "en");
+    assert!(
+        verse(&r, "PHM", 1, 5).unwrap().ends_with("Selah"),
+        "{:?}",
+        verse(&r, "PHM", 1, 5)
+    );
+    let mut units = book_pages("Philemon", "PHM", 1..=1, 1, 10);
+    let at = units.iter().position(|u| u.text.starts_with("6 ")).unwrap();
+    units[at].text = "6 Selah Invented words of the sixth.".into();
+    let r = recognise(&units, "en");
+    assert!(!verified(&r, "PHM", 1, 6));
+}
