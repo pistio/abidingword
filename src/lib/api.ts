@@ -162,6 +162,7 @@ export interface Api {
   appInfo(): Promise<AppInfo>;
   logError(message: string): Promise<void>;
   workspaceGetDefault(): Promise<Workspace>;
+  trashList(workspaceId: string): Promise<{ id: string; title: string; kind: "project" | "study"; deletedAt: string }[]>;
   projectList(workspaceId: string): Promise<Project[]>;
   projectGet(id: string): Promise<Project>;
   projectCreate(input: CreateProject): Promise<Project>;
@@ -605,6 +606,7 @@ export const tauriApi: Api = {
   appInfo: () => call("app_info"),
   logError: (message) => call("app_log_error", { message }),
   workspaceGetDefault: () => call("workspace_get_default"),
+  trashList: (workspaceId) => call("trash_list", { workspaceId }),
   projectList: (workspaceId) => call("project_list", { workspaceId }),
   projectGet: (id) => call("project_get", { id }),
   projectCreate: (input) => call("project_create", { input }),

@@ -103,3 +103,35 @@ pub fn restore(conn: &Connection, id: &str) -> AppResult<Project> {
     conn.execute("UPDATE projects SET deleted_at=NULL,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NOT NULL",params![id,now()])?;
     get(conn, id)
 }
+
+/// Deleted containers and individually deleted studies. Children of a trashed
+/// project stay with that project and become available when it is restored.
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TrashEntry {
+    pub id: String,
+    pub title: String,
+    pub kind: String,
+    pub deleted_at: String,
+}
+
+pub fn trash_list(conn: &Connection, workspace_id: &str) -> AppResult<Vec<TrashEntry>> {
+    let mut stmt = conn.prepare(
+        "SELECT id,title,'project',deleted_at FROM projects
+         WHERE workspace_id=?1 AND deleted_at IS NOT NULL
+         UNION ALL
+         SELECT s.id,s.title,'study',s.deleted_at FROM studies s
+         JOIN projects p ON p.id=s.project_id
+         WHERE p.workspace_id=?1 AND p.deleted_at IS NULL AND s.deleted_at IS NOT NULL
+         ORDER BY 4 DESC, 1",
+    )?;
+    let rows = stmt.query_map([workspace_id], |r| {
+        Ok(TrashEntry {
+            id: r.get(0)?,
+            title: r.get(1)?,
+            kind: r.get(2)?,
+            deleted_at: r.get(3)?,
+        })
+    })?;
+    Ok(rows.collect::<Result<_, _>>()?)
+}

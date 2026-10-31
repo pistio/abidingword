@@ -186,7 +186,9 @@ fn on_disk_19_24_25_upgrade_keeps_answers_graph_history_and_one_backup_across_re
 }
 #[test]
 fn archive_unlink_delete_restore_and_project_removal_retain_all_teaching_ids_until_owner_removal() {
-    let mut c = Connection::open_in_memory().unwrap();
+    let temp = tempfile::tempdir().unwrap();
+    let path = temp.path().join("lifecycle.sqlite");
+    let mut c = Connection::open(&path).unwrap();
     seed(&mut c, 25);
     migrations::run(&mut c).unwrap();
     let ids = TEACHING
@@ -206,7 +208,28 @@ fn archive_unlink_delete_restore_and_project_removal_retain_all_teaching_ids_unt
     teaching::set_study(&c, "blocks", None).unwrap();
     teaching::set_study(&c, "blocks", Some("s")).unwrap();
     studies::delete(&c, "s", false).unwrap();
+    let reopened = Connection::open(&path).unwrap();
+    let trash = projects::trash_list(&reopened, "w").unwrap();
+    drop(reopened);
+    assert_eq!(trash.len(), 1);
+    assert_eq!(trash[0].id, "s");
+    assert_eq!(trash[0].kind, "study");
+    projects::delete(&c, "p", false).unwrap();
+    let trash = projects::trash_list(&c, "w").unwrap();
+    assert_eq!(
+        trash.len(),
+        1,
+        "a trashed container owns its hidden children"
+    );
+    assert_eq!(trash[0].id, "p");
+    assert!(projects::trash_list(&c, "another-workspace")
+        .unwrap()
+        .is_empty());
+    projects::restore(&c, "p").unwrap();
+    assert_eq!(projects::trash_list(&c, "w").unwrap()[0].id, "s");
     studies::restore(&c, "s").unwrap();
+    assert!(projects::trash_list(&c, "w").unwrap().is_empty());
+    assert!(teaching::get(&c, "blocks").unwrap().study_id.is_none());
     studies::delete(&c, "s", true).unwrap();
     teaching::restore(&c, "trash").unwrap();
     for id in ["legacy", "blocks", "trash"] {

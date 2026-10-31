@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { PanelLeft, PanelRight, Search, Settings } from "lucide-react";
+import { PanelLeft, PanelRight, Search, Settings, Globe } from "lucide-react";
 import { BrandLockup } from "@/design-system/BrandLockup";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 
@@ -14,6 +14,7 @@ interface AppBarProps {
   onToggleScripture: () => void;
   onToggleSources: () => void;
   onOpenSettings: () => void;
+  onOpenLanguage: () => void;
   /** Called when a Scripture search starts, so the Scripture pane can be shown. */
   onSearch: () => void;
   onSearchStudies: (query: string) => void;
@@ -105,6 +106,9 @@ export function AppBar(props: AppBarProps) {
           onClick={props.onToggleSources}
         >
           <SideIcon side={props.sourcesSide} />
+        </button>
+        <button type="button" className={iconButton} aria-label={t("settings.language.action")} title={t("settings.language.find")} onClick={props.onOpenLanguage}>
+          <Globe className="size-5" aria-hidden="true" />
         </button>
         <button
           type="button"

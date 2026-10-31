@@ -550,6 +550,28 @@ async function start() {
     const preview = await api.bibleImportPreview({ paths: [`/home/you/Documents/${name}`] });
     await api.bibleImportCommit({ previewId: preview.previewId, name: "Invented Bible (document)", shortName: "DOC", language: "English", languageCode: "en", asDocument: true });
   }
+  // Synthetic structured EPUB for combined-pane A.1 layout review; no publisher text.
+  if (params.get("a1Review") === "1") {
+    api.installFixtureSource({
+      title: "Synthetic EPUB layout review", format: "epub", language: "English",
+      formatted: {
+        structure: [{ id: "review", startSegment: 0, segmentCount: 60, anchors: {} }],
+        items: { review: {
+          id: "review", css: "p { margin: 1em 0; }", root: {}, missingImages: 0,
+          nodes: Array.from({ length: 60 }, (_, index) => ({ t: "p", c: [`Invented reading paragraph ${index + 1}. ${"A paragraph for checking stable reading width and position. ".repeat(8)}`] })),
+        } },
+      },
+      segments: Array.from({ length: 60 }, (_, index) => ({
+        text: `Invented reading paragraph ${index + 1}. ${"A paragraph for checking stable reading width and position. ".repeat(8)}`,
+        sectionPath: `Section ${Math.floor(index / 10) + 1}`,
+      })),
+      contents: Array.from({ length: 6 }, (_, index) => ({
+        id: `review-section-${index}`, title: `Section ${index + 1}`,
+        target: { kind: "segment" as const, position: index * 10 }, children: [],
+      })),
+      mentions: [{ segment: 0, reference: "JHN.15.5", matchedText: "John 15:5" }],
+    });
+  }
   await i18n.changeLanguage(params.get("lang") ?? "en");
   // All three panes even in a narrow window, as the owner works (review scenes, v0.18.5).
   if (params.get("sourcesOpen") === "1") localStorage.setItem("abiding-word.layout.sourcesOpen", "true");

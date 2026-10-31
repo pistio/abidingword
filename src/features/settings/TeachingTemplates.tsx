@@ -6,7 +6,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { teachingKindLabel } from "@/features/teaching/labels";
-import { BUILTIN_BLOCK_TEMPLATES, BUILTIN_TEACHING_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, builtinBlockStartSummary, builtinPoints, startSummary, type BuiltinBlockTemplate, type BuiltinTeachingTemplate } from "@/features/teaching/teachingTemplates";
+import { BUILTIN_BLOCK_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, builtinBlockStartSummary, startSummary, type BuiltinBlockTemplate } from "@/features/teaching/teachingTemplates";
 import type { TeachingTemplate } from "@/types/teaching";
 
 /**
@@ -35,14 +35,6 @@ export function TeachingTemplates({ onEdit, version = 0 }: { onEdit: (templateId
     }
   };
   // A built-in template becomes the person's own copy, in their language, and opens to be changed.
-  const saveAsMine = async (template: BuiltinTeachingTemplate) => {
-    const copy = await api.teachingTemplateCreate({
-      name: t("studies.builtin.copyTitle", { title: teachingKindLabel(t, template.kind) }),
-      kind: template.kind,
-      points: builtinPoints(t, template),
-    });
-    onEdit(copy.id);
-  };
   const saveAsMineBlock = async (template: BuiltinBlockTemplate) => {
     const name = t(`studies.teaching.builtin.${blockTemplateGroup(template.key)}.name`);
     const copy = await api.teachingTemplateCreate({
@@ -85,24 +77,6 @@ export function TeachingTemplates({ onEdit, version = 0 }: { onEdit: (templateId
                 </p>
               </div>
               <Button variant="quiet" onClick={() => act(() => saveAsMineBlock(template))} aria-label={t("studies.teaching.templates.saveAsMineLabel", { name })}>
-                {t("studies.teaching.templates.saveAsMine")}
-              </Button>
-            </li>
-          );
-        })}
-        {BUILTIN_TEACHING_TEMPLATES.map((template) => {
-          const name = teachingKindLabel(t, template.kind);
-          return (
-            <li key={template.key} className="flex flex-wrap items-start justify-between gap-2 border-b border-border-subtle py-3">
-              <div className="min-w-0 flex-1 basis-64">
-                <p className="type-item m-0">{name}</p>
-                <p className={`${meta} line-clamp-2`} title={`${t("studies.templates.builtIn")}${t("common.listSeparator")}${startSummary(t, { builtin: template })}`}>
-                  {t("studies.templates.builtIn")}
-                  {t("common.listSeparator")}
-                  {startSummary(t, { builtin: template })}
-                </p>
-              </div>
-              <Button variant="quiet" onClick={() => act(() => saveAsMine(template))} aria-label={t("studies.teaching.templates.saveAsMineLabel", { name })}>
                 {t("studies.teaching.templates.saveAsMine")}
               </Button>
             </li>

@@ -7,25 +7,20 @@ import { renderApp } from "../support/render";
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
 const pane = () => within(screen.getByRole("main", { name: "Study" }));
 
-it("starts Teaching with a project and no Study, using the existing block editor", async () => {
+it("keeps existing standalone Teaching editable without offering general creation", async () => {
   const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Compatibility" });
+  const prep = await api.teachingCreate({ projectId: project.id, title: "Existing sermon", templateVersion: 2, blocks: [{ blockType: "writing", title: "Main part" }] });
+  await api.teachingBlockUpdate({ id: prep.blocks![0]!.id, body: "An independent message." });
   const { user } = await renderApp(api);
-  await user.click(await pane().findByRole("button", { name: "New Teaching" }));
-  expect(await pane().findByRole("form", { name: "New Teaching" })).toBeInTheDocument();
-  expect(api.state.studies).toHaveLength(0);
-  expect(api.state.projects).toHaveLength(1);
-  expect(pane().getByRole("combobox", { name: "Bible Study (optional)" })).toHaveValue("");
-  const radios = pane().getAllByRole("radio");
-  expect(radios).toHaveLength(4); // EVA, sermon/talk, children/youth, blank
-  await user.click(pane().getByRole("radio", { name: "Sermon / Talk" }));
-  await user.click(pane().getByRole("button", { name: "Start" }));
-  const article = await pane().findByRole("article", { name: "Sermon" });
-  await user.type(within(article).getByRole("textbox", { name: "Main part" }), "An independent message.");
-  await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks!.some(b => b.body === "An independent message.")).toBe(true));
-  expect(api.state.teaching.preparations[0]!.studyId).toBeNull();
-  await user.click(pane().getByRole("button", { name: "Back to Teaching list" }));
-  await user.click(await pane().findByRole("button", { name: "Sermon" }));
-  expect(await pane().findByRole("textbox", { name: "Main part" })).toHaveValue("An independent message.");
+  expect(pane().queryByRole("button", { name: "New Teaching" })).toBeNull();
+  await user.click(await pane().findByRole("button", { name: "Standalone Teaching" }));
+  expect(pane().queryByRole("button", { name: "New Teaching" })).toBeNull();
+  await user.click(await pane().findByRole("button", { name: "Existing sermon" }));
+  const main = await pane().findByRole("textbox", { name: "Main part" });
+  expect(main).toHaveValue("An independent message.");
+  await user.type(main, " Retained edit.");
+  await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks![0]!.body).toContain("Retained edit."));
   expect(api.state.studies).toHaveLength(0);
 });
 
@@ -38,16 +33,17 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   const teaching = await api.teachingCreate({ projectId: project.id, studyId: study.id, title: "Independent manuscript" });
   await api.teachingFindingLink({ preparationId: teaching.id, findingId: finding.id });
   const { user } = await renderApp(api);
-  await user.click(await pane().findByRole("button", { name: "Teaching sessions" }));
-  await user.click(await pane().findByRole("button", { name: teaching.title }));
-  await user.click(pane().getByText(/^Bible Study \(optional\) ·/));
+  await user.click(await pane().findByRole("button", { name: /Vine study/ }));
+  await user.click(await pane().findByRole("button", { name: "Bible Teaching" }));
+  await user.click(pane().getByText(/^Based on: Bible Study/));
   const select = await pane().findByRole("combobox", { name: "Bible Study (optional)" });
   expect(select).toHaveValue(study.id);
+  await waitFor(() => expect(select).not.toBeDisabled());
   await user.selectOptions(select, "");
   await user.click(pane().getByRole("button", { name: "Save study link" }));
   await waitFor(() => expect(api.state.teaching.preparations[0]!.studyId).toBeNull());
   expect((await api.teachingGet(teaching.id)).findings[0]).toMatchObject({ snapshot: true, finding: { content: finding.content } });
-  await user.click(pane().getByText(/^Bible Study \(optional\) ·/));
+  await user.click(pane().getByText(/^Link to Bible Study/));
   await user.selectOptions(pane().getByRole("combobox", { name: "Bible Study (optional)" }), study.id);
   await user.click(pane().getByRole("button", { name: "Save study link" }));
   await waitFor(() => expect(api.state.teaching.preparations[0]!.studyId).toBe(study.id));
@@ -58,15 +54,19 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   expect(within(info).queryByRole("button", { name: /Remove.*Synthetic source/ })).toBeNull();
 });
 
-it.each(["en", "de", "fr", "es", "pt", "ko"])("opens standalone Teaching in %s without creating a Study", async (language) => {
+it.each(["en", "de", "fr", "es", "pt", "ko"])("opens existing standalone Teaching in %s without creating a Study", async (language) => {
   await act(async () => { await i18n.changeLanguage(language); });
-  const api = createMemoryApi(); const { user } = await renderApp(api);
+  const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Existing project" });
+  await api.teachingCreate({ projectId: project.id, title: "Existing message" });
+  const { user } = await renderApp(api);
   const main = within(screen.getByRole("main", { name: i18n.t("app.panes.name.study") }));
-  await user.click(await main.findByRole("button", { name: i18n.t("studies.teaching.newTeaching") }));
+  expect(main.queryByRole("button", { name: i18n.t("studies.teaching.newTeaching") })).toBeNull();
+  await user.click(await main.findByRole("button", { name: i18n.t("studies.teaching.workspace.standalone") }));
+  await user.click(await main.findByRole("button", { name: "Existing message" }));
+  await user.click(await main.findByText(new RegExp(`^${i18n.t("studies.teaching.workspace.linkStudy")}`)));
   expect(await main.findByRole("combobox", { name: i18n.t("studies.teaching.workspace.study") })).toHaveValue("");
-  expect(main.getAllByRole("radio")).toHaveLength(4);
   expect(api.state.studies).toHaveLength(0);
-  expect(api.state.projects).toHaveLength(1);
 });
 
 it("keeps trashed Teaching after Study deletion and removes it when a trashed project is permanently deleted", async () => {

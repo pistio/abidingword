@@ -15,7 +15,9 @@
   },
   "language": {
     "label": "Langue de l’interface",
-    "hint": "Change la langue des menus, des boutons et des messages. Vos études, vos notes, votre bibliothèque et les textes bibliques restent inchangés."
+    "hint": "Change la langue des menus, des boutons et des messages. Vos études, vos notes, votre bibliothèque et les textes bibliques restent inchangés.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Changer de langue"
   },
   "theme": {
     "legend": "Thème",
@@ -288,5 +290,19 @@
     "sampleThere": "« {{title}} » est déjà là : rien n’a été ajouté.",
     "citationsKept": "Références conservées dont le livre n’est pas sur cet ordinateur : {{n}}",
     "citationsReconnected": "Références reliées au même livre de votre bibliothèque : {{n}}"
+  },
+  "trash": {
+    "danger": "Zone de danger",
+    "title": "Corbeille",
+    "move": "Mettre à la corbeille",
+    "restore": "Restaurer",
+    "permanent": "Supprimer définitivement",
+    "confirm": "Mettre « {{title}} » à la corbeille ?",
+    "permanentConfirm": "Supprimer définitivement « {{title}} » ? Cette action est irréversible.",
+    "typeTitle": "Saisissez le titre exact pour confirmer",
+    "empty": "La corbeille est vide.",
+    "hint": "Restaurez un projet pour retrouver son contenu. Les études supprimées séparément apparaissent après la restauration de leur projet.",
+    "studyHint": "L’étude et ses recherches peuvent être restaurées dans Paramètres → Données et sauvegarde → Corbeille. Les enseignements liés restent dans leur projet avec leurs notes et citations sauvegardées, mais le lien est retiré. La restauration ne le rétablit pas automatiquement.",
+    "projectHint": "Le projet, ses études et ses enseignements sont masqués ensemble et peuvent être restaurés. La suppression définitive retire tout le contenu associé."
   }
 }

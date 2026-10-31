@@ -20,7 +20,7 @@ describe("application shell", () => {
     expect(within(scripture).getByText("No Bible has been added yet.")).toBeInTheDocument();
     expect(await within(study).findByRole("heading", { level: 1, name: "Studies" })).toBeInTheDocument();
     expect(await within(sources).findByText(/No sources yet/)).toBeInTheDocument();
-    expect(within(sources).getByRole("button", { name: "Add to library…" })).toBeEnabled();
+    expect(within(sources).getByRole("button", { name: "Add Sources…" })).toBeEnabled();
   });
 
   it("offers keyboard-operable pane dividers", async () => {

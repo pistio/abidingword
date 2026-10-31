@@ -55,7 +55,7 @@ const indent = (depth: number) => " ".repeat(depth);
 export function SourcesSettings() {
   const { t } = useTranslation();
   const api = useApi();
-  const { addSource, openSource } = useLibraryNav();
+  const { openSource } = useLibraryNav();
   // Adding many at once (v0.24), and imports left unfinished.
   const [batch, setBatch] = useState<{ resume: string | undefined } | null>(null);
   const [jobsVersion, setJobsVersion] = useState(0);
@@ -221,11 +221,10 @@ export function SourcesSettings() {
           {page ? t("library.manage.counts", { active: formatNumber(page.active), archived: formatNumber(page.archived), trashed: formatNumber(page.trashed) }) : " "}
         </p>
         <div className="flex flex-wrap gap-2">
-          <Button onClick={addSource}>
+          <Button onClick={() => setBatch({ resume: undefined })}>
             <Plus className="size-4" aria-hidden="true" />
             {t("library.manage.add")}
           </Button>
-          <Button onClick={() => setBatch({ resume: undefined })}>{t("library.batch.open")}</Button>
         </div>
       </div>
       {openJobs.data?.map((job) => (

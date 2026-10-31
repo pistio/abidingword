@@ -409,8 +409,8 @@ function classOf(origin: "explicit" | "section" | "manual", context: Context, fi
   if (origin === "explicit" && context === "elsewhere") return 5;
   const about = origin === "section" || context === "about";
   if (origin === "manual") return fit === "wide" ? 4 : 0;
-  if (about) return fit === "exact" || fit === "narrow" ? 1 : fit === "chapter" || fit === "overlap" ? 3 : 4;
-  return fit === "exact" || fit === "narrow" ? 2 : 4;
+  if (about) return fit === "exact" || fit === "narrow" ? 1 : fit === "chapter" || fit === "overlap" ? 2 : 4;
+  return fit === "exact" || fit === "narrow" ? 3 : 4;
 }
 
 /** Whether a Bible's codes are described: a documented scheme (v0.22). */
@@ -1069,6 +1069,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     appInfo: async () => state.info,
     logError: async () => undefined,
     workspaceGetDefault: async () => state.workspace,
+    trashList: async (workspaceId) => [
+      ...[...deletedProjects.values()].filter(p => p.workspaceId === workspaceId).map(p => ({ id: p.id, title: p.title, kind: "project" as const, deletedAt: p.updatedAt })),
+      ...[...deletedStudies.values()].filter(s => state.projects.some(p => p.id === s.projectId && p.workspaceId === workspaceId)).map(s => ({ id: s.id, title: s.title, kind: "study" as const, deletedAt: s.updatedAt })),
+    ],
     projectList: async (workspaceId) =>
       state.projects
         .filter((p) => p.workspaceId === workspaceId)

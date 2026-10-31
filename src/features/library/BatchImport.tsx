@@ -380,6 +380,7 @@ function ItemRow({ item, onEdit }: { item: ImportJobItem; onEdit: (change: { tit
   const id = useId();
   const [title, setTitle] = useState(item.title ?? "");
   const [author, setAuthor] = useState(item.author ?? "");
+  const [language, setLanguage] = useState(item.language ?? "");
   const choosable = item.status === "ready" || item.status === "duplicate";
   const name = item.title ?? item.fileName;
   return (
@@ -416,6 +417,10 @@ function ItemRow({ item, onEdit }: { item: ImportJobItem; onEdit: (change: { tit
           <label htmlFor={`${id}-author`} className="flex flex-col gap-1 text-[0.9375rem]">
             <span>{t("library.manage.field.author")}</span>
             <input id={`${id}-author`} value={author} onChange={(e) => setAuthor(e.target.value)} onBlur={() => author !== (item.author ?? "") && onEdit({ author })} className="h-9 aw-input px-3" />
+          </label>
+          <label htmlFor={`${id}-language`} className="flex flex-col gap-1 text-[0.9375rem]">
+            <span>{t("library.manage.field.language")}</span>
+            <input id={`${id}-language`} value={language} onChange={e => setLanguage(e.target.value)} onBlur={() => language !== (item.language ?? "") && onEdit({ language })} className="h-9 aw-input px-3" />
           </label>
           <div className="flex flex-col gap-1">
             <label htmlFor={`${id}-type`} className="flex flex-col gap-1 text-[0.9375rem]">

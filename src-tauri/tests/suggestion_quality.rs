@@ -243,11 +243,11 @@ fn for_one_verse_the_best_sources_come_first_in_a_justified_order() {
                 "Sermon Manuscript",
                 "Johanneskommentar",
                 "요한복음 묵상",
+                // a matching chapter heading precedes unqualified mentions (A.1)
+                "A Guide to John",
                 // a neutral citation of exactly the verse, then of a range around it
                 "Personal Notes",
                 "Systematic Notes",
-                // a section on the whole chapter
-                "A Guide to John",
             ]
         );
         // the unrelated sources never appear, and neither does a source that
@@ -269,9 +269,9 @@ fn for_a_passage_a_section_on_it_leads_and_narrower_beats_broader() {
                 "Vine Commentary",
                 "요한복음 묵상",
                 "Sermon Manuscript",
+                "A Guide to John",
                 "Systematic Notes",
                 "Personal Notes",
-                "A Guide to John",
             ]
         );
         assert!(found[..3]
@@ -308,11 +308,10 @@ fn a_later_part_of_the_chapter_offers_only_what_reaches_those_verses() {
             [
                 // the section on exactly these verses
                 "Notes on Love",
-                // neutral citations of verses inside them
+                // a section on the whole chapter, before unqualified citations
+                "A Guide to John",
                 "Personal Notes",
                 "Vine Commentary",
-                // a section on the whole chapter
-                "A Guide to John",
             ]
         );
         // the vine commentary's section on John 15:1–11 shares only the chapter: not offered
@@ -378,8 +377,9 @@ fn a_section_about_a_passage_outranks_a_neutral_mention_even_of_the_exact_verse(
         assert!(at("Sermon Manuscript") < at("Aside"));
         // … a neutral citation of the exact verse before one of a range around it …
         assert!(at("Personal Notes") < at("Aside"));
-        // … and all of them before a section on the whole chapter
-        assert!(at("Aside") < at("A Guide to John"));
+        // … but a matching chapter heading precedes a bare mention (A.1).
+        assert!(at("A Guide to John") < at("Personal Notes"));
+        assert!(at("A Guide to John") < at("Aside"));
         Ok(())
     });
 }
@@ -459,10 +459,10 @@ fn distinct_places_are_preserved() {
         assert_eq!(
             kinds,
             [
-                // the section on a short range, then a neutral exact mention, then the whole chapter
+                // the specific section, then the chapter section, then the bare mention
+                (MatchKind::Contained, LinkOrigin::Section),
                 (MatchKind::Contained, LinkOrigin::Section),
                 (MatchKind::Exact, LinkOrigin::Explicit),
-                (MatchKind::Contained, LinkOrigin::Section),
             ]
         );
         assert_eq!(found[0].more_locations, 0);

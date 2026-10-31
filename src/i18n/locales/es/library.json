@@ -1,6 +1,6 @@
 {
-  "addToLibrary": "Añadir a la biblioteca",
-  "addToLibraryEllipsis": "Añadir a la biblioteca…",
+  "addToLibrary": "Añadir fuentes",
+  "addToLibraryEllipsis": "Añadir fuentes…",
   "sourceType": {
     "book": "Libro",
     "article": "Artículo",
@@ -76,7 +76,7 @@
     "marks_other": "Tus {{count}} marcas en esta fuente (resaltados, notas y marcadores) se quitan con ella."
   },
   "add": {
-    "title": "Añadir a la biblioteca",
+    "title": "Añadir fuentes",
     "reading": "Leyendo el archivo y extrayendo su texto…",
     "intro": "Elige un archivo PDF, EPUB, Word (.docx), Markdown (.md) o de texto (.txt). Abiding Word guarda su propia copia en tu biblioteca y nunca modifica tu archivo. Los PDF escaneados todavía no se pueden leer.",
     "choose": "Elegir un archivo…",
@@ -349,7 +349,7 @@
     "done_many": "Se eliminaron definitivamente {{formatted}} fuentes."
   },
   "manage": {
-    "add": "Agregar fuentes",
+    "add": "Añadir fuentes…",
     "counts": "{{active}} en uso · {{archived}} archivadas · {{trashed}} en la papelera",
     "searchLabel": "Buscar fuentes por título, autor o nombre de archivo",
     "searchPlaceholder": "Título, autor o nombre de archivo",
@@ -504,8 +504,8 @@
     "untagTitle_many": "Quitar una etiqueta de {{formatted}} fuentes"
   },
   "batch": {
-    "open": "Agregar varias…",
-    "title": "Agregar varias fuentes",
+    "open": "Añadir fuentes…",
+    "title": "Añadir fuentes",
     "intro": "Elige varios archivos o una carpeta. Abiding Word lee y revisa cada uno; tú revisas la lista antes de agregar nada.",
     "chooseFiles": "Elegir archivos…",
     "chooseFolder": "Elegir una carpeta…",

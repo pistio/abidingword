@@ -29,7 +29,6 @@ export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, 
 
   // A new study goes into the project last worked in, without asking.
   const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const opener = useRef<HTMLButtonElement>(null);
   const putAway = () => {
     setCreating(false);
@@ -58,8 +57,7 @@ export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, 
         </div>
       )}
 
-      {onOpenTeaching && <StudyCreationActions studyButtonRef={opener} onStudy={() => setCreating(true)} onTeaching={async () => { try { onOpenTeaching(await ensureStudyProject(api, workspace.id, t), true); } catch (e) { setError(e instanceof Error ? e.message : String(e)); } }} />}
-      {error && <p role="alert">{error}</p>}
+      {onOpenTeaching && <StudyCreationActions studyButtonRef={opener} onStudy={() => setCreating(true)} />}
       {creating ? (
         <NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} autoFocus onCancel={putAway} onCreated={onOpenStudy} />
       ) : !onOpenTeaching && (

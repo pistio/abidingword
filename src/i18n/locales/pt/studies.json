@@ -2364,7 +2364,7 @@
     },
     "builtin": {
       "eva": {
-        "name": "Estudo bíblico",
+        "name": "Estudo bíblico em grupo",
         "hint": "Para um grupo: observar a passagem, compreendê-la e perguntar o que se segue.",
         "blocks": {
           "erkennen": {
@@ -2445,7 +2445,11 @@
       "keepNotes": "Ao alterar ou remover a ligação, as notas utilizadas e as suas fontes ficam guardadas como cópias. Alterações posteriores no estudo não modificam essas cópias.",
       "saveLink": "Guardar ligação",
       "savedNote": "Nota de estudo guardada",
-      "project": "Voltar ao projeto"
+      "project": "Voltar ao projeto",
+      "basedOn": "Baseado no estudo bíblico —",
+      "linkStudy": "Vincular a um estudo bíblico",
+      "openStudy": "Abrir estudo vinculado",
+      "standalone": "Ensino independente"
     }
   },
   "parts": {

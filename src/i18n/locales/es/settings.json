@@ -15,7 +15,9 @@
   },
   "language": {
     "label": "Idioma de la interfaz",
-    "hint": "Cambia el idioma de los menús, botones y mensajes. Tus estudios, notas, biblioteca y textos bíblicos no cambian."
+    "hint": "Cambia el idioma de los menús, botones y mensajes. Tus estudios, notas, biblioteca y textos bíblicos no cambian.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Cambiar idioma"
   },
   "theme": {
     "legend": "Tema",
@@ -288,5 +290,19 @@
     "sampleThere": "«{{title}}» ya está aquí, así que no se añadió nada.",
     "citationsKept": "Referencias conservadas cuyo libro no está en este ordenador: {{n}}",
     "citationsReconnected": "Referencias vinculadas al mismo libro de tu biblioteca: {{n}}"
+  },
+  "trash": {
+    "danger": "Zona de peligro",
+    "title": "Papelera",
+    "move": "Mover a la papelera",
+    "restore": "Restaurar",
+    "permanent": "Eliminar permanentemente",
+    "confirm": "¿Mover «{{title}}» a la papelera?",
+    "permanentConfirm": "¿Eliminar «{{title}}» permanentemente? No se puede deshacer.",
+    "typeTitle": "Escribe el título exacto para confirmar",
+    "empty": "La papelera está vacía.",
+    "hint": "Restaura un proyecto para recuperar su contenido. Los estudios eliminados por separado aparecen después de restaurar su proyecto.",
+    "studyHint": "El estudio y su investigación se pueden restaurar en Ajustes → Datos y copias de seguridad → Papelera. La enseñanza vinculada permanece en su proyecto con notas y citas guardadas, pero se desvincula. La restauración no restablece el vínculo automáticamente.",
+    "projectHint": "El proyecto, sus estudios y su enseñanza se ocultan juntos y se pueden restaurar. La eliminación permanente borra todo el contenido dependiente."
   }
 }

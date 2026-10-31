@@ -206,7 +206,7 @@ describe("teaching preparation", () => {
     await user.keyboard("{Enter}");
     const form = await within(studyPane()).findByRole("form", { name: "New Teaching" });
     expect(within(form).getByRole("heading", { name: "New Teaching" })).toHaveFocus();
-    await user.click(within(form).getByRole("radio", { name: "Bible Study — Observation, Understanding, Application" }));
+    await user.click(within(form).getByRole("radio", { name: "Group Bible Study — Observation, Understanding, Application" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
 

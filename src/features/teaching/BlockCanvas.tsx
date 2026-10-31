@@ -124,8 +124,8 @@ export function BlockCanvas({
     }
     return (
       <div key={block.id} role="group" aria-label={name} className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-start gap-1">
-          <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-col gap-2">
+          <div className="min-w-0 w-full">
             {block.blockType === "scripture" ? (
               <div className="flex flex-col gap-1">
                 <p className="type-subhead m-0">{name}</p>

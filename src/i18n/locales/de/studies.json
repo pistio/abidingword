@@ -1610,7 +1610,7 @@
       "passage": "Bibeltextstudium",
       "word": "Wortstudium",
       "topical": "Themenstudium",
-      "teaching": "Lehrvorbereitung",
+      "teaching": "Lehre",
       "biblical_theology": "Biblische Theologie",
       "systematic_theology": "Systematische Theologie",
       "custom": "Keine Vorlage",
@@ -2353,7 +2353,7 @@
     },
     "builtin": {
       "eva": {
-        "name": "Bibelstudium — EVA",
+        "name": "Bibelstudium in der Gruppe — EVA",
         "hint": "Für eine Gruppe: den Text wahrnehmen, ihn verstehen, dann fragen, was daraus folgt.",
         "blocks": {
           "erkennen": {
@@ -2426,15 +2426,19 @@
     "workspace": {
       "title": "Bibellehre",
       "intro": "Bereite hier eine Bibellehre vor – mit oder ohne Bibelstudium.",
-      "sessions": "Lehrvorbereitungen",
-      "empty": "Noch keine Lehrvorbereitung.",
+      "sessions": "Lehreinheiten",
+      "empty": "Noch keine Lehre.",
       "back": "Zurück zur Lehrübersicht",
       "study": "Bibelstudium (wahlweise)",
       "independent": "Eigenständige Bibellehre",
       "keepNotes": "Wenn du die Verknüpfung änderst oder aufhebst, bleiben bereits verwendete Notizen mit ihren Quellen als Kopien erhalten. Spätere Änderungen im Bibelstudium ändern diese Kopien nicht.",
       "saveLink": "Verknüpfung speichern",
       "savedNote": "Gespeicherte Studiennotiz",
-      "project": "Zurück zum Projekt"
+      "project": "Zurück zum Projekt",
+      "basedOn": "Grundlage: Bibelstudie —",
+      "linkStudy": "Mit Bibelstudie verknüpfen",
+      "openStudy": "Verknüpfte Studie öffnen",
+      "standalone": "Eigenständige Lehre"
     }
   },
   "parts": {

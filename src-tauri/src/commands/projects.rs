@@ -40,3 +40,11 @@ pub fn project_delete(
 pub fn project_restore(state: State<'_, AppState>, id: String) -> CommandResult<Project> {
     state.db(|c| projects::restore(c, &id))
 }
+
+#[tauri::command(async)]
+pub fn trash_list(
+    state: State<'_, AppState>,
+    workspace_id: String,
+) -> CommandResult<Vec<projects::TrashEntry>> {
+    state.db(|conn| projects::trash_list(conn, &workspace_id))
+}

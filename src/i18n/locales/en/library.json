@@ -1,6 +1,6 @@
 {
-  "addToLibrary": "Add to library",
-  "addToLibraryEllipsis": "Add to library…",
+  "addToLibrary": "Add Sources",
+  "addToLibraryEllipsis": "Add Sources…",
   "sourceType": {
     "book": "Book",
     "article": "Article",
@@ -73,7 +73,7 @@
     "marks_other": "Your {{count}} marks in it (highlights, notes and bookmarks) are removed with it."
   },
   "add": {
-    "title": "Add to library",
+    "title": "Add Sources",
     "reading": "Reading the file and finding its text…",
     "intro": "Choose a PDF, EPUB, Word (.docx), Markdown (.md) or text (.txt) file. Abiding Word keeps its own copy in your library and never changes your file. Scanned PDFs cannot be read yet.",
     "choose": "Choose a file…",
@@ -330,7 +330,7 @@
     "done_other": "{{formatted}} sources were deleted permanently."
   },
   "manage": {
-    "add": "Add sources",
+    "add": "Add Sources…",
     "counts": "{{active}} in use · {{archived}} archived · {{trashed}} in Trash",
     "searchLabel": "Find sources by title, author or file name",
     "searchPlaceholder": "Title, author or file name",
@@ -472,8 +472,8 @@
     "untagTitle_other": "Remove a tag from {{formatted}} sources"
   },
   "batch": {
-    "open": "Add many…",
-    "title": "Add many sources",
+    "open": "Add Sources…",
+    "title": "Add Sources",
     "intro": "Choose several files, or a folder. Abiding Word reads and checks each one; you review the list before anything is added.",
     "chooseFiles": "Choose files…",
     "chooseFolder": "Choose a folder…",

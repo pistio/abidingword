@@ -92,7 +92,7 @@ describe("Bible Study information", () => {
     await open(user, /The True Vine/);
     const details = await openInfo(user, "Bible Study information");
     const groups = within(details).getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
-    expect(groups).toEqual(["Passages", "Related studies", "Copy"]);
+    expect(groups).toEqual(["Passages", "Related studies", "Copy", "Danger zone"]);
     expect(within(details).getByRole("combobox", { name: "Status" })).toBeInTheDocument();
     expect(within(details).getByRole("textbox", { name: /Purpose/ })).toBeInTheDocument();
     expect(within(details).getByRole("group", { name: "Copy" })).toContainElement(within(details).getByRole("button", { name: /Duplicate/ }));

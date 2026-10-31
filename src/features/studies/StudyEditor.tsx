@@ -324,6 +324,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           </div>
           {view === "study" && (
             <StudyInfo
+              onDeleted={onMissing}
               study={study}
               sections={sections}
               findings={findings.data ?? []}
@@ -348,19 +349,19 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       </header>
 
       {view === "teaching" ? (
-        <TeachingView studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
+        <TeachingView onOpenStudy={(target) => { if (target.id === study.id) setView("study"); else onOpenStudy(target); }} studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
       ) : (
       <>
       {(template?.key === "ten-step-writing-study" || template?.key === "ten-step-exegesis" || sections.some((section) => section.fields?.template === "ten-step-writing-study" || section.fields?.template === "ten-step-exegesis")) && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
-      {!continuous && focusedSection && <nav data-study-steps aria-label={t("studies.flow.steps")} className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-border-subtle bg-pane-work py-2">
-        <Button disabled={focusedIndex === 0} onClick={() => focusSection(sections[focusedIndex - 1]!.id)}>{t("studies.flow.previous")}</Button>
-        <label className="flex min-w-0 flex-1 flex-col gap-1 text-[0.9375rem]">
+      {!continuous && focusedSection && <nav data-study-steps aria-label={t("studies.flow.steps")} className="sticky top-0 z-10 grid grid-cols-2 items-stretch gap-2 border-b border-border-subtle bg-pane-work py-2">
+        <Button className="row-start-2 min-w-0" disabled={focusedIndex === 0} onClick={() => focusSection(sections[focusedIndex - 1]!.id)}>{t("studies.flow.previous")}</Button>
+        <label className="col-span-2 row-start-1 flex min-w-0 flex-col gap-1 text-[0.9375rem]">
           <span>{t("studies.flow.step", { current: focusedIndex + 1, total: sections.length })}</span>
           <select className="aw-input min-h-11 min-w-0 px-2" value={focusedSection.id} onChange={(event) => focusSection(event.target.value)}>
             {sections.map((section) => <option key={section.id} value={section.id}>{sectionTitle(section, template?.key)}</option>)}
           </select>
         </label>
-        <Button disabled={focusedIndex === sections.length - 1} onClick={() => focusSection(sections[focusedIndex + 1]!.id)}>{t("studies.flow.next")}</Button>
+        <Button className="row-start-2 min-w-0" disabled={focusedIndex === sections.length - 1} onClick={() => focusSection(sections[focusedIndex + 1]!.id)}>{t("studies.flow.next")}</Button>
       </nav>}
       {journey && continuous && (
         <JourneyOutline

@@ -8,6 +8,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { formatDate } from "@/i18n/format";
 import type { BackupPreview, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
+import { Trash } from "./Trash";
 import { ProjectExport } from "./ProjectExport";
 import { backupCountsLine, countsLine, megabytes } from "./format";
 
@@ -23,6 +24,7 @@ export function DataSettings() {
   const workspaceId = workspace.data?.id ?? null;
   return (
     <div className="flex flex-col gap-8">
+      {workspaceId && <Trash workspaceId={workspaceId} />}
       <div className="flex flex-col gap-4">
         <h3 className="type-group m-0">{t("settings.data.projects")}</h3>
         <p className="m-0 max-w-prose text-[0.9375rem] text-text-muted">{t("settings.data.projectsHint")}</p>
