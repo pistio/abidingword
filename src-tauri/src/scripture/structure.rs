@@ -2112,13 +2112,16 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
         };
         let after = unmark_raised(&clean(&units[next].text));
         let after = after.trim_start();
-        let goes_on = after.chars().next().is_some_and(char::is_lowercase)
-            || (after
+        let leading_number: Option<u32> = {
+            let digits: String = after
                 .chars()
-                .next()
-                .is_some_and(|c| c.is_ascii_digit() || superscript_digit(c).is_some())
-                && !after.starts_with('1')
-                && !after.starts_with('¹'));
+                .take_while(|c| c.is_ascii_digit() || superscript_digit(*c).is_some())
+                .map(|c| superscript_digit(c).map_or(c, |d| char::from(b'0' + d as u8)))
+                .collect();
+            digits.parse().ok()
+        };
+        let goes_on = after.chars().next().is_some_and(char::is_lowercase)
+            || leading_number.is_some_and(|n| n != 1);
         // (Or the book's own title, set large, follows: the head over the
         // book's first page, "Haggai" / "HAGGAI".)
         let title_follows = (units[next].large || units[next].heading)
@@ -2449,9 +2452,12 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
     // A sentence's end run straight into an opening quotation mark with no
     // space ("… volaban.“¡Santo, santo …"): two pieces of a page read into one
     // line; where the verse's words end is not known (v0.24.4).
+    // (Or a letter run straight into an opening quotation mark and a letter,
+    // "estrellas“Y escribe": the same.)
     static RUN_TOGETHER: OnceLock<regex::Regex> = OnceLock::new();
-    let run_together =
-        RUN_TOGETHER.get_or_init(|| regex::Regex::new(r#"[.!?;:]["“«‘¡¿]+\p{L}"#).expect("valid"));
+    let run_together = RUN_TOGETHER.get_or_init(|| {
+        regex::Regex::new(r#"[.!?;:,]["“«‘¡¿]+\p{L}|\p{L}["“«]\p{L}"#).expect("valid")
+    });
     if run_together.is_match(text) {
         return Some("boundary");
     }
@@ -5104,6 +5110,19 @@ impl Reader<'_> {
         // der Sündenfall." / "⁵ es gab …"): a heading in the body's type, or
         // the first line of a poem's stanza. Not known; not verified.
         if self.block_starts.contains(&unit) && open.last_unit != unit {
+            return true;
+        }
+        // A paragraph of its own in a document without pages, of four words
+        // or fewer with no punctuation, in the middle of the verse's sentence
+        // ("… un vin excellent," / "La Bien-aimée" / "qui coule …"): a
+        // speaker's label the export wrote as a paragraph (v0.24.4).
+        if self.units[unit].place.page.is_none()
+            && open.last_unit != unit
+            && line.split_whitespace().count() <= 4
+            && !line.chars().any(|c| ".,;:!?…".contains(c))
+            && line.chars().next().is_some_and(char::is_uppercase)
+            && !ends_as_sentence(&open.text)
+        {
             return true;
         }
         // The first line of running text on a page, beginning a sentence
