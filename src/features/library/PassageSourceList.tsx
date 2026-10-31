@@ -42,9 +42,9 @@ export function PassageSourceList({
         const titleId = `${prefix}-${index}`;
         const moreId = `${prefix}-${index}-more`;
         const more = expansion[group.sourceId];
-        const extra = more?.open ? (more.places ?? []).slice(group.locations.length) : [];
+        const extra = more?.open ? [...others, ...(more.places ?? []).slice(group.locations.length)] : [];
         return (
-          <li key={group.sourceId}>
+          <li key={group.sourceId} className="border-b border-border-subtle pb-1">
             <div role="group" aria-labelledby={titleId}>
               <button
                 type="button"
@@ -60,23 +60,7 @@ export function PassageSourceList({
                 </span>
                 <span className="type-meta">{reason(best)}</span>
               </button>
-              {others.length > 0 && (
-                <ul className="m-0 mb-1 ml-3 flex list-none flex-col border-l border-border-subtle p-0">
-                  {others.map((place) => (
-                    <li key={place.segmentId}>
-                      <button
-                        type="button"
-                        onClick={() => onOpen(group.sourceId, place.segmentId)}
-                        className="flex w-full flex-col items-start gap-0 rounded-aw py-1 pl-3 text-left text-[0.875rem] hover:bg-hover"
-                      >
-                        <span className="text-text">{locatorLabel(t, place.locator)}</span>
-                        <span className="text-text-muted">{reason(place)}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {group.moreLocations > 0 && onToggleMore && (
+              {others.length + group.moreLocations > 0 && onToggleMore && (
                 <div
                   className="pb-2 pl-3"
                   onKeyDown={(event) => {
@@ -94,7 +78,7 @@ export function PassageSourceList({
                           <button
                             type="button"
                             onClick={() => onOpen(group.sourceId, place.segmentId)}
-                            className="flex w-full flex-col items-start gap-0 rounded-aw py-1 pl-3 text-left text-[0.875rem] hover:bg-hover"
+                            className="flex w-full flex-wrap items-baseline gap-x-2 rounded-aw py-1 pl-3 text-left text-[0.875rem] hover:bg-hover"
                           >
                             <span className="text-text">{locatorLabel(t, place.locator)}</span>
                             <span className="text-text-muted">{reason(place)}</span>
@@ -115,7 +99,7 @@ export function PassageSourceList({
                   >
                     {more?.open
                       ? t("library.pane.showFewerLocations")
-                      : t("library.pane.moreLocations", { count: group.moreLocations })}
+                      : t("library.pane.moreLocations", { count: others.length + group.moreLocations })}
                   </button>
                   {more?.status === "loading" && (
                     <p role="status" className="m-0 pt-1 type-meta">

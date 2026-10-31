@@ -9,6 +9,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { LICENCE_STATUSES, SOURCE_TYPES, type LicenceStatus, type SourceImportPreview, type SourceType } from "@/types/library";
 import { formatLabel, licenceLabel, sourceTypeLabel } from "./labels";
+import { BatchImport } from "./BatchImport";
 import { useLibraryNav } from "./LibraryNav";
 
 /** Add to library: choose a file → check → review → add. */
@@ -20,6 +21,7 @@ export function AddSourceView({ onClose }: { onClose: () => void }) {
   const heading = useRef<HTMLHeadingElement>(null);
   const [preview, setPreview] = useState<SourceImportPreview | null>(null);
   const [checking, setChecking] = useState(false);
+  const [batch, setBatch] = useState(false);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => heading.current?.focus(), [preview]);
 
@@ -43,6 +45,8 @@ export function AddSourceView({ onClose }: { onClose: () => void }) {
   };
 
   return (
+    <>
+    {batch && <BatchImport onClose={(added) => { setBatch(false); if (added > 0) onClose(); }} />}
     <main aria-labelledby={`${id}-title`} className="min-h-0 flex-1 overflow-y-auto bg-bg">
       <div className="mx-auto flex max-w-[46rem] flex-col gap-6 px-8 pb-24 pt-8">
         <div className="flex flex-col items-start gap-4">
@@ -58,7 +62,10 @@ export function AddSourceView({ onClose }: { onClose: () => void }) {
         {!preview && !checking && (
           <div className="flex flex-col items-start gap-3">
             <p className="m-0 text-text-muted">{t("library.add.intro")}</p>
-            <Button variant="primary" onClick={choose}>{t("library.add.choose")}</Button>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="primary" onClick={() => setBatch(true)}>{t("library.batch.title")}</Button>
+              <Button onClick={choose}>{t("library.add.choose")}</Button>
+            </div>
           </div>
         )}
         {preview && (
@@ -71,6 +78,7 @@ export function AddSourceView({ onClose }: { onClose: () => void }) {
         )}
       </div>
     </main>
+    </>
   );
 }
 

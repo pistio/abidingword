@@ -89,6 +89,16 @@ export function BlockCanvas({
     const name = block.title.trim() || blockTypeLabel(t, block.blockType);
     const guidance = block.guidanceKey ? t(block.guidanceKey as never) : "";
     const sameAsSection = sectionTitle !== null && block.title.trim() === sectionTitle;
+    const visibility = (
+          <label className="mt-2 flex min-h-11 items-center gap-2">
+            <input
+              type="checkbox"
+              checked={block.participantFacing}
+              onChange={(e) => void act(() => api.teachingBlockUpdate({ id: block.id, participantFacing: e.target.checked }))}
+            />
+            {t("studies.teaching.blocks.participant")}
+          </label>
+    );
     if (block.blockType === "section") {
       const nested = children(block.id);
       return (
@@ -99,6 +109,8 @@ export function BlockCanvas({
             </h3>
             <BlockTools id={id} block={block} name={name} onMove={move} onDuplicate={() => void act(() => api.teachingBlockDuplicate(block.id))} onDelete={() => void act(() => api.teachingBlockDelete(block.id))} />
           </div>
+          {visibility}
+          {!block.participantFacing && <p className="type-meta m-0">{t("studies.teaching.blocks.leaderOnly")}</p>}
           {guidance && (
             <details className="text-[0.9375rem] text-text-muted">
               <summary className="cursor-pointer">{t("studies.teaching.blocks.guidance")}</summary>
@@ -111,7 +123,7 @@ export function BlockCanvas({
       );
     }
     return (
-      <div key={block.id} className="flex flex-col gap-2">
+      <div key={block.id} role="group" aria-label={name} className="flex flex-col gap-2">
         <div className="flex flex-wrap items-start gap-1">
           <div className="min-w-0 flex-1">
             {block.blockType === "scripture" ? (
@@ -148,6 +160,7 @@ export function BlockCanvas({
           </div>
           <BlockTools id={id} block={block} name={name} onMove={move} onDuplicate={() => void act(() => api.teachingBlockDuplicate(block.id))} onDelete={() => void act(() => api.teachingBlockDelete(block.id))} />
         </div>
+        {visibility}
         {!block.participantFacing && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.teaching.blocks.leaderOnly")}</p>}
         <details className="text-[0.9375rem]">
           <summary className="cursor-pointer text-text-muted">{t("studies.teaching.blocks.settings")}</summary>
@@ -160,14 +173,7 @@ export function BlockCanvas({
               className="aw-input h-10 px-3 text-base"
             />
           </label>
-          <label className="mt-2 flex min-h-11 items-center gap-2">
-            <input
-              type="checkbox"
-              checked={block.participantFacing}
-              onChange={(e) => void act(() => api.teachingBlockUpdate({ id: block.id, participantFacing: e.target.checked }))}
-            />
-            {t("studies.teaching.blocks.participant")}
-          </label>
+
         </details>
       </div>
     );
@@ -178,7 +184,7 @@ export function BlockCanvas({
     <div className="flex flex-col gap-6">
       <div role="radiogroup" aria-label={t("studies.teaching.blocks.viewLabel")} className="flex flex-wrap gap-2">
         {(["continuous", "outline"] as const).map((mode) => (
-          <label key={mode} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
+          <label key={mode} className="aw-choice aw-choice-card min-h-11 cursor-pointer gap-2 px-4">
             <input type="radio" name={`${id}-view`} checked={view === mode} onChange={() => setView(mode)} className="sr-only" />
             {t(mode === "continuous" ? "studies.teaching.blocks.viewContinuous" : "studies.teaching.blocks.viewOutline")}
           </label>

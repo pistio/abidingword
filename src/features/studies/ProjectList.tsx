@@ -7,6 +7,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import type { Workspace } from "@/types/domain";
 import { CreateForm } from "./CreateForm";
+import { StudyCreationActions } from "./StudyCreationActions";
 import { NewStudyForm } from "./NewStudyForm";
 import { StudyList } from "./StudyList";
 import { ensureStudyProject } from "./projects";
@@ -14,19 +15,21 @@ import { studyCountLabel } from "./format";
 
 interface ProjectListProps {
   workspace: Workspace;
+  onOpenTeaching?: (projectId: string, create?: boolean) => void;
   /** Back to the plain list of studies (when this is the organising view, not the start). */
   onHome?: () => void;
   onOpenProject: (projectId: string) => void;
   onOpenStudy: (study: { id: string; projectId: string }) => void;
 }
 
-export function ProjectList({ workspace, onHome, onOpenProject, onOpenStudy }: ProjectListProps) {
+export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, onOpenStudy }: ProjectListProps) {
   const { t } = useTranslation();
   const api = useApi();
   const projects = useLoad(useCallback(() => api.projectList(workspace.id), [api, workspace.id]));
 
   // A new study goes into the project last worked in, without asking.
   const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const opener = useRef<HTMLButtonElement>(null);
   const putAway = () => {
     setCreating(false);
@@ -55,9 +58,11 @@ export function ProjectList({ workspace, onHome, onOpenProject, onOpenStudy }: P
         </div>
       )}
 
+      {onOpenTeaching && <StudyCreationActions studyButtonRef={opener} onStudy={() => setCreating(true)} onTeaching={async () => { try { onOpenTeaching(await ensureStudyProject(api, workspace.id, t), true); } catch (e) { setError(e instanceof Error ? e.message : String(e)); } }} />}
+      {error && <p role="alert">{error}</p>}
       {creating ? (
         <NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} autoFocus onCancel={putAway} onCreated={onOpenStudy} />
-      ) : (
+      ) : !onOpenTeaching && (
         <div>
           <Button ref={opener} variant="primary" onClick={() => setCreating(true)}>
             <Plus className="size-4" aria-hidden="true" />

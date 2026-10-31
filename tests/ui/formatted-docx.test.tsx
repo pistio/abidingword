@@ -414,6 +414,7 @@ describe("moving between Reading and Original in a Word document", () => {
     const doc = within(await original(user, reader));
     await user.click(doc.getByText("1"));
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
+    await user.click(within(sourcesPane()).getByText("Other sources"));
     await user.click(await within(sourcesPane()).findByRole("button", { name: /Another Document/ }));
     const next = await within(sourcesPane()).findByRole("region", { name: "Another Document" });
     expect(back(next)).toBeDisabled();

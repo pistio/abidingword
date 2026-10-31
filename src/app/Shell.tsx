@@ -28,6 +28,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   const [view, setView] = useState<View>("workspace");
   /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
   const [settingsSection, setSettingsSection] = useState<"sources" | null>(null);
+  const [recentSourceIds, setRecentSourceIds] = useState<string[]>([]);
   const positions = useRef(new Map<string, ReaderPosition>());
   const positionReaders = useRef(new Map<string, () => ReaderPosition | null>());
   const registerPositionReader = useCallback((sourceId: string, read: (() => ReaderPosition | null) | null) => {
@@ -76,6 +77,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
     layout.order.indexOf(pane) < layout.order.indexOf("study") ? "left" : "right";
   const libraryNav = useMemo<LibraryNav>(
     () => ({
+      recentSourceIds,
       openLibrary: (query) => {
         capturePositions();
         if (query !== undefined) setBrowseState(undefined);
@@ -88,6 +90,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
       // whose Back returns to where it was opened from (after adding a
       // source: the library).
       openSource: (sourceId, segmentId, position, words) => {
+        setRecentSourceIds((ids) => [sourceId, ...ids.filter((id) => id !== sourceId)].slice(0, 10));
         capturePositions();
         // A citation/search target always wins over a remembered reading place.
         if (!position && !segmentId && !words) position = positions.current.get(sourceId);
@@ -120,7 +123,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         }
       },
     }),
-    [view, reading, open.sources, open.scripture, setOpen, goTo, capturePositions],
+    [recentSourceIds, view, reading, open.sources, open.scripture, setOpen, goTo, capturePositions],
   );
 
   return (

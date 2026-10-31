@@ -10,11 +10,10 @@ const pane = () => within(screen.getByRole("main", { name: "Study" }));
 it("starts Teaching with a project and no Study, using the existing block editor", async () => {
   const api = createMemoryApi();
   const { user } = await renderApp(api);
-  await user.click(await pane().findByRole("button", { name: "Teaching" }));
-  expect(await pane().findByRole("heading", { name: "Teaching" })).toBeInTheDocument();
+  await user.click(await pane().findByRole("button", { name: "New Teaching" }));
+  expect(await pane().findByRole("form", { name: "New Teaching" })).toBeInTheDocument();
   expect(api.state.studies).toHaveLength(0);
   expect(api.state.projects).toHaveLength(1);
-  await user.click(pane().getByRole("button", { name: "New Bible Teaching" }));
   expect(pane().getByRole("combobox", { name: "Bible Study (optional)" })).toHaveValue("");
   const radios = pane().getAllByRole("radio");
   expect(radios).toHaveLength(4); // EVA, sermon/talk, children/youth, blank
@@ -39,14 +38,16 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   const teaching = await api.teachingCreate({ projectId: project.id, studyId: study.id, title: "Independent manuscript" });
   await api.teachingFindingLink({ preparationId: teaching.id, findingId: finding.id });
   const { user } = await renderApp(api);
-  await user.click(await pane().findByRole("button", { name: "Teaching" }));
+  await user.click(await pane().findByRole("button", { name: "Teaching sessions" }));
   await user.click(await pane().findByRole("button", { name: teaching.title }));
+  await user.click(pane().getByText(/^Bible Study \(optional\) ·/));
   const select = await pane().findByRole("combobox", { name: "Bible Study (optional)" });
   expect(select).toHaveValue(study.id);
   await user.selectOptions(select, "");
   await user.click(pane().getByRole("button", { name: "Save study link" }));
   await waitFor(() => expect(api.state.teaching.preparations[0]!.studyId).toBeNull());
   expect((await api.teachingGet(teaching.id)).findings[0]).toMatchObject({ snapshot: true, finding: { content: finding.content } });
+  await user.click(pane().getByText(/^Bible Study \(optional\) ·/));
   await user.selectOptions(pane().getByRole("combobox", { name: "Bible Study (optional)" }), study.id);
   await user.click(pane().getByRole("button", { name: "Save study link" }));
   await waitFor(() => expect(api.state.teaching.preparations[0]!.studyId).toBe(study.id));
@@ -61,9 +62,8 @@ it.each(["en", "de", "fr", "es", "pt", "ko"])("opens standalone Teaching in %s w
   await act(async () => { await i18n.changeLanguage(language); });
   const api = createMemoryApi(); const { user } = await renderApp(api);
   const main = within(screen.getByRole("main", { name: i18n.t("app.panes.name.study") }));
-  await user.click(await main.findByRole("button", { name: i18n.t("studies.teaching.workspace.title") }));
   await user.click(await main.findByRole("button", { name: i18n.t("studies.teaching.newTeaching") }));
-  expect(main.getByRole("combobox", { name: i18n.t("studies.teaching.workspace.study") })).toHaveValue("");
+  expect(await main.findByRole("combobox", { name: i18n.t("studies.teaching.workspace.study") })).toHaveValue("");
   expect(main.getAllByRole("radio")).toHaveLength(4);
   expect(api.state.studies).toHaveLength(0);
   expect(api.state.projects).toHaveLength(1);

@@ -47,7 +47,7 @@ describe("creating studies", () => {
     await openProject(user, "John Sermon Series");
 
     await user.click(newStudy().getByRole("button", { name: "Word study" }));
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "Remain (μένω)");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "Remain (μένω)");
     expect(newStudy().queryByLabelText("Template")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
@@ -66,7 +66,7 @@ describe("creating studies", () => {
     const { api } = await withProject();
     const { user } = await renderApp(api);
     await openProject(user, "John Sermon Series");
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "John 15:1-11");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "John 15:1-11");
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
@@ -82,7 +82,7 @@ describe("creating studies", () => {
     const { api } = await withProject();
     const { user } = await renderApp(api);
     await openProject(user, "John Sermon Series");
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "Youth group");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "Youth group");
     await user.click(newStudy().getByRole("button", { name: "More options" }));
     await user.click(newStudy().getByRole("button", { name: "No template" }));
     await user.type(newStudy().getByLabelText(/^Title/), "Questions from the youth group");
@@ -304,7 +304,7 @@ describe("templates", () => {
 
     await user.click(await screen.findByRole("button", { name: "Back to workspace" }));
     await openProject(user, "John Sermon Series");
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "John 15");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "John 15");
     await user.click(newStudy().getByRole("button", { name: "My template" }));
     await user.selectOptions(newStudy().getByLabelText("Template"), mine.id);
     await user.click(screen.getByRole("button", { name: "Create study" }));

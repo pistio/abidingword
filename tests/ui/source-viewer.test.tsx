@@ -513,6 +513,7 @@ describe("the place is kept between the pane and the full reader", () => {
     await within(reader).findByTestId("pdf-viewer");
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
 
+    await user.click(within(sourcesPane()).getByText("Other sources"));
     await user.click((await within(sourcesPane()).findAllByRole("button", { name: /^Notes on Pruning/ }))[0]!);
     const second = await within(sourcesPane()).findByRole("region", { name: "Notes on Pruning" });
     expect(within(second).getByRole("button", { name: "Reading" })).toHaveAttribute("aria-pressed", "true");

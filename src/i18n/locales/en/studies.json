@@ -1591,7 +1591,7 @@
     "noTemplate": "No template (one Notes part)",
     "yourTemplate": "{{name}} (yours)",
     "optional": "(optional)",
-    "passagePlaceholder": "e.g. John 15:1-11",
+    "passagePlaceholder": "e.g. John 5:1–18 or Romans 8",
     "create": "Create study",
     "formLabel": "New study",
     "studyAs": "Study approach",
@@ -1618,7 +1618,17 @@
       "character": "Biblical Character Study",
       "book": "Whole-Book Study"
     },
-    "startsWith": "Starts with: {{parts}}."
+    "startsWith": "Starts with: {{parts}}.",
+    "subjectLabel": {
+      "passage": "Bible passage",
+      "word": "Word or expression",
+      "topical": "Topic",
+      "character": "Biblical character",
+      "book": "Book of the Bible",
+      "biblical_theology": "Biblical theme",
+      "systematic_theology": "Doctrine",
+      "custom": "Study subject"
+    }
   },
   "list": {
     "filters": "Filter studies",
@@ -2280,7 +2290,7 @@
       "tooManyBlocks": "A template can start with at most {{max}} blocks, and this teaching has more. Make the template in Settings → Templates instead."
     },
     "addStepMenu": "Kind of step to add",
-    "newTeaching": "New Bible Teaching",
+    "newTeaching": "New Teaching",
     "formatLegend": "What would you like to prepare?",
     "formats": {
       "message": {
@@ -2343,7 +2353,7 @@
     },
     "builtin": {
       "eva": {
-        "name": "Bible Study — EVA",
+        "name": "Bible Study — Observation, Understanding, Application",
         "hint": "For a group: observe the passage, understand it, then ask what follows.",
         "blocks": {
           "erkennen": {
@@ -2744,7 +2754,13 @@
     "legacy": "Earlier structured answers",
     "legacyNote": "These answers are kept in their original fields. Nothing has been combined or replaced.",
     "continuous": "Continuous writing",
-    "outline": "Step view"
+    "outline": "Step-by-step",
+    "mode": "Writing mode",
+    "steps": "Study sections",
+    "previous": "Previous section",
+    "next": "Next section",
+    "step": "Section {{current}} of {{total}}",
+    "tenStepAttribution": "Method: Helge Stadelmann and Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). The guidance here is independently written; it does not reproduce the authors’ text."
   },
   "builder": {
     "title": "Template blocks",

@@ -250,48 +250,40 @@ describe("review fixes: writing notes in parts", () => {
   });
 });
 
-describe("folding parts away", () => {
-  it("folds a part to its heading, says how many notes it holds, and remembers it for this study", async () => {
+describe("focused study sections", () => {
+  it("shows one section with its notes in Step-by-step, and the complete document in Continuous writing", async () => {
     const { api, studyId } = await emptyStudy();
     const context = api.state.sections.find((s) => s.title === "Context")!;
     await api.findingCreate({ studyId, findingType: "question", content: "Which feast?", sectionId: context.id });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    const toggle = main().getByRole("button", { name: "Context" });
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await user.click(toggle);
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(main().getByRole("textbox", { name: "Context: paragraph", hidden: true })).not.toBeVisible();
-    expect(within(main().getByRole("region", { name: "Context" })).getByText("1 note")).toBeInTheDocument();
+    await user.click(main().getByRole("button", { name: "Step-by-step" }));
+    const nav = within(main().getByRole("navigation", { name: "Study sections" }));
+    await user.selectOptions(nav.getByRole("combobox"), context.id);
+    expect(main().getByRole("region", { name: "Context" })).toBeVisible();
+    expect(main().queryByRole("region", { name: "Meaning" })).toBeNull();
+    expect(main().getByText("Which feast?")).toBeVisible();
+    await user.click(main().getByRole("button", { name: "Continuous writing" }));
+    expect(main().getByRole("region", { name: "Context" })).toBeVisible();
+    expect(main().getByRole("region", { name: "Meaning" })).toBeVisible();
+    expect(api.state.findings.find((finding) => finding.sectionId === context.id)?.content).toBe("Which feast?");
     cleanup();
-    // The app opens again where it was: in this study.
     await renderApp(api);
     await screen.findByRole("textbox", { name: "Study title" });
-    expect(main().getByRole("button", { name: "Context" })).toHaveAttribute("aria-expanded", "false");
-    expect(main().getByRole("button", { name: "Text" })).toHaveAttribute("aria-expanded", "true");
+    expect(main().getByRole("button", { name: "Continuous writing" })).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("folds and unfolds the whole study at once, so it reads as an outline", async () => {
+  it("adds a question in the focused section without changing the other sections", async () => {
     const { api } = await emptyStudy();
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Fold all" }));
-    for (const part of ["Text", "Observations", "Context", "Meaning", "Theology", "Application"]) expect(main().getByRole("button", { name: part })).toHaveAttribute("aria-expanded", "false");
-    await user.click(main().getByRole("button", { name: "Unfold all" }));
-    expect(main().getByRole("button", { name: "Meaning" })).toHaveAttribute("aria-expanded", "true");
-  });
-
-  it("opens a folded part again when something is added to it", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Meaning" }));
-    // Add stays reachable from the heading's part only when open; adding from Fold all + Unfold works too
-    await user.click(main().getByRole("button", { name: "Meaning" }));
+    await user.click(main().getByRole("button", { name: "Step-by-step" }));
+    const meaning = api.state.sections.find((s) => s.title === "Meaning")!;
+    await user.selectOptions(main().getByRole("combobox"), meaning.id);
     await user.click(main().getByRole("button", { name: "Add to Meaning" }));
     await user.click(main().getByRole("button", { name: "Question" }));
-    expect(main().getByRole("button", { name: "Meaning" })).toHaveAttribute("aria-expanded", "true");
     expect(main().getByLabelText("New question")).toBeVisible();
+    expect(main().queryByRole("region", { name: "Context" })).toBeNull();
   });
 });
 

@@ -57,6 +57,10 @@ async function openStudy(user: User) {
 async function openSource(user: User, title: string, first: RegExp) {
   const back = within(sourcesPane()).queryByRole("button", { name: "Back to Sources" });
   if (back) await user.click(back);
+  if (!within(sourcesPane()).queryByRole("button", { name: new RegExp(title) })) {
+    const browse = within(sourcesPane()).queryByText("Other sources");
+    if (browse) await user.click(browse);
+  }
   await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(title) }));
   const reader = await within(sourcesPane()).findByRole("region", { name: title });
   await within(reader).findByText(first);

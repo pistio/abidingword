@@ -139,13 +139,16 @@
     "showFewerLocations": "Mostrar menos",
     "loadingLocations": "Carregando mais lugares…",
     "locationsFailed": "Não foi possível carregar os outros lugares. Tente novamente.",
-    "recent": "Adicionadas recentemente",
-    "openLibrary": "Abrir biblioteca"
+    "recent": "Abertos recentemente",
+    "openLibrary": "Abrir biblioteca",
+    "matchEvidence": "Uma menção é uma referência bíblica escrita no texto. Um título correspondente oferece contexto, mas não comprova que seja um comentário ou uma relação teológica.",
+    "noRecent": "As fontes que você abrir nesta sessão aparecerão aqui.",
+    "otherSources": "Outras fontes"
   },
   "passage": {
     "mentions": "Menciona {{passage}}",
-    "section": "Seção sobre {{passage}}",
-    "within": "Dentro da seção sobre {{passage}}",
+    "section": "O título menciona {{passage}}",
+    "within": "Na seção intitulada {{passage}}",
     "linked": "Vinculado a {{passage}}"
   },
   "citations": {
@@ -582,5 +585,15 @@
     "allCollections": "Todas as coleções",
     "openCollection": "Abrir coleção: {{name}}",
     "backToLibrary": "Voltar à biblioteca"
+  },
+  "pageNav": {
+    "label": "Navegação de páginas PDF",
+    "previous": "Página PDF anterior",
+    "next": "Próxima página PDF",
+    "page": "Página PDF",
+    "total": "de {{total}}",
+    "go": "Ir para a página",
+    "physical": "As páginas PDF são contadas desde o início do arquivo, incluindo a capa. A numeração impressa pode ser diferente.",
+    "printed": "Número de página impresso: {{label}}."
   }
 }

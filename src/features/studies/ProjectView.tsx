@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus } from "lucide-react";
+import { StudyCreationActions } from "./StudyCreationActions";
 import { Button } from "@/design-system/Button";
 import { InfoControl } from "@/design-system/InfoControl";
 import { ProjectExport } from "@/features/portability/ProjectExport";
@@ -14,7 +14,7 @@ import { StudyList } from "./StudyList";
 
 interface ProjectViewProps {
   project: Project;
-  onOpenTeaching?: () => void;
+  onOpenTeaching?: (create?: boolean) => void;
   /** The only project: shown as "Studies", with nothing about projects at all. */
   plain?: boolean;
   /** A way to the project list, for someone who wants to organise (plain view only). */
@@ -34,6 +34,7 @@ export function ProjectView({ project, onOpenTeaching, plain = false, onProjects
   // is put away until it is asked for, and the studies come first.
   const empty = project.studyCount === 0;
   const [asked, setAsked] = useState(false);
+  const form = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
   const putAway = () => {
     setAsked(false);
@@ -55,22 +56,11 @@ export function ProjectView({ project, onOpenTeaching, plain = false, onProjects
         </div>
       )}
 
-      {onOpenTeaching && <Button onClick={onOpenTeaching}>{t("studies.teaching.workspace.title")}</Button>}
-      {empty || asked ? (
-        <NewStudyForm
-          projectId={project.id}
-          autoFocus={asked}
-          onCancel={empty ? undefined : putAway}
-          onCreated={onOpenStudy}
-        />
-      ) : (
-        <div>
-          <Button ref={opener} variant="primary" onClick={() => setAsked(true)}>
-            <Plus className="size-4" aria-hidden="true" />
-            {t("studies.newStudy.formLabel")}
-          </Button>
-        </div>
-      )}
+      <StudyCreationActions studyButtonRef={opener} onStudy={() => { setAsked(true); requestAnimationFrame(() => form.current?.querySelector("input")?.focus()); }} onTeaching={onOpenTeaching ? () => onOpenTeaching(true) : undefined} />
+      <div ref={form}>
+        {(empty || asked) && <NewStudyForm projectId={project.id} autoFocus={asked} onCancel={empty ? undefined : putAway} onCreated={onOpenStudy} />}
+      </div>
+      {onOpenTeaching && <div><Button variant="quiet" onClick={() => onOpenTeaching(false)}>{t("studies.teaching.workspace.sessions")}</Button></div>}
 
       {!empty && (
         <section aria-labelledby="studies-heading" className="flex flex-col gap-3">

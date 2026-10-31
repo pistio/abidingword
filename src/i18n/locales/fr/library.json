@@ -139,13 +139,16 @@
     "showFewerLocations": "Afficher moins",
     "loadingLocations": "Chargement des autres endroits…",
     "locationsFailed": "Les autres endroits n’ont pas pu être chargés. Réessayez.",
-    "recent": "Ajoutées récemment",
-    "openLibrary": "Ouvrir la bibliothèque"
+    "recent": "Ouverts récemment",
+    "openLibrary": "Ouvrir la bibliothèque",
+    "matchEvidence": "Une mention est une référence biblique présente dans le texte. Un titre correspondant donne du contexte, sans prouver qu’il s’agit d’un commentaire ou d’un lien théologique.",
+    "noRecent": "Les sources ouvertes pendant cette session apparaîtront ici.",
+    "otherSources": "Autres sources"
   },
   "passage": {
     "mentions": "Mentionne {{passage}}",
-    "section": "Section sur {{passage}}",
-    "within": "Dans la section sur {{passage}}",
+    "section": "Le titre mentionne {{passage}}",
+    "within": "Dans la partie intitulée {{passage}}",
     "linked": "Lié à {{passage}}"
   },
   "citations": {
@@ -582,5 +585,15 @@
     "allCollections": "Toutes les collections",
     "openCollection": "Ouvrir la collection : {{name}}",
     "backToLibrary": "Retour à la bibliothèque"
+  },
+  "pageNav": {
+    "label": "Navigation des pages PDF",
+    "previous": "Page PDF précédente",
+    "next": "Page PDF suivante",
+    "page": "Page PDF",
+    "total": "sur {{total}}",
+    "go": "Aller à la page",
+    "physical": "Les pages PDF sont comptées depuis le début du fichier, couverture comprise. La pagination imprimée peut différer.",
+    "printed": "Pagination imprimée : {{label}}."
   }
 }

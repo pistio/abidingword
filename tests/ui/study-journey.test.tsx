@@ -148,17 +148,16 @@ describe("the study's movement on screen", () => {
     }
   });
 
-  it("sets the part being worked in apart from the others, and folding still works part by part", async () => {
+  it("marks the focused part and keeps the other parts in the continuous document", async () => {
     const { api } = await withStudy();
     const user = await openStudy(api);
     const theology = within(study()).getByRole("region", { name: "Theology" });
-    await user.click(within(theology).getByRole("button", { name: "Theology" }));
-    // Folded: a folded part is never marked as the one being worked in.
-    expect(within(theology).getByRole("button", { name: "Theology" })).toHaveAttribute("aria-expanded", "false");
-    expect(theology).not.toHaveAttribute("data-active");
-    await user.click(within(theology).getByRole("button", { name: "Theology" }));
+    await user.click(within(theology).getByRole("textbox"));
     expect(theology).toHaveAttribute("data-active", "true");
     expect(within(study()).getByRole("region", { name: "Meaning" })).not.toHaveAttribute("data-active");
+    await user.click(within(study()).getByRole("button", { name: "Step-by-step" }));
+    expect(within(study()).getByRole("region", { name: "Theology" })).toBeVisible();
+    expect(within(study()).queryByRole("region", { name: "Meaning" })).toBeNull();
   });
 
   it("keeps a part as it is while it is moved, even when it then begins its phase", async () => {
