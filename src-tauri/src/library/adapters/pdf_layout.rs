@@ -2263,6 +2263,30 @@ mod tests {
     }
 
     #[test]
+    fn digits_in_the_margin_are_marked_as_margin_numbers() {
+        // "3" ends well left of where the lines' text begins: a verse
+        // number in the margin, not a number in the line.
+        let mut glyphs = g(
+            "Now the serpent was more subtil than any",
+            60.0,
+            100.0,
+            12.0,
+        );
+        glyphs.extend(g("3", 40.0, 118.0, 8.0));
+        glyphs.extend(g(
+            "eat of the fruit of the trees of the garden",
+            60.0,
+            120.0,
+            12.0,
+        ));
+        glyphs.extend(g("touch it, lest ye die.", 60.0, 140.0, 12.0));
+        let p = page(glyphs);
+        let marked = p.lines[1].marked.as_deref().unwrap();
+        assert!(marked.starts_with(&format!("{MARGIN}\u{b3}")), "{marked:?}");
+        assert!(p.lines[0].marked.is_none());
+    }
+
+    #[test]
     fn slanted_glyphs_make_one_styled_line() {
         // Italic made by slanting an upright face: one line, set apart by
         // its style, never one line per glyph.

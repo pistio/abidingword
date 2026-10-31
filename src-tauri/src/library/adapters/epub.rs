@@ -1303,6 +1303,38 @@ mod tests {
     use super::*;
 
     #[test]
+    fn note_callers_and_footnote_sections_are_marked() {
+        use super::super::pdf_layout::{NOTE_CLOSE, NOTE_OPEN};
+        let (found, _) = blocks(
+            "<html><body><p><strong>1</strong> Au commencement, Dieu\
+             <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" epub:type=\"noteref\">1</a> cr\u{e9}a \
+             les cieux.</p><p>A verse with <sup>2</sup> raised and a note<sup>a</sup> letter.</p>\
+             <section class=\"footnotes\"><ol><li id=\"fn1\"><p>Ou \u{ab} dieux \u{bb}.</p></li></ol>\
+             </section><aside epub:type=\"footnote\"><p>Another note.</p></aside>\
+             <p>Text after the notes.</p></body></html>",
+        );
+        assert_eq!(
+            found[0].text,
+            "1 Au commencement, Dieu1 cr\u{e9}a les cieux."
+        );
+        assert_eq!(
+            found[0].marked.as_deref(),
+            Some(
+                format!("1 Au commencement, Dieu{NOTE_OPEN}1{NOTE_CLOSE} cr\u{e9}a les cieux.")
+                    .as_str()
+            )
+        );
+        assert!(!found[0].note);
+        assert_eq!(
+            found[1].marked.as_deref(),
+            Some("A verse with \u{b2} raised and a note\u{e000}a\u{e001} letter.")
+        );
+        assert!(found[2].note && found[2].text == "Ou \u{ab} dieux \u{bb}.");
+        assert!(found[3].note && found[3].text == "Another note.");
+        assert!(!found[4].note && found[4].marked.is_none());
+    }
+
+    #[test]
     fn blocks_follow_headings_and_skip_scripts() {
         let (found, _) = blocks(
             "<html><head><title>x</title><style>p{}</style></head><body>\

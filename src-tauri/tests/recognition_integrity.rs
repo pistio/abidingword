@@ -947,3 +947,116 @@ fn a_styled_heading_after_an_ellipsis_is_not_verified_text() {
         verse(&r, "PHM", 1, 7)
     );
 }
+
+// --- v0.24.4: layouts withheld set C disclosed ---------------------------------------
+
+#[test]
+fn a_verse_number_in_the_margin_is_found_but_neither_boundary_is_verified() {
+    use abiding_word_lib::library::adapters::pdf_layout::MARGIN;
+    // The margin number marks the line the verse begins in, not where.
+    let mut units = philemon(|_, _, _| {});
+    let at = units.iter().position(|u| u.text.starts_with("8 ")).unwrap();
+    units[at].text = format!("{MARGIN}⁸ {}", words("Philemon", 1, 8));
+    let r = recognise(&units);
+    assert!(verse(&r, "PHM", 1, 8).is_some(), "{:?}", errors(&r));
+    assert_eq!(r.unverified.get(&key(7)), Some(&"boundary"));
+    assert_eq!(r.unverified.get(&key(8)), Some(&"boundary"));
+    assert_eq!(r.unverified.get(&key(9)), None);
+}
+
+#[test]
+fn a_letter_spaced_chapter_label_is_a_chapter_heading() {
+    let mut units = vec![line("Philemon", 1)];
+    let mut label = line("C H A P T E R 1", 1);
+    label.styled = true;
+    label.centred = true;
+    units.push(label);
+    for v in 1..=25u16 {
+        units.push(line(&format!("{v} {}", words("Philemon", 1, v)), 1));
+    }
+    let r = recognise(&units);
+    assert!(errors(&r).is_empty(), "{:?}", errors(&r));
+    assert_eq!(verse(&r, "PHM", 1, 25), Some(words("Philemon", 1, 25)));
+}
+
+#[test]
+fn a_stacked_title_is_read_whole_and_a_hyphenated_one_joined() {
+    // "THE SECOND BOOK OF SAMUEL," / "OTHERWISE CALLED," / "THE SECOND BOOK
+    // OF THE KINGS." names Samuel, whatever its last line says.
+    let mut units = vec![
+        line("Invented last words of the book before.", 1),
+        line("THE SECOND BOOK OF SAMUEL,", 2),
+        line("OTHERWISE CALLED,", 2),
+        line("THE SECOND BOOK OF THE KINGS.", 2),
+    ];
+    for v in 1..=27u16 {
+        units.push(line(&format!("{v} {}", words("2 Samuel", 1, v)), 2));
+    }
+    let r = recognise(&units);
+    assert_eq!(
+        r.books.iter().filter_map(|b| b.book).collect::<Vec<_>>(),
+        vec!["2SA"]
+    );
+    assert_eq!(verse(&r, "2SA", 1, 27), Some(words("2 Samuel", 1, 27)));
+    // "LAMENTATIONS OF JEREMI‐" / "AH." is one title.
+    let mut units = vec![
+        line("Invented last words of the book before.", 1),
+        line("LAMENTATIONS OF JEREMI‐", 2),
+        line("AH.", 2),
+    ];
+    for v in 1..=22u16 {
+        units.push(line(&format!("{v} {}", words("Lamentations", 1, v)), 2));
+    }
+    let r = recognise(&units);
+    assert_eq!(
+        r.books.iter().filter_map(|b| b.book).collect::<Vec<_>>(),
+        vec!["LAM"]
+    );
+    assert_eq!(verse(&r, "LAM", 1, 22), Some(words("Lamentations", 1, 22)));
+}
+
+#[test]
+fn a_book_s_name_alone_opening_a_page_mid_verse_is_a_running_head() {
+    let mut units = philemon(|_, _, _| {});
+    let at = units
+        .iter()
+        .position(|u| u.text.starts_with("12 "))
+        .unwrap();
+    // Verse 11 runs over the page break; the new page opens with "Philemon".
+    units[at - 1].text = "11 Invented words of Philemon c1v11".into();
+    units.insert(at, line("Philemon", 3));
+    units.insert(at + 1, line("for testing, the rest of eleven.", 3));
+    for u in units[at + 2..].iter_mut() {
+        u.place.page = Some(3);
+    }
+    let r = recognise(&units);
+    assert!(errors(&r).is_empty(), "{:?}", errors(&r));
+    let eleven = verse(&r, "PHM", 1, 11).unwrap();
+    assert!(!eleven.contains("Philemon for testing"), "{eleven}");
+    assert!(eleven.ends_with("the rest of eleven."), "{eleven}");
+}
+
+#[test]
+fn a_rare_capitalised_word_in_a_label_s_place_is_a_label_where_labels_are_written() {
+    // Labels established twice ("Friends", "Beloved"); "Lover" written once.
+    let mut units = philemon(|_, _, _| {});
+    let set = |units: &mut Vec<Unit>, v: u16, text: &str| {
+        let at = units
+            .iter()
+            .position(|u| u.text.starts_with(&format!("{v} ")))
+            .unwrap();
+        units[at].text = format!("{v} {text}");
+    };
+    set(&mut units, 3, "Invented words. Friends We will be glad.");
+    set(&mut units, 5, "Other words. Friends Eat and drink.");
+    set(&mut units, 7, "More words. Beloved They are right.");
+    set(&mut units, 9, "Final words. Beloved Under the tree.");
+    set(
+        &mut units,
+        12,
+        "Return, return, that we may gaze. Lover Why do you desire?",
+    );
+    let r = recognise(&units);
+    assert_eq!(r.unverified.get(&key(12)), Some(&"possibleHeading"));
+    assert_eq!(r.unverified.get(&key(14)), None);
+}
