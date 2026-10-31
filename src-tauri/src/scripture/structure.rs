@@ -37,7 +37,9 @@
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::OnceLock;
 
-use crate::library::adapters::pdf_layout::{RAISED_CLOSE, RAISED_OPEN};
+use crate::library::adapters::pdf_layout::{
+    MARGIN, NOTE_CLOSE, NOTE_OPEN, RAISED_CLOSE, RAISED_OPEN,
+};
 
 use serde::Serialize;
 
@@ -182,6 +184,7 @@ fn apparatus_kind(reason: &str) -> &'static str {
         "subscription" => "subscription",
         "crossReference" => "crossReference",
         "noteOnly" => "footnote",
+        "noteCaller" => "footnote",
         "notes" => "notes",
         "noBook" => "frontMatter",
         "leftOutBook" => "otherBook",
@@ -606,6 +609,8 @@ fn title_forms(key: &str) -> Vec<String> {
         "general",
         "saint",
         "st",
+        // ("S. MATTHEW", the King James Version's titles.)
+        "s",
         "heiligen",
         "sankt",
         // French
@@ -1315,6 +1320,20 @@ fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Headi
     }
     let lower = key(text);
     let words: Vec<&str> = lower.split(' ').collect();
+    // A chapter's label set with letter-spacing that broke its word ("C A PÍ
+    // TU LO 20", v0.24.4): the pieces before the number, joined, are the word.
+    if words.len() >= 3 {
+        let joined: String = words[..words.len() - 1].concat();
+        if words[..words.len() - 1]
+            .iter()
+            .all(|w| w.chars().all(char::is_alphabetic))
+            && CHAPTER_WORDS.contains(&joined.as_str())
+        {
+            if let Some(n) = text.split_whitespace().last().and_then(chapter_number) {
+                return Some(Heading::Chapter(n));
+            }
+        }
+    }
     // "Psaume 118 (Vulg. CXVII)": a chapter's label with another numbering
     // in brackets after it (v0.24.3).
     if let Some((head, _)) = text.strip_suffix(')').and_then(|t| t.rsplit_once('(')) {
@@ -1446,6 +1465,10 @@ struct Marker {
     against_word: bool,
     /// Set as a superscript (raised digits).
     raised: bool,
+    /// Set in the margin, left of the line's text (v0.24.4): the verse
+    /// begins somewhere in the line, not known where; neither boundary
+    /// is verified.
+    margin: bool,
 }
 
 /// Punctuation a verse can end with, before the next verse's number.
@@ -1665,6 +1688,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             joined: false,
             against_word: false,
             raised: false,
+            margin: false,
         }));
         from = taken;
     }
@@ -1710,7 +1734,13 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                 return None;
             }
             // What comes before: nothing (the start), a space, punctuation, or a word.
-            let before = &text[..at];
+            // (The margin mark before raised digits is not text.)
+            let margin = raised && text[..at].ends_with(MARGIN);
+            let before = if margin {
+                &text[..at - MARGIN.len_utf8()]
+            } else {
+                &text[..at]
+            };
             let prev = before.chars().last();
             let opened = prev.is_some_and(|p| matches!(p, '(' | '['));
             let prev_solid = before.trim_end().chars().last();
@@ -1919,6 +1949,7 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
                     raw: String::new(),
                     against_word: raised_after_word,
                     raised,
+                    margin,
                     glued: chars.get(k).is_some_and(|(_, c)| !c.is_whitespace()),
                     joined: !at_start && {
                         let lead = if opened {
@@ -1986,7 +2017,7 @@ struct Item {
 
 /// Lines repeated at the top or bottom of most pages (running heads, page
 /// numbers): the unit indices to take out.
-fn page_furniture(units: &[Unit]) -> HashSet<usize> {
+fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSet<usize> {
     let mut out = HashSet::new();
     // Units by (document, page), in order.
     let mut pages: BTreeMap<(u16, u32), Vec<usize>> = BTreeMap::new();
@@ -2056,6 +2087,42 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
         })
         .count();
     let reference_pages = reference_heads >= needed;
+    // A page's first line that is a book's name alone, not large, where the
+    // page goes on with running text (the next line begins in lower case or
+    // with a verse number other than 1): a running head, however few pages
+    // the book fills ("Habakkuk" over its two pages, v0.24.4). A title opens
+    // its chapter 1 instead.
+    for lines in pages.values() {
+        let Some(&first) = lines.first() else {
+            continue;
+        };
+        let u = &units[first];
+        let text = clean(&u.text);
+        let text = text.trim();
+        if u.large || u.heading || text.split_whitespace().count() > 4 {
+            continue;
+        }
+        let names_book = book_named(text, language).is_some()
+            && read_heading(text, language).is_some_and(|h| matches!(h, Heading::Book(_)));
+        if !names_book {
+            continue;
+        }
+        let Some(&next) = lines.get(1) else {
+            continue;
+        };
+        let after = unmark_raised(&clean(&units[next].text));
+        let after = after.trim_start();
+        let goes_on = after.chars().next().is_some_and(char::is_lowercase)
+            || (after
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_digit() || superscript_digit(c).is_some())
+                && !after.starts_with('1')
+                && !after.starts_with('¹'));
+        if goes_on {
+            out.insert(first);
+        }
+    }
     // A line the layout sets at a page's edge, not large, with the same
     // wording on three pages or more ("GÉNESIS" over each page of Genesis):
     // a running head, however few of the document's pages it runs through
@@ -2478,6 +2545,9 @@ fn is_sign(c: char) -> bool {
             || c.is_control()
             || c == RAISED_OPEN
             || c == RAISED_CLOSE
+            || c == NOTE_OPEN
+            || c == NOTE_CLOSE
+            || c == MARGIN
             || ".,;:!?'\"()[]«»„“”‘’-–—/…".contains(c))
 }
 
@@ -2563,9 +2633,44 @@ fn note_letters_in(text: &str) -> Vec<NoteLetter> {
 
 /// A text with its raised-letter marks taken off (the letters kept).
 fn unmark_raised(text: &str) -> String {
-    text.chars()
-        .filter(|c| *c != RAISED_OPEN && *c != RAISED_CLOSE)
-        .collect()
+    let mut out = String::with_capacity(text.len());
+    let mut in_note = false;
+    for c in text.chars() {
+        match c {
+            RAISED_OPEN | RAISED_CLOSE | MARGIN => {}
+            // A note's caller the document declares: no text at all.
+            NOTE_OPEN => in_note = true,
+            NOTE_CLOSE => in_note = false,
+            _ if in_note => {}
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
+/// The verse's words with the note callers the document itself declares
+/// (`NOTE_OPEN` … `NOTE_CLOSE`) taken out, and those callers (v0.24.4).
+fn without_declared_callers(text: &str) -> (String, Vec<String>) {
+    let mut out = String::with_capacity(text.len());
+    let mut callers = Vec::new();
+    let mut current: Option<String> = None;
+    for c in text.chars() {
+        match c {
+            NOTE_OPEN => current = Some(String::new()),
+            NOTE_CLOSE => {
+                if let Some(label) = current.take() {
+                    if !label.trim().is_empty() {
+                        callers.push(label.trim().to_string());
+                    }
+                }
+            }
+            _ => match current.as_mut() {
+                Some(label) => label.push(c),
+                None => out.push(c),
+            },
+        }
+    }
+    (out, callers)
 }
 
 /// Verse words with raised letters: those in `known` (note references) taken
@@ -3249,8 +3354,12 @@ impl Builder<'_> {
         let mut taken = 0;
         while taken < 3 && taken < n {
             let item = &self.items[n - 1 - taken];
-            let Event::Text(line) = &item.event else {
-                break;
+            // (A line set apart as a heading too: "FIRST BOOK OF SAMUEL," set
+            // large over "OTHERWISE CALLED," and the name, v0.24.4.)
+            let line = match &item.event {
+                Event::Text(line) => line,
+                Event::Other { notes: false, text } => text,
+                _ => break,
             };
             let whole = clean(&self.units[item.unit].text).trim() == line.trim();
             let alone = n - 1 - taken == 0 || self.items[n - 2 - taken].unit != item.unit;
@@ -3276,7 +3385,9 @@ impl Builder<'_> {
             .iter()
             .filter_map(|i| match &i.event {
                 // Never with the raised-letter marks: this is a title.
-                Event::Text(t) => Some(unmark_raised(t.trim()).trim().to_string()),
+                Event::Text(t) | Event::Other { text: t, .. } => {
+                    Some(unmark_raised(t.trim()).trim().to_string())
+                }
                 _ => None,
             })
             .collect();
@@ -3429,9 +3540,12 @@ impl Builder<'_> {
                     .iter()
                     .any(|w| k.ends_with(&format!(" {w}")))
             };
+            // (A title hyphenated over two lines, "LAMENTATIONS OF JEREMI‐" /
+            // "AH.", is one title, v0.24.4.)
+            let hyphen = text.ends_with(['-', '‐']);
             if !unit.heading
-                && (dangling || read_heading(text, self.language).is_none())
-                && book_line_shape(text)
+                && (dangling || hyphen || read_heading(text, self.language).is_none())
+                && book_line_shape(text.trim_end_matches(['-', '‐']))
             {
                 if let Some(next) = (index + 1..self.units.len())
                     .find(|i| !skip.contains(i) && !clean(&self.units[*i].text).trim().is_empty())
@@ -3439,7 +3553,11 @@ impl Builder<'_> {
                     let second = unmark_raised(&clean(&self.units[next].text));
                     let second = second.trim();
                     let same_page = self.units[next].place.page == unit.place.page;
-                    let both = format!("{text} {second}");
+                    let both = if hyphen {
+                        format!("{}{second}", text.trim_end_matches(['-', '‐']))
+                    } else {
+                        format!("{text} {second}")
+                    };
                     // The second line may begin in lower case ("the Corinthians").
                     // (Never a number alone: "Jó" over its chapter's "1" is not "Jó 1".)
                     let second_ok = second.chars().count() <= 60
@@ -3593,6 +3711,15 @@ impl Builder<'_> {
                                 Some(start) => format!("{start} {text}"),
                                 None => text.to_string(),
                             };
+                            // The whole title decides the book: "The First
+                            // Book of Samuel, Otherwise Called, The First
+                            // Book of the Kings" is Samuel, whatever its last
+                            // line names (v0.24.4).
+                            let book = if title == text {
+                                book
+                            } else {
+                                book_named(&title, self.language).unwrap_or(book)
+                            };
                             let entry = self.book_entry(&title, book, index);
                             self.push(
                                 Event::Book {
@@ -3618,14 +3745,53 @@ impl Builder<'_> {
                             if n == 1 {
                                 if let Some((title, at)) = self.untitled_book() {
                                     self.items.pop();
-                                    let entry = self.found_book(&title, None, at);
-                                    self.push(
-                                        Event::Book {
-                                            entry,
-                                            chapter: None,
-                                        },
-                                        at,
-                                    );
+                                    // The lines stacked over it may complete the
+                                    // title ("THE FIRST BOOK OF THE" / "CHRONICLES.",
+                                    // "ECCLESIASTES;" / "OR," / "THE PREACHER."), or
+                                    // it may complete the title of a book just
+                                    // opened ("THE ACTS OF THE" / "APOSTLES."),
+                                    // v0.24.4.
+                                    let joined = match self.title_start(false) {
+                                        Some(start) => format!("{start} {title}"),
+                                        None => title.clone(),
+                                    };
+                                    let completes = match self.items.last() {
+                                        Some(Item {
+                                            event:
+                                                Event::Book {
+                                                    entry,
+                                                    chapter: None,
+                                                },
+                                            ..
+                                        }) => {
+                                            let entry = *entry;
+                                            let whole =
+                                                format!("{} {joined}", self.books[entry].heading);
+                                            (self.books[entry].verses == 0
+                                                && self.books[entry].detected.is_some()
+                                                && book_named(&whole, self.language)
+                                                    .map(|b| b.code)
+                                                    == self.books[entry].detected)
+                                                .then_some((entry, whole))
+                                        }
+                                        _ => None,
+                                    };
+                                    if let Some((entry, whole)) = completes {
+                                        self.books[entry].heading = whole;
+                                    } else {
+                                        let named = book_named(&joined, self.language);
+                                        let entry = match named {
+                                            Some(book) => self.book_entry(&joined, book, at),
+                                            None => self.found_book(&joined, None, at),
+                                        };
+                                        self.push(
+                                            Event::Book {
+                                                entry,
+                                                chapter: None,
+                                            },
+                                            at,
+                                        );
+                                    }
                                 }
                             }
                             self.push(Event::Chapter(n), index);
@@ -4227,9 +4393,17 @@ fn block_starts(units: &[Unit], skip: &HashSet<usize>) -> HashSet<usize> {
 fn inline_labels(units: &[Unit]) -> HashSet<String> {
     let mut label: HashMap<String, Vec<usize>> = HashMap::new();
     let mut sentence: HashMap<String, Vec<usize>> = HashMap::new();
+    // How often each capitalised word occurs anywhere (v0.24.4).
+    let mut total: HashMap<String, usize> = HashMap::new();
     for (i, unit) in units.iter().enumerate() {
         let text = clean(&unit.text);
         let words: Vec<&str> = text.split_whitespace().collect();
+        for w in &words {
+            let word = w.trim_matches(|c: char| !c.is_alphabetic());
+            if word.chars().next().is_some_and(char::is_uppercase) {
+                *total.entry(word.to_string()).or_default() += 1;
+            }
+        }
         for w in words.windows(3) {
             // (After a sentence's end, or a verse's number: "SOL 1:2 Beloved
             // Let him kiss me".)
@@ -4256,17 +4430,34 @@ fn inline_labels(units: &[Unit]) -> HashSet<String> {
             }
         }
     }
-    label
-        .into_iter()
+    let established: HashSet<String> = label
+        .iter()
         .filter(|(w, at)| {
             let (first, last) = (at[0], at[at.len() - 1]);
             at.len() >= 2
                 && !sentence
-                    .get(w)
+                    .get(*w)
                     .is_some_and(|s| s.iter().any(|i| (first..=last).contains(i)))
         })
-        .map(|(w, _)| w)
-        .collect()
+        .map(|(w, _)| w.clone())
+        .collect();
+    if established.is_empty() {
+        return established;
+    }
+    // Where a document writes such labels, a capitalised word in a label's
+    // place that is rare in the whole document (twice at most) and never
+    // begins a sentence is a label too ("… you. Lover Why do you …", a
+    // speaker named once), v0.24.4.
+    let rare: Vec<String> = label
+        .iter()
+        .filter(|(w, _)| {
+            !established.contains(*w)
+                && total.get(*w).copied().unwrap_or(0) <= 2
+                && !sentence.contains_key(*w)
+        })
+        .map(|(w, _)| w.clone())
+        .collect();
+    established.into_iter().chain(rare).collect()
 }
 
 /// Runs of three or more lines that are nothing but consecutive numbers
@@ -4911,6 +5102,26 @@ impl Reader<'_> {
                 .chars()
                 .find(|c| c.is_alphabetic())
                 .is_some_and(char::is_uppercase)
+        {
+            return true;
+        }
+        // A short line, flush left, that is a sentence of its own after a
+        // full line ended one ("… Jotham ward König an seiner Statt." /
+        // "Sacharja, König von Israel."): a heading in the body's type that
+        // ends with a full stop, or a short last sentence of the verse —
+        // not known without a typeface the file records (v0.24.4). As the
+        // verse's last line, not verified.
+        if open.last_unit != unit
+            && u.short
+            && !u.indented
+            && !open.last_short
+            && ends_as_sentence(&open.text)
+            && ends_as_sentence(line)
+            && line
+                .chars()
+                .find(|c| c.is_alphabetic())
+                .is_some_and(char::is_uppercase)
+            && line.split_whitespace().count() <= 8
         {
             return true;
         }
@@ -5581,7 +5792,7 @@ impl Reader<'_> {
                         .chars()
                         .all(|c| c.is_ascii_digit() || c.is_whitespace() || matches!(c, '-' | '–'))
             };
-            let doubt = m.against_word || alone;
+            let doubt = m.against_word || alone || m.margin;
             if doubt {
                 self.doubt_boundary();
             }
@@ -5895,6 +6106,19 @@ impl Reader<'_> {
         // out where a note on the page shows them to be its references; else
         // kept as written — and then the chapter is not used. Outside a verse
         // they are plain text.
+        // Note callers the document itself declares (v0.24.4): never verse
+        // text, kept as apparatus with the verse they stand in.
+        let stripped;
+        let words = if words.contains(NOTE_OPEN) {
+            let (text, callers) = without_declared_callers(words);
+            for caller in callers {
+                self.leave_out(&caller, unit, "noteCaller");
+            }
+            stripped = text;
+            stripped.as_str()
+        } else {
+            words
+        };
         let resolved;
         let words = if words.contains(RAISED_OPEN) {
             resolved = match self.open.as_ref() {
@@ -6522,7 +6746,7 @@ fn recognise_in(
     language: Option<ReferenceLanguage>,
     corrections: &Corrections,
 ) -> Recognition {
-    let mut furniture = page_furniture(units);
+    let mut furniture = page_furniture(units, language);
     let mut footnotes = page_footnotes(units);
     // Notes known from the page's layout (smaller text below the running text).
     footnotes.extend(
@@ -6905,6 +7129,21 @@ mod tests {
             Some("2KI")
         );
         assert_eq!(code("INCIPIT LIBER HIEZECHIELIS PROPHETÆ", la), Some("EZK"));
+        let en = ReferenceLanguage::from_label("en");
+        assert_eq!(
+            code(
+                "THE FIRST BOOK OF SAMUEL, OTHERWISE CALLED, THE FIRST BOOK OF THE KINGS.",
+                en
+            ),
+            Some("1SA")
+        );
+        assert_eq!(
+            code(
+                "THE FIRST BOOK OF THE KINGS, COMMONLY CALLED, THE THIRD BOOK OF THE KINGS.",
+                en
+            ),
+            Some("1KI")
+        );
         assert_eq!(code("INCIPIT LIBER ACTUUM APOSTOLORUM", la), Some("ACT"));
         assert_eq!(code("INCIPIT LIBER DABREIAMIN", la), Some("1CH"));
         // Only for Latin; and never "Regum primus" alone (1 Samuel in the

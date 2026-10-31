@@ -251,7 +251,13 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
             let section_path = (!names.is_empty()).then(|| names.join(" › "));
             let heading = headings.iter().rev().flatten().next().cloned();
             let mut cursor = 0usize;
-            for part in split_long(&block.text, MAX_SEGMENT) {
+            let parts = split_long(&block.text, MAX_SEGMENT);
+            let mut marked = block
+                .marked
+                .as_deref()
+                .and_then(|m| super::split_like(m, &parts))
+                .map(Vec::into_iter);
+            for part in parts {
                 // Where this segment sits in the block, to place the block's links in it.
                 let at = block.text[cursor..]
                     .find(part.as_str())
@@ -274,11 +280,13 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
                     }
                 }
                 segments.push(NewSegment {
+                    marked: marked.as_mut().and_then(Iterator::next),
                     text: part,
                     chapter: chapter.clone(),
                     heading: heading.clone(),
                     section_path: section_path.clone().or_else(|| chapter.clone()),
                     paragraph_index: Some(paragraph),
+                    note: block.note,
                     styled: block.classes.iter().any(|c| emphasised.contains(c)),
                     ..Default::default()
                 });
@@ -529,6 +537,12 @@ pub(super) fn percent_decode(value: &str) -> String {
 
 struct Block {
     text: String,
+    /// The text with note callers and superscripts marked for the verse
+    /// recogniser (`NewSegment::marked`), when it has any (v0.24.4).
+    marked: Option<String>,
+    /// Inside the document's notes (`epub:type="footnote"`, a footnotes
+    /// section): never verse text.
+    note: bool,
     heading_level: Option<usize>,
     /// The class names of the element the block is (`class="s"`).
     classes: Vec<String>,
@@ -553,14 +567,44 @@ struct OpenLink {
 #[derive(Default)]
 struct Acc {
     text: String,
+    /// `text` with note callers and superscripts marked (v0.24.4).
+    marked: String,
+    any_marked: bool,
     chars: usize,
     pending_space: bool,
     links: Vec<RawLink>,
     open: Option<OpenLink>,
 }
 
+/// How a piece of inline text is marked for the verse recogniser.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Mark {
+    Plain,
+    /// `<sup>`: digits as superscript digits, a short lowercase label as a
+    /// raised label.
+    Superscript,
+    /// A link the document declares a note's caller (`epub:type="noteref"`).
+    NoteRef,
+}
+
 impl Acc {
     fn push_str(&mut self, piece: &str) {
+        self.push_marked(piece, Mark::Plain);
+    }
+
+    fn push_marked(&mut self, piece: &str, mark: Mark) {
+        use super::pdf_layout::{superscript, NOTE_CLOSE, NOTE_OPEN, RAISED_CLOSE, RAISED_OPEN};
+        let trimmed = piece.trim();
+        let short_label =
+            (1..=3).contains(&trimmed.chars().count()) && trimmed.chars().all(char::is_lowercase);
+        let digits = !trimmed.is_empty() && trimmed.chars().all(|c| c.is_ascii_digit());
+        let (open, close) = match mark {
+            Mark::NoteRef if !trimmed.is_empty() => (Some(NOTE_OPEN), Some(NOTE_CLOSE)),
+            Mark::Superscript if short_label => (Some(RAISED_OPEN), Some(RAISED_CLOSE)),
+            _ => (None, None),
+        };
+        let raise_digits = mark == Mark::Superscript && digits;
+        let mut opened = false;
         for ch in piece.chars() {
             if ch.is_whitespace() {
                 self.pending_space = true;
@@ -568,14 +612,33 @@ impl Acc {
             }
             if self.pending_space && self.chars > 0 {
                 self.text.push(' ');
+                self.marked.push(' ');
                 self.chars += 1;
             }
             self.pending_space = false;
             if let Some(open) = self.open.as_mut() {
                 open.start.get_or_insert(self.chars);
             }
+            if !opened {
+                if let Some(o) = open {
+                    self.marked.push(o);
+                    self.any_marked = true;
+                }
+                opened = true;
+            }
             self.text.push(ch);
+            if raise_digits {
+                self.marked.push_str(&superscript(&ch.to_string()));
+                self.any_marked = true;
+            } else {
+                self.marked.push(ch);
+            }
             self.chars += 1;
+        }
+        if opened {
+            if let Some(c) = close {
+                self.marked.push(c);
+            }
         }
     }
 
@@ -597,13 +660,16 @@ impl Acc {
     }
 
     /// The finished block's text and links. A link still open carries on into the next block.
-    fn take(&mut self) -> (String, Vec<RawLink>) {
+    fn take(&mut self) -> (String, Option<String>, Vec<RawLink>) {
         let carry = self.open.as_ref().map(|o| o.href.clone());
         self.close_link();
+        let marked = std::mem::take(&mut self.marked);
         let out = (
             std::mem::take(&mut self.text),
+            self.any_marked.then_some(marked),
             std::mem::take(&mut self.links),
         );
+        self.any_marked = false;
         self.chars = 0;
         self.pending_space = false;
         self.open = carry.map(|href| OpenLink { href, start: None });
@@ -623,18 +689,30 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
     let mut heading: Option<usize> = None;
     let mut skip_depth = 0usize;
     let mut classes: Vec<String> = Vec::new();
-    let flush =
-        |out: &mut Vec<Block>, acc: &mut Acc, heading: Option<usize>, classes: &[String]| {
-            let (text, links) = acc.take();
-            if !text.is_empty() {
-                out.push(Block {
-                    text,
-                    heading_level: heading,
-                    classes: classes.to_vec(),
-                    links,
-                });
-            }
-        };
+    // Inline marks (v0.24.4): `<sup>` depth, and whether the open link is
+    // a declared note caller. Block marks: the elements that hold the
+    // document's notes, by depth.
+    let mut sup_depth = 0usize;
+    let mut noteref = false;
+    let mut depth = 0usize;
+    let mut note_depths: Vec<usize> = Vec::new();
+    let flush = |out: &mut Vec<Block>,
+                 acc: &mut Acc,
+                 heading: Option<usize>,
+                 classes: &[String],
+                 note: bool| {
+        let (text, marked, links) = acc.take();
+        if !text.is_empty() {
+            out.push(Block {
+                text,
+                marked,
+                note,
+                heading_level: heading,
+                classes: classes.to_vec(),
+                links,
+            });
+        }
+    };
     let class_of = |e: &quick_xml::events::BytesStart| -> Vec<String> {
         attr_value(e, "class")
             .map(|c| c.split_whitespace().map(str::to_string).collect())
@@ -643,61 +721,146 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
     loop {
         match reader.read_event() {
             Ok(Event::Start(e)) => {
+                depth += 1;
                 let name = local_name(e.name().as_ref()).to_ascii_lowercase();
+                let in_notes = !note_depths.is_empty();
+                if notes_element(&e) {
+                    note_depths.push(depth);
+                }
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth += 1,
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading, &classes);
+                        flush(&mut out, &mut acc, heading, &classes, in_notes);
                         heading = Some((name.as_bytes()[1] - b'0') as usize);
                         classes = class_of(&e);
                     }
-                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr" => {
-                        flush(&mut out, &mut acc, heading, &classes);
+                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr"
+                    | "aside" => {
+                        flush(&mut out, &mut acc, heading, &classes, in_notes);
                         classes = class_of(&e);
                     }
                     "a" if skip_depth == 0 => {
                         if let Some(href) = attr_value(&e, "href") {
                             acc.open_link(href);
                         }
+                        noteref = noteref_element(&e);
                     }
+                    "sup" => sup_depth += 1,
                     _ => {}
                 }
                 note_anchor(&e, out.len(), &mut anchors);
             }
             Ok(Event::End(e)) => {
                 let name = local_name(e.name().as_ref()).to_ascii_lowercase();
+                let in_notes = !note_depths.is_empty();
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth = skip_depth.saturating_sub(1),
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading, &classes);
+                        flush(&mut out, &mut acc, heading, &classes, in_notes);
                         heading = None;
                         classes.clear();
                     }
-                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr" => {
-                        flush(&mut out, &mut acc, heading, &classes);
+                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr"
+                    | "aside" => {
+                        flush(&mut out, &mut acc, heading, &classes, in_notes);
                         classes.clear();
                     }
-                    "a" => acc.close_link(),
+                    "a" => {
+                        acc.close_link();
+                        noteref = false;
+                    }
+                    "sup" => sup_depth = sup_depth.saturating_sub(1),
                     _ => {}
                 }
+                if note_depths.last() == Some(&depth) {
+                    note_depths.pop();
+                }
+                depth = depth.saturating_sub(1);
             }
             Ok(Event::Empty(e)) if local_name(e.name().as_ref()).eq_ignore_ascii_case("br") => {
                 acc.push_str(" ")
             }
             Ok(Event::Empty(e)) => note_anchor(&e, out.len(), &mut anchors),
             // Entities arrive separately (GeneralRef), so text is used as is.
-            Ok(Event::Text(t)) if skip_depth == 0 => acc.push_str(&t),
-            Ok(Event::CData(t)) if skip_depth == 0 => acc.push_str(&t),
-            Ok(Event::GeneralRef(r)) if skip_depth == 0 => {
-                acc.push_str(&unescape(&format!("&{};", &*r)))
+            Ok(Event::Text(t)) if skip_depth == 0 => {
+                acc.push_marked(&t, mark_of(noteref, sup_depth))
             }
+            Ok(Event::CData(t)) if skip_depth == 0 => {
+                acc.push_marked(&t, mark_of(noteref, sup_depth))
+            }
+            Ok(Event::GeneralRef(r)) if skip_depth == 0 => acc.push_marked(
+                &unescape(&format!("&{};", &*r)),
+                mark_of(noteref, sup_depth),
+            ),
             Ok(Event::Eof) => break,
             Err(_) => break,
             _ => {}
         }
     }
-    flush(&mut out, &mut acc, heading, &classes);
+    flush(
+        &mut out,
+        &mut acc,
+        heading,
+        &classes,
+        !note_depths.is_empty(),
+    );
     (out, anchors)
+}
+
+fn mark_of(noteref: bool, sup_depth: usize) -> Mark {
+    if noteref {
+        Mark::NoteRef
+    } else if sup_depth > 0 {
+        Mark::Superscript
+    } else {
+        Mark::Plain
+    }
+}
+
+/// The `epub:type` and `role` values of an element, lower-cased, with its
+/// classes.
+fn semantic_values(e: &quick_xml::events::BytesStart) -> Vec<String> {
+    let mut out = Vec::new();
+    for a in e.attributes().flatten() {
+        let key = local_name(a.key.as_ref()).to_ascii_lowercase();
+        if key == "type" || key == "role" || key == "class" {
+            let value = a.value.to_ascii_lowercase();
+            out.extend(value.split_whitespace().map(str::to_string));
+        }
+    }
+    out
+}
+
+/// Whether a link is one the document declares a note's caller
+/// (`epub:type="noteref"`, `role="doc-noteref"`, pandoc's `footnote-ref`).
+fn noteref_element(e: &quick_xml::events::BytesStart) -> bool {
+    semantic_values(e).iter().any(|v| {
+        matches!(
+            v.as_str(),
+            "noteref" | "doc-noteref" | "footnote-ref" | "footnoteref"
+        )
+    })
+}
+
+/// Whether an element holds the document's notes (`epub:type="footnote"`,
+/// `"footnotes"`, `"endnote(s)"`, `"rearnote(s)"`, `role="doc-footnote"`,
+/// `"doc-endnotes"`, pandoc's `class="footnotes"`).
+fn notes_element(e: &quick_xml::events::BytesStart) -> bool {
+    semantic_values(e).iter().any(|v| {
+        matches!(
+            v.as_str(),
+            "footnote"
+                | "footnotes"
+                | "endnote"
+                | "endnotes"
+                | "rearnote"
+                | "rearnotes"
+                | "doc-footnote"
+                | "doc-endnote"
+                | "doc-endnotes"
+                | "doc-footnotes"
+        )
+    })
 }
 
 /// The classes a book's stylesheets set apart: bold, italic, centred or

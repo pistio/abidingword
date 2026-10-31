@@ -211,7 +211,16 @@ pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
     // (The marks around raised letters, `pdf_layout::RAISED_OPEN` and
     // `RAISED_CLOSE`, stand in the marked text only: they are not counted,
     // and a part keeps the mark that closes its last letters.)
-    let mark = |c: char| c == pdf_layout::RAISED_OPEN || c == pdf_layout::RAISED_CLOSE;
+    let mark = |c: char| {
+        matches!(
+            c,
+            pdf_layout::RAISED_OPEN
+                | pdf_layout::RAISED_CLOSE
+                | pdf_layout::NOTE_OPEN
+                | pdf_layout::NOTE_CLOSE
+                | pdf_layout::MARGIN
+        )
+    };
     let chars: Vec<char> = other.chars().collect();
     let mut at = 0usize;
     let mut out = Vec::with_capacity(parts.len());
@@ -229,7 +238,10 @@ pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
             }
             at += 1;
         }
-        if chars.get(at) == Some(&pdf_layout::RAISED_CLOSE) {
+        if matches!(
+            chars.get(at),
+            Some(&pdf_layout::RAISED_CLOSE) | Some(&pdf_layout::NOTE_CLOSE)
+        ) {
             at += 1;
         }
         out.push(chars[start..at].iter().collect());

@@ -135,6 +135,15 @@ pub struct Line {
 /// never in a document's text).
 pub const RAISED_OPEN: char = '\u{E000}';
 pub const RAISED_CLOSE: char = '\u{E001}';
+/// A note's caller the document itself declares as one (an EPUB
+/// `epub:type="noteref"` link): the text between the marks is a note's
+/// reference, never verse text (v0.24.4).
+pub const NOTE_OPEN: char = '\u{E002}';
+pub const NOTE_CLOSE: char = '\u{E003}';
+/// Before raised digits that stand in the margin, left of the column's text
+/// ("³ eat of the fruit …", the verse beginning somewhere in the line): a
+/// verse number whose place in the line is not known (v0.24.4).
+pub const MARGIN: char = '\u{E004}';
 
 /// One or two lower-case letters set smaller and raised above the line's
 /// baseline: a note's or cross-reference's letter.
@@ -711,8 +720,25 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
     }
     let mut out = Vec::new();
     let mut previous: Option<(f64, f64)> = None; // baseline, size
-    for mut group in groups {
+    for group in groups.iter_mut() {
         group.sort_by(|a, b| a.x0.partial_cmp(&b.x0).unwrap_or(Ordering::Equal));
+    }
+    // The left edge of the column's text: where lines that do not begin
+    // with digits begin (v0.24.4). Digits ending well before it are set in
+    // the margin.
+    let body_left = groups
+        .iter()
+        .filter_map(|g| g.first())
+        .filter(|s| {
+            !s.text
+                .trim()
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_digit())
+        })
+        .map(|s| s.x0)
+        .fold(f64::INFINITY, f64::min);
+    for group in groups {
         let y = main_baseline(&group);
         // The line's size is its main text's (most characters), not that of
         // a larger chapter number or initial beside it.
@@ -734,7 +760,7 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
         let mut any_raised = false;
         let mut end: Option<(f64, f64)> = None;
         let main = main_span(&group);
-        for s in &group {
+        for (k, s) in group.iter().enumerate() {
             if let Some((x1, sz)) = end {
                 if s.x0 - x1 > 0.18 * sz.min(s.size) && !text.ends_with(' ') {
                     text.push(' ');
@@ -742,11 +768,25 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
                 }
             }
             text.push_str(&s.text);
+            // The line's first span, digits alone, ending left of the
+            // column's text: a verse number in the margin.
+            let in_margin = k == 0
+                && body_left.is_finite()
+                && s.x1 < body_left - 0.3 * s.size
+                && s.text.trim().chars().all(|c| c.is_ascii_digit())
+                && !s.text.trim().is_empty()
+                && group
+                    .get(1)
+                    .is_some_and(|n| n.x0 >= body_left - 0.3 * s.size);
             if main.is_some_and(|m| raised_letters(s, m)) {
                 any_raised = true;
                 marked.push(RAISED_OPEN);
                 marked.push_str(&s.text);
                 marked.push(RAISED_CLOSE);
+            } else if in_margin {
+                any_raised = true;
+                marked.push(MARGIN);
+                marked.push_str(&superscript(&s.text));
             } else if main.is_some_and(|m| !std::ptr::eq(*s, m) && raised_digits(s, m)) {
                 any_raised = true;
                 marked.push_str(&superscript(&s.text));
