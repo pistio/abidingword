@@ -38,7 +38,7 @@ Screenshots identified the 18-pixel section selector and an overflowing Teaching
 
 ## Delivery
 
-Implementation commit: `6b0d9a16fb6f7b9f239446cdb4c4c1f141b05f8d`. The following documentation commit records this report, screenshots and raw [check logs](checks/). Both delivery commits use `[skip ci]` to avoid remote workflow execution. Owner review is the stopping boundary.
+Implementation commit: `6b0d9a16fb6f7b9f239446cdb4c4c1f141b05f8d`. The following documentation commit records this report, screenshots and captured [check logs](checks/). Delivery commits use `[skip ci]` to avoid remote workflow execution. Owner review is the stopping boundary.
 
 
 Draft PR creation was attempted after pushing the implementation, using:
@@ -50,3 +50,5 @@ gh pr create --repo pistio/abidingword --base feature/windows-ux-milestone-a-rev
 Result: `Post "https://api.github.com/graphql": Forbidden`. No PR was created. The running managed environment has no custom allowed hosts and its effective host list omits `api.github.com`. The saved onboarding configuration draft already includes that host, but the running policy has not applied it. Git fetch/push to `github.com` succeeds. No credentials or TLS settings were changed.
 
 The exact [prepared PR body](draft-pr.md) and [branch comparison](https://github.com/pistio/abidingword/compare/feature/windows-ux-milestone-a-review...fix/windows-milestone-a1?expand=1) make the correction reviewable while GitHub API access is unavailable. Create it as a **draft**, targeting the Milestone A feature branch; do not retarget it to `main`. The API restriction is a remaining delivery blocker, not a passing PR result.
+
+Captured logs preserve the check output with trailing whitespace and extra blank end lines removed for repository formatting.
