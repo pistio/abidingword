@@ -1591,7 +1591,7 @@
     "noTemplate": "Keine Vorlage (ein Teil „Notizen“)",
     "yourTemplate": "{{name}} (eigene)",
     "optional": "(optional)",
-    "passagePlaceholder": "z. B. Johannes 15,1-11",
+    "passagePlaceholder": "z. B. Johannes 5,1–18 oder Römer 8",
     "create": "Bibelstudium erstellen",
     "formLabel": "Neues Bibelstudium",
     "studyAs": "Art des Studiums",
@@ -1618,7 +1618,17 @@
       "character": "Biblische Personenstudie",
       "book": "Bibelbuchstudium"
     },
-    "startsWith": "Beginnt mit: {{parts}}."
+    "startsWith": "Beginnt mit: {{parts}}.",
+    "subjectLabel": {
+      "passage": "Bibelstelle",
+      "word": "Wort oder Ausdruck",
+      "topical": "Thema",
+      "character": "Biblische Person",
+      "book": "Biblisches Buch",
+      "biblical_theology": "Biblisches Thema",
+      "systematic_theology": "Lehrthema",
+      "custom": "Gegenstand des Studiums"
+    }
   },
   "list": {
     "filters": "Bibelstudien filtern",
@@ -2744,7 +2754,13 @@
     "legacy": "Bisherige strukturierte Antworten",
     "legacyNote": "Diese Antworten bleiben in ihren ursprünglichen Feldern. Nichts wurde zusammengefügt oder ersetzt.",
     "continuous": "Fortlaufend schreiben",
-    "outline": "Schrittansicht"
+    "outline": "Schritt für Schritt",
+    "mode": "Schreibansicht",
+    "steps": "Abschnitte des Studiums",
+    "previous": "Vorheriger Abschnitt",
+    "next": "Nächster Abschnitt",
+    "step": "Abschnitt {{current}} von {{total}}",
+    "tenStepAttribution": "Methode: Helge Stadelmann und Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). Die Hinweise hier sind eigenständig formuliert und geben nicht den Originaltext der Autoren wieder."
   },
   "builder": {
     "title": "Vorlagenbausteine",

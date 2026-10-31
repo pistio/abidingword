@@ -130,13 +130,16 @@
     "showFewerLocations": "Show fewer",
     "loadingLocations": "Loading more places…",
     "locationsFailed": "The other places could not be loaded. Try again.",
-    "recent": "Recently added",
-    "openLibrary": "Open library"
+    "recent": "Recently opened",
+    "openLibrary": "Open library",
+    "matchEvidence": "A mention is a literal Scripture reference. A matching heading provides context, not proof of commentary or a theological connection.",
+    "noRecent": "Sources you open will appear here during this session.",
+    "otherSources": "Other sources"
   },
   "passage": {
     "mentions": "Mentions {{passage}}",
-    "section": "Section on {{passage}}",
-    "within": "Within section on {{passage}}",
+    "section": "Heading names {{passage}}",
+    "within": "Within a section headed {{passage}}",
     "linked": "Linked to {{passage}}"
   },
   "citations": {
@@ -540,5 +543,15 @@
     "allCollections": "All collections",
     "openCollection": "Open collection: {{name}}",
     "backToLibrary": "Back to Library"
+  },
+  "pageNav": {
+    "label": "PDF page navigation",
+    "previous": "Previous PDF page",
+    "next": "Next PDF page",
+    "page": "PDF page",
+    "total": "of {{total}}",
+    "go": "Go to page",
+    "physical": "PDF pages count from the start of the file, including covers. Printed numbers may differ.",
+    "printed": "Printed page label: {{label}}."
   }
 }

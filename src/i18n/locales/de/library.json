@@ -130,13 +130,16 @@
     "showFewerLocations": "Weniger anzeigen",
     "loadingLocations": "Weitere Stellen werden geladen…",
     "locationsFailed": "Die weiteren Stellen konnten nicht geladen werden. Versuche es erneut.",
-    "recent": "Zuletzt hinzugefügt",
-    "openLibrary": "Bibliothek öffnen"
+    "recent": "Zuletzt geöffnet",
+    "openLibrary": "Bibliothek öffnen",
+    "matchEvidence": "Eine Erwähnung ist ein wörtlicher Bibelstellenverweis. Eine passende Überschrift bietet Kontext, belegt aber weder eine Auslegung noch einen theologischen Zusammenhang.",
+    "noRecent": "Quellen, die du öffnest, erscheinen hier für diese Sitzung.",
+    "otherSources": "Weitere Quellen"
   },
   "passage": {
     "mentions": "Erwähnt {{passage}}",
-    "section": "Abschnitt zu {{passage}}",
-    "within": "Innerhalb des Abschnitts zu {{passage}}",
+    "section": "Überschrift nennt {{passage}}",
+    "within": "Im Abschnitt mit der Überschrift {{passage}}",
     "linked": "Verknüpft mit {{passage}}"
   },
   "citations": {
@@ -540,5 +543,15 @@
     "allCollections": "Alle Sammlungen",
     "openCollection": "Sammlung öffnen: {{name}}",
     "backToLibrary": "Zurück zur Bibliothek"
+  },
+  "pageNav": {
+    "label": "PDF-Seitennavigation",
+    "previous": "Vorherige PDF-Seite",
+    "next": "Nächste PDF-Seite",
+    "page": "PDF-Seite",
+    "total": "von {{total}}",
+    "go": "Zur Seite",
+    "physical": "PDF-Seiten zählen ab Dateibeginn einschließlich Umschlag. Gedruckte Seitenzahlen können abweichen.",
+    "printed": "Gedruckte Seitenangabe: {{label}}."
   }
 }

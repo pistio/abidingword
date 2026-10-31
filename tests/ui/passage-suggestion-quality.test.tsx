@@ -145,7 +145,7 @@ describe("Suggestion quality in the Sources pane", () => {
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     const entry = (title: string) => within(list).getByRole("group", { name: title });
     expect(entry("Personal Notes")).toHaveTextContent("Mentions John 15:5");
-    expect(entry("Sermon Manuscript")).toHaveTextContent("Section on John 15:1–8");
+    expect(entry("Sermon Manuscript")).toHaveTextContent("Heading names John 15:1–8");
     expect(list.textContent).not.toMatch(/origin|inherited|candidate|match/i);
   });
 
@@ -156,7 +156,7 @@ describe("Suggestion quality in the Sources pane", () => {
     expect(within(list).getAllByRole("group")).toHaveLength(1);
     // the paragraph that cites John 15:5 twice is one place, and the section it lies in is another
     expect(within(list).getAllByRole("button")).toHaveLength(2);
-    expect(within(list).queryByText(/more places? in this source/)).not.toBeInTheDocument();
+    expect(within(list).getByRole("button", { name: "1 more place in this source" })).toHaveAttribute("aria-expanded", "false");
   });
 
   it("counts the places beyond the best three", async () => {
@@ -170,8 +170,8 @@ describe("Suggestion quality in the Sources pane", () => {
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     // three places, then a control (not plain text) for the rest
-    expect(within(list).getAllByRole("button")).toHaveLength(4);
-    expect(within(list).getByRole("button", { name: "3 more places in this source" })).toHaveAttribute("aria-expanded", "false");
+    expect(within(list).getAllByRole("button")).toHaveLength(2);
+    expect(within(list).getByRole("button", { name: "5 more places in this source" })).toHaveAttribute("aria-expanded", "false");
   });
 
   it("opens a section where it begins", async () => {
@@ -187,14 +187,15 @@ describe("Suggestion quality in the Sources pane", () => {
     const { user } = await renderApp(withLibrary(COMMENTARY));
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
-    // the source's first place is where its section opens; the second is the paragraph that cites the verse
+    // The additional literal mention is disclosed separately from the section heading.
+    await user.click(within(list).getByRole("button", { name: "1 more place in this source" }));
     await user.click(within(list).getAllByRole("button")[1]!);
     const reader = await within(sourcesPane()).findByRole("region", { name: "Vine Commentary" });
     await waitFor(() => expect(reader.querySelector("[data-target]")).toHaveTextContent("Remaining is dependence"));
     // a paragraph that cites John 15:5 twice is explained once; its section follows
     const note = await within(reader).findByText("Mentions John 15:5");
     expect(within(reader).getAllByText("Mentions John 15:5")).toHaveLength(1);
-    expect(note.closest("[data-passage-note]")).toHaveTextContent("Within section on John 15:1–11");
+    expect(note.closest("[data-passage-note]")).toHaveTextContent("Within a section headed John 15:1–11");
     await user.click(within(sourcesPane()).getByRole("button", { name: "Back to Sources" }));
     expect(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" })).toBeInTheDocument();
     // opening again lands in the same place
@@ -217,7 +218,7 @@ describe("Suggestion quality in the Sources pane", () => {
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     expect(entryTitles(list)).toEqual(["요한복음 묵상", "Johanneskommentar", "Personal Notes"]);
-    expect(within(list).getByRole("group", { name: "요한복음 묵상" })).toHaveTextContent("Section on John 15:1–11");
+    expect(within(list).getByRole("group", { name: "요한복음 묵상" })).toHaveTextContent("Heading names John 15:1–11");
     expect(within(list).getByRole("group", { name: "Johanneskommentar" })).toHaveTextContent("Mentions John 15:5");
   });
 
@@ -233,6 +234,6 @@ describe("Suggestion quality in the Sources pane", () => {
     expect(korean).toEqual(english);
     expect(german).toEqual(english);
     await act(() => setLanguage("ko"));
-    expect(within(pane).getByRole("group", { name: "Sermon Manuscript" })).toHaveTextContent("15:1–8에 관한 부분");
+    expect(within(pane).getByRole("group", { name: "Sermon Manuscript" })).toHaveTextContent(/제목에 .*15:1–8 표시/);
   });
 });

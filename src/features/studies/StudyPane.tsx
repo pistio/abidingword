@@ -24,7 +24,7 @@ export type StudyLocation =
   // The project list, for organising.
   | { kind: "projectList" }
   | { kind: "project"; projectId: string }
-  | { kind: "teaching"; projectId: string }
+  | { kind: "teaching"; projectId: string; create?: boolean }
   | { kind: "study"; projectId: string; studyId: string };
 
 const LOCATION_KEY = "studyPane.location";
@@ -54,7 +54,7 @@ export function StudyPane({ workspace, onRevealScripture, search, onCloseSearch 
   );
   // Set only when the user opens a study; never saved.
   const [revealFor, setRevealFor] = useState<string | null>(null);
-  useEffect(() => writeLocal(LOCATION_KEY, location), [location]);
+  useEffect(() => writeLocal(LOCATION_KEY, location.kind === "teaching" ? { kind: location.kind, projectId: location.projectId } : location), [location]);
   // The Study open here is what "Add to Study" in a source adds to (v0.15); none while browsing.
   const { setOpenStudy } = useStudyFocus();
   const openId = location.kind === "study" ? location.studyId : null;
@@ -82,6 +82,7 @@ export function StudyPane({ workspace, onRevealScripture, search, onCloseSearch 
             ) : location.kind === "projectList" ? (
               <ProjectList
                 workspace={workspace}
+                onOpenTeaching={(projectId, create) => setLocation({ kind: "teaching", projectId, create })}
                 onHome={goToProjects}
                 onOpenProject={(id) => setLocation({ kind: "project", projectId: id })}
                 onOpenStudy={openStudy}
@@ -92,7 +93,7 @@ export function StudyPane({ workspace, onRevealScripture, search, onCloseSearch 
                 onOpenProject={(id) => setLocation({ kind: "project", projectId: id })}
                 onOpenStudy={openStudy}
                 onProjectList={() => setLocation({ kind: "projectList" })}
-                onOpenTeaching={(projectId) => setLocation({ kind: "teaching", projectId })}
+                onOpenTeaching={(projectId, create) => setLocation({ kind: "teaching", projectId, create })}
               />
             ) : (
               <ProjectScope
@@ -171,9 +172,9 @@ function ProjectScope({ workspaceId, projectId, location, setLocation, onMissing
           onRevealScripture={onRevealScripture}
         />
       ) : location.kind === "teaching" ? (
-        <><Button variant="quiet" onClick={openProject}>{t("studies.teaching.workspace.project")}</Button><TeachingView projectId={projectId} onRevealScripture={onRevealScripture} /></>
+        <><Button variant="quiet" onClick={openProject}>{t("studies.teaching.workspace.project")}</Button><TeachingView projectId={projectId} startNew={location.create} onRevealScripture={onRevealScripture} /></>
       ) : (
-        <ProjectView project={project.data} onOpenTeaching={() => setLocation({ kind: "teaching", projectId })} onProjectChanged={project.setData} onOpenStudy={onOpenStudy} />
+        <ProjectView project={project.data} onOpenTeaching={(create) => setLocation({ kind: "teaching", projectId, create })} onProjectChanged={project.setData} onOpenStudy={onOpenStudy} />
       )}
     </>
   );

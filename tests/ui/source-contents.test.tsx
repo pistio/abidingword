@@ -430,12 +430,18 @@ describe("Contents does not leave stale requests behind", () => {
     await user.click(screen.getByRole("button", { name: "Appendix A" }));
     expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("4");
     await user.click(screen.getByRole("button", { name: "Reading" }));
+    const page = screen.getByRole("spinbutton", { name: "PDF page" });
+    await user.clear(page);
+    await user.type(page, "2");
+    expect(page).toHaveValue(2);
+    expect(screen.getByRole("button", { name: "Go to page" })).toBeEnabled();
+    await user.click(screen.getByRole("button", { name: "Go to page" }));
     await user.click(screen.getByRole("button", { name: "Original" }));
     await screen.findByRole("toolbar", { name: "Original document controls" });
-    // Reading was never moved off the first page, so Original opens there, and stays there.
-    await waitFor(() => expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("1"));
+    // A deliberate Reading jump replaces the old Original jump and stays at page two.
+    await waitFor(() => expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("2"));
     await act(async () => new Promise((resolve) => setTimeout(resolve, 80)));
-    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("1");
+    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("2");
   });
 
   it("closes the panel when the view is switched, so it never names a stale place", async () => {

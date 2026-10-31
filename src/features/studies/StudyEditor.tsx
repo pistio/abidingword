@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, ChevronsDownUp, ChevronsUpDown, Plus } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import { Notice } from "@/design-system/Notice";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useSaveTracker } from "@/hooks/SaveTracker";
@@ -14,6 +14,7 @@ import { Button } from "@/design-system/Button";
 import { EditableTitle } from "./EditableTitle";
 import { AddPart, type NewPart } from "./AddPart";
 import { FindingList, FindingsPanel, KindFilter, QuickCapture } from "./FindingsPanel";
+import { revealStudySection } from "./sectionNavigation";
 import { SectionEditor } from "./SectionEditor";
 import { sectionTitle } from "./builtinText";
 import { useStudyFocus } from "./StudyFocus";
@@ -67,32 +68,15 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     );
   };
   const noteButton = useRef<HTMLButtonElement>(null);
-  // Parts folded away, remembered for this study on this computer (a convenience, never study data).
-  const [continuous, setContinuous] = useState(() => readLocal<boolean>(`study.continuous.${studyId}`, false));
-  const [collapsed, setCollapsedState] = useState<ReadonlySet<string>>(() => new Set(readLocal<string[]>(collapsedKey(studyId), [])));
-  const setCollapsed = useCallback(
-    (next: ReadonlySet<string>) => {
-      setCollapsedState(next);
-      writeLocal(collapsedKey(studyId), [...next]);
-    },
-    [studyId],
-  );
-  const unfold = useCallback(
-    (sectionId: string) =>
-      setCollapsedState((current) => {
-        if (!current.has(sectionId)) return current;
-        const next = new Set([...current].filter((id) => id !== sectionId));
-        writeLocal(collapsedKey(studyId), [...next]);
-        return next;
-      }),
-    [studyId],
-  );
+  // A view preference only: both views edit the same stored sections and writing.
+  const [continuous, setContinuous] = useState(() => readLocal<boolean>(`study.continuous.${studyId}`, true));
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const unfold = useCallback((sectionId: string) => setActiveSection(sectionId), []);
   // What the user has typed but the saved copy may not hold yet (block id -> has writing).
   const [typed, setTyped] = useState<Record<string, boolean>>({});
   const onContent = useCallback((blockId: string, has: boolean) => setTyped((prev) => (prev[blockId] === has ? prev : { ...prev, [blockId]: has })), []);
   const [newSection, setNewSection] = useState<string | null>(null);
   // Where the user last worked, and a block just added there: the study's Add puts text blocks there.
-  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [newBlock, setNewBlock] = useState<string | null>(null);
   // The kind the findings are narrowed to, in the study's own notes and in every section.
   const [kindFilter, setKindFilter] = useState<FindingType | null>(null);
@@ -218,7 +202,15 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     ? ((templates.data ?? []).find((tpl) => tpl.id === study.templateId) ?? null)
     : ((templates.data ?? []).find((tpl) => tpl.isBuiltin && tpl.studyType === study.studyType) ?? null);
   const expand = unfold;
-  const allCollapsed = sections.length > 0 && sections.every((sec) => collapsed.has(sec.id));
+  const focusedIndex = Math.max(0, sections.findIndex((section) => section.id === activeSection));
+  const focusedSection = sections[focusedIndex];
+  const focusSection = (id: string) => {
+    setActiveSection(id);
+    unfold(id);
+    requestAnimationFrame(() => {
+      revealStudySection(id);
+    });
+  };
   const updateSection = (section: StudySection) =>
     detail.setData({ ...current, sections: sections.map((s) => (s.id === section.id ? section : s)) });
 
@@ -243,6 +235,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       // A part the template keeps for later comes with its key and phase; one of the person's own with neither.
       const created = await api.studySectionCreate({ studyId: study.id, title: part.title, guidance: part.guidance, templateSectionKey: part.templateSectionKey, key: part.key ?? null, phase: part.phase ?? null });
       setNewSection(created.id);
+      setActiveSection(created.id);
       detail.reload();
     } catch (e) {
       setError(toApiError(e).message);
@@ -347,17 +340,9 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           )}
           {view === "study" && <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />}
           {view === "study" && <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />}
-          {view === "study" && <button type="button" className="min-h-11 px-2" aria-pressed={continuous} onClick={() => { setContinuous(!continuous); writeLocal(`study.continuous.${studyId}`, !continuous); }}>{t(continuous ? "studies.flow.outline" : "studies.flow.continuous")}</button>}
-          {view === "study" && !continuous && sections.length > 1 && (
-            <button
-              type="button"
-              onClick={() => setCollapsed(allCollapsed ? new Set() : new Set(sections.map((sec) => sec.id)))}
-              className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 hover:text-text-strong"
-            >
-              {allCollapsed ? <ChevronsUpDown className="size-4" aria-hidden="true" /> : <ChevronsDownUp className="size-4" aria-hidden="true" />}
-              {allCollapsed ? t("studies.parts.expandAll") : t("studies.parts.collapseAll")}
-            </button>
-          )}
+          {view === "study" && <div role="group" aria-label={t("studies.flow.mode")} className="flex flex-wrap gap-1">
+            {[false, true].map((mode) => <button key={String(mode)} type="button" className="aw-tab min-h-11" aria-pressed={continuous === mode} onClick={() => { setContinuous(mode); if (!mode && focusedSection) setActiveSection(focusedSection.id); writeLocal(`study.continuous.${studyId}`, mode); }}>{t(mode ? "studies.flow.continuous" : "studies.flow.outline")}</button>)}
+          </div>}
           <SaveIndicator />
         </div>
       </header>
@@ -366,7 +351,18 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
         <TeachingView studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
       ) : (
       <>
-      {journey && (
+      {(template?.key === "ten-step-writing-study" || template?.key === "ten-step-exegesis" || sections.some((section) => section.fields?.template === "ten-step-writing-study" || section.fields?.template === "ten-step-exegesis")) && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
+      {!continuous && focusedSection && <nav data-study-steps aria-label={t("studies.flow.steps")} className="sticky top-0 z-10 flex flex-wrap items-center gap-2 border-b border-border-subtle bg-pane-work py-2">
+        <Button disabled={focusedIndex === 0} onClick={() => focusSection(sections[focusedIndex - 1]!.id)}>{t("studies.flow.previous")}</Button>
+        <label className="flex min-w-0 flex-1 flex-col gap-1 text-[0.9375rem]">
+          <span>{t("studies.flow.step", { current: focusedIndex + 1, total: sections.length })}</span>
+          <select className="aw-input min-h-11 min-w-0 px-2" value={focusedSection.id} onChange={(event) => focusSection(event.target.value)}>
+            {sections.map((section) => <option key={section.id} value={section.id}>{sectionTitle(section, template?.key)}</option>)}
+          </select>
+        </label>
+        <Button disabled={focusedIndex === sections.length - 1} onClick={() => focusSection(sections[focusedIndex + 1]!.id)}>{t("studies.flow.next")}</Button>
+      </nav>}
+      {journey && continuous && (
         <JourneyOutline
           runs={runs}
           current={currentRun}
@@ -381,6 +377,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       {/* The parts stay siblings keyed by their own id, so moving one never rebuilds the others;
           where a phase begins is marked on its first part (v0.18.6 review). */}
       {sections.map((section) => (
+        <div key={section.id} hidden={!continuous && section.id !== focusedSection?.id}>
         <SectionEditor
           templateKey={template?.key}
           key={section.id}
@@ -391,8 +388,9 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           notes={sectionNotes(section.id)}
           noteCount={(findings.data ?? []).filter((f) => f.sectionId === section.id).length}
           capture={capture(section)}
-          collapsed={!continuous && collapsed.has(section.id)}
-          onCollapsedChange={(fold) => setCollapsed(fold ? new Set([...collapsed, section.id]) : new Set([...collapsed].filter((id) => id !== section.id)))}
+          collapsed={false}
+          onCollapsedChange={() => undefined}
+          writingView
           onAddWriting={() => void addWriting(section)}
           onAddNote={(kind) => {
             expand(section.id);
@@ -423,6 +421,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           typed={typed}
           onContent={onContent}
         />
+        </div>
       ))}
 
       <FindingsPanel
@@ -451,8 +450,6 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     </article>
   );
 }
-
-const collapsedKey = (studyId: string) => `study.collapsed.${studyId}`;
 
 /** The kind of note last written in this study (as the note form remembers it), else an observation. */
 function lastNoteKind(studyId: string): FindingType {

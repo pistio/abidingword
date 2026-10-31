@@ -24,7 +24,7 @@ it("snapshots generous single-answer templates without changing legacy structure
   }
 });
 
-it("keeps answers while switching from folded steps to continuous writing", async () => {
+it("keeps answers while switching from focused steps to continuous writing", async () => {
   const { screen, within, waitFor } = await import("@testing-library/react");
   const { renderApp } = await import("../support/render");
   const api = createMemoryApi();
@@ -38,12 +38,19 @@ it("keeps answers while switching from folded steps to continuous writing", asyn
   expect(answers[0]).toHaveAttribute("rows", "10");
   expect(screen.getAllByText("Guidance (optional)")[0]?.closest("details")).not.toHaveAttribute("open");
   await user.type(answers[0]!, "My preserved observation");
-  await user.click(screen.getByRole("button", { name: "Fold all" }));
-  expect(screen.queryAllByRole("textbox", { name: "Your answer" })).toHaveLength(0);
+  await user.click(screen.getByRole("button", { name: "Step-by-step" }));
+  expect(screen.getAllByRole("textbox", { name: "Your answer" })).toHaveLength(1);
+  await user.click(screen.getByRole("button", { name: "Next section" }));
+  expect(screen.getByRole("textbox", { name: "Your answer" })).toHaveValue("");
+  await user.type(screen.getByRole("textbox", { name: "Your answer" }), "Second section writing");
   await user.click(screen.getByRole("button", { name: "Continuous writing" }));
   expect(screen.getAllByRole("textbox", { name: "Your answer" })).toHaveLength(7);
   expect(screen.getAllByRole("textbox", { name: "Your answer" })[0]).toHaveValue("My preserved observation");
   await waitFor(async () => expect((await api.studySectionList(detail.study.id))[0]?.blocks[0]?.content).toBe("My preserved observation"));
-  await user.click(screen.getByRole("button", { name: "Step view" }));
-  expect(screen.queryAllByRole("textbox", { name: "Your answer" })).toHaveLength(0);
+  await user.click(screen.getByRole("button", { name: "Step-by-step" }));
+  expect(screen.getAllByRole("textbox", { name: "Your answer" })).toHaveLength(1);
+  expect(screen.getByRole("textbox", { name: "Your answer" })).toHaveValue("Second section writing");
+  await user.click(screen.getByRole("button", { name: "Previous section" }));
+  expect(screen.getByRole("textbox", { name: "Your answer" })).toHaveValue("My preserved observation");
+  await waitFor(async () => expect((await api.studySectionList(detail.study.id))[1]?.blocks[0]?.content).toBe("Second section writing"));
 });

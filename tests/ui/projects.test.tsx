@@ -11,10 +11,10 @@ beforeEach(() => window.localStorage.clear());
 
 type User = Awaited<ReturnType<typeof renderApp>>["user"];
 
-const ask = () => screen.getByLabelText("What would you like to study?");
+const ask = () => screen.getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ });
 
 async function createStudy(user: User, text: string) {
-  await user.type(await screen.findByLabelText("What would you like to study?"), text);
+  await user.type(await screen.findByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), text);
   await user.click(screen.getByRole("button", { name: "Create study" }));
   return screen.findByRole("textbox", { name: "Study title" });
 }
@@ -42,7 +42,7 @@ describe("the first study", () => {
     await setLanguage("de");
     try {
       const { api, user } = await renderApp();
-      await user.type(await screen.findByLabelText("Was möchtest du studieren?"), "John 15:1-11");
+      await user.type(await screen.findByLabelText("Bibelstelle"), "John 15:1-11");
       await user.click(screen.getByRole("button", { name: "Bibelstudium erstellen" }));
       await waitFor(() => expect(api.state.projects).toHaveLength(1));
       expect(api.state.projects[0]!.title).toBe("Meine Bibelstudien");
@@ -56,7 +56,7 @@ describe("the first study", () => {
     await createStudy(user, "Romans 8");
     await user.click(screen.getByRole("button", { name: "Back to Studies" }));
     await user.click(await screen.findByRole("button", { name: "New study" }));
-    await user.type(await screen.findByLabelText("What would you like to study?"), "Romans 12");
+    await user.type(await screen.findByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "Romans 12");
     await user.click(screen.getByRole("button", { name: "Create study" }));
     await screen.findByRole("textbox", { name: "Study title" });
     expect(api.state.projects).toHaveLength(1);

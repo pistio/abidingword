@@ -160,8 +160,11 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
         <h2 id={`${id}-heading`} className="type-worktitle m-0">
           {t("studies.newStudy.heading")}
         </h2>
+        <label className="text-[0.9375rem] font-medium" htmlFor={`${id}-subject`}>{t(`studies.newStudy.subjectLabel.${aboutAPassage || type === "teaching" ? "passage" : type}`)}</label>
         <input
-          aria-labelledby={`${id}-heading`}
+          id={`${id}-subject`}
+          aria-label={t(`studies.newStudy.subjectLabel.${aboutAPassage || type === "teaching" ? "passage" : type}`)}
+          aria-describedby={`${id}-heading`}
           autoFocus={autoFocus}
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
@@ -190,6 +193,8 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
           </select>
         </label>
       )}
+
+      {approach === "passage" && passageMethod === "ten-step-writing-study" && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
 
       {approach === "mine" && own.length > 0 && (
         <label className="flex flex-col gap-1">

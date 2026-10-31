@@ -15,6 +15,8 @@ export interface LibraryNav {
    */
   openSource: (sourceId: string, segmentId?: string, position?: ReaderPosition, words?: QuotedWords) => void;
   addSource: () => void;
+  /** Session-only opening history, newest first; never inferred from import dates. */
+  recentSourceIds?: readonly string[];
   /**
    * Shows a passage in the Scripture pane (a reference read in a source). Navigation
    * only: no Study changes. From the full reader, the source moves to the Sources

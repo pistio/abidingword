@@ -6,6 +6,7 @@ import { useSaveTracker } from "@/hooks/SaveTracker";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { Finding, FindingType, StudyPhase } from "@/types/studies";
+import { revealStudySection } from "./sectionNavigation";
 import { BlockEditor, type BlockHandle } from "./BlockEditor";
 import { SECTION_STATUSES, type SectionStatus, type StudySection } from "@/types/domain";
 import { sectionGuidance, sectionTitle, structuredOptional } from "./builtinText";
@@ -17,6 +18,8 @@ import { StudyHelp } from "./StudyHelp";
 interface SectionEditorProps {
   section: StudySection;
   templateKey?: string;
+  /** A writing document or focused step: headings are not folding controls. */
+  writingView?: boolean;
   isFirst: boolean;
   isLast: boolean;
   /** Whether findings are assigned to this section. */
@@ -57,7 +60,7 @@ interface SectionEditorProps {
 const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
 
 export function SectionEditor(props: SectionEditorProps) {
-  const { section, templateKey, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
+  const { section, templateKey, writingView = false, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
   const { t } = useTranslation();
   const api = useApi();
   const { track, settled } = useSaveTracker();
@@ -66,9 +69,7 @@ export function SectionEditor(props: SectionEditorProps) {
   const manageId = useId();
   useEffect(() => {
     if (!reveal) return;
-    const heading = document.getElementById(`section-${section.id}`);
-    heading?.scrollIntoView?.({ block: "start" });
-    heading?.focus({ preventScroll: true });
+    revealStudySection(section.id);
   }, [reveal, section.id]);
   const manageToggle = useRef<HTMLButtonElement>(null);
   // Help (v0.20): what each block holds on screen, and where the person last worked.
@@ -218,7 +219,7 @@ export function SectionEditor(props: SectionEditorProps) {
         <div className="flex items-center gap-2">
           {/* The heading folds the part away and opens it again. */}
           <h2 id={headingId} tabIndex={-1} className={`type-section m-0 min-w-0 ${collapsed ? "!font-medium !text-text" : ""}`}>
-            <button
+            {writingView ? <span className="block py-2">{title}</span> : <button
               type="button"
               aria-expanded={!collapsed}
               aria-controls={bodyId}
@@ -227,7 +228,7 @@ export function SectionEditor(props: SectionEditorProps) {
             >
               <ChevronRight className={`size-4 shrink-0 text-text-muted transition-transform ${collapsed ? "" : "rotate-90"}`} aria-hidden="true" />
               <span className="min-w-0 break-words">{title}</span>
-            </button>
+            </button>}
           </h2>
           {collapsed && noteCount > 0 && <span className="type-meta shrink-0">{t("studies.findingCount", { count: noteCount })}</span>}
           {help && (

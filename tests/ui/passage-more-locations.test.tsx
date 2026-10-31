@@ -5,7 +5,7 @@ import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderApp } from "../support/render";
 
 // "More places in this source" is a disclosure: the places beyond the best
-// three can be revealed and opened. All text is invented.
+// best can be revealed and opened. All text is invented.
 
 const MANY: SourceFixture = {
   title: "A Long Sermon Series",
@@ -35,14 +35,14 @@ const list = () => within(sourcesPane()).findByRole("list", { name: "Sources for
 const toggle = async (name: RegExp) => within(await list()).getByRole("button", { name });
 
 describe("Expanding more places in a source", () => {
-  it("is a button, collapsed at first, and the pane still lists only three places", async () => {
+  it("is a button, collapsed at first, and the pane still lists only the best place", async () => {
     const api = withLibrary();
     const { user } = await renderApp(api);
     await readJohn15(user, 5);
-    const more = await toggle(/3 more places in this source/);
+    const more = await toggle(/5 more places in this source/);
     expect(more).toHaveAttribute("aria-expanded", "false");
-    // three places + the control
-    expect(within(await list()).getAllByRole("button")).toHaveLength(4);
+    // best place + the control
+    expect(within(await list()).getAllByRole("button")).toHaveLength(2);
     expect(api.libraryLocationsCalls).toHaveLength(0);
     await user.click(more);
   });
@@ -51,7 +51,7 @@ describe("Expanding more places in a source", () => {
     const api = withLibrary();
     const { user } = await renderApp(api);
     await readJohn15(user, 5);
-    await user.click(await toggle(/3 more places/));
+    await user.click(await toggle(/5 more places/));
     const less = await toggle(/Show fewer/);
     expect(less).toHaveAttribute("aria-expanded", "true");
     expect(less).toHaveAttribute("aria-controls");
@@ -71,11 +71,11 @@ describe("Expanding more places in a source", () => {
     const api = withLibrary();
     const { user } = await renderApp(api);
     await readJohn15(user, 5);
-    await user.click(await toggle(/3 more places/));
+    await user.click(await toggle(/5 more places/));
     await user.click(await toggle(/Show fewer/));
-    const more = await toggle(/3 more places in this source/);
+    const more = await toggle(/5 more places in this source/);
     expect(more).toHaveAttribute("aria-expanded", "false");
-    expect(within(await list()).getAllByRole("button")).toHaveLength(4);
+    expect(within(await list()).getAllByRole("button")).toHaveLength(2);
     await user.click(more);
     await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(7));
     expect(api.libraryLocationsCalls).toHaveLength(1);
@@ -84,13 +84,13 @@ describe("Expanding more places in a source", () => {
   it("works from the keyboard, and Escape collapses and keeps focus on the control", async () => {
     const { user } = await renderApp(withLibrary());
     await readJohn15(user, 5);
-    (await toggle(/3 more places/)).focus();
+    (await toggle(/5 more places/)).focus();
     await user.keyboard("{Enter}");
     await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(7));
     const less = await toggle(/Show fewer/);
     less.focus();
     await user.keyboard("{Escape}");
-    const more = await toggle(/3 more places/);
+    const more = await toggle(/5 more places/);
     expect(more).toHaveAttribute("aria-expanded", "false");
     expect(more).toHaveFocus();
     await user.keyboard(" ");
@@ -101,13 +101,13 @@ describe("Expanding more places in a source", () => {
     const api = withLibrary();
     const { user } = await renderApp(api);
     await readJohn15(user, 5);
-    await user.click(await toggle(/3 more places/));
+    await user.click(await toggle(/5 more places/));
     await toggle(/Show fewer/);
     await user.click(within(scripture()).getByRole("button", { name: /^Verse 6\. Show verse tools/ }));
     await waitFor(() => expect(within(sourcesPane()).queryByRole("list", { name: "Sources for John 15:5" })).not.toBeInTheDocument());
     await user.click(within(scripture()).getByRole("button", { name: /^Verse 5\. Show verse tools/ }));
-    expect(await toggle(/3 more places in this source/)).toHaveAttribute("aria-expanded", "false");
-    expect(within(await list()).getAllByRole("button")).toHaveLength(4);
+    expect(await toggle(/5 more places in this source/)).toHaveAttribute("aria-expanded", "false");
+    expect(within(await list()).getAllByRole("button")).toHaveLength(2);
   });
 });
 

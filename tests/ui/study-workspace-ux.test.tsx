@@ -25,7 +25,7 @@ async function openStudy(user: User, title: RegExp) {
   return screen.findByRole("textbox", { name: "Study title" });
 }
 
-const ask = () => screen.getByLabelText("What would you like to study?");
+const ask = () => screen.getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ });
 
 describe("project page", () => {
   it("offers the creation form straight away in an empty project", async () => {

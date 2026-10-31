@@ -1593,7 +1593,7 @@
     "noTemplate": "Sin plantilla (una sola parte: Notas)",
     "yourTemplate": "{{name}} (tuya)",
     "optional": "(opcional)",
-    "passagePlaceholder": "p. ej. Juan 15:1-11",
+    "passagePlaceholder": "p. ej., Juan 5:1–18 o Romanos 8",
     "create": "Crear estudio",
     "formLabel": "Nuevo estudio",
     "studyAs": "Enfoque del estudio",
@@ -1620,7 +1620,17 @@
       "character": "Estudio de un personaje bíblico",
       "book": "Estudio de un libro bíblico"
     },
-    "startsWith": "Empieza con: {{parts}}."
+    "startsWith": "Empieza con: {{parts}}.",
+    "subjectLabel": {
+      "passage": "Pasaje bíblico",
+      "word": "Palabra o expresión",
+      "topical": "Tema",
+      "character": "Personaje bíblico",
+      "book": "Libro de la Biblia",
+      "biblical_theology": "Tema bíblico",
+      "systematic_theology": "Doctrina",
+      "custom": "Objeto del estudio"
+    }
   },
   "list": {
     "filters": "Filtrar estudios",
@@ -2759,7 +2769,13 @@
     "legacy": "Respuestas estructuradas anteriores",
     "legacyNote": "Las respuestas se conservan en sus campos originales. No se han combinado ni sustituido.",
     "continuous": "Escritura continua",
-    "outline": "Vista por pasos"
+    "outline": "Paso a paso",
+    "mode": "Modo de escritura",
+    "steps": "Secciones del estudio",
+    "previous": "Sección anterior",
+    "next": "Sección siguiente",
+    "step": "Sección {{current}} de {{total}}",
+    "tenStepAttribution": "Método: Helge Stadelmann y Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). Las orientaciones de aquí se redactaron de forma independiente y no reproducen el texto de los autores."
   },
   "builder": {
     "title": "Bloques de la plantilla",

@@ -60,7 +60,7 @@ describe("the three formats", () => {
     const user = await openTeaching(api);
     const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
     const formats = within(form).getAllByRole("radio").filter((r) => r.getAttribute("name")?.endsWith("-format"));
-    expect(formats.map((r) => r.getAttribute("aria-label"))).toEqual(["Bible Study — EVA", "Sermon / Talk", "Bible Lesson — Children / Youth", "Blank template"]);
+    expect(formats.map((r) => r.getAttribute("aria-label"))).toEqual(["Bible Study — Observation, Understanding, Application", "Sermon / Talk", "Bible Lesson — Children / Youth", "Blank template"]);
     expect(within(form).getByRole("radio", { name: "Sermon / Talk" })).toBeChecked();
     expect(within(form).queryByRole("radio", { name: "Talk" })).toBeNull();
     await user.click(within(form).getByRole("radio", { name: "Sermon / Talk" }));

@@ -22,6 +22,7 @@ import { EpubViewer } from "./formatted/EpubViewer";
 import { activeMatch, FindBar, useSourceFind } from "./FindBar";
 import { placeOfPosition, positionOfPlace, type EpubPlace } from "./formatted/epubLocation";
 import { useEpubStructure } from "./formatted/useEpubStructure";
+import { PdfPageNavigation } from "./PdfPageNavigation";
 import { PdfViewer, type PdfFind } from "./PdfViewer";
 import { canGoBack, canGoForward, NO_HISTORY, stepBack, stepForward, visit, type ReaderHistory, type SourceLocation } from "./readerHistory";
 import { currentEntry, useSourceContents } from "./useSourceContents";
@@ -157,6 +158,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   const pdfNow = useRef<(() => PdfPlace) | null>(null);
   // The original PDF's page, as state too: the bookmark button says whether this page has one.
   const [pdfPage, setPdfPage] = useState<number | null>(null);
+  const [textPage, setTextPage] = useState<number | null>(initialPosition?.page ?? null);
   // Reads a selection on an original PDF page as an anchor in the stored text (v0.14).
   const pdfSelection = useRef<((selection: Selection) => SourceSelection | null) | null>(null);
   // The links in an EPUB's text, by the segment they are in.
@@ -253,7 +255,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   /** Where this reader is now, for the next reader to continue from. */
   const positionNow = (): ReaderPosition => ({
     mode: showOriginal ? "original" : "reading",
-    page: showOriginal ? (isEpubView ? null : (originalPage.current ?? startPage)) : (isPdf && window ? readingPage() : null),
+    page: showOriginal ? (isEpubView ? null : (originalPage.current ?? startPage)) : (isPdf && window ? (textPage ?? readingPage()) : null),
     history: historyRef.current,
     place: placeNow(),
   });
@@ -282,7 +284,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       return;
     }
     if (next === "original") {
-      setOpenPage(readingPage());
+      setOpenPage(textPage ?? readingPage());
       setMode("original");
       return;
     }
@@ -311,6 +313,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     if (landing.current !== null) {
       // The page itself, or (a page with no text of its own) the next one that has some.
       const wanted = landing.current;
+      setTextPage(wanted);
       const spots = body ? [...body.querySelectorAll<HTMLElement>("[data-seg-page]")] : [];
       spots.find((el) => Number(el.dataset.segPage) >= wanted)?.scrollIntoView?.({ block: "start" });
       landing.current = null;
@@ -392,6 +395,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
 
   /** Reading, at a physical page: stay in Reading and show that page's text. */
   const goToPage = async (page: number) => {
+    setTextPage(page);
     landing.current = page;
     if (window?.segments.some((x) => x.pageNumber === page)) {
       setWindow({ ...window });
@@ -672,7 +676,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     const top = topSegment(typeof anchor === "number" ? anchor : undefined);
     const text = isEpubView && top ? placeOfPosition(epub.items, top.position) : null;
     return {
-      page: isPdf && window ? readingPage() : null,
+      page: isPdf && window ? (textPage ?? readingPage()) : null,
       fraction: 0,
       position: top?.position ?? null,
       offset: top?.offset ?? 0,
@@ -693,6 +697,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
 
   /** Moves the view to a place, in the mode the reader is in (the mode is never changed by a jump). */
   const goTo = (place: SourceLocation) => {
+    if (!showOriginal && isPdf && place.page !== null) setTextPage(place.page);
     if (showOriginal && isEpubView) {
       const at: EpubPlace | null =
         place.item !== null
@@ -850,6 +855,13 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   };
 
   const inPane = variant === "pane";
+  const navigablePage = showOriginal ? (pdfPage ?? startPage) : (textPage ?? targetPage ?? 1);
+  const pageNavigation = source.data?.format === "pdf" && source.data.pageCount ? <PdfPageNavigation
+    page={navigablePage}
+    total={source.data.pageCount}
+    printedLabel={window?.segments.find((segment) => segment.pageNumber === navigablePage)?.pageLabel}
+    onGo={(page) => jumpTo({ page })}
+  /> : null;
   const s = source.data;
   const Title = inPane ? "h2" : "h1";
   const body = (
@@ -1213,6 +1225,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
             {marksButton}
           </div>
         </div>
+        {pageNavigation}
         {provenance}
         {findBar}
         {noticeLine}
@@ -1224,7 +1237,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
               {pdfStrip}
             </>
           ) : (
-            <div ref={bodyRef} data-testid="reader-body" className="min-h-0 flex-1 overflow-y-auto">
+            <div ref={bodyRef} data-testid="reader-body" onScroll={() => { if (isPdf) setTextPage(readingPage()); }} className="min-h-0 flex-1 overflow-y-auto">
               <div className="flex flex-col gap-5 px-5 pb-16 pt-5">
                 {body}
                 {addPanel ? <div className="sticky bottom-2 z-10">{addPanel}</div> : markStrip}
@@ -1262,6 +1275,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         {contentsButton}
         {marksButton}
       </div>
+      {pageNavigation}
       {provenance}
       {findBar}
       {noticeLine}
@@ -1273,7 +1287,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
             {pdfStrip}
           </>
         ) : (
-          <div ref={bodyRef} data-testid="reader-body" className="min-h-0 flex-1 overflow-y-auto">
+          <div ref={bodyRef} data-testid="reader-body" onScroll={() => { if (isPdf) setTextPage(readingPage()); }} className="min-h-0 flex-1 overflow-y-auto">
             <div className="mx-auto flex max-w-[46rem] flex-col gap-6 px-8 pb-24 pt-6">
               {body}
               {addPanel ? <div className="sticky bottom-2 z-10">{addPanel}</div> : markStrip}

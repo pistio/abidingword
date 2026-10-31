@@ -26,6 +26,7 @@ import { outputHint, outputName, outputsFor, type OutputKind } from "@/features/
 import type { PresentationDocument } from "@/types/presentation";
 
 interface TeachingViewProps {
+  startNew?: boolean;
   projectId?: string;
   studyId?: string;
   studyTitle?: string;
@@ -37,13 +38,13 @@ interface TeachingViewProps {
  * Shared editor for project Teaching and the legacy Study entry. An optional
  * Study can provide findings; every Teaching remains owned by its project.
  */
-export function TeachingView({ projectId, studyId, studyTitle = "", findings = [], onRevealScripture }: TeachingViewProps) {
+export function TeachingView({ projectId, startNew = false, studyId, studyTitle = "", findings = [], onRevealScripture }: TeachingViewProps) {
   const { t } = useTranslation();
   const api = useApi();
   const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId) : api.teachingList(studyId!), [api, projectId, studyId]));
   const settings = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
   const [chosen, setChosen] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState(startNew);
   const id = useId();
   // After a new teaching is put away or one is deleted, the keyboard goes back to "Prepare another".
   const anotherButton = useRef<HTMLButtonElement>(null);
@@ -72,7 +73,7 @@ export function TeachingView({ projectId, studyId, studyTitle = "", findings = [
     return <section className="flex flex-col gap-4" aria-label={t("studies.teaching.workspace.title")}>
       <h1 className="type-title m-0">{t("studies.teaching.workspace.title")}</h1>
       <p className="m-0 text-text-muted">{t("studies.teaching.workspace.intro")}</p>
-      <Button variant="primary" onClick={() => setCreating(true)}>{t("studies.teaching.newTeaching")}</Button>
+      <Button ref={anotherButton} variant="primary" onClick={() => setCreating(true)}>{t("studies.teaching.newTeaching")}</Button>
       {preparations.length ? <ul aria-label={t("studies.teaching.workspace.sessions")} className="m-0 list-none space-y-2 p-0">{preparations.map(p => <li key={p.id}><Button onClick={() => setChosen(p.id)}>{p.title}</Button></li>)}</ul> : <p className="m-0 text-text-muted">{t("studies.teaching.workspace.empty")}</p>}
     </section>;
   }
@@ -194,8 +195,8 @@ function NewTeaching({
   const heading = useRef<HTMLHeadingElement>(null);
   // Asked for from a teaching already there: the keyboard moves to the new form (the first one needs no move).
   useEffect(() => {
-    if (!first) heading.current?.focus();
-  }, [first]);
+    heading.current?.focus();
+  }, []);
   // Three built-in block templates, a blank one, then any template of the person's own.
   // A version-1 template still starts the earlier editor. Nothing links a teaching to its template afterwards.
   const mine = useLoad(useCallback(() => api.teachingTemplateList(), [api]));
@@ -254,11 +255,11 @@ function NewTeaching({
       {projectId && studies.error && <p role="alert">{studies.error.message}</p>}
       <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
         <legend className="type-subhead mb-1">{t("studies.teaching.formatLegend")}</legend>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(12rem,1fr))] gap-2">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr))] gap-2">
           {BUILTIN_BLOCK_TEMPLATES.map((template) => {
             const group = blockTemplateGroup(template.key);
             return (
-              <label key={template.key} className="aw-choice cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
+              <label key={template.key} className="aw-choice aw-choice-card cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
                 <input
                   type="radio"
                   name={`${id}-format`}
@@ -274,7 +275,7 @@ function NewTeaching({
               </label>
             );
           })}
-          <label className="aw-choice cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
+          <label className="aw-choice aw-choice-card cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
             <input type="radio" name={`${id}-format`} value="blank" aria-label={t("studies.teaching.builtin.blank.name")} checked={chosen === "blank"} onChange={() => setChosen("blank")} className="sr-only" />
             <span className="font-medium text-text-strong">{t("studies.teaching.builtin.blank.name")}</span>
             <span className="text-[0.875rem] text-text-muted">{t("studies.teaching.builtin.blank.hint")}</span>
@@ -284,7 +285,7 @@ function NewTeaching({
           <div role="radiogroup" aria-label={t("studies.teaching.templates.startFrom")} className="flex flex-wrap items-center gap-2">
             <span aria-hidden="true" className="type-meta">{t("studies.teaching.templates.startFrom")}</span>
             {personal.map((template) => (
-              <label key={template.id} className="aw-choice min-h-11 cursor-pointer gap-2 px-4">
+              <label key={template.id} className="aw-choice aw-choice-card min-h-11 cursor-pointer gap-2 px-4">
                 <input type="radio" name={`${id}-start`} checked={chosen === template.id} onChange={() => setChosen(template.id)} className="sr-only" />
                 {template.name}
               </label>
@@ -859,12 +860,15 @@ function StudyLink({ preparation, onChanged }: { preparation: TeachingPreparatio
   const studies = useLoad(useCallback(() => api.studyList({ projectId }), [api, projectId]));
   const [choice, setChoice] = useState(preparation.studyId ?? "");
   const [error, setError] = useState<string | null>(null); const [busy, setBusy] = useState(false);
-  return <div className="flex basis-full flex-col gap-2 py-2">
+  return <details className="basis-full rounded-aw border border-border-subtle px-3 py-2">
+    <summary className="cursor-pointer text-[0.9375rem] font-medium">{t("studies.teaching.workspace.study")} · {preparation.studyId ? (studies.data?.find((study) => study.id === preparation.studyId)?.title ?? t("studies.view.study")) : t("studies.teaching.workspace.independent")}</summary>
+    <div className="flex flex-col gap-2 pt-2">
     <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={choice} disabled={busy} onChange={e => setChoice(e.target.value)}>
       <option value="">{t("studies.teaching.workspace.independent")}</option>{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
     <p className="m-0 text-text-muted">{t("studies.teaching.workspace.keepNotes")}</p>
     <Button disabled={busy || choice === (preparation.studyId ?? "")} onClick={async () => { setBusy(true); setError(null); try { onChanged(await api.teachingSetStudy(preparation.id, choice || null)); } catch (e) { setError(toApiError(e).message); } finally { setBusy(false); } }}>{t("studies.teaching.workspace.saveLink")}</Button>
     {(error || studies.error) && <p role="alert">{error ?? studies.error?.message}</p>}
-  </div>;
+    </div>
+  </details>;
 }

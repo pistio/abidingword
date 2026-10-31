@@ -60,7 +60,7 @@ for (const { code } of LANGUAGES) {
         const user = userEvent.setup();
         render(<ApiProvider api={api}><ScriptureProvider settings={api.state.settings} books={BOOKS} translations={[]}><NewStudyForm projectId={project.id} onCreated={created} /></ScriptureProvider></ApiProvider>);
         await user.click(await screen.findByRole("button", { name: i18n.t(`studies.newStudy.approach.${type}`) }));
-        await user.type(screen.getByRole("textbox", { name: i18n.t("studies.newStudy.heading") }), type === "character" ? "Ruth" : "Philippians");
+        await user.type(screen.getByRole("textbox", { name: i18n.t(`studies.newStudy.subjectLabel.${type}`) }), type === "character" ? "Ruth" : "Philippians");
         await user.click(screen.getByRole("button", { name: i18n.t("studies.newStudy.create") }));
         await waitFor(() => expect(created).toHaveBeenCalledOnce());
         expect(parse).not.toHaveBeenCalled();
@@ -87,7 +87,7 @@ it("offers both passage methods and uses the selected template", async () => {
     const method = await screen.findByRole("combobox", { name: "Template" });
     expect(within(method).getAllByRole("option")).toHaveLength(2);
     await user.selectOptions(method, key);
-    await user.type(screen.getByRole("textbox", { name: "What would you like to study?" }), "John 15:1-11");
+    await user.type(screen.getByRole("textbox", { name: "Bible passage" }), "John 15:1-11");
     await user.click(screen.getByRole("button", { name: "Create study" }));
     await waitFor(() => expect(created).toHaveBeenCalledOnce());
     expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === key)!.id);

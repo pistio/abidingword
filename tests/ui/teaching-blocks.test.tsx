@@ -87,7 +87,7 @@ describe("the three built-in block templates", () => {
   it("starts EVA with three writing areas and Campus Connect guidance, not extra fields", async () => {
     const { api, user } = await openTeaching();
     const form = within(studyPane()).getByRole("form", { name: "Prepare a teaching from this study" });
-    await user.click(within(form).getByRole("radio", { name: "Bible Study — EVA" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Study — Observation, Understanding, Application" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     const article = await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
     expect(within(article).getByRole("heading", { name: "Observation" })).toBeInTheDocument();
@@ -163,7 +163,7 @@ describe("the three built-in block templates", () => {
   it("reloads what was autosaved in a writing block", async () => {
     const { api, user } = await openTeaching();
     const form = within(studyPane()).getByRole("form", { name: "Prepare a teaching from this study" });
-    await user.click(within(form).getByRole("radio", { name: "Bible Study — EVA" }));
+    await user.click(within(form).getByRole("radio", { name: "Bible Study — Observation, Understanding, Application" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     const article = await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
     await user.type(within(article).getByRole("textbox", { name: "Observation" }), "The vine remains.");

@@ -74,12 +74,12 @@ describe("the built-in Bible Teaching templates", () => {
     const { user } = await renderApp(api);
     const templates = await openSettingsSection(user, "Templates");
     const list = within(templates).getByRole("list", { name: "Bible Teaching templates" });
-    expect(within(list).getByText("Bible Study — EVA")).toBeInTheDocument();
+    expect(within(list).getByText("Bible Study — Observation, Understanding, Application")).toBeInTheDocument();
     expect(within(list).getByText("Sermon / Talk")).toBeInTheDocument();
     expect(within(list).getByText("Bible Lesson — Children / Youth")).toBeInTheDocument();
-    await user.click(within(list).getByRole("button", { name: "Save Bible Study — EVA as my template" }));
+    await user.click(within(list).getByRole("button", { name: "Save Bible Study — Observation, Understanding, Application as my template" }));
     const sheet = await screen.findByRole("dialog", { name: "Edit Bible Teaching template" });
-    expect(within(sheet).getByRole("textbox", { name: "Name" })).toHaveValue("Bible Study — EVA (copy)");
+    expect(within(sheet).getByRole("textbox", { name: "Name" })).toHaveValue("Bible Study — Observation, Understanding, Application (copy)");
     expect(api.state.teaching.templates[0]!.version).toBe(2);
     expect(api.state.teaching.templates[0]!.blocks?.some((b) => b.blockType === "section" && b.title === "Observation")).toBe(true);
     expect(api.state.teaching.templates[0]!.blocks?.some((b) => b.guidanceKey?.includes("erkennen"))).toBe(true);

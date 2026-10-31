@@ -1593,7 +1593,7 @@
     "noTemplate": "Aucun modèle (une seule partie Notes)",
     "yourTemplate": "{{name}} (le vôtre)",
     "optional": "(facultatif)",
-    "passagePlaceholder": "p. ex. Jean 15,1-11",
+    "passagePlaceholder": "p. ex. Jean 5,1–18 ou Romains 8",
     "create": "Créer l’étude",
     "formLabel": "Nouvelle étude",
     "studyAs": "Approche d’étude",
@@ -1620,7 +1620,17 @@
       "character": "Étude d’un personnage biblique",
       "book": "Étude d’un livre biblique"
     },
-    "startsWith": "Commence par : {{parts}}."
+    "startsWith": "Commence par : {{parts}}.",
+    "subjectLabel": {
+      "passage": "Passage biblique",
+      "word": "Mot ou expression",
+      "topical": "Sujet",
+      "character": "Personnage biblique",
+      "book": "Livre de la Bible",
+      "biblical_theology": "Thème biblique",
+      "systematic_theology": "Doctrine",
+      "custom": "Objet de l’étude"
+    }
   },
   "list": {
     "filters": "Filtrer les études",
@@ -2759,7 +2769,13 @@
     "legacy": "Réponses structurées antérieures",
     "legacyNote": "Ces réponses restent dans leurs champs d’origine. Rien n’a été regroupé ni remplacé.",
     "continuous": "Écriture continue",
-    "outline": "Vue par étape"
+    "outline": "Pas à pas",
+    "mode": "Mode de rédaction",
+    "steps": "Parties de l’étude",
+    "previous": "Partie précédente",
+    "next": "Partie suivante",
+    "step": "Partie {{current}} sur {{total}}",
+    "tenStepAttribution": "Méthode : Helge Stadelmann et Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). Les indications proposées ici ont été rédigées indépendamment et ne reproduisent pas le texte des auteurs."
   },
   "builder": {
     "title": "Blocs du modèle",

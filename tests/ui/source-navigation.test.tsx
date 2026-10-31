@@ -249,6 +249,7 @@ describe("PDF internal links", () => {
     await user.click(links(reader)[0]!);
     await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
+    await user.click(within(sourcesPane()).getByText("Other sources"));
     await user.click(await within(sourcesPane()).findByRole("button", { name: /A Synthetic Commentary/ }));
     const next = await within(sourcesPane()).findByRole("region", { name: "A Synthetic Commentary" });
     expect(back(next)).toBeDisabled();

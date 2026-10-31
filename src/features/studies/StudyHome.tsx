@@ -1,10 +1,11 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import type { Workspace } from "@/types/domain";
+import { StudyCreationActions } from "./StudyCreationActions";
 import { NewStudyForm } from "./NewStudyForm";
 import { ProjectList } from "./ProjectList";
 import { ProjectView } from "./ProjectView";
@@ -12,7 +13,7 @@ import { ensureStudyProject } from "./projects";
 
 interface StudyHomeProps {
   workspace: Workspace;
-  onOpenTeaching: (projectId: string) => void;
+  onOpenTeaching: (projectId: string, create?: boolean) => void;
   onOpenProject: (projectId: string) => void;
   onOpenStudy: (study: { id: string; projectId: string }) => void;
   /** The project list, for someone who wants to organise (a way in, never a step). */
@@ -32,6 +33,7 @@ interface StudyHomeProps {
 export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStudy, onProjectList }: StudyHomeProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const form = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const projects = useLoad(useCallback(() => api.projectList(workspace.id), [api, workspace.id]));
 
@@ -40,13 +42,13 @@ export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStud
 
   const list = projects.data;
   if (list.length >= 2) {
-    return <ProjectList workspace={workspace} onOpenProject={onOpenProject} onOpenStudy={onOpenStudy} />;
+    return <ProjectList workspace={workspace} onOpenTeaching={onOpenTeaching} onOpenProject={onOpenProject} onOpenStudy={onOpenStudy} />;
   }
   if (list.length === 1) {
     return (
       <ProjectView
         project={list[0]!}
-        onOpenTeaching={() => onOpenTeaching(list[0]!.id)}
+        onOpenTeaching={(create) => onOpenTeaching(list[0]!.id, create)}
         plain
         onProjects={onProjectList}
         onProjectChanged={() => projects.reload()}
@@ -57,9 +59,9 @@ export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStud
   return (
     <div className="flex flex-col gap-8">
       <h1 className="type-title m-0">{t("studies.home.title")}</h1>
-      <Button onClick={async () => { try { onOpenTeaching(await ensureStudyProject(api, workspace.id, t)); } catch (e) { setError(e instanceof Error ? e.message : String(e)); } }}>{t("studies.teaching.workspace.title")}</Button>
+      <StudyCreationActions onStudy={() => form.current?.querySelector("input")?.focus()} onTeaching={async () => { try { onOpenTeaching(await ensureStudyProject(api, workspace.id, t), true); } catch (e) { setError(e instanceof Error ? e.message : String(e)); } }} />
       {error && <p role="alert">{error}</p>}
-      <NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} onCreated={onOpenStudy} />
+      <div ref={form}><NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} onCreated={onOpenStudy} /></div>
       <div>
         <Button variant="quiet" onClick={onProjectList}>
           {t("studies.home.organise")}

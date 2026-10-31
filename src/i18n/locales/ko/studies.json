@@ -1589,7 +1589,7 @@
     "noTemplate": "빈 성경공부(노트 부분 하나)",
     "yourTemplate": "{{name}} (내 공부 틀)",
     "optional": "(선택 사항)",
-    "passagePlaceholder": "예: 요한복음 15:1-11",
+    "passagePlaceholder": "예: 요한복음 5:1–18 또는 로마서 8장",
     "create": "성경공부 만들기",
     "formLabel": "새 성경공부",
     "studyAs": "공부 방법",
@@ -1616,7 +1616,17 @@
       "character": "성경 인물 공부",
       "book": "성경 한 권 공부"
     },
-    "startsWith": "구성: {{parts}}."
+    "startsWith": "구성: {{parts}}.",
+    "subjectLabel": {
+      "passage": "성경 본문",
+      "word": "단어나 표현",
+      "topical": "주제",
+      "character": "성경 인물",
+      "book": "성경의 책",
+      "biblical_theology": "성경신학 주제",
+      "systematic_theology": "교리",
+      "custom": "공부할 내용"
+    }
   },
   "list": {
     "filters": "성경공부 필터",
@@ -2729,7 +2739,13 @@
     "legacy": "이전 항목별 답변",
     "legacyNote": "기존 답변은 원래 항목에 그대로 보관됩니다. 합치거나 덮어쓰지 않았습니다.",
     "continuous": "이어서 쓰기",
-    "outline": "단계별 보기"
+    "outline": "단계별 쓰기",
+    "mode": "쓰기 방식",
+    "steps": "성경공부의 부분",
+    "previous": "이전 부분",
+    "next": "다음 부분",
+    "step": "{{total}}개 중 {{current}}번째 부분",
+    "tenStepAttribution": "방법 출처: Helge Stadelmann·Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). 이곳의 안내는 독립적으로 작성했으며 저자들의 원문을 옮긴 것이 아닙니다."
   },
   "builder": {
     "title": "공부 틀 구성 요소",
