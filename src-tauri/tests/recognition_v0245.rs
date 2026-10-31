@@ -536,3 +536,28 @@ fn an_edge_line_after_the_page_s_notes_is_never_verse_text() {
         Some("Invented words of the verse as an inheritance for testing.")
     );
 }
+
+#[test]
+fn a_verse_s_last_line_read_after_the_page_s_notes_leaves_it_unverified() {
+    // "¹ Hymne de David." / "a 1:3 Ps 10:4." (a note) / "Garde-moi, ô Dieu!
+    // Car je cherche en toi mon refuge." at the page's edge: the line may
+    // be the verse's end or a note's; never read in, and the verse is not
+    // verified.
+    let mut units = book_pages("Philemon", "PHM", 1..=1, 1, 10);
+    let at = units
+        .iter()
+        .position(|u| u.text.starts_with("10 "))
+        .unwrap();
+    units[at].text = "10 Hymne de David.".into();
+    let page = units[at].place.page.unwrap();
+    let mut note = line("a 1:3 Ps 10:4; 53:2.", page);
+    note.note = true;
+    let mut tail = line("Garde-moi, ô Dieu! Car je cherche en toi mon refuge.", page);
+    tail.edge = true;
+    units.insert(at + 1, note);
+    units.insert(at + 2, tail);
+    let r = recognise(&units, "fr");
+    assert_eq!(verse(&r, "PHM", 1, 10).as_deref(), Some("Hymne de David."));
+    assert!(!verified(&r, "PHM", 1, 10));
+    assert!(verified(&r, "PHM", 1, 12));
+}

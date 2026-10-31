@@ -2923,12 +2923,13 @@ fn verse_doubt(
     // A bracket holding a chapter and verse ("(Vergl. ff. 96,1b-13a …)",
     // "(Auszug aus 1 Mos. 36,1 ff.)"): a cross-reference read in. ("2,000"
     // has three digits after its comma, and is a number.)
-    // (Or square brackets: "[19:13 O. zehn seiner]", a note set inline,
-    // v0.24.5.)
+    // (Or square brackets with words after the reference: "[19:13 O. zehn
+    // seiner]", a note set inline, v0.24.5; "[32:1]" alone is the edition's
+    // other numbering, Luther 1912.)
     static BRACKET: OnceLock<regex::Regex> = OnceLock::new();
     let bracket = BRACKET.get_or_init(|| {
         regex::Regex::new(
-            r"\([^()]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^()]*)?\)|\[[^\[\]]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^\[\]]*)?\]",
+            r"\([^()]*\d{1,3}[:.,]\d{1,2}(?:[^\d][^()]*)?\)|\[[^\[\]]*\d{1,3}[:.,]\d{1,2}[^\d\[\]][^\[\]]*\p{L}[^\[\]]*\]",
         )
         .expect("valid")
     });
@@ -3069,22 +3070,7 @@ fn page_footnotes(units: &[Unit]) -> HashSet<usize> {
     let mut out = HashSet::new();
     let mut in_notes: Option<(u16, u32)> = None;
     let mut in_column_notes: Option<(u16, u32, u8)> = None;
-    // After a line the layout set as a note at a page's foot, a line at the
-    // page's edge belongs to the notes too ("j 26:61 Or strange" / "The
-    // Gershonite clan from Gershon,", a note's last line set at the very
-    // edge), never to a verse (v0.24.5).
-    let mut after_layout_note: Option<(u16, u32)> = None;
     for (i, unit) in units.iter().enumerate() {
-        if let Some(page) = unit.place.page {
-            let here = (unit.place.document, page);
-            if unit.note {
-                after_layout_note = Some(here);
-            } else if after_layout_note == Some(here) && unit.edge && !unit.heading {
-                out.insert(i);
-            } else if after_layout_note != Some(here) {
-                after_layout_note = None;
-            }
-        }
         if let Some(page) = unit.place.page {
             let here = (unit.place.document, page, unit.column);
             if in_column_notes != Some(here) {
@@ -3116,6 +3102,40 @@ fn page_footnotes(units: &[Unit]) -> HashSet<usize> {
         }
         if in_notes.is_some() {
             out.insert(i);
+        }
+    }
+    out
+}
+
+/// Lines at a page's edge that come after a line the layout set as a note
+/// at the page's foot, with nothing but notes and edge lines after them on
+/// the page (v0.24.5). Such a line is a note's last line in one layout
+/// ("j 26:61 Or strange" / "The Gershonite clan from Gershon,") and a
+/// verse's last line in another ("^a^ 14:1 Ps 10:4 …" / "Garde-moi, ô Dieu!
+/// Car je cherche en toi mon refuge."): never read into a verse, and the
+/// verse it may end is not verified.
+fn note_tails(units: &[Unit]) -> HashSet<usize> {
+    let mut out = HashSet::new();
+    let mut after_note: Option<(u16, u32)> = None;
+    for (i, unit) in units.iter().enumerate() {
+        let Some(page) = unit.place.page else {
+            after_note = None;
+            continue;
+        };
+        let here = (unit.place.document, page);
+        if unit.note {
+            after_note = Some(here);
+        } else if after_note == Some(here)
+            && unit.edge
+            && !unit.heading
+            && units[i + 1..]
+                .iter()
+                .take_while(|u| u.place.page == Some(page) && u.place.document == here.0)
+                .all(|u| u.note || u.edge)
+        {
+            out.insert(i);
+        } else if after_note != Some(here) {
+            after_note = None;
         }
     }
     out
@@ -5474,6 +5494,9 @@ struct Open {
 struct Reader<'a> {
     /// The document is a Septuagint (see `septuagint_document`), v0.24.5.
     septuagint: bool,
+    /// Lines after a page's notes that may be a verse's end (see
+    /// `note_tails`), v0.24.5.
+    note_tails: HashSet<usize>,
     units: &'a [Unit],
     items: &'a [Item],
     language: Option<ReferenceLanguage>,
@@ -5621,14 +5644,9 @@ impl Reader<'_> {
         // as WeasyPrint and LibreOffice set it) or a soft hyphen is broken as
         // with "-" ("inherit‐" / "ance"), never kept as "inherit‐ ance"
         // (v0.24.5).
-        if unit != open.last_unit && !glue {
-            if open.text.ends_with('\u{00AD}') {
-                open.text.pop();
-                open.text.push('-');
-            } else if open.text.ends_with('\u{2010}') {
-                open.text.pop();
-                open.text.push('-');
-            }
+        if unit != open.last_unit && !glue && open.text.ends_with(['\u{00AD}', '\u{2010}']) {
+            open.text.pop();
+            open.text.push('-');
         }
         if open.text.is_empty() || glue {
             open.text.push_str(words);
@@ -6834,6 +6852,10 @@ impl Reader<'_> {
         let Some(open) = self.open.as_ref() else {
             return;
         };
+        if (open.last_unit + 1..unit.min(self.units.len())).any(|j| self.note_tails.contains(&j)) {
+            self.doubt_boundary();
+            return;
+        }
         if open.text.trim().is_empty() || ends_as_sentence(&open.text) {
             return;
         }
@@ -6896,6 +6918,16 @@ impl Reader<'_> {
     }
 
     fn text(&mut self, words: &str, unit: usize) {
+        // Text going on after a line taken out after the page's notes (see
+        // `note_tails`): that line may have been the verse's own, so the verse
+        // is not verified (v0.24.5).
+        if let Some(open) = self.open.as_mut() {
+            if (open.last_unit + 1..unit.min(self.units.len()))
+                .any(|j| self.note_tails.contains(&j))
+            {
+                open.doubt = open.doubt.or(Some("boundary"));
+            }
+        }
         // Raised small letters (see `pdf_layout::RAISED_OPEN`): in a verse, taken
         // out where a note on the page shows them to be its references; else
         // kept as written — and then the chapter is not used. Outside a verse
@@ -7693,6 +7725,8 @@ fn recognise_in(
         v
     };
     furniture.extend(footnotes);
+    let tails = note_tails(units);
+    furniture.extend(tails.iter().copied());
     let starts = block_starts(units, &furniture);
     let septuagint = septuagint_document(units, language);
     let builder = Builder {
@@ -7750,6 +7784,7 @@ fn recognise_in(
         inline_labels: inline_labels(units),
         heading_in_verse: false,
         septuagint,
+        note_tails: tails,
         margin_pages: {
             let mut counts: HashMap<(u16, u32), usize> = HashMap::new();
             for u in units.iter().filter(|u| u.text.contains(MARGIN)) {
