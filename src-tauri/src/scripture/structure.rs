@@ -4880,6 +4880,10 @@ struct Reader<'a> {
     /// verse begins in, not where — poetry indents the text past the numbers
     /// (v0.24.4). By (document, page).
     margin_pages: HashSet<(u16, u32)>,
+    /// A document three tenths or more of whose pages set numbers in the
+    /// margin: on its other pages too (poetry, where every line is indented
+    /// past the numbers), v0.24.4.
+    margin_document: bool,
 }
 
 impl Reader<'_> {
@@ -5854,10 +5858,11 @@ impl Reader<'_> {
                 || m.margin
                 || (m.raised
                     && m.unit_start
-                    && self.units[unit].place.page.is_some_and(|p| {
-                        self.margin_pages
-                            .contains(&(self.units[unit].place.document, p))
-                    }));
+                    && (self.margin_document
+                        || self.units[unit].place.page.is_some_and(|p| {
+                            self.margin_pages
+                                .contains(&(self.units[unit].place.document, p))
+                        })));
             if doubt {
                 self.doubt_boundary();
             }
@@ -6961,6 +6966,18 @@ fn recognise_in(
                 .filter(|(_, n)| *n >= 2)
                 .map(|(k, _)| k)
                 .collect()
+        },
+        margin_document: {
+            let pages: HashSet<(u16, u32)> = units
+                .iter()
+                .filter_map(|u| u.place.page.map(|p| (u.place.document, p)))
+                .collect();
+            let margin: HashSet<(u16, u32)> = units
+                .iter()
+                .filter(|u| u.text.contains(MARGIN))
+                .filter_map(|u| u.place.page.map(|p| (u.place.document, p)))
+                .collect();
+            !pages.is_empty() && margin.len() * 10 >= pages.len() * 3
         },
     };
     let mut out = reader.run();
