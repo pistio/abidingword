@@ -115,7 +115,7 @@ struct Edition {
     format: String,
     layout: String,
     /// "impl" (development), "regression" (disclosed evaluation sets),
-    /// "withheld-b", "withheld-c" (independent, evaluated once each).
+    /// "withheld-b", "withheld-c", "withheld-d" (each independent until its one evaluation).
     role: String,
     /// The books the document holds (None: the whole edition).
     books: Option<Vec<String>>,
@@ -128,7 +128,12 @@ struct Edition {
 fn corpus() -> Vec<Edition> {
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs/corpus");
     let mut out = Vec::new();
-    for name in ["editions.tsv", "withheld-b.tsv", "withheld-c.tsv"] {
+    for name in [
+        "editions.tsv",
+        "withheld-b.tsv",
+        "withheld-c.tsv",
+        "withheld-d.tsv",
+    ] {
         let Ok(text) = std::fs::read_to_string(dir.join(name)) else {
             continue;
         };
