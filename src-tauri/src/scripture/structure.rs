@@ -1237,7 +1237,10 @@ fn septuagint_document(units: &[Unit], language: Option<ReferenceLanguage>) -> b
         // prose ("the Greek Septuagint, but not the Hebrew").
         let front = i < first_book && (unit.heading || unit.large || unit.centred);
         let titled = words <= 16
-            && text.chars().find(|c| c.is_alphabetic()).is_some_and(|c| !c.is_lowercase())
+            && text
+                .chars()
+                .find(|c| c.is_alphabetic())
+                .is_some_and(|c| !c.is_lowercase())
             && !text.contains([',', ';'])
             && !text.trim_end().ends_with(['.', '!', '?', ':']);
         if titled {
