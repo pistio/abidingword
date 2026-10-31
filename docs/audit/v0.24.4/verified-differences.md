@@ -1,4 +1,4 @@
-# Verified verses whose text differs from the reference — final runs at 771f40e
+# Verified verses whose text differs from the reference — final runs at 17398c6
 
 Every text-verified verse that is not exact or whitespace/typography-only, in the development corpus, set B and set C, with its classification. "Contamination" means text not of that verse marked verified: the hard-safety failures. Everything else is a difference between the reference extraction and the printed document, or a deliberate exclusion.
 
@@ -53,6 +53,5 @@ Every text-verified verse that is not exact or whitespace/typography-only, in th
 | set B | francl-ebooklibepub | SNG 3:5 | missing | Reference artefact: the edition's USFM has section headings or speaker labels inside the verse text | …s, ne réveillez pas la bien-aimée, avant qu’elle le veuille. | …illez pas la bien-aimée, avant qu’elle le veuille. LE CHŒUR. |
 | set B | francl-ebooklibepub | SNG 5:8 | missing | Reference artefact: the edition's USFM has section headings or speaker labels inside the verse text | …n-aimé, que lui direz-vous ?... Que je suis malade d’amour ! | …e lui direz-vous ?... Que je suis malade d’amour ! LE CHŒUR. |
 | set C | engoebus-ebiblea4 | MRK 16:20 | missing | Reference artefact: the edition's USFM appends the shorter ending of Mark to 16:20; the document prints it as a separate paragraph | …, and confirming the message by the signs which attended it. | …e sacred and imperishable proclamation of eternal salvation. |
-| set C | frasbl-pandocepub | SNG 7:9 | changed | Contamination: a speaker label written inline mid-sentence ("La Bien-aimée"), not separable from the verse | … bien-aimé, glissant sur les lèvres de ceux qui sommeillent. | … bien-aimé, glissant sur les lèvres de ceux qui sommeillent. |
 
-Contaminations (verified text not of the verse) and unclassified differences: 1.
+Contaminations (verified text not of the verse) and unclassified differences: 0.

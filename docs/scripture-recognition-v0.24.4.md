@@ -115,13 +115,24 @@ identical refused chapters, counts and verses).
   contamination (the four of 8a61c55 — page numbers and a note letter read
   into Berean verses — are gone, §2). Berean PDF 77.3 / 71.2 % (first
   evaluation 62.9 / 59.3 %, 41 wrong).
-* **Development corpus** (`dev-regression.md`, 46 documents): DEV-CORPUS-LINE
+* **Development corpus** (`dev-regression.md`, 46 documents): no verified
+  or detected false positive anywhere. Detection equal to v0.24.3's final run
+  in 43 documents, higher in two (Vulgate PDF +1 832, Segond PDF +176) and
+  lower in one (Segond EPUB −136: four chapters of Jeremiah and Ezekiel now
+  refused because "Ainsi parle l'Éternel:" on a line of its own, repeated,
+  stands between two sentences — a fail-closed cost of the label rule, §2).
+  Verified text 95 % or more of the printed verses in 39 of 46 documents;
+  against v0.24.3 it moved between +1.6 % (porbr2018 PDF) and −5.7 % (Vulgate
+  PDF, whose chapters were refused before and are now found but partly
+  unverified) — the intended cost of the new fail-closed rules.
 
-The seven remaining verified differences of the development corpus are the
-Textbibel's USFM encoding Scripture as headings (reference artefacts), the
-subscriptions kept apart by design and the words a converter dropped; the two
-contaminations v0.24.3 left there (Textbibel headings in the body's type, the
-Song of Songs label) are gone.
+The 20 remaining verified differences of the development corpus
+(`verified-differences.md`) are 7 reference artefacts (the Textbibel's USFM
+encoding Scripture as headings), 4 subscriptions kept apart by design and 9
+verses whose words the converter dropped; the two contaminations v0.24.3 left
+there (Textbibel headings in the body's type, the Song of Songs label) are
+gone. Across the development corpus, set B and set C together: zero verified
+false positives, zero contaminated verified text.
 
 ### Withheld set D (independent; blind; run once)
 
