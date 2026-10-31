@@ -2134,7 +2134,7 @@ fn page_furniture(units: &[Unit]) -> HashSet<usize> {
 fn numbered_name_only(text: &str) -> bool {
     let text = text.trim();
     let rest = match text.split_once(char::is_whitespace) {
-        Some((n, rest)) if matches!(n, "1" | "2" | "3" | "4") => rest,
+        Some(("1" | "2" | "3" | "4", rest)) => rest,
         _ => text,
     };
     !rest.chars().any(|c| c.is_ascii_digit())

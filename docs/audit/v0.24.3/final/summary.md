@@ -1,6 +1,6 @@
 # v0.24.3 final development and regression run against the baseline
 
-Run at commit f73222e (recogniser unchanged since). *Baseline usable*: verses v0.24.2 accepted (its only figure). *Detected*: verses in chapters whose structure was accepted. *Text-verified*: verses whose text became the Bible's text. *FPs*: verses the edition does not have. *Verified with extra/changed/cut text*: see `verified-differences.md` for each one and its classification. *Location*: verified verses whose recorded page and segment hold their text.
+Run at commit 01ac499. *Baseline usable*: verses v0.24.2 accepted. *Detected*: verses in chapters whose structure was accepted. *Text-verified*: verses whose text became the Bible's text. *FPs*: verses the edition does not have. *Verified with extra/changed/cut text*: see `verified-differences.md`. *Location*: verified verses whose recorded page and segment hold their text.
 
 | Edition | Role | Baseline usable | Detected (accepted) | Text-verified | Verified % | Detected-only FPs | Verified FPs | Verified with extra/changed/cut text | Location |
 |---|---|---|---|---|---|---|---|---|---|
@@ -16,11 +16,11 @@ Run at commit f73222e (recogniser unchanged since). *Baseline usable*: verses v0
 | engwebp-pdf | impl | 30811 | 30811 (99.1 %) | 30032 | 96.6 % | 0 | 0 | 0 | 100.0 % |
 | engwebp-vpl | impl | 29776 | 31098 (100.0 %) | 30928 | 99.5 % | 0 | 0 | 1 | 99.8 % |
 | engylt-pdf | regression | 31102 | 31102 (100.0 %) | 31090 | 100.0 % | 0 | 0 | 0 | 100.0 % |
-| fob-epub | impl | 31107 | 31107 (100.0 %) | 31075 | 99.9 % | 0 | 0 | 0 | 100.0 % |
-| fob-pdf | impl | 31107 | 31107 (100.0 %) | 30993 | 99.6 % | 0 | 0 | 0 | 100.0 % |
-| fraLSG-epub | impl | 31122 | 31122 (99.8 %) | 30948 | 99.3 % | 0 | 0 | 0 | 100.0 % |
-| fraLSG-luk | impl | 1098 | 1098 (95.4 %) | 1090 | 94.7 % | 0 | 0 | 0 | 93.7 % |
-| fraLSG-pdf | impl | 30568 | 30550 (98.0 %) | 29814 | 95.6 % | 0 | 0 | 0 | 95.3 % |
+| fob-epub | impl | 31107 | 31107 (100.0 %) | 31074 | 99.9 % | 0 | 0 | 0 | 100.0 % |
+| fob-pdf | impl | 31107 | 31107 (100.0 %) | 30992 | 99.6 % | 0 | 0 | 0 | 100.0 % |
+| fraLSG-epub | impl | 31122 | 31122 (99.8 %) | 30935 | 99.2 % | 0 | 0 | 0 | 100.0 % |
+| fraLSG-luk | impl | 1098 | 1098 (95.4 %) | 1089 | 94.6 % | 0 | 0 | 0 | 93.7 % |
+| fraLSG-pdf | impl | 30568 | 30550 (98.0 %) | 29804 | 95.6 % | 0 | 0 | 0 | 95.4 % |
 | frajnd-epub | regression | 24323 | 29962 (96.2 %) | 29428 | 94.5 % | 0 | 0 | 0 | 100.0 % |
 | frajnd-lopdf | regression | 11024 | 27012 (86.7 %) | 26445 | 84.9 % | 0 | 0 | 0 | 100.0 % |
 | frajnd-pdf | regression | 24944 | 30439 (97.7 %) | 29864 | 95.9 % | 0 | 0 | 0 | 97.5 % |
@@ -38,8 +38,8 @@ Run at commit f73222e (recogniser unchanged since). *Baseline usable*: verses v0
 | kor1961-lopdf | impl | 30770 | 30886 (99.4 %) | 30816 | 99.1 % | 0 | 0 | 0 | 100.0 % |
 | latVUC-epub | impl | 29449 | 29781 (95.4 %) | 29721 | 95.2 % | 0 | 0 | 0 | 100.0 % |
 | latVUC-pdf | impl | 6860 | 6860 (22.0 %) | 6838 | 21.9 % | 0 | 0 | 0 | 100.0 % |
-| porbr2018-epub | impl | 31102 | 31102 (100.0 %) | 31071 | 99.9 % | 0 | 0 | 1 | 100.0 % |
-| porbr2018-pdf | impl | 28541 | 30123 (96.9 %) | 30093 | 96.8 % | 0 | 0 | 3 | 100.0 % |
+| porbr2018-epub | impl | 31102 | 31102 (100.0 %) | 31032 | 99.8 % | 0 | 0 | 1 | 100.0 % |
+| porbr2018-pdf | impl | 28541 | 30123 (96.9 %) | 30054 | 96.6 % | 0 | 0 | 3 | 100.0 % |
 | porbrbsl-docx | impl | 30816 | 30816 (99.1 %) | 30784 | 99.0 % | 0 | 0 | 0 | 100.0 % |
 | porbrbsl-pdf | impl | 30815 | 30815 (99.1 %) | 30540 | 98.2 % | 0 | 0 | 0 | 100.0 % |
 | rv1909-docx | impl | 31084 | 31084 (100.1 %) | 31026 | 99.9 % | 0 | 0 | 0 | 100.0 % |

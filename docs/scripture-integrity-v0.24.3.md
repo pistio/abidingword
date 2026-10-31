@@ -180,7 +180,50 @@ completely and leaves 0023 intact.
 
 ## 9. Audit
 
-*To be completed from the final runs.*
+All figures and per-verse evidence are in `docs/audit/v0.24.3/`:
+
+| File | What it holds |
+|---|---|
+| `summary-baseline.md` | v0.24.2's recogniser (aa8fdd9) on the development and regression corpora |
+| `final/summary.md`, `final/summary-run.md` | the final run on the same corpora, against the baseline |
+| `final/verified-differences.md` | every verified verse whose text differs from the reference, classified |
+| `withheld-b-first/` | withheld set B, its one blind evaluation, unchanged |
+| `withheld-b-regression/` | set B after disclosure, used to find and fix general faults |
+| `withheld-c/` | withheld set C, its one blind evaluation (the final generalisation test) |
+
+**Development and regression corpora (46 documents, 21 editions).** No verse the edition
+does not have, detected or verified. No edition below its baseline detection except where
+v0.24.2 accepted wrong text: the French Segond PDF (30 550 against 30 568), where chapters
+whose verse 1 an introduction's "1 Corinthiens …" took are now refused. Detection ≥ 98 % in
+34 of 46 documents; verified text 85–100 % except the Hebrew PDF (refused) and the
+Clementine Vulgate PDF (21.9 %); verification costs 0–4 %. The
+converted files went from 35–68 % to 85–100 %. Remaining verified text that differs: 24
+verses — 7 reference artefacts (the Textbibel's USFM encodes Scripture as `\s1`), 4 subscriptions
+kept apart by design, 9 words a converter dropped, and **4 genuine contaminations** (3
+Textbibel headings with no layout evidence, 1 inline speaker label). Location accuracy
+97.5–100 %, except the French Segond PDFs (95.4 %; the Luke booklet 93.7 %).
+
+**Withheld set B (11 documents, other generators and layouts), first evaluation:** 23
+verified false positives in three documents, 1 734 verified verses with wrong text, and
+coverage of 0–37 % in four documents. After disclosure and general fixes (set B used as a
+regression set): no false positives, 58 verified differences (8 of them reference
+artefacts), detection 70–100 % except the French Crampon EPUB (39.5 %), the title-less
+Greek booklet (0 %, refused) and two plain-text/eBible files (83–86 %).
+
+**Withheld set C (11 documents), final evaluation, run once:** read well in five documents
+(German Word, eBible English PDF, Greek Markdown, Korean text: 98.9–100 % detected, no
+errors), correctly refused two it cannot read (no verse numbers; Hebrew-letter numerals),
+but **failed hard safety in three**: 73 verified false positives (KJV with verse numbers in
+the margin, the Segond 21-like pandoc EPUB, the Portuguese A5 PDF) and 6 032 verified verses
+with another verse's or a note's words, chiefly where verse numbers stand in the margin
+(4 886) and where note callers are plain digits after words (929). Details:
+`withheld-c/summary.md`.
+
+**Checks.** `cargo fmt --check`, `cargo clippy --all-targets --locked -D warnings` and
+`cargo test --locked` (all suites) pass; `npm run typecheck`, `lint`, `i18n:check`, `test`
+(1 053 tests) and `build` pass. Library, Hebrew/Greek research, import cancellation,
+migrations (0023 forward and rollback), batch and document workflows are covered by those
+suites and unchanged in result.
 
 ## 10. Limitations and their effect on ordinary users
 
@@ -189,6 +232,12 @@ What remains, and what a person using the app sees because of it:
 * **Hebrew Bible as PDF** (§7): refused; the person is told the pages'
   reading order or letters could not be established and is offered to keep
   it as a document. The EPUB of the same edition reads in full.
+* **Layouts not yet handled safely** (withheld set C, §9): verse numbers in the margin,
+  note callers written as plain digits after words, and some A5 PDFs. Verses can be accepted
+  with a neighbour's words. Until this is fixed, a Bible added from such a document can hold
+  wrong text marked as checked; the document itself is always kept and shown as printed.
+* **Books without a title, verses without numbers, Hebrew-letter verse numbers**: refused
+  (nothing read), never guessed.
 * **Clementine Vulgate PDF** (22 % of verses): its pages set two columns so
   close, with a commentary beneath, that most pages' reading order cannot be
   established; their chapters are refused, never guessed. The EPUB reads
@@ -232,4 +281,22 @@ What remains, and what a person using the app sees because of it:
 
 ## 11. Verdict
 
-*To be completed.*
+**NOT READY.**
+
+The development and regression corpora meet the acceptance criteria except for four verified
+contaminations in two editions, and every v0.24.2 finding (the Darby false positives, running
+heads, raised numbers in converted files, lost corrections) is fixed. But the final
+independent test, withheld set C, shows that the recogniser does not yet generalise safely:
+on layouts it was not developed against (verse numbers in the margin, note callers as plain
+digits, an A5 PDF with italic running heads) it accepts verses the edition does not have and
+verifies text that belongs to another verse. The hard safety requirements — zero false
+positives, zero wrong verse assignments and zero contamination in verified passages — are
+not met there, and set B's first evaluation showed the same.
+
+The owner's decision is needed on how to proceed: in particular whether a further milestone
+should (a) add the missing layout evidence (margin verse numbers; plain-digit note callers
+in EPUB and Word; drop numerals) and evaluate on a new withheld set, and/or (b) change the
+product so that text recognised from a document is never used as a Bible's verses without
+the person confirming a sample of it, as a safety net for layouts the recogniser has not
+seen. Sets B and C are now disclosed and become regression sets; a new withheld set is
+needed for the next independent test.
