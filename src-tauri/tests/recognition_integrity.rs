@@ -1146,3 +1146,35 @@ fn a_note_naming_a_passage_at_the_page_s_foot_is_not_its_running_head() {
         assert_eq!(verse(&r, "PHM", 1, v).unwrap(), words("Philemon", 1, v));
     }
 }
+
+#[test]
+fn a_verse_s_last_line_with_a_note_s_letter_before_the_next_title_stays_in_the_verse() {
+    // "²⁴My love be with all of you in Christ Jesus." / "Amen.ᵉ" / "2
+    // CORINTHIANS": the short line with the raised note letter is the verse's
+    // end, not the first line of the next book's title.
+    use abiding_word_lib::library::adapters::pdf_layout::{RAISED_CLOSE, RAISED_OPEN};
+    let mut units = philemon(|_, _, _| {});
+    let at = units
+        .iter()
+        .position(|u| u.text.starts_with("25 "))
+        .unwrap();
+    units[at].text = "25 My love be with all of you in Christ Jesus.".into();
+    units.push(line(&format!("Amen.{RAISED_OPEN}e{RAISED_CLOSE}"), 3));
+    let mut note = line("e 1:25 Some manuscripts do not include Amen.", 3);
+    note.note = true;
+    units.push(note);
+    let mut title = line("HEBREWS", 4);
+    title.edge = true;
+    units.push(title);
+    for v in 1..=14u16 {
+        units.push(line(&format!("{v} {}", words("Hebrews", 1, v)), 4));
+    }
+    let r = recognise(&units);
+    assert_eq!(
+        verse(&r, "PHM", 1, 25),
+        Some("My love be with all of you in Christ Jesus. Amen.".to_string()),
+        "{:?}",
+        errors(&r)
+    );
+    assert_eq!(verse(&r, "HEB", 1, 14), Some(words("Hebrews", 1, 14)));
+}

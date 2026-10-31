@@ -2735,6 +2735,23 @@ fn unmark_raised(text: &str) -> String {
     out
 }
 
+/// A text with its raised spans and declared note callers taken out
+/// altogether ("Amen.ᵉ" → "Amen."), for judging a line's shape (v0.24.4).
+fn without_raised_spans(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut depth = 0u8;
+    for c in text.chars() {
+        match c {
+            RAISED_OPEN | NOTE_OPEN => depth = depth.saturating_add(1),
+            RAISED_CLOSE | NOTE_CLOSE => depth = depth.saturating_sub(1),
+            MARGIN => {}
+            _ if depth > 0 => {}
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
 /// The verse's words with the note callers the document itself declares
 /// (`NOTE_OPEN` … `NOTE_CLOSE`) taken out, and those callers (v0.24.4).
 fn without_declared_callers(text: &str) -> (String, Vec<String>) {
@@ -3456,9 +3473,18 @@ impl Builder<'_> {
             };
             let whole = clean(&self.units[item.unit].text).trim() == line.trim();
             let alone = n - 1 - taken == 0 || self.items[n - 2 - taken].unit != item.unit;
-            let shape = line.trim().chars().count() <= 60
-                && line.trim().chars().next().is_some_and(|c| c.is_uppercase())
-                && !line
+            // (Judged without the raised spans: "Amen.ᵉ" before the next
+            // book's title is a verse's last word with a note's letter, not
+            // a line of the title; a title carries no note callers; v0.24.4.)
+            let plain = without_raised_spans(line);
+            let shape = !line.contains([RAISED_OPEN, NOTE_OPEN, MARGIN])
+                && plain.trim().chars().count() <= 60
+                && plain
+                    .trim()
+                    .chars()
+                    .next()
+                    .is_some_and(|c| c.is_uppercase())
+                && !plain
                     .trim_end()
                     .ends_with(['.', '!', '?', ';', ':', '”', '’', '"']);
             if !whole || !alone || !shape {
@@ -3470,7 +3496,7 @@ impl Builder<'_> {
             return None;
         }
         let ended = matches!(&self.items[n - 1 - taken].event, Event::Text(t)
-            if t.trim_end().ends_with(['.', '!', '?', '”', '’', '"', ')']));
+            if without_raised_spans(t).trim_end().ends_with(['.', '!', '?', '”', '’', '"', ')']));
         if !ended {
             return None;
         }
