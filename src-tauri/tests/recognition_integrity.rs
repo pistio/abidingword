@@ -1126,3 +1126,23 @@ fn the_page_s_own_number_standing_in_a_verse_leaves_it_unverified() {
     assert_eq!(r.unverified.get(&key(8)), Some(&"boundary"));
     assert_eq!(r.unverified.get(&key(9)), None);
 }
+
+#[test]
+fn a_note_naming_a_passage_at_the_page_s_foot_is_not_its_running_head() {
+    // "d 9:9 Deuteronomy 25:4" at the foot of a page is a cross-reference
+    // note; the page's chapters are not refused by it, and the head read for
+    // a page is its topmost line whatever order the lines are gathered in.
+    let units = philemon(|v, page, units| {
+        if v % 10 == 9 {
+            let mut note = line("d 1:3 Deuteronomy 25:4", page);
+            note.note = true;
+            note.edge = true;
+            units.push(note);
+        }
+    });
+    let r = recognise(&units);
+    assert!(errors(&r).is_empty(), "{:?}", errors(&r));
+    for v in 1..=25 {
+        assert_eq!(verse(&r, "PHM", 1, v).unwrap(), words("Philemon", 1, v));
+    }
+}

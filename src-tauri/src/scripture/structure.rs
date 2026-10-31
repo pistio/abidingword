@@ -3027,14 +3027,20 @@ fn check_running_heads(
 ) {
     // The first running head of each page, by (document, page).
     let mut heads: BTreeMap<(u16, u32), PageHead> = BTreeMap::new();
-    for &i in furniture {
+    // (In the document's order, so that the page's first head is its
+    // topmost line, the same on every reading; v0.24.4.)
+    let mut ordered: Vec<usize> = furniture.iter().copied().collect();
+    ordered.sort_unstable();
+    for i in ordered {
         let unit = &units[i];
         let Some(page) = unit.place.page else {
             continue;
         };
         // (A passage in brackets at a page's top is a parallel reference
-        // under a heading, "(Isaiah 66:1-2)", not the page's head.)
+        // under a heading, "(Isaiah 66:1-2)", not the page's head; a note
+        // naming a passage, "d 9:9 Deuteronomy 25:4", is a note.)
         if heads.contains_key(&(unit.place.document, page))
+            || unit.note
             || !reference_head(&unit.text)
             || unit.text.trim_start().starts_with('(')
         {
