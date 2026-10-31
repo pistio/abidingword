@@ -27,6 +27,7 @@ permissions = [
   "allow-app-log-error",
   "allow-workspace-get-default",
   "allow-project-list",
+  "allow-trash-list",
   "allow-project-delete",
   "allow-project-restore",
   "allow-project-get",

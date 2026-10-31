@@ -2353,7 +2353,7 @@
     },
     "builtin": {
       "eva": {
-        "name": "Bible Study — Observation, Understanding, Application",
+        "name": "Group Bible Study — Observation, Understanding, Application",
         "hint": "For a group: observe the passage, understand it, then ask what follows.",
         "blocks": {
           "erkennen": {
@@ -2434,7 +2434,11 @@
       "keepNotes": "Keep previously used notes and their sources as saved copies when changing or removing the study link. Future study edits will not change those copies.",
       "saveLink": "Save study link",
       "savedNote": "Saved study note",
-      "project": "Back to project"
+      "project": "Back to project",
+      "basedOn": "Based on: Bible Study —",
+      "linkStudy": "Link to Bible Study",
+      "openStudy": "Open linked Study",
+      "standalone": "Standalone Teaching"
     }
   },
   "parts": {

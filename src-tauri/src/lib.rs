@@ -73,6 +73,7 @@ pub fn run() {
             commands::app::app_log_error,
             commands::workspaces::workspace_get_default,
             commands::projects::project_list,
+            commands::projects::trash_list,
             commands::projects::project_delete,
             commands::projects::project_restore,
             commands::projects::project_get,

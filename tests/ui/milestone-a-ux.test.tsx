@@ -13,9 +13,8 @@ it.each([false, true])("offers a complete folder import from Add to library, rec
   const api = createMemoryApi();
   api.state.batch.nextFolder = { path: "/synthetic", files: ["/synthetic/first.md", "/synthetic/nested/second.md"] };
   const { user } = await renderApp(api);
-  await user.click(await sources().findByRole("button", { name: "Add to library…" }));
-  await user.click(screen.getByRole("button", { name: "Add many sources" }));
-  const dialog = within(screen.getByRole("dialog", { name: "Add many sources" }));
+  await user.click(await sources().findByRole("button", { name: "Add Sources…" }));
+  const dialog = within(screen.getByRole("dialog", { name: "Add Sources" }));
   if (!recursive) await user.click(dialog.getByRole("checkbox", { name: "Include files in subfolders" }));
   await user.click(dialog.getByRole("button", { name: "Choose a folder…" }));
   await dialog.findByRole("list", { name: "Files found" });
@@ -31,9 +30,8 @@ it("offers multiple individual files without visiting Settings", async () => {
   const api = createMemoryApi();
   api.state.batch.nextFiles = ["/synthetic/first.md", "/synthetic/second.md"];
   const { user } = await renderApp(api);
-  await user.click(await sources().findByRole("button", { name: "Add to library…" }));
-  await user.click(screen.getByRole("button", { name: "Add many sources" }));
-  const dialog = within(screen.getByRole("dialog", { name: "Add many sources" }));
+  await user.click(await sources().findByRole("button", { name: "Add Sources…" }));
+  const dialog = within(screen.getByRole("dialog", { name: "Add Sources" }));
   await user.click(dialog.getByRole("button", { name: "Choose files…" }));
   expect(await dialog.findByText("first.md")).toBeInTheDocument();
   expect(dialog.getByText("second.md")).toBeInTheDocument();
@@ -103,10 +101,14 @@ it.each(["en", "de", "ko", "fr", "es", "pt"])("labels the passage, attributes Te
 });
 
 it("exposes visibility beside the writing while participant exports still omit private content", async () => {
-  const api = createMemoryApi(); const { user } = await renderApp(api);
-  await user.click(await screen.findByRole("button", { name: "New Teaching" }));
+  const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Teaching test" });
+  await api.studyCreate({ projectId: project.id, title: "Privacy study" });
+  const { user } = await renderApp(api);
+  await user.click(await screen.findByRole("button", { name: /Privacy study/ }));
+  await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
   await user.click(await screen.findByRole("button", { name: "Start" }));
-  const editor = await screen.findByRole("article", { name: "Sermon" });
+  const editor = await screen.findByRole("article", { name: /Privacy study/ });
   const main = within(editor).getByRole("textbox", { name: "Main part" });
   await user.type(main, "PRIVATE_SENTINEL");
   const block = main.closest('[role="group"]');
@@ -115,8 +117,13 @@ it("exposes visibility beside the writing while participant exports still omit p
   expect(visibility).toBeVisible();
   if ((visibility as HTMLInputElement).checked) await user.click(visibility);
   await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks!.some(b => b.body === "PRIVATE_SENTINEL" && !b.participantFacing)).toBe(true));
+  expect(api.state.teaching.preparations[0]!.studyId).toBe(api.state.studies[0]!.id);
+  expect(within(editor).getByText("Based on: Bible Study — Privacy study")).toBeVisible();
+  expect(within(editor).getByRole("button", { name: "Open linked Study" })).toBeVisible();
   const prep = await api.teachingGet(api.state.teaching.preparations[0]!.id);
   expect(JSON.stringify(derive(i18n.t.bind(i18n), "worksheet", prep))).not.toContain("PRIVATE_SENTINEL");
+  await user.click(within(editor).getByRole("button", { name: "Open linked Study" }));
+  expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Privacy study");
 });
 
 it("never labels a linked Teaching as independent while the Study list is loading", async () => {
@@ -126,15 +133,15 @@ it("never labels a linked Teaching as independent while the Study list is loadin
   const teaching = await api.teachingCreate({ projectId: project.id, studyId: study.id, title: "Linked teaching" });
   const known = await api.studyList({ projectId: project.id });
   const { user } = await renderApp(api);
-  await user.click(await screen.findByRole("button", { name: "Teaching sessions" }));
+  await user.click(await screen.findByRole("button", { name: /Retained study/ }));
   let release!: (value: typeof known) => void;
   const delayed = new Promise<typeof known>((resolve) => { release = resolve; });
   api.studyList = () => delayed;
-  await user.click(await screen.findByRole("button", { name: teaching.title }));
+  await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
   const editor = await screen.findByRole("article", { name: teaching.title });
-  expect(within(editor).getByText("Bible Study (optional) · Bible Study")).toBeVisible();
-  expect(within(editor).queryByText("Bible Study (optional) · Independent teaching")).toBeNull();
+  expect(within(editor).getByText("Based on: Bible Study — Bible Study")).toBeVisible();
+  expect(within(editor).queryByText("Based on: Bible Study — Independent teaching")).toBeNull();
   await act(async () => release(known));
-  expect(await within(editor).findByText("Bible Study (optional) · Retained study")).toBeVisible();
+  expect(await within(editor).findByText("Based on: Bible Study — Retained study")).toBeVisible();
   expect((await api.teachingGet(teaching.id)).studyId).toBe(study.id);
 });

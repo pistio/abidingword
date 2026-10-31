@@ -1,6 +1,6 @@
 {
-  "addToLibrary": "Zur Bibliothek hinzufügen",
-  "addToLibraryEllipsis": "Zur Bibliothek hinzufügen…",
+  "addToLibrary": "Quellen hinzufügen",
+  "addToLibraryEllipsis": "Quellen hinzufügen…",
   "sourceType": {
     "book": "Buch",
     "article": "Artikel",
@@ -73,7 +73,7 @@
     "marks_other": "Deine {{count}} Anmerkungen darin (Markierungen, Notizen und Lesezeichen) werden mit entfernt."
   },
   "add": {
-    "title": "Zur Bibliothek hinzufügen",
+    "title": "Quellen hinzufügen",
     "reading": "Die Datei wird gelesen und ihr Text ermittelt…",
     "intro": "Wähle eine PDF-, EPUB-, Word- (.docx), Markdown- (.md) oder Textdatei (.txt). Abiding Word legt eine eigene Kopie in deiner Bibliothek an und verändert deine Datei nie. Eingescannte PDFs können noch nicht gelesen werden.",
     "choose": "Datei auswählen…",
@@ -330,7 +330,7 @@
     "done_other": "{{formatted}} Quellen wurden endgültig gelöscht."
   },
   "manage": {
-    "add": "Quellen hinzufügen",
+    "add": "Quellen hinzufügen…",
     "counts": "{{active}} in Gebrauch · {{archived}} archiviert · {{trashed}} im Papierkorb",
     "searchLabel": "Quellen nach Titel, Autor oder Dateiname finden",
     "searchPlaceholder": "Titel, Autor oder Dateiname",
@@ -472,8 +472,8 @@
     "untagTitle_other": "Ein Schlagwort von {{formatted}} Quellen entfernen"
   },
   "batch": {
-    "open": "Viele hinzufügen…",
-    "title": "Viele Quellen hinzufügen",
+    "open": "Quellen hinzufügen…",
+    "title": "Quellen hinzufügen",
     "intro": "Wähle mehrere Dateien oder einen Ordner. Abiding Word liest und prüft jede Datei; du siehst die Liste durch, bevor etwas hinzugefügt wird.",
     "chooseFiles": "Dateien wählen…",
     "chooseFolder": "Ordner wählen…",

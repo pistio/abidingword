@@ -172,9 +172,9 @@ function ProjectScope({ workspaceId, projectId, location, setLocation, onMissing
           onRevealScripture={onRevealScripture}
         />
       ) : location.kind === "teaching" ? (
-        <><Button variant="quiet" onClick={openProject}>{t("studies.teaching.workspace.project")}</Button><TeachingView projectId={projectId} startNew={location.create} onRevealScripture={onRevealScripture} /></>
+        <><Button variant="quiet" onClick={openProject}>{t("studies.teaching.workspace.project")}</Button><TeachingView onOpenStudy={onOpenStudy} projectId={projectId} startNew={location.create} onRevealScripture={onRevealScripture} /></>
       ) : (
-        <ProjectView project={project.data} onOpenTeaching={(create) => setLocation({ kind: "teaching", projectId, create })} onProjectChanged={project.setData} onOpenStudy={onOpenStudy} />
+        <ProjectView onDeleted={onMissing} project={project.data} onOpenTeaching={(create) => setLocation({ kind: "teaching", projectId, create })} onProjectChanged={project.setData} onOpenStudy={onOpenStudy} />
       )}
     </>
   );

@@ -64,6 +64,7 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
   const { t } = useTranslation();
   const heading = useRef<HTMLHeadingElement>(null);
   const root = useRef<HTMLElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
   // Unfolded entries: at first only the way to the current one.
   const [open, setOpen] = useState<Set<string>>(() => new Set(ancestorsOf(items, currentId)));
   const all = branches(items);
@@ -81,8 +82,14 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
   useEffect(() => {
     const current = root.current?.querySelector<HTMLElement>("[aria-current='location']");
     const target = current ?? heading.current;
-    target?.focus({ preventScroll: !current });
-    current?.scrollIntoView?.({ block: "center" });
+    target?.focus({ preventScroll: true });
+    // Scroll only the Contents list, never the reader or the workspace.
+    const viewport = scroller.current;
+    if (current && viewport) {
+      const entry = current.getBoundingClientRect();
+      const bounds = viewport.getBoundingClientRect();
+      viewport.scrollTop += entry.top - bounds.top - (viewport.clientHeight - entry.height) / 2;
+    }
   }, []);
 
   const place = layout === "sheet" ? "absolute inset-0" : "absolute inset-y-0 left-0 w-80 max-w-[85%] border-r border-border shadow-lg";
@@ -117,7 +124,7 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
           </Button>
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
+      <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
         {generated && items.length > 0 && <p className="m-0 px-2 pb-2 type-meta">{t("library.contents.generatedNote")}</p>}
         {items.length === 0 ? (
           <p className="m-0 px-2 py-3 text-text-muted">{t("library.contents.none")}</p>

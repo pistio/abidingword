@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronRight, Globe } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { HelpTip } from "@/design-system/HelpTip";
 import { toApiError } from "@/lib/api";
@@ -236,7 +236,7 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
                     }}
                     className="inline-flex min-h-9 items-center rounded-aw px-2.5 type-meta no-underline hover:bg-hover hover:text-text-strong"
                   >
-                    {t(TITLE_KEY[name])}
+                    {name === "language" && <Globe className="mr-1 size-4" aria-hidden="true" />}{t(TITLE_KEY[name])}
                   </a>
                 </li>
               ))}

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Copy, LayoutTemplate } from "lucide-react";
+import { DeleteControl } from "@/features/portability/Trash";
 import { Button } from "@/design-system/Button";
 import { InfoControl } from "@/design-system/InfoControl";
 import { toApiError } from "@/lib/api";
@@ -27,6 +28,7 @@ interface StudyInfoProps {
   relations: StudyRelation[];
   reloadPassages: () => void;
   reloadRelations: () => void;
+  onDeleted: () => void;
   onChanged: (study: Study) => void;
   onDuplicated: (studyId: string) => void;
   onOpenStudy: (study: { id: string; projectId: string }) => void;
@@ -49,7 +51,7 @@ const draftOf = (study: Study): StudyDraft => ({ status: study.status, descripti
  * passages, related studies and copies, each changed by its own button. Opened
  * from a compact control, so the page stays about Scripture.
  */
-export function StudyInfo({ study, sections, findings, templates, passages, relations, reloadPassages, reloadRelations, onChanged, onDuplicated, onOpenStudy, onRevealScripture }: StudyInfoProps) {
+export function StudyInfo({ onDeleted, study, sections, findings, templates, passages, relations, reloadPassages, reloadRelations, onChanged, onDuplicated, onOpenStudy, onRevealScripture }: StudyInfoProps) {
   const { t } = useTranslation();
   const api = useApi();
   const [error, setError] = useState<string | null>(null);
@@ -158,6 +160,7 @@ export function StudyInfo({ study, sections, findings, templates, passages, rela
             <SaveAsTemplate id={`template-${study.id}`} study={study} sections={sections} />
           </div>
           {error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{error}</p>}
+          <DeleteControl id={study.id} title={study.title} kind="study" onDone={() => { close(); onDeleted(); }} />
         </>
       )}
     />

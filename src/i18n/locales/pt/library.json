@@ -1,6 +1,6 @@
 {
-  "addToLibrary": "Adicionar à biblioteca",
-  "addToLibraryEllipsis": "Adicionar à biblioteca…",
+  "addToLibrary": "Adicionar fontes",
+  "addToLibraryEllipsis": "Adicionar fontes…",
   "sourceType": {
     "book": "Livro",
     "article": "Artigo",
@@ -76,7 +76,7 @@
     "marks_other": "As suas {{count}} marcas nesta fonte (destaques, notas e marcadores) são removidas com ela."
   },
   "add": {
-    "title": "Adicionar à biblioteca",
+    "title": "Adicionar fontes",
     "reading": "Lendo o arquivo e localizando o texto…",
     "intro": "Escolha um arquivo PDF, EPUB, Word (.docx), Markdown (.md) ou de texto (.txt). O Abiding Word guarda a própria cópia na sua biblioteca e nunca altera o seu arquivo. PDFs digitalizados ainda não podem ser lidos.",
     "choose": "Escolher um arquivo…",
@@ -349,7 +349,7 @@
     "done_many": "{{formatted}} fontes foram excluídas definitivamente."
   },
   "manage": {
-    "add": "Adicionar fontes",
+    "add": "Adicionar fontes…",
     "counts": "{{active}} em uso · {{archived}} arquivadas · {{trashed}} na lixeira",
     "searchLabel": "Encontrar fontes por título, autor ou nome do arquivo",
     "searchPlaceholder": "Título, autor ou nome do arquivo",
@@ -504,8 +504,8 @@
     "untagTitle_many": "Remover uma etiqueta de {{formatted}} fontes"
   },
   "batch": {
-    "open": "Adicionar várias…",
-    "title": "Adicionar várias fontes",
+    "open": "Adicionar fontes…",
+    "title": "Adicionar fontes",
     "intro": "Escolha vários arquivos ou uma pasta. O Abiding Word lê e verifica cada um; você revisa a lista antes de qualquer coisa ser adicionada.",
     "chooseFiles": "Escolher arquivos…",
     "chooseFolder": "Escolher uma pasta…",

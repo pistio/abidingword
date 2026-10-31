@@ -27,7 +27,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   const { t } = useTranslation();
   const [view, setView] = useState<View>("workspace");
   /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
-  const [settingsSection, setSettingsSection] = useState<"sources" | null>(null);
+  const [settingsSection, setSettingsSection] = useState<"sources" | "language" | null>(null);
   const [recentSourceIds, setRecentSourceIds] = useState<string[]>([]);
   const positions = useRef(new Map<string, ReaderPosition>());
   const positionReaders = useRef(new Map<string, () => ReaderPosition | null>());
@@ -154,6 +154,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
           setPaneSource((current) => current ? { ...current, position: positions.current.get(current.sourceId) ?? current.position } : current);
           setOpen("sources", !open.sources);
         }}
+        onOpenLanguage={() => { capturePositions(); setSettingsSection("language"); setSettingsFrom(view === "settings" ? settingsFrom : view); setView("settings"); }}
         onOpenSettings={() => {
           capturePositions();
           if (view === "settings") showView(settingsFrom);
@@ -170,6 +171,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
       <UpdateNotice />
       {view === "settings" && (
         <SettingsView
+          key={settingsSection ?? "settings"}
           info={info}
           initialSection={settingsSection}
           onClose={() => showView(settingsFrom)}

@@ -19,8 +19,8 @@ async function setup() {
 }
 
 async function readFolder(user: Awaited<ReturnType<typeof renderApp>>["user"], section: HTMLElement, recursive = true) {
-  await user.click(within(section).getByRole("button", { name: "Add many…" }));
-  const dialog = screen.getByRole("dialog", { name: "Add many sources" });
+  await user.click(within(section).getByRole("button", { name: "Add Sources…" }));
+  const dialog = screen.getByRole("dialog", { name: "Add Sources" });
   if (!recursive) await user.click(within(dialog).getByRole("checkbox", { name: "Include files in subfolders" }));
   await user.click(within(dialog).getByRole("button", { name: "Choose a folder…" }));
   await within(dialog).findByRole("list", { name: "Files found" });
@@ -99,7 +99,7 @@ describe("Adding many sources", () => {
     const section = await openSettingsSection(user, "Sources");
     expect(within(section).getByText("An import of many sources was not finished (1 of 2 added).")).toBeInTheDocument();
     await user.click(within(section).getByRole("button", { name: "Continue" }));
-    const dialog = await screen.findByRole("dialog", { name: "Add many sources" });
+    const dialog = await screen.findByRole("dialog", { name: "Add Sources" });
     expect(await within(dialog).findByText(/This import stopped before it was finished \(1 added\)/)).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Add 1 source" }));
     expect(await within(dialog).findByText("2 sources were added.")).toBeInTheDocument();

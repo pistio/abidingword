@@ -178,7 +178,7 @@ export function TeachingField(props: TeachingFieldProps) {
     : "reading block w-full resize-none overflow-hidden rounded-aw border border-transparent bg-field px-3 py-2 text-text placeholder:text-text-muted hover:border-border-subtle focus:border-border";
 
   return (
-    <div ref={root} className="flex flex-col gap-1">
+    <div ref={root} className="flex min-w-0 w-full flex-col gap-1">
       {emphasis ? (
         <label htmlFor={fid} className="sr-only">
           {label}
@@ -226,7 +226,7 @@ export function TeachingField(props: TeachingFieldProps) {
           className={emphasis === "title" ? `${field} resize-none overflow-hidden py-0.5` : `${field}`}
         />
       ) : (
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 flex-col items-stretch gap-1">
           <input
             id={fid}
             ref={(el) => {

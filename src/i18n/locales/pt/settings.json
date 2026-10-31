@@ -15,7 +15,9 @@
   },
   "language": {
     "label": "Idioma da interface",
-    "hint": "Altera o idioma dos menus, botões e mensagens. Seus estudos, notas, biblioteca e textos bíblicos continuam como estão."
+    "hint": "Altera o idioma dos menus, botões e mensagens. Seus estudos, notas, biblioteca e textos bíblicos continuam como estão.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Alterar idioma"
   },
   "theme": {
     "legend": "Tema",
@@ -288,5 +290,19 @@
     "sampleThere": "“{{title}}” já está aqui, então nada foi adicionado.",
     "citationsKept": "Referências mantidas cujo livro não está neste computador: {{n}}",
     "citationsReconnected": "Referências ligadas ao mesmo livro da sua biblioteca: {{n}}"
+  },
+  "trash": {
+    "danger": "Área de perigo",
+    "title": "Lixeira",
+    "move": "Mover para a lixeira",
+    "restore": "Restaurar",
+    "permanent": "Excluir permanentemente",
+    "confirm": "Mover “{{title}}” para a lixeira?",
+    "permanentConfirm": "Excluir “{{title}}” permanentemente? Esta ação não pode ser desfeita.",
+    "typeTitle": "Digite o título exato para confirmar",
+    "empty": "A lixeira está vazia.",
+    "hint": "Restaure um projeto para recuperar seu conteúdo. Estudos excluídos separadamente aparecem após a restauração do projeto.",
+    "studyHint": "O estudo e sua pesquisa podem ser restaurados em Configurações → Dados e backup → Lixeira. O ensino vinculado permanece no projeto com notas e citações salvas, mas perde o vínculo. A restauração não refaz o vínculo automaticamente.",
+    "projectHint": "O projeto, seus estudos e seu ensino são ocultados juntos e podem ser restaurados. A exclusão permanente remove todo o conteúdo dependente."
   }
 }

@@ -15,7 +15,9 @@
   },
   "language": {
     "label": "Interface language",
-    "hint": "Changes the language of menus, buttons and messages. Your studies, notes, library and Bible texts stay as they are."
+    "hint": "Changes the language of menus, buttons and messages. Your studies, notes, library and Bible texts stay as they are.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Change language"
   },
   "theme": {
     "legend": "Theme",
@@ -288,5 +290,19 @@
     "sampleThere": "“{{title}}” is already here, so nothing was added.",
     "citationsKept": "Citations kept whose library book is not on this computer: {{n}}",
     "citationsReconnected": "Citations linked to the same book in your library: {{n}}"
+  },
+  "trash": {
+    "danger": "Danger zone",
+    "title": "Trash",
+    "move": "Move to Trash",
+    "restore": "Restore",
+    "permanent": "Delete permanently",
+    "confirm": "Move “{{title}}” to Trash?",
+    "permanentConfirm": "Permanently delete “{{title}}”? This cannot be undone.",
+    "typeTitle": "Type the exact title to confirm",
+    "empty": "Trash is empty.",
+    "hint": "Restore a Project to recover its contents. Individually trashed Studies appear after their Project is restored.",
+    "studyHint": "The Study and its research can be restored in Settings → Data and backup → Trash. Linked Teaching stays in its Project with saved notes and citations, but is unlinked. Restoration does not automatically relink it.",
+    "projectHint": "The Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content."
   }
 }

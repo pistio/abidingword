@@ -51,35 +51,19 @@ describe("the built-in Bible Teaching templates", () => {
     for (const kind of ["sermon", "bible_study", "youth", "talk", "other"]) expect(BUILTIN_TEACHING_TEMPLATES.find((b) => b.kind === kind)!.points).toEqual([]);
   });
 
-  it("are listed in Settings without a way to change them, only to save one as the person's own", async () => {
-    const { api } = await setup();
-    const { user } = await renderApp(api);
-    const templates = await openSettingsSection(user, "Templates");
-    const list = within(templates).getByRole("list", { name: "Bible Teaching templates" });
-    const children = within(list).getByText("Children").closest("li")!;
-    expect(children).toHaveTextContent("Starts with: Welcome · Bible story · Question · Activity · Prayer.");
-    expect(children).toHaveTextContent("Built-in");
-    expect(within(children).queryByRole("button", { name: /^Edit|^Delete/ })).toBeNull();
-    await user.click(within(children).getByRole("button", { name: "Save Children as my template" }));
-    // The person's own copy opens to be changed; the built-in stays as it is.
-    const sheet = await screen.findByRole("dialog", { name: "Edit Bible Teaching template" });
-    expect(within(sheet).getByRole("textbox", { name: "Name" })).toHaveValue("Children (copy)");
-    expect(api.state.teaching.templates).toHaveLength(1);
-    expect(api.state.teaching.templates[0]!.points.map((p) => p.title)).toEqual(["Welcome", "Bible story", "Question", "Activity", "Prayer"]);
-    expect(BUILTIN_TEACHING_TEMPLATES.find((b) => b.kind === "children")!.points).toHaveLength(5);
-  });
-
   it("lists the three block templates and saves one as the person's own with its blocks", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
     const templates = await openSettingsSection(user, "Templates");
     const list = within(templates).getByRole("list", { name: "Bible Teaching templates" });
-    expect(within(list).getByText("Bible Study — Observation, Understanding, Application")).toBeInTheDocument();
+    expect(within(list).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(list).queryByText("Children")).toBeNull();
+    expect(within(list).getByText("Group Bible Study — Observation, Understanding, Application")).toBeInTheDocument();
     expect(within(list).getByText("Sermon / Talk")).toBeInTheDocument();
     expect(within(list).getByText("Bible Lesson — Children / Youth")).toBeInTheDocument();
-    await user.click(within(list).getByRole("button", { name: "Save Bible Study — Observation, Understanding, Application as my template" }));
+    await user.click(within(list).getByRole("button", { name: "Save Group Bible Study — Observation, Understanding, Application as my template" }));
     const sheet = await screen.findByRole("dialog", { name: "Edit Bible Teaching template" });
-    expect(within(sheet).getByRole("textbox", { name: "Name" })).toHaveValue("Bible Study — Observation, Understanding, Application (copy)");
+    expect(within(sheet).getByRole("textbox", { name: "Name" })).toHaveValue("Group Bible Study — Observation, Understanding, Application (copy)");
     expect(api.state.teaching.templates[0]!.version).toBe(2);
     expect(api.state.teaching.templates[0]!.blocks?.some((b) => b.blockType === "section" && b.title === "Observation")).toBe(true);
     expect(api.state.teaching.templates[0]!.blocks?.some((b) => b.guidanceKey?.includes("erkennen"))).toBe(true);

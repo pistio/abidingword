@@ -1,6 +1,6 @@
 {
-  "addToLibrary": "Ajouter à la bibliothèque",
-  "addToLibraryEllipsis": "Ajouter à la bibliothèque…",
+  "addToLibrary": "Ajouter des sources",
+  "addToLibraryEllipsis": "Ajouter des sources…",
   "sourceType": {
     "book": "Livre",
     "article": "Article",
@@ -76,7 +76,7 @@
     "marks_other": "Vos {{count}} marques dans cette source (surlignages, notes et signets) sont retirées avec elle."
   },
   "add": {
-    "title": "Ajouter à la bibliothèque",
+    "title": "Ajouter des sources",
     "reading": "Lecture du fichier et recherche de son texte…",
     "intro": "Choisissez un fichier PDF, EPUB, Word (.docx), Markdown (.md) ou texte (.txt). Abiding Word conserve sa propre copie dans votre bibliothèque et ne modifie jamais votre fichier. Les PDF numérisés ne peuvent pas encore être lus.",
     "choose": "Choisir un fichier…",
@@ -349,7 +349,7 @@
     "done_many": "{{formatted}} sources ont été supprimées définitivement."
   },
   "manage": {
-    "add": "Ajouter des sources",
+    "add": "Ajouter des sources…",
     "counts": "{{active}} en usage · {{archived}} archivées · {{trashed}} dans la corbeille",
     "searchLabel": "Trouver des sources par titre, auteur ou nom de fichier",
     "searchPlaceholder": "Titre, auteur ou nom de fichier",
@@ -504,8 +504,8 @@
     "untagTitle_many": "Retirer une étiquette de {{formatted}} sources"
   },
   "batch": {
-    "open": "Ajouter plusieurs…",
-    "title": "Ajouter plusieurs sources",
+    "open": "Ajouter des sources…",
+    "title": "Ajouter des sources",
     "intro": "Choisissez plusieurs fichiers ou un dossier. Abiding Word lit et vérifie chacun ; vous relisez la liste avant que rien ne soit ajouté.",
     "chooseFiles": "Choisir des fichiers…",
     "chooseFolder": "Choisir un dossier…",

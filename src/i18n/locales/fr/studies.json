@@ -2364,7 +2364,7 @@
     },
     "builtin": {
       "eva": {
-        "name": "Étude biblique",
+        "name": "Étude biblique en groupe",
         "hint": "Pour un groupe : observer le passage, le comprendre, puis demander ce qui en découle.",
         "blocks": {
           "erkennen": {
@@ -2445,7 +2445,11 @@
       "keepNotes": "En changeant ou retirant le lien, les notes déjà utilisées et leurs sources restent conservées comme copies. Les modifications ultérieures de l’étude ne changent pas ces copies.",
       "saveLink": "Enregistrer le lien",
       "savedNote": "Note d’étude conservée",
-      "project": "Retour au projet"
+      "project": "Retour au projet",
+      "basedOn": "À partir de l’étude biblique —",
+      "linkStudy": "Lier à une étude biblique",
+      "openStudy": "Ouvrir l’étude liée",
+      "standalone": "Enseignement indépendant"
     }
   },
   "parts": {

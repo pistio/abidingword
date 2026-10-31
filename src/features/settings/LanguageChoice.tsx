@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Globe } from "lucide-react";
 import { HelpTip } from "@/design-system/HelpTip";
 import { LANGUAGES, currentLanguage, setLanguage, type Language } from "@/i18n";
 
@@ -12,7 +13,7 @@ export function LanguageChoice() {
   const active = i18n.language ? currentLanguage() : "en";
   return (
     <div className="flex flex-col items-start gap-1">
-      <span className="inline-flex items-center gap-1">
+      <span className="inline-flex items-center gap-1"><Globe className="size-5" aria-hidden="true" />
         <label htmlFor="settings-ui-language" className="font-medium text-text-strong">
           {t("settings.language.label")}
         </label>

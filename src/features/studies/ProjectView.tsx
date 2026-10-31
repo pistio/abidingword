@@ -1,8 +1,10 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLoad } from "@/hooks/useLoad";
 import { StudyCreationActions } from "./StudyCreationActions";
 import { Button } from "@/design-system/Button";
 import { InfoControl } from "@/design-system/InfoControl";
+import { DeleteControl } from "@/features/portability/Trash";
 import { ProjectExport } from "@/features/portability/ProjectExport";
 import type { Project } from "@/types/domain";
 import type { StudySummary } from "@/types/studies";
@@ -13,6 +15,7 @@ import { NewStudyForm } from "./NewStudyForm";
 import { StudyList } from "./StudyList";
 
 interface ProjectViewProps {
+  onDeleted: () => void;
   project: Project;
   onOpenTeaching?: (create?: boolean) => void;
   /** The only project: shown as "Studies", with nothing about projects at all. */
@@ -23,9 +26,10 @@ interface ProjectViewProps {
   onOpenStudy: (study: { id: string; projectId: string }) => void;
 }
 
-export function ProjectView({ project, onOpenTeaching, plain = false, onProjects, onProjectChanged, onOpenStudy }: ProjectViewProps) {
+export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false, onProjects, onProjectChanged, onOpenStudy }: ProjectViewProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const standalone = useLoad(useCallback(() => api.teachingListProject(project.id).then(rows => rows.filter(row => !row.studyId)), [api, project.id]));
   const rename = useCallback(
     async (title: string) => onProjectChanged(await api.projectUpdate({ id: project.id, title })),
     [api, project.id, onProjectChanged],
@@ -44,23 +48,23 @@ export function ProjectView({ project, onOpenTeaching, plain = false, onProjects
   return (
     <div className="flex flex-col gap-8">
       {plain ? (
-        <h1 className="type-title m-0">{t("studies.home.title")}</h1>
+        <div><h1 className="type-title m-0">{t("studies.home.title")}</h1><ProjectInfo onDeleted={onDeleted} project={project} onChanged={onProjectChanged} /></div>
       ) : (
         <div>
           <p className="caps-label m-0 mb-2">{t("studies.projects.project")}</p>
           <EditableTitle key={project.id} label={t("studies.projects.titleLabel")} value={project.title} onSave={rename} />
           <div className="-ml-2 mt-1 flex flex-wrap items-center gap-x-2 text-[0.9375rem] text-text-muted">
-            <ProjectInfo project={project} onChanged={onProjectChanged} />
+            <ProjectInfo onDeleted={onDeleted} project={project} onChanged={onProjectChanged} />
             <span className="px-2">{studyCountLabel(t, project.studyCount)}</span>
           </div>
         </div>
       )}
 
-      <StudyCreationActions studyButtonRef={opener} onStudy={() => { setAsked(true); requestAnimationFrame(() => form.current?.querySelector("input")?.focus()); }} onTeaching={onOpenTeaching ? () => onOpenTeaching(true) : undefined} />
+      <StudyCreationActions studyButtonRef={opener} onStudy={() => { setAsked(true); requestAnimationFrame(() => form.current?.querySelector("input")?.focus()); }} />
       <div ref={form}>
         {(empty || asked) && <NewStudyForm projectId={project.id} autoFocus={asked} onCancel={empty ? undefined : putAway} onCreated={onOpenStudy} />}
       </div>
-      {onOpenTeaching && <div><Button variant="quiet" onClick={() => onOpenTeaching(false)}>{t("studies.teaching.workspace.sessions")}</Button></div>}
+      {onOpenTeaching && !!standalone.data?.length && <div><Button variant="quiet" onClick={() => onOpenTeaching(false)}>{t("studies.teaching.workspace.standalone")}</Button></div>}
 
       {!empty && (
         <section aria-labelledby="studies-heading" className="flex flex-col gap-3">
@@ -87,7 +91,7 @@ export function ProjectView({ project, onOpenTeaching, plain = false, onProjects
  * only with Save. Its studies are the page itself; the title is edited where
  * it stands.
  */
-function ProjectInfo({ project, onChanged }: { project: Project; onChanged: (project: Project) => void }) {
+function ProjectInfo({ project, onChanged, onDeleted }: { onDeleted: () => void; project: Project; onChanged: (project: Project) => void }) {
   const { t } = useTranslation();
   const api = useApi();
   return (
@@ -109,7 +113,7 @@ function ProjectInfo({ project, onChanged }: { project: Project; onChanged: (pro
           />
         </label>
       )}
-      actions={() => <ProjectExport projectId={project.id} title={project.title} quiet />}
+      actions={(close) => <><ProjectExport projectId={project.id} title={project.title} quiet /><DeleteControl id={project.id} title={project.title} kind="project" onDone={() => { close(); onDeleted(); }} /></>}
     />
   );
 }

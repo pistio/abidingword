@@ -480,7 +480,7 @@ fn md(heading: &str, paragraphs: &[&str]) -> String {
 }
 
 #[test]
-fn a_section_about_the_passage_outranks_a_neutral_exact_mention_which_outranks_a_whole_chapter() {
+fn passage_and_chapter_sections_outrank_neutral_exact_mentions() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let broad = add(
@@ -512,8 +512,8 @@ fn a_section_about_the_passage_outranks_a_neutral_exact_mention_which_outranks_a
             order,
             [
                 (section, MatchKind::Contained),
-                (exact, MatchKind::Exact),
-                (broad, MatchKind::Contained)
+                (broad, MatchKind::Contained),
+                (exact, MatchKind::Exact)
             ]
         );
         Ok(())
@@ -1025,6 +1025,48 @@ fn turning_pages_stays_fast_on_a_large_library() {
             per_query < std::time::Duration::from_millis(100),
             "{per_query:?} per query"
         );
+        Ok(())
+    });
+}
+
+#[test]
+fn acts_six_opens_its_indexed_section_before_an_incidental_mention_in_the_same_work() {
+    let temp = tempfile::tempdir().unwrap();
+    with_db(|conn| {
+        let bytes = "# Überblick\n\nEin beiläufiger Verweis: Apostelgeschichte 6,3.\n\n# Apostelgeschichte 6\n\nErfundene Erläuterung zum ausgewählten Kapitel.\n\n# Apostelgeschichte 7\n\nEin anderes Kapitel.\n";
+        let staged = import::stage(&write(temp.path(), "acts.md", bytes.as_bytes())).unwrap();
+        let source = abiding_word_lib::db::new_id();
+        library::commit_import(
+            conn,
+            &source,
+            &staged,
+            &CommitSourceImport {
+                preview_id: staged.id.clone(),
+                title: "Synthetic German Acts overview".into(),
+                language: Some("de".into()),
+                ..Default::default()
+            },
+            &library::managed_relative_path(&source, &staged),
+        )?;
+        let groups = library::passage_sources(conn, &reference("ACT.6.3"))?;
+        let work = groups
+            .iter()
+            .find(|group| group.source_id == source)
+            .unwrap();
+        let best = &work.locations[0];
+        assert_eq!(best.origin, LinkOrigin::Section);
+        assert_eq!(
+            best.segment_id,
+            segment(conn, &source, "Erfundene Erläuterung")
+        );
+        assert!(work
+            .locations
+            .iter()
+            .any(|place| place.origin == LinkOrigin::Explicit));
+        assert!(!work
+            .locations
+            .iter()
+            .any(|place| place.segment_id == segment(conn, &source, "Ein anderes Kapitel")));
         Ok(())
     });
 }

@@ -31,6 +31,7 @@ interface TeachingViewProps {
   studyId?: string;
   studyTitle?: string;
   findings?: Finding[];
+  onOpenStudy?: (study: { id: string; projectId: string }) => void;
   onRevealScripture: () => void;
 }
 
@@ -38,13 +39,13 @@ interface TeachingViewProps {
  * Shared editor for project Teaching and the legacy Study entry. An optional
  * Study can provide findings; every Teaching remains owned by its project.
  */
-export function TeachingView({ projectId, startNew = false, studyId, studyTitle = "", findings = [], onRevealScripture }: TeachingViewProps) {
+export function TeachingView({ onOpenStudy, projectId, startNew = false, studyId, studyTitle = "", findings = [], onRevealScripture }: TeachingViewProps) {
   const { t } = useTranslation();
   const api = useApi();
-  const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId) : api.teachingList(studyId!), [api, projectId, studyId]));
+  const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId).then(rows => rows.filter(row => !row.studyId)) : api.teachingList(studyId!), [api, projectId, studyId]));
   const settings = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
   const [chosen, setChosen] = useState<string | null>(null);
-  const [creating, setCreating] = useState(startNew);
+  const [creating, setCreating] = useState(startNew && !projectId);
   const id = useId();
   // After a new teaching is put away or one is deleted, the keyboard goes back to "Prepare another".
   const anotherButton = useRef<HTMLButtonElement>(null);
@@ -73,7 +74,6 @@ export function TeachingView({ projectId, startNew = false, studyId, studyTitle 
     return <section className="flex flex-col gap-4" aria-label={t("studies.teaching.workspace.title")}>
       <h1 className="type-title m-0">{t("studies.teaching.workspace.title")}</h1>
       <p className="m-0 text-text-muted">{t("studies.teaching.workspace.intro")}</p>
-      <Button ref={anotherButton} variant="primary" onClick={() => setCreating(true)}>{t("studies.teaching.newTeaching")}</Button>
       {preparations.length ? <ul aria-label={t("studies.teaching.workspace.sessions")} className="m-0 list-none space-y-2 p-0">{preparations.map(p => <li key={p.id}><Button onClick={() => setChosen(p.id)}>{p.title}</Button></li>)}</ul> : <p className="m-0 text-text-muted">{t("studies.teaching.workspace.empty")}</p>}
     </section>;
   }
@@ -100,7 +100,7 @@ export function TeachingView({ projectId, startNew = false, studyId, studyTitle 
   // One study can lead to several teachings: the way to another is always at hand, with the
   // choice between them once there is more than one. Quiet, in the open teaching's details line.
   const switcher = (
-    <span className="flex flex-wrap items-center gap-x-2">
+    <span className="flex min-w-0 max-w-full flex-wrap items-center gap-x-2">
       {projectId && <Button variant="quiet" onClick={() => setChosen(null)}>{t("studies.teaching.workspace.back")}</Button>}
       {preparations.length > 1 && (
         <>
@@ -130,7 +130,7 @@ export function TeachingView({ projectId, startNew = false, studyId, studyTitle 
           </select>
         </>
       )}
-      <button
+      {!projectId && <button
         // Drawn with the open teaching (once it has loaded): focus that was waiting for it lands here.
         ref={(el) => {
           anotherButton.current = el;
@@ -145,7 +145,7 @@ export function TeachingView({ projectId, startNew = false, studyId, studyTitle 
       >
         <Plus className="size-4" aria-hidden="true" />
         {t("studies.teaching.newTeaching")}
-      </button>
+      </button>}
     </span>
   );
 
@@ -155,6 +155,7 @@ export function TeachingView({ projectId, startNew = false, studyId, studyTitle 
         <AssistDockProvider key={currentId}>
         <TeachingEditor
           key={currentId}
+          onOpenStudy={onOpenStudy}
           preparationId={currentId}
           findings={findings}
           assistant={settings.data?.config.enabled ? settings.data : null}
@@ -333,12 +334,13 @@ interface EditorProps {
   } | null;
   onRenamed: () => void;
   onDeleted: () => void;
+  onOpenStudy?: (study: { id: string; projectId: string }) => void;
   onRevealScripture: () => void;
   /** The way to another teaching of this study (and the choice between them). */
   switcher: ReactNode;
 }
 
-function TeachingEditor({ preparationId, findings: initialFindings, assistant, onRenamed, onDeleted, onRevealScripture, switcher }: EditorProps) {
+function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings, assistant, onRenamed, onDeleted, onRevealScripture, switcher }: EditorProps) {
   const { t } = useTranslation();
   const api = useApi();
   const { goTo } = useScripture();
@@ -568,7 +570,7 @@ function TeachingEditor({ preparationId, findings: initialFindings, assistant, o
         {/* One quiet line (v0.19): the teaching's information on request, the way to another
             teaching (and the choice between them), and its Bible text as links. */}
         <div className="flex flex-wrap items-center gap-x-2">
-          <StudyLink key={prep.studyId ?? "independent"} preparation={prep} onChanged={setPrep} />
+          <StudyLink onOpenStudy={onOpenStudy} key={prep.studyId ?? "independent"} preparation={prep} onChanged={setPrep} />
           <TeachingInfo prep={prep} findings={findings} onChanged={setPrep} onDeleted={onDeleted} onRevealScripture={onRevealScripture} />
           {switcher}
           {wholePassages.length > 0 && (
@@ -854,21 +856,24 @@ function DeletePoint({ name, confirm, hasContent, onDelete }: { name: string; co
   );
 }
 
-function StudyLink({ preparation, onChanged }: { preparation: TeachingPreparation; onChanged: (p: TeachingPreparation) => void }) {
+function StudyLink({ preparation, onChanged, onOpenStudy }: { onOpenStudy?: (study: { id: string; projectId: string }) => void; preparation: TeachingPreparation; onChanged: (p: TeachingPreparation) => void }) {
   const { t } = useTranslation(); const api = useApi();
   const projectId = preparation.projectId;
   const studies = useLoad(useCallback(() => api.studyList({ projectId }), [api, projectId]));
   const [choice, setChoice] = useState(preparation.studyId ?? "");
   const [error, setError] = useState<string | null>(null); const [busy, setBusy] = useState(false);
-  return <details className="basis-full rounded-aw border border-border-subtle px-3 py-2">
-    <summary className="cursor-pointer text-[0.9375rem] font-medium">{t("studies.teaching.workspace.study")} · {preparation.studyId ? (studies.data?.find((study) => study.id === preparation.studyId)?.title ?? t("studies.view.study")) : t("studies.teaching.workspace.independent")}</summary>
+  return <section className="min-w-0 basis-full rounded-aw border border-border-subtle px-3 py-2">
+    <details>
+    <summary className="cursor-pointer text-[0.9375rem] font-medium"><span>{t(preparation.studyId ? "studies.teaching.workspace.basedOn" : "studies.teaching.workspace.linkStudy")} {preparation.studyId ? (studies.data?.find((study) => study.id === preparation.studyId)?.title ?? t("studies.view.study")) : t("studies.teaching.workspace.independent")}</span>{preparation.studyId && <span className="ml-2 inline-flex items-center gap-1 type-meta"><PencilLine className="size-3" aria-hidden="true" />{t("common.edit")}</span>}</summary>
     <div className="flex flex-col gap-2 pt-2">
-    <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={choice} disabled={busy} onChange={e => setChoice(e.target.value)}>
-      <option value="">{t("studies.teaching.workspace.independent")}</option>{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+    <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={choice} disabled={busy || !studies.data} onChange={e => setChoice(e.target.value)}>
+      <option value="">{t("studies.teaching.workspace.independent")}</option>{!studies.data && preparation.studyId && <option value={preparation.studyId}>{t("studies.view.study")}</option>}{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
     <p className="m-0 text-text-muted">{t("studies.teaching.workspace.keepNotes")}</p>
     <Button disabled={busy || choice === (preparation.studyId ?? "")} onClick={async () => { setBusy(true); setError(null); try { onChanged(await api.teachingSetStudy(preparation.id, choice || null)); } catch (e) { setError(toApiError(e).message); } finally { setBusy(false); } }}>{t("studies.teaching.workspace.saveLink")}</Button>
     {(error || studies.error) && <p role="alert">{error ?? studies.error?.message}</p>}
     </div>
-  </details>;
+    </details>
+    {preparation.studyId && onOpenStudy && <Button variant="quiet" onClick={() => onOpenStudy({ id: preparation.studyId!, projectId })}>{t("studies.teaching.workspace.openStudy")}</Button>}
+  </section>;
 }

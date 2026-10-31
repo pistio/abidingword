@@ -278,7 +278,8 @@ describe("templates", () => {
     expect(within(templates).getAllByRole("listitem")).toHaveLength(6);
     expect(within(templates).queryByText("Teaching / Sermon Preparation")).not.toBeInTheDocument();
     const formats = screen.getByRole("list", { name: "Bible Teaching templates" });
-    expect(within(formats).getByText(/Starts with: Welcome · Bible story · Question · Activity · Prayer/)).toBeInTheDocument();
+    expect(within(formats).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(formats).getByText("Bible Lesson — Children / Youth")).toBeInTheDocument();
     const passage = within(templates).getByText("Biblical Character Study").closest("li")!;
     await user.click(within(passage as HTMLElement).getByRole("button", { name: "Save Biblical Character Study as my template" }));
 

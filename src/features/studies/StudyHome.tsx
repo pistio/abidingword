@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
@@ -34,7 +34,6 @@ export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStud
   const { t } = useTranslation();
   const api = useApi();
   const form = useRef<HTMLDivElement>(null);
-  const [error, setError] = useState<string | null>(null);
   const projects = useLoad(useCallback(() => api.projectList(workspace.id), [api, workspace.id]));
 
   if (projects.error) return <Notice tone="error">{projects.error.message}</Notice>;
@@ -47,6 +46,7 @@ export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStud
   if (list.length === 1) {
     return (
       <ProjectView
+        onDeleted={projects.reload}
         project={list[0]!}
         onOpenTeaching={(create) => onOpenTeaching(list[0]!.id, create)}
         plain
@@ -59,8 +59,7 @@ export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStud
   return (
     <div className="flex flex-col gap-8">
       <h1 className="type-title m-0">{t("studies.home.title")}</h1>
-      <StudyCreationActions onStudy={() => form.current?.querySelector("input")?.focus()} onTeaching={async () => { try { onOpenTeaching(await ensureStudyProject(api, workspace.id, t), true); } catch (e) { setError(e instanceof Error ? e.message : String(e)); } }} />
-      {error && <p role="alert">{error}</p>}
+      <StudyCreationActions onStudy={() => form.current?.querySelector("input")?.focus()} />
       <div ref={form}><NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} onCreated={onOpenStudy} /></div>
       <div>
         <Button variant="quiet" onClick={onProjectList}>
