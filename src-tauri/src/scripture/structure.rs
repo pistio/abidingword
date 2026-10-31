@@ -1327,10 +1327,10 @@ fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Headi
         if words[..words.len() - 1]
             .iter()
             .all(|w| w.chars().all(char::is_alphabetic))
-            && CHAPTER_WORDS.contains(&joined.as_str())
+            && (CHAPTER_WORDS.contains(&joined.as_str()) || PSALM_WORDS.contains(&joined.as_str()))
         {
-            if let Some(n) = text.split_whitespace().last().and_then(chapter_number) {
-                return Some(Heading::Chapter(n));
+            if let Some(number) = text.split_whitespace().last() {
+                return read_heading(&format!("{joined} {number}"), language);
             }
         }
     }
@@ -2119,7 +2119,12 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
                 .is_some_and(|c| c.is_ascii_digit() || superscript_digit(c).is_some())
                 && !after.starts_with('1')
                 && !after.starts_with('¹'));
-        if goes_on {
+        // (Or the book's own title, set large, follows: the head over the
+        // book's first page, "Haggai" / "HAGGAI".)
+        let title_follows = (units[next].large || units[next].heading)
+            && book_named(after, language).map(|b| b.code)
+                == book_named(text, language).map(|b| b.code);
+        if goes_on || (u.edge && title_follows) {
             out.insert(first);
         }
     }
@@ -2441,6 +2446,32 @@ fn verse_doubt(text: &str, labels: &HashSet<String>) -> Option<&'static str> {
         return Some("reference");
     }
     // A raised number left in the verse (a note's number) or a sign.
+    // A sentence's end run straight into an opening quotation mark with no
+    // space ("… volaban.“¡Santo, santo …"): two pieces of a page read into one
+    // line; where the verse's words end is not known (v0.24.4).
+    static RUN_TOGETHER: OnceLock<regex::Regex> = OnceLock::new();
+    let run_together =
+        RUN_TOGETHER.get_or_init(|| regex::Regex::new(r#"[.!?;:]["“«‘¡¿]+\p{L}"#).expect("valid"));
+    if run_together.is_match(text) {
+        return Some("boundary");
+    }
+    // An editor's note in brackets quoting readings ("[… le texte NU lit
+    // « Dieu » au lieu de « Fils ».]"): a note, not Scripture (v0.24.4).
+    static QUOTING_BRACKET: OnceLock<regex::Regex> = OnceLock::new();
+    let quoting_bracket = QUOTING_BRACKET
+        .get_or_init(|| regex::Regex::new(r#"\[[^\[\]]*[«“"][^\[\]]*\]"#).expect("valid"));
+    if quoting_bracket.is_match(text) {
+        return Some("noteSign");
+    }
+    // A speaker's name in brackets closing the verse after its sentence's end
+    // ("… to my complaint. (The Lord)"): a label (v0.24.4).
+    static BRACKET_LABEL: OnceLock<regex::Regex> = OnceLock::new();
+    let bracket_label = BRACKET_LABEL.get_or_init(|| {
+        regex::Regex::new(r"[.!?;:]\s\((?:\p{Lu}\p{Ll}*\s?){1,3}\)$").expect("valid")
+    });
+    if bracket_label.is_match(text.trim_end()) {
+        return Some("possibleHeading");
+    }
     // A note's letter left against the sentence's end ("Louez Jah.a b
     // Bienheureux"): a label whose raised type the page lost.
     // An editor's note in square brackets, opened by an abbreviation ("zehn[O.
@@ -4836,6 +4867,10 @@ struct Reader<'a> {
     /// A heading was left out since the open verse began: words after it
     /// without a verse number may not be that verse's (v0.24.3).
     heading_in_verse: bool,
+    /// The document sets its verse numbers in the margin (ten lines or more
+    /// marked so): every raised number opening a line marks the line the
+    /// verse begins in, not where (v0.24.4).
+    margin_layout: bool,
 }
 
 impl Reader<'_> {
@@ -5792,7 +5827,10 @@ impl Reader<'_> {
                         .chars()
                         .all(|c| c.is_ascii_digit() || c.is_whitespace() || matches!(c, '-' | '–'))
             };
-            let doubt = m.against_word || alone || m.margin;
+            let doubt = m.against_word
+                || alone
+                || m.margin
+                || (self.margin_layout && m.raised && m.unit_start);
             if doubt {
                 self.doubt_boundary();
             }
@@ -6884,6 +6922,7 @@ fn recognise_in(
         block_starts: starts,
         inline_labels: inline_labels(units),
         heading_in_verse: false,
+        margin_layout: units.iter().filter(|u| u.text.contains(MARGIN)).count() >= 10,
     };
     let mut out = reader.run();
     check_running_heads(units, &furniture, language, &mut out);

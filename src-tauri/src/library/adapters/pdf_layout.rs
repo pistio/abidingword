@@ -571,8 +571,11 @@ fn spans_cut(glyphs: &[Glyph], cut: Option<f64>) -> Vec<Span> {
         let blank = g.text.trim().is_empty();
         let continues = current.as_ref().is_some_and(|(span, next)| {
             let ratio = f64::from(g.size) / span.size;
+            // (A span is text of one size: a bold verse number at 8.5 pt
+            // followed by its verse at 10 pt is two spans, so that the line's
+            // size is its text's, not its number's, v0.24.4.)
             (f64::from(g.y) - span.y).abs() <= 0.15 * span.size.max(f64::from(g.size))
-                && (0.8..=1.25).contains(&ratio)
+                && (0.93..=1.07).contains(&ratio)
                 && f64::from(g.x) >= *next - 0.6 * span.size
                 && f64::from(g.x) - *next <= 0.9 * span.size
                 && cut.is_none_or(|x| {

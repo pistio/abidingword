@@ -59,6 +59,35 @@ fn document_units_dump() {
             })
             .collect(),
     };
+    // AW_DUMP_SIZES=1 with AW_DUMP_PAGES: each PDF line's size and place, and
+    // the page's body size (developer tool for layout questions).
+    if std::env::var_os("AW_DUMP_SIZES").is_some() {
+        if let Some((a, b)) = pages {
+            let bytes = std::fs::read(&file).expect("the file is readable");
+            let text = abiding_word_lib::library::adapters::pdf::read_pages(&bytes, "dump.pdf")
+                .expect("a PDF");
+            for layout in &text.layouts {
+                if !(a..=b).contains(&(layout.number as usize)) {
+                    continue;
+                }
+                println!("page {} body {:.2}", layout.number, layout.body_size());
+                for l in &layout.lines {
+                    println!(
+                        "  size {:5.2} x {:6.1}-{:6.1} y {:6.1} col {} blk {} {:?} «{}»",
+                        l.size,
+                        l.x0,
+                        l.x1,
+                        l.y,
+                        l.column,
+                        l.block,
+                        l.role,
+                        l.text.chars().take(50).collect::<String>()
+                    );
+                }
+            }
+            return;
+        }
+    }
     // AW_DUMP_RECOGNISE=BOOK: read the selected units for verses and print
     // that book's verses and the issues.
     if let Ok(code) = std::env::var("AW_DUMP_RECOGNISE") {
