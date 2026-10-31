@@ -68,7 +68,7 @@ fn usable(r: &Recognition, code: &str, chapter: u16) -> bool {
     r.content.books.contains_key(&book.ordinal)
         && !r.content.issues.iter().any(|i| {
             i.severity == Severity::Error
-                && i.book.as_deref() == Some(book.code)
+                && i.book == Some(book.code)
                 && i.chapter == Some(chapter)
         })
 }
