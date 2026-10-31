@@ -2389,14 +2389,16 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
         for &i in lines {
             let u = &units[i];
             // (Without numbers: those are counted by their form above, and a
-            // chapter's label, "Capítulo 3", may open a page.)
+            // chapter's label, "Capítulo 3", may open a page. A book's name
+            // with its figures counts word for word, figures included: "1.
+            // Mose" and "2. Mose" are two titles, v0.24.5.)
             if u.edge
                 && !u.large
                 && (head_like(&u.text) || long_head(&u.text))
                 && (numbered_name_only(&u.text) || names_book_only(&u.text, language))
-                && seen.insert(shape(&u.text))
+                && seen.insert(key(&u.text))
             {
-                *edge_counts.entry(shape(&u.text)).or_default() += 1;
+                *edge_counts.entry(key(&u.text)).or_default() += 1;
             }
         }
     }
@@ -2406,6 +2408,15 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
     // ("DER BRIEF DES APOSTELS PAULUS AN PHILEMON" over the one page after
     // the title's), v0.24.5.
     let mut named_on: HashMap<&'static str, (u16, u32)> = HashMap::new();
+    let mut edge_lines: HashMap<String, usize> = HashMap::new();
+    for lines in pages.values() {
+        let mut seen = HashSet::new();
+        for &i in lines {
+            if units[i].edge && seen.insert(shape(&units[i].text)) {
+                *edge_lines.entry(shape(&units[i].text)).or_default() += 1;
+            }
+        }
+    }
     for (&(document, page), lines) in &pages {
         for &i in lines {
             let u = &units[i];
@@ -2449,8 +2460,18 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
                     }
                 }
                 // (Never where the book's chapter 1 follows it on the page:
-                // that is its title, after a table of contents named it.)
-                Some(&first) if first != (document, page) && u.edge && !u.large && goes_on => {
+                // that is its title, after a table of contents named it; and
+                // with only nothing-that-opens-a-book after it, never a line
+                // that stands at a page's edge once — a title followed by an
+                // introduction.)
+                Some(&first)
+                    if first != (document, page)
+                        && u.edge
+                        && !u.large
+                        && (strict
+                            || (goes_on
+                                && edge_lines.get(&shape(&u.text)).is_some_and(|n| *n >= 2))) =>
+                {
                     out.insert(i);
                 }
                 Some(_) => {}
@@ -2463,7 +2484,7 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
             if u.edge
                 && !u.large
                 && (head_like(&u.text) || long_head(&u.text))
-                && edge_counts.get(&shape(&u.text)).is_some_and(|n| *n >= 3)
+                && edge_counts.get(&key(&u.text)).is_some_and(|n| *n >= 3)
             {
                 out.insert(i);
             }

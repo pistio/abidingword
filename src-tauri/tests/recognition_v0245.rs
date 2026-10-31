@@ -67,9 +67,7 @@ fn usable(r: &Recognition, code: &str, chapter: u16) -> bool {
     let book = canon::by_code(code).unwrap();
     r.content.books.contains_key(&book.ordinal)
         && !r.content.issues.iter().any(|i| {
-            i.severity == Severity::Error
-                && i.book == Some(book.code)
-                && i.chapter == Some(chapter)
+            i.severity == Severity::Error && i.book == Some(book.code) && i.chapter == Some(chapter)
         })
 }
 
@@ -452,4 +450,25 @@ fn a_septuagint_s_differently_numbered_psalms_are_refused() {
     let r = recognise(&units, "en");
     assert!(usable(&r, "PSA", 1), "{:?}", errors(&r));
     assert!(!usable(&r, "PSA", 22), "{:?}", errors(&r));
+}
+
+#[test]
+fn numbered_titles_of_several_books_are_never_one_repeated_running_head() {
+    // "1. Johannes", "2. Johannes", "3. Johannes", each once at the top of
+    // its book's first page: three titles, not one line over three pages.
+    let mut units = Vec::new();
+    for (title, code, page) in [
+        ("1. Johannes", "1JN", 1u32),
+        ("2. Johannes", "2JN", 3),
+        ("3. Johannes", "3JN", 5),
+    ] {
+        let mut book = book_pages(title, code, 1..=1, page, 30);
+        book[0].large = false;
+        book[0].edge = true;
+        units.extend(book);
+    }
+    let r = recognise(&units, "de");
+    assert!(verse(&r, "1JN", 1, 10).is_some(), "{:?}", r.books);
+    assert!(verse(&r, "2JN", 1, 13).is_some(), "{:?}", r.books);
+    assert!(verse(&r, "3JN", 1, 15).is_some(), "{:?}", r.books);
 }
