@@ -1,0 +1,27 @@
+{
+  "implementationCommit": "6b0d9a16fb6f7b9f239446cdb4c4c1f141b05f8d",
+  "frontend": {
+    "passed": 1161,
+    "failed": 0,
+    "files": 104
+  },
+  "rust": {
+    "passed": 1036,
+    "failed": 0,
+    "ignored": 8,
+    "resultGroups": 85
+  },
+  "migrationFilesUnchanged": 26,
+  "workspaceWidths": [
+    640,
+    900,
+    1100,
+    1440
+  ],
+  "nativeSmoke": {
+    "disposable": true,
+    "schemaVersion": 26,
+    "integrity": "ok",
+    "foreignKeyIssues": 0
+  }
+}

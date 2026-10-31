@@ -1,0 +1,81 @@
+     Running BeforeDevCommand (`npm run dev`)
+
+> abiding-word@0.1.0 dev
+> vite
+
+9:38:39 PM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.3.1  ready in 752 ms
+
+  ➜  Local:   http://localhost:1420/
+     Running DevCommand (`cargo  run --no-default-features --color always --`)
+9:38:41 PM [vite] (client) [optimizer] bundling dependencies...
+[1m[92m   Compiling[0m abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+[1m[96m    Building[0m [=======================> ] 622/625: abiding-word(build)         [1m[96m    Building[0m [=======================> ] 623/625: abiding-word                [1m[96m    Building[0m [=======================> ] 624/625: abiding-word(bin)           [K[1m[92m    Finished[0m `dev` profile [unoptimized] target(s) in 40.40s
+[1m[92m     Running[0m `target/debug/abiding-word`
+dbus-daemon[61255]: [session uid=1000 pid=61255 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=61358 comm="target/debug/abiding-word" label="kernel")
+dbus-daemon[61255]: [session uid=1000 pid=61255 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[61770]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=61358 comm="target/debug/abiding-word" label="kernel")
+dbus-daemon[61770]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+[2026-10-31][21:39:21][abiding_word_lib][INFO] Abiding Word 0.1.0 starting
+[2026-10-31][21:39:21][abiding_word_lib][INFO] data directory: /workspace/.aw-tools/milestone-a1/native-data
+[2026-10-31][21:39:21][abiding_word_lib::state][INFO] database file: /workspace/.aw-tools/milestone-a1/native-data/database/abiding-word.db
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 1 (initial_schema)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 2 (scripture)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 3 (studies)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 4 (library)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 5 (passage_sections)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 6 (source_annotations)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 7 (finding_source_quotes)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 8 (teaching_preparations)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 9 (teaching_step_kinds)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 10 (presentations)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 11 (presentation_target)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 12 (presentation_templates)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 13 (study_phases)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 14 (teaching_templates)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 15 (verse_bridges)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 16 (unresolved_citations)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 17 (word_annotations)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 18 (grammar_provenance)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 19 (bible_documents)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 20 (library_organisation)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 21 (bible_passage_locations)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 22 (import_jobs)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 23 (recognition_corrections)
+[2026-10-31][21:39:21][abiding_word_lib::db::migrations][INFO] applied migration 24 (section_status_and_fields)
+[2026-10-31][21:39:22][abiding_word_lib::db::migrations][INFO] applied migration 25 (teaching_blocks)
+[2026-10-31][21:39:22][abiding_word_lib::db::migrations][INFO] applied migration 26 (project_teaching)
+[2026-10-31][21:39:22][abiding_word_lib::db][INFO] database schema at version 26 (26 migration(s) applied now)
+[2026-10-31][21:39:22][abiding_word_lib::db::workspaces][INFO] created default workspace
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template passage-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template pozetek-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template ten-step-exegesis
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template word-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template topical-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template biblical-character-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template whole-book-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template biblical-theology-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template systematic-theology-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template teaching-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template pozetek-writing-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template ten-step-writing-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template word-research-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template topical-research-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template character-research-study
+[2026-10-31][21:39:22][abiding_word_lib::db::templates][INFO] installed built-in template book-research-study
+[2026-10-31][21:39:22][abiding_word_lib::state][INFO] startup complete
+9:39:36 PM [vite] (client) hmr update /src/design-system/index.css
+9:40:02 PM [vite] (client) hmr update /src/design-system/index.css, /src/features/portability/Trash.tsx
+9:41:12 PM [vite] (client) page reload src/i18n/locales/de/studies.json
+9:41:12 PM [vite] (client) page reload src/i18n/locales/ko/studies.json
+9:41:12 PM [vite] (client) page reload src/i18n/locales/fr/studies.json
+9:41:12 PM [vite] (client) page reload src/i18n/locales/es/studies.json
+9:41:12 PM [vite] (client) page reload src/i18n/locales/pt/studies.json
+9:41:13 PM [vite] (client) [console.warn] IPC custom protocol failed, Tauri will now use the postMessage interface instead TypeError: Load failed
+9:41:13 PM [vite] (client) [console.warn] IPC custom protocol failed, Tauri will now use the postMessage interface instead TypeError: Load failed
+9:41:13 PM [vite] (client) [console.warn] IPC custom protocol failed, Tauri will now use the postMessage interface instead TypeError: Load failed
+9:41:13 PM [vite] (client) [console.warn] IPC custom protocol failed, Tauri will now use the postMessage interface instead TypeError: Load failed
+9:41:13 PM [vite] (client) [console.warn] IPC custom protocol failed, Tauri will now use the postMessage interface instead TypeError: Load failed
+9:41:13 PM [vite] (client) [console.warn] IPC custom protocol failed, Tauri will now use the postMessage interface instead TypeError: Load failed
