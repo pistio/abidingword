@@ -459,12 +459,15 @@ fn numbered_titles_of_several_books_are_never_one_repeated_running_head() {
     let mut units = Vec::new();
     for (title, code, page) in [
         ("1. Johannes", "1JN", 1u32),
-        ("2. Johannes", "2JN", 3),
-        ("3. Johannes", "3JN", 5),
+        ("2. Johannes", "2JN", 10),
+        ("3. Johannes", "3JN", 20),
     ] {
-        let mut book = book_pages(title, code, 1..=1, page, 30);
+        // (Two verses a page: twenty pages, as a real document has more
+        // pages than titles.)
+        let mut book = book_pages(title, code, 1..=1, page, 2);
         book[0].large = false;
         book[0].edge = true;
+        book[1].text = "Kapitel 1".into();
         units.extend(book);
     }
     let r = recognise(&units, "de");
