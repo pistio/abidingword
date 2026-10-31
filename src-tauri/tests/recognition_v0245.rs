@@ -339,7 +339,15 @@ fn a_theme_line_set_apart_between_verse_lines_is_never_verified_verse_text() {
 // --- the Septuagint ------------------------------------------------------------
 
 fn esther_and_daniel(front: &[&str], esther: &str, daniel: &str) -> Vec<Unit> {
-    let mut units: Vec<Unit> = front.iter().map(|t| line(t, 1)).collect();
+    // (The title page's lines set large, as titles are.)
+    let mut units: Vec<Unit> = front
+        .iter()
+        .map(|t| {
+            let mut title = line(t, 1);
+            title.large = true;
+            title
+        })
+        .collect();
     units.extend(book_pages(esther, "EST", 1..=2, 2, 20));
     units.extend(book_pages(daniel, "DAN", 1..=1, 10, 20));
     units
@@ -364,6 +372,12 @@ fn a_septuagint_s_esther_and_daniel_are_the_greek_books_never_the_hebrew() {
     let r = recognise(&units, "en");
     assert_eq!(verse(&r, "EST", 1, 1), None);
     assert!(verse(&r, "DAN", 1, 1).is_some());
+    // A preface's wrapped line of prose about the Septuagint, and a
+    // subtitle under one book's title, say nothing of the whole document.
+    let mut units = esther_and_daniel(&[], "ESTHER", "DANIEL");
+    units.insert(0, line("Esther and Daniel from the Greek Septuagint", 1));
+    let r = recognise(&units, "en");
+    assert_eq!(verse(&r, "EST", 1, 1), Some(words("Esther", 1, 1)));
     // A Hebrew-based Bible whose note mentions the Septuagint keeps both.
     let mut units = esther_and_daniel(&[], "ESTHER", "DANIEL");
     let mut note = line("a 1:1 The Septuagint reads Artaxerxes", 2);
@@ -424,7 +438,11 @@ fn four_books_of_kings_make_the_first_two_samuel() {
 #[test]
 fn a_septuagint_s_differently_numbered_psalms_are_refused() {
     // Psalm 22 of a Septuagint is the Hebrew Psalm 23: never filed as 22.
-    let mut units = vec![line("Septuaginta", 1)];
+    let mut units = vec![{
+        let mut title = line("Septuaginta", 1);
+        title.large = true;
+        title
+    }];
     units.extend(book_pages("PSALMS", "PSA", 1..=1, 2, 30));
     units.extend({
         let mut more = book_pages("x", "PSA", 22..=22, 3, 40);

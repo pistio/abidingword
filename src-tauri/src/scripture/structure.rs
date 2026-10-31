@@ -1128,24 +1128,38 @@ const KINGS_WORDS: &[&str] = &[
 /// four ("KINGS III.", "4 Kings", "ΒΑΣΙΛΕΙΩΝ Γ", "Troisième livre des Rois"):
 /// 1 to 4, or None for a title that does not name Kings so (v0.24.5).
 fn kingdoms_number(title: &str) -> Option<u8> {
+    use std::sync::OnceLock;
+    static REFERENCE: OnceLock<regex::Regex> = OnceLock::new();
+    // A title names no chapter and verse ("1 Reis 19:18" is a reference).
+    if REFERENCE
+        .get_or_init(|| regex::Regex::new(r"\d\s*[:.,]\s*\d").expect("valid"))
+        .is_match(title)
+    {
+        return None;
+    }
     let k = key(title);
     let words: Vec<&str> = k
         .split(|c: char| !c.is_alphanumeric())
         .filter(|w| !w.is_empty())
         .collect();
-    if words.len() > 8
-        || !words.iter().any(|w| KINGS_WORDS.contains(w))
-        || words.contains(&"samuel")
-    {
+    if words.len() > 8 || words.contains(&"samuel") {
         return None;
     }
-    words.iter().find_map(|w| match *w {
+    let at = words.iter().position(|w| KINGS_WORDS.contains(w))?;
+    let ordinal = |w: &str| match w {
         "1" | "i" | "α" | "first" | "premier" | "primer" | "primeiro" | "erste" => Some(1),
         "2" | "ii" | "β" | "second" | "deuxieme" | "segundo" | "zweite" => Some(2),
         "3" | "iii" | "γ" | "third" | "troisieme" | "tercero" | "terceiro" | "dritte" => Some(3),
         "4" | "iv" | "δ" | "fourth" | "quatrieme" | "cuarto" | "quarto" | "vierte" => Some(4),
         _ => None,
-    })
+    };
+    // The number next to the name ("KINGS III", "4 Kings", "ΒΑΣΙΛΕΙΩΝ Γ"),
+    // or opening the title ("Troisième livre des Rois").
+    [at.checked_sub(1), Some(at + 1), Some(0)]
+        .into_iter()
+        .flatten()
+        .filter_map(|i| words.get(i))
+        .find_map(|w| ordinal(w))
 }
 
 /// Whether the document numbers four books of Kings (v0.24.5): it has a
@@ -1177,10 +1191,11 @@ fn four_kingdoms(units: &[Unit]) -> bool {
 /// Whether the document is a Septuagint (v0.24.5), on evidence that does
 /// not depend on the text of Esther or Daniel themselves:
 ///
-/// * it says so in a line of its own that is no sentence — a title, a
-///   heading, a running head or a line before its first book ("THE
-///   SEPTUAGINT VERSION OF THE OLD TESTAMENT …", "Septuaginta") — never in
-///   a note ("The Septuagint reads …" in a Hebrew-based Bible's notes);
+/// * it says so in a line of its own that is no sentence, on its title page
+///   (before its first book) or in a running head ("THE SEPTUAGINT VERSION
+///   OF THE OLD TESTAMENT …", "Septuaginta") — never in a note ("The
+///   Septuagint reads …") nor under one book's title ("Ester / traduzido da
+///   Septuaginta grega": that book is the Greek one, see `greek_part`);
 /// * or it names Old Testament books in Greek ("ΓΕΝΕΣΙΣ", "ΒΑΣΙΛΕΙΩΝ Αʹ
 ///   1:1 …"): a Greek Old Testament is the Septuagint.
 ///
@@ -1194,14 +1209,18 @@ fn septuagint_document(units: &[Unit], language: Option<ReferenceLanguage>) -> b
             ('\u{0370}'..='\u{03FF}').contains(&c) || ('\u{1F00}'..='\u{1FFF}').contains(&c)
         })
     };
-    let first_chapter = units
+    // Before the first book's title: the document's own front matter (its
+    // title page). A line under one book's title ("Ester / traduzido da
+    // Septuaginta grega") speaks of that book, not of the document.
+    let first_book = units
         .iter()
         .position(|u| {
-            read_heading(clean(&u.text).trim(), language)
-                .is_some_and(|h| !matches!(h, Heading::Book(_)))
+            u.text.split_whitespace().count() <= 8
+                && read_heading(clean(&u.text).trim(), language).is_some()
         })
         .unwrap_or(units.len());
     let mut greek_names = 0usize;
+    let mut declared: HashMap<String, usize> = HashMap::new();
     for (i, unit) in units.iter().enumerate() {
         if unit.note {
             continue;
@@ -1212,13 +1231,28 @@ fn septuagint_document(units: &[Unit], language: Option<ReferenceLanguage>) -> b
         if words == 0 {
             continue;
         }
-        let set_apart = unit.heading || unit.large || unit.edge || i < first_chapter;
-        if set_apart && words <= 16 && !text.trim_end().ends_with(['.', '!', '?', ':', ';', ',']) {
+        // A title line of the front matter (a heading, or set large or
+        // centred), or a running head (at the pages' edge, or the same line
+        // over three pages or more) — never a wrapped line of a preface's
+        // prose ("the Greek Septuagint, but not the Hebrew").
+        let front = i < first_book && (unit.heading || unit.large || unit.centred);
+        let titled = words <= 16
+            && text.chars().find(|c| c.is_alphabetic()).is_some_and(|c| !c.is_lowercase())
+            && !text.contains([',', ';'])
+            && !text.trim_end().ends_with(['.', '!', '?', ':']);
+        if titled {
             let k = key(&text);
             if k.split(|c: char| !c.is_alphanumeric())
                 .any(|w| w.starts_with("septuag") || w == "septante" || w == "lxx")
             {
-                return true;
+                let repeated = {
+                    let n = declared.entry(k).or_insert(0usize);
+                    *n += 1;
+                    *n >= 3
+                };
+                if front || unit.edge || repeated {
+                    return true;
+                }
             }
         }
         if !greek(&text) {
