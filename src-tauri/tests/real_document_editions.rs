@@ -387,7 +387,29 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     }
     reset_peak();
     let started = Instant::now();
-    let staged = import::stage_documents(&files, ImportOrigin::UserFiles).unwrap();
+    // A document the app refuses to read at all (a PDF whose text cannot be
+    // extracted, say) is a rejected format: recorded, never a crash of the
+    // report (v0.24.4).
+    let staged = match import::stage_documents(&files, ImportOrigin::UserFiles) {
+        Ok(staged) => staged,
+        Err(error) => {
+            let message = format!("{error:?}");
+            eprintln!("{}: not read: {message}", edition.key);
+            if let Some(out) = std::env::var_os("AW_AUDIT_OUT") {
+                let out = PathBuf::from(out);
+                std::fs::create_dir_all(&out).unwrap();
+                std::fs::write(
+                    out.join(format!("{}.rejected.md", edition.key)),
+                    format!(
+                        "# {} — not read\n\n{}\n\nThe app refused the document: {message}\n",
+                        edition.key, edition.layout
+                    ),
+                )
+                .unwrap();
+            }
+            return None;
+        }
+    };
     let seconds = started.elapsed().as_secs_f64();
     let peak_memory_mb = peak_mb();
     // Only now is the publisher's text read, for the comparison.
