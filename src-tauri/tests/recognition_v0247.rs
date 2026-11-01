@@ -61,7 +61,12 @@ fn verse(r: &Recognition, code: &str, chapter: u16, verse: u16) -> Option<String
 
 fn verified(r: &Recognition, code: &str, chapter: u16, v: u16) -> bool {
     let book = canon::by_code(code).unwrap();
-    verse(r, code, chapter, v).is_some() && !r.unverified.contains_key(&(book.ordinal, chapter, v))
+    verse(r, code, chapter, v).is_some()
+        && !r.unverified.contains_key(&(book.ordinal, chapter, v))
+        // (A refused chapter is refused by an error on it.)
+        && !r.content.issues.iter().any(|i| {
+            i.severity == Severity::Error && i.book == Some(book.code) && i.chapter == Some(chapter)
+        })
 }
 
 fn errors(r: &Recognition) -> Vec<String> {
@@ -309,4 +314,117 @@ fn a_contents_page_of_titles_with_page_numbers_names_no_book() {
         r.books,
         errors(&r)
     );
+}
+
+// --- a running head naming the chapter in progress, over the next chapter -----------
+
+#[test]
+fn a_running_head_over_the_next_chapter_label_never_opens_its_chapter_again() {
+    // "Ruth 1" at the top of the page (chapter 1 in progress), then
+    // "— Chapter 2 —": the head is furniture; chapter 2's verses are never
+    // filed under chapter 1.
+    // (Eleven verses a page: chapter 2's label opens page 3.)
+    let mut units = book_pages("Ruth", "RUT", 1..=3, 1, 11);
+    for u in units.iter_mut() {
+        if let Some(n) = u.text.strip_prefix("Chapter ") {
+            u.text = format!("— Chapter {n} —");
+            u.large = false;
+            u.styled = true;
+            u.centred = true;
+        }
+    }
+    // Every page opens with a head naming the chapter in progress.
+    let mut out = Vec::new();
+    let mut chapter = 1u16;
+    let mut page = 0u32;
+    for u in units {
+        if u.place.page != Some(page) {
+            page = u.place.page.unwrap();
+            let mut head = line(&format!("Ruth {chapter}"), page);
+            head.edge = true;
+            out.push(head);
+        }
+        if let Some(n) = u.text.strip_prefix("— Chapter ") {
+            chapter = n.trim_end_matches(" —").parse().unwrap();
+        }
+        out.push(u);
+    }
+    let r = recognise(&out, "en");
+    let ruth = canon::by_code("RUT").unwrap();
+    for (c, n) in [(1u16, 22u16), (2, 23), (3, 18)] {
+        for v in 1..=n {
+            if let Some(text) = verse(&r, "RUT", c, v) {
+                assert!(
+                    text.contains(&format!("c{c}v{v} ")) || !verified(&r, "RUT", c, v),
+                    "{c}:{v} {text}"
+                );
+            }
+        }
+    }
+    for c in 1..=3 {
+        assert!(verified(&r, "RUT", c, 5), "{c} {:?}", errors(&r));
+    }
+    let _ = ruth;
+}
+
+#[test]
+fn a_book_and_chapter_heading_is_never_read_as_a_numbered_book() {
+    // "John 1" … "John 4" as chapter headings: never "1 John" … — only a
+    // Greek numeral with its sign ("ΣΑΜΟΥΗΛ Α΄") is read after a name.
+    let book = canon::by_code("JHN").unwrap();
+    let mut units = vec![{
+        let mut t = line("João", 1);
+        t.large = true;
+        t
+    }];
+    for c in 1..=4u16 {
+        let mut h = line(&format!("João {c}"), 1);
+        h.large = true;
+        units.push(h);
+        for v in 1..=canon::verse_count(book, c).unwrap() {
+            units.push(line(
+                &format!("{v} {}", words(book.name, c, v)),
+                u32::from(c),
+            ));
+        }
+    }
+    let r = recognise(&units, "pt");
+    for c in 1..=4 {
+        assert!(
+            verified(&r, "JHN", c, 3),
+            "{c} {:?}",
+            r.content
+                .issues
+                .iter()
+                .map(|i| format!("{:?}", i))
+                .collect::<Vec<_>>()
+        );
+    }
+    assert_eq!(verse(&r, "1JN", 1, 1), None);
+}
+
+#[test]
+fn a_roman_psalm_number_seventy_is_no_septuagint_mark() {
+    // "SALMO LXX" (Psalm 70) as a running head: a Roman numeral, never the
+    // abbreviation of the Septuagint; Psalm 23 stays Psalm 23.
+    let book = canon::by_code("PSA").unwrap();
+    let mut t = line("SALMI", 1);
+    t.large = true;
+    let mut units = vec![t];
+    for (page, c) in [(2u32, 23u16), (3, 70)] {
+        let mut head = line("SALMI SALMO LXX", page);
+        head.edge = true;
+        units.push(head);
+        let mut h = line(
+            &format!("SALMO {}", ["XXIII", "LXX"][usize::from(c == 70)]),
+            page,
+        );
+        h.large = true;
+        units.push(h);
+        for v in 1..=canon::verse_count(book, c).unwrap() {
+            units.push(line(&format!("{v} {}", words(book.name, c, v)), page));
+        }
+    }
+    let r = recognise(&units, "it");
+    assert!(verified(&r, "PSA", 23, 3), "{:?}", errors(&r));
 }

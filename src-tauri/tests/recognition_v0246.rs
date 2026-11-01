@@ -60,7 +60,12 @@ fn verse(r: &Recognition, code: &str, chapter: u16, verse: u16) -> Option<String
 
 fn verified(r: &Recognition, code: &str, chapter: u16, v: u16) -> bool {
     let book = canon::by_code(code).unwrap();
-    verse(r, code, chapter, v).is_some() && !r.unverified.contains_key(&(book.ordinal, chapter, v))
+    verse(r, code, chapter, v).is_some()
+        && !r.unverified.contains_key(&(book.ordinal, chapter, v))
+        // (A refused chapter is refused by an error on it; v0.24.7.)
+        && !r.content.issues.iter().any(|i| {
+            i.severity == Severity::Error && i.book == Some(book.code) && i.chapter == Some(chapter)
+        })
 }
 
 fn errors(r: &Recognition) -> Vec<String> {

@@ -879,12 +879,10 @@ fn title_forms(key: &str) -> Vec<String> {
             // form with the number first, as the dictionaries write it
             // ("α σαμουηλ"), v0.24.7.
             if let Some((name, last)) = rest.rsplit_once(' ') {
-                let bare = last.trim_end_matches(['΄', 'ʹ', '\u{0374}', '\'', '’', '.']);
-                if matches!(
-                    bare,
-                    "α" | "β" | "γ" | "δ" | "i" | "ii" | "iii" | "iv" | "1" | "2" | "3" | "4"
-                ) && !name.is_empty()
-                {
+                // Only a Greek numeral with its sign: "João 1", "John II"
+                // are a book and its chapter, never "1 João".
+                let bare = last.trim_end_matches(['΄', 'ʹ', '\u{0374}', '\'', '’']);
+                if bare != last && matches!(bare, "α" | "β" | "γ" | "δ") && !name.is_empty() {
                     out.push(format!("{last} {name}"));
                 }
             }
@@ -1314,9 +1312,20 @@ fn septuagint_document(units: &[Unit], language: Option<ReferenceLanguage>) -> b
             && !text.trim_end().ends_with(['.', '!', '?', ':']);
         if titled {
             let k = key(&text);
-            if k.split(|c: char| !c.is_alphanumeric())
-                .any(|w| w.starts_with("septuag") || w == "septante" || w == "lxx")
-            {
+            let k_words: Vec<&str> = k
+                .split(|c: char| !c.is_alphanumeric())
+                .filter(|w| !w.is_empty())
+                .collect();
+            // ("LXX" after a word for psalm or chapter is the Roman numeral
+            // 70 — "SALMO LXX" — never the Septuagint, v0.24.7.)
+            if k_words.iter().enumerate().any(|(at, w)| {
+                w.starts_with("septuag")
+                    || *w == "septante"
+                    || (*w == "lxx"
+                        && !at.checked_sub(1).is_some_and(|p| {
+                            PSALM_WORDS.contains(&k_words[p]) || CHAPTER_WORDS.contains(&k_words[p])
+                        }))
+            }) {
                 let repeated = {
                     let n = declared.entry(k).or_insert(0usize);
                     *n += 1;
@@ -1712,12 +1721,41 @@ fn contents_entry(text: &str) -> bool {
 
 /// What a heading or a heading-like line says, if it names a book or a
 /// chapter. The whole text must be the name: nothing else on the line.
+/// Whether a line begins, after any ornament, with a word for "chapter"
+/// (read or not: "— Capítulo 22 —", "CHAPTER TWO"), v0.24.7.
+fn chapter_word_line(text: &str) -> bool {
+    let k = key(unwrap_ornament(text.trim()));
+    k.split(|c: char| !c.is_alphanumeric())
+        .find(|w| !w.is_empty())
+        .is_some_and(|w| CHAPTER_WORDS.contains(&w))
+        && text.chars().count() <= 40
+}
+
+/// A heading set between the same ornament on both sides ("— Capítulo 22 —",
+/// "- Chapter 2 -", "~ PSALM 23 ~", "* Ruth *"), v0.24.7: the words inside.
+/// Only a matching pair counts; a dash on one side is left as it is.
+fn unwrap_ornament(text: &str) -> &str {
+    const ORNAMENTS: &[char] = &['—', '–', '-', '~', '*', '•', '·', '§', '❧', '☙', '◆', '■'];
+    let mut t = text;
+    for _ in 0..2 {
+        let (Some(first), Some(last)) = (t.chars().next(), t.chars().last()) else {
+            return t;
+        };
+        if first != last || !ORNAMENTS.contains(&first) || t.chars().count() < 3 {
+            return t;
+        }
+        t = t.trim_matches(first).trim();
+    }
+    t
+}
+
 fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Heading> {
     // A table of contents entry ("Exodus . . . . . 60", "Exodus …… 60"): dot
     // leaders to a page number are never a heading.
     if contents_entry(text) {
         return None;
     }
+    let text = unwrap_ornament(text.trim());
     let text = text.trim().trim_end_matches(['.', ':', '·']).trim();
     // A title that gives a second name may be longer.
     let limit = if gives_second_name(text) { 100 } else { 60 };
@@ -2746,6 +2784,11 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
                         .collect();
                     after.chars().next().is_some_and(char::is_lowercase)
                         || lead.parse::<u32>().is_ok_and(|n| n != 1)
+                        // A chapter's own label straight after it ("Mateus
+                        // 21" over "— Capítulo 22 —"): the line names the
+                        // chapter in progress, never a chapter's title
+                        // (v0.24.7). Also when the label is not read.
+                        || chapter_word_line(after)
                 });
                 if !goes_on {
                     continue;
