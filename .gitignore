@@ -43,3 +43,7 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+
+# Python byte-code caches (scripts/recon, scripts/set-e)
+__pycache__/
+*.pyc

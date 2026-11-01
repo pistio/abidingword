@@ -1,0 +1,107 @@
+"""Write /root/aw-set-e/withheld-e.tsv (one row per document)."""
+import hashlib
+
+D = '/root/aw-set-e/docs/'
+NT = 'MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV'
+PY = 'Python 3.13.18'
+REUSE = (' REUSED SOURCE EDITION: eBible.org has no unused edition of this language (all redistributable %s editions are in '
+         'the earlier-sets list), so this edition is reused in a layout designed independently for set E (earlier layouts were not seen).')
+rows = [
+    ('engwebu-rl2col', 'engwebu-rl2col.pdf', 'engwebu_usfm.zip', 'en', 'Latin', 'pdf',
+     '1415-page trade-size PDF (6.14 x 9.21 in) of the whole ecumenical Bible: title page, copyright page, Contents with page numbers grouped '
+     'Old Testament / Deuterocanonical Books / New Testament, the publisher\'s Preface (FRT) single-column, group divider pages, then every book starting on '
+     'a new page with a full-width title (all \\mt lines) above two justified columns separated by a vertical rule; Noto Serif 8.4 pt; running head '
+     'on every following page with first reference (e.g. "Genesis 24:28") at left, page number centred and last reference at right over a rule; book '
+     'opening pages have the page number at the foot instead; chapter numbers are large bold numerals (20 pt) on their own line, Psalms use the '
+     'publisher\'s chapter label in capitals ("PSALM 23"); verse numbers small bold superscript; red-letter words of Christ; Psalm titles italic; '
+     'speaker labels (Song of Songs) italic; poetry q1/q2/q3 with hanging indents; footnotes (letter callers a, b, c ... restarting each chapter) and '
+     'cross references (dagger + letter) gathered in small type after each chapter below a short rule as "a 1:1 text"; Glossary appended at the end; '
+     'Esther (Greek) keeps its unnumbered additions as in the source.',
+     'withheld-e', 'engwebu (World English Bible Updated); Public Domain', 'all', 'ReportLab 5.0.1 (' + PY + '), tools/gen_engwebu_rl2col.py'),
+    ('enggnv-docxverse', 'enggnv-docxverse.docx', 'enggnv_usfm.zip', 'en', 'Latin', 'docx',
+     'Word document, US Letter, 1 in margins, Garamond 10.5 pt: title page "THE NEWE TESTAMENT / Geneva Bible 1599" with the public-domain notice, '
+     'a Contents page holding an un-updated Word TOC field (placeholder text only), then one Word section per book (new page) whose header carries the '
+     'book\'s short name in small caps at right and whose footer reads "Page {PAGE field}"; book title as centred Heading 1 (toc1 wording, e.g. "THE GOSPEL '
+     'ACCORDING TO ST. MATTHEW"), chapter headings as centred Heading 2 in Roman numerals "CHAP. I.", "CHAP. II."; '
+     'every verse its own paragraph with a hanging indent, starting with bold "chapter:verse" (e.g. "5:3") followed by a tab; original 1599 spelling.',
+     'withheld-e', 'enggnv (Geneva Bible 1599); Public Domain', NT, 'python-docx 1.2.0 (' + PY + '), tools/gen_enggnv_docx.py'),
+    ('engwyc2017-epubapoc', 'engwyc2017-epubapoc.epub', 'engwyc2017_usfm.zip', 'en', 'Latin', 'epub',
+     'Hand-assembled EPUB 3 (with NCX) "The Apocrypha": title page, copyright page (CC BY-NC-ND 4.0 notice), nav with books and chapters, then one '
+     'XHTML file per book: book title h1 in small caps, chapter headings from the publisher\'s \\cl text "CHAPTER 1" as centred ruled h2, every verse a '
+     'separate paragraph beginning with a bracketed bold red-brown verse number "[1]" then a space; the translator\'s bracketed alternative readings '
+     '"[or ...]" in grey italic and supplied words in italic; footnotes as EPUB3 noterefs (superscript numbers 1, 2, ... per book) with the notes '
+     '(reference + text) in a "Notes" section at the end of each book file.',
+     'withheld-e', 'engwyc2017 (Wycliffe\'s Bible with Modern Spelling, Terry Noble); CC BY-NC-ND 4.0',
+     'TOB,JDT,ESG,WIS,SIR,BAR,LJE,S3Y,SUS,BEL,1MA,2MA,1ES,MAN', 'own EPUB writer, Python zipfile (' + PY + '), tools/gen_engwyc_epub.py'),
+    ('engtnt-wp3col', 'engtnt-wp3col.pdf', 'engtnt_usfm.zip', 'en', 'Latin', 'pdf',
+     '133-page A4 PDF of the whole Tyndale New Testament set in three justified, auto-hyphenated columns with column rules (Liberation Serif 8.6 pt); '
+     'unnumbered title page; each book starts a new page with a full-width uppercase centred title over a rule; running head: book short name in '
+     'italic at top left and "Chapter N" (last chapter started on the page) at top right; page number bottom outside (right on recto, left on verso); '
+     'chapters open with a floated 25 pt drop numeral which replaces the verse-1 number; other verse numbers small bold inline; paragraphs indented.',
+     'withheld-e', 'engtnt (Tyndale New Testament 1534); Public Domain', NT, 'WeasyPrint 70.0 (' + PY + '), tools/gen_engtnt_wp3col.py'),
+    ('deutkw-fpdfa5', 'deutkw-fpdfa5.pdf', 'deutkw_usfm.zip', 'de', 'Latin', 'pdf',
+     '389-page A5 PDF "Die Propheten" (Jesaja to Maleachi): title page, notice page, each book on a new page with centred bold title (toc1 wording, e.g. '
+     '"Der Prophet Jesaja"); running head over a hairline with italic book name and bold page number at the outer edge (name left/number right on odd '
+     'pages, mirrored on even pages), no folio on the first two pages; centred bold "Kapitel N" headings; the publisher\'s section headings in italic; '
+     'every verse starts a new line with its small bold number hung in the left margin and the verse justified in the text block; "Inhalt" (contents '
+     'with page numbers) at the END of the document.' + REUSE % 'German',
+     'withheld-e', 'deutkw (Textbibel von Kautzsch und Weizsäcker 1906); Public Domain',
+     'ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL', 'fpdf2 2.9.0 (' + PY + '), tools/gen_deutkw_fpdf.py'),
+    ('fra_fob-pandocepub', 'fra_fob-pandocepub.epub', 'fra_fob_usfm.zip', 'fr', 'Latin', 'epub',
+     'Pandoc EPUB 3 "Le Nouveau Testament et les Psaumes": pandoc title page (title, subtitle "Version d\'Ostervald", translator, rights), nav at '
+     'book level only, one chapter file per book (New Testament books in canonical order, then Psaumes last with an italic one-line editorial note); '
+     'book title h1 (toc1 wording, e.g. "Marc"), chapter headings h2 "Chapitre N" (Psalms: "Psaume N"); verse numbers as grey superscripts followed by a '
+     'no-break space, verses running on inside one paragraph per source paragraph (whole chapters).' + REUSE % 'French',
+     'withheld-e', 'fra_fob (La Sainte Bible, Ostervald); Public Domain', NT + ',PSA', 'pandoc 3.1.3 (HTML to EPUB3), tools/gen_frafob_pandocepub.py'),
+    ('sparvg-pandocdocx', 'sparvg-pandocdocx.docx', 'sparvg_usfm.zip', 'es', 'Latin', 'docx',
+     'Pandoc-produced Word document of the whole Bible with pandoc\'s default styles: Title "Santa Biblia Reina Valera Gómez" with author, the '
+     'publisher\'s rights statement as the first paragraph, Heading 1 "ANTIGUO TESTAMENTO" / "NUEVO TESTAMENTO" at the same level as the book '
+     'headings (Heading 1, toc1 wording, e.g. "Génesis"), chapter headings as Heading 2 holding ONLY the number ("1", "2", ...), each verse its own '
+     'paragraph with a superscript verse number, Psalm titles as italic paragraphs, supplied words (\\add) in italic; no footnotes.',
+     'withheld-e', 'sparvg (Santa Biblia Reina Valera Gómez); © 2004, 2010, 2023 Dr. Humberto Gómez Caballero, free reproduction for non-profit '
+     'distribution permitted provided no words are changed', 'all', 'pandoc 3.1.3 (HTML to DOCX), tools/gen_sparvg_pandocdocx.py'),
+    ('spav1602p-lodocx', 'spav1602p-lodocx.docx', 'spav1602p_usfm.zip', 'es', 'Latin', 'docx',
+     'LibreOffice-written Word document (from flat ODT), A5 page: title page "Los Libros Poéticos" with the copyright notice, each book on a new page '
+     'with a centred small-caps Heading 1, headings "SALMO N" (Psalms) or "CAPÍTULO N" (others) as centred bold Heading 2, the acrostic headings of '
+     'Psalm 119 (ALEF, BET ...) as Heading 3, Psalm titles centred in small italic, each verse its own paragraph with the bold verse number hung in a '
+     'gutter (number, tab, hanging indent 0.7 cm); header is a STYLEREF field showing the current book; page number field bottom right.',
+     'withheld-e', 'spav1602p (Santa Biblia Valera 1602 Purificada); © 2007, 2019, 2024 Iglesia Bautista Bíblica de la Gracia, printing without '
+     'alteration permitted, not for profit', 'PSA,PRO,ECC,SNG', 'LibreOffice 24.2.7.2 (FODT to DOCX "MS Word 2007 XML"), tools/gen_spav1602p_lodocx.py + tools/fodt.py'),
+    ('porbrbsl-md', 'porbrbsl-md.md', 'porbrbsl_usfm.zip', 'pt', 'Latin', 'md',
+     'Pandoc-flavoured Markdown: YAML front matter (title, lang, rights), "# Sumário" with links, books Salmos, Provérbios then the New Testament, '
+     'each "# Book {#code}", chapter headings "## <book short name> N" (e.g. "## Mateus 5", "## Salmos 23"), verse numbers bold inline ("**16** ..."), '
+     'prose paragraphs as plain paragraphs, poetry as blockquote lines ("> ") with hard line breaks and em-space indents for q2, Psalm titles in '
+     'italic paragraphs, section headings "###", speaker labels bold, footnotes and cross references as Markdown footnotes [^book-ch-n] whose '
+     'definitions ("[^id]: **ch:v** text", cross references prefixed "Ref.:") follow each chapter; Markdown special characters backslash-escaped.' +
+     REUSE % 'Portuguese (por-WBTC is restricted, no download)',
+     'withheld-e', 'porbrbsl (Bíblia Portuguesa Mundial); Public Domain', 'PSA,PRO,' + NT, 'own Markdown writer (' + PY + '), tools/gen_porbrbsl_md.py'),
+    ('kor-lopdf', 'kor-lopdf.pdf', 'kor_usfm.zip', 'ko', 'Hangul', 'pdf',
+     '354-page B5 (18.2 x 25.7 cm) PDF of the Korean New Testament exported by LibreOffice Writer: title page "신약전서 / 한국어 성경 (1910)" and a '
+     'notice line, each book on a new page with a centred bold sans title, then the book in two balanced columns with a grey column rule; chapter '
+     'headings "제 N 장" centred bold on a grey band; every verse its own paragraph with a small bold blue verse number and a hanging indent; running '
+     'head at top right (current book name, chapter field) above a rule; footer "- n -" centred; Noto Serif CJK KR.' + REUSE % 'Korean',
+     'withheld-e', 'kor (Korean Bible 1910); Public Domain', NT, 'LibreOffice 24.2.7.2 Writer PDF export (FODT to PDF), tools/gen_kor_lopdf.py + tools/fodt.py'),
+    ('grcmt-txt', 'grcmt-txt.txt', 'grcmt_usfm.zip', 'grc', 'Greek', 'txt',
+     'Plain UTF-8 text with CRLF line ends, 76 columns: centred title block, licence lines, the publisher\'s preface (declension-code tables, table '
+     'rows indented with cells joined by tabs) in English, then for each book a "=" rule, centred title (e.g. "ΚΑΤΑ ΜΑΤΘΑΙΟΝ"), "=" rule; chapter '
+     'headings "ΚΕΦΑΛΑΙΟΝ Αʹ", "ΚΕΦΑΛΑΙΟΝ ΚΗʹ" with Greek alphabetic numerals and keraia; one verse per line, verse number right-aligned in 3 '
+     'columns plus two spaces, wrapped lines indented to the text; unaccented lower-case text exactly as in the edition.',
+     'withheld-e', 'grcmt (Greek Majority Text NT, Robinson-Pierpont 2018); Public Domain', 'all', 'own text writer (' + PY + ' textwrap), tools/gen_grcmt_txt.py'),
+    ('heb-wprtl', 'heb-wprtl.pdf', 'heb_usfm.zip', 'he', 'Hebrew', 'pdf',
+     '183-page right-to-left PDF (170 x 240 mm) of the Torah: title page "חמשה חומשי תורה", Hebrew contents page with dot leaders and Hebrew-letter '
+     'page numbers, each book on a new page with a centred full-width title (pointed toc1 name, e.g. "בְּרֵאשִׁית") over two RTL columns (right column '
+     'first) with a column rule; chapter headings "פרק א׳", "פרק כ״ד" with Hebrew-letter numerals; verse numbers as small bold Hebrew letters '
+     '(gematria, 15 = טו, 16 = טז) inline; running head = book name centred at top; page numbers in Hebrew letters centred at the foot; Noto Serif Hebrew.',
+     'withheld-e', 'heb (Hebrew Bible, Modern Hebrew edition on eBible.org); Public Domain', 'GEN,EXO,LEV,NUM,DEU',
+     'WeasyPrint 70.0 (' + PY + '), tools/gen_heb_wprtl.py'),
+]
+hdr = ['key', 'files', 'reference', 'language', 'script', 'format', 'layout', 'role', 'source and licence', 'books', 'sha256', 'generator']
+out = ['\t'.join(hdr)]
+for r in rows:
+    key, fn, ref, lang, script, fmt, layout, role, src, books, gen = r
+    sha = hashlib.sha256(open(D + fn, 'rb').read()).hexdigest()
+    fields = [key, fn, ref, lang, script, fmt, layout, role, src, books, sha, gen]
+    assert all('\t' not in f and '\n' not in f for f in fields)
+    out.append('\t'.join(fields))
+open('/root/aw-set-e/withheld-e.tsv', 'w', encoding='utf-8').write('\n'.join(out) + '\n')
+print(len(rows))
