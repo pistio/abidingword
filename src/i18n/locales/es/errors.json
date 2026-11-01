@@ -135,6 +135,7 @@
     "documentChapterLong": "{{book}} {{chapter}} llega hasta el versículo {{last}}; normalmente tiene {{expected}} versículos. Quizá se leyó en él otro capítulo u otro libro. Este capítulo no se usa.",
     "documentSeptuagintNumbering": "{{book}} {{chapter}}: este documento es una Septuaginta, que numera este capítulo de otro modo que la numeración de la Biblia hebrea que usa Abiding Word. Este capítulo no se usa.",
     "documentChapterUnread": "{{book}}: el encabezado de capítulo «{{line}}» tiene un número que no se pudo leer. Ese capítulo no se usa.",
+    "documentChapterUnmarked": "{{book}}: después del capítulo {{chapter}}, los números de versículo vuelven a empezar en 1 sin encabezado ni número de capítulo. Ese capítulo no se usa.",
     "documentFootnotes_one": "Se omitió {{count}} línea de notas al pie de las páginas.",
     "documentFootnotes_other": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
     "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas.",

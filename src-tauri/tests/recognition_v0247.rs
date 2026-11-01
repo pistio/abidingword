@@ -231,7 +231,8 @@ fn verse_text_in_a_markdown_html_block_is_never_silently_lost() {
 fn a_letter_spaced_running_head_is_furniture_even_with_a_figure() {
     // "1 S A M U E L" and "O B A D I A H" over the pages: never a verse
     // number, never verse text.
-    let mut units = titled_book("1 SAMUEL", "1SA", 1..=2, 1);
+    // (Ten verses a page: a real book has many pages.)
+    let mut units = book_pages("1 SAMUEL", "1SA", 1..=2, 1, 10);
     let mut page = 2u32;
     let mut i = 0;
     while i < units.len() {

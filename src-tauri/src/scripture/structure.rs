@@ -874,7 +874,20 @@ fn title_forms(key: &str) -> Vec<String> {
                     out.push(first.to_string());
                 }
             }
-            out.insert(0, rest);
+            out.insert(0, rest.clone());
+            // A number after the name ("ΣΑΜΟΥΗΛ Α΄", "Samuel II"): also the
+            // form with the number first, as the dictionaries write it
+            // ("α σαμουηλ"), v0.24.7.
+            if let Some((name, last)) = rest.rsplit_once(' ') {
+                let bare = last.trim_end_matches(['΄', 'ʹ', '\u{0374}', '\'', '’', '.']);
+                if matches!(
+                    bare,
+                    "α" | "β" | "γ" | "δ" | "i" | "ii" | "iii" | "iv" | "1" | "2" | "3" | "4"
+                ) && !name.is_empty()
+                {
+                    out.push(format!("{last} {name}"));
+                }
+            }
         }
     }
     out
@@ -1121,8 +1134,33 @@ const KINGS_WORDS: &[&str] = &[
     "konige",
     "koenige",
     "βασιλειων",
+    // (The Hebrew-based Greek Bibles' "Βασιλέων", "of Kings"; Latin and
+    // Russian four-book names, v0.24.7.)
+    "βασιλεων",
+    "regum",
+    "regnorum",
+    "царств",
     "열왕기",
 ];
+
+/// Whether a title names Kings with a word of the traditions that number four
+/// books of Kingdoms (the Greek, Latin and Slavonic names; "Kingdoms",
+/// "Reigns"), v0.24.7: its first book may be 1 Samuel or 1 Kings.
+fn four_book_name(title: &str) -> bool {
+    const FOUR: &[&str] = &[
+        "kingdoms",
+        "reigns",
+        "regnes",
+        "βασιλειων",
+        "βασιλεων",
+        "regum",
+        "regnorum",
+        "царств",
+    ];
+    key(title)
+        .split(|c: char| !c.is_alphanumeric())
+        .any(|w| FOUR.contains(&w))
+}
 
 /// The number of a book of Kings a title gives when it is written as one of
 /// four ("KINGS III.", "4 Kings", "ΒΑΣΙΛΕΙΩΝ Γ", "Troisième livre des Rois"):
@@ -1162,6 +1200,36 @@ fn kingdoms_number(title: &str) -> Option<u8> {
         .find_map(|w| ordinal(w))
 }
 
+/// Whether the document has a title, in a line of its own, that names a book
+/// of Samuel by Samuel's name ("1 Samuel", "ΣΑΜΟΥΗΛ Α΄", "Samuelis I",
+/// "사무엘상", "שמואל א"), v0.24.7: its books of Kings are then 1 and 2 Kings.
+fn samuel_named(units: &[Unit], language: Option<ReferenceLanguage>) -> bool {
+    const SAMUEL: &[&str] = &[
+        "samuel",
+        "samuels",
+        "σαμουηλ",
+        "samuelis",
+        "samuele",
+        "самуила",
+        "שמואל",
+    ];
+    units.iter().any(|u| {
+        if u.note {
+            return false;
+        }
+        let text = clean(&u.text);
+        let text = text.trim();
+        if text.split_whitespace().count() > 8 || !book_line_shape(text) {
+            return false;
+        }
+        let k = key(text);
+        let named = k
+            .split(|c: char| !c.is_alphanumeric())
+            .any(|w| SAMUEL.contains(&w) || w.starts_with("사무엘"));
+        named && book_named(text, language).is_some_and(|b| matches!(b.code, "1SA" | "2SA"))
+    })
+}
+
 /// Whether the document numbers four books of Kings (v0.24.5): it has a
 /// title, in a line of its own, for a third or fourth book of Kings ("KINGS
 /// III.", "IV Kings", "ΒΑΣΙΛΕΙΩΝ Δ"). Its first and second books of Kings
@@ -1197,7 +1265,8 @@ fn four_kingdoms(units: &[Unit]) -> bool {
 ///   Septuagint reads …") nor under one book's title ("Ester / traduzido da
 ///   Septuaginta grega": that book is the Greek one, see `greek_part`);
 /// * or it names Old Testament books in Greek ("ΓΕΝΕΣΙΣ", "ΒΑΣΙΛΕΙΩΝ Αʹ
-///   1:1 …"): a Greek Old Testament is the Septuagint.
+///   1:1 …") and has the Septuagint's shape — four books of Kings or one of
+///   its own books (v0.24.7: Greek names alone were not enough).
 ///
 /// Its Esther and Daniel are then the Greek books (`ESG`, `DAG`), left out
 /// and named, never the Hebrew canon's. A Greek translation made from the
@@ -1272,12 +1341,23 @@ fn septuagint_document(units: &[Unit], language: Option<ReferenceLanguage>) -> b
         }
         if book_named(name, language).is_some_and(|b| b.ordinal <= 39) {
             greek_names += 1;
-            if greek_names >= 3 {
-                return true;
-            }
         }
     }
-    false
+    // Greek names of Old Testament books are evidence only with the
+    // Septuagint's own shape (v0.24.7): four books of Kings, or a book only
+    // the Septuagint and the deuterocanon have. A Greek Bible translated
+    // from the Hebrew (Vamvas: "ΣΑΜΟΥΗΛ Α΄", "ΒΑΣΙΛΕΩΝ Α΄", no Tobit) is none.
+    greek_names >= 3
+        && (four_kingdoms(units)
+            || units.iter().any(|u| {
+                let text = clean(&u.text);
+                let text = text.trim();
+                !u.note
+                    && (outside_line(text).is_some()
+                        || (text.split_whitespace().count() <= 6
+                            && book_line_shape(text)
+                            && outside_named(text).is_some()))
+            }))
 }
 
 /// The book outside the 66 a title names ("O Primeiro Livro dos Macabeus" →
@@ -1565,6 +1645,11 @@ const CHAPTER_WORDS: &[&str] = &[
     "κεφαλαιο",
     "κεφαλαιον",
     "פרק",
+    // Latin, Italian, Russian (v0.24.7).
+    "caput",
+    "capitulum",
+    "capitolo",
+    "глава",
 ];
 /// Words that name a Psalm, before its number ("Psalm 23").
 const PSALM_WORDS: &[&str] = &[
@@ -1575,6 +1660,8 @@ const PSALM_WORDS: &[&str] = &[
     "salmos",
     "ψαλμος",
     "מזמור",
+    "psalmus",
+    "псалом",
 ];
 
 /// A line that is a chapter's label ("Chapter …", "Kapitel …", "ΚΕΦΑΛΑΙΟΝ
@@ -2608,6 +2695,29 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
                 out.insert(i);
             }
         }
+        // A book's name letter-spaced ("O B A D I A H", "1 S A M U E L") at a
+        // page's edge or as one of its first or last two lines, not set
+        // large: a running head; with a figure in front it would otherwise
+        // be read as a verse number (v0.24.7).
+        {
+            let ends: Vec<usize> = lines
+                .iter()
+                .take(2)
+                .chain(lines.iter().rev().take(2))
+                .copied()
+                .collect();
+            for &i in lines {
+                let u = &units[i];
+                if u.large || !(u.edge || ends.contains(&i)) {
+                    continue;
+                }
+                if let Some(joined) = letter_spaced(&u.text) {
+                    if matches!(read_heading(&joined, language), Some(Heading::Book(_))) {
+                        out.insert(i);
+                    }
+                }
+            }
+        }
         // A book and chapter alone at a page's edge, or as the page's first
         // or last two lines, not set large (a chapter's title is): a running
         // head (v0.24.6).
@@ -2706,6 +2816,30 @@ fn names_book_only(text: &str, language: Option<ReferenceLanguage>) -> bool {
     let text = clean(text);
     let text = text.trim();
     matches!(read_heading(text, language), Some(Heading::Book(_)))
+}
+
+/// A line of letters set apart by spaces ("O B A D I A H", "1 S A M U E L",
+/// "H A G G A I"), joined: "OBADIAH", "1 SAMUEL" (v0.24.7). At least four
+/// single letters; a number of one or two figures may stand in front.
+fn letter_spaced(text: &str) -> Option<String> {
+    let text = clean(text);
+    let words: Vec<&str> = text.split_whitespace().collect();
+    let (lead, letters) = match words.first() {
+        Some(w) if w.len() <= 2 && w.chars().all(|c| c.is_ascii_digit()) => (Some(*w), &words[1..]),
+        _ => (None, &words[..]),
+    };
+    if letters.len() < 4
+        || !letters
+            .iter()
+            .all(|w| w.chars().count() == 1 && w.chars().all(char::is_alphabetic))
+    {
+        return None;
+    }
+    let name: String = letters.concat();
+    Some(match lead {
+        Some(n) => format!("{n} {name}"),
+        None => name,
+    })
 }
 
 /// A line that names a book and a chapter and nothing else, the way running
@@ -3962,21 +4096,51 @@ struct Builder<'a> {
     /// The document numbers four books of Kings (see `four_kingdoms`):
     /// its first and second are Samuel (v0.24.5).
     kingdoms: bool,
+    /// The document has a title naming Samuel (see `samuel_named`), v0.24.7.
+    samuel_named: bool,
 }
 
 impl Builder<'_> {
-    fn found_book(&mut self, heading: &str, detected: Option<&'static Book>, unit: usize) -> usize {
-        // "KINGS I." … "KINGS IV.", "ΒΑΣΙΛΕΙΩΝ Α" … "Δ" in a document that
-        // numbers four books of Kings: the first two are Samuel, the last two
-        // Kings — whatever a dictionary reads for "Kings I" (v0.24.5).
-        let detected = match (self.kingdoms, kingdoms_number(heading)) {
-            (true, Some(n))
-                if detected.is_none_or(|b| matches!(b.code, "1SA" | "2SA" | "1KI" | "2KI")) =>
-            {
-                canon::by_code(["1SA", "2SA", "1KI", "2KI"][usize::from(n - 1)])
-            }
-            _ => detected,
+    /// The book a title written as one of the books of Kings names
+    /// ("ΒΑΣΙΛΕΩΝ Α΄", "1 Kings", "Regum III"), v0.24.7. The name alone is
+    /// ambiguous — the Septuagint and Douay traditions number four books of
+    /// Kings (1 and 2 Samuel, 1 and 2 Kings), the Hebrew Bible's tradition
+    /// two — so the document decides: a title for a third or fourth book of
+    /// Kings makes the first two Samuel; a title naming Samuel makes them 1
+    /// and 2 Kings; with neither, no book (never assigned by the name
+    /// alone). Other titles keep what was read.
+    fn resolve_kings(
+        &self,
+        heading: &str,
+        detected: Option<&'static Book>,
+    ) -> Option<&'static Book> {
+        let Some(n) = kingdoms_number(heading) else {
+            return detected;
         };
+        if detected.is_some_and(|b| !matches!(b.code, "1SA" | "2SA" | "1KI" | "2KI")) {
+            return detected;
+        }
+        let code = if self.kingdoms {
+            ["1SA", "2SA", "1KI", "2KI"][usize::from(n - 1)]
+        } else if self.samuel_named && n <= 2 {
+            ["1KI", "2KI"][usize::from(n - 1)]
+        } else if four_book_name(heading) {
+            // "ΒΑΣΙΛΕΩΝ Α΄", "Regum I", "1 Kingdoms" with no third or fourth
+            // book and no Samuel: 1 Samuel in one numbering, 1 Kings in the
+            // other. Not known, so no book (v0.24.7).
+            return None;
+        } else {
+            // "1 Kings", "Premier livre des Rois": the Hebrew Bible's
+            // numbering unless the document shows four books (v0.24.5).
+            return detected;
+        };
+        canon::by_code(code)
+    }
+
+    fn found_book(&mut self, heading: &str, detected: Option<&'static Book>, unit: usize) -> usize {
+        // A title written as one of the books of Kings: the document decides
+        // which book it is (see `resolve_kings`), v0.24.5 / v0.24.7.
+        let detected = self.resolve_kings(heading, detected);
         self.books.push(FoundBook {
             index: self.books.len(),
             heading: unmark_raised(heading),
@@ -4366,11 +4530,10 @@ impl Builder<'_> {
             self.last_detected = Some(book.code);
             return entry;
         }
-        let book = match (self.kingdoms, kingdoms_number(heading)) {
-            (true, Some(n)) if matches!(book.code, "1SA" | "2SA" | "1KI" | "2KI") => {
-                canon::by_code(["1SA", "2SA", "1KI", "2KI"][usize::from(n - 1)]).unwrap_or(book)
-            }
-            _ => book,
+        let Some(book) = self.resolve_kings(heading, Some(book)) else {
+            // (A Kings title that names no book for certain: offered for
+            // correction, its text not read into any book.)
+            return self.found_book(heading, None, unit);
         };
         if self.last_detected == Some(book.code) {
             if let Some(last) = self
@@ -4390,6 +4553,7 @@ impl Builder<'_> {
         let navigation = chapter_indexes(self.units, skip);
         let mut skip_all: HashSet<usize> = skip.clone();
         skip_all.extend(navigation.iter().copied());
+        skip_all.extend(contents_lists(self.units, skip, self.language));
         let skip = &skip_all;
         let mut joined: HashSet<usize> = HashSet::new();
         // Whether the document is written in lines that each name their book,
@@ -5381,6 +5545,64 @@ fn inline_labels(units: &[Unit]) -> HashSet<String> {
         .map(|(w, _)| w.clone())
         .collect();
     established.into_iter().chain(rare).collect()
+}
+
+/// A table of contents written as lines of a book's name and a number
+/// ("Matthew 1" / "Mark 32" / "Luke 52" …, page numbers), v0.24.7: four or
+/// more lines in a row, each naming a different book, the numbers never
+/// falling. Read as titles, "Matthew 1" would begin Matthew at chapter 1
+/// and the real title would then begin it a second time. Such a list names
+/// no book and no chapter.
+fn contents_lists(
+    units: &[Unit],
+    skip: &HashSet<usize>,
+    language: Option<ReferenceLanguage>,
+) -> HashSet<usize> {
+    use std::sync::OnceLock;
+    static ENTRY: OnceLock<regex::Regex> = OnceLock::new();
+    let entry = ENTRY.get_or_init(|| {
+        regex::Regex::new(r"^(.{2,60}?)[\s.·…_-]+(\d{1,4})$").expect("valid pattern")
+    });
+    let read = |i: usize| -> Option<(&'static str, u32)> {
+        let text = clean(&units[i].text);
+        let c = entry.captures(text.trim())?;
+        let name = c[1]
+            .trim()
+            .trim_end_matches(['.', '·', '…', '_', '-'])
+            .trim();
+        let book = match read_heading(name, language)? {
+            Heading::Book(b) => b,
+            _ => return None,
+        };
+        Some((book.code, c[2].parse().ok()?))
+    };
+    let lines: Vec<usize> = (0..units.len())
+        .filter(|i| !skip.contains(i) && !clean(&units[*i].text).trim().is_empty())
+        .collect();
+    let mut out = HashSet::new();
+    let mut k = 0;
+    while k < lines.len() {
+        let mut run: Vec<(usize, &'static str, u32)> = Vec::new();
+        let mut j = k;
+        while j < lines.len() {
+            let Some((code, n)) = read(lines[j]) else {
+                break;
+            };
+            if run.iter().any(|(_, c, _)| *c == code) || run.last().is_some_and(|(_, _, m)| n < *m)
+            {
+                break;
+            }
+            run.push((lines[j], code, n));
+            j += 1;
+        }
+        if run.len() >= 4 {
+            out.extend(run.iter().map(|(i, _, _)| *i));
+            k = j;
+        } else {
+            k += 1;
+        }
+    }
+    out
 }
 
 /// Runs of three or more lines that are nothing but consecutive numbers
@@ -6886,12 +7108,43 @@ impl Reader<'_> {
             self.out.stats.numbered_chapters += 1;
             return true;
         }
-        // The next chapter's number, or verse 1 again, at the start of a paragraph once
-        // this chapter has all its verses.
+        // Verse 1 again, at the start of a paragraph, with no chapter label or
+        // number in between: a new chapter begins, but nothing in the document
+        // says which. Taking the next number because the chapter before has
+        // its standard count is a guess that drifts wherever the edition
+        // numbers otherwise (the Vulgate's chapters), so the chapter is not
+        // used (v0.24.7).
+        if strong
+            && m.unit_start
+            && m.value == 1
+            && self.chapter_complete()
+            && chapter < book.chapter_count
+        {
+            self.close();
+            self.chapter = None;
+            self.skip_chapter = true;
+            self.out.content.issue(
+                Severity::Warning,
+                Some(book),
+                None,
+                UserMessage::new(
+                    "bibleImport.documentChapterUnmarked",
+                    format!(
+                        "{}: after chapter {chapter}, the verse numbers start again at 1 with no chapter heading or number. That chapter is not used.",
+                        book.name
+                    ),
+                )
+                .with("bookCode", book.code)
+                .with("chapter", chapter),
+            );
+            return true;
+        }
+        // The next chapter's number at the start of a paragraph once this
+        // chapter has all its verses.
         if strong
             && m.unit_start
             && self.chapter_complete()
-            && (m.value == chapter + 1 || m.value == 1)
+            && m.value == chapter + 1
             && chapter < book.chapter_count
         {
             self.start_chapter(chapter + 1, unit);
@@ -8035,6 +8288,7 @@ fn recognise_in(
         block_starts: starts.clone(),
         septuagint,
         kingdoms: four_kingdoms(units),
+        samuel_named: samuel_named(units, language),
     };
     let (items, books) = builder.build(&furniture);
     let reader = Reader {

@@ -65,6 +65,7 @@ impl SourceImportAdapter for MarkdownImporter {
         let mut marked = String::new();
         let mut has_callers = false;
         let mut in_footnote = 0usize;
+        let mut html = String::new();
 
         let path = |headings: &[Option<String>]| -> Option<String> {
             let parts: Vec<&str> = headings.iter().flatten().map(String::as_str).collect();
@@ -184,7 +185,37 @@ impl SourceImportAdapter for MarkdownImporter {
                     marked.push(' ');
                 }
                 // Raw HTML is ignored: never rendered, never executed.
-                Event::Html(_) | Event::InlineHtml(_) => {}
+                // A block of raw HTML: never rendered or executed, but its
+                // text is the document's (a verse's closing "Amen." in a
+                // centred <div>): kept as a paragraph, read as plain text
+                // with every tag taken out and script, style and comments
+                // dropped whole; set apart when it uses anything beyond
+                // simple text formatting (v0.24.7).
+                Event::Start(Tag::HtmlBlock) => html.clear(),
+                Event::Html(t) => html.push_str(&t),
+                Event::End(TagEnd::HtmlBlock) => {
+                    if let Some((text, set_apart)) = html_block_text(&html) {
+                        let section_path = path(&headings);
+                        let heading = headings.iter().rev().flatten().next().cloned();
+                        for part in split_long(&text, MAX_SEGMENT) {
+                            segments.push(NewSegment {
+                                note: in_footnote > 0,
+                                text: part,
+                                chapter: headings[0].clone(),
+                                heading: heading.clone(),
+                                section_path: section_path.clone(),
+                                paragraph_index: Some(paragraph_in_section),
+                                char_start: Some(range.start as u32),
+                                char_end: Some(range.end as u32),
+                                styled: set_apart,
+                                ..Default::default()
+                            });
+                            paragraph_in_section += 1;
+                        }
+                    }
+                    html.clear();
+                }
+                Event::InlineHtml(_) => {}
                 _ => {}
             }
         }
@@ -201,6 +232,89 @@ impl SourceImportAdapter for MarkdownImporter {
             chapter_count: Some(top_level),
         })
     }
+}
+
+/// The plain text of a block of raw HTML, and whether it is set apart (it
+/// uses more than simple text formatting: headings, tables, lists, links,
+/// unknown elements). Script, style, template and iframe elements and
+/// comments are dropped with their content; every other tag is taken out;
+/// the common character references are decoded. Nothing is interpreted or
+/// executed. None when no text is left.
+fn html_block_text(html: &str) -> Option<(String, bool)> {
+    const SIMPLE: &[&str] = &[
+        "div",
+        "p",
+        "span",
+        "center",
+        "b",
+        "i",
+        "em",
+        "strong",
+        "sup",
+        "sub",
+        "br",
+        "small",
+        "big",
+        "u",
+        "font",
+        "blockquote",
+    ];
+    // (ASCII lower case only: byte positions must stay those of `html`.)
+    let lower = html.to_ascii_lowercase();
+    let mut text = String::new();
+    let mut set_apart = false;
+    let mut at = 0usize;
+    let bytes = html.as_bytes();
+    while at < html.len() {
+        if bytes[at] == b'<' {
+            // A comment, or an element dropped with its content.
+            if lower[at..].starts_with("<!--") {
+                at = lower[at..].find("-->").map_or(html.len(), |e| at + e + 3);
+                continue;
+            }
+            let name: String = lower[at + 1..]
+                .trim_start_matches('/')
+                .chars()
+                .take_while(|c| c.is_ascii_alphanumeric())
+                .collect();
+            if ["script", "style", "template", "iframe"].contains(&name.as_str())
+                && !lower[at + 1..].starts_with('/')
+            {
+                let close = format!("</{name}");
+                at = match lower[at..].find(&close) {
+                    Some(e) => lower[at + e..]
+                        .find('>')
+                        .map_or(html.len(), |g| at + e + g + 1),
+                    None => html.len(),
+                };
+                continue;
+            }
+            if !name.is_empty() && !SIMPLE.contains(&name.as_str()) {
+                set_apart = true;
+            }
+            match html[at..].find('>') {
+                Some(g) => {
+                    text.push(' ');
+                    at += g + 1;
+                }
+                None => break,
+            }
+            continue;
+        }
+        let next = html[at..].find('<').map_or(html.len(), |n| at + n);
+        text.push_str(&html[at..next]);
+        at = next;
+    }
+    let decoded = text
+        .replace("&nbsp;", " ")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&#39;", "'")
+        .replace("&apos;", "'")
+        .replace("&amp;", "&");
+    let text = collapse(&decoded);
+    (!text.is_empty()).then_some((text, set_apart))
 }
 
 #[cfg(test)]

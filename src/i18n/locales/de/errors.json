@@ -125,6 +125,7 @@
     "documentChapterLong": "{{book}} {{chapter}} reicht bis Vers {{last}}; das Kapitel hat üblicherweise {{expected}} Verse. Vielleicht wurde ein anderes Kapitel oder Buch hineingelesen. Dieses Kapitel wird nicht verwendet.",
     "documentSeptuagintNumbering": "{{book}} {{chapter}}: Dieses Dokument ist eine Septuaginta; sie zählt dieses Kapitel anders als die Zählung der hebräischen Bibel, die Abiding Word verwendet. Dieses Kapitel wird nicht verwendet.",
     "documentChapterUnread": "{{book}}: Die Kapitelüberschrift „{{line}}“ hat eine Nummer, die nicht gelesen werden konnte. Dieses Kapitel wird nicht verwendet.",
+    "documentChapterUnmarked": "{{book}}: Nach Kapitel {{chapter}} beginnen die Versnummern wieder bei 1, ohne Kapitelüberschrift oder -nummer. Dieses Kapitel wird nicht verwendet.",
     "documentFootnotes_one": "{{count}} Zeile mit Fußnoten unten auf den Seiten wurde ausgelassen.",
     "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen.",
     "documentAdditionalBook": "„{{heading}}“ ist {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Sein Text wurde ausgelassen; die anderen Bücher sind davon nicht betroffen."
