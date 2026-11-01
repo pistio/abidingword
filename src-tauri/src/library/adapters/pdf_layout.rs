@@ -1189,8 +1189,10 @@ fn split(
     // begins, as no line of the right column does: it is the left column's,
     // v0.24.6. Figures alone, a verse number in the margin, keep the rule
     // below.)
-    // (The right column's own left edge: where most of its spans begin —
-    // the gutter may be measured up to such a word itself.)
+    // (The right column's own left edge — the gutter may be measured up to
+    // such a word itself: the leftmost place where a fifth or more of the
+    // right side's spans begin, within a point. With three columns the
+    // right side holds two; their nearer edge is the one.)
     let right_edge = {
         let mut starts: Vec<f64> = spans
             .iter()
@@ -1198,7 +1200,12 @@ fn split(
             .map(|s| s.x0)
             .collect();
         starts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
-        starts.get(starts.len() / 2).copied().unwrap_or(gutter.to)
+        let needed = (starts.len() / 5).max(3);
+        starts
+            .iter()
+            .find(|&&x| starts.iter().filter(|&&y| (y - x).abs() <= 1.0).count() >= needed)
+            .copied()
+            .unwrap_or(gutter.to)
     };
     let inside_gutter_words = |s: &Span| {
         s.x0 >= gutter.from - 1e-6
@@ -2283,6 +2290,31 @@ mod tests {
         let first_right = t.iter().position(|l| l.starts_with("right")).unwrap();
         assert!(selah < first_right, "{t:?}");
         assert_eq!(t[selah - 1], "short 3 line", "{t:?}");
+    }
+
+    #[test]
+    fn three_columns_stay_three_columns_with_short_lines_in_the_middle() {
+        // Short lines in the middle column must never be taken for words
+        // flush right in the first gutter (the right side of that gutter
+        // holds two columns).
+        let mut glyphs = Vec::new();
+        for i in 0..10 {
+            let y = 100.0 + 14.0 * i as f64;
+            glyphs.extend(g(&format!("first column line {i}"), 40.0, y, 10.0));
+            let middle = if i % 2 == 0 {
+                format!("mid {i}")
+            } else {
+                format!("middle column line {i}")
+            };
+            glyphs.extend(g(&middle, 230.0, y, 10.0));
+            glyphs.extend(g(&format!("third column line {i}"), 420.0, y, 10.0));
+        }
+        let p = page(glyphs);
+        let t = texts(&p);
+        assert_eq!(t.len(), 30, "{t:?}");
+        assert!(t[..10].iter().all(|l| l.starts_with("first")), "{t:?}");
+        assert!(t[10..20].iter().all(|l| l.starts_with("mid")), "{t:?}");
+        assert!(t[20..].iter().all(|l| l.starts_with("third")), "{t:?}");
     }
 
     #[test]
