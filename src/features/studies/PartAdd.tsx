@@ -12,6 +12,8 @@ interface PartAddProps {
   part: string;
   onWriting: () => void;
   onNote: (kind: FindingType) => void;
+  /** A.4.4 (#27): a paired question and answer (optional; never forced). */
+  onQa?: () => void;
 }
 
 /**
@@ -19,7 +21,7 @@ interface PartAddProps {
  * people use when they study (an observation, a question…). No generic
  * "item" to pick first. Escape closes it and returns to Add.
  */
-export function PartAdd({ part, onWriting, onNote }: PartAddProps) {
+export function PartAdd({ part, onWriting, onNote, onQa }: PartAddProps) {
   const { t } = useTranslation();
   const id = useId();
   const toggle = useRef<HTMLButtonElement>(null);
@@ -68,6 +70,11 @@ export function PartAdd({ part, onWriting, onNote }: PartAddProps) {
           <button type="button" autoFocus className={item} onClick={() => choose(onWriting)}>
             {t("studies.add.writing")}
           </button>
+          {onQa && (
+            <button type="button" className={item} onClick={() => choose(onQa)}>
+              {t("studies.qa.add")}
+            </button>
+          )}
           {kinds.map((kind) => (
             <button
               key={kind}

@@ -2351,7 +2351,8 @@
         "time": "Time",
         "presentation_notes": "Presentation notes",
         "handout": "Handout",
-        "outline_point": "Outline point"
+        "outline_point": "Outline point",
+        "qa": "Question and answer"
       },
       "options": "Options for {{name}}",
       "leaderBadge": "Leader only",
@@ -2446,7 +2447,26 @@
       "openStudy": "Open linked Study",
       "standalone": "Standalone Teaching"
     },
-    "options": "Teaching options"
+    "options": "Teaching options",
+    "fromStudy": {
+      "open": "Add from Bible Study…",
+      "title": "Add from Bible Study",
+      "help": "Choose what to copy into this teaching. Each copy is yours to edit, names where it came from, starts for the leader only and is never kept in step with the study.",
+      "add": "Add selected",
+      "none": "This Bible Study has nothing to add yet.",
+      "added": "Added from the Bible Study, for the leader only. Share each part when it is ready.",
+      "provenance": "From the Bible Study: {{label}}",
+      "quotation": "Quotation from the Bible Study · {{citation}}",
+      "item": "an item",
+      "quote": "Quotation",
+      "groups": {
+        "writing": "Writing",
+        "qa": "Questions and answers",
+        "finding": "Notes",
+        "citation": "Quotations",
+        "passage": "Passages"
+      }
+    }
   },
   "parts": {
     "add": "Add a part",
@@ -2557,7 +2577,8 @@
       "includeFrame": "“{{opening}}” and “{{closing}}”",
       "writingSpace": "Room to write",
       "includePassage": "Include Bible passage ({{bible}})",
-      "includePassageNone": "Include Bible passage (choose a Bible in the Scripture pane first)"
+      "includePassageNone": "Include Bible passage (choose a Bible in the Scripture pane first)",
+      "answers": "With the answers (shared questions only)"
     },
     "action": {
       "print": "Print or save as PDF…",
@@ -2826,5 +2847,30 @@
     "legacy": "Legacy standalone Teaching",
     "legacyHint": "Manage historical Teaching that is not linked to a Bible Study. Nothing is attached automatically. New Teaching begins within a Study.",
     "noLegacy": "No legacy standalone Teaching."
+  },
+  "qa": {
+    "add": "Question and answer",
+    "label": "Question and answer {{number}}",
+    "question": "Question",
+    "answer": "Answer",
+    "options": "Options for {{label}}",
+    "moveUp": "Move {{label}} up",
+    "moveDown": "Move {{label}} down",
+    "confirmDelete": "Delete {{label}} with its question and answer?"
+  },
+  "qaExport": {
+    "open": "Export questions…",
+    "title": "Export questions",
+    "help": "Choose what to include. Only the writing in the study's parts is exported; your separate notes are never included.",
+    "mode": "What to export",
+    "modes": {
+      "questions": "Questions only",
+      "answers": "Questions and answers",
+      "full": "Whole study"
+    },
+    "save": "Save as Markdown…",
+    "fileType": "Markdown",
+    "saved": "Saved to {{path}}",
+    "empty": "There is nothing to export for this choice yet."
   }
 }

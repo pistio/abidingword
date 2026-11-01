@@ -2362,7 +2362,8 @@
         "time": "Durée",
         "presentation_notes": "Notes de présentation",
         "handout": "Feuille",
-        "outline_point": "Point du plan"
+        "outline_point": "Point du plan",
+        "qa": "Question et réponse"
       },
       "options": "Options pour {{name}}",
       "leaderBadge": "Animateur seulement",
@@ -2457,7 +2458,26 @@
       "openStudy": "Ouvrir l’étude liée",
       "standalone": "Enseignement indépendant"
     },
-    "options": "Options de l’enseignement"
+    "options": "Options de l’enseignement",
+    "fromStudy": {
+      "open": "Ajouter depuis l’étude biblique…",
+      "title": "Ajouter depuis l’étude biblique",
+      "help": "Choisissez ce qui est copié dans cet enseignement. Chaque copie est modifiable, indique son origine, est d’abord réservée à l’animateur et n’est jamais synchronisée avec l’étude.",
+      "add": "Ajouter la sélection",
+      "none": "Cette étude biblique n’a encore rien à ajouter.",
+      "added": "Ajouté depuis l’étude biblique, pour l’animateur seulement. Partagez chaque partie quand elle est prête.",
+      "provenance": "Depuis l’étude biblique : {{label}}",
+      "quotation": "Citation de l’étude biblique · {{citation}}",
+      "item": "un élément",
+      "quote": "Citation",
+      "groups": {
+        "writing": "Texte",
+        "qa": "Questions et réponses",
+        "finding": "Notes",
+        "citation": "Citations",
+        "passage": "Passages"
+      }
+    }
   },
   "parts": {
     "add": "Ajouter une partie",
@@ -2568,7 +2588,8 @@
       "includeFrame": "« {{opening}} » et « {{closing}} »",
       "writingSpace": "Place pour écrire",
       "includePassage": "Inclure le passage biblique ({{bible}})",
-      "includePassageNone": "Inclure le passage biblique (choisissez d’abord une Bible dans le volet Bible)"
+      "includePassageNone": "Inclure le passage biblique (choisissez d’abord une Bible dans le volet Bible)",
+      "answers": "Avec les réponses (questions partagées seulement)"
     },
     "action": {
       "print": "Imprimer ou enregistrer en PDF…",
@@ -2841,5 +2862,30 @@
     "legacy": "Anciens enseignements indépendants",
     "legacyHint": "Gérer les anciens enseignements sans étude biblique associée. Aucun lien n’est créé automatiquement. Un nouvel enseignement commence dans une étude.",
     "noLegacy": "Aucun ancien enseignement indépendant."
+  },
+  "qa": {
+    "add": "Question et réponse",
+    "label": "Question et réponse {{number}}",
+    "question": "Question",
+    "answer": "Réponse",
+    "options": "Options pour {{label}}",
+    "moveUp": "Monter {{label}}",
+    "moveDown": "Descendre {{label}}",
+    "confirmDelete": "Supprimer {{label}} avec sa question et sa réponse ?"
+  },
+  "qaExport": {
+    "open": "Exporter les questions…",
+    "title": "Exporter les questions",
+    "help": "Choisissez ce qui est inclus. Seul le texte des parties de l’étude est exporté ; vos notes séparées ne le sont jamais.",
+    "mode": "Contenu de l’export",
+    "modes": {
+      "questions": "Questions seulement",
+      "answers": "Questions et réponses",
+      "full": "Étude entière"
+    },
+    "save": "Enregistrer en Markdown…",
+    "fileType": "Markdown",
+    "saved": "Enregistré dans {{path}}",
+    "empty": "Rien à exporter pour ce choix pour l’instant."
   }
 }

@@ -88,7 +88,8 @@ export function BlockCanvas({
   };
 
   const renderBlock = (block: TeachingBlock, sectionTitle: string | null): ReactNode => {
-    const name = block.title.trim() || blockTypeLabel(t, block.blockType);
+    // A question-and-answer block is named by its kind; its question is the first field.
+    const name = block.blockType === "qa" ? blockTypeLabel(t, "qa") : block.title.trim() || blockTypeLabel(t, block.blockType);
     const guidance = block.guidanceKey ? t(block.guidanceKey as never) : "";
     const sameAsSection = sectionTitle !== null && block.title.trim() === sectionTitle;
     const frame = {
@@ -144,7 +145,32 @@ export function BlockCanvas({
         </section>
       );
     }
-    const field = block.blockType === "scripture" ? (
+    const field = block.blockType === "qa" ? (
+      <div className="flex flex-col gap-2" data-teaching-qa={block.id}>
+        <TeachingField
+          label={t("studies.qa.question")}
+          level="field"
+          value={block.title}
+          save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
+          part={assistPart(block.role)}
+          blockId={block.id}
+          rows={2}
+          assistant={assistant}
+          onRevealScripture={onRevealScripture}
+        />
+        <TeachingField
+          label={t("studies.qa.answer")}
+          level="field"
+          value={block.body}
+          save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
+          part={assistPart(block.role)}
+          blockId={block.id}
+          rows={5}
+          assistant={assistant}
+          onRevealScripture={onRevealScripture}
+        />
+      </div>
+    ) : block.blockType === "scripture" ? (
       <TeachingLinks preparation={prep} pointId={null} blockId={block.id} scope={name} studyFindings={findings} onChanged={onChanged} onRevealScripture={onRevealScripture} />
     ) : (
       <>
@@ -301,7 +327,7 @@ function BlockFrame({
             <input type="checkbox" checked={writing.participantFacing} onChange={(e) => onVisibility(e.target.checked)} />
             {t("studies.teaching.blocks.participant")}
           </label>
-          {writing.blockType !== "section" && (
+          {writing.blockType !== "section" && writing.blockType !== "qa" && (
             <label className="flex flex-col gap-1">
               <span>{t("studies.teaching.blocks.headingLabel")}</span>
               <input
@@ -320,6 +346,13 @@ function BlockFrame({
           <Button variant="danger" onClick={() => { setConfirming(false); onDelete(); }}>{t("common.delete")}</Button>
           <Button autoFocus onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
         </div>
+      )}
+      {writing.origin && (
+        <p data-origin={writing.origin.kind} className="type-meta m-0">
+          {writing.origin.kind === "citation" && writing.origin.citation
+            ? t("studies.teaching.fromStudy.quotation", { citation: writing.origin.citation })
+            : t("studies.teaching.fromStudy.provenance", { label: writing.origin.label || t("studies.teaching.fromStudy.item") })}
+        </p>
       )}
       {hints && guidance && <p data-block-hints className="m-0 max-w-prose border-l-[3px] border-border bg-bg-secondary px-3 py-2 text-[0.9375rem] text-text-muted">{guidance}</p>}
       {children}

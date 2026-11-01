@@ -69,6 +69,16 @@ pub fn teaching_point_delete(
     state.db(|conn| teaching::delete_point(conn, &id))
 }
 
+/// A.4.4 (#27): copies chosen items of the teaching's Bible Study into it as
+/// editable, leader-only blocks with provenance (no live link, no overwrite).
+#[tauri::command(async)]
+pub fn teaching_add_from_study(
+    state: State<'_, AppState>,
+    input: crate::domain::teaching::AddFromStudy,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::add_from_study(conn, &input))
+}
+
 #[tauri::command(async)]
 pub fn teaching_block_create(
     state: State<'_, AppState>,

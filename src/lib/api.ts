@@ -371,6 +371,8 @@ export interface Api {
   teachingBlockDelete(id: string): Promise<TeachingPreparation>;
   teachingBlockReorder(input: { preparationId: string; parentId?: string | null; ids: string[] }): Promise<TeachingPreparation>;
   teachingBlockDuplicate(id: string): Promise<TeachingPreparation>;
+  /** A.4.4 (#27): copies chosen items of the teaching's Bible Study into it (leader-only snapshots with provenance). */
+  teachingAddFromStudy(input: { preparationId: string; parentId?: string | null; items: import("@/types/teaching").StudyItemRef[] }): Promise<TeachingPreparation>;
   /** Uses a study finding here (a live link; the finding stays the study's). */
   teachingFindingLink(input: { preparationId: string; pointId?: string | null; findingId: string }): Promise<TeachingPreparation>;
   teachingFindingUnlink(linkId: string): Promise<TeachingPreparation>;
@@ -795,6 +797,7 @@ export const tauriApi: Api = {
   teachingBlockDelete: (id) => call("teaching_block_delete", { id }),
   teachingBlockReorder: (input) => call("teaching_block_reorder", { input }),
   teachingBlockDuplicate: (id) => call("teaching_block_duplicate", { id }),
+  teachingAddFromStudy: (input) => call("teaching_add_from_study", { input }),
   teachingFindingLink: (input) => call("teaching_finding_link", { input }),
   teachingFindingUnlink: (id) => call("teaching_finding_unlink", { id }),
   teachingPassageAdd: (input) => call("teaching_passage_add", { input }),

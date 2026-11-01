@@ -49,11 +49,11 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 | A4.3-7 | Six languages; 640/900/1100/1440; scaling/keyboard/screen reader (#25) | ◐ | ✅ strings, widths (browser) | ⛔ owner (scaling, Narrator/NVDA) | |
 | A4.4-1 | DeepSeek Korean "Element nicht gefunden": traced, classified, fixed (#19) | ✅ | ✅ mocked DeepSeek (Rust 6 + UI 2) | ⛔ owner + real DeepSeek | [diagnosis](a44-deepseek-korean-19.md): block body sent as point part without point; provider never called |
 | A4.4-2 | Suggestions never silently replace; stale target refused (#19) | ✅ | ✅ | ⛔ owner | `assistant.staleTarget`; Study help classified too |
-| A4.4-3 | Optional repeatable Q&A blocks in Study and Teaching (#27) | ☐ | ☐ | ⛔ owner | |
-| A4.4-4 | Exports: questions only / with answers / full, visibility-safe (#27) | ☐ | ☐ | ⛔ owner | |
-| A4.4-5 | Explicit "Add from Bible Study" snapshots with provenance (#27) | ☐ | ☐ | ⛔ owner | |
+| A4.4-3 | Optional repeatable Q&A blocks in Study and Teaching (#27) | ✅ | ✅ Rust + UI | ⛔ owner | [notes](a44-qa-exports-transfer.md); no migration |
+| A4.4-4 | Exports: questions only / with answers / full, visibility-safe (#27) | ✅ | ✅ privacy assertions | ⛔ owner | Teaching materials + Study Markdown export |
+| A4.4-5 | Explicit "Add from Bible Study" snapshots with provenance (#27) | ✅ | ✅ | ⛔ owner | Leader-only by default; all or nothing; own study only |
 | A4.X-1 | #21 home not regressed | ✅ (untouched) | ✅ suite green | owner passed A.3 | |
-| A4.X-2 | Schema 27, data, citations, annotations, privacy preserved | ✅ | ✅ suite green | ⛔ owner | |
+| A4.X-2 | Schema 27, data, citations, annotations, privacy preserved | ✅ (0 migration files changed) | ✅ suite green | ⛔ owner | No A.4 migration; 0028 left to the provisional Bible import lineage |
 
 ## Stage log
 
@@ -62,4 +62,5 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 | A.4.1 | `3c2029c` | 1,063 passed / 0 failed / 8 ignored | 1,193 passed / 108 files | fmt, Clippy -D warnings, typecheck, lint, i18n, build |
 | A.4.2 | `0e06137` | unchanged code (review export test is opt-in) | 1,199 passed / 109 files | typecheck, lint, i18n, build; browser harness 10/10 scenes |
 | A.4.3 | `40c6854` | unchanged | 1,206 passed / 110 files | typecheck, lint, i18n, build; editor captures 4/4 widths + A.3 baseline |
-| A.4.4a | see `git log` | 1,070 passed / 0 failed / 8 ignored | 1,208 passed / 111 files | fmt, Clippy -D warnings, typecheck, lint, i18n |
+| A.4.4a | `d723730` | 1,070 passed / 0 failed / 8 ignored | 1,208 passed / 111 files | fmt, Clippy -D warnings, typecheck, lint, i18n |
+| A.4.4b | see `git log` | 1,076 passed / 0 failed / 8 ignored | 1,215 passed / 112 files | fmt, Clippy -D warnings, typecheck, lint, i18n, build; migrations unchanged |

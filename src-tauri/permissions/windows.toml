@@ -213,6 +213,7 @@ permissions = [
   "allow-teaching-point-update",
   "allow-teaching-point-delete",
   "allow-teaching-point-reorder",
+  "allow-teaching-add-from-study",
   "allow-teaching-block-create",
   "allow-teaching-block-update",
   "allow-teaching-block-delete",

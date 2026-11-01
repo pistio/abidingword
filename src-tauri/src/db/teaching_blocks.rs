@@ -151,6 +151,9 @@ struct BlockConfig {
     role: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     guidance_key: Option<String>,
+    /// A.4.4 (#27): kept in the existing JSON column; no migration.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    origin: Option<crate::domain::teaching::BlockOrigin>,
 }
 
 struct StoredBlock {
@@ -303,6 +306,7 @@ fn into_block(stored: StoredBlock) -> TeachingBlock {
         role: stored.config.role,
         guidance_key: stored.config.guidance_key,
         point_id: stored.point_id,
+        origin: stored.config.origin,
     }
 }
 
@@ -380,6 +384,7 @@ pub fn insert_starting(
             participant_facing: facing(&block_type, block.participant_facing),
             role,
             guidance_key: guidance,
+            origin: None,
         };
         let point_id = if block_type == "outline_point" {
             Some(insert_point(
@@ -587,7 +592,7 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
         ));
     }
     let block_type = check_type(&input.block_type)?;
-    let title = point_title(&input.title)?;
+    let title = block_title(&block_type, &input.title)?;
     let body = body_text(&input.body)?;
     let role = check_role(input.role.as_deref())?;
     role_available(conn, &prep.id, None, role.as_deref())?;
@@ -618,10 +623,28 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
     let mut order = siblings;
     let id = new_id();
     order.insert(at, id.clone());
+    let origin = match &input.origin {
+        Some(origin) if prep.study_id.as_deref() != Some(origin.study_id.as_str()) => {
+            return Err(invalid(
+                "teaching.originStudy",
+                "Only the teaching's own Bible Study can be copied from.",
+            ))
+        }
+        Some(origin) => Some(crate::domain::teaching::BlockOrigin {
+            study_id: origin.study_id.clone(),
+            kind: bounded(&origin.kind, 20),
+            item_id: bounded(&origin.item_id, 80),
+            label: bounded(&origin.label, 120),
+            copied_at: now(),
+            citation: origin.citation.as_deref().map(|c| bounded(c, 400)),
+        }),
+        None => None,
+    };
     let config = BlockConfig {
         participant_facing: facing(&block_type, input.participant_facing),
         role,
         guidance_key: guidance,
+        origin,
     };
     let stamp = now();
     let tx = conn.unchecked_transaction()?;
@@ -696,7 +719,7 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
         }
     }
     let title = match &input.title {
-        Some(t) => point_title(t)?,
+        Some(t) => block_title(&block_type, t)?,
         None => current.title,
     };
     let body = match &input.body {
@@ -742,6 +765,8 @@ pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<Teach
         participant_facing,
         role,
         guidance_key: guidance,
+        // Editing a copy never loses where it came from.
+        origin: current.config.origin.clone(),
     };
     let stamp = now();
     let tx = conn.unchecked_transaction()?;
@@ -863,6 +888,7 @@ pub fn duplicate(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> 
             participant_facing: Some(current.config.participant_facing),
             role: None,
             guidance_key: current.config.guidance_key,
+            origin: current.config.origin,
         },
     )
 }
@@ -918,4 +944,231 @@ pub fn restore(conn: &Connection, id: &str) -> AppResult<TeachingPreparation> {
     teaching::touch(&tx, &prep, &stamp)?;
     tx.commit()?;
     teaching::get(conn, &prep_id)
+}
+
+fn bounded(text: &str, max: usize) -> String {
+    text.trim().chars().take(max).collect()
+}
+
+/// The most items one "Add from Bible Study" copies at once.
+pub const FROM_STUDY_MAX: usize = 100;
+
+/// A.4.4 (#27): copies chosen items of the teaching's **own** Bible Study into
+/// it as new, editable blocks (snapshots with provenance). Text is read here,
+/// never taken from the interface; nothing existing is changed or replaced;
+/// every copy starts **for the leader only** until the person marks it for
+/// participants; an item of another study, or one deleted meanwhile, is refused.
+pub fn add_from_study(
+    conn: &Connection,
+    input: &crate::domain::teaching::AddFromStudy,
+) -> AppResult<TeachingPreparation> {
+    use crate::domain::teaching::BlockOrigin;
+    let prep = teaching::row(conn, &input.preparation_id)?;
+    let Some(study_id) = prep.study_id.clone() else {
+        return Err(invalid(
+            "teaching.noStudy",
+            "Link this teaching to a Bible Study first.",
+        ));
+    };
+    if input.items.is_empty() || input.items.len() > FROM_STUDY_MAX {
+        return Err(invalid(
+            "teaching.fromStudyCount",
+            "Choose what to add from the Bible Study.",
+        ));
+    }
+    let stale = || {
+        invalid(
+            "teaching.fromStudyChanged",
+            "Part of the Bible Study changed or was removed. Open Add from Bible Study again.",
+        )
+    };
+    let findings = crate::db::findings::list(conn, &study_id)?;
+    let passages = crate::db::study_passages::list(conn, &study_id)?;
+    // Everything is checked before anything is added: all or nothing.
+    struct Copy {
+        block_type: &'static str,
+        title: String,
+        body: String,
+        origin: BlockOrigin,
+        passage: Option<String>,
+    }
+    let mut copies = Vec::new();
+    for item in &input.items {
+        let origin = |kind: &str, citation: Option<String>| BlockOrigin {
+            study_id: study_id.clone(),
+            kind: kind.into(),
+            item_id: item.id.clone(),
+            label: item.label.clone(),
+            copied_at: String::new(),
+            citation,
+        };
+        match item.kind.as_str() {
+            "writing" | "qa" => {
+                let row: Option<(String, Option<String>, String, String)> = conn
+                    .query_row(
+                        "SELECT b.content, b.data, s.title, s.study_id FROM study_blocks b
+                         JOIN study_sections s ON s.id = b.section_id
+                         WHERE b.id = ?1 AND b.deleted_at IS NULL AND s.deleted_at IS NULL",
+                        [&item.id],
+                        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+                    )
+                    .optional()?;
+                let (content, data, section, owner) = row.ok_or_else(stale)?;
+                if owner != study_id {
+                    return Err(stale());
+                }
+                if item.kind == "qa" {
+                    let qa = crate::domain::qa_of(data.as_deref()).ok_or_else(stale)?;
+                    copies.push(Copy {
+                        block_type: "qa",
+                        title: qa.0,
+                        body: qa.1,
+                        origin: origin("qa", None),
+                        passage: None,
+                    });
+                } else {
+                    copies.push(Copy {
+                        block_type: "writing",
+                        title: section,
+                        body: content,
+                        origin: origin("writing", None),
+                        passage: None,
+                    });
+                }
+            }
+            "finding" => {
+                let finding = findings
+                    .iter()
+                    .find(|f| f.id == item.id)
+                    .ok_or_else(stale)?;
+                copies.push(Copy {
+                    block_type: "writing",
+                    title: item.label.clone(),
+                    body: finding.content.clone(),
+                    origin: origin("finding", None),
+                    passage: None,
+                });
+            }
+            "citation" => {
+                let cited = findings
+                    .iter()
+                    .flat_map(|f| f.sources.iter())
+                    .find(|c| c.id == item.id)
+                    .ok_or_else(stale)?;
+                let quote = cited
+                    .quote
+                    .clone()
+                    .filter(|q| !q.trim().is_empty())
+                    .ok_or_else(stale)?;
+                let citation = [
+                    Some(cited.title.clone()),
+                    cited.author.clone(),
+                    cited.locator.clone(),
+                ]
+                .into_iter()
+                .flatten()
+                .filter(|p| !p.trim().is_empty())
+                .collect::<Vec<_>>()
+                .join(", ");
+                copies.push(Copy {
+                    block_type: "writing",
+                    title: item.label.clone(),
+                    body: format!("„{}“ — {citation}", quote.trim()),
+                    origin: origin("citation", Some(citation)),
+                    passage: None,
+                });
+            }
+            "passage" => {
+                let passage = passages
+                    .iter()
+                    .find(|p| p.id == item.id)
+                    .ok_or_else(stale)?;
+                copies.push(Copy {
+                    block_type: "scripture",
+                    title: item.label.clone(),
+                    body: String::new(),
+                    origin: origin("passage", None),
+                    passage: Some(passage.reference.canonical.clone()),
+                });
+            }
+            _ => return Err(stale()),
+        }
+    }
+    // Checked before anything is added, so a copy cannot fail half way.
+    if count(conn, &prep.id)? + copies.len() > BLOCKS_MAX {
+        return Err(invalid(
+            "teaching.tooManyBlocks",
+            "This teaching has too many blocks.",
+        ));
+    }
+    for copy in &copies {
+        block_title(copy.block_type, &copy.title)?;
+        body_text(&copy.body)?;
+    }
+    let mut after: Option<String> = None;
+    let mut latest = None;
+    let mut made: Vec<String> = Vec::new();
+    let result = (|| -> AppResult<()> {
+        for copy in copies {
+            let before: std::collections::HashSet<String> =
+                list(conn, &prep.id)?.into_iter().map(|b| b.id).collect();
+            let next = create(
+                conn,
+                &CreateTeachingBlock {
+                    preparation_id: prep.id.clone(),
+                    parent_id: input.parent_id.clone(),
+                    after_block_id: after.clone(),
+                    block_type: copy.block_type.into(),
+                    title: copy.title,
+                    body: copy.body,
+                    participant_facing: Some(false),
+                    origin: Some(copy.origin),
+                    ..Default::default()
+                },
+            )?;
+            let added = next
+                .blocks
+                .iter()
+                .find(|b| !before.contains(&b.id))
+                .map(|b| b.id.clone());
+            if let Some(id) = &added {
+                made.push(id.clone());
+            }
+            if let (Some(reference), Some(block)) = (copy.passage, added.clone()) {
+                teaching::add_passage(
+                    conn,
+                    &crate::domain::teaching::AddTeachingPassage {
+                        preparation_id: prep.id.clone(),
+                        point_id: None,
+                        block_id: Some(block),
+                        reference,
+                    },
+                )?;
+            }
+            after = added;
+            latest = Some(next);
+        }
+        Ok(())
+    })();
+    if let Err(error) = result {
+        // All or nothing: what was added by this request is taken away again.
+        for id in made.iter().rev() {
+            let _ = delete(conn, id);
+        }
+        return Err(error);
+    }
+    match latest {
+        Some(_) => teaching::get(conn, &prep.id),
+        None => Err(stale()),
+    }
+}
+
+/// A.4.4 (#27): a question-and-answer block's title is its question, which may
+/// be as long as any writing (no short limit); other titles stay headings.
+fn block_title(block_type: &str, title: &str) -> AppResult<String> {
+    if block_type == "qa" {
+        body_text(title.trim())
+    } else {
+        point_title(title)
+    }
 }

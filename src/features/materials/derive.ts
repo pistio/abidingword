@@ -80,9 +80,15 @@ export interface MaterialOptions {
   writingSpace?: boolean;
   /** The text of the teaching's passages from the chosen Bible (v0.18.8; shown only when it has been read). */
   includePassage?: boolean;
+  /**
+   * A.4.4 (#27): question sheet with the answers of question-and-answer blocks
+   * ("questions and answers"). Only blocks for participants; private blocks
+   * appear only on the leader's version, which always has the answers.
+   */
+  answers?: boolean;
 }
 
-export const DEFAULT_OPTIONS: Required<MaterialOptions> = { includeNotes: false, leader: false, includeFrame: false, writingSpace: true, includePassage: false };
+export const DEFAULT_OPTIONS: Required<MaterialOptions> = { includeNotes: false, leader: false, includeFrame: false, writingSpace: true, includePassage: false, answers: false };
 
 /**
  * The passages' text as blocks, when asked for and read from the chosen
@@ -334,7 +340,10 @@ function blockManuscript(t: TFunction, prep: TeachingPreparation, options: Mater
     if (!blockVisible(prep, block.id, o.includeNotes)) continue;
     if (!block.title.trim() && !block.body.trim()) continue;
     if (block.blockType === "section") blocks.push({ type: "heading", text: block.title.trim() || blockLabel(t, block.blockType) });
-    else if (block.blockType === "outline_point") {
+    else if (block.blockType === "qa") {
+      if (block.title.trim()) blocks.push({ type: "field", label: t("studies.qa.question"), text: block.title.trim() });
+      if (block.body.trim()) blocks.push({ type: "field", label: t("studies.qa.answer"), text: block.body.trim() });
+    } else if (block.blockType === "outline_point") {
       if (block.title.trim()) blocks.push({ type: "heading", text: block.title.trim() });
       if (block.body.trim()) blocks.push({ type: "text", text: block.body.trim() });
     } else if (block.body.trim()) blocks.push({ type: "text", text: block.body.trim() });
@@ -359,6 +368,12 @@ function blockQuestions(t: TFunction, prep: TeachingPreparation, options: Materi
         blocks.push({ type: "question", number, text: line });
         if (!o.leader && o.writingSpace) blocks.push({ type: "space", style: "lines" });
       }
+    } else if (block.blockType === "qa" && block.title.trim()) {
+      number += 1;
+      blocks.push({ type: "question", number, text: block.title.trim() });
+      // The answer only on the leader's version, or when "with answers" was chosen for a shared block.
+      if (block.body.trim() && (o.leader || (o.answers && block.participantFacing))) blocks.push({ type: "field", label: t("studies.qa.answer"), text: block.body.trim() });
+      else if (!o.leader && o.writingSpace) blocks.push({ type: "space", style: "lines" });
     } else if (block.participantFacing && block.blockType === "handout" && block.body.trim()) {
       blocks.push({ type: "text", text: block.body.trim() });
     } else if (o.leader && block.body.trim()) {
@@ -381,7 +396,7 @@ function blockWorksheet(t: TFunction, prep: TeachingPreparation, options: Materi
         blocks.push({ type: "question", number, text: line });
         if (o.writingSpace) blocks.push({ type: "space", style: "lines" });
       }
-    } else if (block.blockType === "outline_point" && block.title.trim()) {
+    } else if ((block.blockType === "outline_point" || block.blockType === "qa") && block.title.trim()) {
       number += 1;
       blocks.push({ type: "question", number, text: block.title.trim() });
       if (o.writingSpace) blocks.push({ type: "space", style: "lines" });

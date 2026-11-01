@@ -13,6 +13,8 @@ import { sectionGuidance, sectionTitle, structuredOptional } from "./builtinText
 import { FieldsEditor } from "./FieldsEditor";
 import { PartAdd } from "./PartAdd";
 import { PhaseSelect } from "./PhaseSelect";
+import { QaEditor } from "./QaEditor";
+import { qaOf } from "./qa";
 import { StudyHelp } from "./StudyHelp";
 
 interface SectionEditorProps {
@@ -36,6 +38,8 @@ interface SectionEditorProps {
   /** Add, at the end of the part: more writing, or a note of a kind. */
   onAddWriting: () => void;
   onAddNote: (kind: FindingType) => void;
+  /** A.4.4 (#27): add a paired question and answer here. */
+  onAddQa?: () => void;
   onChange: (section: StudySection) => void;
   onMove: (delta: -1 | 1) => void;
   onDeleted: (wasEmpty: boolean) => void;
@@ -60,7 +64,7 @@ interface SectionEditorProps {
 const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
 
 export function SectionEditor(props: SectionEditorProps) {
-  const { section, templateKey, writingView = false, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
+  const { section, templateKey, writingView = false, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onAddQa, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
   const { t } = useTranslation();
   const api = useApi();
   const { track, settled } = useSaveTracker();
@@ -275,7 +279,7 @@ export function SectionEditor(props: SectionEditorProps) {
               {t("studies.inquiry.study.button")}
             </button>
           )}
-          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} />
+          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} onQa={onAddQa} />
           <button
             type="button"
             onClick={() => {
@@ -387,7 +391,18 @@ export function SectionEditor(props: SectionEditorProps) {
 
       {structured && free.length > 0 && <h3 className="m-0 mt-2 text-[1rem] font-medium text-text-strong">{t("studies.fields.otherWriting")}</h3>}
       <div className="flex flex-col gap-1">
-        {free.map((block, index) => (
+        {free.map((block, index) => qaOf(block.data) && block.blockType === "question" ? (
+          <QaEditor
+            key={block.id}
+            block={block}
+            number={free.slice(0, index + 1).filter((b) => b.blockType === "question" && qaOf(b.data)).length}
+            isFirst={index === 0}
+            isLast={index === free.length - 1}
+            autoFocus={block.id === newBlockId}
+            onMove={(delta) => moveBlock(block.id, delta)}
+            onDeleted={removeBlock}
+          />
+        ) : (
           <BlockEditor
             key={block.id}
             block={block}
@@ -411,7 +426,7 @@ export function SectionEditor(props: SectionEditorProps) {
       {/* Only where there is nowhere to write yet: the way to begin (everything else is in the part's options). */}
       {!structured && free.length === 0 && (
         <div className="mt-1">
-          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} />
+          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} onQa={onAddQa} />
         </div>
       )}
       </div>

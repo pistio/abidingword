@@ -16,6 +16,7 @@ import { FloatingPanel, AssistDockProvider, useAssistDock } from "./FloatingPane
 import { assistLabel, canvasShape, pointFields, shapeText, showsFrame, stepFieldLabel, teachingKindLabel, type ShapeText } from "./labels";
 import { TeachingInfo } from "./TeachingInfo";
 import { BlockCanvas, CanvasViewChoice, type CanvasView } from "./BlockCanvas";
+import { AddFromStudy } from "./AddFromStudy";
 import { BUILTIN_BLOCK_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, usesBlocks } from "./teachingTemplates";
 import { TeachingField, type AssistantHooks } from "./TeachingField";
 import { TeachingLinks } from "./TeachingLinks";
@@ -352,6 +353,9 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
   // A.4.3 (#25): the teaching's secondary controls behind one quiet "…"; writing continuously by default.
   const optionsToggle = useRef<HTMLButtonElement>(null);
   const [canvasView, setCanvasView] = useState<CanvasView>("continuous");
+  // A.4.4 (#27): copying chosen findings, writing and Q&A from the Bible Study.
+  const [fromStudy, setFromStudy] = useState(false);
+  const [fromStudyDone, setFromStudyDone] = useState<string | null>(null);
   const { t } = useTranslation();
   const api = useApi();
   const { goTo } = useScripture();
@@ -618,9 +622,20 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
               </span>
             )}
             {usesBlocks(prep) && <CanvasViewChoice view={canvasView} onView={setCanvasView} />}
+            {usesBlocks(prep) && prep.studyId && (
+              <Button variant="quiet" onClick={() => { setFromStudyDone(null); setFromStudy(true); }}>{t("studies.teaching.fromStudy.open")}</Button>
+            )}
           </div>
         )}
+        {fromStudyDone && <p role="status" className="type-meta m-0">{fromStudyDone}</p>}
       </header>
+      {fromStudy && prep.studyId && (
+        <AddFromStudy
+          prep={prep}
+          onClose={() => setFromStudy(false)}
+          onAdded={(next) => { setPrep(next); setFromStudy(false); setFromStudyDone(t("studies.teaching.fromStudy.added")); }}
+        />
+      )}
 
       {usesBlocks(prep) ? (
         <BlockCanvas prep={prep} findings={findings} assistant={hooks} onChanged={setPrep} onRevealScripture={onRevealScripture} view={canvasView} />

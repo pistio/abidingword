@@ -180,7 +180,7 @@ describe("Add, in each part of the study", () => {
     await user.click(main().getByRole("button", { name: "Add to Context" }));
     await openPartOptions(user);
     const choices = main().getByRole("group", { name: "Add to Context" });
-    expect(within(choices).getAllByRole("button").map((b) => b.textContent)).toEqual(["Writing", "Observation", "Question", "Interpretation", "Application", "More types"]);
+    expect(within(choices).getAllByRole("button").map((b) => b.textContent)).toEqual(["Writing", "Question and answer", "Observation", "Question", "Interpretation", "Application", "More types"]);
     await user.click(within(choices).getByRole("button", { name: "Observation" }));
     const text = main().getByLabelText("New observation");
     expect(text).toHaveFocus();

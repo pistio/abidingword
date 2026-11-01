@@ -23,6 +23,8 @@ import { StudyPassages } from "./StudyPassages";
 import { hasJourney, namesRun, phaseRuns } from "./journey";
 import { NextStep, usePhaseName } from "./StudyJourney";
 import { lastView, rememberView, type StudyView } from "./studyView";
+import { qaData } from "./qa";
+import { StudyQaExport } from "./StudyQaExport";
 import { TeachingView } from "@/features/teaching/TeachingView";
 
 interface StudyEditorProps {
@@ -187,6 +189,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
   // A.4.3 (#25): the study's secondary controls are behind one quiet "…" (closed by default).
   const [optionsOpen, setOptionsOpen] = useState(false);
   const optionsToggle = useRef<HTMLButtonElement>(null);
+  const [exporting, setExporting] = useState(false);
   // Where each phase begins: its first part, the phase's number and, where it adds something, its name.
   const phaseStarts = new Map(
     runs.map((run, index) => [
@@ -288,6 +291,18 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       setError(toApiError(e).message);
     }
   };
+  // A.4.4 (#27): an optional paired question and answer, where it was asked for.
+  const addQa = async (target: StudySection) => {
+    setError(null);
+    try {
+      const block = await api.studyBlockCreate({ sectionId: target.id, blockType: "question", data: qaData({ question: "", answer: "" }) });
+      expand(target.id);
+      setNewBlock(block.id);
+      updateSection({ ...target, blocks: [...target.blocks, block] });
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
   const capture = (section: StudySection) =>
     capturing[section.id] ? (
       <QuickCapture
@@ -382,6 +397,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
             />
             <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />
             <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />
+            <Button variant="quiet" onClick={() => setExporting(true)}>{t("studies.qaExport.open")}</Button>
             <div role="group" aria-label={t("studies.flow.mode")} className="flex flex-wrap gap-1">
               {[true, false].map((mode) => <button key={String(mode)} type="button" className="aw-tab min-h-11" aria-pressed={continuous === mode} onClick={() => { setContinuous(mode); if (!mode && focusedSection) setActiveSection(focusedSection.id); writeLocal(`study.continuous.${studyId}`, mode); }}>{t(mode ? "studies.flow.continuous" : "studies.flow.outline")}</button>)}
             </div>
@@ -393,6 +409,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
         )}
       </header>
 
+      {exporting && <StudyQaExport title={study.title} sections={sections} templateKey={template?.key} onClose={() => setExporting(false)} />}
       {view === "teaching" ? (
         <TeachingView onOpenStudy={(target) => { if (target.id === study.id) setView("study"); else onOpenStudy(target); }} studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
       ) : (
@@ -425,6 +442,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           onCollapsedChange={() => undefined}
           writingView
           onAddWriting={() => void addWriting(section)}
+          onAddQa={() => void addQa(section)}
           onAddNote={(kind) => {
             expand(section.id);
             openCapture(section.id, kind);

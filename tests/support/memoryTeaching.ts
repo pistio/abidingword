@@ -1,3 +1,4 @@
+import { qaOf } from "@/features/studies/qa";
 // In-memory Teaching Preparation and assistant (v0.16) for interface tests.
 // Mirrors the core's rules (db/teaching.rs, assistant/): findings are linked
 // live while linked, saved with provenance on unlink; Scripture is named without touching the study;
@@ -101,6 +102,7 @@ interface Helpers {
   presentationFindings: (id: string) => string[];
   copyCitation: (original: string, saved: string) => void;
   studyPassages: () => StudyPassage[];
+  studyBlocks: () => Array<{ id: string; studyId: string; sectionTitle: string; blockType: string; content: string; data: string | null }>;
   ref: (canonical: string) => ScriptureRef | null;
 }
 
@@ -123,6 +125,7 @@ type TeachingApi = Pick<
   | "teachingPointDelete"
   | "teachingPointReorder"
   | "teachingBlockCreate"
+  | "teachingAddFromStudy"
   | "teachingBlockUpdate"
   | "teachingBlockDelete"
   | "teachingBlockReorder"
@@ -477,6 +480,57 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       p.links = p.links.filter((l) => l.pointId !== pointId);
       p.passages = p.passages.filter((l) => l.pointId !== pointId);
       p.materials = p.materials.filter((l) => l.pointId !== pointId);
+      touch(p);
+      return view(p);
+    },
+    teachingAddFromStudy: async ({ preparationId, parentId, items }) => {
+      const p = prep(preparationId);
+      if (!p.studyId) throw new ApiError("invalidInput", "Link this teaching to a Bible Study first.", "teaching.noStudy");
+      if (!items.length) throw new ApiError("invalidInput", "Choose what to add from the Bible Study.", "teaching.fromStudyCount");
+      const changed = () => new ApiError("invalidInput", "Part of the Bible Study changed or was removed. Open Add from Bible Study again.", "teaching.fromStudyChanged");
+      const copies = items.map((item) => {
+        const origin = { studyId: p.studyId!, kind: item.kind, itemId: item.id, label: item.label, copiedAt: h.now(), citation: null as string | null };
+        if (item.kind === "writing" || item.kind === "qa") {
+          const block = h.studyBlocks().find((b) => b.id === item.id && b.studyId === p.studyId);
+          if (!block) throw changed();
+          if (item.kind === "qa") {
+            const pair = qaOf(block.data);
+            if (!pair) throw changed();
+            return { blockType: "qa", title: pair.question, body: pair.answer, origin };
+          }
+          return { blockType: "writing", title: block.sectionTitle, body: block.content, origin };
+        }
+        if (item.kind === "finding") {
+          const finding = h.findings().find((f) => f.id === item.id && f.studyId === p.studyId);
+          if (!finding) throw changed();
+          return { blockType: "writing", title: item.label, body: finding.content, origin };
+        }
+        if (item.kind === "citation") {
+          const cited = h.findings().filter((f) => f.studyId === p.studyId).flatMap((f) => f.sources).find((c) => c.id === item.id);
+          if (!cited?.quote) throw changed();
+          const citation = [cited.title, cited.author, cited.locator].filter((x): x is string => !!x && !!x.trim()).join(", ");
+          return { blockType: "writing", title: item.label, body: `„${cited.quote.trim()}“ — ${citation}`, origin: { ...origin, citation } };
+        }
+        if (item.kind === "passage") {
+          const passage = h.studyPassages().find((x) => x.id === item.id && x.studyId === p.studyId);
+          if (!passage) throw changed();
+          return { blockType: "scripture", title: item.label, body: "", origin, reference: passage.reference };
+        }
+        throw changed();
+      });
+      let after: string | null = null;
+      for (const copy of copies) {
+        const block = makeBlock(h, { blockType: copy.blockType, title: copy.title, body: copy.body, parentKey: null, participantFacing: false, role: null, guidanceKey: null });
+        block.parentId = parentId ?? null;
+        block.origin = copy.origin;
+        const next = [...(p.blocks ?? [])];
+        const index = after ? next.findIndex((b) => b.id === after) + 1 : next.length;
+        next.splice(index, 0, block);
+        p.blocks = next;
+        if ("reference" in copy && copy.reference) p.passages.push({ id: h.id(), reference: copy.reference, pointId: null, blockId: block.id, position: p.passages.length } as never);
+        after = block.id;
+      }
+      p.templateVersion = p.templateVersion ?? 2;
       touch(p);
       return view(p);
     },

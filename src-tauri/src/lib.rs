@@ -262,6 +262,7 @@ pub fn run() {
             commands::teaching::teaching_point_update,
             commands::teaching::teaching_point_delete,
             commands::teaching::teaching_point_reorder,
+            commands::teaching::teaching_add_from_study,
             commands::teaching::teaching_block_create,
             commands::teaching::teaching_block_update,
             commands::teaching::teaching_block_delete,

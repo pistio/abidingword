@@ -502,3 +502,24 @@ pub struct UpdateTemplate {
     #[serde(flatten)]
     pub template: TemplateInput,
 }
+
+/// A.4.4 (#27): a Study "question" block that is a paired question and answer
+/// keeps them in its JSON data: `{"kind":"qa","question":…,"answer":…}`. Older
+/// builds read it as an ordinary question block whose text holds both.
+pub fn qa_of(data: Option<&str>) -> Option<(String, String)> {
+    let value: serde_json::Value = serde_json::from_str(data?).ok()?;
+    (value.get("kind")?.as_str()? == "qa").then(|| {
+        (
+            value
+                .get("question")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string(),
+            value
+                .get("answer")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string(),
+        )
+    })
+}

@@ -2351,7 +2351,8 @@
         "time": "Zeit",
         "presentation_notes": "Notizen zur Präsentation",
         "handout": "Arbeitsblatt",
-        "outline_point": "Gliederungspunkt"
+        "outline_point": "Gliederungspunkt",
+        "qa": "Frage und Antwort"
       },
       "options": "Optionen für {{name}}",
       "leaderBadge": "Nur für die Leitung",
@@ -2446,7 +2447,26 @@
       "openStudy": "Verknüpfte Studie öffnen",
       "standalone": "Eigenständige Lehre"
     },
-    "options": "Optionen für diese Bibellehre"
+    "options": "Optionen für diese Bibellehre",
+    "fromStudy": {
+      "open": "Aus dem Bibelstudium übernehmen…",
+      "title": "Aus dem Bibelstudium übernehmen",
+      "help": "Wähle, was in diese Bibellehre kopiert wird. Jede Kopie kannst du bearbeiten; sie nennt ihre Herkunft, ist zunächst nur für die Leitung und wird nie mit dem Bibelstudium abgeglichen.",
+      "add": "Auswahl übernehmen",
+      "none": "Dieses Bibelstudium hat noch nichts zum Übernehmen.",
+      "added": "Aus dem Bibelstudium übernommen, nur für die Leitung. Gib jeden Teil frei, wenn er fertig ist.",
+      "provenance": "Aus dem Bibelstudium: {{label}}",
+      "quotation": "Zitat aus dem Bibelstudium · {{citation}}",
+      "item": "ein Eintrag",
+      "quote": "Zitat",
+      "groups": {
+        "writing": "Text",
+        "qa": "Fragen und Antworten",
+        "finding": "Notizen",
+        "citation": "Zitate",
+        "passage": "Bibelstellen"
+      }
+    }
   },
   "parts": {
     "add": "Teil hinzufügen",
@@ -2557,7 +2577,8 @@
       "includeFrame": "„{{opening}}“ und „{{closing}}“",
       "writingSpace": "Platz zum Schreiben",
       "includePassage": "Bibeltext einfügen ({{bible}})",
-      "includePassageNone": "Bibeltext einfügen (wähle zuerst eine Bibel im Bereich „Bibel“)"
+      "includePassageNone": "Bibeltext einfügen (wähle zuerst eine Bibel im Bereich „Bibel“)",
+      "answers": "Mit den Antworten (nur freigegebene Fragen)"
     },
     "action": {
       "print": "Drucken oder als PDF speichern…",
@@ -2826,5 +2847,30 @@
     "legacy": "Frühere eigenständige Lehre",
     "legacyHint": "Verwalte frühere Lehre ohne verknüpftes Bibelstudium. Nichts wird automatisch zugeordnet. Neue Lehre beginnt in einem Bibelstudium.",
     "noLegacy": "Keine frühere eigenständige Lehre."
+  },
+  "qa": {
+    "add": "Frage und Antwort",
+    "label": "Frage und Antwort {{number}}",
+    "question": "Frage",
+    "answer": "Antwort",
+    "options": "Optionen für {{label}}",
+    "moveUp": "{{label}} nach oben",
+    "moveDown": "{{label}} nach unten",
+    "confirmDelete": "{{label}} mit Frage und Antwort löschen?"
+  },
+  "qaExport": {
+    "open": "Fragen exportieren…",
+    "title": "Fragen exportieren",
+    "help": "Wähle, was enthalten sein soll. Exportiert wird nur der Text in den Teilen des Bibelstudiums; deine separaten Notizen nie.",
+    "mode": "Was exportiert wird",
+    "modes": {
+      "questions": "Nur Fragen",
+      "answers": "Fragen und Antworten",
+      "full": "Ganzes Bibelstudium"
+    },
+    "save": "Als Markdown speichern…",
+    "fileType": "Markdown",
+    "saved": "Gespeichert unter {{path}}",
+    "empty": "Für diese Auswahl gibt es noch nichts zu exportieren."
   }
 }
