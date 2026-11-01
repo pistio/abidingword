@@ -1021,6 +1021,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         .sort((a, b) => order(a.kept[0]!, b.kept[0]!) || Number(b.about) - Number(a.about) || a.group.sourceTitle.localeCompare(b.group.sourceTitle))
         .slice(0, 30);
   };
+  const rootProjects = new Map<string, string>();
   const api: MemoryApi = {
     ...presentationApi(state.presentation, { id, now, api: () => api }),
     ...portabilityApi(state.portability, {
@@ -1083,6 +1084,15 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         .map(withCount)
         .sort((a, b) => a.title.localeCompare(b.title)),
     projectGet: async (key) => withCount(find(state.projects, key, "project")),
+    projectRoot: async (workspaceId, title) => {
+      const key = `root:${workspaceId}`;
+      const saved = rootProjects.get(key);
+      if (saved && state.projects.some(p => p.id === saved)) return { ...state.projects.find(p => p.id === saved)! };
+      const defaults = ["My studies", "Meine Bibelstudien", "내 성경공부", "Mes études", "Mis estudios", "Meus estudos"];
+      const candidates = state.projects.filter(p => p.workspaceId === workspaceId && !p.description && defaults.includes(p.title));
+      const project = candidates.length === 1 ? candidates[0]! : await api.projectCreate({ workspaceId, title });
+      rootProjects.set(key, project.id); return project;
+    },
     projectCreate: async (input) => {
       const t = now();
       const project: Project = {
@@ -1180,6 +1190,15 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       });
       if (primary) state.passages.push({ id: id(), studyId: study.id, reference: primary, role: "primary", createdAt: t });
       return detail(study.id);
+    },
+    studyMove: async (studyId, projectId) => {
+      const study = find(state.studies, studyId, "study");
+      const from = find(state.projects, study.projectId, "project");
+      const target = find(state.projects, projectId, "project");
+      if (from.workspaceId !== target.workspaceId) throw new Error("Project not found");
+      study.projectId = projectId;
+      for (const prep of [...state.teaching.preparations, ...state.teaching.deletedPreparations.values()]) if (prep.studyId === studyId) prep.projectId = projectId;
+      return { ...study };
     },
     studyUpdate: async (input) => {
       const study = find(state.studies, input.id, "study");

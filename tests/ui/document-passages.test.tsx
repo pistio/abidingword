@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Document Bibles made navigable (v0.24): using only the chapters found without
 // doubt, finding a passage in the document, and marking by hand where one is.

@@ -1,7 +1,7 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The Presenter View's reading surface (v0.18.2): Follow app (the default:
 // the app's theme in effect and background family, live), or a fixed Light,

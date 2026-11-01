@@ -2,7 +2,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { setLanguage } from "@/i18n";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Source suggestion quality (v0.9, sub-phase 3): what the Sources pane puts
 // first, how a source reads as one entry, and what the reader says about why.

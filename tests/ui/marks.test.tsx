@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import type { MemoryApi } from "../support/memoryApi";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 const V1 = "Fixture alpha JHN 15:1 about the vine.";
 

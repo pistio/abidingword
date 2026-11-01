@@ -5,7 +5,7 @@ import { DOCX_PARTS, DOCX_PIXEL, FORMATTED_DOCX } from "../support/docxFixture";
 import { FORMATTED_BOOK } from "../support/epubFixture";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The formatted ("Original") view of a Word document. It is drawn by the same
 // renderer as an EPUB's, so these tests cover what is DOCX's own: that the view

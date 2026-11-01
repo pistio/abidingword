@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api";
 import { createMemoryApi } from "../support/memoryApi";
-import { openInfo, openSettingsSection, renderApp } from "../support/render";
+import { openInfo, openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // Settings › Data and backup (v0.19): export one project, import one as a
 // new project, back up everything, and restore everything after a clear
@@ -84,7 +84,7 @@ describe("Data and backup", () => {
     expect(await within(section).findByText("“John (2)” was added. You’ll find it under Projects.")).toBeInTheDocument();
     expect(within(section).getByText("Citations kept whose library book is not on this computer: 1")).toBeInTheDocument();
     expect(within(section).queryByText(/could not be read/)).toBeNull();
-    expect(api.state.projects.map((p) => p.title)).toEqual(["John", "Romans", "John (2)"]);
+    expect(api.state.projects.map((p) => p.title)).toEqual(["John", "Romans", "My studies", "John (2)"]);
   });
 
   it("adds nothing when the preview is cancelled", async () => {
@@ -95,7 +95,7 @@ describe("Data and backup", () => {
     const preview = await within(section).findByRole("region", { name: "Project to import" });
     await user.click(within(preview).getByRole("button", { name: "Cancel" }));
     expect(within(section).queryByRole("region", { name: "Project to import" })).toBeNull();
-    expect(api.state.projects).toHaveLength(2);
+    expect(api.state.projects).toHaveLength(3);
   });
 
   it("says why a file cannot be imported, and changes nothing", async () => {
@@ -106,7 +106,7 @@ describe("Data and backup", () => {
     await user.click(within(section).getByRole("button", { name: /Import project…/ }));
     expect(await within(section).findByRole("alert")).toHaveTextContent(/damaged or was changed/);
     expect(within(section).queryByRole("region", { name: "Project to import" })).toBeNull();
-    expect(api.state.projects).toHaveLength(2);
+    expect(api.state.projects).toHaveLength(3);
   });
 
   it("backs up everything to the file the save dialog named", async () => {
@@ -172,17 +172,17 @@ describe("the example project", () => {
   it("is added only when asked, with its four pieces of work, and never twice", async () => {
     const api = createMemoryApi();
     const { user } = await renderApp(api);
-    expect(api.state.projects).toHaveLength(0);
+    await waitFor(() => expect(api.state.projects).toHaveLength(1));
     const section = await data(user);
     await user.click(within(section).getByRole("button", { name: /Add the example project/ }));
     expect(await within(section).findByText("“Example: Abiding in Christ — John 15:1–11” was added. You’ll find it under Projects.")).toBeInTheDocument();
-    expect(api.state.projects.map((p) => p.title)).toEqual(["Example: Abiding in Christ — John 15:1–11"]);
+    expect(api.state.projects.map((p) => p.title)).toEqual(["My studies", "Example: Abiding in Christ — John 15:1–11"]);
     expect(api.state.studies.map((s) => s.title)).toEqual(["Abiding in the True Vine"]);
     expect(api.state.teaching.preparations.map((p) => p.kind)).toEqual(["sermon", "bible_study", "lesson"]);
 
     await user.click(within(section).getByRole("button", { name: /Add the example project/ }));
     expect(await within(section).findByText("“Example: Abiding in Christ — John 15:1–11” is already here, so nothing was added.")).toBeInTheDocument();
-    expect(api.state.projects).toHaveLength(1);
+    expect(api.state.projects).toHaveLength(2);
     expect(api.state.studies).toHaveLength(1);
   });
 });

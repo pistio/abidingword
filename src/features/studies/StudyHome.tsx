@@ -1,73 +1,39 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import type { Workspace } from "@/types/domain";
 import { WorkspaceTrash } from "@/features/portability/ListingLifecycle";
-import { StudyCreationActions } from "./StudyCreationActions";
 import { NewStudyForm } from "./NewStudyForm";
-import { ProjectList } from "./ProjectList";
-import { ProjectView } from "./ProjectView";
-import { ensureStudyProject } from "./projects";
+import { StudyList } from "./StudyList";
+import { NameDialog } from "./FileActions";
 
 interface StudyHomeProps {
   workspace: Workspace;
-  onOpenTeaching: (projectId: string, create?: boolean) => void;
   onOpenProject: (projectId: string) => void;
   onOpenStudy: (study: { id: string; projectId: string }) => void;
-  /** The project list, for someone who wants to organise (a way in, never a step). */
-  onProjectList: () => void;
 }
 
-/**
- * Where the Study pane starts. Projects are a way to organise studies, not
- * something to understand before the first one:
- *
- * - no project yet: just the question "What would you like to study?"; the
- *   default project ("My studies") is made when the first study is;
- * - one project: its studies, shown as "Studies";
- * - several: the project list, with New study that goes into the project last
- *   worked in (see `projects.ts`).
- */
-export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStudy, onProjectList }: StudyHomeProps) {
-  const { t } = useTranslation();
-  const api = useApi();
-  const form = useRef<HTMLDivElement>(null);
-  const projects = useLoad(useCallback(() => api.projectList(workspace.id), [api, workspace.id]));
-
-  if (projects.error) return <Notice tone="error">{projects.error.message}</Notice>;
-  if (!projects.data) return <p className="text-text-muted">{t("studies.projects.loading")}</p>;
-
-  const list = projects.data;
-  if (list.length >= 2) {
-    return <ProjectList workspace={workspace} onOpenTeaching={onOpenTeaching} onOpenProject={onOpenProject} onOpenStudy={onOpenStudy} />;
-  }
-  if (list.length === 1) {
-    return (
-      <ProjectView
-        onDeleted={projects.reload}
-        project={list[0]!}
-        onOpenTeaching={(create) => onOpenTeaching(list[0]!.id, create)}
-        plain
-        onProjects={onProjectList}
-        onProjectChanged={() => projects.reload()}
-        onOpenStudy={onOpenStudy}
-      />
-    );
-  }
-  return (
-    <div className="flex flex-col gap-8">
-      <h1 className="type-title m-0">{t("studies.home.title")}</h1>
-      <WorkspaceTrash onChanged={projects.reload} />
-      <StudyCreationActions onStudy={() => form.current?.querySelector("input")?.focus()} />
-      <div ref={form}><NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} onCreated={onOpenStudy} /></div>
-      <div>
-        <Button variant="quiet" onClick={onProjectList}>
-          {t("studies.home.organise")}
-        </Button>
-      </div>
-    </div>
-  );
+/** One home at every library size. The implicit ownership container stays hidden. */
+export function StudyHome({ workspace, onOpenProject, onOpenStudy }: StudyHomeProps) {
+  const { t } = useTranslation(); const api = useApi();
+  const [rootTitle] = useState(() => t("studies.projects.defaultTitle"));
+  const [creating, setCreating] = useState(false); const [folder, setFolder] = useState(false); const [version, setVersion] = useState(0);
+  const data = useLoad(useCallback(async () => {
+    const root = await api.projectRoot(workspace.id, rootTitle);
+    return { root, projects: await api.projectList(workspace.id) };
+  }, [api, workspace.id, rootTitle]));
+  const changed = () => { data.reload(); setVersion(v => v + 1); };
+  return <div className="flex flex-col gap-5">
+    <h1 className="type-title m-0">{t("studies.home.title")}</h1>
+    <div className="flex flex-wrap gap-2"><Button variant="primary" onClick={() => setCreating(true)}><Plus className="size-4" aria-hidden="true" />{t("studies.newStudy.formLabel")}</Button><Button onClick={() => setFolder(true)}><Plus className="size-4" aria-hidden="true" />{t("studies.files.newProject")}</Button></div>
+    {data.error && <Notice tone="error">{data.error.message}</Notice>}
+    {creating && data.data && <NewStudyForm projectId={data.data.root.id} autoFocus onCancel={() => setCreating(false)} onCreated={onOpenStudy} />}
+    {folder && <NameDialog title={t("studies.files.newProject")} onClose={() => setFolder(false)} onSave={async title => { await api.projectCreate({ workspaceId: workspace.id, title }); changed(); }} />}
+    {data.data && <StudyList projectId={data.data.root.id} rootId={data.data.root.id} projects={data.data.projects} folders={data.data.projects.filter(p => p.id !== data.data!.root.id)} onOpenProject={onOpenProject} onOpen={onOpenStudy} version={version} onChanged={changed} />}
+    <footer className="mt-6 border-t border-border-subtle pt-3"><WorkspaceTrash onChanged={changed} /></footer>
+  </div>;
 }

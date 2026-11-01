@@ -1,7 +1,8 @@
 import { useCallback, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronRight } from "lucide-react";
-import { ListingLifecycle, UndoTrash, type TrashedRecord } from "@/features/portability/ListingLifecycle";
+import { ChevronRight, Folder, FileText } from "lucide-react";
+import { UndoTrash, type TrashedRecord } from "@/features/portability/ListingLifecycle";
+import { FileActions } from "./FileActions";
 import { Notice } from "@/design-system/Notice";
 import { referenceLabel } from "@/i18n/scripture";
 import { useLoad } from "@/hooks/useLoad";
@@ -18,6 +19,10 @@ interface StudyListProps {
   onOpen: (study: StudySummary) => void;
   /** Bump to reload after a change elsewhere. */
   version?: number;
+  folders?: Project[];
+  rootId?: string;
+  onOpenProject?: (id: string) => void;
+  onChanged?: () => void;
 }
 
 const select = "h-11 aw-input px-2 text-[0.9375rem]";
@@ -26,7 +31,7 @@ const select = "h-11 aw-input px-2 text-[0.9375rem]";
 export const LIST_FILTER_MIN = 6;
 
 /** A filterable list of studies: title, type, main passage, status, date. */
-export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyListProps) {
+export function StudyList({ projectId, projects, onOpen, version = 0, folders = [], rootId, onOpenProject, onChanged }: StudyListProps) {
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
@@ -60,10 +65,10 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
 
   return (
     <div className="flex flex-col gap-3">
-      {undo && <UndoTrash record={undo} onDone={() => { setUndo(null); studies.reload(); }} />}
+      {undo && <UndoTrash record={undo} onDone={() => { setUndo(null); studies.reload(); onChanged?.(); }} />}
       {showFilters && (
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.9375rem]" role="group" aria-label={t("studies.list.filters")}>
-        {!projectId && projects && (
+        {!projectId && !rootId && projects && (
           <label className="flex items-center gap-2">
             <span>{t("studies.list.project")}</span>
             <select value={project} onChange={(e) => setProject(e.target.value)} className={select}>
@@ -97,13 +102,17 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
 
       {studies.error && <Notice tone="error">{studies.error.message}</Notice>}
       {studies.loading && <p className="m-0 text-text-muted">{t("studies.list.loading")}</p>}
-      {studies.data && visible.length === 0 && (
+      {studies.data && visible.length === 0 && folders.length === 0 && (
         <p className="m-0 text-text-muted">
           {filtering || archived.length > 0 ? t("studies.list.noMatch") : t("studies.list.empty")}
         </p>
       )}
-      {studies.data && visible.length > 0 && (
+      {studies.data && (visible.length > 0 || folders.length > 0) && (
         <ul id={id} aria-label={t("studies.list.listLabel")} className="m-0 list-none border-t border-border-subtle p-0">
+          {folders.map(folder => <li key={folder.id} className="flex min-w-0 items-center border-b border-border-subtle">
+            <button type="button" onClick={() => onOpenProject?.(folder.id)} className="flex min-h-16 min-w-0 flex-1 items-center gap-3 px-2 py-3 text-left hover:bg-hover"><Folder className="size-5 shrink-0 text-text-muted" aria-hidden="true" /><span className="min-w-0 flex-1 break-words type-item">{folder.title}</span><span className="sr-only">{t("studies.files.folder")}</span><ChevronRight className="size-5 shrink-0" aria-hidden="true" /></button>
+            <FileActions record={{ id: folder.id, title: folder.title, kind: "project" }} onChanged={() => onChanged?.()} onTrashed={() => { setUndo({ id: folder.id, title: folder.title, kind: "project" }); studies.reload(); onChanged?.(); }} />
+          </li>)}
           {visible.map((study) => (
             <li key={study.id} className="flex min-w-0 flex-wrap items-center border-b border-border-subtle">
               <button
@@ -111,7 +120,7 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
                 onClick={() => onOpen(study)}
                 className="flex min-w-0 flex-1 items-center gap-4 px-2 py-3 text-left hover:bg-hover"
               >
-                <span className="min-w-0 flex-1">
+                <FileText className="size-5 shrink-0 text-text-muted" aria-hidden="true" /><span className="min-w-0 flex-1">
                   <span className="type-item block">{study.title}</span>
                   <span className="mt-1 block text-[0.9375rem] text-text-muted">
                     {[
@@ -135,7 +144,7 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
                 </span>
                 <ChevronRight className="size-5 shrink-0 text-text-muted" aria-hidden="true" />
               </button>
-              <ListingLifecycle record={{ id: study.id, title: study.title, kind: "study" }} onDone={() => { setUndo({ id: study.id, title: study.title, kind: "study" }); studies.reload(); }} />
+              <FileActions record={{ id: study.id, title: study.title, kind: "study" }} projects={projects} rootId={rootId} projectId={study.projectId} onChanged={() => { studies.reload(); onChanged?.(); }} onTrashed={() => { setUndo({ id: study.id, title: study.title, kind: "study" }); studies.reload(); onChanged?.(); }} />
             </li>
           ))}
         </ul>

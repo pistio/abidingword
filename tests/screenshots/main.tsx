@@ -1,3 +1,4 @@
+import { homeReviewFixture } from "../support/homeReviewFixture";
 import { pdfReviewFixture } from "../support/pdfReviewFixture";
 // The documentation screenshot harness (see vite.config.ts and capture.mjs).
 // The real interface, an in-memory library written for the guide, and the
@@ -585,6 +586,7 @@ async function start() {
       mentions: [{ segment: 0, reference: "JHN.15.5", matchedText: "John 15:5" }],
     });
   }
+  if (params.get("a3Review") === "1") await homeReviewFixture(api, params.get("a3Shape") === "owner");
   await i18n.changeLanguage(params.get("lang") ?? "en");
   // All three panes even in a narrow window, as the owner works (review scenes, v0.18.5).
   if (params.get("sourcesOpen") === "1") localStorage.setItem("abiding-word.layout.sourcesOpen", "true");

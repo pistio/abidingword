@@ -17,6 +17,7 @@ const browser = await chromium.launch({
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await page.goto(`${base}?assistant=off&sourcesOpen=1`);
+  await page.getByRole("main").getByRole("button", { name: "Gospel of John Project folder", exact: true }).click();
   await page.getByRole("main").getByRole("button", { name: /^Abiding in the Vine/ }).first().click();
   await page.getByRole("button", { name: "Step-by-step", exact: true }).click();
   await page.getByRole("navigation", { name: "Study sections" }).waitFor();
@@ -98,6 +99,7 @@ try {
   }
   const review = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await review.goto(`${base}?assistant=off`);
+  await review.getByRole("main").getByRole("button", { name: "Gospel of John Project folder", exact: true }).click();
   await review.getByRole("main").getByRole("button", { name: /^Abiding in the Vine/ }).first().click();
   await review.getByRole("button", { name: "Bible Study information", exact: true }).click();
   const information = review.getByRole("dialog", { name: "Bible Study information" });
@@ -131,6 +133,7 @@ try {
   // Minimum supported desktop width: the default Scripture + Study layout.
   const minimum = await browser.newPage({ viewport: { width: 640, height: 800 } });
   await minimum.goto(`${base}?assistant=off`);
+  await minimum.getByRole("main").getByRole("button", { name: "Gospel of John Project folder", exact: true }).click();
   await minimum.getByRole("main").getByRole("button", { name: /^Abiding in the Vine/ }).first().click();
   await minimum.getByRole("button", { name: "Step-by-step", exact: true }).click();
   const selector = minimum.locator("[data-study-steps] select");

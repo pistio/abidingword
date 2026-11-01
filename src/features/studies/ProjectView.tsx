@@ -1,14 +1,14 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLoad } from "@/hooks/useLoad";
 import { StudyCreationActions } from "./StudyCreationActions";
-import { Button } from "@/design-system/Button";
 import { InfoControl } from "@/design-system/InfoControl";
 import { WorkspaceTrash } from "@/features/portability/ListingLifecycle";
 import { DeleteControl } from "@/features/portability/Trash";
 import { ProjectExport } from "@/features/portability/ProjectExport";
 import type { Project } from "@/types/domain";
 import type { StudySummary } from "@/types/studies";
+import { toApiError } from "@/lib/api";
+import { Notice } from "@/design-system/Notice";
 import { useApi } from "@/lib/ApiContext";
 import { EditableTitle } from "./EditableTitle";
 import { studyCountLabel } from "./format";
@@ -17,28 +17,25 @@ import { StudyList } from "./StudyList";
 
 interface ProjectViewProps {
   onDeleted: () => void;
+  rootId?: string;
+  projects?: Project[];
   project: Project;
-  onOpenTeaching?: (create?: boolean) => void;
-  /** The only project: shown as "Studies", with nothing about projects at all. */
-  plain?: boolean;
-  /** A way to the project list, for someone who wants to organise (plain view only). */
-  onProjects?: () => void;
   onProjectChanged: (project: Project) => void;
   onOpenStudy: (study: { id: string; projectId: string }) => void;
 }
 
-export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false, onProjects, onProjectChanged, onOpenStudy }: ProjectViewProps) {
+export function ProjectView({ onDeleted, project, onProjectChanged, onOpenStudy, rootId, projects }: ProjectViewProps) {
   const { t } = useTranslation();
   const api = useApi();
   const [listVersion, setListVersion] = useState(0);
-  const standalone = useLoad(useCallback(() => api.teachingListProject(project.id).then(rows => rows.filter(row => !row.studyId)), [api, project.id]));
+  const [error, setError] = useState<string | null>(null);
+  const refresh = () => { setListVersion(v => v + 1); void api.projectGet(project.id).then(p => { onProjectChanged(p); setError(null); }, e => setError(toApiError(e).message)); };
   const rename = useCallback(
     async (title: string) => onProjectChanged(await api.projectUpdate({ id: project.id, title })),
     [api, project.id, onProjectChanged],
   );
   // The creation form is the main thing in an empty project; otherwise it
   // is put away until it is asked for, and the studies come first.
-  const empty = project.studyCount === 0;
   const [asked, setAsked] = useState(false);
   const form = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
@@ -49,9 +46,6 @@ export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false,
 
   return (
     <div className="flex flex-col gap-8">
-      {plain ? (
-        <div><h1 className="type-title m-0">{t("studies.home.title")}</h1><ProjectInfo onDeleted={onDeleted} project={project} onChanged={onProjectChanged} /></div>
-      ) : (
         <div>
           <p className="caps-label m-0 mb-2">{t("studies.projects.project")}</p>
           <EditableTitle key={project.id} label={t("studies.projects.titleLabel")} value={project.title} onSave={rename} />
@@ -60,31 +54,21 @@ export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false,
             <span className="px-2">{studyCountLabel(t, project.studyCount)}</span>
           </div>
         </div>
-      )}
 
-      <WorkspaceTrash onChanged={() => setListVersion(v => v + 1)} />
       <StudyCreationActions studyButtonRef={opener} onStudy={() => { setAsked(true); requestAnimationFrame(() => form.current?.querySelector("input")?.focus()); }} />
       <div ref={form}>
-        {(empty || asked) && <NewStudyForm projectId={project.id} autoFocus={asked} onCancel={empty ? undefined : putAway} onCreated={onOpenStudy} />}
+        {asked && <NewStudyForm projectId={project.id} autoFocus={asked} onCancel={putAway} onCreated={onOpenStudy} />}
       </div>
-      {onOpenTeaching && !!standalone.data?.length && <div><Button variant="quiet" onClick={() => onOpenTeaching(false)}>{t("studies.teaching.workspace.standalone")}</Button></div>}
 
-      {!empty && (
         <section aria-labelledby="studies-heading" className="flex flex-col gap-3">
           <h2 id="studies-heading" className="type-section m-0">
             {t("studies.projects.studies")}
           </h2>
-          <StudyList version={listVersion} projectId={project.id} onOpen={(s: StudySummary) => onOpenStudy(s)} />
+          <StudyList version={listVersion} projectId={project.id} rootId={rootId} projects={projects} onChanged={refresh} onOpen={(s: StudySummary) => onOpenStudy(s)} />
         </section>
-      )}
 
-      {plain && onProjects && (
-        <div>
-          <Button variant="quiet" onClick={onProjects}>
-            {t("studies.home.organise")}
-          </Button>
-        </div>
-      )}
+      {error && <Notice tone="error">{error}</Notice>}
+      <footer className="mt-6 border-t border-border-subtle pt-3"><WorkspaceTrash onChanged={refresh} /></footer>
     </div>
   );
 }

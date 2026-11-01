@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Generated contents (v0.13): used only when a source carries no contents of its own,
 // and always presented as generated. All library text here is invented.

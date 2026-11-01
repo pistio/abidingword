@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import pozetek from "../../resources/templates/pozetek-study.json";
 import { setLanguage } from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 import { localizedSections } from "@/features/studies/builtinText";
 
 // The POZETEK built-in template (Phase 1). All text is invented.

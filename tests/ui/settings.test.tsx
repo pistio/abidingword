@@ -2,7 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 const ORDER = ["Updates", "Appearance", "Bible texts", "Sources", "Templates", "Language", "AI Assistant", "Data and backup", "About this installation", "Coming in later versions"];
 

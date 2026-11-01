@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // Settings → Sources (v0.24): finding, details, collections, tags, archive,
 // Trash and deleting for good, one at a time and many at once; and the shared

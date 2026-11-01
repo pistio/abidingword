@@ -26,7 +26,7 @@ it("snapshots generous single-answer templates without changing legacy structure
 
 it("keeps answers while switching from focused steps to continuous writing", async () => {
   const { screen, within, waitFor } = await import("@testing-library/react");
-  const { renderApp } = await import("../support/render");
+  const { renderAppInProject: renderApp } = await import("../support/render");
   const api = createMemoryApi();
   const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Writing" });
   const template = api.state.templates.find(t => t.key === "pozetek-writing-study")!;

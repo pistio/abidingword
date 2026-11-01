@@ -5,7 +5,7 @@ import { derive } from "@/features/materials/derive";
 import { BUILTIN_TEACHING_TEMPLATES, templateFromTeaching } from "@/features/teaching/teachingTemplates";
 import { TEACHING_KINDS } from "@/types/teaching";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // Bible Teaching templates (v0.18.7): what a new teaching starts with, its
 // format and its points, questions or steps. Built-in ones stay as they

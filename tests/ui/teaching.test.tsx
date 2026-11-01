@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { ApiError } from "@/lib/api";
 import type { AssistReply } from "@/types/teaching";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // Teaching Preparation (v0.16): written by the person; the assistant only
 // suggests, and nothing changes without an explicit choice. All text is invented.

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/react";
 import { App } from "@/app/App";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 describe("application shell", () => {
   it("shows the brand and the three workspace panes", async () => {

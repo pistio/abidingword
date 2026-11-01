@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // A Bible's language (v0.18.3): chosen on import (from the files' own
 // metadata when they state it, otherwise by the person — never guessed),

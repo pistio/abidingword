@@ -1,7 +1,7 @@
 import { cleanup, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { openInfo, renderApp } from "../support/render";
+import { openInfo, renderAppInProject as renderApp } from "../support/render";
 
 // Study workspace refinement (v0.10). All text is invented.
 

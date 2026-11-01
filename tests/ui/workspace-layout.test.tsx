@@ -1,7 +1,7 @@
 import { cleanup, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 /** The workspace panes from left to right, by name. */
 function paneOrder(): string[] {

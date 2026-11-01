@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { ActionMenu } from "@/design-system/ActionMenu";
+import { ActionMenu, type MenuAction } from "@/design-system/ActionMenu";
 import { Dialog } from "@/design-system/Dialog";
 import { Button } from "@/design-system/Button";
 import { useApi } from "@/lib/ApiContext";
@@ -10,11 +10,11 @@ import { DeleteControl, Trash } from "./Trash";
 
 export interface TrashedRecord { id: string; title: string; kind: "study" | "project" }
 
-export function ListingLifecycle({ record, onDone }: { record: TrashedRecord; onDone: () => void }) {
+export function ListingLifecycle({ record, onDone, actions = [], label }: { record: TrashedRecord; onDone: () => void; actions?: MenuAction[]; label?: string }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   return <span role="group" aria-label={t("settings.trash.actions", { title: record.title })}>
-    <ActionMenu label={t("settings.trash.move")} actions={[{ label: t("settings.trash.move"), icon: <Trash2 className="size-4" aria-hidden="true" />, onSelect: () => setOpen(true) }]} />
+    <ActionMenu label={label ?? t("settings.trash.move")} actions={[...actions, { label: t("settings.trash.move"), icon: <Trash2 className="size-4" aria-hidden="true" />, onSelect: () => setOpen(true) }]} />
     {open && <Dialog title={t("settings.trash.confirm", { title: record.title })} actions={null} onClose={() => setOpen(false)}>
       <DeleteControl {...record} initiallyConfirm onCancel={() => setOpen(false)} onDone={() => { setOpen(false); onDone(); }} />
     </Dialog>}

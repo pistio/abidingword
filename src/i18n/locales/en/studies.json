@@ -2805,5 +2805,19 @@
       "entries": "Earlier structured entries"
     },
     "passageNote": "Only the verses available in the selected edition are shown and cited. The requested passage may contain missing verses."
+  },
+  "files": {
+    "newProject": "New project",
+    "folder": "Project folder",
+    "actions": "File actions",
+    "name": "Name",
+    "rename": "Rename",
+    "move": "Move",
+    "moveTitle": "Move “{{title}}”",
+    "destination": "Destination",
+    "moveHint": "Linked Teaching moves with the Study. Research, citations and saved materials stay intact.",
+    "legacy": "Legacy standalone Teaching",
+    "legacyHint": "Manage historical Teaching that is not linked to a Bible Study. Nothing is attached automatically. New Teaching begins within a Study.",
+    "noLegacy": "No legacy standalone Teaching."
   }
 }

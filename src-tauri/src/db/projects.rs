@@ -135,3 +135,51 @@ pub fn trash_list(conn: &Connection, workspace_id: &str) -> AppResult<Vec<TrashE
     })?;
     Ok(rows.collect::<Result<_, _>>()?)
 }
+
+/// Stable root ownership in the existing backed-up settings table. Existing
+/// default containers are adopted only when their legacy identity is unambiguous.
+pub fn root(conn: &Connection, workspace_id: &str, title: &str) -> AppResult<Project> {
+    workspaces::get(conn, workspace_id)?;
+    let key = format!("studies.rootProject.{workspace_id}");
+    let cached = |connection: &Connection| -> AppResult<Option<Project>> {
+        Ok(crate::db::settings::read::<String>(connection, &key)?
+            .and_then(|id| get(connection, &id).ok())
+            .filter(|project| project.workspace_id == workspace_id))
+    };
+    if let Some(project) = cached(conn)? {
+        return Ok(project);
+    }
+    // Serialise initialisation across app connections, then recheck the marker.
+    let tx = rusqlite::Transaction::new_unchecked(conn, rusqlite::TransactionBehavior::Immediate)?;
+    if let Some(project) = cached(&tx)? {
+        tx.commit()?;
+        return Ok(project);
+    }
+    let defaults = [
+        "My studies",
+        "Meine Bibelstudien",
+        "내 성경공부",
+        "Mes études",
+        "Mis estudios",
+        "Meus estudos",
+    ];
+    let candidates: Vec<_> = list(&tx, workspace_id)?
+        .into_iter()
+        .filter(|p| p.description.is_none() && defaults.contains(&p.title.as_str()))
+        .collect();
+    let project = if candidates.len() == 1 {
+        candidates.into_iter().next().unwrap()
+    } else {
+        create(
+            &tx,
+            &CreateProject {
+                workspace_id: workspace_id.into(),
+                title: title.into(),
+                description: None,
+            },
+        )?
+    };
+    crate::db::settings::write(&tx, &key, &project.id)?;
+    tx.commit()?;
+    Ok(project)
+}

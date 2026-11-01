@@ -2805,5 +2805,19 @@
       "entries": "Bisherige strukturierte Einträge"
     },
     "passageNote": "Angezeigt und zitiert werden nur die Verse, die in der gewählten Ausgabe verfügbar sind. In der angefragten Bibelstelle können Verse fehlen."
+  },
+  "files": {
+    "newProject": "Neues Projekt",
+    "folder": "Projektordner",
+    "actions": "Dateiaktionen",
+    "name": "Name",
+    "rename": "Umbenennen",
+    "move": "Verschieben",
+    "moveTitle": "„{{title}}“ verschieben",
+    "destination": "Ziel",
+    "moveHint": "Verknüpfte Lehre wird mit dem Bibelstudium verschoben. Recherche, Zitate und gespeicherte Materialien bleiben erhalten.",
+    "legacy": "Frühere eigenständige Lehre",
+    "legacyHint": "Verwalte frühere Lehre ohne verknüpftes Bibelstudium. Nichts wird automatisch zugeordnet. Neue Lehre beginnt in einem Bibelstudium.",
+    "noLegacy": "Keine frühere eigenständige Lehre."
   }
 }

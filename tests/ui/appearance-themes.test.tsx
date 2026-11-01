@@ -3,7 +3,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { APP_PALETTES } from "@/design-system/palettes";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // Appearance (v0.18.2): six background families, each with a light and a
 // dark variant. The choice stays one of six; the variant follows the theme in

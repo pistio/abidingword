@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 type User = Awaited<ReturnType<typeof renderApp>>["user"];
 
@@ -14,9 +14,9 @@ async function withProject(studies: Array<{ title: string; primaryPassage?: stri
   return { api, project };
 }
 
-// With a single project the Study pane starts on its studies: there is no project to open.
+// Editor tests enter the named folder explicitly in renderAppInProject.
 async function openProject(_user: User) {
-  await screen.findByRole("heading", { level: 1, name: "Studies" });
+  await screen.findByRole("heading", { level: 1, name: "John Sermon Series" });
 }
 
 async function openStudy(user: User, title: RegExp) {

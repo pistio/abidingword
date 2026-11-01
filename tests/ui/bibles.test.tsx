@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 describe("adding and managing Bibles", () => {
   it("adds the included Bible after reviewing it", async () => {

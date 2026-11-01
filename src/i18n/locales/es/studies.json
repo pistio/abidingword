@@ -2820,5 +2820,19 @@
       "entries": "Entradas estructuradas anteriores"
     },
     "passageNote": "Solo se muestran y citan los versículos disponibles en la edición elegida. Pueden faltar versículos del pasaje solicitado."
+  },
+  "files": {
+    "newProject": "Nuevo proyecto",
+    "folder": "Carpeta de proyecto",
+    "actions": "Acciones del documento",
+    "name": "Nombre",
+    "rename": "Cambiar nombre",
+    "move": "Mover",
+    "moveTitle": "Mover «{{title}}»",
+    "destination": "Destino",
+    "moveHint": "La enseñanza vinculada se mueve con el estudio. Se conservan la investigación, las citas y los materiales guardados.",
+    "legacy": "Enseñanza independiente anterior",
+    "legacyHint": "Gestiona las enseñanzas anteriores sin un estudio bíblico vinculado. No se vinculan automáticamente. Las nuevas enseñanzas comienzan en un estudio.",
+    "noLegacy": "No hay enseñanzas independientes anteriores."
   }
 }

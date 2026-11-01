@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { partsFromStudy } from "@/features/studies/templateParts";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // User-designed templates (v0.18.7): a Bible Study template says where each
 // of its parts belongs in the study outline, a study follows its own

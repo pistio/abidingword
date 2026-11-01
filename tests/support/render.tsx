@@ -53,3 +53,19 @@ export async function saveInfo(user: ReturnType<typeof userEvent.setup>, panel: 
   await user.click(within(panel).getByRole("button", { name: "Save" }));
   await waitFor(() => expect(panel).not.toBeInTheDocument());
 }
+
+/** Editor regressions explicitly enter the one named folder they seeded.
+ * Home acceptance tests use renderApp directly and assert the actual root view.
+ */
+export async function renderAppInProject(api: MemoryApi = createMemoryApi(), options: Parameters<typeof renderApp>[1] = {}) {
+  const project = api.state.projects.length === 1 ? api.state.projects[0] : null;
+  const saved = window.localStorage.getItem("studyPane.location");
+  const result = await renderApp(api, options);
+  if (project && !saved && !["My studies", "Meine Bibelstudien", "내 성경공부", "Mes études", "Mis estudios", "Meus estudos"].includes(project.title)) {
+    const folder = await screen.findByRole("button", { name: `${project.title} ${i18n.t("studies.files.folder")}` });
+    await result.user.click(folder);
+    await screen.findByRole("heading", { level: 1, name: project.title });
+    if (!api.state.studies.some(study => study.projectId === project.id)) await result.user.click(screen.getByRole("button", { name: i18n.t("studies.newStudy.formLabel") }));
+  }
+  return result;
+}

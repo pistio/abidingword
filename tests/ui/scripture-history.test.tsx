@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { canGoBack, canGoForward, goBack, goForward, HISTORY_LIMIT, startHistory, visit } from "@/features/scripture/scriptureHistory";
 import type { ScriptureRef } from "@/types/scripture";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Scripture Back / Forward and "Back to {main passage}" (v0.11). All text is invented.
 
@@ -172,7 +172,7 @@ describe("Back to the Study's primary passage", () => {
     await go(user, "Gal 2");
     expect(await within(pane()).findByRole("button", { name: "Back to John 15:1–11" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Back to Studies" }));
+    await user.click(screen.getByRole("button", { name: "Back to Series" }));
     await waitFor(() => expect(within(pane()).queryByRole("button", { name: /^Back to / })).not.toBeInTheDocument());
     await user.click(await screen.findByRole("button", { name: /Life in the Spirit/ }));
     await within(pane()).findByText(/showing Romans 8:1–4/);

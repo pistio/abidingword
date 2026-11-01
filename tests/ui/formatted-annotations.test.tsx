@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { FORMATTED_BOOK } from "../support/epubFixture";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Marks in the formatted Original of an EPUB or DOCX (v0.14): one mark, made in Reading, drawn on
 // the published page too, only where its stored words are found exactly there. All text is invented.

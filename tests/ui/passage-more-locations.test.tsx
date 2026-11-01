@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // "More places in this source" is a disclosure: the places beyond the best
 // best can be revealed and opened. All text is invented.

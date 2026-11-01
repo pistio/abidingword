@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { ApiProvider } from "@/lib/ApiContext";
 import { AudienceWindow } from "@/features/presentation/AudienceWindow";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp, setWindowWidth } from "../support/render";
+import { renderAppInProject as renderApp, setWindowWidth } from "../support/render";
 
 // Presentation & Delivery (v0.18): slides made from a Bible Teaching by fixed
 // rules, following it live; one Presenter View for phone, tablet and

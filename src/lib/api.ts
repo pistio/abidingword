@@ -163,6 +163,7 @@ export interface Api {
   logError(message: string): Promise<void>;
   workspaceGetDefault(): Promise<Workspace>;
   trashList(workspaceId: string): Promise<{ id: string; title: string; kind: "project" | "study"; deletedAt: string }[]>;
+  projectRoot(workspaceId: string, title: string): Promise<Project>;
   projectList(workspaceId: string): Promise<Project[]>;
   projectGet(id: string): Promise<Project>;
   projectCreate(input: CreateProject): Promise<Project>;
@@ -194,6 +195,7 @@ export interface Api {
   studySearch(query: string): Promise<StudySearchHit[]>;
   studyGet(id: string): Promise<StudyDetail>;
   studyCreate(input: CreateStudy): Promise<StudyDetail>;
+  studyMove(id: string, projectId: string): Promise<Study>;
   studyUpdate(input: UpdateStudy): Promise<Study>;
   studySectionList(studyId: string): Promise<StudySection[]>;
   studySectionUpdate(input: UpdateStudySection): Promise<StudySection>;
@@ -608,6 +610,7 @@ export const tauriApi: Api = {
   logError: (message) => call("app_log_error", { message }),
   workspaceGetDefault: () => call("workspace_get_default"),
   trashList: (workspaceId) => call("trash_list", { workspaceId }),
+  projectRoot: (workspaceId, title) => call("project_root", { workspaceId, title }),
   projectList: (workspaceId) => call("project_list", { workspaceId }),
   projectGet: (id) => call("project_get", { id }),
   projectCreate: (input) => call("project_create", { input }),
@@ -633,6 +636,7 @@ export const tauriApi: Api = {
   studySearch: (query) => call("study_search", { query }),
   studyGet: (id) => call("study_get", { id }),
   studyCreate: (input) => call("study_create", { input }),
+  studyMove: (id, projectId) => call("study_move", { id, projectId }),
   studyUpdate: (input) => call("study_update", { input }),
   studySectionList: (studyId) => call("study_section_list", { studyId }),
   studySectionUpdate: (input) => call("study_section_update", { input }),

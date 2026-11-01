@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The workspace's visual hierarchy (v0.18.4): the Study or Teaching is the
 // current work, Scripture and Sources support it; the open teaching starts with

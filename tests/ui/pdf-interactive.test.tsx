@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { createFakePdfEngine, textItem } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The interactive Original PDF (v0.13): Scripture references on the page itself, pages
 // without text of their own, find marks, and the view remembered per source. All text is invented.

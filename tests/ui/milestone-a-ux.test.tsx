@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { derive } from "@/features/materials/derive";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 const sources = () => within(screen.getByRole("complementary", { name: "Sources" }));
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
@@ -85,6 +85,7 @@ it("shows actual opening history instead of presenting import order as recently 
 it.each(["en", "de", "ko", "fr", "es", "pt"])("labels the passage, attributes Ten-Step and avoids a non-German EVA acronym in %s", async (language) => {
   await act(async () => { await i18n.changeLanguage(language); });
   const api = createMemoryApi(); const { user } = await renderApp(api);
+  await user.click(await screen.findByRole("button", { name: i18n.t("studies.newStudy.formLabel") }));
   const label = i18n.t("studies.newStudy.subjectLabel.passage");
   expect(await screen.findByRole("textbox", { name: label })).toHaveAttribute("placeholder", i18n.t("studies.newStudy.passagePlaceholder"));
   for (const type of ["word", "topical", "character", "book"] as const) {

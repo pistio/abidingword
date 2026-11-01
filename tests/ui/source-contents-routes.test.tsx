@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The same source must offer its own Contents however it was opened: from the
 // library list, or from a finding's citation (which also opens at a segment).

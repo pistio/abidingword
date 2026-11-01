@@ -2,7 +2,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Interactions between features of the v0.5 branch: Bible, translation
 // switching, the verse inspector, and Marks.

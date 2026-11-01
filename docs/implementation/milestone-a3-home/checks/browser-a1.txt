@@ -1,0 +1,1 @@
+A.1 full-workspace checks passed at 900, 1100 and 1440 pixels, including EPUB Reading and Original; default layout at 640 pixels.

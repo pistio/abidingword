@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { derive, manuscript, outputsFor, questionSheet, toMarkdown, worksheet, type Block } from "@/features/materials/derive";
 import type { TeachingPoint, TeachingPreparation } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Teaching materials (v0.18.6): what a Bible Teaching becomes, put together
 // from the person's own writing by fixed rules. Nothing is written for them,

@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { ApiError } from "@/lib/api";
 import type { InquiryReply } from "@/types/inquiry";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Help in a Bible Study (v0.20): a small Help action in each part, only when
 // the assistant is on; a temporary panel that shows exactly what would be
