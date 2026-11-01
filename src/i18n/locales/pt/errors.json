@@ -151,7 +151,11 @@
     "duplicate": "Este arquivo já está na sua biblioteca como “{{title}}”.",
     "originalUnsupported": "Esta fonte não tem visualização do original.",
     "originalMissing": "A cópia deste arquivo guardada pelo Abiding Word não foi encontrada.",
-    "originalUnavailable": "Não é possível abrir o original desta fonte."
+    "originalUnavailable": "Não é possível abrir o original desta fonte.",
+    "structure": {
+      "corrupt": "Não foi possível ler a estrutura PDF salva. O texto e o original permanecem intactos.",
+      "invalid": "Esta correção não corresponde mais à fonte. Abra o texto novamente e tente outra vez."
+    }
   },
   "templates": {
     "noSections": "Um modelo precisa de pelo menos uma parte para começar.",

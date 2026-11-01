@@ -226,7 +226,7 @@ export interface SourceFixture {
   format?: Source["format"];
   sourceType?: Source["sourceType"];
   language?: string;
-  segments: { text: string; pageNumber?: number; sectionPath?: string }[];
+  segments: { text: string; pageNumber?: number; sectionPath?: string; presentation?: import("@/types/library").PdfPresentation }[];
   /** Scripture mentions: segment index, canonical reference, text as written. */
   mentions?: { segment: number; reference: string; matchedText: string }[];
   /**
@@ -887,7 +887,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     const segmentIds = fixture.segments.map((seg, position) => {
       const segment = {
         id: id(), sourceId, position, text: seg.text, pageNumber: seg.pageNumber ?? null, pageLabel: null,
-        chapter: null, heading: null, sectionPath: seg.sectionPath ?? null, paragraphIndex: 0, locator: "",
+        chapter: null, heading: null, sectionPath: seg.sectionPath ?? null, paragraphIndex: 0, locator: "", presentation: seg.presentation,
       };
       segment.locator = locator(segment);
       library.segments.push(segment);
@@ -2467,6 +2467,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       }
       return window(sourceId, offset, limit, null);
     },
+    libraryPdfStructure: async (sourceId) => ({sourceId,fileHash:null,status:"missing",complete:false,tagged:false,unalignedTags:0,uncertainPages:0,headings:[],corrections:[],canUndo:false}),
+    libraryPdfStructureBuild: async () => {throw new Error("No PDF file in the memory library");},
+    libraryPdfStructureCorrect: async () => {throw new Error("No PDF structure in the memory library");},
+    libraryPdfStructureUndo: async () => {throw new Error("No PDF structure in the memory library");},
     librarySourceContents: async (sourceId) => {
       liveSource(sourceId);
       return contentsOf.get(sourceId) ?? [];

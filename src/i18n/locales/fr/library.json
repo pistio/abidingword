@@ -598,5 +598,43 @@
     "go": "Aller à la page",
     "physical": "Les pages PDF sont comptées depuis le début du fichier, couverture comprise. La pagination imprimée peut différer.",
     "printed": "Pagination imprimée : {{label}}."
+  },
+  "structure": {
+    "title": "Structure du document",
+    "explanation": "Les cibles reposent sur le document, sans jugement de pertinence théologique. Les corrections sont enregistrées dans Abiding Word ; les fichiers originaux et les citations restent inchangés.",
+    "build": "Analyser la structure",
+    "rebuild": "Reprendre l’analyse",
+    "undo": "Annuler la correction",
+    "reset": "Réinitialiser les corrections",
+    "status": "{{count}} sections",
+    "uncertain": "Certains textes ou éléments de structure n’ont pas pu être localisés avec certitude. Vérifiez la vue Original.",
+    "search": "Rechercher une section",
+    "physical": "Page PDF {{page}}",
+    "unmapped": "Aucun passage associé",
+    "open": "Ouvrir la section",
+    "edit": "Corriger la section",
+    "refine": "Précisez la recherche pour voir d’autres sections.",
+    "add": "Définir une ligne visible comme section",
+    "addHelp": "Choisissez une ligne sans ambiguïté dans la fenêtre de lecture actuelle.",
+    "heading": "Titre de la section",
+    "level": "Niveau hiérarchique",
+    "mapping": "Passage biblique associé",
+    "mappingHelp": "Laissez vide pour ne pas associer de passage. Pour un livre entier, indiquez tous ses chapitres (Actes 1–28).",
+    "scope": "Étendue du passage",
+    "disable": "Exclure cette section",
+    "basis": {
+      "outline": "Plan intégré",
+      "tagged": "Balises PDF",
+      "layout": "Déduit de la mise en page",
+      "user": "Correction personnelle"
+    },
+    "scopes": {
+      "passage": "Passage",
+      "chapter": "Chapitre",
+      "book": "Livre"
+    },
+    "mappingExample": "Actes 6",
+    "originalBookmarks": "Signets du PDF original",
+    "originalBookmarksHelp": "Il s’agit des destinations de page du PDF, sans les corrections de section de l’application. Une destination de page ne prouve ni une correspondance textuelle exacte ni la pertinence d’un commentaire."
   }
 }

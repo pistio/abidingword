@@ -9,7 +9,7 @@ import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { hostOf } from "@/lib/externalLink";
 import type { PdfPlace } from "@/lib/pdfEngine";
-import type { ContentsItem, SegmentWindow, SourceAnnotation, SourceLink, SourceMatch, SourceReference, SourceSegment } from "@/types/library";
+import type { PdfHeading, ContentsItem, SegmentWindow, SourceAnnotation, SourceLink, SourceMatch, SourceReference, SourceSegment } from "@/types/library";
 import { PHRASE_CLASS } from "@/lib/annotationRender";
 import type { ScriptureRef } from "@/types/scripture";
 import { citationText, formatLabel, locatorLabel, quotationWithCitation, sourceTypeLabel } from "./labels";
@@ -22,6 +22,7 @@ import { EpubViewer } from "./formatted/EpubViewer";
 import { activeMatch, FindBar, useSourceFind } from "./FindBar";
 import { placeOfPosition, positionOfPlace, type EpubPlace } from "./formatted/epubLocation";
 import { useEpubStructure } from "./formatted/useEpubStructure";
+import { PdfStructurePanel } from "./PdfStructurePanel";
 import { PdfPageNavigation } from "./PdfPageNavigation";
 import { PdfViewer, type PdfFind } from "./PdfViewer";
 import { canGoBack, canGoForward, NO_HISTORY, stepBack, stepForward, visit, type ReaderHistory, type SourceLocation } from "./readerHistory";
@@ -74,6 +75,7 @@ export interface ReaderPosition {
 interface SourceReaderProps {
   sourceId: string;
   segmentId?: string;
+  structureNodeId?: string;
   /** Leaves the reader. Told where it was, so the next reader can open there. */
   onClose: (position: ReaderPosition) => void;
   /**
@@ -109,7 +111,7 @@ function scrollInReader(viewport: HTMLElement | null, element: Element | null | 
   for (const saved of ancestors) { saved.element.scrollTop = saved.top; saved.element.scrollLeft = saved.left; }
 }
 
-export function SourceReader({ sourceId, segmentId, onClose, variant = "page", onExpand, initialPosition, quotedWords, onPositionReader, backLabel }: SourceReaderProps) {
+export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, variant = "page", onExpand, initialPosition, quotedWords, onPositionReader, backLabel }: SourceReaderProps) {
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
@@ -131,6 +133,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   // The page this reader was told to open at (continuing from another reader).
   const [initialPage] = useState(initialPosition?.page ?? null);
   const [initialPlace] = useState(initialPosition?.place);
+  const focusedHeading = useRef(initialPosition?.place?.headingId ?? structureNodeId);
   const startedInOriginal = initialPosition?.mode === "original";
   // The physical page the original is showing, kept for the way back to Reading.
   const originalPage = useRef<number | null>(null);
@@ -138,8 +141,10 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   const landing = useRef<number | null>(null);
   // Where the original opens; until chosen, the page of the passage opened at.
   const [openPage, setOpenPage] = useState<number | null>(null);
+  const [structureOpen, setStructureOpen] = useState(false);
+  const [structureRevision, setStructureRevision] = useState(0);
   // The source's own contents (an EPUB's, a PDF's outline), and the panel that shows them.
-  const { items: contents, generated: contentsGenerated, adopt: adoptContents } = useSourceContents(source.data);
+  const { items: contents, generated: contentsGenerated, adopt: adoptContents } = useSourceContents(source.data, structureRevision);
   const stage = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLButtonElement>(null);
   const contentsLayout = useContentsLayout(stage, contents.length > 0);
@@ -153,7 +158,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   // A segment position Reading should scroll to after a contents entry or link was chosen.
   // With an `offset`, the segment is put exactly that far from the top of the view (returning by Back / Forward).
   // With `find`, the current "Find in this source" match is shown instead, and focus stays in the find bar.
-  const landingPosition = useRef<{ position: number; offset: number | null; find?: boolean } | null>(null);
+  const landingPosition = useRef<{ position: number; offset: number | null; find?: boolean; headingId?: string } | null>(null);
   const jumps = useRef(0);
 
   // Back / Forward: deliberate jumps only. Kept in a ref as well as state, so a handler always sees the latest.
@@ -242,12 +247,12 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   useEffect(() => {
     if (!loaded) return;
     if (target.current) {
-      scrollInReader(bodyRef.current, target.current, "center");
+      scrollInReader(bodyRef.current, [...target.current.querySelectorAll<HTMLElement>("[data-pdf-heading]")].find(el=>el.dataset.pdfHeading===(structureNodeId ?? focusedHeading.current)) ?? target.current.querySelector<HTMLElement>("[data-pdf-heading]") ?? target.current, "center");
       target.current.focus({ preventScroll: true });
     } else {
       heading.current?.focus({ preventScroll: true });
     }
-  }, [loaded, targetId]);
+  }, [loaded, targetId, structureNodeId]);
 
   const viewKind = source.data?.originalView?.kind;
   const isPdf = viewKind === "pdf";
@@ -305,13 +310,42 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       return;
     }
     if (next === "original") {
-      setOpenPage(textPage ?? readingPage());
+      const here = topSegment();
+      const body=bodyRef.current, area=body?.getBoundingClientRect();
+      const visible=(element:Element | null | undefined)=>{const box=element?.getBoundingClientRect();return !!(box && area && box.bottom>area.top && box.top<area.bottom);};
+      const focused=body ? [...body.querySelectorAll<HTMLElement>("[data-pdf-heading]")].find(el=>el.dataset.pdfHeading===focusedHeading.current) : undefined;
+      // A centred section target may leave preceding context at the viewport's
+      // top. Keep the selected heading while it is visible, just as the page
+      // navigator keeps the visible marked target's physical page.
+      const selected=visible(focused) ? window?.segments.find(s=>s.presentation?.headings.some(h=>h.id===focusedHeading.current)) : undefined;
+      const marked=visible(body?.querySelector("[data-target]")) ? window?.segments.find(s=>s.id===window.targetSegmentId) : undefined;
+      const segment=selected ?? marked ?? window?.segments.find(s=>s.position===here?.position);
+      const anchor = segment?.presentation?.headings.find(h=>h.id===focusedHeading.current)?.anchor ?? segment?.presentation?.headings[0]?.anchor ?? segment?.presentation?.anchors[0];
+      const page = anchor?.page ?? textPage ?? readingPage();
+      setOpenPage(page);
+      if (anchor) setJump({page,fraction:Math.max(0,(anchor.baseline-anchor.size)/Math.max(1,anchor.pageHeight)),nonce:++jumps.current});
       setMode("original");
       return;
     }
     // Back to Reading: open the text where the original was.
     const page = originalPage.current;
+    const at = pdfNow.current?.();
     setMode("reading");
+    if (at) {
+      try {
+        const w = await api.sourceGetSegments({sourceId,aroundPage:at.page});
+        const candidates = w.segments.filter(s=>s.pageNumber===at.page && s.presentation?.anchors.length);
+        const nearest = candidates.reduce<SourceSegment | null>((best,s) => {
+          const distance = (p: SourceSegment) => Math.min(...p.presentation!.anchors.map(a=>Math.abs((a.baseline-a.size)/Math.max(1,a.pageHeight)-at.fraction)));
+          return !best || distance(s) < distance(best) ? s : best;
+        },null);
+        if(nearest) {
+          const h=nearest.presentation?.headings.reduce<PdfHeading | undefined>((best,h)=>!best || Math.abs((h.anchor.baseline-h.anchor.size)/Math.max(1,h.anchor.pageHeight)-at.fraction)<Math.abs((best.anchor.baseline-best.anchor.size)/Math.max(1,best.anchor.pageHeight)-at.fraction) ? h : best,undefined);
+          focusedHeading.current=h?.id;
+          landingPosition.current={position:nearest.position,offset:null,headingId:h?.id}; setWindow({...w,targetSegmentId:null}); return;
+        }
+      } catch(e) {setError(toApiError(e).message); return;}
+    }
     if (page === null || page === startPage) {
       // Still where it was opened: keep the window (and any marked passage).
       landing.current = startPage;
@@ -346,7 +380,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       landingPosition.current = null;
     }
     if (landingPosition.current !== null) {
-      const { position, offset } = landingPosition.current;
+      const { position, offset, headingId } = landingPosition.current;
       const spot = body?.querySelector<HTMLElement>(`[data-seg-position="${position}"]`);
       if (offset !== null) {
         // Back / Forward: the very place, as far from the top of the view as it was.
@@ -355,7 +389,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       } else {
         // Show the chapter or section heading that precedes the text, too.
         const before = spot?.previousElementSibling;
-        scrollInReader(body, before?.hasAttribute("data-section-marker") ? before : spot, "start");
+        scrollInReader(body, [...(spot?.querySelectorAll<HTMLElement>("[data-pdf-heading]") ?? [])].find(el=>el.dataset.pdfHeading===headingId) ?? spot?.querySelector<HTMLElement>("[data-pdf-heading]") ?? (before?.hasAttribute("data-section-marker") ? before : spot), "start");
       }
       spot?.setAttribute("tabindex", "-1");
       if (spot && refocusOpener.current !== null) {
@@ -369,7 +403,19 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
 
   /** The contents entry the reader is in now: by page for a PDF, by segment position otherwise. */
   const currentEntryNow = (): string | null => {
-    if (isPdf) return currentEntry(contents, "page", showOriginal ? (originalPage.current ?? startPage) : readingPage());
+    if (isPdf && !showOriginal && focusedHeading.current) {
+      const body=bodyRef.current, area=body?.getBoundingClientRect();
+      const selected=body ? [...body.querySelectorAll<HTMLElement>("[data-pdf-heading]")].find(el=>el.dataset.pdfHeading===focusedHeading.current) : undefined;
+      if(selected && (!area || selected.getBoundingClientRect().bottom >= area.top)) return focusedHeading.current;
+    }
+    const pageContents = contents.some(item => item.target?.kind === "page");
+    if (isPdf && pageContents) return currentEntry(contents, "page", showOriginal ? (originalPage.current ?? startPage) : readingPage());
+    if(isPdf && showOriginal) {
+      const page = originalPage.current ?? startPage;
+      const fraction = pdfNow.current?.().fraction ?? 0;
+      const candidates = window?.segments.filter(s=>s.pageNumber===page && (s.presentation?.anchors[0]?.baseline ?? 0)/(s.presentation?.anchors[0]?.pageHeight ?? 1) <= fraction + .05);
+      return currentEntry(contents,"segment",candidates?.at(-1)?.position ?? window?.segments.find(s=>s.pageNumber===page)?.position ?? 0);
+    }
     if (showOriginal && isEpubView) {
       const here = epubNow.current?.();
       return currentEntry(contents, "segment", (here ? positionOfPlace(epub.items, here) : null) ?? 0);
@@ -432,8 +478,9 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   };
 
   /** Reading, at a segment of the extracted text (EPUB). With `find`, at the current find match there. */
-  const goToPosition = async (position: number, offset: number | null = null, find = false) => {
-    landingPosition.current = { position, offset, find };
+  const goToPosition = async (position: number, offset: number | null = null, find = false, headingId?: string) => {
+    focusedHeading.current=headingId;
+    landingPosition.current = { position, offset, find, headingId };
     if (window && position >= window.offset && position < window.offset + window.segments.length) {
       setWindow({ ...window });
       return;
@@ -700,6 +747,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       page: isPdf && window ? (textPage ?? readingPage()) : null,
       fraction: 0,
       position: top?.position ?? null,
+      headingId: focusedHeading.current,
       offset: top?.offset ?? 0,
       item: text?.item ?? null,
       fragment: text?.fragment ?? null,
@@ -718,6 +766,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
 
   /** Moves the view to a place, in the mode the reader is in (the mode is never changed by a jump). */
   const goTo = (place: SourceLocation) => {
+    focusedHeading.current=place.headingId;
     if (!showOriginal && isPdf && place.page !== null) setTextPage(place.page);
     if (showOriginal && isEpubView) {
       const at: EpubPlace | null =
@@ -728,9 +777,14 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
             : null;
       if (at) setEpubJump({ ...at, nonce: ++jumps.current });
     } else if (showOriginal) {
-      if (place.page !== null) setJump({ page: place.page, fraction: place.fraction, nonce: ++jumps.current });
+      if (place.position !== null && isPdf) {
+        void api.sourceGetSegments({sourceId,offset:place.position,limit:1}).then(w=>{
+          const s = w.segments[0]; const anchor=s?.presentation?.headings.find(h=>h.id===place.headingId)?.anchor ?? s?.presentation?.headings[0]?.anchor ?? s?.presentation?.anchors[0];
+          if(s?.pageNumber) setJump({page:s.pageNumber,fraction:anchor ? Math.max(0,(anchor.baseline-anchor.size)/Math.max(1,anchor.pageHeight)) : 0,nonce:++jumps.current});
+        }).catch(e=>setError(toApiError(e).message));
+      } else if (place.page !== null) setJump({ page: place.page, fraction: place.fraction, nonce: ++jumps.current });
     } else if (place.position !== null) {
-      void goToPosition(place.position, place.offset);
+      void goToPosition(place.position, place.offset, false, place.headingId);
     } else if (place.item !== null) {
       const position = positionOfPlace(epub.items, { item: place.item, fragment: place.fragment });
       if (position !== null) void goToPosition(position);
@@ -740,7 +794,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   };
 
   /** A deliberate jump (a link, a contents entry): Back returns to where the reader was. */
-  const jumpTo = (target: { page?: number; fraction?: number; position?: number; item?: string; fragment?: string | null }, from?: number | EpubPlace) => {
+  const jumpTo = (target: { page?: number; fraction?: number; position?: number; headingId?: string; item?: string; fragment?: string | null }, from?: number | EpubPlace) => {
     // A link that leads outside the text leaves the reader where it is.
     if (target.position !== undefined && window && (target.position < 0 || target.position >= window.total)) {
       void api.logError("A link in the source could not be followed: it leads outside the text").catch(() => undefined);
@@ -752,10 +806,10 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     } else if (isEpubView && target.position !== undefined) {
       place = epubPlace(placeOfPosition(epub.items, target.position), 0, target.position);
     } else {
-      place = { page: target.page ?? null, fraction: target.fraction ?? 0, position: target.position ?? null, offset: 0, item: null, fragment: null, itemOffset: 0 };
+      place = { page: target.page ?? null, fraction: target.fraction ?? 0, position: target.position ?? null, headingId:target.headingId, offset: 0, item: null, fragment: null, itemOffset: 0 };
     }
     commit(visit(historyRef.current, placeNow(from), place));
-    if (!showOriginal && place.position !== null) void goToPosition(place.position);
+    if (!showOriginal && place.position !== null) void goToPosition(place.position,null,false,place.headingId);
     else goTo(place);
   };
 
@@ -855,7 +909,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     closeContents();
     // The mode is kept: Original moves its page (zoom unchanged), Reading shows that page's text.
     if (target.kind === "page") jumpTo({ page: target.page });
-    else jumpTo({ position: target.position });
+    else jumpTo({ position: target.position, headingId: isPdf ? item.id : undefined });
   };
 
   const more = async (direction: "earlier" | "later") => {
@@ -880,7 +934,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   const pageNavigation = source.data?.format === "pdf" && source.data.pageCount ? <PdfPageNavigation
     page={navigablePage}
     total={source.data.pageCount}
-    printedLabel={window?.segments.find((segment) => segment.pageNumber === navigablePage)?.pageLabel}
+    printedLabel={window?.segments.find((segment) => segment.pageNumber === navigablePage)?.presentation?.printedLabel ?? window?.segments.find((segment) => segment.pageNumber === navigablePage)?.pageLabel}
     onGo={(page) => jumpTo({ page })}
   /> : null;
   const s = source.data;
@@ -959,7 +1013,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         key={`${sourceId}-${startPage}`}
         sourceId={sourceId}
         initialPage={startPage}
-        initialFraction={initialPlace?.fraction ?? 0}
+        initialFraction={initialPlace?.fraction ?? (()=>{const s=window?.segments.find(x=>x.id===window.targetSegmentId);const a=s?.presentation?.headings.find(h=>h.id===structureNodeId)?.anchor ?? s?.presentation?.headings[0]?.anchor ?? s?.presentation?.anchors[0];return a ? Math.max(0,(a.baseline-a.size)/Math.max(1,a.pageHeight)) : 0;})()}
         onPageChange={(page) => {
           originalPage.current = page;
           setPdfPage(page);
@@ -1023,6 +1077,15 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     ) : null;
 
   const modeSwitch = hasOriginal ? <ModeSwitch mode={mode} onChange={(m) => void choose(m)} /> : null;
+  const structureControl = isPdf ? <>
+    <Button variant="quiet" onClick={()=>setStructureOpen(true)}>{t("library.structure.title")}</Button>
+    {structureOpen && <PdfStructurePanel sourceId={sourceId} segments={window?.segments ?? []}
+      onGo={(position,headingId)=>{jumpTo({position,headingId}); setStructureOpen(false);}} onPage={page=>{jumpTo({page});setStructureOpen(false);}} onClose={()=>setStructureOpen(false)}
+      onChanged={async()=>{
+        const w = await api.sourceGetSegments({sourceId,offset:window?.offset ?? 0,limit:window?.segments.length ?? 150});
+        setWindow({...w,targetSegmentId:window?.targetSegmentId ?? null}); setStructureRevision(v=>v+1);
+      }}/>}</> : null;
+
   const contentsButton =
     contents.length > 0 ? (
       <Button ref={opener} variant="quiet" aria-expanded={panel !== null} aria-controls={panel ? `${id}-contents` : undefined} title={t("library.contents.show")} onClick={() => (panel ? closeContents() : openContents())}>
@@ -1243,6 +1306,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
             {placeButtons}
             {findButton}
             {contentsButton}
+            {structureControl}
             {marksButton}
           </div>
         </div>
@@ -1294,6 +1358,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         {placeButtons}
         {findButton}
         {contentsButton}
+        {structureControl}
         {marksButton}
       </div>
       {pageNavigation}
@@ -1454,17 +1519,19 @@ function linked(
   title: string,
   onFollow: (position: number) => void,
   onOpenInBible: (reference: ScriptureRef) => void,
+  from = 0,
+  to = text.length,
 ): React.ReactNode {
-  if ((!links || links.length === 0) && (!references || references.length === 0)) return painted(text, 0, text.length, marks);
+  if ((!links || links.length === 0) && (!references || references.length === 0)) return painted(text, from, to, marks);
   type Span = { start: number; end: number; link?: SourceLink; reference?: SourceReference };
   const spans: Span[] = [
     ...(links ?? []).map((link): Span => ({ start: link.start, end: link.end, link })),
     ...(references ?? []).map((reference): Span => ({ start: reference.start, end: reference.end, reference })),
   ].sort((a, b) => a.start - b.start || (a.link ? -1 : 1) - (b.link ? -1 : 1));
   const out: React.ReactNode[] = [];
-  let at = 0;
+  let at = from;
   for (const span of spans) {
-    if (span.start < at || span.end > text.length || span.start >= span.end) continue;
+    if (span.start < at || span.end > to || span.start >= span.end) continue;
     if (span.start > at) out.push(<Fragment key={`t${at}`}>{painted(text, at, span.start, marks)}</Fragment>);
     const written = painted(text, span.start, span.end, marks);
     if (span.link) {
@@ -1492,7 +1559,7 @@ function linked(
     }
     at = span.end;
   }
-  if (at < text.length) out.push(<Fragment key={`t${at}`}>{painted(text, at, text.length, marks)}</Fragment>);
+  if (at < to) out.push(<Fragment key={`t${at}`}>{painted(text, at, to, marks)}</Fragment>);
   return out;
 }
 
@@ -1516,14 +1583,32 @@ function SegmentView({
   onOpenInBible,
 }: SegmentViewProps) {
   const { t } = useTranslation();
-  const page = segment.pageLabel ?? segment.pageNumber;
+  const metadata = segment.presentation;
+  const page = metadata?.printedLabel ?? segment.pageLabel ?? segment.pageNumber;
+  const renderRange = (start:number,end:number) => linked(segment.text,links,references,{marks,ranges},t("library.links.follow"),onFollow,onOpenInBible,start,end);
+  const structured = () => {
+    const headings = metadata?.headings ?? [];
+    const boundaries = [...new Set([0,segment.text.length,...headings.flatMap(h=>[h.start,h.end]),...(metadata?.runs ?? []).filter(r=>["header","footer","note","artifact"].includes(r.role)).flatMap(r=>[r.start,r.end])])].filter(n=>n>=0 && n<=segment.text.length).sort((a,b)=>a-b);
+    const out: React.ReactNode[] = [];
+    for(let i=0;i<boundaries.length-1;i++) {
+      const start=boundaries[i]!,end=boundaries[i+1]!;
+      const heading=headings.find(h=>h.start<=start && h.end>=end);
+      const role=metadata?.runs.find(r=>r.start<=start && r.end>=end)?.role;
+      const words=renderRange(start,end);
+      if(heading) out.push(<span key={start} role="heading" aria-level={Math.min(6,heading.level)} data-pdf-heading={heading.id} className={`block font-display font-semibold text-text-strong ${heading.level<=1 ? "mb-3 mt-5 text-2xl" : heading.level===2 ? "mb-2 mt-4 text-xl" : "mb-2 mt-3 text-lg"}`}>{words}</span>);
+      else if(role === "header" || role === "footer" || role === "note" || role === "artifact") out.push(<span key={start} data-pdf-text-role={role} className={`block text-text-muted ${role === "note" ? "pl-4 text-sm" : "text-xs"}`}>{words}</span>);
+      else out.push(<Fragment key={start}>{words}</Fragment>);
+    }
+    return out;
+  };
+  const roleClass = metadata?.role === "quote" ? "border-l-2 border-border pl-5 italic" : metadata?.role === "list" ? "pl-5" : metadata?.role === "note" ? "pl-4 text-sm text-text-muted" : ["header","footer","artifact"].includes(metadata?.role ?? "") ? "text-xs text-text-muted" : "";
   const newPage = segment.pageNumber !== null && segment.pageNumber !== previous?.pageNumber;
   const newSection = segment.pageNumber === null && segment.sectionPath && segment.sectionPath !== previous?.sectionPath;
   return (
     <>
       {newPage && (
         <p className="m-0 mt-2 border-t border-border-subtle pt-2 font-ui text-[0.875rem] font-medium text-text-muted" aria-label={t("library.reader.pageMarker", { page: String(page) })}>
-          {locatorLabel(t, segment.locator, page)}
+          {locatorLabel(t, segment.locator, page)}{metadata?.printedLabel && <> · {t("library.structure.physical",{page:segment.pageNumber})}</>}
         </p>
       )}
       {newSection && (
@@ -1538,9 +1623,10 @@ function SegmentView({
         data-seg-page={segment.pageNumber ?? undefined}
         data-seg-position={segment.position}
         data-segment-id={segment.id}
-        className={`m-0 ${isTarget ? "border-l-[3px] border-accent bg-note px-3 py-1" : ""}`}
+        data-pdf-role={metadata?.role}
+        className={`m-0 leading-relaxed ${roleClass} ${isTarget ? "border-l-[3px] border-accent bg-note px-3 py-1" : ""}`}
       >
-        {linked(segment.text, links, references, { marks, ranges }, t("library.links.follow"), onFollow, onOpenInBible)}
+        {structured()}
         {paragraphMarks && paragraphMarks.length > 0 && <MarksMarker marks={paragraphMarks} open={marksOpen} controls={marksId} onToggle={onToggleMarks} />}
       </p>
       {marksOpen && paragraphMarks && paragraphMarks.length > 0 && <MarksInspector id={marksId} marks={paragraphMarks} onChanged={onMarksChanged} onClose={onCloseMarks} {...markActions} />}

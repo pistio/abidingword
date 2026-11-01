@@ -13,7 +13,7 @@ export interface LibraryNav {
    * Opens a source, at an exact segment when given, or at a view and page (a mark on an Original PDF
    * page). With `words` (v0.15: a citation found exactly), those words are shown marked there.
    */
-  openSource: (sourceId: string, segmentId?: string, position?: ReaderPosition, words?: QuotedWords) => void;
+  openSource: (sourceId: string, segmentId?: string, position?: ReaderPosition, words?: QuotedWords, structureNodeId?: string) => void;
   addSource: () => void;
   /** Session-only opening history, newest first; never inferred from import dates. */
   recentSourceIds?: readonly string[];

@@ -11,7 +11,7 @@ interface PassageSourceListProps {
   label: string;
   /** The passage a link points at, written in the interface language. */
   passageLabel: (reference: ScriptureRef) => string;
-  onOpen: (sourceId: string, segmentId: string) => void;
+  onOpen: (sourceId: string, segmentId: string, structureNodeId?: string) => void;
   /** Which sources show their further places. */
   expansion?: Record<string, ExpansionState>;
   onToggleMore?: (sourceId: string) => void;
@@ -33,7 +33,12 @@ export function PassageSourceList({
   const { t } = useTranslation();
   const prefix = useId();
   const controls = useRef<Record<string, HTMLButtonElement | null>>({});
-  const reason = (place: PassageLocation) => passageReason(t, place.origin, passageLabel(place.reference));
+  const reason = (place: PassageLocation) => {
+    const reason = passageReason(t, place.origin, passageLabel(place.reference));
+    const basis = place.structureBasis;
+    if(basis === "outline" || basis === "tagged" || basis === "layout" || basis === "user") return `${reason} · ${t(`library.structure.basis.${basis}`)}`;
+    return reason;
+  };
   return (
     <ul aria-label={label} className="m-0 -mx-2 flex list-none flex-col gap-1 p-0">
       {groups.map((group, index) => {
@@ -50,7 +55,7 @@ export function PassageSourceList({
                 type="button"
                 data-source-result={group.sourceId}
                 data-source-segment={best.segmentId}
-                onClick={() => onOpen(group.sourceId, best.segmentId)}
+                onClick={() => onOpen(group.sourceId, best.segmentId, best.structureNodeId ?? undefined)}
                 className="flex w-full flex-col items-start gap-0.5 rounded-aw px-2 py-2 text-left hover:bg-hover"
               >
                 {/* A source's name is readable, not loud: many of them stand one under another. */}
@@ -61,6 +66,7 @@ export function PassageSourceList({
                   {[group.author, locatorLabel(t, best.locator)].filter(Boolean).join(t("common.listSeparator"))}
                 </span>
                 <span className="type-meta">{reason(best)}</span>
+                {best.structureBasis && best.sectionHeading && <span className="type-meta break-words">{best.sectionHeading}</span>}
               </button>
               {others.length + group.moreLocations > 0 && onToggleMore && (
                 <div
@@ -81,7 +87,7 @@ export function PassageSourceList({
                             type="button"
                             data-source-result={group.sourceId}
                             data-source-segment={place.segmentId}
-                            onClick={() => onOpen(group.sourceId, place.segmentId)}
+                            onClick={() => onOpen(group.sourceId, place.segmentId, place.structureNodeId ?? undefined)}
                             className="flex w-full flex-wrap items-baseline gap-x-2 rounded-aw py-1 pl-3 text-left text-[0.875rem] hover:bg-hover"
                           >
                             <span className="text-text">{locatorLabel(t, place.locator)}</span>

@@ -556,5 +556,43 @@
     "go": "Zur Seite",
     "physical": "PDF-Seiten zählen ab Dateibeginn einschließlich Umschlag. Gedruckte Seitenzahlen können abweichen.",
     "printed": "Gedruckte Seitenangabe: {{label}}."
+  },
+  "structure": {
+    "title": "Dokumentstruktur",
+    "explanation": "Abschnittsziele beruhen auf Dokumentmerkmalen, nicht auf einer Beurteilung theologischer Relevanz. Korrekturen gehören zu Abiding Word; Originaldateien und Zitattexte bleiben unverändert.",
+    "build": "Struktur erstellen",
+    "rebuild": "Struktur neu erstellen",
+    "undo": "Korrektur rückgängig",
+    "reset": "Korrekturen zurücksetzen",
+    "status": "{{count}} Abschnitte",
+    "uncertain": "Einige Texte oder Strukturen konnten nicht sicher zugeordnet werden. Bitte im Original prüfen.",
+    "search": "Abschnitt suchen",
+    "physical": "PDF-Seite {{page}}",
+    "unmapped": "Keine Bibelstellenzuordnung",
+    "open": "Abschnitt öffnen",
+    "edit": "Abschnitt korrigieren",
+    "refine": "Suche eingrenzen, um weitere Abschnitte zu sehen.",
+    "add": "Sichtbare Textzeile als Abschnitt markieren",
+    "addHelp": "Eine eindeutige Zeile aus dem aktuellen Lesefenster auswählen.",
+    "heading": "Abschnittstitel",
+    "level": "Hierarchieebene",
+    "mapping": "Bibelstellenzuordnung",
+    "mappingHelp": "Leer lassen für keine Verknüpfung. Für ein ganzes Buch den vollständigen Kapitelbereich angeben (Apg 1–28).",
+    "scope": "Umfang der Zuordnung",
+    "disable": "Diesen Abschnitt ausschließen",
+    "basis": {
+      "outline": "Eingebettete Gliederung",
+      "tagged": "PDF-Strukturtags",
+      "layout": "Aus dem Layout abgeleitet",
+      "user": "Benutzerkorrektur"
+    },
+    "scopes": {
+      "passage": "Bibelstelle",
+      "chapter": "Kapitel",
+      "book": "Buch"
+    },
+    "mappingExample": "Apg 6",
+    "originalBookmarks": "Originale PDF-Lesezeichen",
+    "originalBookmarksHelp": "Dies sind die eigenen Seitenziele der PDF, ohne die Abschnittskorrekturen der App. Ein Seitenziel belegt weder einen textgenau zugeordneten Abschnitt noch eine inhaltliche Kommentarrelevanz."
   }
 }

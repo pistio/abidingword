@@ -155,7 +155,7 @@ fn on_disk_19_24_25_upgrade_keeps_answers_graph_history_and_one_backup_across_re
         for _ in 0..3 {
             let db = Database::open(&path, &backups).unwrap();
             db.with_conn(|c| {
-                assert_eq!(migrations::current_version(c)?, 26);
+                assert_eq!(migrations::current_version(c)?, 27);
                 preserved(c, &before);
                 for (v, n, t) in &history {
                     assert_eq!(

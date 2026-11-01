@@ -30,6 +30,7 @@ pub struct StagedSource {
     /// (`db::library::commit_import`), reusing this one only when that is the
     /// same language.
     pub index: PassageIndex,
+    pub pdf_structure: Option<crate::library::pdf_structure::PdfStructure>,
 }
 
 impl StagedSource {
@@ -89,7 +90,20 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
         ));
     }
     let bytes = fs::read(path).map_err(|e| AppError::filesystem(path, e))?;
-    let document = adapter.extract(&bytes, &file_name)?;
+    let (document, pdf_structure) = if extension == "pdf" {
+        let pdf = crate::library::adapters::pdf::read_pages(&bytes, &file_name)?;
+        let document = crate::library::adapters::pdf::document_from_text(&pdf);
+        let structure = (!pdf.scanned).then(|| {
+            crate::library::pdf_structure::extract(
+                &bytes,
+                &pdf,
+                &crate::library::pdf_structure::pieces(&document.segments),
+            )
+        });
+        (document, structure)
+    } else {
+        (adapter.extract(&bytes, &file_name)?, None)
+    };
 
     // The preview language: what the file says, else English. The person may
     // still change it before adding the source; the commit decides again.
@@ -129,5 +143,6 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
         hash: content_hash(&bytes),
         document,
         index,
+        pdf_structure,
     })
 }

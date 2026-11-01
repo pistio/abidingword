@@ -129,7 +129,11 @@
     "duplicate": "이 파일은 이미 자료실에 “{{title}}”(으)로 있습니다.",
     "originalUnsupported": "이 자료에는 원본 보기가 없습니다.",
     "originalMissing": "Abiding Word가 보관한 이 파일의 사본을 찾을 수 없습니다.",
-    "originalUnavailable": "이 자료의 원본을 열 수 없습니다."
+    "originalUnavailable": "이 자료의 원본을 열 수 없습니다.",
+    "structure": {
+      "corrupt": "저장된 PDF 구조를 읽을 수 없습니다. 원문 텍스트와 원본 파일은 그대로 유지됩니다.",
+      "invalid": "수정 사항이 현재 자료와 맞지 않습니다. 텍스트를 다시 열고 시도하세요."
+    }
   },
   "templates": {
     "noSections": "공부 틀에는 부분이 하나 이상 있어야 합니다.",

@@ -1,3 +1,4 @@
+import type { PdfStructureView, PdfCorrection } from "@/types/library";
 // The frontend's only door to the native core. Components use the `Api`
 // interface through `useApi()`, never `invoke` directly, so tests can supply
 // an in-memory implementation.
@@ -286,6 +287,10 @@ export interface Api {
   /** Size and kind of a source's original file, found by source id only. */
   /** The contents an EPUB carries (or the headings of a DOCX), as segment targets (a PDF's outline comes from the PDF engine). */
   librarySourceContents(id: string): Promise<ContentsItem[]>;
+  libraryPdfStructure(id: string): Promise<PdfStructureView>;
+  libraryPdfStructureBuild(id: string): Promise<PdfStructureView>;
+  libraryPdfStructureCorrect(id: string, hash: string, correction: PdfCorrection): Promise<PdfStructureView>;
+  libraryPdfStructureUndo(id: string, hash: string, reset: boolean): Promise<PdfStructureView>;
   /** Contents made from the source's own headings, for a source that carries none (shown as generated). */
   libraryGeneratedContents(id: string): Promise<ContentsItem[]>;
   /** The links in an EPUB's text that lead elsewhere in the same book (none for other formats). */
@@ -725,6 +730,10 @@ export const tauriApi: Api = {
   libraryOpenSegment: (segmentId) => call("library_open_segment", { segmentId }),
   sourceGetSegments: (input) => call("source_get_segments", { input }),
   librarySourceContents: (id) => call("library_source_contents", { id }),
+  libraryPdfStructure: (id) => call("library_pdf_structure", { id }),
+  libraryPdfStructureBuild: (id) => call("library_pdf_structure_build", { id }),
+  libraryPdfStructureCorrect: (id, hash, correction) => call("library_pdf_structure_correct", { id, hash, correction }),
+  libraryPdfStructureUndo: (id, hash, reset) => call("library_pdf_structure_undo", { id, hash, reset }),
   libraryGeneratedContents: (id) => call("library_generated_contents", { id }),
   librarySourceLinks: (id) => call("library_source_links", { id }),
   librarySourceReferences: (id) => call("library_source_references", { id }),

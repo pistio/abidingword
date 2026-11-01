@@ -154,7 +154,12 @@ pub fn add_staged(
         .unwrap_or_else(|| core.dirs.sources());
     let copied = (|| {
         fs::create_dir_all(&folder).map_err(|e| AppError::filesystem(&folder, e))?;
-        fs::copy(&staged.path, &target).map_err(|e| AppError::filesystem(&staged.path, e))?;
+        crate::library::files::copy_verified(
+            &staged.path,
+            &target,
+            &staged.hash,
+            &staged.file_name,
+        )?;
         Ok::<_, AppError>(())
     })();
     if let Err(error) = copied {
@@ -394,6 +399,11 @@ pub fn library_source_contents(
     let Some((relative, format)) = record else {
         return Ok(Vec::new());
     };
+    if format == "pdf" {
+        return Ok(core
+            .db
+            .with_conn(|conn| crate::db::pdf_structures::contents(conn, &id))?);
+    }
     // A DOCX carries no contents of its own; its headings are generated contents.
     if format != "epub" {
         return Ok(Vec::new());
@@ -583,3 +593,72 @@ fn managed_bytes(
 
 /// The largest EPUB read for its contents (matches what import accepts).
 const MAX_CONTENTS_FILE: u64 = 200 * 1024 * 1024;
+
+#[tauri::command(async)]
+pub fn library_pdf_structure(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.db(|conn| crate::db::pdf_structures::view(conn, &id))
+}
+
+/// Explicit rebuild for older imports; preserve the exact existing segments.
+#[tauri::command(async)]
+pub fn library_pdf_structure_build(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    let core = state.core()?;
+    let (relative, format) = core
+        .db
+        .with_conn(|conn| library::original_record(conn, &id))?;
+    if format != "pdf" {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "library.structure.invalid",
+            "This source is not a PDF.",
+        ))
+        .into());
+    }
+    let bytes = original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
+    let hash = crate::library::files::content_hash(&bytes);
+    let stored = core.db.with_conn(|conn| {
+        let mut statement = conn.prepare("SELECT position,page_number,content,char_start,char_end FROM source_segments WHERE source_id=?1 ORDER BY position")?;
+        let rows = statement.query_map([&id], |r| Ok((r.get::<_,i64>(0)?,r.get::<_,Option<u32>>(1)?,r.get::<_,String>(2)?,r.get::<_,Option<u32>>(3)?,r.get::<_,Option<u32>>(4)?)))?.collect::<Result<Vec<_>,_>>()?;
+        Ok(rows)
+    })?;
+    let pieces: Vec<_> = stored
+        .iter()
+        .filter_map(|(position, page, text, start, end)| {
+            Some(crate::library::pdf_structure::Piece {
+                position: *position,
+                page: (*page)?,
+                text,
+                byte_start: *start,
+                byte_end: *end,
+            })
+        })
+        .collect();
+    let pdf = adapters::pdf::read_pages(&bytes, &relative)?;
+    let document = crate::library::pdf_structure::extract(&bytes, &pdf, &pieces);
+    Ok(core
+        .db
+        .with_conn(|conn| crate::db::pdf_structures::replace(conn, &id, &hash, &document))?)
+}
+#[tauri::command(async)]
+pub fn library_pdf_structure_correct(
+    state: State<'_, AppState>,
+    id: String,
+    hash: String,
+    correction: crate::library::pdf_structure::Correction,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.db(|conn| crate::db::pdf_structures::correct(conn, &id, &hash, correction))
+}
+#[tauri::command(async)]
+pub fn library_pdf_structure_undo(
+    state: State<'_, AppState>,
+    id: String,
+    hash: String,
+    reset: bool,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.db(|conn| crate::db::pdf_structures::undo(conn, &id, &hash, reset))
+}

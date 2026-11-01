@@ -12,6 +12,7 @@ pub mod generated_contents;
 pub mod import;
 pub mod original;
 pub mod passage_index;
+pub mod pdf_structure;
 pub mod relevance;
 pub mod sections;
 
@@ -130,7 +131,7 @@ pub struct ListSources {
 }
 
 /// A segment with its provenance, for the reader.
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SourceSegment {
     pub id: String,
@@ -143,6 +144,8 @@ pub struct SourceSegment {
     pub section_path: Option<String>,
     pub paragraph_index: Option<i64>,
     pub locator: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub presentation: Option<pdf_structure::Presentation>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -161,7 +164,7 @@ pub struct GetSegments {
     pub limit: Option<i64>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SegmentWindow {
     pub source_id: String,
@@ -297,6 +300,9 @@ pub struct PassageLocation {
     /// The reference as written in the source (the heading, for a section).
     pub matched_text: String,
     pub section_heading: Option<String>,
+    pub structure_node_id: Option<String>,
+    pub structure_scope: Option<String>,
+    pub structure_basis: Option<String>,
 }
 
 /// A source with the places in it that fit the passage being read, best first.

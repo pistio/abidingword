@@ -140,7 +140,11 @@
     "duplicate": "Diese Datei ist bereits als „{{title}}“ in deiner Bibliothek.",
     "originalUnsupported": "Für diese Quelle gibt es keine Originalansicht.",
     "originalMissing": "Die von Abiding Word gespeicherte Kopie dieser Datei wurde nicht gefunden.",
-    "originalUnavailable": "Das Original dieser Quelle kann nicht geöffnet werden."
+    "originalUnavailable": "Das Original dieser Quelle kann nicht geöffnet werden.",
+    "structure": {
+      "corrupt": "Die gespeicherte PDF-Struktur konnte nicht gelesen werden. Quelltext und Originaldatei bleiben unverändert.",
+      "invalid": "Diese Korrektur passt nicht mehr zur Quelle. Den Text erneut öffnen und wiederholen."
+    }
   },
   "templates": {
     "noSections": "Eine Vorlage braucht mindestens einen Teil, mit dem sie beginnt.",

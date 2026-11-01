@@ -1,3 +1,4 @@
+import { pdfStructureReviewFixture } from "../support/pdfStructureReviewFixture";
 import { homeReviewFixture } from "../support/homeReviewFixture";
 import { pdfReviewFixture } from "../support/pdfReviewFixture";
 // The documentation screenshot harness (see vite.config.ts and capture.mjs).
@@ -585,6 +586,12 @@ async function start() {
       })),
       mentions: [{ segment: 0, reference: "JHN.15.5", matchedText: "John 15:5" }],
     });
+  }
+  if(params.get("a3PdfReview") === "1") {
+    const sourceId = await pdfStructureReviewFixture(api);
+    const otherInfo=api.libraryOriginalInfo, otherRead=api.libraryOriginalRead;
+    api.libraryOriginalInfo=id=>id===sourceId?fixtureOriginalInfo(id):otherInfo(id);
+    api.libraryOriginalRead=(id,offset,length)=>id===sourceId?fixtureOriginalRead(id,offset,length):otherRead(id,offset,length);
   }
   if (params.get("a3Review") === "1") await homeReviewFixture(api, params.get("a3Shape") === "owner");
   await i18n.changeLanguage(params.get("lang") ?? "en");

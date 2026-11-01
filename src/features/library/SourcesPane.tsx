@@ -17,6 +17,7 @@ export interface PaneSource {
   sourceId: string;
   returnToLibrary?: boolean;
   segmentId?: string;
+  structureNodeId?: string;
   /** Changes on every open, so opening the same place again re-targets it. */
   key: number;
   /** What had focus when the source was opened; focus returns there on Back. */
@@ -63,6 +64,8 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
     chapterCount,
   );
   const sources = useLoad(useCallback(() => api.libraryPassageSources(reference), [api, reference]));
+  const reloadSources = sources.reload;
+  useEffect(() => { if (!reading) reloadSources(); }, [reading, reloadSources]);
   const { expansion, toggle } = usePassageSourceExpansion(reference);
   const passageLabel = (ref: ScriptureRef) =>
     referenceLabel(ref, books.find((b) => b.code === ref.book)?.chapterCount);
@@ -103,6 +106,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
           variant="pane"
           sourceId={reading.sourceId}
           segmentId={reading.segmentId}
+          structureNodeId={reading.structureNodeId}
           initialPosition={reading.position}
           quotedWords={reading.words}
           onPositionReader={onPositionReader}
@@ -147,7 +151,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
                   groups={direct}
                   label={t("library.pane.sourcesFor", { passage: label })}
                   passageLabel={passageLabel}
-                  onOpen={openSource}
+                  onOpen={(id,segment,node)=>openSource(id,segment,undefined,undefined,node)}
                   expansion={expansion}
                   onToggleMore={toggle}
                 />

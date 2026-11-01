@@ -140,7 +140,11 @@
     "duplicate": "This file is already in your library as “{{title}}”.",
     "originalUnsupported": "This source has no original view.",
     "originalMissing": "Abiding Word’s copy of this file can’t be found.",
-    "originalUnavailable": "The original of this source can’t be opened."
+    "originalUnavailable": "The original of this source can’t be opened.",
+    "structure": {
+      "corrupt": "The saved PDF structure could not be read. Source text and the original file are unchanged.",
+      "invalid": "This correction no longer matches the source. Reopen its text and try again."
+    }
   },
   "templates": {
     "noSections": "A template needs at least one part to start with.",

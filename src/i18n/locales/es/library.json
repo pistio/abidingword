@@ -598,5 +598,43 @@
     "go": "Ir a la página",
     "physical": "Las páginas PDF se cuentan desde el inicio del archivo, incluida la portada. La numeración impresa puede ser distinta.",
     "printed": "Número de página impreso: {{label}}."
+  },
+  "structure": {
+    "title": "Estructura del documento",
+    "explanation": "Los destinos se basan en el documento, sin juzgar su relevancia teológica. Las correcciones se guardan en Abiding Word; los originales y las citas permanecen intactos.",
+    "build": "Analizar estructura",
+    "rebuild": "Volver a analizar",
+    "undo": "Deshacer corrección",
+    "reset": "Restablecer correcciones",
+    "status": "{{count}} secciones",
+    "uncertain": "No se pudo localizar con certeza parte del texto o de la estructura. Compruebe la vista Original.",
+    "search": "Buscar sección",
+    "physical": "Página PDF {{page}}",
+    "unmapped": "Sin pasaje asociado",
+    "open": "Abrir sección",
+    "edit": "Corregir sección",
+    "refine": "Precise la búsqueda para ver más secciones.",
+    "add": "Marcar una línea visible como sección",
+    "addHelp": "Elija una línea inequívoca de la ventana de lectura actual.",
+    "heading": "Título de sección",
+    "level": "Nivel jerárquico",
+    "mapping": "Pasaje bíblico asociado",
+    "mappingHelp": "Deje vacío para no asociar un pasaje. Para un libro entero, indique todos sus capítulos (Hechos 1–28).",
+    "scope": "Alcance del pasaje",
+    "disable": "Excluir esta sección",
+    "basis": {
+      "outline": "Índice integrado",
+      "tagged": "Etiquetas PDF",
+      "layout": "Inferido del diseño",
+      "user": "Corrección del usuario"
+    },
+    "scopes": {
+      "passage": "Pasaje",
+      "chapter": "Capítulo",
+      "book": "Libro"
+    },
+    "mappingExample": "Hechos 6",
+    "originalBookmarks": "Marcadores del PDF original",
+    "originalBookmarksHelp": "Son los destinos de página del propio PDF, sin las correcciones de sección de la aplicación. Un destino de página no establece una sección alineada con el texto ni la relevancia de un comentario."
   }
 }

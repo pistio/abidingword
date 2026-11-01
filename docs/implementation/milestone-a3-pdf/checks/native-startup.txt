@@ -1,0 +1,27 @@
+     Running BeforeDevCommand (`npm run dev`)
+
+> abiding-word@0.1.0 dev
+> vite
+
+3:06:17 AM [vite] (client) Re-optimizing dependencies because vite config has changed
+
+  VITE v8.3.1  ready in 464 ms
+
+  ➜  Local:   http://localhost:1420/
+     Running DevCommand (`cargo  run --no-default-features --color always --`)
+[1m[92m   Compiling[0m abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+[1m[96m    Building[0m [=======================> ] 622/625: abiding-word(build)
+[1m[96m    Building[0m [=======================> ] 623/625: abiding-word
+[1m[96m    Building[0m [=======================> ] 624/625: abiding-word(bin)
+[K[1m[92m    Finished[0m `dev` profile [unoptimized] target(s) in 39.81s
+[1m[92m     Running[0m `target/debug/abiding-word`
+dbus-daemon[151017]: [session uid=1000 pid=151017 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=151102 comm="target/debug/abiding-word" label="kernel")
+dbus-daemon[151017]: [session uid=1000 pid=151017 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[151421]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=151102 comm="target/debug/abiding-word" label="kernel")
+dbus-daemon[151421]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+[2026-11-01][03:07:00][abiding_word_lib][INFO] Abiding Word 0.1.0 starting
+[2026-11-01][03:07:00][abiding_word_lib][INFO] data directory: /workspace/.aw-tools/milestone-a3/pdf-native-data
+[2026-11-01][03:07:00][abiding_word_lib::state][INFO] database file: /workspace/.aw-tools/milestone-a3/pdf-native-data/database/abiding-word.db
+[2026-11-01][03:07:00][abiding_word_lib::db][INFO] database schema at version 27 (0 migration(s) applied now)
+[2026-11-01][03:07:00][abiding_word_lib::state][INFO] startup complete

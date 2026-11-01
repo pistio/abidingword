@@ -62,6 +62,7 @@ const EXPECTED_TABLES: &[&str] = &[
     "source_collections",
     "source_files",
     "source_passages",
+    "source_pdf_structures",
     "source_segments",
     "source_tag_items",
     "source_tags",

@@ -1,0 +1,8 @@
+{
+  "manual_dispatch_only": true,
+  "not_dispatched": true,
+  "pinned_application_sha": "15cac960a93f260385c868080ec580d4075e2c5f",
+  "catalogue_sha256": "acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13",
+  "stage1_schema26_workflow_unchanged": true,
+  "read_only_repository_permissions": true
+}
