@@ -63,14 +63,6 @@ fn verified(r: &Recognition, code: &str, chapter: u16, v: u16) -> bool {
     verse(r, code, chapter, v).is_some() && !r.unverified.contains_key(&(book.ordinal, chapter, v))
 }
 
-fn usable(r: &Recognition, code: &str, chapter: u16) -> bool {
-    let book = canon::by_code(code).unwrap();
-    r.content.books.contains_key(&book.ordinal)
-        && !r.content.issues.iter().any(|i| {
-            i.severity == Severity::Error && i.book == Some(book.code) && i.chapter == Some(chapter)
-        })
-}
-
 fn errors(r: &Recognition) -> Vec<String> {
     r.content
         .issues
