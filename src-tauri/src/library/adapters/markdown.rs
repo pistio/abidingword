@@ -1,8 +1,16 @@
 //! Markdown (.md, .markdown): headings build a section path; paragraphs,
 //! list items, quotations and code keep their order. Embedded HTML is
 //! dropped, never interpreted or executed.
+//!
+//! Footnotes in the common extended syntax (pandoc, GitHub: `text[^1]` and a
+//! definition `[^1]: note`) are what the document declares them to be
+//! (v0.24.6): a caller is marked for the Scripture recogniser as a note's
+//! caller (as an EPUB's declared noteref is), and a definition is kept as a
+//! note, never as running text.
 
-use pulldown_cmark::{Event, HeadingLevel, Parser, Tag, TagEnd};
+use pulldown_cmark::{Event, HeadingLevel, Options, Parser, Tag, TagEnd};
+
+use super::pdf_layout::{NOTE_CLOSE, NOTE_OPEN};
 
 use super::text::decode_utf8;
 use super::{
@@ -52,17 +60,24 @@ impl SourceImportAdapter for MarkdownImporter {
         // markup, as an EPUB's styled class is (v0.24.5).
         let mut emphasis = 0usize;
         let mut all_emphasised = true;
+        // The block's text with its footnote callers marked (`NOTE_OPEN` label
+        // `NOTE_CLOSE`), and whether it has any; inside a footnote definition.
+        let mut marked = String::new();
+        let mut has_callers = false;
+        let mut in_footnote = 0usize;
 
         let path = |headings: &[Option<String>]| -> Option<String> {
             let parts: Vec<&str> = headings.iter().flatten().map(String::as_str).collect();
             (!parts.is_empty()).then(|| parts.join(" › "))
         };
 
-        for (event, range) in Parser::new(&source).into_offset_iter() {
+        for (event, range) in Parser::new_ext(&source, Options::ENABLE_FOOTNOTES).into_offset_iter()
+        {
             match event {
                 Event::Start(Tag::Heading { level: l, .. }) => {
                     in_heading = Some(level(l));
                     buffer.clear();
+                    marked.clear();
                 }
                 Event::End(TagEnd::Heading(_)) => {
                     let text = collapse(&buffer);
@@ -83,8 +98,24 @@ impl SourceImportAdapter for MarkdownImporter {
                 }
                 Event::Start(Tag::Paragraph | Tag::CodeBlock(_) | Tag::Item) => {
                     buffer.clear();
+                    marked.clear();
+                    has_callers = false;
                     block_start = range.start;
                     all_emphasised = true;
+                }
+                Event::Start(Tag::FootnoteDefinition(_)) => in_footnote += 1,
+                Event::End(TagEnd::FootnoteDefinition) => {
+                    in_footnote = in_footnote.saturating_sub(1);
+                }
+                // A footnote's caller: kept in the text as written, marked
+                // for the recogniser as a declared caller.
+                Event::FootnoteReference(label) => {
+                    buffer.push_str(&format!("[^{label}]"));
+                    marked.push(NOTE_OPEN);
+                    marked.push_str(&label);
+                    marked.push(NOTE_CLOSE);
+                    has_callers = true;
+                    all_emphasised = false;
                 }
                 Event::Start(Tag::Emphasis | Tag::Strong) => emphasis += 1,
                 Event::End(TagEnd::Emphasis | TagEnd::Strong) => {
@@ -102,6 +133,8 @@ impl SourceImportAdapter for MarkdownImporter {
                     }
                     let text = collapse(&buffer);
                     buffer.clear();
+                    let marked_text = collapse(&std::mem::take(&mut marked));
+                    let callers = std::mem::replace(&mut has_callers, false);
                     let styled =
                         std::mem::replace(&mut all_emphasised, true) && in_heading.is_none();
                     if text.is_empty() {
@@ -109,8 +142,20 @@ impl SourceImportAdapter for MarkdownImporter {
                     }
                     let section_path = path(&headings);
                     let heading = headings.iter().rev().flatten().next().cloned();
-                    for part in split_long(&text, MAX_SEGMENT) {
+                    let parts = split_long(&text, MAX_SEGMENT);
+                    // (The marked text split the same way; where the two do
+                    // not split alike, no marks: the callers then stay as
+                    // written, and a verse holding one is not verified.)
+                    let marked_parts = if callers {
+                        let m = split_long(&marked_text, MAX_SEGMENT);
+                        (m.len() == parts.len()).then_some(m)
+                    } else {
+                        None
+                    };
+                    for (n, part) in parts.into_iter().enumerate() {
                         segments.push(NewSegment {
+                            note: in_footnote > 0,
+                            marked: marked_parts.as_ref().map(|m| m[n].clone()),
                             text: part,
                             chapter: headings[0].clone(),
                             heading: heading.clone(),
@@ -132,8 +177,12 @@ impl SourceImportAdapter for MarkdownImporter {
                         all_emphasised = false;
                     }
                     buffer.push_str(&t);
+                    marked.push_str(&t);
                 }
-                Event::SoftBreak => buffer.push(' '),
+                Event::SoftBreak => {
+                    buffer.push(' ');
+                    marked.push(' ');
+                }
                 // Raw HTML is ignored: never rendered, never executed.
                 Event::Html(_) | Event::InlineHtml(_) => {}
                 _ => {}
@@ -210,5 +259,39 @@ mod tests {
                 ("1:2 E à irmã Áfia.", false),
             ]
         );
+    }
+
+    #[test]
+    fn footnote_callers_are_marked_and_definitions_are_notes() {
+        // Pandoc/GitHub footnotes: the caller stays in the text as written
+        // and is marked for the recogniser; the definition, even when it
+        // opens with a bold chapter and verse, is a note, never text.
+        use super::super::pdf_layout::{NOTE_CLOSE, NOTE_OPEN};
+        let md = "## Lucas 17\n\n**35** Duas mulheres estarão moendo.[^luk-17-1]\n\n**37** Eles perguntaram.\n\n[^luk-17-1]: **17:36** Alguns manuscritos acrescentam: dois estarão no campo.\n";
+        let doc = MarkdownImporter.extract(md.as_bytes(), "l.md").unwrap();
+        let verse = doc
+            .segments
+            .iter()
+            .find(|s| s.text.starts_with("35"))
+            .unwrap();
+        assert_eq!(verse.text, "35 Duas mulheres estarão moendo.[^luk-17-1]");
+        assert_eq!(
+            verse.marked.as_deref(),
+            Some(
+                format!("35 Duas mulheres estarão moendo.{NOTE_OPEN}luk-17-1{NOTE_CLOSE}").as_str()
+            )
+        );
+        assert!(!verse.note);
+        let note = doc
+            .segments
+            .iter()
+            .find(|s| s.text.contains("manuscritos"))
+            .unwrap();
+        assert!(note.note, "{note:?}");
+        assert!(doc
+            .segments
+            .iter()
+            .filter(|s| !s.note)
+            .all(|s| !s.text.contains("manuscritos")));
     }
 }

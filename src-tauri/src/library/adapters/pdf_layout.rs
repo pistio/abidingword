@@ -1183,8 +1183,19 @@ fn split(
     // Which column a span belongs to. A span reaching into the gutter (but
     // not across it) belongs to the column it starts or ends in; none is
     // ever left out.
+    // (A span wholly inside the gutter with letters in it — "Selah" set
+    // flush right at the left column's edge, on a page of short poetry lines
+    // that leave the gutter wide — ends before the right column's text
+    // begins, as no line of the right column does: it is the left column's,
+    // v0.24.6. Figures alone, a verse number in the margin, keep the rule
+    // below.)
+    let inside_gutter_words = |s: &Span| {
+        s.x0 >= gutter.from - 1e-6
+            && s.x1 <= gutter.to + 1e-6
+            && s.text.chars().filter(|c| c.is_alphabetic()).count() >= 2
+    };
     let on_left = |s: &Span| {
-        if s.x1 <= middle {
+        if s.x1 <= middle || inside_gutter_words(s) {
             true
         } else if s.x0 >= middle {
             false
@@ -2240,6 +2251,27 @@ mod tests {
         let last = p.lines.last().unwrap();
         assert_eq!(last.role, LineRole::Note);
         assert!(last.text.starts_with("† 15:2"), "{}", last.text);
+    }
+
+    #[test]
+    fn a_word_flush_right_in_the_gutter_stays_with_the_left_column() {
+        // Short poetry lines on the left leave a wide gutter; "Selah" set
+        // flush right at the left column's edge lies inside it, past its
+        // middle. It is the left column's (it ends before the right
+        // column's text begins), read after the left line before it.
+        let mut glyphs = Vec::new();
+        for i in 0..10 {
+            let y = 100.0 + 14.0 * i as f64;
+            glyphs.extend(g(&format!("short {i} line"), 40.0, y, 10.0));
+            glyphs.extend(g(&format!("right column line {i} words"), 260.0, y, 10.0));
+        }
+        glyphs.extend(g("Selah", 200.0, 100.0 + 14.0 * 3.0 + 7.0, 10.0));
+        let p = page(glyphs);
+        let t = texts(&p);
+        let selah = t.iter().position(|l| l == "Selah").unwrap();
+        let first_right = t.iter().position(|l| l.starts_with("right")).unwrap();
+        assert!(selah < first_right, "{t:?}");
+        assert_eq!(t[selah - 1], "short 3 line", "{t:?}");
     }
 
     #[test]

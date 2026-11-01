@@ -1439,10 +1439,70 @@ fn roman(text: &str) -> Option<u16> {
     (total > 0).then_some(total as u16)
 }
 
-/// A Hebrew numeral (א = 1 … ת = 400; ט״ו = 15), its marks ignored.
+/// A Greek alphabetic numeral with its numeral sign ("Αʹ" = 1, "ΙΓʹ" = 13,
+/// "ΡΝʹ" = 150; ϛ or ΣΤ = 6, ϙ/ϟ = 90), v0.24.6. The keraia (ʹ, ΄ or ')
+/// is required, so a word is never read as a number, and the letters must
+/// run from hundreds to units, each place once ("ΓΙʹ" is no numeral).
+fn greek_numeral(text: &str) -> Option<u16> {
+    let t = text.trim();
+    let body = t.strip_suffix(['ʹ', '\u{0374}', '΄', '\'', '’'])?;
+    let upper: String = body.to_uppercase();
+    let upper = upper.replace("ΣΤ", "Ϛ");
+    if upper.is_empty() || upper.chars().count() > 3 {
+        return None;
+    }
+    let mut total = 0u16;
+    let mut last_place = 1000u16;
+    for c in upper.chars() {
+        let v: u16 = match c {
+            'Α' => 1,
+            'Β' => 2,
+            'Γ' => 3,
+            'Δ' => 4,
+            'Ε' => 5,
+            'Ϛ' | 'ϛ' | 'Ϝ' => 6,
+            'Ζ' => 7,
+            'Η' => 8,
+            'Θ' => 9,
+            'Ι' => 10,
+            'Κ' => 20,
+            'Λ' => 30,
+            'Μ' => 40,
+            'Ν' => 50,
+            'Ξ' => 60,
+            'Ο' => 70,
+            'Π' => 80,
+            'Ϙ' | 'Ϟ' | 'ϙ' | 'ϟ' => 90,
+            'Ρ' => 100,
+            'Σ' => 200,
+            'Τ' => 300,
+            'Υ' => 400,
+            _ => return None,
+        };
+        let place = if v >= 100 {
+            100
+        } else if v >= 10 {
+            10
+        } else {
+            1
+        };
+        if place >= last_place {
+            return None;
+        }
+        last_place = place;
+        total += v;
+    }
+    (total > 0).then_some(total)
+}
+
+/// A Hebrew numeral (א = 1 … ת = 400; ט״ו = 15), its marks ignored. The
+/// letters run from the largest value down (ת may repeat: תת = 800), as
+/// numerals are written; a word whose letters do not ("לא" is 31, "אל" is
+/// none) is no numeral (v0.24.6).
 fn hebrew_numeral(text: &str) -> Option<u16> {
     let mut total = 0u16;
     let mut any = false;
+    let mut last = u16::MAX;
     for c in text.chars() {
         let v = match c {
             'א'..='ט' => c as u16 - 'א' as u16 + 1,
@@ -1462,19 +1522,27 @@ fn hebrew_numeral(text: &str) -> Option<u16> {
             '\'' | '"' | '׳' | '״' => continue,
             _ => return None,
         };
+        // (15 and 16, ט״ו and ט״ז, run downwards too.)
+        if v > last || (v == last && v != 400) {
+            return None;
+        }
+        last = v;
         total += v;
         any = true;
     }
     (any && total > 0).then_some(total)
 }
 
-/// A number written as a chapter number: digits, Roman, or Hebrew letters.
+/// A number written as a chapter number: digits, Roman, Hebrew letters or
+/// Greek letters with their numeral sign.
 fn chapter_number(text: &str) -> Option<u16> {
     let t = text.trim();
     if !t.is_empty() && t.len() <= 3 && t.chars().all(|c| c.is_ascii_digit()) {
         return t.parse().ok().filter(|n| *n > 0);
     }
-    roman(t).or_else(|| hebrew_numeral(t))
+    roman(t)
+        .or_else(|| hebrew_numeral(t))
+        .or_else(|| greek_numeral(t))
 }
 
 // --- headings --------------------------------------------------------------------
@@ -1508,6 +1576,26 @@ const PSALM_WORDS: &[&str] = &[
     "ψαλμος",
     "מזמור",
 ];
+
+/// A line that is a chapter's label ("Chapter …", "Kapitel …", "ΚΕΦΑΛΑΙΟΝ
+/// …", "פרק …") whose number cannot be read (v0.24.6): a word for
+/// "chapter", then at most two short words without lower-case letters (so
+/// "Chapter of the Law" or a sentence is never one). A chapter begins there,
+/// but which one is not known.
+fn unread_chapter_label(text: &str, language: Option<ReferenceLanguage>) -> bool {
+    let text = text.trim();
+    let words: Vec<&str> = text.split_whitespace().collect();
+    if !(2..=3).contains(&words.len()) || read_heading(text, language).is_some() {
+        return false;
+    }
+    let first = key(words[0].trim_end_matches(['.', ':']));
+    CHAPTER_WORDS.contains(&first.as_str())
+        && words[1..].iter().all(|w| {
+            w.chars().count() <= 6
+                && !w.chars().any(char::is_lowercase)
+                && !w.chars().any(|c| c.is_ascii_digit())
+        })
+}
 
 /// Removes the invisible marks a document may carry (bidirectional
 /// controls, soft hyphens, zero-width characters); they are not text.
@@ -2254,6 +2342,9 @@ enum Event {
         chapter: Option<u16>,
     },
     Chapter(u16),
+    /// A chapter's label whose number cannot be read ("ΚΕΦΑΛΑΙΟΝ ϡʹ",
+    /// "Chapter Ten"): a chapter begins, but which is not known (v0.24.6).
+    UnreadChapter(String),
     /// A heading that names no book or chapter.
     Other {
         notes: bool,
@@ -2517,6 +2608,41 @@ fn page_furniture(units: &[Unit], language: Option<ReferenceLanguage>) -> HashSe
                 out.insert(i);
             }
         }
+        // A book and chapter alone at a page's edge, or as the page's first
+        // or last two lines, not set large (a chapter's title is): a running
+        // head (v0.24.6).
+        let ends: Vec<usize> = lines
+            .iter()
+            .take(2)
+            .chain(lines.iter().rev().take(2))
+            .copied()
+            .collect();
+        for (at, &i) in lines.iter().enumerate() {
+            let u = &units[i];
+            if u.large || !(u.edge || ends.contains(&i)) || !book_chapter_head(&u.text, language) {
+                continue;
+            }
+            // ("Psalm 23", "Genesis 24" may also be the chapter's own title:
+            // then only with running text going on after it — lower case or
+            // a verse number other than 1 — is it a head.)
+            if read_heading(clean(&u.text).trim(), language).is_some() {
+                let goes_on = lines.get(at + 1).is_some_and(|&next| {
+                    let after = unmark_raised(&clean(&units[next].text));
+                    let after = after.trim_start();
+                    let lead: String = after
+                        .chars()
+                        .take_while(|c| c.is_ascii_digit() || superscript_digit(*c).is_some())
+                        .map(|c| superscript_digit(c).map_or(c, |d| char::from(b'0' + d as u8)))
+                        .collect();
+                    after.chars().next().is_some_and(char::is_lowercase)
+                        || lead.parse::<u32>().is_ok_and(|n| n != 1)
+                });
+                if !goes_on {
+                    continue;
+                }
+            }
+            out.insert(i);
+        }
         if reference_pages {
             for &i in lines.iter().take(1).chain(lines.iter().rev().take(1)) {
                 if reference_head(&units[i].text) {
@@ -2580,6 +2706,46 @@ fn names_book_only(text: &str, language: Option<ReferenceLanguage>) -> bool {
     let text = clean(text);
     let text = text.trim();
     matches!(read_heading(text, language), Some(Heading::Book(_)))
+}
+
+/// A line that names a book and a chapter and nothing else, the way running
+/// heads do (v0.24.6): "Matthew Chapter 5", "Mateus Capítulo 5 – 6",
+/// "PSALMS 23", "12 Matthew Chapter 5" (a page number before or after), and
+/// the same with the chapter word left out ("Genesis 24"). The name must be
+/// a book's name; the numbers no more than three digits (a page number up
+/// to four). Never a sentence: no clause marks, at most eight words.
+fn book_chapter_head(text: &str, language: Option<ReferenceLanguage>) -> bool {
+    use std::sync::OnceLock;
+    static FORM: OnceLock<regex::Regex> = OnceLock::new();
+    let form = FORM.get_or_init(|| {
+        regex::Regex::new(
+            r"^(?:\d{1,4}\s+)?((?:[1-4]\.?\s?)?\p{L}[\p{L}'’.\-]*(?:\s+\p{L}[\p{L}'’.\-]*){0,3}?)(?:\s+(\p{L}+\.?))?\s+(\d{1,3})(?:\s*[-–—]\s*(?:\p{L}[\p{L}'’.\- ]*\s)?(\d{1,3}))?(?:\s+\d{1,4})?$",
+        )
+        .expect("valid pattern")
+    });
+    let text = clean(text);
+    let text = text.trim();
+    if text.split_whitespace().count() > 8
+        || text.contains([',', ';', '!', '?', '“', '”', '«', '»'])
+    {
+        return false;
+    }
+    let Some(c) = form.captures(text) else {
+        return false;
+    };
+    let name = c.get(1).map_or("", |m| m.as_str()).trim();
+    let word = c.get(2).map(|m| key(m.as_str().trim_end_matches('.')));
+    // (With a word between name and number, it must be one for "chapter"
+    // or "psalm": "Moab 10" or "Jesus said 3" are no heads.)
+    if let Some(word) = &word {
+        if !CHAPTER_WORDS.contains(&word.as_str())
+            && !PSALM_WORDS.contains(&word.as_str())
+            && word != "chap"
+        {
+            return false;
+        }
+    }
+    matches!(read_heading(name, language), Some(Heading::Book(_)))
 }
 
 /// Whether a line has no number but a book's own ("1 SAMUEL", "GÉNESIS";
@@ -2825,10 +2991,39 @@ fn verse_doubt(
     // line: a word in capitals closing it after a sentence's end ("… forsake
     // me. BETH"), or a label of the document's own after one ("… rooms.
     // Friends We will be glad …"; see `inline_labels`).
+    // A book's name, a word for "chapter" and a number inside the verse
+    // ("… Who among you, Matthew Chapter 9 if his son …"): a running head
+    // read in; Scripture never writes one (v0.24.6).
+    {
+        let words: Vec<&str> = text.split_whitespace().collect();
+        if words.windows(3).any(|w| {
+            let chapter_word = key(w[1].trim_end_matches('.'));
+            (CHAPTER_WORDS.contains(&chapter_word.as_str())
+                || PSALM_WORDS.contains(&chapter_word.as_str()))
+                && w[2]
+                    .trim_end_matches(['.', ',', ':', ';'])
+                    .chars()
+                    .all(|c| c.is_ascii_digit())
+                && !w[2].is_empty()
+                && w[0].chars().next().is_some_and(char::is_uppercase)
+                && matches!(read_heading(w[0], language), Some(Heading::Book(_)))
+        }) {
+            return Some("possibleHeading");
+        }
+    }
+    // A footnote's caller in the extended Markdown syntax left in the text
+    // ("… as correntes de água[^psa-42-1]"): a note's sign, not Scripture
+    // (v0.24.6; the Markdown reader marks the callers it can read).
+    if text.contains("[^") {
+        return Some("noteSign");
+    }
     let words: Vec<&str> = text.split_whitespace().collect();
     // "Selah" closes a verse, never opens one: a verse beginning with it
-    // took the verse before's last word (v0.24.5).
-    if words.first().is_some_and(|w| is_selah(w)) && words.len() > 1 {
+    // took the verse before's last word (v0.24.5). In the middle of a verse
+    // it may have come from a line of the other column (v0.24.6) — or stand
+    // there in the edition (Habakkuk 3:3 in some translations): not known,
+    // so not verified.
+    if words.len() > 1 && words[..words.len() - 1].iter().any(|w| is_selah(w)) {
         return Some("boundary");
     }
     let sentence_end = |w: &str| w.ends_with(['.', '!', '?', ';', ':', '”', '’', '"', '»']);
@@ -4226,6 +4421,10 @@ impl Builder<'_> {
             let plain = unmark_raised(marked);
             let text = plain.as_str();
             if text.is_empty() {
+                continue;
+            }
+            if self.book_open() && unread_chapter_label(text, self.language) {
+                self.push(Event::UnreadChapter(text.to_string()), index);
                 continue;
             }
             // A book's title over two lines whose first line names nothing
@@ -7199,6 +7398,36 @@ impl Reader<'_> {
                     }
                     self.start_chapter(*n, item.unit);
                 }
+                // A chapter begins whose number cannot be read: its verses are
+                // not placed under any chapter, never under a guessed one
+                // (v0.24.6).
+                Event::UnreadChapter(text) => {
+                    self.notes = false;
+                    if self.skip {
+                        continue;
+                    }
+                    self.close();
+                    let Some(book) = self.book else {
+                        continue;
+                    };
+                    self.leave_out(text, item.unit, "heading");
+                    self.chapter = None;
+                    self.skip_chapter = true;
+                    self.out.content.issue(
+                        Severity::Warning,
+                        Some(book),
+                        None,
+                        UserMessage::new(
+                            "bibleImport.documentChapterUnread",
+                            format!(
+                                "{}: the chapter heading “{text}” has a number that could not be read. That chapter is not used.",
+                                book.name
+                            ),
+                        )
+                        .with("bookCode", book.code)
+                        .with("line", text.as_str()),
+                    );
+                }
                 Event::Other { notes, text } => {
                     if *notes {
                         self.close();
@@ -7230,7 +7459,25 @@ impl Reader<'_> {
                         if self.open.is_some() {
                             self.heading_in_verse = true;
                         }
+                        // A PDF line in the body's own size, set apart only by
+                        // its look (italic, centred, short), that ends as a
+                        // sentence does ("Her steps lead straight to
+                        // Sheol.ᵃ" after "⁵ Her feet go down to death."): as
+                        // likely the verse's last line as a heading, so the
+                        // verse is not verified (v0.24.6). Headings rarely
+                        // end with a full stop; the document's own headings
+                        // (EPUB, Word, Markdown) and large titles are not
+                        // in doubt.
+                        let unit = &self.units[item.unit];
+                        let by_look = reason == "heading"
+                            && unit.place.page.is_some()
+                            && !unit.heading
+                            && !unit.large;
+                        let sentence = ends_as_sentence(&without_raised_spans(&unit.text));
                         if let Some(open) = self.open.as_mut() {
+                            if by_look && sentence && !open.text.trim().is_empty() {
+                                open.doubt = open.doubt.or(Some("possibleHeading"));
+                            }
                             if open.fresh_last_line {
                                 open.doubt = open.doubt.or(Some("possibleHeading"));
                             }
@@ -7372,6 +7619,7 @@ impl Reader<'_> {
         }
         self.short_chapters();
         self.septuagint_numbering();
+        self.doubt_note_tail_pages();
         self.long_verses();
         self.out.content.check_structure();
         self.out
@@ -7402,6 +7650,39 @@ impl Reader<'_> {
                     }
                 }
             }
+        }
+    }
+
+    /// A page where a line was held out after the page's notes (see
+    /// `note_tails`): that line may hold words of any verse of the page — a
+    /// last row read across both columns holds two (v0.24.6) — so no verse
+    /// that begins or ends on the page is verified.
+    fn doubt_note_tail_pages(&mut self) {
+        let pages: HashSet<(u16, u32)> = self
+            .note_tails
+            .iter()
+            .filter_map(|&i| {
+                let u = self.units.get(i)?;
+                Some((u.place.document, u.place.page?))
+            })
+            .collect();
+        if pages.is_empty() {
+            return;
+        }
+        let keys: Vec<(u8, u16, u16)> = self
+            .out
+            .origins
+            .iter()
+            .filter(|(_, o)| {
+                [o.start, o.end].iter().any(|p| {
+                    p.page
+                        .is_some_and(|page| pages.contains(&(p.document, page)))
+                })
+            })
+            .map(|(k, _)| *k)
+            .collect();
+        for key in keys {
+            self.out.unverified.entry(key).or_insert("boundary");
         }
     }
 
@@ -8049,6 +8330,45 @@ mod tests {
         );
         // Never a reference the verse's own words lead into.
         assert!(inline_references("como diz Salmos 91:11 hoje", pt).is_empty());
+    }
+
+    #[test]
+    fn greek_and_hebrew_numerals_are_read_only_in_their_written_form() {
+        // Greek: the numeral sign is required, places run downwards.
+        for (t, n) in [
+            ("Αʹ", 1),
+            ("ΙΓʹ", 13),
+            ("ΚΗʹ", 28),
+            ("Ϛʹ", 6),
+            ("ΣΤʹ", 6),
+            ("ΡΝʹ", 150),
+            ("ιβ΄", 12),
+        ] {
+            assert_eq!(greek_numeral(t), Some(n), "{t}");
+            assert_eq!(chapter_number(t), Some(n), "{t}");
+        }
+        for t in ["ΙΓ", "ΓΙʹ", "ΚΑΙ", "ΑΜΗΝʹ", "ʹ"] {
+            assert_eq!(greek_numeral(t), None, "{t}");
+        }
+        assert_eq!(
+            read_heading("ΚΕΦΑΛΑΙΟΝ ΙΓʹ", None),
+            Some(Heading::Chapter(13))
+        );
+        // Hebrew: gematria, 15 and 16 as ט״ו and ט״ז, letters downwards.
+        for (t, n) in [
+            ("א", 1),
+            ("י״ג", 13),
+            ("ט״ו", 15),
+            ("טז", 16),
+            ("כ״ד", 24),
+            ("קנ", 150),
+        ] {
+            assert_eq!(hebrew_numeral(t), Some(n), "{t}");
+        }
+        for t in ["אל", "גי", "ככ"] {
+            assert_eq!(hebrew_numeral(t), None, "{t}");
+        }
+        assert_eq!(read_heading("פרק כ״ד", None), Some(Heading::Chapter(24)));
     }
 
     #[test]
