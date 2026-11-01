@@ -46,3 +46,12 @@ pub fn study_section_reorder(
 ) -> CommandResult<Vec<StudySection>> {
     state.db(|conn| sections::reorder(conn, &input))
 }
+
+#[tauri::command(async)]
+pub fn study_section_restore_missing(
+    state: State<'_, AppState>,
+    study_id: String,
+    keys: Option<Vec<String>>,
+) -> CommandResult<Vec<StudySection>> {
+    state.db(|conn| sections::restore_missing(conn, &study_id, keys.as_deref()))
+}

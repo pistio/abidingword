@@ -2457,7 +2457,11 @@
     "suggested": "Parties que vous pouvez ajouter",
     "own": "Votre propre titre",
     "collapseAll": "Tout replier",
-    "expandAll": "Tout déplier"
+    "expandAll": "Tout déplier",
+    "restoreMissing": "Restaurer les parties manquantes",
+    "restoreAll": "Restaurer toutes les parties manquantes",
+    "restoreOne": "Restaurer « {{title}} »",
+    "restoreEmptyHint": "Restaure les parties vides du modèle et l’ordre initial de la méthode. Les parties personnelles et les textes restants sont conservés. Les textes déjà supprimés ne sont pas récupérés."
   },
   "journey": {
     "label": "Plan de l’étude",

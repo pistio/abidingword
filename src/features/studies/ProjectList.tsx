@@ -7,6 +7,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import type { Workspace } from "@/types/domain";
 import { CreateForm } from "./CreateForm";
+import { ListingLifecycle, UndoTrash, WorkspaceTrash, type TrashedRecord } from "@/features/portability/ListingLifecycle";
 import { StudyCreationActions } from "./StudyCreationActions";
 import { NewStudyForm } from "./NewStudyForm";
 import { StudyList } from "./StudyList";
@@ -25,6 +26,8 @@ interface ProjectListProps {
 export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, onOpenStudy }: ProjectListProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const [undo, setUndo] = useState<TrashedRecord | null>(null);
+  const [version, setVersion] = useState(0);
   const projects = useLoad(useCallback(() => api.projectList(workspace.id), [api, workspace.id]));
 
   // A new study goes into the project last worked in, without asking.
@@ -42,6 +45,8 @@ export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, 
 
   return (
     <div className="flex flex-col gap-8">
+      <WorkspaceTrash onChanged={() => { projects.reload(); setVersion(v => v + 1); }} />
+      {undo && <UndoTrash record={undo} onDone={() => { setUndo(null); projects.reload(); setVersion(v => v + 1); }} />}
       <div>
         <h1 className="type-title m-0">{t("studies.projects.title")}</h1>
         <p className="mt-2 mb-0 text-text-muted">
@@ -84,11 +89,11 @@ export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, 
       {projects.data && projects.data.length > 0 && (
         <ul aria-label={t("studies.projects.listLabel")} className="m-0 list-none border-t border-border-subtle p-0">
           {projects.data.map((project) => (
-            <li key={project.id} className="border-b border-border-subtle">
+            <li key={project.id} className="flex min-w-0 flex-wrap items-center border-b border-border-subtle">
               <button
                 type="button"
                 onClick={() => onOpenProject(project.id)}
-                className="flex w-full items-center gap-4 px-2 py-4 text-left hover:bg-hover"
+                className="flex min-w-0 flex-1 items-center gap-4 px-2 py-4 text-left hover:bg-hover"
               >
                 <span className="min-w-0 flex-1">
                   <span className="type-item block">
@@ -100,6 +105,7 @@ export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, 
                 </span>
                 <ChevronRight className="size-5 shrink-0 text-text-muted" aria-hidden="true" />
               </button>
+              <ListingLifecycle record={{ id: project.id, title: project.title, kind: "project" }} onDone={() => { setUndo({ id: project.id, title: project.title, kind: "project" }); projects.reload(); setVersion(v => v + 1); }} />
             </li>
           ))}
         </ul>
@@ -110,7 +116,7 @@ export function ProjectList({ workspace, onOpenTeaching, onHome, onOpenProject, 
           <h2 id="all-studies-heading" className="type-section m-0">
             {t("studies.projects.allStudies")}
           </h2>
-          <StudyList projects={projects.data} onOpen={onOpenStudy} />
+          <StudyList version={version} projects={projects.data} onOpen={onOpenStudy} />
         </section>
       )}
     </div>

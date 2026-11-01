@@ -97,6 +97,18 @@ interface SourceReaderProps {
  * extracted text with page markers (PDF) or section headings (EPUB,
  * Markdown). Opens at an exact segment and loads more around it on demand.
  */
+function scrollInReader(viewport: HTMLElement | null, element: Element | null | undefined, block: "start" | "center") {
+  if (!viewport || !element || !viewport.contains(element)) return;
+  // Keep native target alignment, but prevent it scrolling the workspace,
+  // neighbouring panes or the document. Restore ancestors before painting.
+  const ancestors: { element: HTMLElement; top: number; left: number }[] = [];
+  for (let parent = viewport.parentElement; parent; parent = parent.parentElement) {
+    ancestors.push({ element: parent, top: parent.scrollTop, left: parent.scrollLeft });
+  }
+  element.scrollIntoView?.({ block });
+  for (const saved of ancestors) { saved.element.scrollTop = saved.top; saved.element.scrollLeft = saved.left; }
+}
+
 export function SourceReader({ sourceId, segmentId, onClose, variant = "page", onExpand, initialPosition, quotedWords, onPositionReader, backLabel }: SourceReaderProps) {
   const { t } = useTranslation();
   const api = useApi();
@@ -190,6 +202,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   useEffect(() => {
     let active = true;
     let load: Promise<SegmentWindow>;
+    let requestedTarget: string | undefined;
     if (!startedInOriginal && initialPlace?.position !== null && initialPlace?.position !== undefined) {
       const position = initialPlace.position;
       landingPosition.current = { position, offset: initialPlace.offset };
@@ -206,13 +219,21 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         return { ...w, targetSegmentId: keep ? segmentId! : null };
       });
     } else {
+      requestedTarget = segmentId;
       load = segmentId ? api.libraryOpenSegment(segmentId) : api.sourceGetSegments({ sourceId });
     }
-    load.then((w) => active && setWindow(w), (e) => active && setError(toApiError(e).message));
+    load.then((w) => {
+      if (!active) return;
+      if (w.sourceId !== sourceId || (requestedTarget && w.targetSegmentId !== requestedTarget) || (w.targetSegmentId && !w.segments.some(segment => segment.id === w.targetSegmentId))) {
+        setError(t("library.reader.targetUnavailable"));
+        return;
+      }
+      setWindow(w);
+    }, (e) => active && setError(toApiError(e).message));
     return () => {
       active = false;
     };
-  }, [api, sourceId, segmentId, initialPage, startedInOriginal, initialPlace]);
+  }, [api, sourceId, segmentId, initialPage, startedInOriginal, initialPlace, t]);
 
   // Opened at a place: show and focus that paragraph. Otherwise focus the
   // title, so keyboard and screen-reader users know the reader opened.
@@ -221,7 +242,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   useEffect(() => {
     if (!loaded) return;
     if (target.current) {
-      target.current.scrollIntoView?.({ block: "center" });
+      scrollInReader(bodyRef.current, target.current, "center");
       target.current.focus({ preventScroll: true });
     } else {
       heading.current?.focus({ preventScroll: true });
@@ -315,13 +336,13 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       const wanted = landing.current;
       setTextPage(wanted);
       const spots = body ? [...body.querySelectorAll<HTMLElement>("[data-seg-page]")] : [];
-      spots.find((el) => Number(el.dataset.segPage) >= wanted)?.scrollIntoView?.({ block: "start" });
+      scrollInReader(body, spots.find((el) => Number(el.dataset.segPage) >= wanted), "start");
       landing.current = null;
     }
     if (landingPosition.current?.find) {
       // A find match: centred, and the find bar keeps focus (typing and Enter go on there).
       const mark = body?.querySelector<HTMLElement>("[data-find-active]");
-      (mark ?? body?.querySelector<HTMLElement>(`[data-seg-position="${landingPosition.current.position}"]`))?.scrollIntoView?.({ block: "center" });
+      scrollInReader(body, mark ?? body?.querySelector<HTMLElement>(`[data-seg-position="${landingPosition.current.position}"]`), "center");
       landingPosition.current = null;
     }
     if (landingPosition.current !== null) {
@@ -329,12 +350,12 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       const spot = body?.querySelector<HTMLElement>(`[data-seg-position="${position}"]`);
       if (offset !== null) {
         // Back / Forward: the very place, as far from the top of the view as it was.
-        spot?.scrollIntoView?.({ block: "start" });
+        scrollInReader(body, spot, "start");
         if (body) body.scrollTop -= offset;
       } else {
         // Show the chapter or section heading that precedes the text, too.
         const before = spot?.previousElementSibling;
-        (before?.hasAttribute("data-section-marker") ? before : spot)?.scrollIntoView?.({ block: "start" });
+        scrollInReader(body, before?.hasAttribute("data-section-marker") ? before : spot, "start");
       }
       spot?.setAttribute("tabindex", "-1");
       if (spot && refocusOpener.current !== null) {
@@ -1202,7 +1223,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
     // A column: controls that never scroll away, then Reading (which scrolls
     // inside its own body) or the original (which has its own toolbar and scroller).
     return (
-      <section aria-label={s?.title} className="flex min-h-0 flex-1 flex-col" onKeyDown={onReaderKey}>
+      <section aria-label={s?.title} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" onKeyDown={onReaderKey}>
         <div data-testid="reader-header" className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-border-subtle px-3 py-2">
           <Button variant="quiet" onClick={() => onClose(positionNow())}>
             <ArrowLeft className="size-4" aria-hidden="true" /> {backLabel ?? t("library.reader.backToSources")}
@@ -1230,7 +1251,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
         {findBar}
         {noticeLine}
         {tray}
-        <div ref={stage} className="relative flex min-h-0 flex-1 flex-col">
+        <div ref={stage} className="relative flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden">
           {showOriginal ? (
             <>
               {epubViewer ?? original}
@@ -1253,7 +1274,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
   // The full reader is a column too: a header that never scrolls (Back stays
   // reachable however far the text is scrolled) above the content.
   return (
-    <main aria-labelledby={`${id}-title`} className="flex min-h-0 flex-1 flex-col bg-bg" onKeyDown={onReaderKey}>
+    <main aria-labelledby={`${id}-title`} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-bg" onKeyDown={onReaderKey}>
       {/* Chrome recedes around the book: one quiet bar, the title in the interface voice. */}
       <div data-testid="reader-header" className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-subtle bg-bg px-4 py-1.5">
         <Button variant="quiet" className="shrink-0" onClick={() => onClose(positionNow())}>
@@ -1280,7 +1301,7 @@ export function SourceReader({ sourceId, segmentId, onClose, variant = "page", o
       {findBar}
       {noticeLine}
         {tray}
-      <div ref={stage} className="relative flex min-h-0 flex-1 flex-col">
+      <div ref={stage} className="relative flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden">
         {showOriginal ? (
           <>
             {epubViewer ?? original}

@@ -60,7 +60,7 @@ try {
   const reader = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await reader.goto(`${base}?assistant=off&a1Review=1&sourcesOpen=1`);
   const sources = reader.getByRole("complementary", { name: "Sources" });
-  await sources.getByRole("button", { name: "Synthetic EPUB layout review", exact: true }).click();
+  await sources.getByRole("button", { name: /^Synthetic EPUB layout review/ }).click();
   await sources.getByRole("button", { name: "Contents", exact: true }).waitFor();
   const snapshot = () => sources.evaluate(root => Array.from(root.querySelectorAll("*")).filter(node =>
     node instanceof HTMLElement && node.scrollHeight > node.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(node).overflowY),

@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { toApiError } from "@/lib/api";
 import { Plus } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import type { StudySection } from "@/types/domain";
@@ -21,6 +22,7 @@ interface AddPartProps {
   /** The study's parts now: a suggestion already there is not offered again. */
   sections: StudySection[];
   onAdd: (part: NewPart) => Promise<void>;
+  onRestore?: (keys?: string[]) => Promise<void>;
 }
 
 /**
@@ -28,7 +30,7 @@ interface AddPartProps {
  * (such as "Key Words"), or one with the person's own heading. The new part
  * is the person's own text, in their language, from then on.
  */
-export function AddPart({ template, sections, onAdd }: AddPartProps) {
+export function AddPart({ template, sections, onAdd, onRestore }: AddPartProps) {
   const { t } = useTranslation();
   const id = useId();
   const toggle = useRef<HTMLButtonElement>(null);
@@ -69,6 +71,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
         }
       }}
     >
+      {template && onRestore && <RestoreMissingSections template={template} sections={sections} onRestore={onRestore} />}
       <Button ref={toggle} variant="quiet" className="min-h-11 self-start" aria-expanded={open} aria-controls={open ? id : undefined} onClick={() => (open ? close() : setOpen(true))}>
         <Plus className="size-4" aria-hidden="true" />
         {t("studies.parts.add")}
@@ -124,4 +127,29 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
       )}
     </div>
   );
+}
+
+
+function RestoreMissingSections({ template, sections, onRestore }: { template: StudyTemplate; sections: StudySection[]; onRestore: (keys?: string[]) => Promise<void> }) {
+  const { t } = useTranslation();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const supported = template.isBuiltin && ["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key);
+  const present = new Set(sections.map(section => section.key));
+  const missing = supported ? template.sections.filter(part => !part.optional && !part.retired && part.key && !present.has(part.key)) : [];
+  if (!missing.length) return null;
+  const restore = async (keys?: string[]) => {
+    if (busy) return;
+    setBusy(true); setError(null);
+    try { await onRestore(keys); } catch (e) { setError(toApiError(e).message); } finally { setBusy(false); }
+  };
+  return <details className="max-w-full rounded-aw border border-border-subtle p-3">
+    <summary className="min-h-11 cursor-pointer font-medium">{t("studies.parts.restoreMissing")}</summary>
+    <p className="type-meta">{t("studies.parts.restoreEmptyHint")}</p>
+    <div className="flex flex-wrap gap-2">
+      <Button disabled={busy} onClick={() => void restore()}>{t("studies.parts.restoreAll")}</Button>
+      {missing.map(part => <Button key={part.key} disabled={busy} onClick={() => void restore([part.key!])}>{t("studies.parts.restoreOne", { title: sectionTitle(part, template.key) })}</Button>)}
+    </div>
+    {error && <p role="alert">{error}</p>}
+  </details>;
 }

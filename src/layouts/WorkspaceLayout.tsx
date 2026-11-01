@@ -36,6 +36,25 @@ export function WorkspaceLayout({ layout, scripture, study, sources }: Workspace
   const room = useWidth(container);
   const visible = useMemo(() => order.filter((pane) => pane === "study" || open[pane]), [order, open]);
 
+  const sidePanes = visible.filter((pane): pane is SidePaneId => pane !== "study");
+  const budget = Math.max(0, room - STUDY_MIN - (visible.length - 1));
+  const stacked = budget < SIDE_MIN * sidePanes.length;
+  const requested = sidePanes.reduce((sum, pane) => sum + Math.max(SIDE_MIN, widths[pane]), 0);
+  const extra = Math.max(0, requested - SIDE_MIN * sidePanes.length);
+  const shown = { ...widths };
+  for (const pane of sidePanes) {
+    const desired = Math.max(SIDE_MIN, widths[pane]);
+    shown[pane] = !stacked && requested > budget && extra > 0
+      ? SIDE_MIN + (budget - SIDE_MIN * sidePanes.length) * (desired - SIDE_MIN) / extra
+      : desired;
+  }
+  const resize = (pane: SidePaneId, value: number) => {
+    // A deliberate drag/key action starts from the sizes on screen. Window
+    // resizing alone never rewrites the person's saved preferences.
+    for (const other of sidePanes) if (other !== pane) setWidth(other, shown[other]);
+    setWidth(pane, value);
+  };
+
   // After a move, keep keyboard focus on the moved pane's button (moving
   // the pane in the page can drop focus), or on its other one at an edge.
   const moved = useRef<{ pane: PaneId; direction: -1 | 1 } | null>(null);
@@ -77,8 +96,8 @@ export function WorkspaceLayout({ layout, scripture, study, sources }: Workspace
 
   /** The widest a side pane may be dragged while the Study pane keeps its room. */
   const maxWidth = (pane: SidePaneId) => {
-    const others = visible.reduce((sum, p) => (p !== "study" && p !== pane ? sum + widths[p] : sum), 0);
-    return Math.max(SIDE_MIN, room - STUDY_MIN - others);
+    const others = visible.reduce((sum, p) => (p !== "study" && p !== pane ? sum + shown[p] : sum), 0);
+    return Math.max(SIDE_MIN, Math.round(budget - others));
   };
 
   const content: Record<PaneId, ReactNode> = { scripture, study, sources };
@@ -89,9 +108,9 @@ export function WorkspaceLayout({ layout, scripture, study, sources }: Workspace
         <main
           id="pane-study"
           aria-labelledby="pane-study-title"
-          style={{ minWidth: Math.min(STUDY_MIN, room) }}
+          style={stacked ? { width: "100%", height: "min(70vh, 32rem)", minHeight: 320, flex: "none" } : { minWidth: Math.min(STUDY_MIN, room) }}
           // The current work: the most contrast with its text (tokens.css, "Workspace panes").
-          className="flex min-w-0 flex-1 flex-col bg-pane-work"
+          className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-pane-work"
         >
           {body}
         </main>
@@ -103,9 +122,9 @@ export function WorkspaceLayout({ layout, scripture, study, sources }: Workspace
         aria-labelledby={`pane-${pane}-title`}
         // Flex may shrink a side pane below its saved width when the window
         // is small; the saved width is kept for when there is room again.
-        style={{ width: widths[pane] }}
+        style={stacked ? { width: "100%", height: "min(70vh, 32rem)", minHeight: 320, flex: "none" } : { width: shown[pane], flexShrink: 0 }}
         // Supporting panes sit back from the work: Scripture one step, Sources two.
-        className={`flex min-w-0 shrink flex-col ${pane === "scripture" ? "bg-pane-scripture" : "bg-pane-sources"}`}
+        className={`flex min-h-0 min-w-0 shrink flex-col overflow-hidden ${pane === "scripture" ? "bg-pane-scripture" : "bg-pane-sources"}`}
       >
         {body}
       </aside>
@@ -114,22 +133,22 @@ export function WorkspaceLayout({ layout, scripture, study, sources }: Workspace
 
   const studyAt = visible.indexOf("study");
   return (
-    <div ref={container} className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
+    <div ref={container} data-workspace-layout={stacked ? "stacked" : "columns"} className={`flex min-h-0 min-w-0 flex-1 ${stacked ? "flex-col overflow-y-auto overflow-x-hidden" : "overflow-hidden"}`}>
       {visible.map((pane, i) => {
         // A divider resizes the side pane on its far side from Study, so the
         // divider always follows the pointer and Study takes up the slack.
         const resized = (studyAt >= i ? visible[i - 1] : pane) as SidePaneId | undefined;
         return (
           <Fragment key={pane}>
-            {i > 0 && resized && (
+            {!stacked && i > 0 && resized && (
               <Splitter
                 label={t("app.panes.resize", { pane: paneName(resized) })}
                 controls={`pane-${resized}`}
-                value={widths[resized]}
+                value={Math.round(shown[resized])}
                 min={SIDE_MIN}
                 max={maxWidth(resized)}
                 direction={studyAt >= i ? 1 : -1}
-                onChange={(width) => setWidth(resized, width)}
+                onChange={(width) => resize(resized, width)}
               />
             )}
             {renderPane(pane)}

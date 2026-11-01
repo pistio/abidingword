@@ -303,6 +303,8 @@
     "empty": "Trash is empty.",
     "hint": "Restore a Project to recover its contents. Individually trashed Studies appear after their Project is restored.",
     "studyHint": "The Study and its research can be restored in Settings → Data and backup → Trash. Linked Teaching stays in its Project with saved notes and citations, but is unlinked. Restoration does not automatically relink it.",
-    "projectHint": "The Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content."
+    "projectHint": "The Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content.",
+    "actions": "Actions for “{{title}}”",
+    "moved": "“{{title}}” moved to Trash."
   }
 }

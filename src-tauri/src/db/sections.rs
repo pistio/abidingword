@@ -357,3 +357,120 @@ pub fn update(conn: &Connection, input: &UpdateStudySection) -> AppResult<StudyS
     studies::touch(conn, &current.study_id, &now)?;
     get(conn, &input.id)
 }
+
+/// Recreate empty original method parts, never revive deleted user content.
+/// Resolve every definition from the study's built-in template, not caller text.
+pub fn restore_missing(
+    conn: &Connection,
+    study_id: &str,
+    keys: Option<&[String]>,
+) -> AppResult<Vec<StudySection>> {
+    let study = studies::get(conn, study_id)?;
+    let template = templates::get(conn, study.template_id.as_deref().unwrap_or(""))?;
+    if !template.is_builtin
+        || !matches!(
+            template.key.as_str(),
+            "pozetek-study"
+                | "pozetek-writing-study"
+                | "ten-step-exegesis"
+                | "ten-step-writing-study"
+        )
+    {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "templates.unknownPart",
+            "This template part is no longer available.",
+        )));
+    }
+    let original: Vec<_> = template
+        .sections
+        .iter()
+        .filter(|part| !part.optional && !part.retired)
+        .collect();
+    if keys.is_some_and(|keys| {
+        keys.iter()
+            .any(|key| !original.iter().any(|part| part.key.as_ref() == Some(key)))
+    }) {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "templates.unknownPart",
+            "This template part is no longer available.",
+        )));
+    }
+    let tx = conn.unchecked_transaction()?;
+    let mut current = list(&tx, study_id)?;
+    let at = now();
+    let mut added = false;
+    for part in &original {
+        let Some(key) = part.key.as_deref() else {
+            continue;
+        };
+        if keys.is_some_and(|keys| !keys.iter().any(|value| value == key))
+            || current
+                .iter()
+                .any(|section| section.key.as_deref() == Some(key))
+        {
+            continue;
+        }
+        let fields = (!part.fields.is_empty()).then(|| SectionFields {
+            template: part
+                .fields_source
+                .clone()
+                .unwrap_or_else(|| template.key.clone()),
+            version: part.fields_version,
+            fields: part.fields.clone(),
+        });
+        let id = insert_structured(
+            &tx,
+            study_id,
+            NewSection {
+                key: Some(key),
+                title: &part.title,
+                guidance: part.guidance.as_deref(),
+                phase: part.phase,
+            },
+            current.len() as i64,
+            fields.as_ref(),
+            &at,
+        )?;
+        seed_blocks(&tx, &id, fields.as_ref(), &at)?;
+        current.push(get(&tx, &id)?);
+        added = true;
+    }
+    if added {
+        // Restore methodological sequence in original-part slots. Custom parts
+        // keep their slots and relative order; all surviving content keeps IDs.
+        let order: HashMap<_, _> = original
+            .iter()
+            .enumerate()
+            .filter_map(|(index, part)| part.key.as_deref().map(|key| (key, index)))
+            .collect();
+        let mut method: Vec<_> = current
+            .iter()
+            .filter(|section| {
+                section
+                    .key
+                    .as_deref()
+                    .is_some_and(|key| order.contains_key(key))
+            })
+            .collect();
+        method.sort_by_key(|section| order[section.key.as_deref().unwrap()]);
+        let mut method = method.into_iter();
+        for (position, section) in current.iter().enumerate() {
+            let section = if section
+                .key
+                .as_deref()
+                .is_some_and(|key| order.contains_key(key))
+            {
+                method.next().unwrap()
+            } else {
+                section
+            };
+            tx.execute(
+                "UPDATE study_sections SET position=?2 WHERE id=?1",
+                params![section.id, position as i64],
+            )?;
+        }
+        studies::touch(&tx, study_id, &at)?;
+    }
+    tx.commit()?;
+    list(conn, study_id)
+}

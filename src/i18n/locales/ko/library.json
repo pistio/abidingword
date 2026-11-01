@@ -110,7 +110,8 @@
     "backToSources": "자료로 돌아가기",
     "openFull": "전체 화면으로 읽기",
     "openFullTitle": "이 자료를 넓은 화면으로 읽기",
-    "pageMarker": "{{page}}쪽"
+    "pageMarker": "{{page}}쪽",
+    "targetUnavailable": "기록된 위치가 이 자료에 속하지 않거나 사용할 수 없습니다."
   },
   "pane": {
     "libraryHeading": "내 자료실",
@@ -125,7 +126,9 @@
     "openLibrary": "자료실 열기",
     "matchEvidence": "언급은 본문에 적힌 성경 구절 참조입니다. 일치하는 제목은 맥락을 제공하지만, 주석이나 신학적 관련성을 입증하지는 않습니다.",
     "noRecent": "이번 사용 중에 연 자료가 여기에 표시됩니다.",
-    "otherSources": "다른 자료"
+    "otherSources": "다른 자료",
+    "mentionsOnly": "여기에는 참조나 언급만 기록되어 있으며, 해당 본문을 직접 설명하는 내용은 확인되지 않았습니다.",
+    "continueReading": "마지막 읽던 위치에서 계속 읽기"
   },
   "passage": {
     "mentions": "{{passage}} 언급",

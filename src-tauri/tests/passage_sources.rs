@@ -1070,3 +1070,38 @@ fn acts_six_opens_its_indexed_section_before_an_incidental_mention_in_the_same_w
         Ok(())
     });
 }
+
+#[test]
+fn a_pdf_cross_reference_is_a_mention_with_its_exact_page_not_verified_commentary() {
+    let temp = tempfile::tempdir().unwrap();
+    with_db(|conn| {
+        let bytes = fixtures::pdf(&[
+            &["Acts 7 - invented notes", "A literal cross-reference: Acts 6:3. This does not establish direct discussion."],
+            &["Acts 6 - invented chapter notes", "An independently written fixture mentions Acts 6:1-7 and Acts 7:1."],
+            &["Acts 7:1 - a separate page", "This page must never be offered merely because it is adjacent."],
+        ], Some("Invented Acts source - not MacArthur"), Some("Fixture author"));
+        let source = add(conn, temp.path(), "acts.pdf", &bytes, "Invented Acts PDF");
+        let groups = library::passage_sources(conn, &reference("ACT.6.3"))?;
+        let work = groups
+            .iter()
+            .find(|group| group.source_id == source)
+            .unwrap();
+        assert!(work
+            .locations
+            .iter()
+            .all(|place| place.origin == LinkOrigin::Explicit));
+        for place in &work.locations {
+            let (page, owner): (i64, String) = conn.query_row(
+                "SELECT page_number,source_id FROM source_segments WHERE id=?1",
+                [&place.segment_id],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )?;
+            assert_eq!(owner, source);
+            assert!((1..=2).contains(&page));
+            assert_eq!(place.reference.book, "ACT");
+            assert_eq!(place.reference.start_chapter, 6);
+        }
+        assert_eq!(library::get(conn, &source)?.title, "Invented Acts PDF");
+        Ok(())
+    });
+}

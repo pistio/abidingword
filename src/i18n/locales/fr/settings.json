@@ -303,6 +303,8 @@
     "empty": "La corbeille est vide.",
     "hint": "Restaurez un projet pour retrouver son contenu. Les études supprimées séparément apparaissent après la restauration de leur projet.",
     "studyHint": "L’étude et ses recherches peuvent être restaurées dans Paramètres → Données et sauvegarde → Corbeille. Les enseignements liés restent dans leur projet avec leurs notes et citations sauvegardées, mais le lien est retiré. La restauration ne le rétablit pas automatiquement.",
-    "projectHint": "Le projet, ses études et ses enseignements sont masqués ensemble et peuvent être restaurés. La suppression définitive retire tout le contenu associé."
+    "projectHint": "Le projet, ses études et ses enseignements sont masqués ensemble et peuvent être restaurés. La suppression définitive retire tout le contenu associé.",
+    "actions": "Actions pour « {{title}} »",
+    "moved": "« {{title}} » a été mis à la corbeille."
   }
 }

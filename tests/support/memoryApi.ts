@@ -219,6 +219,8 @@ export interface FixtureWord {
 
 /** Invented library content for tests. */
 export interface SourceFixture {
+  /** Optional real invented bytes for browser PDF.js checks. */
+  originalPdf?: Uint8Array;
   title: string;
   author?: string;
   format?: Source["format"];
@@ -924,6 +926,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     if (fixture.generatedContents) generatedOf.set(sourceId, fixture.generatedContents);
     if (fixture.links) linksOf.set(sourceId, fixture.links);
     if (fixture.formatted) formattedOf.set(sourceId, fixture.formatted);
+    if (fixture.originalPdf) originalPdfOf.set(sourceId, fixture.originalPdf);
     return source;
   };
   const toSummary = (s: Source): SourceSummary => ({
@@ -931,6 +934,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
   });
   const segmentsOf = (sourceId: string) => library.segments.filter((x) => x.sourceId === sourceId).sort((a, b) => a.position - b.position);
   // Stands in for a PDF file (the tests' viewer is a fake engine; nothing parses these bytes).
+  const originalPdfOf = new Map<string, Uint8Array>();
   const originalBytes = new TextEncoder().encode("%PDF-1.4 synthetic test file");
   const window = (sourceId: string, offset: number, limit: number, target: string | null) => {
     const all = segmentsOf(sourceId);
@@ -1236,6 +1240,37 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       if (input.phase !== undefined) section.phase = input.phase || null;
       if (input.status) section.status = input.status;
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === section.id) };
+    },
+    studySectionRestoreMissing: async (studyId, keys) => {
+      const study = find(state.studies, studyId, "study");
+      const template = state.templates.find(template => template.id === study.templateId);
+      if (!template?.isBuiltin || !["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key)) throw new ApiError("invalidInput", "This template part is no longer available.");
+      const original = template.sections.filter(part => !part.optional && !part.retired);
+      if (keys?.some(key => !original.some(part => part.key === key))) throw new ApiError("invalidInput", "This template part is no longer available.");
+      const current = state.sections.filter(section => section.studyId === studyId).sort((a,b) => a.position-b.position);
+      let added = false;
+      for (const part of original) {
+        if (!part.key || (keys && !keys.includes(part.key)) || current.some(section => section.key === part.key)) continue;
+        const section = await api.studySectionCreate({ studyId, title: part.title, guidance: part.guidance ?? undefined, key: part.key, phase: part.phase });
+        if (part.fields?.length) {
+          const fields = { template: part.fieldsSource ?? template.key, version: part.fieldsVersion ?? 0, fields: structuredClone(part.fields) };
+          section.fields = fields;
+          find(state.sections, section.id, "section").fields = fields;
+          state.blocks = state.blocks.filter(block => block.sectionId !== section.id);
+          for (const field of part.fields.filter(field => field.kind === "writing" || field.kind === "text")) {
+            const block = await api.studyBlockCreate({ sectionId: section.id, blockType: "paragraph", fieldKey: field.key });
+            void block;
+          }
+        }
+        current.push(section); added = true;
+      }
+      if (added) {
+        const order = new Map(original.map((part,index) => [part.key,index]));
+        const method = current.filter(part => order.has(part.key)).sort((a,b) => order.get(a.key)! - order.get(b.key)!);
+        let cursor = 0;
+        await api.studySectionReorder({ parentId: studyId, ids: current.map(part => order.has(part.key) ? method[cursor++]!.id : part.id) });
+      }
+      return (await api.studyGet(studyId)).sections;
     },
     studySectionCreate: async ({ studyId, title, guidance, templateSectionKey, key, phase }) => {
       if (key?.trim() && !/^[a-z0-9-]{1,64}$/.test(key.trim())) throw new ApiError("invalidInput", "This part's key is not valid.");
@@ -2522,11 +2557,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     libraryOriginalInfo: async (sourceId) => {
       const source = liveSource(sourceId);
       if (!source.originalView) throw new ApiError("invalidInput", "This source has no original view.");
-      return { kind: "pdf", sizeBytes: originalBytes.length };
+      return { kind: "pdf", sizeBytes: (originalPdfOf.get(sourceId) ?? originalBytes).length };
     },
     libraryOriginalRead: async (sourceId, offset, length) => {
       liveSource(sourceId);
-      return originalBytes.slice(offset, offset + length);
+      return (originalPdfOf.get(sourceId) ?? originalBytes).slice(offset, offset + length);
     },
     sourceGetPassages: async (sourceId) => library.mentions.filter((m) => m.sourceId === sourceId).map(mention),
     // Mirrors db::library::passage_sources and library/relevance.rs: rank = (class, origin, fit,

@@ -1,3 +1,4 @@
+import { pdfReviewFixture } from "../support/pdfReviewFixture";
 // The documentation screenshot harness (see vite.config.ts and capture.mjs).
 // The real interface, an in-memory library written for the guide, and the
 // public-domain World English Bible. Nothing here ships with the app.
@@ -483,6 +484,8 @@ async function start() {
     databasePath: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\database\\abiding-word.db",
     logDirectory: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\logs",
   });
+  const fixtureOriginalInfo = api.libraryOriginalInfo;
+  const fixtureOriginalRead = api.libraryOriginalRead;
   if (params.get("empty") !== "1") await seed(api);
   // The example project (v0.19), added as the person would from Settings.
   if (params.get("sample") === "1") await api.sampleProjectInstall();
@@ -549,6 +552,16 @@ async function start() {
     const name = params.get("documentName") ?? `invented-bible.${ext}`;
     const preview = await api.bibleImportPreview({ paths: [`/home/you/Documents/${name}`] });
     await api.bibleImportCommit({ previewId: preview.previewId, name: "Invented Bible (document)", shortName: "DOC", language: "English", languageCode: "en", asDocument: true });
+  }
+  if (params.get("a2Review") === "1") {
+    const method = await api.studyCreate({ projectId: api.state.projects[0]!.id, title: "POZETEK recovery review", templateId: api.state.templates.find(template => template.key === "pozetek-writing-study")!.id });
+    await api.studyBlockUpdate({ id: method.sections[0]!.blocks[0]!.id, content: "Invented research to retain while restoring the method." });
+    await api.studySectionDelete({ id: method.sections.find(section => section.key === "time")!.id, force: false });
+    const review = api.installFixtureSource(pdfReviewFixture());
+    const otherInfo = api.libraryOriginalInfo;
+    const otherRead = api.libraryOriginalRead;
+    api.libraryOriginalInfo = sourceId => sourceId === review.id ? fixtureOriginalInfo(sourceId) : otherInfo(sourceId);
+    api.libraryOriginalRead = (sourceId, offset, length) => sourceId === review.id ? fixtureOriginalRead(sourceId, offset, length) : otherRead(sourceId, offset, length);
   }
   // Synthetic structured EPUB for combined-pane A.1 layout review; no publisher text.
   if (params.get("a1Review") === "1") {
