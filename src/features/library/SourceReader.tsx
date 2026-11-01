@@ -1081,6 +1081,12 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     <Button variant="quiet" onClick={()=>setStructureOpen(true)}>{t("library.structure.title")}</Button>
     {structureOpen && <PdfStructurePanel sourceId={sourceId} segments={window?.segments ?? []}
       onGo={(position,headingId)=>{jumpTo({position,headingId}); setStructureOpen(false);}} onPage={page=>{jumpTo({page});setStructureOpen(false);}} onClose={()=>setStructureOpen(false)}
+      observed={()=>{
+        // Identifiers, mode and page numbers only: what the person sees now.
+        const page = showOriginal ? (originalPage.current ?? startPage) : (textPage ?? readingPage());
+        const printed = window?.segments.find(s=>s.pageNumber===page && s.presentation?.printedLabel)?.presentation?.printedLabel ?? null;
+        return { mode: showOriginal ? "original" : "reading", physicalPage: page, printedPage: printed, openedSegmentId: segmentId ?? null, openedStructureNodeId: structureNodeId ?? null, focusedHeadingId: focusedHeading.current ?? null, variant };
+      }}
       onChanged={async()=>{
         const w = await api.sourceGetSegments({sourceId,offset:window?.offset ?? 0,limit:window?.segments.length ?? 150});
         setWindow({...w,targetSegmentId:window?.targetSegmentId ?? null}); setStructureRevision(v=>v+1);

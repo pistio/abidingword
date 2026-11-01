@@ -152,7 +152,9 @@
     "mentions": "Menciona {{passage}}",
     "section": "O título menciona {{passage}}",
     "within": "Na seção intitulada {{passage}}",
-    "linked": "Vinculado a {{passage}}"
+    "linked": "Vinculado a {{passage}}",
+    "bookSection": "Secção do livro {{passage}} (mais ampla)",
+    "chapterSection": "Título de capítulo {{passage}}"
   },
   "citations": {
     "removed": "(removida da biblioteca)",
@@ -635,6 +637,20 @@
     },
     "mappingExample": "Atos 6",
     "originalBookmarks": "Marcadores do PDF original",
-    "originalBookmarksHelp": "São os destinos de página do próprio PDF, sem as correções de seção do aplicativo. Um destino de página não comprova uma seção alinhada ao texto nem a relevância de um comentário."
+    "originalBookmarksHelp": "São os destinos de página do próprio PDF, sem as correções de seção do aplicativo. Um destino de página não comprova uma seção alinhada ao texto nem a relevância de um comentário.",
+    "rebuildRecommended": "Esta estrutura foi criada com regras de análise anteriores. Escolha «Analisar novamente» para aplicar as regras atuais; correções, citações e anotações são mantidas.",
+    "diagnostic": {
+      "title": "Relatório de diagnóstico (apenas metadados)",
+      "help": "Abra primeiro o resultado de fonte da passagem e depois crie aqui o relatório. Ele regista a impressão digital do ficheiro, os títulos detetados, os candidatos ordenados e a página mostrada — nunca texto de parágrafos, notas ou chaves. Reveja-o antes de partilhar.",
+      "passage": "Passagem a verificar (opcional)",
+      "create": "Criar relatório",
+      "copy": "Copiar relatório",
+      "save": "Guardar relatório…",
+      "copied": "Relatório copiado.",
+      "copyFailed": "Não foi possível copiar o relatório. Use «Guardar relatório…».",
+      "fileType": "Relatório de diagnóstico",
+      "saved": "Guardado em {{path}}",
+      "file": "SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos"
+    }
   }
 }

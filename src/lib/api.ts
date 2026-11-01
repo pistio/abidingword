@@ -1,4 +1,4 @@
-import type { PdfStructureView, PdfCorrection } from "@/types/library";
+import type { PdfStructureView, PdfCorrection, PdfDiagnostic, ReaderObserved } from "@/types/library";
 // The frontend's only door to the native core. Components use the `Api`
 // interface through `useApi()`, never `invoke` directly, so tests can supply
 // an in-memory implementation.
@@ -291,6 +291,12 @@ export interface Api {
   libraryPdfStructureBuild(id: string): Promise<PdfStructureView>;
   libraryPdfStructureCorrect(id: string, hash: string, correction: PdfCorrection): Promise<PdfStructureView>;
   libraryPdfStructureUndo(id: string, hash: string, reset: boolean): Promise<PdfStructureView>;
+  /** A.4.1: the metadata-only structure/targeting report of a PDF Source. */
+  libraryPdfStructureDiagnostic(id: string, passage: string | null, observed: ReaderObserved | null): Promise<PdfDiagnostic>;
+  /** Asks where to save that report (.json); null when cancelled. */
+  chooseDiagnosticFile(defaultName: string, filterName: string): Promise<string | null>;
+  /** Saves the report (rebuilt by the native core) to the chosen file; returns where it went. */
+  libraryPdfStructureDiagnosticSave(id: string, passage: string | null, observed: ReaderObserved | null, path: string): Promise<string>;
   /** Contents made from the source's own headings, for a source that carries none (shown as generated). */
   libraryGeneratedContents(id: string): Promise<ContentsItem[]>;
   /** The links in an EPUB's text that lead elsewhere in the same book (none for other formats). */
@@ -734,6 +740,9 @@ export const tauriApi: Api = {
   libraryPdfStructureBuild: (id) => call("library_pdf_structure_build", { id }),
   libraryPdfStructureCorrect: (id, hash, correction) => call("library_pdf_structure_correct", { id, hash, correction }),
   libraryPdfStructureUndo: (id, hash, reset) => call("library_pdf_structure_undo", { id, hash, reset }),
+  libraryPdfStructureDiagnostic: (id, passage, observed) => call("library_pdf_structure_diagnostic", { id, passage, observed }),
+  chooseDiagnosticFile: async (defaultName, filterName) => save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: ["json"] }] }),
+  libraryPdfStructureDiagnosticSave: (id, passage, observed, path) => call("library_pdf_structure_diagnostic_save", { id, passage, observed, path }),
   libraryGeneratedContents: (id) => call("library_generated_contents", { id }),
   librarySourceLinks: (id) => call("library_source_links", { id }),
   librarySourceReferences: (id) => call("library_source_references", { id }),

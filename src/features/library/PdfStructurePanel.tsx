@@ -7,12 +7,14 @@ import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import { toApiError } from "@/lib/api";
 import { usePdfEngine } from "./PdfEngineContext";
-import type { ContentsItem, PdfCorrection, PdfResolvedHeading, SourceSegment } from "@/types/library";
+import type { ContentsItem, PdfCorrection, PdfDiagnostic, PdfResolvedHeading, ReaderObserved, SourceSegment } from "@/types/library";
 
 /** App-owned metadata only. The original file and citation text remain intact. */
-export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage, onClose }: {
+export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage, onClose, observed }: {
   sourceId: string; segments: SourceSegment[]; onChanged: () => Promise<void>;
   onGo: (position: number, headingId: string) => void; onPage: (page:number)=>void; onClose: () => void;
+  /** The Reader's state now (mode, page, the place it was opened at), for the diagnostic report. */
+  observed?: () => ReaderObserved;
 }) {
   const { t } = useTranslation();
   const api = useApi();
@@ -51,6 +53,7 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
         <Button disabled={busy || !data.canUndo || !data.fileHash} onClick={() => void run(() => api.libraryPdfStructureUndo(sourceId,data.fileHash!,false))}>{t("library.structure.undo")}</Button>
         <Button disabled={busy || !data.corrections.length || !data.fileHash} onClick={() => void run(() => api.libraryPdfStructureUndo(sourceId,data.fileHash!,true))}>{t("library.structure.reset")}</Button>
       </div>
+      {data.status === "ready" && data.rebuildRecommended && <Notice>{t("library.structure.rebuildRecommended")}</Notice>}
       {data.status === "ready" && <>
         <p className="type-meta">{t("library.structure.status", {count:data.headings.length})}</p>
         {(!data.complete || data.uncertainPages > 0 || data.unalignedTags > 0) && <Notice>{t("library.structure.uncertain")}</Notice>}
@@ -69,6 +72,7 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
           <div className="max-h-48 overflow-auto">{segments.flatMap(segment => (segment.presentation?.anchors ?? []).map((anchor,index) => <Button key={`${segment.id}-${index}`} variant="quiet" className="block max-w-full truncate" onClick={()=>add(segment,index)}>{anchor.originalText}</Button>))}</div>
         </details>
       </>}
+      <StructureDiagnostic sourceId={sourceId} observed={observed} />
       {draft && <form className="flex flex-col gap-3 border-t border-border pt-3" onSubmit={e=>{e.preventDefault(); if(data.fileHash) void run(()=>api.libraryPdfStructureCorrect(sourceId,data.fileHash!,draft));}}>
         <label>{t("library.structure.heading")}<input required maxLength={300} className={fieldClass} value={draft.title} onChange={e=>setDraft({...draft,title:e.target.value})}/></label>
         <label>{t("library.structure.level")}<input required type="number" min={1} max={12} className={fieldClass} value={draft.level} onChange={e=>setDraft({...draft,level:Number(e.target.value)})}/></label>
@@ -80,6 +84,66 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
       </form>}
     </div>}
   </Dialog>;
+}
+
+/** A.4.1: a local, metadata-only report of how the structure was read and
+ * which place a passage opens, to copy or save for the owner's own check. */
+function StructureDiagnostic({ sourceId, observed }: { sourceId: string; observed?: () => ReaderObserved }) {
+  const { t } = useTranslation();
+  const api = useApi();
+  const [passage, setPassage] = useState("");
+  const [report, setReport] = useState<PdfDiagnostic | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const input = () => passage.trim() || null;
+  const create = async () => {
+    setBusy(true); setError(null); setStatus(null);
+    try { setReport(await api.libraryPdfStructureDiagnostic(sourceId, input(), observed?.() ?? null)); }
+    catch (e) { setError(toApiError(e).message); }
+    finally { setBusy(false); }
+  };
+  const copy = async () => {
+    if (!report) return;
+    try { await navigator.clipboard.writeText(JSON.stringify(report, null, 2)); setStatus(t("library.structure.diagnostic.copied")); }
+    catch { setError(t("library.structure.diagnostic.copyFailed")); }
+  };
+  const saveFile = async () => {
+    setError(null); setStatus(null);
+    try {
+      const path = await api.chooseDiagnosticFile("abidingword-structure-diagnostic.json", t("library.structure.diagnostic.fileType"));
+      if (!path) return;
+      const where = await api.libraryPdfStructureDiagnosticSave(sourceId, input(), observed?.() ?? null, path);
+      setStatus(t("library.structure.diagnostic.saved", { path: where }));
+    } catch (e) { setError(toApiError(e).message); }
+  };
+  const q = report?.query;
+  return <details className="border-t border-border pt-3" data-structure-diagnostic>
+    <summary>{t("library.structure.diagnostic.title")}</summary>
+    <div className="flex flex-col gap-2 pt-2">
+      <p className="type-meta m-0">{t("library.structure.diagnostic.help")}</p>
+      <label>{t("library.structure.diagnostic.passage")}
+        <input className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text" value={passage} placeholder={t("library.structure.mappingExample")} onChange={e => setPassage(e.target.value)} />
+      </label>
+      <div className="flex flex-wrap gap-2">
+        <Button disabled={busy} onClick={() => void create()}>{t("library.structure.diagnostic.create")}</Button>
+        <Button disabled={!report} onClick={() => void copy()}>{t("library.structure.diagnostic.copy")}</Button>
+        <Button disabled={busy} onClick={() => void saveFile()}>{t("library.structure.diagnostic.save")}</Button>
+      </div>
+      {error && <Notice tone="error">{error}</Notice>}
+      {status && <p role="status" className="type-meta m-0 break-words">{status}</p>}
+      {report && <div className="flex flex-col gap-1" aria-live="polite">
+        <p className="m-0 type-meta break-all">{t("library.structure.diagnostic.file", { hash: report.source.fileSha256 ?? "—", pages: report.structure.pageCount ?? "—", headings: report.structure.headingCount })}</p>
+        {report.structure.rebuildRecommended && <Notice>{t("library.structure.rebuildRecommended")}</Notice>}
+        {q && <>
+          <p className="m-0">{q.verdict}</p>
+          <ol className="m-0 pl-5 type-meta">
+            {q.candidates.slice(0, 5).map(c => <li key={`${c.rank}-${c.segmentPosition}`}>{c.evidence} · {c.matched} · {t("library.structure.physical", { page: c.physicalPage ?? "?" })}{c.printedPage ? ` (${c.printedPage})` : ""}</li>)}
+          </ol>
+        </>}
+      </div>}
+    </div>
+  </details>;
 }
 
 /** Supplied page-only bookmarks stay available even when no exact stored-text

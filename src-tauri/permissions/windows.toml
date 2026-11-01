@@ -94,6 +94,8 @@ permissions = [
   "allow-library-source-contents",
   "allow-library-pdf-structure",
   "allow-library-pdf-structure-build",
+  "allow-library-pdf-structure-diagnostic",
+  "allow-library-pdf-structure-diagnostic-save",
   "allow-library-pdf-structure-correct",
   "allow-library-pdf-structure-undo",
   "allow-library-generated-contents",

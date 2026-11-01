@@ -8,7 +8,7 @@ use crate::scripture::{
     reference::{Point, ScriptureRef},
 };
 use regex::Regex;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
 
 fn key(text: &str) -> String {
@@ -165,11 +165,50 @@ fn canonical(
         })
 }
 
+/// Headings that name this many different biblical books on one physical page
+/// are a listing (a Contents page, a book index), not book introductions.
+pub const LISTING_BOOKS: usize = 3;
+
 /// Apply reversible app-owned corrections. Existing text/anchors never change.
+///
+/// A.4.1: inferred headings on a page listing several biblical books stay in
+/// the hierarchy and Contents, but give no passage mapping (scope `contents`),
+/// so a front-matter Contents line can never stand in for the book's own
+/// section. A user mapping is never overridden.
 pub fn effective(
     doc: &PdfStructure,
     corrections: &[Correction],
     language: ReferenceLanguage,
+) -> Vec<ResolvedHeading> {
+    let first = resolve(doc, corrections, language, &HashSet::new());
+    let mut books: HashMap<u32, HashSet<&str>> = HashMap::new();
+    for h in first.iter().filter(|h| h.heading.basis != "user") {
+        if let Some(code) = h.canonical.as_deref().and_then(|c| c.split('.').next()) {
+            books.entry(h.heading.anchor.page).or_default().insert(code);
+        }
+    }
+    let listed: HashSet<String> = first
+        .iter()
+        .filter(|h| {
+            h.heading.basis != "user"
+                && h.canonical.is_some()
+                && books
+                    .get(&h.heading.anchor.page)
+                    .is_some_and(|b| b.len() >= LISTING_BOOKS)
+        })
+        .map(|h| h.heading.id.clone())
+        .collect();
+    if listed.is_empty() {
+        return first;
+    }
+    resolve(doc, corrections, language, &listed)
+}
+
+fn resolve(
+    doc: &PdfStructure,
+    corrections: &[Correction],
+    language: ReferenceLanguage,
+    listed: &HashSet<String>,
 ) -> Vec<ResolvedHeading> {
     let suppressed: std::collections::HashSet<_> = corrections
         .iter()
@@ -271,9 +310,12 @@ pub fn effective(
                     parent.as_ref().map(|(r, s)| (r, s.as_str())),
                 )
             });
-        let (reference, scope) = resolved
-            .map(|(r, s)| (Some(r.canonical()), s))
-            .unwrap_or((None, "unmapped".into()));
+        let listing = listed.contains(&heading.id);
+        let (reference, scope) = match resolved {
+            Some(_) if listing => (None, "contents".into()),
+            Some((r, s)) => (Some(r.canonical()), s),
+            None => (None, "unmapped".into()),
+        };
         let mut path = if !heading.parents.is_empty() {
             heading
                 .parents

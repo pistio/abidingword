@@ -85,25 +85,25 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | presentación (18), Presentación (7), (none of these) (4) |
 | Portuguese | apresentação (18), Apresentação (7), (none of these) (4) |
 
-**passage** — 242 strings use it in English.
+**passage** — 246 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Bibelstelle (93), Stelle (24), Bibeltext (17), Abschnitt (36), (none of these) (72) |
-| Korean | 본문 (159), 구절 (29), (none of these) (54) |
-| French | passage (192), Passage (30), (none of these) (20) |
-| Spanish | pasaje (168), Pasaje (30), (none of these) (44) |
-| Portuguese | passagem (99), Passagem (18), (none of these) (125) |
+| German | Bibelstelle (95), Stelle (24), Bibeltext (17), Abschnitt (36), (none of these) (74) |
+| Korean | 본문 (160), 구절 (30), (none of these) (56) |
+| French | passage (195), Passage (31), (none of these) (20) |
+| Spanish | pasaje (169), Pasaje (31), (none of these) (46) |
+| Portuguese | passagem (100), Passagem (19), (none of these) (127) |
 
-**source** — 130 strings use it in English.
+**source** — 131 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Quelle (126), (none of these) (4) |
-| Korean | 자료 (112), 출처 (16), (none of these) (2) |
-| French | source (106), Source (21), (none of these) (3) |
-| Spanish | fuente (109), Fuente (18), (none of these) (3) |
-| Portuguese | fonte (110), Fonte (17), (none of these) (3) |
+| German | Quelle (127), (none of these) (4) |
+| Korean | 자료 (113), 출처 (16), (none of these) (2) |
+| French | source (107), Source (21), (none of these) (3) |
+| Spanish | fuente (110), Fuente (18), (none of these) (3) |
+| Portuguese | fonte (111), Fonte (17), (none of these) (3) |
 
 ## 2. Questions left
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1767 strings changed in at least one language since v0.18.10. Spot-check these.
+1781 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -452,6 +452,8 @@ _No open linguistic questions._
 |  | `library.pane.noRecent` | Sources you open will appear here during this session. | Quellen, die du öffnest, erscheinen hier für diese Sitzung. | 이번 사용 중에 연 자료가 여기에 표시됩니다. | Les sources ouvertes pendant cette session apparaîtront ici. | Las fuentes que abras durante esta sesión aparecerán aquí. | As fontes que você abrir nesta sessão aparecerão aqui. |
 |  | `library.pane.otherSources` | Other sources | Weitere Quellen | 다른 자료 | Autres sources | Otras fuentes | Outras fontes |
 |  | `library.pane.recent` | Recently opened | Zuletzt geöffnet | 최근 연 자료 | Ouverts récemment | Abiertos recientemente | Abertos recentemente |
+| {{passage}} | `library.passage.bookSection` | Book section {{passage}} (broader) | Buchabschnitt {{passage}} (breiter) | 책 단위 부분 {{passage}}(더 넓음) | Section du livre {{passage}} (plus large) | Sección del libro {{passage}} (más amplia) | Secção do livro {{passage}} (mais ampla) |
+| {{passage}} | `library.passage.chapterSection` | Chapter heading {{passage}} | Kapitelüberschrift {{passage}} | 장 제목 {{passage}} | Titre de chapitre {{passage}} | Título de capítulo {{passage}} | Título de capítulo {{passage}} |
 | {{passage}} | `library.passage.section` | Heading names {{passage}} | Überschrift nennt {{passage}} | 제목에 {{passage}} 표시 | Le titre mentionne {{passage}} | El título menciona {{passage}} | O título menciona {{passage}} |
 | {{passage}} | `library.passage.within` | Within a section headed {{passage}} | Im Abschnitt mit der Überschrift {{passage}} | {{passage}} 제목의 부분 안 | Dans la partie intitulée {{passage}} | Dentro de la sección titulada {{passage}} | Na seção intitulada {{passage}} |
 |  | `library.reader.targetUnavailable` | The indexed location does not belong to this source or is unavailable. | Die erfasste Stelle gehört nicht zu dieser Quelle oder ist nicht verfügbar. | 기록된 위치가 이 자료에 속하지 않거나 사용할 수 없습니다. | L’emplacement indexé n’appartient pas à cette source ou n’est pas disponible. | La ubicación indexada no pertenece a esta fuente o no está disponible. | O local indexado não pertence a esta fonte ou não está disponível. |
@@ -467,6 +469,17 @@ _No open linguistic questions._
 |  | `library.structure.basis.tagged` | Tagged PDF | PDF-Strukturtags | PDF 구조 태그 | Balises PDF | Etiquetas PDF | Tags de estrutura PDF |
 |  | `library.structure.basis.user` | User correction | Benutzerkorrektur | 사용자 수정 | Correction personnelle | Corrección del usuario | Correção do usuário |
 |  | `library.structure.build` | Build structure | Struktur erstellen | 구조 분석 | Analyser la structure | Analizar estructura | Analisar estrutura |
+|  | `library.structure.diagnostic.copied` | Report copied. | Bericht kopiert. | 보고서를 복사했습니다. | Rapport copié. | Informe copiado. | Relatório copiado. |
+|  | `library.structure.diagnostic.copy` | Copy report | Bericht kopieren | 보고서 복사 | Copier le rapport | Copiar informe | Copiar relatório |
+|  | `library.structure.diagnostic.copyFailed` | The report could not be copied. Use Save report… instead. | Der Bericht konnte nicht kopiert werden. Verwende stattdessen „Bericht speichern…“. | 보고서를 복사하지 못했습니다. 대신 ‘보고서 저장…’을 사용하세요. | Le rapport n’a pas pu être copié. Utilisez plutôt « Enregistrer le rapport… ». | No se pudo copiar el informe. Usa «Guardar informe…». | Não foi possível copiar o relatório. Use «Guardar relatório…». |
+|  | `library.structure.diagnostic.create` | Create report | Bericht erstellen | 보고서 만들기 | Créer le rapport | Crear informe | Criar relatório |
+| {{hash}}, {{pages}}, {{headings}} | `library.structure.diagnostic.file` | File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings | Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften | 파일 SHA-256 {{hash}} · {{pages}}쪽 · 제목 {{headings}}개 | SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres | SHA-256 del archivo {{hash}} · {{pages}} páginas · {{headings}} títulos | SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos |
+|  | `library.structure.diagnostic.fileType` | Diagnostic report | Diagnosebericht | 진단 보고서 | Rapport de diagnostic | Informe de diagnóstico | Relatório de diagnóstico |
+|  | `library.structure.diagnostic.help` | Open the passage’s Source result first, then create the report here. It records the file fingerprint, detected headings, ranked candidates and the page the reader shows — never paragraph text, notes or keys. Review it before sharing. | Öffne zuerst das Quellenergebnis der Bibelstelle und erstelle dann hier den Bericht. Er enthält den Datei-Fingerabdruck, erkannte Überschriften, die gereihten Kandidaten und die angezeigte Seite – nie Absatztext, Notizen oder Schlüssel. Prüfe ihn vor dem Teilen. | 먼저 성경 구절의 자료 결과를 연 다음 여기에서 보고서를 만드세요. 파일 지문, 감지된 제목, 순위가 매겨진 후보와 읽기 화면의 페이지를 기록하며, 본문 문단, 메모, 키는 포함하지 않습니다. 공유하기 전에 확인하세요. | Ouvrez d’abord le résultat de source du passage, puis créez le rapport ici. Il consigne l’empreinte du fichier, les titres détectés, les candidats classés et la page affichée — jamais le texte des paragraphes, les notes ou les clés. Vérifiez-le avant de le partager. | Abre primero el resultado de fuente del pasaje y luego crea aquí el informe. Registra la huella del archivo, los títulos detectados, los candidatos ordenados y la página que muestra el lector; nunca el texto de los párrafos, notas ni claves. Revísalo antes de compartirlo. | Abra primeiro o resultado de fonte da passagem e depois crie aqui o relatório. Ele regista a impressão digital do ficheiro, os títulos detetados, os candidatos ordenados e a página mostrada — nunca texto de parágrafos, notas ou chaves. Reveja-o antes de partilhar. |
+|  | `library.structure.diagnostic.passage` | Passage to check (optional) | Zu prüfende Bibelstelle (optional) | 확인할 구절(선택) | Passage à vérifier (facultatif) | Pasaje que comprobar (opcional) | Passagem a verificar (opcional) |
+|  | `library.structure.diagnostic.save` | Save report… | Bericht speichern… | 보고서 저장… | Enregistrer le rapport… | Guardar informe… | Guardar relatório… |
+| {{path}} | `library.structure.diagnostic.saved` | Saved to {{path}} | Gespeichert unter {{path}} | {{path}}에 저장했습니다 | Enregistré dans {{path}} | Guardado en {{path}} | Guardado em {{path}} |
+|  | `library.structure.diagnostic.title` | Diagnostic report (metadata only) | Diagnosebericht (nur Metadaten) | 진단 보고서(메타데이터만) | Rapport de diagnostic (métadonnées seulement) | Informe de diagnóstico (solo metadatos) | Relatório de diagnóstico (apenas metadados) |
 |  | `library.structure.disable` | Exclude this section | Diesen Abschnitt ausschließen | 이 구간 제외 | Exclure cette section | Excluir esta sección | Excluir esta seção |
 |  | `library.structure.edit` | Correct section | Abschnitt korrigieren | 구간 수정 | Corriger la section | Corregir sección | Corrigir seção |
 |  | `library.structure.explanation` | Section targets are document evidence, not a judgement of commentary relevance. Corrections belong to Abiding Word; original files and citation text remain unchanged. | Abschnittsziele beruhen auf Dokumentmerkmalen, nicht auf einer Beurteilung theologischer Relevanz. Korrekturen gehören zu Abiding Word; Originaldateien und Zitattexte bleiben unverändert. | 구간 위치는 문서에 근거하며 주석의 신학적 관련성을 판정하지 않습니다. 수정 사항은 Abiding Word에 저장되며 원본 파일과 인용문은 그대로 유지됩니다. | Les cibles reposent sur le document, sans jugement de pertinence théologique. Les corrections sont enregistrées dans Abiding Word ; les fichiers originaux et les citations restent inchangés. | Los destinos se basan en el documento, sin juzgar su relevancia teológica. Las correcciones se guardan en Abiding Word; los originales y las citas permanecen intactos. | Os destinos se baseiam no documento, sem avaliar sua relevância teológica. As correções ficam no Abiding Word; os arquivos originais e as citações permanecem intactos. |
@@ -480,6 +493,7 @@ _No open linguistic questions._
 |  | `library.structure.originalBookmarksHelp` | These are the PDF’s own page destinations, without the app’s section corrections. A page destination does not establish a text-aligned section or commentary relevance. | Dies sind die eigenen Seitenziele der PDF, ohne die Abschnittskorrekturen der App. Ein Seitenziel belegt weder einen textgenau zugeordneten Abschnitt noch eine inhaltliche Kommentarrelevanz. | 앱에서 수정한 구간 정보가 아닌 PDF 자체의 페이지 위치입니다. 페이지 위치만으로는 정확한 텍스트 구간이나 주석의 관련성을 확인할 수 없습니다. | Il s’agit des destinations de page du PDF, sans les corrections de section de l’application. Une destination de page ne prouve ni une correspondance textuelle exacte ni la pertinence d’un commentaire. | Son los destinos de página del propio PDF, sin las correcciones de sección de la aplicación. Un destino de página no establece una sección alineada con el texto ni la relevancia de un comentario. | São os destinos de página do próprio PDF, sem as correções de seção do aplicativo. Um destino de página não comprova uma seção alinhada ao texto nem a relevância de um comentário. |
 | {{page}} | `library.structure.physical` | PDF page {{page}} | PDF-Seite {{page}} | PDF {{page}}쪽 | Page PDF {{page}} | Página PDF {{page}} | Página PDF {{page}} |
 |  | `library.structure.rebuild` | Rebuild structure | Struktur neu erstellen | 구조 다시 분석 | Reprendre l’analyse | Volver a analizar | Analisar novamente |
+|  | `library.structure.rebuildRecommended` | This structure was built with earlier analysis rules. Choose Rebuild structure to apply the current rules; corrections, citations and annotations are kept. | Diese Struktur wurde mit früheren Analyseregeln erstellt. Wähle „Struktur neu erstellen“, um die aktuellen Regeln anzuwenden; Korrekturen, Zitate und Markierungen bleiben erhalten. | 이 구조는 이전 분석 규칙으로 만들어졌습니다. 현재 규칙을 적용하려면 ‘구조 다시 분석’을 선택하세요. 수정 사항, 인용과 표시는 유지됩니다. | Cette structure a été créée avec des règles d’analyse antérieures. Choisissez « Reprendre l’analyse » pour appliquer les règles actuelles ; corrections, citations et annotations sont conservées. | Esta estructura se creó con reglas de análisis anteriores. Elige «Volver a analizar» para aplicar las reglas actuales; se conservan las correcciones, citas y anotaciones. | Esta estrutura foi criada com regras de análise anteriores. Escolha «Analisar novamente» para aplicar as regras atuais; correções, citações e anotações são mantidas. |
 |  | `library.structure.refine` | Refine the search to see more sections. | Suche eingrenzen, um weitere Abschnitte zu sehen. | 더 많은 구간을 보려면 검색 범위를 좁히세요. | Précisez la recherche pour voir d’autres sections. | Precise la búsqueda para ver más secciones. | Refine a busca para ver mais seções. |
 |  | `library.structure.reset` | Reset corrections | Korrekturen zurücksetzen | 수정 사항 초기화 | Réinitialiser les corrections | Restablecer correcciones | Redefinir correções |
 |  | `library.structure.scope` | Mapping scope | Umfang der Zuordnung | 연결 범위 | Étendue du passage | Alcance del pasaje | Abrangência da passagem |

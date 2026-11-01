@@ -2471,6 +2471,17 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     libraryPdfStructureBuild: async () => {throw new Error("No PDF file in the memory library");},
     libraryPdfStructureCorrect: async () => {throw new Error("No PDF structure in the memory library");},
     libraryPdfStructureUndo: async () => {throw new Error("No PDF structure in the memory library");},
+    libraryPdfStructureDiagnostic: async (sourceId, passage, observed) => ({
+      schema: "abidingword.pdf-structure-diagnostic/1", appVersion: "memory", generatedAt: new Date(0).toISOString(),
+      privacy: "Metadata only.",
+      source: { id: sourceId, fileSha256: null, fileSizeBytes: null, language: null, indexLanguage: "En", segmentCount: 0, pagesWithText: 0 },
+      structure: { status: "none", analysis: null, currentAnalysis: 2, rebuildRecommended: true, pageCount: null, headingCount: 0, listingPages: [], corrections: 0, byScope: {}, byBasis: {} },
+      headings: [],
+      query: passage ? { input: passage, canonical: null, verdict: "No place in this source shares a verse with the passage.", candidates: [], readerTarget: null } : null,
+      readerObserved: observed,
+    }),
+    chooseDiagnosticFile: async () => null,
+    libraryPdfStructureDiagnosticSave: async () => {throw new Error("No PDF structure in the memory library");},
     librarySourceContents: async (sourceId) => {
       liveSource(sourceId);
       return contentsOf.get(sourceId) ?? [];

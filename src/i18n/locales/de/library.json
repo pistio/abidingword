@@ -143,7 +143,9 @@
     "mentions": "Erwähnt {{passage}}",
     "section": "Überschrift nennt {{passage}}",
     "within": "Im Abschnitt mit der Überschrift {{passage}}",
-    "linked": "Verknüpft mit {{passage}}"
+    "linked": "Verknüpft mit {{passage}}",
+    "bookSection": "Buchabschnitt {{passage}} (breiter)",
+    "chapterSection": "Kapitelüberschrift {{passage}}"
   },
   "citations": {
     "removed": "(aus der Bibliothek entfernt)",
@@ -593,6 +595,20 @@
     },
     "mappingExample": "Apg 6",
     "originalBookmarks": "Originale PDF-Lesezeichen",
-    "originalBookmarksHelp": "Dies sind die eigenen Seitenziele der PDF, ohne die Abschnittskorrekturen der App. Ein Seitenziel belegt weder einen textgenau zugeordneten Abschnitt noch eine inhaltliche Kommentarrelevanz."
+    "originalBookmarksHelp": "Dies sind die eigenen Seitenziele der PDF, ohne die Abschnittskorrekturen der App. Ein Seitenziel belegt weder einen textgenau zugeordneten Abschnitt noch eine inhaltliche Kommentarrelevanz.",
+    "rebuildRecommended": "Diese Struktur wurde mit früheren Analyseregeln erstellt. Wähle „Struktur neu erstellen“, um die aktuellen Regeln anzuwenden; Korrekturen, Zitate und Markierungen bleiben erhalten.",
+    "diagnostic": {
+      "title": "Diagnosebericht (nur Metadaten)",
+      "help": "Öffne zuerst das Quellenergebnis der Bibelstelle und erstelle dann hier den Bericht. Er enthält den Datei-Fingerabdruck, erkannte Überschriften, die gereihten Kandidaten und die angezeigte Seite – nie Absatztext, Notizen oder Schlüssel. Prüfe ihn vor dem Teilen.",
+      "passage": "Zu prüfende Bibelstelle (optional)",
+      "create": "Bericht erstellen",
+      "copy": "Bericht kopieren",
+      "save": "Bericht speichern…",
+      "copied": "Bericht kopiert.",
+      "copyFailed": "Der Bericht konnte nicht kopiert werden. Verwende stattdessen „Bericht speichern…“.",
+      "fileType": "Diagnosebericht",
+      "saved": "Gespeichert unter {{path}}",
+      "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften"
+    }
   }
 }

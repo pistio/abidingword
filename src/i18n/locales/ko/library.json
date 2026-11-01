@@ -134,7 +134,9 @@
     "mentions": "{{passage}} 언급",
     "section": "제목에 {{passage}} 표시",
     "within": "{{passage}} 제목의 부분 안",
-    "linked": "{{passage}}와(과) 연결됨"
+    "linked": "{{passage}}와(과) 연결됨",
+    "bookSection": "책 단위 부분 {{passage}}(더 넓음)",
+    "chapterSection": "장 제목 {{passage}}"
   },
   "citations": {
     "removed": "(자료실에서 제거됨)",
@@ -551,6 +553,20 @@
     },
     "mappingExample": "행 6",
     "originalBookmarks": "원본 PDF 책갈피",
-    "originalBookmarksHelp": "앱에서 수정한 구간 정보가 아닌 PDF 자체의 페이지 위치입니다. 페이지 위치만으로는 정확한 텍스트 구간이나 주석의 관련성을 확인할 수 없습니다."
+    "originalBookmarksHelp": "앱에서 수정한 구간 정보가 아닌 PDF 자체의 페이지 위치입니다. 페이지 위치만으로는 정확한 텍스트 구간이나 주석의 관련성을 확인할 수 없습니다.",
+    "rebuildRecommended": "이 구조는 이전 분석 규칙으로 만들어졌습니다. 현재 규칙을 적용하려면 ‘구조 다시 분석’을 선택하세요. 수정 사항, 인용과 표시는 유지됩니다.",
+    "diagnostic": {
+      "title": "진단 보고서(메타데이터만)",
+      "help": "먼저 성경 구절의 자료 결과를 연 다음 여기에서 보고서를 만드세요. 파일 지문, 감지된 제목, 순위가 매겨진 후보와 읽기 화면의 페이지를 기록하며, 본문 문단, 메모, 키는 포함하지 않습니다. 공유하기 전에 확인하세요.",
+      "passage": "확인할 구절(선택)",
+      "create": "보고서 만들기",
+      "copy": "보고서 복사",
+      "save": "보고서 저장…",
+      "copied": "보고서를 복사했습니다.",
+      "copyFailed": "보고서를 복사하지 못했습니다. 대신 ‘보고서 저장…’을 사용하세요.",
+      "fileType": "진단 보고서",
+      "saved": "{{path}}에 저장했습니다",
+      "file": "파일 SHA-256 {{hash}} · {{pages}}쪽 · 제목 {{headings}}개"
+    }
   }
 }

@@ -607,4 +607,31 @@ export interface PdfStructureView {
   sourceId: string; fileHash: string | null; status: "ready" | "missing";
   complete: boolean; tagged: boolean; unalignedTags: number; uncertainPages: number;
   headings: PdfResolvedHeading[]; corrections: PdfCorrection[]; canUndo: boolean;
+  /** Analysis rules the stored structure was built with (0 = before A.4.1). */
+  analysis?: number;
+  /** Built with earlier rules: Rebuild structure applies the current ones. */
+  rebuildRecommended?: boolean;
+}
+
+/** What the Reader showed when a structure diagnostic was made (A.4.1). */
+export interface ReaderObserved {
+  mode?: string | null; physicalPage?: number | null; printedPage?: string | null;
+  openedSegmentId?: string | null; openedStructureNodeId?: string | null;
+  focusedHeadingId?: string | null; variant?: string | null;
+}
+export interface PdfDiagnosticCandidate {
+  rank: number; class: number; origin: string; evidence: string; scope: string | null;
+  basis: string | null; role: string | null; structureNodeId: string | null;
+  segmentPosition: number; physicalPage: number | null; printedPage: string | null;
+  passage: string; matched: string;
+}
+/** A local, metadata-only report of a PDF Source's structure and targeting (A.4.1). */
+export interface PdfDiagnostic {
+  schema: string; appVersion: string; generatedAt: string; privacy: string;
+  source: { id: string; fileSha256: string | null; fileSizeBytes: number | null; language: string | null; indexLanguage: string; segmentCount: number; pagesWithText: number };
+  structure: { status: string; analysis: number | null; currentAnalysis: number; rebuildRecommended: boolean; pageCount: number | null; headingCount: number; listingPages: number[]; corrections: number; byScope: Record<string, number>; byBasis: Record<string, number> };
+  headings: unknown[];
+  query: null | { input: string; canonical: string | null; verdict: string; candidates: PdfDiagnosticCandidate[];
+    readerTarget: null | { segmentId: string; segmentPosition: number; structureNodeId: string | null; physicalPage: number | null; printedPage: string | null } };
+  readerObserved: ReaderObserved | null;
 }

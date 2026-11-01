@@ -143,7 +143,9 @@
     "mentions": "Mentions {{passage}}",
     "section": "Heading names {{passage}}",
     "within": "Within a section headed {{passage}}",
-    "linked": "Linked to {{passage}}"
+    "linked": "Linked to {{passage}}",
+    "bookSection": "Book section {{passage}} (broader)",
+    "chapterSection": "Chapter heading {{passage}}"
   },
   "citations": {
     "removed": "(removed from library)",
@@ -593,6 +595,20 @@
     },
     "mappingExample": "Acts 6",
     "originalBookmarks": "Original PDF bookmarks",
-    "originalBookmarksHelp": "These are the PDF’s own page destinations, without the app’s section corrections. A page destination does not establish a text-aligned section or commentary relevance."
+    "originalBookmarksHelp": "These are the PDF’s own page destinations, without the app’s section corrections. A page destination does not establish a text-aligned section or commentary relevance.",
+    "rebuildRecommended": "This structure was built with earlier analysis rules. Choose Rebuild structure to apply the current rules; corrections, citations and annotations are kept.",
+    "diagnostic": {
+      "title": "Diagnostic report (metadata only)",
+      "help": "Open the passage’s Source result first, then create the report here. It records the file fingerprint, detected headings, ranked candidates and the page the reader shows — never paragraph text, notes or keys. Review it before sharing.",
+      "passage": "Passage to check (optional)",
+      "create": "Create report",
+      "copy": "Copy report",
+      "save": "Save report…",
+      "copied": "Report copied.",
+      "copyFailed": "The report could not be copied. Use Save report… instead.",
+      "fileType": "Diagnostic report",
+      "saved": "Saved to {{path}}",
+      "file": "File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings"
+    }
   }
 }

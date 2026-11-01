@@ -152,7 +152,9 @@
     "mentions": "Mentionne {{passage}}",
     "section": "Le titre mentionne {{passage}}",
     "within": "Dans la partie intitulée {{passage}}",
-    "linked": "Lié à {{passage}}"
+    "linked": "Lié à {{passage}}",
+    "bookSection": "Section du livre {{passage}} (plus large)",
+    "chapterSection": "Titre de chapitre {{passage}}"
   },
   "citations": {
     "removed": "(retirée de la bibliothèque)",
@@ -635,6 +637,20 @@
     },
     "mappingExample": "Actes 6",
     "originalBookmarks": "Signets du PDF original",
-    "originalBookmarksHelp": "Il s’agit des destinations de page du PDF, sans les corrections de section de l’application. Une destination de page ne prouve ni une correspondance textuelle exacte ni la pertinence d’un commentaire."
+    "originalBookmarksHelp": "Il s’agit des destinations de page du PDF, sans les corrections de section de l’application. Une destination de page ne prouve ni une correspondance textuelle exacte ni la pertinence d’un commentaire.",
+    "rebuildRecommended": "Cette structure a été créée avec des règles d’analyse antérieures. Choisissez « Reprendre l’analyse » pour appliquer les règles actuelles ; corrections, citations et annotations sont conservées.",
+    "diagnostic": {
+      "title": "Rapport de diagnostic (métadonnées seulement)",
+      "help": "Ouvrez d’abord le résultat de source du passage, puis créez le rapport ici. Il consigne l’empreinte du fichier, les titres détectés, les candidats classés et la page affichée — jamais le texte des paragraphes, les notes ou les clés. Vérifiez-le avant de le partager.",
+      "passage": "Passage à vérifier (facultatif)",
+      "create": "Créer le rapport",
+      "copy": "Copier le rapport",
+      "save": "Enregistrer le rapport…",
+      "copied": "Rapport copié.",
+      "copyFailed": "Le rapport n’a pas pu être copié. Utilisez plutôt « Enregistrer le rapport… ».",
+      "fileType": "Rapport de diagnostic",
+      "saved": "Enregistré dans {{path}}",
+      "file": "SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres"
+    }
   }
 }
