@@ -8,6 +8,18 @@ this addendum Codex's integration lineage
 0026 (`e2564b5`). The v0.24.5 contract (`recognition-interface-contract-v0.24.5.md`)
 stands; this lists what v0.24.6 changes on the recognition side.
 
+
+> **Correction — migration number (owner, at the set F authorisation).** The
+> A.3 PDF branch already uses migration `0027_pdf_structure.sql`. The
+> provisional Bible import safeguards (standing column, review tables) must
+> therefore take the next free number, provisionally **`0028`**, when they are
+> integrated onto the A.3 lineage. No conflicting `0027` is to be created and
+> no applied migration rewritten. Wherever this addendum, the v0.24.5
+> contract or the v0.24.4 design say "migration 0027" for the provisional
+> import, read "the provisional-import migration (0028 on the A.3 lineage)";
+> those earlier records are kept as written. Recognised document-derived
+> Bible text stays provisional whatever any evaluation shows.
+
 ## What does not change
 
 * **No new unverified-reason values.** Every v0.24.6 rule uses an existing
