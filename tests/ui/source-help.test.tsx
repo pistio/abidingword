@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import type { InquiryReply } from "@/types/inquiry";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Help with a library source and comparing passages (v0.20): from the words
 // the person selected only, named with the source's title, author and place;

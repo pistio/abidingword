@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 async function withProject(title = "John Sermon Series") {
   const api = createMemoryApi();
@@ -11,9 +11,10 @@ async function withProject(title = "John Sermon Series") {
   return { api, project };
 }
 
-// With a single project the Study pane starts on its studies: there is no project to open.
-async function openProject(_user: Awaited<ReturnType<typeof renderApp>>["user"], _title: string) {
-  await screen.findByRole("heading", { level: 1, name: "Studies" });
+// The fixture helper explicitly opens the named folder before editor checks.
+async function openProject(user: Awaited<ReturnType<typeof renderApp>>["user"], _title: string) {
+  await screen.findByRole("heading", { level: 1, name: _title });
+  if (!screen.queryByRole("form", { name: "New study" }) && !screen.queryByRole("list", { name: "Studies" })) await user.click(screen.getByRole("button", { name: "New study" }));
 }
 
 async function openStudy(api: MemoryApi, user: Awaited<ReturnType<typeof renderApp>>["user"], project: string, study: string) {

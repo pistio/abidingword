@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { highlightPaint, phraseSegments } from "@/lib/annotationRender";
 import { HIGHLIGHT_COLORS, type Annotation } from "@/types/scripture";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 const V1 = "Fixture alpha JHN 15:1 about the vine.";
 const V2 = "Fixture alpha JHN 15:2.";

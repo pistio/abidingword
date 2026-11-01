@@ -48,3 +48,12 @@ pub fn trash_list(
 ) -> CommandResult<Vec<projects::TrashEntry>> {
     state.db(|conn| projects::trash_list(conn, &workspace_id))
 }
+
+#[tauri::command(async)]
+pub fn project_root(
+    state: State<'_, AppState>,
+    workspace_id: String,
+    title: String,
+) -> CommandResult<Project> {
+    state.db(|conn| projects::root(conn, &workspace_id, &title))
+}

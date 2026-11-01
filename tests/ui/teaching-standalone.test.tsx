@@ -2,7 +2,7 @@ import { act, screen, within, waitFor } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderApp, openSettingsSection } from "../support/render";
 
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
 const pane = () => within(screen.getByRole("main", { name: "Study" }));
@@ -14,10 +14,11 @@ it("keeps existing standalone Teaching editable without offering general creatio
   await api.teachingBlockUpdate({ id: prep.blocks![0]!.id, body: "An independent message." });
   const { user } = await renderApp(api);
   expect(pane().queryByRole("button", { name: "New Teaching" })).toBeNull();
-  await user.click(await pane().findByRole("button", { name: "Standalone Teaching" }));
-  expect(pane().queryByRole("button", { name: "New Teaching" })).toBeNull();
-  await user.click(await pane().findByRole("button", { name: "Existing sermon" }));
-  const main = await pane().findByRole("textbox", { name: "Main part" });
+  const data = await openSettingsSection(user, "Data and backup");
+  await user.click(within(data).getByText("Legacy standalone Teaching", { selector: "summary" }));
+  expect(screen.queryByRole("button", { name: "New Teaching" })).toBeNull();
+  await user.click(await screen.findByRole("button", { name: "Existing sermon" }));
+  const main = await screen.findByRole("textbox", { name: "Main part" });
   expect(main).toHaveValue("An independent message.");
   await user.type(main, " Retained edit.");
   await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks![0]!.body).toContain("Retained edit."));
@@ -33,6 +34,7 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   const teaching = await api.teachingCreate({ projectId: project.id, studyId: study.id, title: "Independent manuscript" });
   await api.teachingFindingLink({ preparationId: teaching.id, findingId: finding.id });
   const { user } = await renderApp(api);
+  await user.click(await pane().findByRole("button", { name: "Messages Project folder" }));
   await user.click(await pane().findByRole("button", { name: /Vine study/ }));
   await user.click(await pane().findByRole("button", { name: "Bible Teaching" }));
   await user.click(await pane().findByText(/^Based on: Bible Study/));
@@ -62,10 +64,11 @@ it.each(["en", "de", "fr", "es", "pt", "ko"])("opens existing standalone Teachin
   const { user } = await renderApp(api);
   const main = within(screen.getByRole("main", { name: i18n.t("app.panes.name.study") }));
   expect(main.queryByRole("button", { name: i18n.t("studies.teaching.newTeaching") })).toBeNull();
-  await user.click(await main.findByRole("button", { name: i18n.t("studies.teaching.workspace.standalone") }));
-  await user.click(await main.findByRole("button", { name: "Existing message" }));
-  await user.click(await main.findByText(new RegExp(`^${i18n.t("studies.teaching.workspace.linkStudy")}`)));
-  expect(await main.findByRole("combobox", { name: i18n.t("studies.teaching.workspace.study") })).toHaveValue("");
+  const data = await openSettingsSection(user, i18n.t("settings.sections.data"));
+  await user.click(within(data).getByText(i18n.t("studies.files.legacy"), { selector: "summary" }));
+  await user.click(await screen.findByRole("button", { name: "Existing message" }));
+  await user.click(await screen.findByText(new RegExp(`^${i18n.t("studies.teaching.workspace.linkStudy")}`)));
+  expect(await screen.findByRole("combobox", { name: i18n.t("studies.teaching.workspace.study") })).toHaveValue("");
   expect(api.state.studies).toHaveLength(0);
 });
 

@@ -2,7 +2,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 afterEach(async () => { localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
 
@@ -52,7 +52,7 @@ it("confirms Study deletion from its row, offers Undo and exposes workspace Tras
   const teaching = await api.teachingCreate({ studyId: study.id, title: "Retained teaching" });
   const { user } = await renderApp(api);
   const actions = await screen.findByRole("group", { name: "Actions for “Named row”" });
-  await user.click(within(actions).getByRole("button", { name: "Move to Trash" }));
+  await user.click(within(actions).getByRole("button", { name: "File actions" }));
   await user.click(screen.getByRole("menuitem", { name: "Move to Trash" }));
   const confirm = await screen.findByRole("alertdialog", { name: "Move “Named row” to Trash?" });
   expect((await api.studyGet(study.id)).study.id).toBe(study.id);
@@ -73,19 +73,20 @@ it("offers Project row confirmation with descendants explained and no one-click 
   await api.studyCreate({ projectId: project.id, title: "Descendant row" });
   const { user } = await renderApp(api);
   const actions = await screen.findByRole("group", { name: "Actions for “Named container”" });
-  await user.click(within(actions).getByRole("button", { name: "Move to Trash" }));
+  await user.click(within(actions).getByRole("button", { name: "File actions" }));
   await user.click(screen.getByRole("menuitem", { name: "Move to Trash" }));
   const dialog = await screen.findByRole("dialog", { name: "Move “Named container” to Trash?" });
   expect(dialog).toHaveTextContent("The Project and its Studies and Teaching are hidden together");
   await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
   expect((await api.projectGet(project.id)).id).toBe(project.id);
-  expect(screen.getByRole("button", { name: /Descendant row/ })).toBeVisible();
-  await user.click(within(actions).getByRole("button", { name: "Move to Trash" }));
+  expect(screen.queryByRole("button", { name: /Descendant row/ })).toBeNull();
+  await user.click(within(actions).getByRole("button", { name: "File actions" }));
   await user.click(screen.getByRole("menuitem", { name: "Move to Trash" }));
   const confirmed = await screen.findByRole("alertdialog", { name: "Move “Named container” to Trash?" });
   await user.click(within(confirmed).getByRole("button", { name: "Move to Trash" }));
   await waitFor(() => expect(screen.queryByRole("button", { name: /Descendant row/ })).toBeNull());
   await user.click(screen.getByRole("button", { name: "Undo" }));
+  await user.click(await screen.findByRole("button", { name: "Named container Project folder" }));
   expect(await screen.findByRole("button", { name: /Descendant row/ })).toBeVisible();
 });
 

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ContentsItem, SourceLink } from "@/types/library";
 import { createFakePdfEngine, type FakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Link-following, footnotes and Back / Forward in the source reader. Every
 // document and every word here is invented for the tests.

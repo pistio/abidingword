@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { acceptImport, textFrame, type TemplateDefinition } from "@/types/presentationTemplate";
 import { createMemoryApi } from "../support/memoryApi";
 import { IMPORTED } from "../support/memoryTemplates";
-import { renderApp, setWindowWidth } from "../support/render";
+import { renderAppInProject as renderApp, setWindowWidth } from "../support/render";
 
 // Church presentation templates (v0.18.1): a design chosen per presentation,
 // imported from PowerPoint with an honest report, designed simply, taken to

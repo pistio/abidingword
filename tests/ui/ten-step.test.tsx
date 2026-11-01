@@ -6,7 +6,7 @@ import tenStep from "../../resources/templates/ten-step-exegesis.json";
 import { localizedSections } from "@/features/studies/builtinText";
 import { setLanguage } from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 beforeEach(() => window.localStorage.clear());
 
@@ -82,6 +82,7 @@ describe("the Ten-Step exegesis method", () => {
     expect(parts[8]!.fields?.template).toBe(tenStep.key);
     expect(parts[8]!.fields?.fields).toEqual(tenStep.sections[8]!.fields);
     const { user } = await renderApp(api);
+    await user.click(await screen.findByRole("button", { name: "Own study Project folder" }));
     await user.click(await screen.findByRole("button", { name: /Own Matthew study/ }));
     const summary = await screen.findByRole("region", { name: "My summary" });
     expect(within(summary).getByLabelText("Text subject — What is it about?")).toBeInTheDocument();

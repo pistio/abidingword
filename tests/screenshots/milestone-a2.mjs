@@ -25,7 +25,8 @@ try {
   for (const [width, scale] of [[640, 1], [900, 1], [1100, 1], [1440, 1], [900, 1.25], [1100, 1.5], [1440, 2]]) {
     const page = await browser.newPage({ viewport: { width, height: 1000 }, deviceScaleFactor: scale });
     await page.goto(`${base}?assistant=off&sourcesOpen=1&a1Review=1&a2Review=1`);
-    await page.getByRole("main").getByRole("button", { name: /^Abiding in the Vine/ }).first().click();
+    await page.getByRole("main").getByRole("button", { name: "Gospel of John Project folder", exact: true }).click();
+  await page.getByRole("main").getByRole("button", { name: /^Abiding in the Vine/ }).first().click();
     const sources = page.locator("#pane-sources");
     const pdf = sources.getByRole("button", { name: /^Invented PDF navigation review/ }).first();
     await pdf.scrollIntoViewIfNeeded();
@@ -93,8 +94,9 @@ try {
   }
   const review = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   await review.goto(`${base}?assistant=off&sourcesOpen=1&a2Review=1`);
+  await review.getByRole("main").getByRole("button", { name: "Gospel of John Project folder", exact: true }).click();
   const actions = review.getByRole("group", { name: "Actions for “POZETEK recovery review”", exact: true });
-  await actions.getByRole("button", { name: "Move to Trash", exact: true }).click();
+  await actions.getByRole("button", { name: "File actions", exact: true }).click();
   await review.getByRole("menuitem", { name: "Move to Trash", exact: true }).click();
   const confirmation = review.getByRole("alertdialog", { name: "Move “POZETEK recovery review” to Trash?", exact: true });
   await confirmation.waitFor();

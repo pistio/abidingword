@@ -6,7 +6,7 @@ import { STEP_KINDS, TEACHING_KINDS } from "@/types/teaching";
 import { sectionTitle } from "@/features/studies/builtinText";
 import { STUDY_PHASES, STUDY_TYPES } from "@/types/studies";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // The built-in baselines (v0.18.8): starting points kept as data
 // (resources/templates/*.json, resources/teaching-templates.json), easy to

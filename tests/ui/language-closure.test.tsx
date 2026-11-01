@@ -8,7 +8,7 @@ import { TEACHING_KINDS, type TeachingKind, type TeachingPreparation } from "@/t
 // @ts-expect-error -- a plain Node script without type declarations
 import * as corpus from "../../scripts/i18n-corpus.mjs";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The last language questions of v0.18.10, closed: kind-aware point words in
 // Korean, note labels that do not depend on a note type's gender, the real

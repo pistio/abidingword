@@ -5,7 +5,7 @@ import type { StudySection } from "@/types/domain";
 import passageStudy from "../../resources/templates/passage-study.json";
 import teachingStudy from "../../resources/templates/teaching-study.json";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The study journey (v0.18.6, v0.18.7): a Bible Study's parts grouped into
 // its movement from the text to teaching, where they stand, by the phase

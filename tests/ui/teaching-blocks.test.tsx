@@ -5,7 +5,7 @@ import { derive } from "@/features/materials/derive";
 import { BUILTIN_BLOCK_TEMPLATES, templateFromTeaching } from "@/features/teaching/teachingTemplates";
 import type { TeachingPreparation } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 const prep = (): TeachingPreparation => ({
   id: "p",

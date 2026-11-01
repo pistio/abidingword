@@ -12,7 +12,7 @@ import { AddPart } from "@/features/studies/AddPart";
 import { STUDY_TEMPLATE_KEYS, inStudyCatalogue } from "@/features/studies/catalogue";
 import { localizedSections, sectionGuidance, sectionTitle, structuredText, templateDescription, templateName } from "@/features/studies/builtinText";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 for (const { code } of LANGUAGES) {
   describe(`the six-template catalogue in ${code}`, () => {

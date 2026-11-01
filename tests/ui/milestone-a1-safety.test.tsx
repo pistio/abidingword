@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { openInfo, openSettingsSection, renderApp } from "../support/render";
+import { openInfo, openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 it("confirms a named Study, exposes durable Trash and restores the same identity without relinking Teaching", async () => {
   const api = createMemoryApi();

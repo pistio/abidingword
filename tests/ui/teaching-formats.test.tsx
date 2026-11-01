@@ -4,7 +4,7 @@ import i18n from "@/i18n";
 import { FORMAT_KINDS, TEACHING_FORMATS, formatOf, formatStarts } from "@/features/teaching/teachingTemplates";
 import { TEACHING_KINDS, type TeachingKind } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Bible Teaching in three formats (v0.19): a message, a group Bible study and
 // an interactive lesson. The kinds stored since v0.16 stay as they are; each

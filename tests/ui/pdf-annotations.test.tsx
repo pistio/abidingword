@@ -2,7 +2,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { createFakePdfEngine, textItem } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Marks on the Original PDF (v0.14): drawn where the stored words are placed exactly on the
 // drawn page, made from a selection on the page, and kept per page. All text is invented.

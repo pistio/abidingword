@@ -1,0 +1,120 @@
+import { act, screen, within, waitFor } from "@testing-library/react";
+import { afterEach, expect, it } from "vitest";
+import i18n from "@/i18n";
+import { createMemoryApi } from "../support/memoryApi";
+import { renderApp, openSettingsSection } from "../support/render";
+
+afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
+const studyPane = () => within(screen.getByRole("main", { name: i18n.t("app.panes.name.study") }));
+
+it.each(["en", "de", "ko", "fr", "es", "pt"])("shows root documents and folders once, with quiet recovery controls in %s", async language => {
+  await act(async () => { await i18n.changeLanguage(language); });
+  const api = createMemoryApi();
+  const old = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "My studies" });
+  const folder = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Named folder" });
+  await api.studyCreate({ projectId: old.id, title: "Root document" });
+  await api.studyCreate({ projectId: folder.id, title: "Filed document" });
+  await api.teachingCreate({ projectId: old.id, title: "Legacy message" });
+  const { user } = await renderApp(api);
+  expect(await studyPane().findByRole("button", { name: /Root document/ })).toBeVisible();
+  expect(studyPane().queryByRole("button", { name: /Filed document/ })).toBeNull();
+  expect(studyPane().queryByRole("button", { name: i18n.t("studies.teaching.workspace.standalone") })).toBeNull();
+  expect(studyPane().queryByRole("button", { name: i18n.t("studies.home.organise") })).toBeNull();
+  const trash = studyPane().getByRole("button", { name: i18n.t("settings.trash.title") });
+  expect(trash.closest("footer")).not.toBeNull();
+  await user.click(studyPane().getByRole("button", { name: `Named folder ${i18n.t("studies.files.folder")}` }));
+  expect(await studyPane().findByRole("button", { name: /Filed document/ })).toBeVisible();
+  expect(studyPane().queryByRole("button", { name: /Root document/ })).toBeNull();
+  await user.click(within(studyPane().getByRole("navigation", { name: i18n.t("studies.projects.breadcrumb") })).getByRole("button", { name: i18n.t("studies.home.title") }));
+  expect(await studyPane().findByRole("button", { name: /Root document/ })).toBeVisible();
+  expect(api.state.projects).toHaveLength(2);
+});
+
+it("creates root Studies without picking the last named folder, and creates named folders in place", async () => {
+  const api = createMemoryApi();
+  const { user } = await renderApp(api);
+  expect(await studyPane().findByRole("heading", { name: "Studies", level: 1 })).toBeVisible();
+  await user.click(studyPane().getByRole("button", { name: "New project" }));
+  const dialog = await screen.findByRole("dialog", { name: "New project" });
+  await user.type(within(dialog).getByRole("textbox", { name: "Name" }), "Research folder");
+  await user.click(within(dialog).getByRole("button", { name: "Save" }));
+  expect(await studyPane().findByRole("button", { name: "Research folder Project folder" })).toBeVisible();
+  await user.click(studyPane().getByRole("button", { name: "New study" }));
+  await user.type(await studyPane().findByRole("textbox", { name: "Bible passage" }), "John 15:1-11");
+  await user.click(studyPane().getByRole("button", { name: "Create study" }));
+  await studyPane().findByRole("textbox", { name: "Study title" });
+  expect(api.state.studies[0]!.projectId).toBe((await api.projectRoot(api.state.workspace.id, "My studies")).id);
+});
+
+it("moves Study and linked Teaching into and out of folders, preserving writing, rename and Trash Undo", async () => {
+  const api = createMemoryApi(); const w = api.state.workspace.id;
+  const root = await api.projectRoot(w, "My studies");
+  const folder = await api.projectCreate({ workspaceId: w, title: "Folder" });
+  const { study } = await api.studyCreate({ projectId: root.id, title: "Document" });
+  const teaching = await api.teachingCreate({ studyId: study.id, title: "Linked message" });
+  const { user } = await renderApp(api);
+  const actions = () => studyPane().getByRole("group", { name: "Actions for “Document”" });
+  await studyPane().findByRole("button", { name: /Document/ });
+  await user.click(within(actions()).getByRole("button", { name: "File actions" }));
+  await user.click(screen.getByRole("menuitem", { name: "Move" }));
+  let move = await screen.findByRole("dialog", { name: "Move “Document”" });
+  await user.selectOptions(within(move).getByRole("combobox", { name: "Destination" }), folder.id);
+  await user.click(within(move).getByRole("button", { name: "Move" }));
+  await waitFor(() => expect(studyPane().queryByRole("button", { name: /^Document/ })).toBeNull());
+  expect((await api.teachingGet(teaching.id)).studyId).toBe(study.id);
+  expect((await api.teachingGet(teaching.id)).projectId).toBe(folder.id);
+  await user.click(studyPane().getByRole("button", { name: "Folder Project folder" }));
+  await studyPane().findByRole("button", { name: /Document/ });
+  await user.click(within(actions()).getByRole("button", { name: "File actions" }));
+  await user.click(screen.getByRole("menuitem", { name: "Move" }));
+  move = await screen.findByRole("dialog", { name: "Move “Document”" });
+  await user.selectOptions(within(move).getByRole("combobox", { name: "Destination" }), root.id);
+  await user.click(within(move).getByRole("button", { name: "Move" }));
+  await waitFor(() => expect(studyPane().queryByRole("button", { name: /^Document/ })).toBeNull());
+  await user.click(within(studyPane().getByRole("navigation", { name: i18n.t("studies.projects.breadcrumb") })).getByRole("button", { name: "Studies" }));
+  await studyPane().findByRole("button", { name: /Document/ });
+  await user.click(within(actions()).getByRole("button", { name: "File actions" }));
+  await user.click(screen.getByRole("menuitem", { name: "Move to Trash" }));
+  const confirmation = await screen.findByRole("alertdialog", { name: "Move “Document” to Trash?" });
+  await user.click(within(confirmation).getByRole("button", { name: "Move to Trash" }));
+  await user.click(await studyPane().findByRole("button", { name: "Undo" }));
+  expect(await studyPane().findByRole("button", { name: /Document/ })).toBeVisible();
+  expect((await api.teachingGet(teaching.id)).studyId).toBeNull();
+  await user.click(within(actions()).getByRole("button", { name: "File actions" }));
+  await user.click(screen.getByRole("menuitem", { name: "Rename" }));
+  const rename = await screen.findByRole("dialog", { name: "Rename" });
+  await user.clear(within(rename).getByRole("textbox", { name: "Name" }));
+  await user.type(within(rename).getByRole("textbox", { name: "Name" }), "Renamed document");
+  await user.click(within(rename).getByRole("button", { name: "Save" }));
+  expect(await studyPane().findByRole("button", { name: /Renamed document/ })).toBeVisible();
+  expect((await api.studyGet(study.id)).study.id).toBe(study.id);
+});
+
+it("keeps historical standalone Teaching editable in Data settings, outside ordinary home browsing", async () => {
+  const api = createMemoryApi(); const root = await api.projectRoot(api.state.workspace.id, "My studies");
+  const legacy = await api.teachingCreate({ projectId: root.id, title: "Legacy manuscript", templateVersion: 2, blocks: [{ blockType: "writing", title: "Main part", participantFacing: false }] });
+  await api.teachingBlockUpdate({ id: legacy.blocks![0]!.id, body: "Kept private writing" });
+  const { user } = await renderApp(api);
+  expect(studyPane().queryByText("Legacy manuscript")).toBeNull();
+  const data = await openSettingsSection(user, "Data and backup");
+  await user.click(within(data).getByText("Legacy standalone Teaching", { selector: "summary" }));
+  await user.click(await within(data).findByRole("button", { name: "Legacy manuscript" }));
+  const dialog = await screen.findByRole("dialog", { name: "Legacy standalone Teaching" });
+  expect(await within(dialog).findByRole("textbox", { name: "Main part" })).toHaveValue("Kept private writing");
+  expect(within(dialog).queryByRole("button", { name: "New Teaching" })).toBeNull();
+  expect((await api.teachingGet(legacy.id)).studyId).toBeNull();
+});
+
+it("keeps the open editor and pending writing mounted when the interface language changes", async () => {
+  const api = createMemoryApi();
+  const root = await api.projectRoot(api.state.workspace.id, "My studies");
+  const { study } = await api.studyCreate({ projectId: root.id, title: "Pending research" });
+  const { user } = await renderApp(api);
+  await user.click(await studyPane().findByRole("button", { name: /^Pending research/ }));
+  const title = await studyPane().findByRole("textbox", { name: "Study title" });
+  await user.type(title, " retained");
+  await act(async () => { await i18n.changeLanguage("de"); });
+  expect(studyPane().getByRole("textbox", { name: i18n.t("studies.editor.titleLabel") })).toBe(title);
+  expect(title).toHaveValue("Pending research retained");
+  await waitFor(() => expect(api.state.studies.find(row => row.id === study.id)?.title).toBe("Pending research retained"));
+});

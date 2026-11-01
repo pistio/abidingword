@@ -5,7 +5,7 @@ import { placeOfPosition, positionOfPlace } from "@/features/library/formatted/e
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { FORMATTED_BOOK, PIXEL } from "../support/epubFixture";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The formatted ("Original") view of an EPUB: what it shows, how it moves,
 // and what it will not do. Everything here is invented.

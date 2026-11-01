@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // All library text here is invented for the tests.
 const page = (id: string, title: string, n: number, children: ContentsItem[] = []): ContentsItem => ({ id, title, target: { kind: "page", page: n }, children });

@@ -4,7 +4,7 @@ import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // The desktop visual system (v0.18.5): one set of surfaces, fields, actions
 // and selected states across the app. These check the rules that are easy

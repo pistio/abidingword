@@ -27,6 +27,7 @@ import type { PresentationDocument } from "@/types/presentation";
 
 interface TeachingViewProps {
   startNew?: boolean;
+  initialTeachingId?: string;
   projectId?: string;
   studyId?: string;
   studyTitle?: string;
@@ -39,12 +40,12 @@ interface TeachingViewProps {
  * Shared editor for project Teaching and the legacy Study entry. An optional
  * Study can provide findings; every Teaching remains owned by its project.
  */
-export function TeachingView({ onOpenStudy, projectId, startNew = false, studyId, studyTitle = "", findings = [], onRevealScripture }: TeachingViewProps) {
+export function TeachingView({ onOpenStudy, projectId, startNew = false, studyId, studyTitle = "", findings = [], onRevealScripture, initialTeachingId }: TeachingViewProps) {
   const { t } = useTranslation();
   const api = useApi();
   const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId).then(rows => rows.filter(row => !row.studyId)) : api.teachingList(studyId!), [api, projectId, studyId]));
   const settings = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
-  const [chosen, setChosen] = useState<string | null>(null);
+  const [chosen, setChosen] = useState<string | null>(initialTeachingId ?? null);
   const [creating, setCreating] = useState(startNew && !projectId);
   const id = useId();
   // After a new teaching is put away or one is deleted, the keyboard goes back to "Prepare another".

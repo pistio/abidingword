@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 it.each(["active", "archived"] as const)("Trash → Undo restores a previously %s source with its organisation", async (state) => {
   const api = createMemoryApi();

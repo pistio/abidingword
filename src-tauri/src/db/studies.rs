@@ -371,3 +371,37 @@ pub fn restore(conn: &Connection, id: &str) -> AppResult<Study> {
     conn.execute("UPDATE studies SET deleted_at=NULL,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NOT NULL AND EXISTS(SELECT 1 FROM projects WHERE id=project_id AND deleted_at IS NULL)",params![id,now()])?;
     get(conn, id)
 }
+
+/// Move ownership atomically, including active and trashed linked Teaching.
+/// The schema-26 guards require a temporary unlink inside this transaction;
+/// this deliberately does NOT invoke lifecycle unlink/snapshot conversion.
+pub fn move_to(conn: &Connection, id: &str, project_id: &str) -> AppResult<Study> {
+    let study = get(conn, id)?;
+    let from = projects::get(conn, &study.project_id)?;
+    let target = projects::get(conn, project_id)?;
+    if from.workspace_id != target.workspace_id {
+        return Err(AppError::not_found("project", project_id));
+    }
+    if study.project_id == project_id {
+        return Ok(study);
+    }
+    let tx = conn.unchecked_transaction()?;
+    let ids: Vec<String> = tx
+        .prepare("SELECT id FROM teaching_preparations WHERE study_id=?1")?
+        .query_map([id], |row| row.get(0))?
+        .collect::<Result<_, _>>()?;
+    tx.execute(
+        "UPDATE teaching_preparations SET study_id=NULL WHERE study_id=?1",
+        [id],
+    )?;
+    let at = now();
+    tx.execute(
+        "UPDATE studies SET project_id=?2,updated_at=?3,revision=revision+1 WHERE id=?1",
+        params![id, project_id, at],
+    )?;
+    for teaching in ids {
+        tx.execute("UPDATE teaching_preparations SET project_id=?2,study_id=?3,updated_at=?4,revision=revision+1 WHERE id=?1", params![teaching,project_id,id,at])?;
+    }
+    tx.commit()?;
+    get(conn, id)
+}

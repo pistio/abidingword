@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { createMemoryUpdater } from "../support/memoryUpdater";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // The real delay is covered in updates-startup.test.tsx.
 vi.mock("@/features/updates/timing", () => ({ STARTUP_CHECK_DELAY_MS: 0 }));

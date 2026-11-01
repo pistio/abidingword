@@ -6,7 +6,7 @@ import { derive, toMarkdown } from "@/features/materials/derive";
 import type { MaterialScripture } from "@/types/scripture";
 import type { TeachingPreparation } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The Bible passage on a material (v0.18.8): asked for explicitly, read from
 // the Bible chosen in the Scripture pane and only from it, in verse order

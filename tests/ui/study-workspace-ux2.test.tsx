@@ -1,7 +1,7 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 async function withStudy(title = "The True Vine", extra: { studyType?: "custom" | "passage" } = {}) {
   const api = createMemoryApi();

@@ -5,7 +5,7 @@ import i18n from "@/i18n";
 import { describeMorph } from "@/features/scripture/morphology";
 import type { MorphDescribed, WordReport } from "@/types/scripture";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 // Original-language research (v0.21): lemma search, word details and the Word
 // Study, from a Bible's own word annotations. CONSTRUCTED TEST TEXT, not Bible
