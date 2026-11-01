@@ -54,3 +54,15 @@ Clean source provenance verifies schema 26 and all 26 migrations. [Provenance re
 The existing manual-only Windows acceptance workflow now offers and defaults to this exact source SHA, retaining its two earlier pinned sources, read-only permissions and unchanged migration digest. YAML and the three exact source choices were checked. It has not been dispatched. No Windows installer, signed release or updater overlay was produced. Windows owner review remains required.
 
 Delivery documentation/workflow changes after the implementation do not change application or test code.
+
+## Delivery status
+
+Implementation: `0fad2ab94717d6d0df6609b4bac809e350843a21`.
+Review packet/workflow: `4955beb5e7cd2412775c074e74868d1dd1d43616`.
+A following status-only commit records this delivery result; application/test code remains identical to the tested implementation.
+
+The branch was pushed to `origin/fix/windows-milestone-a3-home`. The actual `gh pr create --draft --base fix/windows-milestone-a2 --head fix/windows-milestone-a3-home` request failed with `Post "https://api.github.com/graphql": Forbidden`. No Stage 1 draft PR was created by this session. This is the active managed API/network limitation, not a review verdict. No bypass was attempted.
+
+[Review Stage 1 against A.2](https://github.com/pistio/abidingword/compare/fix/windows-milestone-a2...fix/windows-milestone-a3-home?expand=1). The [prepared PR body](pr-body.md) is ready once API access is available.
+
+This is the separate Stage 1 reviewable commit boundary requested by the A.3 brief. Stage 2 must use a different branch, verify this baseline/dependencies, and have its own tests and owner handover. No merge, paid workflow dispatch, installer publication, NiPogi deployment or real Windows data access occurred.
