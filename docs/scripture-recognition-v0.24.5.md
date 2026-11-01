@@ -185,7 +185,16 @@ which carries the process id, differs.
 
 ### 4.5 Checks at the frozen commit
 
-CHECKS_PENDING
+At `fc0f538` (later commits touch only `tests/` and `docs/`):
+`cargo fmt -- --check`, `cargo clippy --all-targets --locked -- -D warnings`
+and `cargo test --locked --no-fail-fast` (75 test binaries, 1 018 tests, 0
+failures; migrations untouched) pass; `npm run typecheck`, `lint`,
+`i18n:check`, `test` (1 053 tests) and `build` pass. One timing-sensitive
+UI test (`teaching.test.tsx`, the floating AI panel) failed once while the
+regression runs loaded the machine and passed on its own and in a full
+re-run on the same code. The interface change is one localised message
+(`bibleImport.documentSeptuagintNumbering`, six languages; the i18n review
+corpus regenerated). No migration, schema or user data is touched.
 
 ## 5. Interface contract with the provisional-import work
 
