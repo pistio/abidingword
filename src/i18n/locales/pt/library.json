@@ -599,7 +599,10 @@
     "total": "de {{total}}",
     "go": "Ir para a página",
     "physical": "As páginas PDF são contadas desde o início do arquivo, incluindo a capa. A numeração impressa pode ser diferente.",
-    "printed": "Número de página impresso: {{label}}."
+    "printed": "Número de página impresso: {{label}}.",
+    "indicator": "Página PDF {{page}} de {{total}}",
+    "jump": "Ir para a página",
+    "invalid": "Introduza uma página de 1 a {{total}}."
   },
   "structure": {
     "title": "Estrutura do documento",
@@ -651,6 +654,27 @@
       "fileType": "Relatório de diagnóstico",
       "saved": "Guardado em {{path}}",
       "file": "SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos"
+    }
+  },
+  "toolbar": {
+    "label": "Ferramentas de leitura",
+    "more": "Mais ações de leitura",
+    "settings": "Barra de ferramentas",
+    "customise": "Personalizar a barra…",
+    "customiseTitle": "Barra de ferramentas de leitura",
+    "customiseHelp": "Escolha que ações aparecem como ícones neste dispositivo. As outras ficam no menu «…». Voltar, Leitura/Original e o indicador de página aparecem sempre.",
+    "showInToolbar": "Mostrar na barra",
+    "reset": "Repor predefinição",
+    "items": {
+      "find": "Procurar nesta fonte",
+      "contents": "Conteúdo",
+      "history": "Para trás e para a frente nesta fonte",
+      "bookmark": "Marcar este lugar",
+      "note": "Adicionar nota aqui",
+      "marks": "Marcas",
+      "structure": "Estrutura do documento",
+      "full": "Abrir leitor completo",
+      "about": "Sobre esta fonte"
     }
   }
 }

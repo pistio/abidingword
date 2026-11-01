@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // Invented library material. Nothing here is a real book or a user's library.
 const HIDDEN: SourceFixture = {
@@ -207,9 +208,10 @@ describe("Library organisation", () => {
     await user.click(screen.getByRole("button", { name: /^Garden Notes/ }));
     expect(await screen.findByRole("heading", { level: 1, name: "Garden Notes" })).toBeInTheDocument();
     expect(screen.getByText(/Book · PDF · 1 page · English · 1998/)).toBeInTheDocument();
-    const about = screen.getByText("About this source").closest("details");
-    expect(about).not.toBeNull();
-    expect(about).not.toHaveAttribute("open");
+    // A.4.2: About this source is collapsed by default, behind the reader's "…" menu.
+    expect(screen.queryByRole("dialog", { name: "About this source" })).toBeNull();
+    await readerAction(user, "About this source");
+    const about = await screen.findByRole("dialog", { name: "About this source" });
     expect(about).toHaveTextContent("Example Press");
     expect(about).toHaveTextContent("Second");
     expect(about).toHaveTextContent("On tending");
@@ -220,14 +222,14 @@ describe("Library organisation", () => {
     expect(about).toHaveTextContent("Test licence");
     expect(about).toHaveTextContent("Abiding Word’s copy is on this computer.");
     await waitFor(() => expect(about).toHaveTextContent("Q. Reader, Garden Notes, p. 1"));
-    await user.click(screen.getByText("About this source"));
-    expect(about).toHaveAttribute("open");
+    await user.click(within(about).getByRole("button", { name: "Close" }));
+    expect(screen.queryByRole("dialog", { name: "About this source" })).toBeNull();
 
     await user.click(screen.getByRole("button", { name: "Back" }));
     await user.click(await screen.findByRole("button", { name: /^Lost Pages/ }));
     expect(await screen.findByRole("heading", { level: 1, name: "Lost Pages" })).toBeInTheDocument();
-    const bar = screen.getByText("About this source").closest("div");
-    expect(bar?.querySelector("span.rounded-full")).toHaveTextContent("Archived");
+    // An archived source and a missing file are still said without opening anything.
+    expect(screen.getByText("Archived", { selector: "span.rounded-full" })).toBeInTheDocument();
     expect(screen.getByText("Archived. It stays out of the Sources pane until you restore it in Settings.")).toBeInTheDocument();
     expect(screen.getAllByText("Abiding Word’s copy of this file can’t be found. The record of this source is kept.").length).toBeGreaterThan(0);
   });

@@ -1,8 +1,9 @@
 import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Bookmark, Highlighter, List, Maximize2, Redo2, Search, StickyNote, Undo2 } from "lucide-react";
+import { ArrowLeft, Bookmark, BookOpenText, FileText, Highlighter, Info, List, ListTree, Maximize2, Redo2, Search, StickyNote, Undo2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
+import { Dialog } from "@/design-system/Dialog";
 import { useLoad } from "@/hooks/useLoad";
 import { formatNumber } from "@/i18n/format";
 import { toApiError } from "@/lib/api";
@@ -24,6 +25,7 @@ import { placeOfPosition, positionOfPlace, type EpubPlace } from "./formatted/ep
 import { useEpubStructure } from "./formatted/useEpubStructure";
 import { PdfStructurePanel } from "./PdfStructurePanel";
 import { PdfPageNavigation } from "./PdfPageNavigation";
+import { ReaderToolbar, type ReaderAction } from "./ReaderToolbar";
 import { PdfViewer, type PdfFind } from "./PdfViewer";
 import { canGoBack, canGoForward, NO_HISTORY, stepBack, stepForward, visit, type ReaderHistory, type SourceLocation } from "./readerHistory";
 import { currentEntry, useSourceContents } from "./useSourceContents";
@@ -1042,7 +1044,6 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     });
   };
 
-  const historyButtons = <HistoryButtons history={history} onBack={goBack} onForward={goForward} />;
   // Opened straight into the original (the view last chosen for this source): at the passage opened at, once it is known.
   const targetPosition = window?.segments.find((x) => x.id === window.targetSegmentId)?.position;
   const targetPlace = targetPosition !== undefined && epub.status === "ready" ? placeOfPosition(epub.items, targetPosition) : null;
@@ -1077,8 +1078,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     ) : null;
 
   const modeSwitch = hasOriginal ? <ModeSwitch mode={mode} onChange={(m) => void choose(m)} /> : null;
-  const structureControl = isPdf ? <>
-    <Button variant="quiet" onClick={()=>setStructureOpen(true)}>{t("library.structure.title")}</Button>
+  const structurePanel = isPdf ? <>
     {structureOpen && <PdfStructurePanel sourceId={sourceId} segments={window?.segments ?? []}
       onGo={(position,headingId)=>{jumpTo({position,headingId}); setStructureOpen(false);}} onPage={page=>{jumpTo({page});setStructureOpen(false);}} onClose={()=>setStructureOpen(false)}
       observed={()=>{
@@ -1092,35 +1092,6 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
         setWindow({...w,targetSegmentId:window?.targetSegmentId ?? null}); setStructureRevision(v=>v+1);
       }}/>}</> : null;
 
-  const contentsButton =
-    contents.length > 0 ? (
-      <Button ref={opener} variant="quiet" aria-expanded={panel !== null} aria-controls={panel ? `${id}-contents` : undefined} title={t("library.contents.show")} onClick={() => (panel ? closeContents() : openContents())}>
-        <List className="size-4" aria-hidden="true" /> {t("library.contents.title")}
-      </Button>
-    ) : null;
-  const findButton = (
-    <Button ref={findOpener} variant="quiet" aria-expanded={finding} title={t("library.find.open")} onClick={() => (finding ? closeFind() : openFind())}>
-      <Search className="size-4" aria-hidden="true" /> {t("library.find.button")}
-    </Button>
-  );
-  // Marking the place the reader is at (Reading): a bookmark, or a note with no words selected.
-  const placeButtons =
-    (!showOriginal && window) || onPdfPage ? (
-      <div role="group" aria-label={t("library.marks.title")} className="flex shrink-0 items-center">
-        <Button
-          variant="quiet"
-          aria-pressed={!!hereBookmark}
-          aria-label={hereBookmark ? t("library.marks.removeBookmarkHere") : t("library.marks.bookmarkHere")}
-          title={hereBookmark ? t("library.marks.removeBookmarkHere") : t("library.marks.bookmarkHere")}
-          onClick={() => void toggleBookmark()}
-        >
-          <Bookmark className={`size-4 ${hereBookmark ? "fill-current" : ""}`} aria-hidden="true" />
-        </Button>
-        <Button ref={noteHereButton} variant="quiet" aria-label={t("library.marks.addNoteHere")} title={t("library.marks.addNoteHere")} onClick={noteHere}>
-          <StickyNote className="size-4" aria-hidden="true" />
-        </Button>
-      </div>
-    ) : null;
   // Marking the original PDF: a selection on a page, read through the stored text placed there.
   const closeHelp = () => {
     setHelping(null);
@@ -1212,23 +1183,19 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     </p>
   );
   const citedSegmentId = window?.targetSegmentId ?? window?.segments[0]?.id ?? null;
-  const provenance = s ? (
+  // About this source is in the toolbar menu (collapsed by default, #26); an
+  // archived source or a missing original file is still said here, always.
+  const provenance = s && (s.state === "archived" || !s.filePresent) ? (
     <div className="flex shrink-0 flex-col gap-1 border-b border-border-subtle px-4 py-2">
-      {(s.state === "archived" || !s.filePresent) && (
-        <div className="flex flex-wrap items-center gap-2">
-          {s.state === "archived" && (
-            <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.8125rem] text-text-muted">
-              {t("common.lifecycle.state.archived")}
-            </span>
-          )}
-          {!s.filePresent && <p className="m-0 text-danger">{t("library.about.fileMissing")}</p>}
-        </div>
-      )}
+      <div className="flex flex-wrap items-center gap-2">
+        {s.state === "archived" && (
+          <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.8125rem] text-text-muted">
+            {t("common.lifecycle.state.archived")}
+          </span>
+        )}
+        {!s.filePresent && <p className="m-0 text-danger">{t("library.about.fileMissing")}</p>}
+      </div>
       {s.state === "archived" && <p className="m-0 text-[0.9375rem] text-text-muted">{t("library.about.archivedNote")}</p>}
-      <details className="max-h-[35vh] overflow-y-auto">
-        <summary className="cursor-pointer text-[0.9375rem] text-text-muted">{t("library.about.summary")}</summary>
-        <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
-      </details>
     </div>
   ) : null;
   const findBar = finding ? (
@@ -1275,49 +1242,55 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
       actions={markActions}
     />
   ) : null;
-  const marksButton = (
-    <Button
-      ref={marksPanelOpener}
-      variant="quiet"
-      aria-expanded={marksPanel}
-      aria-controls={marksPanel ? `${id}-marks` : undefined}
-      title={t("library.marks.show")}
-      onClick={() => (marksPanel ? closeMarksPanel() : openMarksPanel())}
-    >
-      <Highlighter className="size-4" aria-hidden="true" /> {t("library.marks.title")}
-    </Button>
-  );
+  // A.4.2 (#26): every reader action, once, for the shared toolbar. Visible
+  // icons keep the names the separate buttons had; the rest are in "…".
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const canMarkPlace = (!showOriginal && !!window) || onPdfPage;
+  const readerActions: ReaderAction[] = [
+    { id: "find", key: "find", label: t("library.find.button"), icon: <Search className="size-4" aria-hidden="true" />, expanded: finding, onSelect: () => (finding ? closeFind() : openFind()) },
+    ...(contents.length > 0 ? [{ id: "contents" as const, key: "contents", label: t("library.contents.title"), icon: <List className="size-4" aria-hidden="true" />, expanded: panel !== null, controls: panel ? `${id}-contents` : undefined, onSelect: () => (panel ? closeContents() : openContents()) }] : []),
+    { id: "history", key: "back", label: t("library.history.back"), icon: <Undo2 className="size-4" aria-hidden="true" />, disabled: !canGoBack(history), onSelect: goBack },
+    { id: "history", key: "forward", label: t("library.history.forward"), icon: <Redo2 className="size-4" aria-hidden="true" />, disabled: !canGoForward(history), onSelect: goForward },
+    ...(canMarkPlace ? [
+      { id: "bookmark" as const, key: "bookmark", label: hereBookmark ? t("library.marks.removeBookmarkHere") : t("library.marks.bookmarkHere"), icon: <Bookmark className={`size-4 ${hereBookmark ? "fill-current" : ""}`} aria-hidden="true" />, pressed: !!hereBookmark, onSelect: () => void toggleBookmark() },
+      { id: "note" as const, key: "note", label: t("library.marks.addNoteHere"), icon: <StickyNote className="size-4" aria-hidden="true" />, onSelect: noteHere },
+    ] : []),
+    { id: "marks", key: "marks", label: t("library.marks.title"), icon: <Highlighter className="size-4" aria-hidden="true" />, expanded: marksPanel, controls: marksPanel ? `${id}-marks` : undefined, onSelect: () => (marksPanel ? closeMarksPanel() : openMarksPanel()) },
+    ...(isPdf ? [{ id: "structure" as const, key: "structure", label: t("library.structure.title"), icon: <ListTree className="size-4" aria-hidden="true" />, onSelect: () => setStructureOpen(true) }] : []),
+    ...(inPane && onExpand ? [{ id: "full" as const, key: "full", label: t("library.reader.openFull"), icon: <Maximize2 className="size-4" aria-hidden="true" />, onSelect: () => onExpand(positionNow()) }] : []),
+    ...(s ? [{ id: "about" as const, key: "about", label: t("library.about.summary"), icon: <Info className="size-4" aria-hidden="true" />, onSelect: () => setAboutOpen(true) }] : []),
+  ];
+  const toolbarRefs = { find: findOpener, contents: opener, note: noteHereButton, marks: marksPanelOpener };
+  // Reading has the compact page indicator here; Original has the viewer's own (one per view, never both).
+  const fixedControls = <>{modeSwitch}{showOriginal ? null : pageNavigation}</>;
+  const aboutDialog = aboutOpen && s ? (
+    <Dialog wide title={t("library.about.summary")} onClose={() => setAboutOpen(false)} actions={<Button onClick={() => setAboutOpen(false)}>{t("common.close")}</Button>}>
+      <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
+    </Dialog>
+  ) : null;
 
   if (inPane) {
     // A column: controls that never scroll away, then Reading (which scrolls
     // inside its own body) or the original (which has its own toolbar and scroller).
     return (
       <section aria-label={s?.title} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" onKeyDown={onReaderKey}>
-        <div data-testid="reader-header" className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-border-subtle px-3 py-2">
-          <Button variant="quiet" onClick={() => onClose(positionNow())}>
-            <ArrowLeft className="size-4" aria-hidden="true" /> {backLabel ?? t("library.reader.backToSources")}
-          </Button>
-          {onExpand && (
-            <Button variant="quiet" onClick={() => onExpand(positionNow())} title={t("library.reader.openFullTitle")}>
-              <Maximize2 className="size-4" aria-hidden="true" /> {t("library.reader.openFull")}
-            </Button>
-          )}
+        <div data-testid="reader-header" className="shrink-0">
+          <ReaderToolbar
+            label={t("library.toolbar.label")}
+            start={
+              <button type="button" onClick={() => onClose(positionNow())} aria-label={backLabel ?? t("library.reader.backToSources")} title={backLabel ?? t("library.reader.backToSources")}
+                className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-aw px-2 text-[0.9375rem] font-medium text-text-strong hover:bg-hover">
+                <ArrowLeft className="size-4" aria-hidden="true" /><span aria-hidden="true" className="@max-lg:sr-only">{t("common.back")}</span>
+              </button>
+            }
+            fixed={fixedControls}
+            actions={readerActions}
+            refs={toolbarRefs}
+          />
         </div>
-        <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-border-subtle px-3 py-1.5">
-          <div className="flex flex-wrap items-center gap-x-2">
-            {historyButtons}
-            {modeSwitch}
-          </div>
-          <div className="flex flex-wrap items-center gap-x-1">
-            {placeButtons}
-            {findButton}
-            {contentsButton}
-            {structureControl}
-            {marksButton}
-          </div>
-        </div>
-        {pageNavigation}
         {provenance}
+        {structurePanel}
+        {aboutDialog}
         {findBar}
         {noticeLine}
         {tray}
@@ -1346,29 +1319,28 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   return (
     <main aria-labelledby={`${id}-title`} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-bg" onKeyDown={onReaderKey}>
       {/* Chrome recedes around the book: one quiet bar, the title in the interface voice. */}
-      <div data-testid="reader-header" className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-subtle bg-bg px-4 py-1.5">
-        <Button variant="quiet" className="shrink-0" onClick={() => onClose(positionNow())}>
-          <ArrowLeft className="size-4" aria-hidden="true" /> {t("common.back")}
-        </Button>
-        <h1
-          id={`${id}-title`}
-          ref={heading}
-          tabIndex={-1}
-          title={s?.title}
-          className="type-item m-0 min-w-0 flex-1 truncate"
-        >
-          {s?.title}
-        </h1>
-        {historyButtons}
-        {modeSwitch}
-        {placeButtons}
-        {findButton}
-        {contentsButton}
-        {structureControl}
-        {marksButton}
+      <div data-testid="reader-header" className="shrink-0">
+        <ReaderToolbar
+          label={t("library.toolbar.label")}
+          start={
+            <button type="button" onClick={() => onClose(positionNow())} aria-label={t("common.back")} title={t("common.back")}
+              className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 rounded-aw px-2 text-[0.9375rem] font-medium text-text-strong hover:bg-hover">
+              <ArrowLeft className="size-4" aria-hidden="true" /><span aria-hidden="true" className="@max-lg:sr-only">{t("common.back")}</span>
+            </button>
+          }
+          title={
+            <h1 id={`${id}-title`} ref={heading} tabIndex={-1} title={s?.title} className="type-item m-0 min-w-0 flex-1 truncate">
+              {s?.title}
+            </h1>
+          }
+          fixed={fixedControls}
+          actions={readerActions}
+          refs={toolbarRefs}
+        />
       </div>
-      {pageNavigation}
       {provenance}
+      {structurePanel}
+      {aboutDialog}
       {findBar}
       {noticeLine}
         {tray}
@@ -1395,6 +1367,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 /** Reading | Original, one control for both readers. */
 function ModeSwitch({ mode, onChange }: { mode: ReaderMode; onChange: (mode: ReaderMode) => void }) {
   const { t } = useTranslation();
+  // A.4.2: in a narrow pane the two views are icons; their names stay for screen readers and as tooltips.
   return (
     <div role="group" aria-label={t("library.original.modesLabel")} className="flex shrink-0">
       {(["reading", "original"] as const).map((m) => (
@@ -1402,10 +1375,12 @@ function ModeSwitch({ mode, onChange }: { mode: ReaderMode; onChange: (mode: Rea
           key={m}
           type="button"
           aria-pressed={mode === m}
+          title={t(`library.original.${m}`)}
           onClick={() => onChange(m)}
-          className="aw-tab"
+          className="aw-tab inline-flex items-center gap-1"
         >
-          {t(`library.original.${m}`)}
+          {m === "reading" ? <BookOpenText className="hidden size-4 @max-md:inline" aria-hidden="true" /> : <FileText className="hidden size-4 @max-md:inline" aria-hidden="true" />}
+          <span className="@max-md:sr-only">{t(`library.original.${m}`)}</span>
         </button>
       ))}
     </div>
@@ -1642,20 +1617,6 @@ function SegmentView({
 }
 
 /** Back / Forward through the places a reader has jumped between: small, never dominant. */
-function HistoryButtons({ history, onBack, onForward }: { history: ReaderHistory; onBack: () => void; onForward: () => void }) {
-  const { t } = useTranslation();
-  return (
-    <div role="group" aria-label={t("library.history.group")} className="flex shrink-0 items-center">
-      <Button variant="quiet" aria-label={t("library.history.back")} title={t("library.history.back")} disabled={!canGoBack(history)} onClick={onBack}>
-        <Undo2 className="size-4" aria-hidden="true" />
-      </Button>
-      <Button variant="quiet" aria-label={t("library.history.forward")} title={t("library.history.forward")} disabled={!canGoForward(history)} onClick={onForward}>
-        <Redo2 className="size-4" aria-hidden="true" />
-      </Button>
-    </div>
-  );
-}
-
 const NO_LINKS = new Map<number, SourceLink[]>();
 const NO_REFERENCES = new Map<number, SourceReference[]>();
 

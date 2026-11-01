@@ -6,6 +6,7 @@ import { FORMATTED_BOOK } from "../support/epubFixture";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // The formatted ("Original") view of a Word document. It is drawn by the same
 // renderer as an EPUB's, so these tests cover what is DOCX's own: that the view
@@ -48,6 +49,8 @@ afterEach(() => {
 });
 
 const sourcesPane = () => screen.getByRole("complementary", { name: "Sources" });
+// These tests are about in-source history, so its two buttons are pinned to the toolbar (A.4.2).
+beforeEach(() => pinReaderActions(["find", "contents", "history"]));
 const back = (root: HTMLElement) => within(root).getByRole("button", { name: "Back to the previous place" });
 const forward = (root: HTMLElement) => within(root).getByRole("button", { name: "Forward to the next place" });
 const TITLE = "A Formatted Document";
@@ -382,7 +385,7 @@ describe("moving between Reading and Original in a Word document", () => {
     const doc = within(await original(user, reader));
     await user.click(doc.getByText("1"));
     await waitFor(() => expect(part(reader)).toBe("Part 3 of 3"));
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     const full = await screen.findByRole("main");
     await within(full).findByTestId("epub-page");
     expect(part(full)).toBe("Part 3 of 3");

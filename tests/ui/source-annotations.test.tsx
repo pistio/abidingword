@@ -2,6 +2,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // All library text here is invented for the tests.
 const SERMON: SourceFixture = {
@@ -161,6 +162,7 @@ describe("marking a source in Reading", () => {
 
 describe("marking a place without selecting words", () => {
   it("bookmarks the place the reader is at, and removes it again (one button, pressed state)", async () => {
+    pinReaderActions(["find", "contents", "bookmark", "note", "marks"]);
     const { api, user } = await openReader();
     const header = screen.getByTestId("reader-header");
     const add = within(header).getByRole("button", { name: "Bookmark this place" });
@@ -175,6 +177,7 @@ describe("marking a place without selecting words", () => {
   });
 
   it("adds a note on a paragraph from the keyboard, with focus returned afterwards", async () => {
+    pinReaderActions(["find", "contents", "bookmark", "note", "marks"]);
     const { api, user } = await openReader();
     const button = within(screen.getByTestId("reader-header")).getByRole("button", { name: "Add note here" });
     button.focus();
@@ -200,7 +203,7 @@ describe("marking a place without selecting words", () => {
 
   it("highlights a whole paragraph without a mouse selection", async () => {
     const { api, user } = await openReader();
-    await user.click(within(screen.getByTestId("reader-header")).getByRole("button", { name: "Add note here" }));
+    await readerAction(user, "Add note here", screen.getByTestId("reader-header"));
     const bar = await strip();
     await user.click(within(bar).getByRole("button", { name: "Highlight this paragraph" }));
     await user.click(within(bar).getByRole("button", { name: "Blue" }));
@@ -234,6 +237,7 @@ describe("the source's marks beside its text", () => {
     api.state.settings.scripturePassage = "PSA.23";
     api.installFixtureSource(SERMON);
     await seedMarks(api);
+    pinReaderActions(["find", "contents", "marks"]);
     const { user } = await renderApp(api);
     await user.click(await within(screen.getByRole("complementary", { name: "Sources" })).findByRole("button", { name: "Open library" }));
     await user.click((await within(await screen.findByRole("main")).findAllByRole("button", { name: /The True Vine/ }))[0]!);
@@ -269,7 +273,7 @@ describe("the source's marks beside its text", () => {
     await within(screen.getByTestId("reader-body")).findByText(/Abide in me/);
     // Never drawn in the text.
     expect(screen.getByTestId("reader-body").querySelector("[data-source-note]")).toBeNull();
-    await user.click(within(screen.getByTestId("reader-header")).getByRole("button", { name: "Marks" }));
+    await readerAction(user, "Marks", screen.getByTestId("reader-header"));
     const panel = await screen.findByRole("region", { name: "Marks in The True Vine" });
     expect(within(panel).getByText("This place can no longer be found in the text.")).toBeInTheDocument();
     expect(within(panel).getByText(/much fruit/)).toBeInTheDocument();

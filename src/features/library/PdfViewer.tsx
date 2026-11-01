@@ -60,6 +60,8 @@ interface PdfViewerProps {
   markActions?: MarkActions;
   /** Filled with a way to turn a text selection on a page into an anchor in the stored text (or null). */
   selectionRef?: React.MutableRefObject<((selection: Selection) => SourceSelection | null) | null>;
+  /** A.4.2: false when the reader's own toolbar already has the page controls (no duplicate row). */
+  pageControls?: boolean;
 }
 
 /** A drawn page's text layer, with the stored paragraphs placed on it: how a selection there is read. */
@@ -85,7 +87,7 @@ export interface PdfFind {
  * inspect the source; search, citations and Scripture links stay with the
  * extracted text.
  */
-export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef }: PdfViewerProps) {
+export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef, pageControls = true }: PdfViewerProps) {
   const { t } = useTranslation();
   const api = useApi();
   const engine = usePdfEngine();
@@ -407,7 +409,7 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
         aria-label={t("library.original.toolbar")}
         className="@container flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-subtle bg-bg px-3 py-1.5 font-ui text-[0.9375rem]"
       >
-        <div className="flex items-center gap-1">
+        {pageControls && <div className="flex items-center gap-1">
           <Button variant="quiet" aria-label={t("library.original.previousPage")} title={t("library.original.previousPage")} disabled={!total || page <= 1} onClick={() => goTo(page - 1)}>
             <ChevronLeft className="size-4" aria-hidden="true" />
           </Button>
@@ -433,7 +435,7 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
           <Button variant="quiet" aria-label={t("library.original.nextPage")} title={t("library.original.nextPage")} disabled={!total || page >= total} onClick={() => goTo(page + 1)}>
             <ChevronRight className="size-4" aria-hidden="true" />
           </Button>
-        </div>
+        </div>}
         <div className="flex items-center gap-1">
           <Button variant="quiet" aria-label={t("library.original.zoomOut")} title={t("library.original.zoomOut")} disabled={!total} onClick={() => zoomBy(-1)}>
             <ZoomOut className="size-4" aria-hidden="true" />

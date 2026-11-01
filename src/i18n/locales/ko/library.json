@@ -515,7 +515,10 @@
     "total": "/ {{total}}",
     "go": "페이지로 이동",
     "physical": "PDF 페이지는 표지를 포함한 파일의 첫 장부터 셉니다. 인쇄된 쪽수와 다를 수 있습니다.",
-    "printed": "인쇄된 쪽 표시: {{label}}."
+    "printed": "인쇄된 쪽 표시: {{label}}.",
+    "indicator": "PDF {{total}}쪽 중 {{page}}쪽",
+    "jump": "쪽으로 이동",
+    "invalid": "1부터 {{total}} 사이의 쪽을 입력하세요."
   },
   "structure": {
     "title": "문서 구조",
@@ -567,6 +570,27 @@
       "fileType": "진단 보고서",
       "saved": "{{path}}에 저장했습니다",
       "file": "파일 SHA-256 {{hash}} · {{pages}}쪽 · 제목 {{headings}}개"
+    }
+  },
+  "toolbar": {
+    "label": "읽기 도구",
+    "more": "읽기 작업 더 보기",
+    "settings": "도구 모음",
+    "customise": "도구 모음 사용자화…",
+    "customiseTitle": "읽기 도구 모음",
+    "customiseHelp": "이 기기에서 아이콘으로 표시할 작업을 고르세요. 나머지는 ‘…’ 메뉴에 남습니다. 뒤로, 읽기/원본, 쪽 표시는 항상 보입니다.",
+    "showInToolbar": "도구 모음에 표시",
+    "reset": "기본값으로 되돌리기",
+    "items": {
+      "find": "이 자료에서 찾기",
+      "contents": "목차",
+      "history": "이 자료에서 뒤로·앞으로",
+      "bookmark": "이 위치에 책갈피 추가",
+      "note": "여기에 메모 추가",
+      "marks": "표시",
+      "structure": "문서 구조",
+      "full": "전체 화면으로 읽기",
+      "about": "이 자료에 대하여"
     }
   }
 }

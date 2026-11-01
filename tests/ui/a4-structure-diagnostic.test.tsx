@@ -7,6 +7,7 @@ import type { PdfAnchor, PdfDiagnostic, PdfResolvedHeading, PdfStructureView } f
 import { createMemoryApi } from "../support/memoryApi";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 const anchor: PdfAnchor = { page: 8, pageWidth: 595, pageHeight: 842, x0: 72, x1: 280, baseline: 220, size: 24, firstChar: 0, column: 0, byteStart: 0, byteEnd: 17, originalText: "Apostelgeschichte" };
 const heading: PdfResolvedHeading = { id: "p8-c0", title: "Apostelgeschichte", level: 2, parents: [], basis: "layout", anchor, segmentPosition: 1, start: 0, end: 17, disabled: false, mapping: null, mappingScope: null, canonical: "ACT.1-ACT.28", scope: "book", endPosition: 3, path: "Apostelgeschichte" };
@@ -59,7 +60,7 @@ describe("A.4.1 structure evidence and diagnostic", () => {
     const { user, diagnostic, heading, target } = await open();
     await user.click(await screen.findByRole("button", { name: /^Invented handbook/ }));
     await screen.findByRole("heading", { name: "Apostelgeschichte" });
-    await user.click(screen.getByRole("button", { name: "Document structure" }));
+    await readerAction(user, "Document structure");
     await user.click(await screen.findByText("Diagnostic report (metadata only)"));
     expect(screen.getByRole("button", { name: "Copy report" })).toBeDisabled();
     await user.type(screen.getByRole("textbox", { name: "Passage to check (optional)" }), "Apg 6");
@@ -77,7 +78,7 @@ describe("A.4.1 structure evidence and diagnostic", () => {
     const { user } = await open({ rebuild: true });
     await user.click(await screen.findByRole("button", { name: /^Invented handbook/ }));
     await screen.findByRole("heading", { name: "Apostelgeschichte" });
-    await user.click(screen.getByRole("button", { name: "Document structure" }));
+    await readerAction(user, "Document structure");
     await waitFor(() => expect(screen.getByText(/built with earlier analysis rules/)).toBeVisible());
   });
 });

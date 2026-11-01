@@ -4,6 +4,7 @@ import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // The same source must offer its own Contents however it was opened: from the
 // library list, or from a finding's citation (which also opens at a segment).
@@ -322,7 +323,7 @@ describe("a PDF's outline is read reliably, and failing is not the same as havin
     await user.click(await within(findings).findByTitle("Open this source at the cited place"));
     const pane = await within(sourcesPane()).findByRole("region", { name: "Notes on the Vine" });
     await waitFor(() => expect(contentsButton(pane)).not.toBeNull());
-    await user.click(within(pane).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", pane);
     const full = await screen.findByRole("main");
     await waitFor(() => expect(contentsButton(full)).not.toBeNull());
     await user.click(within(full).getByRole("button", { name: "Original" }));

@@ -2,6 +2,7 @@ import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction, readerActionEnabled } from "../support/readerActions";
 
 // Invented sources only. Model paragraph geometry so losing a position can fail a test.
 const BOOK: SourceFixture = {
@@ -178,7 +179,7 @@ describe("Library Stage 3 navigation", () => {
     await within(screen.getByRole("complementary", { name: "Scripture" })).findByText(/showing John 15:5/);
     let pane = await within(sources()).findByRole("region", { name: BOOK.title });
     await waitFor(() => expect(top).toBe(250));
-    await user.click(within(pane).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", pane);
     const expanded = await screen.findByRole("main", { name: BOOK.title });
     await user.click(await within(expanded).findByRole("button", { name: "John 15:5 (Scripture reference)" }));
     await user.click(within(expanded).getByRole("menuitem", { name: "Open in Bible" }));
@@ -203,7 +204,7 @@ describe("Library Stage 3 navigation", () => {
     reader = await screen.findByRole("main", { name: BOOK.title });
     await waitFor(() => expect(top).toBe(250));
     expect(within(reader).getByTestId("reader-body").scrollTop).toBe(7);
-    expect(within(reader).getByRole("button", { name: "Back to the previous place" })).toBeEnabled();
+    expect(await readerActionEnabled(user, "Back to the previous place", reader)).toBe(true);
     await user.click(within(reader).getByRole("button", { name: "Back" }));
     await screen.findByRole("heading", { level: 1, name: "Library" });
     top = 0;
@@ -234,11 +235,13 @@ describe("Library Stage 3 navigation", () => {
     await user.click(await screen.findByTitle("Open this source at the cited place"));
     let reader = await within(sources()).findByRole("region", { name: BOOK.title });
     await waitFor(() => expect(reader.querySelector("[data-quoted]")).toHaveTextContent("Compare"));
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     reader = await screen.findByRole("main", { name: BOOK.title });
     await waitFor(() => expect(reader.querySelector("[data-quoted]")).toHaveTextContent("Compare"));
-    await user.click(within(reader).getByText("About this source"));
-    expect(within(reader).getAllByText("A. Gardener").length).toBeGreaterThan(0);
+    await readerAction(user, "About this source", reader);
+    const about = await screen.findByRole("dialog", { name: "About this source" });
+    expect(within(about).getAllByText("A. Gardener").length).toBeGreaterThan(0);
+    await user.click(within(about).getByRole("button", { name: "Close" }));
     await user.click(within(reader).getByRole("button", { name: "Back" }));
     reader = await within(sources()).findByRole("region", { name: BOOK.title });
     await waitFor(() => expect(reader.querySelector("[data-quoted]")).toHaveTextContent("Compare"));

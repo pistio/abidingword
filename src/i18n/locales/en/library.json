@@ -557,7 +557,10 @@
     "total": "of {{total}}",
     "go": "Go to page",
     "physical": "PDF pages count from the start of the file, including covers. Printed numbers may differ.",
-    "printed": "Printed page label: {{label}}."
+    "printed": "Printed page label: {{label}}.",
+    "indicator": "PDF page {{page}} of {{total}}",
+    "jump": "Go to page",
+    "invalid": "Enter a page from 1 to {{total}}."
   },
   "structure": {
     "title": "Document structure",
@@ -609,6 +612,27 @@
       "fileType": "Diagnostic report",
       "saved": "Saved to {{path}}",
       "file": "File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings"
+    }
+  },
+  "toolbar": {
+    "label": "Reader tools",
+    "more": "More reader actions",
+    "settings": "Toolbar",
+    "customise": "Customise toolbar…",
+    "customiseTitle": "Reader toolbar",
+    "customiseHelp": "Choose which actions appear as icons on this device. The others stay in the “…” menu. Back, Reading/Original and the page indicator are always shown.",
+    "showInToolbar": "Show in toolbar",
+    "reset": "Reset to default",
+    "items": {
+      "find": "Find in this source",
+      "contents": "Contents",
+      "history": "Back and forward in this source",
+      "bookmark": "Bookmark this place",
+      "note": "Add note here",
+      "marks": "Marks",
+      "structure": "Document structure",
+      "full": "Open full reader",
+      "about": "About this source"
     }
   }
 }

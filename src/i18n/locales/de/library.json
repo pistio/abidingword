@@ -557,7 +557,10 @@
     "total": "von {{total}}",
     "go": "Zur Seite",
     "physical": "PDF-Seiten zählen ab Dateibeginn einschließlich Umschlag. Gedruckte Seitenzahlen können abweichen.",
-    "printed": "Gedruckte Seitenangabe: {{label}}."
+    "printed": "Gedruckte Seitenangabe: {{label}}.",
+    "indicator": "PDF-Seite {{page}} von {{total}}",
+    "jump": "Zu Seite springen",
+    "invalid": "Gib eine Seite von 1 bis {{total}} ein."
   },
   "structure": {
     "title": "Dokumentstruktur",
@@ -609,6 +612,27 @@
       "fileType": "Diagnosebericht",
       "saved": "Gespeichert unter {{path}}",
       "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften"
+    }
+  },
+  "toolbar": {
+    "label": "Lesewerkzeuge",
+    "more": "Weitere Lese-Aktionen",
+    "settings": "Werkzeugleiste",
+    "customise": "Werkzeugleiste anpassen…",
+    "customiseTitle": "Lese-Werkzeugleiste",
+    "customiseHelp": "Wähle, welche Aktionen auf diesem Gerät als Symbole erscheinen. Die übrigen bleiben im Menü „…“. Zurück, Lesen/Original und die Seitenanzeige sind immer sichtbar.",
+    "showInToolbar": "In der Werkzeugleiste zeigen",
+    "reset": "Auf Standard zurücksetzen",
+    "items": {
+      "find": "In dieser Quelle suchen",
+      "contents": "Inhalt",
+      "history": "Zurück und vor in dieser Quelle",
+      "bookmark": "Lesezeichen an diese Stelle setzen",
+      "note": "Notiz hier hinzufügen",
+      "marks": "Anmerkungen",
+      "structure": "Dokumentstruktur",
+      "full": "Vollansicht öffnen",
+      "about": "Über diese Quelle"
     }
   }
 }

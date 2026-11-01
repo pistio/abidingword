@@ -599,7 +599,10 @@
     "total": "sur {{total}}",
     "go": "Aller à la page",
     "physical": "Les pages PDF sont comptées depuis le début du fichier, couverture comprise. La pagination imprimée peut différer.",
-    "printed": "Pagination imprimée : {{label}}."
+    "printed": "Pagination imprimée : {{label}}.",
+    "indicator": "Page PDF {{page}} sur {{total}}",
+    "jump": "Aller à la page",
+    "invalid": "Saisissez une page de 1 à {{total}}."
   },
   "structure": {
     "title": "Structure du document",
@@ -651,6 +654,27 @@
       "fileType": "Rapport de diagnostic",
       "saved": "Enregistré dans {{path}}",
       "file": "SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres"
+    }
+  },
+  "toolbar": {
+    "label": "Outils de lecture",
+    "more": "Autres actions de lecture",
+    "settings": "Barre d’outils",
+    "customise": "Personnaliser la barre…",
+    "customiseTitle": "Barre d’outils de lecture",
+    "customiseHelp": "Choisissez les actions affichées en icônes sur cet appareil. Les autres restent dans le menu « … ». Retour, Lecture/Original et l’indicateur de page restent toujours visibles.",
+    "showInToolbar": "Afficher dans la barre",
+    "reset": "Rétablir par défaut",
+    "items": {
+      "find": "Rechercher dans cette source",
+      "contents": "Sommaire",
+      "history": "Précédent et suivant dans cette source",
+      "bookmark": "Mettre un signet ici",
+      "note": "Ajouter une note ici",
+      "marks": "Marques",
+      "structure": "Structure du document",
+      "full": "Ouvrir en pleine largeur",
+      "about": "À propos de cette source"
     }
   }
 }

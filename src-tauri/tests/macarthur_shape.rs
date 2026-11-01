@@ -527,3 +527,49 @@ fn uniform_prose_without_headings_is_reported_as_no_section_not_guessed() {
     })
     .unwrap();
 }
+
+/// With `AW_A4_REVIEW_DIR` set, writes the invented handbook PDF and the real
+/// Rust import/index/reader metadata for the browser screenshot harness
+/// (`tests/screenshots/milestone-a4.mjs`). Synthetic review evidence only.
+#[test]
+fn review_export_for_the_browser_harness() {
+    let Some(dir) = std::env::var_os("AW_A4_REVIEW_DIR") else {
+        return;
+    };
+    let dir = std::path::PathBuf::from(dir);
+    fs::create_dir_all(&dir).unwrap();
+    let bytes = handbook(SHAPES[4].1);
+    let temp = tempfile::tempdir().unwrap();
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|c| {
+        let id = imported(c, &bytes, temp.path());
+        let places =
+            library::passage_source_locations(c, &ScriptureRef::from_canonical("ACT.6")?, &id)?;
+        let window = library::segments(
+            c,
+            &abiding_word_lib::library::GetSegments {
+                source_id: id.clone(),
+                around_segment_id: None,
+                around_page: None,
+                offset: Some(0),
+                limit: Some(500),
+            },
+        )?;
+        let json = serde_json::json!({
+            "source": library::get(c, &id)?,
+            "window": window,
+            "structure": pdf_structures::view(c, &id)?,
+            "locations": places,
+            "contents": pdf_structures::contents(c, &id)?,
+            "diagnostic": pdf_diagnostic::diagnostic(c, &id, Some("Apg 6"))?,
+        });
+        fs::write(dir.join("structure-review.pdf"), &bytes).unwrap();
+        fs::write(
+            dir.join("structure-review.json"),
+            serde_json::to_vec_pretty(&json).unwrap(),
+        )
+        .unwrap();
+        Ok(())
+    })
+    .unwrap();
+}

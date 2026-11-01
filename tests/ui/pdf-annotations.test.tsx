@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createFakePdfEngine, textItem } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // Marks on the Original PDF (v0.14): drawn where the stored words are placed exactly on the
 // drawn page, made from a selection on the page, and kept per page. All text is invented.
@@ -123,11 +124,12 @@ describe("marks on the Original PDF", () => {
   });
 
   it("bookmarks the page in view, and a page without text too", async () => {
+    pinReaderActions(["find", "contents", "bookmark"]);
     const { api, engine } = setup();
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openOriginal(user);
     const header = screen.getByTestId("reader-header");
-    await user.click(within(header).getByRole("button", { name: "Bookmark this place" }));
+    await readerAction(user, "Bookmark this place", header);
     await waitFor(() => expect(live(api)).toHaveLength(1));
     const bookmark = live(api)[0]!;
     expect(bookmark).toMatchObject({ kind: "bookmark", pageNumber: 1 });
@@ -140,13 +142,14 @@ describe("marks on the Original PDF", () => {
     const pageBox = screen.getByRole("textbox", { name: "Page number" });
     await user.clear(pageBox);
     await user.type(pageBox, "3{Enter}");
-    await user.click(await within(header).findByRole("button", { name: "Bookmark this place" }));
+    await readerAction(user, "Bookmark this place", header);
     await waitFor(() => expect(live(api)).toHaveLength(2));
     expect(live(api)[1]).toMatchObject({ kind: "bookmark", pageNumber: 3, start: null });
     expect(await within(pageSheet(3)).findByRole("button", { name: "1 mark here: Bookmark" })).toBeInTheDocument();
   });
 
   it("writes a note on the page in view from the keyboard", async () => {
+    pinReaderActions(["find", "contents", "note"]);
     const { api, engine } = setup();
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openOriginal(user);

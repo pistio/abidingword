@@ -4,6 +4,7 @@ import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerActionEnabled } from "../support/readerActions";
 
 // Generated contents (v0.13): used only when a source carries no contents of its own,
 // and always presented as generated. All library text here is invented.
@@ -81,7 +82,7 @@ describe("generated contents", () => {
     await user.click(within(nav).getByRole("button", { name: "Show the subsections of Chapter 1 Soil" }));
     await user.click(within(nav).getByRole("button", { name: /^Pruning/ }));
     // a deliberate jump: Back is offered
-    await waitFor(() => expect(screen.getByRole("button", { name: "Back to the previous place" })).toBeEnabled());
+    await waitFor(async () => expect(await readerActionEnabled(user, "Back to the previous place")).toBe(true));
     expect(screen.getByText("Pruning is painful but good.")).toBeInTheDocument();
   });
 

@@ -34,12 +34,12 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 | A4.1-7 | Local exportable metadata-only diagnostic (#22) | ✅ | ✅ privacy assertions | ⛔ owner | Copy / Save .json; includes observed reader mode/page |
 | A4.1-8 | No hallucinated section; reversible correction (#22) | ✅ (A.3 corrections retained) | ✅ | ⛔ owner | Verdict "No matching section identified" |
 | A4.1-9 | **Real MacArthur PDF end-to-end** (#22) | — | — | ⛔ **OPEN** | Synthetic fixtures cannot close it. Owner steps in the diagnosis doc |
-| A4.2-1 | One compact adaptive toolbar for pane and full reader (#26) | ☐ | ☐ | ⛔ owner | |
-| A4.2-2 | Icon-first, `…` overflow, persistent per-device pin/unpin + reset (#26) | ☐ | ☐ | ⛔ owner | |
-| A4.2-3 | Accessible names, tooltip on hover/focus, 44 px, no long-press-only (#26) | ☐ | ☐ | ⛔ owner | |
-| A4.2-4 | PDF prev/next icons + `3 / 400` jump popover; contextual page explanation (#26) | ☐ | ☐ | ⛔ owner | |
-| A4.2-5 | About collapsed by default; no multi-row wrap at narrow widths (#26) | ☐ | ☐ | ⛔ owner | |
-| A4.2-6 | Preserve history, modes, selections, citations, EPUB, labels, bookmarks, notes, Contents, full-reader transitions (#26) | ☐ | ☐ | ⛔ owner | |
+| A4.2-1 | One compact adaptive toolbar for pane and full reader (#26) | ✅ | ✅ UI + browser harness | ⛔ owner | `ReaderToolbar`; [notes](a42-reader-toolbar.md) |
+| A4.2-2 | Icon-first, `…` overflow, persistent per-device pin/unpin + reset (#26) | ✅ | ✅ | ⛔ owner | Defaults: Find, Contents |
+| A4.2-3 | Accessible names, tooltip on hover/focus, 44 px, no long-press-only (#26) | ✅ | ✅ | ⛔ owner (Narrator/NVDA, touch) | |
+| A4.2-4 | PDF prev/next icons + `3 / 400` jump popover; contextual page explanation (#26) | ✅ | ✅ | ⛔ owner | Original keeps viewer's compact control (no duplicate) |
+| A4.2-5 | About collapsed by default; no multi-row wrap at narrow widths (#26) | ✅ | ✅ 640–1440, 125–200 % | ⛔ owner (native scaling) | |
+| A4.2-6 | Preserve history, modes, selections, citations, EPUB, labels, bookmarks, notes, Contents, full-reader transitions (#26) | ✅ | ✅ full UI suite (1,199) | ⛔ owner | Tests moved to new routes, none deleted |
 | A4.3-1 | Study title + two tabs Bibelstudium/Bibellehre (#25) | ☐ | ☐ | ⛔ owner | |
 | A4.3-2 | Section heading then spacious writing field; continuous default (#25) | ☐ | ☐ | ⛔ owner | |
 | A4.3-3 | Remove repeated "Deine Antwort", hints, status, phase tabs, duplicated controls (#25) | ☐ | ☐ | ⛔ owner | |
@@ -59,4 +59,5 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 
 | Stage | Commit | Rust | Frontend | Other checks |
 |---|---|---|---|---|
-| A.4.1 | see `git log` (first A.4 commit) | 1,063 passed / 0 failed / 8 ignored | 1,193 passed / 108 files | fmt, Clippy -D warnings, typecheck, lint, i18n, build |
+| A.4.1 | `3c2029c` | 1,063 passed / 0 failed / 8 ignored | 1,193 passed / 108 files | fmt, Clippy -D warnings, typecheck, lint, i18n, build |
+| A.4.2 | see `git log` | unchanged code (review export test is opt-in) | 1,199 passed / 109 files | typecheck, lint, i18n, build; browser harness 10/10 scenes |

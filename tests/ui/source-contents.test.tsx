@@ -430,6 +430,7 @@ describe("Contents does not leave stale requests behind", () => {
     await user.click(screen.getByRole("button", { name: "Appendix A" }));
     expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("4");
     await user.click(screen.getByRole("button", { name: "Reading" }));
+    await user.click(screen.getByTestId("pdf-page-indicator"));
     const page = screen.getByRole("spinbutton", { name: "PDF page" });
     await user.clear(page);
     await user.type(page, "2");
