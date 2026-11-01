@@ -5795,6 +5795,11 @@ impl Reader<'_> {
                 if !words.is_empty() && !ends_as_sentence(words) && !korean_end(words) {
                     open.doubt = open.doubt.or(Some("boundary"));
                 }
+                // "Selah" set apart as if a heading: a word that closes a
+                // verse, left out of the one open (v0.24.6).
+                if is_selah(text) && !words.is_empty() {
+                    open.doubt = open.doubt.or(Some("boundary"));
+                }
             }
         }
         let chars = text.chars().count();

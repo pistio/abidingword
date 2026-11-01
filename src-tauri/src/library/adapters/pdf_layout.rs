@@ -1189,9 +1189,20 @@ fn split(
     // begins, as no line of the right column does: it is the left column's,
     // v0.24.6. Figures alone, a verse number in the margin, keep the rule
     // below.)
+    // (The right column's own left edge: where most of its spans begin —
+    // the gutter may be measured up to such a word itself.)
+    let right_edge = {
+        let mut starts: Vec<f64> = spans
+            .iter()
+            .filter(|s| s.x0 >= gutter.to - 1e-6)
+            .map(|s| s.x0)
+            .collect();
+        starts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+        starts.get(starts.len() / 2).copied().unwrap_or(gutter.to)
+    };
     let inside_gutter_words = |s: &Span| {
         s.x0 >= gutter.from - 1e-6
-            && s.x1 <= gutter.to + 1e-6
+            && s.x1 <= right_edge - 0.25 * body
             && s.text.chars().filter(|c| c.is_alphabetic()).count() >= 2
     };
     let on_left = |s: &Span| {
