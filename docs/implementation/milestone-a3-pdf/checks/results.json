@@ -1,0 +1,19 @@
+{
+  "frontend_full": {
+    "files": 107,
+    "passed": 1189,
+    "failed": 0
+  },
+  "additional_frontend_focused": {
+    "file": "tests/ui/pdf-structure.test.tsx",
+    "passed": 9,
+    "failed": 0,
+    "note": "One extra continuity regression added after the full run; application frontend source unchanged."
+  },
+  "rust": {
+    "result_groups": 89,
+    "passed": 1054,
+    "failed": 0,
+    "ignored": 8
+  }
+}

@@ -598,5 +598,43 @@
     "go": "Ir para a página",
     "physical": "As páginas PDF são contadas desde o início do arquivo, incluindo a capa. A numeração impressa pode ser diferente.",
     "printed": "Número de página impresso: {{label}}."
+  },
+  "structure": {
+    "title": "Estrutura do documento",
+    "explanation": "Os destinos se baseiam no documento, sem avaliar sua relevância teológica. As correções ficam no Abiding Word; os arquivos originais e as citações permanecem intactos.",
+    "build": "Analisar estrutura",
+    "rebuild": "Analisar novamente",
+    "undo": "Desfazer correção",
+    "reset": "Redefinir correções",
+    "status": "{{count}} seções",
+    "uncertain": "Não foi possível localizar com segurança parte do texto ou da estrutura. Confira a visualização Original.",
+    "search": "Buscar seção",
+    "physical": "Página PDF {{page}}",
+    "unmapped": "Sem passagem associada",
+    "open": "Abrir seção",
+    "edit": "Corrigir seção",
+    "refine": "Refine a busca para ver mais seções.",
+    "add": "Marcar uma linha visível como seção",
+    "addHelp": "Escolha uma linha inequívoca na janela de leitura atual.",
+    "heading": "Título da seção",
+    "level": "Nível hierárquico",
+    "mapping": "Passagem bíblica associada",
+    "mappingHelp": "Deixe em branco para não associar uma passagem. Para um livro inteiro, informe todos os capítulos (Atos 1–28).",
+    "scope": "Abrangência da passagem",
+    "disable": "Excluir esta seção",
+    "basis": {
+      "outline": "Sumário incorporado",
+      "tagged": "Tags de estrutura PDF",
+      "layout": "Inferido do layout",
+      "user": "Correção do usuário"
+    },
+    "scopes": {
+      "passage": "Passagem",
+      "chapter": "Capítulo",
+      "book": "Livro"
+    },
+    "mappingExample": "Atos 6",
+    "originalBookmarks": "Marcadores do PDF original",
+    "originalBookmarksHelp": "São os destinos de página do próprio PDF, sem as correções de seção do aplicativo. Um destino de página não comprova uma seção alinhada ao texto nem a relevância de um comentário."
   }
 }

@@ -556,5 +556,43 @@
     "go": "Go to page",
     "physical": "PDF pages count from the start of the file, including covers. Printed numbers may differ.",
     "printed": "Printed page label: {{label}}."
+  },
+  "structure": {
+    "title": "Document structure",
+    "explanation": "Section targets are document evidence, not a judgement of commentary relevance. Corrections belong to Abiding Word; original files and citation text remain unchanged.",
+    "build": "Build structure",
+    "rebuild": "Rebuild structure",
+    "undo": "Undo correction",
+    "reset": "Reset corrections",
+    "status": "{{count}} sections",
+    "uncertain": "Some text or structure could not be aligned reliably. Check Original view.",
+    "search": "Find a section",
+    "physical": "PDF page {{page}}",
+    "unmapped": "No passage mapping",
+    "open": "Open section",
+    "edit": "Correct section",
+    "refine": "Refine the search to see more sections.",
+    "add": "Mark a visible text line as a section",
+    "addHelp": "Choose an unambiguous line from the current Reading window.",
+    "heading": "Section title",
+    "level": "Hierarchy level",
+    "mapping": "Bible passage mapping",
+    "mappingHelp": "Leave empty for no passage link. For a whole book, use its full chapter range (Acts 1–28).",
+    "scope": "Mapping scope",
+    "disable": "Exclude this section",
+    "basis": {
+      "outline": "Embedded outline",
+      "tagged": "Tagged PDF",
+      "layout": "Inferred from layout",
+      "user": "User correction"
+    },
+    "scopes": {
+      "passage": "Passage",
+      "chapter": "Chapter",
+      "book": "Book"
+    },
+    "mappingExample": "Acts 6",
+    "originalBookmarks": "Original PDF bookmarks",
+    "originalBookmarksHelp": "These are the PDF’s own page destinations, without the app’s section corrections. A page destination does not establish a text-aligned section or commentary relevance."
   }
 }

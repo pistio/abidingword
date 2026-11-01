@@ -77,6 +77,7 @@ export interface SourceSegment {
   sectionPath: string | null;
   paragraphIndex: number | null;
   locator: string;
+  presentation?: PdfPresentation;
 }
 
 export interface SegmentWindow {
@@ -135,6 +136,9 @@ export interface PassageLocation {
   /** The reference as written in the source (the heading, for a section). */
   matchedText: string;
   sectionHeading: string | null;
+  structureNodeId?: string | null;
+  structureScope?: string | null;
+  structureBasis?: string | null;
 }
 
 /** A source with the places in it that fit the passage being read, best first. */
@@ -574,4 +578,33 @@ export interface ImportItemEdit {
   language?: string;
   sourceType?: SourceType;
   chosen?: boolean;
+}
+
+
+export interface PdfAnchor {
+  page: number; pageWidth: number; pageHeight: number; x0: number; x1: number;
+  baseline: number; size: number; firstChar: number; column: number;
+  byteStart: number; byteEnd: number; originalText: string;
+}
+export interface PdfHeading {
+  id: string; title: string; level: number; parents: string[]; basis: string;
+  anchor: PdfAnchor; segmentPosition: number; start: number; end: number;
+  disabled: boolean; mapping: string | null; mappingScope: string | null;
+}
+export interface PdfResolvedHeading extends PdfHeading {
+  path: string; canonical: string | null; scope: string; endPosition: number;
+}
+export interface PdfPresentation {
+  role: string; basis: string; uncertain: boolean; printedLabel: string | null;
+  anchors: PdfAnchor[]; headings: PdfHeading[]; sectionPath: string | null;
+  runs: {start:number;end:number;role:string}[];
+}
+export interface PdfCorrection {
+  id: string; position: number; title: string; level: number; mapping: string | null;
+  disabled: boolean; anchorId: string; start: number; end: number; scope: string | null;
+}
+export interface PdfStructureView {
+  sourceId: string; fileHash: string | null; status: "ready" | "missing";
+  complete: boolean; tagged: boolean; unalignedTags: number; uncertainPages: number;
+  headings: PdfResolvedHeading[]; corrections: PdfCorrection[]; canUndo: boolean;
 }

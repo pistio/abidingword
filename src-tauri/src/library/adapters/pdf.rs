@@ -31,32 +31,27 @@ impl SourceImportAdapter for PdfImporter {
     }
 
     fn extract(&self, bytes: &[u8], file_name: &str) -> AppResult<ImportedDocument> {
-        let PdfText {
-            metadata,
-            pages,
-            scanned,
-            ..
-        } = read_pages(bytes, file_name)?;
-        let page_count = pages.len() as u32;
-        if scanned {
-            return Ok(ImportedDocument {
-                format: "pdf",
-                metadata,
-                segments: Vec::new(),
-                extraction_status: ExtractionStatus::OcrRequired,
-                page_count: Some(page_count),
-                chapter_count: None,
-            });
-        }
-        let segments = page_segments(&pages);
-        Ok(ImportedDocument {
-            format: "pdf",
-            metadata,
-            segments,
-            extraction_status: ExtractionStatus::ExtractedText,
-            page_count: Some(page_count),
-            chapter_count: None,
-        })
+        Ok(document_from_text(&read_pages(bytes, file_name)?))
+    }
+}
+
+/// Library normalisation only; the shared layout/Scripture extractor is unchanged.
+pub fn document_from_text(text: &PdfText) -> ImportedDocument {
+    ImportedDocument {
+        format: "pdf",
+        metadata: text.metadata.clone(),
+        segments: if text.scanned {
+            Vec::new()
+        } else {
+            page_segments(&text.pages)
+        },
+        extraction_status: if text.scanned {
+            ExtractionStatus::OcrRequired
+        } else {
+            ExtractionStatus::ExtractedText
+        },
+        page_count: Some(text.pages.len() as u32),
+        chapter_count: None,
     }
 }
 

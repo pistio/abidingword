@@ -281,7 +281,7 @@ fn current_schema_and_nullable_wire_input_are_explicit() {
     Database::open_in_memory()
         .unwrap()
         .with_conn(|c| {
-            assert_eq!(abiding_word_lib::db::migrations::current_version(c)?, 26);
+            assert_eq!(abiding_word_lib::db::migrations::current_version(c)?, 27);
             let p = project_id(c, "Wire input");
             for input in [
                 serde_json::json!({"projectId":p,"title":"No study"}),

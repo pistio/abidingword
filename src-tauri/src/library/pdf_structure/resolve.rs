@@ -1,0 +1,355 @@
+//! Heading context only. Never infer a book/chapter from body citations.
+use super::{Correction, Heading, PdfStructure, Presentation, ResolvedHeading};
+use crate::scripture::{
+    canon::Book,
+    language::{fold, ReferenceLanguage},
+    parser::ReferenceParser,
+    recognise::Recogniser,
+    reference::{Point, ScriptureRef},
+};
+use regex::Regex;
+use std::collections::HashMap;
+use std::sync::OnceLock;
+
+fn key(text: &str) -> String {
+    fold(text).chars().filter(|c| c.is_alphanumeric()).collect()
+}
+fn core_title(text: &str) -> &str {
+    for separator in [" — ", " – ", " - ", ": "] {
+        if let Some((start, _)) = text.split_once(separator) {
+            return start.trim();
+        }
+    }
+    text.trim()
+}
+fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'static Book> {
+    let title = core_title(title);
+    let title = title
+        .split_once(' ')
+        .filter(|(first, _)| {
+            [
+                "the", "die", "das", "der", "le", "les", "la", "el", "los", "las", "o", "a", "os",
+                "as",
+            ]
+            .contains(&first.to_lowercase().as_str())
+        })
+        .map(|(_, rest)| rest)
+        .unwrap_or(title);
+    let wanted = key(title);
+    if let Some((_, book)) = ReferenceParser::for_language(language)
+        .lookup_entries()
+        .find(|(alias, _)| key(alias) == wanted)
+    {
+        return Some(book);
+    }
+    // A short foreign alias is accepted only when all supported dictionaries
+    // agree on one book. E.g. German "Apg" in a PDF without language metadata.
+    if wanted.chars().count() < 3 {
+        return None;
+    }
+    let mut found: Option<&'static Book> = None;
+    for lang in [
+        ReferenceLanguage::En,
+        ReferenceLanguage::De,
+        ReferenceLanguage::Ko,
+        ReferenceLanguage::Fr,
+        ReferenceLanguage::Es,
+        ReferenceLanguage::Pt,
+    ] {
+        for (_, book) in ReferenceParser::for_language(lang)
+            .lookup_entries()
+            .filter(|(alias, _)| key(alias) == wanted)
+        {
+            if found.is_some_and(|old| old.code != book.code) {
+                return None;
+            }
+            found = Some(book);
+        }
+    }
+    found
+}
+fn canonical(
+    title: &str,
+    language: ReferenceLanguage,
+    parent: Option<(&ScriptureRef, &str)>,
+) -> Option<(ScriptureRef, String)> {
+    if let Some(book) = book_title(title, language) {
+        return ScriptureRef::new(
+            book,
+            Point {
+                chapter: 1,
+                verse: None,
+            },
+            Point {
+                chapter: book.chapter_count,
+                verse: None,
+            },
+        )
+        .ok()
+        .map(|r| (r, "book".into()));
+    }
+    let found = Recogniser::for_source(language).detect(title);
+    if found.len() == 1 {
+        let r = ScriptureRef::from_canonical(&found[0].reference.canonical).ok()?;
+        return Some((
+            r,
+            if r.start.verse.is_none() && r.end.verse.is_none() && r.start.chapter == r.end.chapter
+            {
+                "chapter"
+            } else {
+                "passage"
+            }
+            .into(),
+        ));
+    }
+    let (parent, scope) = parent?;
+    let mut value = core_title(title).trim().to_lowercase();
+    let mut explicit_chapter = false;
+    for prefix in [
+        "chapter ",
+        "kapitel ",
+        "chapitre ",
+        "capítulo ",
+        "capitulo ",
+    ] {
+        if let Some(rest) = value.strip_prefix(prefix) {
+            value = rest.trim().into();
+            explicit_chapter = true;
+            break;
+        }
+    }
+    if value.starts_with('제') {
+        value = value.trim_start_matches('제').trim().into();
+        explicit_chapter = true;
+    }
+    if value.contains('장') {
+        explicit_chapter = true;
+        value = value.replace('장', ":").replace('절', "");
+        value = value.trim_end_matches(':').trim().into();
+    }
+    static NUMERIC: OnceLock<Regex> = OnceLock::new();
+    let re=NUMERIC.get_or_init(||Regex::new(r"^([0-9]{1,3})(?:\s*[:,]\s*([0-9]{1,3}))?(?:\s*[-–—]\s*(?:([0-9]{1,3})\s*[:,]\s*)?([0-9]{1,3}))?$").unwrap());
+    let caps = re.captures(&value)?;
+    let ch = caps[1].parse().ok()?;
+    let verse = caps.get(2).and_then(|v| v.as_str().parse().ok());
+    if verse.is_none() && scope != "book" && !explicit_chapter {
+        return None;
+    }
+    let last = caps.get(4).and_then(|v| v.as_str().parse::<u16>().ok());
+    let end = if verse.is_some() {
+        Point {
+            chapter: caps
+                .get(3)
+                .and_then(|v| v.as_str().parse().ok())
+                .unwrap_or(ch),
+            verse: last.or(verse),
+        }
+    } else {
+        Point {
+            chapter: last.unwrap_or(ch),
+            verse: None,
+        }
+    };
+    ScriptureRef::new(parent.book, Point { chapter: ch, verse }, end)
+        .ok()
+        .map(|r| {
+            (
+                r,
+                if verse.is_none() && ch == end.chapter {
+                    "chapter"
+                } else {
+                    "passage"
+                }
+                .into(),
+            )
+        })
+}
+
+/// Apply reversible app-owned corrections. Existing text/anchors never change.
+pub fn effective(
+    doc: &PdfStructure,
+    corrections: &[Correction],
+    language: ReferenceLanguage,
+) -> Vec<ResolvedHeading> {
+    let suppressed: std::collections::HashSet<_> = corrections
+        .iter()
+        .filter_map(|p| doc.headings.iter().find(|h| h.id == p.id))
+        .map(|h| h.title.as_str())
+        .collect();
+    let mut headings = doc.headings.clone();
+    for patch in corrections {
+        if let Some(h) = headings.iter_mut().find(|h| h.id == patch.id) {
+            h.title = patch.title.clone();
+            h.level = patch.level;
+            h.mapping = patch.mapping.clone();
+            h.mapping_scope = patch.scope.clone();
+            h.disabled = patch.disabled;
+            h.basis = "user".into();
+        } else if let Some(block) = doc.blocks.iter().find(|b| b.position == patch.position) {
+            if let Some(anchor) = block.anchors.iter().find(|a| a.id() == patch.anchor_id) {
+                headings.push(Heading {
+                    id: patch.id.clone(),
+                    title: patch.title.clone(),
+                    level: patch.level,
+                    parents: Vec::new(),
+                    basis: "user".into(),
+                    anchor: anchor.clone(),
+                    segment_position: patch.position,
+                    start: patch.start,
+                    end: patch.end,
+                    disabled: patch.disabled,
+                    mapping: patch.mapping.clone(),
+                    mapping_scope: patch.scope.clone(),
+                });
+            }
+        }
+    }
+    headings.sort_by(|a, b| {
+        a.segment_position
+            .cmp(&b.segment_position)
+            .then(a.start.cmp(&b.start))
+            .then(a.id.cmp(&b.id))
+    });
+    let mut out: Vec<ResolvedHeading> = Vec::new();
+    let mut open: Vec<usize> = Vec::new();
+    for heading in headings.into_iter().filter(|h| !h.disabled) {
+        while open.last().is_some_and(|i| {
+            let old = &out[*i].heading;
+            let original = doc
+                .headings
+                .iter()
+                .find(|h| h.id == old.id)
+                .map(|h| h.title.as_str())
+                .unwrap_or(&old.title);
+            old.level >= heading.level
+                || (!heading.parents.is_empty() && !heading.parents.iter().any(|p| p == original))
+        }) {
+            let i = open.pop().unwrap();
+            out[i].end_position = heading.segment_position;
+        }
+        // Supplied outline grouping titles can carry book context even when
+        // the grouping node has no destination of its own.
+        let supplied = heading
+            .parents
+            .iter()
+            .rev()
+            .filter(|p| !suppressed.contains(p.as_str()))
+            .find_map(|p| canonical(p, language, None));
+        let inherited = open.iter().rev().find_map(|i| {
+            out[*i]
+                .canonical
+                .as_ref()
+                .and_then(|s| ScriptureRef::from_canonical(s).ok())
+                .map(|r| (r, out[*i].scope.clone()))
+        });
+        let parent = inherited.or(supplied);
+        let resolved = heading
+            .mapping
+            .as_ref()
+            .and_then(|m| ScriptureRef::from_canonical(m).ok())
+            .map(|r| {
+                let scope = heading.mapping_scope.clone().unwrap_or_else(|| {
+                    if r.start.verse.is_none()
+                        && r.end.verse.is_none()
+                        && r.start.chapter == r.end.chapter
+                    {
+                        "chapter"
+                    } else {
+                        "passage"
+                    }
+                    .into()
+                });
+                (r, scope)
+            })
+            .or_else(|| {
+                if heading.basis == "user" {
+                    return None;
+                }
+                canonical(
+                    &heading.title,
+                    language,
+                    parent.as_ref().map(|(r, s)| (r, s.as_str())),
+                )
+            });
+        let (reference, scope) = resolved
+            .map(|(r, s)| (Some(r.canonical()), s))
+            .unwrap_or((None, "unmapped".into()));
+        let mut path = if !heading.parents.is_empty() {
+            heading
+                .parents
+                .iter()
+                .map(|name| {
+                    open.iter()
+                        .find_map(|i| {
+                            let old = &out[*i].heading;
+                            let original = doc
+                                .headings
+                                .iter()
+                                .find(|h| h.id == old.id)
+                                .map(|h| h.title.as_str())
+                                .unwrap_or(&old.title);
+                            (original == name).then(|| old.title.clone())
+                        })
+                        .unwrap_or_else(|| name.clone())
+                })
+                .collect::<Vec<_>>()
+        } else {
+            open.iter().map(|i| out[*i].heading.title.clone()).collect()
+        };
+        path.push(heading.title.clone());
+        out.push(ResolvedHeading {
+            heading,
+            path: path.join(" › "),
+            canonical: reference,
+            scope,
+            end_position: i64::MAX,
+        });
+        open.push(out.len() - 1);
+    }
+    out
+}
+
+pub fn presentations(
+    doc: &PdfStructure,
+    headings: &[ResolvedHeading],
+    positions: &std::collections::HashSet<i64>,
+) -> HashMap<i64, Presentation> {
+    doc.blocks
+        .iter()
+        .filter(|block| positions.contains(&block.position))
+        .map(|block| {
+            let local: Vec<_> = headings
+                .iter()
+                .filter(|h| h.heading.segment_position == block.position)
+                .map(|h| h.heading.clone())
+                .collect();
+            let path = headings
+                .iter()
+                .rev()
+                .find(|h| {
+                    h.heading.segment_position <= block.position && block.position < h.end_position
+                })
+                .map(|h| h.path.clone());
+            (
+                block.position,
+                Presentation {
+                    role: block.role.clone(),
+                    runs: block.runs.clone(),
+                    basis: block.basis.clone(),
+                    uncertain: block.uncertain,
+                    printed_label: block.printed_label.clone(),
+                    anchors: block.anchors.clone(),
+                    headings: local,
+                    section_path: if matches!(
+                        block.role.as_str(),
+                        "note" | "header" | "footer" | "artifact" | "uncertain"
+                    ) {
+                        None
+                    } else {
+                        path
+                    },
+                },
+            )
+        })
+        .collect()
+}

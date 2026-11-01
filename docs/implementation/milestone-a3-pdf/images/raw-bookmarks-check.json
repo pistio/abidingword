@@ -1,0 +1,7 @@
+[
+  {
+    "scenario": "separate original PDF page bookmarks retain corrected Contents",
+    "width": 900,
+    "status": "passed"
+  }
+]

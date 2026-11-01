@@ -359,6 +359,10 @@ pub fn commit_import(
     };
     insert_explicit(&tx, source_id, &segment_ids, &index.references, &now)?;
     insert_derived(&tx, source_id, &segment_ids, &index.sections, &now)?;
+    if let Some(structure) = &staged.pdf_structure {
+        super::pdf_structures::store(&tx, source_id, &staged.hash, structure)?;
+        super::pdf_structures::index(&tx, source_id)?;
+    }
     tx.execute(
         "UPDATE sources SET passage_index_version = ?2 WHERE id = ?1",
         params![source_id, sections::INDEX_VERSION],
@@ -434,6 +438,7 @@ pub(crate) fn remove_in(tx: &Connection, id: &str, now: &str) -> AppResult<Optio
     let file = managed_file(tx, id)?;
     // Its marks go with it (soft-deleted, their words kept in the file).
     crate::db::source_annotations::remove_with_source(tx, id, now)?;
+    tx.execute("DELETE FROM source_pdf_structures WHERE source_id=?1", [id])?;
     // Segments go (search entries by trigger, Scripture links by cascade,
     // citation segment links set to NULL by the foreign key).
     tx.execute("DELETE FROM source_segments WHERE source_id = ?1", [id])?;
@@ -466,6 +471,7 @@ fn segment_from_row(row: &Row) -> rusqlite::Result<SourceSegment> {
         section_path: row.get(7)?,
         paragraph_index: row.get(8)?,
         locator: row.get::<_, Option<String>>(9)?.unwrap_or_default(),
+        presentation: None,
     })
 }
 
@@ -515,9 +521,17 @@ pub fn segments(conn: &Connection, input: &GetSegments) -> AppResult<SegmentWind
         "SELECT {SEGMENT_COLUMNS} FROM source_segments WHERE source_id = ?1
          ORDER BY position LIMIT ?2 OFFSET ?3"
     ))?;
-    let segments = stmt
+    let mut segments = stmt
         .query_map(params![input.source_id, limit, offset], segment_from_row)?
         .collect::<Result<Vec<_>, _>>()?;
+    let mut overlay = super::pdf_structures::overlay(
+        conn,
+        &input.source_id,
+        &segments.iter().map(|s| s.position).collect(),
+    )?;
+    for segment in &mut segments {
+        segment.presentation = overlay.remove(&segment.position);
+    }
     Ok(SegmentWindow {
         source_id: input.source_id.clone(),
         total,
@@ -1040,6 +1054,16 @@ fn insert_derived(
 /// touches nothing else: not `manual` links, segments, citations, files or the
 /// source's own details. Returns the number of links stored.
 pub fn reindex_passages(conn: &Connection, source_id: &str) -> AppResult<usize> {
+    let tx = conn.unchecked_transaction()?;
+    let count = reindex_passages_in_transaction(&tx, source_id)?;
+    tx.commit()?;
+    Ok(count)
+}
+
+pub(crate) fn reindex_passages_in_transaction(
+    conn: &Connection,
+    source_id: &str,
+) -> AppResult<usize> {
     let (label, format, title, kind): (Option<String>, Option<String>, String, String) = conn
         .query_row(
             "SELECT s.language,
@@ -1072,20 +1096,19 @@ pub fn reindex_passages(conn: &Connection, source_id: &str) -> AppResult<usize> 
     );
     let ids: Vec<String> = rows.into_iter().map(|(id, _, _, _)| id).collect();
     let now = now();
-    let tx = conn.unchecked_transaction()?;
-    tx.execute(
+    conn.execute(
         "DELETE FROM source_passages
          WHERE source_id = ?1 AND origin IN ('explicit', 'section', 'inherited')",
         [source_id],
     )?;
-    insert_explicit(&tx, source_id, &ids, &index.references, &now)?;
-    insert_derived(&tx, source_id, &ids, &index.sections, &now)?;
-    tx.execute(
+    insert_explicit(conn, source_id, &ids, &index.references, &now)?;
+    insert_derived(conn, source_id, &ids, &index.sections, &now)?;
+    conn.execute(
         "UPDATE sources SET passage_index_version = ?2 WHERE id = ?1",
         params![source_id, sections::INDEX_VERSION],
     )?;
-    tx.commit()?;
-    Ok(index.references.len() + index.sections.len())
+    let structured = super::pdf_structures::index(conn, source_id)?;
+    Ok(index.references.len() + index.sections.len() + structured)
 }
 
 /// What [`ensure_passage_index`] did.
@@ -1162,7 +1185,7 @@ fn collect_places(
     };
     let mut stmt = conn.prepare(&format!(
         "SELECT s.id, s.title, s.author, g.id, g.position, g.locator, p.origin, p.passage,
-                p.start_key, p.end_key, p.matched_text, p.section_heading
+                p.start_key, p.end_key, p.matched_text, p.section_heading, p.structure_scope, p.structure_basis, p.structure_role, EXISTS(SELECT 1 FROM source_pdf_structures ps WHERE ps.source_id=s.id), p.structure_node_id
          FROM source_passages p
          JOIN source_segments g ON g.id = p.segment_id
          JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL AND s.state = 'active'
@@ -1205,9 +1228,25 @@ fn collect_places(
             }
             context = relevance::section_context(active, &sections);
         }
-        let Some(rank) = relevance::rank(active, link, origin, context) else {
+        let Some(mut rank) = relevance::rank(active, link, origin, context) else {
             continue;
         };
+        let scope: Option<String> = row.get(12)?;
+        let role: Option<String> = row.get(14)?;
+        let structured: bool = row.get(15)?;
+        if structured && origin == LinkOrigin::Explicit {
+            if matches!(role.as_deref(), Some("header" | "footer" | "artifact")) {
+                continue;
+            }
+            rank.class = rank.class.max(if role.as_deref() == Some("note") {
+                5
+            } else {
+                4
+            });
+        }
+        if origin == LinkOrigin::Section && scope.as_deref() == Some("book") {
+            rank.class = 3;
+        }
         let source_id: String = row.get(0)?;
         let position: i64 = row.get(4)?;
         let passage: String = row.get(7)?;
@@ -1240,6 +1279,9 @@ fn collect_places(
                         reference: ScriptureRef::from_canonical(&passage)?.to_dto(),
                         matched_text: row.get(10)?,
                         section_heading: row.get(11)?,
+                        structure_node_id: row.get(16)?,
+                        structure_scope: scope,
+                        structure_basis: row.get(13)?,
                     },
                 },
             );

@@ -1,0 +1,25 @@
+   Compiling abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 28.53s
+     Running tests/capabilities.rs (src-tauri/target/debug/deps/capabilities-569935112c2dab11)
+
+running 3 tests
+test tauri_refuses_each_window_what_its_capabilities_do_not_grant ... ok
+test the_capabilities_attach_one_set_to_each_window_and_little_else ... ok
+test the_permission_sets_match_the_registered_commands_and_the_interface ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/database.rs (src-tauri/target/debug/deps/database-bea44d27d3af72d0)
+
+running 8 tests
+test a_database_from_a_newer_app_version_is_refused ... ok
+test a_failing_migration_is_rolled_back_and_reported ... ok
+test database_file_is_created_inside_the_data_directory ... ok
+test migration_13_gives_existing_parts_and_own_templates_their_phases ... ok
+test migrations_create_the_full_schema_and_record_the_version ... ok
+test new_migrations_apply_on_top_of_an_existing_database ... ok
+test project_study_and_section_survive_a_restart ... ok
+test reopening_is_idempotent_and_keeps_one_default_workspace ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
+

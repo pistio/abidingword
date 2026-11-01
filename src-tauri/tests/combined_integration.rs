@@ -68,7 +68,7 @@ fn existing_v25_teaching_and_structured_answers_survive_study_flow_startup() {
             'book-research-study','character-research-study','topical-research-study')",
                 [],
             )?;
-            assert_eq!(migrations::current_version(conn)?, 26);
+            assert_eq!(migrations::current_version(conn)?, 27);
             Ok((studies::get_detail(conn, &study.study.id)?, prep))
         })
         .unwrap();
@@ -78,7 +78,7 @@ fn existing_v25_teaching_and_structured_answers_survive_study_flow_startup() {
         let db = Database::open(&path, &backups).unwrap();
         db.with_conn(|conn| {
             migrations::validate_existing_history(conn)?;
-            assert_eq!(migrations::current_version(conn)?, 26);
+            assert_eq!(migrations::current_version(conn)?, 27);
             assert_eq!(
                 studies::get_detail(conn, &saved_study.study.id)?,
                 saved_study
