@@ -126,7 +126,8 @@
     "backToSources": "Retour aux sources",
     "openFull": "Ouvrir en pleine largeur",
     "openFullTitle": "Lire cette source en pleine largeur",
-    "pageMarker": "Page {{page}}"
+    "pageMarker": "Page {{page}}",
+    "targetUnavailable": "L’emplacement indexé n’appartient pas à cette source ou n’est pas disponible."
   },
   "pane": {
     "libraryHeading": "Votre bibliothèque",
@@ -143,7 +144,9 @@
     "openLibrary": "Ouvrir la bibliothèque",
     "matchEvidence": "Une mention est une référence biblique présente dans le texte. Un titre correspondant donne du contexte, sans prouver qu’il s’agit d’un commentaire ou d’un lien théologique.",
     "noRecent": "Les sources ouvertes pendant cette session apparaîtront ici.",
-    "otherSources": "Autres sources"
+    "otherSources": "Autres sources",
+    "mentionsOnly": "Seuls des renvois ou des mentions sont indexés ici ; aucune explication directe du passage n’a été vérifiée.",
+    "continueReading": "Reprendre à votre dernière position de lecture"
   },
   "passage": {
     "mentions": "Mentionne {{passage}}",

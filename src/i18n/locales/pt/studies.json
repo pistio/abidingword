@@ -2457,7 +2457,11 @@
     "suggested": "Partes que você pode adicionar",
     "own": "Seu próprio título",
     "collapseAll": "Recolher tudo",
-    "expandAll": "Expandir tudo"
+    "expandAll": "Expandir tudo",
+    "restoreMissing": "Restaurar partes ausentes",
+    "restoreAll": "Restaurar todas as partes ausentes",
+    "restoreOne": "Restaurar “{{title}}”",
+    "restoreEmptyHint": "Restaura as partes vazias do modelo e a ordem original do método. As partes pessoais e os textos existentes são mantidos. Isso não recupera textos excluídos anteriormente."
   },
   "journey": {
     "label": "Estrutura do estudo",

@@ -51,6 +51,7 @@ permissions = [
   "allow-study-section-list",
   "allow-study-section-update",
   "allow-study-section-create",
+  "allow-study-section-restore-missing",
   "allow-study-section-delete",
   "allow-study-section-reorder",
   "allow-study-block-create",

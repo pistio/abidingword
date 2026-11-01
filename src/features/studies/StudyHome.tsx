@@ -5,6 +5,7 @@ import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import type { Workspace } from "@/types/domain";
+import { WorkspaceTrash } from "@/features/portability/ListingLifecycle";
 import { StudyCreationActions } from "./StudyCreationActions";
 import { NewStudyForm } from "./NewStudyForm";
 import { ProjectList } from "./ProjectList";
@@ -59,6 +60,7 @@ export function StudyHome({ workspace, onOpenTeaching, onOpenProject, onOpenStud
   return (
     <div className="flex flex-col gap-8">
       <h1 className="type-title m-0">{t("studies.home.title")}</h1>
+      <WorkspaceTrash onChanged={projects.reload} />
       <StudyCreationActions onStudy={() => form.current?.querySelector("input")?.focus()} />
       <div ref={form}><NewStudyForm projectId={() => ensureStudyProject(api, workspace.id, t)} onCreated={onOpenStudy} /></div>
       <div>

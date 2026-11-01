@@ -62,10 +62,10 @@ describe("workspace layout", () => {
     expect(width("pane-sources")).toBe("368px");
     expect(divider("Sources")).toHaveAttribute("aria-valuenow", "368");
 
-    // At most: window (1440) − Study minimum (360) − Scripture (300).
-    expect(divider("Sources")).toHaveAttribute("aria-valuemax", "780");
+    // At most: window (1440) − Study minimum (360) − Scripture (300) − two 1px dividers.
+    expect(divider("Sources")).toHaveAttribute("aria-valuemax", "778");
     await user.keyboard("{End}");
-    expect(width("pane-sources")).toBe("780px");
+    expect(width("pane-sources")).toBe("778px");
     await user.keyboard("{Home}");
     expect(width("pane-sources")).toBe("240px");
     await user.keyboard("{ArrowLeft}");
@@ -146,8 +146,8 @@ describe("workspace layout", () => {
     await user.click(screen.getByRole("button", { name: "Show Sources pane" }));
     await restart(api, { width: 864 });
     expect(paneOrder()).toEqual(["scripture", "study", "sources"]);
-    // The narrow window leaves less room, so less to grow into.
-    expect(divider("Sources")).toHaveAttribute("aria-valuemax", "240");
+    // Limits use the actual fitted widths, not the larger saved preference.
+    expect(divider("Sources")).toHaveAttribute("aria-valuemax", "253");
 
     await openSettingsSection(user, "Appearance");
     await user.click(await screen.findByRole("button", { name: "Reset layout" }));

@@ -48,6 +48,8 @@ export function PassageSourceList({
             <div role="group" aria-labelledby={titleId}>
               <button
                 type="button"
+                data-source-result={group.sourceId}
+                data-source-segment={best.segmentId}
                 onClick={() => onOpen(group.sourceId, best.segmentId)}
                 className="flex w-full flex-col items-start gap-0.5 rounded-aw px-2 py-2 text-left hover:bg-hover"
               >
@@ -77,6 +79,8 @@ export function PassageSourceList({
                         <li key={place.segmentId}>
                           <button
                             type="button"
+                            data-source-result={group.sourceId}
+                            data-source-segment={place.segmentId}
                             onClick={() => onOpen(group.sourceId, place.segmentId)}
                             className="flex w-full flex-wrap items-baseline gap-x-2 rounded-aw py-1 pl-3 text-left text-[0.875rem] hover:bg-hover"
                           >

@@ -39,6 +39,7 @@ interface StudyEditorProps {
 export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStudy, onRevealScripture }: StudyEditorProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const { settled } = useSaveTracker();
   const { goTo, setStudyPassage } = useScripture();
   const detail = useLoad(useCallback(() => api.studyGet(studyId), [api, studyId]));
   const findings = useLoad(useCallback(() => api.findingList(studyId), [api, studyId]));
@@ -75,6 +76,8 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
   // What the user has typed but the saved copy may not hold yet (block id -> has writing).
   const [typed, setTyped] = useState<Record<string, boolean>>({});
   const onContent = useCallback((blockId: string, has: boolean) => setTyped((prev) => (prev[blockId] === has ? prev : { ...prev, [blockId]: has })), []);
+  const [removedEmptyPart, setRemovedEmptyPart] = useState<string | null>(null);
+  const [restoringParts, setRestoringParts] = useState(false);
   const [newSection, setNewSection] = useState<string | null>(null);
   // Where the user last worked, and a block just added there: the study's Add puts text blocks there.
   const [newBlock, setNewBlock] = useState<string | null>(null);
@@ -212,7 +215,10 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     });
   };
   const updateSection = (section: StudySection) =>
-    detail.setData({ ...current, sections: sections.map((s) => (s.id === section.id ? section : s)) });
+    detail.setData(previous => {
+      const latest = previous ?? current;
+      return { ...latest, sections: latest.sections.map(part => part.id === section.id ? section : part) };
+    });
 
   const moveSection = async (sectionId: string, delta: -1 | 1) => {
     const ids = sections.map((s) => s.id);
@@ -240,6 +246,18 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     } catch (e) {
       setError(toApiError(e).message);
     }
+  };
+
+  const restoreParts = async (keys?: string[]) => {
+    setRestoringParts(true);
+    try {
+      await settled();
+      const restored = await api.studySectionRestoreMissing(study.id, keys);
+      detail.setData(previous => ({ ...(previous ?? current), sections: restored }));
+      const first = restored.find(part => !sections.some(old => old.id === part.id));
+      if (first) { setActiveSection(first.id); setNewSection(first.id); }
+      setRemovedEmptyPart(null);
+    } finally { setRestoringParts(false); }
   };
 
   const sectionNotes = (sectionId: string) => {
@@ -399,7 +417,8 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           }}
           onChange={updateSection}
           onMove={(delta) => moveSection(section.id, delta)}
-          onDeleted={() => {
+          onDeleted={(wasEmpty) => {
+            if (wasEmpty && study.templateId && template?.isBuiltin && template.sections.some(part => part.key === section.key && !part.optional && !part.retired) && ["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key)) setRemovedEmptyPart(section.key);
             detail.reload();
             findings.reload();
           }}
@@ -438,7 +457,8 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
 
       {/* The end of the study: another part, or a note that belongs to no part. */}
       <div className="flex flex-wrap items-start gap-2 border-t border-border-subtle pt-3">
-        <AddPart template={template} sections={sections} onAdd={addSection} />
+        {removedEmptyPart && <div role="status" className="basis-full type-meta">{t("studies.parts.restoreEmptyHint")} <Button disabled={restoringParts} onClick={() => void restoreParts([removedEmptyPart]).catch(error => setError(toApiError(error).message))}>{t("common.lifecycle.undo")}</Button></div>}
+        <AddPart template={template} sections={sections} onAdd={addSection} onRestore={study.templateId ? restoreParts : undefined} />
         <Button ref={noteButton} variant="quiet" className="min-h-11" onClick={() => openCapture("", lastNoteKind(study.id))}>
           <Plus className="size-4" aria-hidden="true" />
           {t("studies.add.note")}

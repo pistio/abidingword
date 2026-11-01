@@ -2446,7 +2446,11 @@
     "suggested": "Parts you might add",
     "own": "Your own heading",
     "collapseAll": "Fold all",
-    "expandAll": "Unfold all"
+    "expandAll": "Unfold all",
+    "restoreMissing": "Restore missing sections",
+    "restoreAll": "Restore all missing sections",
+    "restoreOne": "Restore “{{title}}”",
+    "restoreEmptyHint": "Restores empty template sections and the original method order. Custom sections and surviving writing are kept. This does not recover previously deleted writing."
   },
   "journey": {
     "label": "Study outline",

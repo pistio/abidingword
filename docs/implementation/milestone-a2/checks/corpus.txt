@@ -1,0 +1,4 @@
+> abiding-word@0.1.0 i18n:corpus
+> node scripts/i18n-corpus.mjs
+
+i18n corpus: 3772 strings (3913 keys), 249 audit findings → docs/i18n/native-polish-review-v0.19.md, docs/i18n/native-polish-priority-v0.19.md

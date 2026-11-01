@@ -55,15 +55,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | Enseñanza bíblica (2), enseñanza (14), (none of these) (1) |
 | Portuguese | Ensino bíblico (2), ensino (14), (none of these) (1) |
 
-**template** — 93 strings use it in English.
+**template** — 94 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Vorlage (86), Gemeindevorlage (7) |
-| Korean | 틀 (57), 서식 (34), (none of these) (2) |
-| French | modèle (84), Modèle (9) |
-| Spanish | plantilla (84), Plantilla (9) |
-| Portuguese | modelo (84), Modelo (9) |
+| German | Vorlage (87), Gemeindevorlage (7) |
+| Korean | 틀 (58), 서식 (34), (none of these) (2) |
+| French | modèle (85), Modèle (9) |
+| Spanish | plantilla (85), Plantilla (9) |
+| Portuguese | modelo (85), Modelo (9) |
 
 **Materials** — 3 strings use it in English.
 
@@ -95,15 +95,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | pasaje (166), Pasaje (28), (none of these) (44) |
 | Portuguese | passagem (97), Passagem (16), (none of these) (125) |
 
-**source** — 127 strings use it in English.
+**source** — 128 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Quelle (124), (none of these) (3) |
-| Korean | 자료 (110), 출처 (16), (none of these) (1) |
-| French | source (104), Source (21), (none of these) (2) |
-| Spanish | fuente (107), Fuente (18), (none of these) (2) |
-| Portuguese | fonte (108), Fonte (17), (none of these) (2) |
+| German | Quelle (125), (none of these) (3) |
+| Korean | 자료 (111), 출처 (16), (none of these) (1) |
+| French | source (105), Source (21), (none of these) (2) |
+| Spanish | fuente (108), Fuente (18), (none of these) (2) |
+| Portuguese | fonte (109), Fonte (17), (none of these) (2) |
 
 ## 2. Questions left
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1712 strings changed in at least one language since v0.18.10. Spot-check these.
+1721 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -444,12 +444,15 @@ _No open linguistic questions._
 |  | `library.pageNav.previous` | Previous PDF page | Vorherige PDF-Seite | 이전 PDF 페이지 | Page PDF précédente | Página PDF anterior | Página PDF anterior |
 | {{label}} | `library.pageNav.printed` | Printed page label: {{label}}. | Gedruckte Seitenangabe: {{label}}. | 인쇄된 쪽 표시: {{label}}. | Pagination imprimée : {{label}}. | Número de página impreso: {{label}}. | Número de página impresso: {{label}}. |
 | {{total}} | `library.pageNav.total` | of {{total}} | von {{total}} | / {{total}} | sur {{total}} | de {{total}} | de {{total}} |
+|  | `library.pane.continueReading` | Continue reading from your last position | An der letzten Lesestelle weiterlesen | 마지막 읽던 위치에서 계속 읽기 | Reprendre à votre dernière position de lecture | Continuar desde la última posición de lectura | Continuar da última posição de leitura |
 |  | `library.pane.matchEvidence` | A mention is a literal Scripture reference. A matching heading provides context, not proof of commentary or a theological connection. | Eine Erwähnung ist ein wörtlicher Bibelstellenverweis. Eine passende Überschrift bietet Kontext, belegt aber weder eine Auslegung noch einen theologischen Zusammenhang. | 언급은 본문에 적힌 성경 구절 참조입니다. 일치하는 제목은 맥락을 제공하지만, 주석이나 신학적 관련성을 입증하지는 않습니다. | Une mention est une référence biblique présente dans le texte. Un titre correspondant donne du contexte, sans prouver qu’il s’agit d’un commentaire ou d’un lien théologique. | Una mención es una referencia bíblica escrita en el texto. Un título coincidente aporta contexto, pero no demuestra que sea un comentario ni una relación teológica. | Uma menção é uma referência bíblica escrita no texto. Um título correspondente oferece contexto, mas não comprova que seja um comentário ou uma relação teológica. |
+|  | `library.pane.mentionsOnly` | Only references or mentions are indexed here; no direct discussion has been verified. | Hier sind nur Verweise oder Erwähnungen erfasst; eine direkte Auslegung wurde nicht nachgewiesen. | 여기에는 참조나 언급만 기록되어 있으며, 해당 본문을 직접 설명하는 내용은 확인되지 않았습니다. | Seuls des renvois ou des mentions sont indexés ici ; aucune explication directe du passage n’a été vérifiée. | Solo hay referencias o menciones indexadas; no se ha verificado una explicación directa del pasaje. | Há apenas referências ou menções indexadas; nenhuma explicação direta da passagem foi verificada. |
 |  | `library.pane.noRecent` | Sources you open will appear here during this session. | Quellen, die du öffnest, erscheinen hier für diese Sitzung. | 이번 사용 중에 연 자료가 여기에 표시됩니다. | Les sources ouvertes pendant cette session apparaîtront ici. | Las fuentes que abras durante esta sesión aparecerán aquí. | As fontes que você abrir nesta sessão aparecerão aqui. |
 |  | `library.pane.otherSources` | Other sources | Weitere Quellen | 다른 자료 | Autres sources | Otras fuentes | Outras fontes |
 |  | `library.pane.recent` | Recently opened | Zuletzt geöffnet | 최근 연 자료 | Ouverts récemment | Abiertos recientemente | Abertos recentemente |
 | {{passage}} | `library.passage.section` | Heading names {{passage}} | Überschrift nennt {{passage}} | 제목에 {{passage}} 표시 | Le titre mentionne {{passage}} | El título menciona {{passage}} | O título menciona {{passage}} |
 | {{passage}} | `library.passage.within` | Within a section headed {{passage}} | Im Abschnitt mit der Überschrift {{passage}} | {{passage}} 제목의 부분 안 | Dans la partie intitulée {{passage}} | Dentro de la sección titulada {{passage}} | Na seção intitulada {{passage}} |
+|  | `library.reader.targetUnavailable` | The indexed location does not belong to this source or is unavailable. | Die erfasste Stelle gehört nicht zu dieser Quelle oder ist nicht verfügbar. | 기록된 위치가 이 자료에 속하지 않거나 사용할 수 없습니다. | L’emplacement indexé n’appartient pas à cette source ou n’est pas disponible. | La ubicación indexada no pertenece a esta fuente o no está disponible. | O local indexado não pertence a esta fonte ou não está disponível. |
 |  | `library.search.byName` | Title, author or file name | Titel, Autor oder Dateiname | 제목, 저자 또는 파일 이름 | Titre, auteur ou nom de fichier | Título, autor o nombre de archivo | Título, autor ou nome do arquivo |
 | screen-reader/label | `library.search.byNameLabel` | Sources matching the title, author or file name | Quellen zu Titel, Autor oder Dateiname | 제목, 저자 또는 파일 이름이 맞는 자료 | Sources correspondant au titre, à l’auteur ou au nom de fichier | Fuentes que coinciden con el título, el autor o el nombre de archivo | Fontes que correspondem ao título, ao autor ou ao nome do arquivo |
 |  | `library.search.inText` | In the text | Im Text | 본문에서 | Dans le texte | En el texto | No texto |
@@ -920,11 +923,13 @@ _No open linguistic questions._
 |  | `settings.sections.sources` | Sources | Quellen | 자료 | Sources | Fuentes | Fontes |
 |  | `settings.summary.data` | Export, import and back up your work | Arbeit exportieren, importieren und sichern | 작업 내보내기, 가져오기, 백업 | Exporter, importer et sauvegarder votre travail | Exportar, importar y hacer copia de seguridad de tu trabajo | Exportar, importar e fazer cópia de segurança do seu trabalho |
 |  | `settings.summary.sources` | Your books and notes: find, organise, archive | Deine Bücher und Notizen: finden, ordnen, archivieren | 책과 메모: 찾기, 정리, 보관 | Vos livres et notes : trouver, organiser, archiver | Tus libros y notas: buscar, organizar, archivar | Seus livros e anotações: encontrar, organizar, arquivar |
+| {{title}} | `settings.trash.actions` | Actions for “{{title}}” | Aktionen für „{{title}}“ | “{{title}}” 작업 | Actions pour « {{title}} » | Acciones para «{{title}}» | Ações para “{{title}}” |
 | {{title}} | `settings.trash.confirm` | Move “{{title}}” to Trash? | „{{title}}“ in den Papierkorb verschieben? | “{{title}}”을(를) 휴지통으로 이동할까요? | Mettre « {{title}} » à la corbeille ? | ¿Mover «{{title}}» a la papelera? | Mover “{{title}}” para a lixeira? |
 |  | `settings.trash.danger` | Danger zone | Gefahrenbereich | 주의 영역 | Zone de danger | Zona de peligro | Área de perigo |
 |  | `settings.trash.empty` | Trash is empty. | Der Papierkorb ist leer. | 휴지통이 비어 있습니다. | La corbeille est vide. | La papelera está vacía. | A lixeira está vazia. |
 |  | `settings.trash.hint` | Restore a Project to recover its contents. Individually trashed Studies appear after their Project is restored. | Stelle ein Projekt mit seinen Inhalten wieder her. Einzeln gelöschte Studien erscheinen nach der Wiederherstellung ihres Projekts. | 성경공부 모음을 복원하면 내용도 복원됩니다. 개별 삭제된 성경공부는 성경공부 모음 복원 후 표시됩니다. | Restaurez un projet pour retrouver son contenu. Les études supprimées séparément apparaissent après la restauration de leur projet. | Restaura un proyecto para recuperar su contenido. Los estudios eliminados por separado aparecen después de restaurar su proyecto. | Restaure um projeto para recuperar seu conteúdo. Estudos excluídos separadamente aparecem após a restauração do projeto. |
 |  | `settings.trash.move` | Move to Trash | In den Papierkorb | 휴지통으로 이동 | Mettre à la corbeille | Mover a la papelera | Mover para a lixeira |
+| {{title}} | `settings.trash.moved` | “{{title}}” moved to Trash. | „{{title}}“ wurde in den Papierkorb verschoben. | “{{title}}”을(를) 휴지통으로 옮겼습니다. | « {{title}} » a été mis à la corbeille. | «{{title}}» se movió a la papelera. | “{{title}}” foi movido para a lixeira. |
 |  | `settings.trash.permanent` | Delete permanently | Endgültig löschen | 영구 삭제 | Supprimer définitivement | Eliminar permanentemente | Excluir permanentemente |
 | {{title}} | `settings.trash.permanentConfirm` | Permanently delete “{{title}}”? This cannot be undone. | „{{title}}“ endgültig löschen? Dies kann nicht rückgängig gemacht werden. | “{{title}}”을(를) 영구 삭제할까요? 되돌릴 수 없습니다. | Supprimer définitivement « {{title}} » ? Cette action est irréversible. | ¿Eliminar «{{title}}» permanentemente? No se puede deshacer. | Excluir “{{title}}” permanentemente? Esta ação não pode ser desfeita. |
 |  | `settings.trash.projectHint` | The Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content. | Das Projekt mit seinen Studien und seiner Lehre wird gemeinsam ausgeblendet und kann wiederhergestellt werden. Endgültiges Löschen entfernt alle zugehörigen Inhalte. | 성경공부 모음과 성경공부 및 가르침은 함께 숨겨지며 복원할 수 있습니다. 영구 삭제하면 관련 내용이 모두 제거됩니다. | Le projet, ses études et ses enseignements sont masqués ensemble et peuvent être restaurés. La suppression définitive retire tout le contenu associé. | El proyecto, sus estudios y su enseñanza se ocultan juntos y se pueden restaurar. La eliminación permanente borra todo el contenido dependiente. | O projeto, seus estudos e seu ensino são ocultados juntos e podem ser restaurados. A exclusão permanente remove todo o conteúdo dependente. |
@@ -1726,6 +1731,10 @@ _No open linguistic questions._
 |  | `studies.newStudy.subjectLabel.systematic_theology` | Doctrine | Lehrthema | 교리 | Doctrine | Doctrina | Doutrina |
 |  | `studies.newStudy.subjectLabel.topical` | Topic | Thema | 주제 | Sujet | Tema | Tema |
 |  | `studies.newStudy.subjectLabel.word` | Word or expression | Wort oder Ausdruck | 단어나 표현 | Mot ou expression | Palabra o expresión | Palavra ou expressão |
+|  | `studies.parts.restoreAll` | Restore all missing sections | Alle fehlenden Abschnitte wiederherstellen | 빠진 부분 모두 복원 | Restaurer toutes les parties manquantes | Restaurar todas las secciones que faltan | Restaurar todas as partes ausentes |
+|  | `studies.parts.restoreEmptyHint` | Restores empty template sections and the original method order. Custom sections and surviving writing are kept. This does not recover previously deleted writing. | Stellt leere Vorlagenabschnitte und die ursprüngliche Reihenfolge der Methode wieder her. Eigene Abschnitte und vorhandene Texte bleiben erhalten. Bereits gelöschte Texte werden dadurch nicht wiederhergestellt. | 빈 공부 틀 부분과 원래 방법의 순서를 복원합니다. 직접 만든 부분과 남아 있는 글은 유지됩니다. 이미 삭제한 글을 복구하는 기능은 아닙니다. | Restaure les parties vides du modèle et l’ordre initial de la méthode. Les parties personnelles et les textes restants sont conservés. Les textes déjà supprimés ne sont pas récupérés. | Restaura las secciones vacías de la plantilla y el orden original del método. Conserva las secciones propias y los textos existentes. No recupera textos eliminados anteriormente. | Restaura as partes vazias do modelo e a ordem original do método. As partes pessoais e os textos existentes são mantidos. Isso não recupera textos excluídos anteriormente. |
+|  | `studies.parts.restoreMissing` | Restore missing sections | Fehlende Abschnitte wiederherstellen | 빠진 부분 복원 | Restaurer les parties manquantes | Restaurar secciones que faltan | Restaurar partes ausentes |
+| {{title}} | `studies.parts.restoreOne` | Restore “{{title}}” | „{{title}}“ wiederherstellen | “{{title}}” 복원 | Restaurer « {{title}} » | Restaurar «{{title}}» | Restaurar “{{title}}” |
 |  | `studies.studyType.book` | Whole-Book Study | Bibelbuchstudium | 성경 한 권 공부 | Étude d’un livre biblique | Estudio de un libro bíblico | Estudo de um livro bíblico |
 |  | `studies.studyType.character` | Biblical Character Study | Biblische Personenstudie | 성경 인물 공부 | Étude d’un personnage biblique | Estudio de un personaje bíblico | Estudo de personagem bíblico |
 |  | `studies.teaching.blocks.add` | Add a block | Block hinzufügen | 칸 더하기 | Ajouter un bloc | Añadir un bloque | Adicionar um bloco |

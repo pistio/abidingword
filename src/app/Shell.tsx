@@ -29,6 +29,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
   const [settingsSection, setSettingsSection] = useState<"sources" | "language" | null>(null);
   const [recentSourceIds, setRecentSourceIds] = useState<string[]>([]);
+  const readerRequest = useRef(0);
   const positions = useRef(new Map<string, ReaderPosition>());
   const positionReaders = useRef(new Map<string, () => ReaderPosition | null>());
   const registerPositionReader = useCallback((sourceId: string, read: (() => ReaderPosition | null) | null) => {
@@ -54,7 +55,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   // Each request to open the library (id) remembers its latest search.
   const [library, setLibrary] = useState<{ id: number; query?: string }>({ id: 0 });
   // The full-width reader, and where its Back returns to.
-  const [reading, setReading] = useState<{ sourceId: string; segmentId?: string; from: View; position?: ReaderPosition; words?: QuotedWords; libraryOrigin?: boolean } | null>(null);
+  const [reading, setReading] = useState<{ request: number; sourceId: string; segmentId?: string; from: View; position?: ReaderPosition; words?: QuotedWords; libraryOrigin?: boolean } | null>(null);
   // A source read inside the Sources pane. Kept here, not in the pane, so it
   // is still open after a visit to the full reader, Settings or the Library.
   const [paneSource, setPaneSource] = useState<PaneSource | null>(null);
@@ -103,7 +104,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
           return;
         }
         const from = view === "addSource" ? "library" : view === "source" ? (reading?.from ?? "workspace") : view;
-        setReading({ sourceId, segmentId, from, position, words, libraryOrigin: from === "library" || (view === "source" && reading?.libraryOrigin) });
+        setReading({ request: ++readerRequest.current, sourceId, segmentId, from, position, words, libraryOrigin: from === "library" || (view === "source" && reading?.libraryOrigin) });
         setView("source");
       },
       addSource: () => {
@@ -202,7 +203,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
       {view === "addSource" && <AddSourceView onClose={() => showView(returnTo)} />}
       {view === "source" && reading && (
         <SourceReader
-          key={`${reading.sourceId}-${reading.segmentId ?? ""}`}
+          key={reading.request}
           sourceId={reading.sourceId}
           segmentId={reading.segmentId}
           initialPosition={reading.position}
@@ -271,7 +272,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
               onExpandReader={(position) => {
                 if (!paneSource) return;
                 rememberPosition(paneSource.sourceId, position);
-                setReading({ sourceId: paneSource.sourceId, segmentId: paneSource.segmentId, from: "workspace", position, words: paneSource.words, libraryOrigin: paneSource.returnToLibrary });
+                setReading({ request: ++readerRequest.current, sourceId: paneSource.sourceId, segmentId: paneSource.segmentId, from: "workspace", position, words: paneSource.words, libraryOrigin: paneSource.returnToLibrary });
                 setView("source");
               }}
             />

@@ -1,6 +1,7 @@
 import { useCallback, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
+import { ListingLifecycle, UndoTrash, type TrashedRecord } from "@/features/portability/ListingLifecycle";
 import { Notice } from "@/design-system/Notice";
 import { referenceLabel } from "@/i18n/scripture";
 import { useLoad } from "@/hooks/useLoad";
@@ -29,6 +30,7 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
+  const [undo, setUndo] = useState<TrashedRecord | null>(null);
   const [studyType, setStudyType] = useState<StudyType | "">("");
   const [status, setStatus] = useState<StudyStatus | "">("");
   const [project, setProject] = useState("");
@@ -58,6 +60,7 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
 
   return (
     <div className="flex flex-col gap-3">
+      {undo && <UndoTrash record={undo} onDone={() => { setUndo(null); studies.reload(); }} />}
       {showFilters && (
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.9375rem]" role="group" aria-label={t("studies.list.filters")}>
         {!projectId && projects && (
@@ -102,11 +105,11 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
       {studies.data && visible.length > 0 && (
         <ul id={id} aria-label={t("studies.list.listLabel")} className="m-0 list-none border-t border-border-subtle p-0">
           {visible.map((study) => (
-            <li key={study.id} className="border-b border-border-subtle">
+            <li key={study.id} className="flex min-w-0 flex-wrap items-center border-b border-border-subtle">
               <button
                 type="button"
                 onClick={() => onOpen(study)}
-                className="flex w-full items-center gap-4 px-2 py-3 text-left hover:bg-hover"
+                className="flex min-w-0 flex-1 items-center gap-4 px-2 py-3 text-left hover:bg-hover"
               >
                 <span className="min-w-0 flex-1">
                   <span className="type-item block">{study.title}</span>
@@ -132,6 +135,7 @@ export function StudyList({ projectId, projects, onOpen, version = 0 }: StudyLis
                 </span>
                 <ChevronRight className="size-5 shrink-0 text-text-muted" aria-hidden="true" />
               </button>
+              <ListingLifecycle record={{ id: study.id, title: study.title, kind: "study" }} onDone={() => { setUndo({ id: study.id, title: study.title, kind: "study" }); studies.reload(); }} />
             </li>
           ))}
         </ul>

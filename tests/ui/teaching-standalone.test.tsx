@@ -35,7 +35,7 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   const { user } = await renderApp(api);
   await user.click(await pane().findByRole("button", { name: /Vine study/ }));
   await user.click(await pane().findByRole("button", { name: "Bible Teaching" }));
-  await user.click(pane().getByText(/^Based on: Bible Study/));
+  await user.click(await pane().findByText(/^Based on: Bible Study/));
   const select = await pane().findByRole("combobox", { name: "Bible Study (optional)" });
   expect(select).toHaveValue(study.id);
   await waitFor(() => expect(select).not.toBeDisabled());

@@ -2446,7 +2446,11 @@
     "suggested": "Teile, die du hinzufügen kannst",
     "own": "Eigene Überschrift",
     "collapseAll": "Alle zuklappen",
-    "expandAll": "Alle aufklappen"
+    "expandAll": "Alle aufklappen",
+    "restoreMissing": "Fehlende Abschnitte wiederherstellen",
+    "restoreAll": "Alle fehlenden Abschnitte wiederherstellen",
+    "restoreOne": "„{{title}}“ wiederherstellen",
+    "restoreEmptyHint": "Stellt leere Vorlagenabschnitte und die ursprüngliche Reihenfolge der Methode wieder her. Eigene Abschnitte und vorhandene Texte bleiben erhalten. Bereits gelöschte Texte werden dadurch nicht wiederhergestellt."
   },
   "journey": {
     "label": "Gliederung des Bibelstudiums",

@@ -194,7 +194,8 @@ describe("Library", () => {
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
     expect(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:4" })).toBeInTheDocument();
     expect(within(sourcesPane()).queryByRole("region", { name: "Notes on the Vine" })).not.toBeInTheDocument();
-    expect(within(sourcesPane()).getByRole("heading", { name: "Sources for John 15:4" })).toHaveFocus();
+    const returned = within(sourcesPane()).getByRole("list", { name: "Sources for John 15:4" });
+    expect(within(returned).getByRole("button", { name: /Notes on the Vine/ })).toHaveFocus();
   });
 
   it("opens a recently added source in the pane, and in the full reader on request", async () => {

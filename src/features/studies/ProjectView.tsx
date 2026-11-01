@@ -4,6 +4,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { StudyCreationActions } from "./StudyCreationActions";
 import { Button } from "@/design-system/Button";
 import { InfoControl } from "@/design-system/InfoControl";
+import { WorkspaceTrash } from "@/features/portability/ListingLifecycle";
 import { DeleteControl } from "@/features/portability/Trash";
 import { ProjectExport } from "@/features/portability/ProjectExport";
 import type { Project } from "@/types/domain";
@@ -29,6 +30,7 @@ interface ProjectViewProps {
 export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false, onProjects, onProjectChanged, onOpenStudy }: ProjectViewProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const [listVersion, setListVersion] = useState(0);
   const standalone = useLoad(useCallback(() => api.teachingListProject(project.id).then(rows => rows.filter(row => !row.studyId)), [api, project.id]));
   const rename = useCallback(
     async (title: string) => onProjectChanged(await api.projectUpdate({ id: project.id, title })),
@@ -60,6 +62,7 @@ export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false,
         </div>
       )}
 
+      <WorkspaceTrash onChanged={() => setListVersion(v => v + 1)} />
       <StudyCreationActions studyButtonRef={opener} onStudy={() => { setAsked(true); requestAnimationFrame(() => form.current?.querySelector("input")?.focus()); }} />
       <div ref={form}>
         {(empty || asked) && <NewStudyForm projectId={project.id} autoFocus={asked} onCancel={empty ? undefined : putAway} onCreated={onOpenStudy} />}
@@ -71,7 +74,7 @@ export function ProjectView({ onDeleted, project, onOpenTeaching, plain = false,
           <h2 id="studies-heading" className="type-section m-0">
             {t("studies.projects.studies")}
           </h2>
-          <StudyList projectId={project.id} onOpen={(s: StudySummary) => onOpenStudy(s)} />
+          <StudyList version={listVersion} projectId={project.id} onOpen={(s: StudySummary) => onOpenStudy(s)} />
         </section>
       )}
 

@@ -38,7 +38,7 @@ interface SectionEditorProps {
   onAddNote: (kind: FindingType) => void;
   onChange: (section: StudySection) => void;
   onMove: (delta: -1 | 1) => void;
-  onDeleted: () => void;
+  onDeleted: (wasEmpty: boolean) => void;
   onRevealScripture: () => void;
   /** A section just added: bring it into view and focus its heading. */
   reveal?: boolean;
@@ -144,7 +144,7 @@ export function SectionEditor(props: SectionEditorProps) {
     try {
       await settled();
       await api.studySectionDelete({ id: section.id, force });
-      onDeleted();
+      onDeleted(!force);
     } catch (e) {
       const error = toApiError(e);
       if (!force && error.kind === "conflict") setConfirmingDelete(true);

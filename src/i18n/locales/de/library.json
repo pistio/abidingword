@@ -118,7 +118,8 @@
     "backToSources": "Zurück zu den Quellen",
     "openFull": "Vollansicht öffnen",
     "openFullTitle": "Diese Quelle in voller Breite lesen",
-    "pageMarker": "Seite {{page}}"
+    "pageMarker": "Seite {{page}}",
+    "targetUnavailable": "Die erfasste Stelle gehört nicht zu dieser Quelle oder ist nicht verfügbar."
   },
   "pane": {
     "libraryHeading": "Deine Bibliothek",
@@ -134,7 +135,9 @@
     "openLibrary": "Bibliothek öffnen",
     "matchEvidence": "Eine Erwähnung ist ein wörtlicher Bibelstellenverweis. Eine passende Überschrift bietet Kontext, belegt aber weder eine Auslegung noch einen theologischen Zusammenhang.",
     "noRecent": "Quellen, die du öffnest, erscheinen hier für diese Sitzung.",
-    "otherSources": "Weitere Quellen"
+    "otherSources": "Weitere Quellen",
+    "mentionsOnly": "Hier sind nur Verweise oder Erwähnungen erfasst; eine direkte Auslegung wurde nicht nachgewiesen.",
+    "continueReading": "An der letzten Lesestelle weiterlesen"
   },
   "passage": {
     "mentions": "Erwähnt {{passage}}",

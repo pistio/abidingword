@@ -1,0 +1,254 @@
+[
+  {
+    "width": 640,
+    "deviceScaleFactor": 1,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": -536,
+        "width": 640,
+        "height": 512,
+        "scrollWidth": 640,
+        "clientWidth": 640
+      },
+      {
+        "id": "pane-study",
+        "x": 0,
+        "y": -24,
+        "width": 640,
+        "height": 512,
+        "scrollWidth": 640,
+        "clientWidth": 640
+      },
+      {
+        "id": "pane-sources",
+        "x": 0,
+        "y": 488,
+        "width": 640,
+        "height": 512,
+        "scrollWidth": 640,
+        "clientWidth": 640
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  },
+  {
+    "width": 900,
+    "deviceScaleFactor": 1,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": 56,
+        "width": 264.84375,
+        "height": 944,
+        "scrollWidth": 265,
+        "clientWidth": 265
+      },
+      {
+        "id": "pane-study",
+        "x": 265.84375,
+        "y": 56,
+        "width": 384.15625,
+        "height": 944,
+        "scrollWidth": 384,
+        "clientWidth": 384
+      },
+      {
+        "id": "pane-sources",
+        "x": 651,
+        "y": 56,
+        "width": 249,
+        "height": 944,
+        "scrollWidth": 249,
+        "clientWidth": 249
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  },
+  {
+    "width": 1100,
+    "deviceScaleFactor": 1,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 944,
+        "scrollWidth": 300,
+        "clientWidth": 300
+      },
+      {
+        "id": "pane-study",
+        "x": 301,
+        "y": 56,
+        "width": 502,
+        "height": 944,
+        "scrollWidth": 502,
+        "clientWidth": 502
+      },
+      {
+        "id": "pane-sources",
+        "x": 804,
+        "y": 56,
+        "width": 296,
+        "height": 944,
+        "scrollWidth": 296,
+        "clientWidth": 296
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  },
+  {
+    "width": 1440,
+    "deviceScaleFactor": 1,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 944,
+        "scrollWidth": 300,
+        "clientWidth": 300
+      },
+      {
+        "id": "pane-study",
+        "x": 301,
+        "y": 56,
+        "width": 842,
+        "height": 944,
+        "scrollWidth": 842,
+        "clientWidth": 842
+      },
+      {
+        "id": "pane-sources",
+        "x": 1144,
+        "y": 56,
+        "width": 296,
+        "height": 944,
+        "scrollWidth": 296,
+        "clientWidth": 296
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  },
+  {
+    "width": 900,
+    "deviceScaleFactor": 1.25,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": 56,
+        "width": 264.84375,
+        "height": 944,
+        "scrollWidth": 265,
+        "clientWidth": 265
+      },
+      {
+        "id": "pane-study",
+        "x": 265.84375,
+        "y": 56,
+        "width": 384.15625,
+        "height": 944,
+        "scrollWidth": 384,
+        "clientWidth": 384
+      },
+      {
+        "id": "pane-sources",
+        "x": 651,
+        "y": 56,
+        "width": 249,
+        "height": 944,
+        "scrollWidth": 249,
+        "clientWidth": 249
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  },
+  {
+    "width": 1100,
+    "deviceScaleFactor": 1.5,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 944,
+        "scrollWidth": 300,
+        "clientWidth": 300
+      },
+      {
+        "id": "pane-study",
+        "x": 301,
+        "y": 56,
+        "width": 502,
+        "height": 944,
+        "scrollWidth": 502,
+        "clientWidth": 502
+      },
+      {
+        "id": "pane-sources",
+        "x": 804,
+        "y": 56,
+        "width": 296,
+        "height": 944,
+        "scrollWidth": 296,
+        "clientWidth": 296
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  },
+  {
+    "width": 1440,
+    "deviceScaleFactor": 2,
+    "panes": [
+      {
+        "id": "pane-scripture",
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 944,
+        "scrollWidth": 300,
+        "clientWidth": 300
+      },
+      {
+        "id": "pane-study",
+        "x": 301,
+        "y": 56,
+        "width": 842,
+        "height": 944,
+        "scrollWidth": 842,
+        "clientWidth": 842
+      },
+      {
+        "id": "pane-sources",
+        "x": 1144,
+        "y": 56,
+        "width": 296,
+        "height": 944,
+        "scrollWidth": 296,
+        "clientWidth": 296
+      }
+    ],
+    "originalPdf": true,
+    "cachedTarget": "page 1",
+    "studyWritingPreserved": true
+  }
+]

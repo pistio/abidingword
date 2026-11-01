@@ -45,7 +45,7 @@ interface SourcesPaneProps {
 export function SourcesPane({ reading, onCloseReader, onExpandReader, onPositionReader }: SourcesPaneProps = {}) {
   const { t } = useTranslation();
   const api = useApi();
-  const { openLibrary, openSource, addSource, recentSourceIds = [] } = useLibraryNav();
+  const { openLibrary, openSource: navigateSource, addSource, recentSourceIds = [] } = useLibraryNav();
   const { currentPassage, location, books } = useScripture();
   // The selected verse or passage; otherwise the chapter on screen.
   const reference = currentPassage?.canonical ?? `${location.book}.${location.chapter}`;
@@ -71,19 +71,28 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
   const recent = useLoad(useCallback(() => api.libraryList({}), [api]));
   const empty = recent.data?.length === 0;
   const opened = recentSourceIds.flatMap((id) => recent.data?.find((s) => s.id === id) ?? []);
-  const otherSources = (recent.data ?? []).filter((source) => !recentSourceIds.includes(source.id));
+  const otherSources = (recent.data ?? []).filter((source) => !recentSourceIds.includes(source.id) && !direct.some(group => group.sourceId === source.id));
 
   // Back from the reader: focus returns to what opened it (a citation in the
   // study, say) or, if that is gone, to the first heading of the overview.
   const overview = useRef<HTMLDivElement>(null);
-  const returning = useRef<{ opener: HTMLElement | null } | null>(null);
+  const lastOverview = useRef<{ reference: string; top: number } | null>(null);
+  const openSource: ReturnType<typeof useLibraryNav>["openSource"] = (...args) => {
+    lastOverview.current = { reference, top: overview.current?.scrollTop ?? 0 };
+    navigateSource(...args);
+  };
+  const returning = useRef<{ opener: HTMLElement | null; sourceId: string; segmentId?: string } | null>(null);
   useEffect(() => {
     if (!returning.current || reading) return;
-    const { opener } = returning.current;
+    const { opener, sourceId, segmentId } = returning.current;
     returning.current = null;
-    if (opener?.isConnected) opener.focus();
-    else overview.current?.querySelector<HTMLElement>("h3")?.focus();
-  }, [reading]);
+    if (overview.current) overview.current.scrollTop = lastOverview.current?.reference === reference ? lastOverview.current.top : 0;
+    const candidates = [...(overview.current?.querySelectorAll<HTMLElement>("[data-source-result], [data-source-link]") ?? [])];
+    const replacement = candidates.find(node => node.dataset.sourceResult === sourceId && node.dataset.sourceSegment === segmentId)
+      ?? candidates.find(node => (node.dataset.sourceResult ?? node.dataset.sourceLink) === sourceId);
+    if (opener?.isConnected) opener.focus({ preventScroll: true });
+    else (replacement ?? overview.current?.querySelector<HTMLElement>("h3"))?.focus({ preventScroll: true });
+  }, [reading, reference]);
 
   if (reading) {
     return (
@@ -99,7 +108,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
           onPositionReader={onPositionReader}
           backLabel={reading.returnToLibrary ? t("library.navigation.backToLibrary") : undefined}
           onClose={() => {
-            returning.current = { opener: reading.opener };
+            returning.current = { opener: reading.opener, sourceId: reading.sourceId, segmentId: reading.segmentId };
             onCloseReader?.();
           }}
           onExpand={onExpandReader}
@@ -128,6 +137,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
                 {t("library.pane.sourcesFor", { passage: label })}
               </h3>
               <p className="type-meta m-0">{t("library.pane.matchEvidence")}</p>
+              {direct.length > 0 && direct.every(group => group.locations.every(place => place.origin === "explicit")) && <p role="status" className="type-meta m-0">{t("library.pane.mentionsOnly")}</p>}
               {sources.error && <p className="m-0 text-[0.9375rem] text-danger">{sources.error.message}</p>}
               {sources.data && sources.data.length === 0 && (
                 <p className="m-0 text-[0.9375rem] text-text-muted">{t("library.pane.noSources")}</p>
@@ -147,10 +157,10 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
               <h3 id="recent-heading" className="type-group m-0">{t(opened.length > 0 ? "library.pane.recent" : "library.pane.libraryHeading")}</h3>
               {opened.length === 0 && <p className="type-meta m-0">{t("library.pane.noRecent")}</p>}
               <ul aria-label={t(opened.length > 0 ? "library.pane.recent" : "library.pane.libraryHeading")} className="m-0 flex list-none flex-col p-0">
-                {(opened.length > 0 ? opened : (recent.data ?? [])).slice(0, 5).map((s) => (
+                {(opened.length > 0 ? opened : otherSources).slice(0, 5).map((s) => (
                   <li key={s.id}>
-                    <button type="button" onClick={() => openSource(s.id)} className="w-full py-1 text-left text-[0.9375rem] text-text hover:underline">
-                      {s.title}{s.author ? <span className="text-text-muted">{t("common.listSeparator")}{s.author}</span> : null}
+                    <button type="button" data-source-link={s.id} aria-label={s.title} aria-describedby={opened.length > 0 ? `source-continue-${s.id}` : undefined} onClick={() => openSource(s.id)} className="w-full py-1 text-left text-[0.9375rem] text-text hover:underline">
+                      {s.title}{opened.length > 0 && <span id={`source-continue-${s.id}`} className="block type-meta">{t("library.pane.continueReading")}</span>}{s.author ? <span className="text-text-muted">{t("common.listSeparator")}{s.author}</span> : null}
                     </button>
                   </li>
                 ))}
@@ -158,7 +168,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
               {opened.length > 0 && otherSources.length > 0 && <details className="text-[0.9375rem]">
                 <summary className="cursor-pointer text-text-muted">{t("library.pane.otherSources")}</summary>
                 <ul className="m-0 mt-1 list-none p-0">
-                  {otherSources.slice(0, 5).map((source) => <li key={source.id}><button type="button" className="min-h-10 w-full py-1 text-left hover:underline" onClick={() => openSource(source.id)}>{source.title}</button></li>)}
+                  {otherSources.slice(0, 5).map((source) => <li key={source.id}><button type="button" data-source-link={source.id} className="min-h-10 w-full py-1 text-left hover:underline" onClick={() => openSource(source.id)}>{source.title}</button></li>)}
                 </ul>
               </details>}
             </section>

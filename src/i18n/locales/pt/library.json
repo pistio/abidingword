@@ -126,7 +126,8 @@
     "backToSources": "Voltar às fontes",
     "openFull": "Abrir leitor completo",
     "openFullTitle": "Ler esta fonte em largura total",
-    "pageMarker": "Página {{page}}"
+    "pageMarker": "Página {{page}}",
+    "targetUnavailable": "O local indexado não pertence a esta fonte ou não está disponível."
   },
   "pane": {
     "libraryHeading": "Sua biblioteca",
@@ -143,7 +144,9 @@
     "openLibrary": "Abrir biblioteca",
     "matchEvidence": "Uma menção é uma referência bíblica escrita no texto. Um título correspondente oferece contexto, mas não comprova que seja um comentário ou uma relação teológica.",
     "noRecent": "As fontes que você abrir nesta sessão aparecerão aqui.",
-    "otherSources": "Outras fontes"
+    "otherSources": "Outras fontes",
+    "mentionsOnly": "Há apenas referências ou menções indexadas; nenhuma explicação direta da passagem foi verificada.",
+    "continueReading": "Continuar da última posição de leitura"
   },
   "passage": {
     "mentions": "Menciona {{passage}}",

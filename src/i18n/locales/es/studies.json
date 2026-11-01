@@ -2457,7 +2457,11 @@
     "suggested": "Partes que puedes añadir",
     "own": "Tu propio título",
     "collapseAll": "Plegar todo",
-    "expandAll": "Desplegar todo"
+    "expandAll": "Desplegar todo",
+    "restoreMissing": "Restaurar secciones que faltan",
+    "restoreAll": "Restaurar todas las secciones que faltan",
+    "restoreOne": "Restaurar «{{title}}»",
+    "restoreEmptyHint": "Restaura las secciones vacías de la plantilla y el orden original del método. Conserva las secciones propias y los textos existentes. No recupera textos eliminados anteriormente."
   },
   "journey": {
     "label": "Esquema del estudio",

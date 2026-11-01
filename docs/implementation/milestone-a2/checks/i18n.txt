@@ -1,0 +1,4 @@
+> abiding-word@0.1.0 i18n:check
+> node scripts/i18n-check.mjs
+
+i18n check: 6 languages × 9 areas, 3773 English keys, 130 components — all consistent.

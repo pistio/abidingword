@@ -118,7 +118,8 @@
     "backToSources": "Back to Sources",
     "openFull": "Open full reader",
     "openFullTitle": "Read this source at full width",
-    "pageMarker": "Page {{page}}"
+    "pageMarker": "Page {{page}}",
+    "targetUnavailable": "The indexed location does not belong to this source or is unavailable."
   },
   "pane": {
     "libraryHeading": "Your library",
@@ -134,7 +135,9 @@
     "openLibrary": "Open library",
     "matchEvidence": "A mention is a literal Scripture reference. A matching heading provides context, not proof of commentary or a theological connection.",
     "noRecent": "Sources you open will appear here during this session.",
-    "otherSources": "Other sources"
+    "otherSources": "Other sources",
+    "mentionsOnly": "Only references or mentions are indexed here; no direct discussion has been verified.",
+    "continueReading": "Continue reading from your last position"
   },
   "passage": {
     "mentions": "Mentions {{passage}}",

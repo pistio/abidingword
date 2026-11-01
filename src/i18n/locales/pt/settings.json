@@ -303,6 +303,8 @@
     "empty": "A lixeira está vazia.",
     "hint": "Restaure um projeto para recuperar seu conteúdo. Estudos excluídos separadamente aparecem após a restauração do projeto.",
     "studyHint": "O estudo e sua pesquisa podem ser restaurados em Configurações → Dados e backup → Lixeira. O ensino vinculado permanece no projeto com notas e citações salvas, mas perde o vínculo. A restauração não refaz o vínculo automaticamente.",
-    "projectHint": "O projeto, seus estudos e seu ensino são ocultados juntos e podem ser restaurados. A exclusão permanente remove todo o conteúdo dependente."
+    "projectHint": "O projeto, seus estudos e seu ensino são ocultados juntos e podem ser restaurados. A exclusão permanente remove todo o conteúdo dependente.",
+    "actions": "Ações para “{{title}}”",
+    "moved": "“{{title}}” foi movido para a lixeira."
   }
 }
