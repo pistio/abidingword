@@ -1,5 +1,7 @@
 # A.3 Stage 1 — unified Bible Study home
 
+Tested implementation: `0fad2ab94717d6d0df6609b4bac809e350843a21`.
+
 Review branch: `fix/windows-milestone-a3-home`, based on verified A.2 head `c4d045f4c63586a0a351509a050adc458259394c`. Its last tested implementation was `450bd95ef9bedabc248e1746fbbf8585fe19e72a`. PR #20 remains a draft into A.1; #18 and #17 remain drafts into A and the combined integration respectively. This branch does not start from main.
 
 The A.3 brief and Issue #21 supersede prior acceptance claims. The owner's A.2 Windows review remains unacceptable for homepage hierarchy and the MacArthur case. This change is Stage 1 only; PDF structure work belongs on a separate Stage 2 branch after this reviewable snapshot.

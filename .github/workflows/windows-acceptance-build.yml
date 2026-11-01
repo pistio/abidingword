@@ -9,9 +9,10 @@ on:
         required: true
         type: choice
         options:
+          - 0fad2ab94717d6d0df6609b4bac809e350843a21
           - 450bd95ef9bedabc248e1746fbbf8585fe19e72a
           - 6da1ea3d757d76b1072338f36c331dffc764b8ff
-        default: 450bd95ef9bedabc248e1746fbbf8585fe19e72a
+        default: 0fad2ab94717d6d0df6609b4bac809e350843a21
 
 permissions:
   contents: read
@@ -30,7 +31,7 @@ jobs:
     steps:
       - name: Reject unpinned source selection
         run: |
-          if ($env:EXPECTED_SOURCE_SHA -cne '6da1ea3d757d76b1072338f36c331dffc764b8ff' -and $env:EXPECTED_SOURCE_SHA -cne '450bd95ef9bedabc248e1746fbbf8585fe19e72a') {
+          if ($env:EXPECTED_SOURCE_SHA -cne '6da1ea3d757d76b1072338f36c331dffc764b8ff' -and $env:EXPECTED_SOURCE_SHA -cne '450bd95ef9bedabc248e1746fbbf8585fe19e72a' -and $env:EXPECTED_SOURCE_SHA -cne '0fad2ab94717d6d0df6609b4bac809e350843a21') {
             throw 'Only a pinned schema-26 review source may be built by this workflow.'
           }
       - name: Preserve historical SQL bytes on Windows checkout

@@ -45,3 +45,12 @@ The final backend root-initialisation recheck and concurrency fixture were added
 - All 26 historical migration files and the recognition implementation are unchanged. No schema change.
 
 Captured check text normalises ANSI escapes and trailing whitespace. Failed development runs are not counted in final totals. Windows WebView2 and actual OS scaling still require owner review. No Windows installer or release was produced here.
+
+## Implementation and Windows review preparation
+
+Tested implementation SHA: `0fad2ab94717d6d0df6609b4bac809e350843a21`.
+Clean source provenance verifies schema 26 and all 26 migrations. [Provenance record](build-provenance.json). The historical catalogue digest remains `3a2159765b0c77874143ef3143b6b97bd785d26d5372aa9250dae590be30bded`.
+
+The existing manual-only Windows acceptance workflow now offers and defaults to this exact source SHA, retaining its two earlier pinned sources, read-only permissions and unchanged migration digest. YAML and the three exact source choices were checked. It has not been dispatched. No Windows installer, signed release or updater overlay was produced. Windows owner review remains required.
+
+Delivery documentation/workflow changes after the implementation do not change application or test code.
