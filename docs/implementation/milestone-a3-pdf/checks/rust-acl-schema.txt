@@ -22,4 +22,3 @@ test project_study_and_section_survive_a_restart ... ok
 test reopening_is_idempotent_and_keeps_one_default_workspace ... ok
 
 test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.27s
-

@@ -10,7 +10,10 @@
   ➜  Local:   http://localhost:1420/
      Running DevCommand (`cargo  run --no-default-features --color always --`)
 [1m[92m   Compiling[0m abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
-[1m[96m    Building[0m [=======================> ] 622/625: abiding-word(build)         [1m[96m    Building[0m [=======================> ] 623/625: abiding-word                [1m[96m    Building[0m [=======================> ] 624/625: abiding-word(bin)           [K[1m[92m    Finished[0m `dev` profile [unoptimized] target(s) in 39.81s
+[1m[96m    Building[0m [=======================> ] 622/625: abiding-word(build)
+[1m[96m    Building[0m [=======================> ] 623/625: abiding-word
+[1m[96m    Building[0m [=======================> ] 624/625: abiding-word(bin)
+[K[1m[92m    Finished[0m `dev` profile [unoptimized] target(s) in 39.81s
 [1m[92m     Running[0m `target/debug/abiding-word`
 dbus-daemon[151017]: [session uid=1000 pid=151017 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=151102 comm="target/debug/abiding-word" label="kernel")
 dbus-daemon[151017]: [session uid=1000 pid=151017 pidfd=5] Successfully activated service 'org.a11y.Bus'

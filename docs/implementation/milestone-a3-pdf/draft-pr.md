@@ -13,3 +13,9 @@ Schema 27 is additive and required for backed-up structure/correction history; h
 The handover records exact implementation/delivery SHAs and final validation. Synthetic tests and Linux browser/native evidence do **not** accept the owner-reported MacArthur defect: the actual PDF and native Windows evidence remain required. Issue #22 stays open for that acceptance. Stage 1 is a separate base PR; no editor redesign, Q&A, recognition merger or online catalogue is included.
 
 Do not merge or dispatch paid build/release workflows without the owner's separate instruction. No installer or updater has been published.
+
+Tested application source: `15cac960a93f260385c868080ec580d4075e2c5f`.
+
+Validation: full frontend 1,189/107 files plus the added continuity regression (focused PDF file 9/9); full locked Rust 1,054 passed, 8 existing ignored; typecheck/build, lint, localisation, fmt and all-target Clippy passed. Real native Linux structure/Original smoke and synthetic full-workspace browser checks passed. Historical SQL 1–26 unchanged.
+
+Draft creation was attempted after push; the session GitHub API returned Forbidden. No PR was created. Use the comparison link in the handover and this body for manual draft creation.
