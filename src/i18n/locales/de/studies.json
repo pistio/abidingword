@@ -1716,7 +1716,10 @@
     "newSectionTitle": "Neuer Teil",
     "allSaved": "Alle Änderungen gespeichert.",
     "saved": "Gespeichert",
-    "backTo": "Zurück zu {{place}}"
+    "backTo": "Zurück zu {{place}}",
+    "options": "Optionen für dieses Bibelstudium",
+    "filterOn": "Notizen sind gefiltert.",
+    "filterClear": "Alle zeigen"
   },
   "sections": {
     "rename": "Teil „{{title}}“ umbenennen",
@@ -2349,7 +2352,10 @@
         "presentation_notes": "Notizen zur Präsentation",
         "handout": "Arbeitsblatt",
         "outline_point": "Gliederungspunkt"
-      }
+      },
+      "options": "Optionen für {{name}}",
+      "leaderBadge": "Nur für die Leitung",
+      "confirmDelete": "„{{name}}“ mit seinem Text löschen?"
     },
     "builtin": {
       "eva": {
@@ -2439,7 +2445,8 @@
       "linkStudy": "Mit Bibelstudie verknüpfen",
       "openStudy": "Verknüpfte Studie öffnen",
       "standalone": "Eigenständige Lehre"
-    }
+    },
+    "options": "Optionen für diese Bibellehre"
   },
   "parts": {
     "add": "Teil hinzufügen",

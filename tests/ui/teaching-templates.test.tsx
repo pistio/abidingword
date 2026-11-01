@@ -6,6 +6,7 @@ import { BUILTIN_TEACHING_TEMPLATES, templateFromTeaching } from "@/features/tea
 import { TEACHING_KINDS } from "@/types/teaching";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openTeachingOptions } from "../support/studyActions";
 
 // Bible Teaching templates (v0.18.7): what a new teaching starts with, its
 // format and its points, questions or steps. Built-in ones stay as they
@@ -36,6 +37,7 @@ const newForm = () => within(studyPane()).getByRole("form", { name: "Prepare a t
 
 /** Opens Bible Teaching information (v0.19) and returns the panel. */
 async function openAbout(user: User, article: HTMLElement) {
+  await openTeachingOptions(user);
   const toggle = within(article).getByRole("button", { name: "Bible Teaching information" });
   if (toggle.getAttribute("aria-expanded") !== "true") await user.click(toggle);
   return screen.findByRole("dialog", { name: "Bible Teaching information" });

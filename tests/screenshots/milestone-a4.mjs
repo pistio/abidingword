@@ -88,3 +88,41 @@ try {
   writeFileSync(`${out}/checks-a4.json`, JSON.stringify(results, null, 2));
 }
 console.log(JSON.stringify(results.map((r) => `${r.scene} ${r.width ?? r.lang ?? ""} ${r.scale ?? ""} ${r.status}`)));
+
+// A.4.3 editors: run with A4_SCENES=editors (also against the A.3 baseline for "before").
+if ((process.env.A4_SCENES ?? "").split(",").includes("editors")) {
+  const { readFileSync } = await import("node:fs");
+  const de = JSON.parse(readFileSync(new URL("../../src/i18n/locales/de/studies.json", import.meta.url), "utf8"));
+  const prefix = process.env.A4_PREFIX ?? "a43";
+  const browser2 = await chromium.launch({ ...(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {}), headless: true, args: ["--no-sandbox"] });
+  const done = [];
+  try {
+    for (const width of [640, 900, 1100, 1440]) {
+      const page = await browser2.newPage({ viewport: { width, height: 1000 } });
+      const errors = []; page.on("pageerror", (e) => errors.push(e.message));
+      await page.goto(`${base}?assistant=off&a4Editors=1&lang=de&passage=ROM.8`);
+      const study = page.locator("#pane-study");
+      await study.getByRole("button", { name: /Organisatorisches Projekt/ }).first().click();
+      await study.getByRole("button", { name: /Römer 8/ }).first().click();
+      await study.getByRole("heading", { level: 2 }).first().waitFor();
+      await page.waitForTimeout(200);
+      await page.screenshot({ path: `${out}/${prefix}-study-de-${width}.png` });
+      await study.getByRole("button", { name: de.view.teaching, exact: true }).click();
+      await study.getByRole("radio", { name: new RegExp(de.teaching.builtin.eva.name) }).check({ force: true });
+      await study.getByRole("button", { name: de.teaching.start, exact: true }).click();
+      await study.getByRole("heading", { name: de.teaching.builtin.eva.blocks.erkennen.title }).first().waitFor();
+      await page.waitForTimeout(200);
+      // The header first, as the teaching opens for the person (a new teaching may focus its first field).
+      await page.evaluate(() => document.querySelectorAll("#pane-study, #pane-study *").forEach((el) => { if (el.scrollTop) el.scrollTop = 0; }));
+      await page.screenshot({ path: `${out}/${prefix}-teaching-de-${width}.png` });
+      const geometry = await page.locator("#pane-study").evaluate((n) => ({ width: n.clientWidth, scrollWidth: n.scrollWidth }));
+      assert.ok(geometry.scrollWidth <= geometry.width + 2, JSON.stringify(geometry));
+      assert.deepEqual(errors, []);
+      done.push(`editors ${width} passed`);
+      await page.close();
+    }
+  } finally {
+    await browser2.close();
+  }
+  console.log(JSON.stringify(done));
+}

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, ChevronRight, Lightbulb, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronRight, Info, Lightbulb, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useSaveTracker } from "@/hooks/SaveTracker";
 import { toApiError } from "@/lib/api";
@@ -82,6 +82,8 @@ export function SectionEditor(props: SectionEditorProps) {
   const [helping, setHelping] = useState(false);
   const helpButton = useRef<HTMLButtonElement>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  // A.4.3 (#25): the part's hints (guidance, goal, field help, example) are on request, never repeated chrome.
+  const [hints, setHints] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const headingId = `section-${section.id}`;
   const bodyId = `section-body-${section.id}`;
@@ -101,6 +103,10 @@ export function SectionEditor(props: SectionEditorProps) {
   const exampleId = useId();
   const [showExample, setShowExample] = useState(false);
   const free = structured ? section.blocks.filter((b) => b.fieldKey === null) : section.blocks;
+  // Guidance is kept (never lost); it is shown when the person asks for it.
+  const hintText = structured ? sectionGuidance(section, origin) : (guidance ?? sectionGuidance(section, origin));
+  const fieldHelp = structured && (section.fields?.fields ?? []).some((f) => (f.config?.guidance ?? "").trim() || f.kind === "writing" || f.kind === "text" || f.kind === "entries");
+  const hasHints = Boolean(hintText || goal || example || fieldHelp);
   const statusLabels: Record<SectionStatus, string> = {
     not_started: t("studies.fields.statusNotStarted"),
     in_progress: t("studies.fields.statusInProgress"),
@@ -202,6 +208,7 @@ export function SectionEditor(props: SectionEditorProps) {
       className={`@container scroll-mt-14 border-t pt-3 ${phase && !phase.first ? "mt-3 border-border" : "border-border-subtle"} ${active && !collapsed ? "aw-part-active" : ""}`}
       data-active={active && !collapsed ? "true" : undefined}
       data-phase-start={phase?.index}
+      data-phase={shownPhase ?? undefined}
       onFocusCapture={onActive}
       onKeyDown={(e) => {
         if (e.key !== "Escape") return;
@@ -212,7 +219,7 @@ export function SectionEditor(props: SectionEditorProps) {
         }
       }}
     >
-      {phase?.label && <p className="caps-label m-0 mb-0.5 text-text-muted">{phase.label}</p>}
+      {/* A.4.3: no phase name above the part (no extra headers); the phase is in the part's options. */}
       {renaming ? (
         <RenameForm initial={title} onSubmit={rename} onCancel={() => setRenaming(false)} />
       ) : (
@@ -231,6 +238,28 @@ export function SectionEditor(props: SectionEditorProps) {
             </button>}
           </h2>
           {collapsed && noteCount > 0 && <span className="type-meta shrink-0">{t("studies.findingCount", { count: noteCount })}</span>}
+          <button
+            ref={manageToggle}
+            type="button"
+            aria-expanded={managing}
+            aria-controls={manageId}
+            aria-label={t("studies.sections.options", { title })}
+            title={t("studies.sections.optionsTooltip")}
+            onClick={() => setManaging(!managing)}
+            className="ml-auto inline-flex size-11 shrink-0 items-center justify-center self-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
+          >
+            <MoreHorizontal className="size-4" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+      {managing && !renaming && (
+        <div id={manageId} role="group" aria-label={t("studies.sections.optionsGroup", { title })} className="mt-1 flex flex-wrap items-center gap-1 rounded-aw bg-bg-secondary px-1">
+          {hasHints && (
+            <button type="button" className={tool} aria-pressed={hints} onClick={() => setHints(!hints)}>
+              <Info className="size-4" aria-hidden="true" />
+              {t("studies.flow.guidance")}
+            </button>
+          )}
           {help && (
             <button
               ref={helpButton}
@@ -240,28 +269,13 @@ export function SectionEditor(props: SectionEditorProps) {
               aria-label={t("studies.inquiry.study.open", { part: title })}
               title={t("studies.inquiry.study.tooltip")}
               onClick={() => setHelping(!helping)}
-              className="ml-auto inline-flex min-h-11 shrink-0 items-center gap-1.5 self-center rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:text-text-strong"
+              className={tool}
             >
               <Lightbulb className="size-4" aria-hidden="true" />
-              <span className="hidden @[28rem]:inline">{t("studies.inquiry.study.button")}</span>
+              {t("studies.inquiry.study.button")}
             </button>
           )}
-          <button
-            ref={manageToggle}
-            type="button"
-            aria-expanded={managing}
-            aria-controls={manageId}
-            aria-label={t("studies.sections.options", { title })}
-            title={t("studies.sections.optionsTooltip")}
-            onClick={() => setManaging(!managing)}
-            className={`${help ? "" : "ml-auto "}inline-flex size-11 shrink-0 items-center justify-center self-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong`}
-          >
-            <MoreHorizontal className="size-4" aria-hidden="true" />
-          </button>
-        </div>
-      )}
-      {managing && !renaming && (
-        <div id={manageId} role="group" aria-label={t("studies.sections.optionsGroup", { title })} className="mt-1 flex flex-wrap items-center gap-1">
+          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} />
           <button
             type="button"
             onClick={() => {
@@ -290,6 +304,20 @@ export function SectionEditor(props: SectionEditorProps) {
             {t("common.delete")}
           </button>
           <PhaseSelect value={shownPhase} onChange={(next) => void setPhase(next)} label={t("studies.phase.ofPart", { title })} className="ml-1" large />
+          {structured && !writing && (
+            <label className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
+              <span>{t("studies.fields.status", { title })}</span>
+              <select
+                value={section.status}
+                onChange={(e) => void setStatus(e.target.value as SectionStatus)}
+                className="min-h-11 rounded-aw border border-border bg-bg px-2 text-text"
+              >
+                {SECTION_STATUSES.map((status) => (
+                  <option key={status} value={status}>{statusLabels[status]}</option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
       )}
       {confirmingDelete && (
@@ -321,52 +349,41 @@ export function SectionEditor(props: SectionEditorProps) {
         </div>
       )}
       <div id={bodyId} hidden={collapsed}>
-      {structured && (
-        <div className="mb-3 flex flex-col gap-2">
-          <details><summary className="cursor-pointer text-text-muted">{t("studies.flow.guidance")}</summary><p className="mt-2">{sectionGuidance(section, origin)}</p></details>
-          {legacy && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
-          {!writing && goal && (
-            <p className="m-0 text-[0.9375rem] text-text-muted">
+      {hints && (
+        <div data-part-hints className="mb-3 flex flex-col gap-2 border-l-[3px] border-border bg-bg-secondary px-4 py-3 text-[0.9375rem] text-text-muted">
+          {hintText && <p className="m-0">{hintText}</p>}
+          {goal && (
+            <p className="m-0">
               <span className="font-medium">{t("studies.fields.goal")}: </span>
               {goal}
             </p>
           )}
-          <div hidden={writing} className="flex flex-wrap items-center gap-x-4 gap-y-1">
-            <label className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
-              <span>{t("studies.fields.status", { title })}</span>
-              <select
-                value={section.status}
-                onChange={(e) => void setStatus(e.target.value as SectionStatus)}
-                className="min-h-11 rounded-aw border border-border bg-bg px-2 text-text"
-              >
-                {SECTION_STATUSES.map((status) => (
-                  <option key={status} value={status}>{statusLabels[status]}</option>
-                ))}
-              </select>
-            </label>
-            {example && (
-              <button
-                type="button"
-                aria-expanded={showExample}
-                aria-controls={exampleId}
-                onClick={() => setShowExample(!showExample)}
-                className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-link hover:bg-hover"
-              >
-                <ChevronRight className={`size-4 transition-transform ${showExample ? "rotate-90" : ""}`} aria-hidden="true" />
-                {exampleLabel}
-              </button>
-            )}
-          </div>
           {example && (
-            <div id={exampleId} hidden={!showExample} className="border-l-[3px] border-border bg-bg-secondary px-4 py-3">
+            <button
+              type="button"
+              aria-expanded={showExample}
+              aria-controls={exampleId}
+              onClick={() => setShowExample(!showExample)}
+              className="inline-flex min-h-11 items-center gap-1 self-start rounded-aw px-2 text-[0.9375rem] text-link hover:bg-hover"
+            >
+              <ChevronRight className={`size-4 transition-transform ${showExample ? "rotate-90" : ""}`} aria-hidden="true" />
+              {exampleLabel}
+            </button>
+          )}
+          {example && (
+            <div id={exampleId} hidden={!showExample} className="border-l-[3px] border-border bg-bg px-4 py-3">
               <p className="m-0 mb-1 text-[0.875rem] text-text-muted">{t("studies.fields.exampleNote")}</p>
               <p className="m-0 reading">{example}</p>
             </div>
           )}
-          {legacy ? <details open><summary className="cursor-pointer font-medium">{t("studies.flow.legacy")}</summary><FieldsEditor section={section} onChange={onChange} onError={setError} /></details> : <FieldsEditor section={section} onChange={onChange} onError={setError} />}
         </div>
       )}
-      {!structured && guidance && <p className="mb-2 mt-0 text-[0.9375rem] text-text-muted">{guidance}</p>}
+      {structured && (
+        <div className="mb-3 flex flex-col gap-2">
+          {legacy && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
+          {legacy ? <details open><summary className="cursor-pointer font-medium">{t("studies.flow.legacy")}</summary><FieldsEditor section={section} onChange={onChange} onError={setError} showHelp={hints} /></details> : <FieldsEditor section={section} onChange={onChange} onError={setError} showHelp={hints} partTitle={title} />}
+        </div>
+      )}
 
       {structured && free.length > 0 && <h3 className="m-0 mt-2 text-[1rem] font-medium text-text-strong">{t("studies.fields.otherWriting")}</h3>}
       <div className="flex flex-col gap-1">
@@ -391,9 +408,12 @@ export function SectionEditor(props: SectionEditorProps) {
 
       {capture && <div className="mt-3">{capture}</div>}
       {notes && <div className="mt-3">{notes}</div>}
-      <div className="mt-1">
-        <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} />
-      </div>
+      {/* Only where there is nowhere to write yet: the way to begin (everything else is in the part's options). */}
+      {!structured && free.length === 0 && (
+        <div className="mt-1">
+          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} />
+        </div>
+      )}
       </div>
       {error && (
         <p role="alert" className="m-0 mt-2 text-[0.9375rem] text-danger">

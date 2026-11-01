@@ -594,6 +594,18 @@ async function start() {
     api.libraryOriginalRead=(id,offset,length)=>id===sourceId?fixtureOriginalRead(id,offset,length):otherRead(id,offset,length);
   }
   if (params.get("a3Review") === "1") await homeReviewFixture(api, params.get("a3Shape") === "owner");
+  // A.4.3 review: a POZETEK writing study whose project has another name, with some writing.
+  if (params.get("a4Editors") === "1") {
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Organisatorisches Projekt" });
+    const template = api.state.templates.find((tpl) => tpl.key === "pozetek-writing-study")!;
+    const { study } = await api.studyCreate({ projectId: project.id, title: "Römer 8", templateId: template.id, primaryPassage: "ROM.8" });
+    const sections = await api.studySectionList(study.id);
+    const writing = ["Paulus, die Gemeinde in Rom, der Geist, die Kinder Gottes.", "Rom; Brief aus Korinth, um 57 n. Chr."];
+    for (const [index, text] of writing.entries()) {
+      const block = sections[index]?.blocks[0];
+      if (block) await api.studyBlockUpdate({ id: block.id, content: text });
+    }
+  }
   await i18n.changeLanguage(params.get("lang") ?? "en");
   // All three panes even in a narrow window, as the owner works (review scenes, v0.18.5).
   if (params.get("sourcesOpen") === "1") localStorage.setItem("abiding-word.layout.sourcesOpen", "true");

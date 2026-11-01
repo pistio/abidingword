@@ -6,6 +6,7 @@ import passageStudy from "../../resources/templates/passage-study.json";
 import teachingStudy from "../../resources/templates/teaching-study.json";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 // The study journey (v0.18.6, v0.18.7): a Bible Study's parts grouped into
 // its movement from the text to teaching, where they stand, by the phase
@@ -126,26 +127,22 @@ async function openStudy(api: ReturnType<typeof createMemoryApi>) {
 const study = () => screen.getByRole("main", { name: "Study" });
 
 describe("the study's movement on screen", () => {
-  it("shows an outline of its phases that takes the person to a phase and its first part", async () => {
+  // A.4.3 (#25): no phase tabs or phase headers above the writing; each part keeps its phase,
+  // which the person can still see and change in the part's options.
+  it("draws no phase outline or phase headers above the writing, but keeps every part's phase", async () => {
     const { api } = await withStudy();
     const user = await openStudy(api);
-    const outline = within(study()).getByRole("navigation", { name: "Study outline" });
-    expect(within(outline).getAllByRole("button").map((b) => b.textContent)).toEqual(["Text", "Understanding", "Theology", "Application"]);
-    await user.click(within(outline).getByRole("button", { name: "Go to Theology" }));
-    expect(within(study()).getByRole("heading", { level: 2, name: "Theology" })).toHaveFocus();
-  });
-
-  it("names a phase above its first part only where it adds something; every part keeps its own heading", async () => {
-    const { api } = await withStudy();
-    await openStudy(api);
+    expect(within(study()).queryByRole("navigation", { name: "Study outline" })).toBeNull();
     const meaning = within(study()).getByRole("region", { name: "Meaning" });
-    expect(meaning).toHaveTextContent(/^Understanding/);
-    expect(within(study()).getByRole("region", { name: "Theology" })).not.toHaveTextContent(/^Theology.*Theology/);
-    expect(within(study()).getByRole("region", { name: "Meaning" })).toHaveAttribute("data-phase-start", "1");
+    expect(meaning).not.toHaveTextContent(/^Understanding/);
+    expect(meaning).toHaveAttribute("data-phase-start", "1");
+    expect(meaning).toHaveAttribute("data-phase", "understanding");
     expect(within(study()).getByRole("region", { name: "Observations" })).not.toHaveAttribute("data-phase-start");
     for (const name of ["Text", "Observations", "Context", "Meaning", "Theology", "Application"]) {
       expect(within(study()).getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }
+    await user.click(within(meaning).getByRole("button", { name: "Options for part Meaning" }));
+    expect(within(meaning).getByRole("combobox", { name: /Meaning/ })).toBeInTheDocument();
   });
 
   it("marks the focused part and keeps the other parts in the continuous document", async () => {
@@ -155,6 +152,7 @@ describe("the study's movement on screen", () => {
     await user.click(within(theology).getByRole("textbox"));
     expect(theology).toHaveAttribute("data-active", "true");
     expect(within(study()).getByRole("region", { name: "Meaning" })).not.toHaveAttribute("data-active");
+    await openStudyOptions(user);
     await user.click(within(study()).getByRole("button", { name: "Step-by-step" }));
     expect(within(study()).getByRole("region", { name: "Theology" })).toBeVisible();
     expect(within(study()).queryByRole("region", { name: "Meaning" })).toBeNull();

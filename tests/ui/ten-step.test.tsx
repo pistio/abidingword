@@ -7,6 +7,7 @@ import { localizedSections } from "@/features/studies/builtinText";
 import { setLanguage } from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions, showPartHints } from "../support/studyActions";
 
 beforeEach(() => window.localStorage.clear());
 
@@ -37,6 +38,7 @@ describe("the Ten-Step exegesis method", () => {
     await user.click(await screen.findByRole("button", { name: /Matthew 8:18/ }));
     const first = await screen.findByRole("region", { name: /1 — Become familiar/ });
     expect(within(first).getByLabelText("First impression")).toHaveValue("");
+    await showPartHints(user);
     const toggle = within(first).getByRole("button", { name: "Example: Matthew 8:18–27" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     await user.click(toggle);
@@ -53,6 +55,7 @@ describe("the Ten-Step exegesis method", () => {
     await first.user.type(within(part).getByLabelText("First impression"), "Following Christ");
     await first.user.click(within(part).getByRole("button", { name: /Add question/ }));
     await first.user.type(await within(part).findByLabelText(/Question \(Questions to investigate, entry 1\)/), "Why this order?");
+    await openPartOptions(first.user);
     await first.user.selectOptions(within(part).getByRole("combobox", { name: /Progress of/ }), "in_progress");
     await waitFor(async () => {
       const saved = (await api.studySectionList(studyId))[0]!;
@@ -61,9 +64,10 @@ describe("the Ten-Step exegesis method", () => {
       expect(JSON.parse(saved.blocks.find((b) => b.fieldKey === "questions")!.data!)).toEqual({ question: "Why this order?" });
     });
     cleanup();
-    await renderApp(api);
+    const second = await renderApp(api);
     const reopened = await screen.findByRole("region", { name: /1 — Become familiar/ });
     expect(within(reopened).getByLabelText("First impression")).toHaveValue("Following Christ");
+    await openPartOptions(second.user);
     expect(within(reopened).getByRole("combobox", { name: /Progress of/ })).toHaveValue("in_progress");
   });
 
@@ -86,6 +90,7 @@ describe("the Ten-Step exegesis method", () => {
     await user.click(await screen.findByRole("button", { name: /Own Matthew study/ }));
     const summary = await screen.findByRole("region", { name: "My summary" });
     expect(within(summary).getByLabelText("Text subject — What is it about?")).toBeInTheDocument();
+    await showPartHints(user);
     expect(within(summary).getByRole("button", { name: "Example: Matthew 8:18–27" })).toHaveAttribute("aria-expanded", "false");
   });
 });
@@ -129,6 +134,7 @@ describe("Ten-Step translations", () => {
       expect(within(step9).getByLabelText("Textgegenstand — Worum geht es?")).toBeInTheDocument();
       expect(within(step9).getByLabelText("Textaussage — Was wird gesagt?")).toBeInTheDocument();
       expect(within(step9).getByLabelText("Textthema — Ein Satz")).toBeInTheDocument();
+      await showPartHints(user);
       expect(within(step9).getByRole("button", { name: "Beispiel: Matthäus 8,18–27" })).toHaveAttribute("aria-expanded", "false");
     } finally {
       await setLanguage("en");

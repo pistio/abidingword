@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { partsFromStudy } from "@/features/studies/templateParts";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
+import i18n from "@/i18n";
 
 // User-designed templates (v0.18.7): a Bible Study template says where each
 // of its parts belongs in the study outline, a study follows its own
@@ -26,7 +28,8 @@ async function openStudy(api: MemoryApi, title: string) {
 }
 const study = () => screen.getByRole("main", { name: "Study" });
 const outline = () => within(study()).queryByRole("navigation", { name: "Study outline" });
-const outlineNames = () => within(outline()!).getAllByRole("button").map((b) => b.textContent);
+// A.4.3: the phase outline is no longer drawn above the writing; each part still carries its phase.
+const outlineNames = () => [...new Set([...study().querySelectorAll<HTMLElement>("[data-phase]")].map((el) => el.dataset.phase!))].map((phase) => i18n.t(`studies.journey.phase.${phase as "text"}`));
 
 describe("a Bible Study template of one's own", () => {
   it("is designed part by part: headings, order and where each part belongs, all by keyboard-reachable controls", async () => {
@@ -161,6 +164,7 @@ describe("Save as my template", () => {
     await api.studySectionCreate({ studyId: detail.study.id, title: "Hymns" });
     const user = await openStudy(api, "Abiding");
 
+    await openStudyOptions(user);
     await user.click(within(study()).getByRole("button", { name: "Bible Study information" }));
     await user.click(await screen.findByRole("button", { name: "Save as my template" }));
     const form = screen.getByRole("form", { name: "Save this study’s structure as a template" });
@@ -217,6 +221,7 @@ describe("review fixes (v0.18.7)", () => {
     const { api, project } = await setup();
     await api.studyCreate({ projectId: project.id, title: "Abiding", studyType: "passage" });
     const user = await openStudy(api, "Abiding");
+    await openStudyOptions(user);
     await user.click(within(study()).getByRole("button", { name: "Bible Study information" }));
     const toggle = await screen.findByRole("button", { name: "Save as my template" });
     await user.click(toggle);

@@ -1716,7 +1716,10 @@
     "newSectionTitle": "New part",
     "allSaved": "All changes saved.",
     "saved": "Saved",
-    "backTo": "Back to {{place}}"
+    "backTo": "Back to {{place}}",
+    "options": "Study options",
+    "filterOn": "Notes are filtered.",
+    "filterClear": "Show all"
   },
   "sections": {
     "rename": "Rename part {{title}}",
@@ -2349,7 +2352,10 @@
         "presentation_notes": "Presentation notes",
         "handout": "Handout",
         "outline_point": "Outline point"
-      }
+      },
+      "options": "Options for {{name}}",
+      "leaderBadge": "Leader only",
+      "confirmDelete": "Delete “{{name}}” and its writing?"
     },
     "builtin": {
       "eva": {
@@ -2439,7 +2445,8 @@
       "linkStudy": "Link to Bible Study",
       "openStudy": "Open linked Study",
       "standalone": "Standalone Teaching"
-    }
+    },
+    "options": "Teaching options"
   },
   "parts": {
     "add": "Add a part",

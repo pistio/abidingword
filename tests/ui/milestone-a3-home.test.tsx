@@ -3,6 +3,7 @@ import { afterEach, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderApp, openSettingsSection } from "../support/render";
+import { openTeachingOptions } from "../support/studyActions";
 
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
 const studyPane = () => within(screen.getByRole("main", { name: i18n.t("app.panes.name.study") }));
@@ -101,6 +102,7 @@ it("keeps historical standalone Teaching editable in Data settings, outside ordi
   await user.click(await within(data).findByRole("button", { name: "Legacy manuscript" }));
   const dialog = await screen.findByRole("dialog", { name: "Legacy standalone Teaching" });
   expect(await within(dialog).findByRole("textbox", { name: "Main part" })).toHaveValue("Kept private writing");
+  await openTeachingOptions(user);
   expect(within(dialog).queryByRole("button", { name: "New Teaching" })).toBeNull();
   expect((await api.teachingGet(legacy.id)).studyId).toBeNull();
 });

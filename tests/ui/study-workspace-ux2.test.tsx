@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 async function withStudy(title = "The True Vine", extra: { studyType?: "custom" | "passage" } = {}) {
   const api = createMemoryApi();
@@ -95,17 +96,20 @@ describe("findings and sections in the page", () => {
     expect(within(note).getByRole("button", { name: "+ Add source" })).toBeInTheDocument();
   });
 
-  it("keeps section management reachable and hides guidance once there is writing", async () => {
+  it("keeps section management reachable and the guidance on request, with or without writing", async () => {
     const api = await withStudy();
     const first = (await api.studyGet(api.state.studies[0]!.id)).sections[0]!;
-    // Empty, a section says what it is for; once it has writing the guidance steps aside.
+    // A.4.3: what a section is for is kept, on request (not repeated above the writing).
     const user0 = await open(api);
+    expect(within(study().getByRole("region", { name: first.title })).queryByText(/The passage being studied/)).not.toBeInTheDocument();
+    await openPartOptions(user0, first.title);
+    await user0.click(within(study().getByRole("region", { name: first.title })).getByRole("button", { name: "Guidance (optional)" }));
     expect(within(study().getByRole("region", { name: first.title })).getByText(/The passage being studied/)).toBeInTheDocument();
     await user0.click(screen.getByRole("button", { name: "Settings" }));
     await api.studyBlockUpdate({ id: first.blocks[0]!.id, content: "Abide in me." });
     await user0.click(screen.getByRole("button", { name: "Back to workspace" }));
     const section = await study().findByRole("region", { name: "Text" });
-    expect(within(section).queryByText(/The passage being studied/)).not.toBeInTheDocument();
+    expect(within(section).queryByText(/The passage being studied/)).not.toBeInTheDocument(); // closed again after reopening
     expect(study().queryByText("Start your study")).not.toBeInTheDocument();
     const user = user0;
 
@@ -117,6 +121,7 @@ describe("findings and sections in the page", () => {
     expect(options).toHaveFocus();
 
     // more writing is added from the part's own Add
+    await openPartOptions(user);
     await user.click(within(section).getByRole("button", { name: "Add to Text" }));
     await user.click(within(section).getByRole("button", { name: "Writing" }));
     await waitFor(() => expect(within(section).getAllByRole("textbox", { name: /^Text: paragraph/ })).toHaveLength(2));

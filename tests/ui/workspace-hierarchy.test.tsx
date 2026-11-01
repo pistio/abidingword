@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openTeachingOptions } from "../support/studyActions";
 
 // The workspace's visual hierarchy (v0.18.4): the Study or Teaching is the
 // current work, Scripture and Sources support it; the open teaching starts with
@@ -57,13 +58,16 @@ describe("the three panes", () => {
 });
 
 describe("the open Bible Teaching", () => {
-  it("starts with two lines: its title with Materials, then its information and the way to another", async () => {
+  it("starts with one line: its title, a quiet Materials icon and one options control", async () => {
     const api = await setup();
-    const { article } = await openTeaching(api);
+    const { article, user } = await openTeaching(api);
     const header = article.querySelector("header")!;
     const head = within(header);
     expect(head.getByRole("textbox", { name: "Title" })).toHaveValue("Remain in the vine");
     expect(head.getByRole("button", { name: "Materials" })).toHaveAttribute("aria-haspopup", "menu");
+    // A.4.3: information and the way to another teaching are on request.
+    expect(head.queryByRole("button", { name: "Bible Teaching information" })).toBeNull();
+    await openTeachingOptions(user);
     expect(head.getByRole("button", { name: "Bible Teaching information" })).toHaveAttribute("aria-expanded", "false");
     expect(head.getByRole("button", { name: "New Teaching" })).toBeInTheDocument();
     // Nothing stands between the header and the work (v0.19): the central message comes next.
@@ -140,6 +144,7 @@ describe("the open Bible Teaching", () => {
       return get(id);
     };
     const { user } = await openTeaching(api);
+    await openTeachingOptions(user);
     const picker = () => within(studyPane()).getByRole("combobox", { name: "Teaching:" });
     await user.selectOptions(picker(), api.state.teaching.preparations[1]!.id);
     await within(studyPane()).findByRole("article", { name: "Group study" });

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api";
 import { createMemoryApi } from "../support/memoryApi";
 import { openInfo, renderAppInProject as renderApp, saveInfo } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 // Information panels (v0.19): Project, Bible Study and Bible Teaching
 // information open on request over the work, edit a draft, and write it only
@@ -42,6 +43,7 @@ describe("Bible Study information", () => {
     const { api, studyId, blockId } = await setup();
     const user = await openStudy(api);
     const update = vi.spyOn(api, "studyUpdate");
+    await openStudyOptions(user);
     const panel = await openInfo(user, "Bible Study information");
     await user.selectOptions(within(panel).getByRole("combobox", { name: "Status" }), "archived");
     await user.type(within(panel).getByRole("textbox", { name: /Purpose/ }), "To abide.");
@@ -54,6 +56,7 @@ describe("Bible Study information", () => {
     expect(study).toMatchObject({ status: "archived", description: "To abide." });
     // The study's own writing is untouched.
     expect((await api.studyGet(studyId)).sections[0]!.blocks.find((b) => b.id === blockId)!.content).toBe("The vine and the branches.");
+    await openStudyOptions(user);
     await waitFor(() => expect(screen.getByRole("button", { name: "Bible Study information" })).toHaveFocus());
   });
 
@@ -61,6 +64,7 @@ describe("Bible Study information", () => {
     const { api, studyId } = await setup();
     const user = await openStudy(api);
     const update = vi.spyOn(api, "studyUpdate");
+    await openStudyOptions(user);
     const toggle = screen.getByRole("button", { name: "Bible Study information" });
 
     const close = {
@@ -72,6 +76,7 @@ describe("Bible Study information", () => {
       },
     };
     for (const [how, run] of Object.entries(close)) {
+      await openStudyOptions(user);
       const panel = await openInfo(user, "Bible Study information");
       const purpose = within(panel).getByRole("textbox", { name: /Purpose/ });
       expect(purpose).toHaveValue("");
@@ -88,6 +93,7 @@ describe("Bible Study information", () => {
   it("closes without a note when nothing was changed", async () => {
     const { api } = await setup();
     const user = await openStudy(api);
+    await openStudyOptions(user);
     await openInfo(user, "Bible Study information");
     await user.keyboard("{Escape}");
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
@@ -98,10 +104,12 @@ describe("Bible Study information", () => {
     const { api } = await setup();
     const user = await openStudy(api);
     vi.spyOn(api, "studyUpdate").mockRejectedValueOnce(new ApiError("filesystem", "The data folder could not be written."));
+    await openStudyOptions(user);
     const panel = await openInfo(user, "Bible Study information");
     await user.type(within(panel).getByRole("textbox", { name: /Purpose/ }), "Kept on screen.");
     await user.click(within(panel).getByRole("button", { name: "Save" }));
     expect(await within(panel).findByRole("alert")).toHaveTextContent("The data folder could not be written.");
+    await openStudyOptions(user);
     expect(screen.getByRole("dialog", { name: "Bible Study information" })).toBeInTheDocument();
     expect(within(panel).getByRole("textbox", { name: /Purpose/ })).toHaveValue("Kept on screen.");
     // Trying again works.
@@ -112,6 +120,7 @@ describe("Bible Study information", () => {
   it("does not overwrite information changed elsewhere while the panel was open", async () => {
     const { api, studyId } = await setup();
     const user = await openStudy(api);
+    await openStudyOptions(user);
     const panel = await openInfo(user, "Bible Study information");
     await user.type(within(panel).getByRole("textbox", { name: /Purpose/ }), "Mine.");
     await api.studyUpdate({ id: studyId, description: "Theirs." });
@@ -123,8 +132,10 @@ describe("Bible Study information", () => {
   it("is a labelled dialog that keeps Tab inside while open", async () => {
     const { api } = await setup();
     const user = await openStudy(api);
+    await openStudyOptions(user);
     const panel = await openInfo(user, "Bible Study information");
     expect(panel).toHaveAttribute("aria-modal", "true");
+    await openStudyOptions(user);
     expect(within(panel).getByRole("heading", { name: "Bible Study information" })).toBeInTheDocument();
     for (let i = 0; i < 40; i++) {
       await user.tab();

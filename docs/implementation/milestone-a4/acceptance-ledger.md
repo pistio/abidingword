@@ -40,13 +40,13 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 | A4.2-4 | PDF prev/next icons + `3 / 400` jump popover; contextual page explanation (#26) | ✅ | ✅ | ⛔ owner | Original keeps viewer's compact control (no duplicate) |
 | A4.2-5 | About collapsed by default; no multi-row wrap at narrow widths (#26) | ✅ | ✅ 640–1440, 125–200 % | ⛔ owner (native scaling) | |
 | A4.2-6 | Preserve history, modes, selections, citations, EPUB, labels, bookmarks, notes, Contents, full-reader transitions (#26) | ✅ | ✅ full UI suite (1,199) | ⛔ owner | Tests moved to new routes, none deleted |
-| A4.3-1 | Study title + two tabs Bibelstudium/Bibellehre (#25) | ☐ | ☐ | ⛔ owner | |
-| A4.3-2 | Section heading then spacious writing field; continuous default (#25) | ☐ | ☐ | ⛔ owner | |
-| A4.3-3 | Remove repeated "Deine Antwort", hints, status, phase tabs, duplicated controls (#25) | ☐ | ☐ | ⛔ owner | |
-| A4.3-4 | Hints on demand; section actions in one contextual menu; templates/attribution preserved (#25) | ☐ | ☐ | ⛔ owner | |
-| A4.3-5 | Quiet save, conspicuous pending/error; stable autosave/focus/scroll (#25) | ☐ | ☐ | ⛔ owner | |
-| A4.3-6 | Teaching: same writing-first surface; truthful leader-private indicator; multiple sessions; legacy route (#25) | ☐ | ☐ | ⛔ owner | |
-| A4.3-7 | Six languages; 640/900/1100/1440; scaling/keyboard/screen reader (#25) | ☐ | ☐ | ⛔ owner | |
+| A4.3-1 | Study title + two tabs Bibelstudium/Bibellehre (#25) | ✅ | ✅ | ⛔ owner | [notes](a43-writing-first-editors.md) |
+| A4.3-2 | Section heading then spacious writing field; continuous default (#25) | ✅ | ✅ | ⛔ owner | |
+| A4.3-3 | Remove repeated "Deine Antwort", hints, status, phase tabs, duplicated controls (#25) | ✅ | ✅ | ⛔ owner | Phase outline/headers removed; phase kept per part |
+| A4.3-4 | Hints on demand; section actions in one contextual menu; templates/attribution preserved (#25) | ✅ | ✅ | ⛔ owner | Attribution moved to end of study |
+| A4.3-5 | Quiet save, conspicuous pending/error; stable autosave/focus/scroll (#25) | ✅ | ✅ | ⛔ owner | Fixed: failed field save was reported as saved |
+| A4.3-6 | Teaching: same writing-first surface; truthful leader-private indicator; multiple sessions; legacy route (#25) | ✅ | ✅ | ⛔ owner | Delete now confirms by name |
+| A4.3-7 | Six languages; 640/900/1100/1440; scaling/keyboard/screen reader (#25) | ◐ | ✅ strings, widths (browser) | ⛔ owner (scaling, Narrator/NVDA) | |
 | A4.4-1 | DeepSeek Korean "Element nicht gefunden": traced, classified, fixed (#19) | ☐ | ☐ | ⛔ owner + DeepSeek | Mock provider only in CI |
 | A4.4-2 | Suggestions never silently replace; stale target refused (#19) | ☐ | ☐ | ⛔ owner | |
 | A4.4-3 | Optional repeatable Q&A blocks in Study and Teaching (#27) | ☐ | ☐ | ⛔ owner | |
@@ -60,4 +60,5 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 | Stage | Commit | Rust | Frontend | Other checks |
 |---|---|---|---|---|
 | A.4.1 | `3c2029c` | 1,063 passed / 0 failed / 8 ignored | 1,193 passed / 108 files | fmt, Clippy -D warnings, typecheck, lint, i18n, build |
-| A.4.2 | see `git log` | unchanged code (review export test is opt-in) | 1,199 passed / 109 files | typecheck, lint, i18n, build; browser harness 10/10 scenes |
+| A.4.2 | `0e06137` | unchanged code (review export test is opt-in) | 1,199 passed / 109 files | typecheck, lint, i18n, build; browser harness 10/10 scenes |
+| A.4.3 | see `git log` | unchanged | 1,206 passed / 110 files | typecheck, lint, i18n, build; editor captures 4/4 widths + A.3 baseline |

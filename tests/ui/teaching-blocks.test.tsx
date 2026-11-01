@@ -6,6 +6,7 @@ import { BUILTIN_BLOCK_TEMPLATES, templateFromTeaching } from "@/features/teachi
 import type { TeachingPreparation } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openBlockOptions, openTeachingOptions, showBlockHints } from "../support/studyActions";
 
 const prep = (): TeachingPreparation => ({
   id: "p",
@@ -93,6 +94,7 @@ describe("the three built-in block templates", () => {
     expect(within(article).getByRole("heading", { name: "Observation" })).toBeInTheDocument();
     expect(within(article).getByRole("heading", { name: "Comprehension" })).toBeInTheDocument();
     expect(within(article).getByRole("heading", { name: "Application" })).toBeInTheDocument();
+    await showBlockHints(user);
     const guidance = within(article).getAllByText("Guidance");
     expect(guidance).toHaveLength(3);
     expect(within(article).getAllByText(/Campus Connect 3×3/)).toHaveLength(3);
@@ -106,6 +108,7 @@ describe("the three built-in block templates", () => {
     await user.click(within(form).getByRole("radio", { name: "Sermon / Talk" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     const article = await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
+    await openTeachingOptions(user);
     const view = within(article).getByRole("radiogroup", { name: "How you write" });
     expect(within(view).getByRole("radio", { name: "Continuous" })).toBeChecked();
     const introduction = within(article).getByRole("textbox", { name: "Introduction" });
@@ -116,6 +119,7 @@ describe("the three built-in block templates", () => {
     });
     await user.click(within(view).getByRole("radio", { name: "Outline" }));
     expect(within(article).getByRole("textbox", { name: "Introduction" })).toHaveValue("Last week a vine.");
+    await openBlockOptions(user);
     await user.click(within(article).getByRole("button", { name: "Add a block in Main part" }));
     await user.click(within(article).getByRole("menuitem", { name: "Outline point" }));
     await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks?.some((b) => b.blockType === "outline_point")).toBe(true));
@@ -135,7 +139,7 @@ describe("the three built-in block templates", () => {
     const article = await within(studyPane()).findByRole("article", { name: "Lesson · Abiding" });
     expect(within(article).getByRole("heading", { name: "Preparation" })).toBeInTheDocument();
     expect(within(article).getByRole("heading", { name: "Story" })).toBeInTheDocument();
-    await user.click(within(article).getAllByText("Guidance")[0]!);
+    await showBlockHints(user);
     expect(within(article).getByText(/Age changes how you tell the story/)).toBeInTheDocument();
     expect(api.state.teaching.preparations[0]!.templateKey).toBe("bible-lesson");
   });
@@ -147,7 +151,9 @@ describe("the three built-in block templates", () => {
     const article = await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
     await user.type(within(article).getByRole("textbox", { name: "Introduction" }), "Do not copy this sentence.");
     await waitFor(() => expect(api.state.teaching.preparations[0]!.introduction).toContain("Do not copy this sentence."));
+    await openTeachingOptions(user);
     await user.click(within(article).getByRole("button", { name: "Bible Teaching information" }));
+    await openTeachingOptions(user);
     const about = await screen.findByRole("dialog", { name: "Bible Teaching information" });
     await user.click(within(about).getByRole("button", { name: "Save as my template" }));
     const save = within(about).getByRole("form", { name: "Save this teaching’s structure as a template" });

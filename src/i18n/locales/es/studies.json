@@ -1722,7 +1722,10 @@
     "newSectionTitle": "Nueva parte",
     "allSaved": "Todos los cambios guardados.",
     "saved": "Guardado",
-    "backTo": "Volver a {{place}}"
+    "backTo": "Volver a {{place}}",
+    "options": "Opciones del estudio",
+    "filterOn": "Las notas están filtradas.",
+    "filterClear": "Mostrar todas"
   },
   "sections": {
     "rename": "Cambiar el nombre de la parte {{title}}",
@@ -2360,7 +2363,10 @@
         "presentation_notes": "Notas de la presentación",
         "handout": "Hoja",
         "outline_point": "Punto del bosquejo"
-      }
+      },
+      "options": "Opciones de {{name}}",
+      "leaderBadge": "Solo para quien dirige",
+      "confirmDelete": "¿Eliminar «{{name}}» y su texto?"
     },
     "builtin": {
       "eva": {
@@ -2450,7 +2456,8 @@
       "linkStudy": "Vincular a un estudio bíblico",
       "openStudy": "Abrir el estudio vinculado",
       "standalone": "Enseñanza independiente"
-    }
+    },
+    "options": "Opciones de la enseñanza"
   },
   "parts": {
     "add": "Añadir una parte",

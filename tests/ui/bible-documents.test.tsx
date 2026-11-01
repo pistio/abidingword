@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 // Bibles from documents (v0.23): the review, the two ways to add one, the
 // reader in the Scripture pane, and looking for verses later.
@@ -53,8 +54,10 @@ describe("Bibles from documents", () => {
   it("adds it as a document when the person chooses so, and reads it in the Scripture pane", async () => {
     const { api, user } = await chooseDocuments(["invented-bible.pdf"]);
     await user.click(screen.getByRole("radio", { name: /As a document to read/ }));
+    await openPartOptions(user);
     expect(screen.getByRole("button", { name: "Add to read as a document" })).toBeInTheDocument();
     await fillDetails(user, "DOC");
+    await openPartOptions(user);
     await user.click(screen.getByRole("button", { name: "Add to read as a document" }));
     expect(await screen.findByText(/was added to read as a document/)).toBeInTheDocument();
     expect(api.state.bibles.find((b) => b.shortName === "DOC")?.kind).toBe("document");
@@ -101,6 +104,7 @@ describe("Bibles from documents", () => {
   it("corrects a heading that names no book, then the verses can be used", async () => {
     const { user } = await chooseDocuments(["psalms-unclear.epub"]);
     expect(screen.getByText(/Some places are unclear/)).toBeInTheDocument();
+    await openPartOptions(user);
     expect(screen.getByRole("button", { name: "Add to read as a document" })).toBeInTheDocument();
     const choice = screen.getByRole("combobox", { name: "Book for “The Book of Praises”" });
     await user.selectOptions(choice, "Psalms");
@@ -114,6 +118,7 @@ describe("Bibles from documents", () => {
     expect(screen.getByText(/There is no text to look for verses in/)).toBeInTheDocument();
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
     await fillDetails(user, "SCAN");
+    await openPartOptions(user);
     expect(screen.getByRole("button", { name: "Add to read as a document" })).toBeEnabled();
   });
 

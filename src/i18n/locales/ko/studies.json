@@ -1710,7 +1710,10 @@
     "newSectionTitle": "새 부분",
     "allSaved": "모든 변경 사항을 저장했습니다.",
     "saved": "저장됨",
-    "backTo": "{{place}}(으)로 돌아가기"
+    "backTo": "{{place}}(으)로 돌아가기",
+    "options": "성경 공부 옵션",
+    "filterOn": "메모가 필터링되어 있습니다.",
+    "filterClear": "모두 보기"
   },
   "sections": {
     "rename": "{{title}} 부분 이름 바꾸기",
@@ -2338,7 +2341,10 @@
         "presentation_notes": "발표 메모",
         "handout": "유인물",
         "outline_point": "개요 항목"
-      }
+      },
+      "options": "{{name}} 옵션",
+      "leaderBadge": "인도자 전용",
+      "confirmDelete": "‘{{name}}’과 그 내용을 삭제할까요?"
     },
     "builtin": {
       "eva": {
@@ -2428,7 +2434,8 @@
       "linkStudy": "성경 성경공부에 연결",
       "openStudy": "연결된 성경공부 열기",
       "standalone": "독립적인 가르침"
-    }
+    },
+    "options": "성경 가르침 옵션"
   },
   "parts": {
     "add": "부분 추가",

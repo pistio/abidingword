@@ -7,6 +7,7 @@ import { setLanguage } from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
 import { localizedSections } from "@/features/studies/builtinText";
+import { openPartOptions, showPartHints } from "../support/studyActions";
 
 // The POZETEK built-in template (Phase 1). All text is invented.
 
@@ -46,6 +47,7 @@ describe("a new POZETEK study", () => {
     await user.click(await screen.findByRole("button", { name: /Hosea 11/ }));
     const part = await screen.findByRole("region", { name: "My people" });
     expect(within(part).getByLabelText("Author")).toHaveValue("");
+    await showPartHints(user);
     expect(within(part).getByRole("button", { name: "Example: Hosea 11" })).toHaveAttribute("aria-expanded", "false");
   });
 
@@ -99,6 +101,7 @@ describe("a new POZETEK study", () => {
     await user.click(await screen.findByRole("button", { name: /Any passage/ }));
     const part = await screen.findByRole("region", { name: /^Persons$/ });
     expect(within(part).getByLabelText("Author")).toHaveValue("");
+    await showPartHints(user);
     const toggle = within(part).getByRole("button", { name: "Example: Hosea 11" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     await user.click(toggle);
@@ -116,6 +119,7 @@ describe("a new POZETEK study", () => {
     await first.user.type(within(persons).getByLabelText("Author"), "The prophet");
     await first.user.click(within(persons).getByRole("button", { name: /Add person or group/ }));
     await first.user.type(await within(persons).findByLabelText(/Name or group \(People and groups, entry 1\)/), "Ephraim");
+    await openPartOptions(first.user);
     await first.user.selectOptions(within(persons).getByRole("combobox", { name: /Progress of/ }), "in_progress");
     const explanations = screen.getByRole("region", { name: /^Explanations$/ });
     await first.user.click(within(explanations).getByRole("button", { name: /Add question/ }));
@@ -132,10 +136,11 @@ describe("a new POZETEK study", () => {
     cleanup();
 
     // The workspace reopens on the study that was open.
-    await renderApp(api);
+    const second = await renderApp(api);
     const reopened = await screen.findByRole("region", { name: /^Persons$/ });
     expect(within(reopened).getByLabelText("Author")).toHaveValue("The prophet");
     expect(within(reopened).getByLabelText(/Name or group \(People and groups, entry 1\)/)).toHaveValue("Ephraim");
+    await openPartOptions(second.user);
     expect(within(reopened).getByRole("combobox", { name: /Progress of/ })).toHaveValue("in_progress");
   });
 
@@ -214,6 +219,7 @@ describe("the translations of POZETEK", () => {
     expect(within(kern).getByLabelText("Textaussage — Was sagt der Text darüber?")).toBeInTheDocument();
     expect(within(kern).getByLabelText("Textthema — Ein prägnanter Satz")).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Persönliche Anwendung" })).toBeInTheDocument();
+    await showPartHints(user);
     expect(within(kern).getByRole("button", { name: "Beispiel: Hosea 11" })).toHaveAttribute("aria-expanded", "false");
     await setLanguage("en");
   });

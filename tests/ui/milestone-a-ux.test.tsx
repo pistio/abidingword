@@ -6,6 +6,7 @@ import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
 import { readerAction } from "../support/readerActions";
+import { openTeachingOptions, openBlockOptions } from "../support/studyActions";
 
 const sources = () => within(screen.getByRole("complementary", { name: "Sources" }));
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
@@ -125,13 +126,16 @@ it("exposes visibility beside the writing while participant exports still omit p
   const editor = await screen.findByRole("article", { name: /Privacy study/ });
   const main = within(editor).getByRole("textbox", { name: "Main part" });
   await user.type(main, "PRIVATE_SENTINEL");
-  const block = main.closest('[role="group"]');
+  // A.4.3: a section with one block is one unit; its visibility is in the section's options.
+  const block = main.closest("section") ?? main.closest('[role="group"]');
   expect(block).not.toBeNull();
+  await openBlockOptions(user);
   const visibility = within(block as HTMLElement).getByRole("checkbox", { name: "Show this to participants" });
   expect(visibility).toBeVisible();
   if ((visibility as HTMLInputElement).checked) await user.click(visibility);
   await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks!.some(b => b.body === "PRIVATE_SENTINEL" && !b.participantFacing)).toBe(true));
   expect(api.state.teaching.preparations[0]!.studyId).toBe(api.state.studies[0]!.id);
+  await openTeachingOptions(user);
   expect(within(editor).getByText("Based on: Bible Study — Privacy study")).toBeVisible();
   expect(within(editor).getByRole("button", { name: "Open linked Study" })).toBeVisible();
   const prep = await api.teachingGet(api.state.teaching.preparations[0]!.id);
@@ -153,9 +157,12 @@ it("never labels a linked Teaching as independent while the Study list is loadin
   api.studyList = () => delayed;
   await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
   const editor = await screen.findByRole("article", { name: teaching.title });
+  await openTeachingOptions(user);
   expect(within(editor).getByText("Based on: Bible Study — Bible Study")).toBeVisible();
+  await openTeachingOptions(user);
   expect(within(editor).queryByText("Based on: Bible Study — Independent teaching")).toBeNull();
   await act(async () => release(known));
+  await openTeachingOptions(user);
   expect(await within(editor).findByText("Based on: Bible Study — Retained study")).toBeVisible();
   expect((await api.teachingGet(teaching.id)).studyId).toBe(study.id);
 });
