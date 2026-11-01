@@ -1,6 +1,6 @@
 # Windows Milestone A.2 owner review
 
-This patch starts from A.1 `1b61656d4407a7511b3615b2c91c8411d8c1faff` on `fix/windows-milestone-a2`. The intended PR base is `fix/windows-milestone-a1`, not main. The integration baseline remains `e2564b570abab360722d379c18955272165ec4ac`. PRs #17 and #18 were verified as drafts through their public GitHub pages. Delivery SHAs and final checks are recorded in [validation](milestone-a2/validation.md).
+This patch starts from A.1 `1b61656d4407a7511b3615b2c91c8411d8c1faff` on `fix/windows-milestone-a2`. The intended PR base is `fix/windows-milestone-a1`, not main. The integration baseline remains `e2564b570abab360722d379c18955272165ec4ac`. PRs #17 and #18 were verified as drafts through their public GitHub pages. Tested implementation: `450bd95ef9bedabc248e1746fbbf8585fe19e72a`. Delivery details and final checks are recorded in [validation](milestone-a2/validation.md).
 
 ## Changes and remaining acceptance
 

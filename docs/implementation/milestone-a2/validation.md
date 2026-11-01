@@ -3,7 +3,7 @@
 Baseline: `1b61656d4407a7511b3615b2c91c8411d8c1faff`.
 Branch: `fix/windows-milestone-a2`; review base: `fix/windows-milestone-a1`.
 
-Final implementation SHA and delivery SHA are recorded after the completed checks below.
+Tested implementation SHA: `450bd95ef9bedabc248e1746fbbf8585fe19e72a`. The delivery commit adds only review documentation and the pinned build-workflow selection; application and test code remain exactly this snapshot.
 
 ## Validation scope
 
@@ -45,3 +45,9 @@ Final complete frontend: `npm test -- --maxWorkers=2` — **105 files, 1,177 tes
 Final complete native: `cargo test --manifest-path src-tauri/Cargo.toml --locked --no-fail-fast -- --test-threads=1` — **1038 passed, 0 failed, 8 existing ignored**, 86 result groups including doctests. The previously failing indexing time-limit test passed unchanged. Final Clippy and Rust formatting also passed.
 
 [Captured checks](checks/) are normalised for ANSI escapes and trailing whitespace. Earlier failures are not included in final passing totals.
+
+## Windows review build preparation
+
+The existing manual-only `.github/workflows/windows-acceptance-build.yml` now defaults to implementation SHA `450bd95ef9bedabc248e1746fbbf8585fe19e72a`, with an exact two-SHA guard retaining the previous reviewed schema-26 source. The pinned migration catalogue digest remains `3a2159765b0c77874143ef3143b6b97bd785d26d5372aa9250dae590be30bded`. Clean source provenance verifies schema 26 and all 26 migrations; [captured provenance](build-provenance.json).
+
+The workflow prepares unsigned NSIS review artifacts and checksums without updater/release publication. It has not run. No Windows installer is available from this session. Owner-controlled Windows execution and the original-document acceptance remain required.
