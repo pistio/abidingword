@@ -51,3 +51,15 @@ Final complete native: `cargo test --manifest-path src-tauri/Cargo.toml --locked
 The existing manual-only `.github/workflows/windows-acceptance-build.yml` now defaults to implementation SHA `450bd95ef9bedabc248e1746fbbf8585fe19e72a`, with an exact two-SHA guard retaining the previous reviewed schema-26 source. The pinned migration catalogue digest remains `3a2159765b0c77874143ef3143b6b97bd785d26d5372aa9250dae590be30bded`. Clean source provenance verifies schema 26 and all 26 migrations; [captured provenance](build-provenance.json).
 
 The workflow prepares unsigned NSIS review artifacts and checksums without updater/release publication. It has not run. No Windows installer is available from this session. Owner-controlled Windows execution and the original-document acceptance remain required.
+
+## Delivery and PR status
+
+Implementation: `450bd95ef9bedabc248e1746fbbf8585fe19e72a`.
+Pinned workflow/review packet: `e85854f49e7ab81dfbb8c63aa06cb29388e5b3e8`.
+The following status-only commit records the PR creation result. No application or test code changed after the validated implementation.
+
+The branch was pushed to `origin/fix/windows-milestone-a2`. `gh pr create --draft --base fix/windows-milestone-a1 --head fix/windows-milestone-a2 --body-file docs/implementation/milestone-a2/pr-body.md` failed with `Post "https://api.github.com/graphql": Forbidden`. **No A.2 draft PR was created by this session.** This was a managed network/API rejection, not an owner-review verdict. No bypass was attempted.
+
+[Review the branch against A.1](https://github.com/pistio/abidingword/compare/fix/windows-milestone-a1...fix/windows-milestone-a2?expand=1). The prepared [PR body](pr-body.md) is ready for a draft PR against `fix/windows-milestone-a1` once API access is available. Do not target main or merge this review branch.
+
+The workflow YAML parses successfully, exposes only manual dispatch, retains read-only contents permission, and offers the two exact pinned sources. Its migration digest was recomputed against the clean implementation provenance and matches the existing pin. No workflow was dispatched. Other three repositories remain unchanged.
