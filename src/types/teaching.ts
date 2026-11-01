@@ -255,6 +255,8 @@ export interface AssistInput {
   action: AssistAction;
   part: TeachingPart;
   pointId?: string | null;
+  /** A.4.4 (#19): the block of a block teaching the text belongs to. */
+  blockId?: string | null;
   /** Exactly the person's text being worked on (the part, or the selected words). */
   text: string;
   selected?: boolean;

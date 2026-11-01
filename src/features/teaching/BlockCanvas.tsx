@@ -122,6 +122,7 @@ export function BlockCanvas({
                 <TeachingField
                   label={name}
                   labelHidden
+                  blockId={sole.id}
                   value={sole.body}
                   save={(value) => api.teachingBlockUpdate({ id: sole.id, body: value }).then((next) => (onChanged(next), next))}
                   part={assistPart(sole.role)}
@@ -161,6 +162,7 @@ export function BlockCanvas({
         <TeachingField
           label={name}
           labelHidden
+          blockId={block.id}
           value={block.body}
           save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
           part={assistPart(block.role)}

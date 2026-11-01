@@ -24,6 +24,8 @@ import { assistLabel } from "./labels";
 export interface AssistTarget {
   part: TeachingPart;
   pointId: string | null;
+  /** The block of a block teaching, when the text is a block's (A.4.4). */
+  blockId?: string | null;
   /** The part's name as shown, e.g. "Introduction". */
   label: string;
   /** The text worked on: the whole part, or the selected words. */
@@ -143,6 +145,7 @@ export function AssistPanel(props: AssistPanelProps) {
       action,
       part: target.part,
       pointId: target.pointId,
+      blockId: target.blockId ?? null,
       text: target.text,
       selected: target.selection !== null,
       request,

@@ -1619,9 +1619,11 @@ fn the_whole_part_is_sent_as_it_is_on_screen() {
         block_id: "another-part-block".into(),
         text: "x".into(),
     }];
+    // A.4.4 (#19): writing from another part is refused with an actionable
+    // message, never the generic "item could not be found".
     assert!(matches!(
         w.preview(&w.input(scope(stray), Inquiry::Assumptions, "")),
-        Err(AppError::NotFound { .. })
+        Err(AppError::Assistant(m)) if m.code == Some("assistant.staleTarget")
     ));
     // Selected words always belong to a named piece of writing.
     let loose = Scope::Study {

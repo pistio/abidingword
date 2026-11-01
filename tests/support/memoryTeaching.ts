@@ -313,6 +313,11 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       throw new ApiError("assistant", "The assistant needs its key. You can add it in Settings.");
     const p = prep(input.preparationId);
     const text = input.text.trim();
+    // As the native core (A.4.4, #19): a point's part needs its point; a block teaching's writing names its block.
+    const pointPart = ["pointTitle", "pointExplanation", "pointApplication", "pointIllustration"].includes(input.part);
+    const blockKnown = input.blockId ? (p.blocks ?? []).some((b) => b.id === input.blockId) : false;
+    if ((input.blockId && !blockKnown) || (input.pointId && !p.points.some((x) => x.id === input.pointId)) || (pointPart && !input.pointId && !input.blockId))
+      throw new ApiError("assistant", "This part has changed or was removed since you asked. Close the help, check the text and ask again.", "assistant.staleTarget");
     if (input.action === "structure" || input.action === "restructure") {
       if (p.points.filter((x) => x.title.trim() || x.explanation.trim()).length < 2)
         throw new ApiError("assistant", "Write at least two points first. The assistant comments on the structure you have.");

@@ -236,7 +236,8 @@
     "badAddress": "Saisissez une adresse web commençant par http:// ou https://.",
     "badModel": "Ce nom de modèle est trop long.",
     "noImageKey": "La création d’images demande la clé du service d’images. Vous pouvez l’ajouter dans Paramètres → Assistant IA.",
-    "searchNoKey": "Ce service de recherche n’utilise pas de clé."
+    "searchNoKey": "Ce service de recherche n’utilise pas de clé.",
+    "staleTarget": "Cette partie a été modifiée ou supprimée depuis votre demande. Fermez l’aide, vérifiez le texte et redemandez."
   },
   "teaching": {
     "blockType": "Ce type de bloc ne peut pas être utilisé dans cette préparation.",

@@ -236,7 +236,8 @@
     "badAddress": "Escribe una dirección web que empiece por http:// o https://.",
     "badModel": "Ese nombre de modelo es demasiado largo.",
     "noImageKey": "Crear imágenes necesita la clave del servicio de imágenes. Puedes añadirla en Configuración → Asistente de IA.",
-    "searchNoKey": "Este servicio de búsqueda no usa clave."
+    "searchNoKey": "Este servicio de búsqueda no usa clave.",
+    "staleTarget": "Esta parte ha cambiado o se ha eliminado desde que lo pediste. Cierra la ayuda, revisa el texto y vuelve a pedirlo."
   },
   "teaching": {
     "blockType": "Este tipo de bloque no se puede usar en esta preparación.",

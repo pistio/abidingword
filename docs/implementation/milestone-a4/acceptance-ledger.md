@@ -47,8 +47,8 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 | A4.3-5 | Quiet save, conspicuous pending/error; stable autosave/focus/scroll (#25) | ✅ | ✅ | ⛔ owner | Fixed: failed field save was reported as saved |
 | A4.3-6 | Teaching: same writing-first surface; truthful leader-private indicator; multiple sessions; legacy route (#25) | ✅ | ✅ | ⛔ owner | Delete now confirms by name |
 | A4.3-7 | Six languages; 640/900/1100/1440; scaling/keyboard/screen reader (#25) | ◐ | ✅ strings, widths (browser) | ⛔ owner (scaling, Narrator/NVDA) | |
-| A4.4-1 | DeepSeek Korean "Element nicht gefunden": traced, classified, fixed (#19) | ☐ | ☐ | ⛔ owner + DeepSeek | Mock provider only in CI |
-| A4.4-2 | Suggestions never silently replace; stale target refused (#19) | ☐ | ☐ | ⛔ owner | |
+| A4.4-1 | DeepSeek Korean "Element nicht gefunden": traced, classified, fixed (#19) | ✅ | ✅ mocked DeepSeek (Rust 6 + UI 2) | ⛔ owner + real DeepSeek | [diagnosis](a44-deepseek-korean-19.md): block body sent as point part without point; provider never called |
+| A4.4-2 | Suggestions never silently replace; stale target refused (#19) | ✅ | ✅ | ⛔ owner | `assistant.staleTarget`; Study help classified too |
 | A4.4-3 | Optional repeatable Q&A blocks in Study and Teaching (#27) | ☐ | ☐ | ⛔ owner | |
 | A4.4-4 | Exports: questions only / with answers / full, visibility-safe (#27) | ☐ | ☐ | ⛔ owner | |
 | A4.4-5 | Explicit "Add from Bible Study" snapshots with provenance (#27) | ☐ | ☐ | ⛔ owner | |
@@ -61,4 +61,5 @@ States: ✅ done · ◐ partial · ☐ not started · ⛔ blocked/owner gate.
 |---|---|---|---|---|
 | A.4.1 | `3c2029c` | 1,063 passed / 0 failed / 8 ignored | 1,193 passed / 108 files | fmt, Clippy -D warnings, typecheck, lint, i18n, build |
 | A.4.2 | `0e06137` | unchanged code (review export test is opt-in) | 1,199 passed / 109 files | typecheck, lint, i18n, build; browser harness 10/10 scenes |
-| A.4.3 | see `git log` | unchanged | 1,206 passed / 110 files | typecheck, lint, i18n, build; editor captures 4/4 widths + A.3 baseline |
+| A.4.3 | `40c6854` | unchanged | 1,206 passed / 110 files | typecheck, lint, i18n, build; editor captures 4/4 widths + A.3 baseline |
+| A.4.4a | see `git log` | 1,070 passed / 0 failed / 8 ignored | 1,208 passed / 111 files | fmt, Clippy -D warnings, typecheck, lint, i18n |

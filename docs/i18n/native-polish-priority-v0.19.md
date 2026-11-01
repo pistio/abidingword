@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1808 strings changed in at least one language since v0.18.10. Spot-check these.
+1809 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -139,6 +139,7 @@ _No open linguistic questions._
 | {{date}} | `common.lifecycle.trashedOn` | Moved to Trash on {{date}} | Am {{date}} in den Papierkorb verschoben | {{date}}에 휴지통으로 이동함 | Mis à la corbeille le {{date}} | Movido a la papelera el {{date}} | Movido para a lixeira em {{date}} |
 |  | `common.lifecycle.undo` | Undo | Rückgängig | 실행 취소 | Annuler | Deshacer | Desfazer |
 |  | `common.lifecycle.undone` | Undone. | Rückgängig gemacht. | 되돌렸습니다. | Annulé. | Deshecho. | Desfeito. |
+|  | `errors.assistant.staleTarget` | This part has changed or was removed since you asked. Close the help, check the text and ask again. | Dieser Teil wurde seit deiner Anfrage geändert oder entfernt. Schließe die Hilfe, prüfe den Text und frage erneut. | 요청한 뒤로 이 부분이 바뀌었거나 삭제되었습니다. 도움말을 닫고 내용을 확인한 다음 다시 요청하세요. | Cette partie a été modifiée ou supprimée depuis votre demande. Fermez l’aide, vérifiez le texte et redemandez. | Esta parte ha cambiado o se ha eliminado desde que lo pediste. Cierra la ayuda, revisa el texto y vuelve a pedirlo. | Esta parte mudou ou foi removida desde o pedido. Feche a ajuda, verifique o texto e peça de novo. |
 |  | `errors.batch.cannotChoose` | This file cannot be added. | Diese Datei kann nicht hinzugefügt werden. | 이 파일은 추가할 수 없습니다. | Ce fichier ne peut pas être ajouté. | Este archivo no se puede agregar. | Este arquivo não pode ser adicionado. |
 | {{fileName}} | `errors.batch.changed` | “{{fileName}}” changed after it was checked. Read it again. | „{{fileName}}“ wurde nach der Prüfung geändert. Lies die Datei erneut ein. | “{{fileName}}”이(가) 확인 후에 바뀌었습니다. 다시 읽으세요. | « {{fileName}} » a changé après sa vérification. Relisez-le. | «{{fileName}}» cambió después de revisarse. Vuelve a leerlo. | “{{fileName}}” mudou depois de verificado. Leia-o de novo. |
 |  | `errors.batch.closed` | This import has ended. Start a new one to add more files. | Dieser Import ist beendet. Starte einen neuen, um weitere Dateien hinzuzufügen. | 이 가져오기는 끝났습니다. 파일을 더 추가하려면 새로 시작하세요. | Cette importation est terminée. Commencez-en une nouvelle pour ajouter d’autres fichiers. | Esta importación ha terminado. Inicia una nueva para agregar más archivos. | Esta importação terminou. Inicie uma nova para adicionar mais arquivos. |

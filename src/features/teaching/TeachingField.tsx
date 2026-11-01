@@ -30,6 +30,8 @@ interface TeachingFieldProps {
   save: (value: string) => Promise<unknown>;
   part: TeachingPart;
   pointId?: string | null;
+  /** A.4.4 (#19): the block this field writes, in a block teaching (help is asked about it, not about a point). */
+  blockId?: string | null;
   multiline?: boolean;
   rows?: number;
   placeholder?: string;
@@ -63,7 +65,7 @@ interface TeachingFieldProps {
  * person chooses "Use this", and they can undo that straight away.
  */
 export function TeachingField(props: TeachingFieldProps) {
-  const { label, value, save, part, pointId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
+  const { label, value, save, part, pointId = null, blockId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
   const { t } = useTranslation();
   const generated = useId();
   const id = generated;
@@ -110,6 +112,7 @@ export function TeachingField(props: TeachingFieldProps) {
       target: {
         part,
         pointId,
+        blockId,
         label,
         text: selected ? text.slice(start, end) : text,
         selection: selected ? { start, end } : null,
