@@ -473,3 +473,43 @@ fn a_psalm_label_giving_the_hebrew_number_in_brackets_is_never_filed_by_the_firs
         !verified(&r, "PSA", 19, 3) || verse(&r, "PSA", 19, 3) != Some(words(book.name, 20, 3))
     );
 }
+
+#[test]
+fn a_chapter_number_on_a_line_of_its_own_before_verse_one_gives_the_chapter() {
+    // "2" alone (a drop number set as its own paragraph), then "1 And …":
+    // chapter 2, from the document's own number.
+    let mut units = book_pages("Ruth", "RUT", 1..=3, 1, 30);
+    for u in units.iter_mut() {
+        if let Some(n) = u.text.strip_prefix("Chapter ") {
+            u.text = n.to_string();
+            u.large = false;
+            u.gap_before = true;
+        }
+    }
+    let r = recognise(&units, "en");
+    for c in 1..=3 {
+        assert!(verified(&r, "RUT", c, 5), "{c} {:?}", errors(&r));
+    }
+}
+
+#[test]
+fn a_lone_chapter_number_that_could_be_the_next_verse_is_the_chapter() {
+    // Genesis 16 has 16 verses; then "17" alone on its line and "1 And when
+    // Abram …": chapter 17's own number, never an empty verse 17 of
+    // chapter 16.
+    let mut units = book_pages("Genesis", "GEN", 1..=18, 1, 30);
+    for u in units.iter_mut() {
+        if let Some(n) = u.text.strip_prefix("Chapter ") {
+            if n.parse::<u16>().unwrap() > 16 {
+                u.text = n.to_string();
+                u.large = false;
+                u.gap_before = true;
+            }
+        }
+    }
+    let r = recognise(&units, "en");
+    assert_eq!(verse(&r, "GEN", 16, 17), None);
+    for c in 16..=18 {
+        assert!(verified(&r, "GEN", c, 5), "{c} {:?}", errors(&r));
+    }
+}

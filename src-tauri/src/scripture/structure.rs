@@ -7062,6 +7062,25 @@ impl Reader<'_> {
                 Some(Event::Text(_))
             );
         let quantity = beyond && m.strength == Strength::Medium && (lower_after || word_before);
+        // The next chapter's number on a line of its own once this chapter
+        // has all its verses, with verse 1 numbered straight after it: the
+        // chapter begins, even where its number is also the next verse's
+        // (Genesis 16 has 16 verses; "17" alone, then "1 And when Abram …"),
+        // v0.24.7. Never an empty verse.
+        let alone = m.end.is_none() && clean(&self.units[unit].text).trim() == m.raw.trim();
+        if strong
+            && m.unit_start
+            && alone
+            && self.chapter_complete()
+            && m.value == chapter + 1
+            && chapter < book.chapter_count
+            && matches!(self.items.get(at + 1).map(|i| &i.event),
+                Some(Event::Marker(next)) if next.value == 1 && next.unit_start)
+        {
+            self.start_chapter(chapter + 1, unit);
+            self.out.stats.numbered_chapters += 1;
+            return true;
+        }
         // A chapter's number set as a drop numeral before verse 1 ("17When
         // Abram …", "17Lorsque Abram …"), at a paragraph's start once this
         // chapter has all its verses, with verse 2 numbered next: the next
