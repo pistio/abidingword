@@ -6972,6 +6972,34 @@ impl Reader<'_> {
     /// Reads a candidate verse number; false when it is not one (its digits
     /// then stay in the text).
     fn marker(&mut self, at: usize, m: &Marker, unit: usize) -> bool {
+        // In a refused chapter: a chapter's own number on a line of its own,
+        // with verse 1 numbered straight after it, beyond every chapter read
+        // so far, begins that chapter — the document says which (v0.24.7).
+        if self.skip_chapter && !self.skip && !self.notes {
+            if let Some(book) = self.book {
+                let last = self
+                    .out
+                    .content
+                    .books
+                    .get(&book.ordinal)
+                    .and_then(|b| b.chapters.keys().max().copied())
+                    .unwrap_or(0);
+                let alone = m.end.is_none() && clean(&self.units[unit].text).trim() == m.raw.trim();
+                if m.strength == Strength::Strong
+                    && m.unit_start
+                    && alone
+                    && m.chapter.is_none()
+                    && m.value > last
+                    && m.value <= book.chapter_count
+                    && matches!(self.items.get(at + 1).map(|i| &i.event),
+                        Some(Event::Marker(next)) if next.value == 1 && next.unit_start)
+                {
+                    self.start_chapter(m.value, unit);
+                    self.out.stats.numbered_chapters += 1;
+                    return true;
+                }
+            }
+        }
         if self.skip || self.notes || self.skip_chapter {
             return false;
         }

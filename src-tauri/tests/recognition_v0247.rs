@@ -513,3 +513,28 @@ fn a_lone_chapter_number_that_could_be_the_next_verse_is_the_chapter() {
         assert!(verified(&r, "GEN", c, 5), "{c} {:?}", errors(&r));
     }
 }
+
+#[test]
+fn after_a_refused_chapter_the_next_chapter_s_own_number_is_read_again() {
+    // Chapter numbers alone on their lines; chapter 5's number is missing,
+    // so chapter 5 is refused — but "6" and every later number are the
+    // document's own and are read.
+    let mut units: Vec<Unit> = book_pages("Genesis", "GEN", 1..=9, 1, 1000)
+        .into_iter()
+        .filter(|u| u.text != "Chapter 5")
+        .collect();
+    for u in units.iter_mut() {
+        if let Some(n) = u.text.strip_prefix("Chapter ") {
+            if n != "1" {
+                u.text = n.to_string();
+                u.large = false;
+                u.gap_before = true;
+            }
+        }
+    }
+    let r = recognise(&units, "en");
+    assert!(!verified(&r, "GEN", 5, 3));
+    for c in 6..=9 {
+        assert!(verified(&r, "GEN", c, 3), "{c} {:?}", errors(&r));
+    }
+}
