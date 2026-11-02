@@ -1731,6 +1731,50 @@ fn chapter_word_line(text: &str) -> bool {
         && text.chars().count() <= 40
 }
 
+/// A label that also gives the Greek or Latin numbering's number in brackets
+/// ("Psaume 20 (Vulg. XIX)", "Psalm 23 (LXX 22)"), v0.24.7: the label without
+/// it — its own number is then the Hebrew Bible's. A bracket naming the Hebrew
+/// number ("Psaume 19 (Hébr. 20)") is left: the first number is then another
+/// numbering's, and the label is not read.
+fn without_other_numbering(text: &str) -> &str {
+    let t = text.trim_end();
+    let Some(inner) = t.strip_suffix(')') else {
+        return text;
+    };
+    let Some(open) = inner.rfind('(') else {
+        return text;
+    };
+    let k = key(&inner[open + 1..]);
+    let first = k
+        .split(|c: char| !c.is_alphanumeric())
+        .find(|w| !w.is_empty())
+        .unwrap_or("");
+    let other = matches!(
+        first,
+        "vulg"
+            | "vulgate"
+            | "vulgata"
+            | "lxx"
+            | "septante"
+            | "septuaginta"
+            | "septuagint"
+            | "grec"
+            | "greek"
+            | "gr"
+            | "g"
+    );
+    let rest_numeral = k
+        .split(|c: char| !c.is_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .skip(1)
+        .all(|w| w.chars().all(|c| c.is_ascii_digit()) || w.chars().all(|c| "ivxlc".contains(c)));
+    if other && rest_numeral && k.split_whitespace().count() <= 3 {
+        t[..open].trim_end()
+    } else {
+        text
+    }
+}
+
 /// A heading set between the same ornament on both sides ("— Capítulo 22 —",
 /// "- Chapter 2 -", "~ PSALM 23 ~", "* Ruth *"), v0.24.7: the words inside.
 /// Only a matching pair counts; a dash on one side is left as it is.
@@ -1756,6 +1800,7 @@ fn read_heading(text: &str, language: Option<ReferenceLanguage>) -> Option<Headi
         return None;
     }
     let text = unwrap_ornament(text.trim());
+    let text = without_other_numbering(text);
     let text = text.trim().trim_end_matches(['.', ':', '·']).trim();
     // A title that gives a second name may be longer.
     let limit = if gives_second_name(text) { 100 } else { 60 };

@@ -428,3 +428,48 @@ fn a_roman_psalm_number_seventy_is_no_septuagint_mark() {
     let r = recognise(&units, "it");
     assert!(verified(&r, "PSA", 23, 3), "{:?}", errors(&r));
 }
+
+// --- a label that also gives another numbering's number -----------------------------
+
+fn psalm_units(label: impl Fn(u16) -> String, psalms: std::ops::RangeInclusive<u16>) -> Vec<Unit> {
+    let book = canon::by_code("PSA").unwrap();
+    let mut t = unit("Psaumes", None);
+    t.heading = true;
+    let mut units = vec![t];
+    for c in psalms {
+        let mut h = unit(&label(c), None);
+        h.heading = true;
+        units.push(h);
+        for v in 1..=canon::verse_count(book, c).unwrap() {
+            units.push(unit(&format!("{v} {}", words(book.name, c, v)), None));
+        }
+    }
+    units
+}
+
+#[test]
+fn a_psalm_label_giving_the_vulgate_number_too_is_read_by_its_own_number() {
+    // "Psaume 20 (Vulg. XIX)": Psalm 20, its Vulgate number in brackets.
+    let roman = ["XVIII", "XIX", "XX"];
+    let units = psalm_units(
+        |c| format!("Psaume {c} (Vulg. {})", roman[usize::from(c - 19)]),
+        19..=21,
+    );
+    let r = recognise(&units, "fr");
+    for c in 19..=21 {
+        assert!(verified(&r, "PSA", c, 3), "{c} {:?}", errors(&r));
+    }
+}
+
+#[test]
+fn a_psalm_label_giving_the_hebrew_number_in_brackets_is_never_filed_by_the_first() {
+    // "Psaume 19 (Hébr. 20)": the first number is another numbering's; never
+    // filed as Psalm 19.
+    let units = psalm_units(|c| format!("Psaume {} (Hébr. {c})", c - 1), 20..=21);
+    let r = recognise(&units, "fr");
+    let book = canon::by_code("PSA").unwrap();
+    assert_ne!(verse(&r, "PSA", 19, 1), Some(words(book.name, 20, 1)));
+    assert!(
+        !verified(&r, "PSA", 19, 3) || verse(&r, "PSA", 19, 3) != Some(words(book.name, 20, 3))
+    );
+}
