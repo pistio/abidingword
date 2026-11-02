@@ -1,4 +1,10 @@
-## Set D layouts, reconstructed: 324cfd1 → v0.24.7
+# Set D layouts, reconstructed: 324cfd1 → c96756d
+
+Reconstructions of disclosed layouts; not independent.
+
+Recogniser frozen at `c96756d`; baseline is v0.24.6 frozen at `324cfd1`. Same input files at both runs (`corpus-checksums.sha256`, verified before the final run).
+
+## Results
 
 | Edition | Printed | Detected before | Detected after | Verified before | Verified after | Δ verified | Verified FPs before / after | Verified wrong text before / after |
 |---|---|---|---|---|---|---|---|---|
@@ -10,6 +16,10 @@
 | spaonbv-rlodocx-poet | 4648 | 3785 | 3785 (81.4 %) | 3778 | 3778 (81.3 %) | +0 | 0 / 0 | 0 / 0 |
 | spapddpt-repub2 | 31081 | 20818 | 20818 (67.0 %) | 19519 | 19519 (62.8 %) | +0 | 0 / 0 | 0 / 0 |
 | **Total** | 150027 | 115068 | 115068 (76.7 %) | 110927 | 110927 (73.9 %) | +0 | 0 / 0 | 0 / 0 |
+
+### Every verified verse with wrong text or not in the edition, after
+
+None.
 
 ### Unverified reasons, change per document
 

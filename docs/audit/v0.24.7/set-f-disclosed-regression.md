@@ -1,4 +1,10 @@
-## Set F sealed files — DISCLOSED regression (not independent): 324cfd1 → v0.24.7
+# Set F sealed files — DISCLOSED regression evidence (not independent): 324cfd1 → c96756d
+
+Set F was disclosed with its FAILED / NOT READY verdict on v0.24.6 and was used to design v0.24.7. This run is regression evidence only and must never be reported as independent.
+
+Recogniser frozen at `c96756d`; baseline is v0.24.6 frozen at `324cfd1`. Same input files at both runs (`corpus-checksums.sha256`, verified before the final run).
+
+## Results
 
 | Edition | Printed | Detected before | Detected after | Verified before | Verified after | Δ verified | Verified FPs before / after | Verified wrong text before / after |
 |---|---|---|---|---|---|---|---|---|
@@ -27,9 +33,10 @@ None.
 |---|---|
 | F01 | boundary +497, possibleHeading +38, reference +1 |
 | F02 | boundary -160, reference +25 |
+| F03 | boundary +1, possibleHeading +1 |
 | F06 | boundary +72, noteSign +41, possibleHeading +76 |
 | F09 | boundary -4, noteSign +10, possibleHeading +4 |
 | F10 | boundary +192, possibleHeading +28, reference +1 |
 | F11 | possibleHeading +11 |
 | F12 | possibleHeading +51 |
-| **Total** | boundary +597, noteSign +51, possibleHeading +208, reference +27 |
+| **Total** | boundary +598, noteSign +51, possibleHeading +209, reference +27 |

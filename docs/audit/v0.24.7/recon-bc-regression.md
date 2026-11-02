@@ -1,4 +1,10 @@
-## Set B/C layouts, reconstructed: 324cfd1 → v0.24.7
+# Set B/C layouts, reconstructed: 324cfd1 → c96756d
+
+Reconstructions of disclosed layouts; not independent.
+
+Recogniser frozen at `c96756d`; baseline is v0.24.6 frozen at `324cfd1`. Same input files at both runs (`corpus-checksums.sha256`, verified before the final run).
+
+## Results
 
 | Edition | Printed | Detected before | Detected after | Verified before | Verified after | Δ verified | Verified FPs before / after | Verified wrong text before / after |
 |---|---|---|---|---|---|---|---|---|
@@ -25,6 +31,17 @@
 | spabll-rrlab2col | 31098 | 3187 | 3187 (10.2 %) | 0 | 0 (0.0 %) | +0 | 0 / 0 | 0 / 0 |
 | spavbl-rlofodt | 31086 | 3590 | 3590 (11.5 %) | 3453 | 3453 (11.1 %) | +0 | 0 / 0 | 0 / 0 |
 | **Total** | 551311 | 398929 | 397819 (72.2 %) | 369019 | 368381 (66.8 %) | -638 | 0 / 0 | 8 / 8 |
+
+### Every verified verse with wrong text or not in the edition, after
+
+* engasv-rrlab1col HAB 3:19 (extra, page 1066): insert «» → « For the Chief Musician, on my stringed instruments.»
+* francl-rebooklibepub PRO 22:16 (missing, page None): delete « PAROLES DES SAGES — 1-INTRODUCTION —» → «»
+* francl-rebooklibepub PRO 24:22 (missing, page None): delete « AUTRES PAROLES DES SAGES.» → «»
+* francl-rebooklibepub PRO 29:27 (missing, page None): delete « PAROLES D’AGUR.» → «»
+* francl-rebooklibepub PRO 30:33 (missing, page None): delete « PAROLES DU ROI LAMUEL.» → «»
+* francl-rebooklibepub SNG 1:7 (missing, page None): delete « LE CHŒUR.» → «»
+* francl-rebooklibepub SNG 3:5 (missing, page None): delete « LE CHŒUR.» → «»
+* francl-rebooklibepub SNG 5:8 (missing, page None): delete « LE CHŒUR.» → «»
 
 ### Unverified reasons, change per document
 
