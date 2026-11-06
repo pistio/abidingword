@@ -1,4 +1,4 @@
-# One-time owner-approved build (GitHub Actions), isolated to this review branch.
+# One-time owner-approved build, exact pinned source; push trigger only for this file.
 # Acceptance artifacts only. No updater overlay, signing, releases or deployments.
 name: Windows A.4 owner review 2026-11-06
 
