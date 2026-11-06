@@ -225,7 +225,8 @@
     "badAddress": "Bitte gib eine Webadresse ein, die mit http:// oder https:// beginnt.",
     "badModel": "Dieser Modellname ist zu lang.",
     "noImageKey": "Zum Erstellen von Bildern brauchst du den Schlüssel des Bilddienstes. Du kannst ihn in den Einstellungen → KI-Assistent hinzufügen.",
-    "searchNoKey": "Dieser Suchdienst braucht keinen Schlüssel."
+    "searchNoKey": "Dieser Suchdienst braucht keinen Schlüssel.",
+    "staleTarget": "Dieser Teil wurde seit deiner Anfrage geändert oder entfernt. Schließe die Hilfe, prüfe den Text und frage erneut."
   },
   "teaching": {
     "blockType": "Dieser Blocktyp kann in dieser Lehre nicht verwendet werden.",

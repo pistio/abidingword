@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { textDirection } from "@/features/scripture/ConcordanceView";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 // The concordance (v0.12): surface-form occurrences in one Bible. All text is invented.
 
@@ -139,6 +140,7 @@ describe("A word study's occurrences", () => {
     const findingsBefore = api.state.findings.length;
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Grace/ }));
+    await openStudyOptions(user);
     await user.click(await screen.findByRole("button", { name: "Bible Study information" }));
     expect(screen.getByRole("textbox", { name: "Word" })).toHaveAttribute("dir", "auto");
     await user.click(screen.getByRole("button", { name: "Find occurrences" }));

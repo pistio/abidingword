@@ -136,7 +136,7 @@ it("waits for pending writing saves before restoring method structure", async ()
   const restore = vi.spyOn(api, "studySectionRestoreMissing");
   const { user } = await renderApp(api);
   await user.click(await screen.findByRole("button", { name: /^Pending writing/ }));
-  const answer = (await screen.findAllByRole("textbox", { name: "Your answer" }))[0]!;
+  const answer = (await screen.findAllByRole("textbox", { name: /Your answer$/ }))[0]!;
   await user.type(answer, "Pending research sentinel");
   await user.click(screen.getByText("Restore missing sections"));
   await user.click(screen.getByRole("button", { name: "Restore “Time”" }));
@@ -146,5 +146,5 @@ it("waits for pending writing saves before restoring method structure", async ()
   await waitFor(() => expect(restore).toHaveBeenCalledTimes(1));
   await waitFor(async () => expect((await api.studyGet(original.study.id)).sections).toHaveLength(7));
   expect((await api.studyGet(original.study.id)).sections[0]!.blocks[0]!.content).toBe("Pending research sentinel");
-  expect(screen.getAllByRole("textbox", { name: "Your answer" })[0]).toHaveValue("Pending research sentinel");
+  expect(screen.getAllByRole("textbox", { name: /Your answer$/ })[0]).toHaveValue("Pending research sentinel");
 });

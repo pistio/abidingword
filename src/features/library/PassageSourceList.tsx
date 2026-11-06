@@ -34,7 +34,13 @@ export function PassageSourceList({
   const prefix = useId();
   const controls = useRef<Record<string, HTMLButtonElement | null>>({});
   const reason = (place: PassageLocation) => {
-    const reason = passageReason(t, place.origin, passageLabel(place.reference));
+    // A.4.1: say how broad the grounded heading is (#22): a book section is
+    // broader than the passage, a chapter heading names the chapter.
+    const reason = place.origin === "section" && place.structureScope === "book"
+      ? t("library.passage.bookSection", { passage: passageLabel(place.reference) })
+      : place.origin === "section" && place.structureScope === "chapter"
+        ? t("library.passage.chapterSection", { passage: passageLabel(place.reference) })
+        : passageReason(t, place.origin, passageLabel(place.reference));
     const basis = place.structureBasis;
     if(basis === "outline" || basis === "tagged" || basis === "layout" || basis === "user") return `${reason} · ${t(`library.structure.basis.${basis}`)}`;
     return reason;

@@ -4,6 +4,7 @@ import type { ContentsItem, SourceLink } from "@/types/library";
 import { createFakePdfEngine, type FakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // Link-following, footnotes and Back / Forward in the source reader. Every
 // document and every word here is invented for the tests.
@@ -50,6 +51,8 @@ const LONG: SourceFixture = {
 };
 
 const sourcesPane = () => screen.getByRole("complementary", { name: "Sources" });
+// These tests are about in-source history, so its two buttons are pinned to the toolbar (A.4.2).
+beforeEach(() => pinReaderActions(["find", "contents", "history"]));
 const back = (root: HTMLElement) => within(root).getByRole("button", { name: "Back to the previous place" });
 const forward = (root: HTMLElement) => within(root).getByRole("button", { name: "Forward to the next place" });
 
@@ -233,7 +236,7 @@ describe("PDF internal links", () => {
     await original(user, reader);
     await user.click(links(reader)[0]!);
     await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     const full = await screen.findByRole("main");
     await within(full).findByTestId("pdf-viewer");
     expect(back(full)).toBeEnabled();

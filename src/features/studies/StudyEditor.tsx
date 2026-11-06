@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Plus } from "lucide-react";
 import { Notice } from "@/design-system/Notice";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useSaveTracker } from "@/hooks/SaveTracker";
@@ -21,8 +21,10 @@ import { useStudyFocus } from "./StudyFocus";
 import { StudyInfo } from "./StudyDetails";
 import { StudyPassages } from "./StudyPassages";
 import { hasJourney, namesRun, phaseRuns } from "./journey";
-import { JourneyOutline, NextStep, useCurrentRun, usePhaseName } from "./StudyJourney";
+import { NextStep, usePhaseName } from "./StudyJourney";
 import { lastView, rememberView, type StudyView } from "./studyView";
+import { qaData } from "./qa";
+import { StudyQaExport } from "./StudyQaExport";
 import { TeachingView } from "@/features/teaching/TeachingView";
 
 interface StudyEditorProps {
@@ -183,8 +185,11 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
   // The study's movement (v0.18.6): its parts in runs of one phase, where they stand.
   const runs = useMemo(() => phaseRuns(sections), [sections]);
   const journey = hasJourney(runs);
-  const currentRun = useCurrentRun(article, runs, journey && view === "study", activeSection);
   const phaseName = usePhaseName();
+  // A.4.3 (#25): the study's secondary controls are behind one quiet "…" (closed by default).
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const optionsToggle = useRef<HTMLButtonElement>(null);
+  const [exporting, setExporting] = useState(false);
   // Where each phase begins: its first part, the phase's number and, where it adds something, its name.
   const phaseStarts = new Map(
     runs.map((run, index) => [
@@ -286,6 +291,18 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       setError(toApiError(e).message);
     }
   };
+  // A.4.4 (#27): an optional paired question and answer, where it was asked for.
+  const addQa = async (target: StudySection) => {
+    setError(null);
+    try {
+      const block = await api.studyBlockCreate({ sectionId: target.id, blockType: "question", data: qaData({ question: "", answer: "" }) });
+      expand(target.id);
+      setNewBlock(block.id);
+      updateSection({ ...target, blocks: [...target.blocks, block] });
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
   const capture = (section: StudySection) =>
     capturing[section.id] ? (
       <QuickCapture
@@ -323,10 +340,23 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           <div className="min-w-0 flex-1">
             <EditableTitle key={study.id} label={t("studies.editor.titleLabel")} value={study.title} onSave={rename} />
           </div>
+          {view === "study" && (
+            <button
+              ref={optionsToggle}
+              type="button"
+              aria-expanded={optionsOpen}
+              aria-controls="study-options"
+              aria-label={t("studies.editor.options")}
+              title={t("studies.editor.options")}
+              onClick={() => setOptionsOpen((v) => !v)}
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
+            >
+              <MoreHorizontal className="size-5" aria-hidden="true" />
+            </button>
+          )}
         </div>
-        {/* One quiet line under the title (v0.19): the two ways of working, the study's information on
-            request, its passages and the tools for its parts. A teaching has its own line. */}
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.9375rem] text-text-muted">
+        {/* A.4.3: the two tabs, and a save state that is quiet when all is well. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.9375rem] text-text-muted">
           <div role="group" aria-label={t("studies.view.label")} className="-ml-2 flex">
             {(["study", "teaching"] as const).map((v) => (
               <button
@@ -340,7 +370,16 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
               </button>
             ))}
           </div>
-          {view === "study" && (
+          <SaveIndicator />
+        </div>
+        {view === "study" && optionsOpen && (
+          <div
+            id="study-options"
+            role="group"
+            aria-label={t("studies.editor.options")}
+            onKeyDown={(e) => { if (e.key === "Escape") { e.stopPropagation(); setOptionsOpen(false); optionsToggle.current?.focus(); } }}
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-aw border border-border-subtle bg-bg-secondary px-2 py-1 text-[0.9375rem] text-text-muted"
+          >
             <StudyInfo
               onDeleted={onMissing}
               study={study}
@@ -356,21 +395,25 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
               onOpenStudy={onOpenStudy}
               onRevealScripture={onRevealScripture}
             />
-          )}
-          {view === "study" && <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />}
-          {view === "study" && <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />}
-          {view === "study" && <div role="group" aria-label={t("studies.flow.mode")} className="flex flex-wrap gap-1">
-            {[false, true].map((mode) => <button key={String(mode)} type="button" className="aw-tab min-h-11" aria-pressed={continuous === mode} onClick={() => { setContinuous(mode); if (!mode && focusedSection) setActiveSection(focusedSection.id); writeLocal(`study.continuous.${studyId}`, mode); }}>{t(mode ? "studies.flow.continuous" : "studies.flow.outline")}</button>)}
-          </div>}
-          <SaveIndicator />
-        </div>
+            <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />
+            <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />
+            <Button variant="quiet" onClick={() => setExporting(true)}>{t("studies.qaExport.open")}</Button>
+            <div role="group" aria-label={t("studies.flow.mode")} className="flex flex-wrap gap-1">
+              {[true, false].map((mode) => <button key={String(mode)} type="button" className="aw-tab min-h-11" aria-pressed={continuous === mode} onClick={() => { setContinuous(mode); if (!mode && focusedSection) setActiveSection(focusedSection.id); writeLocal(`study.continuous.${studyId}`, mode); }}>{t(mode ? "studies.flow.continuous" : "studies.flow.outline")}</button>)}
+            </div>
+          </div>
+        )}
+        {/* A filter narrows the notes: say so while it is on, even with the options closed. */}
+        {view === "study" && kindFilter && !optionsOpen && (
+          <p className="type-meta m-0">{t("studies.editor.filterOn")} <button type="button" className="underline" onClick={() => setKindFilter(null)}>{t("studies.editor.filterClear")}</button></p>
+        )}
       </header>
 
+      {exporting && <StudyQaExport title={study.title} sections={sections} templateKey={template?.key} onClose={() => setExporting(false)} />}
       {view === "teaching" ? (
         <TeachingView onOpenStudy={(target) => { if (target.id === study.id) setView("study"); else onOpenStudy(target); }} studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
       ) : (
       <>
-      {(template?.key === "ten-step-writing-study" || template?.key === "ten-step-exegesis" || sections.some((section) => section.fields?.template === "ten-step-writing-study" || section.fields?.template === "ten-step-exegesis")) && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
       {!continuous && focusedSection && <nav data-study-steps aria-label={t("studies.flow.steps")} className="sticky top-0 z-10 grid grid-cols-2 items-stretch gap-2 border-b border-border-subtle bg-pane-work py-2">
         <Button className="row-start-2 min-w-0" disabled={focusedIndex === 0} onClick={() => focusSection(sections[focusedIndex - 1]!.id)}>{t("studies.flow.previous")}</Button>
         <label className="col-span-2 row-start-1 flex min-w-0 flex-col gap-1 text-[0.9375rem]">
@@ -381,18 +424,6 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
         </label>
         <Button className="row-start-2 min-w-0" disabled={focusedIndex === sections.length - 1} onClick={() => focusSection(sections[focusedIndex + 1]!.id)}>{t("studies.flow.next")}</Button>
       </nav>}
-      {journey && continuous && (
-        <JourneyOutline
-          runs={runs}
-          current={currentRun}
-          onGo={(index) => {
-            const first = runs[index]?.sections[0];
-            if (!first) return;
-            document.getElementById(`section-anchor-${first.id}`)?.scrollIntoView?.({ block: "start" });
-            document.getElementById(`section-${first.id}`)?.focus({ preventScroll: true });
-          }}
-        />
-      )}
       {/* The parts stay siblings keyed by their own id, so moving one never rebuilds the others;
           where a phase begins is marked on its first part (v0.18.6 review). */}
       {sections.map((section) => (
@@ -411,6 +442,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           onCollapsedChange={() => undefined}
           writingView
           onAddWriting={() => void addWriting(section)}
+          onAddQa={() => void addQa(section)}
           onAddNote={(kind) => {
             expand(section.id);
             openCapture(section.id, kind);
@@ -465,6 +497,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
         </Button>
       </div>
       <NextStep teachings={teachings.data ?? null} onOpenTeaching={() => setView("teaching")} />
+      {(template?.key === "ten-step-writing-study" || template?.key === "ten-step-exegesis" || sections.some((section) => section.fields?.template === "ten-step-writing-study" || section.fields?.template === "ten-step-exegesis")) && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
       </>
       )}
       {error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{error}</p>}
@@ -485,17 +518,27 @@ function lastNoteKind(studyId: string): FindingType {
 function SaveIndicator() {
   const { t } = useTranslation();
   const { status } = useSaveTracker();
-  // The "Saved" of one save is put away after a moment (the status object is new for each save).
+  // A.4.3: success stays quiet (a brief, muted "Saved"); saving and failure are plainly visible.
   const [expired, setExpired] = useState<unknown>(null);
   useEffect(() => {
     if (status.state !== "saved") return;
-    const timer = setTimeout(() => setExpired(status), 2000);
+    const timer = setTimeout(() => setExpired(status), 1500);
     return () => clearTimeout(timer);
   }, [status]);
   const text =
     status.state === "saving" ? t("common.saving") : status.state === "saved" && expired !== status ? t("studies.editor.saved") : status.state === "error" ? status.message : "";
   return (
-    <span role="status" className={status.state === "error" ? "text-danger" : ""}>
+    <span
+      role="status"
+      data-save-state={status.state}
+      className={
+        status.state === "error"
+          ? "ml-auto rounded-aw border border-danger/50 bg-danger/10 px-2 py-0.5 font-medium text-danger"
+          : status.state === "saving"
+            ? "ml-auto font-medium text-text-strong"
+            : "ml-auto text-text-muted"
+      }
+    >
       {text}
     </span>
   );

@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 // Settings → Sources (v0.24): finding, details, collections, tags, archive,
 // Trash and deleting for good, one at a time and many at once; and the shared
@@ -120,11 +121,13 @@ describe("Settings → Sources", () => {
     await user.click(within(section).getByRole("checkbox", { name: "Select Romans Commentary" }));
     await user.click(within(section).getByRole("checkbox", { name: "Select Galatians Sermon" }));
     await user.click(within(section).getByRole("button", { name: "Organise" }));
+    await openPartOptions(user);
     await user.click(screen.getByRole("menuitem", { name: "Add to a collection…" }));
     const dialog = screen.getByRole("dialog", { name: "Add 2 sources to a collection" });
     await user.selectOptions(within(dialog).getByRole("combobox", { name: "Collection" }), "new");
     await user.type(within(dialog).getByRole("textbox", { name: "Name of the new collection" }), "Letters");
     await user.selectOptions(within(dialog).getByRole("combobox", { name: "Inside" }), parentId);
+    await openPartOptions(user);
     await user.click(within(dialog).getByRole("button", { name: "Add to collection" }));
     await within(section).findByText("2 sources are now in “Letters”.");
     const letters = (await api.libraryCollections()).find((c) => c.name === "Letters")!;

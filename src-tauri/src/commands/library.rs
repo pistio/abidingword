@@ -602,6 +602,41 @@ pub fn library_pdf_structure(
     state.db(|conn| crate::db::pdf_structures::view(conn, &id))
 }
 
+/// A.4.1: the local, metadata-only structure and targeting report of a PDF.
+#[tauri::command(async)]
+pub fn library_pdf_structure_diagnostic(
+    state: State<'_, AppState>,
+    id: String,
+    passage: Option<String>,
+    observed: Option<crate::db::pdf_diagnostic::ReaderObserved>,
+) -> CommandResult<crate::db::pdf_diagnostic::Diagnostic> {
+    state.db(|conn| {
+        crate::db::pdf_diagnostic::diagnostic_with(conn, &id, passage.as_deref(), observed)
+    })
+}
+
+/// Saves that report as a `.json` file where the save dialog said; returns
+/// where it went. The report is rebuilt here, never taken from the interface.
+#[tauri::command(async)]
+pub fn library_pdf_structure_diagnostic_save(
+    state: State<'_, AppState>,
+    id: String,
+    passage: Option<String>,
+    observed: Option<crate::db::pdf_diagnostic::ReaderObserved>,
+    path: String,
+) -> CommandResult<String> {
+    let report = state.db(|conn| {
+        crate::db::pdf_diagnostic::diagnostic_with(conn, &id, passage.as_deref(), observed)
+    })?;
+    let bytes = serde_json::to_vec_pretty(&report).map_err(|e| {
+        AppError::InvalidInput(UserMessage::new("library.structure.invalid", e.to_string()))
+    })?;
+    let target = crate::commands::materials::chosen_path(&path, &["json"])?;
+    crate::commands::materials::refuse_unasked(&path, &target)?;
+    crate::commands::presentations::write_atomically(&target, &bytes)?;
+    Ok(target.to_string_lossy().into_owned())
+}
+
 /// Explicit rebuild for older imports; preserve the exact existing segments.
 #[tauri::command(async)]
 pub fn library_pdf_structure_build(

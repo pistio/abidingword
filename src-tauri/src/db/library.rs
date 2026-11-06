@@ -6,6 +6,7 @@
 //! and Scripture links, via triggers and cascades) and the file row.
 //! Citations in findings keep a snapshot of what they cited.
 
+use serde::Serialize;
 use std::collections::HashMap;
 
 use rusqlite::{params, Connection, OptionalExtension, Row};
@@ -1238,10 +1239,11 @@ fn collect_places(
             if matches!(role.as_deref(), Some("header" | "footer" | "artifact")) {
                 continue;
             }
-            rank.class = rank.class.max(if role.as_deref() == Some("note") {
-                5
-            } else {
-                4
+            rank.class = rank.class.max(match role.as_deref() {
+                Some("note") => 5,
+                // A.4.1: a Contents/listing entry is the weakest evidence.
+                Some("contents") => 6,
+                _ => 4,
             });
         }
         if origin == LinkOrigin::Section && scope.as_deref() == Some("book") {
@@ -1268,6 +1270,7 @@ fn collect_places(
                 segment_id.clone(),
                 Place {
                     rank,
+                    role: role.clone(),
                     position,
                     passage: passage.clone(),
                     opener,
@@ -1288,6 +1291,39 @@ fn collect_places(
         }
     }
     Ok(groups)
+}
+
+/// One ranked place as the metadata-only structure diagnostic reports it.
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DiagnosticPlace {
+    pub location: PassageLocation,
+    pub position: i64,
+    pub class: u8,
+    pub role: Option<String>,
+}
+
+/// [`passage_source_locations`] with each place's rank class and role, for the
+/// A.4.1 diagnostic: the same rules and order, nothing stored is changed.
+pub fn passage_source_diagnostics(
+    conn: &Connection,
+    reference: &ScriptureRef,
+    source_id: &str,
+) -> AppResult<Vec<DiagnosticPlace>> {
+    let mut groups = collect_places(conn, reference, Some(source_id))?;
+    let Some(group) = groups.remove(source_id) else {
+        return Ok(Vec::new());
+    };
+    Ok(consolidate(group.places.into_values().collect())
+        .into_iter()
+        .take(EXPANDED_LOCATIONS_LIMIT)
+        .map(|p| DiagnosticPlace {
+            position: p.position,
+            class: p.rank.class,
+            role: p.role,
+            location: p.location,
+        })
+        .collect())
 }
 
 /// The most places one source can list when expanded (a defensive bound).
@@ -1390,6 +1426,8 @@ pub fn passage_sources(
 /// A candidate place in a source, before consolidation.
 struct Place {
     rank: Rank,
+    /// The structure role of a literal mention in a structured PDF.
+    role: Option<String>,
     position: i64,
     passage: String,
     /// The segment the section it lies in opens on (itself outside any section).

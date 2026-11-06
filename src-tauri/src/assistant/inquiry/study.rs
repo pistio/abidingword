@@ -129,9 +129,9 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
     let study = studies::get(conn, study_id)?;
     let section = match section_id.as_deref().filter(|s| !s.is_empty()) {
         Some(id) => {
-            let section = sections::get(conn, id)?;
+            let section = sections::get(conn, id).map_err(stale_if_missing)?;
             if section.study_id != study.id {
-                return Err(AppError::not_found("study section", id));
+                return Err(stale_target());
             }
             Some(section)
         }
@@ -163,9 +163,9 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
         ));
     }
     if let Some(id) = block_id.as_deref().filter(|b| !b.is_empty()) {
-        let block = blocks::get(conn, id)?;
+        let block = blocks::get(conn, id).map_err(stale_if_missing)?;
         if section.as_ref().is_none_or(|s| s.id != block.section_id) {
-            return Err(AppError::not_found("study block", id));
+            return Err(stale_target());
         }
         if text.chars().count() > super::WRITING_MAX {
             return Err(AppError::Assistant(
@@ -226,11 +226,11 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
         if let Some(section) = &section {
             let mut used = 0;
             let parts = blocks::list_for_section(conn, &section.id)?;
-            if let Some(stray) = writing
+            if writing
                 .iter()
-                .find(|w| !parts.iter().any(|b| b.id == w.block_id))
+                .any(|w| !parts.iter().any(|b| b.id == w.block_id))
             {
-                return Err(AppError::not_found("study block", &stray.block_id));
+                return Err(stale_target());
             }
             for block in parts {
                 // What is on screen, when given; else what is saved.
@@ -346,4 +346,22 @@ fn no_passage() -> AppError {
         "inquiry.noPassage",
         "Choose the passage of this Bible Study first: the help starts from the text.",
     )
+}
+
+/// A.4.4 (#19): the part or block help was asked for is no longer where it was
+/// (deleted, moved or replaced): an actionable answer, never the generic
+/// "item could not be found", and nothing is sent or applied.
+fn stale_target() -> AppError {
+    AppError::Assistant(crate::error::UserMessage::new(
+        "assistant.staleTarget",
+        "This part has changed or was removed since you asked. Close the help, check the text and ask again.",
+    ))
+}
+
+fn stale_if_missing(error: AppError) -> AppError {
+    if matches!(error, AppError::NotFound { .. }) {
+        stale_target()
+    } else {
+        error
+    }
 }

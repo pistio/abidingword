@@ -10,6 +10,8 @@ export interface MenuAction {
   description?: string;
   /** Actions of another kind further down (v0.18.6): a quiet rule and this name above the first of them. */
   group?: string;
+  /** Shown but not available now (A.4.2): announced as unavailable, does nothing. */
+  disabled?: boolean;
 }
 
 /**
@@ -123,11 +125,13 @@ export function ActionMenu({
               role="menuitem"
               // The item is named by its label; the line under it describes it.
               aria-describedby={action.description ? `${id}-d${index}` : undefined}
+              aria-disabled={action.disabled || undefined}
               onClick={() => {
+                if (action.disabled) return;
                 setOpen(false);
                 action.onSelect(button.current);
               }}
-              className={`flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary ${
+              className={`flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary ${
                 action.description ? "max-w-80 py-1.5" : "whitespace-nowrap"
               }`}
             >

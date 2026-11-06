@@ -18,7 +18,7 @@ type Kind = MaterialDocument["kind"];
 /** The choices a material offers, each small and in plain words (no layout settings). */
 const OPTIONS: Record<Kind, (keyof MaterialOptions)[]> = {
   manuscript: ["includePassage", "includeNotes"],
-  questions: ["includePassage", "leader", "includeFrame", "writingSpace"],
+  questions: ["includePassage", "leader", "answers", "includeFrame", "writingSpace"],
   worksheet: ["includePassage", "writingSpace"],
 };
 
@@ -138,7 +138,7 @@ export function MaterialView({ kind, preparation, onBack }: { kind: Kind; prepar
       : t(`studies.materials.option.${option}`);
   // The leader's version holds the opening and closing already, and its notes take the place of room to write.
   const offered = OPTIONS[kind].filter(
-    (option) => !(options.leader && (option === "includeFrame" || option === "writingSpace")) && !(option === "includePassage" && references.length === 0),
+    (option) => !(options.leader && (option === "includeFrame" || option === "writingSpace" || option === "answers")) && !(option === "includePassage" && references.length === 0),
   );
 
   return (

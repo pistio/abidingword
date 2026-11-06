@@ -37,6 +37,10 @@ pub struct View {
     pub headings: Vec<ResolvedHeading>,
     pub corrections: Vec<Correction>,
     pub can_undo: bool,
+    /// The analysis rules the stored structure was built with (0 = before A.4.1).
+    pub analysis: u32,
+    /// Built with earlier rules: **Rebuild structure** applies the current ones.
+    pub rebuild_recommended: bool,
 }
 fn corrupt() -> AppError {
     AppError::InvalidInput(UserMessage::new("library.structure.corrupt","The saved PDF structure could not be read. The source text and original file are unchanged."))
@@ -120,6 +124,8 @@ pub fn view(conn: &Connection, id: &str) -> AppResult<View> {
             headings,
             corrections: record.overrides.clone(),
             can_undo: !record.history.is_empty(),
+            analysis: record.document.analysis,
+            rebuild_recommended: record.document.analysis < pdf_structure::ANALYSIS,
         })
     } else {
         Ok(View {
@@ -133,6 +139,8 @@ pub fn view(conn: &Connection, id: &str) -> AppResult<View> {
             headings: Vec::new(),
             corrections: Vec::new(),
             can_undo: false,
+            analysis: 0,
+            rebuild_recommended: false,
         })
     }
 }
@@ -374,6 +382,11 @@ pub fn index(conn: &Connection, id: &str) -> AppResult<usize> {
             ))
         })
         .collect::<AppResult<_>>()?;
+    let listing_pages: HashSet<u32> = headings
+        .iter()
+        .filter(|h| h.scope == "contents")
+        .map(|h| h.heading.anchor.page)
+        .collect();
     let mut active: Vec<usize> = Vec::new();
     let mut at = 0;
     let mut count = 0usize;
@@ -398,6 +411,12 @@ pub fn index(conn: &Connection, id: &str) -> AppResult<usize> {
                 .and_then(|(s, e)| block.runs.iter().find(|r| r.start <= s && e <= r.end))
                 .map(|r| r.role.as_str())
                 .unwrap_or(&block.role);
+            // A.4.1: a reference on a Contents/listing page is a listing entry.
+            let kind = if listing_pages.contains(&block.page) && kind == "paragraph" {
+                "contents"
+            } else {
+                kind
+            };
             role.execute(params![link, kind])?;
         }
         active.retain(|i| block.position < eligible[*i].0.end_position);

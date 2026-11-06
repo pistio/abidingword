@@ -2,6 +2,7 @@ import { screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { showPartHints } from "../support/studyActions";
 
 async function openStudy(slowSave = true) {
   const api = createMemoryApi();
@@ -21,29 +22,32 @@ const study = () => within(screen.getByRole("main", { name: "Study" }));
 const guidance = /The passage being studied/;
 
 describe("empty prompt and guidance follow what is typed, not what is saved", () => {
-  it("shows section guidance for an empty study", async () => {
-    await openStudy();
-    expect(study().getByText(guidance)).toBeInTheDocument();
+  // A.4.3 (#25): guidance is never repeated chrome above the writing; it is kept and shown on request.
+  it("keeps section guidance on request instead of above the writing", async () => {
+    const { user } = await openStudy();
+    expect(study().queryByText(guidance)).not.toBeInTheDocument();
+    await showPartHints(user);
+    expect(study().getAllByText(guidance)[0]).toBeInTheDocument();
   });
 
   it("hides both as soon as the user types, before the save resolves", async () => {
     const { user } = await openStudy();
     await user.type(study().getByRole("textbox", { name: "Text: paragraph" }), "A");
     expect(study().queryByText("Start your study")).not.toBeInTheDocument();
-    expect(study().queryByText(guidance)).not.toBeInTheDocument();
     // The writing area was not replaced while typing.
     await user.type(study().getByRole("textbox", { name: "Text: paragraph" }), "bide");
     expect(study().getByRole("textbox", { name: "Text: paragraph" })).toHaveValue("Abide");
   });
 
-  it("brings them back when the writing is cleared and the study is empty again", async () => {
+  it("keeps the guidance available whatever is typed or cleared", async () => {
     const { user } = await openStudy();
     const box = () => study().getByRole("textbox", { name: "Text: paragraph" });
     await user.type(box(), "Abide");
+    await showPartHints(user);
+    expect(study().getAllByText(guidance)[0]).toBeInTheDocument();
     await user.clear(box());
-    expect(study().getByText(guidance)).toBeInTheDocument();
     await user.type(box(), "   ");
-    expect(study().getByText(guidance)).toBeInTheDocument();
+    expect(study().getAllByText(guidance)[0]).toBeInTheDocument();
   });
 
   it("renders no related-study UI when there are none", async () => {

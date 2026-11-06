@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // All library text here is invented for the tests.
 const VINE_NOTES: SourceFixture = {
@@ -207,7 +208,7 @@ describe("Library", () => {
     expect(within(reader).getByRole("heading", { level: 2, name: "Notes on the Vine" })).toHaveFocus();
     expect(within(reader).getByText("An opening paragraph about gardens.")).toBeInTheDocument();
 
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     expect(await screen.findByRole("heading", { level: 1, name: "Notes on the Vine" })).toBeInTheDocument();
     expect(screen.queryByRole("main", { name: "Study" })).not.toBeInTheDocument();
 

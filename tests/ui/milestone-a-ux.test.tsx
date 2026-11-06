@@ -5,6 +5,8 @@ import { derive } from "@/features/materials/derive";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
+import { openTeachingOptions, openBlockOptions } from "../support/studyActions";
 
 const sources = () => within(screen.getByRole("complementary", { name: "Sources" }));
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
@@ -45,28 +47,40 @@ it("uses physical PDF pages in both modes, keeps printed labels separate, and re
   const engine = createFakePdfEngine({ pages: 3 });
   const { user } = await renderApp(api, { pdfEngine: engine });
   await user.click(await sources().findByRole("button", { name: "Page fixture" }));
+  // A.4.2: Reading has a compact "2 / 3" indicator; Original keeps the viewer's own page control.
   const nav = () => within(screen.getByRole("navigation", { name: "PDF page navigation" }));
+  const indicator = () => screen.getByTestId("pdf-page-indicator");
+  const original = () => screen.getByRole("textbox", { name: "Page number" });
   expect(nav().getByRole("button", { name: "Previous PDF page" })).toBeDisabled();
   await user.click(nav().getByRole("button", { name: "Next PDF page" }));
-  expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(2);
-  expect(nav().getByText(/Printed page label: iv/)).toBeInTheDocument();
+  expect(indicator()).toHaveTextContent("2 / 3");
+  expect(indicator()).toHaveAccessibleName(/PDF page 2 of 3 Printed page label: iv/);
+  expect(screen.queryByText(/PDF pages count from the start/)).toBeNull(); // explained in the jump form only
   await user.click(screen.getByRole("button", { name: "Original" }));
-  await waitFor(() => expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(2));
-  await user.click(nav().getByRole("button", { name: "Next PDF page" }));
-  await waitFor(() => expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(3));
-  expect(nav().getByRole("button", { name: "Next PDF page" })).toBeDisabled();
+  await waitFor(() => expect(original()).toHaveValue("2"));
+  expect(screen.queryByTestId("pdf-page-indicator")).toBeNull(); // one page control per view
+  await user.click(screen.getByRole("button", { name: "Next page" }));
+  await waitFor(() => expect(original()).toHaveValue("3"));
+  expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
   await user.click(screen.getByRole("button", { name: "Reading" }));
-  await waitFor(() => expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(3));
-  const input = nav().getByRole("spinbutton", { name: "PDF page" });
+  await waitFor(() => expect(indicator()).toHaveTextContent("3 / 3"));
+  await user.click(indicator());
+  const jump = screen.getByRole("dialog", { name: "Go to page" });
+  expect(jump).toHaveTextContent(/PDF pages count from the start/);
+  const input = within(jump).getByRole("spinbutton", { name: "PDF page" });
+  expect(input).toHaveFocus();
   await user.clear(input); await user.type(input, "99");
-  expect(nav().getByRole("button", { name: "Go to page" })).toBeDisabled();
-  await user.clear(input); await user.type(input, "1");
-  await user.click(nav().getByRole("button", { name: "Go to page" }));
-  expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(1);
-  await user.click(screen.getByRole("button", { name: i18n.t("library.history.back") }));
-  await waitFor(() => expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(3));
-  await user.click(screen.getByRole("button", { name: i18n.t("library.history.forward") }));
-  await waitFor(() => expect(nav().getByRole("spinbutton", { name: "PDF page" })).toHaveValue(1));
+  await user.click(within(jump).getByRole("button", { name: "Go to page" }));
+  expect(within(jump).getByRole("alert")).toHaveTextContent("Enter a page from 1 to 3.");
+  expect(indicator()).toHaveTextContent("3 / 3");
+  await user.clear(input); await user.type(input, "1{Enter}");
+  expect(screen.queryByRole("dialog", { name: "Go to page" })).toBeNull();
+  await waitFor(() => expect(indicator()).toHaveTextContent("1 / 3"));
+  expect(indicator()).toHaveFocus();
+  await readerAction(user, i18n.t("library.history.back"));
+  await waitFor(() => expect(indicator()).toHaveTextContent("3 / 3"));
+  await readerAction(user, i18n.t("library.history.forward"));
+  await waitFor(() => expect(indicator()).toHaveTextContent("1 / 3"));
   expect(api.state.library.segments.find(segment => segment.pageNumber === 2)?.pageLabel).toBe("iv");
 });
 
@@ -112,13 +126,16 @@ it("exposes visibility beside the writing while participant exports still omit p
   const editor = await screen.findByRole("article", { name: /Privacy study/ });
   const main = within(editor).getByRole("textbox", { name: "Main part" });
   await user.type(main, "PRIVATE_SENTINEL");
-  const block = main.closest('[role="group"]');
+  // A.4.3: a section with one block is one unit; its visibility is in the section's options.
+  const block = main.closest("section") ?? main.closest('[role="group"]');
   expect(block).not.toBeNull();
+  await openBlockOptions(user);
   const visibility = within(block as HTMLElement).getByRole("checkbox", { name: "Show this to participants" });
   expect(visibility).toBeVisible();
   if ((visibility as HTMLInputElement).checked) await user.click(visibility);
   await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks!.some(b => b.body === "PRIVATE_SENTINEL" && !b.participantFacing)).toBe(true));
   expect(api.state.teaching.preparations[0]!.studyId).toBe(api.state.studies[0]!.id);
+  await openTeachingOptions(user);
   expect(within(editor).getByText("Based on: Bible Study — Privacy study")).toBeVisible();
   expect(within(editor).getByRole("button", { name: "Open linked Study" })).toBeVisible();
   const prep = await api.teachingGet(api.state.teaching.preparations[0]!.id);
@@ -140,9 +157,12 @@ it("never labels a linked Teaching as independent while the Study list is loadin
   api.studyList = () => delayed;
   await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
   const editor = await screen.findByRole("article", { name: teaching.title });
+  await openTeachingOptions(user);
   expect(within(editor).getByText("Based on: Bible Study — Bible Study")).toBeVisible();
+  await openTeachingOptions(user);
   expect(within(editor).queryByText("Based on: Bible Study — Independent teaching")).toBeNull();
   await act(async () => release(known));
+  await openTeachingOptions(user);
   expect(await within(editor).findByText("Based on: Bible Study — Retained study")).toBeVisible();
   expect((await api.teachingGet(teaching.id)).studyId).toBe(study.id);
 });

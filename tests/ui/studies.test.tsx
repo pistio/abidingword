@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 async function seed() {
   const api = createMemoryApi();
@@ -60,6 +61,7 @@ describe("study selection and editing", () => {
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Romans 8:1–17/ }));
 
+    await openPartOptions(user);
     await user.click(await screen.findByRole("button", { name: "Add to Context" }));
     await user.click(screen.getByRole("button", { name: "Writing" }));
     const fields = await screen.findAllByRole("textbox", { name: "Context: paragraph" });

@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerActionEnabled } from "../support/readerActions";
 
 // Find in this source (v0.13), Reading view. All text is invented.
 
@@ -83,7 +84,7 @@ describe("Find in this source", () => {
     await user.type(findBox(reader), "olive{Enter}");
     await waitFor(() => expect(status(reader)).toHaveTextContent("No matches"));
     expect(within(reader).getByRole("button", { name: "Next match" })).toBeDisabled();
-    expect(within(reader).getByRole("button", { name: "Back to the previous place" })).toBeDisabled();
+    expect(await readerActionEnabled(user, "Back to the previous place", reader)).toBe(false);
   });
 
   it("Escape closes the bar, removes the marks and returns focus; Ctrl+F opens it with the last query", async () => {

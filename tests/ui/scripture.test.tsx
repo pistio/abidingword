@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 function withBible(passage = "JHN.15") {
   const api = createMemoryApi();
@@ -127,9 +128,11 @@ describe("Scripture pane", () => {
     const { user } = await renderApp(api);
     await heading();
     await user.click(await screen.findByRole("button", { name: /The True Vine/ }));
+    await openStudyOptions(user);
     await user.click(await screen.findByRole("button", { name: "Add passage" }));
     await user.type(screen.getByLabelText("Passage to add"), "John 15:1-11{Enter}");
 
+    await openStudyOptions(user);
     const link = await screen.findByRole("button", { name: "John 15:1–11" });
     expect(api.state.passages.map((p) => p.reference.canonical)).toEqual(["JHN.15.1-JHN.15.11"]);
     await user.click(link);

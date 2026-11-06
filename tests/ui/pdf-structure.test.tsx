@@ -4,6 +4,7 @@ import type { PdfAnchor, PdfResolvedHeading, PdfStructureView } from "@/types/li
 import { createMemoryApi } from "../support/memoryApi";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 const anchor:PdfAnchor={page:2,pageWidth:600,pageHeight:800,x0:70,x1:280,baseline:250,size:20,firstChar:100,column:0,byteStart:0,byteEnd:12,originalText:"Apg 6,1–7"};
 const text="Apg 6,1–7\nAn invented observation — 한글 remains exact.";
@@ -52,7 +53,7 @@ describe("PDF structure in the complete reader",()=>{
     const selected=target.querySelector<HTMLElement>('[data-pdf-heading="p2-c100"]')!;
     vi.spyOn(selected,"getBoundingClientRect").mockReturnValue(new DOMRect(0,200,300,40));
     await user.click(screen.getByRole("button",{name:"Original"}));
-    await waitFor(()=>expect(screen.getByRole("spinbutton",{name:"PDF page"})).toHaveValue(2));
+    await waitFor(()=>expect(screen.getByRole("textbox",{name:"Page number"})).toHaveValue("2"));
   });
   it("targets the requested heading when several sections share a paragraph, including Contents and history",async()=>{
     const scrolled:HTMLElement[]=[];
@@ -84,7 +85,7 @@ describe("PDF structure in the complete reader",()=>{
   });
   it("sends an anchored, hash-bound correction and refreshes Contents; undo remains discoverable",async()=>{
     const {user,api,source}=await open();
-    await user.click(await screen.findByRole("button",{name:"Document structure"}));
+    await readerAction(user, "Document structure");
     const dialog=await screen.findByRole("dialog",{name:"Document structure"});
     expect(within(dialog).getByText(/not a judgement of commentary relevance/)).toBeVisible();
     await user.click(await within(dialog).findByRole("button",{name:"Correct section"}));
@@ -100,7 +101,7 @@ describe("PDF structure in the complete reader",()=>{
   it("offers explicit structure building for an older import without doing it on opening",async()=>{
     const {user,api}=await open(false);
     expect(api.libraryPdfStructureBuild).not.toHaveBeenCalled();
-    await user.click(await screen.findByRole("button",{name:"Document structure"}));
+    await readerAction(user, "Document structure");
     const dialog=await screen.findByRole("dialog",{name:"Document structure"});
     await user.click(await within(dialog).findByRole("button",{name:"Build structure"}));
     await waitFor(()=>expect(api.libraryPdfStructureBuild).toHaveBeenCalledOnce());
@@ -118,7 +119,7 @@ describe("PDF structure in the complete reader",()=>{
   });
   it("preserves supplied page bookmarks separately from corrected section targets",async()=>{
     const {user}=await open();
-    await user.click(screen.getByRole("button",{name:"Document structure"}));
+    await readerAction(user, "Document structure");
     const dialog=await screen.findByRole("dialog",{name:"Document structure"});
     await user.click(within(dialog).getByText("Original PDF bookmarks"));
     expect(await within(dialog).findByRole("button",{name:/Uncorrected PDF outline/})).toBeVisible();
@@ -151,7 +152,7 @@ describe("PDF structure in the complete reader",()=>{
         vi.spyOn(element,"getBoundingClientRect").mockReturnValue(new DOMRect(0,y,300,100));
       }
       scrolled.length=0;
-      await user.click(screen.getByRole("button",{name:"Open full reader"}));
+      await readerAction(user, "Open full reader");
       await screen.findByRole("heading",{name:"Invented structured commentary"});
       await waitFor(()=>expect(scrolled.some(el=>el.dataset.segPosition==="2")).toBe(true));
       const last=scrolled.at(-1)!;

@@ -5,6 +5,7 @@ import { ApiError } from "@/lib/api";
 import type { InquiryReply } from "@/types/inquiry";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 // Help in a Bible Study (v0.20): a small Help action in each part, only when
 // the assistant is on; a temporary panel that shows exactly what would be
@@ -41,6 +42,7 @@ async function openStudy(user: User) {
 }
 
 async function openHelp(user: User, part: HTMLElement) {
+  await openPartOptions(user);
   await user.click(within(part).getByRole("button", { name: /^Help with/ }));
   return within(part).findByTestId("inquiry-panel");
 }
@@ -92,6 +94,7 @@ describe("Help in a Bible Study", () => {
     const { api } = await setup({ assistant: false });
     const { user } = await renderApp(api);
     const part = await openStudy(user);
+    await openPartOptions(user);
     expect(within(part).queryByRole("button", { name: /^Help with/ })).toBeNull();
     expect(screen.queryByTestId("inquiry-panel")).toBeNull();
     expect(api.state.inquiry.previews).toEqual([]);
@@ -145,6 +148,7 @@ describe("Help in a Bible Study", () => {
     // Escape closes the panel and returns to Help.
     fireEvent.keyDown(heading, { key: "Escape" });
     await waitFor(() => expect(within(part).queryByTestId("inquiry-panel")).toBeNull());
+    await openPartOptions(user);
     await waitFor(() => expect(within(part).getByRole("button", { name: /^Help with/ })).toHaveFocus());
   });
 
@@ -237,6 +241,7 @@ describe("Help in a Bible Study", () => {
     await user.click(within(panel).getByRole("button", { name: "Ask" }));
     const card = (await within(panel).findAllByRole("article"))[0]!;
     const before = api.state.findings.length;
+    await openPartOptions(user);
     await user.click(within(card).getByRole("button", { name: "Add to Bible Study…" }));
     const form = within(card).getByRole("form", { name: "Add this point as a note" });
     const wording = within(form).getByRole("textbox", { name: "The note" });
@@ -305,6 +310,7 @@ describe("Help in other languages", () => {
     await act(async () => {
       await i18n.changeLanguage("de");
     });
+    await openPartOptions(user);
     await user.click(within(part).getByRole("button", { name: /^Hilfe zu/ }));
     const panel = await within(part).findByTestId("inquiry-panel");
     expect(within(panel).getByText(/In deinem Bibelstudium ändert sich nichts, solange du es nicht übernimmst/)).toBeInTheDocument();

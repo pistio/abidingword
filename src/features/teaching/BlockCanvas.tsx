@@ -1,6 +1,6 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, Copy, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, Info, Lock, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
@@ -21,7 +21,7 @@ function assistPart(role: string | null): TeachingPart {
 import { TeachingLinks } from "./TeachingLinks";
 import type { Finding } from "@/types/studies";
 
-type CanvasView = "continuous" | "outline";
+export type CanvasView = "continuous" | "outline";
 
 function writingRows(blockType: string, view: CanvasView): number {
   const spacious = blockType === "teaching_notes" || blockType === "discussion_questions" ? 4 : 8;
@@ -41,17 +41,19 @@ export function BlockCanvas({
   assistant,
   onChanged,
   onRevealScripture,
+  view = "continuous",
 }: {
   prep: TeachingPreparation;
   findings: Finding[];
   assistant: AssistantHooks | null;
   onChanged: (prep: TeachingPreparation) => void;
   onRevealScripture: () => void;
+  /** A.4.3: chosen in the teaching's options (writing continuously is the default). */
+  view?: CanvasView;
 }) {
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
-  const [view, setView] = useState<CanvasView>("continuous");
   const [error, setError] = useState<string | null>(null);
   const blocks = prep.blocks ?? [];
   const act = async (run: () => Promise<TeachingPreparation>) => {
@@ -85,96 +87,124 @@ export function BlockCanvas({
     );
   };
 
-  const renderBlock = (block: TeachingBlock, sectionTitle: string | null) => {
-    const name = block.title.trim() || blockTypeLabel(t, block.blockType);
+  const renderBlock = (block: TeachingBlock, sectionTitle: string | null): ReactNode => {
+    // A question-and-answer block is named by its kind; its question is the first field.
+    const name = block.blockType === "qa" ? blockTypeLabel(t, "qa") : block.title.trim() || blockTypeLabel(t, block.blockType);
     const guidance = block.guidanceKey ? t(block.guidanceKey as never) : "";
     const sameAsSection = sectionTitle !== null && block.title.trim() === sectionTitle;
-    const visibility = (
-          <label className="mt-2 flex min-h-11 items-center gap-2">
-            <input
-              type="checkbox"
-              checked={block.participantFacing}
-              onChange={(e) => void act(() => api.teachingBlockUpdate({ id: block.id, participantFacing: e.target.checked }))}
-            />
-            {t("studies.teaching.blocks.participant")}
-          </label>
-    );
+    const frame = {
+      id,
+      block,
+      name,
+      guidance,
+      onMove: move,
+      onDuplicate: () => void act(() => api.teachingBlockDuplicate(block.id)),
+      onDelete: () => void act(() => api.teachingBlockDelete(block.id)),
+      onVisibility: (participantFacing: boolean) => void act(() => api.teachingBlockUpdate({ id: block.id, participantFacing })),
+      onTitle: (title: string) => void act(() => api.teachingBlockUpdate({ id: block.id, title })),
+    };
     if (block.blockType === "section") {
       const nested = children(block.id);
-      return (
-        <section key={block.id} aria-labelledby={`${id}-${block.id}`} className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-1">
-            <h3 id={`${id}-${block.id}`} className="type-section m-0 min-w-0 flex-1">
-              {name}
-            </h3>
-            <BlockTools id={id} block={block} name={name} onMove={move} onDuplicate={() => void act(() => api.teachingBlockDuplicate(block.id))} onDelete={() => void act(() => api.teachingBlockDelete(block.id))} />
-          </div>
-          {visibility}
-          {!block.participantFacing && <p className="type-meta m-0">{t("studies.teaching.blocks.leaderOnly")}</p>}
-          {guidance && (
-            <details className="text-[0.9375rem] text-text-muted">
-              <summary className="cursor-pointer">{t("studies.teaching.blocks.guidance")}</summary>
-              <p className="m-0 mt-1 max-w-prose">{guidance}</p>
-            </details>
-          )}
-          {nested.map((child) => renderBlock(child, name))}
-          <AddBlock label={t("studies.teaching.blocks.addIn", { section: name })} onAdd={(type) => add(type, block.id)} />
-        </section>
-      );
-    }
-    return (
-      <div key={block.id} role="group" aria-label={name} className="flex flex-col gap-2">
-        <div className="flex min-w-0 flex-col gap-2">
-          <div className="min-w-0 w-full">
-            {block.blockType === "scripture" ? (
-              <div className="flex flex-col gap-1">
-                <p className="type-subhead m-0">{name}</p>
-                <TeachingLinks preparation={prep} pointId={null} blockId={block.id} scope={name} studyFindings={findings} onChanged={onChanged} onRevealScripture={onRevealScripture} />
-              </div>
-            ) : (
-              <>
-                {block.blockType === "outline_point" && (
-                  <TeachingField
-                    label={t("studies.teaching.blocks.headingLabel")}
-                    value={block.title}
-                    save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
-                    part={assistPart(block.role)}
-                    multiline={false}
-                    assistant={null}
-                    onRevealScripture={onRevealScripture}
-                  />
-                )}
+      // A section holding one block of the same name is one unit: one heading, one mark, one "…".
+      const sole = nested.length === 1 && nested[0]!.blockType !== "section" && nested[0]!.blockType !== "scripture" && nested[0]!.title.trim() === name ? nested[0]! : null;
+      if (sole) {
+        return (
+          <section key={block.id} aria-labelledby={`${id}-${block.id}`} className="flex flex-col gap-2">
+            <BlockFrame
+              {...frame}
+              content={sole}
+              guidance={frame.guidance || (sole.guidanceKey ? t(sole.guidanceKey as never) : "")}
+              onVisibility={(participantFacing) => void act(() => api.teachingBlockUpdate({ id: sole.id, participantFacing }))}
+              onTitle={(title) => void act(() => api.teachingBlockUpdate({ id: sole.id, title }))}
+              heading={<h3 id={`${id}-${block.id}`} className="type-section m-0 min-w-0">{name}</h3>}
+              onAdd={(type) => add(type, block.id)}
+            >
+              <div role="group" aria-label={name}>
                 <TeachingField
                   label={name}
-                  labelHidden={sameAsSection && block.blockType !== "outline_point"}
-                  value={block.body}
-                  save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
-                  part={assistPart(block.role)}
-                  rows={writingRows(block.blockType, view)}
+                  labelHidden
+                  blockId={sole.id}
+                  value={sole.body}
+                  save={(value) => api.teachingBlockUpdate({ id: sole.id, body: value }).then((next) => (onChanged(next), next))}
+                  part={assistPart(sole.role)}
+                  rows={writingRows(sole.blockType, view)}
                   placeholder={t("studies.teaching.blocks.placeholder")}
                   assistant={assistant}
                   onRevealScripture={onRevealScripture}
                 />
-              </>
-            )}
-          </div>
-          <BlockTools id={id} block={block} name={name} onMove={move} onDuplicate={() => void act(() => api.teachingBlockDuplicate(block.id))} onDelete={() => void act(() => api.teachingBlockDelete(block.id))} />
-        </div>
-        {visibility}
-        {!block.participantFacing && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.teaching.blocks.leaderOnly")}</p>}
-        <details className="text-[0.9375rem]">
-          <summary className="cursor-pointer text-text-muted">{t("studies.teaching.blocks.settings")}</summary>
-          <label className="mt-2 flex flex-col gap-1">
-            <span>{t("studies.teaching.blocks.headingLabel")}</span>
-            <input
-              value={block.title}
-              aria-label={t("studies.teaching.blocks.titleOf", { name })}
-              onChange={(e) => void act(() => api.teachingBlockUpdate({ id: block.id, title: e.target.value }))}
-              className="aw-input h-10 px-3 text-base"
-            />
-          </label>
-
-        </details>
+              </div>
+            </BlockFrame>
+          </section>
+        );
+      }
+      return (
+        <section key={block.id} aria-labelledby={`${id}-${block.id}`} className="flex flex-col gap-3">
+          <BlockFrame {...frame} heading={<h3 id={`${id}-${block.id}`} className="type-section m-0 min-w-0">{name}</h3>} onAdd={(type) => add(type, block.id)}>
+            {nested.map((child) => renderBlock(child, name))}
+          </BlockFrame>
+        </section>
+      );
+    }
+    const field = block.blockType === "qa" ? (
+      <div className="flex flex-col gap-2" data-teaching-qa={block.id}>
+        <TeachingField
+          label={t("studies.qa.question")}
+          level="field"
+          value={block.title}
+          save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
+          part={assistPart(block.role)}
+          blockId={block.id}
+          rows={2}
+          assistant={assistant}
+          onRevealScripture={onRevealScripture}
+        />
+        <TeachingField
+          label={t("studies.qa.answer")}
+          level="field"
+          value={block.body}
+          save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
+          part={assistPart(block.role)}
+          blockId={block.id}
+          rows={5}
+          assistant={assistant}
+          onRevealScripture={onRevealScripture}
+        />
+      </div>
+    ) : block.blockType === "scripture" ? (
+      <TeachingLinks preparation={prep} pointId={null} blockId={block.id} scope={name} studyFindings={findings} onChanged={onChanged} onRevealScripture={onRevealScripture} />
+    ) : (
+      <>
+        {block.blockType === "outline_point" && (
+          <TeachingField
+            label={t("studies.teaching.blocks.headingLabel")}
+            value={block.title}
+            save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
+            part={assistPart(block.role)}
+            multiline={false}
+            assistant={null}
+            onRevealScripture={onRevealScripture}
+          />
+        )}
+        <TeachingField
+          label={name}
+          labelHidden
+          blockId={block.id}
+          value={block.body}
+          save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
+          part={assistPart(block.role)}
+          rows={writingRows(block.blockType, view)}
+          placeholder={t("studies.teaching.blocks.placeholder")}
+          assistant={assistant}
+          onRevealScripture={onRevealScripture}
+        />
+      </>
+    );
+    return (
+      <div key={block.id} role="group" aria-label={name} className="flex flex-col gap-1">
+        {/* A block named like its section needs no second heading; its label is still read out. */}
+        <BlockFrame {...frame} heading={sameAsSection ? <span className="sr-only">{name}</span> : <p className="type-subhead m-0 min-w-0">{name}</p>}>
+          {field}
+        </BlockFrame>
       </div>
     );
   };
@@ -182,19 +212,151 @@ export function BlockCanvas({
   const top = children(null);
   return (
     <div className="flex flex-col gap-6">
-      <div role="radiogroup" aria-label={t("studies.teaching.blocks.viewLabel")} className="flex flex-wrap gap-2">
-        {(["continuous", "outline"] as const).map((mode) => (
-          <label key={mode} className="aw-choice aw-choice-card min-h-11 cursor-pointer gap-2 px-4">
-            <input type="radio" name={`${id}-view`} checked={view === mode} onChange={() => setView(mode)} className="sr-only" />
-            {t(mode === "continuous" ? "studies.teaching.blocks.viewContinuous" : "studies.teaching.blocks.viewOutline")}
-          </label>
-        ))}
-      </div>
       {top.length === 0 && <p className="m-0 text-text-muted">{t("studies.teaching.blocks.empty")}</p>}
       {top.map((block) => renderBlock(block, null))}
       <AddBlock label={t("studies.teaching.blocks.add")} onAdd={(type) => add(type, null)} />
       {error && <p role="alert" className="m-0 text-danger">{error}</p>}
     </div>
+  );
+}
+
+/** The view choice for a block teaching, shown in the teaching's options (A.4.3). */
+export function CanvasViewChoice({ view, onView }: { view: CanvasView; onView: (view: CanvasView) => void }) {
+  const { t } = useTranslation();
+  const id = useId();
+  return (
+    <div role="radiogroup" aria-label={t("studies.teaching.blocks.viewLabel")} className="flex flex-wrap gap-1">
+      {(["continuous", "outline"] as const).map((mode) => (
+        <label key={mode} className="aw-choice aw-choice-card min-h-11 cursor-pointer gap-2 px-3">
+          <input type="radio" name={`${id}-view`} checked={view === mode} onChange={() => onView(mode)} className="sr-only" />
+          {t(mode === "continuous" ? "studies.teaching.blocks.viewContinuous" : "studies.teaching.blocks.viewOutline")}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * A.4.3 (#25): one block of a teaching, writing first. Its heading, a quiet
+ * but persistent "Leader only" mark on private content, and one "…" that
+ * holds everything else: guidance, who it is for, its heading, moving,
+ * duplicating, adding inside a section and deleting (with a named
+ * confirmation). Nothing changes visibility silently.
+ */
+function BlockFrame({
+  id,
+  block,
+  content,
+  name,
+  guidance,
+  heading,
+  children,
+  onMove,
+  onDuplicate,
+  onDelete,
+  onVisibility,
+  onTitle,
+  onAdd,
+}: {
+  id: string;
+  block: TeachingBlock;
+  /** The writing block shown inside this frame when it is one unit with its section (A.4.3). */
+  content?: TeachingBlock;
+  name: string;
+  guidance: string;
+  heading: ReactNode;
+  children: ReactNode;
+  onMove: (block: TeachingBlock, delta: -1 | 1) => void;
+  onDuplicate: () => void;
+  onDelete: () => void;
+  onVisibility: (participantFacing: boolean) => void;
+  onTitle: (title: string) => void;
+  onAdd?: (type: string) => void;
+}) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [hints, setHints] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const panelId = `${id}-${block.id}-options`;
+  const writing = content ?? block;
+  // Private if the writing is for the leader (or its whole section is).
+  const leaderOnly = !writing.participantFacing || !block.participantFacing;
+  return (
+    <>
+      <div className="flex min-h-11 items-center gap-2">
+        <div className="min-w-0 flex-1">{heading}</div>
+        {leaderOnly && (
+          <span data-leader-only className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border-subtle px-2 py-0.5 text-[0.8125rem] text-text-muted" title={t("studies.teaching.blocks.leaderOnly")}>
+            <Lock className="size-3" aria-hidden="true" />
+            {t("studies.teaching.blocks.leaderBadge")}
+          </span>
+        )}
+        <button
+          ref={toggle}
+          type="button"
+          aria-expanded={open}
+          aria-controls={open ? panelId : undefined}
+          aria-label={t("studies.teaching.blocks.options", { name })}
+          title={t("studies.teaching.blocks.options", { name })}
+          onClick={() => setOpen((v) => !v)}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
+        >
+          <MoreHorizontal className="size-4" aria-hidden="true" />
+        </button>
+      </div>
+      {open && (
+        <div
+          id={panelId}
+          role="group"
+          aria-label={t("studies.teaching.blocks.options", { name })}
+          onKeyDown={(e) => { if (e.key === "Escape") { e.stopPropagation(); setOpen(false); toggle.current?.focus(); } }}
+          className="flex flex-col gap-2 rounded-aw bg-bg-secondary px-2 py-2 text-[0.9375rem]"
+        >
+          <div className="flex flex-wrap items-center gap-1">
+            {guidance && (
+              <button type="button" aria-pressed={hints} onClick={() => setHints(!hints)} className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-text-muted hover:bg-hover hover:text-text-strong">
+                <Info className="size-4" aria-hidden="true" />
+                {t("studies.teaching.blocks.guidance")}
+              </button>
+            )}
+            <BlockTools id={id} block={block} name={name} onMove={onMove} onDuplicate={onDuplicate} onDelete={() => setConfirming(true)} />
+            {onAdd && <AddBlock label={t("studies.teaching.blocks.addIn", { section: name })} onAdd={onAdd} />}
+          </div>
+          <label className="flex min-h-11 items-center gap-2">
+            <input type="checkbox" checked={writing.participantFacing} onChange={(e) => onVisibility(e.target.checked)} />
+            {t("studies.teaching.blocks.participant")}
+          </label>
+          {writing.blockType !== "section" && writing.blockType !== "qa" && (
+            <label className="flex flex-col gap-1">
+              <span>{t("studies.teaching.blocks.headingLabel")}</span>
+              <input
+                defaultValue={writing.title}
+                aria-label={t("studies.teaching.blocks.titleOf", { name })}
+                onBlur={(e) => { if (e.target.value !== writing.title) onTitle(e.target.value); }}
+                className="aw-input h-10 px-3 text-base"
+              />
+            </label>
+          )}
+        </div>
+      )}
+      {confirming && (
+        <div role="alertdialog" aria-label={t("studies.teaching.blocks.confirmDelete", { name })} className="flex flex-wrap items-center gap-2 border-l-[3px] border-danger bg-hover px-3 py-2">
+          <span>{t("studies.teaching.blocks.confirmDelete", { name })}</span>
+          <Button variant="danger" onClick={() => { setConfirming(false); onDelete(); }}>{t("common.delete")}</Button>
+          <Button autoFocus onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
+        </div>
+      )}
+      {writing.origin && (
+        <p data-origin={writing.origin.kind} className="type-meta m-0">
+          {writing.origin.kind === "citation" && writing.origin.citation
+            ? t("studies.teaching.fromStudy.quotation", { citation: writing.origin.citation })
+            : t("studies.teaching.fromStudy.provenance", { label: writing.origin.label || t("studies.teaching.fromStudy.item") })}
+        </p>
+      )}
+      {hints && guidance && <p data-block-hints className="m-0 max-w-prose border-l-[3px] border-border bg-bg-secondary px-3 py-2 text-[0.9375rem] text-text-muted">{guidance}</p>}
+      {children}
+    </>
   );
 }
 

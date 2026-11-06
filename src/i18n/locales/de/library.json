@@ -143,7 +143,9 @@
     "mentions": "Erwähnt {{passage}}",
     "section": "Überschrift nennt {{passage}}",
     "within": "Im Abschnitt mit der Überschrift {{passage}}",
-    "linked": "Verknüpft mit {{passage}}"
+    "linked": "Verknüpft mit {{passage}}",
+    "bookSection": "Buchabschnitt {{passage}} (breiter)",
+    "chapterSection": "Kapitelüberschrift {{passage}}"
   },
   "citations": {
     "removed": "(aus der Bibliothek entfernt)",
@@ -555,7 +557,10 @@
     "total": "von {{total}}",
     "go": "Zur Seite",
     "physical": "PDF-Seiten zählen ab Dateibeginn einschließlich Umschlag. Gedruckte Seitenzahlen können abweichen.",
-    "printed": "Gedruckte Seitenangabe: {{label}}."
+    "printed": "Gedruckte Seitenangabe: {{label}}.",
+    "indicator": "PDF-Seite {{page}} von {{total}}",
+    "jump": "Zu Seite springen",
+    "invalid": "Gib eine Seite von 1 bis {{total}} ein."
   },
   "structure": {
     "title": "Dokumentstruktur",
@@ -593,6 +598,41 @@
     },
     "mappingExample": "Apg 6",
     "originalBookmarks": "Originale PDF-Lesezeichen",
-    "originalBookmarksHelp": "Dies sind die eigenen Seitenziele der PDF, ohne die Abschnittskorrekturen der App. Ein Seitenziel belegt weder einen textgenau zugeordneten Abschnitt noch eine inhaltliche Kommentarrelevanz."
+    "originalBookmarksHelp": "Dies sind die eigenen Seitenziele der PDF, ohne die Abschnittskorrekturen der App. Ein Seitenziel belegt weder einen textgenau zugeordneten Abschnitt noch eine inhaltliche Kommentarrelevanz.",
+    "rebuildRecommended": "Diese Struktur wurde mit früheren Analyseregeln erstellt. Wähle „Struktur neu erstellen“, um die aktuellen Regeln anzuwenden; Korrekturen, Zitate und Markierungen bleiben erhalten.",
+    "diagnostic": {
+      "title": "Diagnosebericht (nur Metadaten)",
+      "help": "Öffne zuerst das Quellenergebnis der Bibelstelle und erstelle dann hier den Bericht. Er enthält den Datei-Fingerabdruck, erkannte Überschriften, die gereihten Kandidaten und die angezeigte Seite – nie Absatztext, Notizen oder Schlüssel. Prüfe ihn vor dem Teilen.",
+      "passage": "Zu prüfende Bibelstelle (optional)",
+      "create": "Bericht erstellen",
+      "copy": "Bericht kopieren",
+      "save": "Bericht speichern…",
+      "copied": "Bericht kopiert.",
+      "copyFailed": "Der Bericht konnte nicht kopiert werden. Verwende stattdessen „Bericht speichern…“.",
+      "fileType": "Diagnosebericht",
+      "saved": "Gespeichert unter {{path}}",
+      "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften"
+    }
+  },
+  "toolbar": {
+    "label": "Lesewerkzeuge",
+    "more": "Weitere Lese-Aktionen",
+    "settings": "Werkzeugleiste",
+    "customise": "Werkzeugleiste anpassen…",
+    "customiseTitle": "Lese-Werkzeugleiste",
+    "customiseHelp": "Wähle, welche Aktionen auf diesem Gerät als Symbole erscheinen. Die übrigen bleiben im Menü „…“. Zurück, Lesen/Original und die Seitenanzeige sind immer sichtbar.",
+    "showInToolbar": "In der Werkzeugleiste zeigen",
+    "reset": "Auf Standard zurücksetzen",
+    "items": {
+      "find": "In dieser Quelle suchen",
+      "contents": "Inhalt",
+      "history": "Zurück und vor in dieser Quelle",
+      "bookmark": "Lesezeichen an diese Stelle setzen",
+      "note": "Notiz hier hinzufügen",
+      "marks": "Anmerkungen",
+      "structure": "Dokumentstruktur",
+      "full": "Vollansicht öffnen",
+      "about": "Über diese Quelle"
+    }
   }
 }

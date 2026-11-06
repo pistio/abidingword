@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // From Sources to Study (v0.15): what is read in a source is added to the open Study as a
 // finding, with the source's words and where they are kept as its citation. All text is invented.
@@ -273,7 +274,7 @@ describe("source marks → Study", () => {
     const { user } = await renderApp(api);
     await openStudy(user, "Abiding");
     const reader = await openSource(user);
-    await user.click(within(reader).getByRole("button", { name: "Marks" }));
+    await readerAction(user, "Marks", reader);
     const list = await screen.findByRole("region", { name: "Marks in The True Vine" });
     const row = within(list).getByText("Glory is the goal.").closest("li")!;
     await user.click(within(row).getByRole("button", { name: "More actions" }));

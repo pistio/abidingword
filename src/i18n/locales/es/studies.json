@@ -1722,7 +1722,10 @@
     "newSectionTitle": "Nueva parte",
     "allSaved": "Todos los cambios guardados.",
     "saved": "Guardado",
-    "backTo": "Volver a {{place}}"
+    "backTo": "Volver a {{place}}",
+    "options": "Opciones del estudio",
+    "filterOn": "Las notas están filtradas.",
+    "filterClear": "Mostrar todas"
   },
   "sections": {
     "rename": "Cambiar el nombre de la parte {{title}}",
@@ -2359,8 +2362,12 @@
         "time": "Tiempo",
         "presentation_notes": "Notas de la presentación",
         "handout": "Hoja",
-        "outline_point": "Punto del bosquejo"
-      }
+        "outline_point": "Punto del bosquejo",
+        "qa": "Pregunta y respuesta"
+      },
+      "options": "Opciones de {{name}}",
+      "leaderBadge": "Solo para quien dirige",
+      "confirmDelete": "¿Eliminar «{{name}}» y su texto?"
     },
     "builtin": {
       "eva": {
@@ -2450,6 +2457,26 @@
       "linkStudy": "Vincular a un estudio bíblico",
       "openStudy": "Abrir el estudio vinculado",
       "standalone": "Enseñanza independiente"
+    },
+    "options": "Opciones de la enseñanza",
+    "fromStudy": {
+      "open": "Añadir desde el estudio bíblico…",
+      "title": "Añadir desde el estudio bíblico",
+      "help": "Elige qué copiar a esta enseñanza. Cada copia es editable, indica su origen, empieza solo para quien dirige y nunca se sincroniza con el estudio.",
+      "add": "Añadir lo seleccionado",
+      "none": "Este estudio bíblico aún no tiene nada que añadir.",
+      "added": "Añadido desde el estudio bíblico, solo para quien dirige. Comparte cada parte cuando esté lista.",
+      "provenance": "Del estudio bíblico: {{label}}",
+      "quotation": "Cita del estudio bíblico · {{citation}}",
+      "item": "un elemento",
+      "quote": "Cita",
+      "groups": {
+        "writing": "Texto",
+        "qa": "Preguntas y respuestas",
+        "finding": "Notas",
+        "citation": "Citas",
+        "passage": "Pasajes"
+      }
     }
   },
   "parts": {
@@ -2561,7 +2588,8 @@
       "includeFrame": "«{{opening}}» y «{{closing}}»",
       "writingSpace": "Espacio para escribir",
       "includePassage": "Incluir el pasaje bíblico ({{bible}})",
-      "includePassageNone": "Incluir el pasaje bíblico (elige primero una Biblia en el panel de la Biblia)"
+      "includePassageNone": "Incluir el pasaje bíblico (elige primero una Biblia en el panel de la Biblia)",
+      "answers": "Con las respuestas (solo preguntas compartidas)"
     },
     "action": {
       "print": "Imprimir o guardar como PDF…",
@@ -2834,5 +2862,30 @@
     "legacy": "Enseñanza independiente anterior",
     "legacyHint": "Gestiona las enseñanzas anteriores sin un estudio bíblico vinculado. No se vinculan automáticamente. Las nuevas enseñanzas comienzan en un estudio.",
     "noLegacy": "No hay enseñanzas independientes anteriores."
+  },
+  "qa": {
+    "add": "Pregunta y respuesta",
+    "label": "Pregunta y respuesta {{number}}",
+    "question": "Pregunta",
+    "answer": "Respuesta",
+    "options": "Opciones de {{label}}",
+    "moveUp": "Subir {{label}}",
+    "moveDown": "Bajar {{label}}",
+    "confirmDelete": "¿Eliminar {{label}} con su pregunta y respuesta?"
+  },
+  "qaExport": {
+    "open": "Exportar preguntas…",
+    "title": "Exportar preguntas",
+    "help": "Elige qué incluir. Solo se exporta lo escrito en las partes del estudio; tus notas aparte nunca.",
+    "mode": "Qué exportar",
+    "modes": {
+      "questions": "Solo preguntas",
+      "answers": "Preguntas y respuestas",
+      "full": "Estudio completo"
+    },
+    "save": "Guardar como Markdown…",
+    "fileType": "Markdown",
+    "saved": "Guardado en {{path}}",
+    "empty": "Aún no hay nada que exportar con esta opción."
   }
 }

@@ -1,3 +1,4 @@
+import { qaOf, qaText } from "@/features/studies/qa";
 import research0 from "../../resources/templates/word-research-study.json";
 import research1 from "../../resources/templates/topical-research-study.json";
 import research2 from "../../resources/templates/character-research-study.json";
@@ -1051,6 +1052,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       copyCitation: (original, saved) => { const place = citationPlaces.get(original); if (place) citationPlaces.set(saved, structuredClone(place)); },
       presentationFindings: (id) => state.presentation.presentations.filter(p => p.preparationId === id).flatMap(p => p.items.filter(i => i.source?.kind === "finding").map(i => i.source!.id)),
       studyPassages: () => state.passages,
+      studyBlocks: () => state.blocks.map((b) => ({ ...b, studyId: state.sections.find((s) => s.id === b.sectionId)?.studyId ?? "", sectionTitle: state.sections.find((s) => s.id === b.sectionId)?.title ?? "" })),
       ref: (canonical) => refFromCanonical(canonical, bookByCode),
     }),
     ...inquiryApi(state.inquiry, {
@@ -1458,9 +1460,16 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     },
     studyBlockCreate: async (input) => {
       find(state.sections, input.sectionId, "section");
+      let qaContent: string | null = null;
       if (input.data !== undefined) {
         const data: unknown = JSON.parse(input.data);
-        if (!input.fieldKey || !data || typeof data !== "object" || Array.isArray(data) || !Object.values(data).every(value => typeof value === "string")) throw new Error("Invalid entry data");
+        if (!data || typeof data !== "object" || Array.isArray(data) || !Object.values(data).every(value => typeof value === "string")) throw new Error("Invalid entry data");
+        // As the native core (A.4.4): Q&A data only on a free question block; its text is derived.
+        if (!input.fieldKey) {
+          const pair = qaOf(input.data);
+          if (input.blockType !== "question" || !pair) throw new Error("Invalid entry data");
+          qaContent = qaText(pair);
+        }
       }
       const t = now();
       const block: StudyBlock = {
@@ -1468,7 +1477,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         sectionId: input.sectionId,
         blockType: input.blockType,
         position: state.blocks.filter((b) => b.sectionId === input.sectionId).length,
-        content: input.content ?? "",
+        content: qaContent ?? input.content ?? "",
         fieldKey: input.fieldKey ?? null,
         data: input.data ?? null,
         createdAt: t,
@@ -1481,7 +1490,14 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyBlockUpdate: async (input) => {
       const block = find(state.blocks, input.id, "block");
       if (input.content !== undefined) block.content = input.content;
-      if (input.data !== undefined) block.data = input.data;
+      if (input.data !== undefined) {
+        if (!block.fieldKey) {
+          const pair = qaOf(input.data);
+          if (block.blockType !== "question" || !pair) throw new Error("Invalid entry data");
+          block.content = qaText(pair);
+        }
+        block.data = input.data;
+      }
       block.revision += 1;
       return { ...block };
     },
@@ -2471,6 +2487,17 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     libraryPdfStructureBuild: async () => {throw new Error("No PDF file in the memory library");},
     libraryPdfStructureCorrect: async () => {throw new Error("No PDF structure in the memory library");},
     libraryPdfStructureUndo: async () => {throw new Error("No PDF structure in the memory library");},
+    libraryPdfStructureDiagnostic: async (sourceId, passage, observed) => ({
+      schema: "abidingword.pdf-structure-diagnostic/1", appVersion: "memory", generatedAt: new Date(0).toISOString(),
+      privacy: "Metadata only.",
+      source: { id: sourceId, fileSha256: null, fileSizeBytes: null, language: null, indexLanguage: "En", segmentCount: 0, pagesWithText: 0 },
+      structure: { status: "none", analysis: null, currentAnalysis: 2, rebuildRecommended: true, pageCount: null, headingCount: 0, listingPages: [], corrections: 0, byScope: {}, byBasis: {} },
+      headings: [],
+      query: passage ? { input: passage, canonical: null, verdict: "No place in this source shares a verse with the passage.", candidates: [], readerTarget: null } : null,
+      readerObserved: observed,
+    }),
+    chooseDiagnosticFile: async () => null,
+    libraryPdfStructureDiagnosticSave: async () => {throw new Error("No PDF structure in the memory library");},
     librarySourceContents: async (sourceId) => {
       liveSource(sourceId);
       return contentsOf.get(sourceId) ?? [];

@@ -141,6 +141,10 @@ pub struct AssistInput {
     pub action: Option<AssistAction>,
     pub part: Option<Part>,
     pub point_id: Option<String>,
+    /// A.4.4 (#19): the block of a block teaching the text belongs to. Block
+    /// teachings have no points; their writing is identified by its block.
+    #[serde(default)]
+    pub block_id: Option<String>,
     /// Exactly the person's text being worked on (the part, or a selection
     /// inside it), as it is on screen now.
     pub text: String,
@@ -351,14 +355,26 @@ pub fn assemble(conn: &Connection, input: &AssistInput) -> AppResult<Context> {
     let part = input.part.unwrap_or(Part::Whole);
     let prep = teaching::get(conn, &input.preparation_id)?;
     let point_id = input.point_id.as_deref().filter(|p| !p.is_empty());
+    // A.4.4 (#19): the writing must still be where it was asked from. A.3 sent a
+    // block teaching's body as a "point" part without a point, and the request
+    // failed as "This item could not be found" before any provider was called.
+    let block = match input.block_id.as_deref().filter(|b| !b.is_empty()) {
+        Some(id) => Some(
+            prep.blocks
+                .iter()
+                .find(|b| b.id == id)
+                .ok_or_else(stale_target)?,
+        ),
+        None => None,
+    };
     let point_index = match point_id {
         Some(id) => Some(
             prep.points
                 .iter()
                 .position(|p| p.id == id)
-                .ok_or_else(|| AppError::not_found("teaching point", id))?,
+                .ok_or_else(stale_target)?,
         ),
-        None if part.is_point() => return Err(AppError::not_found("teaching point", "")),
+        None if part.is_point() && block.is_none() => return Err(stale_target()),
         None => None,
     };
     let text = input.text.trim().to_string();
@@ -380,6 +396,9 @@ pub fn assemble(conn: &Connection, input: &AssistInput) -> AppResult<Context> {
         .iter()
         .filter(|p| !p.title.trim().is_empty() || !p.explanation.trim().is_empty())
         .count()
+        + writing_blocks(&prep)
+            .filter(|b| !b.body.trim().is_empty())
+            .count()
         >= 2;
     let grounded = match action {
         a if a.is_whole() => whole_has_content,
@@ -428,13 +447,14 @@ pub fn assemble(conn: &Connection, input: &AssistInput) -> AppResult<Context> {
     }
 
     let shape = Shape::of(prep.kind.as_deref());
-    let focus = match point_index {
-        Some(i) => format!(
+    let focus = match (point_index, block) {
+        (Some(i), _) => format!(
             "{} — {}",
             point_label(shape, i, &prep.points[i]),
             shape.field(part, prep.points[i].kind.as_deref())
         ),
-        None => part.label().to_string(),
+        (None, Some(b)) if !b.title.trim().is_empty() => cut(&b.title, 80),
+        _ => part.label().to_string(),
     };
 
     Ok(Context {
@@ -451,17 +471,101 @@ pub fn assemble(conn: &Connection, input: &AssistInput) -> AppResult<Context> {
         target_audience: cut(&input.audience, 200),
         target_language: cut(&input.language, 60),
         ui_language: cut(&input.ui_language, 20),
-        nearby: nearby(&prep, action, part, point_index),
+        nearby: {
+            let mut near = nearby(&prep, action, part, point_index);
+            near.extend(nearby_blocks(&prep, action, block.map(|b| b.id.as_str())));
+            near
+        },
         passages: passages(conn, &prep, point_id)?,
         findings,
     })
 }
 
+/// The answer when the writing a request was made from is no longer there
+/// (deleted, replaced or reloaded elsewhere): say what to do, never apply to
+/// other text, never call the provider.
+fn stale_target() -> AppError {
+    AppError::Assistant(UserMessage::new(
+        "assistant.staleTarget",
+        "This part has changed or was removed since you asked. Close the help, check the text and ask again.",
+    ))
+}
+
+/// A block teaching's writing blocks, in their order on screen (sections hold
+/// headings, not writing).
+fn writing_blocks(
+    prep: &TeachingPreparation,
+) -> impl Iterator<Item = &crate::domain::teaching::TeachingBlock> {
+    fn visit<'a>(
+        all: &'a [crate::domain::teaching::TeachingBlock],
+        parent: Option<&str>,
+        out: &mut Vec<&'a crate::domain::teaching::TeachingBlock>,
+    ) {
+        let mut here: Vec<_> = all
+            .iter()
+            .filter(|b| b.parent_id.as_deref() == parent)
+            .collect();
+        here.sort_by_key(|b| b.position);
+        for block in here {
+            if block.block_type != "section" {
+                out.push(block);
+            }
+            visit(all, Some(&block.id), out);
+        }
+    }
+    let mut out = Vec::new();
+    visit(&prep.blocks, None, &mut out);
+    out.into_iter()
+}
+
+/// The writing in the blocks around the one worked on (or all of them, for a
+/// review of the whole), within the same limits as points.
+fn nearby_blocks(
+    prep: &TeachingPreparation,
+    action: AssistAction,
+    focus: Option<&str>,
+) -> Vec<(String, String)> {
+    let whole = action.is_whole() || (action == AssistAction::Free && focus.is_none());
+    let (each, total) = if whole {
+        (WHOLE_TOTAL_MAX / 4, WHOLE_TOTAL_MAX)
+    } else {
+        (NEARBY_EACH_MAX, NEARBY_TOTAL_MAX)
+    };
+    let blocks: Vec<_> = writing_blocks(prep).collect();
+    let at = focus.and_then(|id| blocks.iter().position(|b| b.id == id));
+    if !whole && at.is_none() {
+        return Vec::new();
+    }
+    let mut used = 0usize;
+    let mut out = Vec::new();
+    for (i, block) in blocks.iter().enumerate() {
+        if Some(i) == at || block.body.trim().is_empty() {
+            continue;
+        }
+        if !whole && at.is_some_and(|a| a.abs_diff(i) > 1) {
+            continue;
+        }
+        let text = cut(&block.body, each);
+        used += text.chars().count();
+        if used > total {
+            break;
+        }
+        let label = if block.title.trim().is_empty() {
+            "Block".to_string()
+        } else {
+            cut(&block.title, 80)
+        };
+        out.push((label, text));
+    }
+    out
+}
+
 /// Whether the person has written anything in the teaching yet.
 fn has_writing(prep: &TeachingPreparation) -> bool {
-    [&prep.introduction, &prep.conclusion]
-        .iter()
-        .any(|t| !t.trim().is_empty())
+    writing_blocks(prep).any(|b| !b.body.trim().is_empty())
+        || [&prep.introduction, &prep.conclusion]
+            .iter()
+            .any(|t| !t.trim().is_empty())
         || prep
             .central_message
             .as_deref()

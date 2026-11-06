@@ -134,7 +134,9 @@
     "mentions": "{{passage}} 언급",
     "section": "제목에 {{passage}} 표시",
     "within": "{{passage}} 제목의 부분 안",
-    "linked": "{{passage}}와(과) 연결됨"
+    "linked": "{{passage}}와(과) 연결됨",
+    "bookSection": "책 단위 부분 {{passage}}(더 넓음)",
+    "chapterSection": "장 제목 {{passage}}"
   },
   "citations": {
     "removed": "(자료실에서 제거됨)",
@@ -513,7 +515,10 @@
     "total": "/ {{total}}",
     "go": "페이지로 이동",
     "physical": "PDF 페이지는 표지를 포함한 파일의 첫 장부터 셉니다. 인쇄된 쪽수와 다를 수 있습니다.",
-    "printed": "인쇄된 쪽 표시: {{label}}."
+    "printed": "인쇄된 쪽 표시: {{label}}.",
+    "indicator": "PDF {{total}}쪽 중 {{page}}쪽",
+    "jump": "쪽으로 이동",
+    "invalid": "1부터 {{total}} 사이의 쪽을 입력하세요."
   },
   "structure": {
     "title": "문서 구조",
@@ -551,6 +556,41 @@
     },
     "mappingExample": "행 6",
     "originalBookmarks": "원본 PDF 책갈피",
-    "originalBookmarksHelp": "앱에서 수정한 구간 정보가 아닌 PDF 자체의 페이지 위치입니다. 페이지 위치만으로는 정확한 텍스트 구간이나 주석의 관련성을 확인할 수 없습니다."
+    "originalBookmarksHelp": "앱에서 수정한 구간 정보가 아닌 PDF 자체의 페이지 위치입니다. 페이지 위치만으로는 정확한 텍스트 구간이나 주석의 관련성을 확인할 수 없습니다.",
+    "rebuildRecommended": "이 구조는 이전 분석 규칙으로 만들어졌습니다. 현재 규칙을 적용하려면 ‘구조 다시 분석’을 선택하세요. 수정 사항, 인용과 표시는 유지됩니다.",
+    "diagnostic": {
+      "title": "진단 보고서(메타데이터만)",
+      "help": "먼저 성경 구절의 자료 결과를 연 다음 여기에서 보고서를 만드세요. 파일 지문, 감지된 제목, 순위가 매겨진 후보와 읽기 화면의 페이지를 기록하며, 본문 문단, 메모, 키는 포함하지 않습니다. 공유하기 전에 확인하세요.",
+      "passage": "확인할 구절(선택)",
+      "create": "보고서 만들기",
+      "copy": "보고서 복사",
+      "save": "보고서 저장…",
+      "copied": "보고서를 복사했습니다.",
+      "copyFailed": "보고서를 복사하지 못했습니다. 대신 ‘보고서 저장…’을 사용하세요.",
+      "fileType": "진단 보고서",
+      "saved": "{{path}}에 저장했습니다",
+      "file": "파일 SHA-256 {{hash}} · {{pages}}쪽 · 제목 {{headings}}개"
+    }
+  },
+  "toolbar": {
+    "label": "읽기 도구",
+    "more": "읽기 작업 더 보기",
+    "settings": "도구 모음",
+    "customise": "도구 모음 사용자화…",
+    "customiseTitle": "읽기 도구 모음",
+    "customiseHelp": "이 기기에서 아이콘으로 표시할 작업을 고르세요. 나머지는 ‘…’ 메뉴에 남습니다. 뒤로, 읽기/원본, 쪽 표시는 항상 보입니다.",
+    "showInToolbar": "도구 모음에 표시",
+    "reset": "기본값으로 되돌리기",
+    "items": {
+      "find": "이 자료에서 찾기",
+      "contents": "목차",
+      "history": "이 자료에서 뒤로·앞으로",
+      "bookmark": "이 위치에 책갈피 추가",
+      "note": "여기에 메모 추가",
+      "marks": "표시",
+      "structure": "문서 구조",
+      "full": "전체 화면으로 읽기",
+      "about": "이 자료에 대하여"
+    }
   }
 }

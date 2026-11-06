@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { openInfo, openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 it("confirms a named Study, exposes durable Trash and restores the same identity without relinking Teaching", async () => {
   const api = createMemoryApi();
@@ -10,6 +11,7 @@ it("confirms a named Study, exposes durable Trash and restores the same identity
   const teaching = await api.teachingCreate({ studyId: study.id, title: "Saved teaching" });
   const { user } = await renderApp(api);
   await user.click(await screen.findByRole("button", { name: /Romans research/ }));
+  await openStudyOptions(user);
   const info = await openInfo(user, "Bible Study information");
   await user.click(within(info).getByRole("button", { name: "Move to Trash" }));
   expect((await api.studyGet(study.id)).study.id).toBe(study.id);

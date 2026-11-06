@@ -17,6 +17,7 @@ pub mod integrity;
 pub mod library;
 pub mod library_manage;
 pub mod migrations;
+pub mod pdf_diagnostic;
 pub mod pdf_structures;
 pub mod presentation_templates;
 pub mod presentations;

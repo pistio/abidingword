@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 type User = Awaited<ReturnType<typeof renderApp>>["user"];
 
@@ -59,6 +60,7 @@ describe("creating a study", () => {
     await user.type(ask(), "John 15:1-11");
     await user.click(screen.getByRole("button", { name: "Create study" }));
     // Bible Teaching is derived from Bible Study: a passage study, with its simple template…
+    await openStudyOptions(user);
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
     const study = api.state.studies[0]!;
     expect(study.studyType).toBe("passage");
@@ -123,19 +125,23 @@ describe("the study page", () => {
     expect(screen.queryByRole("button", { name: /Duplicate/ })).not.toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "Related studies" })).not.toBeInTheDocument();
     expect(screen.queryByText(/Changes are saved automatically/)).not.toBeInTheDocument();
+    await openStudyOptions(user);
     expect(screen.getByRole("button", { name: "John 15:1–11" })).toBeInTheDocument();
     expect(screen.queryByText("Primary")).not.toBeInTheDocument();
 
+    await openStudyOptions(user);
     const toggle = screen.getByRole("button", { name: "Bible Study information" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
     await user.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await openStudyOptions(user);
     const details = screen.getByRole("dialog", { name: "Bible Study information" });
     expect(within(details).getByRole("combobox", { name: "Status" })).toBeInTheDocument();
     expect(within(details).getByRole("button", { name: /Duplicate/ })).toBeInTheDocument();
     expect(within(details).getByRole("textbox", { name: /Purpose/ })).toBeInTheDocument();
 
     await user.keyboard("{Escape}");
+    await openStudyOptions(user);
     expect(screen.queryByRole("dialog", { name: "Bible Study information" })).not.toBeInTheDocument();
     await waitFor(() => expect(toggle).toHaveFocus());
   });
@@ -148,6 +154,7 @@ describe("the study page", () => {
     await openStudy(user, /The True Vine/);
 
     expect(screen.queryByRole("button", { name: /Make .* the primary passage/ })).not.toBeInTheDocument();
+    await openStudyOptions(user);
     await user.click(screen.getByRole("button", { name: "Bible Study information" }));
     await user.click(await screen.findByRole("button", { name: /Make Romans 8:1–4 the primary passage/ }));
     await waitFor(() => expect(api.state.passages.find((p) => p.reference.canonical === "ROM.8.1-ROM.8.4")?.role).toBe("primary"));
@@ -159,7 +166,9 @@ describe("the study page", () => {
     const { user } = await renderApp(api);
     await openStudy(user, /Romans 8/);
     expect(screen.queryByRole("button", { name: "Galatians 4" })).not.toBeInTheDocument();
+    await openStudyOptions(user);
     await user.click(screen.getByRole("button", { name: "Bible Study information" }));
+    await openStudyOptions(user);
     const info = await screen.findByRole("dialog", { name: "Bible Study information" });
     await user.click(within(info).getByRole("button", { name: "Galatians 4" }));
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Galatians 4");

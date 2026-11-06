@@ -4,6 +4,7 @@ import i18n from "@/i18n";
 import { createFakePdfEngine, installIntersectionObserver } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction, readerActionEnabled } from "../support/readerActions";
 
 // All library text here is invented for the tests.
 const VINE: SourceFixture = {
@@ -274,7 +275,8 @@ describe("Original inside the Sources pane", () => {
     const view = within(within(reader).getByRole("group", { name: "View" }));
     expect(view.getByRole("button", { name: "Reading" })).toHaveAttribute("aria-pressed", "true");
     expect(view.getByRole("button", { name: "Original" })).toHaveAttribute("aria-pressed", "false");
-    expect(within(reader).getByRole("button", { name: "Open full reader" })).toBeInTheDocument();
+    // A.4.2: Open full reader is in the toolbar's "…" menu by default.
+    expect(within(reader).getByRole("button", { name: "More reader actions" })).toBeInTheDocument();
     expect(within(reader).queryByTestId("pdf-viewer")).toBeNull();
     expect(engine.opened).toEqual([]);
   });
@@ -303,14 +305,14 @@ describe("Original inside the Sources pane", () => {
     expect(screen.getByRole("main", { name: "Study" })).toBeInTheDocument();
   });
 
-  it("keeps Back, the view switch and Open full reader outside whatever scrolls", async () => {
+  it("keeps Back, the view switch and the reader menu outside whatever scrolls", async () => {
     const { api, engine } = setup();
     const { user } = await renderApp(api, { pdfEngine: engine });
     await user.click((await within(sourcesPane()).findAllByRole("button", { name: /^Notes on the Vine/ }))[0]!);
     const reader = await pane();
     const controls = [
       within(reader).getByRole("button", { name: "Back to Sources" }),
-      within(reader).getByRole("button", { name: "Open full reader" }),
+      within(reader).getByRole("button", { name: "More reader actions" }),
       within(reader).getByRole("group", { name: "View" }),
     ];
     const outsideScrolling = (scroller: Element) => controls.every((el) => !scroller.contains(el));
@@ -333,7 +335,7 @@ describe("Original inside the Sources pane", () => {
     const reader = await within(sourcesPane()).findByRole("region", { name: "Ein Aufsatz" });
     expect(within(reader).queryByRole("group", { name: "View" })).toBeNull();
     expect(within(reader).queryByRole("button", { name: "Original" })).toBeNull();
-    expect(within(reader).getByRole("button", { name: "Open full reader" })).toBeInTheDocument();
+    expect(await readerActionEnabled(user, "Open full reader", reader)).toBe(true);
   });
 
   it("keeps Reading usable when the original cannot be shown in the pane", async () => {
@@ -470,7 +472,7 @@ describe("the place is kept between the pane and the full reader", () => {
     expect(pageBox()).toHaveValue("4");
 
     // Expand: still Original, still page 4 (not Reading from the start).
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     expect(await screen.findByRole("heading", { level: 1, name: "Notes on the Vine" })).toBeInTheDocument();
     expect(screen.queryByRole("main", { name: "Study" })).toBeNull();
     await screen.findByRole("toolbar", { name: "Original document controls" });
@@ -493,7 +495,7 @@ describe("the place is kept between the pane and the full reader", () => {
     const { api, engine } = setup();
     const { user } = await renderApp(api, { pdfEngine: engine });
     const reader = await openCitationInPane(user);
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     await screen.findByRole("heading", { level: 1, name: "Notes on the Vine" });
     // Reading in the full reader, at the marked passage on page 3.
     await waitFor(() => expect(screen.getByTestId("reader-body").querySelector("[data-target]")).toHaveAttribute("data-seg-page", "3"));

@@ -3,6 +3,7 @@ import { afterEach, expect, it } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderApp, openSettingsSection } from "../support/render";
+import { openTeachingOptions } from "../support/studyActions";
 
 afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
 const pane = () => within(screen.getByRole("main", { name: "Study" }));
@@ -37,6 +38,7 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   await user.click(await pane().findByRole("button", { name: "Messages Project folder" }));
   await user.click(await pane().findByRole("button", { name: /Vine study/ }));
   await user.click(await pane().findByRole("button", { name: "Bible Teaching" }));
+  await openTeachingOptions(user);
   await user.click(await pane().findByText(/^Based on: Bible Study/));
   const select = await pane().findByRole("combobox", { name: "Bible Study (optional)" });
   expect(select).toHaveValue(study.id);
@@ -45,12 +47,15 @@ it("links and unlinks an existing Teaching without replacing its manuscript or s
   await user.click(pane().getByRole("button", { name: "Save study link" }));
   await waitFor(() => expect(api.state.teaching.preparations[0]!.studyId).toBeNull());
   expect((await api.teachingGet(teaching.id)).findings[0]).toMatchObject({ snapshot: true, finding: { content: finding.content } });
+  await openTeachingOptions(user);
   await user.click(pane().getByText(/^Link to Bible Study/));
   await user.selectOptions(pane().getByRole("combobox", { name: "Bible Study (optional)" }), study.id);
   await user.click(pane().getByRole("button", { name: "Save study link" }));
   await waitFor(() => expect(api.state.teaching.preparations[0]!.studyId).toBe(study.id));
   expect((await api.teachingGet(teaching.id)).findings).toHaveLength(1);
+  await openTeachingOptions(user);
   await user.click(pane().getByRole("button", { name: "Bible Teaching information" }));
+  await openTeachingOptions(user);
   const info = await screen.findByRole("dialog", { name: "Bible Teaching information" });
   expect(within(info).getByText(/Exact saved words/)).toBeInTheDocument();
   expect(within(info).queryByRole("button", { name: /Remove.*Synthetic source/ })).toBeNull();
@@ -67,6 +72,8 @@ it.each(["en", "de", "fr", "es", "pt", "ko"])("opens existing standalone Teachin
   const data = await openSettingsSection(user, i18n.t("settings.sections.data"));
   await user.click(within(data).getByText(i18n.t("studies.files.legacy"), { selector: "summary" }));
   await user.click(await screen.findByRole("button", { name: "Existing message" }));
+  await screen.findByRole("textbox", { name: i18n.t("studies.teaching.titleLabel") });
+  await openTeachingOptions(user);
   await user.click(await screen.findByText(new RegExp(`^${i18n.t("studies.teaching.workspace.linkStudy")}`)));
   expect(await screen.findByRole("combobox", { name: i18n.t("studies.teaching.workspace.study") })).toHaveValue("");
   expect(api.state.studies).toHaveLength(0);

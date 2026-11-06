@@ -196,18 +196,49 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
             .collect::<Vec<_>>()
             .join(" ")
     };
-    let mut seen: HashMap<String, HashSet<u32>> = HashMap::new();
+    let mut seen: HashMap<String, (HashSet<u32>, Vec<f64>)> = HashMap::new();
+    let mut exact: HashMap<String, HashSet<u32>> = HashMap::new();
     for l in lines.iter().filter(|l| margin(l)) {
-        seen.entry(key(&l.text)).or_default().insert(l.page);
+        let entry = seen.entry(key(&l.text)).or_default();
+        entry.0.insert(l.page);
+        entry.1.push(l.size);
+        exact
+            .entry(l.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .or_default()
+            .insert(l.page);
     }
-    let running: HashSet<String> = seen
+    // A.4.1: numbers are ignored only for furniture no larger than the text
+    // (so "Kapitel 6" / "Kapitel 7" headings near the top of a page are not
+    // running heads), and a margin line set clearly larger than its running
+    // text (a chapter-opening title) is not furniture.
+    let mut all_weight: HashMap<i64, usize> = HashMap::new();
+    for l in lines {
+        *all_weight.entry(bucket(l.size)).or_default() += l.text.chars().count();
+    }
+    let text_size = all_weight
+        .iter()
+        .max_by_key(|(b, w)| (**w, -**b))
+        .map_or(0.0, |(b, _)| *b as f64 / 2.0);
+    let running: HashMap<String, f64> = seen
         .into_iter()
-        .filter(|(_, p)| p.len() >= 3)
-        .map(|(k, _)| k)
+        .filter(|(_, (p, _))| p.len() >= 3)
+        .map(|(k, (_, mut sizes))| {
+            sizes.sort_by(f64::total_cmp);
+            (k, sizes[sizes.len() / 2])
+        })
         .collect();
+    let is_running = |l: &Line| -> bool {
+        let Some(usual) = running.get(&key(&l.text)) else {
+            return false;
+        };
+        let repeated = exact
+            .get(&l.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .is_some_and(|p| p.len() >= 3);
+        (repeated || *usual <= text_size * 1.1) && l.size <= usual * 1.2
+    };
     let kept: Vec<&Line> = lines
         .iter()
-        .filter(|l| !(margin(l) && (is_folio(&l.text) || running.contains(&key(&l.text)))))
+        .filter(|l| !(margin(l) && (is_folio(&l.text) || is_running(l))))
         .collect();
 
     // The body size: the size most characters are set in.

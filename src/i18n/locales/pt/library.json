@@ -152,7 +152,9 @@
     "mentions": "Menciona {{passage}}",
     "section": "O título menciona {{passage}}",
     "within": "Na seção intitulada {{passage}}",
-    "linked": "Vinculado a {{passage}}"
+    "linked": "Vinculado a {{passage}}",
+    "bookSection": "Secção do livro {{passage}} (mais ampla)",
+    "chapterSection": "Título de capítulo {{passage}}"
   },
   "citations": {
     "removed": "(removida da biblioteca)",
@@ -597,7 +599,10 @@
     "total": "de {{total}}",
     "go": "Ir para a página",
     "physical": "As páginas PDF são contadas desde o início do arquivo, incluindo a capa. A numeração impressa pode ser diferente.",
-    "printed": "Número de página impresso: {{label}}."
+    "printed": "Número de página impresso: {{label}}.",
+    "indicator": "Página PDF {{page}} de {{total}}",
+    "jump": "Ir para a página",
+    "invalid": "Introduza uma página de 1 a {{total}}."
   },
   "structure": {
     "title": "Estrutura do documento",
@@ -635,6 +640,41 @@
     },
     "mappingExample": "Atos 6",
     "originalBookmarks": "Marcadores do PDF original",
-    "originalBookmarksHelp": "São os destinos de página do próprio PDF, sem as correções de seção do aplicativo. Um destino de página não comprova uma seção alinhada ao texto nem a relevância de um comentário."
+    "originalBookmarksHelp": "São os destinos de página do próprio PDF, sem as correções de seção do aplicativo. Um destino de página não comprova uma seção alinhada ao texto nem a relevância de um comentário.",
+    "rebuildRecommended": "Esta estrutura foi criada com regras de análise anteriores. Escolha «Analisar novamente» para aplicar as regras atuais; correções, citações e anotações são mantidas.",
+    "diagnostic": {
+      "title": "Relatório de diagnóstico (apenas metadados)",
+      "help": "Abra primeiro o resultado de fonte da passagem e depois crie aqui o relatório. Ele regista a impressão digital do ficheiro, os títulos detetados, os candidatos ordenados e a página mostrada — nunca texto de parágrafos, notas ou chaves. Reveja-o antes de partilhar.",
+      "passage": "Passagem a verificar (opcional)",
+      "create": "Criar relatório",
+      "copy": "Copiar relatório",
+      "save": "Guardar relatório…",
+      "copied": "Relatório copiado.",
+      "copyFailed": "Não foi possível copiar o relatório. Use «Guardar relatório…».",
+      "fileType": "Relatório de diagnóstico",
+      "saved": "Guardado em {{path}}",
+      "file": "SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos"
+    }
+  },
+  "toolbar": {
+    "label": "Ferramentas de leitura",
+    "more": "Mais ações de leitura",
+    "settings": "Barra de ferramentas",
+    "customise": "Personalizar a barra…",
+    "customiseTitle": "Barra de ferramentas de leitura",
+    "customiseHelp": "Escolha que ações aparecem como ícones neste dispositivo. As outras ficam no menu «…». Voltar, Leitura/Original e o indicador de página aparecem sempre.",
+    "showInToolbar": "Mostrar na barra",
+    "reset": "Repor predefinição",
+    "items": {
+      "find": "Procurar nesta fonte",
+      "contents": "Conteúdo",
+      "history": "Para trás e para a frente nesta fonte",
+      "bookmark": "Marcar este lugar",
+      "note": "Adicionar nota aqui",
+      "marks": "Marcas",
+      "structure": "Estrutura do documento",
+      "full": "Abrir leitor completo",
+      "about": "Sobre esta fonte"
+    }
   }
 }

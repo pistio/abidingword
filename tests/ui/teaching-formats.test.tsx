@@ -5,6 +5,7 @@ import { FORMAT_KINDS, TEACHING_FORMATS, formatOf, formatStarts } from "@/featur
 import { TEACHING_KINDS, type TeachingKind } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openTeachingOptions } from "../support/studyActions";
 
 // Bible Teaching in three formats (v0.19): a message, a group Bible study and
 // an interactive lesson. The kinds stored since v0.16 stay as they are; each
@@ -90,12 +91,16 @@ describe("older teachings", () => {
     const { api } = await setup([...TEACHING_KINDS]);
     const before = JSON.stringify(api.state.teaching.preparations);
     const user = await openTeaching(api);
+    await openTeachingOptions(user);
     await within(studyPane()).findByRole("combobox", { name: "Teaching:" });
     for (const prep of api.state.teaching.preparations) {
+      await openTeachingOptions(user);
       await user.selectOptions(within(studyPane()).getByRole("combobox", { name: "Teaching:" }), prep.id);
       const article = await within(studyPane()).findByRole("article", { name: prep.title });
       expect(within(article).getByDisplayValue("Kept point")).toBeInTheDocument();
+      await openTeachingOptions(user);
       await user.click(within(article).getByRole("button", { name: "Bible Teaching information" }));
+      await openTeachingOptions(user);
       const panel = await screen.findByRole("dialog", { name: "Bible Teaching information" });
       expect(within(panel).getByRole("combobox", { name: "Kind of teaching" })).toHaveValue(prep.kind);
       await user.keyboard("{Escape}");
@@ -108,7 +113,9 @@ describe("older teachings", () => {
     const { api } = await setup(["sermon"]);
     const user = await openTeaching(api);
     const article = await within(studyPane()).findByRole("article", { name: "Old sermon" });
+    await openTeachingOptions(user);
     await user.click(within(article).getByRole("button", { name: "Bible Teaching information" }));
+    await openTeachingOptions(user);
     const panel = await screen.findByRole("dialog", { name: "Bible Teaching information" });
     const kind = within(panel).getByRole("combobox", { name: "Kind of teaching" });
     expect(within(kind).getAllByRole("option").map(option => [option.textContent, (option as HTMLOptionElement).value])).toEqual([

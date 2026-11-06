@@ -32,6 +32,10 @@ interface FieldsEditorProps {
   section: StudySection;
   onChange: (section: StudySection) => void;
   onError: (message: string | null) => void;
+  /** A.4.3: each field's help text is shown on request (the part's Hints). */
+  showHelp?: boolean;
+  /** The part's title: a part with one writing field needs no second label above it. */
+  partTitle?: string;
 }
 
 /**
@@ -40,15 +44,16 @@ interface FieldsEditorProps {
  * study block that says which field it answers; the field definitions are
  * the part's own snapshot. Writing without a field stays below.
  */
-export function FieldsEditor({ section, onChange, onError }: FieldsEditorProps) {
+export function FieldsEditor({ section, onChange, onError, showHelp = true, partTitle }: FieldsEditorProps) {
   const fields = section.fields?.fields ?? [];
+  const single = fields.length === 1 && fields[0]?.kind === "writing";
   return (
     <div className="flex flex-col gap-5">
       {fields.map((field) =>
         field.kind === "text" || field.kind === "writing" ? (
-          <TextField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
+          <TextField key={field.key} section={section} field={field} onChange={onChange} onError={onError} showHelp={showHelp} soleOf={single ? partTitle : undefined} />
         ) : field.kind === "entries" ? (
-          <EntriesField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
+          <EntriesField key={field.key} section={section} field={field} onChange={onChange} onError={onError} showHelp={showHelp} />
         ) : <ResearchBlock key={field.key} section={section} field={field} onChange={onChange} onError={onError} />,
       )}
     </div>
@@ -60,13 +65,16 @@ interface FieldProps {
   field: TemplateField;
   onChange: (section: StudySection) => void;
   onError: (message: string | null) => void;
+  showHelp?: boolean;
+  /** The part's title when this is its only writing field: the label is then for screen readers only. */
+  soleOf?: string;
 }
 
 function labelOf(section: StudySection, field: TemplateField) {
   return field.label ?? structuredText(section, `fields.${field.key}.label`, field.key);
 }
 
-function TextField({ section, field, onChange, onError }: FieldProps) {
+function TextField({ section, field, onChange, onError, showHelp = true, soleOf }: FieldProps) {
   const api = useApi();
   const block = section.blocks.find((b) => b.fieldKey === field.key);
   const id = useId();
@@ -97,6 +105,8 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
         else onChange({ ...section, blocks: section.blocks.map(block => block.id === saved.id ? saved : block) });
       } catch (e) {
         onError(toApiError(e).message);
+        // A.4.3: the save indicator must say the save failed, never "Saved".
+        throw e;
       }
     },
     [api, ensure, onError, onChange, section],
@@ -110,32 +120,38 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
     el.style.height = `${Math.max(el.scrollHeight, field.kind === "writing" ? 288 : 72)}px`;
   }, [text, field.kind]);
 
+  const help = field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "");
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-[1rem] font-medium text-text-strong">
-        {labelOf(section, field)}
+      {/* A.4.3: a part's only writing field is labelled by the part (no repeated "Your answer" above it). */}
+      <label htmlFor={id} className={soleOf ? "sr-only" : "text-[1rem] font-medium text-text-strong"}>
+        {soleOf ? `${soleOf} — ${labelOf(section, field)}` : labelOf(section, field)}
       </label>
-      <p id={helpId} className="m-0 text-[0.9375rem] text-text-muted">
-        {field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}
-      </p>
+      {showHelp && help && (
+        <p id={helpId} className="m-0 text-[0.9375rem] text-text-muted">
+          {help}
+        </p>
+      )}
       <textarea
         id={id}
         ref={area}
         rows={field.kind === "writing" ? 10 : 3}
         value={text}
-        aria-describedby={helpId}
+        aria-describedby={showHelp && help ? helpId : undefined}
         onChange={(e) => {
           setText(e.target.value);
           schedule(e.target.value);
         }}
         onBlur={flush}
-        className={`${input} resize-none overflow-hidden`}
+        className={field.kind === "writing"
+          ? "block w-full resize-none overflow-hidden rounded-aw border border-transparent bg-field px-3 py-3 text-[1.0625rem] leading-relaxed text-text reading placeholder:text-text-muted hover:border-border-subtle focus:border-border-strong"
+          : `${input} resize-none overflow-hidden`}
       />
     </div>
   );
 }
 
-function EntriesField({ section, field, onChange, onError }: FieldProps) {
+function EntriesField({ section, field, onChange, onError, showHelp = true }: FieldProps) {
   const { t } = useTranslation();
   const api = useApi();
   const entries = section.blocks.filter((b) => b.fieldKey === field.key);
@@ -186,7 +202,7 @@ function EntriesField({ section, field, onChange, onError }: FieldProps) {
     <div role="group" aria-labelledby={headingId} className="flex flex-col gap-2">
       <div>
         <h3 id={headingId} className="m-0 text-[1rem] font-medium text-text-strong">{label}</h3>
-        <p className="m-0 text-[0.9375rem] text-text-muted">{field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}</p>
+        {showHelp && <p className="m-0 text-[0.9375rem] text-text-muted">{field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}</p>}
       </div>
       {entries.length === 0 && <p className="m-0 text-[0.9375rem] text-text-muted">{t("studies.fields.noEntries")}</p>}
       {entries.map((block, index) => (
@@ -243,6 +259,7 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
         await api.studyBlockUpdate({ id: block.id, content: joined(field, parsed), data: json });
       } catch (e) {
         onError(toApiError(e).message);
+        throw e;
       }
     },
     [api, block.id, field, onError],

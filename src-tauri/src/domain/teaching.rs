@@ -47,6 +47,8 @@ pub const TEACHING_BLOCK_TYPES: &[&str] = &[
     "presentation_notes",
     "handout",
     "outline_point",
+    // A.4.4 (#27): a paired question (title) and answer (body).
+    "qa",
 ];
 
 /// A block whose body is also one of the columns presentations already read.
@@ -64,7 +66,7 @@ pub const BLOCK_ROLES: &[&str] = &[
 pub fn block_is_private_by_default(block_type: &str) -> bool {
     !matches!(
         block_type,
-        "discussion_questions" | "handout" | "section" | "scripture" | "outline_point"
+        "discussion_questions" | "handout" | "section" | "scripture" | "outline_point" | "qa"
     )
 }
 
@@ -135,6 +137,9 @@ pub struct TeachingPreparation {
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct TeachingBlock {
+    /// A.4.4 (#27): where an editable copy came from (a Bible Study), never a live link.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin: Option<BlockOrigin>,
     pub id: String,
     pub parent_id: Option<String>,
     pub position: i64,
@@ -266,6 +271,8 @@ pub struct NewTeachingBlock {
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct CreateTeachingBlock {
+    /// A.4.4: provenance of a copy made from the teaching's Bible Study.
+    pub origin: Option<BlockOrigin>,
     pub preparation_id: String,
     pub parent_id: Option<String>,
     /// Insert after this sibling; at the end of the group when absent.
@@ -460,4 +467,41 @@ pub struct UpdateTeachingTemplate {
 
 fn optional_study_id<'de, D: serde::Deserializer<'de>>(d: D) -> Result<String, D::Error> {
     Ok(Option::<String>::deserialize(d)?.unwrap_or_default())
+}
+
+/// A.4.4 (#27): provenance of a block copied from the teaching's Bible Study.
+/// A snapshot: later changes on either side are never synchronised.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase", default)]
+pub struct BlockOrigin {
+    pub study_id: String,
+    /// writing, qa, finding, citation, passage.
+    pub kind: String,
+    pub item_id: String,
+    /// The item's name as the person saw it when copying (bounded).
+    pub label: String,
+    pub copied_at: String,
+    /// For a quotation: its citation line (title, author, place).
+    pub citation: Option<String>,
+}
+
+/// What "Add from Bible Study" asks for: items of the teaching's own study.
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct AddFromStudy {
+    pub preparation_id: String,
+    /// The section to add into; the end of the teaching when absent.
+    pub parent_id: Option<String>,
+    pub items: Vec<StudyItemRef>,
+}
+
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(rename_all = "camelCase", default)]
+pub struct StudyItemRef {
+    /// writing (a study block), qa (a question-and-answer block), finding,
+    /// citation (a finding's source), passage (a study passage).
+    pub kind: String,
+    pub id: String,
+    /// The interface's name for it (e.g. "Beobachtung"); text is read from the study.
+    pub label: String,
 }

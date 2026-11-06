@@ -4,6 +4,7 @@ import i18n from "@/i18n";
 import type { InquiryReply } from "@/types/inquiry";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 // Help with a library source and comparing passages (v0.20): from the words
 // the person selected only, named with the source's title, author and place;
@@ -188,6 +189,7 @@ describe("Help with a library source", () => {
 
     await user.click(within(panel).getByRole("button", { name: "Ask" }));
     const card = (await within(panel).findAllByRole("article"))[0]!;
+    await openPartOptions(user);
     await user.click(within(card).getByRole("button", { name: "Add to Bible Study…" }));
     const form = within(card).getByRole("form", { name: "Add this point as a note" });
     expect(within(form).getByRole("combobox", { name: "Kind of note" })).toHaveDisplayValue("Quotation");

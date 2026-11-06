@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // Scripture links inside Library sources, Reading view (v0.11). All text is invented.
 
@@ -124,7 +125,7 @@ describe("Scripture references in the Reading view", () => {
   it("from the full reader, opens Scripture and keeps the source beside it", async () => {
     const { user } = await renderApp(withLibrary(MANY));
     await openSource(user, "Notes on Abiding");
-    await user.click(within(sourcesPane()).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", sourcesPane());
     await screen.findByRole("heading", { level: 1, name: "Notes on Abiding" });
     const full = document.body;
     expect(screen.queryByRole("complementary", { name: "Scripture" })).not.toBeInTheDocument();

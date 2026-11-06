@@ -6,6 +6,7 @@ import { describeMorph } from "@/features/scripture/morphology";
 import type { MorphDescribed, WordReport } from "@/types/scripture";
 import { createMemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 // Original-language research (v0.21): lemma search, word details and the Word
 // Study, from a Bible's own word annotations. CONSTRUCTED TEST TEXT, not Bible
@@ -229,6 +230,7 @@ describe("A Word Study's lemma", () => {
     await api.studyUpdate({ id: study.study.id, details: { lemma: "בָּרָא", lexicalId: "H1254b", translationId: tagged.id } });
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Create/ }));
+    await openStudyOptions(user);
     await user.click(await screen.findByRole("button", { name: "Bible Study information" }));
     expect(screen.getByRole("textbox", { name: "Lexical number" })).toHaveValue("H1254b");
     await user.click(screen.getByRole("button", { name: "Find this lemma" }));
@@ -249,6 +251,7 @@ describe("A Word Study's lemma", () => {
     await api.studyCreate({ projectId: project.id, title: "Grace", studyType: "word" });
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Grace/ }));
+    await openStudyOptions(user);
     await user.click(await screen.findByRole("button", { name: "Bible Study information" }));
     expect(screen.queryByRole("textbox", { name: "Lexical number" })).toBeNull();
     expect(screen.queryByText(/lemma search is not available/)).toBeNull();

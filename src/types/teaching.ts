@@ -128,12 +128,13 @@ export const TEACHING_BLOCK_TYPES = [
   "presentation_notes",
   "handout",
   "outline_point",
+  "qa",
 ] as const;
 export type TeachingBlockType = (typeof TEACHING_BLOCK_TYPES)[number];
 
 /** True when a new block of this kind is for participants unless the person says otherwise. */
 export function blockParticipantDefault(blockType: string): boolean {
-  return blockType === "discussion_questions" || blockType === "handout" || blockType === "section" || blockType === "scripture" || blockType === "outline_point";
+  return blockType === "discussion_questions" || blockType === "handout" || blockType === "section" || blockType === "scripture" || blockType === "outline_point" || blockType === "qa";
 }
 
 export interface TeachingBlock {
@@ -148,6 +149,27 @@ export interface TeachingBlock {
   role: string | null;
   guidanceKey: string | null;
   pointId: string | null;
+  /** A.4.4 (#27): where an editable copy came from (its Bible Study); never a live link. */
+  origin?: BlockOrigin | null;
+}
+
+/** A.4.4 (#27): the provenance of a block copied from the teaching's Bible Study. */
+export interface BlockOrigin {
+  studyId: string;
+  /** writing, qa, finding, citation, passage. */
+  kind: string;
+  itemId: string;
+  label: string;
+  copiedAt: string;
+  citation?: string | null;
+}
+
+/** An item of the teaching's Bible Study chosen in "Add from Bible Study". */
+export interface StudyItemRef {
+  kind: "writing" | "qa" | "finding" | "citation" | "passage";
+  id: string;
+  /** The interface's name for it; its text is read from the study. */
+  label: string;
 }
 
 /** Fields left out are unchanged; "" clears an optional one. */
@@ -255,6 +277,8 @@ export interface AssistInput {
   action: AssistAction;
   part: TeachingPart;
   pointId?: string | null;
+  /** A.4.4 (#19): the block of a block teaching the text belongs to. */
+  blockId?: string | null;
   /** Exactly the person's text being worked on (the part, or the selected words). */
   text: string;
   selected?: boolean;

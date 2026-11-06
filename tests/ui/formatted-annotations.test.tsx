@@ -4,6 +4,7 @@ import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { FORMATTED_BOOK } from "../support/epubFixture";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // Marks in the formatted Original of an EPUB or DOCX (v0.14): one mark, made in Reading, drawn on
 // the published page too, only where its stored words are found exactly there. All text is invented.
@@ -75,7 +76,7 @@ describe("marks in the formatted Original", () => {
       shown.push(this);
     };
     try {
-      await user.click(within(reader).getByRole("button", { name: "Marks" }));
+      await readerAction(user, "Marks", reader);
       const panel = await screen.findByRole("region", { name: "Marks in A Formatted Book" });
       await user.click(within(panel).getAllByRole("button").find((b) => b.closest("li"))!);
       await waitFor(() => expect(shown.at(-1)).toBe(page().querySelector("mark[data-mark='green']")));

@@ -14,6 +14,11 @@ use super::adapters::{
 use super::generated_contents;
 
 pub const VERSION: i64 = 1;
+/// The structure-analysis rules a document was built with. The stored JSON
+/// shape stays [`VERSION`] 1 (so A.3 documents still load); a document built
+/// before A.4.1 reads as 0 and the diagnostic recommends **Rebuild structure**.
+/// 2: margin-only, size-aware running furniture; Contents listings of books.
+pub const ANALYSIS: u32 = 2;
 pub const MAX_HEADINGS: usize = 5_000;
 pub const MAX_LINES: usize = 120_000;
 pub const MAX_CHARS: usize = 8_000_000;
@@ -94,6 +99,8 @@ pub struct TextRole {
 #[serde(rename_all = "camelCase")]
 pub struct PdfStructure {
     pub version: i64,
+    #[serde(default)]
+    pub analysis: u32,
     pub page_count: u32,
     pub complete: bool,
     pub tagged: bool,
@@ -190,6 +197,99 @@ fn align(piece: &Piece<'_>, line: &str) -> Option<(u32, u32)> {
     ))
 }
 
+fn in_margin(anchor: &Anchor) -> bool {
+    anchor.top_fraction() < 0.10 || anchor.top_fraction() > 0.90
+}
+
+/// Running heads/feet ignore their numbers: "Apostelgeschichte 6" and
+/// "Apostelgeschichte 7" are the same furniture.
+fn furniture_key(text: &str) -> Option<String> {
+    let key: String = compact(
+        &text
+            .chars()
+            .filter(|c| !c.is_ascii_digit())
+            .collect::<String>(),
+    )
+    .to_lowercase();
+    (key.chars().filter(|c| c.is_alphabetic()).count() >= 2).then_some(key)
+}
+
+/// The size most characters are set in.
+fn body_size(all: &[(Anchor, String, bool, u32)]) -> f64 {
+    let mut weight: HashMap<i64, usize> = HashMap::new();
+    for (a, _, _, _) in all {
+        *weight.entry((a.size * 2.0).round() as i64).or_default() += a.original_text.len();
+    }
+    weight
+        .into_iter()
+        .max_by_key(|(b, w)| (*w, -*b))
+        .map_or(0.0, |(b, _)| b as f64 / 2.0)
+}
+
+/// Running furniture: text in the top or bottom margin of three or more pages,
+/// set in its usual size.
+///
+/// A.4.1: only *margin* occurrences are furniture. A.3 reclassified every line
+/// with that text anywhere, so a handbook whose running head is the book name
+/// ("Apostelgeschichte") lost the book's own opening title, and Source results
+/// fell back to the earliest literal mention in the front matter. A margin line
+/// set clearly larger than that furniture (a chapter-opening title at the top
+/// of its page) is kept as text too. Numbers are ignored ("Apostelgeschichte 6"
+/// / "… 7") only for furniture set no larger than the body text, so headings
+/// such as "Kapitel 6" / "Kapitel 7" near the top of their pages survive.
+fn classify_furniture(all: &mut [(Anchor, String, bool, u32)]) {
+    let body = body_size(all);
+    let mut exact: HashMap<String, (HashSet<u32>, Vec<f64>)> = HashMap::new();
+    let mut loose: HashMap<String, (HashSet<u32>, Vec<f64>)> = HashMap::new();
+    for (a, _, _, _) in all.iter() {
+        if in_margin(a) {
+            let entry = exact.entry(compact(&a.original_text)).or_default();
+            entry.0.insert(a.page);
+            entry.1.push(a.size);
+            if let Some(key) = furniture_key(&a.original_text) {
+                let entry = loose.entry(key).or_default();
+                entry.0.insert(a.page);
+                entry.1.push(a.size);
+            }
+        }
+    }
+    let usual = |map: HashMap<String, (HashSet<u32>, Vec<f64>)>| -> HashMap<String, f64> {
+        map.into_iter()
+            .filter(|(_, (pages, _))| pages.len() >= 3)
+            .map(|(key, (_, mut sizes))| {
+                sizes.sort_by(f64::total_cmp);
+                (key, sizes[sizes.len() / 2])
+            })
+            .collect()
+    };
+    let exact = usual(exact);
+    let loose: HashMap<String, f64> = usual(loose)
+        .into_iter()
+        .filter(|(_, size)| body <= 0.0 || *size <= body * 1.1)
+        .collect();
+    for (a, role, _, _) in all.iter_mut() {
+        if !in_margin(a) {
+            continue;
+        }
+        let size = exact
+            .get(&compact(&a.original_text))
+            .copied()
+            .or_else(|| furniture_key(&a.original_text).and_then(|k| loose.get(&k).copied()));
+        let Some(size) = size else {
+            continue;
+        };
+        if a.size > size * 1.2 {
+            continue;
+        }
+        *role = if a.top_fraction() < 0.10 {
+            "header"
+        } else {
+            "footer"
+        }
+        .into();
+    }
+}
+
 pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructure {
     let mut all: Vec<(Anchor, String, bool, u32)> = Vec::new();
     let mut complete = pdf.failed_pages.is_empty();
@@ -247,29 +347,7 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
             ));
         }
     }
-    // Exact repetition near margins, not merely the presence of a book name.
-    let mut repeats: HashMap<String, HashSet<u32>> = HashMap::new();
-    for (a, _, _, _) in &all {
-        if a.top_fraction() < 0.10 || a.top_fraction() > 0.90 {
-            repeats
-                .entry(compact(&a.original_text))
-                .or_default()
-                .insert(a.page);
-        }
-    }
-    for (a, role, _, _) in &mut all {
-        if repeats
-            .get(&compact(&a.original_text))
-            .is_some_and(|pages| pages.len() >= 3)
-        {
-            *role = if a.top_fraction() < 0.10 {
-                "header"
-            } else {
-                "footer"
-            }
-            .into();
-        }
-    }
+    classify_furniture(&mut all);
     let mut by_page: HashMap<u32, Vec<usize>> = HashMap::new();
     for (index, (anchor, _, _, _)) in all.iter().enumerate() {
         by_page.entry(anchor.page).or_default().push(index);
@@ -466,6 +544,7 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
     }
     PdfStructure {
         version: VERSION,
+        analysis: ANALYSIS,
         page_count: pdf.layouts.len() as u32,
         complete,
         tagged: native.tagged,

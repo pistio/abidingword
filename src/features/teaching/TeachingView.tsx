@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, FileDown, FolderOpen, MessageCircleQuestion, PencilLine, Plus, Presentation, ScrollText, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, FileDown, FolderOpen, MessageCircleQuestion, MoreHorizontal, PencilLine, Plus, Presentation, ScrollText, Trash2 } from "lucide-react";
 import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
@@ -15,7 +15,8 @@ import { AssistPanel } from "./AssistPanel";
 import { FloatingPanel, AssistDockProvider, useAssistDock } from "./FloatingPanel";
 import { assistLabel, canvasShape, pointFields, shapeText, showsFrame, stepFieldLabel, teachingKindLabel, type ShapeText } from "./labels";
 import { TeachingInfo } from "./TeachingInfo";
-import { BlockCanvas } from "./BlockCanvas";
+import { BlockCanvas, CanvasViewChoice, type CanvasView } from "./BlockCanvas";
+import { AddFromStudy } from "./AddFromStudy";
 import { BUILTIN_BLOCK_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, usesBlocks } from "./teachingTemplates";
 import { TeachingField, type AssistantHooks } from "./TeachingField";
 import { TeachingLinks } from "./TeachingLinks";
@@ -45,6 +46,8 @@ export function TeachingView({ onOpenStudy, projectId, startNew = false, studyId
   const api = useApi();
   const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId).then(rows => rows.filter(row => !row.studyId)) : api.teachingList(studyId!), [api, projectId, studyId]));
   const settings = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
+  // A.4.3: the open teaching's options stay open while switching teachings (keyboard stays on the picker).
+  const [teachingOptionsOpen, setTeachingOptionsOpen] = useState(false);
   const [chosen, setChosen] = useState<string | null>(initialTeachingId ?? null);
   const [creating, setCreating] = useState(startNew && !projectId);
   const id = useId();
@@ -169,6 +172,8 @@ export function TeachingView({ onOpenStudy, projectId, startNew = false, studyId
           }}
           onRevealScripture={onRevealScripture}
           switcher={switcher}
+          optionsOpen={teachingOptionsOpen}
+          onOptionsOpen={setTeachingOptionsOpen}
         />
         </AssistDockProvider>
       )}
@@ -339,9 +344,18 @@ interface EditorProps {
   onRevealScripture: () => void;
   /** The way to another teaching of this study (and the choice between them). */
   switcher: ReactNode;
+  /** A.4.3: whether the teaching's options are open; kept while switching teachings, so the keyboard stays on the picker. */
+  optionsOpen: boolean;
+  onOptionsOpen: (open: boolean) => void;
 }
 
-function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings, assistant, onRenamed, onDeleted, onRevealScripture, switcher }: EditorProps) {
+function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings, assistant, onRenamed, onDeleted, onRevealScripture, switcher, optionsOpen, onOptionsOpen: setOptionsOpen }: EditorProps) {
+  // A.4.3 (#25): the teaching's secondary controls behind one quiet "…"; writing continuously by default.
+  const optionsToggle = useRef<HTMLButtonElement>(null);
+  const [canvasView, setCanvasView] = useState<CanvasView>("continuous");
+  // A.4.4 (#27): copying chosen findings, writing and Q&A from the Bible Study.
+  const [fromStudy, setFromStudy] = useState(false);
+  const [fromStudyDone, setFromStudyDone] = useState<string | null>(null);
   const { t } = useTranslation();
   const api = useApi();
   const { goTo } = useScripture();
@@ -530,12 +544,10 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
           }}
         />
       )}
-      {/* The open teaching in two lines: its title with what it becomes (Materials), then its
-          details folded into one quiet line, with the way to another teaching. */}
-      <header className="flex flex-col gap-0.5">
-        {/* In a narrow pane Materials moves under the title rather than squeezing it. */}
-        <div className="flex flex-wrap items-start gap-x-2">
-          <div className="min-w-0 flex-1 basis-64 pt-1">
+      {/* A.4.3: the session's title and one quiet "…"; everything else is on request. */}
+      <header className="flex flex-col gap-1">
+        <div className="flex items-start gap-1">
+          <div className="min-w-0 flex-1 pt-1">
             <TeachingField
               key={`title-${prep.id}`}
               label={t("studies.teaching.titleLabel")}
@@ -554,49 +566,79 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
               assistant={null}
             />
           </div>
+          {/* What the teaching becomes stays one quiet icon away (named "Materials" for everyone). */}
           <ActionMenu
             label={t("studies.teaching.materials.open")}
             buttonId={`materials-${prep.id}`}
-            className="ml-auto shrink-0"
+            className="mt-1 shrink-0"
             trigger={
-              <>
-                <FolderOpen className="size-4" aria-hidden="true" />
-                {t("studies.teaching.materials.open")}
-                <ChevronDown className="size-4 text-text-muted" aria-hidden="true" />
-              </>
+              <span className="inline-flex items-center gap-1 text-text-muted" title={t("studies.teaching.materials.open")}>
+                <FolderOpen className="size-5" aria-hidden="true" />
+                <span className="sr-only">{t("studies.teaching.materials.open")}</span>
+              </span>
             }
             actions={materialActions}
           />
+          <button
+            ref={optionsToggle}
+            type="button"
+            aria-expanded={optionsOpen}
+            aria-controls={`teaching-options-${prep.id}`}
+            aria-label={t("studies.teaching.options")}
+            title={t("studies.teaching.options")}
+            onClick={() => setOptionsOpen(!optionsOpen)}
+            className="mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
+          >
+            <MoreHorizontal className="size-5" aria-hidden="true" />
+          </button>
         </div>
-        {/* One quiet line (v0.19): the teaching's information on request, the way to another
-            teaching (and the choice between them), and its Bible text as links. */}
-        <div className="flex flex-wrap items-center gap-x-2">
-          <StudyLink onOpenStudy={onOpenStudy} key={prep.studyId ?? "independent"} preparation={prep} onChanged={setPrep} />
-          <TeachingInfo prep={prep} findings={findings} onChanged={setPrep} onDeleted={onDeleted} onRevealScripture={onRevealScripture} />
-          {switcher}
-          {wholePassages.length > 0 && (
-            <span className="flex flex-wrap items-center gap-x-1">
-              <span className="type-meta">{t("studies.teaching.passagesLine")}</span>
-              {wholePassages.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => {
-                    goTo(p.reference);
-                    onRevealScripture();
-                  }}
-                  className="inline-flex min-h-11 items-center rounded-aw px-2 text-[0.9375rem] font-medium text-link hover:bg-hover"
-                >
-                  {referenceLabel(p.reference)}
-                </button>
-              ))}
-            </span>
-          )}
-        </div>
+        {optionsOpen && (
+          <div
+            id={`teaching-options-${prep.id}`}
+            role="group"
+            aria-label={t("studies.teaching.options")}
+            onKeyDown={(e) => { if (e.key === "Escape") { e.stopPropagation(); setOptionsOpen(false); optionsToggle.current?.focus(); } }}
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-aw border border-border-subtle bg-bg-secondary px-2 py-1"
+          >
+            <StudyLink onOpenStudy={onOpenStudy} key={prep.studyId ?? "independent"} preparation={prep} onChanged={setPrep} />
+            <TeachingInfo prep={prep} findings={findings} onChanged={setPrep} onDeleted={onDeleted} onRevealScripture={onRevealScripture} />
+            {switcher}
+            {wholePassages.length > 0 && (
+              <span className="flex flex-wrap items-center gap-x-1">
+                <span className="type-meta">{t("studies.teaching.passagesLine")}</span>
+                {wholePassages.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => {
+                      goTo(p.reference);
+                      onRevealScripture();
+                    }}
+                    className="inline-flex min-h-11 items-center rounded-aw px-2 text-[0.9375rem] font-medium text-link hover:bg-hover"
+                  >
+                    {referenceLabel(p.reference)}
+                  </button>
+                ))}
+              </span>
+            )}
+            {usesBlocks(prep) && <CanvasViewChoice view={canvasView} onView={setCanvasView} />}
+            {usesBlocks(prep) && prep.studyId && (
+              <Button variant="quiet" onClick={() => { setFromStudyDone(null); setFromStudy(true); }}>{t("studies.teaching.fromStudy.open")}</Button>
+            )}
+          </div>
+        )}
+        {fromStudyDone && <p role="status" className="type-meta m-0">{fromStudyDone}</p>}
       </header>
+      {fromStudy && prep.studyId && (
+        <AddFromStudy
+          prep={prep}
+          onClose={() => setFromStudy(false)}
+          onAdded={(next) => { setPrep(next); setFromStudy(false); setFromStudyDone(t("studies.teaching.fromStudy.added")); }}
+        />
+      )}
 
       {usesBlocks(prep) ? (
-        <BlockCanvas prep={prep} findings={findings} assistant={hooks} onChanged={setPrep} onRevealScripture={onRevealScripture} />
+        <BlockCanvas prep={prep} findings={findings} assistant={hooks} onChanged={setPrep} onRevealScripture={onRevealScripture} view={canvasView} />
       ) : (
       <>
       {/* What it says on a line of its own; what it is for waits in the empty field. */}
