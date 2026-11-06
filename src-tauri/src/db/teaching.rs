@@ -708,6 +708,19 @@ pub fn add_passage(
     conn: &Connection,
     input: &AddTeachingPassage,
 ) -> AppResult<TeachingPreparation> {
+    let tx = rusqlite::Transaction::new_unchecked(conn, rusqlite::TransactionBehavior::Immediate)?;
+    add_passage_in_transaction(&tx, input)?;
+    let prep = get(&tx, &input.preparation_id)?;
+    tx.commit()?;
+    Ok(prep)
+}
+
+/// Attach a passage without committing independently of the caller's writes.
+pub(super) fn add_passage_in_transaction(
+    tx: &rusqlite::Transaction<'_>,
+    input: &AddTeachingPassage,
+) -> AppResult<()> {
+    let conn: &Connection = tx;
     let prep = row(conn, &input.preparation_id)?;
     let point_id = input.point_id.as_deref().filter(|p| !p.is_empty());
     let block_id = input.block_id.as_deref().filter(|p| !p.is_empty());
@@ -728,7 +741,7 @@ pub fn add_passage(
             && p.block_id.as_deref() == block_id
             && p.reference.canonical == canonical
     }) {
-        return get(conn, &prep.id);
+        return Ok(());
     }
     let (end_chapter, end_verse) = columns_for(&reference);
     let position: i64 = conn.query_row(
@@ -738,7 +751,6 @@ pub fn add_passage(
         |r| r.get(0),
     )?;
     let now = now();
-    let tx = conn.unchecked_transaction()?;
     tx.execute(
         "INSERT INTO teaching_passages (id, preparation_id, point_id, block_id, book, start_chapter,
              start_verse, end_chapter, end_verse, position, created_at)
@@ -757,9 +769,7 @@ pub fn add_passage(
             now
         ],
     )?;
-    touch(&tx, &prep, &now)?;
-    tx.commit()?;
-    get(conn, &prep.id)
+    touch(tx, &prep, &now)
 }
 
 pub fn remove_passage(conn: &Connection, passage_id: &str) -> AppResult<TeachingPreparation> {

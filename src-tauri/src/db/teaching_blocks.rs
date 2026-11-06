@@ -6,7 +6,7 @@
 //! A block with a role also writes that column, so a presentation that names
 //! `introduction` or a point still follows the person's text.
 
-use rusqlite::{params, Connection, OptionalExtension};
+use rusqlite::{params, Connection, OptionalExtension, Transaction, TransactionBehavior};
 
 use crate::db::teaching::{self, point_title};
 use crate::db::{new_id, now};
@@ -578,6 +578,17 @@ fn renumber(conn: &Connection, ids: &[String], now: &str) -> AppResult<()> {
 }
 
 pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<TeachingPreparation> {
+    let tx = Transaction::new_unchecked(conn, TransactionBehavior::Immediate)?;
+    create_in_transaction(&tx, input)?;
+    let prep = teaching::get(&tx, &input.preparation_id)?;
+    tx.commit()?;
+    Ok(prep)
+}
+
+/// Insert one block using the caller's transaction, including compatibility
+/// columns, sibling positions, privacy, provenance and revision updates.
+fn create_in_transaction(tx: &Transaction<'_>, input: &CreateTeachingBlock) -> AppResult<String> {
+    let conn: &Connection = tx;
     let prep = teaching::row(conn, &input.preparation_id)?;
     if prep.template_version.unwrap_or(0) < 2 && list(conn, &prep.id)?.is_empty() {
         return Err(invalid(
@@ -647,11 +658,10 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
         origin,
     };
     let stamp = now();
-    let tx = conn.unchecked_transaction()?;
-    reconcile_roles(&tx, &prep.id)?;
+    reconcile_roles(tx, &prep.id)?;
     let point_id = if block_type == "outline_point" {
         Some(insert_point(
-            &tx, &prep.id, at as i64, &title, &body, &stamp,
+            tx, &prep.id, at as i64, &title, &body, &stamp,
         )?)
     } else {
         None
@@ -662,9 +672,9 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?10)",
         params![id, prep.id, parent_id, at as i64, block_type, title, body, config_json(&config)?, point_id, stamp],
     )?;
-    renumber(&tx, &order, &stamp)?;
+    renumber(tx, &order, &stamp)?;
     mirror_role(
-        &tx,
+        tx,
         &prep.id,
         point_id.as_deref(),
         config.role.as_deref(),
@@ -676,10 +686,9 @@ pub fn create(conn: &Connection, input: &CreateTeachingBlock) -> AppResult<Teach
         "UPDATE teaching_preparations SET template_version = COALESCE(template_version, 2), updated_at = ?2, revision = revision + 1 WHERE id = ?1",
         params![prep.id, stamp],
     )?;
-    reconcile_roles(&tx, &prep.id)?;
-    teaching::touch(&tx, &prep, &stamp)?;
-    tx.commit()?;
-    teaching::get(conn, &prep.id)
+    reconcile_roles(tx, &prep.id)?;
+    teaching::touch(tx, &prep, &stamp)?;
+    Ok(id)
 }
 
 pub fn update(conn: &Connection, input: &UpdateTeachingBlock) -> AppResult<TeachingPreparation> {
@@ -963,6 +972,11 @@ pub fn add_from_study(
     input: &crate::domain::teaching::AddFromStudy,
 ) -> AppResult<TeachingPreparation> {
     use crate::domain::teaching::BlockOrigin;
+    // Take the write reservation before reading sources or the destination.
+    // Validation and every copy see the same snapshot; any error rolls back
+    // all writes (including revisions and reconciled compatibility columns).
+    let tx = Transaction::new_unchecked(conn, TransactionBehavior::Immediate)?;
+    let conn: &Connection = &tx;
     let prep = teaching::row(conn, &input.preparation_id)?;
     let Some(study_id) = prep.study_id.clone() else {
         return Err(invalid(
@@ -982,9 +996,13 @@ pub fn add_from_study(
             "Part of the Bible Study changed or was removed. Open Add from Bible Study again.",
         )
     };
+    let study = crate::db::studies::get(conn, &study_id)?;
+    if study.project_id != prep.project_id {
+        return Err(stale());
+    }
     let findings = crate::db::findings::list(conn, &study_id)?;
     let passages = crate::db::study_passages::list(conn, &study_id)?;
-    // Everything is checked before anything is added: all or nothing.
+    // Resolve and validate the complete selection within the transaction.
     struct Copy {
         block_type: &'static str,
         title: String,
@@ -1094,7 +1112,8 @@ pub fn add_from_study(
             _ => return Err(stale()),
         }
     }
-    // Checked before anything is added, so a copy cannot fail half way.
+    // Refuse predictable validation errors before writing. SQL failures below
+    // are handled by the encompassing transaction, never compensating deletes.
     if count(conn, &prep.id)? + copies.len() > BLOCKS_MAX {
         return Err(invalid(
             "teaching.tooManyBlocks",
@@ -1106,61 +1125,39 @@ pub fn add_from_study(
         body_text(&copy.body)?;
     }
     let mut after: Option<String> = None;
-    let mut latest = None;
-    let mut made: Vec<String> = Vec::new();
-    let result = (|| -> AppResult<()> {
-        for copy in copies {
-            let before: std::collections::HashSet<String> =
-                list(conn, &prep.id)?.into_iter().map(|b| b.id).collect();
-            let next = create(
-                conn,
-                &CreateTeachingBlock {
+    for copy in copies {
+        let id = create_in_transaction(
+            &tx,
+            &CreateTeachingBlock {
+                preparation_id: prep.id.clone(),
+                parent_id: input.parent_id.clone(),
+                after_block_id: after.clone(),
+                block_type: copy.block_type.into(),
+                title: copy.title,
+                body: copy.body,
+                participant_facing: Some(false),
+                origin: Some(copy.origin),
+                ..Default::default()
+            },
+        )?;
+        if let Some(reference) = copy.passage {
+            teaching::add_passage_in_transaction(
+                &tx,
+                &crate::domain::teaching::AddTeachingPassage {
                     preparation_id: prep.id.clone(),
-                    parent_id: input.parent_id.clone(),
-                    after_block_id: after.clone(),
-                    block_type: copy.block_type.into(),
-                    title: copy.title,
-                    body: copy.body,
-                    participant_facing: Some(false),
-                    origin: Some(copy.origin),
-                    ..Default::default()
+                    point_id: None,
+                    block_id: Some(id.clone()),
+                    reference,
                 },
             )?;
-            let added = next
-                .blocks
-                .iter()
-                .find(|b| !before.contains(&b.id))
-                .map(|b| b.id.clone());
-            if let Some(id) = &added {
-                made.push(id.clone());
-            }
-            if let (Some(reference), Some(block)) = (copy.passage, added.clone()) {
-                teaching::add_passage(
-                    conn,
-                    &crate::domain::teaching::AddTeachingPassage {
-                        preparation_id: prep.id.clone(),
-                        point_id: None,
-                        block_id: Some(block),
-                        reference,
-                    },
-                )?;
-            }
-            after = added;
-            latest = Some(next);
         }
-        Ok(())
-    })();
-    if let Err(error) = result {
-        // All or nothing: what was added by this request is taken away again.
-        for id in made.iter().rev() {
-            let _ = delete(conn, id);
-        }
-        return Err(error);
+        after = Some(id);
     }
-    match latest {
-        Some(_) => teaching::get(conn, &prep.id),
-        None => Err(stale()),
-    }
+    // Materialise the response before commit too: a read/decoding failure must
+    // not return an error for an operation that has already been persisted.
+    let result = teaching::get(&tx, &prep.id)?;
+    tx.commit()?;
+    Ok(result)
 }
 
 /// A.4.4 (#27): a question-and-answer block's title is its question, which may
