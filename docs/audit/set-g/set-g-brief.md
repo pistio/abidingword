@@ -50,3 +50,69 @@ SEALING:
 
 REPLY with ONLY: the number of documents, the manifest path and its SHA-256, the seal time, the list of keys with format, language and source kind (real file / rendered; eBible / other — no layout details), the conversion-check summary (one line per document: verses compared, discrepancies), the reuse and licence notes, and an explicit statement of every path outside /root/aw-set-g you read, listed or wrote (should be none apart from network downloads, installed tools, fonts and package installs), including any accident.
 ```
+
+## Construction record (written before the evaluation run)
+
+* **Built** by the independent agent from 2026-11-06T21:34Z. **Sealed** at
+  2026-11-06T23:10:36Z (`SEAL.txt`).
+  * Manifest SHA-256:
+    `d0318e02d69fcbd16de6d0050f1f5112097fac97192a85b9df21178d23e0883b`.
+  * `GROUND_TRUTH.md` SHA-256: `fa72ef14…7734`.
+  * `tools.sha256` SHA-256: `03cac038…013e`.
+  * The seal covers all 28 files in the set's `docs/`: 14 documents and 14
+    reference USFM zips.
+* **Verified by the main session before the run:**
+  * every checksum in `SEAL.txt`, in the manifest and in `tools.sha256`
+    matches;
+  * no document, reference or tool is newer than the manifest, apart from
+    the seal files themselves.
+* **Composition** (builder's report):
+  * Real published files, bytes unchanged:
+    * G01: Project Gutenberg EPUB, Almeida (pt).
+    * G02: Project Gutenberg plain text, Swedish 1917.
+    * G03: KJV PDF typeset with BibleTeX, from a GitHub project.
+    * G04: eBible's own published PDF of the Hebrew Living NT.
+  * Rendered by the builder:
+    * groff: G05 (Luther 1545 with Apocrypha).
+    * npm `docx`: G06 (van Ess NT, 1859).
+    * WeasyPrint: G07 (Fillion, deuterocanonical books).
+    * LibreOffice: G08 (RV 1862 NT, DOCX) and G10 (Miqra according to the Masorah, PDF).
+    * Typst: G09 (Korean 1938).
+    * Markdown: G11 (Nestle 1904).
+    * pandoc: G12 (Noyes, EPUB).
+    * ReportLab: G13 (ULB).
+    * EbookLib: G14 (Castellio, EPUB).
+  * Only two documents are rendered from eBible text (G12, G13).
+  * Languages: pt, sv, en, he, hbo, de, fr, es, ko, grc, la.
+* **Conversion check** (builder's report; outputs in the set's
+  `sources/checks/final/`):
+  * Every reference was compared, verse by verse in order, with what the
+    document prints (letters only), plus a verbatim sample.
+  * Where a second independent encoding was reachable, the agreement rate
+    was 95–99.9 %.
+  * Recorded properties of the documents themselves:
+    * G03 omits Zephaniah and Haggai and prints Genesis 25:34 as 26:1.
+    * G04's text layer scrambles 44 pointed names.
+    * G10's PDF text layer is poor: 394 of 793 verses are found in order.
+    * G01, G02, G07 and G08 have misprinted verse numbers in their sources,
+      recorded per verse in `GROUND_TRUTH.md`.
+* **Reuse and licences:**
+  * The KJV (G03) is the only reused translation. It was chosen as a real
+    published PDF and is marked in the manifest.
+  * Some documents are new editions related to earlier ones: Luther 1545,
+    RV 1862, Korean 1938 and the Masorah text.
+  * Public domain, or CC BY-SA (G04, G10, G11's markup, G13, G14, and the
+    G03 layout).
+* **Isolation (builder's own report):**
+  * The builder opened nothing under `/home/user`, `/tmp`, `/root/.claude`
+    or the rest of `/root`.
+  * The agent harness itself stored six long or large command outputs under
+    `/tmp/claude-0/…/tasks/` and `/root/.claude/…/tool-results/`. The builder
+    did not read them.
+  * One `echo $! > sources/render/g07.pid` ran with the repository as its
+    working directory and failed ("No such file or directory"), so nothing
+    was written. The working tree was checked clean afterwards.
+  * Two LibreOffice runs with a broken profile address may have created a
+    default profile in the home directory.
+  * The main session's judgement: nothing about the program, its tests, its
+    documents or earlier sets was seen. The set is treated as independent.
