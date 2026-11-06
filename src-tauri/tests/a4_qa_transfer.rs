@@ -343,3 +343,137 @@ fn a_qa_teaching_block_is_participant_facing_by_default_and_a3_configs_still_loa
     })
     .unwrap();
 }
+
+/// Raw rows include soft-deleted data, JSON origins/privacy, compatibility
+/// columns, positions, revisions, timestamps and search/index side effects.
+/// Comparing only teaching::get() would miss persisted rollback debris.
+type DatabaseSnapshot = Vec<(String, Vec<Vec<rusqlite::types::Value>>)>;
+
+fn database_snapshot(conn: &Connection) -> rusqlite::Result<DatabaseSnapshot> {
+    let mut names =
+        conn.prepare("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")?;
+    let names = names
+        .query_map([], |r| r.get::<_, String>(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    let mut snapshot = Vec::new();
+    for name in names {
+        let quoted = name.replace('"', "\"\"");
+        let mut stmt = conn.prepare(&format!("SELECT * FROM \"{quoted}\""))?;
+        let columns = stmt.column_count();
+        let mut rows = stmt
+            .query_map([], |r| {
+                (0..columns)
+                    .map(|i| r.get::<_, rusqlite::types::Value>(i))
+                    .collect::<Result<Vec<_>, _>>()
+            })?
+            .collect::<Result<Vec<_>, _>>()?;
+        // WITHOUT ROWID and virtual/shadow tables need no special query path.
+        rows.sort_by_cached_key(|row| format!("{row:?}"));
+        snapshot.push((name, rows));
+    }
+    Ok(snapshot)
+}
+
+fn transfer_items(w: &World) -> Vec<StudyItemRef> {
+    vec![
+        item("writing", &w.writing, "Text"),
+        item("passage", &w.passage, "Römer 8,1–11"),
+        item("qa", &w.qa, "Frage und Antwort"),
+        item("finding", &w.finding, "Beobachtung"),
+        item("citation", &w.citation, "Zitat"),
+    ]
+}
+
+#[test]
+fn sql_failures_after_completed_copies_restore_every_persisted_row() {
+    // Fail the second and third blocks, after a Scripture block is inserted,
+    // after a passage is attached, and after revisions were already updated.
+    // AFTER + FAIL deliberately keeps the failing statement's writes until
+    // our transaction rolls them back. No production failure hook is needed.
+    let failures = [
+        ("second-block", "AFTER INSERT ON teaching_blocks WHEN (SELECT COUNT(*) FROM teaching_blocks WHERE json_extract(config, '$.origin') IS NOT NULL) = 3"),
+        ("third-block", "AFTER INSERT ON teaching_blocks WHEN (SELECT COUNT(*) FROM teaching_blocks WHERE json_extract(config, '$.origin') IS NOT NULL) = 4"),
+        ("passage-attachment", "AFTER INSERT ON teaching_passages WHEN NEW.block_id IS NOT NULL"),
+        ("revision-update", "AFTER UPDATE ON teaching_preparations WHEN (SELECT COUNT(*) FROM teaching_passages WHERE block_id IS NOT NULL) > 0"),
+        ("study-touch", "AFTER UPDATE ON studies WHEN (SELECT COUNT(*) FROM teaching_passages WHERE block_id IS NOT NULL) > 0"),
+    ];
+    for (name, event) in failures {
+        let w = world();
+        w.db.with_conn(|conn| {
+            // Nontrivial pre-state: an existing editable snapshot and teaching-level
+            // passage, a visible writing block, plus deleted rows.
+            let existing = add(conn, &w, vec![item("writing", &w.writing, "Existing origin")])?;
+            let original = existing.blocks.iter().find(|b| b.origin.is_none()).unwrap();
+            teaching_blocks::update(conn, &UpdateTeachingBlock {
+                id: original.id.clone(), participant_facing: Some(true), ..Default::default()
+            })?;
+            teaching::add_passage(conn, &abiding_word_lib::domain::teaching::AddTeachingPassage {
+                preparation_id: w.prep.clone(), point_id: None, block_id: None, reference: "JHN.15.1".into()
+            })?;
+            let deleted = teaching_blocks::create(conn, &abiding_word_lib::domain::teaching::CreateTeachingBlock {
+                preparation_id: w.prep.clone(), block_type: "writing".into(), title: "Deleted".into(), ..Default::default()
+            })?;
+            let deleted_id = deleted.blocks.iter().find(|b| b.title == "Deleted").unwrap().id.clone();
+            teaching_blocks::delete(conn, &deleted_id)?;
+            // A distinct timestamp proves that study touches are restored too.
+            conn.execute("UPDATE studies SET updated_at = 'before-transfer' WHERE id = ?1", [&w.study])?;
+            let before = database_snapshot(conn)?;
+            let visible_before = serde_json::to_value(teaching::get(conn, &w.prep)?).unwrap();
+            // Existing passage is not block-attached, so later triggers only
+            // fire once this request has completed its new passage insertion.
+            conn.execute_batch(&format!("CREATE TEMP TRIGGER inject_transfer_failure {event} BEGIN SELECT RAISE(FAIL, 'injected-transfer-failure'); END;"))?;
+            let error = add(conn, &w, transfer_items(&w)).unwrap_err();
+            assert!(matches!(&error, AppError::Database(_)), "{name}: {error:?}");
+            assert!(error.to_string().contains("injected-transfer-failure"), "{name}: {error:?}");
+            assert!(conn.is_autocommit(), "{name}: transaction leaked");
+            assert_eq!(database_snapshot(conn)?, before, "{name}: raw database changed");
+            assert_eq!(serde_json::to_value(teaching::get(conn, &w.prep)?).unwrap(), visible_before, "{name}: visible teaching changed");
+            conn.execute_batch("DROP TRIGGER inject_transfer_failure")?;
+            // The same request succeeds immediately after removing the fault.
+            let result = add(conn, &w, transfer_items(&w))?;
+            assert_eq!(result.blocks.iter().filter(|b| b.origin.is_some()).count(), 6);
+            assert!(result.blocks.iter().filter(|b| b.origin.is_some()).all(|b| !b.participant_facing));
+            let scripture = result.blocks.iter().find(|b| b.block_type == "scripture").unwrap();
+            assert!(result.passages.iter().any(|p| p.block_id.as_deref() == Some(&scripture.id)));
+            Ok(())
+        }).unwrap();
+    }
+}
+
+#[test]
+fn response_read_and_deferred_commit_failures_also_roll_back_the_whole_transfer() {
+    for fault in ["response-read", "commit"] {
+        let w = world();
+        w.db.with_conn(|conn| {
+            if fault == "commit" {
+                // Every statement succeeds; only COMMIT checks this constraint.
+                conn.execute_batch("CREATE TABLE deferred_transfer_fault (
+                    preparation_id TEXT REFERENCES teaching_preparations(id) DEFERRABLE INITIALLY DEFERRED
+                );
+                CREATE TEMP TRIGGER inject_late_failure AFTER INSERT ON teaching_passages
+                BEGIN INSERT INTO deferred_transfer_fault VALUES ('missing-preparation'); END;")?;
+            } else {
+                // The final response cannot decode the damaged title. This
+                // must fail before committing any of the otherwise valid copy.
+                conn.execute_batch("CREATE TEMP TRIGGER inject_late_failure AFTER INSERT ON teaching_passages
+                BEGIN UPDATE teaching_preparations SET title = X'80' WHERE id = NEW.preparation_id; END;")?;
+            }
+            let before = database_snapshot(conn)?;
+            let error = add(conn, &w, vec![
+                item("writing", &w.writing, "Text"),
+                item("passage", &w.passage, "Passage"),
+            ]).unwrap_err();
+            assert!(matches!(&error, AppError::Database(_)), "{fault}: {error:?}");
+            if fault == "commit" {
+                assert!(error.to_string().contains("FOREIGN KEY constraint failed"), "{error:?}");
+            } else {
+                assert!(matches!(error, AppError::Database(rusqlite::Error::InvalidColumnType(..))), "{error:?}");
+            }
+            assert!(conn.is_autocommit(), "{fault}: transaction leaked");
+            assert_eq!(database_snapshot(conn)?, before, "{fault}: raw database changed");
+            conn.execute_batch("DROP TRIGGER inject_late_failure")?;
+            add(conn, &w, transfer_items(&w))?;
+            Ok(())
+        }).unwrap();
+    }
+}

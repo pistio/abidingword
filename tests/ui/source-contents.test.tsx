@@ -331,8 +331,13 @@ describe("Contents for an EPUB", () => {
     await openFromLibrary(user, "A Synthetic Commentary");
     await screen.findByText("Chapter three begins.");
     // Paragraphs 0-2 are above the top of the reading area; 3 is the first in view.
+    // Only mock the reading viewport and paragraphs. Giving the toolbar and
+    // each fixed control the same 100px bounds can move Contents to overflow
+    // between pointer-down and click, depending on when React measures it.
+    const originalBounds = HTMLElement.prototype.getBoundingClientRect;
     vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLElement) {
       const position = this.dataset.segPosition;
+      if (position === undefined && this.dataset.testid !== "reader-body") return originalBounds.call(this);
       if (position === undefined) return { top: 0, bottom: 600, left: 0, right: 100, width: 100, height: 600, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
       const bottom = Number(position) < 3 ? -10 : 40;
       return { top: bottom - 20, bottom, left: 0, right: 100, width: 100, height: 20, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
