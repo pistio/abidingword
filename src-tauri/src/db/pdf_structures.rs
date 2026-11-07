@@ -180,11 +180,36 @@ pub fn replace(
     hash: &str,
     document: &PdfStructure,
 ) -> AppResult<View> {
+    replace_observed(conn, id, hash, document, |_, _, _| Ok(()))
+}
+
+/// Only structure-derived data changes. Re-parsing all literal references here
+/// used to hold the application DB mutex for the entire source a second time.
+pub fn replace_observed(
+    conn: &Connection,
+    id: &str,
+    hash: &str,
+    document: &PdfStructure,
+    mut progress: impl FnMut(&str, usize, usize) -> AppResult<()>,
+) -> AppResult<View> {
     let tx = conn.unchecked_transaction()?;
+    progress("store", 0, 0)?;
+    library::get(&tx, id)?;
     store(&tx, id, hash, document)?;
-    library::reindex_passages_in_transaction(&tx, id)?;
+    tx.execute(
+        "DELETE FROM source_passages WHERE source_id=?1 AND origin IN ('section','inherited')",
+        [id],
+    )?;
+    tx.execute(
+        "UPDATE source_passages SET structure_role=NULL WHERE source_id=?1 AND origin='explicit'",
+        [id],
+    )?;
+    let indexed = index_observed(&tx, id, |done, total| progress("index", done, total))?;
+    progress("indexed", indexed, indexed)?;
+    let result = view(&tx, id)?;
+    progress("commit", 0, 0)?;
     tx.commit()?;
-    view(conn, id)
+    Ok(result)
 }
 
 pub fn correct(
@@ -343,6 +368,14 @@ pub fn undo(conn: &Connection, id: &str, expected_hash: &str, reset: bool) -> Ap
 /// Derived links are opt-in to this validated PDF metadata, never enabled by
 /// a format string. Literal references and user-confirmed links stay separate.
 pub fn index(conn: &Connection, id: &str) -> AppResult<usize> {
+    index_observed(conn, id, |_, _| Ok(()))
+}
+
+fn index_observed(
+    conn: &Connection,
+    id: &str,
+    mut progress: impl FnMut(usize, usize) -> AppResult<()>,
+) -> AppResult<usize> {
     let Some(record) = load(conn, id)? else {
         return Ok(0);
     };
@@ -392,7 +425,10 @@ pub fn index(conn: &Connection, id: &str) -> AppResult<usize> {
     let mut count = 0usize;
     let mut mentions = conn.prepare("SELECT id,start_offset,end_offset FROM source_passages WHERE segment_id=?1 AND origin='explicit'")?;
     let mut role = conn.prepare("UPDATE source_passages SET structure_role=?2 WHERE id=?1")?;
-    for block in &record.document.blocks {
+    for (block_index, block) in record.document.blocks.iter().enumerate() {
+        if block_index % 64 == 0 {
+            progress(block_index, record.document.blocks.len())?;
+        }
         let Some(segment) = rows.get(&block.position) else {
             continue;
         };

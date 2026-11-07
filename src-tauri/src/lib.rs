@@ -141,6 +141,8 @@ pub fn run() {
             commands::library::library_source_contents,
             commands::library::library_pdf_structure,
             commands::library::library_pdf_structure_build,
+            commands::library::library_pdf_structure_progress,
+            commands::library::library_pdf_structure_cancel,
             commands::library::library_pdf_structure_diagnostic,
             commands::library::library_pdf_structure_diagnostic_save,
             commands::library::library_pdf_structure_correct,

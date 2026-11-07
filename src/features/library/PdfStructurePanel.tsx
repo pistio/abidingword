@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system/Button";
 import { Dialog } from "@/design-system/Dialog";
@@ -7,7 +7,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import { toApiError } from "@/lib/api";
 import { usePdfEngine } from "./PdfEngineContext";
-import type { ContentsItem, PdfCorrection, PdfDiagnostic, PdfResolvedHeading, ReaderObserved, SourceSegment } from "@/types/library";
+import type { ContentsItem, PdfBuildProgress, PdfCorrection, PdfDiagnostic, PdfResolvedHeading, ReaderObserved, SourceSegment } from "@/types/library";
 
 /** App-owned metadata only. The original file and citation text remain intact. */
 export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage, onClose, observed }: {
@@ -19,7 +19,26 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
   const { t } = useTranslation();
   const api = useApi();
   const structure = useLoad(useCallback(() => api.libraryPdfStructure(sourceId), [api, sourceId]));
-  const [busy, setBusy] = useState(false);
+  const [editingBusy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<PdfBuildProgress | null>(null);
+  const [progressError, setProgressError] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshMs, setRefreshMs] = useState<number | null>(null);
+  const busy = editingBusy || progress?.status === "running";
+  useEffect(() => {
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      try {
+        const next = await api.libraryPdfStructureProgress(sourceId);
+        if (active) { setProgress(next); setProgressError(null); }
+      } catch (e) { if (active) setProgressError(toApiError(e).message); }
+      finally { if (active) timer = setTimeout(() => void poll(), 500); }
+    };
+    void poll();
+    return () => { active = false; clearTimeout(timer); };
+  }, [api, sourceId]);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [originalOpen,setOriginalOpen]=useState(false);
@@ -30,6 +49,25 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
     try { await work(); structure.reload(); setDraft(null); await onChanged(); }
     catch (e) { setError(toApiError(e).message); }
     finally { setBusy(false); }
+  };
+  const build = async () => {
+    setBusy(true); setError(null); setCancelling(false); setRefreshMs(null);
+    try {
+      const next = await api.libraryPdfStructureBuild(sourceId);
+      structure.setData(next);
+      setDraft(null); setRefreshing(true);
+      const began = performance.now();
+      try { await onChanged(); } finally { setRefreshMs(Math.round(performance.now() - began)); }
+    } catch (e) { setError(toApiError(e).message); }
+    finally {
+      setBusy(false); setRefreshing(false);
+      try { setProgress(await api.libraryPdfStructureProgress(sourceId)); }
+      catch (e) { setProgressError(toApiError(e).message); }
+    }
+  };
+  const cancel = async () => {
+    try { setCancelling(await api.libraryPdfStructureCancel(sourceId)); }
+    catch (e) { setError(toApiError(e).message); }
   };
   const edit = (h: PdfResolvedHeading) => setDraft({id:h.id,position:h.segmentPosition,title:h.title,level:h.level,mapping:h.canonical,scope:h.scope === "unmapped" ? null : h.scope,disabled:false,anchorId:`p${h.anchor.page}-c${h.anchor.firstChar}`,start:h.start,end:h.end});
   const add = (segment: SourceSegment, index: number) => {
@@ -44,15 +82,32 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
   const headings = (data?.headings ?? []).filter(h => h.path.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
   return <Dialog wide title={t("library.structure.title")} onClose={onClose} actions={<Button onClick={onClose}>{t("common.close")}</Button>}>
     <p>{t("library.structure.explanation")}</p>
+    {progressError && <Notice tone="error">{progressError}</Notice>}
+    {(busy || progress) && <div className="flex flex-col gap-2" aria-live="polite">
+      <p role="status">{t("library.structure.processing.stage", { stage: t(`library.structure.processing.stages.${refreshing ? "refresh" : progress?.stage ?? "file"}`), seconds: Math.floor((progress?.elapsedMs ?? 0) / 1000) })}</p>
+      {progress?.status === "running" && <>
+        <progress aria-label={t("library.structure.processing.label")} {...(progress.total ? { value: progress.done, max: progress.total } : {})} />
+        {progress.total > 0 && <span className="type-meta">{progress.done} / {progress.total}</span>}
+        <p className="type-meta">{t("library.structure.processing.background")}</p>
+        <Button disabled={!progress.canCancel || cancelling} onClick={() => void cancel()}>{t(cancelling ? "library.structure.processing.cancelling" : "common.cancel")}</Button>
+      </>}
+      {progress?.status === "succeeded" && <Notice tone="success">{t("library.structure.processing.success", { count: progress.headingCount ?? 0, links: progress.indexedLinks ?? 0 })}</Notice>}
+      {progress?.status === "empty" && <Notice tone="warning">{t("library.structure.processing.empty")}</Notice>}
+      {progress?.status === "cancelled" && <Notice>{t("library.structure.cancelled")}</Notice>}
+      {progress?.status === "failed" && <Notice tone="error">{t(progress.errorCode === "library.structure.timeout" ? "library.structure.timeout" : "library.structure.processing.failed")}</Notice>}
+      {progress && progress.status !== "running" && <details><summary>{t("library.structure.processing.timings")}</summary><ul>{progress.timings.map((m, i) => <li key={i}>{t(`library.structure.processing.stages.${m.stage as PdfBuildProgress["stage"]}`)}: {t("library.structure.processing.duration", { milliseconds: m.milliseconds })}</li>)}{refreshMs !== null && <li>{t("library.structure.processing.stages.refresh")}: {t("library.structure.processing.duration", { milliseconds: refreshMs })}</li>}</ul></details>}
+    </div>}
     {(error || structure.error) && <Notice tone="error">{error ?? structure.error?.message}</Notice>}
     {!data && !structure.error && <p role="status">{t("common.loading")}</p>}
     <details onToggle={e=>setOriginalOpen(e.currentTarget.open)}><summary>{t("library.structure.originalBookmarks")}</summary>{originalOpen && <OriginalPdfBookmarks sourceId={sourceId} onGo={onPage}/>}</details>
     {data && <div className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
-        <Button disabled={busy} onClick={() => void run(() => api.libraryPdfStructureBuild(sourceId))}>{t(data.status === "missing" ? "library.structure.build" : "library.structure.rebuild")}</Button>
+        <Button disabled={busy} onClick={() => void build()}>{t(data.status === "missing" ? "library.structure.build" : "library.structure.rebuild")}</Button>
         <Button disabled={busy || !data.canUndo || !data.fileHash} onClick={() => void run(() => api.libraryPdfStructureUndo(sourceId,data.fileHash!,false))}>{t("library.structure.undo")}</Button>
         <Button disabled={busy || !data.corrections.length || !data.fileHash} onClick={() => void run(() => api.libraryPdfStructureUndo(sourceId,data.fileHash!,true))}>{t("library.structure.reset")}</Button>
       </div>
+      {data.status === "missing" && <Notice>{t("library.structure.processing.missing")}</Notice>}
+      {data.status === "ready" && !data.headings.length && progress?.status !== "empty" && <Notice tone="warning">{t("library.structure.processing.empty")}</Notice>}
       {data.status === "ready" && data.rebuildRecommended && <Notice>{t("library.structure.rebuildRecommended")}</Notice>}
       {data.status === "ready" && <>
         <p className="type-meta">{t("library.structure.status", {count:data.headings.length})}</p>
@@ -72,7 +127,7 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
           <div className="max-h-48 overflow-auto">{segments.flatMap(segment => (segment.presentation?.anchors ?? []).map((anchor,index) => <Button key={`${segment.id}-${index}`} variant="quiet" className="block max-w-full truncate" onClick={()=>add(segment,index)}>{anchor.originalText}</Button>))}</div>
         </details>
       </>}
-      <StructureDiagnostic sourceId={sourceId} observed={observed} />
+      <StructureDiagnostic key={sourceId} sourceId={sourceId} observed={observed} />
       {draft && <form className="flex flex-col gap-3 border-t border-border pt-3" onSubmit={e=>{e.preventDefault(); if(data.fileHash) void run(()=>api.libraryPdfStructureCorrect(sourceId,data.fileHash!,draft));}}>
         <label>{t("library.structure.heading")}<input required maxLength={300} className={fieldClass} value={draft.title} onChange={e=>setDraft({...draft,title:e.target.value})}/></label>
         <label>{t("library.structure.level")}<input required type="number" min={1} max={12} className={fieldClass} value={draft.level} onChange={e=>setDraft({...draft,level:Number(e.target.value)})}/></label>
@@ -109,13 +164,16 @@ function StructureDiagnostic({ sourceId, observed }: { sourceId: string; observe
     catch { setError(t("library.structure.diagnostic.copyFailed")); }
   };
   const saveFile = async () => {
-    setError(null); setStatus(null);
+    setBusy(true); setError(null); setStatus(null);
+    const query = input(); const observation = observed?.() ?? null;
     try {
       const path = await api.chooseDiagnosticFile("abidingword-structure-diagnostic.json", t("library.structure.diagnostic.fileType"));
       if (!path) return;
-      const where = await api.libraryPdfStructureDiagnosticSave(sourceId, input(), observed?.() ?? null, path);
-      setStatus(t("library.structure.diagnostic.saved", { path: where }));
+      const saved = await api.libraryPdfStructureDiagnosticSave(sourceId, query, observation, path);
+      setReport(saved.report);
+      setStatus(t("library.structure.diagnostic.saved", { path: saved.path }));
     } catch (e) { setError(toApiError(e).message); }
+    finally { setBusy(false); }
   };
   const q = report?.query;
   return <details className="border-t border-border pt-3" data-structure-diagnostic>
@@ -123,18 +181,20 @@ function StructureDiagnostic({ sourceId, observed }: { sourceId: string; observe
     <div className="flex flex-col gap-2 pt-2">
       <p className="type-meta m-0">{t("library.structure.diagnostic.help")}</p>
       <label>{t("library.structure.diagnostic.passage")}
-        <input className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text" value={passage} placeholder={t("library.structure.mappingExample")} onChange={e => setPassage(e.target.value)} />
+        <input className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text" value={passage} placeholder={t("library.structure.mappingExample")} disabled={busy} onChange={e => { setPassage(e.target.value); setReport(null); setStatus(null); }} />
       </label>
       <div className="flex flex-wrap gap-2">
         <Button disabled={busy} onClick={() => void create()}>{t("library.structure.diagnostic.create")}</Button>
         <Button disabled={!report} onClick={() => void copy()}>{t("library.structure.diagnostic.copy")}</Button>
         <Button disabled={busy} onClick={() => void saveFile()}>{t("library.structure.diagnostic.save")}</Button>
       </div>
+      {busy && <p role="status">{t("common.loading")}</p>}
       {error && <Notice tone="error">{error}</Notice>}
       {status && <p role="status" className="type-meta m-0 break-words">{status}</p>}
       {report && <div className="flex flex-col gap-1" aria-live="polite">
         <p className="m-0 type-meta break-all">{t("library.structure.diagnostic.file", { hash: report.source.fileSha256 ?? "—", pages: report.structure.pageCount ?? "—", headings: report.structure.headingCount })}</p>
-        {report.structure.rebuildRecommended && <Notice>{t("library.structure.rebuildRecommended")}</Notice>}
+        {!q && <Notice>{t("library.structure.diagnostic.general")}</Notice>}
+        {report.structure.rebuildRecommended && <Notice>{t(report.structure.status === "none" ? "library.structure.processing.missing" : "library.structure.rebuildRecommended")}</Notice>}
         {q && <>
           <p className="m-0">{q.verdict}</p>
           <ol className="m-0 pl-5 type-meta">

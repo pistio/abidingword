@@ -2484,6 +2484,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       return window(sourceId, offset, limit, null);
     },
     libraryPdfStructure: async (sourceId) => ({sourceId,fileHash:null,status:"missing",complete:false,tagged:false,unalignedTags:0,uncertainPages:0,headings:[],corrections:[],canUndo:false}),
+    libraryPdfStructureProgress: async () => null,
+    libraryPdfStructureCancel: async () => false,
     libraryPdfStructureBuild: async () => {throw new Error("No PDF file in the memory library");},
     libraryPdfStructureCorrect: async () => {throw new Error("No PDF structure in the memory library");},
     libraryPdfStructureUndo: async () => {throw new Error("No PDF structure in the memory library");},

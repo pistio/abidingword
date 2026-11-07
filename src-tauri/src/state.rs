@@ -24,6 +24,7 @@ pub struct Core {
 }
 
 pub struct AppState {
+    pub pdf_structure_jobs: crate::library::pdf_build::Jobs,
     startup: Result<Core, ErrorPayload>,
     log_dir: Option<PathBuf>,
     /// Where bundled resources (e.g. included Bibles) are installed.
@@ -90,6 +91,7 @@ impl AppState {
             Err(e) => log::error!("startup failed: {e}"),
         }
         Self {
+            pdf_structure_jobs: Default::default(),
             startup: core.map_err(ErrorPayload::from),
             log_dir,
             resource_dir,

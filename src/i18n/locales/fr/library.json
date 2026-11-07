@@ -653,8 +653,39 @@
       "copyFailed": "Le rapport n’a pas pu être copié. Utilisez plutôt « Enregistrer le rapport… ».",
       "fileType": "Rapport de diagnostic",
       "saved": "Enregistré dans {{path}}",
-      "file": "SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres"
-    }
+      "file": "SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres",
+      "general": "Rapport général — aucun passage vérifié. Pour examiner les candidats d’Actes 6, saisissez Apg 6 avant de créer ou d’enregistrer un nouveau rapport."
+    },
+    "processing": {
+      "label": "Progression de l’analyse",
+      "stage": "{{stage}} · {{seconds}} s",
+      "background": "Vous pouvez fermer ce panneau et continuer à lire ou écrire. L’annulation prend effet à la prochaine étape sûre ; la validation finale ne peut pas être annulée.",
+      "cancelling": "Annulation…",
+      "success": "{{count}} titres enregistrés ; {{links}} liens de structure indexés.",
+      "empty": "Aucun titre exploitable reconnu. L’analyse a été enregistrée, mais le sommaire automatique est indisponible. Vous pouvez marquer manuellement les lignes visibles ci-dessous.",
+      "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic.",
+      "timings": "Durées du traitement",
+      "missing": "Aucune analyse des titres enregistrée. Choisissez Créer la structure ; un diagnostic général peut être enregistré avant cette étape.",
+      "stages": {
+        "file": "Lire et vérifier le fichier",
+        "segments": "Lire les textes enregistrés",
+        "pdf": "Lire les pages PDF",
+        "alignment": "Aligner le texte original",
+        "native": "Lire les signets et balises intégrés",
+        "headings": "Repérer les titres",
+        "store": "Enregistrer les métadonnées",
+        "index": "Indexer les liens de structure",
+        "indexed": "Liens indexés",
+        "commit": "Valider les changements",
+        "refresh": "Actualiser le lecteur"
+      },
+      "duration": "{{milliseconds}} ms"
+    },
+    "cancelled": "Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer.",
+    "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",
+    "busy": "Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer.",
+    "limit": "Le PDF dépasse les limites d’analyse prises en charge. Les métadonnées précédentes sont inchangées.",
+    "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic."
   },
   "toolbar": {
     "label": "Outils de lecture",

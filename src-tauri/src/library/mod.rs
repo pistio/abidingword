@@ -12,6 +12,7 @@ pub mod generated_contents;
 pub mod import;
 pub mod original;
 pub mod passage_index;
+pub mod pdf_build;
 pub mod pdf_structure;
 pub mod relevance;
 pub mod sections;
