@@ -605,8 +605,8 @@
     "invalid": "Saisissez une page de 1 à {{total}}."
   },
   "structure": {
-    "title": "Structure du document",
-    "explanation": "Les cibles reposent sur le document, sans jugement de pertinence théologique. Les corrections sont enregistrées dans Abiding Word ; les fichiers originaux et les citations restent inchangés.",
+    "title": "Chapitres et titres",
+    "explanation": "Vérifiez et corrigez les titres et chapitres reconnus automatiquement dans cette source.",
     "build": "Analyser la structure",
     "rebuild": "Reprendre l’analyse",
     "undo": "Annuler la correction",
@@ -631,7 +631,8 @@
       "outline": "Plan intégré",
       "tagged": "Balises PDF",
       "layout": "Déduit de la mise en page",
-      "user": "Correction personnelle"
+      "user": "Correction personnelle",
+      "printed": "Index imprimé des livres bibliques"
     },
     "scopes": {
       "passage": "Passage",
@@ -703,9 +704,13 @@
       "bookmark": "Mettre un signet ici",
       "note": "Ajouter une note ici",
       "marks": "Marques",
-      "structure": "Structure du document",
+      "structure": "Chapitres et titres",
       "full": "Ouvrir en pleine largeur",
-      "about": "À propos de cette source"
+      "about": "À propos de cette source",
+      "zoomIn": "Agrandir",
+      "zoomOut": "Réduire",
+      "fitWidth": "Ajuster à la largeur",
+      "fitPage": "Ajuster à la page"
     }
   }
 }

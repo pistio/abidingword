@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+import { useAnchoredPopover } from "@/design-system/useAnchoredPopover";
 import { useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -9,8 +11,8 @@ import { formatNumber } from "@/i18n/format";
  * "3 / 400" indicator that opens a small jump-to-page form; the difference
  * between physical and printed numbers is explained there, not permanently.
  */
-export function PdfPageNavigation({ page, total, printedLabel, onGo }: {
-  page: number; total: number; printedLabel?: string | null; onGo: (page: number) => void;
+export function PdfPageNavigation({ page, total, printedLabel, onGo, compact = false }: {
+  compact?: boolean; page: number; total: number; printedLabel?: string | null; onGo: (page: number) => void;
 }) {
   const { t } = useTranslation();
   const id = useId();
@@ -20,6 +22,7 @@ export function PdfPageNavigation({ page, total, printedLabel, onGo }: {
   const indicator = useRef<HTMLButtonElement>(null);
   const field = useRef<HTMLInputElement>(null);
   const box = useRef<HTMLDivElement>(null);
+  const position = useAnchoredPopover(indicator, open, 280);
   useEffect(() => {
     if (!open) return;
     field.current?.focus();
@@ -59,22 +62,23 @@ export function PdfPageNavigation({ page, total, printedLabel, onGo }: {
         aria-label={`${where}${printed ? ` ${printed}` : ""}. ${t("library.pageNav.jump")}`}
         title={printed || t("library.pageNav.jump")}
         onClick={() => { setText(String(page)); setInvalid(false); setOpen((v) => !v); }}
-        className="inline-flex min-h-11 items-center rounded-aw px-1.5 font-ui text-[0.875rem] tabular-nums text-text-muted hover:bg-hover hover:text-text-strong"
+        className="inline-flex min-h-11 min-w-11 justify-center items-center rounded-aw px-1.5 font-ui text-[0.875rem] tabular-nums text-text-muted hover:bg-hover hover:text-text-strong"
       >
-        {formatNumber(page)} / {formatNumber(total)}
+        {compact ? formatNumber(page) : `${formatNumber(page)} / ${formatNumber(total)}`}
       </button>
       <button type="button" aria-label={t("library.pageNav.next")} title={t("library.pageNav.next")} disabled={page >= total} onClick={() => go(page + 1)}
         className="inline-flex size-11 items-center justify-center rounded-aw text-text-strong hover:bg-hover disabled:opacity-40 @max-xs:hidden">
         <ChevronRight className="size-4" aria-hidden="true" />
       </button>
-      {open && (
+      {open && createPortal(
         <div
           ref={box}
           id={`${id}-jump`}
           role="dialog"
           aria-label={t("library.pageNav.jump")}
           onKeyDown={(e) => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(); } }}
-          className="aw-popover absolute left-0 top-full z-40 mt-1 flex w-64 flex-col gap-2 p-3 font-ui"
+          style={position}
+          className="aw-popover flex flex-col gap-2 p-3 font-ui"
         >
           <form noValidate className="flex items-center gap-2" onSubmit={(e) => { e.preventDefault(); submit(); }}>
             <label htmlFor={id} className="text-[0.9375rem]">{t("library.pageNav.page")}</label>
@@ -101,7 +105,7 @@ export function PdfPageNavigation({ page, total, printedLabel, onGo }: {
           </div>
           {invalid && <p role="alert" className="m-0 text-[0.875rem] text-danger">{t("library.pageNav.invalid", { total: formatNumber(total) })}</p>}
           <p id={`${id}-hint`} className="type-meta m-0">{t("library.pageNav.physical")}{printed ? ` ${printed}` : ""}</p>
-        </div>
+        </div>, document.body
       )}
     </nav>
   );

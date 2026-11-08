@@ -1,6 +1,7 @@
 //! Source-only PDF structure, not Scripture verification. No source byte or
 //! stored segment is rewritten. Every proposal keeps its own evidence/anchor.
 mod native;
+mod printed;
 mod resolve;
 
 use serde::{Deserialize, Serialize};
@@ -18,7 +19,8 @@ pub const VERSION: i64 = 1;
 /// shape stays [`VERSION`] 1 (so A.3 documents still load); a document built
 /// before A.4.1 reads as 0 and the diagnostic recommends **Rebuild structure**.
 /// 2: margin-only, size-aware running furniture; Contents listings of books.
-pub const ANALYSIS: u32 = 2;
+/// 3: grounded printed book-index targets, ordered evidence levels and safe Source titles.
+pub const ANALYSIS: u32 = 3;
 pub const MAX_HEADINGS: usize = 5_000;
 pub const MAX_LINES: usize = 120_000;
 pub const MAX_CHARS: usize = 8_000_000;
@@ -481,6 +483,7 @@ pub fn extract_with_progress(
             }
         }
     }
+    printed::promote(&all, &native.labels, &mut headings);
     headings.sort_by(|a, b| {
         a.segment_position
             .cmp(&b.segment_position)

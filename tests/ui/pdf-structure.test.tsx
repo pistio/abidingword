@@ -1,3 +1,4 @@
+import { readerPageName } from "../support/readerActions";
 import { screen, within, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { PdfAnchor, PdfResolvedHeading, PdfStructureView } from "@/types/library";
@@ -53,7 +54,7 @@ describe("PDF structure in the complete reader",()=>{
     const selected=target.querySelector<HTMLElement>('[data-pdf-heading="p2-c100"]')!;
     vi.spyOn(selected,"getBoundingClientRect").mockReturnValue(new DOMRect(0,200,300,40));
     await user.click(screen.getByRole("button",{name:"Original"}));
-    await waitFor(()=>expect(screen.getByRole("textbox",{name:"Page number"})).toHaveValue("2"));
+    await waitFor(()=>expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("2")));
   });
   it("targets the requested heading when several sections share a paragraph, including Contents and history",async()=>{
     const scrolled:HTMLElement[]=[];
@@ -85,9 +86,9 @@ describe("PDF structure in the complete reader",()=>{
   });
   it("sends an anchored, hash-bound correction and refreshes Contents; undo remains discoverable",async()=>{
     const {user,api,source}=await open();
-    await readerAction(user, "Document structure");
-    const dialog=await screen.findByRole("dialog",{name:"Document structure"});
-    expect(within(dialog).getByText(/not a judgement of commentary relevance/)).toBeVisible();
+    await readerAction(user, "Chapters and headings");
+    const dialog=await screen.findByRole("dialog",{name:"Chapters and headings"});
+    expect(within(dialog).getByText(/automatically recognised headings and chapters/)).toBeVisible();
     await user.click(await within(dialog).findByRole("button",{name:"Correct section"}));
     const title=within(dialog).getByRole("textbox",{name:"Section title"});await user.clear(title);await user.type(title,"A corrected section title");
     await user.click(within(dialog).getByRole("button",{name:"Save"}));
@@ -101,8 +102,8 @@ describe("PDF structure in the complete reader",()=>{
   it("offers explicit structure building for an older import without doing it on opening",async()=>{
     const {user,api}=await open(false);
     expect(api.libraryPdfStructureBuild).not.toHaveBeenCalled();
-    await readerAction(user, "Document structure");
-    const dialog=await screen.findByRole("dialog",{name:"Document structure"});
+    await readerAction(user, "Chapters and headings");
+    const dialog=await screen.findByRole("dialog",{name:"Chapters and headings"});
     await user.click(await within(dialog).findByRole("button",{name:"Build structure"}));
     await waitFor(()=>expect(api.libraryPdfStructureBuild).toHaveBeenCalledOnce());
     expect(await within(dialog).findByRole("button",{name:"Correct section"})).toBeVisible();
@@ -119,8 +120,8 @@ describe("PDF structure in the complete reader",()=>{
   });
   it("preserves supplied page bookmarks separately from corrected section targets",async()=>{
     const {user}=await open();
-    await readerAction(user, "Document structure");
-    const dialog=await screen.findByRole("dialog",{name:"Document structure"});
+    await readerAction(user, "Chapters and headings");
+    const dialog=await screen.findByRole("dialog",{name:"Chapters and headings"});
     await user.click(within(dialog).getByText("Original PDF bookmarks"));
     expect(await within(dialog).findByRole("button",{name:/Uncorrected PDF outline/})).toBeVisible();
     expect(within(dialog).getByText(/without the app’s section corrections/)).toBeVisible();

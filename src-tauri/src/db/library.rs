@@ -1235,6 +1235,21 @@ fn collect_places(
         let scope: Option<String> = row.get(12)?;
         let role: Option<String> = row.get(14)?;
         let structured: bool = row.get(15)?;
+        let basis: Option<String> = row.get(13)?;
+        // #34: evidence levels are ordered before specificity, within a
+        // structured PDF. A narrow body match cannot displace a grounded TOC
+        // book opening. Explicit user decisions remain authoritative.
+        let tier =
+            if !structured || origin == LinkOrigin::Manual || basis.as_deref() == Some("user") {
+                0
+            } else if matches!(basis.as_deref(), Some("outline" | "printed")) {
+                1
+            } else if origin == LinkOrigin::Section {
+                2
+            } else {
+                3
+            };
+
         if structured && origin == LinkOrigin::Explicit {
             if matches!(role.as_deref(), Some("header" | "footer" | "artifact")) {
                 continue;
@@ -1264,11 +1279,12 @@ fn collect_places(
         let better = group
             .places
             .get(&segment_id)
-            .is_none_or(|existing| rank < existing.rank);
+            .is_none_or(|existing| (tier, rank) < (existing.tier, existing.rank));
         if better {
             group.places.insert(
                 segment_id.clone(),
                 Place {
+                    tier,
                     rank,
                     role: role.clone(),
                     position,
@@ -1297,6 +1313,7 @@ fn collect_places(
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DiagnosticPlace {
+    pub evidence_tier: u8,
     pub location: PassageLocation,
     pub position: i64,
     pub class: u8,
@@ -1318,6 +1335,7 @@ pub fn passage_source_diagnostics(
         .into_iter()
         .take(EXPANDED_LOCATIONS_LIMIT)
         .map(|p| DiagnosticPlace {
+            evidence_tier: p.tier,
             position: p.position,
             class: p.rank.class,
             role: p.role,
@@ -1425,6 +1443,7 @@ pub fn passage_sources(
 
 /// A candidate place in a source, before consolidation.
 struct Place {
+    tier: u8,
     rank: Rank,
     /// The structure role of a literal mention in a structured PDF.
     role: Option<String>,
@@ -1451,8 +1470,9 @@ struct Place {
 /// different passage, stays: it is somewhere else worth going.
 fn consolidate(mut places: Vec<Place>) -> Vec<Place> {
     places.sort_by(|a, b| {
-        a.rank
-            .cmp(&b.rank)
+        a.tier
+            .cmp(&b.tier)
+            .then(a.rank.cmp(&b.rank))
             .then(a.position.cmp(&b.position))
             .then(a.location.segment_id.cmp(&b.location.segment_id))
     });

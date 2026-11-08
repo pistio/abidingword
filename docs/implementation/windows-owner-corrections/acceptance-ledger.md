@@ -29,12 +29,12 @@ locations or exact failure cause from the counts alone.
 | #35 consistent report display/save/query | Implemented | Same native diagnostic generator; save returns exact written report; busy/error feedback; stale query results cleared; no-query report explicitly general status |
 | #35 owner-shaped performance and memory | Partial | Invented 400-page/2.19MB/2719-segment/4112-link fixture: ~6.1s vs ~27.2s for previous full-text reindex alone. Fixed page/text/heading limits; actual Windows memory/performance still open |
 | #35 actual MacArthur rebuild completes/persists | **OWNER GATE OPEN** | Rerun on original Windows profile copy; export stage timings and optional Apg 6 query |
-| #34 actual TOC → headings → body fallback hierarchy | Pending stage | Existing hierarchy preserved; no ranking-only patch in #35 |
-| #34 printed TOC, native PDF headings, canon/order/ambiguous book safety | Pending stage | Require grounded destinations and separate uncertainty; no forced alternate-canon mapping |
+| #34 actual TOC → headings → body fallback hierarchy | Implemented; actual file open | Evidence tier precedes specificity; grounded book openings remain broader than chapter commentary |
+| #34 printed TOC, native PDF headings, canon/order/ambiguous book safety | Implemented conservatively | Three-book edition-specific folio corroboration or actual page label; ambiguous/unrepresented books retained unmapped |
 | #34 generated Contents and actual Acts introduction | **OPEN** | Existing synthetic suites retained; no actual-file success claim |
-| #34 Greek NT as Source | **OPEN / separate case** | Source metadata only; no recognition-lineage merge or verified-Scripture claim |
-| #34 ordinary-language heading control | Pending stage | Clarify Document structure in all six languages |
-| #34 one combined ReaderToolbar/PdfViewer row | Pending stage | Secondary viewer toolbar must be integrated, not merely CSS-hidden |
+| #34 Greek NT as Source | Technical support; actual file open | Exact Greek titles, real Unicode PDF regression; no Scripture import or recognizer merge |
+| #34 ordinary-language heading control | Implemented | Chapters and headings / Kapitel und Überschriften in all six languages |
+| #34 one combined ReaderToolbar/PdfViewer row | Implemented | Shared controls, live PDF page count; zoom/fit in overflow or pinned; browser and focused regressions |
 | #34 recurring three-pane layout, real WebView2 geometry/DPI/focus | **WINDOWS GATE OPEN** | This executor is Linux; browser evidence does not satisfy WebView2 |
 | #33 exact original seven-part POZETEK and substantive guidance | Pending stage | Preserve existing study writing and stable keys; investigate historical introduction |
 | #33 explicit reversible repair, duplicates, restore-missing | Pending stage | No automatic rename/delete/merge of existing content |

@@ -1,3 +1,5 @@
+import { readerPageName } from "../support/readerActions";
+import { readerAction } from "../support/readerActions";
 import { act, cleanup, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { ContentsItem } from "@/types/library";
@@ -186,14 +188,14 @@ describe("Contents in the full reader (PDF)", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openFromLibrary(user, "Notes on the Vine");
     await user.click(screen.getByRole("button", { name: "Original" }));
-    await screen.findByRole("toolbar", { name: "Original document controls" });
-    await user.click(screen.getByRole("button", { name: "Zoom in" }));
+    await screen.findByRole("toolbar", { name: "Reader tools" });
+    await readerAction(user, "Zoom in");
     const zoom = screen.getByTestId("pdf-zoom").textContent;
-    await waitFor(() => expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("1"));
+    await waitFor(() => expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("1")));
 
     await user.click(screen.getByRole("button", { name: "Contents" }));
     await user.click(screen.getByRole("button", { name: "Chapter 2: Pruning" }));
-    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("3");
+    expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("3"));
     expect(screen.getByTestId("pdf-zoom").textContent).toBe(zoom);
     expect(panel()).toBeNull();
     expect(screen.getByRole("button", { name: "Original" })).toHaveAttribute("aria-pressed", "true");
@@ -205,7 +207,7 @@ describe("Contents in the full reader (PDF)", () => {
     expect(current).toHaveTextContent("Current section");
     await unfold(user, "Appendices");
     await user.click(screen.getByRole("button", { name: "Appendix A" }));
-    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("4");
+    expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("4"));
   });
 
   it("in Reading, stays in Reading and shows that page's text", async () => {
@@ -221,7 +223,7 @@ describe("Contents in the full reader (PDF)", () => {
     expect(engine.opened).toEqual([]); // no PDF was opened for this
     // Original is still there to switch to afterwards.
     await user.click(screen.getByRole("button", { name: "Original" }));
-    await screen.findByRole("toolbar", { name: "Original document controls" });
+    await screen.findByRole("toolbar", { name: "Reader tools" });
   });
 
   it("keeps navigation right when the view is switched between jumps", async () => {
@@ -231,18 +233,18 @@ describe("Contents in the full reader (PDF)", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openFromLibrary(user, "Notes on the Vine");
     await user.click(await screen.findByRole("button", { name: "Original" }));
-    await screen.findByRole("toolbar", { name: "Original document controls" });
+    await screen.findByRole("toolbar", { name: "Reader tools" });
     await user.click(screen.getByRole("button", { name: "Contents" }));
     await unfold(user, "Appendices");
     await user.click(screen.getByRole("button", { name: "Appendix A" }));
-    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("4");
+    expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("4"));
     await user.click(screen.getByRole("button", { name: "Reading" }));
     await waitFor(() => expect(scrolled.some((el) => el.dataset.segPage === "4")).toBe(true));
     await user.click(screen.getByRole("button", { name: "Contents" }));
     await user.click(screen.getByRole("button", { name: /^Chapter 1: Soil/ }));
     await waitFor(() => expect(scrolled.at(-1)?.dataset.segPage).toBe("1"));
     await user.click(screen.getByRole("button", { name: "Original" }));
-    await waitFor(() => expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("1"));
+    await waitFor(() => expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("1")));
   });
 });
 
@@ -278,11 +280,11 @@ describe("Contents in the Sources pane", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openInPane(user, "Notes on the Vine");
     await user.click(within(sourcesPane()).getByRole("button", { name: "Original" }));
-    await within(sourcesPane()).findByRole("toolbar", { name: "Original document controls" });
+    await within(sourcesPane()).findByRole("toolbar", { name: "Reader tools" });
     await user.click(within(sourcesPane()).getByRole("button", { name: "Contents" }));
     await unfold(user, "Appendices", sourcesPane());
     await user.click(within(sourcesPane()).getByRole("button", { name: "Appendix A" }));
-    expect(within(sourcesPane()).getByRole("textbox", { name: "Page number" })).toHaveValue("4");
+    expect(within(sourcesPane()).getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("4"));
   });
 });
 
@@ -429,11 +431,11 @@ describe("Contents does not leave stale requests behind", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openFromLibrary(user, "Notes on the Vine");
     await user.click(await screen.findByRole("button", { name: "Original" }));
-    await screen.findByRole("toolbar", { name: "Original document controls" });
+    await screen.findByRole("toolbar", { name: "Reader tools" });
     await user.click(screen.getByRole("button", { name: "Contents" }));
     await unfold(user, "Appendices");
     await user.click(screen.getByRole("button", { name: "Appendix A" }));
-    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("4");
+    expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("4"));
     await user.click(screen.getByRole("button", { name: "Reading" }));
     await user.click(screen.getByTestId("pdf-page-indicator"));
     const page = screen.getByRole("spinbutton", { name: "PDF page" });
@@ -443,11 +445,11 @@ describe("Contents does not leave stale requests behind", () => {
     expect(screen.getByRole("button", { name: "Go to page" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Go to page" }));
     await user.click(screen.getByRole("button", { name: "Original" }));
-    await screen.findByRole("toolbar", { name: "Original document controls" });
+    await screen.findByRole("toolbar", { name: "Reader tools" });
     // A deliberate Reading jump replaces the old Original jump and stays at page two.
-    await waitFor(() => expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("2"));
+    await waitFor(() => expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("2")));
     await act(async () => new Promise((resolve) => setTimeout(resolve, 80)));
-    expect(screen.getByRole("textbox", { name: "Page number" })).toHaveValue("2");
+    expect(screen.getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("2"));
   });
 
   it("closes the panel when the view is switched, so it never names a stale place", async () => {

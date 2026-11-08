@@ -629,7 +629,7 @@ export interface ReaderObserved {
   focusedHeadingId?: string | null; variant?: string | null;
 }
 export interface PdfDiagnosticCandidate {
-  rank: number; class: number; origin: string; evidence: string; scope: string | null;
+  evidenceTier?: number; rank: number; class: number; origin: string; evidence: string; scope: string | null;
   basis: string | null; role: string | null; structureNodeId: string | null;
   segmentPosition: number; physicalPage: number | null; printedPage: string | null;
   passage: string; matched: string;

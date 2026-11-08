@@ -563,8 +563,8 @@
     "invalid": "Enter a page from 1 to {{total}}."
   },
   "structure": {
-    "title": "Document structure",
-    "explanation": "Section targets are document evidence, not a judgement of commentary relevance. Corrections belong to Abiding Word; original files and citation text remain unchanged.",
+    "title": "Chapters and headings",
+    "explanation": "Review and correct the automatically recognised headings and chapters of this source.",
     "build": "Build structure",
     "rebuild": "Rebuild structure",
     "undo": "Undo correction",
@@ -589,7 +589,8 @@
       "outline": "Embedded outline",
       "tagged": "Tagged PDF",
       "layout": "Inferred from layout",
-      "user": "User correction"
+      "user": "User correction",
+      "printed": "Printed book index"
     },
     "scopes": {
       "passage": "Passage",
@@ -661,9 +662,13 @@
       "bookmark": "Bookmark this place",
       "note": "Add note here",
       "marks": "Marks",
-      "structure": "Document structure",
+      "structure": "Chapters and headings",
       "full": "Open full reader",
-      "about": "About this source"
+      "about": "About this source",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fitWidth": "Fit width",
+      "fitPage": "Fit page"
     }
   }
 }

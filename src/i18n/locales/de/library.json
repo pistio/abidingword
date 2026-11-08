@@ -563,8 +563,8 @@
     "invalid": "Gib eine Seite von 1 bis {{total}} ein."
   },
   "structure": {
-    "title": "Dokumentstruktur",
-    "explanation": "Abschnittsziele beruhen auf Dokumentmerkmalen, nicht auf einer Beurteilung theologischer Relevanz. Korrekturen gehören zu Abiding Word; Originaldateien und Zitattexte bleiben unverändert.",
+    "title": "Kapitel und Überschriften",
+    "explanation": "Hier siehst und korrigierst du die automatisch erkannten Überschriften und Kapitel deiner Quelle.",
     "build": "Struktur erstellen",
     "rebuild": "Struktur neu erstellen",
     "undo": "Korrektur rückgängig",
@@ -589,7 +589,8 @@
       "outline": "Eingebettete Gliederung",
       "tagged": "PDF-Strukturtags",
       "layout": "Aus dem Layout abgeleitet",
-      "user": "Benutzerkorrektur"
+      "user": "Benutzerkorrektur",
+      "printed": "Gedrucktes Buchverzeichnis"
     },
     "scopes": {
       "passage": "Bibelstelle",
@@ -661,9 +662,13 @@
       "bookmark": "Lesezeichen an diese Stelle setzen",
       "note": "Notiz hier hinzufügen",
       "marks": "Anmerkungen",
-      "structure": "Dokumentstruktur",
+      "structure": "Kapitel und Überschriften",
       "full": "Vollansicht öffnen",
-      "about": "Über diese Quelle"
+      "about": "Über diese Quelle",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "fitWidth": "Seitenbreite",
+      "fitPage": "Ganze Seite"
     }
   }
 }

@@ -116,7 +116,7 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
         <ul className="m-0 max-h-64 list-none overflow-auto p-0">
           {headings.slice(0,50).map(h=><li key={h.id} className="border-b border-border-subtle py-2">
             <p className="m-0 break-words">{h.path}</p>
-            <p className="type-meta m-0">{t(`library.structure.basis.${["outline","tagged","layout","user"].includes(h.basis) ? h.basis as "outline" | "tagged" | "layout" | "user" : "layout"}`)} · {t("library.structure.physical",{page:h.anchor.page})} · {h.canonical ?? t("library.structure.unmapped")}</p>
+            <p className="type-meta m-0">{t(`library.structure.basis.${["outline","printed","tagged","layout","user"].includes(h.basis) ? h.basis as "outline" | "printed" | "tagged" | "layout" | "user" : "layout"}`)} · {t("library.structure.physical",{page:h.anchor.page})} · {h.canonical ?? t("library.structure.unmapped")}</p>
             <Button variant="quiet" onClick={()=>onGo(h.segmentPosition,h.id)}>{t("library.structure.open")}</Button>
             <Button variant="quiet" disabled={busy} onClick={()=>edit(h)}>{t("library.structure.edit")}</Button>
           </li>)}

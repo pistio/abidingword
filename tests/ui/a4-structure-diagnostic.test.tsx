@@ -60,7 +60,7 @@ describe("A.4.1 structure evidence and diagnostic", () => {
     const { user, diagnostic, heading, target } = await open();
     await user.click(await screen.findByRole("button", { name: /^Invented handbook/ }));
     await screen.findByRole("heading", { name: "Apostelgeschichte" });
-    await readerAction(user, "Document structure");
+    await readerAction(user, "Chapters and headings");
     await user.click(await screen.findByText("Diagnostic report (metadata only)"));
     expect(screen.getByRole("button", { name: "Copy report" })).toBeDisabled();
     await user.type(screen.getByRole("textbox", { name: "Passage to check (optional)" }), "Apg 6");
@@ -78,7 +78,7 @@ describe("A.4.1 structure evidence and diagnostic", () => {
     const { user } = await open({ rebuild: true });
     await user.click(await screen.findByRole("button", { name: /^Invented handbook/ }));
     await screen.findByRole("heading", { name: "Apostelgeschichte" });
-    await readerAction(user, "Document structure");
+    await readerAction(user, "Chapters and headings");
     await waitFor(() => expect(screen.getByText(/built with earlier analysis rules/)).toBeVisible());
   });
 });

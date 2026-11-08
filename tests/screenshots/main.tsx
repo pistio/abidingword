@@ -486,6 +486,7 @@ async function start() {
     databasePath: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\database\\abiding-word.db",
     logDirectory: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\logs",
   });
+  api.logError = async message => { console.error(message); };
   const fixtureOriginalInfo = api.libraryOriginalInfo;
   const fixtureOriginalRead = api.libraryOriginalRead;
   if (params.get("empty") !== "1") await seed(api);

@@ -22,7 +22,7 @@ async function openPdf() {
 
 const menuItems = async (user: ReturnType<typeof import("@testing-library/user-event").default.setup>, toolbar: HTMLElement) => {
   await user.click(within(toolbar).getByRole("button", { name: "More reader actions" }));
-  const items = within(within(toolbar).getByRole("menu")).getAllByRole("menuitem").map((m) => m.textContent ?? "");
+  const items = within(screen.getByRole("menu", {name:"More reader actions"})).getAllByRole("menuitem").map((m) => m.textContent ?? "");
   await user.keyboard("{Escape}");
   return items;
 };
@@ -36,11 +36,11 @@ describe("A.4.2 compact reader toolbar", () => {
     const find = within(toolbar).getByRole("button", { name: "Find" });
     expect(find).toHaveAttribute("title", "Find");
     expect(find.className).toMatch(/size-11/); // 44 px target
-    for (const name of ["Marks", "Document structure", "Open full reader", "About this source", "Back to the previous place"]) {
+    for (const name of ["Marks", "Chapters and headings", "Open full reader", "About this source", "Back to the previous place"]) {
       expect(within(toolbar).queryByRole("button", { name })).toBeNull();
     }
     const items = await menuItems(user, toolbar);
-    expect(items).toEqual(expect.arrayContaining(["Back to the previous place", "Forward to the next place", "Bookmark this place", "Add note here", "Marks", "Document structure", "Open full reader", "About this source", "Customise toolbar…"]));
+    expect(items).toEqual(expect.arrayContaining(["Back to the previous place", "Forward to the next place", "Bookmark this place", "Add note here", "Marks", "Chapters and headings", "Open full reader", "About this source", "Customise toolbar…"]));
     expect(items).not.toContain("Find");
     expect(new Set(items).size).toBe(items.length);
     // No separate rows of verbose page controls or a permanent About bar remain.
@@ -51,10 +51,10 @@ describe("A.4.2 compact reader toolbar", () => {
   it("disabled menu actions are announced as unavailable and do nothing", async () => {
     const { user, toolbar } = await openPdf();
     await user.click(within(toolbar).getByRole("button", { name: "More reader actions" }));
-    const back = within(toolbar).getByRole("menuitem", { name: "Back to the previous place" });
+    const back = screen.getByRole("menuitem", { name: "Back to the previous place" });
     expect(back).toHaveAttribute("aria-disabled", "true");
     await user.click(back);
-    expect(within(toolbar).getByRole("menu")).toBeInTheDocument(); // still open: nothing happened
+    expect(screen.getByRole("menu", {name:"More reader actions"})).toBeInTheDocument(); // still open: nothing happened
   });
 
   it("pins and unpins actions per device, keeps them after reopening, and resets to the default", async () => {
@@ -92,11 +92,11 @@ describe("A.4.2 compact reader toolbar", () => {
     try {
       const { user, toolbar } = await openPdf();
       expect(toolbar.className).toMatch(/flex-nowrap/);
-      await waitFor(() => expect(within(toolbar).queryByRole("button", { name: "Document structure" })).toBeNull());
+      await waitFor(() => expect(within(toolbar).queryByRole("button", { name: "Chapters and headings" })).toBeNull());
       const shown = within(toolbar).getAllByRole("button").filter((b) => b.dataset.readerAction);
       expect(shown.length).toBeLessThanOrEqual(2);
       const items = await menuItems(user, toolbar);
-      expect(items).toEqual(expect.arrayContaining(["Marks", "Document structure"]));
+      expect(items).toEqual(expect.arrayContaining(["Marks", "Chapters and headings"]));
     } finally {
       rect.mockRestore();
     }

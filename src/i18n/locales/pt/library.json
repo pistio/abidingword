@@ -605,8 +605,8 @@
     "invalid": "Introduza uma página de 1 a {{total}}."
   },
   "structure": {
-    "title": "Estrutura do documento",
-    "explanation": "Os destinos se baseiam no documento, sem avaliar sua relevância teológica. As correções ficam no Abiding Word; os arquivos originais e as citações permanecem intactos.",
+    "title": "Capítulos e títulos",
+    "explanation": "Reveja e corrija os títulos e capítulos reconhecidos automaticamente nesta fonte.",
     "build": "Analisar estrutura",
     "rebuild": "Analisar novamente",
     "undo": "Desfazer correção",
@@ -631,7 +631,8 @@
       "outline": "Sumário incorporado",
       "tagged": "Tags de estrutura PDF",
       "layout": "Inferido do layout",
-      "user": "Correção do usuário"
+      "user": "Correção do usuário",
+      "printed": "Índice impresso de livros bíblicos"
     },
     "scopes": {
       "passage": "Passagem",
@@ -703,9 +704,13 @@
       "bookmark": "Marcar este lugar",
       "note": "Adicionar nota aqui",
       "marks": "Marcas",
-      "structure": "Estrutura do documento",
+      "structure": "Capítulos e títulos",
       "full": "Abrir leitor completo",
-      "about": "Sobre esta fonte"
+      "about": "Sobre esta fonte",
+      "zoomIn": "Ampliar",
+      "zoomOut": "Reduzir",
+      "fitWidth": "Ajustar à largura",
+      "fitPage": "Ajustar à página"
     }
   }
 }

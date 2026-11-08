@@ -19,8 +19,8 @@ try {
   await source.locator('[data-source-result]').filter({hasText:'Invented handbook'}).first().click();
   const tools=source.getByRole('toolbar',{name:'Reader tools'});
   await tools.getByRole('button',{name:'More reader actions'}).click();
-  await tools.getByRole('menuitem',{name:'Document structure',exact:true}).click();
-  const dialog=page.getByRole('dialog',{name:'Document structure',exact:true});
+  await page.getByRole('menu',{name:'More reader actions'}).getByRole('menuitem',{name:before?'Document structure':'Chapters and headings',exact:true}).click();
+  const dialog=page.getByRole('dialog',{name:before?'Document structure':'Chapters and headings',exact:true});
   await dialog.waitFor();
   if(!before) {
    await dialog.getByText('Read PDF pages · 12 s').waitFor();
@@ -37,7 +37,7 @@ try {
    if(width===900) await page.screenshot({path:`${out}/35-cancelled-900.png`});
   }
   await dialog.getByRole('button',{name:'Close',exact:true}).last().click();
-  await page.getByRole('dialog',{name:'Document structure',exact:true}).waitFor({state:'hidden'});
+  await page.getByRole('dialog',{name:before?'Document structure':'Chapters and headings',exact:true}).waitFor({state:'hidden'});
   assert.ok(await source.getByTestId('reader-body').isVisible());
   assert.deepEqual(errors,[]);
   results.push({before,width,progress:before?'unavailable':'visible, cancel retained, retry enabled',pageErrors:errors});

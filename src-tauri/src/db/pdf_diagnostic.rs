@@ -142,6 +142,7 @@ pub struct Query {
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Candidate {
+    pub evidence_tier: u8,
     pub rank: usize,
     pub class: u8,
     pub origin: String,
@@ -407,6 +408,7 @@ fn query(
             .unwrap_or_default();
         candidates.push(Candidate {
             rank: index + 1,
+            evidence_tier: place.evidence_tier,
             class: place.class,
             evidence: evidence(
                 &origin,

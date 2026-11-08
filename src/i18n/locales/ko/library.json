@@ -521,8 +521,8 @@
     "invalid": "1부터 {{total}} 사이의 쪽을 입력하세요."
   },
   "structure": {
-    "title": "문서 구조",
-    "explanation": "구간 위치는 문서에 근거하며 주석의 신학적 관련성을 판정하지 않습니다. 수정 사항은 Abiding Word에 저장되며 원본 파일과 인용문은 그대로 유지됩니다.",
+    "title": "장과 제목",
+    "explanation": "이 자료에서 자동으로 인식한 제목과 장을 확인하고 수정하세요.",
     "build": "구조 분석",
     "rebuild": "구조 다시 분석",
     "undo": "수정 실행 취소",
@@ -547,7 +547,8 @@
       "outline": "내장 목차",
       "tagged": "PDF 구조 태그",
       "layout": "레이아웃에서 추정",
-      "user": "사용자 수정"
+      "user": "사용자 수정",
+      "printed": "인쇄된 성경 책 목차"
     },
     "scopes": {
       "passage": "본문 구간",
@@ -619,9 +620,13 @@
       "bookmark": "이 위치에 책갈피 추가",
       "note": "여기에 메모 추가",
       "marks": "표시",
-      "structure": "문서 구조",
+      "structure": "장과 제목",
       "full": "전체 화면으로 읽기",
-      "about": "이 자료에 대하여"
+      "about": "이 자료에 대하여",
+      "zoomIn": "확대",
+      "zoomOut": "축소",
+      "fitWidth": "너비에 맞춤",
+      "fitPage": "쪽에 맞춤"
     }
   }
 }

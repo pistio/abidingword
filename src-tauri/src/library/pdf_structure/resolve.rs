@@ -10,9 +10,15 @@ use crate::scripture::{
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
+use unicode_normalization::{char::is_combining_mark, UnicodeNormalization};
 
 fn key(text: &str) -> String {
-    fold(text).chars().filter(|c| c.is_alphanumeric()).collect()
+    fold(text)
+        .nfd()
+        .filter(|c| !is_combining_mark(*c))
+        .map(|c| if c == 'ς' { 'σ' } else { c })
+        .filter(|c| c.is_alphanumeric())
+        .collect()
 }
 fn core_title(text: &str) -> &str {
     for separator in [" — ", " – ", " - ", ": "] {
@@ -22,7 +28,7 @@ fn core_title(text: &str) -> &str {
     }
     text.trim()
 }
-fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'static Book> {
+pub(super) fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'static Book> {
     let title = core_title(title);
     let title = title
         .split_once(' ')
@@ -36,6 +42,63 @@ fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'static Book>
         .map(|(_, rest)| rest)
         .unwrap_or(title);
     let wanted = key(title);
+    // These labels depend on canon/naming tradition. Keep their original
+    // headings/Contents, but never force them into the 66-book registry.
+    if [
+        "jud",
+        "1esdras",
+        "2esdras",
+        "3esdras",
+        "4esdras",
+        "1kingdoms",
+        "2kingdoms",
+        "3kingdoms",
+        "4kingdoms",
+    ]
+    .contains(&wanted.as_str())
+    {
+        return None;
+    }
+    // Source-only, exact full Greek NT book titles. No Scripture text is
+    // imported or verified, and no recogniser pipeline is changed.
+    let greek = match wanted.as_str() {
+        "καταματθαιον" => Some("MAT"),
+        "καταμαρκον" => Some("MRK"),
+        "καταλουκαν" => Some("LUK"),
+        "καταιωαννην" => Some("JHN"),
+        "πραξεισαποστολων" | "πραξειστωναποστολων" => {
+            Some("ACT")
+        }
+        "προσρωμαιουσ" => Some("ROM"),
+        "προσκορινθιουσα" => Some("1CO"),
+        "προσκορινθιουσβ" => Some("2CO"),
+        "προσγαλατασ" => Some("GAL"),
+        "προσεφεσιουσ" => Some("EPH"),
+        "προσφιλιππησιουσ" => Some("PHP"),
+        "προσκολοσσαεισ" => Some("COL"),
+        "προσθεσσαλονικεισα" => Some("1TH"),
+        "προσθεσσαλονικεισβ" => Some("2TH"),
+        "προστιμοθεονα" => Some("1TI"),
+        "προστιμοθεονβ" => Some("2TI"),
+        "προστιτον" => Some("TIT"),
+        "προσφιλημονα" => Some("PHM"),
+        "προσεβραιουσ" => Some("HEB"),
+        "ιακωβουεπιστολη" => Some("JAS"),
+        "πετρουα" => Some("1PE"),
+        "πετρουβ" => Some("2PE"),
+        "ιωαννουα" => Some("1JN"),
+        "ιωαννουβ" => Some("2JN"),
+        "ιωαννουγ" => Some("3JN"),
+        "ιουδαεπιστολη" => Some("JUD"),
+        "αποκαλυψισιωαννου" => Some("REV"),
+        _ => None,
+    };
+    if let Some(code) = greek {
+        return crate::scripture::canon::BOOKS
+            .iter()
+            .find(|b| b.code == code);
+    }
+
     if let Some((_, book)) = ReferenceParser::for_language(language)
         .lookup_entries()
         .find(|(alias, _)| key(alias) == wanted)
@@ -73,6 +136,26 @@ fn canonical(
     language: ReferenceLanguage,
     parent: Option<(&ScriptureRef, &str)>,
 ) -> Option<(ScriptureRef, String)> {
+    let title_key = key(title);
+    if [
+        "jud",
+        "1esdras",
+        "2esdras",
+        "3esdras",
+        "4esdras",
+        "1kingdoms",
+        "2kingdoms",
+        "3kingdoms",
+        "4kingdoms",
+    ]
+    .contains(&title_key.as_str())
+        || ((title_key.contains("esther") || title_key.contains("daniel"))
+            && ["greek", "griech", "lxx", "zusatz", "addition"]
+                .iter()
+                .any(|v| title_key.contains(v)))
+    {
+        return None;
+    }
     if let Some(book) = book_title(title, language) {
         return ScriptureRef::new(
             book,
