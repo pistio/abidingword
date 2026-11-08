@@ -200,6 +200,7 @@ export interface Api {
   studyUpdate(input: UpdateStudy): Promise<Study>;
   studySectionList(studyId: string): Promise<StudySection[]>;
   studySectionUpdate(input: UpdateStudySection): Promise<StudySection>;
+  studyPozetekRepair(studyId: string, action: "preview" | "apply" | "undo", expectedIds?: string[]): Promise<{ sections: StudySection[]; canUndo: boolean }>;
   studySectionRestoreMissing(studyId: string, keys?: string[]): Promise<StudySection[]>;
   studySectionCreate(input: CreateStudySection): Promise<StudySection>;
   studySectionDelete(input: { id: string; force: boolean }): Promise<void>;
@@ -655,6 +656,7 @@ export const tauriApi: Api = {
   studyUpdate: (input) => call("study_update", { input }),
   studySectionList: (studyId) => call("study_section_list", { studyId }),
   studySectionUpdate: (input) => call("study_section_update", { input }),
+  studyPozetekRepair: (studyId, action, expectedIds) => call("study_pozetek_repair", { studyId, action, expectedIds }),
   studySectionRestoreMissing: (studyId, keys) => call("study_section_restore_missing", { studyId, keys }),
   studySectionCreate: (input) => call("study_section_create", { input }),
   studySectionDelete: (input) => call("study_section_delete", { input }),

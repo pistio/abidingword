@@ -62,8 +62,7 @@ describe("study selection and editing", () => {
     await user.click(await screen.findByRole("button", { name: /Romans 8:1–17/ }));
 
     await openPartOptions(user);
-    await user.click(await screen.findByRole("button", { name: "Add to Context" }));
-    await user.click(screen.getByRole("button", { name: "Writing" }));
+    await user.click(await screen.findByRole("button", { name: "Add text field to Context" }));
     const fields = await screen.findAllByRole("textbox", { name: "Context: paragraph" });
     expect(fields).toHaveLength(2);
     await waitFor(() => expect(fields[1]).toHaveFocus());

@@ -157,71 +157,40 @@ async function emptyStudy() {
   return withStudy({ title: "The True Vine", primaryPassage: "JHN.15.1-JHN.15.11" });
 }
 
-describe("Add, in each part of the study", () => {
-  it("has its own Add in every part's options, and no Add for the whole study at the top", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    const parts = main().getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+describe("simple additions in each part", () => {
+  it("offers one direct writing action per part, and distinct Q&A and notes", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/);
+    const parts = main().getAllByRole("heading", { level: 2 }).map(h => h.textContent);
     expect(parts).toEqual(["Text", "Observations", "Context", "Meaning", "Theology", "Application"]);
-    // A.4.3: not a repeated bar under every part; in the part's one "…".
-    for (const part of parts) expect(main().queryByRole("button", { name: `Add to ${part}` })).not.toBeInTheDocument();
     await openPartOptions(user);
-    for (const part of parts) expect(main().getByRole("button", { name: `Add to ${part}` })).toBeInTheDocument();
-    expect(main().queryByRole("button", { name: "Add" })).not.toBeInTheDocument();
-    expect(main().queryByText("Start your study")).not.toBeInTheDocument();
+    for (const part of parts) {
+      expect(main().getByRole("button", { name: `Add text field to ${part}` })).toBeInTheDocument();
+      expect(main().getByRole("button", { name: `Note — ${part}` })).toBeInTheDocument();
+      expect(main().queryByRole("button", { name: `Add to ${part}` })).toBeNull();
+    }
   });
-
-  it("adds an observation where it was asked for, with no generic kind of thing to choose first", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    await openPartOptions(user);
-    const choices = main().getByRole("group", { name: "Add to Context" });
-    expect(within(choices).getAllByRole("button").map((b) => b.textContent)).toEqual(["Writing", "Question and answer", "Observation", "Question", "Interpretation", "Application", "More types"]);
-    await user.click(within(choices).getByRole("button", { name: "Observation" }));
-    const text = main().getByLabelText("New observation");
-    expect(text).toHaveFocus();
-    // added from a part, it goes in that part: no choice of place to make
-    expect(main().queryByRole("combobox", { name: /In/ })).not.toBeInTheDocument();
-    await user.type(text, "The disciples are already clean.");
-    await user.click(main().getByRole("button", { name: "Save" }));
+  it("adds an observation in its part from a single flat notes menu", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await user.click(screen.getByRole("menuitem", { name: "Observation" }));
+    const text = main().getByLabelText("New observation"); expect(text).toHaveFocus();
+    await user.type(text, "The disciples are already clean."); await user.click(main().getByRole("button", { name: "Save" }));
     const notes = await main().findByRole("list", { name: "Notes in Context" });
     expect(within(notes).getByDisplayValue("The disciples are already clean.")).toBeInTheDocument();
-    expect(api.state.findings[0]).toMatchObject({ findingType: "observation", sectionId: api.state.sections.find((s) => s.title === "Context")!.id });
+    expect(api.state.findings[0]).toMatchObject({ findingType: "observation", sectionId: api.state.sections.find(s => s.title === "Context")!.id });
   });
-
-  it("offers every kind under More types, and adds writing to the part it was asked in", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Theology" }));
-    await user.click(main().getByRole("button", { name: "More types" }));
-    await openPartOptions(user);
-    const choices = main().getByRole("group", { name: "Add to Theology" });
-    for (const kind of ["Quotation", "Doctrine", "Illustration", "Teaching idea", "Unresolved issue", "Conclusion"]) expect(within(choices).getByRole("button", { name: kind })).toBeInTheDocument();
-    await user.click(within(choices).getByRole("button", { name: "Writing" }));
-    const fields = await main().findAllByRole("textbox", { name: "Theology: paragraph" });
-    expect(fields).toHaveLength(2);
-    await waitFor(() => expect(fields[1]).toHaveFocus());
-    expect(api.state.blocks.filter((b) => b.blockType === "paragraph" && b.sectionId === api.state.sections.find((s) => s.title === "Theology")!.id)).toHaveLength(2);
+  it("keeps every distinct note kind and adds writing directly with focus", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    const notes = main().getByRole("button", { name: "Note — Theology" }); await user.click(notes);
+    for (const name of ["Quotation", "Doctrine", "Illustration", "Teaching idea", "Unresolved issue", "Conclusion"]) expect(screen.getByRole("menuitem", { name })).toBeInTheDocument();
+    await user.keyboard("{Escape}"); expect(notes).toHaveFocus();
+    await user.click(main().getByRole("button", { name: "Add text field to Theology" }));
+    const fields = await main().findAllByRole("textbox", { name: "Theology: paragraph" }); expect(fields).toHaveLength(2); await waitFor(() => expect(fields[1]).toHaveFocus());
   });
-
-  it("closes with Escape and returns focus to the part's Add", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await openPartOptions(user);
-    const add = main().getByRole("button", { name: "Add to Text" });
-    await user.click(add);
-    expect(add).toHaveAttribute("aria-expanded", "true");
-    await user.keyboard("{Escape}");
-    await openPartOptions(user);
-    expect(main().queryByRole("group", { name: "Add to Text" })).not.toBeInTheDocument();
-    expect(add).toHaveFocus();
+  it("closes the notes menu with Escape and returns focus", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    const notes = main().getByRole("button", { name: "Note — Text" }); await user.click(notes); expect(notes).toHaveAttribute("aria-expanded", "true");
+    await user.keyboard("{Escape}"); expect(screen.queryByRole("menu")).toBeNull(); expect(notes).toHaveFocus();
   });
 });
 
@@ -231,8 +200,8 @@ describe("review fixes: writing notes in parts", () => {
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
     await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    await user.click(main().getByRole("button", { name: "Observation" }));
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await user.click(screen.getByRole("menuitem", { name: "Observation" }));
     expect(main().getByLabelText("New observation")).toHaveFocus();
     // Typing in another part re-renders the study; the cursor stays where it is.
     const theology = main().getByRole("textbox", { name: "Theology: paragraph" });
@@ -247,42 +216,36 @@ describe("review fixes: writing notes in parts", () => {
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
     await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    await user.click(main().getByRole("button", { name: "Observation" }));
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await user.click(screen.getByRole("menuitem", { name: "Observation" }));
     await user.type(main().getByLabelText("New observation"), "Half written");
     await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Application" }));
+    await user.click(main().getByRole("button", { name: "Note — Application" }));
     await openPartOptions(user);
-    await user.click(within(main().getByRole("group", { name: "Add to Application" })).getByRole("button", { name: "Question" }));
+    await user.click(screen.getByRole("menuitem", { name: "Question" }));
     // Two notes being written, each in its own part; nothing lost.
     expect(main().getByLabelText("New observation")).toHaveValue("Half written");
     expect(main().getByLabelText("New question")).toHaveFocus();
     // Add again where a note is open keeps the draft and goes back to it.
     await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
     await openPartOptions(user);
-    await user.click(within(main().getByRole("group", { name: "Add to Context" })).getByRole("button", { name: "Question" }));
+    await user.click(screen.getByRole("menuitem", { name: "Question" }));
     expect(main().getByLabelText("New observation")).toHaveValue("Half written");
     expect(main().getByLabelText("New observation")).toHaveFocus();
     await user.keyboard("{Control>}{Enter}{/Control}");
     await waitFor(() => expect(api.state.findings).toHaveLength(1));
     await openPartOptions(user);
-    await waitFor(() => expect(main().getByRole("button", { name: "Add to Context" })).toHaveFocus());
+    await waitFor(() => expect(main().getByRole("button", { name: "Note — Context" })).toHaveFocus());
   });
 
-  it("moves the keyboard to the first further kind when More types is chosen", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Meaning" }));
-    await user.click(main().getByRole("button", { name: "More types" }));
-    await waitFor(() => expect(main().getByRole("button", { name: "Quotation" })).toHaveFocus());
-    await user.keyboard("{Escape}");
-    await openPartOptions(user);
-    expect(main().getByRole("button", { name: "Add to Meaning" })).toHaveFocus();
-  });
-});
+  it("moves through note kinds with the keyboard and returns to Notes", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    const notes = main().getByRole("button", { name: "Note — Meaning" }); await user.click(notes);
+    expect(screen.getByRole("menuitem", { name: "Observation" })).toHaveFocus();
+    await user.keyboard("{ArrowDown}"); expect(screen.getByRole("menuitem", { name: "Interpretation" })).toHaveFocus();
+    await user.keyboard("{Escape}"); expect(notes).toHaveFocus();
+  });});
 
 describe("focused study sections", () => {
   it("shows one section with its notes in Step-by-step, and the complete document in Continuous writing", async () => {
@@ -319,8 +282,8 @@ describe("focused study sections", () => {
     const meaning = api.state.sections.find((s) => s.title === "Meaning")!;
     await user.selectOptions(main().getByRole("combobox"), meaning.id);
     await openPartOptions(user);
-    await user.click(main().getByRole("button", { name: "Add to Meaning" }));
-    await user.click(main().getByRole("button", { name: "Question" }));
+    await user.click(main().getByRole("button", { name: "Note — Meaning" }));
+    await user.click(screen.getByRole("menuitem", { name: "Question" }));
     expect(main().getByLabelText("New question")).toBeVisible();
     expect(main().queryByRole("region", { name: "Context" })).toBeNull();
   });
@@ -337,7 +300,8 @@ describe("adding a part", () => {
     await user.click(within(suggested).getByRole("button", { name: "Key Words" }));
     await main().findByRole("heading", { level: 2, name: "Key Words" });
     await openPartOptions(user, "Key Words");
-    await user.click(within(main().getByRole("region", { name: "Key Words" })).getByRole("button", { name: "Guidance (optional)" }));
+    const hintToggle = within(main().getByRole("region", { name: "Key Words" })).getByRole("button", { name: "Hints" });
+    if (hintToggle.getAttribute("aria-pressed") !== "true") await user.click(hintToggle);
     expect(within(main().getByRole("region", { name: "Key Words" })).getByText(/Words that carry the passage/)).toBeInTheDocument();
     // what is there already is not suggested again
     await user.click(main().getByRole("button", { name: "Add a part" }));

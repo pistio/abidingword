@@ -142,7 +142,8 @@ describe("the study's movement on screen", () => {
       expect(within(study()).getByRole("heading", { level: 2, name })).toBeInTheDocument();
     }
     await user.click(within(meaning).getByRole("button", { name: "Options for part Meaning" }));
-    expect(within(meaning).getByRole("combobox", { name: /Meaning/ })).toBeInTheDocument();
+    expect(within(meaning).queryByRole("combobox", { name: /Meaning/ })).toBeNull();
+    expect(meaning).toHaveAttribute("data-phase", "understanding");
   });
 
   it("marks the focused part and keeps the other parts in the continuous document", async () => {

@@ -170,7 +170,8 @@
   },
   "sections": {
     "hasContent": "« {{title}} » contient encore du texte ou des notes.",
-    "duplicateKey": "Cette étude contient déjà cette partie."
+    "duplicateKey": "Cette étude contient déjà cette partie.",
+    "repairChanged": "Les parties ont changé. Vérifiez-les à nouveau. L’annulation exige des parties ajoutées inchangées ; tous les textes sont conservés."
   },
   "relations": {
     "self": "Une étude ne peut pas être liée à elle-même.",

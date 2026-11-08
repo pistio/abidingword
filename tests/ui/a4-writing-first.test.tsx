@@ -39,11 +39,13 @@ describe("A.4.3 writing-first Bible Study", () => {
     expect(first).toHaveTextContent("Personen");
     const part = first.closest("section")!;
     const field = within(part).getByRole("textbox");
-    expect(field).toHaveAccessibleName(/^Personen — Deine Antwort$/);
-    expect(field).toHaveAttribute("rows", "10");
+    expect(field).toHaveAccessibleName(/^P — Personen — Deine Antwort$/);
+    expect(field).toHaveAttribute("rows", "5");
     // Its only other control is one quiet "…".
-    expect(within(part).getAllByRole("button").map((b) => b.getAttribute("aria-label"))).toEqual([i18n.t("studies.sections.options", { title: "Personen" })]);
-    expect(pane.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toContain("Ort");
+    expect(within(part).getByRole("button", { name: i18n.t("studies.sections.options", { title: "P — Personen" }) })).toBeInTheDocument();
+    expect(within(part).getByRole("button", { name: i18n.t("studies.flow.hideGuidance") })).toBeInTheDocument();
+    expect(field).toHaveClass("resize-y");
+    expect(pane.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toContain("O — Ort");
   });
 
   it("keeps every POZETEK section, writing continuously by default, and its attribution and hints", async () => {
@@ -51,8 +53,9 @@ describe("A.4.3 writing-first Bible Study", () => {
     const pane = within(studyPane());
     expect(pane.getAllByRole("heading", { level: 2 })).toHaveLength(7);
     expect(pane.getAllByRole("textbox", { name: /Deine Antwort$/ })).toHaveLength(7); // continuous: all at once
-    await openPartOptions(user, "Personen");
-    await user.click(pane.getByRole("button", { name: i18n.t("studies.flow.guidance") }));
+    await openPartOptions(user, "P — Personen");
+    const hints = pane.getByRole("button", { name: i18n.t("studies.flow.guidance") });
+    if (hints.getAttribute("aria-pressed") !== "true") await user.click(hints);
     expect(studyPane().querySelector("[data-part-hints]")).not.toBeNull();
     expect(studyPane().querySelector("[data-part-hints]")!.textContent!.length).toBeGreaterThan(10);
   });

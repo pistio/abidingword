@@ -117,24 +117,18 @@ describe("a Bible Study template of one's own", () => {
 });
 
 describe("a study's own parts", () => {
-  it("can be given, moved to or taken out of a phase from the part's options", async () => {
+  it("preserves saved phases without exposing the internal phase selector in part options", async () => {
     const { api, project } = await setup();
-    await api.studyCreate({ projectId: project.id, title: "Abiding", studyType: "passage" });
+    const created = await api.studyCreate({ projectId: project.id, title: "Abiding", studyType: "passage" });
+    const applicationPart = created.sections.find(s => s.title === "Application")!;
+    await api.studySectionUpdate({ id: applicationPart.id, phase: "audience" });
     const user = await openStudy(api, "Abiding");
-    expect(outlineNames()).toEqual(["Text", "Understanding", "Theology", "Application"]);
+    expect(outlineNames()).toEqual(["Text", "Understanding", "Theology", "Audience"]);
     const application = within(study()).getByRole("region", { name: "Application" });
     await user.click(within(application).getByRole("button", { name: "Options for part Application" }));
-    const phase = within(application).getByLabelText("Where Application belongs in the study outline");
-    expect(phase).toHaveValue("application");
-    await user.selectOptions(phase, "audience");
-    await waitFor(() => expect(outlineNames()).toEqual(["Text", "Understanding", "Theology", "Audience"]));
-    expect(api.state.sections.find((s) => s.title === "Application")!.phase).toBe("audience");
-    await user.selectOptions(within(application).getByLabelText("Where Application belongs in the study outline"), "");
-    // Taken out of the outline, it sits with the part before it, with no meaning of its own.
-    await waitFor(() => expect(outlineNames()).toEqual(["Text", "Understanding", "Theology"]));
-    expect(api.state.sections.find((s) => s.title === "Application")!.phase).toBeNull();
-    // The part keeps its key, its heading and its place.
-    expect(api.state.sections.find((s) => s.title === "Application")!.key).toBe("application");
+    expect(within(application).queryByLabelText("Where Application belongs in the study outline")).toBeNull();
+    expect(api.state.sections.find(s => s.id === applicationPart.id)).toMatchObject({ key: "application", phase: "audience" });
+    expect(application).toHaveAttribute("data-phase", "audience");
   });
 
   it("added from the template's parts for later come with their key and phase; one's own come with neither", async () => {
@@ -250,16 +244,16 @@ describe("review fixes (v0.18.7)", () => {
     await expect(api.studySectionCreate({ studyId: detail.study.id, title: "Odd", key: "Not a key!" })).rejects.toThrow(/not valid/);
   });
 
-  it("shows a part's new phase at once, as a 44 px control", async () => {
+  it("keeps the saved phase when a part moves, while ordinary settings stay simple", async () => {
     const { api, project } = await setup();
     await api.studyCreate({ projectId: project.id, title: "Abiding", studyType: "passage" });
     const user = await openStudy(api, "Abiding");
     const meaning = within(study()).getByRole("region", { name: "Meaning" });
     await user.click(within(meaning).getByRole("button", { name: "Options for part Meaning" }));
-    const select = within(meaning).getByLabelText("Where Meaning belongs in the study outline");
-    expect(select).toHaveClass("h-11");
-    await user.selectOptions(select, "theology");
-    expect(select).toHaveValue("theology");
+    expect(within(meaning).queryByLabelText("Where Meaning belongs in the study outline")).toBeNull();
+    await user.click(within(meaning).getByRole("button", { name: "Move part Meaning up" }));
+    await waitFor(() => expect(api.state.sections.find(s => s.title === "Meaning")!.position).toBe(2));
+    expect(api.state.sections.find(s => s.title === "Meaning")!.phase).toBe("understanding");
   });
 
   it("moves focus to New template… after a template is deleted, and back to Delete when it is kept", async () => {

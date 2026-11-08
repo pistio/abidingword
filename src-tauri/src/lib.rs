@@ -100,6 +100,7 @@ pub fn run() {
             commands::sections::study_section_update,
             commands::sections::study_section_create,
             commands::sections::study_section_restore_missing,
+            commands::sections::study_pozetek_repair,
             commands::sections::study_section_delete,
             commands::sections::study_section_reorder,
             commands::blocks::study_block_create,

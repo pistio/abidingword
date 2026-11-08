@@ -30,6 +30,7 @@ interface BuiltinDefinition {
   description?: string | null;
   /** False: kept only for the studies made with it, never offered for a new one (e.g. the old teaching study). */
   offered?: boolean;
+  formerSections?: BuiltinDefinition["sections"];
   sections: {
     key: string;
     title: string;
@@ -61,7 +62,7 @@ function translate(key: string, fallback: string): string {
 function builtinSection(key: string | null | undefined, field: "title" | "guidance", english: string, templateKey?: string) {
   if (!key) return null;
   for (const template of BUILTIN.filter((t) => !templateKey || t.key === templateKey)) {
-    const section = template.sections.find(
+    const section = [...template.sections, ...(template.formerSections ?? [])].find(
       (s) => s.key === key && ((s[field] ?? "") === english || (field === "title" ? s.formerTitles : s.formerGuidance)?.includes(english)),
     );
     if (section) return { template: template.key, section: section.key };

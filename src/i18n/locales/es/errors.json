@@ -170,7 +170,8 @@
   },
   "sections": {
     "hasContent": "«{{title}}» todavía contiene texto o apuntes.",
-    "duplicateKey": "Este estudio ya tiene esa parte."
+    "duplicateKey": "Este estudio ya tiene esa parte.",
+    "repairChanged": "Las partes cambiaron. Revise de nuevo. Deshacer requiere partes añadidas sin cambios; se conservan todos los textos."
   },
   "relations": {
     "self": "Un estudio no se puede vincular consigo mismo.",

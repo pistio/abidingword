@@ -935,6 +935,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
   });
   const segmentsOf = (sourceId: string) => library.segments.filter((x) => x.sourceId === sourceId).sort((a, b) => a.position - b.position);
   // Stands in for a PDF file (the tests' viewer is a fake engine; nothing parses these bytes).
+  const pozetekReceipts = new Map<string, { before: string[]; after: string[]; added: StudySection[] }>();
   const originalPdfOf = new Map<string, Uint8Array>();
   const originalBytes = new TextEncoder().encode("%PDF-1.4 synthetic test file");
   const window = (sourceId: string, offset: number, limit: number, target: string | null) => {
@@ -1261,6 +1262,32 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       if (input.phase !== undefined) section.phase = input.phase || null;
       if (input.status) section.status = input.status;
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === section.id) };
+    },
+    studyPozetekRepair: async (studyId, action, expectedIds) => {
+      const current = sectionsOf(studyId);
+      const ids = current.map(s => s.id);
+      const saved = pozetekReceipts.get(studyId);
+      const conflict = () => new ApiError("conflict", "The parts changed. Review them again. All writing is kept.");
+      if (action === "apply") {
+        if (saved || JSON.stringify(ids) !== JSON.stringify(expectedIds)) throw conflict();
+        await api.studySectionRestoreMissing(studyId);
+        const parts = sectionsOf(studyId);
+        const keys = ["persons", "place", "time", "events", "context", "explanations", "core"];
+        const ordered = keys.map(key => parts.find(s => s.key === key)!).filter(Boolean);
+        ordered.push(...parts.filter(s => !ordered.some(o => o.id === s.id)));
+        const after = ordered.map(s => s.id);
+        if (JSON.stringify(ids) !== JSON.stringify(after)) {
+          await api.studySectionReorder({ parentId: studyId, ids: after });
+          pozetekReceipts.set(studyId, { before: ids, after, added: structuredClone(sectionsOf(studyId).filter(s => !ids.includes(s.id))) });
+        }
+      } else if (action === "undo") {
+        if (!saved || JSON.stringify(saved.after) !== JSON.stringify(ids)) throw conflict();
+        for (const original of saved.added) if (JSON.stringify(current.find(s => s.id === original.id)) !== JSON.stringify(original)) throw conflict();
+        for (const original of saved.added) await api.studySectionDelete({ id: original.id, force: false });
+        await api.studySectionReorder({ parentId: studyId, ids: saved.before });
+        pozetekReceipts.delete(studyId);
+      }
+      return { sections: sectionsOf(studyId), canUndo: pozetekReceipts.has(studyId) };
     },
     studySectionRestoreMissing: async (studyId, keys) => {
       const study = find(state.studies, studyId, "study");

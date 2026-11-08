@@ -36,13 +36,13 @@ locations or exact failure cause from the counts alone.
 | #34 ordinary-language heading control | Implemented | Chapters and headings / Kapitel und Überschriften in all six languages |
 | #34 one combined ReaderToolbar/PdfViewer row | Implemented | Shared controls, live PDF page count; zoom/fit in overflow or pinned; browser and focused regressions |
 | #34 recurring three-pane layout, real WebView2 geometry/DPI/focus | **WINDOWS GATE OPEN** | This executor is Linux; browser evidence does not satisfy WebView2 |
-| #33 exact original seven-part POZETEK and substantive guidance | Pending stage | Preserve existing study writing and stable keys; investigate historical introduction |
-| #33 explicit reversible repair, duplicates, restore-missing | Pending stage | No automatic rename/delete/merge of existing content |
-| #33 compact manually resizable fields; initial dismissible Hinweise | Pending stage | Preserve autosave, full text and manual preferences |
-| #33 Ten-Step guidance / three concise thinking questions | Pending stage | Keep order/keys and only the three existing questions; no added lecture |
-| #33 always-modal named section deletion, including empty | Pending stage | Focus, cancel, Escape/Enter and recovery required |
-| #33 simpler additions and remove ordinary phase selector | Pending stage | Preserve saved phases, Q&A and all existing data |
-| #34 simple Teaching Textfeld hinzufügen | Pending stage | Preserve distinct Q&A/Scripture and saved block roles/privacy/export |
+| #33 exact original seven-part POZETEK and substantive guidance | Implemented; owner review open | Original seven canonical keys in all six languages; history traced to b2345e0; existing snapshots untouched |
+| #33 explicit reversible repair, duplicates, restore-missing | Implemented | Preview/consent, additive canonical parts, preserved duplicate identities, transactional receipt and persistent conservative Undo |
+| #33 compact manually resizable fields; initial dismissible Hinweise | Implemented | Five lines, native resize/scroll; initial empty-part hints, saved per-section dismissal; actual Chromium drag tested |
+| #33 Ten-Step guidance / three concise thinking questions | Implemented; pedagogical owner review open | Expanded guidance/output, optional Matthew 8:18–27; thinking labels unchanged, no extra prose |
+| #33 always-modal named section deletion, including empty | Implemented | Named overlay, Keep/Escape/focus, fresh saved-content check, empty-part Undo retained |
+| #33 simpler additions and remove ordinary phase selector | Implemented | Direct Text/Q&A; single distinct-notes menu; saved phases and advanced template editor preserved |
+| #34 simple Teaching Textfeld hinzufügen | Implemented | Direct private writing; Q&A/Scripture/structural controls secondary; all saved types remain supported |
 | Schema 27, migrations 0001–0027, #31 atomicity, A.4 features | Preserved | Historical SQL and original ledger untouched; next migration reserved for provisional Bible safety |
 
 ## Windows owner steps for the first stage (#35)

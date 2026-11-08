@@ -66,14 +66,14 @@ describe("the shared primitives", () => {
 
   it("confirm every delete or remove with the danger action, never the primary one", () => {
     const wrong = all.flatMap((f) =>
-      [...f.text.matchAll(/role="alertdialog"[\s\S]{0,900}?<\/div>/g)]
+      [...f.text.matchAll(/role="alertdialog"[\s\S]{0,1400}?(?:<\/div>|<\/Dialog>)/g)]
         .filter((m) => /<Button variant="primary"/.test(m[0]) || !/<Button variant="danger"/.test(m[0]))
         .map(() => f.path),
     );
     expect(wrong).toEqual([]);
     // Every confirmation was looked at (a longer one would slip past the pattern above).
     const dialogs = all.reduce((n, f) => n + (f.text.match(/role="alertdialog"/g)?.length ?? 0), 0);
-    const seen = all.reduce((n, f) => n + [...f.text.matchAll(/role="alertdialog"[\s\S]{0,900}?<\/div>/g)].length, 0);
+    const seen = all.reduce((n, f) => n + [...f.text.matchAll(/role="alertdialog"[\s\S]{0,1400}?(?:<\/div>|<\/Dialog>)/g)].length, 0);
     expect(seen).toBe(dialogs);
     expect(dialogs).toBeGreaterThanOrEqual(5);
     // Inline confirmations (delete a teaching, a point, a block, a presentation) use it too.

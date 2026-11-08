@@ -1,6 +1,7 @@
 import { useId, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, Copy, Info, Lock, MoreHorizontal, Plus, Trash2 } from "lucide-react";
+import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
@@ -395,35 +396,24 @@ function BlockTools({
   );
 }
 
-export function AddBlock({ label, onAdd, id: buttonId }: { label: string; onAdd: (type: string) => void; id?: string }) {
+export function AddBlock({ label, onAdd, id: buttonId, advanced = false }: { label: string; onAdd: (type: string) => void; id?: string; advanced?: boolean }) {
   const { t } = useTranslation();
   const id = useId();
   const [open, setOpen] = useState(false);
-  return (
-    <div className="relative">
-      <Button type="button" id={buttonId} variant="quiet" aria-expanded={open} aria-haspopup="menu" aria-controls={`${id}-menu`} onClick={() => setOpen((v) => !v)}>
-        <Plus className="size-4" aria-hidden="true" />
-        {label}
-      </Button>
-      {open && (
-        <ul id={`${id}-menu`} role="menu" aria-label={label} className="absolute z-10 m-0 mt-1 max-h-80 list-none overflow-y-auto rounded-aw border border-border bg-bg p-1 shadow-none">
-          {TEACHING_BLOCK_TYPES.map((type) => (
-            <li key={type} role="none">
-              <button
-                type="button"
-                role="menuitem"
-                className="block w-full rounded-aw px-3 py-2 text-left text-[0.9375rem] hover:bg-hover"
-                onClick={() => {
-                  setOpen(false);
-                  onAdd(type);
-                }}
-              >
-                {t(`studies.teaching.blocks.types.${type}`)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
+  // Template authors retain the complete stored type vocabulary. Ordinary
+  // Teaching writing uses the small set of genuinely different actions below.
+  if (advanced) return <div className="relative">
+    <Button id={buttonId} variant="quiet" aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(!open)}><Plus className="size-4" aria-hidden="true" />{label}</Button>
+    {open && <ul id={id} role="menu" aria-label={label} className="absolute z-10 m-0 mt-1 max-h-80 list-none overflow-y-auto rounded-aw border border-border bg-bg p-1">
+      {TEACHING_BLOCK_TYPES.map(type => <li key={type} role="none"><button type="button" role="menuitem" className="block w-full min-h-11 rounded-aw px-3 py-2 text-left hover:bg-hover" onClick={() => { setOpen(false); onAdd(type); }}>{t(`studies.teaching.blocks.types.${type}`)}</button></li>)}
+    </ul>}
+  </div>;
+  return <div className="flex items-center gap-1">
+    <Button type="button" id={buttonId} variant="quiet" aria-label={`${t("studies.add.textField")} — ${label}`} onClick={() => onAdd("writing")}>
+      <Plus className="size-4" aria-hidden="true" />{t("studies.add.textField")}
+    </Button>
+    <ActionMenu portal label={label} actions={(["qa", "scripture", "section", "outline_point"] as const).map(type => ({
+      label: t(`studies.teaching.blocks.types.${type}`), onSelect: () => onAdd(type),
+    }))} />
+  </div>;
 }

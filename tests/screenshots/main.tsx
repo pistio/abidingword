@@ -620,6 +620,18 @@ async function start() {
       if (block) await api.studyBlockUpdate({ id: block.id, content: text });
     }
   }
+  if (params.get("a4Editors") === "1" && params.get("pozetekLegacy") === "1") {
+    // Invented historical shape for repair preview screenshots, never owner data.
+    const study = api.state.studies.find(study => study.title === "Römer 8")!;
+    for (const [key, oldKey, title] of [["context", "theme", "Theme"], ["explanations", "understanding", "Understanding"], ["core", "consequences", "Consequences"]]) {
+      const part = api.state.sections.find(part => part.studyId === study.id && part.key === key)!;
+      part.key = oldKey!; part.title = title!;
+      const block = api.state.blocks.find(block => block.sectionId === part.id)!;
+      await api.studyBlockUpdate({ id: block.id, content: `Invented preserved ${oldKey} writing — 한글` });
+    }
+    const duplicate = await api.studySectionCreate({ studyId: study.id, title: "Zeit — eigene Notizen" });
+    api.state.sections.find(part => part.id === duplicate.id)!.key = "time";
+  }
   await i18n.changeLanguage(params.get("lang") ?? "en");
   // All three panes even in a narrow window, as the owner works (review scenes, v0.18.5).
   if (params.get("sourcesOpen") === "1") localStorage.setItem("abiding-word.layout.sourcesOpen", "true");
