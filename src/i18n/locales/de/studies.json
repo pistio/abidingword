@@ -905,7 +905,7 @@
         "sections": {
           "persons": {
             "title": "P — Personen",
-            "guidance": "Wer kommt im Text vor, wer spricht, wer handelt und an wen richtet sich die Botschaft? Alle Beteiligten kennenlernen, bevor etwas gedeutet wird. Nur festhalten, was der Text selbst sagt. Wer hat diesen Text verfasst oder gesprochen, soweit der Text oder sein Buch es sagt? Wer spricht in diesem Abschnitt? Wechselt der Sprecher? An wen richtet sich die Botschaft? Jede genannte oder gemeinte Person oder Gruppe eintragen, mit Vers und Rolle. Wie stehen die Beteiligten zueinander? Wer steht über, bei oder gegen wen? Was ist an den Personen dieses Textes noch unklar? Den Verfasser des Buches und seine ersten Empfänger, Sprecher, Handelnde und Angesprochene berücksichtigen, auch Personen in Gleichnissen. Belegte Rollen und Beziehungen von Vermutungen trennen.",
+            "guidance": "Wer hat den Text geschrieben? An wen richtet er sich? Wer spricht, handelt oder kommt vor?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -915,7 +915,7 @@
           },
           "place": {
             "title": "O — Ort",
-            "guidance": "Welche Orte und räumlichen oder kulturellen Beziehungen sind für den Text wichtig? Wahrnehmen, wo etwas geschieht oder wovon die Rede ist. Textbefund und externe Recherche getrennt halten. Jeden im Text genannten Ort eintragen, mit Vers und Rolle. Was ergibt externe Recherche? Die Quelle angeben, damit es vom Textbefund unterscheidbar bleibt. Welche Ortsbezüge sind noch unsicher? Aufenthaltsorte von Verfasser und Empfängern, Schauplatz und erwähnte Orte unterscheiden. Geografie, Topografie, Landschaft, Geologie, Klima und Wetter, Geschichte, Archäologie, Kultur und Ethnie nur heranziehen, wenn sie den Text tatsächlich erklären; Belege nennen.",
+            "guidance": "Wo spielt das Geschehen? Welche geografischen oder kulturellen Umstände sind wichtig?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -925,7 +925,7 @@
           },
           "time": {
             "title": "Z — Zeit",
-            "guidance": "Wann spielt der Text, und welche historischen Umstände sind wichtig? Den Text zeitlich einordnen. Kennzeichnen, was der Text selbst nennt und was eine historische Einordnung ist, die unsicher sein kann. Welche Daten, Zeiten oder Wendungen wie „damals“ und „in jenen Tagen“ nennt der Text? Was ist über die Zeit bekannt? Unsicheres als unsicher kennzeichnen. Woher stammt diese Information? Wie verläuft die Zeit im Abschnitt? Was kommt davor, dabei und danach? Wenn der Text prophetisch ist: Was blickt zurück, was beschreibt die gegenwärtige Lage, was kündigt Zukünftiges an? Entstehung, Empfang oder Lesen durch die ersten Adressaten und die erzählten Ereignisse unterscheiden. Politische, gesellschaftliche und religiöse Verhältnisse beachten; Belege und Hypothesen trennen.",
+            "guidance": "Wann geschieht das? Welche geschichtlichen Umstände sind wichtig?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -935,7 +935,7 @@
           },
           "events": {
             "title": "E — Ereignisse",
-            "guidance": "Was geschieht? Wie entfalten sich Ereignisse oder Aussagen? Dem Verlauf des Textes Abschnitt für Abschnitt folgen. Die Gliederung ist ein Vorschlag, den man ändern darf. Den Text in Abschnitte gliedern: Verse, was geschieht oder gesagt wird und welche Bedeutung das im Verlauf hat. Wo ändert sich die Richtung des Textes? Welche Gegensätze oder Spannungen stellt der Text einander gegenüber? Bei Briefen, Prophetie, Poesie und Lehre den Gedankengang, Aufbau und Verlauf Vers für Vers ebenso sorgfältig verfolgen wie erzählte Handlungen.",
+            "guidance": "Was geschieht im Text? Wie entwickelt sich die Handlung oder der Gedankengang?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -975,7 +975,7 @@
           },
           "context": {
             "title": "T — Textzusammenhang",
-            "guidance": "Wie fügt sich der Abschnitt in das Kapitel, das ganze Buch und die übrige Schrift ein? Den Abschnitt in seiner Umgebung sehen, von den nächsten Versen nach außen, und erkennen, wo er endet. Was steht unmittelbar davor und danach, und wie hängt es zusammen? Worum geht es im Buch, und wo steht der Abschnitt in dessen Gedankengang oder Erzählung? Wie verhält sich der Abschnitt zur übrigen Schrift und ihrer Geschichte? Verwandte Stellen eintragen und sagen, was sie zum Verständnis beitragen. Wo beginnt und endet die Texteinheit, und warum dort? Den geschichtlich-kulturellen Rahmen und weitere theologische Zusammenhänge berücksichtigen, ohne die Aussage dieses Abschnitts zu übergehen.",
+            "guidance": "Wie hängt der Abschnitt mit seinem Umfeld, dem Buch und der übrigen Schrift zusammen?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -985,7 +985,7 @@
           },
           "explanations": {
             "title": "E — Erklärungen",
-            "guidance": "Welche Begriffe, Aussagen oder Auslegungsprobleme verlangen Klärung? Fragen aus dem Text sammeln, an Belegen prüfen und die begründbaren Antworten festhalten. Offenes darf offen bleiben. Jede Frage eintragen mit Vers, geprüften Belegen, überprüfter Antwort und Status. Welche Wörter brauchen Erklärung? Was bedeuten sie hier, in diesem Zusammenhang? Wo mehrere Erklärungen möglich sind, jede mit ihren Gründen nennen. Welche Quellen wurden genutzt? Festhalten, um sie wiederzufinden. Schwierigkeiten am Text, an geeigneten Parallelstellen und mit Nachschlagewerken und Kommentaren untersuchen. Hilfsmittel unterstützen die eigene Beobachtung, ersetzen sie aber nicht.",
+            "guidance": "Welche Begriffe, Aussagen oder Auslegungsfragen müssen geklärt werden?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -995,7 +995,7 @@
           },
           "core": {
             "title": "K — Kern",
-            "guidance": "Was ist die zentrale Aussage genau dieses Abschnitts? Den Kern in drei Schritten benennen: Worum es geht, was der Text darüber sagt und ein prägnanter Satz. Die Reihenfolge beim Ausfüllen ist frei. Den Gegenstand in wenigen Worten benennen, ohne schon zu sagen, was der Text darüber behauptet. Zusammenfassen, was der Abschnitt über seinen Gegenstand sagt, so wie er es sagt. Gegenstand und Aussage in einem Satz zusammenführen, der sich an jedem Vers prüfen lässt. Die persönliche Anwendung folgt als eigene Reflexion nach diesen sieben Teilen.",
+            "guidance": "Textgegenstand — Worum geht es?\nErkenne, welches Thema, welche Person oder welche Beziehung im Mittelpunkt steht. Benenne den Gegenstand in wenigen Worten, noch ohne die Aussage des Textes vorwegzunehmen.\n\nTextaussage — Was sagt der Text darüber?\nUntersuche, was der Abschnitt über diesen Gegenstand aussagt. Fasse die wesentlichen Aussagen und ihren Zusammenhang zusammen.\n\nTextthema — Was ist die zentrale Botschaft?\nVerbinde Textgegenstand und Textaussage zu einem prägnanten Satz, der die Aussage des gesamten Abschnitts wiedergibt.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -2435,15 +2435,15 @@
         "blocks": {
           "introduction": {
             "title": "Einleitung",
-            "guidance": "Wie du beginnst. Kernbotschaft, Hörerschaft und Ziel kannst du als Blöcke ergänzen, wenn du sie brauchst."
+            "guidance": "Führe die Teilnehmer in das Thema ein."
           },
           "main": {
             "title": "Hauptteil",
-            "guidance": "Der Hauptteil der Predigt oder des Vortrags. Gliederungspunkte kannst du neben dem fortlaufenden Text hinzufügen."
+            "guidance": "Erarbeitet die Bedeutung des Textes und seinen Bezug zum Leben."
           },
           "conclusion": {
             "title": "Schluss",
-            "guidance": "Wie du schließt und welche Antwort passt."
+            "guidance": "Fasse das Wichtigste zusammen und leite zur praktischen Anwendung über."
           }
         }
       },

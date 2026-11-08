@@ -905,7 +905,7 @@
         "sections": {
           "persons": {
             "title": "Personnes",
-            "guidance": "Qui apparaît dans le texte, qui parle, qui agit, et à qui le message s’adresse-t-il ? Faire connaissance avec toutes les personnes concernées avant d’interpréter. Ne noter que ce que dit le texte lui-même. Qui a écrit ou prononcé ce texte, autant que le texte ou son livre le dit ? Qui parle dans ce passage ? Le locuteur change-t-il ? À qui le message est-il adressé ? Ajoutez chaque personne ou groupe nommé ou sous-entendu, avec le verset et son rôle. Comment les personnes sont-elles liées entre elles ? Qui est au-dessus, avec ou contre qui ? Qu’est-ce qui reste peu clair au sujet des personnes de ce texte ? Inclure l’auteur du livre, ses premiers destinataires, les locuteurs, acteurs et personnes visées, y compris dans les paraboles. Distinguer les rôles et relations attestés des conjectures.",
+            "guidance": "Qui a écrit le texte ? À qui s’adresse-t-il ? Qui parle, agit ou apparaît ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -915,7 +915,7 @@
           },
           "place": {
             "title": "Lieu",
-            "guidance": "Quels lieux et quelles relations spatiales ou culturelles comptent pour le texte ? Repérer où les choses se passent ou dont on parle. Distinguer ce que dit le texte de ce qu’apportent des sources extérieures. Notez chaque lieu nommé, avec le verset et son rôle. Qu’apportent les recherches extérieures ? Indiquez la source pour les distinguer du texte. Quelles mentions de lieux restent incertaines ? Distinguer les lieux de l’auteur et des destinataires, le cadre et les lieux cités. Géographie, relief, paysages, géologie, climat, histoire, archéologie, culture et ethnicité ne sont utiles que s’ils éclairent réellement le texte ; citer les preuves.",
+            "guidance": "Où cela se passe-t-il ? Quels éléments géographiques ou culturels sont importants ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -925,7 +925,7 @@
           },
           "time": {
             "title": "Temps",
-            "guidance": "Quand le texte se situe-t-il, et quelles circonstances historiques comptent ? Situer le texte dans le temps. Distinguer ce que le texte indique et ce qui est un classement historique, parfois incertain. Quelles dates, périodes ou expressions comme « alors » ou « en ces jours-là » le texte donne-t-il ? Que sait-on de l’époque ? Signalez ce qui reste incertain. D’où vient cette information ? Comment le temps avance-t-il dans le passage ? Qu’y a-t-il avant, pendant, après ? Si le texte est prophétique : qu’est-ce qui regarde en arrière, décrit la situation présente, annonce l’avenir ? Distinguer rédaction, réception ou lecture par le premier public et événements racontés. Examiner le contexte politique, social et religieux en séparant preuves et hypothèses.",
+            "guidance": "Quand cela se passe-t-il ? Quelles circonstances historiques sont importantes ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -935,7 +935,7 @@
           },
           "events": {
             "title": "Événements",
-            "guidance": "Que se passe-t-il ? Comment les événements ou les affirmations se déploient-ils ? Suivre le mouvement du texte section par section. Le plan est une proposition que vous pouvez modifier. Divisez le texte en sections : versets, ce qui se passe ou se dit, et ce que cela signifie dans le déroulement. Où la direction du texte change-t-elle ? Quels contrastes ou tensions le texte met-il en regard ? Dans les lettres, la prophétie, la poésie et l’enseignement, suivre aussi le raisonnement, la structure et la progression verset par verset.",
+            "guidance": "Que se passe-t-il dans le texte ? Comment le récit ou le raisonnement progresse-t-il ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -975,7 +975,7 @@
           },
           "context": {
             "title": "Contexte du texte",
-            "guidance": "Comment le passage s’insère-t-il dans le chapitre, dans tout le livre et dans le reste de l’Écriture ? Voir le passage dans son environnement, des versets voisins vers l’extérieur, et repérer où il s’arrête. Qu’y a-t-il juste avant et après, et comment cela se relie-t-il ? De quoi parle le livre, et où le passage se place-t-il dans son raisonnement ou son récit ? Quel est le rapport du passage avec le reste de l’Écriture et son histoire ? Ajoutez des passages liés et dites ce que chacun apporte à la compréhension. Où l’unité commence-t-elle et finit-elle, et pourquoi là ? Inclure le cadre historique et culturel ainsi que les liens théologiques pertinents, sans écarter le sens de ce passage.",
+            "guidance": "Comment ce passage s’articule-t-il avec son contexte, le livre et le reste de l’Écriture ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -985,7 +985,7 @@
           },
           "explanations": {
             "title": "Explications",
-            "guidance": "Quels termes, affirmations ou problèmes d’interprétation demandent à être éclaircis ? Rassembler les questions du texte, les vérifier à la lumière des preuves et noter les réponses que l’on peut étayer. Laisser ouvert ce qui l’est encore. Ajoutez chaque question avec le verset, les preuves vérifiées, la réponse et l’état. Quels mots demandent une explication ? Que signifient-ils ici, dans ce contexte ? Là où plusieurs explications sont possibles, énoncez chacune avec ses raisons. Quelles sources avez-vous utilisées ? Notez-les pour les retrouver. Étudier les difficultés à partir du texte, de parallèles appropriés, d’ouvrages de référence et de commentaires. Ces outils soutiennent votre observation sans la remplacer.",
+            "guidance": "Quels termes, affirmations ou questions d’interprétation faut-il éclaircir ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -995,7 +995,7 @@
           },
           "core": {
             "title": "Noyau",
-            "guidance": "Quel est le message central de ce passage précisément ? Formuler le noyau en trois temps : de quoi parle le texte, ce qu’il en dit, et une phrase concise. L’ordre de saisie est libre. Nommez le sujet en quelques mots, sans dire encore ce que le texte en affirme. Résumez ce que le passage dit de son objet, comme il le dit. Réunissez l’objet et l’énoncé en une phrase que l’on peut vérifier sur chaque verset. L’application personnelle suit dans une réflexion distincte après ces sept parties.",
+            "guidance": "Sujet — De quoi parle le passage ?\nRepérez le thème, la personne ou la relation qui occupe une place centrale. Nommez ce sujet en quelques mots, sans encore préciser ce que le texte en dit.\n\nAffirmation — Qu’en dit le texte ?\nExaminez ce que le passage dit de ce sujet. Résumez les affirmations principales et les liens entre elles.\n\nThème — Quel est le message central ?\nRéunissez le sujet et l’affirmation en une phrase concise qui exprime le message de l’ensemble du passage.",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -2446,15 +2446,15 @@
         "blocks": {
           "introduction": {
             "title": "Introduction",
-            "guidance": "Comment vous commencez. Le message central, les auditeurs et le but peuvent être ajoutés en blocs si vous en avez besoin."
+            "guidance": "Introduisez le sujet auprès des participants."
           },
           "main": {
             "title": "Développement",
-            "guidance": "Le corps de la prédication ou de l’exposé. Vous pouvez ajouter des points de plan à côté du texte continu."
+            "guidance": "Explorez le sens du texte et son lien avec la vie."
           },
           "conclusion": {
             "title": "Conclusion",
-            "guidance": "Comment vous terminez, et quelle réponse convient."
+            "guidance": "Résumez les points essentiels et passez à l’application pratique."
           }
         }
       },
