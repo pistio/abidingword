@@ -5,8 +5,15 @@
 //! It does no layout, ordering or recognition: each character PDFium reads
 //! from the page's content is written once, in PDFium's character order,
 //! with the measures the layout code already works from (`Glyph` there).
-//! Characters PDFium generates itself (spaces and line ends it infers) are
-//! left out: the layout code decides where words and lines are. A ligature
+//! Characters PDFium generates itself (spaces and line ends it infers, with
+//! no text object behind them) are left out: the layout code decides where
+//! words and lines are. PDFium also marks some of the document's own spaces
+//! "generated"; those keep their text object and are written. A hyphen
+//! ending a line, which PDFium reports as U+0002, is written as "-".
+//!
+//! Not reproduced: the text state's character spacing (`Tc`), which
+//! pdf-extract adds to each advance and PDFium does not expose per
+//! character, so letter-spaced headings show wider gaps between letters. A ligature
 //! PDFium expands ("ﬁ" read as "f", "i", at one origin) is written as one
 //! glyph, as the current backend gives it.
 //!
@@ -144,7 +151,12 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
         while k < n {
             let i = k;
             k += 1;
-            if pdf.FPDFText_IsGenerated(text, i) == 1 {
+            // PDFium marks some of the document's own spaces "generated"
+            // too; those still have the text object they were drawn from.
+            // A character PDFium inferred has none, and is left out.
+            if pdf.FPDFText_IsGenerated(text, i) == 1
+                && pdf.FPDFText_GetTextObject(text, i).is_null()
+            {
                 continue;
             }
             let mut code = pdf.FPDFText_GetUnicode(text, i);
@@ -155,6 +167,15 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
                     code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
                     k += 1;
                 }
+            }
+            // PDFium gives a hyphen that ends a line as U+0002, its own
+            // marker; the document drew a hyphen there (pdf-extract gives
+            // "-"). Only one drawn from a text object is written.
+            if code == 2 {
+                if pdf.FPDFText_GetTextObject(text, i).is_null() {
+                    continue;
+                }
+                code = u32::from('-');
             }
             let Some(c) = char::from_u32(code) else {
                 continue;
