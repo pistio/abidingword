@@ -1,0 +1,29 @@
+{
+  "platform": "Linux Chromium; synthetic job state, invented PDF; not WebView2 acceptance",
+  "results": [
+    {
+      "before": true,
+      "width": 900,
+      "progress": "unavailable",
+      "pageErrors": []
+    },
+    {
+      "before": false,
+      "width": 640,
+      "progress": "visible, cancel retained, retry enabled",
+      "pageErrors": []
+    },
+    {
+      "before": false,
+      "width": 900,
+      "progress": "visible, cancel retained, retry enabled",
+      "pageErrors": []
+    },
+    {
+      "before": false,
+      "width": 1440,
+      "progress": "visible, cancel retained, retry enabled",
+      "pageErrors": []
+    }
+  ]
+}

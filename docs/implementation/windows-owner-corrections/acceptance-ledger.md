@@ -37,7 +37,7 @@ locations or exact failure cause from the counts alone.
 | #34 one combined ReaderToolbar/PdfViewer row | Implemented | Shared controls, live PDF page count; zoom/fit in overflow or pinned; browser and focused regressions |
 | #34 recurring three-pane layout, real WebView2 geometry/DPI/focus | **WINDOWS GATE OPEN** | This executor is Linux; browser evidence does not satisfy WebView2 |
 | #33 exact original seven-part POZETEK and substantive guidance | Implemented; owner review open | Original seven canonical keys in all six languages; history traced to b2345e0; existing snapshots untouched |
-| #33 explicit reversible repair, duplicates, restore-missing | Implemented | Preview/consent, additive canonical parts, preserved duplicate identities, transactional receipt and persistent conservative Undo |
+| #33 explicit reversible repair, duplicates, restore-missing | Implemented | Preview/consent, additive canonical parts, preserved duplicate identities, transactional receipt, persistent Undo and unsaved-editor draft guards |
 | #33 compact manually resizable fields; initial dismissible Hinweise | Implemented | Five lines, native resize/scroll; initial empty-part hints, saved per-section dismissal; actual Chromium drag tested |
 | #33 Ten-Step guidance / three concise thinking questions | Implemented; pedagogical owner review open | Expanded guidance/output, optional Matthew 8:18–27; thinking labels unchanged, no extra prose |
 | #33 always-modal named section deletion, including empty | Implemented | Named overlay, Keep/Escape/focus, fresh saved-content check, empty-part Undo retained |
@@ -72,3 +72,19 @@ backup/matching executable. Never open primary data during development.
    sharing). There is no need to upload the copyrighted PDF. Keep #22/#35 open
    until the actual-file result is verified; manual correction is separate from
    automatic recognition.
+
+
+## Final combined verification and stop point
+
+Exact tested application source: `571b8fc0633b6909b6532e1c6b254e2dbb357f45`.
+Rust: **1,094 passed, zero failed, eight pre-existing ignored**. Frontend:
+**1,231 passed in 114 files, zero failed**. Frontend/native builds, typecheck,
+ESLint, fmt, Clippy all-targets `-D warnings`, six-language consistency/corpus and
+browser review scripts passed. See [handover](README.md), [verification](verification.json)
+and [clean source/migration proof](build-provenance.json).
+
+The schema-27 installer workflow is pinned to that exact SHA and is prepared only;
+no paid run was dispatched. Actual PDF and Windows WebView2 evidence, original
+editor guidance review, real DeepSeek Korean, Q&A/export/transfer owner acceptance
+and all original A.4 gates remain **OPEN**. Stop for that review before further
+Teaching integration. No merge, release, updater or production deployment.

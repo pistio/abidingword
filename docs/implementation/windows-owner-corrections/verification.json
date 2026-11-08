@@ -1,0 +1,52 @@
+{
+  "applicationSource": "571b8fc0633b6909b6532e1c6b254e2dbb357f45",
+  "branch": "codex/windows-owner-corrections-35",
+  "startingSource": "3badf22504939a91020168728913e89fc04b935c",
+  "platform": "Linux; no Windows execution",
+  "recordedUtc": "2026-11-08T00:46:51.209907+00:00",
+  "schema": 27,
+  "historicalMigrations": {
+    "count": 27,
+    "catalogueSha256": "acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13",
+    "unchanged": true
+  },
+  "rust": {
+    "passed": 1094,
+    "failed": 0,
+    "existingIgnored": 8,
+    "command": "cargo test --manifest-path src-tauri/Cargo.toml --locked --no-fail-fast"
+  },
+  "frontend": {
+    "passed": 1231,
+    "failed": 0,
+    "files": 114,
+    "command": "npm test -- --maxWorkers=2"
+  },
+  "checks": {
+    "typecheck": "passed",
+    "eslint": "passed",
+    "rustfmt": "passed",
+    "clippyAllTargetsWarningsDenied": "passed",
+    "sixLanguageConsistency": "passed",
+    "localisationCorpus": "passed",
+    "frontendBuild": "passed",
+    "nativeBuild": "passed",
+    "manualWorkflowPinsAndPermissions": "passed"
+  },
+  "browserEvidence": [
+    "images/34-browser-checks.json",
+    "images/33-browser-checks.json",
+    "images/final-processing/35-browser-checks.json"
+  ],
+  "ownerAcceptance": {
+    "actualMacArthur": false,
+    "actualBasisinformationen": false,
+    "actualGreekNtSource": false,
+    "windowsWebView2GeometryAndAccessibility": false,
+    "realDeepSeekKorean": false,
+    "originalA4OwnerGates": false
+  },
+  "paidActionsDispatched": false,
+  "mergedToMain": false,
+  "releaseOrUpdaterPublished": false
+}
