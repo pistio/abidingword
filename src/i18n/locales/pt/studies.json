@@ -2495,15 +2495,15 @@
     },
     "workspace": {
       "title": "Ensino",
-      "intro": "Prepara um ensino com ou sem estudo bíblico.",
+      "intro": "Prepare um ensino com ou sem estudo bíblico.",
       "sessions": "Sessões de ensino",
       "empty": "Ainda não há sessões de ensino.",
       "back": "Voltar à lista de ensinos",
       "study": "Estudo bíblico (opcional)",
       "independent": "Ensino independente",
-      "keepNotes": "Ao alterar ou remover a ligação, as notas utilizadas e as suas fontes ficam guardadas como cópias. Alterações posteriores no estudo não modificam essas cópias.",
-      "saveLink": "Guardar ligação",
-      "savedNote": "Nota de estudo guardada",
+      "keepNotes": "Ao alterar ou remover o vínculo, as anotações já usadas e suas fontes são preservadas como cópias. Alterações posteriores no estudo não modificam essas cópias.",
+      "saveLink": "Salvar vínculo",
+      "savedNote": "Anotação de estudo salva",
       "project": "Voltar ao projeto",
       "basedOn": "Baseado no estudo bíblico —",
       "linkStudy": "Vincular a um estudo bíblico",
@@ -2936,7 +2936,7 @@
       "answers": "Perguntas e respostas",
       "full": "Estudo completo"
     },
-    "save": "Guardar como Markdown…",
+    "save": "Salvar como Markdown…",
     "fileType": "Markdown",
     "saved": "Guardado em {{path}}",
     "empty": "Ainda não há nada para exportar com esta opção."

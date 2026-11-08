@@ -486,7 +486,7 @@
           },
           "application": {
             "title": "Aplicación personal",
-            "guidance": "¿Qué significa para usted la verdad hallada? Manténgala separada de la observación y la interpretación anteriores.",
+            "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores.",
             "goal": "Responder al texto manteniéndose ligado a lo que dice. Es un cierre aparte, no otra letra de POZETEK.",
             "example": "El amor de Dios por su pueblo se basa en su naturaleza, no en la fidelidad de Israel. Aunque Israel se aparte, Dios muestra compasión en medio del juicio. Eso invita a reconocer las propias seguridades sustitutivas y a confiar de nuevo en Dios. El amor recibido debe marcar también el trato con quienes no corresponden al amor y al cuidado (cf. 1 Jn 4:8, 19).",
             "fields": {
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Aplicación personal",
-            "guidance": "¿Qué significa para usted la verdad hallada? Manténgala separada de la observación y la interpretación anteriores. Responder al texto manteniéndose ligado a lo que dice. Es un cierre aparte, no otra letra de POZETEK. ¿Qué verdad del texto sigue siendo válida para todo lector? ¿Dónde esta verdad desafía, consuela o corrige el propio pensar y vivir? ¿Qué hará: creer, arrepentirse, confiar, obedecer, orar, amar? Sea concreto. ¿Qué distingue la situación de entonces de la de hoy? ¿Qué no debe trasladarse directamente?",
+            "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores. Responde al texto manteniendo la aplicación ligada a lo que dice. Es un cierre aparte, no otra letra de POZETEK. ¿Qué verdad del texto sigue siendo válida para todo lector? ¿Dónde desafía, consuela o corrige esta verdad tu forma de pensar y vivir? ¿Cómo responderás: creer, arrepentirte, confiar, obedecer, orar, amar? Sé concreto. ¿Qué distingue la situación de entonces de la actual? ¿Qué no debe trasladarse directamente?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
