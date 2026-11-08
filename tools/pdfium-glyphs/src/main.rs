@@ -13,9 +13,8 @@
 //!
 //! PDFium also infers spaces inside a text object (between the letters of
 //! a letter-spaced heading): those stand at the very origin of the next
-//! character and are left out too. A ligature
-//! PDFium expands ("ﬁ" read as "f", "i", at one origin) is written as one
-//! glyph, as the current backend gives it.
+//! character and are left out too. Right-to-left text, letters with their
+//! marks and expanded ligatures are given as drawn (`drawing_order`).
 //!
 //! A glyph's advance is the font's own width for the character
 //! (`FPDFFont_GetGlyphWidth`), as the current backend takes it from the
@@ -146,7 +145,6 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
             continue;
         }
         let n = pdf.FPDFText_CountChars(text).max(0);
-        let mut pending: Option<Glyph> = None;
         let mut page_glyphs: Vec<Glyph> = Vec::new();
         let mut drawn_before = None;
         let mut k = 0;
@@ -158,8 +156,16 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
             // A character PDFium inferred has none, and is left out.
             if pdf.FPDFText_IsGenerated(text, i) == 1
                 && (pdf.FPDFText_GetTextObject(text, i).is_null()
-                    || at_next_origin(pdf, text, i, n))
+                    || same_origin(pdf, text, i, i + 1, n)
+                    || same_origin(pdf, text, i, i - 1, n))
             {
+                continue;
+            }
+            // A space at the very origin of the character before it was not
+            // drawn there (a drawn space starts where that character's
+            // advance ends): PDFium adds such spaces after Hebrew marks
+            // without marking them generated.
+            if pdf.FPDFText_GetUnicode(text, i) == 0x20 && same_origin(pdf, text, i, i - 1, n) {
                 continue;
             }
             let mut code = pdf.FPDFText_GetUnicode(text, i);
@@ -193,22 +199,10 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
             }
             chars += 1;
             if let Some(g) = glyph(pdf, text, i, c, left, top, &mut drawn_before) {
-                match pending.as_mut() {
-                    // A ligature PDFium has expanded ("ﬁ" as "f", "i"): its
-                    // letters share one origin. They are one glyph, whose
-                    // advance is theirs together.
-                    Some(p) if p.x == g.x && p.y == g.y => p.join(pdf, &g),
-                    _ => {
-                        if let Some(p) = pending.replace(g) {
-                            page_glyphs.push(p);
-                        }
-                    }
-                }
+                page_glyphs.push(g);
             }
         }
-        if let Some(p) = pending.take() {
-            page_glyphs.push(p);
-        }
+        let page_glyphs = drawing_order(page_glyphs);
         for g in &page_glyphs {
             let _ = out.write_all(g.record().as_bytes());
         }
@@ -222,22 +216,24 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
     ExitCode::SUCCESS
 }
 
-/// Whether character `i` stands at the origin of the character after it:
-/// a space PDFium inferred between two drawn characters, not one drawn.
-unsafe fn at_next_origin(
+/// Whether characters `i` and `j` stand at one origin: a space PDFium
+/// inferred at a drawn character's origin (between the letters of a
+/// letter-spaced heading, or after a Hebrew mark), not one drawn.
+unsafe fn same_origin(
     pdf: &dyn PdfiumLibraryBindings,
     text: FPDF_TEXTPAGE,
     i: i32,
+    j: i32,
     n: i32,
 ) -> bool {
-    if i + 1 >= n {
+    if j < 0 || j >= n {
         return false;
     }
-    let (mut x, mut y, mut nx, mut ny) = (0f64, 0f64, 0f64, 0f64);
+    let (mut x, mut y, mut jx, mut jy) = (0f64, 0f64, 0f64, 0f64);
     pdf.is_true(pdf.FPDFText_GetCharOrigin(text, i, &mut x, &mut y))
-        && pdf.is_true(pdf.FPDFText_GetCharOrigin(text, i + 1, &mut nx, &mut ny))
-        && (x - nx).abs() < 0.01
-        && (y - ny).abs() < 0.01
+        && pdf.is_true(pdf.FPDFText_GetCharOrigin(text, j, &mut jx, &mut jy))
+        && (x - jx).abs() < 0.01
+        && (y - jy).abs() < 0.01
 }
 
 /// One glyph as `pdf_layout::Glyph` holds it:
@@ -265,6 +261,87 @@ struct Glyph {
     /// The right edge of PDFium's loose box (the glyph's outline and
     /// advance), from the media box's left edge.
     loose_right: f32,
+    /// The text object it was drawn from (its address, for grouping).
+    object: usize,
+}
+
+/// A combining mark (general category Mn) of the scripts in the corpus:
+/// Latin and Greek diacritics, Hebrew points and cantillation, Arabic
+/// harakat, the combining grapheme joiner.
+fn is_mark(c: char) -> bool {
+    matches!(c as u32,
+        0x0300..=0x036F | 0x0483..=0x0489 | 0x0591..=0x05BD | 0x05BF | 0x05C1..=0x05C2
+        | 0x05C4..=0x05C5 | 0x05C7 | 0x0610..=0x061A | 0x064B..=0x065F | 0x0670
+        | 0x06D6..=0x06DC | 0x06DF..=0x06E4 | 0x06E7..=0x06E8 | 0x06EA..=0x06ED
+        | 0x1AB0..=0x1AFF | 0x1DC0..=0x1DFF | 0x20D0..=0x20FF | 0xFE20..=0xFE2F)
+}
+
+/// The page's characters as pdf-extract gives them, in the order drawn:
+///
+/// * PDFium gives right-to-left text in reading order (its own bidi
+///   reordering); a text object whose characters run right to left is put
+///   back in the order drawn, left to right, a letter before its marks;
+/// * characters at one origin are one glyph: a letter and the marks the
+///   font draws with it (the font maps one glyph to both, which PDFium
+///   splits), or a Latin ligature PDFium expanded ("ﬁ" as "f", "i");
+/// * a mark alone is drawn without advancing, as the font gives it.
+fn drawing_order(glyphs: Vec<Glyph>) -> Vec<Glyph> {
+    let mut glyphs = glyphs;
+    let mut start = 0;
+    while start < glyphs.len() {
+        let object = glyphs[start].object;
+        let mut end = start + 1;
+        while end < glyphs.len() && glyphs[end].object == object {
+            end += 1;
+        }
+        let run = &mut glyphs[start..end];
+        let letters: Vec<&Glyph> = run
+            .iter()
+            .filter(|g| !g.text.chars().all(is_mark))
+            .collect();
+        let (mut left, mut right) = (0, 0);
+        for pair in letters.windows(2) {
+            if (pair[0].y - pair[1].y).abs() < 0.01 {
+                if pair[1].x < pair[0].x {
+                    left += 1;
+                } else if pair[1].x > pair[0].x {
+                    right += 1;
+                }
+            }
+        }
+        if object != 0 && left > right {
+            run.sort_by(|a, b| {
+                let mark = |g: &Glyph| g.text.chars().all(is_mark);
+                a.x.total_cmp(&b.x).then(mark(a).cmp(&mark(b)))
+            });
+        }
+        start = end;
+    }
+    let mut out: Vec<Glyph> = Vec::with_capacity(glyphs.len());
+    for g in glyphs {
+        let mark = g.text.chars().all(is_mark);
+        if let Some(p) = out.last_mut() {
+            if p.x == g.x && p.y == g.y && p.object == g.object {
+                if mark {
+                    p.text.push_str(&g.text);
+                    continue;
+                }
+                if p.text.chars().all(|c| c.is_ascii_alphabetic())
+                    && g.text.chars().all(|c| c.is_ascii_alphabetic())
+                {
+                    p.join(&g);
+                    continue;
+                }
+            }
+        }
+        let mut g = g;
+        if mark {
+            g.end = g.x;
+            g.w = 0;
+        }
+        out.push(g);
+    }
+    out
 }
 
 /// The font's own width for a character, in thousandths of an em.
@@ -283,7 +360,7 @@ unsafe fn font_width(pdf: &dyn PdfiumLibraryBindings, face: FPDF_FONT, c: char) 
 impl Glyph {
     /// Joins the next expanded letter of a ligature (its advance: the
     /// letters' together, never past PDFium's box for the ligature).
-    unsafe fn join(&mut self, _pdf: &dyn PdfiumLibraryBindings, next: &Glyph) {
+    fn join(&mut self, next: &Glyph) {
         self.text.push_str(&next.text);
         // The letters' advances together are a little wider than the
         // ligature's own ("ﬀ" is narrower than "f" + "f"); PDFium's box for
@@ -380,6 +457,11 @@ unsafe fn glyph(
         pdf.FPDFTextObj_GetFont(object)
     };
     let thousandths = font_width(pdf, face, c);
+    // A generated space whose font has no width for it cannot have been
+    // drawn: PDFium inferred it.
+    if pdf.FPDFText_IsGenerated(text, i) == 1 && thousandths <= 0.0 {
+        return None;
+    }
     let mut r = FS_RECTF {
         left: 0.0,
         top: 0.0,
@@ -415,6 +497,7 @@ unsafe fn glyph(
         w,
         flags,
         loose_right,
+        object: object as usize,
     })
 }
 
