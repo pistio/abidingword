@@ -1,4 +1,4 @@
-# Owner-approved, isolated, one-time Windows review build.
+# Owner-approved, isolated Windows review build; triggered by this workflow-only change.
 # Acceptance artifacts only. No updater overlay, signing, releases or deployment.
 name: Windows owner corrections 2026-11-08 one-off
 
