@@ -1,0 +1,1517 @@
+[
+ {
+  "key": "engwebp-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "eBible letter, two columns, footnotes",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/engwebp_all.pdf",
+  "ref": "/root/aw-corpus/engwebp_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "37be7fab3f124b95070ae46480f9d4776cc19ebc1623a00b16e3f2e06917f896",
+  "size": 9597871,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "37be7fab3f124b95070ae46480f9d4776cc19ebc1623a00b16e3f2e06917f896",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/engwebp-pdf.json"
+ },
+ {
+  "key": "engwebp-book",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "eBible book size, two columns",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/engwebp_book.pdf",
+  "ref": "/root/aw-corpus/engwebp_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "9c6795f3710a151df9e07596951a24e6de440e5a23399277d180b1c443d2cb99",
+  "size": 9288817,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "9c6795f3710a151df9e07596951a24e6de440e5a23399277d180b1c443d2cb99",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/engwebp-book.json"
+ },
+ {
+  "key": "kjv-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "eBible A4, two columns",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/eng-kjv2006_a4.pdf",
+  "ref": "/root/aw-corpus/eng-kjv2006_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "d8e0d814e2af79b9138c94334a08d04111fbdc40b5b016771fff38435f39bebd",
+  "size": 10514289,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "d8e0d814e2af79b9138c94334a08d04111fbdc40b5b016771fff38435f39bebd",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/kjv-pdf.json"
+ },
+ {
+  "key": "deu1912-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "de",
+  "script": "Latin",
+  "layout": "eBible letter, two columns",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/deu1912_all.pdf",
+  "ref": "/root/aw-corpus/deu1912_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "ccf956f61c027d8227dc770bcf86544298222d4d364a770c19818ece95f5dfc6",
+  "size": 8839248,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "ccf956f61c027d8227dc770bcf86544298222d4d364a770c19818ece95f5dfc6",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/deu1912-pdf.json"
+ },
+ {
+  "key": "deuelo-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "de",
+  "script": "Latin",
+  "layout": "eBible book size",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/deuelo_book.pdf",
+  "ref": "/root/aw-corpus/deuelo_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "f1493825b515157b662bc432e48971bd36c05c50005c08feb4e40284dc01b737",
+  "size": 8902332,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "f1493825b515157b662bc432e48971bd36c05c50005c08feb4e40284dc01b737",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/deuelo-pdf.json"
+ },
+ {
+  "key": "fraLSG-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "fr",
+  "script": "Latin",
+  "layout": "eBible letter, one column, book introductions, cross-reference lines and letters",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/fraLSG_all.pdf",
+  "ref": "/root/aw-corpus/fraLSG_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "1c2d1169cc103152e1934e88300fa7c733d9da10e886f0f5cc26810b8d99f170",
+  "size": 12850420,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "1c2d1169cc103152e1934e88300fa7c733d9da10e886f0f5cc26810b8d99f170",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/fraLSG-pdf.json"
+ },
+ {
+  "key": "fraLSG-luk",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "fr",
+  "script": "Latin",
+  "layout": "single book (Luke)",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/fraLSG_LUK.pdf",
+  "ref": "/root/aw-corpus/fraLSG_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "adb0e401da85eb1c978c475dcae860be7fb4236b8250e98271afcae6624b1cdb",
+  "size": 575962,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "adb0e401da85eb1c978c475dcae860be7fb4236b8250e98271afcae6624b1cdb",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/fraLSG-luk.json"
+ },
+ {
+  "key": "fob-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "fr",
+  "script": "Latin",
+  "layout": "eBible letter",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/fra_fob_all.pdf",
+  "ref": "/root/aw-corpus/fra_fob_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "f1e77d5e9d3deee862862d3e138ebf7e1b501e572382d4d01b2e4903183b85a2",
+  "size": 9745404,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "f1e77d5e9d3deee862862d3e138ebf7e1b501e572382d4d01b2e4903183b85a2",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/fob-pdf.json"
+ },
+ {
+  "key": "rv1909-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "es",
+  "script": "Latin",
+  "layout": "eBible letter",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/spaRV1909_all.pdf",
+  "ref": "/root/aw-corpus/spaRV1909_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "82914e1edc88e9edcca55d388af87d8b4cdbcd1df4368c0e52a534229ac2377f",
+  "size": 9071021,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "82914e1edc88e9edcca55d388af87d8b4cdbcd1df4368c0e52a534229ac2377f",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/rv1909-pdf.json"
+ },
+ {
+  "key": "rv1909-lopdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "es",
+  "script": "Latin",
+  "layout": "converted: LibreOffice Writer PDF, paragraphs, superscript verse numbers",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/spaRV1909_lo.pdf",
+  "ref": "/root/aw-corpus/spaRV1909_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "1b82ac19c7941f8c68eb36056b36608d9577c19ea85355ca0c0ceb31a020c23f",
+  "size": 7635572,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "1b82ac19c7941f8c68eb36056b36608d9577c19ea85355ca0c0ceb31a020c23f",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/rv1909-lopdf.json"
+ },
+ {
+  "key": "spabes-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "es",
+  "script": "Latin",
+  "layout": "eBible A4",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/spabes_a4.pdf",
+  "ref": "/root/aw-corpus/spabes_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "e32bf345414eddea6c9364fbeaffd0de2fcc5fcb8a073529ce01bf49d2ffddbc",
+  "size": 8849355,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "e32bf345414eddea6c9364fbeaffd0de2fcc5fcb8a073529ce01bf49d2ffddbc",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/spabes-pdf.json"
+ },
+ {
+  "key": "porbrbsl-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "pt",
+  "script": "Latin",
+  "layout": "eBible letter",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/porbrbsl_all.pdf",
+  "ref": "/root/aw-corpus/porbrbsl_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "820feb05b8e6032582bcd0f483b1308ec72478d590cbecc10fa9cb3c58c58254",
+  "size": 12137019,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "820feb05b8e6032582bcd0f483b1308ec72478d590cbecc10fa9cb3c58c58254",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/porbrbsl-pdf.json"
+ },
+ {
+  "key": "porbr2018-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "pt",
+  "script": "Latin",
+  "layout": "eBible book size",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/porbr2018_book.pdf",
+  "ref": "/root/aw-corpus/porbr2018_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "c73a54114d297ef43adf37f28125ac211ee4701a3d0bd1db9b39f027de71dc10",
+  "size": 8938259,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "c73a54114d297ef43adf37f28125ac211ee4701a3d0bd1db9b39f027de71dc10",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/porbr2018-pdf.json"
+ },
+ {
+  "key": "kor-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "ko",
+  "script": "Hangul",
+  "layout": "eBible letter",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/kor_all.pdf",
+  "ref": "/root/aw-corpus/kor_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "9cde68e514a3872fd094c0335e21b5f0f6bc58097928f8a2cd0fbde714dd2a8e",
+  "size": 10530556,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "9cde68e514a3872fd094c0335e21b5f0f6bc58097928f8a2cd0fbde714dd2a8e",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/kor-pdf.json"
+ },
+ {
+  "key": "grctr-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "grc",
+  "script": "Greek",
+  "layout": "eBible letter, New Testament",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/grctr_all.pdf",
+  "ref": "/root/aw-corpus/grctr_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "ee7907d7147a2868df4aed5fe11baa5eb9547accfe8bf48117dc07e412449aa8",
+  "size": 2338087,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "ee7907d7147a2868df4aed5fe11baa5eb9547accfe8bf48117dc07e412449aa8",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/grctr-pdf.json"
+ },
+ {
+  "key": "hboWLC-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "hbo",
+  "script": "Hebrew",
+  "layout": "eBible letter, right to left",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/hboWLC_all.pdf",
+  "ref": "/root/aw-corpus/hboWLC_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "d00337ea8feffb57333b2f61f918433402c69f76ccc7e13a375146ef2b744af6",
+  "size": 6639554,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "d00337ea8feffb57333b2f61f918433402c69f76ccc7e13a375146ef2b744af6",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/hboWLC-pdf.json"
+ },
+ {
+  "key": "latVUC-pdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "la",
+  "script": "Latin",
+  "layout": "eBible letter, deuterocanon",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/latVUC_all.pdf",
+  "ref": "/root/aw-corpus/latVUC_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "2b7049ed354fa1975f6c3538002b367006ed71448b2ae12bd016cf96293fdcbe",
+  "size": 19211065,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "2b7049ed354fa1975f6c3538002b367006ed71448b2ae12bd016cf96293fdcbe",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/latVUC-pdf.json"
+ },
+ {
+  "key": "deutkw-pdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "de",
+  "script": "Latin",
+  "layout": "eBible letter",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/deutkw_all.pdf",
+  "ref": "/root/aw-corpus/deutkw_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "7576ecfaef5170ef85c653e055f566288e6a3b1170304d68261064508025335c",
+  "size": 9476623,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "7576ecfaef5170ef85c653e055f566288e6a3b1170304d68261064508025335c",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/deutkw-pdf.json"
+ },
+ {
+  "key": "frajnd-pdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "fr",
+  "script": "Latin",
+  "layout": "eBible A4",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/frajnd_a4.pdf",
+  "ref": "/root/aw-corpus/frajnd_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "a3ed40032c5ccecce82f7ffcd1c1b8cfc10863811715939de220170f5c06b568",
+  "size": 12364438,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "a3ed40032c5ccecce82f7ffcd1c1b8cfc10863811715939de220170f5c06b568",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/frajnd-pdf.json"
+ },
+ {
+  "key": "spablm-pdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "es",
+  "script": "Latin",
+  "layout": "eBible letter, deuterocanon",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/spablm_all.pdf",
+  "ref": "/root/aw-corpus/spablm_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "4ed61385a465218d9fa57302224dff1d8b5158aea9a5925447ad6e1e73cb9214",
+  "size": 11849145,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "4ed61385a465218d9fa57302224dff1d8b5158aea9a5925447ad6e1e73cb9214",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/spablm-pdf.json"
+ },
+ {
+  "key": "engylt-pdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "eBible book size",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/engylt_book.pdf",
+  "ref": "/root/aw-corpus/engylt_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "b99369ff6d2aa1718d1b39298395a46336cbf9cf122e7d6bab31f506c7ef54c4",
+  "size": 8696318,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "b99369ff6d2aa1718d1b39298395a46336cbf9cf122e7d6bab31f506c7ef54c4",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/engylt-pdf.json"
+ },
+ {
+  "key": "grcbyz-pdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "grc",
+  "script": "Greek",
+  "layout": "eBible A4, New Testament",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/grcbyz_a4.pdf",
+  "ref": "/root/aw-corpus/grcbyz_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "fae2b849a836fe5d2864ec452f3703ced4b47adac00c62986fbd95172deba10d",
+  "size": 2571781,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "fae2b849a836fe5d2864ec452f3703ced4b47adac00c62986fbd95172deba10d",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/grcbyz-pdf.json"
+ },
+ {
+  "key": "kor1961-lopdf",
+  "tsv": "editions.tsv",
+  "role": "impl",
+  "lang": "ko",
+  "script": "Hangul",
+  "layout": "converted: LibreOffice Writer PDF from the edition's USFM, superscript verse numbers",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/kor1961_usfm_lo.pdf",
+  "ref": "/root/aw-corpus/kor1961_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "6cbd0e3ba247141db8da4660707f5fb62a39833225f06c1af54be15ee99ad02c",
+  "size": 18677420,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "6cbd0e3ba247141db8da4660707f5fb62a39833225f06c1af54be15ee99ad02c",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/kor1961-lopdf.json"
+ },
+ {
+  "key": "deutkw-lopdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "de",
+  "script": "Latin",
+  "layout": "converted: LibreOffice Writer PDF from the edition's USFM",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/deutkw_usfm_lo.pdf",
+  "ref": "/root/aw-corpus/deutkw_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "08344d51aca0b6c1170fa59ccd3da285cc10ed3ddd5e263c10107010476ee7dc",
+  "size": 12285849,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "08344d51aca0b6c1170fa59ccd3da285cc10ed3ddd5e263c10107010476ee7dc",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/deutkw-lopdf.json"
+ },
+ {
+  "key": "frajnd-lopdf",
+  "tsv": "editions.tsv",
+  "role": "regression",
+  "lang": "fr",
+  "script": "Latin",
+  "layout": "converted: LibreOffice Writer PDF from the edition's USFM",
+  "books_col": null,
+  "pdf": "/root/aw-corpus/frajnd_usfm_lo.pdf",
+  "ref": "/root/aw-corpus/frajnd_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "be5de731c77848f4f1e1499f3fdea2de3d47978a65c28d7d2ec819e3520c6b21",
+  "size": 12856007,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "be5de731c77848f4f1e1499f3fdea2de3d47978a65c28d7d2ec819e3520c6b21",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-dev/frajnd-lopdf.json"
+ },
+ {
+  "key": "engbsb-rwpdf2col",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "Reconstruction of set B engbsb-wpdf2col: US Letter, two CSS columns with a rule; title page THE HOLY BIBLE; each book on a new page with the uppercase \\mt1 titl",
+  "books_col": "all",
+  "pdf": "/root/aw-recon-bc/engbsb-rwpdf2col.pdf",
+  "ref": "/root/aw-recon-bc/engbsb_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "89f877f2921090f9bfdfd73a5665b81d2bf5b02c7e65cd87af679d8d32c20e29",
+  "size": 6396406,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "89f877f2921090f9bfdfd73a5665b81d2bf5b02c7e65cd87af679d8d32c20e29",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/engbsb-rwpdf2col.json"
+ },
+ {
+  "key": "engasv-rrlab1col",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "Reconstruction of set B engasv-rlab1col: 6x9 in one column justified (ReportLab); FRT title page (stacked \\mt lines) and its imprint, then the INT PREFACE with ",
+  "books_col": "FRT,INT,GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-recon-bc/engasv-rrlab1col.pdf",
+  "ref": "/root/aw-recon-bc/eng-asv_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "72c01362317ea0f04448f9dbcfc7bf2292f25686c7a3fbcd23f0f894d4a52d8c",
+  "size": 4019371,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "72c01362317ea0f04448f9dbcfc7bf2292f25686c7a3fbcd23f0f894d4a52d8c",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/engasv-rrlab1col.json"
+ },
+ {
+  "key": "spavbl-rlofodt",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "es",
+  "script": "Latin",
+  "layout": "Reconstruction of set B spavbl-lofodt: A5 one column, flat ODT exported by LibreOffice; FRT front matter (title, publisher, Acerca de esta publicaci\u00f3n, translat",
+  "books_col": "FRT,GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-recon-bc/spavbl-rlofodt.pdf",
+  "ref": "/root/aw-recon-bc/spavbl_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "e7dbf9e2822bff354235fe672079601eb250044376901696b8391084e79f80b6",
+  "size": 23052531,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "e7dbf9e2822bff354235fe672079601eb250044376901696b8391084e79f80b6",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/spavbl-rlofodt.json"
+ },
+ {
+  "key": "grcsbl-rfpdf-mrk",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "grc",
+  "script": "Greek",
+  "layout": "Reconstruction of set B grcsbl-fpdf-mrk: Mark only, fpdf2 148x210 mm one column justified; no title anywhere (no title page, running title or PDF title); folio ",
+  "books_col": "MRK",
+  "pdf": "/root/aw-recon-bc/grcsbl-rfpdf-mrk.pdf",
+  "ref": "/root/aw-recon-bc/grcsbl_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+  "size": 168340,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/grcsbl-rfpdf-mrk.json"
+ },
+ {
+  "key": "engrv-ebiblebook",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "eBible original of set B engrv-ebiblebook, current build: eng-rv_book.pdf downloaded unchanged from eBible.org (not reconstructed)",
+  "books_col": "all",
+  "pdf": "/root/aw-recon-bc/eng-rv_book.pdf",
+  "ref": "/root/aw-recon-bc/eng-rv_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "ec7bc275d991d44a324b077f0b0053b6b04c111972a6c9406cd50b9eb76b2a13",
+  "size": 10596535,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "ec7bc275d991d44a324b077f0b0053b6b04c111972a6c9406cd50b9eb76b2a13",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/engrv-ebiblebook.json"
+ },
+ {
+  "key": "engkjvcpb-rwpdfmargin",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "Reconstruction of set C engkjvcpb-wpdfmargin: 5.83x8.27 in one column justified and hyphenated; FRT title page and INT The Translators to the Reader with lower-",
+  "books_col": "FRT,INT,GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-recon-bc/engkjvcpb-rwpdfmargin.pdf",
+  "ref": "/root/aw-recon-bc/engkjvcpb_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "ea7da19de872e0812ccc1e339db4c40f7d7341940f4158d9fc09fe2530f6455f",
+  "size": 7290366,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "ea7da19de872e0812ccc1e339db4c40f7d7341940f4158d9fc09fe2530f6455f",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/engkjvcpb-rwpdfmargin.json"
+ },
+ {
+  "key": "engjps-rdocx2lo",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "Reconstruction of set C engjps-docx2lo: 17x24 cm, two columns with a separator; python-docx with custom styles Bible Book (outline level 1), Chapter Number, Bib",
+  "books_col": "all",
+  "pdf": "/root/aw-recon-bc/engjps-rdocx2lo.pdf",
+  "ref": "/root/aw-recon-bc/engjps_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "c39a2cbf4010a8988151b4d7f94e55e622452179d79726792821fb5186d64c6e",
+  "size": 12788718,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "c39a2cbf4010a8988151b4d7f94e55e622452179d79726792821fb5186d64c6e",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/engjps-rdocx2lo.json"
+ },
+ {
+  "key": "spabll-rrlab2col",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "es",
+  "script": "Latin",
+  "layout": "Reconstruction of set C spabll-rlab2col: A4 two ReportLab frames with a centre rule; books run on (CondPageBreak of a third of a page) with centred capital \\toc",
+  "books_col": "all",
+  "pdf": "/root/aw-recon-bc/spabll-rrlab2col.pdf",
+  "ref": "/root/aw-recon-bc/spabll_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "41f81b9fa7304acfd4a1208da45ae5ae3f263391d54bc70d8f7a73554b56eb5b",
+  "size": 4630220,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "41f81b9fa7304acfd4a1208da45ae5ae3f263391d54bc70d8f7a73554b56eb5b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/spabll-rrlab2col.json"
+ },
+ {
+  "key": "poronbv-rwpdfa5",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "pt",
+  "script": "Latin",
+  "layout": "Reconstruction of set C poronbv-wpdfa5: A5 one column; title page; each book on a new page with centred h1 (\\mt1) and no head; running head = italic \\h top oute",
+  "books_col": "all",
+  "pdf": "/root/aw-recon-bc/poronbv-rwpdfa5.pdf",
+  "ref": "/root/aw-recon-bc/poronbv_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "e31de1b121664aa876bd76869c9bcd58216ce1449370d8b6767fb92c0be48f47",
+  "size": 7504843,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "e31de1b121664aa876bd76869c9bcd58216ce1449370d8b6767fb92c0be48f47",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/poronbv-rwpdfa5.json"
+ },
+ {
+  "key": "hbo-rwpdfrtl-rut",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "hbo",
+  "script": "Hebrew",
+  "layout": "Reconstruction of set C hbo-wpdfrtl-rut: Ruth only, WeasyPrint 140x210 mm right-to-left, Noto Serif Hebrew; h1 \u05e8\u05d5\u05bc\u05ea; \u05e4\u05e8\u05e7 \u05d0 chapter headings with Hebrew-letter n",
+  "books_col": "RUT",
+  "pdf": "/root/aw-recon-bc/hbo-rwpdfrtl-rut.pdf",
+  "ref": "/root/aw-recon-bc/hbo_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "13997cf463f741bad8a08380766e3688c1e53bda730d48a10cc0f3c1722d4a3d",
+  "size": 60662,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "13997cf463f741bad8a08380766e3688c1e53bda730d48a10cc0f3c1722d4a3d",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/hbo-rwpdfrtl-rut.json"
+ },
+ {
+  "key": "engoebus-ebiblea4",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "eBible original of set C engoebus-ebiblea4, current build: engoebus_a4.pdf downloaded unchanged from eBible.org (not reconstructed)",
+  "books_col": "FRT,GEN,JOS,RUT,EST,PSA,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-recon-bc/engoebus_a4.pdf",
+  "ref": "/root/aw-recon-bc/engoebus_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "f45bfced0a75816d3dc7a3c7468a061e47516911641be0d5ec7f5963e2fbcd85",
+  "size": 4071750,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "f45bfced0a75816d3dc7a3c7468a061e47516911641be0d5ec7f5963e2fbcd85",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/engoebus-ebiblea4.json"
+ },
+ {
+  "key": "engbrenton-rlo2col",
+  "tsv": "recon-d.tsv",
+  "role": "recon-d",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "Reconstruction of set D engbrenton-lohtml2col: US Letter two columns with a rule (LibreOffice from HTML, ODT patched to two columns); static running head = the ",
+  "books_col": "all",
+  "pdf": "/root/aw-recon/engbrenton-rlo2col.pdf",
+  "ref": "/root/aw-recon/eng-Brenton_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "dffb9a18645614ee7d7b5a0aa8b3365ae2fd1f3d2846024e54e43ff90d26fb2c",
+  "size": 17714800,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "dffb9a18645614ee7d7b5a0aa8b3365ae2fd1f3d2846024e54e43ff90d26fb2c",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-recon/engbrenton-rlo2col.json"
+ },
+ {
+  "key": "deu1912-rdropcap",
+  "tsv": "recon-d.tsv",
+  "role": "recon-d",
+  "lang": "de",
+  "script": "Latin",
+  "layout": "Reconstruction of set D deu1912-wpdfdropcap: WeasyPrint 5.5x8.5 in one column justified, hyphenated; book title \\toc1 on a new page without a running head; runn",
+  "books_col": "all",
+  "pdf": "/root/aw-recon/deu1912-rdropcap.pdf",
+  "ref": "/root/aw-recon/deu1912_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "5a8deda28d742312e4a49d547824cc914a7d0b84e0757c8b2b771f1cc4cdc5df",
+  "size": 6835365,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "5a8deda28d742312e4a49d547824cc914a7d0b84e0757c8b2b771f1cc4cdc5df",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-recon/deu1912-rdropcap.json"
+ },
+ {
+  "key": "kor-r2col",
+  "tsv": "recon-d.tsv",
+  "role": "recon-d",
+  "lang": "ko",
+  "script": "Hangul",
+  "layout": "Reconstruction of set D kor-wpdf2col: WeasyPrint 6x9 in two columns with a rule; \\h title per book; running head = Book c\u2013Book c (first and last chapter on the ",
+  "books_col": "all",
+  "pdf": "/root/aw-recon/kor-r2col.pdf",
+  "ref": "/root/aw-recon/kor_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "5c7bf54ea44687f9c915035f2297cd4ceb3c58c8a1245b5998939f07caf9a0f7",
+  "size": 4937639,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "5c7bf54ea44687f9c915035f2297cd4ceb3c58c8a1245b5998939f07caf9a0f7",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-recon/kor-r2col.json"
+ },
+ {
+  "key": "engwebu-rl2col",
+  "tsv": "withheld-e.tsv",
+  "role": "withheld-e",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "1415-page trade-size PDF (6.14 x 9.21 in) of the whole ecumenical Bible: title page, copyright page, Contents with page numbers grouped Old Testament / Deuteroc",
+  "books_col": "all",
+  "pdf": "/root/aw-set-e/docs/engwebu-rl2col.pdf",
+  "ref": "/root/aw-set-e/docs/engwebu_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "fbdebaef155e3a1bc06a5246899211343e536681d6af06d3a940778f131239aa",
+  "size": 5696571,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "fbdebaef155e3a1bc06a5246899211343e536681d6af06d3a940778f131239aa",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "fbdebaef155e3a1bc06a5246899211343e536681d6af06d3a940778f131239aa",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-e/engwebu-rl2col.json"
+ },
+ {
+  "key": "engtnt-wp3col",
+  "tsv": "withheld-e.tsv",
+  "role": "withheld-e",
+  "lang": "en",
+  "script": "Latin",
+  "layout": "133-page A4 PDF of the whole Tyndale New Testament set in three justified, auto-hyphenated columns with column rules (Liberation Serif 8.6 pt); unnumbered title",
+  "books_col": "MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-set-e/docs/engtnt-wp3col.pdf",
+  "ref": "/root/aw-set-e/docs/engtnt_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "718136ecbb7a7e1d446d6245d4a421e415267265d88dad9cfd7cb3b60bf1362b",
+  "size": 1729982,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "718136ecbb7a7e1d446d6245d4a421e415267265d88dad9cfd7cb3b60bf1362b",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "718136ecbb7a7e1d446d6245d4a421e415267265d88dad9cfd7cb3b60bf1362b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-e/engtnt-wp3col.json"
+ },
+ {
+  "key": "deutkw-fpdfa5",
+  "tsv": "withheld-e.tsv",
+  "role": "withheld-e",
+  "lang": "de",
+  "script": "Latin",
+  "layout": "389-page A5 PDF \"Die Propheten\" (Jesaja to Maleachi): title page, notice page, each book on a new page with centred bold title (toc1 wording, e.g. \"Der Prophet ",
+  "books_col": "ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL",
+  "pdf": "/root/aw-set-e/docs/deutkw-fpdfa5.pdf",
+  "ref": "/root/aw-set-e/docs/deutkw_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "c05900a4ec24be1354ab0a7328d540c6d2056399c2d83f6b18cc3eb70ff895fd",
+  "size": 1171097,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "c05900a4ec24be1354ab0a7328d540c6d2056399c2d83f6b18cc3eb70ff895fd",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "c05900a4ec24be1354ab0a7328d540c6d2056399c2d83f6b18cc3eb70ff895fd",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-e/deutkw-fpdfa5.json"
+ },
+ {
+  "key": "kor-lopdf",
+  "tsv": "withheld-e.tsv",
+  "role": "withheld-e",
+  "lang": "ko",
+  "script": "Hangul",
+  "layout": "354-page B5 (18.2 x 25.7 cm) PDF of the Korean New Testament exported by LibreOffice Writer: title page \"\uc2e0\uc57d\uc804\uc11c / \ud55c\uad6d\uc5b4 \uc131\uacbd (1910)\" and a notice line, each book on a",
+  "books_col": "MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-set-e/docs/kor-lopdf.pdf",
+  "ref": "/root/aw-set-e/docs/kor_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "38852a2549e984cdc7334ca9a75791ac2b33c7a69f9ea09d3a01b15b086c95e7",
+  "size": 6980831,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "38852a2549e984cdc7334ca9a75791ac2b33c7a69f9ea09d3a01b15b086c95e7",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "38852a2549e984cdc7334ca9a75791ac2b33c7a69f9ea09d3a01b15b086c95e7",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-e/kor-lopdf.json"
+ },
+ {
+  "key": "heb-wprtl",
+  "tsv": "withheld-e.tsv",
+  "role": "withheld-e",
+  "lang": "he",
+  "script": "Hebrew",
+  "layout": "183-page right-to-left PDF (170 x 240 mm) of the Torah: title page \"\u05d7\u05de\u05e9\u05d4 \u05d7\u05d5\u05de\u05e9\u05d9 \u05ea\u05d5\u05e8\u05d4\", Hebrew contents page with dot leaders and Hebrew-letter page numbers, each",
+  "books_col": "GEN,EXO,LEV,NUM,DEU",
+  "pdf": "/root/aw-set-e/docs/heb-wprtl.pdf",
+  "ref": "/root/aw-set-e/docs/heb_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "e5cd8eebcd09f8438a5aa01851ccd03e3e9a05949229bcbbca285c8d2678a456",
+  "size": 1034851,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "e5cd8eebcd09f8438a5aa01851ccd03e3e9a05949229bcbbca285c8d2678a456",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "e5cd8eebcd09f8438a5aa01851ccd03e3e9a05949229bcbbca285c8d2678a456",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-e/heb-wprtl.json"
+ },
+ {
+  "key": "F01",
+  "tsv": "withheld-f.tsv",
+  "role": "withheld-f",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "Pocket 5.5x8.5 in page, two justified columns (Caladea 8.6 pt), roman-numbered front matter: title page and a CONTENTS table with page numbers (plus PDF outline",
+  "books_col": "PSA,PRO,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-set-f/docs/F01-eng-nheb.pdf",
+  "ref": "/root/aw-set-f/docs/F01-eng-nheb.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "61cb24f6ae39ed100bba58bb1b472b01b727e7e08431b13aed0eb40fc6cacecf",
+  "size": 2530256,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "61cb24f6ae39ed100bba58bb1b472b01b727e7e08431b13aed0eb40fc6cacecf",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "61cb24f6ae39ed100bba58bb1b472b01b727e7e08431b13aed0eb40fc6cacecf",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-f/F01.json"
+ },
+ {
+  "key": "F02",
+  "tsv": "withheld-f.tsv",
+  "role": "withheld-f",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "6.5x9.5 in page, two columns with a vertical rule (Liberation Serif 10 pt); title page with the 1853 title wording and an ORDER OF THE BOOKS list (no page numbe",
+  "books_col": "GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL",
+  "pdf": "/root/aw-set-f/docs/F02-eng-leeser.pdf",
+  "ref": "/root/aw-set-f/docs/F02-eng-leeser.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "b3153cdf6927b6c625cc34fb46a66286e7a223a1c6d92c1051cdb2843997efdf",
+  "size": 14941664,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "b3153cdf6927b6c625cc34fb46a66286e7a223a1c6d92c1051cdb2843997efdf",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "b3153cdf6927b6c625cc34fb46a66286e7a223a1c6d92c1051cdb2843997efdf",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-f/F02.json"
+ },
+ {
+  "key": "F03",
+  "tsv": "withheld-f.tsv",
+  "role": "withheld-f",
+  "lang": "deu",
+  "script": "Latin",
+  "layout": "B5 page, two justified columns (Noto Serif 8.4 pt) with a column rule; title page, \"Inhalt\" contents table with page numbers; divider pages \"Das Alte Testament\"",
+  "books_col": "GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEP,HAG,ZEC,MAL,JDT,WIS,TOB,SIR,BAR,1MA,2MA,ESG,DAG,MAN,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,1PE,2PE,1JN,2JN,3JN,HEB,JAS,JUD,REV",
+  "pdf": "/root/aw-set-f/docs/F03-deu-menge.pdf",
+  "ref": "/root/aw-set-f/docs/F03-deu-menge.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "7c3c91c0aa32a051a63a75f3ec7d33c539259cf2828df95264917265b5938228",
+  "size": 5375224,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "7c3c91c0aa32a051a63a75f3ec7d33c539259cf2828df95264917265b5938228",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "7c3c91c0aa32a051a63a75f3ec7d33c539259cf2828df95264917265b5938228",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-f/F03.json"
+ },
+ {
+  "key": "F06",
+  "tsv": "withheld-f.tsv",
+  "role": "withheld-f",
+  "lang": "por",
+  "script": "Latin",
+  "layout": "A5 page, single column, ragged right (Noto Serif 9 pt); title page with licence notice; \"\u00cdndice\" page with page numbers (fpdf2 TOC placeholder) and PDF outline;",
+  "books_col": "MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-set-f/docs/F06-por-nva.pdf",
+  "ref": "/root/aw-set-f/docs/F06-por-nva.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "687950e463498612f303b0ee8256d77b5b0334e36fc28e6e6de0422de0d5f261",
+  "size": 1107109,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "687950e463498612f303b0ee8256d77b5b0334e36fc28e6e6de0422de0d5f261",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "687950e463498612f303b0ee8256d77b5b0334e36fc28e6e6de0422de0d5f261",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-f/F06.json"
+ },
+ {
+  "key": "F07",
+  "tsv": "withheld-f.tsv",
+  "role": "withheld-f",
+  "lang": "kor",
+  "script": "Hangul",
+  "layout": "128x188 mm page; title page \"\uc131 \uacbd \uc804 \uc11c / \uac1c \uc5ed\", a \ubaa9\ucc28 contents page with dotted leaders and page numbers (Typst outline) and PDF bookmarks for books; \"\uad6c \uc57d \uc804 \uc11c\" / \"\uc2e0",
+  "books_col": "all",
+  "pdf": "/root/aw-set-f/docs/F07-kor-rv.pdf",
+  "ref": "/root/aw-set-f/docs/F07-kor-rv.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "2776d2e95ea14a1762aee3c8de63428f2d49449f3b9adf6f66575d1b8ce7d00a",
+  "size": 10498624,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "2776d2e95ea14a1762aee3c8de63428f2d49449f3b9adf6f66575d1b8ce7d00a",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "2776d2e95ea14a1762aee3c8de63428f2d49449f3b9adf6f66575d1b8ce7d00a",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-f/F07.json"
+ },
+ {
+  "key": "F13",
+  "tsv": "withheld-f.tsv",
+  "role": "withheld-f",
+  "lang": "ita",
+  "script": "Latin",
+  "layout": "140x210 mm page, single column (Liberation Serif 9.6 pt), title page and INDICE with dotted leaders and page numbers; the poetical books Giobbe, Salmi, Proverbi",
+  "books_col": "JOB,PSA,PRO,ECC,SNG",
+  "pdf": "/root/aw-set-f/docs/F13-ita-diodati.pdf",
+  "ref": "/root/aw-set-f/docs/F13-ita-diodati.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "46c02167cc29e35ce4aaa82f6239a3c642f46772bd42ff1e981bde3f2253986b",
+  "size": 1072321,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "46c02167cc29e35ce4aaa82f6239a3c642f46772bd42ff1e981bde3f2253986b",
+    "match": true
+   },
+   {
+    "source": "corpus-checksums",
+    "expected": "46c02167cc29e35ce4aaa82f6239a3c642f46772bd42ff1e981bde3f2253986b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-f/F13.json"
+ },
+ {
+  "key": "G03",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "PDF typeset with XeLaTeX by the BibleTeX project (github vermiculus/bible): US Letter, 816 pages, two columns, running head with the book name and page number, ",
+  "books_col": "GEN,EXO,LEV,NUM,DEU,JOS,JDG,RUT,1SA,2SA,1KI,2KI,1CH,2CH,EZR,NEH,EST,JOB,PSA,PRO,ECC,SNG,ISA,JER,LAM,EZK,DAN,HOS,JOL,AMO,OBA,JON,MIC,NAM,HAB,ZEC,MAL,MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-set-g/docs/G03_en_bibletex_kjv.pdf",
+  "ref": "/root/aw-set-g/docs/G03_en_bibletex_kjv.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "36940c681aeaf44e2d16ca1289ceabae1f7da5b7ea8caec8e87b919f9a82e0b7",
+  "size": 4732042,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "36940c681aeaf44e2d16ca1289ceabae1f7da5b7ea8caec8e87b919f9a82e0b7",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "36940c681aeaf44e2d16ca1289ceabae1f7da5b7ea8caec8e87b919f9a82e0b7",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G03.json"
+ },
+ {
+  "key": "G04",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "heb",
+  "script": "Hebrew",
+  "layout": "eBible.org's published A4 PDF (XeTeX pipeline) of the Biblica Open Hebrew Living New Testament: right-to-left modern Hebrew, single column, running heads with t",
+  "books_col": "MAT,MRK,LUK,JHN,ACT,ROM,1CO,2CO,GAL,EPH,PHP,COL,1TH,2TH,1TI,2TI,TIT,PHM,HEB,JAS,1PE,2PE,1JN,2JN,3JN,JUD,REV",
+  "pdf": "/root/aw-set-g/docs/G04_he_ebible_heblb_a4.pdf",
+  "ref": "/root/aw-set-g/docs/G04_he_ebible_heblb_a4.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "7b22c964af775f37e6cb9325b52f03bad8abef5b31322d198ccb0f3d75dfd813",
+  "size": 2069567,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "7b22c964af775f37e6cb9325b52f03bad8abef5b31322d198ccb0f3d75dfd813",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "7b22c964af775f37e6cb9325b52f03bad8abef5b31322d198ccb0f3d75dfd813",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G04.json"
+ },
+ {
+  "key": "G05",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "deu",
+  "script": "Latin",
+  "layout": "A5, 394 pages, Bookman, two columns: title page and book register; running head with the short book name, centred folio at the foot; book titles in old style ('",
+  "books_col": "GEN,RUT,PSA,ROM,JDT,WIS,TOB,SIR,BAR,1MA,2MA,MAN",
+  "pdf": "/root/aw-set-g/docs/G05_de_luther1545_auszug.pdf",
+  "ref": "/root/aw-set-g/docs/G05_de_luther1545_auszug.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "b6ba51eaaef33e89ef6ef02e0eb80b65257cd9431f817d5089c6ef55092d48cf",
+  "size": 2002848,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "b6ba51eaaef33e89ef6ef02e0eb80b65257cd9431f817d5089c6ef55092d48cf",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "b6ba51eaaef33e89ef6ef02e0eb80b65257cd9431f817d5089c6ef55092d48cf",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": null
+ },
+ {
+  "key": "G07",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "fra",
+  "script": "Latin",
+  "layout": "6x9 in pages, single justified column (DejaVu Serif): half-title, contents page with dot leaders and page numbers; each book on a new page with a small-capitals",
+  "books_col": "TOB,JDT,EST,WIS,SIR,BAR,DAN,1MA,2MA",
+  "pdf": "/root/aw-set-g/docs/G07_fr_fillion_deuterocanoniques.pdf",
+  "ref": "/root/aw-set-g/docs/G07_fr_fillion_deuterocanoniques.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "3df8c19ae98ba46a8238509faf2c7c9806470f41c2411726a05f142409027480",
+  "size": 1245166,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "3df8c19ae98ba46a8238509faf2c7c9806470f41c2411726a05f142409027480",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "3df8c19ae98ba46a8238509faf2c7c9806470f41c2411726a05f142409027480",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G07.json"
+ },
+ {
+  "key": "G09",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "kor",
+  "script": "Hangul",
+  "layout": "B5, 27 pages, Noto Sans CJK KR: title page and outline; two columns; running head with the book name under a rule, page number '\u2014 n \u2014'; book titles large and ce",
+  "books_col": "RUT,JON,MIC,PHP,COL,1TH,JAS,1JN,JUD",
+  "pdf": "/root/aw-set-g/docs/G09_ko_kaeyok1938_selection.pdf",
+  "ref": "/root/aw-set-g/docs/G09_ko_kaeyok1938_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+  "size": 416768,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G09.json"
+ },
+ {
+  "key": "G10",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "hbo",
+  "script": "Hebrew",
+  "layout": "17x24 cm, right-to-left, Noto Serif Hebrew with full vowel pointing and cantillation: Hebrew title page with a Latin attribution line; each book on a new page w",
+  "books_col": "SNG,RUT,LAM,ECC,EST,JON",
+  "pdf": "/root/aw-set-g/docs/G10_he_mam_megillot_jonah.pdf",
+  "ref": "/root/aw-set-g/docs/G10_he_mam_megillot_jonah.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "ee7e11750ed7ca22f90bae867398b2bb7bf5508c41b2b2c934a5a89ebd9dfb41",
+  "size": 852810,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "ee7e11750ed7ca22f90bae867398b2bb7bf5508c41b2b2c934a5a89ebd9dfb41",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "ee7e11750ed7ca22f90bae867398b2bb7bf5508c41b2b2c934a5a89ebd9dfb41",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G10.json"
+ },
+ {
+  "key": "G13",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "US Letter, 28 pages, Liberation Serif: title page with the CC BY-SA licence; two columns with a vertical rule; running head with the verse range on the page ('R",
+  "books_col": "RUT,JON,MRK,ROM,PHM,JUD",
+  "pdf": "/root/aw-set-g/docs/G13_en_ulb_selection.pdf",
+  "ref": "/root/aw-set-g/docs/G13_en_ulb_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+  "size": 224105,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G13.json"
+ }
+]

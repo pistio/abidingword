@@ -1,0 +1,222 @@
+[
+ {
+  "key": "hboWLC-pdf",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.6580364450954207,
+  "current_in_order_letters": null,
+  "best_engine": "mupdf",
+  "best_in_order": 0.25731271270408823,
+  "class": "RECOGNITION (partly document: text layer limits every engine)",
+  "note": "current is the best or equal engine at 65.8% in order; the app verified far less"
+ },
+ {
+  "key": "latVUC-pdf",
+  "app_verified_share": 0.2730474879118768,
+  "current_in_order": 0.8925049309664694,
+  "current_in_order_letters": 0.892536743653369,
+  "best_engine": "pdfium",
+  "best_in_order": 0.8925049309664694,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "spavbl-rlofodt",
+  "app_verified_share": 0.11107894228913337,
+  "current_in_order": 0.8599691179309014,
+  "current_in_order_letters": 0.8667889081901821,
+  "best_engine": "pdfium",
+  "best_in_order": 0.8599691179309014,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "grcsbl-rfpdf-mrk",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9687964338781575,
+  "current_in_order_letters": 1.0,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9687964338781575,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "engkjvcpb-rwpdfmargin",
+  "app_verified_share": 3.2152273165712814e-05,
+  "current_in_order": 0.28265063339978136,
+  "current_in_order_letters": 0.8487235547553212,
+  "best_engine": "pdfium",
+  "best_in_order": 0.8482412706578355,
+  "class": "EXTRACTION (verse-number placement only)",
+  "note": "words complete and in order (letters-only 84.9% vs best 84.8%); verse numbers emitted out of their inline position"
+ },
+ {
+  "key": "spabll-rrlab2col",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.7320084892919159,
+  "current_in_order_letters": 0.9900958260981414,
+  "best_engine": "pdfium",
+  "best_in_order": 0.956138658434626,
+  "class": "EXTRACTION (verse-number placement only)",
+  "note": "words complete and in order (letters-only 99.0% vs best 98.8%); verse numbers emitted out of their inline position"
+ },
+ {
+  "key": "hbo-rwpdfrtl-rut",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9529411764705882,
+  "current_in_order_letters": null,
+  "best_engine": "mupdf",
+  "best_in_order": 0.9529411764705882,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "engwebu-rl2col",
+  "app_verified_share": 0.2411409093832401,
+  "current_in_order": 0.8354234999035308,
+  "current_in_order_letters": 0.8354878127210753,
+  "best_engine": "pdfium",
+  "best_in_order": 0.8354234999035308,
+  "class": "RECOGNITION (partly document: text layer limits every engine)",
+  "note": "current is the best or equal engine at 83.5% in order; the app verified far less"
+ },
+ {
+  "key": "deutkw-fpdfa5",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9657309515129421,
+  "current_in_order_letters": 0.9657309515129421,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9657309515129421,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "kor-lopdf",
+  "app_verified_share": 0.008207070707070708,
+  "current_in_order": 0.8698232323232323,
+  "current_in_order_letters": 0.8700757575757576,
+  "best_engine": "pdfium",
+  "best_in_order": 0.8926767676767676,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "heb-wprtl",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.018967874231032127,
+  "current_in_order_letters": null,
+  "best_engine": "mupdf",
+  "best_in_order": 0.8053656869446343,
+  "class": "EXTRACTION",
+  "note": ""
+ },
+ {
+  "key": "F01",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.971486581920904,
+  "current_in_order_letters": 0.971486581920904,
+  "best_engine": "pdfium",
+  "best_in_order": 0.973781779661017,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "F03",
+  "app_verified_share": 0.34833986256502475,
+  "current_in_order": 0.942175015242435,
+  "current_in_order_letters": 0.9422071045791484,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9314571767801559,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "F07",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9781237935915583,
+  "current_in_order_letters": 0.9781559644833355,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9781237935915583,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "F13",
+  "app_verified_share": 0.001463210702341137,
+  "current_in_order": 0.6331521739130435,
+  "current_in_order_letters": 0.6331521739130435,
+  "best_engine": "pdfium",
+  "best_in_order": 0.6331521739130435,
+  "class": "RECOGNITION (partly document: text layer limits every engine)",
+  "note": "current is the best or equal engine at 63.3% in order; the app verified far less"
+ },
+ {
+  "key": "G03",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9310889684305569,
+  "current_in_order_letters": 1.0,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9310889684305569,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "G04",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9953410120357189,
+  "current_in_order_letters": null,
+  "best_engine": "poppler",
+  "best_in_order": 0.9955998447004012,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "G05",
+  "app_verified_share": 0.0,
+  "current_in_order": null,
+  "current_in_order_letters": null,
+  "best_engine": "pdfium",
+  "best_in_order": 0.8197088465845465,
+  "class": "EXTRACTION (cannot open)",
+  "note": "pdf-extract 0.12.1 panics (lib.rs:584 assert_eq 256 vs 255: font /Widths length vs FirstChar..LastChar) on every page; app reports library.badPdf"
+ },
+ {
+  "key": "G07",
+  "app_verified_share": 0.1913477537437604,
+  "current_in_order": 0.9440993788819876,
+  "current_in_order_letters": 0.9440993788819876,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9440993788819876,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "G09",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.9044502617801047,
+  "current_in_order_letters": 0.9764397905759162,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9057591623036649,
+  "class": "RECOGNITION",
+  "note": ""
+ },
+ {
+  "key": "G10",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.39596469104665827,
+  "current_in_order_letters": null,
+  "best_engine": "poppler",
+  "best_in_order": 0.8776796973518285,
+  "class": "EXTRACTION",
+  "note": ""
+ },
+ {
+  "key": "G13",
+  "app_verified_share": 0.0,
+  "current_in_order": 0.4860248447204969,
+  "current_in_order_letters": 0.9790372670807453,
+  "best_engine": "pdfium",
+  "best_in_order": 0.9813664596273292,
+  "class": "EXTRACTION (verse-number placement only)",
+  "note": "words complete and in order (letters-only 97.9% vs best 98.1%); verse numbers emitted out of their inline position"
+ }
+]

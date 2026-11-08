@@ -1,0 +1,58 @@
+engwebp-pdf impl True True ['corpus-checksums'] True 9597871 True
+engwebp-book impl True True ['corpus-checksums'] True 9288817 True
+kjv-pdf impl True True ['corpus-checksums'] True 10514289 True
+deu1912-pdf impl True True ['corpus-checksums'] True 8839248 True
+deuelo-pdf impl True True ['corpus-checksums'] True 8902332 True
+fraLSG-pdf impl True True ['corpus-checksums'] True 12850420 True
+fraLSG-luk impl True True ['corpus-checksums'] True 575962 True
+fob-pdf impl True True ['corpus-checksums'] True 9745404 True
+rv1909-pdf impl True True ['corpus-checksums'] True 9071021 True
+rv1909-lopdf impl True True ['corpus-checksums'] True 7635572 True
+spabes-pdf impl True True ['corpus-checksums'] True 8849355 True
+porbrbsl-pdf impl True True ['corpus-checksums'] True 12137019 True
+porbr2018-pdf impl True True ['corpus-checksums'] True 8938259 True
+kor-pdf impl True True ['corpus-checksums'] True 10530556 True
+grctr-pdf impl True True ['corpus-checksums'] True 2338087 True
+hboWLC-pdf impl True True ['corpus-checksums'] True 6639554 True
+latVUC-pdf impl True True ['corpus-checksums'] True 19211065 True
+deutkw-pdf regression True True ['corpus-checksums'] True 9476623 True
+frajnd-pdf regression True True ['corpus-checksums'] True 12364438 True
+spablm-pdf regression True True ['corpus-checksums'] True 11849145 True
+engylt-pdf regression True True ['corpus-checksums'] True 8696318 True
+grcbyz-pdf regression True True ['corpus-checksums'] True 2571781 True
+kor1961-lopdf impl True True ['corpus-checksums'] True 18677420 True
+deutkw-lopdf regression True True ['corpus-checksums'] True 12285849 True
+frajnd-lopdf regression True True ['corpus-checksums'] True 12856007 True
+engbsb-rwpdf2col recon-bc True True ['corpus-checksums'] True 6396406 True
+engasv-rrlab1col recon-bc True True ['corpus-checksums'] True 4019371 True
+spavbl-rlofodt recon-bc True True ['corpus-checksums'] True 23052531 True
+grcsbl-rfpdf-mrk recon-bc True True ['corpus-checksums'] True 168340 True
+engrv-ebiblebook recon-bc True True ['corpus-checksums'] True 10596535 True
+engkjvcpb-rwpdfmargin recon-bc True True ['corpus-checksums'] True 7290366 True
+engjps-rdocx2lo recon-bc True True ['corpus-checksums'] True 12788718 True
+spabll-rrlab2col recon-bc True True ['corpus-checksums'] True 4630220 True
+poronbv-rwpdfa5 recon-bc True True ['corpus-checksums'] True 7504843 True
+hbo-rwpdfrtl-rut recon-bc True True ['corpus-checksums'] True 60662 True
+engoebus-ebiblea4 recon-bc True True ['corpus-checksums'] True 4071750 True
+engbrenton-rlo2col recon-d True True ['corpus-checksums'] True 17714800 True
+deu1912-rdropcap recon-d True True ['corpus-checksums'] True 6835365 True
+kor-r2col recon-d True True ['corpus-checksums'] True 4937639 True
+engwebu-rl2col withheld-e True True ['manifest', 'corpus-checksums'] True 5696571 True
+engtnt-wp3col withheld-e True True ['manifest', 'corpus-checksums'] True 1729982 True
+deutkw-fpdfa5 withheld-e True True ['manifest', 'corpus-checksums'] True 1171097 True
+kor-lopdf withheld-e True True ['manifest', 'corpus-checksums'] True 6980831 True
+heb-wprtl withheld-e True True ['manifest', 'corpus-checksums'] True 1034851 True
+F01 withheld-f True True ['manifest', 'corpus-checksums'] True 2530256 True
+F02 withheld-f True True ['manifest', 'corpus-checksums'] True 14941664 True
+F03 withheld-f True True ['manifest', 'corpus-checksums'] True 5375224 True
+F06 withheld-f True True ['manifest', 'corpus-checksums'] True 1107109 True
+F07 withheld-f True True ['manifest', 'corpus-checksums'] True 10498624 True
+F13 withheld-f True True ['manifest', 'corpus-checksums'] True 1072321 True
+G03 withheld-g True True ['manifest', 'SEAL'] True 4732042 True
+G04 withheld-g True True ['manifest', 'SEAL'] True 2069567 True
+G05 withheld-g True True ['manifest', 'SEAL'] True 2002848 False
+G07 withheld-g True True ['manifest', 'SEAL'] True 1245166 True
+G09 withheld-g True True ['manifest', 'SEAL'] True 416768 True
+G10 withheld-g True True ['manifest', 'SEAL'] True 852810 True
+G13 withheld-g True True ['manifest', 'SEAL'] True 224105 True
+57
