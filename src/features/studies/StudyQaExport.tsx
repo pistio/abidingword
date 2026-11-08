@@ -54,7 +54,7 @@ export function StudyQaExport({ title, sections, templateKey, onClose }: { title
     setError(null);
     setStatus(null);
     try {
-      const path = await api.chooseMaterialFile({ defaultName: `${title.trim() || "study"}.md`, filterName: t("studies.qaExport.fileType") });
+      const path = await api.chooseMaterialFile({ defaultName: `${title.trim() || t("studies.view.study")}.md`, filterName: t("studies.qaExport.fileType") });
       if (!path) return;
       setStatus(t("studies.qaExport.saved", { path: await api.materialSaveMarkdown({ path, text }) }));
     } catch (e) {

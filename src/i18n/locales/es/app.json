@@ -58,7 +58,7 @@
     "notIncluded": "Esta versión no incluye actualizaciones automáticas.",
     "help": "Abiding Word lo comprueba solo de vez en cuando o cuando lo pides. No necesitas conexión a internet para trabajar y tus estudios no se ven afectados.",
     "errors": {
-      "check": "No se pudo buscar actualizaciones. Comprueba tu conexión e inténtalo de nuevo.",
+      "check": "No se pudieron buscar actualizaciones. Comprueba tu conexión e inténtalo de nuevo.",
       "install": "No se pudo instalar la actualización. Tus estudios no se ven afectados. Puedes intentarlo de nuevo."
     }
   }

@@ -14,6 +14,7 @@
 //! its core properties. It is written with fixed dates, so the same material
 //! gives the same file.
 
+use std::collections::BTreeMap;
 use std::io::{Cursor, Write};
 
 use serde::Deserialize;
@@ -242,6 +243,8 @@ pub struct Format {
     pub language: Option<String>,
     /// "letter" or "a4" (the default).
     pub paper: Option<String>,
+    /// Transient localised custom-style display names, not IDs or document content.
+    pub style_names: BTreeMap<String, String>,
 }
 
 impl Format {
@@ -266,6 +269,47 @@ impl Format {
             (11906, 16838, 1418)
         }
     }
+}
+
+/// Only the custom styles have interface-owned names. Word's built-in names
+/// remain invariant so Word can display them in its own language.
+const CUSTOM_STYLE_NAMES: &[(&str, &str)] = &[
+    ("reference", "Bible reference"),
+    ("notice", "Notice"),
+    ("label", "Label"),
+    ("message", "Message"),
+    ("question", "Question"),
+    ("scripture", "Scripture"),
+    ("note", "Note"),
+    ("line", "Writing line"),
+    ("lineLast", "Writing line (last)"),
+];
+
+fn styles_xml(format: &Format) -> String {
+    let mut names = STYLES.split("<w:name w:val=\"");
+    let mut xml = names
+        .next()
+        .unwrap_or_default()
+        .replace("{LANG}", &format.language());
+    for part in names {
+        xml.push_str("<w:name w:val=\"");
+        if let Some((fallback, tail)) = part.split_once("\"/>") {
+            let translated = CUSTOM_STYLE_NAMES
+                .iter()
+                .find(|(_, name)| *name == fallback)
+                .and_then(|(key, _)| format.style_names.get(*key))
+                .map(|name| escape(name.trim()))
+                .filter(|name| !name.trim().is_empty());
+            xml.push_str(translated.as_deref().unwrap_or(fallback));
+            xml.push_str("\"/>");
+            xml.push_str(tail);
+        } else {
+            xml.push_str(part);
+        }
+    }
+    // Names are inserted once, after reading the fixed template. A translated
+    // name cannot be interpreted as XML, a language token or another style name.
+    xml
 }
 
 fn document_xml(doc: &MaterialDocument, format: &Format) -> String {
@@ -305,10 +349,7 @@ pub fn render(doc: &MaterialDocument, format: &Format) -> AppResult<Vec<u8>> {
         ("docProps/core.xml", core_xml(&doc.title)),
         ("word/_rels/document.xml.rels", DOCUMENT_RELS.to_string()),
         ("word/document.xml", document_xml(doc, format)),
-        (
-            "word/styles.xml",
-            STYLES.replace("{LANG}", &format.language()),
-        ),
+        ("word/styles.xml", styles_xml(format)),
     ];
     let mut writer = ZipWriter::new(Cursor::new(Vec::new()));
     let fail = |e: &dyn std::fmt::Display| AppError::Unexpected(format!("Word document: {e}"));
@@ -325,6 +366,7 @@ pub fn render(doc: &MaterialDocument, format: &Format) -> AppResult<Vec<u8>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::io::Read;
 
     #[test]
     fn text_is_escaped_and_control_characters_dropped() {
@@ -333,5 +375,84 @@ mod tests {
             "a &lt; b &amp; &quot;c&quot; &gt; d"
         );
         assert_eq!(runs("one\ntwo", ""), "<w:r><w:t xml:space=\"preserve\">one</w:t></w:r><w:r><w:br/></w:r><w:r><w:t xml:space=\"preserve\">two</w:t></w:r>");
+    }
+
+    #[test]
+    fn custom_style_names_are_escaped_without_changing_identifiers_or_builtin_names() {
+        let format = Format {
+            style_names: CUSTOM_STYLE_NAMES
+                .iter()
+                .map(|(key, _)| ((*key).into(), format!("자료 {key} <&\"{{LANG}}\u{0007}")))
+                .collect(),
+            ..Default::default()
+        };
+        let xml = styles_xml(&format);
+        for &(key, _) in CUSTOM_STYLE_NAMES {
+            assert!(xml.contains(&format!(
+                "<w:name w:val=\"자료 {key} &lt;&amp;&quot;{{LANG}}\"/>"
+            )));
+        }
+        for name in ["Normal", "Title", "heading 1"] {
+            assert!(xml.contains(&format!("<w:name w:val=\"{name}\"/>")));
+        }
+        let identifiers = |text: &str| {
+            text.split("w:styleId=\"")
+                .skip(1)
+                .map(|part| part.split('"').next().unwrap().to_string())
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(identifiers(&xml), identifiers(STYLES));
+        assert!(!xml.contains('\u{0007}'));
+    }
+
+    #[test]
+    fn style_names_are_optional_and_never_reinterpreted_as_other_names() {
+        let old_client: Format = serde_json::from_str(r#"{"language":"en-GB"}"#).unwrap();
+        assert!(old_client.style_names.is_empty());
+        assert_eq!(styles_xml(&old_client), STYLES.replace("{LANG}", "en-GB"));
+        let format = Format {
+            style_names: BTreeMap::from([
+                ("reference".into(), "Question".into()),
+                ("question".into(), "My question".into()),
+                ("notice".into(), " \u{0007} ".into()),
+                ("Normal".into(), "Do not replace a built-in".into()),
+            ]),
+            ..Default::default()
+        };
+        let xml = styles_xml(&format);
+        assert!(xml.contains("w:styleId=\"AwReference\"><w:name w:val=\"Question\"/>"));
+        assert!(xml.contains("w:styleId=\"AwQuestion\"><w:name w:val=\"My question\"/>"));
+        assert!(xml.contains("w:styleId=\"AwNotice\"><w:name w:val=\"Notice\"/>"));
+        assert!(xml.contains("w:styleId=\"Normal\"><w:name w:val=\"Normal\"/>"));
+    }
+
+    #[test]
+    fn rendered_package_localises_styles_without_changing_material_content() {
+        let doc = MaterialDocument {
+            kind: "questions".into(),
+            title: "Own <title>".into(),
+            blocks: vec![Block::Question {
+                number: 7,
+                text: "Unchanged own words & source".into(),
+            }],
+        };
+        let format = Format {
+            style_names: BTreeMap::from([("question".into(), "Pergunta".into())]),
+            ..Default::default()
+        };
+        let bytes = render(&doc, &format).unwrap();
+        let mut zip = zip::ZipArchive::new(Cursor::new(bytes)).unwrap();
+        let mut styles = String::new();
+        zip.by_name("word/styles.xml")
+            .unwrap()
+            .read_to_string(&mut styles)
+            .unwrap();
+        assert!(styles.contains("w:styleId=\"AwQuestion\"><w:name w:val=\"Pergunta\"/>"));
+        let mut body = String::new();
+        zip.by_name("word/document.xml")
+            .unwrap()
+            .read_to_string(&mut body)
+            .unwrap();
+        assert_eq!(body, document_xml(&doc, &Format::default()));
     }
 }

@@ -99,7 +99,7 @@
     "findImages": "Trouver des images libres sur Wikimedia Commons (seuls les mots de recherche sont envoyés)",
     "generateImages": "Autoriser la création d’images (toujours marquées comme créées par l’assistant)",
     "perspective": "Comment l’IA doit-elle aborder les questions théologiques ?",
-    "perspectiveHint": "Facultatif. Il ne s’agit pas de votre parcours : si c’est utile, écrivez seulement une courte perspective théologique ou d’Église (p. ex. « protestant réformé »). L’IA en tient compte pour les questions théologiques débattues, et mentionne quand même les autres interprétations sérieuses. Laissé vide, aucune tradition n’est supposée.",
+    "perspectiveHint": "Facultatif. Il ne s’agit pas de votre parcours : si c’est utile, indiquez simplement votre perspective théologique ou votre tradition d’Église (p. ex. « protestant réformé »). L’IA en tient compte pour les questions théologiques débattues, et mentionne quand même les autres interprétations sérieuses. Si vous laissez ce champ vide, aucune tradition n’est supposée.",
     "save": "Enregistrer",
     "saved": "Enregistré.",
     "test": "Vérifier la connexion",
@@ -168,7 +168,7 @@
       "unknown": "Abiding Word ne peut pas savoir si {{service}} peut créer des images avec votre compte. Vous pouvez essayer ; en cas d’échec, choisissez OpenAI pour les images."
     },
     "imageKey": "Clé OpenAI pour les images",
-    "imageKeyMissing": "Aucune clé OpenAI pour les images n’est encore gardée : collez-la ci-dessous et appuyez sur « Garder la clé ».",
+    "imageKeyMissing": "Aucune clé OpenAI pour les images n’est encore conservée : collez-la ci-dessous et appuyez sur « Garder la clé ».",
     "imagesLeave": "Les descriptions d’images sont envoyées à OpenAI par Internet, même si votre service d’écriture fonctionne sur cet ordinateur.",
     "searchShort": {
       "brave": "recherche web générale et simple",
@@ -226,7 +226,7 @@
   },
   "background": {
     "legend": "Fond",
-    "help": "Des fonds calmes et peu éblouissants, pensés pour lire et écrire longtemps. Le texte reste bien lisible sur chacun. Chacun a une version claire et une version sombre, qui suit le thème.",
+    "help": "Des fonds calmes et peu éblouissants, pensés pour lire et écrire longtemps. Le texte reste bien lisible sur chacun. Chaque fond existe en version claire et sombre, selon le thème choisi.",
     "parchment": "Parchemin",
     "cream": "Crème",
     "sage": "Sauge",
@@ -268,7 +268,7 @@
     "restoreConfirm": "Tout remplacer par cette sauvegarde",
     "restored": "La sauvegarde a été restaurée.",
     "safetyCopy": "Une copie de l’état précédent est conservée dans {{path}}.",
-    "setAside": "Fichiers de la bibliothèque mis de côté à côté de cette copie : {{n}}",
+    "setAside": "Fichiers de la bibliothèque conservés à côté de cette copie : {{n}}",
     "restoredContinue": "Continuer",
     "working": "En cours…",
     "workingLong": "Avec une grande bibliothèque, cela peut prendre un moment.",

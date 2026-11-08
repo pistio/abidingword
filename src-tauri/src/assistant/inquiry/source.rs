@@ -6,7 +6,10 @@
 
 use rusqlite::Connection;
 
-use super::{cut, BlockKind, ExcerptInput, Inquiry, InquiryInput, Material, Scope, SourcePlace};
+use super::{
+    cut, BlockKind, DisplayLabel, DisplayLocation, ExcerptInput, Inquiry, InquiryInput, Material,
+    Scope, SourcePlace,
+};
 use crate::db::{findings, library, source_annotations, studies};
 use crate::error::{AppError, AppResult, UserMessage};
 use crate::library::annotations::StoredSegment;
@@ -62,6 +65,30 @@ pub fn location(segments: &[StoredSegment]) -> String {
     parts.join(" · ")
 }
 
+/// The same locator facts for UI localisation, without interpreting any stored text.
+fn display_location(segments: &[StoredSegment]) -> DisplayLocation {
+    let first = segments.first().expect("validated excerpt has a segment");
+    let last = segments.last().expect("validated excerpt has a segment");
+    let page = |s: &StoredSegment| {
+        s.locator
+            .as_deref()
+            .filter(|l| l.starts_with("p. "))
+            .map(|l| l[3..].to_string())
+            .or(s.page_number.map(|p| p.to_string()))
+    };
+    DisplayLocation {
+        section: first
+            .section_path
+            .as_deref()
+            .filter(|s| !s.trim().is_empty())
+            .map(|s| s.trim().to_string()),
+        first_page: page(first),
+        last_page: page(last),
+        first_paragraph: first.position as usize + 1,
+        last_paragraph: last.position as usize + 1,
+    }
+}
+
 /// One selected passage as a source block, within `max` characters.
 pub(super) fn excerpt_block(
     conn: &Connection,
@@ -90,6 +117,11 @@ pub(super) fn excerpt_block(
     }
     let text = excerpt.text.clone();
     let block = material.push(BlockKind::Source, format!("{name} — {location}"), &text);
+    block.display = Some(DisplayLabel::Source {
+        title: source.title.clone(),
+        author: source.author.clone(),
+        location: display_location(&excerpt.segments),
+    });
     block.source = Some(SourcePlace {
         source_id: source.id.clone(),
         title: source.title.clone(),
@@ -127,6 +159,11 @@ pub(super) fn include_study(
                 super::study::kind_label(f),
                 cut(&study.title, 80)
             ),
+            DisplayLabel::Note {
+                finding_type: f.finding_type.as_str().into(),
+                part: None,
+                study: Some(study.title.clone()),
+            },
             &mut quotes,
         );
     }
@@ -155,7 +192,48 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
         None => {}
     }
     if !request.is_empty() {
-        material.push(BlockKind::Request, "Your question".into(), request);
+        material
+            .push(BlockKind::Request, "Your question".into(), request)
+            .display = Some(DisplayLabel::Request);
     }
     Ok(material)
+}
+
+#[cfg(test)]
+mod display_tests {
+    use super::*;
+
+    #[test]
+    fn locator_metadata_keeps_source_heading_and_printed_page_labels_exact() {
+        let segments = [
+            StoredSegment {
+                id: "first".into(),
+                position: 11,
+                text: "Exact source".into(),
+                page_number: Some(52),
+                section_path: Some("Your writing — paragraph 9 › 은혜".into()),
+                locator: Some("p. xii".into()),
+            },
+            StoredSegment {
+                id: "last".into(),
+                position: 15,
+                text: "More source".into(),
+                page_number: Some(53),
+                section_path: None,
+                locator: Some("p. xiii".into()),
+            },
+        ];
+        let place = display_location(&segments);
+        assert_eq!(
+            place.section.as_deref(),
+            Some("Your writing — paragraph 9 › 은혜")
+        );
+        assert_eq!(place.first_page.as_deref(), Some("xii"));
+        assert_eq!(place.last_page.as_deref(), Some("xiii"));
+        assert_eq!((place.first_paragraph, place.last_paragraph), (12, 16));
+        assert_eq!(
+            location(&segments),
+            "Your writing — paragraph 9 › 은혜 · pp. xii–xiii · paragraphs 12–16"
+        );
+    }
 }

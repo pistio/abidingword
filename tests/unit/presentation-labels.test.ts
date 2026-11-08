@@ -29,6 +29,14 @@ describe("presentation helpers", () => {
     expect(exportLocale(i18n.t).labels.slide).toBe("슬라이드");
   });
 
+  it.each([
+    ["en", "en-GB"], ["de", "de-DE"], ["ko", "ko-KR"],
+    ["fr", "fr-FR"], ["es", "es-ES"], ["pt", "pt-BR"],
+  ])("sets %s exports to the interface proofing language %s", async (language, tag) => {
+    await i18n.changeLanguage(language);
+    expect(exportLocale(i18n.t).language).toBe(tag);
+  });
+
   it("use the same three backgrounds as the exports", () => {
     expect(Object.keys(themes)).toEqual(["light", "dark", "warm"]);
     expect(palette("warm")).toEqual(themes.warm);

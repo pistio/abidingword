@@ -79,8 +79,8 @@
       "done": "Bible added"
     },
     "checking": "Reading and checking every book, chapter and verse. This can take a few seconds.",
-    "done_one": "<strong>{{name}}</strong> is ready to read, with {{count}} book and {{verses}} verses.",
-    "done_other": "<strong>{{name}}</strong> is ready to read, with {{count}} books and {{verses}} verses.",
+    "done_one": "<strong>{{name}}</strong> is ready to read. Books: {{count}} · Verses: {{verses}}.",
+    "done_other": "<strong>{{name}}</strong> is ready to read. Books: {{count}} · Verses: {{verses}}.",
     "readNow": "Read it now",
     "included": "Included with Abiding Word",
     "chooseLabel": "Choose a Bible",
@@ -196,7 +196,7 @@
       "noWords": "Word information (dictionary forms, grammar, lexical numbers): none. Ordinary documents don’t carry it, and none is made up from the text.",
       "booksTitle_one": "Check the book found ({{formatted}})",
       "booksTitle_other": "Check the books found ({{formatted}})",
-      "booksIntro": "Each book begins at a heading in the document. If a heading was read as the wrong book, or names none, choose the right one — or leave that part out.",
+      "booksIntro": "Each book begins at a heading in the document. If a heading was identified as the wrong book, or no book was identified, choose the right one — or leave that part out.",
       "bookChoice": "Book for “{{heading}}”",
       "notRecognised": "Not recognised — choose a book",
       "leaveOut": "Leave out",
@@ -229,7 +229,7 @@
       },
       "unverified_one": "{{formatted}} verse was found, but its text could not be checked. It is not used as Bible text: it stays in the document and is shown as found but not checked.",
       "unverified_other": "{{formatted}} verses were found, but their text could not be checked. They are not used as Bible text: they stay in the document and are shown as found but not checked.",
-      "unverifiedWhy": "Why their text could not be checked",
+      "unverifiedWhy": "Why the text could not be checked",
       "unverifiedReason": {
         "possibleHeading_one": "{{formatted}} verse contains a line that could be a heading or a label.",
         "possibleHeading_other": "{{formatted}} verses contain a line that could be a heading or a label.",
@@ -312,8 +312,8 @@
       "language": "Language",
       "words": "Word information"
     },
-    "contents_one": "{{count}} book, {{verses}} verses",
-    "contents_other": "{{count}} books, {{verses}} verses",
+    "contents_one": "Books: {{count}} · Verses: {{verses}}",
+    "contents_other": "Books: {{count}} · Verses: {{verses}}",
     "confirmRemove": "Remove <strong>{{name}}</strong>? Its text will be deleted from Abiding Word. Your studies, passage links and notes are kept.",
     "confirmRemoveManaged": "Remove <strong>{{name}}</strong>? Its text will be deleted from Abiding Word, together with Abiding Word’s copy of the file (your original file is not touched). Your studies, passage links and notes are kept.",
     "keep": "Keep it",
@@ -460,7 +460,7 @@
     "lemmaHint": "Uses this Bible’s own word annotations: the dictionary form (lemma), lexical numbers and grammar codes its edition gives each word. Nothing is looked up elsewhere.",
     "lemmaUnavailable": "This Bible has no word annotations, so it cannot be searched by lemma. Word and phrase search work as before.",
     "entries": "Entries for “{{text}}”",
-    "entriesHint": "One dictionary form can stand for different words, told apart by their lexical numbers. Choose one.",
+    "entriesHint": "One dictionary form can represent different words, distinguished by their lexical numbers. Choose one.",
     "entryCount_one": "{{formatted}} time",
     "entryCount_other": "{{formatted}} times",
     "noEntry": "“{{text}}” is not a lemma or lexical number in this Bible’s annotations.",
@@ -672,16 +672,16 @@
   },
   "research": {
     "title": "Original-language research",
-    "intro": "What this edition gives each word, as its own files say. Nothing is looked up elsewhere.",
+    "intro": "The word information included in this edition, as stated in its files. Nothing is looked up elsewhere.",
     "written": "Written word",
-    "writtenValue_one": "{{formatted}} word in {{verses}} verses",
-    "writtenValue_other": "{{formatted}} words in {{verses}} verses",
+    "writtenValue_one": "Words: {{formatted}} · Verses: {{verses}}",
+    "writtenValue_other": "Words: {{formatted}} · Verses: {{verses}}",
     "dictionary": "Dictionary form",
-    "dictionaryValue": "{{words}} words · {{distinct}} different forms",
+    "dictionaryValue": "Words: {{words}} · Different forms: {{distinct}}",
     "grammar": "Grammar",
-    "grammarValue": "{{words}} words with a grammar code",
+    "grammarValue": "Words with a grammar code: {{words}}",
     "number": "Lexical number",
-    "numberValue": "{{words}} words",
+    "numberValue": "Words: {{words}}",
     "notIncluded": "not included",
     "grammarStated": "Grammar codes are described in words: the edition says it uses {{scheme}} (“{{words}}”, in {{file}}).",
     "grammarChoose": "Describe the grammar codes as {{scheme}}",
@@ -734,8 +734,8 @@
       "partialDone": "The verses found can now be looked up by passage in {{name}}. The rest of the document stays readable as it is.",
       "usePartial_one": "Use the {{formatted}} verse found without doubt",
       "usePartial_other": "Use the {{formatted}} verses found without doubt",
-      "partial_one": "{{formatted}} chapter has problems and is held back. The others can be found by passage now; the document itself stays as it is, and the held chapters stay readable in it.",
-      "partial_other": "{{formatted}} chapters have problems and are held back. The others can be found by passage now; the document itself stays as it is, and the held chapters stay readable in it."
+      "partial_one": "{{formatted}} chapter has problems and is held back. The others can now be found by passage. The document stays unchanged, and you can still read the held-back chapter in it.",
+      "partial_other": "{{formatted}} chapters have problems and are held back. The others can now be found by passage. The document stays unchanged, and you can still read the held-back chapters in it."
     },
     "passages": {
       "none": "No passages can be found in this document yet: look for verses, or mark where a passage is.",
@@ -795,5 +795,26 @@
         "notes": "Notes"
       }
     }
+  },
+  "importBookNames": {
+    "TOB": "Tobit",
+    "JDT": "Judith",
+    "ESG": "Esther (Greek)",
+    "WIS": "Wisdom of Solomon",
+    "SIR": "Sirach",
+    "BAR": "Baruch",
+    "LJE": "Letter of Jeremiah",
+    "S3Y": "Song of the Three Young Men",
+    "SUS": "Susanna",
+    "BEL": "Bel and the Dragon",
+    "1MA": "1 Maccabees",
+    "2MA": "2 Maccabees",
+    "3MA": "3 Maccabees",
+    "4MA": "4 Maccabees",
+    "1ES": "1 Esdras (Greek)",
+    "MAN": "Prayer of Manasseh",
+    "PS2": "Psalm 151",
+    "DAG": "Daniel (Greek)",
+    "2ES": "2 Esdras (Latin)"
   }
 }

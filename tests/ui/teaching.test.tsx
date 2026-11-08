@@ -145,7 +145,7 @@ describe("teaching preparation", () => {
     within(article).getByRole("button", { name: "Move “The branches” up" }).focus();
     await user.keyboard("{Enter}");
     await waitFor(() => expect(prep(api).points.map((p) => p.title)).toEqual(["The branches", "The vine"]));
-    expect(within(article).getByText("Point moved to place 1.")).toBeInTheDocument();
+    expect(within(article).getByText("Point moved to position 1.")).toBeInTheDocument();
     await waitFor(() => expect(within(article).getByRole("button", { name: "Move “The branches” up" })).toHaveFocus());
 
     // A point with writing asks first; Keep is the safe default.
@@ -881,10 +881,16 @@ describe("review fixes: applying a suggestion safely", () => {
     api.state.teaching.assistant.replies.push(proposal("We don't stay."));
     const panel = await helpWith(user, article, "Introduction", "Check grammar and spelling");
     await ask(user, panel);
-    await within(panel).findByRole("heading", { name: "Suggested wording" });
+    const heading = await within(panel).findByRole("heading", { name: "Suggested wording" });
+    // The answer moves focus on the next animation frame. Finish that focus
+    // handoff before returning to the field, so it cannot intercept typing.
+    await waitFor(() => expect(heading).toHaveFocus());
     // The person keeps writing while the suggestion is shown.
-    await user.click(field(article, "Introduction"));
+    const introduction = field(article, "Introduction");
+    await user.click(introduction);
+    expect(introduction).toHaveFocus();
     await user.keyboard("{End} And we bear fruit.");
+    expect(introduction).toHaveValue("We dont stay. And we bear fruit.");
     await user.click(within(panel).getByRole("button", { name: "Use this wording" }));
     expect(await within(panel).findByRole("alert")).toHaveTextContent("Your text changed after you asked, so this suggestion was not used.");
     expect(field(article, "Introduction")).toHaveValue("We dont stay. And we bear fruit.");
@@ -1087,7 +1093,7 @@ describe("long assistant actions", () => {
 
     await user.click(within(panel).getByRole("button", { name: "Stop waiting" }));
     expect(within(panel).queryByTestId("pending")).toBeNull();
-    expect(within(panel).getByText(/^Stopped waiting. Nothing was changed./)).toHaveTextContent(/may count toward your use/);
+    expect(within(panel).getByText(/^Stopped waiting. Nothing was changed./)).toHaveTextContent(/may count towards your usage/);
     await act(async () => release());
     // The late answer is ignored.
     expect(within(panel).queryByRole("heading", { name: "Suggested wording" })).toBeNull();

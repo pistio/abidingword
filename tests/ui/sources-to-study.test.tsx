@@ -157,7 +157,12 @@ describe("selected text → Study", () => {
     await user.click(within(await within(reader).findByRole("group", { name: "Mark the selected text" })).getByRole("button", { name: "Add to Study" }));
     await user.click(within(await panel()).getByRole("button", { name: "Cancel" }));
     await waitFor(() => expect(screen.queryByRole("region", { name: /^Add to Study/ })).toBeNull());
+    // Closing restores paragraph focus on the next animation frame. Select only
+    // after that focus handoff, which can otherwise clear the new DOM Range.
+    await waitFor(() => expect(paragraph(reader, "Abide in me")).toHaveFocus());
+    expect(findingsOf(api, studyIds[0]!)).toHaveLength(0);
     await select(paragraph(reader, "Abide in me"), "Abide");
+    expect(document.getSelection()?.toString()).toBe("Abide");
     await user.click(within(await within(reader).findByRole("group", { name: "Mark the selected text" })).getByRole("button", { name: "Add to Study" }));
     await panel();
     await user.keyboard("{Escape}");

@@ -302,7 +302,7 @@
     "typeTitle": "Escribe el título exacto para confirmar",
     "empty": "La papelera está vacía.",
     "hint": "Restaura un proyecto para recuperar su contenido. Los estudios eliminados por separado aparecen después de restaurar su proyecto.",
-    "studyHint": "El estudio y su investigación se pueden restaurar en Ajustes → Datos y copias de seguridad → Papelera. La enseñanza vinculada permanece en su proyecto con notas y citas guardadas, pero se desvincula. La restauración no restablece el vínculo automáticamente.",
+    "studyHint": "El estudio y su investigación se pueden restaurar en Configuración → Datos y copia de seguridad → Papelera. La enseñanza vinculada permanece en su proyecto con apuntes y citas guardados, pero se desvincula. La restauración no restablece el vínculo automáticamente.",
     "projectHint": "El proyecto, sus estudios y su enseñanza se ocultan juntos y se pueden restaurar. La eliminación permanente borra todo el contenido dependiente.",
     "actions": "Acciones para «{{title}}»",
     "moved": "«{{title}}» se movió a la papelera."

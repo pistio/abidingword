@@ -52,7 +52,7 @@
   "editor": {
     "count_one": "{{count}} diapositive affichée",
     "count_other": "{{count}} diapositives affichées",
-    "count_many": "{{count}} diapositives affichées",
+    "count_many": "{{count}} de diapositives affichées",
     "settings": "Nom, présentation visuelle, Bible et durée visée",
     "name": "Nom de cette présentation",
     "bible": "Bible pour les diapositives de passages",
@@ -67,7 +67,7 @@
     "leftOut": "Omise",
     "parts_one": "{{count}} diapositive",
     "parts_other": "{{count}} diapositives",
-    "parts_many": "{{count}} diapositives",
+    "parts_many": "{{count}} de diapositives",
     "hasNotes": "Avec notes",
     "moveUp": "Avancer la diapositive {{number}}",
     "moveDown": "Reculer la diapositive {{number}}",
@@ -154,7 +154,7 @@
     "saved": "Enregistré : {{path}}",
     "savedMissing_one": "Enregistré : {{path}}. {{count}} image n’est pas sur cet ordinateur et apparaît comme un emplacement vide.",
     "savedMissing_other": "Enregistré : {{path}}. {{count}} images ne sont pas sur cet ordinateur et apparaissent comme des emplacements vides.",
-    "savedMissing_many": "Enregistré : {{path}}. {{count}} images ne sont pas sur cet ordinateur et apparaissent comme des emplacements vides.",
+    "savedMissing_many": "Enregistré : {{path}}. {{count}} d’images ne sont pas sur cet ordinateur et apparaissent comme des emplacements vides.",
     "speakerSuffix": "feuillet de l’orateur",
     "labels": {
       "slide": "Diapositive",
@@ -170,7 +170,10 @@
       "imageUnavailable": "Image absente de cet ordinateur",
       "scriptureUnavailable": "Le texte de ce passage n’est pas disponible.",
       "pause": "Pause",
-      "next": "Suivant"
+      "next": "Suivant",
+      "band": "Bandeau de couleur",
+      "blank": "Vide",
+      "slideImage": "Image de la diapositive"
     },
     "standings": {
       "verified": "Vérifié par deux sources",
@@ -316,7 +319,7 @@
     "reviewTitle": "Vérifier la présentation importée",
     "summary_one": "{{file}} · {{ratio}} · {{count}} disposition",
     "summary_other": "{{file}} · {{ratio}} · {{count}} dispositions",
-    "summary_many": "{{file}} · {{ratio}} · {{count}} dispositions",
+    "summary_many": "{{file}} · {{ratio}} · {{count}} de dispositions",
     "name": "Nom du modèle",
     "nameNeeded": "Veuillez donner un nom au modèle.",
     "report": "Ce qui a été importé",
@@ -328,7 +331,7 @@
     "codes": {
       "slidesIgnored_one": "La présentation visuelle seulement ; la diapositive du fichier n’est pas importée",
       "slidesIgnored_other": "La présentation visuelle seulement ; les {{count}} diapositives du fichier ne sont pas importées",
-      "slidesIgnored_many": "La présentation visuelle seulement ; les {{count}} diapositives du fichier ne sont pas importées",
+      "slidesIgnored_many": "La présentation visuelle seulement ; les diapositives du fichier ({{count}}) ne sont pas importées",
       "textBoxes": "Zones de titre et de texte",
       "backgroundImage": "Image d’arrière-plan (avec son recadrage)",
       "picture": "Images et logos",
@@ -397,10 +400,10 @@
     "overflowSlide": "Texte trop long pour la zone du modèle",
     "overflowSummary_one": "Sur {{count}} diapositive, le texte est trop long pour la zone du modèle. Il n’est pas réduit automatiquement : raccourcissez-le, ou activez « Réduire un texte long pour qu’il tienne » pour cette zone dans le modèle.",
     "overflowSummary_other": "Sur {{count}} diapositives, le texte est trop long pour la zone du modèle. Il n’est pas réduit automatiquement : raccourcissez-le, ou activez « Réduire un texte long pour qu’il tienne » pour cette zone dans le modèle.",
-    "overflowSummary_many": "Sur {{count}} diapositives, le texte est trop long pour la zone du modèle. Il n’est pas réduit automatiquement : raccourcissez-le, ou activez « Réduire un texte long pour qu’il tienne » pour cette zone dans le modèle.",
+    "overflowSummary_many": "Sur {{count}} de diapositives, le texte est trop long pour la zone du modèle. Il n’est pas réduit automatiquement : raccourcissez-le, ou activez « Réduire un texte long pour qu’il tienne » pour cette zone dans le modèle.",
     "overflowExport_one": "{{count}} zone de texte est trop petite pour son texte ; vérifiez-la dans le fichier.",
     "overflowExport_other": "{{count}} zones de texte sont trop petites pour leur texte ; vérifiez-les dans le fichier.",
-    "overflowExport_many": "{{count}} zones de texte sont trop petites pour leur texte ; vérifiez-les dans le fichier.",
+    "overflowExport_many": "{{count}} de zones de texte sont trop petites pour leur texte ; vérifiez-les dans le fichier.",
     "roles": {
       "title": "Titre",
       "section": "Changement de partie",
@@ -426,7 +429,7 @@
     },
     "newTitle": "Nouveau modèle pour l’église",
     "editTitle": "Modifier {{name}}",
-    "description": "Description (facultatif)",
+    "description": "Description (facultative)",
     "size": "Taille des diapositives",
     "wide": "Écran large (16:9)",
     "standard": "Standard (4:3)",
@@ -461,7 +464,7 @@
       "reference": "Passage ou auteur",
       "body": "Texte"
     },
-    "boxHandle": "Zone {{box}} : faites glisser pour déplacer, ou utilisez les flèches (Maj pour de plus grands pas)",
+    "boxHandle": "Zone {{box}} : faites glisser pour déplacer, ou utilisez les flèches (Maj pour des déplacements plus grands)",
     "boxSettings": "Zone",
     "addBox": "Ajouter une zone {{box}}",
     "removeBox": "Retirer cette zone",

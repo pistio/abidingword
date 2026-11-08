@@ -1,5 +1,6 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import i18n from "@/i18n";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
 
@@ -72,7 +73,7 @@ describe("ordering slides by dragging", () => {
     await waitFor(() => expect(names(list)).toEqual([ORDER[1], ORDER[2], ORDER[3], ORDER[0], ORDER[4], ORDER[5]]));
     // The moved slide keeps the keyboard and the move is announced.
     await waitFor(() => expect(within(list).getByRole("listitem", { name: "Slide 4: Remain in the vine" }).querySelector("[aria-expanded]")).toHaveFocus());
-    expect(screen.getAllByText("Slide moved to place 4.").length).toBeGreaterThan(0);
+    expect(screen.getAllByText(i18n.t("presentation.editor.moved", { position: 4 })).length).toBeGreaterThan(0);
 
     // Last → first.
     drag(list, 5, 10);

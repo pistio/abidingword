@@ -877,12 +877,22 @@ describe("presenting: the useful few things, simply", () => {
   it("review fixes: after clicking Blank or a slide, Space goes on to the next slide", async () => {
     const { api, user, view } = await presenting();
     await onScreenTwo(user, view);
-    await user.click(within(within(view).getByRole("list", { name: "All slides" })).getAllByRole("button")[2]!);
+    // Closing the screen chooser restores focus on the next animation frame.
+    // Wait for that restoration before clicking a slide, so it cannot steal
+    // focus between the click and Space (Space must target the clicked slide).
+    await waitFor(() => expect(within(view).getByRole("button", { name: "Audience screen" })).toHaveFocus());
+    const thirdSlide = within(within(view).getByRole("list", { name: "All slides" })).getAllByRole("button")[2]!;
+    await user.click(thirdSlide);
+    await waitFor(() => expect(thirdSlide).toHaveFocus());
     expect(within(view).getByText("Slide 3 of 6")).toBeInTheDocument();
     await user.keyboard(" ");
-    expect(within(view).getByText("Slide 4 of 6")).toBeInTheDocument();
-    await user.click(within(view).getByRole("button", { name: "Blank audience screen" }));
-    await waitFor(() => expect(last(api).blank).toBe(true));
+    expect(await within(view).findByText("Slide 4 of 6")).toBeInTheDocument();
+    const blankButton = within(view).getByRole("button", { name: "Blank audience screen" });
+    await user.click(blankButton);
+    await waitFor(() => {
+      expect(last(api).blank).toBe(true);
+      expect(blankButton).toHaveFocus();
+    });
     await user.keyboard(" ");
     // On to the next slide (which ends the blank screen); the Blank button is not pressed again.
     await waitFor(() => expect(last(api)).toMatchObject({ index: 4, blank: false }));

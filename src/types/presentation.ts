@@ -233,6 +233,12 @@ export const EXPORT_FORMATS = ["pptx", "pdf", "speaker_pdf", "markdown", "packag
 export type ExportFormat = (typeof EXPORT_FORMATS)[number];
 
 export interface ExportLabels {
+  text: string;
+  image: string;
+  design: string;
+  band: string;
+  blank: string;
+  slideImage: string;
   slide: string;
   speakerNotes: string;
   introduction: string;

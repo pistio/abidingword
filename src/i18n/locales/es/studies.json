@@ -3,7 +3,7 @@
     "templates": {
       "biblical-theology-study": {
         "name": "Estudio de teología bíblica",
-        "description": "Un tema seguido a lo largo de la historia de la Escritura que se va desplegando.",
+        "description": "Un tema seguido a lo largo del desarrollo de la historia bíblica.",
         "sections": {
           "theme": {
             "title": "Tema",
@@ -297,7 +297,7 @@
               },
               "people": {
                 "label": "Personas y grupos",
-                "help": "Añada cada persona o grupo nombrado o implícito, con el versículo y su papel.",
+                "help": "Añade cada persona o grupo nombrado o implícito, con el versículo y su papel.",
                 "parts": {
                   "name": "Nombre o grupo",
                   "verse": "Versículo",
@@ -323,7 +323,7 @@
             "fields": {
               "places": {
                 "label": "Lugares nombrados en el texto",
-                "help": "Anote cada lugar nombrado, con el versículo y su papel.",
+                "help": "Anota cada lugar nombrado, con el versículo y su papel.",
                 "parts": {
                   "place": "Lugar",
                   "verse": "Versículo",
@@ -333,7 +333,7 @@
               },
               "background": {
                 "label": "Trasfondo geográfico y cultural",
-                "help": "¿Qué añade la investigación externa? Indique la fuente para distinguirlo del texto."
+                "help": "¿Qué añade la investigación externa? Indica la fuente para distinguirlo del texto."
               },
               "unclear": {
                 "label": "Referencias a lugares sin aclarar",
@@ -353,7 +353,7 @@
               },
               "historical": {
                 "label": "Ubicación histórica",
-                "help": "¿Qué se sabe de la época? Señale como incierto lo que lo sea."
+                "help": "¿Qué se sabe de la época? Señala como incierto lo que lo sea."
               },
               "source": {
                 "label": "Fuente de la ubicación histórica",
@@ -377,7 +377,7 @@
             "fields": {
               "passages": {
                 "label": "Secciones del texto",
-                "help": "Divida el texto en secciones: versículos, qué sucede o se dice y qué significa en el desarrollo del conjunto.",
+                "help": "Divide el texto en secciones: versículos, qué sucede o se dice y qué significa en el desarrollo del conjunto.",
                 "parts": {
                   "verses": "Versículos",
                   "event": "Suceso o afirmación",
@@ -415,7 +415,7 @@
               },
               "parallels": {
                 "label": "Pasajes paralelos",
-                "help": "Añada pasajes relacionados y diga qué aporta cada uno a la comprensión.",
+                "help": "Añade pasajes relacionados y di qué aporta cada uno a la comprensión.",
                 "parts": {
                   "reference": "Referencia",
                   "relevance": "Relevancia"
@@ -436,7 +436,7 @@
             "fields": {
               "questions": {
                 "label": "Registro de preguntas",
-                "help": "Añada cada pregunta con el versículo, las evidencias comprobadas, la respuesta y el estado.",
+                "help": "Añade cada pregunta con el versículo, las evidencias comprobadas, la respuesta y el estado.",
                 "parts": {
                   "question": "Pregunta",
                   "verse": "Versículo",
@@ -456,37 +456,37 @@
               },
               "explanations": {
                 "label": "Posibles explicaciones fundamentadas",
-                "help": "Donde sean posibles varias explicaciones, exponga cada una con sus razones."
+                "help": "Donde sean posibles varias explicaciones, expón cada una con sus razones."
               },
               "sources": {
                 "label": "Fuentes",
-                "help": "¿Qué fuentes utilizó? Anótelas para poder encontrarlas de nuevo."
+                "help": "¿Qué fuentes utilizaste? Anótalas para poder encontrarlas de nuevo."
               }
             }
           },
           "core": {
             "title": "Núcleo",
             "guidance": "¿Cuál es el mensaje central de este pasaje en concreto?",
-            "goal": "Formular el núcleo en tres pasos: de qué trata el texto, qué dice sobre ello y una frase concisa. Puede rellenarlos en cualquier orden.",
+            "goal": "Formular el núcleo en tres pasos: de qué trata el texto, qué dice sobre ello y una frase concisa. Puedes rellenarlos en cualquier orden.",
             "example": "Asunto: la relación de Dios con su pueblo infiel. Afirmación: el cuidado de Dios, su juicio justo y su compasión. Tema: el amor de Dios por Israel se muestra en su cuidado, en un juicio justo y en una compasión que abre un futuro.",
             "fields": {
               "subject": {
                 "label": "Asunto del texto — ¿De qué trata?",
-                "help": "Nombre el asunto en pocas palabras, sin decir aún lo que el texto afirma sobre él."
+                "help": "Nombra el asunto en pocas palabras, sin decir aún lo que el texto afirma sobre él."
               },
               "statement": {
                 "label": "Afirmación del texto — ¿Qué dice el texto al respecto?",
-                "help": "Resuma lo que el pasaje dice sobre su asunto, tal como lo dice."
+                "help": "Resume lo que el pasaje dice sobre su asunto, tal como lo dice."
               },
               "theme": {
                 "label": "Tema del texto — Una frase concisa",
-                "help": "Una el asunto y la afirmación en una frase que pueda contrastarse con cada versículo."
+                "help": "Une el asunto y la afirmación en una frase que pueda contrastarse con cada versículo."
               }
             }
           },
           "application": {
             "title": "Aplicación personal",
-            "guidance": "¿Qué significa para usted la verdad hallada? Manténgala separada de la observación y la interpretación anteriores.",
+            "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores.",
             "goal": "Responder al texto manteniéndose ligado a lo que dice. Es un cierre aparte, no otra letra de POZETEK.",
             "example": "El amor de Dios por su pueblo se basa en su naturaleza, no en la fidelidad de Israel. Aunque Israel se aparte, Dios muestra compasión en medio del juicio. Eso invita a reconocer las propias seguridades sustitutivas y a confiar de nuevo en Dios. El amor recibido debe marcar también el trato con quienes no corresponden al amor y al cuidado (cf. 1 Jn 4:8, 19).",
             "fields": {
@@ -496,11 +496,11 @@
               },
               "examination": {
                 "label": "Examen personal",
-                "help": "¿Dónde esta verdad desafía, consuela o corrige el propio pensar y vivir?"
+                "help": "¿Dónde desafía, consuela o corrige esta verdad tu forma de pensar y vivir?"
               },
               "response": {
                 "label": "Respuesta concreta",
-                "help": "¿Qué hará: creer, arrepentirse, confiar, obedecer, orar, amar? Sea concreto."
+                "help": "¿Cómo responderás: creer, arrepentirte, confiar, obedecer, orar, amar? Sé concreto."
               },
               "limits": {
                 "label": "Límites del traslado de entonces a hoy",
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Aplicación personal",
-            "guidance": "¿Qué significa para usted la verdad hallada? Manténgala separada de la observación y la interpretación anteriores. Responder al texto manteniéndose ligado a lo que dice. Es un cierre aparte, no otra letra de POZETEK. ¿Qué verdad del texto sigue siendo válida para todo lector? ¿Dónde esta verdad desafía, consuela o corrige el propio pensar y vivir? ¿Qué hará: creer, arrepentirse, confiar, obedecer, orar, amar? Sea concreto. ¿Qué distingue la situación de entonces de la de hoy? ¿Qué no debe trasladarse directamente?",
+            "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores. Responde al texto manteniendo la aplicación ligada a lo que dice. Es un cierre aparte, no otra letra de POZETEK. ¿Qué verdad del texto sigue siendo válida para todo lector? ¿Dónde desafía, consuela o corrige esta verdad tu forma de pensar y vivir? ¿Cómo responderás: creer, arrepentirte, confiar, obedecer, orar, amar? Sé concreto. ¿Qué distingue la situación de entonces de la actual? ¿Qué no debe trasladarse directamente?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -1774,8 +1774,8 @@
     "saved": "Guardado",
     "backTo": "Volver a {{place}}",
     "options": "Opciones del estudio",
-    "filterOn": "Las notas están filtradas.",
-    "filterClear": "Mostrar todas"
+    "filterOn": "Los apuntes están filtrados.",
+    "filterClear": "Mostrar todos"
   },
   "sections": {
     "rename": "Cambiar el nombre de la parte {{title}}",
@@ -2023,8 +2023,8 @@
       "suggestion": "Sugerencia del asistente"
     },
     "assist": {
-      "menu": "Ayuda IA",
-      "menuLabel": "Ayuda IA con {{part}}",
+      "menu": "Ayuda de IA",
+      "menuLabel": "Ayuda de IA con {{part}}",
       "action": {
         "grammar": "Revisar gramática y ortografía",
         "clarity": "Hacerlo más claro",
@@ -2083,7 +2083,7 @@
         "searches": "También se enviarán a tu servicio de búsqueda palabras basadas en tu petición (pueden incluir tus palabras)."
       },
       "ask": "Pedir",
-      "askHint": "Ctrl+Intro pide; Escape cierra. No se envía nada antes de pedir.",
+      "askHint": "Ctrl+Intro para pedir ayuda; Esc para cerrar. No se envía nada hasta que lo pidas.",
       "ready": "Sugerencia lista.",
       "failed": "El asistente no pudo ayudar esta vez.",
       "kept": "Guardado con esta enseñanza.",
@@ -2402,7 +2402,7 @@
       "remove": "Quitar «{{name}}»",
       "types": {
         "section": "Sección",
-        "writing": "Escritura",
+        "writing": "Texto",
         "scripture": "Pasaje bíblico",
         "teaching_notes": "Notas del líder",
         "discussion_questions": "Preguntas para conversar",
@@ -2468,11 +2468,11 @@
           },
           "story": {
             "title": "Relato",
-            "guidance": "Cuenta el pasaje de un modo que sirva a la edad. El sentido sigue siendo el del texto."
+            "guidance": "Cuenta el pasaje de un modo adecuado a su edad. El sentido sigue siendo el del texto."
           },
           "explain": {
             "title": "Explicación",
-            "guidance": "Di lo que significa el pasaje, con palabras que puedan seguir. No sustituyas ese sentido por una idea más simple."
+            "guidance": "Di lo que significa el pasaje con palabras que puedan entender. No sustituyas ese sentido por una idea más simple."
           },
           "questions": {
             "title": "Preguntas",
@@ -2501,9 +2501,9 @@
       "back": "Volver a las enseñanzas",
       "study": "Estudio bíblico (opcional)",
       "independent": "Enseñanza independiente",
-      "keepNotes": "Al cambiar o quitar el vínculo, las notas utilizadas y sus fuentes se conservan como copias. Los cambios posteriores en el estudio no modifican esas copias.",
+      "keepNotes": "Al cambiar o quitar el vínculo, los apuntes utilizados y sus fuentes se conservan como copias. Los cambios posteriores en el estudio no modifican esas copias.",
       "saveLink": "Guardar vínculo",
-      "savedNote": "Nota de estudio conservada",
+      "savedNote": "Apunte de estudio conservado",
       "project": "Volver al proyecto",
       "basedOn": "Basado en el estudio bíblico —",
       "linkStudy": "Vincular a un estudio bíblico",
@@ -2525,7 +2525,7 @@
       "groups": {
         "writing": "Texto",
         "qa": "Preguntas y respuestas",
-        "finding": "Notas",
+        "finding": "Apuntes",
         "citation": "Citas",
         "passage": "Pasajes"
       }
@@ -2671,6 +2671,11 @@
       "missing_other": "{{bible}} no tiene texto para los versículos {{verses}}; faltan aquí y no se toman de otra Biblia.",
       "missing_many": "{{bible}} no tiene texto para los versículos {{verses}}; faltan aquí y no se toman de otra Biblia.",
       "from": "Texto bíblico: {{name}}."
+    },
+    "wordStyles": {
+      "label": "Etiqueta de campo",
+      "writingLine": "Línea de respuesta",
+      "writingLineLast": "Última línea de respuesta"
     }
   },
   "phase": {
@@ -2827,12 +2832,17 @@
       "block": "Tu texto: «{{start}}»",
       "selection": "Las palabras seleccionadas: «{{words}}»",
       "note": "Tu apunte ({{kind}}): «{{start}}»"
+    },
+    "location": {
+      "pages": "pp. {{first}}–{{last}}",
+      "paragraph": "párrafo {{number}}",
+      "paragraphs": "párrafos {{first}}–{{last}}"
     }
   },
   "fields": {
     "example": "Ejemplo: Oseas 11",
     "exampleMatthew": "Ejemplo: Mateo 8:18–27",
-    "exampleNote": "Solo un ejemplo. No forma parte de su estudio y nunca se guarda como su respuesta.",
+    "exampleNote": "Solo un ejemplo. No forma parte de tu estudio y nunca se guarda como tu respuesta.",
     "goal": "Objetivo",
     "status": "Progreso de «{{title}}»",
     "statusNotStarted": "Sin empezar",
@@ -2856,7 +2866,7 @@
     "guidance": "Indicaciones",
     "legacy": "Respuestas estructuradas anteriores",
     "legacyNote": "Las respuestas se conservan en sus campos originales. No se han combinado ni sustituido.",
-    "continuous": "Escritura continua",
+    "continuous": "Texto seguido",
     "outline": "Paso a paso",
     "mode": "Modo de escritura",
     "steps": "Secciones del estudio",
@@ -2888,7 +2898,7 @@
     "keep": "Guardar como fuente",
     "evidence": "Fuentes guardadas",
     "kinds": {
-      "writing": "Escritura",
+      "writing": "Texto",
       "guidance": "Orientación",
       "heading": "Encabezado",
       "divider": "Separador",
@@ -2929,7 +2939,7 @@
   "qaExport": {
     "open": "Exportar preguntas…",
     "title": "Exportar preguntas",
-    "help": "Elige qué incluir. Solo se exporta lo escrito en las partes del estudio; tus notas aparte nunca.",
+    "help": "Elige qué incluir. Solo se exporta lo escrito en las partes del estudio; tus apuntes aparte nunca.",
     "mode": "Qué exportar",
     "modes": {
       "questions": "Solo preguntas",
@@ -2945,12 +2955,12 @@
     "review": "Revisar partes de POZETEK",
     "undo": "Deshacer reparación de POZETEK",
     "apply": "Añadir partes faltantes y ordenar",
-    "explain": "Las siete partes originales aparecen primero. Las faltantes se añaden vacías. Cada parte existente, incluidos Tema, Comprensión, Consecuencias y duplicados, conserva nombre, textos, notas y enlaces. Las partes ajenas a esta secuencia siguen en su orden relativo actual.",
+    "explain": "Las siete partes originales aparecen primero. Las faltantes se añaden vacías. Cada parte existente, incluidos Tema, Comprensión, Consecuencias y duplicados, conserva nombre, textos, apuntes y enlaces. Las partes ajenas a esta secuencia siguen en su orden relativo actual.",
     "keep": "Conservar parte existente",
     "add": "Añadir parte vacía",
     "duplicates": "Varias partes comparten una clave: {{parts}}. Siguen separadas; no se fusiona contenido.",
-    "safety": "Un registro guardado permite recuperar el orden anterior y quitar solo las partes vacías y sin cambios añadidas por esta reparación. Si una parte añadida cambió, se rechaza Deshacer y se conservan todos los textos. Haga una copia del perfil antes de reparar trabajo importante.",
-    "undoFirst": "Deshaga la reparación anterior antes de aplicar otra.",
-    "finishDrafts": "Termine o cierre las notas abiertas y la edición de nombres antes de deshacer la reparación."
+    "safety": "Un registro guardado permite recuperar el orden anterior y quitar solo las partes vacías y sin cambios añadidas por esta reparación. Si una parte añadida cambió, se rechaza Deshacer y se conservan todos los textos. Haz una copia del perfil antes de reparar trabajo importante.",
+    "undoFirst": "Deshaz la reparación anterior antes de aplicar otra.",
+    "finishDrafts": "Termina o cierra los apuntes abiertos y la edición de nombres antes de deshacer la reparación."
   }
 }

@@ -61,7 +61,7 @@
     "archive": "Status",
     "inUse": "In Gebrauch",
     "both": "In Gebrauch und archiviert",
-    "archiveHelp": "Quellen in Gebrauch erscheinen neben deiner Studie. Archivierte Quellen bleiben in der Bibliothek und außerhalb des Quellenbereichs, bis du sie wiederherstellst."
+    "archiveHelp": "Quellen in Gebrauch erscheinen neben deinem Bibelstudium. Archivierte Quellen bleiben in der Bibliothek und außerhalb des Quellenbereichs, bis du sie wiederherstellst."
   },
   "remove": {
     "label": "{{title}} entfernen",
@@ -144,7 +144,7 @@
     "section": "Überschrift nennt {{passage}}",
     "within": "Im Abschnitt mit der Überschrift {{passage}}",
     "linked": "Verknüpft mit {{passage}}",
-    "bookSection": "Buchabschnitt {{passage}} (breiter)",
+    "bookSection": "Buchabschnitt {{passage}} (weiter gefasst)",
     "chapterSection": "Kapitelüberschrift {{passage}}"
   },
   "citations": {
@@ -291,8 +291,8 @@
     "help": "Hilfe",
     "title": "Hilfe zu diesem Abschnitt",
     "includeStudy": "Auch mein Bibelstudium „{{study}}“ mitsenden",
-    "includeStudyHint": "Sein Bibeltext und bis zu sechs seiner Notizen kommen zum Gesendeten dazu.",
-    "noStudy": "Kein Bibelstudium ist offen; es werden nur die markierten Worte verwendet.",
+    "includeStudyHint": "Sein Bibeltext und bis zu sechs seiner Notizen werden zusätzlich gesendet.",
+    "noStudy": "Kein Bibelstudium ist offen; es werden nur die markierten Wörter verwendet.",
     "keepNote": "Öffne ein Bibelstudium, um Notizen hinzuzufügen."
   },
   "compare": {
@@ -305,7 +305,7 @@
     "count_other": "{{count}} von {{max}} Abschnitten zum Vergleichen",
     "compare": "Vergleichen…",
     "clear": "Leeren",
-    "needTwo": "Wähle mindestens zwei Abschnitte: Markiere Worte in einer Quelle, dann Weitere Aktionen → Zum Vergleich hinzufügen.",
+    "needTwo": "Wähle mindestens zwei Abschnitte: Markiere Wörter in einer Quelle, dann Weitere Aktionen → Zum Vergleich hinzufügen.",
     "remove": "„{{title}}“ aus dem Vergleich entfernen",
     "title_one": "{{count}} Abschnitt vergleichen",
     "title_other": "{{count}} Abschnitte vergleichen"
@@ -453,8 +453,8 @@
     "untagConfirm": "Schlagwort entfernen",
     "organiseTitle": "Sammlungen und Schlagwörter",
     "collectionsTitle": "Sammlungen",
-    "collectionsText": "Deine eigenen Gruppen, auf Wunsch ineinander. Wenn du eine Sammlung entfernst, bleiben ihre Quellen erhalten.",
-    "moveCollection": "Wo {{name}} liegt",
+    "collectionsText": "Deine eigenen Gruppen, auf Wunsch ineinander verschachtelt. Wenn du eine Sammlung entfernst, bleiben ihre Quellen erhalten.",
+    "moveCollection": "Übergeordnete Sammlung für {{name}}",
     "rename": "Umbenennen",
     "newName": "Neuer Name",
     "remove": "Entfernen",
@@ -522,9 +522,9 @@
     "duplicateLibrary": "Bereits in deiner Bibliothek als „{{title}}“. Hake sie an, um sie trotzdem noch einmal hinzuzufügen.",
     "duplicateHere": "Dieselbe Datei wie „{{title}}“ in dieser Liste.",
     "evidence": {
-      "title": "Vorgeschlagen nach einem Wort im Titel",
-      "fileName": "Vorgeschlagen nach einem Wort im Dateinamen",
-      "folder": "Vorgeschlagen nach dem Namen des Ordners",
+      "title": "Nach einem Wort im Titel vorgeschlagen",
+      "fileName": "Nach einem Wort im Dateinamen vorgeschlagen",
+      "folder": "Nach dem Ordnernamen vorgeschlagen",
       "fileType": "Die übliche Kategorie für diese Dateiart: bitte prüfen",
       "person": "Von dir gewählt"
     },
@@ -569,7 +569,7 @@
     "rebuild": "Struktur neu erstellen",
     "undo": "Korrektur rückgängig",
     "reset": "Korrekturen zurücksetzen",
-    "status": "{{count}} Abschnitte",
+    "status": "Abschnitte: {{count}}",
     "uncertain": "Einige Texte oder Strukturen konnten nicht sicher zugeordnet werden. Bitte im Original prüfen.",
     "search": "Abschnitt suchen",
     "physical": "PDF-Seite {{page}}",
@@ -603,7 +603,7 @@
     "rebuildRecommended": "Diese Struktur wurde mit früheren Analyseregeln erstellt. Wähle „Struktur neu erstellen“, um die aktuellen Regeln anzuwenden; Korrekturen, Zitate und Markierungen bleiben erhalten.",
     "diagnostic": {
       "title": "Diagnosebericht (nur Metadaten)",
-      "help": "Öffne zuerst das Quellenergebnis der Bibelstelle und erstelle dann hier den Bericht. Er enthält den Datei-Fingerabdruck, erkannte Überschriften, die gereihten Kandidaten und die angezeigte Seite – nie Absatztext, Notizen oder Schlüssel. Prüfe ihn vor dem Teilen.",
+      "help": "Öffne zuerst das Quellenergebnis der Bibelstelle und erstelle dann hier den Bericht. Er enthält den Datei-Fingerabdruck, erkannte Überschriften, die sortierten Kandidaten und die angezeigte Seite – nie Absatztext, Notizen oder Schlüssel. Prüfe ihn vor dem Teilen.",
       "passage": "Zu prüfende Bibelstelle (optional)",
       "create": "Bericht erstellen",
       "copy": "Bericht kopieren",
@@ -612,20 +612,34 @@
       "copyFailed": "Der Bericht konnte nicht kopiert werden. Verwende stattdessen „Bericht speichern…“.",
       "fileType": "Diagnosebericht",
       "saved": "Gespeichert unter {{path}}",
-      "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften",
+      "file": "Datei-SHA-256 {{hash}} · Seiten: {{pages}} · Überschriften: {{headings}}",
       "general": "Allgemeiner Statusbericht — es wurde keine Bibelstelle geprüft. Gib vor dem nächsten Erstellen oder Speichern Apg 6 ein, um Treffer zu Apostelgeschichte 6 zu prüfen.",
-      "queryHelp": "Gib oben eine Bibelstelle ein, um sie zu prüfen. Ein leeres Feld erzeugt einen allgemeinen Statusbericht."
+      "queryHelp": "Gib oben eine Bibelstelle ein, um sie zu prüfen. Ein leeres Feld erzeugt einen allgemeinen Statusbericht.",
+      "invalidPassage": "Die Bibelstelle konnte nicht gelesen werden. Gib Buch und Kapitel ein, zum Beispiel Apg 6.",
+      "noCandidates": "Kein Verweis in dieser Quelle überschneidet sich mit der Bibelstelle.",
+      "structuralResult": "Das erste Ergebnis beruht auf der Dokumentstruktur, auf PDF-Seite {{page}}.",
+      "literalResult": "Kein passender Abschnitt gefunden. Das erste Ergebnis ist eine Erwähnung auf PDF-Seite {{page}}.",
+      "section": "Abschnittsüberschrift",
+      "book": "Buchabschnitt (weiter gefasst)",
+      "chapter": "Kapitelüberschrift",
+      "manual": "Von dir verknüpft",
+      "contents": "Inhaltsverzeichniseintrag",
+      "note": "Erwähnung in einer Anmerkung",
+      "literal": "Erwähnung der Bibelstelle",
+      "inherited": "Innerhalb eines zugeordneten Abschnitts",
+      "unknown": "Bibelstellenverweis",
+      "manualResult": "Das erste Ergebnis ist eine von dir hinzugefügte Verknüpfung auf PDF-Seite {{page}}."
     },
     "processing": {
       "label": "Fortschritt der Analyse",
       "stage": "{{stage}} · {{seconds}} s",
-      "background": "Du kannst dieses Fenster schließen und weiterlesen oder schreiben. Abbrechen wirkt an der nächsten sicheren Verarbeitungsgrenze; das abschließende Speichern kann nicht abgebrochen werden.",
+      "background": "Du kannst dieses Fenster schließen und weiterlesen oder schreiben. Beim Abbrechen wird der laufende Verarbeitungsschritt noch sicher beendet; das abschließende Speichern kann nicht abgebrochen werden.",
       "cancelling": "Wird abgebrochen…",
-      "success": "{{count}} Überschriften gespeichert; {{links}} Strukturverknüpfungen indiziert.",
+      "success": "Überschriften gespeichert: {{count}}; Strukturverknüpfungen indiziert: {{links}}.",
       "empty": "Keine nutzbaren Überschriften erkannt. Die Analyse wurde gespeichert, aber ein automatisches Inhaltsverzeichnis ist nicht verfügbar. Du kannst unten sichtbare Zeilen manuell markieren.",
-      "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern.",
+      "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Versuche es erneut oder speichere einen Diagnosebericht.",
       "timings": "Verarbeitungszeiten",
-      "missing": "Keine gespeicherte Überschriftenanalyse. Wähle Struktur erstellen; ein allgemeiner Diagnosebericht kann auch vorher gespeichert werden.",
+      "missing": "Keine gespeicherte Überschriftenanalyse. Wähle „Struktur erstellen“; einen allgemeinen Diagnosebericht kannst du auch vorher speichern.",
       "stages": {
         "file": "Datei lesen und prüfen",
         "segments": "Gespeicherte Textabschnitte lesen",
@@ -637,7 +651,7 @@
         "index": "Strukturverknüpfungen indizieren",
         "indexed": "Verknüpfungen indiziert",
         "commit": "Änderungen abschließend speichern",
-        "refresh": "Leser aktualisieren",
+        "refresh": "Leseansicht aktualisieren",
         "indexRead": "Vorhandene Bibelstellenverweise lesen",
         "indexRoles": "Rollen der Verweise aktualisieren"
       },
@@ -645,20 +659,20 @@
       "previous": "Bisherige gespeicherte Analyse — dieser Versuch hat keine Änderungen gespeichert."
     },
     "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
-    "timeout": "Die Analyse hat ihre Zeitgrenze an einer sicheren Verarbeitungsgrenze erreicht. Bisherige Metadaten sind unverändert. Erneut versuchen oder einen Diagnosebericht speichern.",
+    "timeout": "Die Analyse hat zu lange gedauert und wurde beendet. Dieser Versuch hat nichts gespeichert. Versuche es erneut oder speichere einen Diagnosebericht.",
     "busy": "Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst.",
-    "limit": "Die PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
-    "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern.",
-    "automaticRunning": "Kapitel und Überschriften werden untersucht…",
+    "limit": "Das PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
+    "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Versuche es erneut oder speichere einen Diagnosebericht.",
+    "automaticRunning": "Kapitel und Überschriften werden analysiert…",
     "automaticFailed": "Die automatische Überschriftenanalyse wurde angehalten. Lesen und Schreiben bleiben verfügbar.",
     "automaticDetails": "Fortschritt / erneut versuchen"
   },
   "toolbar": {
     "label": "Lesewerkzeuge",
-    "more": "Weitere Lese-Aktionen",
+    "more": "Weitere Leseaktionen",
     "settings": "Werkzeugleiste",
     "customise": "Werkzeugleiste anpassen…",
-    "customiseTitle": "Lese-Werkzeugleiste",
+    "customiseTitle": "Lesewerkzeugleiste",
     "customiseHelp": "Wähle, welche Aktionen auf diesem Gerät als Symbole erscheinen. Die übrigen bleiben im Menü „…“. Zurück, Lesen/Original und die Seitenanzeige sind immer sichtbar.",
     "showInToolbar": "In der Werkzeugleiste zeigen",
     "reset": "Auf Standard zurücksetzen",
@@ -677,5 +691,14 @@
       "fitWidth": "Seitenbreite",
       "fitPage": "Ganze Seite"
     }
+  },
+  "fileDialog": {
+    "source": "Datei für die Bibliothek auswählen",
+    "sources": "Dateien für die Bibliothek auswählen",
+    "folder": "Ordner für die Bibliothek auswählen",
+    "sourceTypes": "Bücher und Notizen (PDF, EPUB, Word, Markdown, Text)",
+    "bible": "Bibel zum Hinzufügen auswählen",
+    "bibleTypes": "Bibeldateien (USFM, .zip, PDF, EPUB, Word, Markdown, Text)",
+    "allFiles": "Alle Dateien"
   }
 }

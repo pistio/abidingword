@@ -15,7 +15,9 @@
     "titleRequired": "Ponle un título.",
     "titleTooLong": "El título es demasiado largo. Debe tener menos de {{max}} caracteres.",
     "textTooLong": "Este texto es demasiado largo. Debe tener menos de {{max}} caracteres.",
-    "blockTooLong": "Este bloque es demasiado largo para guardarlo. Divídelo en varios bloques."
+    "blockTooLong": "Este bloque es demasiado largo para guardarlo. Divídelo en varios bloques.",
+    "entryInvalid": "No se pudo guardar esta entrada.",
+    "unknownField": "Esta parte no contiene ese campo."
   },
   "search": {
     "empty": "Escribe una palabra o frase para buscar."
@@ -124,7 +126,7 @@
     "unknownBookCode": "Libro desconocido.",
     "documentSequence": "{{book}} {{chapter}}: el versículo {{verse}} aparece dentro de un versículo anterior (quizá se leyeron dos columnas mezcladas). Este capítulo no se usa.",
     "additionalBook": "«{{fileName}}» contiene {{book}}, que Abiding Word todavía no puede mostrar. Se dejó fuera; los demás libros no se ven afectados.",
-    "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: agrega cada una por separado.",
+    "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: añade cada una por separado.",
     "documentReadingOrder": "{{book}} {{chapter}}: no se pudo determinar el orden de lectura de la página {{page}} a partir de su diseño. Este capítulo no se usa.",
     "documentChapterJump": "{{book}} {{chapter}}: el documento continúa con este capítulo después del capítulo {{previous}}; no se encontraron los capítulos intermedios. Este capítulo no se usa.",
     "documentRunningHead": "{{book}} {{chapter}}: la página {{page}} termina con el versículo {{found}}, pero su encabezado ({{head}}) indica {{named}}. Este capítulo no se usa.",
@@ -154,13 +156,22 @@
     "originalUnavailable": "No se puede abrir el original de esta fuente.",
     "structure": {
       "corrupt": "No se pudo leer la estructura PDF guardada. El texto y el original permanecen intactos.",
-      "invalid": "Esta corrección ya no coincide con la fuente. Abra de nuevo su texto e inténtelo otra vez.",
-      "timeout": "El análisis alcanzó su límite de tiempo en un punto seguro. Los metadatos anteriores no cambiaron. Reintenta o guarda un diagnóstico.",
+      "invalid": "Esta corrección ya no coincide con la fuente. Abre de nuevo su texto e inténtalo otra vez.",
+      "timeout": "El análisis superó el límite de tiempo y se detuvo. Este intento no guardó ningún cambio. Vuelve a intentarlo o guarda un informe de diagnóstico.",
       "cancelled": "Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar.",
       "busy": "Ya hay un análisis en curso. Espera o cancélalo antes de reintentar.",
       "limit": "El PDF supera los límites de análisis admitidos. Los metadatos anteriores no cambiaron.",
       "failed": "El análisis falló. La estructura y los enlaces anteriores se conservan. Reintenta o guarda un informe de diagnóstico."
-    }
+    },
+    "nothingChosen": "Selecciona al menos un elemento.",
+    "notInTrash": "Solo los elementos de la papelera se pueden eliminar permanentemente. Muévelos primero a la papelera.",
+    "badYear": "El año debe ser un número entre 0 y 3000.",
+    "collectionCycle": "Una colección no se puede mover a sí misma ni a una de sus subcolecciones.",
+    "linkUnsupported": "No se puede abrir este tipo de enlace.",
+    "tooMany": "Puedes modificar un máximo de {{count}} elementos a la vez.",
+    "badName": "Usa un nombre de entre 1 y {{max}} caracteres.",
+    "collectionExists": "Ya existe aquí una colección llamada «{{name}}».",
+    "tagExists": "Ya existe una etiqueta llamada «{{name}}»."
   },
   "templates": {
     "noSections": "Una plantilla necesita al menos una parte con la que empezar.",
@@ -176,7 +187,7 @@
   "sections": {
     "hasContent": "«{{title}}» todavía contiene texto o apuntes.",
     "duplicateKey": "Este estudio ya tiene esa parte.",
-    "repairChanged": "Las partes cambiaron. Revise de nuevo. Deshacer requiere partes añadidas sin cambios; se conservan todos los textos."
+    "repairChanged": "Las partes cambiaron. Revisa de nuevo. Deshacer requiere partes añadidas sin cambios; se conservan todos los textos."
   },
   "relations": {
     "self": "Un estudio no se puede vincular consigo mismo.",
@@ -249,7 +260,7 @@
     "blockType": "Este tipo de bloque no se puede usar en esta preparación.",
     "blockParent": "Un bloque puede colocarse en una sección de esta preparación.",
     "blockRole": "Este bloque no se puede vincular a esa parte de la preparación.",
-    "blockReference": "Elija un bloque de texto bíblico existente en esta preparación.",
+    "blockReference": "Elige un bloque de texto bíblico existente en esta preparación.",
     "tooLong": "Esta parte de la enseñanza es demasiado larga para guardarla.",
     "otherPoint": "Ese punto pertenece a otra enseñanza.",
     "otherStudyFinding": "Ese apunte pertenece a otro estudio.",
@@ -258,7 +269,7 @@
     "imageGone": "Esta imagen ya no está disponible. Créala de nuevo.",
     "projectRequired": "Elige un proyecto para esta enseñanza.",
     "otherProject": "Elige un estudio de este proyecto.",
-    "badSnapshot": "No se puede leer esta nota de estudio conservada."
+    "badSnapshot": "No se puede leer este apunte de estudio conservado."
   },
   "presentation": {
     "imageGone": "Esta imagen no está en este ordenador.",
@@ -284,7 +295,8 @@
     "tooManySlides": "Demasiadas diapositivas para mostrarlas a la vez."
   },
   "material": {
-    "tooLong": "Es demasiado largo para guardarlo en un solo archivo."
+    "tooLong": "Es demasiado largo para guardarlo en un solo archivo.",
+    "tooManyPassages": "Este material contiene demasiados pasajes para incluir su texto."
   },
   "teachingTemplates": {
     "noKind": "Elige para qué es la plantilla.",
@@ -322,13 +334,14 @@
     "grammarNotFit": "Estos códigos gramaticales no encajan en ese sistema, así que se muestran tal como están escritos.",
     "textDiffers": "Los archivos guardados ya no dan exactamente el texto de esta Biblia, así que no se pueden añadir sus palabras. Quita la Biblia y vuelve a añadirla para obtenerlas.",
     "noSource": "Los archivos desde los que se añadió esta Biblia ya no se guardan, así que sus palabras no se pueden volver a leer. Quita la Biblia y vuelve a añadirla para obtenerlas.",
-    "nothingToIndex": "Estos archivos no tienen información de palabras que se pueda indexar."
+    "nothingToIndex": "Estos archivos no tienen información de palabras que se pueda indexar.",
+    "documentBible": "No se puede añadir información de palabras a una Biblia añadida desde un documento."
   },
   "batch": {
     "noFiles": "No se encontraron allí archivos que la biblioteca pueda leer.",
-    "tooMany": "Se pueden agregar como máximo {{max}} archivos a la vez.",
-    "cannotChoose": "Este archivo no se puede agregar.",
-    "closed": "Esta importación ha terminado. Inicia una nueva para agregar más archivos.",
+    "tooMany": "Se pueden añadir como máximo {{max}} archivos a la vez.",
+    "cannotChoose": "Este archivo no se puede añadir.",
+    "closed": "Esta importación ha terminado. Inicia una nueva para añadir más archivos.",
     "notRead": "Algunos archivos aún no se han leído.",
     "changed": "«{{fileName}}» cambió después de revisarse. Vuelve a leerlo."
   },
@@ -336,5 +349,10 @@
     "notVerified": "«{{fileName}}» no coincidía con la copia verificada, así que no se guardó nada. Inténtalo más tarde.",
     "unreachable": "No se pudo completar la descarga. Comprueba la conexión a internet e inténtalo de nuevo.",
     "busy": "Ya hay una descarga en curso. Espera a que termine."
+  },
+  "messageUnavailable": "No se pudo completar esta acción. Vuelve a intentarlo.",
+  "importFormats": {
+    "webPage": "de páginas web",
+    "osisUsx": "OSIS y USX"
   }
 }

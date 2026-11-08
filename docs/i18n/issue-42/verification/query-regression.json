@@ -1,0 +1,8 @@
+{
+  "queryPlan": [
+    "SEARCH source_passages USING INDEX source_passages_source (source_id=?)"
+  ],
+  "links": 4112,
+  "approxVmSteps": 45200,
+  "elapsedMs": 1.58
+}

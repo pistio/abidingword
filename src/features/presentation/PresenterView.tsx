@@ -1,3 +1,4 @@
+import { formatLocale } from "@/i18n/format";
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useReducer, useRef, useState, type FormEvent, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, EyeOff, Eraser, Highlighter, LayoutGrid, Menu, Minus, MonitorUp, MousePointer2, Pause, Play, Plus, RotateCcw, Settings2, X } from "lucide-react";
@@ -468,7 +469,7 @@ export function PresenterView({ doc, onClose }: PresenterViewProps) {
   const startedAt = live.timer.startedAt;
   const elapsed = elapsedOf(live.timer, now);
   const time = guidance(elapsed, doc.targetMinutes);
-  const clock = new Intl.DateTimeFormat(i18n.language, { hour: "2-digit", minute: "2-digit" }).format(now);
+  const clock = new Intl.DateTimeFormat(formatLocale(), { hour: "2-digit", minute: "2-digit" }).format(now);
 
   const awake = useWakeLock(prefs.awake);
   // Follow app: the app's background family in the theme in effect, live.

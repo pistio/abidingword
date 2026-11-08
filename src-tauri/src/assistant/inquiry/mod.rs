@@ -287,6 +287,58 @@ pub struct SourcePlace {
     pub excerpt: Excerpt,
 }
 
+/// UI-only provenance, kept separate from the unchanged labels sent to the model.
+/// Every title and citation remains an exact source/user value, never parsed as copy.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(
+    tag = "type",
+    rename_all = "camelCase",
+    rename_all_fields = "camelCase"
+)]
+pub enum DisplayLabel {
+    Scripture {
+        reference: ScriptureRefDto,
+        translation: Option<String>,
+        text_available: bool,
+    },
+    Writing {
+        part: Option<DisplayPart>,
+        selected: bool,
+    },
+    Note {
+        finding_type: String,
+        part: Option<DisplayPart>,
+        study: Option<String>,
+    },
+    Quote {
+        citation: String,
+        note: String,
+    },
+    Source {
+        title: String,
+        author: Option<String>,
+        location: DisplayLocation,
+    },
+    Request,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayPart {
+    pub key: Option<String>,
+    pub title: String,
+}
+
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayLocation {
+    pub section: Option<String>,
+    pub first_page: Option<String>,
+    pub last_page: Option<String>,
+    pub first_paragraph: usize,
+    pub last_paragraph: usize,
+}
+
 /// One labelled piece of what is sent.
 #[derive(Debug, Clone)]
 pub struct Block {
@@ -300,6 +352,7 @@ pub struct Block {
     /// For a Bible text: the translation's short name.
     pub translation: Option<String>,
     pub source: Option<SourcePlace>,
+    pub display: Option<DisplayLabel>,
 }
 
 /// Everything the request is made from.
@@ -338,6 +391,7 @@ impl Material {
             reference: None,
             translation: None,
             source: None,
+            display: (kind == BlockKind::Request).then_some(DisplayLabel::Request),
         });
         self.blocks.last_mut().expect("just pushed")
     }
@@ -457,6 +511,7 @@ pub struct SharedBlock {
     pub translation: Option<String>,
     pub source_id: Option<String>,
     pub location: Option<String>,
+    pub display: Option<DisplayLabel>,
 }
 
 /// "Before you ask".
@@ -489,6 +544,7 @@ pub fn preview(config: &AssistantConfig, material: &Material) -> InquiryPreview 
                 translation: b.translation.clone(),
                 source_id: b.source.as_ref().map(|s| s.source_id.clone()),
                 location: b.source.as_ref().map(|s| s.location.clone()),
+                display: b.display.clone(),
             })
             .collect(),
         source_text: material.has(BlockKind::Source) || material.has(BlockKind::Quote),
@@ -565,6 +621,7 @@ pub struct Evidence {
     /// The words as they are in the block.
     pub quote: String,
     pub source: Option<SourceLink>,
+    pub display: Option<DisplayLabel>,
 }
 
 /// What a point is, as shown.
@@ -626,6 +683,7 @@ pub struct Point {
     /// The block the point is about (a source, for a position).
     pub about: Option<String>,
     pub about_label: Option<String>,
+    pub about_display: Option<DisplayLabel>,
     pub evidence: Vec<Evidence>,
     /// Passages the assistant names, recognised here. They were not part of
     /// what was sent unless they are among its Scripture blocks.
@@ -791,6 +849,7 @@ fn verify(material: &Material, block: &str, quote: &str) -> Option<Evidence> {
         block: block.id.clone(),
         kind: block.kind,
         label: block.label.clone(),
+        display: block.display.clone(),
         quote: evidence_quote,
         source,
     })
@@ -943,6 +1002,7 @@ pub fn interpret(material: &Material, answer: &Value) -> AppResult<InquiryResult
             text,
             about: about.map(|b| b.id.clone()),
             about_label: about.map(|b| b.label.clone()),
+            about_display: about.and_then(|b| b.display.clone()),
             evidence,
             references,
             downgraded: was_downgraded,
@@ -987,4 +1047,60 @@ pub async fn run(transport: &impl Transport, ready: &Ready) -> AppResult<Inquiry
         assistant: ready.config.assistant_label(),
         remote: ready.config.is_remote(),
     })
+}
+
+#[cfg(test)]
+mod display_tests {
+    use super::*;
+
+    #[test]
+    fn display_metadata_does_not_change_model_words_or_fingerprint() {
+        let config = AssistantConfig::default();
+        let mut material = Material::new(Inquiry::Free, "Study".into(), "de");
+        material.push(
+            BlockKind::Writing,
+            "Your writing — part “Grace”".into(),
+            "Exact writing — 한글.",
+        );
+        let before = preview(&config, &material);
+        material.blocks[0].display = Some(DisplayLabel::Writing {
+            part: Some(DisplayPart {
+                key: None,
+                title: "Grace — part “Quoted”".into(),
+            }),
+            selected: false,
+        });
+        let after = preview(&config, &material);
+        assert_eq!(before.fingerprint, after.fingerprint);
+        assert_eq!(before.blocks[0].label, after.blocks[0].label);
+        assert_eq!(before.blocks[0].text, after.blocks[0].text);
+        assert!(after.blocks[0].display.is_some());
+        let evidence = verify(&material, "W1", "Exact writing — 한글.").unwrap();
+        assert_eq!(evidence.display, material.blocks[0].display);
+        let value = serde_json::to_value(&after.blocks[0]).unwrap();
+        assert_eq!(value["display"]["part"]["title"], "Grace — part “Quoted”");
+        assert_eq!(value["display"]["type"], "writing");
+    }
+
+    #[test]
+    fn checked_point_preserves_display_provenance_without_rewriting_evidence() {
+        let mut material = Material::new(Inquiry::Free, "Study".into(), "fr");
+        let block = material.push(
+            BlockKind::Writing,
+            "Your writing".into(),
+            "Exact source evidence.",
+        );
+        block.display = Some(DisplayLabel::Writing {
+            part: None,
+            selected: true,
+        });
+        let result = interpret(&material, &serde_json::json!({
+            "summary": "A comment", "points": [{ "kind": "writing", "text": "A supported comment", "about": "W1", "evidence": [{ "block": "W1", "quote": "Exact source evidence." }] }]
+        })).unwrap();
+        let InquiryResult::Insight { points, .. } = result else {
+            panic!("expected insight")
+        };
+        assert_eq!(points[0].about_display, material.blocks[0].display);
+        assert_eq!(points[0].evidence[0].quote, "Exact source evidence.");
+    }
 }

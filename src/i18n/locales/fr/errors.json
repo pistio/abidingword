@@ -15,7 +15,9 @@
     "titleRequired": "Veuillez indiquer un titre.",
     "titleTooLong": "Le titre est trop long. Veuillez ne pas dépasser {{max}} caractères.",
     "textTooLong": "Ce texte est trop long. Veuillez ne pas dépasser {{max}} caractères.",
-    "blockTooLong": "Ce bloc est trop long pour être enregistré. Veuillez le diviser en plusieurs blocs."
+    "blockTooLong": "Ce bloc est trop long pour être enregistré. Veuillez le diviser en plusieurs blocs.",
+    "entryInvalid": "Cette entrée n’a pas pu être enregistrée.",
+    "unknownField": "Cette partie ne contient pas ce champ."
   },
   "search": {
     "empty": "Saisissez un mot ou une expression à rechercher."
@@ -57,7 +59,7 @@
     "versesBeforeChapter": "{{book}} : certains versets apparaissent avant le premier chapitre.",
     "badChapterNumber": "{{book}} : le numéro de chapitre « {{label}} » n’a pas pu être lu.",
     "chapterOutOfRange_one": "{{book}} {{chapter}} : {{book}} compte {{count}} chapitre dans la numérotation standard.",
-    "chapterOutOfRange_many": "{{book}} {{chapter}} : {{book}} compte {{count}} chapitres dans la numérotation standard.",
+    "chapterOutOfRange_many": "{{book}} {{chapter}} : {{book}} compte {{count}} de chapitres dans la numérotation standard.",
     "chapterOutOfRange_other": "{{book}} {{chapter}} : {{book}} compte {{count}} chapitres dans la numérotation standard.",
     "badVerseNumber": "{{book}} {{chapter}} : le numéro de verset « {{label}} » n’a pas pu être lu.",
     "bridged": "{{book}} {{chapter}}:{{first}}–{{last}} sont regroupés en un seul verset dans cette traduction.",
@@ -69,9 +71,9 @@
     "missingVerses_many": "{{book}} {{chapter}} : versets {{list}} introuvables. La structure de versets attendue diffère de ce texte.",
     "missingVerses_other": "{{book}} {{chapter}} : versets {{list}} introuvables. La structure de versets attendue diffère de ce texte.",
     "listMore_one": "{{numbers}} et {{count}} autre",
-    "listMore_many": "{{numbers}} et {{count}} autres",
+    "listMore_many": "{{numbers}} et {{count}} d’autres",
     "listMore_other": "{{numbers}} et {{count}} autres",
-    "unknownFormat": "Ces fichiers ne sont pas dans un format de Bible qu’Abiding Word sait encore lire. Il lit les Bibles USFM (fichiers .usfm ou .sfm, ou une archive .zip qui les contient), les fichiers OSIS de l’Open Scriptures Hebrew Bible et les fichiers MorphGNT.",
+    "unknownFormat": "Le format biblique de ces fichiers n’est pas encore pris en charge par Abiding Word. Il lit les Bibles USFM (fichiers .usfm ou .sfm, ou une archive .zip qui les contient), les fichiers OSIS de l’Open Scriptures Hebrew Bible et les fichiers MorphGNT.",
     "formatNotYet": "Les fichiers {{format}} ne peuvent pas encore être importés comme Bible structurée. Abiding Word lit les Bibles USFM (fichiers .usfm ou .sfm, ou une archive .zip qui les contient), les fichiers OSIS de l’Open Scriptures Hebrew Bible et les fichiers MorphGNT. Une Bible peut aussi être ajoutée à partir de documents PDF, EPUB, Word (.docx), Markdown ou texte.",
     "noBooks": "Aucun livre de la Bible n’a été trouvé dans ces fichiers.",
     "tooLarge": "Ces fichiers sont trop volumineux pour constituer une seule Bible.",
@@ -81,7 +83,7 @@
     "badZipEntry": "« {{fileName}} » n’a pas pu être lu dans l’archive.",
     "badOsis": "Le fichier « {{fileName}} » n’a pas pu être lu entièrement.",
     "badLines_one": "{{book}} : {{count}} ligne de « {{fileName}} » n’a pas pu être lue.",
-    "badLines_many": "{{book}} : {{count}} lignes de « {{fileName}} » n’ont pas pu être lues.",
+    "badLines_many": "{{book}} : {{count}} de lignes de « {{fileName}} » n’ont pas pu être lues.",
     "badLines_other": "{{book}} : {{count}} lignes de « {{fileName}} » n’ont pas pu être lues.",
     "verseMapApplied": "Ce texte utilise la numérotation des versets de la Bible hébraïque. Elle a été convertie en numérotation anglaise grâce à la table de correspondance des versets fournie ({{moved}} versets renumérotés, {{joined}} fusionnés, {{titles}} titres de psaumes conservés comme titres).",
     "verseMapUnused": "La table de correspondance des versets fournie n’a pas été utilisée : ces fichiers suivent déjà la numérotation anglaise des versets.",
@@ -91,7 +93,7 @@
     "verseMapConflict": "En {{places}}, la marque de verset du texte et la table de correspondance des versets ne concordent pas ; la marque du texte a été suivie.",
     "psalmTitlesInVerse": "Là où le texte hébreu écrit le titre d’un psaume comme début du verset 1, ces fichiers n’indiquent pas où le titre se termine : il reste donc dans le verset 1.",
     "verseMapDivided_one": "{{count}} verset hébreu a été divisé là où le texte lui-même marque le début d’un verset anglais ({{titles}} des parties sont des titres de psaumes).",
-    "verseMapDivided_many": "{{count}} versets hébreux ont été divisés là où le texte lui-même marque le début d’un verset anglais ({{titles}} des parties sont des titres de psaumes).",
+    "verseMapDivided_many": "{{count}} de versets hébreux ont été divisés là où le texte lui-même marque le début d’un verset anglais ({{titles}} des parties sont des titres de psaumes).",
     "verseMapDivided_other": "{{count}} versets hébreux ont été divisés là où le texte lui-même marque le début d’un verset anglais ({{titles}} des parties sont des titres de psaumes).",
     "documentAmbiguous": "{{book}} {{chapter}},{{verse}} : deux endroits du texte pourraient être le début de ce verset.",
     "documentBookTwice": "{{book}} commence deux fois dans le texte.",
@@ -102,20 +104,20 @@
     "documentChapterShort": "{{book}} {{chapter}} s’arrête au verset {{last}} ; ce chapitre compte habituellement {{expected}} versets. Les versets après le {{last}} n’ont pas été trouvés.",
     "documentNoBook_one": "{{count}} numéro de verset a été trouvé sans nom de livre avant lui ; il a été laissé de côté.",
     "documentNoBook_other": "{{count}} numéros de versets ont été trouvés sans nom de livre avant eux ; ils ont été laissés de côté.",
-    "documentNoBook_many": "{{count}} numéros de versets ont été trouvés sans nom de livre avant eux ; ils ont été laissés de côté.",
+    "documentNoBook_many": "{{count}} de numéros de versets ont été trouvés sans nom de livre avant eux ; ils ont été laissés de côté.",
     "documentUnnumbered_one": "Dans {{count}} chapitre, le verset 1 n’a pas de numéro propre : le texte entre le titre du chapitre et le verset 2 a été pris comme verset 1.",
     "documentUnnumbered_other": "Dans {{count}} chapitres, le verset 1 n’a pas de numéro propre : le texte entre le titre du chapitre et le verset 2 a été pris comme verset 1.",
-    "documentUnnumbered_many": "Dans {{count}} chapitres, le verset 1 n’a pas de numéro propre : le texte entre le titre du chapitre et le verset 2 a été pris comme verset 1.",
+    "documentUnnumbered_many": "Dans {{count}} de chapitres, le verset 1 n’a pas de numéro propre : le texte entre le titre du chapitre et le verset 2 a été pris comme verset 1.",
     "documentPsalmTitles_one": "{{count}} titre de psaume a été gardé comme titre, avant le verset 1.",
     "documentPsalmTitles_other": "{{count}} titres de psaumes ont été gardés comme titres, avant le verset 1.",
-    "documentPsalmTitles_many": "{{count}} titres de psaumes ont été gardés comme titres, avant le verset 1.",
+    "documentPsalmTitles_many": "{{count}} de titres de psaumes ont été gardés comme titres, avant le verset 1.",
     "documentPsalmTitle": "Psaume {{chapter}} : le verset 1 n’a pas de numéro, son titre ne peut donc pas en être distingué.",
     "documentPageLines_one": "{{count}} en-tête ou numéro de page répété sur les pages a été laissé de côté.",
     "documentPageLines_other": "{{count}} en-têtes et numéros de page répétés sur les pages ont été laissés de côté.",
-    "documentPageLines_many": "{{count}} en-têtes et numéros de page répétés sur les pages ont été laissés de côté.",
+    "documentPageLines_many": "{{count}} d’en-têtes et numéros de page répétés sur les pages ont été laissés de côté.",
     "documentLeftOut_one": "Le texte qui n’appartient à aucun verset a été laissé de côté ({{count}} caractère : titres, introductions, notes).",
     "documentLeftOut_other": "Le texte qui n’appartient à aucun verset a été laissé de côté ({{count}} caractères : titres, introductions, notes).",
-    "documentLeftOut_many": "Le texte qui n’appartient à aucun verset a été laissé de côté ({{count}} caractères : titres, introductions, notes).",
+    "documentLeftOut_many": "Le texte qui n’appartient à aucun verset a été laissé de côté ({{count}} de caractères : titres, introductions, notes).",
     "documentMixed": "Choisissez soit les fichiers d’une Bible dans un format biblique (comme USFM), soit des documents (PDF, EPUB, Word, Markdown ou texte), mais pas les deux ensemble.",
     "documentFormats": "Les documents d’une même Bible doivent tous être du même type (tous PDF, tous EPUB…).",
     "documentTooMany": "Trop de documents ont été choisis pour former une seule Bible.",
@@ -135,7 +137,7 @@
     "documentChapterLong": "{{book}} {{chapter}} va jusqu’au verset {{last}} ; ce chapitre compte habituellement {{expected}} versets. Un autre chapitre ou un autre livre y a peut-être été lu. Ce chapitre n’est pas utilisé.",
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
-    "documentFootnotes_many": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
+    "documentFootnotes_many": "{{count}} de lignes de notes en bas de page ont été laissées de côté.",
     "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés."
   },
   "library": {
@@ -144,7 +146,7 @@
     "badDocx": "« {{fileName}} » n’a pas pu être lu comme document Word.",
     "badPdf": "« {{fileName}} » n’a pas pu être lu comme PDF.",
     "passwordProtected": "« {{fileName}} » est protégé par un mot de passe. Retirez la protection, puis importez-le à nouveau.",
-    "unsupportedFile": "« {{fileName}} » n’est pas un type de fichier que la bibliothèque sait encore lire. Elle lit les fichiers PDF, EPUB, Word (.docx), Markdown (.md) et texte brut (.txt).",
+    "unsupportedFile": "Le type de fichier de « {{fileName}} » n’est pas encore pris en charge par la bibliothèque. Elle lit les fichiers PDF, EPUB, Word (.docx), Markdown (.md) et texte brut (.txt).",
     "tooLarge": "« {{fileName}} » est trop volumineux pour être importé.",
     "scannedPdf": "Ce PDF semble contenir des pages numérisées. La reconnaissance de texte (OCR) n’est pas encore disponible ; son texte ne peut donc pas être ajouté.",
     "noText": "Aucun texte n’a été trouvé dans ce fichier.",
@@ -155,12 +157,21 @@
     "structure": {
       "corrupt": "La structure PDF enregistrée est illisible. Le texte et le fichier original restent inchangés.",
       "invalid": "Cette correction ne correspond plus à la source. Rouvrez son texte et réessayez.",
-      "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",
+      "timeout": "L’analyse a dépassé le temps prévu et a été arrêtée. Cette tentative n’a enregistré aucune modification. Réessayez ou enregistrez un rapport de diagnostic.",
       "cancelled": "Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer.",
       "busy": "Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer.",
       "limit": "Le PDF dépasse les limites d’analyse prises en charge. Les métadonnées précédentes sont inchangées.",
       "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic."
-    }
+    },
+    "nothingChosen": "Sélectionnez au moins un élément.",
+    "notInTrash": "Seuls les éléments de la corbeille peuvent être supprimés définitivement. Déplacez-les d’abord dans la corbeille.",
+    "badYear": "L’année doit être un nombre compris entre 0 et 3000.",
+    "collectionCycle": "Une collection ne peut pas être déplacée dans elle-même ni dans l’une de ses sous-collections.",
+    "linkUnsupported": "Ce type de lien ne peut pas être ouvert.",
+    "tooMany": "Vous pouvez modifier au maximum {{count}} éléments à la fois.",
+    "badName": "Utilisez un nom de 1 à {{max}} caractères.",
+    "collectionExists": "Une collection nommée « {{name}} » existe déjà ici.",
+    "tagExists": "Une étiquette nommée « {{name}} » existe déjà."
   },
   "templates": {
     "noSections": "Un modèle doit comporter au moins une partie de départ.",
@@ -176,7 +187,7 @@
   "sections": {
     "hasContent": "« {{title}} » contient encore du texte ou des notes.",
     "duplicateKey": "Cette étude contient déjà cette partie.",
-    "repairChanged": "Les parties ont changé. Vérifiez-les à nouveau. L’annulation exige des parties ajoutées inchangées ; tous les textes sont conservés."
+    "repairChanged": "Les parties ont changé. Vérifiez-les à nouveau. Pour annuler, les parties ajoutées doivent être restées inchangées ; tous les textes sont conservés."
   },
   "relations": {
     "self": "Une étude ne peut pas être liée à elle-même.",
@@ -284,7 +295,8 @@
     "tooManySlides": "Trop de diapositives à afficher en une fois."
   },
   "material": {
-    "tooLong": "C’est trop long pour être enregistré en un seul fichier."
+    "tooLong": "C’est trop long pour être enregistré en un seul fichier.",
+    "tooManyPassages": "Ce support contient trop de passages pour en inclure le texte."
   },
   "teachingTemplates": {
     "noKind": "Choisissez à quoi sert le modèle.",
@@ -292,7 +304,7 @@
   },
   "portability": {
     "notPackage": "Abiding Word ne peut pas lire ce fichier, ou il est endommagé.",
-    "tooLarge": "Ce fichier contient plus qu’Abiding Word ne lit dans un seul fichier.",
+    "tooLarge": "Ce fichier dépasse la taille qu’Abiding Word peut lire en une seule fois.",
     "damaged": "Une partie de ce fichier ne correspond pas à sa liste de contenu : il est endommagé ou a été modifié. Rien n’a été changé ici.",
     "newer": "Ce fichier a été enregistré avec une version plus récente d’Abiding Word ({{version}}). Veuillez d’abord mettre à jour Abiding Word.",
     "notBackupDatabase": "La base de données de cette sauvegarde est endommagée ou n’est pas une base de données Abiding Word. Rien n’a été changé.",
@@ -319,10 +331,11 @@
   "words": {
     "unavailable": "Cette Bible n’a pas d’annotations de mots (lemmes ou grammaire) : cette recherche n’est donc pas disponible. La concordance ordinaire fonctionne toujours.",
     "empty": "Saisissez un lemme ou un numéro lexical à chercher.",
-    "grammarNotFit": "Ces codes grammaticaux ne correspondent pas à ce système : ils sont donc affichés tels qu’écrits.",
+    "grammarNotFit": "Ces codes grammaticaux ne correspondent pas à ce système : ils sont donc affichés tels quels.",
     "textDiffers": "Les fichiers conservés ne donnent plus exactement le texte de cette Bible : ses mots ne peuvent donc pas être ajoutés. Retirez la Bible et ajoutez-la de nouveau pour les obtenir.",
     "noSource": "Les fichiers à partir desquels cette Bible a été ajoutée ne sont plus conservés : ses mots ne peuvent donc pas être relus. Retirez la Bible et ajoutez-la de nouveau pour les obtenir.",
-    "nothingToIndex": "Ces fichiers ne contiennent aucune information sur les mots qui puisse être indexée."
+    "nothingToIndex": "Ces fichiers ne contiennent aucune information sur les mots qui puisse être indexée.",
+    "documentBible": "Il n’est pas possible d’ajouter des informations sur les mots à une Bible ajoutée à partir d’un document."
   },
   "batch": {
     "noFiles": "Aucun fichier lisible par la bibliothèque n’a été trouvé à cet endroit.",
@@ -336,5 +349,10 @@
     "notVerified": "« {{fileName}} » ne correspondait pas à la copie vérifiée ; rien n’a été conservé. Réessayez plus tard.",
     "unreachable": "Le téléchargement n’a pas pu aboutir. Vérifiez la connexion internet et réessayez.",
     "busy": "Un téléchargement est déjà en cours. Attendez qu’il se termine."
+  },
+  "messageUnavailable": "Cette action n’a pas pu être effectuée. Veuillez réessayer.",
+  "importFormats": {
+    "webPage": "de pages web",
+    "osisUsx": "OSIS et USX"
   }
 }

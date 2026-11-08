@@ -79,7 +79,7 @@
     "key": "Chave",
     "keyHint": "Fica no cofre de senhas deste computador, nunca nos seus estudos, e não é mostrada de novo.",
     "keyKeptPlaceholder": "Chave guardada (digite para substituir)",
-    "keySave": "Guardar chave",
+    "keySave": "Salvar chave",
     "keyRemove": "Remover chave",
     "keySaved": "A chave está guardada neste computador.",
     "keyRemoved": "A chave foi removida.",
@@ -130,7 +130,7 @@
       "step4": "Copie na hora: em geral ela aparece só uma vez.",
       "step5": "Volte ao Abiding Word.",
       "step6": "Cole no campo “Chave” acima.",
-      "step7": "Clique em “Guardar chave”.",
+      "step7": "Clique em “Salvar chave”.",
       "step8": "Clique em “Verificar a conexão”.",
       "prices": "Abrir a tabela de preços de {{service}}"
     },
@@ -138,7 +138,7 @@
     "advanced": "Avançado",
     "checking": "Verificando a conexão… Pode levar alguns segundos.",
     "why": {
-      "noKey": "Para verificar a conexão, primeiro cole sua chave e escolha “Guardar chave”.",
+      "noKey": "Para verificar a conexão, primeiro cole sua chave e escolha “Salvar chave”.",
       "noModel": "Para verificar a conexão, primeiro digite o nome do modelo.",
       "noAddress": "Para verificar a conexão, primeiro digite o endereço do serviço.",
       "badAddress": "O endereço do serviço deve começar com http:// ou https://."
@@ -168,8 +168,8 @@
       "unknown": "O Abiding Word não consegue saber se {{service}} pode criar imagens com a sua conta. Você pode tentar; se falhar, escolha a OpenAI para imagens."
     },
     "imageKey": "Chave da OpenAI para imagens",
-    "imageKeyMissing": "Ainda não há chave da OpenAI para imagens: cole abaixo e clique em “Guardar chave”.",
-    "imagesLeave": "As descrições de imagens são enviadas para a OpenAI pela internet, mesmo que seu serviço de escrita não seja.",
+    "imageKeyMissing": "Ainda não há uma chave da OpenAI para imagens: cole a chave abaixo e clique em “Salvar chave”.",
+    "imagesLeave": "As descrições de imagens são enviadas à OpenAI pela internet, mesmo que seu assistente de escrita funcione neste computador.",
     "searchShort": {
       "brave": "busca geral e simples na web",
       "tavily": "busca feita para assistentes de IA",
@@ -190,7 +190,7 @@
       "title": "Como configuro o {{service}}?",
       "step1": "Abra a página do {{service}} abaixo e faça login, ou crie uma conta.",
       "step2": "Crie uma chave lá (ela pode se chamar “API key”) e copie.",
-      "step3": "Cole no campo da chave de busca e clique em “Guardar chave”.",
+      "step3": "Cole a chave de busca no campo correspondente e clique em “Salvar chave”.",
       "step4": "Clique em “Verificar busca”.",
       "open": "Abrir a página do {{service}}",
       "cost": "Os serviços de busca costumam oferecer uma pequena cota gratuita por mês e cobram pelo resto. Isso é resolvido no site deles, não no Abiding Word."
@@ -200,7 +200,7 @@
     "searchTestOk": "O serviço de busca respondeu e encontrou páginas da web.",
     "searchTestEmpty": "O serviço de busca respondeu, mas não encontrou nada em uma busca de teste.",
     "searchWhy": {
-      "noKey": "Para verificar a busca, primeiro cole a chave dela e escolha “Guardar chave”.",
+      "noKey": "Para verificar a busca, primeiro cole a chave de busca e escolha “Salvar chave”.",
       "noAddress": "Para verificar a busca, primeiro digite o endereço do SearXNG."
     },
     "pricesLink": "Ver os preços de {{service}}"
@@ -302,7 +302,7 @@
     "typeTitle": "Digite o título exato para confirmar",
     "empty": "A lixeira está vazia.",
     "hint": "Restaure um projeto para recuperar seu conteúdo. Estudos excluídos separadamente aparecem após a restauração do projeto.",
-    "studyHint": "O estudo e sua pesquisa podem ser restaurados em Configurações → Dados e backup → Lixeira. O ensino vinculado permanece no projeto com notas e citações salvas, mas perde o vínculo. A restauração não refaz o vínculo automaticamente.",
+    "studyHint": "O estudo e sua pesquisa podem ser restaurados em Configurações → Dados e cópia de segurança → Lixeira. O ensino vinculado permanece no projeto com anotações e citações salvas, mas perde o vínculo. A restauração não refaz o vínculo automaticamente.",
     "projectHint": "O projeto, seus estudos e seu ensino são ocultados juntos e podem ser restaurados. A exclusão permanente remove todo o conteúdo dependente.",
     "actions": "Ações para “{{title}}”",
     "moved": "“{{title}}” foi movido para a lixeira."

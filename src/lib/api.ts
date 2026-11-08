@@ -159,6 +159,13 @@ import type {
   TemplateSource,
 } from "@/types/presentationTemplate";
 
+/** Transient export presentation only; never stored with teaching or user text. */
+export interface MaterialDocxFormat {
+  language?: string;
+  paper?: "a4" | "letter";
+  styleNames?: Partial<Record<"reference" | "notice" | "label" | "message" | "question" | "scripture" | "note" | "line" | "lineLast", string>>;
+}
+
 export interface Api {
   appInfo(): Promise<AppInfo>;
   logError(message: string): Promise<void>;
@@ -414,7 +421,7 @@ export interface Api {
   /** Writes a material, as Markdown, to the chosen file; returns where it went. */
   materialSaveMarkdown(input: { path: string; text: string }): Promise<string>;
   /** Writes a material, as a Word document (.docx), to the chosen file (v0.18.8); returns where it went. */
-  materialSaveDocx(input: { path: string; document: MaterialDocument; format?: { language?: string; paper?: "a4" | "letter" } }): Promise<string>;
+  materialSaveDocx(input: { path: string; document: MaterialDocument; format?: MaterialDocxFormat }): Promise<string>;
   /** The text of a material's passages from the chosen Bible only (v0.18.8). */
   materialScripture(input: { translationId: string; references: string[] }): Promise<MaterialScripture>;
   /** The displays connected; empty where a second window cannot be opened. */
@@ -689,9 +696,9 @@ export const tauriApi: Api = {
     const chosen = await open({
       multiple: false,
       directory: false,
-      title: "Choose a file to add to your library",
+      title: i18n.t("library.fileDialog.source"),
       filters: [
-        { name: "Books and notes (PDF, EPUB, Word, Markdown, text)", extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] },
+        { name: i18n.t("library.fileDialog.sourceTypes"), extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] },
       ],
     });
     return typeof chosen === "string" ? chosen : null;
@@ -703,14 +710,14 @@ export const tauriApi: Api = {
     const chosen = await open({
       multiple: true,
       directory: false,
-      title: "Choose files to add to your library",
-      filters: [{ name: "Books and notes (PDF, EPUB, Word, Markdown, text)", extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] }],
+      title: i18n.t("library.fileDialog.sources"),
+      filters: [{ name: i18n.t("library.fileDialog.sourceTypes"), extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] }],
     });
     if (chosen === null) return null;
     return Array.isArray(chosen) ? chosen : [chosen];
   },
   chooseSourceFolder: async () => {
-    const chosen = await open({ multiple: false, directory: true, title: "Choose a folder to add to your library" });
+    const chosen = await open({ multiple: false, directory: true, title: i18n.t("library.fileDialog.folder") });
     return typeof chosen === "string" ? chosen : null;
   },
   libraryBatchScan: (paths, recursive) => call("library_batch_scan", { paths, recursive }),
@@ -760,7 +767,7 @@ export const tauriApi: Api = {
   libraryEpubItem: (id, item) => call("library_epub_item", { id, item }),
   openExternalLink: async (url) => {
     const safe = safeExternalUrl(url);
-    if (!safe) throw new ApiError("invalidInput", "This kind of link is not opened.");
+    if (!safe) throw new ApiError("invalidInput", i18n.t("errors.library.linkUnsupported"), "library.linkUnsupported");
     await openUrl(safe);
   },
   libraryDocxStructure: (id) => call("library_docx_structure", { id }),
@@ -906,11 +913,11 @@ export const tauriApi: Api = {
     const chosen = await open({
       multiple: true,
       directory: false,
-      title: "Choose a Bible to add",
+      title: i18n.t("library.fileDialog.bible"),
       filters: [
         // metadata.xml / Settings.xml chosen alongside name the language (v0.18.3).
-        { name: "Bible files (USFM, .zip, PDF, EPUB, Word, Markdown, text)", extensions: ["zip", "usfm", "sfm", "ptx", "txt", "xml", "pdf", "epub", "docx", "md", "markdown"] },
-        { name: "All files", extensions: ["*"] },
+        { name: i18n.t("library.fileDialog.bibleTypes"), extensions: ["zip", "usfm", "sfm", "ptx", "txt", "xml", "pdf", "epub", "docx", "md", "markdown"] },
+        { name: i18n.t("library.fileDialog.allFiles"), extensions: ["*"] },
       ],
     });
     if (chosen === null) return null;

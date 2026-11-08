@@ -345,6 +345,8 @@ export interface FoundImage {
   licenceUrl: string | null;
   author: string | null;
   attribution: string;
+  /** True for exact attribution supplied by the image source; false for an app-generated credit. */
+  attributionProvided?: boolean;
   /** The small picture, fetched by the core (the window loads no remote images). */
   thumbData: string | null;
 }

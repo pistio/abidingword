@@ -301,9 +301,9 @@
     "permanentConfirm": "„{{title}}“ endgültig löschen? Dies kann nicht rückgängig gemacht werden.",
     "typeTitle": "Zur Bestätigung den genauen Titel eingeben",
     "empty": "Der Papierkorb ist leer.",
-    "hint": "Stelle ein Projekt mit seinen Inhalten wieder her. Einzeln gelöschte Studien erscheinen nach der Wiederherstellung ihres Projekts.",
-    "studyHint": "Die Studie mit ihren Recherchen kann unter Einstellungen → Daten und Sicherung → Papierkorb wiederhergestellt werden. Verknüpfte Lehre bleibt mit gespeicherten Notizen und Zitaten im Projekt, wird aber getrennt. Die Wiederherstellung verknüpft sie nicht automatisch erneut.",
-    "projectHint": "Das Projekt mit seinen Studien und seiner Lehre wird gemeinsam ausgeblendet und kann wiederhergestellt werden. Endgültiges Löschen entfernt alle zugehörigen Inhalte.",
+    "hint": "Stelle ein Projekt mit seinen Inhalten wieder her. Einzeln gelöschte Bibelstudien erscheinen nach der Wiederherstellung ihres Projekts.",
+    "studyHint": "Das Bibelstudium mit seinen Recherchen kann unter Einstellungen → Daten und Sicherung → Papierkorb wiederhergestellt werden. Verknüpfte Bibellehre bleibt mit gespeicherten Notizen und Zitaten im Projekt, wird aber getrennt. Die Wiederherstellung verknüpft sie nicht automatisch erneut.",
+    "projectHint": "Das Projekt mit seinen Bibelstudien und seiner Bibellehre wird gemeinsam ausgeblendet und kann wiederhergestellt werden. Endgültiges Löschen entfernt alle zugehörigen Inhalte.",
     "actions": "Aktionen für „{{title}}“",
     "moved": "„{{title}}“ wurde in den Papierkorb verschoben."
   }

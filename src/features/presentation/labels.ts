@@ -1,6 +1,6 @@
 // Words and small helpers for presentations (v0.18).
 import type { TFunction } from "i18next";
-import i18n from "i18next";
+import { formatLocale } from "@/i18n/format";
 import themes from "../../../resources/presentation/themes.json";
 import englishBooks from "@/i18n/locales/en/books.json";
 import englishPresentation from "@/i18n/locales/en/presentation.json";
@@ -109,20 +109,24 @@ export function teachingGives(item: PresentationItem, part: "heading" | "body"):
   return false;
 }
 
-const LANGUAGE_TAGS: Record<string, string> = { en: "en-US", de: "de-DE", ko: "ko-KR", fr: "fr-FR", es: "es-ES", pt: "pt-BR" };
-
 /** The words the exports need, in the interface language. */
 export function exportLocale(t: TFunction): ExportLocale {
   const bookNames: Record<string, string> = {};
   for (const code of Object.keys(englishBooks.name)) bookNames[code] = passageBookName(t(`books.name.${code}`, { defaultValue: code }));
   const label = (key: keyof typeof englishPresentation.export.labels) => t(`presentation.export.labels.${key}`);
   return {
-    language: LANGUAGE_TAGS[i18n.language] ?? "en-US",
+    language: formatLocale(),
     bookNames,
     psalm: t("books.psalm"),
     verseSeparator: t("books.verseSeparator"),
     labels: {
       slide: label("slide"),
+      text: t("presentation.kinds.text"),
+      image: t("presentation.kinds.image"),
+      design: t("presentation.editor.design"),
+      band: label("band"),
+      blank: label("blank"),
+      slideImage: label("slideImage"),
       speakerNotes: label("speakerNotes"),
       introduction: label("introduction"),
       conclusion: label("conclusion"),

@@ -12,6 +12,7 @@ import type { Evidence, ExcerptInput, Inquiry, InquiryPreview, InquiryReply, Inq
 import { FINDING_TYPES, type Finding, type FindingType } from "@/types/studies";
 import { findingLabel } from "@/features/studies/labels";
 import { inquiryGroups, kindLabel } from "./inquiryLabels";
+import { inquiryAssistantLabel, inquiryBlockText, inquiryBlockLabel, inquiryDisplayLabel } from "./inquiryDisplay";
 
 /** The longest question in the person's words (as the core allows). */
 const REQUEST_MAX = 1_000;
@@ -286,7 +287,7 @@ export function InquiryPanel(props: InquiryPanelProps) {
             }}
             onOpenSource={onOpenSource}
           />
-          <p className="m-0 type-meta">{t("studies.inquiry.from", { assistant: reply.assistant })}</p>
+          <p className="m-0 type-meta">{t("studies.inquiry.from", { assistant: inquiryAssistantLabel(t, reply.assistant) })}</p>
           <div className="flex flex-wrap gap-2">
             <Button
               className="min-h-11"
@@ -316,7 +317,7 @@ function Shared({ preview }: { preview: InquiryPreview }) {
   return (
     <div className="flex flex-col gap-2 rounded-aw bg-bg px-3 py-2" data-testid="inquiry-preview">
       <p className="m-0 font-medium text-text-strong">
-        {preview.remote ? t("studies.inquiry.shared.remote", { assistant: preview.assistant }) : t("studies.inquiry.shared.local", { assistant: preview.assistant })}
+        {preview.remote ? t("studies.inquiry.shared.remote", { assistant: inquiryAssistantLabel(t, preview.assistant) }) : t("studies.inquiry.shared.local", { assistant: inquiryAssistantLabel(t, preview.assistant) })}
       </p>
       <p className="m-0 text-text">{t("studies.inquiry.shared.count", { count: preview.blocks.length })}</p>
       <ul className="m-0 flex list-none flex-col gap-1 p-0">
@@ -331,11 +332,6 @@ function Shared({ preview }: { preview: InquiryPreview }) {
       </p>
     </div>
   );
-}
-
-function blockName(b: Pick<SharedBlock, "kind" | "label" | "reference" | "translation">) {
-  if (b.kind === "scripture" && b.reference) return b.translation ? `${referenceLabel(b.reference)} (${b.translation})` : referenceLabel(b.reference);
-  return b.label;
 }
 
 function SharedItem({ block }: { block: SharedBlock }) {
@@ -354,11 +350,11 @@ function SharedItem({ block }: { block: SharedBlock }) {
         <ChevronRight className={`mt-1 size-4 shrink-0 text-text-muted transition-transform ${open ? "rotate-90" : ""}`} aria-hidden="true" />
         <span className="min-w-0 flex-1">
           <span className="caps-label mr-2 text-text-muted">{t(`studies.inquiry.block.${block.kind}`)}</span>
-          <span className="break-words text-text-strong">{blockName(block)}</span>
+          <span className="break-words text-text-strong">{inquiryBlockLabel(t, block)}</span>
         </span>
       </button>
       <div id={bodyId} hidden={!open} className="reading max-h-60 overflow-auto whitespace-pre-wrap border-t border-border-subtle px-3 py-2 text-[0.9375rem] text-text">
-        {block.text}
+        {inquiryBlockText(t, block)}
       </div>
     </div>
   );
@@ -465,7 +461,7 @@ function PointCard({ point, assistant, keep, onKept, onOpenSource }: { point: In
     <article className={`flex flex-col gap-1.5 rounded-aw border bg-bg px-3 py-2 ${strong ? "border-border" : "border-dashed border-border-subtle"}`} data-kind={point.kind}>
       <p className="m-0 flex flex-wrap items-baseline gap-x-2">
         <span className={`caps-label ${point.kind === "unsupported" || point.downgraded ? "text-danger" : "text-text-muted"}`}>{kindLabel(t, point.kind)}</span>
-        {point.aboutLabel && <span className="type-meta">{point.aboutLabel}</span>}
+        {point.aboutLabel && <span className="type-meta">{point.aboutDisplay ? inquiryDisplayLabel(t, point.aboutDisplay) : point.aboutLabel}</span>}
       </p>
       <p className="m-0 text-text-strong">{point.text}</p>
       {point.downgraded && <p className="m-0 type-meta">{t("studies.inquiry.downgraded")}</p>}
@@ -535,7 +531,7 @@ function EvidenceQuote({ evidence, onOpenSource }: { evidence: Evidence; onOpenS
       <figcaption className="flex flex-wrap items-center gap-x-2 type-meta">
         {evidence.kind === "scripture" ? <BookOpen className="size-3.5" aria-hidden="true" /> : evidence.kind === "source" ? <FileText className="size-3.5" aria-hidden="true" /> : null}
         <span>
-          {t(`studies.inquiry.evidence.${evidence.kind}`)}: {evidence.label}
+          {t(`studies.inquiry.evidence.${evidence.kind}`)}: {evidence.display ? inquiryDisplayLabel(t, evidence.display) : evidence.label}
         </span>
         {link && onOpenSource && (
           <button type="button" onClick={() => onOpenSource(link)} className="min-h-11 rounded-aw px-1 text-link underline underline-offset-2 hover:bg-hover">
@@ -674,7 +670,7 @@ function KeepForm({ label, initial, initialType, citations, assistant, keep, onK
           ))}
         </fieldset>
       )}
-      <p className="m-0 type-meta">{t("studies.inquiry.keep.marked", { assistant })}</p>
+      <p className="m-0 type-meta">{t("studies.inquiry.keep.marked", { assistant: inquiryAssistantLabel(t, assistant) })}</p>
       {error && (
         <p role="alert" className="m-0 text-danger">
           {error}

@@ -1,4 +1,5 @@
 import type { TFunction } from "i18next";
+import { formatLocale } from "@/i18n/format";
 import type { BackupCounts, ProjectCounts } from "@/types/portability";
 
 /** "Bible Studies: 2 · Bible Teachings: 1 · Notes: 6", each part only when there is some. */
@@ -34,7 +35,7 @@ export function backupCountsLine(t: TFunction, counts: BackupCounts): string {
 /** A size in megabytes (at least 0.1), in the interface language. */
 export function megabytes(bytes: number, language: string): string {
   const mb = Math.max(0.1, bytes / 1_000_000);
-  return new Intl.NumberFormat(language, { maximumFractionDigits: mb < 10 ? 1 : 0 }).format(mb);
+  return new Intl.NumberFormat(formatLocale(language), { maximumFractionDigits: mb < 10 ? 1 : 0 }).format(mb);
 }
 
 /** A title usable as a file name on every system. */

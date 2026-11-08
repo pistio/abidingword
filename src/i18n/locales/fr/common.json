@@ -57,6 +57,6 @@
     },
     "trashText_one": "Les éléments de la corbeille sont conservés {{count}} jour, puis supprimés définitivement. D’ici là, vous pouvez les restaurer.",
     "trashText_other": "Les éléments de la corbeille sont conservés {{count}} jours, puis supprimés définitivement. D’ici là, vous pouvez les restaurer.",
-    "trashText_many": "Les éléments de la corbeille sont conservés {{count}} jours, puis supprimés définitivement. D’ici là, vous pouvez les restaurer."
+    "trashText_many": "Les éléments de la corbeille sont conservés {{count}} de jours, puis supprimés définitivement. D’ici là, vous pouvez les restaurer."
   }
 }

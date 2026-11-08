@@ -1749,7 +1749,7 @@
     "groupAbout": "Über dieses Bibelstudium",
     "groupCopy": "Kopieren",
     "findOccurrences": "Vorkommen finden",
-    "saveAsTemplate": "Als meine Vorlage speichern",
+    "saveAsTemplate": "Als eigene Vorlage speichern",
     "saveAsTemplateGroup": "Den Aufbau dieses Bibelstudiums als Vorlage speichern",
     "templateName": "Name der Vorlage",
     "saveAsTemplateKeeps_one": "Die Vorlage übernimmt den Teil dieses Bibelstudiums: seine Überschrift, seinen Hinweis und seinen Platz in der Gliederung. Deine Texte, Notizen, Bibelstellen und Angaben bleiben in diesem Bibelstudium.",
@@ -1893,7 +1893,7 @@
     "deleteTemplate": "Vorlage löschen",
     "new": "Neue Vorlage…",
     "saveAsMine": "Als eigene Vorlage speichern",
-    "saveAsMineLabel": "„{{name}}“ als meine Vorlage speichern"
+    "saveAsMineLabel": "„{{name}}“ als eigene Vorlage speichern"
   },
   "templateEditor": {
     "opening": "Vorlage wird geöffnet…",
@@ -2046,7 +2046,7 @@
       "request": {
         "question": "Worauf soll die Frage aufmerksam machen?",
         "story": "Was für eine wahre Begebenheit suchst du?",
-        "transition": "Was soll er verbinden? (optional)",
+        "transition": "Was soll der Übergang verbinden? (optional)",
         "phrasing": "Was möchtest du sagen? (optional)",
         "visual": "Was soll das Bild verständlich machen? (optional)",
         "free": "Wobei möchtest du Hilfe?"
@@ -2178,7 +2178,7 @@
     "shape": {
       "points": {
         "title": "Hauptpunkte",
-        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: ein Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
+        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: einen Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
         "add": "Punkt hinzufügen",
         "number": "Punkt {{number}}",
         "label": "Punkt {{number}}: {{title}}",
@@ -2199,7 +2199,7 @@
       },
       "generalPoints": {
         "title": "Hauptpunkte",
-        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: ein Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
+        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: einen Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
         "add": "Punkt hinzufügen",
         "number": "Punkt {{number}}",
         "label": "Punkt {{number}}: {{title}}",
@@ -2310,7 +2310,7 @@
       "listLabel": "Vorlagen für Bibellehren",
       "intro": "Eine Vorlage für Bibellehren legt fest, womit eine neue Bibellehre beginnt: ihre Form und die ersten Punkte, Fragen oder Schritte. Jede Bibellehre bekommt beim Erstellen eine eigene Kopie. Wenn du eine Vorlage änderst oder löschst, bleiben bestehende Bibellehren deshalb unverändert.",
       "saveAsMine": "Als eigene Vorlage speichern",
-      "saveAsMineLabel": "„{{name}}“ als meine Vorlage speichern",
+      "saveAsMineLabel": "„{{name}}“ als eigene Vorlage speichern",
       "edit": "„{{name}}“ bearbeiten",
       "duplicate": "„{{name}}“ duplizieren",
       "delete": "„{{name}}“ löschen",
@@ -2329,7 +2329,7 @@
       "builtinChoice": "{{format}} (mitgeliefert)"
     },
     "saveTemplate": {
-      "action": "Als meine Vorlage speichern",
+      "action": "Als eigene Vorlage speichern",
       "group": "Den Aufbau dieser Bibellehre als Vorlage speichern",
       "name": "Name der Vorlage",
       "keeps": {
@@ -2373,13 +2373,13 @@
       "leaderOnly": "Nur für dich als Leitung. Es erscheint nicht auf Blättern oder Folien, außer du gibst es für die Teilnehmenden frei.",
       "participant": "Den Teilnehmenden zeigen",
       "settings": "Dieser Block",
-      "empty": "Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du soweit bist.",
+      "empty": "Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du so weit bist.",
       "viewLabel": "Schreibansicht",
       "viewContinuous": "Fortlaufend",
       "viewOutline": "Gliederung",
       "headingLabel": "Überschrift",
       "templateHeading": "Blöcke",
-      "templateHint": "Abschnitte und Blöcke hinzufügen, umordnen, verdoppeln und umbenennen. Was du in einer Bibellehre schreibst, bleibt nicht in der Vorlage.",
+      "templateHint": "Abschnitte und Blöcke hinzufügen, umordnen, duplizieren und umbenennen. Was du in einer Bibellehre schreibst, bleibt nicht in der Vorlage.",
       "titleOf": "Überschrift von {{name}}",
       "typeOf": "Art des Blocks: {{name}}",
       "section": "Im Abschnitt",
@@ -2387,7 +2387,7 @@
       "noSection": "Kein Abschnitt",
       "moveUp": "„{{name}}“ nach oben",
       "moveDown": "„{{name}}“ nach unten",
-      "duplicate": "„{{name}}“ verdoppeln",
+      "duplicate": "„{{name}}“ duplizieren",
       "remove": "„{{name}}“ entfernen",
       "types": {
         "section": "Abschnitt",
@@ -2439,7 +2439,7 @@
           },
           "main": {
             "title": "Hauptteil",
-            "guidance": "Erarbeitet die Bedeutung des Textes und seinen Bezug zum Leben."
+            "guidance": "Erarbeite die Bedeutung des Textes und seinen Bezug zum Leben."
           },
           "conclusion": {
             "title": "Schluss",
@@ -2457,7 +2457,7 @@
           },
           "story": {
             "title": "Erzählung",
-            "guidance": "Erzähle die Stelle so, dass das Alter mitkommt. Die Bedeutung bleibt die des Textes."
+            "guidance": "Erzähle die Stelle altersgerecht und verständlich. Die Bedeutung bleibt die des Textes."
           },
           "explain": {
             "title": "Erklärung",
@@ -2486,18 +2486,18 @@
       "title": "Bibellehre",
       "intro": "Bereite hier eine Bibellehre vor – mit oder ohne Bibelstudium.",
       "sessions": "Lehreinheiten",
-      "empty": "Noch keine Lehre.",
-      "back": "Zurück zur Lehrübersicht",
+      "empty": "Noch keine Bibellehre.",
+      "back": "Zurück zur Übersicht der Bibellehren",
       "study": "Bibelstudium (wahlweise)",
       "independent": "Eigenständige Bibellehre",
       "keepNotes": "Wenn du die Verknüpfung änderst oder aufhebst, bleiben bereits verwendete Notizen mit ihren Quellen als Kopien erhalten. Spätere Änderungen im Bibelstudium ändern diese Kopien nicht.",
       "saveLink": "Verknüpfung speichern",
-      "savedNote": "Gespeicherte Studiennotiz",
+      "savedNote": "Gespeicherte Notiz aus dem Bibelstudium",
       "project": "Zurück zum Projekt",
-      "basedOn": "Grundlage: Bibelstudie —",
-      "linkStudy": "Mit Bibelstudie verknüpfen",
-      "openStudy": "Verknüpfte Studie öffnen",
-      "standalone": "Eigenständige Lehre"
+      "basedOn": "Grundlage: Bibelstudium —",
+      "linkStudy": "Mit Bibelstudium verknüpfen",
+      "openStudy": "Verknüpftes Bibelstudium öffnen",
+      "standalone": "Eigenständige Bibellehre"
     },
     "options": "Optionen für diese Bibellehre",
     "fromStudy": {
@@ -2659,6 +2659,11 @@
       "missing_one": "{{bible}} hat keinen Text für Vers {{verses}}; er fehlt hier und wird nicht aus einer anderen Bibel genommen.",
       "missing_other": "{{bible}} hat keinen Text für die Verse {{verses}}; sie fehlen hier und werden nicht aus einer anderen Bibel genommen.",
       "from": "Bibeltext: {{name}}."
+    },
+    "wordStyles": {
+      "label": "Feldbezeichnung",
+      "writingLine": "Schreiblinie",
+      "writingLineLast": "Schreiblinie (letzte)"
     }
   },
   "phase": {
@@ -2812,12 +2817,17 @@
       "block": "Dein Text: „{{start}}“",
       "selection": "Die markierten Worte: „{{words}}“",
       "note": "Deine Notiz ({{kind}}): „{{start}}“"
+    },
+    "location": {
+      "pages": "S. {{first}}–{{last}}",
+      "paragraph": "Absatz {{number}}",
+      "paragraphs": "Absätze {{first}}–{{last}}"
     }
   },
   "fields": {
     "example": "Beispiel: Hosea 11",
     "exampleMatthew": "Beispiel: Matthäus 8,18–27",
-    "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deiner Studie und wird nie als deine Antwort gespeichert.",
+    "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deinem Bibelstudium und wird nie als deine Antwort gespeichert.",
     "goal": "Ziel",
     "status": "Bearbeitungsstand von „{{title}}“",
     "statusNotStarted": "Nicht begonnen",
@@ -2930,7 +2940,7 @@
     "review": "POZETEK-Teile prüfen",
     "undo": "POZETEK-Reparatur rückgängig",
     "apply": "Fehlende Teile ergänzen und ordnen",
-    "explain": "Die ursprünglichen sieben Teile stehen zuerst. Fehlende Teile werden leer ergänzt. Alle vorhandenen Teile, auch Thema, Erkenntnisse, Konsequenzen und doppelte Teile, behalten Namen, Texte, Notizen und Verknüpfungen. Teile außerhalb der Siebenerfolge folgen in ihrer bisherigen relativen Reihenfolge.",
+    "explain": "Die ursprünglichen sieben Teile stehen zuerst. Fehlende Teile werden leer ergänzt. Alle vorhandenen Teile, auch Thema, Erkenntnisse, Konsequenzen und doppelte Teile, behalten Namen, Texte, Notizen und Verknüpfungen. Teile außerhalb dieser sieben folgen in ihrer bisherigen relativen Reihenfolge.",
     "keep": "Vorhandenen Teil behalten",
     "add": "Leeren Teil ergänzen",
     "duplicates": "Mehrere Teile haben denselben Schlüssel: {{parts}}. Sie bleiben getrennt; Texte werden nicht zusammengeführt.",

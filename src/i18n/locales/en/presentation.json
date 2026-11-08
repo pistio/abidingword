@@ -59,8 +59,8 @@
     "deleteConfirm": "Delete this presentation? The teaching stays as it is.",
     "delete": "Delete presentation",
     "slides": "Slides",
-    "moved": "Slide moved to place {{position}}.",
-    "added": "Slide added at place {{position}}.",
+    "moved": "Slide moved to position {{position}}.",
+    "added": "Slide added at position {{position}}.",
     "removed": "Slide removed. The teaching stays as it is.",
     "slideLabel": "Slide {{number}}: {{title}}",
     "leftOut": "Left out",
@@ -160,13 +160,16 @@
       "explanation": "Explanation",
       "application": "Application",
       "illustration": "Illustration",
-      "standing": "How reliable",
+      "standing": "Reliability",
       "citations": "Sources",
       "generatedImage": "Generated image",
       "imageUnavailable": "Image not available on this computer",
       "scriptureUnavailable": "The text of this passage is not available.",
       "pause": "Pause",
-      "next": "Next"
+      "next": "Next",
+      "band": "Colour band",
+      "blank": "Blank",
+      "slideImage": "Slide image"
     },
     "standings": {
       "verified": "Checked with two sources",
@@ -330,7 +333,7 @@
       "embeddedFonts": "The file contains fonts; they are not carried over",
       "fontMissing": "A font is not installed here",
       "fontStyleMissing": "A font is installed, but not in the weight or slant used",
-      "fontNotEmbeddable": "A font cannot be included in PDFs (its licence); PDFs use a standard font instead",
+      "fontNotEmbeddable": "A font’s licence prevents it from being included in PDFs; a standard font is used instead",
       "wrapRisk": "Lines may break differently because of a replaced font",
       "tiledBackground": "A tiled background picture is shown stretched",
       "gradientBackground": "A colour gradient becomes its first colour",
@@ -338,7 +341,7 @@
       "effects": "Shadows, glow or 3D effects are not drawn",
       "justified": "Justified text is set left-aligned",
       "growsWithText": "A box that grows with its text keeps its size (long text is reported)",
-      "noWrap": "A box without line breaks wraps its text here",
+      "noWrap": "Text from a box with wrapping disabled wraps here",
       "svgAsPicture": "An SVG picture is shown from its PNG copy",
       "extraTextBox": "An extra text box is not used",
       "smartArt": "SmartArt",
@@ -373,7 +376,7 @@
       "styleMissing": "Installed, but not this style",
       "missing": "Not installed"
     },
-    "notEmbeddable": "PDFs use a standard font instead (licence).",
+    "notEmbeddable": "PDFs use a standard font because this font’s licence prevents embedding.",
     "regular": "Regular",
     "bold": "Bold",
     "italic": "Italic",
@@ -423,7 +426,7 @@
     "colors": {
       "background": "Background",
       "text": "Text",
-      "muted": "Quieter text",
+      "muted": "Subdued text",
       "accent": "Accent"
     },
     "fontFor": {
@@ -473,7 +476,7 @@
       "center": "Centred",
       "right": "Right"
     },
-    "valign": "In the box",
+    "valign": "Vertical alignment",
     "valigns": {
       "top": "Top",
       "middle": "Middle",

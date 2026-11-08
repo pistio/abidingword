@@ -3,7 +3,7 @@
     "templates": {
       "biblical-theology-study": {
         "name": "Étude de théologie biblique",
-        "description": "Un thème suivi au fil de l’histoire de l’Écriture qui se déploie.",
+        "description": "Un thème suivi au fil du déroulement de l’histoire biblique.",
         "sections": {
           "theme": {
             "title": "Thème",
@@ -318,7 +318,7 @@
           "place": {
             "title": "Lieu",
             "guidance": "Quels lieux et quelles relations spatiales ou culturelles comptent pour le texte ?",
-            "goal": "Repérer où les choses se passent ou dont on parle. Distinguer ce que dit le texte de ce qu’apportent des sources extérieures.",
+            "goal": "Repérer les lieux où se déroulent les événements ou qui sont évoqués. Distinguer ce que dit le texte de ce qu’apportent des sources extérieures.",
             "example": "Le royaume du Nord, Israël, forme le contexte ; l’Égypte rappelle la délivrance d’Israël, l’Assyrie représente la menace politique.",
             "fields": {
               "places": {
@@ -500,7 +500,7 @@
               },
               "response": {
                 "label": "Réponse concrète",
-                "help": "Que ferez-vous : croire, se repentir, se confier, obéir, prier, aimer ? Soyez précis."
+                "help": "Que ferez-vous : croire, vous repentir, vous confier, obéir, prier, aimer ? Soyez précis."
               },
               "limits": {
                 "label": "Limites du transfert d’hier à aujourd’hui",
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Application personnelle",
-            "guidance": "Que signifie pour vous la vérité découverte ? Gardez-la distincte de l’observation et de l’interprétation ci-dessus. Répondre au texte en restant lié à ce qu’il dit. C’est une étape de clôture à part, pas une lettre de plus de POZETEK. Quelle vérité du texte reste valable pour tous les lecteurs ? Où cette vérité interpelle-t-elle, console-t-elle ou corrige-t-elle votre pensée et votre vie ? Que ferez-vous : croire, se repentir, se confier, obéir, prier, aimer ? Soyez précis. Qu’est-ce qui distingue la situation d’alors de celle d’aujourd’hui ? Que ne faut-il pas transposer directement ?",
+            "guidance": "Que signifie pour vous la vérité découverte ? Gardez-la distincte de l’observation et de l’interprétation ci-dessus. Répondre au texte en restant lié à ce qu’il dit. C’est une étape de clôture à part, pas une lettre de plus de POZETEK. Quelle vérité du texte reste valable pour tous les lecteurs ? Où cette vérité interpelle-t-elle, console-t-elle ou corrige-t-elle votre pensée et votre vie ? Que ferez-vous : croire, vous repentir, vous confier, obéir, prier, aimer ? Soyez précis. Qu’est-ce qui distingue la situation d’alors de celle d’aujourd’hui ? Que ne faut-il pas transposer directement ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -1614,10 +1614,10 @@
   "titleRequired": "Veuillez d’abord saisir un titre.",
   "titleRequiredOnBlur": "Un titre est obligatoire. Si vous quittez le champ, le titre précédent est conservé.",
   "studyCount_one": "{{count}} étude",
-  "studyCount_many": "{{count}} études",
+  "studyCount_many": "{{count}} d’études",
   "studyCount_other": "{{count}} études",
   "findingCount_one": "{{count}} note",
-  "findingCount_many": "{{count}} notes",
+  "findingCount_many": "{{count}} de notes",
   "findingCount_other": "{{count}} notes",
   "projects": {
     "title": "Projets",
@@ -1695,10 +1695,10 @@
     "empty": "Aucune étude ici pour l’instant.",
     "listLabel": "Études",
     "changed": "modifiée le {{date}}",
-    "showArchived_one": "Afficher l’archivée ({{count}})",
-    "showArchived_other": "Afficher les archivées ({{count}})",
-    "hideArchived": "Masquer les archivées",
-    "showArchived_many": "Afficher les archivées ({{count}})"
+    "showArchived_one": "Afficher l’étude archivée ({{count}})",
+    "showArchived_other": "Afficher les études archivées ({{count}})",
+    "hideArchived": "Masquer les études archivées",
+    "showArchived_many": "Afficher les études archivées ({{count}})"
   },
   "header": {
     "status": "Statut",
@@ -1707,10 +1707,10 @@
     "overview": "Vue d’ensemble",
     "noFindings": "Aucune note pour l’instant",
     "questionCount_one": "{{count}} question",
-    "questionCount_many": "{{count}} questions",
+    "questionCount_many": "{{count}} de questions",
     "questionCount_other": "{{count}} questions",
     "unresolvedCount_one": "{{count}} difficulté non résolue",
-    "unresolvedCount_many": "{{count}} difficultés non résolues",
+    "unresolvedCount_many": "{{count}} de difficultés non résolues",
     "unresolvedCount_other": "{{count}} difficultés non résolues",
     "duplicateGroup": "Dupliquer cette étude",
     "duplicatePrompt": "Faire une copie de « {{title}} » dans ce projet :",
@@ -1761,7 +1761,7 @@
     "saveAsTemplateKeeps_other": "Le modèle reprend les {{count}} parties de cette étude : leurs titres, leurs indications et leurs places dans le plan, dans cet ordre. Votre texte, vos notes, vos passages et vos détails restent dans cette étude.",
     "saveTemplate": "Enregistrer le modèle",
     "savedAsTemplate": "Enregistré comme votre modèle « {{name}} ». Vous pouvez l’utiliser pour une nouvelle étude, et le modifier dans Paramètres → Modèles.",
-    "saveAsTemplateKeeps_many": "Le modèle reprend les {{count}} parties de cette étude : leurs titres, leurs indications et leurs places dans le plan, dans cet ordre. Votre texte, vos notes, vos passages et vos détails restent dans cette étude.",
+    "saveAsTemplateKeeps_many": "Le modèle reprend toutes les parties de cette étude ({{count}}) : leurs titres, leurs indications et leurs places dans le plan, dans cet ordre. Votre texte, vos notes, vos passages et vos détails restent dans cette étude.",
     "saveAsTemplateTooMany": "Un modèle a besoin d’au moins une partie et peut en avoir au plus {{max}}. Modifiez d’abord les parties de cette étude, ou créez le modèle dans Paramètres → Modèles.",
     "findLemma": "Trouver ce lemme",
     "lemmaUnavailable": "La Bible choisie n’a pas d’annotations de mots : la recherche par lemme n’est donc pas disponible."
@@ -1875,7 +1875,7 @@
     "searching": "Recherche dans vos études…",
     "none": "Rien n’a été trouvé dans vos études.",
     "count_one": "{{count}} résultat.",
-    "count_many": "{{count}} résultats.",
+    "count_many": "{{count}} de résultats.",
     "count_other": "{{count}} résultats.",
     "results": "Résultats de la recherche dans les études",
     "location": {
@@ -1890,7 +1890,7 @@
     "intro": "Un modèle est une structure de départ : les parties par lesquelles commence une nouvelle étude, ou la forme d’un enseignement. Modifier un modèle ne change jamais les études déjà créées à partir de lui.",
     "listLabel": "Modèles d’étude",
     "sectionCount_one": "{{count}} partie",
-    "sectionCount_many": "{{count}} parties",
+    "sectionCount_many": "{{count}} de parties",
     "sectionCount_other": "{{count}} parties",
     "builtIn": "Intégré",
     "edit": "Modifier {{name}}",
@@ -2052,7 +2052,7 @@
       "close": "Fermer l’assistant",
       "selectionOnly": "Seulement les mots sélectionnés.",
       "request": {
-        "question": "Que doit faire remarquer la question ?",
+        "question": "Sur quoi la question doit-elle attirer l’attention ?",
         "story": "Quel genre d’histoire vraie cherchez-vous ?",
         "transition": "Que doit-elle relier ? (facultatif)",
         "phrasing": "Que voulez-vous dire ? (facultatif)",
@@ -2071,16 +2071,16 @@
         "request": "ce que vous avez demandé",
         "teaching": "le titre et le type de l’enseignement, et son public, son but et son message central s’ils sont écrits",
         "nearby_one": "une autre partie de cet enseignement (pour garder votre style)",
-        "nearby_many": "{{count}} autres parties de cet enseignement (pour garder votre style)",
+        "nearby_many": "{{count}} d’autres parties de cet enseignement (pour garder votre style)",
         "nearby_other": "{{count}} autres parties de cet enseignement (pour garder votre style)",
         "passages": "Écriture : {{passages}}",
         "findings_one": "une note de votre étude",
-        "findings_many": "{{count}} notes de votre étude",
+        "findings_many": "{{count}} de notes de votre étude",
         "findings_other": "{{count}} notes de votre étude",
         "quotes_one": "une citation d’un livre de votre bibliothèque, avec sa source",
-        "quotes_many": "{{count}} citations de livres de votre bibliothèque, avec leurs sources",
+        "quotes_many": "{{count}} de citations de livres de votre bibliothèque, avec leurs sources",
         "quotes_other": "{{count}} citations de livres de votre bibliothèque, avec leurs sources",
-        "searches": "Des mots de recherche tirés de votre demande (ils peuvent contenir vos mots) iront aussi à votre service de recherche."
+        "searches": "Des mots de recherche tirés de votre demande (ils peuvent contenir vos propres mots) seront aussi envoyés à votre service de recherche."
       },
       "ask": "Demander",
       "askHint": "Ctrl+Entrée pour demander, Échap pour fermer. Rien n’est envoyé avant votre demande.",
@@ -2169,7 +2169,7 @@
         "research": "Chercher quelque chose"
       },
       "freePlaceholder": "p. ex. Est-ce trop long pour un groupe de jeunes ?",
-      "freeHint": "L’assistant voit cette partie et ce dont il a besoin de cet enseignement et de cette étude. Il répond par des remarques et des questions ; il n’écrit pas votre enseignement à votre place.",
+      "freeHint": "L’assistant voit cette partie ainsi que les éléments utiles de cet enseignement et de cette étude. Il répond par des remarques et des questions ; il n’écrit pas votre enseignement à votre place.",
       "slow": "Cela prend plus de temps que d’habitude. Vous pouvez attendre ou arrêter.",
       "stop": "Ne plus attendre",
       "stopped": "Attente arrêtée. Rien n’a été modifié. Le service peut quand même terminer la demande, et elle peut compter dans votre utilisation.",
@@ -2331,7 +2331,7 @@
       "newTitle": "Nouveau modèle d’enseignement",
       "editTitle": "Modifier le modèle d’enseignement",
       "format": "Forme",
-      "pointsList": "Ce par quoi le modèle commence",
+      "pointsList": "Éléments de départ du modèle",
       "pointsHint": "Laissez un titre vide pour le nommer dans chaque enseignement.",
       "none": "Rien pour l’instant : un enseignement créé avec ce modèle commence vide.",
       "untitled": "sans titre",
@@ -2344,9 +2344,9 @@
       "group": "Enregistrer la structure de cet enseignement comme modèle",
       "name": "Nom du modèle",
       "keeps": {
-        "points": "Le modèle reprend la forme et autant de points principaux que cet enseignement, dans l’ordre. Les points commencent sans titre.",
-        "generalPoints": "Le modèle reprend la forme et autant de points principaux que cet enseignement, dans l’ordre. Les points commencent sans titre.",
-        "questions": "Le modèle reprend la forme et autant de questions que cet enseignement. Les questions commencent vides.",
+        "points": "Le modèle reprend la forme de cet enseignement et le même nombre de points principaux, dans le même ordre. Les points commencent sans titre.",
+        "generalPoints": "Le modèle reprend la forme de cet enseignement et le même nombre de points principaux, dans le même ordre. Les points commencent sans titre.",
+        "questions": "Le modèle reprend la forme de cet enseignement et le même nombre de questions. Les questions commencent vides.",
         "steps": "Le modèle reprend la forme et les étapes dans l’ordre, chacune avec son titre et son type.",
         "blocks": "Le modèle reprend la forme et les sections et blocs avec lesquels cet enseignement commence, dans l’ordre. Rien de ce qui est écrit dans les blocs n’est repris."
       },
@@ -2381,7 +2381,7 @@
       "addIn": "Ajouter un bloc dans {{section}}",
       "guidance": "Repères",
       "placeholder": "Écrire ici…",
-      "leaderOnly": "Pour vous qui conduisez. Ce texte reste hors des feuilles et des diapositives, sauf si vous le montrez aux participants.",
+      "leaderOnly": "Réservé à l’animateur. Ce texte reste hors des feuilles et des diapositives, sauf si vous le montrez aux participants.",
       "participant": "Montrer aux participants",
       "settings": "Ce bloc",
       "empty": "Cet enseignement est encore vide. Ajoutez une section ou un espace d’écriture quand vous voulez.",
@@ -2501,7 +2501,7 @@
       "back": "Retour aux enseignements",
       "study": "Étude biblique (facultative)",
       "independent": "Enseignement indépendant",
-      "keepNotes": "En changeant ou retirant le lien, les notes déjà utilisées et leurs sources restent conservées comme copies. Les modifications ultérieures de l’étude ne changent pas ces copies.",
+      "keepNotes": "Si vous modifiez ou retirez le lien, les notes déjà utilisées et leurs sources restent conservées comme copies. Les modifications ultérieures de l’étude ne changent pas ces copies.",
       "saveLink": "Enregistrer le lien",
       "savedNote": "Note d’étude conservée",
       "project": "Retour au projet",
@@ -2671,6 +2671,11 @@
       "missing_other": "{{bible}} n’a pas de texte pour les versets {{verses}} ; ils manquent ici et ne sont pas pris dans une autre Bible.",
       "missing_many": "{{bible}} n’a pas de texte pour les versets {{verses}} ; ils manquent ici et ne sont pas pris dans une autre Bible.",
       "from": "Texte biblique : {{name}}."
+    },
+    "wordStyles": {
+      "label": "Libellé de champ",
+      "writingLine": "Ligne d’écriture",
+      "writingLineLast": "Ligne d’écriture (dernière)"
     }
   },
   "phase": {
@@ -2705,10 +2710,10 @@
     "compareHeading": "Comparaison",
     "none": "L’assistant n’avait rien à ajouter.",
     "unverified_one": "{{count}} citation de la réponse ne figurait pas dans ce qui a été envoyé ; elle a été écartée.",
-    "unverified_many": "{{count}} citations de la réponse ne figuraient pas dans ce qui a été envoyé ; elles ont été écartées.",
+    "unverified_many": "{{count}} de citations de la réponse ne figuraient pas dans ce qui a été envoyé ; elles ont été écartées.",
     "unverified_other": "{{count}} citations de la réponse ne figuraient pas dans ce qui a été envoyé ; elles ont été écartées.",
     "downgradedCount_one": "{{count}} point est présenté comme un raisonnement de l’assistant, faute des mots sur lesquels il s’appuyait.",
-    "downgradedCount_many": "{{count}} points sont présentés comme des raisonnements de l’assistant, faute des mots sur lesquels ils s’appuyaient.",
+    "downgradedCount_many": "{{count}} de points sont présentés comme des raisonnements de l’assistant, faute des mots sur lesquels ils s’appuyaient.",
     "downgradedCount_other": "{{count}} points sont présentés comme des raisonnements de l’assistant, faute des mots sur lesquels ils s’appuyaient.",
     "downgraded": "Présenté comme un raisonnement de l’assistant : les mots invoqués ne figuraient pas dans ce qui a été envoyé.",
     "references": "Passages que l’assistant suggère de consulter :",
@@ -2716,9 +2721,9 @@
     "shared": {
       "remote": "Pour vous aider, ceci sera envoyé à {{assistant}}, hors de cet ordinateur :",
       "local": "Cela reste sur cet ordinateur ({{assistant}}). Il verra :",
-      "count_one": "{{count}} élément, chacun mot pour mot (ouvrez-le pour le lire) :",
-      "count_many": "{{count}} éléments, chacun mot pour mot (ouvrez-en un pour le lire) :",
-      "count_other": "{{count}} éléments, chacun mot pour mot (ouvrez-en un pour le lire) :",
+      "count_one": "{{count}} élément reproduit mot pour mot (ouvrez-le pour le lire) :",
+      "count_many": "{{count}} d’éléments reproduits mot pour mot (ouvrez-en un pour le lire) :",
+      "count_other": "{{count}} éléments reproduits mot pour mot (ouvrez-en un pour le lire) :",
       "sourceText": "Des passages de votre bibliothèque sont inclus.",
       "noSourceText": "Aucun passage de votre bibliothèque n’est inclus.",
       "noSearch": "Rien n’est recherché sur le web."
@@ -2810,7 +2815,7 @@
       "explain": "Cela devient une note dans « {{study}} », avec vos mots : modifiez ce que vous voulez avant de l’ajouter.",
       "wording": "La note",
       "kind": "Type de note",
-      "cites": "Citer les passages de source sur lesquels elle s’appuie",
+      "cites": "Citer les passages des sources sur lesquels elle s’appuie",
       "marked": "La note indiquera que {{assistant}} a aidé.",
       "add": "Ajouter comme note",
       "done": "Ajouté à votre étude biblique comme note.",
@@ -2827,6 +2832,11 @@
       "block": "Votre texte : « {{start}} »",
       "selection": "Les mots sélectionnés : « {{words}} »",
       "note": "Votre note ({{kind}}) : « {{start}} »"
+    },
+    "location": {
+      "pages": "p. {{first}}–{{last}}",
+      "paragraph": "paragraphe {{number}}",
+      "paragraphs": "paragraphes {{first}}–{{last}}"
     }
   },
   "fields": {

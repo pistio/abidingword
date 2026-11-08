@@ -65,7 +65,7 @@ describe("A.4.1 structure evidence and diagnostic", () => {
     expect(screen.getByRole("button", { name: "Copy report" })).toBeDisabled();
     await user.type(screen.getByRole("textbox", { name: "Passage to check (optional)" }), "Apg 6");
     await user.click(screen.getByRole("button", { name: "Create report" }));
-    await screen.findByText(/grounded document structure: book section/);
+    await screen.findByText(/based on document structure/);
     expect(screen.getByText(/Book section \(broader\) · Apostelgeschichte · PDF page 8 \(14\)/)).toBeVisible();
     const [, passage, observed] = diagnostic.mock.calls[0]!;
     expect(passage).toBe("Apg 6");

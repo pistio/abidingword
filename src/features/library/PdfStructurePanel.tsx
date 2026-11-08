@@ -7,7 +7,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import { toApiError } from "@/lib/api";
 import { usePdfEngine } from "./PdfEngineContext";
-import type { ContentsItem, PdfBuildProgress, PdfCorrection, PdfDiagnostic, PdfResolvedHeading, ReaderObserved, SourceSegment } from "@/types/library";
+import type { ContentsItem, PdfBuildProgress, PdfCorrection, PdfDiagnostic, PdfDiagnosticCandidate, PdfResolvedHeading, ReaderObserved, SourceSegment } from "@/types/library";
 
 /** App-owned metadata only. The original file and citation text remain intact. */
 export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage, onClose, observed }: {
@@ -45,6 +45,8 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
   const [draft, setDraft] = useState<PdfCorrection | null>(null);
   const data = structure.data;
   const unsavedAttempt = progress && ["failed", "cancelled"].includes(progress.status);
+  const progressFailure = progress?.status === "failed" ? t(progress.errorCode === "library.structure.timeout" ? "library.structure.timeout" : "library.structure.processing.failed") : null;
+  const visibleError = error ?? structure.error?.message;
   const run = async (work: () => Promise<unknown>) => {
     setBusy(true); setError(null);
     try { await work(); structure.reload(); setDraft(null); await onChanged(); }
@@ -95,10 +97,10 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
       {progress?.status === "succeeded" && <Notice tone="success">{t("library.structure.processing.success", { count: progress.headingCount ?? 0, links: progress.indexedLinks ?? 0 })}</Notice>}
       {progress?.status === "empty" && <Notice tone="warning">{t("library.structure.processing.empty")}</Notice>}
       {progress?.status === "cancelled" && <Notice>{t("library.structure.cancelled")}</Notice>}
-      {progress?.status === "failed" && <Notice tone="error">{t(progress.errorCode === "library.structure.timeout" ? "library.structure.timeout" : "library.structure.processing.failed")}</Notice>}
+      {progressFailure && <Notice tone="error">{progressFailure}</Notice>}
       {progress && progress.status !== "running" && <details><summary>{t("library.structure.processing.timings")}</summary><ul>{progress.timings.map((m, i) => <li key={i}>{t(`library.structure.processing.stages.${m.stage as PdfBuildProgress["stage"]}`)}: {t("library.structure.processing.duration", { milliseconds: m.milliseconds })}</li>)}{refreshMs !== null && <li>{t("library.structure.processing.stages.refresh")}: {t("library.structure.processing.duration", { milliseconds: refreshMs })}</li>}</ul></details>}
     </div>}
-    {(error || structure.error) && <Notice tone="error">{error ?? structure.error?.message}</Notice>}
+    {visibleError && visibleError !== progressFailure && <Notice tone="error">{visibleError}</Notice>}
     {!data && !structure.error && <p role="status">{t("common.loading")}</p>}
     <details onToggle={e=>setOriginalOpen(e.currentTarget.open)}><summary>{t("library.structure.originalBookmarks")}</summary>{originalOpen && <OriginalPdfBookmarks sourceId={sourceId} onGo={onPage}/>}</details>
     {data && <div className="flex flex-col gap-3">
@@ -178,6 +180,17 @@ function StructureDiagnostic({ sourceId, observed }: { sourceId: string; observe
     finally { setBusy(false); }
   };
   const q = report?.query;
+  const first = q?.candidates[0];
+  const evidence = (candidate: PdfDiagnosticCandidate) => {
+    const key = candidate.origin === "manual" ? "manual"
+      : candidate.origin === "section" ? (candidate.scope === "book" ? "book" : candidate.scope === "chapter" ? "chapter" : "section")
+      : candidate.origin === "inherited" ? "inherited"
+      : candidate.origin === "explicit" ? (candidate.role === "contents" ? "contents" : candidate.role === "note" ? "note" : "literal")
+      : "unknown";
+    return t(`library.structure.diagnostic.${key}`);
+  };
+  const verdict = !q?.canonical ? "invalidPassage" : !first ? "noCandidates"
+    : first.origin === "explicit" ? "literalResult" : first.origin === "manual" ? "manualResult" : "structuralResult";
   return <details className="border-t border-border pt-3" data-structure-diagnostic>
     <summary>{t("library.structure.diagnostic.title")}</summary>
     <div className="flex flex-col gap-2 pt-2">
@@ -199,9 +212,9 @@ function StructureDiagnostic({ sourceId, observed }: { sourceId: string; observe
         {!q && <Notice>{t("library.structure.diagnostic.general")}</Notice>}
         {report.structure.rebuildRecommended && <Notice>{t(report.structure.status === "none" ? "library.structure.processing.missing" : "library.structure.rebuildRecommended")}</Notice>}
         {q && <>
-          <p className="m-0">{q.verdict}</p>
+          <p className="m-0">{t(`library.structure.diagnostic.${verdict}`, { page: first?.physicalPage ?? "?" })}</p>
           <ol className="m-0 pl-5 type-meta">
-            {q.candidates.slice(0, 5).map(c => <li key={`${c.rank}-${c.segmentPosition}`}>{c.evidence} · {c.matched} · {t("library.structure.physical", { page: c.physicalPage ?? "?" })}{c.printedPage ? ` (${c.printedPage})` : ""}</li>)}
+            {q.candidates.slice(0, 5).map(c => <li key={`${c.rank}-${c.segmentPosition}`}>{evidence(c)} · {c.matched} · {t("library.structure.physical", { page: c.physicalPage ?? "?" })}{c.printedPage ? ` (${c.printedPage})` : ""}</li>)}
           </ol>
         </>}
       </div>}

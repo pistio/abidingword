@@ -37,7 +37,7 @@
       "introduction": "서론",
       "conclusion": "결론"
     },
-    "point": "성경 가르침 {{number}}번째 부분",
+    "point": "성경 가르침의 {{number}}번째 부분",
     "pointTitled": "{{number}}. {{title}}",
     "passage": "{{reference}}",
     "material": "보관한 이미지: {{title}}",
@@ -162,7 +162,10 @@
       "imageUnavailable": "이 컴퓨터에 없는 이미지",
       "scriptureUnavailable": "이 본문을 찾을 수 없습니다.",
       "pause": "멈춤",
-      "next": "다음"
+      "next": "다음",
+      "band": "색 띠",
+      "blank": "빈 화면",
+      "slideImage": "슬라이드 이미지"
     },
     "standings": {
       "verified": "두 출처로 확인함",

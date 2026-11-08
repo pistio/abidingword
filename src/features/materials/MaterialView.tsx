@@ -1,10 +1,11 @@
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import i18n from "i18next";
+import { formatLocale } from "@/i18n/format";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { ArrowLeft, Copy, FileText, FileType, Printer } from "lucide-react";
 import { Button } from "@/design-system/Button";
-import { toApiError } from "@/lib/api";
+import { toApiError, type MaterialDocxFormat } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { copyText } from "@/lib/clipboard";
 import { fileName } from "@/features/presentation/labels";
@@ -113,7 +114,7 @@ export function MaterialView({ kind, preparation, onBack }: { kind: Kind; prepar
         extension: "docx",
       });
       if (!path) return;
-      const saved = await api.materialSaveDocx({ path, document: doc, format: docxFormat() });
+      const saved = await api.materialSaveDocx({ path, document: doc, format: docxFormat(t) });
       setStatus({ tone: "ok", text: t("studies.materials.status.saved", { path: saved }) });
     } catch (e) {
       setStatus({ tone: "error", text: toApiError(e).message });
@@ -220,15 +221,29 @@ const sentence = (text: string) => (/[.!?。！？]$/.test(text.trim()) ? text.t
 
 /**
  * The Word document's proofing language and paper: the interface language
- * (with the system's region where it is the same language), and US Letter
+ * using the established locale variant, and US Letter
  * where that is the usual paper.
  */
-function docxFormat(): { language: string; paper: "a4" | "letter" } {
+function docxFormat(t: TFunction): MaterialDocxFormat {
   const system = typeof navigator === "undefined" ? "" : navigator.language || "";
-  const ui = i18n.language || "en";
-  const language = system.toLowerCase().startsWith(ui.toLowerCase()) ? system : ui;
+  const language = formatLocale();
   const region = (system.split("-")[1] ?? "").toUpperCase();
-  return { language, paper: ["US", "CA", "MX", "PH", "CL", "CO", "VE", "PR", "GT", "CR", "PA", "DO", "SV", "NI", "HN"].includes(region) ? "letter" : "a4" };
+  return {
+    language,
+    paper: ["US", "CA", "MX", "PH", "CL", "CO", "VE", "PR", "GT", "CR", "PA", "DO", "SV", "NI", "HN"].includes(region) ? "letter" : "a4",
+    // Visible in Word's styles pane; stable native style IDs and document text stay unchanged.
+    styleNames: {
+      reference: t("presentation.editor.passage"),
+      notice: t("scripture.bibles.field.notice"),
+      label: t("studies.materials.wordStyles.label"),
+      message: t("studies.teaching.shape.points.message"),
+      question: t("studies.qa.question"),
+      scripture: t("studies.inquiry.block.scripture"),
+      note: t("scripture.marks.result.note"),
+      line: t("studies.materials.wordStyles.writingLine"),
+      lineLast: t("studies.materials.wordStyles.writingLineLast"),
+    },
+  };
 }
 
 /** The material as a page of paper: always white, in the reading face, the same on screen and when printed. */

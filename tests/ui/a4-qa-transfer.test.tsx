@@ -146,7 +146,7 @@ describe("A.4.4 Add from Bible Study", () => {
     await openTeachingOptions(user);
     await user.click(within(article).getByRole("button", { name: "Add from Bible Study…" }));
     const dialog = await screen.findByRole("dialog", { name: "Add from Bible Study" });
-    expect(dialog).toHaveTextContent("starts for the leader only");
+    expect(dialog).toHaveTextContent("Copies start as leader-only content");
     const add = within(dialog).getByRole("button", { name: "Add selected" });
     expect(add).toBeDisabled();
     await user.click(await within(dialog).findByRole("checkbox", { name: /Observation/ }));

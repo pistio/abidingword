@@ -19,6 +19,8 @@ import type {
 } from "@/types/teaching";
 import { changes, wordDiff } from "./diff";
 import { assistLabel } from "./labels";
+import { inquiryAssistantLabel } from "@/features/ai/inquiryDisplay";
+import { imageAttribution } from "./imageAttribution";
 
 /** What the person asked for help with. */
 export interface AssistTarget {
@@ -393,7 +395,7 @@ export function AssistPanel(props: AssistPanelProps) {
             imagesNote={imagesNote}
             imageService={imageService}
           />
-          <p className="m-0 type-meta">{t("studies.teaching.assist.from", { assistant: reply.assistant })}</p>
+          <p className="m-0 type-meta">{t("studies.teaching.assist.from", { assistant: inquiryAssistantLabel(t, reply.assistant) })}</p>
           <div>
             <Button className="min-h-11" onClick={onClose}>
               {t("studies.teaching.assist.done")}
@@ -430,8 +432,8 @@ function Shared({ preview, target }: { preview: AssistPreview; target: AssistTar
     <div className="flex flex-col gap-1 rounded-aw bg-bg px-3 py-2">
       <p className="m-0 font-medium text-text-strong">
         {preview.remote
-          ? t("studies.teaching.assist.shared.remote", { assistant: preview.assistant })
-          : t("studies.teaching.assist.shared.local", { assistant: preview.assistant })}
+          ? t("studies.teaching.assist.shared.remote", { assistant: inquiryAssistantLabel(t, preview.assistant) })
+          : t("studies.teaching.assist.shared.local", { assistant: inquiryAssistantLabel(t, preview.assistant) })}
       </p>
       <ul className="m-0 list-disc pl-5 text-text">
         {items.map((item) => (
@@ -832,7 +834,7 @@ function Visuals({ reply, heading, kept, onKeep, canFindImages, canGenerateImage
                                 licence: image.licence,
                                 licenceUrl: image.licenceUrl,
                                 author: image.author,
-                                attribution: image.attribution,
+                                attribution: imageAttribution(t, image),
                               },
                             })
                           }
