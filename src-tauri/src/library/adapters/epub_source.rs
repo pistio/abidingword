@@ -71,6 +71,8 @@ const NOTE_CONTAINERS: &[&str] = &[
 /// The `epub:type`, `role` and class values that declare a link a note's
 /// caller.
 const NOTE_REFS: &[&str] = &["noteref", "doc-noteref", "footnote-ref", "footnoteref"];
+/// Declared back-links from a note to its caller.
+const BACK_LINKS: &[&str] = &["doc-backlink", "backlink", "footnote-back", "footnoteback"];
 
 /// One element of an entry, as written.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -391,6 +393,10 @@ pub enum LinkEvidence {
     External,
     /// It has no destination at all (`href=""`).
     Empty,
+    /// It stands inside an element the document declares holds notes, or
+    /// is declared a note's back-link (`role="doc-backlink"`): it belongs
+    /// to the apparatus, whatever it leads to.
+    InsideNotes,
 }
 
 /// One link with its role, its evidence and its place.
@@ -501,9 +507,22 @@ pub fn classify_links(book: &SourceBook) -> LinkRoles {
                 .trim()
                 .to_string();
             let declared = element.declared_noteref();
-            let (evidence, target) = evidence_for(book, entry_index, element_index, dir, href);
+            let (mut evidence, target) = evidence_for(book, entry_index, element_index, dir, href);
+            let in_apparatus = element.has(BACK_LINKS)
+                || entry
+                    .ancestors(element_index)
+                    .any(|a| entry.elements[a].has(NOTE_CONTAINERS));
+            if in_apparatus
+                && !matches!(
+                    evidence,
+                    LinkEvidence::TargetInNotes | LinkEvidence::LinksBack
+                )
+            {
+                evidence = LinkEvidence::InsideNotes;
+            }
             let role = match evidence {
                 LinkEvidence::TargetInNotes | LinkEvidence::LinksBack => LinkRole::NoteCaller,
+                LinkEvidence::InsideNotes => LinkRole::Navigation,
                 _ if declared => LinkRole::Conflict,
                 LinkEvidence::NoTarget | LinkEvidence::Empty | LinkEvidence::PairUndirected
                     if caller_shaped(&label) =>

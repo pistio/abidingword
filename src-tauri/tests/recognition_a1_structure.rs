@@ -645,6 +645,43 @@ fn a_verse_number_read_as_words_is_never_verified() {
 }
 
 #[test]
+fn a_note_s_own_back_link_never_withdraws_the_verses_around_it() {
+    // Pandoc's end-of-section notes stand between chapters; each note opens
+    // with a numbered back-link to its caller. The back-link belongs to the
+    // apparatus and is no uncertainty in the text.
+    let mut body = String::from("<h1>The Book of Ruth</h1>");
+    let mut note = 0;
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        body.push_str(&format!("<section><h2>Chapter {c}</h2><p>"));
+        for v in 1..=n {
+            body.push_str(&format!("<strong>{v}</strong> {}", words(c, v)));
+            // The caller ends its paragraph, as the note's back-link begins
+            // its own: only the declared note container tells them apart.
+            if v == n {
+                note += 1;
+                body.push_str(&format!(
+                    r##"<a href="#fn{note}" class="footnote-ref" id="fnref{note}" epub:type="noteref">{note}</a>"##
+                ));
+            }
+            if v < n {
+                body.push(' ');
+            }
+        }
+        body.push_str(&format!(
+            r##"</p><section class="footnotes" epub:type="footnotes"><aside epub:type="footnote" id="fn{note}"><p><a href="#fnref{note}" class="footnote-back" role="doc-backlink">{note}</a>. {c}:{n} A note on the verse.</p></aside></section></section>"##
+        ));
+    }
+    let path = write("back-links", &epub(&[("ruth.xhtml", body)]));
+    let (s, report) = structure_aware(&path);
+    assert!(report.gated.is_empty(), "{:?}", report.gated);
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        assert!(verified(&s, c, 1) && verified(&s, c, n), "Ruth {c}");
+    }
+}
+
+#[test]
 fn tracing_never_bridges_text_it_cannot_name() {
     let entry = epub_source::read_entry_structure(
         "x.xhtml".into(),
