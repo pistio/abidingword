@@ -25,7 +25,7 @@ normalise any text.
 | Optional-AI interface proposal (design only) | `57568b6` |
 | A1 checks found by the regression (ids, swallowed verse numbers) | `8d02b97` |
 | A1 note back-links are apparatus | `205a453` (the measured state) |
-| A2 branch | `claude/recognition-a2-pdf-engines`, from `ea5f944`; see §6 |
+| A2 branch | `claude/recognition-a2-pdf-engines`, from `ea5f944`; report `c5d81e3` |
 
 ## 2. What A1 changes, and what it does not
 
@@ -250,14 +250,94 @@ implemented in shared files.
 
 ## 6. Phase A2: PDF engines
 
-On branch `claude/recognition-a2-pdf-engines`, document
-`docs/audit/a2/pdf-engines.md`. Its summary and recommendation are copied
-into §8 of the handover once committed.
+Branch `claude/recognition-a2-pdf-engines`, commit `c5d81e3`. The report is
+`docs/audit/a2/pdf-engines.md`, its raw data is in `docs/audit/a2/data/` and
+its scripts are in `scripts/a2-pdf/`.
 
-## 7. Checks at `205a453`
+The measurement used the same 57 disclosed PDFs, with checksums verified,
+through the current extractor (pdf-extract/lopdf with the app's layout code),
+PDFium, MuPDF, Poppler and pdfminer.six.
 
-See the handover, §8.
+* **Opening files.**
+  * Current extractor: 56 of 57. G05 (groff) panics inside pdf-extract on a
+    font `/Widths` array of 256 entries, so the app reports `library.badPdf`.
+  * PDFium, MuPDF and Poppler: 57 of 57.
+* **Text completeness and order** (mean coverage / in-order share, per
+  book):
+
+  | Engine | Coverage | In order |
+  |---|---|---|
+  | Current extractor | 88.9 % | 85.5 % |
+  | PDFium | 87.4 % | 84.0 % |
+  | MuPDF | 91.4 % | 87.7 % |
+  | Poppler | 84.0 % | 74.6 % |
+
+  On 47 of 57 files, current, PDFium and MuPDF are within 2 points.
+* **Hebrew.** No engine is right on all five files. The app's own layout
+  code is best on three of them. PDFium's raw text is in visual order.
+* **Korean and Greek.** Current, PDFium and MuPDF are equal. Poppler's
+  default mode collapses on two columns.
+* **Speed and memory.** PDFium was a median 18× faster than the current
+  extractor's test binary, and used 56 MB peak against 162 MB. The current
+  times come from a debug build, so they are an upper bound.
+* **Damaged copies.**
+  * Corrupted xref offsets: PDFium, MuPDF and Poppler keep 100 % of the text;
+    the current extractor refuses the file.
+  * Missing xref and trailer: only MuPDF reads it.
+* **Extraction against recognition.** 22 documents were verified under 50 %.
+  * 16 are recognition failures: the text is complete and in order, e.g.
+    G03, F07, F01, G04 and G09.
+  * 6 are extraction failures:
+    * G05;
+    * heb-wprtl and G10 (Hebrew);
+    * three files where the app's layout code misplaces inline or margin
+      verse numbers: G13, spabll-rrlab2col and engkjvcpb-rwpdfmargin.
+* **Licensing.**
+  * PDFium is BSD-3 with permissive notices, so it is usable in the closed
+    Windows binary.
+  * MuPDF is AGPL-3.0 unless an Artifex commercial licence is bought.
+  * Poppler is GPL.
+
+  Neither MuPDF nor Poppler can be used as things stand.
+
+**Recommendation.**
+1. Use PDFium (the `pdfium-render` crate with a pinned, checksummed
+   `pdfium.dll`, 7.8 MB) as the primary glyph source.
+2. Run it out of process, in a helper with a Windows Job Object memory and
+   time limit.
+3. Feed its per-character data into the existing `pdf_layout.rs`, not
+   PDFium's own text order.
+4. Keep pdf-extract/lopdf as an in-process fallback behind a switch.
+5. Record which engine produced each document's text.
+
+**Shared interface proposal for Codex** (Sources library and Bible import),
+report §10a: a `PdfGlyphSource` trait returning `PdfDocGlyphs`. That holds
+pages of glyphs (text, box, origin, size, font, rotation, whether from
+ActualText), the page label, the outline, failed pages, the engine name and
+a repaired flag. It is the PDF counterpart of A1's `epub_source::Entry`, so
+the same span tracer can serve PDFs with glyph ranges.
+
+**Not measured, and the main risk:** PDFium glyphs through the app's own
+layout code, especially for Hebrew. That needs Rust work and is the first
+A2 step after review.
+
+## 7. Checks at `205a453` (A1 branch)
+
+| Check | Result |
+|---|---|
+| `cargo fmt -- --check` | clean |
+| `cargo clippy --all-targets --locked -- -D warnings` | clean |
+| `cargo test --locked` | 1 065 passed, 0 failed, 8 ignored (the real-document harnesses, run separately in §4) |
+| `npm run typecheck`, `npm run lint` | clean |
+| `npm run i18n:check` | 6 languages × 9 areas, 2 986 keys, all consistent (no strings added) |
+| `npm test` | 89 files, 1 053 tests passed |
+| `npm run build` | built |
+| Frozen reading against `c96756d`, 24 EPUB editions | identical apart from time, memory and temporary file names |
+| Structural reading, all disclosed EPUBs | §4: 0 new wrong verified verses, 0 verses not in the edition |
+
+All tests that existed before A1 are kept unchanged. No expectation was
+changed.
 
 ## 8. Handover
 
-See `docs/handover-recognition-a1-a2.md`.
+See [`handover-recognition-a1-a2.md`](handover-recognition-a1-a2.md).
