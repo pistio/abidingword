@@ -173,6 +173,55 @@ impl Layout {
 }
 
 fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Book> {
+    read_book_with(bytes, file_name, want_contents, None)
+}
+
+/// The book as the structure-aware reading gives it (Phase A1): the text and
+/// segments are those of [`read_book`] (nothing is cut out), and the links
+/// the book shows to lead to notes are marked as callers in each segment's
+/// `marked` text for the verse recogniser. Also returns, for each spine
+/// document read, its archive path and the segments it gave.
+pub fn read_structural(
+    bytes: &[u8],
+    file_name: &str,
+    source: &super::epub_source::SourceBook,
+    roles: &super::epub_source::LinkRoles,
+) -> AppResult<(ImportedDocument, Vec<(String, usize, usize)>)> {
+    let book = read_book_with(bytes, file_name, false, Some((source, roles)))?;
+    let layout = &book.layout;
+    let mut spans = Vec::with_capacity(layout.order.len());
+    for (index, (_, path)) in layout.order.iter().enumerate() {
+        let Some(doc) = layout.docs.get(path) else {
+            continue;
+        };
+        let end = layout
+            .order
+            .get(index + 1)
+            .and_then(|(_, next)| layout.docs.get(next))
+            .map_or(layout.total, |next| next.first);
+        spans.push((path.clone(), doc.first, end.saturating_sub(doc.first)));
+    }
+    Ok((book.document, spans))
+}
+
+/// An internal link's (archive path, fragment), for `epub_source`.
+pub(super) fn internal_link_target(
+    dir: &str,
+    doc: &str,
+    href: &str,
+) -> Option<(String, Option<String>)> {
+    link_target(dir, doc, href)
+}
+
+fn read_book_with(
+    bytes: &[u8],
+    file_name: &str,
+    want_contents: bool,
+    roles: Option<(
+        &super::epub_source::SourceBook,
+        &super::epub_source::LinkRoles,
+    )>,
+) -> AppResult<Book> {
     let bad = |why: &str| {
         AppError::Import(
             UserMessage::new(
@@ -221,7 +270,14 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
         let Some(xhtml) = read_entry(&mut archive, &path) else {
             continue;
         };
-        let (blocks, anchors) = blocks(&xhtml);
+        let (blocks, anchors) = match roles {
+            Some((source, roles)) => blocks_with(
+                &xhtml,
+                Some((roles, path.as_str())),
+                &roles.note_target_ids(source, &path),
+            ),
+            None => blocks(&xhtml),
+        };
         let chapter = blocks
             .iter()
             .find(|b| b.heading_level.is_some())
@@ -681,7 +737,25 @@ impl Acc {
 /// blockquote, dd, dt, pre, and text directly in div/section). Tolerant of
 /// imperfect markup; character references are decoded by [`unescape`].
 fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
+    blocks_with(xhtml, None, &Default::default())
+}
+
+/// [`blocks`], with the roles of the document's links decided by where they
+/// lead (Phase A1, `epub_source::classify_links`): a link that leads to a
+/// note is marked as a note's caller whatever its text, and the document's
+/// own declaration (`epub:type="noteref"`) no longer decides alone. `None`
+/// reads exactly as [`blocks`] always has.
+fn blocks_with(
+    xhtml: &str,
+    roles: Option<(&super::epub_source::LinkRoles, &str)>,
+    note_targets: &std::collections::HashSet<String>,
+) -> (Vec<Block>, Vec<(String, usize)>) {
     let mut reader = tolerant_reader(xhtml);
+    // The block being read holds an element a note's caller leads to: it is
+    // a note (Phase A1), whatever its markup says.
+    let mut target_note = false;
+    // Every `<a href>` start tag, in document order (as `epub_source` counts).
+    let mut link_ordinal = 0usize;
     let mut out = Vec::new();
     // Elements with an id, and the index of the block they begin in or at.
     let mut anchors: Vec<(String, usize)> = Vec::new();
@@ -700,9 +774,11 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
                  acc: &mut Acc,
                  heading: Option<usize>,
                  classes: &[String],
-                 note: bool| {
+                 note: bool,
+                 target_note: &mut bool| {
         let (text, marked, links) = acc.take();
         if !text.is_empty() {
+            let note = note || std::mem::take(target_note);
             out.push(Block {
                 text,
                 marked,
@@ -730,25 +806,59 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth += 1,
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading, &classes, in_notes);
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
                         heading = Some((name.as_bytes()[1] - b'0') as usize);
                         classes = class_of(&e);
                     }
                     "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr"
                     | "aside" => {
-                        flush(&mut out, &mut acc, heading, &classes, in_notes);
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
                         classes = class_of(&e);
                     }
-                    "a" if skip_depth == 0 => {
-                        if let Some(href) = attr_value(&e, "href") {
-                            acc.open_link(href);
+                    "a" => {
+                        let href = attr_value(&e, "href");
+                        let ordinal = href.as_ref().map(|_| {
+                            link_ordinal += 1;
+                            link_ordinal - 1
+                        });
+                        if skip_depth == 0 {
+                            if let Some(href) = href {
+                                acc.open_link(href);
+                            }
+                            noteref = match (roles, ordinal) {
+                                (Some((roles, path)), Some(ordinal)) => matches!(
+                                    roles.role(path, ordinal),
+                                    Some(
+                                        super::epub_source::LinkRole::NoteCaller
+                                            | super::epub_source::LinkRole::Conflict
+                                    )
+                                ),
+                                (Some(_), None) => false,
+                                (None, _) => noteref_element(&e),
+                            };
                         }
-                        noteref = noteref_element(&e);
                     }
                     "sup" => sup_depth += 1,
                     _ => {}
                 }
                 note_anchor(&e, out.len(), &mut anchors);
+                if !note_targets.is_empty() && is_note_target(&e, note_targets) {
+                    target_note = true;
+                }
             }
             Ok(Event::End(e)) => {
                 let name = local_name(e.name().as_ref()).to_ascii_lowercase();
@@ -756,13 +866,27 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth = skip_depth.saturating_sub(1),
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading, &classes, in_notes);
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
                         heading = None;
                         classes.clear();
                     }
                     "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr"
                     | "aside" => {
-                        flush(&mut out, &mut acc, heading, &classes, in_notes);
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
                         classes.clear();
                     }
                     "a" => {
@@ -780,7 +904,12 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
             Ok(Event::Empty(e)) if local_name(e.name().as_ref()).eq_ignore_ascii_case("br") => {
                 acc.push_str(" ")
             }
-            Ok(Event::Empty(e)) => note_anchor(&e, out.len(), &mut anchors),
+            Ok(Event::Empty(e)) => {
+                note_anchor(&e, out.len(), &mut anchors);
+                if !note_targets.is_empty() && is_note_target(&e, note_targets) {
+                    target_note = true;
+                }
+            }
             // Entities arrive separately (GeneralRef), so text is used as is.
             Ok(Event::Text(t)) if skip_depth == 0 => {
                 acc.push_marked(&t, mark_of(noteref, sup_depth))
@@ -803,8 +932,20 @@ fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
         heading,
         &classes,
         !note_depths.is_empty(),
+        &mut target_note,
     );
     (out, anchors)
+}
+
+fn is_note_target(
+    e: &quick_xml::events::BytesStart,
+    targets: &std::collections::HashSet<String>,
+) -> bool {
+    e.attributes().flatten().any(|a| {
+        let key = local_name(a.key.as_ref());
+        (key == "id" || (key == "name" && local_name(e.name().as_ref()) == "a"))
+            && targets.contains(&percent_decode(&a.value))
+    })
 }
 
 fn mark_of(noteref: bool, sup_depth: usize) -> Mark {

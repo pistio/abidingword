@@ -11,6 +11,7 @@
 pub mod docx;
 pub mod docx_view;
 pub mod epub;
+pub mod epub_source;
 pub mod epub_view;
 mod html_entities;
 pub mod markdown;
