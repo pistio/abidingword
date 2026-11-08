@@ -27,7 +27,7 @@
 //! provenance claim.
 
 use std::cell::RefCell;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -150,13 +150,18 @@ pub enum GateCause {
     /// A caller-shaped link that leads to no note was read as the verse's
     /// words.
     CallerShapedWords,
+    /// The verse's text holds an element of the document's own verse-number
+    /// class: a verse number was read as words.
+    SwallowedVerseNumber,
 }
 
 impl GateCause {
     /// The existing unverified reason it is stored as.
     pub fn reason(self) -> &'static str {
         match self {
-            GateCause::Untraced | GateCause::IdContradicts => "boundary",
+            GateCause::Untraced | GateCause::IdContradicts | GateCause::SwallowedVerseNumber => {
+                "boundary"
+            }
             GateCause::UncertainLink | GateCause::CallerShapedWords => "noteSign",
         }
     }
@@ -227,6 +232,9 @@ struct Placed {
     end: usize,
     matched_links: Vec<(LinkRole, usize)>,
     conflict_inside: bool,
+    /// Characters of the entry from the first span's start to the last
+    /// span's end.
+    chars: (usize, usize),
 }
 
 /// Traces every verse read from an EPUB, and withdraws the verification of
@@ -393,6 +401,10 @@ pub fn gate(
                     end: t.end,
                     matched_links,
                     conflict_inside,
+                    chars: (
+                        record.spans[0].char_start as usize,
+                        record.spans[record.spans.len() - 1].char_end as usize,
+                    ),
                 });
                 record.reasons.push(format!(
                     "traced to {} span(s) of {}, {} excluded range(s)",
@@ -429,6 +441,10 @@ pub fn gate(
         }
         // Links of uncertain role, and caller-shaped words.
         placed.sort_by_key(|p| (p.entry, p.start));
+        // Verse numbers read as words.
+        for key in swallowed_verse_numbers(book, &placed) {
+            gated.entry(key).or_insert(GateCause::SwallowedVerseNumber);
+        }
         for p in &placed {
             if p.conflict_inside {
                 gated.entry(p.key).or_insert(GateCause::UncertainLink);
@@ -527,6 +543,118 @@ fn id_check(marks: &EntryMarks, record: &VerseProvenance, key: (u8, u16, u16)) -
     match best {
         None => IdCheck::None,
         Some((_, (chapter, verse))) if (chapter, verse) == (key.1, key.2) => IdCheck::Agrees,
+        // A longer run of digits ending in the verse's own chapter cannot be
+        // split with certainty: some generators put a digit of the book's
+        // code in front of the chapter ("R110_1" for 1 Chronicles 10:1).
+        // That is no evidence either way.
+        Some((_, (chapter, verse)))
+            if verse == key.2 && digits_end_with(chapter, key.1) && chapter != key.1 =>
+        {
+            IdCheck::None
+        }
         Some((_, (chapter, verse))) => IdCheck::Contradicts { chapter, verse },
     }
+}
+
+/// Whether the decimal digits of `long` end with those of `short`.
+fn digits_end_with(long: u16, short: u16) -> bool {
+    long.to_string().ends_with(&short.to_string())
+}
+
+/// A number as verse numbers are printed: digits, perhaps a range or list
+/// ("12", "1-11", "3,4"); returns its leading value.
+fn verse_number_text(text: &str) -> Option<u16> {
+    let t = text.trim();
+    if t.is_empty()
+        || t.chars().count() > 9
+        || !t
+            .chars()
+            .all(|c| c.is_ascii_digit() || matches!(c, '-' | '\u{2010}'..='\u{2013}' | ','))
+    {
+        return None;
+    }
+    let lead: String = t.chars().take_while(|c| c.is_ascii_digit()).collect();
+    lead.parse().ok()
+}
+
+/// Verses whose traced text holds an element of the document's own
+/// verse-number class.
+///
+/// A class is the document's verse-number class only by measurement: at
+/// least ten of the verses read stand directly after an element of that
+/// class whose text is their own number, and those make up at least half of
+/// that class's number-shaped elements. Nothing is assumed from the class's
+/// name.
+fn swallowed_verse_numbers(book: &SourceBook, placed: &[Placed]) -> Vec<(u8, u16, u16)> {
+    // Number-shaped elements with classes, per entry, in text order.
+    let numbers: Vec<Vec<(usize, usize, usize, u16)>> = book
+        .entries
+        .iter()
+        .map(|entry| {
+            let mut v: Vec<(usize, usize, usize, u16)> = entry
+                .elements
+                .iter()
+                .enumerate()
+                .filter(|(_, e)| !e.classes.is_empty() && e.text_end > e.text_start)
+                .filter_map(|(i, e)| {
+                    verse_number_text(&entry.slice(e.text_start, e.text_end))
+                        .map(|n| (e.text_start, e.text_end, i, n))
+                })
+                .collect();
+            v.sort_unstable();
+            v
+        })
+        .collect();
+    let mut starts: HashMap<&str, usize> = HashMap::new();
+    let mut shaped: HashMap<&str, usize> = HashMap::new();
+    for (entry, list) in book.entries.iter().zip(&numbers) {
+        for &(_, _, i, _) in list {
+            for c in &entry.elements[i].classes {
+                *shaped.entry(c.as_str()).or_default() += 1;
+            }
+        }
+    }
+    for p in placed {
+        let entry = &book.entries[p.entry];
+        let list = &numbers[p.entry];
+        let before = list.partition_point(|&(_, end, _, _)| end <= p.chars.0);
+        // The last number element ending at or before the verse's text.
+        let Some(&(_, end, i, n)) = list[..before].iter().max_by_key(|x| x.1) else {
+            continue;
+        };
+        let gap_clear = (end..p.chars.0).all(|at| entry.text[at].is_whitespace());
+        if gap_clear && n == p.key.2 {
+            for c in &entry.elements[i].classes {
+                *starts.entry(c.as_str()).or_default() += 1;
+            }
+        }
+    }
+    let marker: HashSet<&str> = starts
+        .iter()
+        .filter(|(c, &n)| n >= 10 && n * 2 >= shaped.get(*c).copied().unwrap_or(0))
+        .map(|(c, _)| *c)
+        .collect();
+    if marker.is_empty() {
+        return Vec::new();
+    }
+    let mut out = Vec::new();
+    for p in placed {
+        let entry = &book.entries[p.entry];
+        let list = &numbers[p.entry];
+        let from = list.partition_point(|&(start, _, _, _)| start < p.chars.0);
+        let inside = list[from..]
+            .iter()
+            .take_while(|&&(start, _, _, _)| start < p.chars.1)
+            .any(|&(_, end, i, _)| {
+                end <= p.chars.1
+                    && entry.elements[i]
+                        .classes
+                        .iter()
+                        .any(|c| marker.contains(c.as_str()))
+            });
+        if inside {
+            out.push(p.key);
+        }
+    }
+    out
 }

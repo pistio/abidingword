@@ -580,6 +580,71 @@ fn an_id_at_a_verse_s_start_naming_another_verse_withdraws_verification() {
 }
 
 #[test]
+fn an_id_whose_digits_run_the_book_into_the_chapter_is_no_evidence() {
+    // Some generators write "R110_1" for chapter 10 verse 1 of a book whose
+    // code begins with a digit: the run "110" cannot be split with
+    // certainty, so it must neither agree nor contradict.
+    let mut body = String::from("<h1>The Book of Ruth</h1>");
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        body.push_str(&format!("<h2>Chapter {c}</h2>"));
+        for v in 1..=n {
+            body.push_str(&format!(
+                r#"<p><span class="verse" id="R1{c}_{v}">{v}</span> {}</p>"#,
+                words(c, v)
+            ));
+        }
+    }
+    let path = write("prefixed-ids", &epub(&[("ruth.xhtml", body)]));
+    let (s, report) = structure_aware(&path);
+    assert_eq!(report.id_contradicts, 0);
+    assert!(report.gated.is_empty(), "{:?}", report.gated);
+    for (c, &n) in RUTH.iter().enumerate() {
+        for v in 1..=n {
+            assert!(verified(&s, c as u16 + 1, v), "Ruth {}:{v}", c + 1);
+        }
+    }
+}
+
+#[test]
+fn a_verse_number_read_as_words_is_never_verified() {
+    // An omitted verse printed as "[[ <span class='v'>22</span>]]" with a
+    // note caller after it: the number must not become words of 1:21.
+    let mut body = String::from("<h1>The Book of Ruth</h1>");
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        body.push_str(&format!("<h2>Chapter {c}</h2><p class='p'>"));
+        for v in 1..=n {
+            if (c, v) == (1, 22) {
+                body.push_str(
+                    "[[ <span class='v'>22</span>]]<sup><a id='r1' href='#fn1'>1</a></sup> ",
+                );
+            } else {
+                body.push_str(&format!("<span class='v'>{v}</span>{} ", words(c, v)));
+            }
+        }
+        body.push_str("</p>");
+    }
+    body.push_str(
+        "<div class='footnotes'><p id='fn1'><a href='#r1'>1</a> Some copies lack this verse.</p></div>",
+    );
+    let path = write("omitted-verse", &epub(&[("ruth.xhtml", body)]));
+    let (s, report) = structure_aware(&path);
+    if let Some(t) = text(&s, 1, 21) {
+        assert!(
+            !t.contains("22") || !verified(&s, 1, 21),
+            "1:21 verified as {t:?}"
+        );
+    }
+    assert!(!verified(&s, 1, 22));
+    assert!(
+        verified(&s, 1, 20) && verified(&s, 2, 1),
+        "{:?}",
+        report.gated
+    );
+}
+
+#[test]
 fn tracing_never_bridges_text_it_cannot_name() {
     let entry = epub_source::read_entry_structure(
         "x.xhtml".into(),
