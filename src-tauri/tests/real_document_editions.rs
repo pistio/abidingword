@@ -379,20 +379,48 @@ fn as_usfm_defines(path: &Path) -> PathBuf {
     out
 }
 
-/// The structure-aware reading's report for an edition (Phase A1): the
-/// counts, every gated verse, and every verse's provenance.
+/// The structure-aware reading's report for an edition (Phase A1), kept
+/// compact: the counts; every gated verse; the full provenance of every
+/// verse not traced exactly and of a sample; and for every verse its status,
+/// spans, excluded ranges and id check.
 fn write_structural(
     edition: &Edition,
     report: &abiding_word_lib::scripture::structural::StructuralReport,
 ) {
+    use serde_json::{json, Value};
     let Some(out) = std::env::var_os("AW_AUDIT_OUT").map(PathBuf::from) else {
         return;
     };
     let out = out.join("structural");
     std::fs::create_dir_all(&out).unwrap();
+    let full = serde_json::to_value(report).unwrap();
+    let provenance = full["provenance"].as_object().cloned().unwrap_or_default();
+    let mut verses = serde_json::Map::new();
+    let mut detailed = serde_json::Map::new();
+    for (n, (key, p)) in provenance.iter().enumerate() {
+        let status = p["status"].as_str().unwrap_or("");
+        verses.insert(
+            key.clone(),
+            json!([
+                status,
+                p["spans"].as_array().map_or(0, Vec::len),
+                p["excluded"].as_array().map_or(0, Vec::len),
+                p["idCheck"].clone()
+            ]),
+        );
+        if status != "exact" || n < 25 || report.gated.contains_key(key) {
+            detailed.insert(key.clone(), p.clone());
+        }
+    }
+    let mut summary = full.clone();
+    if let Value::Object(m) = &mut summary {
+        m.remove("provenance");
+        m.insert("verses".into(), Value::Object(verses));
+        m.insert("detailed".into(), Value::Object(detailed));
+    }
     std::fs::write(
         out.join(format!("{}.json", edition.key)),
-        serde_json::to_string(report).unwrap(),
+        serde_json::to_string(&summary).unwrap(),
     )
     .unwrap();
 }
