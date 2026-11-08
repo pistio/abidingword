@@ -137,43 +137,93 @@ pub struct VerseProvenance {
 
 /// What every character of an entry is, for tracing: part of a link with a
 /// role, or plain.
+///
+/// Kept small (Phase A1.2): it exists for every character of a book at
+/// once. A link mark is a `u32` (the role in the top bits, the element
+/// below), kept as runs; the removal marks are allocated only for an entry
+/// that has a removal; positions are `u32`.
 pub struct EntryMarks<'a> {
     pub entry: &'a Entry,
-    /// For each character: the role and element of the link it is in, if any.
-    pub link: Vec<Option<(LinkRole, usize)>>,
+    /// For each character: the role and element of the link it is in, if
+    /// any (`link_at`), as runs.
+    link: crate::library::adapters::epub_source::Runs,
     /// For each character: the element it was removed with, when the
     /// recogniser reported setting that whole element apart and the
-    /// document grounds it (Phase A1.1, `mark_removed`).
-    pub removed: Vec<Option<usize>>,
+    /// document grounds it (Phase A1.1, `mark_removed`, `removed_at`).
+    /// Empty until the entry's first removal.
+    removed: Vec<u32>,
     /// Positions of the non-white-space characters, in order.
-    nonspace: Vec<usize>,
+    nonspace: Vec<u32>,
+}
+
+const NO_MARK: u32 = u32::MAX;
+const ROLE_SHIFT: u32 = 29;
+const ELEMENT_MASK: u32 = (1 << ROLE_SHIFT) - 1;
+
+fn role_code(role: LinkRole) -> u32 {
+    match role {
+        LinkRole::NoteCaller => 0,
+        LinkRole::Navigation => 1,
+        LinkRole::Conflict => 2,
+        LinkRole::Ambiguous => 3,
+    }
+}
+
+fn role_of(code: u32) -> LinkRole {
+    match code {
+        0 => LinkRole::NoteCaller,
+        1 => LinkRole::Navigation,
+        2 => LinkRole::Conflict,
+        _ => LinkRole::Ambiguous,
+    }
 }
 
 impl<'a> EntryMarks<'a> {
     pub fn new(entry: &'a Entry, links: &[(LinkRole, usize)]) -> Self {
-        let mut link = vec![None; entry.text.len()];
+        assert!(
+            entry.text.len() < NO_MARK as usize && entry.elements.len() <= ELEMENT_MASK as usize,
+            "entry too large for its marks"
+        );
+        let mut link = vec![NO_MARK; entry.text.len()];
         for &(role, element) in links {
             let e = &entry.elements[element];
+            let mark = (role_code(role) << ROLE_SHIFT) | element as u32;
             for slot in link
                 .iter_mut()
                 .take(e.text_end.min(entry.text.len()))
                 .skip(e.text_start)
             {
-                *slot = Some((role, element));
+                *slot = mark;
             }
         }
-        let nonspace = entry
+        let mut nonspace = entry
             .text
             .iter()
             .enumerate()
             .filter(|(_, c)| !c.is_whitespace())
-            .map(|(i, _)| i)
-            .collect();
+            .map(|(i, _)| i as u32)
+            .collect::<Vec<u32>>();
+        nonspace.shrink_to_fit();
+        let link = crate::library::adapters::epub_source::Runs::from_dense(&link);
         Self {
             entry,
             link,
-            removed: vec![None; entry.text.len()],
+            removed: Vec::new(),
             nonspace,
+        }
+    }
+
+    /// The role and element of the link the character at `at` is in.
+    pub fn link_at(&self, at: usize) -> Option<(LinkRole, usize)> {
+        let mark = self.link.get(at);
+        (mark != NO_MARK).then(|| (role_of(mark >> ROLE_SHIFT), (mark & ELEMENT_MASK) as usize))
+    }
+
+    /// The element the character at `at` was removed with.
+    pub fn removed_at(&self, at: usize) -> Option<usize> {
+        match self.removed.get(at) {
+            Some(&e) if e != NO_MARK => Some(e as usize),
+            _ => None,
         }
     }
 
@@ -181,17 +231,20 @@ impl<'a> EntryMarks<'a> {
     /// characters are excluded from any verse and reported as
     /// `ExcludedKind::Apparatus` ranges with the element's bytes.
     pub fn mark_removed(&mut self, element: usize) {
+        if self.removed.is_empty() {
+            self.removed = vec![NO_MARK; self.entry.text.len()];
+        }
         let e = &self.entry.elements[element];
         let end = e.text_end.min(self.removed.len());
         for slot in self.removed.iter_mut().take(end).skip(e.text_start) {
-            *slot = Some(element);
+            *slot = element as u32;
         }
     }
 
     /// Index in `nonspace` of the first non-space character at or after the
     /// character `at`.
     pub fn nonspace_at(&self, at: usize) -> usize {
-        self.nonspace.partition_point(|&i| i < at)
+        self.nonspace.partition_point(|&i| (i as usize) < at)
     }
 
     pub fn nonspace_len(&self) -> usize {
@@ -199,24 +252,24 @@ impl<'a> EntryMarks<'a> {
     }
 
     pub fn char_of(&self, k: usize) -> usize {
-        self.nonspace[k]
+        self.nonspace[k] as usize
     }
 
     /// Why the character at `at` is never part of a verse, if it is not.
     pub fn excluded_kind(&self, at: usize) -> Option<ExcludedKind> {
-        match self.link[at] {
+        match self.link_at(at) {
             Some((LinkRole::NoteCaller, _)) => Some(ExcludedKind::NoteCaller),
             Some((LinkRole::Conflict, _)) => Some(ExcludedKind::ConflictingCaller),
-            _ => self.removed[at].map(|_| ExcludedKind::Apparatus),
+            _ => self.removed_at(at).map(|_| ExcludedKind::Apparatus),
         }
     }
 
     /// The element an excluded character belongs to (its link, or the
     /// element removed with it).
     fn excluded_element(&self, at: usize) -> Option<usize> {
-        match self.link[at] {
+        match self.link_at(at) {
             Some((LinkRole::NoteCaller | LinkRole::Conflict, e)) => Some(e),
-            _ => self.removed[at],
+            _ => self.removed_at(at),
         }
     }
 }
@@ -231,7 +284,7 @@ pub fn locate_segments(marks: &EntryMarks, segments: &[&str]) -> Vec<Option<(usi
     let stream: Vec<char> = marks
         .nonspace
         .iter()
-        .map(|&i| marks.entry.text[i])
+        .map(|&i| marks.entry.text[i as usize])
         .collect();
     let mut cursor = 0usize;
     for segment in segments {
@@ -290,7 +343,7 @@ pub fn trace(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<T
     let to = to.min(marks.nonspace.len());
     let mut start = from;
     while start < to {
-        let at = marks.nonspace[start];
+        let at = marks.nonspace[start] as usize;
         if marks.entry.text[at] == wanted[0] && marks.excluded_kind(at).is_none() {
             if let Some(t) = attempt(marks, &wanted, start, to) {
                 return Some(t);
@@ -314,7 +367,7 @@ pub fn find_opening(marks: &EntryMarks, text: &str, from: usize, to: usize) -> O
     let wanted = &wanted[..wanted.len().min(OPENING)];
     let to = to.min(marks.nonspace.len());
     (from..to).find(|&start| {
-        let at = marks.nonspace[start];
+        let at = marks.nonspace[start] as usize;
         marks.entry.text[at] == wanted[0]
             && marks.excluded_kind(at).is_none()
             && attempt(marks, wanted, start, to).is_some()
@@ -337,7 +390,7 @@ fn attempt(marks: &EntryMarks, wanted: &[char], start: usize, to: usize) -> Opti
         if k >= to {
             return None;
         }
-        let at = marks.nonspace[k];
+        let at = marks.nonspace[k] as usize;
         let c = marks.entry.text[at];
         if let Some(kind) = marks.excluded_kind(at) {
             excluded.push((at, kind));
@@ -446,8 +499,8 @@ fn range(entry: &Entry, start: usize, end: usize) -> SourceRange {
     SourceRange {
         char_start: start as u32,
         char_end: end as u32,
-        byte_start: entry.bytes[start].0,
-        byte_end: entry.bytes[end - 1].1,
+        byte_start: entry.byte_range(start).0,
+        byte_end: entry.byte_range(end - 1).1,
     }
 }
 
@@ -478,11 +531,11 @@ pub fn collapse(text: &str) -> String {
     text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
-/// Reads back a span's exact original bytes from the entry (for audits:
-/// the bytes, not the decoded text).
-pub fn original_bytes<'b>(entry: &'b Entry, span: &SourceRange) -> &'b str {
-    entry
-        .source
+/// Reads back a span's exact original bytes from the entry as stored (for
+/// audits: the bytes, not the decoded text). `stored` is the entry's bytes
+/// from the archive; they must be the ones `entry.sha256` names.
+pub fn original_bytes<'b>(stored: &'b str, span: &SourceRange) -> &'b str {
+    stored
         .get(span.byte_start as usize..span.byte_end as usize)
         .unwrap_or("")
 }

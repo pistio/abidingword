@@ -334,10 +334,13 @@ pub fn gate(
         let mut removals: HashMap<(u8, u16, u16), Vec<Removal>> = HashMap::new();
         // Pass 0 learns which classes carry verse text; pass 1 traces again
         // with the removals the document grounds, and decides.
+        // Each character's innermost element: computed once, for pass 1
+        // and for the check of what lies between verses.
+        let mut owners: Vec<epub_source::Runs> = Vec::new();
         for pass in 0..2 {
             let last = pass == 1;
             if last {
-                let owners: Vec<Vec<u32>> = book.entries.iter().map(|e| e.owners()).collect();
+                owners = book.entries.iter().map(|e| e.owners()).collect();
                 let apart = SetApart::measure(book, &source.roles, &marks, &owners, &placed);
                 removals = grounded_removals(
                     &stage.apparatus,
@@ -440,7 +443,7 @@ pub fn gate(
                     };
                     record.id_check = id_check(m, &record, key);
                     let matched_links: Vec<(LinkRole, usize)> =
-                        t.matched.iter().filter_map(|&at| m.link[at]).collect();
+                        t.matched.iter().filter_map(|&at| m.link_at(at)).collect();
                     let conflict_inside = record
                         .excluded
                         .iter()
@@ -518,7 +521,6 @@ pub fn gate(
         placed.sort_by_key(|p| (p.entry, p.start));
         // Letters between a verse and the next that nothing accounts for.
         {
-            let owners: Vec<Vec<u32>> = book.entries.iter().map(|e| e.owners()).collect();
             let apart = SetApart::measure(book, &source.roles, &marks, &owners, &placed);
             for key in unaccounted_text(book, &marks, &owners, &apart, &placed, &unplaced) {
                 gated.entry(key).or_insert(GateCause::UnaccountedText);
@@ -617,7 +619,9 @@ fn id_check(marks: &EntryMarks, record: &VerseProvenance, key: (u8, u16, u16)) -
             c.is_whitespace()
                 || c.is_ascii_digit()
                 || c.is_ascii_punctuation()
-                || marks.link[i].is_some_and(|(r, _)| matches!(r, LinkRole::NoteCaller))
+                || marks
+                    .link_at(i)
+                    .is_some_and(|(r, _)| matches!(r, LinkRole::NoteCaller))
         });
         if clear && best.is_none_or(|(at, _)| e.text_start >= at) {
             best = Some((e.text_start, reference));
@@ -778,7 +782,7 @@ impl<'a> SetApart<'a> {
         book: &'a SourceBook,
         roles: &LinkRoles,
         marks: &[EntryMarks],
-        owners: &[Vec<u32>],
+        owners: &[epub_source::Runs],
         placed: &[Placed],
     ) -> Self {
         let mut carrying: HashSet<&'a str> = HashSet::new();
@@ -791,7 +795,8 @@ impl<'a> SetApart<'a> {
             let mut last = epub_source::NO_ELEMENT;
             for &(from, to) in &p.spans {
                 let end = to.min(entry.text.len());
-                for (at, &owner) in owners[p.entry].iter().enumerate().take(end).skip(from) {
+                for at in from..end {
+                    let owner = owners[p.entry].get(at);
                     if owner == last
                         || owner == epub_source::NO_ELEMENT
                         || entry.text[at].is_whitespace()
@@ -894,7 +899,7 @@ fn grounded_removals(
     apparatus: &[crate::scripture::structure::Apparatus],
     verse_places: &HashMap<(u8, u16, u16), (usize, usize, usize)>,
     marks: &[EntryMarks],
-    owners: &[Vec<u32>],
+    owners: &[epub_source::Runs],
     apart: &SetApart,
     book: &SourceBook,
 ) -> HashMap<(u8, u16, u16), Vec<Removal>> {
@@ -929,7 +934,7 @@ fn grounded_removals(
             let mut k = from;
             while k + wanted.len() <= end {
                 if (0..wanted.len()).all(|n| e.text[m.char_of(k + n)] == wanted[n]) {
-                    let owner = owners[entry][m.char_of(k)];
+                    let owner = owners[entry].get(m.char_of(k));
                     if owner != epub_source::NO_ELEMENT {
                         let whole = e.chain_to_block(owner as usize).into_iter().find(|&i| {
                             let el = &e.elements[i];
@@ -983,7 +988,7 @@ fn removals_in_place(
         if kind != ExcludedKind::Apparatus {
             continue;
         }
-        let element = m.removed[at]?;
+        let element = m.removed_at(at)?;
         if seen.contains(&element) {
             continue;
         }
@@ -1020,7 +1025,7 @@ fn removals_in_place(
 fn unaccounted_text(
     book: &SourceBook,
     marks: &[EntryMarks],
-    owners: &[Vec<u32>],
+    owners: &[epub_source::Runs],
     apart: &SetApart,
     placed: &[Placed],
     unplaced: &[(usize, usize)],
@@ -1047,7 +1052,7 @@ fn unaccounted_text(
         let loose = (p.chars.1..gap_end).any(|at| {
             entry.text[at].is_alphabetic()
                 && m.excluded_kind(at).is_none()
-                && !apart.holds(book, p.entry, owners[p.entry][at])
+                && !apart.holds(book, p.entry, owners[p.entry].get(at))
         });
         if loose {
             out.push(p.key);

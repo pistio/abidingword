@@ -61,6 +61,26 @@ fn epub_styled(files: &[(&str, String)], css: &str) -> Vec<u8> {
     out
 }
 
+/// An entry of an EPUB as stored in the archive, checked against the hash
+/// the source model recorded for it: the bytes every byte range points into.
+fn stored_entry(epub: &[u8], entry: &epub_source::Entry) -> String {
+    use std::io::Read;
+    let mut archive = zip::ZipArchive::new(std::io::Cursor::new(epub)).unwrap();
+    let mut stored = String::new();
+    archive
+        .by_name(&entry.path)
+        .unwrap()
+        .read_to_string(&mut stored)
+        .unwrap();
+    assert_eq!(
+        abiding_word_lib::library::files::content_hash(stored.as_bytes()),
+        entry.sha256,
+        "the stored entry is the one the source model read"
+    );
+    assert_eq!(stored.len(), entry.source_len);
+    stored
+}
+
 fn write(name: &str, bytes: &[u8]) -> PathBuf {
     let dir = std::env::temp_dir().join(format!("aw-a1-{}-{name}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
@@ -484,12 +504,13 @@ fn a_verse_around_a_caller_is_two_exact_spans_and_one_excluded_range() {
     let book = epub_source::read(&bytes).unwrap();
     let entry = &book.entries[book.by_path["OEBPS/ruth.xhtml"]];
     assert_eq!(p.file.entry_sha256, entry.sha256);
+    let stored = stored_entry(&bytes, entry);
     assert_eq!(
-        provenance::original_bytes(entry, &p.spans[0]),
+        provenance::original_bytes(&stored, &p.spans[0]),
         "Text before note"
     );
     assert_eq!(
-        provenance::original_bytes(entry, &p.spans[1]),
+        provenance::original_bytes(&stored, &p.spans[1]),
         "text after note."
     );
     assert_eq!(p.excluded.len(), 1);
@@ -498,7 +519,7 @@ fn a_verse_around_a_caller_is_two_exact_spans_and_one_excluded_range() {
     assert_eq!(x.text, "[1]");
     let (a, b) = x.element_bytes.unwrap();
     assert_eq!(
-        &entry.source[a as usize..b as usize],
+        &stored[a as usize..b as usize],
         r##"<a class="fnanchor" href="#Footnote_1">[1]</a>"##
     );
     // The caller lies between the two spans, in the original's order.
@@ -524,10 +545,11 @@ fn entities_and_inline_markup_keep_exact_byte_ranges() {
     let bytes = std::fs::read(&path).unwrap();
     let book = epub_source::read(&bytes).unwrap();
     let entry = &book.entries[0];
+    let stored = stored_entry(&bytes, entry);
     let original: String = p
         .spans
         .iter()
-        .map(|s| provenance::original_bytes(entry, s))
+        .map(|s| provenance::original_bytes(&stored, s))
         .collect();
     assert_eq!(original, "Naomi &amp; Ruth <i>went</i> on&#8212;together.");
 }
