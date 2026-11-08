@@ -15,7 +15,9 @@
     "titleRequired": "Ponle un título.",
     "titleTooLong": "El título es demasiado largo. Debe tener menos de {{max}} caracteres.",
     "textTooLong": "Este texto es demasiado largo. Debe tener menos de {{max}} caracteres.",
-    "blockTooLong": "Este bloque es demasiado largo para guardarlo. Divídelo en varios bloques."
+    "blockTooLong": "Este bloque es demasiado largo para guardarlo. Divídelo en varios bloques.",
+    "entryInvalid": "No se pudo guardar esta entrada.",
+    "unknownField": "Esta parte no contiene ese campo."
   },
   "search": {
     "empty": "Escribe una palabra o frase para buscar."
@@ -155,12 +157,21 @@
     "structure": {
       "corrupt": "No se pudo leer la estructura PDF guardada. El texto y el original permanecen intactos.",
       "invalid": "Esta corrección ya no coincide con la fuente. Abra de nuevo su texto e inténtelo otra vez.",
-      "timeout": "El análisis alcanzó su límite de tiempo en un punto seguro. Los metadatos anteriores no cambiaron. Reintenta o guarda un diagnóstico.",
+      "timeout": "El análisis superó el límite de tiempo y se detuvo. Este intento no guardó ningún cambio. Vuelve a intentarlo o guarda un informe de diagnóstico.",
       "cancelled": "Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar.",
       "busy": "Ya hay un análisis en curso. Espera o cancélalo antes de reintentar.",
       "limit": "El PDF supera los límites de análisis admitidos. Los metadatos anteriores no cambiaron.",
       "failed": "El análisis falló. La estructura y los enlaces anteriores se conservan. Reintenta o guarda un informe de diagnóstico."
-    }
+    },
+    "nothingChosen": "Selecciona al menos un elemento.",
+    "notInTrash": "Solo los elementos de la papelera se pueden eliminar permanentemente. Muévelos primero a la papelera.",
+    "badYear": "El año debe ser un número entre 0 y 3000.",
+    "collectionCycle": "Una colección no se puede mover a sí misma ni a una de sus subcolecciones.",
+    "linkUnsupported": "No se puede abrir este tipo de enlace.",
+    "tooMany": "Puedes modificar un máximo de {{count}} elementos a la vez.",
+    "badName": "Usa un nombre de entre 1 y {{max}} caracteres.",
+    "collectionExists": "Ya existe aquí una colección llamada «{{name}}».",
+    "tagExists": "Ya existe una etiqueta llamada «{{name}}»."
   },
   "templates": {
     "noSections": "Una plantilla necesita al menos una parte con la que empezar.",
@@ -284,7 +295,8 @@
     "tooManySlides": "Demasiadas diapositivas para mostrarlas a la vez."
   },
   "material": {
-    "tooLong": "Es demasiado largo para guardarlo en un solo archivo."
+    "tooLong": "Es demasiado largo para guardarlo en un solo archivo.",
+    "tooManyPassages": "Este material contiene demasiados pasajes para incluir su texto."
   },
   "teachingTemplates": {
     "noKind": "Elige para qué es la plantilla.",
@@ -322,7 +334,8 @@
     "grammarNotFit": "Estos códigos gramaticales no encajan en ese sistema, así que se muestran tal como están escritos.",
     "textDiffers": "Los archivos guardados ya no dan exactamente el texto de esta Biblia, así que no se pueden añadir sus palabras. Quita la Biblia y vuelve a añadirla para obtenerlas.",
     "noSource": "Los archivos desde los que se añadió esta Biblia ya no se guardan, así que sus palabras no se pueden volver a leer. Quita la Biblia y vuelve a añadirla para obtenerlas.",
-    "nothingToIndex": "Estos archivos no tienen información de palabras que se pueda indexar."
+    "nothingToIndex": "Estos archivos no tienen información de palabras que se pueda indexar.",
+    "documentBible": "No se puede añadir información de palabras a una Biblia añadida desde un documento."
   },
   "batch": {
     "noFiles": "No se encontraron allí archivos que la biblioteca pueda leer.",
@@ -336,5 +349,6 @@
     "notVerified": "«{{fileName}}» no coincidía con la copia verificada, así que no se guardó nada. Inténtalo más tarde.",
     "unreachable": "No se pudo completar la descarga. Comprueba la conexión a internet e inténtalo de nuevo.",
     "busy": "Ya hay una descarga en curso. Espera a que termine."
-  }
+  },
+  "messageUnavailable": "No se pudo completar esta acción. Vuelve a intentarlo."
 }

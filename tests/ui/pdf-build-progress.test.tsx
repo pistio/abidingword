@@ -28,7 +28,7 @@ describe("observable PDF analysis",()=>{
     const user=userEvent.setup();await user.click(screen.getAllByRole("button",{name:"Close"}).at(-1)!);
     expect(first.close).toHaveBeenCalled();first.unmount();
     progress={...running,status:"failed",errorCode:"library.structure.timeout",canCancel:false};
-    panel(api);await screen.findByText(/reached its time limit/);
+    panel(api);await screen.findByText(/analysis took too long/i);
     expect(screen.getByRole("button",{name:"Build structure"})).toBeEnabled();
     expect(screen.queryByText(/headings saved/)).not.toBeInTheDocument();
   });

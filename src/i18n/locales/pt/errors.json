@@ -15,7 +15,9 @@
     "titleRequired": "Dê um título, por favor.",
     "titleTooLong": "O título é longo demais. Use menos de {{max}} caracteres.",
     "textTooLong": "Este texto é longo demais. Use menos de {{max}} caracteres.",
-    "blockTooLong": "Este bloco é longo demais para ser salvo. Divida-o em vários blocos."
+    "blockTooLong": "Este bloco é longo demais para ser salvo. Divida-o em vários blocos.",
+    "entryInvalid": "Não foi possível salvar esta entrada.",
+    "unknownField": "Esta parte não contém esse campo."
   },
   "search": {
     "empty": "Digite uma palavra ou frase para pesquisar."
@@ -155,12 +157,21 @@
     "structure": {
       "corrupt": "Não foi possível ler a estrutura PDF salva. O texto e o original permanecem intactos.",
       "invalid": "Esta correção não corresponde mais à fonte. Abra o texto novamente e tente outra vez.",
-      "timeout": "A análise atingiu o limite de tempo num ponto seguro. Os metadados anteriores não mudaram. Tente novamente ou guarde um diagnóstico.",
-      "cancelled": "Análise cancelada. A estrutura e as ligações anteriores não mudaram. Pode tentar novamente.",
-      "busy": "Já existe uma análise em curso. Aguarde ou cancele-a antes de tentar novamente.",
+      "timeout": "A análise ultrapassou o limite de tempo e foi interrompida. Esta tentativa não salvou nenhuma alteração. Tente novamente ou salve um relatório de diagnóstico.",
+      "cancelled": "Análise cancelada. A estrutura e os vínculos anteriores não foram alterados. Você pode tentar novamente.",
+      "busy": "Já há uma análise em andamento. Aguarde ou cancele antes de tentar novamente.",
       "limit": "O PDF excede os limites de análise suportados. Os metadados anteriores não mudaram.",
-      "failed": "A análise falhou. A estrutura e as ligações anteriores foram preservadas. Tente novamente ou guarde um relatório de diagnóstico."
-    }
+      "failed": "A análise falhou. A estrutura e os vínculos anteriores foram preservados. Tente novamente ou salve um relatório de diagnóstico."
+    },
+    "nothingChosen": "Selecione pelo menos um item.",
+    "notInTrash": "Só é possível excluir permanentemente itens que estão na lixeira. Mova-os primeiro para a lixeira.",
+    "badYear": "O ano deve ser um número entre 0 e 3000.",
+    "collectionCycle": "Uma coleção não pode ser movida para dentro dela mesma nem de uma de suas subcoleções.",
+    "linkUnsupported": "Não é possível abrir esse tipo de link.",
+    "tooMany": "Você pode alterar no máximo {{count}} itens de uma vez.",
+    "badName": "Use um nome com 1 a {{max}} caracteres.",
+    "collectionExists": "Já existe aqui uma coleção chamada “{{name}}”.",
+    "tagExists": "Já existe uma etiqueta chamada “{{name}}”."
   },
   "templates": {
     "noSections": "Um modelo precisa de pelo menos uma parte para começar.",
@@ -237,7 +248,7 @@
     "noImageSearch": "A busca de imagens está desligada. Você pode ligá-la em Configurações.",
     "noImageGeneration": "Criar imagens não está configurado, ou este serviço de IA não pode criar imagens. Você pode escolher um serviço para imagens em Configurações → Assistente de IA.",
     "imageFailed": "Desta vez não foi possível criar a imagem. Tente de novo.",
-    "keyStore": "Não foi possível guardar a chave no cofre de senhas deste computador.",
+    "keyStore": "Não foi possível salvar a chave no cofre de senhas deste computador.",
     "badKey": "Isso não parece uma chave. Cole de novo.",
     "badAddress": "Digite um endereço que comece com http:// ou https://.",
     "badModel": "Esse nome de modelo é longo demais.",
@@ -284,7 +295,8 @@
     "tooManySlides": "Slides demais para mostrar de uma vez."
   },
   "material": {
-    "tooLong": "É longo demais para salvar em um só arquivo."
+    "tooLong": "É longo demais para salvar em um só arquivo.",
+    "tooManyPassages": "Este material contém passagens demais para incluir todo o texto."
   },
   "teachingTemplates": {
     "noKind": "Escolha para que serve o modelo.",
@@ -322,7 +334,8 @@
     "grammarNotFit": "Estes códigos gramaticais não se encaixam nesse sistema, por isso aparecem como estão escritos.",
     "textDiffers": "Os arquivos guardados já não dão exatamente o texto desta Bíblia, por isso as palavras dela não podem ser adicionadas. Remova a Bíblia e adicione-a novamente para obtê-las.",
     "noSource": "Os arquivos a partir dos quais esta Bíblia foi adicionada já não estão guardados, por isso as palavras dela não podem ser lidas novamente. Remova a Bíblia e adicione-a novamente para obtê-las.",
-    "nothingToIndex": "Estes arquivos não têm informações de palavras que possam ser indexadas."
+    "nothingToIndex": "Estes arquivos não têm informações de palavras que possam ser indexadas.",
+    "documentBible": "Não é possível adicionar informações de palavras a uma Bíblia adicionada a partir de um documento."
   },
   "batch": {
     "noFiles": "Nenhum arquivo que a biblioteca consiga ler foi encontrado ali.",
@@ -336,5 +349,6 @@
     "notVerified": "“{{fileName}}” não correspondia à cópia verificada, então nada foi guardado. Tente novamente mais tarde.",
     "unreachable": "Não foi possível concluir o download. Verifique a conexão com a internet e tente novamente.",
     "busy": "Já há um download em andamento. Aguarde até que termine."
-  }
+  },
+  "messageUnavailable": "Não foi possível concluir esta ação. Tente novamente."
 }

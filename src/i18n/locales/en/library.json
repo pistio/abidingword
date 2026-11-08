@@ -614,7 +614,21 @@
       "saved": "Saved to {{path}}",
       "file": "File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings",
       "general": "General status report — no passage was checked. To inspect Acts 6 candidates, enter Apg 6 before creating or saving another report.",
-      "queryHelp": "Enter a passage above to check a specific reference. An empty field produces a general status report."
+      "queryHelp": "Enter a passage above to check a specific reference. An empty field produces a general status report.",
+      "invalidPassage": "The passage could not be read. Enter a book and chapter, for example Acts 6.",
+      "noCandidates": "No reference in this source overlaps the passage.",
+      "structuralResult": "The first result is based on document structure, on PDF page {{page}}.",
+      "literalResult": "No matching section was found. The first result is a reference mention on PDF page {{page}}.",
+      "section": "Section heading",
+      "book": "Book section (broader)",
+      "chapter": "Chapter heading",
+      "manual": "Linked by you",
+      "contents": "Contents entry",
+      "note": "Mention in a note",
+      "literal": "Reference mention",
+      "inherited": "Within a mapped section",
+      "unknown": "Reference link",
+      "manualResult": "The first result is a link you added, on PDF page {{page}}."
     },
     "processing": {
       "label": "Analysis progress",
@@ -645,7 +659,7 @@
       "previous": "Previous saved analysis — this attempt did not save any changes."
     },
     "cancelled": "Analysis cancelled. Previous structure and links are unchanged. You can retry.",
-    "timeout": "Analysis reached its time limit at a safe processing boundary. Previous metadata is unchanged. Retry or save a diagnostic report.",
+    "timeout": "The analysis took too long and was stopped. This attempt saved no changes. Try again or save a diagnostic report.",
     "busy": "An analysis is already running. Wait or cancel it before retrying.",
     "limit": "The PDF exceeds the supported analysis limits. Previous metadata is unchanged.",
     "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report.",
@@ -677,5 +691,14 @@
       "fitWidth": "Fit width",
       "fitPage": "Fit page"
     }
+  },
+  "fileDialog": {
+    "source": "Choose a file to add to your library",
+    "sources": "Choose files to add to your library",
+    "folder": "Choose a folder to add to your library",
+    "sourceTypes": "Books and notes (PDF, EPUB, Word, Markdown, text)",
+    "bible": "Choose a Bible to add",
+    "bibleTypes": "Bible files (USFM, .zip, PDF, EPUB, Word, Markdown, text)",
+    "allFiles": "All files"
   }
 }

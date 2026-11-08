@@ -656,7 +656,21 @@
       "saved": "Guardado en {{path}}",
       "file": "SHA-256 del archivo {{hash}} · {{pages}} páginas · {{headings}} títulos",
       "general": "Informe general: no se comprobó ningún pasaje. Para examinar los candidatos de Hechos 6, escribe Apg 6 antes de crear o guardar otro informe.",
-      "queryHelp": "Escribe un pasaje arriba para comprobarlo. Si el campo está vacío, el informe solo muestra el estado general."
+      "queryHelp": "Escribe un pasaje arriba para comprobarlo. Si el campo está vacío, el informe solo muestra el estado general.",
+      "invalidPassage": "No se pudo interpretar el pasaje. Escribe un libro y un capítulo, por ejemplo Hechos 6.",
+      "noCandidates": "Ninguna referencia de esta fuente coincide con los versículos del pasaje.",
+      "structuralResult": "El primer resultado se basa en la estructura del documento, en la página {{page}} del PDF.",
+      "literalResult": "No se encontró una sección coincidente. El primer resultado es una mención en la página {{page}} del PDF.",
+      "section": "Título de sección",
+      "book": "Sección del libro (más amplia)",
+      "chapter": "Título de capítulo",
+      "manual": "Vínculo añadido por ti",
+      "contents": "Entrada del índice",
+      "note": "Mención en una nota",
+      "literal": "Mención del pasaje",
+      "inherited": "Dentro de una sección vinculada",
+      "unknown": "Referencia a un pasaje",
+      "manualResult": "El primer resultado es un vínculo que añadiste, en la página {{page}} del PDF."
     },
     "processing": {
       "label": "Progreso del análisis",
@@ -687,7 +701,7 @@
       "previous": "Análisis guardado anteriormente: este intento no ha guardado ningún cambio."
     },
     "cancelled": "Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar.",
-    "timeout": "El análisis alcanzó su límite de tiempo en un punto seguro. Los metadatos anteriores no cambiaron. Reintenta o guarda un diagnóstico.",
+    "timeout": "El análisis superó el límite de tiempo y se detuvo. Este intento no guardó ningún cambio. Vuelve a intentarlo o guarda un informe de diagnóstico.",
     "busy": "Ya hay un análisis en curso. Espera o cancélalo antes de reintentar.",
     "limit": "El PDF supera los límites de análisis admitidos. Los metadatos anteriores no cambiaron.",
     "failed": "El análisis falló. La estructura y los enlaces anteriores se conservan. Reintenta o guarda un informe de diagnóstico.",
@@ -719,5 +733,14 @@
       "fitWidth": "Ajustar al ancho",
       "fitPage": "Ajustar a la página"
     }
+  },
+  "fileDialog": {
+    "source": "Elegir un archivo para añadir a tu biblioteca",
+    "sources": "Elegir archivos para añadir a tu biblioteca",
+    "folder": "Elegir una carpeta para añadir a tu biblioteca",
+    "sourceTypes": "Libros y notas (PDF, EPUB, Word, Markdown, texto)",
+    "bible": "Elegir una Biblia para añadir",
+    "bibleTypes": "Archivos de Biblia (USFM, .zip, PDF, EPUB, Word, Markdown, texto)",
+    "allFiles": "Todos los archivos"
   }
 }

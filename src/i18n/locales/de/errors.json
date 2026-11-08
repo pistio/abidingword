@@ -15,7 +15,9 @@
     "titleRequired": "Bitte gib einen Titel ein.",
     "titleTooLong": "Der Titel ist zu lang. Bitte verwende weniger als {{max}} Zeichen.",
     "textTooLong": "Dieser Text ist zu lang. Bitte verwende weniger als {{max}} Zeichen.",
-    "blockTooLong": "Dieser Block ist zu lang zum Speichern. Bitte teile ihn auf mehrere Blöcke auf."
+    "blockTooLong": "Dieser Block ist zu lang zum Speichern. Bitte teile ihn auf mehrere Blöcke auf.",
+    "entryInvalid": "Dieser Eintrag konnte nicht gespeichert werden.",
+    "unknownField": "Dieser Teil enthält dieses Feld nicht."
   },
   "search": {
     "empty": "Gib ein Wort oder einen Ausdruck für die Suche ein."
@@ -144,12 +146,21 @@
     "structure": {
       "corrupt": "Die gespeicherte PDF-Struktur konnte nicht gelesen werden. Quelltext und Originaldatei bleiben unverändert.",
       "invalid": "Diese Korrektur passt nicht mehr zur Quelle. Den Text erneut öffnen und wiederholen.",
-      "timeout": "Die Analyse hat ihre Zeitgrenze an einer sicheren Verarbeitungsgrenze erreicht. Bisherige Metadaten sind unverändert. Erneut versuchen oder einen Diagnosebericht speichern.",
+      "timeout": "Die Analyse hat zu lange gedauert und wurde beendet. Dieser Versuch hat nichts gespeichert. Versuche es erneut oder speichere einen Diagnosebericht.",
       "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
       "busy": "Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst.",
       "limit": "Die PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
       "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern."
-    }
+    },
+    "nothingChosen": "Wähle mindestens einen Eintrag.",
+    "notInTrash": "Nur Einträge im Papierkorb können endgültig gelöscht werden. Verschiebe sie zuerst dorthin.",
+    "badYear": "Das Jahr muss eine Zahl zwischen 0 und 3000 sein.",
+    "collectionCycle": "Eine Sammlung kann nicht in sich selbst oder eine ihrer Untersammlungen verschoben werden.",
+    "linkUnsupported": "Diese Art von Link kann nicht geöffnet werden.",
+    "tooMany": "Du kannst höchstens {{count}} Einträge auf einmal ändern.",
+    "badName": "Verwende einen Namen mit 1 bis {{max}} Zeichen.",
+    "collectionExists": "Hier gibt es bereits eine Sammlung namens „{{name}}“.",
+    "tagExists": "Es gibt bereits ein Schlagwort namens „{{name}}“."
   },
   "templates": {
     "noSections": "Eine Vorlage braucht mindestens einen Teil, mit dem sie beginnt.",
@@ -273,7 +284,8 @@
     "tooManySlides": "Zu viele Folien, um sie auf einmal zu zeigen."
   },
   "material": {
-    "tooLong": "Das ist zu lang, um es als eine Datei zu speichern."
+    "tooLong": "Das ist zu lang, um es als eine Datei zu speichern.",
+    "tooManyPassages": "Diese Unterlage enthält zu viele Bibelstellen, um deren Text einzufügen."
   },
   "teachingTemplates": {
     "noKind": "Wähle, wofür die Vorlage ist.",
@@ -311,7 +323,8 @@
     "grammarNotFit": "Diese Grammatikcodes passen nicht zu diesem Schema und werden daher so angezeigt, wie sie geschrieben sind.",
     "textDiffers": "Die aufbewahrten Dateien ergeben nicht mehr genau den Text dieser Bibel, daher können ihre Wörter nicht hinzugefügt werden. Entferne die Bibel und füge sie erneut hinzu, um sie zu erhalten.",
     "noSource": "Die Dateien, aus denen diese Bibel hinzugefügt wurde, werden nicht mehr aufbewahrt, daher können ihre Wörter nicht erneut gelesen werden. Entferne die Bibel und füge sie erneut hinzu, um sie zu erhalten.",
-    "nothingToIndex": "Diese Dateien enthalten keine Wortangaben, die indexiert werden können."
+    "nothingToIndex": "Diese Dateien enthalten keine Wortangaben, die indexiert werden können.",
+    "documentBible": "Einer aus einem Dokument hinzugefügten Bibel können keine Wortinformationen hinzugefügt werden."
   },
   "batch": {
     "noFiles": "Dort wurden keine Dateien gefunden, die die Bibliothek lesen kann.",
@@ -325,5 +338,6 @@
     "notVerified": "„{{fileName}}“ stimmte nicht mit der geprüften Kopie überein, daher wurde nichts behalten. Versuche es später erneut.",
     "unreachable": "Der Download konnte nicht abgeschlossen werden. Prüfe die Internetverbindung und versuche es erneut.",
     "busy": "Ein Download läuft bereits. Warte, bis er abgeschlossen ist."
-  }
+  },
+  "messageUnavailable": "Diese Aktion konnte nicht abgeschlossen werden. Versuche es erneut."
 }

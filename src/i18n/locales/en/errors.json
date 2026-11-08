@@ -15,7 +15,9 @@
     "titleRequired": "Please give it a title.",
     "titleTooLong": "The title is too long. Please keep it under {{max}} characters.",
     "textTooLong": "This text is too long. Please keep it under {{max}} characters.",
-    "blockTooLong": "This block is too long to save. Please split it into several blocks."
+    "blockTooLong": "This block is too long to save. Please split it into several blocks.",
+    "entryInvalid": "This entry could not be saved.",
+    "unknownField": "This part does not contain that field."
   },
   "search": {
     "empty": "Type a word or phrase to search for."
@@ -144,12 +146,21 @@
     "structure": {
       "corrupt": "The saved PDF structure could not be read. Source text and the original file are unchanged.",
       "invalid": "This correction no longer matches the source. Reopen its text and try again.",
-      "timeout": "Analysis reached its time limit at a safe processing boundary. Previous metadata is unchanged. Retry or save a diagnostic report.",
+      "timeout": "The analysis took too long and was stopped. This attempt saved no changes. Try again or save a diagnostic report.",
       "cancelled": "Analysis cancelled. Previous structure and links are unchanged. You can retry.",
       "busy": "An analysis is already running. Wait or cancel it before retrying.",
       "limit": "The PDF exceeds the supported analysis limits. Previous metadata is unchanged.",
       "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report."
-    }
+    },
+    "nothingChosen": "Choose at least one item.",
+    "notInTrash": "Only items in Trash can be deleted permanently. Move them to Trash first.",
+    "badYear": "The year must be a number between 0 and 3000.",
+    "collectionCycle": "A collection cannot be moved into itself or one of its subcollections.",
+    "linkUnsupported": "This type of link cannot be opened.",
+    "tooMany": "At most {{count}} items can be changed at once.",
+    "badName": "Use a name between 1 and {{max}} characters long.",
+    "collectionExists": "A collection called “{{name}}” already exists here.",
+    "tagExists": "A tag called “{{name}}” already exists."
   },
   "templates": {
     "noSections": "A template needs at least one part to start with.",
@@ -273,7 +284,8 @@
     "tooManySlides": "Too many slides to show at once."
   },
   "material": {
-    "tooLong": "This is too long to save as one file."
+    "tooLong": "This is too long to save as one file.",
+    "tooManyPassages": "This material contains too many passages to include their text."
   },
   "teachingTemplates": {
     "noKind": "Choose what the template is for.",
@@ -311,7 +323,8 @@
     "grammarNotFit": "These grammar codes do not fit that scheme, so they are shown as written.",
     "textDiffers": "The kept files no longer give exactly this Bible’s text, so its words cannot be added. Remove the Bible and add it again to get them.",
     "noSource": "The files this Bible was added from are no longer kept, so its words cannot be read again. Remove the Bible and add it again to get them.",
-    "nothingToIndex": "These files have no word information that can be indexed."
+    "nothingToIndex": "These files have no word information that can be indexed.",
+    "documentBible": "A Bible added from a document has no word information to add."
   },
   "batch": {
     "noFiles": "No files the library can read were found there.",
@@ -325,5 +338,6 @@
     "notVerified": "“{{fileName}}” did not match the verified copy, so nothing was kept. Try again later.",
     "unreachable": "The download could not be completed. Check the internet connection and try again.",
     "busy": "A download is already under way. Wait for it to finish."
-  }
+  },
+  "messageUnavailable": "This action could not be completed. Please try again."
 }

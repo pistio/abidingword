@@ -62,10 +62,12 @@ function values(params: MessageParams): Record<string, unknown> {
 
 /** A coded message in the interface language, or `fallback` if the code is unknown. */
 export function localizeMessage(code: string | null | undefined, params: MessageParams | undefined, fallback: string): string {
-  if (!code || !i18n.exists(`errors.${code}`)) return fallback;
+  if (!code) return fallback;
+  const prepared = values(params ?? {});
+  if (!i18n.exists(`errors.${code}`, { count: typeof prepared.count === "number" ? prepared.count : undefined })) return fallback;
   // The Psalms are counted in psalms, not chapters ("시편 119편", "Psalm 119").
   const psalms = params?.bookCode === "PSA" ? PSALM_WORDING[code] : undefined;
-  return translate(`errors.${psalms ?? code}`, values(params ?? {}));
+  return translate(`errors.${psalms ?? code}`, prepared);
 }
 
 const PSALM_WORDING: Record<string, string> = {
@@ -75,7 +77,9 @@ const PSALM_WORDING: Record<string, string> = {
 
 /** An error from the core, in the interface language. */
 export function localizeError(kind: string, message: string, code?: string | null, params?: MessageParams): string {
-  if (code) return localizeMessage(code, params, message);
+  const localised = code ? localizeMessage(code, params, "") : "";
+  if (localised) return localised;
   if (FIXED_KINDS.includes(kind)) return translate(`errors.kind.${kind}`, {});
+  if (code) return translate("errors.messageUnavailable", {});
   return message;
 }

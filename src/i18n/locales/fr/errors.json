@@ -15,7 +15,9 @@
     "titleRequired": "Veuillez indiquer un titre.",
     "titleTooLong": "Le titre est trop long. Veuillez ne pas dépasser {{max}} caractères.",
     "textTooLong": "Ce texte est trop long. Veuillez ne pas dépasser {{max}} caractères.",
-    "blockTooLong": "Ce bloc est trop long pour être enregistré. Veuillez le diviser en plusieurs blocs."
+    "blockTooLong": "Ce bloc est trop long pour être enregistré. Veuillez le diviser en plusieurs blocs.",
+    "entryInvalid": "Cette entrée n’a pas pu être enregistrée.",
+    "unknownField": "Cette partie ne contient pas ce champ."
   },
   "search": {
     "empty": "Saisissez un mot ou une expression à rechercher."
@@ -155,12 +157,21 @@
     "structure": {
       "corrupt": "La structure PDF enregistrée est illisible. Le texte et le fichier original restent inchangés.",
       "invalid": "Cette correction ne correspond plus à la source. Rouvrez son texte et réessayez.",
-      "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",
+      "timeout": "L’analyse a dépassé le temps prévu et a été arrêtée. Cette tentative n’a enregistré aucune modification. Réessayez ou enregistrez un rapport de diagnostic.",
       "cancelled": "Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer.",
       "busy": "Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer.",
       "limit": "Le PDF dépasse les limites d’analyse prises en charge. Les métadonnées précédentes sont inchangées.",
       "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic."
-    }
+    },
+    "nothingChosen": "Sélectionnez au moins un élément.",
+    "notInTrash": "Seuls les éléments de la corbeille peuvent être supprimés définitivement. Déplacez-les d’abord dans la corbeille.",
+    "badYear": "L’année doit être un nombre compris entre 0 et 3000.",
+    "collectionCycle": "Une collection ne peut pas être déplacée dans elle-même ni dans l’une de ses sous-collections.",
+    "linkUnsupported": "Ce type de lien ne peut pas être ouvert.",
+    "tooMany": "Vous pouvez modifier au maximum {{count}} éléments à la fois.",
+    "badName": "Utilisez un nom de 1 à {{max}} caractères.",
+    "collectionExists": "Une collection nommée « {{name}} » existe déjà ici.",
+    "tagExists": "Une étiquette nommée « {{name}} » existe déjà."
   },
   "templates": {
     "noSections": "Un modèle doit comporter au moins une partie de départ.",
@@ -284,7 +295,8 @@
     "tooManySlides": "Trop de diapositives à afficher en une fois."
   },
   "material": {
-    "tooLong": "C’est trop long pour être enregistré en un seul fichier."
+    "tooLong": "C’est trop long pour être enregistré en un seul fichier.",
+    "tooManyPassages": "Ce support contient trop de passages pour en inclure le texte."
   },
   "teachingTemplates": {
     "noKind": "Choisissez à quoi sert le modèle.",
@@ -322,7 +334,8 @@
     "grammarNotFit": "Ces codes grammaticaux ne correspondent pas à ce système : ils sont donc affichés tels qu’écrits.",
     "textDiffers": "Les fichiers conservés ne donnent plus exactement le texte de cette Bible : ses mots ne peuvent donc pas être ajoutés. Retirez la Bible et ajoutez-la de nouveau pour les obtenir.",
     "noSource": "Les fichiers à partir desquels cette Bible a été ajoutée ne sont plus conservés : ses mots ne peuvent donc pas être relus. Retirez la Bible et ajoutez-la de nouveau pour les obtenir.",
-    "nothingToIndex": "Ces fichiers ne contiennent aucune information sur les mots qui puisse être indexée."
+    "nothingToIndex": "Ces fichiers ne contiennent aucune information sur les mots qui puisse être indexée.",
+    "documentBible": "Il n’est pas possible d’ajouter des informations sur les mots à une Bible ajoutée à partir d’un document."
   },
   "batch": {
     "noFiles": "Aucun fichier lisible par la bibliothèque n’a été trouvé à cet endroit.",
@@ -336,5 +349,6 @@
     "notVerified": "« {{fileName}} » ne correspondait pas à la copie vérifiée ; rien n’a été conservé. Réessayez plus tard.",
     "unreachable": "Le téléchargement n’a pas pu aboutir. Vérifiez la connexion internet et réessayez.",
     "busy": "Un téléchargement est déjà en cours. Attendez qu’il se termine."
-  }
+  },
+  "messageUnavailable": "Cette action n’a pas pu être effectuée. Veuillez réessayer."
 }

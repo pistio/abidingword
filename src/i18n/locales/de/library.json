@@ -614,7 +614,21 @@
       "saved": "Gespeichert unter {{path}}",
       "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften",
       "general": "Allgemeiner Statusbericht — es wurde keine Bibelstelle geprüft. Gib vor dem nächsten Erstellen oder Speichern Apg 6 ein, um Treffer zu Apostelgeschichte 6 zu prüfen.",
-      "queryHelp": "Gib oben eine Bibelstelle ein, um sie zu prüfen. Ein leeres Feld erzeugt einen allgemeinen Statusbericht."
+      "queryHelp": "Gib oben eine Bibelstelle ein, um sie zu prüfen. Ein leeres Feld erzeugt einen allgemeinen Statusbericht.",
+      "invalidPassage": "Die Bibelstelle konnte nicht gelesen werden. Gib Buch und Kapitel ein, zum Beispiel Apg 6.",
+      "noCandidates": "Kein Verweis in dieser Quelle überschneidet sich mit der Bibelstelle.",
+      "structuralResult": "Das erste Ergebnis beruht auf der Dokumentstruktur, auf PDF-Seite {{page}}.",
+      "literalResult": "Kein passender Abschnitt gefunden. Das erste Ergebnis ist eine Erwähnung auf PDF-Seite {{page}}.",
+      "section": "Abschnittsüberschrift",
+      "book": "Buchabschnitt (weiter gefasst)",
+      "chapter": "Kapitelüberschrift",
+      "manual": "Von dir verknüpft",
+      "contents": "Inhaltsverzeichniseintrag",
+      "note": "Erwähnung in einer Anmerkung",
+      "literal": "Erwähnung der Bibelstelle",
+      "inherited": "Innerhalb eines zugeordneten Abschnitts",
+      "unknown": "Bibelstellenverweis",
+      "manualResult": "Das erste Ergebnis ist eine von dir hinzugefügte Verknüpfung auf PDF-Seite {{page}}."
     },
     "processing": {
       "label": "Fortschritt der Analyse",
@@ -645,7 +659,7 @@
       "previous": "Bisherige gespeicherte Analyse — dieser Versuch hat keine Änderungen gespeichert."
     },
     "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
-    "timeout": "Die Analyse hat ihre Zeitgrenze an einer sicheren Verarbeitungsgrenze erreicht. Bisherige Metadaten sind unverändert. Erneut versuchen oder einen Diagnosebericht speichern.",
+    "timeout": "Die Analyse hat zu lange gedauert und wurde beendet. Dieser Versuch hat nichts gespeichert. Versuche es erneut oder speichere einen Diagnosebericht.",
     "busy": "Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst.",
     "limit": "Die PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
     "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern.",
@@ -677,5 +691,14 @@
       "fitWidth": "Seitenbreite",
       "fitPage": "Ganze Seite"
     }
+  },
+  "fileDialog": {
+    "source": "Datei für die Bibliothek auswählen",
+    "sources": "Dateien für die Bibliothek auswählen",
+    "folder": "Ordner für die Bibliothek auswählen",
+    "sourceTypes": "Bücher und Notizen (PDF, EPUB, Word, Markdown, Text)",
+    "bible": "Bibel zum Hinzufügen auswählen",
+    "bibleTypes": "Bibeldateien (USFM, .zip, PDF, EPUB, Word, Markdown, Text)",
+    "allFiles": "Alle Dateien"
   }
 }

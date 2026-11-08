@@ -656,7 +656,21 @@
       "saved": "Enregistré dans {{path}}",
       "file": "SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres",
       "general": "Rapport général — aucun passage vérifié. Pour examiner les candidats d’Actes 6, saisissez Apg 6 avant de créer ou d’enregistrer un nouveau rapport.",
-      "queryHelp": "Saisissez un passage ci-dessus pour le vérifier. Si le champ est vide, le rapport présente uniquement l’état général."
+      "queryHelp": "Saisissez un passage ci-dessus pour le vérifier. Si le champ est vide, le rapport présente uniquement l’état général.",
+      "invalidPassage": "Le passage n’a pas pu être lu. Saisissez un livre et un chapitre, par exemple Actes 6.",
+      "noCandidates": "Aucune référence de cette source ne recoupe le passage.",
+      "structuralResult": "Le premier résultat repose sur la structure du document, à la page PDF {{page}}.",
+      "literalResult": "Aucune section correspondante n’a été trouvée. Le premier résultat est une mention à la page PDF {{page}}.",
+      "section": "Titre de section",
+      "book": "Section consacrée au livre (plus large)",
+      "chapter": "Titre de chapitre",
+      "manual": "Lien ajouté par vous",
+      "contents": "Entrée de la table des matières",
+      "note": "Mention dans une note",
+      "literal": "Mention du passage",
+      "inherited": "Dans une section associée",
+      "unknown": "Lien vers un passage",
+      "manualResult": "Le premier résultat est un lien que vous avez ajouté, à la page PDF {{page}}."
     },
     "processing": {
       "label": "Progression de l’analyse",
@@ -687,7 +701,7 @@
       "previous": "Analyse enregistrée précédemment : cette tentative n’a enregistré aucune modification."
     },
     "cancelled": "Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer.",
-    "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",
+    "timeout": "L’analyse a dépassé le temps prévu et a été arrêtée. Cette tentative n’a enregistré aucune modification. Réessayez ou enregistrez un rapport de diagnostic.",
     "busy": "Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer.",
     "limit": "Le PDF dépasse les limites d’analyse prises en charge. Les métadonnées précédentes sont inchangées.",
     "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic.",
@@ -719,5 +733,14 @@
       "fitWidth": "Ajuster à la largeur",
       "fitPage": "Ajuster à la page"
     }
+  },
+  "fileDialog": {
+    "source": "Choisir un fichier à ajouter à la bibliothèque",
+    "sources": "Choisir des fichiers à ajouter à la bibliothèque",
+    "folder": "Choisir un dossier à ajouter à la bibliothèque",
+    "sourceTypes": "Livres et notes (PDF, EPUB, Word, Markdown, texte)",
+    "bible": "Choisir une Bible à ajouter",
+    "bibleTypes": "Fichiers bibliques (USFM, .zip, PDF, EPUB, Word, Markdown, texte)",
+    "allFiles": "Tous les fichiers"
   }
 }
