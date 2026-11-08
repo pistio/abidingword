@@ -11,9 +11,9 @@
 //! "generated"; those keep their text object and are written. A hyphen
 //! ending a line, which PDFium reports as U+0002, is written as "-".
 //!
-//! Not reproduced: the text state's character spacing (`Tc`), which
-//! pdf-extract adds to each advance and PDFium does not expose per
-//! character, so letter-spaced headings show wider gaps between letters. A ligature
+//! PDFium also infers spaces inside a text object (between the letters of
+//! a letter-spaced heading): those stand at the very origin of the next
+//! character and are left out too. A ligature
 //! PDFium expands ("ﬁ" read as "f", "i", at one origin) is written as one
 //! glyph, as the current backend gives it.
 //!
@@ -147,6 +147,8 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
         }
         let n = pdf.FPDFText_CountChars(text).max(0);
         let mut pending: Option<Glyph> = None;
+        let mut page_glyphs: Vec<Glyph> = Vec::new();
+        let mut drawn_before = None;
         let mut k = 0;
         while k < n {
             let i = k;
@@ -155,7 +157,8 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
             // too; those still have the text object they were drawn from.
             // A character PDFium inferred has none, and is left out.
             if pdf.FPDFText_IsGenerated(text, i) == 1
-                && pdf.FPDFText_GetTextObject(text, i).is_null()
+                && (pdf.FPDFText_GetTextObject(text, i).is_null()
+                    || at_next_origin(pdf, text, i, n))
             {
                 continue;
             }
@@ -189,7 +192,7 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
                 break;
             }
             chars += 1;
-            if let Some(g) = glyph(pdf, text, i, c, left, top) {
+            if let Some(g) = glyph(pdf, text, i, c, left, top, &mut drawn_before) {
                 match pending.as_mut() {
                     // A ligature PDFium has expanded ("ﬁ" as "f", "i"): its
                     // letters share one origin. They are one glyph, whose
@@ -197,14 +200,17 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
                     Some(p) if p.x == g.x && p.y == g.y => p.join(pdf, &g),
                     _ => {
                         if let Some(p) = pending.replace(g) {
-                            let _ = out.write_all(p.record().as_bytes());
+                            page_glyphs.push(p);
                         }
                     }
                 }
             }
         }
         if let Some(p) = pending.take() {
-            let _ = out.write_all(p.record().as_bytes());
+            page_glyphs.push(p);
+        }
+        for g in &page_glyphs {
+            let _ = out.write_all(g.record().as_bytes());
         }
         pdf.FPDFText_ClosePage(text);
         pdf.FPDF_ClosePage(page);
@@ -214,6 +220,24 @@ unsafe fn read(pdf: &dyn PdfiumLibraryBindings, bytes: &[u8], max_chars: usize) 
     pdf.FPDF_CloseDocument(document);
     pdf.FPDF_DestroyLibrary();
     ExitCode::SUCCESS
+}
+
+/// Whether character `i` stands at the origin of the character after it:
+/// a space PDFium inferred between two drawn characters, not one drawn.
+unsafe fn at_next_origin(
+    pdf: &dyn PdfiumLibraryBindings,
+    text: FPDF_TEXTPAGE,
+    i: i32,
+    n: i32,
+) -> bool {
+    if i + 1 >= n {
+        return false;
+    }
+    let (mut x, mut y, mut nx, mut ny) = (0f64, 0f64, 0f64, 0f64);
+    pdf.is_true(pdf.FPDFText_GetCharOrigin(text, i, &mut x, &mut y))
+        && pdf.is_true(pdf.FPDFText_GetCharOrigin(text, i + 1, &mut nx, &mut ny))
+        && (x - nx).abs() < 0.01
+        && (y - ny).abs() < 0.01
 }
 
 /// One glyph as `pdf_layout::Glyph` holds it:
@@ -305,6 +329,7 @@ unsafe fn glyph(
     c: char,
     left: f32,
     top: f32,
+    drawn_before: &mut Option<(FPDF_PAGEOBJECT, FS_MATRIX)>,
 ) -> Option<Glyph> {
     let (mut ox, mut oy) = (0f64, 0f64);
     if !pdf.is_true(pdf.FPDFText_GetCharOrigin(text, i, &mut ox, &mut oy)) {
@@ -319,6 +344,18 @@ unsafe fn glyph(
         f: 0.0,
     };
     let _ = pdf.FPDFText_GetMatrix(text, i, &mut m);
+    let object = pdf.FPDFText_GetTextObject(text, i);
+    // A space PDFium marks generated comes with an identity matrix; it
+    // takes the matrix of the character drawn before it in its text object.
+    if pdf.FPDFText_IsGenerated(text, i) == 1 {
+        if let Some((o, before)) = drawn_before.as_ref() {
+            if *o == object {
+                m = FS_MATRIX { ..*before };
+            }
+        }
+    } else {
+        *drawn_before = Some((object, FS_MATRIX { ..m }));
+    }
     let (a, b, cc, d) = (m.a, m.b, m.c, m.d);
     let font = pdf.FPDFText_GetFontSize(text, i) as f32;
     let slanted = cc.abs() > 1e-3 && cc.abs() <= 0.5 * d.abs();
@@ -337,7 +374,6 @@ unsafe fn glyph(
     let x = ox as f32 - left;
     let y = top - oy as f32;
     // The font's own width for the character, in thousandths of an em.
-    let object = pdf.FPDFText_GetTextObject(text, i);
     let face = if object.is_null() {
         std::ptr::null_mut()
     } else {
