@@ -103,3 +103,26 @@ native builds passed. Existing A.4 structure, privacy/export, backup/restore and
 #31 rollback regressions remain enabled. The original acceptance ledger and
 all migration SQL files are unchanged. Browser checks above passed in all four
 scenes; real MacArthur / Greek NT / WebView2 owner gates remain open.
+
+## Follow-up: automatic Contents also uses persisted analysis
+
+The final route review found another old path: `library_generated_contents`
+parsed a whole PDF synchronously and retained its answer only in a process-local
+cache keyed by Source ID. That could leave Contents work invisible and the
+metadata diagnostic showing no saved structure. This is a technical mechanism,
+not proof of the precise failure on the owner's file.
+
+For an old PDF with no saved structure, automatic Contents now uses the same
+blocking worker, retained progress/cancellation/deadline and transactional
+structure/link persistence as explicit Build. The reader shows a nonblocking
+analysis status with **Progress / retry** leading to the measurable panel.
+A saved analysis, including zero headings, is reused instead of triggering a
+second whole-file parser. Failure/cancellation is retained and requires explicit
+retry during the session. The unbounded session-only PDF Contents cache is removed.
+DOCX fallback extraction also runs on the blocking worker, outside the IPC thread.
+
+Three native regressions cover automatic persistence and fresh-session reuse,
+empty saved analysis without re-parsing, and retained failure/explicit retry.
+The nonempty case uses the same invented 400-page fixture; it is not actual-file
+acceptance. Two reader regressions cover pending progress with reading still
+usable, and safe failure/retry without exposing error text.

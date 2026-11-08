@@ -252,6 +252,35 @@ pub fn rebuild(
     })
 }
 
+/// Legacy Sources without saved metadata use the SAME bounded, observable,
+/// transactional analysis as Rebuild. A saved empty result is final, not a
+/// request for an invisible second whole-PDF parse. Failure/cancellation waits
+/// for an explicit retry; reopening a reader does not repeatedly start work.
+pub fn ensure_contents(
+    db: &Database,
+    sources: &Path,
+    id: &str,
+    jobs: &Jobs,
+) -> AppResult<Vec<crate::library::contents::ContentsItem>> {
+    if db.with_conn(|conn| Ok(crate::db::pdf_structures::load(conn, id)?.is_some()))? {
+        return db.with_conn(|conn| crate::db::pdf_structures::contents(conn, id));
+    }
+    if jobs.get(id).is_some() {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "library.structure.failed",
+            "Open Chapters and headings for processing progress or an explicit retry.",
+        )));
+    }
+    let job = jobs.start(id)?;
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        rebuild(db, sources, id, &job)
+    }))
+    .unwrap_or_else(|_| Err(AppError::Unexpected("PDF analysis worker stopped".into())));
+    job.finish(&result);
+    result?;
+    db.with_conn(|conn| crate::db::pdf_structures::contents(conn, id))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

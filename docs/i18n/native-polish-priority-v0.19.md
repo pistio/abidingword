@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-1916 strings changed in at least one language since v0.18.10. Spot-check these.
+1919 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -469,6 +469,9 @@ _No open linguistic questions._
 |  | `library.sourceType.commentary` | Commentary | Kommentar | 주석 | Commentaire | Comentario | Comentário |
 |  | `library.structure.add` | Mark a visible text line as a section | Sichtbare Textzeile als Abschnitt markieren | 현재 텍스트 줄을 구간으로 지정 | Définir une ligne visible comme section | Marcar una línea visible como sección | Marcar uma linha visível como seção |
 |  | `library.structure.addHelp` | Choose an unambiguous line from the current Reading window. | Eine eindeutige Zeile aus dem aktuellen Lesefenster auswählen. | 현재 읽기 화면에서 중복되지 않는 줄을 선택하세요. | Choisissez une ligne sans ambiguïté dans la fenêtre de lecture actuelle. | Elija una línea inequívoca de la ventana de lectura actual. | Escolha uma linha inequívoca na janela de leitura atual. |
+|  | `library.structure.automaticDetails` | Progress / retry | Fortschritt / erneut versuchen | 진행 상황 / 다시 시도 | Progression / réessayer | Progreso / reintentar | Progresso / tentar novamente |
+|  | `library.structure.automaticFailed` | Automatic heading analysis stopped. Existing reading and writing are available. | Die automatische Überschriftenanalyse wurde angehalten. Lesen und Schreiben bleiben verfügbar. | 자동 제목 분석이 중지되었습니다. 읽기와 글쓰기는 계속할 수 있습니다. | L’analyse automatique des titres s’est arrêtée. La lecture et l’écriture restent disponibles. | Se detuvo el análisis automático de títulos. Puede seguir leyendo y escribiendo. | A análise automática de títulos parou. Pode continuar a ler e escrever. |
+|  | `library.structure.automaticRunning` | Analysing chapters and headings… | Kapitel und Überschriften werden untersucht… | 장과 제목을 분석하는 중… | Analyse des chapitres et titres… | Analizando capítulos y títulos… | A analisar capítulos e títulos… |
 |  | `library.structure.basis.layout` | Inferred from layout | Aus dem Layout abgeleitet | 레이아웃에서 추정 | Déduit de la mise en page | Inferido del diseño | Inferido do layout |
 |  | `library.structure.basis.outline` | Embedded outline | Eingebettete Gliederung | 내장 목차 | Plan intégré | Índice integrado | Sumário incorporado |
 |  | `library.structure.basis.printed` | Printed book index | Gedrucktes Buchverzeichnis | 인쇄된 성경 책 목차 | Index imprimé des livres bibliques | Índice impreso de libros bíblicos | Índice impresso de livros bíblicos |

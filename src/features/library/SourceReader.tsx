@@ -147,7 +147,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   const [structureOpen, setStructureOpen] = useState(false);
   const [structureRevision, setStructureRevision] = useState(0);
   // The source's own contents (an EPUB's, a PDF's outline), and the panel that shows them.
-  const { items: contents, generated: contentsGenerated, adopt: adoptContents } = useSourceContents(source.data, structureRevision);
+  const { items: contents, generated: contentsGenerated, generation: contentsGeneration, adopt: adoptContents } = useSourceContents(source.data, structureRevision);
   const stage = useRef<HTMLDivElement>(null);
   const [compactControls, setCompactControls] = useState(false);
   useLayoutEffect(() => {
@@ -1290,6 +1290,10 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     ] : []),
     ...(s ? [{ id: "about" as const, key: "about", label: t("library.about.summary"), icon: <Info className="size-4" aria-hidden="true" />, onSelect: () => setAboutOpen(true) }] : []),
   ];
+  const contentsProgress = isPdf && contentsGeneration ? <div role="status" className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border-subtle px-3 py-1 text-[0.875rem] text-text-muted">
+    <span>{t(contentsGeneration === "running" ? "library.structure.automaticRunning" : "library.structure.automaticFailed")}</span>
+    <Button variant="quiet" onClick={() => setStructureOpen(true)}>{t("library.structure.automaticDetails")}</Button>
+  </div> : null;
   const toolbarRefs = { find: findOpener, contents: opener, note: noteHereButton, marks: marksPanelOpener };
   // Reading has the compact page indicator here; Original has the viewer's own (one per view, never both).
   const fixedControls = <>{modeSwitch}{pageNavigation}{onPdfPage && <span data-testid="pdf-zoom" className="sr-only">{t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)})}</span>}</>;
@@ -1318,6 +1322,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
             refs={toolbarRefs}
           />
         </div>
+        {contentsProgress}
         {provenance}
         {structurePanel}
         {aboutDialog}
@@ -1368,6 +1373,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
           refs={toolbarRefs}
         />
       </div>
+      {contentsProgress}
       {provenance}
       {structurePanel}
       {aboutDialog}

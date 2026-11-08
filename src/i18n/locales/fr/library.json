@@ -686,7 +686,10 @@
     "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",
     "busy": "Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer.",
     "limit": "Le PDF dépasse les limites d’analyse prises en charge. Les métadonnées précédentes sont inchangées.",
-    "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic."
+    "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic.",
+    "automaticRunning": "Analyse des chapitres et titres…",
+    "automaticFailed": "L’analyse automatique des titres s’est arrêtée. La lecture et l’écriture restent disponibles.",
+    "automaticDetails": "Progression / réessayer"
   },
   "toolbar": {
     "label": "Outils de lecture",

@@ -644,7 +644,10 @@
     "timeout": "Analysis reached its time limit at a safe processing boundary. Previous metadata is unchanged. Retry or save a diagnostic report.",
     "busy": "An analysis is already running. Wait or cancel it before retrying.",
     "limit": "The PDF exceeds the supported analysis limits. Previous metadata is unchanged.",
-    "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report."
+    "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report.",
+    "automaticRunning": "Analysing chapters and headings…",
+    "automaticFailed": "Automatic heading analysis stopped. Existing reading and writing are available.",
+    "automaticDetails": "Progress / retry"
   },
   "toolbar": {
     "label": "Reader tools",

@@ -17,6 +17,7 @@ export interface SourceContents {
   items: ContentsItem[];
   /** `items` were generated from the source's headings, not carried by the source. */
   generated: boolean;
+  generation: "running" | "failed" | null;
   /**
    * Offers contents found another way (the Original view's own open document
    * has just read the outline). Taken only if it adds something: over none,
@@ -32,6 +33,7 @@ export function useSourceContents(source: Source | null | undefined, revision = 
   const authoritative = useRef(false);
   const engine = usePdfEngine();
   const [found, setFound] = useState<{ id: string; revision: number; status: Status; items: ContentsItem[]; generated?: boolean } | null>(null);
+  const [generation, setGeneration] = useState<{ id: string; revision: number; status: "running" | "failed" } | null>(null);
   const id = source?.id;
   // Where the source's own contents come from: a PDF's outline, an EPUB's navigation; other formats carry none.
   const kind = source?.originalView?.kind === "pdf" ? "pdf" : source?.format === "epub" ? "epub" : "none";
@@ -50,12 +52,18 @@ export function useSourceContents(source: Source | null | undefined, revision = 
     // No contents of its own: the core's generated contents, if the source has text to make them from.
     const generate = () => {
       if (!hasText) return;
+      setGeneration({ id, revision, status: "running" });
       api.libraryGeneratedContents(id).then(
-        (items) =>
-          active &&
-          items.length > 0 &&
-          setFound((current) => (current?.id === id && current.revision === revision && current.items.length > 0 ? current : { id, revision, status: "ready", items, generated: true })),
-        (e) => void api.logError(`Generated contents could not be made: ${e instanceof Error ? e.message : String(e)}`).catch(() => undefined),
+        (items) => {
+          if (!active) return;
+          setGeneration(null);
+          if (items.length > 0) setFound((current) => (current?.id === id && current.revision === revision && current.items.length > 0 ? current : { id, revision, status: "ready", items, generated: true }));
+        },
+        () => {
+          if (!active) return;
+          setGeneration({ id, revision, status: "failed" });
+          void api.logError("Generated contents unavailable; inspect retained heading-analysis progress and retry explicitly.").catch(() => undefined);
+        },
       );
     };
     const attempt = (n: number) => {
@@ -105,7 +113,7 @@ export function useSourceContents(source: Source | null | undefined, revision = 
   );
 
   const mine = found && found.id === id && found.revision === revision ? found : null;
-  return { items: mine?.items ?? EMPTY, generated: mine?.generated ?? false, adopt };
+  return { items: mine?.items ?? EMPTY, generated: mine?.generated ?? false, generation: generation && generation.id === id && generation.revision === revision ? generation.status : null, adopt };
 }
 
 const EMPTY: ContentsItem[] = [];

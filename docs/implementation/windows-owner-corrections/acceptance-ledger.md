@@ -24,7 +24,7 @@ locations or exact failure cause from the counts alone.
 | #35 background work; reading/writing available | Implemented | Explicit blocking worker; parsing outside DB mutex; concurrent read and actual write regression |
 | #35 duplicate rebuild prevention | Implemented | One analysis at a time per application, retained job state, immediate UI disabling; native duplicate/retry tests |
 | #35 cancellation, deadline, failed SQL, safe retry | Implemented | Cooperative page/stage/64-block checks; five-minute deadline at safe boundaries; commit gate; transactional rollback tests; no hard interruption inside a third-party page/font parser |
-| #35 persist metadata and links together; preserve literal provenance | Implemented | Structure-only reindex avoids re-reading all body references; source bytes and all 4,112 literal IDs/timestamps retained |
+| #35 persist metadata and links together; preserve literal provenance | Implemented | Explicit Build and automatic Contents share the transactional worker; saved empty results reused; source bytes and all 4,112 literal IDs/timestamps retained |
 | #35 zero headings must not imply usable Contents | Implemented | Explicit warning and manual-line correction path; stored analysis distinguished from useful headings |
 | #35 consistent report display/save/query | Implemented | Same native diagnostic generator; save returns exact written report; busy/error feedback; stale query results cleared; no-query report explicitly general status |
 | #35 owner-shaped performance and memory | Partial | Invented 400-page/2.19MB/2719-segment/4112-link fixture: ~6.1s vs ~27.2s for previous full-text reindex alone. Fixed page/text/heading limits; actual Windows memory/performance still open |

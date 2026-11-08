@@ -686,7 +686,10 @@
     "timeout": "A análise atingiu o limite de tempo num ponto seguro. Os metadados anteriores não mudaram. Tente novamente ou guarde um diagnóstico.",
     "busy": "Já existe uma análise em curso. Aguarde ou cancele-a antes de tentar novamente.",
     "limit": "O PDF excede os limites de análise suportados. Os metadados anteriores não mudaram.",
-    "failed": "A análise falhou. A estrutura e as ligações anteriores foram preservadas. Tente novamente ou guarde um relatório de diagnóstico."
+    "failed": "A análise falhou. A estrutura e as ligações anteriores foram preservadas. Tente novamente ou guarde um relatório de diagnóstico.",
+    "automaticRunning": "A analisar capítulos e títulos…",
+    "automaticFailed": "A análise automática de títulos parou. Pode continuar a ler e escrever.",
+    "automaticDetails": "Progresso / tentar novamente"
   },
   "toolbar": {
     "label": "Ferramentas de leitura",

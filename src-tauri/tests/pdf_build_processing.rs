@@ -302,3 +302,75 @@ fn reading_and_autosave_database_access_remain_available_during_pdf_work() {
             .is_none());
     });
 }
+
+#[test]
+fn automatic_contents_persist_the_same_structure_and_never_reparse_saved_results() {
+    let fixture = fixture(400);
+    let jobs = Jobs::default();
+    let items =
+        pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &jobs).unwrap();
+    assert!(!items.is_empty());
+    let job = jobs.get("source").unwrap().snapshot();
+    assert_eq!(job.status, "succeeded");
+    assert!(job.heading_count.unwrap() > 0);
+    let before = fixture.db.with_conn(fingerprint).unwrap();
+    fs::remove_file(fixture.dir.path().join("book/source/input.pdf")).unwrap();
+    let fresh_session = Jobs::default();
+    let again =
+        pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &fresh_session)
+            .unwrap();
+    assert_eq!(
+        serde_json::to_value(items).unwrap(),
+        serde_json::to_value(again).unwrap()
+    );
+    assert!(fresh_session.get("source").is_none());
+    assert_eq!(fixture.db.with_conn(fingerprint).unwrap(), before);
+}
+
+#[test]
+fn a_saved_empty_analysis_is_not_an_invisible_second_full_pdf_parse() {
+    let fixture = fixture(8);
+    pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &Jobs::default())
+        .unwrap();
+    fixture
+        .db
+        .with_conn(|conn| {
+            let record = pdf_structures::load(conn, "source")?.unwrap();
+            let mut document = record.document.clone();
+            document.headings.clear();
+            pdf_structures::replace(conn, "source", &record.hash, &document)?;
+            Ok(())
+        })
+        .unwrap();
+    fs::remove_file(fixture.dir.path().join("book/source/input.pdf")).unwrap();
+    let jobs = Jobs::default();
+    assert!(
+        pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &jobs)
+            .unwrap()
+            .is_empty()
+    );
+    assert!(jobs.get("source").is_none());
+}
+
+#[test]
+fn failed_automatic_analysis_is_retained_until_an_explicit_retry() {
+    let fixture = fixture(8);
+    let path = fixture.dir.path().join("book/source/input.pdf");
+    fs::remove_file(&path).unwrap();
+    let jobs = Jobs::default();
+    let before = fixture.db.with_conn(fingerprint).unwrap();
+    assert!(pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &jobs).is_err());
+    assert_eq!(jobs.get("source").unwrap().snapshot().status, "failed");
+    fs::write(&path, &fixture.bytes).unwrap();
+    assert!(pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &jobs).is_err());
+    assert_eq!(fixture.db.with_conn(fingerprint).unwrap(), before);
+    let retry = jobs.start("source").unwrap();
+    let result = pdf_build::rebuild(&fixture.db, fixture.dir.path(), "source", &retry);
+    retry.finish(&result);
+    assert!(result.is_ok());
+    pdf_build::ensure_contents(&fixture.db, fixture.dir.path(), "source", &jobs).unwrap();
+    assert!(fixture
+        .db
+        .with_conn(|conn| Ok(pdf_structures::load(conn, "source")?.is_some()))
+        .unwrap());
+}

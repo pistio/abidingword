@@ -7,7 +7,6 @@
 
 use std::fs;
 use std::path::PathBuf;
-use std::sync::{Mutex, OnceLock};
 
 use tauri::State;
 
@@ -16,7 +15,7 @@ use crate::db::{findings, library};
 use crate::domain::Finding;
 use crate::error::{AppError, ErrorPayload, UserMessage};
 use crate::filesystem;
-use crate::library::{adapters, contents, generated_contents, import, original};
+use crate::library::{adapters, contents, import, original};
 use crate::library::{
     AddFindingSource, CitationPlace, CommitSourceImport, CreateFindingFromSource, FindingCitation,
     GetSegments, LibraryResults, ListSources, PassageLocation, PassageMention, PassageSourceGroup,
@@ -417,63 +416,48 @@ pub fn library_source_contents(
 /// none (v0.13): a DOCX's Word headings, an EPUB's or Markdown file's
 /// headings, a PDF's probable headings (see `library::generated_contents`).
 /// The interface shows them as generated. Empty when nothing is clear enough.
-#[tauri::command(async)]
-pub fn library_generated_contents(
-    state: State<'_, AppState>,
+#[tauri::command]
+pub async fn library_generated_contents(
+    app: tauri::AppHandle,
     id: String,
 ) -> CommandResult<Vec<contents::ContentsItem>> {
-    let core = state.core()?;
-    let (source, record) = core.db.with_conn(|conn| {
-        let source = library::get(conn, &id)?;
-        let record = library::original_record(conn, &id).ok();
-        Ok((source, record))
-    })?;
-    match record {
-        Some((relative, format)) if format == "docx" => {
-            let bytes =
-                original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-            let expected = usize::try_from(source.segment_count).unwrap_or(0);
-            Ok(adapters::docx::contents(&bytes, expected))
-        }
-        Some((relative, format)) if format == "pdf" => {
-            if let Some(found) = generated_cache_get(&id) {
-                return Ok(found);
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let core = state.core()?;
+        let (source, record) = core.db.with_conn(|conn| {
+            let source = library::get(conn, &id)?;
+            let record = library::original_record(conn, &id).ok();
+            Ok((source, record))
+        })?;
+        match record {
+            Some((_, format)) if format == "pdf" => crate::library::pdf_build::ensure_contents(
+                &core.db,
+                &core.dirs.sources(),
+                &id,
+                &state.pdf_structure_jobs,
+            )
+            .map_err(ErrorPayload::from),
+            Some((relative, format)) if format == "docx" => {
+                let bytes = original::read_managed(
+                    &core.dirs.sources(),
+                    &id,
+                    &relative,
+                    MAX_CONTENTS_FILE,
+                )?;
+                Ok(adapters::docx::contents(
+                    &bytes,
+                    usize::try_from(source.segment_count).unwrap_or(0),
+                ))
             }
-            let bytes =
-                original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-            let found = generated_contents::from_pdf(&bytes);
-            generated_cache_put(&id, &found);
-            Ok(found)
+            _ => core
+                .db
+                .with_conn(|conn| library::generated_contents(conn, &id))
+                .map_err(ErrorPayload::from),
         }
-        _ => Ok(core
-            .db
-            .with_conn(|conn| library::generated_contents(conn, &id))?),
-    }
-}
-
-/// Generated PDF contents already worked out this session (reading a whole
-/// PDF again for each opening would be slow), a few sources at most.
-type GeneratedCache = Mutex<Vec<(String, Vec<contents::ContentsItem>)>>;
-
-fn generated_cache() -> &'static GeneratedCache {
-    static CACHE: OnceLock<GeneratedCache> = OnceLock::new();
-    CACHE.get_or_init(|| Mutex::new(Vec::new()))
-}
-const GENERATED_CACHE_SOURCES: usize = 8;
-
-fn generated_cache_get(id: &str) -> Option<Vec<contents::ContentsItem>> {
-    let cache = generated_cache().lock().ok()?;
-    cache.iter().find(|(k, _)| k == id).map(|(_, v)| v.clone())
-}
-
-fn generated_cache_put(id: &str, items: &[contents::ContentsItem]) {
-    if let Ok(mut cache) = generated_cache().lock() {
-        cache.retain(|(k, _)| k != id);
-        cache.push((id.to_string(), items.to_vec()));
-        if cache.len() > GENERATED_CACHE_SOURCES {
-            cache.remove(0);
-        }
-    }
+    })
+    .await
+    .map_err(|_| ErrorPayload::from(AppError::Unexpected("Contents worker unavailable".into())))?
 }
 
 /// The links inside an EPUB's text that lead elsewhere in the same book (see
