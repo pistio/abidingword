@@ -1,0 +1,3610 @@
+{
+ "F01": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 327,
+    "score": {
+     "letters": {
+      "coverage": 0.971486581920904,
+      "covered": 11005,
+      "in_order": 3304,
+      "in_order_share": 0.2916666666666667,
+      "verses": 11328
+     },
+     "nfc": {
+      "coverage": 0.971486581920904,
+      "covered": 11005,
+      "in_order": 3304,
+      "in_order_share": 0.2916666666666667,
+      "verses": 11328
+     },
+     "nfkc": {
+      "coverage": 0.971486581920904,
+      "covered": 11005,
+      "in_order": 3304,
+      "in_order_share": 0.2916666666666667,
+      "verses": 11328
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 327,
+    "score": {
+     "letters": {
+      "coverage": 0.974223163841808,
+      "covered": 11036,
+      "in_order": 3305,
+      "in_order_share": 0.2917549435028249,
+      "verses": 11328
+     },
+     "nfc": {
+      "coverage": 0.974223163841808,
+      "covered": 11036,
+      "in_order": 3305,
+      "in_order_share": 0.2917549435028249,
+      "verses": 11328
+     },
+     "nfkc": {
+      "coverage": 0.974223163841808,
+      "covered": 11036,
+      "in_order": 3305,
+      "in_order_share": 0.2917549435028249,
+      "verses": 11328
+     }
+    }
+   }
+  },
+  "ref_verses": 11328,
+  "sha256": "61cb24f6ae39ed100bba58bb1b472b01b727e7e08431b13aed0eb40fc6cacecf"
+ },
+ "F02": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1134,
+    "score": {
+     "letters": {
+      "coverage": 0.9643952815106079,
+      "covered": 22319,
+      "in_order": 4230,
+      "in_order_share": 0.18277664952685477,
+      "verses": 23143
+     },
+     "nfc": {
+      "coverage": 0.9643520719007908,
+      "covered": 22318,
+      "in_order": 4227,
+      "in_order_share": 0.1826470206974031,
+      "verses": 23143
+     },
+     "nfkc": {
+      "coverage": 0.9643520719007908,
+      "covered": 22318,
+      "in_order": 4227,
+      "in_order_share": 0.1826470206974031,
+      "verses": 23143
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1134,
+    "score": {
+     "letters": {
+      "coverage": 0.9643952815106079,
+      "covered": 22319,
+      "in_order": 4230,
+      "in_order_share": 0.18277664952685477,
+      "verses": 23143
+     },
+     "nfc": {
+      "coverage": 0.9643520719007908,
+      "covered": 22318,
+      "in_order": 4227,
+      "in_order_share": 0.1826470206974031,
+      "verses": 23143
+     },
+     "nfkc": {
+      "coverage": 0.9643520719007908,
+      "covered": 22318,
+      "in_order": 4227,
+      "in_order_share": 0.1826470206974031,
+      "verses": 23143
+     }
+    }
+   }
+  },
+  "ref_verses": 23143,
+  "sha256": "b3153cdf6927b6c625cc34fb46a66286e7a223a1c6d92c1051cdb2843997efdf"
+ },
+ "F03": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1102,
+    "score": {
+     "letters": {
+      "coverage": 0.9801367005743992,
+      "covered": 30544,
+      "in_order": 3234,
+      "in_order_share": 0.10377691493116838,
+      "verses": 31163
+     },
+     "nfc": {
+      "coverage": 0.9801046112376857,
+      "covered": 30543,
+      "in_order": 3227,
+      "in_order_share": 0.1035522895741745,
+      "verses": 31163
+     },
+     "nfkc": {
+      "coverage": 0.9801046112376857,
+      "covered": 30543,
+      "in_order": 3227,
+      "in_order_share": 0.1035522895741745,
+      "verses": 31163
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1102,
+    "score": {
+     "letters": {
+      "coverage": 0.9801367005743992,
+      "covered": 30544,
+      "in_order": 3232,
+      "in_order_share": 0.10371273625774155,
+      "verses": 31163
+     },
+     "nfc": {
+      "coverage": 0.9801367005743992,
+      "covered": 30544,
+      "in_order": 3226,
+      "in_order_share": 0.10352020023746109,
+      "verses": 31163
+     },
+     "nfkc": {
+      "coverage": 0.9801367005743992,
+      "covered": 30544,
+      "in_order": 3226,
+      "in_order_share": 0.10352020023746109,
+      "verses": 31163
+     }
+    }
+   }
+  },
+  "ref_verses": 31163,
+  "sha256": "7c3c91c0aa32a051a63a75f3ec7d33c539259cf2828df95264917265b5938228"
+ },
+ "F06": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 372,
+    "score": {
+     "letters": {
+      "coverage": 0.9612237189978597,
+      "covered": 7635,
+      "in_order": 7534,
+      "in_order_share": 0.9485081203575475,
+      "verses": 7943
+     },
+     "nfc": {
+      "coverage": 0.9610978219816191,
+      "covered": 7634,
+      "in_order": 7533,
+      "in_order_share": 0.9483822233413068,
+      "verses": 7943
+     },
+     "nfkc": {
+      "coverage": 0.9610978219816191,
+      "covered": 7634,
+      "in_order": 7533,
+      "in_order_share": 0.9483822233413068,
+      "verses": 7943
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 372,
+    "score": {
+     "letters": {
+      "coverage": 0.9612237189978597,
+      "covered": 7635,
+      "in_order": 7534,
+      "in_order_share": 0.9485081203575475,
+      "verses": 7943
+     },
+     "nfc": {
+      "coverage": 0.9610978219816191,
+      "covered": 7634,
+      "in_order": 7533,
+      "in_order_share": 0.9483822233413068,
+      "verses": 7943
+     },
+     "nfkc": {
+      "coverage": 0.9610978219816191,
+      "covered": 7634,
+      "in_order": 7533,
+      "in_order_share": 0.9483822233413068,
+      "verses": 7943
+     }
+    }
+   }
+  },
+  "ref_verses": 7949,
+  "sha256": "687950e463498612f303b0ee8256d77b5b0334e36fc28e6e6de0422de0d5f261"
+ },
+ "F07": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1131,
+    "score": {
+     "letters": {
+      "coverage": 0.9899626817655386,
+      "covered": 30772,
+      "in_order": 9091,
+      "in_order_share": 0.29246557714579846,
+      "verses": 31084
+     },
+     "nfc": {
+      "coverage": 0.9899626817655386,
+      "covered": 30772,
+      "in_order": 9090,
+      "in_order_share": 0.29243340625402137,
+      "verses": 31084
+     },
+     "nfkc": {
+      "coverage": 0.9899626817655386,
+      "covered": 30772,
+      "in_order": 9090,
+      "in_order_share": 0.29243340625402137,
+      "verses": 31084
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1131,
+    "score": {
+     "letters": {
+      "coverage": 0.9899626817655386,
+      "covered": 30772,
+      "in_order": 9091,
+      "in_order_share": 0.29246557714579846,
+      "verses": 31084
+     },
+     "nfc": {
+      "coverage": 0.9899626817655386,
+      "covered": 30772,
+      "in_order": 9090,
+      "in_order_share": 0.29243340625402137,
+      "verses": 31084
+     },
+     "nfkc": {
+      "coverage": 0.9899626817655386,
+      "covered": 30772,
+      "in_order": 9090,
+      "in_order_share": 0.29243340625402137,
+      "verses": 31084
+     }
+    }
+   }
+  },
+  "ref_verses": 31084,
+  "sha256": "2776d2e95ea14a1762aee3c8de63428f2d49449f3b9adf6f66575d1b8ce7d00a"
+ },
+ "F13": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 356,
+    "score": {
+     "letters": {
+      "coverage": 0.6943979933110368,
+      "covered": 3322,
+      "in_order": 3029,
+      "in_order_share": 0.6331521739130435,
+      "verses": 4784
+     },
+     "nfc": {
+      "coverage": 0.6943979933110368,
+      "covered": 3322,
+      "in_order": 3029,
+      "in_order_share": 0.6331521739130435,
+      "verses": 4784
+     },
+     "nfkc": {
+      "coverage": 0.6943979933110368,
+      "covered": 3322,
+      "in_order": 3029,
+      "in_order_share": 0.6331521739130435,
+      "verses": 4784
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 356,
+    "score": {
+     "letters": {
+      "coverage": 0.6943979933110368,
+      "covered": 3322,
+      "in_order": 3029,
+      "in_order_share": 0.6331521739130435,
+      "verses": 4784
+     },
+     "nfc": {
+      "coverage": 0.6943979933110368,
+      "covered": 3322,
+      "in_order": 3029,
+      "in_order_share": 0.6331521739130435,
+      "verses": 4784
+     },
+     "nfkc": {
+      "coverage": 0.6943979933110368,
+      "covered": 3322,
+      "in_order": 3029,
+      "in_order_share": 0.6331521739130435,
+      "verses": 4784
+     }
+    }
+   }
+  },
+  "ref_verses": 4784,
+  "sha256": "46c02167cc29e35ce4aaa82f6239a3c642f46772bd42ff1e981bde3f2253986b"
+ },
+ "G03": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 815,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31011,
+      "in_order": 31011,
+      "in_order_share": 1.0,
+      "verses": 31011
+     },
+     "nfc": {
+      "coverage": 0.9906807261939312,
+      "covered": 30722,
+      "in_order": 1081,
+      "in_order_share": 0.03485859856180065,
+      "verses": 31011
+     },
+     "nfkc": {
+      "coverage": 0.9906807261939312,
+      "covered": 30722,
+      "in_order": 1081,
+      "in_order_share": 0.03485859856180065,
+      "verses": 31011
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 815,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31011,
+      "in_order": 31011,
+      "in_order_share": 1.0,
+      "verses": 31011
+     },
+     "nfc": {
+      "coverage": 0.9906807261939312,
+      "covered": 30722,
+      "in_order": 1081,
+      "in_order_share": 0.03485859856180065,
+      "verses": 31011
+     },
+     "nfkc": {
+      "coverage": 0.9906807261939312,
+      "covered": 30722,
+      "in_order": 1081,
+      "in_order_share": 0.03485859856180065,
+      "verses": 31011
+     }
+    }
+   }
+  },
+  "ref_verses": 31011,
+  "sha256": "36940c681aeaf44e2d16ca1289ceabae1f7da5b7ea8caec8e87b919f9a82e0b7"
+ },
+ "G04": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 398,
+    "score": {
+     "letters": {
+      "coverage": 0.9923644363918727,
+      "covered": 7668,
+      "in_order": 7667,
+      "in_order_share": 0.9922350200595315,
+      "verses": 7727
+     },
+     "nfc": {
+      "coverage": 0.9906820240714378,
+      "covered": 7655,
+      "in_order": 7654,
+      "in_order_share": 0.9905526077390967,
+      "verses": 7727
+     },
+     "nfkc": {
+      "coverage": 0.9906820240714378,
+      "covered": 7655,
+      "in_order": 7654,
+      "in_order_share": 0.9905526077390967,
+      "verses": 7727
+     },
+     "stripped": {
+      "coverage": 0.9954704283680601,
+      "covered": 7692,
+      "in_order": 7691,
+      "in_order_share": 0.9953410120357189,
+      "verses": 7727
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 7727
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 7727
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 398,
+    "score": {
+     "letters": {
+      "coverage": 0.9931409343859195,
+      "covered": 7674,
+      "in_order": 7673,
+      "in_order_share": 0.9930115180535783,
+      "verses": 7727
+     },
+     "nfc": {
+      "coverage": 0.9914585220654847,
+      "covered": 7661,
+      "in_order": 7660,
+      "in_order_share": 0.9913291057331435,
+      "verses": 7727
+     },
+     "nfkc": {
+      "coverage": 0.9914585220654847,
+      "covered": 7661,
+      "in_order": 7660,
+      "in_order_share": 0.9913291057331435,
+      "verses": 7727
+     },
+     "stripped": {
+      "coverage": 0.9958586773650835,
+      "covered": 7695,
+      "in_order": 7694,
+      "in_order_share": 0.9957292610327423,
+      "verses": 7727
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 7727
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 7727
+     }
+    }
+   }
+  },
+  "ref_verses": 7727,
+  "sha256": "7b22c964af775f37e6cb9325b52f03bad8abef5b31322d198ccb0f3d75dfd813"
+ },
+ "G05": {
+  "engines": {
+   "current": {
+    "ok": false,
+    "pages_with_text": 0,
+    "score": {}
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 394,
+    "score": {
+     "letters": {
+      "coverage": 0.9412094064949608,
+      "covered": 8405,
+      "in_order": 7699,
+      "in_order_share": 0.8621500559910414,
+      "verses": 8930
+     },
+     "nfc": {
+      "coverage": 0.8912653975363942,
+      "covered": 7959,
+      "in_order": 4164,
+      "in_order_share": 0.46629339305711087,
+      "verses": 8930
+     },
+     "nfkc": {
+      "coverage": 0.8912653975363942,
+      "covered": 7959,
+      "in_order": 4164,
+      "in_order_share": 0.46629339305711087,
+      "verses": 8930
+     }
+    }
+   }
+  },
+  "ref_verses": 8930,
+  "sha256": "b6ba51eaaef33e89ef6ef02e0eb80b65257cd9431f817d5089c6ef55092d48cf"
+ },
+ "G07": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 264,
+    "score": {
+     "letters": {
+      "coverage": 0.9440993788819876,
+      "covered": 760,
+      "in_order": 760,
+      "in_order_share": 0.9440993788819876,
+      "verses": 805
+     },
+     "nfc": {
+      "coverage": 0.9440993788819876,
+      "covered": 760,
+      "in_order": 760,
+      "in_order_share": 0.9440993788819876,
+      "verses": 805
+     },
+     "nfkc": {
+      "coverage": 0.9440993788819876,
+      "covered": 760,
+      "in_order": 760,
+      "in_order_share": 0.9440993788819876,
+      "verses": 805
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 264,
+    "score": {
+     "letters": {
+      "coverage": 0.9440993788819876,
+      "covered": 760,
+      "in_order": 760,
+      "in_order_share": 0.9440993788819876,
+      "verses": 805
+     },
+     "nfc": {
+      "coverage": 0.9440993788819876,
+      "covered": 760,
+      "in_order": 760,
+      "in_order_share": 0.9440993788819876,
+      "verses": 805
+     },
+     "nfkc": {
+      "coverage": 0.9440993788819876,
+      "covered": 760,
+      "in_order": 760,
+      "in_order_share": 0.9440993788819876,
+      "verses": 805
+     }
+    }
+   }
+  },
+  "ref_verses": 805,
+  "sha256": "3df8c19ae98ba46a8238509faf2c7c9806470f41c2411726a05f142409027480"
+ },
+ "G09": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 27,
+    "score": {
+     "letters": {
+      "coverage": 0.9764397905759162,
+      "covered": 746,
+      "in_order": 746,
+      "in_order_share": 0.9764397905759162,
+      "verses": 764
+     },
+     "nfc": {
+      "coverage": 0.9044502617801047,
+      "covered": 691,
+      "in_order": 691,
+      "in_order_share": 0.9044502617801047,
+      "verses": 764
+     },
+     "nfkc": {
+      "coverage": 0.9044502617801047,
+      "covered": 691,
+      "in_order": 691,
+      "in_order_share": 0.9044502617801047,
+      "verses": 764
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 27,
+    "score": {
+     "letters": {
+      "coverage": 0.9777486910994765,
+      "covered": 747,
+      "in_order": 747,
+      "in_order_share": 0.9777486910994765,
+      "verses": 764
+     },
+     "nfc": {
+      "coverage": 0.9057591623036649,
+      "covered": 692,
+      "in_order": 692,
+      "in_order_share": 0.9057591623036649,
+      "verses": 764
+     },
+     "nfkc": {
+      "coverage": 0.9057591623036649,
+      "covered": 692,
+      "in_order": 692,
+      "in_order_share": 0.9057591623036649,
+      "verses": 764
+     }
+    }
+   }
+  },
+  "ref_verses": 764,
+  "sha256": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b"
+ },
+ "G10": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 39,
+    "score": {
+     "letters": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     },
+     "nfc": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     },
+     "nfkc": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     },
+     "stripped": {
+      "coverage": 0.39596469104665827,
+      "covered": 314,
+      "in_order": 65,
+      "in_order_share": 0.08196721311475409,
+      "verses": 793
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 39,
+    "score": {
+     "letters": {
+      "coverage": 0.2042875157629256,
+      "covered": 162,
+      "in_order": 28,
+      "in_order_share": 0.03530895334174023,
+      "verses": 793
+     },
+     "nfc": {
+      "coverage": 0.2042875157629256,
+      "covered": 162,
+      "in_order": 28,
+      "in_order_share": 0.03530895334174023,
+      "verses": 793
+     },
+     "nfkc": {
+      "coverage": 0.2042875157629256,
+      "covered": 162,
+      "in_order": 28,
+      "in_order_share": 0.03530895334174023,
+      "verses": 793
+     },
+     "stripped": {
+      "coverage": 0.733921815889029,
+      "covered": 582,
+      "in_order": 205,
+      "in_order_share": 0.25851197982345525,
+      "verses": 793
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 793
+     }
+    }
+   }
+  },
+  "ref_verses": 793,
+  "sha256": "ee7e11750ed7ca22f90bae867398b2bb7bf5508c41b2b2c934a5a89ebd9dfb41"
+ },
+ "G13": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 28,
+    "score": {
+     "letters": {
+      "coverage": 0.9790372670807453,
+      "covered": 1261,
+      "in_order": 1261,
+      "in_order_share": 0.9790372670807453,
+      "verses": 1288
+     },
+     "nfc": {
+      "coverage": 0.4860248447204969,
+      "covered": 626,
+      "in_order": 626,
+      "in_order_share": 0.4860248447204969,
+      "verses": 1288
+     },
+     "nfkc": {
+      "coverage": 0.4860248447204969,
+      "covered": 626,
+      "in_order": 626,
+      "in_order_share": 0.4860248447204969,
+      "verses": 1288
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 28,
+    "score": {
+     "letters": {
+      "coverage": 0.9790372670807453,
+      "covered": 1261,
+      "in_order": 1261,
+      "in_order_share": 0.9790372670807453,
+      "verses": 1288
+     },
+     "nfc": {
+      "coverage": 0.4860248447204969,
+      "covered": 626,
+      "in_order": 626,
+      "in_order_share": 0.4860248447204969,
+      "verses": 1288
+     },
+     "nfkc": {
+      "coverage": 0.4860248447204969,
+      "covered": 626,
+      "in_order": 626,
+      "in_order_share": 0.4860248447204969,
+      "verses": 1288
+     }
+    }
+   }
+  },
+  "ref_verses": 1288,
+  "sha256": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8"
+ },
+ "deu1912-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1343,
+    "score": {
+     "letters": {
+      "coverage": 0.9970098385955887,
+      "covered": 31009,
+      "in_order": 31009,
+      "in_order_share": 0.9970098385955887,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.996977686322423,
+      "covered": 31008,
+      "in_order": 31008,
+      "in_order_share": 0.996977686322423,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.996977686322423,
+      "covered": 31008,
+      "in_order": 31008,
+      "in_order_share": 0.996977686322423,
+      "verses": 31102
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1343,
+    "score": {
+     "letters": {
+      "coverage": 0.9970098385955887,
+      "covered": 31009,
+      "in_order": 31009,
+      "in_order_share": 0.9970098385955887,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.996977686322423,
+      "covered": 31008,
+      "in_order": 31008,
+      "in_order_share": 0.996977686322423,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.996977686322423,
+      "covered": 31008,
+      "in_order": 31008,
+      "in_order_share": 0.996977686322423,
+      "verses": 31102
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "ccf956f61c027d8227dc770bcf86544298222d4d364a770c19818ece95f5dfc6"
+ },
+ "deu1912-rdropcap": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1641,
+    "score": {
+     "letters": {
+      "coverage": 0.9572053244164362,
+      "covered": 29771,
+      "in_order": 7354,
+      "in_order_share": 0.23644781686065205,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9571088675969391,
+      "covered": 29768,
+      "in_order": 7358,
+      "in_order_share": 0.2365764259533149,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9571088675969391,
+      "covered": 29768,
+      "in_order": 7358,
+      "in_order_share": 0.2365764259533149,
+      "verses": 31102
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1641,
+    "score": {
+     "letters": {
+      "coverage": 0.9572053244164362,
+      "covered": 29771,
+      "in_order": 7354,
+      "in_order_share": 0.23644781686065205,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9571088675969391,
+      "covered": 29768,
+      "in_order": 7358,
+      "in_order_share": 0.2365764259533149,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9571088675969391,
+      "covered": 29768,
+      "in_order": 7358,
+      "in_order_share": 0.2365764259533149,
+      "verses": 31102
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "5a8deda28d742312e4a49d547824cc914a7d0b84e0757c8b2b771f1cc4cdc5df"
+ },
+ "deuelo-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1186,
+    "score": {
+     "letters": {
+      "coverage": 0.9974920420565255,
+      "covered": 31023,
+      "in_order": 31018,
+      "in_order_share": 0.9973312755216874,
+      "verses": 31101
+     },
+     "nfc": {
+      "coverage": 0.9974920420565255,
+      "covered": 31023,
+      "in_order": 31018,
+      "in_order_share": 0.9973312755216874,
+      "verses": 31101
+     },
+     "nfkc": {
+      "coverage": 0.9974920420565255,
+      "covered": 31023,
+      "in_order": 31018,
+      "in_order_share": 0.9973312755216874,
+      "verses": 31101
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1186,
+    "score": {
+     "letters": {
+      "coverage": 0.9974920420565255,
+      "covered": 31023,
+      "in_order": 31018,
+      "in_order_share": 0.9973312755216874,
+      "verses": 31101
+     },
+     "nfc": {
+      "coverage": 0.9974920420565255,
+      "covered": 31023,
+      "in_order": 31018,
+      "in_order_share": 0.9973312755216874,
+      "verses": 31101
+     },
+     "nfkc": {
+      "coverage": 0.9974920420565255,
+      "covered": 31023,
+      "in_order": 31018,
+      "in_order_share": 0.9973312755216874,
+      "verses": 31101
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "f1493825b515157b662bc432e48971bd36c05c50005c08feb4e40284dc01b737"
+ },
+ "deutkw-fpdfa5": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 389,
+    "score": {
+     "letters": {
+      "coverage": 0.9659132336857456,
+      "covered": 5299,
+      "in_order": 5298,
+      "in_order_share": 0.9657309515129421,
+      "verses": 5486
+     },
+     "nfc": {
+      "coverage": 0.9659132336857456,
+      "covered": 5299,
+      "in_order": 5298,
+      "in_order_share": 0.9657309515129421,
+      "verses": 5486
+     },
+     "nfkc": {
+      "coverage": 0.9659132336857456,
+      "covered": 5299,
+      "in_order": 5298,
+      "in_order_share": 0.9657309515129421,
+      "verses": 5486
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 389,
+    "score": {
+     "letters": {
+      "coverage": 0.9659132336857456,
+      "covered": 5299,
+      "in_order": 5298,
+      "in_order_share": 0.9657309515129421,
+      "verses": 5486
+     },
+     "nfc": {
+      "coverage": 0.9659132336857456,
+      "covered": 5299,
+      "in_order": 5298,
+      "in_order_share": 0.9657309515129421,
+      "verses": 5486
+     },
+     "nfkc": {
+      "coverage": 0.9659132336857456,
+      "covered": 5299,
+      "in_order": 5298,
+      "in_order_share": 0.9657309515129421,
+      "verses": 5486
+     }
+    }
+   }
+  },
+  "ref_verses": 5486,
+  "sha256": "c05900a4ec24be1354ab0a7328d540c6d2056399c2d83f6b18cc3eb70ff895fd"
+ },
+ "deutkw-lopdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1126,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31157,
+      "in_order": 31157,
+      "in_order_share": 1.0,
+      "verses": 31157
+     },
+     "nfc": {
+      "coverage": 1.0,
+      "covered": 31157,
+      "in_order": 31157,
+      "in_order_share": 1.0,
+      "verses": 31157
+     },
+     "nfkc": {
+      "coverage": 1.0,
+      "covered": 31157,
+      "in_order": 31157,
+      "in_order_share": 1.0,
+      "verses": 31157
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1126,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31157,
+      "in_order": 31157,
+      "in_order_share": 1.0,
+      "verses": 31157
+     },
+     "nfc": {
+      "coverage": 1.0,
+      "covered": 31157,
+      "in_order": 31157,
+      "in_order_share": 1.0,
+      "verses": 31157
+     },
+     "nfkc": {
+      "coverage": 1.0,
+      "covered": 31157,
+      "in_order": 31157,
+      "in_order_share": 1.0,
+      "verses": 31157
+     }
+    }
+   }
+  },
+  "ref_verses": 31157,
+  "sha256": "08344d51aca0b6c1170fa59ccd3da285cc10ed3ddd5e263c10107010476ee7dc"
+ },
+ "deutkw-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1489,
+    "score": {
+     "letters": {
+      "coverage": 0.9955066277241069,
+      "covered": 31017,
+      "in_order": 18170,
+      "in_order_share": 0.5831755303784061,
+      "verses": 31157
+     },
+     "nfc": {
+      "coverage": 0.9955066277241069,
+      "covered": 31017,
+      "in_order": 18170,
+      "in_order_share": 0.5831755303784061,
+      "verses": 31157
+     },
+     "nfkc": {
+      "coverage": 0.9955066277241069,
+      "covered": 31017,
+      "in_order": 18170,
+      "in_order_share": 0.5831755303784061,
+      "verses": 31157
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1489,
+    "score": {
+     "letters": {
+      "coverage": 0.9955066277241069,
+      "covered": 31017,
+      "in_order": 18170,
+      "in_order_share": 0.5831755303784061,
+      "verses": 31157
+     },
+     "nfc": {
+      "coverage": 0.9955066277241069,
+      "covered": 31017,
+      "in_order": 18170,
+      "in_order_share": 0.5831755303784061,
+      "verses": 31157
+     },
+     "nfkc": {
+      "coverage": 0.9955066277241069,
+      "covered": 31017,
+      "in_order": 18170,
+      "in_order_share": 0.5831755303784061,
+      "verses": 31157
+     }
+    }
+   }
+  },
+  "ref_verses": 31157,
+  "sha256": "7576ecfaef5170ef85c653e055f566288e6a3b1170304d68261064508025335c"
+ },
+ "engasv-rrlab1col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1381,
+    "score": {
+     "letters": {
+      "coverage": 0.9712410731519012,
+      "covered": 30192,
+      "in_order": 8792,
+      "in_order_share": 0.2828282828282828,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.9712410731519012,
+      "covered": 30192,
+      "in_order": 8791,
+      "in_order_share": 0.2827961140063051,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.9712410731519012,
+      "covered": 30192,
+      "in_order": 8791,
+      "in_order_share": 0.2827961140063051,
+      "verses": 31086
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1381,
+    "score": {
+     "letters": {
+      "coverage": 0.9712410731519012,
+      "covered": 30192,
+      "in_order": 8792,
+      "in_order_share": 0.2828282828282828,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.9712410731519012,
+      "covered": 30192,
+      "in_order": 8791,
+      "in_order_share": 0.2827961140063051,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.9712410731519012,
+      "covered": 30192,
+      "in_order": 8791,
+      "in_order_share": 0.2827961140063051,
+      "verses": 31086
+     }
+    }
+   }
+  },
+  "ref_verses": 31086,
+  "sha256": "72c01362317ea0f04448f9dbcfc7bf2292f25686c7a3fbcd23f0f894d4a52d8c"
+ },
+ "engbrenton-rlo2col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 762,
+    "score": {
+     "letters": {
+      "coverage": 0.9653896386591206,
+      "covered": 22175,
+      "in_order": 3467,
+      "in_order_share": 0.15093600348280364,
+      "verses": 22970
+     },
+     "nfc": {
+      "coverage": 0.8697866782760122,
+      "covered": 19979,
+      "in_order": 3169,
+      "in_order_share": 0.13796255986068787,
+      "verses": 22970
+     },
+     "nfkc": {
+      "coverage": 0.8697866782760122,
+      "covered": 19979,
+      "in_order": 3169,
+      "in_order_share": 0.13796255986068787,
+      "verses": 22970
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 762,
+    "score": {
+     "letters": {
+      "coverage": 0.9653896386591206,
+      "covered": 22175,
+      "in_order": 3467,
+      "in_order_share": 0.15093600348280364,
+      "verses": 22970
+     },
+     "nfc": {
+      "coverage": 0.8697866782760122,
+      "covered": 19979,
+      "in_order": 3169,
+      "in_order_share": 0.13796255986068787,
+      "verses": 22970
+     },
+     "nfkc": {
+      "coverage": 0.8697866782760122,
+      "covered": 19979,
+      "in_order": 3169,
+      "in_order_share": 0.13796255986068787,
+      "verses": 22970
+     }
+    }
+   }
+  },
+  "ref_verses": 22970,
+  "sha256": "dffb9a18645614ee7d7b5a0aa8b3365ae2fd1f3d2846024e54e43ff90d26fb2c"
+ },
+ "engbsb-rwpdf2col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 993,
+    "score": {
+     "letters": {
+      "coverage": 0.891333719359197,
+      "covered": 27708,
+      "in_order": 316,
+      "in_order_share": 0.010165347744965579,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.890851187029531,
+      "covered": 27693,
+      "in_order": 472,
+      "in_order_share": 0.01518368397349289,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.890851187029531,
+      "covered": 27693,
+      "in_order": 472,
+      "in_order_share": 0.01518368397349289,
+      "verses": 31086
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 993,
+    "score": {
+     "letters": {
+      "coverage": 0.891333719359197,
+      "covered": 27708,
+      "in_order": 316,
+      "in_order_share": 0.010165347744965579,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.890851187029531,
+      "covered": 27693,
+      "in_order": 472,
+      "in_order_share": 0.01518368397349289,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.890851187029531,
+      "covered": 27693,
+      "in_order": 472,
+      "in_order_share": 0.01518368397349289,
+      "verses": 31086
+     }
+    }
+   }
+  },
+  "ref_verses": 31086,
+  "sha256": "89f877f2921090f9bfdfd73a5665b81d2bf5b02c7e65cd87af679d8d32c20e29"
+ },
+ "engjps-rdocx2lo": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 949,
+    "score": {
+     "letters": {
+      "coverage": 0.9645279758047094,
+      "covered": 22324,
+      "in_order": 484,
+      "in_order_share": 0.02091164398358177,
+      "verses": 23145
+     },
+     "nfc": {
+      "coverage": 0.9643551523007129,
+      "covered": 22320,
+      "in_order": 483,
+      "in_order_share": 0.02086843810758263,
+      "verses": 23145
+     },
+     "nfkc": {
+      "coverage": 0.9643551523007129,
+      "covered": 22320,
+      "in_order": 483,
+      "in_order_share": 0.02086843810758263,
+      "verses": 23145
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 949,
+    "score": {
+     "letters": {
+      "coverage": 0.9645279758047094,
+      "covered": 22324,
+      "in_order": 484,
+      "in_order_share": 0.02091164398358177,
+      "verses": 23145
+     },
+     "nfc": {
+      "coverage": 0.9643551523007129,
+      "covered": 22320,
+      "in_order": 483,
+      "in_order_share": 0.02086843810758263,
+      "verses": 23145
+     },
+     "nfkc": {
+      "coverage": 0.9643551523007129,
+      "covered": 22320,
+      "in_order": 483,
+      "in_order_share": 0.02086843810758263,
+      "verses": 23145
+     }
+    }
+   }
+  },
+  "ref_verses": 23145,
+  "sha256": "c39a2cbf4010a8988151b4d7f94e55e622452179d79726792821fb5186d64c6e"
+ },
+ "engkjvcpb-rwpdfmargin": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1716,
+    "score": {
+     "letters": {
+      "coverage": 0.9623496881229503,
+      "covered": 29931,
+      "in_order": 7361,
+      "in_order_share": 0.23667288277281204,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.3628384026750691,
+      "covered": 11285,
+      "in_order": 52,
+      "in_order_share": 0.0016719182046170664,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.3628384026750691,
+      "covered": 11285,
+      "in_order": 52,
+      "in_order_share": 0.0016719182046170664,
+      "verses": 31102
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1716,
+    "score": {
+     "letters": {
+      "coverage": 0.9624139926692817,
+      "covered": 29933,
+      "in_order": 7361,
+      "in_order_share": 0.23667288277281204,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.36290270722140056,
+      "covered": 11287,
+      "in_order": 52,
+      "in_order_share": 0.0016719182046170664,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.36290270722140056,
+      "covered": 11287,
+      "in_order": 52,
+      "in_order_share": 0.0016719182046170664,
+      "verses": 31102
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "ea7da19de872e0812ccc1e339db4c40f7d7341940f4158d9fc09fe2530f6455f"
+ },
+ "engoebus-ebiblea4": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 718,
+    "score": {
+     "letters": {
+      "coverage": 0.9897797610479344,
+      "covered": 13752,
+      "in_order": 12362,
+      "in_order_share": 0.8897365769396862,
+      "verses": 13894
+     },
+     "nfc": {
+      "coverage": 0.9896358140204404,
+      "covered": 13750,
+      "in_order": 13740,
+      "in_order_share": 0.9889160788829711,
+      "verses": 13894
+     },
+     "nfkc": {
+      "coverage": 0.9896358140204404,
+      "covered": 13750,
+      "in_order": 13740,
+      "in_order_share": 0.9889160788829711,
+      "verses": 13894
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 718,
+    "score": {
+     "letters": {
+      "coverage": 0.9897797610479344,
+      "covered": 13752,
+      "in_order": 12362,
+      "in_order_share": 0.8897365769396862,
+      "verses": 13894
+     },
+     "nfc": {
+      "coverage": 0.9896358140204404,
+      "covered": 13750,
+      "in_order": 13740,
+      "in_order_share": 0.9889160788829711,
+      "verses": 13894
+     },
+     "nfkc": {
+      "coverage": 0.9896358140204404,
+      "covered": 13750,
+      "in_order": 13740,
+      "in_order_share": 0.9889160788829711,
+      "verses": 13894
+     }
+    }
+   }
+  },
+  "ref_verses": 13894,
+  "sha256": "f45bfced0a75816d3dc7a3c7468a061e47516911641be0d5ec7f5963e2fbcd85"
+ },
+ "engrv-ebiblebook": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1336,
+    "score": {
+     "letters": {
+      "coverage": 0.9990027665186901,
+      "covered": 31055,
+      "in_order": 31055,
+      "in_order_share": 0.9990027665186901,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.9990027665186901,
+      "covered": 31055,
+      "in_order": 31055,
+      "in_order_share": 0.9990027665186901,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.9990027665186901,
+      "covered": 31055,
+      "in_order": 31055,
+      "in_order_share": 0.9990027665186901,
+      "verses": 31086
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1336,
+    "score": {
+     "letters": {
+      "coverage": 0.9990027665186901,
+      "covered": 31055,
+      "in_order": 31055,
+      "in_order_share": 0.9990027665186901,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.9990027665186901,
+      "covered": 31055,
+      "in_order": 31055,
+      "in_order_share": 0.9990027665186901,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.9990027665186901,
+      "covered": 31055,
+      "in_order": 31055,
+      "in_order_share": 0.9990027665186901,
+      "verses": 31086
+     }
+    }
+   }
+  },
+  "ref_verses": 31086,
+  "sha256": "ec7bc275d991d44a324b077f0b0053b6b04c111972a6c9406cd50b9eb76b2a13"
+ },
+ "engtnt-wp3col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 133,
+    "score": {
+     "letters": {
+      "coverage": 0.9871762635152125,
+      "covered": 7852,
+      "in_order": 7852,
+      "in_order_share": 0.9871762635152125,
+      "verses": 7954
+     },
+     "nfc": {
+      "coverage": 0.9869248177017853,
+      "covered": 7850,
+      "in_order": 7850,
+      "in_order_share": 0.9869248177017853,
+      "verses": 7954
+     },
+     "nfkc": {
+      "coverage": 0.9869248177017853,
+      "covered": 7850,
+      "in_order": 7850,
+      "in_order_share": 0.9869248177017853,
+      "verses": 7954
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 133,
+    "score": {
+     "letters": {
+      "coverage": 0.9871762635152125,
+      "covered": 7852,
+      "in_order": 7852,
+      "in_order_share": 0.9871762635152125,
+      "verses": 7954
+     },
+     "nfc": {
+      "coverage": 0.9869248177017853,
+      "covered": 7850,
+      "in_order": 7850,
+      "in_order_share": 0.9869248177017853,
+      "verses": 7954
+     },
+     "nfkc": {
+      "coverage": 0.9869248177017853,
+      "covered": 7850,
+      "in_order": 7850,
+      "in_order_share": 0.9869248177017853,
+      "verses": 7954
+     }
+    }
+   }
+  },
+  "ref_verses": 7954,
+  "sha256": "718136ecbb7a7e1d446d6245d4a421e415267265d88dad9cfd7cb3b60bf1362b"
+ },
+ "engwebp-book": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1064,
+    "score": {
+     "letters": {
+      "coverage": 0.985626085278796,
+      "covered": 30651,
+      "in_order": 9993,
+      "in_order_share": 0.32133899286127726,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.985626085278796,
+      "covered": 30651,
+      "in_order": 9993,
+      "in_order_share": 0.32133899286127726,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.985626085278796,
+      "covered": 30651,
+      "in_order": 9993,
+      "in_order_share": 0.32133899286127726,
+      "verses": 31098
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1064,
+    "score": {
+     "letters": {
+      "coverage": 0.985626085278796,
+      "covered": 30651,
+      "in_order": 9993,
+      "in_order_share": 0.32133899286127726,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.985626085278796,
+      "covered": 30651,
+      "in_order": 9993,
+      "in_order_share": 0.32133899286127726,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.985626085278796,
+      "covered": 30651,
+      "in_order": 9993,
+      "in_order_share": 0.32133899286127726,
+      "verses": 31098
+     }
+    }
+   }
+  },
+  "ref_verses": 31098,
+  "sha256": "9c6795f3710a151df9e07596951a24e6de440e5a23399277d180b1c443d2cb99"
+ },
+ "engwebp-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1272,
+    "score": {
+     "letters": {
+      "coverage": 0.9815743777734902,
+      "covered": 30525,
+      "in_order": 29453,
+      "in_order_share": 0.9471027075696187,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9815743777734902,
+      "covered": 30525,
+      "in_order": 29453,
+      "in_order_share": 0.9471027075696187,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9815743777734902,
+      "covered": 30525,
+      "in_order": 29453,
+      "in_order_share": 0.9471027075696187,
+      "verses": 31098
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1272,
+    "score": {
+     "letters": {
+      "coverage": 0.9815743777734902,
+      "covered": 30525,
+      "in_order": 29453,
+      "in_order_share": 0.9471027075696187,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9815743777734902,
+      "covered": 30525,
+      "in_order": 29453,
+      "in_order_share": 0.9471027075696187,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9815743777734902,
+      "covered": 30525,
+      "in_order": 29453,
+      "in_order_share": 0.9471027075696187,
+      "verses": 31098
+     }
+    }
+   }
+  },
+  "ref_verses": 31098,
+  "sha256": "37be7fab3f124b95070ae46480f9d4776cc19ebc1623a00b16e3f2e06917f896"
+ },
+ "engwebu-rl2col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1415,
+    "score": {
+     "letters": {
+      "coverage": 0.948581902373143,
+      "covered": 29499,
+      "in_order": 1021,
+      "in_order_share": 0.03283169335648595,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9485497459643707,
+      "covered": 29498,
+      "in_order": 1020,
+      "in_order_share": 0.03279953694771368,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9485497459643707,
+      "covered": 29498,
+      "in_order": 1020,
+      "in_order_share": 0.03279953694771368,
+      "verses": 31098
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1415,
+    "score": {
+     "letters": {
+      "coverage": 0.948581902373143,
+      "covered": 29499,
+      "in_order": 1021,
+      "in_order_share": 0.03283169335648595,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9485497459643707,
+      "covered": 29498,
+      "in_order": 1020,
+      "in_order_share": 0.03279953694771368,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9485497459643707,
+      "covered": 29498,
+      "in_order": 1020,
+      "in_order_share": 0.03279953694771368,
+      "verses": 31098
+     }
+    }
+   }
+  },
+  "ref_verses": 31098,
+  "sha256": "fbdebaef155e3a1bc06a5246899211343e536681d6af06d3a940778f131239aa"
+ },
+ "engylt-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1087,
+    "score": {
+     "letters": {
+      "coverage": 0.9989068227123657,
+      "covered": 31068,
+      "in_order": 31068,
+      "in_order_share": 0.9989068227123657,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9989068227123657,
+      "covered": 31068,
+      "in_order": 31068,
+      "in_order_share": 0.9989068227123657,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9989068227123657,
+      "covered": 31068,
+      "in_order": 31068,
+      "in_order_share": 0.9989068227123657,
+      "verses": 31102
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1087,
+    "score": {
+     "letters": {
+      "coverage": 0.9989068227123657,
+      "covered": 31068,
+      "in_order": 31068,
+      "in_order_share": 0.9989068227123657,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9989068227123657,
+      "covered": 31068,
+      "in_order": 31068,
+      "in_order_share": 0.9989068227123657,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9989068227123657,
+      "covered": 31068,
+      "in_order": 31068,
+      "in_order_share": 0.9989068227123657,
+      "verses": 31102
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "b99369ff6d2aa1718d1b39298395a46336cbf9cf122e7d6bab31f506c7ef54c4"
+ },
+ "fob-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1347,
+    "score": {
+     "letters": {
+      "coverage": 0.9976211142186646,
+      "covered": 31033,
+      "in_order": 31032,
+      "in_order_share": 0.9975889671135114,
+      "verses": 31107
+     },
+     "nfc": {
+      "coverage": 0.9976211142186646,
+      "covered": 31033,
+      "in_order": 31032,
+      "in_order_share": 0.9975889671135114,
+      "verses": 31107
+     },
+     "nfkc": {
+      "coverage": 0.9976211142186646,
+      "covered": 31033,
+      "in_order": 31032,
+      "in_order_share": 0.9975889671135114,
+      "verses": 31107
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1347,
+    "score": {
+     "letters": {
+      "coverage": 0.9976211142186646,
+      "covered": 31033,
+      "in_order": 31032,
+      "in_order_share": 0.9975889671135114,
+      "verses": 31107
+     },
+     "nfc": {
+      "coverage": 0.9976211142186646,
+      "covered": 31033,
+      "in_order": 31032,
+      "in_order_share": 0.9975889671135114,
+      "verses": 31107
+     },
+     "nfkc": {
+      "coverage": 0.9976211142186646,
+      "covered": 31033,
+      "in_order": 31032,
+      "in_order_share": 0.9975889671135114,
+      "verses": 31107
+     }
+    }
+   }
+  },
+  "ref_verses": 31107,
+  "sha256": "f1e77d5e9d3deee862862d3e138ebf7e1b501e572382d4d01b2e4903183b85a2"
+ },
+ "fraLSG-luk": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 133,
+    "score": {
+     "letters": {
+      "coverage": 0.7723718505647263,
+      "covered": 889,
+      "in_order": 889,
+      "in_order_share": 0.7723718505647263,
+      "verses": 1151
+     },
+     "nfc": {
+      "coverage": 0.7723718505647263,
+      "covered": 889,
+      "in_order": 889,
+      "in_order_share": 0.7723718505647263,
+      "verses": 1151
+     },
+     "nfkc": {
+      "coverage": 0.7723718505647263,
+      "covered": 889,
+      "in_order": 889,
+      "in_order_share": 0.7723718505647263,
+      "verses": 1151
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 133,
+    "score": {
+     "letters": {
+      "coverage": 0.7723718505647263,
+      "covered": 889,
+      "in_order": 889,
+      "in_order_share": 0.7723718505647263,
+      "verses": 1151
+     },
+     "nfc": {
+      "coverage": 0.7723718505647263,
+      "covered": 889,
+      "in_order": 889,
+      "in_order_share": 0.7723718505647263,
+      "verses": 1151
+     },
+     "nfkc": {
+      "coverage": 0.7723718505647263,
+      "covered": 889,
+      "in_order": 889,
+      "in_order_share": 0.7723718505647263,
+      "verses": 1151
+     }
+    }
+   }
+  },
+  "ref_verses": 1151,
+  "sha256": "adb0e401da85eb1c978c475dcae860be7fb4236b8250e98271afcae6624b1cdb"
+ },
+ "fraLSG-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1754,
+    "score": {
+     "letters": {
+      "coverage": 0.8237086942572986,
+      "covered": 25675,
+      "in_order": 1831,
+      "in_order_share": 0.05874238049406481,
+      "verses": 31170
+     },
+     "nfc": {
+      "coverage": 0.8236766121270452,
+      "covered": 25674,
+      "in_order": 1830,
+      "in_order_share": 0.05871029836381136,
+      "verses": 31170
+     },
+     "nfkc": {
+      "coverage": 0.8236766121270452,
+      "covered": 25674,
+      "in_order": 1830,
+      "in_order_share": 0.05871029836381136,
+      "verses": 31170
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1754,
+    "score": {
+     "letters": {
+      "coverage": 0.8237086942572986,
+      "covered": 25675,
+      "in_order": 1831,
+      "in_order_share": 0.05874238049406481,
+      "verses": 31170
+     },
+     "nfc": {
+      "coverage": 0.8236766121270452,
+      "covered": 25674,
+      "in_order": 1830,
+      "in_order_share": 0.05871029836381136,
+      "verses": 31170
+     },
+     "nfkc": {
+      "coverage": 0.8236766121270452,
+      "covered": 25674,
+      "in_order": 1830,
+      "in_order_share": 0.05871029836381136,
+      "verses": 31170
+     }
+    }
+   }
+  },
+  "ref_verses": 31170,
+  "sha256": "1c2d1169cc103152e1934e88300fa7c733d9da10e886f0f5cc26810b8d99f170"
+ },
+ "frajnd-lopdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1156,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31167,
+      "in_order": 30043,
+      "in_order_share": 0.9639362145859403,
+      "verses": 31167
+     },
+     "nfc": {
+      "coverage": 1.0,
+      "covered": 31167,
+      "in_order": 30043,
+      "in_order_share": 0.9639362145859403,
+      "verses": 31167
+     },
+     "nfkc": {
+      "coverage": 1.0,
+      "covered": 31167,
+      "in_order": 30043,
+      "in_order_share": 0.9639362145859403,
+      "verses": 31167
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1156,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31167,
+      "in_order": 30043,
+      "in_order_share": 0.9639362145859403,
+      "verses": 31167
+     },
+     "nfc": {
+      "coverage": 0.9999358295633202,
+      "covered": 31165,
+      "in_order": 30042,
+      "in_order_share": 0.9639041293676004,
+      "verses": 31167
+     },
+     "nfkc": {
+      "coverage": 0.9999358295633202,
+      "covered": 31165,
+      "in_order": 30042,
+      "in_order_share": 0.9639041293676004,
+      "verses": 31167
+     }
+    }
+   }
+  },
+  "ref_verses": 31167,
+  "sha256": "be5de731c77848f4f1e1499f3fdea2de3d47978a65c28d7d2ec819e3520c6b21"
+ },
+ "frajnd-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1549,
+    "score": {
+     "letters": {
+      "coverage": 0.8492315590207591,
+      "covered": 26468,
+      "in_order": 1417,
+      "in_order_share": 0.04546475438765361,
+      "verses": 31167
+     },
+     "nfc": {
+      "coverage": 0.8491673885840794,
+      "covered": 26466,
+      "in_order": 1415,
+      "in_order_share": 0.04540058395097379,
+      "verses": 31167
+     },
+     "nfkc": {
+      "coverage": 0.8491673885840794,
+      "covered": 26466,
+      "in_order": 1415,
+      "in_order_share": 0.04540058395097379,
+      "verses": 31167
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1549,
+    "score": {
+     "letters": {
+      "coverage": 0.8492315590207591,
+      "covered": 26468,
+      "in_order": 1417,
+      "in_order_share": 0.04546475438765361,
+      "verses": 31167
+     },
+     "nfc": {
+      "coverage": 0.8491673885840794,
+      "covered": 26466,
+      "in_order": 1415,
+      "in_order_share": 0.04540058395097379,
+      "verses": 31167
+     },
+     "nfkc": {
+      "coverage": 0.8491673885840794,
+      "covered": 26466,
+      "in_order": 1415,
+      "in_order_share": 0.04540058395097379,
+      "verses": 31167
+     }
+    }
+   }
+  },
+  "ref_verses": 31167,
+  "sha256": "a3ed40032c5ccecce82f7ffcd1c1b8cfc10863811715939de220170f5c06b568"
+ },
+ "grcbyz-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 322,
+    "score": {
+     "letters": {
+      "coverage": 0.9868057300829354,
+      "covered": 7853,
+      "in_order": 7853,
+      "in_order_share": 0.9868057300829354,
+      "verses": 7958
+     },
+     "nfc": {
+      "coverage": 0.9868057300829354,
+      "covered": 7853,
+      "in_order": 7853,
+      "in_order_share": 0.9868057300829354,
+      "verses": 7958
+     },
+     "nfkc": {
+      "coverage": 0.9868057300829354,
+      "covered": 7853,
+      "in_order": 7853,
+      "in_order_share": 0.9868057300829354,
+      "verses": 7958
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 322,
+    "score": {
+     "letters": {
+      "coverage": 0.9868057300829354,
+      "covered": 7853,
+      "in_order": 7853,
+      "in_order_share": 0.9868057300829354,
+      "verses": 7958
+     },
+     "nfc": {
+      "coverage": 0.9868057300829354,
+      "covered": 7853,
+      "in_order": 7853,
+      "in_order_share": 0.9868057300829354,
+      "verses": 7958
+     },
+     "nfkc": {
+      "coverage": 0.9868057300829354,
+      "covered": 7853,
+      "in_order": 7853,
+      "in_order_share": 0.9868057300829354,
+      "verses": 7958
+     }
+    }
+   }
+  },
+  "ref_verses": 7958,
+  "sha256": "fae2b849a836fe5d2864ec452f3703ced4b47adac00c62986fbd95172deba10d"
+ },
+ "grcsbl-rfpdf-mrk": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 37,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 673,
+      "in_order": 673,
+      "in_order_share": 1.0,
+      "verses": 673
+     },
+     "nfc": {
+      "coverage": 0.9687964338781575,
+      "covered": 652,
+      "in_order": 652,
+      "in_order_share": 0.9687964338781575,
+      "verses": 673
+     },
+     "nfkc": {
+      "coverage": 0.9687964338781575,
+      "covered": 652,
+      "in_order": 652,
+      "in_order_share": 0.9687964338781575,
+      "verses": 673
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 37,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 673,
+      "in_order": 673,
+      "in_order_share": 1.0,
+      "verses": 673
+     },
+     "nfc": {
+      "coverage": 0.9687964338781575,
+      "covered": 652,
+      "in_order": 652,
+      "in_order_share": 0.9687964338781575,
+      "verses": 673
+     },
+     "nfkc": {
+      "coverage": 0.9687964338781575,
+      "covered": 652,
+      "in_order": 652,
+      "in_order_share": 0.9687964338781575,
+      "verses": 673
+     }
+    }
+   }
+  },
+  "ref_verses": 673,
+  "sha256": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732"
+ },
+ "grctr-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 338,
+    "score": {
+     "letters": {
+      "coverage": 0.9826567801935403,
+      "covered": 7819,
+      "in_order": 1086,
+      "in_order_share": 0.13648359934648738,
+      "verses": 7957
+     },
+     "nfc": {
+      "coverage": 0.9826567801935403,
+      "covered": 7819,
+      "in_order": 1086,
+      "in_order_share": 0.13648359934648738,
+      "verses": 7957
+     },
+     "nfkc": {
+      "coverage": 0.9826567801935403,
+      "covered": 7819,
+      "in_order": 1086,
+      "in_order_share": 0.13648359934648738,
+      "verses": 7957
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 338,
+    "score": {
+     "letters": {
+      "coverage": 0.9826567801935403,
+      "covered": 7819,
+      "in_order": 1086,
+      "in_order_share": 0.13648359934648738,
+      "verses": 7957
+     },
+     "nfc": {
+      "coverage": 0.9826567801935403,
+      "covered": 7819,
+      "in_order": 1086,
+      "in_order_share": 0.13648359934648738,
+      "verses": 7957
+     },
+     "nfkc": {
+      "coverage": 0.9826567801935403,
+      "covered": 7819,
+      "in_order": 1086,
+      "in_order_share": 0.13648359934648738,
+      "verses": 7957
+     }
+    }
+   }
+  },
+  "ref_verses": 7957,
+  "sha256": "ee7907d7147a2868df4aed5fe11baa5eb9547accfe8bf48117dc07e412449aa8"
+ },
+ "hbo-rwpdfrtl-rut": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 8,
+    "score": {
+     "letters": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "nfc": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "nfkc": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "stripped": {
+      "coverage": 0.9529411764705882,
+      "covered": 81,
+      "in_order": 81,
+      "in_order_share": 0.9529411764705882,
+      "verses": 85
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 8,
+    "score": {
+     "letters": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "nfc": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "nfkc": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "stripped": {
+      "coverage": 0.9529411764705882,
+      "covered": 81,
+      "in_order": 81,
+      "in_order_share": 0.9529411764705882,
+      "verses": 85
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 85
+     }
+    }
+   }
+  },
+  "ref_verses": 85,
+  "sha256": "13997cf463f741bad8a08380766e3688c1e53bda730d48a10cc0f3c1722d4a3d"
+ },
+ "hboWLC-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 912,
+    "score": {
+     "letters": {
+      "coverage": 8.615861801576703e-05,
+      "covered": 2,
+      "in_order": 2,
+      "in_order_share": 8.615861801576703e-05,
+      "verses": 23213
+     },
+     "nfc": {
+      "coverage": 8.615861801576703e-05,
+      "covered": 2,
+      "in_order": 2,
+      "in_order_share": 8.615861801576703e-05,
+      "verses": 23213
+     },
+     "nfkc": {
+      "coverage": 8.615861801576703e-05,
+      "covered": 2,
+      "in_order": 2,
+      "in_order_share": 8.615861801576703e-05,
+      "verses": 23213
+     },
+     "stripped": {
+      "coverage": 0.659027269202602,
+      "covered": 15298,
+      "in_order": 15275,
+      "in_order_share": 0.6580364450954207,
+      "verses": 23213
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 23213
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 23213
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 912,
+    "score": {
+     "letters": {
+      "coverage": 0.0003015551630551846,
+      "covered": 7,
+      "in_order": 7,
+      "in_order_share": 0.0003015551630551846,
+      "verses": 23213
+     },
+     "nfc": {
+      "coverage": 0.0003015551630551846,
+      "covered": 7,
+      "in_order": 7,
+      "in_order_share": 0.0003015551630551846,
+      "verses": 23213
+     },
+     "nfkc": {
+      "coverage": 0.0003015551630551846,
+      "covered": 7,
+      "in_order": 7,
+      "in_order_share": 0.0003015551630551846,
+      "verses": 23213
+     },
+     "stripped": {
+      "coverage": 0.9940119760479041,
+      "covered": 23074,
+      "in_order": 23074,
+      "in_order_share": 0.9940119760479041,
+      "verses": 23213
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 23213
+     },
+     "stripped_word_reversed": {
+      "coverage": 8.615861801576703e-05,
+      "covered": 2,
+      "in_order": 1,
+      "in_order_share": 4.3079309007883516e-05,
+      "verses": 23213
+     }
+    }
+   }
+  },
+  "ref_verses": 23213,
+  "sha256": "d00337ea8feffb57333b2f61f918433402c69f76ccc7e13a375146ef2b744af6"
+ },
+ "heb-wprtl": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 183,
+    "score": {
+     "letters": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "nfc": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "nfkc": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "stripped": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 5852
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 5852
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 183,
+    "score": {
+     "letters": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "nfc": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "nfkc": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "stripped": {
+      "coverage": 0.05485304169514696,
+      "covered": 321,
+      "in_order": 66,
+      "in_order_share": 0.011278195488721804,
+      "verses": 5852
+     },
+     "stripped_line_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 5852
+     },
+     "stripped_word_reversed": {
+      "coverage": 0.0,
+      "covered": 0,
+      "in_order": 0,
+      "in_order_share": 0.0,
+      "verses": 5852
+     }
+    }
+   }
+  },
+  "ref_verses": 5852,
+  "sha256": "e5cd8eebcd09f8438a5aa01851ccd03e3e9a05949229bcbbca285c8d2678a456"
+ },
+ "kjv-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1560,
+    "score": {
+     "letters": {
+      "coverage": 0.9950485499324803,
+      "covered": 30948,
+      "in_order": 30948,
+      "in_order_share": 0.9950485499324803,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9950485499324803,
+      "covered": 30948,
+      "in_order": 30948,
+      "in_order_share": 0.9950485499324803,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9950485499324803,
+      "covered": 30948,
+      "in_order": 30948,
+      "in_order_share": 0.9950485499324803,
+      "verses": 31102
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1560,
+    "score": {
+     "letters": {
+      "coverage": 0.9950485499324803,
+      "covered": 30948,
+      "in_order": 30948,
+      "in_order_share": 0.9950485499324803,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9950485499324803,
+      "covered": 30948,
+      "in_order": 30948,
+      "in_order_share": 0.9950485499324803,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9950485499324803,
+      "covered": 30948,
+      "in_order": 30948,
+      "in_order_share": 0.9950485499324803,
+      "verses": 31102
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "d8e0d814e2af79b9138c94334a08d04111fbdc40b5b016771fff38435f39bebd"
+ },
+ "kor-lopdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 354,
+    "score": {
+     "letters": {
+      "coverage": 0.9545454545454546,
+      "covered": 7560,
+      "in_order": 5589,
+      "in_order_share": 0.7056818181818182,
+      "verses": 7920
+     },
+     "nfc": {
+      "coverage": 0.9542929292929293,
+      "covered": 7558,
+      "in_order": 5587,
+      "in_order_share": 0.7054292929292929,
+      "verses": 7920
+     },
+     "nfkc": {
+      "coverage": 0.9542929292929293,
+      "covered": 7558,
+      "in_order": 5587,
+      "in_order_share": 0.7054292929292929,
+      "verses": 7920
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 354,
+    "score": {
+     "letters": {
+      "coverage": 0.9545454545454546,
+      "covered": 7560,
+      "in_order": 5589,
+      "in_order_share": 0.7056818181818182,
+      "verses": 7920
+     },
+     "nfc": {
+      "coverage": 0.9542929292929293,
+      "covered": 7558,
+      "in_order": 5587,
+      "in_order_share": 0.7054292929292929,
+      "verses": 7920
+     },
+     "nfkc": {
+      "coverage": 0.9542929292929293,
+      "covered": 7558,
+      "in_order": 5587,
+      "in_order_share": 0.7054292929292929,
+      "verses": 7920
+     }
+    }
+   }
+  },
+  "ref_verses": 7920,
+  "sha256": "38852a2549e984cdc7334ca9a75791ac2b33c7a69f9ea09d3a01b15b086c95e7"
+ },
+ "kor-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 795,
+    "score": {
+     "letters": {
+      "coverage": 0.9951598851279404,
+      "covered": 30841,
+      "in_order": 30840,
+      "in_order_share": 0.99512761769546,
+      "verses": 30991
+     },
+     "nfc": {
+      "coverage": 0.9951598851279404,
+      "covered": 30841,
+      "in_order": 30841,
+      "in_order_share": 0.9951598851279404,
+      "verses": 30991
+     },
+     "nfkc": {
+      "coverage": 0.9951598851279404,
+      "covered": 30841,
+      "in_order": 30841,
+      "in_order_share": 0.9951598851279404,
+      "verses": 30991
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 795,
+    "score": {
+     "letters": {
+      "coverage": 0.9951598851279404,
+      "covered": 30841,
+      "in_order": 30840,
+      "in_order_share": 0.99512761769546,
+      "verses": 30991
+     },
+     "nfc": {
+      "coverage": 0.9951598851279404,
+      "covered": 30841,
+      "in_order": 30841,
+      "in_order_share": 0.9951598851279404,
+      "verses": 30991
+     },
+     "nfkc": {
+      "coverage": 0.9951598851279404,
+      "covered": 30841,
+      "in_order": 30841,
+      "in_order_share": 0.9951598851279404,
+      "verses": 30991
+     }
+    }
+   }
+  },
+  "ref_verses": 30991,
+  "sha256": "9cde68e514a3872fd094c0335e21b5f0f6bc58097928f8a2cd0fbde714dd2a8e"
+ },
+ "kor-r2col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1303,
+    "score": {
+     "letters": {
+      "coverage": 0.989771223903714,
+      "covered": 30674,
+      "in_order": 30629,
+      "in_order_share": 0.9883191894420961,
+      "verses": 30991
+     },
+     "nfc": {
+      "coverage": 0.9897389564712336,
+      "covered": 30673,
+      "in_order": 30629,
+      "in_order_share": 0.9883191894420961,
+      "verses": 30991
+     },
+     "nfkc": {
+      "coverage": 0.9897389564712336,
+      "covered": 30673,
+      "in_order": 30629,
+      "in_order_share": 0.9883191894420961,
+      "verses": 30991
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1303,
+    "score": {
+     "letters": {
+      "coverage": 0.989771223903714,
+      "covered": 30674,
+      "in_order": 30629,
+      "in_order_share": 0.9883191894420961,
+      "verses": 30991
+     },
+     "nfc": {
+      "coverage": 0.9897389564712336,
+      "covered": 30673,
+      "in_order": 30629,
+      "in_order_share": 0.9883191894420961,
+      "verses": 30991
+     },
+     "nfkc": {
+      "coverage": 0.9897389564712336,
+      "covered": 30673,
+      "in_order": 30629,
+      "in_order_share": 0.9883191894420961,
+      "verses": 30991
+     }
+    }
+   }
+  },
+  "ref_verses": 30991,
+  "sha256": "5c7bf54ea44687f9c915035f2297cd4ceb3c58c8a1245b5998939f07caf9a0f7"
+ },
+ "kor1961-lopdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1119,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31081,
+      "in_order": 31081,
+      "in_order_share": 1.0,
+      "verses": 31081
+     },
+     "nfc": {
+      "coverage": 0.9997747820211705,
+      "covered": 31074,
+      "in_order": 10857,
+      "in_order_share": 0.34931308516457,
+      "verses": 31081
+     },
+     "nfkc": {
+      "coverage": 0.9997747820211705,
+      "covered": 31074,
+      "in_order": 10857,
+      "in_order_share": 0.34931308516457,
+      "verses": 31081
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1119,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31081,
+      "in_order": 31081,
+      "in_order_share": 1.0,
+      "verses": 31081
+     },
+     "nfc": {
+      "coverage": 0.9997747820211705,
+      "covered": 31074,
+      "in_order": 10857,
+      "in_order_share": 0.34931308516457,
+      "verses": 31081
+     },
+     "nfkc": {
+      "coverage": 0.9997747820211705,
+      "covered": 31074,
+      "in_order": 10857,
+      "in_order_share": 0.34931308516457,
+      "verses": 31081
+     }
+    }
+   }
+  },
+  "ref_verses": 31081,
+  "sha256": "6cbd0e3ba247141db8da4660707f5fb62a39833225f06c1af54be15ee99ad02c"
+ },
+ "latVUC-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 2146,
+    "score": {
+     "letters": {
+      "coverage": 0.9599478271934848,
+      "covered": 30175,
+      "in_order": 2710,
+      "in_order_share": 0.0862123814977413,
+      "verses": 31434
+     },
+     "nfc": {
+      "coverage": 0.9599160145065853,
+      "covered": 30174,
+      "in_order": 2709,
+      "in_order_share": 0.08618056881084177,
+      "verses": 31434
+     },
+     "nfkc": {
+      "coverage": 0.9599160145065853,
+      "covered": 30174,
+      "in_order": 2709,
+      "in_order_share": 0.08618056881084177,
+      "verses": 31434
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 2146,
+    "score": {
+     "letters": {
+      "coverage": 0.9599478271934848,
+      "covered": 30175,
+      "in_order": 2710,
+      "in_order_share": 0.0862123814977413,
+      "verses": 31434
+     },
+     "nfc": {
+      "coverage": 0.9599160145065853,
+      "covered": 30174,
+      "in_order": 2709,
+      "in_order_share": 0.08618056881084177,
+      "verses": 31434
+     },
+     "nfkc": {
+      "coverage": 0.9599160145065853,
+      "covered": 30174,
+      "in_order": 2709,
+      "in_order_share": 0.08618056881084177,
+      "verses": 31434
+     }
+    }
+   }
+  },
+  "ref_verses": 31434,
+  "sha256": "2b7049ed354fa1975f6c3538002b367006ed71448b2ae12bd016cf96293fdcbe"
+ },
+ "porbr2018-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1093,
+    "score": {
+     "letters": {
+      "coverage": 0.9986496045270401,
+      "covered": 31060,
+      "in_order": 31060,
+      "in_order_share": 0.9986496045270401,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9986496045270401,
+      "covered": 31060,
+      "in_order": 31060,
+      "in_order_share": 0.9986496045270401,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9986496045270401,
+      "covered": 31060,
+      "in_order": 31060,
+      "in_order_share": 0.9986496045270401,
+      "verses": 31102
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1093,
+    "score": {
+     "letters": {
+      "coverage": 0.9986496045270401,
+      "covered": 31060,
+      "in_order": 31060,
+      "in_order_share": 0.9986496045270401,
+      "verses": 31102
+     },
+     "nfc": {
+      "coverage": 0.9986496045270401,
+      "covered": 31060,
+      "in_order": 31060,
+      "in_order_share": 0.9986496045270401,
+      "verses": 31102
+     },
+     "nfkc": {
+      "coverage": 0.9986496045270401,
+      "covered": 31060,
+      "in_order": 31060,
+      "in_order_share": 0.9986496045270401,
+      "verses": 31102
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "c73a54114d297ef43adf37f28125ac211ee4701a3d0bd1db9b39f027de71dc10"
+ },
+ "porbrbsl-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1897,
+    "score": {
+     "letters": {
+      "coverage": 0.9899028876455077,
+      "covered": 30784,
+      "in_order": 29850,
+      "in_order_share": 0.9598688018522091,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9899028876455077,
+      "covered": 30784,
+      "in_order": 29850,
+      "in_order_share": 0.9598688018522091,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9899028876455077,
+      "covered": 30784,
+      "in_order": 29850,
+      "in_order_share": 0.9598688018522091,
+      "verses": 31098
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1897,
+    "score": {
+     "letters": {
+      "coverage": 0.9899028876455077,
+      "covered": 30784,
+      "in_order": 29850,
+      "in_order_share": 0.9598688018522091,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9899028876455077,
+      "covered": 30784,
+      "in_order": 29850,
+      "in_order_share": 0.9598688018522091,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9899028876455077,
+      "covered": 30784,
+      "in_order": 29850,
+      "in_order_share": 0.9598688018522091,
+      "verses": 31098
+     }
+    }
+   }
+  },
+  "ref_verses": 31098,
+  "sha256": "820feb05b8e6032582bcd0f483b1308ec72478d590cbecc10fa9cb3c58c58254"
+ },
+ "poronbv-rwpdfa5": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 2179,
+    "score": {
+     "letters": {
+      "coverage": 0.9652145957241601,
+      "covered": 30023,
+      "in_order": 29996,
+      "in_order_share": 0.964346568075872,
+      "verses": 31105
+     },
+     "nfc": {
+      "coverage": 0.9652145957241601,
+      "covered": 30023,
+      "in_order": 29996,
+      "in_order_share": 0.964346568075872,
+      "verses": 31105
+     },
+     "nfkc": {
+      "coverage": 0.9652145957241601,
+      "covered": 30023,
+      "in_order": 29996,
+      "in_order_share": 0.964346568075872,
+      "verses": 31105
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 2179,
+    "score": {
+     "letters": {
+      "coverage": 0.9652145957241601,
+      "covered": 30023,
+      "in_order": 29996,
+      "in_order_share": 0.964346568075872,
+      "verses": 31105
+     },
+     "nfc": {
+      "coverage": 0.9652145957241601,
+      "covered": 30023,
+      "in_order": 29996,
+      "in_order_share": 0.964346568075872,
+      "verses": 31105
+     },
+     "nfkc": {
+      "coverage": 0.9652145957241601,
+      "covered": 30023,
+      "in_order": 29996,
+      "in_order_share": 0.964346568075872,
+      "verses": 31105
+     }
+    }
+   }
+  },
+  "ref_verses": 31105,
+  "sha256": "e31de1b121664aa876bd76869c9bcd58216ce1449370d8b6767fb92c0be48f47"
+ },
+ "rv1909-lopdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 881,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31084,
+      "in_order": 31084,
+      "in_order_share": 1.0,
+      "verses": 31084
+     },
+     "nfc": {
+      "coverage": 1.0,
+      "covered": 31084,
+      "in_order": 31084,
+      "in_order_share": 1.0,
+      "verses": 31084
+     },
+     "nfkc": {
+      "coverage": 1.0,
+      "covered": 31084,
+      "in_order": 31084,
+      "in_order_share": 1.0,
+      "verses": 31084
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 881,
+    "score": {
+     "letters": {
+      "coverage": 1.0,
+      "covered": 31084,
+      "in_order": 31084,
+      "in_order_share": 1.0,
+      "verses": 31084
+     },
+     "nfc": {
+      "coverage": 1.0,
+      "covered": 31084,
+      "in_order": 31084,
+      "in_order_share": 1.0,
+      "verses": 31084
+     },
+     "nfkc": {
+      "coverage": 1.0,
+      "covered": 31084,
+      "in_order": 31084,
+      "in_order_share": 1.0,
+      "verses": 31084
+     }
+    }
+   }
+  },
+  "ref_verses": 31084,
+  "sha256": "1b82ac19c7941f8c68eb36056b36608d9577c19ea85355ca0c0ceb31a020c23f"
+ },
+ "rv1909-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1003,
+    "score": {
+     "letters": {
+      "coverage": 0.9743276283618582,
+      "covered": 30286,
+      "in_order": 22474,
+      "in_order_share": 0.7230086217989963,
+      "verses": 31084
+     },
+     "nfc": {
+      "coverage": 0.9743276283618582,
+      "covered": 30286,
+      "in_order": 22474,
+      "in_order_share": 0.7230086217989963,
+      "verses": 31084
+     },
+     "nfkc": {
+      "coverage": 0.9743276283618582,
+      "covered": 30286,
+      "in_order": 22474,
+      "in_order_share": 0.7230086217989963,
+      "verses": 31084
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1003,
+    "score": {
+     "letters": {
+      "coverage": 0.9743276283618582,
+      "covered": 30286,
+      "in_order": 22474,
+      "in_order_share": 0.7230086217989963,
+      "verses": 31084
+     },
+     "nfc": {
+      "coverage": 0.9743276283618582,
+      "covered": 30286,
+      "in_order": 22474,
+      "in_order_share": 0.7230086217989963,
+      "verses": 31084
+     },
+     "nfkc": {
+      "coverage": 0.9743276283618582,
+      "covered": 30286,
+      "in_order": 22474,
+      "in_order_share": 0.7230086217989963,
+      "verses": 31084
+     }
+    }
+   }
+  },
+  "ref_verses": 31084,
+  "sha256": "82914e1edc88e9edcca55d388af87d8b4cdbcd1df4368c0e52a534229ac2377f"
+ },
+ "spabes-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1358,
+    "score": {
+     "letters": {
+      "coverage": 0.9979743416610398,
+      "covered": 31038,
+      "in_order": 31038,
+      "in_order_share": 0.9979743416610398,
+      "verses": 31101
+     },
+     "nfc": {
+      "coverage": 0.9979743416610398,
+      "covered": 31038,
+      "in_order": 31038,
+      "in_order_share": 0.9979743416610398,
+      "verses": 31101
+     },
+     "nfkc": {
+      "coverage": 0.9979743416610398,
+      "covered": 31038,
+      "in_order": 31038,
+      "in_order_share": 0.9979743416610398,
+      "verses": 31101
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1358,
+    "score": {
+     "letters": {
+      "coverage": 0.9979743416610398,
+      "covered": 31038,
+      "in_order": 31038,
+      "in_order_share": 0.9979743416610398,
+      "verses": 31101
+     },
+     "nfc": {
+      "coverage": 0.9979743416610398,
+      "covered": 31038,
+      "in_order": 31038,
+      "in_order_share": 0.9979743416610398,
+      "verses": 31101
+     },
+     "nfkc": {
+      "coverage": 0.9979743416610398,
+      "covered": 31038,
+      "in_order": 31038,
+      "in_order_share": 0.9979743416610398,
+      "verses": 31101
+     }
+    }
+   }
+  },
+  "ref_verses": 31102,
+  "sha256": "e32bf345414eddea6c9364fbeaffd0de2fcc5fcb8a073529ce01bf49d2ffddbc"
+ },
+ "spabll-rrlab2col": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 742,
+    "score": {
+     "letters": {
+      "coverage": 0.9901279825069136,
+      "covered": 30791,
+      "in_order": 30790,
+      "in_order_share": 0.9900958260981414,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.8089266190751817,
+      "covered": 25156,
+      "in_order": 5979,
+      "in_order_share": 0.19226316804939225,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.8089266190751817,
+      "covered": 25156,
+      "in_order": 5979,
+      "in_order_share": 0.19226316804939225,
+      "verses": 31098
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 742,
+    "score": {
+     "letters": {
+      "coverage": 0.9901279825069136,
+      "covered": 30791,
+      "in_order": 30790,
+      "in_order_share": 0.9900958260981414,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.8089266190751817,
+      "covered": 25156,
+      "in_order": 5979,
+      "in_order_share": 0.19226316804939225,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.8089266190751817,
+      "covered": 25156,
+      "in_order": 5979,
+      "in_order_share": 0.19226316804939225,
+      "verses": 31098
+     }
+    }
+   }
+  },
+  "ref_verses": 31098,
+  "sha256": "41f81b9fa7304acfd4a1208da45ae5ae3f263391d54bc70d8f7a73554b56eb5b"
+ },
+ "spablm-pdf": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1844,
+    "score": {
+     "letters": {
+      "coverage": 0.9909962055437649,
+      "covered": 30818,
+      "in_order": 29889,
+      "in_order_share": 0.9611229017943276,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9909962055437649,
+      "covered": 30818,
+      "in_order": 29889,
+      "in_order_share": 0.9611229017943276,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9909962055437649,
+      "covered": 30818,
+      "in_order": 29889,
+      "in_order_share": 0.9611229017943276,
+      "verses": 31098
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1844,
+    "score": {
+     "letters": {
+      "coverage": 0.9909962055437649,
+      "covered": 30818,
+      "in_order": 29889,
+      "in_order_share": 0.9611229017943276,
+      "verses": 31098
+     },
+     "nfc": {
+      "coverage": 0.9909962055437649,
+      "covered": 30818,
+      "in_order": 29889,
+      "in_order_share": 0.9611229017943276,
+      "verses": 31098
+     },
+     "nfkc": {
+      "coverage": 0.9909962055437649,
+      "covered": 30818,
+      "in_order": 29889,
+      "in_order_share": 0.9611229017943276,
+      "verses": 31098
+     }
+    }
+   }
+  },
+  "ref_verses": 31098,
+  "sha256": "4ed61385a465218d9fa57302224dff1d8b5158aea9a5925447ad6e1e73cb9214"
+ },
+ "spavbl-rlofodt": {
+  "engines": {
+   "current": {
+    "ok": true,
+    "pages_with_text": 1691,
+    "score": {
+     "letters": {
+      "coverage": 0.8818117480537863,
+      "covered": 27412,
+      "in_order": 8344,
+      "in_order_share": 0.26841665058225567,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.8817474104098308,
+      "covered": 27410,
+      "in_order": 15442,
+      "in_order_share": 0.49675094898024835,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.8817474104098308,
+      "covered": 27410,
+      "in_order": 15442,
+      "in_order_share": 0.49675094898024835,
+      "verses": 31086
+     }
+    }
+   },
+   "pdfium-layout": {
+    "ok": true,
+    "pages_with_text": 1691,
+    "score": {
+     "letters": {
+      "coverage": 0.8818117480537863,
+      "covered": 27412,
+      "in_order": 8344,
+      "in_order_share": 0.26841665058225567,
+      "verses": 31086
+     },
+     "nfc": {
+      "coverage": 0.8817474104098308,
+      "covered": 27410,
+      "in_order": 15442,
+      "in_order_share": 0.49675094898024835,
+      "verses": 31086
+     },
+     "nfkc": {
+      "coverage": 0.8817474104098308,
+      "covered": 27410,
+      "in_order": 15442,
+      "in_order_share": 0.49675094898024835,
+      "verses": 31086
+     }
+    }
+   }
+  },
+  "ref_verses": 31086,
+  "sha256": "e7dbf9e2822bff354235fe672079601eb250044376901696b8391084e79f80b6"
+ }
+}

@@ -1,0 +1,710 @@
+{
+ "current": {
+  "F01": {
+   "not_in_edition": [],
+   "printed": 11328,
+   "verified": 0,
+   "wrong": []
+  },
+  "F02": {
+   "not_in_edition": [],
+   "printed": 23143,
+   "verified": 20487,
+   "wrong": []
+  },
+  "F03": {
+   "not_in_edition": [],
+   "printed": 31142,
+   "verified": 10848,
+   "wrong": []
+  },
+  "F06": {
+   "not_in_edition": [],
+   "printed": 7949,
+   "verified": 4721,
+   "wrong": []
+  },
+  "F07": {
+   "not_in_edition": [],
+   "printed": 31084,
+   "verified": 0,
+   "wrong": []
+  },
+  "F13": {
+   "not_in_edition": [],
+   "printed": 4784,
+   "verified": 7,
+   "wrong": []
+  },
+  "G03": {
+   "not_in_edition": [],
+   "printed": 31011,
+   "verified": 0,
+   "wrong": []
+  },
+  "G04": {
+   "not_in_edition": [],
+   "printed": 7508,
+   "verified": 0,
+   "wrong": []
+  },
+  "G07": {
+   "not_in_edition": [],
+   "printed": 601,
+   "verified": 115,
+   "wrong": []
+  },
+  "G09": {
+   "not_in_edition": [],
+   "printed": 764,
+   "verified": 0,
+   "wrong": []
+  },
+  "G10": {
+   "not_in_edition": [],
+   "printed": 793,
+   "verified": 0,
+   "wrong": []
+  },
+  "G13": {
+   "not_in_edition": [],
+   "printed": 1288,
+   "verified": 0,
+   "wrong": []
+  },
+  "deu1912-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30700,
+   "wrong": []
+  },
+  "deu1912-rdropcap": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 27284,
+   "wrong": []
+  },
+  "deuelo-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30510,
+   "wrong": []
+  },
+  "deutkw-fpdfa5": {
+   "not_in_edition": [],
+   "printed": 5465,
+   "verified": 0,
+   "wrong": []
+  },
+  "deutkw-lopdf": {
+   "not_in_edition": [],
+   "printed": 31136,
+   "verified": 29821,
+   "wrong": [
+    "2KI 4:25",
+    "LUK 9:43"
+   ]
+  },
+  "deutkw-pdf": {
+   "not_in_edition": [],
+   "printed": 31136,
+   "verified": 29724,
+   "wrong": [
+    "1KI 8:12",
+    "1KI 8:13",
+    "PSA 60:13",
+    "ACT 2:14",
+    "2CO 6:16"
+   ]
+  },
+  "engasv-rrlab1col": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 27471,
+   "wrong": [
+    "HAB 3:19"
+   ]
+  },
+  "engbrenton-rlo2col": {
+   "not_in_edition": [],
+   "printed": 22358,
+   "verified": 14409,
+   "wrong": []
+  },
+  "engbsb-rwpdf2col": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 22363,
+   "wrong": []
+  },
+  "engjps-rdocx2lo": {
+   "not_in_edition": [],
+   "printed": 23145,
+   "verified": 20867,
+   "wrong": []
+  },
+  "engkjvcpb-rwpdfmargin": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 1,
+   "wrong": []
+  },
+  "engoebus-ebiblea4": {
+   "not_in_edition": [],
+   "printed": 13894,
+   "verified": 13558,
+   "wrong": []
+  },
+  "engrv-ebiblebook": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 30408,
+   "wrong": []
+  },
+  "engtnt-wp3col": {
+   "not_in_edition": [],
+   "printed": 7954,
+   "verified": 6040,
+   "wrong": []
+  },
+  "engwebp-book": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 30112,
+   "wrong": []
+  },
+  "engwebp-pdf": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 29828,
+   "wrong": []
+  },
+  "engwebu-rl2col": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 7499,
+   "wrong": []
+  },
+  "engylt-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 31057,
+   "wrong": []
+  },
+  "fob-pdf": {
+   "not_in_edition": [],
+   "printed": 31107,
+   "verified": 30782,
+   "wrong": []
+  },
+  "fraLSG-luk": {
+   "not_in_edition": [],
+   "printed": 1151,
+   "verified": 996,
+   "wrong": []
+  },
+  "fraLSG-pdf": {
+   "not_in_edition": [],
+   "printed": 31170,
+   "verified": 29457,
+   "wrong": []
+  },
+  "frajnd-lopdf": {
+   "not_in_edition": [],
+   "printed": 31146,
+   "verified": 26360,
+   "wrong": []
+  },
+  "frajnd-pdf": {
+   "not_in_edition": [],
+   "printed": 31146,
+   "verified": 29625,
+   "wrong": []
+  },
+  "grcbyz-pdf": {
+   "not_in_edition": [],
+   "printed": 7958,
+   "verified": 7921,
+   "wrong": []
+  },
+  "grcsbl-rfpdf-mrk": {
+   "not_in_edition": [],
+   "printed": 673,
+   "verified": 0,
+   "wrong": []
+  },
+  "grctr-pdf": {
+   "not_in_edition": [],
+   "printed": 7957,
+   "verified": 7640,
+   "wrong": []
+  },
+  "hbo-rwpdfrtl-rut": {
+   "not_in_edition": [],
+   "printed": 85,
+   "verified": 0,
+   "wrong": []
+  },
+  "hboWLC-pdf": {
+   "not_in_edition": [],
+   "printed": 23192,
+   "verified": 0,
+   "wrong": []
+  },
+  "heb-wprtl": {
+   "not_in_edition": [],
+   "printed": 5852,
+   "verified": 0,
+   "wrong": []
+  },
+  "kjv-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30868,
+   "wrong": []
+  },
+  "kor-lopdf": {
+   "not_in_edition": [],
+   "printed": 7920,
+   "verified": 65,
+   "wrong": []
+  },
+  "kor-pdf": {
+   "not_in_edition": [],
+   "printed": 30991,
+   "verified": 30917,
+   "wrong": []
+  },
+  "kor-r2col": {
+   "not_in_edition": [],
+   "printed": 30991,
+   "verified": 30723,
+   "wrong": []
+  },
+  "kor1961-lopdf": {
+   "not_in_edition": [],
+   "printed": 31081,
+   "verified": 30808,
+   "wrong": []
+  },
+  "latVUC-pdf": {
+   "not_in_edition": [],
+   "printed": 31229,
+   "verified": 8527,
+   "wrong": []
+  },
+  "porbr2018-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 29536,
+   "wrong": [
+    "GAL 6:18"
+   ]
+  },
+  "porbrbsl-pdf": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 30199,
+   "wrong": []
+  },
+  "poronbv-rwpdfa5": {
+   "not_in_edition": [],
+   "printed": 31105,
+   "verified": 29988,
+   "wrong": []
+  },
+  "rv1909-lopdf": {
+   "not_in_edition": [],
+   "printed": 31084,
+   "verified": 30420,
+   "wrong": []
+  },
+  "rv1909-pdf": {
+   "not_in_edition": [],
+   "printed": 31084,
+   "verified": 30582,
+   "wrong": []
+  },
+  "spabes-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30240,
+   "wrong": []
+  },
+  "spabll-rrlab2col": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 0,
+   "wrong": []
+  },
+  "spablm-pdf": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 29104,
+   "wrong": []
+  },
+  "spavbl-rlofodt": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 3453,
+   "wrong": []
+  }
+ },
+ "pdfium": {
+  "F01": {
+   "not_in_edition": [],
+   "printed": 11328,
+   "verified": 8541,
+   "wrong": []
+  },
+  "F02": {
+   "not_in_edition": [],
+   "printed": 23143,
+   "verified": 20487,
+   "wrong": []
+  },
+  "F03": {
+   "not_in_edition": [],
+   "printed": 31142,
+   "verified": 6107,
+   "wrong": []
+  },
+  "F06": {
+   "not_in_edition": [],
+   "printed": 7949,
+   "verified": 4721,
+   "wrong": []
+  },
+  "F07": {
+   "not_in_edition": [],
+   "printed": 31084,
+   "verified": 1,
+   "wrong": []
+  },
+  "F13": {
+   "not_in_edition": [],
+   "printed": 4784,
+   "verified": 7,
+   "wrong": []
+  },
+  "G03": {
+   "not_in_edition": [],
+   "printed": 31011,
+   "verified": 0,
+   "wrong": []
+  },
+  "G04": {
+   "not_in_edition": [],
+   "printed": 7508,
+   "verified": 0,
+   "wrong": []
+  },
+  "G05": {
+   "not_in_edition": [],
+   "printed": 4580,
+   "verified": 0,
+   "wrong": []
+  },
+  "G07": {
+   "not_in_edition": [],
+   "printed": 601,
+   "verified": 115,
+   "wrong": []
+  },
+  "G09": {
+   "not_in_edition": [],
+   "printed": 764,
+   "verified": 0,
+   "wrong": []
+  },
+  "G10": {
+   "not_in_edition": [],
+   "printed": 793,
+   "verified": 0,
+   "wrong": []
+  },
+  "G13": {
+   "not_in_edition": [],
+   "printed": 1288,
+   "verified": 0,
+   "wrong": []
+  },
+  "deu1912-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30700,
+   "wrong": []
+  },
+  "deu1912-rdropcap": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 27284,
+   "wrong": []
+  },
+  "deuelo-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30510,
+   "wrong": []
+  },
+  "deutkw-fpdfa5": {
+   "not_in_edition": [],
+   "printed": 5465,
+   "verified": 0,
+   "wrong": []
+  },
+  "deutkw-lopdf": {
+   "not_in_edition": [],
+   "printed": 31136,
+   "verified": 29821,
+   "wrong": [
+    "2KI 4:25",
+    "LUK 9:43"
+   ]
+  },
+  "deutkw-pdf": {
+   "not_in_edition": [],
+   "printed": 31136,
+   "verified": 29724,
+   "wrong": [
+    "1KI 8:12",
+    "1KI 8:13",
+    "PSA 60:13",
+    "ACT 2:14",
+    "2CO 6:16"
+   ]
+  },
+  "engasv-rrlab1col": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 27471,
+   "wrong": [
+    "HAB 3:19"
+   ]
+  },
+  "engbrenton-rlo2col": {
+   "not_in_edition": [],
+   "printed": 22358,
+   "verified": 14409,
+   "wrong": []
+  },
+  "engbsb-rwpdf2col": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 22363,
+   "wrong": []
+  },
+  "engjps-rdocx2lo": {
+   "not_in_edition": [],
+   "printed": 23145,
+   "verified": 20867,
+   "wrong": []
+  },
+  "engkjvcpb-rwpdfmargin": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 1,
+   "wrong": []
+  },
+  "engoebus-ebiblea4": {
+   "not_in_edition": [],
+   "printed": 13894,
+   "verified": 13558,
+   "wrong": []
+  },
+  "engrv-ebiblebook": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 30408,
+   "wrong": []
+  },
+  "engtnt-wp3col": {
+   "not_in_edition": [],
+   "printed": 7954,
+   "verified": 6040,
+   "wrong": []
+  },
+  "engwebp-book": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 30112,
+   "wrong": []
+  },
+  "engwebp-pdf": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 29828,
+   "wrong": []
+  },
+  "engwebu-rl2col": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 7307,
+   "wrong": []
+  },
+  "engylt-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 31057,
+   "wrong": []
+  },
+  "fob-pdf": {
+   "not_in_edition": [],
+   "printed": 31107,
+   "verified": 30782,
+   "wrong": []
+  },
+  "fraLSG-luk": {
+   "not_in_edition": [],
+   "printed": 1151,
+   "verified": 996,
+   "wrong": []
+  },
+  "fraLSG-pdf": {
+   "not_in_edition": [],
+   "printed": 31170,
+   "verified": 29457,
+   "wrong": []
+  },
+  "frajnd-lopdf": {
+   "not_in_edition": [],
+   "printed": 31146,
+   "verified": 26356,
+   "wrong": []
+  },
+  "frajnd-pdf": {
+   "not_in_edition": [],
+   "printed": 31146,
+   "verified": 29804,
+   "wrong": []
+  },
+  "grcbyz-pdf": {
+   "not_in_edition": [],
+   "printed": 7958,
+   "verified": 7921,
+   "wrong": []
+  },
+  "grcsbl-rfpdf-mrk": {
+   "not_in_edition": [],
+   "printed": 673,
+   "verified": 0,
+   "wrong": []
+  },
+  "grctr-pdf": {
+   "not_in_edition": [],
+   "printed": 7957,
+   "verified": 7640,
+   "wrong": []
+  },
+  "hbo-rwpdfrtl-rut": {
+   "not_in_edition": [],
+   "printed": 85,
+   "verified": 0,
+   "wrong": []
+  },
+  "hboWLC-pdf": {
+   "not_in_edition": [],
+   "printed": 23192,
+   "verified": 0,
+   "wrong": []
+  },
+  "heb-wprtl": {
+   "not_in_edition": [],
+   "printed": 5852,
+   "verified": 0,
+   "wrong": []
+  },
+  "kjv-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30868,
+   "wrong": []
+  },
+  "kor-lopdf": {
+   "not_in_edition": [],
+   "printed": 7920,
+   "verified": 65,
+   "wrong": []
+  },
+  "kor-pdf": {
+   "not_in_edition": [],
+   "printed": 30991,
+   "verified": 30917,
+   "wrong": []
+  },
+  "kor-r2col": {
+   "not_in_edition": [],
+   "printed": 30991,
+   "verified": 30723,
+   "wrong": []
+  },
+  "kor1961-lopdf": {
+   "not_in_edition": [],
+   "printed": 31081,
+   "verified": 30808,
+   "wrong": []
+  },
+  "latVUC-pdf": {
+   "not_in_edition": [],
+   "printed": 31229,
+   "verified": 8527,
+   "wrong": []
+  },
+  "porbr2018-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 29536,
+   "wrong": [
+    "GAL 6:18"
+   ]
+  },
+  "porbrbsl-pdf": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 30199,
+   "wrong": []
+  },
+  "poronbv-rwpdfa5": {
+   "not_in_edition": [],
+   "printed": 31105,
+   "verified": 29988,
+   "wrong": []
+  },
+  "rv1909-lopdf": {
+   "not_in_edition": [],
+   "printed": 31084,
+   "verified": 30420,
+   "wrong": []
+  },
+  "rv1909-pdf": {
+   "not_in_edition": [],
+   "printed": 31084,
+   "verified": 30582,
+   "wrong": []
+  },
+  "spabes-pdf": {
+   "not_in_edition": [],
+   "printed": 31102,
+   "verified": 30240,
+   "wrong": []
+  },
+  "spabll-rrlab2col": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 0,
+   "wrong": []
+  },
+  "spablm-pdf": {
+   "not_in_edition": [],
+   "printed": 31098,
+   "verified": 29104,
+   "wrong": []
+  },
+  "spavbl-rlofodt": {
+   "not_in_edition": [],
+   "printed": 31086,
+   "verified": 4020,
+   "wrong": []
+  }
+ }
+}
