@@ -1,3 +1,4 @@
+import { formatLocale } from "@/i18n/format";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AlertTriangle, ArrowLeft, Check, CircleX, ExternalLink } from "lucide-react";
@@ -600,7 +601,7 @@ function DocumentFiles({ preview }: { preview: DocumentPreview }) {
  * below.
  */
 export function Readiness({ preview }: { preview: ImportPreview }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const held = new Set(
     preview.issues
       .filter((i) => i.severity === "error" && i.book !== null && i.chapter !== null)
@@ -613,7 +614,7 @@ export function Readiness({ preview }: { preview: ImportPreview }) {
     first = t("scripture.addBible.document.ready.none");
   } else if (ready.length <= 3) {
     const names = ready.map((b) => bookName(b.code, b.name));
-    const books = new Intl.ListFormat(i18n.language, { type: "conjunction" }).format(names);
+    const books = new Intl.ListFormat(formatLocale(), { type: "conjunction" }).format(names);
     first = t("scripture.addBible.document.ready.some", { books, count: ready.length });
   } else {
     first = t("scripture.addBible.document.ready.many", { count: ready.length });
