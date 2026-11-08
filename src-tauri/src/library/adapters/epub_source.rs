@@ -280,11 +280,19 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
     let mut elements: Vec<Element> = Vec::new();
     let mut ids = HashMap::new();
     let mut stack: Vec<usize> = Vec::new();
-    let mut reader = tolerant_reader(&source);
+    // A byte-order mark is not markup: the reader is given what follows it,
+    // and every position is counted from the entry's first byte, so the
+    // byte ranges index the file as stored (Phase A1.1).
+    let skip = if source.starts_with('\u{feff}') {
+        '\u{feff}'.len_utf8()
+    } else {
+        0
+    };
+    let mut reader = tolerant_reader(&source[skip..]);
     loop {
-        let at = reader.buffer_position() as usize;
+        let at = reader.buffer_position() as usize + skip;
         let event = reader.read_event();
-        let end = reader.buffer_position() as usize;
+        let end = reader.buffer_position() as usize + skip;
         let hidden = stack.last().is_some_and(|e| elements[*e].hidden);
         match event {
             Ok(Event::Start(e)) => {

@@ -21,6 +21,22 @@ use abiding_word_lib::scripture::structural::{self, GateCause, StructuralReport}
 const RUTH: [u16; 4] = [22, 23, 18, 22];
 
 fn epub(body: &str) -> Vec<u8> {
+    epub_with(body, false)
+}
+
+/// The book's one entry, as stored (with a byte-order mark when `bom`).
+fn entry_bytes(body: &str, bom: bool) -> Vec<u8> {
+    let mut out = Vec::new();
+    if bom {
+        out.extend_from_slice("\u{feff}".as_bytes());
+    }
+    out.extend_from_slice(format!(
+        r#"<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>Ruth</title></head><body>{body}</body></html>"#
+    ).as_bytes());
+    out
+}
+
+fn epub_with(body: &str, bom: bool) -> Vec<u8> {
     let mut out = std::io::Cursor::new(Vec::new());
     {
         let mut zip = zip::ZipWriter::new(&mut out);
@@ -33,11 +49,7 @@ fn epub(body: &str) -> Vec<u8> {
         zip.start_file("OEBPS/content.opf", stored).unwrap();
         zip.write_all(br#"<?xml version="1.0"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Ruth</dc:title><dc:language>en</dc:language></metadata><manifest><item id="t" href="ruth.xhtml" media-type="application/xhtml+xml"/></manifest><spine><itemref idref="t"/></spine></package>"#).unwrap();
         zip.start_file("OEBPS/ruth.xhtml", stored).unwrap();
-        write!(
-            zip,
-            r#"<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>Ruth</title></head><body>{body}</body></html>"#
-        )
-        .unwrap();
+        zip.write_all(&entry_bytes(body, bom)).unwrap();
         zip.finish().unwrap();
     }
     out.into_inner()
@@ -247,4 +259,320 @@ fn a_removed_reference_whose_class_also_carries_verse_words_is_not_grounded() {
             );
         }
     }
+}
+
+/// A cross-reference at the very end of some verses, as `porbr2018` sets
+/// them: `…words. <span class="rq"><a href="GEN.xhtml#…">Genesis 1:3</a> </span>`.
+fn with_trailing_references() -> String {
+    let mut body = String::from("<h1>The Book of Ruth</h1>");
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        body.push_str(&format!("<h2>Chapter {c}</h2>"));
+        for v in 1..=n {
+            let tail = if v == 3 {
+                format!(
+                    r#" <span class="rq"><a class="bibleref" href="GEN.xhtml#G{c}_3">Genesis {c}:{v}</a> </span>"#
+                )
+            } else {
+                String::new()
+            };
+            body.push_str(&format!(
+                r#"<p class="p"><sup class="v">{v}</sup>Invented words of Ruth c{c}v{v}. They are here for testing.{tail}</p>"#
+            ));
+        }
+    }
+    body
+}
+
+#[test]
+fn a_reference_removed_after_the_last_word_of_a_verse_is_an_excluded_range_of_the_original() {
+    let (s, report) = read("trailing-references", &with_trailing_references());
+    let mut checked = 0;
+    for c in 1..=4u16 {
+        let key = format!("RUT {c}:3");
+        let record = &report.provenance[&key];
+        let t = text(&s, c, 3).unwrap();
+        if t.contains("Genesis") {
+            // The recogniser kept it as words: nothing was removed.
+            continue;
+        }
+        assert_eq!(
+            record.status,
+            TraceStatus::Exact,
+            "{key}: {:?}",
+            record.reasons
+        );
+        let removed: Vec<_> = record
+            .excluded
+            .iter()
+            .filter(|x| x.kind == ExcludedKind::Apparatus)
+            .collect();
+        assert_eq!(removed.len(), 1, "{key}: {:?}", record.excluded);
+        assert_eq!(removed[0].text.trim(), format!("Genesis {c}:3"));
+        assert!(removed[0].element_bytes.is_some());
+        assert!(verified(&s, c, 3), "{key}: {:?}", record.reasons);
+        // The verse before is not refused for the reference after it.
+        assert!(verified(&s, c, 2), "RUT {c}:2");
+        checked += 1;
+    }
+    assert_eq!(checked, 4, "the recogniser removed every reference");
+    assert!(report.gated.is_empty(), "{:?}", report.gated);
+}
+
+/// Ruth as `porbr2018` sets a book: a chapter's verses in one paragraph,
+/// each after `<span class="verse">`, its notes in `aside`s at the end.
+/// `before`, `inside` and `tail` place markup before a verse's number, in
+/// the middle of its words and after them.
+fn ruth_paragraphs(
+    before: impl Fn(u16, u16) -> String,
+    inside: impl Fn(u16, u16) -> String,
+    tail: impl Fn(u16, u16) -> String,
+) -> String {
+    let mut body = String::from("<h1>The Book of Ruth</h1>");
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        body.push_str(&format!("<h2>Chapter {c}</h2><p class=\"p\">"));
+        for v in 1..=n {
+            body.push_str(&format!(
+                "{}<span class=\"verse\" id=\"C{c}_{v}\">{v}&#160;</span>Invented words of Ruth c{c}v{v}. {}They are here for testing.{}  \n",
+                before(c, v),
+                inside(c, v),
+                tail(c, v)
+            ));
+        }
+        body.push_str("</p>");
+    }
+    for c in 1..=4 {
+        body.push_str(&format!(
+            r##"<aside epub:type="footnote" id="FN{c}"><p class="f"><a class="notebackref" href="#C{c}_3">* {c}:3</a> <span class="ft">or: tested</span></p></aside>"##
+        ));
+    }
+    body
+}
+
+fn reference(c: u16) -> String {
+    format!(
+        r#"<span class="rq"><a class="bibleref" href="GEN.xhtml#G{c}_3">Genesis {c}:3</a> </span>"#
+    )
+}
+
+#[test]
+fn a_note_caller_may_stand_between_a_verse_and_the_reference_removed_after_it() {
+    let (s, report) = read(
+        "caller-then-reference",
+        &ruth_paragraphs(
+            |_, _| String::new(),
+            |_, _| String::new(),
+            |c, v| {
+                if v == 3 {
+                    format!(
+                        r##" <a href="#FN{c}" epub:type="noteref" class="noteref">*</a> {}"##,
+                        reference(c)
+                    )
+                } else {
+                    String::new()
+                }
+            },
+        ),
+    );
+    let mut checked = 0;
+    for c in 1..=4u16 {
+        let key = format!("RUT {c}:3");
+        let t = text(&s, c, 3).unwrap();
+        if t.contains("Genesis") {
+            continue;
+        }
+        let record = &report.provenance[&key];
+        let removed: Vec<_> = record
+            .excluded
+            .iter()
+            .filter(|x| x.kind == ExcludedKind::Apparatus)
+            .collect();
+        assert_eq!(removed.len(), 1, "{key}: {:?}", record.reasons);
+        assert_eq!(removed[0].text.trim(), format!("Genesis {c}:3"));
+        assert!(verified(&s, c, 3), "{key}: {:?}", record.reasons);
+        checked += 1;
+    }
+    assert_eq!(checked, 4, "the recogniser removed every reference");
+    assert!(report.gated.is_empty(), "{:?}", report.gated);
+}
+
+/// Verse 3 of each chapter cannot be traced: an inline reference the
+/// recogniser removes has a class that also holds a verse's words, so it is
+/// not grounded. `title` closes the paragraph before verse 3 and puts a line
+/// no verse holds in a paragraph of the verses' own style.
+fn untraced_third_verses(title: bool) -> String {
+    ruth_paragraphs(
+        move |_, v| {
+            if title && v == 3 {
+                r#"</p><p class="p">A Line No Verse Holds</p><p class="p">"#.into()
+            } else {
+                String::new()
+            }
+        },
+        |c, v| match (c, v) {
+            (_, 3) => format!(r#"<span class="rq">Genesis {c}:3 </span>"#),
+            (4, 10) => r#"<span class="rq">Behold </span>"#.into(),
+            _ => String::new(),
+        },
+        |_, _| String::new(),
+    )
+}
+
+#[test]
+fn the_verse_before_an_untraced_verse_in_the_same_paragraph_is_judged_up_to_its_opening_words() {
+    let (s, report) = read("untraced-in-paragraph", &untraced_third_verses(false));
+    let mut checked = 0;
+    for c in 1..=4u16 {
+        if report.gated.get(&format!("RUT {c}:3")) != Some(&GateCause::Untraced) {
+            continue;
+        }
+        assert!(
+            verified(&s, c, 2),
+            "RUT {c}:2: {:?} {:?}",
+            report.gated.get(&format!("RUT {c}:2")),
+            report.provenance[&format!("RUT {c}:2")].reasons
+        );
+        checked += 1;
+    }
+    assert!(
+        checked > 0,
+        "no third verse was left untraced: {:?}",
+        report.gated
+    );
+}
+
+#[test]
+fn a_line_before_an_untraced_verse_is_never_verified_away() {
+    // The control: a line no verse holds, in the verses' own paragraph
+    // style, between verse 2 and the untraced verse 3. Verse 2 is verified
+    // only with the line in its text (the corpus case is Crampon's
+    // PRO 29:27 before the untraced 30:1).
+    let (s, report) = read("untraced-after-a-line", &untraced_third_verses(true));
+    let mut checked = 0;
+    for c in 1..=4u16 {
+        if report.gated.get(&format!("RUT {c}:3")) != Some(&GateCause::Untraced) {
+            continue;
+        }
+        let t = text(&s, c, 2).unwrap();
+        assert!(
+            t.contains("No Verse Holds") || !verified(&s, c, 2),
+            "RUT {c}:2 verified without the line after it: {t:?}"
+        );
+        checked += 1;
+    }
+    assert!(
+        checked > 0,
+        "no third verse was left untraced: {:?}",
+        report.gated
+    );
+}
+
+/// A title in its own paragraph wholly in `<em>`, as `frasbl` sets a
+/// psalm's title, after the last verse of chapters 1–3 (Crampon's layout,
+/// where the reading sets such a line apart); `em_in_verses` also sets a
+/// word of three verses in `<em>`.
+fn em_titles(em_in_verses: bool) -> String {
+    let mut body = String::from("<h1>Le livre de Ruth</h1>");
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        for v in 1..=n {
+            let number = if v == 1 {
+                format!(r#"<span class="dropnum">{c}</span>"#)
+            } else {
+                format!(r#"<sup class="v">{v}</sup>"#)
+            };
+            let word = if em_in_verses && c == 2 && v <= 3 {
+                "<em>truly</em> "
+            } else {
+                ""
+            };
+            let title = if c < 4 && v == n {
+                "<p><em>WORDS OF THE GLEANERS.</em></p>"
+            } else {
+                ""
+            };
+            body.push_str(&format!(
+                r#"<p class="p">{number}Invented words of Ruth c{c}v{v}. They are {word}here for testing.</p>{title}"#
+            ));
+        }
+    }
+    body
+}
+
+#[test]
+fn a_classless_element_the_document_never_sets_verse_words_in_accounts_for_its_text() {
+    let (s, report) = read("em-titles", &em_titles(false));
+    let mut checked = 0;
+    for c in 1..=3u16 {
+        let last = RUTH[c as usize - 1];
+        let t = text(&s, c, last).unwrap();
+        if t.contains("GLEANERS") {
+            continue;
+        }
+        assert!(
+            verified(&s, c, last),
+            "RUT {c}:{last}: {:?}",
+            report.gated.get(&format!("RUT {c}:{last}"))
+        );
+        checked += 1;
+    }
+    assert!(checked > 0, "the recogniser kept every title as words");
+}
+
+#[test]
+fn the_same_element_around_verse_words_does_not_account_for_it() {
+    let (s, report) = read("em-titles-and-words", &em_titles(true));
+    let mut checked = 0;
+    for c in 1..=3u16 {
+        let last = RUTH[c as usize - 1];
+        let t = text(&s, c, last).unwrap();
+        if t.contains("GLEANERS") {
+            continue;
+        }
+        assert!(!verified(&s, c, last), "RUT {c}:{last} verified");
+        assert_eq!(
+            report.gated.get(&format!("RUT {c}:{last}")),
+            Some(&GateCause::UnaccountedText)
+        );
+        checked += 1;
+    }
+    assert!(checked > 0, "the recogniser kept every title as words");
+}
+
+#[test]
+fn byte_ranges_index_the_entry_as_stored_when_it_begins_with_a_byte_order_mark() {
+    // `porbr2018`'s entries begin with one: every byte range was three
+    // bytes short of the file until the mark was counted.
+    let body = with_trailing_references();
+    let stored = entry_bytes(&body, true);
+    let path = write("bom", &epub_with(&body, true));
+    let (_, report) =
+        structural::stage_documents(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    let mut checked = 0;
+    for c in 1..=4u16 {
+        let record = &report.provenance[&format!("RUT {c}:3")];
+        assert_eq!(record.status, TraceStatus::Exact, "{:?}", record.reasons);
+        for span in &record.spans {
+            let raw = &stored[span.byte_start as usize..span.byte_end as usize];
+            let text = std::str::from_utf8(raw).expect("a span is whole characters");
+            assert!(
+                record.text.contains(text.trim()),
+                "RUT {c}:3 span bytes {:?} hold {text:?}",
+                (span.byte_start, span.byte_end)
+            );
+            checked += 1;
+        }
+        for x in &record.excluded {
+            let raw = &stored[x.range.byte_start as usize..x.range.byte_end as usize];
+            assert_eq!(std::str::from_utf8(raw).unwrap().trim(), x.text.trim());
+            let (from, to) = x.element_bytes.unwrap();
+            let element = std::str::from_utf8(&stored[from as usize..to as usize]).unwrap();
+            assert!(
+                element.starts_with('<') && element.ends_with('>') && element.contains(&x.text),
+                "{element:?}"
+            );
+        }
+    }
+    assert!(checked >= 4);
 }

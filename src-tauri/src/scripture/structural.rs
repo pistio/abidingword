@@ -388,16 +388,17 @@ pub fn gate(
                         };
                         let found = provenance::trace(&marks[entry], &text, start, to)
                             .or_else(|| provenance::trace(&marks[entry], &text, from, to));
-                        let found = found.filter(|t| {
+                        let found = found.and_then(|t| {
                             removals_in_place(
                                 &marks[entry],
-                                t,
+                                &t,
                                 removals.get(&key).map(Vec::as_slice),
                             )
+                            .map(|after| (t, after))
                         });
-                        if let Some(t) = found {
+                        if let Some((t, after)) = found {
                             cursor = Some((entry, t.end));
-                            traced_out = Some((entry, t));
+                            traced_out = Some((entry, t, after));
                         } else {
                             reasons.push(
                             "its words are not found, in order, in the original text of its place (only white space, note callers and note signs may stand between them)"
@@ -424,10 +425,13 @@ pub fn gate(
                     id_check: IdCheck::None,
                     reasons,
                 };
-                if let Some((entry, t)) = traced_out {
+                if let Some((entry, t, after)) = traced_out {
                     let m = &marks[entry];
                     record.spans = provenance::spans(m, &t);
                     record.excluded = provenance::excluded_ranges(m, &t);
+                    record
+                        .excluded
+                        .extend(after.iter().map(|&e| provenance::removed_range(m, e)));
                     record.quote = provenance::quote(m, &record.spans);
                     record.status = if record.quote == collapse(&text) {
                         TraceStatus::Exact
@@ -465,8 +469,20 @@ pub fn gate(
                         record.file.entry,
                         record.excluded.len()
                     ));
-                } else if let Some(&(entry, (from, _))) = places.0 {
-                    unplaced.push((entry, from));
+                } else if let Some(&(entry, (from, to))) = places.0 {
+                    // Where its own opening words stand, when they can be
+                    // found after the verse before; else its segment's start.
+                    let after = match cursor {
+                        Some((e, at)) if e == entry && at > from && at < to => at,
+                        _ => from,
+                    };
+                    let to = match places.1 {
+                        Some(&(e, (_, end))) if e == entry => end.max(to),
+                        _ => to,
+                    };
+                    let begins =
+                        provenance::find_opening(&marks[entry], &text, after, to).unwrap_or(from);
+                    unplaced.push((entry, begins));
                 }
                 if !last {
                     continue;
@@ -742,6 +758,19 @@ struct SetApart<'a> {
     note_blocks: HashSet<(usize, usize)>,
     carrying: HashSet<&'a str>,
     count: HashMap<&'a str, usize>,
+    /// The same, for inline elements without a class, by their name.
+    carrying_tags: HashSet<&'a str>,
+    count_tags: HashMap<&'a str, usize>,
+}
+
+/// Inline elements that, without a class, are measured by their name: a
+/// document that sets a psalm's title in `<em>` and never a verse's words
+/// sets it apart as surely as by a class.
+const MEASURED_TAGS: [&str; 9] = ["em", "i", "b", "strong", "span", "small", "sup", "sub", "u"];
+
+fn measured_tag(element: &epub_source::Element) -> Option<&str> {
+    (element.classes.is_empty() && MEASURED_TAGS.contains(&element.name.as_str()))
+        .then_some(element.name.as_str())
 }
 
 impl<'a> SetApart<'a> {
@@ -753,6 +782,7 @@ impl<'a> SetApart<'a> {
         placed: &[Placed],
     ) -> Self {
         let mut carrying: HashSet<&'a str> = HashSet::new();
+        let mut carrying_tags: HashSet<&'a str> = HashSet::new();
         // Only verified verses measure what verse text is: a verse the
         // recogniser itself refused (for a reference read in, a possible
         // heading …) says nothing about where verse text stands.
@@ -774,15 +804,22 @@ impl<'a> SetApart<'a> {
                         for c in &entry.elements[e].classes {
                             carrying.insert(c.as_str());
                         }
+                        if let Some(tag) = measured_tag(&entry.elements[e]) {
+                            carrying_tags.insert(tag);
+                        }
                     }
                 }
             }
         }
         let mut count: HashMap<&'a str, usize> = HashMap::new();
+        let mut count_tags: HashMap<&'a str, usize> = HashMap::new();
         for entry in &book.entries {
             for e in &entry.elements {
                 for c in &e.classes {
                     *count.entry(c.as_str()).or_default() += 1;
+                }
+                if let Some(tag) = measured_tag(e) {
+                    *count_tags.entry(tag).or_default() += 1;
                 }
             }
         }
@@ -798,11 +835,19 @@ impl<'a> SetApart<'a> {
             note_blocks,
             carrying,
             count,
+            carrying_tags,
+            count_tags,
         }
     }
 
-    /// Whether an element's classes (all of them) are apart by measurement.
+    /// Whether an element's classes (all of them), or the name of an inline
+    /// element without a class, are apart by measurement: used at least
+    /// three times in the book, and never around a verified verse's words.
     fn class_apart(&self, element: &epub_source::Element) -> bool {
+        if let Some(tag) = measured_tag(element) {
+            return !self.carrying_tags.contains(tag)
+                && self.count_tags.get(tag).copied().unwrap_or(0) >= 3;
+        }
         !element.classes.is_empty()
             && element.classes.iter().all(|c| {
                 !self.carrying.contains(c.as_str())
@@ -922,30 +967,49 @@ fn grounded_removals(
 /// Whether a traced verse's removed elements are exactly those the
 /// recogniser reported, each after exactly the reported number of the
 /// verse's characters. With no reported removal, no element may have been
-/// skipped as removed.
-fn removals_in_place(m: &EntryMarks, t: &provenance::Traced, reported: Option<&[Removal]>) -> bool {
+/// skipped as removed. A removal reported after the verse's last character
+/// stands outside the trace: it must begin where the verse ends (or where
+/// the removal before it ends), with only note callers and note signs
+/// between. Gives the elements so found after the
+/// verse, in order, or `None` when the removals do not agree.
+fn removals_in_place(
+    m: &EntryMarks,
+    t: &provenance::Traced,
+    reported: Option<&[Removal]>,
+) -> Option<Vec<usize>> {
     let reported = reported.unwrap_or(&[]);
     let mut seen: Vec<usize> = Vec::new();
     for &(at, kind) in &t.excluded {
         if kind != ExcludedKind::Apparatus {
             continue;
         }
-        let Some(element) = m.removed[at] else {
-            return false;
-        };
+        let element = m.removed[at]?;
         if seen.contains(&element) {
             continue;
         }
-        let Some(r) = reported.iter().find(|r| r.element == element) else {
-            return false;
-        };
+        let r = reported.iter().find(|r| r.element == element)?;
         let before = t.matched.iter().filter(|&&c| c < at).count();
         if before != r.before {
-            return false;
+            return None;
         }
         seen.push(element);
     }
-    seen.len() == reported.len()
+    let mut after = Vec::new();
+    let mut at = t.end;
+    for r in reported.iter().filter(|r| !seen.contains(&r.element)) {
+        let e = &m.entry.elements[r.element];
+        let begins = m.nonspace_at(e.text_start);
+        // Only note callers and note signs may stand between.
+        while at < begins && provenance::skipped_between(m, m.char_of(at)) {
+            at += 1;
+        }
+        if r.before != t.matched.len() || begins != at {
+            return None;
+        }
+        at = m.nonspace_at(e.text_end);
+        after.push(r.element);
+    }
+    Some(after)
 }
 
 /// Verses after which the original holds letters that no verse holds and

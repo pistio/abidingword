@@ -408,7 +408,12 @@ fn write_structural(
                 p["idCheck"].clone()
             ]),
         );
-        if status != "exact" || n < 25 || report.gated.contains_key(key) {
+        // Every verse something was removed from is kept whole: its
+        // removed ranges are the evidence for verifying it (Phase A1.1).
+        let removed = p["excluded"]
+            .as_array()
+            .is_some_and(|x| x.iter().any(|r| r["kind"] == "apparatus"));
+        if status != "exact" || n < 25 || removed || report.gated.contains_key(key) {
             detailed.insert(key.clone(), p.clone());
         }
     }

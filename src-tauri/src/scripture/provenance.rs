@@ -301,6 +301,33 @@ pub fn trace(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<T
     None
 }
 
+/// Where, between the `nonspace` indices `from` and `to`, a verse that
+/// cannot be traced whole begins: the first place its opening characters
+/// (up to `OPENING`) trace as [`trace`] traces. None when they are found
+/// nowhere (Phase A1.1, for judging the text before it).
+pub fn find_opening(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<usize> {
+    const OPENING: usize = 24;
+    let wanted: Vec<char> = text.chars().filter(|c| !c.is_whitespace()).collect();
+    if wanted.is_empty() {
+        return None;
+    }
+    let wanted = &wanted[..wanted.len().min(OPENING)];
+    let to = to.min(marks.nonspace.len());
+    (from..to).find(|&start| {
+        let at = marks.nonspace[start];
+        marks.entry.text[at] == wanted[0]
+            && marks.excluded_kind(at).is_none()
+            && attempt(marks, wanted, start, to).is_some()
+    })
+}
+
+/// Whether the character is one a trace skips: a note caller's or a note
+/// sign.
+pub fn skipped_between(marks: &EntryMarks, at: usize) -> bool {
+    matches!(marks.excluded_kind(at), Some(ExcludedKind::NoteCaller))
+        || NOTE_SIGNS.contains(&marks.entry.text[at])
+}
+
 fn attempt(marks: &EntryMarks, wanted: &[char], start: usize, to: usize) -> Option<Traced> {
     let mut matched = Vec::with_capacity(wanted.len());
     let mut excluded = Vec::new();
@@ -397,6 +424,21 @@ pub fn excluded_ranges(marks: &EntryMarks, traced: &Traced) -> Vec<ExcludedRange
         i = j;
     }
     out
+}
+
+/// The exact range of a whole element the recogniser removed after a
+/// verse's last character (Phase A1.1): it is outside the verse's spans, so
+/// [`excluded_ranges`] does not reach it, but it was part of the verse's
+/// place and is reported as excluded `Apparatus`.
+pub fn removed_range(marks: &EntryMarks, element: usize) -> ExcludedRange {
+    let entry = marks.entry;
+    let e = &entry.elements[element];
+    ExcludedRange {
+        kind: ExcludedKind::Apparatus,
+        range: range(entry, e.text_start, e.text_end),
+        element_bytes: Some((e.byte_start as u32, e.byte_end as u32)),
+        text: entry.slice(e.text_start, e.text_end),
+    }
 }
 
 fn range(entry: &Entry, start: usize, end: usize) -> SourceRange {
