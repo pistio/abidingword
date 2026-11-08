@@ -18,7 +18,7 @@ regression evidence on known documents, not independent evaluation.
 | `227a0a7` | Helper: the document's own spaces, line-final hyphens |
 | `b795b5f` | Helper: inferred spaces left out, relabelled spaces measured as drawn |
 | `a26af11` | Helper: right-to-left text and Hebrew marks as drawn |
-| this commit | Isolation tests, clean timing, evidence (`docs/audit/a2.1/`), this report |
+| `b2d0cad` and the commit after it | Evidence (`docs/audit/a2.1/`), clean per-process timing, table generator, this report |
 
 ## 2. The interface
 

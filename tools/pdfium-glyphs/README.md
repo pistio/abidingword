@@ -19,7 +19,8 @@ cargo build --release --locked
 target/release/aw-pdfium-glyphs <dir with libpdfium.so or pdfium.dll> file.pdf --max-chars 40000000 --max-memory-mb 4096
 ```
 
-How it measures a glyph (origin, the font's own advance, size, ligatures)
+How it measures a glyph (origin, the font's own advance, size, ligatures,
+right-to-left order and marks, which spaces PDFium inferred)
 is described at the top of `src/main.rs`.
 
 Exit codes: 0 read; 2 not a readable PDF; 3 password-protected; 4 PDFium
