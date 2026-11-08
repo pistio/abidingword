@@ -28,7 +28,27 @@ fn document_units_dump() {
         eprintln!("AW_DUMP_FILE not set; nothing to do");
         return;
     };
-    let doc = documents::read(&file, 0).expect("readable document");
+    // Phase A2.1: AW_PDF_ENGINE=pdfium reads a PDF's glyphs with PDFium in
+    // its helper process (AW_PDFIUM_HELPER, AW_PDFIUM_LIB).
+    let doc = if std::env::var("AW_PDF_ENGINE").ok().as_deref() == Some("pdfium") {
+        let source = abiding_word_lib::library::adapters::pdf_glyph_source::PdfiumHelper {
+            exe: std::env::var_os("AW_PDFIUM_HELPER")
+                .expect("AW_PDFIUM_HELPER")
+                .into(),
+            library: std::env::var_os("AW_PDFIUM_LIB")
+                .expect("AW_PDFIUM_LIB")
+                .into(),
+            timeout: std::time::Duration::from_secs(1800),
+            max_memory_mb: 4096,
+            max_chars: 40_000_000,
+        };
+        let pdf = |bytes: &[u8], name: &str| {
+            abiding_word_lib::library::adapters::pdf::read_pages_with(bytes, name, &source)
+        };
+        documents::read_with(&file, 0, &pdf).expect("readable document")
+    } else {
+        documents::read(&file, 0).expect("readable document")
+    };
     let pages = range("AW_DUMP_PAGES");
     if let Some((a, b)) = pages {
         for p in a..=b {

@@ -395,6 +395,108 @@ impl Collector {
     }
 }
 
+impl Collector {
+    /// Lays out the page just drawn when it shows its own gutter (shared by
+    /// `pdf_extract`'s `end_page` and any other glyph source).
+    fn finish_page(&mut self) {
+        let Some(page) = self.pages.last_mut() else {
+            return;
+        };
+        // A page that shows its own gutter is laid out the same whatever the
+        // other pages share (the shared gutter only serves pages without
+        // one): it is laid out now and its characters let go.
+        let gutter = body_gutter(page);
+        let done = gutter.map(|_| {
+            let glyphs = std::mem::take(&mut page.glyphs);
+            layout_page(
+                PageGlyphs {
+                    number: page.number,
+                    width: page.width,
+                    height: page.height,
+                    glyphs,
+                },
+                None,
+            )
+        });
+        self.found.push((gutter, done));
+    }
+
+    /// Phase A2.1: the glyphs one source drew, given to this collector one
+    /// at a time, exactly as `pdf_extract`'s `output_character` gives them.
+    fn add_glyph(&mut self, glyph: Glyph, chars: usize) {
+        if self.chars >= MAX_CHARS {
+            self.skipped += chars;
+            if self.truncated_from.is_none() {
+                self.truncated_from = Some(self.pages.len().max(1) as u32);
+            }
+            return;
+        }
+        self.chars += chars;
+        if let Some(page) = self.pages.last_mut() {
+            page.glyphs.push(glyph);
+        }
+    }
+}
+
+/// One character as a glyph source other than `pdf_extract` reports it
+/// (Phase A2.1, `pdf_glyph_source`): the measures `Glyph` keeps.
+#[derive(Debug, Clone, PartialEq)]
+pub struct SourceGlyph {
+    pub text: String,
+    /// From the page's left edge.
+    pub x: f32,
+    /// The baseline, down from the page's top edge.
+    pub y: f32,
+    /// Where the glyph's advance ends.
+    pub end: f32,
+    pub size: f32,
+    /// The advance in thousandths of the size.
+    pub width: u16,
+    pub upright: bool,
+    pub slanted: bool,
+}
+
+/// Where a glyph source puts what it reads, page by page (Phase A2.1).
+pub trait GlyphSink {
+    fn begin_page(&mut self, number: u32, width: f64, height: f64);
+    fn glyph(&mut self, glyph: SourceGlyph);
+    fn end_page(&mut self);
+}
+
+impl GlyphSink for Collector {
+    fn begin_page(&mut self, number: u32, width: f64, height: f64) {
+        self.top = 0.0;
+        self.left = 0.0;
+        self.pages.push(PageGlyphs {
+            number,
+            width,
+            height,
+            glyphs: Vec::new(),
+        });
+    }
+
+    fn glyph(&mut self, g: SourceGlyph) {
+        let chars = g.text.chars().count();
+        self.add_glyph(
+            Glyph {
+                text: GlyphText::from(g.text.as_str()),
+                x: g.x,
+                y: g.y,
+                end: g.end,
+                size: g.size,
+                width: g.width,
+                upright: g.upright,
+                slanted: g.slanted,
+            },
+            chars,
+        );
+    }
+
+    fn end_page(&mut self) {
+        self.finish_page();
+    }
+}
+
 impl pdf_extract::OutputDev for Collector {
     fn begin_page(
         &mut self,
@@ -414,26 +516,7 @@ impl pdf_extract::OutputDev for Collector {
     }
 
     fn end_page(&mut self) -> Result<(), pdf_extract::OutputError> {
-        let Some(page) = self.pages.last_mut() else {
-            return Ok(());
-        };
-        // A page that shows its own gutter is laid out the same whatever the
-        // other pages share (the shared gutter only serves pages without
-        // one): it is laid out now and its characters let go.
-        let gutter = body_gutter(page);
-        let done = gutter.map(|_| {
-            let glyphs = std::mem::take(&mut page.glyphs);
-            layout_page(
-                PageGlyphs {
-                    number: page.number,
-                    width: page.width,
-                    height: page.height,
-                    glyphs,
-                },
-                None,
-            )
-        });
-        self.found.push((gutter, done));
+        self.finish_page();
         Ok(())
     }
 

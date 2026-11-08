@@ -119,6 +119,47 @@ pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
     })
 }
 
+/// Phase A2.1: reads a PDF's text layer from another glyph source (PDFium in
+/// its helper process), laid out by the same layout code as `read_pages`.
+/// The metadata is read with lopdf when lopdf can open the file, and is
+/// left empty otherwise (the text does not depend on it).
+pub fn read_pages_with(
+    bytes: &[u8],
+    file_name: &str,
+    source: &dyn super::pdf_glyph_source::PdfGlyphSource,
+) -> AppResult<PdfText> {
+    let mut collector = Collector::default();
+    let report = source.read(bytes, file_name, &mut collector)?;
+    let metadata = Document::load_mem(bytes)
+        .ok()
+        .filter(|d| !d.is_encrypted())
+        .map(|d| metadata(&d))
+        .unwrap_or_default();
+    let truncated = collector.truncated_from.or(report.truncated_from);
+    let layouts = collector.layouts();
+    let mut failed_pages = report.failed_pages.clone();
+    if let Some(from) = truncated {
+        failed_pages.extend(from..=layouts.len() as u32);
+    }
+    failed_pages.sort_unstable();
+    failed_pages.dedup();
+    let pages: Vec<String> = layouts.iter().map(PageLayout::text).collect();
+    let orders = layouts.iter().map(|l| l.order).collect();
+    let letters: usize = pages
+        .iter()
+        .map(|p| p.chars().filter(|c| c.is_alphanumeric()).count())
+        .sum();
+    let scanned = pages.is_empty() || letters < MIN_LETTERS_PER_PAGE * pages.len();
+    Ok(PdfText {
+        metadata,
+        pages,
+        orders,
+        layouts,
+        failed_pages,
+        scanned,
+    })
+}
+
 /// Every page laid out in reading order (`pdf_layout`), in page order. The
 /// text extractor can panic or fail on unusual files; that must never take
 /// the app down: the whole document is read at once, and if that fails each

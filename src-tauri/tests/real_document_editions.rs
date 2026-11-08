@@ -395,7 +395,21 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     // A document the app refuses to read at all (a PDF whose text cannot be
     // extracted, say) is a rejected format: recorded, never a crash of the
     // report (v0.24.4).
-    let staged = match import::stage_documents(&files, ImportOrigin::UserFiles) {
+    // Phase A2.1: AW_PDF_ENGINE=pdfium reads PDFs' glyphs with PDFium in its
+    // helper process (AW_PDFIUM_HELPER, AW_PDFIUM_LIB), laid out by the same
+    // layout code; unset, the current backend reads them.
+    let staged = match match pdfium_source() {
+        Some(source) => {
+            let pdf = |bytes: &[u8], name: &str| {
+                abiding_word_lib::library::adapters::pdf::read_pages_with(bytes, name, &source)
+            };
+            let read = |path: &Path, document: u16| {
+                abiding_word_lib::scripture::documents::read_with(path, document, &pdf)
+            };
+            import::stage_documents_read(&files, ImportOrigin::UserFiles, &read)
+        }
+        None => import::stage_documents(&files, ImportOrigin::UserFiles),
+    } {
         Ok(staged) => staged,
         Err(error) => {
             let message = format!("{error:?}");
@@ -1079,4 +1093,24 @@ fn real_document_editions_report() {
     if let Some(out) = &out {
         std::fs::write(out.join("summary.md"), table).unwrap();
     }
+}
+
+/// The PDFium glyph source when  (Phase A2.1).
+fn pdfium_source() -> Option<abiding_word_lib::library::adapters::pdf_glyph_source::PdfiumHelper> {
+    if std::env::var("AW_PDF_ENGINE").ok().as_deref() != Some("pdfium") {
+        return None;
+    }
+    Some(
+        abiding_word_lib::library::adapters::pdf_glyph_source::PdfiumHelper {
+            exe: std::env::var_os("AW_PDFIUM_HELPER")
+                .expect("AW_PDFIUM_HELPER: the aw-pdfium-glyphs helper")
+                .into(),
+            library: std::env::var_os("AW_PDFIUM_LIB")
+                .expect("AW_PDFIUM_LIB: the directory holding libpdfium")
+                .into(),
+            timeout: std::time::Duration::from_secs(1800),
+            max_memory_mb: 4096,
+            max_chars: 40_000_000,
+        },
+    )
 }
