@@ -38,7 +38,7 @@ describe("Bibles from documents", () => {
     expect(screen.getByText("Its original layout stays available for reading.")).toBeInTheDocument();
     expect(screen.getByText("15 verses detected")).toBeInTheDocument();
     // In a sentence (v0.24.2): which books can be used as they are.
-    expect(screen.getByTestId("readiness")).toHaveTextContent("Psalms, John, and Romans are ready to use.");
+    expect(screen.getByTestId("readiness")).toHaveTextContent("Psalms, John and Romans are ready to use.");
     expect(screen.getByRole("radio", { name: /By book, chapter and verse/ })).toBeChecked();
     expect(screen.getByText(/Word information \(dictionary forms, grammar, lexical numbers\): none/)).toBeInTheDocument();
     await fillDetails(user, "INV");
@@ -142,7 +142,7 @@ describe("Bibles from documents", () => {
     await user.click(within(pane).getByRole("button", { name: "Look for verses…" }));
     const dialog = await screen.findByRole("dialog", { name: "Look for verses in PDF Bible" });
     expect(await within(dialog).findByText("15 verses detected")).toBeInTheDocument();
-    expect(within(dialog).getByTestId("readiness")).toHaveTextContent("Psalms, John, and Romans are ready to use.");
+    expect(within(dialog).getByTestId("readiness")).toHaveTextContent("Psalms, John and Romans are ready to use.");
     await user.click(within(dialog).getByRole("button", { name: "Use these verses" }));
     expect(await within(dialog).findByText("PDF Bible can now be read by book, chapter and verse.")).toBeInTheDocument();
     expect(api.state.bibles.find((b) => b.shortName === "PDFB")?.kind).toBe("structured");
