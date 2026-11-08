@@ -125,7 +125,9 @@ describe("Bible Study information", () => {
     await user.type(within(panel).getByRole("textbox", { name: /Purpose/ }), "Mine.");
     await api.studyUpdate({ id: studyId, description: "Theirs." });
     await user.click(within(panel).getByRole("button", { name: "Save" }));
-    expect(await within(panel).findByRole("alert")).toHaveTextContent(/changed somewhere else/);
+    expect(await within(panel).findByRole("alert")).toHaveTextContent(
+      "This was changed elsewhere while you were editing. Cancel and open it again to see the current version.",
+    );
     expect(api.state.studies.find((s) => s.id === studyId)!.description).toBe("Theirs.");
   });
 

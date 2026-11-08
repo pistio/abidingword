@@ -159,6 +159,13 @@ import type {
   TemplateSource,
 } from "@/types/presentationTemplate";
 
+/** Transient export presentation only; never stored with teaching or user text. */
+export interface MaterialDocxFormat {
+  language?: string;
+  paper?: "a4" | "letter";
+  styleNames?: Partial<Record<"reference" | "notice" | "label" | "message" | "question" | "scripture" | "note" | "line" | "lineLast", string>>;
+}
+
 export interface Api {
   appInfo(): Promise<AppInfo>;
   logError(message: string): Promise<void>;
@@ -414,7 +421,7 @@ export interface Api {
   /** Writes a material, as Markdown, to the chosen file; returns where it went. */
   materialSaveMarkdown(input: { path: string; text: string }): Promise<string>;
   /** Writes a material, as a Word document (.docx), to the chosen file (v0.18.8); returns where it went. */
-  materialSaveDocx(input: { path: string; document: MaterialDocument; format?: { language?: string; paper?: "a4" | "letter" } }): Promise<string>;
+  materialSaveDocx(input: { path: string; document: MaterialDocument; format?: MaterialDocxFormat }): Promise<string>;
   /** The text of a material's passages from the chosen Bible only (v0.18.8). */
   materialScripture(input: { translationId: string; references: string[] }): Promise<MaterialScripture>;
   /** The displays connected; empty where a second window cannot be opened. */

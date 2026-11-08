@@ -216,8 +216,8 @@ describe("numbers", () => {
     expect(numbered(questionSheet(t, study, { leader: true }).blocks)).toEqual(["1. Why?", "2. How?"]);
     expect(numbered(manuscript(t, study).blocks)).toEqual(["Question 1: Why?", "Question 2: How?"]);
     // The notes of the question not yet worded are still with the leader, unnumbered.
-    expect(questionSheet(t, study, { leader: true }).blocks).toContainEqual({ type: "heading", text: "Notes for a question not yet worded" });
-    expect(manuscript(t, study).blocks).toContainEqual({ type: "heading", text: "Notes for a question not yet worded" });
+    expect(questionSheet(t, study, { leader: true }).blocks).toContainEqual({ type: "heading", text: "Notes for a question not yet written" });
+    expect(manuscript(t, study).blocks).toContainEqual({ type: "heading", text: "Notes for a question not yet written" });
   });
 });
 
@@ -377,9 +377,27 @@ describe("one material, every way out (v0.18.8)", () => {
     await user.click(screen.getByRole("menuitem", { name: "Question sheet" }));
     await within(studyPane()).findByRole("article", { name: "Preview: Question sheet" });
     api.state.presentation.nextMaterialPath = "/home/test/Documents/Group";
+    expect(navigator.language).toBe("en-US");
+    const saveDocx = vi.spyOn(api, "materialSaveDocx");
     await user.click(within(studyPane()).getByRole("button", { name: "Save as a Word document…" }));
     await within(studyPane()).findByText("Saved: /home/test/Documents/Group.docx");
     expect(api.state.presentation.materialDialogs.at(-1)).toBe("Remain in the vine – Question sheet.docx");
+    expect(saveDocx).toHaveBeenCalledWith(expect.objectContaining({
+      format: expect.objectContaining({
+        language: "en-GB",
+        styleNames: {
+          reference: "Passage",
+          notice: "Notice",
+          label: "Field label",
+          message: "Central message",
+          question: "Question",
+          scripture: "Bible text",
+          note: "Note",
+          line: "Writing line",
+          lineLast: "Writing line (last)",
+        },
+      }),
+    }));
     const sent = api.state.presentation.materialDocx[0]!.document;
     expect(sent).toEqual(derive(t, "questions", await api.teachingGet(prepId)));
     // The group's sheet: no leader writing, in the Word file either.

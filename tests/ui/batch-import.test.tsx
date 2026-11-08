@@ -97,7 +97,7 @@ describe("Adding many sources", () => {
     api.state.batch.jobs.get(job.id)!.state = "interrupted";
     const { user } = await renderApp(api);
     const section = await openSettingsSection(user, "Sources");
-    expect(within(section).getByText("An import of many sources was not finished (1 of 2 added).")).toBeInTheDocument();
+    expect(within(section).getByText("A source import was not completed (1 of 2 added).")).toBeInTheDocument();
     await user.click(within(section).getByRole("button", { name: "Continue" }));
     const dialog = await screen.findByRole("dialog", { name: "Add Sources" });
     expect(await within(dialog).findByText(/This import stopped before it was finished \(1 added\)/)).toBeInTheDocument();
@@ -105,6 +105,6 @@ describe("Adding many sources", () => {
     expect(await within(dialog).findByText("2 sources were added.")).toBeInTheDocument();
     expect(api.state.library.sources).toHaveLength(2);
     await user.click(within(dialog).getByRole("button", { name: "Close" }));
-    await waitFor(() => expect(within(section).queryByText(/was not finished/)).not.toBeInTheDocument());
+    await waitFor(() => expect(within(section).queryByText(/was not completed/)).not.toBeInTheDocument());
   });
 });

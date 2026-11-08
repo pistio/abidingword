@@ -445,6 +445,7 @@ fn room_to_write_is_three_ruled_lines_and_the_page_and_language_are_the_persons(
         &docx::Format {
             language: Some("de-DE".into()),
             paper: Some("letter".into()),
+            ..Default::default()
         },
     )
     .unwrap();
@@ -459,6 +460,7 @@ fn room_to_write_is_three_ruled_lines_and_the_page_and_language_are_the_persons(
             &docx::Format {
                 language: Some("\"><x/>".into()),
                 paper: None,
+                ..Default::default()
             },
         )
         .unwrap(),

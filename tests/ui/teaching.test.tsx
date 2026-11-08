@@ -145,7 +145,7 @@ describe("teaching preparation", () => {
     within(article).getByRole("button", { name: "Move “The branches” up" }).focus();
     await user.keyboard("{Enter}");
     await waitFor(() => expect(prep(api).points.map((p) => p.title)).toEqual(["The branches", "The vine"]));
-    expect(within(article).getByText("Point moved to place 1.")).toBeInTheDocument();
+    expect(within(article).getByText("Point moved to position 1.")).toBeInTheDocument();
     await waitFor(() => expect(within(article).getByRole("button", { name: "Move “The branches” up" })).toHaveFocus());
 
     // A point with writing asks first; Keep is the safe default.
@@ -1087,7 +1087,7 @@ describe("long assistant actions", () => {
 
     await user.click(within(panel).getByRole("button", { name: "Stop waiting" }));
     expect(within(panel).queryByTestId("pending")).toBeNull();
-    expect(within(panel).getByText(/^Stopped waiting. Nothing was changed./)).toHaveTextContent(/may count toward your use/);
+    expect(within(panel).getByText(/^Stopped waiting. Nothing was changed./)).toHaveTextContent(/may count towards your usage/);
     await act(async () => release());
     // The late answer is ignored.
     expect(within(panel).queryByRole("heading", { name: "Suggested wording" })).toBeNull();

@@ -77,6 +77,9 @@ pub fn render(
     };
     let shaper = Shaper { fonts };
     let lang = esc(&options.locale.language);
+    let image_name = esc(&options.locale.labels.image);
+    let unavailable_name = esc(&options.locale.labels.image_unavailable);
+    let blank_name = esc(&options.locale.labels.blank);
     let notes = options.speaker_notes;
     let mut files: Vec<(String, Vec<u8>)> = Vec::new();
     let mut media: Vec<(String, Media)> = Vec::new();
@@ -127,14 +130,21 @@ pub fn render(
         for (shape_id, block) in (2..).zip(blocks.iter()) {
             match block {
                 Block::Text(b) => {
-                    shapes.push_str(&text_shape(shape_id, b, &lang));
+                    shapes.push_str(&text_shape(shape_id, b, &lang, &options.locale.labels.text));
                 }
                 Block::Picture(p) => {
                     if let Some(rid) = related(&p.asset_id, &mut files, &mut rels) {
-                        shapes.push_str(&picture_shape(shape_id, p, &rid));
+                        shapes.push_str(&picture_shape(
+                            shape_id,
+                            p,
+                            &rid,
+                            &options.locale.labels.design,
+                        ));
                     }
                 }
-                Block::Rect(r) => shapes.push_str(&rect_shape(shape_id, r)),
+                Block::Rect(r) => {
+                    shapes.push_str(&rect_shape(shape_id, r, &options.locale.labels.band))
+                }
                 Block::Image(i)
                     if image_data
                         .get(&i.asset_id)
@@ -148,7 +158,7 @@ pub fn render(
                         .and_then(|im| im.caption.clone())
                         .unwrap_or_default();
                     shapes.push_str(&format!(
-                        r#"<p:pic><p:nvPicPr><p:cNvPr id="{shape_id}" name="Picture {shape_id}" descr="{alt}"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="{rid}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>"#,
+                        r#"<p:pic><p:nvPicPr><p:cNvPr id="{shape_id}" name="{image_name} {shape_id}" descr="{alt}"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="{rid}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>"#,
                         emu(i.x),
                         emu(i.y),
                         emu(i.w),
@@ -160,7 +170,7 @@ pub fn render(
                 | Block::Missing { x, y, w, h } => {
                     let label = &options.locale.labels.image_unavailable;
                     shapes.push_str(&format!(
-                        r#"<p:sp><p:nvSpPr><p:cNvPr id="{shape_id}" name="Image unavailable {shape_id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln w="19050"><a:solidFill><a:srgbClr val="{muted}"/></a:solidFill></a:ln></p:spPr><p:txBody><a:bodyPr anchor="ctr"/><a:lstStyle/><a:p><a:pPr algn="ctr"/><a:r><a:rPr lang="{lang}" sz="2200" dirty="0"><a:solidFill><a:srgbClr val="{muted}"/></a:solidFill></a:rPr><a:t>{}</a:t></a:r></a:p></p:txBody></p:sp>"#,
+                        r#"<p:sp><p:nvSpPr><p:cNvPr id="{shape_id}" name="{unavailable_name} {shape_id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln w="19050"><a:solidFill><a:srgbClr val="{muted}"/></a:solidFill></a:ln></p:spPr><p:txBody><a:bodyPr anchor="ctr"/><a:lstStyle/><a:p><a:pPr algn="ctr"/><a:r><a:rPr lang="{lang}" sz="2200" dirty="0"><a:solidFill><a:srgbClr val="{muted}"/></a:solidFill></a:rPr><a:t>{}</a:t></a:r></a:p></p:txBody></p:sp>"#,
                         emu(*x),
                         emu(*y),
                         emu(*w),
@@ -257,7 +267,7 @@ pub fn render(
         ),
         (
             "ppt/slideLayouts/slideLayout1.xml".into(),
-            format!(r#"{DECL}<p:sldLayout {NS} type="blank" preserve="1"><p:cSld name="Blank"><p:spTree>{GROUP}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>"#).into_bytes(),
+            format!(r#"{DECL}<p:sldLayout {NS} type="blank" preserve="1"><p:cSld name="{blank_name}"><p:spTree>{GROUP}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>"#).into_bytes(),
         ),
         (
             "ppt/slideLayouts/_rels/slideLayout1.xml.rels".into(),
@@ -271,7 +281,12 @@ pub fn render(
     if with_notes {
         package.push((
             "ppt/notesMasters/notesMaster1.xml".into(),
-            NOTES_MASTER.replace("{NS}", NS).into_bytes(),
+            NOTES_MASTER
+                .replace("{NS}", NS)
+                .replace("{SLIDE_IMAGE}", &esc(&options.locale.labels.slide_image))
+                .replace("{NOTES}", &esc(&options.locale.labels.speaker_notes))
+                .replace("{LANG}", &lang)
+                .into_bytes(),
         ));
         package.push((
             "ppt/notesMasters/_rels/notesMaster1.xml.rels".into(),
@@ -282,7 +297,12 @@ pub fn render(
         ));
         package.push((
             "ppt/theme/theme2.xml".into(),
-            theme("Notes", &layout::palette("light"), None).into_bytes(),
+            theme(
+                &options.locale.labels.speaker_notes,
+                &layout::palette("light"),
+                None,
+            )
+            .into_bytes(),
         ));
     }
     package.extend(files);
@@ -314,7 +334,8 @@ fn run(text: &str, b: &layout::TextBox, color: &str, lang: &str) -> String {
     )
 }
 
-fn text_shape(id: usize, b: &layout::TextBox, lang: &str) -> String {
+fn text_shape(id: usize, b: &layout::TextBox, lang: &str, label: &str) -> String {
+    let name = esc(label);
     let color = hex(&b.color);
     let algn = match b.align {
         Align::Left => "l",
@@ -363,7 +384,7 @@ fn text_shape(id: usize, b: &layout::TextBox, lang: &str) -> String {
             };
             let [l, t, r, bo] = f.inset;
             format!(
-                r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="Text {id}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap="square" lIns="{}" tIns="{}" rIns="{}" bIns="{}" rtlCol="0" anchor="{anchor}">{autofit}</a:bodyPr><a:lstStyle/>{paragraphs}</p:txBody></p:sp>"#,
+                r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="{name} {id}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap="square" lIns="{}" tIns="{}" rIns="{}" bIns="{}" rtlCol="0" anchor="{anchor}">{autofit}</a:bodyPr><a:lstStyle/>{paragraphs}</p:txBody></p:sp>"#,
                 emu(f.x),
                 emu(f.y),
                 emu(f.w),
@@ -375,7 +396,7 @@ fn text_shape(id: usize, b: &layout::TextBox, lang: &str) -> String {
             )
         }
         None => format!(
-            r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="Text {id}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="t"><a:noAutofit/></a:bodyPr><a:lstStyle/>{paragraphs}</p:txBody></p:sp>"#,
+            r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="{name} {id}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="t"><a:noAutofit/></a:bodyPr><a:lstStyle/>{paragraphs}</p:txBody></p:sp>"#,
             emu(b.x),
             emu(b.y),
             emu(b.w),
@@ -386,7 +407,8 @@ fn text_shape(id: usize, b: &layout::TextBox, lang: &str) -> String {
 
 /// A template picture, cropped as in the source (PowerPoint's own crop) and
 /// as transparent as there.
-fn picture_shape(id: usize, p: &layout::Picture, rid: &str) -> String {
+fn picture_shape(id: usize, p: &layout::Picture, rid: &str, label: &str) -> String {
+    let name = esc(label);
     let c = p.crop;
     let pct = |v: f32| (v * 100_000.0).round() as i64;
     let crop = if c.is_none() {
@@ -406,7 +428,7 @@ fn picture_shape(id: usize, p: &layout::Picture, rid: &str) -> String {
         String::new()
     };
     format!(
-        r#"<p:pic><p:nvPicPr><p:cNvPr id="{id}" name="Design {id}"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="{rid}">{alpha}</a:blip>{crop}<a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>"#,
+        r#"<p:pic><p:nvPicPr><p:cNvPr id="{id}" name="{name} {id}"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="{rid}">{alpha}</a:blip>{crop}<a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>"#,
         emu(p.x),
         emu(p.y),
         emu(p.w),
@@ -415,7 +437,8 @@ fn picture_shape(id: usize, p: &layout::Picture, rid: &str) -> String {
 }
 
 /// A plain band of colour from the template.
-fn rect_shape(id: usize, r: &layout::RectBox) -> String {
+fn rect_shape(id: usize, r: &layout::RectBox, label: &str) -> String {
+    let name = esc(label);
     let fill = match &r.fill {
         Some(f) if r.fill_opacity < 1.0 => format!(
             r#"<a:solidFill><a:srgbClr val="{}"><a:alpha val="{}"/></a:srgbClr></a:solidFill>"#,
@@ -437,7 +460,7 @@ fn rect_shape(id: usize, r: &layout::RectBox) -> String {
         _ => "<a:ln><a:noFill/></a:ln>".to_string(),
     };
     format!(
-        r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="Band {id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom>{fill}{line}</p:spPr></p:sp>"#,
+        r#"<p:sp><p:nvSpPr><p:cNvPr id="{id}" name="{name} {id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom>{fill}{line}</p:spPr></p:sp>"#,
         emu(r.x),
         emu(r.y),
         emu(r.w),
@@ -447,6 +470,8 @@ fn rect_shape(id: usize, r: &layout::RectBox) -> String {
 
 fn notes_slide(slide: &Slide, options: &ExportOptions, lang: &str) -> String {
     let loc = &options.locale;
+    let slide_image = esc(&loc.labels.slide_image);
+    let notes = esc(&loc.labels.speaker_notes);
     let mut paragraphs = String::new();
     let para = |text: &str, bold: bool| -> String {
         format!(
@@ -468,7 +493,7 @@ fn notes_slide(slide: &Slide, options: &ExportOptions, lang: &str) -> String {
         }
     }
     format!(
-        r#"{DECL}<p:notes {NS}><p:cSld><p:spTree>{GROUP}<p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image Placeholder 1"/><p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr><p:nvPr><p:ph type="sldImg"/></p:nvPr></p:nvSpPr><p:spPr/></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes Placeholder 2"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>{paragraphs}</p:txBody></p:sp></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:notes>"#
+        r#"{DECL}<p:notes {NS}><p:cSld><p:spTree>{GROUP}<p:sp><p:nvSpPr><p:cNvPr id="2" name="{slide_image} 1"/><p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr><p:nvPr><p:ph type="sldImg"/></p:nvPr></p:nvSpPr><p:spPr/></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="{notes} 2"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>{paragraphs}</p:txBody></p:sp></p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:notes>"#
     )
 }
 
@@ -562,6 +587,7 @@ fn master(palette: &Palette) -> String {
 }
 
 fn theme(name: &str, palette: &Palette, design: Option<&TemplateDefinition>) -> String {
+    let name = esc(name);
     // The template's two fonts become the theme's heading and body fonts.
     let scheme = |family: &str| {
         let latin = if family.trim().is_empty() {
@@ -586,7 +612,7 @@ fn theme(name: &str, palette: &Palette, design: Option<&TemplateDefinition>) -> 
     )
 }
 
-const NOTES_MASTER: &str = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:notesMaster {NS}><p:cSld><p:bg><p:bgRef idx="1001"><a:schemeClr val="bg1"/></p:bgRef></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr><p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image Placeholder 1"/><p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr><p:nvPr><p:ph type="sldImg" idx="2"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="685800" y="1143000"/><a:ext cx="5486400" cy="3086100"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln w="12700"><a:solidFill><a:prstClr val="black"/></a:solidFill></a:ln></p:spPr></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes Placeholder 2"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="body" sz="quarter" idx="3"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="685800" y="4400550"/><a:ext cx="5486400" cy="3600450"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr vert="horz" lIns="91440" tIns="45720" rIns="91440" bIns="45720" rtlCol="0"/><a:lstStyle/><a:p><a:pPr lvl="0"/><a:endParaRPr lang="en-US"/></a:p></p:txBody></p:sp></p:spTree></p:cSld><p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/><p:notesStyle><a:lvl1pPr marL="0" algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1"><a:defRPr sz="1400" kern="1200"><a:solidFill><a:schemeClr val="tx1"/></a:solidFill><a:latin typeface="+mn-lt"/><a:ea typeface="+mn-ea"/><a:cs typeface="+mn-cs"/></a:defRPr></a:lvl1pPr></p:notesStyle></p:notesMaster>"#;
+const NOTES_MASTER: &str = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:notesMaster {NS}><p:cSld><p:bg><p:bgRef idx="1001"><a:schemeClr val="bg1"/></p:bgRef></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr><p:sp><p:nvSpPr><p:cNvPr id="2" name="{SLIDE_IMAGE} 1"/><p:cNvSpPr><a:spLocks noGrp="1" noRot="1" noChangeAspect="1"/></p:cNvSpPr><p:nvPr><p:ph type="sldImg" idx="2"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="685800" y="1143000"/><a:ext cx="5486400" cy="3086100"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln w="12700"><a:solidFill><a:prstClr val="black"/></a:solidFill></a:ln></p:spPr></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="{NOTES} 2"/><p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr><p:nvPr><p:ph type="body" sz="quarter" idx="3"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="685800" y="4400550"/><a:ext cx="5486400" cy="3600450"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr vert="horz" lIns="91440" tIns="45720" rIns="91440" bIns="45720" rtlCol="0"/><a:lstStyle/><a:p><a:pPr lvl="0"/><a:endParaRPr lang="{LANG}"/></a:p></p:txBody></p:sp></p:spTree></p:cSld><p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/><p:notesStyle><a:lvl1pPr marL="0" algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1"><a:defRPr sz="1400" kern="1200"><a:solidFill><a:schemeClr val="tx1"/></a:solidFill><a:latin typeface="+mn-lt"/><a:ea typeface="+mn-ea"/><a:cs typeface="+mn-cs"/></a:defRPr></a:lvl1pPr></p:notesStyle></p:notesMaster>"#;
 
 /// The files in a fixed order with fixed dates: the same presentation gives
 /// the same file.
@@ -607,4 +633,98 @@ fn zip(files: Vec<(String, Vec<u8>)>) -> AppResult<Vec<u8>> {
     }
     let cursor = writer.finish().map_err(|e| fail(&e))?;
     Ok(cursor.into_inner())
+}
+
+#[cfg(test)]
+mod language_tests {
+    use super::super::document::{AudienceSlide, SpeakerSlide};
+    use super::*;
+    use std::io::Read as _;
+
+    #[test]
+    fn exported_shape_names_and_notes_use_escaped_locale_without_changing_content() {
+        let doc = PresentationDocument {
+            title: "Owner's title & meaning".into(),
+            theme: "light".into(),
+            slides: vec![Slide {
+                kind: "text".into(),
+                audience: AudienceSlide {
+                    heading: Some("Source <words> & meaning".into()),
+                    body: Some("Unchanged owner text".into()),
+                    ..Default::default()
+                },
+                speaker: SpeakerSlide {
+                    notes: "Owner notes & meaning".into(),
+                    ..Default::default()
+                },
+                ..Default::default()
+            }],
+            ..Default::default()
+        };
+        let mut options = ExportOptions {
+            speaker_notes: true,
+            ..Default::default()
+        };
+        options.locale.language = "de-DE".into();
+        options.locale.labels.text = "Text & <Feld>".into();
+        options.locale.labels.blank = "Leer & <frei>".into();
+        options.locale.labels.slide_image = "Bild & <Folie>".into();
+        options.locale.labels.speaker_notes = "Notizen & <Text>".into();
+        let band = layout::RectBox {
+            x: 0.0,
+            y: 0.0,
+            w: 100.0,
+            h: 20.0,
+            fill: Some("#ffffff".into()),
+            fill_opacity: 1.0,
+            line: None,
+            line_width: 0.0,
+        };
+        assert!(rect_shape(7, &band, "Farbe & <Band>")
+            .contains("id=\"7\" name=\"Farbe &amp; &lt;Band&gt; 7\""));
+        let picture = layout::Picture {
+            asset_id: "unchanged-asset".into(),
+            x: 0.0,
+            y: 0.0,
+            w: 100.0,
+            h: 20.0,
+            crop: Default::default(),
+            opacity: 1.0,
+        };
+        let shape = picture_shape(8, &picture, "rId9", "Design & <Bild>");
+        assert!(shape.contains("id=\"8\" name=\"Design &amp; &lt;Bild&gt; 8\""));
+        assert!(shape.contains("r:embed=\"rId9\""));
+        let bytes = render(&doc, &ImageData::new(), &FontSet::empty(), &options).unwrap();
+        let mut archive = zip::ZipArchive::new(Cursor::new(bytes)).unwrap();
+        let mut xml = |path: &str| {
+            let mut text = String::new();
+            archive
+                .by_name(path)
+                .unwrap()
+                .read_to_string(&mut text)
+                .unwrap();
+            text
+        };
+        let slide = xml("ppt/slides/slide1.xml");
+        assert!(slide.contains("name=\"Text &amp; &lt;Feld&gt; "));
+        assert!(slide.contains("Source &lt;words&gt; &amp; meaning"));
+        assert!(slide.contains("Unchanged owner text"));
+        assert!(slide.contains("id=\"1\""));
+        assert!(!slide.contains("name=\"Text & <Feld>"));
+        assert!(
+            xml("ppt/slideLayouts/slideLayout1.xml").contains("name=\"Leer &amp; &lt;frei&gt;\"")
+        );
+        for path in [
+            "ppt/notesSlides/notesSlide1.xml",
+            "ppt/notesMasters/notesMaster1.xml",
+        ] {
+            let notes = xml(path);
+            assert!(notes.contains("id=\"2\" name=\"Bild &amp; &lt;Folie&gt; 1\""));
+            assert!(notes.contains("id=\"3\" name=\"Notizen &amp; &lt;Text&gt; 2\""));
+            assert!(notes.contains("lang=\"de-DE\""));
+            assert!(!notes.contains("Slide Image Placeholder"));
+        }
+        assert!(xml("ppt/notesSlides/notesSlide1.xml").contains("Owner notes &amp; meaning"));
+        assert!(xml("ppt/theme/theme2.xml").contains("name=\"Notizen &amp; &lt;Text&gt;\""));
+    }
 }

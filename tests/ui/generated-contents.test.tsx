@@ -149,7 +149,7 @@ it("shows automatic analysis failure with explicit retry while retaining reading
   api.libraryGeneratedContents = async () => { throw new Error("PRIVATE SOURCE TEXT must never be displayed"); };
   const { user } = await renderApp(api, { pdfEngine: engine });
   await openFromLibrary(user, "Failed heading analysis");
-  expect(await screen.findByText("Automatic heading analysis stopped. Existing reading and writing are available.")).toBeVisible();
+  expect(await screen.findByText("Automatic heading analysis stopped. You can still read and write.")).toBeVisible();
   expect(screen.queryByText(/PRIVATE SOURCE TEXT/)).toBeNull();
   expect(screen.getByText("An opening paragraph about gardens.")).toBeVisible();
   await user.click(screen.getByRole("button", { name: "Progress / retry" }));

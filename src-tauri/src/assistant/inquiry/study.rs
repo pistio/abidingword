@@ -6,7 +6,7 @@
 
 use rusqlite::Connection;
 
-use super::{cut, BlockKind, Inquiry, InquiryInput, Material, Scope};
+use super::{cut, BlockKind, DisplayLabel, DisplayPart, Inquiry, InquiryInput, Material, Scope};
 use crate::assistant::context::write_first;
 use crate::db::{
     bibles, blocks, findings, sections, settings as app_settings, studies, study_passages,
@@ -66,17 +66,30 @@ pub(super) fn scripture(
     };
     let block = material.push(BlockKind::Scripture, label, &body);
     block.reference = Some(reference.to_dto());
+    block.display = Some(DisplayLabel::Scripture {
+        reference: reference.to_dto(),
+        translation: short.clone(),
+        text_available: text.is_some(),
+    });
     block.translation = short;
     Ok(())
 }
 
 /// A note as the assistant reads it, with the quotations kept in it.
-pub(super) fn note(material: &mut Material, finding: &Finding, label: String, quotes: &mut usize) {
-    material.push(
-        BlockKind::Note,
-        label,
-        &cut(&finding.content, super::NOTE_MAX),
-    );
+pub(super) fn note(
+    material: &mut Material,
+    finding: &Finding,
+    label: String,
+    display: DisplayLabel,
+    quotes: &mut usize,
+) {
+    material
+        .push(
+            BlockKind::Note,
+            label,
+            &cut(&finding.content, super::NOTE_MAX),
+        )
+        .display = Some(display);
     let note_id = material
         .blocks
         .last()
@@ -96,14 +109,19 @@ pub(super) fn note(material: &mut Material, finding: &Finding, label: String, qu
         if let Some(locator) = c.locator.as_deref().filter(|l| !l.is_empty()) {
             citation = format!("{citation}, {locator}");
         }
-        material.push(
-            BlockKind::Quote,
-            format!(
-                "Quotation from {}, kept in note {note_id}",
-                cut(&citation, 200)
-            ),
-            &cut(quote, super::QUOTE_MAX),
-        );
+        material
+            .push(
+                BlockKind::Quote,
+                format!(
+                    "Quotation from {}, kept in note {note_id}",
+                    cut(&citation, 200)
+                ),
+                &cut(quote, super::QUOTE_MAX),
+            )
+            .display = Some(DisplayLabel::Quote {
+            citation: citation.clone(),
+            note: note_id.clone(),
+        });
         *quotes += 1;
     }
 }
@@ -137,6 +155,10 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
         }
         None => None,
     };
+    let display_part = section.as_ref().map(|s| DisplayPart {
+        key: s.key.clone(),
+        title: s.title.clone(),
+    });
     let part = section
         .as_ref()
         .map(|s| format!(" — part “{}”", cut(&s.title, 80)))
@@ -183,21 +205,36 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
                     "The selected words are no longer in the text. Select them again.",
                 ));
             }
-            material.push(
-                BlockKind::Writing,
-                format!("Words you selected in your writing{part}"),
-                selected,
-            );
-            if selected != text {
-                material.push(
+            material
+                .push(
                     BlockKind::Writing,
-                    format!("Your writing they are in{part}"),
-                    text,
-                );
+                    format!("Words you selected in your writing{part}"),
+                    selected,
+                )
+                .display = Some(DisplayLabel::Writing {
+                part: display_part.clone(),
+                selected: true,
+            });
+            if selected != text {
+                material
+                    .push(
+                        BlockKind::Writing,
+                        format!("Your writing they are in{part}"),
+                        text,
+                    )
+                    .display = Some(DisplayLabel::Writing {
+                    part: display_part.clone(),
+                    selected: false,
+                });
             }
             material.original = Some(selected.to_string());
         } else if !text.is_empty() {
-            material.push(BlockKind::Writing, format!("Your writing{part}"), text);
+            material
+                .push(BlockKind::Writing, format!("Your writing{part}"), text)
+                .display = Some(DisplayLabel::Writing {
+                part: display_part.clone(),
+                selected: false,
+            });
             material.original = Some(text.to_string());
         }
     }
@@ -214,6 +251,11 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
                 &mut material,
                 finding,
                 format!("Your note ({}){part}", kind_label(finding)),
+                DisplayLabel::Note {
+                    finding_type: finding.finding_type.as_str().into(),
+                    part: display_part.clone(),
+                    study: None,
+                },
                 &mut quotes,
             );
             Some(id)
@@ -243,7 +285,12 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
                 }
                 let piece = cut(piece, super::WRITING_MAX - used);
                 used += piece.chars().count();
-                material.push(BlockKind::Writing, format!("Your writing{part}"), &piece);
+                material
+                    .push(BlockKind::Writing, format!("Your writing{part}"), &piece)
+                    .display = Some(DisplayLabel::Writing {
+                    part: display_part.clone(),
+                    selected: false,
+                });
             }
         }
     }
@@ -268,13 +315,20 @@ pub fn assemble(conn: &Connection, input: &InquiryInput, request: &str) -> AppRe
                 &mut material,
                 f,
                 format!("Another of your notes in this part ({})", kind_label(f)),
+                DisplayLabel::Note {
+                    finding_type: f.finding_type.as_str().into(),
+                    part: display_part.clone(),
+                    study: None,
+                },
                 &mut quotes,
             );
         }
     }
 
     if !request.is_empty() {
-        material.push(BlockKind::Request, "Your question".into(), request);
+        material
+            .push(BlockKind::Request, "Your question".into(), request)
+            .display = Some(DisplayLabel::Request);
     }
 
     // Grounded in the person's material, or not at all.

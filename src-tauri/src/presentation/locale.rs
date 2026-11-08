@@ -24,7 +24,7 @@ pub struct ExportLocale {
 impl Default for ExportLocale {
     fn default() -> Self {
         Self {
-            language: "en-US".to_string(),
+            language: "en-GB".to_string(),
             book_names: BTreeMap::new(),
             psalm: "Psalm".to_string(),
             verse_separator: ":".to_string(),
@@ -37,6 +37,12 @@ impl Default for ExportLocale {
 #[serde(rename_all = "camelCase", default)]
 pub struct ExportLabels {
     pub slide: String,
+    pub text: String,
+    pub image: String,
+    pub design: String,
+    pub band: String,
+    pub blank: String,
+    pub slide_image: String,
     pub speaker_notes: String,
     pub introduction: String,
     pub conclusion: String,
@@ -69,6 +75,12 @@ impl Default for ExportLabels {
         .collect();
         Self {
             slide: "Slide".to_string(),
+            text: "Text".to_string(),
+            image: "Image".to_string(),
+            design: "Design".to_string(),
+            band: "Colour band".to_string(),
+            blank: "Blank".to_string(),
+            slide_image: "Slide image".to_string(),
             speaker_notes: "Speaker notes".to_string(),
             introduction: "Introduction".to_string(),
             conclusion: "Conclusion".to_string(),

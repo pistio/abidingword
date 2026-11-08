@@ -57,6 +57,23 @@ export interface InquiryInput {
 
 export type BlockKind = "scripture" | "writing" | "note" | "quote" | "source" | "request";
 
+/** Transient UI metadata; model labels and all source/user text remain unchanged. */
+export interface DisplayLocation {
+  section: string | null;
+  firstPage: string | null;
+  lastPage: string | null;
+  firstParagraph: number;
+  lastParagraph: number;
+}
+
+export type DisplayLabel =
+  | { type: "scripture"; reference: ScriptureRef; translation: string | null; textAvailable: boolean }
+  | { type: "writing"; part: { key: string | null; title: string } | null; selected: boolean }
+  | { type: "note"; findingType: FindingType; part: { key: string | null; title: string } | null; study: string | null }
+  | { type: "quote"; citation: string; note: string }
+  | { type: "source"; title: string; author: string | null; location: DisplayLocation }
+  | { type: "request" };
+
 /** One labelled piece of what would be sent, word for word. */
 export interface SharedBlock {
   id: string;
@@ -67,6 +84,7 @@ export interface SharedBlock {
   translation: string | null;
   sourceId: string | null;
   location: string | null;
+  display?: DisplayLabel | null;
 }
 
 export interface InquiryPreview {
@@ -92,6 +110,7 @@ export interface SourceLink {
 }
 
 export interface Evidence {
+  display?: DisplayLabel | null;
   block: string;
   kind: BlockKind;
   label: string;
@@ -135,6 +154,7 @@ export interface InsightPoint {
   text: string;
   about: string | null;
   aboutLabel: string | null;
+  aboutDisplay?: DisplayLabel | null;
   evidence: Evidence[];
   /** Passages the assistant names (suggestions, recognised by the app). */
   references: ScriptureRef[];

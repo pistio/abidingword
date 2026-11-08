@@ -62,7 +62,7 @@ describe("observable PDF analysis",()=>{
     const saved:PdfDiagnostic={...base,source:{...base.source,fileSha256:"SAVED-FINGERPRINT"},query:null};
     api.chooseDiagnosticFile=vi.fn(async()=>"/chosen/report.json");
     api.libraryPdfStructureDiagnosticSave=vi.fn(async()=>({path:"/chosen/report.json",report:saved}));
-    panel(api);const user=userEvent.setup();await screen.findByText(/No saved heading analysis/);
+    panel(api);const user=userEvent.setup();await screen.findByText(/No heading analysis has been saved/);
     await user.click(screen.getByText("Diagnostic report (metadata only)"));
     await user.click(screen.getByRole("button",{name:"Save report…"}));
     await screen.findByText(/SAVED-FINGERPRINT/);
@@ -77,7 +77,7 @@ describe("observable PDF analysis",()=>{
   it("disables duplicate builds immediately while waiting for the first progress poll",async()=>{
     const api=setup();let finish!:(v:PdfStructureView)=>void;
     api.libraryPdfStructureBuild=vi.fn(()=>new Promise<PdfStructureView>(resolve=>{finish=resolve;}));
-    const view=panel(api);const user=userEvent.setup();await screen.findByText(/No saved heading analysis/);
+    const view=panel(api);const user=userEvent.setup();await screen.findByText(/No heading analysis has been saved/);
     await user.click(screen.getByRole("button",{name:"Build structure"}));
     expect(screen.getByRole("button",{name:"Build structure"})).toBeDisabled();
     await act(async()=>finish({...empty,status:"ready"}));
