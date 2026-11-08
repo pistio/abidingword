@@ -1830,6 +1830,17 @@ fn natural_key(name: &str) -> Vec<(String, u64)> {
 /// Reads documents as a Bible (v0.23): each through the library's adapter,
 /// then all of them for books, chapters and verses. Nothing is kept yet.
 pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<StagedImport> {
+    stage_documents_read(paths, origin, &documents::read)
+}
+
+/// [`stage_documents`], with each document read by `read` (Phase A1: the
+/// structure-aware reading of `scripture::structural` reads EPUBs its own
+/// way; every other step is the same).
+pub fn stage_documents_read(
+    paths: &[PathBuf],
+    origin: ImportOrigin,
+    read: &dyn Fn(&std::path::Path, u16) -> AppResult<documents::DocumentFile>,
+) -> AppResult<StagedImport> {
     if paths.len() > documents::MAX_FILES {
         return Err(AppError::Import(UserMessage::new(
             "bibleImport.documentTooMany",
@@ -1850,7 +1861,7 @@ pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<Sta
                 "These files are too large to be a single Bible.",
             )));
         }
-        files.push(documents::read(path, index as u16)?);
+        files.push(read(path, index as u16)?);
     }
     let formats: BTreeSet<&str> = files.iter().map(|f| f.format).collect();
     if formats.len() > 1 {

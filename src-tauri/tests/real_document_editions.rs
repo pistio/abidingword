@@ -379,6 +379,52 @@ fn as_usfm_defines(path: &Path) -> PathBuf {
     out
 }
 
+/// The structure-aware reading's report for an edition (Phase A1), kept
+/// compact: the counts; every gated verse; the full provenance of every
+/// verse not traced exactly and of a sample; and for every verse its status,
+/// spans, excluded ranges and id check.
+fn write_structural(
+    edition: &Edition,
+    report: &abiding_word_lib::scripture::structural::StructuralReport,
+) {
+    use serde_json::{json, Value};
+    let Some(out) = std::env::var_os("AW_AUDIT_OUT").map(PathBuf::from) else {
+        return;
+    };
+    let out = out.join("structural");
+    std::fs::create_dir_all(&out).unwrap();
+    let full = serde_json::to_value(report).unwrap();
+    let provenance = full["provenance"].as_object().cloned().unwrap_or_default();
+    let mut verses = serde_json::Map::new();
+    let mut detailed = serde_json::Map::new();
+    for (n, (key, p)) in provenance.iter().enumerate() {
+        let status = p["status"].as_str().unwrap_or("");
+        verses.insert(
+            key.clone(),
+            json!([
+                status,
+                p["spans"].as_array().map_or(0, Vec::len),
+                p["excluded"].as_array().map_or(0, Vec::len),
+                p["idCheck"].clone()
+            ]),
+        );
+        if status != "exact" || n < 25 || report.gated.contains_key(key) {
+            detailed.insert(key.clone(), p.clone());
+        }
+    }
+    let mut summary = full.clone();
+    if let Value::Object(m) = &mut summary {
+        m.remove("provenance");
+        m.insert("verses".into(), Value::Object(verses));
+        m.insert("detailed".into(), Value::Object(detailed));
+    }
+    std::fs::write(
+        out.join(format!("{}.json", edition.key)),
+        serde_json::to_string(&summary).unwrap(),
+    )
+    .unwrap();
+}
+
 fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let files: Vec<PathBuf> = edition.files.iter().map(|f| dir.join(f)).collect();
     if let Some(missing) = files.iter().find(|f| !f.exists()) {
@@ -395,7 +441,20 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     // A document the app refuses to read at all (a PDF whose text cannot be
     // extracted, say) is a rejected format: recorded, never a crash of the
     // report (v0.24.4).
-    let staged = match import::stage_documents(&files, ImportOrigin::UserFiles) {
+    // AW_PIPELINE=structural (Phase A1): the structure-aware reading
+    // (`scripture::structural`), with its provenance report written next to
+    // the edition's report. Unset: the frozen reading, exactly as before.
+    let structural = std::env::var("AW_PIPELINE").is_ok_and(|p| p == "structural");
+    let staged = if structural {
+        abiding_word_lib::scripture::structural::stage_documents(&files, ImportOrigin::UserFiles)
+            .map(|(staged, report)| {
+                write_structural(edition, &report);
+                staged
+            })
+    } else {
+        import::stage_documents(&files, ImportOrigin::UserFiles)
+    };
+    let staged = match staged {
         Ok(staged) => staged,
         Err(error) => {
             let message = format!("{error:?}");

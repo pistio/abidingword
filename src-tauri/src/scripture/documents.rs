@@ -523,11 +523,22 @@ fn line_units(
 fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
     use crate::library::adapters::epub;
     let links = epub::links(bytes, segments.len());
+    clear_navigation(&links, segments);
+    cut_label_links(&links, segments);
+}
+
+/// A passage that is nothing but links to other places (a list of the
+/// book's chapters, "1 Samuel" leading to the book's index) is the book's
+/// navigation, not its text: emptied for reading verses.
+pub(crate) fn clear_navigation(
+    links: &[crate::library::contents::SourceLink],
+    segments: &mut [NewSegment],
+) {
     // A passage that is nothing but links to other places (a list of the
     // book's chapters, "1 Samuel" leading to the book's index) is the
     // book's navigation, not its text.
     let mut linked: std::collections::BTreeMap<usize, usize> = Default::default();
-    for link in &links {
+    for link in links {
         if let Ok(at) = usize::try_from(link.position) {
             *linked.entry(at).or_default() += link.end.saturating_sub(link.start);
         }
@@ -541,9 +552,14 @@ fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
             }
         }
     }
+}
+
+/// The baseline's note links (before Phase A1): a short link of letters or
+/// signs is cut out of the passage's text, by its label alone.
+fn cut_label_links(links: &[crate::library::contents::SourceLink], segments: &mut [NewSegment]) {
     let mut cuts: std::collections::BTreeMap<usize, Vec<(usize, usize)>> = Default::default();
     let mut notes: std::collections::BTreeSet<usize> = Default::default();
-    for link in &links {
+    for link in links {
         let (Ok(at), Ok(target)) = (usize::try_from(link.position), usize::try_from(link.target))
         else {
             continue;
@@ -601,7 +617,7 @@ fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
     }
 }
 
-fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize) {
+pub(crate) fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize) {
     let mut out = Vec::new();
     let mut notes = 0usize;
     let mut previous: Vec<&str> = Vec::new();
