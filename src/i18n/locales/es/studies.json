@@ -905,7 +905,7 @@
         "sections": {
           "persons": {
             "title": "Personas",
-            "guidance": "¿Quién aparece en el texto, quién habla, quién actúa y a quién se dirige el mensaje? Conocer a todos los implicados antes de interpretar nada. Anotar solo lo que dice el propio texto. ¿Quién escribió o dijo este texto, en la medida en que el texto o su libro lo indican? ¿Quién habla en este pasaje? ¿Cambia quien habla? ¿A quién se dirige el mensaje? Añada cada persona o grupo nombrado o implícito, con el versículo y su papel. ¿Cómo se relacionan entre sí los implicados? ¿Quién está por encima, junto a o contra quién? ¿Qué sigue sin estar claro sobre las personas de este texto? Incluir al autor del libro, los primeros destinatarios, hablantes, actores y receptores, también en las parábolas. Separar los papeles y relaciones explícitos de las conjeturas.",
+            "guidance": "¿Quién escribió el texto? ¿A quién se dirige? ¿Quién habla, actúa o aparece?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -915,7 +915,7 @@
           },
           "place": {
             "title": "Lugar",
-            "guidance": "¿Qué lugares y qué relaciones espaciales o culturales son importantes para el texto? Fijarse en dónde sucede o de qué lugares se habla. Separar lo que dice el texto de lo que aportan fuentes externas. Anote cada lugar nombrado, con el versículo y su papel. ¿Qué añade la investigación externa? Indique la fuente para distinguirlo del texto. ¿Qué referencias a lugares siguen siendo inciertas? Distinguir los lugares del autor y los destinatarios, el escenario y los lugares citados. Geografía, relieve, paisajes, geología, clima, historia, arqueología, cultura y etnia solo son pertinentes cuando explican realmente el texto; citar pruebas.",
+            "guidance": "¿Dónde sucede? ¿Qué circunstancias geográficas o culturales son importantes?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -925,7 +925,7 @@
           },
           "time": {
             "title": "Tiempo",
-            "guidance": "¿Cuándo transcurre el texto y qué circunstancias históricas importan? Situar el texto en el tiempo. Distinguir lo que el texto indica de una ubicación histórica que puede ser incierta. ¿Qué fechas, épocas o expresiones como «entonces» o «en aquellos días» da el texto? ¿Qué se sabe de la época? Señale como incierto lo que lo sea. ¿De dónde procede esta información? ¿Cómo avanza el tiempo en el pasaje? ¿Qué viene antes, durante y después? Si el texto es profético: ¿qué mira al pasado, qué describe la situación presente y qué anuncia el futuro? Distinguir composición, recepción o lectura por el primer público y acontecimientos narrados. Considerar las circunstancias políticas, sociales y religiosas; separar pruebas e hipótesis.",
+            "guidance": "¿Cuándo sucede? ¿Qué circunstancias históricas son importantes?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -935,7 +935,7 @@
           },
           "events": {
             "title": "Sucesos",
-            "guidance": "¿Qué sucede? ¿Cómo se desarrollan los sucesos o las afirmaciones? Seguir el movimiento del texto sección por sección. El esquema es una propuesta que puede cambiar. Divida el texto en secciones: versículos, qué sucede o se dice y qué significa en el desarrollo del conjunto. ¿Dónde cambia la dirección del texto? ¿Qué opuestos o tensiones contrapone el texto? En cartas, profecía, poesía y enseñanza, seguir también el argumento, la estructura y el desarrollo versículo a versículo.",
+            "guidance": "¿Qué sucede en el texto? ¿Cómo se desarrolla la acción o el razonamiento?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -975,7 +975,7 @@
           },
           "context": {
             "title": "Contexto del texto",
-            "guidance": "¿Cómo encaja el pasaje en el capítulo, en todo el libro y en el resto de la Escritura? Ver el pasaje en su entorno, desde los versículos más cercanos hacia fuera, y notar dónde termina. ¿Qué hay justo antes y después, y cómo se conecta? ¿De qué trata el libro y dónde se sitúa el pasaje en su argumento o relato? ¿Cómo se relaciona el pasaje con el resto de la Escritura y su historia? Añada pasajes relacionados y diga qué aporta cada uno a la comprensión. ¿Dónde empieza y termina la unidad, y por qué ahí? Incluir el marco histórico y cultural y las conexiones teológicas pertinentes sin sustituir el sentido de este pasaje.",
+            "guidance": "¿Cómo se relaciona el pasaje con su contexto, el libro y el resto de las Escrituras?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -985,7 +985,7 @@
           },
           "explanations": {
             "title": "Explicaciones",
-            "guidance": "¿Qué términos, afirmaciones o problemas de interpretación necesitan aclaración? Reunir las preguntas del texto, contrastarlas con evidencias y anotar las respuestas que se pueden sostener. Dejar abierto lo que siga abierto. Añada cada pregunta con el versículo, las evidencias comprobadas, la respuesta y el estado. ¿Qué palabras necesitan explicación? ¿Qué significan aquí, en este contexto? Donde sean posibles varias explicaciones, exponga cada una con sus razones. ¿Qué fuentes utilizó? Anótelas para poder encontrarlas de nuevo. Investigar las dificultades mediante el texto, paralelos adecuados, obras de consulta y comentarios. Estas ayudas apoyan la observación propia sin reemplazarla.",
+            "guidance": "¿Qué términos, afirmaciones o cuestiones de interpretación hay que aclarar?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -995,7 +995,7 @@
           },
           "core": {
             "title": "Núcleo",
-            "guidance": "¿Cuál es el mensaje central de este pasaje en concreto? Formular el núcleo en tres pasos: de qué trata el texto, qué dice sobre ello y una frase concisa. Puede rellenarlos en cualquier orden. Nombre el asunto en pocas palabras, sin decir aún lo que el texto afirma sobre él. Resuma lo que el pasaje dice sobre su asunto, tal como lo dice. Una el asunto y la afirmación en una frase que pueda contrastarse con cada versículo. La aplicación personal sigue como reflexión separada después de estas siete partes.",
+            "guidance": "Asunto — ¿De qué trata el pasaje?\nIdentifica el tema, la persona o la relación que ocupa el centro. Nombra el asunto en pocas palabras, sin adelantar todavía lo que el texto dice al respecto.\n\nAfirmación — ¿Qué dice el texto al respecto?\nExamina lo que el pasaje dice sobre este asunto. Resume las afirmaciones principales y la relación entre ellas.\n\nTema — ¿Cuál es el mensaje central?\nUne el asunto y la afirmación en una frase concisa que exprese el mensaje de todo el pasaje.",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -2446,15 +2446,15 @@
         "blocks": {
           "introduction": {
             "title": "Introducción",
-            "guidance": "Cómo empiezas. El mensaje central, los oyentes y el propósito se pueden añadir como bloques si los necesitas."
+            "guidance": "Introduce el tema a los participantes."
           },
           "main": {
             "title": "Cuerpo",
-            "guidance": "El cuerpo del sermón o de la charla. Puedes añadir puntos del bosquejo junto al texto seguido."
+            "guidance": "Explora con el grupo el significado del texto y su relación con la vida."
           },
           "conclusion": {
             "title": "Conclusión",
-            "guidance": "Cómo cierras y qué respuesta conviene."
+            "guidance": "Resume los puntos principales y da paso a la aplicación práctica."
           }
         }
       },

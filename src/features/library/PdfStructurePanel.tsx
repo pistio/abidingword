@@ -44,6 +44,7 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
   const [originalOpen,setOriginalOpen]=useState(false);
   const [draft, setDraft] = useState<PdfCorrection | null>(null);
   const data = structure.data;
+  const unsavedAttempt = progress && ["failed", "cancelled"].includes(progress.status);
   const run = async (work: () => Promise<unknown>) => {
     setBusy(true); setError(null);
     try { await work(); structure.reload(); setDraft(null); await onChanged(); }
@@ -107,8 +108,9 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
         <Button disabled={busy || !data.corrections.length || !data.fileHash} onClick={() => void run(() => api.libraryPdfStructureUndo(sourceId,data.fileHash!,true))}>{t("library.structure.reset")}</Button>
       </div>
       {data.status === "missing" && <Notice>{t("library.structure.processing.missing")}</Notice>}
-      {data.status === "ready" && !data.headings.length && progress?.status !== "empty" && <Notice tone="warning">{t("library.structure.processing.empty")}</Notice>}
+      {data.status === "ready" && !unsavedAttempt && !data.headings.length && progress?.status !== "empty" && <Notice tone="warning">{t("library.structure.processing.empty")}</Notice>}
       {data.status === "ready" && data.rebuildRecommended && <Notice>{t("library.structure.rebuildRecommended")}</Notice>}
+      {unsavedAttempt && data.status === "ready" && <Notice>{t("library.structure.processing.previous")}</Notice>}
       {data.status === "ready" && <>
         <p className="type-meta">{t("library.structure.status", {count:data.headings.length})}</p>
         {(!data.complete || data.uncertainPages > 0 || data.unalignedTags > 0) && <Notice>{t("library.structure.uncertain")}</Notice>}
@@ -183,6 +185,7 @@ function StructureDiagnostic({ sourceId, observed }: { sourceId: string; observe
       <label>{t("library.structure.diagnostic.passage")}
         <input className="w-full rounded-md border border-border bg-surface px-3 py-2 text-text" value={passage} placeholder={t("library.structure.mappingExample")} disabled={busy} onChange={e => { setPassage(e.target.value); setReport(null); setStatus(null); }} />
       </label>
+      <p className="type-meta m-0">{t("library.structure.diagnostic.queryHelp")}</p>
       <div className="flex flex-wrap gap-2">
         <Button disabled={busy} onClick={() => void create()}>{t("library.structure.diagnostic.create")}</Button>
         <Button disabled={!report} onClick={() => void copy()}>{t("library.structure.diagnostic.copy")}</Button>

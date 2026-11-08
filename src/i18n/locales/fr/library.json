@@ -655,7 +655,8 @@
       "fileType": "Rapport de diagnostic",
       "saved": "Enregistré dans {{path}}",
       "file": "SHA-256 du fichier {{hash}} · {{pages}} pages · {{headings}} titres",
-      "general": "Rapport général — aucun passage vérifié. Pour examiner les candidats d’Actes 6, saisissez Apg 6 avant de créer ou d’enregistrer un nouveau rapport."
+      "general": "Rapport général — aucun passage vérifié. Pour examiner les candidats d’Actes 6, saisissez Apg 6 avant de créer ou d’enregistrer un nouveau rapport.",
+      "queryHelp": "Saisissez un passage ci-dessus pour le vérifier. Si le champ est vide, le rapport présente uniquement l’état général."
     },
     "processing": {
       "label": "Progression de l’analyse",
@@ -678,9 +679,12 @@
         "index": "Indexer les liens de structure",
         "indexed": "Liens indexés",
         "commit": "Valider les changements",
-        "refresh": "Actualiser le lecteur"
+        "refresh": "Actualiser le lecteur",
+        "indexRead": "Lire les références existantes",
+        "indexRoles": "Actualiser le rôle des références"
       },
-      "duration": "{{milliseconds}} ms"
+      "duration": "{{milliseconds}} ms",
+      "previous": "Analyse enregistrée précédemment : cette tentative n’a enregistré aucune modification."
     },
     "cancelled": "Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer.",
     "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",

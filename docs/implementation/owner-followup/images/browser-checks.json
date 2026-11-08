@@ -1,0 +1,197 @@
+{
+  "platform": "Linux Chromium; invented profile; not Windows acceptance",
+  "results": [
+    {
+      "language": "en",
+      "before": true,
+      "width": 900,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "before": true,
+      "width": 1440,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "before": false,
+      "width": 900,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "before": false,
+      "width": 1440,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "before": true,
+      "width": 900,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "before": true,
+      "width": 1440,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "before": false,
+      "width": 900,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "before": false,
+      "width": 1440,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "before": true,
+      "width": 900,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "before": true,
+      "width": 1440,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "before": false,
+      "width": 900,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "before": false,
+      "width": 1440,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "before": true,
+      "width": 900,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "before": true,
+      "width": 1440,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "before": false,
+      "width": 900,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "before": false,
+      "width": 1440,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "before": true,
+      "width": 900,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "before": true,
+      "width": 1440,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "before": false,
+      "width": 900,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "before": false,
+      "width": 1440,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "before": true,
+      "width": 900,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "before": true,
+      "width": 1440,
+      "hintParagraphs": 1,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "before": false,
+      "width": 900,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "before": false,
+      "width": 1440,
+      "hintParagraphs": 3,
+      "fields": 1,
+      "pageErrors": []
+    }
+  ]
+}

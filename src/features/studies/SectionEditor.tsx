@@ -344,7 +344,7 @@ export function SectionEditor(props: SectionEditorProps) {
       {hints && hasHints && (
         <div data-part-hints className="mb-3 flex flex-col gap-2 border-l-[3px] border-border bg-bg-secondary px-4 py-3 text-[0.9375rem] text-text-muted">
           <Button variant="quiet" className="self-end" onClick={() => setHints(false)}>{t("studies.flow.hideGuidance")}</Button>
-          {hintText && <p className="m-0">{hintText}</p>}
+          {hintText && hintText.split("\n\n").map((paragraph, index) => <p key={index} className="m-0 whitespace-pre-line">{paragraph}</p>)}
           {goal && (
             <p className="m-0">
               <span className="font-medium">{t("studies.fields.goal")}: </span>

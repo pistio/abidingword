@@ -203,7 +203,7 @@ fn cancellation_and_sql_failure_during_reindex_restore_previous_structure_and_li
     f.db.with_conn(|conn| {
         let before = fingerprint(conn)?;
         let document = &pdf_structures::load(conn,"source")?.unwrap().document;
-        for fail_stage in ["store","index","commit"] {
+        for fail_stage in ["store","indexRead","index","indexRoles","commit"] {
             let result=pdf_structures::replace_observed(conn,"source",&content_hash(&f.bytes),document, |stage,_,_| {
                 if stage == fail_stage { Err(AppError::InvalidInput(UserMessage::new("library.structure.cancelled","injected cancellation"))) } else {Ok(())}
             });
@@ -214,6 +214,12 @@ fn cancellation_and_sql_failure_during_reindex_restore_previous_structure_and_li
         assert!(pdf_structures::replace(conn,"source",&content_hash(&f.bytes),document).is_err());
         assert_eq!(fingerprint(conn)?,before);
         conn.execute_batch("DROP TRIGGER fail_index")?;
+        let mut changed = document.clone();
+        for block in &mut changed.blocks { block.role = "note".into(); }
+        conn.execute_batch("CREATE TEMP TRIGGER fail_role BEFORE UPDATE OF structure_role ON source_passages BEGIN SELECT RAISE(FAIL,'injected role failure'); END;")?;
+        assert!(pdf_structures::replace(conn,"source",&content_hash(&f.bytes),&changed).is_err());
+        assert_eq!(fingerprint(conn)?,before,"role write failure must roll back metadata and links");
+        conn.execute_batch("DROP TRIGGER fail_role")?;
         Ok(())
     }).unwrap();
 }
@@ -373,4 +379,17 @@ fn failed_automatic_analysis_is_retained_until_an_explicit_retry() {
         .db
         .with_conn(|conn| Ok(pdf_structures::load(conn, "source")?.is_some()))
         .unwrap());
+}
+
+#[test]
+fn unchanged_literal_roles_are_not_written_again() {
+    let f = fixture(8);
+    let result = pdf_build::rebuild(&f.db, f.dir.path(), "source", &Job::default());
+    result.unwrap();
+    f.db.with_conn(|conn| {
+        let record = pdf_structures::load(conn, "source")?.unwrap();
+        conn.execute_batch("CREATE TEMP TRIGGER no_redundant_roles BEFORE UPDATE OF structure_role ON source_passages WHEN OLD.origin='explicit' BEGIN SELECT RAISE(FAIL,'redundant literal role update'); END;")?;
+        pdf_structures::replace(conn, "source", &record.hash, &record.document)?;
+        Ok(())
+    }).unwrap();
 }

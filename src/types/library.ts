@@ -605,7 +605,7 @@ export interface PdfCorrection {
 }
 export interface PdfBuildProgress {
   status: "running" | "succeeded" | "empty" | "cancelled" | "failed";
-  stage: "file" | "segments" | "pdf" | "alignment" | "native" | "headings" | "store" | "index" | "indexed" | "commit";
+  stage: "file" | "segments" | "pdf" | "alignment" | "native" | "headings" | "store" | "index" | "indexRead" | "indexRoles" | "indexed" | "commit";
   done: number; total: number; elapsedMs: number;
   timings: { stage: string; milliseconds: number }[];
   headingCount: number | null; indexedLinks: number | null;

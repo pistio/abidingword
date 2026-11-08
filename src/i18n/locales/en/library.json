@@ -613,7 +613,8 @@
       "fileType": "Diagnostic report",
       "saved": "Saved to {{path}}",
       "file": "File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings",
-      "general": "General status report — no passage was checked. To inspect Acts 6 candidates, enter Apg 6 before creating or saving another report."
+      "general": "General status report — no passage was checked. To inspect Acts 6 candidates, enter Apg 6 before creating or saving another report.",
+      "queryHelp": "Enter a passage above to check a specific reference. An empty field produces a general status report."
     },
     "processing": {
       "label": "Analysis progress",
@@ -636,9 +637,12 @@
         "index": "Index structure links",
         "indexed": "Links indexed",
         "commit": "Commit changes",
-        "refresh": "Refresh reader"
+        "refresh": "Refresh reader",
+        "indexRead": "Read existing reference links",
+        "indexRoles": "Update reference roles"
       },
-      "duration": "{{milliseconds}} ms"
+      "duration": "{{milliseconds}} ms",
+      "previous": "Previous saved analysis — this attempt did not save any changes."
     },
     "cancelled": "Analysis cancelled. Previous structure and links are unchanged. You can retry.",
     "timeout": "Analysis reached its time limit at a safe processing boundary. Previous metadata is unchanged. Retry or save a diagnostic report.",

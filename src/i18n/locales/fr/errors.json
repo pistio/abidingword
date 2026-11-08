@@ -154,7 +154,12 @@
     "originalUnavailable": "L’original de cette source ne peut pas être ouvert.",
     "structure": {
       "corrupt": "La structure PDF enregistrée est illisible. Le texte et le fichier original restent inchangés.",
-      "invalid": "Cette correction ne correspond plus à la source. Rouvrez son texte et réessayez."
+      "invalid": "Cette correction ne correspond plus à la source. Rouvrez son texte et réessayez.",
+      "timeout": "L’analyse a atteint sa limite de temps à une étape sûre. Les métadonnées précédentes sont inchangées. Réessayez ou enregistrez un diagnostic.",
+      "cancelled": "Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer.",
+      "busy": "Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer.",
+      "limit": "Le PDF dépasse les limites d’analyse prises en charge. Les métadonnées précédentes sont inchangées.",
+      "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic."
     }
   },
   "templates": {

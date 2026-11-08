@@ -28,12 +28,18 @@ describe("owner Study corrections",()=>{
   const parts=pozetek.sections.filter(s=>!s.optional);
   expect(parts.map(s=>s.key)).toEqual(["persons","place","time","events","context","explanations","core"]);
   expect(i18n.t("studies.builtin.templates.pozetek-writing-study.name").includes("POZETEK")).toBe(language === "de");
-  for(const part of parts){expect(sectionTitle(part,pozetek.key)).not.toMatch(/^studies\./);expect(i18n.t(`studies.builtin.templates.pozetek-writing-study.sections.${part.key}.guidance`, {defaultValue:""}).length).toBeGreaterThan(120);}
+  for(const part of parts){
+   expect(sectionTitle(part,pozetek.key)).not.toMatch(/^studies\./);
+   const hint=i18n.t(`studies.builtin.templates.pozetek-writing-study.sections.${part.key}.guidance`, {defaultValue:""});
+   expect(hint.length).toBeGreaterThan(20);
+   if(part.key === "core") expect(hint.split("\n\n")).toHaveLength(3);
+   else expect(hint.length).toBeLessThan(180);
+  }
  });
  it("starts with meaningful dismissible hints, keeps dismissal after reopening, and preserves full autosaved writing in a resizable field",async()=>{
   const {api,open}=await fixture();const {user}=await open();
   const part=within(pane()).getByRole("heading",{name:"Persons"}).closest("section")!;
-  expect(within(part).getByText(/book’s author and original audience/)).toBeVisible();
+  expect(within(part).getByText(/Who wrote the text/)).toBeVisible();
   expect(within(part).queryByText(/Write in your own words/)).toBeNull();
   const answer=within(part).getByRole("textbox");expect(answer).toHaveAttribute("rows","5");expect(answer).toHaveClass("resize-y");
   await user.click(within(part).getByRole("button",{name:"Hide hints"}));expect(part.querySelector("[data-part-hints]")).toBeNull();

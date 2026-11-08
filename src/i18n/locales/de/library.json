@@ -613,7 +613,8 @@
       "fileType": "Diagnosebericht",
       "saved": "Gespeichert unter {{path}}",
       "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften",
-      "general": "Allgemeiner Statusbericht — es wurde keine Bibelstelle geprüft. Gib vor dem nächsten Erstellen oder Speichern Apg 6 ein, um Treffer zu Apostelgeschichte 6 zu prüfen."
+      "general": "Allgemeiner Statusbericht — es wurde keine Bibelstelle geprüft. Gib vor dem nächsten Erstellen oder Speichern Apg 6 ein, um Treffer zu Apostelgeschichte 6 zu prüfen.",
+      "queryHelp": "Gib oben eine Bibelstelle ein, um sie zu prüfen. Ein leeres Feld erzeugt einen allgemeinen Statusbericht."
     },
     "processing": {
       "label": "Fortschritt der Analyse",
@@ -636,9 +637,12 @@
         "index": "Strukturverknüpfungen indizieren",
         "indexed": "Verknüpfungen indiziert",
         "commit": "Änderungen abschließend speichern",
-        "refresh": "Leser aktualisieren"
+        "refresh": "Leser aktualisieren",
+        "indexRead": "Vorhandene Bibelstellenverweise lesen",
+        "indexRoles": "Rollen der Verweise aktualisieren"
       },
-      "duration": "{{milliseconds}} ms"
+      "duration": "{{milliseconds}} ms",
+      "previous": "Bisherige gespeicherte Analyse — dieser Versuch hat keine Änderungen gespeichert."
     },
     "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
     "timeout": "Die Analyse hat ihre Zeitgrenze an einer sicheren Verarbeitungsgrenze erreicht. Bisherige Metadaten sind unverändert. Erneut versuchen oder einen Diagnosebericht speichern.",

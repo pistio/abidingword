@@ -905,7 +905,7 @@
         "sections": {
           "persons": {
             "title": "Persons",
-            "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed? Get to know everyone involved before interpreting anything. Record only what the text itself says. Who wrote or spoke this text, as far as the text or its book says? Who is speaking in this passage? Does the speaker change? To whom is the message directed? Add each person or group named or implied. Note the verse and what each one does or is. How are those involved related to one another? Who stands over, with or against whom? What about the people in this text is still unclear? Include the book’s author and original audience, speakers, agents and recipients, including people in parables. Distinguish stated roles and relationships from conjecture.",
+            "guidance": "Who wrote the text? Who is it addressed to? Who speaks, acts or appears in it?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -915,7 +915,7 @@
           },
           "place": {
             "title": "Place",
-            "guidance": "Which places and spatial or cultural relationships matter for the text? Notice where things happen or are spoken of. Keep what the text says apart from what you learn from outside sources. List each place the text names. Note the verse and what role it plays. What does outside research add? Say where each piece of information comes from, so it stays distinct from the text. Which place references are still uncertain? Consider where the author and recipients were, the setting and places mentioned. Geography, topography, landscapes, geology, climate, history, archaeology, culture and ethnicity belong here only when they actually explain the text; cite evidence.",
+            "guidance": "Where does it take place? Which geographical or cultural circumstances matter?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -925,7 +925,7 @@
           },
           "time": {
             "title": "Time",
-            "guidance": "When does the text take place, and which historical circumstances matter? Place the text in time. Mark what the text states and what is a historical placement that may be uncertain. Which dates, seasons, sequences or phrases such as “then” and “in those days” does the text give? What do you know about the period? Mark uncertain points as uncertain. Where does this information come from? How does time move within the passage? What comes before, during and after? If the text is prophetic: what looks back, what describes the present situation, what announces the future? Distinguish composition, reception by the first audience and the events described. Consider political, social and religious circumstances; separate evidence from hypotheses.",
+            "guidance": "When does it happen? Which historical circumstances matter?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -935,7 +935,7 @@
           },
           "events": {
             "title": "Events",
-            "guidance": "What happens? How do events or statements unfold? Follow the movement of the text section by section. The outline is yours to propose and to change. Divide the text into sections. For each, give the verses, what happens or is said, and what it means for the course of the whole. Where does the direction of the text change? Which opposites or tensions does the text set against each other? For letters, prophecy, poetry and teaching, trace the argument, structure and verse-by-verse progression as carefully as narrative actions.",
+            "guidance": "What happens in the text? How does the action or argument develop?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -975,7 +975,7 @@
           },
           "context": {
             "title": "Text context",
-            "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture? See the passage in its surroundings, from the nearest verses outward, and notice where it ends. What comes directly before and after the passage, and how does it connect? What is the book about, and where does the passage stand in its argument or story? How does the passage relate to the rest of Scripture and its storyline? Add related passages. Say what each contributes to understanding this text. Where does the unit begin and end, and why there? Include relevant historical-cultural setting and wider theological connections without overriding what this passage says.",
+            "guidance": "How does the passage connect with its surroundings, the book and the rest of Scripture?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -985,7 +985,7 @@
           },
           "explanations": {
             "title": "Explanations",
-            "guidance": "Which terms, statements or interpretive problems need clarifying? Collect questions from the text, check them against evidence, and record the answers you can support. Leave open what is still open. Add each question. Record the verse, the evidence you checked, your answer, and whether the question is still open. Which words need explaining? What do they mean here, in this context? Where more than one explanation is possible, state each with its reasons. Which sources did you use? Note them so you can find them again. Use the text, suitable parallels, reference works and commentaries to investigate difficulties; they support your observation rather than replace it.",
+            "guidance": "Which terms, statements or questions of interpretation need clarifying?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -995,7 +995,7 @@
           },
           "core": {
             "title": "Core",
-            "guidance": "What is the central message of exactly this passage? Name the core in three steps: what the text is about, what it says about that, and one concise sentence. You may fill them in any order. Name the subject in a few words, without yet saying what the text claims about it. Summarise what the passage says about its subject, as it says it. Join subject and statement in one sentence that you could test against every verse. Keep personal application for a distinct reflection after these seven parts.",
+            "guidance": "Subject — What is the passage about?\nIdentify the topic, person or relationship at its centre. Name the subject in a few words, without yet stating what the text says about it.\n\nStatement — What does the text say about it?\nExamine what the passage says about this subject. Summarise its main statements and how they relate to one another.\n\nTheme — What is the central message?\nCombine the subject and statement into one concise sentence that expresses the message of the whole passage.",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -2435,15 +2435,15 @@
         "blocks": {
           "introduction": {
             "title": "Introduction",
-            "guidance": "How you will begin. A central message, the people you are speaking to, and the purpose can be added as blocks if you want them."
+            "guidance": "Introduce the participants to the topic."
           },
           "main": {
             "title": "Main part",
-            "guidance": "The body of the sermon or talk. Add outline points if you want a structure beside the continuous writing."
+            "guidance": "Explore the meaning of the text and its connection with life."
           },
           "conclusion": {
             "title": "Conclusion",
-            "guidance": "How you will close, and what response is fitting."
+            "guidance": "Summarise the main points and lead into practical application."
           }
         }
       },
