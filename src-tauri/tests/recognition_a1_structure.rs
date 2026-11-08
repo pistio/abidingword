@@ -23,6 +23,11 @@ fn words(chapter: u16, verse: u16) -> String {
 
 /// A minimal EPUB 3 with the given spine documents (name, body markup).
 fn epub(files: &[(&str, String)]) -> Vec<u8> {
+    epub_styled(files, "")
+}
+
+/// [`epub`] with a stylesheet every document links.
+fn epub_styled(files: &[(&str, String)], css: &str) -> Vec<u8> {
     let mut out = Vec::new();
     {
         let mut zip = zip::ZipWriter::new(std::io::Cursor::new(&mut out));
@@ -40,11 +45,16 @@ fn epub(files: &[(&str, String)]) -> Vec<u8> {
             ));
             spine.push_str(&format!(r#"<itemref idref="d{i}"/>"#));
         }
+        if !css.is_empty() {
+            manifest.push_str(r#"<item id="css" href="style.css" media-type="text/css"/>"#);
+            zip.start_file("OEBPS/style.css", stored).unwrap();
+            zip.write_all(css.as_bytes()).unwrap();
+        }
         zip.start_file("OEBPS/content.opf", stored).unwrap();
         zip.write_all(format!(r#"<?xml version="1.0"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Invented Ruth</dc:title><dc:language>en</dc:language></metadata><manifest>{manifest}</manifest><spine>{spine}</spine></package>"#).as_bytes()).unwrap();
         for (name, body) in files {
             zip.start_file(format!("OEBPS/{name}"), stored).unwrap();
-            zip.write_all(format!(r#"<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>t</title></head><body>{body}</body></html>"#).as_bytes()).unwrap();
+            zip.write_all(format!(r#"<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"><head><title>t</title><link rel="stylesheet" href="style.css"/></head><body>{body}</body></html>"#).as_bytes()).unwrap();
         }
         zip.finish().unwrap();
     }
@@ -602,5 +612,44 @@ fn caller_shapes_are_short_labels_never_longer_words() {
     }
     for no in ["Boaz", "", "12345", "words"] {
         assert!(!epub_source::caller_shaped(no), "{no}");
+    }
+}
+
+#[test]
+fn a_block_the_stylesheet_floats_beside_the_text_is_never_part_of_a_verse() {
+    // A marginal note (a chronology) in its own block between two verses,
+    // after a verse ending with a colon, floated beside the text by the
+    // book's stylesheet. The chapter's numeral is floated too, but inline:
+    // it stays the chapter's number.
+    let css = ".margin { float: right; width: 20%; font-size: smaller }\n.first { float: left; font-size: 200% }";
+    let mut body = String::from("<h1>The Book of Ruth</h1>");
+    for (c, &n) in RUTH.iter().enumerate() {
+        let c = c as u16 + 1;
+        for v in 1..=n {
+            let number = if v == 1 {
+                format!(r#"<span class="first">{c}</span>"#)
+            } else {
+                v.to_string()
+            };
+            let w = if (c, v) == (2, 4) {
+                words(c, v).replace("testing.", "testing, saying:")
+            } else {
+                words(c, v)
+            };
+            body.push_str(&format!("<p>{number} {w}</p>"));
+            if (c, v) == (2, 4) {
+                body.push_str(r#"<div class="margin">Before Christ 1312</div>"#);
+            }
+        }
+    }
+    let path = write("floated", &epub_styled(&[("ruth.xhtml", body)], css));
+    let (s, report) = structure_aware(&path);
+    assert!(verified(&s, 2, 4), "{} {:?}", why(&s, 2, 4), report.gated);
+    assert_eq!(
+        text(&s, 2, 4).unwrap(),
+        "Invented words of Ruth c2v4 are here for testing, saying:"
+    );
+    for v in 1..=23 {
+        assert!(verified(&s, 2, v), "2:{v} {}", why(&s, 2, v));
     }
 }

@@ -379,6 +379,24 @@ fn as_usfm_defines(path: &Path) -> PathBuf {
     out
 }
 
+/// The structure-aware reading's report for an edition (Phase A1): the
+/// counts, every gated verse, and every verse's provenance.
+fn write_structural(
+    edition: &Edition,
+    report: &abiding_word_lib::scripture::structural::StructuralReport,
+) {
+    let Some(out) = std::env::var_os("AW_AUDIT_OUT").map(PathBuf::from) else {
+        return;
+    };
+    let out = out.join("structural");
+    std::fs::create_dir_all(&out).unwrap();
+    std::fs::write(
+        out.join(format!("{}.json", edition.key)),
+        serde_json::to_string(report).unwrap(),
+    )
+    .unwrap();
+}
+
 fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let files: Vec<PathBuf> = edition.files.iter().map(|f| dir.join(f)).collect();
     if let Some(missing) = files.iter().find(|f| !f.exists()) {
@@ -395,7 +413,20 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     // A document the app refuses to read at all (a PDF whose text cannot be
     // extracted, say) is a rejected format: recorded, never a crash of the
     // report (v0.24.4).
-    let staged = match import::stage_documents(&files, ImportOrigin::UserFiles) {
+    // AW_PIPELINE=structural (Phase A1): the structure-aware reading
+    // (`scripture::structural`), with its provenance report written next to
+    // the edition's report. Unset: the frozen reading, exactly as before.
+    let structural = std::env::var("AW_PIPELINE").is_ok_and(|p| p == "structural");
+    let staged = if structural {
+        abiding_word_lib::scripture::structural::stage_documents(&files, ImportOrigin::UserFiles)
+            .map(|(staged, report)| {
+                write_structural(edition, &report);
+                staged
+            })
+    } else {
+        import::stage_documents(&files, ImportOrigin::UserFiles)
+    };
+    let staged = match staged {
         Ok(staged) => staged,
         Err(error) => {
             let message = format!("{error:?}");

@@ -186,7 +186,7 @@ pub fn read_structural(
     file_name: &str,
     source: &super::epub_source::SourceBook,
     roles: &super::epub_source::LinkRoles,
-) -> AppResult<(ImportedDocument, Vec<(String, usize, usize)>)> {
+) -> AppResult<(ImportedDocument, Vec<EntrySegments>)> {
     let book = read_book_with(bytes, file_name, false, Some((source, roles)))?;
     let layout = &book.layout;
     let mut spans = Vec::with_capacity(layout.order.len());
@@ -203,6 +203,10 @@ pub fn read_structural(
     }
     Ok((book.document, spans))
 }
+
+/// A spine document's archive path, its first segment and how many
+/// segments it gave.
+pub type EntrySegments = (String, usize, usize);
 
 /// An internal link's (archive path, fragment), for `epub_source`.
 pub(super) fn internal_link_target(
@@ -250,11 +254,17 @@ fn read_book_with(
     // The classes the book's stylesheets set apart (bold, italic, centred,
     // larger): evidence of headings where the book does not use h1–h6.
     let mut emphasised = std::collections::HashSet::new();
+    // The classes the stylesheets float beside the text (structure-aware
+    // reading only).
+    let mut floated = std::collections::HashSet::new();
     for item in package.manifest.values() {
         if item.media_type == "text/css" {
             let path = normalise(&format!("{base}{}", item.href));
             if let Some(css) = read_entry(&mut archive, &path) {
                 emphasised.extend(emphasised_classes(&css));
+                if roles.is_some() {
+                    floated.extend(floated_classes(&css));
+                }
             }
         }
     }
@@ -275,6 +285,7 @@ fn read_book_with(
                 &xhtml,
                 Some((roles, path.as_str())),
                 &roles.note_target_ids(source, &path),
+                &floated,
             ),
             None => blocks(&xhtml),
         };
@@ -737,7 +748,7 @@ impl Acc {
 /// blockquote, dd, dt, pre, and text directly in div/section). Tolerant of
 /// imperfect markup; character references are decoded by [`unescape`].
 fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
-    blocks_with(xhtml, None, &Default::default())
+    blocks_with(xhtml, None, &Default::default(), &Default::default())
 }
 
 /// [`blocks`], with the roles of the document's links decided by where they
@@ -749,6 +760,7 @@ fn blocks_with(
     xhtml: &str,
     roles: Option<(&super::epub_source::LinkRoles, &str)>,
     note_targets: &std::collections::HashSet<String>,
+    floated: &std::collections::HashSet<String>,
 ) -> (Vec<Block>, Vec<(String, usize)>) {
     let mut reader = tolerant_reader(xhtml);
     // The block being read holds an element a note's caller leads to: it is
@@ -800,7 +812,18 @@ fn blocks_with(
                 depth += 1;
                 let name = local_name(e.name().as_ref()).to_ascii_lowercase();
                 let in_notes = !note_depths.is_empty();
-                if notes_element(&e) {
+                // A block the book's stylesheet floats beside the text (a
+                // margin note, a sidebar): out of the text's flow, kept as
+                // apparatus (Phase A1). Inline elements (a drop numeral) are
+                // not blocks and stay in the text.
+                let floated_block = !floated.is_empty()
+                    && matches!(
+                        name.as_str(),
+                        "div" | "p" | "aside" | "section" | "blockquote" | "table"
+                    )
+                    && attr_value(&e, "class")
+                        .is_some_and(|c| c.split_whitespace().any(|c| floated.contains(c)));
+                if notes_element(&e) || floated_block {
                     note_depths.push(depth);
                 }
                 match name.as_str() {
@@ -1057,6 +1080,59 @@ pub(super) fn emphasised_classes(css: &str) -> std::collections::HashSet<String>
         for selector in selectors.split(',') {
             let last = selector.split_whitespace().last().unwrap_or("");
             // "div.s", ".s", ".s:first-child" → "s".
+            if let Some((_, class)) = last.rsplit_once('.') {
+                let class: String = class
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_')
+                    .collect();
+                if !class.is_empty() {
+                    out.insert(class);
+                }
+            }
+        }
+    }
+    out
+}
+
+/// The classes a book's stylesheets float beside the text or take out of
+/// its flow (`float: left|right`, `position: absolute|fixed`), simple class
+/// selectors only, as [`emphasised_classes`] reads them.
+pub(super) fn floated_classes(css: &str) -> std::collections::HashSet<String> {
+    let mut out = std::collections::HashSet::new();
+    let mut text = String::with_capacity(css.len());
+    let mut rest = css;
+    while let Some(start) = rest.find("/*") {
+        text.push_str(&rest[..start]);
+        rest = rest[start + 2..]
+            .find("*/")
+            .map_or("", |end| &rest[start + 2 + end + 2..]);
+    }
+    text.push_str(rest);
+    for rule in text.split('}') {
+        let Some((selectors, declarations)) = rule.split_once('{') else {
+            continue;
+        };
+        let declarations = declarations.to_ascii_lowercase();
+        let value = |property: &str| -> Option<String> {
+            declarations.split(';').find_map(|d| {
+                let (k, v) = d.split_once(':')?;
+                (k.trim() == property).then(|| v.trim().to_string())
+            })
+        };
+        let out_of_flow = value("float")
+            .is_some_and(|v| v.starts_with("left") || v.starts_with("right"))
+            || value("position")
+                .is_some_and(|v| v.starts_with("absolute") || v.starts_with("fixed"));
+        if !out_of_flow {
+            continue;
+        }
+        for selector in selectors.split(',') {
+            let last = selector.split_whitespace().last().unwrap_or("");
+            // Only a selector of the class alone or on an element (".m",
+            // "div.m"), never one of its descendants or states.
+            if last.contains(':') || last.contains('[') {
+                continue;
+            }
             if let Some((_, class)) = last.rsplit_once('.') {
                 let class: String = class
                     .chars()

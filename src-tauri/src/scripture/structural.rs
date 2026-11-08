@@ -86,13 +86,6 @@ pub fn read_epub_bytes(
     bytes: &[u8],
     document: u16,
 ) -> AppResult<(DocumentFile, Option<StructuralSource>)> {
-    // A1-RED-STUB: the structural reading switched off, to show the tests fail.
-    if std::env::var_os("AW_A1_STUB").is_some() || true {
-        return Ok((
-            documents::read_bytes(path, name, "epub", bytes, bytes.len() as u64, document)?,
-            None,
-        ));
-    }
     let Some(book) = epub_source::read(bytes) else {
         // Not readable for its structure: read as before, with no claims.
         return Ok((
@@ -253,7 +246,8 @@ pub fn gate(
     };
     let content = &staged.content;
     // The verses, by document, in the order they stand.
-    let mut by_document: BTreeMap<u16, Vec<((u8, u16, u16), String)>> = BTreeMap::new();
+    type Verses = Vec<((u8, u16, u16), String)>;
+    let mut by_document: BTreeMap<u16, Verses> = BTreeMap::new();
     for (&book, b) in &content.books {
         for (&chapter, c) in &b.chapters {
             for (&verse, text) in &c.verses {
@@ -375,40 +369,37 @@ pub fn gate(
                 id_check: IdCheck::None,
                 reasons,
             };
-            match traced_out {
-                Some((entry, t)) => {
-                    let m = &marks[entry];
-                    record.spans = provenance::spans(m, &t);
-                    record.excluded = provenance::excluded_ranges(m, &t);
-                    record.quote = provenance::quote(m, &record.spans);
-                    record.status = if record.quote == collapse(&text) {
-                        TraceStatus::Exact
-                    } else {
-                        TraceStatus::SpacingDiffers
-                    };
-                    record.id_check = id_check(m, &record, key);
-                    let matched_links: Vec<(LinkRole, usize)> =
-                        t.matched.iter().filter_map(|&at| m.link[at]).collect();
-                    let conflict_inside = record
-                        .excluded
-                        .iter()
-                        .any(|x| x.kind == ExcludedKind::ConflictingCaller);
-                    placed.push(Placed {
-                        key,
-                        entry,
-                        start: m.nonspace_at(record.spans[0].char_start as usize),
-                        end: t.end,
-                        matched_links,
-                        conflict_inside,
-                    });
-                    record.reasons.push(format!(
-                        "traced to {} span(s) of {}, {} excluded range(s)",
-                        record.spans.len(),
-                        record.file.entry,
-                        record.excluded.len()
-                    ));
-                }
-                None => {}
+            if let Some((entry, t)) = traced_out {
+                let m = &marks[entry];
+                record.spans = provenance::spans(m, &t);
+                record.excluded = provenance::excluded_ranges(m, &t);
+                record.quote = provenance::quote(m, &record.spans);
+                record.status = if record.quote == collapse(&text) {
+                    TraceStatus::Exact
+                } else {
+                    TraceStatus::SpacingDiffers
+                };
+                record.id_check = id_check(m, &record, key);
+                let matched_links: Vec<(LinkRole, usize)> =
+                    t.matched.iter().filter_map(|&at| m.link[at]).collect();
+                let conflict_inside = record
+                    .excluded
+                    .iter()
+                    .any(|x| x.kind == ExcludedKind::ConflictingCaller);
+                placed.push(Placed {
+                    key,
+                    entry,
+                    start: m.nonspace_at(record.spans[0].char_start as usize),
+                    end: t.end,
+                    matched_links,
+                    conflict_inside,
+                });
+                record.reasons.push(format!(
+                    "traced to {} span(s) of {}, {} excluded range(s)",
+                    record.spans.len(),
+                    record.file.entry,
+                    record.excluded.len()
+                ));
             }
             match record.status {
                 TraceStatus::Exact => report.exact += 1,
