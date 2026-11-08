@@ -64,6 +64,10 @@ pub enum ExcludedKind {
     ConflictingCaller,
     /// A note sign (†, ‡, §, ¶, *) the recogniser took out.
     NoteSign,
+    /// A whole element the recogniser reported setting apart (a
+    /// cross-reference read in), whose class this document never uses for
+    /// verse text (Phase A1.1).
+    Apparatus,
 }
 
 /// Original text inside a verse that is not the verse's text, kept with its
@@ -137,6 +141,10 @@ pub struct EntryMarks<'a> {
     pub entry: &'a Entry,
     /// For each character: the role and element of the link it is in, if any.
     pub link: Vec<Option<(LinkRole, usize)>>,
+    /// For each character: the element it was removed with, when the
+    /// recogniser reported setting that whole element apart and the
+    /// document grounds it (Phase A1.1, `mark_removed`).
+    pub removed: Vec<Option<usize>>,
     /// Positions of the non-white-space characters, in order.
     nonspace: Vec<usize>,
 }
@@ -164,7 +172,19 @@ impl<'a> EntryMarks<'a> {
         Self {
             entry,
             link,
+            removed: vec![None; entry.text.len()],
             nonspace,
+        }
+    }
+
+    /// Marks a whole element as set apart on grounded evidence: its
+    /// characters are excluded from any verse and reported as
+    /// `ExcludedKind::Apparatus` ranges with the element's bytes.
+    pub fn mark_removed(&mut self, element: usize) {
+        let e = &self.entry.elements[element];
+        let end = e.text_end.min(self.removed.len());
+        for slot in self.removed.iter_mut().take(end).skip(e.text_start) {
+            *slot = Some(element);
         }
     }
 
@@ -182,11 +202,21 @@ impl<'a> EntryMarks<'a> {
         self.nonspace[k]
     }
 
-    fn excluded_kind(&self, at: usize) -> Option<ExcludedKind> {
+    /// Why the character at `at` is never part of a verse, if it is not.
+    pub fn excluded_kind(&self, at: usize) -> Option<ExcludedKind> {
         match self.link[at] {
             Some((LinkRole::NoteCaller, _)) => Some(ExcludedKind::NoteCaller),
             Some((LinkRole::Conflict, _)) => Some(ExcludedKind::ConflictingCaller),
-            _ => None,
+            _ => self.removed[at].map(|_| ExcludedKind::Apparatus),
+        }
+    }
+
+    /// The element an excluded character belongs to (its link, or the
+    /// element removed with it).
+    fn excluded_element(&self, at: usize) -> Option<usize> {
+        match self.link[at] {
+            Some((LinkRole::NoteCaller | LinkRole::Conflict, e)) => Some(e),
+            _ => self.removed[at],
         }
     }
 }
@@ -271,6 +301,33 @@ pub fn trace(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<T
     None
 }
 
+/// Where, between the `nonspace` indices `from` and `to`, a verse that
+/// cannot be traced whole begins: the first place its opening characters
+/// (up to `OPENING`) trace as [`trace`] traces. None when they are found
+/// nowhere (Phase A1.1, for judging the text before it).
+pub fn find_opening(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<usize> {
+    const OPENING: usize = 24;
+    let wanted: Vec<char> = text.chars().filter(|c| !c.is_whitespace()).collect();
+    if wanted.is_empty() {
+        return None;
+    }
+    let wanted = &wanted[..wanted.len().min(OPENING)];
+    let to = to.min(marks.nonspace.len());
+    (from..to).find(|&start| {
+        let at = marks.nonspace[start];
+        marks.entry.text[at] == wanted[0]
+            && marks.excluded_kind(at).is_none()
+            && attempt(marks, wanted, start, to).is_some()
+    })
+}
+
+/// Whether the character is one a trace skips: a note caller's or a note
+/// sign.
+pub fn skipped_between(marks: &EntryMarks, at: usize) -> bool {
+    matches!(marks.excluded_kind(at), Some(ExcludedKind::NoteCaller))
+        || NOTE_SIGNS.contains(&marks.entry.text[at])
+}
+
 fn attempt(marks: &EntryMarks, wanted: &[char], start: usize, to: usize) -> Option<Traced> {
     let mut matched = Vec::with_capacity(wanted.len());
     let mut excluded = Vec::new();
@@ -333,12 +390,15 @@ pub fn excluded_ranges(marks: &EntryMarks, traced: &Traced) -> Vec<ExcludedRange
     let mut i = 0usize;
     while i < traced.excluded.len() {
         let (at, kind) = traced.excluded[i];
-        let element = marks.link[at].map(|(_, e)| e);
+        let element = match kind {
+            ExcludedKind::NoteSign => None,
+            _ => marks.excluded_element(at),
+        };
         let mut j = i + 1;
         while j < traced.excluded.len()
             && traced.excluded[j].1 == kind
             && element.is_some()
-            && marks.link[traced.excluded[j].0].map(|(_, e)| e) == element
+            && marks.excluded_element(traced.excluded[j].0) == element
         {
             j += 1;
         }
@@ -364,6 +424,21 @@ pub fn excluded_ranges(marks: &EntryMarks, traced: &Traced) -> Vec<ExcludedRange
         i = j;
     }
     out
+}
+
+/// The exact range of a whole element the recogniser removed after a
+/// verse's last character (Phase A1.1): it is outside the verse's spans, so
+/// [`excluded_ranges`] does not reach it, but it was part of the verse's
+/// place and is reported as excluded `Apparatus`.
+pub fn removed_range(marks: &EntryMarks, element: usize) -> ExcludedRange {
+    let entry = marks.entry;
+    let e = &entry.elements[element];
+    ExcludedRange {
+        kind: ExcludedKind::Apparatus,
+        range: range(entry, e.text_start, e.text_end),
+        element_bytes: Some((e.byte_start as u32, e.byte_end as u32)),
+        text: entry.slice(e.text_start, e.text_end),
+    }
 }
 
 fn range(entry: &Entry, start: usize, end: usize) -> SourceRange {

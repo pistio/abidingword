@@ -171,6 +171,13 @@ pub struct Apparatus {
     pub place: Place,
     /// The verse it stands with, when one was open.
     pub verse: Option<(u8, u16, u16)>,
+    /// For text set apart from inside a verse's words (a cross-reference
+    /// read in): how many non-space characters of the verse's words, as
+    /// read, stand before it (Phase A1.1). With `verse`, this is where the
+    /// piece was in the verse, so the structure-aware reading can find its
+    /// exact range in the original. None for anything else.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub within_verse: Option<u32>,
 }
 
 /// Most characters kept of one piece of apparatus, and of all of it.
@@ -204,6 +211,7 @@ fn add_apparatus(
     place: Place,
     unit: usize,
     verse: Option<(u8, u16, u16)>,
+    within_verse: Option<u32>,
 ) {
     let text = text.trim();
     if text.is_empty() || *total >= APPARATUS_TOTAL_CHARS {
@@ -213,6 +221,8 @@ fn add_apparatus(
     *last_unit = Some(unit);
     if let Some(last) = list.last_mut() {
         if follows
+            && within_verse.is_none()
+            && last.within_verse.is_none()
             && last.kind == kind
             && last.place.document == place.document
             && last.text.chars().count() + text.chars().count() < APPARATUS_PIECE_CHARS
@@ -230,6 +240,7 @@ fn add_apparatus(
         text,
         place,
         verse,
+        within_verse,
     });
 }
 
@@ -6094,6 +6105,18 @@ impl Reader<'_> {
     }
 
     fn leave_out(&mut self, text: &str, unit: usize, reason: &'static str) {
+        self.leave_out_within(text, unit, reason, None);
+    }
+
+    /// `leave_out`, for text taken from inside the open verse's words, with
+    /// how many non-space characters of those words stood before it.
+    fn leave_out_within(
+        &mut self,
+        text: &str,
+        unit: usize,
+        reason: &'static str,
+        within_verse: Option<u32>,
+    ) {
         // Text set apart while a verse is open whose words do not end as a
         // sentence does ("… with Abraam and Isaac and" / a line taken out /
         // "Jacob."): the verse may go on in what was taken out, so where it
@@ -6133,6 +6156,7 @@ impl Reader<'_> {
             place,
             unit,
             verse,
+            within_verse,
         );
         if self.out.left_out.len() < SAMPLES {
             self.out.left_out.push(LeftOut {
@@ -6224,13 +6248,17 @@ impl Reader<'_> {
         // conosco. Isaías 7:14"): the source of a quotation, not Scripture.
         if let Some(cut) = trailing_reference(&text, self.language) {
             let tail = text[cut..].trim().to_string();
+            let before = nonspace_chars(&text[..cut]);
             text.truncate(cut);
             let kept = text.trim_end().len();
             text.truncate(kept);
-            self.leave_out(&tail, open.last_unit, "crossReference");
+            self.leave_out_within(&tail, open.last_unit, "crossReference", Some(before));
         }
         for (start, end) in inline_references(&text, self.language).into_iter().rev() {
             let reference = text[start..end].trim().to_string();
+            // The text before `start` is not yet changed: references are
+            // taken out from the last.
+            let before_reference = nonspace_chars(&text[..start]);
             let before = text[..start].trim_end().to_string();
             let after = text[end..].trim_start().to_string();
             text = if after.is_empty() {
@@ -6238,7 +6266,12 @@ impl Reader<'_> {
             } else {
                 format!("{before} {after}")
             };
-            self.leave_out(&reference, open.last_unit, "crossReference");
+            self.leave_out_within(
+                &reference,
+                open.last_unit,
+                "crossReference",
+                Some(before_reference),
+            );
         }
         let key = (open.ordinal, open.chapter, open.verse);
         let book = canon::by_ordinal(open.ordinal).expect("a staged book is canonical");
@@ -8520,6 +8553,7 @@ fn recognise_in(
                 unit.place,
                 i,
                 None,
+                None,
             );
         }
     }
@@ -8565,6 +8599,12 @@ fn recognise_in(
         )
     });
     out
+}
+
+/// How many non-space characters a text has (Phase A1.1: where a piece set
+/// apart from a verse stood in its words).
+fn nonspace_chars(text: &str) -> u32 {
+    text.chars().filter(|c| !c.is_whitespace()).count() as u32
 }
 
 #[cfg(test)]
