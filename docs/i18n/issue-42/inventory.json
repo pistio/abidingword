@@ -14,35 +14,35 @@
         },
         "common": {
           "keys": 50,
-          "sha256": "874f2d94311c44f291cae11778da760b6c0cec34b14c7adcff9fa62e7886535d"
+          "sha256": "ae5ca4b2074509fd3f0a289acdba10d797513da87dad2161311fbda05ab3588f"
         },
         "errors": {
-          "keys": 291,
-          "sha256": "393c92eff5714d27623da2d90e96f5e70f2aeca434242caa171eede6ca4d0993"
+          "keys": 293,
+          "sha256": "e1e42b69ec859fb59754587d5f2018615c4027996ea64fbd361a5508b92984f0"
         },
         "library": {
           "keys": 592,
-          "sha256": "5e707ced65756d74e9c1aaa340f93db6c4bf1097908321631fc832ccbc1bf00d"
+          "sha256": "0867de87c4a5c1252245f555026fb47e9ccde11e50168009b6d34d45f1daebed"
         },
         "presentation": {
-          "keys": 416,
-          "sha256": "0b5127c564ac9fcb473da42966aa1d35d66e3aeec052f2379a16a4df48c328d1"
+          "keys": 419,
+          "sha256": "a7465bb5c9e952f07fe8f5a8e4cb52e3feccc7569b5756066a34f1ef3e137f11"
         },
         "scripture": {
-          "keys": 639,
-          "sha256": "c138f5fcec9965294c81c2df9395d5bde4bac04c2968bef4fc4b8b0ca717b2ed"
+          "keys": 658,
+          "sha256": "24dd0222e7fe1fdcf53244eeab8fd9e94297ecb6b4fc301f4fdeb50b931dcee3"
         },
         "settings": {
           "keys": 256,
           "sha256": "19a649b89550d3c0b2b9b3f74939e4bc482f0d2a1559e41be0df7b7eee0bbf7c"
         },
         "studies": {
-          "keys": 1801,
-          "sha256": "018abb89c9812f8a2f95e6b07bfaf3da45ac7fcf9ad030bd9920aed44456ffc5"
+          "keys": 1807,
+          "sha256": "616c84e3bc19d4c2e254916239ea5e6b48789e5dfcb49487c1dd9fde41e5048d"
         }
       },
-      "keys": 4156,
-      "changedKeys": 37
+      "keys": 4186,
+      "changedKeys": 137
     },
     "de": {
       "areas": {
@@ -59,38 +59,38 @@
           "sha256": "a9605976a7dec83cc29199b1708b8b683e080ebf52d520fb3bb723681c82c493"
         },
         "errors": {
-          "keys": 291,
-          "sha256": "c598f54b741f5f3c60eedcaa9391477b5645f52ebfe74fda23a4a30dcec79bf3"
+          "keys": 293,
+          "sha256": "f3d0e1720bbf3b62cb6204937584ed98968b0beb98338754ac75a3ef248329fd"
         },
         "library": {
           "keys": 592,
-          "sha256": "e69e066fdefdf4bd8eabfab15694aff38efcf659f2ed36f81f5606eaf6d4700f"
+          "sha256": "3e4c13aa8a8c6cc08f6ab09d73332c769c74f63e9b53c4f6d33067db73630e06"
         },
         "presentation": {
-          "keys": 416,
-          "sha256": "f494f7f8c3abbc8bc92f1bff1335f770ba02320f465e435685ada56eabb2d138"
+          "keys": 419,
+          "sha256": "581a41b22f31693bda9e22db3ad22145cf9f44b668a821921dbf569791e07c2d"
         },
         "scripture": {
-          "keys": 639,
-          "sha256": "49e16941e6115efc950dab4b7a7a4f47758ab6fcf51b46a2fa11ecb3440a6b0f"
+          "keys": 658,
+          "sha256": "f5104e458f411edb0aba341baf9af0b5261885b092dfc127fb03cead25c53a68"
         },
         "settings": {
           "keys": 256,
-          "sha256": "7512644d6b92b6654421d106ecd0c393e0cc24203cf8d40e28fc164b7f9df529"
+          "sha256": "5df0e49b0d3ebfd79f329e5f34bce47c28ca8aeb3130d6943eba3e7126044fc9"
         },
         "studies": {
-          "keys": 1801,
-          "sha256": "bb55d48f5f498438fc7fcbc8f185c26396782db0200c609505aa9cef0f580ebd"
+          "keys": 1807,
+          "sha256": "eec49ad4eb947933697822f438802c71d29cc3caaa8dfa5c49cfd29af8830286"
         }
       },
-      "keys": 4156,
-      "changedKeys": 41
+      "keys": 4186,
+      "changedKeys": 146
     },
     "ko": {
       "areas": {
         "app": {
           "keys": 43,
-          "sha256": "f832b5359df84df249c619210b042eda348c196c993a3fe45db376d8b18dc7e0"
+          "sha256": "2bcfdc72a6f5f7e4903d4e638da8438934370d42b2863a2008ddc5bb02b54096"
         },
         "books": {
           "keys": 68,
@@ -101,38 +101,38 @@
           "sha256": "6dd61b6693f13d2a1b0e7da471c655b05e647d86be32d284987893287c174559"
         },
         "errors": {
-          "keys": 280,
-          "sha256": "76eb89848d3d52558f5f64de2b6608d3fde97e3d78a3865bd1b0cf7d1c198bfa"
+          "keys": 282,
+          "sha256": "5392c3d41b00fb8538ed81a61964067d51739b1cc02baadce053f2b20aa37a6d"
         },
         "library": {
           "keys": 550,
-          "sha256": "216bf14530a22ee1275403171b00eeada6aee77e8fd2bc4b0fff03245ab5c6f9"
+          "sha256": "1bd2d562bf553d41c977f7f1c112e789caeb95999af4c543401d9e8a4e650747"
         },
         "presentation": {
-          "keys": 405,
-          "sha256": "fddaa7e7ed51046f1a1326e9a1624db2697c51d49005b28e21471c157afed8c0"
+          "keys": 408,
+          "sha256": "2054d7fe742814de224759666c0a7706ffb125edd0823a6f6aad0fb2897470be"
         },
         "scripture": {
-          "keys": 580,
-          "sha256": "acae395b23c53925efd6de1eb1b340d965f0ff02a656f205ab5de7d5ceb267c8"
+          "keys": 599,
+          "sha256": "b6489a9f9535aaa1a0e5a2d41f30201be93ece22053dbe6758f07baaaeb850d7"
         },
         "settings": {
           "keys": 256,
-          "sha256": "0a98caa7f8f8744725c9be6d8d94d5db3d369c04e7d3736239a3eb330c886fdd"
+          "sha256": "6b221877a90f7221fc1c195c1a266f317e8a97524d60e99bfde01760737e634a"
         },
         "studies": {
-          "keys": 1786,
-          "sha256": "d5db8cae1ba21c2348d7ff0d0bec8e0026058c3af21072bb952b04a50f2a03f6"
+          "keys": 1792,
+          "sha256": "b3336e7c43788e40304c05593efa215145962adff81ee293191a1bd1ba1c5c2a"
         }
       },
-      "keys": 4016,
-      "changedKeys": 39
+      "keys": 4046,
+      "changedKeys": 114
     },
     "fr": {
       "areas": {
         "app": {
           "keys": 43,
-          "sha256": "a8dc9916d6dc9e5d142952c8d2b364577769f5b9b41ba170472403dce70ee5e3"
+          "sha256": "660f4a5558063e8ceeb90739ee29012e76729520bce520c7e72a48d91cddc707"
         },
         "books": {
           "keys": 68,
@@ -140,41 +140,41 @@
         },
         "common": {
           "keys": 52,
-          "sha256": "077b2f01fd12734f37be59f92517adb99cdad364875622d8a218a6258b0771cf"
+          "sha256": "d22f2f3866be175c475d2fe5ee60db54535a0521573887547c14e957848b3ecf"
         },
         "errors": {
-          "keys": 302,
-          "sha256": "00dba5d14410db3e639c6db38c90352b03258a4571d04e333f4e83961d9f9fa2"
+          "keys": 304,
+          "sha256": "0915afe4c2742318789ce65e050694a01cb98852fc7b7c0011ae265c1bee1f36"
         },
         "library": {
           "keys": 634,
-          "sha256": "4c55b3bca2374a21bf041c4ceb54384c4f820054ad1b8ba8bdab42124a853da4"
+          "sha256": "390da82b338e4df40e7343d61fef8723d6df122e5c7a245cf667f6987cd06f2d"
         },
         "presentation": {
-          "keys": 427,
-          "sha256": "75c59e60bc83c41bddeec6df04f0c647afb2872c84ecfe6085f4c0f4bf39820d"
+          "keys": 430,
+          "sha256": "6bb78a6c74ee07b538c2743fdc8d7471bdb290f11a2c3bd9a149eeeb2eda5aad"
         },
         "scripture": {
-          "keys": 698,
-          "sha256": "931ca155c5789a61513f42f2678dd5691ba1ec7bff39de2686681714d3188aa5"
+          "keys": 717,
+          "sha256": "60380f0a098dd6d1b3e0f931cd1c4fb526959661d36b16961c20086758ea79bd"
         },
         "settings": {
           "keys": 256,
-          "sha256": "d0195398a6e8378480b35f5489d9e473c4f0d05a543551764bd09bd6b7d8219d"
+          "sha256": "1af03985b80bb82d27438467d64b9539ea152ddc6abfaa5535b22baf9ed0daaa"
         },
         "studies": {
-          "keys": 1816,
-          "sha256": "e55bfda54ab09ef11f248f6fdc528bbb794ca99771e24ebf57f07e5a4a88ab1b"
+          "keys": 1822,
+          "sha256": "6ebf2f962ed8d3c2b8619793372a5756e66a63f8648d4d644fa9dacd9915a41f"
         }
       },
-      "keys": 4296,
-      "changedKeys": 37
+      "keys": 4326,
+      "changedKeys": 233
     },
     "es": {
       "areas": {
         "app": {
           "keys": 43,
-          "sha256": "c824e30ee9b981b31f49098fa5f64a1d41adba9ad4d030035319d80c401f4934"
+          "sha256": "07760e40e8cc69a946fe264bf0e0e830f4ec7e5c1de8418f8ac9aa7e9b0e6120"
         },
         "books": {
           "keys": 68,
@@ -185,32 +185,32 @@
           "sha256": "b35fff79085d1172d1485792f18c30bf5f17d80ecb67b20733a1bac70da6c712"
         },
         "errors": {
-          "keys": 302,
-          "sha256": "f7645aced9293781d4458d901416d9537292e09bb249404db6fbf752666b1d53"
+          "keys": 304,
+          "sha256": "9e2d1254bde593eade2151f3cc6994b52b3761b896270360b35e99ecc64c746c"
         },
         "library": {
           "keys": 634,
-          "sha256": "794af86f37a5226ce1664c5dc5e543b88f26d5062e53a8b5f0c7929aafdda5e5"
+          "sha256": "56269694d7a9952246dc8ec0eef8c950b218596794cf58d6efae550d108e24b0"
         },
         "presentation": {
-          "keys": 427,
-          "sha256": "7d02336e503768413856c4948481a00ee99ff4a27b2ecdc22dee82ee56c52236"
+          "keys": 430,
+          "sha256": "b01cc4c4ffc709e38e31275c1f50c4321c034e44e2406825db10cd0c4e1d2fd3"
         },
         "scripture": {
-          "keys": 698,
-          "sha256": "b09512a81270d8dc8506dec121a41edf76d9dfb764b70ba4989e7f5327372c32"
+          "keys": 717,
+          "sha256": "7301d2f36556ccbba0cf988c49bc4e3db4a2e53c3aab58f6482f5f61f1056f15"
         },
         "settings": {
           "keys": 256,
-          "sha256": "3d02a5d63fe525da28f7386de3c56ee295c9d0e588a459212b7496d0875796f6"
+          "sha256": "ecbdbfdd0b84c8d0db6f8a671870f85a06f1c41e7ff2f81e19b3f2716b501574"
         },
         "studies": {
-          "keys": 1816,
-          "sha256": "e2a43fd9ea59fc4223c52f8f58b353f91fd594c24b7a45460c12bdbb9bc3c35e"
+          "keys": 1822,
+          "sha256": "aa23a44344dc75f88ed4853be879961f970e6c151c9edfaa8d5c5c4ff8c8629b"
         }
       },
-      "keys": 4296,
-      "changedKeys": 39
+      "keys": 4326,
+      "changedKeys": 200
     },
     "pt": {
       "areas": {
@@ -224,35 +224,35 @@
         },
         "common": {
           "keys": 52,
-          "sha256": "e1d94cb5156e240403dce86b79b6508e496316faddd10c63c0174b1bdcbd0656"
+          "sha256": "f4d11734a2b4824f46227e91e03bf96346b3bea889c4a2dc2271e25727ba8d13"
         },
         "errors": {
-          "keys": 302,
-          "sha256": "12e98a936f7914252f3564b6bb73d1acb069d76c1be68cc542a558d089516fb5"
+          "keys": 304,
+          "sha256": "78a0d92bb7c83b25c0aedea0ed8be1ce24a7f07ca7fed93aa087072be9164691"
         },
         "library": {
           "keys": 634,
-          "sha256": "d7742ff2d5bba25016005e0116cbab3388146f23c6680932d416cfc7c5f593f2"
+          "sha256": "77e30ee03e3c6ed66c5ccdcb556928bd4cf806079d299673c9bf766e6c338172"
         },
         "presentation": {
-          "keys": 427,
-          "sha256": "82164d51564ef7f185a7aa70fd4aa7c43ad95e45a661e0b4486dc7cff7e0bb64"
+          "keys": 430,
+          "sha256": "3159f46f48b0f397ad4fec685d72eab63f7c6a9444e1ec61fa8bcd29a56ef162"
         },
         "scripture": {
-          "keys": 698,
-          "sha256": "a3d85227a4d07998564ffd5caaf1a78c470a0bf6480d8742d7dca2f035bc77de"
+          "keys": 717,
+          "sha256": "e098b05ace0bfd3e9125c9da42e003e5f17f21360a4d6413e0666f6e522da0f9"
         },
         "settings": {
           "keys": 256,
-          "sha256": "c373d9de47ca004b2a28f6f72e05094d4abfebc40feaccc4eb26db4bf7eaa7bc"
+          "sha256": "b60606e1e21ad41c5b59e145d2e3e399cc759feaafcc7db27e8421084b714966"
         },
         "studies": {
-          "keys": 1816,
-          "sha256": "3c37c75c2a6dec21ed79b149c081c800e3f1972d258863663a719b9f31fdd797"
+          "keys": 1822,
+          "sha256": "b78928d9742595688baf9520e0581703af30679b0ab76bd767f2db74c8ee82b6"
         }
       },
-      "keys": 4296,
-      "changedKeys": 76
+      "keys": 4326,
+      "changedKeys": 179
     }
   },
   "sources": [
@@ -334,7 +334,11 @@
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "sha256": "f8c2e4580fc55bf950a002236ab9daddefc0283c426646390f0faf4dd169b9cc"
+      "sha256": "c9c74a19f757b2318f0087347ab3df951d3c66b69d473df88b0837cac7734b86"
+    },
+    {
+      "file": "src/features/ai/inquiryDisplay.ts",
+      "sha256": "d8e254a6e800db2953fd1b679ace52e0829ce76b354483782a32c80c215f1f96"
     },
     {
       "file": "src/features/ai/inquiryLabels.ts",
@@ -470,7 +474,7 @@
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "sha256": "520ed75f65526a2abdb8f2f1120e66ed7bc3d5f17da8cbdffb2cd89a2bb1b868"
+      "sha256": "e6f356ec586ee5f34c8e3266faa9788e8ebd2c2b7a23bccb72620e03c8e75f95"
     },
     {
       "file": "src/features/materials/derive.ts",
@@ -542,7 +546,7 @@
     },
     {
       "file": "src/features/presentation/labels.ts",
-      "sha256": "9dcb413eb615d609f539da971e2939f398dd692c928ac42045356b60ad22fe60"
+      "sha256": "66bfbd3ee8391e901ee687adde1ae639f5dadc36d8e0cc0b024215ac53f590e1"
     },
     {
       "file": "src/features/presentation/templateSupport.ts",
@@ -814,7 +818,7 @@
     },
     {
       "file": "src/features/studies/StudyQaExport.tsx",
-      "sha256": "494a0e18485243567859d71d78b69383084609358e3bbea5b796029fdea2a420"
+      "sha256": "c294f2ccf11da7b042ac53788fc0a9fd3575e9efc25908fb87309451a73a7c9a"
     },
     {
       "file": "src/features/studies/StudySearchResults.tsx",
@@ -870,7 +874,7 @@
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "sha256": "b1a9b6cf907f17cfd19f196d9aa575dd597635c6cc030798e156e6dc1be38555"
+      "sha256": "4d94f4d04f459810c86d281cac1752caa215f6e423f78aea50e2b927d08f694c"
     },
     {
       "file": "src/features/teaching/BlockCanvas.tsx",
@@ -903,6 +907,10 @@
     {
       "file": "src/features/teaching/diff.ts",
       "sha256": "a180f413ef4c8e4c1b689b3471931e1b2fae70be2431d7745cccdd5c1eb64d13"
+    },
+    {
+      "file": "src/features/teaching/imageAttribution.ts",
+      "sha256": "bdf263dc4cb387740eb8fada89ea826c6c0936e049787819239e2c5b18601c7b"
     },
     {
       "file": "src/features/teaching/labels.ts",
@@ -962,7 +970,7 @@
     },
     {
       "file": "src/i18n/messages.ts",
-      "sha256": "0a44523191900550fc83f2682939e98e24ee1e03136df50fbb6f0e62076882cf"
+      "sha256": "ee0101f21c70f7c3658343522829f148c1e4d91724f52b413355be79f861f3fa"
     },
     {
       "file": "src/i18n/resources.ts",
@@ -994,7 +1002,7 @@
     },
     {
       "file": "src/lib/api.ts",
-      "sha256": "0236c28d9fcd1e1106c0237d8b8e723caa1aa8331f313c390e38ef78b49305e8"
+      "sha256": "9644e528f877e7b15261fd03faed3fe7365df4f89f2e6e49ed38328d80453039"
     },
     {
       "file": "src/lib/clipboard.ts",
@@ -1054,7 +1062,7 @@
     },
     {
       "file": "src/types/inquiry.ts",
-      "sha256": "4a74f5dabe07e0bc1086fea9a620ba2209765737de56eb0b3de5c800da3dd787"
+      "sha256": "66d498f2e8e00093357ffe7ed446528c152e6b8d1a818837fc16388b7886ef74"
     },
     {
       "file": "src/types/library.ts",
@@ -1066,7 +1074,7 @@
     },
     {
       "file": "src/types/presentation.ts",
-      "sha256": "81e1442fa3bd49a9c60f1b17544cbaf1099ddead0a7c33b4146c7fefd0c83d8c"
+      "sha256": "00e0b74a0efeb8f1a6a55588c225c71e77eb4889e5229b23439d832a699e7297"
     },
     {
       "file": "src/types/presentationTemplate.ts",
@@ -1082,7 +1090,7 @@
     },
     {
       "file": "src/types/teaching.ts",
-      "sha256": "5fc0d636aa47c0d956b4ac9b8ec54b465ff72b2d284487c17a7eccebd3b353bb"
+      "sha256": "c2e87ce2a20f4369c9367bdfb11f72b8a667b833ca4063ca86b450412cc38f00"
     },
     {
       "file": "src-tauri/src/assistant/config.rs",
@@ -1098,7 +1106,7 @@
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "sha256": "e81f4685cb965bb7df5d8e62b99f18ff4f23e2094224212539e74621c993d890"
+      "sha256": "b57d371534b5995125e924ad07d4caac0fd9515163863633de9a5c0964621afb"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/compare.rs",
@@ -1110,7 +1118,7 @@
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "sha256": "ac18c8b4fa724f891d81908701b3c598dc265b1a93fe8c5a4429ef525f6ee202"
+      "sha256": "f9113e2b12b91e04ee2f727f30cd746e6d3c27c06b1852651e36499c726646af"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/prompts.rs",
@@ -1118,11 +1126,11 @@
     },
     {
       "file": "src-tauri/src/assistant/inquiry/source.rs",
-      "sha256": "4094603d61f942cbc459a944527de32d26527f076ae39745722f4cdde27659f0"
+      "sha256": "8a1a407d90792eedc8b69ab11d3bdebda04056f2a5343250ee682e8ad645675a"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "sha256": "1039904ebd843a7056aee006da78baf196eb2e21ab2a402f9640982a5b41132f"
+      "sha256": "050caf8a3817e317e1afe4e2536915a18d518baf74932e7f6c4f05af40366157"
     },
     {
       "file": "src-tauri/src/assistant/mod.rs",
@@ -1534,7 +1542,7 @@
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "sha256": "99558bfd23c6731c189fddddbbf2f56b45658febd7b972348d083964d6c99ad7"
+      "sha256": "db806db7e924645f2e327c944d41ec71825339d2a830aed059faa6435f7934dd"
     },
     {
       "file": "src-tauri/src/materials/mod.rs",
@@ -1574,7 +1582,7 @@
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
-      "sha256": "740b2503002c60d337cabac94b8678667d29a2a8dc30f21b94b58f2607c9b7cc"
+      "sha256": "797afabfa0cbac75e6bd13518f226c28c1cc96fc72b261aa8ae18aad32aa107a"
     },
     {
       "file": "src-tauri/src/presentation/markdown.rs",
@@ -1594,7 +1602,7 @@
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "sha256": "f2ce3a6dabb9b1582b3a00a1b81f601641f9ae51aff4d73e82ce399f95563b5b"
+      "sha256": "0e015dec3efff2037df6ae59c47fda54f96103baafa19e72da153933bd29d0ac"
     },
     {
       "file": "src-tauri/src/presentation/pptx_import.rs",
@@ -1892,7 +1900,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/images.rs",
-          "line": 224
+          "line": 229
         }
       ]
     },
@@ -1901,7 +1909,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/images.rs",
-          "line": 75
+          "line": 77
         }
       ]
     },
@@ -1919,7 +1927,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/images.rs",
-          "line": 187
+          "line": 192
         }
       ]
     },
@@ -1928,7 +1936,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/images.rs",
-          "line": 200
+          "line": 205
         }
       ]
     },
@@ -1946,7 +1954,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/mod.rs",
-          "line": 534
+          "line": 590
         },
         {
           "file": "src-tauri/src/assistant/mod.rs",
@@ -1977,7 +1985,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/mod.rs",
-          "line": 382
+          "line": 436
         },
         {
           "file": "src-tauri/src/assistant/mod.rs",
@@ -1994,7 +2002,7 @@
         },
         {
           "file": "src-tauri/src/assistant/inquiry/mod.rs",
-          "line": 414
+          "line": 468
         }
       ]
     },
@@ -2029,7 +2037,7 @@
         },
         {
           "file": "src-tauri/src/assistant/inquiry/study.rs",
-          "line": 355
+          "line": 409
         }
       ]
     },
@@ -2051,7 +2059,7 @@
         },
         {
           "file": "src-tauri/src/assistant/inquiry/study.rs",
-          "line": 172
+          "line": 194
         }
       ]
     },
@@ -2060,7 +2068,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/mod.rs",
-          "line": 800
+          "line": 859
         },
         {
           "file": "src-tauri/src/assistant/mod.rs",
@@ -2971,7 +2979,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/mod.rs",
-          "line": 501
+          "line": 557
         }
       ]
     },
@@ -2980,7 +2988,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/source.rs",
-          "line": 150
+          "line": 187
         }
       ]
     },
@@ -3016,7 +3024,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/source.rs",
-          "line": 23
+          "line": 26
         }
       ]
     },
@@ -3025,7 +3033,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/source.rs",
-          "line": 15
+          "line": 18
         }
       ]
     },
@@ -3034,7 +3042,7 @@
       "locations": [
         {
           "file": "src-tauri/src/assistant/inquiry/mod.rs",
-          "line": 389
+          "line": 443
         }
       ]
     },
@@ -4281,231 +4289,237 @@
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 187,
+      "line": 188,
       "text": "@container flex flex-col gap-3 rounded-aw border border-border border-l-[4px] border-l-accent bg-bg-secondary px-4 py-3 font-ui text-[0.9375rem]",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 189,
+      "line": 190,
       "text": "flex items-start justify-between gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 190,
+      "line": 191,
       "text": "type-group m-0 flex items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 198,
+      "line": 199,
       "text": "inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 207,
+      "line": 208,
       "text": "flex flex-col gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 213,
+      "line": 214,
       "text": "aw-input h-11 w-full min-w-0 px-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 227,
+      "line": 228,
       "text": "flex flex-col gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 238,
+      "line": 239,
       "text": "aw-input w-full px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 247,
+      "line": 248,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 267,
+      "line": 268,
       "text": "flex flex-col gap-3",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 290,
+      "line": 291,
       "text": "flex flex-wrap gap-2",
-      "classification": "CSS attribute"
-    },
-    {
-      "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 317,
-      "text": "flex flex-col gap-2 rounded-aw bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
       "line": 318,
+      "text": "flex flex-col gap-2 rounded-aw bg-bg px-3 py-2",
+      "classification": "CSS attribute"
+    },
+    {
+      "file": "src/features/ai/InquiryPanel.tsx",
+      "line": 319,
       "text": "m-0 font-medium text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 322,
+      "line": 323,
       "text": "m-0 flex list-none flex-col gap-1 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 346,
+      "line": 342,
       "text": "rounded-aw border border-border-subtle",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 352,
+      "line": 348,
       "text": "flex min-h-11 w-full items-start gap-2 rounded-aw px-2 py-1.5 text-left hover:bg-hover",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 356,
+      "line": 352,
       "text": "caps-label mr-2 text-text-muted",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 357,
+      "line": 353,
       "text": "break-words text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 360,
+      "line": 356,
       "text": "reading max-h-60 overflow-auto whitespace-pre-wrap border-t border-border-subtle px-3 py-2 text-[0.9375rem] text-text",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 386,
+      "line": 382,
       "text": "flex flex-col gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 408,
+      "line": 404,
       "text": "flex flex-col gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 419,
+      "line": 415,
       "text": "m-0 flex list-none flex-col gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 465,
+      "line": 461,
       "text": "border-dashed border-border-subtle",
       "classification": "requires context review"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 466,
+      "line": 462,
       "text": "m-0 flex flex-wrap items-baseline gap-x-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 476,
+      "line": 472,
       "text": "flex flex-wrap items-center gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 479,
+      "line": 475,
       "text": "min-h-11 rounded-aw px-2 text-link underline underline-offset-2 hover:bg-hover",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 533,
+      "line": 529,
       "text": "m-0 border-l-[3px] border-border pl-3",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 535,
+      "line": 531,
       "text": "flex flex-wrap items-center gap-x-2 type-meta",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 541,
+      "line": 537,
       "text": "min-h-11 rounded-aw px-1 text-link underline underline-offset-2 hover:bg-hover",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 553,
+      "line": 549,
       "text": "reading m-0 whitespace-pre-wrap rounded-aw border border-border-subtle bg-bg px-3 py-2 text-[1.0625rem] text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 558,
+      "line": 554,
       "text": "mx-0.5 rounded-sm px-0.5 text-text-muted line-through decoration-danger decoration-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 563,
+      "line": 559,
       "text": "mx-0.5 rounded-sm bg-note px-0.5 font-semibold text-text-strong no-underline [text-decoration-line:underline] decoration-accent decoration-2 underline-offset-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 630,
+      "line": 626,
       "text": "flex flex-col gap-2 rounded-aw border border-border-subtle bg-bg-secondary px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 641,
+      "line": 637,
       "text": "aw-input reading w-full px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 642,
+      "line": 638,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 653,
+      "line": 649,
       "text": "m-0 flex flex-col gap-1 border-0 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 656,
+      "line": 652,
       "text": "flex min-h-11 items-start gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/ai/InquiryPanel.tsx",
-      "line": 683,
+      "line": 679,
       "text": "flex flex-wrap gap-2",
       "classification": "CSS attribute"
+    },
+    {
+      "file": "src/features/ai/inquiryDisplay.ts",
+      "line": 49,
+      "text": "Other compatible service",
+      "classification": "requires context review"
     },
     {
       "file": "src/features/library/BatchImport.tsx",
@@ -6177,49 +6191,49 @@
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 145,
+      "line": 146,
       "text": "@container flex flex-col gap-3",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 146,
+      "line": 147,
       "text": "flex flex-col gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 147,
+      "line": 148,
       "text": "flex flex-wrap items-center gap-x-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 159,
+      "line": 160,
       "text": "flex flex-wrap items-center gap-x-2 gap-y-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 177,
+      "line": 178,
       "text": "m-0 flex flex-wrap items-center gap-x-4 border-0 p-0 @lg:ml-auto",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 178,
+      "line": 179,
       "text": "type-meta float-left mr-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 182,
+      "line": 183,
       "text": "cursor-default text-text-muted",
       "classification": "requires context review"
     },
     {
       "file": "src/features/materials/MaterialView.tsx",
-      "line": 207,
+      "line": 208,
       "text": "m-0 border-l-2 border-border py-1 pl-3 text-text-muted",
       "classification": "CSS attribute"
     },
@@ -13347,361 +13361,361 @@
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 68,
+      "line": 70,
       "text": "flex flex-wrap items-center gap-x-3 gap-y-2 rounded-aw border border-border-subtle bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 69,
+      "line": 71,
       "text": "size-5 shrink-0 animate-spin text-primary motion-reduce:animate-none",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 73,
+      "line": 75,
       "text": "block type-meta",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 255,
+      "line": 257,
       "text": "h-11 min-w-0 flex-1 basis-56 aw-input px-3 text-[0.9375rem] placeholder:text-text-muted",
       "classification": "requires context review"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 263,
+      "line": 265,
       "text": "flex flex-col gap-3 rounded-aw border border-border border-l-[4px] border-l-accent bg-bg-secondary px-4 py-3 font-ui text-[0.9375rem]",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 265,
+      "line": 267,
       "text": "flex items-start justify-between gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 273,
+      "line": 275,
       "text": "inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 283,
+      "line": 285,
       "text": "flex flex-col gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 299,
+      "line": 301,
       "text": "aw-input w-full px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 307,
+      "line": 309,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 322,
+      "line": 324,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 336,
+      "line": 338,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 350,
+      "line": 352,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 376,
+      "line": 378,
       "text": "flex flex-col gap-3",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 430,
+      "line": 432,
       "text": "flex flex-col gap-1 rounded-aw bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 431,
+      "line": 433,
       "text": "m-0 font-medium text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 436,
+      "line": 438,
       "text": "m-0 list-disc pl-5 text-text",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 464,
+      "line": 466,
       "text": "type-group m-0 flex items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 483,
+      "line": 485,
       "text": "flex flex-col gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 491,
+      "line": 493,
       "text": "reading m-0 whitespace-pre-wrap rounded-aw border border-border-subtle bg-bg px-3 py-2 text-[1.0625rem] text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 496,
+      "line": 498,
       "text": "mx-0.5 rounded-sm px-0.5 text-text-muted line-through decoration-danger decoration-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 501,
+      "line": 503,
       "text": "mx-0.5 rounded-sm bg-note px-0.5 font-semibold text-text-strong no-underline [text-decoration-line:underline] decoration-accent decoration-2 underline-offset-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 511,
+      "line": 513,
       "text": "flex flex-wrap gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 523,
+      "line": 525,
       "text": "flex flex-col gap-2",
-      "classification": "CSS attribute"
-    },
-    {
-      "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 529,
-      "text": "m-0 flex list-none flex-col gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
       "line": 531,
+      "text": "m-0 flex list-none flex-col gap-2 p-0",
+      "classification": "CSS attribute"
+    },
+    {
+      "file": "src/features/teaching/AssistPanel.tsx",
+      "line": 533,
       "text": "flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 536,
+      "line": 538,
       "text": "flex flex-wrap items-center gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 542,
+      "line": 544,
       "text": "inline-flex flex-wrap items-center gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 543,
+      "line": 545,
       "text": "min-h-11 rounded-aw px-2 text-link underline underline-offset-2 hover:bg-hover",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 553,
+      "line": 555,
       "text": "min-h-11 rounded-aw border border-border px-2 text-[0.875rem] hover:bg-hover",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 573,
+      "line": 575,
       "text": "flex flex-col gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 577,
+      "line": 579,
       "text": "m-0 font-medium text-text-strong",
-      "classification": "CSS attribute"
-    },
-    {
-      "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 578,
-      "text": "m-0 flex list-none flex-col gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
       "line": 580,
-      "text": "flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2",
+      "text": "m-0 flex list-none flex-col gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 581,
-      "text": "reading m-0 whitespace-pre-wrap text-text-strong",
+      "line": 582,
+      "text": "flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
       "line": 583,
+      "text": "reading m-0 whitespace-pre-wrap text-text-strong",
+      "classification": "CSS attribute"
+    },
+    {
+      "file": "src/features/teaching/AssistPanel.tsx",
+      "line": 585,
       "text": "flex flex-wrap gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 623,
+      "line": 625,
       "text": "flex flex-col gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 628,
+      "line": 630,
       "text": "m-0 font-medium text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 632,
+      "line": 634,
       "text": "m-0 flex list-none flex-col gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 634,
+      "line": 636,
       "text": "flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 678,
+      "line": 680,
       "text": "flex flex-col gap-0.5",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 679,
+      "line": 681,
       "text": "type-meta font-medium",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 680,
+      "line": 682,
       "text": "m-0 flex list-none flex-col gap-0.5 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 686,
+      "line": 688,
       "text": "inline-flex min-h-11 items-center gap-1 rounded-aw px-1 text-left text-link underline underline-offset-2 hover:bg-hover",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 737,
+      "line": 739,
       "text": "flex flex-col gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 742,
+      "line": 744,
       "text": "m-0 flex list-none flex-col gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 747,
+      "line": 749,
       "text": "flex flex-col gap-2 rounded-aw border border-border-subtle bg-bg px-3 py-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 752,
+      "line": 754,
       "text": "flex flex-wrap gap-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 754,
+      "line": 756,
       "text": "min-h-11 aria-disabled:cursor-not-allowed aria-disabled:opacity-60",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 760,
+      "line": 762,
       "text": "min-h-11 aria-disabled:cursor-not-allowed aria-disabled:opacity-60",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 774,
+      "line": 776,
       "text": "self-center text-text-muted",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 795,
+      "line": 797,
       "text": "m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2 p-0",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 797,
-      "text": "flex flex-col gap-1",
-      "classification": "CSS attribute"
-    },
-    {
-      "file": "src/features/teaching/AssistPanel.tsx",
       "line": 799,
-      "text": "aspect-[4/3] w-full rounded-aw border border-border-subtle object-cover",
+      "text": "flex flex-col gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
       "line": 801,
+      "text": "aspect-[4/3] w-full rounded-aw border border-border-subtle object-cover",
+      "classification": "CSS attribute"
+    },
+    {
+      "file": "src/features/teaching/AssistPanel.tsx",
+      "line": 803,
       "text": "flex aspect-[4/3] items-center justify-center rounded-aw border border-border-subtle text-text-muted",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 811,
+      "line": 813,
       "text": "inline-flex min-h-11 items-center gap-1 rounded-aw px-1 text-left text-[0.875rem] text-link underline underline-offset-2",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 849,
+      "line": 851,
       "text": "flex flex-col gap-1",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 850,
+      "line": 852,
       "text": "w-full max-w-sm rounded-aw border border-border-subtle",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 851,
+      "line": 853,
       "text": "text-[0.875rem] font-medium text-text-strong",
       "classification": "CSS attribute"
     },
     {
       "file": "src/features/teaching/AssistPanel.tsx",
-      "line": 884,
+      "line": 886,
       "text": "m-0 flex items-center gap-1 type-meta",
       "classification": "CSS attribute"
     },
@@ -14528,6 +14542,12 @@
       "classification": "CSS attribute"
     },
     {
+      "file": "src/features/teaching/imageAttribution.ts",
+      "line": 7,
+      "text": "Wikimedia Commons",
+      "classification": "requires context review"
+    },
+    {
       "file": "src/features/updates/UpdateNotice.tsx",
       "line": 14,
       "text": "flex items-center gap-3",
@@ -14597,6 +14617,18 @@
       "file": "src/hooks/SaveTracker.tsx",
       "line": 62,
       "text": "useSaveTracker must be used inside <SaveTrackerProvider>",
+      "classification": "requires context review"
+    },
+    {
+      "file": "src/i18n/messages.ts",
+      "line": 89,
+      "text": "Web page",
+      "classification": "requires context review"
+    },
+    {
+      "file": "src/i18n/messages.ts",
+      "line": 90,
+      "text": "OSIS and USX",
       "classification": "requires context review"
     },
     {
@@ -15051,121 +15083,133 @@
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 77,
+      "line": 79,
       "text": "No images could be found this time. Please try again.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 90,
+      "line": 92,
       "text": ".into())],\n        body: None,\n    }\n}\n\nfn plain(html: &str) -> String {\n    let mut out = String::new();\n    let mut in_tag = false;\n    for c in html.chars() {\n        match c {\n            '<' => in_tag = true,\n            '>' => in_tag = false,\n            _ if !in_tag => out.push(c),\n            _ => {}\n        }\n    }\n    out.replace(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 154,
+      "line": 158,
       "text": "{a}, {licence}, via Wikimedia Commons",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 155,
+      "line": 159,
       "text": "{licence}, via Wikimedia Commons",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 189,
+      "line": 194,
       "text": "Making images is not set up, or this AI service cannot make images. You can choose a service for images in Settings.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 202,
+      "line": 207,
       "text": "Making images needs the image service's key. You can add it in Settings → AI Assistant.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 216,
+      "line": 221,
       "text": " })),\n    })\n}\n\n/// The generated picture as PNG bytes.\npub fn parse_generated(reply: &HttpReply) -> AppResult<Vec<u8>> {\n    if !(200..300).contains(&reply.status) {\n        log::warn!(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 223,
+      "line": 228,
       "text": ", reply.status);\n        return Err(AppError::Assistant(UserMessage::new(\n            ",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 226,
+      "line": 231,
       "text": ",\n        )));\n    }\n    let value: Value =\n        serde_json::from_slice(&reply.body).map_err(|_| super::provider::bad_reply())?;\n    let data = value[",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 231,
+      "line": 236,
       "text": "]\n        .as_str()\n        .ok_or_else(super::provider::bad_reply)?;\n    let bytes = base64::engine::general_purpose::STANDARD\n        .decode(data)\n        .map_err(|_| super::provider::bad_reply())?;\n    if !bytes.starts_with(b",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 237,
+      "line": 242,
       "text": ") {\n        return Err(super::provider::bad_reply());\n    }\n    Ok(bytes)\n}\n\npub fn data_url(png: &[u8]) -> String {\n    format!(\n        ",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 245,
+      "line": 250,
       "text": ",\n        base64::engine::general_purpose::STANDARD.encode(png)\n    )\n}\n\n#[cfg(test)]\nmod tests {\n    use super::*;\n    use crate::assistant::config::{ImageService, ProviderKind};\n\n    #[test]\n    fn found_images_keep_licence_author_and_source() {\n        let reply = HttpReply {\n            status: 200,\n            body: serde_json::to_vec(&json!({",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 267,
+      "line": 272,
       "text": "x\\\">Jane Doe</a>",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 279,
+      "line": 284,
       "text": "an image without a licence is left out",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 281,
+      "line": 287,
       "text": "CC BY-SA 4.0",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 282,
+      "line": 288,
       "text": "Jane Doe",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 285,
+      "line": 291,
       "text": "Jane Doe, CC BY-SA 4.0, via Wikimedia Commons",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 320,
+      "line": 297,
+      "text": "Writer via Archive — CC BY 4.0 — Exact credit",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/images.rs",
+      "line": 300,
+      "text": "CC BY 4.0",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/images.rs",
+      "line": 338,
       "text": "off by default",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 332,
+      "line": 350,
       "text": "Claude makes no images",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/images.rs",
-      "line": 340,
+      "line": 358,
       "text": "the OpenAI key is needed",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
@@ -15243,62 +15287,116 @@
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 309,
+      "line": 362,
       "text": "Bible Study “Abide”",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 342,
+      "line": 396,
       "text": "just pushed",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 384,
+      "line": 438,
       "text": "The assistant is turned off. You can turn it on in Settings.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 391,
+      "line": 445,
       "text": "This kind of help is not available here.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 416,
+      "line": 470,
       "text": "Say in a few words what you are looking for.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 462,
+      "line": 517,
       "text": "Before you ask",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 503,
+      "line": 559,
       "text": "What would be sent has changed since you looked. Please look at it again before asking.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 536,
+      "line": 592,
       "text": "The assistant needs its key. You can add it in Settings.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 704,
+      "line": 762,
       "text": "',\n            '‐' | '‑' | '‒' | '–' | '—' | '―' => '-',\n            _ => c,\n        };\n        for lower in mapped.to_lowercase() {\n            chars.push(lower);\n            spans.push((at, end));\n        }\n    }\n    if chars.last() == Some(&' ') {\n        chars.pop();\n        spans.pop();\n    }\n    (chars, spans)\n}\n\n/// Where `needle` is in `hay` (loosely), as a byte range of `hay` within\n/// `window`; the first such place.\npub fn find_loosely(hay: &str, needle: &str, window: (usize, usize)) -> Option<(usize, usize)> {\n    let plain = needle.trim_matches(|c: char| c.is_whitespace() || c == '…');\n    // As quoted; then without quotation marks the answer may have put around it.\n    find_in(hay, plain, window).or_else(|| {\n        let bare = plain.trim_matches(|c: char| {\n            c.is_whitespace() || matches!(c, '",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/mod.rs",
-      "line": 802,
+      "line": 861,
       "text": "The suggestion was much longer than your text, so it was not shown. Please try again.",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1062,
+      "text": "Your writing — part “Grace”",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1063,
+      "text": "Exact writing — 한글.",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1078,
+      "text": "Exact writing — 한글.",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1090,
+      "text": "Your writing",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1091,
+      "text": "Exact source evidence.",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1098,
+      "text": "A supported comment",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1098,
+      "text": "Exact source evidence.",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1101,
+      "text": "expected insight",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/mod.rs",
+      "line": 1104,
+      "text": "Exact source evidence.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
@@ -15363,38 +15461,80 @@
     },
     {
       "file": "src-tauri/src/assistant/inquiry/source.rs",
-      "line": 17,
+      "line": 20,
       "text": "This source has no text that can be read here (for example, a scanned PDF). The assistant works only from a source's text, so it cannot help with this one.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/source.rs",
-      "line": 25,
+      "line": 28,
       "text": "This passage is too long to send at once. Select a shorter passage.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/source.rs",
-      "line": 126,
-      "text": "Your note ({}) in your Bible Study “{}”",
+      "line": 70,
+      "text": "validated excerpt has a segment",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/source.rs",
-      "line": 142,
-      "text": "A passage of a library source",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/assistant/inquiry/source.rs",
-      "line": 152,
-      "text": "Include a Bible Study to relate this passage to.",
+      "line": 71,
+      "text": "validated excerpt has a segment",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/source.rs",
       "line": 158,
+      "text": "Your note ({}) in your Bible Study “{}”",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 179,
+      "text": "A passage of a library source",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 189,
+      "text": "Include a Bible Study to relate this passage to.",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 196,
       "text": "Your question",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 212,
+      "text": "Exact source",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 214,
+      "text": "Your writing — paragraph 9 › 은혜",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 220,
+      "text": "More source",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 229,
+      "text": "Your writing — paragraph 9 › 은혜",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/assistant/inquiry/source.rs",
+      "line": 236,
+      "text": "Your writing — paragraph 9 › 은혜 · pp. xii–xiii · paragraphs 12–16",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
@@ -15405,109 +15545,109 @@
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 102,
+      "line": 116,
       "text": "Quotation from {}, kept in note {note_id}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 147,
+      "line": 169,
       "text": "Bible Study “{}” ({}){part}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 162,
+      "line": 184,
       "text": "The selected words are no longer in the text. Select them again.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 174,
+      "line": 196,
       "text": "This text is too long to send at once. Select a part of it and try again.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 183,
+      "line": 205,
       "text": "The selected words are no longer in the text. Select them again.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 188,
+      "line": 211,
       "text": "Words you selected in your writing{part}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 194,
+      "line": 222,
       "text": "Your writing they are in{part}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 200,
+      "line": 233,
       "text": "Your writing{part}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 216,
+      "line": 253,
       "text": "Your note ({}){part}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 246,
+      "line": 289,
       "text": "Your writing{part}",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 270,
+      "line": 317,
       "text": "Another of your notes in this part ({})",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 277,
+      "line": 330,
       "text": "Your question",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 296,
+      "line": 350,
       "text": "Select the words you would like to understand first.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 304,
+      "line": 358,
       "text": "Choose the question you recorded.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 340,
+      "line": 394,
       "text": "The text of this passage is not installed. Add a Bible in Settings, or choose one for this study.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 347,
+      "line": 401,
       "text": "Choose the passage of this Bible Study first: the help starts from the text.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 353,
+      "line": 407,
       "text": "item could not be found",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/assistant/inquiry/study.rs",
-      "line": 357,
+      "line": 411,
       "text": "This part has changed or was removed since you asked. Close the help, check the text and ask again.",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
@@ -23697,134 +23837,182 @@
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 101,
+      "line": 102,
       "text": "),\n            '\\t' | '\\n' => out.push(c),\n            c if (c as u32) < 0x20 || c == '\\u{FFFE}' || c == '\\u{FFFF}' => {}\n            c => out.push(c),\n        }\n    }\n    out\n}\n\n/// Runs of one piece of text, with its own line breaks and tabs kept.\nfn runs(text: &str, props: &str) -> String {\n    let rpr = if props.is_empty() {\n        String::new()\n    } else {\n        format!(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 115,
+      "line": 116,
       "text": ")\n    };\n    let mut out = String::new();\n    for (i, line) in text\n        .replace(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 125,
+      "line": 126,
       "text": "));\n        }\n        for (j, part) in line.split('\\t').enumerate() {\n            if j > 0 {\n                out.push_str(&format!(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 274,
+      "line": 277,
+      "text": "Bible reference",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 284,
+      "text": "Writing line",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 285,
+      "text": "Writing line (last)",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 318,
       "text": "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?>\\n<w:document {NS}><w:body>{}<w:sectPr><w:pgSz w:w=\\\"{w}\\\" w:h=\\\"{h}\\\"/><w:pgMar w:top=\\\"{m}\\\" w:right=\\\"{m}\\\" w:bottom=\\\"{m}\\\" w:left=\\\"{m}\\\" w:header=\\\"709\\\" w:footer=\\\"709\\\" w:gutter=\\\"0\\\"/></w:sectPr></w:body></w:document>",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 281,
+      "line": 325,
       "text": "<?xml version=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 281,
+      "line": 325,
       "text": "?>\n<w:styles xmlns:w=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 284,
+      "line": 328,
       "text": "<?xml version=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 284,
+      "line": 328,
       "text": "?>\n<Types xmlns=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 285,
+      "line": 329,
       "text": "><Default Extension=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 285,
+      "line": 329,
       "text": "/><Default Extension=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 285,
+      "line": 329,
       "text": "/><Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 285,
+      "line": 329,
       "text": "/><Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 285,
+      "line": 329,
       "text": "/><Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 287,
+      "line": 331,
       "text": "<?xml version=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 287,
+      "line": 331,
       "text": "?>\n<Relationships xmlns=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 288,
+      "line": 332,
       "text": "><Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 288,
+      "line": 332,
       "text": "/><Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 290,
+      "line": 334,
       "text": "<?xml version=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 290,
+      "line": 334,
       "text": "?>\n<Relationships xmlns=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 291,
+      "line": 335,
       "text": "><Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 295,
+      "line": 339,
       "text": "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?>\\n<cp:coreProperties xmlns:cp=\\\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\\\" xmlns:dc=\\\"http://purl.org/dc/elements/1.1/\\\"><dc:title>{}</dc:title><dc:creator>Abiding Word</dc:creator></cp:coreProperties>",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/materials/docx.rs",
-      "line": 314,
+      "line": 355,
       "text": "Word document: {e}",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 401,
+      "text": "').next().unwrap().to_string())\n                .collect::<Vec<_>>()\n        };\n        assert_eq!(identifiers(&xml), identifiers(STYLES));\n        assert!(!xml.contains('\\u{0007}'));\n    }\n\n    #[test]\n    fn style_names_are_optional_and_never_reinterpreted_as_other_names() {\n        let old_client: Format = serde_json::from_str(r#",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 412,
+      "text": "));\n        let format = Format {\n            style_names: BTreeMap::from([\n                (",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 418,
+      "text": ".into()),\n            ]),\n            ..Default::default()\n        };\n        let xml = styles_xml(&format);\n        assert!(xml.contains(",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 424,
+      "text": "w:styleId=\\\"AwQuestion\\\"><w:name w:val=\\\"My question\\\"/>",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/materials/docx.rs",
+      "line": 436,
+      "text": "Unchanged own words & source",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
@@ -24363,49 +24551,61 @@
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
-      "line": 61,
+      "line": 67,
       "text": "Not verified",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
-      "line": 62,
+      "line": 68,
       "text": "Invented illustration",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
-      "line": 63,
+      "line": 69,
       "text": "Found image",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
-      "line": 64,
-      "text": "Generated image",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/locale.rs",
-      "line": 72,
-      "text": "Speaker notes",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/locale.rs",
-      "line": 80,
+      "line": 70,
       "text": "Generated image",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
       "line": 81,
+      "text": "Colour band",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/locale.rs",
+      "line": 83,
+      "text": "Slide image",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/locale.rs",
+      "line": 84,
+      "text": "Speaker notes",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/locale.rs",
+      "line": 92,
+      "text": "Generated image",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/locale.rs",
+      "line": 93,
       "text": "Image not available offline",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/locale.rs",
-      "line": 82,
+      "line": 94,
       "text": "Scripture text not available",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
@@ -24556,115 +24756,109 @@
     {
       "file": "src-tauri/src/presentation/pptx.rs",
       "line": 57,
-      "text": ".into()\n    }\n}\n\nstruct Media {\n    name: String,\n}\n\npub fn render(\n    doc: &PresentationDocument,\n    image_data: &ImageData,\n    fonts: &FontSet,\n    options: &ExportOptions,\n) -> AppResult<Vec<u8>> {\n    let design = doc.design();\n    let palette = Palette {\n        background: design.colors.background.clone(),\n        text: design.colors.text.clone(),\n        muted: design.colors.muted.clone(),\n        accent: design.colors.accent.clone(),\n    };\n    let shaper = Shaper { fonts };\n    let lang = esc(&options.locale.language);\n    let notes = options.speaker_notes;\n    let mut files: Vec<(String, Vec<u8>)> = Vec::new();\n    let mut media: Vec<(String, Media)> = Vec::new();\n    let n = doc.slides.len();\n\n    for (i, slide) in doc.slides.iter().enumerate() {\n        let number = i + 1;\n        let laid = layout::page(slide, doc, &design, &shaper, &options.locale);\n        let blocks = &laid.blocks;\n        let mut rels = vec![format!(\n            r#",
+      "text": ".into()\n    }\n}\n\nstruct Media {\n    name: String,\n}\n\npub fn render(\n    doc: &PresentationDocument,\n    image_data: &ImageData,\n    fonts: &FontSet,\n    options: &ExportOptions,\n) -> AppResult<Vec<u8>> {\n    let design = doc.design();\n    let palette = Palette {\n        background: design.colors.background.clone(),\n        text: design.colors.text.clone(),\n        muted: design.colors.muted.clone(),\n        accent: design.colors.accent.clone(),\n    };\n    let shaper = Shaper { fonts };\n    let lang = esc(&options.locale.language);\n    let image_name = esc(&options.locale.labels.image);\n    let unavailable_name = esc(&options.locale.labels.image_unavailable);\n    let blank_name = esc(&options.locale.labels.blank);\n    let notes = options.speaker_notes;\n    let mut files: Vec<(String, Vec<u8>)> = Vec::new();\n    let mut media: Vec<(String, Media)> = Vec::new();\n    let n = doc.slides.len();\n\n    for (i, slide) in doc.slides.iter().enumerate() {\n        let number = i + 1;\n        let laid = layout::page(slide, doc, &design, &shaper, &options.locale);\n        let blocks = &laid.blocks;\n        let mut rels = vec![format!(\n            r#",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 90,
+      "line": 93,
       "text": "#\n        )];\n        let mut shapes = String::new();\n        // A picture's file, added once to the package and related to this slide.\n        let mut related = |asset_id: &str,\n                           files: &mut Vec<(String, Vec<u8>)>,\n                           rels: &mut Vec<String>|\n         -> Option<String> {\n            let (bytes, header) = image_data\n                .get(asset_id)\n                .filter(|(_, h)| h.media_type != ",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 100,
+      "line": 103,
       "text": ")?;\n            let existing = media.iter().position(|(id, _)| id == asset_id);\n            let name = match existing {\n                Some(k) => media[k].1.name.clone(),\n                None => {\n                    let name = format!(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 106,
+      "line": 109,
       "text": "), bytes.clone()));\n                    media.push((asset_id.to_string(), Media { name: name.clone() }));\n                    name\n                }\n            };\n            let target = format!(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 111,
+      "line": 114,
       "text": ");\n            let rid = match rels\n                .iter()\n                .position(|r| r.contains(&format!(",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 120,
+      "line": 123,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 151,
+      "line": 161,
       "text": "<p:pic><p:nvPicPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 151,
+      "line": 161,
       "text": "/><p:cNvPicPr><a:picLocks noChangeAspect=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 151,
+      "line": 161,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 151,
+      "line": 161,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "<p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "><a:solidFill><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "/></a:solidFill></a:ln></p:spPr><p:txBody><a:bodyPr anchor=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "/><a:lstStyle/><a:p><a:pPr algn=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "/><a:r><a:rPr lang=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 163,
+      "line": 173,
       "text": "><a:solidFill><a:srgbClr val=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 176,
-      "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
@@ -24675,98 +24869,92 @@
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 187,
+      "line": 196,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 195,
+      "line": 197,
+      "text": "<Relationship Id=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 205,
       "text": "{DECL}<p:sld {NS}><p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 213,
+      "line": 223,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 214,
+      "line": 224,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 215,
+      "line": 225,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 222,
+      "line": 232,
       "text": "{DECL}<cp:coreProperties xmlns:cp=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 222,
+      "line": 232,
       "text": "><dc:title>{}</dc:title><dc:creator>Abiding Word</dc:creator></cp:coreProperties>",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 230,
+      "line": 240,
       "text": "{DECL}<Properties xmlns=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 230,
+      "line": 240,
       "text": "><Application>Abiding Word</Application><Slides>{n}</Slides><Notes>{}</Notes></Properties>",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 243,
+      "line": 253,
       "text": "{DECL}<p:viewPr {NS}><p:normalViewPr><p:restoredLeft sz=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 243,
+      "line": 253,
       "text": "/><p:restoredTop sz=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 243,
+      "line": 253,
       "text": "/></p:normalViewPr><p:gridSpacing cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 247,
+      "line": 257,
       "text": "{DECL}<a:tblStyleLst xmlns:a=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 253,
+      "line": 263,
       "text": "<Relationship Id=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 254,
-      "text": "<Relationship Id=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 260,
-      "text": "><p:cSld name=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
@@ -24777,794 +24965,836 @@
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 268,
+      "line": 270,
+      "text": "><p:cSld name=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 274,
+      "text": "<Relationship Id=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 278,
       "text": "Abiding Word",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 279,
+      "line": 294,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 296,
+      "line": 316,
       "text": "<p:nvGrpSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 296,
+      "line": 316,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 296,
+      "line": 316,
       "text": "/><a:chExt cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 305,
+      "line": 325,
       "text": "<a:latin typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 305,
+      "line": 325,
       "text": "/><a:ea typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 305,
+      "line": 325,
       "text": "/><a:cs typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 309,
+      "line": 329,
       "text": "<a:r><a:rPr lang=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 309,
+      "line": 329,
       "text": "><a:solidFill><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 335,
+      "line": 356,
       "text": "<a:p><a:pPr algn=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 335,
+      "line": 356,
       "text": "/><a:endParaRPr lang=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 340,
+      "line": 361,
       "text": "<a:lnSpc><a:spcPct val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 342,
+      "line": 363,
       "text": "<a:lnSpc><a:spcPct val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 345,
+      "line": 366,
       "text": "<a:p><a:pPr algn=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 366,
+      "line": 387,
       "text": "<p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 366,
+      "line": 387,
       "text": "/><p:cNvSpPr txBox=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 366,
+      "line": 387,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 366,
+      "line": 387,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 366,
+      "line": 387,
       "text": "><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 378,
+      "line": 399,
       "text": "<p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 378,
+      "line": 399,
       "text": "/><p:cNvSpPr txBox=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 378,
+      "line": 399,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 378,
+      "line": 399,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 378,
+      "line": 399,
       "text": "><a:avLst/></a:prstGeom><a:noFill/></p:spPr><p:txBody><a:bodyPr wrap=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 404,
-      "text": "<a:alphaModFix amt=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 409,
-      "text": "<p:pic><p:nvPicPr><p:cNvPr id=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 409,
-      "text": "/><p:cNvPicPr><a:picLocks noChangeAspect=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 409,
-      "text": "/><a:ext cx=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 409,
-      "text": "/></a:xfrm><a:prstGeom prst=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 421,
-      "text": "<a:solidFill><a:srgbClr val=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 421,
-      "text": "><a:alpha val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
       "line": 426,
+      "text": "<a:alphaModFix amt=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 431,
+      "text": "<p:pic><p:nvPicPr><p:cNvPr id=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 431,
+      "text": "/><p:cNvPicPr><a:picLocks noChangeAspect=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 431,
+      "text": "/><a:ext cx=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 431,
+      "text": "/></a:xfrm><a:prstGeom prst=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 444,
       "text": "<a:solidFill><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 433,
+      "line": 444,
+      "text": "><a:alpha val=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 449,
+      "text": "<a:solidFill><a:srgbClr val=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 456,
       "text": "><a:solidFill><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 440,
+      "line": 463,
       "text": "<p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 440,
+      "line": 463,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 440,
+      "line": 463,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 453,
+      "line": 478,
       "text": "<a:p><a:r><a:rPr lang=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 471,
+      "line": 496,
       "text": "{DECL}<p:notes {NS}><p:cSld><p:spTree>{GROUP}<p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 471,
+      "line": 496,
       "text": "/><p:cNvSpPr><a:spLocks noGrp=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 471,
-      "text": "/></p:cNvSpPr><p:nvPr><p:ph type=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 471,
-      "text": "/></p:nvPr></p:nvSpPr><p:spPr/></p:sp><p:sp><p:nvSpPr><p:cNvPr id=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 471,
-      "text": "/><p:cNvSpPr><a:spLocks noGrp=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 471,
-      "text": "/></p:cNvSpPr><p:nvPr><p:ph type=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 477,
-      "text": "{DECL}<Relationships xmlns=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 485,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 486,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 487,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 488,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 489,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 490,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 491,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 492,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 493,
-      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
       "line": 496,
+      "text": "/></p:cNvSpPr><p:nvPr><p:ph type=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 496,
+      "text": "/></p:nvPr></p:nvSpPr><p:spPr/></p:sp><p:sp><p:nvSpPr><p:cNvPr id=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 496,
+      "text": "/><p:cNvSpPr><a:spLocks noGrp=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 496,
+      "text": "/></p:cNvSpPr><p:nvPr><p:ph type=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 502,
+      "text": "{DECL}<Relationships xmlns=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 510,
       "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 497,
+      "line": 511,
       "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 501,
-      "text": "<Override PartName=",
-      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
-    },
-    {
-      "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 509,
+      "line": 512,
       "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
       "line": 513,
-      "text": "{DECL}<Types xmlns=",
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 513,
-      "text": "><Default Extension=",
+      "line": 514,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 513,
-      "text": "/><Default Extension=",
+      "line": 515,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 513,
-      "text": "/><Default Extension=",
+      "line": 516,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 513,
-      "text": "/><Default Extension=",
+      "line": 517,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 513,
-      "text": "/><Default Extension=",
+      "line": 518,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 523,
-      "text": "<Relationship Id=",
+      "line": 521,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 525,
-      "text": "<Relationship Id=",
+      "line": 522,
+      "text": "<Override PartName=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
       "line": 526,
+      "text": "<Override PartName=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 534,
+      "text": "<Override PartName=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 538,
+      "text": "{DECL}<Types xmlns=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 538,
+      "text": "><Default Extension=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 538,
+      "text": "/><Default Extension=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 538,
+      "text": "/><Default Extension=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 538,
+      "text": "/><Default Extension=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 538,
+      "text": "/><Default Extension=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 548,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 527,
+      "line": 550,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 528,
+      "line": 551,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 531,
+      "line": 552,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 535,
+      "line": 553,
       "text": "<Relationship Id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 544,
+      "line": 556,
+      "text": "<Relationship Id=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 560,
+      "text": "<Relationship Id=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 569,
       "text": "<p:sldId id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 553,
+      "line": 578,
       "text": "><p:sldMasterIdLst><p:sldMasterId id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 553,
+      "line": 578,
       "text": "/></p:sldMasterIdLst>{notes_master}<p:sldIdLst>{slides}</p:sldIdLst><p:sldSz cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 553,
+      "line": 578,
       "text": "/><p:notesSz cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 559,
+      "line": 584,
       "text": "{DECL}<p:sldMaster {NS}><p:cSld><p:bg><p:bgPr><a:solidFill><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 559,
+      "line": 584,
       "text": "/></a:solidFill><a:effectLst/></p:bgPr></p:bg><p:spTree>{GROUP}</p:spTree></p:cSld><p:clrMap bg1=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 559,
+      "line": 584,
       "text": "/><p:sldLayoutIdLst><p:sldLayoutId id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 559,
+      "line": 584,
       "text": "/></p:sldLayoutIdLst><p:txStyles><p:titleStyle><a:lvl1pPr><a:defRPr sz=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 559,
+      "line": 584,
       "text": "/></a:lvl1pPr></p:titleStyle><p:bodyStyle><a:lvl1pPr><a:defRPr sz=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 559,
+      "line": 584,
       "text": "/></a:lvl1pPr></p:bodyStyle><p:otherStyle><a:lvl1pPr><a:defRPr sz=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 573,
+      "line": 599,
       "text": "<a:latin typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 573,
+      "line": 599,
       "text": "/><a:ea typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 573,
+      "line": 599,
       "text": "/><a:cs typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 573,
+      "line": 599,
       "text": "/><a:font script=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 573,
+      "line": 599,
       "text": "/><a:font script=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 573,
+      "line": 599,
       "text": "/><a:font script=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 578,
+      "line": 604,
       "text": "<a:solidFill><a:schemeClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 579,
+      "line": 605,
       "text": "><a:solidFill><a:schemeClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "{DECL}<a:theme xmlns:a=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "><a:themeElements><a:clrScheme name=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "><a:dk1><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:dk1><a:lt1><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:lt1><a:dk2><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:dk2><a:lt2><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:lt2><a:accent1><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:accent1><a:accent2><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:accent2><a:accent3><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:accent3><a:accent4><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:accent4><a:accent5><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:accent5><a:accent6><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:accent6><a:hlink><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:hlink><a:folHlink><a:srgbClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "/></a:folHlink></a:clrScheme><a:fontScheme name=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 581,
+      "line": 607,
       "text": "><a:majorFont>{major}</a:majorFont><a:minorFont>{minor}</a:minorFont></a:fontScheme><a:fmtScheme name=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "<?xml version=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "?><p:notesMaster {NS}><p:cSld><p:bg><p:bgRef idx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "><a:schemeClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></p:bgRef></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:chExt cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></a:xfrm></p:grpSpPr><p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><p:cNvSpPr><a:spLocks noGrp=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></p:cNvSpPr><p:nvPr><p:ph type=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "><a:solidFill><a:prstClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></a:solidFill></a:ln></p:spPr></p:sp><p:sp><p:nvSpPr><p:cNvPr id=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><p:cNvSpPr><a:spLocks noGrp=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></p:cNvSpPr><p:nvPr><p:ph type=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:ext cx=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></a:xfrm><a:prstGeom prst=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "><a:avLst/></a:prstGeom></p:spPr><p:txBody><a:bodyPr vert=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:lstStyle/><a:p><a:pPr lvl=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:endParaRPr lang=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></a:p></p:txBody></p:sp></p:spTree></p:cSld><p:clrMap bg1=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><p:notesStyle><a:lvl1pPr marL=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "><a:defRPr sz=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "><a:solidFill><a:schemeClr val=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/></a:solidFill><a:latin typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:ea typeface=",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {
       "file": "src-tauri/src/presentation/pptx.rs",
-      "line": 589,
+      "line": 615,
       "text": "/><a:cs typeface=",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 653,
+      "text": "Unchanged owner text",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 657,
+      "text": "Owner notes & meaning",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 711,
+      "text": "Unchanged owner text",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 725,
+      "text": "Slide Image Placeholder",
+      "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
+    },
+    {
+      "file": "src-tauri/src/presentation/pptx.rs",
+      "line": 727,
+      "text": "Owner notes &amp; meaning",
       "classification": "native candidate: may be log, provider prompt, metadata or visible copy; inspect call path"
     },
     {

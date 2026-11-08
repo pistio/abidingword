@@ -23,6 +23,21 @@ for path in Path('src/i18n/locales').glob('*/*.json'):
         assert set(re.findall(r'{{\s*([^}]+)\s*}}', old)) == set(re.findall(r'{{\s*([^}]+)\s*}}', after[key])), (path, key)
         if 'ten-step-' in key:
             assert after[key] == old, f'Accepted Ten-Step wording changed: {path}:{key}'
-for pattern in ['src-tauri', 'resources', 'src/i18n/locales/*/books.json']:
+# Transient AI provenance metadata and generated presentation/document accessibility labels are the native exceptions: no model prompt,
+# stored source/writing, schema, migration or recognised Scripture value is edited.
+NATIVE_DISPLAY_FILES = {
+    'src-tauri/src/assistant/inquiry/mod.rs',
+    'src-tauri/src/assistant/inquiry/source.rs',
+    'src-tauri/src/assistant/inquiry/study.rs',
+    'src-tauri/src/assistant/images.rs',
+    'src-tauri/src/materials/docx.rs',
+    'src-tauri/tests/fixtures/materials/documents.json',
+    'src-tauri/tests/material_docx.rs',
+    'src-tauri/src/presentation/locale.rs',
+    'src-tauri/src/presentation/pptx.rs',
+}
+changed_native = set(subprocess.check_output(['git', 'diff', '--name-only', BASE, '--', 'src-tauri']).decode().splitlines())
+assert changed_native <= NATIVE_DISPLAY_FILES, changed_native - NATIVE_DISPLAY_FILES
+for pattern in ['resources', 'src/i18n/locales/*/books.json']:
     assert not subprocess.check_output(['git', 'diff', BASE, '--', pattern]), pattern
-print('All existing keys, plural branches, placeholder names, Ten-Step guidance, native source, resources, Bible names and migrations preserved.')
+print('All existing keys, plural branches, placeholder names, Ten-Step guidance, native source outside the seven explicitly allowed display-metadata/accessibility source files, the generated document fixture and its optional-format test adaptation, resources, Bible names and migrations preserved.')

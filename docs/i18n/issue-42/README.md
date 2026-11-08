@@ -1,142 +1,91 @@
-# Issue 42 — editorial coverage and owner review
+# Issue #42 — complete AI editorial review for owner assessment
 
-This branch follows the targeted #35/#33 branch at
-`38c785be723f4ff4ca7ba8c885aeabff3a89df7a`. Changes are separated into native
-dialogs/errors/Source diagnostics, Teaching/Settings wording, display formatting,
-and generated review evidence. No paid Actions, installer, updater, merge,
-release or deployment was performed.
+PR #44 remains a **draft**, stacked on PR #43 (`codex/owner-followup-35-33`, `38c785be723f4ff4ca7ba8c885aeabff3a89df7a`). The continuation baseline is `64dadc0d1bb263362aa384951612e9395d705725`. Issue #42 remains open. No human native-speaker approval, owner acceptance or real Windows acceptance is claimed.
 
-**Status: first AI editorial tranche, not complete whole-application editorial
-acceptance.** The inventory is comprehensive; individual linguistic adjudication
-of every unchanged string and every source candidate remains open. Neither
-generated coverage nor a passing key check is presented as native-speaker
-approval. No human native-speaker proofreading has occurred in this task.
+The six separate AI language reviewers read **every baseline locale string**, including formerly unchanged and legacy keys, in all nine namespaces. They recorded retain/edit/protected/question decisions individually, then reviewed 30 new display keys per language discovered by the source audit. Independent consistency passes checked all edits plus retained safety/method contexts; the final 180 additions also received a separate six-language consistency review. Automated inventory/ledger validation verifies that evidence matches the files; it is not presented as the linguistic review itself.
 
-## What is covered
+## Complete coverage and decision evidence
 
-- The complete current six-language corpus is regenerated in
-  [native-polish-review-v0.19.md](../native-polish-review-v0.19.md), including
-  original English and German, all nine namespaces and plural branches. The
-  existing v0.18.10 terminology decisions remain the starting glossary.
-- [inventory.json](inventory.json) fingerprints every TS/TSX and Rust source
-  file inspected by the inventory (375 files), records every statically named
-  native UserMessage code (216), and lists possible hardcoded source strings.
-  All 216 codes have translations in all six languages, including plural-only
-  keys. Candidates include CSS, logs, provider prompts, technical metadata,
-  product names and UI text; a candidate is **not** a confirmed visible leak.
-- All locale keys are inventoried, not just the strings changed since v0.18.10.
-  Per-language files below list every individually edited key, its original and
-  revised wording, context and reason. They explicitly distinguish that work
-  from unchanged inventory entries. Do not close #42 on inventory coverage alone.
-- A source audit found English native file-dialog titles/filter labels, an
-  unsupported-link error, raw English PDF diagnostic verdict/evidence, twelve
-  missing native Library/material/word/field messages, and a plural-key existence
-  bug. These paths now use the active interface language. Unknown coded errors
-  use a localised generic failure rather than exposing an English technical
-  fallback; the stable error code remains available on the API error.
-- Timeout copy now explains the outcome, lack of saved changes and next action,
-  rather than “a safe processing boundary”. Duplicate identical timeout notices
-  are suppressed. Structure-based evidence, manual links, inherited context,
-  Contents entries and literal mentions remain distinct. Technical JSON exports
-  retain their original schema/diagnostic fields; UI wording is localised.
-- Brazilian Portuguese Source processing/diagnostic text uses arquivo, salvar,
-  detectado, compartilhar and natural progressive forms; action references match
-  the actual buttons. Teaching and AI-key labels receive focused register and
-  terminology corrections. German Bibelstudium/Bibellehre distinctions and Korean
-  성경공부 labels are restored where inconsistent or duplicated. Optional Spanish
-  POZETEK application guidance uses the established tú register without changing
-  the method. Bible quotations retain their own original register.
-- Dates explicitly use en-GB; Portuguese formatting uses pt-BR. Stored language
-  IDs, timestamps and data are unchanged. Presenter time, number/size formatting
-  and displayed conjunction lists use the same regional policy. This does not
-  change Bible recognition, book identities, imported Scripture or parsing.
+The final corpus has **4,045 logical English strings / 4,186 English leaves including plural forms**. The 4,015 baseline logical strings were all included, not only the previous 269 edited keys. All **25,396 current locale leaves** have explicit decisions and before/after evidence. This continuation makes **564 existing-leaf edits and 180 new display-label additions**; retain/protected decisions cover everything else, including unresolved questions left unchanged.
 
-## Feature-area matrix
+| Language | Current leaves | Existing edits | Added leaves | First-pass report and individual decisions | Distinct consistency reviewer |
+| --- | ---: | ---: | ---: | --- | --- |
+| en-GB | 4,186 | 70 | 30 | [English](review-en.md) · [ledger](review-en-decisions.json) | [German reviewer](review-de-en-consistency.md) |
+| de, du | 4,186 | 75 | 30 | [German](review-de.md) · [ledger](review-de-decisions.json) | [French reviewer](review-fr-second-de.md) |
+| ko, respectful | 4,046 | 46 | 30 | [Korean](review-ko.md) · [ledger](review-ko-decisions.json) | [Portuguese reviewer](review-pt-second-ko.md) |
+| fr, vous | 4,326 | 166 | 30 | [French](review-fr.md) · [ledger](review-fr-decisions.json) | [Spanish reviewer](review-es-second-fr.md) |
+| es, tú | 4,326 | 131 | 30 | [Spanish](review-es.md) · [ledger](review-es-decisions.json) | [Korean reviewer](review-ko-second-es.md) |
+| pt-BR, você | 4,326 | 76 | 30 | [Brazilian Portuguese](review-pt.md) · [ledger](review-pt-decisions.json) | [Coordinating reviewer](review-root-second-pt.md) |
 
-| Area | Review/evidence in this tranche | Still open |
+Each ledger contains key/path, feature context, exact baseline/result text, disposition and reason. New keys have explicit addition decisions. Counts include every plural branch, not just a representative form. [Final additions review](review-fr-final-additions.md) documents locator, format, additional-book, PowerPoint and Word labels in all six languages. The complete side-by-side corpus and automated terminology flags remain in [the generated corpus](../native-polish-review-v0.19.md) and [priority report](../native-polish-priority-v0.19.md). Their remaining heuristic flags are explained by the individual decisions; they are not human-review verdicts.
+
+## Feature and source-context matrix
+
+| Priority / area | Completed AI editorial scope and concrete result | Remaining assessment boundary |
 | --- | --- | --- |
-| Common/navigation/accessibility | Complete key/source inventory; registers, British formatting, native picker captions, narrow-pane screenshots | Individually adjudicate all unchanged labels and ARIA/keyboard paths; Windows high-DPI checks |
-| Library/Source/PDF/EPUB/DOCX | Native-message coverage, headings/diagnostics/timeout copy, raw English leaks, pt-BR review; six-language timeout screenshots | All non-PDF reader states and original-file Windows acceptance |
-| Scripture/books/canon/references | Existing registry names preserved; plural-native-error fix; no imported text or recognition changes | Independent linguistic pass over every remaining grammar/import/edition warning; do not infer canon approval from key coverage |
-| Bible Study/POZETEK | Source-backed compact hints/Kern triplet in parent; terminology and Spanish register corrections; writing/repair/Undo regressions | Confirm specialist Kern terminology with owner/native reviewers; original unpublished guide unavailable except owner's issue excerpts |
-| Ten-Step | Accepted guidance and resources byte/wording protected; no substantive or editorial change | No new method acceptance requested |
-| Teaching/Q&A/templates | Three source-backed hints in parent; German/Korean/Portuguese workspace terminology; template/privacy terminology preserved | Full individual pass of all remaining templates/Q&A and exports; EVA/Bible Lesson primary guidance not supplied |
-| Materials/presentation/exports | Materials error localised; privacy distinction checked in all six languages; presenter clock variant; existing glossary retained | All generated-document/slide/error contexts in six languages, long text and high DPI |
-| Optional AI/settings | All-six-language review of assistant intro, key storage, model/search and image-consent wording; pt-BR action references corrected | Every provider-specific context; live DeepSeek Korean correction remains owner acceptance |
-| Backup/restore/lifecycle | All-six-language review of backup privacy, key exclusion, replacement confirmation, recovery copy and file-preservation warnings; retained | Remaining destructive-state/restore UI contexts on Windows |
-| Native/Tauri/error handling | 216 statically named codes × six locales; plural and unknown-code regressions; translated picker options tested | Dynamically composed/uncoded paths and platform-owned dialog chrome need contextual adjudication |
+| P0 Errors/native dialogs/accessibility | All errors and import warnings, dynamic parameters, plural-only/unknown-code handling, labels/ARIA/keyboard announcements, native picker titles/filters. German timeout no longer exposes English. | OS-owned dialog chrome, assistive-technology software and Windows WebView2 require platform assessment. |
+| P0 Sources/PDF/EPUB/DOCX | All locale copy, diagnostics, contents/TOC, source annotations, progress/cancellation/retry and generated evidence; original/reading surfaces and hardcoded paths traced. | Real MacArthur 400-page processing, persistence and explicit Apg 6 target remain #35 owner gates; synthetic results do not establish them. |
+| P0 Scripture/import/canon | Complete book/reference/morphology/edition/import-warning wording; separate code-based additional-book labels and known format parameters localised. Greek/Latin distinctions and uncertainty retained. | Imported Scripture, actual source/edition copyright/licence data, canon identities and recogniser preserved verbatim; no new canon/theological approval. |
+| P0 Study/POZETEK/Ten-Step | All templates, sections/fields, findings, Q&A, repair/Undo, help and writing flows read. Seven POZETEK sections and subject/statement/theme Kern triplet preserved. Spanish Kern edits only change usted to established tú. | Accepted Ten-Step wording unchanged; two genuine French syntax occurrences are separately flagged below. Original unpublished guide/workshop not directly available. |
+| P0 Teaching/Materials/privacy | Complete EVA/sermon-talk/lesson, leader/participant text, template builders, transfer/Q&A and privacy labels read; no added theology or new method summary. | Primary owner material, live AI response and actual external Word/PowerPoint rendering are separate assessment contexts. |
+| P1 Exports/presentations | Generated manuscript/sheets/Markdown/Word/PDF/PowerPoint labels and error paths traced. British/Brazilian proofing tags, empty Q&A filename, PowerPoint selection/accessibility names and nine custom Word style names fixed. | Built-in Word style identities and package schema/IDs remain invariant; actual audience/projector/Windows/Office acceptance still needed. |
+| P0 AI/settings/backup | Every provider/consent/model/image/offline/privacy/settings/destructive/restore string read. Structured AI preview/evidence facts and generated image credits remove English wrappers without rewriting provenance. | No live service requests, billing, API-key use or real restore performed. Local-installation explanatory wording has the limited question below. |
+| P1 Common/navigation/legacy | All nine namespaces, deliberate product names, defaults, typography, register, dates/numbers, unused/duplicate/legacy strings individually read. | Sample screenshots demonstrate selected contexts, not every possible rendered state or qualified native-speaker approval. |
 
-The privacy wording checked in all six languages preserves: only slides reach
-the audience; private Teaching notes stay out of participant Materials; AI is
-optional and works on request; API keys stay in the local password store and
-out of backups; full backups are private and restore replaces current work with
-a preceding safety copy. These checks are linguistic, not a new security audit.
+[Frontend/source audit](review-frontend-source.md) and [1,786 frontend candidate dispositions](review-frontend-source-decisions.json) distinguish visible copy from CSS/logs/developer-only diagnostics. [Native audit](review-de-native-audit.md) and [1,978 lexical dispositions](review-de-native-source-decisions.json) classify initial native-source candidates, with final display fixes reviewed in their diffs and dedicated tests. [The refreshed inventory](inventory.json) fingerprints 377 final production source files and covers 216 statically named native message codes in all six languages. Its broad regular-expression candidates include SQL/XML/test/protocol false positives; the context audits supersede those candidates. Key mapping alone is not the editorial evidence.
 
-## Independent language notes and evidence
+The source fixes use transient display metadata, not changes to stored studies or writing. Source titles, authors, quotations, actual attribution, printed page labels, imported text and stable model/command identities stay exact. [Word mapping evidence](review-pt-word-styles.md) shows the nine distinct custom style names in every language. Owner-defined technical diagnostic JSON retains its requested English evidence/schema while visible verdicts are localised.
 
-The complete corpus contains 4,015 logical English strings (4,156 English keys
-including plural forms). Raw key counts are EN 4,156; DE 4,156; KO 4,016;
-FR/ES/pt-BR 4,296 each. These differences reflect the locales' plural forms.
-This tranche individually edits 269 keys across the six languages; that count
-does not imply individual adjudication of every other key.
+## Context screenshots and checks
 
-| Language | Register/glossary decisions | Change log | UI evidence |
+The final [72 editor/settings cases](images/full-review/checks.json) and [12 Source/Scripture/timeout cases](images/full-review/source-checks.json) provide **96 screenshots** across all six languages at 900px (1.5 device scale) and 1440px (1.0 scale). The synthetic profile exercises Study, Teaching, deletion with Escape/focus return, Settings, AI/privacy, backup, source reading, missing Scripture text and a native timeout carrying the witnessed English fallback. No page error or pane/dialog horizontal overflow was observed in those samples. Hot reload is disabled for the editor capture to keep the sampled copy stable.
+
+| Language | Study / Teaching (900px) | Source / timeout (900px) | AI / backup (900px) |
 | --- | --- | --- | --- |
-| en-GB | British spelling/date order; Bible Study, Bible Teaching, Materials and manuscript distinctions retained | [English](en.md) | [Before](images/en-before-timeout-900.png) / [after](images/en-after-timeout-900.png) |
-| de | Familiar du; Bibelstudium versus Bibellehre; no new teaching methodology | [German](de.md) | [Before](images/de-before-timeout-900.png) / [after](images/de-after-timeout-900.png) |
-| ko | Respectful endings; 성경공부 / 성경 가르침 / 틀; remove duplicated 성경; distinguish foot/endnotes from commentary | [Korean](ko.md) | [Before](images/ko-before-timeout-900.png) / [after](images/ko-after-timeout-900.png) |
-| fr | Consistent vous; curly apostrophes; nonbreaking spaces in new quoted-name messages | [French](fr.md) | [Before](images/fr-before-timeout-900.png) / [after](images/fr-after-timeout-900.png) |
-| es | Existing tú; Spain-leaning established vocabulary (ordenador, añadir), broadly understandable; no switch to vosotros or regional Bible-name changes | [Spanish](es.md) | [Before](images/es-before-timeout-900.png) / [after](images/es-after-timeout-900.png) |
-| pt-BR | Você, arquivo and salvar; Brazilian progress forms; preserve meaningful keep/save distinctions | [Brazilian Portuguese](pt.md) | [Before](images/pt-before-timeout-900.png) / [after](images/pt-after-timeout-900.png) |
+| en-GB | [Study](images/full-review/en-study-900.png) · [Teaching](images/full-review/en-teaching-900.png) | [Source](images/full-review/en-source-900.png) · [timeout](images/full-review/en-timeout-900.png) | [AI](images/full-review/en-ai-settings-900.png) · [backup](images/full-review/en-backup-settings-900.png) |
+| de | [Study](images/full-review/de-study-900.png) · [Teaching](images/full-review/de-teaching-900.png) | [Source](images/full-review/de-source-900.png) · [timeout](images/full-review/de-timeout-900.png) | [AI](images/full-review/de-ai-settings-900.png) · [backup](images/full-review/de-backup-settings-900.png) |
+| ko | [Study](images/full-review/ko-study-900.png) · [Teaching](images/full-review/ko-teaching-900.png) | [Source](images/full-review/ko-source-900.png) · [timeout](images/full-review/ko-timeout-900.png) | [AI](images/full-review/ko-ai-settings-900.png) · [backup](images/full-review/ko-backup-settings-900.png) |
+| fr | [Study](images/full-review/fr-study-900.png) · [Teaching](images/full-review/fr-teaching-900.png) | [Source](images/full-review/fr-source-900.png) · [timeout](images/full-review/fr-timeout-900.png) | [AI](images/full-review/fr-ai-settings-900.png) · [backup](images/full-review/fr-backup-settings-900.png) |
+| es | [Study](images/full-review/es-study-900.png) · [Teaching](images/full-review/es-teaching-900.png) | [Source](images/full-review/es-source-900.png) · [timeout](images/full-review/es-timeout-900.png) | [AI](images/full-review/es-ai-settings-900.png) · [backup](images/full-review/es-backup-settings-900.png) |
+| pt-BR | [Study](images/full-review/pt-study-900.png) · [Teaching](images/full-review/pt-teaching-900.png) | [Source](images/full-review/pt-source-900.png) · [timeout](images/full-review/pt-timeout-900.png) | [AI](images/full-review/pt-ai-settings-900.png) · [backup](images/full-review/pt-backup-settings-900.png) |
 
-The parent also includes [24 Kern screenshots/checks](../../implementation/owner-followup/images/browser-checks.json)
-for all six languages at 900/1440px. [Twelve timeout cases](images/browser-checks.json)
-exercise the real React UI with an invented profile and synthetic native failure.
-No page errors or dialog horizontal overflow were observed. These are Linux
-Chromium tests, **not Windows WebView2 or actual MacArthur acceptance**. Native
-dialog options are unit-tested; OS-owned dialog buttons require Windows review.
+These are **Linux Chromium with a generated PDF and invented memory profile**, not Windows WebView2/high-DPI, actual owner files, native screen-reader operation, real OS dialogs, a live DeepSeek Korean response or Windows acceptance. The installed Scripture fixture has no imported text; its missing-text warning is intentional. The earlier [before/after timeout evidence](images/browser-checks.json) and [parent Kern evidence](../../implementation/owner-followup/images/browser-checks.json) remain historical comparisons.
 
-## Reproduction and preservation
+## Owner questions retained without invention
+
+1. **Protected French Ten-Step syntax:** both the legacy context-field help and current step-04 guidance contain “Que précède et suit ce passage ?”. Suggested genuine linguistic correction: “Qu’est-ce qui précède et suit ce passage ?”. Both remain unchanged and individually flagged; no accepted method wording was silently altered.
+2. **Template sample quotation provenance:** “Abiding is not a technique but a friendship.” / “A pastor” was retained. Confirm whether this is deliberately invented sample copy or a source-backed quotation before changing its attribution or theological wording.
+3. **Local-installation explanatory scope:** the local-provider installation help says text never leaves the computer. The actual provider help and consent path correctly evaluate the current address (verified in source); the separate installation explanation could be made explicitly about the default loopback setup when a person later changes Address. Existing wording is retained pending that contextual policy decision; no new privacy promise is introduced.
+4. **Unavailable primary owner source:** the private YCC/Campus Connect/EVA workshop and unpublished original method guide were not directly available. Existing owner-provided/accepted text and issue excerpts were preserved; this review does not invent source access or certify new methodological fidelity. Apg 6 in English diagnostic help remains the owner’s explicit acceptance query, deliberately retained rather than treated as an English leak.
+
+Qualified human native-speaker proofreading and owner assessment have not occurred. These questions and platform gaps remain explicit; the individual AI review and recorded verification gates are complete and ready for owner assessment.
+
+## Verification and preservation
+
+Final verification results and resolved earlier failures are recorded in [verification.json](verification.json), with complete frontend case results and native logs. **1,289 frontend tests passed (120 files); 1,103 Rust tests passed, with 8 existing ignored tests.** Typecheck, ESLint, locale/corpus/individual-ledger/preservation/query checks, Rust fmt, all-target locked Clippy, frontend production build and Linux locked release compilation passed. The release compile took 6m10s; the frontend retains its existing large-chunk warning. No earlier partial result substitutes for these final results.
+
+Reproduction (Node >=20.19, stable Rust with rustfmt/Clippy and the usual Tauri Linux development libraries):
 
 ```sh
-node scripts/i18n-editorial-inventory.mjs
+npm ci
+node scripts/i18n-editorial-inventory.mjs --inventory-only
 npm run i18n:corpus
-npm run i18n:check
+node scripts/test-editorial-review.mjs
 python3 scripts/test-editorial-contract.py
 python3 scripts/test-pdf-index-query.py
+npm run typecheck
+npm run lint
+npm run i18n:check
+npm test -- --maxWorkers=1
+npm run build
+cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
+cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings
+cargo test --manifest-path src-tauri/Cargo.toml --locked
+cargo build --manifest-path src-tauri/Cargo.toml --release --locked
 ```
 
-The contract test preserves every existing key, placeholder name and ICU plural
-branch, all Ten-Step wording, native source/resources and Bible names relative
-to this tranche's parent. All migrations, schema 27, reserved 0028 and original
-sources remain untouched. UI-language changes never rewrite user writing.
-The #35 offline query-work regression checks the production SQL uses the source
-index and stays below 100,000 VM steps for 4,112 links (observed 45,200).
+Browser reproduction uses the screenshot Vite harness on port 1432 with `SCREENSHOT_DATA` pointing to the generated `pdf_structure` fixture (`AW_PDF_REVIEW_DIR`), then `tests/screenshots/editorial-full.mjs` and `editorial-sources.mjs` with Playwright/Chromium. The test fixture generator and all UI profiles are synthetic. Workspace-local XDG directories are needed in a read-only-home Cloud sandbox for Tauri mock capability tests; this does not alter app capabilities.
 
-Verification: typecheck, ESLint, localisation and corpus checks, the editorial
-preservation contract, the query-work regression, and 36 recorded browser cases
-(24 parent Kern cases plus 12 timeout cases). All 216 statically named native
-codes are covered in six locales; plural-only and unsupported-code cases have
-dedicated runtime regressions. Rust checks on the unchanged native source pass:
-1,095 tests, eight existing ignored; formatting and locked all-target Clippy with
-warnings denied. Local locked Rust release compilation passed in 7m46s.
-Frontend production build passed with its existing large-chunk warning. The
-final clean frontend run passed all 1,246 tests in 117 files, with zero failures.
-The local native
-release build is Linux compilation evidence, not a Windows installer. Do not
-dispatch an old acceptance workflow and assume it builds these branches: the
-existing installer workflow is still pinned to its separately reviewed source.
+The preservation gate keeps all baseline keys, plural branches, placeholder names, accepted Ten-Step text, Bible-name registry bytes, resources, schema 27, historical migrations, reserved 0028, recogniser/importers, stored manuscripts and user source material intact. Its narrow native exception list covers only transient display facts, generated export accessibility/style labels and the exact generated fixture/optional-format test adaptation. No workflow/NSIS/updater change, paid GitHub Actions, installer, merge, release, deployment or live AI request was performed. Feature commits carry `[skip ci]`; the draft remains based on PR #43.
 
-## Owner gates
-
-Keep #35/#33/#42 and PR #37 owner gates open. The real MacArthur PDF must rebuild
-and persist on Windows, then an explicitly entered Apg 6 diagnostic must show
-the actual target. Source ranking changes are not claimed here. Windows layout,
-original PDF, real DeepSeek Korean correction, privacy-safe exports and all A.4
-acceptance gates remain intact. Do not publish the private workshop/guide files.
-
-Whole-application individual editorial adjudication, remaining source candidates,
-unsampled UI contexts and qualified native-speaker proofreading are explicitly
-outstanding. This draft supplies a reproducible complete inventory and concrete
-reviewed corrections; it does not substitute those for the exhaustive approval
-requested by #42.
+Historical first-tranche edit reports `en.md`, `de.md`, `ko.md`, `fr.md`, `es.md`, `pt.md` are retained for the prior PR history. The `review-*` reports/ledgers above supersede their incomplete-review status for this continuation.
