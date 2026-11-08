@@ -110,6 +110,20 @@ corrected in the helper (`glyph-fidelity.md`):
 On the sampled pages of F02 and engbsb every glyph both engines read now
 ends within 0.1 pt of pdf-extract's.
 
+## 5a. Checks
+
+At `51346f6`:
+
+* `cargo fmt -- --check`: clean.
+* `cargo clippy --all-targets --locked -- -D warnings`: clean, for the app
+  and for `tools/pdfium-glyphs`.
+* `cargo test --release --locked`: 1 051 passed, 0 failed, 8 ignored (the
+  harnesses), in 77 binaries. This includes the 4 `pdf_glyph_source` tests:
+  record stream, hang, crash, password.
+* `npm run typecheck`, `lint`, `i18n:check`, `test` (1 053 tests) and
+  `build`: all passed. No interface file changed.
+* Windows cross-build of the helper (`x86_64-pc-windows-gnu`): builds.
+
 ## 5. Unresolved risks
 
 1. **Word spacing (`Tw`).** It is not available from PDFium per character,
