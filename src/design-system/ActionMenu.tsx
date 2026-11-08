@@ -1,3 +1,5 @@
+import { createPortal } from "react-dom";
+import { useAnchoredPopover } from "./useAnchoredPopover";
 import { Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { MoreHorizontal } from "lucide-react";
 
@@ -27,6 +29,7 @@ export function ActionMenu({
   trigger,
   buttonId,
   align = "end",
+  portal = false,
 }: {
   label: string;
   actions: MenuAction[];
@@ -36,11 +39,14 @@ export function ActionMenu({
   buttonId?: string;
   /** Which edge of the button the menu lines up with: its end (the default, for a menu at the end of a row) or its start. */
   align?: "start" | "end";
+  portal?: boolean;
 }) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLDivElement>(null);
+  const position = useAnchoredPopover(button, open && portal);
+  const layer = (content: ReactNode) => portal ? createPortal(content, document.body) : content;
 
   useEffect(() => {
     if (!open) return;
@@ -85,7 +91,7 @@ export function ActionMenu({
       >
         {trigger ?? <MoreHorizontal className="size-4" aria-hidden="true" />}
       </button>
-      {open && (
+      {open && layer(
         <div
           id={id}
           ref={menu}
@@ -106,7 +112,8 @@ export function ActionMenu({
               setOpen(false);
             }
           }}
-          className={`aw-popover absolute ${align === "start" ? "left-0" : "right-0"} top-full z-30 mt-1 flex min-w-max flex-col p-1 font-ui`}
+          style={portal ? position : undefined}
+          className={`aw-popover ${portal ? "" : "absolute"} ${portal ? "" : align === "start" ? "left-0" : "right-0"} ${portal ? "" : "top-full mt-1 min-w-max"} z-30 flex flex-col p-1 font-ui`}
         >
           {actions.map((action, index) => (
             <Fragment key={action.label}>
@@ -132,7 +139,7 @@ export function ActionMenu({
                 action.onSelect(button.current);
               }}
               className={`flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary ${
-                action.description ? "max-w-80 py-1.5" : "whitespace-nowrap"
+                action.description ? "max-w-80 py-1.5" : portal ? "whitespace-normal" : "whitespace-nowrap"
               }`}
             >
               {action.icon}

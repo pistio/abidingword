@@ -1,10 +1,11 @@
+import { readerPage, readerPageName, jumpReaderPage } from "../support/readerActions";
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { createFakePdfEngine, installIntersectionObserver } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
-import { readerAction, readerActionEnabled } from "../support/readerActions";
+import { readerAction, readerActionEnabled, pinReaderActions } from "../support/readerActions";
 
 // All library text here is invented for the tests.
 const VINE: SourceFixture = {
@@ -32,6 +33,7 @@ const ESSAY: SourceFixture = {
 const sourcesPane = () => screen.getByRole("complementary", { name: "Sources" });
 
 function setup({ pages = 4, sources = [VINE, ESSAY] }: { pages?: number; sources?: SourceFixture[] } = {}) {
+  pinReaderActions(["find","contents","zoomOut","zoomIn","fitWidth","fitPage"]);
   const api = createMemoryApi();
   api.installFixtureBible("FXA", "alpha");
   api.state.settings.scripturePassage = "JHN.15";
@@ -59,7 +61,7 @@ async function openCitationInPane(user: User) {
 
 const header = () => screen.getByTestId("reader-header");
 const modes = () => within(header()).queryByRole("group", { name: "View" });
-const pageBox = () => screen.getByRole("textbox", { name: "Page number" }) as HTMLInputElement;
+const pageBox = () => readerPage();
 
 let restore: (() => void) | null = null;
 afterEach(() => {
@@ -112,7 +114,7 @@ describe("Reading and Original", () => {
     await user.click(await within(screen.getByRole("list", { name: "Sources" })).findByRole("button", { name: /^Notes on the Vine/ }));
     await screen.findByTestId("pdf-canvas");
     await waitFor(() => expect(screen.getByTestId("pdf-canvas").parentElement!.scrollTop).toBe(425));
-    expect(pageBox()).toHaveValue("1");
+    expect(pageBox()).toHaveAccessibleName(readerPageName("1"));
   });
 
   it("opens in Reading, the existing extracted-text reader", async () => {
@@ -142,13 +144,13 @@ describe("Reading and Original", () => {
     await openFromLibrary(user);
     await user.click(within(modes()!).getByRole("button", { name: "Original" }));
 
-    const toolbar = await screen.findByRole("toolbar", { name: "Original document controls" });
-    for (const name of ["Previous page", "Next page", "Zoom in", "Zoom out", "Fit width", "Fit page"]) {
+    const toolbar = await screen.findByRole("toolbar", { name: "Reader tools" });
+    for (const name of ["Previous PDF page", "Next PDF page", "Zoom in", "Zoom out", "Fit width", "Fit page"]) {
       expect(within(toolbar).getByRole("button", { name })).toBeInTheDocument();
     }
-    await waitFor(() => expect(pageBox()).toHaveValue("1"));
-    expect(within(toolbar).getByText("/ 4")).toBeInTheDocument();
-    expect(within(toolbar).getByRole("status")).toHaveTextContent("Page 1 of 4");
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("1")));
+    expect(within(toolbar).getByTestId("pdf-page-indicator")).toHaveTextContent("1 / 4");
+    expect(within(toolbar).getByTestId("pdf-page-indicator")).toHaveAccessibleName(/PDF page 1 of 4/);
     // Fit width is the default, and the reader is still the same source.
     expect(within(toolbar).getByRole("button", { name: "Fit width" })).toHaveAttribute("aria-pressed", "true");
     expect(engine.opened).toHaveLength(1);
@@ -160,25 +162,25 @@ describe("Reading and Original", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openFromLibrary(user);
     await user.click(within(modes()!).getByRole("button", { name: "Original" }));
-    const toolbar = await screen.findByRole("toolbar", { name: "Original document controls" });
-    await waitFor(() => expect(pageBox()).toHaveValue("1"));
-    expect(within(toolbar).getByRole("button", { name: "Previous page" })).toBeDisabled();
+    const toolbar = await screen.findByRole("toolbar", { name: "Reader tools" });
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("1")));
+    expect(within(toolbar).getByRole("button", { name: "Previous PDF page" })).toBeDisabled();
 
-    await user.click(within(toolbar).getByRole("button", { name: "Next page" }));
-    expect(pageBox()).toHaveValue("2");
-    await user.click(within(toolbar).getByRole("button", { name: "Next page" }));
-    await user.click(within(toolbar).getByRole("button", { name: "Next page" }));
-    expect(pageBox()).toHaveValue("4");
-    expect(within(toolbar).getByRole("button", { name: "Next page" })).toBeDisabled();
-    await user.click(within(toolbar).getByRole("button", { name: "Previous page" }));
-    expect(pageBox()).toHaveValue("3");
+    await user.click(within(toolbar).getByRole("button", { name: "Next PDF page" }));
+    expect(pageBox()).toHaveAccessibleName(readerPageName("2"));
+    await user.click(within(toolbar).getByRole("button", { name: "Next PDF page" }));
+    await user.click(within(toolbar).getByRole("button", { name: "Next PDF page" }));
+    expect(pageBox()).toHaveAccessibleName(readerPageName("4"));
+    expect(within(toolbar).getByRole("button", { name: "Next PDF page" })).toBeDisabled();
+    await user.click(within(toolbar).getByRole("button", { name: "Previous PDF page" }));
+    expect(pageBox()).toHaveAccessibleName(readerPageName("3"));
 
-    await user.clear(pageBox());
-    await user.type(pageBox(), "2{Enter}");
-    expect(pageBox()).toHaveValue("2");
-    await user.clear(pageBox());
-    await user.type(pageBox(), "99{Enter}");
-    expect(pageBox()).toHaveValue("4"); // clamped to the last page
+    await jumpReaderPage(user, 2);
+    expect(pageBox()).toHaveAccessibleName(readerPageName("2"));
+    await jumpReaderPage(user, 99);
+    expect(screen.getByRole("alert")).toHaveTextContent(/Enter a page/);
+    expect(pageBox()).toHaveAccessibleName(readerPageName("2")); // invalid jump is refused
+    await user.keyboard("{Escape}");
 
     const zoom = screen.getByTestId("pdf-zoom");
     await user.click(within(toolbar).getByRole("button", { name: "Zoom in" }));
@@ -238,12 +240,12 @@ describe("Reading and Original", () => {
       await i18n.changeLanguage("de");
     });
     await user.click(within(header()).getByRole("button", { name: "Original" }));
-    const toolbar = await screen.findByRole("toolbar", { name: "Steuerung des Originaldokuments" });
-    for (const name of ["Vorherige Seite", "Nächste Seite", "Vergrößern", "Verkleinern", "Seitenbreite", "Ganze Seite"]) {
+    const toolbar = await screen.findByRole("toolbar", { name: "Lesewerkzeuge" });
+    for (const name of ["Vorherige PDF-Seite", "Nächste PDF-Seite", "Vergrößern", "Verkleinern", "Seitenbreite", "Ganze Seite"]) {
       expect(within(toolbar).getByRole("button", { name })).toBeInTheDocument();
     }
-    expect(within(toolbar).getByRole("textbox", { name: "Seitenzahl" })).toBeInTheDocument();
-    expect(within(toolbar).getByRole("status")).toHaveTextContent("Seite 1 von 4");
+    expect(within(toolbar).getByTestId("pdf-page-indicator")).toHaveAccessibleName(/PDF-Seite 1 von 4/);
+    expect(within(toolbar).getByTestId("pdf-page-indicator")).toHaveTextContent("1 / 4");
     expect(within(header()).getByRole("group", { name: "Ansicht" })).toBeInTheDocument();
     expect(await screen.findByRole("region", { name: "Originaldokument" })).toBeInTheDocument();
     for (const english of ["Previous page", "Next page", "Zoom in", "Fit width", "Page number"]) {
@@ -291,7 +293,7 @@ describe("Original inside the Sources pane", () => {
 
     expect(await within(reader).findByTestId("pdf-viewer")).toBeInTheDocument();
     expect(originalTab).toHaveFocus(); // changing view does not move focus away
-    expect(within(sourcesPane()).getByRole("toolbar", { name: "Original document controls" })).toBeInTheDocument();
+    expect(within(sourcesPane()).getByRole("toolbar", { name: "Reader tools" })).toBeInTheDocument();
     // Still the workspace: no full reader took over.
     expect(screen.getByRole("main", { name: "Study" })).toBeInTheDocument();
     expect(screen.getByRole("complementary", { name: "Scripture" })).toBeInTheDocument();
@@ -364,8 +366,8 @@ describe("Original inside the Sources pane", () => {
     });
     expect(within(reader).getByRole("group", { name: "Ansicht" })).toBeInTheDocument();
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    const toolbar = await within(reader).findByRole("toolbar", { name: "Steuerung des Originaldokuments" });
-    for (const name of ["Vorherige Seite", "Nächste Seite", "Vergrößern", "Verkleinern", "Seitenbreite", "Ganze Seite"]) {
+    const toolbar = await within(reader).findByRole("toolbar", { name: "Lesewerkzeuge" });
+    for (const name of ["Vorherige PDF-Seite", "Nächste PDF-Seite", "Vergrößern", "Verkleinern", "Seitenbreite", "Ganze Seite"]) {
       expect(within(toolbar).getByRole("button", { name })).toBeInTheDocument();
     }
   });
@@ -376,18 +378,18 @@ describe("Original inside the Sources pane", () => {
     await user.click((await within(sourcesPane()).findAllByRole("button", { name: /^Notes on the Vine/ }))[0]!);
     const reader = await pane();
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    const toolbar = await within(reader).findByRole("toolbar", { name: "Original document controls" });
-    for (const name of ["Previous page", "Next page", "Zoom in", "Zoom out", "Fit width", "Fit page"]) {
+    const toolbar = await within(reader).findByRole("toolbar", { name: "Reader tools" });
+    for (const name of ["Previous PDF page", "Next PDF page", "Zoom in", "Zoom out", "Fit width", "Fit page"]) {
       const button = within(toolbar).getByRole("button", { name });
       expect(button).toHaveAccessibleName(name);
       expect(button.getAttribute("title") ?? button.textContent).toBeTruthy();
     }
-    expect(within(toolbar).getByRole("textbox", { name: "Page number" })).toBeInTheDocument();
-    // The toolbar wraps rather than forcing the pane to scroll sideways, and
-    // the text beside the fit icons collapses (but stays readable to assistive technology) when narrow.
-    expect(toolbar.className).toMatch(/flex-wrap/);
+    expect(within(toolbar).getByTestId("pdf-page-indicator")).toBeInTheDocument();
+    // One shared nonwrapping row; pinned controls retain accessible names.
+    expect(toolbar.className).toMatch(/flex-nowrap/);
     expect(toolbar.className).toMatch(/@container/);
-    expect(within(toolbar).getByText("Fit width").className).toMatch(/@max-md:sr-only/);
+    expect(within(toolbar).getByRole("button", {name:"Fit width"})).toHaveAccessibleName("Fit width");
+    expect(within(reader).queryByRole("toolbar", {name:"Original document controls"})).toBeNull();
   });
 
   it("does not redraw pages while the pane is being resized", async () => {
@@ -435,8 +437,8 @@ describe("the place is kept between the pane and the full reader", () => {
     const reader = await openCitationInPane(user);
     await waitFor(() => expect(reader.querySelector("[data-target]")).toHaveAttribute("data-seg-page", "3"));
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    await within(reader).findByRole("toolbar", { name: "Original document controls" });
-    await waitFor(() => expect(pageBox()).toHaveValue("3"));
+    await within(reader).findByRole("toolbar", { name: "Reader tools" });
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("3")));
     expect(screen.queryByRole("heading", { level: 1, name: "Notes on the Vine" })).toBeNull();
   });
 
@@ -445,9 +447,9 @@ describe("the place is kept between the pane and the full reader", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     const reader = await openCitationInPane(user);
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    await waitFor(() => expect(pageBox()).toHaveValue("3"));
-    await user.click(screen.getByRole("button", { name: "Previous page" }));
-    expect(pageBox()).toHaveValue("2");
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("3")));
+    await user.click(screen.getByRole("button", { name: "Previous PDF page" }));
+    expect(pageBox()).toHaveAccessibleName(readerPageName("2"));
 
     const scrolled: HTMLElement[] = [];
     // jsdom has no scrollIntoView; record what the reader scrolls to.
@@ -467,27 +469,27 @@ describe("the place is kept between the pane and the full reader", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     const reader = await openCitationInPane(user);
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    await waitFor(() => expect(pageBox()).toHaveValue("3"));
-    await user.click(screen.getByRole("button", { name: "Next page" }));
-    expect(pageBox()).toHaveValue("4");
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("3")));
+    await user.click(screen.getByRole("button", { name: "Next PDF page" }));
+    expect(pageBox()).toHaveAccessibleName(readerPageName("4"));
 
     // Expand: still Original, still page 4 (not Reading from the start).
     await readerAction(user, "Open full reader", reader);
     expect(await screen.findByRole("heading", { level: 1, name: "Notes on the Vine" })).toBeInTheDocument();
     expect(screen.queryByRole("main", { name: "Study" })).toBeNull();
-    await screen.findByRole("toolbar", { name: "Original document controls" });
-    await waitFor(() => expect(pageBox()).toHaveValue("4"));
+    await screen.findByRole("toolbar", { name: "Reader tools" });
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("4")));
     expect(within(header()).getByRole("button", { name: "Original" })).toHaveAttribute("aria-pressed", "true");
 
     // Go on in the full reader, then return: the pane continues at that page, same view.
-    await user.click(screen.getByRole("button", { name: "Previous page" }));
-    await user.click(screen.getByRole("button", { name: "Previous page" }));
-    expect(pageBox()).toHaveValue("2");
+    await user.click(screen.getByRole("button", { name: "Previous PDF page" }));
+    await user.click(screen.getByRole("button", { name: "Previous PDF page" }));
+    expect(pageBox()).toHaveAccessibleName(readerPageName("2"));
     await user.click(within(header()).getByRole("button", { name: "Back" }));
     expect(await screen.findByRole("main", { name: "Study" })).toBeInTheDocument();
     const back = await pane();
     expect(await within(back).findByTestId("pdf-viewer")).toBeInTheDocument();
-    await waitFor(() => expect(pageBox()).toHaveValue("2"));
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("2")));
     expect(within(back).getByRole("button", { name: "Original" })).toHaveAttribute("aria-pressed", "true");
   });
 
@@ -551,7 +553,7 @@ describe("moving across a zoomed page", () => {
       within(modes()!).getByRole("button", { name: "Original" }),
     );
     await screen.findByTestId("pdf-canvas");
-    await waitFor(() => expect(pageBox()).toHaveValue("1"));
+    await waitFor(() => expect(pageBox()).toHaveAccessibleName(readerPageName("1")));
     await act(() => new Promise((r) => requestAnimationFrame(() => r(null)))); // the opening jump
     return user;
   }
@@ -579,7 +581,7 @@ describe("moving across a zoomed page", () => {
     el.scrollLeft = 750; // centre at 1000 of 2000
     el.scrollTop = 3700; // centre at 4000 of 8000
     const toolbar = screen.getByRole("toolbar", {
-      name: "Original document controls",
+      name: "Reader tools",
     });
     await user.click(within(toolbar).getByRole("button", { name: "Zoom in" }));
     expect(el.scrollLeft).toBe(750); // 0.5 * 2000 - 250

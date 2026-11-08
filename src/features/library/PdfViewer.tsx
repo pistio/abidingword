@@ -24,7 +24,10 @@ const GAP = 12;
 const RESIZE_SETTLE_MS = 120;
 const PADDING = 16;
 
-type Zoom = { kind: "fit-width" } | { kind: "fit-page" } | { kind: "percent"; value: number };
+export type Zoom = { kind: "fit-width" } | { kind: "fit-page" } | { kind: "percent"; value: number };
+
+export interface PdfControlState { page: number; total: number; percent: number; fit: Zoom["kind"]; zoom: Zoom }
+export interface PdfControls { zoomBy: (direction: 1 | -1) => void; fitWidth: () => void; fitPage: () => void }
 
 interface PdfViewerProps {
   sourceId: string;
@@ -62,6 +65,10 @@ interface PdfViewerProps {
   selectionRef?: React.MutableRefObject<((selection: Selection) => SourceSelection | null) | null>;
   /** A.4.2: false when the reader's own toolbar already has the page controls (no duplicate row). */
   pageControls?: boolean;
+  /** The Source reader owns the one header; this viewer then renders no toolbar. */
+  initialZoom?: Zoom;
+  controlsRef?: React.MutableRefObject<PdfControls | null>;
+  onControlsState?: (state: PdfControlState | null) => void;
 }
 
 /** A drawn page's text layer, with the stored paragraphs placed on it: how a selection there is read. */
@@ -87,14 +94,14 @@ export interface PdfFind {
  * inspect the source; search, citations and Scripture links stay with the
  * extracted text.
  */
-export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef, pageControls = true }: PdfViewerProps) {
+export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef, pageControls = true, controlsRef, onControlsState, initialZoom }: PdfViewerProps) {
   const { t } = useTranslation();
   const api = useApi();
   const engine = usePdfEngine();
   const [doc, setDoc] = useState<PdfDocument | null>(null);
   const [failed, setFailed] = useState(false);
   const [sizes, setSizes] = useState<Record<number, PdfPageSize>>({});
-  const [zoom, setZoom] = useState<Zoom>({ kind: "fit-width" });
+  const [zoom, setZoom] = useState<Zoom>(initialZoom ?? { kind: "fit-width" });
   const [page, setPage] = useState(Math.max(1, initialPage));
   const [draft, setDraft] = useState<string | null>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
@@ -334,7 +341,7 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
 
   // Zooming keeps the document point at the centre of the view where it was.
   const centre = useRef<{ x: number; y: number } | null>(null);
-  const changeZoom = (next: Zoom) => {
+  const changeZoom = useCallback((next: Zoom) => {
     const el = scroller.current;
     if (el && el.scrollWidth > 0 && el.scrollHeight > 0) {
       centre.current = {
@@ -343,7 +350,7 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
       };
     }
     setZoom(next);
-  };
+  }, []);
   useLayoutEffect(() => {
     const el = scroller.current;
     const kept = centre.current;
@@ -379,12 +386,18 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
     window.addEventListener("mouseup", stop);
   };
 
-  const zoomBy = (direction: 1 | -1) => {
+  const zoomBy = useCallback((direction: 1 | -1) => {
     const now = currentPercent;
     const next =
       direction === 1 ? ZOOM_STEPS.find((s) => s > now + 1) ?? ZOOM_STEPS[ZOOM_STEPS.length - 1]! : [...ZOOM_STEPS].reverse().find((s) => s < now - 1) ?? ZOOM_STEPS[0]!;
     changeZoom({ kind: "percent", value: next });
-  };
+  }, [currentPercent, changeZoom]);
+
+  useEffect(() => {
+    if (controlsRef) controlsRef.current = { zoomBy, fitWidth: () => changeZoom({kind:"fit-width"}), fitPage: () => changeZoom({kind:"fit-page"}) };
+    onControlsState?.(failed ? null : {page,total,percent:currentPercent,fit:zoom.kind,zoom});
+  }, [controlsRef,onControlsState,page,total,currentPercent,zoom,zoomBy,changeZoom,failed]);
+  useEffect(() => () => { if (controlsRef) controlsRef.current = null; onControlsState?.(null); }, [controlsRef,onControlsState]);
 
   const pages = useMemo(() => Array.from({ length: total }, (_, i) => i + 1), [total]);
 
@@ -403,8 +416,8 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col" data-testid="pdf-viewer">
-      <div
+    <div className="flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden" data-testid="pdf-viewer">
+      {!controlsRef && <div
         role="toolbar"
         aria-label={t("library.original.toolbar")}
         className="@container flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-subtle bg-bg px-3 py-1.5 font-ui text-[0.9375rem]"
@@ -453,7 +466,7 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
             <Maximize2 className="size-4" aria-hidden="true" /> <span className="@max-md:sr-only">{t("library.original.fitPage")}</span>
           </Button>
         </div>
-      </div>
+      </div>}
 
       <div
         ref={scroller}
@@ -462,7 +475,7 @@ export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageCh
         tabIndex={0}
         onScroll={onScroll}
         onMouseDown={onMouseDown}
-        className="relative min-h-0 flex-1 overflow-auto bg-bg-secondary data-[panning=true]:cursor-grabbing data-[panning=true]:select-none"
+        className="relative min-h-0 min-w-0 max-w-full flex-1 overflow-auto bg-bg-secondary data-[panning=true]:cursor-grabbing data-[panning=true]:select-none"
       >
         {!doc && <p className="m-0 p-6 text-text-muted">{t("library.original.loading")}</p>}
         {/* The canvas is at least as wide as the view and as wide as its widest

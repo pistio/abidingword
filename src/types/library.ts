@@ -603,6 +603,15 @@ export interface PdfCorrection {
   id: string; position: number; title: string; level: number; mapping: string | null;
   disabled: boolean; anchorId: string; start: number; end: number; scope: string | null;
 }
+export interface PdfBuildProgress {
+  status: "running" | "succeeded" | "empty" | "cancelled" | "failed";
+  stage: "file" | "segments" | "pdf" | "alignment" | "native" | "headings" | "store" | "index" | "indexed" | "commit";
+  done: number; total: number; elapsedMs: number;
+  timings: { stage: string; milliseconds: number }[];
+  headingCount: number | null; indexedLinks: number | null;
+  errorCode: string | null; canCancel: boolean;
+}
+
 export interface PdfStructureView {
   sourceId: string; fileHash: string | null; status: "ready" | "missing";
   complete: boolean; tagged: boolean; unalignedTags: number; uncertainPages: number;
@@ -620,7 +629,7 @@ export interface ReaderObserved {
   focusedHeadingId?: string | null; variant?: string | null;
 }
 export interface PdfDiagnosticCandidate {
-  rank: number; class: number; origin: string; evidence: string; scope: string | null;
+  evidenceTier?: number; rank: number; class: number; origin: string; evidence: string; scope: string | null;
   basis: string | null; role: string | null; structureNodeId: string | null;
   segmentPosition: number; physicalPage: number | null; printedPage: string | null;
   passage: string; matched: string;

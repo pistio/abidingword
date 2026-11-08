@@ -904,8 +904,8 @@
         "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "People",
-            "guidance": "Who speaks, acts or receives the message? Distinguish what the text says from your assumptions.",
+            "title": "Persons",
+            "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed? Get to know everyone involved before interpreting anything. Record only what the text itself says. Who wrote or spoke this text, as far as the text or its book says? Who is speaking in this passage? Does the speaker change? To whom is the message directed? Add each person or group named or implied. Note the verse and what each one does or is. How are those involved related to one another? Who stands over, with or against whom? What about the people in this text is still unclear? Include the book’s author and original audience, speakers, agents and recipients, including people in parables. Distinguish stated roles and relationships from conjecture.",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -915,7 +915,7 @@
           },
           "place": {
             "title": "Place",
-            "guidance": "Which places and relationships matter to this passage?",
+            "guidance": "Which places and spatial or cultural relationships matter for the text? Notice where things happen or are spoken of. Keep what the text says apart from what you learn from outside sources. List each place the text names. Note the verse and what role it plays. What does outside research add? Say where each piece of information comes from, so it stays distinct from the text. Which place references are still uncertain? Consider where the author and recipients were, the setting and places mentioned. Geography, topography, landscapes, geology, climate, history, archaeology, culture and ethnicity belong here only when they actually explain the text; cite evidence.",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -925,7 +925,7 @@
           },
           "time": {
             "title": "Time",
-            "guidance": "When does this happen? Mark uncertain historical proposals as uncertain.",
+            "guidance": "When does the text take place, and which historical circumstances matter? Place the text in time. Mark what the text states and what is a historical placement that may be uncertain. Which dates, seasons, sequences or phrases such as “then” and “in those days” does the text give? What do you know about the period? Mark uncertain points as uncertain. Where does this information come from? How does time move within the passage? What comes before, during and after? If the text is prophetic: what looks back, what describes the present situation, what announces the future? Distinguish composition, reception by the first audience and the events described. Consider political, social and religious circumstances; separate evidence from hypotheses.",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -934,8 +934,8 @@
             }
           },
           "events": {
-            "title": "Flow of the Passage",
-            "guidance": "Follow the events, structure, reasoning and movement of the passage. This also applies to letters, poetry and arguments.",
+            "title": "Events",
+            "guidance": "What happens? How do events or statements unfold? Follow the movement of the text section by section. The outline is yours to propose and to change. Divide the text into sections. For each, give the verses, what happens or is said, and what it means for the course of the whole. Where does the direction of the text change? Which opposites or tensions does the text set against each other? For letters, prophecy, poetry and teaching, trace the argument, structure and verse-by-verse progression as carefully as narrative actions.",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -972,6 +972,46 @@
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
             }
+          },
+          "context": {
+            "title": "Text context",
+            "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture? See the passage in its surroundings, from the nearest verses outward, and notice where it ends. What comes directly before and after the passage, and how does it connect? What is the book about, and where does the passage stand in its argument or story? How does the passage relate to the rest of Scripture and its storyline? Add related passages. Say what each contributes to understanding this text. Where does the unit begin and end, and why there? Include relevant historical-cultural setting and wider theological connections without overriding what this passage says.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "explanations": {
+            "title": "Explanations",
+            "guidance": "Which terms, statements or interpretive problems need clarifying? Collect questions from the text, check them against evidence, and record the answers you can support. Leave open what is still open. Add each question. Record the verse, the evidence you checked, your answer, and whether the question is still open. Which words need explaining? What do they mean here, in this context? Where more than one explanation is possible, state each with its reasons. Which sources did you use? Note them so you can find them again. Use the text, suitable parallels, reference works and commentaries to investigate difficulties; they support your observation rather than replace it.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "core": {
+            "title": "Core",
+            "guidance": "What is the central message of exactly this passage? Name the core in three steps: what the text is about, what it says about that, and one concise sentence. You may fill them in any order. Name the subject in a few words, without yet saying what the text claims about it. Summarise what the passage says about its subject, as it says it. Join subject and statement in one sentence that you could test against every verse. Keep personal application for a distinct reflection after these seven parts.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "application": {
+            "title": "Personal application",
+            "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
           }
         }
       },
@@ -981,103 +1021,113 @@
         "sections": {
           "step-01-familiarity": {
             "title": "1 — Become familiar with the text",
-            "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely.",
+            "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely. First impressions and unresolved questions, not a finished interpretation. What seems to be the passage's main concern on an initial reading? What scenes, changes or lines of thought are visible?",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "Matthew 8:18–27 contains two encounters about following Jesus, followed by the calming of the storm. Initial questions include the cost of discipleship, the command to let the dead bury their dead, the disciples’ little faith, and the identity of the one who commands wind and sea."
           },
           "step-02-text": {
             "title": "2 — Establish the textual basis",
-            "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty.",
+            "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty. A documented basis for reading this text, with important translation questions marked. Note actual wording differences and whether they matter. Record only variants supported by a trustworthy textual source.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "In Matthew 8:24, translations describe a violent storm or disturbance on the lake. The Greek wording emphasises its intensity. Its precise force must be weighed in context, not expanded into events the passage does not report."
           },
           "step-03-situation": {
             "title": "3 — Clarify the original communication situation",
-            "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference.",
+            "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference. The relevant historical setting, not a collection of unrelated background facts. What can reasonably be established about writer and readers? Distinguish the setting of the reported event from the time of writing.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "Matthew presents Jesus as the promised Messiah. The events occur during his ministry in Galilee. Following a teacher then meant more than attending lessons; Jesus calls people to follow him personally and without treating comfort as the highest good."
           },
           "step-04-context": {
             "title": "4 — Understand the context",
-            "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons.",
+            "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons. Explain how the passage contributes to its book and how its limits were chosen. Where does this unit begin and end? What indicates the boundaries? What comes directly before and after?",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "After the Sermon on the Mount (Matthew 5–7), Matthew 8 portrays Jesus' authority through healings. Two calls to discipleship precede the boat scene: in 8:23 the disciples follow Jesus into the boat. The episodes can also be studied separately."
           },
           "step-05-genre": {
             "title": "5 — Examine the type of text",
-            "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern.",
+            "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern. An interpretation shaped by the way this passage communicates. Is it narrative, poetry, prophecy, letter, law, parable or another genre? What kind of narrative, speech or argument is it?",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "Matthew 8:18–22 contains two short dialogues centred on Jesus' replies; verses 23–27 form a miracle narrative. The disciples fear while Jesus sleeps; the fierce storm gives way to calm; helpless people face Jesus' authority."
           },
           "step-06-language": {
             "title": "6 — Examine words and sentences",
-            "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning.",
+            "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning. Explain significant wording and relationships within the passage. Determine meaning from use in this sentence and context. Look for contrasts, reasons, conditions, actions and their objects.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "In Matthew 8:20, animals have resting places but the Son of Man has nowhere to lay his head: the contrast challenges expectations of secure comfort. In 8:21–22, the issue is the priority of Jesus' call. The father's circumstances cannot be established with certainty from these verses."
           },
           "step-07-flow": {
             "title": "7 — Trace the train of thought",
-            "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline.",
+            "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline. A clear outline drawn from the text, not imposed on it. How does each part lead into the next? Give each segment a short, text-supported heading.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "One possible outline of Matthew 8:18–27: vv. 18–20, the cost of following Jesus; vv. 21–22, the priority of his call; vv. 23–25, disciples follow him into danger; vv. 26–27, Jesus reveals his authority over wind and sea."
           },
           "step-08-theology": {
             "title": "8 — Clarify theological questions",
-            "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible.",
+            "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible. Interpret theological claims in a way that is faithful to this text and the whole Bible. Give evidence, a reasoned answer and a clear status. Explain their contribution, not merely their similarity.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "Matthew 8:22 raises the question of honouring parents: Jesus affirms that duty elsewhere (Matthew 15:4–6), so his words cannot abolish it universally. The storm narrative invites comparison with God's rule over the sea (Psalm 89:10; 107:23–30), sharpening the question of Jesus' identity."
           },
           "step-09-message": {
             "title": "9 — Formulate the central message",
-            "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage.",
+            "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage. A brief and defensible statement of the passage's central message. Name the topic without yet making the text's claim. Summarise the passage's claim about this subject.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "Subject: following Jesus in view of his demands and authority. Statement: Jesus calls for priority over security and other obligations; his followers may trust his authority even in danger. Theme: Following Jesus requires wholehearted commitment and trust in the Lord whose authority is greater than the dangers his disciples face."
           },
           "step-10-application": {
             "title": "10 — Understand and apply the meaning today",
-            "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today.",
+            "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today. A faithful, concrete response grounded in the text and attentive to its original setting. Which truth applies beyond the original situation? Consider covenant and redemptive-historical differences as well as culture.",
             "fields": {
               "answer": {
                 "label": "Your answer",
                 "help": "Write in your own words. Your observations and conclusions can grow here."
               }
-            }
+            },
+            "example": "Matthew 8 calls readers to examine where comfort or security outranks trust in Christ. The disciples' circumstances during Jesus' earthly ministry cannot simply be reproduced today, but his claim on discipleship remains. Confidence rests in Christ's authority, not in the absence of difficulty."
           }
         }
       },
@@ -1871,7 +1921,9 @@
     "toggle": "Add",
     "note": "Note",
     "to": "Add to {{part}}",
-    "writing": "Writing"
+    "writing": "Writing",
+    "textField": "Add text field",
+    "textTo": "Add text field to {{part}}"
   },
   "home": {
     "title": "Studies",
@@ -2786,7 +2838,7 @@
   },
   "flow": {
     "answer": "Your answer",
-    "guidance": "Guidance (optional)",
+    "guidance": "Hints",
     "legacy": "Earlier structured answers",
     "legacyNote": "These answers are kept in their original fields. Nothing has been combined or replaced.",
     "continuous": "Continuous writing",
@@ -2796,7 +2848,8 @@
     "previous": "Previous section",
     "next": "Next section",
     "step": "Section {{current}} of {{total}}",
-    "tenStepAttribution": "Method: Helge Stadelmann and Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). The guidance here is independently written; it does not reproduce the authors’ text."
+    "tenStepAttribution": "Method: Helge Stadelmann and Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). The guidance here is independently written; it does not reproduce the authors’ text.",
+    "hideGuidance": "Hide hints"
   },
   "builder": {
     "title": "Template blocks",
@@ -2872,5 +2925,17 @@
     "fileType": "Markdown",
     "saved": "Saved to {{path}}",
     "empty": "There is nothing to export for this choice yet."
+  },
+  "repair": {
+    "review": "Review POZETEK parts",
+    "undo": "Undo POZETEK repair",
+    "apply": "Add missing parts and order",
+    "explain": "The original seven parts appear first. Missing parts are added empty. Every existing part, including Theme, Understanding, Consequences and duplicate parts, keeps its name, writing, notes and links and follows in its existing relative order when outside the seven-part sequence.",
+    "keep": "Keep existing part",
+    "add": "Add empty part",
+    "duplicates": "Multiple parts share a key: {{parts}}. They remain separate; no content is merged.",
+    "safety": "A persistent Undo receipt restores the previous order and removes only unchanged, empty parts added by this repair. If an added part has changed, Undo refuses and keeps all writing. Back up your profile before repairing important work.",
+    "undoFirst": "Undo the previous repair before applying another.",
+    "finishDrafts": "Finish or close open notes and part-name edits before undoing the repair."
   }
 }

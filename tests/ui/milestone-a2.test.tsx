@@ -117,6 +117,8 @@ it("offers Undo only after the backend confirms a removed method section was emp
   await user.click(await screen.findByRole("button", { name: /^Undo method/ }));
   await user.click(await screen.findByRole("button", { name: i18n.t("studies.sections.options", { title: "Time" }) }));
   await user.click(screen.getByRole("button", { name: i18n.t("studies.sections.delete", { title: "Time" }) }));
+  const confirmation = await screen.findByRole("alertdialog", { name: "Delete part Time?" });
+  await user.click(within(confirmation).getByRole("button", { name: "Delete part" }));
   await user.click(await screen.findByRole("button", { name: "Undo" }));
   await waitFor(() => expect(api.state.sections.filter(part => part.studyId === original.study.id && part.key === "time")).toHaveLength(1));
   const restored = (await api.studyGet(original.study.id)).sections.find(part => part.key === "time")!;

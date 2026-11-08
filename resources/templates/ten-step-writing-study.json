@@ -7,7 +7,7 @@
     {
       "key": "step-01-familiarity",
       "title": "1 — Become familiar with the text",
-      "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely.",
+      "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely. First impressions and unresolved questions, not a finished interpretation. What seems to be the passage's main concern on an initial reading? What scenes, changes or lines of thought are visible?",
       "phase": "text",
       "fields": [
         {
@@ -15,12 +15,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely."
+      ]
     },
     {
       "key": "step-02-text",
       "title": "2 — Establish the textual basis",
-      "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty.",
+      "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty. A documented basis for reading this text, with important translation questions marked. Note actual wording differences and whether they matter. Record only variants supported by a trustworthy textual source.",
       "phase": "text",
       "fields": [
         {
@@ -28,12 +31,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty."
+      ]
     },
     {
       "key": "step-03-situation",
       "title": "3 — Clarify the original communication situation",
-      "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference.",
+      "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference. The relevant historical setting, not a collection of unrelated background facts. What can reasonably be established about writer and readers? Distinguish the setting of the reported event from the time of writing.",
       "phase": "text",
       "fields": [
         {
@@ -41,12 +47,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference."
+      ]
     },
     {
       "key": "step-04-context",
       "title": "4 — Understand the context",
-      "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons.",
+      "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons. Explain how the passage contributes to its book and how its limits were chosen. Where does this unit begin and end? What indicates the boundaries? What comes directly before and after?",
       "phase": "text",
       "fields": [
         {
@@ -54,12 +63,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons."
+      ]
     },
     {
       "key": "step-05-genre",
       "title": "5 — Examine the type of text",
-      "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern.",
+      "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern. An interpretation shaped by the way this passage communicates. Is it narrative, poetry, prophecy, letter, law, parable or another genre? What kind of narrative, speech or argument is it?",
       "phase": "text",
       "fields": [
         {
@@ -67,12 +79,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern."
+      ]
     },
     {
       "key": "step-06-language",
       "title": "6 — Examine words and sentences",
-      "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning.",
+      "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning. Explain significant wording and relationships within the passage. Determine meaning from use in this sentence and context. Look for contrasts, reasons, conditions, actions and their objects.",
       "phase": "understanding",
       "fields": [
         {
@@ -80,12 +95,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning."
+      ]
     },
     {
       "key": "step-07-flow",
       "title": "7 — Trace the train of thought",
-      "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline.",
+      "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline. A clear outline drawn from the text, not imposed on it. How does each part lead into the next? Give each segment a short, text-supported heading.",
       "phase": "understanding",
       "fields": [
         {
@@ -93,12 +111,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline."
+      ]
     },
     {
       "key": "step-08-theology",
       "title": "8 — Clarify theological questions",
-      "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible.",
+      "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible. Interpret theological claims in a way that is faithful to this text and the whole Bible. Give evidence, a reasoned answer and a clear status. Explain their contribution, not merely their similarity.",
       "phase": "understanding",
       "fields": [
         {
@@ -106,12 +127,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible."
+      ]
     },
     {
       "key": "step-09-message",
       "title": "9 — Formulate the central message",
-      "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage.",
+      "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage. A brief and defensible statement of the passage's central message. Name the topic without yet making the text's claim. Summarise the passage's claim about this subject.",
       "phase": "understanding",
       "fields": [
         {
@@ -119,12 +143,15 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage."
+      ]
     },
     {
       "key": "step-10-application",
       "title": "10 — Understand and apply the meaning today",
-      "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today.",
+      "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today. A faithful, concrete response grounded in the text and attentive to its original setting. Which truth applies beyond the original situation? Consider covenant and redemptive-historical differences as well as culture.",
       "phase": "application",
       "fields": [
         {
@@ -132,7 +159,10 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today."
+      ]
     }
   ],
   "offered": true

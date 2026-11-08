@@ -23,9 +23,9 @@ const guidance = /The passage being studied/;
 
 describe("empty prompt and guidance follow what is typed, not what is saved", () => {
   // A.4.3 (#25): guidance is never repeated chrome above the writing; it is kept and shown on request.
-  it("keeps section guidance on request instead of above the writing", async () => {
+  it("shows guidance for an empty part and keeps it available on request", async () => {
     const { user } = await openStudy();
-    expect(study().queryByText(guidance)).not.toBeInTheDocument();
+    expect(study().getByText(guidance)).toBeInTheDocument();
     await showPartHints(user);
     expect(study().getAllByText(guidance)[0]).toBeInTheDocument();
   });

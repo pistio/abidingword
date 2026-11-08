@@ -1,6 +1,7 @@
 //! Source-only PDF structure, not Scripture verification. No source byte or
 //! stored segment is rewritten. Every proposal keeps its own evidence/anchor.
 mod native;
+mod printed;
 mod resolve;
 
 use serde::{Deserialize, Serialize};
@@ -18,7 +19,8 @@ pub const VERSION: i64 = 1;
 /// shape stays [`VERSION`] 1 (so A.3 documents still load); a document built
 /// before A.4.1 reads as 0 and the diagnostic recommends **Rebuild structure**.
 /// 2: margin-only, size-aware running furniture; Contents listings of books.
-pub const ANALYSIS: u32 = 2;
+/// 3: grounded printed book-index targets, ordered evidence levels and safe Source titles.
+pub const ANALYSIS: u32 = 3;
 pub const MAX_HEADINGS: usize = 5_000;
 pub const MAX_LINES: usize = 120_000;
 pub const MAX_CHARS: usize = 8_000_000;
@@ -291,10 +293,20 @@ fn classify_furniture(all: &mut [(Anchor, String, bool, u32)]) {
 }
 
 pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructure {
+    extract_with_progress(bytes, pdf, pieces, |_, _, _| Ok(())).expect("uninterrupted analysis")
+}
+
+pub fn extract_with_progress(
+    bytes: &[u8],
+    pdf: &PdfText,
+    pieces: &[Piece<'_>],
+    mut progress: impl FnMut(&str, usize, usize) -> crate::error::AppResult<()>,
+) -> crate::error::AppResult<PdfStructure> {
     let mut all: Vec<(Anchor, String, bool, u32)> = Vec::new();
     let mut complete = pdf.failed_pages.is_empty();
     let mut chars = 0usize;
-    for page in &pdf.layouts {
+    for (page_index, page) in pdf.layouts.iter().enumerate() {
+        progress("alignment", page_index, pdf.layouts.len())?;
         if all.len() >= MAX_LINES || chars >= MAX_CHARS {
             complete = false;
             break;
@@ -356,7 +368,9 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
     for piece in pieces {
         pieces_by_page.entry(piece.page).or_default().push(piece);
     }
+    progress("native", 0, 0)?;
     let native = native::read(bytes, &all.iter().map(|x| x.0.clone()).collect::<Vec<_>>());
+    progress("headings", 0, 0)?;
     complete &= !native.truncated;
     let mut headings = Vec::new();
     let mut selected = HashSet::new();
@@ -469,6 +483,7 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
             }
         }
     }
+    printed::promote(&all, &native.labels, &mut headings);
     headings.sort_by(|a, b| {
         a.segment_position
             .cmp(&b.segment_position)
@@ -485,7 +500,10 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
         .map(|r| ((r.page, compact(&r.text)), r))
         .collect();
     let mut blocks = Vec::new();
-    for piece in pieces {
+    for (piece_index, piece) in pieces.iter().enumerate() {
+        if piece_index % 64 == 0 {
+            progress("alignment", piece_index, pieces.len())?;
+        }
         let found: Vec<_> =
             by_page
                 .get(&piece.page)
@@ -542,7 +560,7 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
                 .collect(),
         });
     }
-    PdfStructure {
+    Ok(PdfStructure {
         version: VERSION,
         analysis: ANALYSIS,
         page_count: pdf.layouts.len() as u32,
@@ -551,7 +569,7 @@ pub fn extract(bytes: &[u8], pdf: &PdfText, pieces: &[Piece<'_>]) -> PdfStructur
         unaligned_tags: native.unaligned_tags,
         headings,
         blocks,
-    }
+    })
 }
 
 pub use resolve::{effective, presentations};

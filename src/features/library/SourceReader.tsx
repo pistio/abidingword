@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Bookmark, BookOpenText, FileText, Highlighter, Info, List, ListTree, Maximize2, Redo2, Search, StickyNote, Undo2 } from "lucide-react";
+import { ArrowLeft, Bookmark, BookOpenText, FileText, Highlighter, Info, List, ListTree, Maximize2, Redo2, Search, StickyNote, Undo2, ZoomIn, ZoomOut, MoveHorizontal } from "lucide-react";
+import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
 import { Dialog } from "@/design-system/Dialog";
@@ -26,7 +27,7 @@ import { useEpubStructure } from "./formatted/useEpubStructure";
 import { PdfStructurePanel } from "./PdfStructurePanel";
 import { PdfPageNavigation } from "./PdfPageNavigation";
 import { ReaderToolbar, type ReaderAction } from "./ReaderToolbar";
-import { PdfViewer, type PdfFind } from "./PdfViewer";
+import { PdfViewer, type PdfFind, type PdfControls, type PdfControlState, type Zoom } from "./PdfViewer";
 import { canGoBack, canGoForward, NO_HISTORY, stepBack, stepForward, visit, type ReaderHistory, type SourceLocation } from "./readerHistory";
 import { currentEntry, useSourceContents } from "./useSourceContents";
 import { MarksInspector, MarksMarker, type MarkActions } from "./annotations/ParagraphMarks";
@@ -146,8 +147,17 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   const [structureOpen, setStructureOpen] = useState(false);
   const [structureRevision, setStructureRevision] = useState(0);
   // The source's own contents (an EPUB's, a PDF's outline), and the panel that shows them.
-  const { items: contents, generated: contentsGenerated, adopt: adoptContents } = useSourceContents(source.data, structureRevision);
+  const { items: contents, generated: contentsGenerated, generation: contentsGeneration, adopt: adoptContents } = useSourceContents(source.data, structureRevision);
   const stage = useRef<HTMLDivElement>(null);
+  const [compactControls, setCompactControls] = useState(false);
+  useLayoutEffect(() => {
+    const element=stage.current; if (!element) return;
+    const measure=()=> { if(element.clientWidth>0) setCompactControls(element.clientWidth<300); };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer=new ResizeObserver(measure); observer.observe(element);
+    return ()=>observer.disconnect();
+  }, [sourceId]);
   const opener = useRef<HTMLButtonElement>(null);
   const contentsLayout = useContentsLayout(stage, contents.length > 0);
   const [panel, setPanel] = useState<{ currentId: string | null } | null>(null);
@@ -175,6 +185,14 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   };
   // Where the original is, on request (page and how far down it).
   const pdfNow = useRef<(() => PdfPlace) | null>(null);
+  const pdfControls = useRef<PdfControls | null>(null);
+  const [pdfControlsState, setPdfControlsState] = useState<PdfControlState | null>(null);
+  const [pdfZoom, setPdfZoom] = useState<Zoom>({kind:"fit-width"});
+  const [pdfTotal, setPdfTotal] = useState<{id:string; total:number} | null>(null);
+  const pdfControlsChanged = useCallback((next: PdfControlState | null) => {
+    if (next) { setPdfZoom(next.zoom); if (next.total) setPdfTotal({id:sourceId,total:next.total}); }
+    setPdfControlsState(next);
+  }, [sourceId]);
   // The original PDF's page, as state too: the bookmark button says whether this page has one.
   const [pdfPage, setPdfPage] = useState<number | null>(null);
   const [textPage, setTextPage] = useState<number | null>(initialPosition?.page ?? null);
@@ -933,9 +951,11 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 
   const inPane = variant === "pane";
   const navigablePage = showOriginal ? (pdfPage ?? startPage) : (textPage ?? targetPage ?? 1);
-  const pageNavigation = source.data?.format === "pdf" && source.data.pageCount ? <PdfPageNavigation
+  const physicalPages = pdfTotal?.id === sourceId ? pdfTotal.total : source.data?.pageCount;
+  const pageNavigation = source.data?.format === "pdf" && physicalPages ? <PdfPageNavigation
+    compact={compactControls}
     page={navigablePage}
-    total={source.data.pageCount}
+    total={physicalPages}
     printedLabel={window?.segments.find((segment) => segment.pageNumber === navigablePage)?.presentation?.printedLabel ?? window?.segments.find((segment) => segment.pageNumber === navigablePage)?.pageLabel}
     onGo={(page) => jumpTo({ page })}
   /> : null;
@@ -1023,6 +1043,10 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
         jumpTo={jump}
         onOutline={adoptContents}
         onLink={(place) => jumpTo({ page: place.page, fraction: place.fraction })}
+        controlsRef={pdfControls}
+        initialZoom={pdfZoom}
+        onControlsState={pdfControlsChanged}
+        pageControls={false}
         locationRef={pdfNow}
         onOpenInBible={(reference) => openInBible(reference, positionNow())}
         find={pdfFind}
@@ -1077,7 +1101,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
       )
     ) : null;
 
-  const modeSwitch = hasOriginal ? <ModeSwitch mode={mode} onChange={(m) => void choose(m)} /> : null;
+  const modeSwitch = hasOriginal ? <ModeSwitch compact={compactControls} mode={mode} onChange={(m) => void choose(m)} /> : null;
   const structurePanel = isPdf ? <>
     {structureOpen && <PdfStructurePanel sourceId={sourceId} segments={window?.segments ?? []}
       onGo={(position,headingId)=>{jumpTo({position,headingId}); setStructureOpen(false);}} onPage={page=>{jumpTo({page});setStructureOpen(false);}} onClose={()=>setStructureOpen(false)}
@@ -1258,11 +1282,21 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     { id: "marks", key: "marks", label: t("library.marks.title"), icon: <Highlighter className="size-4" aria-hidden="true" />, expanded: marksPanel, controls: marksPanel ? `${id}-marks` : undefined, onSelect: () => (marksPanel ? closeMarksPanel() : openMarksPanel()) },
     ...(isPdf ? [{ id: "structure" as const, key: "structure", label: t("library.structure.title"), icon: <ListTree className="size-4" aria-hidden="true" />, onSelect: () => setStructureOpen(true) }] : []),
     ...(inPane && onExpand ? [{ id: "full" as const, key: "full", label: t("library.reader.openFull"), icon: <Maximize2 className="size-4" aria-hidden="true" />, onSelect: () => onExpand(positionNow()) }] : []),
+    ...(onPdfPage ? [
+      {id:"zoomOut" as const,key:"zoomOut",label:t("library.original.zoomOut"),icon:<ZoomOut className="size-4"/>,disabled:!pdfControlsState?.total,group:t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)}),onSelect:(opener: HTMLElement | null)=>{pdfControls.current?.zoomBy(-1);opener?.focus({preventScroll:true});}},
+      {id:"zoomIn" as const,key:"zoomIn",label:t("library.original.zoomIn"),icon:<ZoomIn className="size-4"/>,disabled:!pdfControlsState?.total,group:t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)}),onSelect:(opener: HTMLElement | null)=>{pdfControls.current?.zoomBy(1);opener?.focus({preventScroll:true});}},
+      {id:"fitWidth" as const,key:"fitWidth",label:t("library.original.fitWidth"),icon:<MoveHorizontal className="size-4"/>,disabled:!pdfControlsState?.total,group:t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)}),pressed:pdfControlsState?.fit==="fit-width",onSelect:(opener: HTMLElement | null)=>{pdfControls.current?.fitWidth();opener?.focus({preventScroll:true});}},
+      {id:"fitPage" as const,key:"fitPage",label:t("library.original.fitPage"),icon:<Maximize2 className="size-4"/>,disabled:!pdfControlsState?.total,group:t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)}),pressed:pdfControlsState?.fit==="fit-page",onSelect:(opener: HTMLElement | null)=>{pdfControls.current?.fitPage();opener?.focus({preventScroll:true});}},
+    ] : []),
     ...(s ? [{ id: "about" as const, key: "about", label: t("library.about.summary"), icon: <Info className="size-4" aria-hidden="true" />, onSelect: () => setAboutOpen(true) }] : []),
   ];
+  const contentsProgress = isPdf && contentsGeneration ? <div role="status" className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border-subtle px-3 py-1 text-[0.875rem] text-text-muted">
+    <span>{t(contentsGeneration === "running" ? "library.structure.automaticRunning" : "library.structure.automaticFailed")}</span>
+    <Button variant="quiet" onClick={() => setStructureOpen(true)}>{t("library.structure.automaticDetails")}</Button>
+  </div> : null;
   const toolbarRefs = { find: findOpener, contents: opener, note: noteHereButton, marks: marksPanelOpener };
   // Reading has the compact page indicator here; Original has the viewer's own (one per view, never both).
-  const fixedControls = <>{modeSwitch}{showOriginal ? null : pageNavigation}</>;
+  const fixedControls = <>{modeSwitch}{pageNavigation}{onPdfPage && <span data-testid="pdf-zoom" className="sr-only">{t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)})}</span>}</>;
   const aboutDialog = aboutOpen && s ? (
     <Dialog wide title={t("library.about.summary")} onClose={() => setAboutOpen(false)} actions={<Button onClick={() => setAboutOpen(false)}>{t("common.close")}</Button>}>
       <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
@@ -1288,6 +1322,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
             refs={toolbarRefs}
           />
         </div>
+        {contentsProgress}
         {provenance}
         {structurePanel}
         {aboutDialog}
@@ -1338,6 +1373,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
           refs={toolbarRefs}
         />
       </div>
+      {contentsProgress}
       {provenance}
       {structurePanel}
       {aboutDialog}
@@ -1365,8 +1401,11 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 }
 
 /** Reading | Original, one control for both readers. */
-function ModeSwitch({ mode, onChange }: { mode: ReaderMode; onChange: (mode: ReaderMode) => void }) {
+function ModeSwitch({ mode, onChange, compact }: { compact: boolean; mode: ReaderMode; onChange: (mode: ReaderMode) => void }) {
   const { t } = useTranslation();
+  if (compact) return <ActionMenu portal label={t("library.original.modesLabel")} align="start"
+    trigger={<span title={`${t("library.original.modesLabel")}: ${t(`library.original.${mode}`)}`} className="inline-flex w-7 justify-center"><span className="sr-only">{t("library.original.modesLabel")}: {t(`library.original.${mode}`)}</span>{mode==="reading"?<BookOpenText className="size-4" aria-hidden="true"/>:<FileText className="size-4" aria-hidden="true"/>}</span>}
+    actions={(["reading","original"] as const).map(m=>({label:t(`library.original.${m}`),onSelect:()=>onChange(m)}))}/>;
   // A.4.2: in a narrow pane the two views are icons; their names stay for screen readers and as tooltips.
   return (
     <div role="group" aria-label={t("library.original.modesLabel")} className="flex shrink-0">

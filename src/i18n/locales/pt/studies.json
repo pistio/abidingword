@@ -905,7 +905,7 @@
         "sections": {
           "persons": {
             "title": "Pessoas",
-            "guidance": "Quem fala, age ou recebe a mensagem? Diferencie o texto das suas suposições.",
+            "guidance": "Quem aparece no texto, quem fala, quem age e a quem a mensagem se dirige? Conhecer todos os envolvidos antes de interpretar. Registrar apenas o que o próprio texto diz. Quem escreveu ou disse este texto, até onde o texto ou o seu livro indica? Quem fala nesta passagem? O falante muda? A quem a mensagem é dirigida? Acrescente cada pessoa ou grupo mencionado ou implícito, com o versículo e o papel. Como os envolvidos se relacionam entre si? Quem está acima, ao lado ou contra quem? O que ainda não está claro sobre as pessoas deste texto? Incluir o autor do livro, os primeiros destinatários, quem fala, age e recebe a mensagem, também nas parábolas. Distinguir funções e relações explícitas de conjecturas.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
@@ -915,7 +915,7 @@
           },
           "place": {
             "title": "Lugar",
-            "guidance": "Que lugares e relações geográficas ajudam a compreender a passagem?",
+            "guidance": "Quais lugares e relações espaciais ou culturais são importantes para o texto? Perceber onde as coisas acontecem ou de que lugares se fala. Separar o que o texto diz do que vem de fontes externas. Anote cada lugar mencionado, com o versículo e o papel. O que a pesquisa externa acrescenta? Indique a fonte para distinguir do texto. Quais referências a lugares ainda são incertas? Distinguir os lugares do autor e dos destinatários, o cenário e os locais mencionados. Geografia, relevo, paisagens, geologia, clima, história, arqueologia, cultura e etnia só entram quando realmente esclarecem o texto; citar evidências.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
@@ -925,7 +925,7 @@
           },
           "time": {
             "title": "Tempo",
-            "guidance": "Quando isso acontece? Indique as hipóteses históricas incertas.",
+            "guidance": "Quando o texto se passa e quais circunstâncias históricas importam? Situar o texto no tempo. Distinguir o que o texto indica do que é uma localização histórica possivelmente incerta. Que datas, épocas ou expressões como “então” e “naqueles dias” o texto apresenta? O que se sabe sobre a época? Marque como incerto o que for incerto. De onde vem esta informação? Como o tempo avança na passagem? O que vem antes, durante e depois? Se o texto é profético: o que olha para o passado, o que descreve a situação presente e o que anuncia o futuro? Distinguir composição, receção ou leitura pelo primeiro público e acontecimentos narrados. Considerar as circunstâncias políticas, sociais e religiosas; separar evidências de hipóteses.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
@@ -934,8 +934,8 @@
             }
           },
           "events": {
-            "title": "Desenvolvimento do texto",
-            "guidance": "Acompanhe os acontecimentos, a estrutura, o raciocínio e o desenvolvimento do texto, inclusive em cartas e poesia.",
+            "title": "Acontecimentos",
+            "guidance": "O que acontece? Como os acontecimentos ou as afirmações se desenvolvem? Acompanhar o movimento do texto seção por seção. O esboço é uma proposta que você pode alterar. Divida o texto em seções: versículos, o que acontece ou é dito e o que isso significa no desenvolvimento do conjunto. Onde a direção do texto muda? Que opostos ou tensões o texto coloca frente a frente? Em cartas, profecia, poesia e ensino, acompanhar também o raciocínio, a estrutura e a progressão versículo a versículo.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
@@ -972,6 +972,46 @@
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
             }
+          },
+          "context": {
+            "title": "Contexto do texto",
+            "guidance": "Como a passagem se encaixa no capítulo, no livro inteiro e no restante da Escritura? Ver a passagem em seu entorno, dos versículos mais próximos para fora, e notar onde ela termina. O que vem logo antes e depois, e como se conecta? Sobre o que é o livro e onde a passagem se situa em seu argumento ou narrativa? Como a passagem se relaciona com o restante da Escritura e a sua história? Acrescente passagens relacionadas e diga o que cada uma contribui para a compreensão. Onde a unidade começa e termina, e por que ali? Incluir o contexto histórico-cultural e as ligações teológicas pertinentes sem substituir o sentido desta passagem.",
+            "fields": {
+              "answer": {
+                "label": "Sua resposta",
+                "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
+              }
+            }
+          },
+          "explanations": {
+            "title": "Explicações",
+            "guidance": "Quais termos, afirmações ou problemas de interpretação precisam de esclarecimento? Reunir as perguntas do texto, conferi-las com evidências e registrar as respostas que podem ser sustentadas. Deixar em aberto o que ainda está aberto. Acrescente cada pergunta com o versículo, as evidências verificadas, a resposta e a situação. Que palavras precisam de explicação? O que significam aqui, neste contexto? Onde mais de uma explicação for possível, apresente cada uma com seus motivos. Que fontes você usou? Anote-as para poder encontrá-las de novo. Investigar as dificuldades pelo texto, paralelos adequados, obras de referência e comentários. Estas ajudas apoiam a observação pessoal sem a substituir.",
+            "fields": {
+              "answer": {
+                "label": "Sua resposta",
+                "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
+              }
+            }
+          },
+          "core": {
+            "title": "Núcleo",
+            "guidance": "Qual é a mensagem central exatamente desta passagem? Formular o núcleo em três passos: sobre o que o texto trata, o que diz a respeito e uma frase concisa. Você pode preenchê-los em qualquer ordem. Nomeie o assunto em poucas palavras, sem dizer ainda o que o texto afirma sobre ele. Resuma o que a passagem diz sobre o seu assunto, como ela o diz. Una assunto e afirmação em uma frase que possa ser conferida em cada versículo. A aplicação pessoal segue como reflexão distinta depois destas sete partes.",
+            "fields": {
+              "answer": {
+                "label": "Sua resposta",
+                "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
+              }
+            }
+          },
+          "application": {
+            "title": "Aplicação pessoal",
+            "guidance": "O que significa para você a verdade encontrada? Mantenha-a separada da observação e da interpretação acima. Responder ao texto permanecendo ligado ao que ele diz. É um passo final à parte, não mais uma letra de POZETEK. Que verdade do texto permanece válida para todo leitor? Onde esta verdade desafia, consola ou corrige o seu pensar e viver? O que você fará: crer, arrepender-se, confiar, obedecer, orar, amar? Seja específico. O que distingue a situação de então da de hoje? O que não deve ser transposto diretamente?",
+            "fields": {
+              "answer": {
+                "label": "Sua resposta",
+                "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
+              }
+            }
           }
         }
       },
@@ -981,103 +1021,113 @@
         "sections": {
           "step-01-familiarity": {
             "title": "1 — Familiarizar-se com o texto",
-            "guidance": "Ler toda a passagem várias vezes, inclusive em traduções diferentes. Observar seu desenvolvimento e registrar perguntas sem antecipar respostas.",
+            "guidance": "Ler toda a passagem várias vezes, inclusive em traduções diferentes. Observar seu desenvolvimento e registrar perguntas sem antecipar respostas. Primeiras observações e perguntas em aberto, ainda não uma interpretação final. Qual parece ser a ideia principal? Quais cenas e transições aparecem?",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus 8:18–27 traz duas conversas sobre seguir Jesus e, em seguida, Jesus acalmando a tempestade. Surgem perguntas sobre o custo do discipulado, o sepultamento dos mortos, a pouca fé e a identidade de quem ordena ao vento e ao mar."
           },
           "step-02-text": {
             "title": "2 — Estabelecer a base textual",
-            "guidance": "Comparar traduções e notas textuais. Distinguir escolhas de tradução de variantes de manuscritos e registrar incertezas.",
+            "guidance": "Comparar traduções e notas textuais. Distinguir escolhas de tradução de variantes de manuscritos e registrar incertezas. Uma base textual justificada e as principais dúvidas de tradução. Anotar diferenças e seu impacto. Registrar apenas variantes documentadas.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus 8:24 descreve uma tempestade violenta no lago. O termo grego ressalta sua intensidade, mas não permite acrescentar acontecimentos que o relato não menciona."
           },
           "step-03-situation": {
             "title": "3 — Esclarecer a situação original de comunicação",
-            "guidance": "Perguntar quem escreveu para quem, quando, onde e por quê. Investigar o contexto histórico e cultural relevante, separando fatos de hipóteses.",
+            "guidance": "Perguntar quem escreveu para quem, quando, onde e por quê. Investigar o contexto histórico e cultural relevante, separando fatos de hipóteses. Conhecer o cenário histórico necessário para entender a passagem. O que se pode afirmar com fundamento? Distinguir a época dos acontecimentos da redação.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus apresenta Jesus como o Messias prometido. A cena ocorre durante seu ministério na Galileia. Seguir um mestre envolvia mais que receber aulas; Jesus chama as pessoas a segui-lo pessoalmente."
           },
           "step-04-context": {
             "title": "4 — Compreender o contexto",
-            "guidance": "Delimitar a passagem e sua posição nos versículos próximos, no livro, em relatos paralelos e na Bíblia toda. Começar pelo contexto imediato.",
+            "guidance": "Delimitar a passagem e sua posição nos versículos próximos, no livro, em relatos paralelos e na Bíblia toda. Começar pelo contexto imediato. Entender a função desta unidade dentro do livro. Onde a unidade começa e termina? O que vem antes e depois?",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Depois do Sermão do Monte (Mt 5–7), Mateus 8 mostra a autoridade de Jesus. Duas conversas sobre discipulado precedem a cena do barco: em 8:23, os discípulos seguem Jesus para dentro do barco. Os episódios também podem ser estudados separadamente."
           },
           "step-05-genre": {
             "title": "5 — Examinar o tipo de texto",
-            "guidance": "Identificar gênero, forma e recursos literários como contraste, repetição e diálogo. Não impor ao texto uma estrutura artificial.",
+            "guidance": "Identificar gênero, forma e recursos literários como contraste, repetição e diálogo. Não impor ao texto uma estrutura artificial. Ler de acordo com a forma como o texto comunica. Narrativa, poesia, profecia, carta, lei ou outro? Que tipo de narrativa ou discurso é este?",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus 8:18–22 contém dois diálogos centrados nas respostas de Jesus; 8:23–27 é uma narrativa de milagre. O medo dos discípulos contrasta com o descanso de Jesus, a tempestade com a calmaria e a impotência humana com sua autoridade."
           },
           "step-06-language": {
             "title": "6 — Examinar palavras e frases",
-            "guidance": "Investigar termos importantes e relações entre frases dentro do contexto. Um verbete de dicionário, sozinho, não determina o significado.",
+            "guidance": "Investigar termos importantes e relações entre frases dentro do contexto. Um verbete de dicionário, sozinho, não determina o significado. Explicar palavras e relações essenciais no texto. Estudar o uso nesta frase e no contexto. Observar contrastes, razões, condições e ações.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Em Mateus 8:20, os animais têm abrigo, mas o Filho do Homem não tem onde reclinar a cabeça. Em 8:21–22, o chamado de Jesus tem prioridade; não é possível afirmar com certeza se o pai já havia morrido."
           },
           "step-07-flow": {
             "title": "7 — Traçar a linha de raciocínio",
-            "guidance": "Voltar à passagem inteira. Observar quem fala e age, como as partes se conectam e onde surgem mudanças. Elaborar um diagrama e um esboço justificado.",
+            "guidance": "Voltar à passagem inteira. Observar quem fala e age, como as partes se conectam e onde surgem mudanças. Elaborar um diagrama e um esboço justificado. Um esboço que realmente surja do texto. Como uma parte conduz à outra? Dar títulos breves e fiéis a cada parte.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus 8:18–20: o custo de seguir Jesus; vv. 21–22: a prioridade de seu chamado; vv. 23–25: os discípulos o seguem em meio ao perigo; vv. 26–27: sua autoridade sobre o vento e o mar."
           },
           "step-08-theology": {
             "title": "8 — Esclarecer questões teológicas",
-            "guidance": "Estudar as questões primeiro na passagem e depois no contexto próximo e no restante da Bíblia. A Escritura interpreta a Escritura; manter visíveis as dúvidas.",
+            "guidance": "Estudar as questões primeiro na passagem e depois no contexto próximo e no restante da Bíblia. A Escritura interpreta a Escritura; manter visíveis as dúvidas. Conclusões fiéis ao texto e ao testemunho bíblico. Registrar evidências, conclusão e situação. Explicar o que cada passagem acrescenta.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus 8:22 deve ser lido à luz do ensino de Jesus sobre honrar os pais (Mt 15:4–6). O domínio de Deus sobre o mar (Sl 89:9; 107:23–30) aprofunda a pergunta sobre a identidade de Jesus."
           },
           "step-09-message": {
             "title": "9 — Formular a mensagem central",
-            "guidance": "Separar o assunto (sobre o que o texto fala), a afirmação (o que ele diz) e o tema (uma frase que reúne ambos). Conferir cada parte do texto.",
+            "guidance": "Separar o assunto (sobre o que o texto fala), a afirmação (o que ele diz) e o tema (uma frase que reúne ambos). Conferir cada parte do texto. Uma mensagem central clara e verificável. Nomear o assunto sem antecipar a conclusão. Resumir o que a passagem afirma sobre o assunto.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Assunto: seguir Jesus diante de suas exigências e autoridade. Afirmação: Jesus requer prioridade sobre a segurança humana e merece confiança até no perigo. Tema: seguir Jesus exige entrega e confiança no Senhor cuja autoridade supera os perigos."
           },
           "step-10-application": {
             "title": "10 — Entender e aplicar o significado hoje",
-            "guidance": "Passar do sentido original à aplicação responsável. Considerar a morte e a ressurreição de Cristo e o derramamento do Espírito Santo; não transferir automaticamente detalhes históricos.",
+            "guidance": "Passar do sentido original à aplicação responsável. Considerar a morte e a ressurreição de Cristo e o derramamento do Espírito Santo; não transferir automaticamente detalhes históricos. Uma resposta concreta, fundamentada e fiel ao contexto original. O que continua válido hoje? Considerar cultura e história da redenção.",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
                 "help": "Escreva com suas próprias palavras. Desenvolva aqui suas observações e conclusões."
               }
-            }
+            },
+            "example": "Mateus 8 leva a refletir se conforto e segurança tomam o lugar da confiança em Cristo. Não podemos repetir a situação dos discípulos durante o ministério terreno de Jesus, mas seu chamado permanece. A confiança repousa na autoridade dele, não na ausência de dificuldades."
           }
         }
       },
@@ -1879,7 +1929,9 @@
     "toggle": "Adicionar",
     "note": "Anotação",
     "to": "Adicionar a {{part}}",
-    "writing": "Texto"
+    "writing": "Texto",
+    "textField": "Adicionar campo de texto",
+    "textTo": "Adicionar campo de texto a {{part}}"
   },
   "home": {
     "title": "Estudos",
@@ -2801,7 +2853,7 @@
   },
   "flow": {
     "answer": "Sua resposta",
-    "guidance": "Orientações (opcional)",
+    "guidance": "Orientações",
     "legacy": "Respostas estruturadas anteriores",
     "legacyNote": "As respostas permanecem em seus campos originais. Nada foi combinado nem substituído.",
     "continuous": "Escrita contínua",
@@ -2811,7 +2863,8 @@
     "previous": "Seção anterior",
     "next": "Próxima seção",
     "step": "Seção {{current}} de {{total}}",
-    "tenStepAttribution": "Método: Helge Stadelmann e Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). As orientações aqui foram redigidas de forma independente e não reproduzem o texto dos autores."
+    "tenStepAttribution": "Método: Helge Stadelmann e Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). As orientações aqui foram redigidas de forma independente e não reproduzem o texto dos autores.",
+    "hideGuidance": "Ocultar orientações"
   },
   "builder": {
     "title": "Blocos do modelo",
@@ -2887,5 +2940,17 @@
     "fileType": "Markdown",
     "saved": "Guardado em {{path}}",
     "empty": "Ainda não há nada para exportar com esta opção."
+  },
+  "repair": {
+    "review": "Rever partes do POZETEK",
+    "undo": "Anular reparação do POZETEK",
+    "apply": "Adicionar partes em falta e ordenar",
+    "explain": "As sete partes originais aparecem primeiro. As partes em falta são adicionadas vazias. Todas as partes existentes, incluindo Tema, Compreensão, Consequências e duplicados, mantêm nome, textos, notas e ligações. As partes fora desta sequência seguem na sua ordem relativa atual.",
+    "keep": "Manter parte existente",
+    "add": "Adicionar parte vazia",
+    "duplicates": "Várias partes partilham uma chave: {{parts}}. Permanecem separadas; nenhum conteúdo é fundido.",
+    "safety": "Um registo guardado permite repor a ordem anterior e retirar apenas partes vazias e inalteradas adicionadas por esta reparação. Se uma parte adicionada mudou, Anular é recusado e todos os textos são mantidos. Faça uma cópia do perfil antes de reparar trabalho importante.",
+    "undoFirst": "Anule a reparação anterior antes de aplicar outra.",
+    "finishDrafts": "Termine ou feche as notas abertas e a edição dos nomes das partes antes de anular a reparação."
   }
 }

@@ -112,15 +112,7 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
     [api, ensure, onError, onChange, section],
   );
   const { schedule, flush } = useAutosave(save);
-  const area = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => {
-    const el = area.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.max(el.scrollHeight, field.kind === "writing" ? 288 : 72)}px`;
-  }, [text, field.kind]);
-
-  const help = field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "");
+  const help = field.config?.guidance ?? (soleOf ? "" : structuredText(section, `fields.${field.key}.help`, ""));
   return (
     <div className="flex flex-col gap-1">
       {/* A.4.3: a part's only writing field is labelled by the part (no repeated "Your answer" above it). */}
@@ -134,8 +126,7 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
       )}
       <textarea
         id={id}
-        ref={area}
-        rows={field.kind === "writing" ? 10 : 3}
+        rows={field.kind === "writing" ? 5 : 3}
         value={text}
         aria-describedby={showHelp && help ? helpId : undefined}
         onChange={(e) => {
@@ -144,8 +135,8 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
         }}
         onBlur={flush}
         className={field.kind === "writing"
-          ? "block w-full resize-none overflow-hidden rounded-aw border border-transparent bg-field px-3 py-3 text-[1.0625rem] leading-relaxed text-text reading placeholder:text-text-muted hover:border-border-subtle focus:border-border-strong"
-          : `${input} resize-none overflow-hidden`}
+          ? "block w-full resize-y overflow-auto rounded-aw border border-transparent bg-field px-3 py-3 text-[1.0625rem] leading-relaxed text-text reading placeholder:text-text-muted hover:border-border-subtle focus:border-border-strong"
+          : `${input} resize-y overflow-auto`}
       />
     </div>
   );

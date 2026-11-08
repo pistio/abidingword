@@ -101,10 +101,10 @@ describe("findings and sections in the page", () => {
     const first = (await api.studyGet(api.state.studies[0]!.id)).sections[0]!;
     // A.4.3: what a section is for is kept, on request (not repeated above the writing).
     const user0 = await open(api);
-    expect(within(study().getByRole("region", { name: first.title })).queryByText(/The passage being studied/)).not.toBeInTheDocument();
-    await openPartOptions(user0, first.title);
-    await user0.click(within(study().getByRole("region", { name: first.title })).getByRole("button", { name: "Guidance (optional)" }));
     expect(within(study().getByRole("region", { name: first.title })).getByText(/The passage being studied/)).toBeInTheDocument();
+    await openPartOptions(user0, first.title);
+    await user0.click(within(study().getByRole("region", { name: first.title })).getByRole("button", { name: "Hints" }));
+    expect(within(study().getByRole("region", { name: first.title })).queryByText(/The passage being studied/)).not.toBeInTheDocument();
     await user0.click(screen.getByRole("button", { name: "Settings" }));
     await api.studyBlockUpdate({ id: first.blocks[0]!.id, content: "Abide in me." });
     await user0.click(screen.getByRole("button", { name: "Back to workspace" }));
@@ -122,8 +122,7 @@ describe("findings and sections in the page", () => {
 
     // more writing is added from the part's own Add
     await openPartOptions(user);
-    await user.click(within(section).getByRole("button", { name: "Add to Text" }));
-    await user.click(within(section).getByRole("button", { name: "Writing" }));
+    await user.click(within(section).getByRole("button", { name: "Add text field to Text" }));
     await waitFor(() => expect(within(section).getAllByRole("textbox", { name: /^Text: paragraph/ })).toHaveLength(2));
   });
 });

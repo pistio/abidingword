@@ -80,11 +80,23 @@ fn legacy_definitions_and_new_writing_templates_coexist_and_reject_ambiguous_blo
         for (key, count) in [
             ("pozetek-study", 8),
             ("ten-step-exegesis", 10),
-            ("pozetek-writing-study", 7),
+            ("pozetek-writing-study", 8),
             ("ten-step-writing-study", 10),
         ] {
             let template = templates::get_by_key(conn, key)?;
             assert_eq!(template.sections.len(), count);
+            if key == "pozetek-writing-study" {
+                assert_eq!(
+                    template
+                        .sections
+                        .iter()
+                        .filter(|part| !part.optional)
+                        .count(),
+                    7
+                );
+                let reflection = template.sections.iter().find(|part| part.optional).unwrap();
+                assert_eq!(reflection.key.as_deref(), Some("application"));
+            }
             if key.contains("writing") {
                 assert!(template
                     .sections

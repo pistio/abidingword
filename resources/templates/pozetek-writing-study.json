@@ -7,8 +7,8 @@
   "sections": [
     {
       "key": "persons",
-      "title": "People",
-      "guidance": "Who speaks, acts or receives the message? Distinguish what the text says from your assumptions.",
+      "title": "Persons",
+      "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed? Get to know everyone involved before interpreting anything. Record only what the text itself says. Who wrote or spoke this text, as far as the text or its book says? Who is speaking in this passage? Does the speaker change? To whom is the message directed? Add each person or group named or implied. Note the verse and what each one does or is. How are those involved related to one another? Who stands over, with or against whom? What about the people in this text is still unclear? Include the book’s author and original audience, speakers, agents and recipients, including people in parables. Distinguish stated roles and relationships from conjecture.",
       "phase": "text",
       "fields": [
         {
@@ -16,12 +16,18 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerTitles": [
+        "People"
+      ],
+      "formerGuidance": [
+        "Who speaks, acts or receives the message? Distinguish what the text says from your assumptions."
+      ]
     },
     {
       "key": "place",
       "title": "Place",
-      "guidance": "Which places and relationships matter to this passage?",
+      "guidance": "Which places and spatial or cultural relationships matter for the text? Notice where things happen or are spoken of. Keep what the text says apart from what you learn from outside sources. List each place the text names. Note the verse and what role it plays. What does outside research add? Say where each piece of information comes from, so it stays distinct from the text. Which place references are still uncertain? Consider where the author and recipients were, the setting and places mentioned. Geography, topography, landscapes, geology, climate, history, archaeology, culture and ethnicity belong here only when they actually explain the text; cite evidence.",
       "phase": "text",
       "fields": [
         {
@@ -29,12 +35,50 @@
           "kind": "writing"
         }
       ],
-      "fieldsVersion": 1
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "Which places and relationships matter to this passage?"
+      ]
     },
     {
       "key": "time",
       "title": "Time",
-      "guidance": "When does this happen? Mark uncertain historical proposals as uncertain.",
+      "guidance": "When does the text take place, and which historical circumstances matter? Place the text in time. Mark what the text states and what is a historical placement that may be uncertain. Which dates, seasons, sequences or phrases such as “then” and “in those days” does the text give? What do you know about the period? Mark uncertain points as uncertain. Where does this information come from? How does time move within the passage? What comes before, during and after? If the text is prophetic: what looks back, what describes the present situation, what announces the future? Distinguish composition, reception by the first audience and the events described. Consider political, social and religious circumstances; separate evidence from hypotheses.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1,
+      "formerGuidance": [
+        "When does this happen? Mark uncertain historical proposals as uncertain."
+      ]
+    },
+    {
+      "key": "events",
+      "title": "Events",
+      "guidance": "What happens? How do events or statements unfold? Follow the movement of the text section by section. The outline is yours to propose and to change. Divide the text into sections. For each, give the verses, what happens or is said, and what it means for the course of the whole. Where does the direction of the text change? Which opposites or tensions does the text set against each other? For letters, prophecy, poetry and teaching, trace the argument, structure and verse-by-verse progression as carefully as narrative actions.",
+      "phase": "text",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1,
+      "formerTitles": [
+        "Flow of the Passage"
+      ],
+      "formerGuidance": [
+        "Follow the events, structure, reasoning and movement of the passage. This also applies to letters, poetry and arguments."
+      ]
+    },
+    {
+      "key": "context",
+      "title": "Text context",
+      "guidance": "How does the passage fit into the chapter, the whole book and the rest of Scripture? See the passage in its surroundings, from the nearest verses outward, and notice where it ends. What comes directly before and after the passage, and how does it connect? What is the book about, and where does the passage stand in its argument or story? How does the passage relate to the rest of Scripture and its storyline? Add related passages. Say what each contributes to understanding this text. Where does the unit begin and end, and why there? Include relevant historical-cultural setting and wider theological connections without overriding what this passage says.",
       "phase": "text",
       "fields": [
         {
@@ -45,10 +89,10 @@
       "fieldsVersion": 1
     },
     {
-      "key": "events",
-      "title": "Flow of the Passage",
-      "guidance": "Follow the events, structure, reasoning and movement of the passage. This also applies to letters, poetry and arguments.",
-      "phase": "text",
+      "key": "explanations",
+      "title": "Explanations",
+      "guidance": "Which terms, statements or interpretive problems need clarifying? Collect questions from the text, check them against evidence, and record the answers you can support. Leave open what is still open. Add each question. Record the verse, the evidence you checked, your answer, and whether the question is still open. Which words need explaining? What do they mean here, in this context? Where more than one explanation is possible, state each with its reasons. Which sources did you use? Note them so you can find them again. Use the text, suitable parallels, reference works and commentaries to investigate difficulties; they support your observation rather than replace it.",
+      "phase": "understanding",
       "fields": [
         {
           "key": "answer",
@@ -57,6 +101,35 @@
       ],
       "fieldsVersion": 1
     },
+    {
+      "key": "core",
+      "title": "Core",
+      "guidance": "What is the central message of exactly this passage? Name the core in three steps: what the text is about, what it says about that, and one concise sentence. You may fill them in any order. Name the subject in a few words, without yet saying what the text claims about it. Summarise what the passage says about its subject, as it says it. Join subject and statement in one sentence that you could test against every verse. Keep personal application for a distinct reflection after these seven parts.",
+      "phase": "understanding",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1
+    },
+    {
+      "key": "application",
+      "title": "Personal application",
+      "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
+      "phase": "application",
+      "fields": [
+        {
+          "key": "answer",
+          "kind": "writing"
+        }
+      ],
+      "fieldsVersion": 1,
+      "optional": true
+    }
+  ],
+  "formerSections": [
     {
       "key": "theme",
       "title": "Theme",

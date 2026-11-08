@@ -36,9 +36,9 @@ it("keeps answers while switching from focused steps to continuous writing", asy
   await user.click(within(await screen.findByRole("list", { name: "Studies" })).getByRole("button", { name: /Continuous fixture/ }));
   const answers = await screen.findAllByRole("textbox", { name: /Your answer$/ });
   expect(answers).toHaveLength(7);
-  expect(answers[0]).toHaveAttribute("rows", "10");
+  expect(answers[0]).toHaveAttribute("rows", "5");
   // A.4.3: hints are on request, not shown above every field.
-  expect(document.querySelector("[data-part-hints]")).toBeNull();
+  expect(document.querySelector("[data-part-hints]")).not.toBeNull();
   await user.type(answers[0]!, "My preserved observation");
   await openStudyOptions(user);
   await user.click(screen.getByRole("button", { name: "Step-by-step" }));

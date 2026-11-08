@@ -25,6 +25,8 @@ pub const MAX_CANDIDATES: usize = 25;
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Diagnostic {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub processing: Option<crate::library::pdf_build::Progress>,
     pub schema: &'static str,
     pub app_version: &'static str,
     pub generated_at: String,
@@ -140,6 +142,7 @@ pub struct Query {
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Candidate {
+    pub evidence_tier: u8,
     pub rank: usize,
     pub class: u8,
     pub origin: String,
@@ -349,6 +352,7 @@ pub fn diagnostic_with(
         Some(input) => Some(query(conn, id, input, language, &labels, &headings)?),
     };
     Ok(Diagnostic {
+        processing: None,
         schema: SCHEMA,
         app_version: env!("CARGO_PKG_VERSION"),
         generated_at: now(),
@@ -404,6 +408,7 @@ fn query(
             .unwrap_or_default();
         candidates.push(Candidate {
             rank: index + 1,
+            evidence_tier: place.evidence_tier,
             class: place.class,
             evidence: evidence(
                 &origin,

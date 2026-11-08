@@ -900,12 +900,12 @@
         }
       },
       "pozetek-writing-study": {
-        "name": "POZETEK – Bibeltext untersuchen",
+        "name": "POZETEK",
         "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
         "sections": {
           "persons": {
-            "title": "Personen",
-            "guidance": "Wer spricht, handelt oder wird angesprochen? Unterscheide Textbeobachtung und Vermutung.",
+            "title": "P — Personen",
+            "guidance": "Wer kommt im Text vor, wer spricht, wer handelt und an wen richtet sich die Botschaft? Alle Beteiligten kennenlernen, bevor etwas gedeutet wird. Nur festhalten, was der Text selbst sagt. Wer hat diesen Text verfasst oder gesprochen, soweit der Text oder sein Buch es sagt? Wer spricht in diesem Abschnitt? Wechselt der Sprecher? An wen richtet sich die Botschaft? Jede genannte oder gemeinte Person oder Gruppe eintragen, mit Vers und Rolle. Wie stehen die Beteiligten zueinander? Wer steht über, bei oder gegen wen? Was ist an den Personen dieses Textes noch unklar? Den Verfasser des Buches und seine ersten Empfänger, Sprecher, Handelnde und Angesprochene berücksichtigen, auch Personen in Gleichnissen. Belegte Rollen und Beziehungen von Vermutungen trennen.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -914,8 +914,8 @@
             }
           },
           "place": {
-            "title": "Ort",
-            "guidance": "Welche Orte und räumlichen Beziehungen sind für den Text wichtig?",
+            "title": "O — Ort",
+            "guidance": "Welche Orte und räumlichen oder kulturellen Beziehungen sind für den Text wichtig? Wahrnehmen, wo etwas geschieht oder wovon die Rede ist. Textbefund und externe Recherche getrennt halten. Jeden im Text genannten Ort eintragen, mit Vers und Rolle. Was ergibt externe Recherche? Die Quelle angeben, damit es vom Textbefund unterscheidbar bleibt. Welche Ortsbezüge sind noch unsicher? Aufenthaltsorte von Verfasser und Empfängern, Schauplatz und erwähnte Orte unterscheiden. Geografie, Topografie, Landschaft, Geologie, Klima und Wetter, Geschichte, Archäologie, Kultur und Ethnie nur heranziehen, wenn sie den Text tatsächlich erklären; Belege nennen.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -924,8 +924,8 @@
             }
           },
           "time": {
-            "title": "Zeit",
-            "guidance": "Wann spielt der Text? Kennzeichne unsichere geschichtliche Annahmen.",
+            "title": "Z — Zeit",
+            "guidance": "Wann spielt der Text, und welche historischen Umstände sind wichtig? Den Text zeitlich einordnen. Kennzeichnen, was der Text selbst nennt und was eine historische Einordnung ist, die unsicher sein kann. Welche Daten, Zeiten oder Wendungen wie „damals“ und „in jenen Tagen“ nennt der Text? Was ist über die Zeit bekannt? Unsicheres als unsicher kennzeichnen. Woher stammt diese Information? Wie verläuft die Zeit im Abschnitt? Was kommt davor, dabei und danach? Wenn der Text prophetisch ist: Was blickt zurück, was beschreibt die gegenwärtige Lage, was kündigt Zukünftiges an? Entstehung, Empfang oder Lesen durch die ersten Adressaten und die erzählten Ereignisse unterscheiden. Politische, gesellschaftliche und religiöse Verhältnisse beachten; Belege und Hypothesen trennen.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -934,8 +934,8 @@
             }
           },
           "events": {
-            "title": "Ereignisse",
-            "guidance": "Verfolge Ereignisse, Aufbau, Gedankengang und Argumentation. Das gilt auch für Briefe, Gedichte und Lehrtexte.",
+            "title": "E — Ereignisse",
+            "guidance": "Was geschieht? Wie entfalten sich Ereignisse oder Aussagen? Dem Verlauf des Textes Abschnitt für Abschnitt folgen. Die Gliederung ist ein Vorschlag, den man ändern darf. Den Text in Abschnitte gliedern: Verse, was geschieht oder gesagt wird und welche Bedeutung das im Verlauf hat. Wo ändert sich die Richtung des Textes? Welche Gegensätze oder Spannungen stellt der Text einander gegenüber? Bei Briefen, Prophetie, Poesie und Lehre den Gedankengang, Aufbau und Verlauf Vers für Vers ebenso sorgfältig verfolgen wie erzählte Handlungen.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
@@ -972,6 +972,46 @@
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
             }
+          },
+          "context": {
+            "title": "T — Textzusammenhang",
+            "guidance": "Wie fügt sich der Abschnitt in das Kapitel, das ganze Buch und die übrige Schrift ein? Den Abschnitt in seiner Umgebung sehen, von den nächsten Versen nach außen, und erkennen, wo er endet. Was steht unmittelbar davor und danach, und wie hängt es zusammen? Worum geht es im Buch, und wo steht der Abschnitt in dessen Gedankengang oder Erzählung? Wie verhält sich der Abschnitt zur übrigen Schrift und ihrer Geschichte? Verwandte Stellen eintragen und sagen, was sie zum Verständnis beitragen. Wo beginnt und endet die Texteinheit, und warum dort? Den geschichtlich-kulturellen Rahmen und weitere theologische Zusammenhänge berücksichtigen, ohne die Aussage dieses Abschnitts zu übergehen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Erklärungen",
+            "guidance": "Welche Begriffe, Aussagen oder Auslegungsprobleme verlangen Klärung? Fragen aus dem Text sammeln, an Belegen prüfen und die begründbaren Antworten festhalten. Offenes darf offen bleiben. Jede Frage eintragen mit Vers, geprüften Belegen, überprüfter Antwort und Status. Welche Wörter brauchen Erklärung? Was bedeuten sie hier, in diesem Zusammenhang? Wo mehrere Erklärungen möglich sind, jede mit ihren Gründen nennen. Welche Quellen wurden genutzt? Festhalten, um sie wiederzufinden. Schwierigkeiten am Text, an geeigneten Parallelstellen und mit Nachschlagewerken und Kommentaren untersuchen. Hilfsmittel unterstützen die eigene Beobachtung, ersetzen sie aber nicht.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Kern",
+            "guidance": "Was ist die zentrale Aussage genau dieses Abschnitts? Den Kern in drei Schritten benennen: Worum es geht, was der Text darüber sagt und ein prägnanter Satz. Die Reihenfolge beim Ausfüllen ist frei. Den Gegenstand in wenigen Worten benennen, ohne schon zu sagen, was der Text darüber behauptet. Zusammenfassen, was der Abschnitt über seinen Gegenstand sagt, so wie er es sagt. Gegenstand und Aussage in einem Satz zusammenführen, der sich an jedem Vers prüfen lässt. Die persönliche Anwendung folgt als eigene Reflexion nach diesen sieben Teilen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Persönliche Anwendung",
+            "guidance": "Was bedeutet die erkannte Wahrheit für dich? Getrennt halten von Beobachtung und Auslegung oben. Auf den Text so antworten, dass die Anwendung an seiner Aussage gebunden bleibt. Ein eigener Abschluss, kein weiterer Buchstabe von POZETEK. Welche Wahrheit des Textes bleibt für alle Leser gültig? Wo fordert, tröstet oder korrigiert diese Wahrheit das eigene Denken und Leben? Was wird konkret geschehen: Glaube, Umkehr, Vertrauen, Gehorsam, Gebet, Liebe? So konkret wie möglich. Was unterscheidet die damalige von der heutigen Lage? Was darf nicht unmittelbar übertragen werden?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
           }
         }
       },
@@ -981,103 +1021,113 @@
         "sections": {
           "step-01-familiarity": {
             "title": "1 — Mit dem Text vertraut werden",
-            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben.",
+            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben. Erste Beobachtungen und offene Fragen, noch keine fertige Auslegung. Was scheint die Hauptaussage zu sein? Welche Szenen und Übergänge sind erkennbar?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8,18–27 enthält zwei Gespräche zur Nachfolge und danach die Sturmstillung. Erste Fragen betreffen den Preis der Nachfolge, das Begraben der Toten, Kleinglauben und Jesu Vollmacht."
           },
           "step-02-text": {
             "title": "2 — Die Textgrundlage feststellen",
-            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden.",
+            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden. Eine begründete Textgrundlage mit benannten Unsicherheiten. Wortlaut und Bedeutung vergleichen. Nur belegte Varianten festhalten.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8,24 berichtet von einem heftigen Sturm auf dem See. Das griechische Wort betont die Intensität; zusätzliche Ereignisse, die nicht im Text stehen, dürfen daraus nicht abgeleitet werden."
           },
           "step-03-situation": {
             "title": "3 — Die ursprüngliche Kommunikationssituation klären",
-            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen.",
+            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen. Der geschichtliche Rahmen, der für diesen Abschnitt nötig ist. Was ist über Verfasser und Leser bekannt? Handlungszeit und Entstehungszeit unterscheiden.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Matthäus zeigt Jesus als den verheißenen Messias. Das Geschehen liegt in Galiläa. Nachfolge bedeutete mehr als Unterricht: Jesus ruft Menschen, ihm persönlich zu folgen."
           },
           "step-04-context": {
             "title": "4 — Den Zusammenhang erfassen",
-            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang.",
+            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang. Die Rolle des Textes im Buch und seine begründeten Grenzen. Wo beginnt und endet die Einheit? Was steht davor und danach?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Auf die Bergpredigt (Mt 5–7) folgen Berichte über Jesu Vollmacht. Mt 8,23 verbindet den Ruf zur Nachfolge mit dem Boot: Die Jünger folgen Jesus. Die Episoden können auch einzeln ausgelegt werden."
           },
           "step-05-genre": {
             "title": "5 — Die Textart untersuchen",
-            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen.",
+            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen. Verstehen, wie die Form die Botschaft vermittelt. Erzählung, Gedicht, Prophetie, Brief oder anderes? Welche Form innerhalb der Gattung?",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8,18–22 sind kurze Gespräche, Mt 8,23–27 ein Wunderbericht. Jesu Ruhe steht der Angst der Jünger gegenüber; dem Sturm folgt Stille; menschlicher Hilflosigkeit begegnet Jesu Vollmacht."
           },
           "step-06-language": {
             "title": "6 — Wörter und Sätze untersuchen",
-            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung.",
+            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung. Begriffe und Gedankengänge nachvollziehbar erklären. Bedeutung im Zusammenhang prüfen. Gegensätze, Gründe und Bedingungen markieren.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8,20 stellt die Ruheplätze der Tiere Jesu fehlender Ruhestätte gegenüber. Mt 8,21–22 betont den Vorrang seines Rufes; der genaue Zustand des Vaters lässt sich aus dem Text nicht sicher bestimmen."
           },
           "step-07-flow": {
             "title": "7 — Den Gedankengang entfalten",
-            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln.",
+            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln. Eine Gliederung, die aus dem Text hervorgeht. Wie entwickelt sich die Aussage? Verse und Überschriften begründet zuordnen.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8,18–20: Kosten der Nachfolge; V. 21–22: Vorrang von Jesu Ruf; V. 23–25: Nachfolge in Gefahr; V. 26–27: Jesu Vollmacht über Wind und See."
           },
           "step-08-theology": {
             "title": "8 — Theologische Fragen klären",
-            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben.",
+            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben. Textgemäße und schriftgemäße Antworten. Belege und begründete Antwort festhalten. Den Beitrag der Stelle erklären.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8,22 ist im Licht von Jesu Bekräftigung des Elterngebotes (Mt 15,4–6) zu verstehen. Die Sturmstillung erinnert an Gottes Herrschaft über das Meer (Ps 89,10; 107,23–30) und stellt die Frage nach Jesu Identität."
           },
           "step-09-message": {
             "title": "9 — Die zentrale Aussage formulieren",
-            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen.",
+            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen. Eine präzise, überprüfbare Hauptaussage. Das Thema in wenigen Worten benennen. Die Aussage über den Gegenstand festhalten.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Textgegenstand: Nachfolge Jesu angesichts seiner Ansprüche und Vollmacht. Textaussage: Jesus fordert Vorrang vor Sicherheiten und Vertrauen auch in Gefahr. Textthema: Nachfolge verlangt Hingabe und Vertrauen auf den Herrn, dessen Vollmacht größer ist als jede Gefahr."
           },
           "step-10-application": {
             "title": "10 — Die Bedeutung für heute erkennen und anwenden",
-            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen.",
+            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen. Eine treue, konkrete und begrenzte Anwendung. Was gilt über die damalige Situation hinaus? Heilsgeschichtliche und kulturelle Unterschiede benennen.",
             "fields": {
               "answer": {
                 "label": "Deine Antwort",
                 "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
               }
-            }
+            },
+            "example": "Mt 8 fordert zur Prüfung auf, ob Sicherheit und Bequemlichkeit vor Vertrauen auf Christus stehen. Die damalige Situation der Jünger lässt sich nicht einfach wiederholen. Jesu Anspruch auf Nachfolge bleibt, und Zuversicht gründet in seiner Vollmacht."
           }
         }
       },
@@ -1871,7 +1921,9 @@
     "toggle": "Hinzufügen",
     "note": "Notiz",
     "to": "Zu {{part}} hinzufügen",
-    "writing": "Text"
+    "writing": "Text",
+    "textField": "Textfeld hinzufügen",
+    "textTo": "Textfeld zu {{part}} hinzufügen"
   },
   "home": {
     "title": "Bibelstudien",
@@ -2786,7 +2838,7 @@
   },
   "flow": {
     "answer": "Deine Antwort",
-    "guidance": "Hinweise (optional)",
+    "guidance": "Hinweise",
     "legacy": "Bisherige strukturierte Antworten",
     "legacyNote": "Diese Antworten bleiben in ihren ursprünglichen Feldern. Nichts wurde zusammengefügt oder ersetzt.",
     "continuous": "Fortlaufend schreiben",
@@ -2796,7 +2848,8 @@
     "previous": "Vorheriger Abschnitt",
     "next": "Nächster Abschnitt",
     "step": "Abschnitt {{current}} von {{total}}",
-    "tenStepAttribution": "Methode: Helge Stadelmann und Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). Die Hinweise hier sind eigenständig formuliert und geben nicht den Originaltext der Autoren wieder."
+    "tenStepAttribution": "Methode: Helge Stadelmann und Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). Die Hinweise hier sind eigenständig formuliert und geben nicht den Originaltext der Autoren wieder.",
+    "hideGuidance": "Hinweise ausblenden"
   },
   "builder": {
     "title": "Vorlagenbausteine",
@@ -2872,5 +2925,17 @@
     "fileType": "Markdown",
     "saved": "Gespeichert unter {{path}}",
     "empty": "Für diese Auswahl gibt es noch nichts zu exportieren."
+  },
+  "repair": {
+    "review": "POZETEK-Teile prüfen",
+    "undo": "POZETEK-Reparatur rückgängig",
+    "apply": "Fehlende Teile ergänzen und ordnen",
+    "explain": "Die ursprünglichen sieben Teile stehen zuerst. Fehlende Teile werden leer ergänzt. Alle vorhandenen Teile, auch Thema, Erkenntnisse, Konsequenzen und doppelte Teile, behalten Namen, Texte, Notizen und Verknüpfungen. Teile außerhalb der Siebenerfolge folgen in ihrer bisherigen relativen Reihenfolge.",
+    "keep": "Vorhandenen Teil behalten",
+    "add": "Leeren Teil ergänzen",
+    "duplicates": "Mehrere Teile haben denselben Schlüssel: {{parts}}. Sie bleiben getrennt; Texte werden nicht zusammengeführt.",
+    "safety": "Eine gespeicherte Rückgängig-Funktion stellt die frühere Reihenfolge wieder her und entfernt nur unveränderte, leere Teile dieser Reparatur. Wurde ein ergänzter Teil verändert, bleibt alles erhalten und Rückgängig wird abgelehnt. Vor wichtigen Reparaturen das Profil sichern.",
+    "undoFirst": "Die vorige Reparatur zuerst rückgängig machen.",
+    "finishDrafts": "Offene Notizen und Änderungen an Teilnamen zuerst abschließen oder schließen, bevor die Reparatur rückgängig gemacht wird."
   }
 }

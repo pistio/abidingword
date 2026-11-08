@@ -55,3 +55,15 @@ pub fn study_section_restore_missing(
 ) -> CommandResult<Vec<StudySection>> {
     state.db(|conn| sections::restore_missing(conn, &study_id, keys.as_deref()))
 }
+
+#[tauri::command(async)]
+pub fn study_pozetek_repair(
+    state: State<'_, AppState>,
+    study_id: String,
+    action: String,
+    expected_ids: Option<Vec<String>>,
+) -> CommandResult<crate::db::pozetek_repair::RepairView> {
+    state.db(|conn| {
+        crate::db::pozetek_repair::run(conn, &study_id, &action, expected_ids.as_deref())
+    })
+}

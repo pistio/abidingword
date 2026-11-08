@@ -5,14 +5,15 @@ import { Button } from "@/design-system/Button";
 import { useSaveTracker } from "@/hooks/SaveTracker";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import type { Finding, FindingType, StudyPhase } from "@/types/studies";
+import type { Finding, FindingType } from "@/types/studies";
 import { revealStudySection } from "./sectionNavigation";
 import { BlockEditor, type BlockHandle } from "./BlockEditor";
 import { SECTION_STATUSES, type SectionStatus, type StudySection } from "@/types/domain";
 import { sectionGuidance, sectionTitle, structuredOptional } from "./builtinText";
 import { FieldsEditor } from "./FieldsEditor";
 import { PartAdd } from "./PartAdd";
-import { PhaseSelect } from "./PhaseSelect";
+import { Dialog } from "@/design-system/Dialog";
+import { readLocal, writeLocal } from "@/lib/storage";
 import { QaEditor } from "./QaEditor";
 import { qaOf } from "./qa";
 import { StudyHelp } from "./StudyHelp";
@@ -86,8 +87,14 @@ export function SectionEditor(props: SectionEditorProps) {
   const [helping, setHelping] = useState(false);
   const helpButton = useRef<HTMLButtonElement>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const deleteOpener = useRef<HTMLButtonElement>(null);
   // A.4.3 (#25): the part's hints (guidance, goal, field help, example) are on request, never repeated chrome.
-  const [hints, setHints] = useState(false);
+  const hintKey = `study.part.hints.${section.id}`;
+  const [hintPreference, setHintPreference] = useState<boolean | null>(() => readLocal(hintKey, null));
+  const empty = !hasFindings && !section.blocks.some(block => typed[block.id] ?? Boolean(block.content.trim() || block.data));
+  const hints = hintPreference ?? empty;
+  const setHints = (value: boolean) => { setHintPreference(value); writeLocal(hintKey, value); };
   const [error, setError] = useState<string | null>(null);
   const headingId = `section-${section.id}`;
   const bodyId = `section-body-${section.id}`;
@@ -101,7 +108,7 @@ export function SectionEditor(props: SectionEditorProps) {
   const writing = section.fields?.fields.every((field) => field.kind === "writing") ?? false;
   const goal = structured ? structuredOptional(section, "goal") : null;
   const example = structured ? structuredOptional(section, "example") : null;
-  const exampleLabel = section.fields?.template === "ten-step-exegesis"
+  const exampleLabel = section.fields?.template?.startsWith("ten-step-")
     ? t("studies.fields.exampleMatthew")
     : t("studies.fields.example");
   const exampleId = useId();
@@ -149,44 +156,25 @@ export function SectionEditor(props: SectionEditorProps) {
   // The database decides whether the section still has content: text
   // typed a moment ago may not be in this page's copy yet. Pending saves are
   // awaited first; a "conflict" answer means it has content, so ask.
-  const remove = async (force: boolean) => {
+  const remove = async () => {
+    if (deleting) return;
+    setDeleting(true);
     setError(null);
     try {
       await settled();
-      await api.studySectionDelete({ id: section.id, force });
-      onDeleted(!force);
-    } catch (e) {
-      const error = toApiError(e);
-      if (!force && error.kind === "conflict") setConfirmingDelete(true);
-      else setError(error.message);
-    }
-  };
-
-  // Where the part belongs in the study outline: the person's to change, never a lock (v0.18.7).
-  // The choice shows at once; only the answer to the latest choice is applied.
-  const [shownPhase, setPhaseShown] = useState(section.phase);
-  const phaseRequest = useRef(0);
-  // A new phase from the core (another save, a reload) is shown as it is.
-  const [storedPhase, setStoredPhase] = useState(section.phase);
-  if (storedPhase !== section.phase) {
-    setStoredPhase(section.phase);
-    setPhaseShown(section.phase);
-  }
-  const setPhase = async (next: StudyPhase | null) => {
-    setPhaseShown(next);
-    const request = ++phaseRequest.current;
-    const saving = api.studySectionUpdate({ id: section.id, phase: next ?? "" });
-    track(saving);
-    try {
-      const updated = await saving;
-      if (request !== phaseRequest.current) return;
-      onChange({ ...updated, blocks: section.blocks });
-      setError(null);
-    } catch (e) {
-      if (request !== phaseRequest.current) return;
-      setPhaseShown(section.phase);
-      setError(toApiError(e).message);
-    }
+      let wasEmpty = true;
+      try {
+        await api.studySectionDelete({ id: section.id, force: false });
+      } catch (e) {
+        if (toApiError(e).kind !== "conflict") throw e;
+        // The named modal already obtained consent. The core still checks
+        // freshly saved writing before deciding whether force is needed.
+        wasEmpty = false;
+        await api.studySectionDelete({ id: section.id, force: true });
+      }
+      onDeleted(wasEmpty);
+    } catch (e) { setError(toApiError(e).message); }
+    finally { setDeleting(false); }
   };
 
   const rename = async (title: string) => {
@@ -211,8 +199,9 @@ export function SectionEditor(props: SectionEditorProps) {
       // A new phase begins with more space and a firmer rule than a new part within one.
       className={`@container scroll-mt-14 border-t pt-3 ${phase && !phase.first ? "mt-3 border-border" : "border-border-subtle"} ${active && !collapsed ? "aw-part-active" : ""}`}
       data-active={active && !collapsed ? "true" : undefined}
+      data-part-editing={renaming ? "true" : undefined}
       data-phase-start={phase?.index}
-      data-phase={shownPhase ?? undefined}
+      data-phase={section.phase ?? undefined}
       onFocusCapture={onActive}
       onKeyDown={(e) => {
         if (e.key !== "Escape") return;
@@ -301,13 +290,12 @@ export function SectionEditor(props: SectionEditorProps) {
           <button
             type="button"
             className={`${tool} hover:text-danger`}
-            onClick={() => void remove(false)}
+            onClick={(event) => { deleteOpener.current = event.currentTarget; setConfirmingDelete(true); }}
             aria-label={t("studies.sections.delete", { title })}
           >
             <Trash2 className="size-4" aria-hidden="true" />
             {t("common.delete")}
           </button>
-          <PhaseSelect value={shownPhase} onChange={(next) => void setPhase(next)} label={t("studies.phase.ofPart", { title })} className="ml-1" large />
           {structured && !writing && (
             <label className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
               <span>{t("studies.fields.status", { title })}</span>
@@ -325,15 +313,15 @@ export function SectionEditor(props: SectionEditorProps) {
         </div>
       )}
       {confirmingDelete && (
-        <div role="alertdialog" aria-label={t("studies.sections.confirmLabel", { title })} className="mt-2 flex flex-col gap-2 border-l-[3px] border-danger bg-hover px-4 py-3">
-          <p className="m-0">
-            {t(hasFindings ? "studies.sections.confirmWithFindings" : "studies.sections.confirm", { title })}
-          </p>
-          <div className="flex gap-2">
-            <Button variant="danger" onClick={() => remove(true)}>{t("studies.sections.deleteSection")}</Button>
-            <Button autoFocus onClick={() => setConfirmingDelete(false)}>{t("studies.keepIt")}</Button>
-          </div>
-        </div>
+        <Dialog role="alertdialog" title={t("studies.sections.confirmLabel", { title })}
+          onClose={() => { if (!deleting) setConfirmingDelete(false); }} returnFocus={() => deleteOpener.current ?? manageToggle.current}
+          actions={<>
+            <Button autoFocus disabled={deleting} onClick={() => setConfirmingDelete(false)}>{t("studies.keepIt")}</Button>
+            <Button variant="danger" disabled={deleting} onClick={() => void remove()}>{t("studies.sections.deleteSection")}</Button>
+          </>}>
+          <p className="m-0">{t(hasFindings ? "studies.sections.confirmWithFindings" : "studies.sections.confirm", { title })}</p>
+          {error && <p role="alert">{error}</p>}
+        </Dialog>
       )}
       {help && helping && (
         <div className="mt-2 mb-3">
@@ -353,8 +341,9 @@ export function SectionEditor(props: SectionEditorProps) {
         </div>
       )}
       <div id={bodyId} hidden={collapsed}>
-      {hints && (
+      {hints && hasHints && (
         <div data-part-hints className="mb-3 flex flex-col gap-2 border-l-[3px] border-border bg-bg-secondary px-4 py-3 text-[0.9375rem] text-text-muted">
+          <Button variant="quiet" className="self-end" onClick={() => setHints(false)}>{t("studies.flow.hideGuidance")}</Button>
           {hintText && <p className="m-0">{hintText}</p>}
           {goal && (
             <p className="m-0">
@@ -430,7 +419,7 @@ export function SectionEditor(props: SectionEditorProps) {
         </div>
       )}
       </div>
-      {error && (
+      {error && !confirmingDelete && (
         <p role="alert" className="m-0 mt-2 text-[0.9375rem] text-danger">
           {error}
         </p>

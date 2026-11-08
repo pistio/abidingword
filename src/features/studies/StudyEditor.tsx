@@ -24,6 +24,7 @@ import { hasJourney, namesRun, phaseRuns } from "./journey";
 import { NextStep, usePhaseName } from "./StudyJourney";
 import { lastView, rememberView, type StudyView } from "./studyView";
 import { qaData } from "./qa";
+import { PozetekRepair } from "./PozetekRepair";
 import { StudyQaExport } from "./StudyQaExport";
 import { TeachingView } from "@/features/teaching/TeachingView";
 
@@ -67,7 +68,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     setCapturingState(({ [place]: _closed, ...rest }) => rest);
     // Back to the Add it was opened from.
     requestAnimationFrame(() =>
-      (place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-add]") : noteButton.current)?.focus(),
+      (place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-note] button") : noteButton.current)?.focus(),
     );
   };
   const noteButton = useRef<HTMLButtonElement>(null);
@@ -426,7 +427,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       </nav>}
       {/* The parts stay siblings keyed by their own id, so moving one never rebuilds the others;
           where a phase begins is marked on its first part (v0.18.6 review). */}
-      {sections.map((section) => (
+      {sections.map((section, index) => (
         <div key={section.id} hidden={!continuous && section.id !== focusedSection?.id}>
         <SectionEditor
           templateKey={template?.key}
@@ -451,6 +452,9 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
           onMove={(delta) => moveSection(section.id, delta)}
           onDeleted={(wasEmpty) => {
             if (wasEmpty && study.templateId && template?.isBuiltin && template.sections.some(part => part.key === section.key && !part.optional && !part.retired) && ["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key)) setRemovedEmptyPart(section.key);
+            const next = sections[index + 1] ?? sections[index - 1];
+            if (next) requestAnimationFrame(() => revealStudySection(next.id));
+            else requestAnimationFrame(() => document.getElementById("study-overview")?.querySelector<HTMLElement>("button, input, [tabindex]")?.focus());
             detail.reload();
             findings.reload();
           }}
@@ -490,6 +494,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       {/* The end of the study: another part, or a note that belongs to no part. */}
       <div className="flex flex-wrap items-start gap-2 border-t border-border-subtle pt-3">
         {removedEmptyPart && <div role="status" className="basis-full type-meta">{t("studies.parts.restoreEmptyHint")} <Button disabled={restoringParts} onClick={() => void restoreParts([removedEmptyPart]).catch(error => setError(toApiError(error).message))}>{t("common.lifecycle.undo")}</Button></div>}
+        {template?.isBuiltin && template.key === "pozetek-writing-study" && <PozetekRepair studyId={study.id} hasOpenDrafts={Object.keys(capturing).length > 0} onChanged={parts => detail.setData(previous => ({ ...(previous ?? current), sections: parts }))} />}
         <AddPart template={template} sections={sections} onAdd={addSection} onRestore={study.templateId ? restoreParts : undefined} />
         <Button ref={noteButton} variant="quiet" className="min-h-11" onClick={() => openCapture("", lastNoteKind(study.id))}>
           <Plus className="size-4" aria-hidden="true" />

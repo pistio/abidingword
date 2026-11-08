@@ -1,3 +1,4 @@
+import { jumpReaderPage } from "../support/readerActions";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { createFakePdfEngine, textItem } from "../support/fakePdfEngine";
@@ -115,7 +116,7 @@ describe("marks on the Original PDF", () => {
     });
     // A share of the page: item 3 starts at character 0; "bears fruit" from 23 on (fake layout: 1% per character).
     expect(note).toHaveStyle({ left: `${at}%` });
-    await user.click(screen.getByRole("button", { name: "Zoom in" }));
+    await readerAction(user, "Zoom in");
     await waitFor(() => expect(pageSheet(1).querySelector("[data-pdf-mark='note']")).toHaveStyle({ left: `${at}%` }));
     // The page's marker opens the note, which can be read and edited there.
     await user.click(within(pageSheet(1)).getByRole("button", { name: "1 mark here: Note" }));
@@ -139,9 +140,7 @@ describe("marks on the Original PDF", () => {
     expect(await within(pageSheet(1)).findByRole("button", { name: "1 mark here: Bookmark" })).toBeInTheDocument();
 
     // A scanned page (no text of its own): the page itself is bookmarked.
-    const pageBox = screen.getByRole("textbox", { name: "Page number" });
-    await user.clear(pageBox);
-    await user.type(pageBox, "3{Enter}");
+    await jumpReaderPage(user, 3);
     await readerAction(user, "Bookmark this place", header);
     await waitFor(() => expect(live(api)).toHaveLength(2));
     expect(live(api)[1]).toMatchObject({ kind: "bookmark", pageNumber: 3, start: null });

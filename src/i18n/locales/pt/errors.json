@@ -170,7 +170,8 @@
   },
   "sections": {
     "hasContent": "“{{title}}” ainda tem texto ou anotações.",
-    "duplicateKey": "Este estudo já tem essa parte."
+    "duplicateKey": "Este estudo já tem essa parte.",
+    "repairChanged": "As partes mudaram. Reveja-as. Anular exige partes adicionadas inalteradas; todos os textos são mantidos."
   },
   "relations": {
     "self": "Um estudo não pode ser vinculado a si mesmo.",

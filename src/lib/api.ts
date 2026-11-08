@@ -1,4 +1,4 @@
-import type { PdfStructureView, PdfCorrection, PdfDiagnostic, ReaderObserved } from "@/types/library";
+import type { PdfBuildProgress, PdfStructureView, PdfCorrection, PdfDiagnostic, ReaderObserved } from "@/types/library";
 // The frontend's only door to the native core. Components use the `Api`
 // interface through `useApi()`, never `invoke` directly, so tests can supply
 // an in-memory implementation.
@@ -200,6 +200,7 @@ export interface Api {
   studyUpdate(input: UpdateStudy): Promise<Study>;
   studySectionList(studyId: string): Promise<StudySection[]>;
   studySectionUpdate(input: UpdateStudySection): Promise<StudySection>;
+  studyPozetekRepair(studyId: string, action: "preview" | "apply" | "undo", expectedIds?: string[]): Promise<{ sections: StudySection[]; canUndo: boolean }>;
   studySectionRestoreMissing(studyId: string, keys?: string[]): Promise<StudySection[]>;
   studySectionCreate(input: CreateStudySection): Promise<StudySection>;
   studySectionDelete(input: { id: string; force: boolean }): Promise<void>;
@@ -289,14 +290,16 @@ export interface Api {
   librarySourceContents(id: string): Promise<ContentsItem[]>;
   libraryPdfStructure(id: string): Promise<PdfStructureView>;
   libraryPdfStructureBuild(id: string): Promise<PdfStructureView>;
+  libraryPdfStructureProgress(id: string): Promise<PdfBuildProgress | null>;
+  libraryPdfStructureCancel(id: string): Promise<boolean>;
   libraryPdfStructureCorrect(id: string, hash: string, correction: PdfCorrection): Promise<PdfStructureView>;
   libraryPdfStructureUndo(id: string, hash: string, reset: boolean): Promise<PdfStructureView>;
   /** A.4.1: the metadata-only structure/targeting report of a PDF Source. */
   libraryPdfStructureDiagnostic(id: string, passage: string | null, observed: ReaderObserved | null): Promise<PdfDiagnostic>;
   /** Asks where to save that report (.json); null when cancelled. */
   chooseDiagnosticFile(defaultName: string, filterName: string): Promise<string | null>;
-  /** Saves the report (rebuilt by the native core) to the chosen file; returns where it went. */
-  libraryPdfStructureDiagnosticSave(id: string, passage: string | null, observed: ReaderObserved | null, path: string): Promise<string>;
+  /** Saves a native-generated report atomically and returns that exact report for display. */
+  libraryPdfStructureDiagnosticSave(id: string, passage: string | null, observed: ReaderObserved | null, path: string): Promise<{ path: string; report: PdfDiagnostic }>;
   /** Contents made from the source's own headings, for a source that carries none (shown as generated). */
   libraryGeneratedContents(id: string): Promise<ContentsItem[]>;
   /** The links in an EPUB's text that lead elsewhere in the same book (none for other formats). */
@@ -653,6 +656,7 @@ export const tauriApi: Api = {
   studyUpdate: (input) => call("study_update", { input }),
   studySectionList: (studyId) => call("study_section_list", { studyId }),
   studySectionUpdate: (input) => call("study_section_update", { input }),
+  studyPozetekRepair: (studyId, action, expectedIds) => call("study_pozetek_repair", { studyId, action, expectedIds }),
   studySectionRestoreMissing: (studyId, keys) => call("study_section_restore_missing", { studyId, keys }),
   studySectionCreate: (input) => call("study_section_create", { input }),
   studySectionDelete: (input) => call("study_section_delete", { input }),
@@ -740,6 +744,8 @@ export const tauriApi: Api = {
   librarySourceContents: (id) => call("library_source_contents", { id }),
   libraryPdfStructure: (id) => call("library_pdf_structure", { id }),
   libraryPdfStructureBuild: (id) => call("library_pdf_structure_build", { id }),
+  libraryPdfStructureProgress: (id) => call("library_pdf_structure_progress", { id }),
+  libraryPdfStructureCancel: (id) => call("library_pdf_structure_cancel", { id }),
   libraryPdfStructureCorrect: (id, hash, correction) => call("library_pdf_structure_correct", { id, hash, correction }),
   libraryPdfStructureUndo: (id, hash, reset) => call("library_pdf_structure_undo", { id, hash, reset }),
   libraryPdfStructureDiagnostic: (id, passage, observed) => call("library_pdf_structure_diagnostic", { id, passage, observed }),

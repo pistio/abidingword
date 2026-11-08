@@ -605,8 +605,8 @@
     "invalid": "Introduza uma página de 1 a {{total}}."
   },
   "structure": {
-    "title": "Estrutura do documento",
-    "explanation": "Os destinos se baseiam no documento, sem avaliar sua relevância teológica. As correções ficam no Abiding Word; os arquivos originais e as citações permanecem intactos.",
+    "title": "Capítulos e títulos",
+    "explanation": "Reveja e corrija os títulos e capítulos reconhecidos automaticamente nesta fonte.",
     "build": "Analisar estrutura",
     "rebuild": "Analisar novamente",
     "undo": "Desfazer correção",
@@ -631,7 +631,8 @@
       "outline": "Sumário incorporado",
       "tagged": "Tags de estrutura PDF",
       "layout": "Inferido do layout",
-      "user": "Correção do usuário"
+      "user": "Correção do usuário",
+      "printed": "Índice impresso de livros bíblicos"
     },
     "scopes": {
       "passage": "Passagem",
@@ -653,8 +654,42 @@
       "copyFailed": "Não foi possível copiar o relatório. Use «Guardar relatório…».",
       "fileType": "Relatório de diagnóstico",
       "saved": "Guardado em {{path}}",
-      "file": "SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos"
-    }
+      "file": "SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos",
+      "general": "Relatório geral — nenhum trecho foi verificado. Para examinar os candidatos de Atos 6, introduza Apg 6 antes de criar ou guardar outro relatório."
+    },
+    "processing": {
+      "label": "Progresso da análise",
+      "stage": "{{stage}} · {{seconds}} s",
+      "background": "Pode fechar este painel e continuar a ler ou escrever. O cancelamento aplica-se no próximo ponto seguro; a confirmação final não pode ser cancelada.",
+      "cancelling": "A cancelar…",
+      "success": "{{count}} títulos guardados; {{links}} ligações de estrutura indexadas.",
+      "empty": "Não foram reconhecidos títulos utilizáveis. A análise foi guardada, mas o índice automático está indisponível. Pode marcar manualmente as linhas visíveis abaixo.",
+      "failed": "A análise falhou. A estrutura e as ligações anteriores foram preservadas. Tente novamente ou guarde um relatório de diagnóstico.",
+      "timings": "Tempos de processamento",
+      "missing": "Não há análise de títulos guardada. Escolha Criar estrutura; pode guardar um diagnóstico geral antes disso.",
+      "stages": {
+        "file": "Ler e verificar ficheiro",
+        "segments": "Ler textos guardados",
+        "pdf": "Ler páginas PDF",
+        "alignment": "Alinhar texto original",
+        "native": "Ler marcadores e etiquetas incorporados",
+        "headings": "Encontrar títulos",
+        "store": "Guardar metadados",
+        "index": "Indexar ligações de estrutura",
+        "indexed": "Ligações indexadas",
+        "commit": "Confirmar alterações",
+        "refresh": "Atualizar leitor"
+      },
+      "duration": "{{milliseconds}} ms"
+    },
+    "cancelled": "Análise cancelada. A estrutura e as ligações anteriores não mudaram. Pode tentar novamente.",
+    "timeout": "A análise atingiu o limite de tempo num ponto seguro. Os metadados anteriores não mudaram. Tente novamente ou guarde um diagnóstico.",
+    "busy": "Já existe uma análise em curso. Aguarde ou cancele-a antes de tentar novamente.",
+    "limit": "O PDF excede os limites de análise suportados. Os metadados anteriores não mudaram.",
+    "failed": "A análise falhou. A estrutura e as ligações anteriores foram preservadas. Tente novamente ou guarde um relatório de diagnóstico.",
+    "automaticRunning": "A analisar capítulos e títulos…",
+    "automaticFailed": "A análise automática de títulos parou. Pode continuar a ler e escrever.",
+    "automaticDetails": "Progresso / tentar novamente"
   },
   "toolbar": {
     "label": "Ferramentas de leitura",
@@ -672,9 +707,13 @@
       "bookmark": "Marcar este lugar",
       "note": "Adicionar nota aqui",
       "marks": "Marcas",
-      "structure": "Estrutura do documento",
+      "structure": "Capítulos e títulos",
       "full": "Abrir leitor completo",
-      "about": "Sobre esta fonte"
+      "about": "Sobre esta fonte",
+      "zoomIn": "Ampliar",
+      "zoomOut": "Reduzir",
+      "fitWidth": "Ajustar à largura",
+      "fitPage": "Ajustar à página"
     }
   }
 }

@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { act, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
@@ -123,4 +123,36 @@ describe("generated contents", () => {
     await screen.findByText("Nothing but text.");
     expect(screen.queryByRole("button", { name: "Contents" })).toBeNull();
   });
+});
+
+
+it("exposes automatic PDF analysis progress without blocking reading, then offers its Contents", async () => {
+  const { api, engine } = setup([pdf("Pending heading analysis")]);
+  let finish!: (items: ContentsItem[]) => void;
+  api.libraryGeneratedContents = () => new Promise(resolve => { finish = resolve; });
+  api.libraryPdfStructureProgress = async () => ({ status: "running", stage: "pdf", done: 2, total: 4, elapsedMs: 1200, timings: [], headingCount: null, indexedLinks: null, errorCode: null, canCancel: true });
+  const { user } = await renderApp(api, { pdfEngine: engine });
+  await openFromLibrary(user, "Pending heading analysis");
+  expect(await screen.findByText("Analysing chapters and headings…")).toBeVisible();
+  expect(screen.getByText("An opening paragraph about gardens.")).toBeVisible();
+  await user.click(screen.getByRole("button", { name: "Progress / retry" }));
+  const dialog = await screen.findByRole("dialog", { name: "Chapters and headings" });
+  expect(await within(dialog).findByRole("progressbar")).toHaveAttribute("value", "2");
+  await user.click(within(dialog).getAllByRole("button", { name: "Close" }).at(-1)!);
+  await act(async () => finish(GENERATED_PDF));
+  await waitFor(() => expect(screen.queryByText("Analysing chapters and headings…")).toBeNull());
+  expect(await contentsButton()).toBeEnabled();
+});
+
+it("shows automatic analysis failure with explicit retry while retaining reading and hiding error details", async () => {
+  const { api, engine } = setup([pdf("Failed heading analysis")]);
+  api.libraryGeneratedContents = async () => { throw new Error("PRIVATE SOURCE TEXT must never be displayed"); };
+  const { user } = await renderApp(api, { pdfEngine: engine });
+  await openFromLibrary(user, "Failed heading analysis");
+  expect(await screen.findByText("Automatic heading analysis stopped. Existing reading and writing are available.")).toBeVisible();
+  expect(screen.queryByText(/PRIVATE SOURCE TEXT/)).toBeNull();
+  expect(screen.getByText("An opening paragraph about gardens.")).toBeVisible();
+  await user.click(screen.getByRole("button", { name: "Progress / retry" }));
+  const dialog = await screen.findByRole("dialog", { name: "Chapters and headings" });
+  expect(within(dialog).getByRole("button", { name: "Build structure" })).toBeEnabled();
 });

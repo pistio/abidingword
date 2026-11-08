@@ -61,7 +61,7 @@ export function StudyHelp({ studyId, studyTitle, section, notes, handles, lastBl
   const initial: Inquiry =
     kind === "selection" ? "expression" : note && (note.findingType === "question" || note.findingType === "unresolved_issue") ? "unresolved" : "understand";
   const wording = kind === "block" || kind === "selection";
-  const actions = STUDY_INQUIRIES.filter((a) => (a === "clarify" || a === "grammar" ? wording : a === "expression" ? kind === "selection" : a === "unresolved" ? kind === "note" : true));
+  const actions = STUDY_INQUIRIES.filter((a) => a !== "questions" && (a === "clarify" || a === "grammar" ? wording : a === "expression" ? kind === "selection" : a === "unresolved" ? kind === "note" : true));
 
   return (
     <InquiryPanel

@@ -7,7 +7,6 @@
 
 use std::fs;
 use std::path::PathBuf;
-use std::sync::{Mutex, OnceLock};
 
 use tauri::State;
 
@@ -16,7 +15,7 @@ use crate::db::{findings, library};
 use crate::domain::Finding;
 use crate::error::{AppError, ErrorPayload, UserMessage};
 use crate::filesystem;
-use crate::library::{adapters, contents, generated_contents, import, original};
+use crate::library::{adapters, contents, import, original};
 use crate::library::{
     AddFindingSource, CitationPlace, CommitSourceImport, CreateFindingFromSource, FindingCitation,
     GetSegments, LibraryResults, ListSources, PassageLocation, PassageMention, PassageSourceGroup,
@@ -417,63 +416,48 @@ pub fn library_source_contents(
 /// none (v0.13): a DOCX's Word headings, an EPUB's or Markdown file's
 /// headings, a PDF's probable headings (see `library::generated_contents`).
 /// The interface shows them as generated. Empty when nothing is clear enough.
-#[tauri::command(async)]
-pub fn library_generated_contents(
-    state: State<'_, AppState>,
+#[tauri::command]
+pub async fn library_generated_contents(
+    app: tauri::AppHandle,
     id: String,
 ) -> CommandResult<Vec<contents::ContentsItem>> {
-    let core = state.core()?;
-    let (source, record) = core.db.with_conn(|conn| {
-        let source = library::get(conn, &id)?;
-        let record = library::original_record(conn, &id).ok();
-        Ok((source, record))
-    })?;
-    match record {
-        Some((relative, format)) if format == "docx" => {
-            let bytes =
-                original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-            let expected = usize::try_from(source.segment_count).unwrap_or(0);
-            Ok(adapters::docx::contents(&bytes, expected))
-        }
-        Some((relative, format)) if format == "pdf" => {
-            if let Some(found) = generated_cache_get(&id) {
-                return Ok(found);
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let core = state.core()?;
+        let (source, record) = core.db.with_conn(|conn| {
+            let source = library::get(conn, &id)?;
+            let record = library::original_record(conn, &id).ok();
+            Ok((source, record))
+        })?;
+        match record {
+            Some((_, format)) if format == "pdf" => crate::library::pdf_build::ensure_contents(
+                &core.db,
+                &core.dirs.sources(),
+                &id,
+                &state.pdf_structure_jobs,
+            )
+            .map_err(ErrorPayload::from),
+            Some((relative, format)) if format == "docx" => {
+                let bytes = original::read_managed(
+                    &core.dirs.sources(),
+                    &id,
+                    &relative,
+                    MAX_CONTENTS_FILE,
+                )?;
+                Ok(adapters::docx::contents(
+                    &bytes,
+                    usize::try_from(source.segment_count).unwrap_or(0),
+                ))
             }
-            let bytes =
-                original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-            let found = generated_contents::from_pdf(&bytes);
-            generated_cache_put(&id, &found);
-            Ok(found)
+            _ => core
+                .db
+                .with_conn(|conn| library::generated_contents(conn, &id))
+                .map_err(ErrorPayload::from),
         }
-        _ => Ok(core
-            .db
-            .with_conn(|conn| library::generated_contents(conn, &id))?),
-    }
-}
-
-/// Generated PDF contents already worked out this session (reading a whole
-/// PDF again for each opening would be slow), a few sources at most.
-type GeneratedCache = Mutex<Vec<(String, Vec<contents::ContentsItem>)>>;
-
-fn generated_cache() -> &'static GeneratedCache {
-    static CACHE: OnceLock<GeneratedCache> = OnceLock::new();
-    CACHE.get_or_init(|| Mutex::new(Vec::new()))
-}
-const GENERATED_CACHE_SOURCES: usize = 8;
-
-fn generated_cache_get(id: &str) -> Option<Vec<contents::ContentsItem>> {
-    let cache = generated_cache().lock().ok()?;
-    cache.iter().find(|(k, _)| k == id).map(|(_, v)| v.clone())
-}
-
-fn generated_cache_put(id: &str, items: &[contents::ContentsItem]) {
-    if let Ok(mut cache) = generated_cache().lock() {
-        cache.retain(|(k, _)| k != id);
-        cache.push((id.to_string(), items.to_vec()));
-        if cache.len() > GENERATED_CACHE_SOURCES {
-            cache.remove(0);
-        }
-    }
+    })
+    .await
+    .map_err(|_| ErrorPayload::from(AppError::Unexpected("Contents worker unavailable".into())))?
 }
 
 /// The links inside an EPUB's text that lead elsewhere in the same book (see
@@ -602,82 +586,111 @@ pub fn library_pdf_structure(
     state.db(|conn| crate::db::pdf_structures::view(conn, &id))
 }
 
-/// A.4.1: the local, metadata-only structure and targeting report of a PDF.
-#[tauri::command(async)]
-pub fn library_pdf_structure_diagnostic(
-    state: State<'_, AppState>,
+/// Display and save use the same worker and the same captured query/reader state.
+#[tauri::command]
+pub async fn library_pdf_structure_diagnostic(
+    app: tauri::AppHandle,
     id: String,
     passage: Option<String>,
     observed: Option<crate::db::pdf_diagnostic::ReaderObserved>,
 ) -> CommandResult<crate::db::pdf_diagnostic::Diagnostic> {
-    state.db(|conn| {
-        crate::db::pdf_diagnostic::diagnostic_with(conn, &id, passage.as_deref(), observed)
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let mut report = state.db(|conn| {
+            crate::db::pdf_diagnostic::diagnostic_with(conn, &id, passage.as_deref(), observed)
+        })?;
+        report.processing = state.pdf_structure_jobs.get(&id).map(|j| j.snapshot());
+        Ok(report)
     })
+    .await
+    .map_err(|_| {
+        ErrorPayload::from(AppError::Unexpected(
+            "PDF diagnostic worker unavailable".into(),
+        ))
+    })?
 }
 
-/// Saves that report as a `.json` file where the save dialog said; returns
-/// where it went. The report is rebuilt here, never taken from the interface.
-#[tauri::command(async)]
-pub fn library_pdf_structure_diagnostic_save(
-    state: State<'_, AppState>,
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SavedPdfDiagnostic {
+    path: String,
+    report: crate::db::pdf_diagnostic::Diagnostic,
+}
+
+#[tauri::command]
+pub async fn library_pdf_structure_diagnostic_save(
+    app: tauri::AppHandle,
     id: String,
     passage: Option<String>,
     observed: Option<crate::db::pdf_diagnostic::ReaderObserved>,
     path: String,
-) -> CommandResult<String> {
-    let report = state.db(|conn| {
-        crate::db::pdf_diagnostic::diagnostic_with(conn, &id, passage.as_deref(), observed)
-    })?;
-    let bytes = serde_json::to_vec_pretty(&report).map_err(|e| {
-        AppError::InvalidInput(UserMessage::new("library.structure.invalid", e.to_string()))
-    })?;
-    let target = crate::commands::materials::chosen_path(&path, &["json"])?;
-    crate::commands::materials::refuse_unasked(&path, &target)?;
-    crate::commands::presentations::write_atomically(&target, &bytes)?;
-    Ok(target.to_string_lossy().into_owned())
+) -> CommandResult<SavedPdfDiagnostic> {
+    let report = library_pdf_structure_diagnostic(app, id, passage, observed).await?;
+    tauri::async_runtime::spawn_blocking(move || {
+        let bytes = serde_json::to_vec_pretty(&report)
+            .map_err(|_| AppError::Unexpected("PDF diagnostic serialization failed".into()))?;
+        let target = crate::commands::materials::chosen_path(&path, &["json"])?;
+        crate::commands::materials::refuse_unasked(&path, &target)?;
+        crate::commands::presentations::write_atomically(&target, &bytes)?;
+        Ok(SavedPdfDiagnostic {
+            path: target.to_string_lossy().into_owned(),
+            report,
+        })
+    })
+    .await
+    .map_err(|_| {
+        ErrorPayload::from(AppError::Unexpected(
+            "PDF diagnostic save worker unavailable".into(),
+        ))
+    })?
 }
 
-/// Explicit rebuild for older imports; preserve the exact existing segments.
-#[tauri::command(async)]
-pub fn library_pdf_structure_build(
+/// CPU/file work is explicitly off the IPC executor; progress is retained in
+/// AppState so closing/reopening the panel cannot hide a failed operation.
+#[tauri::command]
+pub async fn library_pdf_structure_build(
+    app: tauri::AppHandle,
     state: State<'_, AppState>,
     id: String,
 ) -> CommandResult<crate::db::pdf_structures::View> {
-    let core = state.core()?;
-    let (relative, format) = core
-        .db
-        .with_conn(|conn| library::original_record(conn, &id))?;
-    if format != "pdf" {
-        return Err(AppError::InvalidInput(UserMessage::new(
-            "library.structure.invalid",
-            "This source is not a PDF.",
-        ))
-        .into());
-    }
-    let bytes = original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-    let hash = crate::library::files::content_hash(&bytes);
-    let stored = core.db.with_conn(|conn| {
-        let mut statement = conn.prepare("SELECT position,page_number,content,char_start,char_end FROM source_segments WHERE source_id=?1 ORDER BY position")?;
-        let rows = statement.query_map([&id], |r| Ok((r.get::<_,i64>(0)?,r.get::<_,Option<u32>>(1)?,r.get::<_,String>(2)?,r.get::<_,Option<u32>>(3)?,r.get::<_,Option<u32>>(4)?)))?.collect::<Result<Vec<_>,_>>()?;
-        Ok(rows)
-    })?;
-    let pieces: Vec<_> = stored
-        .iter()
-        .filter_map(|(position, page, text, start, end)| {
-            Some(crate::library::pdf_structure::Piece {
-                position: *position,
-                page: (*page)?,
-                text,
-                byte_start: *start,
-                byte_end: *end,
-            })
+    state.core()?;
+    let job = state.pdf_structure_jobs.start(&id)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let core = state.core().map_err(|_| AppError::Unexpected("PDF analysis unavailable".into()))?;
+            crate::library::pdf_build::rebuild(&core.db, &core.dirs.sources(), &id, &job)
+        })).unwrap_or_else(|_| Err(AppError::Unexpected("PDF analysis worker stopped".into())));
+        job.finish(&result);
+        result.map_err(|error| {
+            let code = match error {
+                AppError::InvalidInput(ref m) | AppError::Import(ref m) => m.code.unwrap_or("library.structure.failed"),
+                _ => "library.structure.failed",
+            };
+            ErrorPayload::from(AppError::InvalidInput(UserMessage::new(code,
+                "Heading analysis stopped. Reopen Chapters and headings for its stage and retry. Previous metadata remains available.")))
         })
-        .collect();
-    let pdf = adapters::pdf::read_pages(&bytes, &relative)?;
-    let document = crate::library::pdf_structure::extract(&bytes, &pdf, &pieces);
-    Ok(core
-        .db
-        .with_conn(|conn| crate::db::pdf_structures::replace(conn, &id, &hash, &document))?)
+    }).await.map_err(|_| ErrorPayload::from(AppError::Unexpected("PDF worker unavailable".into())))?
+}
+
+#[tauri::command(async)]
+pub fn library_pdf_structure_progress(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<Option<crate::library::pdf_build::Progress>> {
+    state.core()?;
+    Ok(state.pdf_structure_jobs.get(&id).map(|j| j.snapshot()))
+}
+
+#[tauri::command(async)]
+pub fn library_pdf_structure_cancel(state: State<'_, AppState>, id: String) -> CommandResult<bool> {
+    state.core()?;
+    Ok(state
+        .pdf_structure_jobs
+        .get(&id)
+        .is_some_and(|j| j.cancel()))
 }
 #[tauri::command(async)]
 pub fn library_pdf_structure_correct(

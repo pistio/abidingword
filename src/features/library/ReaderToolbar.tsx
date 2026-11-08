@@ -16,7 +16,7 @@ import { readLocal, writeLocal } from "@/lib/storage";
  * screen-reader users: every action is in the row or in the menu, by name.
  */
 export type ReaderActionId =
-  | "find" | "contents" | "history" | "bookmark" | "note" | "marks" | "structure" | "full" | "about";
+  | "find" | "contents" | "history" | "bookmark" | "note" | "marks" | "structure" | "full" | "about" | "zoomIn" | "zoomOut" | "fitWidth" | "fitPage";
 
 export interface ReaderAction {
   /** The pin it belongs to (Back and Forward share "history"). */
@@ -30,11 +30,12 @@ export interface ReaderAction {
   expanded?: boolean;
   controls?: string;
   disabled?: boolean;
+  group?: string;
 }
 
 /** Shown in the row unless the person changes it: the two the owner reaches for most. */
 export const DEFAULT_PINS: ReaderActionId[] = ["find", "contents"];
-export const PIN_ORDER: ReaderActionId[] = ["find", "contents", "history", "bookmark", "note", "marks", "structure", "full", "about"];
+export const PIN_ORDER: ReaderActionId[] = ["find", "contents", "history", "bookmark", "note", "marks", "structure", "full", "about", "zoomOut", "zoomIn", "fitWidth", "fitPage"];
 const STORAGE_KEY = "reader.toolbar.pins";
 /** One icon button, including its gap (44 px target + 4 px). */
 const SLOT = 48;
@@ -137,7 +138,7 @@ export function ReaderToolbar({ start, title, fixed, actions, label, menuLabel, 
   const shownKeys = new Set(shown.map((a) => a.key));
   const rest = actions.filter((a) => !shownKeys.has(a.key));
   const menu: MenuAction[] = [
-    ...rest.map((a) => ({ label: a.label, icon: a.icon, disabled: a.disabled, onSelect: (opener: HTMLButtonElement | null) => a.onSelect(opener) })),
+    ...rest.map((a) => ({ label: a.label, icon: a.icon, group: a.group, disabled: a.disabled, onSelect: (opener: HTMLButtonElement | null) => a.onSelect(opener) })),
     { label: t("library.toolbar.customise"), icon: <Settings2 className="size-4" aria-hidden="true" />, group: t("library.toolbar.settings"), onSelect: () => setCustomising(true) },
   ];
   const available = PIN_ORDER.filter((id) => actions.some((a) => a.id === id));
@@ -148,7 +149,7 @@ export function ReaderToolbar({ start, title, fixed, actions, label, menuLabel, 
       role="toolbar"
       aria-label={label}
       data-testid="reader-toolbar"
-      className="@container relative z-20 flex min-h-12 shrink-0 flex-nowrap items-center gap-1 border-b border-border-subtle bg-bg px-2 py-0.5"
+      className="@container relative z-20 flex min-h-12 shrink-0 flex-nowrap items-center gap-1 border-b border-border-subtle bg-bg px-1 py-0.5"
     >
       <div ref={startPart} className="flex shrink-0 flex-nowrap items-center">{start}</div>
       {title ? <div className="flex min-w-0 flex-1 items-center">{title}</div> : null}
@@ -156,7 +157,7 @@ export function ReaderToolbar({ start, title, fixed, actions, label, menuLabel, 
       {title ? null : <div className="min-w-0 flex-1" />}
       <div className="flex shrink-0 flex-nowrap items-center gap-1">
         {shown.map((a) => <IconAction key={a.key} action={a} buttonRef={refs[a.key]} />)}
-        <ActionMenu label={menuLabel ?? t("library.toolbar.more")} actions={menu} />
+        <ActionMenu portal label={menuLabel ?? t("library.toolbar.more")} actions={menu} />
       </div>
       {customising && (
         <Dialog

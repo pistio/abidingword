@@ -486,6 +486,7 @@ async function start() {
     databasePath: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\database\\abiding-word.db",
     logDirectory: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\logs",
   });
+  api.logError = async message => { console.error(message); };
   const fixtureOriginalInfo = api.libraryOriginalInfo;
   const fixtureOriginalRead = api.libraryOriginalRead;
   if (params.get("empty") !== "1") await seed(api);
@@ -589,6 +590,19 @@ async function start() {
   }
   if(params.get("a3PdfReview") === "1") {
     const sourceId = await pdfStructureReviewFixture(api);
+    if (params.get("pdfProcessingReview") === "1") {
+      // Synthetic job-state adapter for browser/geometry review only. Actual
+      // processing/timing/persistence is exercised by pdf_build_processing.rs.
+      let cancelled = false;
+      const prior = api.libraryPdfStructureProgress;
+      api.libraryPdfStructureProgress = async id => id === sourceId ? {
+        status: cancelled ? "cancelled" : "running", stage: "pdf", done: 125, total: 400,
+        elapsedMs: 12000, timings: [{ stage: "file", milliseconds: 74 }],
+        headingCount: null, indexedLinks: null, errorCode: null, canCancel: !cancelled,
+      } : prior(id);
+      api.libraryPdfStructureCancel = async id => { if (id !== sourceId) return false; cancelled = true; return true; };
+    }
+
     const otherInfo=api.libraryOriginalInfo, otherRead=api.libraryOriginalRead;
     api.libraryOriginalInfo=id=>id===sourceId?fixtureOriginalInfo(id):otherInfo(id);
     api.libraryOriginalRead=(id,offset,length)=>id===sourceId?fixtureOriginalRead(id,offset,length):otherRead(id,offset,length);
@@ -605,6 +619,18 @@ async function start() {
       const block = sections[index]?.blocks[0];
       if (block) await api.studyBlockUpdate({ id: block.id, content: text });
     }
+  }
+  if (params.get("a4Editors") === "1" && params.get("pozetekLegacy") === "1") {
+    // Invented historical shape for repair preview screenshots, never owner data.
+    const study = api.state.studies.find(study => study.title === "Römer 8")!;
+    for (const [key, oldKey, title] of [["context", "theme", "Theme"], ["explanations", "understanding", "Understanding"], ["core", "consequences", "Consequences"]]) {
+      const part = api.state.sections.find(part => part.studyId === study.id && part.key === key)!;
+      part.key = oldKey!; part.title = title!;
+      const block = api.state.blocks.find(block => block.sectionId === part.id)!;
+      await api.studyBlockUpdate({ id: block.id, content: `Invented preserved ${oldKey} writing — 한글` });
+    }
+    const duplicate = await api.studySectionCreate({ studyId: study.id, title: "Zeit — eigene Notizen" });
+    api.state.sections.find(part => part.id === duplicate.id)!.key = "time";
   }
   await i18n.changeLanguage(params.get("lang") ?? "en");
   // All three panes even in a narrow window, as the owner works (review scenes, v0.18.5).

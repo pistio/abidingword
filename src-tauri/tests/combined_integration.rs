@@ -87,7 +87,9 @@ fn existing_v25_teaching_and_structured_answers_survive_study_flow_startup() {
             assert_eq!(
                 templates::get_by_key(conn, "pozetek-writing-study")?
                     .sections
-                    .len(),
+                    .iter()
+                    .filter(|part| !part.optional)
+                    .count(),
                 7
             );
             assert_eq!(

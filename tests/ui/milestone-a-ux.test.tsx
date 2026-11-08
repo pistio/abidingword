@@ -1,3 +1,4 @@
+import { readerPageName } from "../support/readerActions";
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, expect, it } from "vitest";
 import i18n from "@/i18n";
@@ -50,18 +51,18 @@ it("uses physical PDF pages in both modes, keeps printed labels separate, and re
   // A.4.2: Reading has a compact "2 / 3" indicator; Original keeps the viewer's own page control.
   const nav = () => within(screen.getByRole("navigation", { name: "PDF page navigation" }));
   const indicator = () => screen.getByTestId("pdf-page-indicator");
-  const original = () => screen.getByRole("textbox", { name: "Page number" });
+  const original = () => screen.getByTestId("pdf-page-indicator");
   expect(nav().getByRole("button", { name: "Previous PDF page" })).toBeDisabled();
   await user.click(nav().getByRole("button", { name: "Next PDF page" }));
   expect(indicator()).toHaveTextContent("2 / 3");
   expect(indicator()).toHaveAccessibleName(/PDF page 2 of 3 Printed page label: iv/);
   expect(screen.queryByText(/PDF pages count from the start/)).toBeNull(); // explained in the jump form only
   await user.click(screen.getByRole("button", { name: "Original" }));
-  await waitFor(() => expect(original()).toHaveValue("2"));
-  expect(screen.queryByTestId("pdf-page-indicator")).toBeNull(); // one page control per view
-  await user.click(screen.getByRole("button", { name: "Next page" }));
-  await waitFor(() => expect(original()).toHaveValue("3"));
-  expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
+  await waitFor(() => expect(original()).toHaveAccessibleName(readerPageName("2")));
+  expect(screen.getAllByTestId("pdf-page-indicator")).toHaveLength(1); // shared in both views
+  await user.click(screen.getByRole("button", { name: "Next PDF page" }));
+  await waitFor(() => expect(original()).toHaveAccessibleName(readerPageName("3")));
+  expect(screen.getByRole("button", { name: "Next PDF page" })).toBeDisabled();
   await user.click(screen.getByRole("button", { name: "Reading" }));
   await waitFor(() => expect(indicator()).toHaveTextContent("3 / 3"));
   await user.click(indicator());

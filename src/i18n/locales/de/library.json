@@ -563,8 +563,8 @@
     "invalid": "Gib eine Seite von 1 bis {{total}} ein."
   },
   "structure": {
-    "title": "Dokumentstruktur",
-    "explanation": "Abschnittsziele beruhen auf Dokumentmerkmalen, nicht auf einer Beurteilung theologischer Relevanz. Korrekturen gehören zu Abiding Word; Originaldateien und Zitattexte bleiben unverändert.",
+    "title": "Kapitel und Überschriften",
+    "explanation": "Hier siehst und korrigierst du die automatisch erkannten Überschriften und Kapitel deiner Quelle.",
     "build": "Struktur erstellen",
     "rebuild": "Struktur neu erstellen",
     "undo": "Korrektur rückgängig",
@@ -589,7 +589,8 @@
       "outline": "Eingebettete Gliederung",
       "tagged": "PDF-Strukturtags",
       "layout": "Aus dem Layout abgeleitet",
-      "user": "Benutzerkorrektur"
+      "user": "Benutzerkorrektur",
+      "printed": "Gedrucktes Buchverzeichnis"
     },
     "scopes": {
       "passage": "Bibelstelle",
@@ -611,8 +612,42 @@
       "copyFailed": "Der Bericht konnte nicht kopiert werden. Verwende stattdessen „Bericht speichern…“.",
       "fileType": "Diagnosebericht",
       "saved": "Gespeichert unter {{path}}",
-      "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften"
-    }
+      "file": "Datei-SHA-256 {{hash}} · {{pages}} Seiten · {{headings}} Überschriften",
+      "general": "Allgemeiner Statusbericht — es wurde keine Bibelstelle geprüft. Gib vor dem nächsten Erstellen oder Speichern Apg 6 ein, um Treffer zu Apostelgeschichte 6 zu prüfen."
+    },
+    "processing": {
+      "label": "Fortschritt der Analyse",
+      "stage": "{{stage}} · {{seconds}} s",
+      "background": "Du kannst dieses Fenster schließen und weiterlesen oder schreiben. Abbrechen wirkt an der nächsten sicheren Verarbeitungsgrenze; das abschließende Speichern kann nicht abgebrochen werden.",
+      "cancelling": "Wird abgebrochen…",
+      "success": "{{count}} Überschriften gespeichert; {{links}} Strukturverknüpfungen indiziert.",
+      "empty": "Keine nutzbaren Überschriften erkannt. Die Analyse wurde gespeichert, aber ein automatisches Inhaltsverzeichnis ist nicht verfügbar. Du kannst unten sichtbare Zeilen manuell markieren.",
+      "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern.",
+      "timings": "Verarbeitungszeiten",
+      "missing": "Keine gespeicherte Überschriftenanalyse. Wähle Struktur erstellen; ein allgemeiner Diagnosebericht kann auch vorher gespeichert werden.",
+      "stages": {
+        "file": "Datei lesen und prüfen",
+        "segments": "Gespeicherte Textabschnitte lesen",
+        "pdf": "PDF-Seiten lesen",
+        "alignment": "Originaltext zuordnen",
+        "native": "Eingebettete Lesezeichen und Tags lesen",
+        "headings": "Überschriften erkennen",
+        "store": "Metadaten speichern",
+        "index": "Strukturverknüpfungen indizieren",
+        "indexed": "Verknüpfungen indiziert",
+        "commit": "Änderungen abschließend speichern",
+        "refresh": "Leser aktualisieren"
+      },
+      "duration": "{{milliseconds}} ms"
+    },
+    "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
+    "timeout": "Die Analyse hat ihre Zeitgrenze an einer sicheren Verarbeitungsgrenze erreicht. Bisherige Metadaten sind unverändert. Erneut versuchen oder einen Diagnosebericht speichern.",
+    "busy": "Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst.",
+    "limit": "Die PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
+    "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern.",
+    "automaticRunning": "Kapitel und Überschriften werden untersucht…",
+    "automaticFailed": "Die automatische Überschriftenanalyse wurde angehalten. Lesen und Schreiben bleiben verfügbar.",
+    "automaticDetails": "Fortschritt / erneut versuchen"
   },
   "toolbar": {
     "label": "Lesewerkzeuge",
@@ -630,9 +665,13 @@
       "bookmark": "Lesezeichen an diese Stelle setzen",
       "note": "Notiz hier hinzufügen",
       "marks": "Anmerkungen",
-      "structure": "Dokumentstruktur",
+      "structure": "Kapitel und Überschriften",
       "full": "Vollansicht öffnen",
-      "about": "Über diese Quelle"
+      "about": "Über diese Quelle",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "fitWidth": "Seitenbreite",
+      "fitPage": "Ganze Seite"
     }
   }
 }

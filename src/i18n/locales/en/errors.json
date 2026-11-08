@@ -159,7 +159,8 @@
   },
   "sections": {
     "hasContent": "“{{title}}” still has writing or notes in it.",
-    "duplicateKey": "This study already has that part."
+    "duplicateKey": "This study already has that part.",
+    "repairChanged": "The parts changed. Review them again. Undo requires unchanged added parts; all writing is kept."
   },
   "relations": {
     "self": "A study can’t be linked to itself.",

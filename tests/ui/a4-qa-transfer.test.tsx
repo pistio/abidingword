@@ -84,7 +84,6 @@ describe("A.4.4 Question and answer in a Bible Study", () => {
     const first = within(studyPane()).getAllByRole("heading", { level: 2 })[0]!.textContent!;
     for (let i = 0; i < 2; i++) {
       await openPartOptions(user, first);
-      await user.click(within(studyPane()).getByRole("button", { name: `Add to ${first}` }));
       await user.click(within(studyPane()).getByRole("button", { name: "Question and answer" }));
     }
     const two = await within(studyPane()).findByRole("group", { name: "Question and answer 2" });

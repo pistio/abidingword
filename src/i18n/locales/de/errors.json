@@ -159,7 +159,8 @@
   },
   "sections": {
     "hasContent": "„{{title}}“ enthält noch Text oder Notizen.",
-    "duplicateKey": "Dieses Bibelstudium hat diesen Teil schon."
+    "duplicateKey": "Dieses Bibelstudium hat diesen Teil schon.",
+    "repairChanged": "Die Teile wurden verändert. Bitte erneut prüfen. Rückgängig erfordert unveränderte ergänzte Teile; alle Texte bleiben erhalten."
   },
   "relations": {
     "self": "Ein Bibelstudium kann nicht mit sich selbst verknüpft werden.",

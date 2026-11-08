@@ -286,7 +286,7 @@ function BlockTemplateFields({ id, blocks, setBlocks }: { id: string; blocks: Bl
           );
         })}
       </ol>
-      <AddBlock
+      <AddBlock advanced
         id={`${id}-add`}
         label={t("studies.teaching.blocks.add")}
         onAdd={(type) => {

@@ -123,6 +123,8 @@ const PRIVILEGED: &[&str] = &[
     "library_remove_source",
     "library_pdf_structure",
     "library_pdf_structure_build",
+    "library_pdf_structure_progress",
+    "library_pdf_structure_cancel",
     "library_pdf_structure_correct",
     "library_pdf_structure_undo",
     "assistant_settings_set",

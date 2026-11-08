@@ -71,6 +71,78 @@ pub struct PdfText {
     pub scanned: bool,
 }
 
+/// Explicit Source rebuild only: page boundaries provide progress and safe
+/// cancellation without changing the import/Scripture recognition pipeline.
+pub fn read_pages_with_progress(
+    bytes: &[u8],
+    mut progress: impl FnMut(usize, usize) -> AppResult<()>,
+) -> AppResult<PdfText> {
+    let invalid = || {
+        AppError::Import(UserMessage::new(
+            "library.badPdf",
+            "This PDF could not be read. The original and saved metadata are unchanged.",
+        ))
+    };
+    let document = Document::load_mem(bytes).map_err(|_| invalid())?;
+    if document.is_encrypted() {
+        return Err(AppError::Import(UserMessage::new(
+            "library.passwordProtected",
+            "Remove PDF password protection before analysing headings.",
+        )));
+    }
+    let numbers: Vec<_> = document.get_pages().into_keys().collect();
+    if numbers.is_empty() || numbers.len() > 3000 {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "library.structure.limit",
+            "Heading analysis supports PDFs with 1–3000 pages.",
+        )));
+    }
+    let mut layouts = Vec::with_capacity(numbers.len());
+    let mut failed_pages = Vec::new();
+    let mut chars = 0;
+    for (index, number) in numbers.iter().enumerate() {
+        progress(index, numbers.len())?;
+        let result = catch_unwind(AssertUnwindSafe(|| {
+            let mut collector = Collector::default();
+            pdf_extract::output_doc_page(&document, &mut collector, *number).map(|_| collector)
+        }));
+        let layout = match result {
+            Ok(Ok(collector)) if collector.truncated_from.is_none() => collector.layouts().pop(),
+            _ => None,
+        };
+        let mut layout = layout.unwrap_or_else(|| {
+            failed_pages.push(index as u32 + 1);
+            PageLayout::empty(index as u32 + 1)
+        });
+        layout.number = index as u32 + 1;
+        chars += layout.lines.iter().map(|l| l.text.len()).sum::<usize>();
+        if chars > crate::library::pdf_structure::MAX_CHARS {
+            return Err(AppError::InvalidInput(UserMessage::new(
+                "library.structure.limit",
+                "The PDF text exceeds the bounded heading-analysis limit.",
+            )));
+        }
+        layouts.push(layout);
+    }
+    progress(numbers.len(), numbers.len())?;
+    if failed_pages.len() == layouts.len() {
+        return Err(invalid());
+    }
+    let pages: Vec<_> = layouts.iter().map(PageLayout::text).collect();
+    let letters: usize = pages
+        .iter()
+        .map(|p| p.chars().filter(|c| c.is_alphanumeric()).count())
+        .sum();
+    Ok(PdfText {
+        metadata: metadata(&document),
+        scanned: letters < MIN_LETTERS_PER_PAGE * pages.len(),
+        orders: layouts.iter().map(|l| l.order).collect(),
+        layouts,
+        pages,
+        failed_pages,
+    })
+}
+
 /// Reads a PDF's metadata and text layer. Refuses an unreadable or
 /// password-protected file with a coded message; never panics.
 pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {

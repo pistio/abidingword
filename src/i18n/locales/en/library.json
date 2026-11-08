@@ -563,8 +563,8 @@
     "invalid": "Enter a page from 1 to {{total}}."
   },
   "structure": {
-    "title": "Document structure",
-    "explanation": "Section targets are document evidence, not a judgement of commentary relevance. Corrections belong to Abiding Word; original files and citation text remain unchanged.",
+    "title": "Chapters and headings",
+    "explanation": "Review and correct the automatically recognised headings and chapters of this source.",
     "build": "Build structure",
     "rebuild": "Rebuild structure",
     "undo": "Undo correction",
@@ -589,7 +589,8 @@
       "outline": "Embedded outline",
       "tagged": "Tagged PDF",
       "layout": "Inferred from layout",
-      "user": "User correction"
+      "user": "User correction",
+      "printed": "Printed book index"
     },
     "scopes": {
       "passage": "Passage",
@@ -611,8 +612,42 @@
       "copyFailed": "The report could not be copied. Use Save report… instead.",
       "fileType": "Diagnostic report",
       "saved": "Saved to {{path}}",
-      "file": "File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings"
-    }
+      "file": "File SHA-256 {{hash}} · {{pages}} pages · {{headings}} headings",
+      "general": "General status report — no passage was checked. To inspect Acts 6 candidates, enter Apg 6 before creating or saving another report."
+    },
+    "processing": {
+      "label": "Analysis progress",
+      "stage": "{{stage}} · {{seconds}} s",
+      "background": "You can close this panel and continue reading or writing. Cancel takes effect at the next safe boundary; committing cannot be cancelled.",
+      "cancelling": "Cancelling…",
+      "success": "{{count}} headings saved; {{links}} structure links indexed.",
+      "empty": "No usable headings were recognised. The analysis was saved, but automatic Contents is unavailable. You can mark visible lines manually below.",
+      "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report.",
+      "timings": "Processing timings",
+      "missing": "No saved heading analysis. Choose Build structure; a general diagnostic can be saved without building first.",
+      "stages": {
+        "file": "Read and verify file",
+        "segments": "Read stored segments",
+        "pdf": "Read PDF pages",
+        "alignment": "Align original text",
+        "native": "Read embedded outline and tags",
+        "headings": "Find headings",
+        "store": "Save metadata",
+        "index": "Index structure links",
+        "indexed": "Links indexed",
+        "commit": "Commit changes",
+        "refresh": "Refresh reader"
+      },
+      "duration": "{{milliseconds}} ms"
+    },
+    "cancelled": "Analysis cancelled. Previous structure and links are unchanged. You can retry.",
+    "timeout": "Analysis reached its time limit at a safe processing boundary. Previous metadata is unchanged. Retry or save a diagnostic report.",
+    "busy": "An analysis is already running. Wait or cancel it before retrying.",
+    "limit": "The PDF exceeds the supported analysis limits. Previous metadata is unchanged.",
+    "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report.",
+    "automaticRunning": "Analysing chapters and headings…",
+    "automaticFailed": "Automatic heading analysis stopped. Existing reading and writing are available.",
+    "automaticDetails": "Progress / retry"
   },
   "toolbar": {
     "label": "Reader tools",
@@ -630,9 +665,13 @@
       "bookmark": "Bookmark this place",
       "note": "Add note here",
       "marks": "Marks",
-      "structure": "Document structure",
+      "structure": "Chapters and headings",
       "full": "Open full reader",
-      "about": "About this source"
+      "about": "About this source",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "fitWidth": "Fit width",
+      "fitPage": "Fit page"
     }
   }
 }
