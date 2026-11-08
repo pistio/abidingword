@@ -73,7 +73,23 @@ Custom guidance remains as authored. Hint dismissal and resizing are preserved.
 
 ## Verification / acceptance
 
-Technical results and browser evidence are recorded with the follow-up commits.
+Technical verification: 1,238 frontend tests covered. The full run initially
+reported three stale generated-corpus assertions; both corpus documents were
+regenerated and all 26 corpus tests then passed. All other 1,212 tests passed
+in that full run. Rust: 1,095 passed, eight existing ignored, zero failed.
+Typecheck, ESLint, localisation, production frontend build, Rust formatting and
+locked all-target Clippy with warnings denied passed. Existing bundle-size
+warning remains. No historical migration or accepted Ten-Step content changed.
+
+The owner-shaped native regression completed in 4,347 ms locally: explicit-link
+read 6 ms, derived-link index 58 ms, role writes 12 ms. Process peak RSS was
+128,640 KiB. These measurements are synthetic Linux evidence, not owner-PDF
+Windows results. Cancellation and injected SQL failures preserve full snapshots.
+
+Browser evidence: [24 before/after cases](owner-followup/images/browser-checks.json)
+cover EN/DE/KO/FR/ES/pt-BR at 900/1440px; each has one untouched field, three
+post-change hint paragraphs, no page errors or horizontal Study overflow.
+Images are named `<language>-<before|after>-core-<width>.png` in that directory.
 Linux Chromium with invented data cannot establish Windows WebView2 or real-file
 acceptance. All existing A.4 owner gates remain open. AI linguistic review is
 not qualified human native-speaker approval.
