@@ -1,0 +1,1712 @@
+{
+ "kor-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 154.695,
+   "cpu_seconds": 153.873,
+   "peak_rss_mb": 85.3,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 6.982,
+   "cpu_seconds": 6.969,
+   "peak_rss_mb": 51.4,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 5.367,
+   "cpu_seconds": 6.073,
+   "peak_rss_mb": 141.3,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 6.712,
+   "cpu_seconds": 6.675,
+   "peak_rss_mb": 24.8,
+   "timeout": false
+  }
+ },
+ "grctr-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 22.697,
+   "cpu_seconds": 22.677,
+   "peak_rss_mb": 41.3,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 1.953,
+   "cpu_seconds": 1.936,
+   "peak_rss_mb": 34.9,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.628,
+   "cpu_seconds": 2.281,
+   "peak_rss_mb": 141.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.162,
+   "cpu_seconds": 1.159,
+   "peak_rss_mb": 24.8,
+   "timeout": false
+  }
+ },
+ "grcbyz-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 26.457,
+   "cpu_seconds": 26.358,
+   "peak_rss_mb": 39.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.091,
+   "cpu_seconds": 2.085,
+   "peak_rss_mb": 35.6,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.809,
+   "cpu_seconds": 2.46,
+   "peak_rss_mb": 140.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.424,
+   "cpu_seconds": 1.393,
+   "peak_rss_mb": 24.8,
+   "timeout": false
+  }
+ },
+ "kor1961-lopdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 128.741,
+   "cpu_seconds": 135.531,
+   "peak_rss_mb": 376.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.044,
+   "cpu_seconds": 2.035,
+   "peak_rss_mb": 59.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.772,
+   "cpu_seconds": 3.624,
+   "peak_rss_mb": 187.6,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 12.957,
+   "cpu_seconds": 12.866,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "engbsb-rwpdf2col": {
+  "current": {
+   "rc": 0,
+   "seconds": 57.647,
+   "cpu_seconds": 57.538,
+   "peak_rss_mb": 89.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 3.428,
+   "cpu_seconds": 3.406,
+   "peak_rss_mb": 53.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.015,
+   "cpu_seconds": 3.681,
+   "peak_rss_mb": 149.6,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.962,
+   "cpu_seconds": 2.939,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "engkjvcpb-rwpdfmargin": {
+  "current": {
+   "rc": 0,
+   "seconds": 62.234,
+   "cpu_seconds": 62.078,
+   "peak_rss_mb": 254.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 3.271,
+   "cpu_seconds": 3.262,
+   "peak_rss_mb": 56.0,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.134,
+   "cpu_seconds": 3.797,
+   "peak_rss_mb": 148.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.967,
+   "cpu_seconds": 2.958,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "spabll-rrlab2col": {
+  "current": {
+   "rc": 0,
+   "seconds": 35.83,
+   "cpu_seconds": 35.74,
+   "peak_rss_mb": 79.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.139,
+   "cpu_seconds": 2.136,
+   "peak_rss_mb": 69.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.119,
+   "cpu_seconds": 2.742,
+   "peak_rss_mb": 149.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.834,
+   "cpu_seconds": 1.802,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "hbo-rwpdfrtl-rut": {
+  "current": {
+   "rc": 0,
+   "seconds": 0.268,
+   "cpu_seconds": 0.268,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.072,
+   "cpu_seconds": 0.071,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.728,
+   "cpu_seconds": 1.333,
+   "peak_rss_mb": 140.1,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.026,
+   "cpu_seconds": 0.025,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "deu1912-rdropcap": {
+  "current": {
+   "rc": 0,
+   "seconds": 66.512,
+   "cpu_seconds": 66.146,
+   "peak_rss_mb": 241.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 3.555,
+   "cpu_seconds": 3.538,
+   "peak_rss_mb": 54.2,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.008,
+   "cpu_seconds": 3.683,
+   "peak_rss_mb": 146.4,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 3.009,
+   "cpu_seconds": 2.985,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "kor-r2col": {
+  "current": {
+   "rc": 0,
+   "seconds": 69.35,
+   "cpu_seconds": 69.084,
+   "peak_rss_mb": 82.8,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 15.489,
+   "cpu_seconds": 15.434,
+   "peak_rss_mb": 45.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.432,
+   "cpu_seconds": 3.244,
+   "peak_rss_mb": 142.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 9.535,
+   "cpu_seconds": 9.468,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "engwebu-rl2col": {
+  "current": {
+   "rc": 0,
+   "seconds": 51.135,
+   "cpu_seconds": 51.169,
+   "peak_rss_mb": 89.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.587,
+   "cpu_seconds": 2.566,
+   "peak_rss_mb": 76.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.663,
+   "cpu_seconds": 3.298,
+   "peak_rss_mb": 151.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.426,
+   "cpu_seconds": 2.414,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "engtnt-wp3col": {
+  "current": {
+   "rc": 0,
+   "seconds": 14.795,
+   "cpu_seconds": 14.724,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.808,
+   "cpu_seconds": 0.805,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.322,
+   "cpu_seconds": 1.769,
+   "peak_rss_mb": 142.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.649,
+   "cpu_seconds": 0.642,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "kor-lopdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 33.663,
+   "cpu_seconds": 35.47,
+   "peak_rss_mb": 119.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.673,
+   "cpu_seconds": 0.672,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.358,
+   "cpu_seconds": 2.125,
+   "peak_rss_mb": 147.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.847,
+   "cpu_seconds": 2.842,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "heb-wprtl": {
+  "current": {
+   "rc": 0,
+   "seconds": 8.06,
+   "cpu_seconds": 8.025,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.473,
+   "cpu_seconds": 0.469,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.011,
+   "cpu_seconds": 1.897,
+   "peak_rss_mb": 142.1,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.643,
+   "cpu_seconds": 0.642,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "F01": {
+  "current": {
+   "rc": 0,
+   "seconds": 22.379,
+   "cpu_seconds": 22.41,
+   "peak_rss_mb": 85.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.896,
+   "cpu_seconds": 0.896,
+   "peak_rss_mb": 35.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.523,
+   "cpu_seconds": 2.256,
+   "peak_rss_mb": 141.9,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.114,
+   "cpu_seconds": 1.11,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "F03": {
+  "current": {
+   "rc": 0,
+   "seconds": 44.408,
+   "cpu_seconds": 44.371,
+   "peak_rss_mb": 88.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.503,
+   "cpu_seconds": 2.494,
+   "peak_rss_mb": 76.1,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.232,
+   "cpu_seconds": 3.019,
+   "peak_rss_mb": 151.4,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.999,
+   "cpu_seconds": 1.982,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "F06": {
+  "current": {
+   "rc": 0,
+   "seconds": 6.542,
+   "cpu_seconds": 6.626,
+   "peak_rss_mb": 67.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.559,
+   "cpu_seconds": 0.552,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.865,
+   "cpu_seconds": 1.687,
+   "peak_rss_mb": 141.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.196,
+   "cpu_seconds": 1.183,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "F07": {
+  "current": {
+   "rc": 0,
+   "seconds": 73.117,
+   "cpu_seconds": 76.932,
+   "peak_rss_mb": 246.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.999,
+   "cpu_seconds": 5.943,
+   "peak_rss_mb": 56.6,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.965,
+   "cpu_seconds": 3.045,
+   "peak_rss_mb": 162.9,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.777,
+   "cpu_seconds": 2.707,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "F13": {
+  "current": {
+   "rc": 0,
+   "seconds": 11.732,
+   "cpu_seconds": 11.681,
+   "peak_rss_mb": 53.3,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.721,
+   "cpu_seconds": 0.713,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.351,
+   "cpu_seconds": 1.933,
+   "peak_rss_mb": 140.4,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.739,
+   "cpu_seconds": 0.703,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G03": {
+  "current": {
+   "rc": 0,
+   "seconds": 34.334,
+   "cpu_seconds": 34.46,
+   "peak_rss_mb": 70.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.614,
+   "cpu_seconds": 2.609,
+   "peak_rss_mb": 53.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.382,
+   "cpu_seconds": 3.047,
+   "peak_rss_mb": 146.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.036,
+   "cpu_seconds": 2.018,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G04": {
+  "current": {
+   "rc": 0,
+   "seconds": 20.541,
+   "cpu_seconds": 20.613,
+   "peak_rss_mb": 66.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 1.551,
+   "cpu_seconds": 1.549,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.731,
+   "cpu_seconds": 2.349,
+   "peak_rss_mb": 141.4,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.244,
+   "cpu_seconds": 1.104,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G05": {
+  "current": {
+   "rc": 101,
+   "seconds": 6.294,
+   "cpu_seconds": 6.326,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.897,
+   "cpu_seconds": 0.894,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.56,
+   "cpu_seconds": 2.146,
+   "peak_rss_mb": 141.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.328,
+   "cpu_seconds": 2.301,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G07": {
+  "current": {
+   "rc": 0,
+   "seconds": 12.322,
+   "cpu_seconds": 12.243,
+   "peak_rss_mb": 53.8,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.821,
+   "cpu_seconds": 0.816,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.22,
+   "cpu_seconds": 1.927,
+   "peak_rss_mb": 140.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.511,
+   "cpu_seconds": 0.503,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G09": {
+  "current": {
+   "rc": 0,
+   "seconds": 1.912,
+   "cpu_seconds": 2.048,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.225,
+   "cpu_seconds": 0.219,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.695,
+   "cpu_seconds": 1.424,
+   "peak_rss_mb": 140.3,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.111,
+   "cpu_seconds": 0.11,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G10": {
+  "current": {
+   "rc": 0,
+   "seconds": 4.537,
+   "cpu_seconds": 4.699,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.258,
+   "cpu_seconds": 0.258,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.949,
+   "cpu_seconds": 1.646,
+   "peak_rss_mb": 140.3,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.19,
+   "cpu_seconds": 0.189,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "G13": {
+  "current": {
+   "rc": 0,
+   "seconds": 1.283,
+   "cpu_seconds": 1.286,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.141,
+   "cpu_seconds": 0.141,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.788,
+   "cpu_seconds": 1.394,
+   "peak_rss_mb": 140.6,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.08,
+   "cpu_seconds": 0.079,
+   "peak_rss_mb": 35.5,
+   "timeout": false
+  }
+ },
+ "engwebp-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 111.016,
+   "cpu_seconds": 110.453,
+   "peak_rss_mb": 104.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.451,
+   "cpu_seconds": 5.257,
+   "peak_rss_mb": 64.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.601,
+   "cpu_seconds": 5.247,
+   "peak_rss_mb": 150.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.563,
+   "cpu_seconds": 5.507,
+   "peak_rss_mb": 23.9,
+   "timeout": false
+  }
+ },
+ "engwebp-book": {
+  "current": {
+   "rc": 0,
+   "seconds": 110.488,
+   "cpu_seconds": 110.505,
+   "peak_rss_mb": 101.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 6.259,
+   "cpu_seconds": 6.231,
+   "peak_rss_mb": 62.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.735,
+   "cpu_seconds": 5.442,
+   "peak_rss_mb": 150.0,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.547,
+   "cpu_seconds": 5.499,
+   "peak_rss_mb": 24.2,
+   "timeout": false
+  }
+ },
+ "kjv-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 108.053,
+   "cpu_seconds": 108.63,
+   "peak_rss_mb": 280.3,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.517,
+   "cpu_seconds": 5.476,
+   "peak_rss_mb": 70.1,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.979,
+   "cpu_seconds": 5.686,
+   "peak_rss_mb": 159.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.986,
+   "cpu_seconds": 5.935,
+   "peak_rss_mb": 34.9,
+   "timeout": false
+  }
+ },
+ "deu1912-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 91.105,
+   "cpu_seconds": 90.776,
+   "peak_rss_mb": 224.9,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 4.987,
+   "cpu_seconds": 4.959,
+   "peak_rss_mb": 59.9,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.673,
+   "cpu_seconds": 5.411,
+   "peak_rss_mb": 144.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 4.616,
+   "cpu_seconds": 4.598,
+   "peak_rss_mb": 34.3,
+   "timeout": false
+  }
+ },
+ "deuelo-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 96.66,
+   "cpu_seconds": 96.416,
+   "peak_rss_mb": 266.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.106,
+   "cpu_seconds": 5.083,
+   "peak_rss_mb": 60.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.605,
+   "cpu_seconds": 5.261,
+   "peak_rss_mb": 145.3,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 4.815,
+   "cpu_seconds": 4.774,
+   "peak_rss_mb": 34.3,
+   "timeout": false
+  }
+ },
+ "fraLSG-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 136.441,
+   "cpu_seconds": 137.026,
+   "peak_rss_mb": 359.3,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 7.039,
+   "cpu_seconds": 6.954,
+   "peak_rss_mb": 78.6,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 5.723,
+   "cpu_seconds": 6.461,
+   "peak_rss_mb": 163.9,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 6.691,
+   "cpu_seconds": 6.682,
+   "peak_rss_mb": 41.3,
+   "timeout": false
+  }
+ },
+ "fraLSG-luk": {
+  "current": {
+   "rc": 0,
+   "seconds": 4.952,
+   "cpu_seconds": 5.025,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.284,
+   "cpu_seconds": 0.283,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.881,
+   "cpu_seconds": 1.505,
+   "peak_rss_mb": 140.1,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.291,
+   "cpu_seconds": 0.287,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "fob-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 105.872,
+   "cpu_seconds": 105.524,
+   "peak_rss_mb": 298.8,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.339,
+   "cpu_seconds": 5.327,
+   "peak_rss_mb": 63.1,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.617,
+   "cpu_seconds": 5.341,
+   "peak_rss_mb": 147.1,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.047,
+   "cpu_seconds": 5.025,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "rv1909-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 95.227,
+   "cpu_seconds": 94.928,
+   "peak_rss_mb": 232.9,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.163,
+   "cpu_seconds": 5.144,
+   "peak_rss_mb": 57.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.512,
+   "cpu_seconds": 5.215,
+   "peak_rss_mb": 149.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 4.708,
+   "cpu_seconds": 4.694,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "rv1909-lopdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 31.545,
+   "cpu_seconds": 34.376,
+   "peak_rss_mb": 294.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.115,
+   "cpu_seconds": 2.109,
+   "peak_rss_mb": 52.4,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.367,
+   "cpu_seconds": 3.019,
+   "peak_rss_mb": 160.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.413,
+   "cpu_seconds": 1.402,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "spabes-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 89.991,
+   "cpu_seconds": 89.779,
+   "peak_rss_mb": 215.9,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 4.576,
+   "cpu_seconds": 4.56,
+   "peak_rss_mb": 58.4,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.139,
+   "cpu_seconds": 4.777,
+   "peak_rss_mb": 149.4,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 4.846,
+   "cpu_seconds": 4.833,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "porbrbsl-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 125.272,
+   "cpu_seconds": 125.185,
+   "peak_rss_mb": 322.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 6.532,
+   "cpu_seconds": 6.495,
+   "peak_rss_mb": 76.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 5.104,
+   "cpu_seconds": 5.703,
+   "peak_rss_mb": 156.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 6.441,
+   "cpu_seconds": 6.416,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "porbr2018-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 94.791,
+   "cpu_seconds": 94.753,
+   "peak_rss_mb": 235.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.304,
+   "cpu_seconds": 5.253,
+   "peak_rss_mb": 61.0,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.362,
+   "cpu_seconds": 5.032,
+   "peak_rss_mb": 146.3,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.239,
+   "cpu_seconds": 5.209,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "hboWLC-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 63.393,
+   "cpu_seconds": 63.032,
+   "peak_rss_mb": 162.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.123,
+   "cpu_seconds": 5.112,
+   "peak_rss_mb": 55.9,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.31,
+   "cpu_seconds": 3.902,
+   "peak_rss_mb": 143.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 3.764,
+   "cpu_seconds": 3.75,
+   "peak_rss_mb": 36.6,
+   "timeout": false
+  }
+ },
+ "latVUC-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 185.683,
+   "cpu_seconds": 186.443,
+   "peak_rss_mb": 497.2,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 10.197,
+   "cpu_seconds": 10.083,
+   "peak_rss_mb": 117.9,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 8.093,
+   "cpu_seconds": 8.667,
+   "peak_rss_mb": 189.5,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 10.704,
+   "cpu_seconds": 10.558,
+   "peak_rss_mb": 51.0,
+   "timeout": false
+  }
+ },
+ "deutkw-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 99.687,
+   "cpu_seconds": 99.469,
+   "peak_rss_mb": 243.2,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.336,
+   "cpu_seconds": 5.318,
+   "peak_rss_mb": 63.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.362,
+   "cpu_seconds": 5.198,
+   "peak_rss_mb": 146.5,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.128,
+   "cpu_seconds": 5.106,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "frajnd-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 129.585,
+   "cpu_seconds": 129.792,
+   "peak_rss_mb": 318.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 6.502,
+   "cpu_seconds": 6.461,
+   "peak_rss_mb": 74.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 5.846,
+   "cpu_seconds": 6.363,
+   "peak_rss_mb": 158.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 6.679,
+   "cpu_seconds": 6.632,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "spablm-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 125.429,
+   "cpu_seconds": 124.995,
+   "peak_rss_mb": 314.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.749,
+   "cpu_seconds": 5.7,
+   "peak_rss_mb": 73.7,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 5.494,
+   "cpu_seconds": 5.488,
+   "peak_rss_mb": 153.1,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 6.082,
+   "cpu_seconds": 6.059,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "engylt-pdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 91.976,
+   "cpu_seconds": 91.505,
+   "peak_rss_mb": 234.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 4.851,
+   "cpu_seconds": 4.829,
+   "peak_rss_mb": 60.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.46,
+   "cpu_seconds": 4.608,
+   "peak_rss_mb": 147.6,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 4.473,
+   "cpu_seconds": 4.433,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "deutkw-lopdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 37.176,
+   "cpu_seconds": 38.201,
+   "peak_rss_mb": 399.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 1.847,
+   "cpu_seconds": 1.818,
+   "peak_rss_mb": 60.6,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.887,
+   "cpu_seconds": 2.866,
+   "peak_rss_mb": 185.7,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.582,
+   "cpu_seconds": 1.531,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "frajnd-lopdf": {
+  "current": {
+   "rc": 0,
+   "seconds": 38.305,
+   "cpu_seconds": 39.097,
+   "peak_rss_mb": 409.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 1.99,
+   "cpu_seconds": 1.97,
+   "peak_rss_mb": 64.0,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.831,
+   "cpu_seconds": 2.983,
+   "peak_rss_mb": 190.0,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.719,
+   "cpu_seconds": 1.691,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "engasv-rrlab1col": {
+  "current": {
+   "rc": 0,
+   "seconds": 38.941,
+   "cpu_seconds": 38.559,
+   "peak_rss_mb": 236.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 1.882,
+   "cpu_seconds": 1.876,
+   "peak_rss_mb": 63.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.795,
+   "cpu_seconds": 2.486,
+   "peak_rss_mb": 147.3,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.581,
+   "cpu_seconds": 1.57,
+   "peak_rss_mb": 45.4,
+   "timeout": false
+  }
+ },
+ "spavbl-rlofodt": {
+  "current": {
+   "rc": 0,
+   "seconds": 56.47,
+   "cpu_seconds": 65.578,
+   "peak_rss_mb": 573.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.743,
+   "cpu_seconds": 2.733,
+   "peak_rss_mb": 72.0,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.83,
+   "cpu_seconds": 4.537,
+   "peak_rss_mb": 219.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.992,
+   "cpu_seconds": 2.921,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "grcsbl-rfpdf-mrk": {
+  "current": {
+   "rc": 0,
+   "seconds": 0.877,
+   "cpu_seconds": 0.885,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.134,
+   "cpu_seconds": 0.133,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 0.769,
+   "cpu_seconds": 1.385,
+   "peak_rss_mb": 141.9,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 0.089,
+   "cpu_seconds": 0.087,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "engrv-ebiblebook": {
+  "current": {
+   "rc": 0,
+   "seconds": 113.61,
+   "cpu_seconds": 113.177,
+   "peak_rss_mb": 286.5,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 5.814,
+   "cpu_seconds": 5.799,
+   "peak_rss_mb": 68.5,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 4.888,
+   "cpu_seconds": 5.485,
+   "peak_rss_mb": 152.2,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 5.758,
+   "cpu_seconds": 5.72,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "engjps-rdocx2lo": {
+  "current": {
+   "rc": 0,
+   "seconds": 44.204,
+   "cpu_seconds": 48.421,
+   "peak_rss_mb": 203.4,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.374,
+   "cpu_seconds": 2.334,
+   "peak_rss_mb": 50.3,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.112,
+   "cpu_seconds": 3.669,
+   "peak_rss_mb": 179.1,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.147,
+   "cpu_seconds": 2.131,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "poronbv-rwpdfa5": {
+  "current": {
+   "rc": 0,
+   "seconds": 73.821,
+   "cpu_seconds": 73.727,
+   "peak_rss_mb": 277.3,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 3.544,
+   "cpu_seconds": 3.52,
+   "peak_rss_mb": 59.2,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.408,
+   "cpu_seconds": 4.04,
+   "peak_rss_mb": 150.6,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 3.274,
+   "cpu_seconds": 3.264,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "engoebus-ebiblea4": {
+  "current": {
+   "rc": 0,
+   "seconds": 39.798,
+   "cpu_seconds": 39.703,
+   "peak_rss_mb": 117.9,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.187,
+   "cpu_seconds": 2.163,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.22,
+   "cpu_seconds": 2.88,
+   "peak_rss_mb": 138.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.082,
+   "cpu_seconds": 2.079,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "engbrenton-rlo2col": {
+  "current": {
+   "rc": 0,
+   "seconds": 51.231,
+   "cpu_seconds": 57.626,
+   "peak_rss_mb": 283.7,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.558,
+   "cpu_seconds": 2.553,
+   "peak_rss_mb": 61.6,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 3.207,
+   "cpu_seconds": 3.864,
+   "peak_rss_mb": 198.8,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.431,
+   "cpu_seconds": 2.422,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "deutkw-fpdfa5": {
+  "current": {
+   "rc": 0,
+   "seconds": 6.441,
+   "cpu_seconds": 6.474,
+   "peak_rss_mb": 63.0,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 0.574,
+   "cpu_seconds": 0.562,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 1.066,
+   "cpu_seconds": 1.601,
+   "peak_rss_mb": 140.0,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 1.171,
+   "cpu_seconds": 1.167,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ },
+ "F02": {
+  "current": {
+   "rc": 0,
+   "seconds": 46.473,
+   "cpu_seconds": 51.377,
+   "peak_rss_mb": 236.6,
+   "timeout": false
+  },
+  "pdfium": {
+   "rc": 0,
+   "seconds": 2.283,
+   "cpu_seconds": 2.233,
+   "peak_rss_mb": 55.3,
+   "timeout": false
+  },
+  "mupdf": {
+   "rc": 0,
+   "seconds": 2.715,
+   "cpu_seconds": 3.372,
+   "peak_rss_mb": 183.9,
+   "timeout": false
+  },
+  "poppler": {
+   "rc": 0,
+   "seconds": 2.183,
+   "cpu_seconds": 2.169,
+   "peak_rss_mb": 49.8,
+   "timeout": false
+  }
+ }
+}

@@ -1,0 +1,275 @@
+[
+ {
+  "key": "G13~xref",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "US Letter, 28 pages, Liberation Serif: title page with the CC BY-SA licence; two columns with a vertical rule; running head with the verse range on the page ('R",
+  "books_col": "RUT,JON,MRK,ROM,PHM,JUD",
+  "pdf": "/root/a2-pdf/damaged/G13~xref.pdf",
+  "ref": "/root/aw-set-g/docs/G13_en_ulb_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+  "size": 224105,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G13.json",
+  "damage": "xref offsets +13",
+  "original": "G13"
+ },
+ {
+  "key": "G13~trunc",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "US Letter, 28 pages, Liberation Serif: title page with the CC BY-SA licence; two columns with a vertical rule; running head with the verse range on the page ('R",
+  "books_col": "RUT,JON,MRK,ROM,PHM,JUD",
+  "pdf": "/root/a2-pdf/damaged/G13~trunc.pdf",
+  "ref": "/root/aw-set-g/docs/G13_en_ulb_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+  "size": 224105,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G13.json",
+  "damage": "cut at byte 222408 of 224105",
+  "original": "G13"
+ },
+ {
+  "key": "G13~length",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "eng",
+  "script": "Latin",
+  "layout": "US Letter, 28 pages, Liberation Serif: title page with the CC BY-SA licence; two columns with a vertical rule; running head with the verse range on the page ('R",
+  "books_col": "RUT,JON,MRK,ROM,PHM,JUD",
+  "pdf": "/root/a2-pdf/damaged/G13~length.pdf",
+  "ref": "/root/aw-set-g/docs/G13_en_ulb_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+  "size": 224105,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "4a7a9c63c6aa554faef9dbac5b7d2b17c9642c001c50225c873f619cdac60ad8",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G13.json",
+  "damage": "page 4 content stream obj 49: /Length 5275 -> 2637",
+  "original": "G13"
+ },
+ {
+  "key": "grcsbl-rfpdf-mrk~xref",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "grc",
+  "script": "Greek",
+  "layout": "Reconstruction of set B grcsbl-fpdf-mrk: Mark only, fpdf2 148x210 mm one column justified; no title anywhere (no title page, running title or PDF title); folio ",
+  "books_col": "MRK",
+  "pdf": "/root/a2-pdf/damaged/grcsbl-rfpdf-mrk~xref.pdf",
+  "ref": "/root/aw-recon-bc/grcsbl_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+  "size": 168340,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/grcsbl-rfpdf-mrk.json",
+  "damage": "xref offsets +13",
+  "original": "grcsbl-rfpdf-mrk"
+ },
+ {
+  "key": "grcsbl-rfpdf-mrk~trunc",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "grc",
+  "script": "Greek",
+  "layout": "Reconstruction of set B grcsbl-fpdf-mrk: Mark only, fpdf2 148x210 mm one column justified; no title anywhere (no title page, running title or PDF title); folio ",
+  "books_col": "MRK",
+  "pdf": "/root/a2-pdf/damaged/grcsbl-rfpdf-mrk~trunc.pdf",
+  "ref": "/root/aw-recon-bc/grcsbl_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+  "size": 168340,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/grcsbl-rfpdf-mrk.json",
+  "damage": "cut at byte 165461 of 168340",
+  "original": "grcsbl-rfpdf-mrk"
+ },
+ {
+  "key": "grcsbl-rfpdf-mrk~length",
+  "tsv": "recon-bc.tsv",
+  "role": "recon-bc",
+  "lang": "grc",
+  "script": "Greek",
+  "layout": "Reconstruction of set B grcsbl-fpdf-mrk: Mark only, fpdf2 148x210 mm one column justified; no title anywhere (no title page, running title or PDF title); folio ",
+  "books_col": "MRK",
+  "pdf": "/root/a2-pdf/damaged/grcsbl-rfpdf-mrk~length.pdf",
+  "ref": "/root/aw-recon-bc/grcsbl_usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+  "size": 168340,
+  "checks": [
+   {
+    "source": "corpus-checksums",
+    "expected": "fa3cb84131b34b35b875033b7f762f7498143a41bda7542e782f265badd6d732",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/v7-bc/grcsbl-rfpdf-mrk.json",
+  "damage": "page 4 content stream obj 10: /Length 3559 -> 1779",
+  "original": "grcsbl-rfpdf-mrk"
+ },
+ {
+  "key": "G09~xref",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "kor",
+  "script": "Hangul",
+  "layout": "B5, 27 pages, Noto Sans CJK KR: title page and outline; two columns; running head with the book name under a rule, page number '\u2014 n \u2014'; book titles large and ce",
+  "books_col": "RUT,JON,MIC,PHP,COL,1TH,JAS,1JN,JUD",
+  "pdf": "/root/a2-pdf/damaged/G09~xref.pdf",
+  "ref": "/root/aw-set-g/docs/G09_ko_kaeyok1938_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+  "size": 416768,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G09.json",
+  "damage": "xref offsets +13",
+  "original": "G09"
+ },
+ {
+  "key": "G09~trunc",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "kor",
+  "script": "Hangul",
+  "layout": "B5, 27 pages, Noto Sans CJK KR: title page and outline; two columns; running head with the book name under a rule, page number '\u2014 n \u2014'; book titles large and ce",
+  "books_col": "RUT,JON,MIC,PHP,COL,1TH,JAS,1JN,JUD",
+  "pdf": "/root/a2-pdf/damaged/G09~trunc.pdf",
+  "ref": "/root/aw-set-g/docs/G09_ko_kaeyok1938_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+  "size": 416768,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G09.json",
+  "damage": "cut at byte 395686 of 416768",
+  "original": "G09"
+ },
+ {
+  "key": "G09~length",
+  "tsv": "withheld-g.tsv",
+  "role": "withheld-g",
+  "lang": "kor",
+  "script": "Hangul",
+  "layout": "B5, 27 pages, Noto Sans CJK KR: title page and outline; two columns; running head with the book name under a rule, page number '\u2014 n \u2014'; book titles large and ce",
+  "books_col": "RUT,JON,MIC,PHP,COL,1TH,JAS,1JN,JUD",
+  "pdf": "/root/a2-pdf/damaged/G09~length.pdf",
+  "ref": "/root/aw-set-g/docs/G09_ko_kaeyok1938_selection.usfm.zip",
+  "exists": true,
+  "ref_exists": true,
+  "sha256": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+  "size": 416768,
+  "checks": [
+   {
+    "source": "manifest",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   },
+   {
+    "source": "SEAL",
+    "expected": "733b6029bbf490c852ff9055d3be11edeed7d042889f287143e2ea9ac19ddf8b",
+    "match": true
+   }
+  ],
+  "verified": true,
+  "ref_check": true,
+  "audit_json": "/root/audit/withheld-g.ORIGINAL/G09.json",
+  "damage": "page 4 content stream obj 1019: /Length 5942 -> 2971",
+  "original": "G09"
+ }
+]

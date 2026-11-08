@@ -1,0 +1,51 @@
+{
+ "G13": {
+  "rc": 0,
+  "seconds": 1.495,
+  "cpu_seconds": 1.479,
+  "peak_rss_mb": 38.7,
+  "timeout": false
+ },
+ "G09": {
+  "rc": 0,
+  "seconds": 1.214,
+  "cpu_seconds": 1.21,
+  "peak_rss_mb": 35.5,
+  "timeout": false
+ },
+ "F06": {
+  "rc": 0,
+  "seconds": 6.737,
+  "cpu_seconds": 6.723,
+  "peak_rss_mb": 43.1,
+  "timeout": false
+ },
+ "kor-lopdf": {
+  "rc": 0,
+  "seconds": 16.812,
+  "cpu_seconds": 16.721,
+  "peak_rss_mb": 53.5,
+  "timeout": false
+ },
+ "engtnt-wp3col": {
+  "rc": 0,
+  "seconds": 15.916,
+  "cpu_seconds": 15.834,
+  "peak_rss_mb": 55.4,
+  "timeout": false
+ },
+ "F03": {
+  "rc": 0,
+  "seconds": 41.911,
+  "cpu_seconds": 41.655,
+  "peak_rss_mb": 79.1,
+  "timeout": false
+ },
+ "G05": {
+  "rc": 0,
+  "seconds": 12.699,
+  "cpu_seconds": 12.607,
+  "peak_rss_mb": 44.4,
+  "timeout": false
+ }
+}
