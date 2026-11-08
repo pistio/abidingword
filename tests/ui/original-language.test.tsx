@@ -293,8 +293,8 @@ describe("The import preview", () => {
       grammar: { scheme: "oshb", coded: 8, described: 8, stated: { file: "copr.htm", words: "Open Scriptures Hebrew Bible" } }, estimatedBytes: 0, indexed: true, leftOut: { syntax: 2, conflict: 1, tooLong: 0, unbalanced: 0, overlapping: 0, outsideVerse: 5, empty: 0, tooMany: 0 },
     }));
     const research = screen.getByRole("region", { name: "Original-language research" });
-    expect(within(research).getByText("1,200 words in 300 verses")).toBeInTheDocument();
-    expect(within(research).getByText("1,200 words · 410 different forms")).toBeInTheDocument();
+    expect(within(research).getByText("Words: 1,200 · Verses: 300")).toBeInTheDocument();
+    expect(within(research).getByText("Words: 1,200 · Different forms: 410")).toBeInTheDocument();
     expect(within(research).getByText(/the edition says it uses the Open Scriptures Hebrew Bible’s morphology/)).toBeInTheDocument();
     // Stated by the edition: nothing to choose.
     expect(within(research).queryByRole("checkbox")).toBeNull();

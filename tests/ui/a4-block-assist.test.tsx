@@ -1,11 +1,11 @@
-// A.4.4 (#19): AI writing help on a block teaching's field (German interface,
+// A.4.4 (#19): AI writing help on a block teaching's field (all six interfaces,
 // Korean writing, DeepSeek configured). The field names its block, so the
 // request reaches the provider; the suggestion is shown for review and the
 // original text stays until the person uses it. Memory API mirrors the native
 // rule; no network or paid call.
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import i18n from "@/i18n";
+import i18n, { LANGUAGES } from "@/i18n";
 import type { AssistReply } from "@/types/teaching";
 import { createMemoryApi } from "../support/memoryApi";
 import { renderAppInProject as renderApp } from "../support/render";
@@ -18,13 +18,13 @@ afterEach(async () => {
   await act(async () => { await i18n.changeLanguage("en"); });
 });
 
-async function evaWithAssistant() {
+async function evaWithAssistant(language: string) {
   const api = createMemoryApi();
   const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Hauskreis" });
   await api.studyCreate({ projectId: project.id, title: "요한복음 15" });
   await api.assistantSettingsSet({ ...api.state.teaching.assistant.config, enabled: true, provider: "deepseek", model: "deepseek-chat" });
   await api.assistantKeySet("provider", "sk-deepseek-test");
-  await act(async () => { await i18n.changeLanguage("de"); });
+  await act(async () => { await i18n.changeLanguage(language); });
   const { user } = await renderApp(api);
   await user.click(within(await screen.findByRole("list", { name: i18n.t("studies.list.listLabel") })).getByRole("button", { name: /요한복음 15/ }));
   await within(studyPane()).findByRole("textbox", { name: i18n.t("studies.editor.titleLabel") });
@@ -33,14 +33,16 @@ async function evaWithAssistant() {
   await user.click(within(form).getByRole("radio", { name: new RegExp(i18n.t("studies.teaching.builtin.eva.name")) }));
   await user.click(within(form).getByRole("button", { name: i18n.t("studies.teaching.start") }));
   const erkennen = i18n.t("studies.teaching.builtin.eva.blocks.erkennen.title");
-  const article = await within(studyPane()).findByRole("article");
-  const field = await within(article).findByRole("textbox", { name: erkennen });
+  // The Study article contains the named Teaching article. Wait for its actual
+  // field, then scope commands to that editor rather than any article ancestor.
+  const field = await within(studyPane()).findByRole("textbox", { name: erkennen });
+  const article = within(studyPane()).getByRole("article", { name: api.state.teaching.preparations[0]!.title });
   return { api, user, article, field, erkennen };
 }
 
-describe("A.4.4 AI help on a block teaching (#19)", () => {
+describe.each(LANGUAGES)("A.4.4 AI help on a block teaching (#19), $code", ({ code }) => {
   it("sends the block, shows the Korean correction for review and changes nothing until it is used", async () => {
-    const { api, user, article, field, erkennen } = await evaWithAssistant();
+    const { api, user, article, field, erkennen } = await evaWithAssistant(code);
     await user.type(field, KOREAN);
     await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks!.some((b) => b.body === KOREAN)).toBe(true));
     const reply: AssistReply = { result: { type: "proposal", suggestion: FIXED, changes: "높임말", placement: "replace" }, assistant: "DeepSeek · deepseek-chat", remote: true };
@@ -71,7 +73,7 @@ describe("A.4.4 AI help on a block teaching (#19)", () => {
     expect(asked.blockId).toBe(block.id);
     expect(asked.pointId ?? null).toBeNull();
     expect(asked.text).toBe(KOREAN);
-    expect(asked.uiLanguage).toBe("de");
+    expect(asked.uiLanguage).toBe(code);
     // Still the original until the person chooses.
     expect(field).toHaveValue(KOREAN);
     await user.click(within(panel).getByRole("button", { name: i18n.t("studies.teaching.assist.proposal.use") }));
@@ -79,7 +81,7 @@ describe("A.4.4 AI help on a block teaching (#19)", () => {
   });
 
   it("refuses safely, with a clear message, when the block is gone", async () => {
-    const { api, user, article, field, erkennen } = await evaWithAssistant();
+    const { api, user, article, field, erkennen } = await evaWithAssistant(code);
     await user.type(field, KOREAN);
     const menuName = i18n.t("studies.teaching.assist.menuLabel", { part: erkennen });
     // The block disappears elsewhere (another window, a restore) before the request.

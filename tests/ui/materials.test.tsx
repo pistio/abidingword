@@ -391,7 +391,7 @@ describe("one material, every way out (v0.18.8)", () => {
           label: "Field label",
           message: "Central message",
           question: "Question",
-          scripture: "Bible text",
+          scripture: t("studies.inquiry.block.scripture"),
           note: "Note",
           line: "Writing line",
           lineLast: "Writing line (last)",
