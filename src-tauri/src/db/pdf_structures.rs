@@ -200,11 +200,7 @@ pub fn replace_observed(
         "DELETE FROM source_passages WHERE source_id=?1 AND origin IN ('section','inherited')",
         [id],
     )?;
-    tx.execute(
-        "UPDATE source_passages SET structure_role=NULL WHERE source_id=?1 AND origin='explicit'",
-        [id],
-    )?;
-    let indexed = index_observed(&tx, id, |done, total| progress("index", done, total))?;
+    let indexed = index_observed(&tx, id, &mut progress)?;
     progress("indexed", indexed, indexed)?;
     let result = view(&tx, id)?;
     progress("commit", 0, 0)?;
@@ -368,13 +364,13 @@ pub fn undo(conn: &Connection, id: &str, expected_hash: &str, reset: bool) -> Ap
 /// Derived links are opt-in to this validated PDF metadata, never enabled by
 /// a format string. Literal references and user-confirmed links stay separate.
 pub fn index(conn: &Connection, id: &str) -> AppResult<usize> {
-    index_observed(conn, id, |_, _| Ok(()))
+    index_observed(conn, id, |_, _, _| Ok(()))
 }
 
 fn index_observed(
     conn: &Connection,
     id: &str,
-    mut progress: impl FnMut(usize, usize) -> AppResult<()>,
+    mut progress: impl FnMut(&str, usize, usize) -> AppResult<()>,
 ) -> AppResult<usize> {
     let Some(record) = load(conn, id)? else {
         return Ok(0);
@@ -423,25 +419,36 @@ fn index_observed(
     let mut active: Vec<usize> = Vec::new();
     let mut at = 0;
     let mut count = 0usize;
-    let mut mentions = conn.prepare("SELECT id,start_offset,end_offset FROM source_passages WHERE segment_id=?1 AND origin='explicit'")?;
-    let mut role = conn.prepare("UPDATE source_passages SET structure_role=?2 WHERE id=?1")?;
+    // Without ANALYZE SQLite can choose origin_range for the old per-block
+    // query, scanning every explicit reference in the entire library N times.
+    // Fetch this source exactly once through its established source index.
+    progress("indexRead", 0, 0)?;
+    let read_started = std::time::Instant::now();
+    type Literal = (String, Option<u32>, Option<u32>, Option<String>);
+    let mut literals: HashMap<String, Vec<Literal>> = HashMap::new();
+    {
+        let mut query = conn.prepare("SELECT segment_id,id,start_offset,end_offset,structure_role FROM source_passages INDEXED BY source_passages_source WHERE source_id=?1 AND origin='explicit'")?;
+        for row in query.query_map([id], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                (r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?),
+            ))
+        })? {
+            let (segment, literal) = row?;
+            literals.entry(segment).or_default().push(literal);
+        }
+    }
+    let read_ms = read_started.elapsed().as_millis();
+    let mut changed_roles: Vec<(String, Option<String>)> = Vec::new();
+    progress("index", 0, record.document.blocks.len())?;
     for (block_index, block) in record.document.blocks.iter().enumerate() {
         if block_index % 64 == 0 {
-            progress(block_index, record.document.blocks.len())?;
+            progress("index", block_index, record.document.blocks.len())?;
         }
         let Some(segment) = rows.get(&block.position) else {
             continue;
         };
-        let literal = mentions
-            .query_map([segment], |r| {
-                Ok((
-                    r.get::<_, String>(0)?,
-                    r.get::<_, Option<u32>>(1)?,
-                    r.get::<_, Option<u32>>(2)?,
-                ))
-            })?
-            .collect::<Result<Vec<_>, _>>()?;
-        for (link, start, end) in literal {
+        for (link, start, end, previous_role) in literals.remove(segment).unwrap_or_default() {
             let kind = start
                 .zip(end)
                 .and_then(|(s, e)| block.runs.iter().find(|r| r.start <= s && e <= r.end))
@@ -453,7 +460,9 @@ fn index_observed(
             } else {
                 kind
             };
-            role.execute(params![link, kind])?;
+            if previous_role.as_deref() != Some(kind) {
+                changed_roles.push((link, Some(kind.into())));
+            }
         }
         active.retain(|i| block.position < eligible[*i].0.end_position);
         let mut openers = Vec::new();
@@ -506,6 +515,24 @@ fn index_observed(
             count += 1;
         }
     }
+    // Clear obsolete roles only for literals not aligned to any new block.
+    for literal in literals.into_values().flatten() {
+        if literal.3.is_some() {
+            changed_roles.push((literal.0, None));
+        }
+    }
+    progress("indexRoles", 0, changed_roles.len())?;
+    let write_started = std::time::Instant::now();
+    let mut role = conn.prepare(
+        "UPDATE source_passages SET structure_role=?2 WHERE id=?1 AND structure_role IS NOT ?2",
+    )?;
+    for (i, (link, kind)) in changed_roles.iter().enumerate() {
+        if i % 64 == 0 {
+            progress("indexRoles", i, changed_roles.len())?;
+        }
+        role.execute(params![link, kind])?;
+    }
+    log::info!("PDF reference indexing explicit_read_ms={} role_write_ms={} changed_roles={} derived_links={}", read_ms, write_started.elapsed().as_millis(), changed_roles.len(), count);
     Ok(count)
 }
 

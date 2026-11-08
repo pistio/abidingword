@@ -143,7 +143,12 @@
     "originalUnavailable": "The original of this source can’t be opened.",
     "structure": {
       "corrupt": "The saved PDF structure could not be read. Source text and the original file are unchanged.",
-      "invalid": "This correction no longer matches the source. Reopen its text and try again."
+      "invalid": "This correction no longer matches the source. Reopen its text and try again.",
+      "timeout": "Analysis reached its time limit at a safe processing boundary. Previous metadata is unchanged. Retry or save a diagnostic report.",
+      "cancelled": "Analysis cancelled. Previous structure and links are unchanged. You can retry.",
+      "busy": "An analysis is already running. Wait or cancel it before retrying.",
+      "limit": "The PDF exceeds the supported analysis limits. Previous metadata is unchanged.",
+      "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report."
     }
   },
   "templates": {

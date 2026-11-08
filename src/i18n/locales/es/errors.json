@@ -154,7 +154,12 @@
     "originalUnavailable": "No se puede abrir el original de esta fuente.",
     "structure": {
       "corrupt": "No se pudo leer la estructura PDF guardada. El texto y el original permanecen intactos.",
-      "invalid": "Esta corrección ya no coincide con la fuente. Abra de nuevo su texto e inténtelo otra vez."
+      "invalid": "Esta corrección ya no coincide con la fuente. Abra de nuevo su texto e inténtelo otra vez.",
+      "timeout": "El análisis alcanzó su límite de tiempo en un punto seguro. Los metadatos anteriores no cambiaron. Reintenta o guarda un diagnóstico.",
+      "cancelled": "Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar.",
+      "busy": "Ya hay un análisis en curso. Espera o cancélalo antes de reintentar.",
+      "limit": "El PDF supera los límites de análisis admitidos. Los metadatos anteriores no cambiaron.",
+      "failed": "El análisis falló. La estructura y los enlaces anteriores se conservan. Reintenta o guarda un informe de diagnóstico."
     }
   },
   "templates": {

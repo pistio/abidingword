@@ -49,6 +49,14 @@ describe("observable PDF analysis",()=>{
     expect(screen.queryByText(/headings saved/)).not.toBeInTheDocument();
     expect(screen.getByText("Mark a visible text line as a section")).toBeVisible();
   });
+  it("does not present legacy zero headings as the result of a failed latest attempt",async()=>{
+    const api=setup();api.libraryPdfStructure=async()=>({...empty,status:"ready",analysis:2,rebuildRecommended:true});
+    api.libraryPdfStructureProgress=async()=>({...running,status:"failed",errorCode:"library.structure.timeout",canCancel:false});
+    panel(api);
+    await screen.findByText(/Previous saved analysis/);
+    expect(screen.queryByText(/No usable headings were recognised/)).not.toBeInTheDocument();
+    expect(screen.getByText(/this attempt did not save any changes/)).toBeVisible();
+  });
   it("displays the exact saved report, labels general status, and clears stale results when the query changes",async()=>{
     const api=setup();const base=await api.libraryPdfStructureDiagnostic("source",null,null);
     const saved:PdfDiagnostic={...base,source:{...base.source,fileSha256:"SAVED-FINGERPRINT"},query:null};

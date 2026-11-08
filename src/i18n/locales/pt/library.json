@@ -655,7 +655,8 @@
       "fileType": "Relatório de diagnóstico",
       "saved": "Guardado em {{path}}",
       "file": "SHA-256 do ficheiro {{hash}} · {{pages}} páginas · {{headings}} títulos",
-      "general": "Relatório geral — nenhum trecho foi verificado. Para examinar os candidatos de Atos 6, introduza Apg 6 antes de criar ou guardar outro relatório."
+      "general": "Relatório geral — nenhum trecho foi verificado. Para examinar os candidatos de Atos 6, introduza Apg 6 antes de criar ou guardar outro relatório.",
+      "queryHelp": "Digite uma passagem acima para verificá-la. Se o campo estiver vazio, o relatório mostra apenas o estado geral."
     },
     "processing": {
       "label": "Progresso da análise",
@@ -678,9 +679,12 @@
         "index": "Indexar ligações de estrutura",
         "indexed": "Ligações indexadas",
         "commit": "Confirmar alterações",
-        "refresh": "Atualizar leitor"
+        "refresh": "Atualizar leitor",
+        "indexRead": "Ler as referências existentes",
+        "indexRoles": "Atualizar a função das referências"
       },
-      "duration": "{{milliseconds}} ms"
+      "duration": "{{milliseconds}} ms",
+      "previous": "Análise salva anteriormente: esta tentativa não salvou nenhuma alteração."
     },
     "cancelled": "Análise cancelada. A estrutura e as ligações anteriores não mudaram. Pode tentar novamente.",
     "timeout": "A análise atingiu o limite de tempo num ponto seguro. Os metadados anteriores não mudaram. Tente novamente ou guarde um diagnóstico.",

@@ -655,7 +655,8 @@
       "fileType": "Informe de diagnóstico",
       "saved": "Guardado en {{path}}",
       "file": "SHA-256 del archivo {{hash}} · {{pages}} páginas · {{headings}} títulos",
-      "general": "Informe general: no se comprobó ningún pasaje. Para examinar los candidatos de Hechos 6, escribe Apg 6 antes de crear o guardar otro informe."
+      "general": "Informe general: no se comprobó ningún pasaje. Para examinar los candidatos de Hechos 6, escribe Apg 6 antes de crear o guardar otro informe.",
+      "queryHelp": "Escribe un pasaje arriba para comprobarlo. Si el campo está vacío, el informe solo muestra el estado general."
     },
     "processing": {
       "label": "Progreso del análisis",
@@ -678,9 +679,12 @@
         "index": "Indexar enlaces de estructura",
         "indexed": "Enlaces indexados",
         "commit": "Confirmar cambios",
-        "refresh": "Actualizar lector"
+        "refresh": "Actualizar lector",
+        "indexRead": "Leer las referencias existentes",
+        "indexRoles": "Actualizar la función de las referencias"
       },
-      "duration": "{{milliseconds}} ms"
+      "duration": "{{milliseconds}} ms",
+      "previous": "Análisis guardado anteriormente: este intento no ha guardado ningún cambio."
     },
     "cancelled": "Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar.",
     "timeout": "El análisis alcanzó su límite de tiempo en un punto seguro. Los metadatos anteriores no cambiaron. Reintenta o guarda un diagnóstico.",

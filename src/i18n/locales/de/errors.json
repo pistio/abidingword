@@ -143,7 +143,12 @@
     "originalUnavailable": "Das Original dieser Quelle kann nicht geöffnet werden.",
     "structure": {
       "corrupt": "Die gespeicherte PDF-Struktur konnte nicht gelesen werden. Quelltext und Originaldatei bleiben unverändert.",
-      "invalid": "Diese Korrektur passt nicht mehr zur Quelle. Den Text erneut öffnen und wiederholen."
+      "invalid": "Diese Korrektur passt nicht mehr zur Quelle. Den Text erneut öffnen und wiederholen.",
+      "timeout": "Die Analyse hat ihre Zeitgrenze an einer sicheren Verarbeitungsgrenze erreicht. Bisherige Metadaten sind unverändert. Erneut versuchen oder einen Diagnosebericht speichern.",
+      "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
+      "busy": "Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst.",
+      "limit": "Die PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
+      "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern."
     }
   },
   "templates": {
