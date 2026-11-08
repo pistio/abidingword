@@ -65,6 +65,22 @@ describe("owner Study corrections",()=>{
   await screen.findByRole("button",{name:"Undo POZETEK repair"});const after=await api.studySectionList(study.id);
   expect(after.slice(0,7).map(s=>s.key)).toEqual(["persons","place","time","events","context","explanations","core"]);
   for(const original of before)expect(after.find(s=>s.id===original.id)).toMatchObject(original);
+  await openPartOptions(user,"Text context");
+  const newPart=within(pane()).getByRole("heading",{name:"Text context"}).closest("section")!;
+  await user.click(within(newPart).getByRole("button",{name:"Note — Text context"}));
+  await user.click(screen.getByRole("menuitem",{name:"Observation"}));
+  await user.type(within(newPart).getByLabelText("New observation"),"Unsaved draft must survive");
+  expect(screen.getByRole("button",{name:"Undo POZETEK repair"})).toBeDisabled();
+  expect(within(newPart).getByLabelText("New observation")).toHaveValue("Unsaved draft must survive");
+  await user.click(within(newPart).getByRole("button",{name:"Cancel"}));
+  await user.click(within(newPart).getByRole("button",{name:"Rename part Text context"}));
+  const name=within(newPart).getByRole("textbox",{name:"Heading of the part"});
+  await user.clear(name);await user.type(name,"Unsubmitted name must survive");
+  await user.click(screen.getByRole("button",{name:"Undo POZETEK repair"}));
+  expect(name).toHaveValue("Unsubmitted name must survive");
+  expect(apply.mock.calls.some(call=>call[1]==="undo")).toBe(false);
+  await user.click(within(newPart).getByRole("button",{name:"Cancel"}));
+
   await user.click(screen.getByRole("button",{name:"Undo POZETEK repair"}));await waitFor(()=>expect(api.state.sections.filter(s=>s.studyId===study.id)).toHaveLength(before.length));
   expect((await api.studySectionList(study.id)).map(s=>s.id)).toEqual(before.map(s=>s.id));
  });

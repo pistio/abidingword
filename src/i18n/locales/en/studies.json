@@ -2935,6 +2935,7 @@
     "add": "Add empty part",
     "duplicates": "Multiple parts share a key: {{parts}}. They remain separate; no content is merged.",
     "safety": "A persistent Undo receipt restores the previous order and removes only unchanged, empty parts added by this repair. If an added part has changed, Undo refuses and keeps all writing. Back up your profile before repairing important work.",
-    "undoFirst": "Undo the previous repair before applying another."
+    "undoFirst": "Undo the previous repair before applying another.",
+    "finishDrafts": "Finish or close open notes and part-name edits before undoing the repair."
   }
 }

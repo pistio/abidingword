@@ -33,6 +33,8 @@ Apply and receipt persistence are one SQLite transaction; the receipt uses the
 existing settings table. Undo survives restart and restores the prior order,
 removing only empty and completely unchanged parts added by that repair. It
 refuses if added writing/metadata/notes changed or the section list/order changed.
+Open note drafts and unsubmitted part names also block Undo, including a fresh
+check after pending saves settle; these edits are not yet visible in SQLite.
 Existing writing can continue to change without being discarded. Revisions advance
 on reorder and Undo; no revision is rewound. A failed receipt write rolls back all
 parts, blocks, ordering and revisions. No schema migration is added.

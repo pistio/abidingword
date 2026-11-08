@@ -494,7 +494,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       {/* The end of the study: another part, or a note that belongs to no part. */}
       <div className="flex flex-wrap items-start gap-2 border-t border-border-subtle pt-3">
         {removedEmptyPart && <div role="status" className="basis-full type-meta">{t("studies.parts.restoreEmptyHint")} <Button disabled={restoringParts} onClick={() => void restoreParts([removedEmptyPart]).catch(error => setError(toApiError(error).message))}>{t("common.lifecycle.undo")}</Button></div>}
-        {template?.isBuiltin && template.key === "pozetek-writing-study" && <PozetekRepair studyId={study.id} onChanged={parts => detail.setData(previous => ({ ...(previous ?? current), sections: parts }))} />}
+        {template?.isBuiltin && template.key === "pozetek-writing-study" && <PozetekRepair studyId={study.id} hasOpenDrafts={Object.keys(capturing).length > 0} onChanged={parts => detail.setData(previous => ({ ...(previous ?? current), sections: parts }))} />}
         <AddPart template={template} sections={sections} onAdd={addSection} onRestore={study.templateId ? restoreParts : undefined} />
         <Button ref={noteButton} variant="quiet" className="min-h-11" onClick={() => openCapture("", lastNoteKind(study.id))}>
           <Plus className="size-4" aria-hidden="true" />

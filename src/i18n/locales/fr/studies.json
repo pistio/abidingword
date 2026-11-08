@@ -2950,6 +2950,7 @@
     "add": "Ajouter une partie vide",
     "duplicates": "Plusieurs parties partagent une clé : {{parts}}. Elles restent distinctes ; aucun texte n’est fusionné.",
     "safety": "Une annulation enregistrée rétablit l’ordre précédent et retire uniquement les parties vides et inchangées ajoutées par cette réparation. Si une partie ajoutée a changé, l’annulation est refusée et tous les textes sont conservés. Sauvegardez votre profil avant une réparation importante.",
-    "undoFirst": "Annulez la réparation précédente avant d’en appliquer une autre."
+    "undoFirst": "Annulez la réparation précédente avant d’en appliquer une autre.",
+    "finishDrafts": "Terminez ou fermez les notes ouvertes et les modifications de noms de parties avant d’annuler la réparation."
   }
 }

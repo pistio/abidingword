@@ -2935,6 +2935,7 @@
     "add": "Leeren Teil ergänzen",
     "duplicates": "Mehrere Teile haben denselben Schlüssel: {{parts}}. Sie bleiben getrennt; Texte werden nicht zusammengeführt.",
     "safety": "Eine gespeicherte Rückgängig-Funktion stellt die frühere Reihenfolge wieder her und entfernt nur unveränderte, leere Teile dieser Reparatur. Wurde ein ergänzter Teil verändert, bleibt alles erhalten und Rückgängig wird abgelehnt. Vor wichtigen Reparaturen das Profil sichern.",
-    "undoFirst": "Die vorige Reparatur zuerst rückgängig machen."
+    "undoFirst": "Die vorige Reparatur zuerst rückgängig machen.",
+    "finishDrafts": "Offene Notizen und Änderungen an Teilnamen zuerst abschließen oder schließen, bevor die Reparatur rückgängig gemacht wird."
   }
 }

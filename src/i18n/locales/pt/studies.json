@@ -2950,6 +2950,7 @@
     "add": "Adicionar parte vazia",
     "duplicates": "Várias partes partilham uma chave: {{parts}}. Permanecem separadas; nenhum conteúdo é fundido.",
     "safety": "Um registo guardado permite repor a ordem anterior e retirar apenas partes vazias e inalteradas adicionadas por esta reparação. Se uma parte adicionada mudou, Anular é recusado e todos os textos são mantidos. Faça uma cópia do perfil antes de reparar trabalho importante.",
-    "undoFirst": "Anule a reparação anterior antes de aplicar outra."
+    "undoFirst": "Anule a reparação anterior antes de aplicar outra.",
+    "finishDrafts": "Termine ou feche as notas abertas e a edição dos nomes das partes antes de anular a reparação."
   }
 }

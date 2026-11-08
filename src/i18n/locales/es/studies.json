@@ -2950,6 +2950,7 @@
     "add": "Añadir parte vacía",
     "duplicates": "Varias partes comparten una clave: {{parts}}. Siguen separadas; no se fusiona contenido.",
     "safety": "Un registro guardado permite recuperar el orden anterior y quitar solo las partes vacías y sin cambios añadidas por esta reparación. Si una parte añadida cambió, se rechaza Deshacer y se conservan todos los textos. Haga una copia del perfil antes de reparar trabajo importante.",
-    "undoFirst": "Deshaga la reparación anterior antes de aplicar otra."
+    "undoFirst": "Deshaga la reparación anterior antes de aplicar otra.",
+    "finishDrafts": "Termine o cierre las notas abiertas y la edición de nombres antes de deshacer la reparación."
   }
 }

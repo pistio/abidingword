@@ -199,6 +199,7 @@ export function SectionEditor(props: SectionEditorProps) {
       // A new phase begins with more space and a firmer rule than a new part within one.
       className={`@container scroll-mt-14 border-t pt-3 ${phase && !phase.first ? "mt-3 border-border" : "border-border-subtle"} ${active && !collapsed ? "aw-part-active" : ""}`}
       data-active={active && !collapsed ? "true" : undefined}
+      data-part-editing={renaming ? "true" : undefined}
       data-phase-start={phase?.index}
       data-phase={section.phase ?? undefined}
       onFocusCapture={onActive}
