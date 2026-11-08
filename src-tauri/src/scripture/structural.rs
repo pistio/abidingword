@@ -153,15 +153,20 @@ pub enum GateCause {
     /// The verse's text holds an element of the document's own verse-number
     /// class: a verse number was read as words.
     SwallowedVerseNumber,
+    /// Letters of the original between this verse and the next that no verse
+    /// holds and nothing in the document accounts for (a heading, a note, a
+    /// class that never carries verse text): words may have been dropped.
+    UnaccountedText,
 }
 
 impl GateCause {
     /// The existing unverified reason it is stored as.
     pub fn reason(self) -> &'static str {
         match self {
-            GateCause::Untraced | GateCause::IdContradicts | GateCause::SwallowedVerseNumber => {
-                "boundary"
-            }
+            GateCause::Untraced
+            | GateCause::IdContradicts
+            | GateCause::SwallowedVerseNumber
+            | GateCause::UnaccountedText => "boundary",
             GateCause::UncertainLink | GateCause::CallerShapedWords => "noteSign",
         }
     }
@@ -232,6 +237,10 @@ struct Placed {
     end: usize,
     matched_links: Vec<(LinkRole, usize)>,
     conflict_inside: bool,
+    /// The verse's spans, as character ranges of the entry.
+    spans: Vec<(usize, usize)>,
+    /// Verified by the recogniser.
+    verified: bool,
     /// Characters of the entry from the first span's start to the last
     /// span's end.
     chars: (usize, usize),
@@ -289,7 +298,7 @@ pub fn gate(
         for l in &source.roles.links {
             links_of[l.entry].push((l.role, l.element));
         }
-        let marks: Vec<EntryMarks> = book
+        let mut marks: Vec<EntryMarks> = book
             .entries
             .iter()
             .zip(links_of.iter())
@@ -318,129 +327,187 @@ pub fn gate(
             }
         }
         let mut placed: Vec<Placed> = Vec::new();
-        let mut cursor: Option<(usize, usize)> = None;
-        for (key, text) in verses {
-            let origin = stage.origins[&key];
-            let verified = !stage.unverified.contains_key(&key);
-            let from_segment = origin.start.segment.map(|s| s as usize);
-            let to_segment = if origin.end.document == origin.start.document {
-                origin.end.segment.map(|s| s as usize)
-            } else {
-                None
-            };
-            let places = (
-                from_segment.and_then(|s| segment_place.get(&s)),
-                to_segment.and_then(|s| segment_place.get(&s)),
-            );
-            let mut reasons = Vec::new();
-            let mut entry_path = String::new();
-            let mut entry_sha = String::new();
-            let mut traced_out = None;
-            if let (Some(&(entry, (from, _))), Some(&(entry_to, (_, to)))) = places {
-                entry_path = book.entries[entry].path.clone();
-                entry_sha = book.entries[entry].sha256.clone();
-                if entry != entry_to {
-                    reasons.push("its text crosses two documents of the book".to_string());
+        // Where verses that could not be traced begin: (entry, nonspace).
+        let mut unplaced: Vec<(usize, usize)> = Vec::new();
+        // Each verse's place in the original: (entry, from, to) nonspace.
+        let mut verse_places: HashMap<(u8, u16, u16), (usize, usize, usize)> = HashMap::new();
+        let mut removals: HashMap<(u8, u16, u16), Vec<Removal>> = HashMap::new();
+        // Pass 0 learns which classes carry verse text; pass 1 traces again
+        // with the removals the document grounds, and decides.
+        for pass in 0..2 {
+            let last = pass == 1;
+            if last {
+                let owners: Vec<Vec<u32>> = book.entries.iter().map(|e| e.owners()).collect();
+                let apart = SetApart::measure(book, &source.roles, &marks, &owners, &placed);
+                removals = grounded_removals(
+                    &stage.apparatus,
+                    &verse_places,
+                    &marks,
+                    &owners,
+                    &apart,
+                    book,
+                );
+                for list in removals.values() {
+                    for r in list {
+                        marks[r.entry].mark_removed(r.element);
+                    }
+                }
+            }
+            placed.clear();
+            unplaced.clear();
+            let mut cursor: Option<(usize, usize)> = None;
+            for (key, text) in verses.iter().cloned() {
+                let origin = stage.origins[&key];
+                let verified = !stage.unverified.contains_key(&key);
+                let from_segment = origin.start.segment.map(|s| s as usize);
+                let to_segment = if origin.end.document == origin.start.document {
+                    origin.end.segment.map(|s| s as usize)
                 } else {
-                    let start = match cursor {
-                        Some((e, at)) if e == entry && at > from && at < to => at,
-                        _ => from,
-                    };
-                    let found = provenance::trace(&marks[entry], &text, start, to)
-                        .or_else(|| provenance::trace(&marks[entry], &text, from, to));
-                    if let Some(t) = found {
-                        cursor = Some((entry, t.end));
-                        traced_out = Some((entry, t));
+                    None
+                };
+                let places = (
+                    from_segment.and_then(|s| segment_place.get(&s)),
+                    to_segment.and_then(|s| segment_place.get(&s)),
+                );
+                let mut reasons = Vec::new();
+                let mut entry_path = String::new();
+                let mut entry_sha = String::new();
+                let mut traced_out = None;
+                if let (Some(&(entry, (from, _))), Some(&(entry_to, (_, to)))) = places {
+                    if !last && entry == entry_to {
+                        verse_places.insert(key, (entry, from, to));
+                    }
+                    entry_path = book.entries[entry].path.clone();
+                    entry_sha = book.entries[entry].sha256.clone();
+                    if entry != entry_to {
+                        reasons.push("its text crosses two documents of the book".to_string());
                     } else {
-                        reasons.push(
+                        let start = match cursor {
+                            Some((e, at)) if e == entry && at > from && at < to => at,
+                            _ => from,
+                        };
+                        let found = provenance::trace(&marks[entry], &text, start, to)
+                            .or_else(|| provenance::trace(&marks[entry], &text, from, to));
+                        let found = found.filter(|t| {
+                            removals_in_place(
+                                &marks[entry],
+                                t,
+                                removals.get(&key).map(Vec::as_slice),
+                            )
+                        });
+                        if let Some(t) = found {
+                            cursor = Some((entry, t.end));
+                            traced_out = Some((entry, t));
+                        } else {
+                            reasons.push(
                             "its words are not found, in order, in the original text of its place (only white space, note callers and note signs may stand between them)"
                                 .to_string(),
                         );
+                        }
                     }
-                }
-            } else {
-                reasons.push("its place in the original could not be found".to_string());
-            }
-            let mut record = VerseProvenance {
-                reference: key,
-                file: FileIdentity {
-                    document,
-                    file_sha256: source.file_sha256.clone(),
-                    entry: entry_path,
-                    entry_sha256: entry_sha,
-                },
-                text: text.clone(),
-                spans: Vec::new(),
-                excluded: Vec::new(),
-                quote: String::new(),
-                status: TraceStatus::Untraced,
-                id_check: IdCheck::None,
-                reasons,
-            };
-            if let Some((entry, t)) = traced_out {
-                let m = &marks[entry];
-                record.spans = provenance::spans(m, &t);
-                record.excluded = provenance::excluded_ranges(m, &t);
-                record.quote = provenance::quote(m, &record.spans);
-                record.status = if record.quote == collapse(&text) {
-                    TraceStatus::Exact
                 } else {
-                    TraceStatus::SpacingDiffers
-                };
-                record.id_check = id_check(m, &record, key);
-                let matched_links: Vec<(LinkRole, usize)> =
-                    t.matched.iter().filter_map(|&at| m.link[at]).collect();
-                let conflict_inside = record
-                    .excluded
-                    .iter()
-                    .any(|x| x.kind == ExcludedKind::ConflictingCaller);
-                placed.push(Placed {
-                    key,
-                    entry,
-                    start: m.nonspace_at(record.spans[0].char_start as usize),
-                    end: t.end,
-                    matched_links,
-                    conflict_inside,
-                    chars: (
-                        record.spans[0].char_start as usize,
-                        record.spans[record.spans.len() - 1].char_end as usize,
-                    ),
-                });
-                record.reasons.push(format!(
-                    "traced to {} span(s) of {}, {} excluded range(s)",
-                    record.spans.len(),
-                    record.file.entry,
-                    record.excluded.len()
-                ));
-            }
-            match record.status {
-                TraceStatus::Exact => report.exact += 1,
-                TraceStatus::SpacingDiffers => report.spacing_differs += 1,
-                TraceStatus::Untraced => report.untraced += 1,
-            }
-            match record.id_check {
-                IdCheck::Agrees => report.id_agrees += 1,
-                IdCheck::Contradicts { .. } => report.id_contradicts += 1,
-                IdCheck::None => {}
-            }
-            if verified {
-                let cause = match (record.status, record.id_check) {
-                    (TraceStatus::Untraced, _) => Some(GateCause::Untraced),
-                    (_, IdCheck::Contradicts { .. }) => Some(GateCause::IdContradicts),
-                    _ => None,
-                };
-                if let Some(cause) = cause {
-                    gated.insert(key, cause);
+                    reasons.push("its place in the original could not be found".to_string());
                 }
-            } else if let Some(reason) = stage.unverified.get(&key) {
-                record
-                    .reasons
-                    .push(format!("not verified by the recogniser ({reason})"));
+                let mut record = VerseProvenance {
+                    reference: key,
+                    file: FileIdentity {
+                        document,
+                        file_sha256: source.file_sha256.clone(),
+                        entry: entry_path,
+                        entry_sha256: entry_sha,
+                    },
+                    text: text.clone(),
+                    spans: Vec::new(),
+                    excluded: Vec::new(),
+                    quote: String::new(),
+                    status: TraceStatus::Untraced,
+                    id_check: IdCheck::None,
+                    reasons,
+                };
+                if let Some((entry, t)) = traced_out {
+                    let m = &marks[entry];
+                    record.spans = provenance::spans(m, &t);
+                    record.excluded = provenance::excluded_ranges(m, &t);
+                    record.quote = provenance::quote(m, &record.spans);
+                    record.status = if record.quote == collapse(&text) {
+                        TraceStatus::Exact
+                    } else {
+                        TraceStatus::SpacingDiffers
+                    };
+                    record.id_check = id_check(m, &record, key);
+                    let matched_links: Vec<(LinkRole, usize)> =
+                        t.matched.iter().filter_map(|&at| m.link[at]).collect();
+                    let conflict_inside = record
+                        .excluded
+                        .iter()
+                        .any(|x| x.kind == ExcludedKind::ConflictingCaller);
+                    placed.push(Placed {
+                        key,
+                        entry,
+                        start: m.nonspace_at(record.spans[0].char_start as usize),
+                        end: t.end,
+                        matched_links,
+                        conflict_inside,
+                        verified,
+                        spans: record
+                            .spans
+                            .iter()
+                            .map(|r| (r.char_start as usize, r.char_end as usize))
+                            .collect(),
+                        chars: (
+                            record.spans[0].char_start as usize,
+                            record.spans[record.spans.len() - 1].char_end as usize,
+                        ),
+                    });
+                    record.reasons.push(format!(
+                        "traced to {} span(s) of {}, {} excluded range(s)",
+                        record.spans.len(),
+                        record.file.entry,
+                        record.excluded.len()
+                    ));
+                } else if let Some(&(entry, (from, _))) = places.0 {
+                    unplaced.push((entry, from));
+                }
+                if !last {
+                    continue;
+                }
+                match record.status {
+                    TraceStatus::Exact => report.exact += 1,
+                    TraceStatus::SpacingDiffers => report.spacing_differs += 1,
+                    TraceStatus::Untraced => report.untraced += 1,
+                }
+                match record.id_check {
+                    IdCheck::Agrees => report.id_agrees += 1,
+                    IdCheck::Contradicts { .. } => report.id_contradicts += 1,
+                    IdCheck::None => {}
+                }
+                if verified {
+                    let cause = match (record.status, record.id_check) {
+                        (TraceStatus::Untraced, _) => Some(GateCause::Untraced),
+                        (_, IdCheck::Contradicts { .. }) => Some(GateCause::IdContradicts),
+                        _ => None,
+                    };
+                    if let Some(cause) = cause {
+                        gated.insert(key, cause);
+                    }
+                } else if let Some(reason) = stage.unverified.get(&key) {
+                    record
+                        .reasons
+                        .push(format!("not verified by the recogniser ({reason})"));
+                }
+                report.provenance.insert(key_name(key), record);
             }
-            report.provenance.insert(key_name(key), record);
         }
         // Links of uncertain role, and caller-shaped words.
         placed.sort_by_key(|p| (p.entry, p.start));
+        // Letters between a verse and the next that nothing accounts for.
+        {
+            let owners: Vec<Vec<u32>> = book.entries.iter().map(|e| e.owners()).collect();
+            let apart = SetApart::measure(book, &source.roles, &marks, &owners, &placed);
+            for key in unaccounted_text(book, &marks, &owners, &apart, &placed, &unplaced) {
+                gated.entry(key).or_insert(GateCause::UnaccountedText);
+            }
+        }
         // Verse numbers read as words.
         for key in swallowed_verse_numbers(book, &placed) {
             gated.entry(key).or_insert(GateCause::SwallowedVerseNumber);
@@ -653,6 +720,272 @@ fn swallowed_verse_numbers(book: &SourceBook, placed: &[Placed]) -> Vec<(u8, u16
                         .any(|c| marker.contains(c.as_str()))
             });
         if inside {
+            out.push(p.key);
+        }
+    }
+    out
+}
+
+/// What the document itself sets apart from its verse text (Phase A1.1).
+///
+/// Structure first (`Entry::set_apart`: headings, notes, navigation,
+/// floated blocks). Then measured classes: a class is apart when at least
+/// three elements carry it and no character of any traced verse the
+/// recogniser verified stands in
+/// an element of that class (the verse character's innermost element and
+/// its ancestors up to the block). Nothing is decided from a class's name or
+/// from how text looks.
+struct SetApart<'a> {
+    floated: &'a HashSet<String>,
+    /// Blocks a note's caller leads to: (entry, block element). The reader
+    /// reads them as notes (`epub::read_structural`).
+    note_blocks: HashSet<(usize, usize)>,
+    carrying: HashSet<&'a str>,
+    count: HashMap<&'a str, usize>,
+}
+
+impl<'a> SetApart<'a> {
+    fn measure(
+        book: &'a SourceBook,
+        roles: &LinkRoles,
+        marks: &[EntryMarks],
+        owners: &[Vec<u32>],
+        placed: &[Placed],
+    ) -> Self {
+        let mut carrying: HashSet<&'a str> = HashSet::new();
+        // Only verified verses measure what verse text is: a verse the
+        // recogniser itself refused (for a reference read in, a possible
+        // heading …) says nothing about where verse text stands.
+        for p in placed.iter().filter(|p| p.verified) {
+            let entry = &book.entries[p.entry];
+            let mut last = epub_source::NO_ELEMENT;
+            for &(from, to) in &p.spans {
+                let end = to.min(entry.text.len());
+                for (at, &owner) in owners[p.entry].iter().enumerate().take(end).skip(from) {
+                    if owner == last
+                        || owner == epub_source::NO_ELEMENT
+                        || entry.text[at].is_whitespace()
+                        || marks[p.entry].excluded_kind(at).is_some()
+                    {
+                        continue;
+                    }
+                    last = owner;
+                    for e in entry.chain_to_block(owner as usize) {
+                        for c in &entry.elements[e].classes {
+                            carrying.insert(c.as_str());
+                        }
+                    }
+                }
+            }
+        }
+        let mut count: HashMap<&'a str, usize> = HashMap::new();
+        for entry in &book.entries {
+            for e in &entry.elements {
+                for c in &e.classes {
+                    *count.entry(c.as_str()).or_default() += 1;
+                }
+            }
+        }
+        let note_blocks = roles
+            .links
+            .iter()
+            .filter(|l| l.role == LinkRole::NoteCaller)
+            .filter_map(|l| l.target)
+            .map(|(entry, element)| (entry, book.entries[entry].block_of(element)))
+            .collect();
+        SetApart {
+            floated: &book.floated,
+            note_blocks,
+            carrying,
+            count,
+        }
+    }
+
+    /// Whether an element's classes (all of them) are apart by measurement.
+    fn class_apart(&self, element: &epub_source::Element) -> bool {
+        !element.classes.is_empty()
+            && element.classes.iter().all(|c| {
+                !self.carrying.contains(c.as_str())
+                    && self.count.get(c.as_str()).copied().unwrap_or(0) >= 3
+            })
+    }
+
+    /// Whether the character's innermost element is set apart, by the
+    /// document's structure or by a measured class up to its block.
+    fn holds(&self, book: &SourceBook, entry_index: usize, owner: u32) -> bool {
+        if owner == epub_source::NO_ELEMENT {
+            return false;
+        }
+        let entry = &book.entries[entry_index];
+        let owner = owner as usize;
+        entry.set_apart(owner, self.floated)
+            || entry
+                .ancestors_of(owner)
+                .any(|a| self.note_blocks.contains(&(entry_index, a)))
+            || entry
+                .chain_to_block(owner)
+                .into_iter()
+                .any(|e| self.class_apart(&entry.elements[e]))
+    }
+}
+
+/// A removal the recogniser reported from inside a verse's words that the
+/// document grounds (Phase A1.1).
+struct Removal {
+    entry: usize,
+    element: usize,
+    /// Non-space characters of the verse's own words before it (after the
+    /// earlier removals of the same verse are taken away).
+    before: usize,
+}
+
+/// The pieces the recogniser reported setting apart from inside a verse
+/// (`Apparatus::within_verse`), each found in the original: the one whole
+/// element, in the verse's place, whose text is exactly the piece and that
+/// the document sets apart (`SetApart::class_apart`). A piece with no such
+/// element, or with more than one, is not grounded, and its verse keeps no
+/// claim on it.
+fn grounded_removals(
+    apparatus: &[crate::scripture::structure::Apparatus],
+    verse_places: &HashMap<(u8, u16, u16), (usize, usize, usize)>,
+    marks: &[EntryMarks],
+    owners: &[Vec<u32>],
+    apart: &SetApart,
+    book: &SourceBook,
+) -> HashMap<(u8, u16, u16), Vec<Removal>> {
+    // By verse, in the order they stood.
+    type Pieces<'p> = HashMap<(u8, u16, u16), Vec<(u32, &'p str)>>;
+    let mut pieces: Pieces = HashMap::new();
+    for piece in apparatus {
+        if let (Some(key), Some(at)) = (piece.verse, piece.within_verse) {
+            pieces
+                .entry(key)
+                .or_default()
+                .push((at, piece.text.as_str()));
+        }
+    }
+    let mut out: HashMap<(u8, u16, u16), Vec<Removal>> = HashMap::new();
+    for (key, mut list) in pieces {
+        let Some(&(entry, from, to)) = verse_places.get(&key) else {
+            continue;
+        };
+        list.sort_by_key(|(at, _)| *at);
+        let m = &marks[entry];
+        let e = &book.entries[entry];
+        let end = to.min(m.nonspace_len());
+        let mut taken = 0usize;
+        let mut found = Vec::new();
+        for (at, text) in list {
+            let wanted: Vec<char> = text.chars().filter(|c| !c.is_whitespace()).collect();
+            if wanted.is_empty() {
+                continue;
+            }
+            let mut candidates = Vec::new();
+            let mut k = from;
+            while k + wanted.len() <= end {
+                if (0..wanted.len()).all(|n| e.text[m.char_of(k + n)] == wanted[n]) {
+                    let owner = owners[entry][m.char_of(k)];
+                    if owner != epub_source::NO_ELEMENT {
+                        let whole = e.chain_to_block(owner as usize).into_iter().find(|&i| {
+                            let el = &e.elements[i];
+                            m.nonspace_at(el.text_start) == k
+                                && m.nonspace_at(el.text_end) == k + wanted.len()
+                        });
+                        if let Some(i) = whole {
+                            if !e.elements[i].is_block_element()
+                                && apart.class_apart(&e.elements[i])
+                            {
+                                candidates.push(i);
+                            }
+                        }
+                    }
+                }
+                k += 1;
+            }
+            if candidates.len() != 1 {
+                continue;
+            }
+            found.push(Removal {
+                entry,
+                element: candidates[0],
+                before: (at as usize).saturating_sub(taken),
+            });
+            taken += wanted.len();
+        }
+        if !found.is_empty() {
+            out.insert(key, found);
+        }
+    }
+    out
+}
+
+/// Whether a traced verse's removed elements are exactly those the
+/// recogniser reported, each after exactly the reported number of the
+/// verse's characters. With no reported removal, no element may have been
+/// skipped as removed.
+fn removals_in_place(m: &EntryMarks, t: &provenance::Traced, reported: Option<&[Removal]>) -> bool {
+    let reported = reported.unwrap_or(&[]);
+    let mut seen: Vec<usize> = Vec::new();
+    for &(at, kind) in &t.excluded {
+        if kind != ExcludedKind::Apparatus {
+            continue;
+        }
+        let Some(element) = m.removed[at] else {
+            return false;
+        };
+        if seen.contains(&element) {
+            continue;
+        }
+        let Some(r) = reported.iter().find(|r| r.element == element) else {
+            return false;
+        };
+        let before = t.matched.iter().filter(|&&c| c < at).count();
+        if before != r.before {
+            return false;
+        }
+        seen.push(element);
+    }
+    seen.len() == reported.len()
+}
+
+/// Verses after which the original holds letters that no verse holds and
+/// nothing in the document accounts for, before the next verse begins (or
+/// the entry ends). Where a verse that could not be traced begins inside the
+/// gap, only the part before its start is judged: that verse may hold the
+/// rest.
+fn unaccounted_text(
+    book: &SourceBook,
+    marks: &[EntryMarks],
+    owners: &[Vec<u32>],
+    apart: &SetApart,
+    placed: &[Placed],
+    unplaced: &[(usize, usize)],
+) -> Vec<(u8, u16, u16)> {
+    let mut out = Vec::new();
+    for (i, p) in placed.iter().enumerate() {
+        let entry = &book.entries[p.entry];
+        let m = &marks[p.entry];
+        let next = placed.get(i + 1).filter(|q| q.entry == p.entry);
+        let (mut gap_end, gap_end_nonspace) = match next {
+            Some(q) if q.start < p.end => continue,
+            Some(q) => (q.chars.0, q.start),
+            None => (entry.text.len(), m.nonspace_len()),
+        };
+        // A verse that could not be traced, beginning in the gap, may hold
+        // what follows its start: the gap is judged only up to there.
+        if let Some(&(_, at)) = unplaced
+            .iter()
+            .filter(|&&(e, at)| e == p.entry && at >= p.end && at < gap_end_nonspace)
+            .min_by_key(|&&(_, at)| at)
+        {
+            gap_end = m.char_of(at);
+        }
+        let loose = (p.chars.1..gap_end).any(|at| {
+            entry.text[at].is_alphabetic()
+                && m.excluded_kind(at).is_none()
+                && !apart.holds(book, p.entry, owners[p.entry][at])
+        });
+        if loose {
             out.push(p.key);
         }
     }

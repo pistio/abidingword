@@ -64,6 +64,10 @@ pub enum ExcludedKind {
     ConflictingCaller,
     /// A note sign (†, ‡, §, ¶, *) the recogniser took out.
     NoteSign,
+    /// A whole element the recogniser reported setting apart (a
+    /// cross-reference read in), whose class this document never uses for
+    /// verse text (Phase A1.1).
+    Apparatus,
 }
 
 /// Original text inside a verse that is not the verse's text, kept with its
@@ -137,6 +141,10 @@ pub struct EntryMarks<'a> {
     pub entry: &'a Entry,
     /// For each character: the role and element of the link it is in, if any.
     pub link: Vec<Option<(LinkRole, usize)>>,
+    /// For each character: the element it was removed with, when the
+    /// recogniser reported setting that whole element apart and the
+    /// document grounds it (Phase A1.1, `mark_removed`).
+    pub removed: Vec<Option<usize>>,
     /// Positions of the non-white-space characters, in order.
     nonspace: Vec<usize>,
 }
@@ -164,7 +172,19 @@ impl<'a> EntryMarks<'a> {
         Self {
             entry,
             link,
+            removed: vec![None; entry.text.len()],
             nonspace,
+        }
+    }
+
+    /// Marks a whole element as set apart on grounded evidence: its
+    /// characters are excluded from any verse and reported as
+    /// `ExcludedKind::Apparatus` ranges with the element's bytes.
+    pub fn mark_removed(&mut self, element: usize) {
+        let e = &self.entry.elements[element];
+        let end = e.text_end.min(self.removed.len());
+        for slot in self.removed.iter_mut().take(end).skip(e.text_start) {
+            *slot = Some(element);
         }
     }
 
@@ -182,11 +202,21 @@ impl<'a> EntryMarks<'a> {
         self.nonspace[k]
     }
 
-    fn excluded_kind(&self, at: usize) -> Option<ExcludedKind> {
+    /// Why the character at `at` is never part of a verse, if it is not.
+    pub fn excluded_kind(&self, at: usize) -> Option<ExcludedKind> {
         match self.link[at] {
             Some((LinkRole::NoteCaller, _)) => Some(ExcludedKind::NoteCaller),
             Some((LinkRole::Conflict, _)) => Some(ExcludedKind::ConflictingCaller),
-            _ => None,
+            _ => self.removed[at].map(|_| ExcludedKind::Apparatus),
+        }
+    }
+
+    /// The element an excluded character belongs to (its link, or the
+    /// element removed with it).
+    fn excluded_element(&self, at: usize) -> Option<usize> {
+        match self.link[at] {
+            Some((LinkRole::NoteCaller | LinkRole::Conflict, e)) => Some(e),
+            _ => self.removed[at],
         }
     }
 }
@@ -333,12 +363,15 @@ pub fn excluded_ranges(marks: &EntryMarks, traced: &Traced) -> Vec<ExcludedRange
     let mut i = 0usize;
     while i < traced.excluded.len() {
         let (at, kind) = traced.excluded[i];
-        let element = marks.link[at].map(|(_, e)| e);
+        let element = match kind {
+            ExcludedKind::NoteSign => None,
+            _ => marks.excluded_element(at),
+        };
         let mut j = i + 1;
         while j < traced.excluded.len()
             && traced.excluded[j].1 == kind
             && element.is_some()
-            && marks.link[traced.excluded[j].0].map(|(_, e)| e) == element
+            && marks.excluded_element(traced.excluded[j].0) == element
         {
             j += 1;
         }

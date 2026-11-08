@@ -74,6 +74,9 @@ const NOTE_REFS: &[&str] = &["noteref", "doc-noteref", "footnote-ref", "footnote
 /// Declared back-links from a note to its caller.
 const BACK_LINKS: &[&str] = &["doc-backlink", "backlink", "footnote-back", "footnoteback"];
 
+/// No element holds the character (`Entry::owners`).
+pub const NO_ELEMENT: u32 = u32::MAX;
+
 /// One element of an entry, as written.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Element {
@@ -114,6 +117,11 @@ impl Element {
         BLOCKS.contains(&self.name.as_str())
     }
 
+    /// Whether the element is a block (`p`, `div`, `li` …).
+    pub fn is_block_element(&self) -> bool {
+        self.is_block()
+    }
+
     fn is_heading(&self) -> bool {
         matches!(self.name.as_str(), "h1" | "h2" | "h3" | "h4" | "h5" | "h6")
     }
@@ -146,12 +154,59 @@ impl Entry {
             .collect()
     }
 
+    /// For each character of `text`, the innermost element that holds it
+    /// (`NO_ELEMENT` when none does).
+    pub fn owners(&self) -> Vec<u32> {
+        let mut out = vec![NO_ELEMENT; self.text.len()];
+        // Elements are in document order, parents before their children, so
+        // a child's range overwrites its parent's.
+        for (i, e) in self.elements.iter().enumerate() {
+            let end = e.text_end.min(out.len());
+            if e.text_start < end {
+                out[e.text_start..end].fill(i as u32);
+            }
+        }
+        out
+    }
+
+    /// `element` and its ancestors up to and including the nearest block.
+    pub fn chain_to_block(&self, element: usize) -> Vec<usize> {
+        let mut out = Vec::new();
+        for e in self.ancestors(element) {
+            out.push(e);
+            if self.elements[e].is_block() {
+                break;
+            }
+        }
+        out
+    }
+
+    /// Whether the document's own structure sets `element` apart from the
+    /// text: it is, or stands inside, a heading (`h1`–`h6`), a declared
+    /// note container, navigation (`nav`), an `aside`, hidden content, or a
+    /// block whose class the stylesheet floats beside the text.
+    pub fn set_apart(&self, element: usize, floated: &std::collections::HashSet<String>) -> bool {
+        self.ancestors(element).any(|a| {
+            let e = &self.elements[a];
+            e.hidden
+                || e.is_heading()
+                || e.has(NOTE_CONTAINERS)
+                || matches!(e.name.as_str(), "nav" | "aside")
+                || (e.is_block() && e.classes.iter().any(|c| floated.contains(c)))
+        })
+    }
+
+    /// `element` and its ancestors, nearest first.
+    pub fn ancestors_of(&self, element: usize) -> impl Iterator<Item = usize> + '_ {
+        self.ancestors(element)
+    }
+
     fn ancestors(&self, element: usize) -> impl Iterator<Item = usize> + '_ {
         std::iter::successors(Some(element), move |e| self.elements[*e].parent)
     }
 
     /// The nearest block element that holds `element` (itself if a block).
-    fn block_of(&self, element: usize) -> usize {
+    pub fn block_of(&self, element: usize) -> usize {
         self.ancestors(element)
             .find(|e| self.elements[*e].is_block())
             .unwrap_or(element)
@@ -169,6 +224,9 @@ pub struct SourceBook {
     pub entries: Vec<Entry>,
     /// Entry index by archive path.
     pub by_path: HashMap<String, usize>,
+    /// Classes the book's stylesheets float beside the text or position
+    /// out of its flow (`epub::floated_classes`): apparatus by layout.
+    pub floated: std::collections::HashSet<String>,
 }
 
 /// Reads every spine document of an EPUB for its structure. None when the
@@ -184,6 +242,14 @@ pub fn read(bytes: &[u8]) -> Option<SourceBook> {
         .unwrap_or_default();
     let package = parse_package(&opf);
     let mut book = SourceBook::default();
+    for item in package.manifest.values() {
+        if item.media_type == "text/css" {
+            let path = normalise(&format!("{base}{}", item.href));
+            if let Some(css) = read_entry(&mut archive, &path) {
+                book.floated.extend(super::epub::floated_classes(&css));
+            }
+        }
+    }
     for idref in &package.spine {
         let Some(item) = package.manifest.get(idref) else {
             continue;
