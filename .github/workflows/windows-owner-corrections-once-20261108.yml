@@ -1,0 +1,116 @@
+# Owner-approved, isolated, one-time Windows review build.
+# Acceptance artifacts only. No updater overlay, signing, releases or deployment.
+name: Windows owner corrections 2026-11-08 one-off
+
+on:
+  push:
+    branches:
+      - build/windows-owner-corrections-20261108
+    paths:
+      - .github/workflows/windows-owner-corrections-once-20261108.yml
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    if: ${{ github.event_name == 'push' && github.repository == 'pistio/abidingword' && github.ref == 'refs/heads/build/windows-owner-corrections-20261108' }}
+    runs-on: windows-2025
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      EXPECTED_SOURCE_SHA: 571b8fc0633b6909b6532e1c6b254e2dbb357f45
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
+    steps:
+      - name: Reject unpinned source selection
+        run: |
+          if ($env:EXPECTED_SOURCE_SHA -cne '571b8fc0633b6909b6532e1c6b254e2dbb357f45') {
+            throw 'Only the pinned owner-correction schema-27 review source may be built by this workflow.'
+          }
+      - name: Preserve historical SQL bytes on Windows checkout
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: 571b8fc0633b6909b6532e1c6b254e2dbb357f45
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.22.1
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: 1.99.1
+      - name: Verify exact source and historical migrations before compilation
+        run: |
+          node scripts/build-provenance.mjs --expected-sha "$env:EXPECTED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/build-provenance.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Source provenance failed.' }
+          @'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { join } from 'node:path';
+          const proof = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'build-provenance.json'), 'utf8'));
+          const digest = createHash('sha256').update(JSON.stringify(proof.migrations)).digest('hex');
+          // Pins every historical name, version, filename and SQL hash to the approved source.
+          if (digest !== 'acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13') {
+            throw new Error('Historical migration catalogue differs from the approved schema-27 source');
+          }
+          const files = readdirSync('src-tauri/migrations').filter(f => f.endsWith('.sql')).sort();
+          if (JSON.stringify(files) !== JSON.stringify(proof.migrations.map(m => m.file).sort())) {
+            throw new Error('Migration directory contains missing or unregistered SQL files');
+          }
+          const config = JSON.parse(readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+          if (config.plugins?.updater || config.bundle?.createUpdaterArtifacts) {
+            throw new Error('Acceptance builds must not configure the updater');
+          }
+          console.log(`Approved historical catalogue SHA-256: ${digest}`);
+          '@ | node --input-type=module
+          if ($LASTEXITCODE -ne 0) { throw 'Historical catalogue/configuration verification failed.' }
+      - name: Record build environment
+        env:
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          @(
+            "Source SHA: $env:EXPECTED_SOURCE_SHA"
+            "Workflow SHA: $env:WORKFLOW_SHA"
+            "Run: $env:RUN_ID attempt $env:RUN_ATTEMPT"
+            "Runner: $env:RUNNER_OS $env:RUNNER_ARCH"
+            "Windows image: $env:ImageOS $env:ImageVersion"
+            "Node: $(node --version)"
+            "npm: $(npm --version)"
+            "Rust: $(rustc --version)"
+            "Cargo: $(cargo --version)"
+          ) | Set-Content "$env:RUNNER_TEMP/build-environment.txt"
+      - run: npm ci
+      - name: Build unsigned NSIS installer without updater configuration
+        run: npx tauri build --bundles nsis --no-sign --ci -- --locked
+      - name: Stage installer and checksum
+        run: |
+          $installers = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
+          if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) {
+            throw 'Expected exactly one nonempty NSIS installer.'
+          }
+          New-Item -ItemType Directory -Path staged | Out-Null
+          $name = "Abiding-Word-owner-corrections-schema27-$env:EXPECTED_SOURCE_SHA-x64-setup.exe"
+          Copy-Item -LiteralPath $installers[0].FullName -Destination "staged/$name"
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "staged/$name").Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content "$env:RUNNER_TEMP/installer-sha256.txt"
+      - name: Upload acceptance installer
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-owner-corrections-schema27-571b8fc0633b6909b6532e1c6b254e2dbb357f45-Windows-x64
+          path: staged/*.exe
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload source and installer evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-owner-corrections-schema27-571b8fc0633b6909b6532e1c6b254e2dbb357f45-provenance
+          path: |
+            ${{ runner.temp }}/build-provenance.json
+            ${{ runner.temp }}/build-environment.txt
+            ${{ runner.temp }}/installer-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
