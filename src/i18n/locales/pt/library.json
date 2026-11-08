@@ -153,7 +153,7 @@
     "section": "O título menciona {{passage}}",
     "within": "Na seção intitulada {{passage}}",
     "linked": "Vinculado a {{passage}}",
-    "bookSection": "Secção do livro {{passage}} (mais ampla)",
+    "bookSection": "Seção do livro {{passage}} (mais ampla)",
     "chapterSection": "Título de capítulo {{passage}}"
   },
   "citations": {
@@ -196,11 +196,11 @@
     "noNativeText": "Esta página não tem texto selecionável"
   },
   "contents": {
-    "title": "Conteúdo",
-    "show": "Mostrar o conteúdo",
-    "close": "Fechar o conteúdo",
-    "for": "Conteúdo de {{title}}",
-    "none": "Nenhum conteúdo disponível",
+    "title": "Sumário",
+    "show": "Mostrar sumário",
+    "close": "Fechar sumário",
+    "for": "Sumário de {{title}}",
+    "none": "Nenhum sumário disponível",
     "current": "Seção atual",
     "generated": "Sumário gerado",
     "generatedNote": "Criado a partir dos títulos encontrados nesta fonte. Não faz parte do original.",
@@ -284,7 +284,7 @@
     "close": "Fechar as marcas",
     "show": "Mostrar as marcas desta fonte",
     "delete": "Excluir",
-    "panels": "Conteúdo ou marcas",
+    "panels": "Sumário ou marcas",
     "notePage": "Nota sobre esta página",
     "cannotPlace": "Estas palavras não podem ser marcadas aqui com exatidão. Selecione-as em Leitura para marcá-las."
   },
@@ -602,7 +602,7 @@
     "printed": "Número de página impresso: {{label}}.",
     "indicator": "Página PDF {{page}} de {{total}}",
     "jump": "Ir para a página",
-    "invalid": "Introduza uma página de 1 a {{total}}."
+    "invalid": "Digite uma página de 1 a {{total}}."
   },
   "structure": {
     "title": "Capítulos e títulos",
@@ -611,7 +611,7 @@
     "rebuild": "Analisar novamente",
     "undo": "Desfazer correção",
     "reset": "Redefinir correções",
-    "status": "{{count}} seções",
+    "status": "Seções: {{count}}",
     "uncertain": "Não foi possível localizar com segurança parte do texto ou da estrutura. Confira a visualização Original.",
     "search": "Buscar seção",
     "physical": "Página PDF {{page}}",
@@ -629,7 +629,7 @@
     "disable": "Excluir esta seção",
     "basis": {
       "outline": "Sumário incorporado",
-      "tagged": "Tags de estrutura PDF",
+      "tagged": "Tags de estrutura do PDF",
       "layout": "Inferido do layout",
       "user": "Correção do usuário",
       "printed": "Índice impresso de livros bíblicos"
@@ -654,7 +654,7 @@
       "copyFailed": "Não foi possível copiar o relatório. Use “Salvar relatório…”.",
       "fileType": "Relatório de diagnóstico",
       "saved": "Salvo em {{path}}",
-      "file": "SHA-256 do arquivo {{hash}} · {{pages}} páginas · {{headings}} títulos",
+      "file": "SHA-256 do arquivo: {{hash}} · Páginas: {{pages}} · Títulos: {{headings}}",
       "general": "Relatório geral — nenhuma passagem foi verificada. Para examinar os resultados de Atos 6, digite Atos 6 antes de criar ou salvar outro relatório.",
       "queryHelp": "Digite uma passagem acima para verificá-la. Se o campo estiver vazio, o relatório mostra apenas o estado geral.",
       "invalidPassage": "Não foi possível interpretar a passagem. Digite um livro e um capítulo, por exemplo Atos 6.",
@@ -677,7 +677,7 @@
       "stage": "{{stage}} · {{seconds}} s",
       "background": "Você pode fechar este painel e continuar lendo ou escrevendo. O cancelamento ocorre na próxima etapa segura; a confirmação final não pode ser cancelada.",
       "cancelling": "Cancelando…",
-      "success": "{{count}} títulos salvos; {{links}} vínculos de estrutura indexados.",
+      "success": "Títulos salvos: {{count}}; vínculos de estrutura indexados: {{links}}.",
       "empty": "Nenhum título utilizável foi reconhecido. A análise foi salva, mas não há sumário automático. Você pode marcar manualmente as linhas visíveis abaixo.",
       "failed": "A análise falhou. A estrutura e os vínculos anteriores foram preservados. Tente novamente ou salve um relatório de diagnóstico.",
       "timings": "Tempos de processamento",
@@ -687,7 +687,7 @@
         "segments": "Ler trechos salvos",
         "pdf": "Ler páginas PDF",
         "alignment": "Alinhar texto original",
-        "native": "Ler marcadores e etiquetas incorporados",
+        "native": "Ler sumário e tags incorporados",
         "headings": "Encontrar títulos",
         "store": "Salvar metadados",
         "index": "Indexar vínculos de estrutura",
@@ -715,13 +715,13 @@
     "settings": "Barra de ferramentas",
     "customise": "Personalizar a barra…",
     "customiseTitle": "Barra de ferramentas de leitura",
-    "customiseHelp": "Escolha que ações aparecem como ícones neste dispositivo. As outras ficam no menu «…». Voltar, Leitura/Original e o indicador de página aparecem sempre.",
+    "customiseHelp": "Escolha quais ações aparecem como ícones neste dispositivo. As outras ficam no menu “…”; Voltar, Leitura/Original e o indicador de página aparecem sempre.",
     "showInToolbar": "Mostrar na barra",
-    "reset": "Repor predefinição",
+    "reset": "Restaurar padrão",
     "items": {
       "find": "Procurar nesta fonte",
-      "contents": "Conteúdo",
-      "history": "Para trás e para a frente nesta fonte",
+      "contents": "Sumário",
+      "history": "Voltar e avançar nesta fonte",
       "bookmark": "Marcar este lugar",
       "note": "Adicionar nota aqui",
       "marks": "Marcas",

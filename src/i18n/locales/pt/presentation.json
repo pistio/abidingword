@@ -170,7 +170,10 @@
       "imageUnavailable": "Imagem não disponível neste computador",
       "scriptureUnavailable": "O texto desta passagem não está disponível.",
       "pause": "Pausa",
-      "next": "Próximo"
+      "next": "Próximo",
+      "band": "Faixa colorida",
+      "blank": "Em branco",
+      "slideImage": "Imagem do slide"
     },
     "standings": {
       "verified": "Conferido com duas fontes",
@@ -346,7 +349,7 @@
       "patternBackground": "Um fundo com padrão vira uma só cor",
       "effects": "Sombras, brilhos ou efeitos 3D não são desenhados",
       "justified": "O texto justificado é alinhado à esquerda",
-      "growsWithText": "Uma caixa que cresce com o texto mantém o tamanho (texto longo é avisado)",
+      "growsWithText": "Uma caixa que cresce com o texto mantém o tamanho (há um aviso para textos longos)",
       "noWrap": "Uma caixa sem quebra de linha quebra o texto aqui",
       "svgAsPicture": "Uma imagem SVG é mostrada a partir da cópia PNG",
       "extraTextBox": "Uma caixa de texto adicional não é usada",
@@ -361,7 +364,7 @@
       "rotatedGroup": "Grupos girados",
       "customShape": "Formas que não são retângulos",
       "gradientShape": "Preenchimentos em degradê nas formas",
-      "shapedPicture": "Imagens recortadas em forma",
+      "shapedPicture": "Imagens com recorte em formas",
       "wordArt": "WordArt",
       "verticalText": "Texto vertical",
       "media": "Vídeo e som",

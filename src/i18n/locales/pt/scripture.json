@@ -211,7 +211,7 @@
         "document": "Como documento para ler",
         "documentHint": "Você a lê como está e pode pesquisar o texto. As ferramentas de versículos não estão disponíveis, e as referências dos seus estudos abrem em outra Bíblia."
       },
-      "noWords": "Informações de palavras (formas de dicionário, gramática, números lexicais): nenhuma. Documentos comuns não as trazem, e nenhuma é inventada a partir do texto.",
+      "noWords": "Informações sobre as palavras (formas de dicionário, gramática, números léxicos): nenhuma. Documentos comuns não as trazem, e nenhuma é inventada a partir do texto.",
       "booksTitle_one": "Verificar o livro encontrado ({{formatted}})",
       "booksTitle_other": "Verificar os livros encontrados ({{formatted}})",
       "booksTitle_many": "Verificar os livros encontrados ({{formatted}})",
@@ -259,21 +259,21 @@
         "reference_other": "{{formatted}} versículos contêm uma referência bíblica, talvez um cabeçalho de página ou uma referência cruzada.",
         "noteSign_one": "{{formatted}} versículo contém um sinal de nota que nenhuma nota explica.",
         "noteSign_other": "{{formatted}} versículos contêm um sinal de nota que nenhuma nota explica.",
-        "unnumbered_one": "Em {{formatted}} capítulo, o versículo 1 não tem número; onde termina não é certo.",
-        "unnumbered_other": "Em {{formatted}} capítulos, o versículo 1 não tem número; onde termina não é certo.",
+        "unnumbered_one": "Em {{formatted}} capítulo, o versículo 1 não tem número; não está claro onde ele termina.",
+        "unnumbered_other": "Em {{formatted}} capítulos, o versículo 1 não tem número; não está claro onde ele termina.",
         "possibleHeading_many": "{{formatted}} versículos contêm uma linha que pode ser um título ou uma indicação.",
         "reference_many": "{{formatted}} versículos contêm uma referência bíblica, talvez um cabeçalho de página ou uma referência cruzada.",
         "noteSign_many": "{{formatted}} versículos contêm um sinal de nota que nenhuma nota explica.",
-        "unnumbered_many": "Em {{formatted}} capítulos, o versículo 1 não tem número; onde termina não é certo.",
+        "unnumbered_many": "Em {{formatted}} capítulos, o versículo 1 não tem número; não está claro onde ele termina.",
         "length_one": "{{formatted}} versículo é muito mais longo que os outros do seu capítulo.",
         "length_other": "{{formatted}} versículos são muito mais longos que os outros do seu capítulo.",
         "length_many": "{{formatted}} versículos são muito mais longos que os outros do seu capítulo.",
         "psalmTitle_one": "Em {{formatted}} salmo, o versículo 1 pode incluir o título do salmo.",
         "psalmTitle_other": "Em {{formatted}} salmos, o versículo 1 pode incluir o título do salmo.",
         "psalmTitle_many": "Em {{formatted}} salmos, o versículo 1 pode incluir o título do salmo.",
-        "boundary_one": "Em {{formatted}} versículo, não é certo onde começa ou termina.",
-        "boundary_other": "Em {{formatted}} versículos, não é certo onde começam ou terminam.",
-        "boundary_many": "Em {{formatted}} versículos, não é certo onde começam ou terminam."
+        "boundary_one": "Em {{formatted}} versículo, não está claro onde começa ou termina.",
+        "boundary_other": "Em {{formatted}} versículos, não está claro onde começam ou terminam.",
+        "boundary_many": "Em {{formatted}} versículos, não está claro onde começam ou terminam."
       },
       "yourCorrection": "Sua correção",
       "saved": {
@@ -292,7 +292,7 @@
     "doneDocument": "<strong>{{name}}</strong> foi adicionada para ler como documento.",
     "available": {
       "title": "Disponíveis para baixar",
-      "intro": "Edições livres nas línguas originais, com informações sobre cada palavra. O Abiding Word só baixa uma quando você pede, confere cada arquivo com a cópia verificada e não guarda nada que seja diferente.",
+      "intro": "Edições livres nas línguas originais, com informações sobre cada palavra. O Abiding Word só baixa uma quando você pede, confere cada arquivo com a cópia verificada e não salva nada que seja diferente.",
       "size": "{{size}} MB",
       "contains": {
         "lemma": "formas de dicionário",
@@ -344,7 +344,7 @@
       "from": "Origem",
       "added": "Adicionada em",
       "language": "Idioma",
-      "words": "Informações de palavras"
+      "words": "Informações sobre as palavras"
     },
     "contents_one": "{{count}} livro, {{verses}} versículos",
     "contents_many": "{{count}} livros, {{verses}} versículos",
@@ -364,20 +364,20 @@
       "grammarStated": "Gramática descrita segundo {{scheme}}, como a edição indica.",
       "grammarChosen": "Gramática descrita segundo {{scheme}}, como você escolheu.",
       "evidence": "Indicado em {{file}}: “{{words}}”.",
-      "check": "Procurar informações de palavras…",
-      "recheck": "Ler novamente as informações de palavras…",
+      "check": "Procurar informações sobre as palavras…",
+      "recheck": "Ler novamente as informações sobre as palavras…",
       "checking": "Lendo os arquivos…",
-      "nothing": "Estes arquivos não têm informações de palavras que possam ser indexadas.",
+      "nothing": "Estes arquivos não têm informações sobre as palavras que possam ser indexadas.",
       "replaces": "Salvar substitui o índice de palavras atual. O texto da Bíblia continua exatamente como está.",
       "save": "Salvar índice de palavras",
       "removeEllipsis": "Remover índice de palavras…",
       "remove": "Remover índice de palavras",
-      "confirmRemove": "Remover o índice de palavras de {{name}}? O texto, as suas notas e a concordância normal são mantidos. Você pode ler as informações de palavras novamente mais tarde."
+      "confirmRemove": "Remover o índice de palavras de {{name}}? O texto, as suas notas e a concordância normal são mantidos. Você pode ler as informações sobre as palavras novamente mais tarde."
     },
     "contentsDocument_one": "Um documento para ler ({{formatted}} arquivo), sem versículos",
     "contentsDocument_other": "Um documento para ler ({{formatted}} arquivos), sem versículos",
     "contentsDocument_many": "Um documento para ler ({{formatted}} arquivos), sem versículos",
-    "wordsDocument": "Nenhuma: documentos não trazem informações de palavras.",
+    "wordsDocument": "Nenhuma: documentos não trazem informações sobre as palavras.",
     "lifecycle": {
       "menu": "Mais para {{name}}",
       "archiveHint": "Sai da lista de traduções; fica guardada e pode ser recuperada a qualquer momento.",
@@ -689,9 +689,9 @@
       "middle": "voz média",
       "passive": "voz passiva",
       "middleOrPassive": "voz média ou passiva",
-      "middleDeponent": "depoente médio",
-      "passiveDeponent": "depoente passivo",
-      "middleOrPassiveDeponent": "depoente médio ou passivo"
+      "middleDeponent": "deponente de voz média",
+      "passiveDeponent": "deponente de voz passiva",
+      "middleOrPassiveDeponent": "deponente de voz média ou passiva"
     },
     "mood": {
       "indicative": "indicativo",
@@ -728,11 +728,11 @@
     "writtenValue_many": "{{formatted}} palavras em {{verses}} versículos",
     "writtenValue_other": "{{formatted}} palavras em {{verses}} versículos",
     "dictionary": "Forma de dicionário",
-    "dictionaryValue": "{{words}} palavras · {{distinct}} formas diferentes",
+    "dictionaryValue": "Palavras: {{words}} · formas diferentes: {{distinct}}",
     "grammar": "Gramática",
-    "grammarValue": "{{words}} palavras com código gramatical",
+    "grammarValue": "Palavras com código gramatical: {{words}}",
     "number": "Número léxico",
-    "numberValue": "{{words}} palavras",
+    "numberValue": "Palavras: {{words}}",
     "notIncluded": "não incluído",
     "grammarStated": "Os códigos gramaticais são descritos em palavras: a edição indica que usa {{scheme}} (“{{words}}”, em {{file}}).",
     "grammarChoose": "Descrever os códigos gramaticais segundo {{scheme}}",
@@ -835,10 +835,10 @@
         "possibleHeading": "Talvez contenha um título ou uma indicação.",
         "reference": "Contém uma referência bíblica.",
         "noteSign": "Contém um sinal de nota.",
-        "unnumbered": "Seu fim não é certo.",
+        "unnumbered": "Não está claro onde termina.",
         "length": "É muito mais longo que os versículos ao seu redor.",
         "psalmTitle": "Pode incluir o título do salmo.",
-        "boundary": "Não é certo onde começa ou termina."
+        "boundary": "Não está claro onde começa ou termina."
       },
       "unverified_many": "{{formatted}} versículos encontrados, texto não verificado",
       "placesIntro_many": "Encontrados no documento, mas não foi possível verificar seu texto:",
@@ -854,5 +854,26 @@
         "notes": "Notas"
       }
     }
+  },
+  "importBookNames": {
+    "TOB": "Tobias",
+    "JDT": "Judite",
+    "ESG": "Ester (texto grego)",
+    "WIS": "Sabedoria de Salomão",
+    "SIR": "Eclesiástico (Sirácida)",
+    "BAR": "Baruc",
+    "LJE": "Carta de Jeremias",
+    "S3Y": "Cântico dos Três Jovens",
+    "SUS": "Susana",
+    "BEL": "Bel e o Dragão",
+    "1MA": "1 Macabeus",
+    "2MA": "2 Macabeus",
+    "3MA": "3 Macabeus",
+    "4MA": "4 Macabeus",
+    "1ES": "1 Esdras (texto grego)",
+    "MAN": "Oração de Manassés",
+    "PS2": "Salmo 151",
+    "DAG": "Daniel (texto grego)",
+    "2ES": "2 Esdras (texto latino)"
   }
 }

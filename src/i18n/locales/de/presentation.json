@@ -166,7 +166,10 @@
       "imageUnavailable": "Bild auf diesem Computer nicht vorhanden",
       "scriptureUnavailable": "Der Text dieser Bibelstelle ist nicht vorhanden.",
       "pause": "Pause",
-      "next": "Weiter"
+      "next": "Weiter",
+      "band": "Farbfläche",
+      "blank": "Leer",
+      "slideImage": "Folienbild"
     },
     "standings": {
       "verified": "Mit zwei Quellen geprüft",

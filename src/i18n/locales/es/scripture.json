@@ -201,10 +201,10 @@
       "notes_other": "{{formatted}} notas al pie se mantienen aparte del texto.",
       "notes_many": "{{formatted}} notas al pie se mantienen aparte del texto.",
       "usable": "Se reconocieron libros, capítulos y versículos. Se puede leer por libro, capítulo y versículo como cualquier otra Biblia.",
-      "unusable": "Algunos lugares no están claros (se indican abajo), así que sus versículos no se pueden usar tal como están. Puedes corregir los libros encontrados o agregarla para leerla como documento.",
-      "noneFound": "No se reconoció una estructura de libros, capítulos y versículos. Se puede agregar para leerla como documento.",
-      "scannedOnly": "No hay texto en el que buscar versículos. Se puede agregar para leerla página por página.",
-      "modeLabel": "Cómo agregarla",
+      "unusable": "Algunos lugares no están claros (se indican abajo), así que sus versículos no se pueden usar tal como están. Puedes corregir los libros encontrados o añadirla para leerla como documento.",
+      "noneFound": "No se reconoció una estructura de libros, capítulos y versículos. Se puede añadir para leerla como documento.",
+      "scannedOnly": "No hay texto en el que buscar versículos. Se puede añadir para leerla página por página.",
+      "modeLabel": "Cómo añadirla",
       "mode": {
         "verses": "Por libro, capítulo y versículo",
         "versesHint": "Ir a un pasaje, la búsqueda, la concordancia y las referencias de tus estudios funcionan como con cualquier Biblia. El documento también se conserva.",
@@ -233,10 +233,10 @@
         "noteOnly": "Solo en una nota",
         "subscription": "Palabras finales de un libro"
       },
-      "pdfLimit": "En un PDF, un título impreso entre dos versículos no siempre se puede distinguir del versículo anterior. Revisa algunos pasajes después de agregarla.",
+      "pdfLimit": "En un PDF, un título impreso entre dos versículos no siempre se puede distinguir del versículo anterior. Revisa algunos pasajes después de añadirla.",
       "licenceField": "Derechos de autor o licencia (opcional)",
       "licenceHint": "Tal como lo indica el documento, como referencia propia.",
-      "addDocument": "Agregar para leer como documento",
+      "addDocument": "Añadir para leer como documento",
       "ready": {
         "none": "Todavía no se puede usar ningún libro por sus versículos.",
         "some_one": "{{books}} está listo para usar.",
@@ -289,7 +289,7 @@
       },
       "unverified_many": "Se encontraron {{formatted}} versículos, pero no se pudo comprobar su texto. No se usan como texto bíblico: quedan en el documento y se muestran como encontrados pero no comprobados."
     },
-    "doneDocument": "<strong>{{name}}</strong> se agregó para leerla como documento.",
+    "doneDocument": "<strong>{{name}}</strong> se añadió para leerla como documento.",
     "available": {
       "title": "Disponibles para descargar",
       "intro": "Ediciones libres en los idiomas originales, con información de cada palabra. Abiding Word descarga una solo cuando lo pides, compara cada archivo con su copia verificada y no guarda nada que difiera.",
@@ -299,21 +299,21 @@
         "strong": "números léxicos",
         "morph": "gramática"
       },
-      "added": "Agregada",
+      "added": "Añadida",
       "download": "Descargar {{name}}…",
       "confirmTitle": "¿Descargar {{name}}?",
       "confirm": "Descargar ({{size}})",
-      "confirmBody": "Se descargan {{files}} archivos ({{size}}) desde GitHub y cada uno se compara con su copia verificada. Luego revisas la Biblia como siempre; no se agrega nada antes de que confirmes.",
+      "confirmBody": "Se descargan {{files}} archivos ({{size}}) desde GitHub y cada uno se compara con su copia verificada. Luego revisas la Biblia como siempre; no se añade nada antes de que confirmes.",
       "technical": "Licencia y versión",
-      "offline": "Una vez agregada, funciona sin conexión a internet.",
+      "offline": "Una vez añadida, funciona sin conexión a internet.",
       "progress": "Descargando y comprobando el archivo {{done}} de {{total}}…",
       "starting": "Descargando…",
       "partial_one": "{{count}} de los 66 libros",
       "partial_other": "{{count}} de los 66 libros",
       "partial_many": "{{count}} de los 66 libros",
-      "confirmBody_one": "Se descarga {{files}} archivo ({{size}}) desde GitHub y se compara con su copia verificada. Luego revisas la Biblia como siempre; no se agrega nada antes de que confirmes.",
-      "confirmBody_other": "Se descargan {{files}} archivos ({{size}}) desde GitHub y cada uno se compara con su copia verificada. Luego revisas la Biblia como siempre; no se agrega nada antes de que confirmes.",
-      "confirmBody_many": "Se descargan {{files}} archivos ({{size}}) desde GitHub y cada uno se compara con su copia verificada. Luego revisas la Biblia como siempre; no se agrega nada antes de que confirmes."
+      "confirmBody_one": "Se descarga {{files}} archivo ({{size}}) desde GitHub y se compara con su copia verificada. Luego revisas la Biblia como siempre; no se añade nada antes de que confirmes.",
+      "confirmBody_other": "Se descargan {{files}} archivos ({{size}}) desde GitHub y cada uno se compara con su copia verificada. Luego revisas la Biblia como siempre; no se añade nada antes de que confirmes.",
+      "confirmBody_many": "Se descargan {{files}} archivos ({{size}}) desde GitHub y cada uno se compara con su copia verificada. Luego revisas la Biblia como siempre; no se añade nada antes de que confirmes."
     },
     "partialBooks_one": "{{count}} de los 66 libros",
     "partialBooks_other": "{{count}} de los 66 libros",
@@ -388,8 +388,8 @@
       "trashQuestion": "¿Mover {{name}} a la papelera?",
       "keptText": "Tus notas, resaltados y los pasajes de tus estudios pertenecen a los versículos, no a una Biblia: se conservan. Tus propios archivos nunca se tocan.",
       "deleteQuestion": "¿Eliminar {{name}} definitivamente?",
-      "deleteText": "Se eliminan su texto y la copia de sus archivos que guarda Abiding Word. Para volver a leerla tendrías que agregarla de nuevo.",
-      "deleteTextMany": "Se eliminan su texto y las copias de sus archivos que guarda Abiding Word. Para volver a leerlas tendrías que agregarlas de nuevo.",
+      "deleteText": "Se eliminan su texto y la copia de sus archivos que guarda Abiding Word. Para volver a leerla tendrías que añadirla de nuevo.",
+      "deleteTextMany": "Se eliminan su texto y las copias de sus archivos que guarda Abiding Word. Para volver a leerlas tendrías que añadirlas de nuevo.",
       "deleted_one": "Se eliminó definitivamente {{formatted}} Biblia.",
       "deleted_other": "Se eliminaron definitivamente {{formatted}} Biblias.",
       "deleted_many": "Se eliminaron definitivamente {{formatted}} Biblias.",
@@ -439,7 +439,7 @@
     "search": "Buscar en tus notas",
     "searchPlaceholder": "Buscar en tus notas…",
     "count_one": "{{count}} marca",
-    "count_many": "{{count}} de marcas",
+    "count_many": "{{count}} marcas",
     "count_other": "{{count}} marcas",
     "loading": "Cargando tus marcas…",
     "loadMore": "Mostrar más",
@@ -542,7 +542,7 @@
     "grammar": "Gramática",
     "grammarRaw": "código tal como está escrito:",
     "shape": {
-      "phrase": "Marcado junto como una sola unidad.",
+      "phrase": "Marcadas juntas como una sola unidad.",
       "part": "Parte de una palabra escrita."
     },
     "entryCount_one": "Esta entrada aparece {{formatted}} vez en esta Biblia.",
@@ -854,5 +854,26 @@
         "notes": "Notas"
       }
     }
+  },
+  "importBookNames": {
+    "TOB": "Tobías",
+    "JDT": "Judit",
+    "ESG": "Ester (griego)",
+    "WIS": "Sabiduría de Salomón",
+    "SIR": "Sirácida",
+    "BAR": "Baruc",
+    "LJE": "Carta de Jeremías",
+    "S3Y": "Cántico de los tres jóvenes",
+    "SUS": "Susana",
+    "BEL": "Bel y el dragón",
+    "1MA": "1 Macabeos",
+    "2MA": "2 Macabeos",
+    "3MA": "3 Macabeos",
+    "4MA": "4 Macabeos",
+    "1ES": "1 Esdras (griego)",
+    "MAN": "Oración de Manasés",
+    "PS2": "Salmo 151",
+    "DAG": "Daniel (griego)",
+    "2ES": "2 Esdras (latino)"
   }
 }

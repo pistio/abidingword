@@ -79,8 +79,8 @@
       "done": "Bibel hinzugefügt"
     },
     "checking": "Abiding Word liest und prüft jedes Buch, jedes Kapitel und jeden Vers. Das kann einige Sekunden dauern.",
-    "done_one": "<strong>{{name}}</strong> kann jetzt gelesen werden – mit {{count}} Buch und {{verses}} Versen.",
-    "done_other": "<strong>{{name}}</strong> kann jetzt gelesen werden – mit {{count}} Büchern und {{verses}} Versen.",
+    "done_one": "<strong>{{name}}</strong> kann jetzt gelesen werden. Bücher: {{count}} · Verse: {{verses}}.",
+    "done_other": "<strong>{{name}}</strong> kann jetzt gelesen werden. Bücher: {{count}} · Verse: {{verses}}.",
     "readNow": "Jetzt lesen",
     "included": "In Abiding Word enthalten",
     "chooseLabel": "Bibel auswählen",
@@ -193,7 +193,7 @@
         "document": "Als Dokument zum Lesen",
         "documentHint": "Du liest es so, wie es ist, und kannst seinen Text durchsuchen. Werkzeuge für Verse gibt es dafür nicht; Bibelstellen aus deinen Studien öffnen sich in einer anderen Bibel."
       },
-      "noWords": "Wortinformationen (Grundformen, Grammatik, lexikalische Nummern): keine. Gewöhnliche Dokumente enthalten sie nicht, und aus dem Text wird keine erfunden.",
+      "noWords": "Wortinformationen (Grundformen, Grammatik, lexikalische Nummern): keine. Gewöhnliche Dokumente enthalten sie nicht, und aus dem Text werden keine erfunden.",
       "booksTitle_one": "Gefundenes Buch prüfen ({{formatted}})",
       "booksTitle_other": "Gefundene Bücher prüfen ({{formatted}})",
       "booksIntro": "Jedes Buch beginnt an einer Überschrift im Dokument. Wenn eine Überschrift als falsches Buch gelesen wurde oder keines nennt, wähle das richtige – oder lass diesen Teil weg.",
@@ -207,14 +207,14 @@
       "reason": {
         "heading": "Überschrift",
         "beforeVerses": "Vor dem ersten Vers",
-        "noBook": "Vor jedem Buch",
+        "noBook": "Vor dem ersten Buch",
         "notes": "Anmerkungen",
         "leftOutBook": "In einem weggelassenen Teil",
         "crossReference": "Querverweis",
         "noteOnly": "Nur in einer Anmerkung",
         "subscription": "Schlussworte eines Buches"
       },
-      "pdfLimit": "In einer PDF lässt sich eine zwischen zwei Versen gedruckte Überschrift nicht immer vom Vers davor unterscheiden. Prüfe nach dem Hinzufügen einige Stellen.",
+      "pdfLimit": "In einem PDF lässt sich eine zwischen zwei Versen gedruckte Überschrift nicht immer vom Vers davor unterscheiden. Prüfe nach dem Hinzufügen einige Stellen.",
       "licenceField": "Urheberrecht oder Lizenz (optional)",
       "licenceHint": "So, wie das Dokument es angibt, für deine eigenen Unterlagen.",
       "addDocument": "Als Dokument zum Lesen hinzufügen",
@@ -261,7 +261,7 @@
     "doneDocument": "<strong>{{name}}</strong> wurde als Dokument zum Lesen hinzugefügt.",
     "available": {
       "title": "Zum Herunterladen verfügbar",
-      "intro": "Freie Ausgaben in den Ursprachen, mit Angaben zu jedem Wort. Abiding Word lädt eine Ausgabe nur auf deinen Wunsch herunter, prüft jede Datei gegen ihre geprüfte Kopie und behält nichts, was abweicht.",
+      "intro": "Freie Ausgaben in den Ursprachen, mit Angaben zu jedem Wort. Abiding Word lädt eine Ausgabe nur auf deinen Wunsch herunter, vergleicht jede Datei mit der geprüften Referenzkopie und behält nichts, was abweicht.",
       "size": "{{size}} MB",
       "contains": {
         "lemma": "Wörterbuchformen",
@@ -272,15 +272,15 @@
       "download": "{{name}} herunterladen…",
       "confirmTitle": "{{name}} herunterladen?",
       "confirm": "Herunterladen ({{size}})",
-      "confirmBody": "{{files}} Dateien ({{size}}) werden von GitHub heruntergeladen und jede wird gegen ihre geprüfte Kopie geprüft. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt.",
+      "confirmBody": "{{files}} Dateien ({{size}}) werden von GitHub heruntergeladen und mit ihren geprüften Referenzkopien verglichen. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt.",
       "technical": "Lizenz und Version",
       "offline": "Einmal hinzugefügt, funktioniert sie ohne Internetverbindung.",
       "progress": "Datei {{done}} von {{total}} wird heruntergeladen und geprüft…",
       "starting": "Wird heruntergeladen…",
       "partial_one": "{{count}} der 66 Bücher",
       "partial_other": "{{count}} der 66 Bücher",
-      "confirmBody_one": "{{files}} Datei ({{size}}) wird von GitHub heruntergeladen und gegen ihre geprüfte Kopie geprüft. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt.",
-      "confirmBody_other": "{{files}} Dateien ({{size}}) werden von GitHub heruntergeladen und jede wird gegen ihre geprüfte Kopie geprüft. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt."
+      "confirmBody_one": "{{files}} Datei ({{size}}) wird von GitHub heruntergeladen und mit ihrer geprüften Referenzkopie verglichen. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt.",
+      "confirmBody_other": "{{files}} Dateien ({{size}}) werden von GitHub heruntergeladen und mit ihren geprüften Referenzkopien verglichen. Danach siehst du die Bibel wie gewohnt durch; vor deiner Bestätigung wird nichts hinzugefügt."
     },
     "partialBooks_one": "{{count}} der 66 Bücher",
     "partialBooks_other": "{{count}} der 66 Bücher"
@@ -312,8 +312,8 @@
       "language": "Sprache",
       "words": "Wortangaben"
     },
-    "contents_one": "{{count}} Buch, {{verses}} Verse",
-    "contents_other": "{{count}} Bücher, {{verses}} Verse",
+    "contents_one": "Bücher: {{count}} · Verse: {{verses}}",
+    "contents_other": "Bücher: {{count}} · Verse: {{verses}}",
     "confirmRemove": "<strong>{{name}}</strong> entfernen? Der Text wird aus Abiding Word gelöscht. Deine Bibelstudien, Verknüpfungen zu Bibelstellen und Notizen bleiben erhalten.",
     "confirmRemoveManaged": "<strong>{{name}}</strong> entfernen? Der Text wird aus Abiding Word gelöscht, zusammen mit der Kopie, die Abiding Word von der Datei angelegt hat (deine Originaldatei bleibt unberührt). Deine Bibelstudien, Verknüpfungen zu Bibelstellen und Notizen bleiben erhalten.",
     "keep": "Behalten",
@@ -546,7 +546,7 @@
       "common": "Genus commune",
       "feminine": "feminin",
       "masculine": "maskulin",
-      "neuter": "neutral"
+      "neuter": "sächlich"
     },
     "number": {
       "dual": "Dual",
@@ -575,7 +575,7 @@
       "demonstrative": "demonstrativ",
       "indefinite": "indefinit",
       "interrogative": "interrogativ",
-      "personal": "Personal-",
+      "personal": "personal",
       "relative": "relativ"
     },
     "prepositionType": {
@@ -674,14 +674,14 @@
     "title": "Arbeit am Grundtext",
     "intro": "Was diese Ausgabe jedem Wort mitgibt, so wie es ihre eigenen Dateien angeben. Nichts wird anderswo nachgeschlagen.",
     "written": "Geschriebenes Wort",
-    "writtenValue_one": "{{formatted}} Wort in {{verses}} Versen",
-    "writtenValue_other": "{{formatted}} Wörter in {{verses}} Versen",
+    "writtenValue_one": "Wörter: {{formatted}} · Verse: {{verses}}",
+    "writtenValue_other": "Wörter: {{formatted}} · Verse: {{verses}}",
     "dictionary": "Grundform",
-    "dictionaryValue": "{{words}} Wörter · {{distinct}} verschiedene Formen",
+    "dictionaryValue": "Wörter: {{words}} · verschiedene Formen: {{distinct}}",
     "grammar": "Grammatik",
-    "grammarValue": "{{words}} Wörter mit Grammatikcode",
+    "grammarValue": "Wörter mit Grammatikcode: {{words}}",
     "number": "Lexikalische Nummer",
-    "numberValue": "{{words}} Wörter",
+    "numberValue": "Wörter: {{words}}",
     "notIncluded": "nicht enthalten",
     "grammarStated": "Grammatikcodes werden in Worten beschrieben: Die Ausgabe gibt an, dass sie {{scheme}} verwendet („{{words}}“, in {{file}}).",
     "grammarChoose": "Grammatikcodes in Worten beschreiben ({{scheme}})",
@@ -795,5 +795,26 @@
         "notes": "Anmerkungen"
       }
     }
+  },
+  "importBookNames": {
+    "TOB": "Tobit",
+    "JDT": "Judit",
+    "ESG": "Ester (griechisch)",
+    "WIS": "Weisheit Salomos",
+    "SIR": "Jesus Sirach",
+    "BAR": "Baruch",
+    "LJE": "Brief des Jeremia",
+    "S3Y": "Gesang der drei jungen Männer",
+    "SUS": "Susanna",
+    "BEL": "Bel und der Drache",
+    "1MA": "1. Makkabäer",
+    "2MA": "2. Makkabäer",
+    "3MA": "3. Makkabäer",
+    "4MA": "4. Makkabäer",
+    "1ES": "1. Esdras (griechisch)",
+    "MAN": "Gebet Manasses",
+    "PS2": "Psalm 151",
+    "DAG": "Daniel (griechisch)",
+    "2ES": "2. Esdras (lateinisch)"
   }
 }

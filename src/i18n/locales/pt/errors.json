@@ -65,7 +65,7 @@
     "bridged": "{{book}} {{chapter}}:{{first}}–{{last}} estão combinados em um só versículo nesta tradução.",
     "verseTwice": "{{book}} {{chapter}}:{{verse}} aparece duas vezes.",
     "emptyVerse": "{{book}} {{chapter}}:{{verse}} não tem texto.",
-    "missingChapters": "{{book}}: {{found}} de {{count}} capítulos encontrados (faltam: {{list}}).",
+    "missingChapters": "{{book}}: capítulos encontrados: {{found}} de {{count}} (faltam: {{list}}).",
     "noVerses": "{{book}} {{chapter}}: nenhum versículo foi encontrado.",
     "missingVerses_one": "{{book}} {{chapter}}: versículo {{list}} não encontrado. A estrutura de versículos esperada difere deste texto.",
     "missingVerses_many": "{{book}} {{chapter}}: versículos {{list}} não encontrados. A estrutura de versículos esperada difere deste texto.",
@@ -74,7 +74,7 @@
     "listMore_many": "{{numbers}} e mais {{count}}",
     "listMore_other": "{{numbers}} e mais {{count}}",
     "unknownFormat": "Estes arquivos não estão em um formato de Bíblia que o Abiding Word já consiga ler. Ele lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles), os arquivos OSIS da Open Scriptures Hebrew Bible e arquivos MorphGNT.",
-    "formatNotYet": "Arquivos {{format}} ainda não podem ser importados como Bíblia estruturada. O Abiding Word lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles), os arquivos OSIS da Open Scriptures Hebrew Bible e arquivos MorphGNT. Uma Bíblia também pode ser adicionada a partir de documentos PDF, EPUB, Word (.docx), Markdown ou de texto.",
+    "formatNotYet": "Ainda não é possível importar {{format}} como Bíblia estruturada. O Abiding Word lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles), os arquivos OSIS da Open Scriptures Hebrew Bible e arquivos MorphGNT. Uma Bíblia também pode ser adicionada a partir de documentos PDF, EPUB, Word (.docx), Markdown ou de texto.",
     "noBooks": "Nenhum livro da Bíblia foi encontrado nestes arquivos.",
     "tooLarge": "Estes arquivos são grandes demais para serem uma única Bíblia.",
     "badZip": "O arquivo “{{fileName}}” não é um arquivo .zip legível.",
@@ -187,7 +187,7 @@
   "sections": {
     "hasContent": "“{{title}}” ainda tem texto ou anotações.",
     "duplicateKey": "Este estudo já tem essa parte.",
-    "repairChanged": "As partes mudaram. Reveja-as. Anular exige partes adicionadas inalteradas; todos os textos são mantidos."
+    "repairChanged": "As partes mudaram. Confira novamente. Só é possível desfazer a adição se as partes adicionadas não tiverem sido alteradas; todo o texto é mantido."
   },
   "relations": {
     "self": "Um estudo não pode ser vinculado a si mesmo.",
@@ -258,18 +258,18 @@
   },
   "teaching": {
     "blockType": "Este tipo de bloco não pode ser usado nesta preparação.",
-    "blockParent": "Um bloco pode ser colocado numa secção desta preparação.",
+    "blockParent": "Um bloco pode ficar em uma seção deste ensino.",
     "blockRole": "Este bloco não pode ser associado a essa parte da preparação.",
     "blockReference": "Escolha um bloco de texto bíblico existente nesta preparação.",
     "tooLong": "Esta parte do ensino é longa demais para salvar.",
     "otherPoint": "Esse ponto pertence a outro ensino.",
     "otherStudyFinding": "Essa anotação pertence a outro estudo.",
-    "badMaterial": "Este item não pode ser guardado.",
-    "notVerified": "Uma história só é guardada como verificada com duas fontes independentes.",
+    "badMaterial": "Este item não pode ser salvo.",
+    "notVerified": "Uma história só pode ser salva como verificada quando é relatada por duas fontes independentes.",
     "imageGone": "Esta imagem não está mais disponível. Crie de novo.",
-    "projectRequired": "Escolhe um projeto para este ensino.",
-    "otherProject": "Escolhe um estudo deste projeto.",
-    "badSnapshot": "Não foi possível ler esta nota de estudo guardada."
+    "projectRequired": "Escolha um projeto para este ensino.",
+    "otherProject": "Escolha um estudo deste projeto.",
+    "badSnapshot": "Não foi possível ler esta anotação de estudo salva."
   },
   "presentation": {
     "imageGone": "Esta imagem não está neste computador.",
@@ -332,10 +332,10 @@
     "unavailable": "Esta Bíblia não tem anotações de palavras (lemas ou gramática), por isso esta busca não está disponível. A concordância normal continua funcionando.",
     "empty": "Digite um lema ou um número léxico para procurar.",
     "grammarNotFit": "Estes códigos gramaticais não se encaixam nesse sistema, por isso aparecem como estão escritos.",
-    "textDiffers": "Os arquivos guardados já não dão exatamente o texto desta Bíblia, por isso as palavras dela não podem ser adicionadas. Remova a Bíblia e adicione-a novamente para obtê-las.",
-    "noSource": "Os arquivos a partir dos quais esta Bíblia foi adicionada já não estão guardados, por isso as palavras dela não podem ser lidas novamente. Remova a Bíblia e adicione-a novamente para obtê-las.",
-    "nothingToIndex": "Estes arquivos não têm informações de palavras que possam ser indexadas.",
-    "documentBible": "Não é possível adicionar informações de palavras a uma Bíblia adicionada a partir de um documento."
+    "textDiffers": "Os arquivos salvos já não correspondem exatamente ao texto desta Bíblia, por isso as informações sobre as palavras não podem ser adicionadas. Remova a Bíblia e adicione-a novamente para obtê-las.",
+    "noSource": "Os arquivos usados para adicionar esta Bíblia não estão mais salvos, por isso não é possível reler as informações sobre as palavras. Remova a Bíblia e adicione-a novamente para obtê-las.",
+    "nothingToIndex": "Estes arquivos não têm informações sobre as palavras que possam ser indexadas.",
+    "documentBible": "Não é possível adicionar informações sobre as palavras a uma Bíblia adicionada a partir de um documento."
   },
   "batch": {
     "noFiles": "Nenhum arquivo que a biblioteca consiga ler foi encontrado ali.",
@@ -346,9 +346,13 @@
     "changed": "“{{fileName}}” mudou depois de verificado. Leia-o de novo."
   },
   "catalogue": {
-    "notVerified": "“{{fileName}}” não correspondia à cópia verificada, então nada foi guardado. Tente novamente mais tarde.",
+    "notVerified": "“{{fileName}}” não correspondia à cópia verificada, então nada foi salvo. Tente novamente mais tarde.",
     "unreachable": "Não foi possível concluir o download. Verifique a conexão com a internet e tente novamente.",
     "busy": "Já há um download em andamento. Aguarde até que termine."
   },
-  "messageUnavailable": "Não foi possível concluir esta ação. Tente novamente."
+  "messageUnavailable": "Não foi possível concluir esta ação. Tente novamente.",
+  "importFormats": {
+    "webPage": "páginas da web",
+    "osisUsx": "OSIS e USX"
+  }
 }

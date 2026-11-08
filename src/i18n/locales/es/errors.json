@@ -126,7 +126,7 @@
     "unknownBookCode": "Libro desconocido.",
     "documentSequence": "{{book}} {{chapter}}: el versículo {{verse}} aparece dentro de un versículo anterior (quizá se leyeron dos columnas mezcladas). Este capítulo no se usa.",
     "additionalBook": "«{{fileName}}» contiene {{book}}, que Abiding Word todavía no puede mostrar. Se dejó fuera; los demás libros no se ven afectados.",
-    "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: agrega cada una por separado.",
+    "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: añade cada una por separado.",
     "documentReadingOrder": "{{book}} {{chapter}}: no se pudo determinar el orden de lectura de la página {{page}} a partir de su diseño. Este capítulo no se usa.",
     "documentChapterJump": "{{book}} {{chapter}}: el documento continúa con este capítulo después del capítulo {{previous}}; no se encontraron los capítulos intermedios. Este capítulo no se usa.",
     "documentRunningHead": "{{book}} {{chapter}}: la página {{page}} termina con el versículo {{found}}, pero su encabezado ({{head}}) indica {{named}}. Este capítulo no se usa.",
@@ -156,7 +156,7 @@
     "originalUnavailable": "No se puede abrir el original de esta fuente.",
     "structure": {
       "corrupt": "No se pudo leer la estructura PDF guardada. El texto y el original permanecen intactos.",
-      "invalid": "Esta corrección ya no coincide con la fuente. Abra de nuevo su texto e inténtelo otra vez.",
+      "invalid": "Esta corrección ya no coincide con la fuente. Abre de nuevo su texto e inténtalo otra vez.",
       "timeout": "El análisis superó el límite de tiempo y se detuvo. Este intento no guardó ningún cambio. Vuelve a intentarlo o guarda un informe de diagnóstico.",
       "cancelled": "Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar.",
       "busy": "Ya hay un análisis en curso. Espera o cancélalo antes de reintentar.",
@@ -187,7 +187,7 @@
   "sections": {
     "hasContent": "«{{title}}» todavía contiene texto o apuntes.",
     "duplicateKey": "Este estudio ya tiene esa parte.",
-    "repairChanged": "Las partes cambiaron. Revise de nuevo. Deshacer requiere partes añadidas sin cambios; se conservan todos los textos."
+    "repairChanged": "Las partes cambiaron. Revisa de nuevo. Deshacer requiere partes añadidas sin cambios; se conservan todos los textos."
   },
   "relations": {
     "self": "Un estudio no se puede vincular consigo mismo.",
@@ -260,7 +260,7 @@
     "blockType": "Este tipo de bloque no se puede usar en esta preparación.",
     "blockParent": "Un bloque puede colocarse en una sección de esta preparación.",
     "blockRole": "Este bloque no se puede vincular a esa parte de la preparación.",
-    "blockReference": "Elija un bloque de texto bíblico existente en esta preparación.",
+    "blockReference": "Elige un bloque de texto bíblico existente en esta preparación.",
     "tooLong": "Esta parte de la enseñanza es demasiado larga para guardarla.",
     "otherPoint": "Ese punto pertenece a otra enseñanza.",
     "otherStudyFinding": "Ese apunte pertenece a otro estudio.",
@@ -269,7 +269,7 @@
     "imageGone": "Esta imagen ya no está disponible. Créala de nuevo.",
     "projectRequired": "Elige un proyecto para esta enseñanza.",
     "otherProject": "Elige un estudio de este proyecto.",
-    "badSnapshot": "No se puede leer esta nota de estudio conservada."
+    "badSnapshot": "No se puede leer este apunte de estudio conservado."
   },
   "presentation": {
     "imageGone": "Esta imagen no está en este ordenador.",
@@ -339,9 +339,9 @@
   },
   "batch": {
     "noFiles": "No se encontraron allí archivos que la biblioteca pueda leer.",
-    "tooMany": "Se pueden agregar como máximo {{max}} archivos a la vez.",
-    "cannotChoose": "Este archivo no se puede agregar.",
-    "closed": "Esta importación ha terminado. Inicia una nueva para agregar más archivos.",
+    "tooMany": "Se pueden añadir como máximo {{max}} archivos a la vez.",
+    "cannotChoose": "Este archivo no se puede añadir.",
+    "closed": "Esta importación ha terminado. Inicia una nueva para añadir más archivos.",
     "notRead": "Algunos archivos aún no se han leído.",
     "changed": "«{{fileName}}» cambió después de revisarse. Vuelve a leerlo."
   },
@@ -350,5 +350,9 @@
     "unreachable": "No se pudo completar la descarga. Comprueba la conexión a internet e inténtalo de nuevo.",
     "busy": "Ya hay una descarga en curso. Espera a que termine."
   },
-  "messageUnavailable": "No se pudo completar esta acción. Vuelve a intentarlo."
+  "messageUnavailable": "No se pudo completar esta acción. Vuelve a intentarlo.",
+  "importFormats": {
+    "webPage": "de páginas web",
+    "osisUsx": "OSIS y USX"
+  }
 }

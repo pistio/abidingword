@@ -3,7 +3,7 @@
     "templates": {
       "biblical-theology-study": {
         "name": "Estudo de teologia bíblica",
-        "description": "Um tema acompanhado ao longo da história das Escrituras que se desdobra.",
+        "description": "Um tema acompanhado ao longo da história narrada nas Escrituras.",
         "sections": {
           "theme": {
             "title": "Tema",
@@ -1945,8 +1945,8 @@
     "otherStudy": "Outro estudo…",
     "noStudies": "Ainda não há nenhum estudo. Comece um no painel Estudo e depois adicione isto.",
     "yourNote": "Sua anotação (opcional)",
-    "placeholder": "O que você tira disto?",
-    "placeholderRequired": "Escreva o que você tira deste lugar…",
+    "placeholder": "Que conclusões você tira deste trecho?",
+    "placeholderRequired": "Escreva suas conclusões sobre este trecho…",
     "save": "Adicionar ao estudo",
     "added": "Adicionado a {{study}} · {{part}}.",
     "loading": "Carregando seus estudos…"
@@ -2268,7 +2268,7 @@
     "format": {
       "points": "Pontos principais com explicação, aplicação e ilustração, entre uma introdução e uma conclusão.",
       "generalPoints": "Pontos principais com explicação, aplicação e ilustração, entre uma introdução e uma conclusão.",
-      "questions": "Perguntas para o grupo, cada uma com aonde a conversa pode levar e perguntas de continuação.",
+      "questions": "Perguntas para o grupo, cada uma com possíveis rumos para a conversa e perguntas de continuação.",
       "steps": "Uma lição em etapas: ensino, leitura bíblica, perguntas, atividades e imagens, na ordem em que acontecem."
     },
     "startsWith": "Começa com: {{steps}}.",
@@ -2419,7 +2419,7 @@
       },
       "options": "Opções de {{name}}",
       "leaderBadge": "Só para quem conduz",
-      "confirmDelete": "Eliminar «{{name}}» e o seu texto?"
+      "confirmDelete": "Excluir “{{name}}” e seu texto?"
     },
     "builtin": {
       "eva": {
@@ -2450,7 +2450,7 @@
           },
           "main": {
             "title": "Parte principal",
-            "guidance": "Explorem o significado do texto e sua relação com a vida."
+            "guidance": "Explore o significado do texto e sua relação com a vida."
           },
           "conclusion": {
             "title": "Conclusão",
@@ -2517,7 +2517,7 @@
       "help": "Escolha o que copiar para este ensino. Cada cópia pode ser editada, indica a origem, começa só para quem conduz e nunca é sincronizada com o estudo.",
       "add": "Adicionar seleção",
       "none": "Este estudo bíblico ainda não tem nada para adicionar.",
-      "added": "Adicionado do estudo bíblico, só para quem conduz. Partilhe cada parte quando estiver pronta.",
+      "added": "Adicionado do estudo bíblico, só para quem conduz. Compartilhe cada parte quando estiver pronta.",
       "provenance": "Do estudo bíblico: {{label}}",
       "quotation": "Citação do estudo bíblico · {{citation}}",
       "item": "um item",
@@ -2641,7 +2641,7 @@
       "writingSpace": "Espaço para escrever",
       "includePassage": "Incluir a passagem bíblica ({{bible}})",
       "includePassageNone": "Incluir a passagem bíblica (escolha primeiro uma Bíblia no painel da Bíblia)",
-      "answers": "Com as respostas (só perguntas partilhadas)"
+      "answers": "Com as respostas (só perguntas compartilhadas)"
     },
     "action": {
       "print": "Imprimir ou salvar como PDF…",
@@ -2671,6 +2671,11 @@
       "missing_other": "{{bible}} não tem texto para os versículos {{verses}}; eles ficam de fora e não são tirados de outra Bíblia.",
       "missing_many": "{{bible}} não tem texto para os versículos {{verses}}; eles ficam de fora e não são tirados de outra Bíblia.",
       "from": "Texto bíblico: {{name}}."
+    },
+    "wordStyles": {
+      "label": "Rótulo de campo",
+      "writingLine": "Linha de resposta",
+      "writingLineLast": "Última linha de resposta"
     }
   },
   "phase": {
@@ -2827,6 +2832,11 @@
       "block": "Seu texto: “{{start}}”",
       "selection": "As palavras selecionadas: “{{words}}”",
       "note": "Sua anotação ({{kind}}): “{{start}}”"
+    },
+    "location": {
+      "pages": "pp. {{first}}–{{last}}",
+      "paragraph": "parágrafo {{number}}",
+      "paragraphs": "parágrafos {{first}}–{{last}}"
     }
   },
   "fields": {
@@ -2924,7 +2934,7 @@
     "options": "Opções de {{label}}",
     "moveUp": "Mover {{label}} para cima",
     "moveDown": "Mover {{label}} para baixo",
-    "confirmDelete": "Eliminar {{label}} com a pergunta e a resposta?"
+    "confirmDelete": "Excluir {{label}}, incluindo a pergunta e a resposta?"
   },
   "qaExport": {
     "open": "Exportar perguntas…",
@@ -2938,19 +2948,19 @@
     },
     "save": "Salvar como Markdown…",
     "fileType": "Markdown",
-    "saved": "Guardado em {{path}}",
+    "saved": "Salvo em {{path}}",
     "empty": "Ainda não há nada para exportar com esta opção."
   },
   "repair": {
-    "review": "Rever partes do POZETEK",
-    "undo": "Anular reparação do POZETEK",
-    "apply": "Adicionar partes em falta e ordenar",
-    "explain": "As sete partes originais aparecem primeiro. As partes em falta são adicionadas vazias. Todas as partes existentes, incluindo Tema, Compreensão, Consequências e duplicados, mantêm nome, textos, notas e ligações. As partes fora desta sequência seguem na sua ordem relativa atual.",
+    "review": "Revisar partes do POZETEK",
+    "undo": "Desfazer reparo do POZETEK",
+    "apply": "Adicionar partes ausentes e ordenar",
+    "explain": "As sete partes originais aparecem primeiro. As partes ausentes são adicionadas vazias. Todas as partes existentes, incluindo Tema, Compreensão, Consequências e partes duplicadas, mantêm seus nomes, textos, anotações e vínculos. As partes fora dessa sequência mantêm sua ordem relativa atual.",
     "keep": "Manter parte existente",
     "add": "Adicionar parte vazia",
-    "duplicates": "Várias partes partilham uma chave: {{parts}}. Permanecem separadas; nenhum conteúdo é fundido.",
-    "safety": "Um registo guardado permite repor a ordem anterior e retirar apenas partes vazias e inalteradas adicionadas por esta reparação. Se uma parte adicionada mudou, Anular é recusado e todos os textos são mantidos. Faça uma cópia do perfil antes de reparar trabalho importante.",
-    "undoFirst": "Anule a reparação anterior antes de aplicar outra.",
-    "finishDrafts": "Termine ou feche as notas abertas e a edição dos nomes das partes antes de anular a reparação."
+    "duplicates": "Várias partes usam a mesma chave: {{parts}}. Elas permanecem separadas; nenhum conteúdo é combinado.",
+    "safety": "Um registro salvo permite restaurar a ordem anterior e remover apenas as partes vazias e inalteradas adicionadas por este reparo. Se uma parte adicionada tiver sido alterada, não será possível desfazer o reparo, e todo o texto será mantido. Faça uma cópia do perfil antes de reparar um trabalho importante.",
+    "undoFirst": "Desfaça o reparo anterior antes de aplicar outro.",
+    "finishDrafts": "Conclua ou feche as anotações abertas e termine de editar os nomes das partes antes de desfazer o reparo."
   }
 }

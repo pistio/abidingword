@@ -144,13 +144,13 @@
     "originalMissing": "Die von Abiding Word gespeicherte Kopie dieser Datei wurde nicht gefunden.",
     "originalUnavailable": "Das Original dieser Quelle kann nicht geöffnet werden.",
     "structure": {
-      "corrupt": "Die gespeicherte PDF-Struktur konnte nicht gelesen werden. Quelltext und Originaldatei bleiben unverändert.",
-      "invalid": "Diese Korrektur passt nicht mehr zur Quelle. Den Text erneut öffnen und wiederholen.",
+      "corrupt": "Die gespeicherte PDF-Struktur konnte nicht gelesen werden. Der Text der Quelle und die Originaldatei bleiben unverändert.",
+      "invalid": "Diese Korrektur passt nicht mehr zur Quelle. Öffne ihren Text erneut und versuche es noch einmal.",
       "timeout": "Die Analyse hat zu lange gedauert und wurde beendet. Dieser Versuch hat nichts gespeichert. Versuche es erneut oder speichere einen Diagnosebericht.",
       "cancelled": "Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen.",
       "busy": "Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst.",
-      "limit": "Die PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
-      "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Erneut versuchen oder einen Diagnosebericht speichern."
+      "limit": "Das PDF überschreitet die unterstützten Analysegrenzen. Bisherige Metadaten sind unverändert.",
+      "failed": "Analyse fehlgeschlagen. Bisherige Struktur und Verknüpfungen bleiben verfügbar. Versuche es erneut oder speichere einen Diagnosebericht."
     },
     "nothingChosen": "Wähle mindestens einen Eintrag.",
     "notInTrash": "Nur Einträge im Papierkorb können endgültig gelöscht werden. Verschiebe sie zuerst dorthin.",
@@ -165,7 +165,7 @@
   "templates": {
     "noSections": "Eine Vorlage braucht mindestens einen Teil, mit dem sie beginnt.",
     "tooManySections": "Eine Vorlage kann höchstens {{max}} Teile haben.",
-    "builtinReadOnly": "Mitgelieferte Vorlagen können nicht geändert werden. Nutze „Als meine Vorlage speichern“, um eine eigene Fassung zu erstellen.",
+    "builtinReadOnly": "Mitgelieferte Vorlagen können nicht geändert werden. Nutze „Als eigene Vorlage speichern“, um eine eigene Fassung zu erstellen.",
     "duplicateKey": "Zwei Teile der Vorlage sind derselbe Teil. Entferne einen davon.",
     "invalidKey": "Die Kennung dieses Teils ist ungültig.",
     "unknownPart": "Dieser Vorlagenteil ist nicht mehr verfügbar.",
@@ -176,7 +176,7 @@
   "sections": {
     "hasContent": "„{{title}}“ enthält noch Text oder Notizen.",
     "duplicateKey": "Dieses Bibelstudium hat diesen Teil schon.",
-    "repairChanged": "Die Teile wurden verändert. Bitte erneut prüfen. Rückgängig erfordert unveränderte ergänzte Teile; alle Texte bleiben erhalten."
+    "repairChanged": "Die Teile wurden verändert. Bitte prüfe sie erneut. Rückgängig ist nur möglich, wenn die ergänzten Teile unverändert sind; alle Texte bleiben erhalten."
   },
   "relations": {
     "self": "Ein Bibelstudium kann nicht mit sich selbst verknüpft werden.",
@@ -246,10 +246,10 @@
     "staleTarget": "Dieser Teil wurde seit deiner Anfrage geändert oder entfernt. Schließe die Hilfe, prüfe den Text und frage erneut."
   },
   "teaching": {
-    "blockType": "Dieser Blocktyp kann in dieser Lehre nicht verwendet werden.",
-    "blockParent": "Ein Block kann in einem Abschnitt dieser Lehre stehen.",
-    "blockRole": "Dieser Block kann diesem Teil der Lehre nicht zugeordnet werden.",
-    "blockReference": "Wähle einen vorhandenen Bibeltextblock in dieser Lehre.",
+    "blockType": "Dieser Blocktyp kann in dieser Bibellehre nicht verwendet werden.",
+    "blockParent": "Ein Block kann in einem Abschnitt dieser Bibellehre stehen.",
+    "blockRole": "Dieser Block kann diesem Teil der Bibellehre nicht zugeordnet werden.",
+    "blockReference": "Wähle einen vorhandenen Bibeltextblock in dieser Bibellehre.",
     "tooLong": "Dieser Teil der Bibellehre ist zu lang zum Speichern.",
     "otherPoint": "Dieser Punkt gehört zu einer anderen Bibellehre.",
     "otherStudyFinding": "Diese Notiz gehört zu einem anderen Bibelstudium.",
@@ -258,7 +258,7 @@
     "imageGone": "Dieses Bild ist nicht mehr verfügbar. Bitte erstelle es erneut.",
     "projectRequired": "Wähle ein Projekt für diese Bibellehre.",
     "otherProject": "Wähle ein Bibelstudium in diesem Projekt.",
-    "badSnapshot": "Diese gespeicherte Studiennotiz kann nicht gelesen werden."
+    "badSnapshot": "Diese gespeicherte Notiz aus dem Bibelstudium kann nicht gelesen werden."
   },
   "presentation": {
     "imageGone": "Dieses Bild ist nicht auf diesem Computer.",
@@ -297,15 +297,15 @@
     "damaged": "Ein Teil dieser Datei passt nicht zu ihrem Inhaltsverzeichnis: Sie ist beschädigt oder wurde verändert. Hier wurde nichts geändert.",
     "newer": "Diese Datei wurde mit einer neueren Version von Abiding Word gespeichert ({{version}}). Bitte aktualisiere Abiding Word zuerst.",
     "notBackupDatabase": "Die Datenbank in dieser Sicherung ist beschädigt oder keine Datenbank von Abiding Word. Es wurde nichts geändert.",
-    "restoreFailed": "Die Sicherung konnte nicht wiederhergestellt werden. Deine Arbeit wurde wieder so hergestellt, wie sie war.",
+    "restoreFailed": "Die Sicherung konnte nicht wiederhergestellt werden. Deine Arbeit wurde auf den vorherigen Stand zurückgesetzt.",
     "noFile": "Bitte wähle eine Datei aus.",
     "rollbackFailed": "Die Sicherung konnte nicht wiederhergestellt werden, und deine vorherige Arbeit konnte nicht automatisch zurückgeholt werden. Eine Kopie davon liegt unter {{path}}."
   },
   "inquiry": {
     "notHere": "Diese Art Hilfe gibt es hier nicht.",
     "changed": "Was gesendet würde, hat sich geändert, seit du es angesehen hast. Bitte sieh es dir noch einmal an, bevor du fragst.",
-    "selectionChanged": "Die markierten Worte stehen nicht mehr im Text. Markiere sie noch einmal.",
-    "selectWords": "Markiere zuerst die Worte, die du verstehen möchtest.",
+    "selectionChanged": "Die markierten Wörter stehen nicht mehr im Text. Markiere sie noch einmal.",
+    "selectWords": "Markiere zuerst die Wörter, die du verstehen möchtest.",
     "chooseNote": "Wähle die Frage, die du notiert hast.",
     "noPassage": "Wähle zuerst den Bibeltext dieses Bibelstudiums: Die Hilfe geht vom Text aus.",
     "noBibleText": "Der Text dieser Stelle ist nicht installiert. Füge in den Einstellungen eine Bibel hinzu oder wähle eine für dieses Bibelstudium.",
@@ -339,5 +339,9 @@
     "unreachable": "Der Download konnte nicht abgeschlossen werden. Prüfe die Internetverbindung und versuche es erneut.",
     "busy": "Ein Download läuft bereits. Warte, bis er abgeschlossen ist."
   },
-  "messageUnavailable": "Diese Aktion konnte nicht abgeschlossen werden. Versuche es erneut."
+  "messageUnavailable": "Diese Aktion konnte nicht abgeschlossen werden. Versuche es erneut.",
+  "importFormats": {
+    "webPage": "Webseiten",
+    "osisUsx": "OSIS und USX"
+  }
 }

@@ -39,10 +39,10 @@
     "placeholder": "Titre, auteur, mots ou \"expression exacte\"",
     "nothingFound": "Rien n’a été trouvé dans votre bibliothèque.",
     "resultCount_one": "{{number}} passage trouvé.",
-    "resultCount_many": "{{number}} passages trouvés.",
+    "resultCount_many": "{{number}} de passages trouvés.",
     "resultCount_other": "{{number}} passages trouvés.",
     "resultCountMore_one": "{{number}}+ passage trouvé.",
-    "resultCountMore_many": "{{number}}+ passages trouvés.",
+    "resultCountMore_many": "Passages trouvés : {{number}}+.",
     "resultCountMore_other": "{{number}}+ passages trouvés.",
     "resultsLabel": "Résultats de la recherche dans la bibliothèque",
     "showMore": "Afficher plus de résultats",
@@ -72,7 +72,7 @@
     "confirm": "Retirer de la bibliothèque",
     "keep": "La conserver",
     "marks_one": "Votre marque dans cette source (surlignage, note ou signet) est retirée avec elle.",
-    "marks_many": "Vos {{count}} marques dans cette source (surlignages, notes et signets) sont retirées avec elle.",
+    "marks_many": "Vos marques dans cette source ({{count}} : surlignages, notes et signets) sont retirées avec elle.",
     "marks_other": "Vos {{count}} marques dans cette source (surlignages, notes et signets) sont retirées avec elle."
   },
   "add": {
@@ -83,7 +83,7 @@
     "whatFound": "Ce qui a été trouvé",
     "extracted": "Texte extrait avec succès",
     "references_one": "{{number}} référence biblique détectée",
-    "references_many": "{{number}} références bibliques détectées",
+    "references_many": "{{number}} de références bibliques détectées",
     "references_other": "{{number}} références bibliques détectées",
     "duplicate": "Ce fichier se trouve déjà dans votre bibliothèque sous le titre <strong>{{title}}</strong>.",
     "addCopy": "Ajouter quand même une deuxième copie",
@@ -91,16 +91,16 @@
   },
   "size": {
     "pages_one": "{{number}} page",
-    "pages_many": "{{number}} pages",
+    "pages_many": "{{number}} de pages",
     "pages_other": "{{number}} pages",
     "chapters_one": "{{number}} chapitre",
-    "chapters_many": "{{number}} chapitres",
+    "chapters_many": "{{number}} de chapitres",
     "chapters_other": "{{number}} chapitres",
     "sections_one": "{{number}} section",
-    "sections_many": "{{number}} sections",
+    "sections_many": "{{number}} de sections",
     "sections_other": "{{number}} sections",
     "paragraphs_one": "{{number}} paragraphe",
-    "paragraphs_many": "{{number}} paragraphes",
+    "paragraphs_many": "{{number}} de paragraphes",
     "paragraphs_other": "{{number}} paragraphes"
   },
   "metadata": {
@@ -118,7 +118,7 @@
     "fileHere": "La copie du fichier conservée par Abiding Word est sur cet ordinateur.",
     "fileMissing": "La copie du fichier conservée par Abiding Word est introuvable. La fiche de cette source est conservée.",
     "citation": "Référence",
-    "archivedNote": "Archivé. Cette source reste hors du volet Sources jusqu’à ce que vous la restauriez dans Paramètres."
+    "archivedNote": "Archivée. Cette source reste hors du volet Sources jusqu’à ce que vous la restauriez dans Paramètres."
   },
   "reader": {
     "showEarlier": "Afficher le texte précédent",
@@ -135,7 +135,7 @@
     "sourcesFor": "Sources pour {{passage}}",
     "noSources": "Aucune source de votre bibliothèque n’est liée à ce passage.",
     "moreLocations_one": "{{count}} autre endroit dans cette source",
-    "moreLocations_many": "{{count}} autres endroits dans cette source",
+    "moreLocations_many": "{{count}} d’autres endroits dans cette source",
     "moreLocations_other": "{{count}} autres endroits dans cette source",
     "showFewerLocations": "Afficher moins",
     "loadingLocations": "Chargement des autres endroits…",
@@ -169,7 +169,7 @@
     "listLabel": "Passages à citer",
     "cite": "Citer {{citation}}",
     "open": "Ouvrir la source",
-    "quoteLabel": "Cité de la source",
+    "quoteLabel": "Extrait cité",
     "openFailed": "Cette source n’a pas pu être ouverte.",
     "unavailable": "(absente de cet ordinateur)",
     "unavailableTitle": "Cette source n’est pas disponible sur cet ordinateur. La référence a été conservée."
@@ -268,7 +268,7 @@
       "bookmark": "Signet"
     },
     "marker_one": "{{count}} marque ici : {{kinds}}",
-    "marker_many": "{{count}} marques ici : {{kinds}}",
+    "marker_many": "{{count}} de marques ici : {{kinds}}",
     "marker_other": "{{count}} marques ici : {{kinds}}",
     "here": "Marques ici",
     "changeColour": "Changer la couleur",
@@ -309,19 +309,19 @@
   "compare": {
     "add": "Ajouter à la comparaison",
     "added_one": "Ajouté à la comparaison ({{count}} passage).",
-    "added_many": "Ajouté à la comparaison ({{count}} passages).",
+    "added_many": "Ajouté à la comparaison ({{count}} de passages).",
     "added_other": "Ajouté à la comparaison ({{count}} passages).",
-    "notAdded": "Non ajouté : ce passage y est déjà, ou trois sont choisis.",
+    "notAdded": "Non ajouté : ce passage figure déjà dans la comparaison, ou trois passages sont déjà sélectionnés.",
     "tray": "Passages à comparer",
     "count_one": "{{count}} passage sur {{max}} à comparer",
-    "count_many": "{{count}} passages sur {{max}} à comparer",
+    "count_many": "{{count}} de passages sur {{max}} à comparer",
     "count_other": "{{count}} passages sur {{max}} à comparer",
     "compare": "Comparer…",
     "clear": "Vider",
     "needTwo": "Choisissez au moins deux passages : sélectionnez des mots dans une source, puis Autres actions → Ajouter à la comparaison.",
     "remove": "Retirer « {{title}} » de la comparaison",
     "title_one": "Comparer {{count}} passage",
-    "title_many": "Comparer {{count}} passages",
+    "title_many": "Comparer {{count}} de passages",
     "title_other": "Comparer {{count}} passages"
   },
   "trash": {
@@ -330,15 +330,15 @@
     "kept": "Vos marques dans la source et les citations de vos études restent attachées et reviennent si vous la restaurez.",
     "done": "« {{title}} » a été mise à la corbeille.",
     "keptMany": "Vos marques dans ces sources et les citations de vos études restent attachées et reviennent si vous les restaurez.",
-    "text_one": "Elle quitte votre bibliothèque, le volet Sources et la recherche. Vous pouvez la restaurer depuis la corbeille (Réglages → Sources) pendant {{count}} jour ; ensuite, elle est supprimée définitivement.",
-    "text_other": "Elle quitte votre bibliothèque, le volet Sources et la recherche. Vous pouvez la restaurer depuis la corbeille (Réglages → Sources) pendant {{count}} jours ; ensuite, elle est supprimée définitivement.",
-    "text_many": "Elle quitte votre bibliothèque, le volet Sources et la recherche. Vous pouvez la restaurer depuis la corbeille (Réglages → Sources) pendant {{count}} jours ; ensuite, elle est supprimée définitivement.",
+    "text_one": "Elle quitte votre bibliothèque, le volet Sources et la recherche. Vous pouvez la restaurer depuis la corbeille (Paramètres → Sources) pendant {{count}} jour ; ensuite, elle est supprimée définitivement.",
+    "text_other": "Elle quitte votre bibliothèque, le volet Sources et la recherche. Vous pouvez la restaurer depuis la corbeille (Paramètres → Sources) pendant {{count}} jours ; ensuite, elle est supprimée définitivement.",
+    "text_many": "Elle quitte votre bibliothèque, le volet Sources et la recherche. Vous pouvez la restaurer depuis la corbeille (Paramètres → Sources) pendant {{count}} de jours ; ensuite, elle est supprimée définitivement.",
     "marks_one": "Sa marque ({{count}} : surlignage, note ou signet) est masquée tant qu’elle est dans la corbeille.",
     "marks_other": "Ses {{count}} marques (surlignages, notes et signets) sont masquées tant qu’elle est dans la corbeille.",
-    "marks_many": "Ses {{count}} marques (surlignages, notes et signets) sont masquées tant qu’elle est dans la corbeille.",
-    "textMany_one": "Elles quittent votre bibliothèque, le volet Sources et la recherche. Vous pouvez les restaurer depuis la corbeille (Réglages → Sources) pendant {{count}} jour ; ensuite, elles sont supprimées définitivement.",
-    "textMany_other": "Elles quittent votre bibliothèque, le volet Sources et la recherche. Vous pouvez les restaurer depuis la corbeille (Réglages → Sources) pendant {{count}} jours ; ensuite, elles sont supprimées définitivement.",
-    "textMany_many": "Elles quittent votre bibliothèque, le volet Sources et la recherche. Vous pouvez les restaurer depuis la corbeille (Réglages → Sources) pendant {{count}} jours ; ensuite, elles sont supprimées définitivement."
+    "marks_many": "Les marques de cette source ({{count}} : surlignages, notes et signets) sont masquées tant qu’elle est dans la corbeille.",
+    "textMany_one": "Elles quittent votre bibliothèque, le volet Sources et la recherche. Vous pouvez les restaurer depuis la corbeille (Paramètres → Sources) pendant {{count}} jour ; ensuite, elles sont supprimées définitivement.",
+    "textMany_other": "Elles quittent votre bibliothèque, le volet Sources et la recherche. Vous pouvez les restaurer depuis la corbeille (Paramètres → Sources) pendant {{count}} jours ; ensuite, elles sont supprimées définitivement.",
+    "textMany_many": "Elles quittent votre bibliothèque, le volet Sources et la recherche. Vous pouvez les restaurer depuis la corbeille (Paramètres → Sources) pendant {{count}} de jours ; ensuite, elles sont supprimées définitivement."
   },
   "delete": {
     "question": "Supprimer « {{title}} » définitivement ?",
@@ -348,10 +348,10 @@
     "keptMany": "Les citations de vos études gardent une trace de ce qu’elles citaient. Vos fichiers d’origine ne sont pas touchés.",
     "questionMany_one": "Supprimer définitivement {{formatted}} source ?",
     "questionMany_other": "Supprimer définitivement {{formatted}} sources ?",
-    "questionMany_many": "Supprimer définitivement {{formatted}} sources ?",
+    "questionMany_many": "Supprimer définitivement {{formatted}} de sources ?",
     "done_one": "{{formatted}} source a été supprimée définitivement.",
     "done_other": "{{formatted}} sources ont été supprimées définitivement.",
-    "done_many": "{{formatted}} sources ont été supprimées définitivement."
+    "done_many": "{{formatted}} de sources ont été supprimées définitivement."
   },
   "manage": {
     "add": "Ajouter des sources…",
@@ -402,7 +402,7 @@
       "noText": "Numérisé : pas de texte",
       "duplicate_one": "Ajouté encore {{formatted}} fois",
       "duplicate_other": "Ajouté encore {{formatted}} fois",
-      "duplicate_many": "Ajouté encore {{formatted}} fois"
+      "duplicate_many": "Ajouté encore {{formatted}} de fois"
     },
     "empty": "Pas encore de sources. Ajoutez vos livres, articles et notes pour les lire à côté de la Bible.",
     "noMatches": "Aucune source ne correspond. Essayez d’autres mots ou moins de filtres.",
@@ -417,22 +417,22 @@
       "restoredOne": "« {{title}} » a été restaurée.",
       "archived_one": "{{formatted}} source a été archivée.",
       "archived_other": "{{formatted}} sources ont été archivées.",
-      "archived_many": "{{formatted}} sources ont été archivées.",
+      "archived_many": "{{formatted}} de sources ont été archivées.",
       "restored_one": "{{formatted}} source a été restaurée.",
       "restored_other": "{{formatted}} sources ont été restaurées.",
-      "restored_many": "{{formatted}} sources ont été restaurées.",
+      "restored_many": "{{formatted}} de sources ont été restaurées.",
       "trashed_one": "{{formatted}} source a été mise à la corbeille.",
       "trashed_other": "{{formatted}} sources ont été mises à la corbeille.",
-      "trashed_many": "{{formatted}} sources ont été mises à la corbeille.",
+      "trashed_many": "{{formatted}} de sources ont été mises à la corbeille.",
       "collected_one": "{{formatted}} source est maintenant dans « {{name}} ».",
       "collected_other": "{{formatted}} sources sont maintenant dans « {{name}} ».",
-      "collected_many": "{{formatted}} sources sont maintenant dans « {{name}} ».",
+      "collected_many": "{{formatted}} de sources sont maintenant dans « {{name}} ».",
       "tagged_one": "Des étiquettes ont été ajoutées à {{formatted}} source.",
       "tagged_other": "Des étiquettes ont été ajoutées à {{formatted}} sources.",
-      "tagged_many": "Des étiquettes ont été ajoutées à {{formatted}} sources.",
+      "tagged_many": "Des étiquettes ont été ajoutées à {{formatted}} de sources.",
       "untagged_one": "L’étiquette a été retirée de {{formatted}} source.",
       "untagged_other": "L’étiquette a été retirée de {{formatted}} sources.",
-      "untagged_many": "L’étiquette a été retirée de {{formatted}} sources."
+      "untagged_many": "L’étiquette a été retirée de {{formatted}} de sources."
     },
     "moreDetails": "Plus de détails et le fichier",
     "field": {
@@ -458,7 +458,7 @@
       "duplicates": "Même fichier",
       "duplicatesText_one": "Ajouté encore {{formatted}} fois (à trouver avec « Seulement les fichiers ajoutés plusieurs fois »).",
       "duplicatesText_other": "Ajouté encore {{formatted}} fois (à trouver avec « Seulement les fichiers ajoutés plusieurs fois »).",
-      "duplicatesText_many": "Ajouté encore {{formatted}} fois (à trouver avec « Seulement les fichiers ajoutés plusieurs fois »)."
+      "duplicatesText_many": "Ajouté encore {{formatted}} de fois (à trouver avec « Seulement les fichiers ajoutés plusieurs fois »)."
     },
     "extraction": {
       "scanned": "Pages numérisées : lisibles dans l’original, pas de recherche possible (pas d’OCR).",
@@ -480,7 +480,7 @@
     "untagConfirm": "Retirer l’étiquette",
     "organiseTitle": "Collections et étiquettes",
     "collectionsTitle": "Collections",
-    "collectionsText": "Vos propres groupes, imbriqués si vous le souhaitez. Retirer une collection garde ses sources.",
+    "collectionsText": "Vos propres groupes, imbriqués si vous le souhaitez. Retirer une collection ne supprime pas ses sources.",
     "moveCollection": "Emplacement de {{name}}",
     "rename": "Renommer",
     "newName": "Nouveau nom",
@@ -497,21 +497,21 @@
     "selected_many": "{{formatted}} sélectionnées",
     "trashMany_one": "Mettre {{formatted}} source à la corbeille ?",
     "trashMany_other": "Mettre {{formatted}} sources à la corbeille ?",
-    "trashMany_many": "Mettre {{formatted}} sources à la corbeille ?",
+    "trashMany_many": "Mettre {{formatted}} de sources à la corbeille ?",
     "collectTitle_one": "Ajouter {{formatted}} source à une collection",
     "collectTitle_other": "Ajouter {{formatted}} sources à une collection",
-    "collectTitle_many": "Ajouter {{formatted}} sources à une collection",
+    "collectTitle_many": "Ajouter {{formatted}} de sources à une collection",
     "tagTitle_one": "Ajouter des étiquettes à {{formatted}} source",
     "tagTitle_other": "Ajouter des étiquettes à {{formatted}} sources",
-    "tagTitle_many": "Ajouter des étiquettes à {{formatted}} sources",
+    "tagTitle_many": "Ajouter des étiquettes à {{formatted}} de sources",
     "untagTitle_one": "Retirer une étiquette de {{formatted}} source",
     "untagTitle_other": "Retirer une étiquette de {{formatted}} sources",
-    "untagTitle_many": "Retirer une étiquette de {{formatted}} sources"
+    "untagTitle_many": "Retirer une étiquette de {{formatted}} de sources"
   },
   "batch": {
     "open": "Ajouter des sources…",
     "title": "Ajouter des sources",
-    "intro": "Choisissez plusieurs fichiers ou un dossier. Abiding Word lit et vérifie chacun ; vous relisez la liste avant que rien ne soit ajouté.",
+    "intro": "Choisissez plusieurs fichiers ou un dossier. Abiding Word lit et vérifie chaque fichier ; vous pouvez ensuite relire la liste avant tout ajout.",
     "chooseFiles": "Choisir des fichiers…",
     "chooseFolder": "Choisir un dossier…",
     "recursive": "Inclure les fichiers des sous-dossiers",
@@ -531,7 +531,7 @@
     "summary": {
       "found_one": "{{formatted}} fichier trouvé",
       "found_other": "{{formatted}} fichiers trouvés",
-      "found_many": "{{formatted}} fichiers trouvés",
+      "found_many": "{{formatted}} de fichiers trouvés",
       "duplicates_one": "{{formatted}} déjà dans votre bibliothèque ou en double",
       "duplicates_other": "{{formatted}} déjà dans votre bibliothèque ou en double",
       "duplicates_many": "{{formatted}} déjà dans votre bibliothèque ou en double",
@@ -543,7 +543,7 @@
       "imported_many": "{{formatted}} déjà ajoutées",
       "unsupported_one": "{{formatted}} fichier d’un autre type ignoré",
       "unsupported_other": "{{formatted}} fichiers d’autres types ignorés",
-      "unsupported_many": "{{formatted}} fichiers d’autres types ignorés",
+      "unsupported_many": "{{formatted}} de fichiers d’autres types ignorés",
       "overLimit_one": "{{formatted}} au-delà de la limite ignoré",
       "overLimit_other": "{{formatted}} au-delà de la limite ignorés",
       "overLimit_many": "{{formatted}} au-delà de la limite ignorés"
@@ -574,16 +574,16 @@
     "scanning": "Recherche des fichiers…",
     "add_one": "Ajouter {{formatted}} source",
     "add_other": "Ajouter {{formatted}} sources",
-    "add_many": "Ajouter {{formatted}} sources",
+    "add_many": "Ajouter {{formatted}} de sources",
     "done_one": "{{formatted}} source a été ajoutée.",
     "done_other": "{{formatted}} sources ont été ajoutées.",
-    "done_many": "{{formatted}} sources ont été ajoutées.",
+    "done_many": "{{formatted}} de sources ont été ajoutées.",
     "stopped_one": "Arrêté. {{formatted}} source a été ajoutée ; les autres non.",
     "stopped_other": "Arrêté. {{formatted}} sources ont été ajoutées ; les autres non.",
-    "stopped_many": "Arrêté. {{formatted}} sources ont été ajoutées ; les autres non.",
+    "stopped_many": "Arrêté. {{formatted}} de sources ont été ajoutées ; les autres non.",
     "pages_one": "{{formatted}} page",
     "pages_other": "{{formatted}} pages",
-    "pages_many": "{{formatted}} pages"
+    "pages_many": "{{formatted}} de pages"
   },
   "navigation": {
     "collection": "Collection",
@@ -645,7 +645,7 @@
     "rebuildRecommended": "Cette structure a été créée avec des règles d’analyse antérieures. Choisissez « Reprendre l’analyse » pour appliquer les règles actuelles ; corrections, citations et annotations sont conservées.",
     "diagnostic": {
       "title": "Rapport de diagnostic (métadonnées seulement)",
-      "help": "Ouvrez d’abord le résultat de source du passage, puis créez le rapport ici. Il consigne l’empreinte du fichier, les titres détectés, les candidats classés et la page affichée — jamais le texte des paragraphes, les notes ou les clés. Vérifiez-le avant de le partager.",
+      "help": "Ouvrez d’abord le résultat correspondant au passage dans le volet Sources, puis créez le rapport ici. Il consigne l’empreinte du fichier, les titres détectés, les candidats classés et la page affichée — jamais le texte des paragraphes, les notes ou les clés. Vérifiez-le avant de le partager.",
       "passage": "Passage à vérifier (facultatif)",
       "create": "Créer le rapport",
       "copy": "Copier le rapport",
@@ -681,7 +681,7 @@
       "empty": "Aucun titre exploitable reconnu. L’analyse a été enregistrée, mais le sommaire automatique est indisponible. Vous pouvez marquer manuellement les lignes visibles ci-dessous.",
       "failed": "Échec de l’analyse. La structure et les liens précédents sont conservés. Réessayez ou enregistrez un rapport de diagnostic.",
       "timings": "Durées du traitement",
-      "missing": "Aucune analyse des titres enregistrée. Choisissez Créer la structure ; un diagnostic général peut être enregistré avant cette étape.",
+      "missing": "Aucune analyse des titres enregistrée. Choisissez « Analyser la structure » ; un diagnostic général peut être enregistré avant cette étape.",
       "stages": {
         "file": "Lire et vérifier le fichier",
         "segments": "Lire les textes enregistrés",
