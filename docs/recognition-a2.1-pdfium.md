@@ -126,6 +126,11 @@ At `51346f6`:
 
 ## 5. Unresolved risks
 
+Word spacing, the Windows sandbox requirements and the security review are
+set out in `docs/audit/a2.1/open-questions.md`. Further integration waits
+until the Codex Windows Source corrections pass acceptance.
+
+
 1. **Word spacing (`Tw`).** It is not available from PDFium per character,
    and a `TJ`-justified line looks the same. Documents justified with `Tw`
    lose verification (F03 −4 741). Fixing it needs either the text state
@@ -144,8 +149,10 @@ At `51346f6`:
    * No Job Object memory cap yet.
    * No `CREATE_NO_WINDOW`.
    * Code signing and MSVC builds are not set up.
-5. **Security.** PDFium's CVE history and advisories were not checked
-   from here. A helper process limits the damage, it does not prevent it.
+5. **Security.** PDFium has a steady record of memory-safety CVEs
+   reachable from a crafted PDF (several in 2026; `open-questions.md` §3).
+   A helper process limits the damage, it does not prevent it; a
+   least-privilege sandbox and an update policy would be needed.
 6. **Operational cost.** There are two more binaries to ship, sign and
    update (8 MB). The PDF is copied to a temporary file.
 

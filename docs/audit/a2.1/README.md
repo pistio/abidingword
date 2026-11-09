@@ -10,6 +10,7 @@ evaluation. The report is `docs/recognition-a2.1-pdfium.md`.
 | `measurements.md` | Per document, grouped as asked (G05, Hebrew, Korean, Greek, multi-column) and all 57: text coverage, reading order, verified, wrong, not in edition, time and peak memory for both paths and the helper alone |
 | `glyph-fidelity.md` | The seven differences between PDFium's text page and the glyphs the layout needs, found by glyph-by-glyph comparison, and what remains (word spacing) |
 | `isolation-packaging-licensing.md` | Helper process, watchdog, memory cap, tests; Windows cross-build; licences; offline operation |
+| `open-questions.md` | Before any further integration: word spacing (`Tw`), the Windows sandbox requirements (Job Object, `CREATE_NO_WINDOW`, least privilege, signing), the security review |
 | `data/fidelity.json` | Scores per document and engine (`a21_measure.py`) |
 | `data/recognition.json` | Verified, wrong and not-in-edition verses per document and engine (harness) |
 | `data/clean-timing.json` | Wall time, CPU time and peak memory per reading (`a21_clean_timing.py`) |
