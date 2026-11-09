@@ -1,0 +1,179 @@
+# Owner-approved, isolated one-off Windows owner acceptance. Push event restricted to this workflow path.
+# Acceptance artifacts only. No updater, signing, release or deployment.
+name: Windows combined owner acceptance I35 I42 2026-11-09
+
+on:
+  push:
+    branches:
+      - build/abidingword-i35-i42-20261109
+    paths:
+      - .github/workflows/windows-combined-owner-20261109.yml
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    if: ${{ github.event_name == 'push' && github.repository == 'pistio/abidingword' && github.ref == 'refs/heads/build/abidingword-i35-i42-20261109' }}
+    runs-on: windows-2025
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      EXPECTED_SOURCE_SHA: 6ffed07de160b5168faf740cd4e1642ec5c29cf2
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
+    steps:
+      - name: Reject unpinned source selection
+        run: |
+          if ($env:EXPECTED_SOURCE_SHA -cne '6ffed07de160b5168faf740cd4e1642ec5c29cf2') {
+            throw 'Only the pinned owner-correction schema-27 review source may be built by this workflow.'
+          }
+      - name: Preserve historical SQL bytes on Windows checkout
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: 6ffed07de160b5168faf740cd4e1642ec5c29cf2
+          persist-credentials: false
+          path: app
+      - name: Check out reviewed packaging tools from this workflow revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: packaging
+          persist-credentials: false
+          sparse-checkout: scripts/windows
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.22.1
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: 1.99.1
+      - name: Verify exact source and historical migrations before compilation
+        working-directory: app
+        run: |
+          node scripts/build-provenance.mjs --expected-sha "$env:EXPECTED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/build-provenance.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Source provenance failed.' }
+          @'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { join } from 'node:path';
+          const proof = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'build-provenance.json'), 'utf8'));
+          const digest = createHash('sha256').update(JSON.stringify(proof.migrations)).digest('hex');
+          // Pins every historical name, version, filename and SQL hash to the approved source.
+          if (digest !== 'acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13') {
+            throw new Error('Historical migration catalogue differs from the approved schema-27 source');
+          }
+          const files = readdirSync('src-tauri/migrations').filter(f => f.endsWith('.sql')).sort();
+          if (JSON.stringify(files) !== JSON.stringify(proof.migrations.map(m => m.file).sort())) {
+            throw new Error('Migration directory contains missing or unregistered SQL files');
+          }
+          const config = JSON.parse(readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+          if (config.plugins?.updater || config.bundle?.createUpdaterArtifacts) {
+            throw new Error('Acceptance builds must not configure the updater');
+          }
+          console.log(`Approved historical catalogue SHA-256: ${digest}`);
+          '@ | node --input-type=module
+          if ($LASTEXITCODE -ne 0) { throw 'Historical catalogue/configuration verification failed.' }
+      - name: Record build environment
+        env:
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          @(
+            "Source SHA: $env:EXPECTED_SOURCE_SHA"
+            "Workflow SHA: $env:WORKFLOW_SHA"
+            "Run: $env:RUN_ID attempt $env:RUN_ATTEMPT"
+            "Runner: $env:RUNNER_OS $env:RUNNER_ARCH"
+            "Windows image: $env:ImageOS $env:ImageVersion"
+            "Node: $(node --version)"
+            "npm: $(npm --version)"
+            "Rust: $(rustc --version)"
+            "Cargo: $(cargo --version)"
+          ) | Set-Content "$env:RUNNER_TEMP/build-environment.txt"
+      - name: Install pinned frontend and Tauri CLI dependencies
+        working-directory: app
+        run: npm ci
+      - name: Restore hash-verified NSIS download archives
+        id: nsis-cache
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ runner.temp }}/nsis-archives
+          key: Windows-x64-tauri-2.12.0-nsis-${{ hashFiles('packaging/scripts/windows/nsis-toolchain.json') }}
+      - name: Acquire and validate NSIS dependencies before application compilation
+        id: nsis-preflight
+        timeout-minutes: 6
+        run: |
+          & "$env:GITHUB_WORKSPACE/packaging/scripts/windows/Prepare-Nsis.ps1" -CacheDirectory "$env:RUNNER_TEMP/nsis-archives" -EvidenceDirectory "$env:RUNNER_TEMP/packaging-evidence"
+      - name: Prove pinned Tauri uses cached NSIS without GitHub tool downloads
+        id: nsis-probe
+        timeout-minutes: 2
+        run: |
+          & "$env:GITHUB_WORKSPACE/packaging/scripts/windows/Test-NsisCache.ps1" -AppDirectory "$env:GITHUB_WORKSPACE/app" -EvidenceDirectory "$env:RUNNER_TEMP/packaging-evidence"
+      - name: Save verified archives for subsequent explicitly approved builds
+        if: steps.nsis-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ runner.temp }}/nsis-archives
+          key: Windows-x64-tauri-2.12.0-nsis-${{ hashFiles('packaging/scripts/windows/nsis-toolchain.json') }}
+      - name: Compile unsigned application without packaging
+        id: compile
+        working-directory: app
+        run: |
+          New-Item -ItemType Directory -Force "$env:RUNNER_TEMP/packaging-evidence" | Out-Null
+          npx tauri build --no-bundle --no-sign --ci -- --locked 2>&1 | Tee-Object "$env:RUNNER_TEMP/packaging-evidence/application-build.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Application compilation failed. No installer was produced.' }
+      - name: Preserve diagnostic executable and configured resources
+        id: diagnostic
+        if: always() && steps.compile.outcome != 'skipped'
+        run: |
+          & "$env:GITHUB_WORKSPACE/packaging/scripts/windows/Save-DiagnosticExecutable.ps1" -AppDirectory "$env:GITHUB_WORKSPACE/app" -Destination "$env:RUNNER_TEMP/diagnostic-executable"
+      - name: Upload diagnostic compilation output (not a portable application)
+        if: always() && steps.diagnostic.outputs.available == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-diagnostic-only-not-portable-6ffed07de160b5168faf740cd4e1642ec5c29cf2
+          path: ${{ runner.temp }}/diagnostic-executable/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Package existing unsigned executable with cached NSIS
+        if: success() && steps.compile.outcome == 'success' && steps.nsis-probe.outcome == 'success'
+        working-directory: app
+        env:
+          TAURI_BUNDLER_TOOLS_GITHUB_MIRROR_TEMPLATE: https://127.0.0.1:9/<owner>/<repo>/<version>/<asset>
+        run: |
+          . "$env:GITHUB_WORKSPACE/packaging/scripts/windows/Prepare-Nsis.ps1" -LibraryOnly
+          Assert-NsisCache (Join-Path ([Environment]::GetFolderPath('LocalApplicationData')) 'tauri/NSIS')
+          npx tauri bundle --bundles nsis --no-sign --ci 2>&1 | Tee-Object "$env:RUNNER_TEMP/packaging-evidence/application-bundle.log"
+          if ($LASTEXITCODE -ne 0) { throw 'Installer packaging failed. Diagnostic compilation output is preserved; it is NOT a portable application.' }
+      - name: Stage installer and checksum
+        run: |
+          $installers = @(Get-ChildItem 'app/src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
+          if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) { throw 'Expected exactly one nonempty NSIS installer.' }
+          New-Item -ItemType Directory -Path staged | Out-Null
+          $name = "Abiding-Word-owner-corrections-schema27-$env:EXPECTED_SOURCE_SHA-x64-setup.exe"
+          Copy-Item -LiteralPath $installers[0].FullName -Destination "staged/$name"
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "staged/$name").Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content "$env:RUNNER_TEMP/installer-sha256.txt"
+      - name: Upload acceptance installer
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-owner-corrections-schema27-6ffed07de160b5168faf740cd4e1642ec5c29cf2-Windows-x64
+          path: staged/*.exe
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload provenance and failure evidence even if preflight or packaging fails
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-packaging-evidence-6ffed07de160b5168faf740cd4e1642ec5c29cf2-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/build-provenance.json
+            ${{ runner.temp }}/build-environment.txt
+            ${{ runner.temp }}/installer-sha256.txt
+            ${{ runner.temp }}/packaging-evidence/*.json
+            ${{ runner.temp }}/packaging-evidence/*.log
+            ${{ runner.temp }}/diagnostic-executable/manifest.json
+          if-no-files-found: error
+          retention-days: 14
