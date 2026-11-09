@@ -9,7 +9,7 @@ $exe = Join-Path $release 'abiding-word.exe'
 $missing = [Collections.Generic.List[string]]::new()
 @'
 DIAGNOSTIC COMPILATION OUTPUT — NOT AN INSTALLER, NOT VALIDATED AS PORTABLE
-Source: 571b8fc0633b6909b6532e1c6b254e2dbb357f45; schema 27.
+Source: 6ffed07de160b5168faf740cd4e1642ec5c29cf2; schema 27.
 Unsigned application executable, target-adjacent DLLs and every configured Tauri
 resource are preserved for diagnosis if packaging fails. This is not a release.
 Windows launch, resource resolution, WebView2/VC++ runtime prerequisites and profile
@@ -35,6 +35,6 @@ foreach ($resource in $config.bundle.resources.PSObject.Properties) {
 $files = @(Get-ChildItem -LiteralPath $Destination -Recurse -File | ForEach-Object {
   @{path=[IO.Path]::GetRelativePath($Destination,$_.FullName);bytes=$_.Length;sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}
 })
-@{source='571b8fc0633b6909b6532e1c6b254e2dbb357f45';schema=27;classification='diagnostic-only-not-portable';complete=($missing.Count -eq 0);missing=@($missing);files=$files} |
+@{source='6ffed07de160b5168faf740cd4e1642ec5c29cf2';schema=27;classification='diagnostic-only-not-portable';complete=($missing.Count -eq 0);missing=@($missing);files=$files} |
   ConvertTo-Json -Depth 8 | Set-Content (Join-Path $Destination 'manifest.json')
 if ($env:GITHUB_OUTPUT) { "available=$((Test-Path -LiteralPath $exe).ToString().ToLowerInvariant())" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8 }
