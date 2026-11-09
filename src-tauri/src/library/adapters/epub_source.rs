@@ -134,19 +134,138 @@ pub struct Entry {
     pub path: String,
     /// SHA-256 of the entry's bytes, as stored in the archive.
     pub sha256: String,
-    /// The entry exactly as stored (its bytes as UTF-8).
-    pub source: String,
+    /// The entry's length in bytes, as stored. (The bytes themselves are
+    /// not kept, Phase A1.2: every byte range points into the stored entry,
+    /// identified by `sha256`.)
+    pub source_len: usize,
     /// The visible text in document order, entities decoded, white space as
     /// written. Text inside `head`, `script` and `style` is not included.
     pub text: Vec<char>,
-    /// For each character of `text`, the bytes of `source` it comes from.
-    pub bytes: Vec<(u32, u32)>,
+    /// For each character of `text`, the bytes of `source` it comes from
+    /// (`byte_range`), kept as a start and a length (Phase A1.2).
+    bytes: ByteRanges,
     pub elements: Vec<Element>,
     /// Element by id (the first element with that id).
     pub ids: HashMap<String, usize>,
 }
 
+/// A value for every character of an entry, kept as runs of equal values
+/// (Phase A1.2): a link's mark or a text node's innermost element is the
+/// same over many characters. `get` gives exactly what the dense table
+/// it was made from holds at that position.
+#[derive(Debug, Clone, Default)]
+pub struct Runs {
+    starts: Vec<u32>,
+    values: Vec<u32>,
+    len: usize,
+}
+
+impl Runs {
+    pub fn from_dense(dense: &[u32]) -> Self {
+        let mut runs = Runs {
+            len: dense.len(),
+            ..Default::default()
+        };
+        for (i, &v) in dense.iter().enumerate() {
+            if runs.values.last() != Some(&v) {
+                runs.starts.push(i as u32);
+                runs.values.push(v);
+            }
+        }
+        runs.starts.shrink_to_fit();
+        runs.values.shrink_to_fit();
+        runs
+    }
+
+    /// The value at position `at` (`at` < the table's length).
+    pub fn get(&self, at: usize) -> u32 {
+        debug_assert!(at < self.len);
+        let run = self.starts.partition_point(|&s| s as usize <= at);
+        self.values[run - 1]
+    }
+
+    pub fn len(&self) -> usize {
+        self.len
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+}
+
+/// Byte ranges of an entry's characters (Phase A1.2). Inside a text node
+/// each character's bytes follow the one before's, so most ranges need not
+/// be stored: an anchor (the character's index and first byte) starts a run
+/// where that does not hold, after every exception and every 64 characters,
+/// and a character's range is its anchor's byte plus the UTF-8 lengths of
+/// the characters since. A range that is not its character's own UTF-8
+/// bytes (an entity, `&amp;`; a line break, `<br/>`) is an exception, kept
+/// as it is. `get` gives exactly the range pushed.
+#[derive(Debug, Clone, Default)]
+pub struct ByteRanges {
+    /// (character index, its first byte), in order.
+    anchors: Vec<(u32, u32)>,
+    /// (character index, first byte, end byte), in order.
+    exceptions: Vec<(u32, u32, u32)>,
+    len: usize,
+    /// While pushing: the end of the last character, if it was in a run.
+    run_end: Option<u32>,
+    last_anchor: usize,
+}
+
+impl ByteRanges {
+    fn push(&mut self, start: u32, end: u32, c: char) {
+        let index = self.len;
+        self.len += 1;
+        if end != start + c.len_utf8() as u32 {
+            self.exceptions.push((index as u32, start, end));
+            self.run_end = None;
+            return;
+        }
+        let continues = self.run_end == Some(start) && index - self.last_anchor < 64;
+        if !continues {
+            self.anchors.push((index as u32, start));
+            self.last_anchor = index;
+        }
+        self.run_end = Some(end);
+    }
+
+    /// The range of character `i`, given the entry's text.
+    fn get(&self, i: usize, text: &[char]) -> (u32, u32) {
+        if let Ok(k) = self.exceptions.binary_search_by_key(&(i as u32), |e| e.0) {
+            let (_, start, end) = self.exceptions[k];
+            return (start, end);
+        }
+        let a = self.anchors.partition_point(|&(at, _)| at as usize <= i) - 1;
+        let (at, byte) = self.anchors[a];
+        let start = byte
+            + text[at as usize..i]
+                .iter()
+                .map(|c| c.len_utf8() as u32)
+                .sum::<u32>();
+        (start, start + text[i].len_utf8() as u32)
+    }
+
+    fn len(&self) -> usize {
+        self.len
+    }
+
+    fn shrink_to_fit(&mut self) {
+        self.anchors.shrink_to_fit();
+        self.exceptions.shrink_to_fit();
+    }
+}
+
 impl Entry {
+    /// The bytes of `source` the character `i` of `text` comes from.
+    pub fn byte_range(&self, i: usize) -> (u32, u32) {
+        self.bytes.get(i, &self.text)
+    }
+
+    /// The number of characters with byte ranges (as `text`).
+    pub fn byte_ranges(&self) -> usize {
+        self.bytes.len()
+    }
     /// The decoded text of a range of characters.
     pub fn slice(&self, from: usize, to: usize) -> String {
         self.text[from.min(self.text.len())..to.min(self.text.len())]
@@ -156,7 +275,7 @@ impl Entry {
 
     /// For each character of `text`, the innermost element that holds it
     /// (`NO_ELEMENT` when none does).
-    pub fn owners(&self) -> Vec<u32> {
+    pub fn owners(&self) -> Runs {
         let mut out = vec![NO_ELEMENT; self.text.len()];
         // Elements are in document order, parents before their children, so
         // a child's range overwrites its parent's.
@@ -166,7 +285,7 @@ impl Entry {
                 out[e.text_start..end].fill(i as u32);
             }
         }
-        out
+        Runs::from_dense(&out)
     }
 
     /// `element` and its ancestors up to and including the nearest block.
@@ -276,7 +395,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
         .map(|b| format!("{b:02x}"))
         .collect();
     let mut text = Vec::new();
-    let mut bytes = Vec::new();
+    let mut bytes = ByteRanges::default();
     let mut elements: Vec<Element> = Vec::new();
     let mut ids = HashMap::new();
     let mut stack: Vec<usize> = Vec::new();
@@ -318,7 +437,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 if is_br && !hidden {
                     // A line break is white space between words.
                     text.push('\n');
-                    bytes.push((at as u32, end as u32));
+                    bytes.push(at as u32, end as u32, '\n');
                 }
             }
             Ok(Event::End(e)) => {
@@ -341,7 +460,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 for c in raw.chars() {
                     let len = c.len_utf8();
                     text.push(c);
-                    bytes.push((offset as u32, (offset + len) as u32));
+                    bytes.push(offset as u32, (offset + len) as u32, c);
                     offset += len;
                 }
             }
@@ -352,7 +471,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 for c in raw.chars() {
                     let len = c.len_utf8();
                     text.push(c);
-                    bytes.push((offset as u32, (offset + len) as u32));
+                    bytes.push(offset as u32, (offset + len) as u32, c);
                     offset += len;
                 }
             }
@@ -360,7 +479,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 let name: &str = &r;
                 for c in unescape(&format!("&{name};")).chars() {
                     text.push(c);
-                    bytes.push((at as u32, end as u32));
+                    bytes.push(at as u32, end as u32, c);
                 }
             }
             Ok(Event::Eof) | Err(_) => break,
@@ -372,10 +491,19 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
         elements[index].text_end = text.len();
         elements[index].byte_end = source.len();
     }
+    // A whole book's entries are held at once: no growth slack (Phase A1.2).
+    text.shrink_to_fit();
+    bytes.shrink_to_fit();
+    elements.shrink_to_fit();
+    for e in &mut elements {
+        e.classes.shrink_to_fit();
+        e.semantics.shrink_to_fit();
+    }
+    ids.shrink_to_fit();
     Entry {
         path,
         sha256,
-        source,
+        source_len: source.len(),
         text,
         bytes,
         elements,
@@ -797,4 +925,88 @@ pub fn note_count(book: &SourceBook) -> usize {
                 .count()
         })
         .sum()
+}
+
+#[cfg(test)]
+mod compact_tests {
+    use super::*;
+
+    #[test]
+    fn runs_give_exactly_the_dense_table() {
+        // Runs of every length, a value repeated after another, the last
+        // position, and the empty table.
+        let mut dense = Vec::new();
+        let mut seed = 7u32;
+        for _ in 0..5000 {
+            seed = seed.wrapping_mul(1_103_515_245).wrapping_add(12_345);
+            let value = if seed % 5 == 0 {
+                NO_ELEMENT
+            } else {
+                (seed >> 8) % 7
+            };
+            for _ in 0..(seed >> 16) % 9 {
+                dense.push(value);
+            }
+        }
+        let runs = Runs::from_dense(&dense);
+        assert_eq!(runs.len(), dense.len());
+        for (at, &v) in dense.iter().enumerate() {
+            assert_eq!(runs.get(at), v, "position {at}");
+        }
+        assert!(Runs::from_dense(&[]).is_empty());
+    }
+
+    #[test]
+    fn byte_ranges_give_exactly_every_range_pushed() {
+        // Runs of ASCII and of longer characters, ranges with tags between
+        // them, entities (one range for one character, and one range for
+        // several), a line break's tag, and runs longer than an anchor's.
+        let mut text = Vec::new();
+        let mut ranges = Vec::new();
+        let mut b = ByteRanges::default();
+        let mut push =
+            |c: char, s: u32, e: u32, text: &mut Vec<char>, ranges: &mut Vec<(u32, u32)>| {
+                text.push(c);
+                ranges.push((s, e));
+                b.push(s, e, c);
+            };
+        let mut at = 0u32;
+        for (n, word) in [
+            "Naomi",
+            "ʼĕlōhîm",
+            "בְּרֵאשִׁית",
+            "and",
+            "x".repeat(200).as_str(),
+        ]
+        .iter()
+        .enumerate()
+        {
+            for c in word.chars() {
+                let len = c.len_utf8() as u32;
+                push(c, at, at + len, &mut text, &mut ranges);
+                at += len;
+            }
+            match n % 3 {
+                0 => at += 7, // a tag between
+                1 => {
+                    push('&', at, at + 5, &mut text, &mut ranges); // "&amp;"
+                    at += 5;
+                }
+                _ => {
+                    for c in ['—', ' '] {
+                        push(c, at, at + 7, &mut text, &mut ranges); // one entity, two characters
+                    }
+                    at += 7;
+                    push('\n', at, at + 5, &mut text, &mut ranges); // "<br/>"
+                    at += 5;
+                }
+            }
+        }
+        b.shrink_to_fit();
+        assert_eq!(b.len(), ranges.len());
+        for (i, &r) in ranges.iter().enumerate() {
+            assert_eq!(b.get(i, &text), r, "character {i} {:?}", text[i]);
+        }
+        assert!(b.anchors.len() < ranges.len() / 4);
+    }
 }

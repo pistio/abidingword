@@ -137,43 +137,163 @@ pub struct VerseProvenance {
 
 /// What every character of an entry is, for tracing: part of a link with a
 /// role, or plain.
+///
+/// Kept small (Phase A1.2): it exists for every character of a book at
+/// once. A link mark is a `u32` (the role in the top bits, the element
+/// below), kept as runs; the removal marks are allocated only for an entry
+/// that has a removal; positions are `u32`.
 pub struct EntryMarks<'a> {
     pub entry: &'a Entry,
-    /// For each character: the role and element of the link it is in, if any.
-    pub link: Vec<Option<(LinkRole, usize)>>,
+    /// For each character: the role and element of the link it is in, if
+    /// any (`link_at`), as runs.
+    link: crate::library::adapters::epub_source::Runs,
     /// For each character: the element it was removed with, when the
     /// recogniser reported setting that whole element apart and the
-    /// document grounds it (Phase A1.1, `mark_removed`).
-    pub removed: Vec<Option<usize>>,
-    /// Positions of the non-white-space characters, in order.
-    nonspace: Vec<usize>,
+    /// document grounds it (Phase A1.1, `mark_removed`, `removed_at`).
+    /// Empty until the entry's first removal.
+    removed: Vec<u32>,
+    /// Positions of the non-white-space characters, in order (`NonSpace`).
+    nonspace: NonSpace,
+}
+
+/// The positions of an entry's non-white-space characters (Phase A1.2): a
+/// bit for every character, the count before each 64 of them, and where
+/// every 64th non-space character stands. `rank(at)` is how many stand
+/// before `at` and `select(k)` where the `k`-th stands, exactly as a list
+/// of the positions would give them, at a bit or so a character.
+struct NonSpace {
+    bits: Vec<u64>,
+    /// Non-space characters before each word of `bits`.
+    before: Vec<u32>,
+    /// Where the 0th, 64th, 128th … non-space character stands.
+    samples: Vec<u32>,
+    total: usize,
+    len: usize,
+}
+
+impl NonSpace {
+    fn new(text: &[char]) -> Self {
+        let words = text.len().div_ceil(64);
+        let mut bits = vec![0u64; words];
+        let mut samples = Vec::new();
+        let mut total = 0usize;
+        for (i, c) in text.iter().enumerate() {
+            if !c.is_whitespace() {
+                if total % 64 == 0 {
+                    samples.push(i as u32);
+                }
+                bits[i / 64] |= 1 << (i % 64);
+                total += 1;
+            }
+        }
+        let mut before = Vec::with_capacity(words);
+        let mut count = 0u32;
+        for w in &bits {
+            before.push(count);
+            count += w.count_ones();
+        }
+        NonSpace {
+            bits,
+            before,
+            samples,
+            total,
+            len: text.len(),
+        }
+    }
+
+    /// How many non-space characters stand before character `at`.
+    fn rank(&self, at: usize) -> usize {
+        if at >= self.len {
+            return self.total;
+        }
+        let w = at / 64;
+        let below = self.bits[w] & ((1u64 << (at % 64)) - 1);
+        self.before[w] as usize + below.count_ones() as usize
+    }
+
+    /// Where the `k`-th non-space character stands (`k` < `total`).
+    fn select(&self, k: usize) -> usize {
+        assert!(k < self.total, "non-space character {k} of {}", self.total);
+        let from = self.samples[k / 64] as usize;
+        let mut left = k % 64;
+        let mut w = from / 64;
+        let mut word = self.bits[w] & !((1u64 << (from % 64)) - 1);
+        loop {
+            let ones = word.count_ones() as usize;
+            if left < ones {
+                for _ in 0..left {
+                    word &= word - 1;
+                }
+                return w * 64 + word.trailing_zeros() as usize;
+            }
+            left -= ones;
+            w += 1;
+            word = self.bits[w];
+        }
+    }
+}
+
+const NO_MARK: u32 = u32::MAX;
+const ROLE_SHIFT: u32 = 29;
+const ELEMENT_MASK: u32 = (1 << ROLE_SHIFT) - 1;
+
+fn role_code(role: LinkRole) -> u32 {
+    match role {
+        LinkRole::NoteCaller => 0,
+        LinkRole::Navigation => 1,
+        LinkRole::Conflict => 2,
+        LinkRole::Ambiguous => 3,
+    }
+}
+
+fn role_of(code: u32) -> LinkRole {
+    match code {
+        0 => LinkRole::NoteCaller,
+        1 => LinkRole::Navigation,
+        2 => LinkRole::Conflict,
+        _ => LinkRole::Ambiguous,
+    }
 }
 
 impl<'a> EntryMarks<'a> {
     pub fn new(entry: &'a Entry, links: &[(LinkRole, usize)]) -> Self {
-        let mut link = vec![None; entry.text.len()];
+        assert!(
+            entry.text.len() < NO_MARK as usize && entry.elements.len() <= ELEMENT_MASK as usize,
+            "entry too large for its marks"
+        );
+        let mut link = vec![NO_MARK; entry.text.len()];
         for &(role, element) in links {
             let e = &entry.elements[element];
+            let mark = (role_code(role) << ROLE_SHIFT) | element as u32;
             for slot in link
                 .iter_mut()
                 .take(e.text_end.min(entry.text.len()))
                 .skip(e.text_start)
             {
-                *slot = Some((role, element));
+                *slot = mark;
             }
         }
-        let nonspace = entry
-            .text
-            .iter()
-            .enumerate()
-            .filter(|(_, c)| !c.is_whitespace())
-            .map(|(i, _)| i)
-            .collect();
+        let nonspace = NonSpace::new(&entry.text);
+        let link = crate::library::adapters::epub_source::Runs::from_dense(&link);
         Self {
             entry,
             link,
-            removed: vec![None; entry.text.len()],
+            removed: Vec::new(),
             nonspace,
+        }
+    }
+
+    /// The role and element of the link the character at `at` is in.
+    pub fn link_at(&self, at: usize) -> Option<(LinkRole, usize)> {
+        let mark = self.link.get(at);
+        (mark != NO_MARK).then(|| (role_of(mark >> ROLE_SHIFT), (mark & ELEMENT_MASK) as usize))
+    }
+
+    /// The element the character at `at` was removed with.
+    pub fn removed_at(&self, at: usize) -> Option<usize> {
+        match self.removed.get(at) {
+            Some(&e) if e != NO_MARK => Some(e as usize),
+            _ => None,
         }
     }
 
@@ -181,42 +301,45 @@ impl<'a> EntryMarks<'a> {
     /// characters are excluded from any verse and reported as
     /// `ExcludedKind::Apparatus` ranges with the element's bytes.
     pub fn mark_removed(&mut self, element: usize) {
+        if self.removed.is_empty() {
+            self.removed = vec![NO_MARK; self.entry.text.len()];
+        }
         let e = &self.entry.elements[element];
         let end = e.text_end.min(self.removed.len());
         for slot in self.removed.iter_mut().take(end).skip(e.text_start) {
-            *slot = Some(element);
+            *slot = element as u32;
         }
     }
 
     /// Index in `nonspace` of the first non-space character at or after the
     /// character `at`.
     pub fn nonspace_at(&self, at: usize) -> usize {
-        self.nonspace.partition_point(|&i| i < at)
+        self.nonspace.rank(at)
     }
 
     pub fn nonspace_len(&self) -> usize {
-        self.nonspace.len()
+        self.nonspace.total
     }
 
     pub fn char_of(&self, k: usize) -> usize {
-        self.nonspace[k]
+        self.nonspace.select(k)
     }
 
     /// Why the character at `at` is never part of a verse, if it is not.
     pub fn excluded_kind(&self, at: usize) -> Option<ExcludedKind> {
-        match self.link[at] {
+        match self.link_at(at) {
             Some((LinkRole::NoteCaller, _)) => Some(ExcludedKind::NoteCaller),
             Some((LinkRole::Conflict, _)) => Some(ExcludedKind::ConflictingCaller),
-            _ => self.removed[at].map(|_| ExcludedKind::Apparatus),
+            _ => self.removed_at(at).map(|_| ExcludedKind::Apparatus),
         }
     }
 
     /// The element an excluded character belongs to (its link, or the
     /// element removed with it).
     fn excluded_element(&self, at: usize) -> Option<usize> {
-        match self.link[at] {
+        match self.link_at(at) {
             Some((LinkRole::NoteCaller | LinkRole::Conflict, e)) => Some(e),
-            _ => self.removed[at],
+            _ => self.removed_at(at),
         }
     }
 }
@@ -229,9 +352,11 @@ impl<'a> EntryMarks<'a> {
 pub fn locate_segments(marks: &EntryMarks, segments: &[&str]) -> Vec<Option<(usize, usize)>> {
     let mut out = Vec::with_capacity(segments.len());
     let stream: Vec<char> = marks
-        .nonspace
+        .entry
+        .text
         .iter()
-        .map(|&i| marks.entry.text[i])
+        .copied()
+        .filter(|c| !c.is_whitespace())
         .collect();
     let mut cursor = 0usize;
     for segment in segments {
@@ -287,10 +412,10 @@ pub fn trace(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<T
     if wanted.is_empty() {
         return None;
     }
-    let to = to.min(marks.nonspace.len());
+    let to = to.min(marks.nonspace_len());
     let mut start = from;
     while start < to {
-        let at = marks.nonspace[start];
+        let at = marks.char_of(start);
         if marks.entry.text[at] == wanted[0] && marks.excluded_kind(at).is_none() {
             if let Some(t) = attempt(marks, &wanted, start, to) {
                 return Some(t);
@@ -312,9 +437,9 @@ pub fn find_opening(marks: &EntryMarks, text: &str, from: usize, to: usize) -> O
         return None;
     }
     let wanted = &wanted[..wanted.len().min(OPENING)];
-    let to = to.min(marks.nonspace.len());
+    let to = to.min(marks.nonspace_len());
     (from..to).find(|&start| {
-        let at = marks.nonspace[start];
+        let at = marks.char_of(start);
         marks.entry.text[at] == wanted[0]
             && marks.excluded_kind(at).is_none()
             && attempt(marks, wanted, start, to).is_some()
@@ -337,7 +462,7 @@ fn attempt(marks: &EntryMarks, wanted: &[char], start: usize, to: usize) -> Opti
         if k >= to {
             return None;
         }
-        let at = marks.nonspace[k];
+        let at = marks.char_of(k);
         let c = marks.entry.text[at];
         if let Some(kind) = marks.excluded_kind(at) {
             excluded.push((at, kind));
@@ -446,8 +571,8 @@ fn range(entry: &Entry, start: usize, end: usize) -> SourceRange {
     SourceRange {
         char_start: start as u32,
         char_end: end as u32,
-        byte_start: entry.bytes[start].0,
-        byte_end: entry.bytes[end - 1].1,
+        byte_start: entry.byte_range(start).0,
+        byte_end: entry.byte_range(end - 1).1,
     }
 }
 
@@ -478,11 +603,49 @@ pub fn collapse(text: &str) -> String {
     text.split_whitespace().collect::<Vec<_>>().join(" ")
 }
 
-/// Reads back a span's exact original bytes from the entry (for audits:
-/// the bytes, not the decoded text).
-pub fn original_bytes<'b>(entry: &'b Entry, span: &SourceRange) -> &'b str {
-    entry
-        .source
+/// Reads back a span's exact original bytes from the entry as stored (for
+/// audits: the bytes, not the decoded text). `stored` is the entry's bytes
+/// from the archive; they must be the ones `entry.sha256` names.
+pub fn original_bytes<'b>(stored: &'b str, span: &SourceRange) -> &'b str {
+    stored
         .get(span.byte_start as usize..span.byte_end as usize)
         .unwrap_or("")
+}
+
+#[cfg(test)]
+mod nonspace_tests {
+    use super::NonSpace;
+
+    #[test]
+    fn rank_and_select_give_exactly_the_list_of_positions() {
+        // Long runs of white space (an XHTML file's indentation) and of
+        // letters, across many 64-character words, and the empty text.
+        let mut text = Vec::new();
+        let mut seed = 11u32;
+        for _ in 0..4000 {
+            seed = seed.wrapping_mul(1_103_515_245).wrapping_add(12_345);
+            let run = 1 + (seed >> 16) as usize % 150;
+            let c = if seed % 3 == 0 { ' ' } else { 'a' };
+            text.extend(std::iter::repeat_n(c, run));
+            if seed % 7 == 0 {
+                text.push('\n');
+            }
+        }
+        let list: Vec<usize> = text
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| !c.is_whitespace())
+            .map(|(i, _)| i)
+            .collect();
+        let n = NonSpace::new(&text);
+        assert_eq!(n.total, list.len());
+        for at in 0..=text.len() + 3 {
+            assert_eq!(n.rank(at), list.partition_point(|&i| i < at), "rank {at}");
+        }
+        for (k, &at) in list.iter().enumerate() {
+            assert_eq!(n.select(k), at, "select {k}");
+        }
+        let empty = NonSpace::new(&[]);
+        assert_eq!((empty.total, empty.rank(0)), (0, 0));
+    }
 }

@@ -306,6 +306,12 @@ struct EditionAudit {
     errors: Vec<String>,
     seconds: f64,
     peak_memory_mb: Option<f64>,
+    /// The reading alone (Phase A1.2): time and peak resident memory when
+    /// `stage_documents` returns, before this harness writes any report.
+    /// `seconds` and `peak_memory_mb` also cover writing the structural
+    /// provenance report, which holds the whole report as JSON at once.
+    read_seconds: f64,
+    read_peak_memory_mb: Option<f64>,
 }
 
 /// Why a chapter was refused, from the codes of the errors naming it.
@@ -450,15 +456,20 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     // (`scripture::structural`), with its provenance report written next to
     // the edition's report. Unset: the frozen reading, exactly as before.
     let structural = std::env::var("AW_PIPELINE").is_ok_and(|p| p == "structural");
+    let read_done = std::cell::Cell::new((0.0f64, None));
     let staged = if structural {
         abiding_word_lib::scripture::structural::stage_documents(&files, ImportOrigin::UserFiles)
             .map(|(staged, report)| {
+                read_done.set((started.elapsed().as_secs_f64(), peak_mb()));
                 write_structural(edition, &report);
                 staged
             })
     } else {
-        import::stage_documents(&files, ImportOrigin::UserFiles)
+        let staged = import::stage_documents(&files, ImportOrigin::UserFiles);
+        read_done.set((started.elapsed().as_secs_f64(), peak_mb()));
+        staged
     };
+    let (read_seconds, read_peak_memory_mb) = read_done.get();
     let staged = match staged {
         Ok(staged) => staged,
         Err(error) => {
@@ -799,6 +810,8 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         errors,
         seconds,
         peak_memory_mb,
+        read_seconds,
+        read_peak_memory_mb,
     })
 }
 
