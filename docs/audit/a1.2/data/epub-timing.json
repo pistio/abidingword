@@ -1,0 +1,482 @@
+[
+ {
+  "set": "g",
+  "edition": "G01",
+  "a1_1": {
+   "read_seconds": 14.947768053,
+   "read_peak_memory_mb": 483.19921875,
+   "seconds": 15.906139843,
+   "peak_memory_mb": 549.1328125,
+   "provenance_sha256": "ba5fca3b132bb72c4110e3e8d12fc085d57123cd70adcc7a04ad9ac09a122794",
+   "provenance_verses": 25062
+  },
+  "a1_2": {
+   "read_seconds": 13.973418142,
+   "read_peak_memory_mb": 248.47265625,
+   "seconds": 14.865469009,
+   "peak_memory_mb": 495.93359375,
+   "provenance_sha256": "ba5fca3b132bb72c4110e3e8d12fc085d57123cd70adcc7a04ad9ac09a122794",
+   "provenance_verses": 25062
+  }
+ },
+ {
+  "set": "g",
+  "edition": "G12",
+  "a1_1": {
+   "read_seconds": 3.104476938,
+   "read_peak_memory_mb": 72.46484375,
+   "seconds": 3.282291328,
+   "peak_memory_mb": 117.796875,
+   "provenance_sha256": "4ae788ec9b72932d60e2d9359f159819879b130d18ea0d6ed000565617486ee6",
+   "provenance_verses": 8400
+  },
+  "a1_2": {
+   "read_seconds": 3.049657151,
+   "read_peak_memory_mb": 40.80078125,
+   "seconds": 3.269611383,
+   "peak_memory_mb": 118.14453125,
+   "provenance_sha256": "4ae788ec9b72932d60e2d9359f159819879b130d18ea0d6ed000565617486ee6",
+   "provenance_verses": 8400
+  }
+ },
+ {
+  "set": "g",
+  "edition": "G14",
+  "a1_1": {
+   "read_seconds": 0.98795129,
+   "read_peak_memory_mb": 28.8046875,
+   "seconds": 1.000696159,
+   "peak_memory_mb": 28.8046875,
+   "provenance_sha256": "6a5d4c9a27355b4997d864cb39dc11504880147f68b4c7b41a5cba339cbf5cc0",
+   "provenance_verses": 773
+  },
+  "a1_2": {
+   "read_seconds": 0.880852064,
+   "read_peak_memory_mb": 20.22265625,
+   "seconds": 0.900552149,
+   "peak_memory_mb": 26.3671875,
+   "provenance_sha256": "6a5d4c9a27355b4997d864cb39dc11504880147f68b4c7b41a5cba339cbf5cc0",
+   "provenance_verses": 773
+  }
+ },
+ {
+  "set": "f",
+  "edition": "F04",
+  "a1_1": {
+   "read_seconds": 18.316702095,
+   "read_peak_memory_mb": 308.60546875,
+   "seconds": 19.104542462,
+   "peak_memory_mb": 410.00390625,
+   "provenance_sha256": "a4105efefb8610bdcde1c65b2792421acd20a1c5d6b32f3ba6a58201a2016a09",
+   "provenance_verses": 31140
+  },
+  "a1_2": {
+   "read_seconds": 17.953046546,
+   "read_peak_memory_mb": 139.83984375,
+   "seconds": 18.822492379,
+   "peak_memory_mb": 433.94921875,
+   "provenance_sha256": "a4105efefb8610bdcde1c65b2792421acd20a1c5d6b32f3ba6a58201a2016a09",
+   "provenance_verses": 31140
+  }
+ },
+ {
+  "set": "f",
+  "edition": "F10",
+  "a1_1": {
+   "read_seconds": 1.526335349,
+   "read_peak_memory_mb": 64.62890625,
+   "seconds": 1.633354148,
+   "peak_memory_mb": 76.81640625,
+   "provenance_sha256": "ee794b0244f3e8402f147418d95509d66fd639440e947d50c655eceffe6f0a44",
+   "provenance_verses": 4403
+  },
+  "a1_2": {
+   "read_seconds": 1.578755997,
+   "read_peak_memory_mb": 36.28125,
+   "seconds": 1.6942152369999999,
+   "peak_memory_mb": 76.89453125,
+   "provenance_sha256": "ee794b0244f3e8402f147418d95509d66fd639440e947d50c655eceffe6f0a44",
+   "provenance_verses": 4403
+  }
+ },
+ {
+  "set": "f",
+  "edition": "F12",
+  "a1_1": {
+   "read_seconds": 9.366252574,
+   "read_peak_memory_mb": 214.21484375,
+   "seconds": 9.405622209,
+   "peak_memory_mb": 214.21484375,
+   "provenance_sha256": "71e4765869528b0c1138cb9fc1949465a9d9bcc92ff8c4166d46ee4fee7a8175",
+   "provenance_verses": 2526
+  },
+  "a1_2": {
+   "read_seconds": 9.81233585,
+   "read_peak_memory_mb": 93.109375,
+   "seconds": 9.850705435,
+   "peak_memory_mb": 93.109375,
+   "provenance_sha256": "71e4765869528b0c1138cb9fc1949465a9d9bcc92ff8c4166d46ee4fee7a8175",
+   "provenance_verses": 2526
+  }
+ },
+ {
+  "set": "e",
+  "edition": "engwyc2017-epubapoc",
+  "a1_1": {
+   "read_seconds": 1.715914915,
+   "read_peak_memory_mb": 58.98046875,
+   "seconds": 1.717334074,
+   "peak_memory_mb": 58.98046875,
+   "provenance_sha256": "57935a03365809a6d10b267c2b19ff47d4484658df4882bd14edfdce320fff40",
+   "provenance_verses": 73
+  },
+  "a1_2": {
+   "read_seconds": 1.760193017,
+   "read_peak_memory_mb": 31.25,
+   "seconds": 1.761564157,
+   "peak_memory_mb": 31.25,
+   "provenance_sha256": "57935a03365809a6d10b267c2b19ff47d4484658df4882bd14edfdce320fff40",
+   "provenance_verses": 73
+  }
+ },
+ {
+  "set": "e",
+  "edition": "fra_fob-pandocepub",
+  "a1_1": {
+   "read_seconds": 4.126120919,
+   "read_peak_memory_mb": 91.9453125,
+   "seconds": 4.372073287,
+   "peak_memory_mb": 150.4140625,
+   "provenance_sha256": "7e568859013061aed1f76b8defb3d11a6cc38f47e4600963efded89f13d46733",
+   "provenance_verses": 10423
+  },
+  "a1_2": {
+   "read_seconds": 4.044383258,
+   "read_peak_memory_mb": 47.27734375,
+   "seconds": 4.320861015,
+   "peak_memory_mb": 150.41796875,
+   "provenance_sha256": "7e568859013061aed1f76b8defb3d11a6cc38f47e4600963efded89f13d46733",
+   "provenance_verses": 10423
+  }
+ },
+ {
+  "set": "recon",
+  "edition": "spapddpt-repub2",
+  "a1_1": {
+   "read_seconds": 14.932526681,
+   "read_peak_memory_mb": 263.20703125,
+   "seconds": 15.551749462,
+   "peak_memory_mb": 353.34375,
+   "provenance_sha256": "615804ad8fb414e24a3c6a1505358e62a51c3c138801815c656910e1b0601a01",
+   "provenance_verses": 24837
+  },
+  "a1_2": {
+   "read_seconds": 14.609872585,
+   "read_peak_memory_mb": 118.40625,
+   "seconds": 15.29534112,
+   "peak_memory_mb": 353.94921875,
+   "provenance_sha256": "615804ad8fb414e24a3c6a1505358e62a51c3c138801815c656910e1b0601a01",
+   "provenance_verses": 24837
+  }
+ },
+ {
+  "set": "bc",
+  "edition": "englsv-rpandocepub",
+  "a1_1": {
+   "read_seconds": 12.734352746,
+   "read_peak_memory_mb": 310.3828125,
+   "seconds": 13.300621105,
+   "peak_memory_mb": 405.328125,
+   "provenance_sha256": "fa3cefd675d825eb09d5c78e15d66688b0a464c9e948d1bacfb32f4df4bb5e56",
+   "provenance_verses": 31104
+  },
+  "a1_2": {
+   "read_seconds": 12.208956786,
+   "read_peak_memory_mb": 120.76171875,
+   "seconds": 12.995222064,
+   "peak_memory_mb": 427.37890625,
+   "provenance_sha256": "fa3cefd675d825eb09d5c78e15d66688b0a464c9e948d1bacfb32f4df4bb5e56",
+   "provenance_verses": 31104
+  }
+ },
+ {
+  "set": "bc",
+  "edition": "francl-rebooklibepub",
+  "a1_1": {
+   "read_seconds": 16.142213648,
+   "read_peak_memory_mb": 355.01171875,
+   "seconds": 16.497482198,
+   "peak_memory_mb": 355.01171875,
+   "provenance_sha256": "1e3891a8f772c73f6a7c7b84d90c5c19623a1ba2a99ea76d29b3227e81d77c26",
+   "provenance_verses": 15918
+  },
+  "a1_2": {
+   "read_seconds": 15.392131332,
+   "read_peak_memory_mb": 143.51953125,
+   "seconds": 15.899230551,
+   "peak_memory_mb": 265.9140625,
+   "provenance_sha256": "1e3891a8f772c73f6a7c7b84d90c5c19623a1ba2a99ea76d29b3227e81d77c26",
+   "provenance_verses": 15918
+  }
+ },
+ {
+  "set": "bc",
+  "edition": "frasbl-rpandocepub",
+  "a1_1": {
+   "read_seconds": 12.964973414,
+   "read_peak_memory_mb": 338.71875,
+   "seconds": 13.680456928,
+   "peak_memory_mb": 384.0390625,
+   "provenance_sha256": "a3cf9aad99412d2af1a5b573120130c06675a668f995f714868bbc2e8828a1cf",
+   "provenance_verses": 28331
+  },
+  "a1_2": {
+   "read_seconds": 12.60257239,
+   "read_peak_memory_mb": 133.62109375,
+   "seconds": 13.417531751,
+   "peak_memory_mb": 382.578125,
+   "provenance_sha256": "a3cf9aad99412d2af1a5b573120130c06675a668f995f714868bbc2e8828a1cf",
+   "provenance_verses": 28331
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "deu1912-epub",
+  "a1_1": {
+   "read_seconds": 21.093865686,
+   "read_peak_memory_mb": 279.0390625,
+   "seconds": 21.764622704,
+   "peak_memory_mb": 394.83203125,
+   "provenance_sha256": "9af619d683e34e3ea9134952f84da5666165ee1b1020b6e804989f2dcff887f6",
+   "provenance_verses": 31092
+  },
+  "a1_2": {
+   "read_seconds": 21.307521956,
+   "read_peak_memory_mb": 117.32421875,
+   "seconds": 22.10192024,
+   "peak_memory_mb": 416.65234375,
+   "provenance_sha256": "9af619d683e34e3ea9134952f84da5666165ee1b1020b6e804989f2dcff887f6",
+   "provenance_verses": 31092
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "engwebp-epub",
+  "a1_1": {
+   "read_seconds": 24.724441695,
+   "read_peak_memory_mb": 306.21484375,
+   "seconds": 25.544402449,
+   "peak_memory_mb": 412.078125,
+   "provenance_sha256": "e3d1718afc0689f43d8e259118b112f1017c526bbbf8060bbb8bbfa92542a5eb",
+   "provenance_verses": 31098
+  },
+  "a1_2": {
+   "read_seconds": 26.029179522,
+   "read_peak_memory_mb": 146.4453125,
+   "seconds": 26.837162889,
+   "peak_memory_mb": 417.3984375,
+   "provenance_sha256": "e3d1718afc0689f43d8e259118b112f1017c526bbbf8060bbb8bbfa92542a5eb",
+   "provenance_verses": 31098
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "fob-epub",
+  "a1_1": {
+   "read_seconds": 20.629193414,
+   "read_peak_memory_mb": 281.72265625,
+   "seconds": 21.261018402,
+   "peak_memory_mb": 399.88671875,
+   "provenance_sha256": "d888aa3cabcad3bb619fe68d6b603118e1abfd782388be13f71a88b1dc94c937",
+   "provenance_verses": 31107
+  },
+  "a1_2": {
+   "read_seconds": 20.798009868,
+   "read_peak_memory_mb": 118.01953125,
+   "seconds": 21.666723761,
+   "peak_memory_mb": 418.84375,
+   "provenance_sha256": "d888aa3cabcad3bb619fe68d6b603118e1abfd782388be13f71a88b1dc94c937",
+   "provenance_verses": 31107
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "fraLSG-epub",
+  "a1_1": {
+   "read_seconds": 32.768100449,
+   "read_peak_memory_mb": 378.7421875,
+   "seconds": 33.484972991,
+   "peak_memory_mb": 471.96875,
+   "provenance_sha256": "6dc2fc11ab2a5ade8b41904ff54e5adbf138fac7f4b04f8c784dde5c76847cb3",
+   "provenance_verses": 31170
+  },
+  "a1_2": {
+   "read_seconds": 34.429921584,
+   "read_peak_memory_mb": 179.8828125,
+   "seconds": 35.558606262,
+   "peak_memory_mb": 464.69140625,
+   "provenance_sha256": "6dc2fc11ab2a5ade8b41904ff54e5adbf138fac7f4b04f8c784dde5c76847cb3",
+   "provenance_verses": 31170
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "frajnd-epub",
+  "a1_1": {
+   "read_seconds": 21.165756226,
+   "read_peak_memory_mb": 341.34765625,
+   "seconds": 21.976946526,
+   "peak_memory_mb": 459.6015625,
+   "provenance_sha256": "22273dfa8ef1eb7aa314b05e31a596dc2560911409603b00c098ddae4833fdcd",
+   "provenance_verses": 30921
+  },
+  "a1_2": {
+   "read_seconds": 23.899866051,
+   "read_peak_memory_mb": 157.28515625,
+   "seconds": 24.858091559000002,
+   "peak_memory_mb": 454.19921875,
+   "provenance_sha256": "22273dfa8ef1eb7aa314b05e31a596dc2560911409603b00c098ddae4833fdcd",
+   "provenance_verses": 30921
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "grctr-epub",
+  "a1_1": {
+   "read_seconds": 5.373655763,
+   "read_peak_memory_mb": 84.03125,
+   "seconds": 5.547724201,
+   "peak_memory_mb": 130.4765625,
+   "provenance_sha256": "8da32bcd2d74eed597363d4ad0932e99868c81a7203de7ac8af7ab080e9c8f32",
+   "provenance_verses": 7957
+  },
+  "a1_2": {
+   "read_seconds": 5.748460304,
+   "read_peak_memory_mb": 48.4765625,
+   "seconds": 5.951584127,
+   "peak_memory_mb": 130.8046875,
+   "provenance_sha256": "8da32bcd2d74eed597363d4ad0932e99868c81a7203de7ac8af7ab080e9c8f32",
+   "provenance_verses": 7957
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "hboWLC-epub",
+  "a1_1": {
+   "read_seconds": 43.950958991,
+   "read_peak_memory_mb": 220.3125,
+   "seconds": 44.51869958,
+   "peak_memory_mb": 344.12109375,
+   "provenance_sha256": "bd86dc7ab5f54c48dc85df3cf6f1a1033949483a38c8edc65f51339b52243d31",
+   "provenance_verses": 23192
+  },
+  "a1_2": {
+   "read_seconds": 44.100574598,
+   "read_peak_memory_mb": 105.4296875,
+   "seconds": 44.787063825,
+   "peak_memory_mb": 344.70703125,
+   "provenance_sha256": "bd86dc7ab5f54c48dc85df3cf6f1a1033949483a38c8edc65f51339b52243d31",
+   "provenance_verses": 23192
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "kjv-epub",
+  "a1_1": {
+   "read_seconds": 22.145741324,
+   "read_peak_memory_mb": 345.9609375,
+   "seconds": 22.733043644,
+   "peak_memory_mb": 429.9375,
+   "provenance_sha256": "1908102fdcb6723f5744268d2b5eae068dd8243fb661d28c6c94e20083244dda",
+   "provenance_verses": 31102
+  },
+  "a1_2": {
+   "read_seconds": 24.322251231,
+   "read_peak_memory_mb": 157.59765625,
+   "seconds": 25.133609336,
+   "peak_memory_mb": 427.859375,
+   "provenance_sha256": "1908102fdcb6723f5744268d2b5eae068dd8243fb661d28c6c94e20083244dda",
+   "provenance_verses": 31102
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "kor-epub",
+  "a1_1": {
+   "read_seconds": 25.557941102,
+   "read_peak_memory_mb": 211.46875,
+   "seconds": 26.239424834,
+   "peak_memory_mb": 406.6484375,
+   "provenance_sha256": "992aeb5d4f0a917e4d06b1a037161cb241870bf8b846ac71616272e98e5a920e",
+   "provenance_verses": 30990
+  },
+  "a1_2": {
+   "read_seconds": 27.281986654,
+   "read_peak_memory_mb": 126.9921875,
+   "seconds": 28.101648465,
+   "peak_memory_mb": 404.72265625,
+   "provenance_sha256": "992aeb5d4f0a917e4d06b1a037161cb241870bf8b846ac71616272e98e5a920e",
+   "provenance_verses": 30990
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "latVUC-epub",
+  "a1_1": {
+   "read_seconds": 29.234691088,
+   "read_peak_memory_mb": 598.515625,
+   "seconds": 29.9742326,
+   "peak_memory_mb": 598.515625,
+   "provenance_sha256": "cbb85dc7e82b6868d107b8735a6c117e4c5c9931baf816aaf0424e10cde154ae",
+   "provenance_verses": 31228
+  },
+  "a1_2": {
+   "read_seconds": 30.772800169,
+   "read_peak_memory_mb": 219.41015625,
+   "seconds": 31.628878909,
+   "peak_memory_mb": 444.7109375,
+   "provenance_sha256": "cbb85dc7e82b6868d107b8735a6c117e4c5c9931baf816aaf0424e10cde154ae",
+   "provenance_verses": 31228
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "porbr2018-epub",
+  "a1_1": {
+   "read_seconds": 19.686774324,
+   "read_peak_memory_mb": 276.17578125,
+   "seconds": 20.46983775,
+   "peak_memory_mb": 406.34765625,
+   "provenance_sha256": "9d70705c066771dd3369003e0849f17d8c8ab22063722e970bdb3b9a142c4c63",
+   "provenance_verses": 31102
+  },
+  "a1_2": {
+   "read_seconds": 21.282011372,
+   "read_peak_memory_mb": 127.48828125,
+   "seconds": 22.095900264,
+   "peak_memory_mb": 428.3828125,
+   "provenance_sha256": "9d70705c066771dd3369003e0849f17d8c8ab22063722e970bdb3b9a142c4c63",
+   "provenance_verses": 31102
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "rv1909-epub",
+  "a1_1": {
+   "read_seconds": 18.964518564,
+   "read_peak_memory_mb": 265.26953125,
+   "seconds": 19.780923859,
+   "peak_memory_mb": 393.1796875,
+   "provenance_sha256": "05d4502c04a20607ff2f7e47e32176af1ef10f465dc2cf1a25fafd7826031585",
+   "provenance_verses": 31084
+  },
+  "a1_2": {
+   "read_seconds": 21.085642368,
+   "read_peak_memory_mb": 115.64453125,
+   "seconds": 21.868197496,
+   "peak_memory_mb": 392.85546875,
+   "provenance_sha256": "05d4502c04a20607ff2f7e47e32176af1ef10f465dc2cf1a25fafd7826031585",
+   "provenance_verses": 31084
+  }
+ }
+]
