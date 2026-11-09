@@ -193,55 +193,73 @@ impl Runs {
     }
 }
 
-/// Byte ranges of an entry's characters: a `u32` start and a `u8` length
-/// each, and the rare range longer than 255 bytes (a long `<br …/>` tag)
-/// apart. Five bytes a character instead of eight.
+/// Byte ranges of an entry's characters (Phase A1.2). Inside a text node
+/// each character's bytes follow the one before's, so most ranges need not
+/// be stored: an anchor (the character's index and first byte) starts a run
+/// where that does not hold, after every exception and every 64 characters,
+/// and a character's range is its anchor's byte plus the UTF-8 lengths of
+/// the characters since. A range that is not its character's own UTF-8
+/// bytes (an entity, `&amp;`; a line break, `<br/>`) is an exception, kept
+/// as it is. `get` gives exactly the range pushed.
 #[derive(Debug, Clone, Default)]
 pub struct ByteRanges {
-    starts: Vec<u32>,
-    lengths: Vec<u8>,
-    long: HashMap<u32, u32>,
+    /// (character index, its first byte), in order.
+    anchors: Vec<(u32, u32)>,
+    /// (character index, first byte, end byte), in order.
+    exceptions: Vec<(u32, u32, u32)>,
+    len: usize,
+    /// While pushing: the end of the last character, if it was in a run.
+    run_end: Option<u32>,
+    last_anchor: usize,
 }
 
 impl ByteRanges {
-    fn push(&mut self, start: u32, end: u32) {
-        let index = self.starts.len() as u32;
-        self.starts.push(start);
-        let length = end.saturating_sub(start);
-        if length > u32::from(u8::MAX) {
-            self.lengths.push(u8::MAX);
-            self.long.insert(index, end);
-        } else {
-            self.lengths.push(length as u8);
+    fn push(&mut self, start: u32, end: u32, c: char) {
+        let index = self.len;
+        self.len += 1;
+        if end != start + c.len_utf8() as u32 {
+            self.exceptions.push((index as u32, start, end));
+            self.run_end = None;
+            return;
         }
+        let continues = self.run_end == Some(start) && index - self.last_anchor < 64;
+        if !continues {
+            self.anchors.push((index as u32, start));
+            self.last_anchor = index;
+        }
+        self.run_end = Some(end);
     }
 
-    fn get(&self, i: usize) -> (u32, u32) {
-        let start = self.starts[i];
-        let length = self.lengths[i];
-        if length == u8::MAX {
-            if let Some(&end) = self.long.get(&(i as u32)) {
-                return (start, end);
-            }
+    /// The range of character `i`, given the entry's text.
+    fn get(&self, i: usize, text: &[char]) -> (u32, u32) {
+        if let Ok(k) = self.exceptions.binary_search_by_key(&(i as u32), |e| e.0) {
+            let (_, start, end) = self.exceptions[k];
+            return (start, end);
         }
-        (start, start + u32::from(length))
+        let a = self.anchors.partition_point(|&(at, _)| at as usize <= i) - 1;
+        let (at, byte) = self.anchors[a];
+        let start = byte
+            + text[at as usize..i]
+                .iter()
+                .map(|c| c.len_utf8() as u32)
+                .sum::<u32>();
+        (start, start + text[i].len_utf8() as u32)
     }
 
     fn len(&self) -> usize {
-        self.starts.len()
+        self.len
     }
 
     fn shrink_to_fit(&mut self) {
-        self.starts.shrink_to_fit();
-        self.lengths.shrink_to_fit();
-        self.long.shrink_to_fit();
+        self.anchors.shrink_to_fit();
+        self.exceptions.shrink_to_fit();
     }
 }
 
 impl Entry {
     /// The bytes of `source` the character `i` of `text` comes from.
     pub fn byte_range(&self, i: usize) -> (u32, u32) {
-        self.bytes.get(i)
+        self.bytes.get(i, &self.text)
     }
 
     /// The number of characters with byte ranges (as `text`).
@@ -419,7 +437,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 if is_br && !hidden {
                     // A line break is white space between words.
                     text.push('\n');
-                    bytes.push(at as u32, end as u32);
+                    bytes.push(at as u32, end as u32, '\n');
                 }
             }
             Ok(Event::End(e)) => {
@@ -442,7 +460,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 for c in raw.chars() {
                     let len = c.len_utf8();
                     text.push(c);
-                    bytes.push(offset as u32, (offset + len) as u32);
+                    bytes.push(offset as u32, (offset + len) as u32, c);
                     offset += len;
                 }
             }
@@ -453,7 +471,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 for c in raw.chars() {
                     let len = c.len_utf8();
                     text.push(c);
-                    bytes.push(offset as u32, (offset + len) as u32);
+                    bytes.push(offset as u32, (offset + len) as u32, c);
                     offset += len;
                 }
             }
@@ -461,7 +479,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 let name: &str = &r;
                 for c in unescape(&format!("&{name};")).chars() {
                     text.push(c);
-                    bytes.push(at as u32, end as u32);
+                    bytes.push(at as u32, end as u32, c);
                 }
             }
             Ok(Event::Eof) | Err(_) => break,
@@ -939,22 +957,56 @@ mod compact_tests {
     }
 
     #[test]
-    fn byte_ranges_keep_every_start_and_end_including_long_ones() {
-        let ranges = [
-            (0u32, 1u32),
-            (1, 9),
-            (9, 9 + 255),
-            (264, 264 + 256),
-            (520, 4000),
-            (4000, 4003),
-        ];
+    fn byte_ranges_give_exactly_every_range_pushed() {
+        // Runs of ASCII and of longer characters, ranges with tags between
+        // them, entities (one range for one character, and one range for
+        // several), a line break's tag, and runs longer than an anchor's.
+        let mut text = Vec::new();
+        let mut ranges = Vec::new();
         let mut b = ByteRanges::default();
-        for &(s, e) in &ranges {
-            b.push(s, e);
+        let mut push =
+            |c: char, s: u32, e: u32, text: &mut Vec<char>, ranges: &mut Vec<(u32, u32)>| {
+                text.push(c);
+                ranges.push((s, e));
+                b.push(s, e, c);
+            };
+        let mut at = 0u32;
+        for (n, word) in [
+            "Naomi",
+            "ʼĕlōhîm",
+            "בְּרֵאשִׁית",
+            "and",
+            "x".repeat(200).as_str(),
+        ]
+        .iter()
+        .enumerate()
+        {
+            for c in word.chars() {
+                let len = c.len_utf8() as u32;
+                push(c, at, at + len, &mut text, &mut ranges);
+                at += len;
+            }
+            match n % 3 {
+                0 => at += 7, // a tag between
+                1 => {
+                    push('&', at, at + 5, &mut text, &mut ranges); // "&amp;"
+                    at += 5;
+                }
+                _ => {
+                    for c in ['—', ' '] {
+                        push(c, at, at + 7, &mut text, &mut ranges); // one entity, two characters
+                    }
+                    at += 7;
+                    push('\n', at, at + 5, &mut text, &mut ranges); // "<br/>"
+                    at += 5;
+                }
+            }
         }
+        b.shrink_to_fit();
         assert_eq!(b.len(), ranges.len());
         for (i, &r) in ranges.iter().enumerate() {
-            assert_eq!(b.get(i), r, "range {i}");
+            assert_eq!(b.get(i, &text), r, "character {i} {:?}", text[i]);
         }
+        assert!(b.anchors.len() < ranges.len() / 4);
     }
 }

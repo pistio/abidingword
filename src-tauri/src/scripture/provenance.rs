@@ -152,8 +152,85 @@ pub struct EntryMarks<'a> {
     /// document grounds it (Phase A1.1, `mark_removed`, `removed_at`).
     /// Empty until the entry's first removal.
     removed: Vec<u32>,
-    /// Positions of the non-white-space characters, in order.
-    nonspace: Vec<u32>,
+    /// Positions of the non-white-space characters, in order (`NonSpace`).
+    nonspace: NonSpace,
+}
+
+/// The positions of an entry's non-white-space characters (Phase A1.2): a
+/// bit for every character, the count before each 64 of them, and where
+/// every 64th non-space character stands. `rank(at)` is how many stand
+/// before `at` and `select(k)` where the `k`-th stands, exactly as a list
+/// of the positions would give them, at a bit or so a character.
+struct NonSpace {
+    bits: Vec<u64>,
+    /// Non-space characters before each word of `bits`.
+    before: Vec<u32>,
+    /// Where the 0th, 64th, 128th … non-space character stands.
+    samples: Vec<u32>,
+    total: usize,
+    len: usize,
+}
+
+impl NonSpace {
+    fn new(text: &[char]) -> Self {
+        let words = text.len().div_ceil(64);
+        let mut bits = vec![0u64; words];
+        let mut samples = Vec::new();
+        let mut total = 0usize;
+        for (i, c) in text.iter().enumerate() {
+            if !c.is_whitespace() {
+                if total % 64 == 0 {
+                    samples.push(i as u32);
+                }
+                bits[i / 64] |= 1 << (i % 64);
+                total += 1;
+            }
+        }
+        let mut before = Vec::with_capacity(words);
+        let mut count = 0u32;
+        for w in &bits {
+            before.push(count);
+            count += w.count_ones();
+        }
+        NonSpace {
+            bits,
+            before,
+            samples,
+            total,
+            len: text.len(),
+        }
+    }
+
+    /// How many non-space characters stand before character `at`.
+    fn rank(&self, at: usize) -> usize {
+        if at >= self.len {
+            return self.total;
+        }
+        let w = at / 64;
+        let below = self.bits[w] & ((1u64 << (at % 64)) - 1);
+        self.before[w] as usize + below.count_ones() as usize
+    }
+
+    /// Where the `k`-th non-space character stands (`k` < `total`).
+    fn select(&self, k: usize) -> usize {
+        assert!(k < self.total, "non-space character {k} of {}", self.total);
+        let from = self.samples[k / 64] as usize;
+        let mut left = k % 64;
+        let mut w = from / 64;
+        let mut word = self.bits[w] & !((1u64 << (from % 64)) - 1);
+        loop {
+            let ones = word.count_ones() as usize;
+            if left < ones {
+                for _ in 0..left {
+                    word &= word - 1;
+                }
+                return w * 64 + word.trailing_zeros() as usize;
+            }
+            left -= ones;
+            w += 1;
+            word = self.bits[w];
+        }
+    }
 }
 
 const NO_MARK: u32 = u32::MAX;
@@ -196,14 +273,7 @@ impl<'a> EntryMarks<'a> {
                 *slot = mark;
             }
         }
-        let mut nonspace = entry
-            .text
-            .iter()
-            .enumerate()
-            .filter(|(_, c)| !c.is_whitespace())
-            .map(|(i, _)| i as u32)
-            .collect::<Vec<u32>>();
-        nonspace.shrink_to_fit();
+        let nonspace = NonSpace::new(&entry.text);
         let link = crate::library::adapters::epub_source::Runs::from_dense(&link);
         Self {
             entry,
@@ -244,15 +314,15 @@ impl<'a> EntryMarks<'a> {
     /// Index in `nonspace` of the first non-space character at or after the
     /// character `at`.
     pub fn nonspace_at(&self, at: usize) -> usize {
-        self.nonspace.partition_point(|&i| (i as usize) < at)
+        self.nonspace.rank(at)
     }
 
     pub fn nonspace_len(&self) -> usize {
-        self.nonspace.len()
+        self.nonspace.total
     }
 
     pub fn char_of(&self, k: usize) -> usize {
-        self.nonspace[k] as usize
+        self.nonspace.select(k)
     }
 
     /// Why the character at `at` is never part of a verse, if it is not.
@@ -282,9 +352,11 @@ impl<'a> EntryMarks<'a> {
 pub fn locate_segments(marks: &EntryMarks, segments: &[&str]) -> Vec<Option<(usize, usize)>> {
     let mut out = Vec::with_capacity(segments.len());
     let stream: Vec<char> = marks
-        .nonspace
+        .entry
+        .text
         .iter()
-        .map(|&i| marks.entry.text[i as usize])
+        .copied()
+        .filter(|c| !c.is_whitespace())
         .collect();
     let mut cursor = 0usize;
     for segment in segments {
@@ -340,10 +412,10 @@ pub fn trace(marks: &EntryMarks, text: &str, from: usize, to: usize) -> Option<T
     if wanted.is_empty() {
         return None;
     }
-    let to = to.min(marks.nonspace.len());
+    let to = to.min(marks.nonspace_len());
     let mut start = from;
     while start < to {
-        let at = marks.nonspace[start] as usize;
+        let at = marks.char_of(start);
         if marks.entry.text[at] == wanted[0] && marks.excluded_kind(at).is_none() {
             if let Some(t) = attempt(marks, &wanted, start, to) {
                 return Some(t);
@@ -365,9 +437,9 @@ pub fn find_opening(marks: &EntryMarks, text: &str, from: usize, to: usize) -> O
         return None;
     }
     let wanted = &wanted[..wanted.len().min(OPENING)];
-    let to = to.min(marks.nonspace.len());
+    let to = to.min(marks.nonspace_len());
     (from..to).find(|&start| {
-        let at = marks.nonspace[start] as usize;
+        let at = marks.char_of(start);
         marks.entry.text[at] == wanted[0]
             && marks.excluded_kind(at).is_none()
             && attempt(marks, wanted, start, to).is_some()
@@ -390,7 +462,7 @@ fn attempt(marks: &EntryMarks, wanted: &[char], start: usize, to: usize) -> Opti
         if k >= to {
             return None;
         }
-        let at = marks.nonspace[k] as usize;
+        let at = marks.char_of(k);
         let c = marks.entry.text[at];
         if let Some(kind) = marks.excluded_kind(at) {
             excluded.push((at, kind));
@@ -538,4 +610,42 @@ pub fn original_bytes<'b>(stored: &'b str, span: &SourceRange) -> &'b str {
     stored
         .get(span.byte_start as usize..span.byte_end as usize)
         .unwrap_or("")
+}
+
+#[cfg(test)]
+mod nonspace_tests {
+    use super::NonSpace;
+
+    #[test]
+    fn rank_and_select_give_exactly_the_list_of_positions() {
+        // Long runs of white space (an XHTML file's indentation) and of
+        // letters, across many 64-character words, and the empty text.
+        let mut text = Vec::new();
+        let mut seed = 11u32;
+        for _ in 0..4000 {
+            seed = seed.wrapping_mul(1_103_515_245).wrapping_add(12_345);
+            let run = 1 + (seed >> 16) as usize % 150;
+            let c = if seed % 3 == 0 { ' ' } else { 'a' };
+            text.extend(std::iter::repeat_n(c, run));
+            if seed % 7 == 0 {
+                text.push('\n');
+            }
+        }
+        let list: Vec<usize> = text
+            .iter()
+            .enumerate()
+            .filter(|(_, c)| !c.is_whitespace())
+            .map(|(i, _)| i)
+            .collect();
+        let n = NonSpace::new(&text);
+        assert_eq!(n.total, list.len());
+        for at in 0..=text.len() + 3 {
+            assert_eq!(n.rank(at), list.partition_point(|&i| i < at), "rank {at}");
+        }
+        for (k, &at) in list.iter().enumerate() {
+            assert_eq!(n.select(k), at, "select {k}");
+        }
+        let empty = NonSpace::new(&[]);
+        assert_eq!((empty.total, empty.rank(0)), (0, 0));
+    }
 }
