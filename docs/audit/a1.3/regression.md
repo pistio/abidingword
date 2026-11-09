@@ -1,8 +1,10 @@
 # Phase A1.3: regression on the 113 disclosed editions
 
-Candidate `7f7962e` (A1.3 on A1.2 `e9c406a`), structural EPUB reading, the
+Candidate `ccaad81` (A1.3 on A1.2; built at `7f7962e`, the same source before A1.2's docs commit was put under it), structural EPUB reading, the
 frozen recogniser's successor for every other document. Compared with the
-A1.1 structural run (`5b2bbdd`) and the frozen v0.24.7 recogniser
+A1.1 structural run (its edition reports are identical to those of
+A1.1's final code `5b2bbdd` and of A1.2, `docs/audit/a1.2/equivalence.md`)
+and the frozen v0.24.7 recogniser
 (`c96756d`) on identical, checksummed inputs (`CORPUS_OK`, `SETG_OK`).
 Sets B–G are disclosed: these are regression measurements, not
 independent evaluation. Set H was not created or run.

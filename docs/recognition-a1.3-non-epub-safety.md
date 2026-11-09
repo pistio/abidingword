@@ -1,7 +1,7 @@
 # Scripture recognition, Phase A1.3: no known wrong verified verse outside EPUB
 
 **Status:** candidate for the owner's review, on branch
-`claude/recognition-a1.3-non-epub-safety`, on top of A1.2 (`e9c406a`).
+`claude/recognition-a1.3-non-epub-safety`, on top of A1.2 (`e9c406a` and its docs commit `eb78609`).
 There is no migration, no change to `Cargo.lock`, no interface change and
 no production integration. The frozen `c96756d` recogniser and its
 baseline reports are untouched and remain the comparison evidence.
@@ -14,8 +14,8 @@ independent evaluation. Set H was not created or run.
 
 | SHA | What |
 |---|---|
-| `f53b350` | Five safety rules, their regression tests (`tests/recognition_a1_3_safety.rs`) |
-| `7f7962e` | Corpus derivation script: keep every paragraph marker's text |
+| `b97ee44` | Five safety rules, their regression tests (`tests/recognition_a1_3_safety.rs`) |
+| `ccaad81` | Corpus derivation script: keep every paragraph marker's text |
 | the commit after it | Evidence (`docs/audit/a1.3/`), this report; the red-letter control test; a duplicated test attribute removed |
 
 ## 2. Result on the 113 editions
