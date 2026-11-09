@@ -125,7 +125,12 @@ def from_usfm(folder, ident, formats, chapter_label):
             elif tag == "d":
                 flush()
                 parts.append(f'<p style="font-style:italic">{html.escape(rest)}</p>')
-            elif tag in ("p", "m", "q", "q1", "q2", "pi", "nb", "li", "li1"):
+            # Every paragraph that holds verse text (Phase A1.3: `\mi`, the
+            # indented letters of Ezra and Daniel in `spablm`, were dropped
+            # with their words before).
+            elif tag in ("p", "m", "q", "q1", "q2", "q3", "q4", "pi", "pi1", "pi2", "pi3",
+                         "nb", "li", "li1", "li2", "li3", "mi", "pm", "pmo", "pmc", "pmr",
+                         "pc", "pr", "qm", "qm1", "qm2", "qc", "qr", "ph", "ph1", "ph2"):
                 flush()
                 if rest:
                     paragraph.append(html.escape(re.sub(r"\\\w+\s?", "", rest)))
