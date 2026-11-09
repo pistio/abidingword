@@ -6,7 +6,9 @@
 //! This is limited to the main window. The presentation audience has its own
 //! window and is never changed here.
 
-use tauri::{PhysicalSize, WebviewWindow};
+use tauri::PhysicalSize;
+#[cfg(target_os = "windows")]
+use tauri::WebviewWindow;
 
 const PIXEL_TOLERANCE: u32 = 2;
 
