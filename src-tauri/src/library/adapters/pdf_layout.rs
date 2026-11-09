@@ -129,6 +129,9 @@ pub struct Line {
     /// as much, whatever it ends with (v0.24.3; `styled` leaves out a centred
     /// line that ends as a sentence does, as a poem's line may).
     pub centred: bool,
+    /// Two in five of its compared letters or more drawn with another width
+    /// (Phase A1.3): perhaps another face. Weaker than `styled`.
+    pub partly_styled: bool,
 }
 
 /// Around raised small letters in [`Line::marked`] (private-use characters,
@@ -810,6 +813,15 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
             first_char: group.iter().map(|s| s.first_char).min().unwrap_or(0),
             role: LineRole::Text,
             centred: false,
+            // (Phase A1.3) Two in five or more: a face whose letters mostly
+            // share the body's widths (LibreOffice's Liberation Serif bold:
+            // "a" wider, "e" the same) reaches no more. Used only to withhold
+            // verification, never to set a line aside.
+            partly_styled: {
+                let compared: u32 = group.iter().map(|s| s.compared).sum();
+                let styled: u32 = group.iter().map(|s| s.styled).sum();
+                compared >= 6 && styled * 100 >= compared * 40
+            },
             styled: {
                 let compared: u32 = group.iter().map(|s| s.compared).sum();
                 let styled: u32 = group.iter().map(|s| s.styled).sum();
@@ -1461,6 +1473,7 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
                 marked: None,
                 styled: false,
                 centred: false,
+                partly_styled: false,
             });
         }
         text.clear();
@@ -1678,6 +1691,7 @@ fn right_to_left_lines(glyphs: &[Glyph], width: f64) -> Option<Vec<Line>> {
             marked: None,
             styled: false,
             centred: false,
+            partly_styled: false,
         });
     }
     (gutters < 3 || gutters * 4 <= row_count).then_some(lines)

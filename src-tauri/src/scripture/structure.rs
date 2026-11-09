@@ -6094,6 +6094,13 @@ struct Reader<'a> {
     /// margin: on its other pages too (poetry, where every line is indented
     /// past the numbers), v0.24.4.
     margin_document: bool,
+    /// The document raises its verse numbers (Phase A1.3): at least 50
+    /// raised numbers, and plain ones inside its lines no more than one for
+    /// every 19 raised. A plain
+    /// number there that opens a verse is not shown to be a verse number
+    /// (`spav1602p-lodocx`'s "… diciendo de mí: 8 Cosa pestilencial …",
+    /// where every verse number has a style of its own and this one none).
+    raised_numbers: bool,
     /// The line just added ran two pieces of the page together: the verse
     /// opened next begins where that is not known (v0.24.4).
     next_boundary: bool,
@@ -6525,11 +6532,21 @@ impl Reader<'_> {
             return false;
         };
         let u = &self.units[unit];
+        // (Phase A1.3) A PDF line perhaps in another face (`partly_styled`)
+        // that begins a block of its own (a new segment), after the verse
+        // ended its sentence (checked below): a heading in a face whose
+        // letters mostly share the body's widths (`deutkw`'s derived PDF,
+        // "Berg Karmel." / "Als sie aber der Mann Gottes …"), as the edition
+        // marks it. Not known.
+        let begins_block = u.place.page.is_some()
+            && unit > 0
+            && self.units[unit - 1].place.segment != u.place.segment;
+        let partly = u.partly_styled && begins_block;
         // (Centred alone is not enough: an indented line of poetry can stand
         // in the middle of its column.)
         // (A line at a page's edge only when short: a heading opening a
         // page, not the last line of a column standing apart.)
-        if !(u.styled || u.large || u.heading || (u.edge && u.short)) {
+        if !(u.styled || u.large || u.heading || (u.edge && u.short) || partly || u.small) {
             return false;
         }
         // A paragraph of its own that an EPUB or Word document styles (bold,
@@ -6563,7 +6580,27 @@ impl Reader<'_> {
         line.chars().count() <= 200
             && (before.ends_with(['.', '!', '?', '”', '’', '"', '»', ')', '。', '…'])
                 || korean_end(before)
-                || (u.short && u.styled && capital))
+                || (u.short && u.styled && capital)
+                // A whole line in another typeface after a colon, comma or
+                // semicolon (Phase A1.3): the edition's heading set after
+                // words that introduce speech ("¹² Damals sprach Salomo:" /
+                // "Die Sonne stellte er ans Himmelszelt, …", `deutkw`'s \s1),
+                // or a quotation set in italic. Not known which.
+                // (Its face shown by its letters' widths, `partly_styled`:
+                // a poem's centred line is `styled` by its place alone. Not
+                // a line opening a quotation: words spoken, set in their
+                // own face, "But Jesus, answering, said to him," / "“Allow
+                // it now, …”" in eBible's red-letter PDF.)
+                || (u.styled
+                    && u.partly_styled
+                    // (The face changing at this line: a paragraph set in
+                    // another face throughout goes on in it.)
+                    && !self.units[open.last_unit].styled
+                    // (Nor partly: a quotation set in red or italic that
+                    // began inside the line before runs on into this one.)
+                    && !self.units[open.last_unit].partly_styled
+                    && before.ends_with([':', ',', ';'])
+                    && !line.trim_start().starts_with(['“', '‘', '«', '„', '"', '\'', '‹', '»', '‚'])))
     }
 
     /// Whether a verse's whole text is labels of notes that name this verse
@@ -7187,6 +7224,7 @@ impl Reader<'_> {
             let doubt = m.against_word
                 || alone
                 || m.margin
+                || (self.raised_numbers && !m.raised && !m.unit_start && m.chapter.is_none())
                 || (m.raised
                     && m.unit_start
                     && (self.margin_document
@@ -7739,6 +7777,45 @@ impl Reader<'_> {
             None => detected,
         };
         let same_entry = self.entry == Some(entry);
+        // The next book's heading took in a line before its own title line
+        // (Phase A1.3): it does not begin with that line's text. The line
+        // may be the verse's own ("… irmãos." / "Amém!Escrita de Roma para
+        // os Gálatas" / "Carta de Paulo aos Efésios", read as one heading in
+        // `porbr2018`'s PDF), so the verse before is not verified.
+        // (A line in the body's size: "The Book of" / "Joshua", a title over
+        // two lines in large type, takes in nothing of a verse.)
+        let took_line_before = {
+            let title = unmark_raised(&clean(&self.units[unit].text));
+            let heading = self.out.books[entry].heading.trim_start();
+            // The line the heading begins with, a few lines back past the
+            // page's furniture (a running head between them).
+            let first = (unit.saturating_sub(4)..unit).rev().find(|&p| {
+                let line = unmark_raised(&clean(&self.units[p].text));
+                !line.trim().is_empty() && heading.starts_with(line.trim())
+            });
+            self.units[unit].place.page.is_some()
+                && !title.trim().is_empty()
+                && !heading.starts_with(title.trim())
+                && first.is_some_and(|p| {
+                    let b = &self.units[p];
+                    // (Right after the verse's last line, on its page: a
+                    // line of the verse running into the heading, not a
+                    // title's first line set in the body's size, "THE BOOK
+                    // OF" / "EZRA".)
+                    !(b.large || b.heading || b.edge)
+                        && self.open.as_ref().is_some_and(|o| {
+                            o.last_unit + 1 == p
+                                && self.units[o.last_unit].place.page == b.place.page
+                        })
+                })
+        };
+        if !same_entry && took_line_before {
+            if let Some(open) = self.open.as_mut() {
+                if !open.text.trim().is_empty() {
+                    open.doubt = open.doubt.or(Some("boundary"));
+                }
+            }
+        }
         if !same_entry {
             self.close();
             if let Some((text, _, at)) = self.before.take() {
@@ -8518,6 +8595,25 @@ fn recognise_in(
                 .collect()
         },
         next_boundary: false,
+        raised_numbers: {
+            // Raised numbers anywhere (a verse per paragraph raises them at
+            // its start); plain ones inside lines, where a raised document
+            // sets none.
+            let (mut raised, mut plain) = (0usize, 0usize);
+            for item in &items {
+                if let Event::Marker(m) = &item.event {
+                    if m.chapter.is_some() {
+                        continue;
+                    }
+                    if m.raised {
+                        raised += 1;
+                    } else if !m.unit_start {
+                        plain += 1;
+                    }
+                }
+            }
+            raised >= 50 && raised >= 19 * plain
+        },
         margin_document: {
             let pages: HashSet<(u16, u32)> = units
                 .iter()

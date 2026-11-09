@@ -1578,6 +1578,149 @@ fn kind_of(ctx: &Ctx, style: &str) -> Kind {
     }
 }
 
+/// A digit run as a verse number is written (`3`, `12`, `1-2`).
+fn number_run(t: &str) -> bool {
+    let t = t.trim();
+    !t.is_empty()
+        && t.chars().filter(char::is_ascii_digit).count() <= 6
+        && t.chars()
+            .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–'))
+}
+
+/// The plain text with raised digits, and digits in a number format
+/// (`number_formats`), written as superscript digits, and raised small
+/// letters marked; None when there are none.
+fn marked_text(inlines: &[Inline], number_format: &dyn Fn(&Fmt) -> bool) -> Option<String> {
+    let mut raised = String::new();
+    let mut any_raised = false;
+    for i in inlines {
+        match i {
+            Inline::Text(t, f)
+                if ((f.sup || f.raised)
+                    && !t.trim().is_empty()
+                    && t.trim()
+                        .chars()
+                        .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–')))
+                    || (number_format(f) && number_run(t)) =>
+            {
+                any_raised = true;
+                raised.push_str(&super::pdf_layout::superscript(t));
+            }
+            // Raised small letters (a note's caller, "Cristoᵃ"): marked as
+            // the PDF reader marks them, for the recogniser to take out
+            // where a note explains them (v0.24.3).
+            Inline::Text(t, f)
+                if (f.sup || f.raised)
+                    && (1..=3).contains(&t.trim().chars().count())
+                    && t.trim().chars().all(char::is_lowercase) =>
+            {
+                any_raised = true;
+                raised.push(super::pdf_layout::RAISED_OPEN);
+                raised.push_str(t.trim());
+                raised.push(super::pdf_layout::RAISED_CLOSE);
+            }
+            Inline::Text(t, _) => raised.push_str(t),
+            Inline::Br => raised.push(' '),
+            _ => {}
+        }
+    }
+    any_raised.then(|| raised.split_whitespace().collect::<Vec<_>>().join(" "))
+}
+
+/// The character formats a document sets its verse numbers in without
+/// raising them (Phase A1.3): a bold small "7" in a style of its own
+/// (`spav1602p-lodocx`'s "Num"). A format counts when at least 20 runs of
+/// digits alone are set in it, no run with a letter, and it is smaller than
+/// the body's text: measured in the document, never assumed. Formats
+/// already raised are marked anyway.
+fn number_formats(blocks: &[Block]) -> Vec<Fmt> {
+    fn walk<'b>(blocks: &'b [Block], counts: &mut Vec<(&'b Fmt, usize, usize)>) {
+        for b in blocks {
+            match b {
+                Block::Para(p) => {
+                    for i in &p.inlines {
+                        let Inline::Text(t, f) = i else { continue };
+                        if f.sup || f.raised || *f == Fmt::default() {
+                            continue;
+                        }
+                        let digits = number_run(t);
+                        let letters = t.chars().any(char::is_alphabetic);
+                        if !digits && !letters {
+                            continue;
+                        }
+                        match counts.iter_mut().find(|(g, _, _)| *g == f) {
+                            Some((_, d, l)) => {
+                                *d += usize::from(digits);
+                                *l += usize::from(letters);
+                            }
+                            None => counts.push((f, usize::from(digits), usize::from(letters))),
+                        }
+                    }
+                }
+                Block::Table(t) => {
+                    for row in &t.rows {
+                        for cell in &row.cells {
+                            walk(&cell.blocks, counts);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let mut counts = Vec::new();
+    walk(blocks, &mut counts);
+    // The body's size: the most common size of runs with letters (None:
+    // none is written, the document's default).
+    let mut sizes: Vec<(Option<u32>, usize)> = Vec::new();
+    for &(f, _, letters) in &counts {
+        match sizes.iter_mut().find(|(s, _)| *s == f.size) {
+            Some((_, n)) => *n += letters,
+            None => sizes.push((f.size, letters)),
+        }
+    }
+    let body = sizes
+        .iter()
+        .filter(|(_, n)| *n > 0)
+        .max_by_key(|(_, n)| *n)
+        .and_then(|(s, _)| *s);
+    // Smaller than the body (half-points): a drop numeral starting a
+    // chapter is digits alone in a format of its own too, but large
+    // (`deu1951-rpydocxdrop`: bold, 31 pt, lowered), and is no verse number.
+    let small = |f: &Fmt| match (f.size, body) {
+        (Some(s), Some(b)) => s < b,
+        (Some(s), None) => s <= 18,
+        (None, _) => false,
+    };
+    counts
+        .into_iter()
+        .filter(|&(f, digits, letters)| digits >= 20 && letters == 0 && small(f))
+        .map(|(f, _, _)| f.clone())
+        .collect()
+}
+
+/// Marks again the paragraphs that hold digits in a number format.
+fn mark_number_formats(blocks: &mut [Block], formats: &[Fmt]) {
+    for b in blocks {
+        match b {
+            Block::Para(p) => {
+                let holds = p.inlines.iter().any(
+                    |i| matches!(i, Inline::Text(t, f) if number_run(t) && formats.contains(f)),
+                );
+                if holds {
+                    p.marked = marked_text(&p.inlines, &|f| formats.contains(f));
+                }
+            }
+            Block::Table(t) => {
+                for row in &mut t.rows {
+                    for cell in &mut row.cells {
+                        mark_number_formats(&mut cell.blocks, formats);
+                    }
+                }
+            }
+        }
+    }
+}
+
 fn build_para(
     ctx: &Ctx,
     direct: PProps,
@@ -1603,39 +1746,7 @@ fn build_para(
         }
     }
     let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
-    let mut raised = String::new();
-    let mut any_raised = false;
-    for i in &inlines {
-        match i {
-            Inline::Text(t, f)
-                if (f.sup || f.raised)
-                    && !t.trim().is_empty()
-                    && t.trim()
-                        .chars()
-                        .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–')) =>
-            {
-                any_raised = true;
-                raised.push_str(&super::pdf_layout::superscript(t));
-            }
-            // Raised small letters (a note's caller, "Cristoᵃ"): marked as
-            // the PDF reader marks them, for the recogniser to take out
-            // where a note explains them (v0.24.3).
-            Inline::Text(t, f)
-                if (f.sup || f.raised)
-                    && (1..=3).contains(&t.trim().chars().count())
-                    && t.trim().chars().all(char::is_lowercase) =>
-            {
-                any_raised = true;
-                raised.push(super::pdf_layout::RAISED_OPEN);
-                raised.push_str(t.trim());
-                raised.push(super::pdf_layout::RAISED_CLOSE);
-            }
-            Inline::Text(t, _) => raised.push_str(t),
-            Inline::Br => raised.push(' '),
-            _ => {}
-        }
-    }
-    let marked = any_raised.then(|| raised.split_whitespace().collect::<Vec<_>>().join(" "));
+    let marked = marked_text(&inlines, &|_| false);
 
     // The paragraph's own look: alignment, indentation, spacing, kept inside the page.
     let mut css = Vec::new();
@@ -1842,6 +1953,10 @@ pub(super) fn read_docx(bytes: &[u8], file_name: &str) -> AppResult<Docx> {
             match reader.read_event() {
                 Ok(Event::Start(e)) if name_of(&e) == "w:body" => {
                     parse_blocks(&mut reader, &mut ctx, "w:body", 0, &mut blocks);
+                    let formats = number_formats(&blocks);
+                    if !formats.is_empty() {
+                        mark_number_formats(&mut blocks, &formats);
+                    }
                     break;
                 }
                 Ok(Event::Eof) | Err(_) => break,

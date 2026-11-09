@@ -32,6 +32,8 @@ fn unit(text: &str, page: Option<u32>) -> Unit {
         styled: false,
         edge: false,
         centred: false,
+        partly_styled: false,
+        small: false,
         column: 0,
         gap_before: false,
         short: false,
