@@ -164,8 +164,18 @@ fn extension(path: &Path) -> String {
         .unwrap_or_default()
 }
 
+/// How a PDF's text layer is read: `pdf::read_pages` (the current backend)
+/// or, in Phase A2.1's comparison, another glyph source laid out by the same
+/// layout code (`pdf::read_pages_with`).
+pub type PdfReader<'a> = &'a dyn Fn(&[u8], &str) -> AppResult<pdf::PdfText>;
+
 /// Reads one document. `document` is its place among the Bible's documents.
 pub fn read(path: &Path, document: u16) -> AppResult<DocumentFile> {
+    read_with(path, document, &pdf::read_pages)
+}
+
+/// `read`, with a PDF's text layer read by `pdf` (Phase A2.1).
+pub fn read_with(path: &Path, document: u16, pdf: PdfReader) -> AppResult<DocumentFile> {
     let name = file_name(path);
     let extension = extension(path);
     let size = fs::metadata(path)
@@ -181,7 +191,7 @@ pub fn read(path: &Path, document: u16) -> AppResult<DocumentFile> {
         ));
     }
     let bytes = fs::read(path).map_err(|e| AppError::filesystem(path, e))?;
-    read_bytes(path, &name, &extension, &bytes, size, document)
+    read_bytes_with(path, &name, &extension, &bytes, size, document, pdf)
 }
 
 /// Reads a document already in memory (tests read fixtures this way).
@@ -193,10 +203,31 @@ pub fn read_bytes(
     size: u64,
     document: u16,
 ) -> AppResult<DocumentFile> {
+    read_bytes_with(
+        path,
+        name,
+        extension,
+        bytes,
+        size,
+        document,
+        &pdf::read_pages,
+    )
+}
+
+/// `read_bytes`, with a PDF's text layer read by `pdf_reader` (Phase A2.1).
+pub fn read_bytes_with(
+    path: &Path,
+    name: &str,
+    extension: &str,
+    bytes: &[u8],
+    size: u64,
+    document: u16,
+    pdf_reader: PdfReader,
+) -> AppResult<DocumentFile> {
     let hash = content_hash(bytes);
     let mut file = match extension {
         "pdf" => {
-            let text = pdf::read_pages(bytes, name)?;
+            let text = pdf_reader(bytes, name)?;
             let page_count = Some(text.pages.len() as u32);
             if text.scanned {
                 DocumentFile {

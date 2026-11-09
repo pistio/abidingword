@@ -1,0 +1,18 @@
+# The one PDFium build the A2.1 prototype was measured with. Prebuilt by
+# bblanchon/pdfium-binaries (MIT packaging of PDFium, BSD-3-Clause), release
+# "chromium/8138" (PDFium 159.0.8138.0), downloaded 2026-11-08.
+# The helper binds to it at run time; nothing is compiled from PDFium source.
+release = chromium/8138
+version = 159.0.8138.0
+
+[linux-x64]
+archive = https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F8138/pdfium-linux-x64.tgz
+archive_sha256 = d6b1e28950a0392590d79bbdbb7eb19686872b688f8a36f170acb19e41473113
+library = lib/libpdfium.so
+library_sha256 = 655e831208783f38dc187ad424bdfdae39858cfbfcf3a9a2cb9dd0694b5abcad
+
+[windows-x64]
+archive = https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F8138/pdfium-win-x64.tgz
+archive_sha256 = 8d48973e3eb472dda0f5f2435e595ac043f9f2219dd71883392f549445afa8a5
+library = bin/pdfium.dll
+library_sha256 = 71a3e63e6ab8f5746a0fc9de9bc3d0c0dc07eb60990dfd37d9db7fc891821943

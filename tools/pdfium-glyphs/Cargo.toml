@@ -1,0 +1,25 @@
+[package]
+name = "aw-pdfium-glyphs"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Phase A2.1 prototype: reads a PDF's characters with PDFium in its own process and writes them as glyph records for Abiding Word's layout code."
+license-file = "LICENSE-NOTICE.md"
+
+# Its own workspace: this helper is not part of the application's build or
+# dependency graph (src-tauri/Cargo.lock is unchanged).
+[workspace]
+
+[dependencies]
+# Pinned. Dynamic binding to a pinned PDFium build (chromium/8138, see
+# tools/pdfium-glyphs/PDFIUM.lock); no PDFium source is compiled here.
+pdfium-render = { version = "=0.9.5", default-features = false, features = ["pdfium_latest"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = true
+strip = true
