@@ -49,7 +49,7 @@ pub(crate) fn reconcile(main: &WebviewWindow, force: bool) {
                 || expected.height.abs_diff(actual.height) > PIXEL_TOLERANCE
             {
                 log::warn!(
-                    "Main WebView2 physical-size mismatch repaired: window={}x{}, webview={}x{}",
+                    "Main WebView2 physical-size reconciliation requested: window={}x{}, previous-webview={}x{}",
                     expected.width,
                     expected.height,
                     actual.width,
