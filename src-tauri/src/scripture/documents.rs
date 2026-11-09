@@ -84,6 +84,15 @@ pub struct Unit {
     /// A PDF line set in the middle of its column (v0.24.3): with a gap
     /// above it, a heading even in the body's own type.
     pub centred: bool,
+    /// A PDF line two in five of whose letters are drawn with another width
+    /// (Phase A1.3, `pdf_layout::Line::partly_styled`): perhaps another
+    /// face. It only ever withholds verification.
+    pub partly_styled: bool,
+    /// A PDF line of text in smaller type than the page's body (Phase A1.3):
+    /// a psalm's or a book's closing title set smaller (`engasv`'s "For the
+    /// Chief Musician, …" after Habakkuk 3:19). It only ever withholds
+    /// verification.
+    pub small: bool,
     /// The column of its PDF page it stands in (0 = the left or only one).
     pub column: u8,
     /// A PDF line of running text with clear space above it, below another
@@ -274,6 +283,8 @@ pub fn read_bytes(
                             unit.styled = line.styled;
                             unit.edge = matches!(line.role, LineRole::Head | LineRole::Foot);
                             unit.centred = line.centred;
+                            unit.partly_styled = line.partly_styled;
+                            unit.small = line.role == LineRole::Text && line.size <= 0.96 * body;
                             unit.column = line.column;
                             unit.short = widths.get(&line.column).is_some_and(|(a, b)| {
                                 b - a > 0.0 && line.x1 - line.x0 < 0.7 * (b - a)
@@ -502,6 +513,8 @@ fn line_units(
             styled: false,
             edge: false,
             centred: false,
+            partly_styled: false,
+            small: false,
             column: 0,
             gap_before: false,
             short: false,
@@ -642,6 +655,8 @@ pub(crate) fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<U
                 styled: false,
                 edge: false,
                 centred: false,
+                partly_styled: false,
+                small: false,
                 column: 0,
                 gap_before: false,
                 short: false,
@@ -674,6 +689,8 @@ pub(crate) fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<U
                     styled: false,
                     edge: false,
                     centred: false,
+                    partly_styled: false,
+                    small: false,
                     column: 0,
                     gap_before: false,
                     short: false,
@@ -695,6 +712,8 @@ pub(crate) fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<U
             styled: segment.styled,
             edge: false,
             centred: false,
+            partly_styled: false,
+            small: false,
             column: 0,
             gap_before: false,
             short: false,
