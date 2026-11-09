@@ -7,7 +7,6 @@
 //! invented; books and verse counts are real.
 
 #[path = "support/library_fixtures.rs"]
-#[allow(dead_code)]
 mod fixtures;
 
 use abiding_word_lib::scripture::canon;
@@ -156,6 +155,22 @@ fn a_whole_line_in_another_face_after_a_colon_withdraws_the_verse() {
     units[i].text = "7 Invented words of chapter one verse seven, and he said to him,".into();
     let mut spoken = line(
         "“Invented words spoken in their own face, set as a line.”",
+        1,
+    );
+    spoken.styled = true;
+    spoken.partly_styled = true;
+    units.insert(i + 1, spoken);
+    let r = recognise(&units);
+    assert!(verified(&r, "PHM", 1, 7), "{:?}", r.unverified);
+    // Nor words spoken that began in the line before, in its own face
+    // there too ("… Jesus answered her, “Woman," / "great is your faith!
+    // …" in eBible's red-letter book edition).
+    let mut units = book("Philemon", "PHM", 1, false);
+    let i = at(&units, "7 ");
+    units[i].text = "7 Invented words of chapter one verse seven, he said, “Woman,".into();
+    units[i].partly_styled = true;
+    let mut spoken = line(
+        "invented words spoken go on in their own face, set as a line.”",
         1,
     );
     spoken.styled = true;
