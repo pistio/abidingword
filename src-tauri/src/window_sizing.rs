@@ -28,6 +28,7 @@ mod windows {
     // The only reconciled window is "main"; coalesce bursts of resize events.
     static REQUESTED: AtomicU64 = AtomicU64::new(0);
     static WORKER_ACTIVE: AtomicBool = AtomicBool::new(false);
+    static INITIAL_MEASUREMENT_LOGGED: AtomicBool = AtomicBool::new(false);
 
     /// Restore Tauri's automatic parent-to-webview resizing. This is a native
     /// call and needs no extra frontend command permission.
@@ -59,10 +60,18 @@ mod windows {
         let factor = main.scale_factor().unwrap_or(1.0);
         // These are physical sizes, not CSS px; DPI can change while a
         // window is moving between monitors. Do not resize the parent window.
-        log::debug!(
-            "Main window geometry: client={}x{}, webview={}x{}, scale={factor:.3}",
-            expected.width, expected.height, actual.width, actual.height
-        );
+        let log_initial = !INITIAL_MEASUREMENT_LOGGED.swap(true, Ordering::AcqRel);
+        if log_initial {
+            log::info!(
+                "Initial main-window geometry: client={}x{}, webview={}x{}, scale={factor:.3}",
+                expected.width, expected.height, actual.width, actual.height
+            );
+        } else {
+            log::debug!(
+                "Main window geometry: client={}x{}, webview={}x{}, scale={factor:.3}",
+                expected.width, expected.height, actual.width, actual.height
+            );
+        }
         if !needs_repair(expected, actual) {
             return;
         }
