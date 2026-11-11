@@ -59,7 +59,7 @@ pub fn run() {
                 let focused = matches!(event, tauri::WindowEvent::Focused(true));
                 if focused || matches!(event, tauri::WindowEvent::Resized(_)) {
                     if let Some(main) = window.app_handle().get_webview_window("main") {
-                        window_sizing::reconcile(&main, focused);
+                        window_sizing::schedule(main);
                     }
                 }
             }
@@ -78,11 +78,11 @@ pub fn run() {
             }
         })
         .setup(|app| {
-            // Initial bounds sync; later native resize/focus events repair
-            // stale Windows WebView2 surfaces without touching user content.
+            // Enable native auto-resize and schedule an initial geometry check;
+            // later resize/focus checks run off the Windows event thread.
             #[cfg(target_os = "windows")]
             if let Some(main) = app.get_webview_window("main") {
-                window_sizing::reconcile(&main, true);
+                window_sizing::initialise(&main);
             }
             if updates_configured(app.handle()) {
                 app.handle()
