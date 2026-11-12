@@ -1,6 +1,8 @@
 # P0 issue #49: collect native window/child HWND geometry only.
 # Run against an Abiding Word instance using invented/disposable data.
 # No source text, window titles, screenshots, file paths or credentials logged.
+# Coordinates are subject to caller DPI awareness: execute from a DPI-aware
+# PowerShell host and compare the reported DPI with the native application.
 [CmdletBinding()]
 param(
   [Parameter(Mandatory = $true)][int]$ProcessId,
@@ -28,6 +30,8 @@ public static class AwWindowMetrics {
         public int Dpi { get; set; }
         public int ClientWidth { get; set; }
         public int ClientHeight { get; set; }
+        public int ClientScreenX { get; set; }
+        public int ClientScreenY { get; set; }
         public int ScreenX { get; set; }
         public int ScreenY { get; set; }
         public int ScreenWidth { get; set; }
@@ -41,6 +45,8 @@ public static class AwWindowMetrics {
     private delegate bool EnumChildProc(IntPtr hwnd, IntPtr lparam);
     [DllImport("user32.dll")] private static extern bool GetClientRect(IntPtr hwnd, out RECT rect);
     [DllImport("user32.dll")] private static extern bool GetWindowRect(IntPtr hwnd, out RECT rect);
+    [StructLayout(LayoutKind.Sequential)] private struct POINT { public int X, Y; }
+    [DllImport("user32.dll")] private static extern bool ClientToScreen(IntPtr hwnd, ref POINT point);
     [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr hwnd);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int GetClassName(IntPtr hwnd, StringBuilder str, int max);
@@ -52,6 +58,9 @@ public static class AwWindowMetrics {
         RECT client, window;
         if (!GetClientRect(hwnd, out client) || !GetWindowRect(hwnd, out window))
             throw new InvalidOperationException("Unable to measure an HWND");
+        var origin = new POINT { X = 0, Y = 0 };
+        if (!ClientToScreen(hwnd, ref origin))
+            throw new InvalidOperationException("Unable to translate client origin");
         var name = new StringBuilder(256);
         GetClassName(hwnd, name, name.Capacity);
         return new Record {
@@ -60,6 +69,8 @@ public static class AwWindowMetrics {
             Dpi = unchecked((int)GetDpiForWindow(hwnd)),
             ClientWidth = client.Width,
             ClientHeight = client.Height,
+            ClientScreenX = origin.X,
+            ClientScreenY = origin.Y,
             ScreenX = window.Left,
             ScreenY = window.Top,
             ScreenWidth = window.Width,
