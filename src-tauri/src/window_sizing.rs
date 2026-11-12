@@ -24,6 +24,7 @@ fn needs_repair(expected: PhysicalSize<u32>, actual: PhysicalSize<u32>) -> bool 
 mod windows {
     use super::*;
     use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+    use std::sync::{mpsc, LazyLock};
     use std::thread;
     use std::time::Duration;
 
@@ -31,62 +32,116 @@ mod windows {
     static REQUESTED: AtomicU64 = AtomicU64::new(0);
     static WORKER_ACTIVE: AtomicBool = AtomicBool::new(false);
     static INITIAL_MEASUREMENT_LOGGED: AtomicBool = AtomicBool::new(false);
+    // Diagnostic A/B runs use the same executable and disposable profiles.
+    // Unknown explicit modes fail closed to observation, never a forced resize.
+    static REPAIR_ENABLED: LazyLock<bool> = LazyLock::new(|| {
+        std::env::var_os("ABIDING_WORD_VIEWPORT_MODE")
+            .map(|mode| mode == "repair")
+            .unwrap_or(true)
+    });
+    static TRACE: LazyLock<bool> =
+        LazyLock::new(|| std::env::var("ABIDING_WORD_VIEWPORT_TRACE").as_deref() == Ok("1"));
 
-    fn reconcile(main: &WebviewWindow) {
-        if main.label() != "main" {
-            return;
-        }
-        if main.is_minimized().unwrap_or(false) {
+    // Wry 0.57 returns a zero position for a WindowContent webview, even if
+    // controller.Bounds has an offset. Read the actual COM RECT on the UI
+    // thread via Tauri's dispatcher; never move a COM interface to this worker.
+    fn controller_bounds(webview: &tauri::Webview) -> Option<serde_json::Value> {
+        let (tx, rx) = mpsc::channel();
+        webview
+            .with_webview(move |platform| {
+                let controller = platform.controller();
+                let mut rect = Default::default();
+                let mut parent = Default::default();
+                let mut zoom = 0.0;
+                // SAFETY: both COM calls run on WebView2's owning UI thread.
+                let measured = unsafe { controller.Bounds(&mut rect) }.ok().map(|()| {
+                    let parent = unsafe { controller.ParentWindow(&mut parent) }
+                        .ok()
+                        .map(|()| format!("{:x}", parent.0 as usize));
+                    serde_json::json!({
+                        "rect": [rect.left, rect.top, rect.right, rect.bottom],
+                        "parentHwnd": parent,
+                        "zoomFactor": unsafe { controller.ZoomFactor(&mut zoom) }.ok().map(|()| zoom)
+                    })
+                });
+                let _ = tx.send(measured);
+            })
+            .ok()?;
+        rx.recv_timeout(Duration::from_secs(2)).ok().flatten()
+    }
+
+    fn sample(
+        main: &WebviewWindow,
+        revision: u64,
+        phase: &str,
+        expected: PhysicalSize<u32>,
+        actual: PhysicalSize<u32>,
+    ) {
+        let webview: &tauri::Webview = main.as_ref();
+        let controller = controller_bounds(webview);
+        let bounds = webview.bounds().ok().map(|rect| format!("{rect:?}"));
+        let current_client = main.inner_size().ok();
+        log::info!(
+            "Viewport sample {}",
+            serde_json::json!({
+                "sequence": revision, "phase": phase,
+                "repairEnabled": *REPAIR_ENABLED,
+                "client": [expected.width, expected.height],
+                "webview": [actual.width, actual.height],
+                "controller": controller, "tauriBounds": bounds,
+                "scale": main.scale_factor().ok(),
+                "stableClient": current_client == Some(expected)
+            })
+        );
+    }
+
+    fn reconcile(main: &WebviewWindow, revision: u64) {
+        if main.label() != "main" || main.is_minimized().unwrap_or(true) {
             return;
         }
         let Ok(expected) = main.inner_size() else {
             return;
         };
+        if expected.width == 0 || expected.height == 0 {
+            return;
+        }
         let webview: &tauri::Webview = main.as_ref();
         let Ok(actual) = webview.size() else {
             log::warn!("Could not measure the main WebView2 surface");
             return;
         };
-        // Bounds can reveal an offset that size-only measurements would miss.
-        // Do not change WebviewWindow position until independently measured.
-        let bounds = webview.bounds().ok();
-        let factor = main.scale_factor().unwrap_or(1.0);
-        // These are physical sizes, not CSS px; DPI can change while a
-        // window is moving between monitors. Do not resize the parent window.
-        let log_initial = !INITIAL_MEASUREMENT_LOGGED.swap(true, Ordering::AcqRel);
-        if log_initial {
-            log::info!(
-                "Initial main-window geometry: client={}x{}, webview={}x{}, bounds={bounds:?}, scale={factor:.3}",
-                expected.width, expected.height, actual.width, actual.height
-            );
-        } else {
-            log::debug!(
-                "Main window geometry: client={}x{}, webview={}x{}, scale={factor:.3}",
-                expected.width, expected.height, actual.width, actual.height
-            );
+        let mismatch = needs_repair(expected, actual);
+        let initial = !INITIAL_MEASUREMENT_LOGGED.swap(true, Ordering::AcqRel);
+        if initial || mismatch || *TRACE {
+            sample(main, revision, "observed", expected, actual);
         }
-        if !needs_repair(expected, actual) {
+        if !mismatch || !*REPAIR_ENABLED {
+            return;
+        }
+        // Independent dispatcher reads are not an atomic geometry snapshot.
+        // Drop stale observations; the coalescer will process the latest event.
+        if REQUESTED.load(Ordering::Acquire) != revision
+            || main.inner_size().ok() != Some(expected)
+            || main.is_minimized().unwrap_or(true)
+        {
             return;
         }
         match webview.set_size(expected) {
             Ok(()) => {
-                log::warn!(
-                    "Requested WebView2 surface repair: client={}x{}, previous-webview={}x{}, observed-after-request={:?}, scale={factor:.3}",
-                    expected.width, expected.height, actual.width, actual.height, webview.size().ok()
-                );
+                // The setter queues work. This getter is a subsequent dispatcher
+                // readback, still not proof of DOM layout/compositor repaint.
+                if let Ok(observed) = webview.size() {
+                    sample(main, revision, "after-request", expected, observed);
+                }
             }
-            Err(error) => {
-                log::warn!(
-                    "WebView2 surface repair failed: client={}x{}, previous-webview={}x{}, reason={error}",
-                    expected.width, expected.height, actual.width, actual.height
-                );
-            }
+            Err(error) => log::warn!("WebView2 size request failed: {error}"),
         }
     }
 
     /// Native event callbacks must return promptly. Post a small bounded
-    /// worker that measures the *latest* geometry after WebView2's own resize
-    /// notifications settle; only the final requested size is applied.
+    /// worker that measures current geometry after WebView2's own resize
+    /// notifications. The 40ms coalescing interval is not a geometry/height fix
+    /// and is not taken as evidence that the compositor has settled.
     pub(super) fn schedule(main: WebviewWindow) {
         if main.label() != "main" {
             return;
@@ -98,7 +153,7 @@ mod windows {
         thread::spawn(move || loop {
             let revision = REQUESTED.load(Ordering::Acquire);
             thread::sleep(Duration::from_millis(40));
-            reconcile(&main);
+            reconcile(&main, revision);
             if REQUESTED.load(Ordering::Acquire) != revision {
                 continue;
             }

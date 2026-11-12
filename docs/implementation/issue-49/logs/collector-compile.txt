@@ -1,0 +1,1 @@
+Collector C# compiles; Win32 calls NOT executed on Linux.

@@ -1,0 +1,486 @@
+{
+  "kind": "Chromium DOM-only vertical-height contract; no Windows WebView2/native acceptance",
+  "note": "This tests React/CSS resize response. A passing result cannot confirm the user-observed 193px native Windows gap is fixed.",
+  "results": [
+    {
+      "scale": 1,
+      "height": 800,
+      "innerHeight": 800,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1,
+      "documentHeight": 800,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 800,
+        "top": 0,
+        "bottom": 800
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      }
+    },
+    {
+      "scale": 1,
+      "height": 1019,
+      "innerHeight": 1019,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1,
+      "documentHeight": 1019,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1019,
+        "top": 0,
+        "bottom": 1019
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      }
+    },
+    {
+      "scale": 1,
+      "height": 670,
+      "innerHeight": 670,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1,
+      "documentHeight": 670,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 670,
+        "top": 0,
+        "bottom": 670
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      }
+    },
+    {
+      "scale": 1,
+      "height": 1130,
+      "innerHeight": 1130,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1,
+      "documentHeight": 1130,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1130,
+        "top": 0,
+        "bottom": 1130
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      }
+    },
+    {
+      "scale": 1,
+      "height": 800,
+      "innerHeight": 800,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1,
+      "documentHeight": 800,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 800,
+        "top": 0,
+        "bottom": 800
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      }
+    },
+    {
+      "scale": 1.5,
+      "height": 800,
+      "innerHeight": 800,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1.5,
+      "documentHeight": 800,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 800,
+        "top": 0,
+        "bottom": 800
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      }
+    },
+    {
+      "scale": 1.5,
+      "height": 1019,
+      "innerHeight": 1019,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1.5,
+      "documentHeight": 1019,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1019,
+        "top": 0,
+        "bottom": 1019
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 963,
+        "top": 56,
+        "bottom": 1019
+      }
+    },
+    {
+      "scale": 1.5,
+      "height": 670,
+      "innerHeight": 670,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1.5,
+      "documentHeight": 670,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 670,
+        "top": 0,
+        "bottom": 670
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 614,
+        "top": 56,
+        "bottom": 670
+      }
+    },
+    {
+      "scale": 1.5,
+      "height": 1130,
+      "innerHeight": 1130,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1.5,
+      "documentHeight": 1130,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1130,
+        "top": 0,
+        "bottom": 1130
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 1074,
+        "top": 56,
+        "bottom": 1130
+      }
+    },
+    {
+      "scale": 1.5,
+      "height": 800,
+      "innerHeight": 800,
+      "innerWidth": 1440,
+      "devicePixelRatio": 1.5,
+      "documentHeight": 800,
+      "shell": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 800,
+        "top": 0,
+        "bottom": 800
+      },
+      "workspace": {
+        "x": 0,
+        "y": 56,
+        "width": 1440,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "scripture": {
+        "x": 0,
+        "y": 56,
+        "width": 300,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "study": {
+        "x": 301,
+        "y": 56,
+        "width": 818,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      },
+      "sources": {
+        "x": 1120,
+        "y": 56,
+        "width": 320,
+        "height": 744,
+        "top": 56,
+        "bottom": 800
+      }
+    }
+  ]
+}

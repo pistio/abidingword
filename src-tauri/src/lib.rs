@@ -21,7 +21,7 @@ pub mod sample;
 pub mod scripture;
 pub mod state;
 
-// Main-window WebView2 physical size: screenshot-proven Windows viewport gap.
+// Provisional main-window WebView2 diagnostics/correction; Windows cause unproven.
 // Also compiled in Rust tests on other platforms for pure reconciliation rules.
 #[cfg(any(test, target_os = "windows"))]
 mod window_sizing;
@@ -57,7 +57,13 @@ pub fn run() {
             #[cfg(target_os = "windows")]
             if window.label() == "main" {
                 let focused = matches!(event, tauri::WindowEvent::Focused(true));
-                if focused || matches!(event, tauri::WindowEvent::Resized(_)) {
+                if focused
+                    || matches!(
+                        event,
+                        tauri::WindowEvent::Resized(_)
+                            | tauri::WindowEvent::ScaleFactorChanged { .. }
+                    )
+                {
                     if let Some(main) = window.app_handle().get_webview_window("main") {
                         window_sizing::schedule(main);
                     }
