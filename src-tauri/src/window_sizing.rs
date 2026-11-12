@@ -47,13 +47,16 @@ mod windows {
             log::warn!("Could not measure the main WebView2 surface");
             return;
         };
+        // Bounds can reveal an offset that size-only measurements would miss.
+        // Do not change WebviewWindow position until independently measured.
+        let bounds = webview.bounds().ok();
         let factor = main.scale_factor().unwrap_or(1.0);
         // These are physical sizes, not CSS px; DPI can change while a
         // window is moving between monitors. Do not resize the parent window.
         let log_initial = !INITIAL_MEASUREMENT_LOGGED.swap(true, Ordering::AcqRel);
         if log_initial {
             log::info!(
-                "Initial main-window geometry: client={}x{}, webview={}x{}, scale={factor:.3}",
+                "Initial main-window geometry: client={}x{}, webview={}x{}, bounds={bounds:?}, scale={factor:.3}",
                 expected.width, expected.height, actual.width, actual.height
             );
         } else {
@@ -68,8 +71,8 @@ mod windows {
         match webview.set_size(expected) {
             Ok(()) => {
                 log::warn!(
-                    "Requested WebView2 surface repair: client={}x{}, previous-webview={}x{}, scale={factor:.3}",
-                    expected.width, expected.height, actual.width, actual.height
+                    "Requested WebView2 surface repair: client={}x{}, previous-webview={}x{}, observed-after-request={:?}, scale={factor:.3}",
+                    expected.width, expected.height, actual.width, actual.height, webview.size().ok()
                 );
             }
             Err(error) => {
