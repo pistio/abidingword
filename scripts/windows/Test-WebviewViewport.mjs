@@ -135,11 +135,17 @@ try {
   const scale=expectedDpi/96;
   let previousSequence=0;
   for(const [name,action,size] of [ ['initial','observe'],['maximised','maximise'],['restored','restore'],['shorter','resize',[Math.round(1000*scale),Math.round(620*scale)]],['taller','resize',[Math.round(1100*scale),Math.round(850*scale)]],['maximised-again','maximise'],['restored-again','restore'] ]) {
+    // An old Tauri sample must never be accepted as evidence for a new
+    // maximise/restore/resize transition, even if the dimensions happen
+    // to match. Only an observed native event can advance the sequence.
     native(`${name}-action`,action,size);
     let measured,dom,sample,comparison;
     for(let i=0;i<20;i++) {
       measured=native(`${name}-measure`);dom=await page.evaluate(domSnapshot);sample=latestSample(info.logDirectory);
       comparison=compareGeometry(measured,sample,dom);
+      if(action !== 'observe' && (!Number.isSafeInteger(sample?.sequence) || sample.sequence <= previousSequence)) {
+        comparison={passed:false,diagnosis:'stale-native-event-sample',errors:['No new native Tauri geometry sample after the requested window transition.']};
+      }
       if(comparison.passed)break;
       await delay(100); // observation polling, never a resize/paint workaround
     }
@@ -148,7 +154,10 @@ try {
     await page.screenshot({path:join(out,`${name}-DOM.png`)});
     let nativeScreenshotError;
     try{native(name,'observe',undefined,true);}catch(error){nativeScreenshotError=String(error.message);report.failures.push(`${name}: native screenshot unavailable`);}
-    const eventCounterGrowth=(sample?.sequence??0)-previousSequence;previousSequence=sample?.sequence??0;
+    const eventCounterGrowth=(sample?.sequence??0)-previousSequence;
+    // Do not move the baseline backwards or hide a missing event with an
+    // older snapshot. A failed transition remains failed in report.json.
+    previousSequence=Math.max(previousSequence,sample?.sequence??0);
     if(eventCounterGrowth>100)report.failures.push(`${name}: excessive native event growth`);
     const entry={name,native:measured,tauri:sample,dom,comparison,editing,scroll,eventCounterGrowth,nativeScreenshotError};report.cases.push(entry);
     if(!comparison.passed||Object.values(editing).includes(false)||scroll.some(s=>!s.passed))report.failures.push(name);
