@@ -78,18 +78,19 @@ pub fn run() {
             }
         })
         .setup(|app| {
-            // Enable native auto-resize and schedule an initial geometry check;
-            // later resize/focus checks run off the Windows event thread.
-            #[cfg(target_os = "windows")]
-            if let Some(main) = app.get_webview_window("main") {
-                window_sizing::initialise(&main);
-            }
             if updates_configured(app.handle()) {
                 app.handle()
                     .plugin(tauri_plugin_updater::Builder::new().build())?;
             }
             let state = start(app.handle());
             app.manage(state);
+            // Start the first Windows geometry measurement only after logging
+            // has been installed by start(); otherwise the diagnostic can
+            // finish before its initial measurements are recorded.
+            #[cfg(target_os = "windows")]
+            if let Some(main) = app.get_webview_window("main") {
+                window_sizing::initialise(&main);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
