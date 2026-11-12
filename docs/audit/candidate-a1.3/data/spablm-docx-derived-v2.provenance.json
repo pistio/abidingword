@@ -1,0 +1,71 @@
+{
+ "key": "spablm-docx-derived-v2",
+ "file": "spablm_usfm_lo.v2.docx",
+ "sha256": "7e5c90804f203d780a116af9969c9b2bffbc82d2a9056d5b30f0c0fc80aa4925",
+ "parts_sha256": "ed5c8ad1a7f55e79ad8994dba25e6976255508f09fbfbcc538a302776ab8a097",
+ "parts": [
+  {
+   "name": "_rels/.rels",
+   "sha256": "3823de16366678a094490aa4983c96c800dd02d98852331736bf558c1f6ebfcf"
+  },
+  {
+   "name": "docProps/core.xml",
+   "sha256": "7ca876c4fae46de643fac74a8bbb00e81e73bf89eda7bbd1c9014e0151304286"
+  },
+  {
+   "name": "docProps/app.xml",
+   "sha256": "97a9907310e6d93acd1870a5bb16e5fde94d508f054688b92d94f6f4d771f0cd"
+  },
+  {
+   "name": "docProps/custom.xml",
+   "sha256": "9b1afafd2d4a7132c3f88bb8c1a6976f0e722be9949d6e72eb441608283c4d01"
+  },
+  {
+   "name": "word/_rels/document.xml.rels",
+   "sha256": "096af0fdf086896e8ec49c5eea3138066af1b8698932c4150b1bf324a6d1d6bb"
+  },
+  {
+   "name": "word/document.xml",
+   "sha256": "3e1ab4082ff8179f2e7f020cf4c12f970c38585092c18bdef34850d6853d55ea"
+  },
+  {
+   "name": "word/styles.xml",
+   "sha256": "dcf6c0e1f40fb683d4f4cdce58b53a840697d2ebdc1d9bd0d37dbae1e90789d5"
+  },
+  {
+   "name": "word/fontTable.xml",
+   "sha256": "6da31e903635c219d2811c0b2291367a8e6c0f175fc479d3f658b6931abf5ad9"
+  },
+  {
+   "name": "word/settings.xml",
+   "sha256": "b7defed1a5c2556723d574567a12fc4434b524d6bc458d8d1703ab036ac12c6b"
+  },
+  {
+   "name": "word/theme/theme1.xml",
+   "sha256": "cecdf4f21275f87c79187622b39191d29095638711bd3fe1b92624c6d5c8c070"
+  },
+  {
+   "name": "[Content_Types].xml",
+   "sha256": "74ae22f7f8786c6bff08b99c2065b69181e863c730bd99d87550d6f3e624722b"
+  }
+ ],
+ "container": "ZIP, entries stored, dates 1980-01-01, original order",
+ "source": {
+  "file": "spablm_usfm.zip",
+  "sha256": "69ff87d19976bfc2306cb11ffeffd9fe0b4163eac9bd09da7f687b53a4de90f5",
+  "origin": "https://ebible.org/Scriptures/spablm_usfm.zip (as held in the corpus; docs/audit/v0.24.7/corpus-checksums.sha256)"
+ },
+ "generator": {
+  "script": "scripts/build-derived-editions.py",
+  "script_sha256": "236c189125142ec95265784fd9a49868c18166b015fd518add56f71a0789595a",
+  "script_git_blob": "4d058a709fd9bce0a95e8be67149e3c4035b0757",
+  "script_last_commit": "ccaad81a07a843a616615dde9ef9bbdfc4d0add4",
+  "command": "scripts/build-derived-editions.py <folder> spablm docx --usfm=\"Capítulo {n}\"",
+  "normalised_by": "scripts/corpus/build-spablm-docx-derived-v2.py"
+ },
+ "tools": {
+  "libreoffice": "LibreOffice 24.2.7.2 420(Build:2)",
+  "python": "3.13.18"
+ },
+ "supersedes_nothing": "v1 (spablm_usfm_lo.docx, SHA-256 2ad1094b299e2e19f4275ff90dea15cf8934717b7be83df3aab0ec8ed9b7d28d) stays in the corpus unchanged"
+}

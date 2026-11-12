@@ -1,0 +1,136 @@
+{
+ "source_usfm": {
+  "file": "spablm_usfm.zip",
+  "sha256": "69ff87d19976bfc2306cb11ffeffd9fe0b4163eac9bd09da7f687b53a4de90f5"
+ },
+ "document": {
+  "file": "spablm_usfm_lo.docx",
+  "sha256": "2ad1094b299e2e19f4275ff90dea15cf8934717b7be83df3aab0ec8ed9b7d28d"
+ },
+ "books_in_source": 66,
+ "books_in_document": 66,
+ "verses_in_source": 31103,
+ "verses_complete": 31094,
+ "verses_missing_from_document": [],
+ "verses_only_in_document": [],
+ "verses_incomplete": [
+  {
+   "reference": "EZR 4:11",
+   "missing": [
+    "Al rey Artajerjes, de parte de tus siervos, los hombres de allende el río."
+   ],
+   "not_in_source": [],
+   "source": "Esta es la copia de la carta que enviaron: Al rey Artajerjes, de parte de tus siervos, los hombres de allende el río.",
+   "document": "Esta es la copia de la carta que enviaron:"
+  },
+  {
+   "reference": "EZR 4:17",
+   "missing": [
+    "Salud."
+   ],
+   "not_in_source": [],
+   "source": "El rey envió esta respuesta a Rehum, el canciller, y a Simsai, el secretario, y a los demás compañeros suyos que habitaban en Samaria y en el resto de la provincia de allende el río: Salud.",
+   "document": "El rey envió esta respuesta a Rehum, el canciller, y a Simsai, el secretario, y a los demás compañeros suyos que habitaban en Samaria y en el resto de la provincia de allende el río:"
+  },
+  {
+   "reference": "EZR 5:7",
+   "missing": [
+    "Al rey Darío, toda paz."
+   ],
+   "not_in_source": [],
+   "source": "Le enviaron la misiva, en la cual iba escrito de esta manera: Al rey Darío, toda paz.",
+   "document": "Le enviaron la misiva, en la cual iba escrito de esta manera:"
+  },
+  {
+   "reference": "EZR 7:12",
+   "missing": [
+    "al sacerdote Esdras, escriba instruido en la ley del Dios del cielo: Paz cumplida."
+   ],
+   "not_in_source": [],
+   "source": "“Artajerjes, rey de reyes, al sacerdote Esdras, escriba instruido en la ley del Dios del cielo: Paz cumplida.",
+   "document": "“Artajerjes, rey de reyes,"
+  },
+  {
+   "reference": "DAN 4:1",
+   "missing": [
+    "a todos los pueblos, naciones y lenguas que habitan en toda la tierra: Que la paz se os multiplique."
+   ],
+   "not_in_source": [],
+   "source": "El rey Nabucodonosor, a todos los pueblos, naciones y lenguas que habitan en toda la tierra: Que la paz se os multiplique.",
+   "document": "El rey Nabucodonosor,"
+  },
+  {
+   "reference": "DAN 4:19",
+   "missing": [
+    "Beltsasar respondió y dijo: “Señor mío, que el sueño sea para los que te aborrecen, y su interpretación para tus adversarios."
+   ],
+   "not_in_source": [],
+   "source": "Entonces Daniel, cuyo nombre era Beltsasar, se quedó atónito por un momento, y sus pensamientos le turbaban. El rey habló y dijo: «Beltsasar, no dejes que el sueño ni su interpretación te turben». Beltsasar respondió y dijo: “Señor mío, que el sueño sea para los que te aborrecen, y su interpretación para tus adversarios.",
+   "document": "Entonces Daniel, cuyo nombre era Beltsasar, se quedó atónito por un momento, y sus pensamientos le turbaban. El rey habló y dijo: «Beltsasar, no dejes que el sueño ni su interpretación te turben»."
+  },
+  {
+   "reference": "DAN 6:25",
+   "missing": [
+    "“Que la paz se os multiplique."
+   ],
+   "not_in_source": [],
+   "source": "Entonces el rey Darío escribió a todos los pueblos, naciones y lenguas que habitaban en toda la tierra: “Que la paz se os multiplique.",
+   "document": "Entonces el rey Darío escribió a todos los pueblos, naciones y lenguas que habitaban en toda la tierra:"
+  },
+  {
+   "reference": "DAN 9:4",
+   "missing": [
+    "“Oh Señor, Dios grande y temible, que guardas el pacto y la misericordia con los que te aman y guardan tus mandamientos;"
+   ],
+   "not_in_source": [],
+   "source": "Oré a Yahvé, mi Dios, e hice confesión, diciendo: “Oh Señor, Dios grande y temible, que guardas el pacto y la misericordia con los que te aman y guardan tus mandamientos;",
+   "document": "Oré a Yahvé, mi Dios, e hice confesión, diciendo:"
+  },
+  {
+   "reference": "DAN 9:11",
+   "missing": [
+    "“Por ello se ha derramado sobre nosotros la maldición y el juramento que están escritos en la ley de Moisés, siervo de Dios, porque hemos pecado contra él."
+   ],
+   "not_in_source": [],
+   "source": "Todo Israel ha transgredido tu ley, apartándose para no escuchar tu voz. “Por ello se ha derramado sobre nosotros la maldición y el juramento que están escritos en la ley de Moisés, siervo de Dios, porque hemos pecado contra él.",
+   "document": "Todo Israel ha transgredido tu ley, apartándose para no escuchar tu voz."
+  }
+ ],
+ "words_in_source_verses": 711123,
+ "words_missing": 130,
+ "words_missing_by_source_marker": {
+  "\\mi": 130
+ },
+ "source_verse_words_by_paragraph_marker": {
+  "\\m": 2090,
+  "\\mi": 3890,
+  "\\p": 574285,
+  "\\q1": 59117,
+  "\\q2": 71741
+ },
+ "source_excluded": {
+  "\\ca (occurrences)": 0,
+  "\\d (words, heading)": 907,
+  "\\f (occurrences)": 814,
+  "\\fe (occurrences)": 0,
+  "\\h (words, heading)": 89,
+  "\\id (words, heading)": 102,
+  "\\ide (words, heading)": 65,
+  "\\ms1 (words, heading)": 10,
+  "\\mt1 (words, heading)": 86,
+  "\\mt2 (words, heading)": 214,
+  "\\mt3 (words, heading)": 10,
+  "\\sp (words, heading)": 33,
+  "\\toc1 (words, heading)": 303,
+  "\\toc2 (words, heading)": 89,
+  "\\toc3 (words, heading)": 83,
+  "\\va (occurrences)": 0,
+  "\\vp (occurrences)": 0,
+  "\\w attributes (occurrences)": 440776,
+  "\\x (occurrences)": 0
+ },
+ "document_headings_excluded_words": {
+  "italic paragraph (\\d)": 907
+ },
+ "complete": false
+}
