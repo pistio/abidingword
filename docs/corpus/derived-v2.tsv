@@ -1,0 +1,3 @@
+key	files	reference	language	script	format	layout	role	source	books	sha256	generator
+# Corrected derivatives kept beside their originals. Not read by the harness at 7c7565a (docs/audit/candidate-a1.3/ledger.md).
+spablm-docx-derived-v2	spablm_usfm_lo.v2.docx	spablm_usfm.zip	es	Latin	docx	converted: LibreOffice Writer from the edition's USFM, chapter labels "Capítulo N"; corrected derivative of spablm-docx (every paragraph marker's text kept)	regression-v2	Spanish Free Bible for the World (eBible.org); public domain	all	7e5c90804f203d780a116af9969c9b2bffbc82d2a9056d5b30f0c0fc80aa4925	scripts/build-derived-editions.py at ccaad81, LibreOffice 24.2.7.2; scripts/corpus/build-spablm-docx-derived-v2.py

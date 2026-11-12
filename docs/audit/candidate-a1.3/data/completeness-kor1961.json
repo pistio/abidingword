@@ -1,0 +1,44 @@
+{
+ "source_usfm": {
+  "file": "kor1961_usfm.zip",
+  "sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50"
+ },
+ "document": {
+  "file": "kor1961_usfm_lo.docx",
+  "sha256": "bcfe3210e8996df748f778441436b0d34b6e2eb58b7727a72c84558e1b11da92"
+ },
+ "books_in_source": 66,
+ "books_in_document": 66,
+ "verses_in_source": 31081,
+ "verses_complete": 31081,
+ "verses_missing_from_document": [],
+ "verses_only_in_document": [],
+ "verses_incomplete": [],
+ "words_in_source_verses": 460714,
+ "words_missing": 0,
+ "words_missing_by_source_marker": {},
+ "source_verse_words_by_paragraph_marker": {
+  "\\p": 460714
+ },
+ "source_excluded": {
+  "\\ca (occurrences)": 0,
+  "\\d (words, heading)": 631,
+  "\\f (occurrences)": 1784,
+  "\\fe (occurrences)": 0,
+  "\\h (words, heading)": 66,
+  "\\id (words, heading)": 198,
+  "\\mt1 (words, heading)": 66,
+  "\\s1 (words, heading)": 8449,
+  "\\toc1 (words, heading)": 66,
+  "\\usfm (words, heading)": 66,
+  "\\va (occurrences)": 0,
+  "\\vp (occurrences)": 0,
+  "\\w attributes (occurrences)": 0,
+  "\\x (occurrences)": 0
+ },
+ "document_headings_excluded_words": {
+  "bold centred paragraph (\\s)": 8449,
+  "italic paragraph (\\d)": 631
+ },
+ "complete": true
+}

@@ -1,0 +1,530 @@
+[
+ {
+  "set": "g",
+  "edition": "G01",
+  "provenance_verses": 25062,
+  "provenance_sha256": {
+   "a11": "ba5fca3b132bb72c4110e3e8d12fc085d57123cd70adcc7a04ad9ac09a122794",
+   "a12": "ba5fca3b132bb72c4110e3e8d12fc085d57123cd70adcc7a04ad9ac09a122794",
+   "cand": "ba5fca3b132bb72c4110e3e8d12fc085d57123cd70adcc7a04ad9ac09a122794"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 9.4,
+   "a12": 9.4,
+   "cand": 9.9
+  },
+  "read_peak_memory_mb": {
+   "a11": 483,
+   "a12": 248,
+   "cand": 249
+  }
+ },
+ {
+  "set": "g",
+  "edition": "G12",
+  "provenance_verses": 8400,
+  "provenance_sha256": {
+   "a11": "4ae788ec9b72932d60e2d9359f159819879b130d18ea0d6ed000565617486ee6",
+   "a12": "4ae788ec9b72932d60e2d9359f159819879b130d18ea0d6ed000565617486ee6",
+   "cand": "4ae788ec9b72932d60e2d9359f159819879b130d18ea0d6ed000565617486ee6"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 2.0,
+   "a12": 2.0,
+   "cand": 2.1
+  },
+  "read_peak_memory_mb": {
+   "a11": 72,
+   "a12": 40,
+   "cand": 41
+  }
+ },
+ {
+  "set": "g",
+  "edition": "G14",
+  "provenance_verses": 773,
+  "provenance_sha256": {
+   "a11": "6a5d4c9a27355b4997d864cb39dc11504880147f68b4c7b41a5cba339cbf5cc0",
+   "a12": "6a5d4c9a27355b4997d864cb39dc11504880147f68b4c7b41a5cba339cbf5cc0",
+   "cand": "6a5d4c9a27355b4997d864cb39dc11504880147f68b4c7b41a5cba339cbf5cc0"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 0.5,
+   "a12": 0.5,
+   "cand": 0.5
+  },
+  "read_peak_memory_mb": {
+   "a11": 28,
+   "a12": 20,
+   "cand": 20
+  }
+ },
+ {
+  "set": "f",
+  "edition": "F04",
+  "provenance_verses": 31140,
+  "provenance_sha256": {
+   "a11": "a4105efefb8610bdcde1c65b2792421acd20a1c5d6b32f3ba6a58201a2016a09",
+   "a12": "a4105efefb8610bdcde1c65b2792421acd20a1c5d6b32f3ba6a58201a2016a09",
+   "cand": "a4105efefb8610bdcde1c65b2792421acd20a1c5d6b32f3ba6a58201a2016a09"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 11.5,
+   "a12": 11.9,
+   "cand": 11.7
+  },
+  "read_peak_memory_mb": {
+   "a11": 312,
+   "a12": 139,
+   "cand": 140
+  }
+ },
+ {
+  "set": "f",
+  "edition": "F10",
+  "provenance_verses": 4403,
+  "provenance_sha256": {
+   "a11": "ee794b0244f3e8402f147418d95509d66fd639440e947d50c655eceffe6f0a44",
+   "a12": "ee794b0244f3e8402f147418d95509d66fd639440e947d50c655eceffe6f0a44",
+   "cand": "ee794b0244f3e8402f147418d95509d66fd639440e947d50c655eceffe6f0a44"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 1.1,
+   "a12": 1.1,
+   "cand": 1.1
+  },
+  "read_peak_memory_mb": {
+   "a11": 65,
+   "a12": 36,
+   "cand": 36
+  }
+ },
+ {
+  "set": "f",
+  "edition": "F12",
+  "provenance_verses": 2526,
+  "provenance_sha256": {
+   "a11": "71e4765869528b0c1138cb9fc1949465a9d9bcc92ff8c4166d46ee4fee7a8175",
+   "a12": "71e4765869528b0c1138cb9fc1949465a9d9bcc92ff8c4166d46ee4fee7a8175",
+   "cand": "71e4765869528b0c1138cb9fc1949465a9d9bcc92ff8c4166d46ee4fee7a8175"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 6.6,
+   "a12": 6.8,
+   "cand": 6.7
+  },
+  "read_peak_memory_mb": {
+   "a11": 213,
+   "a12": 93,
+   "cand": 93
+  }
+ },
+ {
+  "set": "e",
+  "edition": "engwyc2017-epubapoc",
+  "provenance_verses": 73,
+  "provenance_sha256": {
+   "a11": "57935a03365809a6d10b267c2b19ff47d4484658df4882bd14edfdce320fff40",
+   "a12": "57935a03365809a6d10b267c2b19ff47d4484658df4882bd14edfdce320fff40",
+   "cand": "57935a03365809a6d10b267c2b19ff47d4484658df4882bd14edfdce320fff40"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 1.2,
+   "a12": 1.2,
+   "cand": 1.3
+  },
+  "read_peak_memory_mb": {
+   "a11": 58,
+   "a12": 31,
+   "cand": 31
+  }
+ },
+ {
+  "set": "e",
+  "edition": "fra_fob-pandocepub",
+  "provenance_verses": 10423,
+  "provenance_sha256": {
+   "a11": "7e568859013061aed1f76b8defb3d11a6cc38f47e4600963efded89f13d46733",
+   "a12": "7e568859013061aed1f76b8defb3d11a6cc38f47e4600963efded89f13d46733",
+   "cand": "7e568859013061aed1f76b8defb3d11a6cc38f47e4600963efded89f13d46733"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 2.7,
+   "a12": 2.7,
+   "cand": 2.7
+  },
+  "read_peak_memory_mb": {
+   "a11": 92,
+   "a12": 47,
+   "cand": 47
+  }
+ },
+ {
+  "set": "recon",
+  "edition": "spapddpt-repub2",
+  "provenance_verses": 24837,
+  "provenance_sha256": {
+   "a11": "615804ad8fb414e24a3c6a1505358e62a51c3c138801815c656910e1b0601a01",
+   "a12": "615804ad8fb414e24a3c6a1505358e62a51c3c138801815c656910e1b0601a01",
+   "cand": "615804ad8fb414e24a3c6a1505358e62a51c3c138801815c656910e1b0601a01"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 8.8,
+   "a12": 8.4,
+   "cand": 8.6
+  },
+  "read_peak_memory_mb": {
+   "a11": 264,
+   "a12": 118,
+   "cand": 120
+  }
+ },
+ {
+  "set": "bc",
+  "edition": "englsv-rpandocepub",
+  "provenance_verses": 31104,
+  "provenance_sha256": {
+   "a11": "fa3cefd675d825eb09d5c78e15d66688b0a464c9e948d1bacfb32f4df4bb5e56",
+   "a12": "fa3cefd675d825eb09d5c78e15d66688b0a464c9e948d1bacfb32f4df4bb5e56",
+   "cand": "fa3cefd675d825eb09d5c78e15d66688b0a464c9e948d1bacfb32f4df4bb5e56"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 7.9,
+   "a12": 7.6,
+   "cand": 8.0
+  },
+  "read_peak_memory_mb": {
+   "a11": 310,
+   "a12": 120,
+   "cand": 121
+  }
+ },
+ {
+  "set": "bc",
+  "edition": "francl-rebooklibepub",
+  "provenance_verses": 15918,
+  "provenance_sha256": {
+   "a11": "1e3891a8f772c73f6a7c7b84d90c5c19623a1ba2a99ea76d29b3227e81d77c26",
+   "a12": "1e3891a8f772c73f6a7c7b84d90c5c19623a1ba2a99ea76d29b3227e81d77c26",
+   "cand": "999852a2c3344508f1d57e742c118b7ff26070a9cdbed78cebe8c32f9ea2ea32"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": false,
+  "read_seconds": {
+   "a11": 10.1,
+   "a12": 10.4,
+   "cand": 10.4
+  },
+  "read_peak_memory_mb": {
+   "a11": 361,
+   "a12": 143,
+   "cand": 144
+  }
+ },
+ {
+  "set": "bc",
+  "edition": "frasbl-rpandocepub",
+  "provenance_verses": 28331,
+  "provenance_sha256": {
+   "a11": "a3cf9aad99412d2af1a5b573120130c06675a668f995f714868bbc2e8828a1cf",
+   "a12": "a3cf9aad99412d2af1a5b573120130c06675a668f995f714868bbc2e8828a1cf",
+   "cand": "a3cf9aad99412d2af1a5b573120130c06675a668f995f714868bbc2e8828a1cf"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 8.9,
+   "a12": 8.8,
+   "cand": 8.9
+  },
+  "read_peak_memory_mb": {
+   "a11": 338,
+   "a12": 133,
+   "cand": 134
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "deu1912-epub",
+  "provenance_verses": 31092,
+  "provenance_sha256": {
+   "a11": "9af619d683e34e3ea9134952f84da5666165ee1b1020b6e804989f2dcff887f6",
+   "a12": "9af619d683e34e3ea9134952f84da5666165ee1b1020b6e804989f2dcff887f6",
+   "cand": "9af619d683e34e3ea9134952f84da5666165ee1b1020b6e804989f2dcff887f6"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 13.4,
+   "a12": 13.4,
+   "cand": 13.9
+  },
+  "read_peak_memory_mb": {
+   "a11": 278,
+   "a12": 117,
+   "cand": 118
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "engwebp-epub",
+  "provenance_verses": 31098,
+  "provenance_sha256": {
+   "a11": "e3d1718afc0689f43d8e259118b112f1017c526bbbf8060bbb8bbfa92542a5eb",
+   "a12": "e3d1718afc0689f43d8e259118b112f1017c526bbbf8060bbb8bbfa92542a5eb",
+   "cand": "e3d1718afc0689f43d8e259118b112f1017c526bbbf8060bbb8bbfa92542a5eb"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 16.7,
+   "a12": 17.5,
+   "cand": 17.4
+  },
+  "read_peak_memory_mb": {
+   "a11": 306,
+   "a12": 146,
+   "cand": 147
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "fob-epub",
+  "provenance_verses": 31107,
+  "provenance_sha256": {
+   "a11": "d888aa3cabcad3bb619fe68d6b603118e1abfd782388be13f71a88b1dc94c937",
+   "a12": "d888aa3cabcad3bb619fe68d6b603118e1abfd782388be13f71a88b1dc94c937",
+   "cand": "d888aa3cabcad3bb619fe68d6b603118e1abfd782388be13f71a88b1dc94c937"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 13.7,
+   "a12": 13.8,
+   "cand": 13.8
+  },
+  "read_peak_memory_mb": {
+   "a11": 286,
+   "a12": 118,
+   "cand": 118
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "fraLSG-epub",
+  "provenance_verses": 31170,
+  "provenance_sha256": {
+   "a11": "6dc2fc11ab2a5ade8b41904ff54e5adbf138fac7f4b04f8c784dde5c76847cb3",
+   "a12": "6dc2fc11ab2a5ade8b41904ff54e5adbf138fac7f4b04f8c784dde5c76847cb3",
+   "cand": "6dc2fc11ab2a5ade8b41904ff54e5adbf138fac7f4b04f8c784dde5c76847cb3"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 22.0,
+   "a12": 23.0,
+   "cand": 22.6
+  },
+  "read_peak_memory_mb": {
+   "a11": 375,
+   "a12": 178,
+   "cand": 180
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "frajnd-epub",
+  "provenance_verses": 30921,
+  "provenance_sha256": {
+   "a11": "22273dfa8ef1eb7aa314b05e31a596dc2560911409603b00c098ddae4833fdcd",
+   "a12": "22273dfa8ef1eb7aa314b05e31a596dc2560911409603b00c098ddae4833fdcd",
+   "cand": "22273dfa8ef1eb7aa314b05e31a596dc2560911409603b00c098ddae4833fdcd"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 14.6,
+   "a12": 17.0,
+   "cand": 16.9
+  },
+  "read_peak_memory_mb": {
+   "a11": 340,
+   "a12": 157,
+   "cand": 158
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "grctr-epub",
+  "provenance_verses": 7957,
+  "provenance_sha256": {
+   "a11": "8da32bcd2d74eed597363d4ad0932e99868c81a7203de7ac8af7ab080e9c8f32",
+   "a12": "8da32bcd2d74eed597363d4ad0932e99868c81a7203de7ac8af7ab080e9c8f32",
+   "cand": "8da32bcd2d74eed597363d4ad0932e99868c81a7203de7ac8af7ab080e9c8f32"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 3.9,
+   "a12": 4.2,
+   "cand": 4.2
+  },
+  "read_peak_memory_mb": {
+   "a11": 84,
+   "a12": 48,
+   "cand": 48
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "hboWLC-epub",
+  "provenance_verses": 23192,
+  "provenance_sha256": {
+   "a11": "bd86dc7ab5f54c48dc85df3cf6f1a1033949483a38c8edc65f51339b52243d31",
+   "a12": "bd86dc7ab5f54c48dc85df3cf6f1a1033949483a38c8edc65f51339b52243d31",
+   "cand": "bd86dc7ab5f54c48dc85df3cf6f1a1033949483a38c8edc65f51339b52243d31"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 31.9,
+   "a12": 31.4,
+   "cand": 33.3
+  },
+  "read_peak_memory_mb": {
+   "a11": 220,
+   "a12": 105,
+   "cand": 105
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "kjv-epub",
+  "provenance_verses": 31102,
+  "provenance_sha256": {
+   "a11": "1908102fdcb6723f5744268d2b5eae068dd8243fb661d28c6c94e20083244dda",
+   "a12": "1908102fdcb6723f5744268d2b5eae068dd8243fb661d28c6c94e20083244dda",
+   "cand": "1908102fdcb6723f5744268d2b5eae068dd8243fb661d28c6c94e20083244dda"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 14.3,
+   "a12": 14.5,
+   "cand": 14.8
+  },
+  "read_peak_memory_mb": {
+   "a11": 345,
+   "a12": 157,
+   "cand": 158
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "kor-epub",
+  "provenance_verses": 30990,
+  "provenance_sha256": {
+   "a11": "992aeb5d4f0a917e4d06b1a037161cb241870bf8b846ac71616272e98e5a920e",
+   "a12": "992aeb5d4f0a917e4d06b1a037161cb241870bf8b846ac71616272e98e5a920e",
+   "cand": "992aeb5d4f0a917e4d06b1a037161cb241870bf8b846ac71616272e98e5a920e"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 18.6,
+   "a12": 19.4,
+   "cand": 19.7
+  },
+  "read_peak_memory_mb": {
+   "a11": 212,
+   "a12": 127,
+   "cand": 127
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "latVUC-epub",
+  "provenance_verses": 31228,
+  "provenance_sha256": {
+   "a11": "cbb85dc7e82b6868d107b8735a6c117e4c5c9931baf816aaf0424e10cde154ae",
+   "a12": "cbb85dc7e82b6868d107b8735a6c117e4c5c9931baf816aaf0424e10cde154ae",
+   "cand": "cbb85dc7e82b6868d107b8735a6c117e4c5c9931baf816aaf0424e10cde154ae"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 21.2,
+   "a12": 20.3,
+   "cand": 19.8
+  },
+  "read_peak_memory_mb": {
+   "a11": 596,
+   "a12": 219,
+   "cand": 220
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "porbr2018-epub",
+  "provenance_verses": 31102,
+  "provenance_sha256": {
+   "a11": "9d70705c066771dd3369003e0849f17d8c8ab22063722e970bdb3b9a142c4c63",
+   "a12": "9d70705c066771dd3369003e0849f17d8c8ab22063722e970bdb3b9a142c4c63",
+   "cand": "9d70705c066771dd3369003e0849f17d8c8ab22063722e970bdb3b9a142c4c63"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 13.3,
+   "a12": 13.8,
+   "cand": 13.7
+  },
+  "read_peak_memory_mb": {
+   "a11": 279,
+   "a12": 127,
+   "cand": 128
+  }
+ },
+ {
+  "set": "dev",
+  "edition": "rv1909-epub",
+  "provenance_verses": 31084,
+  "provenance_sha256": {
+   "a11": "05d4502c04a20607ff2f7e47e32176af1ef10f465dc2cf1a25fafd7826031585",
+   "a12": "05d4502c04a20607ff2f7e47e32176af1ef10f465dc2cf1a25fafd7826031585",
+   "cand": "05d4502c04a20607ff2f7e47e32176af1ef10f465dc2cf1a25fafd7826031585"
+  },
+  "a1_2_equals_a1_1": true,
+  "candidate_equals_a1_2": true,
+  "read_seconds": {
+   "a11": 13.0,
+   "a12": 13.3,
+   "cand": 13.5
+  },
+  "read_peak_memory_mb": {
+   "a11": 265,
+   "a12": 115,
+   "cand": 116
+  }
+ }
+]

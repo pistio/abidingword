@@ -1,0 +1,353 @@
+{
+ "purpose": "spablm-docx v1 (original, sealed, unchanged) beside spablm-docx-derived-v2 (corrected fixture). A fixture repair: not a recogniser improvement.",
+ "candidate_code": "7c7565a7a3df8f3dcc9711c8701af8c94dbad6af",
+ "source_usfm": {
+  "file": "spablm_usfm.zip",
+  "sha256": "69ff87d19976bfc2306cb11ffeffd9fe0b4163eac9bd09da7f687b53a4de90f5",
+  "origin": "https://ebible.org/Scriptures/spablm_usfm.zip (as held in the corpus; docs/audit/v0.24.7/corpus-checksums.sha256)"
+ },
+ "v1": {
+  "key": "spablm-docx",
+  "file": "spablm_usfm_lo.docx",
+  "sha256": "2ad1094b299e2e19f4275ff90dea15cf8934717b7be83df3aab0ec8ed9b7d28d",
+  "manifest": "docs/corpus/editions.tsv (unchanged)",
+  "checksum_record": "docs/audit/v0.24.7/corpus-checksums.sha256 (unchanged)",
+  "generator": {
+   "script": "scripts/build-derived-editions.py as before commit ccaad81 (git show b97ee44:scripts/build-derived-editions.py)",
+   "script_sha256": "d641a4084944521586559492b5f2523032a322de541903592ef7a29c9b3d9eb1",
+   "reproduced": "Rebuilt from the same USFM with that revision: every part identical to v1 (only the container entry dates differ)."
+  },
+  "parts": {
+   "_rels/.rels": "3823de16366678a094490aa4983c96c800dd02d98852331736bf558c1f6ebfcf",
+   "docProps/core.xml": "7ca876c4fae46de643fac74a8bbb00e81e73bf89eda7bbd1c9014e0151304286",
+   "docProps/app.xml": "97a9907310e6d93acd1870a5bb16e5fde94d508f054688b92d94f6f4d771f0cd",
+   "docProps/custom.xml": "9b1afafd2d4a7132c3f88bb8c1a6976f0e722be9949d6e72eb441608283c4d01",
+   "word/_rels/document.xml.rels": "096af0fdf086896e8ec49c5eea3138066af1b8698932c4150b1bf324a6d1d6bb",
+   "word/document.xml": "66a351125c7bdad0cba969832ec1d993b5f60b13a2c184cb5db2cd6c9bf80cd6",
+   "word/styles.xml": "dcf6c0e1f40fb683d4f4cdce58b53a840697d2ebdc1d9bd0d37dbae1e90789d5",
+   "word/fontTable.xml": "6da31e903635c219d2811c0b2291367a8e6c0f175fc479d3f658b6931abf5ad9",
+   "word/settings.xml": "b7defed1a5c2556723d574567a12fc4434b524d6bc458d8d1703ab036ac12c6b",
+   "word/theme/theme1.xml": "cecdf4f21275f87c79187622b39191d29095638711bd3fe1b92624c6d5c8c070",
+   "[Content_Types].xml": "74ae22f7f8786c6bff08b99c2065b69181e863c730bd99d87550d6f3e624722b"
+  }
+ },
+ "v2": {
+  "key": "spablm-docx-derived-v2",
+  "file": "spablm_usfm_lo.v2.docx",
+  "sha256": "7e5c90804f203d780a116af9969c9b2bffbc82d2a9056d5b30f0c0fc80aa4925",
+  "parts_sha256": "ed5c8ad1a7f55e79ad8994dba25e6976255508f09fbfbcc538a302776ab8a097",
+  "parts": [
+   {
+    "name": "_rels/.rels",
+    "sha256": "3823de16366678a094490aa4983c96c800dd02d98852331736bf558c1f6ebfcf"
+   },
+   {
+    "name": "docProps/core.xml",
+    "sha256": "7ca876c4fae46de643fac74a8bbb00e81e73bf89eda7bbd1c9014e0151304286"
+   },
+   {
+    "name": "docProps/app.xml",
+    "sha256": "97a9907310e6d93acd1870a5bb16e5fde94d508f054688b92d94f6f4d771f0cd"
+   },
+   {
+    "name": "docProps/custom.xml",
+    "sha256": "9b1afafd2d4a7132c3f88bb8c1a6976f0e722be9949d6e72eb441608283c4d01"
+   },
+   {
+    "name": "word/_rels/document.xml.rels",
+    "sha256": "096af0fdf086896e8ec49c5eea3138066af1b8698932c4150b1bf324a6d1d6bb"
+   },
+   {
+    "name": "word/document.xml",
+    "sha256": "3e1ab4082ff8179f2e7f020cf4c12f970c38585092c18bdef34850d6853d55ea"
+   },
+   {
+    "name": "word/styles.xml",
+    "sha256": "dcf6c0e1f40fb683d4f4cdce58b53a840697d2ebdc1d9bd0d37dbae1e90789d5"
+   },
+   {
+    "name": "word/fontTable.xml",
+    "sha256": "6da31e903635c219d2811c0b2291367a8e6c0f175fc479d3f658b6931abf5ad9"
+   },
+   {
+    "name": "word/settings.xml",
+    "sha256": "b7defed1a5c2556723d574567a12fc4434b524d6bc458d8d1703ab036ac12c6b"
+   },
+   {
+    "name": "word/theme/theme1.xml",
+    "sha256": "cecdf4f21275f87c79187622b39191d29095638711bd3fe1b92624c6d5c8c070"
+   },
+   {
+    "name": "[Content_Types].xml",
+    "sha256": "74ae22f7f8786c6bff08b99c2065b69181e863c730bd99d87550d6f3e624722b"
+   }
+  ],
+  "container": "ZIP, entries stored, dates 1980-01-01, original order",
+  "source": {
+   "file": "spablm_usfm.zip",
+   "sha256": "69ff87d19976bfc2306cb11ffeffd9fe0b4163eac9bd09da7f687b53a4de90f5",
+   "origin": "https://ebible.org/Scriptures/spablm_usfm.zip (as held in the corpus; docs/audit/v0.24.7/corpus-checksums.sha256)"
+  },
+  "generator": {
+   "script": "scripts/build-derived-editions.py",
+   "script_sha256": "236c189125142ec95265784fd9a49868c18166b015fd518add56f71a0789595a",
+   "script_git_blob": "4d058a709fd9bce0a95e8be67149e3c4035b0757",
+   "script_last_commit": "ccaad81a07a843a616615dde9ef9bbdfc4d0add4",
+   "command": "scripts/build-derived-editions.py <folder> spablm docx --usfm=\"Capítulo {n}\"",
+   "normalised_by": "scripts/corpus/build-spablm-docx-derived-v2.py"
+  },
+  "tools": {
+   "libreoffice": "LibreOffice 24.2.7.2 420(Build:2)",
+   "python": "3.13.18"
+  },
+  "supersedes_nothing": "v1 (spablm_usfm_lo.docx, SHA-256 2ad1094b299e2e19f4275ff90dea15cf8934717b7be83df3aab0ec8ed9b7d28d) stays in the corpus unchanged"
+ },
+ "parts_that_differ": [
+  "word/document.xml"
+ ],
+ "parts_identical": [
+  "_rels/.rels",
+  "docProps/core.xml",
+  "docProps/app.xml",
+  "docProps/custom.xml",
+  "word/_rels/document.xml.rels",
+  "word/styles.xml",
+  "word/fontTable.xml",
+  "word/settings.xml",
+  "word/theme/theme1.xml",
+  "[Content_Types].xml"
+ ],
+ "completeness_audit": {
+  "tool": "scripts/corpus/audit-derived-completeness.py",
+  "v1": {
+   "verses_in_source": 31103,
+   "verses_complete": 31094,
+   "words_in_source_verses": 711123,
+   "words_missing": 130,
+   "words_missing_by_source_marker": {
+    "\\mi": 130
+   },
+   "verses_incomplete": [
+    "EZR 4:11",
+    "EZR 4:17",
+    "EZR 5:7",
+    "EZR 7:12",
+    "DAN 4:1",
+    "DAN 4:19",
+    "DAN 6:25",
+    "DAN 9:4",
+    "DAN 9:11"
+   ]
+  },
+  "v2": {
+   "verses_in_source": 31103,
+   "verses_complete": 31103,
+   "words_in_source_verses": 711123,
+   "words_missing": 0,
+   "words_missing_by_source_marker": {},
+   "verses_incomplete": []
+  },
+  "source_verse_words_by_paragraph_marker": {
+   "\\m": 2090,
+   "\\mi": 3890,
+   "\\p": 574285,
+   "\\q1": 59117,
+   "\\q2": 71741
+  },
+  "source_excluded": {
+   "\\ca (occurrences)": 0,
+   "\\d (words, heading)": 907,
+   "\\f (occurrences)": 814,
+   "\\fe (occurrences)": 0,
+   "\\h (words, heading)": 89,
+   "\\id (words, heading)": 102,
+   "\\ide (words, heading)": 65,
+   "\\ms1 (words, heading)": 10,
+   "\\mt1 (words, heading)": 86,
+   "\\mt2 (words, heading)": 214,
+   "\\mt3 (words, heading)": 10,
+   "\\sp (words, heading)": 33,
+   "\\toc1 (words, heading)": 303,
+   "\\toc2 (words, heading)": 89,
+   "\\toc3 (words, heading)": 83,
+   "\\va (occurrences)": 0,
+   "\\vp (occurrences)": 0,
+   "\\w attributes (occurrences)": 440776,
+   "\\x (occurrences)": 0
+  }
+ },
+ "recogniser_unchanged_code": {
+  "harness_sha256": "cc555ac6e745d6127dc8eef770d737c232990cc0e02d0c6aa73b061b6d43dc6a",
+  "v1": {
+   "printed": 31098,
+   "verified": 31072,
+   "correct": 31063,
+   "wrong": 9,
+   "wrong_refs": [
+    "EZR 4:11",
+    "EZR 4:17",
+    "EZR 5:7",
+    "EZR 7:12",
+    "DAN 4:1",
+    "DAN 4:19",
+    "DAN 6:25",
+    "DAN 9:4",
+    "DAN 9:11"
+   ],
+   "not_in_edition": [],
+   "refused_correct": 25,
+   "caught": 1,
+   "read_seconds": 24.6,
+   "read_peak_memory_mb": 83
+  },
+  "v2": {
+   "printed": 31098,
+   "verified": 31072,
+   "correct": 31072,
+   "wrong": 0,
+   "wrong_refs": [],
+   "not_in_edition": [],
+   "refused_correct": 25,
+   "caught": 1,
+   "read_seconds": 25.1,
+   "read_peak_memory_mb": 87
+  }
+ },
+ "nine_verses": [
+  {
+   "reference": "EZR 4:11",
+   "source_usfm_text": "Esta es la copia de la carta que enviaron: Al rey Artajerjes, de parte de tus siervos, los hombres de allende el río.",
+   "v1_document_text": "Esta es la copia de la carta que enviaron:",
+   "v1_words_missing": [
+    "Al rey Artajerjes, de parte de tus siervos, los hombres de allende el río."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "Esta es la copia de la carta que enviaron:",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "EZR 4:17",
+   "source_usfm_text": "El rey envió esta respuesta a Rehum, el canciller, y a Simsai, el secretario, y a los demás compañeros suyos que habitaban en Samaria y en el resto de la provincia de allende el río: Salud.",
+   "v1_document_text": "El rey envió esta respuesta a Rehum, el canciller, y a Simsai, el secretario, y a los demás compañeros suyos que habitaban en Samaria y en el resto de la provincia de allende el río:",
+   "v1_words_missing": [
+    "Salud."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "El rey envió esta respuesta a Rehum, el canciller, y a Simsai, el secretario, y a los demás compañeros suyos que habitaban en Samaria y en el resto de la provincia de allende el río:",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "EZR 5:7",
+   "source_usfm_text": "Le enviaron la misiva, en la cual iba escrito de esta manera: Al rey Darío, toda paz.",
+   "v1_document_text": "Le enviaron la misiva, en la cual iba escrito de esta manera:",
+   "v1_words_missing": [
+    "Al rey Darío, toda paz."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "Le enviaron la misiva, en la cual iba escrito de esta manera:",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "EZR 7:12",
+   "source_usfm_text": "“Artajerjes, rey de reyes, al sacerdote Esdras, escriba instruido en la ley del Dios del cielo: Paz cumplida.",
+   "v1_document_text": "“Artajerjes, rey de reyes,",
+   "v1_words_missing": [
+    "al sacerdote Esdras, escriba instruido en la ley del Dios del cielo: Paz cumplida."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "“Artajerjes, rey de reyes,",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "DAN 4:1",
+   "source_usfm_text": "El rey Nabucodonosor, a todos los pueblos, naciones y lenguas que habitan en toda la tierra: Que la paz se os multiplique.",
+   "v1_document_text": "El rey Nabucodonosor,",
+   "v1_words_missing": [
+    "a todos los pueblos, naciones y lenguas que habitan en toda la tierra: Que la paz se os multiplique."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "El rey Nabucodonosor,",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "DAN 4:19",
+   "source_usfm_text": "Entonces Daniel, cuyo nombre era Beltsasar, se quedó atónito por un momento, y sus pensamientos le turbaban. El rey habló y dijo: «Beltsasar, no dejes que el sueño ni su interpretación te turben». Beltsasar respondió y dijo: “Señor mío, que el sueño sea para los que te aborrecen, y su interpretación para tus adversarios.",
+   "v1_document_text": "Entonces Daniel, cuyo nombre era Beltsasar, se quedó atónito por un momento, y sus pensamientos le turbaban. El rey habló y dijo: «Beltsasar, no dejes que el sueño ni su interpretación te turben».",
+   "v1_words_missing": [
+    "Beltsasar respondió y dijo: “Señor mío, que el sueño sea para los que te aborrecen, y su interpretación para tus adversarios."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "Entonces Daniel, cuyo nombre era Beltsasar, se quedó atónito por un momento, y sus pensamientos le turbaban. El rey habló y dijo: «Beltsasar, no dejes que el sueño ni su interpretación te turben».",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "DAN 6:25",
+   "source_usfm_text": "Entonces el rey Darío escribió a todos los pueblos, naciones y lenguas que habitaban en toda la tierra: “Que la paz se os multiplique.",
+   "v1_document_text": "Entonces el rey Darío escribió a todos los pueblos, naciones y lenguas que habitaban en toda la tierra:",
+   "v1_words_missing": [
+    "“Que la paz se os multiplique."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "Entonces el rey Darío escribió a todos los pueblos, naciones y lenguas que habitaban en toda la tierra:",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "DAN 9:4",
+   "source_usfm_text": "Oré a Yahvé, mi Dios, e hice confesión, diciendo: “Oh Señor, Dios grande y temible, que guardas el pacto y la misericordia con los que te aman y guardan tus mandamientos;",
+   "v1_document_text": "Oré a Yahvé, mi Dios, e hice confesión, diciendo:",
+   "v1_words_missing": [
+    "“Oh Señor, Dios grande y temible, que guardas el pacto y la misericordia con los que te aman y guardan tus mandamientos;"
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "Oré a Yahvé, mi Dios, e hice confesión, diciendo:",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  },
+  {
+   "reference": "DAN 9:11",
+   "source_usfm_text": "Todo Israel ha transgredido tu ley, apartándose para no escuchar tu voz. “Por ello se ha derramado sobre nosotros la maldición y el juramento que están escritos en la ley de Moisés, siervo de Dios, porque hemos pecado contra él.",
+   "v1_document_text": "Todo Israel ha transgredido tu ley, apartándose para no escuchar tu voz.",
+   "v1_words_missing": [
+    "“Por ello se ha derramado sobre nosotros la maldición y el juramento que están escritos en la ley de Moisés, siervo de Dios, porque hemos pecado contra él."
+   ],
+   "v1_recogniser": {
+    "verified": true,
+    "found": "Todo Israel ha transgredido tu ley, apartándose para no escuchar tu voz.",
+    "kind": "missing"
+   },
+   "v2_document_complete": true,
+   "v2_recogniser": "verified, text equal to the edition"
+  }
+ ]
+}
