@@ -5,6 +5,7 @@
 import { createRequire } from 'node:module';
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 const { chromium } = createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODULE ?? 'playwright');
 const output = process.env.VIEWPORT_EVIDENCE_OUT ?? 'docs/implementation/windows-viewport-p0-browser.json';
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? '/usr/bin/chromium', args: ['--no-sandbox'] });
@@ -58,7 +59,7 @@ try {
 } finally {
   await browser.close();
 }
-mkdirSync(output.slice(0, output.lastIndexOf('/')), { recursive: true });
+mkdirSync(dirname(output), { recursive: true });
 writeFileSync(output, JSON.stringify({
   kind: 'Chromium DOM-only vertical-height contract; no Windows WebView2/native acceptance',
   note: 'This tests React/CSS resize response. A passing result cannot confirm the user-observed 193px native Windows gap is fixed.',
