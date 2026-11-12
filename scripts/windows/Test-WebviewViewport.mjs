@@ -69,7 +69,10 @@ function latestSample(logDirectory) {
     const start=line.indexOf('Viewport sample ');if(start<0)return [];
     try{return [JSON.parse(line.slice(start+'Viewport sample '.length))];}catch{return [];}
   }));
-  return samples.at(-1);
+  // Rotated log directory iteration is not chronologically ordered.
+  // Select the newest sequence explicitly, not the last filename scanned.
+  return samples.filter(s => Number.isSafeInteger(s?.sequence))
+    .reduce((latest, sample) => !latest || sample.sequence > latest.sequence ? sample : latest, null);
 }
 async function scrollAll(page) {
   return page.evaluate(async()=>{
