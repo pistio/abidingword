@@ -2,6 +2,8 @@
 //!
 //! Do not guess a CSS height from a screenshot. Measure the window and webview
 //! separately; change only the embedded webview when their physical sizes differ.
+//! Tauri's WebviewWindow auto-fills its parent already: set_auto_resize() is a
+//! documented no-op here and deliberately not called.
 //! Native events schedule work off the event-handler thread to avoid blocking
 //! WebView2's Windows message loop. No Scripture or user data is read or logged.
 
@@ -28,21 +30,7 @@ mod windows {
     // The only reconciled window is "main"; coalesce bursts of resize events.
     static REQUESTED: AtomicU64 = AtomicU64::new(0);
     static WORKER_ACTIVE: AtomicBool = AtomicBool::new(false);
-    static AUTO_RESIZE_ENABLED: AtomicBool = AtomicBool::new(false);
     static INITIAL_MEASUREMENT_LOGGED: AtomicBool = AtomicBool::new(false);
-
-    /// Restore Tauri's automatic parent-to-webview resizing. This is a native
-    /// call and needs no extra frontend command permission.
-    fn enable_auto_resize(main: &WebviewWindow) {
-        if AUTO_RESIZE_ENABLED.swap(true, Ordering::AcqRel) {
-            return;
-        }
-        let webview: &tauri::Webview = main.as_ref();
-        if let Err(error) = webview.set_auto_resize(true) {
-            AUTO_RESIZE_ENABLED.store(false, Ordering::Release);
-            log::warn!("Main WebView2 auto-resize could not be enabled: {error}");
-        }
-    }
 
     fn reconcile(main: &WebviewWindow) {
         if main.label() != "main" {
@@ -51,9 +39,6 @@ mod windows {
         if main.is_minimized().unwrap_or(false) {
             return;
         }
-        // Configure auto-resize from this background worker, not from the
-        // synchronous Tauri setup or Windows native event callback.
-        enable_auto_resize(main);
         let Ok(expected) = main.inner_size() else {
             return;
         };
