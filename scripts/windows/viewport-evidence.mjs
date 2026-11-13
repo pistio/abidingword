@@ -17,6 +17,7 @@ export function domSnapshot() {
     visualViewport: window.visualViewport ? { width: visualViewport.width, height: visualViewport.height, offsetLeft: visualViewport.offsetLeft, offsetTop: visualViewport.offsetTop, scale: visualViewport.scale } : null,
     shell: rect(document.querySelector('[data-testid="app-shell"]')),
     workspace: rect(document.querySelector('[data-workspace-layout]')),
+    layoutMode: document.querySelector('[data-workspace-layout]')?.getAttribute('data-workspace-layout') ?? null,
     panes,
     focus: { tag: active?.tagName, selectionStart: active?.selectionStart ?? null, selectionEnd: active?.selectionEnd ?? null }
   };
@@ -26,6 +27,9 @@ export function compareGeometry(native, sample, dom, tolerance = 4) {
   const errors = [];
   const equal = (a, b) => Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) <= tolerance;
   const main = native.Main;
+  // A stacked/narrow workspace deliberately caps individual pane heights:
+  // it is not evidence for the wide three-column Windows 193px defect.
+  if (dom.layoutMode === 'stacked') errors.push('Stacked/narrow workspace: wide three-pane native geometry was not exercised.');
   const controller = sample?.controller;
   if (!main || !controller?.rect || !sample.stableClient) return { passed: false, diagnosis: 'missing-or-unstable-native-measurement', errors: ['Require independent Win32 client, stable Tauri sample and actual COM controller bounds.'] };
   const [left, top, right, bottom] = controller.rect;
