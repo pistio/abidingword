@@ -1,0 +1,17 @@
+{
+  "platform": "Linux Chromium; real React with memory API formatted EPUB/DOCX; not native WebView2",
+  "results": [
+    {
+      "id": "epub-1920-1009-1",
+      "error": "Error: original-deep: workspace.top moved; workspace.bottom moved; pane-scripture.top moved; pane-scripture.bottom moved; pane-study.top moved; pane-study.bottom moved; pane-sources.top moved; pane-sources.bottom moved; shell.scrollTop moved; Ancestor DIV fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text scrolled; Reader toolbar disappeared; Application toolbar disappeared\n    at capture (file:///workspace/abidingword/tests/screenshots/original-workspace-flow.mjs:40:237)\n    at async exerciseOriginal (file:///workspace/abidingword/tests/screenshots/original-workspace-flow.mjs:48:3)\n    at async file:///workspace/abidingword/tests/screenshots/original-workspace.mjs:14:11",
+      "writingPreserved": true,
+      "errors": []
+    },
+    {
+      "id": "docx-1920-1009-1",
+      "error": "Error: original-deep: workspace.top moved; workspace.bottom moved; pane-scripture.top moved; pane-scripture.bottom moved; pane-study.top moved; pane-study.bottom moved; pane-sources.top moved; pane-sources.bottom moved; shell.scrollTop moved; Ancestor DIV fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text scrolled; Reader toolbar disappeared; Application toolbar disappeared\n    at capture (file:///workspace/abidingword/tests/screenshots/original-workspace-flow.mjs:40:237)\n    at async exerciseOriginal (file:///workspace/abidingword/tests/screenshots/original-workspace-flow.mjs:48:3)\n    at async file:///workspace/abidingword/tests/screenshots/original-workspace.mjs:14:11",
+      "writingPreserved": true,
+      "errors": []
+    }
+  ]
+}

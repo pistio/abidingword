@@ -1,5 +1,7 @@
 # Issue #49: Windows viewport investigation and acceptance gate
 
+> 13 November update: the actual Source → Original interaction now reproduces a shared blank band in the real React workspace. See [the scroll-containment investigation and targeted Windows protocol](issue-49-original/README.md). The earlier resize-only results below are historical and do not exercise that trigger. Native acceptance of the new correction remains pending.
+
 [Draft PR #50](https://github.com/pistio/abidingword/pull/50), stacked on [PR #44](https://github.com/pistio/abidingword/pull/44).
 
 **2026-11-12: NOT FIXED / Windows acceptance BLOCKED.** This execution environment is Linux, with no attached Windows desktop or WebView2 runtime. No native Windows measurements or before/after screenshots were obtained. No paid Actions, installer, signing, release, deployment or merge was started. The reproducible Windows runner below is prepared but has not executed on Windows.

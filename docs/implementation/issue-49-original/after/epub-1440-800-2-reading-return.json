@@ -1,0 +1,377 @@
+{
+  "innerWidth": 1440,
+  "innerHeight": 800,
+  "devicePixelRatio": 2,
+  "windowScroll": [
+    0,
+    0
+  ],
+  "visualViewport": {
+    "width": 1440,
+    "height": 800,
+    "offsetTop": 0,
+    "pageTop": 0
+  },
+  "document": {
+    "tag": "HTML",
+    "id": "",
+    "testid": null,
+    "className": "",
+    "rect": {
+      "top": 0,
+      "bottom": 800,
+      "left": 0,
+      "right": 1440,
+      "width": 1440,
+      "height": 800
+    },
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "scrollHeight": 800,
+    "clientHeight": 800,
+    "scrollWidth": 1440,
+    "clientWidth": 1440,
+    "overflow": "hidden"
+  },
+  "shell": {
+    "tag": "DIV",
+    "id": "",
+    "testid": "app-shell",
+    "className": "fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text",
+    "rect": {
+      "top": 0,
+      "bottom": 800,
+      "left": 0,
+      "right": 1440,
+      "width": 1440,
+      "height": 800
+    },
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "scrollHeight": 1744,
+    "clientHeight": 800,
+    "scrollWidth": 1440,
+    "clientWidth": 1440,
+    "overflow": "hidden"
+  },
+  "workspace": {
+    "tag": "DIV",
+    "id": "",
+    "testid": null,
+    "className": "flex min-h-0 min-w-0 flex-1 overflow-hidden",
+    "rect": {
+      "top": 56,
+      "bottom": 800,
+      "left": 0,
+      "right": 1440,
+      "width": 1440,
+      "height": 744
+    },
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "scrollHeight": 744,
+    "clientHeight": 744,
+    "scrollWidth": 1440,
+    "clientWidth": 1440,
+    "overflow": "hidden"
+  },
+  "panes": [
+    {
+      "tag": "ASIDE",
+      "id": "pane-scripture",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 shrink flex-col overflow-hidden bg-pane-scripture",
+      "rect": {
+        "top": 56,
+        "bottom": 800,
+        "left": 0,
+        "right": 300,
+        "width": 300,
+        "height": 744
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 744,
+      "clientHeight": 744,
+      "scrollWidth": 300,
+      "clientWidth": 300,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "MAIN",
+      "id": "pane-study",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-pane-work",
+      "rect": {
+        "top": 56,
+        "bottom": 800,
+        "left": 301,
+        "right": 1119,
+        "width": 818,
+        "height": 744
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 744,
+      "clientHeight": 744,
+      "scrollWidth": 818,
+      "clientWidth": 818,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "ASIDE",
+      "id": "pane-sources",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 shrink flex-col overflow-hidden bg-pane-sources",
+      "rect": {
+        "top": 56,
+        "bottom": 800,
+        "left": 1120,
+        "right": 1440,
+        "width": 320,
+        "height": 744
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 744,
+      "clientHeight": 744,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    }
+  ],
+  "reader": {
+    "tag": "DIV",
+    "id": "",
+    "testid": "reader-body",
+    "className": "min-h-0 flex-1 overflow-y-auto",
+    "rect": {
+      "top": 153,
+      "bottom": 800,
+      "left": 1120,
+      "right": 1440,
+      "width": 320,
+      "height": 647
+    },
+    "scrollTop": 20050,
+    "scrollLeft": 0,
+    "scrollHeight": 36040,
+    "clientHeight": 647,
+    "scrollWidth": 320,
+    "clientWidth": 320,
+    "overflow": "auto"
+  },
+  "toolbar": {
+    "top": 104,
+    "bottom": 153,
+    "left": 1120,
+    "right": 1440,
+    "width": 320,
+    "height": 49
+  },
+  "toolbarVisible": true,
+  "appbar": {
+    "top": 0,
+    "bottom": 56,
+    "left": 0,
+    "right": 1440,
+    "width": 1440,
+    "height": 56
+  },
+  "appbarVisible": true,
+  "ancestors": [
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": null,
+      "className": "relative flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden",
+      "rect": {
+        "top": 153,
+        "bottom": 800,
+        "left": 1120,
+        "right": 1440,
+        "width": 320,
+        "height": 647
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 647,
+      "clientHeight": 647,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SECTION",
+      "id": "",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+      "rect": {
+        "top": 104,
+        "bottom": 800,
+        "left": 1120,
+        "right": 1440,
+        "width": 320,
+        "height": 696
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 696,
+      "clientHeight": 696,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "ASIDE",
+      "id": "pane-sources",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 shrink flex-col overflow-hidden bg-pane-sources",
+      "rect": {
+        "top": 56,
+        "bottom": 800,
+        "left": 1120,
+        "right": 1440,
+        "width": 320,
+        "height": 744
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 744,
+      "clientHeight": 744,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 flex-1 overflow-hidden",
+      "rect": {
+        "top": 56,
+        "bottom": 800,
+        "left": 0,
+        "right": 1440,
+        "width": 1440,
+        "height": 744
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 744,
+      "clientHeight": 744,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": "app-shell",
+      "className": "fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text",
+      "rect": {
+        "top": 0,
+        "bottom": 800,
+        "left": 0,
+        "right": 1440,
+        "width": 1440,
+        "height": 800
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 1744,
+      "clientHeight": 800,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "DIV",
+      "id": "root",
+      "testid": null,
+      "className": "",
+      "rect": {
+        "top": 0,
+        "bottom": 800,
+        "left": 0,
+        "right": 1440,
+        "width": 1440,
+        "height": 800
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "overflow": "visible"
+    },
+    {
+      "tag": "BODY",
+      "id": "",
+      "testid": null,
+      "className": "",
+      "rect": {
+        "top": 0,
+        "bottom": 800,
+        "left": 0,
+        "right": 1440,
+        "width": 1440,
+        "height": 800
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "HTML",
+      "id": "",
+      "testid": null,
+      "className": "",
+      "rect": {
+        "top": 0,
+        "bottom": 800,
+        "left": 0,
+        "right": 1440,
+        "width": 1440,
+        "height": 800
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 800,
+      "clientHeight": 800,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "overflow": "hidden"
+    }
+  ],
+  "anchors": [],
+  "readingParagraphs": [
+    {
+      "textPrefix": "INVENTED formatted paragraph 40. Read this invented content ",
+      "rect": {
+        "top": 152.9375,
+        "bottom": 650.1875,
+        "left": 1140,
+        "right": 1420,
+        "width": 280,
+        "height": 497.25
+      }
+    },
+    {
+      "textPrefix": "INVENTED formatted paragraph 41. Read this invented content ",
+      "rect": {
+        "top": 715.875,
+        "bottom": 1279.625,
+        "left": 1140,
+        "right": 1420,
+        "width": 280,
+        "height": 563.75
+      }
+    }
+  ]
+}

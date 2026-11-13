@@ -12,19 +12,23 @@ import { fileURLToPath } from 'node:url';
 import { setTimeout as delay } from 'node:timers/promises';
 import { release, version } from 'node:os';
 import { domSnapshot, compareGeometry } from './viewport-evidence.mjs';
+import { originalEpub, originalTitle } from './original-epub-fixture.mjs';
 
 const { values: args } = parseArgs({ options: {
   exe: { type: 'string' }, 'exe-sha256': { type: 'string' }, 'source-sha': { type: 'string' },
+  scenario: { type: 'string', default: 'resize' },
   out: { type: 'string' }, mode: { type: 'string' }, 'expected-dpi': { type: 'string' },
   port: { type: 'string', default: '9227' }, powershell: { type: 'string', default: 'pwsh.exe' }, help: { type: 'boolean' },
 } });
 if (args.help) {
-  console.log('Windows only: node scripts/windows/Test-WebviewViewport.mjs --exe PATH --exe-sha256 SHA256 --source-sha GIT_SHA --mode observe|repair --expected-dpi 96|120|144|192 --out NEW_DIRECTORY [--port 9227]');
+  console.log('Windows only: node scripts/windows/Test-WebviewViewport.mjs --exe PATH --exe-sha256 SHA256 --source-sha GIT_SHA --mode observe|repair --expected-dpi 96|120|144|192 --out NEW_DIRECTORY [--scenario original|resize] [--port 9227]');
   process.exit(0);
 }
 assert.equal(process.platform, 'win32', 'Native acceptance requires an interactive Windows desktop; Linux/Chromium is not a substitute.');
 assert.ok(args.exe && args.out && /^[a-f0-9]{64}$/i.test(args['exe-sha256'] ?? '') && /^[a-f0-9]{40}$/i.test(args['source-sha'] ?? ''), 'Pin executable hash, source SHA and new output directory.');
 assert.ok(['observe', 'repair'].includes(args.mode), 'Choose explicit observation or measured correction.');
+assert.ok(['original', 'resize'].includes(args.scenario), 'Choose the exact Original interaction or historical resize scenario.');
+if (args.scenario === 'original') assert.equal(args.mode, 'observe', 'Original acceptance observes native dimensions without the speculative size repair.');
 const expectedDpi = Number(args['expected-dpi']);
 assert.ok([96, 120, 144, 192].includes(expectedDpi), 'Use actual OS display scaling, not browser emulation.');
 const exe = resolve(args.exe), out = resolve(args.out), port = Number(args.port);
@@ -43,16 +47,20 @@ const mark = 'INVENTED VIEWPORT DATA — NOT SCRIPTURE OR OWNER WRITING';
 const counts = [51,25,36,54,47,71,53,59,41,42,57,50,38,31,27,33,26,40,42,31,25];
 const fixture = ['\\id JHN', '\\ide UTF-8', `\\h ${mark}`];
 counts.forEach((n, c) => { fixture.push(`\\c ${c+1}`);for(let v=1;v<=n;v++)fixture.push(`\\v ${v} ${(mark + ` row ${c+1}:${v}. `).repeat(5)}`); });
-const bibleFile = join(out, 'invented.usfm'), sourceFile = join(out, 'invented.md');
+const bibleFile = join(out, 'invented.usfm'), sourceFile = join(out, args.scenario === 'original' ? 'invented-original.epub' : 'invented.md');
 writeFileSync(bibleFile, fixture.join('\n'));
 writeFileSync(sourceFile, `# INVENTED Viewport Source\n\n${Array.from({length:80},(_,i)=>`Invented paragraph ${i+1}. John 15:1. ${'Geometry test data only. '.repeat(15)}`).join('\n\n')}`);
+if (args.scenario === 'original') writeFileSync(sourceFile, originalEpub());
+const sourceTitle = args.scenario === 'original' ? originalTitle : 'INVENTED Viewport Source';
+const protocolRoot = fileURLToPath(new URL('../../', import.meta.url));
+const protocolSourceSha = execFileSync('git', ['-C', protocolRoot, 'rev-parse', 'HEAD'], {encoding:'utf8'}).trim();
 const child = spawn(exe, [], { windowsHide: false, stdio: 'ignore', env: {
   ...process.env, ABIDING_WORD_DATA_DIR: profile,
   WEBVIEW2_USER_DATA_FOLDER: join(profile, 'webview2'),
   WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${port} --remote-debugging-address=127.0.0.1`,
   ABIDING_WORD_VIEWPORT_MODE: args.mode, ABIDING_WORD_VIEWPORT_TRACE: '1',
 } });
-const report = { sourceSha: args['source-sha'], executableSha256: args['exe-sha256'], mode: args.mode, expectedDpi, platform: process.platform, architecture: process.arch, osRelease: release(), osVersion: version(), cases: [], stage: 'spawn', nativeAcceptance: 'NOT AUTOMATIC: requires independent native screenshot review; no installer or paid Actions run', failures: [] };
+const report = { protocolSourceSha, sourceSha: args['source-sha'], executableSha256: args['exe-sha256'], mode: args.mode, scenario: args.scenario, expectedDpi, platform: process.platform, architecture: process.arch, osRelease: release(), osVersion: version(), cases: [], stage: 'spawn', nativeAcceptance: 'NOT AUTOMATIC: requires independent native screenshot review; no installer or paid Actions run', failures: [] };
 let browser;
 let startupError;child.once('error', error => { startupError=error; });
 const collector = fileURLToPath(new URL('./Measure-WebviewGeometry.ps1', import.meta.url));
@@ -107,7 +115,7 @@ try {
   assert.equal(resolve(info.dataDirectory).toLowerCase(), profile.toLowerCase(), 'App is not using the disposable profile; stop before seeding.');
   assert.equal(info.updatesEnabled,false,'Require a plain build without updater.');assert.equal(info.schemaVersion,27);
   report.stage='seed-disposable-profile';
-  const seeded=await page.evaluate(async({bibleFile,sourceFile,mark})=>{
+  const seeded=await page.evaluate(async({bibleFile,sourceFile,mark,sourceTitle,scenario})=>{
     const invoke=window.__TAURI_INTERNALS__.invoke;
     const workspace=await invoke('workspace_get_default');
     const project=await invoke('project_create',{input:{workspaceId:workspace.id,title:'INVENTED Viewport Project'}});
@@ -115,38 +123,87 @@ try {
     const body=(`${mark}. Writing and scrolling must survive native resizing.\n`).repeat(50);
     const section=detail.sections.find(s=>s.blocks.length);const block=section.blocks[0];
     await invoke('study_block_update',{input:{id:block.id,content:body}});
+    // All Study sections must be populated: an empty/short Study misses the
+    // real overflow condition behind the Reading -> Original regression.
+    if(scenario==='original')for(const part of detail.sections)for(const writing of part.blocks) {
+      if(writing.id!==block.id)await invoke('study_block_update',{input:{id:writing.id,content:body}});
+    }
     const preview=await invoke('bible_import_preview',{input:{paths:[bibleFile]}});
     assertNoImportError(preview);
     function assertNoImportError(p){if(!p.canImport)throw Error('Invented USFM fixture was rejected; do not bypass import validation.');}
     const bible=await invoke('bible_import_commit',{input:{previewId:preview.previewId,name:mark,shortName:'INVENTED',language:'English',languageCode:'en'}});
     const source=await invoke('library_import_preview',{path:sourceFile});
     if(!source.canImport)throw Error('Invented source fixture rejected.');
-    await invoke('library_import_commit',{input:{previewId:source.previewId,title:'INVENTED Viewport Source',allowDuplicate:false}});
+    const imported=await invoke('library_import_commit',{input:{previewId:source.previewId,title:sourceTitle,allowDuplicate:false}});
+    if(scenario==='original') {
+      if(imported.format!=='epub')throw Error('Targeted Original verification requires a real EPUB import.');
+      const structure=await invoke('library_epub_structure',{id:imported.id});
+      if(!structure.some(item=>Object.hasOwn(item.anchors,'p40') && Object.hasOwn(item.anchors,'p65')))throw Error('Imported formatted EPUB lacks deep passage/footnote anchors.');
+      const window=await invoke('source_get_segments',{input:{sourceId:imported.id,offset:40,limit:1}});
+      const segment=window.segments[0];
+      if(!segment?.text.startsWith('INVENTED formatted paragraph 41.'))throw Error('Real import paragraph mapping differs; inspect before proceeding.');
+      await invoke('source_annotation_create',{input:{sourceId:imported.id,kind:'highlight',color:'amber',start:{segmentId:segment.id,offset:0},end:{segmentId:segment.id,offset:31},quote:segment.text.slice(0,31)}});
+      localStorage.setItem('abiding-word.reader.toolbar.pins',JSON.stringify(['contents','history','marks']));
+    }
     await invoke('settings_update',{input:{scriptureTranslationId:bible.id,scripturePassage:'JHN.15',theme:'light'}});
     localStorage.setItem('abiding-word.ui.language',JSON.stringify('en'));
     localStorage.setItem('abiding-word.layout.sourcesOpen','true');
-    return {studyId:detail.study.id,blockId:block.id,body};
-  },{bibleFile,sourceFile,mark});
+    return {studyId:detail.study.id,blockId:block.id,body,sourceId:imported.id,sourceFormat:imported.format};
+  },{bibleFile,sourceFile,mark,sourceTitle,scenario:args.scenario});
+  report.sourceFormat=seeded.sourceFormat;
   report.stage='open-three-real-panes';
   await page.reload();await page.locator('[data-testid="app-shell"]').waitFor();
   const study=page.locator('#pane-study');
   await study.getByRole('button',{name:/INVENTED Viewport Project/}).first().click();
   await study.getByRole('button',{name:/INVENTED Viewport Study/}).first().click();
+  const area=study.locator('section textarea').first();await area.waitFor();
+  const editStudy=async()=>{await area.fill(seeded.body+'Edited in disposable test.');await area.focus();await area.evaluate(el=>el.setSelectionRange(el.value.length,el.value.length));};
+  // Mirror the regression: edit Study before opening the Source, so test
+  // automation does not scroll the surrounding workspace after Reading opens.
+  if(args.scenario==='original')await editStudy();
   // SourcesPane's current overview renders recent/other imported Sources
   // as [data-source-link] buttons; [data-source-result] is used in search
   // results and may be absent in the ordinary overview after import.
   const sourceLink=page.locator('#pane-sources [data-source-link], #pane-sources [data-source-result]')
-    .filter({hasText:'INVENTED Viewport Source'}).first();
+    .filter({hasText:sourceTitle}).first();
   await sourceLink.waitFor({state:'visible'});
   await sourceLink.click();
   await page.locator('#pane-sources [data-testid=reader-body]').waitFor();
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
-  const area=study.locator('section textarea').first();await area.waitFor();await area.fill(seeded.body+'Edited in disposable test.');await area.focus();
-  const expected=await area.inputValue();await area.evaluate(el=>el.setSelectionRange(el.value.length,el.value.length));
+  if(args.scenario==='resize')await editStudy();
+  const expected=await area.inputValue();
   const caret=await area.evaluate(el=>[el.selectionStart,el.selectionEnd]);
   report.stage='initial-native-sample';
   const first=native('initial');assert.equal(first.Main.Dpi,expectedDpi,'Actual Windows DPI differs from requested run; emulation is not acceptance.');
   const scale=expectedDpi/96;
+  if(args.scenario==='original') {
+    report.stage='original-interaction';
+    native('original-maximise','maximise');
+    const { exerciseOriginal, compareOriginal } = await import('../../tests/screenshots/original-workspace-flow.mjs');
+    let interactionBaseline;
+    await exerciseOriginal(page,{record:async(name,interaction)=>{
+      interactionBaseline ??= interaction;
+      const interactionComparison=compareOriginal(interactionBaseline,interaction);
+      const measured=native(`${name}-measure`);
+      const dom=await page.evaluate(domSnapshot);
+      const sample=latestSample(info.logDirectory);
+      let comparison=compareGeometry(measured,sample,dom);
+      if(!measured.Main.Visible || measured.Main.Minimized || !measured.Main.Maximized)comparison={
+        passed:false,diagnosis:'native-transition-unconfirmed',
+        errors:[...comparison.errors,'Original verification requires a visible, maximised, non-minimised native window.']
+      };
+      let nativeScreenshotError;
+      try { native(name,'observe',undefined,true); } catch(error) { nativeScreenshotError=String(error.message);report.failures.push(`${name}: native screenshot unavailable`); }
+      await page.screenshot({path:join(out,`${name}-DOM.png`)});
+      report.cases.push({name,native:measured,tauri:sample,dom,comparison,interaction,interactionComparison,nativeScreenshotError});
+      if(!comparison.passed)report.failures.push(`${name}: native geometry`);
+      if(!interactionComparison.passed)report.failures.push(`${name}: Original interaction containment`);
+    }});
+    report.originalScrolling=await scrollAll(page);
+    if(report.originalScrolling.some(result=>!result.passed))report.failures.push('Pane scrolling failed after Original navigation.');
+    report.originalEditing={valuePreserved:(await area.inputValue())===expected,caretPreserved:JSON.stringify(await area.evaluate(el=>[el.selectionStart,el.selectionEnd]))===JSON.stringify(caret)};
+    if(Object.values(report.originalEditing).includes(false))report.failures.push('Study writing or caret changed during Original navigation.');
+  } else {
   let previousSequence=0;
   for(const [name,action,size] of [ ['initial','observe'],['maximised','maximise'],['restored','restore'],['shorter','resize',[Math.round(1440*scale),Math.round(620*scale)]],['taller','resize',[Math.round(1440*scale),Math.round(850*scale)]],['maximised-again','maximise'],['restored-again','restore'] ]) {
     // An old Tauri sample must never be accepted as evidence for a new
@@ -192,6 +249,7 @@ try {
     if(eventCounterGrowth>100)report.failures.push(`${name}: excessive native event growth`);
     const entry={name,native:measured,tauri:sample,dom,comparison,editing,scroll,eventCounterGrowth,nativeScreenshotError};report.cases.push(entry);
     if(!comparison.passed||Object.values(editing).includes(false)||scroll.some(s=>!s.passed))report.failures.push(name);
+  }
   }
   report.stage='persistent-edit-readback';
   await area.blur();

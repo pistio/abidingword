@@ -1,0 +1,415 @@
+{
+  "innerWidth": 1920,
+  "innerHeight": 1009,
+  "devicePixelRatio": 1,
+  "windowScroll": [
+    0,
+    0
+  ],
+  "visualViewport": {
+    "width": 1920,
+    "height": 1009,
+    "offsetTop": 0,
+    "pageTop": 0
+  },
+  "document": {
+    "tag": "HTML",
+    "id": "",
+    "testid": null,
+    "className": "",
+    "rect": {
+      "top": 0,
+      "bottom": 1009,
+      "left": 0,
+      "right": 1920,
+      "width": 1920,
+      "height": 1009
+    },
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "scrollHeight": 1009,
+    "clientHeight": 1009,
+    "scrollWidth": 1920,
+    "clientWidth": 1920,
+    "overflow": "hidden"
+  },
+  "shell": {
+    "tag": "DIV",
+    "id": "",
+    "testid": "app-shell",
+    "className": "fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text",
+    "rect": {
+      "top": 0,
+      "bottom": 1009,
+      "left": 0,
+      "right": 1920,
+      "width": 1920,
+      "height": 1009
+    },
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "scrollHeight": 1744,
+    "clientHeight": 1009,
+    "scrollWidth": 1920,
+    "clientWidth": 1920,
+    "overflow": "hidden"
+  },
+  "workspace": {
+    "tag": "DIV",
+    "id": "",
+    "testid": null,
+    "className": "flex min-h-0 min-w-0 flex-1 overflow-hidden",
+    "rect": {
+      "top": 56,
+      "bottom": 1009,
+      "left": 0,
+      "right": 1920,
+      "width": 1920,
+      "height": 953
+    },
+    "scrollTop": 0,
+    "scrollLeft": 0,
+    "scrollHeight": 953,
+    "clientHeight": 953,
+    "scrollWidth": 1920,
+    "clientWidth": 1920,
+    "overflow": "hidden"
+  },
+  "panes": [
+    {
+      "tag": "ASIDE",
+      "id": "pane-scripture",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 shrink flex-col overflow-hidden bg-pane-scripture",
+      "rect": {
+        "top": 56,
+        "bottom": 1009,
+        "left": 0,
+        "right": 300,
+        "width": 300,
+        "height": 953
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 953,
+      "clientHeight": 953,
+      "scrollWidth": 300,
+      "clientWidth": 300,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "MAIN",
+      "id": "pane-study",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-pane-work",
+      "rect": {
+        "top": 56,
+        "bottom": 1009,
+        "left": 301,
+        "right": 1599,
+        "width": 1298,
+        "height": 953
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 953,
+      "clientHeight": 953,
+      "scrollWidth": 1298,
+      "clientWidth": 1298,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "ASIDE",
+      "id": "pane-sources",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 shrink flex-col overflow-hidden bg-pane-sources",
+      "rect": {
+        "top": 56,
+        "bottom": 1009,
+        "left": 1600,
+        "right": 1920,
+        "width": 320,
+        "height": 953
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 953,
+      "clientHeight": 953,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    }
+  ],
+  "reader": {
+    "tag": "DIV",
+    "id": "",
+    "testid": null,
+    "className": "relative min-h-0 flex-1 overflow-auto bg-bg-secondary",
+    "rect": {
+      "top": 206,
+      "bottom": 1009,
+      "left": 1600,
+      "right": 1920,
+      "width": 320,
+      "height": 803
+    },
+    "scrollTop": 19712,
+    "scrollLeft": 0,
+    "scrollHeight": 34611,
+    "clientHeight": 803,
+    "scrollWidth": 320,
+    "clientWidth": 320,
+    "overflow": "auto"
+  },
+  "toolbar": {
+    "top": 104,
+    "bottom": 153,
+    "left": 1600,
+    "right": 1920,
+    "width": 320,
+    "height": 49
+  },
+  "toolbarVisible": true,
+  "appbar": {
+    "top": 0,
+    "bottom": 56,
+    "left": 0,
+    "right": 1920,
+    "width": 1920,
+    "height": 56
+  },
+  "appbarVisible": true,
+  "ancestors": [
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": "epub-viewer",
+      "className": "flex min-h-0 flex-1 flex-col",
+      "rect": {
+        "top": 153,
+        "bottom": 1009,
+        "left": 1600,
+        "right": 1920,
+        "width": 320,
+        "height": 856
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 856,
+      "clientHeight": 856,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "visible"
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": null,
+      "className": "relative flex min-h-0 flex-1 flex-col min-w-0 overflow-hidden",
+      "rect": {
+        "top": 153,
+        "bottom": 1009,
+        "left": 1600,
+        "right": 1920,
+        "width": 320,
+        "height": 856
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 856,
+      "clientHeight": 856,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "SECTION",
+      "id": "",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden",
+      "rect": {
+        "top": 104,
+        "bottom": 1009,
+        "left": 1600,
+        "right": 1920,
+        "width": 320,
+        "height": 905
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 905,
+      "clientHeight": 905,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "ASIDE",
+      "id": "pane-sources",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 shrink flex-col overflow-hidden bg-pane-sources",
+      "rect": {
+        "top": 56,
+        "bottom": 1009,
+        "left": 1600,
+        "right": 1920,
+        "width": 320,
+        "height": 953
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 953,
+      "clientHeight": 953,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": null,
+      "className": "flex min-h-0 min-w-0 flex-1 overflow-hidden",
+      "rect": {
+        "top": 56,
+        "bottom": 1009,
+        "left": 0,
+        "right": 1920,
+        "width": 1920,
+        "height": 953
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 953,
+      "clientHeight": 953,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "DIV",
+      "id": "",
+      "testid": "app-shell",
+      "className": "fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text",
+      "rect": {
+        "top": 0,
+        "bottom": 1009,
+        "left": 0,
+        "right": 1920,
+        "width": 1920,
+        "height": 1009
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 1744,
+      "clientHeight": 1009,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "DIV",
+      "id": "root",
+      "testid": null,
+      "className": "",
+      "rect": {
+        "top": 0,
+        "bottom": 1009,
+        "left": 0,
+        "right": 1920,
+        "width": 1920,
+        "height": 1009
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 1009,
+      "clientHeight": 1009,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflow": "visible"
+    },
+    {
+      "tag": "BODY",
+      "id": "",
+      "testid": null,
+      "className": "",
+      "rect": {
+        "top": 0,
+        "bottom": 1009,
+        "left": 0,
+        "right": 1920,
+        "width": 1920,
+        "height": 1009
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 1009,
+      "clientHeight": 1009,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflow": "hidden"
+    },
+    {
+      "tag": "HTML",
+      "id": "",
+      "testid": null,
+      "className": "",
+      "rect": {
+        "top": 0,
+        "bottom": 1009,
+        "left": 0,
+        "right": 1920,
+        "width": 1920,
+        "height": 1009
+      },
+      "scrollTop": 0,
+      "scrollLeft": 0,
+      "scrollHeight": 1009,
+      "clientHeight": 1009,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflow": "hidden"
+    }
+  ],
+  "anchors": [
+    {
+      "id": "p40",
+      "tag": "P",
+      "markId": null,
+      "rect": {
+        "top": 205.75,
+        "bottom": 710.59375,
+        "left": 1624,
+        "right": 1896,
+        "width": 272,
+        "height": 504.84375
+      }
+    },
+    {
+      "id": "",
+      "tag": "MARK",
+      "markId": "00000000-0000-4000-8000-000000000155",
+      "rect": {
+        "top": 207.75,
+        "bottom": 258.796875,
+        "left": 1624,
+        "right": 1886.5625,
+        "width": 262.5625,
+        "height": 51.046875
+      }
+    },
+    {
+      "id": "p65",
+      "tag": "P",
+      "markId": null,
+      "rect": {
+        "top": 12536.140625,
+        "bottom": 13040.984375,
+        "left": 1624,
+        "right": 1896,
+        "width": 272,
+        "height": 504.84375
+      }
+    }
+  ],
+  "readingParagraphs": []
+}

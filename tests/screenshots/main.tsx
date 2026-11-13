@@ -15,6 +15,7 @@ import "@fontsource/noto-serif/600.css";
 import "@/design-system/index.css";
 import i18n from "@/i18n";
 import { App } from "@/app/App";
+import type { EpubNode } from "@/types/library";
 import type { MorphDescribed, VerseText } from "@/types/scripture";
 import { createMemoryApi, type FixtureWord, type MemoryApi } from "../support/memoryApi";
 import { ApiError } from "@/lib/api";
@@ -504,6 +505,25 @@ async function start() {
       segments: Array.from({ length: 80 }, (_, i) => ({ text: `Invented paragraph ${i + 1}. ${"Geometry content only. ".repeat(30)}` })),
       mentions: [{ segment: 0, reference: "JHN.15.1", matchedText: "John 15:1" }],
     });
+  }
+  if (params.has("originalReview")) {
+    const kind = params.get("originalReview") === "docx" ? "docx" : "epub";
+    const texts = Array.from({ length: 70 }, (_, i) => `INVENTED formatted paragraph ${i + 1}. ${"Read this invented content to test scrolling and navigation. ".repeat(8)}`);
+    const source = api.installFixtureSource({ title: "INVENTED Original navigation", format: kind, language: "English",
+      formatted: { kind, structure: [{ id: "chapter", startSegment: 0, segmentCount: 70, anchors: Object.fromEntries(texts.map((_, i) => [`p${i}`, i])) }],
+        items: { chapter: { id: "chapter", css: "p { margin: 1em 0; }", root: {}, missingImages: 0,
+          nodes: texts.map<EpubNode>((text, i) => ({ t: "p", a: { id: `p${i}` }, c: [text,
+            ...(i === 40 ? [{ t: "a", a: { id: "noteref", role: "doc-noteref" }, l: { item: "chapter", id: "p65" }, c: ["Footnote 1"] }] : []),
+            ...(i === 65 ? [{ t: "a", a: { id: "backref", role: "doc-backlink" }, l: { item: "chapter", id: "p40" }, c: ["Return to passage"] }] : []),
+          ] })),
+        } } },
+      segments: texts.map((text, i) => ({ text, sectionPath: i >= 40 ? "Deep passage" : "Opening" })),
+      contents: [{ id: "opening", title: "Opening", target: { kind: "segment", position: 0 }, children: [] }, { id: "deep", title: "Deep passage", target: { kind: "segment", position: 40 }, children: [] }, { id: "notes", title: "Footnotes", target: { kind: "segment", position: 65 }, children: [] }],
+      generatedContents: [{ id: "opening", title: "Opening", target: { kind: "segment", position: 0 }, children: [] }, { id: "deep", title: "Deep passage", target: { kind: "segment", position: 40 }, children: [] }, { id: "notes", title: "Footnotes", target: { kind: "segment", position: 65 }, children: [] }],
+      mentions: [{ segment: 40, reference: "JHN.15.1", matchedText: "John 15:1" }],
+    });
+    const segment = (await api.sourceGetSegments({ sourceId: source.id, offset: 40, limit: 1 })).segments[0]!;
+    await api.sourceAnnotationCreate({ sourceId: source.id, kind: "highlight", color: "amber", start: { segmentId: segment.id, offset: 0 }, end: { segmentId: segment.id, offset: 31 }, quote: segment.text.slice(0, 31) });
   }
   // The example project (v0.19), added as the person would from Settings.
   if (params.get("sample") === "1") await api.sampleProjectInstall();
