@@ -1,0 +1,12 @@
+{
+  "baseline": "624ef9f357bcc956275e70bbd8ae371f1eba89f9",
+  "migrations": 27,
+  "migrationSHA256": "f1dbfdb065d280d7c8f0f4962d023c59b3ad3306b4f74c32151a82461ccad5bd",
+  "digestMethod": "sorted relative path + NUL + bytes + NUL",
+  "candidateHelperSHA256": "c8eabbfd087bd83124d3f567e7dc5f5d9c74f87a449144813194bf796b45a8d5",
+  "nativeWindowsRun": false,
+  "paidActionsStarted": false,
+  "installerCreated": false,
+  "installedApplicationTouched": false,
+  "NiPogiTouched": false
+}

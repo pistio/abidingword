@@ -38,21 +38,21 @@ describe("owner Study corrections",()=>{
  });
  it("starts with meaningful dismissible hints, keeps dismissal after reopening, and preserves full autosaved writing in a resizable field",async()=>{
   const {api,open}=await fixture();const {user}=await open();
-  const part=within(pane()).getByRole("heading",{name:"Persons"}).closest("section")!;
+  const part=within(pane()).getByRole("heading",{name:"People"}).closest("section")!;
   expect(within(part).getByText(/Who wrote the text/)).toBeVisible();
   expect(within(part).queryByText(/Write in your own words/)).toBeNull();
   const answer=within(part).getByRole("textbox");expect(answer).toHaveAttribute("rows","5");expect(answer).toHaveClass("resize-y");
   await user.click(within(part).getByRole("button",{name:"Hide hints"}));expect(part.querySelector("[data-part-hints]")).toBeNull();
   const text="Long original writing 한글 ".repeat(20);await user.type(answer,text);await user.tab();
   await waitFor(()=>expect(api.state.blocks.some(b=>b.content===text)).toBe(true));
-  cleanup();await open();const again=within(pane()).getByRole("heading",{name:"Persons"}).closest("section")!;
+  cleanup();await open();const again=within(pane()).getByRole("heading",{name:"People"}).closest("section")!;
   expect(again.querySelector("[data-part-hints]")).toBeNull();expect(within(again).getByRole("textbox")).toHaveValue(text);
-  await openPartOptions(user,"Persons");await user.click(within(again).getByRole("button",{name:"Hints"}));expect(again.querySelector("[data-part-hints]")).not.toBeNull();
+  await openPartOptions(user,"People");await user.click(within(again).getByRole("button",{name:"Hints"}));expect(again.querySelector("[data-part-hints]")).not.toBeNull();
  });
  it("always asks in a named modal for an empty part, traps focus, keeps on Escape and supports empty-part undo",async()=>{
   const {api,study,open}=await fixture();const {user}=await open();const remove=vi.spyOn(api,"studySectionDelete");
-  await openPartOptions(user,"Persons");const opener=within(pane()).getByRole("button",{name:"Delete part Persons"});await user.click(opener);
-  let modal=screen.getByRole("alertdialog",{name:"Delete part Persons?"});expect(modal).toHaveAttribute("aria-modal","true");expect(remove).not.toHaveBeenCalled();
+  await openPartOptions(user,"People");const opener=within(pane()).getByRole("button",{name:"Delete part People"});await user.click(opener);
+  let modal=screen.getByRole("alertdialog",{name:"Delete part People?"});expect(modal).toHaveAttribute("aria-modal","true");expect(remove).not.toHaveBeenCalled();
   const keep=within(modal).getByRole("button",{name:"Keep it"});expect(keep).toHaveFocus();
   await user.keyboard("{Shift>}{Tab}{/Shift}");expect(within(modal).getByRole("button",{name:"Delete part"})).toHaveFocus();
   await user.keyboard("{Tab}");expect(keep).toHaveFocus();

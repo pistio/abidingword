@@ -1,0 +1,71 @@
+{
+  "kind": "Independent contributing-layout diagnostic; not baseline/acceptance evidence",
+  "environment": "Linux Chromium, real React workspace with invented memory-API data",
+  "applicationSource": "624ef9f357bcc956275e70bbd8ae371f1eba89f9; working fixture/approved People wording present",
+  "productionChanges": "None. Study labels and CSS remain unchanged.",
+  "method": "Measure shell scrollHeight and visually hidden Study label geometry/offsetParent. Then temporarily set display:none on those labels in this disposable browser page only and remeasure. This counterfactual isolates their contribution to shell overflow; removing accessibility labels is NOT proposed as a fix.",
+  "finding": "Absolutely positioned sr-only writing-field labels use fixed app-shell as offsetParent. The last label below the viewport contributes to its programmatic scroll extent. Original scrollIntoView can therefore move the shell despite normal visible pane layout.",
+  "measurements": {
+    "before": 1744,
+    "afterHidingOnlyVisuallyHiddenStudyElements": 1009,
+    "labels": [
+      {
+        "tag": "LABEL",
+        "text": "People \u2014 Your answer",
+        "top": 272,
+        "bottom": 273,
+        "parent": "app-shell",
+        "position": "absolute"
+      },
+      {
+        "tag": "LABEL",
+        "text": "Place \u2014 Your answer",
+        "top": 517.125,
+        "bottom": 518.125,
+        "parent": "app-shell",
+        "position": "absolute"
+      },
+      {
+        "tag": "LABEL",
+        "text": "Time \u2014 Your answer",
+        "top": 762.25,
+        "bottom": 763.25,
+        "parent": "app-shell",
+        "position": "absolute"
+      },
+      {
+        "tag": "LABEL",
+        "text": "Events \u2014 Your answer",
+        "top": 1007.375,
+        "bottom": 1008.375,
+        "parent": "app-shell",
+        "position": "absolute"
+      },
+      {
+        "tag": "LABEL",
+        "text": "Text context \u2014 Your answer",
+        "top": 1252.5,
+        "bottom": 1253.5,
+        "parent": "app-shell",
+        "position": "absolute"
+      },
+      {
+        "tag": "LABEL",
+        "text": "Explanations \u2014 Your answer",
+        "top": 1497.625,
+        "bottom": 1498.625,
+        "parent": "app-shell",
+        "position": "absolute"
+      },
+      {
+        "tag": "LABEL",
+        "text": "Core \u2014 Your answer",
+        "top": 1742.75,
+        "bottom": 1743.75,
+        "parent": "app-shell",
+        "position": "absolute"
+      }
+    ]
+  },
+  "probeScript": "import{createRequire}from'node:module';const{chromium}=createRequire(import.meta.url)('/workspace/browser-tools/node_modules/playwright');const browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});const page=await browser.newPage({viewport:{width:1920,height:1009}});await page.goto('http://localhost:1432/tests/screenshots/index.html?empty=1&assistant=off&viewportReview=1&a4Editors=1&sourcesOpen=1&lang=en&originalReview=epub');const study=page.locator('#pane-study');await study.getByRole('button',{name:/INVENTED Viewport Project/}).first().click();await study.getByRole('button',{name:/INVENTED Viewport Study/}).first().click();await study.locator('section textarea').first().waitFor();console.log(JSON.stringify(await page.evaluate(()=>{const shell=document.querySelector('[data-testid=app-shell]');const before=shell.scrollHeight;const labels=[...document.querySelectorAll('#pane-study .sr-only')].map(e=>({tag:e.tagName,text:e.textContent.slice(0,40),top:e.getBoundingClientRect().top,bottom:e.getBoundingClientRect().bottom,parent:e.offsetParent?.getAttribute('data-testid'),position:getComputedStyle(e).position}));document.querySelectorAll('#pane-study .sr-only').forEach(e=>e.style.display='none');return{before,afterHidingOnlyVisuallyHiddenStudyElements:shell.scrollHeight,labels};}),null,2));await browser.close();\n"
+}

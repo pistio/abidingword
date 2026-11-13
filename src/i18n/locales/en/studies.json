@@ -275,10 +275,10 @@
       },
       "pozetek-study": {
         "name": "Guided Passage Study",
-        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "description": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "Persons",
+            "title": "People",
             "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
             "goal": "Get to know everyone involved before interpreting anything. Record only what the text itself says.",
             "example": "Hosea proclaims God’s word to Israel/Ephraim; the focus is God’s relationship with his people. Egypt and Assyria belong to the historical background that is addressed.",
@@ -901,10 +901,10 @@
       },
       "pozetek-writing-study": {
         "name": "Guided Passage Study",
-        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "description": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "Persons",
+            "title": "People",
             "guidance": "Who wrote the text? Who is it addressed to? Who speaks, acts or appears in it?",
             "fields": {
               "answer": {

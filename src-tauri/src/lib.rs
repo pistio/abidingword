@@ -21,6 +21,11 @@ pub mod sample;
 pub mod scripture;
 pub mod state;
 
+// Provisional main-window WebView2 diagnostics/correction; Windows cause unproven.
+// Also compiled in Rust tests on other platforms for pure reconciliation rules.
+#[cfg(any(test, target_os = "windows"))]
+mod window_sizing;
+
 use std::path::PathBuf;
 
 use tauri::{AppHandle, Manager};
@@ -45,6 +50,25 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         // Closing the main window also closes a presentation's audience screen.
         .on_window_event(|window, event| {
+            // Tauri's HTML shell is fixed inset-0, yet Windows WebView2 can
+            // retain a smaller physical surface after resize/DPI changes.
+            // Repair only the browser surface, not the native window, and
+            // leave the separately hosted audience window untouched.
+            #[cfg(target_os = "windows")]
+            if window.label() == "main" {
+                let focused = matches!(event, tauri::WindowEvent::Focused(true));
+                if focused
+                    || matches!(
+                        event,
+                        tauri::WindowEvent::Resized(_)
+                            | tauri::WindowEvent::ScaleFactorChanged { .. }
+                    )
+                {
+                    if let Some(main) = window.app_handle().get_webview_window("main") {
+                        window_sizing::schedule(main);
+                    }
+                }
+            }
             if window.label() == "main"
                 && matches!(
                     event,
@@ -66,6 +90,13 @@ pub fn run() {
             }
             let state = start(app.handle());
             app.manage(state);
+            // Start the first Windows geometry measurement only after logging
+            // has been installed by start(); otherwise the diagnostic can
+            // finish before its initial measurements are recorded.
+            #[cfg(target_os = "windows")]
+            if let Some(main) = app.get_webview_window("main") {
+                window_sizing::initialise(&main);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

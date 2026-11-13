@@ -1,0 +1,10 @@
+
+> abiding-word@0.1.0 i18n:corpus
+> node scripts/i18n-corpus.mjs
+
+i18n corpus: 4045 strings (4186 keys), 261 audit findings → docs/i18n/native-polish-review-v0.19.md, docs/i18n/native-polish-priority-v0.19.md
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

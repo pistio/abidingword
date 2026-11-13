@@ -1,0 +1,1 @@
+Verified 40 browser geometry/scroll/edit cases (NOT native WebView2).

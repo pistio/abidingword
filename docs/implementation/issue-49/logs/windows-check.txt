@@ -1,0 +1,12 @@
+    Checking tauri-runtime v2.12.0
+    Checking wry v0.57.0
+   Compiling abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+    Checking zip v2.4.2
+    Checking tauri-runtime-wry v2.12.0
+    Checking tauri v2.12.0
+    Checking tauri-plugin-fs v2.6.0
+    Checking tauri-plugin-log v2.10.0
+    Checking tauri-plugin-opener v2.7.0
+    Checking tauri-plugin-updater v2.13.1
+    Checking tauri-plugin-dialog v2.8.0
+    Finished `dev` profile [unoptimized] target(s) in 31.88s

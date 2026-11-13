@@ -1,0 +1,105 @@
+{
+  "date": "2026-11-13",
+  "baselineSource": "624ef9f357bcc956275e70bbd8ae371f1eba89f9",
+  "platform": "Linux Chromium actual React / memory API; native Windows acceptance pending",
+  "checks": {
+    "rustFormatting": "pass",
+    "rustClippyAllTargetsWarningsDenied": "pass",
+    "rustTests": {
+      "passed": 1107,
+      "failed": 0,
+      "ignoredExisting": 8
+    },
+    "typecheck": "pass after fixture typing/color corrections",
+    "eslint": "pass",
+    "translationAudit": "pass; 6 languages x 9 areas, 4046 keys, 137 components",
+    "productionBuild": "pass; existing chunk size warning",
+    "helperBrowser": {
+      "passed": 40,
+      "negativeControls": 24
+    },
+    "actualWorkspaceBefore": {
+      "failedExpected": 2,
+      "formats": [
+        "epub",
+        "docx"
+      ],
+      "shellScrollTop": 206,
+      "viewportHeight": 1009,
+      "paneBottom": 803
+    },
+    "actualWorkspaceAfter": {
+      "passedCases": 8,
+      "snapshots": 96,
+      "shellScrollTop": 0,
+      "toolbarVisible": true,
+      "paneBottomEqualsViewport": true
+    },
+    "withoutStudyBaseline": {
+      "passedSteps": 11,
+      "shellScrollTop": 0
+    },
+    "nativeEpubRustAdapter": {
+      "passed": 1,
+      "segments": 70,
+      "anchors": [
+        40,
+        65
+      ],
+      "contents": 3,
+      "internalLinks": 2
+    },
+    "approvedPeopleExpectations": {
+      "passed": 34,
+      "files": 3
+    },
+    "nodeRunnerSyntax": "pass",
+    "frontendTests": {
+      "fullRun": {
+        "passed": 1297,
+        "failed": 1,
+        "files": 121,
+        "failure": "i18n generated corpus stale after four approved English wording changes"
+      },
+      "resolution": "npm run i18n:corpus regenerated the four English entries in each committed corpus document; no application change followed full test run.",
+      "corpusRetest": {
+        "passed": 26,
+        "failed": 0
+      },
+      "finalVerifiedDistinctTests": 1298,
+      "note": "Full run plus focused retest; not claimed as a second clean full-suite execution."
+    }
+  },
+  "commands": [
+    "cargo fmt --manifest-path src-tauri/Cargo.toml -- --check",
+    "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings",
+    "cargo test --manifest-path src-tauri/Cargo.toml --locked",
+    "npm run typecheck",
+    "npm run lint",
+    "npm run i18n:check",
+    "npm run build",
+    "npm test -- --maxWorkers=2 --reporter=json --outputFile=work/issue-49-original/frontend.json",
+    "PLAYWRIGHT_MODULE=/workspace/browser-tools/node_modules/playwright node tests/screenshots/original-scroll-containment.mjs",
+    "PLAYWRIGHT_MODULE=/workspace/browser-tools/node_modules/playwright ORIGINAL_EVIDENCE_OUT=<capture directory> node tests/screenshots/original-workspace.mjs",
+    "npm run i18n:corpus",
+    "npm test -- tests/ui/i18n-corpus.test.ts --reporter=json --outputFile=work/issue-49-original/corpus-retest.json"
+  ],
+  "review": {
+    "independentSourceReview": "approved; narrow two-site containment preserves gap correction and focus",
+    "resolvedHarnessFindings": [
+      "Use valid annotation color amber.",
+      "Capture actual AppBar header, not skip link.",
+      "Assert navigation destinations, not only unchanged geometry.",
+      "Use typed EPUB node fixture and correct DOCX structured fixture.",
+      "Populate Study before opening Source in native protocol.",
+      "Update only approved English display-label test expectations."
+    ]
+  },
+  "limitations": [
+    "The owner document format is unconfirmed; demonstrated browser defect is EPUB/DOCX.",
+    "Native Windows protocol prepared but not executed with corrected source.",
+    "DPR browser variants are emulated, not OS DPI verification.",
+    "Prior Rust size intervention remains unchanged, unsubstantiated for this trigger; native Original scenario requires observe mode."
+  ],
+  "logs": "Adjacent checks/ text logs have trailing whitespace normalised only."
+}

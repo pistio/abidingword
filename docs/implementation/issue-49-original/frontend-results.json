@@ -1,0 +1,620 @@
+{
+  "fullRun": {
+    "success": false,
+    "numPassedTests": 1297,
+    "numFailedTests": 1,
+    "numPendingTests": 0
+  },
+  "files": [
+    {
+      "path": "tests/scripts/build-provenance.test.ts",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "path": "tests/scripts/updater.test.ts",
+      "status": "passed",
+      "tests": 29
+    },
+    {
+      "path": "tests/unit/externalLink.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "tests/unit/formatLocale.test.ts",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "path": "tests/unit/imageAttribution.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/unit/importDiagnosticLocale.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "tests/unit/inquiry-display.test.ts",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "path": "tests/unit/nativeLanguageSurface.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "tests/unit/pdfLinks.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/unit/pdfOutline.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/unit/pdfPageText.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/unit/pdfjsEngine.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/unit/pdfjsPageText.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "tests/unit/presentation-delivery.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/unit/presentation-labels.test.ts",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/unit/referenceApi.test.ts",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/unit/scripture.test.ts",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "tests/unit/structureErrorLanguage.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/unit/viewport-evidence.test.ts",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/ui/a4-block-assist.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "path": "tests/ui/a4-qa-transfer.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "tests/ui/a4-reader-toolbar.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/a4-structure-diagnostic.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "tests/ui/a4-writing-first.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/annotation-inspector.test.tsx",
+      "status": "passed",
+      "tests": 26
+    },
+    {
+      "path": "tests/ui/annotations.test.tsx",
+      "status": "passed",
+      "tests": 21
+    },
+    {
+      "path": "tests/ui/appearance-themes.test.tsx",
+      "status": "passed",
+      "tests": 40
+    },
+    {
+      "path": "tests/ui/autosize.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/baselines.test.tsx",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "path": "tests/ui/batch-import.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/bible-documents.test.tsx",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "path": "tests/ui/bible-language.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/bibles.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "path": "tests/ui/concordance.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/ui/document-passages.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/formatted-annotations.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/formatted-docx.test.tsx",
+      "status": "passed",
+      "tests": 26
+    },
+    {
+      "path": "tests/ui/formatted-epub.test.tsx",
+      "status": "passed",
+      "tests": 24
+    },
+    {
+      "path": "tests/ui/generated-contents.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/german-address.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/i18n-corpus.test.ts",
+      "status": "failed",
+      "tests": 26
+    },
+    {
+      "path": "tests/ui/i18n.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "path": "tests/ui/info-overlays.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/korean-terminology.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/korean-typography.test.ts",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/language-closure.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/ui/library-organisation.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/library-stage3-navigation.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/library.test.tsx",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "path": "tests/ui/marks.test.tsx",
+      "status": "passed",
+      "tests": 25
+    },
+    {
+      "path": "tests/ui/material-docx-fixtures.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "path": "tests/ui/material-scripture.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/materials.test.tsx",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "path": "tests/ui/milestone-a-ux.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "path": "tests/ui/milestone-a1-safety.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/milestone-a2.test.tsx",
+      "status": "passed",
+      "tests": 16
+    },
+    {
+      "path": "tests/ui/milestone-a3-home.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/ui/original-language.test.tsx",
+      "status": "passed",
+      "tests": 22
+    },
+    {
+      "path": "tests/ui/owner-study-corrections.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/ui/passage-more-locations.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/passage-sources.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/ui/passage-suggestion-quality.test.tsx",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "path": "tests/ui/pdf-annotations.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/pdf-build-progress.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/pdf-interactive.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/pdf-structure.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/ui/pdf-text-match.test.ts",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "tests/ui/portability.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "path": "tests/ui/pozetek.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/ui/presentation-appearance.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/presentation-ordering.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/presentation-templates.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/presentation.test.tsx",
+      "status": "passed",
+      "tests": 43
+    },
+    {
+      "path": "tests/ui/projects.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/reference-dashes.test.ts",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "path": "tests/ui/research-review.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/schema26-library-review.test.tsx",
+      "status": "passed",
+      "tests": 2
+    },
+    {
+      "path": "tests/ui/scripture-history.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/scripture-links-formatted.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/scripture-links.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "path": "tests/ui/scripture.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/ui/selection-anchor.test.ts",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/settings-compact.test.tsx",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "path": "tests/ui/settings.test.tsx",
+      "status": "passed",
+      "tests": 10
+    },
+    {
+      "path": "tests/ui/shell.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/source-annotations.test.tsx",
+      "status": "passed",
+      "tests": 14
+    },
+    {
+      "path": "tests/ui/source-contents-routes.test.tsx",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "path": "tests/ui/source-contents.test.tsx",
+      "status": "passed",
+      "tests": 20
+    },
+    {
+      "path": "tests/ui/source-find.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/source-help.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/source-navigation.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "path": "tests/ui/source-reader.test.tsx",
+      "status": "passed",
+      "tests": 3
+    },
+    {
+      "path": "tests/ui/source-selection.test.ts",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/source-viewer.test.tsx",
+      "status": "passed",
+      "tests": 30
+    },
+    {
+      "path": "tests/ui/sources-settings.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/sources-to-study.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "path": "tests/ui/studies-v3.test.tsx",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "path": "tests/ui/studies.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/study-help.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "path": "tests/ui/study-journey.test.tsx",
+      "status": "passed",
+      "tests": 15
+    },
+    {
+      "path": "tests/ui/study-refinement.test.tsx",
+      "status": "passed",
+      "tests": 48
+    },
+    {
+      "path": "tests/ui/study-workspace-ux.test.tsx",
+      "status": "passed",
+      "tests": 11
+    },
+    {
+      "path": "tests/ui/study-workspace-ux2.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/study-workspace-ux3.test.tsx",
+      "status": "passed",
+      "tests": 4
+    },
+    {
+      "path": "tests/ui/teaching-blocks.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/teaching-formats.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "tests/ui/teaching-output-integrity.test.tsx",
+      "status": "passed",
+      "tests": 5
+    },
+    {
+      "path": "tests/ui/teaching-standalone.test.tsx",
+      "status": "passed",
+      "tests": 9
+    },
+    {
+      "path": "tests/ui/teaching-templates.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "path": "tests/ui/teaching.test.tsx",
+      "status": "passed",
+      "tests": 55
+    },
+    {
+      "path": "tests/ui/template-blocks.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/template-catalogue.test.tsx",
+      "status": "passed",
+      "tests": 19
+    },
+    {
+      "path": "tests/ui/ten-step.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/updates-startup.test.tsx",
+      "status": "passed",
+      "tests": 1
+    },
+    {
+      "path": "tests/ui/updates.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "path": "tests/ui/user-templates.test.tsx",
+      "status": "passed",
+      "tests": 13
+    },
+    {
+      "path": "tests/ui/v05-regression.test.tsx",
+      "status": "passed",
+      "tests": 6
+    },
+    {
+      "path": "tests/ui/visual-system.test.tsx",
+      "status": "passed",
+      "tests": 7
+    },
+    {
+      "path": "tests/ui/workspace-hierarchy.test.tsx",
+      "status": "passed",
+      "tests": 12
+    },
+    {
+      "path": "tests/ui/workspace-layout.test.tsx",
+      "status": "passed",
+      "tests": 8
+    },
+    {
+      "path": "tests/ui/writing-templates.test.tsx",
+      "status": "passed",
+      "tests": 2
+    }
+  ],
+  "corpusRetest": {
+    "success": true,
+    "numPassedTests": 26,
+    "numFailedTests": 0
+  }
+}
