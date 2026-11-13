@@ -1,0 +1,92 @@
+# Single owner-approved diagnostic executable build for Issue #49.
+# This isolated branch is outside the normal CI/native-build branch filters.
+# This workflow triggers only when THIS file is first pushed/changed on the
+# exact one-off branch. Never creates installers, releases, tags or deployments.
+name: Issue 49 - one-off Windows executable (no installer)
+
+on:
+  push:
+    branches:
+      - windows-viewport-build-20261113
+    paths:
+      - .github/workflows/windows-viewport-single-build.yml
+
+permissions:
+  contents: read
+
+jobs:
+  build-plain-exe:
+    if: github.event_name == 'push'
+    runs-on: windows-2025
+    timeout-minutes: 90
+    env:
+      PINNED_SOURCE_SHA: 624ef9f357bcc956275e70bbd8ae371f1eba89f9
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Preserve original SQL bytes
+        run: git config --global core.autocrlf false
+      - name: Check out exact reviewed application commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.PINNED_SOURCE_SHA }}
+          persist-credentials: false
+      - name: Verify exact code and no updater
+        run: |
+          if ((git rev-parse HEAD).Trim() -cne $env:PINNED_SOURCE_SHA) { throw "Wrong source SHA" }
+          $cfg = Get-Content src-tauri/tauri.conf.json -Raw | ConvertFrom-Json
+          if ($cfg.plugins.updater -or $cfg.bundle.createUpdaterArtifacts) { throw "Updater must be disabled" }
+          New-Item -ItemType Directory -Force -Path work | Out-Null
+          node --version
+          git rev-parse HEAD
+      - name: Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Rust 1.99.1
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.99.1
+      - name: Verify code provenance
+        run: |
+          node scripts/build-provenance.mjs --expected-sha "$env:PINNED_SOURCE_SHA" --require-clean --out work/viewport-source.json
+          if ($LASTEXITCODE -ne 0) { throw "Source provenance failed" }
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Compile plain unsigned debug executable without bundling
+        run: |
+          npx tauri build --debug --no-bundle --no-sign --ci -- --locked
+          if ($LASTEXITCODE -ne 0) { throw "No-bundle Windows build failed" }
+      - name: Record executable checksum and build environment
+        run: |
+          $exe = "src-tauri/target/debug/abiding-word.exe"
+          if (-not (Test-Path $exe)) { throw "Expected standalone executable missing" }
+          if ((Get-Item $exe).Length -le 0) { throw "Empty executable" }
+          $hash = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash.ToLowerInvariant()
+          @(
+            "SourceSHA=$env:PINNED_SOURCE_SHA"
+            "ExecutableSHA256=$hash"
+            "RunnerOS=$env:RUNNER_OS"
+            "ImageOS=$env:ImageOS"
+            "ImageVersion=$env:ImageVersion"
+            "Rust=$(rustc --version)"
+            "Node=$(node --version)"
+            "GitHubRunID=$env:GITHUB_RUN_ID"
+            "Windows11DesktopVerified=false"
+            "NativeWebView2GeometryVerified=false"
+            "InstallerCreated=false"
+          ) | Set-Content work/viewport-build-environment.txt
+      - name: Upload diagnostic executable and source proof only
+        uses: actions/upload-artifact@v4
+        with:
+          name: Abiding-Word-Issue49-Windows-plain-exe-${{ env.PINNED_SOURCE_SHA }}
+          path: |
+            src-tauri/target/debug/abiding-word.exe
+            work/viewport-source.json
+            work/viewport-build-environment.txt
+          if-no-files-found: error
+          retention-days: 7
