@@ -1,0 +1,18 @@
+{
+  "node": {
+    "version": "24.22.3",
+    "archiveSha256": "e612af99f626ab415ea225af6bce5c971feb448cb5cae250bb1c3fa50c5f7d9f",
+    "url": "https://nodejs.org/dist/v24.22.3/node-v24.22.3-win-x64.zip"
+  },
+  "powershell": {
+    "version": "7.5.4",
+    "archiveSha256": "b40d192ae95ba6ccc4cc362ff4e1b18ca6fb5055bebbcd3920684e12701fa8f6",
+    "url": "https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/PowerShell-7.5.4-win-x64.zip"
+  },
+  "playwrightCore": {
+    "version": "1.65.0",
+    "archiveSha256": "315247c55a793ca760b2f05bdcee0e6a53fd65b1f22d1d3de8323c8c9395add3",
+    "npmIntegrity": "sha512-vNSKgH6YqtN7cdT/L334zo0a+YwkrpicyrHJlWWPIm/Q+Nn2SWInil01oT0mbu96U4GgoRtCYQD9CzJQgju+lA==",
+    "url": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.65.0.tgz"
+  }
+}

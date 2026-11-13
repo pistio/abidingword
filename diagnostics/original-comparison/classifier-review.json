@@ -1,0 +1,93 @@
+{
+  "kind": "Synthetic classifier policy tests, NOT native Windows execution",
+  "results": [
+    {
+      "name": "Measured shared band requires native image review",
+      "passed": true
+    },
+    {
+      "name": "Corrected numeric checks still require native image review",
+      "passed": true
+    },
+    {
+      "name": "Missing controller is not reproduction",
+      "passed": true
+    },
+    {
+      "name": "Missing screenshot is not reproduction",
+      "passed": true
+    },
+    {
+      "name": "Repair enabled is not observation evidence",
+      "passed": true
+    },
+    {
+      "name": "Repair event in full log invalidates both modes",
+      "passed": true
+    },
+    {
+      "name": "Reading setup failure is not reproduction",
+      "passed": true
+    },
+    {
+      "name": "Stacked workspace is not target defect",
+      "passed": true
+    },
+    {
+      "name": "Missing source format is setup failure",
+      "passed": true
+    },
+    {
+      "name": "No COM logfile is missing diagnostics",
+      "passed": true
+    },
+    {
+      "name": "Fake non-PNG output is missing screenshot evidence",
+      "passed": true
+    },
+    {
+      "name": "Wrong screenshot size is missing screenshot evidence",
+      "passed": true
+    },
+    {
+      "name": "Missing shell offset cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "Missing pane offset cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "Missing window offset cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "Missing workspace edge cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "A failing importer is not reproduction",
+      "passed": true
+    },
+    {
+      "name": "Changed native dimensions are not a contained-scroll reproduction",
+      "passed": true
+    },
+    {
+      "name": "Missing required navigation stage cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "Unsaved writing cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "No pane scrolling cannot pass corrected run",
+      "passed": true
+    },
+    {
+      "name": "A passing baseline is explicitly non-reproducing",
+      "passed": true
+    }
+  ]
+}

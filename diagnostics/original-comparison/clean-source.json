@@ -1,0 +1,11 @@
+{
+  "sourceSha": "32e8a52567c3863f9b2930125f711fba6b7bd9ef",
+  "clean": true,
+  "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=work/issue-49-authorised/frontend.json",
+  "completedUTC": "2026-11-13T23:51:50.723509+00:00",
+  "passed": 1298,
+  "failed": 0,
+  "testFiles": 121,
+  "fullRunAfterCorpusCorrection": true,
+  "runsThisApproval": 1
+}

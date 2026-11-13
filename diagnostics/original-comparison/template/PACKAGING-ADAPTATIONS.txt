@@ -1,0 +1,36 @@
+PROTOCOL PACKAGING ADAPTATIONS — APPLICATION EXECUTABLES UNCHANGED
+
+Application source and source protocol: 32e8a52567c3863f9b2930125f711fba6b7bd9ef.
+The baseline source/executable is separately pinned in package-manifest.json.
+Exactly the SAME packaged protocol is used for baseline and corrected runs.
+
+Unchanged from the reviewed source protocol:
+- Measure-WebviewGeometry.ps1
+- viewport-evidence.mjs
+- original-epub-fixture.mjs
+- original-workspace-flow.mjs (all actual navigation and containment assertions)
+
+Test-WebviewViewport.mjs packaging adaptations:
+- Replace development-only Git clean-checkout checks with complete package-file
+  hash verification and the approved source/executable-pair manifest. No Git,
+  Rust or development checkout is required on the Windows test machine.
+- Obtain protocolSourceSha from that manifest and verify its exact reviewed SHA.
+- Use process-local PowerShell ExecutionPolicy Bypass for bundled verified
+  scripts; the machine's policy is not modified.
+- Assert both dataDirectory and logDirectory belong to the NEW disposable
+  profile before reading/copying logs. Copy only raw 'Viewport sample' lines,
+  retaining original timestamps and explicit repairEnabled values.
+- Retain DOM/interaction evidence even if a native collector/log read fails;
+  record missing measurements as failures, never as a layout reproduction.
+- Annotate latest logged COM sequence/phase and reuse. No forced native event
+  is used to manufacture a fresh COM sample before the first failure.
+- Correct descriptive report text: the launcher itself performs no builds or
+  installation; it does not claim no authorised build occurred historically.
+
+The wrapper/classifier additionally verifies Windows 11, native 96 DPI,
+complete native/DOM measurements, native PNG identity/dimensions, observation
+mode in logs, identical fixtures, matching WebView2 version/client geometry,
+required navigation stages and source/executable provenance. Missing evidence
+and setup failures remain blocked. Native screenshot review is never automated
+away. Evidence ZIPs exclude disposable profile/WebView cache directories; the
+local profiles remain available under the result directory.
