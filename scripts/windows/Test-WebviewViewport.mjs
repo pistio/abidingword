@@ -52,7 +52,7 @@ const child = spawn(exe, [], { windowsHide: false, stdio: 'ignore', env: {
   WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${port} --remote-debugging-address=127.0.0.1`,
   ABIDING_WORD_VIEWPORT_MODE: args.mode, ABIDING_WORD_VIEWPORT_TRACE: '1',
 } });
-const report = { sourceSha: args['source-sha'], executableSha256: args['exe-sha256'], mode: args.mode, expectedDpi, platform: process.platform, architecture: process.arch, osRelease: release(), osVersion: version(), cases: [], nativeAcceptance: 'NOT AUTOMATIC: requires independent native screenshot review; no installer or paid Actions run', failures: [] };
+const report = { sourceSha: args['source-sha'], executableSha256: args['exe-sha256'], mode: args.mode, expectedDpi, platform: process.platform, architecture: process.arch, osRelease: release(), osVersion: version(), cases: [], stage: 'spawn', nativeAcceptance: 'NOT AUTOMATIC: requires independent native screenshot review; no installer or paid Actions run', failures: [] };
 let browser;
 let startupError;child.once('error', error => { startupError=error; });
 const collector = fileURLToPath(new URL('./Measure-WebviewGeometry.ps1', import.meta.url));
@@ -97,13 +97,16 @@ try {
     if(i===99)throw Error('No WebView2 CDP endpoint; use a plain local build on an interactive Windows desktop.');
     await delay(200);
   }
+  report.stage='webview2-connect';
   const {chromium}=createRequire(import.meta.url)(process.env.PLAYWRIGHT_MODULE??'playwright');
   browser=await chromium.connectOverCDP(`http://127.0.0.1:${port}`);report.webview2Version=browser.version();
   const page=browser.contexts()[0].pages()[0];assert.ok(page, 'No application WebView2 target');
   await page.locator('[data-testid="app-shell"]').waitFor();
+  report.stage='app-info';
   const info=await page.evaluate(()=>window.__TAURI_INTERNALS__.invoke('app_info'));
   assert.equal(resolve(info.dataDirectory).toLowerCase(), profile.toLowerCase(), 'App is not using the disposable profile; stop before seeding.');
   assert.equal(info.updatesEnabled,false,'Require a plain build without updater.');assert.equal(info.schemaVersion,27);
+  report.stage='seed-disposable-profile';
   const seeded=await page.evaluate(async({bibleFile,sourceFile,mark})=>{
     const invoke=window.__TAURI_INTERNALS__.invoke;
     const workspace=await invoke('workspace_get_default');
@@ -124,6 +127,7 @@ try {
     localStorage.setItem('abiding-word.layout.sourcesOpen','true');
     return {studyId:detail.study.id,blockId:block.id,body};
   },{bibleFile,sourceFile,mark});
+  report.stage='open-three-real-panes';
   await page.reload();await page.locator('[data-testid="app-shell"]').waitFor();
   const study=page.locator('#pane-study');
   await study.getByRole('button',{name:/INVENTED Viewport Project/}).first().click();
@@ -134,6 +138,7 @@ try {
   const area=study.locator('section textarea').first();await area.waitFor();await area.fill(seeded.body+'Edited in disposable test.');await area.focus();
   const expected=await area.inputValue();await area.evaluate(el=>el.setSelectionRange(el.value.length,el.value.length));
   const caret=await area.evaluate(el=>[el.selectionStart,el.selectionEnd]);
+  report.stage='initial-native-sample';
   const first=native('initial');assert.equal(first.Main.Dpi,expectedDpi,'Actual Windows DPI differs from requested run; emulation is not acceptance.');
   const scale=expectedDpi/96;
   let previousSequence=0;
@@ -141,6 +146,7 @@ try {
     // An old Tauri sample must never be accepted as evidence for a new
     // maximise/restore/resize transition, even if the dimensions happen
     // to match. Only an observed native event can advance the sequence.
+    report.stage=`window-transition:${name}`;
     native(`${name}-action`,action,size);
     let measured,dom,sample,comparison;
     for(let i=0;i<20;i++) {
@@ -165,14 +171,16 @@ try {
     const entry={name,native:measured,tauri:sample,dom,comparison,editing,scroll,eventCounterGrowth,nativeScreenshotError};report.cases.push(entry);
     if(!comparison.passed||Object.values(editing).includes(false)||scroll.some(s=>!s.passed))report.failures.push(name);
   }
+  report.stage='persistent-edit-readback';
   await area.blur();
   await page.waitForFunction(async({id,expected,blockId})=>{
     const detail=await window.__TAURI_INTERNALS__.invoke('study_get',{id});return detail.sections.flatMap(s=>s.blocks).find(b=>b.id===blockId)?.content===expected;
   },{id:seeded.studyId,expected,blockId:seeded.blockId});
   report.savedEditVerified=true;
   report.geometryAndFunctionPassed=report.failures.length===0;
+  report.stage='finished';
 } catch(error) {
-  report.failures.push(String(error.message));report.geometryAndFunctionPassed=false;
+  report.failures.push(String(error?.stack ?? error));report.geometryAndFunctionPassed=false;
 } finally {
   writeFileSync(join(out,'report.json'),JSON.stringify(report,null,2)+'\n');
   if(browser)await browser.close();if(child.exitCode===null)child.kill();
