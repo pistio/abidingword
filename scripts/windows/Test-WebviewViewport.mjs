@@ -148,7 +148,7 @@ try {
   const first=native('initial');assert.equal(first.Main.Dpi,expectedDpi,'Actual Windows DPI differs from requested run; emulation is not acceptance.');
   const scale=expectedDpi/96;
   let previousSequence=0;
-  for(const [name,action,size] of [ ['initial','observe'],['maximised','maximise'],['restored','restore'],['shorter','resize',[Math.round(1000*scale),Math.round(620*scale)]],['taller','resize',[Math.round(1100*scale),Math.round(850*scale)]],['maximised-again','maximise'],['restored-again','restore'] ]) {
+  for(const [name,action,size] of [ ['initial','observe'],['maximised','maximise'],['restored','restore'],['shorter','resize',[Math.round(1440*scale),Math.round(620*scale)]],['taller','resize',[Math.round(1440*scale),Math.round(850*scale)]],['maximised-again','maximise'],['restored-again','restore'] ]) {
     // An old Tauri sample must never be accepted as evidence for a new
     // maximise/restore/resize transition, even if the dimensions happen
     // to match. Only an observed native event can advance the sequence.
