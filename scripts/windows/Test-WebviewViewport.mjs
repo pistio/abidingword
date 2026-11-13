@@ -132,7 +132,13 @@ try {
   const study=page.locator('#pane-study');
   await study.getByRole('button',{name:/INVENTED Viewport Project/}).first().click();
   await study.getByRole('button',{name:/INVENTED Viewport Study/}).first().click();
-  await page.locator('#pane-sources [data-source-result]').filter({hasText:'INVENTED Viewport Source'}).first().click();
+  // SourcesPane's current overview renders recent/other imported Sources
+  // as [data-source-link] buttons; [data-source-result] is used in search
+  // results and may be absent in the ordinary overview after import.
+  const sourceLink=page.locator('#pane-sources [data-source-link], #pane-sources [data-source-result]')
+    .filter({hasText:'INVENTED Viewport Source'}).first();
+  await sourceLink.waitFor({state:'visible'});
+  await sourceLink.click();
   await page.locator('#pane-sources [data-testid=reader-body]').waitFor();
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
   const area=study.locator('section textarea').first();await area.waitFor();await area.fill(seeded.body+'Edited in disposable test.');await area.focus();
