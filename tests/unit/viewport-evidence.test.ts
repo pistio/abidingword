@@ -33,6 +33,15 @@ it("rejects a clipped pane and a displaced controller host even if all reported 
   c.native.Descendants[0]!.ClientHeight = 1000; c.native.Descendants[0]!.ClientScreenY = 223;
   expect(compareGeometry(c.native, c.sample, c.dom).errors).toContain("Controller host/origin is offset from native client.");
 });
+it("does not treat a deliberately stacked narrow workspace as three-pane Windows acceptance", () => {
+  const c = capture();
+  (c.dom as typeof c.dom & { layoutMode: string }).layoutMode = "stacked";
+  expect(compareGeometry(c.native, c.sample, c.dom)).toMatchObject({ passed: false });
+  expect(compareGeometry(c.native, c.sample, c.dom).errors).toContain(
+    "Stacked/narrow workspace: wide three-pane native geometry was not exercised.",
+  );
+});
+
 it("fails closed without a stable COM measurement or with emulated/nonmatching DPI", () => {
   const c = capture();
   expect(compareGeometry(c.native, null, c.dom).passed).toBe(false);
