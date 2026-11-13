@@ -38,6 +38,8 @@ public static class AwWindowMetrics {
         public string Hwnd { get; set; } = "";
         public string ClassName { get; set; } = "";
         public bool Visible { get; set; }
+        public bool Maximized { get; set; }
+        public bool Minimized { get; set; }
         public int Dpi { get; set; }
         public int ClientWidth { get; set; }
         public int ClientHeight { get; set; }
@@ -69,6 +71,8 @@ public static class AwWindowMetrics {
     [StructLayout(LayoutKind.Sequential)] private struct POINT { public int X, Y; }
     [DllImport("user32.dll")] private static extern bool ClientToScreen(IntPtr hwnd, ref POINT point);
     [DllImport("user32.dll")] private static extern bool IsWindowVisible(IntPtr hwnd);
+    [DllImport("user32.dll")] private static extern bool IsZoomed(IntPtr hwnd);
+    [DllImport("user32.dll")] private static extern bool IsIconic(IntPtr hwnd);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern int GetClassName(IntPtr hwnd, StringBuilder str, int max);
     [DllImport("user32.dll")] private static extern uint GetDpiForWindow(IntPtr hwnd);
@@ -91,6 +95,8 @@ public static class AwWindowMetrics {
             Hwnd = hwnd.ToInt64().ToString("x"),
             ClassName = name.ToString(),
             Visible = IsWindowVisible(hwnd),
+            Maximized = IsZoomed(hwnd),
+            Minimized = IsIconic(hwnd),
             Dpi = unchecked((int)GetDpiForWindow(hwnd)),
             ClientWidth = client.Width,
             ClientHeight = client.Height,
