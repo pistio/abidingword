@@ -66,6 +66,8 @@ node scripts/windows/Test-WebviewViewport.mjs --exe $Exe --exe-sha256 $Hash --so
 
 Run each command separately and retain failed observation evidence. Repeat with actual **Windows** display scaling 125%, 150%, 200% and expected DPI 120, 144, 192, each in a new output directory. Do not use Chromium DPR emulation or force-device-scale-factor as a substitute. Keep the app fully on one monitor and an unobscured, clean test desktop. Localhost CDP is enabled only for the launched test process and closed with it; never use the owner's production profile. Windows executable hash and caller-pinned clean source SHA are recorded; retain the local build log to associate that binary with source.
 
+**Wide-layout prerequisite:** the P0 screenshot is a three-column desktop defect. The shorter/taller native height transitions therefore retain an outer width of 1440 logical pixels at the measured scaling factor. A narrow/stacked layout has intentionally different pane-height behaviour and cannot be used as positive three-pane viewport evidence. The comparator now records `data-workspace-layout` and explicitly refuses a `stacked` result. On high-DPI monitors, use a large enough clean desktop for the requested physical width; report insufficient resolution instead of counting an unintended narrow layout as successful native acceptance.
+
 The runner measures launch, maximise, restore, shorter/taller native outer sizes, maximise again and restore again. It records:
 
 - independently DPI-aware Win32 main client/child HWND rectangles, screen origins, visibility, classes and monitor;
