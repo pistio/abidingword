@@ -158,9 +158,25 @@ try {
     for(let i=0;i<20;i++) {
       measured=native(`${name}-measure`);dom=await page.evaluate(domSnapshot);sample=latestSample(info.logDirectory);
       comparison=compareGeometry(measured,sample,dom);
-      if(action !== 'observe' && (!Number.isSafeInteger(sample?.sequence) || sample.sequence <= previousSequence)) {
-        comparison={passed:false,diagnosis:'stale-native-event-sample',errors:['No new native Tauri geometry sample after the requested window transition.']};
-      }
+      // A green pane-to-client comparison proves nothing if ShowWindow/
+      // SetWindowPos failed and the window never entered the requested state.
+      const stateErrors=[];
+      if(!measured.Main.Visible || measured.Main.Minimized)
+        stateErrors.push('The main native window is hidden or minimised.');
+      if(action==='maximise' && !measured.Main.Maximized)
+        stateErrors.push('Native IsZoomed is false after maximise.');
+      if((action==='restore' || action==='resize') && measured.Main.Maximized)
+        stateErrors.push('Native IsZoomed is true after restore/resize.');
+      if(action==='resize' && size &&
+         (Math.abs(measured.Main.ScreenWidth-size[0])>4 ||
+          Math.abs(measured.Main.ScreenHeight-size[1])>4))
+        stateErrors.push('Native outer window size differs from the requested physical size.');
+      if(action !== 'observe' && (!Number.isSafeInteger(sample?.sequence) || sample.sequence <= previousSequence))
+        stateErrors.push('No new native Tauri geometry sample after the requested window transition.');
+      if(stateErrors.length)comparison={
+        passed:false,diagnosis:'native-transition-unconfirmed',
+        errors:[...comparison.errors,...stateErrors]
+      };
       if(comparison.passed)break;
       await delay(100); // observation polling, never a resize/paint workaround
     }
