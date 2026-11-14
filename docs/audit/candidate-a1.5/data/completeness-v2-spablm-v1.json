@@ -1,0 +1,240 @@
+{
+ "auditor_version": 2,
+ "profile": "build-derived-editions-usfm",
+ "books_option": "66",
+ "source_usfm": {
+  "file": "spablm_usfm.zip",
+  "sha256": "69ff87d19976bfc2306cb11ffeffd9fe0b4163eac9bd09da7f687b53a4de90f5"
+ },
+ "document": {
+  "file": "spablm_usfm_lo.docx",
+  "sha256": "2ad1094b299e2e19f4275ff90dea15cf8934717b7be83df3aab0ec8ed9b7d28d"
+ },
+ "complete": false,
+ "failure": null,
+ "books_in_source": 66,
+ "books_in_document": 66,
+ "verses_in_source": 31103,
+ "verses_complete": 31094,
+ "verses_incomplete": [
+  {
+   "reference": "EZR 4:11",
+   "missing": [
+    "Al rey Artajerjes, de parte de tus siervos, los hombres de allende el río."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "EZR 4:17",
+   "missing": [
+    "Salud."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "EZR 5:7",
+   "missing": [
+    "Al rey Darío, toda paz."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "EZR 7:12",
+   "missing": [
+    "al sacerdote Esdras, escriba instruido en la ley del Dios del cielo: Paz cumplida."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "DAN 4:1",
+   "missing": [
+    "a todos los pueblos, naciones y lenguas que habitan en toda la tierra: Que la paz se os multiplique."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "DAN 4:19",
+   "missing": [
+    "Beltsasar respondió y dijo: “Señor mío, que el sueño sea para los que te aborrecen, y su interpretación para tus adversarios."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "DAN 6:25",
+   "missing": [
+    "“Que la paz se os multiplique."
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "DAN 9:4",
+   "missing": [
+    "“Oh Señor, Dios grande y temible, que guardas el pacto y la misericordia con los que te aman y guardan tus mandamientos;"
+   ],
+   "not_in_source": []
+  },
+  {
+   "reference": "DAN 9:11",
+   "missing": [
+    "“Por ello se ha derramado sobre nosotros la maldición y el juramento que están escritos en la ley de Moisés, siervo de Dios, porque hemos pecado contra él."
+   ],
+   "not_in_source": []
+  }
+ ],
+ "verses_missing_from_document": [],
+ "verses_only_in_document": [],
+ "chapters_missing_from_document": [],
+ "chapters_only_in_document": [],
+ "books_missing_from_document": [],
+ "books_only_in_document": [],
+ "words_missing": 130,
+ "words_not_in_source": 0,
+ "heading_words_set_as_text": 0,
+ "words_missing_by_source_marker": {
+  "\\mi": 130
+ },
+ "source_words_by_marker": {
+  "\\d": 907,
+  "\\m": 2090,
+  "\\mi": 3890,
+  "\\p": 574285,
+  "\\q1": 59117,
+  "\\q2": 71741
+ },
+ "source_text_words_before_a_verse": 0,
+ "source_excluded": {
+  "\\ca (occurrences)": 0,
+  "\\ef (occurrences)": 0,
+  "\\ex (occurrences)": 0,
+  "\\f (occurrences)": 814,
+  "\\fe (occurrences)": 0,
+  "\\fig (occurrences)": 0,
+  "\\id (words, never printed)": 102,
+  "\\ide (words, never printed)": 65,
+  "\\ms1 (words)": 10,
+  "\\mt1 (words)": 86,
+  "\\mt2 (words)": 214,
+  "\\mt3 (words)": 10,
+  "\\rq (occurrences)": 0,
+  "\\sp (words)": 33,
+  "\\toc1 (words, never printed)": 303,
+  "\\toc2 (words, never printed)": 89,
+  "\\toc3 (words, never printed)": 83,
+  "\\va (occurrences)": 0,
+  "\\vp (occurrences)": 0,
+  "\\x (occurrences)": 0,
+  "attributes (occurrences)": 440776,
+  "milestones (occurrences)": 0
+ },
+ "source_files_ignored": [
+  "copr.htm",
+  "keys.asc",
+  "signature.txt.asc",
+  "dejavuserif.css"
+ ],
+ "source_books_declared_not_rendered": {
+  "INT": 0,
+  "TOB": 244,
+  "JDT": 339,
+  "ESG": 205,
+  "WIS": 436,
+  "SIR": 1383,
+  "BAR": 213,
+  "1MA": 924,
+  "2MA": 555,
+  "1ES": 448,
+  "MAN": 15,
+  "PS2": 7,
+  "3MA": 228,
+  "2ES": 944,
+  "4MA": 484,
+  "DAG": 530
+ },
+ "omitted_heading_words_inside_verses": {
+  "SNG 1:1": [
+   "\\sp: Amado"
+  ],
+  "SNG 1:4": [
+   "\\sp: Amigos",
+   "\\sp: Amado"
+  ],
+  "SNG 1:7": [
+   "\\sp: Amante"
+  ],
+  "SNG 1:10": [
+   "\\sp: Amigos"
+  ],
+  "SNG 1:11": [
+   "\\sp: Amado"
+  ],
+  "SNG 1:14": [
+   "\\sp: Amante"
+  ],
+  "SNG 1:15": [
+   "\\sp: Amado"
+  ],
+  "SNG 1:16": [
+   "\\sp: Amante"
+  ],
+  "SNG 2:1": [
+   "\\sp: Amante"
+  ],
+  "SNG 2:2": [
+   "\\sp: Amado"
+  ],
+  "SNG 2:13": [
+   "\\sp: Amante"
+  ],
+  "SNG 2:15": [
+   "\\sp: Amado"
+  ],
+  "SNG 4:15": [
+   "\\sp: Amado"
+  ],
+  "SNG 5:1": [
+   "\\sp: Amigos",
+   "\\sp: Amado"
+  ],
+  "SNG 5:8": [
+   "\\sp: Amigos"
+  ],
+  "SNG 5:9": [
+   "\\sp: Amado"
+  ],
+  "SNG 6:1": [
+   "\\sp: Amante"
+  ],
+  "SNG 6:3": [
+   "\\sp: Amado"
+  ],
+  "SNG 6:12": [
+   "\\sp: Amigos"
+  ],
+  "SNG 6:13": [
+   "\\sp: Amado"
+  ],
+  "SNG 7:9": [
+   "\\sp: Amada"
+  ],
+  "SNG 8:4": [
+   "\\sp: Amigos"
+  ],
+  "SNG 8:5": [
+   "\\sp: Amado"
+  ],
+  "SNG 8:7": [
+   "\\sp: Hermanos"
+  ],
+  "SNG 8:9": [
+   "\\sp: Amada"
+  ],
+  "SNG 8:12": [
+   "\\sp: Amante"
+  ],
+  "SNG 8:13": [
+   "\\sp: Amado"
+  ]
+ },
+ "document_unsupported": {},
+ "document_words_before_the_first_book": 0
+}
