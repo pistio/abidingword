@@ -1,6 +1,6 @@
 # Windows Original-view installer preparation — 18 November 2026
 
-**Verification complete; installer workflow not activated or approved for building.** This work belongs in the cloud development/review environment. It requires no commands on NiPogi or the owner's Windows desktop at this stage.
+**The single approved Windows installer build has completed successfully.** See the [installer download and verification](installer-build-20261118.md). This work belongs in the cloud development/review environment. It requires no commands on NiPogi or the owner's Windows desktop at this stage.
 
 ## Exact candidate
 
@@ -14,7 +14,7 @@ The candidate has passed the required frontend and Linux Rust verification gates
 
 The complete [installer workflow draft](installer-workflow.yml.in) pins all six application references to the candidate SHA. It is deliberately outside `.github/workflows` and cannot run from this location.
 
-After source publication and explicit installer-build approval, activate through the existing pathway:
+The owner-approved build activated the following existing pathway:
 
 | Field | Value |
 | --- | --- |
@@ -32,7 +32,7 @@ Do not rerun the old installer job: its old source pins are intentional. The pre
 
 The old packaging helper hardcoded the previous `6ffed07…` source in its diagnostic notice and manifest. The candidate therefore includes a narrowly updated `Save-DiagnosticExecutable.ps1` which checks the actual application checkout against the expected full SHA before writing files. The draft calls that candidate helper; NSIS preparation and probing continue to use the previously verified fixed packaging revision.
 
-## Completed verification and remaining Windows stage
+## Verification completed before the Windows build
 
 The [verification record](installer-preparation-verification.json) records the tested file hashes and limits.
 
@@ -47,6 +47,6 @@ The [verification record](installer-preparation-verification.json) records the t
 - PowerShell 7.5.4 validates all four helpers and all eleven PowerShell blocks from the exact resolved workflow. Five synthetic staging checks pass: correct source in notice/manifest, correct file hashes/sizes, truthful completeness, and wrong/malformed SHA rejection before output creation. The invented executable/DLL fixture files were never run. [PowerShell verification details](installer-powershell-validation.json) retain the checked input hashes and runtime verification.
 - The complete migration catalogue is unchanged: schema 27, exactly 27 registered SQL files, guard SHA-256 `acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13`.
 
-Rust 1.99.1 and required Linux development libraries were set up in the owner-authorised cloud workspace. These Linux checks complete the repository's pre-push gate; the Windows-only native collector will be compiled by the separately approved Windows build. PowerShell parsing and synthetic helper execution do not establish Windows packaging or installation success.
+Rust 1.99.1 and required Linux development libraries were set up in the owner-authorised cloud workspace. These Linux checks completed the repository's pre-push gate. The Windows-only native collector subsequently compiled successfully in the approved Windows build. PowerShell parsing and synthetic helper execution do not establish Windows packaging or installation success.
 
-The reviewed workflow SHA-256 is `dcf0a088dcee5b39a5c419b80a4d2ed8795d68a340e50b8afc05d21407a8b4c8`. It remains inert documentation, with no active workflow change. The requested next action is one Windows-only NSIS build of the exact candidate through the existing pathway, without automatic retry, merge, signing, updater, release or deployment. The owner has not yet approved that build. No further Windows diagnostic repeat is required solely to replace the already accepted first comparison.
+The reviewed workflow SHA-256 is `dcf0a088dcee5b39a5c419b80a4d2ed8795d68a340e50b8afc05d21407a8b4c8`. This template remains under documentation; identical bytes were activated at `711f6dbe07c531fb410a5010fb25c0fd08cd80be` on the existing build branch after the owner approved one build. Run `44421251924` succeeded on attempt 1, with one application compilation and one NSIS packaging operation. [Installer verification](installer-build-20261118.md) records the downloaded files, checksums and exact expected packaging change. No retry, merge, signing, updater, release or deployment occurred. Installation and installed-release acceptance remain pending. No further diagnostic repeat is required solely to replace the already accepted first comparison.

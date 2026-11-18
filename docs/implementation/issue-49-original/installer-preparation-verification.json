@@ -1,5 +1,5 @@
 {
-  "purpose": "Verified installer candidate and inert workflow; ready for a separate single Windows NSIS build approval",
+  "purpose": "Installer candidate and reviewed workflow verified; single owner-approved Windows NSIS build completed; installed-release acceptance pending",
   "date": "2026-11-18",
   "baseSourceSha": "32e8a52567c3863f9b2930125f711fba6b7bd9ef",
   "environment": "ChatGPT cloud Linux review workspace; not Windows desktop or NiPogi",
@@ -26,16 +26,15 @@
     "powerShellSyntax": "15 inputs passed: four helpers and all 11 resolved workflow run blocks",
     "powerShellSyntheticHelper": "5 checks passed, including source bindings, file inventories and rejection before output creation",
     "candidateScopeAudit": "Application frontend, People wording, resources, database, Scripture, recognition, dependency locks, migrations, app identity and active workflow tree preserved",
-    "migrationCatalogue": "27 registered migrations, no missing or extra SQL files; exact guard digest matches"
+    "migrationCatalogue": "27 registered migrations, no missing or extra SQL files; exact guard digest matches",
+    "windowsCompilationAndNsisPackaging": "passed: run 44421251924, attempt 1, one application compilation and one NSIS package"
   },
   "notPerformed": [
-    "Windows build",
-    "installer build",
-    "Actions dispatch",
     "merge",
     "release",
     "deployment",
-    "installed-application change"
+    "installed-application change",
+    "workflow/application-build retry"
   ],
   "unchangedFromBase": [
     "production frontend",
@@ -59,13 +58,12 @@
   "rustAndPowerShellTestedCheckoutSha": "0021c18a7b754b487b5ca9e1e189f6d4a7c50db7",
   "sourceRelationship": "Verification ran at local checkout 0021c18a7b754b487b5ca9e1e189f6d4a7c50db7, which adds only two documentation files to local candidate ba354bac94e66b02ea7d2f17da008f48b52a4bd2. The published candidate 539b54d65c2cecf010cd1573b8bd51c91ac640bd has the identical complete Git tree f06b161d5017d105980ce9c94dc4337e58e6ee53 as that local candidate; only commit metadata differs. Application, diagnostic and test files are identical.",
   "pendingChecks": {
-    "windowsCompilationAndNsisPackaging": "Not run; requires one separately authorised Windows installer build",
     "installedReleaseAcceptance": "Not run; the accepted Windows evidence is for diagnostic source 32e8a525, not a new installed release"
   },
   "workflow": {
     "path": "docs/implementation/issue-49-original/installer-workflow.yml.in",
     "sha256": "dcf0a088dcee5b39a5c419b80a4d2ed8795d68a340e50b8afc05d21407a8b4c8",
-    "activation": "Inert documentation; not in .github/workflows",
+    "activation": "Exact reviewed content activated in existing workflow at 711f6dbe07c531fb410a5010fb25c0fd08cd80be after one explicit owner approval",
     "applicationSourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
     "packagingSourceSha": "4bddc038d190cf42fd475b7c504430e96c014769",
     "applicationPins": 6,
@@ -92,5 +90,14 @@
     "completeCandidateTreeSha": "f06b161d5017d105980ce9c94dc4337e58e6ee53",
     "completeTreeIdentityVerified": true,
     "activeWorkflowChanged": false
+  },
+  "approvedWindowsBuild": {
+    "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "activationSha": "711f6dbe07c531fb410a5010fb25c0fd08cd80be",
+    "runId": 44421251924,
+    "attempt": 1,
+    "conclusion": "success",
+    "report": "installer-build-verification.json",
+    "reportSha256": "386cf10cc1cc1e072b251b2069e69ca1495e2f7643fec797e1568f63d2f13f45"
   }
 }
