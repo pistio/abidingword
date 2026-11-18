@@ -1,24 +1,12 @@
-//! Keep the main Windows WebView2 surface aligned with the native client area.
+//! Optional read-only Windows WebView2 geometry diagnostics.
 //!
-//! Do not guess a CSS height from a screenshot. Measure the window and webview
-//! separately; change only the embedded webview when their physical sizes differ.
-//! Tauri's WebviewWindow auto-fills its parent already: set_auto_resize() is a
-//! documented no-op here and deliberately not called.
+//! ABIDING_WORD_VIEWPORT_TRACE=1 enables dimension-only samples. Without it,
+//! scheduling returns before starting a worker. Tauri manages the window and
+//! embedded webview sizes; this collector only observes their geometry.
 //! Native events schedule work off the event-handler thread to avoid blocking
 //! WebView2's Windows message loop. No Scripture or user data is read or logged.
 
-use tauri::PhysicalSize;
-#[cfg(target_os = "windows")]
-use tauri::WebviewWindow;
-
-const PIXEL_TOLERANCE: u32 = 2;
-
-fn needs_repair(expected: PhysicalSize<u32>, actual: PhysicalSize<u32>) -> bool {
-    expected.width > 0
-        && expected.height > 0
-        && (expected.width.abs_diff(actual.width) > PIXEL_TOLERANCE
-            || expected.height.abs_diff(actual.height) > PIXEL_TOLERANCE)
-}
+use tauri::{PhysicalSize, WebviewWindow};
 
 #[cfg(target_os = "windows")]
 mod windows {
@@ -28,17 +16,10 @@ mod windows {
     use std::thread;
     use std::time::Duration;
 
-    // The only reconciled window is "main"; coalesce bursts of resize events.
+    // The only observed window is "main"; coalesce bursts of native events.
     static REQUESTED: AtomicU64 = AtomicU64::new(0);
     static WORKER_ACTIVE: AtomicBool = AtomicBool::new(false);
-    static INITIAL_MEASUREMENT_LOGGED: AtomicBool = AtomicBool::new(false);
-    // Diagnostic A/B runs use the same executable and disposable profiles.
-    // Unknown explicit modes fail closed to observation, never a forced resize.
-    static REPAIR_ENABLED: LazyLock<bool> = LazyLock::new(|| {
-        std::env::var_os("ABIDING_WORD_VIEWPORT_MODE")
-            .map(|mode| mode == "repair")
-            .unwrap_or(true)
-    });
+    // Native measurements are enabled only for explicit diagnostic runs.
     static TRACE: LazyLock<bool> =
         LazyLock::new(|| std::env::var("ABIDING_WORD_VIEWPORT_TRACE").as_deref() == Ok("1"));
 
@@ -53,7 +34,7 @@ mod windows {
                 let mut rect = Default::default();
                 let mut parent = Default::default();
                 let mut zoom = 0.0;
-                // SAFETY: both COM calls run on WebView2's owning UI thread.
+                // SAFETY: the COM calls run on WebView2's owning UI thread.
                 let measured = unsafe { controller.Bounds(&mut rect) }.ok().map(|()| {
                     let parent = unsafe { controller.ParentWindow(&mut parent) }
                         .ok()
@@ -73,7 +54,6 @@ mod windows {
     fn sample(
         main: &WebviewWindow,
         revision: u64,
-        phase: &str,
         expected: PhysicalSize<u32>,
         actual: PhysicalSize<u32>,
     ) {
@@ -84,8 +64,8 @@ mod windows {
         log::info!(
             "Viewport sample {}",
             serde_json::json!({
-                "sequence": revision, "phase": phase,
-                "repairEnabled": *REPAIR_ENABLED,
+                "sequence": revision, "phase": "observed",
+                "repairEnabled": false,
                 "client": [expected.width, expected.height],
                 "webview": [actual.width, actual.height],
                 "controller": controller, "tauriBounds": bounds,
@@ -95,7 +75,7 @@ mod windows {
         );
     }
 
-    fn reconcile(main: &WebviewWindow, revision: u64) {
+    fn observe(main: &WebviewWindow, revision: u64) {
         if main.label() != "main" || main.is_minimized().unwrap_or(true) {
             return;
         }
@@ -110,32 +90,7 @@ mod windows {
             log::warn!("Could not measure the main WebView2 surface");
             return;
         };
-        let mismatch = needs_repair(expected, actual);
-        let initial = !INITIAL_MEASUREMENT_LOGGED.swap(true, Ordering::AcqRel);
-        if initial || mismatch || *TRACE {
-            sample(main, revision, "observed", expected, actual);
-        }
-        if !mismatch || !*REPAIR_ENABLED {
-            return;
-        }
-        // Independent dispatcher reads are not an atomic geometry snapshot.
-        // Drop stale observations; the coalescer will process the latest event.
-        if REQUESTED.load(Ordering::Acquire) != revision
-            || main.inner_size().ok() != Some(expected)
-            || main.is_minimized().unwrap_or(true)
-        {
-            return;
-        }
-        match webview.set_size(expected) {
-            Ok(()) => {
-                // The setter queues work. This getter is a subsequent dispatcher
-                // readback, still not proof of DOM layout/compositor repaint.
-                if let Ok(observed) = webview.size() {
-                    sample(main, revision, "after-request", expected, observed);
-                }
-            }
-            Err(error) => log::warn!("WebView2 size request failed: {error}"),
-        }
+        sample(main, revision, expected, actual);
     }
 
     /// Native event callbacks must return promptly. Post a small bounded
@@ -143,7 +98,7 @@ mod windows {
     /// notifications. The 40ms coalescing interval is not a geometry/height fix
     /// and is not taken as evidence that the compositor has settled.
     pub(super) fn schedule(main: WebviewWindow) {
-        if main.label() != "main" {
+        if !*TRACE || main.label() != "main" {
             return;
         }
         REQUESTED.fetch_add(1, Ordering::AcqRel);
@@ -153,7 +108,7 @@ mod windows {
         thread::spawn(move || loop {
             let revision = REQUESTED.load(Ordering::Acquire);
             thread::sleep(Duration::from_millis(40));
-            reconcile(&main, revision);
+            observe(&main, revision);
             if REQUESTED.load(Ordering::Acquire) != revision {
                 continue;
             }
@@ -175,49 +130,4 @@ pub(crate) fn initialise(main: &WebviewWindow) {
 #[cfg(target_os = "windows")]
 pub(crate) fn schedule(main: WebviewWindow) {
     windows::schedule(main);
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn detects_owner_shaped_bottom_gap() {
-        assert!(needs_repair(
-            PhysicalSize::new(1903, 999),
-            PhysicalSize::new(1903, 806)
-        ));
-    }
-
-    #[test]
-    fn ignores_matching_geometry_and_small_dpi_rounding() {
-        assert!(!needs_repair(
-            PhysicalSize::new(1280, 800),
-            PhysicalSize::new(1280, 800)
-        ));
-        assert!(!needs_repair(
-            PhysicalSize::new(1280, 800),
-            PhysicalSize::new(1279, 799)
-        ));
-    }
-
-    #[test]
-    fn ignores_zero_sized_minimised_surfaces() {
-        assert!(!needs_repair(
-            PhysicalSize::new(0, 0),
-            PhysicalSize::new(1280, 800)
-        ));
-        assert!(!needs_repair(
-            PhysicalSize::new(1280, 0),
-            PhysicalSize::new(1280, 800)
-        ));
-    }
-
-    #[test]
-    fn catches_width_mismatch_independently_of_height() {
-        assert!(needs_repair(
-            PhysicalSize::new(1600, 900),
-            PhysicalSize::new(1590, 900)
-        ));
-    }
 }

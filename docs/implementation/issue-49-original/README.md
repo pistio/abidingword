@@ -1,6 +1,8 @@
 # Issue #49: Reading → Original scroll containment
 
-Status: browser reproduction corrected and independently reviewed; **Windows acceptance remains open**. Work is in the development checkout, not the installed application or NiPogi. No build, installer, merge, release or deployment was started.
+Status, 18 November 2026: the targeted EPUB comparison is now **verified on native Windows 11 at 100% scaling**, including independent review of the complete first run's native screenshots. See [native evidence, limitations and production cleanup](native-acceptance-20261118.md). The normal installer and wider native acceptance remain open.
+
+The sections below preserve the 13 November source investigation and its then-pending build plan. The subsequently authorised diagnostic build used exact source `32e8a52567c3863f9b2930125f711fba6b7bd9ef`; the owner ran it on 18 November. No further debug build is needed solely to repeat that accepted comparison. Current source removes the unproven native sizing intervention and retains opt-in read-only diagnostics.
 
 ## Reproduced mechanism
 

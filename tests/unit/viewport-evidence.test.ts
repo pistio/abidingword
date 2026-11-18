@@ -7,7 +7,7 @@ function capture(dpi = 96) {
   const rect = { bottom: 1000 / scale };
   return {
     native: { Main: { Hwnd: "1", Dpi: dpi, ClientWidth: 1600, ClientHeight: 1000, ClientScreenX: 10, ClientScreenY: 30 }, Descendants: [{ Hwnd: "2", ClientWidth: 1600, ClientHeight: 1000, ClientScreenX: 10, ClientScreenY: 30 }] },
-    sample: { stableClient: true, client: [1600, 1000], webview: [1600, 1000], controller: { rect: [0, 0, 1600, 1000], parentHwnd: "2" }, scale },
+    sample: { stableClient: true, repairEnabled: false, client: [1600, 1000], webview: [1600, 1000], controller: { rect: [0, 0, 1600, 1000], parentHwnd: "2" }, scale },
     dom: { innerWidth: 1600 / scale, innerHeight: 1000 / scale, devicePixelRatio: scale, shell: rect, workspace: rect, panes: { scripture: { rect }, study: { rect }, sources: { rect } } },
   };
 }
@@ -47,4 +47,13 @@ it("fails closed without a stable COM measurement or with emulated/nonmatching D
   expect(compareGeometry(c.native, null, c.dom).passed).toBe(false);
   c.dom.devicePixelRatio = 1.5;
   expect(compareGeometry(c.native, c.sample, c.dom).passed).toBe(false);
+});
+
+it("rejects otherwise matching geometry when native repair is enabled or its status is unproved", () => {
+  const c = capture();
+  for (const repairEnabled of [true, undefined, "false"]) {
+    const result = compareGeometry(c.native, { ...c.sample, repairEnabled }, c.dom);
+    expect(result.passed).toBe(false);
+    expect(result.errors).toContain("Native size repair must be explicitly recorded as disabled.");
+  }
 });

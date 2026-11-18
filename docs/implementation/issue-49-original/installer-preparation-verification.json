@@ -1,0 +1,58 @@
+{
+  "purpose": "Prepared installer candidate; Rust gates still blocked; no build activation",
+  "date": "2026-11-18",
+  "baseSourceSha": "32e8a52567c3863f9b2930125f711fba6b7bd9ef",
+  "environment": "ChatGPT cloud Linux review workspace; not Windows desktop or NiPogi",
+  "frontend": {
+    "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=work/installer-prep/frontend.json",
+    "passed": 1299,
+    "failed": 0,
+    "testFiles": 121,
+    "resultSha256": "4683f22d0fb7c8b4821af2c3fb32e8b07171119ee13fb6af7d925f492ac811f7"
+  },
+  "checks": {
+    "typecheck": "passed",
+    "eslint": "passed",
+    "i18n": "passed: 6 languages, 9 areas, 4046 English keys, 137 components",
+    "frontendProductionBuild": "passed; existing chunk-size warning",
+    "nodeDiagnosticSyntax": "passed",
+    "workflowYamlAndStepOrder": "passed",
+    "archivedGeometryReplay": "28/28 verdicts preserved; baseline failure remains failure",
+    "independentCodeReview": "completed; diagnostic artifact source-label correction applied"
+  },
+  "blockedChecks": {
+    "rustfmt": "not run: permitted Rust toolchain unavailable",
+    "clippy": "not run: permitted Rust toolchain unavailable",
+    "rustTests": "not run: permitted Rust toolchain unavailable",
+    "windowsCompile": "not run; requires separately authorised build",
+    "powerShellExecution": "not run: pwsh unavailable"
+  },
+  "notPerformed": [
+    "Windows build",
+    "installer build",
+    "Actions dispatch",
+    "source branch push",
+    "merge",
+    "release",
+    "deployment",
+    "installed-application change"
+  ],
+  "unchangedFromBase": [
+    "production frontend",
+    "People translations",
+    "application configuration",
+    "dependency locks",
+    "migration SQL and catalogue",
+    "Scripture resources",
+    "recognition code",
+    "audience-window close behavior"
+  ],
+  "reviewedFiles": {
+    "src-tauri/src/lib.rs": "6ea092bcbc408fb73e9c8e2784df75d0b6e4cc958687746f37e7b326f0158436",
+    "src-tauri/src/window_sizing.rs": "13b08d05fc134be7eab4e1d4e55e4c89fe87ae3471ebd2abf0267f456db343bf",
+    "scripts/windows/Test-WebviewViewport.mjs": "015111ca14841ab6facadc30de610500590fd0b18af80ea9d3e22ecd71e80a2b",
+    "scripts/windows/viewport-evidence.mjs": "3fe78530f4247119f727a241845fa48c98c05e50a32a8f0636c5135ba9f2ce43",
+    "scripts/windows/Save-DiagnosticExecutable.ps1": "1fdbed8a15e4aab2268d959e2268d08794e177856d6dee46ef265eef0acbb2d4",
+    "tests/unit/viewport-evidence.test.ts": "f3734762413d1775a46b07f3ba26486bbfb28a1b4c40fc7e8fcb76c048834971"
+  }
+}

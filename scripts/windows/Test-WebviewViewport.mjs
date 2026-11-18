@@ -21,14 +21,13 @@ const { values: args } = parseArgs({ options: {
   port: { type: 'string', default: '9227' }, powershell: { type: 'string', default: 'pwsh.exe' }, help: { type: 'boolean' },
 } });
 if (args.help) {
-  console.log('Windows only: node scripts/windows/Test-WebviewViewport.mjs --exe PATH --exe-sha256 SHA256 --source-sha GIT_SHA --mode observe|repair --expected-dpi 96|120|144|192 --out NEW_DIRECTORY [--scenario original|resize] [--port 9227]');
+  console.log('Windows only: node scripts/windows/Test-WebviewViewport.mjs --exe PATH --exe-sha256 SHA256 --source-sha GIT_SHA --mode observe --expected-dpi 96|120|144|192 --out NEW_DIRECTORY [--scenario original|resize] [--port 9227]');
   process.exit(0);
 }
 assert.equal(process.platform, 'win32', 'Native acceptance requires an interactive Windows desktop; Linux/Chromium is not a substitute.');
 assert.ok(args.exe && args.out && /^[a-f0-9]{64}$/i.test(args['exe-sha256'] ?? '') && /^[a-f0-9]{40}$/i.test(args['source-sha'] ?? ''), 'Pin executable hash, source SHA and new output directory.');
-assert.ok(['observe', 'repair'].includes(args.mode), 'Choose explicit observation or measured correction.');
+assert.equal(args.mode, 'observe', 'Native size repair has been removed; diagnostics are observation-only. Use --mode observe.');
 assert.ok(['original', 'resize'].includes(args.scenario), 'Choose the exact Original interaction or historical resize scenario.');
-if (args.scenario === 'original') assert.equal(args.mode, 'observe', 'Original acceptance observes native dimensions without the speculative size repair.');
 const expectedDpi = Number(args['expected-dpi']);
 assert.ok([96, 120, 144, 192].includes(expectedDpi), 'Use actual OS display scaling, not browser emulation.');
 const exe = resolve(args.exe), out = resolve(args.out), port = Number(args.port);
@@ -58,7 +57,9 @@ const child = spawn(exe, [], { windowsHide: false, stdio: 'ignore', env: {
   ...process.env, ABIDING_WORD_DATA_DIR: profile,
   WEBVIEW2_USER_DATA_FOLDER: join(profile, 'webview2'),
   WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${port} --remote-debugging-address=127.0.0.1`,
-  ABIDING_WORD_VIEWPORT_MODE: args.mode, ABIDING_WORD_VIEWPORT_TRACE: '1',
+  // The mode variable keeps archived baseline executables in observation mode.
+  // Current application code has no native size repair, regardless of this value.
+  ABIDING_WORD_VIEWPORT_MODE: 'observe', ABIDING_WORD_VIEWPORT_TRACE: '1',
 } });
 const report = { protocolSourceSha, sourceSha: args['source-sha'], executableSha256: args['exe-sha256'], mode: args.mode, scenario: args.scenario, expectedDpi, platform: process.platform, architecture: process.arch, osRelease: release(), osVersion: version(), cases: [], stage: 'spawn', nativeAcceptance: 'NOT AUTOMATIC: requires independent native screenshot review; no installer or paid Actions run', failures: [] };
 let browser;
@@ -266,4 +267,4 @@ try {
   if(browser)await browser.close();if(child.exitCode===null)child.kill();
 }
 assert.equal(report.geometryAndFunctionPassed,true,'Native evidence contains a failed gate; inspect report and native screenshots. Do not call the issue fixed.');
-console.log('Native measurements/scroll/edit checks passed. Independently review native client screenshots and compare observe/repair runs before any fix claim.');
+console.log('Native measurements/scroll/edit checks passed. Independently review the native client screenshots and exact-build comparison before claiming acceptance.');

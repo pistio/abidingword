@@ -1,6 +1,8 @@
 # Issue #49: Windows viewport investigation and acceptance gate
 
-> 13 November update: the actual Source → Original interaction now reproduces a shared blank band in the real React workspace. See [the scroll-containment investigation and targeted Windows protocol](issue-49-original/README.md). The earlier resize-only results below are historical and do not exercise that trigger. Native acceptance of the new correction remains pending.
+> 18 November update: the targeted EPUB Source → Original comparison passed on native Windows 11 at 100% scaling after independent screenshot review. The baseline reproduced a 206px shell-scroll displacement; the corrected build retained all pane edges and controls in all 12 states. See [the native evidence review and production cleanup](issue-49-original/native-acceptance-20261118.md).
+>
+> The investigation below records the earlier hypotheses and commands as historical evidence. The native size intervention has now been removed. Current diagnostics require `--mode observe` and only collect measurements when `ABIDING_WORD_VIEWPORT_TRACE=1`. Historical `--mode repair` commands below do not apply to the current source. Installer and wider native acceptance remain open.
 
 [Draft PR #50](https://github.com/pistio/abidingword/pull/50), stacked on [PR #44](https://github.com/pistio/abidingword/pull/44).
 

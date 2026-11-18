@@ -32,6 +32,7 @@ export function compareGeometry(native, sample, dom, tolerance = 4) {
   if (dom.layoutMode === 'stacked') errors.push('Stacked/narrow workspace: wide three-pane native geometry was not exercised.');
   const controller = sample?.controller;
   if (!main || !controller?.rect || !sample.stableClient) return { passed: false, diagnosis: 'missing-or-unstable-native-measurement', errors: ['Require independent Win32 client, stable Tauri sample and actual COM controller bounds.'] };
+  if (sample.repairEnabled !== false) errors.push('Native size repair must be explicitly recorded as disabled.');
   const [left, top, right, bottom] = controller.rect;
   const host = [main, ...(native.Descendants ?? [])].find(r => r.Hwnd === controller.parentHwnd);
   if (!host) errors.push('Controller parent HWND not present in independent Win32 capture.');

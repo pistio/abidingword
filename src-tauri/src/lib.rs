@@ -21,9 +21,8 @@ pub mod sample;
 pub mod scripture;
 pub mod state;
 
-// Provisional main-window WebView2 diagnostics/correction; Windows cause unproven.
-// Also compiled in Rust tests on other platforms for pure reconciliation rules.
-#[cfg(any(test, target_os = "windows"))]
+// Optional read-only main-window WebView2 geometry diagnostics.
+#[cfg(target_os = "windows")]
 mod window_sizing;
 
 use std::path::PathBuf;
@@ -50,10 +49,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         // Closing the main window also closes a presentation's audience screen.
         .on_window_event(|window, event| {
-            // Tauri's HTML shell is fixed inset-0, yet Windows WebView2 can
-            // retain a smaller physical surface after resize/DPI changes.
-            // Repair only the browser surface, not the native window, and
-            // leave the separately hosted audience window untouched.
+            // Collect geometry only when the explicit diagnostic trace is enabled.
+            // Tauri continues to manage native window and WebView2 sizing.
             #[cfg(target_os = "windows")]
             if window.label() == "main" {
                 let focused = matches!(event, tauri::WindowEvent::Focused(true));
@@ -90,9 +87,8 @@ pub fn run() {
             }
             let state = start(app.handle());
             app.manage(state);
-            // Start the first Windows geometry measurement only after logging
-            // has been installed by start(); otherwise the diagnostic can
-            // finish before its initial measurements are recorded.
+            // Schedule optional Windows measurements after start() installs logging.
+            // With tracing disabled, initialise() does not start a worker.
             #[cfg(target_os = "windows")]
             if let Some(main) = app.get_webview_window("main") {
                 window_sizing::initialise(&main);
