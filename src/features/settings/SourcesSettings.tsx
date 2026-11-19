@@ -164,6 +164,10 @@ export function SourcesSettings() {
   const refresh = async () => {
     await Promise.all([load(), loadOrganisation()]);
   };
+  const metadataSaved = async () => {
+    languages.reload();
+    await refresh();
+  };
   const flat = useMemo(() => flatten(collections), [collections]);
   const items = page?.items ?? [];
   const ids = [...selected];
@@ -464,8 +468,9 @@ export function SourcesSettings() {
                   onToggle={() => toggle(s.id)}
                   open={editing === s.id}
                   onOpen={() => setEditing(editing === s.id ? null : s.id)}
+                  onEdit={() => setEditing(s.id)}
                   onRead={() => openSource(s.id)}
-                  onSaved={refresh}
+                  onSaved={metadataSaved}
                   onArchive={() => move([s.id], "archived", t("library.manage.done.archivedOne", { title: s.title }))}
                   onRestore={() => move([s.id], "active", t("library.manage.done.restoredOne", { title: s.title }), false)}
                   onTrash={() => setAsking({ kind: "trash", ids: [s.id] })}
@@ -599,6 +604,7 @@ interface RowProps {
   onToggle: () => void;
   open: boolean;
   onOpen: () => void;
+  onEdit: () => void;
   onRead: () => void;
   onSaved: () => Promise<void>;
   onArchive: () => void;
@@ -607,8 +613,9 @@ interface RowProps {
   onDelete: () => void;
 }
 
-function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, onSaved, onArchive, onRestore, onTrash, onDelete }: RowProps) {
+function Row({ source: s, collections, checked, onToggle, open, onOpen, onEdit, onRead, onSaved, onArchive, onRestore, onTrash, onDelete }: RowProps) {
   const { t } = useTranslation();
+  const [focusRequest, setFocusRequest] = useState(0);
   const meta = [s.author, sourceTypeLabel(t, s.sourceType), s.format ? formatLabel(t, s.format as SourceFormat) : null, s.language, t("library.view.addedOn", { date: formatDate(s.createdAt) })]
     .filter(Boolean)
     .join(t("common.listSeparator"));
@@ -620,6 +627,7 @@ function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, 
         ]
       : [
           { label: t("library.manage.read"), onSelect: onRead },
+          { label: t("library.metadata.edit"), onSelect: () => { setFocusRequest((current) => current + 1); onEdit(); } },
           s.state === "archived" ? { label: t("common.lifecycle.restore"), onSelect: onRestore } : { label: t("common.lifecycle.archive"), onSelect: onArchive },
           { label: t("common.lifecycle.moveToTrashEllipsis"), onSelect: onTrash },
         ];
@@ -628,7 +636,7 @@ function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, 
       <div className="flex items-start gap-3">
         <input type="checkbox" checked={checked} onChange={onToggle} aria-label={t("library.manage.selectOne", { title: s.title })} className="mt-1.5" />
         <div className="min-w-0 flex-1">
-          <button type="button" aria-expanded={open} onClick={onOpen} className="min-w-0 text-left">
+          <button type="button" aria-expanded={open} onClick={() => { setFocusRequest(0); onOpen(); }} className="min-w-0 text-left">
             <span className="type-item block hover:underline">{s.title}</span>
             <span className="type-meta block">{meta}</span>
           </button>
@@ -644,7 +652,7 @@ function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, 
         </div>
         <ActionMenu label={t("library.manage.more", { title: s.title })} actions={actions} />
       </div>
-      {open && <SourceDetails sourceId={s.id} summary={s} collections={collections} onSaved={onSaved} />}
+      {open && <SourceDetails sourceId={s.id} summary={s} collections={collections} onSaved={onSaved} focusRequest={focusRequest} />}
     </li>
   );
 }
@@ -654,7 +662,7 @@ function Badge({ children }: { children: ReactNode }) {
 }
 
 /** A source's details, editable; its file, tags and collections. Nothing is saved until Save. */
-function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: string; summary: ManagedSource; collections: (SourceCollection & { depth: number })[]; onSaved: () => Promise<void> }) {
+function SourceDetails({ sourceId, summary, collections, onSaved, focusRequest }: { sourceId: string; summary: ManagedSource; collections: (SourceCollection & { depth: number })[]; onSaved: () => Promise<void>; focusRequest: number }) {
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
@@ -667,6 +675,18 @@ function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: 
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const editor = useRef<HTMLDivElement>(null);
+  const focusedRequest = useRef(0);
+  useEffect(() => {
+    // Menu activation should reach the actual editor even when its details
+    // arrive later. Saving or ordinary typing must not take focus again.
+    if (!draft || focusRequest <= focusedRequest.current) return;
+    const title = editor.current?.querySelector<HTMLInputElement>("input");
+    if (title) {
+      title.focus();
+      focusedRequest.current = focusRequest;
+    }
+  }, [draft, focusRequest]);
   if (loaded.error) return <Notice tone="error">{loaded.error.message}</Notice>;
   if (!draft) return null;
 
@@ -695,7 +715,7 @@ function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: 
   };
 
   return (
-    <div className="ml-7 flex flex-col gap-3 rounded-aw border border-border-subtle bg-bg p-3">
+    <div ref={editor} className="ml-7 flex flex-col gap-3 rounded-aw border border-border-subtle bg-bg p-3">
       <SourceMetadataFields draft={draft} onChange={(next) => { setSaved(false); setDraft(next); }}>
         <dl className="mt-3 grid grid-cols-1 gap-x-4 gap-y-1 text-[0.9375rem] sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium text-text-strong">{t("library.manage.file.name")}</dt>

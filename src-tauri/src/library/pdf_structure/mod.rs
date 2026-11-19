@@ -21,7 +21,8 @@ pub const VERSION: i64 = 1;
 /// 2: margin-only, size-aware running furniture; Contents listings of books.
 /// 3: grounded printed book-index targets, ordered evidence levels and safe Source titles.
 /// 4: printed contents destinations independent of cover typography; real heading hierarchy.
-pub const ANALYSIS: u32 = 4;
+/// 5: multilingual book aliases corroborate differently spelled printed Contents and openings.
+pub const ANALYSIS: u32 = 5;
 pub const MAX_HEADINGS: usize = 5_000;
 pub const MAX_LINES: usize = 120_000;
 pub const MAX_CHARS: usize = 8_000_000;
@@ -710,5 +711,8 @@ pub fn extract_with_progress(
     })
 }
 
-pub(crate) use resolve::{book_references, canonical as heading_reference, is_reference_list};
+pub(crate) use resolve::{
+    book_references, canonical as heading_reference, is_reference_list,
+    named_reference as source_reference,
+};
 pub use resolve::{effective, presentations};

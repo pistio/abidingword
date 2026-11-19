@@ -1131,7 +1131,7 @@ pub struct PassageIndexReport {
     pub failed: usize,
 }
 
-/// Version 5 changes heading navigation only. Do not redetect or replace the
+/// Versions 5 and 6 change heading navigation only. Do not redetect or replace the
 /// independently indexed literal references (or any user-confirmed links).
 fn refresh_structure_links(conn: &Connection, source_id: &str) -> AppResult<()> {
     let (language, format): (Option<String>, Option<String>) = conn.query_row(
@@ -1286,7 +1286,7 @@ pub fn ensure_passage_index(conn: &Connection) -> AppResult<PassageIndexReport> 
         .collect::<Result<_, _>>()?;
     let mut report = PassageIndexReport::default();
     for (id, version) in stale {
-        let result = if version == 4 {
+        let result = if matches!(version, 4 | 5) {
             refresh_structure_links(conn, &id)
         } else {
             reindex_passages(conn, &id).map(|_| ())

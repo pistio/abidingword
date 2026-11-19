@@ -273,12 +273,13 @@ fn preserved(conn: &Connection, id: &str) -> (Vec<String>, Vec<String>) {
 
 #[test]
 fn existing_epub_upgrade_preserves_text_literal_and_manual_identities_without_reimport() {
-    let bytes = toc_epub(false, false, false, false);
-    let db = Database::open_in_memory().unwrap();
-    db.with_conn(|conn| {
+    for previous_version in [4, 5] {
+        let bytes = toc_epub(false, false, false, false);
+        let db = Database::open_in_memory().unwrap();
+        db.with_conn(|conn| {
         let (id, staged) = add(conn, "invented.epub", &bytes);
         conn.execute("DELETE FROM source_passages WHERE source_id=?1 AND origin IN ('section','inherited')", [&id])?;
-        conn.execute("UPDATE sources SET passage_index_version=4 WHERE id=?1", [&id])?;
+        conn.execute("UPDATE sources SET passage_index_version=?2 WHERE id=?1", rusqlite::params![&id, previous_version])?;
         // A user decision remains authoritative even after the TOC is rebuilt.
         conn.execute("INSERT INTO source_passages(id,source_id,segment_id,passage,start_key,end_key,matched_text,created_at,origin) SELECT 'intentional-link',source_id,segment_id,passage,start_key,end_key,matched_text,'original-manual-time','manual' FROM source_passages WHERE source_id=?1 AND passage='ROM.9.1' LIMIT 1", [&id])?;
         let before = preserved(conn, &id);
@@ -298,6 +299,7 @@ fn existing_epub_upgrade_preserves_text_literal_and_manual_identities_without_re
         assert_eq!(conn.query_row("SELECT COUNT(*) FROM bible_verses", [], |r| r.get::<_, i64>(0))?, 0);
         Ok(())
     }).unwrap();
+    }
 }
 
 #[test]

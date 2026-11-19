@@ -198,6 +198,109 @@ fn printed_titles_use_corroborated_offsets_and_real_openings_even_when_drawn_tit
     .unwrap();
 }
 #[test]
+fn multilingual_contents_aliases_recover_real_destinations_when_old_analysis_is_rebuilt() {
+    let root = tempfile::tempdir().unwrap();
+    let db = Database::open_in_memory().unwrap();
+    let expected = [
+        ("Sprueche", "Sprichwörter", 3, "PRO.1-PRO.31"),
+        ("Roemer", "Römer", 4, "ROM.1-ROM.16"),
+        ("Matthaeus", "Matthäus", 5, "MAT.1-MAT.28"),
+    ];
+    let mut toc = vec![(60.0, 740.0, 20.0, "Inhaltsverzeichnis".into())];
+    for (n, (title, _, _, _)) in expected.iter().enumerate() {
+        toc.push((
+            60.0,
+            680.0 - n as f64 * 35.0,
+            10.0,
+            format!("{title} . . . {}", 10 + n),
+        ));
+    }
+    // No PDF page labels or literal title matches: all three independent book
+    // aliases must corroborate the printed-to-physical page offset.
+    let bytes = fixtures::pdf_sized(&[
+        cover(),
+        toc,
+        page("Sprichwörter"),
+        page("Römer"),
+        page("Matthäus"),
+    ]);
+    let id = imported(&db, root.path(), &bytes);
+    let hash = db
+        .with_conn(|c| {
+            let record = pdf_structures::load(c, &id)?.unwrap();
+            assert_eq!(record.document.printed_contents.len(), 3);
+            assert!(record
+                .document
+                .blocks
+                .iter()
+                .all(|b| b.printed_label.is_none()));
+            // Simulate saved analysis 4 metadata whose extraction omitted
+            // these destinations. Merely resolving its remaining headings
+            // cannot recreate the missing printed Contents entries.
+            let mut old = record.document.clone();
+            old.analysis = 4;
+            old.printed_contents.clear();
+            old.headings.retain(|h| h.basis != "printed");
+            pdf_structures::store(c, &id, &record.hash, &old)?;
+            let view = pdf_structures::view(c, &id)?;
+            assert_eq!(view.analysis, 4);
+            assert!(view.rebuild_recommended);
+            assert!(pdf_structures::load(c, &id)?
+                .unwrap()
+                .document
+                .printed_contents
+                .is_empty());
+            Ok(record.hash.clone())
+        })
+        .unwrap();
+
+    let rebuilt = pdf_build::rebuild(&db, root.path(), &id, &Job::default()).unwrap();
+    assert_eq!(rebuilt.analysis, 5);
+    assert!(!rebuilt.rebuild_recommended);
+    assert_eq!(rebuilt.file_hash.as_deref(), Some(hash.as_str()));
+    db.with_conn(|c| {
+        let record = pdf_structures::load(c, &id)?.unwrap();
+        assert_eq!(record.document.printed_contents.len(), 3);
+        for (title, original, page, canonical) in expected {
+            let destination = record
+                .document
+                .printed_contents
+                .iter()
+                .find(|d| d.title == title)
+                .unwrap();
+            let h = rebuilt
+                .headings
+                .iter()
+                .find(|h| h.heading.title == title)
+                .unwrap();
+            assert_eq!(destination.page, page);
+            assert_eq!(
+                destination.anchor_id.as_deref(),
+                Some(h.heading.anchor.id().as_str())
+            );
+            assert_eq!(h.heading.anchor.page, page);
+            assert_eq!(h.heading.anchor.original_text, original);
+            assert_eq!(h.heading.basis, "printed");
+            assert_eq!(h.scope, "book");
+            assert_eq!(h.canonical.as_deref(), Some(canonical));
+            let text: String = c.query_row(
+                "SELECT content FROM source_segments WHERE source_id=?1 AND position=?2",
+                rusqlite::params![id, h.heading.segment_position],
+                |r| r.get(0),
+            )?;
+            assert_eq!(
+                text.encode_utf16()
+                    .skip(h.heading.start as usize)
+                    .take((h.heading.end - h.heading.start) as usize)
+                    .collect::<Vec<_>>(),
+                original.encode_utf16().collect::<Vec<_>>()
+            );
+        }
+        Ok(())
+    })
+    .unwrap();
+}
+#[test]
 fn rebuild_keeps_user_corrections_and_old_documents_default_to_no_printed_page_destinations() {
     let root = tempfile::tempdir().unwrap();
     let db = Database::open_in_memory().unwrap();

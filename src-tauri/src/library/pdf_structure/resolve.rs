@@ -3,7 +3,7 @@ use super::{Correction, Heading, PdfStructure, Presentation, ResolvedHeading};
 use crate::scripture::{
     canon::Book,
     language::{fold, ReferenceLanguage},
-    parser::ReferenceParser,
+    parser::Prepared,
     recognise::Recogniser,
     reference::{Point, ScriptureRef},
 };
@@ -11,6 +11,9 @@ use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::sync::OnceLock;
 use unicode_normalization::{char::is_combining_mark, UnicodeNormalization};
+
+#[path = "heading_books.rs"]
+mod heading_books;
 
 fn key(text: &str) -> String {
     fold(text)
@@ -22,7 +25,19 @@ fn key(text: &str) -> String {
 }
 fn core_title(text: &str) -> &str {
     for separator in [" — ", " – ", " - ", ": "] {
-        if let Some((start, _)) = text.split_once(separator) {
+        for (at, _) in text.match_indices(separator) {
+            let (start, rest) = (&text[..at], &text[at + separator.len()..]);
+            // A spaced verse separator or range belongs to the reference,
+            // not to an explanatory subtitle (`John 3: 16 – 18 — Love`).
+            if start.chars().next_back().is_some_and(char::is_numeric)
+                && rest
+                    .trim_start()
+                    .chars()
+                    .next()
+                    .is_some_and(char::is_numeric)
+            {
+                continue;
+            }
             return start.trim();
         }
     }
@@ -71,7 +86,32 @@ pub(crate) fn is_reference_list(title: &str) -> bool {
     })
 }
 pub(super) fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'static Book> {
-    let title = core_title(title);
+    book_label(title, language).or_else(|| book_label(core_title(title), language))
+}
+
+/// The entire label, with no subtitle/prose truncation. Parenthetical names
+/// are synonyms only when both independently resolve to the same book.
+fn book_label(title: &str, language: ReferenceLanguage) -> Option<&'static Book> {
+    let title = title.trim();
+    if title
+        .chars()
+        .take(crate::scripture::resolve::MAX_TYPED + 1)
+        .count()
+        > crate::scripture::resolve::MAX_TYPED
+    {
+        return None;
+    }
+    if let Some((left, right)) = title.strip_suffix(')').and_then(|s| s.split_once(" (")) {
+        let a = book_label(left, language)?;
+        let b = book_label(right, language)?;
+        return (a.code == b.code).then_some(a);
+    }
+    if let Some((left, right)) = title.split_once(" / ") {
+        let a = book_label(left, language)?;
+        let b = book_label(right, language)?;
+        return (a.code == b.code).then_some(a);
+    }
+    let original_title = title;
     let title = title
         .split_once(' ')
         .filter(|(first, _)| {
@@ -141,47 +181,69 @@ pub(super) fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'s
             .find(|b| b.code == code);
     }
 
-    if let Some((_, book)) = ReferenceParser::for_language(language)
-        .lookup_entries()
-        .find(|(alias, _)| key(alias) == wanted)
+    heading_books::lookup(original_title, language)
+        .or_else(|| heading_books::lookup(title, language))
+}
+
+fn whole_book(book: &'static Book) -> Option<ScriptureRef> {
+    ScriptureRef::new(
+        book,
+        Point {
+            chapter: 1,
+            verse: None,
+        },
+        Point {
+            chapter: book.chapter_count,
+            verse: None,
+        },
+    )
+    .ok()
+}
+
+/// Strict source-only reference input: the complete value must be a book
+/// label, or a known book label followed by a complete chapter/verse suffix.
+/// Used by real source headings and manual whole-source coverage, without
+/// relaxing the shared running-text or Scripture-import recognizers.
+pub(crate) fn named_reference(
+    title: &str,
+    language: ReferenceLanguage,
+) -> Option<(ScriptureRef, String)> {
+    if title
+        .chars()
+        .take(crate::scripture::resolve::MAX_TYPED + 1)
+        .count()
+        > crate::scripture::resolve::MAX_TYPED
     {
-        return Some(book);
-    }
-    // A short foreign alias is accepted only when all supported dictionaries
-    // agree on one book. E.g. German "Apg" in a PDF without language metadata.
-    if wanted.chars().count() < 3 {
         return None;
     }
-    let mut found: Option<&'static Book> = None;
-    for lang in [
-        ReferenceLanguage::En,
-        ReferenceLanguage::De,
-        ReferenceLanguage::Ko,
-        ReferenceLanguage::Fr,
-        ReferenceLanguage::Es,
-        ReferenceLanguage::Pt,
-    ] {
-        for (_, book) in ReferenceParser::for_language(lang)
-            .lookup_entries()
-            .filter(|(alias, _)| key(alias) == wanted)
-        {
-            if found.is_some_and(|old| old.code != book.code) {
-                return None;
-            }
-            found = Some(book);
+    if let Some(book) = book_label(title, language) {
+        return whole_book(book).map(|r| (r, "book".into()));
+    }
+    // Prefix lookup uses the cached lexicon; no language regex is compiled
+    // per heading. Try the longest label first (including numbered books).
+    for (at, _) in title.char_indices().rev() {
+        if at == 0 {
+            break;
+        }
+        let Some(book) = book_label(title[..at].trim_end(), language) else {
+            continue;
+        };
+        let reference = whole_book(book)?;
+        if let Some(found) = relative_reference(title[at..].trim(), &reference, "book", true) {
+            return Some(found);
         }
     }
-    found
+    None
 }
 
 /// An explicitly combined book opening is one real destination for each named
 /// book. The shared title never chooses one book as implicit chapter context.
 pub(crate) fn book_references(title: &str, language: ReferenceLanguage) -> Vec<ScriptureRef> {
-    let title = core_title(title);
     let mut books = Vec::new();
     if let Some(book) = book_title(title, language) {
         books.push(book);
     } else {
+        let title = core_title(title);
         static COMBINED: OnceLock<Regex> = OnceLock::new();
         let combined = COMBINED.get_or_init(|| Regex::new(r"(?i)^([1-3])\.?\s*(?:\+|&|/|,|and\b|und\b|et\b|y\b|e\b)\s*([1-3])\.?\s*(\p{L}.*)$").unwrap());
         if let Some(parts) = combined.captures(title) {
@@ -259,20 +321,10 @@ pub(crate) fn canonical(
     {
         return None;
     }
-    if let Some(book) = book_title(title, language) {
-        return ScriptureRef::new(
-            book,
-            Point {
-                chapter: 1,
-                verse: None,
-            },
-            Point {
-                chapter: book.chapter_count,
-                verse: None,
-            },
-        )
-        .ok()
-        .map(|r| (r, "book".into()));
+    if let Some(found) =
+        named_reference(title, language).or_else(|| named_reference(core_title(title), language))
+    {
+        return Some(found);
     }
     let found = Recogniser::for_source(language).detect(title);
     if found.len() == 1 {
@@ -289,7 +341,16 @@ pub(crate) fn canonical(
         ));
     }
     let (parent, scope) = parent?;
-    let mut value = core_title(title).trim().to_lowercase();
+    relative_reference(core_title(title), parent, scope, false)
+}
+
+fn relative_reference(
+    title: &str,
+    parent: &ScriptureRef,
+    scope: &str,
+    named: bool,
+) -> Option<(ScriptureRef, String)> {
+    let mut value = Prepared::new(title).text.trim().to_lowercase();
     let mut explicit_chapter = false;
     let mut explicit_verse = false;
     for prefix in [
@@ -305,14 +366,38 @@ pub(crate) fn canonical(
             break;
         }
     }
-    if value.starts_with('제') {
-        value = value.trim_start_matches('제').trim().into();
+    if value.starts_with(['제', '第']) {
+        value = value.trim_start_matches(['제', '第']).trim().into();
         explicit_chapter = true;
     }
-    if value.contains('장') {
-        explicit_chapter = true;
-        value = value.replace('장', ":").replace('절', "");
-        value = value.trim_end_matches(':').trim().into();
+    let mut chapter_unit = false;
+    let mut prefix_unit = false;
+    for unit in heading_books::chapter_units() {
+        if value.contains(unit) {
+            prefix_unit |= value.trim_start().starts_with(unit);
+            value = value.replace(unit, ":");
+            explicit_chapter = true;
+            chapter_unit = true;
+        }
+    }
+    for unit in heading_books::verse_units() {
+        if value.contains(unit) {
+            // A unit separates numeric tokens. Removing it without a boundary
+            // would turn malformed `1절2절` into the invented verse `12`.
+            value = value.replace(unit, " ");
+            explicit_verse = !explicit_chapter;
+        }
+    }
+    if chapter_unit {
+        // Repeated units belong to a complete range: `1장1절–2장2절`,
+        // `1章–2章`. Preserve its endpoints rather than clipping the first.
+        static UNIT_RANGE: OnceLock<Regex> = OnceLock::new();
+        let re = UNIT_RANGE.get_or_init(|| Regex::new(r":\s*([-‐‑‒–—~])").unwrap());
+        value = re.replace_all(&value, "$1").trim().into();
+        if prefix_unit {
+            value = value.strip_prefix(':').unwrap_or(&value).trim().into();
+        }
+        value = value.strip_suffix(':').unwrap_or(&value).trim().into();
     }
     for prefix in [
         "verses ",
@@ -332,16 +417,31 @@ pub(crate) fn canonical(
             break;
         }
     }
-    if value.ends_with('절') && !value.contains('장') {
-        value = value.trim_end_matches('절').trim().into();
-        explicit_verse = true;
-    }
     static NUMERIC: OnceLock<Regex> = OnceLock::new();
-    let re=NUMERIC.get_or_init(||Regex::new(r"^([0-9]{1,3})(?:\s*[:,]\s*([0-9]{1,3}))?(?:\s*[-–—]\s*(?:([0-9]{1,3})\s*[:,]\s*)?([0-9]{1,3}))?$").unwrap());
-    let caps = re.captures(&value)?;
+    let re=NUMERIC.get_or_init(||Regex::new(r"^([0-9]{1,3})(?:\s*[:,]\s*([0-9]{1,3}))?(?:\s*[-‐‑‒–—~]\s*(?:([0-9]{1,3})\s*[:,]\s*)?([0-9]{1,3}))?$").unwrap());
+    let caps = re.captures(value.trim())?;
     let ch = caps[1].parse().ok()?;
     let verse = caps.get(2).and_then(|v| v.as_str().parse().ok());
     let last = caps.get(4).and_then(|v| v.as_str().parse::<u16>().ok());
+    // Explicit references in one-chapter books use verse shorthand, just as
+    // the shared parser does (`Jude 5`, `Philemon 1–4`). A separate child
+    // heading `1` under a book remains a structural chapter, and an explicit
+    // chapter word/unit always retains its chapter meaning.
+    if named && parent.book.chapter_count == 1 && verse.is_none() && !explicit_chapter {
+        return ScriptureRef::new(
+            parent.book,
+            Point {
+                chapter: 1,
+                verse: Some(ch),
+            },
+            Point {
+                chapter: 1,
+                verse: Some(last.unwrap_or(ch)),
+            },
+        )
+        .ok()
+        .map(|r| (r, "passage".into()));
+    }
     if verse.is_none() && !explicit_chapter && (explicit_verse || scope == "chapter") {
         if scope != "chapter" || parent.start.chapter != parent.end.chapter {
             return None;

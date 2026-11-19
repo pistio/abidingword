@@ -118,6 +118,11 @@ pub(crate) fn parse(passage: &str, language: ReferenceLanguage) -> AppResult<Scr
     }
     let reference = ScriptureRef::from_canonical(text)
         .or_else(|_| resolve::resolve(text, resolve::Context::new(None, Some(language))))
+        .or_else(|_| {
+            super::pdf_structure::source_reference(text, language)
+                .map(|(reference, _)| reference)
+                .ok_or_else(|| invalid(text))
+        })
         .map_err(|_| invalid(text))?;
     if reference.canon_verse_error(&|_, _, _| false).is_some() {
         return Err(invalid(text));

@@ -181,6 +181,74 @@ fn manual_ranges_accept_interface_languages_preserve_other_metadata_and_match_on
 }
 
 #[test]
+fn source_coverage_uses_the_same_german_spelling_variants_for_books_and_passages() {
+    let db = Database::open_in_memory().unwrap();
+    db.with_conn(|conn| {
+        let id = add(
+            conn,
+            "aliases.txt",
+            "An invented whole-work discussion.",
+            "Alias scope",
+            SourceType::Book,
+        );
+        for (written, expected) in [
+            ("Sprüche", "PRO.1-PRO.31"),
+            ("Sprichwörter", "PRO.1-PRO.31"),
+            ("Sprueche", "PRO.1-PRO.31"),
+            ("Sprichwoerter", "PRO.1-PRO.31"),
+            ("Sprueche 3:5-6", "PRO.3.5-PRO.3.6"),
+            ("Sprichwoerter 3,5", "PRO.3.5"),
+            ("Kohelet", "ECC.1-ECC.12"),
+            ("Prediger", "ECC.1-ECC.12"),
+            ("1. Mose", "GEN.1-GEN.50"),
+            ("Genesis", "GEN.1-GEN.50"),
+        ] {
+            set(conn, &id, "manual", &[written]);
+            assert_eq!(
+                library::get(conn, &id)?.coverage[0].reference.canonical,
+                expected,
+                "{written}"
+            );
+        }
+        // A typed scope must still be one reference, not a prose sentence or
+        // an unsupported passage rescued by a smaller prefix match.
+        for invalid in [
+            "Read Sprueche 3:5",
+            "Sprueche 3:999",
+            "Sprueche 3:5 and more",
+            "Sprueche 3:5 — unrelated prose",
+            "Jude 1절2절",
+            "Jude 1節2節",
+        ] {
+            let before = row(conn, &id);
+            assert!(
+                library_manage::update_source(
+                    conn,
+                    &input(
+                        conn,
+                        &id,
+                        Some(json!({"mode":"manual","passages":[invalid]}))
+                    )
+                )
+                .is_err(),
+                "{invalid}"
+            );
+            assert_eq!(row(conn, &id), before);
+        }
+        assert_eq!(
+            conn.query_row(
+                "SELECT COUNT(*) FROM source_passages WHERE source_id=?1",
+                [&id],
+                |row| row.get::<_, i64>(0)
+            )?,
+            0
+        );
+        Ok(())
+    })
+    .unwrap();
+}
+
+#[test]
 fn coverage_errors_are_atomic_and_unrelated_edits_preserve_malformed_legacy_data() {
     let db = Database::open_in_memory().unwrap();
     db.with_conn(|conn| {

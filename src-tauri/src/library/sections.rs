@@ -52,7 +52,9 @@ use crate::scripture::reference::ScriptureRef;
 ///   (`scripture::recognise`), and visible heading lines as local context (v0.13.2).
 /// * 5 – book/chapter/verse ancestors from source headings; existing literal
 ///   references are unchanged when upgrading a version-4 index.
-pub const INDEX_VERSION: i64 = 5;
+/// * 6 – all installed book-name dictionaries and safe spelling variants in
+///   source headings; version-4/5 literal and manual links stay unchanged.
+pub const INDEX_VERSION: i64 = 6;
 
 /// What the importers put between the headings of a `section_path`.
 pub const PATH_SEPARATOR: &str = " › ";
