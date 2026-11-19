@@ -1,0 +1,220 @@
+{
+  "date": "2026-11-19",
+  "scope": "Settings Sources Edit details and multilingual source book/chapter/verse hierarchy; draft PR #54",
+  "execution_platform": "Codex Cloud Linux; subsequent Windows build and native acceptance pending",
+  "base_commit": "68ad53714328c497f0fb2a847d8dbc75b4db8f2c",
+  "application_commit": "288076c3a8117bca429d2e62d8e0b2185525e731",
+  "tested_local_commit": "749179ab9f29857242913692e0985c59bc6ca50b",
+  "application_tree": "7b939be156fb836e7e13f328dfcbaa1363d940f9",
+  "published_tree_matches_tested_local_tree": true,
+  "final_input_manifest": {
+    "file_count": 890,
+    "sha256": "1294a8b39d6d80f878c31a5a3e855c3fb6fbfe66599669f2bc3aa59a2184c20a",
+    "unchanged_during_final_native_checks": true,
+    "scope": "Tracked and new non-documentation files; generated/ignored files and dependency symlink excluded"
+  },
+  "changed_application_and_test_files": [
+    {
+      "path": "src-tauri/src/db/library.rs",
+      "sha256": "a5aef331d4849bced029de08423ddc6ae7b43ccb715389490a4941c535ed5e5d"
+    },
+    {
+      "path": "src-tauri/src/library/coverage.rs",
+      "sha256": "00904017d5bf5208a27ff96a6a0155e1eea8a179b5973217aea5711fe1dfd871"
+    },
+    {
+      "path": "src-tauri/src/library/pdf_structure/heading_books.rs",
+      "sha256": "3e928c78e36f1ad0c9198c708660251afb740395784bd5b84b06b681271ec0b0"
+    },
+    {
+      "path": "src-tauri/src/library/pdf_structure/mod.rs",
+      "sha256": "be5711260695e2178c81694af85e29f60b645286519c3f9b1f52b79e284db874"
+    },
+    {
+      "path": "src-tauri/src/library/pdf_structure/resolve.rs",
+      "sha256": "6aad522f05440283d8966dcc80801083c12c6ca8049da58848e04eb790e080f2"
+    },
+    {
+      "path": "src-tauri/src/library/sections.rs",
+      "sha256": "8f694d8453dcffa03a5aea20b2125a74b7d39902e5a14462fd1c0ae4f6347c5f"
+    },
+    {
+      "path": "src-tauri/tests/pdf_printed_contents.rs",
+      "sha256": "d687ba04dd4c00dc019e17d1249fb6b415a71f44b20da7f72dbbafa2f0ce3a26"
+    },
+    {
+      "path": "src-tauri/tests/source_coverage.rs",
+      "sha256": "7433d6f01c29330ab438acd880d96450cf96d37709f46270c068ac3c841906c7"
+    },
+    {
+      "path": "src-tauri/tests/source_heading_languages.rs",
+      "sha256": "be46c9efe7245e9648e69ac7a3c49e10ac831dbc1a5240d96d936ea50d8429b4"
+    },
+    {
+      "path": "src-tauri/tests/source_navigation.rs",
+      "sha256": "991ff6529184cc4ca013f095fb0b4e1b2bf6f05d6e7e65d407fc14def0b353e3"
+    },
+    {
+      "path": "src/features/settings/SourcesSettings.tsx",
+      "sha256": "6eace620218fb5461392f5b9b95550750878260d538810bf4b36f87cefbe92fa"
+    },
+    {
+      "path": "tests/ui/sources-settings.test.tsx",
+      "sha256": "ab25c79b5be85ef1d93118e16d5d44215d27078a202b61156213039ec3ea2623"
+    }
+  ],
+  "frontend": {
+    "full_suite": {
+      "command": "npm test -- --reporter=default --reporter=json",
+      "exit": 0,
+      "seconds": 95.54,
+      "passed": 1364,
+      "failed": 0,
+      "total": 1364,
+      "test_files": 126
+    },
+    "focused_settings_metadata_coverage_passed": 27,
+    "production_build": {
+      "command": "npm run build",
+      "exit": 0,
+      "seconds": 19.25
+    },
+    "other_gates_observed": [
+      {
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "exit": 0
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "lint"
+        ],
+        "exit": 0
+      },
+      {
+        "command": [
+          "npm",
+          "run",
+          "i18n:check"
+        ],
+        "exit": 0
+      }
+    ],
+    "i18n_check": {
+      "languages": 6,
+      "areas_per_language": 9,
+      "english_keys": 4079,
+      "components": 139
+    },
+    "earlier_frontend_failures": "Presenter and Teaching assertions both pass unchanged in this complete run; their earlier timing cause is not established or claimed fixed."
+  },
+  "native": {
+    "focused": {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked",
+        "--test",
+        "source_heading_languages",
+        "--test",
+        "source_coverage",
+        "--test",
+        "source_navigation",
+        "--test",
+        "pdf_printed_contents"
+      ],
+      "exit": 0,
+      "seconds": 20.64,
+      "suites": 4,
+      "passed": 34,
+      "failed": 0,
+      "ignored": 0
+    },
+    "format": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--",
+        "--check"
+      ],
+      "exit": 0,
+      "seconds": 1.05
+    },
+    "clippy": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--offline",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit": 0,
+      "seconds": 11.27
+    },
+    "complete_suite": {
+      "command": [
+        "cargo",
+        "test",
+        "--offline",
+        "--locked"
+      ],
+      "exit": 0,
+      "seconds": 294.98,
+      "suites": 102,
+      "passed": 1146,
+      "failed": 0,
+      "ignored": 9
+    },
+    "toolchain": {
+      "cargo": "1.99.1",
+      "rustc": "1.99.1",
+      "build_jobs": 2,
+      "test_threads": 2
+    }
+  },
+  "language_catalogue": {
+    "installed_packs": 101,
+    "available_language_book_pairs": 6390,
+    "coverage": "At least one documented resolvable source heading per available pair, with one retained explicit ambiguity exception.",
+    "withheld_exception": "Igbo Jude supplies only Jud; the pre-existing canon-ambiguity rule remains.",
+    "limits": "No claim for missing catalogue books, every possible spelling, unknown languages, or arbitrary PDF extraction."
+  },
+  "versions": {
+    "database_schema": 27,
+    "source_passage_index": 6,
+    "pdf_analysis": 5,
+    "pdf_json_shape": 1
+  },
+  "preservation": {
+    "version_4_and_5_structural_refresh": "Preserves existing literal/manual IDs and timestamps, source segments/text, annotations, citations and coverage.",
+    "epub_supplied_contents": "Refresh on opening Contents, guarded by managed-file hash and exact text/segment identity checks.",
+    "pdf_analysis_refresh": "Older analysis recommends explicit Rebuild; no automatic PDF reread.",
+    "invented_pdf_regression": "Three differently spelled Contents/body labels recover the same actual physical destinations after analysis-4 rebuild; original hash and anchor text slices are retained.",
+    "unchanged_code_areas": {
+      "scripture_recognizer_and_dictionary_data": true,
+      "dependencies_and_lockfiles": true,
+      "migrations_and_workflows": true
+    }
+  },
+  "owner_acceptance": {
+    "supplied_handbook": "Owner reports fixed.",
+    "scope": "Reported handbook correction only; not blanket acceptance of other PDFs, this later follow-up or Scripture recognition."
+  },
+  "windows_delivery": {
+    "existing_installer_source": "bcf4858591f6d306838773ebc884550ca27d19b6",
+    "existing_run": 44621293307,
+    "contains_this_followup": false,
+    "additional_build_started": false,
+    "merge_release_or_updater_publication": false
+  },
+  "recognition_coordination": "Claude continues the independent recognition track; no frozen recognizer changes or Set H work performed by this follow-up."
+}

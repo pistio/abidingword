@@ -4,7 +4,7 @@
 
 This handover reconciles the surviving implementation records, current source, open issues and later owner decisions. It replaces neither the original concept nor historical evidence. It prevents an older handover, an unclosed issue or an outdated milestone table from restarting completed work or losing future obligations.
 
-**Current position:** the application foundation and most core study/teaching workflows exist. The active delivery is the global Source PDF/navigation and whole-source coverage candidate in draft PR #54. The single already-approved Windows installer build has succeeded on attempt 1, and its downloaded package has passed static source/payload verification. Actual Windows acceptance of this candidate, remaining A.4 functional acceptance and the independent Scripture-recognition programme are still outstanding. The product is not declared finished or release-ready.
+**Current position:** the application foundation and most core study/teaching workflows exist. The active delivery is the global Source PDF/navigation and whole-source coverage candidate in draft PR #54. The single already-approved Windows installer build succeeded on attempt 1, and its downloaded package passed static source/payload verification. The owner now reports that the supplied handbook correction works. A later follow-up adds explicit Settings source editing and multilingual book-name hierarchy support; it is additional application code and is not in that existing ZIP. The remaining native/A.4 acceptance and the independent Scripture-recognition programme are still outstanding. The product is not declared finished or release-ready.
 
 ## 1. Ultimate objective
 
@@ -30,11 +30,12 @@ Authoritative references: [concept](../concept.md), [architecture](../architectu
 | Item | Snapshot |
 |---|---|
 | Application review | [Draft PR #54](https://github.com/pistio/abidingword/pull/54), stacked on the reviewed Windows lineage |
-| Exact application source | `bcf4858591f6d306838773ebc884550ca27d19b6` |
-| Exact application tree | `f2a06a00276d4913d909dc859dadc429044ab402` |
-| Global Source work | General PDF extraction/navigation fixes and whole-source coverage implemented; see the three current Source records below |
-| Complete native suite | 1,137 passed; zero failures; nine ignored |
-| Complete frontend suite | 1,362 / 1,364 passed. One known presenter failure and one newly observed Teaching failure; both passed focused checks. **The full run is not entirely green.** |
+| Latest application follow-up | `288076c3a8117bca429d2e62d8e0b2185525e731`; tree `7b939be156fb836e7e13f328dfcbaa1363d940f9`; Settings editing and multilingual hierarchy, not yet in the Windows ZIP |
+| Delivered Windows application source | `bcf4858591f6d306838773ebc884550ca27d19b6` |
+| Delivered Windows application tree | `f2a06a00276d4913d909dc859dadc429044ab402` |
+| Global Source work | General PDF extraction/navigation fixes and whole-source coverage implemented; later Settings/menu and multilingual-hierarchy follow-up described in section 2.3 |
+| Delivered candidate's complete native suite | 1,137 passed; zero failures; nine ignored; follow-up evidence is separate |
+| Delivered candidate's complete frontend suite | Historical run: 1,362 / 1,364 passed, with Presenter and Teaching failures. The later follow-up passes all 1,364; no timing-cause repair is claimed. |
 | Windows build | [Run 44621293307](https://github.com/pistio/abidingword/actions/runs/44621293307), started `2026-11-19T21:41:26Z` |
 | Isolated build commit | `ca169b377233ca678421699c4aa36d906c090617` |
 | Build outcome | **Success on attempt 1**, completed `2026-11-19T21:57:32Z`; one application compilation and one NSIS package. Downloaded installer and bundled payload verified. Native desktop acceptance remains pending. |
@@ -46,6 +47,7 @@ Current Source records:
 - [Global PDF extraction and generality](pdf-extraction-generality-20261119.md).
 - [Whole-source Scripture coverage](source-coverage-20261119.md).
 - [Source navigation verification](source-navigation-20261119-verification.json) and [whole-source verification](source-coverage-20261119-verification.json).
+- [Settings editing and multilingual hierarchy](source-settings-aliases-20261119.md) and its [separate verification](source-settings-aliases-20261119-verification.json).
 
 The owner supplied the original reference PDF; earlier statements that it was unavailable are superseded. Rust import and rebuild checks on Linux reproduced and corrected its extraction/navigation failure. This is evidence about the supplied file and tested classes of documents, not a guarantee for every possible PDF. Original source files, extracted copyrighted text, private databases and owner screenshots are not publication artifacts.
 
@@ -74,7 +76,7 @@ Five separate invented generality regressions cover Roman/restarted decimal labe
 
 The older Issue #49 bottom-border symptom was accepted by the owner on 19 November and is closed. Preserve the accepted containment correction. That observation does not establish every document format, scaling setting, toolbar path or later Source change. See [owner acceptance](issue-49-original/owner-acceptance-20261119.md).
 
-### 2.2 Completed Windows delivery and the next owner check
+### 2.2 Completed Windows delivery and owner acceptance
 
 [Download the normal Windows installer ZIP](https://github.com/pistio/abidingword/actions/runs/44621293307/artifacts/14577518643) · [Successful build](https://github.com/pistio/abidingword/actions/runs/44621293307) · [Complete static verification record](source-coverage-windows-build-20261119-verification.json)
 
@@ -92,6 +94,8 @@ The older Issue #49 bottom-border symptom was accepted by the owner on 19 Novemb
 
 The ZIP contains one normal unsigned setup executable, named `Abiding-Word-Sources-Follow-up-schema27-bcf4858591f6d306838773ebc884550ca27d19b6-x64-setup.exe`. The GitHub artifact is retained until **3 December 2026**. The separate diagnostic archive is evidence, not a portable application. Static NSIS extraction reported the same `BadCmd=13` subtype metadata as the earlier verified installer; extraction succeeded and complete application/resource comparisons passed. This does not claim that the NSIS installation script was executed or that Windows trust checks passed.
 
+**Later owner report:** the supplied handbook correction is fixed. Retain that acceptance; do not ask the next agent to rediscover the same failure. It does not establish success for every other source or close the remaining native/Teaching/provider checks. The later Settings/menu and alias changes below are not in this installer.
+
 Compact normal-application acceptance:
 
 1. Close Abiding Word, extract the ZIP and run its setup executable. This is the new Sources candidate, not the earlier Original-view installer.
@@ -100,6 +104,18 @@ Compact normal-application acceptance:
 4. Check Reading/Original, Back/Forward and source-detail editing preserve the intended place, identity and view.
 5. On a source actually devoted to a passage, inspect or set its coverage in **Edit details → More details**. Confirm a whole-work result such as **Covers Romans 8** appears for Romans 8:28 without inventing a page, while real mentions remain explicit alternatives. Test **No specific passage** if correcting an erroneous automatic scope.
 6. Keep the remaining A.4 checks in section 5 open until separately observed; this short Source acceptance does not certify every Teaching, provider, Office or high-DPI path.
+
+### 2.3 Later Settings and multilingual-hierarchy follow-up
+
+The owner requested an explicit edit action in Settings and broader language/name variants in the book → chapter → verse hierarchy. These are implemented in [the follow-up](source-settings-aliases-20261119.md):
+
+- **Settings → Sources → ⋯ → Edit details** opens the existing shared editor for active/archived sources, focuses Title, preserves source identity/text and refreshes language filters after saving.
+- Source headings use all 101 installed language dictionaries, including German **Sprüche/Sprichwörter/Sprueche/Sprichwoerter**, **Prediger/Kohelet**, **1. Mose/Genesis**, formal Mose forms and same-book parenthetical synonyms. Ambiguities and meaningful accent distinctions remain protected.
+- Source index version 6 refreshes structural links from versions 4/5 without replacing literal/manual links. Existing supplied EPUB Contents refreshes on opening after file/text identity checks.
+- PDF analysis version 5 recommends an explicit **Rebuild structure** where older extraction may have omitted destinations whose printed Contents and body headings use different name variants. Stored JSON version 1 and schema 27 remain unchanged.
+- The complete frontend run is now 1,364/1,364; the complete locked Rust suite passes 1,146 tests with zero failures and nine ignored. All 34 focused source/PDF tests and the required static/build checks pass. Exact identity and verification are in the companion record; preserve the earlier installer's separate evidence rather than rewriting it.
+
+This follow-up requires a subsequent Windows build and native acceptance. The earlier single-build permission has already been used; no additional paid Actions, merge, tag, release or updater publication are part of this follow-up.
 
 ## 3. Implemented foundation — preserve rather than rebuild
 
@@ -148,7 +164,7 @@ The read-only GitHub check found **15 open issues**. An open issue can contain a
 |---|---|
 | [#19](https://github.com/pistio/abidingword/issues/19) DeepSeek/Korean | Field-target root cause fixed in A.4 and mocked regressions exist. Actual owner-configured DeepSeek correction on Windows remains to check, including preview, explicit apply, stale targets and unchanged original writing. |
 | [#21](https://github.com/pistio/abidingword/issues/21) Study home | Implemented and owner-accepted in principle, recorded by #28. Preserve the file/folder home and legacy compatibility; reconcile stale issue status rather than rebuilding it. |
-| [#22](https://github.com/pistio/abidingword/issues/22) PDF hierarchy | Implemented hierarchy/corrections plus today's actual-file/global fixes. New Windows candidate must demonstrate reliable Source navigation, generated Contents, precise/broad labels and preserved provenance. |
+| [#22](https://github.com/pistio/abidingword/issues/22) PDF hierarchy | Implemented hierarchy/corrections plus today's actual-file/global fixes. Owner reports the supplied handbook is fixed; other formats/sources and the later multilingual follow-up still need their native acceptance. |
 | [#25](https://github.com/pistio/abidingword/issues/25) Writing first | Both editors implemented and subsequently corrected. Complete owner acceptance across empty/populated methods, menus, autosave, focus, saved drafts, privacy and scaling remains. |
 | [#26](https://github.com/pistio/abidingword/issues/26) Compact toolbar | Shared toolbar and duplicate-PDF-row correction exist. Confirm one visible row, useful overflow, pins, page controls and accessibility at actual native widths/scales. #49 closure is not blanket #26 acceptance. |
 | [#27](https://github.com/pistio/abidingword/issues/27) Q&A/exports/transfer | Implemented; genuine atomic transfer correction also exists. Owner acceptance of question-only/answer/full outputs, visibility and editable provenance-bearing snapshots remains. Respect pause on further new integration. |
@@ -157,7 +173,7 @@ The read-only GitHub check found **15 open issues**. An open issue can contain a
 | [#31](https://github.com/pistio/abidingword/issues/31) Transfer atomicity | Implemented in `35526df…` / PR #32 and preserved in later lineage. Keep transactional failure regressions; feature acceptance remains under #27. |
 | [#33](https://github.com/pistio/abidingword/issues/33) Methods/controls | Canonical seven parts, repair/Undo, duplicate preservation, resizing, simple additions and modal deletion implemented. Owner confirmed correct structure/resizing, then requested shorter hints, now implemented. Compact guidance/Kern/source fidelity still needs final owner review. Ten-Step already accepted. |
 | [#34](https://github.com/pistio/abidingword/issues/34) Consolidated corrections | Partly superseded by #49 acceptance and PR #54. Keep actual Greek NT-as-Source, remaining high-DPI/toolbar and simpler Teaching acceptance explicit. |
-| [#35](https://github.com/pistio/abidingword/issues/35) Real Source processing | Original file now available and native correction measured. Current Windows rebuild, persisted analysis and actual reading/navigation are still pending. Earlier null-query diagnostics are historical. |
+| [#35](https://github.com/pistio/abidingword/issues/35) Real Source processing | Original file available and correction measured; owner now reports the supplied handbook works. Preserve that accepted subset while keeping other sources and remaining detailed native checks open. Earlier null-query diagnostics are historical. |
 | [#36](https://github.com/pistio/abidingword/issues/36) Recognition architecture | Claude-owned structural-first research, exact evidence spans and independent acceptance. Coordinate interfaces; do not merge its code into the Source fix casually. |
 | [#38](https://github.com/pistio/abidingword/issues/38) NSIS packaging | Verified preflight correction exists and later installer delivery overcame the earlier acquisition failure. Use the pinned current build path, not the obsolete failed run/source. |
 | [#42](https://github.com/pistio/abidingword/issues/42) Languages | Complete individual AI editorial pass exists. Remaining owner/native/Office/accessibility checks and four explicitly recorded questions are below. |
@@ -167,6 +183,8 @@ Supporting implementation records: [A.4 handover](milestone-a4-handover.md), [A.
 ## 6. Scripture recognition — separate coordination lane
 
 The latest pushed research line verified during this takeover is **A1.5 / draft PR #53**, not the old October v0.24.3 state. GitHub establishes the last committed results; it does not establish whether a separate Claude process is currently executing. The user's report of active Claude work remains a coordination constraint. This takeover did not run, stop, restart or alter that process.
+
+The owner repeated that Claude is working while requesting the Settings/name follow-up. The freeze snapshot below is the last reviewed evidence, not a claim that no later work exists. Review Claude's next report before marking its outstanding corrections or gates complete.
 
 | Reference | Verified value |
 |---|---|
@@ -208,6 +226,19 @@ The committed freeze reports 1,101 Rust tests and 26 corpus-tool tests passing, 
 5. **Numbering/canon safety.** Preserve printed numbers and use validated agreement/mappings before cross-edition alignment. `withinReference` is not proof of English-numbering agreement. Never join traditions merely by identical `(book, chapter, verse)` values or misfile additional books.
 6. **Unresolved extraction limits.** Scanned PDFs require future OCR; Hebrew RTL layouts and Hebrew-letter numerals remain limited/refused. Hidden/off-page PDF text and CSS-hidden EPUB content may still be read. Missing source text, unsupported language families and unfamiliar publishers/layouts remain limitations. Keep refusals honest rather than inventing text.
 7. **Integration and Windows acceptance.** Review an exact combined candidate with these guarantees and real Windows evidence. Passing disclosed corpus scores does not authorise a wholesale research-branch merge, signing, release or automatic update.
+
+### Follow-up from the pre-Set-H review
+
+The bounded follow-up supplied for Claude concerns evaluation tooling and its disclosed rehearsals while preserving the frozen recognizer. Its next evidence package should resolve the following review findings:
+
+- Distinguish matched-reference scoring, no-Scripture controls, exploratory documents and mixed-content challenges. A missing reference is not automatically a no-Scripture control; mixed documents need an explicit allowed-content policy.
+- Record a separate execution verdict and an overall gate. A nonzero exit, timeout or resource failure cannot become a successful document merely because partial/complete result JSON exists.
+- Anchor the sealed manifest, runner and frozen binary checksums, the one-run record and true edition independence. Renamed files/edition keys and changing an output directory must not substitute for those guarantees.
+- Require a meaningful minimum of authentic, scored Scripture evidence; an independent set cannot pass on controls and exploratory files alone.
+
+A separate application-integration concern remains for Codex: saved/corrected staged imports can re-enter recognition. The eventual integration must reapply the structural verification, provenance and refusal rules after every such path, without making unverified candidate text available as Scripture. This is not a reason to modify the frozen research candidate inside the Source-navigation branch.
+
+No completion of these follow-ups, independent-set approval or Set H execution is inferred from the owner's report that Claude is working.
 
 ### 6.3 PDFium is a separate experiment
 
