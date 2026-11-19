@@ -1,0 +1,18 @@
+started 2026-11-19T23:12:58Z
+seal_commit ae3770967288ff107e6ea65cac64d7dae1848780
+manifest 68cc97366d4b3d48b66d7b0a9a89f854e5ae21042788ca10eb0e07865819f26b
+checksums 316a55fa9479af9481637bb91271ffb62a288d5b7e65eb62464911b8aa63a2c2
+binary 920f7e28e6c03f0c2fd7832bb78ce7c2077d6767541f0b86bb02f2fec1ed3a8e
+runner d1b6a36ce3f4548ee74e3b6fbbad35a1a1467288f0c352b38d4c77a5cf817a51
+check_set 66923a8972bb26cac54ef90101c19259f49e0901ae27c50bfd753ff2c968fcf6
+inventory 811ffdb9d37348d2176d39c9fe6be142dda6190e58f6a65e1f341259c60ac3dc
+limits timeout_seconds 1800 memory_kb 4194304
+host Linux 6.18.44-fc-v653 x86_64
+R1 exit 0 seconds 5
+R2 exit 0 seconds 3
+R3 exit 0 seconds 13
+R4 exit 0 seconds 1
+R5 exit 0 seconds 0
+R6 exit 0 seconds 0
+R7 exit 0 seconds 7
+ended 2026-11-19T23:13:27Z

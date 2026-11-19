@@ -1,0 +1,38 @@
+{
+ "seal_folder": "/root/wt-a15/docs/audit/candidate-a1.5/rehearsal/limits/seal",
+ "documents_folder": "/root/a15/rehearsal/docs-limits",
+ "seal_commit": "7d1bfa230677153c5aa5c1715d8c84f365085fff",
+ "manifest_sha256": "904a428f52506220af5e79c20dfc461580b48f11b73cfe4a140c9f6fb7bcfc79",
+ "checksums_sha256": "60522ba37f7e89b12983f996c7a99a77527526e5749b3a8cbd5372fdb46467a9",
+ "classes": {
+  "control": 0,
+  "exploratory": 0,
+  "mixed": 0,
+  "scored": 3
+ },
+ "inventory_sha256": "811ffdb9d37348d2176d39c9fe6be142dda6190e58f6a65e1f341259c60ac3dc",
+ "authentic_scored_evidence": {
+  "documents": 2,
+  "reference_verses": 62115,
+  "formats": [
+   "epub",
+   "pdf"
+  ],
+  "languages": [
+   "eng",
+   "por"
+  ],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}

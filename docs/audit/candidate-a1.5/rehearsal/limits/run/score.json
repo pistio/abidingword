@@ -1,0 +1,204 @@
+{
+ "run": {
+  "started": "2026-11-19T23:13:35Z",
+  "seal_commit": "7d1bfa230677153c5aa5c1715d8c84f365085fff",
+  "manifest": "904a428f52506220af5e79c20dfc461580b48f11b73cfe4a140c9f6fb7bcfc79",
+  "checksums": "60522ba37f7e89b12983f996c7a99a77527526e5749b3a8cbd5372fdb46467a9",
+  "binary": "920f7e28e6c03f0c2fd7832bb78ce7c2077d6767541f0b86bb02f2fec1ed3a8e",
+  "runner": "d1b6a36ce3f4548ee74e3b6fbbad35a1a1467288f0c352b38d4c77a5cf817a51",
+  "check_set": "66923a8972bb26cac54ef90101c19259f49e0901ae27c50bfd753ff2c968fcf6",
+  "inventory": "811ffdb9d37348d2176d39c9fe6be142dda6190e58f6a65e1f341259c60ac3dc",
+  "limits": {
+   "timeout_seconds": 10,
+   "memory_kb": 524288
+  },
+  "host": "Linux 6.18.44-fc-v653 x86_64",
+  "ended": "2026-11-19T23:13:58Z"
+ },
+ "assessment": {
+  "verdict": "not a protocol run",
+  "run_validity": {
+   "outputs_intact": true,
+   "run_complete": true,
+   "every_document_has_a_record": true,
+   "seal_matches": true,
+   "frozen_binary": true,
+   "protocol_limits": false,
+   "canonical_inventory": false
+  },
+  "criteria": {
+   "1_no_wrong_verified_text": true,
+   "2_no_verified_reference_outside_the_edition": true,
+   "3_no_verified_reference_in_controls_or_outside_allowed": true,
+   "4_every_document_completed_or_refused_cleanly": false
+  },
+  "accuracy_claim": "0 verified verses with wrong text and 0 verified references outside the edition, among 5889 verified verses of 1 completed scored documents (0 authentic). Exploratory documents are not part of this figure.",
+  "authentic_evidence": {
+   "documents": 0,
+   "printed_verses": 0,
+   "verified_correct": 0,
+   "formats": [],
+   "languages": [],
+   "minimum": {
+    "documents": 8,
+    "reference_verses": 20000,
+    "formats": 2,
+    "languages": 4
+   },
+   "meets_minimum": false
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "execution": {
+   "failure": 2,
+   "completed": 1
+  },
+  "failure_causes": {
+   "timeout": 2
+  },
+  "scored": {
+   "documents": 1,
+   "printed": 8550,
+   "verified": 5889,
+   "verified_correct": 5889,
+   "verified_wrong": 0,
+   "verified_typography": 0,
+   "verified_absent": 0,
+   "refused_correct": 200,
+   "caught": 0,
+   "refused_chapters": 150
+  },
+  "control": {
+   "documents": 0,
+   "completed": 0,
+   "verified": 0
+  },
+  "mixed": {
+   "documents": 0,
+   "completed": 0,
+   "verified_allowed": 0,
+   "verified_outside_allowed": 0
+  },
+  "exploratory": {
+   "documents": 0,
+   "completed": 0,
+   "note": "raw observations only; no matching reference, so nothing is judged"
+  }
+ },
+ "groups": {
+  "format": {
+   "epub": {
+    "documents": 1,
+    "printed": 8550,
+    "verified": 5889,
+    "verified_correct": 5889,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 200,
+    "caught": 0,
+    "refused_chapters": 150
+   }
+  },
+  "language": {
+   "eng": {
+    "documents": 1,
+    "printed": 8550,
+    "verified": 5889,
+    "verified_correct": 5889,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 200,
+    "caught": 0,
+    "refused_chapters": 150
+   }
+  },
+  "script": {
+   "Latin": {
+    "documents": 1,
+    "printed": 8550,
+    "verified": 5889,
+    "verified_correct": 5889,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 200,
+    "caught": 0,
+    "refused_chapters": 150
+   }
+  },
+  "kind": {
+   "generated": {
+    "documents": 1,
+    "printed": 8550,
+    "verified": 5889,
+    "verified_correct": 5889,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 200,
+    "caught": 0,
+    "refused_chapters": 150
+   }
+  }
+ },
+ "documents": [
+  {
+   "key": "L1",
+   "files": "G01_pt_pg62383_biblia_sagrada.epub",
+   "reference": "G01_pt_pg62383_biblia_sagrada.usfm.zip",
+   "language": "por",
+   "script": "Latin",
+   "format": "epub",
+   "kind": "authentic",
+   "class": "scored",
+   "exit": 124,
+   "wall_seconds": 10,
+   "execution": "failure",
+   "cause": "timeout"
+  },
+  {
+   "key": "L2",
+   "files": "G03_en_bibletex_kjv.pdf",
+   "reference": "G03_en_bibletex_kjv.usfm.zip",
+   "language": "eng",
+   "script": "Latin",
+   "format": "pdf",
+   "kind": "authentic",
+   "class": "scored",
+   "exit": 124,
+   "wall_seconds": 10,
+   "execution": "failure",
+   "cause": "timeout"
+  },
+  {
+   "key": "L3",
+   "files": "G12_en_noyes_poetry_gospels.epub",
+   "reference": "G12_en_noyes_poetry_gospels.usfm.zip",
+   "language": "eng",
+   "script": "Latin",
+   "format": "epub",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 3,
+   "execution": "completed",
+   "observed": {
+    "printed": 8550,
+    "verified": 5889,
+    "verified_wrong": 0,
+    "verified_wrong_references": [],
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_correct": 5889,
+    "refused_correct": 200,
+    "caught": 0,
+    "refused_chapters": 150,
+    "books_not_found": 0,
+    "peak_memory_mb": 40.56640625,
+    "seconds": 2.382578082
+   }
+  }
+ ]
+}
