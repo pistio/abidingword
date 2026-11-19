@@ -391,7 +391,7 @@ fn index_observed(
         .collect();
     let eligible: Vec<_> = headings
         .iter()
-        .filter(|h| h.canonical.is_some())
+        .filter(|h| h.canonical.is_some() || !h.additional_canonicals.is_empty())
         .filter(|h| {
             h.heading.basis == "user"
                 || !blocks.get(&h.heading.segment_position).is_some_and(|b| {
@@ -404,11 +404,13 @@ fn index_observed(
                     matches!(role, "note" | "header" | "footer" | "artifact")
                 })
         })
-        .map(|h| {
-            Ok((
-                h,
-                ScriptureRef::from_canonical(h.canonical.as_ref().unwrap())?,
-            ))
+        .flat_map(|h| {
+            h.canonical
+                .iter()
+                .chain(h.additional_canonicals.iter())
+                .map(move |canonical| {
+                    ScriptureRef::from_canonical(canonical).map(|reference| (h, reference))
+                })
         })
         .collect::<AppResult<_>>()?;
     let listing_pages: HashSet<u32> = headings
@@ -483,7 +485,18 @@ fn index_observed(
                 "note" | "header" | "footer" | "artifact" | "uncertain"
             )
         {
-            active.last().copied().into_iter().collect()
+            // Several books explicitly sharing one real opening retain that
+            // same nearest anchor; do not arbitrarily inherit only the last
+            // book in the combined title.
+            active.last().map_or_else(Vec::new, |last| {
+                let nearest = &eligible[*last].0.heading.id;
+                active
+                    .iter()
+                    .rev()
+                    .take_while(|i| &eligible[**i].0.heading.id == nearest)
+                    .copied()
+                    .collect()
+            })
         } else {
             Vec::new()
         };
@@ -541,33 +554,103 @@ pub fn contents(conn: &Connection, id: &str) -> AppResult<Vec<ContentsItem>> {
         return Ok(Vec::new());
     };
     let headings = record.headings.clone();
-    fn tree(
-        headings: &[ResolvedHeading],
-        at: &mut usize,
+    struct Navigation {
+        page: u32,
+        order: (i64, u32),
+        position: i64,
+        end_position: i64,
         level: u8,
-        end: i64,
-    ) -> Vec<ContentsItem> {
-        let mut out = Vec::new();
-        while *at < headings.len()
-            && headings[*at].heading.level >= level
-            && headings[*at].heading.segment_position < end
-        {
-            let h = &headings[*at];
-            let this = h.heading.level;
-            *at += 1;
-            let children = if *at < headings.len() && headings[*at].heading.level > this {
-                tree(headings, at, headings[*at].heading.level, h.end_position)
-            } else {
-                Vec::new()
-            };
-            out.push(ContentsItem {
+        item: ContentsItem,
+    }
+    let mut navigation: Vec<_> = headings
+        .iter()
+        .map(|h| Navigation {
+            page: h.heading.anchor.page,
+            order: (h.heading.segment_position, h.heading.start),
+            position: h.heading.segment_position,
+            end_position: h.end_position,
+            level: h.heading.level,
+            item: ContentsItem {
                 id: h.heading.id.clone(),
                 title: h.heading.title.clone(),
                 target: Some(ContentsTarget::Segment {
                     position: h.heading.segment_position,
                 }),
-                children,
-            });
+                children: Vec::new(),
+            },
+        })
+        .collect();
+    for (i, destination) in record
+        .document
+        .printed_contents
+        .iter()
+        .take(pdf_structure::MAX_HEADINGS)
+        .enumerate()
+    {
+        if destination.page == 0
+            || destination.page > record.document.page_count
+            || !(1..=12).contains(&destination.level)
+            || destination.anchor_id.as_ref().is_some_and(|id| {
+                headings.iter().any(|h| &h.heading.id == id)
+                    || record.overrides.iter().any(|c| &c.id == id && c.disabled)
+            })
+        {
+            continue;
+        }
+        navigation.push(Navigation {
+            page: destination.page,
+            order: (i64::MIN, i as u32),
+            position: record
+                .document
+                .blocks
+                .iter()
+                .filter(|b| b.page >= destination.page)
+                .map(|b| b.position)
+                .min()
+                .unwrap_or_else(|| {
+                    record
+                        .document
+                        .blocks
+                        .iter()
+                        .map(|b| b.position)
+                        .max()
+                        .unwrap_or(0)
+                        .saturating_add(1)
+                }),
+            end_position: i64::MAX,
+            level: destination.level,
+            item: ContentsItem {
+                id: destination.id.clone(),
+                title: destination.title.clone(),
+                target: Some(ContentsTarget::Page {
+                    page: i64::from(destination.page),
+                }),
+                children: Vec::new(),
+            },
+        });
+    }
+    navigation.sort_by_key(|n| (n.page, n.order));
+    navigation.truncate(crate::library::contents::MAX_ITEMS);
+    fn tree(navigation: &[Navigation], at: &mut usize, level: u8, end: i64) -> Vec<ContentsItem> {
+        let mut out = Vec::new();
+        while *at < navigation.len()
+            && navigation[*at].level >= level
+            && navigation[*at].position < end
+        {
+            let n = &navigation[*at];
+            let this = n.level;
+            *at += 1;
+            let children = if *at < navigation.len()
+                && navigation[*at].level > this
+                && navigation[*at].position < n.end_position
+            {
+                tree(navigation, at, navigation[*at].level, n.end_position)
+            } else {
+                Vec::new()
+            };
+            let mut item = n.item.clone();
+            item.children = children;
+            out.push(item);
         }
         out
     }
@@ -619,11 +702,11 @@ pub fn contents(conn: &Connection, id: &str) -> AppResult<Vec<ContentsItem>> {
         }
         out
     }
-    Ok(if headings.is_empty() {
+    Ok(if navigation.is_empty() {
         Vec::new()
     } else {
         groups(
-            tree(&headings, &mut 0, 1, i64::MAX),
+            tree(&navigation, &mut 0, 1, i64::MAX),
             &headings,
             &record.document,
         )

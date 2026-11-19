@@ -95,7 +95,10 @@
     "kind": "종류",
     "sharing": "공유",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "“{{fileName}}”에서 가져옴"
+    "fromFile": "“{{fileName}}”에서 가져옴",
+    "edit": "정보 수정",
+    "editNamed": "{{title}} 정보 수정",
+    "editTitle": "자료 정보 수정"
   },
   "about": {
     "summary": "이 자료에 대하여",
@@ -397,7 +400,8 @@
       "licenceStatus": "공유",
       "licence": "라이선스(명시된 대로)",
       "collections": "모음",
-      "tags": "태그"
+      "tags": "태그",
+      "notes": "메모"
     },
     "file": {
       "name": "파일",
@@ -647,7 +651,8 @@
       "zoomIn": "확대",
       "zoomOut": "축소",
       "fitWidth": "너비에 맞춤",
-      "fitPage": "쪽에 맞춤"
+      "fitPage": "쪽에 맞춤",
+      "edit": "정보 수정"
     }
   },
   "fileDialog": {
@@ -658,5 +663,16 @@
     "bible": "추가할 성경 선택",
     "bibleTypes": "성경 파일 (USFM, .zip, PDF, EPUB, Word, Markdown, 텍스트)",
     "allFiles": "모든 파일"
+  },
+  "sync": {
+    "go": "현재 성경 본문으로 이동",
+    "scripture": "성경 본문: {{passage}}",
+    "help": "성경 본문을 바꾸어도 이 자료에서 읽던 위치는 유지됩니다.",
+    "noPassage": "먼저 성경 본문을 선택하세요.",
+    "loading": "이 자료에서 해당 본문의 위치를 찾는 중…",
+    "noMatch": "이 자료에서 {{passage}}에 해당하는 위치를 찾지 못했습니다.",
+    "opened": "여기서 마지막으로 연 성경 본문: {{passage}}",
+    "mentionsTitle": "이 자료에서 {{passage}}을(를) 언급한 곳",
+    "mentionsHelp": "이 자료에는 해당 본문에 대응하는 항목은 없지만 본문을 언급한 곳이 있습니다. 열 위치를 선택하세요."
   }
 }

@@ -37,7 +37,7 @@ it("labels printed-index evidence in the interface language and keeps its headin
   render(<PassageSourceList groups={[group]} label="Sources" passageLabel={reference => reference.display} onOpen={onOpen} />);
 
   const result = screen.getByRole("button", { name: /^Invented handbook/ });
-  expect(result).toHaveTextContent("Book section Acts 1–28 (broader)");
+  expect(result).toHaveTextContent("Book section Acts (broader)");
   expect(result).toHaveTextContent("Printed book index");
   await user.click(result);
   expect(onOpen).toHaveBeenCalledExactlyOnceWith("invented-handbook", "acts-introduction", "acts-heading");

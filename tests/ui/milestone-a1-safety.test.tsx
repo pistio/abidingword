@@ -72,7 +72,7 @@ it("opens the exact indexed chapter section ahead of a literal mention in the sa
   await user.click(await scripture.findByRole("button", { name: /^Verse 5\. Show verse tools/ }));
   const sources = within(screen.getByRole("complementary", { name: "Sources" }));
   const results = await sources.findByRole("list", { name: "Sources for John 15:5" });
-  const work = within(results).getByRole("button", { name: /Invented chapter guide/ });
+  const work = within(results).getByRole("button", { name: /^Invented chapter guide/ });
   expect(work).toHaveTextContent("Heading names John 15");
   expect(work).not.toHaveTextContent("Mentions");
   await user.click(work);

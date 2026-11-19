@@ -99,7 +99,7 @@ function setup(fixtures: SourceFixture[] = [PDF, EPUB, LONG]) {
 
 async function openPane(api: MemoryApi, engine: FakePdfEngine, title: string, width = 1440) {
   const { user } = await renderApp(api, { pdfEngine: engine, width });
-  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(title) }));
+  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(`^${title}`) }));
   const reader = await within(sourcesPane()).findByRole("region", { name: title });
   return { user, reader };
 }
@@ -254,7 +254,7 @@ describe("PDF internal links", () => {
     await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
     await user.click(within(sourcesPane()).getByText("Other sources"));
-    await user.click(await within(sourcesPane()).findByRole("button", { name: /A Synthetic Commentary/ }));
+    await user.click(await within(sourcesPane()).findByRole("button", { name: /^A Synthetic Commentary/ }));
     const next = await within(sourcesPane()).findByRole("region", { name: "A Synthetic Commentary" });
     expect(back(next)).toBeDisabled();
     expect(forward(next)).toBeDisabled();

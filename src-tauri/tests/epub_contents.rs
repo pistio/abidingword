@@ -106,9 +106,9 @@ fn nesting_is_kept_not_flattened() {
 }
 
 #[test]
-fn a_fragment_maps_to_the_nearest_segment_and_an_unknown_one_to_the_chapter() {
+fn known_fragments_resolve_exactly_and_unknown_fragments_never_become_chapter_starts() {
     let nav = nav(
-        r#"<ol><li><a href="text/ch2.xhtml#c2">Heading</a></li><li><a href="text/ch2.xhtml#c2s">Sub heading</a></li><li><a href="text/ch2.xhtml#mid">Paragraph</a></li><li><a href="text/ch2.xhtml#nope">Unknown</a></li><li><a href="ch3.xhtml#also-nope">Unknown too</a></li></ol>"#,
+        r#"<ol><li><a href="text/ch2.xhtml#c2">Heading</a></li><li><a href="text/ch2.xhtml#c2s">Sub heading</a></li><li><a href="text/ch2.xhtml#mid">Paragraph</a></li><li><a href="text/ch2.xhtml">Chapter start</a></li><li><a href="text/ch2.xhtml#nope">Unknown</a></li><li><a href="ch3.xhtml#also-nope">Unknown too</a></li><li><a href="text/ch2.xhtml#missing-parent">Unresolved parent</a><ol><li><a href="text/ch2.xhtml#mid">Known child</a></li></ol></li></ol>"#,
     );
     // ch2 = b1(2) b2(3) b3(4) with the two headings before b1 and b2.
     let items = contents(&book(&nav, "", &[], ""));
@@ -118,10 +118,15 @@ fn a_fragment_maps_to_the_nearest_segment_and_an_unknown_one_to_the_chapter() {
             ("Heading", Some(2)),
             ("Sub heading", Some(3)),
             ("Paragraph", Some(3)),
-            ("Unknown", Some(2)),
-            ("Unknown too", Some(5)),
+            ("Chapter start", Some(2)),
+            ("Unresolved parent", None),
         ]
     );
+    // Missing leaves have no usable target and are omitted. Their existence
+    // cannot turn the chapter/front matter into a fabricated destination.
+    assert!(items[..4].iter().all(|item| item.children.is_empty()));
+    assert_eq!(titles(&items[4].children), [("Known child", Some(3))]);
+    assert!(items[4].children[0].children.is_empty());
 }
 
 #[test]

@@ -28,6 +28,48 @@ fn core_title(text: &str) -> &str {
     }
     text.trim()
 }
+
+/// These headings describe lists of references, not the source's exposition.
+/// Their entries remain visible in Contents and as literal references.
+pub(crate) fn is_reference_list(title: &str) -> bool {
+    let title = fold(title);
+    [
+        "contents",
+        "table of contents",
+        "outline",
+        "cross-references",
+        "cross references",
+        "scripture references",
+        "bible references",
+        "parallel passages",
+        "see also",
+        "inhaltsverzeichnis",
+        "inhalt",
+        "gliederung",
+        "bibelstellenregister",
+        "bibelstellenverzeichnis",
+        "stellenregister",
+        "querverweise",
+        "parallelstellen",
+        "siehe auch",
+        "table des matières",
+        "plan du livre",
+        "références croisées",
+        "referencias cruzadas",
+        "referências cruzadas",
+        "índice de referencias",
+        "목차",
+        "개요",
+        "교차 참조",
+    ]
+    .iter()
+    .any(|label| {
+        title == *label
+            || title.strip_prefix(label).is_some_and(|rest| {
+                rest.starts_with(':') || rest.starts_with(" — ") || rest.starts_with(" – ")
+            })
+    })
+}
 pub(super) fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'static Book> {
     let title = core_title(title);
     let title = title
@@ -131,11 +173,72 @@ pub(super) fn book_title(title: &str, language: ReferenceLanguage) -> Option<&'s
     }
     found
 }
-fn canonical(
+
+/// An explicitly combined book opening is one real destination for each named
+/// book. The shared title never chooses one book as implicit chapter context.
+pub(crate) fn book_references(title: &str, language: ReferenceLanguage) -> Vec<ScriptureRef> {
+    let title = core_title(title);
+    let mut books = Vec::new();
+    if let Some(book) = book_title(title, language) {
+        books.push(book);
+    } else {
+        static COMBINED: OnceLock<Regex> = OnceLock::new();
+        let combined = COMBINED.get_or_init(|| Regex::new(r"(?i)^([1-3])\.?\s*(?:\+|&|/|,|and\b|und\b|et\b|y\b|e\b)\s*([1-3])\.?\s*(\p{L}.*)$").unwrap());
+        if let Some(parts) = combined.captures(title) {
+            for number in [&parts[1], &parts[2]] {
+                let Some(book) = book_title(&format!("{number} {}", &parts[3]), language) else {
+                    return Vec::new();
+                };
+                if !books.iter().any(|b: &&Book| b.code == book.code) {
+                    books.push(book);
+                }
+            }
+        } else {
+            for separator in [" + ", " & ", " / ", " and ", " und ", " et ", " y ", " e "] {
+                let parts: Vec<_> = title.split(separator).collect();
+                if parts.len() < 2 {
+                    continue;
+                }
+                let found: Option<Vec<_>> = parts
+                    .into_iter()
+                    .map(|part| book_title(part.trim(), language))
+                    .collect();
+                if let Some(found) = found {
+                    books = found;
+                    break;
+                }
+            }
+        }
+        if books.len() < 2 {
+            return Vec::new();
+        }
+    }
+    books
+        .into_iter()
+        .filter_map(|book| {
+            ScriptureRef::new(
+                book,
+                Point {
+                    chapter: 1,
+                    verse: None,
+                },
+                Point {
+                    chapter: book.chapter_count,
+                    verse: None,
+                },
+            )
+            .ok()
+        })
+        .collect()
+}
+pub(crate) fn canonical(
     title: &str,
     language: ReferenceLanguage,
     parent: Option<(&ScriptureRef, &str)>,
 ) -> Option<(ScriptureRef, String)> {
+    if is_reference_list(title) {
+        return None;
+    }
     let title_key = key(title);
     if [
         "jud",
@@ -188,6 +291,7 @@ fn canonical(
     let (parent, scope) = parent?;
     let mut value = core_title(title).trim().to_lowercase();
     let mut explicit_chapter = false;
+    let mut explicit_verse = false;
     for prefix in [
         "chapter ",
         "kapitel ",
@@ -210,15 +314,55 @@ fn canonical(
         value = value.replace('장', ":").replace('절', "");
         value = value.trim_end_matches(':').trim().into();
     }
+    for prefix in [
+        "verses ",
+        "verse ",
+        "vers ",
+        "verse: ",
+        "verset ",
+        "versets ",
+        "versículo ",
+        "versículos ",
+        "versiculo ",
+        "versiculos ",
+    ] {
+        if let Some(rest) = value.strip_prefix(prefix) {
+            value = rest.trim().into();
+            explicit_verse = true;
+            break;
+        }
+    }
+    if value.ends_with('절') && !value.contains('장') {
+        value = value.trim_end_matches('절').trim().into();
+        explicit_verse = true;
+    }
     static NUMERIC: OnceLock<Regex> = OnceLock::new();
     let re=NUMERIC.get_or_init(||Regex::new(r"^([0-9]{1,3})(?:\s*[:,]\s*([0-9]{1,3}))?(?:\s*[-–—]\s*(?:([0-9]{1,3})\s*[:,]\s*)?([0-9]{1,3}))?$").unwrap());
     let caps = re.captures(&value)?;
     let ch = caps[1].parse().ok()?;
     let verse = caps.get(2).and_then(|v| v.as_str().parse().ok());
+    let last = caps.get(4).and_then(|v| v.as_str().parse::<u16>().ok());
+    if verse.is_none() && !explicit_chapter && (explicit_verse || scope == "chapter") {
+        if scope != "chapter" || parent.start.chapter != parent.end.chapter {
+            return None;
+        }
+        return ScriptureRef::new(
+            parent.book,
+            Point {
+                chapter: parent.start.chapter,
+                verse: Some(ch),
+            },
+            Point {
+                chapter: parent.start.chapter,
+                verse: Some(last.unwrap_or(ch)),
+            },
+        )
+        .ok()
+        .map(|reference| (reference, "passage".into()));
+    }
     if verse.is_none() && scope != "book" && !explicit_chapter {
         return None;
     }
-    let last = caps.get(4).and_then(|v| v.as_str().parse::<u16>().ok());
     let end = if verse.is_some() {
         Point {
             chapter: caps
@@ -266,15 +410,17 @@ pub fn effective(
     let first = resolve(doc, corrections, language, &HashSet::new());
     let mut books: HashMap<u32, HashSet<&str>> = HashMap::new();
     for h in first.iter().filter(|h| h.heading.basis != "user") {
-        if let Some(code) = h.canonical.as_deref().and_then(|c| c.split('.').next()) {
-            books.entry(h.heading.anchor.page).or_default().insert(code);
+        for canonical in h.canonical.iter().chain(&h.additional_canonicals) {
+            if let Some(code) = canonical.split('.').next() {
+                books.entry(h.heading.anchor.page).or_default().insert(code);
+            }
         }
     }
     let listed: HashSet<String> = first
         .iter()
         .filter(|h| {
             h.heading.basis != "user"
-                && h.canonical.is_some()
+                && (h.canonical.is_some() || !h.additional_canonicals.is_empty())
                 && books
                     .get(&h.heading.anchor.page)
                     .is_some_and(|b| b.len() >= LISTING_BOOKS)
@@ -334,7 +480,30 @@ fn resolve(
     });
     let mut out: Vec<ResolvedHeading> = Vec::new();
     let mut open: Vec<usize> = Vec::new();
+    let printed_boundary = |heading: &Heading| {
+        doc.printed_contents
+            .iter()
+            .filter(|destination| {
+                destination.page > heading.anchor.page && destination.level <= heading.level
+            })
+            .filter_map(|destination| {
+                doc.blocks
+                    .iter()
+                    .find(|block| block.page >= destination.page)
+                    .map(|block| block.position)
+            })
+            .min()
+    };
     for heading in headings.into_iter().filter(|h| !h.disabled) {
+        // An unanchored printed destination still closes the preceding book.
+        // Its later headings must not inherit a book merely because the new
+        // opening could not be aligned to a stored paragraph.
+        while open.last().is_some_and(|i| {
+            printed_boundary(&out[*i].heading).is_some_and(|end| end <= heading.segment_position)
+        }) {
+            let i = open.pop().unwrap();
+            out[i].end_position = printed_boundary(&out[i].heading).unwrap();
+        }
         while open.last().is_some_and(|i| {
             let old = &out[*i].heading;
             let original = doc
@@ -354,17 +523,34 @@ fn resolve(
         let supplied = heading
             .parents
             .iter()
-            .rev()
             .filter(|p| !suppressed.contains(p.as_str()))
-            .find_map(|p| canonical(p, language, None));
-        let inherited = open.iter().rev().find_map(|i| {
-            out[*i]
-                .canonical
-                .as_ref()
-                .and_then(|s| ScriptureRef::from_canonical(s).ok())
-                .map(|r| (r, out[*i].scope.clone()))
-        });
+            .fold(None, |parent: Option<(ScriptureRef, String)>, title| {
+                if book_references(title, language).len() > 1 {
+                    return None;
+                }
+                canonical(
+                    title,
+                    language,
+                    parent.as_ref().map(|(r, scope)| (r, scope.as_str())),
+                )
+                .or(parent)
+            });
+        let inherited = open
+            .iter()
+            .rev()
+            .find(|i| out[**i].canonical.is_some() || !out[**i].additional_canonicals.is_empty())
+            .and_then(|i| {
+                out[*i]
+                    .canonical
+                    .as_ref()
+                    .and_then(|s| ScriptureRef::from_canonical(s).ok())
+                    .map(|r| (r, out[*i].scope.clone()))
+            });
         let parent = inherited.or(supplied);
+        let reference_list = heading.parents.iter().any(|p| is_reference_list(p))
+            || open
+                .iter()
+                .any(|i| is_reference_list(&out[*i].heading.title));
         let resolved = heading
             .mapping
             .as_ref()
@@ -384,7 +570,7 @@ fn resolve(
                 (r, scope)
             })
             .or_else(|| {
-                if heading.basis == "user" {
+                if heading.basis == "user" || reference_list {
                     return None;
                 }
                 canonical(
@@ -392,11 +578,36 @@ fn resolve(
                     language,
                     parent.as_ref().map(|(r, s)| (r, s.as_str())),
                 )
+            })
+            .filter(|(reference, _)| {
+                heading.basis == "user"
+                    || parent.as_ref().is_none_or(|(parent, _)| {
+                        reference.start_key() >= parent.start_key()
+                            && reference.end_key() <= parent.end_key()
+                    })
             });
         let listing = listed.contains(&heading.id);
+        let additional_canonicals: Vec<_> =
+            if !listing && !reference_list && heading.basis != "user" && resolved.is_none() {
+                let references = book_references(&heading.title, language);
+                if references.len() > 1
+                    && parent.as_ref().is_none_or(|(parent, _)| {
+                        references.iter().all(|r| {
+                            r.start_key() >= parent.start_key() && r.end_key() <= parent.end_key()
+                        })
+                    })
+                {
+                    references.into_iter().map(|r| r.canonical()).collect()
+                } else {
+                    Vec::new()
+                }
+            } else {
+                Vec::new()
+            };
         let (reference, scope) = match resolved {
             Some(_) if listing => (None, "contents".into()),
             Some((r, s)) => (Some(r.canonical()), s),
+            None if !additional_canonicals.is_empty() => (None, "book".into()),
             None => (None, "unmapped".into()),
         };
         let mut path = if !heading.parents.is_empty() {
@@ -426,10 +637,16 @@ fn resolve(
             heading,
             path: path.join(" › "),
             canonical: reference,
+            additional_canonicals,
             scope,
             end_position: i64::MAX,
         });
         open.push(out.len() - 1);
+    }
+    for resolved in &mut out {
+        if let Some(boundary) = printed_boundary(&resolved.heading) {
+            resolved.end_position = resolved.end_position.min(boundary);
+        }
     }
     out
 }

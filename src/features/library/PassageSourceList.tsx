@@ -1,9 +1,11 @@
 import { useId, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { bookLabel } from "@/i18n/scripture";
 import type { PassageLocation, PassageSourceGroup } from "@/types/library";
 import type { ScriptureRef } from "@/types/scripture";
 import { locatorLabel, passageReason } from "./labels";
 import type { ExpansionState } from "./usePassageSourceExpansion";
+import { SourceEditButton } from "./SourceMetadataEditor";
 
 interface PassageSourceListProps {
   groups: PassageSourceGroup[];
@@ -12,6 +14,7 @@ interface PassageSourceListProps {
   /** The passage a link points at, written in the interface language. */
   passageLabel: (reference: ScriptureRef) => string;
   onOpen: (sourceId: string, segmentId: string, structureNodeId?: string) => void;
+  onEdit?: (sourceId: string) => void;
   /** Which sources show their further places. */
   expansion?: Record<string, ExpansionState>;
   onToggleMore?: (sourceId: string) => void;
@@ -27,6 +30,7 @@ export function PassageSourceList({
   label,
   passageLabel,
   onOpen,
+  onEdit,
   expansion = {},
   onToggleMore,
 }: PassageSourceListProps) {
@@ -37,7 +41,7 @@ export function PassageSourceList({
     // A.4.1: say how broad the grounded heading is (#22): a book section is
     // broader than the passage, a chapter heading names the chapter.
     const reason = place.origin === "section" && place.structureScope === "book"
-      ? t("library.passage.bookSection", { passage: passageLabel(place.reference) })
+      ? t("library.passage.bookSection", { passage: bookLabel(place.reference.book, false) })
       : place.origin === "section" && place.structureScope === "chapter"
         ? t("library.passage.chapterSection", { passage: passageLabel(place.reference) })
         : passageReason(t, place.origin, passageLabel(place.reference));
@@ -57,12 +61,13 @@ export function PassageSourceList({
         return (
           <li key={group.sourceId} className="border-b border-border-subtle pb-1">
             <div role="group" aria-labelledby={titleId}>
+              <div className="flex items-start">
               <button
                 type="button"
                 data-source-result={group.sourceId}
                 data-source-segment={best.segmentId}
                 onClick={() => onOpen(group.sourceId, best.segmentId, best.structureNodeId ?? undefined)}
-                className="flex w-full flex-col items-start gap-0.5 rounded-aw px-2 py-2 text-left hover:bg-hover"
+                className="flex min-w-0 flex-1 flex-col items-start gap-0.5 rounded-aw px-2 py-2 text-left hover:bg-hover"
               >
                 {/* A source's name is readable, not loud: many of them stand one under another. */}
                 <span id={titleId} className="font-medium text-text">
@@ -74,6 +79,8 @@ export function PassageSourceList({
                 <span className="type-meta">{reason(best)}</span>
                 {best.structureBasis && best.sectionHeading && <span className="type-meta break-words">{best.sectionHeading}</span>}
               </button>
+              {onEdit && <SourceEditButton title={group.sourceTitle} onClick={() => onEdit(group.sourceId)} />}
+              </div>
               {others.length + group.moreLocations > 0 && onToggleMore && (
                 <div
                   className="pb-2 pl-3"

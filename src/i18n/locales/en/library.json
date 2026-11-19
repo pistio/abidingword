@@ -103,7 +103,10 @@
     "kind": "Kind",
     "sharing": "Sharing",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "from “{{fileName}}”"
+    "fromFile": "from “{{fileName}}”",
+    "edit": "Edit details",
+    "editNamed": "Edit details for {{title}}",
+    "editTitle": "Edit source details"
   },
   "about": {
     "summary": "About this source",
@@ -423,7 +426,8 @@
       "licenceStatus": "Sharing",
       "licence": "Licence (as stated)",
       "collections": "Collections",
-      "tags": "Tags"
+      "tags": "Tags",
+      "notes": "Notes"
     },
     "file": {
       "name": "File",
@@ -689,7 +693,8 @@
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
       "fitWidth": "Fit width",
-      "fitPage": "Fit page"
+      "fitPage": "Fit page",
+      "edit": "Edit details"
     }
   },
   "fileDialog": {
@@ -700,5 +705,16 @@
     "bible": "Choose a Bible to add",
     "bibleTypes": "Bible files (USFM, .zip, PDF, EPUB, Word, Markdown, text)",
     "allFiles": "All files"
+  },
+  "sync": {
+    "go": "Go to current passage",
+    "scripture": "Scripture: {{passage}}",
+    "help": "Changing Scripture keeps your place in this source.",
+    "noPassage": "Choose a Scripture passage first.",
+    "loading": "Looking for a matching place in this source…",
+    "noMatch": "No matching place was found in this source for {{passage}}.",
+    "opened": "Last passage opened here: {{passage}}",
+    "mentionsTitle": "Mentions of {{passage}} in this source",
+    "mentionsHelp": "This source mentions the passage, but has no matching section. Choose a mention to open."
   }
 }

@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Bookmark, BookOpenText, FileText, Highlighter, Info, List, ListTree, Maximize2, Redo2, Search, StickyNote, Undo2, ZoomIn, ZoomOut, MoveHorizontal } from "lucide-react";
+import { ArrowLeft, Bookmark, BookOpenText, FileText, Highlighter, Info, List, ListTree, Maximize2, Pencil, Redo2, Search, StickyNote, Undo2, ZoomIn, ZoomOut, MoveHorizontal } from "lucide-react";
 import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
@@ -16,6 +16,8 @@ import { PHRASE_CLASS } from "@/lib/annotationRender";
 import type { ScriptureRef } from "@/types/scripture";
 import { citationText, formatLabel, locatorLabel, quotationWithCitation, sourceTypeLabel } from "./labels";
 import { SourceAbout } from "./SourceAbout";
+import { SourceMetadataEditor } from "./SourceMetadataEditor";
+import { SourcePassageNavigation } from "./SourcePassageNavigation";
 import { useLibraryNav, type QuotedWords } from "./LibraryNav";
 import { PassageLinkNote } from "./PassageLinkNote";
 import { ScriptureReference } from "./ScriptureReference";
@@ -126,6 +128,8 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   const [helping, setHelping] = useState<SourceSelection | null>(null);
   const [comparing, setComparing] = useState(false);
   const [window, setWindow] = useState<SegmentWindow | null>(null);
+  const currentWindow = useRef(window);
+  useLayoutEffect(() => { currentWindow.current = window; }, [window]);
   const [error, setError] = useState<string | null>(null);
   // A web link the system could not open: shown above the formatted view, which has no body to show `error` in.
   const [linkFailed, setLinkFailed] = useState(false);
@@ -172,6 +176,26 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   // With `find`, the current "Find in this source" match is shown instead, and focus stays in the find bar.
   const landingPosition = useRef<{ position: number; offset: number | null; find?: boolean; headingId?: string } | null>(null);
   const jumps = useRef(0);
+  // Every explicit navigation shares one generation, including passage lookup.
+  // A newer choice cancels pending arrivals without changing the current view or history.
+  const navigationGeneration = useRef(0);
+  const cancelNavigation = useRef<(() => void) | null>(null);
+  const beginNavigation = useCallback((onCancel?: () => void) => {
+    const previous = cancelNavigation.current;
+    const generation = ++navigationGeneration.current;
+    cancelNavigation.current = onCancel ?? null;
+    landing.current = null;
+    landingPosition.current = null;
+    previous?.();
+    return {
+      isCurrent: () => generation === navigationGeneration.current,
+      complete: () => { if (generation === navigationGeneration.current) cancelNavigation.current = null; },
+    };
+  }, []);
+  useLayoutEffect(() => () => {
+    navigationGeneration.current += 1;
+    cancelNavigation.current = null;
+  }, [sourceId]);
 
   // Back / Forward: deliberate jumps only. Kept in a ref as well as state, so a handler always sees the latest.
   const [history, setHistory] = useState<ReaderHistory>(initialPosition?.history ?? NO_HISTORY);
@@ -308,6 +332,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 
   const choose = async (next: ReaderMode) => {
     if (next === mode) return;
+    const request = beginNavigation();
     rememberMode(sourceId, next);
     // A request made in the other view, and a panel that named a place there, are finished.
     setPanel(null);
@@ -354,6 +379,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     if (at) {
       try {
         const w = await api.sourceGetSegments({sourceId,aroundPage:at.page});
+        if (!request.isCurrent()) return;
         const candidates = w.segments.filter(s=>s.pageNumber===at.page && s.presentation?.anchors.length);
         const nearest = candidates.reduce<SourceSegment | null>((best,s) => {
           const distance = (p: SourceSegment) => Math.min(...p.presentation!.anchors.map(a=>Math.abs((a.baseline-a.size)/Math.max(1,a.pageHeight)-at.fraction)));
@@ -364,7 +390,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
           focusedHeading.current=h?.id;
           landingPosition.current={position:nearest.position,offset:null,headingId:h?.id}; setWindow({...w,targetSegmentId:null}); return;
         }
-      } catch(e) {setError(toApiError(e).message); return;}
+      } catch(e) {if (request.isCurrent()) setError(toApiError(e).message); return;}
     }
     if (page === null || page === startPage) {
       // Still where it was opened: keep the window (and any marked passage).
@@ -374,10 +400,11 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     }
     try {
       const w = await api.sourceGetSegments({ sourceId, aroundPage: page });
+      if (!request.isCurrent()) return;
       landing.current = page;
       setWindow({ ...w, targetSegmentId: null });
     } catch (e) {
-      setError(toApiError(e).message);
+      if (request.isCurrent()) setError(toApiError(e).message);
     }
   };
 
@@ -482,6 +509,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 
   /** Reading, at a physical page: stay in Reading and show that page's text. */
   const goToPage = async (page: number) => {
+    const request = beginNavigation();
     setTextPage(page);
     landing.current = page;
     if (window?.segments.some((x) => x.pageNumber === page)) {
@@ -490,8 +518,10 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     }
     try {
       const w = await api.sourceGetSegments({ sourceId, aroundPage: page });
+      if (!request.isCurrent()) return;
       setWindow({ ...w, targetSegmentId: null });
     } catch (e) {
+      if (!request.isCurrent()) return;
       landing.current = null;
       setError(toApiError(e).message);
     }
@@ -499,6 +529,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 
   /** Reading, at a segment of the extracted text (EPUB). With `find`, at the current find match there. */
   const goToPosition = async (position: number, offset: number | null = null, find = false, headingId?: string) => {
+    const request = beginNavigation();
     focusedHeading.current=headingId;
     landingPosition.current = { position, offset, find, headingId };
     if (window && position >= window.offset && position < window.offset + window.segments.length) {
@@ -507,8 +538,10 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     }
     try {
       const w = await api.sourceGetSegments({ sourceId, offset: Math.max(0, position - 20), limit: 150 });
+      if (!request.isCurrent()) return;
       setWindow({ ...w, targetSegmentId: null });
     } catch (e) {
+      if (!request.isCurrent()) return;
       landingPosition.current = null;
       setError(toApiError(e).message);
     }
@@ -786,6 +819,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 
   /** Moves the view to a place, in the mode the reader is in (the mode is never changed by a jump). */
   const goTo = (place: SourceLocation) => {
+    const request = beginNavigation();
     focusedHeading.current=place.headingId;
     if (!showOriginal && isPdf && place.page !== null) setTextPage(place.page);
     if (showOriginal && isEpubView) {
@@ -799,9 +833,10 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
     } else if (showOriginal) {
       if (place.position !== null && isPdf) {
         void api.sourceGetSegments({sourceId,offset:place.position,limit:1}).then(w=>{
+          if (!request.isCurrent()) return;
           const s = w.segments[0]; const anchor=s?.presentation?.headings.find(h=>h.id===place.headingId)?.anchor ?? s?.presentation?.headings[0]?.anchor ?? s?.presentation?.anchors[0];
           if(s?.pageNumber) setJump({page:s.pageNumber,fraction:anchor ? Math.max(0,(anchor.baseline-anchor.size)/Math.max(1,anchor.pageHeight)) : 0,nonce:++jumps.current});
-        }).catch(e=>setError(toApiError(e).message));
+        }).catch(e=>{if (request.isCurrent()) setError(toApiError(e).message);});
       } else if (place.page !== null) setJump({ page: place.page, fraction: place.fraction, nonce: ++jumps.current });
     } else if (place.position !== null) {
       void goToPosition(place.position, place.offset, false, place.headingId);
@@ -814,12 +849,13 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   };
 
   /** A deliberate jump (a link, a contents entry): Back returns to where the reader was. */
-  const jumpTo = (target: { page?: number; fraction?: number; position?: number; headingId?: string; item?: string; fragment?: string | null }, from?: number | EpubPlace) => {
+  const jumpTo = (target: { page?: number; fraction?: number; position?: number; headingId?: string; item?: string; fragment?: string | null }, from?: number | EpubPlace, prepared?: SegmentWindow) => {
     // A link that leads outside the text leaves the reader where it is.
     if (target.position !== undefined && window && (target.position < 0 || target.position >= window.total)) {
       void api.logError("A link in the source could not be followed: it leads outside the text").catch(() => undefined);
       return;
     }
+    beginNavigation();
     let place: SourceLocation;
     if (isEpubView && target.item !== undefined) {
       place = epubPlace({ item: target.item, fragment: target.fragment ?? null, offset: 0 });
@@ -829,7 +865,19 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
       place = { page: target.page ?? null, fraction: target.fraction ?? 0, position: target.position ?? null, headingId:target.headingId, offset: 0, item: null, fragment: null, itemOffset: 0 };
     }
     commit(visit(historyRef.current, placeNow(from), place));
-    if (!showOriginal && place.position !== null) void goToPosition(place.position,null,false,place.headingId);
+    if (prepared && place.position !== null && !showOriginal) {
+      // The explicit passage request has already loaded and validated this window.
+      // Apply it together with the landing, without a second asynchronous navigation.
+      focusedHeading.current = place.headingId;
+      landingPosition.current = { position: place.position, offset: null, headingId: place.headingId };
+      if (isPdf) setTextPage(place.page);
+      setWindow({ ...prepared, targetSegmentId: null });
+    } else if (prepared && showOriginal && isPdf) {
+      const segment = prepared.segments.find((segment) => segment.position === place.position);
+      const anchor = segment?.presentation?.headings.find((heading) => heading.id === place.headingId)?.anchor ?? segment?.presentation?.headings[0]?.anchor ?? segment?.presentation?.anchors[0];
+      focusedHeading.current = place.headingId;
+      if (segment?.pageNumber) setJump({ page: segment.pageNumber, fraction: anchor ? Math.max(0, (anchor.baseline - anchor.size) / Math.max(1, anchor.pageHeight)) : 0, nonce: ++jumps.current });
+    } else if (!showOriginal && place.position !== null) void goToPosition(place.position,null,false,place.headingId);
     else goTo(place);
   };
 
@@ -851,6 +899,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   const [findFocus, setFindFocus] = useState(0);
   const findOpener = useRef<HTMLButtonElement>(null);
   const showMatch = (match: SourceMatch) => {
+    beginNavigation();
     if (showOriginal && isEpubView) {
       const at = placeOfPosition(epub.items, match.position);
       if (at) setEpubJump({ ...at, nonce: ++jumps.current });
@@ -934,10 +983,12 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
 
   const more = async (direction: "earlier" | "later") => {
     if (!window) return;
+    const request = beginNavigation();
     const limit = 150;
     const offset = direction === "earlier" ? Math.max(0, window.offset - limit) : window.offset + window.segments.length;
     try {
       const next = await api.sourceGetSegments({ sourceId, offset, limit: direction === "earlier" ? window.offset - offset : limit });
+      if (!request.isCurrent()) return;
       setWindow({
         ...window,
         offset: direction === "earlier" ? next.offset : window.offset,
@@ -945,7 +996,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
         targetSegmentId: window.targetSegmentId,
       });
     } catch (e) {
-      setError(toApiError(e).message);
+      if (request.isCurrent()) setError(toApiError(e).message);
     }
   };
 
@@ -1089,6 +1140,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
             start={epubOpen ?? epubStart ?? targetPlace ?? { item: epub.items[0]!.id, fragment: null, offset: 0 }}
             jumpTo={epubJump}
             onLink={(target, from) => jumpTo({ item: target.item, fragment: target.id }, from)}
+            onNavigate={() => { beginNavigation(); }}
             onExternal={openExternal}
             locationRef={epubNow}
             onOpenInBible={(reference) => openInBible(reference, positionNow())}
@@ -1112,8 +1164,13 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
         return { mode: showOriginal ? "original" : "reading", physicalPage: page, printedPage: printed, openedSegmentId: segmentId ?? null, openedStructureNodeId: structureNodeId ?? null, focusedHeadingId: focusedHeading.current ?? null, variant };
       }}
       onChanged={async()=>{
-        const w = await api.sourceGetSegments({sourceId,offset:window?.offset ?? 0,limit:window?.segments.length ?? 150});
-        setWindow({...w,targetSegmentId:window?.targetSegmentId ?? null}); setStructureRevision(v=>v+1);
+        const generation = navigationGeneration.current;
+        // A build can finish after its dialog closes and the reader moves elsewhere.
+        // Refresh the current window, then discard it if navigation changes during this read.
+        const visible = currentWindow.current;
+        const w = await api.sourceGetSegments({sourceId,offset:visible?.offset ?? 0,limit:visible?.segments.length ?? 150});
+        if (generation === navigationGeneration.current) setWindow({...w,targetSegmentId:visible?.targetSegmentId ?? null});
+        setStructureRevision(v=>v+1);
       }}/>}</> : null;
 
   // Marking the original PDF: a selection on a page, read through the stored text placed there.
@@ -1269,6 +1326,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   // A.4.2 (#26): every reader action, once, for the shared toolbar. Visible
   // icons keep the names the separate buttons had; the rest are in "…".
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const canMarkPlace = (!showOriginal && !!window) || onPdfPage;
   const readerActions: ReaderAction[] = [
     { id: "find", key: "find", label: t("library.find.button"), icon: <Search className="size-4" aria-hidden="true" />, expanded: finding, onSelect: () => (finding ? closeFind() : openFind()) },
@@ -1289,6 +1347,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
       {id:"fitPage" as const,key:"fitPage",label:t("library.original.fitPage"),icon:<Maximize2 className="size-4"/>,disabled:!pdfControlsState?.total,group:t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)}),pressed:pdfControlsState?.fit==="fit-page",onSelect:(opener: HTMLElement | null)=>{pdfControls.current?.fitPage();opener?.focus({preventScroll:true});}},
     ] : []),
     ...(s ? [{ id: "about" as const, key: "about", label: t("library.about.summary"), icon: <Info className="size-4" aria-hidden="true" />, onSelect: () => setAboutOpen(true) }] : []),
+    ...(s ? [{ id: "edit" as const, key: "edit", label: t("library.metadata.edit"), icon: <Pencil className="size-4" aria-hidden="true" />, onSelect: () => setEditing(true) }] : []),
   ];
   const contentsProgress = isPdf && contentsGeneration ? <div role="status" className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border-subtle px-3 py-1 text-[0.875rem] text-text-muted">
     <span>{t(contentsGeneration === "running" ? "library.structure.automaticRunning" : "library.structure.automaticFailed")}</span>
@@ -1298,10 +1357,16 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   // Reading has the compact page indicator here; Original has the viewer's own (one per view, never both).
   const fixedControls = <>{modeSwitch}{pageNavigation}{onPdfPage && <span data-testid="pdf-zoom" className="sr-only">{t("library.original.zoomValue",{percent:formatNumber(pdfControlsState?.percent ?? 100)})}</span>}</>;
   const aboutDialog = aboutOpen && s ? (
-    <Dialog wide title={t("library.about.summary")} onClose={() => setAboutOpen(false)} actions={<Button onClick={() => setAboutOpen(false)}>{t("common.close")}</Button>}>
+    <Dialog wide title={t("library.about.summary")} onClose={() => setAboutOpen(false)} actions={<><Button onClick={() => { setAboutOpen(false); setEditing(true); }}>{t("library.metadata.edit")}</Button><Button onClick={() => setAboutOpen(false)}>{t("common.close")}</Button></>}>
       <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
     </Dialog>
   ) : null;
+  const metadataEditor = editing ? <SourceMetadataEditor sourceId={sourceId} onClose={() => setEditing(false)} onSaved={(saved) => { source.setData(saved); setEditing(false); }} returnFocus={() => heading.current ?? bodyRef.current} /> : null;
+  const passageNavigation = <SourcePassageNavigation sourceId={sourceId} beginNavigation={beginNavigation} prepareEpubContents={s?.format === "epub"} enabled={loaded && (!showOriginal || !isEpubView || epub.status === "ready")} onNavigate={(location, prepared) => {
+    const segment = prepared.segments.find((segment) => segment.id === location.segmentId)!;
+    if ((showOriginal && isPdf && !segment.pageNumber) || (showOriginal && isEpubView && !placeOfPosition(epub.items, segment.position))) throw new Error(t("library.reader.targetUnavailable"));
+    jumpTo({ position: segment.position, page: segment.pageNumber ?? undefined, headingId: location.structureNodeId ?? undefined }, undefined, prepared);
+  }} />;
 
   if (inPane) {
     // A column: controls that never scroll away, then Reading (which scrolls
@@ -1322,10 +1387,12 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
             refs={toolbarRefs}
           />
         </div>
+        {passageNavigation}
         {contentsProgress}
         {provenance}
         {structurePanel}
         {aboutDialog}
+        {metadataEditor}
         {findBar}
         {noticeLine}
         {tray}
@@ -1373,10 +1440,12 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
           refs={toolbarRefs}
         />
       </div>
+      {passageNavigation}
       {contentsProgress}
       {provenance}
       {structurePanel}
       {aboutDialog}
+      {metadataEditor}
       {findBar}
       {noticeLine}
         {tray}

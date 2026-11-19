@@ -521,7 +521,7 @@ fn passage_and_chapter_sections_outrank_neutral_exact_mentions() {
 }
 
 #[test]
-fn an_overlapping_range_ranks_after_a_containing_one_and_a_chapter_only_range_is_not_offered() {
+fn only_a_containing_structural_range_is_a_destination_for_the_whole_request() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let same_chapter = add(
@@ -557,17 +557,16 @@ fn an_overlapping_range_ranks_after_a_containing_one_and_a_chapter_only_range_is
             .iter()
             .map(|g| (g.source_id.clone(), g.locations[0].match_kind))
             .collect();
-        // active 15:5–12: 15:1–20 contains it; 15:8–14 overlaps it; 15:16–17 shares only the
-        // chapter, which is not enough to suggest anything; Romans is not shown either.
+        // A heading for 15:8–14 covers only part of 15:5–12. Without a broader
+        // parent or a literal mention, that source supplies no destination.
         assert!(order
             .iter()
-            .all(|(id, _)| *id != other_book && *id != same_chapter));
+            .all(|(id, _)| *id != other_book && *id != same_chapter && *id != overlap));
+        assert_eq!(order, [(contained, MatchKind::Contained)]);
         assert_eq!(
-            order,
-            [
-                (contained, MatchKind::Contained),
-                (overlap, MatchKind::Overlap)
-            ]
+            links(conn, &segment(conn, &overlap, "Friends and fruit")),
+            [("section", "JHN.15.8-JHN.15.14".into())],
+            "the partial section remains indexed for requests it actually contains"
         );
         Ok(())
     });
@@ -720,7 +719,7 @@ fn removed_sources_never_appear() {
 }
 
 #[test]
-fn a_chapter_view_lists_the_sources_that_speak_to_any_part_of_it() {
+fn a_chapter_request_does_not_treat_partial_sections_as_chapter_openings() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let id = add(
@@ -731,15 +730,19 @@ fn a_chapter_view_lists_the_sources_that_speak_to_any_part_of_it() {
             "Commentary",
         );
         let found = library::passage_sources(conn, &reference("JHN.15"))?;
-        assert_eq!(found.len(), 1);
-        // both sections of the chapter, nothing for Romans
-        let passages: Vec<_> = found[0]
-            .locations
-            .iter()
-            .map(|l| l.reference.canonical.as_str())
-            .collect();
-        assert_eq!(passages, ["JHN.15.1-JHN.15.11", "JHN.15.12-JHN.15.17"]);
-        assert_eq!(found[0].source_id, id);
+        assert!(
+            found.is_empty(),
+            "neither subsection contains the whole chapter"
+        );
+        for (query, expected) in [
+            ("JHN.15.5", "JHN.15.1-JHN.15.11"),
+            ("JHN.15.14", "JHN.15.12-JHN.15.17"),
+        ] {
+            let places = library::passage_source_locations(conn, &reference(query), &id)?;
+            assert_eq!(places.len(), 1);
+            assert_eq!(places[0].reference.canonical, expected);
+            assert_eq!(places[0].origin, LinkOrigin::Section);
+        }
         Ok(())
     });
 }
@@ -1030,7 +1033,7 @@ fn turning_pages_stays_fast_on_a_large_library() {
 }
 
 #[test]
-fn acts_six_opens_its_indexed_section_before_an_incidental_mention_in_the_same_work() {
+fn acts_six_uses_its_indexed_section_and_keeps_incidental_mentions_out_of_navigation() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let bytes = "# Überblick\n\nEin beiläufiger Verweis: Apostelgeschichte 6,3.\n\n# Apostelgeschichte 6\n\nErfundene Erläuterung zum ausgewählten Kapitel.\n\n# Apostelgeschichte 7\n\nEin anderes Kapitel.\n";
@@ -1059,14 +1062,45 @@ fn acts_six_opens_its_indexed_section_before_an_incidental_mention_in_the_same_w
             best.segment_id,
             segment(conn, &source, "Erfundene Erläuterung")
         );
-        assert!(work
-            .locations
-            .iter()
-            .any(|place| place.origin == LinkOrigin::Explicit));
+        assert_eq!(work.locations.len(), 1);
+        assert_eq!(work.more_locations, 0);
+        assert!(
+            links(conn, &segment(conn, &source, "Ein beiläufiger Verweis"))
+                .contains(&("explicit", "ACT.6.3".into())),
+            "literal evidence is preserved even though a real section is the destination"
+        );
         assert!(!work
             .locations
             .iter()
             .any(|place| place.segment_id == segment(conn, &source, "Ein anderes Kapitel")));
+        Ok(())
+    });
+}
+
+#[test]
+fn an_archived_source_can_be_navigated_explicitly_without_rejoining_the_overview() {
+    use abiding_word_lib::db::library_manage::{self, ItemState};
+    let temp = tempfile::tempdir().unwrap();
+    with_db(|conn| {
+        let id = add(
+            conn,
+            temp.path(),
+            "archived.md",
+            COMMENTARY.as_bytes(),
+            "Kept commentary",
+        );
+        let query = reference("JHN.15.5");
+        let before = library::passage_source_locations(conn, &query, &id)?;
+        assert_eq!(before.len(), 1);
+        library_manage::set_source_state(conn, std::slice::from_ref(&id), ItemState::Archived)?;
+        assert!(library::passage_sources(conn, &query)?.is_empty());
+        let archived = library::passage_source_locations(conn, &query, &id)?;
+        assert_eq!(archived.len(), 1);
+        assert_eq!(archived[0].segment_id, before[0].segment_id);
+        assert_eq!(archived[0].origin, LinkOrigin::Section);
+        library_manage::set_source_state(conn, std::slice::from_ref(&id), ItemState::Trashed)?;
+        assert!(library::passage_sources(conn, &query)?.is_empty());
+        assert!(library::passage_source_locations(conn, &query, &id)?.is_empty());
         Ok(())
     });
 }

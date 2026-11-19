@@ -593,6 +593,8 @@ export interface PdfHeading {
 }
 export interface PdfResolvedHeading extends PdfHeading {
   path: string; canonical: string | null; scope: string; endPosition: number;
+  /** A genuine combined-book heading maps each named book to the same physical anchor. */
+  additionalCanonicals?: string[];
 }
 export interface PdfPresentation {
   role: string; basis: string; uncertain: boolean; printedLabel: string | null;

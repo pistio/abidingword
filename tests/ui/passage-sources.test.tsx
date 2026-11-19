@@ -58,19 +58,20 @@ describe("Sources for the passage being read", () => {
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     const entries = within(list).getAllByRole("listitem");
     expect(entries).toHaveLength(1);
-    const open = within(list).getByRole("button", { name: /A Synthetic Commentary/ });
+    const open = within(list).getByRole("button", { name: /^A Synthetic Commentary/ });
     // Not ten near-identical cards: the section's opening place and why it fits.
     expect(open).toHaveTextContent("P. Example");
     expect(open).toHaveTextContent("Heading names John 15:1–11");
     expect(open).not.toHaveTextContent("Within section");
-    expect(within(list).getAllByRole("button")).toHaveLength(1);
+    expect(within(list).getAllByRole("button")).toHaveLength(2);
+    expect(within(list).getByRole("button", { name: "Edit details for A Synthetic Commentary" })).toBeInTheDocument();
   });
 
   it("opens the section where it begins, in the Sources pane, and says why it is linked", async () => {
     const { user } = await renderApp(withLibrary(COMMENTARY));
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
-    await user.click(within(list).getByRole("button", { name: /A Synthetic Commentary/ }));
+    await user.click(within(list).getByRole("button", { name: /^A Synthetic Commentary/ }));
     const reader = await within(sourcesPane()).findByRole("region", { name: "A Synthetic Commentary" });
     await waitFor(() => expect(reader.querySelector("[data-target]")).toHaveTextContent("Opening paragraph about the vine."));
     expect(await within(reader).findByText("Heading names John 15:1–11")).toBeInTheDocument();
@@ -103,7 +104,7 @@ describe("Sources for the passage being read", () => {
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     expect(within(list).getAllByRole("listitem").filter((li) => li.parentElement === list)).toHaveLength(1);
     // three places (the best one on the title, two beneath), not five cards
-    expect(within(list).getAllByRole("button")).toHaveLength(2);
+    expect(within(list).getAllByRole("button")).toHaveLength(3);
     expect(within(list).getByRole("button", { name: "4 more places in this source" })).toBeInTheDocument();
   });
 
@@ -163,7 +164,7 @@ describe("Sources for the passage being read", () => {
     const pane = sourcesPane();
     await act(() => setLanguage("de"));
     const list = await within(pane).findByRole("list", { name: /^Quellen zu / });
-    expect(within(list).getByRole("button", { name: /A Synthetic Commentary/ })).toHaveTextContent(/Überschrift nennt .*15/);
+    expect(within(list).getByRole("button", { name: /^A Synthetic Commentary/ })).toHaveTextContent(/Überschrift nennt .*15/);
     await act(() => setLanguage("ko"));
     expect(await within(pane).findByRole("list", { name: /관련 자료$/ })).toBeInTheDocument();
   });

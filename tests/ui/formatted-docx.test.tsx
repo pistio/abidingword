@@ -64,7 +64,7 @@ function setup(fixtures: SourceFixture[] = [FORMATTED_DOCX]) {
 
 async function openPane(api: MemoryApi, engine: ReturnType<typeof createFakePdfEngine>, title = TITLE, width = 1440) {
   const { user } = await renderApp(api, { pdfEngine: engine, width });
-  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(title) }));
+  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(`^${title}`) }));
   const reader = await within(sourcesPane()).findByRole("region", { name: title });
   return { user, reader };
 }
@@ -80,7 +80,7 @@ async function original(user: Awaited<ReturnType<typeof renderApp>>["user"], rea
   return page(reader);
 }
 
-const part = (reader: HTMLElement) => within(reader).getByRole("status").textContent;
+const part = (reader: HTMLElement) => within(within(reader).getByRole("toolbar", { name: "Original document controls" })).getByRole("status").textContent;
 const hostOf = (reader: HTMLElement) => within(reader).getByTestId("epub-page");
 
 describe("the Original view of a Word document", () => {
@@ -418,7 +418,7 @@ describe("moving between Reading and Original in a Word document", () => {
     await user.click(doc.getByText("1"));
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
     await user.click(within(sourcesPane()).getByText("Other sources"));
-    await user.click(await within(sourcesPane()).findByRole("button", { name: /Another Document/ }));
+    await user.click(await within(sourcesPane()).findByRole("button", { name: /^Another Document/ }));
     const next = await within(sourcesPane()).findByRole("region", { name: "Another Document" });
     expect(back(next)).toBeDisabled();
   });

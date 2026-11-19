@@ -32,6 +32,7 @@ export function SourceAbout({ source, citation }: { source: Source; citation: st
       <Row term={t("library.manage.field.tags")}>{source.tagNames.length > 0 ? source.tagNames.join(sep) : null}</Row>
       <Row term={t("library.manage.field.licenceStatus")}>{licenceLabel(t, source.licenceStatus)}</Row>
       <Row term={t("library.manage.field.licence")}>{source.licence}</Row>
+      <Row term={t("library.manage.field.notes")}>{source.notes}</Row>
       <Row term={t("library.manage.file.name")}>{source.originalFilename}</Row>
       <Row term={t("library.filter.archive")}>
         {source.state === "archived" ? t("common.lifecycle.state.archived") : t("library.filter.inUse")}

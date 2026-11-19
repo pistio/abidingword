@@ -111,7 +111,10 @@
     "kind": "Tipo",
     "sharing": "Uso compartido",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "de «{{fileName}}»"
+    "fromFile": "de «{{fileName}}»",
+    "edit": "Editar datos",
+    "editNamed": "Editar datos de {{title}}",
+    "editTitle": "Editar datos de la fuente"
   },
   "about": {
     "summary": "Acerca de esta fuente",
@@ -449,7 +452,8 @@
       "licenceStatus": "Compartir",
       "licence": "Licencia (tal como se indica)",
       "collections": "Colecciones",
-      "tags": "Etiquetas"
+      "tags": "Etiquetas",
+      "notes": "Notas"
     },
     "file": {
       "name": "Archivo",
@@ -731,7 +735,8 @@
       "zoomIn": "Acercar",
       "zoomOut": "Alejar",
       "fitWidth": "Ajustar al ancho",
-      "fitPage": "Ajustar a la página"
+      "fitPage": "Ajustar a la página",
+      "edit": "Editar datos"
     }
   },
   "fileDialog": {
@@ -742,5 +747,16 @@
     "bible": "Elegir una Biblia para añadir",
     "bibleTypes": "Archivos de Biblia (USFM, .zip, PDF, EPUB, Word, Markdown, texto)",
     "allFiles": "Todos los archivos"
+  },
+  "sync": {
+    "go": "Ir al pasaje actual",
+    "scripture": "Pasaje bíblico: {{passage}}",
+    "help": "Al cambiar el pasaje bíblico se conserva tu posición en esta fuente.",
+    "noPassage": "Selecciona primero un pasaje bíblico.",
+    "loading": "Buscando un lugar correspondiente en esta fuente…",
+    "noMatch": "No se encontró ningún lugar correspondiente a {{passage}} en esta fuente.",
+    "opened": "Último pasaje abierto aquí: {{passage}}",
+    "mentionsTitle": "Menciones de {{passage}} en esta fuente",
+    "mentionsHelp": "Esta fuente menciona el pasaje, pero no tiene una sección correspondiente. Elige una mención para abrirla."
   }
 }

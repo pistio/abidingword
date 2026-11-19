@@ -45,7 +45,7 @@ async function openStudy(user: User, title: string) {
 }
 
 async function openSource(user: User) {
-  await user.click(await within(sourcesPane()).findByRole("button", { name: /The True Vine/ }));
+  await user.click(await within(sourcesPane()).findByRole("button", { name: /^The True Vine/ }));
   const reader = await within(sourcesPane()).findByRole("region", { name: "The True Vine" });
   await within(reader).findByText(/Abide in me/);
   return reader;
@@ -345,7 +345,7 @@ describe("copying a quotation with its citation", () => {
     const segment = api.state.library.segments.find((x) => x.text === "Bleibt in mir.")!;
     await api.sourceAnnotationCreate({ sourceId: segment.sourceId, kind: "highlight", color: "amber", start: { segmentId: segment.id, offset: 0 }, end: { segmentId: segment.id, offset: 13 }, quote: "Bleibt in mir" });
     const { user } = await renderApp(api);
-    await user.click(await within(screen.getByRole("complementary", { name: "Quellen" })).findByRole("button", { name: /Anonyme Predigt/ }));
+    await user.click(await within(screen.getByRole("complementary", { name: "Quellen" })).findByRole("button", { name: /^Anonyme Predigt/ }));
     const reader = await within(screen.getByRole("complementary", { name: "Quellen" })).findByRole("region", { name: "Anonyme Predigt" });
     await user.click(await within(reader).findByRole("button", { name: "1 Anmerkung hier: Markierung" }));
     const marks = await within(reader).findByRole("region", { name: "Anmerkungen hier" });

@@ -110,20 +110,23 @@ fn outline_anchor(
     page: u32,
     top: Option<f64>,
     left: Option<f64>,
+    page_only: bool,
     anchors: &[Anchor],
 ) -> Option<Anchor> {
-    let compact_title = compact(title);
+    let compact_title = compact(title).to_lowercase();
     let matches: Vec<_> = anchors
         .iter()
-        .filter(|a| a.page == page && compact(&a.original_text) == compact_title)
+        .filter(|a| a.page == page && compact(&a.original_text).to_lowercase() == compact_title)
         .collect();
     if matches.len() == 1 {
         return Some(matches[0].clone());
     }
-    let top = top?;
+    let Some(top) = top else {
+        return page_only.then(|| opening_anchor(page, anchors)).flatten();
+    };
     // A precise supplied destination may have a different bookmark title.
-    // Require proximity to its baseline; an unresolvable page-only outline
-    // is still available in Original, but cannot invent a text segment target.
+    // Require proximity to its baseline. Do not replace an ambiguous precise
+    // destination with a different heading somewhere else on the page.
     let distance =
         |a: &Anchor| (a.baseline - top).abs() + left.map(|x| (a.x0 - x).abs() * 0.1).unwrap_or(0.0);
     let mut nearby: Vec<_> = anchors
@@ -135,6 +138,54 @@ fn outline_anchor(
     if nearby
         .get(1)
         .is_some_and(|next| distance(next) - distance(first) < first.size.max(1.0) * 0.3)
+    {
+        return None;
+    }
+    Some(first.clone())
+}
+
+/// A page-only bookmark already supplies the physical page. Its label may
+/// differ from the printed title ("Romans 8" / "Life in the Spirit"). Bind
+/// that label to a real, prominent opening line on that exact page, preserving
+/// its original text for segment alignment. Neither a printed page number nor
+/// a similarly named heading elsewhere is used to guess the destination.
+fn opening_anchor(page: u32, anchors: &[Anchor]) -> Option<Anchor> {
+    let mut weights: HashMap<i64, usize> = HashMap::new();
+    for a in anchors.iter().filter(|a| a.page == page) {
+        *weights.entry((a.size * 2.0).round() as i64).or_default() +=
+            a.original_text.chars().count();
+    }
+    let body = weights
+        .into_iter()
+        .max_by_key(|(size, weight)| (*weight, -*size))?
+        .0 as f64
+        / 2.0;
+    if body <= 0.0 {
+        return None;
+    }
+    let mut candidates: Vec<_> = anchors
+        .iter()
+        .filter(|a| {
+            let text = a.original_text.trim();
+            a.page == page
+                && (0.04..=0.45).contains(&a.top_fraction())
+                && a.size >= body * 1.25
+                && (2..=120).contains(&text.chars().count())
+                && text.chars().filter(|c| c.is_alphabetic()).count() >= 2
+                && text.split_whitespace().count() <= 15
+        })
+        .collect();
+    candidates.sort_by(|a, b| {
+        a.baseline
+            .total_cmp(&b.baseline)
+            .then(a.x0.total_cmp(&b.x0))
+    });
+    let first = *candidates.first()?;
+    // Two headings in parallel columns do not supply a unique opening anchor.
+    // A page-wide destination has no horizontal coordinate to disambiguate.
+    if candidates
+        .get(1)
+        .is_some_and(|next| (next.baseline - first.baseline).abs() <= first.size.max(next.size))
     {
         return None;
     }
@@ -206,6 +257,11 @@ impl OutlineWalk<'_> {
                             page,
                             y.zip(height).map(|(y, h)| h - y),
                             left,
+                            y.is_none()
+                                && matches!(
+                                    kind,
+                                    Some(b"Fit" | b"FitB" | b"FitH" | b"FitBH" | b"XYZ")
+                                ),
                             page_anchors,
                         ) {
                             self.found.push(Candidate {

@@ -154,12 +154,14 @@ describe("Suggestion quality in the Sources pane", () => {
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     expect(within(list).getAllByRole("group")).toHaveLength(1);
-    // the paragraph that cites John 15:5 twice is one place, and the section it lies in is another
-    expect(within(list).getAllByRole("button")).toHaveLength(2);
+    // The paragraph that cites John 15:5 twice is one other place. Alongside the
+    // best place and its disclosure control is the source's details action.
+    expect(within(list).getAllByRole("button")).toHaveLength(3);
+    expect(within(list).getByRole("button", { name: "Edit details for Vine Commentary" })).toBeInTheDocument();
     expect(within(list).getByRole("button", { name: "1 more place in this source" })).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("counts the places beyond the best three", async () => {
+  it("counts the other places behind the disclosure", async () => {
     const many: SourceFixture = {
       title: "A Long Sermon Series",
       format: "text",
@@ -169,8 +171,9 @@ describe("Suggestion quality in the Sources pane", () => {
     const { user } = await renderApp(withLibrary(many));
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
-    // three places, then a control (not plain text) for the rest
-    expect(within(list).getAllByRole("button")).toHaveLength(2);
+    // Best place, source details, and a control (not plain text) for the rest.
+    expect(within(list).getAllByRole("button")).toHaveLength(3);
+    expect(within(list).getByRole("button", { name: "Edit details for A Long Sermon Series" })).toBeInTheDocument();
     expect(within(list).getByRole("button", { name: "5 more places in this source" })).toHaveAttribute("aria-expanded", "false");
   });
 
@@ -178,7 +181,7 @@ describe("Suggestion quality in the Sources pane", () => {
     const { user } = await renderApp(withLibrary(SERMON));
     await readJohn15(user, 5);
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
-    await user.click(within(list).getByRole("button", { name: /Sermon Manuscript/ }));
+    await user.click(within(list).getByRole("button", { name: /^Sermon Manuscript/ }));
     const reader = await within(sourcesPane()).findByRole("region", { name: "Sermon Manuscript" });
     await waitFor(() => expect(reader.querySelector("[data-target]")).toHaveTextContent("Open with a garden story."));
   });
@@ -189,7 +192,8 @@ describe("Suggestion quality in the Sources pane", () => {
     const list = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" });
     // The additional literal mention is disclosed separately from the section heading.
     await user.click(within(list).getByRole("button", { name: "1 more place in this source" }));
-    await user.click(within(list).getAllByRole("button")[1]!);
+    const mentionLabel = "Vine Commentary › John 15:1–11 — The True Vine Mentions John 15:5";
+    await user.click(within(list).getByRole("button", { name: mentionLabel }));
     const reader = await within(sourcesPane()).findByRole("region", { name: "Vine Commentary" });
     await waitFor(() => expect(reader.querySelector("[data-target]")).toHaveTextContent("Remaining is dependence"));
     // a paragraph that cites John 15:5 twice is explained once; its section follows
@@ -199,7 +203,7 @@ describe("Suggestion quality in the Sources pane", () => {
     await user.click(within(sourcesPane()).getByRole("button", { name: "Back to Sources" }));
     expect(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" })).toBeInTheDocument();
     // opening again lands in the same place
-    await user.click(within(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" })).getAllByRole("button")[1]!);
+    await user.click(within(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:5" })).getByRole("button", { name: mentionLabel }));
     const again = await within(sourcesPane()).findByRole("region", { name: "Vine Commentary" });
     await waitFor(() => expect(again.querySelector("[data-target]")).toHaveTextContent("Remaining is dependence"));
   });

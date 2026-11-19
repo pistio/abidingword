@@ -213,13 +213,12 @@ fn the_other_queries_make_sense_too() {
                 "D Second Half of John"
             ]
         );
-        // the whole chapter: both sections inside it first, then the neutral citation
+        // The whole chapter cannot use either partial subsection as its
+        // opening. Sources with literal mentions or a containing range remain.
         let chapter = show(conn, "JHN.15");
         assert_eq!(
             titles(&chapter),
             [
-                "A Vine Study",
-                "E Love One Another",
                 "F Neutral Notes",
                 "B Matthew Cross-references",
                 "C Mark Cross-references",
@@ -289,9 +288,9 @@ fn a_demoted_citation_is_still_stored_with_its_provenance() {
 }
 
 #[test]
-fn a_citation_inside_a_section_about_the_passage_is_about_it_not_a_cross_reference() {
+fn a_citation_inside_a_relevant_section_remains_evidence_but_not_a_competing_destination() {
     with_db(|conn, dir| {
-        add(conn, dir, "g.md", "# G\n\n## John 15:1–11 — The Vine\n\nA first paragraph.\n\nVerse 5 says John 15:5 plainly.\n", "G Vine Section", "English");
+        let id = add(conn, dir, "g.md", "# G\n\n## John 15:1–11 — The Vine\n\nA first paragraph.\n\nVerse 5 says John 15:5 plainly.\n", "G Vine Section", "English");
         add(
             conn,
             dir,
@@ -301,19 +300,26 @@ fn a_citation_inside_a_section_about_the_passage_is_about_it_not_a_cross_referen
             "English",
         );
         let found = show(conn, "JHN.15.5");
-        // the section (and the citation inside it) before the cross-reference
+        // The section is the source's destination. Its literal citation is
+        // still indexed for provenance, independently of navigation filtering.
         assert_eq!(titles(&found), ["G Vine Section", "H Cross-references"]);
-        assert!(found[0]
-            .locations
-            .iter()
-            .any(|l| l.origin == LinkOrigin::Explicit && l.match_kind == MatchKind::Exact));
+        assert_eq!(found[0].locations.len(), 1);
+        assert_eq!(found[0].locations[0].origin, LinkOrigin::Section);
+        assert_eq!(
+            found[0].locations[0].reference.canonical,
+            "JHN.15.1-JHN.15.11"
+        );
+        let literal: i64 = conn.query_row(
+            "SELECT COUNT(*) FROM source_passages WHERE source_id=?1 AND origin='explicit' AND passage='JHN.15.5' AND matched_text='John 15:5'",
+            [&id], |row| row.get(0),
+        )?;
+        assert_eq!(literal, 1);
         Ok(())
     });
 }
 
 #[test]
-fn a_book_scale_heading_does_not_make_a_citation_inside_it_about_the_passage_or_a_cross_reference()
-{
+fn a_broad_structural_target_does_not_use_a_body_citation_to_raise_its_rank() {
     with_db(|conn, dir| {
         add(
             conn,
@@ -332,8 +338,17 @@ fn a_book_scale_heading_does_not_make_a_citation_inside_it_about_the_passage_or_
             "English",
         );
         let found = show(conn, "JHN.15.5");
-        // the citation inside the book-scale section is neutral: above a true cross-reference
-        assert_eq!(titles(&found), ["I Broad Section", "J Cross-references"]);
+        // The broad source opens its containing heading; its incidental body
+        // citation cannot turn that broad target into an exact verse section.
+        assert_eq!(titles(&found), ["J Cross-references", "I Broad Section"]);
+        assert_eq!(found[1].locations.len(), 1);
+        assert_eq!(found[1].locations[0].origin, LinkOrigin::Section);
+        assert_eq!(found[1].locations[0].reference.canonical, "JHN.11-JHN.21");
+        assert!(
+            library::mentions(conn, &ScriptureRef::from_canonical("JHN.15.5")?)?
+                .iter()
+                .any(|mention| mention.source_id == found[1].source_id)
+        );
         Ok(())
     });
 }

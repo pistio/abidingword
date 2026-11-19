@@ -1,8 +1,8 @@
 //! A.4.1: invented documents shaped like a German Bible handbook (front matter,
 //! a Contents page listing biblical books, one introduction per book with
 //! running heads, page numbers and incidental references). They reproduce
-//! failure *hypotheses* for the owner's MacArthur report; they cannot accept
-//! the real PDF, which was never available to development.
+//! the handbook failure shapes independently of the owner's document. Actual
+//! file validation is opt-in and separate; no private text is a test fixture.
 #[path = "support/library_fixtures.rs"]
 mod fixtures;
 use abiding_word_lib::{
@@ -187,6 +187,7 @@ struct Outcome {
     page: i64,
     first: PassageLocation,
     places: Vec<PassageLocation>,
+    literal_mentions: Vec<String>,
     view: pdf_structures::View,
     diagnostic: serde_json::Value,
 }
@@ -202,10 +203,17 @@ fn outcome(shape: Shape, passage: &str) -> Outcome {
         let first = places.first().cloned().expect("a place for the passage");
         let diagnostic =
             serde_json::to_value(pdf_diagnostic::diagnostic(c, &id, Some(passage))?).unwrap();
+        let literal_mentions = c
+            .prepare(
+                "SELECT matched_text FROM source_passages WHERE source_id=?1 AND origin='explicit'",
+            )?
+            .query_map([&id], |row| row.get(0))?
+            .collect::<Result<Vec<_>, _>>()?;
         Ok(Outcome {
             page: page_of(c, &first),
             first,
             places,
+            literal_mentions,
             view,
             diagnostic,
         })
@@ -286,14 +294,17 @@ fn acts_6_opens_the_book_section_not_front_matter_in_every_handbook_shape() {
             .unwrap();
         assert_eq!(heading.heading.anchor.page as i64, ACTS_PAGE, "{name}");
         assert_eq!(heading.canonical.as_deref(), Some("ACT.1-ACT.28"), "{name}");
-        // The front-matter dedication and the Acts 7 body mention stay literal
-        // mentions after the grounded section; nothing is dropped.
-        let mention = o
-            .places
-            .iter()
-            .position(|p| p.matched_text == "Apg 6,4")
-            .expect("front matter mention kept");
-        assert!(mention > 0, "{name}");
+        // Navigation stops at the real book opening. Literal evidence stays
+        // in storage but does not compete with a relevant structural target.
+        assert_eq!(o.places.len(), 1, "{name}");
+        assert!(
+            o.literal_mentions.iter().any(|text| text == "Apg 6,4"),
+            "{name}: dedication evidence retained"
+        );
+        assert!(
+            o.literal_mentions.iter().any(|text| text == "Apg 7,58"),
+            "{name}: other-chapter evidence retained"
+        );
         assert!(
             o.places.iter().all(|p| p.matched_text != "Apg 7,58"),
             "{name}: shares no verse with Acts 6"

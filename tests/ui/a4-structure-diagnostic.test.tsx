@@ -52,7 +52,7 @@ describe("A.4.1 structure evidence and diagnostic", () => {
   it("labels a book-level heading as a broader book section, not as a section about the passage", async () => {
     await open();
     const result = await screen.findByRole("button", { name: /^Invented handbook/ });
-    expect(result).toHaveTextContent("Book section Acts 1–28 (broader)");
+    expect(result).toHaveTextContent("Book section Acts (broader)");
     expect(result).not.toHaveTextContent("Heading names");
   });
 

@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-11-19",
+  "baseCommit": "59c8f5e04d6c76a72c7a8613ba1332a4d758703f",
+  "scope": "Source metadata editing, deliberate passage navigation and actual Contents/book/chapter/verse hierarchy",
+  "validation": {
+    "frontend": {
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=<local-report>"
+      ],
+      "exitCode": 1,
+      "seconds": 390.76,
+      "logSha256": "5bab5843d337062a1f5024f56e6475660d3e0379505f9b049d5ab03c24089a33",
+      "inputsUnchanged": true,
+      "success": false,
+      "files": 125,
+      "passed": 1338,
+      "failed": 2,
+      "ignored": 0,
+      "inputManifestSha256": "71c01ab293fb296961d843436028e867b0c66e0141b4f6cf6c8f8d63a880c8c8",
+      "inputFiles": 865,
+      "failures": [
+        {
+          "file": "tests/ui/presentation.test.tsx",
+          "test": "review fixes a clicker on the audience screen moves the Presenter View; Space presses buttons instead of turning pages",
+          "message": "TestingLibraryElementError: Unable to find an element with the text: Slide 1 of 6. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+        },
+        {
+          "file": "tests/ui/studies-v3.test.tsx",
+          "test": "findings links the current passage and opens it from the finding",
+          "message": "Error: Unable to find role=\"heading\" and name \"Psalm 23\""
+        }
+      ],
+      "sameFailuresRecordedOnBase": "docs/implementation/owner-followup-20261119-verification.json",
+      "interpretation": "The final complete run passed 1338/1340. These exact two failures were already recorded on the base commit. Both passed unchanged in one focused run. Their tests and affected presentation/Scripture/studies/shared-helper paths have no diff; neither fixture opens a source reader. No direct coupling to source-navigation changes was found. Exact event ordering was not instrumented, so a specific timing cause is unproven. This is not a wholly green final full-suite run.",
+      "singleUnchangedFocusedRun": {
+        "passed": 2,
+        "failed": 0,
+        "filtered": 56,
+        "reportSha256": "32826ab408225243176450299c2c03956f5c71259b321a6e99e156674465fe5c",
+        "logSha256": "6c7be77b30ccea21d0995ce3716be0a3cdeb82785b3449377f6ac543ab291c4b"
+      }
+    },
+    "rust": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-fail-fast"
+      ],
+      "exitCode": 0,
+      "seconds": 257.802,
+      "logSha256": "cf28cae01a69cb2009b68660eaea400c7d716efbd2ffa905ed7c33dc5dc9f46b",
+      "inputsUnchanged": true,
+      "passed": 1122,
+      "failed": 0,
+      "ignored": 9,
+      "ignoredNote": "Eight pre-existing ignored diagnostics plus one new opt-in private-PDF diagnostic, executed separately below.",
+      "inputInventorySha256": "7888e3742bdfd5ab492d0736bd0cccb0747fbc826e59e37585a0f2152a310145",
+      "inputFiles": 338
+    },
+    "typecheck": {
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "exitCode": 0,
+      "seconds": 20.43,
+      "logSha256": "dff1d01717df7805cee8dd6b522e890dc704d194b2a1f6dbcf4e6313aabff9d5"
+    },
+    "eslint": {
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exitCode": 0,
+      "seconds": 18.22,
+      "logSha256": "020cc1c1c50f602e51366f1b16c2d6be04507bff2a11824b959ab51d4dd9fe29"
+    },
+    "translations": {
+      "command": [
+        "npm",
+        "run",
+        "i18n:check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.56,
+      "logSha256": "22fb4e0467a3d0c5378f9c548e088b395e7665082f00399214d16e78e4a64811"
+    },
+    "generatedTranslationCorpus": {
+      "command": [
+        "node",
+        "scripts/i18n-corpus.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 0.39,
+      "logSha256": "7fb0295101bc58d8d2b62ef34944d4be2ee7d368d3fbddbd805234761842f104"
+    },
+    "frontendBuild": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "seconds": 21.17,
+      "logSha256": "36aecf4f121f279fa23446bee477970d2283380a3c328842894b0fcf9df332c7",
+      "existingChunkSizeWarning": true
+    },
+    "rustfmt": {
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--check"
+      ],
+      "exitCode": 0,
+      "seconds": 1.026,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "inputsUnchanged": true
+    },
+    "clippyAllTargets": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 0,
+      "seconds": 1.166,
+      "logSha256": "e1eb8b07726d9295e8c63a0ded1e057e8ecac35ba7710d72b775e05194cee022",
+      "inputsUnchanged": true
+    }
+  },
+  "actualPrivatePdf": {
+    "method": "Local native import and Rebuild against the owner-provided original PDF; independently checked expected opening page for all 66 canonical books.",
+    "pages": 400,
+    "selectableText": true,
+    "embeddedOutline": false,
+    "printedContentsPhysicalPages": [
+      5,
+      6
+    ],
+    "baseline": {
+      "headings": 3,
+      "mappedOpenings": 0,
+      "contentsRoots": 2
+    },
+    "final": {
+      "analysis": 4,
+      "complete": true,
+      "headings": 775,
+      "bases": {
+        "layout": 706,
+        "printed": 69
+      },
+      "contentsRoots": 75,
+      "printedDestinations": 75,
+      "anchoredPrintedDestinations": 69,
+      "pageOnlyDestinations": [
+        394,
+        396,
+        398,
+        398,
+        399,
+        400
+      ],
+      "mappedOpeningNodes": 63,
+      "canonicalBooksCovered": 66,
+      "unmappedBooks": [],
+      "nonBookMappings": [],
+      "queries": [
+        {
+          "canonical": "ROM.8",
+          "locations": [
+            {
+              "basis": "printed",
+              "origin": "section",
+              "page": 239,
+              "scope": "book"
+            }
+          ]
+        },
+        {
+          "canonical": "ROM.8.1",
+          "locations": [
+            {
+              "basis": "printed",
+              "origin": "section",
+              "page": 239,
+              "scope": "book"
+            }
+          ]
+        },
+        {
+          "canonical": "ACT.6",
+          "locations": [
+            {
+              "basis": "printed",
+              "origin": "section",
+              "page": 232,
+              "scope": "book"
+            }
+          ]
+        },
+        {
+          "canonical": "ACT.6.1",
+          "locations": [
+            {
+              "basis": "printed",
+              "origin": "section",
+              "page": 232,
+              "scope": "book"
+            }
+          ]
+        },
+        {
+          "canonical": "1TH.3",
+          "locations": [
+            {
+              "basis": "printed",
+              "origin": "section",
+              "page": 288,
+              "scope": "book"
+            }
+          ]
+        },
+        {
+          "canonical": "2TH.2",
+          "locations": [
+            {
+              "basis": "printed",
+              "origin": "section",
+              "page": 295,
+              "scope": "book"
+            }
+          ]
+        }
+      ],
+      "sharedBookOpenings": [
+        {
+          "mappings": [
+            {
+              "canonical": "1SA.1-1SA.31",
+              "inheritedRows": 40,
+              "sectionRows": 1
+            },
+            {
+              "canonical": "2SA.1-2SA.24",
+              "inheritedRows": 40,
+              "sectionRows": 1
+            }
+          ],
+          "page": 66
+        },
+        {
+          "mappings": [
+            {
+              "canonical": "1KI.1-1KI.22",
+              "inheritedRows": 36,
+              "sectionRows": 1
+            },
+            {
+              "canonical": "2KI.1-2KI.25",
+              "inheritedRows": 36,
+              "sectionRows": 1
+            }
+          ],
+          "page": 75
+        },
+        {
+          "mappings": [
+            {
+              "canonical": "1CH.1-1CH.29",
+              "inheritedRows": 33,
+              "sectionRows": 1
+            },
+            {
+              "canonical": "2CH.1-2CH.36",
+              "inheritedRows": 33,
+              "sectionRows": 1
+            }
+          ],
+          "page": 83
+        }
+      ]
+    },
+    "importAndRebuildIdentical": true,
+    "storedSegments": 1849,
+    "storedSegmentIdsAndTextUnchangedDuringRebuild": true,
+    "originalFileBytesUnchanged": true,
+    "diagnosticExitCode": 0,
+    "diagnosticSeconds": 34.21,
+    "productionInputsStillMatchActualFileRun": true,
+    "changedNativeProductionSha256": {
+      "src-tauri/src/commands/library.rs": "c8032e33b1a08a14b28050a7e3012a99f76391d7c81b17d7066278ef02679fe1",
+      "src-tauri/src/db/library.rs": "1cea92e1861160da710790d670961bd4a33bd021f28d190d0739f043e2c58698",
+      "src-tauri/src/db/pdf_structures.rs": "730f5661aeafff038a0efcb107930ff4d9f672ffce324e291096076a0bbeaa77",
+      "src-tauri/src/library/adapters/epub.rs": "34fda7aac4ed785f572538759523ca2e24d5629bb7bc903041c1c695599fc9bb",
+      "src-tauri/src/library/generated_contents.rs": "2f6c1afe1f6d164f5f20e6a74e3b4b087fd72ebd336bafa32b07f6fa4cdd10d3",
+      "src-tauri/src/library/import.rs": "3c7530efa91b709dfac3c320d0255f18f4fb05dbe49b459b557b53e525afd1e9",
+      "src-tauri/src/library/pdf_structure/mod.rs": "27ce3f6febdbff9ffdb74711ebb56edbb0a620eb2d533a61571fec7ab35bf2c2",
+      "src-tauri/src/library/pdf_structure/native.rs": "278f0eee9ece64dd57865bcb6fbfc23fee3cfe59bb90f38cc471876fdddd49be",
+      "src-tauri/src/library/pdf_structure/printed.rs": "a1b11458038e607210928542ac91fedf034726fcc8ada2f8976e944d00d2edd5",
+      "src-tauri/src/library/pdf_structure/resolve.rs": "903e5237078d0ac3e6d9b3459bac54bb9c01010c76bc29c1a05633a8925d61bf",
+      "src-tauri/src/library/sections.rs": "69d32681a7a1dbe81da1a5b1e21feed278c0ec9eb2ccec40cf410a20e86eb4df"
+    },
+    "publicationBoundary": "Only aggregate results and book/page metadata are included. No original PDF, extracted text, private page renders, source database, input-file fingerprint or original-library identifiers are published."
+  },
+  "earlierChecksAndCorrections": {
+    "firstFullFrontendRun": {
+      "passed": 1265,
+      "failed": 64,
+      "correction": "Updated old Open/Edit selectors, status-region queries, disclosure counts and broader-book labels; the combined-book assertion remained unchanged and passed against settled production code."
+    },
+    "fullFrontendBeforeFinalNavigationReview": {
+      "passed": 1329,
+      "failed": 0,
+      "followup": "Review then found same-source async navigation and rebuild-refresh races. One shared navigation generation and current-window refresh guards were added, with 11 additional regressions, before the final full suite."
+    },
+    "nativeEarlyStops": [
+      {
+        "exitCode": 101,
+        "passed": 613,
+        "failed": 1,
+        "ignored": 1
+      },
+      {
+        "exitCode": 101,
+        "passed": 625,
+        "failed": 1,
+        "ignored": 1
+      },
+      {
+        "exitCode": 101,
+        "passed": 1038,
+        "failed": 6,
+        "ignored": 7
+      }
+    ],
+    "nativeContractCorrections": [
+      "Missing EPUB fragments are unresolved, not silent chapter-opening targets; valid exact anchors and children remain asserted.",
+      "Historical schema-19 fixture now uses only schema-19 columns and asserts retained original text, identities, offsets, timestamps and file hash.",
+      "Version-27 startup test permits exactly the derived passage-index change from 4 to 5 and checks every other original value plus the exact pre-migration backup.",
+      "Old mixed literal/structure and partial-overlap expectations were updated to whole-request containment and structural fallback, with stored-reference preservation checks."
+    ],
+    "clippyCorrections": "Replaced an API newer than the declared Rust 1.82 MSRV with modulo and removed one needless borrow; final all-target Clippy passed.",
+    "corpusCommandCorrection": "A nonexistent npm script alias was replaced by the repository-provided node scripts/i18n-corpus.mjs --check command; that command passed."
+  },
+  "upgrade": {
+    "pdfAnalysisVersion": 4,
+    "existingPdfAction": "Chapters and headings → Rebuild structure once after installing this candidate.",
+    "sourcePassageIndexVersion": 5,
+    "literalIdsAndTimestampsPreservedForV4Upgrade": true,
+    "databaseSchemaChanged": false,
+    "dependencyLocksChanged": false,
+    "scriptureRecognitionImplementationChanged": false,
+    "epubRefresh": "Managed file hash and every extracted paragraph must match before app-owned heading paths and derived TOC links are refreshed."
+  },
+  "delivery": {
+    "windowsBuildStarted": false,
+    "windowsInstallerCreated": false,
+    "nativeWindowsAcceptance": "Pending the separately approved installer build and normal use on Windows 11.",
+    "existingInstalledSource": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "proposedBuildPath": "build/abidingword-i35-i42-20261109 / windows-combined-owner-20261109.yml",
+    "approvalScope": "One exact-source Windows installer build through the established pathway; no retry, merge, release, updater publication or deployment.",
+    "browserVisualAcceptance": "Not completed: local Chromium startup was restricted and the cloud browser could not reach the local preview.",
+    "privatePdfRequiredByBuild": false
+  },
+  "changedInputSha256": {
+    "docs/i18n/native-polish-priority-v0.19.md": "0abd33025b619be689794be2c9e1bd6a2c09b507c21f0179830bfb6faa0ec4d5",
+    "docs/i18n/native-polish-review-v0.19.md": "41f1a037d061a3094f8e739bbb2df63949c5074c1907e164230cfdc22445966b",
+    "src-tauri/src/commands/library.rs": "c8032e33b1a08a14b28050a7e3012a99f76391d7c81b17d7066278ef02679fe1",
+    "src-tauri/src/db/library.rs": "1cea92e1861160da710790d670961bd4a33bd021f28d190d0739f043e2c58698",
+    "src-tauri/src/db/pdf_structures.rs": "730f5661aeafff038a0efcb107930ff4d9f672ffce324e291096076a0bbeaa77",
+    "src-tauri/src/library/adapters/epub.rs": "34fda7aac4ed785f572538759523ca2e24d5629bb7bc903041c1c695599fc9bb",
+    "src-tauri/src/library/generated_contents.rs": "2f6c1afe1f6d164f5f20e6a74e3b4b087fd72ebd336bafa32b07f6fa4cdd10d3",
+    "src-tauri/src/library/import.rs": "3c7530efa91b709dfac3c320d0255f18f4fb05dbe49b459b557b53e525afd1e9",
+    "src-tauri/src/library/pdf_structure/mod.rs": "27ce3f6febdbff9ffdb74711ebb56edbb0a620eb2d533a61571fec7ab35bf2c2",
+    "src-tauri/src/library/pdf_structure/native.rs": "278f0eee9ece64dd57865bcb6fbfc23fee3cfe59bb90f38cc471876fdddd49be",
+    "src-tauri/src/library/pdf_structure/printed.rs": "a1b11458038e607210928542ac91fedf034726fcc8ada2f8976e944d00d2edd5",
+    "src-tauri/src/library/pdf_structure/resolve.rs": "903e5237078d0ac3e6d9b3459bac54bb9c01010c76bc29c1a05633a8925d61bf",
+    "src-tauri/src/library/sections.rs": "69d32681a7a1dbe81da1a5b1e21feed278c0ec9eb2ccec40cf410a20e86eb4df",
+    "src-tauri/tests/epub_contents.rs": "68776409fce1b33b3663bb209fabad84675a8c251211e3e67aeef602cb034d86",
+    "src-tauri/tests/macarthur_shape.rs": "4ff9586a06087b934ae1944a303539c32eefcce2f1590fef35ec0e5c1f71e70c",
+    "src-tauri/tests/migration_v024.rs": "08fbaeaa786ad38e42545391a3d3edad0d60fab0cef7b545fce3c72e31bb10a2",
+    "src-tauri/tests/migration_v27.rs": "809d101d2e520834947de389de05c79a0a5eee9651147c39d2dac5f9f6f286b5",
+    "src-tauri/tests/passage_sources.rs": "d4d8c0d0c5c5a5deea7a9f6259398044600cd61750f615b70eacef3e32695a7c",
+    "src-tauri/tests/pdf_outline_destinations.rs": "78fd36d1e86f72eb290f497272f983fec1aa832e5075fefa3c8129c42a6ee537",
+    "src-tauri/tests/pdf_printed_contents.rs": "c7e727188e302805aa90ddba3a21a51ac0a03226147b7fe9372cf00e613fbc73",
+    "src-tauri/tests/pdf_structure_real_file.rs": "6a6b77af94ca84a70f89c6a21f823f2c85a806b3168d3abecc64edc70acc1da8",
+    "src-tauri/tests/source_evidence_levels.rs": "6f111f92d20204570a0f9a519239a5a5b14f86c277447a1a7d1f6c2b7d6cf34e",
+    "src-tauri/tests/source_navigation.rs": "4ceabc77d00b89c84c16649e32677e114794224317950da20592239e6caff82a",
+    "src-tauri/tests/source_relevance.rs": "3f4b25ffc44dec5547447126476f478a1c5e5e66f75fbc242309e1825e5e6b98",
+    "src-tauri/tests/suggestion_quality.rs": "640c87c7f3c2575924fb77f4b2a46dc20c907d22fbd29288e3c84657dac84769",
+    "src/features/library/LibraryView.tsx": "8cedc4b69d73a074e85e842562a20e5bc48ffe2daa386d3b719e7647aa580980",
+    "src/features/library/PassageSourceList.tsx": "68b0e0cfa9084afbac12d53a880d94a27c7b6cba9ab958d0ddbb70ebbc83d6ba",
+    "src/features/library/PdfStructurePanel.tsx": "58c79531dc1373bd95ef41ad8aab14a183af1ba854ab02efa8949232e3416fdc",
+    "src/features/library/ReaderToolbar.tsx": "40bafc12615d75bba6411175ac6dbc2688431279005d21d92c5d22898966deec",
+    "src/features/library/SourceAbout.tsx": "48b693979e65ad7500d65f77561f3e866de8bece63822508f31c11ebd7b96e09",
+    "src/features/library/SourceMetadataEditor.tsx": "a76e6e0a93053938b6857e7fceb699927b4d7ab9a88f0b0ec45ac3cdd2e71e23",
+    "src/features/library/SourcePassageNavigation.tsx": "48573eb6582e94b6ccdafd0d7f5a755e28e6acb12edb3db2e8937cd1bd8a22a9",
+    "src/features/library/SourceReader.tsx": "e78a82d58a91333aabe3cc9c27492f2bbb040e54fdcef251da25d0f11e54569e",
+    "src/features/library/SourcesPane.tsx": "14f6be7b5fd9318a89e0b74b1c59c794523fc7374eead626db08a3962af790b1",
+    "src/features/library/formatted/EpubViewer.tsx": "dad399af398fdc1b0388c9a5e5144367e1aa60add53aacf968ceb6684871bb13",
+    "src/features/settings/SourcesSettings.tsx": "4880a0f1c2b80c16bf8b679540a0638350a9cb15096924bfe10b91e41cfef361",
+    "src/i18n/locales/de/library.json": "b105e2db7513efa1200bbd6af068cf0f15437b90cccde55a38a9c505ec05b357",
+    "src/i18n/locales/en/library.json": "e05a28a76436e77835350514b3576530722875cb6e28ade0a2716643bb7dd713",
+    "src/i18n/locales/es/library.json": "cc721722ca1621f70f830674aa83ff9b8bc7ebd9b19839b4acf56e929dac80db",
+    "src/i18n/locales/fr/library.json": "54c63d1fbd255cbf39ab5db5646a3d508a5f5ec3e37d34dba01ebc97a02abbf9",
+    "src/i18n/locales/ko/library.json": "8477495546e5aa52f3a393f0437fd3e64b01311833dfaf32ccb396f0007cb2bd",
+    "src/i18n/locales/pt/library.json": "21d05551ca0ff78c55f7a0a8d32d25144b681867b2d6f8caa66eab80edca5413",
+    "src/types/library.ts": "967afd063f2dcb51cf6e19479aebe4f42dad7526f166b86b85a284bab0be5e0d",
+    "tests/ui/a4-structure-diagnostic.test.tsx": "61d7edf8ee79bf9dc2a1d92636cc68dfd1abb74a9e884d4e99232c8110c98459",
+    "tests/ui/formatted-annotations.test.tsx": "bca6192af62d3c9870c66333a010a98e387a47e3bc1cffef458532fe756a3379",
+    "tests/ui/formatted-docx.test.tsx": "2f1a1607c034a7701954ba920da1e41808a747bdd5eb105ffdd9bb5aec763b6d",
+    "tests/ui/formatted-epub.test.tsx": "2b0b9634e80d8c889c2953de9ff57a6a6db3e7578b2722f549f6c41eca8502a0",
+    "tests/ui/library-organisation.test.tsx": "e07ec0082e77c73c9b40237d512b907321f944b979662f90ca1d4a53a730a5b0",
+    "tests/ui/library.test.tsx": "a1797b2c2c913b7997cf517391a2d87abb1435eaed005627396392f9e675e92f",
+    "tests/ui/milestone-a1-safety.test.tsx": "6d8318dc9c5fd12afd7ec0e216f8bef97ebd8e07da25ae8f3dcdbf54d5fac07b",
+    "tests/ui/milestone-a2.test.tsx": "9b96632968ca4f9dc8c8ddbbbdb5d9d0b7a2487870796340efad72319fed86b6",
+    "tests/ui/passage-more-locations.test.tsx": "0ede01b2ec24085bc01f385ec1114581cd00d3a50e652ebd7f93a7b7008f3851",
+    "tests/ui/passage-sources.test.tsx": "c18f44a34fc777831698b21f27b4ba40f4d2c53255e25ee7abcffc96c551d345",
+    "tests/ui/passage-suggestion-quality.test.tsx": "9f1802c8caad7a0a961541b20db06f0f580de7337381a8cd56744d317a6effb6",
+    "tests/ui/pdf-structure.test.tsx": "5d5085128179a71e36c9f4614919d630d4a36deb8d16011ce06dd61eb5410370",
+    "tests/ui/source-contents.test.tsx": "bf8af3030fa39dd3ae640fd40e2ca97ee7f3faec3fd9234ab3658d6e0e92c92f",
+    "tests/ui/source-help.test.tsx": "80ee2703287600f6903dac7cecc8e10e71cf38594d8accc686cbf18d044b01e8",
+    "tests/ui/source-metadata.test.tsx": "a30c3a7b3c5efc6078b5babe90b0cd26ff767f96e96571fdfecda160aea73cae",
+    "tests/ui/source-navigation.test.tsx": "b2a3abd7a7258ad06f57b0d66e5e231b4389de4dd7aaf689cf37a0aa72dbc538",
+    "tests/ui/source-passage-navigation.test.tsx": "64525b27f139e752efcceea3d2bc273a5bf2d1c3ef32d48d49f92c9a2b8f81da",
+    "tests/ui/source-result-evidence.test.tsx": "7c8fa95ba08732e237df28814b59417f4b34238b9780d3a25b957b9df2af1e6c",
+    "tests/ui/source-viewer.test.tsx": "aa56c1afab7fbc06847ded4e4517b55960ddcd96ba4574768e37eaabd5eba059",
+    "tests/ui/sources-to-study.test.tsx": "f0013546b3f604165bdedb42aa36b1036c0465289fbfa0538722004e35af8bfc"
+  }
+}

@@ -101,7 +101,7 @@ it.each(["source", "segment"])("rejects a mismatched indexed %s instead of displ
   const { user } = await renderApp(api);
   const sources = within(screen.getByRole("complementary", { name: "Sources" }));
   expect(await sources.findByText(/Only references or mentions are indexed here/)).toBeVisible();
-  await user.click(sources.getByRole("button", { name: new RegExp(intended.title) }));
+  await user.click(sources.getByRole("button", { name: new RegExp(`^${intended.title}`) }));
   expect(await sources.findByRole("alert")).toHaveTextContent("The indexed location does not belong to this source or is unavailable.");
   expect(sources.queryByText("WRONG_SOURCE_SENTINEL")).toBeNull();
   expect(sources.queryByText("A reference to John 15:5.")).toBeNull();

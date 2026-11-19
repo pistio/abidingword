@@ -103,7 +103,10 @@
     "kind": "Art",
     "sharing": "Weitergabe",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "aus „{{fileName}}“"
+    "fromFile": "aus „{{fileName}}“",
+    "edit": "Details bearbeiten",
+    "editNamed": "Details für {{title}} bearbeiten",
+    "editTitle": "Quellendetails bearbeiten"
   },
   "about": {
     "summary": "Über diese Quelle",
@@ -423,7 +426,8 @@
       "licenceStatus": "Weitergabe",
       "licence": "Lizenz (wie angegeben)",
       "collections": "Sammlungen",
-      "tags": "Schlagwörter"
+      "tags": "Schlagwörter",
+      "notes": "Notizen"
     },
     "file": {
       "name": "Datei",
@@ -689,7 +693,8 @@
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
       "fitWidth": "Seitenbreite",
-      "fitPage": "Ganze Seite"
+      "fitPage": "Ganze Seite",
+      "edit": "Details bearbeiten"
     }
   },
   "fileDialog": {
@@ -700,5 +705,16 @@
     "bible": "Bibel zum Hinzufügen auswählen",
     "bibleTypes": "Bibeldateien (USFM, .zip, PDF, EPUB, Word, Markdown, Text)",
     "allFiles": "Alle Dateien"
+  },
+  "sync": {
+    "go": "Zur aktuellen Bibelstelle",
+    "scripture": "Bibelstelle: {{passage}}",
+    "help": "Die Leseposition in dieser Quelle bleibt beim Wechsel der Bibelstelle erhalten.",
+    "noPassage": "Wähle zuerst eine Bibelstelle aus.",
+    "loading": "Passende Stelle in dieser Quelle wird gesucht…",
+    "noMatch": "Für {{passage}} wurde in dieser Quelle keine passende Stelle gefunden.",
+    "opened": "Zuletzt hier geöffnete Bibelstelle: {{passage}}",
+    "mentionsTitle": "Erwähnungen von {{passage}} in dieser Quelle",
+    "mentionsHelp": "Diese Quelle erwähnt die Bibelstelle, hat aber keinen passenden Abschnitt. Wähle eine Erwähnung zum Öffnen aus."
   }
 }

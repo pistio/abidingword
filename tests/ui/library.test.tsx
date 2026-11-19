@@ -164,7 +164,7 @@ describe("Library", () => {
     const scripture = screen.getByRole("complementary", { name: "Scripture" });
     await user.type(within(scripture).getByLabelText("Go to passage"), "John 15{Enter}");
     const found = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15" });
-    const item = within(found).getByRole("button", { name: /Notes on the Vine/ });
+    const item = within(found).getByRole("button", { name: /^Notes on the Vine/ });
     // Who wrote it, where, and why it is here: a plain reason, not "John 15:4" in quotation marks.
     expect(item).toHaveTextContent("J. Example · p. 2Mentions John 15:4");
 
@@ -177,7 +177,7 @@ describe("Library", () => {
     await user.click(within(scripture).getByRole("button", { name: /^Verse 4\. Show verse tools/ }));
     const verse = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:4" });
     expect(within(sourcesPane()).queryByRole("list", { name: /^Elsewhere in/ })).not.toBeInTheDocument();
-    await user.click(within(verse).getByRole("button", { name: /Notes on the Vine/ }));
+    await user.click(within(verse).getByRole("button", { name: /^Notes on the Vine/ }));
 
     // The source opens inside the Sources pane; the workspace stays.
     const reader = await within(sourcesPane()).findByRole("region", { name: "Notes on the Vine" });
@@ -196,7 +196,7 @@ describe("Library", () => {
     expect(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:4" })).toBeInTheDocument();
     expect(within(sourcesPane()).queryByRole("region", { name: "Notes on the Vine" })).not.toBeInTheDocument();
     const returned = within(sourcesPane()).getByRole("list", { name: "Sources for John 15:4" });
-    expect(within(returned).getByRole("button", { name: /Notes on the Vine/ })).toHaveFocus();
+    expect(within(returned).getByRole("button", { name: /^Notes on the Vine/ })).toHaveFocus();
   });
 
   it("opens a recently added source in the pane, and in the full reader on request", async () => {

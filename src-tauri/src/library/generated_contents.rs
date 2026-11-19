@@ -179,6 +179,25 @@ fn bucket(size: f64) -> i64 {
     (size * 2.0).round() as i64
 }
 
+/// Some producers overprint a bold/shadow heading at the same coordinates.
+/// Recognise exact repetition for shape checks only; original drawn/stored
+/// text is preserved, including when adjacent title lines are joined.
+pub(crate) fn heading_shape(text: &str) -> &str {
+    for copies in 2..=4 {
+        if text.len() % copies != 0 {
+            continue;
+        }
+        let length = text.len() / copies;
+        let Some(part) = text.get(..length) else {
+            continue;
+        };
+        if part.chars().filter(|c| c.is_alphabetic()).count() >= 2 && part.repeat(copies) == text {
+            return part;
+        }
+    }
+    text
+}
+
 /// The probable headings among a PDF's lines: (level, page, title), in order.
 pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
     if lines.is_empty() || pages == 0 {
@@ -258,7 +277,7 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
     }
 
     let is_candidate = |l: &Line| -> bool {
-        let text = l.text.trim();
+        let text = heading_shape(l.text.trim());
         let chars = text.chars().count();
         let letters = text.chars().filter(|c| c.is_alphabetic()).count();
         let words = text.split_whitespace().count();
@@ -302,8 +321,10 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
         }
     }
 
-    // Levels by size: the largest heading size is level 1. Sizes below the
-    // third are left out (too close to the text to trust).
+    // Levels by size: the largest heading size is level 1. The body-relative
+    // candidate checks already establish prominence. Large cover/title-page
+    // type must not discard genuine smaller headings elsewhere in the book;
+    // cap their displayed depth instead of dropping the fourth size onward.
     let mut sizes: Vec<i64> = found.iter().map(|(_, s, _)| bucket(*s)).collect();
     sizes.sort_unstable_by(|a, b| b.cmp(a));
     sizes.dedup();
@@ -311,7 +332,7 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
         .into_iter()
         .filter_map(|(page, size, title)| {
             let rank = sizes.iter().position(|s| *s == bucket(size))?;
-            (rank < MAX_LEVELS).then(|| (rank + 1, page, title))
+            Some((rank.min(MAX_LEVELS - 1) + 1, page, title))
         })
         .collect();
 

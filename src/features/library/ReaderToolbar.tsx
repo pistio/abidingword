@@ -16,7 +16,7 @@ import { readLocal, writeLocal } from "@/lib/storage";
  * screen-reader users: every action is in the row or in the menu, by name.
  */
 export type ReaderActionId =
-  | "find" | "contents" | "history" | "bookmark" | "note" | "marks" | "structure" | "full" | "about" | "zoomIn" | "zoomOut" | "fitWidth" | "fitPage";
+  | "find" | "contents" | "history" | "bookmark" | "note" | "marks" | "structure" | "full" | "about" | "edit" | "zoomIn" | "zoomOut" | "fitWidth" | "fitPage";
 
 export interface ReaderAction {
   /** The pin it belongs to (Back and Forward share "history"). */
@@ -35,7 +35,7 @@ export interface ReaderAction {
 
 /** Shown in the row unless the person changes it: the two the owner reaches for most. */
 export const DEFAULT_PINS: ReaderActionId[] = ["find", "contents"];
-export const PIN_ORDER: ReaderActionId[] = ["find", "contents", "history", "bookmark", "note", "marks", "structure", "full", "about", "zoomOut", "zoomIn", "fitWidth", "fitPage"];
+export const PIN_ORDER: ReaderActionId[] = ["find", "contents", "history", "bookmark", "note", "marks", "structure", "full", "about", "edit", "zoomOut", "zoomIn", "fitWidth", "fitPage"];
 const STORAGE_KEY = "reader.toolbar.pins";
 /** One icon button, including its gap (44 px target + 4 px). */
 const SLOT = 48;

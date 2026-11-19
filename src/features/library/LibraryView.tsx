@@ -12,6 +12,7 @@ import { formatDate, formatNumber } from "@/i18n/format";
 import { SOURCE_TYPES, TRASH_RETENTION_DAYS, type LibraryResults, type ManagePage, type ItemState, type SourceFormat, type SourceType } from "@/types/library";
 import { formatLabel, locatorLabel, sourceTypeLabel } from "./labels";
 import { useLibraryNav } from "./LibraryNav";
+import { SourceEditButton, SourceMetadataEditor } from "./SourceMetadataEditor";
 
 /** The everyday list pages at the same size as Settings → Sources. */
 const PAGE = 50;
@@ -94,6 +95,7 @@ export function LibraryView({
   const [morePending, setMorePending] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => { if (!initialState) heading.current?.focus(); }, [initialState]);
   const snapshot = useRef<(() => LibraryBrowseState) | null>(null);
@@ -269,6 +271,19 @@ export function LibraryView({
     setOutcome(null);
     return value;
   };
+  const metadataSaved = () => {
+    setEditing(null);
+    page.reload();
+    languages.reload();
+    const epoch = ++searchEpoch.current;
+    setMorePending(false);
+    if (submitted.trim()) {
+      fetchSearch(submitted, 0).then(
+        ([passages, names]) => { if (epoch === searchEpoch.current) acceptSearch(0, passages, names); },
+        (error: unknown) => { if (epoch === searchEpoch.current) failSearch(error, 0); },
+      );
+    }
+  };
 
   const select = "aw-input";
   const items = page.data?.items ?? [];
@@ -278,6 +293,7 @@ export function LibraryView({
   const nothing = outcome !== null && names.length === 0 && (passages?.hits.length ?? 0) === 0;
   return (
     <main ref={main} aria-labelledby={`${id}-title`} className="min-h-0 flex-1 overflow-y-auto bg-bg">
+      {editing && <SourceMetadataEditor key={editing} sourceId={editing} onClose={() => setEditing(null)} onSaved={metadataSaved} returnFocus={() => heading.current} />}
       {/* Back stays in reach while the page scrolls: the same full-width bar as Settings (v0.18.5). */}
       <div className="sticky top-0 z-10 border-b border-border-subtle bg-bg">
         <div className="mx-auto max-w-[52rem] px-4 py-2 sm:px-8">
@@ -318,14 +334,15 @@ export function LibraryView({
               <h3 className="type-item m-0">{t("library.search.byName")}</h3>
               <ul aria-label={t("library.search.byNameLabel")} className="m-0 flex list-none flex-col p-0">
                 {names.map((hit) => (
-                  <li key={hit.id} className="border-t border-border-subtle">
-                    <button type="button" data-library-focus={`${hit.id}:`} onClick={() => read(hit.id)} className="flex w-full flex-col items-start gap-1 px-1 py-3 text-left hover:bg-hover">
+                  <li key={hit.id} className="flex items-start border-t border-border-subtle">
+                    <button type="button" data-library-focus={`${hit.id}:`} onClick={() => read(hit.id)} className="flex min-w-0 flex-1 flex-col items-start gap-1 px-1 py-3 text-left hover:bg-hover">
                       <span className="font-medium text-text-strong">
                         {hit.author ? `${hit.author}, ` : ""}
                         <cite className="not-italic">{hit.title}</cite>
                       </span>
                       {hit.state === "archived" && <ArchiveBadge label={t("common.lifecycle.state.archived")} />}
                     </button>
+                    <SourceEditButton title={hit.title} onClick={() => setEditing(hit.id)} />
                   </li>
                 ))}
               </ul>
@@ -463,7 +480,8 @@ export function LibraryView({
                           </span>
                         )}
                       </button>
-                      {/* Rarely needed: a quiet icon on each row, its name saying which source. */}
+                      <div className="flex shrink-0 items-center">
+                      <SourceEditButton title={s.title} onClick={() => setEditing(s.id)} />
                       <button
                         type="button"
                         onClick={() => confirm(s.id)}
@@ -473,6 +491,7 @@ export function LibraryView({
                       >
                         <Trash2 className="size-4" aria-hidden="true" />
                       </button>
+                      </div>
                     </div>
                     {s.collections.length > 0 && (
                       <div className="flex flex-wrap items-center gap-2">
