@@ -1,0 +1,6 @@
+key	reference	language	script	format	role	kind
+dry-G01	G01_pt_pg62383_biblia_sagrada.usfm.zip	por	Latin	epub	dryrun	generated
+dry-G05	G05_de_luther1545_auszug.usfm.zip	deu	Latin	pdf	dryrun	generated
+dry-G08	G08_es_rv1862_nt.usfm.zip	spa	Latin	docx	dryrun	generated
+dry-G12	G12_en_noyes_poetry_gospels.usfm.zip	eng	Latin	epub	dryrun	generated
+dry-control	-	en	Latin	md	dryrun	control

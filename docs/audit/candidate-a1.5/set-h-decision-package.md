@@ -107,9 +107,18 @@ python3 scripts/evaluation/score-set.py <output folder> <sealed set>/manifest.ts
 ```
 
 The runner refuses to start when the output folder exists, the binary is
-not the frozen one, the manifest is not the sealed one, or any file
-differs from its checksum. Each document runs in its own process, so one
-failure is that document's result. Outputs are checksummed at the end.
+not the frozen one, the manifest is not the sealed one, any file differs
+from its checksum, or a key is one a disclosed edition already uses. Each
+document runs in its own process, so one failure is that document's
+result. `RUN.txt` records the binary's, the runner's and the manifest's
+SHA-256; outputs are checksummed at the end. The runner's and the
+scorer's own checksums are pinned in `FREEZE.md` §5a.
+
+**Rehearsed, not run on Set H.** Both scripts were run on a mock set made
+only of disclosed documents (four Set G files under new keys and a
+no-Scripture control): ceilings did not change any result, the control
+verified nothing, and each of the five refusals above was triggered and
+held (`FREEZE.md` §5a).
 
 ## 7. Seal contents
 

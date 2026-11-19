@@ -24,11 +24,17 @@ seal=$(grep -Eo '^[0-9a-f]{64}$' "$set_dir/SEAL.txt" | head -1)
 got_manifest=$(sha256sum "$set_dir/manifest.tsv" | cut -d' ' -f1)
 [ "$seal" = "$got_manifest" ] || { echo "refused: manifest $got_manifest is not the sealed $seal" >&2; exit 2; }
 (cd "$set_dir" && sha256sum -c --quiet checksums.sha256) || { echo "refused: a sealed file changed" >&2; exit 2; }
+# A key the harness also knows from a disclosed manifest would run that
+# edition's files too: refuse it.
+disclosed=$(cd "$(dirname "$0")/../../docs/corpus" && awk -F'\t' 'FNR>1 && !/^#/ {print $1}' *.tsv | sort -u)
+clash=$(awk -F'\t' 'NR>1 && !/^#/ {print $1}' "$set_dir/manifest.tsv" | sort | comm -12 - <(echo "$disclosed"))
+[ -z "$clash" ] || { echo "refused: keys already used by disclosed editions: $clash" >&2; exit 2; }
 role=$(awk -F'\t' 'NR>1 && !/^#/ {print $8; exit}' "$set_dir/manifest.tsv")
 mkdir -p "$out"
 {
   echo "started $(date -u +%Y-%m-%dT%H:%M:%SZ)"
   echo "binary $got_bin"
+  echo "runner $(sha256sum "$0" | cut -d' ' -f1)"
   echo "manifest $got_manifest"
   echo "role $role"
   uname -srm

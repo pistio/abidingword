@@ -1,0 +1,12 @@
+started 2026-11-19T01:51:38Z
+binary 920f7e28e6c03f0c2fd7832bb78ce7c2077d6767541f0b86bb02f2fec1ed3a8e
+runner 66f20eb9e08c1e55c55b8192b8a26799cdf02631b1341779d9bf5cd9d2c84af7
+manifest 0efded77d06e12363e706578dfc4ea2670196e738f7510f8e65937776519199a
+role dryrun
+Linux 6.18.44-fc-v653 x86_64
+dry-G01 exit 0 seconds 14
+dry-G05 exit 0 seconds 0
+dry-G08 exit 0 seconds 6
+dry-G12 exit 0 seconds 3
+dry-control exit 0 seconds 0
+ended 2026-11-19T01:52:01Z
