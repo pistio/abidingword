@@ -145,10 +145,10 @@ person confirms the edition; migration 0028 is to enforce that.
 
 Measured on the disclosed corpus (release build, reading alone):
 
-* EPUB median 120 MB, highest 249 MB;
-* PDF median about 190 MB, highest 566 MB (`spavbl-rlofodt`).
+* EPUB median 119 MB, highest 249 MB;
+* PDF median 185 MB, highest 566 MB (`spavbl-rlofodt`).
 
-Times and per-edition figures: `FREEZE.md`.
+Times and per-edition figures: `docs/audit/candidate-a1.5/FREEZE.md` §4.
 
 **Requirements for integration:**
 

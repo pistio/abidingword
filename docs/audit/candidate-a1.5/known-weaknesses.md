@@ -53,7 +53,7 @@ handover (§7).
 
 ## C. PDF memory — **bounded where possible, otherwise an integration requirement**
 
-* Highest reading peak: 566 MB (`spavbl-rlofodt`), median about 190 MB
+* Highest reading peak: 566 MB (`spavbl-rlofodt`), median 185 MB
   (measured in `FREEZE.md`).
 * The largest cost is pdf-extract and lopdf holding the whole document,
   its decoded streams and every glyph. lopdf inflates streams without a
