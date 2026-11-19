@@ -318,6 +318,9 @@ struct EditionAudit {
     /// provenance report, which holds the whole report as JSON at once.
     read_seconds: f64,
     read_peak_memory_mb: Option<f64>,
+    /// Where the document's printed numbering departs from the reference
+    /// (Phase A1.5, `scripture::numbering`), per book.
+    numbering: Vec<abiding_word_lib::scripture::numbering::BookNumbering>,
 }
 
 /// Why a chapter was refused, from the codes of the errors naming it.
@@ -577,6 +580,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     )
     .unwrap();
     let content = &staged.content;
+    let numbering = abiding_word_lib::scripture::numbering::assess(content);
     let usable = content.usable_chapters().unwrap_or_default();
     let origins = staged.document_origins();
     let stage = staged.documents.as_ref().expect("a document stage");
@@ -889,6 +893,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         peak_memory_mb,
         read_seconds,
         read_peak_memory_mb,
+        numbering,
     })
 }
 
