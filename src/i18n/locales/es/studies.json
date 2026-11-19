@@ -487,7 +487,7 @@
           "application": {
             "title": "Aplicación personal",
             "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores.",
-            "goal": "Responder al texto manteniéndose ligado a lo que dice. Es un cierre aparte, no otra letra de POZETEK.",
+            "goal": "Responder al texto manteniéndose ligado a lo que dice. La aplicación personal es un paso final separado, después de la observación y la interpretación.",
             "example": "El amor de Dios por su pueblo se basa en su naturaleza, no en la fidelidad de Israel. Aunque Israel se aparte, Dios muestra compasión en medio del juicio. Eso invita a reconocer las propias seguridades sustitutivas y a confiar de nuevo en Dios. El amor recibido debe marcar también el trato con quienes no corresponden al amor y al cuidado (cf. 1 Jn 4:8, 19).",
             "fields": {
               "truth": {
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Aplicación personal",
-            "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores. Responde al texto manteniendo la aplicación ligada a lo que dice. Es un cierre aparte, no otra letra de POZETEK. ¿Qué verdad del texto sigue siendo válida para todo lector? ¿Dónde desafía, consuela o corrige esta verdad tu forma de pensar y vivir? ¿Cómo responderás: creer, arrepentirte, confiar, obedecer, orar, amar? Sé concreto. ¿Qué distingue la situación de entonces de la actual? ¿Qué no debe trasladarse directamente?",
+            "guidance": "¿Qué significa para ti la verdad que has encontrado? Mantenla separada de la observación y la interpretación anteriores. Responde al texto manteniendo la aplicación ligada a lo que dice. La aplicación personal es un paso final separado, después de la observación y la interpretación. ¿Qué verdad del texto sigue siendo válida para todo lector? ¿Dónde desafía, consuela o corrige esta verdad tu forma de pensar y vivir? ¿Cómo responderás: creer, arrepentirte, confiar, obedecer, orar, amar? Sé concreto. ¿Qué distingue la situación de entonces de la actual? ¿Qué no debe trasladarse directamente?",
             "fields": {
               "answer": {
                 "label": "Tu respuesta",
@@ -2952,8 +2952,8 @@
     "empty": "Aún no hay nada que exportar con esta opción."
   },
   "repair": {
-    "review": "Revisar partes de POZETEK",
-    "undo": "Deshacer reparación de POZETEK",
+    "review": "Revisar las partes del estudio",
+    "undo": "Deshacer la reparación del estudio",
     "apply": "Añadir partes faltantes y ordenar",
     "explain": "Las siete partes originales aparecen primero. Las faltantes se añaden vacías. Cada parte existente, incluidos Tema, Comprensión, Consecuencias y duplicados, conserva nombre, textos, apuntes y enlaces. Las partes ajenas a esta secuencia siguen en su orden relativo actual.",
     "keep": "Conservar parte existente",

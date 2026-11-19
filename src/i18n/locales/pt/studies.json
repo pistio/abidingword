@@ -487,7 +487,7 @@
           "application": {
             "title": "Aplicação pessoal",
             "guidance": "O que significa para você a verdade encontrada? Mantenha-a separada da observação e da interpretação acima.",
-            "goal": "Responder ao texto permanecendo ligado ao que ele diz. É um passo final à parte, não mais uma letra de POZETEK.",
+            "goal": "Responder ao texto permanecendo ligado ao que ele diz. A aplicação pessoal é uma etapa final separada, após a observação e a interpretação.",
             "example": "O amor de Deus pelo seu povo se baseia na sua natureza, não na fidelidade de Israel. Embora Israel se afaste, Deus mostra compaixão em meio ao juízo. Isso desafia a reconhecer as próprias seguranças substitutas e a confiar de novo em Deus. O amor recebido deve moldar também o trato com quem não corresponde ao amor e ao cuidado (cf. 1 Jo 4.8,19).",
             "fields": {
               "truth": {
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Aplicação pessoal",
-            "guidance": "O que significa para você a verdade encontrada? Mantenha-a separada da observação e da interpretação acima. Responder ao texto permanecendo ligado ao que ele diz. É um passo final à parte, não mais uma letra de POZETEK. Que verdade do texto permanece válida para todo leitor? Onde esta verdade desafia, consola ou corrige o seu pensar e viver? O que você fará: crer, arrepender-se, confiar, obedecer, orar, amar? Seja específico. O que distingue a situação de então da de hoje? O que não deve ser transposto diretamente?",
+            "guidance": "O que significa para você a verdade encontrada? Mantenha-a separada da observação e da interpretação acima. Responder ao texto permanecendo ligado ao que ele diz. A aplicação pessoal é uma etapa final separada, após a observação e a interpretação. Que verdade do texto permanece válida para todo leitor? Onde esta verdade desafia, consola ou corrige o seu pensar e viver? O que você fará: crer, arrepender-se, confiar, obedecer, orar, amar? Seja específico. O que distingue a situação de então da de hoje? O que não deve ser transposto diretamente?",
             "fields": {
               "answer": {
                 "label": "Sua resposta",
@@ -2952,8 +2952,8 @@
     "empty": "Ainda não há nada para exportar com esta opção."
   },
   "repair": {
-    "review": "Revisar partes do POZETEK",
-    "undo": "Desfazer reparo do POZETEK",
+    "review": "Revisar as partes do estudo",
+    "undo": "Desfazer o reparo do estudo",
     "apply": "Adicionar partes ausentes e ordenar",
     "explain": "As sete partes originais aparecem primeiro. As partes ausentes são adicionadas vazias. Todas as partes existentes, incluindo Tema, Compreensão, Consequências e partes duplicadas, mantêm seus nomes, textos, anotações e vínculos. As partes fora dessa sequência mantêm sua ordem relativa atual.",
     "keep": "Manter parte existente",

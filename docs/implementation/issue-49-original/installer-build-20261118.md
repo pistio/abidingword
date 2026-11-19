@@ -1,6 +1,6 @@
 # Windows Original-view installer — approved build completed
 
-**The single approved Windows x64 NSIS build succeeded on 18 November 2026, on attempt 1.** The downloaded installer and its application/resources have been independently verified. Installation and native acceptance of this release remain pending.
+**The single approved Windows x64 NSIS build succeeded on 18 November 2026, on attempt 1.** The downloaded installer and its application/resources have been independently verified. On 19 November the owner reported that the bottom-border problem no longer recurs; [the owner acceptance](owner-acceptance-20261119.md) closes that reported symptom. The build-time review below retains its original evidence and scope.
 
 ## Download and exact identities
 
@@ -55,7 +55,7 @@ This is the NSIS marker documented in the locked Tauri source and explicitly rec
 
 ## Limits and recorded warnings
 
-No Windows installer or application was launched during this review. Native Windows 11 installed-release acceptance is still pending. The accepted native comparison of diagnostic source `32e8a525` remains evidence for the captured EPUB/100% scenario, not a new installed-release run. Issue #49 stays open and PR #50 stays draft.
+No Windows installer or application was launched during the 18 November build review. At that time installed-release acceptance was pending. The owner subsequently accepted the reported symptom on 19 November, as linked above. The accepted native comparison of diagnostic source `32e8a525` remains evidence for the captured EPUB/100% scenario, not a new installed-release measurement. Issue #49 is closed on the owner's report; PR #50 remains draft.
 
 - `npm ci` reported 14 existing dependency vulnerabilities: 11 moderate and 3 high. Dependencies were not changed; advisory applicability was not assessed in this focused build/provenance review.
 - Vite emitted the existing chunk-size warning. Pinned Actions emitted Node deprecation warnings. The synthetic NSIS probe reported an unused WebView label. All required steps completed successfully.

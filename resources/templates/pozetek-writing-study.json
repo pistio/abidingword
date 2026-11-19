@@ -130,7 +130,7 @@
     {
       "key": "application",
       "title": "Personal application",
-      "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
+      "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. Personal application is a separate closing step after observation and interpretation. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
       "phase": "application",
       "fields": [
         {
@@ -139,7 +139,10 @@
         }
       ],
       "fieldsVersion": 1,
-      "optional": true
+      "optional": true,
+      "formerGuidance": [
+        "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?"
+      ]
     }
   ],
   "formerSections": [

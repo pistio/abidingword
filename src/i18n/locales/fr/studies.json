@@ -487,7 +487,7 @@
           "application": {
             "title": "Application personnelle",
             "guidance": "Que signifie pour vous la vérité découverte ? Gardez-la distincte de l’observation et de l’interprétation ci-dessus.",
-            "goal": "Répondre au texte en restant lié à ce qu’il dit. C’est une étape de clôture à part, pas une lettre de plus de POZETEK.",
+            "goal": "Répondre au texte en restant lié à ce qu’il dit. L’application personnelle est une étape finale distincte, après l’observation et l’interprétation.",
             "example": "L’amour de Dieu pour son peuple repose sur sa nature, non sur la fidélité d’Israël. Même quand Israël se détourne, Dieu manifeste sa compassion au cœur du jugement. Cela invite à reconnaître ses propres sécurités de substitution et à se confier de nouveau en Dieu. L’amour reçu doit aussi marquer la manière de traiter ceux qui ne rendent ni amour ni attention (cf. 1 Jn 4,8.19).",
             "fields": {
               "truth": {
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Application personnelle",
-            "guidance": "Que signifie pour vous la vérité découverte ? Gardez-la distincte de l’observation et de l’interprétation ci-dessus. Répondre au texte en restant lié à ce qu’il dit. C’est une étape de clôture à part, pas une lettre de plus de POZETEK. Quelle vérité du texte reste valable pour tous les lecteurs ? Où cette vérité interpelle-t-elle, console-t-elle ou corrige-t-elle votre pensée et votre vie ? Que ferez-vous : croire, vous repentir, vous confier, obéir, prier, aimer ? Soyez précis. Qu’est-ce qui distingue la situation d’alors de celle d’aujourd’hui ? Que ne faut-il pas transposer directement ?",
+            "guidance": "Que signifie pour vous la vérité découverte ? Gardez-la distincte de l’observation et de l’interprétation ci-dessus. Répondre au texte en restant lié à ce qu’il dit. L’application personnelle est une étape finale distincte, après l’observation et l’interprétation. Quelle vérité du texte reste valable pour tous les lecteurs ? Où cette vérité interpelle-t-elle, console-t-elle ou corrige-t-elle votre pensée et votre vie ? Que ferez-vous : croire, vous repentir, vous confier, obéir, prier, aimer ? Soyez précis. Qu’est-ce qui distingue la situation d’alors de celle d’aujourd’hui ? Que ne faut-il pas transposer directement ?",
             "fields": {
               "answer": {
                 "label": "Votre réponse",
@@ -2952,8 +2952,8 @@
     "empty": "Rien à exporter pour ce choix pour l’instant."
   },
   "repair": {
-    "review": "Vérifier les parties POZETEK",
-    "undo": "Annuler la réparation POZETEK",
+    "review": "Vérifier les parties de l’étude",
+    "undo": "Annuler la réparation de l’étude",
     "apply": "Ajouter les parties manquantes et ordonner",
     "explain": "Les sept parties d’origine viennent en premier. Les parties manquantes sont ajoutées vides. Chaque partie existante, y compris Thème, Compréhension, Conséquences et les doublons, conserve son nom, ses textes, notes et liens. Les parties hors de cette séquence suivent dans leur ordre relatif actuel.",
     "keep": "Conserver la partie",
