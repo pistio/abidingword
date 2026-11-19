@@ -12,7 +12,7 @@ import { useApi } from "@/lib/ApiContext";
 import { formatDate, formatNumber } from "@/i18n/format";
 import { BatchImport } from "@/features/library/BatchImport";
 import { useLibraryNav } from "@/features/library/LibraryNav";
-import { SourceMetadataFields, sourceMetadataInput } from "@/features/library/SourceMetadataEditor";
+import { SourceMetadataFields, sourceMetadataInput, type SourceMetadataDraft } from "@/features/library/SourceMetadataEditor";
 import { formatLabel, sourceTypeLabel } from "@/features/library/labels";
 import {
   SOURCE_TYPES,
@@ -21,7 +21,6 @@ import {
   type ManagedSource,
   type ManagePage,
   type ManageSort,
-  type Source,
   type SourceCollection,
   type SourceFormat,
   type SourceType,
@@ -661,7 +660,7 @@ function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: 
   const id = useId();
   const loaded = useLoad(useCallback(() => api.libraryGetSource(sourceId), [api, sourceId]));
   // The loaded details until something is changed; nothing is saved until Save.
-  const [edited, setDraft] = useState<Source | null>(null);
+  const [edited, setDraft] = useState<SourceMetadataDraft | null>(null);
   const draft = edited ?? loaded.data;
   const [member, setMember] = useState<ReadonlySet<string>>(new Set(summary.collections));
   const [newTag, setNewTag] = useState("");
@@ -675,7 +674,10 @@ function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: 
     setBusy(true);
     setError(null);
     try {
-      await api.libraryUpdateSource(sourceMetadataInput(draft));
+      const updated = await api.libraryUpdateSource(sourceMetadataInput(draft));
+      // A later bibliography-only save must not replay this coverage override.
+      // Keep any new draft the person started while this save was in flight.
+      setDraft((current) => current === null || current === draft ? updated : current);
       for (const c of collections) {
         const was = summary.collections.includes(c.id);
         const now = member.has(c.id);

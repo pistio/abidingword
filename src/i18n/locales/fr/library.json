@@ -758,5 +758,24 @@
     "opened": "Dernier passage ouvert ici : {{passage}}",
     "mentionsTitle": "Mentions de {{passage}} dans cette source",
     "mentionsHelp": "Cette source mentionne le passage, mais ne contient aucune section correspondante. Choisissez une mention à ouvrir."
+  },
+  "coverage": {
+    "title": "Étendue biblique",
+    "help": "Permet de proposer la source entière pour un livre ou un passage biblique. Son ouverture conserve votre position de lecture.",
+    "mode": "Définition de l’étendue",
+    "automatic": "Détecter automatiquement",
+    "manual": "Définir l’étendue",
+    "none": "Aucune étendue pour la source entière",
+    "passages": "Livres ou passages",
+    "passagesHelp": "Saisissez une référence par ligne, jusqu’à {{max}}. Par exemple : Romains, Romains 8 ou Jean 15:1–11.",
+    "detected": "Étendue actuelle : {{passages}}",
+    "automaticHelp": "Utilise les informations de la source pour identifier le livre ou le passage qu’elle traite.",
+    "covers": "Traite de {{passage}}",
+    "openSource": "Ouvrir la source",
+    "mentions_one": "{{count}} mention dans cette source",
+    "mentions_other": "{{count}} mentions dans cette source",
+    "noPrecisePlace": "Cette source traite de {{passages}}, mais aucun emplacement précis ne correspond à ce passage. Votre position de lecture est conservée.",
+    "mentionsHelp": "Cette source traite de {{passages}}. Choisissez une mention ci-dessous pour l’ouvrir, ou annulez pour poursuivre votre lecture au même endroit.",
+    "mentions_many": "{{count}} mentions dans cette source"
   }
 }

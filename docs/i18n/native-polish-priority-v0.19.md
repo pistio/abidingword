@@ -85,25 +85,25 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | presentación (18), Presentación (7), (none of these) (4) |
 | Portuguese | apresentação (18), Apresentação (7), (none of these) (4) |
 
-**passage** — 261 strings use it in English.
+**passage** — 270 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Bibelstelle (106), Stelle (25), Bibeltext (16), Abschnitt (39), (none of these) (75) |
-| Korean | 본문 (169), 구절 (33), (none of these) (59) |
-| French | passage (208), Passage (32), (none of these) (21) |
-| Spanish | pasaje (179), Pasaje (33), (none of these) (49) |
-| Portuguese | passagem (111), Passagem (20), (none of these) (130) |
+| German | Bibelstelle (106), Stelle (26), Bibeltext (16), Abschnitt (43), (none of these) (79) |
+| Korean | 본문 (177), 구절 (33), (none of these) (60) |
+| French | passage (217), Passage (32), (none of these) (21) |
+| Spanish | pasaje (185), Pasaje (33), (none of these) (52) |
+| Portuguese | passagem (116), Passagem (20), (none of these) (134) |
 
-**source** — 143 strings use it in English.
+**source** — 151 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Quelle (139), (none of these) (4) |
-| Korean | 자료 (125), 출처 (16), (none of these) (2) |
-| French | source (116), Source (22), (none of these) (5) |
-| Spanish | fuente (121), Fuente (18), (none of these) (4) |
-| Portuguese | fonte (122), Fonte (17), (none of these) (4) |
+| German | Quelle (147), (none of these) (4) |
+| Korean | 자료 (133), 출처 (16), (none of these) (2) |
+| French | source (124), Source (22), (none of these) (5) |
+| Spanish | fuente (129), Fuente (18), (none of these) (4) |
+| Portuguese | fonte (130), Fonte (17), (none of these) (4) |
 
 ## 2. Questions left
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-2133 strings changed in at least one language since v0.18.10. Spot-check these.
+2152 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -227,6 +227,10 @@ _No open linguistic questions._
 |  | `errors.library.badYear` | The year must be a number between 0 and 3000. | Das Jahr muss eine Zahl zwischen 0 und 3000 sein. | 연도는 0에서 3000 사이의 숫자여야 합니다. | L’année doit être un nombre compris entre 0 et 3000. | El año debe ser un número entre 0 y 3000. | O ano deve ser um número entre 0 e 3000. |
 |  | `errors.library.collectionCycle` | A collection cannot be moved into itself or one of its subcollections. | Eine Sammlung kann nicht in sich selbst oder eine ihrer Untersammlungen verschoben werden. | 자료 모음을 자기 자신이나 그 안의 하위 모음으로 옮길 수 없습니다. | Une collection ne peut pas être déplacée dans elle-même ni dans l’une de ses sous-collections. | Una colección no se puede mover a sí misma ni a una de sus subcolecciones. | Uma coleção não pode ser movida para dentro dela mesma nem de uma de suas subcoleções. |
 | {{name}} | `errors.library.collectionExists` | A collection called “{{name}}” already exists here. | Hier gibt es bereits eine Sammlung namens „{{name}}“. | 여기에 “{{name}}” 자료 모음이 이미 있습니다. | Une collection nommée « {{name}} » existe déjà ici. | Ya existe aquí una colección llamada «{{name}}». | Já existe aqui uma coleção chamada “{{name}}”. |
+|  | `errors.library.coverage.empty` | Enter at least one Bible book or passage to set coverage. | Gib mindestens ein Bibelbuch oder einen Abschnitt als Themenbereich ein. | 본문 범위를 지정하려면 성경 책이나 본문을 하나 이상 입력하세요. | Saisissez au moins un livre ou passage biblique pour définir l’étendue. | Escribe al menos un libro o pasaje bíblico para definir el contenido. | Insira ao menos um livro ou passagem bíblica para definir a abrangência. |
+| {{passage}} | `errors.library.coverage.invalidPassage` | “{{passage}}” could not be identified as a Bible book or passage. Check the reference before saving. | „{{passage}}“ konnte keinem Bibelbuch oder Bibelabschnitt zugeordnet werden. Prüfe die Angabe vor dem Speichern. | “{{passage}}”을(를) 성경 책이나 본문으로 확인할 수 없습니다. 저장하기 전에 성경 구절 표기를 확인하세요. | « {{passage}} » n’a pas pu être identifié comme livre ou passage biblique. Vérifiez la référence avant d’enregistrer. | No se pudo identificar «{{passage}}» como libro o pasaje bíblico. Revisa la referencia antes de guardar. | Não foi possível identificar “{{passage}}” como livro ou passagem bíblica. Confira a referência antes de salvar. |
+|  | `errors.library.coverage.metadataUnreadable` | The saved source details could not be read safely. No changes were saved. | Die gespeicherten Quellenangaben konnten nicht sicher gelesen werden. Es wurden keine Änderungen gespeichert. | 저장된 자료의 세부 정보를 안전하게 읽을 수 없습니다. 변경 사항은 저장되지 않았습니다. | Les informations enregistrées sur la source n’ont pas pu être lues de manière sûre. Aucune modification n’a été enregistrée. | No se pudieron leer con seguridad los datos guardados de la fuente. No se guardó ningún cambio. | Não foi possível ler os detalhes salvos da fonte com segurança. Nenhuma alteração foi salva. |
+| {{max}} | `errors.library.coverage.tooMany` | Enter up to {{max}} coverage references. | Gib höchstens {{max}} Bibelstellen als Themenbereich ein. | 본문 범위는 최대 {{max}}개까지 입력할 수 있습니다. | Saisissez au maximum {{max}} références pour l’étendue. | Escribe un máximo de {{max}} referencias para el contenido. | Insira no máximo {{max}} referências de abrangência. |
 |  | `errors.library.linkUnsupported` | This type of link cannot be opened. | Diese Art von Link kann nicht geöffnet werden. | 이 유형의 링크는 열 수 없습니다. | Ce type de lien ne peut pas être ouvert. | No se puede abrir este tipo de enlace. | Não é possível abrir esse tipo de link. |
 |  | `errors.library.notInTrash` | Only items in Trash can be deleted permanently. Move them to Trash first. | Nur Einträge im Papierkorb können endgültig gelöscht werden. Verschiebe sie zuerst dorthin. | 휴지통에 있는 항목만 영구 삭제할 수 있습니다. 먼저 휴지통으로 옮겨 주세요. | Seuls les éléments de la corbeille peuvent être supprimés définitivement. Déplacez-les d’abord dans la corbeille. | Solo los elementos de la papelera se pueden eliminar permanentemente. Muévelos primero a la papelera. | Só é possível excluir permanentemente itens que estão na lixeira. Mova-os primeiro para a lixeira. |
 |  | `errors.library.nothingChosen` | Choose at least one item. | Wähle mindestens einen Eintrag. | 항목을 하나 이상 선택해 주세요. | Sélectionnez au moins un élément. | Selecciona al menos un elemento. | Selecione pelo menos um item. |
@@ -354,6 +358,21 @@ _No open linguistic questions._
 |  | `library.contents.none` | No contents available | Kein Inhaltsverzeichnis vorhanden | 목차가 없습니다 | Aucun sommaire disponible | No hay ningún índice disponible | Nenhum sumário disponível |
 |  | `library.contents.show` | Show contents | Inhaltsverzeichnis anzeigen | 목차 보기 | Afficher le sommaire | Mostrar el índice | Mostrar sumário |
 |  | `library.contents.title` | Contents | Inhalt | 목차 | Sommaire | Índice | Sumário |
+|  | `library.coverage.automatic` | Detect automatically | Automatisch erkennen | 자동으로 감지 | Détecter automatiquement | Detectar automáticamente | Detectar automaticamente |
+|  | `library.coverage.automaticHelp` | Uses the source’s details to identify the book or passage it covers. | Ermittelt anhand der Angaben zur Quelle, welches Bibelbuch oder welchen Abschnitt sie behandelt. | 자료의 세부 정보에서 자료가 다루는 성경 책이나 본문을 찾습니다. | Utilise les informations de la source pour identifier le livre ou le passage qu’elle traite. | Utiliza los datos de la fuente para identificar el libro o pasaje que trata. | Usa os detalhes da fonte para identificar o livro ou a passagem de que ela trata. |
+| {{passage}} | `library.coverage.covers` | Covers {{passage}} | Behandelt {{passage}} | 다루는 본문: {{passage}} | Traite de {{passage}} | Trata {{passage}} | Trata de {{passage}} |
+| {{passages}} | `library.coverage.detected` | Current coverage: {{passages}} | Aktueller Themenbereich: {{passages}} | 현재 본문 범위: {{passages}} | Étendue actuelle : {{passages}} | Contenido actual: {{passages}} | Abrangência atual: {{passages}} |
+|  | `library.coverage.help` | Use this to suggest the whole source for a Bible book or passage. Opening it keeps your reading place. | Damit wird die gesamte Quelle zu einem Bibelbuch oder Bibelabschnitt vorgeschlagen. Beim Öffnen bleibt deine Lesestelle erhalten. | 자료 전체가 다루는 성경 책이나 본문에 따라 이 자료를 추천합니다. 자료를 열어도 읽던 위치는 유지됩니다. | Permet de proposer la source entière pour un livre ou un passage biblique. Son ouverture conserve votre position de lecture. | Permite sugerir la fuente completa para un libro o pasaje bíblico. Al abrirla se conserva el lugar de lectura. | Permite sugerir a fonte inteira para um livro ou passagem bíblica. Ao abri-la, sua posição de leitura é mantida. |
+|  | `library.coverage.manual` | Set coverage | Themenbereich angeben | 직접 지정 | Définir l’étendue | Definir el contenido | Definir abrangência |
+| plural, {{count}} | `library.coverage.mentions` | *one:* {{count}} mention in this source<br>*other:* {{count}} mentions in this source | *one:* {{count}} Erwähnung in dieser Quelle<br>*other:* {{count}} Erwähnungen in dieser Quelle | *other:* 이 자료의 본문 언급 {{count}}곳 | *one:* {{count}} mention dans cette source<br>*many:* {{count}} mentions dans cette source<br>*other:* {{count}} mentions dans cette source | *one:* {{count}} mención en esta fuente<br>*many:* {{count}} menciones en esta fuente<br>*other:* {{count}} menciones en esta fuente | *one:* {{count}} menção nesta fonte<br>*many:* {{count}} menções nesta fonte<br>*other:* {{count}} menções nesta fonte |
+| {{passages}} | `library.coverage.mentionsHelp` | This source covers {{passages}}. Choose a mention below to open that place, or cancel to keep reading where you are. | Diese Quelle behandelt {{passages}}. Wähle unten eine Erwähnung, um sie zu öffnen, oder brich ab, um an deiner bisherigen Stelle weiterzulesen. | 이 자료는 {{passages}}을(를) 다룹니다. 아래에서 언급된 위치를 선택하여 열거나, 취소하여 읽던 곳에서 계속 읽으세요. | Cette source traite de {{passages}}. Choisissez une mention ci-dessous pour l’ouvrir, ou annulez pour poursuivre votre lecture au même endroit. | Esta fuente trata {{passages}}. Elige una mención para abrir ese lugar o cancela para seguir leyendo donde estabas. | Esta fonte trata de {{passages}}. Escolha uma menção abaixo para abrir esse local ou cancele para continuar lendo de onde parou. |
+|  | `library.coverage.mode` | How coverage is set | Themenbereich festlegen | 본문 범위 설정 방식 | Définition de l’étendue | Cómo se define el contenido | Como definir a abrangência |
+| {{passages}} | `library.coverage.noPrecisePlace` | This source covers {{passages}}, but has no precise location for this passage. Your reading place is unchanged. | Diese Quelle behandelt {{passages}}, hat aber keine genaue Zielstelle für diesen Abschnitt. Deine Lesestelle bleibt erhalten. | 이 자료는 {{passages}}을(를) 다루지만 현재 본문에 해당하는 정확한 위치는 없습니다. 읽던 위치가 유지됩니다. | Cette source traite de {{passages}}, mais aucun emplacement précis ne correspond à ce passage. Votre position de lecture est conservée. | Esta fuente trata {{passages}}, pero no tiene una ubicación precisa para este pasaje. Se conserva tu lugar de lectura. | Esta fonte trata de {{passages}}, mas não tem um local preciso para esta passagem. Sua posição de leitura é mantida. |
+|  | `library.coverage.none` | No whole-source coverage | Kein Themenbereich für die gesamte Quelle | 자료 전체의 본문 범위 없음 | Aucune étendue pour la source entière | Sin contenido bíblico para la fuente completa | Sem abrangência para a fonte inteira |
+|  | `library.coverage.openSource` | Open source | Quelle öffnen | 자료 열기 | Ouvrir la source | Abrir fuente | Abrir fonte |
+|  | `library.coverage.passages` | Books or passages | Bibelbücher oder Abschnitte | 성경 책 또는 본문 | Livres ou passages | Libros o pasajes | Livros ou passagens |
+| {{max}} | `library.coverage.passagesHelp` | Enter one reference per line, up to {{max}}. For example: Romans, Romans 8, or John 15:1–11. | Eine Bibelstelle pro Zeile, höchstens {{max}}. Zum Beispiel: Römer, Römer 8 oder Johannes 15,1–11. | 한 줄에 하나씩, 최대 {{max}}개까지 입력하세요. 예: 로마서, 로마서 8장, 요한복음 15:1–11. | Saisissez une référence par ligne, jusqu’à {{max}}. Par exemple : Romains, Romains 8 ou Jean 15:1–11. | Escribe una referencia por línea, hasta {{max}}. Por ejemplo: Romanos, Romanos 8 o Juan 15:1–11. | Insira uma referência por linha, até {{max}}. Por exemplo: Romanos, Romanos 8 ou João 15:1–11. |
+|  | `library.coverage.title` | Biblical coverage | Biblischer Themenbereich | 다루는 성경 본문 | Étendue biblique | Contenido bíblico que abarca | Abrangência bíblica |
 | plural, {{formatted}} | `library.delete.done` | *one:* {{formatted}} source was deleted permanently.<br>*other:* {{formatted}} sources were deleted permanently. | *one:* {{formatted}} Quelle wurde endgültig gelöscht.<br>*other:* {{formatted}} Quellen wurden endgültig gelöscht. | *other:* 자료 {{formatted}}개를 영구 삭제했습니다. | *one:* {{formatted}} source a été supprimée définitivement.<br>*many:* {{formatted}} de sources ont été supprimées définitivement.<br>*other:* {{formatted}} sources ont été supprimées définitivement. | *one:* Se eliminó definitivamente {{formatted}} fuente.<br>*many:* Se eliminaron definitivamente {{formatted}} fuentes.<br>*other:* Se eliminaron definitivamente {{formatted}} fuentes. | *one:* {{formatted}} fonte foi excluída definitivamente.<br>*many:* {{formatted}} fontes foram excluídas definitivamente.<br>*other:* {{formatted}} fontes foram excluídas definitivamente. |
 |  | `library.delete.kept` | Citations in your studies keep a record of what they cited. Your original file is not touched. | Zitate in deinen Studien behalten einen Vermerk, was sie zitiert haben. Deine Originaldatei bleibt unberührt. | 성경공부의 인용에는 무엇을 인용했는지 기록이 남습니다. 원본 파일은 건드리지 않습니다. | Les citations de vos études gardent une trace de ce qu’elles citaient. Votre fichier d’origine n’est pas touché. | Las citas de tus estudios conservan un registro de lo que citaban. Tu archivo original no se toca. | As citações dos seus estudos guardam um registro do que citavam. Seu arquivo original não é alterado. |
 |  | `library.delete.keptMany` | Citations in your studies keep a record of what they cited. Your original files are not touched. | Zitate in deinen Studien behalten einen Vermerk, was sie zitiert haben. Deine Originaldateien bleiben unberührt. | 성경공부의 인용에는 무엇을 인용했는지 기록이 남습니다. 원본 파일은 건드리지 않습니다. | Les citations de vos études gardent une trace de ce qu’elles citaient. Vos fichiers d’origine ne sont pas touchés. | Las citas de tus estudios conservan un registro de lo que citaban. Tus archivos originales no se tocan. | As citações dos seus estudos guardam um registro do que citavam. Seus arquivos originais não são alterados. |

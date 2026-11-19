@@ -171,7 +171,13 @@
     "tooMany": "Puedes modificar un máximo de {{count}} elementos a la vez.",
     "badName": "Usa un nombre de entre 1 y {{max}} caracteres.",
     "collectionExists": "Ya existe aquí una colección llamada «{{name}}».",
-    "tagExists": "Ya existe una etiqueta llamada «{{name}}»."
+    "tagExists": "Ya existe una etiqueta llamada «{{name}}».",
+    "coverage": {
+      "invalidPassage": "No se pudo identificar «{{passage}}» como libro o pasaje bíblico. Revisa la referencia antes de guardar.",
+      "tooMany": "Escribe un máximo de {{max}} referencias para el contenido.",
+      "empty": "Escribe al menos un libro o pasaje bíblico para definir el contenido.",
+      "metadataUnreadable": "No se pudieron leer con seguridad los datos guardados de la fuente. No se guardó ningún cambio."
+    }
   },
   "templates": {
     "noSections": "Una plantilla necesita al menos una parte con la que empezar.",

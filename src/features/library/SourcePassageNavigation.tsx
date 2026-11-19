@@ -8,14 +8,15 @@ import { useScripture } from "@/features/scripture/ScriptureContext";
 import { bookLabel, referenceLabel } from "@/i18n/scripture";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import type { PassageLocation, SegmentWindow } from "@/types/library";
+import type { PassageLocation, SegmentWindow, SourceCoverage } from "@/types/library";
 import type { ScriptureRef } from "@/types/scripture";
-import { locatorLabel, passageReason } from "./labels";
+import { coverageLabel, locatorLabel, matchingCoverage, passageReason } from "./labels";
 
 interface Outcome {
   key: string;
   busy: boolean;
   choices?: PassageLocation[];
+  coverage?: SourceCoverage[];
   empty?: boolean;
   error?: string;
 }
@@ -30,10 +31,12 @@ interface NavigationRequest {
  * source to a grounded section, or offer literal mentions for the reader to choose.
  * Both matching and target loading belong to that request: stale responses never move the reader.
  */
-export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents, beginNavigation, onNavigate }: {
+export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents, metadataRevision, beginNavigation, onNavigate }: {
   sourceId: string;
   enabled: boolean;
   prepareEpubContents: boolean;
+  /** A saved details edit invalidates pending coverage messages without moving the reader. */
+  metadataRevision: number;
   /** Shared with the reader's Contents, history, page and view navigation. */
   beginNavigation: (onCancel?: () => void) => NavigationRequest;
   onNavigate: (location: PassageLocation, window: SegmentWindow) => void;
@@ -42,7 +45,7 @@ export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents
   const api = useApi();
   const { currentPassage, current, books, translation, documentBible, documentPassage } = useScripture();
   const requested = documentBible ? documentPassage?.reference ?? null : translation ? currentPassage ?? current : null;
-  const key = JSON.stringify([sourceId, requested?.canonical ?? null]);
+  const key = JSON.stringify([sourceId, requested?.canonical ?? null, metadataRevision]);
   const label = (reference: ScriptureRef) => referenceLabel(reference, books.find((book) => book.code === reference.book)?.chapterCount);
   const passage = requested ? label(requested) : null;
   const matchLabel = (location: PassageLocation) => location.origin === "section" && location.structureScope === "book"
@@ -68,8 +71,8 @@ export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents
     });
     return { request, ticket: ++operation.current };
   };
-  const openLocation = async (location: PassageLocation, ticket: number, request: NavigationRequest, choices?: PassageLocation[]) => {
-    setOutcome({ key, busy: true, choices });
+  const openLocation = async (location: PassageLocation, ticket: number, request: NavigationRequest, choices?: PassageLocation[], coverage?: SourceCoverage[]) => {
+    setOutcome({ key, busy: true, choices, coverage });
     try {
       const loaded = await api.libraryOpenSegment(location.segmentId);
       if (ticket !== operation.current || !request.isCurrent()) return;
@@ -83,7 +86,7 @@ export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents
       setOpened({ sourceId, location });
       setOutcome({ key, busy: false });
     } catch (error) {
-      if (ticket === operation.current) setOutcome({ key, busy: false, choices, error: toApiError(error).message });
+      if (ticket === operation.current) setOutcome({ key, busy: false, choices, coverage, error: toApiError(error).message });
     } finally {
       request.complete();
     }
@@ -107,7 +110,13 @@ export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents
       if (destination) await openLocation(destination, ticket, request);
       else {
         const choices = locations.filter((location) => location.origin === "explicit");
-        setOutcome({ key, busy: false, ...(choices.length > 0 ? { choices } : { empty: true }) });
+        // Rebuild may have changed inferred relevance since this reader opened.
+        // Read it for this outcome only: a delayed response must never replace
+        // newer bibliographic edits in the reader's source state.
+        const freshSource = await api.libraryGetSource(sourceId);
+        if (ticket !== operation.current || !request.isCurrent()) return;
+        const coverage = freshSource.id === sourceId ? matchingCoverage(freshSource.coverage ?? [], requested) : [];
+        setOutcome({ key, busy: false, coverage, ...(choices.length > 0 ? { choices } : { empty: true }) });
       }
     } catch (error) {
       if (ticket === operation.current) setOutcome({ key, busy: false, error: toApiError(error).message });
@@ -120,6 +129,7 @@ export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents
     setOutcome({ key, busy: false });
   };
   const choices = shown?.choices;
+  const coveredPassages = (shown?.coverage ?? []).map(coverageLabel).join(t("common.listSeparator"));
   return <>
     <div className="shrink-0 border-b border-border-subtle px-3 py-1 text-[0.875rem]" aria-busy={shown?.busy ?? false}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -129,16 +139,16 @@ export function SourcePassageNavigation({ sourceId, enabled, prepareEpubContents
         <span className="text-text-muted">{passage ? t("library.sync.scripture", { passage }) : t("library.sync.noPassage")}</span>
       </div>
       <p role="status" className="m-0 pb-1 text-text-muted">
-        {shown?.busy ? t("library.sync.loading") : shown?.empty ? t("library.sync.noMatch", { passage }) : opened?.sourceId === sourceId ? t("library.sync.opened", { passage: matchLabel(opened.location) }) : t("library.sync.help")}
+        {shown?.busy ? t("library.sync.loading") : shown?.empty ? coveredPassages ? t("library.coverage.noPrecisePlace", { passages: coveredPassages }) : t("library.sync.noMatch", { passage }) : opened?.sourceId === sourceId ? t("library.sync.opened", { passage: matchLabel(opened.location) }) : t("library.sync.help")}
       </p>
       {shown?.error && !choices && <Notice tone="error">{shown.error}</Notice>}
     </div>
     {choices && <Dialog wide title={t("library.sync.mentionsTitle", { passage })} onClose={closeChoices} actions={<Button onClick={closeChoices}>{t("common.cancel")}</Button>}>
-      <p className="m-0 text-text-muted">{t("library.sync.mentionsHelp")}</p>
+      <p className="m-0 text-text-muted">{coveredPassages ? t("library.coverage.mentionsHelp", { passages: coveredPassages }) : t("library.sync.mentionsHelp")}</p>
       {shown.error && <Notice tone="error">{shown.error}</Notice>}
       <ul aria-label={t("library.sync.mentionsTitle", { passage })} className="m-0 flex list-none flex-col gap-1 p-0">
         {choices.map((location, index) => <li key={`${location.segmentId}:${index}`}>
-          <button type="button" disabled={shown.busy} onClick={() => { const { request, ticket } = startRequest(); void openLocation(location, ticket, request, choices); }} className="flex min-h-11 w-full flex-col items-start gap-1 rounded-aw px-3 py-2 text-left hover:bg-hover disabled:opacity-50">
+          <button type="button" disabled={shown.busy} onClick={() => { const { request, ticket } = startRequest(); void openLocation(location, ticket, request, choices, shown.coverage); }} className="flex min-h-11 w-full flex-col items-start gap-1 rounded-aw px-3 py-2 text-left hover:bg-hover disabled:opacity-50">
             <span className="font-medium">{locatorLabel(t, location.locator)}</span>
             <span className="text-[0.875rem] text-text-muted">{passageReason(t, location.origin, label(location.reference))}</span>
             {location.sectionHeading && <span className="text-[0.875rem] text-text-muted">{location.sectionHeading}</span>}

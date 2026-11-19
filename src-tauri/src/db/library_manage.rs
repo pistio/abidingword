@@ -517,6 +517,9 @@ pub struct UpdateSource {
     pub licence_status: LicenceStatus,
     pub licence: Option<String>,
     pub notes: Option<String>,
+    /// Omitted by older callers and unchanged editor controls: preserve intent.
+    #[serde(default)]
+    pub coverage: Option<crate::library::coverage::CoverageUpdate>,
 }
 
 fn text(value: &Option<String>, max: usize, what: &str) -> AppResult<Option<String>> {
@@ -534,11 +537,29 @@ pub fn update_source(conn: &Connection, input: &UpdateSource) -> AppResult<crate
             )));
         }
     }
+    let coverage_data = if let Some(update) = &input.coverage {
+        let data: Option<String> = conn
+            .query_row(
+                "SELECT data FROM sources WHERE id=?1 AND deleted_at IS NULL",
+                [&input.id],
+                |r| r.get(0),
+            )
+            .optional()?
+            .ok_or_else(|| AppError::not_found("source", &input.id))?;
+        Some(crate::library::coverage::merged_data(
+            data.as_deref(),
+            update,
+            crate::scripture::language::ReferenceLanguage::resolve(input.language.as_deref())
+                .language,
+        )?)
+    } else {
+        None
+    };
     let changed = conn.execute(
         "UPDATE sources SET title = ?2, subtitle = ?3, author = ?4, publisher = ?5, edition = ?6,
              publication_year = ?7, isbn = ?8, doi = ?9, language = ?10, source_type = ?11,
              licence_status = ?12, licence = ?13, notes = ?14, updated_at = ?15,
-             revision = revision + 1
+             revision = revision + 1, data = CASE WHEN ?16 THEN ?17 ELSE data END
          WHERE id = ?1 AND deleted_at IS NULL",
         params![
             input.id,
@@ -556,6 +577,8 @@ pub fn update_source(conn: &Connection, input: &UpdateSource) -> AppResult<crate
             text(&input.licence, DESCRIPTION_MAX_CHARS, "licence")?,
             text(&input.notes, DESCRIPTION_MAX_CHARS, "notes")?,
             now(),
+            input.coverage.is_some(),
+            coverage_data,
         ],
     )?;
     if changed == 0 {

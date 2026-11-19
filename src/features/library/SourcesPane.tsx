@@ -146,7 +146,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
                 {t("library.pane.sourcesFor", { passage: label })}
               </h3>
               <p className="type-meta m-0">{t("library.pane.matchEvidence")}</p>
-              {direct.length > 0 && direct.every(group => group.locations.every(place => place.origin === "explicit")) && <p role="status" className="type-meta m-0">{t("library.pane.mentionsOnly")}</p>}
+              {direct.length > 0 && direct.every(group => !(group.coverage?.length) && group.locations.length > 0 && group.locations.every(place => place.origin === "explicit")) && <p role="status" className="type-meta m-0">{t("library.pane.mentionsOnly")}</p>}
               {sources.error && <p className="m-0 text-[0.9375rem] text-danger">{sources.error.message}</p>}
               {sources.data && sources.data.length === 0 && (
                 <p className="m-0 text-[0.9375rem] text-text-muted">{t("library.pane.noSources")}</p>

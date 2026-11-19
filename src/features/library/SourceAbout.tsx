@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { formatNumber } from "@/i18n/format";
 import type { Source, SourceFormat } from "@/types/library";
-import { formatLabel, licenceLabel, sourceTypeLabel } from "./labels";
+import { coverageLabel, formatLabel, licenceLabel, sourceTypeLabel } from "./labels";
 
 /**
  * Bibliographic and provenance details for one source. Shown inside a
@@ -26,6 +26,7 @@ export function SourceAbout({ source, citation }: { source: Source; citation: st
       <Row term={t("library.manage.field.doi")}>{source.doi}</Row>
       <Row term={t("library.metadata.language")}>{source.language}</Row>
       <Row term={t("library.manage.field.category")}>{sourceTypeLabel(t, source.sourceType)}</Row>
+      <Row term={t("library.coverage.title")}>{(source.coverage ?? []).map(coverageLabel).join(sep)}</Row>
       <Row term={t("library.manage.filter.format")}>{format}</Row>
       <Row term={t("library.manage.file.pages")}>{pages}</Row>
       <Row term={t("library.manage.field.collections")}>{source.collectionNames.length > 0 ? source.collectionNames.join(sep) : null}</Row>

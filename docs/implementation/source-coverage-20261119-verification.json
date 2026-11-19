@@ -1,0 +1,348 @@
+{
+  "date": "2026-11-19",
+  "base_commit": "0b6ffa76ac4e3528ea83d54c86d0e6588eb22924",
+  "scope": "Whole-source biblical coverage and independent PDF extraction variants for draft PR #54",
+  "execution_platform": "Codex Cloud Linux; no Windows desktop acceptance",
+  "final_inputs": {
+    "frontend": {
+      "file_count": 629,
+      "sha256": "927d212aa495d7611958351a348eef588c68bd948b4031274ea911a70f06947f",
+      "unchanged_during_final_run": true
+    },
+    "native": {
+      "file_count": 342,
+      "sha256": "b74b4498aeeaa4ce0a7404235c628b79a62ecd059eca241ae7b2f0f7d9d9ba63",
+      "unchanged_during_final_run": true
+    }
+  },
+  "changed_application_and_test_files": [
+    {
+      "path": "src-tauri/src/db/library.rs",
+      "sha256": "4ba1b1b9136ff2006e2d665d0aa20e8819cd4479c02c9dd7318dde26bcf47c24"
+    },
+    {
+      "path": "src-tauri/src/db/library_manage.rs",
+      "sha256": "ccc6f029c5aadb5421a8899c313c906b9959193b4f78e6f928b4c58745a8416b"
+    },
+    {
+      "path": "src-tauri/src/db/mod.rs",
+      "sha256": "5b4760e78998f2b86ca10b65730713faa93e0084b211d59e708da95898888e0b"
+    },
+    {
+      "path": "src-tauri/src/db/source_coverage.rs",
+      "sha256": "bf507350a7b11d3a5fc3759a2284628b27811de7c0ce9841dcacaac24fdddb3c"
+    },
+    {
+      "path": "src-tauri/src/library/coverage.rs",
+      "sha256": "4afd5c69a05e501315a38f1a6069d968dcaa39d2d869571de0d30fc8011c0fd5"
+    },
+    {
+      "path": "src-tauri/src/library/mod.rs",
+      "sha256": "22a48bd5baf6e19fa4ce5797c96be3bdb58ac5bbd8b0ddaad043aaab7fe4eede"
+    },
+    {
+      "path": "src-tauri/tests/library_manage.rs",
+      "sha256": "481f19f11630c5dfb65b344a154c5d0d2b20deeb4a84f6e5dde090e5426c7246"
+    },
+    {
+      "path": "src-tauri/tests/pdf_extraction_variants.rs",
+      "sha256": "7ca5bcdb4b8f8f1b836703d0ebbd70c85b657145ce0fe37ad36248634fb7980c"
+    },
+    {
+      "path": "src-tauri/tests/source_coverage.rs",
+      "sha256": "b4ec973b133d6f362f34c0eb62bfbafc4e46160a573d852b7b113e6f3533a7ae"
+    },
+    {
+      "path": "src-tauri/tests/source_relevance.rs",
+      "sha256": "152e469afaed67ee578ec2d0f889cd12afb540852f69ac2758f187d32140d38a"
+    },
+    {
+      "path": "src/features/library/PassageSourceList.tsx",
+      "sha256": "c3e6228e5435131b209007cf1af4e64557ab191d5dbb2b3f5930d70c2bcef445"
+    },
+    {
+      "path": "src/features/library/SourceAbout.tsx",
+      "sha256": "f4a3207684279a9bdc59d6f9dc93732632affda0bb7e86cf12825b492816d76d"
+    },
+    {
+      "path": "src/features/library/SourceMetadataEditor.tsx",
+      "sha256": "d7143a64a2042146966be62783bacf5f1dd8068d4f57f7fb7480467be5b1848d"
+    },
+    {
+      "path": "src/features/library/SourcePassageNavigation.tsx",
+      "sha256": "15f6aacb38a8cd1f57a5c77afefbe0f4d54bf5e7969ec3ee5dfa952ab8ffbf5c"
+    },
+    {
+      "path": "src/features/library/SourceReader.tsx",
+      "sha256": "2d87994397e404ff0be802722a479f0e1c2f26aa7e7ce5ec000effb8a119f623"
+    },
+    {
+      "path": "src/features/library/SourcesPane.tsx",
+      "sha256": "6d2713b578f43ded55164aa0743ea6bf5036ad73e72ed8bef79e451766816540"
+    },
+    {
+      "path": "src/features/library/labels.ts",
+      "sha256": "aca16929a7d51fa6714eed87333961200bbb20040c1be6889b7241cfc931c8aa"
+    },
+    {
+      "path": "src/features/settings/SourcesSettings.tsx",
+      "sha256": "f3c5b3f28b80db2e170eebbf6a60a4aa5c16d5f4a45b05b907a797449fe72153"
+    },
+    {
+      "path": "src/i18n/locales/de/errors.json",
+      "sha256": "b6291d3d9e54a40f0bc67a45040af1d0171aad4e13e1f88e15b4b31cb3171c7a"
+    },
+    {
+      "path": "src/i18n/locales/de/library.json",
+      "sha256": "955b5b21397f727833b64a3213112397109569eab809a20c9bb6a455b6746705"
+    },
+    {
+      "path": "src/i18n/locales/en/errors.json",
+      "sha256": "d782479b7ef06daae6f7fd3c9b434335f94888c7163d2e16f4e5a5ef06783bd5"
+    },
+    {
+      "path": "src/i18n/locales/en/library.json",
+      "sha256": "17b17a32b89aa0cc3d58ed085a55cd84439ebd82de452cc5e1db853f3ea2df32"
+    },
+    {
+      "path": "src/i18n/locales/es/errors.json",
+      "sha256": "ceb3870430b1543cd854e66ac1506acd519c958f13f3e17119b6ffaf3fea9134"
+    },
+    {
+      "path": "src/i18n/locales/es/library.json",
+      "sha256": "5e209ebf24659fb16facebe991817b118aba5453588e531693b54349cff860fe"
+    },
+    {
+      "path": "src/i18n/locales/fr/errors.json",
+      "sha256": "0fd3b3e210d3687a368aac40ee5c4bbb45b12153cee11a2e4bb5fa94ebe6de98"
+    },
+    {
+      "path": "src/i18n/locales/fr/library.json",
+      "sha256": "564811daaba145c912b2d782287b7fbca0955ca1d73676d2ef456db9a3549e5f"
+    },
+    {
+      "path": "src/i18n/locales/ko/errors.json",
+      "sha256": "79ecaf58d6ca22ffd68e003d5326e00a859435f08671ac23875abd88b2148897"
+    },
+    {
+      "path": "src/i18n/locales/ko/library.json",
+      "sha256": "7473218fb950f467ddcba62c79c460044e28e48e87bee7d10537e43cf13c8435"
+    },
+    {
+      "path": "src/i18n/locales/pt/errors.json",
+      "sha256": "2fcfe2c159ec5bc95dbac75c07d7ce79cdfdf1aa710cb59e4134cc6f65419748"
+    },
+    {
+      "path": "src/i18n/locales/pt/library.json",
+      "sha256": "d036f8ac7a3dd0d2763027c20a8890ebeb4ae315020b4bd7efcd84862ef66476"
+    },
+    {
+      "path": "src/types/library.ts",
+      "sha256": "eb35e5e7fb0f74690f7409fe1fd51e8c05bd467b525c666300b71e07887b510a"
+    },
+    {
+      "path": "tests/ui/source-coverage.test.tsx",
+      "sha256": "e2aba0fc9789e8ffb84e56f3ca92c4cd18e4a29ef951cfe6ac024356f534f33e"
+    },
+    {
+      "path": "tests/ui/source-passage-navigation.test.tsx",
+      "sha256": "5ad2c82fa00efa92a7068420011e803db8751b75f9154a252ce8a515c7007931"
+    }
+  ],
+  "frontend": {
+    "full": {
+      "command": "npm test -- --maxWorkers=1 --reporter=json",
+      "passed": 1362,
+      "failed": 2,
+      "total": 1364,
+      "exit_code": 1,
+      "failures": [
+        {
+          "file": "tests/ui/presentation.test.tsx",
+          "test": "review fixes a clicker on the audience screen moves the Presenter View; Space presses buttons instead of turning pages"
+        },
+        {
+          "file": "tests/ui/teaching.test.tsx",
+          "test": "teaching preparation starts empty, is written by the person, and saves as they type"
+        }
+      ]
+    },
+    "unchanged_focused_followup": {
+      "invocations": 1,
+      "passed": 2,
+      "failed": 0,
+      "filtered_out": 96,
+      "exit_code": 0,
+      "input_hashes_unchanged": true
+    },
+    "assessment": {
+      "presentation": "Matches the failure already recorded on the base candidate.",
+      "teaching": "Newly observed in this full run. The saved failure checks both audience and introduction but does not include actual values; the failed field and timing cause are unproven.",
+      "comparison": "Relevant production, tests, shared controls/hooks, harness and configuration are byte-identical to 59c8f5e and 0b6ffa76. These fixtures import no source and open no source reader or metadata editor.",
+      "limit": "The final complete frontend suite is not wholly green; the focused pass does not replace that result."
+    },
+    "focused_coverage": {
+      "initial_six_file_run_passed": 66,
+      "final_coverage_and_settings_run_passed": 23,
+      "new_cases": 24
+    },
+    "other_gates": [
+      {
+        "name": "typecheck",
+        "command": [
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:11:36.173702+00:00",
+        "seconds": 19.281
+      },
+      {
+        "name": "lint",
+        "command": [
+          "npm",
+          "run",
+          "lint"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:11:55.455400+00:00",
+        "seconds": 16.855
+      },
+      {
+        "name": "i18n",
+        "command": [
+          "npm",
+          "run",
+          "i18n:check"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:12:12.311452+00:00",
+        "seconds": 0.6
+      },
+      {
+        "name": "corpus",
+        "command": [
+          "node",
+          "scripts/i18n-corpus.mjs",
+          "--check"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:12:12.911558+00:00",
+        "seconds": 0.342
+      },
+      {
+        "name": "frontend-build",
+        "command": [
+          "npm",
+          "run",
+          "build"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:12:13.253957+00:00",
+        "seconds": 18.691
+      }
+    ]
+  },
+  "native": {
+    "final_gates": [
+      {
+        "name": "native-fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--check"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:22:05.001843+00:00",
+        "seconds": 1.13
+      },
+      {
+        "name": "native-clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:22:06.132403+00:00",
+        "seconds": 21.694
+      },
+      {
+        "name": "native-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--locked",
+          "--no-fail-fast"
+        ],
+        "exit_code": 0,
+        "started_at": "2026-11-19T21:22:27.826425+00:00",
+        "seconds": 301.666,
+        "suites": 101,
+        "passed": 1137,
+        "failed": 0,
+        "ignored": 9
+      }
+    ],
+    "focused_distinct_passed": 92,
+    "new_coverage_integration_passed": 9,
+    "new_title_unit_passed": 1,
+    "new_pdf_variant_passed": 5,
+    "intermediate_corrections": [
+      "Localized title affixes compare folded text at UTF-8 character boundaries; candidate-local NFC handles decomposed accents.",
+      "Orphaned articles from descriptive title fragments do not become short-book proposals.",
+      "Confirmed coverage sets the same relevance tie-break with or without incidental mentions.",
+      "Four previous broad-ancestor ordering assertions were updated to the requested structural-first order, retaining destination and stored-mention checks.",
+      "Clippy type-complexity warning resolved by a named EvidenceRow alias. Final formatting, Clippy and full tests rerun on unchanged final inputs."
+    ]
+  },
+  "pdf_generality": {
+    "production_extraction_changed_since_base": false,
+    "fixture_text": "Invented only",
+    "variants": [
+      "Roman front matter and restarted decimal native labels",
+      "Duplicate labels refuse ambiguous destination",
+      "Two-column printed Contents",
+      "Three font/body-size combinations and large covers",
+      "Verified page-only empty appendix destination"
+    ],
+    "actual_private_pdf": "Earlier actual-file results remain recorded in source-navigation-20261119-verification.json; this follow-up does not publish or require the private file.",
+    "limits": [
+      "Image-only or broken text requires OCR.",
+      "Ambiguous destinations are not guessed.",
+      "No universal PDF success rate claimed."
+    ]
+  },
+  "compatibility": {
+    "schema_changed": false,
+    "dependency_locks_changed": false,
+    "recognition_rules_changed": false,
+    "passage_index_version_changed_by_this_followup": false,
+    "storage": "Existing sources.data JSON, namespaced sourceCoverage; no fabricated page/segment links.",
+    "manual_and_suppressed_coverage_survive_rebuild": true,
+    "untouched_metadata_saves_preserve_raw_legacy_data": true,
+    "non_german_pozetek_value_matches": {
+      "en": 0,
+      "ko": 0,
+      "fr": 0,
+      "es": 0,
+      "pt": 0
+    },
+    "german_pozetek_value_matches": 6
+  },
+  "delivery": {
+    "authorization": "One Windows installer build through the existing pathway, including these follow-up changes.",
+    "build_branch": "build/abidingword-i35-i42-20261109",
+    "workflow": ".github/workflows/windows-combined-owner-20261109.yml",
+    "build_started_at_record_creation": false,
+    "retry_authorized": false,
+    "windows_acceptance": "pending",
+    "merge_release_deployment": false
+  }
+}

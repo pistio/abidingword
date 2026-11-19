@@ -7,14 +7,20 @@ import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import { LICENCE_STATUSES, SOURCE_TYPES, type Source, type SourceType, type UpdateSource } from "@/types/library";
-import { sourceTypeLabel } from "./labels";
+import { LICENCE_STATUSES, SOURCE_TYPES, type Source, type SourceCoverageMode, type SourceType, type UpdateSource } from "@/types/library";
+import { coverageLabel, sourceTypeLabel } from "./labels";
+
+/** Raw references belong to the disposable draft until the native core validates Save. */
+export type SourceMetadataDraft = Source & { coverageEdit?: { mode: SourceCoverageMode; passagesText: string } };
 
 /** The same bibliographic fields in Settings, the Library and the reader. */
-export function SourceMetadataFields({ draft, onChange, children }: { draft: Source; onChange: (draft: Source) => void; children?: ReactNode }) {
+export function SourceMetadataFields({ draft, onChange, children }: { draft: SourceMetadataDraft; onChange: (draft: SourceMetadataDraft) => void; children?: ReactNode }) {
   const { t } = useTranslation();
   const id = useId();
   const set = <K extends keyof Source>(key: K, value: Source[K]) => onChange({ ...draft, [key]: value });
+  const coverageMode = draft.coverageEdit?.mode ?? draft.coverageMode ?? "automatic";
+  const passagesText = draft.coverageEdit?.passagesText ?? (draft.coverage ?? []).map(coverageLabel).join("\n");
+  const setCoverage = (mode: SourceCoverageMode, text = passagesText) => onChange({ ...draft, coverageEdit: { mode, passagesText: text } });
   const field = (key: "title" | "subtitle" | "author" | "publisher" | "edition" | "isbn" | "doi" | "language" | "licence", label: string) => (
     <div className="flex flex-col gap-1">
       <label htmlFor={`${id}-${key}`} className="text-[0.9375rem] font-medium text-text-strong">{label}</label>
@@ -56,16 +62,36 @@ export function SourceMetadataFields({ draft, onChange, children }: { draft: Sou
           <label htmlFor={`${id}-notes`} className="text-[0.9375rem] font-medium text-text-strong">{t("library.manage.field.notes")}</label>
           <textarea id={`${id}-notes`} value={draft.notes ?? ""} onChange={(event) => set("notes", event.target.value || null)} rows={3} className="aw-input px-3 py-2" />
         </div>
+        <fieldset className="m-0 flex flex-col gap-2 border-0 p-0 sm:col-span-2">
+          <legend className="mb-1 text-[0.9375rem] font-medium text-text-strong">{t("library.coverage.title")}</legend>
+          <p id={`${id}-coverage-help`} className="m-0 type-meta">{t("library.coverage.help")}</p>
+          <label htmlFor={`${id}-coverage-mode`} className="sr-only">{t("library.coverage.mode")}</label>
+          <select id={`${id}-coverage-mode`} value={coverageMode} aria-describedby={`${id}-coverage-help`} onChange={(event) => setCoverage(event.target.value as SourceCoverageMode)} className="h-10 aw-input px-2">
+            <option value="automatic">{t("library.coverage.automatic")}</option>
+            <option value="manual">{t("library.coverage.manual")}</option>
+            <option value="none">{t("library.coverage.none")}</option>
+          </select>
+          {coverageMode === "manual" ? <>
+            <label htmlFor={`${id}-coverage-passages`} className="text-[0.9375rem] font-medium text-text-strong">{t("library.coverage.passages")}</label>
+            <textarea id={`${id}-coverage-passages`} value={passagesText} onChange={(event) => setCoverage("manual", event.target.value)} rows={3} aria-describedby={`${id}-coverage-format`} className="aw-input px-3 py-2" />
+            <p id={`${id}-coverage-format`} className="m-0 type-meta">{t("library.coverage.passagesHelp", { max: 8 })}</p>
+          </> : coverageMode === "automatic" && <p className="m-0 type-meta">{(draft.coverage ?? []).length > 0 && draft.coverageMode !== "manual" ? t("library.coverage.detected", { passages: (draft.coverage ?? []).map(coverageLabel).join(t("common.listSeparator")) }) : t("library.coverage.automaticHelp")}</p>}
+        </fieldset>
       </div>
       {children}
     </details>
   </>;
 }
 
-/** Send bibliographic fields only; file identity, text and annotations stay with the source. */
-export function sourceMetadataInput(source: Source): UpdateSource {
+/** Send details and any deliberate coverage edit; file identity, text and annotations stay with the source. */
+export function sourceMetadataInput(source: SourceMetadataDraft): UpdateSource {
   const { id, title, subtitle, author, publisher, edition, publicationYear, isbn, doi, language, sourceType, licenceStatus, licence, notes } = source;
-  return { id, title, subtitle, author, publisher, edition, publicationYear, isbn, doi, language, sourceType, licenceStatus, licence, notes };
+  const input: UpdateSource = { id, title, subtitle, author, publisher, edition, publicationYear, isbn, doi, language, sourceType, licenceStatus, licence, notes };
+  if (source.coverageEdit) {
+    const { mode, passagesText } = source.coverageEdit;
+    input.coverage = { mode, ...(mode === "manual" ? { passages: passagesText.split("\n").map((passage) => passage.trim()).filter(Boolean) } : {}) };
+  }
+  return input;
 }
 
 export function SourceEditButton({ title, onClick }: { title: string; onClick: () => void }) {
@@ -80,7 +106,7 @@ export function SourceMetadataEditor({ sourceId, onClose, onSaved, returnFocus }
   const { t } = useTranslation();
   const api = useApi();
   const loaded = useLoad(useCallback(() => api.libraryGetSource(sourceId), [api, sourceId]));
-  const [edited, setEdited] = useState<Source | null>(null);
+  const [edited, setEdited] = useState<SourceMetadataDraft | null>(null);
   const draft = edited ?? loaded.data;
   const [busy, setBusy] = useState(false);
   const saving = useRef(false);

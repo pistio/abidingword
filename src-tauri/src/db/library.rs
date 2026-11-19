@@ -89,6 +89,8 @@ fn source_from_row(row: &Row) -> rusqlite::Result<Source> {
         collection_names: Vec::new(),
         tag_names: Vec::new(),
         file_present: false,
+        coverage: Vec::new(),
+        coverage_mode: crate::library::coverage::CoverageMode::Automatic,
     })
 }
 
@@ -142,6 +144,7 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<Source> {
     source.tag_names = tags;
     // The row says a file was stored. The command checks that the file is still on disk.
     source.file_present = source.format.is_some();
+    (source.coverage_mode, source.coverage) = super::source_coverage::for_source(conn, id)?;
     Ok(source)
 }
 
@@ -1312,6 +1315,7 @@ struct Group {
     author: Option<String>,
     places: Vec<Place>,
     about: bool,
+    coverage: Vec<crate::library::coverage::SourceCoverage>,
 }
 
 /// Every place the relevance model accepts for the passage, grouped by source;
@@ -1431,6 +1435,7 @@ fn collect_places(
             author: row.get(2).unwrap_or_default(),
             places: Vec::new(),
             about: false,
+            coverage: Vec::new(),
         });
         if rank.class <= 3 && matches!(origin, LinkOrigin::Section | LinkOrigin::Manual) {
             group.about = true;
@@ -1680,29 +1685,75 @@ pub fn passage_source_locations(
 ///
 /// Places are ranked by [`relevance::rank`], one per segment, then consolidated
 /// (see [`consolidate`]) so a section, the paragraph that opens it and repeated
-/// mentions of the same passage inside it read as one place. Sources are ordered
-/// by their best place; between equal best places, a source with a section or
-/// manual link that is about the passage comes before one that only cites it;
-/// then title, then id: a total order, so equal input gives equal output. How
-/// many mentions a source has never raises its position.
+/// mentions of the same passage inside it read as one place. Precise structural
+/// and manual destinations lead. Whole-source coverage and broader usable
+/// ancestors follow, ordered by fit; literal-only sources come last. Equal fits
+/// use aboutness, then title, then id: equal input gives equal output. Coverage
+/// never fabricates a location, and mention counts never raise a source's rank.
 pub fn passage_sources(
     conn: &Connection,
     reference: &ScriptureRef,
 ) -> AppResult<Vec<PassageSourceGroup>> {
     struct RankedGroup {
+        tier: u8,
         best: Rank,
         /// A section or manual link that is about the passage (not merely broad).
         about: bool,
         title_key: String,
         group: PassageSourceGroup,
     }
-    let groups = collect_places(conn, reference, None)?;
+    let mut groups = collect_places(conn, reference, None)?;
+    for covered in super::source_coverage::for_passage(conn, reference)? {
+        let group = groups.entry(covered.id).or_insert_with(|| Group {
+            title: covered.title,
+            author: covered.author,
+            places: Vec::new(),
+            about: true,
+            coverage: Vec::new(),
+        });
+        group.coverage = covered.ranges;
+        group.about = true;
+    }
 
     let mut ranked: Vec<RankedGroup> = groups
         .into_iter()
         .map(|(source_id, group)| {
             let places = consolidate(group.places);
-            let best = places[0].rank;
+            let location_rank = places.first().map(|place| place.rank);
+            let structured = places.iter().any(|place| {
+                matches!(
+                    place.location.origin,
+                    LinkOrigin::Section | LinkOrigin::Manual
+                )
+            });
+            let tier = if structured && location_rank.is_some_and(|rank| rank.class <= 2) {
+                0
+            } else if structured || !group.coverage.is_empty() {
+                1
+            } else {
+                2
+            };
+            let coverage_rank = group
+                .coverage
+                .iter()
+                .filter_map(|coverage| {
+                    let range = ScriptureRef::from_canonical(&coverage.reference.canonical).ok()?;
+                    relevance::rank(
+                        (reference.start_key(), reference.end_key()),
+                        (range.start_key(), range.end_key()),
+                        LinkOrigin::Section,
+                        Context::Neutral,
+                    )
+                })
+                .min();
+            let best = if tier == 0 {
+                location_rank
+            } else if !group.coverage.is_empty() && !structured {
+                coverage_rank
+            } else {
+                location_rank.into_iter().chain(coverage_rank).min()
+            }
+            .expect("a recommendation has a location or validated matching coverage");
             let more = places.len().saturating_sub(LOCATIONS_PER_SOURCE) as i64;
             let locations: Vec<PassageLocation> = places
                 .into_iter()
@@ -1710,6 +1761,7 @@ pub fn passage_sources(
                 .map(|p| p.location)
                 .collect();
             RankedGroup {
+                tier,
                 best,
                 about: group.about,
                 title_key: group.title.to_lowercase(),
@@ -1719,16 +1771,19 @@ pub fn passage_sources(
                     author: group.author,
                     locations,
                     more_locations: more,
+                    coverage: group.coverage,
                 },
             }
         })
         .collect();
     ranked.sort_by(|a, b| {
-        a.best
-            .cmp(&b.best)
-            .then(b.about.cmp(&a.about))
-            .then(a.title_key.cmp(&b.title_key))
-            .then(a.group.source_id.cmp(&b.group.source_id))
+        a.tier.cmp(&b.tier).then_with(|| {
+            a.best
+                .cmp(&b.best)
+                .then(b.about.cmp(&a.about))
+                .then(a.title_key.cmp(&b.title_key))
+                .then(a.group.source_id.cmp(&b.group.source_id))
+        })
     });
     Ok(ranked
         .into_iter()

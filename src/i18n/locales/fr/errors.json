@@ -171,7 +171,13 @@
     "tooMany": "Vous pouvez modifier au maximum {{count}} éléments à la fois.",
     "badName": "Utilisez un nom de 1 à {{max}} caractères.",
     "collectionExists": "Une collection nommée « {{name}} » existe déjà ici.",
-    "tagExists": "Une étiquette nommée « {{name}} » existe déjà."
+    "tagExists": "Une étiquette nommée « {{name}} » existe déjà.",
+    "coverage": {
+      "invalidPassage": "« {{passage}} » n’a pas pu être identifié comme livre ou passage biblique. Vérifiez la référence avant d’enregistrer.",
+      "tooMany": "Saisissez au maximum {{max}} références pour l’étendue.",
+      "empty": "Saisissez au moins un livre ou passage biblique pour définir l’étendue.",
+      "metadataUnreadable": "Les informations enregistrées sur la source n’ont pas pu être lues de manière sûre. Aucune modification n’a été enregistrée."
+    }
   },
   "templates": {
     "noSections": "Un modèle doit comporter au moins une partie de départ.",

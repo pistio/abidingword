@@ -6,6 +6,7 @@ import { jumpReaderPage, readerAction, readerActionEnabled, readerPage, readerPa
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { FORMATTED_BOOK } from "../support/epubFixture";
 import { FORMATTED_DOCX } from "../support/docxFixture";
+import type { SourceCoverage } from "@/types/library";
 
 // Invented content with paragraph geometry: an unexpected jump changes a measurable position.
 const BOOK: SourceFixture = {
@@ -71,6 +72,7 @@ async function chooseScripture(user: User, passage: string) {
   await within(sources()).findByText(`Scripture: ${passage}`);
 }
 const sync = (reader: HTMLElement) => within(reader).getByRole("button", { name: "Go to current passage" });
+const WHOLE_JOHN: SourceCoverage = { scope: "book", basis: "metadata", reference: { canonical: "JHN.1-JHN.21", display: "John", book: "JHN", startChapter: 1, startVerse: null, endChapter: 21, endVerse: null } };
 
 describe("explicit passage navigation in the current source", () => {
   it("keeps reading in place when Scripture changes, then opens the selected section on request with Back and marks preserved", async () => {
@@ -482,6 +484,118 @@ describe("explicit passage navigation in the current source", () => {
     await user.click(sync(reader));
     expect(await within(reader).findByText("No matching place was found in this source for Psalm 23.")).toBeInTheDocument();
     expect(top).toBe(250);
+  });
+
+  it("reads refreshed whole-source coverage without moving position, replacing metadata or adding history", async () => {
+    const { api, book } = setup({ ...BOOK, sections: [] });
+    const { user } = await renderApp(api);
+    const reader = await openAtKeptPlace(user);
+    const body = within(reader).getByTestId("reader-body");
+    body.scrollTop = 9;
+    const source = api.state.library.sources.find(source => source.id === book.id)!;
+    // A rebuild can infer coverage after the reader's initial metadata loaded.
+    source.coverage = [WHOLE_JOHN];
+    const open = vi.spyOn(api, "libraryOpenSegment");
+    await chooseScripture(user, "John 15:5");
+    expect(top).toBe(250);
+    await user.click(sync(reader));
+    expect(await within(reader).findByText("This source covers John, but has no precise location for this passage. Your reading place is unchanged.")).toBeInTheDocument();
+    expect(open).not.toHaveBeenCalled();
+    expect(within(reader).getByTestId("reader-body")).toBe(body);
+    expect(top).toBe(250);
+    expect(body.scrollTop).toBe(9);
+    await readerAction(user, "Back to the previous place", reader);
+    await waitFor(() => expect(top).toBe(0));
+    expect(await readerActionEnabled(user, "Back to the previous place", reader)).toBe(false);
+  });
+
+  it("offers the sole literal mention as a choice even when the whole source covers the passage", async () => {
+    const { api, book } = setup({ ...BOOK, sections: [], mentions: [{ segment: 30, reference: "JHN.15.5", matchedText: "John 15:5" }] });
+    api.state.library.sources.find(source => source.id === book.id)!.coverage = [WHOLE_JOHN];
+    const { user } = await renderApp(api);
+    const reader = await openAtKeptPlace(user);
+    await chooseScripture(user, "John 15:5");
+    const open = vi.spyOn(api, "libraryOpenSegment");
+    await user.click(sync(reader));
+    const dialog = await screen.findByRole("dialog", { name: "Mentions of John 15:5 in this source" });
+    expect(within(dialog).getByText("This source covers John. Choose a mention below to open that place, or cancel to keep reading where you are.")).toBeInTheDocument();
+    expect(open).not.toHaveBeenCalled();
+    expect(top).toBe(250);
+    await user.click(within(dialog).getByRole("button", { name: /Mentions John 15:5/ }));
+    await waitFor(() => expect(top).toBe(30));
+    await readerAction(user, "Back to the previous place", reader);
+    await waitFor(() => expect(top).toBe(250));
+  });
+
+  it("does not claim whole-source relevance when the source covers a different chapter", async () => {
+    const { api, book } = setup({ ...BOOK, sections: [] });
+    api.state.library.sources.find(source => source.id === book.id)!.coverage = [{ ...WHOLE_JOHN, scope: "chapter", reference: { ...WHOLE_JOHN.reference, canonical: "JHN.14", display: "John 14", startChapter: 14, endChapter: 14 } }];
+    const { user } = await renderApp(api);
+    const reader = await openAtKeptPlace(user);
+    await chooseScripture(user, "John 15:5");
+    await user.click(sync(reader));
+    expect(await within(reader).findByText("No matching place was found in this source for John 15:5.")).toBeInTheDocument();
+    expect(top).toBe(250);
+  });
+
+  it.each(["Scripture", "Contents", "another source"] as const)("ignores a delayed coverage read after the reader chooses %s", async (next) => {
+    const { api, book } = setup({ ...BOOK, sections: [], generatedContents: [...BOOK.generatedContents!, { id: "newer-coverage", title: "Newer reading choice", target: { kind: "segment", position: 300 }, children: [] }] });
+    api.installFixtureSource({ ...BOOK, title: "Another volume", sections: [] });
+    const { user } = await renderApp(api);
+    const reader = await openAtKeptPlace(user);
+    await chooseScripture(user, "John 15:5");
+    let release: () => void = () => undefined;
+    const previous = await api.libraryGetSource(book.id);
+    const read = vi.spyOn(api, "libraryGetSource").mockImplementationOnce(async () => {
+      await new Promise<void>(resolve => { release = resolve; });
+      return { ...previous, coverage: [WHOLE_JOHN] };
+    });
+    await user.click(sync(reader));
+    await waitFor(() => expect(read).toHaveBeenCalled());
+    if (next === "Scripture") await chooseScripture(user, "John 15:14");
+    else if (next === "Contents") {
+      await readerAction(user, "Contents", reader);
+      await user.click(await within(reader).findByRole("button", { name: /^Newer reading choice/ }));
+      await waitFor(() => expect(top).toBe(300));
+    } else {
+      await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
+      await user.click(await within(sources()).findByRole("button", { name: "Another volume" }));
+      await within(sources()).findByRole("region", { name: "Another volume" });
+    }
+    await act(async () => release());
+    expect(within(sources()).queryByText(/This source covers John, but/)).not.toBeInTheDocument();
+    if (next !== "another source") {
+      expect(top).toBe(next === "Contents" ? 300 : 250);
+      expect(sync(reader)).toBeEnabled();
+    } else expect(within(sources()).getByRole("region", { name: "Another volume" })).toBeInTheDocument();
+  });
+
+  it("does not let a pending coverage read overwrite newer saved details or revive an outdated message", async () => {
+    const { api, book } = setup({ ...BOOK, sections: [] });
+    const { user } = await renderApp(api);
+    const reader = await openAtKeptPlace(user);
+    await chooseScripture(user, "John 15:5");
+    let release: () => void = () => undefined;
+    const previous = await api.libraryGetSource(book.id);
+    const read = vi.spyOn(api, "libraryGetSource").mockImplementationOnce(async () => {
+      await new Promise<void>(resolve => { release = resolve; });
+      return { ...previous, coverage: [WHOLE_JOHN] };
+    });
+    await user.click(sync(reader));
+    await waitFor(() => expect(read).toHaveBeenCalled());
+    await readerAction(user, "Edit details", reader);
+    const dialog = await screen.findByRole("dialog", { name: "Edit source details" });
+    const title = await within(dialog).findByRole("textbox", { name: "Title" });
+    await user.clear(title);
+    await user.type(title, "Corrected current title");
+    await user.click(within(dialog).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await act(async () => release());
+    expect(within(sources()).getByRole("region", { name: "Corrected current title" })).toBe(reader);
+    expect(within(reader).queryByText(/This source covers John, but/)).not.toBeInTheDocument();
+    expect(sync(reader)).toBeEnabled();
+    expect(top).toBe(250);
+    expect(await api.libraryGetSource(book.id)).toMatchObject({ title: "Corrected current title" });
   });
 
   it("explains the unavailable action when no Scripture Bible or passage has been chosen", async () => {

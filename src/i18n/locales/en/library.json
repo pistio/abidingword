@@ -716,5 +716,23 @@
     "opened": "Last passage opened here: {{passage}}",
     "mentionsTitle": "Mentions of {{passage}} in this source",
     "mentionsHelp": "This source mentions the passage, but has no matching section. Choose a mention to open."
+  },
+  "coverage": {
+    "title": "Biblical coverage",
+    "help": "Use this to suggest the whole source for a Bible book or passage. Opening it keeps your reading place.",
+    "mode": "How coverage is set",
+    "automatic": "Detect automatically",
+    "manual": "Set coverage",
+    "none": "No whole-source coverage",
+    "passages": "Books or passages",
+    "passagesHelp": "Enter one reference per line, up to {{max}}. For example: Romans, Romans 8, or John 15:1–11.",
+    "detected": "Current coverage: {{passages}}",
+    "automaticHelp": "Uses the source’s details to identify the book or passage it covers.",
+    "covers": "Covers {{passage}}",
+    "openSource": "Open source",
+    "mentions_one": "{{count}} mention in this source",
+    "mentions_other": "{{count}} mentions in this source",
+    "noPrecisePlace": "This source covers {{passages}}, but has no precise location for this passage. Your reading place is unchanged.",
+    "mentionsHelp": "This source covers {{passages}}. Choose a mention below to open that place, or cancel to keep reading where you are."
   }
 }

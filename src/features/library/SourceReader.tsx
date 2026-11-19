@@ -150,6 +150,7 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
   const [openPage, setOpenPage] = useState<number | null>(null);
   const [structureOpen, setStructureOpen] = useState(false);
   const [structureRevision, setStructureRevision] = useState(0);
+  const [metadataRevision, setMetadataRevision] = useState(0);
   // The source's own contents (an EPUB's, a PDF's outline), and the panel that shows them.
   const { items: contents, generated: contentsGenerated, generation: contentsGeneration, adopt: adoptContents } = useSourceContents(source.data, structureRevision);
   const stage = useRef<HTMLDivElement>(null);
@@ -1361,8 +1362,8 @@ export function SourceReader({ sourceId, segmentId, structureNodeId, onClose, va
       <SourceAbout source={s} citation={citationText(t, citationOf(citedSegmentId))} />
     </Dialog>
   ) : null;
-  const metadataEditor = editing ? <SourceMetadataEditor sourceId={sourceId} onClose={() => setEditing(false)} onSaved={(saved) => { source.setData(saved); setEditing(false); }} returnFocus={() => heading.current ?? bodyRef.current} /> : null;
-  const passageNavigation = <SourcePassageNavigation sourceId={sourceId} beginNavigation={beginNavigation} prepareEpubContents={s?.format === "epub"} enabled={loaded && (!showOriginal || !isEpubView || epub.status === "ready")} onNavigate={(location, prepared) => {
+  const metadataEditor = editing ? <SourceMetadataEditor sourceId={sourceId} onClose={() => setEditing(false)} onSaved={(saved) => { source.setData(saved); setMetadataRevision((revision) => revision + 1); setEditing(false); }} returnFocus={() => heading.current ?? bodyRef.current} /> : null;
+  const passageNavigation = <SourcePassageNavigation sourceId={sourceId} metadataRevision={metadataRevision} beginNavigation={beginNavigation} prepareEpubContents={s?.format === "epub"} enabled={loaded && (!showOriginal || !isEpubView || epub.status === "ready")} onNavigate={(location, prepared) => {
     const segment = prepared.segments.find((segment) => segment.id === location.segmentId)!;
     if ((showOriginal && isPdf && !segment.pageNumber) || (showOriginal && isEpubView && !placeOfPosition(epub.items, segment.position))) throw new Error(t("library.reader.targetUnavailable"));
     jumpTo({ position: segment.position, page: segment.pageNumber ?? undefined, headingId: location.structureNodeId ?? undefined }, undefined, prepared);

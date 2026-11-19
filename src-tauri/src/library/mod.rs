@@ -6,6 +6,7 @@ pub mod adapters;
 pub mod annotations;
 pub mod batch;
 pub mod contents;
+pub mod coverage;
 pub mod files;
 pub mod find;
 pub mod generated_contents;
@@ -109,6 +110,9 @@ pub struct Source {
     /// Whether a primary file row exists. The get-source command sets this
     /// false when that managed file is not on disk.
     pub file_present: bool,
+    /// Relevance of the whole work; never a segment/page destination.
+    pub coverage: Vec<coverage::SourceCoverage>,
+    pub coverage_mode: coverage::CoverageMode,
 }
 
 /// One row of the library list.
@@ -317,6 +321,9 @@ pub struct PassageSourceGroup {
     pub locations: Vec<PassageLocation>,
     /// How many further places the source has.
     pub more_locations: i64,
+    /// Matching whole-work scopes, separate from navigable locations.
+    /// A recommended work may have no precise location at all.
+    pub coverage: Vec<coverage::SourceCoverage>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]

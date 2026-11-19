@@ -160,7 +160,13 @@
     "tooMany": "At most {{count}} items can be changed at once.",
     "badName": "Use a name between 1 and {{max}} characters long.",
     "collectionExists": "A collection called “{{name}}” already exists here.",
-    "tagExists": "A tag called “{{name}}” already exists."
+    "tagExists": "A tag called “{{name}}” already exists.",
+    "coverage": {
+      "invalidPassage": "“{{passage}}” could not be identified as a Bible book or passage. Check the reference before saving.",
+      "tooMany": "Enter up to {{max}} coverage references.",
+      "empty": "Enter at least one Bible book or passage to set coverage.",
+      "metadataUnreadable": "The saved source details could not be read safely. No changes were saved."
+    }
   },
   "templates": {
     "noSections": "A template needs at least one part to start with.",

@@ -1,6 +1,6 @@
 //! Source relevance after the first Windows acceptance of v0.9: material *about*
 //! a passage must outrank material that only *cites* it; cross-references from
-//! other passages' sections are incidental; book-scale ranges are far too broad;
+//! other passages' sections are incidental; broad ancestors follow precise targets;
 //! a shared chapter number alone suggests nothing. Every source here is invented,
 //! imported through the real path (stage, commit, index).
 
@@ -134,17 +134,17 @@ fn with_db<T>(f: impl FnOnce(&Connection, &Path) -> AppResult<T>) -> T {
 // --- the observed Windows results -----------------------------------------------
 
 #[test]
-fn for_john_15_5_the_section_about_it_leads_and_cross_references_and_the_broad_range_follow() {
+fn for_john_15_5_precise_structure_then_broad_ancestors_lead_literal_references() {
     with_windows_corpus(|conn| {
         let found = show(conn, "JHN.15.5");
         assert_eq!(
             titles(&found),
             [
                 "A Vine Study",
+                "D Second Half of John",
                 "F Neutral Notes",
                 "B Matthew Cross-references",
                 "C Mark Cross-references",
-                "D Second Half of John",
             ],
             "{}",
             dump(&found)
@@ -189,12 +189,15 @@ fn a_neutral_exact_mention_stays_discoverable_above_the_cross_references() {
 }
 
 #[test]
-fn a_book_scale_range_is_last_and_never_above_a_narrow_section() {
+fn a_book_scale_ancestor_follows_narrow_structure_and_precedes_literal_only_sources() {
     with_windows_corpus(|conn| {
         let found = show(conn, "JHN.15.5");
-        assert_eq!(found.last().unwrap().source_title, "D Second Half of John");
         let at = |t: &str| titles(&found).iter().position(|x| *x == t).unwrap();
         assert!(at("A Vine Study") < at("D Second Half of John"));
+        assert!(at("D Second Half of John") < at("F Neutral Notes"));
+        let broad = &found[at("D Second Half of John")];
+        assert_eq!(broad.locations[0].origin, LinkOrigin::Section);
+        assert_eq!(broad.locations[0].reference.canonical, "JHN.11-JHN.21");
         Ok(())
     });
 }
@@ -207,10 +210,10 @@ fn the_other_queries_make_sense_too() {
             titles(&show(conn, "JHN.15.1-JHN.15.11")),
             [
                 "A Vine Study",
+                "D Second Half of John",
                 "F Neutral Notes",
                 "B Matthew Cross-references",
                 "C Mark Cross-references",
-                "D Second Half of John"
             ]
         );
         // The whole chapter cannot use either partial subsection as its
@@ -219,10 +222,10 @@ fn the_other_queries_make_sense_too() {
         assert_eq!(
             titles(&chapter),
             [
+                "D Second Half of John",
                 "F Neutral Notes",
                 "B Matthew Cross-references",
                 "C Mark Cross-references",
-                "D Second Half of John"
             ],
             "{}",
             dump(&chapter)
@@ -340,14 +343,15 @@ fn a_broad_structural_target_does_not_use_a_body_citation_to_raise_its_rank() {
         let found = show(conn, "JHN.15.5");
         // The broad source opens its containing heading; its incidental body
         // citation cannot turn that broad target into an exact verse section.
-        assert_eq!(titles(&found), ["J Cross-references", "I Broad Section"]);
-        assert_eq!(found[1].locations.len(), 1);
-        assert_eq!(found[1].locations[0].origin, LinkOrigin::Section);
-        assert_eq!(found[1].locations[0].reference.canonical, "JHN.11-JHN.21");
+        // A usable ancestor still precedes another source's literal-only match.
+        assert_eq!(titles(&found), ["I Broad Section", "J Cross-references"]);
+        assert_eq!(found[0].locations.len(), 1);
+        assert_eq!(found[0].locations[0].origin, LinkOrigin::Section);
+        assert_eq!(found[0].locations[0].reference.canonical, "JHN.11-JHN.21");
         assert!(
             library::mentions(conn, &ScriptureRef::from_canonical("JHN.15.5")?)?
                 .iter()
-                .any(|mention| mention.source_id == found[1].source_id)
+                .any(|mention| mention.source_id == found[0].source_id)
         );
         Ok(())
     });

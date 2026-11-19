@@ -1,7 +1,20 @@
 import type { TFunction } from "i18next";
-import type { FindingCitation, LicenceStatus, PassageLinkOrigin, SourceFormat, SourceType } from "@/types/library";
+import { bookLabel, referenceLabel } from "@/i18n/scripture";
+import type { FindingCitation, LicenceStatus, PassageLinkOrigin, SourceCoverage, SourceFormat, SourceType } from "@/types/library";
+import type { ScriptureRef } from "@/types/scripture";
 
 // Stored values stay stable; only their labels are translated (docs/i18n.md).
+
+export function coverageLabel(coverage: SourceCoverage): string {
+  return coverage.scope === "book" ? bookLabel(coverage.reference.book, false) : referenceLabel(coverage.reference);
+}
+
+/** Native ranges are validated. This display filter never invents a navigation target. */
+export function matchingCoverage(coverage: SourceCoverage[], requested: ScriptureRef): SourceCoverage[] {
+  const start = (reference: ScriptureRef) => reference.startChapter * 1000 + (reference.startVerse ?? 0);
+  const end = (reference: ScriptureRef) => reference.endChapter * 1000 + (reference.endVerse ?? 999);
+  return coverage.filter(({ reference }) => reference.book === requested.book && start(reference) <= end(requested) && start(requested) <= end(reference));
+}
 
 export function sourceTypeLabel(t: TFunction, type: SourceType): string {
   return t(`library.sourceType.${type}`);

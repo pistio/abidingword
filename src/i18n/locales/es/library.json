@@ -758,5 +758,24 @@
     "opened": "Último pasaje abierto aquí: {{passage}}",
     "mentionsTitle": "Menciones de {{passage}} en esta fuente",
     "mentionsHelp": "Esta fuente menciona el pasaje, pero no tiene una sección correspondiente. Elige una mención para abrirla."
+  },
+  "coverage": {
+    "title": "Contenido bíblico que abarca",
+    "help": "Permite sugerir la fuente completa para un libro o pasaje bíblico. Al abrirla se conserva el lugar de lectura.",
+    "mode": "Cómo se define el contenido",
+    "automatic": "Detectar automáticamente",
+    "manual": "Definir el contenido",
+    "none": "Sin contenido bíblico para la fuente completa",
+    "passages": "Libros o pasajes",
+    "passagesHelp": "Escribe una referencia por línea, hasta {{max}}. Por ejemplo: Romanos, Romanos 8 o Juan 15:1–11.",
+    "detected": "Contenido actual: {{passages}}",
+    "automaticHelp": "Utiliza los datos de la fuente para identificar el libro o pasaje que trata.",
+    "covers": "Trata {{passage}}",
+    "openSource": "Abrir fuente",
+    "mentions_one": "{{count}} mención en esta fuente",
+    "mentions_other": "{{count}} menciones en esta fuente",
+    "noPrecisePlace": "Esta fuente trata {{passages}}, pero no tiene una ubicación precisa para este pasaje. Se conserva tu lugar de lectura.",
+    "mentionsHelp": "Esta fuente trata {{passages}}. Elige una mención para abrir ese lugar o cancela para seguir leyendo donde estabas.",
+    "mentions_many": "{{count}} menciones en esta fuente"
   }
 }
