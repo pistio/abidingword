@@ -1,0 +1,2055 @@
+{
+  "kind": "Linux Chromium synthetic scroll-containment qualification; NOT full app or Windows acceptance",
+  "helperSha256": "c8eabbfd087bd83124d3f567e7dc5f5d9c74f87a449144813194bf796b45a8d5",
+  "sourcePath": "src/lib/scrollInViewport.ts",
+  "results": [
+    {
+      "scale": 1,
+      "depth": 0,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1,
+      "depth": 0,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1,
+      "depth": 1,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1,
+      "depth": 1,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1,
+      "depth": 2,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1,
+      "depth": 2,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1,
+      "kind": "outside",
+      "passed": true
+    },
+    {
+      "scale": 1,
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "scale": 1,
+      "kind": "disconnected",
+      "passed": true
+    },
+    {
+      "scale": 1,
+      "kind": "restore-on-throw",
+      "passed": true
+    },
+    {
+      "scale": 1.25,
+      "depth": 0,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.25,
+      "depth": 0,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.25,
+      "depth": 1,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.25,
+      "depth": 1,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.25,
+      "depth": 2,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.25,
+      "depth": 2,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.25,
+      "kind": "outside",
+      "passed": true
+    },
+    {
+      "scale": 1.25,
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "scale": 1.25,
+      "kind": "disconnected",
+      "passed": true
+    },
+    {
+      "scale": 1.25,
+      "kind": "restore-on-throw",
+      "passed": true
+    },
+    {
+      "scale": 1.5,
+      "depth": 0,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.5,
+      "depth": 0,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.5,
+      "depth": 1,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.5,
+      "depth": 1,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.5,
+      "depth": 2,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.5,
+      "depth": 2,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 1.5,
+      "kind": "outside",
+      "passed": true
+    },
+    {
+      "scale": 1.5,
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "scale": 1.5,
+      "kind": "disconnected",
+      "passed": true
+    },
+    {
+      "scale": 1.5,
+      "kind": "restore-on-throw",
+      "passed": true
+    },
+    {
+      "scale": 2,
+      "depth": 0,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 2,
+      "depth": 0,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 2,
+      "depth": 1,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 2,
+      "depth": 1,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 2,
+      "depth": 2,
+      "block": "start",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          182
+        ],
+        "window": [
+          17,
+          400
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 650,
+        "anchorOffset": 2,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 2,
+      "depth": 2,
+      "block": "center",
+      "negativeControlMovedAncestor": true,
+      "passed": true,
+      "before": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 19,
+        "anchorOffset": 633,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "unsafe": {
+        "shell": [
+          29,
+          87
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      },
+      "after": {
+        "shell": [
+          29,
+          37
+        ],
+        "window": [
+          17,
+          100
+        ],
+        "other": [
+          13,
+          21
+        ],
+        "viewTop": 560,
+        "anchorOffset": 92,
+        "anchorHeight": 30,
+        "viewportHeight": 210,
+        "borderTop": 2,
+        "active": "focus",
+        "value": "INVENTED DRAFT",
+        "caret": [
+          3,
+          7
+        ]
+      }
+    },
+    {
+      "scale": 2,
+      "kind": "outside",
+      "passed": true
+    },
+    {
+      "scale": 2,
+      "kind": "missing",
+      "passed": true
+    },
+    {
+      "scale": 2,
+      "kind": "disconnected",
+      "passed": true
+    },
+    {
+      "scale": 2,
+      "kind": "restore-on-throw",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,802 @@
+{
+  "date": "2026-11-18",
+  "purpose": "Single owner-approved Windows x64 NSIS installer build and static artifact verification",
+  "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+  "approval": {
+    "ownerMessage": "ok approve",
+    "scope": "One Windows x64 NSIS installer build of the exact candidate through the existing pathway; no retry",
+    "installationOrMergeOrReleaseIncluded": false
+  },
+  "run": {
+    "id": 44421251924,
+    "url": "https://github.com/pistio/abidingword/actions/runs/44421251924",
+    "attempt": 1,
+    "conclusion": "success",
+    "jobCount": 1,
+    "jobId": 135214534225,
+    "jobName": "acceptance",
+    "jobAttempt": 1,
+    "startedUTC": "2026-11-18T23:30:03Z",
+    "completedUTC": "2026-11-18T23:45:36Z"
+  },
+  "activationSha": "711f6dbe07c531fb410a5010fb25c0fd08cd80be",
+  "workflowSha256": "dcf0a088dcee5b39a5c419b80a4d2ed8795d68a340e50b8afc05d21407a8b4c8",
+  "packagingSourceSha": "4bddc038d190cf42fd475b7c504430e96c014769",
+  "artifacts": [
+    {
+      "id": 14483376077,
+      "name": "Abiding-Word-diagnostic-only-not-portable-539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+      "size_in_bytes": 36434243,
+      "digest": "sha256:b762e212e74885169ac2ac09d5cebf423bc376968bce6ac099bb94c001f98266",
+      "created_at": "2026-11-18T23:45:03Z",
+      "expires_at": "2026-12-02T23:45:00Z",
+      "expired": false
+    },
+    {
+      "id": 14482862105,
+      "name": "Abiding-Word-Original-View-packaging-evidence-539b54d65c2cecf010cd1573b8bd51c91ac640bd-attempt-1",
+      "size_in_bytes": 22323,
+      "digest": "sha256:1cc1c3e903eba0c977c27188b5ba88510f00e45c1e4a049a56c0dde34bad0928",
+      "created_at": "2026-11-18T23:45:30Z",
+      "expires_at": "2026-12-02T23:45:29Z",
+      "expired": false
+    },
+    {
+      "id": 14481669640,
+      "name": "Abiding-Word-Original-View-schema27-539b54d65c2cecf010cd1573b8bd51c91ac640bd-Windows-x64",
+      "size_in_bytes": 33607228,
+      "digest": "sha256:fbebcc5b8cb1aa635355a82bc49b0ab78806b36b3d87050ea650583fbd19ff60",
+      "created_at": "2026-11-18T23:45:29Z",
+      "expires_at": "2026-12-02T23:45:27Z",
+      "expired": false
+    }
+  ],
+  "downloadVerification": [
+    {
+      "artifactId": 14481669640,
+      "filename": "Abiding-Word-Windows-Installer-539b54d.zip",
+      "sha256": "fbebcc5b8cb1aa635355a82bc49b0ab78806b36b3d87050ea650583fbd19ff60",
+      "bytes": 33607228,
+      "zipCrcPassed": true,
+      "entries": [
+        "Abiding-Word-Original-View-schema27-539b54d65c2cecf010cd1573b8bd51c91ac640bd-x64-setup.exe"
+      ]
+    },
+    {
+      "artifactId": 14482862105,
+      "filename": "Abiding-Word-Installer-Build-Evidence-539b54d.zip",
+      "sha256": "1cc1c3e903eba0c977c27188b5ba88510f00e45c1e4a049a56c0dde34bad0928",
+      "bytes": 22323,
+      "zipCrcPassed": true,
+      "entries": [
+        "build-provenance.json",
+        "installer-sha256.txt",
+        "build-environment.txt",
+        "packaging-evidence/application-build.log",
+        "packaging-evidence/application-bundle.log",
+        "packaging-evidence/nsis-cache-probe.json",
+        "packaging-evidence/nsis-cache-probe.log",
+        "packaging-evidence/nsis-preflight.json",
+        "diagnostic-executable/manifest.json"
+      ]
+    },
+    {
+      "artifactId": 14483376077,
+      "filename": "Abiding-Word-Prepackaging-Diagnostic-539b54d.zip",
+      "sha256": "b762e212e74885169ac2ac09d5cebf423bc376968bce6ac099bb94c001f98266",
+      "bytes": 36434243,
+      "zipCrcPassed": true,
+      "entries": 16
+    }
+  ],
+  "buildEnvironment": [
+    "Source SHA: 539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "Workflow SHA: 711f6dbe07c531fb410a5010fb25c0fd08cd80be",
+    "Packaging source SHA: 4bddc038d190cf42fd475b7c504430e96c014769",
+    "Run: 44421251924 attempt 1",
+    "Runner: Windows X64",
+    "Windows image: win25-vs2026 20261103.298.1",
+    "Node: v24.22.1",
+    "npm: 11.19.1",
+    "Rust: rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "Cargo: cargo 1.99.1 (5f94df478 2026-08-27)"
+  ],
+  "buildSourceProvenance": {
+    "commit": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "dirty": false,
+    "schemaVersion": 27,
+    "migrations": [
+      {
+        "version": 1,
+        "name": "initial_schema",
+        "file": "0001_initial_schema.sql",
+        "sha256": "a0631bbc74b12b9900074ce4aaeb3437a0bec8c1814ec0848bf3379de2bbdcc6"
+      },
+      {
+        "version": 2,
+        "name": "scripture",
+        "file": "0002_scripture.sql",
+        "sha256": "7aa670dfddfeb164c579d6a2d2dbda8c59cff26bf121aee614746d439c8ec9e7"
+      },
+      {
+        "version": 3,
+        "name": "studies",
+        "file": "0003_studies.sql",
+        "sha256": "edbf84bb0d15f379a0e46e836f4082f4f9627332cbdb6378ffee67006d909ac5"
+      },
+      {
+        "version": 4,
+        "name": "library",
+        "file": "0004_library.sql",
+        "sha256": "6a69101c45e35ddfd9492728f282f2cae7bd0ad3e7851523ac8fc37e03c34f49"
+      },
+      {
+        "version": 5,
+        "name": "passage_sections",
+        "file": "0005_passage_sections.sql",
+        "sha256": "4c2988058e5db2729a8ccd71abf4cbc750ca6805283e7e46f8f70db435e33819"
+      },
+      {
+        "version": 6,
+        "name": "source_annotations",
+        "file": "0006_source_annotations.sql",
+        "sha256": "d037f4a9f1afc755541a4245f439d649e4b979a3f70ab679e9a18c2ce21bcb87"
+      },
+      {
+        "version": 7,
+        "name": "finding_source_quotes",
+        "file": "0007_finding_source_quotes.sql",
+        "sha256": "2e643740eb7662b5af982e178d3d3af672ce0c93659a9ff766278219b4d1fede"
+      },
+      {
+        "version": 8,
+        "name": "teaching_preparations",
+        "file": "0008_teaching_preparations.sql",
+        "sha256": "24358f2726358ab84c2be6edb381962d44d664686e212fb68ad3b5fb0cc19181"
+      },
+      {
+        "version": 9,
+        "name": "teaching_step_kinds",
+        "file": "0009_teaching_step_kinds.sql",
+        "sha256": "30b51c5269c4df0c041e54fdb7697ec48f99fad5723b1c3e907fcfad93cff26f"
+      },
+      {
+        "version": 10,
+        "name": "presentations",
+        "file": "0010_presentations.sql",
+        "sha256": "75a1d3100aed2daa2c61db1f0632c780a1b1dccdacae9b48f0cf77f4b7092c3e"
+      },
+      {
+        "version": 11,
+        "name": "presentation_target",
+        "file": "0011_presentation_target.sql",
+        "sha256": "cad7c6dbaa04546d6bb359948912511afc08679f6e196ee631162a616df0920e"
+      },
+      {
+        "version": 12,
+        "name": "presentation_templates",
+        "file": "0012_presentation_templates.sql",
+        "sha256": "4897e69f1772ecc4739d8b48b68cc67339c2fbf891d5bc7431ac503bd98ad600"
+      },
+      {
+        "version": 13,
+        "name": "study_phases",
+        "file": "0013_study_phases.sql",
+        "sha256": "b21b8d7376bcefffd7af7c1612faae3e75b380f551d71be4a469646ed92d5752"
+      },
+      {
+        "version": 14,
+        "name": "teaching_templates",
+        "file": "0014_teaching_templates.sql",
+        "sha256": "c2bb3d53a9534dc935bf92685a5ce89f1138955c108c6dd7d930c8b4a28a7f2f"
+      },
+      {
+        "version": 15,
+        "name": "verse_bridges",
+        "file": "0015_verse_bridges.sql",
+        "sha256": "6fe4b7bf54c5e7bc24cf3dc5d162618868abe9ec65dbb381f735db503a1ebf5c"
+      },
+      {
+        "version": 16,
+        "name": "unresolved_citations",
+        "file": "0016_unresolved_citations.sql",
+        "sha256": "9d8fc7cdbec5c5c7ce1b7c05e412d6396695d106d05e8e36f61cf4cf7424846a"
+      },
+      {
+        "version": 17,
+        "name": "word_annotations",
+        "file": "0017_word_annotations.sql",
+        "sha256": "0328b622162d1849e110c0e1d872ef678bb97dc41fd7b4fc68dfd317ef408f20"
+      },
+      {
+        "version": 18,
+        "name": "grammar_provenance",
+        "file": "0018_grammar_provenance.sql",
+        "sha256": "360fa1b64e04d6577414af653b2a75ae5e3e5e2167e37ac73341592734f2a0e2"
+      },
+      {
+        "version": 19,
+        "name": "bible_documents",
+        "file": "0019_bible_documents.sql",
+        "sha256": "9c5f902a99211c4c02e6789908639eb75542bbeab2a379092247728bcafe13d4"
+      },
+      {
+        "version": 20,
+        "name": "library_organisation",
+        "file": "0020_library_organisation.sql",
+        "sha256": "3c3b94a6448ffb8449a90161126cb8ea838cd5d53948ea62dabb656655dcc71c"
+      },
+      {
+        "version": 21,
+        "name": "bible_passage_locations",
+        "file": "0021_bible_passage_locations.sql",
+        "sha256": "58408192a7f7a8ee5570dff1b22c3a3227516cd1feb7bfe3f6f1d0d29d518cf1"
+      },
+      {
+        "version": 22,
+        "name": "import_jobs",
+        "file": "0022_import_jobs.sql",
+        "sha256": "b77b53f8186ba795f8acdec482eac93250edf90e2ad140dd073fe175d3220521"
+      },
+      {
+        "version": 23,
+        "name": "recognition_corrections",
+        "file": "0023_recognition_corrections.sql",
+        "sha256": "beb1121b087d028b657c464ff65a351475cc307fe2b08430112ed608790c334a"
+      },
+      {
+        "version": 24,
+        "name": "section_status_and_fields",
+        "file": "0024_section_status_and_fields.sql",
+        "sha256": "7b8c3b31856ae40d2b6ad5c764515066066a20c0dc4dfac20ba5e62384a53252"
+      },
+      {
+        "version": 25,
+        "name": "teaching_blocks",
+        "file": "0025_teaching_blocks.sql",
+        "sha256": "68fd35adfff4af4d57ad5687249fd26442a72f470d6dbec54bb10caca6d29e36"
+      },
+      {
+        "version": 26,
+        "name": "project_teaching",
+        "file": "0026_project_teaching.sql",
+        "sha256": "cbcef5c4d83a571230b6001d3ebc6d9f4060709f1aae148bc2ea4456598ef95c"
+      },
+      {
+        "version": 27,
+        "name": "pdf_structure",
+        "file": "0027_pdf_structure.sql",
+        "sha256": "7a6bcaea751d7c46726bba645d2319cb4a8a3d809bc5e0643850504b9b4d8b55"
+      }
+    ]
+  },
+  "diagnosticManifest": {
+    "source": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "schema": 27,
+    "complete": true,
+    "classification": "diagnostic-only-not-portable",
+    "missing": [],
+    "files": [
+      {
+        "sha256": "ac79673d67134e66cc64a73bff0aa44d515fc828c57e8146d6880c21a0f8bf85",
+        "path": "abiding-word.exe",
+        "bytes": 29800960
+      },
+      {
+        "sha256": "4c5e4f928ea842d6f4c10f539500441f492d17fbae0ad08dc523388eec9093c3",
+        "path": "DIAGNOSTIC-ONLY.txt",
+        "bytes": 621
+      },
+      {
+        "sha256": "b6170cdaba249210fd9709d689b517b820afe98d70440e4864a56c7c681abe78",
+        "path": "scripture\\deu1912_usfm.zip",
+        "bytes": 2494966
+      },
+      {
+        "sha256": "0c6c86ae1a4124101ba9c68be9d2be55c17467e2a78cdb23e531feb4aa37dce5",
+        "path": "scripture\\deu1951_usfm.zip",
+        "bytes": 1536609
+      },
+      {
+        "sha256": "0e3c181372347c7e3cd79fb747a592e79406381f29449041df4fb0948fd9240b",
+        "path": "scripture\\deuelo_usfm.zip",
+        "bytes": 1500516
+      },
+      {
+        "sha256": "09cdf4340d239564d64b7a03bce5ddfc6ebddda5323c7a5bbee959653759b1f0",
+        "path": "scripture\\engbsb_usfm.zip",
+        "bytes": 3017090
+      },
+      {
+        "sha256": "c725155aa8192b954e552a0b08aa75f8e7b85e6e56f1eb22efd6d30f5b4aa3cc",
+        "path": "scripture\\engwebp_usfm.zip",
+        "bytes": 2903129
+      },
+      {
+        "sha256": "fcf2a836549dd042c113b70e8844da0a46394a3188c87808580e811cfb0fc179",
+        "path": "scripture\\fraLSG_usfm.zip",
+        "bytes": 3469798
+      },
+      {
+        "sha256": "c1034fe50c7e30c5fe33201654b1e2a373da69ac9eab42a008ca85ee8b67f0b7",
+        "path": "scripture\\grcbyz_usfm.zip",
+        "bytes": 811139
+      },
+      {
+        "sha256": "fa1a59e1545ee404b2b5306fd5e57e2b44617e3c88bd0da60d44c3bd9ae496d6",
+        "path": "scripture\\grcmt_usfm.zip",
+        "bytes": 866796
+      },
+      {
+        "sha256": "6807ec1ccf114ced6d33024b448bd4e7825fd7837ecec6b43fe9cf9dcb9bcba0",
+        "path": "scripture\\grcsbl_usfm.zip",
+        "bytes": 917905
+      },
+      {
+        "sha256": "3232412340f9c3bbe1d85330944306be326f6c7ce6e6aa117b379c4476ae6615",
+        "path": "scripture\\grctr_usfm.zip",
+        "bytes": 787932
+      },
+      {
+        "sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50",
+        "path": "scripture\\kor1961_usfm.zip",
+        "bytes": 1433819
+      },
+      {
+        "sha256": "adda51da837676b7bcc91a57c18578d86ec505baf951d5170adddb8389e5d163",
+        "path": "scripture\\porbr2018_usfm.zip",
+        "bytes": 1448160
+      },
+      {
+        "sha256": "488ca0d7f4e9ab974745b47eca305b876491339d6973bc3e5a23244bebea6b5c",
+        "path": "scripture\\spaRV1909_usfm.zip",
+        "bytes": 2380145
+      }
+    ]
+  },
+  "provenanceAudit": {
+    "audit": "Windows NSIS installer build provenance",
+    "result": "passed_with_recorded_warnings",
+    "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "workflowCommit": "711f6dbe07c531fb410a5010fb25c0fd08cd80be",
+    "workflowPath": ".github/workflows/windows-combined-owner-20261109.yml",
+    "workflowSha256": "dcf0a088dcee5b39a5c419b80a4d2ed8795d68a340e50b8afc05d21407a8b4c8",
+    "remoteWorkflowGitBlob": "28e75556315ce7edab63c1a0c3de9b3aabf2b2fb",
+    "packagingSourceSha": "4bddc038d190cf42fd475b7c504430e96c014769",
+    "run": {
+      "id": 44421251924,
+      "url": "https://github.com/pistio/abidingword/actions/runs/44421251924",
+      "attempt": 1,
+      "conclusion": "success",
+      "jobCount": 1,
+      "jobId": 135214534225,
+      "jobName": "acceptance",
+      "jobAttempt": 1,
+      "startedUTC": "2026-11-18T23:30:03Z",
+      "completedUTC": "2026-11-18T23:45:36Z"
+    },
+    "applicationSource": {
+      "clean": true,
+      "schemaVersion": 27,
+      "migrationCount": 27,
+      "migrationVersions": "1 through 27",
+      "migrationCatalogueSha256": "acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13",
+      "catalogueDigestIndependentlyRecomputed": true,
+      "updaterConfigurationAbsentGuardPassed": true
+    },
+    "orderedSuccessfulStages": [
+      {
+        "name": "Verify exact source and historical migrations before compilation",
+        "startedUTC": "2026-11-18T23:30:47Z",
+        "completedUTC": "2026-11-18T23:30:47Z",
+        "result": "success"
+      },
+      {
+        "name": "Acquire and validate NSIS dependencies before application compilation",
+        "startedUTC": "2026-11-18T23:32:05Z",
+        "completedUTC": "2026-11-18T23:32:07Z",
+        "result": "success"
+      },
+      {
+        "name": "Prove pinned Tauri uses cached NSIS without GitHub tool downloads",
+        "startedUTC": "2026-11-18T23:32:07Z",
+        "completedUTC": "2026-11-18T23:32:11Z",
+        "result": "success"
+      },
+      {
+        "name": "Compile unsigned application without packaging",
+        "startedUTC": "2026-11-18T23:32:12Z",
+        "completedUTC": "2026-11-18T23:44:59Z",
+        "result": "success"
+      },
+      {
+        "name": "Preserve diagnostic executable and configured resources",
+        "startedUTC": "2026-11-18T23:44:59Z",
+        "completedUTC": "2026-11-18T23:45:00Z",
+        "result": "success"
+      },
+      {
+        "name": "Package existing unsigned executable with cached NSIS",
+        "startedUTC": "2026-11-18T23:45:03Z",
+        "completedUTC": "2026-11-18T23:45:26Z",
+        "result": "success"
+      },
+      {
+        "name": "Stage installer and checksum",
+        "startedUTC": "2026-11-18T23:45:26Z",
+        "completedUTC": "2026-11-18T23:45:27Z",
+        "result": "success"
+      },
+      {
+        "name": "Upload acceptance installer",
+        "startedUTC": "2026-11-18T23:45:27Z",
+        "completedUTC": "2026-11-18T23:45:29Z",
+        "result": "success"
+      }
+    ],
+    "compilationAndPackaging": {
+      "applicationCompilationCount": 1,
+      "applicationCompilationCompletionMarkers": 1,
+      "applicationNsisPackagingCount": 1,
+      "applicationBundleCount": 1,
+      "workflowOrApplicationBuildRetryObserved": false,
+      "separateSyntheticNsisCacheProbe": true,
+      "probeIsNotAnApplicationCompilation": true,
+      "applicationBuildCommand": "npx tauri build --no-bundle --no-sign --ci -- --locked",
+      "applicationBundleCommand": "npx tauri bundle --bundles nsis --no-sign --ci",
+      "signingDisabledByCommandsAndBuildLog": true,
+      "releasePublicationSteps": false,
+      "updaterOverlaySteps": false,
+      "installerOrApplicationExecutionSteps": false
+    },
+    "nsis": {
+      "version": "3.11",
+      "cliVersion": "2.12.0",
+      "bundlerVersion": "2.10.0",
+      "preflightPassed": true,
+      "probePassed": true,
+      "probeGithubToolDownloadsBlocked": true,
+      "verifiedTools": [
+        {
+          "name": "nsis-3.11.zip",
+          "route": "official release",
+          "attempt": 1,
+          "sha256": "c7d27f780ddb6cffb4730138cd1591e841f4b7edb155856901cdf5f214394fa1"
+        },
+        {
+          "name": "nsis_tauri_utils.dll",
+          "route": "official release",
+          "attempt": 1,
+          "sha256": "5ba143b5db4a87d32d6e7802e033330aae56cbceabe0d1e3ba41948385ad4709"
+        }
+      ],
+      "metadataRouteFallback": "DLL release-API metadata unavailable; existing fallback fetched and verified the official release asset on attempt 1. This was not an application-build retry."
+    },
+    "diagnosticProvenance": {
+      "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+      "complete": true,
+      "missing": [],
+      "inventoriedFiles": 15,
+      "noticeIncludedInInventory": true,
+      "recordedBeforeNsisBundleTypePatch": true,
+      "note": "The bundler subsequently patches the application PE with NSIS bundle-type metadata. The diagnostic EXE hash is not automatically the packaged payload EXE hash."
+    },
+    "installer": {
+      "filename": "Abiding-Word-Original-View-schema27-539b54d65c2cecf010cd1573b8bd51c91ac640bd-x64-setup.exe",
+      "recordedSha256": "1ade97d555b39bd6c215d1b6739cc4b23563b6e20eff6c0f9d2afcc867fffbbf",
+      "actualSha256IndependentlyVerified": true,
+      "bytes": 33616012,
+      "artifactId": 14481669640,
+      "artifactName": "Abiding-Word-Original-View-schema27-539b54d65c2cecf010cd1573b8bd51c91ac640bd-Windows-x64"
+    },
+    "recordedWarnings": [
+      {
+        "kind": "dependency_audit",
+        "detail": "npm ci reported 14 vulnerabilities: 11 moderate and 3 high. The pinned dependencies were not changed. Advisory applicability is outside this focused provenance audit."
+      },
+      {
+        "kind": "build_size",
+        "detail": "Vite reported its existing chunk-size warning; the frontend production build completed."
+      },
+      {
+        "kind": "synthetic_probe",
+        "detail": "NSIS cache probe reported unused install_webview2 label because the synthetic probe skips WebView installation; probe packaging passed."
+      },
+      {
+        "kind": "tooling_deprecations",
+        "detail": "Pinned GitHub Actions target Node 20 and ran under enforced Node 24; action dependencies emitted punycode/url.parse deprecation warnings. All steps completed."
+      },
+      {
+        "kind": "expected_unsigned_output",
+        "detail": "Tauri confirmed that signing was skipped because --no-sign was supplied."
+      }
+    ],
+    "limits": [
+      "Build/provenance acceptance only; the installer was not installed or launched by this review.",
+      "Native Windows comparison at prior source 32e8a525 remains separate from installed-release acceptance at this source.",
+      "Installer payload, PE architecture and Authenticode inspection are handled by the separate payload review.",
+      "This audit confirms one workflow attempt and one application compilation, not an absence of bounded network-fetch retry capability in third-party setup actions."
+    ],
+    "evidenceFiles": [
+      "run.json",
+      "artifacts.json",
+      "activation.json",
+      "windows-job.log",
+      "evidence/build-environment.txt",
+      "evidence/build-provenance.json",
+      "evidence/installer-sha256.txt",
+      "evidence/diagnostic-executable/manifest.json",
+      "evidence/packaging-evidence/nsis-preflight.json",
+      "evidence/packaging-evidence/nsis-cache-probe.json",
+      "evidence/packaging-evidence/application-build.log",
+      "evidence/packaging-evidence/application-bundle.log"
+    ]
+  },
+  "payloadAudit": {
+    "completedUTC": "2026-11-18T23:52:24.044187+00:00",
+    "classification": "Static Linux inspection of Windows installer contents; no Windows execution or installed-application acceptance",
+    "result": "passed; expected Tauri bundle marker patch accounted for by direct byte comparison",
+    "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+    "installer": {
+      "filename": "Abiding-Word-Original-View-schema27-539b54d65c2cecf010cd1573b8bd51c91ac640bd-x64-setup.exe",
+      "bytes": 33616012,
+      "sha256": "1ade97d555b39bd6c215d1b6739cc4b23563b6e20eff6c0f9d2afcc867fffbbf",
+      "matchesPublishedChecksumFile": true,
+      "pe": {
+        "machine": "0x014c",
+        "format": "PE32",
+        "architecture": "x86",
+        "subsystem": 2,
+        "certificateTableFileOffset": 0,
+        "certificateTableSize": 0,
+        "embeddedAuthenticodeCertificatePresent": false
+      },
+      "architectureNote": "The NSIS bootstrap is x86; the packaged application is x64."
+    },
+    "extraction": {
+      "tool": "7-Zip 25.01 Linux x64",
+      "exitCode": 0,
+      "files": 20,
+      "uncompressedBytes": 53474818,
+      "archiveType": "Nsis",
+      "extractorSubtype": "NSIS-3 Unicode BadCmd=13",
+      "summary": "Everything is Ok; application and resources independently verified against trusted hashes. NSIS script semantics were not interpreted or executed."
+    },
+    "diagnosticInventory": {
+      "filesVerified": 15,
+      "everySizeAndSha256MatchesManifest": true,
+      "manifestCopiesIdentical": true,
+      "complete": true,
+      "missing": [],
+      "noticeExcludedFromInstaller": "DIAGNOSTIC-ONLY.txt is staging-only metadata, not an application resource."
+    },
+    "application": {
+      "path": "abiding-word.exe",
+      "bytes": 29800960,
+      "prebundlingSha256": "ac79673d67134e66cc64a73bff0aa44d515fc828c57e8146d6880c21a0f8bf85",
+      "packagedSha256": "36b7fb210d4d75f0c26c54afc5c642ac1e6ad3566834e59a1c752456e251d648",
+      "prebundlingMatchesDiagnosticManifest": true,
+      "rawByteIdentical": false,
+      "expectedBundlePatch": {
+        "markerOffset": 24663892,
+        "before": "__TAURI_BUNDLE_TYPE_VAR_UNK",
+        "after": "__TAURI_BUNDLE_TYPE_VAR_NSS",
+        "changedByteCount": 3,
+        "changedBytes": [
+          {
+            "offset": 24663916,
+            "beforeHex": "55",
+            "afterHex": "4e",
+            "beforeAscii": "U",
+            "afterAscii": "N"
+          },
+          {
+            "offset": 24663917,
+            "beforeHex": "4e",
+            "afterHex": "53",
+            "beforeAscii": "N",
+            "afterAscii": "S"
+          },
+          {
+            "offset": 24663918,
+            "beforeHex": "4b",
+            "afterHex": "53",
+            "beforeAscii": "K",
+            "afterAscii": "S"
+          }
+        ],
+        "allOtherBytesIdentical": true,
+        "recordedInBuildBundleLog": true,
+        "documentedByLockedSource": "tauri-utils 2.10.0 src/platform.rs defines UNK default and NSS for NSIS"
+      },
+      "pe": {
+        "machine": "0x8664",
+        "format": "PE32+",
+        "architecture": "x64",
+        "subsystem": 2,
+        "certificateTableFileOffset": 0,
+        "certificateTableSize": 0,
+        "embeddedAuthenticodeCertificatePresent": false
+      }
+    },
+    "resources": {
+      "configured": 13,
+      "verifiedAgainstManifestAndSource": 13,
+      "files": [
+        {
+          "sourcePath": "resources/scripture/engbsb/engbsb_usfm.zip",
+          "payloadPath": "scripture/engbsb_usfm.zip",
+          "bytes": 3017090,
+          "sha256": "09cdf4340d239564d64b7a03bce5ddfc6ebddda5323c7a5bbee959653759b1f0",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/engwebp/engwebp_usfm.zip",
+          "payloadPath": "scripture/engwebp_usfm.zip",
+          "bytes": 2903129,
+          "sha256": "c725155aa8192b954e552a0b08aa75f8e7b85e6e56f1eb22efd6d30f5b4aa3cc",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/deu1912/deu1912_usfm.zip",
+          "payloadPath": "scripture/deu1912_usfm.zip",
+          "bytes": 2494966,
+          "sha256": "b6170cdaba249210fd9709d689b517b820afe98d70440e4864a56c7c681abe78",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/deu1951/deu1951_usfm.zip",
+          "payloadPath": "scripture/deu1951_usfm.zip",
+          "bytes": 1536609,
+          "sha256": "0c6c86ae1a4124101ba9c68be9d2be55c17467e2a78cdb23e531feb4aa37dce5",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/deuelo/deuelo_usfm.zip",
+          "payloadPath": "scripture/deuelo_usfm.zip",
+          "bytes": 1500516,
+          "sha256": "0e3c181372347c7e3cd79fb747a592e79406381f29449041df4fb0948fd9240b",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/kor1961/kor1961_usfm.zip",
+          "payloadPath": "scripture/kor1961_usfm.zip",
+          "bytes": 1433819,
+          "sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/fraLSG/fraLSG_usfm.zip",
+          "payloadPath": "scripture/fraLSG_usfm.zip",
+          "bytes": 3469798,
+          "sha256": "fcf2a836549dd042c113b70e8844da0a46394a3188c87808580e811cfb0fc179",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/spaRV1909/spaRV1909_usfm.zip",
+          "payloadPath": "scripture/spaRV1909_usfm.zip",
+          "bytes": 2380145,
+          "sha256": "488ca0d7f4e9ab974745b47eca305b876491339d6973bc3e5a23244bebea6b5c",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/porbr2018/porbr2018_usfm.zip",
+          "payloadPath": "scripture/porbr2018_usfm.zip",
+          "bytes": 1448160,
+          "sha256": "adda51da837676b7bcc91a57c18578d86ec505baf951d5170adddb8389e5d163",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grcsbl/grcsbl_usfm.zip",
+          "payloadPath": "scripture/grcsbl_usfm.zip",
+          "bytes": 917905,
+          "sha256": "6807ec1ccf114ced6d33024b448bd4e7825fd7837ecec6b43fe9cf9dcb9bcba0",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grcmt/grcmt_usfm.zip",
+          "payloadPath": "scripture/grcmt_usfm.zip",
+          "bytes": 866796,
+          "sha256": "fa1a59e1545ee404b2b5306fd5e57e2b44617e3c88bd0da60d44c3bd9ae496d6",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grctr/grctr_usfm.zip",
+          "payloadPath": "scripture/grctr_usfm.zip",
+          "bytes": 787932,
+          "sha256": "3232412340f9c3bbe1d85330944306be326f6c7ce6e6aa117b379c4476ae6615",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grcbyz/grcbyz_usfm.zip",
+          "payloadPath": "scripture/grcbyz_usfm.zip",
+          "bytes": 811139,
+          "sha256": "c1034fe50c7e30c5fe33201654b1e2a373da69ac9eab42a008ca85ee8b67f0b7",
+          "matchesDiagnosticManifest": true,
+          "matchesSource": true
+        }
+      ]
+    },
+    "applicationDlls": {
+      "countInDiagnosticManifest": 0,
+      "countInApplicationPayload": 0,
+      "missing": []
+    },
+    "installerSupportFiles": {
+      "count": 6,
+      "files": [
+        {
+          "path": "$PLUGINSDIR/NSISdl.dll",
+          "bytes": 15360,
+          "sha256": "ddf40229dd9d6b268902d8dea88c8a04aacf1af218dd29f6dcd35babc54ac08d"
+        },
+        {
+          "path": "$PLUGINSDIR/StartMenu.dll",
+          "bytes": 7680,
+          "sha256": "fe330320459637d8dd2b5d84d07925c38ec264152ffd3b1760a4d44d76536caa"
+        },
+        {
+          "path": "$PLUGINSDIR/System.dll",
+          "bytes": 12288,
+          "sha256": "8b4c47c4cf5e76ec57dd5a050d5acd832a0d532ee875d7b44f6cdaf68f90d37c"
+        },
+        {
+          "path": "$PLUGINSDIR/modern-wizard.bmp",
+          "bytes": 26494,
+          "sha256": "3ad2dc318056d0a2024af1804ea741146cfc18cc404649a44610cbf8b2056cf2"
+        },
+        {
+          "path": "$PLUGINSDIR/nsDialogs.dll",
+          "bytes": 9728,
+          "sha256": "b1350f487692057c8ffde75dcc55287a52a3272240d4d4912f24464b27551fc0"
+        },
+        {
+          "path": "$PLUGINSDIR/nsis_tauri_utils.dll",
+          "bytes": 34304,
+          "sha256": "5ba143b5db4a87d32d6e7802e033330aae56cbceabe0d1e3ba41948385ad4709"
+        }
+      ],
+      "tauriUtilityDllMatchesVerifiedNsisPreflight": true
+    },
+    "provenance": {
+      "commitMatchesManifestAndRequestedSource": true,
+      "dirty": false,
+      "schemaVersion": 27,
+      "registeredMigrationsVerifiedAgainstSource": 27,
+      "migrationCatalogueSha256": "acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13",
+      "updaterConfigured": false
+    },
+    "unexpectedApplicationFiles": [],
+    "limitations": [
+      "No Windows binary, installer or installed application was executed.",
+      "PE certificate-table absence establishes no embedded Authenticode signature; Windows trust/catalogue validation was not performed.",
+      "NSIS installer support files are separate from the application diagnostic manifest; the Tauri utility DLL additionally matches its verified preflight hash.",
+      "7-Zip reports BadCmd=13 in NSIS subtype metadata; successful extraction and direct cryptographic comparisons validate application/resource contents, not installation-script behavior."
+    ],
+    "sourceChanged": false,
+    "windowsExecution": false,
+    "installerExecution": false,
+    "workflowActions": false
+  },
+  "inputRecordSha256": {
+    "payload-verification.json": "bf3adc1e384ebf1679b6dcf622e056f257c0d3a861545b66fa9a27babfc1e0c3",
+    "provenance-verification.json": "d196fc9c2e383510f986daf109baf32a1d7bfe5b0327f11bb154c12252c26e80",
+    "windows-job.log": "8e4aeefecbd268a73c4d7e510ffe7a3a1081ad5263b6a14c3f97c17886636753"
+  },
+  "deliveryFilename": "Abiding-Word-Windows-Installer-539b54d.zip",
+  "installerArtifactUrl": "https://github.com/pistio/abidingword/actions/runs/44421251924/artifacts/14481669640",
+  "acceptanceBoundary": "Windows compilation, NSIS packaging, downloaded archive integrity and static payload contents verified. No installer or application execution by this review. Windows 11 installed-release acceptance remains pending; the previous native comparison at 32e8a525 remains evidence for its own scope.",
+  "issueState": "Issue #49 open; PR #50 draft"
+}

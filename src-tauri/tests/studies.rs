@@ -367,7 +367,7 @@ fn six_built_in_templates_exist_and_are_protected() {
             names,
             [
                 "Passage Study",
-                "POZETEK — Examine a Bible text",
+                "Guided Passage Study",
                 "Ten steps — Interpret a Bible passage",
                 "Biblical Word Study",
                 "Topical Bible Study",

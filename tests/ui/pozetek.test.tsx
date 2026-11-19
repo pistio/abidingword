@@ -99,7 +99,7 @@ describe("a new POZETEK study", () => {
     const { api, studyId } = await withPozetek();
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Any passage/ }));
-    const part = await screen.findByRole("region", { name: /^Persons$/ });
+    const part = await screen.findByRole("region", { name: /^People$/ });
     expect(within(part).getByLabelText("Author")).toHaveValue("");
     await showPartHints(user);
     const toggle = within(part).getByRole("button", { name: "Example: Hosea 11" });
@@ -115,7 +115,7 @@ describe("a new POZETEK study", () => {
     const { api, studyId } = await withPozetek();
     const first = await renderApp(api);
     await first.user.click(await screen.findByRole("button", { name: /Any passage/ }));
-    const persons = await screen.findByRole("region", { name: /^Persons$/ });
+    const persons = await screen.findByRole("region", { name: /^People$/ });
     await first.user.type(within(persons).getByLabelText("Author"), "The prophet");
     await first.user.click(within(persons).getByRole("button", { name: /Add person or group/ }));
     await first.user.type(await within(persons).findByLabelText(/Name or group \(People and groups, entry 1\)/), "Ephraim");
@@ -137,7 +137,7 @@ describe("a new POZETEK study", () => {
 
     // The workspace reopens on the study that was open.
     const second = await renderApp(api);
-    const reopened = await screen.findByRole("region", { name: /^Persons$/ });
+    const reopened = await screen.findByRole("region", { name: /^People$/ });
     expect(within(reopened).getByLabelText("Author")).toHaveValue("The prophet");
     expect(within(reopened).getByLabelText(/Name or group \(People and groups, entry 1\)/)).toHaveValue("Ephraim");
     await openPartOptions(second.user);

@@ -275,10 +275,10 @@
       },
       "pozetek-study": {
         "name": "Guided Passage Study",
-        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "description": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "Persons",
+            "title": "People",
             "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
             "goal": "Get to know everyone involved before interpreting anything. Record only what the text itself says.",
             "example": "Hosea proclaims God’s word to Israel/Ephraim; the focus is God’s relationship with his people. Egypt and Assyria belong to the historical background that is addressed.",
@@ -487,7 +487,7 @@
           "application": {
             "title": "Personal application",
             "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above.",
-            "goal": "Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK.",
+            "goal": "Respond to the text in a way that stays tied to what it says. Personal application is a separate closing step after observation and interpretation.",
             "example": "God’s love for his people rests in his nature, not in Israel’s faithfulness. Even though Israel turns away, God shows compassion in the midst of judgment. That challenges us to recognise our own substitute securities and to trust God anew. Love received should also shape how we treat people who do not return love and care (cf. 1 John 4:8, 19).",
             "fields": {
               "truth": {
@@ -901,10 +901,10 @@
       },
       "pozetek-writing-study": {
         "name": "Guided Passage Study",
-        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "description": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "Persons",
+            "title": "People",
             "guidance": "Who wrote the text? Who is it addressed to? Who speaks, acts or appears in it?",
             "fields": {
               "answer": {
@@ -1005,7 +1005,7 @@
           },
           "application": {
             "title": "Personal application",
-            "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
+            "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. Personal application is a separate closing step after observation and interpretation. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
             "fields": {
               "answer": {
                 "label": "Your answer",
@@ -2937,8 +2937,8 @@
     "empty": "There is nothing to export for this choice yet."
   },
   "repair": {
-    "review": "Review POZETEK parts",
-    "undo": "Undo POZETEK repair",
+    "review": "Review study parts",
+    "undo": "Undo study repair",
     "apply": "Add missing parts and order",
     "explain": "The original seven parts appear first. Missing parts are added empty. Every existing part, including Theme, Understanding, Consequences and duplicate parts, keeps its name, writing, notes and links and follows in its existing relative order when outside the seven-part sequence.",
     "keep": "Keep existing part",

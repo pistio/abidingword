@@ -21,6 +21,10 @@ pub mod sample;
 pub mod scripture;
 pub mod state;
 
+// Optional read-only main-window WebView2 geometry diagnostics.
+#[cfg(target_os = "windows")]
+mod window_sizing;
+
 use std::path::PathBuf;
 
 use tauri::{AppHandle, Manager};
@@ -45,6 +49,23 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         // Closing the main window also closes a presentation's audience screen.
         .on_window_event(|window, event| {
+            // Collect geometry only when the explicit diagnostic trace is enabled.
+            // Tauri continues to manage native window and WebView2 sizing.
+            #[cfg(target_os = "windows")]
+            if window.label() == "main" {
+                let focused = matches!(event, tauri::WindowEvent::Focused(true));
+                if focused
+                    || matches!(
+                        event,
+                        tauri::WindowEvent::Resized(_)
+                            | tauri::WindowEvent::ScaleFactorChanged { .. }
+                    )
+                {
+                    if let Some(main) = window.app_handle().get_webview_window("main") {
+                        window_sizing::schedule(main);
+                    }
+                }
+            }
             if window.label() == "main"
                 && matches!(
                     event,
@@ -66,6 +87,12 @@ pub fn run() {
             }
             let state = start(app.handle());
             app.manage(state);
+            // Schedule optional Windows measurements after start() installs logging.
+            // With tracing disabled, initialise() does not start a worker.
+            #[cfg(target_os = "windows")]
+            if let Some(main) = app.get_webview_window("main") {
+                window_sizing::initialise(&main);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

@@ -74,7 +74,7 @@ describe("creating studies", () => {
 
     await openStudyOptions(user);
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
-    expect(sectionHeadings()[0]).toBe("Persons");
+    expect(sectionHeadings()[0]).toBe("People");
     await openStudyOptions(user);
     const passages = screen.getByRole("region", { name: "Passages" });
     expect(within(passages).queryByText("Primary")).not.toBeInTheDocument();

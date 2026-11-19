@@ -1,6 +1,6 @@
 {
   "key": "pozetek-study",
-  "name": "POZETEK — Examine a Bible text",
+  "name": "Guided Passage Study",
   "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
   "studyType": "passage",
   "sections": [

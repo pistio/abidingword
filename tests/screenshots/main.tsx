@@ -15,6 +15,7 @@ import "@fontsource/noto-serif/600.css";
 import "@/design-system/index.css";
 import i18n from "@/i18n";
 import { App } from "@/app/App";
+import type { EpubNode } from "@/types/library";
 import type { MorphDescribed, VerseText } from "@/types/scripture";
 import { createMemoryApi, type FixtureWord, type MemoryApi } from "../support/memoryApi";
 import { ApiError } from "@/lib/api";
@@ -490,6 +491,40 @@ async function start() {
   const fixtureOriginalInfo = api.libraryOriginalInfo;
   const fixtureOriginalRead = api.libraryOriginalRead;
   if (params.get("empty") !== "1") await seed(api);
+  if (params.get("viewportReview") === "1") {
+    // Entirely invented geometry content; never imported Scripture or owner data.
+    const bible = api.installFixtureBible("INVENTED", "viewport");
+    bible.name = "Invented geometry fixture — NOT Scripture";
+    api.state.text.set(bible.id, new Map([["JHN|15", Array.from({ length: 27 }, (_, i) => ({
+      canonical: `JHN.15.${i + 1}`, chapter: 15, verse: i + 1,
+      text: `INVENTED GEOMETRY ROW ${i + 1} — NOT SCRIPTURE. ${"Only test layout and scrolling. ".repeat(20)}`,
+    }))]]));
+    api.state.settings.scriptureTranslationId = bible.id;
+    api.state.settings.scripturePassage = "JHN.15";
+    api.installFixtureSource({ title: "INVENTED Viewport Source", format: "markdown", language: "English",
+      segments: Array.from({ length: 80 }, (_, i) => ({ text: `Invented paragraph ${i + 1}. ${"Geometry content only. ".repeat(30)}` })),
+      mentions: [{ segment: 0, reference: "JHN.15.1", matchedText: "John 15:1" }],
+    });
+  }
+  if (params.has("originalReview")) {
+    const kind = params.get("originalReview") === "docx" ? "docx" : "epub";
+    const texts = Array.from({ length: 70 }, (_, i) => `INVENTED formatted paragraph ${i + 1}. ${"Read this invented content to test scrolling and navigation. ".repeat(8)}`);
+    const source = api.installFixtureSource({ title: "INVENTED Original navigation", format: kind, language: "English",
+      formatted: { kind, structure: [{ id: "chapter", startSegment: 0, segmentCount: 70, anchors: Object.fromEntries(texts.map((_, i) => [`p${i}`, i])) }],
+        items: { chapter: { id: "chapter", css: "p { margin: 1em 0; }", root: {}, missingImages: 0,
+          nodes: texts.map<EpubNode>((text, i) => ({ t: "p", a: { id: `p${i}` }, c: [text,
+            ...(i === 40 ? [{ t: "a", a: { id: "noteref", role: "doc-noteref" }, l: { item: "chapter", id: "p65" }, c: ["Footnote 1"] }] : []),
+            ...(i === 65 ? [{ t: "a", a: { id: "backref", role: "doc-backlink" }, l: { item: "chapter", id: "p40" }, c: ["Return to passage"] }] : []),
+          ] })),
+        } } },
+      segments: texts.map((text, i) => ({ text, sectionPath: i >= 40 ? "Deep passage" : "Opening" })),
+      contents: [{ id: "opening", title: "Opening", target: { kind: "segment", position: 0 }, children: [] }, { id: "deep", title: "Deep passage", target: { kind: "segment", position: 40 }, children: [] }, { id: "notes", title: "Footnotes", target: { kind: "segment", position: 65 }, children: [] }],
+      generatedContents: [{ id: "opening", title: "Opening", target: { kind: "segment", position: 0 }, children: [] }, { id: "deep", title: "Deep passage", target: { kind: "segment", position: 40 }, children: [] }, { id: "notes", title: "Footnotes", target: { kind: "segment", position: 65 }, children: [] }],
+      mentions: [{ segment: 40, reference: "JHN.15.1", matchedText: "John 15:1" }],
+    });
+    const segment = (await api.sourceGetSegments({ sourceId: source.id, offset: 40, limit: 1 })).segments[0]!;
+    await api.sourceAnnotationCreate({ sourceId: source.id, kind: "highlight", color: "amber", start: { segmentId: segment.id, offset: 0 }, end: { segmentId: segment.id, offset: 31 }, quote: segment.text.slice(0, 31) });
+  }
   // The example project (v0.19), added as the person would from Settings.
   if (params.get("sample") === "1") await api.sampleProjectInstall();
   // Study and research help (v0.20): the assistant off (the plain study), or prepared answers.
@@ -610,11 +645,11 @@ async function start() {
   if (params.get("a3Review") === "1") await homeReviewFixture(api, params.get("a3Shape") === "owner");
   // A.4.3 review: a POZETEK writing study whose project has another name, with some writing.
   if (params.get("a4Editors") === "1") {
-    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Organisatorisches Projekt" });
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: params.get("viewportReview") === "1" ? "INVENTED Viewport Project" : "Organisatorisches Projekt" });
     const template = api.state.templates.find((tpl) => tpl.key === "pozetek-writing-study")!;
-    const { study } = await api.studyCreate({ projectId: project.id, title: "Römer 8", templateId: template.id, primaryPassage: "ROM.8" });
+    const { study } = await api.studyCreate({ projectId: project.id, title: params.get("viewportReview") === "1" ? "INVENTED Viewport Study" : "Römer 8", templateId: template.id, primaryPassage: params.get("viewportReview") === "1" ? "JHN.15" : "ROM.8" });
     const sections = await api.studySectionList(study.id);
-    const writing = ["Paulus, die Gemeinde in Rom, der Geist, die Kinder Gottes.", "Rom; Brief aus Korinth, um 57 n. Chr."];
+    const writing = params.get("viewportReview") === "1" ? Array.from({ length: 7 }, (_, i) => `INVENTED STUDY GEOMETRY ${i + 1}. ${"Writing stays intact during resizing. ".repeat(40)}`) : ["Paulus, die Gemeinde in Rom, der Geist, die Kinder Gottes.", "Rom; Brief aus Korinth, um 57 n. Chr."];
     for (const [index, text] of writing.entries()) {
       const block = sections[index]?.blocks[0];
       if (block) await api.studyBlockUpdate({ id: block.id, content: text });

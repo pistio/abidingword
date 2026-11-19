@@ -1,0 +1,222 @@
+{
+  "recordedAt": "2026-11-19T09:47:26.391345+00:00",
+  "baseCommit": "d26981e6404de72a8c4717ae1d3a0b0c53431b66",
+  "inputNote": "Checks ran on this base plus the exact changed code/resource/test inputs hashed below. Documentation was finalized afterward. GitHub publication preserves the complete local tree.",
+  "changedInputsSha256": {
+    "resources/templates/pozetek-study.json": "3f1eb24576840d1ed08b34c6c88bafb817d03e8af0fc2fbcdaab644eea25607f",
+    "resources/templates/pozetek-writing-study.json": "f875a549fab51ae677caa0daa725ea012af32b7a925358b5d74401366dc16086",
+    "src-tauri/tests/studies.rs": "50f30cc8b87b9ccc2b157c1e3c49bd6ffec5ae7182db9c28d09ef80884b73cf1",
+    "src/features/library/PassageSourceList.tsx": "38420eec761f3cd515431fe768a0db788afe77dbf22a5fd71e523eef1e1fc4f7",
+    "src/i18n/locales/en/studies.json": "7dad2f4f7326a41525c2d29553a1ba4e37eb1d63b6c2a2add54350cd6fd0186b",
+    "src/i18n/locales/es/studies.json": "6f32ee8a1c01e7269042752fa862992512b2eda6647a9db241fa7585e306864c",
+    "src/i18n/locales/fr/studies.json": "b6009686dcda3efe56155d2e2468d1822510ff9786d72506314c54df9294486d",
+    "src/i18n/locales/ko/studies.json": "1cf1da4d2c8e0e1ba870772927281e1a66d9a792dbce88936d13ab6373fa9b3c",
+    "src/i18n/locales/pt/studies.json": "7d721bfe0198f3a4a2f02e472e27b00a4454b9f190b12bee1154261ff2491206",
+    "tests/ui/guided-passage-wording.test.ts": "ae15b7ddfd9fb2e114386524d2079ec99194b521f0242eb66ea099f4fe37ca3b",
+    "tests/ui/owner-study-corrections.test.tsx": "79f7851b76dea2c0ea6f2eedd7e0255fbc4bed2ae6809598d84825ec593c7db4",
+    "tests/ui/source-result-evidence.test.tsx": "32e0227b9e253ce368324983a013b2df2badf6ac29f53d37856c7bcb343a9af1"
+  },
+  "frontend": {
+    "checks": [
+      {
+        "command": "npm run typecheck",
+        "exitCode": 0,
+        "logSha256": "dff1d01717df7805cee8dd6b522e890dc704d194b2a1f6dbcf4e6313aabff9d5"
+      },
+      {
+        "command": "npm run lint",
+        "exitCode": 0,
+        "logSha256": "020cc1c1c50f602e51366f1b16c2d6be04507bff2a11824b959ab51d4dd9fe29"
+      },
+      {
+        "command": "npm run i18n:check",
+        "exitCode": 0,
+        "logSha256": "4b6e4652a0cb9be0edcdc4d5d4c3c32e394c99d16bc02460749d7cc0d99c079c"
+      },
+      {
+        "command": "npm run build",
+        "exitCode": 0,
+        "logSha256": "5f64dee7d86f1f80a5bf087cf05d73d556b610f0eb712df39606dfcc69e1056f"
+      }
+    ],
+    "fullRun": {
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=frontend.json",
+      "success": false,
+      "passed": 1312,
+      "failed": 2,
+      "total": 1314,
+      "testFiles": 123,
+      "reportSha256": "3fd9539444e40820cb95dc7a6eb18c00b895f97835458d8f0357f966479e2151",
+      "failures": [
+        {
+          "file": "tests/ui/presentation.test.tsx",
+          "test": "review fixes a clicker on the audience screen moves the Presenter View; Space presses buttons instead of turning pages",
+          "message": "TestingLibraryElementError: Unable to find an element with the text: Slide 1 of 6. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+        },
+        {
+          "file": "tests/ui/studies-v3.test.tsx",
+          "test": "findings links the current passage and opens it from the finding",
+          "message": "Error: Unable to find role=\"heading\" and name \"Psalm 23\""
+        }
+      ]
+    },
+    "unchangedTargetedRerun": {
+      "command": "npm test -- --maxWorkers=1 tests/ui/presentation.test.tsx tests/ui/studies-v3.test.tsx -t \"a clicker on the audience screen moves the Presenter View; Space presses buttons instead of turning pages|links the current passage and opens it from the finding\" --reporter=json --outputFile=frontend-targeted-unchanged.json",
+      "passed": 2,
+      "failed": 0,
+      "filtered": 56,
+      "reportSha256": "ba0b26f102cf57f7d7c1d72eea7ba3eccbd9d6beddd9a00072fbddc78c080db1"
+    },
+    "interpretation": "The complete run passed 1312/1314. Both failed tests passed unchanged on one targeted rerun. Their tests, shared helpers and affected presentation/Scripture paths have no current diff. Existing requestAnimationFrame focus restoration is a plausible race; exact event ordering was not instrumented. This is not a single completely green full-suite run.",
+    "newRegressions": {
+      "wordingCases": 14,
+      "printedIndexEvidenceCases": 1,
+      "allPassedInFullRun": true,
+      "sourceLabelNegativeControl": "The new printed-index test failed before the one-line display fix and passed afterward."
+    },
+    "corpus": {
+      "current": true,
+      "historicalBaseline": "f19abbbb181ce74ce21b2727928207dc1e7980e8",
+      "historicalChangedKeys": 2119,
+      "changedRowsPerDocument": 4
+    },
+    "existingBuildWarning": "Vite reports chunks above 500 kB; dependency versions were not changed."
+  },
+  "native": {
+    "toolchain": {
+      "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+      "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+      "components": [
+        "cargo-x86_64-unknown-linux-gnu",
+        "clippy-x86_64-unknown-linux-gnu",
+        "rust-std-x86_64-unknown-linux-gnu",
+        "rustc-x86_64-unknown-linux-gnu",
+        "rustfmt-x86_64-unknown-linux-gnu"
+      ]
+    },
+    "finalGates": [
+      {
+        "command": [
+          "cargo",
+          "fmt",
+          "--manifest-path",
+          "src-tauri/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "checkout": "d26981e6404de72a8c4717ae1d3a0b0c53431b66",
+        "startedAt": "2026-11-19T09:41:22.922930+00:00",
+        "endedAt": "2026-11-19T09:41:24.477552+00:00",
+        "exitCode": 0,
+        "elapsedSeconds": 1.55,
+        "logFile": "rustfmt-final.log",
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "nativeInputManifestSha256": "1ee6169705cbf8b80b35b6f05231f0cc57ead363f0b5022b1240581b70b16639"
+      },
+      {
+        "command": [
+          "cargo",
+          "clippy",
+          "--manifest-path",
+          "src-tauri/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "checkout": "d26981e6404de72a8c4717ae1d3a0b0c53431b66",
+        "startedAt": "2026-11-19T09:41:24.478064+00:00",
+        "endedAt": "2026-11-19T09:41:36.940139+00:00",
+        "exitCode": 0,
+        "elapsedSeconds": 12.46,
+        "logFile": "rust-clippy-final.log",
+        "logSha256": "611030a5fed141537d61aa250f4444d3be9dfbe53e3f1c211e9b790a3d9c7b29",
+        "nativeInputManifestSha256": "1ee6169705cbf8b80b35b6f05231f0cc57ead363f0b5022b1240581b70b16639"
+      },
+      {
+        "command": [
+          "cargo",
+          "test",
+          "--manifest-path",
+          "src-tauri/Cargo.toml",
+          "--locked"
+        ],
+        "checkout": "d26981e6404de72a8c4717ae1d3a0b0c53431b66",
+        "startedAt": "2026-11-19T09:41:36.940557+00:00",
+        "endedAt": "2026-11-19T09:46:11.863607+00:00",
+        "exitCode": 0,
+        "elapsedSeconds": 274.92,
+        "logFile": "rust-tests-final.log",
+        "logSha256": "ea65feef2ea929cf22e5d5d1c55d0016baf4335256fb34350be5e166ceca5f49",
+        "nativeInputManifestSha256": "1ee6169705cbf8b80b35b6f05231f0cc57ead363f0b5022b1240581b70b16639",
+        "resultGroups": 95,
+        "totals": {
+          "passed": 1103,
+          "failed": 0,
+          "ignored": 8,
+          "measured": 0,
+          "filteredOut": 0
+        },
+        "ignoredTests": [
+          "test document_units_dump ... ignored",
+          "test write_examples ... ignored",
+          "test real_document_editions_report ... ignored",
+          "test bundled_number_index_cost ... ignored",
+          "test oshb_corpus_reference_correctness ... ignored",
+          "test real_editions_report ... ignored",
+          "test write_interface_fixture ... ignored",
+          "test a_whole_generated_annotated_bible_is_measured ... ignored"
+        ],
+        "failedTests": []
+      }
+    ],
+    "nativeInputsUnchangedDuringFinalGates": true,
+    "nativeInputManifestSha256": "1ee6169705cbf8b80b35b6f05231f0cc57ead363f0b5022b1240581b70b16639",
+    "initialRun": {
+      "command": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "src-tauri/Cargo.toml",
+        "--locked"
+      ],
+      "exitCode": 101,
+      "elapsedSeconds": 344.5,
+      "checkoutSha": "d26981e6404de72a8c4717ae1d3a0b0c53431b66",
+      "nativeInputDiffSha256": "26fef64639390e58edd39c2d8745310eeeaf860c356da177c0c746a35c94a1ed",
+      "nativeInputsUnchangedDuringRun": true,
+      "logSha256": "0789faf0b3c680893434d9def2115fc92ef31c7abec106a6158127f8096a0354",
+      "totals": {
+        "passed": 1000,
+        "failed": 1,
+        "ignored": 6
+      },
+      "resultGroups": 80
+    },
+    "initialFailureResolution": "The template-seeding test still expected POZETEK — Examine a Bible text. Only that expected display-name literal was changed to Guided Passage Study, then formatting, Clippy and the complete locked suite were rerun successfully."
+  },
+  "preservation": {
+    "germanLocaleUnchanged": true,
+    "productionRustUnchanged": true,
+    "workflowsUnchanged": true,
+    "dependencyManifestsAndLocksUnchanged": true,
+    "migrationsUnchanged": true
+  },
+  "visibleAcronymValueCounts": {
+    "en": 0,
+    "de": 6,
+    "ko": 0,
+    "fr": 0,
+    "es": 0,
+    "pt": 0
+  },
+  "delivery": {
+    "windowsBuildsStarted": 0,
+    "newInstallerCreated": false,
+    "mergeOrReleasePerformed": false,
+    "draftPullRequest": 50,
+    "layoutIssue49": "closed on owner report dated 19 November 2026",
+    "sourceIssue35": "open; current actual-file symptom/report still needed"
+  }
+}

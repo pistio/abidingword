@@ -42,7 +42,7 @@ export function PassageSourceList({
         ? t("library.passage.chapterSection", { passage: passageLabel(place.reference) })
         : passageReason(t, place.origin, passageLabel(place.reference));
     const basis = place.structureBasis;
-    if(basis === "outline" || basis === "tagged" || basis === "layout" || basis === "user") return `${reason} · ${t(`library.structure.basis.${basis}`)}`;
+    if(basis === "outline" || basis === "printed" || basis === "tagged" || basis === "layout" || basis === "user") return `${reason} · ${t(`library.structure.basis.${basis}`)}`;
     return reason;
   };
   return (
