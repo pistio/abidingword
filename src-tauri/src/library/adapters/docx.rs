@@ -1412,7 +1412,7 @@ fn parse_run(
             },
             Ok(Event::Text(t)) => {
                 if in_text {
-                    text.push_str(&t);
+                    text.push_str(&super::neutralise_marks(&t));
                 } else if in_instr {
                     if let Some(f) = fields.last_mut() {
                         if !f.result {
@@ -1422,7 +1422,7 @@ fn parse_run(
                 }
             }
             Ok(Event::GeneralRef(r)) if in_text => {
-                text.push_str(&unescape(&format!("&{};", &*r)));
+                text.push_str(&super::neutralise_marks(&unescape(&format!("&{};", &*r))));
             }
             Ok(Event::End(e)) => match e.name().as_ref() {
                 "w:t" => in_text = false,
@@ -1877,6 +1877,20 @@ pub(super) fn read_docx(bytes: &[u8], file_name: &str) -> AppResult<Docx> {
         .unwrap_or_else(|| "word/document.xml".to_string());
     let document_xml =
         read_entry(&mut archive, &document_path).ok_or_else(|| bad(file_name, "no document"))?;
+    // A body that is not well-formed XML is refused whole (Phase A1.5,
+    // independent review finding 11): read as far as its first error, it
+    // looked complete, and a paragraph cut there could verify short.
+    {
+        let mut reader = Reader::from_str(&document_xml);
+        reader.config_mut().check_end_names = false;
+        loop {
+            match reader.read_event() {
+                Ok(Event::Eof) => break,
+                Err(_) => return Err(bad(file_name, "damaged document part")),
+                _ => {}
+            }
+        }
+    }
     let dir = document_path
         .rsplit_once('/')
         .map(|(d, _)| format!("{d}/"))

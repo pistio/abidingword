@@ -79,6 +79,22 @@ pub struct PdfText {
 /// Reads a PDF's metadata and text layer. Refuses an unreadable or
 /// password-protected file with a coded message; never panics.
 pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
+    // Loading, metadata and the page list run inside the guard too (Phase
+    // A1.5, independent review finding 14: a panic there ended the import's
+    // task and the interface waited for ever). A stack overflow (a document
+    // that recurses without end) is not a panic and is not caught here.
+    catch_unwind(AssertUnwindSafe(|| read_pages_unguarded(bytes, file_name))).unwrap_or_else(|_| {
+        Err(AppError::Import(
+            UserMessage::new(
+                "library.badPdf",
+                format!("“{file_name}” could not be read as a PDF."),
+            )
+            .with("fileName", file_name),
+        ))
+    })
+}
+
+fn read_pages_unguarded(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
     let unreadable = || {
         AppError::Import(
             UserMessage::new(
@@ -100,6 +116,12 @@ pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
             .with("fileName", file_name),
         ));
     }
+    // A document whose drawing would recurse without end overflows the
+    // extractor's stack, which no guard catches: refused before it is
+    // drawn (Phase A1.5, independent review finding 3).
+    if recursion_hazard(&document) {
+        return Err(unreadable());
+    }
     let metadata = metadata(&document);
     let (layouts, failed_pages) = read_layouts(&document, file_name).ok_or_else(unreadable)?;
     let pages: Vec<String> = layouts.iter().map(PageLayout::text).collect();
@@ -117,6 +139,113 @@ pub fn read_pages(bytes: &[u8], file_name: &str) -> AppResult<PdfText> {
         failed_pages,
         scanned,
     })
+}
+
+/// How deep forms may draw forms, and how much of the graph is walked,
+/// before a document is taken to recurse without end. Real documents draw
+/// a form inside a form rarely, and never dozens deep.
+const MAX_FORM_DEPTH: usize = 32;
+const MAX_FORM_VISITS: usize = 100_000;
+const MAX_PARENTS: usize = 256;
+
+/// Whether drawing the document could recurse without end in the text
+/// extractor (pdf-extract 0.12): a page's `/Parent` chain that loops (its
+/// inherited properties are looked up recursively), or a form XObject that
+/// draws itself through any chain of forms (`Do` draws a form recursively,
+/// with the form's own resources or else the caller's), or forms nested
+/// past [`MAX_FORM_DEPTH`]. Every XObject a resource dictionary names
+/// counts, drawn or not: the walk must not depend on parsing content.
+fn recursion_hazard(document: &Document) -> bool {
+    use std::collections::HashSet;
+    fn deref<'a>(document: &'a Document, o: &'a Object) -> Option<&'a lopdf::Dictionary> {
+        match document.dereference(o).ok()?.1 {
+            Object::Dictionary(d) => Some(d),
+            Object::Stream(s) => Some(&s.dict),
+            _ => None,
+        }
+    }
+    let mut safe: HashSet<(lopdf::ObjectId, usize)> = HashSet::new();
+    let mut visits = 0usize;
+    // (form, resources it would be drawn with) → whether drawing it may
+    // recurse without end.
+    fn walk<'a>(
+        document: &'a Document,
+        resources: &'a lopdf::Dictionary,
+        stack: &mut Vec<lopdf::ObjectId>,
+        safe: &mut HashSet<(lopdf::ObjectId, usize)>,
+        visits: &mut usize,
+    ) -> bool {
+        if stack.len() > MAX_FORM_DEPTH {
+            return true;
+        }
+        let Some(xobjects) = resources
+            .get(b"XObject")
+            .ok()
+            .and_then(|o| deref(document, o))
+        else {
+            return false;
+        };
+        for (_, value) in xobjects.iter() {
+            let Ok(id) = value.as_reference() else {
+                continue;
+            };
+            *visits += 1;
+            if *visits > MAX_FORM_VISITS || stack.contains(&id) {
+                return true;
+            }
+            let Ok(Object::Stream(form)) = document.get_object(id) else {
+                continue;
+            };
+            if form.dict.get(b"Subtype").and_then(Object::as_name).ok() != Some(b"Form".as_slice())
+            {
+                continue;
+            }
+            let own = form
+                .dict
+                .get(b"Resources")
+                .ok()
+                .and_then(|o| deref(document, o));
+            let next = own.unwrap_or(resources);
+            let key = (id, next as *const lopdf::Dictionary as usize);
+            if safe.contains(&key) {
+                continue;
+            }
+            stack.push(id);
+            if walk(document, next, stack, safe, visits) {
+                return true;
+            }
+            stack.pop();
+            safe.insert(key);
+        }
+        false
+    }
+    for (_, page) in document.get_pages() {
+        // The `/Parent` chain, and the resources the page inherits along it.
+        let mut seen = HashSet::new();
+        let mut id = page;
+        let mut resources = None;
+        loop {
+            if !seen.insert(id) || seen.len() > MAX_PARENTS {
+                return true;
+            }
+            let Ok(node) = document.get_dictionary(id) else {
+                break;
+            };
+            if resources.is_none() {
+                resources = node.get(b"Resources").ok().and_then(|o| deref(document, o));
+            }
+            match node.get(b"Parent").and_then(Object::as_reference) {
+                Ok(parent) => id = parent,
+                Err(_) => break,
+            }
+        }
+        if let Some(resources) = resources {
+            if walk(document, resources, &mut Vec::new(), &mut safe, &mut visits) {
+                return true;
+            }
+        }
+    }
+    false
 }
 
 /// Every page laid out in reading order (`pdf_layout`), in page order. The
@@ -227,5 +356,78 @@ fn metadata(document: &Document) -> FoundMetadata {
         author: field(b"Author"),
         language,
         ..Default::default()
+    }
+}
+
+#[cfg(test)]
+mod recursion_tests {
+    use super::*;
+    use lopdf::content::{Content, Operation};
+    use lopdf::{dictionary, Stream};
+
+    /// One page drawing form `X1`; the form draws `X1` again when
+    /// `self_drawing`, else a second form that draws nothing.
+    fn pdf(self_drawing: bool) -> Vec<u8> {
+        let mut doc = Document::with_version("1.5");
+        let pages_id = doc.new_object_id();
+        let font_id = doc.add_object(dictionary! {
+            "Type" => "Font", "Subtype" => "Type1", "BaseFont" => "Helvetica",
+        });
+        let text = Content {
+            operations: vec![
+                Operation::new("BT", vec![]),
+                Operation::new("Tf", vec!["F1".into(), 11.into()]),
+                Operation::new("Td", vec![72.into(), 700.into()]),
+                Operation::new("Tj", vec![Object::string_literal("Invented words")]),
+                Operation::new("ET", vec![]),
+            ],
+        };
+        let leaf = doc.add_object(Stream::new(
+            dictionary! { "Type" => "XObject", "Subtype" => "Form",
+            "BBox" => vec![0.into(), 0.into(), 595.into(), 842.into()],
+            "Resources" => dictionary! { "Font" => dictionary! { "F1" => font_id } } },
+            text.encode().unwrap(),
+        ));
+        let form_id = doc.new_object_id();
+        let draws = Content {
+            operations: vec![Operation::new("Do", vec!["X1".into()])],
+        };
+        let target = if self_drawing { form_id } else { leaf };
+        doc.objects.insert(
+            form_id,
+            Object::Stream(Stream::new(
+                dictionary! { "Type" => "XObject", "Subtype" => "Form",
+                "BBox" => vec![0.into(), 0.into(), 595.into(), 842.into()],
+                "Resources" => dictionary! { "XObject" => dictionary! { "X1" => target } } },
+                draws.encode().unwrap(),
+            )),
+        );
+        let content_id = doc.add_object(Stream::new(dictionary! {}, draws.encode().unwrap()));
+        let page_id = doc.add_object(dictionary! {
+            "Type" => "Page", "Parent" => pages_id, "Contents" => content_id,
+            "MediaBox" => vec![0.into(), 0.into(), 595.into(), 842.into()],
+            "Resources" => dictionary! { "XObject" => dictionary! { "X1" => form_id } },
+        });
+        doc.objects.insert(
+            pages_id,
+            Object::Dictionary(dictionary! {
+                "Type" => "Pages", "Kids" => vec![Object::Reference(page_id)], "Count" => 1,
+            }),
+        );
+        let catalog_id = doc.add_object(dictionary! { "Type" => "Catalog", "Pages" => pages_id });
+        doc.trailer.set("Root", catalog_id);
+        let mut bytes = Vec::new();
+        doc.save_to(&mut bytes).unwrap();
+        bytes
+    }
+
+    #[test]
+    fn a_form_that_draws_itself_is_refused_before_it_is_drawn() {
+        // Phase A1.5 (independent review finding 3): drawn, it recursed until
+        // the stack overflowed and the whole app was gone.
+        assert!(read_pages(&pdf(true), "loop.pdf").is_err());
+        // The control: a form drawing another form once is read.
+        let read = read_pages(&pdf(false), "nested.pdf").unwrap();
+        assert!(read.pages[0].contains("Invented words"), "{:?}", read.pages);
     }
 }

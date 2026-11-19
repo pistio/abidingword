@@ -258,6 +258,175 @@ fn the_frozen_reading_reads_numeric_callers_as_verse_numbers() {
 }
 
 #[test]
+fn characters_a_document_writes_never_act_as_the_readers_marks() {
+    // Phase A1.5 (independent review finding 7): the readers mark note
+    // callers and raised letters with private-use characters
+    // (U+E000-U+E004). A document writing them itself made the words
+    // between vanish from a verse, which was then verified.
+    let body = ruth(
+        |c, v| match (c, v) {
+            (1, 3) => "Invented words of Ruth c1v3 are \u{E002}here for\u{E003} testing.".into(),
+            _ => words(c, v),
+        },
+        "",
+    );
+    let path = write("pua", &epub(&[("ruth.xhtml", body)]));
+    for (name, s) in [
+        ("frozen", baseline(&path)),
+        ("structural", structure_aware(&path).0),
+    ] {
+        let t = text(&s, 1, 3).unwrap_or_default();
+        assert!(t.contains("here for"), "{name}: {t:?}");
+        assert!(!verified(&s, 1, 3), "{name}: {t:?}");
+        for v in [1, 2, 4, 5] {
+            assert!(verified(&s, 1, v), "{name} 1:{v} {}", why(&s, 1, v));
+        }
+    }
+}
+
+#[test]
+fn a_verse_cut_by_an_xml_error_is_never_verified_short() {
+    // Phase A1.5 (independent review finding 11): reading stopped at the
+    // error and the verse cut there was verified with its first words only.
+    let body = ruth(
+        |c, v| match (c, v) {
+            (4, 22) => "Invented words of Ruth c4v22 are <!-- here for testing.".into(),
+            _ => words(c, v),
+        },
+        "",
+    );
+    let path = write("xml-error", &epub(&[("ruth.xhtml", body)]));
+    for (name, s) in [
+        ("frozen", baseline(&path)),
+        ("structural", structure_aware(&path).0),
+    ] {
+        assert!(!verified(&s, 4, 22), "{name}: {:?}", text(&s, 4, 22));
+        // (The verse before may be withheld too: where 4:22 begins is less
+        // certain. Nothing before it is lost.)
+        for v in 1..=18 {
+            assert!(verified(&s, 3, v), "{name} 3:{v}: {}", why(&s, 3, v));
+        }
+    }
+}
+
+#[test]
+fn a_link_written_in_capitals_is_counted_by_both_readers() {
+    // Phase A1.5 (independent review finding 10): the frozen reader matched
+    // `href` in lower case only, so after an `<a HREF=…>` the two readers
+    // counted links differently and roles landed on the wrong links.
+    let notes = String::from(
+        r#"<section epub:type="endnotes" role="doc-endnotes"><ol><li id="en0" epub:type="endnote"><p>An invented endnote.</p></li></ol></section>"#,
+    );
+    // A navigation link in capitals before the book, then a caller.
+    let body = r#"<p><a HREF="notes.xhtml">Notes</a></p>"#.to_string()
+        + &ruth(
+            |c, v| {
+                let w = words(c, v);
+                match (c, v) {
+                    (1, 2) => {
+                        let (a, b) = w.split_at(w.find(" here").unwrap());
+                        format!(
+                            r#"{a}<sup><a href="notes.xhtml#en0">1</a></sup> {}"#,
+                            b.trim()
+                        )
+                    }
+                    _ => w,
+                }
+            },
+            "",
+        );
+    let path = write(
+        "capital-href",
+        &epub(&[("ruth.xhtml", body), ("notes.xhtml", notes)]),
+    );
+    let (s, report) = structure_aware(&path);
+    assert!(verified(&s, 1, 2), "{} {:?}", why(&s, 1, 2), report.gated);
+    assert_eq!(text(&s, 1, 2).unwrap(), words(1, 2));
+}
+
+#[test]
+fn no_documents_is_an_error_never_a_panic() {
+    // Phase A1.5 (independent review finding 15).
+    assert!(import::stage_documents(&[], ImportOrigin::UserFiles).is_err());
+    assert!(structural::stage_documents(&[], ImportOrigin::UserFiles).is_err());
+}
+
+#[test]
+fn a_spine_naming_a_document_twice_reads_it_once() {
+    // Phase A1.5 (independent review finding 2): a spine naming one
+    // document many times read it each time (a tiny file, unbounded work),
+    // and the frozen reading then found every verse twice.
+    let mut out = Vec::new();
+    {
+        let mut zip = zip::ZipWriter::new(std::io::Cursor::new(&mut out));
+        let stored: zip::write::SimpleFileOptions = zip::write::SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Stored);
+        zip.start_file("mimetype", stored).unwrap();
+        zip.write_all(b"application/epub+zip").unwrap();
+        zip.start_file("META-INF/container.xml", stored).unwrap();
+        zip.write_all(br#"<?xml version="1.0"?><container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container"><rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>"#).unwrap();
+        zip.start_file("OEBPS/content.opf", stored).unwrap();
+        let spine = r#"<itemref idref="d0"/>"#.repeat(3);
+        zip.write_all(format!(r#"<?xml version="1.0"?><package xmlns="http://www.idpf.org/2007/opf" version="3.0"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>Invented Ruth</dc:title><dc:language>en</dc:language></metadata><manifest><item id="d0" href="ruth.xhtml" media-type="application/xhtml+xml"/></manifest><spine>{spine}</spine></package>"#).as_bytes()).unwrap();
+        zip.start_file("OEBPS/ruth.xhtml", stored).unwrap();
+        zip.write_all(format!(r#"<?xml version="1.0" encoding="utf-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>t</title></head><body>{}</body></html>"#, ruth(words, "")).as_bytes()).unwrap();
+        zip.finish().unwrap();
+    }
+    let path = write("spine-twice", &out);
+    for (name, s) in [
+        ("frozen", baseline(&path)),
+        ("structural", structure_aware(&path).0),
+    ] {
+        for (c, &n) in RUTH.iter().enumerate() {
+            for v in 1..=n {
+                let c = c as u16 + 1;
+                assert!(verified(&s, c, v), "{name} {c}:{v} {}", why(&s, c, v));
+            }
+        }
+    }
+}
+
+#[test]
+fn a_word_linked_to_a_note_is_not_taken_out_as_a_caller() {
+    // Phase A1.5 (independent security review, finding 9): a link leading
+    // into the notes whose text is a word of the verse, not a caller.
+    // Taking it out would verify the verse without the word.
+    let notes = String::from(
+        r#"<section epub:type="endnotes" role="doc-endnotes"><ol><li id="en0" epub:type="endnote"><p>An invented endnote.</p></li><li id="en1" epub:type="endnote"><p>Another.</p></li></ol></section>"#,
+    );
+    let body = ruth(
+        |c, v| {
+            let w = words(c, v);
+            let (a, b) = w.split_at(w.find(" here").unwrap());
+            match (c, v) {
+                // The word "here" itself is the link's text.
+                (2, 1) => format!(r#"{a} <a href="notes.xhtml#en0">here</a>{}"#, &b[5..]),
+                // The control: a raised letter is a caller.
+                (2, 2) => format!(
+                    r#"{a}<sup><a href="notes.xhtml#en1">a</a></sup> {}"#,
+                    b.trim()
+                ),
+                _ => w,
+            }
+        },
+        "",
+    );
+    let path = write(
+        "linked-word",
+        &epub(&[("ruth.xhtml", body), ("notes.xhtml", notes)]),
+    );
+    let (s, report) = structure_aware(&path);
+    assert!(
+        !verified(&s, 2, 1),
+        "{:?} {:?}",
+        text(&s, 2, 1),
+        report.gated
+    );
+    assert!(verified(&s, 2, 2), "{} {:?}", why(&s, 2, 2), report.gated);
+    assert_eq!(text(&s, 2, 2).unwrap(), words(2, 2));
+}
+
+#[test]
 fn letter_and_sign_callers_leading_into_declared_endnotes_are_callers() {
     let labels = ["A", "OR", "a", "*", "ii"];
     let mut notes = String::from(r#"<section epub:type="endnotes" role="doc-endnotes"><ol>"#);

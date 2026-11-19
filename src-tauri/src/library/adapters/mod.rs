@@ -204,6 +204,38 @@ pub fn split_long(paragraph: &str, max: usize) -> Vec<String> {
     parts
 }
 
+/// A document's own text with the code points the readers use as marks
+/// (`pdf_layout::RAISED_OPEN` … `MARGIN`, U+E000–U+E004) made U+FFFD, so
+/// that a document cannot write a mark (Phase A1.5, independent review
+/// finding 7: a literal U+E002 … U+E003 made the words between vanish from
+/// a verse). The recogniser never verifies a verse holding U+FFFD.
+pub fn neutralise_marks(text: &str) -> std::borrow::Cow<'_, str> {
+    if text.chars().any(|c| ('\u{E000}'..='\u{E004}').contains(&c)) {
+        std::borrow::Cow::Owned(
+            text.chars()
+                .map(|c| {
+                    if ('\u{E000}'..='\u{E004}').contains(&c) {
+                        '\u{FFFD}'
+                    } else {
+                        c
+                    }
+                })
+                .collect(),
+        )
+    } else {
+        std::borrow::Cow::Borrowed(text)
+    }
+}
+
+/// One character of a document's own text, as [`neutralise_marks`] makes it.
+pub fn neutral_char(c: char) -> char {
+    if ('\u{E000}'..='\u{E004}').contains(&c) {
+        '\u{FFFD}'
+    } else {
+        c
+    }
+}
+
 /// A second version of a paragraph cut where [`split_long`] cut the first
 /// (`parts`), character for character: the two must have the same
 /// characters in the same places (a marked text, `NewSegment::marked`).

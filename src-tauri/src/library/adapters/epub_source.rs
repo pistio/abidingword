@@ -369,6 +369,7 @@ pub fn read(bytes: &[u8]) -> Option<SourceBook> {
             }
         }
     }
+    let mut spine_bytes = 0usize;
     for idref in &package.spine {
         let Some(item) = package.manifest.get(idref) else {
             continue;
@@ -380,6 +381,10 @@ pub fn read(bytes: &[u8]) -> Option<SourceBook> {
         let Some(source) = read_entry(&mut archive, &path) else {
             continue;
         };
+        spine_bytes += source.len();
+        if spine_bytes > super::epub::MAX_SPINE_BYTES {
+            return None;
+        }
         let entry = read_entry_structure(path.clone(), source);
         book.by_path.insert(path, book.entries.len());
         book.entries.push(entry);
@@ -458,7 +463,9 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 let raw: &str = &t;
                 let mut offset = at;
                 for c in raw.chars() {
+                    // (Both are three bytes: the byte ranges hold.)
                     let len = c.len_utf8();
+                    let c = super::neutral_char(c);
                     text.push(c);
                     bytes.push(offset as u32, (offset + len) as u32, c);
                     offset += len;
@@ -470,6 +477,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
                 let mut offset = at + 9;
                 for c in raw.chars() {
                     let len = c.len_utf8();
+                    let c = super::neutral_char(c);
                     text.push(c);
                     bytes.push(offset as u32, (offset + len) as u32, c);
                     offset += len;
@@ -478,6 +486,7 @@ pub fn read_entry_structure(path: String, source: String) -> Entry {
             Ok(Event::GeneralRef(r)) if !hidden => {
                 let name: &str = &r;
                 for c in unescape(&format!("&{name};")).chars() {
+                    let c = super::neutral_char(c);
                     text.push(c);
                     bytes.push(at as u32, end as u32, c);
                 }
@@ -684,6 +693,41 @@ pub fn caller_shaped(label: &str) -> bool {
     (digits && n <= 4) || (letters && n <= 3) || (signs && n <= 3)
 }
 
+/// Whether a link's own text and markup say it is a note's caller, not a
+/// word of the text that happens to lead to a note (Phase A1.5): declared
+/// as one (`epub:type="noteref"`), raised (`<sup>` around or inside it), in
+/// brackets ("[a]", "(1)"), of a class naming a note ("notemark",
+/// "fnanchor", "footnote-ref"), or signs alone ("*", "†").
+fn looks_like_caller(entry: &Entry, element: usize, label: &str, declared: bool) -> bool {
+    let trimmed = label.trim();
+    if trimmed.is_empty() || declared {
+        return true;
+    }
+    let bracketed = (trimmed.starts_with('[') && trimmed.ends_with(']'))
+        || (trimmed.starts_with('(') && trimmed.ends_with(')'))
+        || (trimmed.starts_with('{') && trimmed.ends_with('}'))
+        || (trimmed.starts_with('<') && trimmed.ends_with('>'));
+    let signs = trimmed
+        .chars()
+        .all(|c| !c.is_alphanumeric() && !c.is_whitespace());
+    let e = &entry.elements[element];
+    let noteish = |el: &Element| {
+        el.classes.iter().any(|c| {
+            let c = c.to_ascii_lowercase();
+            c.contains("note") || c.starts_with("fn") || c.contains("footnote")
+        })
+    };
+    let raised = e.name == "sup"
+        || entry
+            .ancestors(element)
+            .any(|a| entry.elements[a].name == "sup")
+        || entry.elements[element + 1..]
+            .iter()
+            .take_while(|d| d.byte_start < e.byte_end)
+            .any(|d| d.name == "sup" || noteish(d));
+    bracketed || signs || raised || noteish(e)
+}
+
 /// Decides the role of every link of the book by where it leads.
 pub fn classify_links(book: &SourceBook) -> LinkRoles {
     let mut roles = LinkRoles::default();
@@ -723,6 +767,16 @@ pub fn classify_links(book: &SourceBook) -> LinkRoles {
                 evidence = LinkEvidence::InsideNotes;
             }
             let role = match evidence {
+                // Leading into the notes is not enough: the link's own text
+                // must look like a caller too (Phase A1.5). A word linked to
+                // a note ("Thou shalt <a href="#n1">not</a> kill") is the
+                // verse's own; taking it out as a caller would verify
+                // "Thou shalt kill". Not known: the verse is withheld.
+                LinkEvidence::TargetInNotes | LinkEvidence::LinksBack
+                    if !looks_like_caller(entry, element_index, &label, declared) =>
+                {
+                    LinkRole::Conflict
+                }
                 LinkEvidence::TargetInNotes | LinkEvidence::LinksBack => LinkRole::NoteCaller,
                 LinkEvidence::InsideNotes => LinkRole::Navigation,
                 _ if declared => LinkRole::Conflict,

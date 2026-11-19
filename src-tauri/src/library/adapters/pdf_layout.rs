@@ -476,6 +476,7 @@ impl pdf_extract::OutputDev for Collector {
         font_size: f64,
         char: &str,
     ) -> Result<(), pdf_extract::OutputError> {
+        let char: &str = &super::neutralise_marks(char);
         if self.chars >= MAX_CHARS {
             self.skipped += char.chars().count();
             if self.truncated_from.is_none() {
