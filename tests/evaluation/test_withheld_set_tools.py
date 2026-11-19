@@ -25,6 +25,7 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 TOOLS = os.path.join(ROOT, "scripts", "evaluation")
 RUNNER = os.path.join(TOOLS, "run-withheld-set.sh")
 CHECK = os.path.join(TOOLS, "check-set.py")
+SEAL = os.path.join(TOOLS, "seal-set.py")
 SCORE = os.path.join(TOOLS, "score-set.py")
 
 FAKE = r'''#!/usr/bin/env python3
@@ -457,6 +458,58 @@ class Builder(Fixture):
         self.assertEqual(report["authentic_scored_evidence"]["documents"], 1)
         self.assertEqual(report["authentic_scored_evidence"]["reference_verses"], 1)
         self.assertFalse(report["authentic_scored_evidence"]["meets_minimum"])
+
+
+class Sealing(Fixture):
+    """seal-set.py: the builder's check before the seal, and the seal."""
+
+    def unsealed(self, ledger=True):
+        s = self.make()
+        os.remove(os.path.join(s.seal, "SEAL.txt"))
+        if not ledger:
+            os.remove(os.path.join(s.seal, "review-ledger.md"))
+        return s
+
+    def seal_set(self, s, *extra):
+        return subprocess.run(["python3", SEAL, s.seal, s.docs, f"--inventory={s.inventory}", *extra],
+                              capture_output=True, text=True)
+
+    def test_the_builder_can_check_before_the_reviewer_signs(self):
+        s = self.unsealed(ledger=False)
+        r = self.seal_set(s)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("review-ledger.md not written yet", r.stderr)
+        self.assertFalse(os.path.exists(os.path.join(s.seal, "SEAL.txt")))
+
+    def test_the_seal_waits_for_the_reviewers_ledger(self):
+        s = self.unsealed(ledger=False)
+        r = self.seal_set(s, "--write")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("review-ledger.md is missing or empty", r.stderr)
+        self.assertFalse(os.path.exists(os.path.join(s.seal, "SEAL.txt")))
+
+    def test_the_seal_written_is_one_the_checks_accept(self):
+        s = self.unsealed()
+        r = self.seal_set(s, "--write")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        r = subprocess.run(["python3", CHECK, s.seal, s.docs, f"--inventory={s.inventory}"],
+                           capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0, r.stderr)
+
+    def test_a_sealed_folder_is_never_sealed_again(self):
+        s = self.make()
+        r = self.seal_set(s, "--write")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("never sealed again", r.stderr)
+
+    def test_nothing_is_sealed_that_the_checks_refuse(self):
+        s = self.unsealed()
+        with open(os.path.join(s.docs, "S1.epub"), "ab") as f:
+            f.write(b"x")
+        r = self.seal_set(s, "--write")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("differs from its checksum", r.stderr)
+        self.assertFalse(os.path.exists(os.path.join(s.seal, "SEAL.txt")))
 
 
 class AuthenticMinimum(unittest.TestCase):

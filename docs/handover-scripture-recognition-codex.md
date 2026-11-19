@@ -163,6 +163,33 @@ Times and per-edition figures: `docs/audit/candidate-a1.5/FREEZE.md` §4.
    `docs/audit/candidate-a1.5/reviews/security-review.md`.
 3. Treat any panic as a refused document. The PDF reader catches its own;
    the others return errors.
+4. **Every rerun of recognition must pass the structural gate again and
+   regenerate provenance and numbering evidence.** Applying saved
+   corrections (`StagedImport::apply_saved`), making new ones
+   (`StagedImport::correct`) or reading the documents again for any other
+   reason calls `import::recognise`, which **replaces**
+   `DocumentStage::unverified` (with `origins`, `books`, `left_out` and
+   `apparatus`) by the recogniser's fresh result. The gate
+   (`structural::gate`) runs only inside `structural::stage_documents`,
+   and needs each EPUB's `StructuralSource`, which that function drops when
+   it returns. So, as the candidate stands, after a correction every
+   withdrawal the gate made is gone, a verse it withheld can be shown as
+   verified, and the `StructuralReport` and `numbering::assess` describe
+   the reading before the correction. The integration must:
+   * keep each EPUB's `StructuralSource` with the staged import (or read
+     the files again);
+   * after **every** call of `recognise`, run `structural::gate` again,
+     replace the `StructuralReport` (provenance, link roles, gated
+     verses) and recompute `numbering::assess`;
+   * never show or store a verse as verified from a staged import whose
+     report predates its latest recognition;
+   * test it: an EPUB with a verse the gate withdraws stays unverified
+     after `apply_saved` and after `correct` (for instance a book heading
+     re-assigned), and its provenance and numbering reflect the correction.
+
+   This is application work. The frozen recogniser (`08c6faa`) is not
+   changed for it, and no figure in the evaluation covers a corrected
+   import: the harness reads each document once, without corrections.
 
 ## 7. Not supported
 
@@ -220,6 +247,10 @@ From this repository, runnable without the corpus:
   A1.5 hardening tests.
 * `python3 -m unittest discover -s tests/corpus -p 'test_*.py'`: the
   completeness auditor and derivation tests.
+* `python3 -m unittest discover -s tests/evaluation -p 'test_*.py'`: the
+  withheld-set tools (check, seal, run, score).
+* To be written by the integration: the correction test of §6,
+  requirement 4.
 
 With the disclosed corpus (outside Git): `src-tauri/tests/real_document_editions.rs`,
 `AW_PIPELINE=structural`, as in `FREEZE.md`.
@@ -236,3 +267,6 @@ With the disclosed corpus (outside Git): `src-tauri/tests/real_document_editions
 * The rules are measured on these 113 editions. They only withhold
   verification, so an unseen layout costs coverage, not correctness, as
   far as the disclosed evidence shows.
+* No figure covers an import after corrections: the harness reads each
+  document once. Until requirement 4 of §6 is met, a corrected import can
+  show as verified a verse the gate had withheld.

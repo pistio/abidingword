@@ -31,9 +31,10 @@ Changes since the A1.3 candidate (`7c7565a`), oldest first:
 | `2536495` | Hardening after the independent security and canon reviews |
 | `08c6faa` | `scripture::numbering`: where printed numbering departs |
 
-Commits after `08c6faa` on this branch change only `docs/` and
-`scripts/evaluation/` (the runner and scorer, pinned in §5a); no source,
-test, manifest or lock file.
+Commits after `08c6faa` on this branch change only `docs/`,
+`scripts/evaluation/` and `tests/evaluation/` (the evaluation tools and
+their tests, pinned in §5a); no recogniser source or test, corpus manifest
+or lock file.
 
 **"Immutable" means recorded, not enforced.** No tag was made. A tag or
 branch protection on `08c6faa` would make it binding; that is the owner's
@@ -108,23 +109,66 @@ measure of the reading (`read_seconds`, `read_peak_memory_mb`).
 
 ## 5a. Evaluation tools, pinned
 
+The recogniser is not part of this section and did not change. These are
+the tools that check, run and score a withheld set, as revised after
+Codex's review of PR #53 (`docs/audit/candidate-a1.5/set-h-decision-package.md`).
+
 | File | SHA-256 |
 |---|---|
-| `scripts/evaluation/run-withheld-set.sh` | `66f20eb9e08c1e55c55b8192b8a26799cdf02631b1341779d9bf5cd9d2c84af7` |
-| `scripts/evaluation/score-set.py` | `740b07011f443ac0de0919961415efa843ebedbe64f2e1eb013529b82ca4ddc0` |
+| `scripts/evaluation/check-set.py` | `66923a8972bb26cac54ef90101c19259f49e0901ae27c50bfd753ff2c968fcf6` |
+| `scripts/evaluation/seal-set.py` | `fa39c98179465ae0af7edeb487673fa0cc4ae52ba01703559e8dcd1a25acaefc` |
+| `scripts/evaluation/run-withheld-set.sh` | `d1b6a36ce3f4548ee74e3b6fbbad35a1a1467288f0c352b38d4c77a5cf817a51` |
+| `scripts/evaluation/score-set.py` | `13f9d4ae699b940cbea8f0cfc534d175821d3c60d52d8f9aeca1215c857ebe16` |
+| `scripts/evaluation/disclosed-inventory.py` | `e656f38eb40fff814472a91503a37ca5d6107dfc95ab6733f92af341d7854021` |
+| `docs/evaluation/disclosed-documents.sha256` (the canonical inventory) | `a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8` |
+| `docs/evaluation/disclosed-editions.tsv` | `5241c244d3abea222370f78c916fc1e2a72696d046df5d8e456697607859fc6d` |
+| `docs/evaluation/builder-brief.md` | `a21be798421aa148a47f9e1f3272bbf739e5404fb4cdcf5bf56ea3835d98d0fe` |
+| `tests/evaluation/test_withheld_set_tools.py` | `df370b5e083dca61af882ca4fed8a23dfdb62447114d4570b888294fcb082197` |
 | `scripts/corpus/audit-derived-completeness.py` (v2) | `d268175759f92add320530c9b8f5509f9f1b60ba726cc5f861501db5c90ab5f0` |
 
-**Dry run** of the runner and scorer on a mock set (four disclosed Set G
-documents under new keys, and this repository's README as a control;
-nothing withheld): every document ran in its own process under the 4 GB
-and 30-minute ceilings; the three readable documents gave totals
-identical to the run without ceilings; G05 was refused as an unreadable
-PDF, as before; the control verified 0 references; outputs checksummed.
-The heaviest disclosed reading (`spavbl-rlofodt`, 570 MB) gives identical
-totals under the 4 GB ceiling. The runner refused, each time before
-reading anything: a second run into the same folder, another binary
-(A1.3's), a changed manifest, a changed document, and a key already used
-by a disclosed edition.
+**Qualification of these tools:**
+
+* `tests/evaluation`: **29 tests** with a fake harness (no recogniser, no
+  corpus): every refusal of the runner, every way a document's run can end,
+  the four document classes, the scorer's refusals, the authentic minimum,
+  and the builder's check and seal (`seal-set.py`, added after the
+  rehearsal below; it uses `check-set.py` unchanged, so the checksum the
+  rehearsal recorded for `check-set.py` is still the pinned one).
+  Thirteen safeguards were removed one at a time. The two of `seal-set.py`
+  each failed their test. Of the other eleven, 8 failed their test in the
+  first pass and 3 did not: two were real gaps (a seal changed in a later
+  commit; exploratory documents kept out of the per-group tables), and
+  both now have tests that fail without them; the third, the runner's
+  no-clobber lock, is backed by the pre-run lock check, which its test
+  does catch.
+* **Rehearsal with the frozen binary on disclosed documents**
+  (`rehearsal/`): three sealed sets, each committed alone, run once and
+  recorded. With the canonical inventory the runner refused the protocol
+  set before reading anything: every reused disclosed document, reference
+  and USFM book was named (`rehearsal/protocol/refused-canonical-inventory.txt`).
+  With a rehearsal inventory (`rehearsal/inventory-removed.sha256` lists the
+  hashes taken out):
+  * protocol set (4 scored, 1 control, 1 mixed, 1 exploratory): 3 scored
+    completed with 33 548 verified, 0 wrong, 0 outside the edition; the
+    unreadable PDF refused cleanly; control and mixed verified nothing; the
+    exploratory document (G08 against a *different* Spanish edition) shows
+    2 343 differing verified verses as raw observations, outside the gate;
+  * forced-failure set (10 s ceiling): two timeouts (exit 124), one
+    completed;
+  * memory set (384 MB ceiling): a real allocation failure under the
+    ceiling (exit 134, "memory allocation of 632 bytes failed") classed as
+    a memory failure, nothing counted; the other document completed.
+
+  Every verdict is "not a protocol run", as it must be: rehearsal
+  inventory, and test ceilings for the failure sets. A second attempt was
+  refused by the documents folder's lock, and a copy of the set without the
+  lock by the committed run record.
+
+**First dry run (tools at `f50c541`, superseded, kept as recorded):** four
+disclosed Set G documents under new keys and the README as a control;
+results identical to the run without ceilings; the heaviest disclosed
+reading (`spavbl-rlofodt`, 570 MB) identical under the 4 GB ceiling
+(`data/dryrun/`).
 
 ## 6. What the independent reviews found, and what was done
 
