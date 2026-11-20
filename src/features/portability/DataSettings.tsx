@@ -446,7 +446,7 @@ function RestoreCompleteDialog({ message, safetyCopy, filesSetAside = 0 }: {
   }, []);
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/55 p-4">
-      <section role="alertdialog" aria-modal="true" aria-label={message}
+      <section role="dialog" aria-modal="true" aria-label={message}
         className="flex w-full max-w-lg flex-col gap-3 rounded-aw border border-border-subtle bg-bg p-6 shadow-xl">
         <h3 className="m-0 type-group text-text-strong">{message}</h3>
         <p className="m-0 text-[0.9375rem]">{t("settings.data.safetyCopy", { path: safetyCopy })}</p>

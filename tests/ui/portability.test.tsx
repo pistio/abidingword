@@ -138,7 +138,7 @@ describe("Data and backup", () => {
     await user.click(within(section).getByRole("button", { name: /Restore from backup…/ }));
     preview = await within(section).findByRole("region", { name: "Backup to restore" });
     await user.click(within(preview).getByRole("button", { name: "Replace everything with this backup" }));
-    const finished = await screen.findByRole("alertdialog", { name: "The backup was restored." });
+    const finished = await screen.findByRole("dialog", { name: "The backup was restored." });
     expect(within(finished).getByText(/A copy of what was here before is kept at .*pre-restore/)).toBeInTheDocument();
     expect(api.state.portability.restored).toEqual(["/home/test/Backups/All.awbackup"]);
     expect(within(finished).getByRole("button", { name: "Continue" })).toHaveFocus();
@@ -185,7 +185,7 @@ describe("Data and backup", () => {
     const reopened = within(section).getByRole("list", { name: "Automatic recovery points" });
     await user.click(within(reopened).getAllByRole("button", { name: "Review restore…" })[0]!);
     await user.click(within(section).getByRole("button", { name: "Restore this database copy" }));
-    const finished = await screen.findByRole("alertdialog", { name: /The database was restored/ });
+    const finished = await screen.findByRole("dialog", { name: /The database was restored/ });
     expect(within(finished).getByText(/pre-restore/)).toBeInTheDocument();
     expect(within(finished).getByRole("button", { name: "Continue" })).toHaveFocus();
     expect(api.state.portability.dailyRestored).toEqual([good]);
