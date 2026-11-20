@@ -67,8 +67,14 @@ fn old_work_can_be_restored_without_touching_managed_files() {
 
     let restored = snapshots::restore(&db, &dirs, &id).unwrap();
     assert!(restored.files_unchanged);
-    assert_eq!(fs::read(&source).unwrap(), b"Never overwrite this private source");
-    assert_eq!(db.with_conn(|conn| Ok(note(conn))).unwrap(), "\"My first Bible study\"");
+    assert_eq!(
+        fs::read(&source).unwrap(),
+        b"Never overwrite this private source"
+    );
+    assert_eq!(
+        db.with_conn(|conn| Ok(note(conn))).unwrap(),
+        "\"My first Bible study\""
+    );
     assert_eq!(
         from_copy(Path::new(&restored.safety_copy)),
         "\"My newer teaching\""
@@ -76,9 +82,13 @@ fn old_work_can_be_restored_without_touching_managed_files() {
     // The original snapshot remains intact and useful after restoring.
     assert_eq!(snapshots::list(&db, &dirs).unwrap().len(), 1);
     db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn)?, migrations::MIGRATIONS.len() as i64);
+        assert_eq!(
+            migrations::current_version(conn)?,
+            migrations::MIGRATIONS.len() as i64
+        );
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 #[test]
@@ -109,15 +119,24 @@ fn foreign_paths_and_schema_versions_are_rejected_before_safety_copy() {
         assert!(snapshots::restore(&db, &dirs, &invalid).is_err());
     }
     let future = id.replacen("abiding-word-v27-", "abiding-word-v999-", 1);
-    fs::copy(dirs.daily_backups().join(&id), dirs.daily_backups().join(&future)).unwrap();
-    assert!(!snapshots::list(&db, &dirs)
-        .unwrap()
-        .iter()
-        .find(|s| s.id == future)
-        .unwrap()
-        .usable);
+    fs::copy(
+        dirs.daily_backups().join(&id),
+        dirs.daily_backups().join(&future),
+    )
+    .unwrap();
+    assert!(
+        !snapshots::list(&db, &dirs)
+            .unwrap()
+            .iter()
+            .find(|s| s.id == future)
+            .unwrap()
+            .usable
+    );
     assert!(snapshots::restore(&db, &dirs, &future).is_err());
-    assert_eq!(db.with_conn(|conn| Ok(note(conn))).unwrap(), "\"No change\"");
+    assert_eq!(
+        db.with_conn(|conn| Ok(note(conn))).unwrap(),
+        "\"No change\""
+    );
     assert!(!dirs.pre_restore_backups().exists());
 }
 
@@ -130,7 +149,11 @@ fn symlink_snapshot_is_not_listed_or_opened() {
     write_note(&db, "\"Keep me\"");
     let id = snapshot(&db, &dirs);
     let link_id = "abiding-word-v27-2001-01-01T00-00-00.000Z.db".to_string();
-    symlink(dirs.daily_backups().join(&id), dirs.daily_backups().join(&link_id)).unwrap();
+    symlink(
+        dirs.daily_backups().join(&id),
+        dirs.daily_backups().join(&link_id),
+    )
+    .unwrap();
     assert!(!snapshots::list(&db, &dirs)
         .unwrap()
         .iter()

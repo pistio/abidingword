@@ -119,8 +119,7 @@ pub fn list(db: &Database, dirs: &DataDirs) -> AppResult<Vec<Snapshot>> {
                 created_at: created(when),
                 schema_version,
                 bytes,
-                usable: schema_version == version
-                    && check_snapshot(&path, version).is_ok(),
+                usable: schema_version == version && check_snapshot(&path, version).is_ok(),
             }
         })
         .collect())
@@ -137,21 +136,23 @@ impl Drop for StagedFile {
 }
 
 fn staged_copy(source: &Path, destination_dir: &Path, version: i64) -> AppResult<StagedFile> {
-    fs::create_dir_all(destination_dir)
-        .map_err(|e| AppError::filesystem(destination_dir, e))?;
+    fs::create_dir_all(destination_dir).map_err(|e| AppError::filesystem(destination_dir, e))?;
     let name = format!("recovery-{}.db", uuid::Uuid::new_v4());
     let target = destination_dir.join(name);
     let stage = StagedFile(target.clone());
     let mut input = File::open(source).map_err(|_| unavailable())?;
-    let mut output = File::create_new(&target)
-        .map_err(|e| AppError::filesystem(&target, e))?;
+    let mut output = File::create_new(&target).map_err(|e| AppError::filesystem(&target, e))?;
     let bytes = std::io::copy(&mut input.take(MAX_BYTES + 1), &mut output)
         .map_err(|e| AppError::filesystem(&target, e))?;
     if bytes > MAX_BYTES {
         return Err(unavailable());
     }
-    output.flush().map_err(|e| AppError::filesystem(&target, e))?;
-    output.sync_all().map_err(|e| AppError::filesystem(&target, e))?;
+    output
+        .flush()
+        .map_err(|e| AppError::filesystem(&target, e))?;
+    output
+        .sync_all()
+        .map_err(|e| AppError::filesystem(&target, e))?;
     drop(output);
     check_snapshot(&target, version)?;
     Ok(stage)
@@ -173,7 +174,11 @@ pub fn restore(db: &Database, dirs: &DataDirs, id: &str) -> AppResult<RestoredSn
 
     // This verified backup is made before ANY mutation of the active database.
     let safety = db.with_conn(|conn| {
-        backup::pre_migration(conn, &dirs.pre_restore_backups(), migrations::current_version(conn)?)
+        backup::pre_migration(
+            conn,
+            &dirs.pre_restore_backups(),
+            migrations::current_version(conn)?,
+        )
     })?;
 
     db.with_conn_mut(|conn| {
@@ -229,7 +234,12 @@ mod tests {
 
     #[test]
     fn recovery_identifiers_are_strict_basenames_with_real_dates() {
-        assert_eq!(parse_name("abiding-word-v27-2026-11-20T17-35-12.123Z.db").unwrap().0, 27);
+        assert_eq!(
+            parse_name("abiding-word-v27-2026-11-20T17-35-12.123Z.db")
+                .unwrap()
+                .0,
+            27
+        );
         for bad in [
             "../abiding-word-v27-2026-11-20T17-35-12.123Z.db",
             "C:\\abiding-word-v27-2026-11-20T17-35-12.123Z.db",

@@ -94,9 +94,7 @@ pub fn backup_restore(
 /// Lists validly named daily recovery points without reading private content.
 /// Corrupt/incompatible files are visible as disabled choices.
 #[tauri::command(async)]
-pub fn daily_snapshot_list(
-    state: State<'_, AppState>,
-) -> CommandResult<Vec<snapshots::Snapshot>> {
+pub fn daily_snapshot_list(state: State<'_, AppState>) -> CommandResult<Vec<snapshots::Snapshot>> {
     let core = state.core()?;
     Ok(snapshots::list(&core.db, &core.dirs)?)
 }
