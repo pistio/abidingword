@@ -4,7 +4,6 @@
 //! of the CURRENT database before any change. No direct filesystem paths from UI.
 
 use std::fs::{self, File};
-use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use chrono::NaiveDateTime;
@@ -17,7 +16,6 @@ use crate::filesystem::DataDirs;
 
 const MAX_VISIBLE: usize = 100;
 const MAX_BYTES: u64 = 8 * 1024 * 1024 * 1024;
-const DATE_PATTERN: &str = "%Y-%m-%dT%H-%M-%S%.3fZ";
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -49,46 +47,44 @@ fn unavailable() -> AppError {
 }
 
 fn parse_name(name: &str) -> Option<(i64, NaiveDateTime)> {
-    if name.len() > 100 || !name.is_ascii() || (name.contains('/') || name.contains('\\')) {
-        return None;
-    }
-    let stem = name.strip_prefix("abiding-word-v")?.strip_suffix(".db")?;
-    let (version, stamp) = stem.split_once('-')?;
-    if version.is_empty() || !version.bytes().all(|b| b.is_ascii_digit()) || stamp.len() != 24 {
-        return None;
-    }
-    let version = version.parse::<i64>().ok()?;
-    if !(1..=10_000).contains(&version) {
-        return None;
-    }
-    let when = NaiveDateTime::parse_from_str(stamp, DATE_PATTERN).ok()?;
-    Some((version, when))
+    backup::parse_snapshot_name(name)
 }
 
 fn created(when: NaiveDateTime) -> String {
     format!("{}Z", when.format("%Y-%m-%dT%H:%M:%S%.3f"))
 }
 
-fn check_snapshot(path: &Path, expected_version: i64) -> AppResult<u64> {
+fn open_snapshot(path: &Path, expected_version: i64) -> AppResult<(Connection, u64)> {
+    backup::check_directory(path.parent().ok_or_else(unavailable)?).map_err(|_| unavailable())?;
     let metadata = fs::symlink_metadata(path).map_err(|_| unavailable())?;
-    if !metadata.file_type().is_file() || metadata.len() == 0 || metadata.len() > MAX_BYTES {
+    if !metadata.file_type().is_file()
+        || backup::redirected(&metadata)
+        || metadata.len() == 0
+        || metadata.len() > MAX_BYTES
+    {
         return Err(unavailable());
     }
-    // Opening read-only does not create or modify a candidate snapshot.
-    let snap = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)
-        .map_err(|_| unavailable())?;
+    // Keep this connection when staging: copying the raw .db file would miss
+    // committed WAL pages and reopen a filename which could have changed.
+    let snap = Connection::open_with_flags(
+        path,
+        OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NOFOLLOW,
+    )
+    .map_err(|_| unavailable())?;
     integrity::check(&snap).map_err(|_| unavailable())?;
     migrations::validate_existing_history(&snap).map_err(|_| unavailable())?;
     if migrations::current_version(&snap).map_err(|_| unavailable())? != expected_version {
         return Err(unavailable());
     }
-    Ok(metadata.len())
+    backup::validate_schema(&snap, expected_version).map_err(|_| unavailable())?;
+    Ok((snap, metadata.len()))
 }
 
 /// Newest first. Includes corrupt and old-version candidates as disabled rows;
 /// never returns arbitrary files, symlinks or user-supplied filesystem paths.
 pub fn list(db: &Database, dirs: &DataDirs) -> AppResult<Vec<Snapshot>> {
     let dir = dirs.daily_backups();
+    backup::check_directory(&dir).map_err(|_| unavailable())?;
     if !dir.exists() {
         return Ok(Vec::new());
     }
@@ -119,7 +115,7 @@ pub fn list(db: &Database, dirs: &DataDirs) -> AppResult<Vec<Snapshot>> {
                 created_at: created(when),
                 schema_version,
                 bytes,
-                usable: schema_version == version && check_snapshot(&path, version).is_ok(),
+                usable: schema_version == version && open_snapshot(&path, version).is_ok(),
             }
         })
         .collect())
@@ -136,25 +132,21 @@ impl Drop for StagedFile {
 }
 
 fn staged_copy(source: &Path, destination_dir: &Path, version: i64) -> AppResult<StagedFile> {
-    fs::create_dir_all(destination_dir).map_err(|e| AppError::filesystem(destination_dir, e))?;
+    let (input, _) = open_snapshot(source, version)?;
+    backup::ensure_directory(destination_dir)?;
     let name = format!("recovery-{}.db", uuid::Uuid::new_v4());
     let target = destination_dir.join(name);
     let stage = StagedFile(target.clone());
-    let input = File::open(source).map_err(|_| unavailable())?;
-    let mut output = File::create_new(&target).map_err(|e| AppError::filesystem(&target, e))?;
-    let bytes = std::io::copy(&mut input.take(MAX_BYTES + 1), &mut output)
-        .map_err(|e| AppError::filesystem(&target, e))?;
-    if bytes > MAX_BYTES {
-        return Err(unavailable());
-    }
-    output
-        .flush()
-        .map_err(|e| AppError::filesystem(&target, e))?;
-    output
-        .sync_all()
-        .map_err(|e| AppError::filesystem(&target, e))?;
-    drop(output);
-    check_snapshot(&target, version)?;
+    // Reserve our own file before asking SQLite to populate it. SQLite's backup
+    // API takes a consistent database snapshot, including committed WAL data.
+    drop(File::create_new(&target).map_err(|e| AppError::filesystem(&target, e))?);
+    input.backup(rusqlite::MAIN_DB, &target, None)?;
+    File::options()
+        .write(true)
+        .open(&target)
+        .and_then(|file| file.sync_all())
+        .map_err(|error| AppError::filesystem(&target, error))?;
+    open_snapshot(&target, version)?;
     Ok(stage)
 }
 
@@ -169,63 +161,68 @@ pub fn restore(db: &Database, dirs: &DataDirs, id: &str) -> AppResult<RestoredSn
         return Err(unavailable());
     }
     let candidate = dirs.daily_backups().join(id);
-    check_snapshot(&candidate, current)?;
     let stage = staged_copy(&candidate, &dirs.cache(), current)?;
 
-    // This verified backup is made before ANY mutation of the active database.
-    let safety = db.with_conn(|conn| {
-        backup::pre_migration(
-            conn,
-            &dirs.pre_restore_backups(),
-            migrations::current_version(conn)?,
-        )
-    })?;
-
-    db.with_conn_mut(|conn| {
-        let result = (|| {
-            conn.restore(
-                rusqlite::MAIN_DB,
-                &stage.0,
-                None::<fn(rusqlite::backup::Progress)>,
-            )?;
-            db::reinitialise(conn, None)
-        })();
-        match result {
-            Ok(()) => Ok(()),
-            Err(error) => {
-                log::error!("daily recovery failed; restoring the pre-recovery safety copy: {error}");
-                let rollback = conn
-                    .restore(
-                        rusqlite::MAIN_DB,
-                        &safety,
-                        None::<fn(rusqlite::backup::Progress)>,
-                    )
-                    .map_err(AppError::from)
-                    .and_then(|_| db::reinitialise(conn, None));
-                match rollback {
-                    Ok(()) => Err(AppError::Import(UserMessage::new(
-                        "portability.restoreFailed",
-                        "The recovery point could not be restored. Your earlier work was put back.",
-                    ))),
-                    Err(again) => {
-                        log::error!("daily recovery rollback failed: {again}");
-                        Err(AppError::Import(
-                            UserMessage::new(
-                                "portability.rollbackFailed",
-                                "Recovery failed; your previous database has been preserved in a safety copy.",
-                            )
-                            .with("path", safety.display()),
-                        ))
-                    }
-                }
-            }
+    // Hold one database lock from current-work validation through safety copy,
+    // replacement and rollback. A concurrent native write cannot fall between
+    // the safety copy and database replacement and disappear from both.
+    let safety = db.with_conn_mut(|conn| {
+        if migrations::current_version(conn)? != current {
+            return Err(unavailable());
         }
+        let safety = backup::pre_migration(conn, &dirs.pre_restore_backups(), current)?;
+        restore_staged(conn, &stage.0, &safety, |conn| db::reinitialise(conn, None))?;
+        Ok(safety)
     })?;
     Ok(RestoredSnapshot {
         created_at: created(when),
         safety_copy: safety.display().to_string(),
         files_unchanged: true,
     })
+}
+
+/// Keep recovery and rollback on the same connection/lock. The initializer is
+/// injectable only internally so tests can force both failure paths with real
+/// disposable SQLite databases instead of relying on filesystem permissions.
+fn restore_staged(
+    conn: &mut Connection,
+    stage: &Path,
+    safety: &Path,
+    mut initialise: impl FnMut(&mut Connection) -> AppResult<()>,
+) -> AppResult<()> {
+    let result = conn
+        .restore(
+            rusqlite::MAIN_DB,
+            stage,
+            None::<fn(rusqlite::backup::Progress)>,
+        )
+        .map_err(AppError::from)
+        .and_then(|_| initialise(conn));
+    if let Err(error) = result {
+        log::error!("daily recovery failed; restoring the pre-recovery safety copy: {error}");
+        let rollback = conn
+            .restore(
+                rusqlite::MAIN_DB,
+                safety,
+                None::<fn(rusqlite::backup::Progress)>,
+            )
+            .map_err(AppError::from)
+            .and_then(|_| initialise(conn));
+        return match rollback {
+            Ok(()) => Err(AppError::Import(UserMessage::new(
+                "portability.restoreFailed",
+                "The recovery point could not be restored. Your earlier work was put back.",
+            ))),
+            Err(again) => {
+                log::error!("daily recovery rollback failed: {again}");
+                Err(AppError::Import(UserMessage::new(
+                    "portability.rollbackFailed",
+                    format!("Recovery failed and your previous database could not be put back automatically. A safety copy is retained at {}.", safety.display()),
+                ).with("path", safety.display())))
+            }
+        };
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -246,10 +243,92 @@ mod tests {
             "abiding-word-v27-2026-22-20T17-35-12.123Z.db",
             "abiding-word-v27-2026-11-20T17-35-12Z.db",
             "abiding-word-v0-2026-11-20T17-35-12.123Z.db",
+            "abiding-word-v027-2026-11-20T17-35-12.123Z.db",
+            "abiding-word-v+27-2026-11-20T17-35-12.123Z.db",
             "abiding-word-v27-2026-11-20T17-35-12.123Z.db/other",
             "not-a-snapshot.db",
         ] {
             assert!(parse_name(bad).is_none(), "{bad}");
         }
+    }
+    fn sqlite_note(conn: &Connection) -> String {
+        conn.query_row(
+            "SELECT value FROM settings WHERE key='recovery.test'",
+            [],
+            |row| row.get(0),
+        )
+        .unwrap()
+    }
+
+    fn forced_restore_failure(rollback_also_fails: bool) {
+        let temp = tempfile::tempdir().unwrap();
+        let dirs = DataDirs::ensure(temp.path().join("profile")).unwrap();
+        let db = Database::open(&dirs.database_file(), &dirs.pre_migration_backups()).unwrap();
+        db.with_conn(|conn| {
+            conn.execute("INSERT INTO settings(key,value,created_at,updated_at) VALUES('recovery.test','older','now','now')", [])?;
+            Ok(())
+        }).unwrap();
+        let original = db
+            .with_conn(|conn| backup::daily_snapshot(conn, &dirs.daily_backups()))
+            .unwrap()
+            .unwrap();
+        db.with_conn(|conn| {
+            conn.execute(
+                "UPDATE settings SET value='newer' WHERE key='recovery.test'",
+                [],
+            )?;
+            Ok(())
+        })
+        .unwrap();
+        let stage = staged_copy(&original, &dirs.cache(), 27).unwrap();
+        db.with_conn_mut(|conn| {
+            let safety = backup::pre_migration(conn, &dirs.pre_restore_backups(), 27)?;
+            let mut attempts = 0;
+            let error = restore_staged(conn, &stage.0, &safety, |restored| {
+                attempts += 1;
+                assert_eq!(
+                    sqlite_note(restored),
+                    if attempts == 1 { "older" } else { "newer" }
+                );
+                if attempts == 1 || rollback_also_fails {
+                    Err(AppError::Unexpected(
+                        "Invented post-restore validation failure".into(),
+                    ))
+                } else {
+                    db::reinitialise(restored, None)
+                }
+            })
+            .unwrap_err();
+            assert_eq!(attempts, 2);
+            assert_eq!(sqlite_note(conn), "newer");
+            let (code, params) = error.user_code();
+            if rollback_also_fails {
+                assert_eq!(code, Some("portability.rollbackFailed"));
+                assert_eq!(params.get("path"), Some(&safety.display().to_string()));
+                assert!(error.to_string().contains(&safety.display().to_string()));
+            } else {
+                assert_eq!(code, Some("portability.restoreFailed"));
+                conn.execute(
+                    "UPDATE settings SET value='still writable' WHERE key='recovery.test'",
+                    [],
+                )?;
+                assert_eq!(sqlite_note(conn), "still writable");
+            }
+            let saved = Connection::open_with_flags(&safety, OpenFlags::SQLITE_OPEN_READ_ONLY)?;
+            assert_eq!(sqlite_note(&saved), "newer");
+            assert!(original.exists());
+            Ok(())
+        })
+        .unwrap();
+    }
+
+    #[test]
+    fn a_failed_post_restore_validation_rolls_back_real_sqlite_and_allows_writing() {
+        forced_restore_failure(false);
+    }
+
+    #[test]
+    fn a_failed_rollback_reports_the_retained_readable_safety_copy() {
+        forced_restore_failure(true);
     }
 }

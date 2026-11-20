@@ -24,6 +24,7 @@
 //! differs from the backup's is moved next to the safety copy, never deleted.
 
 use std::fs;
+use std::io;
 use std::path::{Component, Path, PathBuf};
 
 use rusqlite::{Connection, OpenFlags};
@@ -128,10 +129,10 @@ fn counts(conn: &Connection, files: u32) -> AppResult<Counts> {
 /// The files under `dir`, relative to `root`, in a stable order. Links are
 /// not followed: only real files Abiding Word put there.
 fn walk(root: &Path, dir: &Path, out: &mut Vec<(String, PathBuf)>) -> AppResult<()> {
-    let Ok(entries) = fs::read_dir(dir) else {
-        return Ok(());
-    };
-    let mut entries: Vec<_> = entries.filter_map(Result::ok).collect();
+    let entries = fs::read_dir(dir).map_err(|e| AppError::filesystem(dir, e))?;
+    let mut entries: Vec<_> = entries
+        .collect::<Result<_, _>>()
+        .map_err(|e| AppError::filesystem(dir, e))?;
     entries.sort_by_key(|e| e.file_name());
     for entry in entries {
         let path = entry.path();
@@ -192,6 +193,8 @@ pub(crate) fn safe_place(path: &str) -> bool {
 
 /// Writes a backup of everything to `target`.
 pub fn create(db: &Database, dirs: &DataDirs, target: &Path) -> AppResult<BackupReport> {
+    db_backup::ensure_directory(&dirs.cache())?;
+    db_backup::check_directory(&dirs.sources())?;
     let staging = Staging::new(&dirs.cache(), "backup")?;
     let snapshot = staging.path().join(DATABASE);
     let version = db.with_conn(|conn| {
@@ -263,6 +266,7 @@ fn open_checked(path: &Path, newest: i64) -> AppResult<Connection> {
         return Err(newer(&format!("schema {version}")));
     }
     migrations::validate_existing_history(&conn)?;
+    db_backup::validate_schema(&conn, version).map_err(|_| not_an_app_database())?;
     Ok(conn)
 }
 
@@ -345,6 +349,7 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
     let ours = db.with_conn(migrations::current_version)?;
 
     // 1–2. Everything unpacked and checked before anything changes.
+    db_backup::ensure_directory(&dirs.cache())?;
     let staging = Staging::new(&dirs.cache(), "restore")?;
     let staged_db = staging.path().join(DATABASE);
     reader.extract(DATABASE, &staged_db)?;
@@ -353,33 +358,93 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
         reader.extract(&place.entry, &staging.path().join(&place.entry))?;
     }
 
-    // 3. The safety copy, verified.
-    let safety = db.with_conn(|conn| {
-        db_backup::pre_migration(
+    // Refuse inaccessible routes, symlinks/reparse points and a directory
+    // standing where a file belongs before replacing any database content.
+    // Repeat the checks when each file is installed; a missing source is not
+    // silently reported as a successful full restore.
+    for place in &manifest.places {
+        check_target(&dirs.root().join(&place.to))?;
+    }
+
+    // One lock spans the verified safety copy, database replacement, file
+    // replacement and any rollback. A write cannot slip between safety copy
+    // and replacement, nor observe a restored database with half-restored files.
+    db.with_conn_mut(|conn| {
+        migrations::validate_existing_history(conn)?;
+        let safety = db_backup::pre_migration(
             conn,
             &dirs.pre_restore_backups(),
             migrations::current_version(conn)?,
-        )
-    })?;
-    log::info!("safety copy before restoring: {}", safety.display());
-
-    // 4. The database, and the steps of every start; the safety copy comes
-    //    back if any of them fails.
-    let counts = db.with_conn_mut(|conn| {
-        let restored = (|| {
+        )?;
+        log::info!("safety copy before restoring: {}", safety.display());
+        let aside = dirs
+            .pre_restore_backups()
+            .join(format!("files-{}-{}", file_stamp(), crate::db::new_id()));
+        let mut changed = Vec::new();
+        let restored: AppResult<RestoreReport> = (|| {
             conn.restore(
                 rusqlite::MAIN_DB,
                 &staged_db,
                 None::<fn(rusqlite::backup::Progress)>,
             )?;
             crate::db::reinitialise(conn, Some(&dirs.pre_migration_backups()))?;
-            counts(conn, manifest.places.len() as u32)
+            let counts = counts(conn, manifest.places.len() as u32)?;
+            let mut set_aside = 0;
+            for place in &manifest.places {
+                let from = staging.path().join(&place.entry);
+                let target = dirs.root().join(&place.to);
+                check_target(&target)?;
+                let previous = if target.is_file() {
+                    let bytes = fs::read(&target)
+                        .map_err(|e| AppError::filesystem(&target, e))?;
+                    let listed = reader.files.iter().find(|f| f.path == place.entry);
+                    if listed.is_some_and(|l| {
+                        l.size == bytes.len() as u64 && l.sha256 == sha256(&bytes)
+                    }) {
+                        continue;
+                    }
+                    let moved = aside.join(&place.to);
+                    db_backup::ensure_directory(moved.parent().expect("managed file parent"))?;
+                    fs::rename(&target, &moved)
+                        .map_err(|e| AppError::filesystem(&target, e))?;
+                    set_aside += 1;
+                    Some(moved)
+                } else {
+                    None
+                };
+                // Record the undo before creating/copying: a disk-full copy
+                // may have produced only part of the file before failing.
+                changed.push(FileChange {
+                    target: target.clone(),
+                    previous,
+                    created: false,
+                });
+                db_backup::ensure_directory(target.parent().expect("managed file parent"))?;
+                let mut output = fs::OpenOptions::new()
+                    .write(true)
+                    .create_new(true)
+                    .open(&target)
+                    .map_err(|e| AppError::filesystem(&target, e))?;
+                changed.last_mut().expect("recorded file change").created = true;
+                let mut input = fs::File::open(&from)
+                    .map_err(|e| AppError::filesystem(&from, e))?;
+                io::copy(&mut input, &mut output)
+                    .and_then(|_| output.sync_all())
+                    .map_err(|e| AppError::filesystem(&target, e))?;
+            }
+            Ok(RestoreReport {
+                counts,
+                safety_copy: safety.display().to_string(),
+                files_added: changed.len() as u32,
+                files_set_aside: set_aside,
+            })
         })();
         match restored {
-            Ok(counts) => Ok(counts),
+            Ok(report) => Ok(report),
             Err(error) => {
                 log::error!("restoring the backup failed, putting the safety copy back: {error}");
-                let back = conn
+                let files_back = undo_files(&changed);
+                let database_back = conn
                     .restore(
                         rusqlite::MAIN_DB,
                         &safety,
@@ -387,74 +452,85 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
                     )
                     .map_err(AppError::from)
                     .and_then(|_| crate::db::reinitialise(conn, None));
-                match back {
-                    Ok(()) => Err(AppError::Import(UserMessage::new(
+                if files_back.is_ok() && database_back.is_ok() {
+                    Err(AppError::Import(UserMessage::new(
                         "portability.restoreFailed",
                         "The backup could not be restored. Your work was put back as it was.",
-                    ))),
-                    Err(e) => {
-                        log::error!("the safety copy could not be put back: {e}");
-                        Err(AppError::Import(
-                            UserMessage::new(
-                                "portability.rollbackFailed",
-                                format!(
-                                    "The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {}.",
-                                    safety.display()
-                                ),
-                            )
-                            .with("path", safety.display()),
-                        ))
-                    }
+                    )))
+                } else {
+                    log::error!("rollback incomplete: database={database_back:?}, files={files_back:?}; safety database: {}; retained files: {}", safety.display(), aside.display());
+                    Err(AppError::Import(
+                        UserMessage::new(
+                            "portability.rollbackFailed",
+                            format!(
+                                "The backup could not be restored, and your earlier work could not be put back automatically. Safety copies are kept at {}.",
+                                dirs.pre_restore_backups().display()
+                            ),
+                        )
+                        .with("path", dirs.pre_restore_backups().display()),
+                    ))
                 }
             }
         }
-    })?;
-
-    // 5. The files: added; a different file already there is set aside.
-    let aside = dirs
-        .pre_restore_backups()
-        .join(format!("files-{}", file_stamp()));
-    let mut added = 0;
-    let mut set_aside = 0;
-    for place in &manifest.places {
-        let from = staging.path().join(&place.entry);
-        let target = dirs.root().join(&place.to);
-        if target.is_file() {
-            let same = fs::read(&target)
-                .map(|bytes| {
-                    let listed = reader.files.iter().find(|f| f.path == place.entry);
-                    listed
-                        .is_some_and(|l| l.size == bytes.len() as u64 && l.sha256 == sha256(&bytes))
-                })
-                .unwrap_or(false);
-            if same {
-                continue;
-            }
-            let moved = aside.join(&place.to);
-            if let Some(dir) = moved.parent() {
-                fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
-            }
-            fs::rename(&target, &moved).map_err(|e| AppError::filesystem(&target, e))?;
-            set_aside += 1;
-        } else if target.exists() {
-            // A folder where the backup has a file: left as it is.
-            log::warn!("not restored, a folder is in the way: {}", target.display());
-            continue;
-        }
-        if let Some(dir) = target.parent() {
-            fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
-        }
-        fs::rename(&from, &target)
-            .or_else(|_| fs::copy(&from, &target).map(|_| ()))
-            .map_err(|e| AppError::filesystem(&target, e))?;
-        added += 1;
-    }
-    Ok(RestoreReport {
-        counts,
-        safety_copy: safety.display().to_string(),
-        files_added: added,
-        files_set_aside: set_aside,
     })
+}
+
+struct FileChange {
+    target: PathBuf,
+    previous: Option<PathBuf>,
+    created: bool,
+}
+
+fn check_target(target: &Path) -> AppResult<()> {
+    db_backup::check_directory(target.parent().expect("managed file parent"))?;
+    match fs::symlink_metadata(target) {
+        Ok(metadata) => {
+            #[cfg(windows)]
+            let reparse = {
+                use std::os::windows::fs::MetadataExt;
+                metadata.file_attributes() & 0x400 != 0
+            };
+            #[cfg(not(windows))]
+            let reparse = false;
+            if !metadata.file_type().is_file() || reparse {
+                return Err(AppError::filesystem(
+                    target,
+                    io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        "a recovery target must be a regular file, never a link or directory",
+                    ),
+                ));
+            }
+            Ok(())
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
+        Err(error) => Err(AppError::filesystem(target, error)),
+    }
+}
+
+fn undo_files(changed: &[FileChange]) -> AppResult<()> {
+    let mut failure = None;
+    for item in changed.iter().rev() {
+        let result = (|| {
+            db_backup::check_directory(item.target.parent().expect("managed file parent"))?;
+            if item.created {
+                fs::remove_file(&item.target).map_err(|e| AppError::filesystem(&item.target, e))?;
+            }
+            if let Some(previous) = &item.previous {
+                fs::rename(previous, &item.target)
+                    .map_err(|e| AppError::filesystem(previous, e))?;
+            }
+            Ok(())
+        })();
+        if let Err(error) = result {
+            log::error!(
+                "could not undo restored file {}: {error}",
+                item.target.display()
+            );
+            failure = Some(error);
+        }
+    }
+    failure.map_or(Ok(()), Err)
 }
 
 #[cfg(test)]

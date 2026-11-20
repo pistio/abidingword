@@ -1139,13 +1139,14 @@ fn a_backup_from_a_newer_version_is_refused() {
 }
 
 #[test]
-fn a_restore_that_fails_part_way_puts_the_safety_copy_back() {
+fn a_backup_with_false_historical_schema_is_refused_before_replacement() {
     let out = tempfile::tempdir().unwrap();
     let here = folder();
     let good = backup_to(&here, out.path());
     // A backup whose database claims to be two versions older than it is
     // (0015 adds a column, which cannot be added twice):
-    // it passes every check, and then its upgrade fails half-way.
+    // Canonical schema validation now refuses this before it can reach
+    // migration; the independent file-failure case exercises live rollback.
     let staged = out.path().join("staged.db");
     {
         let mut archive = zip::ZipArchive::new(fs::File::open(&good).unwrap()).unwrap();
@@ -1202,7 +1203,7 @@ fn a_restore_that_fails_part_way_puts_the_safety_copy_back() {
     let before = there.db.with_conn(|c| Ok(shape_of_all(c))).unwrap();
     assert_eq!(
         code(backup::restore(&there.db, &there.dirs, &broken)),
-        "portability.restoreFailed"
+        "portability.notBackupDatabase"
     );
     there
         .db
@@ -1227,13 +1228,8 @@ fn a_restore_that_fails_part_way_puts_the_safety_copy_back() {
             Ok(())
         })
         .unwrap();
-    // The safety copy stays where it was made.
-    assert!(
-        fs::read_dir(there.dirs.pre_restore_backups())
-            .unwrap()
-            .count()
-            >= 1
-    );
+    // Rejected before touching live data or creating a safety copy.
+    assert!(!there.dirs.pre_restore_backups().exists());
 }
 
 fn shape_of_all(conn: &Connection) -> Vec<String> {
@@ -1449,6 +1445,551 @@ fn legacy_study_owned_teaching_package_backfills_project_owner() {
             assert_eq!(t.findings.len(), 1);
             assert_eq!(t.passages.len(), 1);
             assert_eq!(t.materials.len(), 1);
+            Ok(())
+        })
+        .unwrap();
+}
+
+#[test]
+fn a_file_restore_failure_rolls_back_database_and_already_replaced_files() {
+    let out = tempfile::tempdir().unwrap();
+    let archived = folder();
+    archived
+        .db
+        .with_conn(|c| {
+            make_project(c, &archived.dirs.teaching_images(), "Archived work").map(|_| ())
+        })
+        .unwrap();
+    for name in ["first.txt", "second.txt", "third.txt"] {
+        fs::write(
+            archived.dirs.sources().join(name),
+            format!("Archived {name}"),
+        )
+        .unwrap();
+    }
+    let good = backup_to(&archived, out.path());
+    // Every archive entry/hash is valid, but its destinations conflict. The
+    // failure occurs after first.txt has been replaced and second.txt added.
+    let broken = out.path().join("conflicting-files.awbackup");
+    rewrite(
+        &good,
+        &broken,
+        |name, bytes| {
+            Some(if name == "manifest.json" {
+                manifest_edit(bytes, |m| {
+                    for place in m["places"].as_array_mut().unwrap() {
+                        if place["to"] == "sources/third.txt" {
+                            place["to"] = serde_json::json!("sources/second.txt/child.txt");
+                        }
+                    }
+                })
+            } else {
+                bytes
+            })
+        },
+        &[],
+    );
+
+    let live = folder();
+    live.db
+        .with_conn(|c| {
+            make_project(c, &live.dirs.teaching_images(), "Current writing")?;
+            c.execute("UPDATE findings SET content='Current author writing must survive a failed restore' WHERE parent_id IS NULL", [])?;
+            Ok(())
+        })
+        .unwrap();
+    fs::write(
+        live.dirs.sources().join("first.txt"),
+        b"Current source bytes",
+    )
+    .unwrap();
+    let before = live.db.with_conn(|c| Ok(shape_of_all(c))).unwrap();
+    let failed = backup::restore(&live.db, &live.dirs, &broken);
+    assert_eq!(live.db.with_conn(|c| Ok(shape_of_all(c))).unwrap(), before);
+    assert_eq!(code(failed), "portability.restoreFailed");
+    assert_eq!(
+        fs::read(live.dirs.sources().join("first.txt")).unwrap(),
+        b"Current source bytes"
+    );
+    assert!(!live.dirs.sources().join("second.txt").exists());
+    assert_eq!(
+        fs::read(live.dirs.teaching_images().join(IMAGE)).unwrap(),
+        PNG
+    );
+    // A restored, still writable SQLite database—not only an error message.
+    live.db
+        .with_conn(|c| {
+            c.execute(
+                "UPDATE projects SET description='Writing after rollback'",
+                [],
+            )?;
+            assert_eq!(
+                c.query_row("PRAGMA integrity_check", [], |r| r.get::<_, String>(0))?,
+                "ok"
+            );
+            Ok(())
+        })
+        .unwrap();
+    assert!(fs::read_dir(live.dirs.pre_restore_backups())
+        .unwrap()
+        .any(|e| e.unwrap().path().extension().is_some_and(|x| x == "db")));
+}
+
+#[cfg(unix)]
+#[test]
+fn full_backup_restore_never_follows_source_symlinks() {
+    use std::os::unix::fs::symlink;
+    let out = tempfile::tempdir().unwrap();
+    let archived = folder();
+    fs::create_dir_all(archived.dirs.sources().join("library")).unwrap();
+    fs::write(
+        archived.dirs.sources().join("library/book.pdf"),
+        b"Archived invented PDF",
+    )
+    .unwrap();
+    let saved = backup_to(&archived, out.path());
+    let live = folder();
+    live.db
+        .with_conn(|c| {
+            make_project(c, &live.dirs.teaching_images(), "Keep current work").map(|_| ())
+        })
+        .unwrap();
+    let outside = tempfile::tempdir().unwrap();
+    fs::write(outside.path().join("book.pdf"), b"Outside bytes stay exact").unwrap();
+    let before = live.db.with_conn(|c| Ok(shape_of_all(c))).unwrap();
+    symlink(outside.path(), live.dirs.sources().join("library")).unwrap();
+    assert!(backup::restore(&live.db, &live.dirs, &saved).is_err());
+    assert_eq!(
+        fs::read(outside.path().join("book.pdf")).unwrap(),
+        b"Outside bytes stay exact"
+    );
+    assert_eq!(live.db.with_conn(|c| Ok(shape_of_all(c))).unwrap(), before);
+    assert!(!live.dirs.pre_restore_backups().exists());
+}
+
+/// Remove only generated identities/timestamps so this native API payload can
+/// be consumed by the real frontend material derivation and DOCX tests. Writing,
+/// provenance, privacy flags, passages, ordering and revisions stay exact.
+fn normalised_recovery_payload(value: &mut serde_json::Value) {
+    fn visit(value: &mut serde_json::Value, ids: &mut std::collections::HashMap<String, String>) {
+        match value {
+            serde_json::Value::Object(object) => {
+                for (key, value) in object {
+                    if matches!(key.as_str(), "createdAt" | "updatedAt" | "copiedAt") {
+                        *value = serde_json::json!("2026-01-01T00:00:00.000Z");
+                    } else {
+                        visit(value, ids);
+                    }
+                }
+            }
+            serde_json::Value::Array(values) => values.iter_mut().for_each(|v| visit(v, ids)),
+            serde_json::Value::String(text) if uuid::Uuid::parse_str(text).is_ok() => {
+                let next = format!("fixture-id-{}", ids.len() + 1);
+                *text = ids.entry(text.clone()).or_insert(next).clone();
+            }
+            _ => {}
+        }
+    }
+    visit(value, &mut std::collections::HashMap::new());
+}
+
+#[test]
+fn study_teaching_and_private_materials_survive_project_full_and_daily_recovery() {
+    use abiding_word_lib::db::{bibles, blocks, reader_positions, sections, teaching_blocks};
+    use abiding_word_lib::domain::{
+        AddFromStudy, BlockType, CreateStudyBlock, StudyItemRef, UpdateStudyBlock,
+        UpdateTeachingBlock,
+    };
+    use abiding_word_lib::portability::snapshots;
+    use abiding_word_lib::scripture::reference::ScriptureRef;
+    use abiding_word_lib::scripture::{import as bible_import, CommitImport};
+
+    let out = tempfile::tempdir().unwrap();
+    let here = folder();
+    let made = here
+        .db
+        .with_conn(|c| make_project(c, &here.dirs.teaching_images(), "Recovery preservation"))
+        .unwrap();
+    let scripture_file = here.dirs.sources().join("invented.usfm");
+    fs::write(&scripture_file, "\\id JHN Invented recovery fixture\n\\c 15\n\\p\n\\v 1 PUBLIC SCRIPTURE fixture text.\n\\v 2 PRIVATE SCRIPTURE fixture text.\n").unwrap();
+    for (name, bytes) in [
+        (
+            "invented.pdf",
+            b"%PDF invented preservation bytes".as_slice(),
+        ),
+        ("invented.epub", b"invented EPUB preservation bytes"),
+    ] {
+        fs::write(here.dirs.sources().join(name), bytes).unwrap();
+    }
+    let (study, writing, qa, linked, independent, scripture) = here.db.with_conn(|c| {
+        let study: String = c.query_row("SELECT id FROM studies WHERE project_id=?1 AND title='Abiding'", [&made.project], |r| r.get(0))?;
+        let section = sections::list(c, &study)?.remove(0);
+        let writing = blocks::create(c, &CreateStudyBlock { section_id: section.id.clone(), block_type: BlockType::Paragraph, content: Some("First draft".into()), field_key: None })?;
+        blocks::update(c, &UpdateStudyBlock { id: writing.id.clone(), content: Some("AUTHOR WRITING: preserved observation — 한글".into()), data: None })?;
+        let qa = blocks::create_with_data(c, &CreateStudyBlock { section_id: section.id, block_type: BlockType::Question, content: None, field_key: None }, Some(r#"{"kind":"qa","question":"PUBLIC QUESTION: What does the invented branch need?","answer":"PUBLIC ANSWER: The invented vine sustains it."}"#))?;
+        let linked = teaching::create(c, &CreateTeaching {
+            study_id: study.clone(), title: "Recovery teaching".into(), kind: Some("bible_study".into()), template_key: Some("recovery-fixture".into()), template_version: Some(2),
+            blocks: vec![
+                NewTeachingBlock { key: Some("public-writing".into()), block_type: "writing".into(), body: "PUBLIC MANUSCRIPT: Words prepared by the author.".into(), participant_facing: Some(true), ..Default::default() },
+                NewTeachingBlock { key: Some("leader".into()), block_type: "teaching_notes".into(), body: "PRIVATE LEADER: Pause and check the invented clock.".into(), participant_facing: Some(false), ..Default::default() },
+                NewTeachingBlock { key: Some("public-reading".into()), block_type: "scripture".into(), title: "Public reading".into(), participant_facing: Some(true), ..Default::default() },
+                NewTeachingBlock { key: Some("private-reading".into()), block_type: "scripture".into(), title: "PRIVATE reading".into(), participant_facing: Some(false), ..Default::default() },
+            ], ..Default::default()
+        })?;
+        teaching_blocks::add_from_study(c, &AddFromStudy { preparation_id: linked.id.clone(), items: vec![StudyItemRef { kind: "qa".into(), id: qa.id.clone(), label: "Author question and answer".into() }, StudyItemRef { kind: "writing".into(), id: writing.id.clone(), label: "Author observation".into() }], ..Default::default() })?;
+        // Copied Study material starts private. The author explicitly makes
+        // only this question/answer participant-facing; other copied writing
+        // retains its private setting.
+        let copied_qa = teaching::get(c, &linked.id)?.blocks.into_iter().find(|b| b.block_type == "qa").unwrap();
+        assert!(!copied_qa.participant_facing);
+        teaching_blocks::update(c, &UpdateTeachingBlock { id: copied_qa.id, participant_facing: Some(true), ..Default::default() })?;
+        for (key, reference) in [("public-reading", "JHN.15.1"), ("private-reading", "JHN.15.2")] {
+            teaching::add_passage(c, &AddTeachingPassage { preparation_id: linked.id.clone(), point_id: None, block_id: linked.blocks.iter().find(|b| b.block_key.as_deref() == Some(key)).map(|b| b.id.clone()), reference: reference.into() })?;
+        }
+        let independent = teaching::create(c, &CreateTeaching { project_id: Some(made.project.clone()), title: "Independent recovery session".into(), template_version: Some(2), blocks: vec![NewTeachingBlock { block_type: "teaching_notes".into(), body: "PRIVATE INDEPENDENT: Never lose this separate session.".into(), participant_facing: Some(false), ..Default::default() }], ..Default::default() })?;
+        let staged = bible_import::stage(std::slice::from_ref(&scripture_file), bible_import::ImportOrigin::UserFiles)?;
+        let bible = bibles::new_translation_id();
+        bibles::commit_import(c, &bible, &staged.content, &CommitImport { preview_id: staged.id, name: "Invented recovery Scripture fixture".into(), short_name: "FX".into(), language: "English".into(), language_code: Some("en".into()), publisher: None, copyright_notice: Some("Invented test text, not a Bible translation".into()), license_type: None, words: Default::default(), as_document: false }, &bibles::SourceRecord { origin: "managed_copy", path: Some("sources/invented.usfm".into()), original_file_name: Some("invented.usfm".into()), format: "usfm", is_builtin: false })?;
+        let scripture = bibles::material_passages(c, &bible, &[ScriptureRef::from_canonical("JHN.15.1").unwrap(), ScriptureRef::from_canonical("JHN.15.2").unwrap()])?;
+        let place: reader_positions::ReaderPosition = serde_json::from_value(serde_json::json!({"mode":"original","page":12,"history":{"entries":[{"page":11,"fraction":0.5,"position":null,"offset":20.0,"item":null,"fragment":null,"itemOffset":0.0},{"page":12,"fraction":0.7,"position":null,"offset":40.0,"item":null,"fragment":null,"itemOffset":0.0}],"index":1}})).unwrap();
+        reader_positions::save(c, "lib-1", &place)?;
+        assert_eq!(teaching::list_project(c, &made.project)?.len(), 3);
+        assert_eq!(teaching::list(c, &study)?.len(), 2);
+        Ok((study, writing.id, qa.id, linked.id, independent.id, scripture))
+    }).unwrap();
+    let expected = here
+        .db
+        .with_conn(|c| {
+            Ok((
+                blocks::get(c, &writing)?,
+                blocks::get(c, &qa)?,
+                teaching::get(c, &linked)?,
+                teaching::get(c, &independent)?,
+                reader_positions::list(c)?,
+            ))
+        })
+        .unwrap();
+    let check = |c: &Connection| -> AppResult<()> {
+        assert_eq!(blocks::get(c, &writing)?, expected.0);
+        assert_eq!(blocks::get(c, &qa)?, expected.1);
+        assert_eq!(teaching::get(c, &linked)?, expected.2);
+        assert_eq!(teaching::get(c, &independent)?, expected.3);
+        assert_eq!(reader_positions::list(c)?, expected.4);
+        assert!(!c.prepare("PRAGMA foreign_key_check")?.exists([])?);
+        assert_eq!(migrations::current_version(c)?, 27);
+        Ok(())
+    };
+    let files: Vec<_> = [
+        "invented.pdf",
+        "invented.epub",
+        "invented.usfm",
+        "teaching-images/0123456789abcdef0123456789abcdef.png",
+    ]
+    .map(|p| {
+        (
+            p.to_string(),
+            fs::read(here.dirs.sources().join(p)).unwrap(),
+        )
+    })
+    .into();
+    let full = backup_to(&here, out.path());
+    let snapshot = here
+        .db
+        .with_conn(|c| abiding_word_lib::db::backup::daily_snapshot(c, &here.dirs.daily_backups()))
+        .unwrap()
+        .unwrap();
+    let id = snapshot.file_name().unwrap().to_str().unwrap().to_string();
+    here.db
+        .with_conn(|c| {
+            blocks::update(
+                c,
+                &UpdateStudyBlock {
+                    id: writing.clone(),
+                    content: Some("NEWER AUTHOR WRITING: Keep in safety copy".into()),
+                    data: None,
+                },
+            )?;
+            let private = teaching::get(c, &linked)?
+                .blocks
+                .into_iter()
+                .find(|b| b.block_key.as_deref() == Some("leader"))
+                .unwrap();
+            teaching_blocks::update(
+                c,
+                &UpdateTeachingBlock {
+                    id: private.id,
+                    body: Some("PRIVATE NEWER LEADER WRITING".into()),
+                    ..Default::default()
+                },
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    fs::write(
+        here.dirs.sources().join("invented.pdf"),
+        b"Current PDF bytes intentionally differ from snapshot time",
+    )
+    .unwrap();
+    let daily = snapshots::restore(&here.db, &here.dirs, &id).unwrap();
+    here.db.with_conn(check).unwrap();
+    assert!(daily.files_unchanged);
+    assert_eq!(
+        fs::read(here.dirs.sources().join("invented.pdf")).unwrap(),
+        b"Current PDF bytes intentionally differ from snapshot time"
+    );
+    for (name, bytes) in files.iter().filter(|(name, _)| name != "invented.pdf") {
+        assert_eq!(&fs::read(here.dirs.sources().join(name)).unwrap(), bytes);
+    }
+    let safety = Connection::open_with_flags(
+        &daily.safety_copy,
+        rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
+    )
+    .unwrap();
+    assert_eq!(
+        blocks::get(&safety, &writing).unwrap().content,
+        "NEWER AUTHOR WRITING: Keep in safety copy"
+    );
+    assert!(teaching::get(&safety, &linked)
+        .unwrap()
+        .blocks
+        .iter()
+        .any(|b| b.body == "PRIVATE NEWER LEADER WRITING"));
+    drop(safety);
+    drop(here.db);
+    let reopened = Database::open(
+        &here.dirs.database_file(),
+        &here.dirs.pre_migration_backups(),
+    )
+    .unwrap();
+    reopened.with_conn(check).unwrap();
+
+    let restored = folder();
+    backup::restore(&restored.db, &restored.dirs, &full).unwrap();
+    restored.db.with_conn(check).unwrap();
+    for (name, bytes) in &files {
+        assert_eq!(
+            &fs::read(restored.dirs.sources().join(name)).unwrap(),
+            bytes
+        );
+    }
+    drop(restored.db);
+    let restored_db = Database::open(
+        &restored.dirs.database_file(),
+        &restored.dirs.pre_migration_backups(),
+    )
+    .unwrap();
+    restored_db.with_conn(check).unwrap();
+
+    let package = out.path().join("preservation.awproject");
+    reopened
+        .with_conn(|c| project::export(c, &made.project, &here.dirs.teaching_images(), &package))
+        .unwrap();
+    let imported = folder();
+    let report = import(&imported, &package).unwrap();
+    assert_eq!(report.counts.teachings, 3);
+    assert_eq!(report.citations_kept, 1);
+    assert_eq!(report.left_out, 0);
+    assert_eq!(report.missing.sources, ["Commentary on John"]);
+    imported
+        .db
+        .with_conn(|c| {
+            let sessions = teaching::list_project(c, &report.project_id)?;
+            let native = teaching::get(
+                c,
+                &sessions
+                    .iter()
+                    .find(|s| s.title == "Recovery teaching")
+                    .unwrap()
+                    .id,
+            )?;
+            let stand_alone = teaching::get(
+                c,
+                &sessions
+                    .iter()
+                    .find(|s| s.title == "Independent recovery session")
+                    .unwrap()
+                    .id,
+            )?;
+            assert_eq!(stand_alone.study_id, None);
+            assert_eq!(stand_alone.blocks[0].body, expected.3.blocks[0].body);
+            assert_ne!(native.study_id.as_deref(), Some(study.as_str()));
+            assert_eq!(
+                native
+                    .blocks
+                    .iter()
+                    .map(|b| (&b.body, b.participant_facing))
+                    .collect::<Vec<_>>(),
+                expected
+                    .2
+                    .blocks
+                    .iter()
+                    .map(|b| (&b.body, b.participant_facing))
+                    .collect::<Vec<_>>()
+            );
+            assert_eq!(
+                native
+                    .passages
+                    .iter()
+                    .map(|p| &p.reference)
+                    .collect::<Vec<_>>(),
+                expected
+                    .2
+                    .passages
+                    .iter()
+                    .map(|p| &p.reference)
+                    .collect::<Vec<_>>()
+            );
+            // Origins are historical provenance of an editable copy, not a
+            // live link. Preserve original Study/item IDs and citation text;
+            // do not relabel the author’s original source as the new import.
+            assert_eq!(
+                native
+                    .blocks
+                    .iter()
+                    .filter_map(|b| b.origin.as_ref())
+                    .collect::<Vec<_>>(),
+                expected
+                    .2
+                    .blocks
+                    .iter()
+                    .filter_map(|b| b.origin.as_ref())
+                    .collect::<Vec<_>>()
+            );
+            let imported_blocks = blocks::list_for_study(c, native.study_id.as_deref().unwrap())?;
+            assert!(imported_blocks
+                .iter()
+                .any(|b| b.content == expected.0.content));
+            assert!(imported_blocks
+                .iter()
+                .any(|b| b.data == expected.1.data && b.block_type == BlockType::Question));
+            assert!(!c.prepare("PRAGMA foreign_key_check")?.exists([])?);
+            Ok(())
+        })
+        .unwrap();
+
+    let mut payload = serde_json::json!({"preparation": expected.2, "scripture": scripture});
+    normalised_recovery_payload(&mut payload);
+    let path =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("../tests/fixtures/recovery-preservation.json");
+    let bytes = format!("{}\n", serde_json::to_string_pretty(&payload).unwrap());
+    if std::env::var_os("UPDATE_RECOVERY_FIXTURES").is_some() {
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(&path, &bytes).unwrap();
+    }
+    assert_eq!(fs::read_to_string(&path).expect("Generate native fixture with UPDATE_RECOVERY_FIXTURES=1 cargo test --test portability study_teaching_and_private_materials_survive"), bytes);
+}
+
+#[test]
+fn a_backup_with_an_added_destructive_trigger_is_refused_before_replacement() {
+    use sha2::Digest;
+    use std::io::Read;
+    let out = tempfile::tempdir().unwrap();
+    let archived = folder();
+    let good = backup_to(&archived, out.path());
+    let copy = out.path().join("untrusted.db");
+    let mut zip = zip::ZipArchive::new(fs::File::open(&good).unwrap()).unwrap();
+    let mut bytes = Vec::new();
+    zip.by_name("database.db")
+        .unwrap()
+        .read_to_end(&mut bytes)
+        .unwrap();
+    fs::write(&copy, bytes).unwrap();
+    let candidate = Connection::open(&copy).unwrap();
+    candidate.execute_batch("CREATE TRIGGER sqliteXerase AFTER UPDATE OF content ON study_blocks BEGIN DELETE FROM teaching_blocks; END;").unwrap();
+    assert_eq!(
+        candidate
+            .query_row("PRAGMA quick_check", [], |r| r.get::<_, String>(0))
+            .unwrap(),
+        "ok"
+    );
+    drop(candidate);
+    let bytes = fs::read(copy).unwrap();
+    let sha = format!("{:x}", sha2::Sha256::digest(&bytes));
+    let broken = out.path().join("trigger.awbackup");
+    rewrite(
+        &good,
+        &broken,
+        |name, data| {
+            Some(match name {
+                "database.db" => bytes.clone(),
+                "manifest.json" => manifest_edit(data, |m| {
+                    let db = m["files"]
+                        .as_array_mut()
+                        .unwrap()
+                        .iter_mut()
+                        .find(|f| f["path"] == "database.db")
+                        .unwrap();
+                    db["size"] = serde_json::json!(bytes.len());
+                    db["sha256"] = serde_json::json!(sha);
+                }),
+                _ => data,
+            })
+        },
+        &[],
+    );
+    let live = folder();
+    live.db
+        .with_conn(|c| {
+            make_project(c, &live.dirs.teaching_images(), "Never erase current work").map(|_| ())
+        })
+        .unwrap();
+    let before = live.db.with_conn(|c| Ok(shape_of_all(c))).unwrap();
+    assert_eq!(
+        code(backup::restore(&live.db, &live.dirs, &broken)),
+        "portability.notBackupDatabase"
+    );
+    assert_eq!(live.db.with_conn(|c| Ok(shape_of_all(c))).unwrap(), before);
+    assert!(!live.dirs.pre_restore_backups().exists());
+}
+
+#[test]
+fn a_genuine_historical_backup_still_upgrades_to_schema_27() {
+    let out = tempfile::tempdir().unwrap();
+    let old_path = out.path().join("schema14.db");
+    let mut historical = Connection::open(&old_path).unwrap();
+    migrations::run_with(&mut historical, &migrations::MIGRATIONS[..14]).unwrap();
+    historical.execute("INSERT INTO workspaces(id,name,is_default,created_at,updated_at) VALUES('old-workspace','Historical invented work',1,'T','T')", []).unwrap();
+    historical.execute("INSERT INTO projects(id,workspace_id,title,created_at,updated_at) VALUES('old-project','old-workspace','Preserved schema14 project','T','T')", []).unwrap();
+    drop(historical);
+    let archived = folder();
+    archived
+        .db
+        .with_conn_mut(|c| {
+            c.restore(
+                rusqlite::MAIN_DB,
+                &old_path,
+                None::<fn(rusqlite::backup::Progress)>,
+            )?;
+            Ok(())
+        })
+        .unwrap();
+    let package = backup_to(&archived, out.path());
+    let live = folder();
+    backup::restore(&live.db, &live.dirs, &package).unwrap();
+    live.db
+        .with_conn(|c| {
+            assert_eq!(migrations::current_version(c)?, 27);
+            assert_eq!(
+                c.query_row(
+                    "SELECT title FROM projects WHERE id='old-project'",
+                    [],
+                    |r| r.get::<_, String>(0)
+                )?,
+                "Preserved schema14 project"
+            );
+            assert!(!c.prepare("PRAGMA foreign_key_check")?.exists([])?);
+            Ok(())
+        })
+        .unwrap();
+    drop(live.db);
+    let reopened = Database::open(
+        &live.dirs.database_file(),
+        &live.dirs.pre_migration_backups(),
+    )
+    .unwrap();
+    reopened
+        .with_conn(|c| {
+            assert_eq!(migrations::current_version(c)?, 27);
             Ok(())
         })
         .unwrap();

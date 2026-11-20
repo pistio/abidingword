@@ -1,0 +1,181 @@
+{
+  "preparation": {
+    "audience": null,
+    "blocks": [
+      {
+        "blockKey": "public-writing",
+        "blockType": "writing",
+        "body": "PUBLIC MANUSCRIPT: Words prepared by the author.",
+        "guidanceKey": null,
+        "id": "fixture-id-1",
+        "parentId": null,
+        "participantFacing": true,
+        "pointId": null,
+        "position": 0,
+        "role": null,
+        "title": ""
+      },
+      {
+        "blockKey": "leader",
+        "blockType": "teaching_notes",
+        "body": "PRIVATE LEADER: Pause and check the invented clock.",
+        "guidanceKey": null,
+        "id": "fixture-id-2",
+        "parentId": null,
+        "participantFacing": false,
+        "pointId": null,
+        "position": 1,
+        "role": null,
+        "title": ""
+      },
+      {
+        "blockKey": "public-reading",
+        "blockType": "scripture",
+        "body": "",
+        "guidanceKey": null,
+        "id": "fixture-id-3",
+        "parentId": null,
+        "participantFacing": true,
+        "pointId": null,
+        "position": 2,
+        "role": null,
+        "title": "Public reading"
+      },
+      {
+        "blockKey": "private-reading",
+        "blockType": "scripture",
+        "body": "",
+        "guidanceKey": null,
+        "id": "fixture-id-4",
+        "parentId": null,
+        "participantFacing": false,
+        "pointId": null,
+        "position": 3,
+        "role": null,
+        "title": "PRIVATE reading"
+      },
+      {
+        "blockKey": null,
+        "blockType": "qa",
+        "body": "PUBLIC ANSWER: The invented vine sustains it.",
+        "guidanceKey": null,
+        "id": "fixture-id-5",
+        "origin": {
+          "citation": null,
+          "copiedAt": "2026-01-01T00:00:00.000Z",
+          "itemId": "fixture-id-6",
+          "kind": "qa",
+          "label": "Author question and answer",
+          "studyId": "fixture-id-7"
+        },
+        "parentId": null,
+        "participantFacing": true,
+        "pointId": null,
+        "position": 4,
+        "role": null,
+        "title": "PUBLIC QUESTION: What does the invented branch need?"
+      },
+      {
+        "blockKey": null,
+        "blockType": "writing",
+        "body": "AUTHOR WRITING: preserved observation — 한글",
+        "guidanceKey": null,
+        "id": "fixture-id-8",
+        "origin": {
+          "citation": null,
+          "copiedAt": "2026-01-01T00:00:00.000Z",
+          "itemId": "fixture-id-9",
+          "kind": "writing",
+          "label": "Author observation",
+          "studyId": "fixture-id-7"
+        },
+        "parentId": null,
+        "participantFacing": false,
+        "pointId": null,
+        "position": 5,
+        "role": null,
+        "title": "Text"
+      }
+    ],
+    "centralMessage": null,
+    "conclusion": "",
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "findings": [],
+    "id": "fixture-id-10",
+    "introduction": "",
+    "kind": "bible_study",
+    "materials": [],
+    "notes": "",
+    "passages": [
+      {
+        "blockId": "fixture-id-3",
+        "id": "fixture-id-11",
+        "pointId": null,
+        "reference": {
+          "book": "JHN",
+          "canonical": "JHN.15.1",
+          "display": "John 15:1",
+          "endChapter": 15,
+          "endVerse": 1,
+          "startChapter": 15,
+          "startVerse": 1
+        }
+      },
+      {
+        "blockId": "fixture-id-4",
+        "id": "fixture-id-12",
+        "pointId": null,
+        "reference": {
+          "book": "JHN",
+          "canonical": "JHN.15.2",
+          "display": "John 15:2",
+          "endChapter": 15,
+          "endVerse": 2,
+          "startChapter": 15,
+          "startVerse": 2
+        }
+      }
+    ],
+    "points": [],
+    "projectId": "fixture-id-13",
+    "purpose": null,
+    "revision": 32,
+    "studyId": "fixture-id-7",
+    "templateKey": "recovery-fixture",
+    "templateVersion": 2,
+    "title": "Recovery teaching",
+    "updatedAt": "2026-01-01T00:00:00.000Z"
+  },
+  "scripture": {
+    "copyrightNotice": "Invented test text, not a Bible translation",
+    "name": "Invented recovery Scripture fixture",
+    "passages": [
+      {
+        "canonical": "JHN.15.1",
+        "missing": [],
+        "verses": [
+          {
+            "canonical": "JHN.15.1",
+            "chapter": 15,
+            "text": "PUBLIC SCRIPTURE fixture text.",
+            "verse": 1
+          }
+        ]
+      },
+      {
+        "canonical": "JHN.15.2",
+        "missing": [],
+        "verses": [
+          {
+            "canonical": "JHN.15.2",
+            "chapter": 15,
+            "text": "PRIVATE SCRIPTURE fixture text.",
+            "verse": 2
+          }
+        ]
+      }
+    ],
+    "shortName": "FX",
+    "translationId": "fixture-id-14"
+  }
+}

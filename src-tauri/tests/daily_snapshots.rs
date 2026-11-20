@@ -121,3 +121,76 @@ fn retention_deletes_only_old_verified_managed_snapshots() {
     assert_eq!(fs::read(&damaged).unwrap(), b"bad backup");
     assert_eq!(fs::read(&unrelated).unwrap(), b"retain");
 }
+
+#[test]
+fn manual_database_names_are_neither_counted_as_today_nor_pruned() {
+    let (_temp, dirs, db) = seeded();
+    let daily = dirs.daily_backups();
+    let current = db
+        .with_conn(|conn| backup::daily_snapshot(conn, &daily))
+        .unwrap()
+        .unwrap();
+    let today = chrono::Utc::now().format("%Y-%m-%d");
+    let names = [
+        "abiding-word-v27-000-personal-copy.db".to_string(),
+        "abiding-word-v027-2020-01-01T00-00-00.000Z.db".to_string(),
+        format!("abiding-word-v27-{today}T-my-personal-copy.db"),
+    ];
+    for name in &names {
+        fs::copy(&current, daily.join(name)).unwrap();
+    }
+    // A valid but manually named same-day file must not suppress our real point.
+    fs::remove_file(&current).unwrap();
+    assert!(db
+        .with_conn(|conn| backup::daily_snapshot(conn, &daily))
+        .unwrap()
+        .is_some());
+    let current = fs::read_dir(&daily)
+        .unwrap()
+        .flatten()
+        .find(|item| !names.contains(&item.file_name().to_string_lossy().into_owned()))
+        .unwrap()
+        .path();
+    for day in 1..=10 {
+        fs::copy(
+            &current,
+            daily.join(format!(
+                "abiding-word-v27-2020-01-{day:02}T00-00-00.000Z.db"
+            )),
+        )
+        .unwrap();
+    }
+    db.with_conn(|conn| backup::daily_snapshot(conn, &daily))
+        .unwrap();
+    for name in names {
+        assert_eq!(
+            get_note(&daily.join(&name)),
+            "\"My invented written notes\"",
+            "{name}"
+        );
+    }
+    assert_eq!(fs::read_dir(&daily).unwrap().count(), 10); // seven managed + three manual
+}
+
+#[test]
+fn rapidly_created_safety_copies_have_distinct_names_and_preserve_each_version() {
+    let (_temp, dirs, db) = seeded();
+    let mut paths = Vec::new();
+    for index in 0..8 {
+        let path = db
+            .with_conn(|conn| {
+                conn.execute(
+                    "UPDATE settings SET value=?1 WHERE key='test.sentence'",
+                    [index.to_string()],
+                )?;
+                backup::pre_migration(conn, &dirs.pre_restore_backups(), 27)
+            })
+            .unwrap();
+        assert_eq!(get_note(&path), index.to_string());
+        assert!(!paths.contains(&path));
+        paths.push(path);
+    }
+    for (index, path) in paths.iter().enumerate() {
+        assert_eq!(get_note(path), index.to_string());
+    }
+}
