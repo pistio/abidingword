@@ -1,7 +1,7 @@
 # Prepared for review only. Activate the existing one-off pathway only after explicit installer-build approval.
 # This .yml.in file is inert; the existing build branch and active workflow path are retained below.
 # Acceptance artifacts only. No updater, signing, release or deployment.
-name: Windows Sources follow-up schema 27 installer acceptance
+name: Windows Settings, languages and focus schema 27 installer acceptance
 
 on:
   push:
@@ -22,19 +22,19 @@ jobs:
       run:
         shell: pwsh
     env:
-      EXPECTED_SOURCE_SHA: bcf4858591f6d306838773ebc884550ca27d19b6
+      EXPECTED_SOURCE_SHA: 13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54
       CARGO_PROFILE_RELEASE_DEBUG: "0"
     steps:
       - name: Reject unpinned source selection
         run: |
-          if ($env:EXPECTED_SOURCE_SHA -cne 'bcf4858591f6d306838773ebc884550ca27d19b6') {
-            throw 'Only the pinned Sources-follow-up schema-27 source may be built by this workflow.'
+          if ($env:EXPECTED_SOURCE_SHA -cne '13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54') {
+            throw 'Only the pinned Settings-languages-focus schema-27 source may be built by this workflow.'
           }
       - name: Preserve historical SQL bytes on Windows checkout
         run: git config --global core.autocrlf false
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          ref: bcf4858591f6d306838773ebc884550ca27d19b6
+          ref: 13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54
           persist-credentials: false
           path: app
       - name: Check out verified NSIS packaging tools from the successful installer run
@@ -135,7 +135,7 @@ jobs:
         if: always() && steps.diagnostic.outputs.available == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: Abiding-Word-diagnostic-only-not-portable-bcf4858591f6d306838773ebc884550ca27d19b6
+          name: Abiding-Word-diagnostic-only-not-portable-13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54
           path: ${{ runner.temp }}/diagnostic-executable/
           if-no-files-found: error
           retention-days: 14
@@ -154,14 +154,14 @@ jobs:
           $installers = @(Get-ChildItem 'app/src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
           if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) { throw 'Expected exactly one nonempty NSIS installer.' }
           New-Item -ItemType Directory -Path staged | Out-Null
-          $name = "Abiding-Word-Sources-Follow-up-schema27-$env:EXPECTED_SOURCE_SHA-x64-setup.exe"
+          $name = "Abiding-Word-Settings-Languages-Focus-schema27-$env:EXPECTED_SOURCE_SHA-x64-setup.exe"
           Copy-Item -LiteralPath $installers[0].FullName -Destination "staged/$name"
           $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "staged/$name").Hash.ToLowerInvariant()
           "$hash  $name" | Set-Content "$env:RUNNER_TEMP/installer-sha256.txt"
       - name: Upload acceptance installer
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: Abiding-Word-Sources-Follow-up-schema27-bcf4858591f6d306838773ebc884550ca27d19b6-Windows-x64
+          name: Abiding-Word-Settings-Languages-Focus-schema27-13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54-Windows-x64
           path: staged/*.exe
           if-no-files-found: error
           retention-days: 14
@@ -169,7 +169,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: Abiding-Word-Sources-Follow-up-packaging-evidence-bcf4858591f6d306838773ebc884550ca27d19b6-attempt-${{ github.run_attempt }}
+          name: Abiding-Word-Settings-Languages-Focus-packaging-evidence-13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54-attempt-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/build-provenance.json
             ${{ runner.temp }}/build-environment.txt
