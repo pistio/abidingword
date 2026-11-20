@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, FileDown, FolderOpen, Me
 import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
+import { settleOutstandingWrites } from "@/hooks/SaveTracker";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { referenceLabel } from "@/i18n/scripture";
@@ -378,6 +379,10 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
   // teaching's place, made from it; the presentation keeps its own editor.
   const [delivering, setDelivering] = useState(false);
   const [material, setMaterial] = useState<Exclude<OutputKind, "presentation"> | null>(null);
+  const [preparingOutput, setPreparingOutput] = useState(false);
+  const outputPending = useRef(false);
+  const outputRequest = useRef(0);
+  useEffect(() => () => { outputRequest.current += 1; }, [preparationId]);
   // The presentation already made, if any: it can be saved as a file straight from Materials.
   const presentations = useLoad(useCallback(() => api.presentationList(preparationId), [api, preparationId]));
   const [exporting, setExporting] = useState<PresentationDocument | null>(null);
@@ -488,6 +493,31 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
   // The teaching's own passages (not a point's): its Bible text, shown with the teaching as context.
   const wholePassages = prep.passages.filter((p) => p.pointId === null && !p.blockId);
 
+  // A material/presentation is a snapshot of committed author writing. Flush
+  // debounce drafts and await every save before reading it; opening a preview
+  // must never unmount pending fields and expose an export of older wording.
+  const prepareOutput = async (open: () => void | Promise<void>) => {
+    if (outputPending.current) return;
+    outputPending.current = true;
+    const request = ++outputRequest.current;
+    setPreparingOutput(true);
+    setError(null);
+    try {
+      await settleOutstandingWrites();
+      const current = await api.teachingGet(prep.id);
+      if (request !== outputRequest.current) return;
+      setPrep(current);
+      await open();
+    } catch (e) {
+      if (request === outputRequest.current) setError(toApiError(e).message);
+    } finally {
+      if (request === outputRequest.current) {
+        outputPending.current = false;
+        setPreparingOutput(false);
+      }
+    }
+  };
+
   const backToTeaching = () => {
     setDelivering(false);
     setMaterial(null);
@@ -513,7 +543,8 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
       label: outputName(t, kind, prep.kind),
       description: outputHint(t, kind, prep.kind),
       icon: ICONS[kind],
-      onSelect: () => (kind === "presentation" ? setDelivering(true) : setMaterial(kind)),
+      disabled: preparingOutput,
+      onSelect: () => void prepareOutput(() => { if (kind === "presentation") setDelivering(true); else setMaterial(kind); }),
     })),
     ...(madePresentations.length > 0
       ? [
@@ -525,16 +556,21 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
                 : t("studies.materials.menu.exportHint"),
             icon: <FileDown className="size-4 shrink-0 self-start mt-1" aria-hidden="true" />,
             group: t("studies.materials.menu.files"),
-            onSelect: () => {
-              api.presentationDocument(madePresentations[0]!.id).then(setExporting, (e: unknown) => setError(toApiError(e).message));
-            },
+            disabled: preparingOutput,
+            onSelect: () => void prepareOutput(async () => {
+              const request = outputRequest.current;
+              const doc = await api.presentationDocument(madePresentations[0]!.id);
+              if (request === outputRequest.current) setExporting(doc);
+            }),
           },
         ]
       : []),
   ];
 
   return (
-    <article aria-label={prep.title} className="flex flex-col gap-5">
+    <>
+    {preparingOutput && <p role="status" className="type-meta m-0">{t("common.saving")}</p>}
+    <article aria-label={prep.title} aria-busy={preparingOutput} inert={preparingOutput} className="flex flex-col gap-5">
       {exporting && (
         <ExportDialog
           doc={exporting}
@@ -549,7 +585,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
         <div className="flex items-start gap-1">
           <div className="min-w-0 flex-1 pt-1">
             <TeachingField
-              key={`title-${prep.id}`}
+              saveKey={`teaching:${prep.id}:title`} key={`title-${prep.id}`}
               label={t("studies.teaching.titleLabel")}
               value={prep.title}
               save={(value) =>
@@ -643,7 +679,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
       <>
       {/* What it says on a line of its own; what it is for waits in the empty field. */}
       <TeachingField
-        key={`message-${prep.id}`}
+        saveKey={`teaching:${prep.id}:centralMessage`} key={`message-${prep.id}`}
         label={shape("message")}
         placeholder={shape("messageHint")}
         value={prep.centralMessage ?? ""}
@@ -655,7 +691,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
       />
 
       {showsFrame(shapeName, "introduction", prep.introduction) && (
-        <TeachingField key={`intro-${prep.id}`} label={shape("introduction")} value={prep.introduction} save={save("introduction")} part="introduction" assistant={hooks} onRevealScripture={onRevealScripture} />
+        <TeachingField saveKey={`teaching:${prep.id}:introduction`} key={`intro-${prep.id}`} label={shape("introduction")} value={prep.introduction} save={save("introduction")} part="introduction" assistant={hooks} onRevealScripture={onRevealScripture} />
       )}
 
       <section aria-labelledby={`points-${prep.id}`} className="flex flex-col gap-4">
@@ -769,7 +805,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
                   </span>
                 </div>
                 <TeachingField
-                  key={`ptitle-${point.id}`}
+                  saveKey={`teaching-point:${point.id}:title`} key={`ptitle-${point.id}`}
                   label={shape("titleLabel", { number: index + 1 })}
                   value={point.title}
                   save={savePoint(point.id, "title")}
@@ -787,7 +823,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
                   const part = field === "explanation" ? "pointExplanation" : field === "application" ? "pointApplication" : "pointIllustration";
                   return (
                     <TeachingField
-                      key={`p${field}-${point.id}`}
+                      saveKey={`teaching-point:${point.id}:${field}`} key={`p${field}-${point.id}`}
                       level="field"
                       label={stepLabel ?? shape(field)}
                       value={point[field]}
@@ -834,7 +870,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
       </section>
 
       {showsFrame(shapeName, "conclusion", prep.conclusion) && (
-        <TeachingField key={`concl-${prep.id}`} label={shape("conclusion")} value={prep.conclusion} save={save("conclusion")} part="conclusion" assistant={hooks} onRevealScripture={onRevealScripture} />
+        <TeachingField saveKey={`teaching:${prep.id}:conclusion`} key={`concl-${prep.id}`} label={shape("conclusion")} value={prep.conclusion} save={save("conclusion")} part="conclusion" assistant={hooks} onRevealScripture={onRevealScripture} />
       )}
       {/* Notes for oneself (v0.19): real writing, but not the teaching others receive; after it,
           folded away and quieter, and never on the Materials for listeners or a group. */}
@@ -854,7 +890,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
         </h3>
         <div id={`notes-body-${prep.id}`} hidden={!notesOpen} className="flex flex-col gap-2 pb-3">
           <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.teaching.notesPrivate")}</p>
-          <TeachingField key={`notes-${prep.id}`} label={t("studies.teaching.notes")} placeholder={t("studies.teaching.notesHint")} value={prep.notes} save={save("notes")} part="notes" rows={3} assistant={hooks} labelHidden />
+          <TeachingField saveKey={`teaching:${prep.id}:notes`} key={`notes-${prep.id}`} label={t("studies.teaching.notes")} placeholder={t("studies.teaching.notesHint")} value={prep.notes} save={save("notes")} part="notes" rows={3} assistant={hooks} labelHidden />
         </div>
       </section>
       </>
@@ -869,6 +905,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
         {notice}
       </p>
     </article>
+    </>
   );
 }
 

@@ -2,6 +2,8 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, configure } from "@testing-library/react";
 import { afterEach } from "vitest";
 import i18n from "@/i18n";
+import { resetAutosaveLanesForTests } from "@/hooks/useAutosave";
+import { resetDatabaseWriteBarrierForTests } from "@/lib/databaseRestoreLock";
 
 // jsdom has no PointerEvent: a MouseEvent with a pointer id stands in, so
 // pointer events carry coordinates and buttons as in a browser.
@@ -24,6 +26,8 @@ configure({ asyncUtilTimeout: 5000 });
 
 afterEach(async () => {
   cleanup();
+  resetDatabaseWriteBarrierForTests();
+  resetAutosaveLanesForTests();
   window.localStorage.clear();
   // Each test starts in English, the language the tests are written in.
   if (i18n.language !== "en") await i18n.changeLanguage("en");

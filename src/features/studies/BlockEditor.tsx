@@ -70,10 +70,14 @@ export function BlockEditor(props: BlockEditorProps) {
     (content: string) => api.studyBlockUpdate({ id: block.id, content }),
     [api, block.id],
   );
-  const { schedule, flush } = useAutosave(save);
+  const current = useRef(text);
+  const { schedule, flush } = useAutosave(save, undefined, `study-block:${block.id}:content`, (value) => {
+    setText(value);
+    current.current = value;
+    onContent?.(block.id, value.trim().length > 0);
+  });
 
   // The text now, for Help (it changes only here).
-  const current = useRef(text);
   const change = useCallback(
     (next: string) => {
       current.current = next;

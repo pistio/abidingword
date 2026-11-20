@@ -83,18 +83,24 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
   const blockId = useRef<string | null>(block?.id ?? null);
   const creating = useRef<Promise<string> | null>(null);
 
-  // A field without its block (an older copy) gets one when the first text is written.
+  // A missing historical field gets a block on first writing. A previous
+  // editor mount may have finished creating it while this one was waiting in
+  // the shared save lane, so look again before creating a duplicate.
   const ensure = useCallback(async () => {
     if (blockId.current) return blockId.current;
-    creating.current ??= api
-      .studyBlockCreate({ sectionId: section.id, blockType: "paragraph", fieldKey: field.key })
-      .then((created) => {
-        blockId.current = created.id;
-        onChange({ ...section, blocks: [...section.blocks, created] });
-        return created.id;
-      });
+    creating.current ??= (async () => {
+      const current = (await api.studySectionList(section.studyId)).find(part => part.id === section.id);
+      const existing = current?.blocks.find(candidate => candidate.fieldKey === field.key);
+      const found = existing ?? await api.studyBlockCreate({ sectionId: section.id, blockType: "paragraph", fieldKey: field.key });
+      blockId.current = found.id;
+      return found.id;
+    })().catch((error: unknown) => {
+      // A failed first creation must remain retryable with the retained text.
+      creating.current = null;
+      throw error;
+    });
     return creating.current;
-  }, [api, field.key, onChange, section]);
+  }, [api, field.key, section.id, section.studyId]);
 
   const save = useCallback(
     async (content: string) => {
@@ -103,6 +109,7 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
         const current = (await api.studySectionList(section.studyId)).find(part => part.id === section.id);
         if (current) onChange(current);
         else onChange({ ...section, blocks: section.blocks.map(block => block.id === saved.id ? saved : block) });
+        onError(null);
       } catch (e) {
         onError(toApiError(e).message);
         // A.4.3: the save indicator must say the save failed, never "Saved".
@@ -111,7 +118,7 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
     },
     [api, ensure, onError, onChange, section],
   );
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `section:${section.id}:field:${field.key}`, setText);
   const help = field.config?.guidance ?? (soleOf ? "" : structuredText(section, `fields.${field.key}.help`, ""));
   return (
     <div className="flex flex-col gap-1">
@@ -255,7 +262,11 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
     },
     [api, block.id, field, onError],
   );
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `study-block:${block.id}:entry`, (value) => {
+    const recovered = parseValues(value);
+    latest.current = recovered;
+    setValues(recovered);
+  });
 
   useEffect(() => {
     if (autoFocus) first.current?.focus();

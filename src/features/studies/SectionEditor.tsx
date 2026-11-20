@@ -125,7 +125,7 @@ export function SectionEditor(props: SectionEditorProps) {
   };
   const setStatus = async (status: SectionStatus) => {
     const saving = api.studySectionUpdate({ id: section.id, status });
-    track(saving);
+    track(saving, `section-status:${section.id}`);
     try {
       await saving;
       onChange({ ...section, status });
@@ -179,7 +179,7 @@ export function SectionEditor(props: SectionEditorProps) {
 
   const rename = async (title: string) => {
     const saving = api.studySectionUpdate({ id: section.id, title });
-    track(saving);
+    track(saving, `section-title:${section.id}`);
     try {
       const updated = await saving;
       onChange({ ...updated, blocks: section.blocks });

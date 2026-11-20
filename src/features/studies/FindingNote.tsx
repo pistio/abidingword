@@ -41,7 +41,7 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
   const type = findingInline(t, finding.findingType);
 
   const save = useCallback((content: string) => api.findingUpdate({ id: finding.id, content }), [api, finding.id]);
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `finding:${finding.id}:content`, setText);
 
   const act = async (action: () => Promise<unknown>) => {
     setError(null);

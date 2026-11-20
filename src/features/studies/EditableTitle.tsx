@@ -4,6 +4,7 @@ import { useAutosave } from "@/hooks/useAutosave";
 import { useAutosize } from "@/hooks/useAutosize";
 
 interface EditableTitleProps {
+  saveKey: string;
   /** Accessible name, e.g. "Study title". */
   label: string;
   value: string;
@@ -14,7 +15,7 @@ interface EditableTitleProps {
  * A page heading the user can edit in place. Saves automatically; a blank
  * title is never saved and is restored when the field is left.
  */
-export function EditableTitle({ label, value, onSave }: EditableTitleProps) {
+export function EditableTitle({ label, value, onSave, saveKey }: EditableTitleProps) {
   const { t } = useTranslation();
   const [text, setText] = useState(value);
   const [saved, setSaved] = useState(value);
@@ -26,7 +27,7 @@ export function EditableTitle({ label, value, onSave }: EditableTitleProps) {
     },
     [onSave],
   );
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, saveKey, setText);
   const blank = !text.trim();
   const area = useRef<HTMLTextAreaElement>(null);
 

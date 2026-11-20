@@ -47,7 +47,10 @@ export function QaEditor({ block, number, isFirst, isLast, autoFocus, onMove, on
     },
     [api, block.id, onChange],
   );
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `study-block:${block.id}:qa`, (value) => {
+    const recovered = qaOf(value);
+    if (recovered) { latest.current = recovered; setPair(recovered); }
+  });
   useEffect(() => {
     if (autoFocus) question.current?.focus();
   }, [autoFocus]);

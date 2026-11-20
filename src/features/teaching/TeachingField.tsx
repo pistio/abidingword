@@ -25,6 +25,7 @@ export interface AssistantHooks {
 }
 
 interface TeachingFieldProps {
+  saveKey: string;
   label: string;
   value: string;
   save: (value: string) => Promise<unknown>;
@@ -65,7 +66,7 @@ interface TeachingFieldProps {
  * person chooses "Use this", and they can undo that straight away.
  */
 export function TeachingField(props: TeachingFieldProps) {
-  const { label, value, save, part, pointId = null, blockId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
+  const { label, value, save, saveKey, part, pointId = null, blockId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
   const { t } = useTranslation();
   const generated = useId();
   const id = generated;
@@ -81,7 +82,7 @@ export function TeachingField(props: TeachingFieldProps) {
   const root = useRef<HTMLDivElement>(null);
   // One assistant panel at a time, over the workspace: this part's shows only while it owns it.
   const dock = useAssistDock();
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, saveKey, setText);
 
   // Fits the text area to its text; a title also refits when the pane's width changes.
   useAutosize(area as RefObject<HTMLTextAreaElement | null>, emphasis === "title" ? 1 : rows, text, placeholder);

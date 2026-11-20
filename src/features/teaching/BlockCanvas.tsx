@@ -125,7 +125,7 @@ export function BlockCanvas({
                   label={name}
                   labelHidden
                   blockId={sole.id}
-                  value={sole.body}
+                  saveKey={`teaching-block:${sole.id}:body`} value={sole.body}
                   save={(value) => api.teachingBlockUpdate({ id: sole.id, body: value }).then((next) => (onChanged(next), next))}
                   part={assistPart(sole.role)}
                   rows={writingRows(sole.blockType, view)}
@@ -151,7 +151,7 @@ export function BlockCanvas({
         <TeachingField
           label={t("studies.qa.question")}
           level="field"
-          value={block.title}
+          saveKey={`teaching-block:${block.id}:title`} value={block.title}
           save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
           part={assistPart(block.role)}
           blockId={block.id}
@@ -162,7 +162,7 @@ export function BlockCanvas({
         <TeachingField
           label={t("studies.qa.answer")}
           level="field"
-          value={block.body}
+          saveKey={`teaching-block:${block.id}:body`} value={block.body}
           save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
           part={assistPart(block.role)}
           blockId={block.id}
@@ -178,7 +178,7 @@ export function BlockCanvas({
         {block.blockType === "outline_point" && (
           <TeachingField
             label={t("studies.teaching.blocks.headingLabel")}
-            value={block.title}
+            saveKey={`teaching-block:${block.id}:title`} value={block.title}
             save={(value) => api.teachingBlockUpdate({ id: block.id, title: value }).then((next) => (onChanged(next), next))}
             part={assistPart(block.role)}
             multiline={false}
@@ -190,7 +190,7 @@ export function BlockCanvas({
           label={name}
           labelHidden
           blockId={block.id}
-          value={block.body}
+          saveKey={`teaching-block:${block.id}:body`} value={block.body}
           save={(value) => api.teachingBlockUpdate({ id: block.id, body: value }).then((next) => (onChanged(next), next))}
           part={assistPart(block.role)}
           rows={writingRows(block.blockType, view)}

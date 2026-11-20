@@ -357,7 +357,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
             </nav>
           )}
           <div className="min-w-0 flex-1">
-            <EditableTitle key={study.id} label={t("studies.editor.titleLabel")} value={study.title} onSave={rename} />
+            <EditableTitle saveKey={`study:${study.id}:title`} key={study.id} label={t("studies.editor.titleLabel")} value={study.title} onSave={rename} />
           </div>
           {view === "study" && (
             <button
