@@ -177,6 +177,9 @@
       "tooMany": "Saisissez au maximum {{max}} références pour l’étendue.",
       "empty": "Saisissez au moins un livre ou passage biblique pour définir l’étendue.",
       "metadataUnreadable": "Les informations enregistrées sur la source n’ont pas pu être lues de manière sûre. Aucune modification n’a été enregistrée."
+    },
+    "reader": {
+      "invalidSavedPlace": "Cette position de lecture n’a pas pu être enregistrée. La source n’a pas été modifiée."
     }
   },
   "templates": {

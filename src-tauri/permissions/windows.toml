@@ -121,6 +121,8 @@ permissions = [
   "allow-finding-source-remove",
   "allow-settings-get",
   "allow-settings-update",
+  "allow-source-reader-positions",
+  "allow-source-reader-position-save",
   "allow-scripture-books",
   "allow-scripture-get-chapter",
   "allow-scripture-get-passage",

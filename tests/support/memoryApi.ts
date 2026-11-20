@@ -19,7 +19,7 @@ import teachingStudy from "../../resources/templates/teaching-study.json";
 import topicalStudy from "../../resources/templates/topical-study.json";
 import wordStudy from "../../resources/templates/word-study.json";
 import i18n from "i18next";
-import { ApiError, type Api } from "@/lib/api";
+import { ApiError, type Api, type SavedReaderPosition } from "@/lib/api";
 import type {
   AppInfo,
   AppSettings,
@@ -123,6 +123,8 @@ export interface MemoryApi extends Api {
     sections: StudySection[];
     blocks: StudyBlock[];
     settings: AppSettings;
+    /** Durable source positions, retained when this mock app is remounted. */
+    readerPositions: SavedReaderPosition[];
     bibles: BibleTranslation[];
     /** translation id → "BOOK|chapter" → verses */
     text: Map<string, Map<string, VerseText[]>>;
@@ -451,6 +453,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     sections: [],
     blocks: [],
     settings: { theme: "light", scriptureTranslationId: null, scripturePassage: null },
+    readerPositions: [],
     bibles: [],
     text: new Map(),
     words: new Map(),
@@ -1531,6 +1534,12 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyBlockDelete: async (key) => {
       find(state.blocks, key, "block");
       state.blocks = state.blocks.filter((b) => b.id !== key);
+    },
+    sourceReaderPositions: async () => state.readerPositions.map((row) => structuredClone(row)),
+    sourceReaderPositionSave: async ({ sourceId, position }) => {
+      const source = state.library.sources.find((row) => row.id === sourceId && !row.deleted);
+      if (!source || state.manage.states.get(sourceId)?.state === "trashed") throw new ApiError("notFound", "Source not available");
+      state.readerPositions = [{ sourceId, position: structuredClone(position) }, ...state.readerPositions.filter((row) => row.sourceId !== sourceId)].slice(0, 60);
     },
     settingsGet: async () => ({ ...state.settings }),
     settingsUpdate: async (input) => {

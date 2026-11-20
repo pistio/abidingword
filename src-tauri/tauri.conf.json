@@ -51,7 +51,8 @@
       "../resources/scripture/grcsbl/grcsbl_usfm.zip": "scripture/grcsbl_usfm.zip",
       "../resources/scripture/grcmt/grcmt_usfm.zip": "scripture/grcmt_usfm.zip",
       "../resources/scripture/grctr/grctr_usfm.zip": "scripture/grctr_usfm.zip",
-      "../resources/scripture/grcbyz/grcbyz_usfm.zip": "scripture/grcbyz_usfm.zip"
+      "../resources/scripture/grcbyz/grcbyz_usfm.zip": "scripture/grcbyz_usfm.zip",
+      "../docs/release/THIRD-PARTY-NOTICES.md": "licenses/THIRD-PARTY-NOTICES.md"
     }
   }
 }

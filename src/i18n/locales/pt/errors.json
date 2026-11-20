@@ -177,6 +177,9 @@
       "tooMany": "Insira no máximo {{max}} referências de abrangência.",
       "empty": "Insira ao menos um livro ou passagem bíblica para definir a abrangência.",
       "metadataUnreadable": "Não foi possível ler os detalhes salvos da fonte com segurança. Nenhuma alteração foi salva."
+    },
+    "reader": {
+      "invalidSavedPlace": "Não foi possível guardar esta posição de leitura. A fonte não foi alterada."
     }
   },
   "templates": {

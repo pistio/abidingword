@@ -95,15 +95,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | pasaje (185), Pasaje (33), (none of these) (52) |
 | Portuguese | passagem (116), Passagem (20), (none of these) (134) |
 
-**source** — 151 strings use it in English.
+**source** — 152 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Quelle (147), (none of these) (4) |
-| Korean | 자료 (133), 출처 (16), (none of these) (2) |
-| French | source (124), Source (22), (none of these) (5) |
-| Spanish | fuente (129), Fuente (18), (none of these) (4) |
-| Portuguese | fonte (130), Fonte (17), (none of these) (4) |
+| German | Quelle (148), (none of these) (4) |
+| Korean | 자료 (134), 출처 (16), (none of these) (2) |
+| French | source (125), Source (22), (none of these) (5) |
+| Spanish | fuente (130), Fuente (18), (none of these) (4) |
+| Portuguese | fonte (131), Fonte (17), (none of these) (4) |
 
 ## 2. Questions left
 
@@ -111,7 +111,7 @@ _No open linguistic questions._
 
 ## 3. Strings changed in v0.19
 
-2152 strings changed in at least one language since v0.18.10. Spot-check these.
+2153 strings changed in at least one language since v0.18.10. Spot-check these.
 
 | Context | Key | English | German | Korean | French | Spanish | Portuguese |
 |---|---|---|---|---|---|---|---|
@@ -234,6 +234,7 @@ _No open linguistic questions._
 |  | `errors.library.linkUnsupported` | This type of link cannot be opened. | Diese Art von Link kann nicht geöffnet werden. | 이 유형의 링크는 열 수 없습니다. | Ce type de lien ne peut pas être ouvert. | No se puede abrir este tipo de enlace. | Não é possível abrir esse tipo de link. |
 |  | `errors.library.notInTrash` | Only items in Trash can be deleted permanently. Move them to Trash first. | Nur Einträge im Papierkorb können endgültig gelöscht werden. Verschiebe sie zuerst dorthin. | 휴지통에 있는 항목만 영구 삭제할 수 있습니다. 먼저 휴지통으로 옮겨 주세요. | Seuls les éléments de la corbeille peuvent être supprimés définitivement. Déplacez-les d’abord dans la corbeille. | Solo los elementos de la papelera se pueden eliminar permanentemente. Muévelos primero a la papelera. | Só é possível excluir permanentemente itens que estão na lixeira. Mova-os primeiro para a lixeira. |
 |  | `errors.library.nothingChosen` | Choose at least one item. | Wähle mindestens einen Eintrag. | 항목을 하나 이상 선택해 주세요. | Sélectionnez au moins un élément. | Selecciona al menos un elemento. | Selecione pelo menos um item. |
+|  | `errors.library.reader.invalidSavedPlace` | This reading place could not be saved. The source was not changed. | Diese Lesestelle konnte nicht gespeichert werden. Die Quelle wurde nicht verändert. | 이 읽기 위치를 저장하지 못했습니다. 자료는 변경되지 않았습니다. | Cette position de lecture n’a pas pu être enregistrée. La source n’a pas été modifiée. | No se pudo guardar esta posición de lectura. La fuente no se ha modificado. | Não foi possível guardar esta posição de leitura. A fonte não foi alterada. |
 |  | `errors.library.structure.busy` | An analysis is already running. Wait or cancel it before retrying. | Eine Analyse läuft bereits. Warte oder brich sie ab, bevor du es erneut versuchst. | 이미 분석이 진행 중입니다. 기다리거나 취소한 후 다시 시도하세요. | Une analyse est déjà en cours. Attendez ou annulez-la avant de réessayer. | Ya hay un análisis en curso. Espera o cancélalo antes de reintentar. | Já há uma análise em andamento. Aguarde ou cancele antes de tentar novamente. |
 |  | `errors.library.structure.cancelled` | Analysis cancelled. Previous structure and links are unchanged. You can retry. | Analyse abgebrochen. Bisherige Struktur und Verknüpfungen sind unverändert. Du kannst es erneut versuchen. | 분석이 취소되었습니다. 이전 구조와 링크는 변경되지 않았습니다. 다시 시도할 수 있습니다. | Analyse annulée. La structure et les liens précédents sont inchangés. Vous pouvez réessayer. | Análisis cancelado. La estructura y los enlaces anteriores no cambiaron. Puedes reintentar. | Análise cancelada. A estrutura e os vínculos anteriores não foram alterados. Você pode tentar novamente. |
 |  | `errors.library.structure.corrupt` | The saved PDF structure could not be read. Source text and the original file are unchanged. | Die gespeicherte PDF-Struktur konnte nicht gelesen werden. Der Text der Quelle und die Originaldatei bleiben unverändert. | 저장된 PDF 구조를 읽을 수 없습니다. 원문 텍스트와 원본 파일은 그대로 유지됩니다. | La structure PDF enregistrée est illisible. Le texte et le fichier original restent inchangés. | No se pudo leer la estructura PDF guardada. El texto y el original permanecen intactos. | Não foi possível ler a estrutura PDF salva. O texto e o original permanecem intactos. |

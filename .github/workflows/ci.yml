@@ -33,6 +33,12 @@ jobs:
       - run: npm run lint
       - name: Translations (npm run i18n:check)
         run: npm run i18n:check
+      - name: Bundled Scripture integrity, licences and installer attribution
+        run: npm run release:resources
+      # Distinguish released/runtime libraries from development-only tooling.
+      # A high-severity runtime advisory prevents a public release candidate.
+      - name: No high-severity production npm vulnerabilities
+        run: npm audit --omit=dev --audit-level=high
       - run: npm test
       - run: npm run build
 

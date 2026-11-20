@@ -59,13 +59,15 @@ function Workspace({ info, updater }: { info: AppInfo; updater: Updater }) {
   const api = useApi();
   const loaded = useLoad(
     useCallback(async () => {
-      const [workspace, settings, books, translations] = await Promise.all([
+      const [workspace, settings, books, translations, readerPositions] = await Promise.all([
         api.workspaceGetDefault(),
         api.settingsGet(),
         api.scriptureBooks(),
         api.bibleList(),
+        // Reader continuity is optional: a damaged bookmark must not stop startup.
+        api.sourceReaderPositions().catch(() => []),
       ]);
-      return { workspace, settings, books, translations };
+      return { workspace, settings, books, translations, readerPositions };
     }, [api]),
   );
 
@@ -81,7 +83,7 @@ function Workspace({ info, updater }: { info: AppInfo; updater: Updater }) {
         <UpdatesProvider updater={updater} enabled={info.updatesEnabled} version={info.version}>
           <StudyFocusProvider>
             <ComparisonProvider>
-              <Shell info={info} workspace={loaded.data.workspace} />
+              <Shell info={info} workspace={loaded.data.workspace} initialReaderPositions={loaded.data.readerPositions} />
             </ComparisonProvider>
           </StudyFocusProvider>
         </UpdatesProvider>

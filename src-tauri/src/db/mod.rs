@@ -22,6 +22,7 @@ pub mod pdf_structures;
 pub mod presentation_templates;
 pub mod presentations;
 pub mod projects;
+pub mod reader_positions;
 pub mod relations;
 pub mod sections;
 pub mod settings;

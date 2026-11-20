@@ -78,6 +78,11 @@ impl DataDirs {
         self.root.join("backups").join("pre-migration")
     }
 
+    /// Automatic, database-only safety copies, distinct from a full .awbackup.
+    pub fn daily_backups(&self) -> PathBuf {
+        self.root.join("backups").join("daily")
+    }
+
     /// Copies of the database made just before a backup was restored (v0.19).
     pub fn pre_restore_backups(&self) -> PathBuf {
         self.root.join("backups").join("pre-restore")

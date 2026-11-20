@@ -166,6 +166,9 @@
       "tooMany": "Enter up to {{max}} coverage references.",
       "empty": "Enter at least one Bible book or passage to set coverage.",
       "metadataUnreadable": "The saved source details could not be read safely. No changes were saved."
+    },
+    "reader": {
+      "invalidSavedPlace": "This reading place could not be saved. The source was not changed."
     }
   },
   "templates": {

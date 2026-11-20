@@ -1,4 +1,6 @@
 import type { PdfBuildProgress, PdfStructureView, PdfCorrection, PdfDiagnostic, ReaderObserved } from "@/types/library";
+import type { ReaderPosition } from "@/features/library/SourceReader";
+export interface SavedReaderPosition { sourceId: string; position: ReaderPosition }
 // The frontend's only door to the native core. Components use the `Api`
 // interface through `useApi()`, never `invoke` directly, so tests can supply
 // an in-memory implementation.
@@ -494,6 +496,9 @@ export interface Api {
   studyBlockDelete(id: string): Promise<void>;
   settingsGet(): Promise<AppSettings>;
   settingsUpdate(input: UpdateSettings): Promise<AppSettings>;
+  /** Per-source reading locations and history, stored in the backed-up SQLite settings. */
+  sourceReaderPositions(): Promise<SavedReaderPosition[]>;
+  sourceReaderPositionSave(input: SavedReaderPosition): Promise<void>;
 
   scriptureBooks(): Promise<BookInfo[]>;
   scriptureGetChapter(input: { translationId: string; book: string; chapter: number }): Promise<ChapterText>;
@@ -888,6 +893,8 @@ export const tauriApi: Api = {
   studyBlockDelete: (id) => call("study_block_delete", { id }),
   settingsGet: () => call("settings_get"),
   settingsUpdate: (input) => call("settings_update", { input }),
+  sourceReaderPositions: () => call("source_reader_positions"),
+  sourceReaderPositionSave: (input) => call("source_reader_position_save", { input }),
 
   scriptureBooks: () => call("scripture_books"),
   scriptureGetChapter: (input) => call("scripture_get_chapter", { input }),
