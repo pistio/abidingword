@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useApi } from "@/lib/ApiContext";
+import type { SavedReaderPosition } from "@/lib/api";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useTranslation } from "react-i18next";
 import { AddBibleView } from "@/features/scripture/AddBibleView";
@@ -23,15 +25,40 @@ type View = "workspace" | "settings" | "library" | "source" | "addSource";
 /** Tasks that open over the current page, which stays as it was behind them. */
 type Overlay = { kind: "addBible" } | { kind: "template"; templateId: string | null } | { kind: "teachingTemplate"; templateId: string | null } | null;
 
-export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace }) {
+export function Shell({ info, workspace, initialReaderPositions = [] }: { info: AppInfo; workspace: Workspace; initialReaderPositions?: SavedReaderPosition[] }) {
   const { t } = useTranslation();
+  const api = useApi();
   const [view, setView] = useState<View>("workspace");
   /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
   const [settingsSection, setSettingsSection] = useState<"sources" | "language" | null>(null);
   const [recentSourceIds, setRecentSourceIds] = useState<string[]>([]);
   const readerRequest = useRef(0);
-  const positions = useRef(new Map<string, ReaderPosition>());
+  // Navigation coordinates are persisted in SQLite, and therefore included in
+  // the normal .awbackup. They are never derived from the source's contents.
+  const positions = useRef(new Map<string, ReaderPosition>(initialReaderPositions.map(row => [row.sourceId, row.position])));
+  const persisted = useRef(new Map(initialReaderPositions.map(row => [row.sourceId, JSON.stringify(row.position)])));
+  const inFlight = useRef(new Map<string, Promise<void>>());
   const positionReaders = useRef(new Map<string, () => ReaderPosition | null>());
+  const persist = useCallback((sourceId: string, position: ReaderPosition) => {
+    const fingerprint = JSON.stringify(position);
+    if (persisted.current.get(sourceId) === fingerprint) return;
+    persisted.current.set(sourceId, fingerprint);
+    // Serialize each source's writes: an earlier scroll can never overwrite
+    // a later place, even when the native commands complete out of order.
+    const previous = inFlight.current.get(sourceId) ?? Promise.resolve();
+    const next = previous.catch(() => undefined).then(() => api.sourceReaderPositionSave({ sourceId, position }));
+    inFlight.current.set(sourceId, next);
+    void next.catch(() => {
+      // Retry the latest place on the next capture, without risking startup.
+      if (persisted.current.get(sourceId) === fingerprint) persisted.current.delete(sourceId);
+    }).finally(() => {
+      if (inFlight.current.get(sourceId) === next) inFlight.current.delete(sourceId);
+    });
+  }, [api]);
+  const rememberPosition = useCallback((sourceId: string, position: ReaderPosition) => {
+    positions.current.set(sourceId, position);
+    persist(sourceId, position);
+  }, [persist]);
   const registerPositionReader = useCallback((sourceId: string, read: (() => ReaderPosition | null) | null) => {
     if (read) positionReaders.current.set(sourceId, read);
     else positionReaders.current.delete(sourceId);
@@ -39,12 +66,21 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
   const capturePositions = useCallback(() => {
     for (const [sourceId, read] of positionReaders.current) {
       const position = read();
-      if (position) positions.current.set(sourceId, position);
+      if (position) rememberPosition(sourceId, position);
     }
-  }, []);
-  const rememberPosition = useCallback((sourceId: string, position: ReaderPosition) => {
-    positions.current.set(sourceId, position);
-  }, []);
+  }, [rememberPosition]);
+  useEffect(() => {
+    // Frequent bounded snapshots protect a long reading session from an
+    // unexpected application exit; navigation/closing also saves immediately.
+    const timer = window.setInterval(capturePositions, 3000);
+    const onHide = () => capturePositions();
+    window.addEventListener("pagehide", onHide);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("pagehide", onHide);
+      capturePositions();
+    };
+  }, [capturePositions]);
   const [browseState, setBrowseState] = useState<LibraryBrowseState>();
   const [settingsFrom, setSettingsFrom] = useState<View>("workspace");
   const [returnTo, setReturnTo] = useState<View>("workspace");
@@ -94,9 +130,8 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         setRecentSourceIds((ids) => [sourceId, ...ids.filter((id) => id !== sourceId)].slice(0, 10));
         capturePositions();
         // A citation/search target always wins over a remembered reading place.
-        if (!position && !segmentId && !words) position = positions.current.get(sourceId);
-        if (position) positions.current.set(sourceId, position);
-        else positions.current.delete(sourceId);
+        if (!position && !segmentId && !words && !structureNodeId) position = positions.current.get(sourceId);
+        if (position) rememberPosition(sourceId, position);
         if (view === "workspace" && (open.sources || window.innerWidth >= NARROW_WIDTH)) {
           if (!open.sources) setOpen("sources", true);
           const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -124,7 +159,7 @@ export function Shell({ info, workspace }: { info: AppInfo; workspace: Workspace
         }
       },
     }),
-    [recentSourceIds, view, reading, open.sources, open.scripture, setOpen, goTo, capturePositions],
+    [recentSourceIds, view, reading, open.sources, open.scripture, setOpen, goTo, capturePositions, rememberPosition],
   );
 
   return (
