@@ -289,7 +289,20 @@
     "sampleAdded": "‘{{title}}’을(를) 추가했습니다. 성경공부 모음 목록에서 볼 수 있습니다.",
     "sampleThere": "‘{{title}}’이(가) 이미 있어 아무것도 추가하지 않았습니다.",
     "citationsKept": "책이 이 컴퓨터에 없지만 보존된 출처: {{n}}",
-    "citationsReconnected": "자료실에 있는 같은 책과 연결된 출처: {{n}}"
+    "citationsReconnected": "자료실에 있는 같은 책과 연결된 출처: {{n}}",
+    "dailyTitle": "자동 복원 지점",
+    "dailyHint": "Abiding Word는 검증된 일일 데이터베이스 사본을 최대 7개 보관합니다. 작성한 글과 설정은 포함되지만 가져온 책과 이미지는 포함되지 않습니다. 완전한 백업은 ‘모두 백업…’으로 만들어 주세요.",
+    "dailyShow": "복원 지점 보기",
+    "dailyRefresh": "복원 지점 새로고침",
+    "dailyEmpty": "아직 자동 복원 지점이 없습니다.",
+    "dailyWhen": "{{date}} · {{size}}MB · 데이터베이스 버전 {{version}}",
+    "dailyReady": "복원 가능",
+    "dailyUnavailable": "복원 불가: 손상되었거나 호환되지 않는 버전",
+    "dailyChoose": "복원 검토…",
+    "dailyPreview": "복원할 지점 확인",
+    "dailyWarning": "이 지점을 복원하면 현재 데이터베이스의 글과 설정이 이전 상태로 바뀝니다. 가져온 책과 이미지는 복원되지 않고 현재 파일이 그대로 남으므로 일부 과거 출처 연결이 끊어질 수 있습니다. 변경하기 전에 현재 데이터베이스의 검증된 사본을 보관합니다. 전체 복원이 필요하면 ‘백업에서 복원…’을 이용하세요.",
+    "dailyConfirm": "이 데이터베이스 사본 복원",
+    "dailyRestored": "데이터베이스를 복원했습니다. 가져온 파일은 변경되지 않았습니다. Abiding Word를 다시 열어 계속하세요."
   },
   "trash": {
     "danger": "주의 영역",

@@ -289,7 +289,20 @@
     "sampleAdded": "« {{title}} » a été ajouté. Vous le trouverez dans Projets.",
     "sampleThere": "« {{title}} » est déjà là : rien n’a été ajouté.",
     "citationsKept": "Références conservées dont le livre n’est pas sur cet ordinateur : {{n}}",
-    "citationsReconnected": "Références reliées au même livre de votre bibliothèque : {{n}}"
+    "citationsReconnected": "Références reliées au même livre de votre bibliothèque : {{n}}",
+    "dailyTitle": "Points de récupération automatiques",
+    "dailyHint": "Abiding Word conserve jusqu’à sept copies quotidiennes vérifiées de la base de données. Elles protègent vos écrits et réglages, pas les livres ni les images importés. Pour une sauvegarde complète, utilisez « Tout sauvegarder… ».",
+    "dailyShow": "Afficher les points de récupération",
+    "dailyRefresh": "Actualiser les points de récupération",
+    "dailyEmpty": "Aucun point de récupération automatique pour le moment.",
+    "dailyWhen": "{{date}} · {{size}} Mo · schéma de base {{version}}",
+    "dailyReady": "Disponible",
+    "dailyUnavailable": "Indisponible : fichier endommagé ou version incompatible",
+    "dailyChoose": "Examiner la restauration…",
+    "dailyPreview": "Point de récupération à restaurer",
+    "dailyWarning": "Restaurer ce point remplace les écrits et les réglages de votre base actuelle par une copie antérieure. Les livres et images importés ne sont pas restaurés : ces fichiers restent inchangés et certaines anciennes références peuvent ne plus fonctionner. Abiding Word crée d’abord une copie de sécurité vérifiée de la base actuelle. Pour tout récupérer, utilisez « Restaurer une sauvegarde… ».",
+    "dailyConfirm": "Restaurer cette copie de la base",
+    "dailyRestored": "La base de données a été restaurée. Les fichiers importés sont inchangés. Rouvrez Abiding Word pour continuer."
   },
   "trash": {
     "danger": "Zone de danger",

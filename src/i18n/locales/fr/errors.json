@@ -319,7 +319,8 @@
     "notBackupDatabase": "La base de données de cette sauvegarde est endommagée ou n’est pas une base de données Abiding Word. Rien n’a été changé.",
     "restoreFailed": "La sauvegarde n’a pas pu être restaurée. Votre travail a été remis tel qu’il était.",
     "noFile": "Veuillez choisir un fichier.",
-    "rollbackFailed": "La sauvegarde n’a pas pu être restaurée, et votre travail précédent n’a pas pu être remis automatiquement. Une copie en est conservée dans {{path}}."
+    "rollbackFailed": "La sauvegarde n’a pas pu être restaurée, et votre travail précédent n’a pas pu être remis automatiquement. Une copie en est conservée dans {{path}}.",
+    "snapshotUnavailable": "Ce point de récupération est endommagé ou incompatible. Votre travail n’a pas été modifié."
   },
   "inquiry": {
     "notHere": "Ce type d’aide n’est pas disponible ici.",

@@ -289,7 +289,20 @@
     "sampleAdded": "„{{title}}“ wurde hinzugefügt. Du findest es unter Projekte.",
     "sampleThere": "„{{title}}“ ist schon da, daher wurde nichts hinzugefügt.",
     "citationsKept": "Erhaltene Quellenangaben, deren Buch nicht auf diesem Computer ist: {{n}}",
-    "citationsReconnected": "Quellenangaben, die mit demselben Buch deiner Bibliothek verknüpft wurden: {{n}}"
+    "citationsReconnected": "Quellenangaben, die mit demselben Buch deiner Bibliothek verknüpft wurden: {{n}}",
+    "dailyTitle": "Automatische Wiederherstellungspunkte",
+    "dailyHint": "Abiding Word behält bis zu sieben geprüfte tägliche Datenbankkopien. Die Kopien sichern deine Texte und Einstellungen, nicht aber importierte Bücher oder Bilder. Für eine vollständige Sicherung verwende „Alles sichern…“.",
+    "dailyShow": "Wiederherstellungspunkte anzeigen",
+    "dailyRefresh": "Wiederherstellungspunkte aktualisieren",
+    "dailyEmpty": "Es gibt noch keine automatischen Wiederherstellungspunkte.",
+    "dailyWhen": "{{date}} · {{size}} MB · Datenbankschema {{version}}",
+    "dailyReady": "Verfügbar",
+    "dailyUnavailable": "Nicht verwendbar: beschädigt oder andere Datenbankversion",
+    "dailyChoose": "Wiederherstellung prüfen…",
+    "dailyPreview": "Wiederherstellungspunkt prüfen",
+    "dailyWarning": "Wenn du diesen Stand wiederherstellst, werden deine aktuellen Texte und Datenbankeinstellungen durch die ältere Kopie ersetzt. Importierte Bücher und Bilder werden nicht zurückgespielt; sie bleiben unverändert, und ältere Quellenangaben können auf fehlende Dateien zeigen. Zuerst wird eine geprüfte Sicherheitskopie der aktuellen Datenbank angelegt. Für die vollständige Wiederherstellung verwende „Aus Sicherung wiederherstellen…“.",
+    "dailyConfirm": "Diesen Datenbankstand wiederherstellen",
+    "dailyRestored": "Die Datenbank wurde wiederhergestellt. Importierte Dateien sind unverändert. Öffne Abiding Word erneut, um weiterzuarbeiten."
   },
   "trash": {
     "danger": "Gefahrenbereich",

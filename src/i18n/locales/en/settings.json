@@ -289,7 +289,20 @@
     "sampleAdded": "“{{title}}” was added. You’ll find it under Projects.",
     "sampleThere": "“{{title}}” is already here, so nothing was added.",
     "citationsKept": "Citations kept whose library book is not on this computer: {{n}}",
-    "citationsReconnected": "Citations linked to the same book in your library: {{n}}"
+    "citationsReconnected": "Citations linked to the same book in your library: {{n}}",
+    "dailyTitle": "Automatic recovery points",
+    "dailyHint": "Abiding Word keeps up to seven verified daily database copies. They protect your writing and settings, not imported books or images. Use Back up everything… for a complete backup.",
+    "dailyShow": "Show recovery points",
+    "dailyRefresh": "Refresh recovery points",
+    "dailyEmpty": "No automatic recovery points are available yet.",
+    "dailyWhen": "{{date}} · {{size}} MB · database v{{version}}",
+    "dailyReady": "Available",
+    "dailyUnavailable": "Unavailable: damaged or incompatible version",
+    "dailyChoose": "Review restore…",
+    "dailyPreview": "Recovery point to restore",
+    "dailyWarning": "Restoring this point replaces the writing and settings in your current database. It does not restore imported books or images. Those files stay as they are, and older citations may refer to missing files. Abiding Word makes a verified safety copy of your current database first. For complete recovery, use Restore from backup.",
+    "dailyConfirm": "Restore this database copy",
+    "dailyRestored": "The database was restored. Imported files were unchanged. Reopen Abiding Word to continue."
   },
   "trash": {
     "danger": "Danger zone",

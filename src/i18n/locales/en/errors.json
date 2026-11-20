@@ -308,7 +308,8 @@
     "notBackupDatabase": "The database in this backup is damaged or is not an Abiding Word database. Nothing was changed.",
     "restoreFailed": "The backup could not be restored. Your work was put back as it was.",
     "noFile": "Please choose a file.",
-    "rollbackFailed": "The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {{path}}."
+    "rollbackFailed": "The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {{path}}.",
+    "snapshotUnavailable": "This recovery point is damaged or incompatible. Your work was not changed."
   },
   "inquiry": {
     "notHere": "This kind of help is not available here.",

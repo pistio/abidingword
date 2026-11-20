@@ -319,7 +319,8 @@
     "notBackupDatabase": "O banco de dados desta cópia de segurança está danificado ou não é do Abiding Word. Nada foi alterado.",
     "restoreFailed": "Não foi possível restaurar a cópia de segurança. O seu trabalho voltou a ficar como estava.",
     "noFile": "Escolha um arquivo.",
-    "rollbackFailed": "Não foi possível restaurar a cópia de segurança, e o seu trabalho anterior não pôde ser recuperado automaticamente. Há uma cópia dele em {{path}}."
+    "rollbackFailed": "Não foi possível restaurar a cópia de segurança, e o seu trabalho anterior não pôde ser recuperado automaticamente. Há uma cópia dele em {{path}}.",
+    "snapshotUnavailable": "Este ponto de recuperação está danificado ou é incompatível. Seu trabalho não foi alterado."
   },
   "inquiry": {
     "notHere": "Este tipo de ajuda não está disponível aqui.",
