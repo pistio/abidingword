@@ -12,16 +12,17 @@
 //! operating system's credential store, never in the database or the data
 //! folder. Nor does it hold the cache, logs, earlier backups or exports.
 //!
-//! Restoring replaces the database with the backup's, after:
+//! Restoring first verifies every backup entry, then makes a verified safety
+//! copy of the current database. It installs staged managed files with an
+//! in-process rollback log before replacing SQLite. If any file operation
+//! fails, originals are moved back and the database remains unchanged.
+//! If database replacement or reinitialisation fails, the database safety
+//! copy is restored and the staged file changes are reversed. Originals
+//! replaced by a successful restore are kept beside the safety copy.
 //!
-//! 1. reading the whole backup and checking every part against its manifest;
-//! 2. checking the backup's database on its own (integrity, version);
-//! 3. a verified safety copy of the current database in `backups/pre-restore/`.
-//!
-//! The restored database then goes through the same steps as at every start
-//! (integrity, migrations, default records). If any of that fails, the
-//! safety copy is put back. Files are added to `sources/`; a file there that
-//! differs from the backup's is moved next to the safety copy, never deleted.
+//! A power loss during the file phase still needs a durable, on-disk
+//! recovery journal: this is a draft safety improvement, NOT the complete
+//! crash-recovery release gate.
 
 use std::fs;
 use std::path::{Component, Path, PathBuf};
@@ -30,7 +31,7 @@ use rusqlite::{Connection, OpenFlags};
 use serde::{Deserialize, Serialize};
 
 use super::{
-    file_stamp, invalid, not_a_package, sha256, Limits, PackageFile, Reader, Staging, Writer,
+    file_stamp, invalid, not_a_package, Limits, PackageFile, Reader, Staging, Writer,
 };
 use crate::db::{backup as db_backup, integrity, migrations, Database};
 use crate::error::{AppError, AppResult, UserMessage};
