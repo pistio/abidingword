@@ -24,6 +24,15 @@ const original = {
 };
 
 describe("durable source reading", () => {
+  it("puts saved sources into Continue reading when the app is reopened", async () => {
+    const api = createMemoryApi();
+    const source = api.installFixtureSource(BOOK);
+    await api.sourceReaderPositionSave({ sourceId: source.id, position: original });
+    await renderApp(api, { pdfEngine: createFakePdfEngine({ pages: 6 }) });
+    const pane = screen.getByRole("complementary", { name: "Sources" });
+    const resume = await within(pane).findByRole("button", { name: "A Durable Reader" });
+    expect(resume.closest("li")).toHaveTextContent("Continue reading");
+  });
   it("restores a saved PDF page and mode on cold application startup", async () => {
     const api = createMemoryApi();
     const source = api.installFixtureSource(BOOK);
