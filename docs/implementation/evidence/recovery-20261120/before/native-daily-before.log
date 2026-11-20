@@ -1,0 +1,52 @@
+    Blocking waiting for file lock on build directory
+   Compiling abiding-word v0.1.0 (/workspace/work/recovery-native-before/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 56.85s
+     Running tests/daily_snapshot_recovery.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshot_recovery-dd526e073ebdc385)
+
+running 10 tests
+test corrupted_candidate_is_visible_but_disabled_and_never_changes_work ... ok
+test a_failed_safety_copy_never_replaces_the_current_database ... ok
+test committed_wal_content_is_staged_and_restored_instead_of_stale_database_pages ... FAILED
+test a_structurally_broken_snapshot_cannot_replace_the_live_database ... ok
+test foreign_paths_and_schema_versions_are_rejected_before_safety_copy ... ok
+test missing_writing_tables_and_forged_history_are_unavailable_before_replacement ... FAILED
+test current_database_history_is_verified_before_any_safety_copy_or_replacement ... FAILED
+test old_work_can_be_restored_without_touching_managed_files ... ok
+test redirected_daily_cache_and_safety_directories_are_rejected_without_external_writes ... FAILED
+test symlink_snapshot_is_not_listed_or_opened ... ok
+
+failures:
+
+---- committed_wal_content_is_staged_and_restored_instead_of_stale_database_pages stdout ----
+
+thread 'committed_wal_content_is_staged_and_restored_instead_of_stale_database_pages' (7873) panicked at tests/daily_snapshot_recovery.rs:224:5:
+assertion `left == right` failed
+  left: "\"Before snapshot WAL edit\""
+ right: "\"Committed only in WAL\""
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- missing_writing_tables_and_forged_history_are_unavailable_before_replacement stdout ----
+
+thread 'missing_writing_tables_and_forged_history_are_unavailable_before_replacement' (7877) panicked at tests/daily_snapshot_recovery.rs:259:9:
+PRAGMA foreign_keys=OFF; DROP TABLE study_blocks;
+
+---- current_database_history_is_verified_before_any_safety_copy_or_replacement stdout ----
+
+thread 'current_database_history_is_verified_before_any_safety_copy_or_replacement' (7875) panicked at tests/daily_snapshot_recovery.rs:283:5:
+assertion failed: snapshots::restore(&db, &dirs, &id).is_err()
+
+---- redirected_daily_cache_and_safety_directories_are_rejected_without_external_writes stdout ----
+
+thread 'redirected_daily_cache_and_safety_directories_are_rejected_without_external_writes' (7879) panicked at tests/daily_snapshot_recovery.rs:337:13:
+assertion failed: snapshots::list(&db, &dirs).is_err()
+
+
+failures:
+    committed_wal_content_is_staged_and_restored_instead_of_stale_database_pages
+    current_database_history_is_verified_before_any_safety_copy_or_replacement
+    missing_writing_tables_and_forged_history_are_unavailable_before_replacement
+    redirected_daily_cache_and_safety_directories_are_rejected_without_external_writes
+
+test result: FAILED. 6 passed; 4 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.76s
+
+error: test failed, to rerun pass `--test daily_snapshot_recovery`

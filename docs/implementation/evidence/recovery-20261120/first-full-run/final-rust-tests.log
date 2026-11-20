@@ -1,0 +1,480 @@
+   Compiling abiding-word v0.1.0 (/workspace/work/daily-recovery/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 1m 10s
+     Running unittests src/lib.rs (/workspace/abidingword/src-tauri/target/debug/deps/abiding_word_lib-5f37ca7c5de76bf8)
+
+running 259 tests
+test assistant::config::tests::bad_addresses_are_refused ... ok
+test assistant::config::tests::every_cloud_service_has_an_address_and_needs_a_key ... ok
+test assistant::config::tests::image_capability_comes_from_the_service_not_the_model_name ... ok
+test assistant::config::tests::remote_unless_on_this_computer ... ok
+test assistant::config::tests::local_addresses_are_recognised ... ok
+test assistant::context::tests::the_assistant_is_told_what_each_field_holds_as_the_canvas_names_it ... ok
+test assistant::images::tests::previews_come_only_from_wikimedia_and_must_be_images ... ok
+test assistant::images::tests::generation_is_only_offered_where_set_up ... ok
+test assistant::images::tests::source_supplied_attribution_is_marked_and_kept_exact ... ok
+test assistant::images::tests::found_images_keep_licence_author_and_source ... ok
+test assistant::inquiry::display_tests::checked_point_preserves_display_provenance_without_rewriting_evidence ... ok
+test assistant::inquiry::prompts::tests::original_language_details_are_never_presented_as_material ... ok
+test assistant::inquiry::display_tests::display_metadata_does_not_change_model_words_or_fingerprint ... ok
+test assistant::inquiry::source::display_tests::locator_metadata_keeps_source_heading_and_printed_page_labels_exact ... ok
+test assistant::prompts::tests::a_free_request_is_answered_as_comments_within_the_rules ... ok
+test assistant::prompts::tests::every_request_keeps_the_voice_and_the_boundaries ... ok
+test assistant::provider::tests::answers_and_refusals_are_read ... ok
+test assistant::provider::tests::json_is_found_inside_prose_or_a_fence ... ok
+test assistant::provider::tests::the_key_travels_only_in_its_header ... ok
+test assistant::provider::tests::a_remote_service_without_its_key_is_not_called ... ok
+test assistant::research::tests::keys_travel_only_where_each_service_expects_them ... ok
+test assistant::research::tests::only_returned_addresses_survive_and_two_sites_make_it_checked ... ok
+test assistant::research::tests::every_service_is_read_the_same_way ... ok
+test commands::materials::tests::a_chosen_file_always_ends_in_md ... ok
+test assistant::research::tests::search_results_are_read_and_unsafe_links_dropped ... ok
+test assistant::research::tests::sites_are_counted_once_per_organisation ... ok
+test assistant::research::tests::without_a_search_service_nothing_is_searched ... ok
+test commands::materials::tests::no_file_or_a_relative_one_is_refused ... ok
+test commands::materials::tests::never_replaces_a_file_the_save_dialog_did_not_ask_about ... ok
+test db::fts::tests::nothing_to_search_for ... ok
+test commands::materials::tests::saves_the_text_exactly_and_refuses_a_runaway_one ... ok
+test db::fts::tests::straight_double_quotes_mark_an_exact_phrase ... ok
+test db::fts::tests::typographic_quotes_are_not_search_syntax ... ok
+test db::text_refresh::tests::a_reference_left_literal_matches_its_one_pass_decoding ... ok
+test db::text_refresh::tests::different_text_in_any_script_never_matches ... ok
+test db::text_refresh::tests::the_same_unicode_text_matches_and_spacing_may_differ ... ok
+test domain::validate::tests::title_length_counts_characters_not_bytes ... ok
+test domain::validate::tests::title_is_trimmed_and_required ... ok
+test error::tests::coded_messages_carry_code_and_params ... ok
+test domain::validate::tests::blank_optional_text_becomes_none ... ok
+test error::tests::payload_hides_technical_detail ... ok
+test error::tests::payload_serialises_with_camel_case_kind ... ok
+test filesystem::tests::copies_sources_without_touching_the_originals ... ok
+test error::tests::invalid_input_message_is_passed_through ... ok
+test filesystem::tests::creates_every_subdirectory_and_is_idempotent ... ok
+test filesystem::tests::reports_a_filesystem_error_when_root_is_a_file ... ok
+test library::adapters::epub::tests::character_references_decode_like_html_once ... ok
+test library::adapters::epub::tests::blocks_follow_headings_and_skip_scripts ... ok
+test library::adapters::epub::tests::only_internal_targets_are_followed ... ok
+test library::adapters::epub_view::tests::declarations_keep_only_harmless_properties ... ok
+test library::adapters::epub::tests::paths_and_entities_resolve ... ok
+test library::adapters::epub_view::tests::sheets_lose_at_rules_and_odd_selectors ... ok
+test library::adapters::markdown::tests::keeps_heading_hierarchy_and_paragraph_order ... ok
+test library::adapters::pdf_layout::tests::a_centred_line_is_set_apart ... ok
+test library::adapters::epub_view::tests::values_with_resources_or_scripts_are_refused ... ok
+test library::adapters::pdf_layout::tests::a_heading_at_the_top_of_one_column_stays_in_that_column ... ok
+test library::adapters::pdf_layout::tests::a_line_reaching_into_the_gutter_stays_in_its_column ... ok
+test library::adapters::pdf_layout::tests::a_line_crossing_the_gutter_beside_column_text_makes_the_page_uncertain ... ok
+test library::adapters::pdf_layout::tests::a_narrow_column_of_numbers_is_not_a_column ... ok
+test library::adapters::pdf_layout::tests::a_raised_verse_number_stays_in_its_line_and_a_large_initial_opens_the_first ... ok
+test library::adapters::pdf_layout::tests::a_running_head_and_a_page_number_stand_apart ... ok
+test library::adapters::pdf_layout::tests::a_single_note_line_at_the_foot_is_a_note_and_its_larger_sign_joins_it ... ok
+test library::adapters::pdf_layout::tests::a_title_over_both_columns_divides_them_into_bands ... ok
+test library::adapters::pdf_layout::tests::hebrew_drawn_in_visual_order_is_read_right_to_left_and_kept_uncertain ... ok
+test library::adapters::pdf_layout::tests::no_character_is_dropped_or_repeated ... ok
+test library::adapters::pdf_layout::tests::one_column_stays_one_column ... ok
+test library::adapters::pdf_layout::tests::raised_small_letters_are_marked_for_the_recogniser ... ok
+test library::adapters::pdf_layout::tests::right_to_left_text_keeps_its_drawing_order ... ok
+test library::adapters::pdf_layout::tests::slanted_glyphs_make_one_styled_line ... ok
+test library::adapters::pdf_layout::tests::two_columns_drawn_across_are_read_column_by_column ... ok
+test library::adapters::pdf_layout::tests::a_line_with_a_wide_space_inside_it_makes_a_one_column_page_uncertain ... ok
+test library::adapters::tests::locators_prefer_the_real_provenance ... ok
+test library::adapters::tests::long_paragraphs_split_at_sentences ... ok
+test library::adapters::tests::paragraphs_join_lines_and_hyphenation ... ok
+test library::adapters::tests::language_tags_become_names ... ok
+test library::adapters::text::tests::rejects_non_utf8 ... ok
+test library::adapters::text::tests::splits_into_paragraphs_in_order ... ok
+test library::annotations::tests::a_quote_across_segments_is_joined_with_a_newline ... ok
+test library::annotations::tests::a_repeated_quote_is_settled_by_context_or_left_ambiguous ... ok
+test library::annotations::tests::context_is_cut_at_whole_characters ... ok
+test library::annotations::tests::offsets_are_utf16_and_never_split_a_character ... ok
+test library::annotations::tests::place_details_round_trip_and_ignore_unknown_versions ... ok
+test library::annotations::tests::spans_merge_touching_ranges_and_cut_others ... ok
+test library::annotations::tests::trimming_moves_ends_off_joiners_and_spaces ... ok
+test library::batch::tests::a_category_is_proposed_only_from_a_word_that_says_so ... ok
+test library::batch::tests::the_scan_lists_readable_files_and_counts_the_rest ... ok
+test library::files::tests::file_names_cannot_escape_or_misbehave ... ok
+test library::files::tests::hashes_are_stable_sha256 ... ok
+test library::find::tests::case_and_accents_are_ignored_and_the_original_text_is_returned ... ok
+test library::find::tests::hangul_is_matched_by_whole_syllables ... ok
+test library::find::tests::matches_do_not_overlap_and_ranges_are_utf16 ... ok
+test library::find::tests::whitespace_runs_count_as_one_space ... ok
+test library::adapters::pdf_layout::tests::a_page_with_one_line_in_its_right_column_is_read_with_the_documents_gutter ... ok
+test library::generated_contents::tests::a_heading_over_two_lines_is_one_entry_and_sentences_are_not_headings ... ok
+test library::generated_contents::tests::larger_type_is_a_heading_and_its_size_gives_the_level ... ok
+test library::generated_contents::tests::numbered_and_keyword_headings_need_space_above ... ok
+test library::generated_contents::tests::noisy_or_flat_documents_get_no_contents ... ok
+test library::generated_contents::tests::sections_become_nested_contents_at_their_first_segment ... ok
+test library::generated_contents::tests::running_headers_footers_and_page_numbers_are_left_out ... ok
+test db::migrations::schema_compatibility_tests::current_build_accepts_database_at_version_19 ... ok
+test library::passage_index::tests::language_labels_resolve_with_an_english_fallback ... ok
+test library::pdf_build::tests::time_limit_is_checked_before_any_next_stage_or_commit ... ok
+test library::relevance::tests::a_book_scale_range_is_last_whatever_the_evidence ... ok
+test library::relevance::tests::a_chapter_wide_section_beats_a_neutral_mention ... ok
+test library::relevance::tests::a_citation_inside_a_section_about_the_passage_is_about_it ... ok
+test library::relevance::tests::a_link_inside_the_passage_is_narrow_and_a_partial_overlap_is_just_that ... ok
+test library::relevance::tests::a_link_shares_verses_or_it_does_not_match ... ok
+test library::relevance::tests::a_manual_link_comes_first_unless_it_is_far_too_broad ... ok
+test library::relevance::tests::a_neutral_range_that_is_not_specific_is_weak ... ok
+test library::relevance::tests::a_partial_overlap_is_weaker_than_containment ... ok
+test library::relevance::tests::a_passage_across_a_chapter_boundary_is_narrow_but_chapters_are_not ... ok
+test library::relevance::tests::a_section_about_the_passage_beats_a_citation_from_another_sections_heading ... ok
+test library::relevance::tests::a_section_context_is_about_neutral_or_elsewhere ... ok
+test library::relevance::tests::an_exact_section_beats_a_neutral_mention_which_beats_a_cross_reference ... ok
+test library::relevance::tests::fit_says_how_specific_a_link_is ... ok
+test library::relevance::tests::matching_chapter_heading_precedes_an_unqualified_literal_mention ... ok
+test library::relevance::tests::reading_a_whole_chapter_still_ranks_the_broad_ranges_down ... ok
+test library::relevance::tests::two_or_three_chapters_are_weaker_than_a_chapter ... ok
+test library::relevance::tests::within_a_class_nearer_and_narrower_comes_first ... ok
+test library::passage_index::tests::a_format_without_structure_has_no_section_links ... ok
+test library::sections::tests::a_heading_links_its_opening_segment_and_those_after_it ... ok
+test library::sections::tests::a_book_name_alone_names_no_passage ... ok
+test library::sections::tests::a_narrow_section_is_not_widened_by_the_heading_above ... ok
+test library::sections::tests::a_heading_with_a_flood_of_references_keeps_only_the_first_few ... ok
+test library::sections::tests::a_segment_without_a_path_ends_the_section ... ok
+test library::passage_index::tests::explicit_references_are_found_in_any_language_and_shorthand_in_the_sources ... ok
+test library::sections::tests::a_section_without_a_passage_belongs_to_the_nearest_ancestor_that_has_one ... ok
+test library::sections::tests::components_split_on_the_importers_separator_and_drop_blanks ... ok
+test library::sections::tests::nested_headings_open_together_on_one_segment ... ok
+test library::sections::tests::only_structured_formats_derive_sections ... ok
+test library::sections::tests::origins_round_trip_through_their_stored_names ... ok
+test library::sections::tests::a_sibling_section_does_not_inherit_the_previous_one ... ok
+test library::sections::tests::body_references_never_change_a_sections_passage ... ok
+test library::sections::tests::the_same_reference_twice_in_a_heading_is_one_link ... ok
+test library::sections::tests::unrelated_sections_and_unstructured_segments_get_nothing ... ok
+test library::sections::tests::several_references_in_one_heading_are_all_kept_separately ... ok
+test materials::docx::tests::custom_style_names_are_escaped_without_changing_identifiers_or_builtin_names ... ok
+test materials::docx::tests::style_names_are_optional_and_never_reinterpreted_as_other_names ... ok
+test materials::docx::tests::text_is_escaped_and_control_characters_dropped ... ok
+test portability::backup::tests::places_stay_inside_sources ... ok
+test materials::docx::tests::rendered_package_localises_styles_without_changing_material_content ... ok
+test portability::snapshots::tests::recovery_identifiers_are_strict_basenames_with_real_dates ... ok
+test portability::tests::entry_names_are_plain_relative_paths ... ok
+test presentation::document::tests::a_part_names_its_own_verses ... ok
+test presentation::document::tests::hangul_counts_double_so_korean_passages_fit_their_slides ... ok
+test presentation::document::tests::long_passages_split_on_whole_verses ... ok
+test presentation::font_catalog::tests::a_family_is_found_exactly_without_its_style_or_not_at_all ... ok
+test library::coverage::tests::title_scope_accepts_explicit_bibliographic_forms_but_not_mixed_or_generic_titles ... ok
+test presentation::fonts::tests::a_subset_is_a_readable_font_with_the_glyphs_used ... ok
+test presentation::fonts::tests::composite_glyph_components_are_found ... ok
+test presentation::images::tests::reads_a_jpeg_frame ... ok
+test presentation::images::tests::reads_png_and_gif_sizes ... ok
+test presentation::locale::tests::references_read_like_the_interface ... ok
+test presentation::pptx::language_tests::exported_shape_names_and_notes_use_escaped_locale_without_changing_content ... ok
+test presentation::pptx_import::tests::relationship_targets_resolve_against_their_folder ... ok
+test presentation::pptx_import::tests::sizes_are_named_by_their_proportions ... ok
+test presentation::pptx_import::tests::theme_colour_changes_follow_office ... ok
+test presentation::template::tests::a_replacement_font_is_used_when_chosen ... ok
+test presentation::template::tests::broken_definitions_are_refused ... ok
+test presentation::template::tests::kinds_fall_back_to_custom_but_a_pause_stays_plain ... ok
+test presentation::template_store::tests::an_image_is_kept_once_and_a_package_brings_it_back ... ok
+test presentation::text::tests::wraps_words_and_hangul ... ok
+test scripture::aliases::tests::every_book_is_reachable_by_its_own_first_alias_in_every_language ... ok
+test scripture::aliases::tests::every_language_names_all_66_books ... ok
+test scripture::aliases::tests::no_accent_free_spelling_points_at_two_books_unless_the_exact_spelling_decides ... ok
+test scripture::aliases::tests::no_alias_points_at_two_books_within_a_language ... ok
+test scripture::annotation_data::tests::builds_an_anchor_across_verses ... ok
+test scripture::annotation_data::tests::builds_an_anchor_within_one_verse ... ok
+test scripture::annotation_data::tests::data_reads_leniently_and_stores_only_what_matters ... ok
+test scripture::annotation_data::tests::handles_punctuation_and_non_ascii ... ok
+test scripture::annotation_data::tests::only_the_five_colours ... ok
+test scripture::annotation_data::tests::refuses_bad_ranges ... ok
+test scripture::annotation_data::tests::utf16_offsets_follow_javascript_indexes ... ok
+test scripture::annotation_data::tests::wording_must_match_exactly ... ok
+test scripture::canon::tests::chapter_counts_match_the_english_canon ... ok
+test scripture::canon::tests::codes_are_unique_three_character_identifiers ... ok
+test scripture::canon::tests::numbered_books_carry_their_number ... ok
+test scripture::canon::tests::testaments_split_at_matthew ... ok
+test scripture::canon::tests::there_are_66_books_in_canonical_order ... ok
+test scripture::canon::tests::verse_counts_cover_every_chapter_of_the_canon_in_order ... ok
+test scripture::canons::tests::each_tradition_keeps_every_protestant_book_and_the_new_testament_order ... ok
+test scripture::canons::tests::greek_books_that_contain_a_hebrew_one_point_at_it ... ok
+test scripture::canons::tests::the_66_books_keep_their_ordinals_and_new_books_never_reuse_one ... ok
+test scripture::catalogue::tests::every_listed_file_is_pinned_to_a_commit_and_a_checksum ... ok
+test scripture::concordance::tests::greek_ignores_accents_and_final_sigma ... ok
+test scripture::concordance::tests::hebrew_ignores_points_and_maqaf_separates ... ok
+test scripture::concordance::tests::korean_is_the_exact_written_word ... ok
+test scripture::concordance::tests::latin_accents_are_kept ... ok
+test scripture::concordance::tests::offsets_are_utf16 ... ok
+test scripture::concordance::tests::phrases_are_consecutive_tokens_across_punctuation ... ok
+test scripture::concordance::tests::whole_words_only ... ok
+test scripture::concordance::tests::word_mode_wants_one_word ... ok
+test scripture::data_packs::tests::every_generated_alias_names_a_book_of_the_canon_and_no_spelling_names_two ... ok
+test scripture::data_packs::tests::the_file_lists_one_hundred_languages_by_rank_with_the_reviewed_six_among_them ... ok
+test scripture::documents::tests::an_empty_text_file_is_refused ... ok
+test scripture::documents::tests::lines_of_a_long_paragraph_point_at_the_part_that_holds_them ... ok
+test scripture::documents::tests::markdown_headings_come_back_between_paragraphs ... ok
+test scripture::documents::tests::other_files_are_refused ... ok
+test scripture::documents::tests::text_lines_keep_their_paragraph ... ok
+test scripture::grammar::tests::a_fit_without_a_statement_is_only_a_fit ... ok
+test scripture::grammar::tests::a_format_declaring_another_scheme_states_nothing ... ok
+test scripture::grammar::tests::the_editions_own_words_are_the_statement ... ok
+test scripture::grammar::tests::too_few_codes_that_decode_is_no_fit ... ok
+test scripture::greek::tests::morphgnt_codes_as_its_readme_defines_them ... ok
+test scripture::greek::tests::robinson_examples_from_its_documentation ... ok
+test scripture::greek::tests::robinson_refuses_what_it_does_not_define ... ok
+test scripture::language::tests::a_missing_or_unrecognised_language_falls_back_to_english_and_says_so ... ok
+test scripture::language::tests::anything_else_is_not_a_supported_language ... ok
+test scripture::language::tests::case_accents_whitespace_and_trailing_words_do_not_matter ... ok
+test scripture::language::tests::codes_are_the_two_letter_identities ... ok
+test scripture::language::tests::every_form_in_the_brief_is_recognised ... ok
+test scripture::language::tests::language_tags_are_normalised_and_names_are_not_tags ... ok
+test scripture::language::tests::names_in_the_other_languages_are_recognised ... ok
+test scripture::language::tests::the_other_reference_languages_are_found_by_code_and_name ... ok
+test scripture::language::tests::what_the_library_stores_round_trips ... ok
+test scripture::morphology::tests::anything_else_is_not_described ... ok
+test scripture::morphology::tests::participles_take_a_state_and_no_person ... ok
+test scripture::morphology::tests::stems_follow_the_language ... ok
+test scripture::morphology::tests::the_comma_spelling_reads_the_same ... ok
+test scripture::morphology::tests::the_documented_genesis_examples ... ok
+test scripture::oshb::tests::the_header_is_cut_on_a_character_boundary ... ok
+test scripture::parser::tests::no_english_alias_points_at_two_books ... ok
+test scripture::phrase_ranges::tests::absorbing_follows_chains ... ok
+test scripture::phrase_ranges::tests::overlap_and_touch_are_different_things ... ok
+test scripture::phrase_ranges::tests::positions_are_lexicographic_and_verse_ends_meet_the_next_verse ... ok
+test scripture::phrase_ranges::tests::positions_come_back_inside_verses ... ok
+test scripture::phrase_ranges::tests::remainders_cover_every_way_two_ranges_can_meet ... ok
+test scripture::phrase_ranges::tests::spans_need_a_forward_range_inside_the_text ... ok
+test scripture::phrase_ranges::tests::surrogate_pairs_count_as_two_units ... ok
+test scripture::phrase_ranges::tests::whitespace_only_ranges_have_no_visible_text ... ok
+test scripture::recognise::tests::contested_names_are_known ... ok
+test scripture::recognise::tests::the_outcome_never_depends_on_the_order_candidates_arrive_in ... ok
+test scripture::reference::tests::canonical_round_trips ... ok
+test scripture::reference::tests::display_forms_read_naturally ... ok
+test scripture::reference::tests::invalid_canonical_strings_are_rejected ... ok
+test scripture::reference::tests::verse_keys_order_the_whole_canon ... ok
+test scripture::structure::tests::a_wrapped_line_of_prose_is_never_a_title ... ok
+test portability::snapshots::tests::a_failed_rollback_reports_the_retained_readable_safety_copy ... ok
+test scripture::structure::tests::greek_titles_in_their_traditional_shape ... ok
+test scripture::structure::tests::korean_prose_is_never_a_line_of_references ... ok
+test scripture::structure::tests::note_callers_are_taken_out_and_nothing_else ... ok
+test scripture::structure::tests::printed_titles_name_their_books ... ok
+test scripture::structure::tests::quotation_references_closing_a_verse_are_found ... ok
+test portability::snapshots::tests::a_failed_post_restore_validation_rolls_back_real_sqlite_and_allows_writing ... ok
+test scripture::structure::tests::raised_letters_are_resolved_by_the_notes ... ok
+test scripture::usfm::tests::alternate_numbers_are_dropped_and_bridges_kept_as_labels ... ok
+test scripture::structure::tests::the_vulgate_s_own_titles_are_read_by_its_table ... ok
+test scripture::usfm::tests::verses_before_a_chapter_are_counted_not_kept ... ok
+test scripture::usfm::tests::verses_continue_across_paragraph_and_poetry_markers ... ok
+test scripture::usfm::tests::keeps_words_and_drops_markup ... ok
+test scripture::versification::tests::a_comment_quoting_an_entry_is_not_an_entry ... ok
+test scripture::versification::tests::reads_whole_verse_entries_and_skips_parts ... ok
+test scripture::words::tests::escapes_repeats_and_unknown_names ... ok
+test scripture::words::tests::lexical_ids_are_every_value_and_part ... ok
+test scripture::words::tests::malformed_lists_are_refused_whole ... ok
+test scripture::words::tests::reads_named_and_default_attributes ... ok
+test presentation::font_catalog::tests::the_folders_of_this_computer_can_be_read ... ok
+test scripture::versification::tests::refuses_a_map_that_is_partly_wrong ... ok
+test scripture::structure::tests::contents_entries_running_heads_and_note_lines_are_read_as_such ... ok
+
+test result: ok. 259 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.73s
+
+     Running unittests src/main.rs (/workspace/abidingword/src-tauri/target/debug/deps/abiding_word-79bcfc95d4b0c942)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/a4_qa_transfer.rs (/workspace/abidingword/src-tauri/target/debug/deps/a4_qa_transfer-d08ce6582a87a249)
+
+running 8 tests
+test an_independent_teaching_has_no_study_to_copy_from ... ok
+test another_studys_note_or_a_deleted_item_is_refused_and_nothing_is_added ... ok
+test a_study_qa_block_keeps_question_and_answer_apart_and_derives_its_text ... ok
+test a_qa_teaching_block_is_participant_facing_by_default_and_a3_configs_still_load ... ok
+test copies_are_snapshots_never_synchronised_and_keep_provenance_when_edited_or_duplicated ... ok
+test chosen_study_items_become_leader_only_editable_copies_with_provenance ... ok
+test response_read_and_deferred_commit_failures_also_roll_back_the_whole_transfer ... ok
+test sql_failures_after_completed_copies_restore_every_persisted_row ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.09s
+
+     Running tests/annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/annotations-7a978fadef3fe12c)
+
+running 9 tests
+test phrase_highlights_are_drawn_only_in_identical_wording ... ok
+test phrase_anchors_refuse_anything_that_does_not_match_the_text ... ok
+test a_verse_highlight_is_translation_independent ... ok
+test phrase_marks_span_verses_within_one_chapter ... ok
+test refused_annotation_requests_carry_stable_codes ... ok
+test removing_and_adding_the_same_bible_again_restores_the_phrase ... ok
+test the_same_words_again_recolour_instead_of_duplicating ... ok
+test phrase_notes_keep_their_quote_in_every_translation ... ok
+test verse_highlights_have_colours_and_old_ones_are_amber ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.33s
+
+     Running tests/assistant.rs (/workspace/abidingword/src-tauri/target/debug/deps/assistant-973f87bb79dd2ccf)
+
+running 17 tests
+test a_request_in_the_persons_words_is_answered_only_as_comments ... ok
+test a_local_service_needs_no_key_and_says_it_stays_here ... ok
+test a_suggestion_far_longer_than_the_text_is_not_offered ... ok
+test a_question_needs_the_persons_own_material_not_just_a_request ... ok
+test a_wording_suggestion_is_only_a_suggestion ... ok
+test keys_are_never_in_the_database_or_the_settings_view ... ok
+test illustrations_are_marked_as_invented ... ok
+test other_ways_to_say_it_stay_about_as_long_as_the_persons_words ... ok
+test nothing_is_written_for_the_person_without_their_material ... ok
+test real_stories_need_a_search_and_are_checked_against_it ... ok
+test the_preview_lists_what_is_shared_and_where_it_goes ... ok
+test the_answer_to_a_free_request_is_kept_short ... ok
+test the_request_carries_the_voice_rule_and_labelled_provenance_but_no_key ... ok
+test the_teaching_title_is_always_listed_as_shared_and_quotes_are_bounded ... ok
+test comments_never_misquote_and_passages_are_recognised_not_added ... ok
+test when_the_search_finds_nothing_no_story_is_made_up ... ok
+test without_a_key_or_when_off_nothing_is_sent ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.39s
+
+     Running tests/assistant_blocks.rs (/workspace/abidingword/src-tauri/target/debug/deps/assistant_blocks-74886e907f6fe392)
+
+running 6 tests
+test a_block_from_another_teaching_is_not_accepted ... ok
+test a_block_deleted_after_asking_is_refused_and_nothing_is_sent_or_applied ... ok
+test a3s_request_without_a_block_is_refused_with_an_actionable_message_not_not_found ... ok
+test block_writing_counts_as_the_persons_material_for_a_free_request ... ok
+test korean_correction_of_a_block_reaches_deepseek_and_is_only_a_suggestion ... ok
+test the_preview_names_the_block_and_sends_nothing ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+     Running tests/bible_catalogue.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_catalogue-f1eb26c5e7eb3571)
+
+running 4 tests
+test one_altered_file_means_nothing_is_kept ... ok
+test the_catalogue_lists_its_editions_with_sizes_and_licences ... ok
+test a_missing_file_or_an_unlisted_host_is_refused ... ok
+test a_verified_download_is_kept_and_read_like_any_bible_file ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/bible_documents.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_documents-7bec061c090baa52)
+
+running 75 tests
+test a_chapter_cut_short_is_refused_and_a_few_verses_short_is_a_warning ... ok
+test a_cancelled_import_writes_nothing ... ok
+test a_chapter_far_longer_than_usual_is_refused ... ok
+test a_chapter_number_alone_on_its_line_starts_that_chapter_even_after_a_short_chapter ... ok
+test a_book_that_begins_twice_is_refused ... ok
+test a_contents_page_with_dot_leaders_is_not_read_as_headings ... ok
+test a_hyphen_at_a_line_s_end_is_kept_only_on_the_document_s_evidence ... ok
+test a_dev42_database_upgrades_and_keeps_everything ... ok
+test a_large_heading_between_verses_is_left_out ... ok
+test a_malformed_pdf_is_refused_with_a_message ... ok
+test a_chapter_number_set_a_little_larger_in_its_line_does_not_make_it_a_heading ... ok
+test a_large_number_starting_a_line_is_not_a_chapter_and_verse ... ok
+test a_note_sign_is_taken_out_only_where_a_note_names_its_verse ... ok
+test a_book_name_wrapped_onto_its_own_line_stays_in_the_verse ... ok
+test a_missing_verse_is_reported_and_its_neighbours_keep_their_text ... ok
+test a_page_dense_with_smaller_notes_is_not_read_as_scripture ... ok
+test a_page_whose_reading_order_cannot_be_established_is_not_used ... ok
+test a_psalm_number_alone_on_its_line_is_not_verse_text ... ok
+test a_psalm_title_before_verse_1_stays_its_title ... ok
+test a_repeated_speaker_label_inside_a_verse_refuses_the_chapter ... ok
+test a_preface_line_naming_a_passage_is_not_a_bible_line ... ok
+test a_scanned_pdf_has_pages_but_no_text ... ok
+test a_psalm_whose_verse_1_has_no_number_is_refused_not_guessed ... ok
+test a_short_second_column_drawn_across_is_read_in_order ... ok
+test a_scanned_pdf_can_be_added_to_read_page_by_page ... ok
+test a_place_marked_by_hand_is_found_by_passage_and_changes_nothing_else ... ok
+test a_sign_with_no_note_on_its_page_stays_in_the_text ... ok
+test a_stray_number_on_its_own_line_never_renumbers_a_chapter_silently ... ok
+test a_suspended_hyphen_at_a_line_end_is_kept ... ok
+test a_text_that_loses_its_numbers_is_refused_as_too_long ... ok
+test a_title_over_two_lines_with_a_possessive_names_its_book ... ok
+test a_text_bible_is_staged_as_a_document_import_with_its_verses ... ok
+test a_section_heading_naming_a_book_word_is_not_a_book ... ok
+test a_usfm_text_file_is_still_read_as_usfm ... ok
+test a_title_without_its_number_follows_the_book_before_it ... ok
+test a_two_column_pdf_is_read_in_column_order_however_its_lines_are_drawn ... ok
+test a_title_that_gives_a_second_name_names_its_own_book ... ok
+test a_word_broken_at_a_line_end_before_or_and_nor_is_joined ... ok
+test an_editions_own_numbering_is_kept_as_written_and_reported ... ok
+test books_outside_the_66_are_named_and_left_out ... ok
+test added_as_a_document_it_has_no_verses_and_can_be_given_them_later ... ok
+test added_by_verse_it_reads_as_any_bible_and_remembers_where_each_verse_was ... ok
+test documents_and_bible_format_files_together_are_refused ... ok
+test corrections_choose_or_leave_out_a_book ... ok
+test docx_with_headings_numbered_verses_and_footnotes ... ok
+test epub_with_book_and_chapter_headings ... ok
+test corrections_in_the_review_read_the_documents_again ... ok
+test headings_and_notes_inside_chapters_are_left_out ... ok
+test hebrew_right_to_left_text_keeps_its_points ... ok
+test greek_book_title ... ok
+test every_verse_kept_is_exactly_the_documents_own_text_and_traces_back_to_it ... ok
+test lines_named_by_the_older_vpl_codes ... ok
+test chapter_headings_in_six_languages ... ok
+test korean_headings_and_verses ... ok
+test mark_9_44_a_cluster_of_note_signs_is_taken_out_when_the_notes_name_the_verse ... ok
+test lines_named_by_usfm_codes ... ok
+test notes_at_the_foot_of_a_column_are_not_read_between_the_columns ... ok
+test numbers_inside_the_text_are_not_verse_numbers ... ok
+test line_references_name_chapter_and_verse ... ok
+test markdown_headings ... ok
+test plain_text_with_headings_and_verse_lines ... ok
+test raised_letters_are_taken_out_only_where_the_notes_explain_them ... ok
+test selah_closing_a_psalm_stays_in_its_verse ... ok
+test printed_bible_layout_chapter_numbers_start_paragraphs ... ok
+test pdf_with_a_text_layer_running_heads_and_a_verse_across_pages ... ok
+test text_read_across_two_columns_without_positions_is_still_refused ... ok
+test the_gospel_according_to_saint_mark_names_mark ... ok
+test styled_paragraphs_of_poetry_stay_in_their_verses ... ok
+test text_before_any_book_is_left_out_and_reported ... ok
+test two_equal_places_for_one_verse_refuse_the_chapter ... ok
+test verse_numbers_without_any_book_give_no_verses ... ok
+test two_equally_weak_places_for_one_verse_refuse_the_chapter ... ok
+test verse_1_without_a_number_after_a_heading_is_reported ... ok
+test the_chapters_recognised_without_doubt_can_be_used_while_the_rest_stays_unverified ... ok
+test verses_with_problems_are_never_saved_and_nothing_is_left_behind ... ok
+
+test result: ok. 75 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.90s
+
+     Running tests/bible_language.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_language-6ce5fd1b6f5374ae)
+
+running 7 tests
+test a_damaged_metadata_entry_in_a_zip_is_skipped_never_a_failed_import ... ok
+test metadata_details_found_in_review ... ok
+test structured_metadata_beside_the_usfm_names_the_language ... ok
+test without_trustworthy_metadata_the_language_is_left_unchosen ... ok
+test a_tag_is_stored_normalised_a_name_is_refused_and_no_tag_stays_none ... ok
+test correcting_the_language_later_changes_only_the_language_and_reaches_typed_references ... ok
+test a_verse_beyond_the_canon_is_good_when_any_installed_bible_has_it ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.32s
+
+     Running tests/capabilities.rs (/workspace/abidingword/src-tauri/target/debug/deps/capabilities-569935112c2dab11)
+
+running 3 tests
+test the_capabilities_attach_one_set_to_each_window_and_little_else ... ok
+test the_permission_sets_match_the_registered_commands_and_the_interface ... ok
+test tauri_refuses_each_window_what_its_capabilities_do_not_grant ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/citations.rs (/workspace/abidingword/src-tauri/target/debug/deps/citations-30578682f3c1d4bf)
+
+running 11 tests
+test a_database_from_before_keeps_every_citation_through_the_upgrade ... ok
+test a_source_removed_from_the_library_keeps_its_citations_as_before ... ok
+test a_v0_19_package_from_before_this_fix_keeps_partial_citations_and_refuses_corrupt_ones ... ok
+test a_backup_made_before_this_version_restores_and_keeps_its_citations ... ok
+test a_citation_keeps_everything_where_its_source_is_missing_and_survives_every_move ... ok
+test an_old_unrelated_dangling_row_here_does_not_block_an_import ... ok
+test old_dangling_citation_rows_do_not_stop_the_upgrade ... FAILED
+test imported_twice_each_project_keeps_its_own_citation ... ok
+test the_database_will_not_hold_a_citation_that_names_nothing ... ok
+test adding_exactly_the_cited_file_to_the_library_reconnects_kept_citations ... ok
+test exactly_the_same_file_reconnects_a_citation_and_a_similar_title_never_does ... ok
+
+failures:
+
+---- old_dangling_citation_rows_do_not_stop_the_upgrade stdout ----
+
+thread 'old_dangling_citation_rows_do_not_stop_the_upgrade' (23921) panicked at tests/citations.rs:797:67:
+the upgrade succeeds: Integrity("The database contains broken record references")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    old_dangling_citation_rows_do_not_stop_the_upgrade
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.52s
+
+error: test failed, to rerun pass `--test citations`

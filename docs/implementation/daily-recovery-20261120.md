@@ -2,7 +2,7 @@
 
 **20 November 2026 · draft PR #56, stacked on PR #55 · native Windows acceptance pending.**
 
-This milestone finishes the daily recovery workflow and strengthens the surrounding authorship, full-backup and export paths. The working branch is `feature/daily-snapshot-recovery-20261120`; the fetched starting head was `b8d9af869c95395a44cc6d9a3867626ab83d9804`. Exact final source identity, commands, counts, CI and preserved failing-before evidence are in [the verification record](daily-recovery-20261120-verification.json). `RECOVERY_VERIFICATION_PENDING` until that record is complete.
+This milestone finishes the daily recovery workflow and strengthens the surrounding authorship, full-backup and export paths. The working branch is `feature/daily-snapshot-recovery-20261120`; the fetched starting head was `b8d9af869c95395a44cc6d9a3867626ab83d9804`. Exact final source identity, commands, counts, CI and preserved failing-before evidence are in [the verification record](daily-recovery-20261120-verification.json). All required local checks pass on clean implementation `e8f52ff668fbc02880925809bedf0f0b8e26bf83`. The subsequent evidence commit changes documentation only; the exact pushed-head CI result is recorded in [PR #56](https://github.com/pistio/abidingword/pull/56).
 
 ## What was wrong and what changed
 
@@ -38,6 +38,16 @@ Real disposable SQLite repositories create an invented Study with Q&A, several l
 The interface browser procedure is `tests/screenshots/recovery-interface.mjs`, using the existing real React screenshot harness with an empty invented in-memory profile. It checks both restore routes in all six languages at 1280×900, 480×640 and a 640×450 CSS viewport with DPR 2: availability, described choices, keyboard Cancel, no replacement on Cancel, pending-state containment, long-path wrapping, focus trapping and an actual reload request. These are **Linux browser measurements**, not SQLite preservation or Windows DPI/screen-reader acceptance.
 
 Recovery copy and the guide are updated in English (British), German, Korean, French, Spanish and Brazilian Portuguese. Generated editorial reports were regenerated from their sources. [Individual language decisions](recovery-language-20261120.md) record before/after wording; AI review is not human native-speaker approval.
+
+The first push was refused by GitHub’s private-email protection. The unpublished commit metadata was replaced with the account’s no-reply identity, preserving every source tree exactly; all complete checks were then repeated on the replacement implementation above. The verification record retains the old/new identity mapping. No account privacy setting or remote history was changed.
+
+## Final local verification
+
+At the exact implementation above: **132 frontend files / 1,427 tests passed, zero unhandled errors; 1,174 Rust tests passed, zero failed, nine existing diagnostic/fixture/performance tests ignored; 36 browser flows passed.** Lockfile installation, typecheck, ESLint, six-language checks, deterministic corpus validation, production frontend build, Rust formatting, strict Clippy, all 13 bundled-resource integrity/rights checks and the production dependency audit passed. The audit found zero vulnerabilities. Tracked implementation inputs and HEAD remained unchanged throughout both final runs.
+
+Complete command logs, input hashes, source/migration provenance, browser geometry and selected screenshots are retained in [the evidence directory](evidence/recovery-20261120). Existing React `act` warnings remain visible (800 in the final local suite; 797 in the starting CI log), and Vite still reports its non-fatal large-chunk advisory. Neither warning is suppressed or confused with the now-resolved unhandled rejection.
+
+Archived tests against the original implementation establish the WAL, validation, retention and full-backup rollback failures. The Materials pending-save failure also has a retained log. FieldsEditor creation and backup/project capture failures were observed on dirty intermediate versions; their retained transcript metadata explicitly states that no exact intermediate tree hash or standalone original stdout log exists. The detached-draft overwrite was found by review and has passing corrected regressions, but no executed failing-before case. These evidence classes are kept distinct in the verification record.
 
 ## Review boundary
 

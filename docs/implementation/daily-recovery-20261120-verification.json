@@ -1,0 +1,1801 @@
+{
+  "milestone": "Recovery, writing preservation and publication readiness",
+  "assembledUTC": "2026-11-20T23:48:44.051713+00:00",
+  "implementationSourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+  "commitPrivacyCorrection": {
+    "reason": "GitHub GH007 rejected private commit email; preserve privacy protection using account no-reply identity",
+    "baseline": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+    "oldImplementation": "5dd3776e09aea3e11aadc2d3471d3351346675bf",
+    "replacementImplementation": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+    "unpublishedOldEvidenceCommit": "d4a64b53ec8ef244db05482cb35e593a6c897381",
+    "sourceTreesUnchanged": true,
+    "commits": [
+      {
+        "oldCommit": "6cf808a92377b39e2828f5f62d6dc12ec992d84a",
+        "replacementCommit": "0b982497005d222dd2d1e004308c3cda7ff6c6e4",
+        "tree": "a85b85affaaadab908405e49d2dc7419fdb2859c",
+        "treeUnchanged": true
+      },
+      {
+        "oldCommit": "0d07e805ae641b701bf193748e151608051a5376",
+        "replacementCommit": "d051133a10197e12a79588e1f6c091654edb3f30",
+        "tree": "e75f4eec179b072b5a28c3dd7f21b50d3d6c3bf6",
+        "treeUnchanged": true
+      },
+      {
+        "oldCommit": "b5a0c8c800da83f45f475cbf3639897c4f4bf977",
+        "replacementCommit": "01f89a4c4dd36271d460011e67d42a1822b3e245",
+        "tree": "8d68990309d0512748fd7af44f0e953cf5a24f06",
+        "treeUnchanged": true
+      },
+      {
+        "oldCommit": "a2ea1bee83d4678fb0ad54a6b437c60fa5ab7419",
+        "replacementCommit": "582f3459327e91244bdc5ede0f18eddf0bf5ce79",
+        "tree": "70d6a61ec2985a206998e4e5afe1b78fd348ec9e",
+        "treeUnchanged": true
+      },
+      {
+        "oldCommit": "5dd3776e09aea3e11aadc2d3471d3351346675bf",
+        "replacementCommit": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+        "tree": "34fd1a1a06f8eb645427e1de4e39ef0d5a459a1d",
+        "treeUnchanged": true
+      }
+    ],
+    "noRemoteHistoryRewritten": true
+  },
+  "branch": "feature/daily-snapshot-recovery-20261120",
+  "baselineSourceSha": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+  "draftPullRequest": "https://github.com/pistio/abidingword/pull/56",
+  "stackedOn": "https://github.com/pistio/abidingword/pull/55",
+  "execution": "Codex Cloud; local Linux frontend/Rust/browser verification with invented disposable data",
+  "result": "All required local commands passed on the clean frozen implementation; native Windows acceptance remains pending.",
+  "sourceChecks": {
+    "frontend": {
+      "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+      "startedUTC": "2026-11-20T23:40:13.429108+00:00",
+      "completedUTC": "2026-11-20T23:48:13.035534+00:00",
+      "cleanBefore": true,
+      "cleanAfter": true,
+      "sourceUnchanged": true,
+      "headUnchanged": true
+    },
+    "native": {
+      "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+      "startedUTC": "2026-11-20T23:40:13.416173+00:00",
+      "completedUTC": "2026-11-20T23:47:19.235914+00:00",
+      "cleanBefore": true,
+      "cleanAfter": true,
+      "sourceUnchanged": true,
+      "headUnchanged": true
+    }
+  },
+  "sourceInputFileCount": 908,
+  "sourceProvenance": "evidence/recovery-20261120/source-provenance-final.json",
+  "commands": [
+    {
+      "name": "npm-ci",
+      "command": [
+        "npm",
+        "ci",
+        "--cache",
+        "/workspace/.npm"
+      ],
+      "startedUTC": "2026-11-20T23:40:13.429127+00:00",
+      "durationSeconds": 7.45,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-npm-ci.log",
+      "logSha256": "2eee8ecbefed382fdfac9fa75ef3ced1b05c1b3d3a0ad6d244a58561240f76aa",
+      "mode": "frontend"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "startedUTC": "2026-11-20T23:40:20.883255+00:00",
+      "durationSeconds": 32.6,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-typecheck.log",
+      "logSha256": "2f2238cd78882d4bdbfba4105c717a22862372df1f5f34152efcf6bd6d2c256d",
+      "mode": "frontend"
+    },
+    {
+      "name": "eslint",
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "startedUTC": "2026-11-20T23:40:53.482433+00:00",
+      "durationSeconds": 45.62,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-eslint.log",
+      "logSha256": "61c95a8a559be46afa5591e71ec3b8aac2867e882bf8fc9247934d5ce81a7b5d",
+      "mode": "frontend"
+    },
+    {
+      "name": "i18n",
+      "command": [
+        "npm",
+        "run",
+        "i18n:check"
+      ],
+      "startedUTC": "2026-11-20T23:41:39.104113+00:00",
+      "durationSeconds": 1.4,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-i18n.log",
+      "logSha256": "7e3af6f579e617d7910d003db31af32afb7735051a4b2191079018689fd502c1",
+      "mode": "frontend"
+    },
+    {
+      "name": "i18n-corpus",
+      "command": [
+        "npm",
+        "run",
+        "i18n:corpus",
+        "--",
+        "--check"
+      ],
+      "startedUTC": "2026-11-20T23:41:40.507469+00:00",
+      "durationSeconds": 1.28,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-i18n-corpus.log",
+      "logSha256": "7caca57b58fc3d81c41e1bc0f5e4f6451a659abd45089da2adf0defebb531b9a",
+      "mode": "frontend"
+    },
+    {
+      "name": "resources",
+      "command": [
+        "npm",
+        "run",
+        "release:resources"
+      ],
+      "startedUTC": "2026-11-20T23:41:41.792746+00:00",
+      "durationSeconds": 0.36,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-resources.log",
+      "logSha256": "ee765641d2af77fad24eee753feb0979484a63c91e7ed9882c1a48679a410418",
+      "mode": "frontend"
+    },
+    {
+      "name": "audit",
+      "command": [
+        "npm",
+        "audit",
+        "--omit=dev",
+        "--audit-level=high",
+        "--cache",
+        "/workspace/.npm",
+        "--json"
+      ],
+      "startedUTC": "2026-11-20T23:41:42.157410+00:00",
+      "durationSeconds": 0.96,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-audit.log",
+      "logSha256": "3c98c97323fbfaf3a70a2ed2c6324b254ec34cc6105dd3cc7707c5dfc94828c8",
+      "mode": "frontend"
+    },
+    {
+      "name": "frontend-tests",
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=work/recovery-verification/frontend-tests.json"
+      ],
+      "startedUTC": "2026-11-20T23:41:43.121007+00:00",
+      "durationSeconds": 358.25,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-frontend-tests.log",
+      "logSha256": "6d96d78fc612a0c47cc8836784ca208271dc6c1f7b1311f1d5e1a12ff4024b73",
+      "mode": "frontend"
+    },
+    {
+      "name": "frontend-build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "startedUTC": "2026-11-20T23:47:41.379467+00:00",
+      "durationSeconds": 31.6,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-frontend-build.log",
+      "logSha256": "f625e1102a0cf31b6eb3d3b36d22fec0ff33c5cea2041d8358f4bb9a522ab1b2",
+      "mode": "frontend"
+    },
+    {
+      "name": "rust-fmt",
+      "command": [
+        "/workspace/work/recovery-native-env.sh",
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "src-tauri/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "startedUTC": "2026-11-20T23:40:13.416195+00:00",
+      "durationSeconds": 2.37,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-rust-fmt.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "native"
+    },
+    {
+      "name": "rust-clippy",
+      "command": [
+        "/workspace/work/recovery-native-env.sh",
+        "cargo",
+        "clippy",
+        "--manifest-path",
+        "src-tauri/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "startedUTC": "2026-11-20T23:40:15.787026+00:00",
+      "durationSeconds": 0.73,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-rust-clippy.log",
+      "logSha256": "bb76d746acf8827d33e2ea465a2a7e5fa1c6a4d49d77f76f98461f0764efb480",
+      "mode": "native"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "/workspace/work/recovery-native-env.sh",
+        "cargo",
+        "test",
+        "--manifest-path",
+        "src-tauri/Cargo.toml",
+        "--locked",
+        "--no-fail-fast"
+      ],
+      "startedUTC": "2026-11-20T23:40:16.518743+00:00",
+      "durationSeconds": 422.62,
+      "exitCode": 0,
+      "log": "evidence/recovery-20261120/final-rust-tests.log",
+      "logSha256": "ad3bff538e2aa43530117b355b9953249bf787d0677a4c024f5702280d125f9f",
+      "mode": "native"
+    }
+  ],
+  "frontend": {
+    "actualTestFiles": 132,
+    "fileStatuses": {
+      "passed": 132
+    },
+    "assertions": 1427,
+    "assertionStatuses": {
+      "passed": 1427
+    },
+    "reportedTotalTests": 1427,
+    "reportedPassedTests": 1427,
+    "reportedFailedTests": 0,
+    "reportedPendingTests": 0,
+    "reportedTodoTests": 0,
+    "reportedDescribeSuites": 435,
+    "suiteCountNote": "Vitest numTotalTestSuites includes describe groups; actualTestFiles counts testResults entries.",
+    "unhandledErrors": 0,
+    "unhandledEvidence": "Complete Vitest process exited zero; complete default-reporter log contains no unhandled-error report.",
+    "nonFatalReactActWarnings": 800,
+    "startingCIReactActWarnings": 797,
+    "warningNote": "Existing React test act warnings remain visible; they are not unhandled errors and were not suppressed. Full logs are retained."
+  },
+  "native": {
+    "testTargets": 105,
+    "passed": 1174,
+    "failed": 0,
+    "ignored": 9,
+    "measured": 0,
+    "filteredOut": 0,
+    "ignoredTests": [
+      "document_units_dump",
+      "real_file_import_and_rebuild_report",
+      "write_examples",
+      "real_document_editions_report",
+      "bundled_number_index_cost",
+      "oshb_corpus_reference_correctness",
+      "real_editions_report",
+      "write_interface_fixture",
+      "a_whole_generated_annotated_bible_is_measured"
+    ],
+    "targets": [
+      {
+        "target": "Running unittests src/lib.rs (/workspace/abidingword/src-tauri/target/debug/deps/abiding_word_lib-5f37ca7c5de76bf8)",
+        "result": "ok",
+        "passed": 259,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running unittests src/main.rs (/workspace/abidingword/src-tauri/target/debug/deps/abiding_word-79bcfc95d4b0c942)",
+        "result": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/a4_qa_transfer.rs (/workspace/abidingword/src-tauri/target/debug/deps/a4_qa_transfer-d08ce6582a87a249)",
+        "result": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/annotations-7a978fadef3fe12c)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/assistant.rs (/workspace/abidingword/src-tauri/target/debug/deps/assistant-973f87bb79dd2ccf)",
+        "result": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/assistant_blocks.rs (/workspace/abidingword/src-tauri/target/debug/deps/assistant_blocks-74886e907f6fe392)",
+        "result": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/bible_catalogue.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_catalogue-f1eb26c5e7eb3571)",
+        "result": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/bible_documents.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_documents-7bec061c090baa52)",
+        "result": "ok",
+        "passed": 75,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/bible_language.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_language-6ce5fd1b6f5374ae)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/capabilities.rs (/workspace/abidingword/src-tauri/target/debug/deps/capabilities-569935112c2dab11)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/citations.rs (/workspace/abidingword/src-tauri/target/debug/deps/citations-30578682f3c1d4bf)",
+        "result": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/combined_integration.rs (/workspace/abidingword/src-tauri/target/debug/deps/combined_integration-8073f7be07a720f0)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/concordance.rs (/workspace/abidingword/src-tauri/target/debug/deps/concordance-a0194e9d3b5f2fe0)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/contextual_references.rs (/workspace/abidingword/src-tauri/target/debug/deps/contextual_references-00869ce53fe41fee)",
+        "result": "ok",
+        "passed": 31,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/daily_snapshot_recovery.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshot_recovery-dd526e073ebdc385)",
+        "result": "ok",
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/daily_snapshots.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshots-6bb2711a8be17c12)",
+        "result": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/database.rs (/workspace/abidingword/src-tauri/target/debug/deps/database-bea44d27d3af72d0)",
+        "result": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/document_units_dump.rs (/workspace/abidingword/src-tauri/target/debug/deps/document_units_dump-7747c20631ad5334)",
+        "result": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/docx_view.rs (/workspace/abidingword/src-tauri/target/debug/deps/docx_view-d686ba911ed4d1fe)",
+        "result": "ok",
+        "passed": 20,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/domain.rs (/workspace/abidingword/src-tauri/target/debug/deps/domain-e89204fca2d694d1)",
+        "result": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/epub_contents.rs (/workspace/abidingword/src-tauri/target/debug/deps/epub_contents-9562f517001702fc)",
+        "result": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/epub_links.rs (/workspace/abidingword/src-tauri/target/debug/deps/epub_links-1ff3584b594e50bd)",
+        "result": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/epub_view.rs (/workspace/abidingword/src-tauri/target/debug/deps/epub_view-e796aa1a29c99a8e)",
+        "result": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/findings.rs (/workspace/abidingword/src-tauri/target/debug/deps/findings-a043d6094ad9e968)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/generated_contents.rs (/workspace/abidingword/src-tauri/target/debug/deps/generated_contents-dc817850cf365818)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/hardening.rs (/workspace/abidingword/src-tauri/target/debug/deps/hardening-797183035236b7b0)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/inquiry.rs (/workspace/abidingword/src-tauri/target/debug/deps/inquiry-f6bc24cdfd52a879)",
+        "result": "ok",
+        "passed": 31,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/library.rs (/workspace/abidingword/src-tauri/target/debug/deps/library-3696d337ea0afefb)",
+        "result": "ok",
+        "passed": 18,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/library_batch.rs (/workspace/abidingword/src-tauri/target/debug/deps/library_batch-6f64eb9ef184849a)",
+        "result": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/library_manage.rs (/workspace/abidingword/src-tauri/target/debug/deps/library_manage-9dffde66a3c4936e)",
+        "result": "ok",
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/macarthur_shape.rs (/workspace/abidingword/src-tauri/target/debug/deps/macarthur_shape-c168ddf580a35614)",
+        "result": "ok",
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/marks.rs (/workspace/abidingword/src-tauri/target/debug/deps/marks-2ee1e16a86581c78)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/material_docx.rs (/workspace/abidingword/src-tauri/target/debug/deps/material_docx-a302f70088411f97)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/material_scripture.rs (/workspace/abidingword/src-tauri/target/debug/deps/material_scripture-93d1d3a51c7110c8)",
+        "result": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v024.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v024-5a74c2c7de4c870e)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v10.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v10-7de66742da3fa199)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v11.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v11-3e485b738640c72a)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v12.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v12-dbf6f68feb02c64b)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v14.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v14-43ad94a63016166e)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v2.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v2-7374183a004242d4)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v25.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v25-b75cae474662a16d)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v26.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v26-e241a30fd0da3706)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v27.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v27-2dad11f2afae32b8)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v3.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v3-a46050a8dbcd6834)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v4.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v4-a3da92bd92242ee0)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v5.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v5-7d5dcaba1709ea55)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v6.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v6-0010010919937891)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v7.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v7-15baa6423a7abdd6)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v8.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v8-520e077666593a24)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/migration_v9.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v9-0339e656a05e25a4)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/milestone_a2_sections.rs (/workspace/abidingword/src-tauri/target/debug/deps/milestone_a2_sections-3738c0f3feb0b509)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/milestone_a3_home.rs (/workspace/abidingword/src-tauri/target/debug/deps/milestone_a3_home-c4e61cde3934e901)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/multilingual_references.rs (/workspace/abidingword/src-tauri/target/debug/deps/multilingual_references-3b5ea4ab83b1b6bd)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/original_language.rs (/workspace/abidingword/src-tauri/target/debug/deps/original_language-cae885be140596de)",
+        "result": "ok",
+        "passed": 23,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/passage_languages.rs (/workspace/abidingword/src-tauri/target/debug/deps/passage_languages-316032a9e9e501b8)",
+        "result": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/passage_sources.rs (/workspace/abidingword/src-tauri/target/debug/deps/passage_sources-28a6348a8faa702d)",
+        "result": "ok",
+        "passed": 26,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pdf_build_processing.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_build_processing-2e78a1aeffb686fe)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pdf_extraction_variants.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_extraction_variants-0b5499a9675658b4)",
+        "result": "ok",
+        "passed": 5,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pdf_outline_destinations.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_outline_destinations-df730708bd0985a8)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pdf_printed_contents.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_printed_contents-ef20bf03d4178450)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pdf_structure.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_structure-f5eec0c134e15f53)",
+        "result": "ok",
+        "passed": 11,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pdf_structure_real_file.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_structure_real_file-b2b9bf7a9fc26eca)",
+        "result": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/phrase_highlights.rs (/workspace/abidingword/src-tauri/target/debug/deps/phrase_highlights-ec301461b3c4f5d1)",
+        "result": "ok",
+        "passed": 23,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/portability.rs (/workspace/abidingword/src-tauri/target/debug/deps/portability-755f7aacecb952bb)",
+        "result": "ok",
+        "passed": 19,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pozetek.rs (/workspace/abidingword/src-tauri/target/debug/deps/pozetek-d049509052cca986)",
+        "result": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/pozetek_repair.rs (/workspace/abidingword/src-tauri/target/debug/deps/pozetek_repair-b27ca07a72f15433)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/presentations.rs (/workspace/abidingword/src-tauri/target/debug/deps/presentations-88b48d166d589605)",
+        "result": "ok",
+        "passed": 25,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/reader_continuity.rs (/workspace/abidingword/src-tauri/target/debug/deps/reader_continuity-d5e3d687d286be3c)",
+        "result": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/real_document_editions.rs (/workspace/abidingword/src-tauri/target/debug/deps/real_document_editions-2bbfcfc956b8f9a6)",
+        "result": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/real_editions.rs (/workspace/abidingword/src-tauri/target/debug/deps/real_editions-557e402394fb181a)",
+        "result": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 3,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/recognition_integrity.rs (/workspace/abidingword/src-tauri/target/debug/deps/recognition_integrity-0fd975d46ffeeb0f)",
+        "result": "ok",
+        "passed": 25,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/reference_dashes.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_dashes-b8526cab78614189)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/reference_languages.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_languages-f80724f86faea027)",
+        "result": "ok",
+        "passed": 34,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/reference_perf.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_perf-04758fde348b60b7)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/reference_resolver.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_resolver-b883a56b3b27ffb0)",
+        "result": "ok",
+        "passed": 20,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/references.rs (/workspace/abidingword/src-tauri/target/debug/deps/references-a75e815f2ca2b057)",
+        "result": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/sample.rs (/workspace/abidingword/src-tauri/target/debug/deps/sample-f1c974f1e8f6bb28)",
+        "result": "ok",
+        "passed": 1,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/schema26_review.rs (/workspace/abidingword/src-tauri/target/debug/deps/schema26_review-a4bfcd12e6f239c2)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/scripture.rs (/workspace/abidingword/src-tauri/target/debug/deps/scripture-82fbcb5c87d008a8)",
+        "result": "ok",
+        "passed": 19,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_annotations-0c38ffc5c16cc244)",
+        "result": "ok",
+        "passed": 18,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_coverage.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_coverage-9e57ec9a77e65db9)",
+        "result": "ok",
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_evidence_levels.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_evidence_levels-5558109e21f68e50)",
+        "result": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_find.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_find-7414d02ae734c5e5)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_heading_languages.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_heading_languages-78b810510af3b6ee)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_locations.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_locations-2e27e14ff524cb67)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_navigation.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_navigation-392600e29ae77d73)",
+        "result": "ok",
+        "passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_references.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_references-c38c9939849f1c78)",
+        "result": "ok",
+        "passed": 8,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/source_relevance.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_relevance-3c1ce1688ef0cd27)",
+        "result": "ok",
+        "passed": 12,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/sources_to_study.rs (/workspace/abidingword/src-tauri/target/debug/deps/sources_to_study-9dc8b5ca8f7de186)",
+        "result": "ok",
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/studies.rs (/workspace/abidingword/src-tauri/target/debug/deps/studies-dcf9515c7edcdfe2)",
+        "result": "ok",
+        "passed": 17,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/study_flow.rs (/workspace/abidingword/src-tauri/target/debug/deps/study_flow-fdaf4a908ad3fd45)",
+        "result": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/suggestion_quality.rs (/workspace/abidingword/src-tauri/target/debug/deps/suggestion_quality-0d437613122ad1e7)",
+        "result": "ok",
+        "passed": 20,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/teaching.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching-7fb79e08f767cc7f)",
+        "result": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/teaching_blocks.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching_blocks-2aeb1e717fd55b3a)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/teaching_standalone.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching_standalone-4ef6bb02cc93ac29)",
+        "result": "ok",
+        "passed": 6,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/teaching_templates.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching_templates-c3820cbe598d371e)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/template_assets.rs (/workspace/abidingword/src-tauri/target/debug/deps/template_assets-e8497ff25fbdb233)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/template_catalogue.rs (/workspace/abidingword/src-tauri/target/debug/deps/template_catalogue-e0163b5a48a82973)",
+        "result": "ok",
+        "passed": 4,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/template_import.rs (/workspace/abidingword/src-tauri/target/debug/deps/template_import-2146999ca607500b)",
+        "result": "ok",
+        "passed": 15,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/ten_step.rs (/workspace/abidingword/src-tauri/target/debug/deps/ten_step-7f9d94bc060afba9)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/text_refresh.rs (/workspace/abidingword/src-tauri/target/debug/deps/text_refresh-324ef285123d15b3)",
+        "result": "ok",
+        "passed": 2,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/windows_dev44_compatibility.rs (/workspace/abidingword/src-tauri/target/debug/deps/windows_dev44_compatibility-aa012bff88156cd7)",
+        "result": "ok",
+        "passed": 7,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/windows_rollback.rs (/workspace/abidingword/src-tauri/target/debug/deps/windows_rollback-58bf8e87f8adaf72)",
+        "result": "ok",
+        "passed": 3,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Running tests/word_annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/word_annotations-99dc638ad1e7c157)",
+        "result": "ok",
+        "passed": 15,
+        "failed": 0,
+        "ignored": 1,
+        "measured": 0,
+        "filteredOut": 0
+      },
+      {
+        "target": "Doc-tests abiding_word_lib",
+        "result": "ok",
+        "passed": 0,
+        "failed": 0,
+        "ignored": 0,
+        "measured": 0,
+        "filteredOut": 0
+      }
+    ]
+  },
+  "browser": {
+    "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+    "check": {
+      "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+      "cleanBefore": true,
+      "startedUTC": "2026-11-20T23:40:53.801939+00:00",
+      "exitCode": 0,
+      "headUnchanged": true,
+      "cleanAfter": true
+    },
+    "platform": "Linux Chromium; real React interface, invented in-memory backend; reduced viewport/DPR emulation, not native Windows acceptance",
+    "passedFlows": 36,
+    "failedFlows": 0,
+    "languages": [
+      "en-GB",
+      "de",
+      "ko",
+      "fr",
+      "es",
+      "pt-BR"
+    ],
+    "viewports": [
+      "1280x900 CSS / DPR1",
+      "480x640 CSS / DPR1",
+      "640x450 CSS / DPR2"
+    ],
+    "restores": [
+      "daily database",
+      "full backup"
+    ],
+    "results": "evidence/recovery-20261120/browser-results.json",
+    "scope": "Real React UI with invented in-memory backend: availability, confirmation, keyboard cancel, pending containment, long paths, focus trap and reload request. Separate real SQLite tests establish database preservation.",
+    "notEstablished": [
+      "Windows/WebView2",
+      "actual Windows DPI",
+      "screen-reader acceptance",
+      "native file picker or Office rendering"
+    ]
+  },
+  "beforeEvidence": {
+    "originalCI": {
+      "url": "https://github.com/pistio/abidingword/actions/runs/44825652838",
+      "result": "failed",
+      "frontendPassedAssertions": 1389,
+      "frontendFiles": 129,
+      "reason": "Unhandled Invented save failure rejection despite passing assertions; rejection observer now installed before triggering rejection."
+    },
+    "baselineNativeSource": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+    "transcriptObservations": [
+      "evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.console-excerpt.txt",
+      "evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.metadata.json",
+      "evidence/recovery-20261120/before/transcript-observations/fields-editor-transcript-observation.json"
+    ],
+    "transcriptEvidenceLimit": "FieldsEditor creation and pending backup/project capture failures were observed on dirty intermediate implementations; no exact tree hash or original standalone stdout log was retained. Metadata explicitly labels the transcript excerpts. Detached-draft overwrite was found by review, with corrected regressions but no executed failing-before case.",
+    "failingBeforeLogs": {
+      "dailySnapshot": "evidence/recovery-20261120/before/native-daily-before.log",
+      "dailyRetention": "evidence/recovery-20261120/before/native-retention-before.log",
+      "fullBackupRollback": "evidence/recovery-20261120/before/recovery-portability-before.log",
+      "materialsSettlement": "evidence/recovery-20261120/before/materials-barrier-before.log"
+    },
+    "dailyBaselineCounts": {
+      "testTargets": 1,
+      "passed": 6,
+      "failed": 4,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 0,
+      "ignoredTests": [],
+      "targets": [
+        {
+          "target": "Running tests/daily_snapshot_recovery.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshot_recovery-dd526e073ebdc385)",
+          "result": "FAILED",
+          "passed": 6,
+          "failed": 4,
+          "ignored": 0,
+          "measured": 0,
+          "filteredOut": 0
+        }
+      ]
+    },
+    "retentionBaselineCounts": {
+      "testTargets": 1,
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 4,
+      "ignoredTests": [],
+      "targets": [
+        {
+          "target": "Running tests/daily_snapshots.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshots-6bb2711a8be17c12)",
+          "result": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filteredOut": 4
+        }
+      ]
+    },
+    "rollbackBaselineCounts": {
+      "testTargets": 1,
+      "passed": 0,
+      "failed": 1,
+      "ignored": 0,
+      "measured": 0,
+      "filteredOut": 18,
+      "ignoredTests": [],
+      "targets": [
+        {
+          "target": "Running tests/portability.rs (/workspace/abidingword/src-tauri/target/debug/deps/portability-755f7aacecb952bb)",
+          "result": "FAILED",
+          "passed": 0,
+          "failed": 1,
+          "ignored": 0,
+          "measured": 0,
+          "filteredOut": 18
+        }
+      ]
+    },
+    "materialsFailure": "Actual Teaching Q&A preview opened with Earlier question while the current save was pending.",
+    "finalPassingNativeRegressions": [
+      "committed_wal_content_is_staged_and_restored_instead_of_stale_database_pages",
+      "missing_writing_tables_and_forged_history_are_unavailable_before_replacement",
+      "current_database_history_is_verified_before_any_safety_copy_or_replacement",
+      "redirected_daily_cache_and_safety_directories_are_rejected_without_external_writes",
+      "manual_database_names_are_neither_counted_as_today_nor_pruned",
+      "a_file_restore_failure_rolls_back_database_and_already_replaced_files",
+      "old_dangling_citation_rows_do_not_stop_the_upgrade",
+      "a_backup_made_before_this_version_restores_and_keeps_its_citations",
+      "historical_safety_copy_exception_does_not_accept_unrelated_broken_references"
+    ],
+    "finalFrontendRegressionFiles": [
+      "materials-save-barrier.test.tsx",
+      "portability.test.tsx",
+      "recovery-field-creation.test.tsx",
+      "recovery-preservation-materials.test.tsx",
+      "recovery-save-barrier.test.tsx"
+    ]
+  },
+  "firstFullRunFailures": {
+    "sourceAtStart": "b5a0c8c800da83f45f475cbf3639897c4f4bf977",
+    "frontend": {
+      "counts": {
+        "actualTestFiles": 132,
+        "fileStatuses": {
+          "passed": 130,
+          "failed": 2
+        },
+        "assertions": 1427,
+        "assertionStatuses": {
+          "passed": 1420,
+          "failed": 7
+        },
+        "reportedTotalTests": 1427,
+        "reportedPassedTests": 1420,
+        "reportedFailedTests": 7,
+        "reportedPendingTests": 0,
+        "reportedTodoTests": 0,
+        "reportedDescribeSuites": 435,
+        "suiteCountNote": "Vitest numTotalTestSuites includes describe groups; actualTestFiles counts testResults entries."
+      },
+      "cleanBefore": true,
+      "sourceUnchanged": false,
+      "headUnchanged": false,
+      "limitation": "The first frontend run overlapped a subsequent native correction; its recorded input/HEAD change prevents treating it as a complete immutable-source certification.",
+      "cause": "Test setup imported useAutosave and loaded the Tauri API before per-file native mocks; seven native-boundary assertions failed.",
+      "correction": "Mechanical extraction of shared autosave state into src/lib/autosaveState.ts removes that setup import side effect; native API assertions remain unchanged.",
+      "focusedBeforeFailed": 7,
+      "focusedAfterPassed": 34,
+      "resolvedBy": "The complete final frontend suite at implementationSourceSha passes."
+    },
+    "native": {
+      "failedTest": "old_dangling_citation_rows_do_not_stop_the_upgrade",
+      "cause": "Strict foreign-key validation blocked migration16's established repair of historical dangling citation references.",
+      "correction": "Only canonical schemas3–15 finding_sources references repaired by unchanged migration16 may pass pre-upgrade validation. Original rows remain in the safety copy; strict post-upgrade validation precedes restored-file installation.",
+      "resolvedBy": "The complete final Rust suite passes; current schema27 and unrelated broken references remain rejected."
+    },
+    "logs": [
+      "evidence/recovery-20261120/first-full-run/final-frontend-tests.log",
+      "evidence/recovery-20261120/first-full-run/final-rust-tests.log"
+    ]
+  },
+  "preservation": {
+    "schemaVersion": 27,
+    "migration0028": "unchanged/reserved",
+    "protectedSourcePrefixesCompared": [
+      ".github/workflows/",
+      "resources/",
+      "src-tauri/resources/",
+      "src-tauri/migrations/",
+      "src-tauri/src/db/migrations.rs",
+      "src-tauri/src/scripture/",
+      "src-tauri/src/library/",
+      "src-tauri/src/db/bible",
+      "src-tauri/src/commands/bible",
+      "src-tauri/src/commands/scripture.rs"
+    ],
+    "protectedChanges": [],
+    "changedFilesSinceBaseline": [
+      "docs/guide/08-settings-updates-backups.md",
+      "docs/i18n/native-polish-priority-v0.19.md",
+      "docs/i18n/native-polish-review-v0.19.md",
+      "docs/implementation/continuity-20261119.md",
+      "docs/implementation/daily-recovery-20261120.md",
+      "docs/implementation/publish-readiness-20261120.md",
+      "docs/implementation/recovery-language-20261120.md",
+      "docs/implementation/windows-owner-acceptance-20261120.md",
+      "src-tauri/src/db/backup.rs",
+      "src-tauri/src/portability/backup.rs",
+      "src-tauri/src/portability/snapshots.rs",
+      "src-tauri/tests/citations.rs",
+      "src-tauri/tests/daily_snapshot_recovery.rs",
+      "src-tauri/tests/daily_snapshots.rs",
+      "src-tauri/tests/fixtures/materials/recovery-documents.json",
+      "src-tauri/tests/material_docx.rs",
+      "src-tauri/tests/portability.rs",
+      "src/features/portability/DataSettings.tsx",
+      "src/features/portability/ProjectExport.tsx",
+      "src/features/studies/BlockEditor.tsx",
+      "src/features/studies/EditableTitle.tsx",
+      "src/features/studies/FieldsEditor.tsx",
+      "src/features/studies/FindingNote.tsx",
+      "src/features/studies/ProjectView.tsx",
+      "src/features/studies/QaEditor.tsx",
+      "src/features/studies/SectionEditor.tsx",
+      "src/features/studies/StudyEditor.tsx",
+      "src/features/teaching/BlockCanvas.tsx",
+      "src/features/teaching/TeachingField.tsx",
+      "src/features/teaching/TeachingView.tsx",
+      "src/hooks/SaveTracker.tsx",
+      "src/hooks/useAutosave.ts",
+      "src/i18n/locales/de/settings.json",
+      "src/i18n/locales/en/settings.json",
+      "src/i18n/locales/es/settings.json",
+      "src/i18n/locales/fr/settings.json",
+      "src/i18n/locales/ko/settings.json",
+      "src/i18n/locales/pt/settings.json",
+      "src/lib/ApiContext.tsx",
+      "src/lib/autosaveState.ts",
+      "src/lib/databaseRestoreLock.ts",
+      "src/lib/guardedApi.ts",
+      "tests/fixtures/recovery-preservation.json",
+      "tests/screenshots/recovery-interface.mjs",
+      "tests/support/setup.ts",
+      "tests/ui/materials-save-barrier.test.tsx",
+      "tests/ui/portability.test.tsx",
+      "tests/ui/recovery-field-creation.test.tsx",
+      "tests/ui/recovery-preservation-materials.test.tsx",
+      "tests/ui/recovery-save-barrier.test.tsx"
+    ],
+    "unchanged": [
+      "migrations",
+      "bundled resources",
+      "Scripture recognition",
+      "GitHub workflows",
+      "owner teaching materials"
+    ],
+    "dailyRestore": "Database only; imported source/image/Bible file bytes unchanged. Current writing retained in verified safety database before replacement.",
+    "fullRestore": "Verified database safety copy and tracked source-file undo operations; both rollback branches attempted on failure, retained-copy location and locked UI on incomplete rollback.",
+    "writing": "Shared settlement drains saves and retains failed drafts across remounts. Successful restoration prevents subsequent API calls in the same webview until reload.",
+    "integratedScenario": "Invented Study/Q&A, multiple linked and independent Teaching records, private leader text/Scripture and citations survive project transfer, full backup, daily restore and reopen. Generated native fixture exercises Materials, Markdown and DOCX privacy.",
+    "withheldEvaluation": "Separate frozen recognition/Collection H lane was not accessed or integrated by this work."
+  },
+  "limits": [
+    "No native Windows acceptance or matching Windows binary is claimed.",
+    "Linux browser DPR emulation does not establish native high-DPI, WebView2, screen-reader, file-lock/reparse or Office behaviour.",
+    "Six-language review is AI editorial review, not human native-speaker approval.",
+    "Single-process application-owned profile assumptions do not certify hostile concurrent filesystem replacement or external SQLite writers.",
+    "Resource integrity checks do not choose a software licence or complete legal/distribution review.",
+    "No Windows build, installer, paid CI, merge, release, signing, deployment, installed-application or personal-profile change was performed by this evidence assembly."
+  ],
+  "githubCI": {
+    "status": "Record the ordinary Ubuntu CI result in the PR body/checks after the final evidence commit is pushed.",
+    "authoritativeLocation": "https://github.com/pistio/abidingword/pull/56",
+    "rule": "PR body/checks must identify the exact pushed head SHA and workflow run IDs. Local evidence is pinned above; CI metadata is intentionally not recursively committed into this file."
+  },
+  "documents": [
+    "daily-recovery-20261120.md",
+    "recovery-language-20261120.md",
+    "publish-readiness-20261120.md",
+    "windows-owner-acceptance-20261120.md"
+  ],
+  "files": [
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-npm-ci.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-npm-ci.log",
+      "sha256": "2eee8ecbefed382fdfac9fa75ef3ced1b05c1b3d3a0ad6d244a58561240f76aa",
+      "bytes": 148
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-typecheck.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-typecheck.log",
+      "sha256": "2f2238cd78882d4bdbfba4105c717a22862372df1f5f34152efcf6bd6d2c256d",
+      "bytes": 256
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-eslint.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-eslint.log",
+      "sha256": "61c95a8a559be46afa5591e71ec3b8aac2867e882bf8fc9247934d5ce81a7b5d",
+      "bytes": 247
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-i18n.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-i18n.log",
+      "sha256": "7e3af6f579e617d7910d003db31af32afb7735051a4b2191079018689fd502c1",
+      "bytes": 362
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-i18n-corpus.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-i18n-corpus.log",
+      "sha256": "7caca57b58fc3d81c41e1bc0f5e4f6451a659abd45089da2adf0defebb531b9a",
+      "bytes": 336
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-resources.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-resources.log",
+      "sha256": "ee765641d2af77fad24eee753feb0979484a63c91e7ed9882c1a48679a410418",
+      "bytes": 379
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-audit.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-audit.log",
+      "sha256": "3c98c97323fbfaf3a70a2ed2c6324b254ec34cc6105dd3cc7707c5dfc94828c8",
+      "bytes": 364
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-frontend-tests.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-frontend-tests.log",
+      "sha256": "6d96d78fc612a0c47cc8836784ca208271dc6c1f7b1311f1d5e1a12ff4024b73",
+      "bytes": 368992
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-frontend-build.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-frontend-build.log",
+      "sha256": "f625e1102a0cf31b6eb3d3b36d22fec0ff33c5cea2041d8358f4bb9a522ab1b2",
+      "bytes": 9477
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/frontend-checks.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/frontend-checks.json",
+      "sha256": "2f18cd35731e6788bc15a078f9ab6104159496fdb350e33edd72dabe58ec9078",
+      "bytes": 104707
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-rust-fmt.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-rust-clippy.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-clippy.log",
+      "sha256": "bb76d746acf8827d33e2ea465a2a7e5fa1c6a4d49d77f76f98461f0764efb480",
+      "bytes": 60
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-rust-tests.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-tests.log",
+      "sha256": "ad3bff538e2aa43530117b355b9953249bf787d0677a4c024f5702280d125f9f",
+      "bytes": 111417
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/native-checks.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/native-checks.json",
+      "sha256": "298550eb2b3fc40263d2c945bedc48c94b030d640c81a821d556b8df6d864fbf",
+      "bytes": 102607
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/source-provenance-final.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/source-provenance-final.json",
+      "sha256": "4cf3d2419d42de88e5115dc6d0515151291755c5d5e21574ed87c5800be0daf9",
+      "bytes": 5375
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/email-metadata-correction.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/email-metadata-correction.json",
+      "sha256": "2dae32c041f2abd5a127bee6bee5e4eb91c3490f2991167046581a2cdd72fb1d",
+      "bytes": 1652
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/starting-ci-warning-summary.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/starting-ci-warning-summary.json",
+      "sha256": "2ba378cecea4d2c17f16c87b1df7804f945c8e2248f567b4dc4873cfdde30b41",
+      "bytes": 408
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/frontend-tests.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/frontend-tests.json",
+      "sha256": "326b5d346391d6ed1eeb695cad32e591602b463da7ad4656752b50d029e95f9e",
+      "bytes": 494634
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser-check.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/browser-check.json",
+      "sha256": "6749fb4cba1e4686fe41e8bf975634356de452032b7befd208e3a24869ea0d19",
+      "bytes": 201
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser-results.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/results.json",
+      "sha256": "71d9ffbb1234bd8fefe1cfab3186a6810e77086aef57e9698b4c7b3a62e24351",
+      "bytes": 46588
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/final-browser.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser.log",
+      "sha256": "4f3f50c3f16cdb8ffec4623b5239db2696e058d20c73862298926fab3a50d631",
+      "bytes": 52
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser/en-480x640-1x-daily.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/en-480x640-1x-daily.png",
+      "sha256": "fa925e3c9dfdd074970a556db97c22f42b732aa8a36cf2111a04470c7ccb8e81",
+      "bytes": 60107
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser/en-480x640-1x-full.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/en-480x640-1x-full.png",
+      "sha256": "3c48a50b27082d91c53bf1ea4e3adef72934e908c37601f300d75003d13c08a7",
+      "bytes": 66301
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-daily.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/ko-480x640-1x-daily.png",
+      "sha256": "c75b9be1091d209e2444502eb9bc35daa9f83ab928c4eaa36d0df96ddc8930aa",
+      "bytes": 69613
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-full.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/ko-480x640-1x-full.png",
+      "sha256": "bb36f81ae452f544d5b606af54695066e6fb2de4dff9be3d9b38a5e6b2753010",
+      "bytes": 64108
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/browser/en-640x450-2x-full.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/en-640x450-2x-full.png",
+      "sha256": "5896cade83d4f3cb3177fc33cc3d5ec536e5cbde9af7e7b4cccc028b0cd23f77",
+      "bytes": 138173
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.console-excerpt.txt",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/additional-before/capture-settlement-before.console-excerpt.txt",
+      "sha256": "a9563e123f6ecf026a7e1762230d9215709c676ebfbaf161724488be53e9e41e",
+      "bytes": 1529
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.metadata.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/additional-before/capture-settlement-before.metadata.json",
+      "sha256": "80979e4806317f5d2203b46df4e21045e46a83a387360b2cbc2dc69b3e014d37",
+      "bytes": 3102
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/transcript-observations/fields-editor-transcript-observation.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/additional-before/fields-editor-transcript-observation.json",
+      "sha256": "9a35244860ed302b98b5d43853cf602dbd1d57d8e3755c9b18e1a1ac4f0bc339",
+      "bytes": 3496
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/native-daily-before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/native-daily-before.log",
+      "sha256": "e977d16b70de2f465afdb9dd283fc603700c584d27bfd30231b725c3b371b940",
+      "bytes": 3002
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/native-retention-before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/native-retention-before.log",
+      "sha256": "5536eb00df4ad6410d7d2cc981dbb41664702ec088877d5b43677e6fb4058eb1",
+      "bytes": 988
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/recovery-portability-before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/preservation-verification/recovery-portability-before.log",
+      "sha256": "6aa48618e42ddcf66cfdeafe7f71932a80ad38827f4e2ee78c1d02cf0ded6d2d",
+      "bytes": 2705
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/materials-barrier-before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/preservation-verification/materials-barrier-before.log",
+      "sha256": "d9f98335a626dc3e50642407d58498c0d366c6be0879006403573152cbc7417f",
+      "bytes": 2113
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/first-full-run/frontend-checks.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/attempt-b5a0c8c/frontend-checks.json",
+      "sha256": "87ac148b2b76271cf50176498ab2180bde8899cd21ba3a3a4063639dec045047",
+      "bytes": 103786
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/first-full-run/frontend-tests.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/attempt-b5a0c8c/frontend-tests.json",
+      "sha256": "2161c7d5dc986c36e972a081fb83df7edc344e667514cc1327d9440e090d9376",
+      "bytes": 498133
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/first-full-run/native-checks.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/attempt-b5a0c8c/native-checks.json",
+      "sha256": "5b9db9ca5b5ae3b5d6fc1f8d832e784a806edefc05352af323f8bbb62ad50174",
+      "bytes": 102482
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/first-full-run/final-frontend-tests.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/attempt-b5a0c8c/final-frontend-tests.log",
+      "sha256": "610202ff8b604fbc6dae5530b15ab68328a78282fbefa1698187f83678d93fd2",
+      "bytes": 441
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/first-full-run/final-rust-tests.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/attempt-b5a0c8c/final-rust-tests.log",
+      "sha256": "7d78ebeeed2f99c977ec18c0ecbc4dc80863905a7829e72ee2b55959b4d314fa",
+      "bytes": 34977
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/mock-import-before.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/mock-import-before.json",
+      "sha256": "df3a166c3e17420d8feff8cc3bf5f00129e6ee6b5ee22cd4d155261b0c9d6572",
+      "bytes": 7652
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/mock-import-after.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/mock-import-after.json",
+      "sha256": "ec17d3186aa09bd441028f841ca0c3d31fe2d780e004a721d4a52926f9730eae",
+      "bytes": 12512
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/native-environment.sh",
+      "sourcePath": "/workspace/work/recovery-native-env.sh",
+      "sha256": "2013531467be7f2f7a69ad38eea2b68cad15ab66bc658402795e6ddb31f99ec4",
+      "bytes": 784
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/run-checks.py",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/run-checks.py",
+      "sha256": "7c42db00c255702a301a1018d6acec9dcd07cdbbaf539e6ed96d711cd170fa6a",
+      "bytes": 3104
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/assemble-evidence.py",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/assemble-evidence.py",
+      "sha256": "c198f1b7c70d97213656427d63a60c363dda989477fb439d06c83f29eb87a22e",
+      "bytes": 25941
+    }
+  ]
+}

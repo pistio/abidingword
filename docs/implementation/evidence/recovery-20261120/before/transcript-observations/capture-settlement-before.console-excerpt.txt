@@ -1,0 +1,38 @@
+TRANSCRIPT-DERIVED CONSOLE EXCERPT — not a separately retained original stdout file.
+Copied from the completed tool response for session 58960, chunk 7d027e.
+No rerun was performed when this excerpt was recorded.
+
+ RUN  v4.1.11 /workspace/work/daily-recovery
+
+ tests/ui/portability.test.tsx (22 tests | 2 failed | 20 skipped) 3531ms
+   × waits for current Study writing before creating a backup file 2367ms
+   × waits for current Study writing before creating a project file 1159ms
+
+ FAIL  tests/ui/portability.test.tsx > Data and backup > waits for current Study writing before creating a backup file
+AssertionError: expected "backupCreate" to not be called at all, but actually been called 1 times
+Received:
+  1st backupCreate call:
+    Array [
+      "/home/test/All.awbackup",
+    ]
+Number of calls: 1
+
+ FAIL  tests/ui/portability.test.tsx > Data and backup > waits for current Study writing before creating a project file
+AssertionError: expected "projectExport" to not be called at all, but actually been called 1 times
+Received:
+  1st projectExport call:
+    Array [
+      Object {
+        "path": "/home/test/Romans.awproject",
+        "projectId": "00000000-0000-4000-8000-000000000020",
+      },
+    ]
+Number of calls: 1
+
+Both assertions failed at tests/ui/portability.test.tsx:156:25:
+    expect(capture).not.toHaveBeenCalled();
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 20 skipped (22)
+   Start at  23:05:37
+   Duration  12.47s (transform 5.60s, setup 2.16s, import 6.12s, tests 3.53s, environment 476ms)
