@@ -7,8 +7,10 @@ It merges the protocol of PR #51 (`docs/audit/candidate-a1.3/set-h-protocol.md`)
 with the review amendments of PR #52 (`set-h-protocol-independent-review.md`)
 and Codex's review of PR #53 (five points: document classes, execution
 assessment, independence and one-run safeguards, composition and authentic
-evidence, an independent builder arrangement). The recogniser is unchanged
-at `08c6faa`; only the evaluation tools and this page changed.
+evidence, an independent builder arrangement), and the follow-up review of
+`4dd9f8e` (scoring anchored to committed evidence; input paths contained;
+the independent setup stated concretely). The recogniser is unchanged at
+`08c6faa`; only the evaluation tools and this page changed.
 
 ## 1. The candidate
 
@@ -28,46 +30,70 @@ not approval of migration 0028.
 | **Owner** | the owner | approves this page, the source list and the final list of documents (titles, publishers, licences: metadata, not files); authorises the build and the single run | — |
 | **Document builder** | a new cloud session in an environment of its own, or a person the owner names | finds and downloads lawfully available published files; makes references and any generated documents; records provenance; runs `seal-set.py` until it passes; seals with `seal-set.py --write` once the reviewer has signed and the owner has approved | receive or read the recogniser's code, rules, tests, failure reports or any earlier set's results; open this repository, its issues or pull requests; run any Bible-recognition software |
 | **Ground-truth reviewer** | a second new session, or a person | checks each reference against its document before the seal (edition, revision, canon, versification, at least 20 sampled verses and the boundaries); checks each edition against the exclusion list; signs `review-ledger.md` | the same as the builder; change anything after the seal |
-| **Runner** | a Claude Code session with this repository | runs `run-withheld-set.sh` once; commits the run record at once | edit code, harness, seal or documents; rerun |
-| **Assessor** | a session other than the runner's | scores with `score-set.py`; writes the case ledger | change the raw score |
+| **Runner** | a Claude Code session with this repository and the set repository | runs `run-withheld-set.sh` once (it commits the run record itself); copies the outputs to the set repository | edit code, harness, seal or documents; rerun |
+| **Assessor** | a session other than the runner's | scores with `score-set.py --run-record=<the runner's record commit>`; writes the case ledger | change the raw score |
 
-**The owner does not need to collect the files.** Proposed arrangement:
+**The owner does not need to collect the files.** The application
+repository is **public**: withholding credentials does not hide its
+source, and a private set repository protects the set, not the
+recogniser. Separation therefore has to come from the sessions and their
+network, and what cannot be enforced is stated as procedure.
 
-1. The owner creates a **private repository for the set** (for example
-   `pistio/abidingword-set-h`) and two cloud environments, one for the
-   builder and one for the reviewer, **with no repository of this project
-   attached** and network access limited to the approved sources.
-2. The builder session receives only the files listed in
-   `docs/evaluation/README.md` §"For the builder": the neutral brief
-   (`docs/evaluation/builder-brief.md`), the list of disclosed editions
-   (`disclosed-editions.tsv`, identity only), the hash inventory
-   (`disclosed-documents.sha256`), `check-set.py` and `seal-set.py`, and,
-   for DOCX made from USFM, the completeness auditor. None of these describes the recogniser,
-   its rules or how it fared.
-3. The builder writes documents, references and the seal folder to the set
-   repository; the reviewer reads them there and signs the ledger; the owner
-   approves the list; the seal folder is then committed to this repository
-   in one commit that changes nothing else (§8).
-4. The runner reads the documents from the set repository into a folder
-   outside Git and runs once.
+**Concrete setup (proposed):**
+
+1. **A private set repository**, created empty by the owner (for example
+   `pistio/abidingword-set-h`). It receives the builder's handover files
+   (`builder/`), the documents and references, the seal folder, and later
+   the run's outputs. Public-domain text only by default (below).
+2. **One cloud environment for the builder and the reviewer**, made by the
+   owner in Claude Code's environment settings:
+   * network access **Limited**, with **Allowed domains** set to the
+     approved source hosts only (the owner's list, for example the hosts
+     of Project Gutenberg and eBible.org), **package managers off**, MCP
+     servers off where the setting is offered; no GitHub host on the list;
+   * repositories: **the set repository only**, never this one;
+   * no setup script, no variables, no saved credentials.
+3. **Fresh sessions.** The builder and the reviewer are each a **new**
+   session started by the owner in that environment: not a fork,
+   continuation or child of any session that has worked on this project,
+   so no chat history, memory, `CLAUDE.md` or checkout of this repository
+   comes with it. The first message is the brief alone; the handover files
+   are already in the set repository's `builder/` folder.
+4. **A recorded start.** Each session first records in
+   `access-records.md`: its session link and environment name; the
+   repositories it can see (only the set repository); and an attempt to
+   fetch `https://github.com/pistio/abidingword`,
+   `https://raw.githubusercontent.com/pistio/abidingword/HEAD/README.md` and
+   `https://api.github.com/repos/pistio/abidingword`, each of which must
+   be refused by the network policy. **If any of these succeeds, the
+   separation for that session is procedural only:** the session says so
+   in `access-records.md`, stops, and the owner decides.
+5. **The transcript is the access log.** Every tool call, URL and file a
+   cloud session reads is in its transcript. The owner keeps the builder's
+   and the reviewer's transcripts, and the assessor checks them for any
+   access to this project before scoring.
+6. The **runner** is a separate session with this repository and the set
+   repository: it runs the recogniser, so it may read it, but must not
+   change it. It copies the outputs to the set repository (`runs/`), where
+   the assessor, another fresh session with this repository, reads them;
+   the committed `OUTPUTS.sha256` binds their bytes.
+
+**What this enforces, and what stays procedure:**
+
+| | Enforced where the platform offers it | Procedure, recorded |
+|---|---|---|
+| No copy of the recogniser in the builder's or reviewer's session | no checkout of this repository; repositories fixed when the session starts | — |
+| No reading of the public source | the environment's network allowlist (no GitHub host), checked at the start (item 4) | if a GitHub host must be allowed for a source, separation is procedural for that session and is recorded as such |
+| No inherited context | a new session, not a fork or continuation | the owner starts it; its first message is the brief alone |
+| Nothing else learned about the recogniser | — | the brief, and the transcript reviewed by the assessor; a model's general knowledge cannot be ruled out |
+| Published files independent of the recogniser | existed before it, by construction | the *choice* among them is the builder's: why the builder must not see the recogniser |
 
 **Copyright and cloud sessions.** The mandate forbids unapproved cloud AI
-transmission of copyrighted text. The builder, reviewer and runner are
-cloud sessions. Proposed: **public-domain texts only** by default; texts
-under an open licence (Creative Commons and similar) only if the owner
-approves that here; no all-rights-reserved text in any cloud session.
-
-**Isolation this arrangement can give, and what it cannot.** A builder
-session with no repository of this project attached has no copy of the
-recogniser. Whether its credentials could still read this repository
-depends on the GitHub app's installation scope, which the owner controls;
-it cannot be proven from inside the session. Independence therefore rests
-on (a) what is not attached, (b) the neutral brief, and (c) the access
-records each role writes (every URL visited, every file read). Published
-files that existed before the recogniser are independent of it by
-construction; the *choice* among them is the builder's, which is why the
-builder must not see the recogniser. A model's name is not evidence of
-independence; the records are.
+transmission of copyrighted text. The builder, reviewer, runner and
+assessor are cloud sessions. Proposed: **public-domain texts only** by
+default; texts under an open licence (Creative Commons and similar) only
+if the owner approves that here; no all-rights-reserved text in any cloud
+session.
 
 ## 3. Composition: 24 documents, overlaps shown
 
@@ -126,6 +152,9 @@ authentic minimum below, and never toward the accuracy claim.
 
 `check-set.py` reports the builder's figures before the seal (from the
 references), and the scorer reports the run's (from the printed verses).
+The 20 000 counts **printed** verses, not verified ones: the scorer
+reports, beside it, the verified and verified-correct verses and the
+coverage (verified correct ÷ printed), with no pass mark.
 **If the minimum is not met**, the set may still be sealed and run, but the
 result carries this qualification limit, verbatim from the scorer: *the
 result qualifies the candidate for the generated documents and for the
@@ -180,17 +209,23 @@ counted.
    list in mixed documents;
 4. **0** execution failures: every document completed or refused cleanly.
 
+**Anchors, before any assessment:** the run record committed by the runner
+(the one commit that added RUN.txt, OUTPUTS.sha256 and CHECK.json,
+unchanged since), the run folder's three files identical to it, every
+output matching the committed OUTPUTS.sha256, and the seal read from the
+commit RUN.txt names, with the seal folder on disk identical to it. A
+missing or inconsistent anchor **refuses** assessment; nothing is scored.
+
 **Protocol run:** the frozen binary, the protocol ceilings (§7), the
 canonical disclosed-document inventory, a complete RUN.txt for every
-document, outputs unchanged since the run, and the seal the run names.
-Anything else is "not a protocol run" whatever the counts.
+document. Anything else is "not a protocol run" whatever the counts.
 
 **Verdict:** *pass*, *fail*, or *not a protocol run*. The **accuracy
 claim** is only: *N verified verses with wrong text and M outside the
 edition, among V verified verses of D completed scored documents (A
 authentic)*. Exploratory documents are not part of it. **Coverage**
-(verified correct ÷ printed) is reported per document and group, with no
-pass mark.
+(verified correct ÷ printed) is reported with its denominator, overall,
+per document and group, with no pass mark.
 
 A divergence between reference and document found after the run counts as
 a failure in the raw score. It may be explained in a separate
@@ -204,14 +239,15 @@ is then disclosed; corrections need a new candidate and a new withheld set.
 |---|---|---|
 | The frozen binary | runner compares its SHA-256 and refuses; RUN.txt records it; the scorer checks it | — |
 | The pinned tools | RUN.txt records the runner's and `check-set.py`'s SHA-256 | the assessor compares them with `FREEZE.md` §5a |
-| The seal | `seal-set.py --write` seals only a folder that passes every check, with the reviewer's ledger and the access records present, and never twice; `check-set.py` at the run: the seal folder is exactly what one commit added, that commit changes nothing else, nothing changed since, every file as in `SEAL.txt` | the builder commits it; the owner approves before |
+| The seal | `seal-set.py --write` seals only a folder that passes every check, with the reviewer's ledger and the access records present, and never twice; at the run and again at assessment (one shared check): the seal folder is exactly what one commit added, that commit changes nothing else, its `SEAL.txt` lists every file it holds, and the folder on disk is byte for byte that commit, unchanged since. The scorer reads the manifest and every `allowed/<key>.txt` **from the seal commit**, never from disk | the builder commits it; the owner approves before |
+| Paths | every name in the manifest, `checksums.sha256` and `SEAL.txt` must be a plain relative path (no absolute path, no `..`), checked before any file is opened; **no symbolic link** is accepted in the seal, documents or run folder; every file must resolve inside its folder | — |
 | The documents | every file in the documents folder listed in `checksums.sha256` and unchanged; nothing unlisted; every manifest file listed | — |
 | Provenance | a complete row per document; its file hash the checksummed one | the reviewer checks that each row is **true** and signs `identity_checked_by` |
 | Not a disclosed document | a file, or a USFM book inside a reference, byte-identical to anything in the canonical inventory (7 461 hashes) is refused | the same edition re-saved, re-zipped, in another format or from another publisher is **not** caught by hashes: the builder checks `disclosed-editions.tsv`, the reviewer confirms each edition and signs |
 | Not a disclosed key | a key a disclosed manifest uses is refused (the harness would also run that edition's files) | it proves nothing about whether an edition is unseen |
-| One run | the output folder must not exist; the documents folder gets `.run-started` before the first document is read, and a folder that has it is refused; a committed run record (`<seal>/../run/`) makes every later attempt from a checkout that has it refuse | the runner commits RUN.txt, OUTPUTS.sha256 and the score **at once**. A copy of the documents made before the run, used from a checkout without the run record, cannot be stopped by code: access records |
-| The run as scored | the scorer refuses outputs changed or added since the run, or a RUN.txt of another seal, and declares a run with other ceilings, binary or inventory "not a protocol run" | — |
-| Independence of builder and reviewer | — | no repository of this project attached, neutral brief only, access records (§2) |
+| One run | the output folder must not exist; the documents folder gets `.run-started` before the first document is read, and a folder that has it is refused; the runner **commits the run record itself** (`<seal>/../run/`: RUN.txt, OUTPUTS.sha256, CHECK.json, a commit of its own) as soon as the outputs are checksummed, and refuses to start where Git cannot commit; a committed run record makes every later attempt from a checkout that has it refuse | the runner pushes that commit at once. A copy of the documents made before the run, used from a checkout without the run record, cannot be stopped by code: access records |
+| The run as scored | the scorer requires `--run-record=<commit>`: the one commit that added the three files, unchanged and without uncommitted changes since; the run folder's three files must equal it; every output must match the committed OUTPUTS.sha256, nothing added, no link; RUN.txt's manifest and checksums must be the sealed ones and its seal commit an ancestor of the record. Anything missing or inconsistent refuses assessment. A run with other ceilings, binary or inventory is "not a protocol run" | the outputs themselves stay outside this repository: their bytes are bound by the committed OUTPUTS.sha256; keeping a copy is the runner's duty |
+| Independence of builder and reviewer | fresh sessions without this repository, in an environment whose network allowlist has no GitHub host (§2) | everything the table in §2 lists as procedure; the session transcripts are the access records |
 | No copyrighted text in this repository | the run record holds hashes, checks and scores only; reports that quote text stay outside Git | public-domain sources by default (§2) |
 
 ## 7. Ceilings and the exact run
@@ -230,14 +266,18 @@ protocol run"):
 scripts/evaluation/run-withheld-set.sh docs/evaluation/set-h/seal <seal commit> <documents folder> <harness binary> 920f7e28e6c03f0c2fd7832bb78ce7c2077d6767541f0b86bb02f2fec1ed3a8e <new output folder outside Git>
 ```
 
-then, at once, the run record (`docs/evaluation/set-h/run/`: RUN.txt,
-OUTPUTS.sha256, CHECK.json) committed; then, by the assessor:
+The runner commits the run record itself (`docs/evaluation/set-h/run/`:
+RUN.txt, OUTPUTS.sha256, CHECK.json, a commit of its own) and prints that
+commit; it is pushed at once, before any assessment. Then, by the
+assessor:
 
 ```
-python3 scripts/evaluation/score-set.py <output folder> docs/evaluation/set-h/seal --json=score.json --md=score.md
+python3 scripts/evaluation/score-set.py <output folder> docs/evaluation/set-h/seal --run-record=<the runner's record commit> --json=score.json --md=score.md
 ```
 
-and `score.json` and `score.md` added to the run record.
+and `score.json` and `score.md` added to the run record in a later commit
+(the scorer refuses a record whose three anchor files change after their
+commit, not the addition of the score).
 
 ## 8. Seal contents
 
@@ -257,24 +297,34 @@ that changes nothing else, before the run:
 * `access-records.md`: who filled each role, and what each read;
 * `SEAL.txt`: the UTC time and the SHA-256 of every other file.
 
-Documents stay outside this repository. Copyrighted text never goes into
+Every name in it is a plain relative path, and no file is a symbolic link
+(`check-set.py` refuses otherwise). Documents stay outside this
+repository. Copyrighted text never goes into
 it or into public comments.
 
 ## 9. Rehearsed on disclosed documents, not run on Set H
 
-The tools were qualified by 29 synthetic tests and three sealed rehearsal
-sets of disclosed documents run with the frozen binary (`FREEZE.md` §5a,
-`rehearsal/`). The rehearsal shows every class, a clean refusal, a
-timeout, a real memory failure under a lowered ceiling, the refusal of
-disclosed documents by the canonical inventory, and the refusal of a
-second attempt. Every rehearsal verdict is "not a protocol run", as it
-must be.
+The tools are qualified by 46 synthetic tests, including the independent
+review's three scoring alterations and three path escapes, each refused,
+and by four sealed rehearsal sets of disclosed documents run with the
+frozen binary (`FREEZE.md` §5a, `rehearsal/`). The first three were
+rescored with the anchored scorer against their committed run record, with
+identical results; the fourth was run end to end with the final tools,
+the runner committing its own record. The rehearsals show every class, a
+clean refusal, a timeout, a real memory failure under a lowered ceiling,
+the refusal of disclosed documents by the canonical inventory, and the
+refusal of a second attempt. Every rehearsal verdict is "not a protocol
+run", as it must be.
 
 ## 10. Before authorising
 
 - [ ] Approve or amend §2–§8.
-- [ ] Approve the builder arrangement (§2): the private set repository,
-      the two environments and the source list; or name people instead.
+- [ ] Approve the concrete setup of §2: the private set repository, the
+      builder/reviewer environment (its list of allowed source hosts,
+      package managers and MCP servers off, no GitHub host), fresh sessions
+      started by you, and the recorded start check; or name people instead.
+- [ ] Accept what §2 lists as procedure, with the transcripts as access
+      records.
 - [ ] Decide the licences allowed in cloud sessions: public domain only
       (proposed), or also open licences.
 - [ ] Accept the authentic minimum and the qualification limit (§3),

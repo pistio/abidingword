@@ -163,8 +163,9 @@ Times and per-edition figures: `docs/audit/candidate-a1.5/FREEZE.md` §4.
    `docs/audit/candidate-a1.5/reviews/security-review.md`.
 3. Treat any panic as a refused document. The PDF reader catches its own;
    the others return errors.
-4. **Every rerun of recognition must pass the structural gate again and
-   regenerate provenance and numbering evidence.** Applying saved
+4. **Unfinished integration work: every rerun of recognition must pass
+   the structural gate again and regenerate provenance and numbering
+   evidence.** Applying saved
    corrections (`StagedImport::apply_saved`), making new ones
    (`StagedImport::correct`) or reading the documents again for any other
    reason calls `import::recognise`, which **replaces**

@@ -8,8 +8,9 @@
 
 The tools are in `scripts/evaluation/`: `check-set.py` (the checks, before
 running), `seal-set.py` (the same checks before the seal, and the seal),
-`run-withheld-set.sh` (the one run), `score-set.py` (the
-score and assessment), `disclosed-inventory.py` (rebuilds the two lists
+`run-withheld-set.sh` (the one run; it commits the run record),
+`score-set.py` (the score and assessment, anchored to the committed run
+record with `--run-record`), `disclosed-inventory.py` (rebuilds the two lists
 above). Their checksums are pinned in
 `docs/audit/candidate-a1.5/FREEZE.md` §5a, and the protocol is
 `docs/audit/candidate-a1.5/set-h-decision-package.md`.

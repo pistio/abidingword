@@ -12,7 +12,8 @@ the owner's Set H decision. Everything here is on disclosed documents.
 | `reviews/canon-review.md` | Independent review of canon and versification, with triage |
 | `regression.md` | The 113 editions against the A1.3 candidate, edition by edition |
 | `set-h-decision-package.md` | The protocol, criteria, ceilings and exact run proposed for Set H. Not authorised. |
-| `rehearsal/` | Three sealed rehearsal sets of disclosed documents, each run once with the frozen binary: seals, run records, scores. Not Set H |
+| `rehearsal/` | Four sealed rehearsal sets of disclosed documents, each run once with the frozen binary: seals, run records, scores (the first three rescored against their committed record). Not Set H |
+| `data/review-2026-11-19/` | Receipts of the follow-up review of `4dd9f8e`: its probes before and after the fixes |
 | `data/` | Completeness audits, probe results, per-edition reports |
 
 The handover for Codex is `docs/handover-scripture-recognition-codex.md`.

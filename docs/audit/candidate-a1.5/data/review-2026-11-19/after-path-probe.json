@@ -1,0 +1,37 @@
+{
+ "evidence": "<scratch>/review-evidence-after/aw-path-containment-gyaks4s3/results.json",
+ "candidate_commit": "4dd9f8e12be1c531f55ba5121423a184a6ae97cb",
+ "checker_sha256": "d7290e28b229f2b369ba53a9f9ab73a3736348b868620fc732a2fc95285605c4",
+ "fake_harness_only": true,
+ "invented_non_scripture_files_only": true,
+ "candidate_repository_modified": false,
+ "cases": [
+  {
+   "case": "parent_relative",
+   "runner_exit": 2,
+   "preflight_ok": null,
+   "fake_harness_output_created": false,
+   "actual_document_resolved_outside_documents_folder": true,
+   "outcome": "refused",
+   "stderr": "refused: C1: '../outside/C1.docx' is not a plain relative path (it has an empty, '.' or '..' part)\nrefused: checksums.sha256: '../outside/C1.docx' is not a plain relative path (it has an empty, '.' or '..' part)\nnote: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\nrefused: the set failed its checks (above); nothing was read\n"
+  },
+  {
+   "case": "absolute",
+   "runner_exit": 2,
+   "preflight_ok": null,
+   "fake_harness_output_created": false,
+   "actual_document_resolved_outside_documents_folder": true,
+   "outcome": "refused",
+   "stderr": "refused: C1: '<scratch>/review-evidence-after/aw-path-containment-gyaks4s3/absolute/outside/C1.docx' is an absolute path\nrefused: checksums.sha256: '<scratch>/review-evidence-after/aw-path-containment-gyaks4s3/absolute/outside/C1.docx' is an absolute path\nnote: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\nrefused: the set failed its checks (above); nothing was read\n"
+  },
+  {
+   "case": "symlink",
+   "runner_exit": 2,
+   "preflight_ok": null,
+   "fake_harness_output_created": false,
+   "actual_document_resolved_outside_documents_folder": true,
+   "outcome": "refused",
+   "stderr": "refused: documents folder: 'C1.docx' is a symbolic link; links are not accepted\nrefused: checksums.sha256: 'C1.docx' is or passes through a symbolic link\nnote: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\nrefused: the set failed its checks (above); nothing was read\n"
+  }
+ ]
+}

@@ -110,31 +110,62 @@ measure of the reading (`read_seconds`, `read_peak_memory_mb`).
 ## 5a. Evaluation tools, pinned
 
 The recogniser is not part of this section and did not change. These are
-the tools that check, run and score a withheld set, as revised after
-Codex's review of PR #53 (`docs/audit/candidate-a1.5/set-h-decision-package.md`).
+the tools that check, seal, run and score a withheld set, as revised after
+Codex's review of PR #53 and the follow-up review of `4dd9f8e`
+(`docs/audit/candidate-a1.5/set-h-decision-package.md`).
 
 | File | SHA-256 |
 |---|---|
-| `scripts/evaluation/check-set.py` | `66923a8972bb26cac54ef90101c19259f49e0901ae27c50bfd753ff2c968fcf6` |
-| `scripts/evaluation/seal-set.py` | `fa39c98179465ae0af7edeb487673fa0cc4ae52ba01703559e8dcd1a25acaefc` |
-| `scripts/evaluation/run-withheld-set.sh` | `d1b6a36ce3f4548ee74e3b6fbbad35a1a1467288f0c352b38d4c77a5cf817a51` |
-| `scripts/evaluation/score-set.py` | `13f9d4ae699b940cbea8f0cfc534d175821d3c60d52d8f9aeca1215c857ebe16` |
+| `scripts/evaluation/check-set.py` | `d7290e28b229f2b369ba53a9f9ab73a3736348b868620fc732a2fc95285605c4` |
+| `scripts/evaluation/seal-set.py` | `e343202e2cbf6fb35b9fa70b74b6a457b214d5bc9ece9ecc2c101d57c0e23c8f` |
+| `scripts/evaluation/run-withheld-set.sh` | `8515e92c329370236f5aab0495b4e08c4f6a76f64f6e8d0abbd59584181385a9` |
+| `scripts/evaluation/score-set.py` | `803a7adb99c1fcb336be59e2b8eb328fbaaa8b54c4daf6fc1c96aba78d29bc2d` |
 | `scripts/evaluation/disclosed-inventory.py` | `e656f38eb40fff814472a91503a37ca5d6107dfc95ab6733f92af341d7854021` |
 | `docs/evaluation/disclosed-documents.sha256` (the canonical inventory) | `a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8` |
 | `docs/evaluation/disclosed-editions.tsv` | `5241c244d3abea222370f78c916fc1e2a72696d046df5d8e456697607859fc6d` |
-| `docs/evaluation/builder-brief.md` | `a21be798421aa148a47f9e1f3272bbf739e5404fb4cdcf5bf56ea3835d98d0fe` |
-| `tests/evaluation/test_withheld_set_tools.py` | `df370b5e083dca61af882ca4fed8a23dfdb62447114d4570b888294fcb082197` |
+| `docs/evaluation/builder-brief.md` | `7e1ea823a4fb0bd89070f3e3612f1b3909266378aa5a0357c6548734298468a2` |
+| `tests/evaluation/test_withheld_set_tools.py` | `b28e3a6f3d0ede4450e3ae24e33d92551c0662bfdcea24f534046e9d3f28a9b5` |
 | `scripts/corpus/audit-derived-completeness.py` (v2) | `d268175759f92add320530c9b8f5509f9f1b60ba726cc5f861501db5c90ab5f0` |
+
+Superseded pins, kept as recorded: at `4dd9f8e` check-set `66923a89…`,
+seal-set `fa39c981…`, runner `d1b6a36c…`, scorer `13f9d4ae…`, brief
+`a21be798…`, tests `df370b5e…`; at `f50c541` runner `66f20eb9…`, scorer
+`740b0701…`.
+
+**Follow-up review of `4dd9f8e` (19 November 2026).** It reproduced, with
+the committed fake harness only, three ways to turn a failing run into a
+pass (an allowed list widened after the run; a report, or an exit code,
+changed and OUTPUTS.sha256 regenerated outside the committed record) and
+three input paths that escaped the documents folder (`../`, an absolute
+path, a link). Done, in `5717388`:
+
+* The scorer now requires `--run-record=<commit>`, the one commit that
+  added RUN.txt, OUTPUTS.sha256 and CHECK.json, unchanged since; checks the
+  run folder against it and every output against the committed
+  OUTPUTS.sha256; reads the seal (manifest, every allowed list) from the
+  seal commit RUN.txt names, with the seal folder on disk identical to it.
+  Anything missing or inconsistent refuses assessment. The runner commits
+  the run record itself, alone, as soon as the outputs are checksummed.
+* Every name must be a plain relative path, checked before any file is
+  opened; no symbolic link is accepted in the seal, documents or run
+  folder; every file must resolve inside its folder.
+* Receipts in `data/review-2026-11-19/`: the review's probes reproduce all
+  six cases at `4dd9f8e`; on the fixed tools its path probe exits 0 (all
+  three refused), and its scorer cases, run step for step through the
+  anchored interface, are each refused (the unchanged scorer probe stops at
+  its first step, because the scorer refuses it; that stop is not counted).
 
 **Qualification of these tools:**
 
-* `tests/evaluation`: **29 tests** with a fake harness (no recogniser, no
+* `tests/evaluation`: **46 tests** with a fake harness (no recogniser, no
   corpus): every refusal of the runner, every way a document's run can end,
-  the four document classes, the scorer's refusals, the authentic minimum,
-  and the builder's check and seal (`seal-set.py`, added after the
-  rehearsal below; it uses `check-set.py` unchanged, so the checksum the
-  rehearsal recorded for `check-set.py` is still the pinned one).
-  Thirteen safeguards were removed one at a time. The two of `seal-set.py`
+  the four document classes, the scorer's refusals and anchors, path
+  containment, the authentic minimum, and the builder's check and seal.
+  The 17 added after the follow-up review include its three alterations
+  (class `ScoringAnchors`) and three escapes (class `PathContainment`);
+  eleven of their safeguards were removed one at a time, and each removal
+  failed its test. Before that, thirteen safeguards were removed one at a
+  time. The two of `seal-set.py`
   each failed their test. Of the other eleven, 8 failed their test in the
   first pass and 3 did not: two were real gaps (a seal changed in a later
   commit; exploratory documents kept out of the per-group tables), and
@@ -163,6 +194,22 @@ Codex's review of PR #53 (`docs/audit/candidate-a1.5/set-h-decision-package.md`)
   inventory, and test ceilings for the failure sets. A second attempt was
   refused by the documents folder's lock, and a copy of the set without the
   lock by the committed run record.
+
+  These three rehearsals were run with the tools of `f1d0d7f` and scored
+  before their record was committed. After the follow-up review they were
+  **rescored with the anchored scorer** against their committed run record
+  (`deeca37`): verdicts, criteria, execution and every document's
+  observations identical (`rehearsal/*/run/score-anchored.*`).
+* **Fourth rehearsal, end to end with the final tools** (`rehearsal/protocol-2/`):
+  the same seven disclosed documents, sealed in `8f9dffa`; the canonical
+  inventory refused it before reading; with the rehearsal inventory it ran
+  once and the runner committed its own record (`5509668`, three files
+  only); scored with `--run-record=5509668`: 33 548 verified, 0 wrong, 0
+  outside the edition, coverage 70.5 % of 47 610 printed verses in the
+  three completed scored documents; results identical to the first
+  rehearsal. On this real run the scorer refused another commit named as
+  the record, a missing `--run-record`, and an altered report whose
+  OUTPUTS.sha256 had been regenerated.
 
 **First dry run (tools at `f50c541`, superseded, kept as recorded):** four
 disclosed Set G documents under new keys and the README as a control;

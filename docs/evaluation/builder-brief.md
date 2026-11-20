@@ -7,6 +7,16 @@ later run software on the collection once; you will not run it, see it,
 or learn how it works. That is deliberate: the collection is useful only
 if whoever chooses the documents knows nothing about the software.
 
+## Before anything else
+
+Record in `access-records.md`: your session link (or your name), the
+environment, the repositories you can see, and the result of trying to
+open `https://github.com/pistio/abidingword`,
+`https://raw.githubusercontent.com/pistio/abidingword/HEAD/README.md` and
+`https://api.github.com/repos/pistio/abidingword`. Each should be refused.
+If any of them opens, do not read it: write that down, stop, and tell the
+owner.
+
 ## What you receive, and what you must not seek
 
 You receive only: this brief; `disclosed-editions.tsv` (editions that must
@@ -98,6 +108,11 @@ A documents folder (the files only) and a seal folder:
   every URL visited, every file read;
 * `review-ledger.md`: left for the reviewer, who checks your references
   and editions and signs it.
+
+Every file name you write (in the manifest, `checksums.sha256` and the
+seal) must be a plain relative path inside its folder: no absolute path,
+no `..`, no backslash. Put real files in both folders; symbolic links are
+refused.
 
 Run `python3 seal-set.py <seal folder> <documents folder>
 --inventory=disclosed-documents.sha256` until it passes, then hand over.
