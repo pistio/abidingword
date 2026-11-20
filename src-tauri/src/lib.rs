@@ -87,6 +87,20 @@ pub fn run() {
             }
             let state = start(app.handle());
             app.manage(state);
+            // Automatic daily SQLite snapshot on a worker: startup and
+            // writing remain usable even if the backup disk is full.
+            // This is database-only; a complete backup still uses .awbackup.
+            let backup_handle = app.handle().clone();
+            std::thread::spawn(move || {
+                let state = backup_handle.state::<AppState>();
+                if let Ok(core) = state.core() {
+                    match core.db.with_conn(|conn| db::backup::daily_snapshot(conn, &core.dirs.daily_backups())) {
+                        Ok(Some(path)) => log::info!("verified automatic database snapshot {}", path.display()),
+                        Ok(None) => {},
+                        Err(error) => log::warn!("automatic database snapshot unavailable: {error}"),
+                    }
+                }
+            });
             // Schedule optional Windows measurements after start() installs logging.
             // With tracing disabled, initialise() does not start a worker.
             #[cfg(target_os = "windows")]

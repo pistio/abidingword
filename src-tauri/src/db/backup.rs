@@ -56,3 +56,66 @@ fn backup_error(path: &Path, message: String) -> AppError {
         message,
     }
 }
+
+
+/// Creates an automatic, verified **database-only** safety snapshot at most
+/// once per UTC day. The managed source files are deliberately NOT copied:
+/// the user still needs a normal .awbackup for a complete portable backup.
+/// Only files this function named are eligible for retention cleanup.
+pub fn daily_snapshot(conn: &Connection, dir: &Path) -> AppResult<Option<PathBuf>> {
+    const RETAIN: usize = 7;
+    fs::create_dir_all(dir).map_err(|e| backup_error(dir, e.to_string()))?;
+    let version = migrations::current_version(conn)?;
+    let today = chrono::Utc::now().format("%Y-%m-%d").to_string();
+    let prefix = format!("abiding-word-v{version}-{today}T");
+
+    let candidates = fs::read_dir(dir).map_err(|e| backup_error(dir, e.to_string()))?;
+    let mut already_saved = false;
+    for item in candidates {
+        let item = item.map_err(|e| backup_error(dir, e.to_string()))?;
+        let name = item.file_name().to_string_lossy().into_owned();
+        // Only regular files we created, not symlinks, other backups or a
+        // database file placed here manually.
+        if !name.starts_with(&prefix) || !name.ends_with(".db")
+            || !item.file_type().map_err(|e| backup_error(dir, e.to_string()))?.is_file()
+        { continue; }
+        if verify(&item.path(), version).is_ok() {
+            already_saved = true;
+            break;
+        }
+    }
+    let created = if already_saved {
+        None
+    } else {
+        Some(pre_migration(conn, dir, version)?)
+    };
+
+    let mut snapshots = Vec::new();
+    for item in fs::read_dir(dir).map_err(|e| backup_error(dir, e.to_string()))? {
+        let item = item.map_err(|e| backup_error(dir, e.to_string()))?;
+        let name = item.file_name().to_string_lossy().into_owned();
+        if !name.starts_with("abiding-word-v") || !name.ends_with(".db")
+            || !item.file_type().map_err(|e| backup_error(dir, e.to_string()))?.is_file()
+        { continue; }
+        // Keep an invalid snapshot for diagnosis, rather than silently
+        // deleting something that might still be recoverable.
+        let path = item.path();
+        let version_in_name = name.split('-').nth(2).and_then(|s| s.strip_prefix('v'))
+            .and_then(|s| s.parse::<i64>().ok());
+        if let Some(its_version) = version_in_name {
+            if verify(&path, its_version).is_ok() {
+                let modified = item.metadata().and_then(|m| m.modified())
+                    .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+                snapshots.push((modified, path));
+            }
+        }
+    }
+    snapshots.sort_by_key(|(modified, path)| (*modified, path.clone()));
+    let excess = snapshots.len().saturating_sub(RETAIN);
+    for (_, old) in snapshots.into_iter().take(excess) {
+        if let Err(error) = fs::remove_file(&old) {
+            log::warn!("could not prune older automatic database snapshot {}: {error}", old.display());
+        }
+    }
+    Ok(created)
+}
