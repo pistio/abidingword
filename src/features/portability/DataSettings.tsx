@@ -1,4 +1,5 @@
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { ArchiveRestore, HardDriveDownload, Sprout, Upload } from "lucide-react";
 import { Button } from "@/design-system/Button";
@@ -281,16 +282,11 @@ function BackupRestore() {
         </section>
       )}
       {done && (
-        <Notice tone="success">
-          <p className="m-0">{t("settings.data.restored")}</p>
-          <p className="m-0 mt-1 type-meta">{t("settings.data.safetyCopy", { path: done.safetyCopy })}</p>
-          {done.filesSetAside > 0 && <p className="m-0 mt-1">{t("settings.data.setAside", { n: done.filesSetAside })}</p>}
-          <div className="mt-3">
-            <Button variant="primary" onClick={() => window.location.reload()}>
-              {t("settings.data.restoredContinue")}
-            </Button>
-          </div>
-        </Notice>
+        <RestoreCompleteDialog
+          message={t("settings.data.restored")}
+          safetyCopy={done.safetyCopy}
+          filesSetAside={done.filesSetAside}
+        />
       )}
       {error && <Notice tone="error">{error}</Notice>}
     </div>
@@ -417,18 +413,45 @@ function DailyRecovery() {
           </div>
         </section>
       )}
-      {done && (
-        <Notice tone="success">
-          <p className="m-0">{t("settings.data.dailyRestored")}</p>
-          <p className="m-0 mt-1 type-meta">{t("settings.data.safetyCopy", { path: done.safetyCopy })}</p>
-          <div className="mt-3">
-            <Button variant="primary" onClick={() => window.location.reload()}>
-              {t("settings.data.restoredContinue")}
-            </Button>
-          </div>
-        </Notice>
-      )}
+      {done && <RestoreCompleteDialog message={t("settings.data.dailyRestored")} safetyCopy={done.safetyCopy} />}
       {error && <Notice tone="error">{error}</Notice>}
     </section>
+  );
+}
+
+
+/** Block all stale editors from being used after a database has been replaced.
+ * The alert dialog is outside #root; the old workspace becomes inert until
+ * Continue reloads the application and reads the restored database afresh.
+ */
+function RestoreCompleteDialog({ message, safetyCopy, filesSetAside = 0 }: {
+  message: string;
+  safetyCopy: string;
+  filesSetAside?: number;
+}) {
+  const { t } = useTranslation();
+  useEffect(() => {
+    const root = document.getElementById("root");
+    const wasInert = root?.hasAttribute("inert") ?? false;
+    root?.setAttribute("inert", "");
+    return () => {
+      if (!wasInert) root?.removeAttribute("inert");
+    };
+  }, []);
+  return createPortal(
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/55 p-4">
+      <section role="alertdialog" aria-modal="true" aria-label={message}
+        className="flex w-full max-w-lg flex-col gap-3 rounded-aw border border-border-subtle bg-bg p-6 shadow-xl">
+        <h3 className="m-0 type-group text-text-strong">{message}</h3>
+        <p className="m-0 text-[0.9375rem]">{t("settings.data.safetyCopy", { path: safetyCopy })}</p>
+        {filesSetAside > 0 && <p className="m-0">{t("settings.data.setAside", { n: filesSetAside })}</p>}
+        <div className="flex justify-end">
+          <Button autoFocus variant="primary" onClick={() => window.location.reload()}>
+            {t("settings.data.restoredContinue")}
+          </Button>
+        </div>
+      </section>
+    </div>,
+    document.body,
   );
 }
