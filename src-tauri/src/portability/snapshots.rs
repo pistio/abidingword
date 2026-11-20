@@ -49,7 +49,7 @@ fn unavailable() -> AppError {
 }
 
 fn parse_name(name: &str) -> Option<(i64, NaiveDateTime)> {
-    if name.len() > 100 || !name.is_ascii() || name.contains(['/', '\\']) {
+    if name.len() > 100 || !name.is_ascii() || (name.contains('/') || name.contains('\\')) {
         return None;
     }
     let stem = name.strip_prefix("abiding-word-v")?.strip_suffix(".db")?;

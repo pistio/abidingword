@@ -129,7 +129,7 @@ fn symlink_snapshot_is_not_listed_or_opened() {
     let (_tmp, dirs, db) = new_install();
     write_note(&db, "\"Keep me\"");
     let id = snapshot(&db, &dirs);
-    let link_id = id.replacen("abiding-word-v27-", "abiding-word-v26-", 1);
+    let link_id = "abiding-word-v27-2001-01-01T00-00-00.000Z.db".to_string();
     symlink(dirs.daily_backups().join(&id), dirs.daily_backups().join(&link_id)).unwrap();
     assert!(!snapshots::list(&db, &dirs)
         .unwrap()

@@ -309,11 +309,27 @@ folder. To restore it, close Abiding Word and copy the folder back.
 > backup. Keep using **Back up everything…** to create a private `.awbackup`
 > of both your writing and the files it depends on.
 >
-> Automatic snapshots are created off the main window's thread. A full disk or
-> unreadable snapshot produces a warning in the log; it does not overwrite your
-> work. A corrupt snapshot is retained for investigation, and a fresh verified
-> copy is attempted. Older automatic snapshots (not manual backups or other
+> Automatic snapshots are created off the main window's thread, including
+> when Abiding Word stays open for days. A full disk or unreadable snapshot
+> produces a warning in the log; it does not overwrite your work. A corrupt
+> snapshot is retained for investigation, and a fresh verified copy is
+> attempted. Older valid automatic snapshots (not manual backups or other
 > files) are rotated after a newer one has passed verification.
+>
+> **To restore a daily recovery point:** open **Settings → Data and backup →
+> Automatic recovery points → Show recovery points**. Available copies show
+> their date, size and database version. Damaged/incompatible copies are
+> shown but cannot be selected. Choose **Review restore…**, read the warning,
+> then confirm. A verified copy of your *current* database goes into
+> `backups/pre-restore/` before anything is replaced. Click **Continue**
+> to reopen the application afterwards.
+>
+> **Important:** this restores only the saved database, not the imported books,
+> Bibles or images. Existing files stay unchanged. If an older saved citation
+> points to a file you removed later, that file will still be missing. Use
+> **Restore from backup…** with a complete `.awbackup` when you need the
+> original files as well. Same-schema daily snapshots are accepted; older
+> database versions must be restored through a compatible full backup.
 >
 > Abiding Word also protects you automatically. Before an update changes how
 > your data is stored, it saves a copy in the folder's **backups** subfolder.
