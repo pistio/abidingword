@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useApi } from "@/lib/ApiContext";
+import { databaseRestoreActive } from "@/lib/databaseRestoreLock";
 import type { SavedReaderPosition } from "@/lib/api";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useTranslation } from "react-i18next";
@@ -40,6 +41,7 @@ export function Shell({ info, workspace, initialReaderPositions = [] }: { info: 
   const inFlight = useRef(new Map<string, Promise<void>>());
   const positionReaders = useRef(new Map<string, () => ReaderPosition | null>());
   const persist = useCallback((sourceId: string, position: ReaderPosition) => {
+    if (databaseRestoreActive()) return;
     const fingerprint = JSON.stringify(position);
     if (persisted.current.get(sourceId) === fingerprint) return;
     persisted.current.set(sourceId, fingerprint);
@@ -64,6 +66,7 @@ export function Shell({ info, workspace, initialReaderPositions = [] }: { info: 
     else positionReaders.current.delete(sourceId);
   }, []);
   const capturePositions = useCallback(() => {
+    if (databaseRestoreActive()) return;
     for (const [sourceId, read] of positionReaders.current) {
       const position = read();
       if (position) rememberPosition(sourceId, position);

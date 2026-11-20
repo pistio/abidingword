@@ -7,6 +7,8 @@ import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
+import { settleOutstandingWrites } from "@/hooks/SaveTracker";
+import { beginDatabaseRestore, endDatabaseRestore } from "@/lib/databaseRestoreLock";
 import { formatDate } from "@/i18n/format";
 import type { BackupPreview, DailySnapshot, DailySnapshotRestore, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import { LegacyTeaching } from "./LegacyTeaching";
@@ -243,10 +245,13 @@ function BackupRestore() {
     if (!picked || busy) return;
     setBusy(true);
     setError(null);
+    beginDatabaseRestore();
     try {
+      await settleOutstandingWrites();
       setDone(await api.backupRestore(picked.path));
       setPicked(null);
     } catch (e) {
+      endDatabaseRestore();
       setError(toApiError(e).message);
     } finally {
       setBusy(false);
@@ -357,12 +362,15 @@ function DailyRecovery() {
     if (!selected || !selected.usable || busy || done) return;
     setBusy(true);
     setError(null);
+    beginDatabaseRestore();
     try {
+      await settleOutstandingWrites();
       const result = await api.dailySnapshotRestore(selected.id);
       setDone(result);
       setSelected(null);
       setItems(null);
     } catch (e) {
+      endDatabaseRestore();
       setSelected(null);
       setError(toApiError(e).message);
     } finally {
@@ -430,14 +438,7 @@ function RestoreCompleteDialog({ message, safetyCopy, filesSetAside = 0 }: {
   filesSetAside?: number;
 }) {
   const { t } = useTranslation();
-  useEffect(() => {
-    const root = document.getElementById("root");
-    const wasInert = root?.hasAttribute("inert") ?? false;
-    root?.setAttribute("inert", "");
-    return () => {
-      if (!wasInert) root?.removeAttribute("inert");
-    };
-  }, []);
+  useEffect(() => () => endDatabaseRestore(), []);
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/55 p-4">
       <section role="alertdialog" aria-modal="true" aria-label={message}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSaveTracker } from "./SaveTracker";
+import { databaseRestoreActive } from "@/lib/databaseRestoreLock";
 
 export const AUTOSAVE_DELAY_MS = 500;
 
@@ -28,6 +29,7 @@ export function useAutosave(
 
   const flush = useCallback(() => {
     clearTimeout(timer.current);
+    if (databaseRestoreActive()) { pending.current = null; return; }
     const value = pending.current;
     if (value === null) return;
     pending.current = null;
@@ -38,6 +40,7 @@ export function useAutosave(
 
   const schedule = useCallback(
     (value: string) => {
+      if (databaseRestoreActive()) return;
       pending.current = value;
       clearTimeout(timer.current);
       timer.current = setTimeout(flush, delay);
