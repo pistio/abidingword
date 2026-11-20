@@ -271,3 +271,20 @@ With the disclosed corpus (outside Git): `src-tauri/tests/real_document_editions
 * No figure covers an import after corrections: the harness reads each
   document once. Until requirement 4 of §6 is met, a corrected import can
   show as verified a verse the gate had withheld.
+
+## 12. Open integration work (main application, PR #54)
+
+Assigned to the main Abiding Word integration work, not to recognition
+development. The frozen recogniser (`08c6faa`) is not changed for any of
+it, and a Set H pass does not complete any of it.
+
+| # | Work | Where it is specified |
+|---:|---|---|
+| 1 | Run the structural verification gate again after every saved correction, new correction or re-recognition | §6, requirement 4 (**unfinished**) |
+| 2 | Regenerate provenance and per-book numbering evidence after such changes | §6, requirement 4 (**unfinished**) |
+| 3 | Migration 0028: provisional recognition standing and its evidence | §8 (proposal only) |
+| 4 | Unverified text never enters Scripture display, comparison, search, Study citations, Teaching, AI context or exports as verified Bible text | §4, §9 |
+| 5 | PDF processing in a memory-limited worker process | §6, requirement 1 |
+| 6 | Progress and cancellation | §6, requirement 2 |
+| 7 | Edition-specific numbering kept; cross-edition alignment only through validated mappings | §5 |
+| 8 | Windows integration and end-to-end acceptance | the application's own acceptance process (`docs/updates.md`) |

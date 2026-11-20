@@ -116,18 +116,28 @@ Codex's review of PR #53 and the follow-up review of `4dd9f8e`
 
 | File | SHA-256 |
 |---|---|
-| `scripts/evaluation/check-set.py` | `d7290e28b229f2b369ba53a9f9ab73a3736348b868620fc732a2fc95285605c4` |
+| `scripts/evaluation/check-set.py` | `01a13dde21510ad9e9f3b9c301d971e87feffbacdcaee0449d6c2f9180c3411f` |
 | `scripts/evaluation/seal-set.py` | `e343202e2cbf6fb35b9fa70b74b6a457b214d5bc9ece9ecc2c101d57c0e23c8f` |
 | `scripts/evaluation/run-withheld-set.sh` | `8515e92c329370236f5aab0495b4e08c4f6a76f64f6e8d0abbd59584181385a9` |
-| `scripts/evaluation/score-set.py` | `803a7adb99c1fcb336be59e2b8eb328fbaaa8b54c4daf6fc1c96aba78d29bc2d` |
-| `scripts/evaluation/disclosed-inventory.py` | `e656f38eb40fff814472a91503a37ca5d6107dfc95ab6733f92af341d7854021` |
+| `scripts/evaluation/score-set.py` | `658de955cc4594b5893ba84518ccbdfc7673b95da280edc5056c09835fb9a9bf` |
+| `scripts/evaluation/disclosed-inventory.py` | `61afa5818d1e5fc053b80a5018024b5ba042a18fa06861cba01f04d6f2dbb9da` |
 | `docs/evaluation/disclosed-documents.sha256` (the canonical inventory) | `a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8` |
-| `docs/evaluation/disclosed-editions.tsv` | `5241c244d3abea222370f78c916fc1e2a72696d046df5d8e456697607859fc6d` |
-| `docs/evaluation/builder-brief.md` | `7e1ea823a4fb0bd89070f3e3612f1b3909266378aa5a0357c6548734298468a2` |
-| `tests/evaluation/test_withheld_set_tools.py` | `b28e3a6f3d0ede4450e3ae24e33d92551c0662bfdcea24f534046e9d3f28a9b5` |
+| `docs/evaluation/disclosed-editions.tsv` | `9c736eb2394803dfe44b938eee7c88f0881c28f2113bbff2541a9f695cb0801a` |
+| `docs/evaluation/builder-brief.md` | `f4b63afab9c1ecfb70c692b2b4b95618cb8cc7801039ac04d9aa46e3c3459b1b` |
+| `tests/evaluation/test_withheld_set_tools.py` | `8cc2e2d0659b91dd00ced7fe5d365d909e1f286a972e3ab13d13741fcded2140` |
 | `scripts/corpus/audit-derived-completeness.py` (v2) | `d268175759f92add320530c9b8f5509f9f1b60ba726cc5f861501db5c90ab5f0` |
 
-Superseded pins, kept as recorded: at `4dd9f8e` check-set `66923a89…`,
+Final preparation (`a11fd0a`, 20 November 2026): the scorer names, beside
+the coverage figure, every scored document refused whole or failed to run
+(rehearsal 4 rescored: `rehearsal/protocol-2/run/score-final.*`); the
+builder's files no longer name the project (brief, edition list); and
+`check-set.py` changed in one comment only, so rehearsal 4's recorded
+`check_set` (`d7290e28…`) differs from the pin above by that comment
+(`git diff 5717388 a11fd0a -- scripts/evaluation/check-set.py`).
+
+Superseded pins, kept as recorded: at `e73b5d3` check-set `d7290e28…`,
+scorer `803a7adb…`, inventory script `e656f38e…`, editions `5241c244…`,
+brief `7e1ea823…`, tests `b28e3a6f…`; at `4dd9f8e` check-set `66923a89…`,
 seal-set `fa39c981…`, runner `d1b6a36c…`, scorer `13f9d4ae…`, brief
 `a21be798…`, tests `df370b5e…`; at `f50c541` runner `66f20eb9…`, scorer
 `740b0701…`.

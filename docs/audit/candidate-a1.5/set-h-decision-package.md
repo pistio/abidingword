@@ -39,53 +39,50 @@ source, and a private set repository protects the set, not the
 recogniser. Separation therefore has to come from the sessions and their
 network, and what cannot be enforced is stated as procedure.
 
-**Concrete setup (proposed):**
+**Concrete setup (proposed; tested 20 November 2026, see
+`data/isolation-test-2026-11-20/` and `SET-H-APPROVAL.md`):**
 
-1. **A private set repository**, created empty by the owner (for example
-   `pistio/abidingword-set-h`). It receives the builder's handover files
-   (`builder/`), the documents and references, the seal folder, and later
-   the run's outputs. Public-domain text only by default (below).
-2. **One cloud environment for the builder and the reviewer**, made by the
-   owner in Claude Code's environment settings:
-   * network access **Limited**, with **Allowed domains** set to the
-     approved source hosts only (the owner's list, for example the hosts
-     of Project Gutenberg and eBible.org), **package managers off**, MCP
-     servers off where the setting is offered; no GitHub host on the list;
-   * repositories: **the set repository only**, never this one;
-   * no setup script, no variables, no saved credentials.
-3. **Fresh sessions.** The builder and the reviewer are each a **new**
-   session started by the owner in that environment: not a fork,
-   continuation or child of any session that has worked on this project,
-   so no chat history, memory, `CLAUDE.md` or checkout of this repository
-   comes with it. The first message is the brief alone; the handover files
-   are already in the set repository's `builder/` folder.
-4. **A recorded start.** Each session first records in
-   `access-records.md`: its session link and environment name; the
-   repositories it can see (only the set repository); and an attempt to
-   fetch `https://github.com/pistio/abidingword`,
-   `https://raw.githubusercontent.com/pistio/abidingword/HEAD/README.md` and
-   `https://api.github.com/repos/pistio/abidingword`, each of which must
-   be refused by the network policy. **If any of these succeeds, the
-   separation for that session is procedural only:** the session says so
-   in `access-records.md`, stops, and the owner decides.
-5. **The transcript is the access log.** Every tool call, URL and file a
-   cloud session reads is in its transcript. The owner keeps the builder's
-   and the reviewer's transcripts, and the assessor checks them for any
-   access to this project before scoring.
-6. The **runner** is a separate session with this repository and the set
+1. **A private set repository** with a **neutral name** that does not name
+   the project (for example `pistio/collection-h`). It receives the
+   builder's handover files (`builder/`), the documents and references, the
+   seal folder, and later the run's outputs. Public-domain text only by
+   default (below).
+2. **One cloud environment for the builder and the reviewer**, neutrally
+   named: network access **Limited**, allowed hosts the approved sources
+   only (proposed: `ebible.org`; Project Gutenberg answers this cloud with
+   503 and cannot be used), **package managers off**, **MCP servers off**,
+   repositories **the set repository only**, no setup script, variables or
+   saved credentials.
+3. **Fresh sessions started by the owner.** The builder and the reviewer
+   are each a **new** session the owner starts in that environment, with
+   the brief as the first message. The test showed such a session carries
+   no checkout, memory, `CLAUDE.md` or history of this project. A session
+   started by another session will not push or widen its access without a
+   person, so the owner must start these.
+4. **The transcript is the access log.** Every command, address and file a
+   cloud session uses is in its transcript. The owner keeps the builder's
+   and the reviewer's transcripts; they are reviewed before the seal and
+   again by the assessor before scoring, for any access to a repository
+   other than the set repository.
+5. The **runner** is a separate session with this repository and the set
    repository: it runs the recogniser, so it may read it, but must not
    change it. It copies the outputs to the set repository (`runs/`), where
    the assessor, another fresh session with this repository, reads them;
    the committed `OUTPUTS.sha256` binds their bytes.
 
-**What this enforces, and what stays procedure:**
+The builder's files name neither the project nor where its source lives,
+and the builder is not told: in the tested environment **a session can read
+any public repository with `git`**, this one included, though its web page,
+raw files, API and archive are refused.
 
-| | Enforced where the platform offers it | Procedure, recorded |
+**What this enforces, and what stays procedure (as tested):**
+
+| | Enforced (demonstrated) | Not enforced, or procedure |
 |---|---|---|
-| No copy of the recogniser in the builder's or reviewer's session | no checkout of this repository; repositories fixed when the session starts | — |
-| No reading of the public source | the environment's network allowlist (no GitHub host), checked at the start (item 4) | if a GitHub host must be allowed for a source, separation is procedural for that session and is recorded as such |
-| No inherited context | a new session, not a fork or continuation | the owner starts it; its first message is the brief alone |
-| Nothing else learned about the recogniser | — | the brief, and the transcript reviewed by the assessor; a model's general knowledge cannot be ruled out |
+| No copy of the recogniser in the builder's or reviewer's session | no checkout, memory, `CLAUDE.md` or history of this project; GitHub tools and API scoped to the session's repository | — |
+| No reading of the public source | its web page, raw files, API and archive refused; other private repositories refused | **`git clone` of this public repository works**: separation is procedure (option A in `SET-H-APPROVAL.md` §4), or enforced only by making the repository private for the build window (option B) |
+| No inherited context | a new session started by the owner | its first message is the brief alone |
+| Nothing else learned about the recogniser | — | the brief names no project; the transcripts are reviewed; a model's general knowledge cannot be ruled out |
 | Published files independent of the recogniser | existed before it, by construction | the *choice* among them is the builder's: why the builder must not see the recogniser |
 
 **Copyright and cloud sessions.** The mandate forbids unapproved cloud AI
@@ -247,7 +244,7 @@ is then disclosed; corrections need a new candidate and a new withheld set.
 | Not a disclosed key | a key a disclosed manifest uses is refused (the harness would also run that edition's files) | it proves nothing about whether an edition is unseen |
 | One run | the output folder must not exist; the documents folder gets `.run-started` before the first document is read, and a folder that has it is refused; the runner **commits the run record itself** (`<seal>/../run/`: RUN.txt, OUTPUTS.sha256, CHECK.json, a commit of its own) as soon as the outputs are checksummed, and refuses to start where Git cannot commit; a committed run record makes every later attempt from a checkout that has it refuse | the runner pushes that commit at once. A copy of the documents made before the run, used from a checkout without the run record, cannot be stopped by code: access records |
 | The run as scored | the scorer requires `--run-record=<commit>`: the one commit that added the three files, unchanged and without uncommitted changes since; the run folder's three files must equal it; every output must match the committed OUTPUTS.sha256, nothing added, no link; RUN.txt's manifest and checksums must be the sealed ones and its seal commit an ancestor of the record. Anything missing or inconsistent refuses assessment. A run with other ceilings, binary or inventory is "not a protocol run" | the outputs themselves stay outside this repository: their bytes are bound by the committed OUTPUTS.sha256; keeping a copy is the runner's duty |
-| Independence of builder and reviewer | fresh sessions without this repository, in an environment whose network allowlist has no GitHub host (§2) | everything the table in §2 lists as procedure; the session transcripts are the access records |
+| Independence of builder and reviewer | fresh sessions without this repository; its web, raw, API and archive endpoints refused (§2, tested) | `git` reads of this public repository are **not** blocked (tested); everything §2 lists as procedure; the session transcripts are the access records |
 | No copyrighted text in this repository | the run record holds hashes, checks and scores only; reports that quote text stay outside Git | public-domain sources by default (§2) |
 
 ## 7. Ceilings and the exact run
@@ -318,15 +315,5 @@ run", as it must be.
 
 ## 10. Before authorising
 
-- [ ] Approve or amend §2–§8.
-- [ ] Approve the concrete setup of §2: the private set repository, the
-      builder/reviewer environment (its list of allowed source hosts,
-      package managers and MCP servers off, no GitHub host), fresh sessions
-      started by you, and the recorded start check; or name people instead.
-- [ ] Accept what §2 lists as procedure, with the transcripts as access
-      records.
-- [ ] Decide the licences allowed in cloud sessions: public domain only
-      (proposed), or also open licences.
-- [ ] Accept the authentic minimum and the qualification limit (§3),
-      including the risk that Korean or Hebrew slots cannot be filled.
-- [ ] Then, separately: authorise building, sealing and the single run.
+The owner's decisions, the readiness verdict and the remaining blocker are
+in **`SET-H-APPROVAL.md`**, which supersedes this section.
