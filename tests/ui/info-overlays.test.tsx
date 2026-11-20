@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api";
 import { createMemoryApi } from "../support/memoryApi";
@@ -28,6 +28,25 @@ async function openStudy(api: ReturnType<typeof createMemoryApi>) {
   await user.click(await screen.findByRole("button", { name: /Abiding/ }));
   await within(studyPane()).findByRole("textbox", { name: "Study title" });
   return user;
+}
+
+/** Hold the next paint so a newer keyboard target can be chosen before it. */
+function deferredFrames() {
+  const pending = new Map<number, FrameRequestCallback>();
+  let sequence = 0;
+  const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+    pending.set(++sequence, callback);
+    return sequence;
+  });
+  const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((handle) => { pending.delete(handle); });
+  return {
+    flush: () => act(() => {
+      const callbacks = [...pending.values()];
+      pending.clear();
+      for (const callback of callbacks) callback(performance.now());
+    }),
+    restore: () => { pending.clear(); request.mockRestore(); cancel.mockRestore(); },
+  };
 }
 
 describe("Bible Study information", () => {
@@ -88,6 +107,69 @@ describe("Bible Study information", () => {
     }
     expect(update).not.toHaveBeenCalled();
     expect(api.state.studies.find((s) => s.id === studyId)!.description ?? "").toBe("");
+  });
+
+  it.each(["outside click", "Escape"] as const)("keeps fresh Study writing focused and saved after information closes by %s", async (dismiss) => {
+    const { api, studyId, blockId } = await setup();
+    const user = await openStudy(api);
+    const writing = within(studyPane()).getByDisplayValue("The vine and the branches.") as HTMLTextAreaElement;
+    const saveWriting = vi.spyOn(api, "studyBlockUpdate");
+    const saveInfoDraft = vi.spyOn(api, "studyUpdate");
+    await openStudyOptions(user);
+    const panel = await openInfo(user, "Bible Study information");
+    await user.type(within(panel).getByRole("textbox", { name: /Purpose/ }), "Discard this draft.");
+    const frames = deferredFrames();
+    try {
+      if (dismiss === "Escape") await user.keyboard("{Escape}");
+      await user.click(writing);
+      expect(screen.queryByRole("dialog")).toBeNull();
+      const focusedBeforeFrame = document.activeElement === writing;
+      frames.flush();
+      const focusedAfterFrame = document.activeElement === writing;
+      await user.keyboard("{End} Study the whole passage.");
+      // Blur flushes the real autosave path; do not re-click or refocus the field,
+      // which would hide a stolen keyboard target before the writing is entered.
+      await act(async () => { fireEvent.blur(writing); });
+      const saved = (await api.studyGet(studyId)).sections[0]!.blocks.find((block) => block.id === blockId)!;
+      const expectedText = "The vine and the branches. Study the whole passage.";
+      expect({
+        focusedBeforeFrame,
+        focusedAfterFrame,
+        visibleWriting: writing.value,
+        savedWriting: saved.content,
+        writingPayloads: saveWriting.mock.calls.map(([input]) => ({ id: input.id, content: input.content })),
+        informationSaves: saveInfoDraft.mock.calls.length,
+      }).toEqual({
+        focusedBeforeFrame: true,
+        focusedAfterFrame: true,
+        visibleWriting: expectedText,
+        savedWriting: expectedText,
+        writingPayloads: [{ id: blockId, content: expectedText }],
+        informationSaves: 0,
+      });
+    } finally {
+      frames.restore();
+    }
+  });
+
+  it("keeps focus inside a reopened information panel when its previous close frame runs", async () => {
+    const { api } = await setup();
+    const user = await openStudy(api);
+    await openStudyOptions(user);
+    await openInfo(user, "Bible Study information");
+    const frames = deferredFrames();
+    try {
+      await user.keyboard("{Escape}");
+      expect(screen.queryByRole("dialog")).toBeNull();
+      const reopened = await openInfo(user, "Bible Study information");
+      const status = within(reopened).getByRole("combobox", { name: "Status" });
+      expect(status).toHaveFocus();
+      frames.flush();
+      expect(status).toHaveFocus();
+      expect(screen.getByRole("button", { name: "Bible Study information" })).toHaveAttribute("aria-expanded", "true");
+    } finally {
+      frames.restore();
+    }
   });
 
   it("closes without a note when nothing was changed", async () => {

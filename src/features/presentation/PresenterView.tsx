@@ -212,13 +212,37 @@ export function PresenterView({ doc, onClose }: PresenterViewProps) {
     if (next && !next.disabled) next.focus();
     else exitButton.current?.focus();
   }, []);
-  /** Back from a panel or the audience view: the keyboard returns to the button that opened it. */
-  const returnTo = (name: string) =>
-    requestAnimationFrame(() => {
-      // On a phone, Scripture, Audience screen and View are reached through the menu.
-      const target = [toolButtons.current[name], toolButtons.current.menu, exitButton.current].find((el) => el?.isConnected);
-      target?.focus();
+  const pendingFocus = useRef<number | null>(null);
+  const focusMounted = useRef(true);
+  useEffect(() => {
+    focusMounted.current = true;
+    return () => {
+      focusMounted.current = false;
+      if (pendingFocus.current !== null) cancelAnimationFrame(pendingFocus.current);
+      pendingFocus.current = null;
+    };
+  }, []);
+  /** Restore after rendering, unless a later action has already chosen where the keyboard belongs. */
+  const focusAfterFrame = useCallback((destination: () => HTMLElement | null | undefined) => {
+    if (!focusMounted.current) return;
+    if (pendingFocus.current !== null) cancelAnimationFrame(pendingFocus.current);
+    const previous = document.activeElement;
+    const frame = requestAnimationFrame(() => {
+      if (!focusMounted.current || pendingFocus.current !== frame) return;
+      pendingFocus.current = null;
+      const current = document.activeElement;
+      if (current && current !== document.body && current !== document.documentElement && current !== previous) return;
+      const target = destination();
+      if (target?.isConnected) target.focus();
     });
+    pendingFocus.current = frame;
+  }, []);
+  /** Back from a panel or the audience view: the keyboard returns to the button that opened it. */
+  const returnTo = useCallback((name: string) =>
+    focusAfterFrame(() => {
+      // On a phone, Scripture, Audience screen and View are reached through the menu.
+      return [toolButtons.current[name], toolButtons.current.menu, exitButton.current].find((el) => el?.isConnected);
+    }), [focusAfterFrame]);
 
   // The talk begins with the first move or when the audience screen is first shown: the timer starts then (once).
   const begun = useRef(false);
@@ -395,7 +419,7 @@ export function PresenterView({ doc, onClose }: PresenterViewProps) {
       run(command);
       return true;
     },
-    [activeTool, audience, close, closeAudience, go, leaving, panel, run, t, total, typed],
+    [activeTool, audience, close, closeAudience, go, leaving, panel, returnTo, run, t, total, typed],
   );
 
   useEffect(() => {
@@ -837,8 +861,9 @@ export function PresenterView({ doc, onClose }: PresenterViewProps) {
                 setPanel("none");
               }}
               onCloseWindow={() => {
+                const closeButton = headerRef.current?.closest("[data-presenter-root]")?.querySelector<HTMLElement>("[data-presenter-panel] [data-panel-close]");
                 closeAudience();
-                requestAnimationFrame(() => document.querySelector<HTMLElement>("[data-presenter-panel] [data-panel-close]")?.focus());
+                focusAfterFrame(() => closeButton);
               }}
             />
           )}

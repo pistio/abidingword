@@ -51,10 +51,19 @@ export function InfoControl<T>({
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const button = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const focusFrame = useRef<number | null>(null);
   const buttonId = useId();
   const dirty = open && draft !== null && JSON.stringify(draft) !== JSON.stringify(start);
 
+  const cancelFocusReturn = useCallback(() => {
+    if (focusFrame.current !== null) cancelAnimationFrame(focusFrame.current);
+    focusFrame.current = null;
+  }, []);
+  useEffect(() => cancelFocusReturn, [cancelFocusReturn]);
+
   const show = () => {
+    cancelFocusReturn();
     const saved = initial();
     setStart(saved);
     setDraftState(saved);
@@ -64,13 +73,24 @@ export function InfoControl<T>({
   };
   const close = useCallback(
     (discarded: boolean) => {
+      const focused = document.activeElement;
+      const ownsFocus = panel.current?.contains(focused) || focused === button.current || focused === document.body;
+      cancelFocusReturn();
       setOpen(false);
       setError(null);
       if (discarded) setNotice(t("common.info.discarded"));
-      // Back to the control it was opened from (found by id: this also runs from the panel's own actions).
-      requestAnimationFrame(() => document.getElementById(buttonId)?.focus());
+      if (!ownsFocus) return;
+      // Outside mousedown dismisses this panel before the clicked editor takes
+      // focus. A later frame must not overrule that newer choice (or a panel
+      // action that deliberately focused something else).
+      focusFrame.current = requestAnimationFrame(() => {
+        focusFrame.current = null;
+        const current = document.activeElement;
+        if (current && current !== document.body && current !== focused) return;
+        button.current?.focus({ preventScroll: true });
+      });
     },
-    [t, buttonId],
+    [t, cancelFocusReturn],
   );
   const dismiss = () => close(dirty);
   const apply = async () => {
@@ -119,7 +139,7 @@ export function InfoControl<T>({
         {notice}
       </span>
       {open && draft !== null && (
-        <InfoPanel title={title} anchor={button} onDismiss={dismiss}>
+        <InfoPanel title={title} anchor={button} panel={panel} onDismiss={dismiss}>
           <div className="flex flex-col gap-4">{fields(draft, (next) => setDraftState(next))}</div>
           {error && (
             <p role="alert" className="m-0 text-[0.9375rem] text-danger">
@@ -133,11 +153,16 @@ export function InfoControl<T>({
               {t("common.save")}
             </Button>
           </div>
-          {actions && <div className="flex flex-col gap-4 border-t border-border-subtle pt-4">{actions(() => close(false))}</div>}
+          {actions && <InfoActions actions={actions} onClose={() => close(false)} />}
         </InfoPanel>
       )}
     </span>
   );
+}
+
+/** Render action content with an event callback; closing never runs during this control's render. */
+function InfoActions({ actions, onClose }: { actions: (close: () => void) => ReactNode; onClose: () => void }) {
+  return <div className="flex flex-col gap-4 border-t border-border-subtle pt-4">{actions(onClose)}</div>;
 }
 
 /**
@@ -146,10 +171,9 @@ export function InfoControl<T>({
  * window. It takes focus, keeps Tab inside while open, and closes on Escape
  * or a click outside. Not a full-screen modal: nothing behind is dimmed.
  */
-function InfoPanel({ title, anchor, onDismiss, children }: { title: string; anchor: React.RefObject<HTMLElement | null>; onDismiss: () => void; children: ReactNode }) {
+function InfoPanel({ title, anchor, panel, onDismiss, children }: { title: string; anchor: React.RefObject<HTMLElement | null>; panel: React.RefObject<HTMLDivElement | null>; onDismiss: () => void; children: ReactNode }) {
   const { t } = useTranslation();
   const titleId = useId();
-  const panel = useRef<HTMLDivElement>(null);
   const dismissRef = useRef(onDismiss);
   useEffect(() => {
     dismissRef.current = onDismiss;
@@ -187,7 +211,7 @@ function InfoPanel({ title, anchor, onDismiss, children }: { title: string; anch
     };
     document.addEventListener("mousedown", away);
     return () => document.removeEventListener("mousedown", away);
-  }, [anchor]);
+  }, [anchor, panel]);
 
   return createPortal(
     <div

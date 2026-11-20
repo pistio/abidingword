@@ -1,5 +1,5 @@
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { ApiError } from "@/lib/api";
 import type { AssistReply } from "@/types/teaching";
@@ -127,6 +127,64 @@ describe("teaching preparation", () => {
     expect(prep(api)).toMatchObject({ audience: "Families", introduction: "Have you ever pruned a rose?" });
     // With the assistant off there is no assistant anywhere.
     expect(within(article).queryByRole("button", { name: /^AI Help with/ })).toBeNull();
+  });
+
+  it("keeps fresh Teaching writing focused and saves its exact payload after information Save", async () => {
+    const { api } = await setup();
+    const { user } = await renderApp(api);
+    await openTeaching(user);
+    await user.click(within(studyPane()).getByRole("radio", { name: "Sermon / Talk" }));
+    await user.click(within(studyPane()).getByRole("button", { name: "Start" }));
+    const article = await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
+    const introduction = field(article, "Introduction") as HTMLTextAreaElement;
+    const introductionId = prep(api).blocks!.find((block) => block.role === "introduction")!.id;
+    const saveWriting = vi.spyOn(api, "teachingBlockUpdate");
+    const saveInformation = vi.spyOn(api, "teachingUpdate");
+    const info = await openAbout(user, article);
+    await user.type(within(info).getByRole("textbox", { name: "Who it is for" }), "Families");
+    const pending = new Map<number, FrameRequestCallback>();
+    let sequence = 0;
+    const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      pending.set(++sequence, callback);
+      return sequence;
+    });
+    const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((handle) => { pending.delete(handle); });
+    try {
+      await user.click(within(info).getByRole("button", { name: "Save" }));
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      await user.click(introduction);
+      const focusedBeforeFrame = document.activeElement === introduction;
+      act(() => {
+        const callbacks = [...pending.values()];
+        pending.clear();
+        for (const callback of callbacks) callback(performance.now());
+      });
+      const focusedAfterFrame = document.activeElement === introduction;
+      const text = "Have you ever pruned a rose?";
+      await user.keyboard(text);
+      await act(async () => { fireEvent.blur(introduction); });
+      expect({
+        focusedBeforeFrame,
+        focusedAfterFrame,
+        visibleWriting: introduction.value,
+        savedWriting: prep(api).introduction,
+        writingPayloads: saveWriting.mock.calls.map(([input]) => ({ id: input.id, body: input.body })),
+        savedAudience: prep(api).audience,
+        informationSaves: saveInformation.mock.calls.length,
+      }).toEqual({
+        focusedBeforeFrame: true,
+        focusedAfterFrame: true,
+        visibleWriting: text,
+        savedWriting: text,
+        writingPayloads: [{ id: introductionId, body: text }],
+        savedAudience: "Families",
+        informationSaves: 1,
+      });
+    } finally {
+      pending.clear();
+      request.mockRestore();
+      cancel.mockRestore();
+    }
   });
 
   it("adds, orders and removes main points from the keyboard", async () => {
