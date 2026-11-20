@@ -18,7 +18,6 @@ pub fn settings_update(
     state.db(|conn| settings::update(conn, &input))
 }
 
-
 /// Saved library reading places, included in ordinary database backups.
 #[tauri::command(async)]
 pub fn source_reader_positions(

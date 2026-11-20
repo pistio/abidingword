@@ -30,7 +30,10 @@ fn place(page: u32) -> saved::ReaderPosition {
             fragment: None,
             item_offset: 0.0,
         }),
-        history: Some(saved::ReaderHistory { entries: vec![], index: -1 }),
+        history: Some(saved::ReaderHistory {
+            entries: vec![],
+            index: -1,
+        }),
     }
 }
 
@@ -50,7 +53,8 @@ fn places_are_kept_per_source_and_updated_in_recent_order() {
         assert_eq!(rows[1].source_id, "two");
         assert_eq!(rows[1].position.page, Some(7));
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 #[test]
@@ -66,7 +70,10 @@ fn invalid_places_never_replace_a_last_good_place() {
         wrong.place.as_mut().unwrap().fraction = f64::NAN;
         assert!(saved::save(conn, "one", &wrong).is_err());
         let mut wrong = place(100);
-        wrong.history = Some(saved::ReaderHistory { entries: vec![], index: 0 });
+        wrong.history = Some(saved::ReaderHistory {
+            entries: vec![],
+            index: 0,
+        });
         assert!(saved::save(conn, "one", &wrong).is_err());
         let mut wrong = place(100);
         wrong.history = Some(saved::ReaderHistory {
@@ -77,7 +84,8 @@ fn invalid_places_never_replace_a_last_good_place() {
         assert!(saved::save(conn, "missing", &place(1)).is_err());
         assert_eq!(saved::list(conn)?[0].position.page, Some(5));
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 #[test]
@@ -94,7 +102,8 @@ fn trashed_sources_do_not_reappear_and_permanent_removal_forgets_place() {
         saved::forget(conn, "one")?;
         assert!(saved::list(conn)?.is_empty());
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 #[test]
@@ -110,16 +119,22 @@ fn ordinary_backup_restore_preserves_reading_history_and_place() {
             index: 0,
         });
         saved::save(conn, "one", &position)
-    }).unwrap();
+    })
+    .unwrap();
     let output = temp.path().join("safe.awbackup");
     backup::create(&db, &dirs, &output).unwrap();
-    db.with_conn(|conn| saved::save(conn, "one", &place(10))).unwrap();
+    db.with_conn(|conn| saved::save(conn, "one", &place(10)))
+        .unwrap();
     backup::restore(&db, &dirs, &output).unwrap();
     db.with_conn(|conn| {
         let records = saved::list(conn)?;
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].position.page, Some(6));
-        assert_eq!(records[0].position.history.as_ref().unwrap().entries.len(), 1);
+        assert_eq!(
+            records[0].position.history.as_ref().unwrap().entries.len(),
+            1
+        );
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }

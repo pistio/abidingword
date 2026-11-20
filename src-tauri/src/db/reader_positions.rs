@@ -92,11 +92,13 @@ fn valid(position: &ReaderPosition) -> bool {
 }
 
 fn source_exists(conn: &Connection, source_id: &str) -> AppResult<bool> {
-    let exists: Option<i64> = conn.query_row(
-        "SELECT 1 FROM sources WHERE id=?1 AND deleted_at IS NULL AND state != 'trashed'",
-        [source_id],
-        |row| row.get(0),
-    ).optional()?;
+    let exists: Option<i64> = conn
+        .query_row(
+            "SELECT 1 FROM sources WHERE id=?1 AND deleted_at IS NULL AND state != 'trashed'",
+            [source_id],
+            |row| row.get(0),
+        )
+        .optional()?;
     Ok(exists.is_some())
 }
 
@@ -106,7 +108,9 @@ pub fn list(conn: &Connection) -> AppResult<Vec<SavedReaderPosition>> {
     let mut seen = HashSet::new();
     let mut result = Vec::new();
     for row in stored {
-        if result.len() == MAX_SOURCES { break; }
+        if result.len() == MAX_SOURCES {
+            break;
+        }
         if row.source_id.len() > 128
             || row.source_id.is_empty()
             || !seen.insert(row.source_id.clone())
@@ -131,14 +135,18 @@ pub fn save(conn: &Connection, source_id: &str, position: &ReaderPosition) -> Ap
     }
     let mut entries = list(conn)?;
     entries.retain(|row| row.source_id != source_id);
-    entries.insert(0, SavedReaderPosition {
-        source_id: source_id.to_string(),
-        position: position.clone(),
-    });
+    entries.insert(
+        0,
+        SavedReaderPosition {
+            source_id: source_id.to_string(),
+            position: position.clone(),
+        },
+    );
     entries.truncate(MAX_SOURCES);
-    let encoded = serde_json::to_vec(&entries)
-        .map_err(|e| AppError::Unexpected(e.to_string()))?;
-    if encoded.len() > MAX_JSON_BYTES { return Err(invalid()); }
+    let encoded = serde_json::to_vec(&entries).map_err(|e| AppError::Unexpected(e.to_string()))?;
+    if encoded.len() > MAX_JSON_BYTES {
+        return Err(invalid());
+    }
     settings::write(conn, KEY, &entries)
 }
 
