@@ -438,7 +438,12 @@ function RestoreCompleteDialog({ message, safetyCopy, filesSetAside = 0 }: {
   filesSetAside?: number;
 }) {
   const { t } = useTranslation();
-  useEffect(() => () => endDatabaseRestore(), []);
+  useEffect(() => {
+    // StrictMode may mount/clean up/re-mount effects in development.
+    // Reassert the lock on every setup, so stale autosaves never restart.
+    beginDatabaseRestore();
+    return () => endDatabaseRestore();
+  }, []);
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/55 p-4">
       <section role="alertdialog" aria-modal="true" aria-label={message}

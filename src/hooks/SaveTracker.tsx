@@ -5,7 +5,6 @@ import { toApiError } from "@/lib/api";
 // Track all started writes even if the StudyPane's provider unmounts while
 // opening Settings. Recovery must not overwrite a database with queued saves.
 const outstandingWrites = new Set<Promise<unknown>>();
-let lastWriteError: unknown = null;
 
 /** Waits for in-flight autosaves before replacing the whole database.
  * A failed save blocks recovery instead of silently losing unsaved writing.
@@ -14,7 +13,6 @@ export async function settleOutstandingWrites(): Promise<void> {
   const results = await Promise.allSettled([...outstandingWrites]);
   const failed = results.find((r): r is PromiseRejectedResult => r.status === "rejected");
   if (failed) throw failed.reason;
-  if (lastWriteError) throw lastWriteError;
 }
 
 export type SaveStatus =
@@ -46,8 +44,8 @@ export function SaveTrackerProvider({ children }: { children: ReactNode }) {
   const track = useCallback((save: Promise<unknown>) => {
     outstandingWrites.add(save);
     save.then(
-      () => { outstandingWrites.delete(save); lastWriteError = null; },
-      (error) => { outstandingWrites.delete(save); lastWriteError = error; },
+      () => { outstandingWrites.delete(save); },
+      () => { outstandingWrites.delete(save); },
     );
     pending.current.add(save);
     const forget = () => pending.current.delete(save);
