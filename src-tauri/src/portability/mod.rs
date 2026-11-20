@@ -19,6 +19,7 @@
 
 pub mod backup;
 pub mod project;
+pub mod snapshots;
 
 use std::fs;
 use std::io::{Read, Write};

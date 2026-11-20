@@ -9,7 +9,7 @@ use tauri::State;
 use super::materials::{chosen_path, refuse_unasked};
 use super::CommandResult;
 use crate::error::{AppError, UserMessage};
-use crate::portability::{backup, project};
+use crate::portability::{backup, project, snapshots};
 use crate::state::AppState;
 
 fn picked(raw: &str) -> Result<PathBuf, AppError> {
@@ -89,6 +89,27 @@ pub fn backup_restore(
     let path = picked(&path)?;
     let core = state.core()?;
     Ok(backup::restore(&core.db, &core.dirs, &path)?)
+}
+
+/// Lists validly named daily recovery points without reading private content.
+/// Corrupt/incompatible files are visible as disabled choices.
+#[tauri::command(async)]
+pub fn daily_snapshot_list(
+    state: State<'_, AppState>,
+) -> CommandResult<Vec<snapshots::Snapshot>> {
+    let core = state.core()?;
+    Ok(snapshots::list(&core.db, &core.dirs)?)
+}
+
+/// Database-only recovery. The caller confirms replacement explicitly;
+/// no filesystem paths are accepted and the managed source files are untouched.
+#[tauri::command(async)]
+pub fn daily_snapshot_restore(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<snapshots::RestoredSnapshot> {
+    let core = state.core()?;
+    Ok(snapshots::restore(&core.db, &core.dirs, &id)?)
 }
 
 /// Adds the example project, only when asked; never twice.

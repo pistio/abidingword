@@ -153,6 +153,8 @@ pub fn run() {
             commands::portability::backup_create,
             commands::portability::backup_inspect,
             commands::portability::backup_restore,
+            commands::portability::daily_snapshot_list,
+            commands::portability::daily_snapshot_restore,
             commands::portability::sample_project_install,
             commands::studies::study_list,
             commands::studies::study_delete,

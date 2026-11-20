@@ -40,6 +40,8 @@ permissions = [
   "allow-backup-create",
   "allow-backup-inspect",
   "allow-backup-restore",
+  "allow-daily-snapshot-list",
+  "allow-daily-snapshot-restore",
   "allow-sample-project-install",
   "allow-study-list",
   "allow-study-delete",
