@@ -1,10 +1,10 @@
 # Abiding Word — continuity, current state and complete known roadmap
 
-**Snapshot: 19 November 2026. Development environment: Codex Cloud / GitHub; Windows is the primary native acceptance environment. This is not NiPogi deployment work.**
+**Snapshot: 19 November 2026, continued 20 November 2026. Development environment: Codex Cloud / GitHub; Windows is the primary native acceptance environment. This is not NiPogi deployment work.**
 
 This handover reconciles the surviving implementation records, current source, open issues and later owner decisions. It replaces neither the original concept nor historical evidence. It prevents an older handover, an unclosed issue or an outdated milestone table from restarting completed work or losing future obligations.
 
-**Current position:** the application foundation and most core study/teaching workflows exist. The active delivery is the global Source PDF/navigation and whole-source coverage candidate in draft PR #54. The single already-approved Windows installer build succeeded on attempt 1, and its downloaded package passed static source/payload verification. The owner now reports that the supplied handbook correction works. A later follow-up adds explicit Settings source editing and multilingual book-name hierarchy support; it is additional application code and is not in that existing ZIP. The remaining native/A.4 acceptance and the independent Scripture-recognition programme are still outstanding. The product is not declared finished or release-ready.
+**Current position:** the application foundation and most core study/teaching workflows exist. The active delivery is the global Source PDF/navigation and whole-source coverage candidate in draft PR #54. The single already-approved Windows installer build succeeded on attempt 1, and its downloaded package passed static source/payload verification. The owner now reports that the supplied handbook correction works. A later follow-up adds explicit Settings source editing and multilingual book-name hierarchy support; it is additional application code and is not in that existing ZIP. The 20 November continuation also corrects reproduced Study/Teaching and Presenter focus races; see section 2.4. The remaining native/A.4 acceptance and the independent Scripture-recognition programme are still outstanding. The product is not declared finished or release-ready.
 
 ## 1. Ultimate objective
 
@@ -30,7 +30,7 @@ Authoritative references: [concept](../concept.md), [architecture](../architectu
 | Item | Snapshot |
 |---|---|
 | Application review | [Draft PR #54](https://github.com/pistio/abidingword/pull/54), stacked on the reviewed Windows lineage |
-| Latest application follow-up | `288076c3a8117bca429d2e62d8e0b2185525e731`; tree `7b939be156fb836e7e13f328dfcbaa1363d940f9`; Settings editing and multilingual hierarchy, not yet in the Windows ZIP |
+| Latest application follow-up | `13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54`; tree `50c15740b989c478900d86a31d606956fc3b9f93`; preserves Settings/language work and corrects writing/Presenter focus; not yet in the Windows ZIP |
 | Delivered Windows application source | `bcf4858591f6d306838773ebc884550ca27d19b6` |
 | Delivered Windows application tree | `f2a06a00276d4913d909dc859dadc429044ab402` |
 | Global Source work | General PDF extraction/navigation fixes and whole-source coverage implemented; later Settings/menu and multilingual-hierarchy follow-up described in section 2.3 |
@@ -41,7 +41,9 @@ Authoritative references: [concept](../concept.md), [architecture](../architectu
 | Build outcome | **Success on attempt 1**, completed `2026-11-19T21:57:32Z`; one application compilation and one NSIS package. Downloaded installer and bundled payload verified. Native desktop acceptance remains pending. |
 | Approval scope | The one Windows build was already approved. It does not imply main merge, automatic update, signing, public release or NiPogi deployment. |
 
-Current Source records:
+Current application and Source records:
+
+- [Writing/Presenter focus continuation](focus-restoration-20261120.md) and [exact verification](focus-restoration-20261120-verification.json).
 
 - [Source navigation and real-file investigation](source-navigation-20261119.md).
 - [Global PDF extraction and generality](pdf-extraction-generality-20261119.md).
@@ -113,9 +115,17 @@ The owner requested an explicit edit action in Settings and broader language/nam
 - Source headings use all 101 installed language dictionaries, including German **Sprüche/Sprichwörter/Sprueche/Sprichwoerter**, **Prediger/Kohelet**, **1. Mose/Genesis**, formal Mose forms and same-book parenthetical synonyms. Ambiguities and meaningful accent distinctions remain protected.
 - Source index version 6 refreshes structural links from versions 4/5 without replacing literal/manual links. Existing supplied EPUB Contents refreshes on opening after file/text identity checks.
 - PDF analysis version 5 recommends an explicit **Rebuild structure** where older extraction may have omitted destinations whose printed Contents and body headings use different name variants. Stored JSON version 1 and schema 27 remain unchanged.
-- The complete frontend run is now 1,364/1,364; the complete locked Rust suite passes 1,146 tests with zero failures and nine ignored. All 34 focused source/PDF tests and the required static/build checks pass. Exact identity and verification are in the companion record; preserve the earlier installer's separate evidence rather than rewriting it.
+- The Settings/language frontend run is 1,364/1,364; the complete locked Rust suite passes 1,146 tests with zero failures and nine ignored. All 34 focused source/PDF tests and the required static/build checks pass. Exact identity and verification are in the companion record; preserve the earlier installer's separate evidence rather than rewriting it.
 
 This follow-up requires a subsequent Windows build and native acceptance. The earlier single-build permission has already been used; no additional paid Actions, merge, tag, release or updater publication are part of this follow-up.
+
+### 2.4 Writing and Presenter focus follow-up, 20 November
+
+The recorded delayed-focus investigation is now reproduced and corrected. Closing information can no longer take keyboard focus back from a newly selected writing field. Closing presenter panels, closing the audience window, and leaving/reopening Presenter preserve the latest focus choice. Escape/Cancel still return to the opener when there is no newer target. Saving or cancelling a Study note also preserves a newly selected passage field or reopened draft. The fix covers the shared information control, Study note capture and both presentation components; it changes no save API, debounce, keyboard routing, database schema or recognizer code.
+
+Controlled-frame regressions check actual Study/Teaching writing and save payloads, as well as presenter keyboard behavior and panel lifecycle. The before-fix writing examples show that intended keystrokes never reached the writing field; the information Save itself succeeded. This proves a focus defect, not a failure of the storage API, and does not retrospectively establish the cause of every historical failing assertion.
+
+[Implementation and acceptance](focus-restoration-20261120.md) and [verification](focus-restoration-20261120-verification.json) record the exact candidate. The next Windows build is prepared as an inert recipe; the earlier single-build allowance was already used. Existing `bcf4858` installer evidence remains separate. No additional build, main merge, signing, release or updater publication is inferred.
 
 ## 3. Implemented foundation — preserve rather than rebuild
 
@@ -191,13 +201,13 @@ The owner repeated that Claude is working while requesting the Settings/name fol
 | Research branch | `claude/recognition-a1.5-evaluation-qualification` |
 | Frozen recognizer code | `08c6faac8c92c6c791ec1e7bbbe997362fa1059f` |
 | Code tree | `be296f2570dcbcc251789b2b1e1bbe2c9e7c2798` |
-| Latest documentation/tooling head | `f50c541fe95acb62715e89dc1bd60886043b77e8`, 19 November 02:26:50 UTC |
+| Latest reviewed documentation/tooling head | `4dd9f8e12be1c531f55ba5121423a184a6ae97cb`, reviewed 19 November; later Claude work requires its own report |
 | Frozen harness SHA-256 | `920f7e28e6c03f0c2fd7832bb78ce7c2077d6767541f0b86bb02f2fec1ed3a8e` |
 | Pipeline | `AW_PIPELINE=structural`, Rust/Cargo 1.97.0, Linux x86-64 |
 | Application integration | Not completed; this is research evidence and an engineering handover |
 | Independent Set H | Not created, selected, downloaded, inspected, sealed or run |
 
-Primary references: [PR #53](https://github.com/pistio/abidingword/pull/53), [A1.5 freeze](https://github.com/pistio/abidingword/blob/f50c541fe95acb62715e89dc1bd60886043b77e8/docs/audit/candidate-a1.5/FREEZE.md), [Codex integration handover](https://github.com/pistio/abidingword/blob/f50c541fe95acb62715e89dc1bd60886043b77e8/docs/handover-scripture-recognition-codex.md), [Set H decision package](https://github.com/pistio/abidingword/blob/f50c541fe95acb62715e89dc1bd60886043b77e8/docs/audit/candidate-a1.5/set-h-decision-package.md).
+Primary references: [PR #53](https://github.com/pistio/abidingword/pull/53), [A1.5 freeze](https://github.com/pistio/abidingword/blob/4dd9f8e12be1c531f55ba5121423a184a6ae97cb/docs/audit/candidate-a1.5/FREEZE.md), [Codex integration handover](https://github.com/pistio/abidingword/blob/4dd9f8e12be1c531f55ba5121423a184a6ae97cb/docs/handover-scripture-recognition-codex.md), [Set H decision package](https://github.com/pistio/abidingword/blob/4dd9f8e12be1c531f55ba5121423a184a6ae97cb/docs/audit/candidate-a1.5/set-h-decision-package.md).
 
 ### 6.1 Completed reported work
 
@@ -219,7 +229,7 @@ The committed freeze reports 1,101 Rust tests and 26 corpus-tool tests passing, 
 
 ### 6.2 Remaining recognition completion gates
 
-1. **Independent evidence.** Set H is prepared as a protocol, not a completed test. Its proposal includes at least 24 documents, at least 12 authentic published files if obtainable, EPUB/PDF/DOCX, nine language families, canon/numbering variety, three non-Scripture controls and two mixed-content challenges. Builder, reference reviewer, runner and assessor have distinct roles/access records. A frozen single run uses 30 minutes and 4 GB address space per document. Gates require zero wrong verified text, zero nonexistent verified references, zero false control/mixed-content results, and clean refusal under resource failure. Coverage remains separately reported. The earlier independent-evaluation approval boundary is retained; no authorisation or success is invented. Reference texts must match the exact edition, revision, canon and versification; unmatched documents are declared exploratory before sealing. A document/reference divergence discovered after the run stays a failure in the raw score, with its explanation alongside it. If H fails, H becomes disclosed and the corrected candidate needs a new withheld set. The qualified derived-document completeness auditor currently covers USFM→DOCX only, not PDF/EPUB.
+1. **Independent evidence.** Set H is a protocol, not a completed test. The latest reviewed allocation is 24 documents: 10 EPUB, nine PDF and five DOCX; 19 scored, three controls and two mixed. Its declared authentic minimum is eight completed authentic scored documents across two formats and four languages, with 20,000 reference/printed verses. These are not 20,000 correctly verified verses. Below the declared minimum, the result must carry the protocol's qualification limit; coverage has no pass mark and must remain visible. Unmatched references and unavailable language slots are declared exploratory or omitted before sealing and recorded as deviations. Builder, reference reviewer, runner and assessor have distinct roles/access records. A frozen single run uses 30 minutes and 4 GB address space per document. Scored accuracy, control results, mixed allowed-reference compliance and execution outcomes are separate; mixed/exploratory documents do not enter the accuracy claim. No independent-set approval or success is invented. References must match the exact edition, revision, canon and versification. A document/reference divergence found after the run stays in the raw score with its explanation. If H fails, H becomes disclosed and a corrected candidate needs a new withheld set. The derived-document completeness auditor covers USFM→DOCX only. The remaining scoring evidence, path and isolation corrections below must be resolved before execution is approved.
 2. **Provisional import storage and UI.** Migration **0028 is reserved for Codex and remains a proposal**, not something Claude implemented. Store document/entry hashes, separate recognition status and person-confirmed edition standing, original spans/exclusions or existing origin places, per-book numbering evidence and engine version. Extend existing `bible_verse_places`; preserve schema-27 Source structure and historical migrations. Say **Recognised from your document**. Do not populate or display unverified candidate text as a Scripture verse, even with a provisional label; show its original-document location and reason instead. Recognition remains provisional until edition confirmation, which itself does not certify missing text.
 3. **Downstream consumers.** Reading, comparison, search/concordance, Study citations, Teaching, AI context and exports must all obey the standing and numbering rules. A cosmetic import warning alone is insufficient.
 4. **Resource control and responsiveness.** Run PDF reading in a separate capped process: Linux address-space limits and a Windows Job Object, clean process termination and refused-document handling. Recognition's current entry points are synchronous; progress/cancellation hooks remain to build. The existing Source-structure rebuild progress/cancel feature is a different path and does not complete this requirement.
@@ -227,18 +237,19 @@ The committed freeze reports 1,101 Rust tests and 26 corpus-tool tests passing, 
 6. **Unresolved extraction limits.** Scanned PDFs require future OCR; Hebrew RTL layouts and Hebrew-letter numerals remain limited/refused. Hidden/off-page PDF text and CSS-hidden EPUB content may still be read. Missing source text, unsupported language families and unfamiliar publishers/layouts remain limitations. Keep refusals honest rather than inventing text.
 7. **Integration and Windows acceptance.** Review an exact combined candidate with these guarantees and real Windows evidence. Passing disclosed corpus scores does not authorise a wholesale research-branch merge, signing, release or automatic update.
 
-### Follow-up from the pre-Set-H review
+### Follow-up from the 19 November review of `4dd9f8e`
 
-The bounded follow-up supplied for Claude concerns evaluation tooling and its disclosed rehearsals while preserving the frozen recognizer. Its next evidence package should resolve the following review findings:
+Claude's update resolved most of the earlier class/execution/composition concerns. The independent review reran all 29 evaluation tests and 26 corpus-tool tests successfully, confirmed all 279 frozen source hashes and ten pinned tool/document hashes, and left the frozen recognizer unchanged. These counts belong to that research branch, not the application branch.
 
-- Distinguish matched-reference scoring, no-Scripture controls, exploratory documents and mixed-content challenges. A missing reference is not automatically a no-Scripture control; mixed documents need an explicit allowed-content policy.
-- Record a separate execution verdict and an overall gate. A nonzero exit, timeout or resource failure cannot become a successful document merely because partial/complete result JSON exists.
-- Anchor the sealed manifest, runner and frozen binary checksums, the one-run record and true edition independence. Renamed files/edition keys and changing an output directory must not substitute for those guarantees.
-- Require a meaningful minimum of authentic, scored Scripture evidence; an independent set cannot pass on controls and exploratory files alone.
+Three bounded corrections remain with Claude:
 
-A separate application-integration concern remains for Codex: saved/corrected staged imports can re-enter recognition. The eventual integration must reapply the structural verification, provenance and refusal rules after every such path, without making unverified candidate text available as Scripture. This is not a reason to modify the frozen research candidate inside the Source-navigation branch.
+- **Bind scoring to committed evidence.** Synthetic fake-harness probes changed fail to pass by changing a mixed allowed-reference list, or by changing an external wrong-verse report / process-exit record and regenerating only the mutable external checksum list. For the latter cases, the committed run record and tracked worktree remained unchanged. Bind the complete seal (including allowed lists) to the recorded seal commit, and RUN.txt / OUTPUTS.sha256 / CHECK.json to an explicit committed run-record identity. Refuse missing or inconsistent anchors and verify outputs against the committed hashes. This does not allege alteration of Claude's rehearsal results.
+- **Contain declared input paths.** Preflight accepted parent-relative escapes, absolute external paths and escaping symlinks in synthetic cases. Validate relative and resolved containment before opening/hashing documents, references and seal entries. Hash checking still applied in the reproduced cases; do not describe this as a demonstrated hash-inventory bypass.
+- **Clarify independence.** The application repository is public; withholding credentials does not make its source inaccessible. Use fresh contexts without inherited project/chat material or a project checkout, with enforced approved-source network restrictions where available. Otherwise call the separation procedural and retain explicit rules/access logs. A private Set H repository protects that set, not the public recognizer source.
 
-No completion of these follow-ups, independent-set approval or Set H execution is inferred from the owner's report that Claude is working.
+No actual Set H files were selected, downloaded, inspected, built, sealed or run in that review. The proposed next step is targeted tooling/regression corrections and updated pins, not a repeat of the entire disclosed corpus or timing comparison. Owner decisions on the concrete independent arrangement, source/licence scope and actual set still precede the separately authorised sealing/single run.
+
+The application-integration concern is accurately documented in handover requirement 4 but remains unfinished: `apply_saved` / correction can re-enter recognition and lose the structural gate. Reapply structural verification/refusal rules and regenerate provenance/numbering after every recognition rerun. Migration 0028, consumer safety, process isolation, progress/cancellation and native acceptance remain separate Codex integration obligations. Do not modify the frozen recognizer in this Source/focus branch or mark the integration finished because the handover records it.
 
 ### 6.3 PDFium is a separate experiment
 
@@ -341,11 +352,11 @@ Optional local encryption and broad commercial/content-market features remain fu
 ## 10. Actionable continuation order
 
 1. **Completed in this takeover: the exact approved Windows build and static delivery verification.** Run 44621293307 succeeded once; installer, application, resources and migration provenance were checked. No build retry, main merge, release, updater publication or deployment occurred.
-2. **Next: normal Windows acceptance of the delivered candidate, following section 2.2.** Rebuild saved Source structure once when needed; check real-source navigation, broad versus pinpoint relevance, sticky reading position and Reading/Original transitions. Confirm the global change also behaves conservatively on unrelated sources and whole-work cases.
+2. **Next: build and accept the latest Windows candidate under a new, explicit single-build approval.** The prepared inert recipe in the focus follow-up includes Settings editing, multilingual aliases and focus corrections; the existing `bcf4858` ZIP predates them. Reuse the successful packaging path, then check the normal application: rebuild saved Source structure once when needed; real-source navigation; broad versus pinpoint relevance; sticky reading position; Reading/Original transitions; Settings editing; and writing/presenter focus. Retain the owner’s accepted handbook correction. Confirm unrelated sources and whole-work cases conservatively; do not equate these observations with arbitrary-PDF success.
 3. **Close the remaining A.4 acceptance matrix by observed result.** Cover one-row toolbar/native scaling, writing-first Study/Teaching, correct concise method guidance, optional Q&A, visibility-safe outputs, atomic snapshot transfer and real DeepSeek Korean assistance. Retain the pause on additional integration until simpler Teaching is accepted.
 4. **Coordinate the active Claude recognizer without duplicating it.** Pin current implementation/evidence, retain all disclosed-set limitations, complete provisional-standing safety on the correct migration lineage and define the next independent acceptance gate. Set H remains unrun until specifically authorised after an appropriate freeze.
 5. **Resolve the specific remaining language/source questions and documentation drift.** Do not redo the completed exhaustive AI editorial pass or modify accepted Ten-Step methodology wholesale.
-6. **Review release readiness on the actual combined lineage.** Preserve historical migrations, backup/restore, exact editions/citations, participant privacy and legacy content. Address the two recorded frontend failures proportionately; focused passing results do not rewrite the full-run outcome. A bounded read-only review found a plausible shared delayed-focus race: PresenterView and InfoControl queue focus restoration that can overrule a newer focus choice. The failed presenter DOM shows Audience opened while the slide stayed at two; Teaching logs do not retain actual saved-field values. Instrument focus/event order and save payloads before changing production behaviour. This is an identified investigation, not a proven harmless test issue or a proven autosave/data-loss defect.
+6. **Review release readiness on the actual combined lineage.** Preserve historical migrations, backup/restore, exact editions/citations, participant privacy and legacy content. The delayed-focus mechanism has now been reproduced with controlled frames and corrected in the 20 November follow-up, with actual writing/save payloads and presenter key targets checked. Preserve the historical failed runs and their limits: the newer evidence does not retrospectively prove the cause of every old assertion, and it does not replace native acceptance. Use the exact follow-up verification record rather than rerunning unrelated recognition/native suites for frontend-only changes.
 7. **Then select the next bounded product milestone from the retained roadmap.** Advanced research, wider imports, knowledge continuity, output/mobile delivery and optional integrations remain visible; they must not disappear behind repeated PDF repair rounds.
 
 No blanket product completion, recognizer readiness, main merge, updater publication or native acceptance is established by this document. The known roadmap is consolidated from inspected records; unseen private source guidance and future owner decisions remain explicit gaps rather than invented requirements.

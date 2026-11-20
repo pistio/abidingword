@@ -1,0 +1,151 @@
+{
+  "date": "2026-11-20",
+  "scope": "Main application continuation: preserve fresh Study/Teaching/Presenter focus, including Study note \u2192 passage navigation; draft PR54",
+  "execution_platform": "Codex Cloud Linux; native Windows acceptance pending",
+  "base_commit": "249a701e9193bc0257021ca32f8f02bbffda7285",
+  "application_commit": "13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54",
+  "tested_local_commit": "7c3a8c178aa753ac1c0d0f5af704521285c897bf",
+  "application_tree": "50c15740b989c478900d86a31d606956fc3b9f93",
+  "published_tree_matches_tested_local_tree": true,
+  "input_manifest": {
+    "file_count": 890,
+    "sha256": "eb3272e8a583248e65dc2a53f03fab83a872b47e190fa3099c20d63657724e8c",
+    "unchanged_through_final_checks": true,
+    "scope": "Tracked non-documentation files; generated/ignored files and dependency symlink excluded"
+  },
+  "changed_code_files": [
+    {
+      "path": "src/design-system/InfoControl.tsx",
+      "sha256": "c3c937bf54ecba74d2b7055e30a9aac3a3e3d269abccbb7a55c706d99dfe3c11"
+    },
+    {
+      "path": "src/features/presentation/PresentationView.tsx",
+      "sha256": "716196f4032462958de9f967a62899ee3985353c48064d7284109d5597401a63"
+    },
+    {
+      "path": "src/features/presentation/PresenterView.tsx",
+      "sha256": "24545bcc3114c914b4463de997cc2ba40b5594290832a4f60b71e5d54d28dbc0"
+    },
+    {
+      "path": "src/features/studies/StudyEditor.tsx",
+      "sha256": "c0b49f4525d5c1d2e42f65c9781bb5339dceb377e2859bc220b94e23899576a6"
+    },
+    {
+      "path": "tests/ui/info-overlays.test.tsx",
+      "sha256": "28e66803ea7abcfd96ee72b47b98f1222b3129dd27abcf742bcbe6f82853c18b"
+    },
+    {
+      "path": "tests/ui/presentation.test.tsx",
+      "sha256": "7122ac2267823cf1da39aa8b3cac56c802218cd437b07c0c336072ef9d9a643d"
+    },
+    {
+      "path": "tests/ui/teaching.test.tsx",
+      "sha256": "38191d6f409b1457c0a1a3160244d87bf80868935a53027f203043d8053864da"
+    },
+    {
+      "path": "tests/ui/studies-v3.test.tsx",
+      "sha256": "c6e8c71a71af10182e2dcfacb66fdc248c2c615b9907e1d9fe8075cac3ae89b9"
+    }
+  ],
+  "frontend": {
+    "passed": 1374,
+    "failed": 0,
+    "total": 1374,
+    "test_files": 126,
+    "full_suite": {
+      "command": [
+        "npm",
+        "test",
+        "--",
+        "--maxWorkers=4",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=/workspace/scratch/ab728d5521c2/main-focus-evidence-20261119/frontend-results.json"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 108.88,
+      "log": "frontend-full.log"
+    },
+    "lint": {
+      "command": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 21.74,
+      "log": "lint.log"
+    },
+    "production_build_includes_typecheck": {
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 23.36,
+      "log": "build.log"
+    },
+    "i18n": {
+      "command": [
+        "npm",
+        "run",
+        "i18n:check"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 1.36,
+      "log": "i18n.log"
+    },
+    "i18n_languages": 6,
+    "new_tests": 10,
+    "strengthened_existing_tests": 1
+  },
+  "focused_evidence": {
+    "info_and_teaching": {
+      "before": "Four controlled-frame regressions failed; keystrokes did not reach writing fields, with no writing save payload. Teaching information Save itself succeeded.",
+      "after": "All 67 tests in both affected files passed, with exact visible/saved text and payload assertions."
+    },
+    "presenter": {
+      "before": "Three initial race cases failed; ordinary Escape/opener return passed. A later reopen case exposed the same deferred-focus issue in the parent.",
+      "after": "All five controlled-frame cases passed, and all 48 presentation tests passed in the final full run."
+    },
+    "study_note": {
+      "preexisting_source_sha256": "e90f7b6f0ed77c63aeb3f3e706e55de6a4bc2852c9189b69523f9c094a1b38c3",
+      "before": "Go to passage focus was true before the frame and false after; input stayed empty; parser was not called. Saved note and JHN.15.2 link were correct. A second case lost focus from a reopened draft.",
+      "after": "All 16 studies-v3 tests passed; exact typed passage, parser request, saved note/link, asynchronous chapter load and finding-link return are asserted."
+    }
+  },
+  "intermediate_results_retained": [
+    "First combined run: 1373/1373 passed before an InfoActions render boundary was added to satisfy the React refs lint rule.",
+    "Next combined run: 1372/1373 passed; the existing Study note\u2192passage test failed. Controlled diagnostics reproduced a separate preexisting StudyEditor focus defect; the truncated full-run log alone does not prove that historical event sequence.",
+    "The first Study diagnostic after the fix checked a chapter heading too early synchronously. Focus/input/parser assertions passed; the final test keeps the original asynchronous heading wait.",
+    "Final combined source: 1374/1374 passed. No test was skipped, removed, retried to mask a failure, or given a longer timeout."
+  ],
+  "preservation": {
+    "save_api_and_debounce": true,
+    "reference_parser_and_scripture_text": true,
+    "source_editing_aliases_and_coverage": true,
+    "rust_and_resources": true,
+    "migrations_schema 27": true,
+    "dependencies_and_lockfiles": true,
+    "active_workflows": true
+  },
+  "native_tests": "Not rerun for these frontend-only changes; baseline 1,146-pass native evidence remains attached to the earlier source/settings follow-up.",
+  "windows": {
+    "existing_installer_source": "bcf4858591f6d306838773ebc884550ca27d19b6",
+    "contains_this_followup": false,
+    "prepared_recipe": "docs/implementation/windows-focus-followup-20261120.yml.in",
+    "recipe_sha256": "76853da3eaeebbf39434cf1b40a79d57f5f63d283d083ed313b8abec468e2770",
+    "inert": true,
+    "application_source": "13b65b74903b7a02e1c8c0f6ef4a5a92c1814e54",
+    "previous_successful_workflow_commit": "ca169b377233ca678421699c4aa36d906c090617",
+    "activation_branch": "build/abidingword-i35-i42-20261109",
+    "activation_path": ".github/workflows/windows-combined-owner-20261109.yml",
+    "packaging_source": "4bddc038d190cf42fd475b7c504430e96c014769",
+    "requested_build_limit": 1,
+    "approval_status": "New explicit single-build approval required; previous one-build allowance was used.",
+    "build_started": false,
+    "native_acceptance": "pending"
+  },
+  "recognition": "Claude owns the separate frozen-recognizer/evaluation follow-up; no recognition code, migration 0028 or actual Set H work was changed or executed here."
+}
