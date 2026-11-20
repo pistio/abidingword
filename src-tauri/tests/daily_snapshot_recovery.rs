@@ -161,7 +161,6 @@ fn symlink_snapshot_is_not_listed_or_opened() {
     assert!(snapshots::restore(&db, &dirs, &link_id).is_err());
 }
 
-
 #[test]
 fn a_structurally_broken_snapshot_cannot_replace_the_live_database() {
     let (_tmp, dirs, db) = new_install();
@@ -191,8 +190,8 @@ fn a_structurally_broken_snapshot_cannot_replace_the_live_database() {
             .flatten()
             .collect();
         assert!(!files.is_empty());
-        assert!(files.iter().any(|item| {
-            from_copy(&item.path()) == "\"Newer work stays safe\""
-        }));
+        assert!(files
+            .iter()
+            .any(|item| { from_copy(&item.path()) == "\"Newer work stays safe\"" }));
     }
 }
