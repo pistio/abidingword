@@ -4011,10 +4011,10 @@ impl Builder<'_> {
                     j -= 1;
                 }
                 if let Some(start) = start {
-                    for i in start..=k {
-                        if let Event::Text(line) = &self.items[i].event {
+                    for item in &mut self.items[start..=k] {
+                        if let Event::Text(line) = &item.event {
                             let text = unmark_raised(line.trim());
-                            self.items[i].event = Event::Other { notes: false, text };
+                            item.event = Event::Other { notes: false, text };
                         }
                     }
                     k = start;
@@ -4136,10 +4136,10 @@ impl Builder<'_> {
                 _ => false,
             };
             if (paragraph && !sentence) || ended(&self.items[first - 1]) {
-                for i in first..=k {
-                    if let Event::Text(line) = &self.items[i].event {
+                for item in &mut self.items[first..=k] {
+                    if let Event::Text(line) = &item.event {
                         let text = unmark_raised(line.trim());
-                        self.items[i].event = Event::Other { notes: false, text };
+                        item.event = Event::Other { notes: false, text };
                     }
                 }
                 k = first;
