@@ -31,13 +31,13 @@ _spec.loader.exec_module(check_set)
 
 
 def seal_text(folder, when):
+    """SEAL.txt for the regular files of `folder`; links are never followed
+    (check-set.py refuses them)."""
     entries = []
-    for root, _, files in os.walk(folder):
-        for f in files:
-            rel = os.path.relpath(os.path.join(root, f), folder)
-            if rel != "SEAL.txt":
-                data = open(os.path.join(root, f), "rb").read()
-                entries.append((rel, hashlib.sha256(data).hexdigest()))
+    for rel in check_set.plain_files(folder, [], "seal folder"):
+        if rel != "SEAL.txt":
+            data = open(os.path.join(folder, *rel.split("/")), "rb").read()
+            entries.append((rel, hashlib.sha256(data).hexdigest()))
     return "\n".join([f"sealed {when}"] + [f"{h}  {rel}" for rel, h in sorted(entries)]) + "\n"
 
 
@@ -62,7 +62,7 @@ def main():
     when = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     with tempfile.TemporaryDirectory() as tmp:
         trial = os.path.join(tmp, "seal")
-        shutil.copytree(seal, trial)
+        shutil.copytree(seal, trial, symlinks=True)  # a link stays a link, and is refused
         for name in ("review-ledger.md", "access-records.md"):
             p = os.path.join(trial, name)
             if not os.path.exists(p):

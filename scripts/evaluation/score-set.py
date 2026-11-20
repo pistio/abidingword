@@ -1,12 +1,24 @@
 #!/usr/bin/env python3
 """Scores one run of the harness on a sealed set, and assesses it (Phase A1.5).
 
-    score-set.py <run folder> <seal folder> [--json=OUT] [--md=OUT]
-                 [--frozen-binary=SHA256] [--inventory=FILE]
+    score-set.py <run folder> <seal folder> --run-record=COMMIT
+                 [--json=OUT] [--md=OUT] [--frozen-binary=SHA256] [--inventory=FILE]
 
-Writes nothing into the run folder. Refuses (exit 2) to score a run whose
-outputs differ from its OUTPUTS.sha256, or whose RUN.txt is not the run of
-this seal.
+Writes nothing into the run folder. Before reading any output it checks
+two anchors, and refuses (exit 2) when either is missing or inconsistent:
+
+* **The run record**: COMMIT must be the one commit, in the checked-out
+  history, that added RUN.txt, OUTPUTS.sha256 and CHECK.json to
+  <seal folder>/../run/ (the runner commits them when the run ends), and
+  no later commit or uncommitted change may touch them. The run folder's
+  three files must be byte for byte the committed ones, and every output
+  must match the committed OUTPUTS.sha256, with nothing added.
+* **The seal**: the seal commit RUN.txt names must be an ancestor of the
+  run record and pass check-set.py's committed-seal check (it changes only
+  the seal folder; its SEAL.txt lists every file it holds; the seal folder
+  on disk is byte for byte that commit, unchanged since). The manifest and
+  every allowed/<key>.txt are read from the seal commit, never from disk,
+  and RUN.txt's manifest and checksums hashes must be the sealed ones.
 
 Three layers, kept apart:
 
@@ -52,41 +64,105 @@ INVENTORY = os.path.join(REPO, "docs", "evaluation", "disclosed-documents.sha256
 SUM_LINE = re.compile(r"^([0-9a-f]{64}) [ *](.+)$")
 
 
-def verify_outputs(folder):
-    """The run folder exactly as OUTPUTS.sha256 says: every file present and
-    unchanged, nothing added."""
+def verify_outputs(folder, listing):
+    """The run folder exactly as the committed OUTPUTS.sha256 (`listing`)
+    says: every file present and unchanged, nothing added, no link, no name
+    outside the folder."""
     problems = []
-    path = os.path.join(folder, "OUTPUTS.sha256")
-    if not os.path.exists(path):
-        return ["OUTPUTS.sha256 missing"]
     listed = {}
-    for line in open(path, encoding="utf-8").read().splitlines():
+    for line in listing.splitlines():
         m = SUM_LINE.match(line)
-        if m:
-            listed[os.path.normpath(m.group(2))] = m.group(1)
-    present = set()
-    for root, _, files in os.walk(folder):
-        for f in files:
-            rel = os.path.normpath(os.path.relpath(os.path.join(root, f), folder))
-            if rel != "OUTPUTS.sha256":
-                present.add(rel)
+        if not m:
+            if line.strip():
+                problems.append(f"OUTPUTS.sha256: '{line}' is not `sha256  name`")
+            continue
+        name = m.group(2)[2:] if m.group(2).startswith("./") else m.group(2)
+        listed[name] = m.group(1)
+    present = set(check_set.plain_files(folder, problems, "run folder")) - {"OUTPUTS.sha256"}
     for rel in sorted(present - set(listed)):
         problems.append(f"{rel} was added after the run")
     for rel, want in sorted(listed.items()):
-        p = os.path.join(folder, rel)
-        if not os.path.exists(p):
+        p = check_set.inside(folder, rel, problems, "OUTPUTS.sha256")
+        if p is None:
+            continue
+        if not os.path.isfile(p):
             problems.append(f"{rel} is missing")
         elif check_set.sha256(p) != want:
             problems.append(f"{rel} changed after the run")
     return problems
 
 
-def read_run(folder):
+ANCHORS = ("RUN.txt", "OUTPUTS.sha256", "CHECK.json")
+
+
+def anchors(folder, seal, run_record):
+    """Checks the run record and the seal (see the module's notes). Returns
+    (problems, info): info holds the committed RUN.txt text, the seal's
+    files at its commit and the commits themselves."""
+    problems = []
+    repo = check_set.repo_of(seal)
+    if not repo:
+        return ["the seal folder is not in a Git repository"], None
+    git = lambda *a: check_set.git(repo, *a)
+    rel_seal = check_set.repo_relative(repo, seal)
+    rel_run = f"{os.path.dirname(rel_seal)}/run"
+    if not run_record:
+        return ["--run-record=<commit> is required: the commit that recorded this run"], None
+    full = git("rev-parse", "--verify", "--quiet", run_record + "^{commit}")
+    if full.returncode != 0 or not full.stdout.strip():
+        return [f"run record commit {run_record} not found"], None
+    record = full.stdout.strip()
+    if git("merge-base", "--is-ancestor", record, "HEAD").returncode != 0:
+        problems.append("the run record commit is not in the checked-out history")
+    paths = [f"{rel_run}/{a}" for a in ANCHORS]
+    touching = git("log", "--format=%H", "HEAD", "--", *paths).stdout.split()
+    if not touching:
+        return problems + [f"no committed run record at {rel_run}/"], None
+    if touching != [record]:
+        if record not in touching:
+            problems.append(f"{run_record} is not the commit that recorded this run ({touching[-1][:12]} is)")
+        if len(touching) > 1:
+            problems.append("the run record was changed after it was committed")
+    if git("status", "--porcelain", "--", *paths).stdout.strip():
+        problems.append("the run record has uncommitted changes")
+    committed = {}
+    for a in ANCHORS:
+        blob = check_set.git_bytes(repo, "show", f"{record}:{rel_run}/{a}")
+        if blob.returncode != 0:
+            problems.append(f"the run record commit does not hold {rel_run}/{a}")
+            continue
+        committed[a] = blob.stdout
+        local = os.path.join(folder, a)
+        if os.path.islink(local) or not os.path.isfile(local):
+            problems.append(f"{a} is missing from the run folder")
+        elif open(local, "rb").read() != blob.stdout:
+            problems.append(f"{a} in the run folder differs from the committed run record")
+    if problems:
+        return problems, None
+    run_text = committed["RUN.txt"].decode("utf-8")
+    fields = dict(line.split(" ", 1) for line in run_text.splitlines() if " " in line)
+    seal_commit = fields.get("seal_commit", "").strip()
+    if not seal_commit:
+        return ["the committed RUN.txt names no seal commit"], None
+    seal_problems, info = check_set.committed_seal(seal, seal_commit)
+    problems += seal_problems
+    if info is None:
+        return problems, None
+    if git("merge-base", "--is-ancestor", info["commit"], record).returncode != 0:
+        problems.append("the seal commit is not an ancestor of the run record")
+    files = info["files"]
+    if fields.get("manifest") != check_set.sha256_bytes(files.get("manifest.tsv", b"")):
+        problems.append("RUN.txt's manifest is not the sealed one")
+    if fields.get("checksums") != check_set.sha256_bytes(files.get("checksums.sha256", b"")):
+        problems.append("RUN.txt's checksums are not the sealed ones")
+    problems += verify_outputs(folder, committed["OUTPUTS.sha256"].decode("utf-8"))
+    return problems, {"run_text": run_text, "seal": info, "run_record": record,
+                      "run_record_path": rel_run}
+
+
+def read_run(text):
     run = {"documents": {}, "fields": {}}
-    path = os.path.join(folder, "RUN.txt")
-    if not os.path.exists(path):
-        return run
-    for line in open(path, encoding="utf-8").read().splitlines():
+    for line in text.splitlines():
         m = re.match(r"^(\S+) exit (\d+) seconds (\d+)$", line)
         if m:
             run["documents"][m.group(1)] = (int(m.group(2)), int(m.group(3)))
@@ -156,7 +232,7 @@ def ref_key(text):
     return (m.group(1), int(m.group(2)), int(m.group(3))) if m else None
 
 
-def document(folder, seal, row, run):
+def document(folder, sealed_files, row, run):
     key = row["key"]
     d = {k: row[k] for k in ("key", "files", "reference", "language", "script", "format", "kind", "class")}
     exit_code, wall = run["documents"].get(key, (None, None))
@@ -192,7 +268,8 @@ def document(folder, seal, row, run):
     elif d["execution"] == "failure" and observed is not None:
         d["diagnostic"] = observed  # kept, never counted
     if d["execution"] == "completed" and row["class"] == "mixed":
-        allowed = check_set.parse_allowed(os.path.join(seal, "allowed", key + ".txt"))
+        allowed = check_set.parse_allowed_text(
+            sealed_files[f"allowed/{key}.txt"].decode("utf-8"), f"allowed/{key}.txt")
         inside, outside = [], []
         for r in observed["verified_references"]:
             k = ref_key(r)
@@ -218,7 +295,7 @@ def scored_totals(docs):
 def assess(docs, run, seal_report, frozen_binary, inventory=INVENTORY):
     f = run["fields"]
     validity = {
-        "outputs_intact": True,  # checked before scoring; a changed run is refused
+        "anchored_and_intact": True,  # checked before scoring; anything else is refused
         "run_complete": "ended" in f,
         "every_document_has_a_record": all(d["exit"] is not None for d in docs),
         "seal_matches": f.get("manifest") == seal_report["manifest_sha256"]
@@ -252,6 +329,7 @@ def assess(docs, run, seal_report, frozen_binary, inventory=INVENTORY):
     evidence = {
         "documents": len(auth),
         "printed_verses": sum(d["observed"]["printed"] for d in auth),
+        "verified": sum(d["observed"]["verified"] for d in auth),
         "verified_correct": sum(d["observed"]["verified_correct"] for d in auth),
         "formats": sorted({d["format"] for d in auth}),
         "languages": sorted({d["language"] for d in auth}),
@@ -262,10 +340,16 @@ def assess(docs, run, seal_report, frozen_binary, inventory=INVENTORY):
         and evidence["printed_verses"] >= minimum["reference_verses"]
         and len(evidence["formats"]) >= minimum["formats"]
         and len(evidence["languages"]) >= minimum["languages"])
+    printed = scored.get("printed", 0)
+    coverage = round(100.0 * scored.get("verified_correct", 0) / printed, 1) if printed else None
+    evidence["coverage_percent"] = (round(100.0 * evidence["verified_correct"] / evidence["printed_verses"], 1)
+                                    if evidence["printed_verses"] else None)
     claim = (f"{scored.get('verified_wrong', 0)} verified verses with wrong text and "
              f"{scored.get('verified_absent', 0)} verified references outside the edition, among "
              f"{scored.get('verified', 0)} verified verses of {scored.get('documents', 0)} completed scored "
-             f"documents ({len(auth)} authentic). Exploratory documents are not part of this figure.")
+             f"documents ({len(auth)} authentic), which print {printed} verses: coverage "
+             f"{coverage if coverage is not None else '-'} % (verified correct / printed; no pass mark). "
+             f"Exploratory documents are not part of this figure.")
     limit = None
     if not evidence["meets_minimum"]:
         limit = (f"Scored authentic evidence ({evidence['documents']} documents, {evidence['printed_verses']} "
@@ -283,7 +367,7 @@ def assess(docs, run, seal_report, frozen_binary, inventory=INVENTORY):
         "qualification_limit": limit,
         "execution": dict(collections.Counter(d["execution"] for d in docs)),
         "failure_causes": dict(collections.Counter(d["cause"] for d in failures)),
-        "scored": scored,
+        "scored": dict(scored, coverage_percent=coverage),
         "control": {"documents": len(by_class["control"]), "completed": len(done("control")),
                     "verified": control_verified},
         "mixed": {"documents": len(by_class["mixed"]), "completed": len(done("mixed")),
@@ -300,7 +384,10 @@ def markdown(out):
     def yes(b):
         return "yes" if b else "**no**"
 
-    L = [f"## Verdict: **{a['verdict']}**", "", a["accuracy_claim"], ""]
+    an = out["anchors"]
+    L = [f"## Verdict: **{a['verdict']}**", "",
+         f"Run record `{an['run_record_commit']}` ({an['run_record_path']}), seal `{an['seal_commit']}`, "
+         f"scorer `{an['scorer_sha256'][:16]}…`.", "", a["accuracy_claim"], ""]
     if a["qualification_limit"]:
         L += ["**Qualification limit:** " + a["qualification_limit"], ""]
     L += ["| Run validity | |", "|---|---|"] + [f"| {k} | {yes(v)} |" for k, v in a["run_validity"].items()]
@@ -341,30 +428,24 @@ def main():
     if len(args) != 2:
         sys.exit(__doc__)
     folder, seal = args
-    problems = verify_outputs(folder)
+    problems, info = anchors(folder, seal, opts.get("run-record"))
     if problems:
         for p in problems:
             print("refused:", p, file=sys.stderr)
         sys.exit(2)
-    run = read_run(folder)
-    sealed = {}
-    for line in open(os.path.join(seal, "SEAL.txt"), encoding="utf-8").read().splitlines()[1:]:
-        m = SUM_LINE.match(line)
-        if m:
-            sealed[m.group(2)] = m.group(1)
-    seal_report = {"manifest_sha256": sealed.get("manifest.tsv"), "checksums_sha256": sealed.get("checksums.sha256")}
-    if check_set.sha256(os.path.join(seal, "manifest.tsv")) != seal_report["manifest_sha256"]:
-        print("refused: the seal folder's manifest is not the sealed one", file=sys.stderr)
-        sys.exit(2)
-    if run["fields"].get("manifest") != seal_report["manifest_sha256"]:
-        print("refused: RUN.txt is not a run of this seal's manifest", file=sys.stderr)
-        sys.exit(2)
+    files = info["seal"]["files"]
+    run = read_run(info["run_text"])
+    seal_report = {"manifest_sha256": check_set.sha256_bytes(files["manifest.tsv"]),
+                   "checksums_sha256": check_set.sha256_bytes(files["checksums.sha256"])}
     errors = []
-    rows = check_set.manifest_rows(os.path.join(seal, "manifest.tsv"), errors)
+    rows = check_set.manifest_rows_text(files["manifest.tsv"].decode("utf-8"), errors)
+    for r in rows:
+        if r["class"] == "mixed" and f"allowed/{r['key']}.txt" not in files:
+            errors.append(f"{r['key']}: the seal commit holds no allowed/{r['key']}.txt")
     if errors:
         print("refused:", "; ".join(errors), file=sys.stderr)
         sys.exit(2)
-    docs = [document(folder, seal, r, run) for r in rows]
+    docs = [document(folder, files, r, run) for r in rows]
     groups = {}
     for key in ("format", "language", "script", "kind"):
         g = collections.defaultdict(list)
@@ -373,6 +454,10 @@ def main():
                 g[d[key]].append(d)
         groups[key] = {k: scored_totals(v) for k, v in sorted(g.items())}
     out = {
+        "anchors": {"run_record_commit": info["run_record"], "run_record_path": info["run_record_path"],
+                    "seal_commit": info["seal"]["commit"], "seal_path": info["seal"]["seal_rel"],
+                    "scorer_sha256": check_set.sha256(os.path.abspath(__file__)),
+                    "check_set_sha256": check_set.sha256(os.path.join(HERE, "check-set.py"))},
         "run": run["fields"],
         "assessment": assess(docs, run, seal_report, opts.get("frozen-binary", FROZEN_BINARY),
                              opts.get("inventory", INVENTORY)),

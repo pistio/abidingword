@@ -172,6 +172,8 @@ class SetFixture:
                             binsha or self.fake_sha, out], capture_output=True, text=True, env=env)
         if check:
             self.assertOk(r)
+        if r.returncode == 0:
+            self.record = self.git("rev-parse", "HEAD").strip()  # the runner's record commit
         return r, out
 
     @staticmethod
@@ -179,12 +181,25 @@ class SetFixture:
         if r.returncode != 0:
             raise AssertionError(r.stdout + r.stderr)
 
-    def score(self, out):
+    def score(self, out, run_record=None):
         js = os.path.join(self.tmp, "score.json")
-        r = subprocess.run(["python3", SCORE, out, self.seal, f"--json={js}",
+        if os.path.exists(js):
+            os.remove(js)
+        record = [] if run_record == "" else [f"--run-record={run_record or self.record}"]
+        r = subprocess.run(["python3", SCORE, out, self.seal, f"--json={js}", *record,
                             f"--frozen-binary={self.fake_sha}", f"--inventory={self.inventory}"],
                            capture_output=True, text=True)
         return r, (json.load(open(js)) if r.returncode == 0 else None)
+
+    def rehash_outputs(self, out):
+        """What someone would do to make altered outputs look consistent."""
+        lines = []
+        for root, _, files in os.walk(out):
+            for f in sorted(files):
+                if f != "OUTPUTS.sha256":
+                    p = os.path.join(root, f)
+                    lines.append(f"{sha(open(p, 'rb').read())}  ./{os.path.relpath(p, out)}")
+        open(os.path.join(out, "OUTPUTS.sha256"), "w").write("\n".join(sorted(lines)) + "\n")
 
 
 GOOD = [
@@ -444,7 +459,188 @@ class ScorerRefuses(Fixture):
         s.reseal()
         r, _ = s.score(out)
         self.assertEqual(r.returncode, 2)
-        self.assertIn("not a run of this seal", r.stderr)
+        self.assertIn("manifest.tsv differs from the seal commit", r.stderr)
+
+    def test_a_link_among_the_outputs(self):
+        s = self.make()
+        _, out = s.run(check=True)
+        target = os.path.join(self.tmp, "elsewhere.json")
+        os.rename(os.path.join(out, "S1.json"), target)
+        os.symlink(target, os.path.join(out, "S1.json"))
+        r, _ = s.score(out)
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("'S1.json' is a symbolic link", r.stderr)
+
+
+MIXED = [{"key": "M1", "class": "mixed", "format": "epub",
+          "behaviour": {"write": {".control.json": control(["JHN 3:16", "JHN 3:17"])}}}]
+WRONG = [{"key": "S1", "class": "scored", "kind": "authentic", "format": "epub",
+          "behaviour": {"write": {".json": report(10, 10, wrong=["MAT 1:2"])}}}]
+PANIC = [{"key": "S1", "class": "scored", "kind": "authentic", "format": "epub",
+          "behaviour": {"write": {".json": report(10, 10)}, "exit": 101}}]
+
+
+class ScoringAnchors(Fixture):
+    """The independent review's three alterations (each turned a failing run
+    into a pass), and the other ways an anchor can be missing or wrong. The
+    runner commits the run record; the scorer must be given that commit."""
+
+    def assertRefused(self, s, out, message, **kw):
+        r, _ = s.score(out, **kw)
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertIn(message, r.stderr)
+
+    def test_an_allowed_list_widened_after_the_run(self):
+        s = self.make(docs=MIXED, allowed={"M1": ["JHN 3:16"]})
+        _, out = s.run(check=True)
+        r, score = s.score(out)
+        self.assertEqual(score["assessment"]["verdict"], "fail")
+        self.assertEqual(score["assessment"]["mixed"]["verified_outside_allowed"], 1)
+        s.write("allowed/M1.txt", "JHN 3:16-17\n")
+        self.assertRefused(s, out, "allowed/M1.txt differs from the seal commit")
+        s.reseal()  # SEAL.txt recomputed to match: still not the sealed one
+        self.assertRefused(s, out, "SEAL.txt differs from the seal commit")
+        s.git("add", "-A")
+        s.git("commit", "-qm", "widen the allowed list after the run")
+        self.assertRefused(s, out, "the seal folder changed after the seal commit")
+
+    def test_a_report_changed_and_the_outputs_rehashed(self):
+        s = self.make(docs=WRONG, allowed={})
+        _, out = s.run(check=True)
+        r, score = s.score(out)
+        self.assertEqual(score["assessment"]["verdict"], "fail")
+        p = os.path.join(out, "S1.json")
+        value = json.load(open(p))
+        value["differences"] = []
+        json.dump(value, open(p, "w"))
+        s.rehash_outputs(out)
+        self.assertRefused(s, out, "OUTPUTS.sha256 in the run folder differs from the committed run record")
+        self.assertEqual(s.git("status", "--porcelain").strip(), "")  # the record itself untouched
+
+    def test_an_exit_code_changed_and_the_outputs_rehashed(self):
+        s = self.make(docs=PANIC, allowed={})
+        _, out = s.run(check=True)
+        r, score = s.score(out)
+        self.assertEqual(score["documents"][0]["execution"], "failure")
+        self.assertEqual(score["assessment"]["verdict"], "fail")
+        p = os.path.join(out, "RUN.txt")
+        text = open(p).read()
+        self.assertIn("S1 exit 101 seconds ", text)
+        open(p, "w").write(text.replace("S1 exit 101 seconds ", "S1 exit 0 seconds "))
+        s.rehash_outputs(out)
+        self.assertRefused(s, out, "RUN.txt in the run folder differs from the committed run record")
+
+    def test_a_run_record_changed_in_a_later_commit(self):
+        s = self.make(docs=PANIC, allowed={})
+        _, out = s.run(check=True)
+        record = s.record
+        p = os.path.join(out, "RUN.txt")
+        text = open(p).read().replace("S1 exit 101 seconds ", "S1 exit 0 seconds ")
+        open(p, "w").write(text)
+        s.rehash_outputs(out)
+        for name in ("RUN.txt", "OUTPUTS.sha256"):
+            shutil.copyfile(os.path.join(out, name), os.path.join(s.repo, "eval", "set-x", "run", name))
+        s.git("add", "-A")
+        s.git("commit", "-qm", "a second run record")
+        self.assertRefused(s, out, "the run record was changed after it was committed", run_record=record)
+        self.assertRefused(s, out, "the run record was changed after it was committed",
+                           run_record=s.git("rev-parse", "HEAD").strip())
+
+    def test_a_run_record_with_uncommitted_changes(self):
+        s = self.make(docs=WRONG, allowed={})
+        _, out = s.run(check=True)
+        with open(os.path.join(s.repo, "eval", "set-x", "run", "CHECK.json"), "a") as f:
+            f.write(" ")
+        self.assertRefused(s, out, "the run record has uncommitted changes")
+
+    def test_no_committed_run_record(self):
+        s = self.make(docs=WRONG, allowed={})
+        _, out = s.run(check=True)
+        s.git("reset", "-q", "--hard", "HEAD~1")
+        self.assertRefused(s, out, "no committed run record", run_record=s.commit)
+
+    def test_another_commit_named_as_the_run_record(self):
+        s = self.make(docs=WRONG, allowed={})
+        _, out = s.run(check=True)
+        self.assertRefused(s, out, "is not the commit that recorded this run", run_record=s.commit)
+
+    def test_no_run_record_named(self):
+        s = self.make(docs=WRONG, allowed={})
+        _, out = s.run(check=True)
+        self.assertRefused(s, out, "--run-record=<commit> is required", run_record="")
+
+    def test_the_runner_commits_the_record_alone(self):
+        s = self.make(docs=WRONG, allowed={})
+        _, out = s.run(check=True)
+        changed = s.git("diff-tree", "--no-commit-id", "--name-only", "-r", s.record).split()
+        self.assertEqual(sorted(changed), ["eval/set-x/run/CHECK.json", "eval/set-x/run/OUTPUTS.sha256",
+                                           "eval/set-x/run/RUN.txt"])
+        for name in ("RUN.txt", "OUTPUTS.sha256", "CHECK.json"):
+            self.assertEqual(open(os.path.join(out, name), "rb").read(),
+                             open(os.path.join(s.repo, "eval", "set-x", "run", name), "rb").read())
+
+
+class PathContainment(Fixture):
+    """Every name must be a plain relative path inside its folder, and no
+    link is accepted: refused before any document is read (the independent
+    review's three escapes, and the same rule for the seal)."""
+
+    def escape(self, mode):
+        def alter_input(fixture):
+            declared = os.path.join(fixture.docs, "C1.docx")
+            outside = os.path.join(fixture.tmp, "outside")
+            os.makedirs(outside, exist_ok=True)
+            target = os.path.join(outside, "C1.docx")
+            os.rename(declared, target)
+            if mode == "link":
+                os.symlink(target, declared)
+            elif mode == "inner link":
+                os.rename(target, os.path.join(fixture.docs, "real.docx"))
+                os.symlink(os.path.join(fixture.docs, "real.docx"), declared)
+            else:
+                replacement = "../outside/C1.docx" if mode == "parent" else target
+                for name in ("manifest.tsv", "checksums.sha256"):
+                    p = os.path.join(fixture.seal, name)
+                    text = open(p).read().replace("C1.docx", replacement)
+                    open(p, "w").write(text)
+        s = SetFixture(self.tmp, [{"key": "C1", "class": "control", "format": "docx",
+                                   "content": b"Invented, non-Scripture path probe.\n",
+                                   "behaviour": {"write": {".control.json": control([])}}}],
+                       tamper=alter_input)
+        r, out = s.run()
+        self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+        self.assertFalse(os.path.exists(os.path.join(out, "C1.control.json")), "the harness ran")
+        self.assertFalse(os.path.exists(os.path.join(s.docs, ".run-started")))
+        return r.stderr
+
+    def test_a_path_that_climbs_out_of_the_documents_folder(self):
+        self.assertIn("'../outside/C1.docx' is not a plain relative path", self.escape("parent"))
+
+    def test_an_absolute_path(self):
+        self.assertIn("is an absolute path", self.escape("absolute"))
+
+    def test_a_link_out_of_the_documents_folder(self):
+        self.assertIn("'C1.docx' is a symbolic link", self.escape("link"))
+
+    def test_a_link_that_stays_inside_the_documents_folder(self):
+        self.assertIn("'C1.docx' is a symbolic link", self.escape("inner link"))
+
+    def test_a_seal_entry_that_climbs_out(self):
+        s = self.make()
+        open(os.path.join(self.tmp, "outside.txt"), "w").write("x\n")
+        with open(os.path.join(s.seal, "SEAL.txt"), "a") as f:
+            f.write(f"{sha(b'x' + bytes([10]))}  ../../../outside.txt\n")
+        s.git("add", "-A")
+        s.git("commit", "-q", "--amend", "--no-edit")
+        s.commit = s.git("rev-parse", "HEAD").strip()
+        self.assertIn("'../../../outside.txt' is not a plain relative path", self.refused(s))
+
+    def test_a_link_in_the_seal_folder(self):
+        def link(fixture):
+            open(os.path.join(fixture.tmp, "notes.md"), "w").write("outside\n")
+            os.symlink(os.path.join(fixture.tmp, "notes.md"), os.path.join(fixture.seal, "notes.md"))
+        err = self.refused(self.make(tamper=link))
+        self.assertIn("'notes.md' is a symbolic link", err)
 
 
 class Builder(Fixture):
@@ -501,6 +697,15 @@ class Sealing(Fixture):
         r = self.seal_set(s, "--write")
         self.assertEqual(r.returncode, 2)
         self.assertIn("never sealed again", r.stderr)
+
+    def test_a_link_is_never_sealed(self):
+        s = self.unsealed()
+        open(os.path.join(self.tmp, "notes.md"), "w").write("outside\n")
+        os.symlink(os.path.join(self.tmp, "notes.md"), os.path.join(s.seal, "notes.md"))
+        r = self.seal_set(s, "--write")
+        self.assertEqual(r.returncode, 2)
+        self.assertIn("'notes.md' is a symbolic link", r.stderr)
+        self.assertFalse(os.path.exists(os.path.join(s.seal, "SEAL.txt")))
 
     def test_nothing_is_sealed_that_the_checks_refuse(self):
         s = self.unsealed()
