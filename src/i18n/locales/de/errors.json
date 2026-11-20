@@ -166,6 +166,9 @@
       "tooMany": "Gib höchstens {{max}} Bibelstellen als Themenbereich ein.",
       "empty": "Gib mindestens ein Bibelbuch oder einen Abschnitt als Themenbereich ein.",
       "metadataUnreadable": "Die gespeicherten Quellenangaben konnten nicht sicher gelesen werden. Es wurden keine Änderungen gespeichert."
+    },
+    "reader": {
+      "invalidSavedPlace": "Diese Lesestelle konnte nicht gespeichert werden. Die Quelle wurde nicht verändert."
     }
   },
   "templates": {

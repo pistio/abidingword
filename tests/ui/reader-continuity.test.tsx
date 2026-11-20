@@ -30,7 +30,7 @@ describe("durable source reading", () => {
     await api.sourceReaderPositionSave({ sourceId: source.id, position: original });
     const { user } = await renderApp(api, { pdfEngine: createFakePdfEngine({ pages: 6 }) });
     const pane = screen.getByRole("complementary", { name: "Sources" });
-    await user.click(await within(pane).findByRole("button", { name: /A Durable Reader/ }));
+    await user.click(await within(pane).findByRole("button", { name: "A Durable Reader" }));
     const reader = await within(pane).findByRole("region", { name: "A Durable Reader" });
     expect(await within(reader).findByTestId("pdf-viewer")).toBeInTheDocument();
     await waitFor(() => expect(within(reader).getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("4")));
@@ -43,7 +43,7 @@ describe("durable source reading", () => {
     await api.sourceReaderPositionSave({ sourceId: other.id, position: { mode: "reading", page: null } });
     const { user } = await renderApp(api, { pdfEngine: createFakePdfEngine({ pages: 6 }) });
     const pane = screen.getByRole("complementary", { name: "Sources" });
-    await user.click(await within(pane).findByRole("button", { name: /A Durable Reader/ }));
+    await user.click(await within(pane).findByRole("button", { name: "A Durable Reader" }));
     const reader = await within(pane).findByRole("region", { name: "A Durable Reader" });
     await within(reader).findByText("Invented text for page 1");
     fireEvent(window, new Event("pagehide"));

@@ -12,7 +12,7 @@ use crate::error::{AppError, AppResult, UserMessage};
 const KEY: &str = "library.source_reader_positions.v1";
 const MAX_SOURCES: usize = 60;
 const MAX_HISTORY: usize = 200;
-const MAX_JSON_BYTES: usize = 80_000;
+const MAX_JSON_BYTES: usize = 3_000_000;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
