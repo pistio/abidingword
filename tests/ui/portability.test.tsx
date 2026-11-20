@@ -153,6 +153,62 @@ describe("Data and backup", () => {
     expect(await within(section).findByRole("alert")).toHaveTextContent(/newer version of Abiding Word/);
     expect(api.state.portability.restored).toEqual([]);
   });
+  it("shows verified daily recovery points, refuses corrupt ones and requires explicit confirmation", async () => {
+    const { api } = await setup();
+    const good = "abiding-word-v27-2026-11-20T10-20-00.123Z.db";
+    const broken = "abiding-word-v26-2026-11-19T10-20-00.123Z.db";
+    api.state.portability.dailySnapshots = [
+      { id: good, createdAt: "2026-11-20T10:20:00.123Z", schemaVersion: 27, bytes: 1_500_000, usable: true },
+      { id: broken, createdAt: "2026-11-19T10:20:00.123Z", schemaVersion: 26, bytes: 900_000, usable: false },
+    ];
+    const { user } = await renderApp(api);
+    const section = await data(user);
+    expect(within(section).getByText(/up to seven verified daily database copies/)).toBeVisible();
+    await user.click(within(section).getByRole("button", { name: "Show recovery points" }));
+    const list = await within(section).findByRole("list", { name: "Automatic recovery points" });
+    expect(within(list).getByText("Available")).toBeInTheDocument();
+    expect(within(list).getByText(/damaged or incompatible version/)).toBeInTheDocument();
+    const buttons = within(list).getAllByRole("button", { name: "Review restore…" });
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]).toBeEnabled();
+    expect(buttons[1]).toBeDisabled();
+
+    // Inspection and cancellation cannot change the native database.
+    await user.click(buttons[0]!);
+    const preview = await within(section).findByRole("region", { name: "Recovery point to restore" });
+    expect(within(preview).getByText(/It does not restore imported books or images/)).toBeVisible();
+    expect(within(preview).getByText(/verified safety copy/)).toBeVisible();
+    expect(within(preview).getByRole("button", { name: "Cancel" })).toHaveFocus();
+    await user.click(within(preview).getByRole("button", { name: "Cancel" }));
+    expect(api.state.portability.dailyRestored).toEqual([]);
+
+    const reopened = within(section).getByRole("list", { name: "Automatic recovery points" });
+    await user.click(within(reopened).getAllByRole("button", { name: "Review restore…" })[0]!);
+    await user.click(within(section).getByRole("button", { name: "Restore this database copy" }));
+    expect(await within(section).findByText(/The database was restored/)).toBeInTheDocument();
+    expect(within(section).getByText(/pre-restore/)).toBeInTheDocument();
+    expect(within(section).getByRole("button", { name: "Continue" })).toBeVisible();
+    expect(api.state.portability.dailyRestored).toEqual([good]);
+  });
+
+  it("does not offer recovery when there are no snapshots, and fails safely if one changed after review", async () => {
+    const { api } = await setup();
+    const { user } = await renderApp(api);
+    const section = await data(user);
+    await user.click(within(section).getByRole("button", { name: "Show recovery points" }));
+    expect(await within(section).findByText("No automatic recovery points are available yet.")).toBeInTheDocument();
+    const id = "abiding-word-v27-2026-11-20T10-00-00.000Z.db";
+    api.state.portability.dailySnapshots = [{ id, createdAt: "2026-11-20T10:00:00Z", schemaVersion: 27, bytes: 500_000, usable: true }];
+    await user.click(within(section).getByRole("button", { name: "Refresh recovery points" }));
+    const entries = await within(section).findByRole("list", { name: "Automatic recovery points" });
+    await user.click(within(entries).getByRole("button", { name: "Review restore…" }));
+    // Native revalidates the file after the first preview, before any mutation.
+    api.state.portability.dailySnapshots[0]!.usable = false;
+    await user.click(within(section).getByRole("button", { name: "Restore this database copy" }));
+    expect(await within(section).findByRole("alert")).toHaveTextContent(/damaged or incompatible/);
+    expect(api.state.portability.dailyRestored).toEqual([]);
+    expect(within(section).queryByText("The database was restored.")).not.toBeInTheDocument();
+  });
 });
 
 describe("Project information", () => {
