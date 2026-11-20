@@ -123,7 +123,8 @@ Codex's review of PR #53 and the follow-up review of `4dd9f8e`
 | `scripts/evaluation/disclosed-inventory.py` | `61afa5818d1e5fc053b80a5018024b5ba042a18fa06861cba01f04d6f2dbb9da` |
 | `docs/evaluation/disclosed-documents.sha256` (the canonical inventory) | `a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8` |
 | `docs/evaluation/disclosed-editions.tsv` | `9c736eb2394803dfe44b938eee7c88f0881c28f2113bbff2541a9f695cb0801a` |
-| `docs/evaluation/builder-brief.md` | `f4b63afab9c1ecfb70c692b2b4b95618cb8cc7801039ac04d9aa46e3c3459b1b` |
+| `docs/evaluation/builder-brief.md` | `bf7008d84c2dcd2c3f4d8f5e5b58d01475ff8ead8425314c186cc181971be147` |
+| `docs/evaluation/transcript-audit.md` | `6552c9095243a1320fb59d47b47ad12e873b9f72faa32737793b05797bd356a8` |
 | `tests/evaluation/test_withheld_set_tools.py` | `8cc2e2d0659b91dd00ced7fe5d365d909e1f286a972e3ab13d13741fcded2140` |
 | `scripts/corpus/audit-derived-completeness.py` (v2) | `d268175759f92add320530c9b8f5509f9f1b60ba726cc5f861501db5c90ab5f0` |
 
@@ -135,7 +136,11 @@ builder's files no longer name the project (brief, edition list); and
 `check_set` (`d7290e28…`) differs from the pin above by that comment
 (`git diff 5717388 a11fd0a -- scripts/evaluation/check-set.py`).
 
-Superseded pins, kept as recorded: at `e73b5d3` check-set `d7290e28…`,
+Owner decisions (20 November 2026, `SET-H-APPROVAL.md`): option A
+(procedural independence, audited by `docs/evaluation/transcript-audit.md`);
+the brief now states the access-route rules and the approved host.
+
+Superseded pins, kept as recorded: brief `f4b63afa…` at `e2e9e62`; at `e73b5d3` check-set `d7290e28…`,
 scorer `803a7adb…`, inventory script `e656f38e…`, editions `5241c244…`,
 brief `7e1ea823…`, tests `b28e3a6f…`; at `4dd9f8e` check-set `66923a89…`,
 seal-set `fa39c981…`, runner `d1b6a36c…`, scorer `13f9d4ae…`, brief

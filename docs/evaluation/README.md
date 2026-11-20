@@ -4,6 +4,7 @@
 |---|---|
 | `builder-brief.md` | The neutral brief for whoever builds a withheld set. Nothing in it describes the recogniser |
 | `disclosed-editions.tsv` | Every edition used by the 113 disclosed editions (development corpus, Sets B–G, reconstructions): identity, language, source and licence as recorded. No layout, converter, rule or result |
+| `transcript-audit.md` | How the builder's and reviewer's transcripts are audited (option A: procedural independence), and what invalidates a session. For the auditor, not the builder |
 | `disclosed-documents.sha256` | The canonical inventory: 7 461 SHA-256 hashes of every disclosed document, reference, build intermediate and USFM book in them, and every hash the manifests record. No names |
 
 The tools are in `scripts/evaluation/`: `check-set.py` (the checks, before

@@ -4,12 +4,18 @@
 private repository while the public `pistio/abidingword` repository stays
 blocked?
 
-**Answer, as tested: no, not by enforcement.** A fresh session in a
-restricted environment cannot open the repository's web page, raw files,
-API or zip archive. It **can** read the repository with plain `git`
-(`git ls-remote` and `git clone`), as it can any public repository. Writing
-to its own repository was not demonstrated. A session started by another
-session will not push without a person's go-ahead (below).
+**Answer, as tested: write yes, block no.**
+* **Write: yes.** With the owner's go-ahead, a fresh session committed and
+  pushed an invented file to its own private repository (`f50b267`,
+  corroborated on GitHub).
+* **Block: not by enforcement.** A fresh session in a restricted
+  environment cannot open the repository's web page, raw files, API or
+  zip archive, and server-side page fetches are blocked too. It **can**
+  read the repository with plain `git` (`git ls-remote` and `git clone`),
+  as it can any public repository, and web search works. The owner chose
+  procedural independence with a full transcript audit (option A,
+  `SET-H-APPROVAL.md`); nothing here is described as technically
+  enforced.
 
 Invented files only. No Set H material was selected, downloaded, inspected
 or made.
@@ -50,8 +56,30 @@ repository: they match (`HEAD ceba01ff…`).
 | E2 | `https://ebible.org/` (not allowed) | CONNECT 403 | **blocked** |
 | E3 | `https://example.com/` (not allowed) | CONNECT 403 | **blocked** |
 | E4 | `https://pypi.org/simple/` (package registry) | name not resolved | **blocked** |
-| C | Commit and push an invented note to the session's own repository | refused by the session's own permission check ("Sensitive Information Leakage", on a command that also ran network probes); a second fresh session declined to push without a person's go-ahead, because its instructions came from another session | **not demonstrated** |
-| G | WebFetch of the repository page and raw file (server-side fetching); `add_repo` for the repository | not run: the sessions declined without a person's go-ahead | **untested** |
+| C | Commit and push an invented note to the session's own repository | first session: refused by its own permission check (the instruction came from another session, in a command that also ran network probes). Second session, after the owner's message: `isolation-test/invented-note.txt` committed and pushed, `e5179d1..f50b267 HEAD -> main`; on GitHub `main` is `f50b267` holding only the README and that note | **allowed (demonstrated)** |
+| G1, G2 | WebFetch (through a helper agent) of the repository page and its raw README | `getaddrinfo ENOTFOUND github.com` / `raw.githubusercontent.com`: page fetches follow the environment's allowlist | **blocked** |
+| G5 | How git reaches GitHub | through the session's HTTPS proxy (`HTTPS_PROXY`, `http.proxyauthmethod=basic`), SSH URLs rewritten to HTTPS | explains B5, B6, D3 |
+| G6 | Gutenberg's 503 | the proxy connected (`200 Connection Established`), then the site answered `503`, `retry-after: 21600` | the site, not the environment |
+| — | Does a helper agent's activity reach the transcript? | yes: the WebFetch helper's prompt, tool calls and results appear in the parent session's events with the agent's id | **auditable** |
+
+## Readiness probes in the approved environment
+
+`Collection H` (`env_01Kus7n5JxhUcNsGy6fHog2r`): network **Limited**, allowed
+host `ebible.org` only, package managers off, MCP servers off, no setup
+script, variables or secrets; repository `pistio/collection-h` (private).
+Read-only probe sessions `session_011iiPcSZEDbzb7FEUTXiBo7` and
+`session_011iiPcWVox1cFwyXNzRqa8y`; nothing created, committed or pushed by
+them.
+
+| Probe | Result | Route |
+|---|---|---|
+| Workspace and context | only `pistio/collection-h`; no `CLAUDE.md`; no earlier message; GitHub access scoped to `pistio/collection-h` | as tested above |
+| `https://ebible.org/` | 200 | **open** (the approved host) |
+| `www.gutenberg.org`, `example.com` | CONNECT 403 | **blocked** |
+| `github.com/pistio/abidingword`, `api.github.com/repos/pistio/abidingword` | 403, 403 | **blocked** |
+| `git ls-remote https://github.com/pistio/abidingword HEAD` | exit 0, `ceba01ff62c1` | **open** (not enforced) |
+| WebSearch (a neutral query) | 17 results | **open**: search runs outside the network allowlist; every query is in the transcript |
+| Repository and scheduling tools (`list_repos`, `add_repo`, `check_repo_access`, scheduled tasks) | not exposed to the session: two probes found none, loaded or deferred (the session's metadata still lists them) | **not available** as tested; the audit still checks for any use |
 
 ## What this means
 
@@ -64,9 +92,10 @@ repository: they match (`HEAD ceba01ff…`).
   including this one. The environment's network allowlist does not govern
   them. While `pistio/abidingword` is public, keeping a builder away from
   its source is **procedure**, checked afterwards in the transcript.
-* **Not yet known:** whether WebFetch (which may fetch outside the
-  container) or `add_repo` reaches the repository; and the write path to
-  the session's own repository. Both sessions wait for a person's message.
+* **Open but visible:** web search, and `git` reads of public
+  repositories. Every tool call, including a helper agent's, is in the
+  session's transcript, which is what the audit reads
+  (`docs/evaluation/transcript-audit.md`).
 * **Operational:** a session started by another session treats its
   instructions as untrusted and will not push or widen its access without
   a person. The builder and the reviewer must therefore be started and
@@ -74,14 +103,8 @@ repository: they match (`HEAD ceba01ff…`).
   cloud (503 with a six-hour retry), so it cannot be a source for cloud
   sessions.
 
-## To finish the check (owner, one message)
-
-Open `https://claude.ai/code/session_011iiPcUd2VF4YHZiXU9gpCL` and reply:
-
-> Confirmed. Run all four steps, including the push to `main` of this test repository.
-
-That session then pushes the invented note (the write path) and runs the
-two WebFetch probes and the two read-only diagnostics, and reports them.
+The owner's go-ahead was given in `session_011iiPcUd2VF4YHZiXU9gpCL` on
+20 November 2026 (06:24 UTC); its results are in the table above.
 
 ## Clean-up after the check
 

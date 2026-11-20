@@ -10,7 +10,8 @@ if whoever chooses the documents knows nothing about the software.
 ## Before anything else
 
 Record in `access-records.md`: your session link (or your name), the
-environment, and the repositories you can see. Your whole session is kept
+environment, and the repositories your session description says you were
+given (do not list or look for others). Your whole session is kept
 as a record: every command, every address you open and every file you
 read will be reviewed before the collection is used.
 
@@ -30,13 +31,23 @@ for the repository you were given. Do not run any
 Bible-recognition software on the documents. If you come across any of
 these by accident, stop and record it in `access-records.md`.
 
+Also not allowed, because they reach beyond your repository: listing,
+attaching or checking access to other repositories (tools such as
+`list_repos`, `add_repo`, `check_repo_access`); creating scheduled tasks,
+other sessions or messages to other sessions; adding network hosts or
+connectors. Web search is allowed only to find editions on the approved
+sources. Anything a helper agent you start does is part of your record,
+under the same rules. Breaking any of these rules invalidates your
+session's work.
+
 ## Sources and licences
 
 * Lawfully available published files only, with their licence recorded.
 * **Public domain only**, unless the owner's approval says that texts
   under an open licence may also be used. No all-rights-reserved text.
 * No scanned page images: every document's text must be selectable.
-* The approved sources are those the owner lists with the approval. Record
+* The approved sources are those the owner names in your first message
+  (initially `ebible.org` only); your network reaches no other host. Record
   every URL you visit.
 
 ## The collection

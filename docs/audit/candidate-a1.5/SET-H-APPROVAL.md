@@ -2,30 +2,47 @@
 
 The one document for the owner's decision. Details, if needed, are in
 `set-h-decision-package.md` (protocol), `FREEZE.md` (candidate) and
-`data/isolation-test-2026-11-20/` (environment check). **Set H has not been
+`data/isolation-test-2026-11-20/` (environment checks). **Set H has not been
 selected, downloaded, inspected, built, sealed or run.** The evaluation is
 not complete until it has been run and assessed.
 
-## Readiness verdict: **NOT READY**
+## Readiness verdict: **READY FOR OWNER AUTHORISATION**
 
-**The remaining blocker:** a builder or reviewer session cannot be
-*enforced* to stay away from the recogniser's public source.
+You have decided the arrangement (below), and the approved environment and
+set repository are set up. Every material access route has been checked.
+Separation of the builder and reviewer from the recogniser is
+**procedural, with a complete transcript audit**. It is **not technically
+enforced**: a session in the approved environment can still read public
+GitHub repositories with `git`, and can use web search.
 
-In the tested restricted environment, a fresh session cannot open
-`pistio/abidingword`'s web page, raw files, API or archive. It **can** read
-the repository with plain `git clone`, as it can any public repository.
-The proposed isolation was therefore partly procedural, not enforced as
-the decision package claimed. You must choose how separation is provided
-(§4: option A, B or C).
+**The one remaining step is yours:** authorise selection and building, and
+start the builder session with the message in §8. Sealing and the single
+run stay separately authorised (§8, §9).
 
-**Also outstanding:** one message from you completes the environment check
-(§5, step 0). It covers the write path to the session's own repository,
-and whether server-side fetching reaches the repository. A session started
-by another session will not push without a person's go-ahead.
+## Owner decisions (20 November 2026)
 
-Once you have chosen A or C and the write path is shown, nothing else
-stands between this package and your authorisation. No further engineering
-is needed. Option B needs a re-run of the probe after the change.
+1. **Independence: option A.** Procedural independence with strict
+   auditing: fresh, separately started builder and reviewer sessions;
+   neutral repository names and instructions; no checkout of this project
+   and no inherited context; complete transcript review
+   (`docs/evaluation/transcript-audit.md`). Any access to the recogniser's
+   source, tests, earlier results or other prohibited repositories
+   invalidates the affected session. Separation is **not** described as
+   technically enforced while public `git` access remains possible.
+2. **Set repository and environment approved:** `pistio/collection-h`
+   (private) and the environment `Collection H`, with **`ebible.org` as
+   the only source host**. No further host is added automatically. The
+   second isolation test's result (an invented file committed and pushed
+   to a disposable private repository) is preserved.
+3. **Licences:** public-domain texts. Open-licensed texts may be
+   **proposed** for separate approval if authentic published evidence is
+   insufficient. No all-rights-reserved material in cloud sessions without
+   explicit permission.
+4. **Published-evidence minimum accepted, never reduced to pass:** 8
+   completed authentic scored Scripture documents, in 2 formats and 4
+   languages, with 20 000 printed or reference verses. The report keeps
+   apart measured accuracy, verified coverage, clean refusals, exploratory
+   material and unsupported languages.
 
 ## 1. Identities
 
@@ -41,8 +58,13 @@ is needed. Option B needs a re-run of the probe after the change.
 | `scripts/evaluation/score-set.py` | `658de955cc4594b5893ba84518ccbdfc7673b95da280edc5056c09835fb9a9bf` |
 | `docs/evaluation/disclosed-documents.sha256` (canonical inventory, 7 461 hashes) | `a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8` |
 | `docs/evaluation/disclosed-editions.tsv` | `9c736eb2394803dfe44b938eee7c88f0881c28f2113bbff2541a9f695cb0801a` |
-| `docs/evaluation/builder-brief.md` | `f4b63afab9c1ecfb70c692b2b4b95618cb8cc7801039ac04d9aa46e3c3459b1b` |
+| `docs/evaluation/builder-brief.md` | `bf7008d84c2dcd2c3f4d8f5e5b58d01475ff8ead8425314c186cc181971be147` |
+| `docs/evaluation/transcript-audit.md` | `6552c9095243a1320fb59d47b47ad12e873b9f72faa32737793b05797bd356a8` |
 | `scripts/corpus/audit-derived-completeness.py` (v2) | `d268175759f92add320530c9b8f5509f9f1b60ba726cc5f861501db5c90ab5f0` |
+
+The set repository's `builder/` folder (commit `4f84805`) holds copies of
+the brief, both exclusion lists, `check-set.py`, `seal-set.py` and the
+auditor, with these SHA-256 sums.
 
 **Historical evidence, unchanged:** on the 113 disclosed editions,
 1 980 257 verified correct, **9 verified wrong** (all from the defective
@@ -59,12 +81,9 @@ controls with no Scripture and 2 mixed-content documents, each with a
 sealed list of the passages it may verify. Documents with no trustworthy
 reference are declared *exploratory* before the seal and are never scored.
 No disclosed edition is used. The allocation is in
-`set-h-decision-package.md` §3.
-
-**Published-evidence minimum:** at least 8 *completed* scored authentic
-documents, in at least 2 formats and 4 languages, printing at least 20 000
-verses between them. These are printed verses, not verified ones. If the
-minimum is not met, the scorer adds a qualification limit, verbatim.
+`set-h-decision-package.md` §3. A language that cannot be represented by an
+undisclosed, accurately referenced document is left out, and the limit is
+stated; it is never filled with disclosed material.
 
 **Pass requires all of the following:**
 1. 0 verified verses with wrong text;
@@ -82,86 +101,60 @@ If 1–4 do not all hold, the verdict is **fail**. If 5 does not hold, the
 scorer refuses to assess at all. If 6 does not hold, the verdict is
 **not a protocol run**.
 
-**Reported separately, never merged:**
-* verified correct verses, and coverage (verified correct ÷ printed, over
-  completed scored documents), with no pass mark;
-* abstentions within read documents: refused-correct and caught verses,
-  and refused chapters;
-* **clean refusals of whole documents**: named in the accuracy claim as
-  *not recognition coverage*, contributing no verse;
-* execution failures, with their cause;
-* exploratory documents, raw only;
-* any language or format the set could not cover with an undisclosed,
-  accurately referenced document. This is stated as a limit, never filled
-  with disclosed material.
+If the published-evidence minimum is not met, the scorer adds its
+qualification limit, verbatim. The minimum is never lowered.
 
-## 3. Builder and reviewer environment
+**Reported separately, never merged:**
+
+| Measure | What it is |
+|---|---|
+| Measured accuracy | verified verses with wrong text, and verified references outside the edition, over completed scored documents |
+| Verified coverage | verified correct ÷ printed, over completed scored documents; no pass mark |
+| Abstentions | refused-correct and caught verses, and refused chapters, inside documents that were read |
+| **Clean refusals** | whole documents the app refused. They are named in the accuracy claim as *not recognition coverage* and contribute no verse |
+| Execution failures | each with its cause |
+| Exploratory material | raw observations only, never in accuracy or coverage |
+| Unsupported languages | languages or formats the set could not cover, stated as limits |
+
+## 3. Builder and reviewer environment (set up)
 
 | Setting | Value |
 |---|---|
-| Network | **Limited** |
-| Allowed hosts | proposed: `ebible.org`. Others only with your approval. **Not** `www.gutenberg.org`: it answers this cloud with `503`, retry after 6 hours, so Gutenberg files can only come from you |
+| Environment | `Collection H` (`env_01Kus7n5JxhUcNsGy6fHog2r`), personal |
+| Network | **Limited**; allowed host **`ebible.org` only** (reachable, 200). Further hosts only with your separate approval. Project Gutenberg answers this cloud with 503 and is not used |
 | Package managers / MCP servers | off / off |
 | Setup script, variables, saved credentials | none |
-| Repositories | the private set repository only (§5) |
-| Sessions | **started by you**, new (not a fork or continuation), with the brief as the first message |
+| Repository | `pistio/collection-h`, private; `main` at `4f84805`: README and `builder/` |
+| Sessions | **started by you**, new (not a fork or continuation), with the message in §8 as the first message |
 
-## 4. Enforced and procedural guarantees
+## 4. What is enforced and what is procedure (as tested)
 
-Demonstrated in `data/isolation-test-2026-11-20/`:
-
-| Guarantee | Status |
+| Route or guarantee | Status |
 |---|---|
 | No checkout, memory, `CLAUDE.md` or chat history from this project | **enforced** (demonstrated) |
 | GitHub tools and API scoped to the session's own repository; no GitHub MCP tools | **enforced** (demonstrated) |
-| This repository's web page, raw files, API and zip archive | **refused** (demonstrated) |
-| Other private repositories of the account, over git | **refused** (demonstrated) |
-| Hosts outside the allowlist; package registries | **refused** (demonstrated) |
-| **This repository over `git`** (and any public repository) | **NOT enforced**: `git clone` works (demonstrated) |
-| WebFetch (server-side) and `add_repo` of this repository | **untested**: needs your message (§5, step 0) |
-| Writing to the session's own repository | **not yet demonstrated**: needs your message |
-| Builder and reviewer not told the project | procedure: the handed-over files no longer name the project or its location (checked) |
-| No access to the recogniser by any route | procedure: the whole transcript is reviewed before the seal and again by the assessor before scoring |
-| The model's general knowledge | cannot be ruled out |
+| Repository and scheduling tools (`list_repos`, `add_repo`, `check_repo_access`, scheduled tasks) | **not exposed** to the session (two probes) |
+| Writing to the session's own repository | **works** (demonstrated: `f50b267`) |
+| This repository's web page, raw files, API and archive | **refused** (403) |
+| Server-side page fetches (WebFetch) of this repository | **refused** (host not in the allowlist) |
+| Other private repositories over git | **refused** |
+| Hosts outside the allowlist; package registries | **refused** |
+| **`git` reads of any public repository, this one included** | **open**: procedure, audited |
+| **Web search** | **open**: allowed only to find editions on the approved source; audited |
+| Helper agents | run under the same rules; their calls appear in the parent's transcript (demonstrated) |
+| Builder and reviewer not told the project | procedure: the handed-over files name no project (checked) |
+| The model's general knowledge; the owner account's public profile | cannot be ruled out: the set repository's owner is `pistio`, whose public repositories include this one |
 
-**Choose one** (the blocker):
+## 5. Set-up done, and clean-up
 
-* **A. Procedural separation, audited (recommended).** Fresh sessions;
-  neutral repository and file names; the builder is never told the project.
-  Every transcript is reviewed for any `git`, web or tool access to a
-  repository other than the set repository. Any such access voids that
-  session's work, and you decide what follows. Sets E–G were built under
-  similar procedural separation.
-* **B. Enforced for the build and review window.** Make `pistio/abidingword`
-  private while the builder and reviewer sessions are open; private
-  repositories outside a session's scope were refused over git (D4). Re-run
-  the probe first, and restore visibility after the seal. GitHub's
-  confirmation dialog lists the side effects. A private repository's CI
-  uses the account's Actions minutes, and the mandate forbids paid Actions
-  without approval. Check the test-update channel and the PR #54 work
-  first.
-* **C. A person builds and reviews**, outside any session with access to
-  this project. This is procedural, on that person's conduct.
-
-## 5. Private repository and environment set-up
-
-0. **Finish the check:** open
-   `https://claude.ai/code/session_011iiPcUd2VF4YHZiXU9gpCL` and reply:
-   *"Confirmed. Run all four steps, including the push to `main` of this
-   test repository."* Then delete `pistio/abidingword-seth-isolation-test`
-   and the environment `Set H isolation test`.
-1. **Set repository.** Private, with a neutral name that does not name the
-   project, for example `pistio/collection-h`, initialised with a README.
-   It can be created for you with the GitHub tool: creating the disposable
-   test repository that way worked, and the Claude GitHub App could reach
-   it at once. Or create it yourself: GitHub → New repository → owner
-   `pistio` → the name → **Private** → *Add a README* → Create. Then check
-   that Settings → Applications → Claude → Repository access includes it.
-   Never make it public.
-2. **Builder files.** Commit to its `builder/` folder exactly the files
-   listed in `docs/evaluation/README.md` §"For the builder".
-3. **Environment.** As §3, named neutrally (for example "Collection H"),
-   repository: the set repository.
+* **Done:** the set repository `pistio/collection-h` (private), the
+  environment `Collection H`, and the builder files in `builder/`.
+* **Optional clean-up** (nothing in them but invented text):
+  * delete the repository `pistio/abidingword-seth-isolation-test` and the
+    environment `Set H isolation test`;
+  * archive the probe sessions `session_011iiPcVvhdecywvqehnFXRQ`,
+    `session_011iiPcUd2VF4YHZiXU9gpCL`, `session_011iiPcSZEDbzb7FEUTXiBo7`
+    and `session_011iiPcWVox1cFwyXNzRqa8y`.
 
 ## 6. Coverage limitations known in advance
 
@@ -171,7 +164,9 @@ Demonstrated in `data/isolation-test-2026-11-20/`:
 * Hebrew right-to-left PDFs and Hebrew-letter numerals verify nothing.
   This is safe but gives no coverage.
 * Authentic DOCX Bibles are rare.
-* Project Gutenberg is unreachable from cloud sessions.
+* With `ebible.org` as the only source, many documents may come from one
+  publisher's own conversions. Overlap of publisher or converter with the
+  disclosed editions is reported, not hidden.
 * There is no qualified completeness auditor for PDF or EPUB made from
   USFM.
 * Missing text is invisible: verification means fidelity to the document
@@ -179,30 +174,37 @@ Demonstrated in `data/isolation-test-2026-11-20/`:
 
 ## 7. Copyright and licences
 
-* Public-domain texts only.
-* Open licences only if you approve them.
-* No all-rights-reserved text in any cloud session.
+* Public-domain texts.
+* Open-licensed texts only if proposed and then separately approved by you.
+* No all-rights-reserved material in any cloud session without your
+  explicit permission.
 * Documents and outputs live only in the private set repository, never in
   this repository or any public comment.
 
 ## 8. Preparing, reviewing and sealing the set
 
-1. You approve this package (§4 option, §3 hosts, §7 licences), and the
-   repository and environment are set up (§5).
-2. You start the **builder** session. It builds the 24 documents and
-   references, records provenance, and runs `seal-set.py` until it passes.
-3. You start the **reviewer** session, fresh. It checks every reference
-   (edition, revision, canon, versification, at least 20 sampled verses,
-   the boundaries) and every edition against `disclosed-editions.tsv`, and
-   signs `review-ledger.md`.
-4. The builder's and reviewer's transcripts are reviewed for access
-   outside the set repository (option A).
-5. You approve the list of documents: metadata only.
-6. The builder seals with `seal-set.py --write`.
-7. The seal folder is committed alone to `docs/evaluation/set-h/seal/` in
+1. **Authorise selection and building** (the remaining step). Then start a
+   new session in Claude Code: environment **Collection H**, repository
+   **`pistio/collection-h`**, with this first message:
+
+   > You are the builder of a test collection. Read `builder/builder-brief.md` in this repository and follow it exactly. The approved source host is `ebible.org` only; use public-domain texts only. Work in this repository: put the documents and references in `documents/` and the seal folder in `seal/`, and commit and push your work to `main` as you go. Do not seal: run `python3 builder/seal-set.py seal documents --inventory=builder/disclosed-documents.sha256` until it passes, then tell me you are ready for review.
+
+2. **Review.** When the builder reports ready, start a second new session
+   in the same environment and repository, with:
+
+   > You are the reviewer of the test collection in this repository. Read `builder/builder-brief.md`; its rules on what you must not seek apply to you as well. Do not change any document or reference. For every scored document, check that the reference is the same edition, revision, canon and versification; sample at least 20 verses against the document; check the first and last verse of each book; record every divergence. Check every edition against `builder/disclosed-editions.tsv`. Write and sign `seal/review-ledger.md`, commit and push it, and tell me the result.
+
+3. **Audit.** A session that is neither the builder nor the reviewer (or
+   you) reads both transcripts against
+   `docs/evaluation/transcript-audit.md`, and records the result in
+   `seal/access-records.md`. Any invalidating event: that session's work
+   is not sealed, and you decide.
+4. **You approve the list**: metadata only.
+5. **Seal** (separate authorisation): the builder runs `seal-set.py --write`.
+   The seal folder is committed alone to `docs/evaluation/set-h/seal/` in
    this repository.
 
-## 9. The single run
+## 9. The single run (separate authorisation)
 
 1. A **runner** session, with this repository and the set repository,
    confirms the binary's SHA-256, then runs once:
@@ -212,7 +214,8 @@ Demonstrated in `data/isolation-test-2026-11-20/`:
    * It commits the run record itself and prints that commit, which is
      pushed at once.
    * The outputs are copied to the set repository.
-2. An **assessor** session (not the runner's) runs
+2. An **assessor** session (not the runner's) re-audits the transcripts,
+   then runs
    `python3 scripts/evaluation/score-set.py <output folder> docs/evaluation/set-h/seal --run-record=<record commit> --json=score.json --md=score.md`.
    * It refuses anything not anchored to the committed seal and run record.
    * The assessor compares RUN.txt's runner and check-set hashes with §1.
