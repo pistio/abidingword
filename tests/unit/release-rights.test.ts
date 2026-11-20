@@ -26,7 +26,7 @@ function fixture({ licence = "Public Domain", withNotice = true }: { licence?: s
   writeFileSync(join(home, "invented_usfm.zip"), archive);
   writeFileSync(join(home, "copr.htm"), "An invented public-domain source for a test.");
   writeFileSync(join(home, "SOURCE.md"), `| SHA-256 | \`${sha}\` |\n| Licence | ${licence} |\n`);
-  writeFileSync(join(notices, "THIRD-PARTY-NOTICES.md"), withNotice ? "| Test (\`invented\`) | Public Domain |" : "# No notices");
+  writeFileSync(join(notices, "THIRD-PARTY-NOTICES.md"), withNotice ? "| Test (`invented`) | Public Domain |" : "# No notices");
   return { root, home, sha };
 }
 afterEach(() => { for (const p of folders.splice(0)) rmSync(p, { recursive: true, force: true }); });
