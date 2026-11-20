@@ -114,6 +114,10 @@ fn retention_deletes_only_old_verified_managed_snapshots() {
         })
         .count();
     assert_eq!(valid, 7);
+    // The CURRENT recovery point must survive rotation even when the old
+    // snapshots were copied in later (newer filesystem modification times).
+    assert!(current.exists());
+    assert_eq!(get_note(&current), "\"My invented written notes\"");
     assert_eq!(fs::read(&damaged).unwrap(), b"bad backup");
     assert_eq!(fs::read(&unrelated).unwrap(), b"retain");
 }

@@ -118,15 +118,16 @@ pub fn daily_snapshot(conn: &Connection, dir: &Path) -> AppResult<Option<PathBuf
             .and_then(|s| s.parse::<i64>().ok());
         if let Some(its_version) = version_in_name {
             if verify(&path, its_version).is_ok() {
-                let modified = item
-                    .metadata()
-                    .and_then(|m| m.modified())
-                    .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
-                snapshots.push((modified, path));
+                // The timestamp in our own verified filename, NOT the file
+                // modification time, determines which recovery point is oldest.
+                // Copying an old backup today cannot evict today's snapshot.
+                if let Some(stamp) = name.splitn(4, '-').nth(3) {
+                    snapshots.push((stamp.to_string(), path));
+                }
             }
         }
     }
-    snapshots.sort_by_key(|(modified, path)| (*modified, path.clone()));
+    snapshots.sort_by(|(a, ap), (b, bp)| a.cmp(b).then_with(|| ap.cmp(bp)));
     let excess = snapshots.len().saturating_sub(RETAIN);
     for (_, old) in snapshots.into_iter().take(excess) {
         if let Err(error) = fs::remove_file(&old) {
