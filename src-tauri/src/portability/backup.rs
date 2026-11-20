@@ -363,9 +363,67 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
     })?;
     log::info!("safety copy before restoring: {}", safety.display());
 
-    // 4. The database, and the steps of every start; the safety copy comes
-    //    back if any of them fails.
-    let counts = db.with_conn_mut(|conn| {
+    // 4. Install staged files before replacing the database, retaining a
+    //    reversible record of every source file that changes. A failed
+    //    move cannot leave the database pointing at half-restored files.
+    let aside = dirs.pre_restore_backups().join(format!(
+        "files-{}-{}", file_stamp(), uuid::Uuid::new_v4()
+    ));
+    let mut changes = Vec::<FileChange>::new();
+    let mut added = 0;
+    let mut set_aside = 0;
+    let files_result = (|| -> AppResult<()> {
+        for place in &manifest.places {
+            let from = staging.path().join(&place.entry);
+            let target = dirs.root().join(&place.to);
+            check_restore_target(dirs.root(), &target)?;
+            let previous = match fs::symlink_metadata(&target) {
+                Ok(meta) if meta.file_type().is_file() => {
+                    let listed = reader.files.iter().find(|f| f.path == place.entry)
+                        .ok_or_else(not_a_package)?;
+                    if existing_equals(&target, listed) {
+                        continue;
+                    }
+                    let saved = aside.join(&place.to);
+                    if let Some(dir) = saved.parent() {
+                        fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
+                    }
+                    fs::rename(&target, &saved)
+                        .map_err(|e| AppError::filesystem(&target, e))?;
+                    set_aside += 1;
+                    Some(saved)
+                }
+                Ok(_) => return Err(restore_failed()),
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
+                Err(error) => return Err(AppError::filesystem(&target, error)),
+            };
+            changes.push(FileChange {
+                target: target.clone(),
+                prior: previous,
+                installed: false,
+            });
+            if let Some(dir) = target.parent() {
+                fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
+            }
+            // Staging and managed sources are under the same data root.
+            // Never perform an unverified partial copy into the final path.
+            fs::rename(&from, &target)
+                .map_err(|e| AppError::filesystem(&target, e))?;
+            changes.last_mut().expect("change pushed").installed = true;
+            added += 1;
+        }
+        Ok(())
+    })();
+    if let Err(error) = files_result {
+        log::error!("restoring source files failed: {error}");
+        rollback_files_or_report(&changes, &safety, &aside)?;
+        return Err(restore_failed());
+    }
+
+    // 5. Replace the SQLite database ONLY after all managed files are ready.
+    //    On an error, restore the verified safety database and undo the
+    //    managed file changes too.
+    let result = db.with_conn_mut(|conn| {
         let restored = (|| {
             conn.restore(
                 rusqlite::MAIN_DB,
@@ -388,73 +446,122 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
                     .map_err(AppError::from)
                     .and_then(|_| crate::db::reinitialise(conn, None));
                 match back {
-                    Ok(()) => Err(AppError::Import(UserMessage::new(
-                        "portability.restoreFailed",
-                        "The backup could not be restored. Your work was put back as it was.",
-                    ))),
+                    Ok(()) => Err(restore_failed()),
                     Err(e) => {
-                        log::error!("the safety copy could not be put back: {e}");
+                        log::error!("the database safety copy could not be put back: {e}");
                         Err(AppError::Import(
                             UserMessage::new(
                                 "portability.rollbackFailed",
-                                format!(
-                                    "The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {}.",
-                                    safety.display()
-                                ),
-                            )
-                            .with("path", safety.display()),
+                                "The backup could not be restored and your earlier work could not be put back automatically.",
+                            ).with("path", safety.display()),
                         ))
                     }
                 }
             }
         }
-    })?;
-
-    // 5. The files: added; a different file already there is set aside.
-    let aside = dirs
-        .pre_restore_backups()
-        .join(format!("files-{}", file_stamp()));
-    let mut added = 0;
-    let mut set_aside = 0;
-    for place in &manifest.places {
-        let from = staging.path().join(&place.entry);
-        let target = dirs.root().join(&place.to);
-        if target.is_file() {
-            let same = fs::read(&target)
-                .map(|bytes| {
-                    let listed = reader.files.iter().find(|f| f.path == place.entry);
-                    listed
-                        .is_some_and(|l| l.size == bytes.len() as u64 && l.sha256 == sha256(&bytes))
-                })
-                .unwrap_or(false);
-            if same {
-                continue;
-            }
-            let moved = aside.join(&place.to);
-            if let Some(dir) = moved.parent() {
-                fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
-            }
-            fs::rename(&target, &moved).map_err(|e| AppError::filesystem(&target, e))?;
-            set_aside += 1;
-        } else if target.exists() {
-            // A folder where the backup has a file: left as it is.
-            log::warn!("not restored, a folder is in the way: {}", target.display());
-            continue;
+    });
+    match result {
+        Ok(counts) => Ok(RestoreReport {
+            counts,
+            safety_copy: safety.display().to_string(),
+            files_added: added,
+            files_set_aside: set_aside,
+        }),
+        Err(error) => {
+            rollback_files_or_report(&changes, &safety, &aside)?;
+            Err(error)
         }
-        if let Some(dir) = target.parent() {
-            fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
-        }
-        fs::rename(&from, &target)
-            .or_else(|_| fs::copy(&from, &target).map(|_| ()))
-            .map_err(|e| AppError::filesystem(&target, e))?;
-        added += 1;
     }
-    Ok(RestoreReport {
-        counts,
-        safety_copy: safety.display().to_string(),
-        files_added: added,
-        files_set_aside: set_aside,
-    })
+}
+
+
+struct FileChange {
+    target: PathBuf,
+    prior: Option<PathBuf>,
+    installed: bool,
+}
+
+fn restore_failed() -> AppError {
+    AppError::Import(UserMessage::new(
+        "portability.restoreFailed",
+        "The backup could not be restored. Your earlier work was put back as it was.",
+    ))
+}
+
+// Existing symlinks in any managed path are never followed. This protects
+// against redirects from sources/ into an unrelated folder.
+fn check_restore_target(root: &Path, target: &Path) -> AppResult<()> {
+    let relative = target.strip_prefix(root).map_err(|_| not_a_package())?;
+    let mut current = root.to_path_buf();
+    for component in relative.components() {
+        current.push(component.as_os_str());
+        match fs::symlink_metadata(&current) {
+            Ok(meta) if meta.file_type().is_symlink() => return Err(restore_failed()),
+            Ok(meta) if current.as_path() != target && !meta.is_dir() =>
+                return Err(restore_failed()),
+            Ok(_) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(AppError::filesystem(&current, error)),
+        }
+    }
+    Ok(())
+}
+
+// Match a potentially huge source file without reading it all into RAM.
+fn existing_equals(path: &Path, listed: &PackageFile) -> bool {
+    use sha2::{Digest, Sha256};
+    let Ok(meta) = fs::symlink_metadata(path) else { return false; };
+    if !meta.file_type().is_file() || meta.len() != listed.size {
+        return false;
+    }
+    let Ok(mut input) = fs::File::open(path) else { return false; };
+    let mut digest = Sha256::new();
+    let mut buf = [0u8; 64 * 1024];
+    loop {
+        use std::io::Read;
+        match input.read(&mut buf) {
+            Ok(0) => break,
+            Ok(n) => digest.update(&buf[..n]),
+            Err(_) => return false,
+        }
+    }
+    format!("{:x}", digest.finalize()) == listed.sha256
+}
+
+// Restore originals in reverse order, even when failure occurred after
+// setting a prior file aside but before installing its replacement.
+fn rollback_file_changes(changes: &[FileChange]) -> AppResult<()> {
+    for change in changes.iter().rev() {
+        if change.installed {
+            fs::remove_file(&change.target)
+                .map_err(|e| AppError::filesystem(&change.target, e))?;
+        }
+        if let Some(original) = &change.prior {
+            fs::rename(original, &change.target)
+                .map_err(|e| AppError::filesystem(original, e))?;
+        }
+    }
+    Ok(())
+}
+
+fn rollback_files_or_report(
+    changes: &[FileChange],
+    safety: &Path,
+    aside: &Path,
+) -> AppResult<()> {
+    if let Err(error) = rollback_file_changes(changes) {
+        log::error!(
+            "source rollback failed: {error}; database safety: {}; saved originals: {}",
+            safety.display(), aside.display()
+        );
+        return Err(AppError::Import(
+            UserMessage::new(
+                "portability.rollbackFailed",
+                "Restore failed and source files could not all be recovered automatically.",
+            ).with("path", safety.display()),
+        ));
+    }
+    Ok(())
 }
 
 #[cfg(test)]
