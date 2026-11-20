@@ -7,7 +7,7 @@ import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { formatDate } from "@/i18n/format";
-import type { BackupPreview, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
+import type { BackupPreview, DailySnapshot, DailySnapshotRestore, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import { LegacyTeaching } from "./LegacyTeaching";
 import { Trash } from "./Trash";
 import { ProjectExport } from "./ProjectExport";
@@ -37,6 +37,7 @@ export function DataSettings() {
         <p className="m-0 max-w-prose text-[0.9375rem] text-text-muted">{t("settings.data.backupHint")}</p>
         <BackupCreate />
         <BackupRestore />
+        <DailyRecovery />
       </div>
       <div className="flex flex-col gap-4 border-t border-border-subtle pt-6">
         <h3 className="type-group m-0">{t("settings.data.sample")}</h3>
@@ -325,5 +326,109 @@ function SampleInstall() {
       {done && <Notice tone="success">{t(done.added ? "settings.data.sampleAdded" : "settings.data.sampleThere", { title: done.title })}</Notice>}
       {error && <Notice tone="error">{error}</Notice>}
     </div>
+  );
+}
+
+
+/**
+ * Daily snapshots are a *database-only* fallback, not a second way to restore
+ * source files. Every choice is checked again by Rust, by basename and schema.
+ * The destructive action is available only after the explicit preview.
+ */
+function DailyRecovery() {
+  const { t, i18n } = useTranslation();
+  const api = useApi();
+  const [items, setItems] = useState<DailySnapshot[] | null>(null);
+  const [selected, setSelected] = useState<DailySnapshot | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<DailySnapshotRestore | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const reloadList = async () => {
+    if (busy || done) return;
+    setBusy(true);
+    setError(null);
+    try {
+      setItems(await api.dailySnapshotList());
+    } catch (e) {
+      setError(toApiError(e).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const restore = async () => {
+    if (!selected || !selected.usable || busy || done) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await api.dailySnapshotRestore(selected.id);
+      setDone(result);
+      setSelected(null);
+      setItems(null);
+    } catch (e) {
+      setSelected(null);
+      setError(toApiError(e).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const description = (item: DailySnapshot) => t("settings.data.dailyWhen", {
+    date: formatDate(item.createdAt),
+    size: megabytes(item.bytes, i18n.language),
+    version: item.schemaVersion,
+  });
+
+  return (
+    <section className="flex flex-col gap-3 border-t border-border-subtle pt-5">
+      <h4 className="m-0 font-medium text-text-strong">{t("settings.data.dailyTitle")}</h4>
+      <p className="m-0 max-w-prose text-[0.9375rem] text-text-muted">{t("settings.data.dailyHint")}</p>
+      <div>
+        <Button disabled={busy || done !== null || selected !== null} onClick={() => void reloadList()}>
+          {t(items === null ? "settings.data.dailyShow" : "settings.data.dailyRefresh")}
+        </Button>
+      </div>
+      {items?.length === 0 && <p className="m-0 text-text-muted">{t("settings.data.dailyEmpty")}</p>}
+      {items && items.length > 0 && !selected && !done && (
+        <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label={t("settings.data.dailyTitle")}>
+          {items.map((item) => (
+            <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-aw border border-border-subtle p-3">
+              <div className="flex flex-col gap-1">
+                <span className="text-[0.9375rem] text-text-strong">{description(item)}</span>
+                <span className="type-meta text-text-muted">{t(item.usable ? "settings.data.dailyReady" : "settings.data.dailyUnavailable")}</span>
+              </div>
+              <Button disabled={!item.usable || busy} onClick={() => setSelected(item)}>
+                {t("settings.data.dailyChoose")}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {selected && (
+        <section aria-label={t("settings.data.dailyPreview")} className="flex flex-col gap-3 rounded-aw border border-border-subtle bg-raised p-4">
+          <p className="m-0 font-medium text-text-strong">{description(selected)}</p>
+          <Notice tone="warning">{t("settings.data.dailyWarning")}</Notice>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="danger" disabled={busy} onClick={() => void restore()}>
+              {busy ? t("settings.data.working") : t("settings.data.dailyConfirm")}
+            </Button>
+            <Button disabled={busy} autoFocus onClick={() => setSelected(null)}>{t("common.cancel")}</Button>
+          </div>
+        </section>
+      )}
+      {done && (
+        <Notice tone="success">
+          <p className="m-0">{t("settings.data.dailyRestored")}</p>
+          <p className="m-0 mt-1 type-meta">{t("settings.data.safetyCopy", { path: done.safetyCopy })}</p>
+          <div className="mt-3">
+            <Button variant="primary" onClick={() => window.location.reload()}>
+              {t("settings.data.restoredContinue")}
+            </Button>
+          </div>
+        </Notice>
+      )}
+      {error && <Notice tone="error">{error}</Notice>}
+    </section>
   );
 }

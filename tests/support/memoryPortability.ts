@@ -3,7 +3,7 @@
 // adds a new project under a free title; nothing is replaced.
 import { ApiError, type Api } from "@/lib/api";
 import type { Project } from "@/types/domain";
-import type { BackupPreview, ProjectPackagePreview } from "@/types/portability";
+import type { BackupPreview, DailySnapshot, ProjectPackagePreview } from "@/types/portability";
 import type { FindingType } from "@/types/studies";
 import type { TeachingKind } from "@/types/teaching";
 import sample from "../../resources/sample/abiding-in-christ.json";
@@ -18,6 +18,9 @@ export interface PortabilityState {
   exported: { projectId: string; path: string }[];
   backups: string[];
   restored: string[];
+  /** Mock snapshot inventory and explicit restore activity. */
+  dailySnapshots: DailySnapshot[];
+  dailyRestored: string[];
   /** The example project once added (as the settings table remembers it). */
   sampleProjectId: string | null;
 }
@@ -43,6 +46,8 @@ export function newPortabilityState(): PortabilityState {
     exported: [],
     backups: [],
     restored: [],
+    dailySnapshots: [],
+    dailyRestored: [],
     sampleProjectId: null,
   };
 }
@@ -55,6 +60,8 @@ type PortabilityApi = Pick<
   | "backupCreate"
   | "backupInspect"
   | "backupRestore"
+  | "dailySnapshotList"
+  | "dailySnapshotRestore"
   | "choosePortableFile"
   | "choosePortableSaveFile"
   | "sampleProjectInstall"
@@ -122,6 +129,17 @@ export function portabilityApi(
         safetyCopy: "/home/test/.local/share/Abiding Word/backups/pre-restore/abiding-word-v15-2026-10-22T10-00-00.000Z.db",
         filesAdded: state.backup.counts.files,
         filesSetAside: 0,
+      };
+    },
+    dailySnapshotList: async () => state.dailySnapshots.map((row) => ({ ...row })),
+    dailySnapshotRestore: async (snapshotId) => {
+      const selected = state.dailySnapshots.find((row) => row.id === snapshotId);
+      if (!selected || !selected.usable) throw new ApiError("invalidInput", "This recovery point is damaged or incompatible. Your work was not changed.");
+      state.dailyRestored.push(snapshotId);
+      return {
+        createdAt: selected.createdAt,
+        safetyCopy: "/home/test/.local/share/Abiding Word/backups/pre-restore/abiding-word-v27-2026-11-20T10-00-00.000Z.db",
+        filesUnchanged: true,
       };
     },
     // As src-tauri/src/sample.rs: the same content, through the same calls.

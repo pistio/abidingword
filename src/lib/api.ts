@@ -14,7 +14,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { safeExternalUrl } from "./externalLink";
 import type { InquiryInput, InquiryPreview, InquiryReply, KeepInsight } from "@/types/inquiry";
 import type { ImportItemEdit, ImportJob, ImportJobItem, ItemState, ManagePage, ManageQuery, SourceCollection, SourceTag, UpdateSource } from "@/types/library";
-import type { BackupPreview, BackupReport, ProjectExportReport, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
+import type { BackupPreview, BackupReport, DailySnapshot, DailySnapshotRestore, ProjectExportReport, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import type {
   AppInfo,
   AppSettings,
@@ -192,6 +192,10 @@ export interface Api {
   backupInspect(path: string): Promise<BackupPreview>;
   /** Replaces everything with a backup, after a safety copy. */
   backupRestore(path: string): Promise<RestoreReport>;
+  /** Lists verified automatic database-only recovery points; no imported files. */
+  dailySnapshotList(): Promise<DailySnapshot[]>;
+  /** Restore only the SQLite database after explicit confirmation in Settings. */
+  dailySnapshotRestore(id: string): Promise<DailySnapshotRestore>;
   /** Adds the example project when asked; finds it instead when it is already there. */
   sampleProjectInstall(): Promise<SampleReport>;
   /** The system's open dialog for a project package or a backup; null when cancelled. */
@@ -651,6 +655,8 @@ export const tauriApi: Api = {
   backupCreate: (path) => call("backup_create", { path }),
   backupInspect: (path) => call("backup_inspect", { path }),
   backupRestore: (path) => call("backup_restore", { path }),
+  dailySnapshotList: () => call("daily_snapshot_list"),
+  dailySnapshotRestore: (id) => call("daily_snapshot_restore", { id }),
   sampleProjectInstall: () => call("sample_project_install"),
   choosePortableFile: async ({ kind, title, filterName }) => {
     const chosen = await open({ multiple: false, directory: false, title, filters: [{ name: filterName, extensions: [PORTABLE_EXTENSION[kind]] }] });
