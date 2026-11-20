@@ -1,34 +1,46 @@
-# Database-only recovery from daily snapshots — Windows acceptance
+# Recovery and preservation milestone
 
-**20 November 2026 · draft, not accepted on Windows · stacked on PR #55.**
+**20 November 2026 · draft PR #56, stacked on PR #55 · native Windows acceptance pending.**
 
-## Why this is a separate recovery path
+This milestone finishes the daily recovery workflow and strengthens the surrounding authorship, full-backup and export paths. The working branch is `feature/daily-snapshot-recovery-20261120`; the fetched starting head was `b8d9af869c95395a44cc6d9a3867626ab83d9804`. Exact final source identity, commands, counts, CI and preserved failing-before evidence are in [the verification record](daily-recovery-20261120-verification.json). `RECOVERY_VERIFICATION_PENDING` until that record is complete.
 
-Abiding Word automatically stores at most seven verified daily SQLite copies under `backups/daily/`. They preserve **Studies, Teaching, notes, citations, source metadata and reading places** from the database. They do **not** include imported PDFs, Bibles, images or any files in `sources/`. A daily snapshot is **not** a portable `.awbackup` and must never be presented as a full backup.
+## What was wrong and what changed
 
-The new **Settings → Data and backup → Automatic recovery points** workflow deliberately requires the user to request a list, select an eligible record and confirm a full database replacement after seeing the warning. On success the app tells them to reload.
+The reported CI run `44825652838` passed 1,389 frontend assertions but failed on an unhandled `Invented save failure` rejection. Its test attached the rejection assertion after React had yielded. The corrected test installs its rejection observer before rejecting; it still asserts that recovery is blocked. The production audit found consequential defects beyond that test timing error.
 
-## Native safety contract
+| Trigger | Before | Correction and regression evidence |
+| --- | --- | --- |
+| A previously failed save, pending debounce, or save from an editor that has closed | Failed operations disappeared from tracking, pending text could be dropped when the restore flag was set, and one queue snapshot could miss later chained writes. | A shared settlement registry flushes pending drafts and drains queued API work. Failed field writes remain unresolved until that field succeeds. Both restore paths use the same two-phase barrier. |
+| Failed/in-flight writing, close editor, reopen the same field and write newer text | A detached retry could overwrite the newer writing, or the recovered draft was hidden behind older database text. | Stable entity/field identities share write ordering and revision ownership. Reopened text, structured fields and Q&A display the retained draft; an obsolete draft cannot replay over newer writing. |
+| The first block for an older structured field fails to be created, or its editor remounts during creation | A rejected creation promise remained cached; a second mount could create a duplicate field block. | Retry clears the failed creation request and looks up the current field block before creating. Both actual-editor cases failed before and pass after. |
+| Restore finishes, a dialog unmounts or a delayed native-index/reader callback runs | UI cleanup could unlock stale editors; direct API calls bypassed autosave protection. | Success is a one-way webview latch. All API calls are gated because apparent reads may refresh native indexes. Only a complete reload resumes editing; incomplete rollback also keeps the lock. Ordinary failed restore releases it without clearing failed drafts. |
+| A SQLite recovery point has committed text in its WAL | Raw `.db` copying restored the older main-file pages. | Stage through SQLite's backup API from the checked connection, then validate the staged database again. The original `b8d9af8` restores the wrong text in the new real-SQLite regression. |
+| Candidate/current database has incompatible history or altered schema | Page integrity and a version number could accept missing writing tables, changed constraints or an added destructive trigger. | Verify migration history, exact canonical schema objects for the supported historical version, and foreign keys. The canonical schema is derived in memory from unchanged migrations; candidates are not repaired or migrated during inspection. |
+| A native write falls between safety-copy creation and replacement | The current state could be absent from both the restored database and its safety copy. | One database mutex spans current-state verification, safety copy, replacement, file installation and rollback. Frontend settlement completes prior queued command promises before that operation begins. |
+| Full `.awbackup` file installation fails after replacing the database | A file-copy error could leave restored database content beside partially replaced files. | Record file undo operations before copying. Roll back both files and the database; if either rollback fails, report retained safety locations and keep editing locked. A crafted package causes the original code to fail this preservation regression. |
+| Backup, project export or Materials is opened while writing is still saving | Captures could omit the latest writing; Materials could expose an earlier question and enable export. | Full backup/project export wait for settlement. Teaching output waits, rereads saved Teaching and then opens the chosen material/presentation. Failed saves keep the editable draft available and block output. |
+| Recovery directories are redirected or daily files have loosely matching manual names | Parent symlinks were followed; an unrelated valid database could suppress a daily copy or be eligible for pruning. | Reject symlink/reparse routes, strictly parse complete managed filenames and use non-overwriting safety-copy names. Manual and damaged files are retained. |
 
-1. The native API accepts a strictly parsed filename identifier, **never** a user-supplied absolute path. The file must lie in the app's own daily-backup folder. Symlinks, directory traversal and unrelated filenames are refused.
-2. Show damaged or schema-incompatible candidate files as **unavailable**, not as selectable. Only same-schema, integrity-checked, migration-history-valid snapshots may be used.
-3. Recheck the candidate immediately before restoring; copy it into a private staging file and validate the copy again, so the bytes restored are those that were checked.
-4. Before any mutation, write and verify a full **database-only safety copy of current work** to `backups/pre-restore/`. The previous SQLite database must remain recoverable.
-5. Restore through SQLite's backup API under the existing database mutex. Run the ordinary post-restore integrity/startup checks. If anything fails, automatically put the safety copy back, or report its exact location for manual recovery.
-6. **Never move, replace, copy or delete managed source, Bible, image or other files.** Existing source-file mismatches or missing files remain the user's responsibility. No automatic upload or external call.
-7. The original daily point and any damaged copies remain intact. This workflow uses no schema migration, frozen recognizer code, Set H documents, signing, updater or release service.
+## Data-preservation contract
 
-## Required Windows owner verification
+Daily points contain the database: authored Studies, Teaching, Q&A, private notes, citations, extracted/indexed source text, settings and reader positions/history. They **do not contain imported PDF, EPUB, Bible or image files**. Database-only restore never restores or modifies those original files; missing-source citations remain honest. The full `.awbackup` path includes managed originals and retains differing files beside the pre-restore database copy.
 
-Use only a disposable Windows profile with invented Study/Teaching data and an unrelated PDF/EPUB. Never restore a daily point against the owner's live personal profile in acceptance testing.
+A restore requires an explicit preview and confirmation. Cancel performs no replacement. Current work is checked and backed up before replacement. Failed preparation or successfully rolled-back restoration leaves writing usable; unresolved writing remains available for retry. A successful replacement cannot be followed by a stale editor/reader/index write in the same webview. If automatic rollback is incomplete, the application names the retained safety location and requires reload rather than pretending the old workspace is safe to edit.
 
-- Write a fictional Study, Teaching, private leader block, participant question and citation, open a PDF in Original mode, create a complete `.awbackup` and record its checksum.
-- Create a daily copy, edit both Study and Teaching and confirm the newer words are saved. Select **Show recovery points**; a date and database version are visible, with corrupted/older-schema candidates disabled.
-- Review the restore and press **Cancel** once: all current writing and files remain exactly unchanged.
-- Confirm on the disposable profile. Verify that the older Study/Teaching text returns, the previous newer text is preserved in `backups/pre-restore/`, and that all managed imported PDF/EPUB bytes are unchanged.
-- Check old citations with files that are still present and deliberately missing in the test folder; no fabricated page destination or silent file restoration.
-- Repeat with a corrupt snapshot and a tampered filename; the live database must not change, no safety copy should be created, and errors should be understandable in EN/DE/KO/FR/ES/PT.
-- Reopen the app and verify writing, private/participant export separation and recent-reader state.
-- Separately test a **full** `.awbackup` restore into a second disposable installation, showing that original documents also come back.
+The native command audit found that all library `spawn_blocking` workers are awaited by their API promises; batch import advances through awaited frontend commands. The independent daily worker only reads/copies the database. This supports the current frontend settlement contract; it is not a claim about arbitrary external SQLite writers or multiple separately running application processes.
 
-**Acceptance status:** implementation plus automated tests pending full CI; no Windows owner acceptance. This branch must remain draft until independently reviewed and tested. It does not certify the overall release.
+Canonical schema checking is deliberately conservative: manually altered table/index/trigger definitions are refused. Supported historical full backups are checked against their own migration version before the existing upgrade path runs. No migration was edited or added; schema 27 and reserved migration 0028 remain unchanged. No recognizer candidate, withheld Collection H document, bundled Bible archive or owner teaching material was modified.
+
+## Integrated evidence
+
+Real disposable SQLite repositories create an invented Study with Q&A, several linked and independent Teaching records, private leader writing and private Scripture. Tests preserve their writing, relationships and citation provenance through `.awproject`, full `.awbackup`, database-only recovery and database reopen. They assert missing-source behaviour and exact original-file bytes. A normalised fixture generated by that native scenario feeds the actual Materials derivation and preview, Markdown generation and native DOCX tests. Participant versions exclude private text and private Scripture; answer and leader variants contain only the requested material. Fixture regeneration is explicit, and normal tests compare generated content rather than silently rewriting it.
+
+The interface browser procedure is `tests/screenshots/recovery-interface.mjs`, using the existing real React screenshot harness with an empty invented in-memory profile. It checks both restore routes in all six languages at 1280×900, 480×640 and a 640×450 CSS viewport with DPR 2: availability, described choices, keyboard Cancel, no replacement on Cancel, pending-state containment, long-path wrapping, focus trapping and an actual reload request. These are **Linux browser measurements**, not SQLite preservation or Windows DPI/screen-reader acceptance.
+
+Recovery copy and the guide are updated in English (British), German, Korean, French, Spanish and Brazilian Portuguese. Generated editorial reports were regenerated from their sources. [Individual language decisions](recovery-language-20261120.md) record before/after wording; AI review is not human native-speaker approval.
+
+## Review boundary
+
+The final [publication matrix](publish-readiness-20261120.md) distinguishes verified implementation, implemented but Windows-unaccepted behaviour, actual engineering gaps, external decisions and deferrals. Existing narrow owner acceptances for Source→Original, the supplied handbook, Settings→Sources→Edit details, POZETEK and Ten-Step remain intact. Existing Teaching/Q&A/Materials/exports are not described as missing.
+
+The next native procedure is the coherent [Windows disposable-profile worksheet](windows-owner-acceptance-20261120.md), including writing failures, both restore types, source hashes, private outputs and reopening. No matching Windows binary is built by this milestone. Native file-lock/reparse behaviour, display scaling, screen-reader interaction and installed Office rendering remain unaccepted. No installer, merge, signing, release, updater publication, NiPogi deployment, real-user-data change or paid API call is part of this work.

@@ -241,7 +241,7 @@ service, keeping a key and checking the connection save by themselves.)
 
 ## Data and backup
 
-Four separate actions, each with its own button.
+Project transfers, full backups and automatic recovery points have separate actions.
 
 **Export project…** saves one project as a file (`.awproject`): its Bible
 Studies and Bible Teachings, with their notes, Materials and presentations.
@@ -264,18 +264,66 @@ It is a **private copy for you**, not for sharing: it can hold books and
 Bibles you may not pass on. **API keys are never included**; enter them
 again after restoring on another computer.
 
-**Restore from backup…** shows what the backup holds and asks before it does
-anything. **Replace everything with this backup** then:
+**Restore from backup…** shows what the backup holds and asks before
+replacing anything. Read the warning carefully: the backup will replace your
+current work and settings. **Cancel** leaves your work and files unchanged.
+Only **Replace everything with this backup** starts the restore:
 
-1. checks the whole backup first (a damaged or changed file is refused and
-   nothing happens);
-2. keeps a copy of your current work in the data folder's
-   **backups/pre-restore** subfolder;
-3. replaces your work with the backup's. If anything goes wrong, your work
-   is put back as it was.
+1. Editing pauses while Abiding Word saves pending writing and waits for
+   saves already in progress. If a save fails, restoration stops; resolve the
+   save error before trying again.
+2. The whole backup is checked. A damaged or changed backup is refused before
+   your database is replaced.
+3. A verified safety copy of your current database is kept in the data
+   folder’s **backups/pre-restore** subfolder.
+4. The backup’s database and imported files are restored. Library files that
+   differ are kept separately next to the safety copy.
 
-Library files that differ from the backup's are set aside next to that copy,
-never deleted. Click **Continue** afterwards: Abiding Word reloads.
+Keep Abiding Word open while it is restoring. If restoration fails, Abiding
+Word attempts to put your previous work back. If that cannot be completed,
+the error gives the retained safety-copy location; keep that copy for recovery.
+Editing stays paused when the previous state could not be restored. Reload
+Abiding Word before trying to continue, and retain the safety copy if startup
+reports another problem.
+
+After a successful restore, the completion message shows the safety-copy
+location. Choose **Reload Abiding Word** to load the restored work. Editing
+stays paused until this reload so that an old open editor cannot overwrite
+the restored database. This applies to both full backups and the database-only
+recovery points described below.
+
+### Automatic recovery points
+
+Abiding Word makes a daily database copy while it is running and keeps up to
+seven verified copies in **backups/daily**. These contain your Bible Studies,
+Bible Teachings, notes, citations, database settings and reading places. They
+**do not contain imported source files, Bible files or images**. Keep using
+**Back up everything…** for a complete private `.awbackup`.
+
+1. Open **Settings → Data and backup → Automatic recovery points** and choose
+   **Show recovery points**. Each entry shows its date, size and database
+   version. Damaged or incompatible copies are labelled **Unavailable** and
+   cannot be selected. **Refresh recovery points** checks the list again.
+2. Choose **Review restore…** beside an available copy. Read the replacement
+   warning. **Cancel** is the safe way back: selecting or reviewing a point
+   does not replace the database.
+3. Choose **Restore this database copy** only when you want that older work
+   to replace your current database. The same save checks apply as for a full
+   restore. Abiding Word saves and verifies your current database in
+   **backups/pre-restore** before replacing it.
+4. Keep the safety-copy location shown after restoration, then choose
+   **Reload Abiding Word**. Check the restored writing after the reload.
+
+A daily restore never changes imported files. If an older citation refers to
+a file removed later, the citation remains but the file is still missing.
+Use **Restore from backup…** with a full `.awbackup` when you also need the
+original files. Daily recovery points must use the current database version;
+older database versions require a compatible full backup.
+
+Recovery runs locally. It does not send your writing or backup files to an
+online service. The recovery controls can be reached with **Tab** and activated
+with **Enter** or **Space**. On a narrow window, scroll the recovery panel to
+reach the warning and actions; the completion message also scrolls when needed.
 
 **Add the example project** adds *Example: Abiding in Christ — John
 15:1–11*: a Bible Study and how it becomes a message, a group Bible study and
@@ -301,39 +349,16 @@ whole **Abiding Word** folder to a USB stick, an external drive or a cloud
 folder. To restore it, close Abiding Word and copy the folder back.
 
 > [!TIP]
-> Abiding Word creates **one verified SQLite database safety snapshot per day**
-> while it is running. It keeps up to seven recent snapshots in
-> `backups/daily/`. These recover studies, notes, bibliographic metadata and
-> reading places from the database, but **do not contain your imported source
-> files, Bible files or images**. A snapshot is never presented as a complete
-> backup. Keep using **Back up everything…** to create a private `.awbackup`
-> of both your writing and the files it depends on.
+> Automatic recovery copies are made while Abiding Word is running, including
+> when it stays open for several days. The daily boundary uses UTC. A full
+> disk or an unreadable snapshot produces a warning in the log; it does not
+> overwrite your work. Damaged copies are kept for investigation, and a fresh
+> verified copy is attempted. Only older valid automatic snapshots are rotated;
+> manual backups and unrelated files are retained.
 >
-> Automatic snapshots are created off the main window's thread, including
-> when Abiding Word stays open for days. A full disk or unreadable snapshot
-> produces a warning in the log; it does not overwrite your work. A corrupt
-> snapshot is retained for investigation, and a fresh verified copy is
-> attempted. Older valid automatic snapshots (not manual backups or other
-> files) are rotated after a newer one has passed verification.
->
-> **To restore a daily recovery point:** open **Settings → Data and backup →
-> Automatic recovery points → Show recovery points**. Available copies show
-> their date, size and database version. Damaged/incompatible copies are
-> shown but cannot be selected. Choose **Review restore…**, read the warning,
-> then confirm. A verified copy of your *current* database goes into
-> `backups/pre-restore/` before anything is replaced. Click **Continue**
-> to reopen the application afterwards.
->
-> **Important:** this restores only the saved database, not the imported books,
-> Bibles or images. Existing files stay unchanged. If an older saved citation
-> points to a file you removed later, that file will still be missing. Use
-> **Restore from backup…** with a complete `.awbackup` when you need the
-> original files as well. Same-schema daily snapshots are accepted; older
-> database versions must be restored through a compatible full backup.
->
-> Abiding Word also protects you automatically. Before an update changes how
-> your data is stored, it saves a copy in the folder's **backups** subfolder.
-> If anything goes wrong, nothing is changed and you are told in plain words.
+> Before an update changes how data is stored, Abiding Word also saves a copy
+> in the data folder’s **backups** subfolder. These database copies do not
+> replace a full `.awbackup` of your writing and imported files.
 
 > [!TIP]
 > To find the folder quickly, press **Windows key + R**, type `%APPDATA%`,
