@@ -5,7 +5,7 @@ use std::path::Path;
 
 use abiding_word_lib::db::{backup, Database};
 use abiding_word_lib::filesystem::DataDirs;
-use rusqlite::{params, Connection, OpenFlags};
+use rusqlite::{Connection, OpenFlags};
 
 fn seeded() -> (tempfile::TempDir, DataDirs, Database) {
     let temp = tempfile::tempdir().unwrap();

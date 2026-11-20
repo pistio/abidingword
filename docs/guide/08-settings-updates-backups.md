@@ -301,6 +301,20 @@ whole **Abiding Word** folder to a USB stick, an external drive or a cloud
 folder. To restore it, close Abiding Word and copy the folder back.
 
 > [!TIP]
+> Abiding Word creates **one verified SQLite database safety snapshot per day**
+> while it is running. It keeps up to seven recent snapshots in
+> `backups/daily/`. These recover studies, notes, bibliographic metadata and
+> reading places from the database, but **do not contain your imported source
+> files, Bible files or images**. A snapshot is never presented as a complete
+> backup. Keep using **Back up everything…** to create a private `.awbackup`
+> of both your writing and the files it depends on.
+>
+> Automatic snapshots are created off the main window's thread. A full disk or
+> unreadable snapshot produces a warning in the log; it does not overwrite your
+> work. A corrupt snapshot is retained for investigation, and a fresh verified
+> copy is attempted. Older automatic snapshots (not manual backups or other
+> files) are rotated after a newer one has passed verification.
+>
 > Abiding Word also protects you automatically. Before an update changes how
 > your data is stored, it saves a copy in the folder's **backups** subfolder.
 > If anything goes wrong, nothing is changed and you are told in plain words.

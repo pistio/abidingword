@@ -31,7 +31,7 @@ export function Shell({ info, workspace, initialReaderPositions = [] }: { info: 
   const [view, setView] = useState<View>("workspace");
   /** Set when the Library asks for Settings → Sources; cleared for an ordinary visit. */
   const [settingsSection, setSettingsSection] = useState<"sources" | "language" | null>(null);
-  const [recentSourceIds, setRecentSourceIds] = useState<string[]>([]);
+  const [recentSourceIds, setRecentSourceIds] = useState<string[]>(() => initialReaderPositions.map(row => row.sourceId).slice(0, 10));
   const readerRequest = useRef(0);
   // Navigation coordinates are persisted in SQLite, and therefore included in
   // the normal .awbackup. They are never derived from the source's contents.
