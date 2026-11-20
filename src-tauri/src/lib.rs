@@ -92,19 +92,39 @@ pub fn run() {
             // This is database-only; a complete backup still uses .awbackup.
             let backup_handle = app.handle().clone();
             std::thread::spawn(move || {
-                let state = backup_handle.state::<AppState>();
-                if let Ok(core) = state.core() {
-                    match core.db.with_conn(|conn| {
-                        db::backup::daily_snapshot(conn, &core.dirs.daily_backups())
-                    }) {
-                        Ok(Some(path)) => {
-                            log::info!("verified automatic database snapshot {}", path.display())
-                        }
-                        Ok(None) => {}
-                        Err(error) => {
-                            log::warn!("automatic database snapshot unavailable: {error}")
+                // Keep making daily recovery points during a long, uninterrupted
+                // writing session, not just whenever the user restarts.
+                // The storage function is idempotent per UTC day.
+                let mut last_checked_day = None;
+                loop {
+                    let today = chrono::Utc::now().date_naive();
+                    if last_checked_day != Some(today) {
+                        let state = backup_handle.state::<AppState>();
+                        let Ok(core) = state.core() else {
+                            break;
+                        };
+                        match core.db.with_conn(|conn| {
+                            db::backup::daily_snapshot(conn, &core.dirs.daily_backups())
+                        }) {
+                            Ok(Some(path)) => {
+                                log::info!(
+                                    "verified automatic database snapshot {}",
+                                    path.display()
+                                );
+                                last_checked_day = Some(today);
+                            }
+                            Ok(None) => last_checked_day = Some(today),
+                            Err(error) => {
+                                // A full disk is not permission to stop editing.
+                                // Retry the safety snapshot at the next check.
+                                log::warn!("automatic database snapshot unavailable: {error}");
+                            }
                         }
                     }
+                    if backup_handle.get_webview_window("main").is_none() {
+                        break;
+                    }
+                    std::thread::sleep(std::time::Duration::from_secs(6 * 60 * 60));
                 }
             });
             // Schedule optional Windows measurements after start() installs logging.
