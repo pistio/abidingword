@@ -196,6 +196,8 @@ pub fn run() {
             commands::library::finding_source_list,
             commands::settings::settings_get,
             commands::settings::settings_update,
+            commands::settings::source_reader_positions,
+            commands::settings::source_reader_position_save,
             commands::scripture::scripture_books,
             commands::scripture::scripture_get_chapter,
             commands::scripture::scripture_get_passage,

@@ -23,6 +23,7 @@ pub mod presentation_templates;
 pub mod presentations;
 pub mod projects;
 pub mod relations;
+pub mod reader_positions;
 pub mod sections;
 pub mod settings;
 pub mod source_annotations;

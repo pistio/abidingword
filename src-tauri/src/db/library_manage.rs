@@ -130,6 +130,7 @@ pub fn remove_sources(
             Some(_) => return Err(not_in_trash()),
         }
         files.push((id.clone(), library::remove_in(&tx, id, &at)?));
+        crate::db::reader_positions::forget(&tx, id)?;
     }
     tx.commit()?;
     log::info!("{} source(s) removed for good", files.len());
