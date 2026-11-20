@@ -1,0 +1,37 @@
+{
+ "evidence": "<scratch>/review-evidence-before/aw-path-containment-8qydvdns/results.json",
+ "candidate_commit": "4dd9f8e12be1c531f55ba5121423a184a6ae97cb",
+ "checker_sha256": "66923a8972bb26cac54ef90101c19259f49e0901ae27c50bfd753ff2c968fcf6",
+ "fake_harness_only": true,
+ "invented_non_scripture_files_only": true,
+ "candidate_repository_modified": false,
+ "cases": [
+  {
+   "case": "parent_relative",
+   "runner_exit": 0,
+   "preflight_ok": true,
+   "fake_harness_output_created": true,
+   "actual_document_resolved_outside_documents_folder": true,
+   "outcome": "external_path_accepted",
+   "stderr": "note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\n"
+  },
+  {
+   "case": "absolute",
+   "runner_exit": 0,
+   "preflight_ok": true,
+   "fake_harness_output_created": true,
+   "actual_document_resolved_outside_documents_folder": true,
+   "outcome": "external_path_accepted",
+   "stderr": "note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\n"
+  },
+  {
+   "case": "symlink",
+   "runner_exit": 0,
+   "preflight_ok": true,
+   "fake_harness_output_created": true,
+   "actual_document_resolved_outside_documents_folder": true,
+   "outcome": "external_path_accepted",
+   "stderr": "note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\n"
+  }
+ ]
+}

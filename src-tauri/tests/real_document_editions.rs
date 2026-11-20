@@ -138,8 +138,14 @@ fn corpus() -> Vec<Edition> {
         "withheld-e.tsv",
         "withheld-f.tsv",
         "withheld-g.tsv",
-    ] {
-        let Ok(text) = std::fs::read_to_string(dir.join(name)) else {
+    ]
+    .into_iter()
+    .map(|name| dir.join(name))
+    // AW_CORPUS_MANIFEST=<file> (Phase A1.5): one more manifest, from
+    // anywhere: a sealed set's own, kept outside the repository.
+    .chain(std::env::var_os("AW_CORPUS_MANIFEST").map(PathBuf::from))
+    {
+        let Ok(text) = std::fs::read_to_string(&name) else {
             continue;
         };
         for line in text.lines().skip(1) {
@@ -312,6 +318,9 @@ struct EditionAudit {
     /// provenance report, which holds the whole report as JSON at once.
     read_seconds: f64,
     read_peak_memory_mb: Option<f64>,
+    /// Where the document's printed numbering departs from the reference
+    /// (Phase A1.5, `scripture::numbering`), per book.
+    numbering: Vec<abiding_word_lib::scripture::numbering::BookNumbering>,
 }
 
 /// Why a chapter was refused, from the codes of the errors naming it.
@@ -436,6 +445,77 @@ fn write_structural(
     .unwrap();
 }
 
+/// What the recogniser made of a document that has no reference text (a
+/// control: a document with no Scripture, or one whose quotations are
+/// judged by hand). References only, never the text.
+fn control(dir: &Path, edition: &Edition) -> Option<serde_json::Value> {
+    let files: Vec<PathBuf> = edition.files.iter().map(|f| dir.join(f)).collect();
+    if let Some(missing) = files.iter().find(|f| !f.exists()) {
+        eprintln!("{}: {} missing, skipped", edition.key, missing.display());
+        return None;
+    }
+    reset_peak();
+    let started = Instant::now();
+    let structural = std::env::var("AW_PIPELINE").is_ok_and(|p| p == "structural");
+    let staged = if structural {
+        abiding_word_lib::scripture::structural::stage_documents(&files, ImportOrigin::UserFiles)
+            .map(|(staged, _)| staged)
+    } else {
+        import::stage_documents(&files, ImportOrigin::UserFiles)
+    };
+    let seconds = started.elapsed().as_secs_f64();
+    let peak = peak_mb();
+    let base = serde_json::json!({
+        "key": edition.key, "control": true, "format": edition.format,
+        "language": edition.language, "script": edition.script,
+        "seconds": seconds, "peak_memory_mb": peak,
+    });
+    let mut out = base.as_object().cloned().unwrap();
+    match staged {
+        Err(e) => {
+            out.insert("refused_document".into(), format!("{e:?}").into());
+            out.insert("detected".into(), 0.into());
+            out.insert("verified".into(), 0.into());
+        }
+        Ok(staged) => {
+            let usable = staged.content.usable_chapters().unwrap_or_default();
+            let stage = staged.documents.as_ref().expect("a document stage");
+            let (mut detected, mut verified) = (0usize, Vec::new());
+            for (ordinal, book) in &staged.content.books {
+                let code = canon::by_ordinal(*ordinal).map_or("?", |b| b.code);
+                for (chapter, c) in &book.chapters {
+                    for verse in c.verses.keys() {
+                        detected += 1;
+                        if usable.contains(&(*ordinal, *chapter))
+                            && !stage.unverified.contains_key(&(*ordinal, *chapter, *verse))
+                        {
+                            verified.push(format!("{code} {chapter}:{verse}"));
+                        }
+                    }
+                }
+            }
+            out.insert("detected".into(), detected.into());
+            out.insert("verified".into(), verified.len().into());
+            out.insert("verified_references".into(), verified.into());
+            out.insert(
+                "errors".into(),
+                staged
+                    .content
+                    .issues
+                    .iter()
+                    .filter(|i| i.severity == Severity::Error)
+                    .count()
+                    .into(),
+            );
+        }
+    }
+    eprintln!(
+        "{}: control, detected {}, verified {}",
+        edition.key, out["detected"], out["verified"]
+    );
+    Some(serde_json::Value::Object(out))
+}
+
 fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     let files: Vec<PathBuf> = edition.files.iter().map(|f| dir.join(f)).collect();
     if let Some(missing) = files.iter().find(|f| !f.exists()) {
@@ -500,6 +580,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     )
     .unwrap();
     let content = &staged.content;
+    let numbering = abiding_word_lib::scripture::numbering::assess(content);
     let usable = content.usable_chapters().unwrap_or_default();
     let origins = staged.document_origins();
     let stage = staged.documents.as_ref().expect("a document stage");
@@ -812,6 +893,7 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         peak_memory_mb,
         read_seconds,
         read_peak_memory_mb,
+        numbering,
     })
 }
 
@@ -1130,6 +1212,19 @@ fn real_document_editions_report() {
             continue;
         }
         if !roles.contains(&edition.role) && only.is_none() {
+            continue;
+        }
+        // A document with no reference text ("-" in the manifest): a
+        // control. Nothing in it is compared; what was verified is counted.
+        if edition.reference.is_none() {
+            if let (Some(c), Some(out)) = (control(&dir, &edition), &out) {
+                std::fs::create_dir_all(out).unwrap();
+                std::fs::write(
+                    out.join(format!("{}.control.json", edition.key)),
+                    serde_json::to_string_pretty(&c).unwrap(),
+                )
+                .unwrap();
+            }
             continue;
         }
         let Some(a) = audit(&dir, &edition) else {

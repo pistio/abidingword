@@ -39,6 +39,26 @@ ORDER = (
 ).split()
 
 
+# USFM markers the USFM layout leaves out on purpose (`from_usfm`). A marker
+# in neither this list, the paragraphs that hold text, nor the headings it
+# prints stops the build: text is never dropped silently (Phase A1.5).
+NOT_PRINTED = set(
+    "id ide usfm sts rem h toc1 toc2 toc3 toca1 toca2 toca3 "
+    "mt mt1 mt2 mt3 mt4 mte mte1 mte2 ms ms1 ms2 ms3 mr sr r sp sd sd1 sd2 cl cd cp qa "
+    "imt imt1 imt2 imt3 is is1 is2 ip ipi im imi ipq imq ipr iq iq1 iq2 iq3 ib ili ili1 ili2 "
+    "iot io io1 io2 io3 io4 iex imte imte1 ie periph b".split()
+)
+# Character styles that may open a line.
+CHARACTER = set("wj nd bk it bd em sc add k qs tl pn ord sig sls no bdit qt w".split())
+# Paragraph classes of eBible's HTML the Markdown layout knows: those it
+# writes, and those it leaves out on purpose.
+MD_TEXT = r"(?:p|q\d?|m|mi|pi\d?|nb|pc|pm\w*|li\d?|qm\d?|qc|qr|pr)"
+MD_NOT_PRINTED = set(
+    "main footnote copyright mt mt2 mt3 mt4 ms ms2 mr s s2 s3 sr r d sp qa b ip is is2 toc1 toc2 "
+    "iot io io1 io2 imt imt2 qs popup notemark tnav".split()
+)
+
+
 def book_title(z, code):
     try:
         page = z.read(f"{code}.htm").decode("utf-8-sig")
@@ -89,6 +109,7 @@ def from_usfm(folder, ident, formats, chapter_label):
         m = re.search(r"\\id\s+([A-Z0-9]{3})", text)
         if m and m.group(1) in ORDER:
             files[m.group(1)] = text
+    text_with_closers = {}
     parts = ['<!DOCTYPE html><html><head><meta charset="UTF-8"/>'
              "<style>h1{page-break-before:always;text-align:center}"
              "h2{text-align:center}.s{font-weight:bold;text-align:center}"
@@ -97,6 +118,7 @@ def from_usfm(folder, ident, formats, chapter_label):
         text = files.get(code)
         if not text:
             continue
+        text_with_closers[code] = text
         text = re.sub(r"\\f .*?\\f\*", "", text, flags=re.S)
         text = re.sub(r"\\x .*?\\x\*", "", text, flags=re.S)
         text = re.sub(r"\\\+?w ([^|\\]*)\|[^\\]*\\\+?w\*", r"\1", text)
@@ -138,6 +160,18 @@ def from_usfm(folder, ident, formats, chapter_label):
                 number, _, verse = rest.partition(" ")
                 clean_verse = html.escape(re.sub(r"\\\w+\s?", "", verse))
                 paragraph.append(f"<sup>{html.escape(number)}</sup>{clean_verse}")
+            # Left out on purpose: identification, titles, introductions and
+            # the headings this layout does not print.
+            elif tag in NOT_PRINTED:
+                pass
+            # A character style opening a line: the line is text.
+            elif re.search(r"\\\+?" + re.escape(tag) + r"\*", text_with_closers.get(code, "")) or tag in CHARACTER:
+                paragraph.append(html.escape(re.sub(r"\\\w+\s?", "", line.strip())))
+            # Anything else is not known to be safe to leave out: stop,
+            # never drop text silently (Phase A1.5).
+            else:
+                raise SystemExit(f"{ident} {code}: unknown USFM marker \\{tag} in {line.strip()[:60]!r}: "
+                                 "add it to the paragraphs that hold text or to NOT_PRINTED")
         flush()
     parts.append("</body></html>")
     with tempfile.TemporaryDirectory() as tmp:
@@ -181,7 +215,13 @@ def main():
             body = chapter_body(page)
             parts.append(body)
             md.append(f"## {number}\n")
-            for p in re.findall(r"<div class='(?:p|q\d?|m|pi\d?|nb)'>(.*?)</div>", body, re.S):
+            # A paragraph class that is neither written nor left out on
+            # purpose stops the build (Phase A1.5).
+            for cls in set(re.findall(r"<div class=['\"]([^'\"]+)['\"]>", body)):
+                if not re.fullmatch(MD_TEXT, cls) and cls not in MD_NOT_PRINTED:
+                    raise SystemExit(f"{ident} {code} {number}: unknown paragraph class {cls!r}: "
+                                     "add it to MD_TEXT or MD_NOT_PRINTED")
+            for p in re.findall(r"<div class='" + MD_TEXT + r"'>(.*?)</div>", body, re.S):
                 # Verse numbers as plain numbers in the paragraph.
                 p = re.sub(r'<span class="verse" id="V\d+">(\d+)&#160;</span>', r" \1 ", p)
                 text = plain(p)

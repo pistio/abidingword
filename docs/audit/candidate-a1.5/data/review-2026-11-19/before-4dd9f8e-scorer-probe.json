@@ -1,0 +1,41 @@
+{
+ "candidate": "4dd9f8e12be1c531f55ba5121423a184a6ae97cb",
+ "original_reviewed_candidate": "4dd9f8e12be1c531f55ba5121423a184a6ae97cb",
+ "only_synthetic_reports": true,
+ "no_frozen_recognizer_or_set_h_used": true,
+ "work_folder": "<scratch>/review-evidence-before/integrity-p48xfbgi",
+ "probes": [
+  {
+   "case": "changed_sealed_allowlist",
+   "before": "fail",
+   "after": "pass",
+   "before_outside_allowed": 1,
+   "after_outside_allowed": 0,
+   "seal_txt_unchanged": true,
+   "outputs_unchanged": true,
+   "after_resealing_mutable_seal_txt": "pass"
+  },
+  {
+   "case": "changed_external_report_and_rehashed_outputs",
+   "committed_run_record": "1871f292c562665d060ef57d75e2be3a62a90cd0",
+   "before": "fail",
+   "after": "pass",
+   "before_execution": "completed",
+   "after_execution": "completed",
+   "committed_record_unchanged": true,
+   "external_outputs_differs_from_committed": true,
+   "tracked_git_worktree_clean": true
+  },
+  {
+   "case": "changed_external_run_exit_and_rehashed_outputs",
+   "committed_run_record": "5b7d4fb3a003085de946ef829c2155af393f8d89",
+   "before": "fail",
+   "after": "pass",
+   "before_execution": "failure",
+   "after_execution": "completed",
+   "committed_record_unchanged": true,
+   "external_outputs_differs_from_committed": true,
+   "tracked_git_worktree_clean": true
+  }
+ ]
+}

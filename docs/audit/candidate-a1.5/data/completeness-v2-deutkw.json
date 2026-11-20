@@ -1,0 +1,65 @@
+{
+ "auditor_version": 2,
+ "profile": "build-derived-editions-usfm",
+ "books_option": "66",
+ "source_usfm": {
+  "file": "deutkw_usfm.zip",
+  "sha256": "c142f2c8297a8fb2694e23ac380d651b6fe3831dd9bb9f0912c6198ae0f78328"
+ },
+ "document": {
+  "file": "deutkw_usfm_lo.docx",
+  "sha256": "0ee10c55d7d1ee1c91f39b79d677a7f04b679fdfb181538356ec2d5aae93c914"
+ },
+ "complete": true,
+ "failure": null,
+ "books_in_source": 66,
+ "books_in_document": 66,
+ "verses_in_source": 31157,
+ "verses_complete": 31157,
+ "verses_incomplete": [],
+ "verses_missing_from_document": [],
+ "verses_only_in_document": [],
+ "chapters_missing_from_document": [],
+ "chapters_only_in_document": [],
+ "books_missing_from_document": [],
+ "books_only_in_document": [],
+ "words_missing": 0,
+ "words_not_in_source": 0,
+ "heading_words_set_as_text": 0,
+ "words_missing_by_source_marker": {},
+ "source_words_by_marker": {
+  "\\p": 711556,
+  "\\s1": 9042,
+  "\\s2": 539
+ },
+ "source_text_words_before_a_verse": 0,
+ "source_excluded": {
+  "\\ca (occurrences)": 0,
+  "\\ef (occurrences)": 0,
+  "\\ex (occurrences)": 0,
+  "\\f (occurrences)": 0,
+  "\\fe (occurrences)": 0,
+  "\\fig (occurrences)": 0,
+  "\\id (words, never printed)": 66,
+  "\\mt1 (words)": 300,
+  "\\rq (occurrences)": 0,
+  "\\toc1 (words, never printed)": 300,
+  "\\toc2 (words, never printed)": 88,
+  "\\toc3 (words, never printed)": 88,
+  "\\va (occurrences)": 0,
+  "\\vp (occurrences)": 0,
+  "\\x (occurrences)": 0,
+  "attributes (occurrences)": 0,
+  "milestones (occurrences)": 0
+ },
+ "source_files_ignored": [
+  "copr.htm",
+  "keys.asc",
+  "signature.txt.asc",
+  "dejavuserif.css"
+ ],
+ "source_books_declared_not_rendered": {},
+ "omitted_heading_words_inside_verses": {},
+ "document_unsupported": {},
+ "document_words_before_the_first_book": 0
+}

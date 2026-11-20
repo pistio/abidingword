@@ -182,6 +182,34 @@ fn raised_digits(s: &Span, main: &Span) -> bool {
         && main.y - s.y < 0.8 * main.size
 }
 
+/// A note's letter and the next verse's number drawn as one small raised
+/// run ("d 16", "a2"): one or two lower-case letters, perhaps a space, then
+/// a verse number. Its parts, when each alone would be raised: the letters,
+/// the white space between, the digits (Phase A1.5; `engbsb-rwpdf2col` sets
+/// 344 verse numbers so, and they were read as plain numbers).
+fn raised_letters_then_digits<'a>(s: &'a Span, main: &Span) -> Option<(&'a str, &'a str, &'a str)> {
+    let t = s.text.as_str();
+    let letters_end = t.find(|c: char| !(c.is_alphabetic() && c.is_lowercase()))?;
+    let (letters, rest) = t.split_at(letters_end);
+    let gap_end = rest.find(|c: char| !c.is_whitespace())?;
+    let (gap, digits) = rest.split_at(gap_end);
+    if !(1..=2).contains(&letters.chars().count()) || digits != digits.trim_end() {
+        return None;
+    }
+    // Each part by the test it would meet alone, at the run's own size and
+    // baseline: smaller than the line's text and lifted off its baseline.
+    let part = |text: &str| Span {
+        text: text.to_string(),
+        ..s.clone()
+    };
+    let lift = main.y - s.y;
+    (s.size < 0.85 * main.size
+        && lift > 0.2 * main.size
+        && raised_letters(&part(letters), main)
+        && raised_digits(&part(digits), main))
+    .then_some((letters, gap, digits))
+}
+
 /// Digits written as superscript digits ("12" → "¹²"); other characters as
 /// they are. How a raised verse number reaches the verse recogniser.
 pub fn superscript(text: &str) -> String {
@@ -448,6 +476,7 @@ impl pdf_extract::OutputDev for Collector {
         font_size: f64,
         char: &str,
     ) -> Result<(), pdf_extract::OutputError> {
+        let char: &str = &super::neutralise_marks(char);
         if self.chars >= MAX_CHARS {
             self.skipped += char.chars().count();
             if self.truncated_from.is_none() {
@@ -796,6 +825,16 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
             } else if main.is_some_and(|m| !std::ptr::eq(*s, m) && raised_digits(s, m)) {
                 any_raised = true;
                 marked.push_str(&superscript(&s.text));
+            } else if let Some((letters, gap, digits)) = main
+                .filter(|m| !std::ptr::eq(*s, *m))
+                .and_then(|m| raised_letters_then_digits(s, m))
+            {
+                any_raised = true;
+                marked.push(RAISED_OPEN);
+                marked.push_str(letters);
+                marked.push(RAISED_CLOSE);
+                marked.push_str(gap);
+                marked.push_str(&superscript(digits));
             } else {
                 marked.push_str(&s.text);
             }
@@ -2356,6 +2395,35 @@ mod tests {
             line.marked.as_deref(),
             Some(format!("Lot, qui voyageait {RAISED_OPEN}c{RAISED_CLOSE}Et la contrée").as_str())
         );
+    }
+
+    #[test]
+    fn a_raised_note_letter_run_together_with_a_raised_verse_number_is_marked_as_both() {
+        // "… cubits high.ᵈ ¹⁶You are to make …": the note's letter and the
+        // next verse's number, both small and raised, drawn as one run
+        // ("d 16"). Each is what it is; the number is a raised verse number
+        // (engbsb-rwpdf2col, Phase A1.5).
+        let mut glyphs = g("and thirty cubits high.", 40.0, 100.0, 12.0);
+        glyphs.extend(g("d 16", 172.0, 96.0, 7.0));
+        glyphs.extend(g("You are to make a roof", 190.0, 100.0, 12.0));
+        let p = page(glyphs);
+        let line = &p.lines[0];
+        assert!(line.text.contains("high.d 16"), "{:?}", line.text);
+        let marked = line.marked.as_deref().expect("something raised");
+        assert_eq!(
+            marked,
+            line.text.replace(
+                "d 16",
+                &format!("{RAISED_OPEN}d{RAISED_CLOSE} \u{b9}\u{2076}")
+            )
+        );
+        // The control: the same run on the baseline in the body's size is
+        // words and a number, nothing raised.
+        let mut glyphs = g("and thirty cubits high.", 40.0, 100.0, 12.0);
+        glyphs.extend(g("d 16", 172.0, 100.0, 12.0));
+        glyphs.extend(g("You are to make a roof", 200.0, 100.0, 12.0));
+        let p = page(glyphs);
+        assert!(p.lines[0].marked.is_none(), "{:?}", p.lines[0].marked);
     }
 
     #[test]

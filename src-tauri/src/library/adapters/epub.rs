@@ -272,14 +272,26 @@ fn read_book_with(
     let mut pending: Vec<PendingLink> = Vec::new();
     let mut layout = Layout::default();
     let mut chapters = 0u32;
+    // Each spine document once (Phase A1.5, independent review finding 2:
+    // a spine naming one document a million times read it a million
+    // times), as the structure-aware reader does.
+    let mut read_paths = std::collections::HashSet::new();
+    let mut spine_bytes = 0usize;
     for idref in &package.spine {
         let Some(item) = package.manifest.get(idref) else {
             continue;
         };
         let path = normalise(&format!("{base}{}", item.href));
+        if !read_paths.insert(path.clone()) {
+            continue;
+        }
         let Some(xhtml) = read_entry(&mut archive, &path) else {
             continue;
         };
+        spine_bytes += xhtml.len();
+        if spine_bytes > MAX_SPINE_BYTES {
+            return Err(bad("larger than any Bible"));
+        }
         let (blocks, anchors) = match roles {
             Some((source, roles)) => blocks_with(
                 &xhtml,
@@ -426,13 +438,28 @@ pub(super) fn read_entry(
     name: &str,
 ) -> Option<String> {
     let mut entry = archive.by_name(name).ok()?;
-    if entry.size() > MAX_ENTRY_BYTES {
+    let declared = entry.size();
+    if declared > MAX_ENTRY_BYTES {
         return None;
     }
-    let mut text = String::new();
-    entry.read_to_string(&mut text).ok()?;
-    Some(text)
+    // Never more than the entry says it holds: a compressed entry can lie
+    // about its size and inflate without end (Phase A1.5, independent
+    // review finding 1).
+    let mut bytes = Vec::new();
+    (&mut entry)
+        .take(declared + 1)
+        .read_to_end(&mut bytes)
+        .ok()?;
+    if bytes.len() as u64 > declared {
+        return None;
+    }
+    String::from_utf8(bytes).ok()
 }
+
+/// The most text of spine documents one book may inflate to (Phase A1.5):
+/// the largest Bible of the corpus holds 15 MB. Beyond it the book is
+/// refused, never read in part.
+pub(super) const MAX_SPINE_BYTES: usize = 120 * 1024 * 1024;
 
 /// Resolves "OEBPS/text/../images/a.xhtml" style paths inside the archive.
 pub(super) fn normalise(path: &str) -> String {
@@ -935,17 +962,24 @@ fn blocks_with(
             }
             // Entities arrive separately (GeneralRef), so text is used as is.
             Ok(Event::Text(t)) if skip_depth == 0 => {
-                acc.push_marked(&t, mark_of(noteref, sup_depth))
+                acc.push_marked(&super::neutralise_marks(&t), mark_of(noteref, sup_depth))
             }
             Ok(Event::CData(t)) if skip_depth == 0 => {
-                acc.push_marked(&t, mark_of(noteref, sup_depth))
+                acc.push_marked(&super::neutralise_marks(&t), mark_of(noteref, sup_depth))
             }
             Ok(Event::GeneralRef(r)) if skip_depth == 0 => acc.push_marked(
-                &unescape(&format!("&{};", &*r)),
+                &super::neutralise_marks(&unescape(&format!("&{};", &*r))),
                 mark_of(noteref, sup_depth),
             ),
             Ok(Event::Eof) => break,
-            Err(_) => break,
+            // The document ends here in error (Phase A1.5, independent
+            // review finding 11): what was being read is cut. A mark no
+            // verse is verified with goes where the text stops, so the verse
+            // cut short is withheld, never verified short.
+            Err(_) => {
+                acc.push_marked("\u{FFFD}", mark_of(false, 0));
+                break;
+            }
             _ => {}
         }
     }
@@ -1386,9 +1420,14 @@ pub(super) fn internal_target(dir: &str, href: &str) -> Option<(String, Option<S
 }
 
 pub(super) fn attr_value(e: &quick_xml::events::BytesStart, key: &str) -> Option<String> {
+    // Names compared as the structure-aware reader compares them, in any
+    // case and with repeated attributes tolerated, so that the two readers
+    // count the same links (Phase A1.5, independent review finding 10: an
+    // `<a HREF=…>` shifted every later link's role).
     e.attributes()
+        .with_checks(false)
         .flatten()
-        .find(|a| local_name(a.key.as_ref()) == key)
+        .find(|a| local_name(a.key.as_ref()).eq_ignore_ascii_case(key))
         .map(|a| a.value.to_string())
 }
 
@@ -1517,6 +1556,43 @@ fn parse_ncx(xml: &str) -> Vec<RawItem> {
 
 #[cfg(test)]
 mod tests {
+
+    #[test]
+    fn an_entry_that_inflates_beyond_its_declared_size_is_not_read() {
+        // Phase A1.5 (independent review finding 1): the size an archive
+        // declares for an entry is not trusted; reading stops one byte past
+        // it. The entry below says it holds 10 bytes and holds 100 000.
+        use std::io::Write as _;
+        let mut bytes = Vec::new();
+        {
+            let mut zip = zip::ZipWriter::new(std::io::Cursor::new(&mut bytes));
+            let deflated = zip::write::SimpleFileOptions::default()
+                .compression_method(zip::CompressionMethod::Deflated);
+            zip.start_file("a.xhtml", deflated).unwrap();
+            zip.write_all(&vec![b'a'; 100_000]).unwrap();
+            zip.finish().unwrap();
+        }
+        let honest = bytes.clone();
+        // The uncompressed size: 22 bytes into the local header, 24 into
+        // the central directory's.
+        let patch = |bytes: &mut Vec<u8>, signature: [u8; 4], at: usize| {
+            let start = bytes
+                .windows(4)
+                .position(|w| w == signature)
+                .expect("a header");
+            bytes[start + at..start + at + 4].copy_from_slice(&10u32.to_le_bytes());
+        };
+        patch(&mut bytes, [0x50, 0x4b, 0x03, 0x04], 22);
+        patch(&mut bytes, [0x50, 0x4b, 0x01, 0x02], 24);
+        let mut archive = zip::ZipArchive::new(Cursor::new(bytes.as_slice())).unwrap();
+        assert_eq!(read_entry(&mut archive, "a.xhtml"), None);
+        // The control: the same entry, honest about its size, is read.
+        let mut archive = zip::ZipArchive::new(Cursor::new(honest.as_slice())).unwrap();
+        assert_eq!(
+            read_entry(&mut archive, "a.xhtml").map(|t| t.len()),
+            Some(100_000)
+        );
+    }
     use super::*;
 
     #[test]

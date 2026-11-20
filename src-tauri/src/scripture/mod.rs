@@ -19,6 +19,7 @@ pub mod import;
 pub mod language;
 pub mod morphgnt;
 pub mod morphology;
+pub mod numbering;
 pub mod oshb;
 pub mod packs;
 pub mod parser;

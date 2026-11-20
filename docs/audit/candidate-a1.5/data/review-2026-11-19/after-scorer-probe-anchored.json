@@ -1,0 +1,70 @@
+{
+ "candidate_head": "4dd9f8e12be1c531f55ba5121423a184a6ae97cb",
+ "synthetic_only": true,
+ "work_folder": "<scratch>/review-evidence-after/anchored-99e3xgae",
+ "probes": [
+  {
+   "case": "changed_sealed_allowlist",
+   "run_record": "ea93e1b29bafdcc2d0d3a0e0687205610a977173",
+   "before": {
+    "exit": 0,
+    "verdict": "fail",
+    "refusals": []
+   },
+   "after": {
+    "exit": 2,
+    "verdict": null,
+    "refusals": [
+     "refused: allowed/M1.txt differs from the seal commit",
+     "refused: the seal folder has uncommitted changes"
+    ]
+   },
+   "after_resealing_mutable_seal_txt": {
+    "exit": 2,
+    "verdict": null,
+    "refusals": [
+     "refused: SEAL.txt differs from the seal commit",
+     "refused: allowed/M1.txt differs from the seal commit",
+     "refused: the seal folder has uncommitted changes"
+    ]
+   }
+  },
+  {
+   "case": "changed_external_report_and_rehashed_outputs",
+   "run_record": "f34b975481bca6dabb931b0d05c00a5252f34bc4",
+   "before": {
+    "exit": 0,
+    "verdict": "fail",
+    "refusals": []
+   },
+   "after": {
+    "exit": 2,
+    "verdict": null,
+    "refusals": [
+     "refused: OUTPUTS.sha256 in the run folder differs from the committed run record"
+    ]
+   },
+   "committed_record_unchanged": true,
+   "tracked_git_worktree_clean": true
+  },
+  {
+   "case": "changed_external_run_exit_and_rehashed_outputs",
+   "run_record": "d0ba03b5434054664b1a0bc24a3446cba612075e",
+   "before": {
+    "exit": 0,
+    "verdict": "fail",
+    "refusals": []
+   },
+   "after": {
+    "exit": 2,
+    "verdict": null,
+    "refusals": [
+     "refused: RUN.txt in the run folder differs from the committed run record",
+     "refused: OUTPUTS.sha256 in the run folder differs from the committed run record"
+    ]
+   },
+   "committed_record_unchanged": true,
+   "tracked_git_worktree_clean": true
+  }
+ ]
+}

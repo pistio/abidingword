@@ -1,0 +1,85 @@
+reference text	language	source and licence, as recorded
+deu1912	de	Lutherbibel 1912; Martin Luther (rev. 1912); https://ebible.org/Scriptures/deu1912_usfm.zip; "Public Domain".
+deu1951	de	Die Schlachter-Bibel 1951; Franz-Eugen Schlachter / Genfer Bibelgesellschaft; https://ebible.org/Scriptures/deu1951_usfm.zip; "copyright © 1951 Genfer Bibelgeschellschaft (Geneva Bible Society)" "Creative Commons Attribution license 4.0"
+deuelbbk	de	Elberfelder Übersetzung (Version von bibelkommentare.de); Verbreitung des christlichen Glaubens e.V.; https://ebible.org/Scriptures/deuelbbk_usfm.zip; "copyright © 2019 Verbreitung des christlichen Glaubens e.V." "Creative Commons Attribution-Noncommercial-No Derivatives license 4.0"
+deuelo	de	Unrevidierte Elberfelder 1905 (eBible.org); public domain
+deutkw	de	deutkw (Textbibel von Kautzsch und Weizsäcker 1906); Public Domain
+eng-asv	en	American Standard Version (1901); American Revision Committee; https://ebible.org/Scriptures/eng-asv_usfm.zip; "The American Standard Version of the Holy Bible is in the Public Domain. Copy freely."
+eng-Brenton	en	Brenton Septuagint Translation (1851); Sir Lancelot C. L. Brenton; https://ebible.org/Scriptures/eng-Brenton_usfm.zip; "Published in 1851, and now in the Public Domain."
+eng-kjv2006	en	King James Version 1769 (eBible.org); public domain
+eng-rv	en	Revised Version with Apocrypha (1895); https://ebible.org/Scriptures/eng-rv_usfm.zip (PDF: https://ebible.org/pdf/eng-rv/eng-rv_book.pdf); "This work is in the Public Domain. You may copy and use it freely."
+engBBE	en	Bible in Basic English (1965); S. H. Hooke (ed.), Cambridge Press; https://ebible.org/Scriptures/engBBE_usfm.zip; "Public Domain" (published without copyright notice)
+engbsb	en	Berean Standard Bible; BSB Publishing, LLC; https://ebible.org/Scriptures/engbsb_usfm.zip; "Public Domain"
+engDBY	en	Darby Translation (1890); J. N. Darby; https://ebible.org/Scriptures/engDBY_usfm.zip; "Public Domain"
+engDRA	en	Douay-Rheims 1899 American Edition; English College, Douai; https://ebible.org/Scriptures/engDRA_usfm.zip; "Public Domain"
+enggnv	en	enggnv (Geneva Bible 1599); Public Domain
+engjps	en	JPS TaNaKH 1917; Jewish Publication Society; https://ebible.org/Scriptures/engjps_usfm.zip; "Public Domain"
+engkjvcpb	en	KJV Cambridge Paragraph Bible; https://ebible.org/Scriptures/engkjvcpb_usfm.zip; "Public Domain" (outside the UK; Crown letters patent apply in the UK per eBible copyright page)
+englsv	en	Literal Standard Version; Covenant Press; https://ebible.org/Scriptures/englsv_usfm.zip; "copyright © 2020 Covenant Press" "Creative Commons Attribution Share-Alike license 4.0"
+engoebus	en	Open English Bible (U.S. spelling); OpenEnglishBible.org; https://ebible.org/Scriptures/engoebus_usfm.zip (PDF: https://ebible.org/pdf/engoebus/engoebus_a4.pdf); "Public Domain"
+engtnt	en	engtnt (Tyndale New Testament 1534); Public Domain
+engwebp	en	World English Bible (eBible.org); public domain
+engwebster	en	Noah Webster Bible (1833); https://ebible.org/Scriptures/engwebster_usfm.zip; "Public Domain"
+engwebu	en	engwebu (World English Bible Updated); Public Domain
+engwyc2017	en	engwyc2017 (Wycliffe's Bible with Modern Spelling, Terry Noble); CC BY-NC-ND 4.0
+engylt	en	Young's Literal Translation 1898 (eBible.org); public domain
+F01-eng-nheb	eng	New Heart English Bible (NHEB), Wayne A. Mitchell; text from scrollmapper/bible_databases (2025 schema, master branch, formats/json/NHEB.json, retrieved 2026-11-01); public domain (the NHEB is dedicated to the public domain by its editor; scrollmapper lists its licence as "Unknown"; repository code MIT)
+F02-eng-leeser	eng	Isaac Leeser Tanakh (1853), eBible.org englee, USFM zip generated 30 Oct 2026 from source files dated 12 Dec 2025; Public Domain
+F03-deu-menge	deu	Menge-Bibel (Hermann Menge, 1939 text) with Apocrypha, CrossWire module GerMenge via scrollmapper/bible_databases (formats/json/GerMenge.json, master, retrieved 2026-11-01); Public Domain (translator died 1939; licence field "Public Domain")
+F04-fra-martin	fra	Bible David Martin (1744), CrossWire module FreBDM1744 via scrollmapper/bible_databases (formats/json/FreBDM1744.json, master, retrieved 2026-11-01); Public Domain
+F05-spa-rv1865	spa	La Santa Biblia Reina-Valera (1865) con arreglos ortográficos, CrossWire module SpaRV1865 via scrollmapper/bible_databases (formats/json/SpaRV1865.json, master, retrieved 2026-11-01); Public Domain
+F06-por-nva	por	Bíblia Nova Versão de Acesso Livre (NVA), CrossWire module PorNVA via scrollmapper/bible_databases (formats/json/PorNVA.json, master, retrieved 2026-11-01); licence Creative Commons BY-SA 4.0 (attribution and licence notice printed on the title page; layout shared under the same licence)
+F07-kor-rv	kor	개역성경 (Korean Revised Version, 1961 개역한글 text), CrossWire module KorRV via scrollmapper/bible_databases (formats/json/KorRV.json, master, retrieved 2026-11-01); licence field "Public Domain".
+F08-heb-salkinson	heb	Salkinson-Ginsburg Hebrew New Testament (1886), eBible.org hebsg, USFM zip generated 30 Oct 2026 from source files dated 12 Dec 2025; Public Domain
+F09-grc-tcgnt	grc	The Text-Critical Greek New Testament: Byzantine Text (Robert Adam Boyd, based on Robinson-Pierpont Byzantine Textform 2018), eBible.org grctcgnt, USFM zip generated 31 Oct 2026; Public Domain.
+F10-lat-sistine	lat	Vulgata Sistina (Sixtine Vulgate, 1590), CrossWire module VulgSistine via scrollmapper/bible_databases (formats/json/VulgSistine.json, master, retrieved 2026-11-01); Public Domain.
+F11-ell-vamvas	ell	Η Αγία Γραφή, translation of Neophytos Vamvas (1850; Katharevousa Greek), CrossWire module GreVamvas via scrollmapper/bible_databases (formats/json/GreVamvas.json, master, retrieved 2026-11-01); Public Domain
+F12-rus-synodal	rus	Russian Synodal Translation (Синодальный перевод), eBible.org russyn, USFM zip generated 30 Oct 2026 from source files dated 12 Dec 2025; Public Domain
+F13-ita-diodati	ita	La Sacra Bibbia, Giovanni Diodati, revised edition 1885 (Diodati Bibbia 1885), eBible.org ita1885, USFM zip generated 30 Oct 2026 from source files dated 3 May 2025; Public Domain
+fra_fob	fr	fra_fob (La Sainte Bible, Ostervald); Public Domain
+frajnd	fr	Darby 1885 French (eBible.org); public domain
+fraLSG	fr	Louis Segond 1910; Louis Segond; https://ebible.org/Scriptures/fraLSG_usfm.zip; "Cette Bible est dans le domaine public."
+francl	fr	Sainte Bible néo-Crampon Libre; Fraternité de Tibériade; https://ebible.org/Scriptures/francl_usfm.zip; "copyright © 2022 Fraternité de Tibériade" "Creative Commons Attribution Share-Alike license 4.0"
+frasbl	fr	Sainte Bible libre pour le monde; David Williams (trad.), Michael Paul Johnson; https://ebible.org/Scriptures/frasbl_usfm.zip; "Public Domain" (draft translation)
+G01_pt_pg62383_biblia_sagrada	por	Project Gutenberg eBook #62383, Almeida translation (Lisbon 1911 printing), Public domain in the USA; Gutenberg licence kept
+G02_sv_pg2100_bibeln_1917	swe	Project Gutenberg eBook #2100, Bibeln 1917 (Project Runeberg transcription), Public domain in the USA; Gutenberg licence kept
+G03_en_bibletex_kjv	eng	vermiculus/bible commit 642de2d (bible.pdf created 2015-05-17); KJV text public domain (from Project Gutenberg), layout CC BY-SA; translation reuse (KJV)
+G04_he_ebible_heblb_a4	heb	eBible.org heblb (build 2026-10-30), (c) 2009 Biblica, CC BY-SA 4.0
+G05_de_luther1545_auszug	deu	Luther 1545 (letzte Hand), lutherbibel.net digitisation via Zefania XML (kohelet-net-admin/zefania-xml-bibles); text public domain
+G06_de_vaness_nt	deu	Leander van Ess, Die heiligen Schriften des Neuen Testamentes (Sulzbach 1859), digitised by Hans J. Herbst 2012, Zefania XML; public domain
+G07_fr_fillion_deuterocanoniques	fra	La Sainte Bible, traduction de L.-Cl. Fillion, Zefania XML (magnificat.ca); public domain
+G08_es_rv1862_nt	spa	Reina-Valera New Testament 1862 (SPCC; BFBS 1884 printing), Project Gutenberg eBook #5879 / valera1909.com; public domain
+G09_ko_kaeyok1938_selection	kor	셩경 개역 (Korean Revised Bible, Seoul: 聖書公會 1938), ko.wikisource transcription; public domain (PD-old-80)
+G10_he_mam_megillot_jonah	hbo	Miqra according to the Masorah (S. A. Kadish; OSIS MAPM by D. Troidl, openscriptures/morphhb), CC BY-SA 3.0
+G11_grc_nestle1904	grc	Nestle 1904 Greek New Testament (base text D. R. dos Santos, public domain; XML biblicalhumanities.org, CC BY-SA 4.0)
+G12_en_noyes_poetry_gospels	eng	eBible.org engnoy, The Holy Bible translated by George R. Noyes (1869), public domain
+G13_en_ulb_selection	eng	eBible.org engULB, Unlocked Literal Bible (c) 2017 Door43 World Missions Community, CC BY-SA 4.0
+G14_la_castellio_excerpta	lat	Biblia Sacra ex Sebastiani Castellionis interpretatione, transcription by the biblia-castellionis project (github njand, commit 0f93476, 2023), CC BY-SA 4.0
+grc-tisch	grc	Tischendorf 8th edition Greek NT (Sandborg-Petersen, Yale, Robinson); https://ebible.org/Scriptures/grc-tisch_usfm.zip; "Public Domain" ("This text and its analysis are in the Public Domain. Copy freely.")
+grcbrent	grc	The Greek Septuagint with Apocrypha (μετάφραση των εβδομήκοντα), compiled by Sir Lancelot C. L. Brenton; https://ebible.org/Scriptures/grcbrent_usfm.zip; "Public Domain"
+grcbyz	grc	Byzantine Greek NT 1904 (eBible.org); public domain
+grcmt	grc	grcmt (Greek Majority Text NT, Robinson-Pierpont 2018); Public Domain
+grcsbl	grc	The Greek New Testament: SBL Edition; Society of Biblical Literature and Logos Bible Software; https://ebible.org/Scriptures/grcsbl_usfm.zip; "copyright © 2010 Society of Biblical Literature and Logos Bible Software" "Creative Commons Attribution license 4.0"
+grcsr	grc	Solid Rock Greek New Testament, Scholar's Edition (Robinson–Pierpont text; Joey McCollum and Stephen Brown); https://ebible.org/Scriptures/grcsr_usfm.zip; "Public Domain"
+grctr	grc	Textus Receptus (eBible.org); public domain
+hbo	hbo	Hebrew Masoretic OT (כתבי הקודש); https://ebible.org/Scriptures/hbo_usfm.zip; "Public Domain"
+hboWLC	hbo	Westminster Leningrad Codex (eBible.org); public domain
+heb	he	heb (Hebrew Bible, Modern Hebrew edition on eBible.org); Public Domain
+hebwlc	hbo	Westminster Leningrad Codex (hebwlc); Westminster Hebrew Institute / United Bible Societies; https://ebible.org/Scriptures/hebwlc_usfm.zip; "Public Domain".
+kor	ko	Korean Bible 1910 (한국어 성경); 레널즈, 이승두, 김정삼; https://ebible.org/Scriptures/kor_usfm.zip; "Public Domain".
+kor1961	ko	성경전서 개역한글판 1961 (Korean Bible Society); economic copyright expired, integrity and attribution respected
+latVUC	la	Clementine Vulgate 1598 (eBible.org); public domain
+porblt	pt	Biblia Livre Para Todos; Free Bible Ministry, Inc.; https://ebible.org/Scriptures/porblt_usfm.zip; "copyright © 2022 Free Bible Ministry, Inc." "Creative Commons Attribution Share-Alike license 4.0"
+porbr2018	pt	Bíblia Livre 2018, Almeida revision (eBible.org); CC BY 4.0
+porbrbsl	pt	World Portuguese Bible (eBible.org HTML, converted); public domain
+poronbv	pt	Biblica® Open Nova Bíblia Viva 2007; Biblica, Inc.; https://ebible.org/Scriptures/poronbv_usfm.zip; "Copyright © 2007, 2010 by Biblica, Inc." "Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA)"
+portft	pt	A Bíblia Sagrada, Tradução para Tradutores (NT); Ellis W. Deibler, Jr.; https://ebible.org/Scriptures/portft_usfm.zip; "Copyright © 2018 Ellis W. Deibler, Jr." "Creative Commons Attribution Share-Alike license 4.0"
+spabes	es	La Biblia en Español Sencillo (eBible.org); public domain
+spabll	es	Santa Biblia libre Latinoamericano; https://ebible.org/Scriptures/spabll_usfm.zip; "Public Domain" (draft translation)
+spablm	es	Spanish Free Bible for the World (eBible.org); public domain
+spaonbv	es	Biblica® Open Nueva Biblia Viva 2008; Biblica, Inc.; https://ebible.org/Scriptures/spaonbv_usfm.zip; "Copyright © 2006, 2008 by Biblica, Inc." "Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA)"
+spapddpt	es	Palabra de Dios para ti (Biblia Latinoamericana Textual); Asociación Bíblica Latinoamericana; https://ebible.org/Scriptures/spapddpt_usfm.zip; "copyright © 2020 Asociacion Biblica Latinoamericana" "Creative Commons Attribution license 4.0"
+spaRV1909	es	Reina-Valera 1909 (eBible.org HTML, converted); public domain
+sparvg	es	sparvg (Santa Biblia Reina Valera Gómez); © 2004, 2010, 2023 Dr. Humberto Gómez Caballero, free reproduction for non-profit distribution permitted provided no words are changed
+spav1602p	es	spav1602p (Santa Biblia Valera 1602 Purificada); © 2007, 2019, 2024 Iglesia Bautista Bíblica de la Gracia, printing without alteration permitted, not for profit
+spavbl	es	Versión Biblia Libre; Jonathan Gallagher y Shelly Barrios de Avila; https://ebible.org/Scriptures/spavbl_usfm.zip; "copyright © 2018-2020 Jonathan Gallagher y Shelly Barrios de Avila" "Creative Commons Attribution Share-Alike license 4.0"

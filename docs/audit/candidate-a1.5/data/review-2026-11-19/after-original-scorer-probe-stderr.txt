@@ -1,0 +1,3 @@
+AssertionError: refused: allowed/M1.txt differs from the seal commit
+refused: the seal folder has uncommitted changes
+

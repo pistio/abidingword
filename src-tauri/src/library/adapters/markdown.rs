@@ -59,6 +59,7 @@ impl SourceImportAdapter for MarkdownImporter {
         // ("*TEMA: …*", "*Mateus 1:1–16*") is set apart by the document's own
         // markup, as an EPUB's styled class is (v0.24.5).
         let mut emphasis = 0usize;
+        let mut in_image = 0usize;
         let mut all_emphasised = true;
         // The block's text with its footnote callers marked (`NOTE_OPEN` label
         // `NOTE_CLOSE`), and whether it has any; inside a footnote definition.
@@ -119,6 +120,11 @@ impl SourceImportAdapter for MarkdownImporter {
                     all_emphasised = false;
                 }
                 Event::Start(Tag::Emphasis | Tag::Strong) => emphasis += 1,
+                // An image's description is not the document's text (Phase
+                // A1.5, independent review finding 16).
+                Event::Start(Tag::Image { .. }) => in_image += 1,
+                Event::End(TagEnd::Image) => in_image = in_image.saturating_sub(1),
+                Event::Text(_) | Event::Code(_) if in_image > 0 => {}
                 Event::End(TagEnd::Emphasis | TagEnd::Strong) => {
                     emphasis = emphasis.saturating_sub(1);
                 }
@@ -177,6 +183,7 @@ impl SourceImportAdapter for MarkdownImporter {
                     if emphasis == 0 && !t.trim().is_empty() {
                         all_emphasised = false;
                     }
+                    let t = super::neutralise_marks(&t);
                     buffer.push_str(&t);
                     marked.push_str(&t);
                 }
@@ -373,6 +380,21 @@ mod tests {
                 ("1:2 E à irmã Áfia.", false),
             ]
         );
+    }
+
+    #[test]
+    fn an_image_s_description_is_not_text() {
+        // Phase A1.5 (independent review finding 16).
+        let md =
+            "## Rute 1\n\n1 Palavras inventadas ![2 Outras palavras inventadas](a.png) aqui.\n";
+        let doc = MarkdownImporter.extract(md.as_bytes(), "r.md").unwrap();
+        let verse = doc
+            .segments
+            .iter()
+            .find(|s| s.text.starts_with('1'))
+            .unwrap();
+        assert!(!verse.text.contains("Outras"), "{:?}", verse.text);
+        assert!(verse.text.contains("aqui"), "{:?}", verse.text);
     }
 
     #[test]

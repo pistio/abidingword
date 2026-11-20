@@ -1841,6 +1841,14 @@ pub fn stage_documents_read(
     origin: ImportOrigin,
     read: &dyn Fn(&std::path::Path, u16) -> AppResult<documents::DocumentFile>,
 ) -> AppResult<StagedImport> {
+    // (Phase A1.5, independent review finding 15: an empty list panicked
+    // below, at `files[0]`.)
+    if paths.is_empty() {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "import.noFiles",
+            "Choose at least one file.",
+        )));
+    }
     if paths.len() > documents::MAX_FILES {
         return Err(AppError::Import(UserMessage::new(
             "bibleImport.documentTooMany",

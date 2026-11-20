@@ -48,15 +48,17 @@ impl SourceImportAdapter for TextImporter {
 /// UTF-8 text, with a byte-order mark tolerated.
 pub(crate) fn decode_utf8(bytes: &[u8], file_name: &str) -> AppResult<String> {
     let bytes = bytes.strip_prefix(b"\xEF\xBB\xBF").unwrap_or(bytes);
-    String::from_utf8(bytes.to_vec()).map_err(|_| {
-        AppError::Import(
-            UserMessage::new(
-                "library.notUtf8",
-                format!("“{file_name}” is not saved as UTF-8 text, so it could not be read."),
+    String::from_utf8(bytes.to_vec())
+        .map(|t| super::neutralise_marks(&t).into_owned())
+        .map_err(|_| {
+            AppError::Import(
+                UserMessage::new(
+                    "library.notUtf8",
+                    format!("“{file_name}” is not saved as UTF-8 text, so it could not be read."),
+                )
+                .with("fileName", file_name),
             )
-            .with("fileName", file_name),
-        )
-    })
+        })
 }
 
 #[cfg(test)]

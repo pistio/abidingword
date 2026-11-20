@@ -299,6 +299,11 @@ const OUTSIDE_TITLES: &[(&str, &str, Option<&str>)] = &[
     ("baruque", "BAR", None),
     ("carta de jeremias", "LJE", None),
     ("epistle of jeremy", "LJE", None),
+    // "Epistle Of Jeremiah" (engwyc2017-epubapoc) was read as Jeremiah and
+    // refused only because the chapter ran too long (Phase A1.5,
+    // independent canon review finding 4).
+    ("epistle of jeremiah", "LJE", None),
+    ("letter of jeremy", "LJE", None),
     ("letter of jeremiah", "LJE", None),
     ("lettre de jeremie", "LJE", None),
     ("brief des jeremia", "LJE", None),
@@ -2182,6 +2187,12 @@ fn line_reference(text: &str, language: Option<ReferenceLanguage>) -> Option<Lin
     (chapter > 0 && verse > 0).then_some((chapter, verse, end, book, taken + used))
 }
 
+/// A character no text of Scripture is written in (Phase A1.5): the
+/// private-use area and the replacement character.
+fn unreadable_char(c: char) -> bool {
+    matches!(c, '\u{E000}'..='\u{F8FF}' | '\u{F0000}'..='\u{10FFFF}' | '\u{FFFD}')
+}
+
 /// The text of a unit cut into words and candidate verse numbers.
 fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
     let mut out: Vec<Piece> = Vec::new();
@@ -2209,6 +2220,14 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
         .position(|(at, _)| *at >= from)
         .unwrap_or(chars.len());
     let mut text_start = from;
+    // The text before each candidate number with its marks taken out
+    // (`unmark_raised`), kept up as the scan goes (Phase A1.5, independent
+    // review finding 4: computing it afresh for every number copied the
+    // unit's whole prefix each time, quadratic in a long unit). The same
+    // left-to-right reading, so the same text.
+    let mut unmarked = String::new();
+    let mut unmarked_upto = 0usize;
+    let mut in_note = false;
     while i < chars.len() {
         let (at, c) = chars[i];
         let is_digit = c.is_ascii_digit();
@@ -2217,6 +2236,16 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             i += 1;
             continue;
         }
+        for c in text[unmarked_upto..at].chars() {
+            match c {
+                RAISED_OPEN | RAISED_CLOSE | MARGIN => {}
+                NOTE_OPEN => in_note = true,
+                NOTE_CLOSE => in_note = false,
+                _ if in_note => {}
+                _ => unmarked.push(c),
+            }
+        }
+        unmarked_upto = at;
         // The whole run of digits of one kind.
         let mut j = i;
         while j < chars.len()
@@ -2247,15 +2276,10 @@ fn pieces(text: &str, language: Option<ReferenceLanguage>) -> Vec<Piece> {
             // What comes before: nothing (the start), a space, punctuation, or a word.
             // (The margin mark before raised digits is not text.)
             let margin = raised && text[..at].ends_with(MARGIN);
-            let before = if margin {
-                &text[..at - MARGIN.len_utf8()]
-            } else {
-                &text[..at]
-            };
             // (Marks around raised letters and declared note callers are not
-            // text: "year.⟨‡⟩ 18" is "year. 18", v0.24.4.)
-            let before_unmarked = unmark_raised(before);
-            let before = before_unmarked.as_str();
+            // text: "year.⟨‡⟩ 18" is "year. 18", v0.24.4. The margin mark
+            // before raised digits is one of them.)
+            let before = unmarked.as_str();
             let prev = before.chars().last();
             let opened = prev.is_some_and(|p| matches!(p, '(' | '['));
             // (A note's sign hung on the sentence's end, "year.‡ 18", does
@@ -6351,7 +6375,12 @@ impl Reader<'_> {
             .or_else(|| number_inside.map(|_| "boundary"))
             .or_else(|| open.heading_like_end.then_some("possibleHeading"))
             .or_else(|| verse_doubt(&text, &self.inline_labels, self.language))
-            .or_else(|| trailing_book_name(&text, self.language).then_some("reference"));
+            .or_else(|| trailing_book_name(&text, self.language).then_some("reference"))
+            // A character that is no letter of any script (Phase A1.5): a
+            // private-use code point (a font's own sign, or a reader's mark
+            // left in the text) or U+FFFD (something that could not be
+            // read). The text is not known to be what the page shows.
+            .or_else(|| text.chars().any(unreadable_char).then_some("noteSign"));
         chapter.verses.insert(open.verse, text);
         if let Some(end) = open.end {
             chapter.bridges.insert(open.verse, end);
@@ -8948,6 +8977,21 @@ mod tests {
             outside_named("INCIPIT LIBER TOBIÆ").map(|o| o.0),
             Some("TOB")
         );
+    }
+
+    #[test]
+    fn every_name_of_the_letter_of_jeremiah_is_the_book_outside_the_66() {
+        // Phase A1.5: "Epistle Of Jeremiah" was read as Jeremiah.
+        for title in [
+            "Epistle Of Jeremiah",
+            "The Epistle of Jeremiah",
+            "Letter of Jeremy",
+            "The Letter of Jeremiah",
+            "Epistle of Jeremy",
+        ] {
+            assert_eq!(outside_named(title).map(|o| o.0), Some("LJE"), "{title}");
+        }
+        assert_eq!(outside_named("Jeremiah"), None);
     }
 
     #[test]

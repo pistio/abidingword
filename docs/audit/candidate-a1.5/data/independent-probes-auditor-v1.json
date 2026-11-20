@@ -1,0 +1,666 @@
+[
+ {
+  "probe": "c01-baseline",
+  "mutated": "nothing",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c02-word-dropped",
+  "mutated": "doc drops 'narf'",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c03-word-altered",
+  "mutated": "doc alters one letter",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c04-words-swapped",
+  "mutated": "doc swaps two words in a verse",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c05-word-moved-next-verse",
+  "mutated": "last word of v1 moved to v2",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=0 missing=0 only_doc=0 incompl=2 spaced=0"
+ },
+ {
+  "probe": "c06-verse-missing",
+  "mutated": "doc lacks v2",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=1 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c07-notes-excluded",
+  "mutated": "source has \\f and \\x notes; doc omits them",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c08-w-attributes",
+  "mutated": "\\w word|attrs\\w*",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c09-word-split-across-runs",
+  "mutated": "words split across runs",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c10-nested-char",
+  "mutated": "nested \\+nd in \\wj",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c11-poetry",
+  "mutated": "\\q1 \\q2 \\b, doc one paragraph per line",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c12-table-kept",
+  "mutated": "\\tr \\tc table -> Word table",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c13-table-cell-dropped",
+  "mutated": "doc drops a table cell",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c14-custom-z-paragraph-dropped",
+  "mutated": "doc drops text under custom \\zodd paragraph",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c15-hebrew-pointed",
+  "mutated": "pointed Hebrew, identical",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=1 ok=1 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c16-hebrew-point-dropped",
+  "mutated": "doc loses one dagesh",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=1 ok=0 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c17-korean",
+  "mutated": "Korean, identical",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=1 ok=1 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c18-korean-syllable-dropped",
+  "mutated": "doc drops one Hangul syllable",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=1 ok=0 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c19-nfd-vs-nfc",
+  "mutated": "doc is NFD, source NFC (code points altered; strict tool should flag)",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=1 ok=0 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c20-bridges",
+  "mutated": "\\v 1-2, 3a, 3b",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=3 ok=3 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c21-va-vp-ca-cp",
+  "mutated": "\\ca \\cp \\va \\vp present in source",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c22-s-heading-inside-verse",
+  "mutated": "\\s1 inside v1, doc has bold-centred heading",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c23-tracked-deletion",
+  "mutated": "'narf' is a tracked deletion (w:del)",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c24-text-moved-to-footnote",
+  "mutated": "'narf' only in word/footnotes.xml",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c25-tab-and-br",
+  "mutated": "w:br / w:tab between words",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=1 ok=1 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c26-wrong-chapter",
+  "mutated": "chapter 1 and 2 texts exchanged",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=0 missing=0 only_doc=0 incompl=2 spaced=0"
+ },
+ {
+  "probe": "c27-wrong-book",
+  "mutated": "books' texts exchanged",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=3 ok=0 missing=1 only_doc=1 incompl=2 spaced=0"
+ },
+ {
+  "probe": "c28-verse-text-before-first-heading",
+  "mutated": "'narf' moved before the first heading",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c29-unterminated-note-no-closer",
+  "mutated": "malformed source: \\f never closed (loud failure is right)",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "c30-d-before-v",
+  "mutated": "\\d holding \\v 1 (verse text kept, italic with number)",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "c31-d-before-v-dropped",
+  "mutated": "doc drops the text of \\d \\v 1",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "e01-vacuous-empty-zip",
+  "mutated": "USFM zip has no files; doc has no books",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=0 ok=0 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e02-vacuous-readme-only",
+  "mutated": "zip has only a README; doc empty",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=0 ok=0 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e03-non66-book-ignored",
+  "mutated": "source has TOB (outside the 66); doc lacks it entirely",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e04-only-non66-book",
+  "mutated": "source is only TOB; doc empty",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=0 ok=0 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e05-lowercase-id",
+  "mutated": "second book has '\\id exo' (lower case); doc lacks it",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e06-utf16-file",
+  "mutated": "second book file is UTF-16; doc lacks it",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e07-duplicate-book-id",
+  "mutated": "two files both \\id GEN with different verses; doc has only the second file's text",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e08-merged-words",
+  "mutated": "doc lost every space inside the verses",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=2"
+ },
+ {
+  "probe": "e09-word-boundary-shifted",
+  "mutated": "doc moves the spaces: 'bli mnar fquux'",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=1"
+ },
+ {
+  "probe": "e10-korean-spacing-lost",
+  "mutated": "Korean with all word spaces removed",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=1 ok=1 missing=0 only_doc=0 incompl=0 spaced=1"
+ },
+ {
+  "probe": "e11-verses-reordered",
+  "mutated": "doc prints v2 before v1",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e12-verse-text-interleaved",
+  "mutated": "half of v1 printed after half of v2 under a repeated number",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e13-chapters-reordered",
+  "mutated": "doc prints chapter 2 before chapter 1",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e14-books-reordered",
+  "mutated": "doc prints EXO before GEN",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=3 ok=3 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e15-hidden-vanish",
+  "mutated": "'narf' and all of v2 are hidden text (w:vanish)",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e16-hidden-via-char-style",
+  "mutated": "'narf' hidden by a character style with w:vanish",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e17-white-1pt-text",
+  "mutated": "'narf' is white, 1pt",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e18-tracked-move-away",
+  "mutated": "'narf' is tracked-moved out of v1 (w:moveFrom) to before the first verse number",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e19-rq-swallows-rest",
+  "mutated": "inline \\rq …\\rq* in v1; doc drops the verse words after it",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e20-unterminated-note-swallows-verses",
+  "mutated": "\\f in v1 never closed, next \\f* is in v4; doc lacks v2, v3 and most of v4",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=1 ok=1 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e21-unterminated-va-swallows-verses",
+  "mutated": "\\va in v1 never closed; doc lacks v2 and v3",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=1 ok=1 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e22-text-between-c-and-v",
+  "mutated": "running text between \\c 2 and its first \\v; doc drops it",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e23-text-on-c-line",
+  "mutated": "words on the \\c line after the number; doc drops them (and the report does not count them)",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e24-duplicate-h1-first-discarded",
+  "mutated": "doc has the book twice; the first copy is altered",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e25-alien-italic-paragraph-in-verse",
+  "mutated": "doc inserts an all-italic paragraph of foreign words between v1 and v2",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e26-alien-bold-centred-in-verse",
+  "mutated": "doc inserts a bold-centred paragraph of foreign words",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e27-alien-text-before-first-verse",
+  "mutated": "doc inserts a plain paragraph of foreign words between chapter heading and v1",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e28-d-inside-verse-dropped",
+  "mutated": "\\d after \\v 1 (words are inside v1 in the source); doc drops them",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e29-sp-inside-verse-dropped",
+  "mutated": "\\sp inside v1; doc drops its words",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e30-ip-inside-verse-dropped",
+  "mutated": "an introduction marker (\\ip) after \\v 1; doc drops its words",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e31-textbox-italic",
+  "mutated": "'narf' moved into a floating text box (italic)",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "e32-struck-through",
+  "mutated": "'narf' struck through (debatable: still visible)",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e33-book-no-verses-malformed-v",
+  "mutated": "source writes \\v1 \\v2 (no space): no verse is recognised; doc has only the book heading",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=0 ok=0 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e34-two-books-in-one-file-second-missing",
+  "mutated": "one file holds GEN then EXO; doc files everything under the last \\h",
+  "expected": "incomplete",
+  "actual": "complete",
+  "cls": "ESCAPE",
+  "detail": "src_verses=3 ok=3 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "e35-textbox-plain",
+  "mutated": "'narf' moved into a floating text box (plain)",
+  "expected": "incomplete",
+  "actual": "incomplete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=0 missing=0 only_doc=0 incompl=2 spaced=0"
+ },
+ {
+  "probe": "f01-verse-number-split-runs",
+  "mutated": "superscript '10' written as two runs '1','0'",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=1 ok=0 missing=1 only_doc=2 incompl=0 spaced=0"
+ },
+ {
+  "probe": "f02-superscript-by-char-style",
+  "mutated": "verse numbers raised by a character style, not direct formatting",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=0 missing=2 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "f03-milestone-qt",
+  "mutated": "\\qt-s |who=…\\* … \\qt-e\\* milestones",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f04-milestone-zaln",
+  "mutated": "\\zaln-s …\\* alignment milestones",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f05-note-callers-in-doc",
+  "mutated": "doc keeps a superscript note caller 'a' in v1",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=1 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f06-nobreak-hyphen",
+  "mutated": "hyphen written as w:noBreakHyphen",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=1 ok=0 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f07-fig",
+  "mutated": "\\fig caption|attrs\\fig* in source (not verse text)",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f08-ef-extended-note",
+  "mutated": "extended note \\ef …\\ef*",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f09-two-books-same-h",
+  "mutated": "two books share the same \\h; doc has both, complete",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=3 ok=1 missing=1 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f10-tab-after-verse-number",
+  "mutated": "tab instead of space after \\v 1",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=1 only_doc=1 incompl=0 spaced=0"
+ },
+ {
+  "probe": "f11-chapter-label-with-book-number",
+  "mutated": "chapter heading '1 Zorbel 2' (book name starts with a number)",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=1 ok=0 missing=1 only_doc=1 incompl=0 spaced=0"
+ },
+ {
+  "probe": "f12-alternate-content",
+  "mutated": "a word inside mc:AlternateContent (Choice + Fallback copies)",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f13-centred-bold-verse-paragraph",
+  "mutated": "\\pc inscription rendered bold and centred, with its verse number",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=1 ok=0 missing=1 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "f14-char-marker-at-line-start-after-heading",
+  "mutated": "heading wrapped onto a second line starting with \\nd",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=2 ok=1 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f15-italic-continuation-paragraph",
+  "mutated": "a verse's second line is wholly italic in source and doc",
+  "expected": "complete",
+  "actual": "incomplete",
+  "cls": "FALSE ALARM",
+  "detail": "src_verses=1 ok=0 missing=0 only_doc=0 incompl=1 spaced=0"
+ },
+ {
+  "probe": "f16-crlf",
+  "mutated": "CRLF line endings",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ },
+ {
+  "probe": "f17-bom-nbsp",
+  "mutated": "BOM; NBSP in source, plain space in doc",
+  "expected": "complete",
+  "actual": "complete",
+  "cls": "OK",
+  "detail": "src_verses=2 ok=2 missing=0 only_doc=0 incompl=0 spaced=0"
+ }
+]
