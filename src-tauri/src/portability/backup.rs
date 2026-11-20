@@ -266,7 +266,7 @@ fn open_checked(path: &Path, newest: i64) -> AppResult<Connection> {
         return Err(newer(&format!("schema {version}")));
     }
     migrations::validate_existing_history(&conn)?;
-    db_backup::validate_schema(&conn, version).map_err(|_| not_an_app_database())?;
+    db_backup::validate_upgrade_schema(&conn, version).map_err(|_| not_an_app_database())?;
     Ok(conn)
 }
 
@@ -388,6 +388,9 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
                 None::<fn(rusqlite::backup::Progress)>,
             )?;
             crate::db::reinitialise(conn, Some(&dirs.pre_migration_backups()))?;
+            // Legacy citation exceptions are allowed only before their existing
+            // migration. The database we expose after restore must be strict.
+            db_backup::validate_schema(conn, migrations::current_version(conn)?)?;
             let counts = counts(conn, manifest.places.len() as u32)?;
             let mut set_aside = 0;
             for place in &manifest.places {

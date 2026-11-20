@@ -28,7 +28,7 @@ pub fn pre_migration(conn: &Connection, dir: &Path, version: i64) -> AppResult<P
     if migrations::current_version(conn)? != version {
         return Err(backup_error(dir, "the live schema version changed".into()));
     }
-    validate_schema(conn, version)?;
+    validate_upgrade_schema(conn, version)?;
     ensure_directory(dir)?;
 
     // Reserve a new filename, including when two backups start within the same
@@ -57,11 +57,16 @@ pub fn pre_migration(conn: &Connection, dir: &Path, version: i64) -> AppResult<P
     conn.execute("VACUUM INTO ?1", [target])
         .map_err(|e| backup_error(&path, e.to_string()))?;
 
-    verify(&path, version).map_err(|e| backup_error(&path, format!("verification failed: {e}")))?;
+    verify_with_policy(&path, version, true)
+        .map_err(|e| backup_error(&path, format!("verification failed: {e}")))?;
     Ok(path)
 }
 
 fn verify(path: &Path, expected_version: i64) -> AppResult<()> {
+    verify_with_policy(path, expected_version, false)
+}
+
+fn verify_with_policy(path: &Path, expected_version: i64, before_upgrade: bool) -> AppResult<()> {
     let metadata =
         fs::symlink_metadata(path).map_err(|error| backup_error(path, error.to_string()))?;
     if !metadata.is_file() || redirected(&metadata) {
@@ -76,7 +81,7 @@ fn verify(path: &Path, expected_version: i64) -> AppResult<()> {
     )?;
     integrity::check(&copy)?;
     migrations::validate_existing_history(&copy)?;
-    validate_schema(&copy, expected_version)?;
+    validate_schema_with_policy(&copy, expected_version, before_upgrade)?;
     let version = migrations::current_version(&copy)?;
     if version != expected_version {
         return Err(AppError::Unexpected(format!(
@@ -243,6 +248,23 @@ fn schema(conn: &Connection) -> AppResult<Schema> {
 /// restore. Keep exact schema definitions, including constraints and triggers.
 /// The reference lives in memory and never migrates the candidate or live work.
 pub(crate) fn validate_schema(conn: &Connection, version: i64) -> AppResult<()> {
+    validate_schema_with_policy(conn, version, false)
+}
+
+/// Migration 0016 deliberately repairs historical dangling citation references.
+/// Its pre-upgrade safety copy must preserve those original rows, and an old full
+/// backup may enter that same upgrade path. This exception never accepts changed
+/// schema definitions or unrelated broken references, and is inapplicable after
+/// version 15. The restored/upgraded database must pass strict validation again.
+pub(crate) fn validate_upgrade_schema(conn: &Connection, version: i64) -> AppResult<()> {
+    validate_schema_with_policy(conn, version, true)
+}
+
+fn validate_schema_with_policy(
+    conn: &Connection,
+    version: i64,
+    before_upgrade: bool,
+) -> AppResult<()> {
     static EXPECTED: OnceLock<Mutex<BTreeMap<i64, Schema>>> = OnceLock::new();
     if version < 1 || version > migrations::MIGRATIONS.last().map_or(0, |m| m.version) {
         return Err(AppError::Integrity(
@@ -270,10 +292,21 @@ pub(crate) fn validate_schema(conn: &Connection, version: i64) -> AppResult<()> 
             "The database schema definitions do not match version {version}"
         )));
     }
-    if conn.prepare("PRAGMA foreign_key_check")?.exists([])? {
-        return Err(AppError::Integrity(
-            "The database contains broken record references".into(),
-        ));
+    let mut statement = conn.prepare("PRAGMA foreign_key_check")?;
+    let violations = statement.query_map([], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, String>(2)?))
+    })?;
+    for violation in violations {
+        let (table, parent) = violation?;
+        let repaired_by_v16 = before_upgrade
+            && (3..16).contains(&version)
+            && table == "finding_sources"
+            && matches!(parent.as_str(), "findings" | "sources" | "source_segments");
+        if !repaired_by_v16 {
+            return Err(AppError::Integrity(
+                "The database contains broken record references".into(),
+            ));
+        }
     }
     Ok(())
 }

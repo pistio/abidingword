@@ -194,3 +194,25 @@ fn rapidly_created_safety_copies_have_distinct_names_and_preserve_each_version()
         assert_eq!(get_note(path), index.to_string());
     }
 }
+
+#[test]
+fn historical_safety_copy_exception_does_not_accept_unrelated_broken_references() {
+    use abiding_word_lib::db::migrations;
+    let temp = tempfile::tempdir().unwrap();
+    let mut conn = Connection::open(temp.path().join("historical.db")).unwrap();
+    migrations::run_with(&mut conn, &migrations::MIGRATIONS[..15]).unwrap();
+    conn.execute_batch(
+        "PRAGMA foreign_keys=OFF;
+         INSERT INTO finding_tags(finding_id,tag,created_at) VALUES('missing','not-a-citation','now');",
+    ).unwrap();
+    let backup_dir = temp.path().join("pre-migration");
+    assert!(backup::pre_migration(&conn, &backup_dir, 15).is_err());
+    assert!(!backup_dir.exists());
+    let preserved: i64 = conn
+        .query_row("SELECT COUNT(*) FROM finding_tags", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(
+        preserved, 1,
+        "refusal must never repair or remove existing writing"
+    );
+}

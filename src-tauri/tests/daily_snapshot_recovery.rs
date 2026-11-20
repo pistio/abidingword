@@ -270,6 +270,8 @@ fn missing_writing_tables_and_forged_history_are_unavailable_before_replacement(
         "PRAGMA foreign_keys=OFF; DROP TABLE study_blocks;",
         "UPDATE schema_versions SET name='invented_wrong_lineage' WHERE version=27;",
         "ALTER TABLE study_blocks RENAME COLUMN content TO unusable_content;",
+        "PRAGMA foreign_keys=OFF; INSERT INTO finding_tags(finding_id,tag,created_at) VALUES('missing-finding','broken','now');",
+        "PRAGMA foreign_keys=OFF; INSERT INTO finding_sources(id,finding_id,source_id,cited_title,created_at,updated_at) VALUES('broken','missing-finding',NULL,'Invented unavailable source','now','now');",
         "CREATE TRIGGER destroy_writing AFTER UPDATE ON study_sections BEGIN DELETE FROM study_sections; END;",
         "CREATE TRIGGER sqliteXerase AFTER UPDATE ON study_sections BEGIN DELETE FROM study_sections; END;",
         "DROP INDEX passage_references_one_primary;",

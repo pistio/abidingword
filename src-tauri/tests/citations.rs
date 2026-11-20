@@ -795,6 +795,44 @@ fn old_dangling_citation_rows_do_not_stop_the_upgrade() {
     }
     let db =
         Database::open(&path, &temp.path().join("pre-migration")).expect("the upgrade succeeds");
+    // The established migration-16 repair must not weaken the safety-copy
+    // contract: all historical rows, including dangling ones, remain recoverable
+    // in the exact pre-upgrade database. Only the upgraded DB repairs them.
+    let copies = fs::read_dir(temp.path().join("pre-migration"))
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .collect::<Vec<_>>();
+    assert_eq!(copies.len(), 1);
+    let safety =
+        Connection::open_with_flags(&copies[0], rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+            .unwrap();
+    assert_eq!(migrations::current_version(&safety).unwrap(), 15);
+    let preserved = safety
+        .prepare("SELECT id FROM finding_sources ORDER BY id")
+        .unwrap()
+        .query_map([], |row| row.get::<_, String>(0))
+        .unwrap()
+        .collect::<rusqlite::Result<Vec<_>>>()
+        .unwrap();
+    assert_eq!(
+        preserved,
+        [
+            "good",
+            "no-note",
+            "no-segment",
+            "no-source",
+            "no-source-no-title"
+        ]
+    );
+    let broken: i64 = safety
+        .query_row(
+            "SELECT COUNT(*) FROM pragma_foreign_key_check('finding_sources')",
+            [],
+            |row| row.get(0),
+        )
+        .unwrap();
+    assert_eq!(broken, 4);
+    drop(safety);
     db.with_conn(|c| {
         let f = findings::get(c, "f")?;
         let by_id = |id: &str| f.sources.iter().find(|s| s.id == id).cloned();
@@ -830,14 +868,15 @@ fn old_dangling_citation_rows_do_not_stop_the_upgrade() {
 fn a_backup_made_before_this_version_restores_and_keeps_its_citations() {
     use abiding_word_lib::portability::backup;
     use sha2::Digest;
-    let temp = tempfile::tempdir().unwrap();
-    // A schema-15 database (v0.19 before this fix), as a backup holds it.
-    let old = temp.path().join("old.db");
-    const T: &str = "2026-01-01T00:00:00.000Z";
-    {
-        let mut conn = Connection::open(&old).unwrap();
-        migrations::run_with(&mut conn, &MIGRATIONS[..15]).unwrap();
-        conn.execute_batch(&format!(
+    for include_legacy_dangling_citation in [false, true] {
+        let temp = tempfile::tempdir().unwrap();
+        // A schema-15 database (v0.19 before this fix), as a backup holds it.
+        let old = temp.path().join("old.db");
+        const T: &str = "2026-01-01T00:00:00.000Z";
+        {
+            let mut conn = Connection::open(&old).unwrap();
+            migrations::run_with(&mut conn, &MIGRATIONS[..15]).unwrap();
+            conn.execute_batch(&format!(
             "INSERT INTO workspaces (id, name, is_default, created_at, updated_at) VALUES ('w', 'My Workspace', 1, '{T}', '{T}');
              INSERT INTO projects (id, workspace_id, title, created_at, updated_at) VALUES ('p', 'w', 'From the backup', '{T}', '{T}');
              INSERT INTO studies (id, project_id, title, study_type, created_at, updated_at) VALUES ('s', 'p', 'Abiding', 'passage', '{T}', '{T}');
@@ -847,57 +886,95 @@ fn a_backup_made_before_this_version_restores_and_keeps_its_citations() {
              PRAGMA journal_mode = DELETE;"
         ))
         .unwrap();
-    }
-    let bytes = fs::read(&old).unwrap();
-    let sha: String = sha2::Sha256::digest(&bytes)
-        .iter()
-        .map(|b| format!("{b:02x}"))
-        .collect();
-    let manifest = serde_json::json!({
-        "format": "abiding-word-backup", "formatVersion": 1, "schemaVersion": 15,
-        "appVersion": "0.19.0", "createdAt": T, "places": [],
-        "files": [{ "path": "database.db", "size": bytes.len(), "sha256": sha }]
-    });
-    let path = temp.path().join("old.awbackup");
-    let mut zip = zip::ZipWriter::new(fs::File::create(&path).unwrap());
-    let options = zip::write::SimpleFileOptions::default();
-    zip.start_file("manifest.json", options).unwrap();
-    zip.write_all(&serde_json::to_vec(&manifest).unwrap())
-        .unwrap();
-    zip.start_file("database.db", options).unwrap();
-    zip.write_all(&bytes).unwrap();
-    zip.finish().unwrap();
+            if include_legacy_dangling_citation {
+                conn.execute_batch(&format!(
+                "PRAGMA foreign_keys=OFF;
+                 INSERT INTO finding_sources(id,finding_id,source_id,cited_title,quote,created_at,updated_at)
+                 VALUES ('legacy-missing-source','f','removed-library-source','Invented historical work','Original quoted writing','{T}','{T}');"
+            )).unwrap();
+            }
+        }
+        let bytes = fs::read(&old).unwrap();
+        let sha: String = sha2::Sha256::digest(&bytes)
+            .iter()
+            .map(|b| format!("{b:02x}"))
+            .collect();
+        let manifest = serde_json::json!({
+            "format": "abiding-word-backup", "formatVersion": 1, "schemaVersion": 15,
+            "appVersion": "0.19.0", "createdAt": T, "places": [],
+            "files": [{ "path": "database.db", "size": bytes.len(), "sha256": sha }]
+        });
+        let path = temp.path().join("old.awbackup");
+        let mut zip = zip::ZipWriter::new(fs::File::create(&path).unwrap());
+        let options = zip::write::SimpleFileOptions::default();
+        zip.start_file("manifest.json", options).unwrap();
+        zip.write_all(&serde_json::to_vec(&manifest).unwrap())
+            .unwrap();
+        zip.start_file("database.db", options).unwrap();
+        zip.write_all(&bytes).unwrap();
+        zip.finish().unwrap();
 
-    let here = folder();
-    backup::restore(&here.db, &here.dirs, &path).unwrap();
-    here.db
-        .with_conn(|c| {
-            assert_eq!(
-                migrations::current_version(c)?,
-                MIGRATIONS.last().unwrap().version
-            );
-            let f = findings::get(c, "f")?;
-            assert_eq!(f.sources.len(), 1);
-            let cite = &f.sources[0];
-            assert_eq!(
-                (
-                    cite.title.as_str(),
-                    cite.locator.as_deref(),
-                    cite.quote.as_deref()
-                ),
-                ("On the Vine", Some("p. 3"), Some("the vine"))
-            );
-            assert!(!cite.removed && !cite.unavailable);
-            let (origin, hash): (Option<String>, Option<String>) = c.query_row(
+        let here = folder();
+        backup::restore(&here.db, &here.dirs, &path).unwrap();
+        here.db
+            .with_conn(|c| {
+                assert_eq!(
+                    migrations::current_version(c)?,
+                    MIGRATIONS.last().unwrap().version
+                );
+                let f = findings::get(c, "f")?;
+                assert_eq!(
+                    f.sources.len(),
+                    if include_legacy_dangling_citation {
+                        2
+                    } else {
+                        1
+                    }
+                );
+                if include_legacy_dangling_citation {
+                    let legacy = f
+                        .sources
+                        .iter()
+                        .find(|citation| citation.id == "legacy-missing-source")
+                        .unwrap();
+                    assert!(legacy.unavailable);
+                    assert_eq!(legacy.title, "Invented historical work");
+                    assert_eq!(legacy.quote.as_deref(), Some("Original quoted writing"));
+                    assert!(legacy.source_id.is_none());
+                }
+                let cite = f
+                    .sources
+                    .iter()
+                    .find(|citation| citation.id == "c")
+                    .unwrap();
+                assert_eq!(
+                    (
+                        cite.title.as_str(),
+                        cite.locator.as_deref(),
+                        cite.quote.as_deref()
+                    ),
+                    ("On the Vine", Some("p. 3"), Some("the vine"))
+                );
+                assert!(!cite.removed && !cite.unavailable);
+                let (origin, hash): (Option<String>, Option<String>) = c.query_row(
                 "SELECT cited_source_id, cited_content_hash FROM finding_sources WHERE id = 'c'",
                 [],
                 |r| Ok((r.get(0)?, r.get(1)?)),
             )?;
-            assert_eq!(
-                (origin.as_deref(), hash.as_deref()),
-                (Some("lib"), Some(HASH))
-            );
-            Ok(())
-        })
-        .unwrap();
+                assert_eq!(
+                    (origin.as_deref(), hash.as_deref()),
+                    (Some("lib"), Some(HASH))
+                );
+                let broken: i64 =
+                    c.query_row("SELECT COUNT(*) FROM pragma_foreign_key_check", [], |row| {
+                        row.get(0)
+                    })?;
+                assert_eq!(
+                    broken, 0,
+                    "legacy exceptions must be repaired before restored work is exposed"
+                );
+                Ok(())
+            })
+            .unwrap();
+    }
 }
