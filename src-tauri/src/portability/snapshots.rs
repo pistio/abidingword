@@ -140,7 +140,7 @@ fn staged_copy(source: &Path, destination_dir: &Path, version: i64) -> AppResult
     let name = format!("recovery-{}.db", uuid::Uuid::new_v4());
     let target = destination_dir.join(name);
     let stage = StagedFile(target.clone());
-    let mut input = File::open(source).map_err(|_| unavailable())?;
+    let input = File::open(source).map_err(|_| unavailable())?;
     let mut output = File::create_new(&target).map_err(|e| AppError::filesystem(&target, e))?;
     let bytes = std::io::copy(&mut input.take(MAX_BYTES + 1), &mut output)
         .map_err(|e| AppError::filesystem(&target, e))?;
