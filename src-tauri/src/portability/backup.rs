@@ -30,9 +30,7 @@ use std::path::{Component, Path, PathBuf};
 use rusqlite::{Connection, OpenFlags};
 use serde::{Deserialize, Serialize};
 
-use super::{
-    file_stamp, invalid, not_a_package, Limits, PackageFile, Reader, Staging, Writer,
-};
+use super::{file_stamp, invalid, not_a_package, Limits, PackageFile, Reader, Staging, Writer};
 use crate::db::{backup as db_backup, integrity, migrations, Database};
 use crate::error::{AppError, AppResult, UserMessage};
 use crate::filesystem::DataDirs;
@@ -367,9 +365,9 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
     // 4. Install staged files before replacing the database, retaining a
     //    reversible record of every source file that changes. A failed
     //    move cannot leave the database pointing at half-restored files.
-    let aside = dirs.pre_restore_backups().join(format!(
-        "files-{}-{}", file_stamp(), uuid::Uuid::new_v4()
-    ));
+    let aside =
+        dirs.pre_restore_backups()
+            .join(format!("files-{}-{}", file_stamp(), uuid::Uuid::new_v4()));
     let mut changes = Vec::<FileChange>::new();
     let mut added = 0;
     let mut set_aside = 0;
@@ -380,7 +378,10 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
             check_restore_target(dirs.root(), &target)?;
             let previous = match fs::symlink_metadata(&target) {
                 Ok(meta) if meta.file_type().is_file() => {
-                    let listed = reader.files.iter().find(|f| f.path == place.entry)
+                    let listed = reader
+                        .files
+                        .iter()
+                        .find(|f| f.path == place.entry)
                         .ok_or_else(not_a_package)?;
                     if existing_equals(&target, listed) {
                         continue;
@@ -389,8 +390,7 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
                     if let Some(dir) = saved.parent() {
                         fs::create_dir_all(dir).map_err(|e| AppError::filesystem(dir, e))?;
                     }
-                    fs::rename(&target, &saved)
-                        .map_err(|e| AppError::filesystem(&target, e))?;
+                    fs::rename(&target, &saved).map_err(|e| AppError::filesystem(&target, e))?;
                     set_aside += 1;
                     Some(saved)
                 }
@@ -408,8 +408,7 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
             }
             // Staging and managed sources are under the same data root.
             // Never perform an unverified partial copy into the final path.
-            fs::rename(&from, &target)
-                .map_err(|e| AppError::filesystem(&target, e))?;
+            fs::rename(&from, &target).map_err(|e| AppError::filesystem(&target, e))?;
             changes.last_mut().expect("change pushed").installed = true;
             added += 1;
         }
@@ -475,7 +474,6 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
     }
 }
 
-
 struct FileChange {
     target: PathBuf,
     prior: Option<PathBuf>,
@@ -498,8 +496,9 @@ fn check_restore_target(root: &Path, target: &Path) -> AppResult<()> {
         current.push(component.as_os_str());
         match fs::symlink_metadata(&current) {
             Ok(meta) if meta.file_type().is_symlink() => return Err(restore_failed()),
-            Ok(meta) if current.as_path() != target && !meta.is_dir() =>
-                return Err(restore_failed()),
+            Ok(meta) if current.as_path() != target && !meta.is_dir() => {
+                return Err(restore_failed())
+            }
             Ok(_) => {}
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
             Err(error) => return Err(AppError::filesystem(&current, error)),
@@ -511,11 +510,15 @@ fn check_restore_target(root: &Path, target: &Path) -> AppResult<()> {
 // Match a potentially huge source file without reading it all into RAM.
 fn existing_equals(path: &Path, listed: &PackageFile) -> bool {
     use sha2::{Digest, Sha256};
-    let Ok(meta) = fs::symlink_metadata(path) else { return false; };
+    let Ok(meta) = fs::symlink_metadata(path) else {
+        return false;
+    };
     if !meta.file_type().is_file() || meta.len() != listed.size {
         return false;
     }
-    let Ok(mut input) = fs::File::open(path) else { return false; };
+    let Ok(mut input) = fs::File::open(path) else {
+        return false;
+    };
     let mut digest = Sha256::new();
     let mut buf = [0u8; 64 * 1024];
     loop {
@@ -534,32 +537,28 @@ fn existing_equals(path: &Path, listed: &PackageFile) -> bool {
 fn rollback_file_changes(changes: &[FileChange]) -> AppResult<()> {
     for change in changes.iter().rev() {
         if change.installed {
-            fs::remove_file(&change.target)
-                .map_err(|e| AppError::filesystem(&change.target, e))?;
+            fs::remove_file(&change.target).map_err(|e| AppError::filesystem(&change.target, e))?;
         }
         if let Some(original) = &change.prior {
-            fs::rename(original, &change.target)
-                .map_err(|e| AppError::filesystem(original, e))?;
+            fs::rename(original, &change.target).map_err(|e| AppError::filesystem(original, e))?;
         }
     }
     Ok(())
 }
 
-fn rollback_files_or_report(
-    changes: &[FileChange],
-    safety: &Path,
-    aside: &Path,
-) -> AppResult<()> {
+fn rollback_files_or_report(changes: &[FileChange], safety: &Path, aside: &Path) -> AppResult<()> {
     if let Err(error) = rollback_file_changes(changes) {
         log::error!(
             "source rollback failed: {error}; database safety: {}; saved originals: {}",
-            safety.display(), aside.display()
+            safety.display(),
+            aside.display()
         );
         return Err(AppError::Import(
             UserMessage::new(
                 "portability.rollbackFailed",
                 "Restore failed and source files could not all be recovered automatically.",
-            ).with("path", safety.display()),
+            )
+            .with("path", safety.display()),
         ));
     }
     Ok(())

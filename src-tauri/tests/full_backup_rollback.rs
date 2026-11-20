@@ -24,26 +24,50 @@ fn update_note(db: &Database, text: &str) {
             params![text],
         )?;
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 fn note(db: &Database) -> String {
-    db.with_conn(|conn| Ok(conn.query_row(
-        "SELECT value FROM settings WHERE key='fixture.full.restore'",
-        [], |row| row.get(0),
-    )?)).unwrap()
+    db.with_conn(|conn| {
+        Ok(conn.query_row(
+            "SELECT value FROM settings WHERE key='fixture.full.restore'",
+            [],
+            |row| row.get(0),
+        )?)
+    })
+    .unwrap()
 }
 
 fn safety_value(path: &Path) -> String {
     let conn = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY).unwrap();
-    conn.query_row("SELECT value FROM settings WHERE key='fixture.full.restore'", [], |r| r.get(0)).unwrap()
+    conn.query_row(
+        "SELECT value FROM settings WHERE key='fixture.full.restore'",
+        [],
+        |r| r.get(0),
+    )
+    .unwrap()
 }
 
-fn with_backup() -> (tempfile::TempDir, DataDirs, Database, tempfile::TempDir, PathBuf) {
+fn with_backup() -> (
+    tempfile::TempDir,
+    DataDirs,
+    Database,
+    tempfile::TempDir,
+    PathBuf,
+) {
     let (original, dirs, db) = install();
     update_note(&db, "\"From the saved backup\"");
-    fs::write(dirs.sources().join("00-first.txt"), b"Archive edition of first source").unwrap();
-    fs::write(dirs.sources().join("01-second.txt"), b"Archive edition of second source").unwrap();
+    fs::write(
+        dirs.sources().join("00-first.txt"),
+        b"Archive edition of first source",
+    )
+    .unwrap();
+    fs::write(
+        dirs.sources().join("01-second.txt"),
+        b"Archive edition of second source",
+    )
+    .unwrap();
     let out = tempfile::tempdir().unwrap();
     let path = out.path().join("my-private-backup.awbackup");
     backup::create(&db, &dirs, &path).unwrap();
@@ -64,8 +88,11 @@ fn failure_after_replacing_first_file_restores_its_old_bytes_and_keeps_live_data
     assert_eq!(note(&db), "\"My newer draft\"");
     assert_eq!(fs::read(&first).unwrap(), b"Do not lose my newer source");
     assert!(second.is_dir());
-    let copies: Vec<_> = fs::read_dir(dirs.pre_restore_backups()).unwrap()
-        .flatten().filter(|e| e.path().is_file()).collect();
+    let copies: Vec<_> = fs::read_dir(dirs.pre_restore_backups())
+        .unwrap()
+        .flatten()
+        .filter(|e| e.path().is_file())
+        .collect();
     assert_eq!(copies.len(), 1);
     assert_eq!(safety_value(&copies[0].path()), "\"My newer draft\"");
 }
@@ -80,22 +107,32 @@ fn successful_restore_recovers_files_and_db_but_keeps_original_source_aside() {
     let report = backup::restore(&db, &dirs, &archive).unwrap();
 
     assert_eq!(note(&db), "\"From the saved backup\"");
-    assert_eq!(fs::read(&first).unwrap(), b"Archive edition of first source");
+    assert_eq!(
+        fs::read(&first).unwrap(),
+        b"Archive edition of first source"
+    );
     assert_eq!(
         fs::read(dirs.sources().join("01-second.txt")).unwrap(),
         b"Archive edition of second source",
     );
     assert_eq!(report.files_set_aside, 1);
     assert_eq!(report.files_added, 2);
-    assert_eq!(safety_value(Path::new(&report.safety_copy)), "\"Current unsaved variant\"");
+    assert_eq!(
+        safety_value(Path::new(&report.safety_copy)),
+        "\"Current unsaved variant\""
+    );
 
-    let preserved: Vec<_> = fs::read_dir(dirs.pre_restore_backups()).unwrap()
+    let preserved: Vec<_> = fs::read_dir(dirs.pre_restore_backups())
+        .unwrap()
         .flatten()
         .filter(|e| e.file_name().to_string_lossy().starts_with("files-"))
         .map(|e| e.path().join("sources/00-first.txt"))
         .collect();
     assert_eq!(preserved.len(), 1);
-    assert_eq!(fs::read(&preserved[0]).unwrap(), b"Previously imported first source");
+    assert_eq!(
+        fs::read(&preserved[0]).unwrap(),
+        b"Previously imported first source"
+    );
 }
 
 #[cfg(unix)]
@@ -106,12 +143,19 @@ fn local_symlink_to_an_external_file_is_never_followed_or_replaced() {
     let (_old, _dirs, _db, _output, archive) = with_backup();
     let (_tmp, dirs, db) = install();
     update_note(&db, "\"Still mine\"");
-    let outside = dirs.root().parent().unwrap().join("external-personal-file.txt");
+    let outside = dirs
+        .root()
+        .parent()
+        .unwrap()
+        .join("external-personal-file.txt");
     fs::write(&outside, b"Outside file is private").unwrap();
     symlink(&outside, dirs.sources().join("00-first.txt")).unwrap();
 
     assert!(backup::restore(&db, &dirs, &archive).is_err());
     assert_eq!(note(&db), "\"Still mine\"");
     assert_eq!(fs::read(&outside).unwrap(), b"Outside file is private");
-    assert!(fs::symlink_metadata(dirs.sources().join("00-first.txt")).unwrap().file_type().is_symlink());
+    assert!(fs::symlink_metadata(dirs.sources().join("00-first.txt"))
+        .unwrap()
+        .file_type()
+        .is_symlink());
 }
