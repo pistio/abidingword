@@ -94,10 +94,16 @@ pub fn run() {
             std::thread::spawn(move || {
                 let state = backup_handle.state::<AppState>();
                 if let Ok(core) = state.core() {
-                    match core.db.with_conn(|conn| db::backup::daily_snapshot(conn, &core.dirs.daily_backups())) {
-                        Ok(Some(path)) => log::info!("verified automatic database snapshot {}", path.display()),
-                        Ok(None) => {},
-                        Err(error) => log::warn!("automatic database snapshot unavailable: {error}"),
+                    match core.db.with_conn(|conn| {
+                        db::backup::daily_snapshot(conn, &core.dirs.daily_backups())
+                    }) {
+                        Ok(Some(path)) => {
+                            log::info!("verified automatic database snapshot {}", path.display())
+                        }
+                        Ok(None) => {}
+                        Err(error) => {
+                            log::warn!("automatic database snapshot unavailable: {error}")
+                        }
                     }
                 }
             });
