@@ -360,6 +360,7 @@ fn details_can_be_edited_without_touching_the_text() {
                 licence_status: LicenceStatus::Private,
                 licence: None,
                 notes: None,
+                coverage: None,
             },
         )?;
         assert_eq!(saved.title, "Ephesians Commentary");

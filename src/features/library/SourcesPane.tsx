@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PaneHeader } from "@/design-system/PaneHeader";
 import { Button } from "@/design-system/Button";
@@ -11,6 +11,7 @@ import { useLibraryNav, type QuotedWords } from "./LibraryNav";
 import { PassageSourceList } from "./PassageSourceList";
 import { usePassageSourceExpansion } from "./usePassageSourceExpansion";
 import { SourceReader, type ReaderPosition } from "./SourceReader";
+import { SourceEditButton, SourceMetadataEditor } from "./SourceMetadataEditor";
 
 /** A source open inside the Sources pane (kept by the shell, so it survives leaving the workspace). */
 export interface PaneSource {
@@ -72,6 +73,9 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
   // Only sources that share a verse with the passage are offered (the core never returns a chapter-only match).
   const direct = sources.data ?? [];
   const recent = useLoad(useCallback(() => api.libraryList({}), [api]));
+  const reloadRecent = recent.reload;
+  useEffect(() => { if (!reading) reloadRecent(); }, [reading, reloadRecent]);
+  const [editing, setEditing] = useState<string | null>(null);
   const empty = recent.data?.length === 0;
   const opened = recentSourceIds.flatMap((id) => recent.data?.find((s) => s.id === id) ?? []);
   const otherSources = (recent.data ?? []).filter((source) => !recentSourceIds.includes(source.id) && !direct.some(group => group.sourceId === source.id));
@@ -124,6 +128,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
   return (
     <>
       <PaneHeader id="pane-sources-title" title={t("app.panes.name.sources")} />
+      {editing && <SourceMetadataEditor key={editing} sourceId={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); recent.reload(); sources.reload(); }} returnFocus={() => overview.current?.querySelector<HTMLElement>("h3") ?? null} />}
       <div ref={overview} className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
         {/* Nothing until the library has loaded, so the pane never flickers
             from one layout to the other. */}
@@ -141,7 +146,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
                 {t("library.pane.sourcesFor", { passage: label })}
               </h3>
               <p className="type-meta m-0">{t("library.pane.matchEvidence")}</p>
-              {direct.length > 0 && direct.every(group => group.locations.every(place => place.origin === "explicit")) && <p role="status" className="type-meta m-0">{t("library.pane.mentionsOnly")}</p>}
+              {direct.length > 0 && direct.every(group => !(group.coverage?.length) && group.locations.length > 0 && group.locations.every(place => place.origin === "explicit")) && <p role="status" className="type-meta m-0">{t("library.pane.mentionsOnly")}</p>}
               {sources.error && <p className="m-0 text-[0.9375rem] text-danger">{sources.error.message}</p>}
               {sources.data && sources.data.length === 0 && (
                 <p className="m-0 text-[0.9375rem] text-text-muted">{t("library.pane.noSources")}</p>
@@ -152,6 +157,7 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
                   label={t("library.pane.sourcesFor", { passage: label })}
                   passageLabel={passageLabel}
                   onOpen={(id,segment,node)=>openSource(id,segment,undefined,undefined,node)}
+                  onEdit={setEditing}
                   expansion={expansion}
                   onToggleMore={toggle}
                 />
@@ -162,17 +168,18 @@ export function SourcesPane({ reading, onCloseReader, onExpandReader, onPosition
               {opened.length === 0 && <p className="type-meta m-0">{t("library.pane.noRecent")}</p>}
               <ul aria-label={t(opened.length > 0 ? "library.pane.recent" : "library.pane.libraryHeading")} className="m-0 flex list-none flex-col p-0">
                 {(opened.length > 0 ? opened : otherSources).slice(0, 5).map((s) => (
-                  <li key={s.id}>
-                    <button type="button" data-source-link={s.id} aria-label={s.title} aria-describedby={opened.length > 0 ? `source-continue-${s.id}` : undefined} onClick={() => openSource(s.id)} className="w-full py-1 text-left text-[0.9375rem] text-text hover:underline">
+                  <li key={s.id} className="flex items-start">
+                    <button type="button" data-source-link={s.id} aria-label={s.title} aria-describedby={opened.length > 0 ? `source-continue-${s.id}` : undefined} onClick={() => openSource(s.id)} className="min-w-0 flex-1 py-1 text-left text-[0.9375rem] text-text hover:underline">
                       {s.title}{opened.length > 0 && <span id={`source-continue-${s.id}`} className="block type-meta">{t("library.pane.continueReading")}</span>}{s.author ? <span className="text-text-muted">{t("common.listSeparator")}{s.author}</span> : null}
                     </button>
+                    <SourceEditButton title={s.title} onClick={() => setEditing(s.id)} />
                   </li>
                 ))}
               </ul>
               {opened.length > 0 && otherSources.length > 0 && <details className="text-[0.9375rem]">
                 <summary className="cursor-pointer text-text-muted">{t("library.pane.otherSources")}</summary>
                 <ul className="m-0 mt-1 list-none p-0">
-                  {otherSources.slice(0, 5).map((source) => <li key={source.id}><button type="button" data-source-link={source.id} className="min-h-10 w-full py-1 text-left hover:underline" onClick={() => openSource(source.id)}>{source.title}</button></li>)}
+                  {otherSources.slice(0, 5).map((source) => <li key={source.id} className="flex items-start"><button type="button" data-source-link={source.id} className="min-h-10 min-w-0 flex-1 py-1 text-left hover:underline" onClick={() => openSource(source.id)}>{source.title}</button><SourceEditButton title={source.title} onClick={() => setEditing(source.id)} /></li>)}
                 </ul>
               </details>}
             </section>

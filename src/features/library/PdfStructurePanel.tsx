@@ -4,6 +4,7 @@ import { Button } from "@/design-system/Button";
 import { Dialog } from "@/design-system/Dialog";
 import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
+import { bookLabel } from "@/i18n/scripture";
 import { useApi } from "@/lib/ApiContext";
 import { toApiError } from "@/lib/api";
 import { usePdfEngine } from "./PdfEngineContext";
@@ -83,6 +84,9 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
   };
   const fieldClass = "w-full rounded-md border border-border bg-surface px-3 py-2 text-text";
   const headings = (data?.headings ?? []).filter(h => h.path.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
+  const mappingLabel = (heading: PdfResolvedHeading) => heading.canonical ?? (heading.additionalCanonicals?.length
+    ? heading.additionalCanonicals.map(canonical => bookLabel(canonical.split(".")[0]!, false)).join(t("common.listSeparator"))
+    : t("library.structure.unmapped"));
   return <Dialog wide title={t("library.structure.title")} onClose={onClose} actions={<Button onClick={onClose}>{t("common.close")}</Button>}>
     <p>{t("library.structure.explanation")}</p>
     {progressError && <Notice tone="error">{progressError}</Notice>}
@@ -120,7 +124,7 @@ export function PdfStructurePanel({ sourceId, segments, onChanged, onGo, onPage,
         <ul className="m-0 max-h-64 list-none overflow-auto p-0">
           {headings.slice(0,50).map(h=><li key={h.id} className="border-b border-border-subtle py-2">
             <p className="m-0 break-words">{h.path}</p>
-            <p className="type-meta m-0">{t(`library.structure.basis.${["outline","printed","tagged","layout","user"].includes(h.basis) ? h.basis as "outline" | "printed" | "tagged" | "layout" | "user" : "layout"}`)} · {t("library.structure.physical",{page:h.anchor.page})} · {h.canonical ?? t("library.structure.unmapped")}</p>
+            <p className="type-meta m-0">{t(`library.structure.basis.${["outline","printed","tagged","layout","user"].includes(h.basis) ? h.basis as "outline" | "printed" | "tagged" | "layout" | "user" : "layout"}`)} · {t("library.structure.physical",{page:h.anchor.page})} · {mappingLabel(h)}</p>
             <Button variant="quiet" onClick={()=>onGo(h.segmentPosition,h.id)}>{t("library.structure.open")}</Button>
             <Button variant="quiet" disabled={busy} onClick={()=>edit(h)}>{t("library.structure.edit")}</Button>
           </li>)}

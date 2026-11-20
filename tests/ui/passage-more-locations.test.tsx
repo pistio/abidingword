@@ -10,7 +10,7 @@ import { renderAppInProject as renderApp } from "../support/render";
 const MANY: SourceFixture = {
   title: "A Long Sermon Series",
   format: "text",
-  segments: [1, 2, 3, 4, 5, 6].map((n) => ({ text: `Part ${n}: John 15:5.` })),
+  segments: [1, 2, 3, 4, 5, 6].map((n) => ({ text: `Part ${n}: John 15:5.`, sectionPath: `Part ${n}` })),
   mentions: [1, 2, 3, 4, 5, 6].map((n) => ({ segment: n - 1, reference: "JHN.15.5", matchedText: "John 15:5" })),
 };
 
@@ -41,8 +41,9 @@ describe("Expanding more places in a source", () => {
     await readJohn15(user, 5);
     const more = await toggle(/5 more places in this source/);
     expect(more).toHaveAttribute("aria-expanded", "false");
-    // best place + the control
-    expect(within(await list()).getAllByRole("button")).toHaveLength(2);
+    // Best place, source details, and the disclosure control.
+    expect(within(await list()).getAllByRole("button")).toHaveLength(3);
+    expect(within(await list()).getByRole("button", { name: "Edit details for A Long Sermon Series" })).toBeInTheDocument();
     expect(api.libraryLocationsCalls).toHaveLength(0);
     await user.click(more);
   });
@@ -55,10 +56,10 @@ describe("Expanding more places in a source", () => {
     const less = await toggle(/Show fewer/);
     expect(less).toHaveAttribute("aria-expanded", "true");
     expect(less).toHaveAttribute("aria-controls");
-    await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(7));
+    await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(8));
     expect(api.libraryLocationsCalls).toEqual([{ sourceId: expect.any(String), reference: "JHN.15.5" }]);
     // the fourth place is the first one added
-    await user.click(within(await list()).getAllByRole("button")[3]!);
+    await user.click(within(await list()).getByRole("button", { name: "Part 4 Mentions John 15:5" }));
     const reader = await within(sourcesPane()).findByRole("region", { name: "A Long Sermon Series" });
     await waitFor(() => expect(reader.querySelector("[data-target]")).toHaveTextContent("Part 4: John 15:5."));
     // Back keeps the pane as it was, expansion included, without asking again
@@ -75,9 +76,9 @@ describe("Expanding more places in a source", () => {
     await user.click(await toggle(/Show fewer/));
     const more = await toggle(/5 more places in this source/);
     expect(more).toHaveAttribute("aria-expanded", "false");
-    expect(within(await list()).getAllByRole("button")).toHaveLength(2);
+    expect(within(await list()).getAllByRole("button")).toHaveLength(3);
     await user.click(more);
-    await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(7));
+    await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(8));
     expect(api.libraryLocationsCalls).toHaveLength(1);
   });
 
@@ -86,7 +87,7 @@ describe("Expanding more places in a source", () => {
     await readJohn15(user, 5);
     (await toggle(/5 more places/)).focus();
     await user.keyboard("{Enter}");
-    await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(7));
+    await waitFor(async () => expect(within(await list()).getAllByRole("button")).toHaveLength(8));
     const less = await toggle(/Show fewer/);
     less.focus();
     await user.keyboard("{Escape}");
@@ -107,7 +108,7 @@ describe("Expanding more places in a source", () => {
     await waitFor(() => expect(within(sourcesPane()).queryByRole("list", { name: "Sources for John 15:5" })).not.toBeInTheDocument());
     await user.click(within(scripture()).getByRole("button", { name: /^Verse 5\. Show verse tools/ }));
     expect(await toggle(/5 more places in this source/)).toHaveAttribute("aria-expanded", "false");
-    expect(within(await list()).getAllByRole("button")).toHaveLength(2);
+    expect(within(await list()).getAllByRole("button")).toHaveLength(3);
   });
 });
 

@@ -33,7 +33,9 @@
 //! existing library is re-indexed from the stored paths, so both give the same
 //! result for the same source.
 
+use crate::library::pdf_structure::{book_references, heading_reference, is_reference_list};
 use crate::scripture::recognise::Recogniser;
+use crate::scripture::reference::ScriptureRef;
 
 /// The version of the whole passage index: how references are found
 /// (`scripture::parser`, by the source's language) and how sections are derived
@@ -48,7 +50,11 @@ use crate::scripture::recognise::Recogniser;
 ///   nearby (`scripture::parser::context`).
 /// * 4 – explicit references in every supported language, the source's first
 ///   (`scripture::recognise`), and visible heading lines as local context (v0.13.2).
-pub const INDEX_VERSION: i64 = 4;
+/// * 5 – book/chapter/verse ancestors from source headings; existing literal
+///   references are unchanged when upgrading a version-4 index.
+/// * 6 – all installed book-name dictionaries and safe spelling variants in
+///   source headings; version-4/5 literal and manual links stay unchanged.
+pub const INDEX_VERSION: i64 = 6;
 
 /// What the importers put between the headings of a `section_path`.
 pub const PATH_SEPARATOR: &str = " › ";
@@ -111,11 +117,18 @@ pub struct DerivedLink {
     pub canonical: String,
     /// The reference as written in the heading (e.g. `John 15:1–11`).
     pub matched_text: String,
+    /// The actual heading's extent, never inferred from a body mention.
+    pub scope: String,
+    pub basis: String,
+    /// Supplied EPUB TOC identity, ancestry and validated segment bounds.
+    /// Opaque to readers; no file paths or original text are encoded here.
+    pub node_id: Option<String>,
 }
 
 struct Reference {
     canonical: String,
     text: String,
+    scope: String,
 }
 
 struct Node {
@@ -124,18 +137,80 @@ struct Node {
     references: Vec<Reference>,
 }
 
-fn references_of(heading: &str, parser: &Recogniser) -> Vec<Reference> {
+fn references_of(
+    heading: &str,
+    parser: &Recogniser,
+    parent: Option<(&ScriptureRef, &str)>,
+) -> Vec<Reference> {
+    if is_reference_list(heading) {
+        return Vec::new();
+    }
+    let books = book_references(heading, parser.language());
+    if books.len() > 1 {
+        return books
+            .into_iter()
+            .filter(|reference| {
+                parent.is_none_or(|(p, _)| {
+                    reference.start_key() >= p.start_key() && reference.end_key() <= p.end_key()
+                })
+            })
+            .map(|reference| Reference {
+                canonical: reference.canonical(),
+                text: heading.to_string(),
+                scope: "book".into(),
+            })
+            .collect();
+    }
+    let detected = parser.detect(heading);
+    if let Some((reference, scope)) = heading_reference(heading, parser.language(), parent) {
+        if parent.is_some_and(|(parent, _)| {
+            reference.start_key() < parent.start_key() || reference.end_key() > parent.end_key()
+        }) {
+            return Vec::new();
+        }
+        return vec![Reference {
+            canonical: reference.canonical(),
+            text: detected
+                .iter()
+                .find(|found| found.reference.canonical == reference.canonical())
+                .map(|found| found.text.clone())
+                .unwrap_or_else(|| heading.to_string()),
+            scope,
+        }];
+    }
     let mut seen: Vec<Reference> = Vec::new();
-    for found in parser.detect(heading) {
+    // Genuine comparison headings can name several passages. A single
+    // rejected/ambiguous heading must not be reaccepted by a looser parser.
+    if detected.len() < 2 {
+        return seen;
+    }
+    for found in detected {
         if seen
             .iter()
             .any(|r| r.canonical == found.reference.canonical)
         {
             continue;
         }
+        let Ok(reference) = ScriptureRef::from_canonical(&found.reference.canonical) else {
+            continue;
+        };
+        if parent.is_some_and(|(parent, _)| {
+            reference.start_key() < parent.start_key() || reference.end_key() > parent.end_key()
+        }) {
+            continue;
+        }
+        let scope = if reference.start.verse.is_none()
+            && reference.end.verse.is_none()
+            && reference.start.chapter == reference.end.chapter
+        {
+            "chapter"
+        } else {
+            "passage"
+        };
         seen.push(Reference {
             canonical: found.reference.canonical,
             text: found.text,
+            scope: scope.into(),
         });
         if seen.len() == MAX_REFERENCES_PER_HEADING {
             break;
@@ -169,10 +244,25 @@ pub fn derive<'a>(
             .count();
         open.truncate(shared);
         for part in &parts[shared..] {
+            let parent = open
+                .iter()
+                .rev()
+                .find(|n| !n.references.is_empty())
+                .filter(|n| n.references.len() == 1)
+                .and_then(|n| {
+                    ScriptureRef::from_canonical(&n.references[0].canonical)
+                        .ok()
+                        .map(|r| (r, n.references[0].scope.as_str()))
+                });
+            let blocked = open.iter().any(|n| is_reference_list(&n.component));
             let node = Node {
                 component: (*part).to_string(),
                 first_segment: index,
-                references: references_of(part, parser),
+                references: if blocked {
+                    Vec::new()
+                } else {
+                    references_of(part, parser, parent.as_ref().map(|(r, scope)| (r, *scope)))
+                },
             };
             // A heading opens its section on the segment that follows it.
             for reference in &node.references {
@@ -183,6 +273,9 @@ pub fn derive<'a>(
                     heading: node.component.clone(),
                     canonical: reference.canonical.clone(),
                     matched_text: reference.text.clone(),
+                    scope: reference.scope.clone(),
+                    basis: "heading".into(),
+                    node_id: None,
                 });
             }
             open.push(node);
@@ -199,12 +292,127 @@ pub fn derive<'a>(
                         heading: node.component.clone(),
                         canonical: reference.canonical.clone(),
                         matched_text: reference.text.clone(),
+                        scope: reference.scope.clone(),
+                        basis: "heading".into(),
+                        node_id: None,
                     });
                 }
             }
         }
     }
     out
+}
+
+/// Supplied Contents entries are already resolved to internal segment anchors.
+/// A targetless book/group supplies context, but never an invented opening.
+pub fn derive_contents(
+    items: &[crate::library::contents::ContentsItem],
+    language: crate::scripture::language::ReferenceLanguage,
+    segment_count: usize,
+) -> Vec<DerivedLink> {
+    use crate::library::contents::{ContentsItem, ContentsTarget};
+    fn first_target(item: &ContentsItem) -> Option<i64> {
+        match item.target {
+            Some(ContentsTarget::Segment { position }) => Some(position),
+            _ => item.children.iter().find_map(first_target),
+        }
+    }
+    fn walk(
+        items: &[ContentsItem],
+        bounds: (usize, usize),
+        path: &str,
+        parent: Option<(&ScriptureRef, &str)>,
+        blocked: bool,
+        parser: &Recogniser,
+        out: &mut Vec<DerivedLink>,
+    ) {
+        let (start, end) = bounds;
+        for (at, item) in items.iter().enumerate() {
+            let bound = items[at + 1..]
+                .iter()
+                .find_map(first_target)
+                .and_then(|position| usize::try_from(position).ok())
+                .unwrap_or(end)
+                .min(end);
+            let position = match item.target {
+                Some(ContentsTarget::Segment { position }) => usize::try_from(position)
+                    .ok()
+                    .filter(|p| start <= *p && *p < bound),
+                _ => None,
+            };
+            let blocked = blocked || is_reference_list(&item.title);
+            let references = if blocked {
+                Vec::new()
+            } else {
+                references_of(&item.title, parser, parent)
+            };
+            let node_path = if path.is_empty() {
+                item.id.clone()
+            } else {
+                format!("{path}/{}", item.id)
+            };
+            if let Some(position) = position {
+                for reference in &references {
+                    out.push(DerivedLink {
+                        segment_index: position,
+                        origin: LinkOrigin::Section,
+                        opener_index: position,
+                        heading: item.title.clone(),
+                        canonical: reference.canonical.clone(),
+                        matched_text: item.title.clone(),
+                        scope: reference.scope.clone(),
+                        basis: "outline".into(),
+                        node_id: Some(format!("epub-toc:{node_path}|{position}|{bound}")),
+                    });
+                }
+            }
+            // If an entry supplies an invalid destination, its children cannot
+            // escape that claimed physical branch. Targetless groups remain usable.
+            let child_start = position.unwrap_or(start);
+            let resolved = (references.len() == 1)
+                .then(|| {
+                    ScriptureRef::from_canonical(&references[0].canonical)
+                        .ok()
+                        .map(|r| (r, references[0].scope.as_str()))
+                })
+                .flatten();
+            let context = if references.len() > 1 {
+                None
+            } else {
+                resolved.as_ref().map(|(r, scope)| (r, *scope)).or(parent)
+            };
+            if !matches!(item.target, Some(ContentsTarget::Segment { .. })) || position.is_some() {
+                walk(
+                    &item.children,
+                    (child_start, bound),
+                    &node_path,
+                    context,
+                    blocked,
+                    parser,
+                    out,
+                );
+            }
+        }
+    }
+    let mut links = Vec::new();
+    walk(
+        items,
+        (0, segment_count),
+        "",
+        None,
+        false,
+        Recogniser::for_source(language),
+        &mut links,
+    );
+    links
+}
+
+pub(crate) fn contents_identity(id: &str) -> Option<(&str, i64, i64)> {
+    let mut parts = id.strip_prefix("epub-toc:")?.split('|');
+    let path = parts.next()?;
+    let start = parts.next()?.parse().ok()?;
+    let end = parts.next()?.parse().ok()?;
+    (parts.next().is_none() && start < end).then_some((path, start, end))
 }
 
 #[cfg(test)]

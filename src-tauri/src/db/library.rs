@@ -89,6 +89,8 @@ fn source_from_row(row: &Row) -> rusqlite::Result<Source> {
         collection_names: Vec::new(),
         tag_names: Vec::new(),
         file_present: false,
+        coverage: Vec::new(),
+        coverage_mode: crate::library::coverage::CoverageMode::Automatic,
     })
 }
 
@@ -142,6 +144,7 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<Source> {
     source.tag_names = tags;
     // The row says a file was stored. The command checks that the file is still on disk.
     source.file_present = source.format.is_some();
+    (source.coverage_mode, source.coverage) = super::source_coverage::for_source(conn, id)?;
     Ok(source)
 }
 
@@ -335,7 +338,7 @@ pub fn commit_import(
         .source_type
         .unwrap_or(SourceType::default_for(doc.format))
         .as_str();
-    let rebuilt;
+    let mut rebuilt;
     let index = if staged.index.language == final_language
         && !crate::scripture::parser::MAIN_PASSAGE_KINDS.contains(&kind)
     {
@@ -356,6 +359,11 @@ pub fn commit_import(
                 title: &title,
             },
         );
+        rebuilt.sections.extend(sections::derive_contents(
+            &staged.contents,
+            final_language,
+            doc.segments.len(),
+        ));
         &rebuilt
     };
     insert_explicit(&tx, source_id, &segment_ids, &index.references, &now)?;
@@ -1024,8 +1032,8 @@ fn insert_derived(
     let mut insert = conn.prepare(
         "INSERT INTO source_passages (id, source_id, segment_id, passage, start_key, end_key,
              matched_text, start_offset, end_offset, created_at, origin, section_segment_id,
-             section_heading)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, NULL, NULL, ?8, ?9, ?10, ?11)",
+             section_heading, structure_scope, structure_basis, structure_node_id)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, NULL, NULL, ?8, ?9, ?10, ?11, ?12, ?13, ?14)",
     )?;
     for link in links {
         let reference = ScriptureRef::from_canonical(&link.canonical)?;
@@ -1041,6 +1049,9 @@ fn insert_derived(
             link.origin.as_str(),
             segment_ids[link.opener_index],
             link.heading,
+            link.scope,
+            link.basis,
+            link.node_id,
         ])?;
     }
     Ok(())
@@ -1099,7 +1110,8 @@ pub(crate) fn reindex_passages_in_transaction(
     let now = now();
     conn.execute(
         "DELETE FROM source_passages
-         WHERE source_id = ?1 AND origin IN ('explicit', 'section', 'inherited')",
+         WHERE source_id = ?1 AND origin IN ('explicit', 'section', 'inherited')
+           AND COALESCE(structure_node_id, '') NOT LIKE 'epub-toc:%'",
         [source_id],
     )?;
     insert_explicit(conn, source_id, &ids, &index.references, &now)?;
@@ -1119,6 +1131,145 @@ pub struct PassageIndexReport {
     pub failed: usize,
 }
 
+/// Versions 5 and 6 change heading navigation only. Do not redetect or replace the
+/// independently indexed literal references (or any user-confirmed links).
+fn refresh_structure_links(conn: &Connection, source_id: &str) -> AppResult<()> {
+    let (language, format): (Option<String>, Option<String>) = conn.query_row(
+        "SELECT s.language, f.format FROM sources s LEFT JOIN source_files f ON f.source_id=s.id AND f.is_primary=1 AND f.deleted_at IS NULL WHERE s.id=?1",
+        [source_id], |row| Ok((row.get(0)?, row.get(1)?)),
+    )?;
+    let rows: Vec<(String, Option<String>)> = conn
+        .prepare(
+            "SELECT id, section_path FROM source_segments WHERE source_id=?1 ORDER BY position",
+        )?
+        .query_map([source_id], |row| Ok((row.get(0)?, row.get(1)?)))?
+        .collect::<Result<_, _>>()?;
+    let links = if sections::has_sections(format.as_deref().unwrap_or("")) {
+        sections::derive(
+            rows.iter().map(|(_, path)| path.as_deref()),
+            crate::scripture::recognise::Recogniser::for_source(passage_index::language_of(
+                language.as_deref(),
+                "source heading refresh",
+            )),
+        )
+    } else {
+        Vec::new()
+    };
+    let ids: Vec<String> = rows.into_iter().map(|(id, _)| id).collect();
+    let tx = conn.unchecked_transaction()?;
+    tx.execute(
+        "DELETE FROM source_passages WHERE source_id=?1 AND origin IN ('section', 'inherited') AND COALESCE(structure_node_id, '') NOT LIKE 'epub-toc:%'",
+        [source_id],
+    )?;
+    insert_derived(&tx, source_id, &ids, &links, &now())?;
+    super::pdf_structures::index(&tx, source_id)?;
+    tx.execute(
+        "UPDATE sources SET passage_index_version=?2 WHERE id=?1",
+        params![source_id, sections::INDEX_VERSION],
+    )?;
+    tx.commit()?;
+    Ok(())
+}
+
+/// Refresh one EPUB's supplied TOC while retaining every original segment,
+/// literal/reference identity, manual link, annotation and citation. A changed
+/// managed file or different text sequence is not safe to bind to old anchors.
+pub fn refresh_contents_links(
+    conn: &Connection,
+    source_id: &str,
+    hash: &str,
+    document: &crate::library::adapters::ImportedDocument,
+    contents: &[crate::library::contents::ContentsItem],
+) -> AppResult<bool> {
+    let (language, expected_hash, format): (Option<String>, String, String) = conn.query_row(
+        "SELECT s.language, f.sha256, f.format FROM sources s JOIN source_files f ON f.source_id=s.id AND f.is_primary=1 AND f.deleted_at IS NULL WHERE s.id=?1",
+        [source_id], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)),
+    )?;
+    if format != "epub" || document.format != "epub" || hash != expected_hash {
+        return Ok(false);
+    }
+    let rows: Vec<(String, String, Option<String>)> = conn.prepare(
+        "SELECT id, content, section_path FROM source_segments WHERE source_id=?1 ORDER BY position",
+    )?.query_map([source_id], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?)))?
+        .collect::<Result<_, _>>()?;
+    if rows.len() != document.segments.len()
+        || rows
+            .iter()
+            .zip(&document.segments)
+            .any(|((_, text, _), segment)| text != &segment.text)
+    {
+        return Ok(false);
+    }
+    let language = passage_index::language_of(language.as_deref(), "EPUB Contents navigation");
+    let mut links = sections::derive(
+        document
+            .segments
+            .iter()
+            .map(|segment| segment.section_path.as_deref()),
+        crate::scripture::recognise::Recogniser::for_source(language),
+    );
+    links.extend(sections::derive_contents(contents, language, rows.len()));
+    type Identity = (
+        String,
+        String,
+        String,
+        String,
+        String,
+        Option<String>,
+        Option<String>,
+        Option<String>,
+    );
+    let mut current: Vec<Identity> = conn.prepare(
+        "SELECT origin, segment_id, passage, matched_text, section_heading, structure_scope, structure_basis, structure_node_id FROM source_passages WHERE source_id=?1 AND origin IN ('section','inherited') AND COALESCE(structure_basis,'')<>'user'",
+    )?.query_map([source_id], |row| Ok((row.get(0)?, row.get(1)?, row.get(2)?, row.get(3)?, row.get(4)?, row.get(5)?, row.get(6)?, row.get(7)?)))?
+        .collect::<Result<_, _>>()?;
+    let mut expected: Vec<Identity> = links
+        .iter()
+        .map(|link| {
+            (
+                link.origin.as_str().into(),
+                rows[link.segment_index].0.clone(),
+                link.canonical.clone(),
+                link.matched_text.clone(),
+                link.heading.clone(),
+                Some(link.scope.clone()),
+                Some(link.basis.clone()),
+                link.node_id.clone(),
+            )
+        })
+        .collect();
+    current.sort();
+    expected.sort();
+    let paths_match = rows
+        .iter()
+        .zip(&document.segments)
+        .all(|((_, _, path), segment)| path == &segment.section_path);
+    if current == expected && paths_match {
+        return Ok(true);
+    }
+    let tx = conn.unchecked_transaction()?;
+    // These paths are app-owned extraction metadata. Correct a former
+    // pre-heading attribution only after the entire file/text identity check;
+    // original text, segment IDs, timestamps and literal links stay unchanged.
+    for ((id, _, path), segment) in rows.iter().zip(&document.segments) {
+        if path != &segment.section_path {
+            tx.execute(
+                "UPDATE source_segments SET section_path=?2 WHERE id=?1",
+                params![id, segment.section_path],
+            )?;
+        }
+    }
+    let ids: Vec<_> = rows.into_iter().map(|(id, _, _)| id).collect();
+    tx.execute("DELETE FROM source_passages WHERE source_id=?1 AND origin IN ('section','inherited') AND COALESCE(structure_basis,'')<>'user'", [source_id])?;
+    insert_derived(&tx, source_id, &ids, &links, &now())?;
+    tx.execute(
+        "UPDATE sources SET passage_index_version=?2 WHERE id=?1",
+        params![source_id, sections::INDEX_VERSION],
+    )?;
+    tx.commit()?;
+    Ok(true)
+}
+
 /// Brings every source's passage index up to the current derivation: sources
 /// that existed before v0.9, or were indexed by an older rule or in English
 /// before language-aware detection, are rebuilt from what is stored, one
@@ -1126,16 +1277,21 @@ pub struct PassageIndexReport {
 /// fails is logged and left as it was (its literal links keep working) and is
 /// tried again at the next start. Cheap when nothing is out of date.
 pub fn ensure_passage_index(conn: &Connection) -> AppResult<PassageIndexReport> {
-    let stale: Vec<String> = conn
+    let stale: Vec<(String, i64)> = conn
         .prepare(
-            "SELECT id FROM sources WHERE deleted_at IS NULL AND passage_index_version < ?1
+            "SELECT id, passage_index_version FROM sources WHERE deleted_at IS NULL AND passage_index_version < ?1
              ORDER BY created_at, id",
         )?
-        .query_map([sections::INDEX_VERSION], |r| r.get(0))?
+        .query_map([sections::INDEX_VERSION], |r| Ok((r.get(0)?, r.get(1)?)))?
         .collect::<Result<_, _>>()?;
     let mut report = PassageIndexReport::default();
-    for id in stale {
-        match reindex_passages(conn, &id) {
+    for (id, version) in stale {
+        let result = if matches!(version, 4 | 5) {
+            refresh_structure_links(conn, &id)
+        } else {
+            reindex_passages(conn, &id).map(|_| ())
+        };
+        match result {
             Ok(_) => report.rebuilt += 1,
             Err(error) => {
                 report.failed += 1;
@@ -1153,12 +1309,13 @@ pub fn ensure_passage_index(conn: &Connection) -> AppResult<PassageIndexReport> 
     Ok(report)
 }
 
-/// A source's places for the passage, one per segment, not yet consolidated.
+/// A source's candidate places before resolving its heading hierarchy.
 struct Group {
     title: String,
     author: Option<String>,
-    places: HashMap<String, Place>,
+    places: Vec<Place>,
     about: bool,
+    coverage: Vec<crate::library::coverage::SourceCoverage>,
 }
 
 /// Every place the relevance model accepts for the passage, grouped by source;
@@ -1184,19 +1341,24 @@ fn collect_places(
     } else {
         ""
     };
+    let source_states = if only_source.is_some() {
+        "s.state IN ('active', 'archived')"
+    } else {
+        "s.state = 'active'"
+    };
     let mut stmt = conn.prepare(&format!(
         "SELECT s.id, s.title, s.author, g.id, g.position, g.locator, p.origin, p.passage,
-                p.start_key, p.end_key, p.matched_text, p.section_heading, p.structure_scope, p.structure_basis, p.structure_role, EXISTS(SELECT 1 FROM source_pdf_structures ps WHERE ps.source_id=s.id), p.structure_node_id
+                p.start_key, p.end_key, p.matched_text, p.section_heading, p.structure_scope, p.structure_basis, p.structure_role, EXISTS(SELECT 1 FROM source_pdf_structures ps WHERE ps.source_id=s.id), p.structure_node_id, g.section_path
          FROM source_passages p
          JOIN source_segments g ON g.id = p.segment_id
-         JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL AND s.state = 'active'
+         JOIN sources s ON s.id = p.source_id AND s.deleted_at IS NULL AND {source_states}
          WHERE p.origin IN ('explicit', 'section', 'manual')
            AND p.start_key >= ?1 AND p.start_key <= ?3 AND p.end_key >= ?2{one_source}"
     ))?;
     // The passage links of the section a paragraph lies in: its own section link
     // (an opening paragraph) or an inherited one, with where that section opens.
     let mut section_links = conn.prepare(
-        "SELECT start_key, end_key, COALESCE(section_segment_id, segment_id)
+        "SELECT start_key, end_key
          FROM source_passages INDEXED BY source_passages_segment
          WHERE segment_id = ?1 AND origin IN ('section', 'inherited')",
     )?;
@@ -1215,17 +1377,12 @@ fn collect_places(
         let Some(kind) = relevance::kind_of(active, link) else {
             continue;
         };
-        let mut opener = segment_id.clone();
         let mut context = Context::Neutral;
         if origin == LinkOrigin::Explicit {
             let mut sections: Vec<KeyRange> = Vec::new();
-            let found = section_links.query_map([&segment_id], |r| {
-                Ok(((r.get(0)?, r.get(1)?), r.get::<_, String>(2)?))
-            })?;
+            let found = section_links.query_map([&segment_id], |r| Ok((r.get(0)?, r.get(1)?)))?;
             for item in found {
-                let (range, section_opener) = item?;
-                sections.push(range);
-                opener = section_opener;
+                sections.push(item?);
             }
             context = relevance::section_context(active, &sections);
         }
@@ -1236,19 +1393,25 @@ fn collect_places(
         let role: Option<String> = row.get(14)?;
         let structured: bool = row.get(15)?;
         let basis: Option<String> = row.get(13)?;
-        // #34: evidence levels are ordered before specificity, within a
-        // structured PDF. A narrow body match cannot displace a grounded TOC
-        // book opening. Explicit user decisions remain authoritative.
-        let tier =
-            if !structured || origin == LinkOrigin::Manual || basis.as_deref() == Some("user") {
-                0
-            } else if matches!(basis.as_deref(), Some("outline" | "printed")) {
-                1
-            } else if origin == LinkOrigin::Section {
-                2
-            } else {
-                3
-            };
+        // A structural destination must contain the request. A chapter request
+        // stops at its chapter; it does not jump into just one child verse.
+        if origin == LinkOrigin::Section
+            && basis.as_deref() != Some("user")
+            && (link.0 > active.0 || link.1 < active.1)
+        {
+            continue;
+        }
+        // Evidence picks a trustworthy branch root. Actual child headings may
+        // then descend below it even when their typography has a weaker basis.
+        let tier = if origin == LinkOrigin::Manual || basis.as_deref() == Some("user") {
+            0
+        } else if matches!(basis.as_deref(), Some("outline" | "printed")) {
+            1
+        } else if origin == LinkOrigin::Section {
+            2
+        } else {
+            3
+        };
 
         if structured && origin == LinkOrigin::Explicit {
             if matches!(role.as_deref(), Some("header" | "footer" | "artifact")) {
@@ -1270,43 +1433,181 @@ fn collect_places(
         let group = groups.entry(source_id).or_insert_with(|| Group {
             title: row.get(1).unwrap_or_default(),
             author: row.get(2).unwrap_or_default(),
-            places: HashMap::new(),
+            places: Vec::new(),
             about: false,
+            coverage: Vec::new(),
         });
         if rank.class <= 3 && matches!(origin, LinkOrigin::Section | LinkOrigin::Manual) {
             group.about = true;
         }
-        let better = group
-            .places
-            .get(&segment_id)
-            .is_none_or(|existing| (tier, rank) < (existing.tier, existing.rank));
-        if better {
-            group.places.insert(
-                segment_id.clone(),
-                Place {
-                    tier,
-                    rank,
-                    role: role.clone(),
-                    position,
-                    passage: passage.clone(),
-                    opener,
-                    location: PassageLocation {
-                        segment_id,
-                        locator: row.get::<_, Option<String>>(5)?.unwrap_or_default(),
-                        origin,
-                        match_kind: kind,
-                        reference: ScriptureRef::from_canonical(&passage)?.to_dto(),
-                        matched_text: row.get(10)?,
-                        section_heading: row.get(11)?,
-                        structure_node_id: row.get(16)?,
-                        structure_scope: scope,
-                        structure_basis: row.get(13)?,
-                    },
-                },
-            );
-        }
+        group.places.push(Place {
+            tier,
+            rank,
+            range: link,
+            path: row.get(17)?,
+            role: role.clone(),
+            position,
+            passage: passage.clone(),
+            location: PassageLocation {
+                segment_id,
+                locator: row.get::<_, Option<String>>(5)?.unwrap_or_default(),
+                origin,
+                match_kind: kind,
+                reference: ScriptureRef::from_canonical(&passage)?.to_dto(),
+                matched_text: row.get(10)?,
+                section_heading: row.get(11)?,
+                structure_node_id: row.get(16)?,
+                structure_scope: scope,
+                structure_basis: row.get(13)?,
+            },
+        });
     }
+    drop(rows);
+    for (source_id, group) in &mut groups {
+        group.places = navigate_structure(conn, source_id, std::mem::take(&mut group.places))?;
+    }
+    groups.retain(|_, group| !group.places.is_empty());
     Ok(groups)
+}
+
+/// Choose the deepest matching real ancestor within the best supported branch.
+/// Literal mentions are a separate fallback only when no such ancestor exists.
+fn navigate_structure(
+    conn: &Connection,
+    source_id: &str,
+    mut places: Vec<Place>,
+) -> AppResult<Vec<Place>> {
+    let intentional = |p: &Place| {
+        p.location.origin == LinkOrigin::Manual
+            || p.location.structure_basis.as_deref() == Some("user")
+    };
+    if places.iter().any(intentional) {
+        places.retain(intentional);
+        return Ok(places);
+    }
+    let structured: Vec<usize> = places
+        .iter()
+        .enumerate()
+        .filter(|(_, p)| p.location.origin == LinkOrigin::Section)
+        .map(|(i, _)| i)
+        .collect();
+    if structured.is_empty() {
+        places.retain(|p| p.location.origin == LinkOrigin::Explicit);
+        return Ok(places);
+    }
+    let scope_depth = |p: &Place| match p.location.structure_scope.as_deref() {
+        Some("book") => 0,
+        Some("chapter") => 1,
+        _ => 2,
+    };
+    let root = *structured
+        .iter()
+        .min_by_key(|i| {
+            let p = &places[**i];
+            (p.tier, scope_depth(p), p.position, p.rank, &p.passage)
+        })
+        .unwrap();
+    let record = super::pdf_structures::load(conn, source_id)?;
+    let pdf_root = record.as_ref().and_then(|record| {
+        record.headings.iter().position(|h| {
+            Some(h.heading.id.as_str()) == places[root].location.structure_node_id.as_deref()
+        })
+    });
+    let path_of = |place: &Place| -> Option<String> {
+        let heading = place.location.section_heading.as_deref()?;
+        let parts: Vec<_> = sections::components(place.path.as_deref()?).collect();
+        let at = parts.iter().rposition(|part| *part == heading)?;
+        Some(parts[..=at].join(sections::PATH_SEPARATOR))
+    };
+    let root_path = path_of(&places[root]);
+    let root_end = if let Some(path) = &root_path {
+        let prefix = format!("{path}{}", sections::PATH_SEPARATOR);
+        conn.query_row("SELECT MIN(position) FROM source_segments WHERE source_id=?1 AND position>?2 AND (section_path IS NULL OR (section_path<>?3 AND substr(section_path,1,length(?4))<>?4))",
+            params![source_id, places[root].position, path, prefix], |row| row.get::<_, Option<i64>>(0))?
+    } else {
+        None
+    };
+    let in_branch = |i: usize| {
+        if i == root {
+            return true;
+        }
+        let p = &places[i];
+        let root_place = &places[root];
+        if p.range.0 < root_place.range.0
+            || p.range.1 > root_place.range.1
+            || p.position < root_place.position
+        {
+            return false;
+        }
+        if let (Some(record), Some(root_index)) = (&record, pdf_root) {
+            let Some(index) = record.headings.iter().position(|h| {
+                Some(h.heading.id.as_str()) == p.location.structure_node_id.as_deref()
+            }) else {
+                return false;
+            };
+            let prefix = format!(
+                "{}{}",
+                record.headings[root_index].path,
+                sections::PATH_SEPARATOR
+            );
+            let end = record
+                .headings
+                .iter()
+                .enumerate()
+                .skip(root_index + 1)
+                .find(|(_, h)| !h.path.starts_with(&prefix))
+                .map(|(i, _)| i)
+                .unwrap_or(record.headings.len());
+            return root_index < index
+                && index < end
+                && record.headings[index].path.starts_with(&prefix);
+        }
+        if let Some((root_path, start, end)) = root_place
+            .location
+            .structure_node_id
+            .as_deref()
+            .and_then(sections::contents_identity)
+        {
+            if p.position < start || p.position >= end {
+                return false;
+            }
+            return match p
+                .location
+                .structure_node_id
+                .as_deref()
+                .and_then(sections::contents_identity)
+            {
+                Some((path, _, _)) => path.starts_with(&format!("{root_path}/")),
+                None => {
+                    p.location.structure_basis.as_deref() == Some("heading")
+                        && scope_depth(p) > scope_depth(root_place)
+                }
+            };
+        }
+        if let Some(root_path) = &root_path {
+            let prefix = format!("{root_path}{}", sections::PATH_SEPARATOR);
+            return root_end.is_none_or(|end| p.position < end)
+                && path_of(p).is_some_and(|path| path.starts_with(&prefix));
+        }
+        // An old flat heading still has its own valid, explicit destination;
+        // without hierarchy metadata do not invent a parent-child relationship.
+        false
+    };
+    let best = *structured
+        .iter()
+        .filter(|i| in_branch(**i))
+        .min_by_key(|i| {
+            let p = &places[**i];
+            (
+                p.range.1 - p.range.0,
+                p.rank,
+                p.tier,
+                p.position,
+                &p.passage,
+            )
+        })
+        .unwrap();
+    Ok(vec![places.swap_remove(best)])
 }
 
 /// One ranked place as the metadata-only structure diagnostic reports it.
@@ -1331,7 +1632,7 @@ pub fn passage_source_diagnostics(
     let Some(group) = groups.remove(source_id) else {
         return Ok(Vec::new());
     };
-    Ok(consolidate(group.places.into_values().collect())
+    Ok(consolidate(group.places)
         .into_iter()
         .take(EXPANDED_LOCATIONS_LIMIT)
         .map(|p| DiagnosticPlace {
@@ -1360,7 +1661,7 @@ pub fn passage_source_locations(
     let Some(group) = groups.remove(source_id) else {
         return Ok(Vec::new());
     };
-    Ok(consolidate(group.places.into_values().collect())
+    Ok(consolidate(group.places)
         .into_iter()
         .take(EXPANDED_LOCATIONS_LIMIT)
         .map(|p| p.location)
@@ -1384,29 +1685,75 @@ pub fn passage_source_locations(
 ///
 /// Places are ranked by [`relevance::rank`], one per segment, then consolidated
 /// (see [`consolidate`]) so a section, the paragraph that opens it and repeated
-/// mentions of the same passage inside it read as one place. Sources are ordered
-/// by their best place; between equal best places, a source with a section or
-/// manual link that is about the passage comes before one that only cites it;
-/// then title, then id: a total order, so equal input gives equal output. How
-/// many mentions a source has never raises its position.
+/// mentions of the same passage inside it read as one place. Precise structural
+/// and manual destinations lead. Whole-source coverage and broader usable
+/// ancestors follow, ordered by fit; literal-only sources come last. Equal fits
+/// use aboutness, then title, then id: equal input gives equal output. Coverage
+/// never fabricates a location, and mention counts never raise a source's rank.
 pub fn passage_sources(
     conn: &Connection,
     reference: &ScriptureRef,
 ) -> AppResult<Vec<PassageSourceGroup>> {
     struct RankedGroup {
+        tier: u8,
         best: Rank,
         /// A section or manual link that is about the passage (not merely broad).
         about: bool,
         title_key: String,
         group: PassageSourceGroup,
     }
-    let groups = collect_places(conn, reference, None)?;
+    let mut groups = collect_places(conn, reference, None)?;
+    for covered in super::source_coverage::for_passage(conn, reference)? {
+        let group = groups.entry(covered.id).or_insert_with(|| Group {
+            title: covered.title,
+            author: covered.author,
+            places: Vec::new(),
+            about: true,
+            coverage: Vec::new(),
+        });
+        group.coverage = covered.ranges;
+        group.about = true;
+    }
 
     let mut ranked: Vec<RankedGroup> = groups
         .into_iter()
         .map(|(source_id, group)| {
-            let places = consolidate(group.places.into_values().collect());
-            let best = places[0].rank;
+            let places = consolidate(group.places);
+            let location_rank = places.first().map(|place| place.rank);
+            let structured = places.iter().any(|place| {
+                matches!(
+                    place.location.origin,
+                    LinkOrigin::Section | LinkOrigin::Manual
+                )
+            });
+            let tier = if structured && location_rank.is_some_and(|rank| rank.class <= 2) {
+                0
+            } else if structured || !group.coverage.is_empty() {
+                1
+            } else {
+                2
+            };
+            let coverage_rank = group
+                .coverage
+                .iter()
+                .filter_map(|coverage| {
+                    let range = ScriptureRef::from_canonical(&coverage.reference.canonical).ok()?;
+                    relevance::rank(
+                        (reference.start_key(), reference.end_key()),
+                        (range.start_key(), range.end_key()),
+                        LinkOrigin::Section,
+                        Context::Neutral,
+                    )
+                })
+                .min();
+            let best = if tier == 0 {
+                location_rank
+            } else if !group.coverage.is_empty() && !structured {
+                coverage_rank
+            } else {
+                location_rank.into_iter().chain(coverage_rank).min()
+            }
+            .expect("a recommendation has a location or validated matching coverage");
             let more = places.len().saturating_sub(LOCATIONS_PER_SOURCE) as i64;
             let locations: Vec<PassageLocation> = places
                 .into_iter()
@@ -1414,6 +1761,7 @@ pub fn passage_sources(
                 .map(|p| p.location)
                 .collect();
             RankedGroup {
+                tier,
                 best,
                 about: group.about,
                 title_key: group.title.to_lowercase(),
@@ -1423,16 +1771,19 @@ pub fn passage_sources(
                     author: group.author,
                     locations,
                     more_locations: more,
+                    coverage: group.coverage,
                 },
             }
         })
         .collect();
     ranked.sort_by(|a, b| {
-        a.best
-            .cmp(&b.best)
-            .then(b.about.cmp(&a.about))
-            .then(a.title_key.cmp(&b.title_key))
-            .then(a.group.source_id.cmp(&b.group.source_id))
+        a.tier.cmp(&b.tier).then_with(|| {
+            a.best
+                .cmp(&b.best)
+                .then(b.about.cmp(&a.about))
+                .then(a.title_key.cmp(&b.title_key))
+                .then(a.group.source_id.cmp(&b.group.source_id))
+        })
     });
     Ok(ranked
         .into_iter()
@@ -1445,29 +1796,20 @@ pub fn passage_sources(
 struct Place {
     tier: u8,
     rank: Rank,
+    range: KeyRange,
+    path: Option<String>,
     /// The structure role of a literal mention in a structured PDF.
     role: Option<String>,
     position: i64,
     passage: String,
-    /// The segment the section it lies in opens on (itself outside any section).
-    opener: String,
     location: PassageLocation,
 }
 
 /// One source's places, best first, without redundancy.
 ///
-/// Places are ordered by rank (reading order, then id, break ties). A place is
-/// then dropped when a better one in the *same local context* already shows it:
-///
-/// - the context is the section a paragraph lies in (where it opens), or the
-///   segment itself outside any section;
-/// - it is dropped when that earlier place is a section or manual link whose
-///   fit is at least as good (the section already leads there), or when it
-///   mentions the very same passage as the earlier place (the second "John 15:5"
-///   in the same section adds no place).
-///
-/// A mention that fits the passage *better* than its section, or names a
-/// different passage, stays: it is somewhere else worth going.
+/// A resolved structural destination is already singular. In the literal
+/// fallback, retain distinct paragraphs as explicit choices, including two
+/// mentions in the same unrelated section. Deduplicate only the same segment.
 fn consolidate(mut places: Vec<Place>) -> Vec<Place> {
     places.sort_by(|a, b| {
         a.tier
@@ -1478,12 +1820,9 @@ fn consolidate(mut places: Vec<Place>) -> Vec<Place> {
     });
     let mut kept: Vec<Place> = Vec::new();
     for place in places {
-        let redundant = kept.iter().any(|k| {
-            k.opener == place.opener
-                && k.rank.fit <= place.rank.fit
-                && (matches!(k.location.origin, LinkOrigin::Section | LinkOrigin::Manual)
-                    || k.passage == place.passage)
-        });
+        let redundant = kept
+            .iter()
+            .any(|k| k.location.segment_id == place.location.segment_id);
         if !redundant {
             kept.push(place);
         }

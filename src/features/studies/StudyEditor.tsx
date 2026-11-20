@@ -57,7 +57,15 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
   // Notes being written, one per place: a part's id, or "" for the study's other notes, with the kind chosen.
   // Opening Add again where a note is already being written keeps that draft.
   const [capturing, setCapturingState] = useState<Readonly<Record<string, FindingType>>>({});
+  const noteButton = useRef<HTMLButtonElement>(null);
+  const captureFocusFrame = useRef<number | null>(null);
+  const cancelCaptureFocusReturn = useCallback(() => {
+    if (captureFocusFrame.current !== null) cancelAnimationFrame(captureFocusFrame.current);
+    captureFocusFrame.current = null;
+  }, []);
+  useEffect(() => cancelCaptureFocusReturn, [cancelCaptureFocusReturn, studyId]);
   const openCapture = (place: string, kind: FindingType) => {
+    cancelCaptureFocusReturn();
     if (capturing[place]) {
       document.querySelector<HTMLTextAreaElement>(`[data-capture="${place}"]`)?.focus();
       return;
@@ -65,13 +73,23 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     setCapturingState((c) => ({ ...c, [place]: kind }));
   };
   const closeCapture = (place: string) => {
+    const focused = document.activeElement;
+    const captureRoot = document.querySelector(`[data-capture="${place}"]`)?.closest("[role='group']");
+    const opener = place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-note] button") : noteButton.current;
+    const ownsFocus = captureRoot?.contains(focused) || focused === opener || focused === document.body;
+    cancelCaptureFocusReturn();
     setCapturingState(({ [place]: _closed, ...rest }) => rest);
-    // Back to the Add it was opened from.
-    requestAnimationFrame(() =>
-      (place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-note] button") : noteButton.current)?.focus(),
-    );
+    if (!ownsFocus) return;
+    // Return to Note only while the closed capture still owns the keyboard.
+    // A new passage input, writing field or reopened draft takes precedence.
+    captureFocusFrame.current = requestAnimationFrame(() => {
+      captureFocusFrame.current = null;
+      const current = document.activeElement;
+      if (current && current !== document.body && current !== focused) return;
+      const target = place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-note] button") : noteButton.current;
+      target?.focus({ preventScroll: true });
+    });
   };
-  const noteButton = useRef<HTMLButtonElement>(null);
   // A view preference only: both views edit the same stored sections and writing.
   const [continuous, setContinuous] = useState(() => readLocal<boolean>(`study.continuous.${studyId}`, true));
   const [activeSection, setActiveSection] = useState<string | null>(null);

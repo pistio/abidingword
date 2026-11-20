@@ -9,6 +9,15 @@ export type LicenceStatus = (typeof LICENCE_STATUSES)[number];
 
 export type SourceFormat = "pdf" | "epub" | "docx" | "markdown" | "text";
 
+export type SourceCoverageMode = "automatic" | "manual" | "none";
+
+/** What a whole source covers; this never supplies a page or paragraph target. */
+export interface SourceCoverage {
+  reference: ScriptureRef;
+  scope: "book" | "chapter" | "passage";
+  basis: "manual" | "metadata";
+}
+
 /** Which in-app viewer shows a source's original file (the format decides). */
 export interface OriginalView {
   /** "pdf": drawn from the file's own bytes; "epub" and "docx": pages the core builds (see `EpubItem`). */
@@ -54,6 +63,9 @@ export interface Source {
   tagNames: string[];
   /** Whether Abiding Word's copy of the file is on this computer. */
   filePresent: boolean;
+  /** Effective whole-source relevance, separate from indexed reading locations. */
+  coverage?: SourceCoverage[];
+  coverageMode?: SourceCoverageMode;
 }
 
 export interface SourceSummary {
@@ -149,6 +161,8 @@ export interface PassageSourceGroup {
   locations: PassageLocation[];
   /** How many further places the source has. */
   moreLocations: number;
+  /** Whole-source ranges overlapping the requested passage; locations may be empty. */
+  coverage?: SourceCoverage[];
 }
 
 /** Why one segment is linked to Scripture (what it mentions; the section it opens or lies within). */
@@ -518,6 +532,8 @@ export interface UpdateSource {
   licenceStatus: LicenceStatus;
   licence: string | null;
   notes: string | null;
+  /** Omitted when coverage was not edited. Native validation is atomic with the other details. */
+  coverage?: { mode: SourceCoverageMode; passages?: string[] };
 }
 
 /** Adding many sources at once (v0.24): one file of an import job. */
@@ -593,6 +609,8 @@ export interface PdfHeading {
 }
 export interface PdfResolvedHeading extends PdfHeading {
   path: string; canonical: string | null; scope: string; endPosition: number;
+  /** A genuine combined-book heading maps each named book to the same physical anchor. */
+  additionalCanonicals?: string[];
 }
 export interface PdfPresentation {
   role: string; basis: string; uncertain: boolean; printedLabel: string | null;

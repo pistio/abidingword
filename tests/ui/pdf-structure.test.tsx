@@ -43,6 +43,16 @@ async function open(ready=true, shared=false, delayed=false) {
   return {api,engine,user,source,release};
 }
 describe("PDF structure in the complete reader",()=>{
+  it("shows both mapped books for a combined-book heading instead of calling it unmapped", async () => {
+    const { api, user, source } = await open();
+    const view = await api.libraryPdfStructure(source.id);
+    api.libraryPdfStructure = async () => ({ ...view, status: "ready", headings: [{ ...heading, title: "1.+2.Samuel", path: "1.+2.Samuel", canonical: null, scope: "book", additionalCanonicals: ["1SA.1-1SA.31", "2SA.1-2SA.24"] }] });
+    await readerAction(user, "Chapters and headings");
+    const panel = await screen.findByRole("dialog", { name: "Chapters and headings" });
+    const row = (await within(panel).findByText("1.+2.Samuel")).closest("li")!;
+    expect(row).toHaveTextContent("1 Samuel · 2 Samuel");
+    expect(row).not.toHaveTextContent("No passage mapping");
+  });
   it("keeps a visible centred section when preceding-page context is also on screen during a direct Original switch",async()=>{
     const {user}=await open(true,true);
     const body=screen.getByTestId("reader-body");

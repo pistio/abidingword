@@ -26,6 +26,8 @@ interface EpubViewerProps {
   jumpTo?: (EpubPlace & { nonce: number }) | null;
   /** A link in the page was followed. */
   onLink: (target: EpubLinkTarget, from: EpubPlace) => void;
+  /** The reader explicitly chose Previous/Next part, superseding pending navigation. */
+  onNavigate?: () => void;
   /** A link to the web was clicked: open it outside the app. Not history, not a jump. Absent: web links are plain text. */
   onExternal?: (url: string) => void;
   /** Filled with a way to ask where the view is now, for the reader's history. */
@@ -57,7 +59,7 @@ async function readParagraphs(read: (offset: number, limit: number) => Promise<P
  * extracted text. Scripture references in the page's text are found by the core,
  * in the source's language, one page at a time, and drawn as "Open in Bible".
  */
-export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, onLink, onExternal, locationRef, onOpenInBible, marks, revealMark }: EpubViewerProps) {
+export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, onLink, onNavigate, onExternal, locationRef, onOpenInBible, marks, revealMark }: EpubViewerProps) {
   const { t } = useTranslation();
   const api = useApi();
   const scroller = useRef<HTMLDivElement>(null);
@@ -294,6 +296,7 @@ export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, 
 
   const index = Math.max(0, structure.findIndex((s) => s.id === (current?.id ?? wantedItem)));
   const go = (to: number) => {
+    onNavigate?.();
     const target = structure[to];
     if (!target) return;
     focusArrival.current = false;

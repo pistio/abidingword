@@ -128,14 +128,14 @@ fn printed_index_uses_actual_openings_in_the_editions_order_never_the_listing_pa
     .unwrap();
 }
 #[test]
-fn toc_book_destination_precedes_a_more_specific_layout_heading_and_body_mentions() {
+fn toc_book_destination_descends_into_its_real_layout_chapter_before_body_mentions() {
     let root = tempfile::tempdir().unwrap();
     let db = Database::open_in_memory().unwrap();
-    let mut bytes = fixtures::pdf_sized(&[
-        page("Apostelgeschichte"),
-        page("Kapitel 6"),
-        page("Kapitel 7"),
-    ]);
+    let mut six = page("Kapitel 6");
+    six[0].2 = 18.0;
+    let mut seven = page("Kapitel 7");
+    seven[0].2 = 18.0;
+    let mut bytes = fixtures::pdf_sized(&[page("Apostelgeschichte"), six, seven]);
     let mut doc = Document::load_mem(&bytes).unwrap();
     let physical = doc.get_pages()[&1];
     let tree = doc.new_object_id();
@@ -156,10 +156,12 @@ fn toc_book_destination_precedes_a_more_specific_layout_heading_and_body_mention
     doc.save_to(&mut bytes).unwrap();
     db.with_conn(|c| {
         let id = imported(c, &bytes, root.path());
-        assert_target(c, &id, "ACT.6", 1, "outline", "book");
+        assert_target(c, &id, "ACT.6", 2, "layout", "chapter");
+        assert_target(c, &id, "ACT.6.1", 2, "layout", "chapter");
+        assert_target(c, &id, "ACT.8", 1, "outline", "book");
         let report =
             serde_json::to_value(pdf_diagnostic::diagnostic(c, &id, Some("Apg 6"))?).unwrap();
-        assert_eq!(report["query"]["candidates"][0]["evidenceTier"], 1);
+        assert_eq!(report["query"]["candidates"][0]["evidenceTier"], 2);
         Ok(())
     })
     .unwrap();

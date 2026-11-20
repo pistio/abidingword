@@ -103,7 +103,10 @@
     "kind": "Art",
     "sharing": "Weitergabe",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "aus „{{fileName}}“"
+    "fromFile": "aus „{{fileName}}“",
+    "edit": "Details bearbeiten",
+    "editNamed": "Details für {{title}} bearbeiten",
+    "editTitle": "Quellendetails bearbeiten"
   },
   "about": {
     "summary": "Über diese Quelle",
@@ -423,7 +426,8 @@
       "licenceStatus": "Weitergabe",
       "licence": "Lizenz (wie angegeben)",
       "collections": "Sammlungen",
-      "tags": "Schlagwörter"
+      "tags": "Schlagwörter",
+      "notes": "Notizen"
     },
     "file": {
       "name": "Datei",
@@ -689,7 +693,8 @@
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
       "fitWidth": "Seitenbreite",
-      "fitPage": "Ganze Seite"
+      "fitPage": "Ganze Seite",
+      "edit": "Details bearbeiten"
     }
   },
   "fileDialog": {
@@ -700,5 +705,34 @@
     "bible": "Bibel zum Hinzufügen auswählen",
     "bibleTypes": "Bibeldateien (USFM, .zip, PDF, EPUB, Word, Markdown, Text)",
     "allFiles": "Alle Dateien"
+  },
+  "sync": {
+    "go": "Zur aktuellen Bibelstelle",
+    "scripture": "Bibelstelle: {{passage}}",
+    "help": "Die Leseposition in dieser Quelle bleibt beim Wechsel der Bibelstelle erhalten.",
+    "noPassage": "Wähle zuerst eine Bibelstelle aus.",
+    "loading": "Passende Stelle in dieser Quelle wird gesucht…",
+    "noMatch": "Für {{passage}} wurde in dieser Quelle keine passende Stelle gefunden.",
+    "opened": "Zuletzt hier geöffnete Bibelstelle: {{passage}}",
+    "mentionsTitle": "Erwähnungen von {{passage}} in dieser Quelle",
+    "mentionsHelp": "Diese Quelle erwähnt die Bibelstelle, hat aber keinen passenden Abschnitt. Wähle eine Erwähnung zum Öffnen aus."
+  },
+  "coverage": {
+    "title": "Biblischer Themenbereich",
+    "help": "Damit wird die gesamte Quelle zu einem Bibelbuch oder Bibelabschnitt vorgeschlagen. Beim Öffnen bleibt deine Lesestelle erhalten.",
+    "mode": "Themenbereich festlegen",
+    "automatic": "Automatisch erkennen",
+    "manual": "Themenbereich angeben",
+    "none": "Kein Themenbereich für die gesamte Quelle",
+    "passages": "Bibelbücher oder Abschnitte",
+    "passagesHelp": "Eine Bibelstelle pro Zeile, höchstens {{max}}. Zum Beispiel: Römer, Römer 8 oder Johannes 15,1–11.",
+    "detected": "Aktueller Themenbereich: {{passages}}",
+    "automaticHelp": "Ermittelt anhand der Angaben zur Quelle, welches Bibelbuch oder welchen Abschnitt sie behandelt.",
+    "covers": "Behandelt {{passage}}",
+    "openSource": "Quelle öffnen",
+    "mentions_one": "{{count}} Erwähnung in dieser Quelle",
+    "mentions_other": "{{count}} Erwähnungen in dieser Quelle",
+    "noPrecisePlace": "Diese Quelle behandelt {{passages}}, hat aber keine genaue Zielstelle für diesen Abschnitt. Deine Lesestelle bleibt erhalten.",
+    "mentionsHelp": "Diese Quelle behandelt {{passages}}. Wähle unten eine Erwähnung, um sie zu öffnen, oder brich ab, um an deiner bisherigen Stelle weiterzulesen."
   }
 }

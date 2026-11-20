@@ -115,7 +115,7 @@ describe("Library organisation", () => {
 
     await user.type(librarySearch(), "Hidden Title{Enter}");
     const byName = await screen.findByRole("list", { name: "Sources matching the title, author or file name" });
-    expect(within(byName).getByRole("button", { name: /Hidden Title/ })).toBeInTheDocument();
+    expect(within(byName).getByRole("button", { name: /^Q\. Quill, Hidden Title/ })).toBeInTheDocument();
     expect(screen.queryByRole("list", { name: "Library search results" })).not.toBeInTheDocument();
 
     await user.clear(librarySearch());

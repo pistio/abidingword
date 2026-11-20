@@ -408,8 +408,16 @@ pub fn library_source_contents(
         return Ok(Vec::new());
     }
     let bytes = original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-    let expected = usize::try_from(source.segment_count).unwrap_or(0);
-    Ok(adapters::epub::contents(&bytes, expected))
+    let (document, items) = adapters::epub::extract_with_contents(&bytes, "book.epub")?;
+    let hash = crate::library::files::content_hash(&bytes);
+    if document.segments.len() != usize::try_from(source.segment_count).unwrap_or(0)
+        || !core.db.with_conn(|conn| {
+            library::refresh_contents_links(conn, &id, &hash, &document, &items)
+        })?
+    {
+        return Ok(Vec::new());
+    }
+    Ok(items)
 }
 
 /// Contents made from the source's own structure, for a source that carries

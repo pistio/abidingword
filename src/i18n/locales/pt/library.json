@@ -111,7 +111,10 @@
     "kind": "Tipo",
     "sharing": "Compartilhamento",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "de “{{fileName}}”"
+    "fromFile": "de “{{fileName}}”",
+    "edit": "Editar detalhes",
+    "editNamed": "Editar detalhes de {{title}}",
+    "editTitle": "Editar detalhes da fonte"
   },
   "about": {
     "summary": "Sobre esta fonte",
@@ -449,7 +452,8 @@
       "licenceStatus": "Compartilhamento",
       "licence": "Licença (conforme indicada)",
       "collections": "Coleções",
-      "tags": "Etiquetas"
+      "tags": "Etiquetas",
+      "notes": "Notas"
     },
     "file": {
       "name": "Arquivo",
@@ -731,7 +735,8 @@
       "zoomIn": "Ampliar",
       "zoomOut": "Reduzir",
       "fitWidth": "Ajustar à largura",
-      "fitPage": "Ajustar à página"
+      "fitPage": "Ajustar à página",
+      "edit": "Editar detalhes"
     }
   },
   "fileDialog": {
@@ -742,5 +747,35 @@
     "bible": "Escolher uma Bíblia para adicionar",
     "bibleTypes": "Arquivos de Bíblia (USFM, .zip, PDF, EPUB, Word, Markdown, texto)",
     "allFiles": "Todos os arquivos"
+  },
+  "sync": {
+    "go": "Ir para a passagem atual",
+    "scripture": "Passagem bíblica: {{passage}}",
+    "help": "Ao mudar a passagem bíblica, sua posição nesta fonte é mantida.",
+    "noPassage": "Escolha primeiro uma passagem bíblica.",
+    "loading": "Procurando um local correspondente nesta fonte…",
+    "noMatch": "Nenhum local correspondente a {{passage}} foi encontrado nesta fonte.",
+    "opened": "Última passagem aberta aqui: {{passage}}",
+    "mentionsTitle": "Menções a {{passage}} nesta fonte",
+    "mentionsHelp": "Esta fonte menciona a passagem, mas não tem uma seção correspondente. Escolha uma menção para abrir."
+  },
+  "coverage": {
+    "title": "Abrangência bíblica",
+    "help": "Permite sugerir a fonte inteira para um livro ou passagem bíblica. Ao abri-la, sua posição de leitura é mantida.",
+    "mode": "Como definir a abrangência",
+    "automatic": "Detectar automaticamente",
+    "manual": "Definir abrangência",
+    "none": "Sem abrangência para a fonte inteira",
+    "passages": "Livros ou passagens",
+    "passagesHelp": "Insira uma referência por linha, até {{max}}. Por exemplo: Romanos, Romanos 8 ou João 15:1–11.",
+    "detected": "Abrangência atual: {{passages}}",
+    "automaticHelp": "Usa os detalhes da fonte para identificar o livro ou a passagem de que ela trata.",
+    "covers": "Trata de {{passage}}",
+    "openSource": "Abrir fonte",
+    "mentions_one": "{{count}} menção nesta fonte",
+    "mentions_other": "{{count}} menções nesta fonte",
+    "noPrecisePlace": "Esta fonte trata de {{passages}}, mas não tem um local preciso para esta passagem. Sua posição de leitura é mantida.",
+    "mentionsHelp": "Esta fonte trata de {{passages}}. Escolha uma menção abaixo para abrir esse local ou cancele para continuar lendo de onde parou.",
+    "mentions_many": "{{count}} menções nesta fonte"
   }
 }

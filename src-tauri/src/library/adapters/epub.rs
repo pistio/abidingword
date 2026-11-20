@@ -57,6 +57,14 @@ pub fn contents(bytes: &[u8], expected_segments: usize) -> Vec<ContentsItem> {
     }
 }
 
+/// Import and source navigation share the same single parse and anchor map.
+pub fn extract_with_contents(
+    bytes: &[u8],
+    file_name: &str,
+) -> AppResult<(ImportedDocument, Vec<ContentsItem>)> {
+    read_book(bytes, file_name, true).map(|book| (book.document, book.items))
+}
+
 /// The links inside the book's text that lead to another place in the same
 /// book: where the link is (segment position and the character range of its
 /// text, in UTF-16 units as the interface counts them) and the segment it
@@ -101,12 +109,8 @@ pub fn structure(bytes: &[u8], expected_segments: usize) -> Vec<super::epub_view
             anchors: doc
                 .anchors
                 .iter()
-                .map(|(name, at)| {
-                    (
-                        name.clone(),
-                        (*at).min(layout.total.saturating_sub(1)) as i64,
-                    )
-                })
+                .filter(|(_, at)| **at < doc.end)
+                .map(|(name, at)| (name.clone(), *at as i64))
                 .collect(),
         });
     }
@@ -143,19 +147,20 @@ pub(super) struct Layout {
 #[derive(Default)]
 struct DocLayout {
     first: usize,
+    end: usize,
     anchors: HashMap<String, usize>,
 }
 
 impl Layout {
-    /// The segment a (document, fragment) leads to: the anchor's own segment
-    /// if the fragment is known, else the document's first. None if the
-    /// document is not part of the reading order or the book has no text.
+    /// A supplied fragment must resolve to one actual anchor. A document-only
+    /// target may use its opening; a missing/ambiguous fragment may not.
     fn position(&self, path: &str, fragment: Option<&str>) -> Option<i64> {
         let doc = self.docs.get(path)?;
-        let at = fragment
-            .and_then(|f| doc.anchors.get(f).copied())
-            .unwrap_or(doc.first);
-        (self.total > 0).then(|| at.min(self.total - 1) as i64)
+        let at = match fragment {
+            Some(fragment) => *doc.anchors.get(fragment)?,
+            None => doc.first,
+        };
+        (doc.first <= at && at < doc.end).then_some(at as i64)
     }
 }
 
@@ -168,7 +173,7 @@ impl Layout {
             Some(f) => *doc.anchors.get(f)?,
             None => doc.first,
         };
-        (self.total > 0).then(|| at.min(self.total - 1) as i64)
+        (doc.first <= at && at < doc.end).then_some(at as i64)
     }
 }
 
@@ -231,6 +236,7 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
         }
         let mut doc = DocLayout {
             first: segments.len(),
+            end: segments.len(),
             anchors: HashMap::new(),
         };
         // Segments emitted before each block, to place anchors among them.
@@ -277,7 +283,9 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
                     text: part,
                     chapter: chapter.clone(),
                     heading: heading.clone(),
-                    section_path: section_path.clone().or_else(|| chapter.clone()),
+                    // A later heading never gives earlier front matter a
+                    // structural opening, even within the same spine file.
+                    section_path: section_path.clone(),
                     paragraph_index: Some(paragraph),
                     styled: block.classes.iter().any(|c| emphasised.contains(c)),
                     ..Default::default()
@@ -286,10 +294,16 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
             }
         }
         before.push(segments.len());
+        doc.end = segments.len();
+        let mut ambiguous = std::collections::HashSet::new();
         for (id, block_index) in anchors {
             let at = before.get(block_index).copied().unwrap_or(segments.len());
+            if doc.anchors.get(&id).is_some_and(|previous| *previous != at) {
+                ambiguous.insert(id.clone());
+            }
             doc.anchors.entry(id).or_insert(at);
         }
+        doc.anchors.retain(|id, _| !ambiguous.contains(id));
         layout.order.push((idref.clone(), path.clone()));
         layout.docs.entry(path).or_insert(doc);
     }

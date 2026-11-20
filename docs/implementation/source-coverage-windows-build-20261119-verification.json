@@ -1,0 +1,417 @@
+{
+  "repository": "pistio/abidingword",
+  "application_source": "bcf4858591f6d306838773ebc884550ca27d19b6",
+  "application_tree": "f2a06a00276d4913d909dc859dadc429044ab402",
+  "workflow_commit": "ca169b377233ca678421699c4aa36d906c090617",
+  "workflow_path": ".github/workflows/windows-combined-owner-20261109.yml",
+  "packaging_source": "4bddc038d190cf42fd475b7c504430e96c014769",
+  "run": {
+    "id": 44621293307,
+    "url": "https://github.com/pistio/abidingword/actions/runs/44621293307",
+    "status": "completed",
+    "conclusion": "success",
+    "attempt": 1,
+    "created_at": "2026-11-19T21:41:26Z",
+    "completed_at": "2026-11-19T21:57:32Z"
+  },
+  "job_id": 135903338056,
+  "application_compilations": 1,
+  "application_packages": 1,
+  "artifacts": [
+    {
+      "id": 14578252547,
+      "name": "Abiding-Word-Sources-Follow-up-packaging-evidence-bcf4858591f6d306838773ebc884550ca27d19b6-attempt-1",
+      "size_in_bytes": 22193,
+      "url": "https://api.github.com/repos/pistio/abidingword/actions/artifacts/14578252547",
+      "archive_download_url": "https://api.github.com/repos/pistio/abidingword/actions/artifacts/14578252547/zip",
+      "expired": false,
+      "created_at": "2026-11-19T21:57:25Z",
+      "expires_at": "2026-12-03T21:57:24Z",
+      "updated_at": "2026-11-19T21:57:25Z",
+      "digest": "sha256:fb1da545d5fa797b3337eab10a014e56bad26ab6d60eff885b0025cfa5a45e67",
+      "workflow_run": {
+        "id": 44621293307,
+        "repository_id": 1398390886,
+        "head_repository_id": 1398390886,
+        "head_branch": "build/abidingword-i35-i42-20261109",
+        "head_sha": "ca169b377233ca678421699c4aa36d906c090617"
+      }
+    },
+    {
+      "id": 14577518643,
+      "name": "Abiding-Word-Sources-Follow-up-schema27-bcf4858591f6d306838773ebc884550ca27d19b6-Windows-x64",
+      "size_in_bytes": 33681409,
+      "url": "https://api.github.com/repos/pistio/abidingword/actions/artifacts/14577518643",
+      "archive_download_url": "https://api.github.com/repos/pistio/abidingword/actions/artifacts/14577518643/zip",
+      "expired": false,
+      "created_at": "2026-11-19T21:57:23Z",
+      "expires_at": "2026-12-03T21:57:20Z",
+      "updated_at": "2026-11-19T21:57:23Z",
+      "digest": "sha256:bbe6279764e7f3aae37947d985f8bae8d42fe67eb2238d1f4b0e29dd95656c20",
+      "workflow_run": {
+        "id": 44621293307,
+        "repository_id": 1398390886,
+        "head_repository_id": 1398390886,
+        "head_branch": "build/abidingword-i35-i42-20261109",
+        "head_sha": "ca169b377233ca678421699c4aa36d906c090617"
+      }
+    },
+    {
+      "id": 14577518563,
+      "name": "Abiding-Word-diagnostic-only-not-portable-bcf4858591f6d306838773ebc884550ca27d19b6",
+      "size_in_bytes": 36541240,
+      "url": "https://api.github.com/repos/pistio/abidingword/actions/artifacts/14577518563",
+      "archive_download_url": "https://api.github.com/repos/pistio/abidingword/actions/artifacts/14577518563/zip",
+      "expired": false,
+      "created_at": "2026-11-19T21:56:54Z",
+      "expires_at": "2026-12-03T21:56:50Z",
+      "updated_at": "2026-11-19T21:56:54Z",
+      "digest": "sha256:b1970e68898dd9659a7bee7bfec4cdfa2cc374701d7754cec15c6fc11fff014e",
+      "workflow_run": {
+        "id": 44621293307,
+        "repository_id": 1398390886,
+        "head_repository_id": 1398390886,
+        "head_branch": "build/abidingword-i35-i42-20261109",
+        "head_sha": "ca169b377233ca678421699c4aa36d906c090617"
+      }
+    }
+  ],
+  "windows_owner_acceptance": "pending",
+  "merge": false,
+  "release": false,
+  "updater_publication": false,
+  "deployment": false,
+  "artifact_archive_checks": [
+    {
+      "completedUTC": "2026-11-19T21:59:24.419849+00:00",
+      "operation": "zip",
+      "filename": "diagnostic.zip",
+      "bytes": 36541240,
+      "sha256": "b1970e68898dd9659a7bee7bfec4cdfa2cc374701d7754cec15c6fc11fff014e",
+      "matchesExpectedDigestAndSize": true,
+      "zipCrcPassed": true,
+      "entries": [
+        "abiding-word.exe",
+        "manifest.json",
+        "DIAGNOSTIC-ONLY.txt",
+        "scripture/deu1912_usfm.zip",
+        "scripture/deu1951_usfm.zip",
+        "scripture/deuelo_usfm.zip",
+        "scripture/engbsb_usfm.zip",
+        "scripture/engwebp_usfm.zip",
+        "scripture/fraLSG_usfm.zip",
+        "scripture/grcbyz_usfm.zip",
+        "scripture/grcmt_usfm.zip",
+        "scripture/grcsbl_usfm.zip",
+        "scripture/grctr_usfm.zip",
+        "scripture/kor1961_usfm.zip",
+        "scripture/porbr2018_usfm.zip",
+        "scripture/spaRV1909_usfm.zip"
+      ],
+      "uncompressedBytes": 53609350,
+      "result": "passed"
+    },
+    {
+      "completedUTC": "2026-11-19T21:59:25.112770+00:00",
+      "operation": "zip",
+      "filename": "installer.zip",
+      "bytes": 33681409,
+      "sha256": "bbe6279764e7f3aae37947d985f8bae8d42fe67eb2238d1f4b0e29dd95656c20",
+      "matchesExpectedDigestAndSize": true,
+      "zipCrcPassed": true,
+      "entries": [
+        "Abiding-Word-Sources-Follow-up-schema27-bcf4858591f6d306838773ebc884550ca27d19b6-x64-setup.exe"
+      ],
+      "uncompressedBytes": 33690155,
+      "result": "passed"
+    },
+    {
+      "completedUTC": "2026-11-19T21:59:25.470348+00:00",
+      "operation": "zip",
+      "filename": "evidence.zip",
+      "bytes": 22193,
+      "sha256": "fb1da545d5fa797b3337eab10a014e56bad26ab6d60eff885b0025cfa5a45e67",
+      "matchesExpectedDigestAndSize": true,
+      "zipCrcPassed": true,
+      "entries": [
+        "build-provenance.json",
+        "build-environment.txt",
+        "installer-sha256.txt",
+        "packaging-evidence/application-build.log",
+        "packaging-evidence/application-bundle.log",
+        "packaging-evidence/nsis-cache-probe.json",
+        "packaging-evidence/nsis-cache-probe.log",
+        "packaging-evidence/nsis-preflight.json",
+        "diagnostic-executable/manifest.json"
+      ],
+      "uncompressedBytes": 111273,
+      "result": "passed"
+    }
+  ],
+  "payload_verification": {
+    "completedUTC": "2026-11-19T22:00:19.529141+00:00",
+    "operation": "payload",
+    "sourceSha": "bcf4858591f6d306838773ebc884550ca27d19b6",
+    "installer": {
+      "filename": "Abiding-Word-Sources-Follow-up-schema27-bcf4858591f6d306838773ebc884550ca27d19b6-x64-setup.exe",
+      "bytes": 33690155,
+      "sha256": "f31c247d8bf4904e564ba3d26c4e8033b537650cbda97da3dcbae5c704b7c250",
+      "matchesBuildChecksum": true,
+      "pe": {
+        "machine": "0x014c",
+        "format": "PE32",
+        "architecture": "x86",
+        "subsystem": 2,
+        "certificateTableFileOffset": 0,
+        "certificateTableSize": 0,
+        "embeddedCertificateTablePresent": false
+      }
+    },
+    "diagnosticInventory": {
+      "filesVerified": 15,
+      "allSizesAndHashesMatch": true,
+      "manifestCopiesIdentical": true
+    },
+    "application": {
+      "bytes": 30038016,
+      "prebundlingSha256": "a0c5b42e9c1f27e28ed279b43580b8f1054892096eabd6a57935e583f9f5e37b",
+      "packagedSha256": "16021ba389fd449a6f67aa6e2a74ca5928916bebecea985b71823417abb358ac",
+      "rawByteIdentical": false,
+      "expectedBundlePatch": {
+        "markerOffset": 24867172,
+        "before": "__TAURI_BUNDLE_TYPE_VAR_UNK",
+        "after": "__TAURI_BUNDLE_TYPE_VAR_NSS",
+        "changedByteCount": 3,
+        "changedBytes": [
+          {
+            "offset": 24867196,
+            "beforeHex": "55",
+            "afterHex": "4e",
+            "beforeAscii": "U",
+            "afterAscii": "N"
+          },
+          {
+            "offset": 24867197,
+            "beforeHex": "4e",
+            "afterHex": "53",
+            "beforeAscii": "N",
+            "afterAscii": "S"
+          },
+          {
+            "offset": 24867198,
+            "beforeHex": "4b",
+            "afterHex": "53",
+            "beforeAscii": "K",
+            "afterAscii": "S"
+          }
+        ],
+        "allOtherBytesIdentical": true
+      },
+      "pe": {
+        "machine": "0x8664",
+        "format": "PE32+",
+        "architecture": "x64",
+        "subsystem": 2,
+        "certificateTableFileOffset": 0,
+        "certificateTableSize": 0,
+        "embeddedCertificateTablePresent": false
+      }
+    },
+    "resources": {
+      "configured": 13,
+      "verifiedAgainstManifestAndExactSource": 13,
+      "files": [
+        {
+          "sourcePath": "resources/scripture/engbsb/engbsb_usfm.zip",
+          "payloadPath": "scripture/engbsb_usfm.zip",
+          "bytes": 3017090,
+          "sha256": "09cdf4340d239564d64b7a03bce5ddfc6ebddda5323c7a5bbee959653759b1f0",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/engwebp/engwebp_usfm.zip",
+          "payloadPath": "scripture/engwebp_usfm.zip",
+          "bytes": 2903129,
+          "sha256": "c725155aa8192b954e552a0b08aa75f8e7b85e6e56f1eb22efd6d30f5b4aa3cc",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/deu1912/deu1912_usfm.zip",
+          "payloadPath": "scripture/deu1912_usfm.zip",
+          "bytes": 2494966,
+          "sha256": "b6170cdaba249210fd9709d689b517b820afe98d70440e4864a56c7c681abe78",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/deu1951/deu1951_usfm.zip",
+          "payloadPath": "scripture/deu1951_usfm.zip",
+          "bytes": 1536609,
+          "sha256": "0c6c86ae1a4124101ba9c68be9d2be55c17467e2a78cdb23e531feb4aa37dce5",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/deuelo/deuelo_usfm.zip",
+          "payloadPath": "scripture/deuelo_usfm.zip",
+          "bytes": 1500516,
+          "sha256": "0e3c181372347c7e3cd79fb747a592e79406381f29449041df4fb0948fd9240b",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/kor1961/kor1961_usfm.zip",
+          "payloadPath": "scripture/kor1961_usfm.zip",
+          "bytes": 1433819,
+          "sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/fraLSG/fraLSG_usfm.zip",
+          "payloadPath": "scripture/fraLSG_usfm.zip",
+          "bytes": 3469798,
+          "sha256": "fcf2a836549dd042c113b70e8844da0a46394a3188c87808580e811cfb0fc179",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/spaRV1909/spaRV1909_usfm.zip",
+          "payloadPath": "scripture/spaRV1909_usfm.zip",
+          "bytes": 2380145,
+          "sha256": "488ca0d7f4e9ab974745b47eca305b876491339d6973bc3e5a23244bebea6b5c",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/porbr2018/porbr2018_usfm.zip",
+          "payloadPath": "scripture/porbr2018_usfm.zip",
+          "bytes": 1448160,
+          "sha256": "adda51da837676b7bcc91a57c18578d86ec505baf951d5170adddb8389e5d163",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grcsbl/grcsbl_usfm.zip",
+          "payloadPath": "scripture/grcsbl_usfm.zip",
+          "bytes": 917905,
+          "sha256": "6807ec1ccf114ced6d33024b448bd4e7825fd7837ecec6b43fe9cf9dcb9bcba0",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grcmt/grcmt_usfm.zip",
+          "payloadPath": "scripture/grcmt_usfm.zip",
+          "bytes": 866796,
+          "sha256": "fa1a59e1545ee404b2b5306fd5e57e2b44617e3c88bd0da60d44c3bd9ae496d6",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grctr/grctr_usfm.zip",
+          "payloadPath": "scripture/grctr_usfm.zip",
+          "bytes": 787932,
+          "sha256": "3232412340f9c3bbe1d85330944306be326f6c7ce6e6aa117b379c4476ae6615",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        },
+        {
+          "sourcePath": "resources/scripture/grcbyz/grcbyz_usfm.zip",
+          "payloadPath": "scripture/grcbyz_usfm.zip",
+          "bytes": 811139,
+          "sha256": "c1034fe50c7e30c5fe33201654b1e2a373da69ac9eab42a008ca85ee8b67f0b7",
+          "matchesDiagnosticManifest": true,
+          "matchesExactSource": true
+        }
+      ]
+    },
+    "applicationDlls": {
+      "count": 0,
+      "files": []
+    },
+    "installerSupportFiles": [
+      {
+        "path": "$PLUGINSDIR/NSISdl.dll",
+        "bytes": 15360,
+        "sha256": "ddf40229dd9d6b268902d8dea88c8a04aacf1af218dd29f6dcd35babc54ac08d"
+      },
+      {
+        "path": "$PLUGINSDIR/StartMenu.dll",
+        "bytes": 7680,
+        "sha256": "fe330320459637d8dd2b5d84d07925c38ec264152ffd3b1760a4d44d76536caa"
+      },
+      {
+        "path": "$PLUGINSDIR/System.dll",
+        "bytes": 12288,
+        "sha256": "8b4c47c4cf5e76ec57dd5a050d5acd832a0d532ee875d7b44f6cdaf68f90d37c"
+      },
+      {
+        "path": "$PLUGINSDIR/modern-wizard.bmp",
+        "bytes": 26494,
+        "sha256": "3ad2dc318056d0a2024af1804ea741146cfc18cc404649a44610cbf8b2056cf2"
+      },
+      {
+        "path": "$PLUGINSDIR/nsDialogs.dll",
+        "bytes": 9728,
+        "sha256": "b1350f487692057c8ffde75dcc55287a52a3272240d4d4912f24464b27551fc0"
+      },
+      {
+        "path": "$PLUGINSDIR/nsis_tauri_utils.dll",
+        "bytes": 34304,
+        "sha256": "5ba143b5db4a87d32d6e7802e033330aae56cbceabe0d1e3ba41948385ad4709"
+      }
+    ],
+    "tauriUtilityDllPinChecked": true,
+    "provenance": {
+      "commitMatchesRequestedSource": true,
+      "dirty": false,
+      "schemaVersion": 27,
+      "registeredMigrationsVerifiedAgainstSource": 27
+    },
+    "limitations": [
+      "Static Linux inspection only; no Windows application or installer executed.",
+      "Certificate-table metadata is not Windows signature/trust validation.",
+      "Extracted payload identity does not validate NSIS installation-script behaviour."
+    ],
+    "windowsExecution": false,
+    "installerExecution": false,
+    "result": "passed"
+  },
+  "nsis_extraction": {
+    "completedUTC": "2026-11-19T21:59:51.130252+00:00",
+    "operation": "extract",
+    "archive": "Abiding-Word-Sources-Follow-up-schema27-bcf4858591f6d306838773ebc884550ca27d19b6-x64-setup.exe",
+    "bytes": 33690155,
+    "sha256": "f31c247d8bf4904e564ba3d26c4e8033b537650cbda97da3dcbae5c704b7c250",
+    "exitCode": 0,
+    "archiveType": "Nsis",
+    "subtype": "NSIS-3 Unicode BadCmd=13",
+    "files": 20,
+    "uncompressedBytes": 53711874,
+    "listingLog": "payload-listing.log",
+    "extractionLog": "payload-extraction.log",
+    "windowsExecution": false,
+    "installerScriptExecuted": false,
+    "result": "passed"
+  },
+  "build_environment": [
+    "Source SHA: bcf4858591f6d306838773ebc884550ca27d19b6",
+    "Workflow SHA: ca169b377233ca678421699c4aa36d906c090617",
+    "Packaging source SHA: 4bddc038d190cf42fd475b7c504430e96c014769",
+    "Run: 44621293307 attempt 1",
+    "Runner: Windows X64",
+    "Windows image: win25-vs2026 20261103.298.1",
+    "Node: v24.22.1",
+    "npm: 11.19.1",
+    "Rust: rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "Cargo: cargo 1.99.1 (5f94df478 2026-08-27)"
+  ],
+  "inspection": "Static read-only archive and payload verification on Linux; no Windows executable or installer launched.",
+  "limits": [
+    "Windows desktop owner acceptance remains pending.",
+    "Source candidate full frontend run was 1362/1364; focused passes do not make it green.",
+    "GitHub artifact retention ends 3 December 2026."
+  ]
+}

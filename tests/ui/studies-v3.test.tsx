@@ -1,5 +1,5 @@
-import { screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 import { openStudyOptions } from "../support/studyActions";
@@ -35,6 +35,25 @@ async function addNote(user: Awaited<ReturnType<typeof renderApp>>["user"]) {
 }
 
 const detailsOf = (list: HTMLElement, name: RegExp) => within(list).getByRole("button", { name: new RegExp(`^Details for ${name.source}`) });
+
+/** A person can choose the next control before a scheduled focus return paints. */
+function deferredFrames() {
+  const pending = new Map<number, FrameRequestCallback>();
+  let sequence = 0;
+  const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+    pending.set(++sequence, callback);
+    return sequence;
+  });
+  const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((handle) => { pending.delete(handle); });
+  return {
+    flush: () => act(() => {
+      const callbacks = [...pending.values()];
+      pending.clear();
+      for (const callback of callbacks) callback(performance.now());
+    }),
+    restore: () => { pending.clear(); request.mockRestore(); cancel.mockRestore(); },
+  };
+}
 
 const sectionHeadings = () =>
   within(screen.getByRole("main", { name: "Study" }))
@@ -229,13 +248,65 @@ describe("findings", () => {
     await user.click(screen.getByRole("button", { name: "Options" }));
     expect(screen.getByLabelText("Link current passage (John 15:2)")).not.toBeChecked();
     await user.click(screen.getByLabelText("Link current passage (John 15:2)"));
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(api.state.findings[0]?.passages[0]?.reference.canonical).toBe("JHN.15.2"));
+    const parseReference = vi.spyOn(api, "referenceParse");
+    const frames = deferredFrames();
+    try {
+      await user.click(screen.getByRole("button", { name: "Save" }));
+      await waitFor(() => expect(api.state.findings[0]?.passages[0]?.reference.canonical).toBe("JHN.15.2"));
+      const passage = within(scripture).getByLabelText("Go to passage") as HTMLInputElement;
+      await user.click(passage);
+      const focusedBeforeFrame = document.activeElement === passage;
+      frames.flush();
+      const focusedAfterFrame = document.activeElement === passage;
+      // Type into the chosen target without a second click that would conceal
+      // a late return to Note. Record the submitted text as well as navigation.
+      await user.keyboard("Psalm 23");
+      const typedPassage = passage.value;
+      await user.keyboard("{Enter}");
+      expect({
+        focusedBeforeFrame,
+        focusedAfterFrame,
+        typedPassage,
+        parsedInputs: parseReference.mock.calls.map(([text]) => text),
+        savedNote: api.state.findings[0]?.content,
+        savedReference: api.state.findings[0]?.passages[0]?.reference.canonical,
+      }).toEqual({
+        focusedBeforeFrame: true,
+        focusedAfterFrame: true,
+        typedPassage: "Psalm 23",
+        parsedInputs: ["Psalm 23"],
+        savedNote: "What does fruit mean here?",
+        savedReference: "JHN.15.2",
+      });
+      await within(scripture).findByRole("heading", { level: 2, name: "Psalm 23" });
+      await user.click(within(screen.getByRole("list", { name: "Other notes" })).getByRole("button", { name: "John 15:2" }));
+      expect(await within(scripture).findByRole("heading", { level: 2, name: "John 15" })).toBeInTheDocument();
+    } finally {
+      frames.restore();
+    }
+  });
 
-    await user.type(within(scripture).getByLabelText("Go to passage"), "Psalm 23{Enter}");
-    await within(scripture).findByRole("heading", { level: 2, name: "Psalm 23" });
-    await user.click(within(screen.getByRole("list", { name: "Other notes" })).getByRole("button", { name: "John 15:2" }));
-    expect(await within(scripture).findByRole("heading", { level: 2, name: "John 15" })).toBeInTheDocument();
+  it("keeps a reopened note draft focused when the previous note's close frame runs", async () => {
+    const { api, user } = await inStudy();
+    await addNote(user);
+    await user.type(screen.getByLabelText("New observation"), "Discard this draft.");
+    const frames = deferredFrames();
+    try {
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+      await addNote(user);
+      const draft = screen.getByLabelText("New observation");
+      expect(draft).toHaveFocus();
+      frames.flush();
+      expect(draft).toHaveFocus();
+      await user.keyboard("Keep this new draft.");
+      expect(draft).toHaveValue("Keep this new draft.");
+      expect(api.state.findings).toHaveLength(0);
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+      frames.flush();
+      expect(within(screen.getByRole("main", { name: "Study" })).getByRole("button", { name: "Note" })).toHaveFocus();
+    } finally {
+      frames.restore();
+    }
   });
 
   it("does not react to the old Alt shortcuts, and keeps Ctrl+Enter in the editor", async () => {

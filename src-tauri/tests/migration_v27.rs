@@ -45,16 +45,33 @@ fn populated_v26_upgrades_additively_with_a_pre_migration_backup_and_immutable_h
     drop(c);
     let db = Database::open(&path, &backups).unwrap();
     db.with_conn(|c| {
-        // Startup seeds settings/defaults; migrations themselves are verified
-        // separately below. Existing source-bearing tables remain exact.
-        let after=snapshot(c);assert_eq!(&after[..3],&before[..3]);
+        // Startup seeds defaults and refreshes only the derived passage-index
+        // version. Every other original source/file/segment value stays exact.
+        let after=snapshot(c);
+        let version_column=c.prepare("SELECT * FROM sources")?.column_index("passage_index_version")?;
+        assert_eq!(before[0][0][version_column],Value::Integer(4));
+        let mut expected=before[..3].to_vec();
+        expected[0][0][version_column]=Value::Integer(abiding_word_lib::library::sections::INDEX_VERSION);
+        assert_eq!(&after[..3],&expected);
         let actual:Vec<(i64,String,String)>=c.prepare("SELECT version,name,applied_at FROM schema_versions WHERE version<=26 ORDER BY version")?.query_map([],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?.collect::<Result<_,_>>()?;
         assert_eq!(actual,history);assert_eq!(migrations::current_version(c)?,27);
         assert_eq!(c.query_row("SELECT count(*) FROM source_pdf_structures",[],|r|r.get::<_,i64>(0))?,0);
         assert_eq!(c.query_row("SELECT origin FROM source_passages WHERE id='link'",[],|r|r.get::<_,String>(0))?,"manual");
         assert!(!c.prepare("PRAGMA foreign_key_check")?.exists([])?);Ok(())
     }).unwrap();
-    assert_eq!(std::fs::read_dir(backups).unwrap().count(), 1);
+    let saved: Vec<_> = std::fs::read_dir(backups)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .collect();
+    assert_eq!(saved.len(), 1);
+    let original =
+        Connection::open_with_flags(&saved[0], rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY).unwrap();
+    assert_eq!(migrations::current_version(&original).unwrap(), 26);
+    assert_eq!(
+        snapshot(&original),
+        before,
+        "pre-migration backup keeps the exact old values, including index version 4"
+    );
 }
 #[test]
 fn migration_failure_rolls_back_every_added_column_and_existing_rows() {

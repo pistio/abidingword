@@ -95,7 +95,10 @@
     "kind": "종류",
     "sharing": "공유",
     "isbn": "ISBN {{isbn}}",
-    "fromFile": "“{{fileName}}”에서 가져옴"
+    "fromFile": "“{{fileName}}”에서 가져옴",
+    "edit": "정보 수정",
+    "editNamed": "{{title}} 정보 수정",
+    "editTitle": "자료 정보 수정"
   },
   "about": {
     "summary": "이 자료에 대하여",
@@ -397,7 +400,8 @@
       "licenceStatus": "공유",
       "licence": "라이선스(명시된 대로)",
       "collections": "모음",
-      "tags": "태그"
+      "tags": "태그",
+      "notes": "메모"
     },
     "file": {
       "name": "파일",
@@ -647,7 +651,8 @@
       "zoomIn": "확대",
       "zoomOut": "축소",
       "fitWidth": "너비에 맞춤",
-      "fitPage": "쪽에 맞춤"
+      "fitPage": "쪽에 맞춤",
+      "edit": "정보 수정"
     }
   },
   "fileDialog": {
@@ -658,5 +663,33 @@
     "bible": "추가할 성경 선택",
     "bibleTypes": "성경 파일 (USFM, .zip, PDF, EPUB, Word, Markdown, 텍스트)",
     "allFiles": "모든 파일"
+  },
+  "sync": {
+    "go": "현재 성경 본문으로 이동",
+    "scripture": "성경 본문: {{passage}}",
+    "help": "성경 본문을 바꾸어도 이 자료에서 읽던 위치는 유지됩니다.",
+    "noPassage": "먼저 성경 본문을 선택하세요.",
+    "loading": "이 자료에서 해당 본문의 위치를 찾는 중…",
+    "noMatch": "이 자료에서 {{passage}}에 해당하는 위치를 찾지 못했습니다.",
+    "opened": "여기서 마지막으로 연 성경 본문: {{passage}}",
+    "mentionsTitle": "이 자료에서 {{passage}}을(를) 언급한 곳",
+    "mentionsHelp": "이 자료에는 해당 본문에 대응하는 항목은 없지만 본문을 언급한 곳이 있습니다. 열 위치를 선택하세요."
+  },
+  "coverage": {
+    "title": "다루는 성경 본문",
+    "help": "자료 전체가 다루는 성경 책이나 본문에 따라 이 자료를 추천합니다. 자료를 열어도 읽던 위치는 유지됩니다.",
+    "mode": "본문 범위 설정 방식",
+    "automatic": "자동으로 감지",
+    "manual": "직접 지정",
+    "none": "자료 전체의 본문 범위 없음",
+    "passages": "성경 책 또는 본문",
+    "passagesHelp": "한 줄에 하나씩, 최대 {{max}}개까지 입력하세요. 예: 로마서, 로마서 8장, 요한복음 15:1–11.",
+    "detected": "현재 본문 범위: {{passages}}",
+    "automaticHelp": "자료의 세부 정보에서 자료가 다루는 성경 책이나 본문을 찾습니다.",
+    "covers": "다루는 본문: {{passage}}",
+    "openSource": "자료 열기",
+    "mentions_other": "이 자료의 본문 언급 {{count}}곳",
+    "noPrecisePlace": "이 자료는 {{passages}}을(를) 다루지만 현재 본문에 해당하는 정확한 위치는 없습니다. 읽던 위치가 유지됩니다.",
+    "mentionsHelp": "이 자료는 {{passages}}을(를) 다룹니다. 아래에서 언급된 위치를 선택하여 열거나, 취소하여 읽던 곳에서 계속 읽으세요."
   }
 }

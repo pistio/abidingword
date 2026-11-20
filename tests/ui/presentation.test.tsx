@@ -57,6 +57,30 @@ async function settle() {
   });
 }
 
+/** Keep a frame pending while a later user action chooses a new focus target. */
+function holdAnimationFrames() {
+  let next = 1;
+  const pending = new Map<number, FrameRequestCallback>();
+  const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+    const id = next++;
+    pending.set(id, callback);
+    return id;
+  });
+  const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => pending.delete(id));
+  return {
+    flush: () => act(() => {
+      const callbacks = [...pending.values()];
+      pending.clear();
+      for (const callback of callbacks) callback(performance.now());
+    }),
+    restore: () => {
+      pending.clear();
+      request.mockRestore();
+      cancel.mockRestore();
+    },
+  };
+}
+
 afterEach(async () => {
   window.localStorage.clear();
   setWindowWidth(1440);
@@ -438,6 +462,99 @@ describe("presenter layout: controls float, the speaker's material never moves",
     for (let i = 0; i < 12; i++) {
       await user.tab();
       expect(settings.contains(document.activeElement)).toBe(true);
+    }
+  });
+
+  it("queued presenter restoration keeps a newly focused Next button and its keyboard action", async () => {
+    const { user, view } = await presenting(1366);
+    await user.click(within(view).getByRole("button", { name: "View" }));
+    const frames = holdAnimationFrames();
+    try {
+      fireEvent.keyDown(document.activeElement!, { key: "Escape" });
+      const next = within(view).getByRole("button", { name: "Next" });
+      next.focus();
+      frames.flush();
+      expect(next).toHaveFocus();
+      await user.keyboard("{Enter}");
+      expect(within(view).getByText("Slide 2 of 6")).toBeInTheDocument();
+      expect(within(view).queryByRole("dialog")).toBeNull();
+    } finally {
+      frames.restore();
+    }
+  });
+
+  it("queued presenter restoration keeps focus inside a subsequently opened passage panel", async () => {
+    const { user, view } = await presenting(1366);
+    await user.click(within(view).getByRole("button", { name: "View" }));
+    const frames = holdAnimationFrames();
+    try {
+      fireEvent.keyDown(document.activeElement!, { key: "Escape" });
+      await user.click(within(view).getByRole("button", { name: "Bible passage" }));
+      const passage = within(await within(view).findByRole("dialog", { name: "Bible passage" })).getByRole("textbox", { name: "Passage" });
+      expect(passage).toHaveFocus();
+      frames.flush();
+      expect(passage).toHaveFocus();
+      await user.keyboard("Jn 3:16");
+      expect(passage).toHaveValue("Jn 3:16");
+      expect(within(view).getByText("Slide 1 of 6")).toBeInTheDocument();
+    } finally {
+      frames.restore();
+    }
+  });
+
+  it("queued presenter restoration after closing the audience window cannot take focus from a newer panel", async () => {
+    const { user, view } = await presenting(1366);
+    await user.click(within(view).getByRole("button", { name: "Audience screen" }));
+    await user.click(await within(view).findByRole("button", { name: "Show on screen 2 (1920 × 1080)" }));
+    await waitFor(() => expect(within(view).getByRole("button", { name: "Audience screen" })).toHaveFocus());
+    await user.click(within(view).getByRole("button", { name: "Audience screen" }));
+    const frames = holdAnimationFrames();
+    try {
+      await user.click(await within(view).findByRole("button", { name: "Close the audience screen" }));
+      await user.click(within(view).getByRole("button", { name: "Bible passage" }));
+      const passage = within(await within(view).findByRole("dialog", { name: "Bible passage" })).getByRole("textbox", { name: "Passage" });
+      expect(passage).toHaveFocus();
+      frames.flush();
+      expect(passage).toHaveFocus();
+    } finally {
+      frames.restore();
+    }
+  });
+
+  it("queued presenter restoration still returns to its opener when focus has not moved elsewhere", async () => {
+    const { user, view } = await presenting(1366);
+    const opener = within(view).getByRole("button", { name: "View" });
+    await user.click(opener);
+    const frames = holdAnimationFrames();
+    try {
+      fireEvent.keyDown(document.activeElement!, { key: "Escape" });
+      frames.flush();
+      expect(opener).toHaveFocus();
+    } finally {
+      frames.restore();
+    }
+  });
+
+  it("queued presenter restoration from a closed Presenter View cannot affect a reopened view", async () => {
+    const { user, view } = await presenting(1366);
+    await user.click(within(view).getByRole("button", { name: "Audience screen" }));
+    await user.click(await within(view).findByRole("button", { name: "Show on screen 2 (1920 × 1080)" }));
+    await waitFor(() => expect(within(view).getByRole("button", { name: "Audience screen" })).toHaveFocus());
+    await user.click(within(view).getByRole("button", { name: "Audience screen" }));
+    const frames = holdAnimationFrames();
+    try {
+      await user.click(await within(view).findByRole("button", { name: "Close the audience screen" }));
+      await user.click(within(view).getByRole("button", { name: "Exit" }));
+      expect(view).not.toBeInTheDocument();
+      await user.click(await screen.findByRole("button", { name: "Start Presenter View" }));
+      const reopened = await screen.findByRole("dialog", { name: /Remain in the vine/ });
+      await user.click(within(reopened).getByRole("button", { name: "Bible passage" }));
+      const passage = within(await within(reopened).findByRole("dialog", { name: "Bible passage" })).getByRole("textbox", { name: "Passage" });
+      expect(passage).toHaveFocus();
+      frames.flush();
+      expect(passage).toHaveFocus();
+    } finally {
+      frames.restore();
     }
   });
 

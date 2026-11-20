@@ -160,7 +160,13 @@
     "tooMany": "Du kannst höchstens {{count}} Einträge auf einmal ändern.",
     "badName": "Verwende einen Namen mit 1 bis {{max}} Zeichen.",
     "collectionExists": "Hier gibt es bereits eine Sammlung namens „{{name}}“.",
-    "tagExists": "Es gibt bereits ein Schlagwort namens „{{name}}“."
+    "tagExists": "Es gibt bereits ein Schlagwort namens „{{name}}“.",
+    "coverage": {
+      "invalidPassage": "„{{passage}}“ konnte keinem Bibelbuch oder Bibelabschnitt zugeordnet werden. Prüfe die Angabe vor dem Speichern.",
+      "tooMany": "Gib höchstens {{max}} Bibelstellen als Themenbereich ein.",
+      "empty": "Gib mindestens ein Bibelbuch oder einen Abschnitt als Themenbereich ein.",
+      "metadataUnreadable": "Die gespeicherten Quellenangaben konnten nicht sicher gelesen werden. Es wurden keine Änderungen gespeichert."
+    }
   },
   "templates": {
     "noSections": "Eine Vorlage braucht mindestens einen Teil, mit dem sie beginnt.",

@@ -20,7 +20,9 @@ pub const VERSION: i64 = 1;
 /// before A.4.1 reads as 0 and the diagnostic recommends **Rebuild structure**.
 /// 2: margin-only, size-aware running furniture; Contents listings of books.
 /// 3: grounded printed book-index targets, ordered evidence levels and safe Source titles.
-pub const ANALYSIS: u32 = 3;
+/// 4: printed contents destinations independent of cover typography; real heading hierarchy.
+/// 5: multilingual book aliases corroborate differently spelled printed Contents and openings.
+pub const ANALYSIS: u32 = 5;
 pub const MAX_HEADINGS: usize = 5_000;
 pub const MAX_LINES: usize = 120_000;
 pub const MAX_CHARS: usize = 8_000_000;
@@ -59,7 +61,7 @@ pub struct Heading {
     pub level: u8,
     #[serde(default)]
     pub parents: Vec<String>,
-    /// outline, tagged, layout, user. None of these verifies commentary.
+    /// outline, printed, tagged, layout, user. None of these verifies commentary.
     pub basis: String,
     pub anchor: Anchor,
     pub segment_position: i64,
@@ -109,6 +111,21 @@ pub struct PdfStructure {
     pub unaligned_tags: usize,
     pub headings: Vec<Heading>,
     pub blocks: Vec<Block>,
+    /// Corroborated printed Contents destinations. A page without a usable
+    /// text heading stays navigable, but never becomes an indexed section.
+    #[serde(default)]
+    pub printed_contents: Vec<PrintedDestination>,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PrintedDestination {
+    pub id: String,
+    pub title: String,
+    pub level: u8,
+    pub page: u32,
+    #[serde(default)]
+    pub anchor_id: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -134,6 +151,10 @@ pub struct ResolvedHeading {
     pub heading: Heading,
     pub path: String,
     pub canonical: Option<String>,
+    /// A real combined-book opening can cover several books at the same
+    /// anchor. It never supplies an arbitrary single-book chapter context.
+    #[serde(default)]
+    pub additional_canonicals: Vec<String>,
     /// book, chapter, passage, or unmapped.
     pub scope: String,
     pub end_position: i64,
@@ -197,6 +218,40 @@ fn align(piece: &Piece<'_>, line: &str) -> Option<(u32, u32)> {
         piece.text[..start].encode_utf16().count() as u32,
         piece.text[..start + needle.len()].encode_utf16().count() as u32,
     ))
+}
+
+fn anchored_heading(
+    candidate: &native::Candidate,
+    pieces: &HashMap<u32, Vec<&Piece<'_>>>,
+) -> Option<Heading> {
+    let a = &candidate.anchor;
+    let (piece, start, end) = pieces
+        .get(&a.page)
+        .into_iter()
+        .flatten()
+        .copied()
+        .find_map(|p| {
+            p.byte_start
+                .zip(p.byte_end)
+                .is_none_or(|(s, e)| a.byte_start >= s as usize && a.byte_start < e as usize)
+                .then(|| align(p, &a.original_text))
+                .flatten()
+                .map(|(s, e)| (p, s, e))
+        })?;
+    Some(Heading {
+        id: a.id(),
+        title: candidate.title.clone(),
+        level: candidate.level,
+        parents: candidate.parents.clone(),
+        basis: candidate.basis.clone(),
+        anchor: a.clone(),
+        segment_position: piece.position,
+        start,
+        end,
+        disabled: false,
+        mapping: None,
+        mapping_scope: None,
+    })
 }
 
 fn in_margin(anchor: &Anchor) -> bool {
@@ -483,14 +538,97 @@ pub fn extract_with_progress(
             }
         }
     }
-    printed::promote(&all, &native.labels, &mut headings);
+    let printed = printed::recover(&all, &native.labels, &headings, pdf.layouts.len() as u32);
+    let mut printed_count = 0;
+    for candidate in &printed.headings {
+        let Some(h) = anchored_heading(candidate, &pieces_by_page) else {
+            continue;
+        };
+        if let Some(existing) = headings.iter_mut().find(|old| old.id == h.id) {
+            if existing.basis == "layout" {
+                *existing = h;
+                printed_count += 1;
+            }
+        } else {
+            selected.insert(h.id.clone());
+            headings.push(h);
+            printed_count += 1;
+        }
+    }
+    if printed_count >= 3 {
+        let first = headings
+            .iter()
+            .filter(|h| h.basis == "printed")
+            .map(|h| h.anchor.page)
+            .min()
+            .unwrap();
+        // A corroborated Contents is the primary structure. Cover typography
+        // and the listing page itself are not extra chapters before its first
+        // destination. Supplied outline/tagged evidence remains independent.
+        headings.retain(|h| {
+            h.basis != "layout"
+                || h.anchor.page >= first && !printed.listing_pages.contains(&h.anchor.page)
+        });
+        // Keep independently prominent, separated subheadings beneath the
+        // printed entries. A title's immediately following subtitle and body
+        // lists (including outlines of Bible chapters) do not pass this gate.
+        let body = body_size(&all);
+        let mut previous: HashMap<(u32, u8), f64> = HashMap::new();
+        for (a, role, uncertain, _) in &all {
+            if *uncertain || role != "paragraph" || a.page < first {
+                continue;
+            }
+            let gap = previous
+                .insert((a.page, a.column), a.baseline)
+                .map_or(99.0, |y| (a.baseline - y) / a.size.max(1.0));
+            if selected.contains(&a.id())
+                || printed.listing_pages.contains(&a.page)
+                || body <= 0.0
+                || a.size < body * 1.1
+                || gap < 1.5
+                || a.original_text.chars().count() > 120
+                || a.original_text
+                    .chars()
+                    .filter(|c| c.is_alphabetic())
+                    .count()
+                    < 2
+                || a.original_text.split_whitespace().count() > 15
+                || a.original_text.ends_with([',', ';', '-', '‐'])
+            {
+                continue;
+            }
+            let candidate = native::Candidate {
+                title: compact(&a.original_text),
+                level: 2,
+                parents: Vec::new(),
+                basis: "layout".into(),
+                anchor: a.clone(),
+            };
+            if let Some(h) = anchored_heading(&candidate, &pieces_by_page) {
+                selected.insert(h.id.clone());
+                headings.push(h);
+            }
+        }
+    }
     headings.sort_by(|a, b| {
         a.segment_position
             .cmp(&b.segment_position)
             .then(a.start.cmp(&b.start))
             .then(a.id.cmp(&b.id))
     });
-    if headings.len() >= MAX_HEADINGS {
+    if printed_count >= 3 {
+        let mut enclosing = None;
+        for h in &mut headings {
+            if h.basis == "printed" {
+                enclosing = Some(h.level);
+            } else if h.basis == "layout" {
+                if let Some(level) = enclosing {
+                    h.level = level + 1;
+                }
+            }
+        }
+    }
+    if headings.len() >= MAX_HEADINGS || printed.destinations.len() >= MAX_HEADINGS {
         complete = false;
     }
     headings.truncate(MAX_HEADINGS);
@@ -569,7 +707,12 @@ pub fn extract_with_progress(
         unaligned_tags: native.unaligned_tags,
         headings,
         blocks,
+        printed_contents: printed.destinations,
     })
 }
 
+pub(crate) use resolve::{
+    book_references, canonical as heading_reference, is_reference_list,
+    named_reference as source_reference,
+};
 pub use resolve::{effective, presentations};

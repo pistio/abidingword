@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowLeft, ArrowUp, ChevronRight, Download, GripVertical, Play, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { Button } from "@/design-system/Button";
@@ -151,6 +151,15 @@ function PresentationEditor({
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const startButton = useRef<HTMLButtonElement>(null);
+  const wasPresenting = useRef(false);
+  useLayoutEffect(() => {
+    const closed = wasPresenting.current && !presenting;
+    wasPresenting.current = presenting;
+    if (!closed) return;
+    // Return as the presenter unmounts; a queued frame could steal focus after it reopens.
+    const current = document.activeElement;
+    if (!current || current === document.body || current === document.documentElement) startButton.current?.focus();
+  }, [presenting]);
   const docRequest = useRef(0);
   const images = useSlideImages(presentationId, doc?.images ?? []);
   const { pageFor, error: designError } = useDesignPages(presentationId, doc?.template, doc?.slides ?? []);
@@ -424,7 +433,6 @@ function PresentationEditor({
           doc={doc}
           onClose={() => {
             setPresenting(false);
-            requestAnimationFrame(() => startButton.current?.focus());
           }}
         />
       )}

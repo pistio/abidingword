@@ -31,6 +31,7 @@ pub struct StagedSource {
     /// same language.
     pub index: PassageIndex,
     pub pdf_structure: Option<crate::library::pdf_structure::PdfStructure>,
+    pub contents: Vec<crate::library::contents::ContentsItem>,
 }
 
 impl StagedSource {
@@ -90,6 +91,7 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
         ));
     }
     let bytes = fs::read(path).map_err(|e| AppError::filesystem(path, e))?;
+    let mut contents = Vec::new();
     let (document, pdf_structure) = if extension == "pdf" {
         let pdf = crate::library::adapters::pdf::read_pages(&bytes, &file_name)?;
         let document = crate::library::adapters::pdf::document_from_text(&pdf);
@@ -101,6 +103,11 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
             )
         });
         (document, structure)
+    } else if extension == "epub" {
+        let (document, supplied) =
+            crate::library::adapters::epub::extract_with_contents(&bytes, &file_name)?;
+        contents = supplied;
+        (document, None)
     } else {
         (adapter.extract(&bytes, &file_name)?, None)
     };
@@ -109,7 +116,7 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
     // still change it before adding the source; the commit decides again.
     let language =
         passage_index::language_of(document.metadata.language.as_deref(), "library import");
-    let index = passage_index::build(
+    let mut index = passage_index::build(
         document.format,
         document.segments.iter().map(|s| {
             (
@@ -125,6 +132,13 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
             title: document.metadata.title.as_deref().unwrap_or(&file_name),
         },
     );
+    index
+        .sections
+        .extend(crate::library::sections::derive_contents(
+            &contents,
+            language,
+            document.segments.len(),
+        ));
 
     log::info!(
         "library import staged: {} ({} segments, {} references, {} section links, read as {})",
@@ -144,5 +158,6 @@ pub fn stage(path: &Path) -> AppResult<StagedSource> {
         document,
         index,
         pdf_structure,
+        contents,
     })
 }

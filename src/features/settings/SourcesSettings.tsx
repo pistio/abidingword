@@ -12,16 +12,15 @@ import { useApi } from "@/lib/ApiContext";
 import { formatDate, formatNumber } from "@/i18n/format";
 import { BatchImport } from "@/features/library/BatchImport";
 import { useLibraryNav } from "@/features/library/LibraryNav";
+import { SourceMetadataFields, sourceMetadataInput, type SourceMetadataDraft } from "@/features/library/SourceMetadataEditor";
 import { formatLabel, sourceTypeLabel } from "@/features/library/labels";
 import {
-  LICENCE_STATUSES,
   SOURCE_TYPES,
   TRASH_RETENTION_DAYS,
   type ItemState,
   type ManagedSource,
   type ManagePage,
   type ManageSort,
-  type Source,
   type SourceCollection,
   type SourceFormat,
   type SourceType,
@@ -164,6 +163,10 @@ export function SourcesSettings() {
 
   const refresh = async () => {
     await Promise.all([load(), loadOrganisation()]);
+  };
+  const metadataSaved = async () => {
+    languages.reload();
+    await refresh();
   };
   const flat = useMemo(() => flatten(collections), [collections]);
   const items = page?.items ?? [];
@@ -465,8 +468,9 @@ export function SourcesSettings() {
                   onToggle={() => toggle(s.id)}
                   open={editing === s.id}
                   onOpen={() => setEditing(editing === s.id ? null : s.id)}
+                  onEdit={() => setEditing(s.id)}
                   onRead={() => openSource(s.id)}
-                  onSaved={refresh}
+                  onSaved={metadataSaved}
                   onArchive={() => move([s.id], "archived", t("library.manage.done.archivedOne", { title: s.title }))}
                   onRestore={() => move([s.id], "active", t("library.manage.done.restoredOne", { title: s.title }), false)}
                   onTrash={() => setAsking({ kind: "trash", ids: [s.id] })}
@@ -600,6 +604,7 @@ interface RowProps {
   onToggle: () => void;
   open: boolean;
   onOpen: () => void;
+  onEdit: () => void;
   onRead: () => void;
   onSaved: () => Promise<void>;
   onArchive: () => void;
@@ -608,8 +613,9 @@ interface RowProps {
   onDelete: () => void;
 }
 
-function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, onSaved, onArchive, onRestore, onTrash, onDelete }: RowProps) {
+function Row({ source: s, collections, checked, onToggle, open, onOpen, onEdit, onRead, onSaved, onArchive, onRestore, onTrash, onDelete }: RowProps) {
   const { t } = useTranslation();
+  const [focusRequest, setFocusRequest] = useState(0);
   const meta = [s.author, sourceTypeLabel(t, s.sourceType), s.format ? formatLabel(t, s.format as SourceFormat) : null, s.language, t("library.view.addedOn", { date: formatDate(s.createdAt) })]
     .filter(Boolean)
     .join(t("common.listSeparator"));
@@ -621,6 +627,7 @@ function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, 
         ]
       : [
           { label: t("library.manage.read"), onSelect: onRead },
+          { label: t("library.metadata.edit"), onSelect: () => { setFocusRequest((current) => current + 1); onEdit(); } },
           s.state === "archived" ? { label: t("common.lifecycle.restore"), onSelect: onRestore } : { label: t("common.lifecycle.archive"), onSelect: onArchive },
           { label: t("common.lifecycle.moveToTrashEllipsis"), onSelect: onTrash },
         ];
@@ -629,7 +636,7 @@ function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, 
       <div className="flex items-start gap-3">
         <input type="checkbox" checked={checked} onChange={onToggle} aria-label={t("library.manage.selectOne", { title: s.title })} className="mt-1.5" />
         <div className="min-w-0 flex-1">
-          <button type="button" aria-expanded={open} onClick={onOpen} className="min-w-0 text-left">
+          <button type="button" aria-expanded={open} onClick={() => { setFocusRequest(0); onOpen(); }} className="min-w-0 text-left">
             <span className="type-item block hover:underline">{s.title}</span>
             <span className="type-meta block">{meta}</span>
           </button>
@@ -645,7 +652,7 @@ function Row({ source: s, collections, checked, onToggle, open, onOpen, onRead, 
         </div>
         <ActionMenu label={t("library.manage.more", { title: s.title })} actions={actions} />
       </div>
-      {open && <SourceDetails sourceId={s.id} summary={s} collections={collections} onSaved={onSaved} />}
+      {open && <SourceDetails sourceId={s.id} summary={s} collections={collections} onSaved={onSaved} focusRequest={focusRequest} />}
     </li>
   );
 }
@@ -655,54 +662,42 @@ function Badge({ children }: { children: ReactNode }) {
 }
 
 /** A source's details, editable; its file, tags and collections. Nothing is saved until Save. */
-function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: string; summary: ManagedSource; collections: (SourceCollection & { depth: number })[]; onSaved: () => Promise<void> }) {
+function SourceDetails({ sourceId, summary, collections, onSaved, focusRequest }: { sourceId: string; summary: ManagedSource; collections: (SourceCollection & { depth: number })[]; onSaved: () => Promise<void>; focusRequest: number }) {
   const { t } = useTranslation();
   const api = useApi();
   const id = useId();
   const loaded = useLoad(useCallback(() => api.libraryGetSource(sourceId), [api, sourceId]));
   // The loaded details until something is changed; nothing is saved until Save.
-  const [edited, setDraft] = useState<Source | null>(null);
+  const [edited, setDraft] = useState<SourceMetadataDraft | null>(null);
   const draft = edited ?? loaded.data;
   const [member, setMember] = useState<ReadonlySet<string>>(new Set(summary.collections));
   const [newTag, setNewTag] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+  const editor = useRef<HTMLDivElement>(null);
+  const focusedRequest = useRef(0);
+  useEffect(() => {
+    // Menu activation should reach the actual editor even when its details
+    // arrive later. Saving or ordinary typing must not take focus again.
+    if (!draft || focusRequest <= focusedRequest.current) return;
+    const title = editor.current?.querySelector<HTMLInputElement>("input");
+    if (title) {
+      title.focus();
+      focusedRequest.current = focusRequest;
+    }
+  }, [draft, focusRequest]);
   if (loaded.error) return <Notice tone="error">{loaded.error.message}</Notice>;
   if (!draft) return null;
-  const set = <K extends keyof Source>(key: K, value: Source[K]) => {
-    setSaved(false);
-    setDraft({ ...draft, [key]: value });
-  };
-  const field = (key: "title" | "subtitle" | "author" | "publisher" | "edition" | "isbn" | "doi" | "language" | "licence", label: string) => (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={`${id}-${key}`} className="text-[0.9375rem] font-medium text-text-strong">
-        {label}
-      </label>
-      <input id={`${id}-${key}`} value={(draft[key] as string | null) ?? ""} onChange={(e) => set(key, (e.target.value || (key === "title" ? "" : null)) as never)} className="h-10 aw-input px-3" />
-    </div>
-  );
 
   const save = async () => {
     setBusy(true);
     setError(null);
     try {
-      await api.libraryUpdateSource({
-        id: draft.id,
-        title: draft.title,
-        subtitle: draft.subtitle,
-        author: draft.author,
-        publisher: draft.publisher,
-        edition: draft.edition,
-        publicationYear: draft.publicationYear,
-        isbn: draft.isbn,
-        doi: draft.doi,
-        language: draft.language,
-        sourceType: draft.sourceType,
-        licenceStatus: draft.licenceStatus,
-        licence: draft.licence,
-        notes: draft.notes,
-      });
+      const updated = await api.libraryUpdateSource(sourceMetadataInput(draft));
+      // A later bibliography-only save must not replay this coverage override.
+      // Keep any new draft the person started while this save was in flight.
+      setDraft((current) => current === null || current === draft ? updated : current);
       for (const c of collections) {
         const was = summary.collections.includes(c.id);
         const now = member.has(c.id);
@@ -720,52 +715,8 @@ function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: 
   };
 
   return (
-    <div className="ml-7 flex flex-col gap-3 rounded-aw border border-border-subtle bg-bg p-3">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {field("title", t("library.manage.field.title"))}
-        {field("author", t("library.manage.field.author"))}
-        <div className="flex flex-col gap-1">
-          <label htmlFor={`${id}-type`} className="text-[0.9375rem] font-medium text-text-strong">
-            {t("library.manage.field.category")}
-          </label>
-          <select id={`${id}-type`} value={draft.sourceType} onChange={(e) => set("sourceType", e.target.value as SourceType)} className="h-10 aw-input px-2">
-            {SOURCE_TYPES.map((x) => (
-              <option key={x} value={x}>
-                {sourceTypeLabel(t, x)}
-              </option>
-            ))}
-          </select>
-        </div>
-        {field("language", t("library.manage.field.language"))}
-      </div>
-      <details>
-        <summary className="cursor-pointer text-[0.9375rem] font-medium text-text-strong">{t("library.manage.moreDetails")}</summary>
-        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {field("subtitle", t("library.manage.field.subtitle"))}
-          {field("publisher", t("library.manage.field.publisher"))}
-          {field("edition", t("library.manage.field.edition"))}
-          <div className="flex flex-col gap-1">
-            <label htmlFor={`${id}-year`} className="text-[0.9375rem] font-medium text-text-strong">
-              {t("library.manage.field.year")}
-            </label>
-            <input id={`${id}-year`} inputMode="numeric" value={draft.publicationYear ?? ""} onChange={(e) => set("publicationYear", e.target.value ? Number(e.target.value.replace(/\D/g, "")) : null)} className="h-10 aw-input px-3" />
-          </div>
-          {field("isbn", t("library.manage.field.isbn"))}
-          {field("doi", t("library.manage.field.doi"))}
-          <div className="flex flex-col gap-1">
-            <label htmlFor={`${id}-licence-status`} className="text-[0.9375rem] font-medium text-text-strong">
-              {t("library.manage.field.licenceStatus")}
-            </label>
-            <select id={`${id}-licence-status`} value={draft.licenceStatus} onChange={(e) => set("licenceStatus", e.target.value as Source["licenceStatus"])} className="h-10 aw-input px-2">
-              {LICENCE_STATUSES.map((x) => (
-                <option key={x} value={x}>
-                  {t(`library.licence.${x}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-          {field("licence", t("library.manage.field.licence"))}
-        </div>
+    <div ref={editor} className="ml-7 flex flex-col gap-3 rounded-aw border border-border-subtle bg-bg p-3">
+      <SourceMetadataFields draft={draft} onChange={(next) => { setSaved(false); setDraft(next); }}>
         <dl className="mt-3 grid grid-cols-1 gap-x-4 gap-y-1 text-[0.9375rem] sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium text-text-strong">{t("library.manage.file.name")}</dt>
           <dd className="m-0 break-all">{summary.originalFilename ?? "—"}</dd>
@@ -784,7 +735,7 @@ function SourceDetails({ sourceId, summary, collections, onSaved }: { sourceId: 
             </>
           )}
         </dl>
-      </details>
+      </SourceMetadataFields>
 
       {collections.length > 0 && (
         <fieldset className="m-0 flex flex-col gap-1 border-0 p-0">

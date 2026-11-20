@@ -101,18 +101,29 @@ describe("Settings → Sources", () => {
   it("edits a source's details, collections and tags without touching its text", async () => {
     const { api, user, section } = await setup();
     const list = within(section).getByRole("list", { name: "Sources" });
-    await user.click(within(list).getByRole("button", { name: /^Romans Commentary/ }));
+    const originalId = api.state.library.sources.find((s) => s.title === "Romans Commentary")!.id;
+    await user.click(within(list).getByRole("button", { name: "More for Romans Commentary" }));
+    await user.keyboard("{ArrowDown}{Enter}");
     const title = await within(list).findByRole("textbox", { name: "Title" });
+    expect(title).toHaveFocus();
     await user.clear(title);
     await user.type(title, "Romans: A Commentary");
+    const language = within(list).getByRole("textbox", { name: "Language" });
+    await user.clear(language);
+    await user.type(language, "Français");
     await user.selectOptions(within(list).getByRole("combobox", { name: "Category" }), "commentary");
     await user.type(within(list).getByRole("textbox", { name: "Add tags (separate with commas)" }), "Grace, Romans");
     await user.click(within(list).getByRole("button", { name: "Save" }));
     await within(list).findByText("Saved.");
     const source = api.state.library.sources.find((s) => s.title === "Romans: A Commentary")!;
+    expect(source.id).toBe(originalId);
     expect(source.sourceType).toBe("commentary");
+    expect(source.language).toBe("Français");
     expect((await api.libraryTags()).map((t) => t.name)).toEqual(["Grace", "Romans"]);
     expect(api.state.library.segments.filter((s) => s.sourceId === source.id)).toHaveLength(1);
+    await user.click(within(section).getByText("Filters"));
+    const languages = within(section).getByRole("combobox", { name: "Language" });
+    expect(await within(languages).findByRole("option", { name: "Français" })).toBeInTheDocument();
   });
 
   it("puts many sources in a new collection, nested, and finds them by it", async () => {
