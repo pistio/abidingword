@@ -191,17 +191,17 @@ pub(crate) fn parse_snapshot_name(name: &str) -> Option<(i64, NaiveDateTime)> {
 
 /// Windows junctions and other reparse points need the same refusal as symlinks.
 pub(crate) fn redirected(metadata: &Metadata) -> bool {
-    if metadata.file_type().is_symlink() {
-        return true;
-    }
     #[cfg(windows)]
     {
         use std::os::windows::fs::MetadataExt;
         const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x400;
-        metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
+        metadata.file_type().is_symlink()
+            || metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0
     }
     #[cfg(not(windows))]
-    false
+    {
+        metadata.file_type().is_symlink()
+    }
 }
 
 /// Check existing parents before creating/reading a managed recovery directory.
