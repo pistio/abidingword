@@ -34,8 +34,8 @@ backslash), and no file or folder in the seal or documents folder may be a
 symbolic link. Names are checked before any file is opened, and each file
 must resolve inside its folder.
 
-What this enforces, and what it cannot: see
-docs/audit/candidate-a1.5/set-h-decision-package.md section 6.
+What this enforces, and what it cannot: see the safeguards section of the
+evaluation protocol.
 """
 import hashlib
 import json

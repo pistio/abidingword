@@ -350,6 +350,16 @@ def assess(docs, run, seal_report, frozen_binary, inventory=INVENTORY):
              f"documents ({len(auth)} authentic), which print {printed} verses: coverage "
              f"{coverage if coverage is not None else '-'} % (verified correct / printed; no pass mark). "
              f"Exploratory documents are not part of this figure.")
+    # A clean refusal is safe, never coverage: say which scored documents
+    # gave nothing, and why, beside the figure.
+    not_read = [d for d in by_class["scored"] if d["execution"] != "completed"]
+    refused = [d["key"] for d in not_read if d["execution"] == "refused"]
+    failed = [d["key"] for d in not_read if d["execution"] == "failure"]
+    if not_read:
+        claim += (f" Not in the coverage figure, and not recognition coverage: {len(refused)} scored "
+                  f"document(s) refused whole{' (' + ', '.join(refused) + ')' if refused else ''} and "
+                  f"{len(failed)} that failed to run{' (' + ', '.join(failed) + ')' if failed else ''}, "
+                  f"of {len(by_class['scored'])} scored documents; no verse from them counts as verified.")
     limit = None
     if not evidence["meets_minimum"]:
         limit = (f"Scored authentic evidence ({evidence['documents']} documents, {evidence['printed_verses']} "
@@ -367,7 +377,8 @@ def assess(docs, run, seal_report, frozen_binary, inventory=INVENTORY):
         "qualification_limit": limit,
         "execution": dict(collections.Counter(d["execution"] for d in docs)),
         "failure_causes": dict(collections.Counter(d["cause"] for d in failures)),
-        "scored": dict(scored, coverage_percent=coverage),
+        "scored": dict(scored, coverage_percent=coverage, documents_in_manifest=len(by_class["scored"]),
+                       refused_whole=refused, failed_to_run=failed),
         "control": {"documents": len(by_class["control"]), "completed": len(done("control")),
                     "verified": control_verified},
         "mixed": {"documents": len(by_class["mixed"]), "completed": len(done("mixed")),

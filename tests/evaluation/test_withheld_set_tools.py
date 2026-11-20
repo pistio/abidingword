@@ -366,6 +366,9 @@ class Execution(Fixture):
         self.assertEqual(a["scored"]["verified_wrong"], 0)
         self.assertEqual(a["scored"]["verified_typography"], 1)
         self.assertIn("Exploratory documents are not part of this figure", a["accuracy_claim"])
+        self.assertIn("not recognition coverage: 1 scored document(s) refused whole (S2)", a["accuracy_claim"])
+        self.assertEqual(a["scored"]["refused_whole"], ["S2"])
+        self.assertEqual(a["scored"]["documents_in_manifest"], 2)
         self.assertEqual(score["groups"]["format"], {"epub": {
             "documents": 1, "printed": 100, "verified": 90, "verified_correct": 90, "verified_wrong": 0,
             "verified_typography": 1, "verified_absent": 0, "refused_correct": 8, "caught": 2,

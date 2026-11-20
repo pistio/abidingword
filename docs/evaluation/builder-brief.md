@@ -10,12 +10,9 @@ if whoever chooses the documents knows nothing about the software.
 ## Before anything else
 
 Record in `access-records.md`: your session link (or your name), the
-environment, the repositories you can see, and the result of trying to
-open `https://github.com/pistio/abidingword`,
-`https://raw.githubusercontent.com/pistio/abidingword/HEAD/README.md` and
-`https://api.github.com/repos/pistio/abidingword`. Each should be refused.
-If any of them opens, do not read it: write that down, stop, and tell the
-owner.
+environment, and the repositories you can see. Your whole session is kept
+as a record: every command, every address you open and every file you
+read will be reviewed before the collection is used.
 
 ## What you receive, and what you must not seek
 
@@ -25,9 +22,11 @@ not be used); `check-set.py` and `seal-set.py` (check your folder, and seal
 it); and, if you make Word documents from USFM,
 `audit-derived-completeness.py`.
 
-Do not open, search or ask for: any software that reads Bibles from
+Do not open, search or ask for, by any means (web pages, `git`, APIs,
+search engines, other sessions): any software that reads Bibles from
 documents, its source code, its rules, tests, issues, pull requests or
-reports, or any earlier test collection or its results. Do not run any
+reports, or any earlier test collection or its results. Use `git` only
+for the repository you were given. Do not run any
 Bible-recognition software on the documents. If you come across any of
 these by accident, stop and record it in `access-records.md`.
 

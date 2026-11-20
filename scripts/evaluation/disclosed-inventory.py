@@ -46,6 +46,8 @@ def clean_source(text):
     # Remarks about how earlier sets were made are not identity.
     text = re.sub(r"\s*(REUSE )?NOTE:.*$", "", text)
     text = re.sub(r"\s*\(layout[^)]*\)", "", text)
+    # Nor is the name of the software the editions were tested with.
+    text = re.sub(r";?\s*bundled with [^)]*", "", text, flags=re.I)
     return re.sub(r"\s+", " ", text).strip(" ;")
 
 
