@@ -1,17 +1,15 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useSaveTracker } from "./SaveTracker";
+import { getWritingLane, type AutosaveDraft } from "@/lib/autosaveState";
 import { assertDatabaseWritesAllowed, databaseRestoreActive, databaseWritesBlocked, registerAutosaveFlusher } from "@/lib/databaseRestoreLock";
 
 export const AUTOSAVE_DELAY_MS = 500;
-interface Draft { value: string; revision: number }
-interface WritingLane { revision: number; savedRevision: number; chain: Promise<unknown>; draft: Draft | null; owner: symbol | null }
-const lanes = new Map<string | symbol, WritingLane>();
 
 /** Debounced, ordered writing with a stable field identity across remounts. */
 export function useAutosave(save: (value: string) => Promise<unknown>, delay = AUTOSAVE_DELAY_MS, identity?: string, recover?: (value: string) => void) {
   const { track } = useSaveTracker();
   const saveRef = useRef(save);
-  const pending = useRef<Draft | null>(null);
+  const pending = useRef<AutosaveDraft | null>(null);
   const recoverRef = useRef(recover);
   const owner = useRef(Symbol("editor"));
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -23,15 +21,7 @@ export function useAutosave(save: (value: string) => Promise<unknown>, delay = A
 
   useEffect(() => { saveRef.current = save; recoverRef.current = recover; }, [save, recover]);
 
-  // Called from event handlers/effects, never by mutating globals in render.
-  const writingLane = useCallback(() => {
-    let lane = lanes.get(key);
-    if (!lane) {
-      lane = { revision: 0, savedRevision: 0, chain: Promise.resolve(), draft: null, owner: null };
-      lanes.set(key, lane);
-    }
-    return lane;
-  }, [key]);
+  const writingLane = useCallback(() => getWritingLane(key), [key]);
 
   const forgetDetached = useCallback(() => {
     if (!mounted.current && active.current === 0 && pending.current === null) {
@@ -101,10 +91,4 @@ export function useAutosave(save: (value: string) => Promise<unknown>, delay = A
   }, [flush, forgetDetached, writingLane]);
 
   return { schedule, flush };
-}
-
-/** Test isolation models a fresh webview, not a production failure reset. */
-export function resetAutosaveLanesForTests() {
-  if (import.meta.env.MODE !== "test") throw new Error("Test-only webview reset");
-  lanes.clear();
 }

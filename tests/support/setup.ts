@@ -2,7 +2,8 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, configure } from "@testing-library/react";
 import { afterEach } from "vitest";
 import i18n from "@/i18n";
-import { resetAutosaveLanesForTests } from "@/hooks/useAutosave";
+// Keep reset imports adapter-free: API tests install their own Tauri mocks.
+import { resetAutosaveLanesForTests } from "@/lib/autosaveState";
 import { resetDatabaseWriteBarrierForTests } from "@/lib/databaseRestoreLock";
 
 // jsdom has no PointerEvent: a MouseEvent with a pointer id stands in, so

@@ -6,7 +6,7 @@ This milestone finishes the daily recovery workflow and strengthens the surround
 
 ## What was wrong and what changed
 
-The reported CI run `44825652838` passed 1,389 frontend assertions but failed on an unhandled `Invented save failure` rejection. Its test attached the rejection assertion after React had yielded. The corrected test installs its rejection observer before rejecting; it still asserts that recovery is blocked. The production audit found consequential defects beyond that test timing error.
+The reported CI run `44825652838` passed 1,389 frontend assertions but failed on an unhandled `Invented save failure` rejection. Its test attached the rejection assertion after React had yielded. The corrected test installs its rejection observer before rejecting; it still asserts that recovery is blocked. The production audit found consequential defects beyond that test timing error. The first complete local frontend pass then exposed a separate setup-import regression in seven existing native-API assertions: importing the autosave hook from shared setup loaded Tauri before per-file mocks registered. The writing state/reset is now a dependency-free module; the original native-language and reference-API assertions are unchanged. Both failed runs remain in the verification history.
 
 | Trigger | Before | Correction and regression evidence |
 | --- | --- | --- |
