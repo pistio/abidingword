@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { act, render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SaveTrackerProvider, settleOutstandingWrites, useSaveTracker } from "@/hooks/SaveTracker";
 import { useAutosave } from "@/hooks/useAutosave";
@@ -45,26 +45,24 @@ describe("database replacement save barrier", () => {
 
   it("refuses new autosaves while restoring, but allows writing when an unsuccessful restore unlocks", async () => {
     const save = vi.fn(async (_text: string) => undefined);
-    let edits!: ReturnType<typeof useAutosave>;
-
     function Editor() {
-      edits = useAutosave(save);
-      return null;
+      const { schedule, flush } = useAutosave(save);
+      const trySave = (text: string) => { schedule(text); flush(); };
+      return (
+        <>
+          <button onClick={() => trySave("must not overwrite the restored database")}>During restore</button>
+          <button onClick={() => trySave("still safe to write after failed recovery")}>After failure</button>
+        </>
+      );
     }
     const view = render(<SaveTrackerProvider><Editor /></SaveTrackerProvider>);
-    act(() => {
-      beginDatabaseRestore();
-      edits.schedule("must not overwrite the restored database");
-      edits.flush();
-    });
+    act(() => beginDatabaseRestore());
+    fireEvent.click(screen.getByRole("button", { name: "During restore" }));
     expect(databaseRestoreActive()).toBe(true);
     expect(save).not.toHaveBeenCalled();
 
-    act(() => {
-      endDatabaseRestore();
-      edits.schedule("still safe to write after failed recovery");
-      edits.flush();
-    });
+    act(() => endDatabaseRestore());
+    fireEvent.click(screen.getByRole("button", { name: "After failure" }));
     await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
     expect(save).toHaveBeenCalledWith("still safe to write after failed recovery");
     view.unmount();
