@@ -160,3 +160,39 @@ fn symlink_snapshot_is_not_listed_or_opened() {
         .any(|s| s.id == link_id));
     assert!(snapshots::restore(&db, &dirs, &link_id).is_err());
 }
+
+
+#[test]
+fn a_structurally_broken_snapshot_cannot_replace_the_live_database() {
+    let (_tmp, dirs, db) = new_install();
+    write_note(&db, "\"Older note\"");
+    let id = snapshot(&db, &dirs);
+    write_note(&db, "\"Newer work stays safe\"");
+
+    // SQLite can report page integrity 'ok' while an application table is
+    // missing. This tests the *post-restore* validation and rollback, not
+    // merely the corrupt-file or wrong-version preflight.
+    let candidate = dirs.daily_backups().join(&id);
+    let copy = Connection::open(&candidate).unwrap();
+    copy.execute_batch("PRAGMA foreign_keys=OFF; DROP TABLE workspaces;")
+        .unwrap();
+    drop(copy);
+
+    assert!(snapshots::restore(&db, &dirs, &id).is_err());
+    assert_eq!(
+        db.with_conn(|conn| Ok(note(conn))).unwrap(),
+        "\"Newer work stays safe\""
+    );
+    // If the invalid snapshot reached the restore step, a safety copy of
+    // current work was made and has to remain available to the owner.
+    if dirs.pre_restore_backups().exists() {
+        let files: Vec<_> = fs::read_dir(dirs.pre_restore_backups())
+            .unwrap()
+            .flatten()
+            .collect();
+        assert!(!files.is_empty());
+        assert!(files.iter().any(|item| {
+            from_copy(&item.path()) == "\"Newer work stays safe\""
+        }));
+    }
+}
