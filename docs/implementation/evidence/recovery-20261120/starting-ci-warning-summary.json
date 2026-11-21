@@ -1,0 +1,8 @@
+{
+  "runId": 44825652838,
+  "jobId": 136597586092,
+  "sourceSha": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+  "evidence": "Previously retrieved full frontend GitHub job log via connector",
+  "nonFatalReactActWarnings": 797,
+  "note": "These warnings predate this milestone; they remain visible and are not suppressed. They are distinct from the unhandled save rejection that failed the starting CI job."
+}

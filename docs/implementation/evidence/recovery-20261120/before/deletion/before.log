@@ -1,0 +1,1610 @@
+
+> abiding-word@0.1.0 test
+> vitest run tests/ui/parent-delete-save-barrier.test.tsx --maxWorkers=1
+
+
+ RUN  v4.1.11 /workspace/work/recovery-parent-delete-before
+
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx (9 tests | 9 failed) 22308ms
+     × settles project writing before confirmed deletion and keeps later captures usable 1063ms
+     × settles study writing before confirmed deletion and keeps later captures usable 814ms
+     × settles teaching writing before confirmed deletion and keeps later captures usable 843ms
+     × retains project and its visible draft when saving fails before deletion 5647ms
+     × retains study and its visible draft when saving fails before deletion 5721ms
+     × retains teaching and its visible draft when saving fails before deletion 5857ms
+     × freezes project typing and panel dismissal until a settled deletion completes 727ms
+     × freezes study typing and panel dismissal until a settled deletion completes 802ms
+     × freezes teaching typing and panel dismissal until a settled deletion completes 829ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > settles project writing before confirmed deletion and keeps later captures usable
+AssertionError: expected "projectDelete" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st projectDelete call:
+
+    Array [
+      "00000000-0000-4000-8000-000000000002",
+      false,
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:72:33
+     70|     try {
+     71|       await view.confirm();
+     72|       expect(view.deletion).not.toHaveBeenCalled();
+       |                                 ^
+     73|     } finally {
+     74|       await act(async () => { saving.resolve(); await saving.promise; …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > settles study writing before confirmed deletion and keeps later captures usable
+AssertionError: expected "studyDelete" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st studyDelete call:
+
+    Array [
+      "00000000-0000-4000-8000-000000000019",
+      false,
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:72:33
+     70|     try {
+     71|       await view.confirm();
+     72|       expect(view.deletion).not.toHaveBeenCalled();
+       |                                 ^
+     73|     } finally {
+     74|       await act(async () => { saving.resolve(); await saving.promise; …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > settles teaching writing before confirmed deletion and keeps later captures usable
+AssertionError: expected "teachingDelete" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st teachingDelete call:
+
+    Array [
+      "00000000-0000-4000-8000-000000000049",
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:72:33
+     70|     try {
+     71|       await view.confirm();
+     72|       expect(view.deletion).not.toHaveBeenCalled();
+       |                                 ^
+     73|     } finally {
+     74|       await act(async () => { saving.resolve(); await saving.promise; …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > retains project and its visible draft when saving fails before deletion
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-labelledby[39m=[32m"_r_2h_"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"fixed z-40 flex flex-col gap-4 overflow-y-auto rounded-[var(--aw-radius-lg)] border border-border bg-raised p-5 text-text shadow-xl"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"top: 6px; left: 8px; width: 560px; max-height: 754px;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex items-start justify-between gap-2"[39m
+  [36m>[39m
+    [36m<h2[39m
+      [33mclass[39m=[32m"type-worktitle m-0"[39m
+      [33mid[39m=[32m"_r_2h_"[39m
+    [36m>[39m
+      [0mProject information[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"Close"[39m
+      [33mclass[39m=[32m"-mr-2 -mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"[39m
+      [33mdata-info-close[39m=[32m"true"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x size-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4"[39m
+  [36m>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mDescription[0m
+      [36m</span>[39m
+      [36m<textarea[39m
+        [33mclass[39m=[32m"reading resize-y rounded-aw border border-border-subtle bg-transparent px-3 py-1.5 text-[1rem] placeholder:text-text-muted focus:border-border"[39m
+        [33mplaceholder[39m=[32m"What this project is for, in a sentence or two"[39m
+        [33mrows[39m=[32m"3"[39m
+      [36m/>[39m
+    [36m</label>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-wrap items-center justify-end gap-2"[39m
+    [33mdata-info-actions[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mCancel[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-on-primary hover:bg-primary-hover "[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mSave[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4 border-t border-border-subtle pt-4"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-3"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover "[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-download size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 15V3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m7 10 5 5 5-5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mExport project…[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"flex flex-col gap-2 border-t border-danger pt-3"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"type-group m-0"[39m
+      [36m>[39m
+        [0mDanger zone[0m
+      [36m</h3>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"m-0 text-text-muted"[39m
+      [36m>[39m
+        [0mThe Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"Move “Disposable folder” to Trash?"[39m
+        [33mclass[39m=[32m"flex flex-col gap-2"[39m
+        [33mrole[39m=[32m"alertdialog"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"m-0"[39m
+        [36m>[39m
+          [0mMove “Disposable folder” to Trash?[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mMove to Trash[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mCancel[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-labelledby[39m=[32m"_r_2h_"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"fixed z-40 flex flex-col gap-4 overflow-y-auto rounded-[var(--aw-radius-lg)] border border-border bg-raised p-5 text-text shadow-xl"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"top: 6px; left: 8px; width: 560px; max-height: 754px;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex items-start justify-between gap-2"[39m
+  [36m>[39m
+    [36m<h2[39m
+      [33mclass[39m=[32m"type-worktitle m-0"[39m
+      [33mid[39m=[32m"_r_2h_"[39m
+    [36m>[39m
+      [0mProject information[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"Close"[39m
+      [33mclass[39m=[32m"-mr-2 -mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"[39m
+      [33mdata-info-close[39m=[32m"true"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x size-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4"[39m
+  [36m>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mDescription[0m
+      [36m</span>[39m
+      [36m<textarea[39m
+        [33mclass[39m=[32m"reading resize-y rounded-aw border border-border-subtle bg-transparent px-3 py-1.5 text-[1rem] placeholder:text-text-muted focus:border-border"[39m
+        [33mplaceholder[39m=[32m"What this project is for, in a sentence or two"[39m
+        [33mrows[39m=[32m"3"[39m
+      [36m/>[39m
+    [36m</label>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-wrap items-center justify-end gap-2"[39m
+    [33mdata-info-actions[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mCancel[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-on-primary hover:bg-primary-hover "[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mSave[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4 border-t border-border-subtle pt-4"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-3"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover "[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-download size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 15V3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m7 10 5 5 5-5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mExport project…[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"flex flex-col gap-2 border-t border-danger pt-3"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"type-group m-0"[39m
+      [36m>[39m
+        [0mDanger zone[0m
+      [36m</h3>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"m-0 text-text-muted"[39m
+      [36m>[39m
+        [0mThe Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"Move “Disposable folder” to Trash?"[39m
+        [33mclass[39m=[32m"flex flex-col gap-2"[39m
+        [33mrole[39m=[32m"alertdialog"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"m-0"[39m
+        [36m>[39m
+          [0mMove “Disposable folder” to Trash?[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mMove to Trash[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mCancel[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</div>[39m
+ ❯ waitForWrapper ../daily-recovery/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../daily-recovery/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:85:36
+     83|     const view = await fixture(kind, async () => { if (fail) throw new…
+     84|     await view.confirm();
+     85|     expect(await within(view.info).findByRole("alert")).toHaveTextCont…
+       |                                    ^
+     86|     expect(view.deletion).not.toHaveBeenCalled();
+     87|     expect(view.field).toHaveValue("Latest invented writing");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > retains study and its visible draft when saving fails before deletion
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-labelledby[39m=[32m"_r_3e_"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"fixed z-40 flex flex-col gap-4 overflow-y-auto rounded-[var(--aw-radius-lg)] border border-border bg-raised p-5 text-text shadow-xl"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"top: 6px; left: 8px; width: 560px; max-height: 754px;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex items-start justify-between gap-2"[39m
+  [36m>[39m
+    [36m<h2[39m
+      [33mclass[39m=[32m"type-worktitle m-0"[39m
+      [33mid[39m=[32m"_r_3e_"[39m
+    [36m>[39m
+      [0mBible Study information[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"Close"[39m
+      [33mclass[39m=[32m"-mr-2 -mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"[39m
+      [33mdata-info-close[39m=[32m"true"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x size-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4"[39m
+  [36m>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"m-0 text-[0.9375rem] text-text-muted"[39m
+    [36m>[39m
+      [0mType: Passage Study · Changed 21 Nov 2026[0m
+    [36m</p>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1 @md:max-w-64"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mStatus[0m
+      [36m</span>[39m
+      [36m<select[39m
+        [33mclass[39m=[32m"h-11 aw-input px-2 text-text-strong"[39m
+      [36m>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"active"[39m
+        [36m>[39m
+          [0mActive[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"paused"[39m
+        [36m>[39m
+          [0mPaused[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"completed"[39m
+        [36m>[39m
+          [0mCompleted[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"archived"[39m
+        [36m>[39m
+          [0mArchived[0m
+        [36m</option>[39m
+      [36m</select>[39m
+    [36m</label>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mPurpose[0m
+        [0m [0m
+        [36m<span[39m
+          [33mclass[39m=[32m"font-normal"[39m
+        [36m>[39m
+          [0m(optional)[0m
+        [36m</span>[39m
+      [36m</span>[39m
+      [36m<textarea[39m
+        [33mclass[39m=[32m"reading resize-y rounded-aw border border-border-subtle bg-transparent px-3 py-1.5 text-[1rem] placeholder:text-text-muted focus:border-border"[39m
+        [33mplaceholder[39m=[32m"What are you trying to understand or prepare?"[39m
+        [33mrows[39m=[32m"2"[39m
+      [36m/>[39m
+    [36m</label>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-wrap items-center justify-end gap-2"[39m
+    [33mdata-info-actions[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mCancel[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-on-primary hover:bg-primary-hover "[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mSave[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4 border-t border-border-subtle pt-4"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-3"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col gap-2 "[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-plus size-4"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M5 12h14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 5v14"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mAdd passage[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"m-0 text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mRelated studies[0m
+      [36m</h3>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover min-h-11 text-[0.9375rem] !text-text-muted hover:!text-text-strong"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m+ Link a related study[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"Copy"[39m
+      [33mclass[39m=[32m"flex flex-col gap-3"[39m
+      [33mrole[39m=[32m"group"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"type-group m-0"[39m
+      [36m>[39m
+        [0mCopy[0m
+      [36m</h3>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover min-h-11"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-copy size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mDuplicate…[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover min-h-11"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-layout-template size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"9"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"5"[39m
+              [33mx[39m=[32m"16"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mSave as my template[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"flex flex-col gap-2 border-t border-danger pt-3"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"type-group m-0"[39m
+      [36m>[39m
+        [0mDanger zone[0m
+      [36m</h3>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"m-0 text-text-muted"[39m
+      [36m>[39m
+        [0mThe Study and its research can be restored in Settings → Data and backup → Trash. Linked Teaching stays in its Project with saved notes and citations, but is unlinked. Restoration does not automatically relink it.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"Move “Disposable Study” to Trash?"[39m
+        [33mclass[39m=[32m"flex flex-col gap-2"[39m
+        [33mrole[39m=[32m"alertdialog"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"m-0"[39m
+        [36m>[39m
+          [0mMove “Disposable Study” to Trash?[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mMove to Trash[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mCancel[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-labelledby[39m=[32m"_r_3e_"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"fixed z-40 flex flex-col gap-4 overflow-y-auto rounded-[var(--aw-radius-lg)] border border-border bg-raised p-5 text-text shadow-xl"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"top: 6px; left: 8px; width: 560px; max-height: 754px;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex items-start justify-between gap-2"[39m
+  [36m>[39m
+    [36m<h2[39m
+      [33mclass[39m=[32m"type-worktitle m-0"[39m
+      [33mid[39m=[32m"_r_3e_"[39m
+    [36m>[39m
+      [0mBible Study information[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"Close"[39m
+      [33mclass[39m=[32m"-mr-2 -mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"[39m
+      [33mdata-info-close[39m=[32m"true"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x size-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4"[39m
+  [36m>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"m-0 text-[0.9375rem] text-text-muted"[39m
+    [36m>[39m
+      [0mType: Passage Study · Changed 21 Nov 2026[0m
+    [36m</p>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1 @md:max-w-64"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mStatus[0m
+      [36m</span>[39m
+      [36m<select[39m
+        [33mclass[39m=[32m"h-11 aw-input px-2 text-text-strong"[39m
+      [36m>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"active"[39m
+        [36m>[39m
+          [0mActive[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"paused"[39m
+        [36m>[39m
+          [0mPaused[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"completed"[39m
+        [36m>[39m
+          [0mCompleted[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"archived"[39m
+        [36m>[39m
+          [0mArchived[0m
+        [36m</option>[39m
+      [36m</select>[39m
+    [36m</label>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mPurpose[0m
+        [0m [0m
+        [36m<span[39m
+          [33mclass[39m=[32m"font-normal"[39m
+        [36m>[39m
+          [0m(optional)[0m
+        [36m</span>[39m
+      [36m</span>[39m
+      [36m<textarea[39m
+        [33mclass[39m=[32m"reading resize-y rounded-aw border border-border-subtle bg-transparent px-3 py-1.5 text-[1rem] placeholder:text-text-muted focus:border-border"[39m
+        [33mplaceholder[39m=[32m"What are you trying to understand or prepare?"[39m
+        [33mrows[39m=[32m"2"[39m
+      [36m/>[39m
+    [36m</label>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-wrap items-center justify-end gap-2"[39m
+    [33mdata-info-actions[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mCancel[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-on-primary hover:bg-primary-hover "[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mSave[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4 border-t border-border-subtle pt-4"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-3"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col gap-2 "[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-plus size-4"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M5 12h14"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 5v14"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mAdd passage[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"m-0 text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mRelated studies[0m
+      [36m</h3>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover min-h-11 text-[0.9375rem] !text-text-muted hover:!text-text-strong"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m+ Link a related study[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"Copy"[39m
+      [33mclass[39m=[32m"flex flex-col gap-3"[39m
+      [33mrole[39m=[32m"group"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"type-group m-0"[39m
+      [36m>[39m
+        [0mCopy[0m
+      [36m</h3>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover min-h-11"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-copy size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mDuplicate…[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 px-2 text-text-strong hover:bg-hover min-h-11"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-layout-template size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"9"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"5"[39m
+              [33mx[39m=[32m"16"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mSave as my template[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<section[39m
+      [33mclass[39m=[32m"flex flex-col gap-2 border-t border-danger pt-3"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"type-group m-0"[39m
+      [36m>[39m
+        [0mDanger zone[0m
+      [36m</h3>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"m-0 text-text-muted"[39m
+      [36m>[39m
+        [0mThe Study and its research can be restored in Settings → Data and backup → Trash. Linked Teaching stays in its Project with saved notes and citations, but is unlinked. Restoration does not automatically relink it.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33maria-label[39m=[32m"Move “Disposable Study” to Trash?"[39m
+        [33mclass[39m=[32m"flex flex-col gap-2"[39m
+        [33mrole[39m=[32m"alertdialog"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"m-0"[39m
+        [36m>[39m
+          [0mMove “Disposable Study” to Trash?[0m
+        [36m</p>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mMove to Trash[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0mCancel[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</section>[39m
+  [36m</div>[39m
+[36m</div>[39m
+ ❯ waitForWrapper ../daily-recovery/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../daily-recovery/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:85:36
+     83|     const view = await fixture(kind, async () => { if (fail) throw new…
+     84|     await view.confirm();
+     85|     expect(await within(view.info).findByRole("alert")).toHaveTextCont…
+       |                                    ^
+     86|     expect(view.deletion).not.toHaveBeenCalled();
+     87|     expect(view.field).toHaveValue("Latest invented writing");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > retains teaching and its visible draft when saving fails before deletion
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-labelledby[39m=[32m"_r_4k_"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"fixed z-40 flex flex-col gap-4 overflow-y-auto rounded-[var(--aw-radius-lg)] border border-border bg-raised p-5 text-text shadow-xl"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"top: 6px; left: 8px; width: 560px; max-height: 754px;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex items-start justify-between gap-2"[39m
+  [36m>[39m
+    [36m<h2[39m
+      [33mclass[39m=[32m"type-worktitle m-0"[39m
+      [33mid[39m=[32m"_r_4k_"[39m
+    [36m>[39m
+      [0mBible Teaching information[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"Close"[39m
+      [33mclass[39m=[32m"-mr-2 -mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"[39m
+      [33mdata-info-close[39m=[32m"true"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x size-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4"[39m
+  [36m>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1 @md:max-w-80"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mKind of teaching[0m
+      [36m</span>[39m
+      [36m<select[39m
+        [33mclass[39m=[32m"h-11 aw-input px-2 text-text-strong"[39m
+      [36m>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m""[39m
+        [36m>[39m
+          [0mNot specified[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"sermon"[39m
+        [36m>[39m
+          [0mSermon / Talk[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"bible_study"[39m
+        [36m>[39m
+          [0mBible Study[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"lesson"[39m
+        [36m>[39m
+          [0mBible Teaching[0m
+        [36m</option>[39m
+      [36m</select>[39m
+    [36m</label>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mWho it is for[0m
+      [36m</span>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"h-11 aw-input px-3 text-[1rem] placeholder:text-text-muted"[39m
+        [33mplaceholder[39m=[32m"e.g. the whole church, a youth group"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+    [36m</label>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mPurpose[0m
+      [36m</span>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"h-11 aw-input px-3 text-[1rem] placeholder:text-text-muted"[39m
+        [33mplaceholder[39m=[32m"What you hope this teaching will do"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+    [36m</label>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-wrap items-center justify-end gap-2"[39m
+    [33mdata-info-actions[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mCancel[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-on-primary hover:bg-primary-hover "[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mSave[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4 border-t border-border-subtle pt-4"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-2"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-1"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-plus size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M5 12h14"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 5v14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mAdd a passage[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-2"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33mclass[39m=[32m"inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-layout-template size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"9"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"5"[39m
+              [33mx[39m=[32m"16"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mSave as my template[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-wrap items-center gap-2"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33maria-label[39m=[32m"Delete this teaching? Your study, with its notes and passages, stays as it is."[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-2 rounded-aw border-l-[3px] border-danger bg-hover px-2 py-1 text-[0.9375rem]"[39m
+        [33mrole[39m=[32m"group"[39m
+      [36m>[39m
+        [36m<span>[39m
+          [0mDelete this teaching? Your study, with its notes and passages, stays as it is.[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 min-h-11"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mDelete[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"min-h-11 rounded px-2 hover:bg-hover"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mKeep[0m
+        [36m</button>[39m
+      [36m</span>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</div>[39m
+
+Ignored nodes: comments, script, style
+[36m<div[39m
+  [33maria-labelledby[39m=[32m"_r_4k_"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"fixed z-40 flex flex-col gap-4 overflow-y-auto rounded-[var(--aw-radius-lg)] border border-border bg-raised p-5 text-text shadow-xl"[39m
+  [33mrole[39m=[32m"dialog"[39m
+  [33mstyle[39m=[32m"top: 6px; left: 8px; width: 560px; max-height: 754px;"[39m
+[36m>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex items-start justify-between gap-2"[39m
+  [36m>[39m
+    [36m<h2[39m
+      [33mclass[39m=[32m"type-worktitle m-0"[39m
+      [33mid[39m=[32m"_r_4k_"[39m
+    [36m>[39m
+      [0mBible Teaching information[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"Close"[39m
+      [33mclass[39m=[32m"-mr-2 -mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"[39m
+      [33mdata-info-close[39m=[32m"true"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x size-4"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"2"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4"[39m
+  [36m>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1 @md:max-w-80"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mKind of teaching[0m
+      [36m</span>[39m
+      [36m<select[39m
+        [33mclass[39m=[32m"h-11 aw-input px-2 text-text-strong"[39m
+      [36m>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m""[39m
+        [36m>[39m
+          [0mNot specified[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"sermon"[39m
+        [36m>[39m
+          [0mSermon / Talk[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"bible_study"[39m
+        [36m>[39m
+          [0mBible Study[0m
+        [36m</option>[39m
+        [36m<option[39m
+          [33mvalue[39m=[32m"lesson"[39m
+        [36m>[39m
+          [0mBible Teaching[0m
+        [36m</option>[39m
+      [36m</select>[39m
+    [36m</label>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mWho it is for[0m
+      [36m</span>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"h-11 aw-input px-3 text-[1rem] placeholder:text-text-muted"[39m
+        [33mplaceholder[39m=[32m"e.g. the whole church, a youth group"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+    [36m</label>[39m
+    [36m<label[39m
+      [33mclass[39m=[32m"flex flex-col gap-1"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"text-[0.9375rem] font-medium text-text-muted"[39m
+      [36m>[39m
+        [0mPurpose[0m
+      [36m</span>[39m
+      [36m<input[39m
+        [33mclass[39m=[32m"h-11 aw-input px-3 text-[1rem] placeholder:text-text-muted"[39m
+        [33mplaceholder[39m=[32m"What you hope this teaching will do"[39m
+        [33mvalue[39m=[32m""[39m
+      [36m/>[39m
+    [36m</label>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-wrap items-center justify-end gap-2"[39m
+    [33mdata-info-actions[39m=[32m"true"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-border text-text-strong hover:bg-hover "[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mCancel[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 bg-primary text-on-primary hover:bg-primary-hover "[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0mSave[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"flex flex-col gap-4 border-t border-border-subtle pt-4"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-2"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-1"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-plus size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M5 12h14"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 5v14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mAdd a passage[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-col gap-2"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33mclass[39m=[32m"inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-layout-template size-4"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"3"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"9"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"7"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"5"[39m
+              [33mx[39m=[32m"16"[39m
+              [33my[39m=[32m"14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mSave as my template[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"flex flex-wrap items-center gap-2"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33maria-label[39m=[32m"Delete this teaching? Your study, with its notes and passages, stays as it is."[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-2 rounded-aw border-l-[3px] border-danger bg-hover px-2 py-1 text-[0.9375rem]"[39m
+        [33mrole[39m=[32m"group"[39m
+      [36m>[39m
+        [36m<span>[39m
+          [0mDelete this teaching? Your study, with its notes and passages, stays as it is.[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 min-h-11"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mDelete[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"min-h-11 rounded px-2 hover:bg-hover"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mKeep[0m
+        [36m</button>[39m
+      [36m</span>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</div>[39m
+ ❯ waitForWrapper ../daily-recovery/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../daily-recovery/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:85:36
+     83|     const view = await fixture(kind, async () => { if (fail) throw new…
+     84|     await view.confirm();
+     85|     expect(await within(view.info).findByRole("alert")).toHaveTextCont…
+       |                                    ^
+     86|     expect(view.deletion).not.toHaveBeenCalled();
+     87|     expect(view.field).toHaveValue("Latest invented writing");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/9]⎯
+
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > freezes project typing and panel dismissal until a settled deletion completes
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > freezes study typing and panel dismissal until a settled deletion completes
+ FAIL  tests/ui/parent-delete-save-barrier.test.tsx > parent deletion and current author writing > freezes teaching typing and panel dismissal until a settled deletion completes
+Error: expect(element).toHaveValue(Latest invented writing)
+
+Expected the element to have value:
+  Latest invented writing
+Received:
+  Latest invented writinglate input
+ ❯ tests/ui/parent-delete-save-barrier.test.tsx:106:26
+    104|       await view.user.click(view.field);
+    105|       await view.user.keyboard("late input{Escape}");
+    106|       expect(view.field).toHaveValue("Latest invented writing");
+       |                          ^
+    107|       expect(view.info).toBeInTheDocument();
+    108|       expect(view.write).toHaveBeenCalledTimes(writes);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed (9)
+   Start at  00:18:22
+   Duration  26.22s (transform 2.22s, setup 836ms, import 2.28s, tests 22.31s, environment 372ms)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice

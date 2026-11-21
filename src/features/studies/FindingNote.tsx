@@ -5,6 +5,8 @@ import { Button } from "@/design-system/Button";
 import { FindingSources } from "@/features/library/FindingSources";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 import { referenceLabel } from "@/i18n/scripture";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
@@ -37,17 +39,27 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
   const [tags, setTags] = useState(finding.tags.join(", "));
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { deleting, runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
   const label = findingLabel(t, finding.findingType);
   const type = findingInline(t, finding.findingType);
 
   const save = useCallback((content: string) => api.findingUpdate({ id: finding.id, content }), [api, finding.id]);
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `finding:${finding.id}:content`, setText);
 
   const act = async (action: () => Promise<unknown>) => {
     setError(null);
     try {
       await action();
       onChanged();
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
+
+  const remove = async () => {
+    setError(null);
+    try {
+      if (await runDeletion(() => api.findingDelete(finding.id))) onChanged();
     } catch (e) {
       setError(toApiError(e).message);
     }
@@ -73,6 +85,7 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
   return (
     <li>
       <article
+        aria-busy={deleting}
         aria-label={t("studies.findings.itemLabel", { type: label, excerpt })}
         className="flex flex-col gap-1 border-l-2 border-border py-1 pl-4"
         onKeyDown={(e) => {
@@ -230,7 +243,8 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
               <button
                 type="button"
                 className={`${quiet} ml-auto gap-1 hover:text-danger`}
-                onClick={() => (text.trim() ? setConfirming(true) : act(() => api.findingDelete(finding.id)))}
+                disabled={deleting}
+                onClick={() => (text.trim() ? setConfirming(true) : void remove())}
                 aria-label={t("studies.findings.delete", { type })}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
@@ -243,8 +257,8 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
         {confirming && (
           <div role="alertdialog" aria-label={t("studies.findings.confirmDelete", { type })} className="flex flex-wrap items-center gap-2 text-[0.9375rem]">
             <span>{t("studies.findings.confirmDelete", { type })}</span>
-            <Button variant="danger" onClick={() => act(() => api.findingDelete(finding.id))}>{t("common.delete")}</Button>
-            <Button autoFocus onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
+            <Button variant="danger" disabled={deleting} onClick={() => void remove()}>{t("common.delete")}</Button>
+            <Button autoFocus disabled={deleting} onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
           </div>
         )}
         {error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{error}</p>}

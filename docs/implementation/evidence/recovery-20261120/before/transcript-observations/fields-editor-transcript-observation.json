@@ -1,0 +1,70 @@
+{
+  "recordType": "conversation-tool-output-observation",
+  "isOriginalMachineTestReport": false,
+  "isReconstructedRawLog": false,
+  "scope": "Observed intermediate FieldsEditor regression results, transcribed from retained conversation tool output. No rerun was performed for this record.",
+  "source": {
+    "worktree": "/workspace/work/daily-recovery",
+    "state": "dirty intermediate implementation",
+    "exactTestedCommitOrTreeHash": null,
+    "startingBranchHead": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+    "startingHeadMeaning": "The worktree was created at this source before development. This is not asserted to identify the exact dirty source used by this test invocation.",
+    "detail": "The new stable autosave lanes were already present; FieldsEditor still cached a rejected first-creation promise and created a new block without re-reading the current field after remount."
+  },
+  "before": {
+    "command": "npm test -- tests/ui/recovery-field-creation.test.tsx --maxWorkers=2",
+    "execSessionId": 25320,
+    "outputChunkId": "c1545c",
+    "testStartTimeAsPrinted": "23:10:18",
+    "calendarDate": "2026-11-20",
+    "exitCode": 1,
+    "testFiles": {
+      "failed": 1,
+      "total": 1
+    },
+    "tests": {
+      "failed": 2,
+      "passed": 0,
+      "total": 2
+    },
+    "assertions": [
+      {
+        "name": "retries a failed first field-block creation without losing the current writing",
+        "file": "tests/ui/recovery-field-creation.test.tsx",
+        "lineAtExecution": 37,
+        "observedFailure": "AssertionError: promise rejected \"{ kind: 'conflict', …(1) }\" instead of resolving",
+        "meaning": "A second attempt to settle the same retained field writing still rejected after the first field-block creation had failed."
+      },
+      {
+        "name": "reuses a field block created by the previous mount before saving newer writing",
+        "file": "tests/ui/recovery-field-creation.test.tsx",
+        "lineAtExecution": 62,
+        "observedFailure": "AssertionError: expected \"studyBlockCreate\" to be called once, but got 2 times",
+        "meaning": "The remounted editor issued a second field-block creation. The later block-count assertion was not reached in this failing run."
+      }
+    ],
+    "originalPersistedLogPath": null,
+    "evidenceLocation": "Retained conversation tool output for exec session 25320 / chunk c1545c; not a filesystem log."
+  },
+  "correctedMachineEvidence": {
+    "path": "work/recovery-verification/mock-import-after.json",
+    "overall": {
+      "passed": 34,
+      "failed": 0,
+      "testFiles": 4
+    },
+    "fieldCreationCases": "Both named FieldsEditor cases have status passed in that Vitest JSON report.",
+    "remountCases": [
+      "never replays a detached failed draft over newer writing from the same reopened field",
+      "shows retained unsaved text after failed recovery and reopening the editor",
+      "rehydrates the actual Study title control after failed recovery without overwriting a corrected title",
+      "serialises a reopened field's new value after its detached in-flight write"
+    ]
+  },
+  "detachedDraftOverwrite": {
+    "discovery": "code review by root and review agent",
+    "beforeExecutionPerformed": false,
+    "beforeMachineEvidencePath": null,
+    "claimBoundary": "The review identified the stale detached draft/reordered in-flight save risk. Only corrected regression executions are recorded; do not describe a failing-before execution for this case."
+  }
+}

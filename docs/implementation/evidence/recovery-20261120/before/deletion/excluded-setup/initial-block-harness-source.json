@@ -1,0 +1,7 @@
+{
+  "sourceHead": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "applicationDiff": "",
+  "newTestFile": "tests/ui/delete-save-barrier.test.tsx",
+  "testSha256": "a4a6be3d36459fed653d22fbc27e191778f9ffd2f34d5cdc7cb3e0e537eb655b",
+  "command": "npm test -- tests/ui/delete-save-barrier.test.tsx --maxWorkers=2 --reporter=json --outputFile=work/recovery-verification/delete-before/frontend.json"
+}

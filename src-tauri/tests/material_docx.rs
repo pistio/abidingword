@@ -25,7 +25,16 @@ struct Fixture {
 fn fixtures() -> Vec<Fixture> {
     let path =
         Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/materials/documents.json");
-    serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap()
+    let mut fixtures: Vec<Fixture> =
+        serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    // Real SQLite recovery -> frontend derive -> Word export. The frontend
+    // regression checks this generated model against its native API payload.
+    let recovered = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/materials/recovery-documents.json");
+    let recovery: Vec<Fixture> =
+        serde_json::from_str(&std::fs::read_to_string(recovered).unwrap()).unwrap();
+    fixtures.extend(recovery);
+    fixtures
 }
 
 fn fixture(name: &str) -> MaterialDocument {

@@ -1,4 +1,5 @@
-import { useCallback, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { ArchiveRestore, HardDriveDownload, Sprout, Upload } from "lucide-react";
 import { Button } from "@/design-system/Button";
@@ -6,8 +7,9 @@ import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
+import { runDatabaseRestore, settleOutstandingWrites } from "@/hooks/SaveTracker";
 import { formatDate } from "@/i18n/format";
-import type { BackupPreview, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
+import type { BackupPreview, DailySnapshot, DailySnapshotRestore, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import { LegacyTeaching } from "./LegacyTeaching";
 import { Trash } from "./Trash";
 import { ProjectExport } from "./ProjectExport";
@@ -37,6 +39,7 @@ export function DataSettings() {
         <p className="m-0 max-w-prose text-[0.9375rem] text-text-muted">{t("settings.data.backupHint")}</p>
         <BackupCreate />
         <BackupRestore />
+        <DailyRecovery />
       </div>
       <div className="flex flex-col gap-4 border-t border-border-subtle pt-6">
         <h3 className="type-group m-0">{t("settings.data.sample")}</h3>
@@ -185,13 +188,15 @@ function BackupCreate() {
   const [done, setDone] = useState<{ path: string; size: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const run = async () => {
+    if (busy) return;
+    setBusy(true);
     setError(null);
     setDone(null);
     const stamp = new Date().toISOString().slice(0, 10);
-    const path = await api.choosePortableSaveFile({ kind: "backup", defaultName: `Abiding Word ${stamp}.awbackup`, filterName: t("settings.data.backupFilter") });
-    if (!path) return;
-    setBusy(true);
     try {
+      const path = await api.choosePortableSaveFile({ kind: "backup", defaultName: `Abiding Word ${stamp}.awbackup`, filterName: t("settings.data.backupFilter") });
+      if (!path) return;
+      await settleOutstandingWrites();
       const [saved, report] = await api.backupCreate(path);
       setDone({ path: saved, size: report.size });
     } catch (e) {
@@ -220,16 +225,26 @@ function BackupRestore() {
   const api = useApi();
   const [picked, setPicked] = useState<{ path: string; preview: BackupPreview } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [done, setDone] = useState<RestoreReport | null>(null);
+  const [blocked, setBlocked] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const chooseButton = useRef<HTMLButtonElement>(null);
+  const warningId = useId();
+
+  const cancel = () => {
+    if (busy) return;
+    setPicked(null);
+    chooseButton.current?.focus();
+  };
 
   const choose = async () => {
-    setError(null);
-    setDone(null);
-    const path = await api.choosePortableFile({ kind: "backup", title: t("settings.data.openBackup"), filterName: t("settings.data.backupFilter") });
-    if (!path) return;
+    if (busy || done || blocked) return;
     setBusy(true);
+    setError(null);
     try {
+      const path = await api.choosePortableFile({ kind: "backup", title: t("settings.data.openBackup"), filterName: t("settings.data.backupFilter") });
+      if (!path) return;
       setPicked({ path, preview: await api.backupInspect(path) });
     } catch (e) {
       setError(toApiError(e).message);
@@ -240,58 +255,62 @@ function BackupRestore() {
   const confirm = async () => {
     if (!picked || busy) return;
     setBusy(true);
+    setRestoring(true);
     setError(null);
     try {
-      setDone(await api.backupRestore(picked.path));
+      setDone(await runDatabaseRestore(() => api.backupRestore(picked.path)));
       setPicked(null);
     } catch (e) {
-      setError(toApiError(e).message);
+      const failure = toApiError(e);
+      if (failure.code === "portability.rollbackFailed") setBlocked(failure.message);
+      else setError(failure.message);
     } finally {
       setBusy(false);
+      setRestoring(false);
     }
   };
 
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <Button disabled={busy || done !== null} onClick={() => void choose()}>
+        <Button ref={chooseButton} disabled={busy || done !== null} onClick={() => void choose()}>
           <ArchiveRestore className="size-4" aria-hidden="true" />
           {t("settings.data.restore")}
         </Button>
       </div>
       {picked && (
-        <section aria-label={t("settings.data.restorePreview")} className="flex flex-col gap-3 rounded-aw border border-border-subtle bg-raised p-4 text-[0.9375rem]">
+        <section aria-label={t("settings.data.restorePreview")} aria-describedby={warningId}
+          className="flex min-w-0 flex-col gap-3 rounded-aw border border-border-subtle bg-raised p-4 text-[0.9375rem]"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); cancel(); }
+          }}>
           <div>
             <p className="m-0 type-meta">{t("settings.data.savedOn", { date: formatDate(picked.preview.createdAt), version: picked.preview.appVersion })}</p>
             <p className="m-0 type-meta">
               {backupCountsLine(t, picked.preview.counts)} · {t("settings.data.size", { size: megabytes(picked.preview.size, i18n.language) })}
             </p>
           </div>
-          <Notice tone="warning">{t("settings.data.restoreWarning")}</Notice>
+          <div id={warningId}><Notice tone="warning">{t("settings.data.restoreWarning")}</Notice></div>
           <div className="flex flex-wrap gap-2">
+            <Button disabled={busy} autoFocus onClick={cancel}>
+              {t("common.cancel")}
+            </Button>
             <Button variant="danger" disabled={busy} onClick={() => void confirm()}>
               {busy ? t("settings.data.working") : t("settings.data.restoreConfirm")}
-            </Button>
-            <Button disabled={busy} autoFocus onClick={() => setPicked(null)}>
-              {t("common.cancel")}
             </Button>
           </div>
           {busy && <p role="status" className="m-0 type-meta">{t("settings.data.workingLong")}</p>}
         </section>
       )}
-      {done && (
-        <Notice tone="success">
-          <p className="m-0">{t("settings.data.restored")}</p>
-          <p className="m-0 mt-1 type-meta">{t("settings.data.safetyCopy", { path: done.safetyCopy })}</p>
-          {done.filesSetAside > 0 && <p className="m-0 mt-1">{t("settings.data.setAside", { n: done.filesSetAside })}</p>}
-          <div className="mt-3">
-            <Button variant="primary" onClick={() => window.location.reload()}>
-              {t("settings.data.restoredContinue")}
-            </Button>
-          </div>
-        </Notice>
+      {(restoring || done || blocked) && (
+        <RestoreStatusDialog
+          message={blocked ? t("settings.data.restoreNeedsAttention") : done ? t("settings.data.restored") : t("settings.data.restoreInProgress")}
+          safetyCopy={done?.safetyCopy}
+          filesSetAside={done?.filesSetAside}
+          failureMessage={blocked ?? undefined}
+        />
       )}
-      {error && <Notice tone="error">{error}</Notice>}
+      {error && <RestoreError message={error} />}
     </div>
   );
 }
@@ -326,4 +345,207 @@ function SampleInstall() {
       {error && <Notice tone="error">{error}</Notice>}
     </div>
   );
+}
+
+
+/**
+ * Daily snapshots are a *database-only* fallback, not a second way to restore
+ * source files. Every choice is checked again by Rust, by basename and schema.
+ * The destructive action is available only after the explicit preview.
+ */
+function DailyRecovery() {
+  const { t, i18n } = useTranslation();
+  const api = useApi();
+  const [items, setItems] = useState<DailySnapshot[] | null>(null);
+  const [selected, setSelected] = useState<DailySnapshot | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+  const [done, setDone] = useState<DailySnapshotRestore | null>(null);
+  const [blocked, setBlocked] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const listId = useId();
+  const warningId = useId();
+  const returnToPoint = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (selected || !returnToPoint.current) return;
+    document.getElementById(returnToPoint.current)?.focus();
+    returnToPoint.current = null;
+  }, [selected]);
+
+  const cancel = () => {
+    if (busy || !selected) return;
+    returnToPoint.current = `${listId}-${selected.id}-choose`;
+    setSelected(null);
+  };
+
+  const reloadList = async () => {
+    if (busy || done) return;
+    setBusy(true);
+    setError(null);
+    try {
+      setItems(await api.dailySnapshotList());
+    } catch (e) {
+      setError(toApiError(e).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const restore = async () => {
+    if (!selected || !selected.usable || busy || done) return;
+    setBusy(true);
+    setRestoring(true);
+    setError(null);
+    try {
+      const result = await runDatabaseRestore(() => api.dailySnapshotRestore(selected.id));
+      setDone(result);
+      setSelected(null);
+      setItems(null);
+    } catch (e) {
+      setSelected(null);
+      const failure = toApiError(e);
+      if (failure.code === "portability.rollbackFailed") setBlocked(failure.message);
+      else setError(failure.message);
+    } finally {
+      setBusy(false);
+      setRestoring(false);
+    }
+  };
+
+  const description = (item: DailySnapshot) => t("settings.data.dailyWhen", {
+    date: formatDate(item.createdAt),
+    size: megabytes(item.bytes, i18n.language),
+    version: item.schemaVersion,
+  });
+
+  return (
+    <section className="flex min-w-0 flex-col gap-3 border-t border-border-subtle pt-5">
+      <h4 className="m-0 font-medium text-text-strong">{t("settings.data.dailyTitle")}</h4>
+      <p className="m-0 max-w-prose text-[0.9375rem] text-text-muted">{t("settings.data.dailyHint")}</p>
+      <div>
+        <Button disabled={busy || done !== null || selected !== null} onClick={() => void reloadList()}>
+          {t(items === null ? "settings.data.dailyShow" : "settings.data.dailyRefresh")}
+        </Button>
+      </div>
+      {busy && !restoring && <p role="status" className="m-0 type-meta">{t("settings.data.working")}</p>}
+      {items?.length === 0 && <p className="m-0 text-text-muted">{t("settings.data.dailyEmpty")}</p>}
+      {items && items.length > 0 && !selected && !done && (
+        <ul className="m-0 flex list-none flex-col gap-2 p-0" aria-label={t("settings.data.dailyTitle")}>
+          {items.map((item) => (
+            <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-aw border border-border-subtle p-3">
+              <div id={`${listId}-${item.id}`} className="flex min-w-0 flex-col gap-1 break-words">
+                <span className="text-[0.9375rem] text-text-strong">{description(item)}</span>
+                <span className="type-meta text-text-muted">{t(item.usable ? "settings.data.dailyReady" : "settings.data.dailyUnavailable")}</span>
+              </div>
+              <Button id={`${listId}-${item.id}-choose`} aria-describedby={`${listId}-${item.id}`} disabled={!item.usable || busy} onClick={() => setSelected(item)}>
+                {t("settings.data.dailyChoose")}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {selected && (
+        <section aria-label={t("settings.data.dailyPreview")} aria-describedby={warningId}
+          className="flex min-w-0 flex-col gap-3 rounded-aw border border-border-subtle bg-raised p-4"
+          onKeyDown={(event) => {
+            if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); cancel(); }
+          }}>
+          <p className="m-0 font-medium text-text-strong">{description(selected)}</p>
+          <div id={warningId}><Notice tone="warning">{t("settings.data.dailyWarning")}</Notice></div>
+          <div className="flex flex-wrap gap-2">
+            <Button disabled={busy} autoFocus onClick={cancel}>{t("common.cancel")}</Button>
+            <Button variant="danger" disabled={busy} onClick={() => void restore()}>
+              {busy ? t("settings.data.working") : t("settings.data.dailyConfirm")}
+            </Button>
+          </div>
+        </section>
+      )}
+      {(restoring || done || blocked) && <RestoreStatusDialog message={blocked ? t("settings.data.restoreNeedsAttention") : done ? t("settings.data.dailyRestored") : t("settings.data.restoreInProgress")} safetyCopy={done?.safetyCopy} failureMessage={blocked ?? undefined} />}
+      {error && <RestoreError message={error} />}
+    </section>
+  );
+}
+
+
+/** Keep recovery progress and the explicit reload action reachable at narrow
+ * widths and large text sizes. The write barrier owns the permanent success
+ * latch: unmounting this presentation must never make stale editors writable.
+ */
+function RestoreStatusDialog({ message, safetyCopy, filesSetAside = 0, failureMessage }: {
+  message: string;
+  safetyCopy?: string;
+  filesSetAside?: number;
+  failureMessage?: string;
+}) {
+  const { t } = useTranslation();
+  const titleId = useId();
+  const hintId = useId();
+  const overlay = useRef<HTMLDivElement>(null);
+  const panel = useRef<HTMLElement>(null);
+  const reload = useRef<HTMLButtonElement>(null);
+  const complete = safetyCopy !== undefined || failureMessage !== undefined;
+
+  useEffect(() => {
+    // #root is controlled by the write barrier. Other portals must also stop
+    // accepting interaction while recovery is running or awaiting a reload.
+    const hidden = new Set<HTMLElement>();
+    const freezeBackground = () => {
+      for (const element of document.body.children) {
+        if (!(element instanceof HTMLElement) || element === overlay.current || element.id === "root" || element.hasAttribute("inert")) continue;
+        element.setAttribute("inert", "");
+        hidden.add(element);
+      }
+    };
+    freezeBackground();
+    const observer = new MutationObserver(freezeBackground);
+    observer.observe(document.body, { childList: true });
+    const focusHere = () => (reload.current ?? panel.current)?.focus();
+    const keepFocus = (event: FocusEvent) => {
+      if (event.target instanceof Node && !panel.current?.contains(event.target)) focusHere();
+    };
+    const keepKeys = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" && event.key !== "Escape") return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      focusHere();
+    };
+    document.addEventListener("focusin", keepFocus, true);
+    document.addEventListener("keydown", keepKeys, true);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("focusin", keepFocus, true);
+      document.removeEventListener("keydown", keepKeys, true);
+      for (const element of hidden) element.removeAttribute("inert");
+    };
+  }, []);
+
+  useEffect(() => { (reload.current ?? panel.current)?.focus(); }, [complete]);
+
+  return createPortal(
+    <div ref={overlay} className="fixed inset-0 z-[200] flex items-center justify-center bg-black/55 p-4">
+      <section ref={panel} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={hintId} tabIndex={-1}
+        className="flex max-h-[calc(100dvh-2rem)] w-full min-w-0 max-w-lg flex-col gap-3 overflow-y-auto rounded-aw border border-border-subtle bg-bg p-4 shadow-xl sm:p-6">
+        <h3 id={titleId} className="m-0 type-group text-text-strong">{message}</h3>
+        <p id={hintId} role={complete ? undefined : "status"} className="m-0 text-[0.9375rem]">
+          {t(failureMessage ? "settings.data.restoreFailureReloadHint" : complete ? "settings.data.restoreReloadHint" : "settings.data.restoreInProgressHint")}
+        </p>
+        {safetyCopy && <p className="m-0 break-words text-[0.9375rem] [overflow-wrap:anywhere]">{t("settings.data.safetyCopy", { path: safetyCopy })}</p>}
+        {failureMessage && <div className="min-w-0 [overflow-wrap:anywhere]"><Notice tone="error">{failureMessage}</Notice></div>}
+        {filesSetAside > 0 && <p className="m-0">{t("settings.data.setAside", { n: filesSetAside })}</p>}
+        {complete && <div className="flex shrink-0 justify-end">
+          <Button ref={reload} variant="primary" onClick={() => window.location.reload()}>
+            {t("settings.data.restoredContinue")}
+          </Button>
+        </div>}
+      </section>
+    </div>,
+    document.body,
+  );
+}
+
+function RestoreError({ message }: { message: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => { ref.current?.focus(); }, [message]);
+  return <div ref={ref} tabIndex={-1}><Notice tone="error">{message}</Notice></div>;
 }

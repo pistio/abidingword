@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, ChevronRight, Info, Lightbulb, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useSaveTracker } from "@/hooks/SaveTracker";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { Finding, FindingType } from "@/types/studies";
@@ -68,7 +70,7 @@ export function SectionEditor(props: SectionEditorProps) {
   const { section, templateKey, writingView = false, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onAddQa, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
   const { t } = useTranslation();
   const api = useApi();
-  const { track, settled } = useSaveTracker();
+  const { track } = useSaveTracker();
   const [renaming, setRenaming] = useState(false);
   const [managing, setManaging] = useState(false);
   const manageId = useId();
@@ -87,7 +89,7 @@ export function SectionEditor(props: SectionEditorProps) {
   const [helping, setHelping] = useState(false);
   const helpButton = useRef<HTMLButtonElement>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  const { deleting, runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
   const deleteOpener = useRef<HTMLButtonElement>(null);
   // A.4.3 (#25): the part's hints (guidance, goal, field help, example) are on request, never repeated chrome.
   const hintKey = `study.part.hints.${section.id}`;
@@ -125,7 +127,7 @@ export function SectionEditor(props: SectionEditorProps) {
   };
   const setStatus = async (status: SectionStatus) => {
     const saving = api.studySectionUpdate({ id: section.id, status });
-    track(saving);
+    track(saving, `section-status:${section.id}`);
     try {
       await saving;
       onChange({ ...section, status });
@@ -158,28 +160,27 @@ export function SectionEditor(props: SectionEditorProps) {
   // awaited first; a "conflict" answer means it has content, so ask.
   const remove = async () => {
     if (deleting) return;
-    setDeleting(true);
     setError(null);
     try {
-      await settled();
       let wasEmpty = true;
-      try {
-        await api.studySectionDelete({ id: section.id, force: false });
-      } catch (e) {
-        if (toApiError(e).kind !== "conflict") throw e;
-        // The named modal already obtained consent. The core still checks
-        // freshly saved writing before deciding whether force is needed.
-        wasEmpty = false;
-        await api.studySectionDelete({ id: section.id, force: true });
-      }
-      onDeleted(wasEmpty);
+      const removed = await runDeletion(async () => {
+        try {
+          await api.studySectionDelete({ id: section.id, force: false });
+        } catch (e) {
+          if (toApiError(e).kind !== "conflict") throw e;
+          // The named modal already obtained consent. The core still checks
+          // freshly saved writing before deciding whether force is needed.
+          wasEmpty = false;
+          await api.studySectionDelete({ id: section.id, force: true });
+        }
+      });
+      if (removed) onDeleted(wasEmpty);
     } catch (e) { setError(toApiError(e).message); }
-    finally { setDeleting(false); }
   };
 
   const rename = async (title: string) => {
     const saving = api.studySectionUpdate({ id: section.id, title });
-    track(saving);
+    track(saving, `section-title:${section.id}`);
     try {
       const updated = await saving;
       onChange({ ...updated, blocks: section.blocks });
@@ -192,6 +193,7 @@ export function SectionEditor(props: SectionEditorProps) {
 
   return (
     <section
+      aria-busy={deleting}
       aria-labelledby={headingId}
       id={`section-anchor-${section.id}`}
       // The part being worked in carries the brass line of work in progress; a folded part's

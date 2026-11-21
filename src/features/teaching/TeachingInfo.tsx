@@ -10,6 +10,8 @@ import type { TeachingKind, TeachingPreparation } from "@/types/teaching";
 import { SaveTeachingTemplate } from "./SaveTeachingTemplate";
 import { FORMAT_KINDS, TEACHING_FORMATS, formatOf } from "./teachingTemplates";
 import { TeachingLinks } from "./TeachingLinks";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 
 /** What the Bible Teaching information panel edits as one draft (v0.19). */
 interface TeachingDraft {
@@ -43,15 +45,17 @@ export function TeachingInfo({
   const api = useApi();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { deleting, runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
   const field = "h-11 aw-input px-3 text-[1rem]";
   const label = "text-[0.9375rem] font-medium text-text-muted";
 
   const remove = async (close: () => void) => {
     setError(null);
     try {
-      await api.teachingDelete(prep.id);
-      close();
-      onDeleted();
+      if (await runDeletion(() => api.teachingDelete(prep.id))) {
+        close();
+        onDeleted();
+      }
     } catch (e) {
       setError(toApiError(e).message);
     }
@@ -91,12 +95,12 @@ export function TeachingInfo({
           <SaveTeachingTemplate preparation={prep} />
           <div className="flex flex-wrap items-center gap-2">
             {confirmDelete ? (
-              <span role="group" aria-label={t("studies.teaching.deleteConfirm")} className="flex flex-wrap items-center gap-2 rounded-aw border-l-[3px] border-danger bg-hover px-2 py-1 text-[0.9375rem]">
+              <span role="group" aria-busy={deleting} aria-label={t("studies.teaching.deleteConfirm")} className="flex flex-wrap items-center gap-2 rounded-aw border-l-[3px] border-danger bg-hover px-2 py-1 text-[0.9375rem]">
                 <span>{t("studies.teaching.deleteConfirm")}</span>
-                <Button variant="danger" className="min-h-11" onClick={() => void remove(close)}>
+                <Button variant="danger" disabled={deleting} className="min-h-11" onClick={() => void remove(close)}>
                   {t("common.delete")}
                 </Button>
-                <button type="button" autoFocus onClick={() => setConfirmDelete(false)} className="min-h-11 rounded px-2 hover:bg-hover">
+                <button type="button" autoFocus disabled={deleting} onClick={() => setConfirmDelete(false)} className="min-h-11 rounded px-2 hover:bg-hover">
                   {t("common.keep")}
                 </button>
               </span>

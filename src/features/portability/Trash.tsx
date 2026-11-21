@@ -5,25 +5,29 @@ import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
 import { toApiError } from "@/lib/api";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 
 export function DeleteControl({ id, title, kind, permanent = false, initiallyConfirm = false, onCancel, onDone }: { id: string; title: string; kind: "project" | "study"; permanent?: boolean; initiallyConfirm?: boolean; onCancel?: () => void; onDone: () => void }) {
   const { t } = useTranslation();
   const api = useApi();
   const [confirm, setConfirm] = useState(initiallyConfirm);
   const [typed, setTyped] = useState("");
-  const [busy, setBusy] = useState(false);
+  const { deleting: busy, runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
   const [error, setError] = useState<string | null>(null);
   const remove = async () => {
     if (busy || (permanent && typed !== title)) return;
-    setBusy(true); setError(null);
+    setError(null);
     try {
-      if (kind === "project") await api.projectDelete(id, permanent);
-      else await api.studyDelete(id, permanent);
-      onDone();
+      const removed = await runDeletion(async () => {
+        if (kind === "project") await api.projectDelete(id, permanent);
+        else await api.studyDelete(id, permanent);
+      });
+      // Restore interaction before this control or its containing portal unmounts.
+      if (removed) onDone();
     } catch (e) { setError(toApiError(e).message); }
-    finally { setBusy(false); }
   };
-  return <section className="flex flex-col gap-2 border-t border-danger pt-3">
+  return <section aria-busy={busy} className="flex flex-col gap-2 border-t border-danger pt-3">
     <h3 className="type-group m-0">{t("settings.trash.danger")}</h3>
     <p className="m-0 text-text-muted">{t(`settings.trash.${kind}Hint`)}</p>
     {!confirm ? <Button variant="quiet" onClick={() => setConfirm(true)}><Trash2 className="size-4" aria-hidden="true" />{t(permanent ? "settings.trash.permanent" : "settings.trash.move")}</Button> : <div role="alertdialog" aria-label={t(permanent ? "settings.trash.permanentConfirm" : "settings.trash.confirm", { title })} className="flex flex-col gap-2">

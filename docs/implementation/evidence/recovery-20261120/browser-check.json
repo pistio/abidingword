@@ -1,0 +1,36 @@
+{
+  "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
+  "cleanBefore": true,
+  "startedUTC": "2026-11-21T00:36:18.567819+00:00",
+  "command": [
+    "node",
+    "tests/screenshots/recovery-interface.mjs",
+    "work/recovery-verification/final-browser"
+  ],
+  "platform": "Linux Chromium with real React App and invented memory APIs; not native Windows/SQLite acceptance",
+  "scriptSha256": "d82215fa2b974ee92827d19e81ad0b3c22fcade103a0e2144f9deff4d4a879ae",
+  "exitCode": 0,
+  "finishedUTC": "2026-11-21T00:37:54.488739+00:00",
+  "durationSeconds": 95.92,
+  "headUnchanged": true,
+  "cleanAfter": true,
+  "log": "work/recovery-verification/final-browser.log",
+  "logSha256": "4f3f50c3f16cdb8ffec4623b5239db2696e058d20c73862298926fab3a50d631",
+  "artifactsSha256": {
+    "work/recovery-verification/final-browser/de-480x640-1x-daily.png": "83d7b4c7a23c9efabf6b54680bd13f8686c27a0ce207a2d1240c76774d0f609a",
+    "work/recovery-verification/final-browser/de-480x640-1x-full.png": "356a719b2ecec93337584d6483cd4a177663dac01d33c6f53d2b6c3994bd246e",
+    "work/recovery-verification/final-browser/en-480x640-1x-daily.png": "16e421263def61d223ebb2b25b3787174fc96bb8750559c7ad8f26855ced339a",
+    "work/recovery-verification/final-browser/en-480x640-1x-full.png": "3c48a50b27082d91c53bf1ea4e3adef72934e908c37601f300d75003d13c08a7",
+    "work/recovery-verification/final-browser/en-640x450-2x-daily.png": "c75166edca2d265c5872d55acdf4b8760f547562ba9b1a7606ef6b33b8d06423",
+    "work/recovery-verification/final-browser/en-640x450-2x-full.png": "5896cade83d4f3cb3177fc33cc3d5ec536e5cbde9af7e7b4cccc028b0cd23f77",
+    "work/recovery-verification/final-browser/es-480x640-1x-daily.png": "9444d798816f5c9ac32d1b08d06a7a714834e7bbf30fa0f78ccd06dc15174b8c",
+    "work/recovery-verification/final-browser/es-480x640-1x-full.png": "d3f4d695f1b33b62d5c5858ec7683f5f6ac16a8c892adb7b0e4148675a94349f",
+    "work/recovery-verification/final-browser/fr-480x640-1x-daily.png": "7424b642246343f1ceac7957d4bd376bb444a53a0ca0d234945fccf1aacc7154",
+    "work/recovery-verification/final-browser/fr-480x640-1x-full.png": "a98efb181bf41a97403061e035d26894a40409530836d5f11685375c51c7c35a",
+    "work/recovery-verification/final-browser/ko-480x640-1x-daily.png": "c75b9be1091d209e2444502eb9bc35daa9f83ab928c4eaa36d0df96ddc8930aa",
+    "work/recovery-verification/final-browser/ko-480x640-1x-full.png": "285a9bb0ab8152d75d05076ddc1e0ad6233dcf7583218ae4d575c851a1f50f3f",
+    "work/recovery-verification/final-browser/pt-480x640-1x-daily.png": "44e54bb5a872fc38b4a9e2538aed532905758cfc53290cda5c73a28f6d5d69e0",
+    "work/recovery-verification/final-browser/pt-480x640-1x-full.png": "e54c3eb52ba6e29b2db701f4e865a8f6b96f6f10380668364260a9ca4ce3341a",
+    "work/recovery-verification/final-browser/results.json": "71d9ffbb1234bd8fefe1cfab3186a6810e77086aef57e9698b4c7b3a62e24351"
+  }
+}

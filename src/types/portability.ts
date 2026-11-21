@@ -81,6 +81,22 @@ export interface BackupPreview {
   size: number;
 }
 
+/** A database-only daily recovery point; imported files are NOT included. */
+export interface DailySnapshot {
+  id: string;
+  createdAt: string;
+  schemaVersion: number;
+  bytes: number;
+  usable: boolean;
+}
+
+/** An explicit restore leaves all managed source files untouched. */
+export interface DailySnapshotRestore {
+  createdAt: string;
+  safetyCopy: string;
+  filesUnchanged: boolean;
+}
+
 export interface RestoreReport {
   counts: BackupCounts;
   /** The copy of the database as it was just before restoring. */

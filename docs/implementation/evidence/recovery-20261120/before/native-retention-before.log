@@ -1,0 +1,22 @@
+   Compiling abiding-word v0.1.0 (/workspace/work/recovery-native-before/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 50.21s
+     Running tests/daily_snapshots.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshots-6bb2711a8be17c12)
+
+running 1 test
+test manual_database_names_are_neither_counted_as_today_nor_pruned ... FAILED
+
+failures:
+
+---- manual_database_names_are_neither_counted_as_today_nor_pruned stdout ----
+
+thread 'manual_database_names_are_neither_counted_as_today_nor_pruned' (9388) panicked at tests/daily_snapshots.rs:144:5:
+assertion failed: db.with_conn(|conn| backup::daily_snapshot(conn, &daily)).unwrap().is_some()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    manual_database_names_are_neither_counted_as_today_nor_pruned
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.37s
+
+error: test failed, to rerun pass `--test daily_snapshots`

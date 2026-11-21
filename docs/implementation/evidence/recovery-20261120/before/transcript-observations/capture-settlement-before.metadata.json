@@ -1,0 +1,54 @@
+{
+  "case": "Current author writing must settle before full-backup and project-package capture",
+  "evidenceKind": "Historical tool-console excerpt and metadata, transcribed from retained conversation tool output; original standalone stdout file was not saved",
+  "rerun": false,
+  "baseline": {
+    "baseCommit": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+    "branch": "feature/daily-snapshot-recovery-20261120",
+    "workingDirectory": "/workspace/work/daily-recovery",
+    "clean": false,
+    "exactWorkingTreeHash": null,
+    "description": "Current shared working tree containing new save-barrier work, recovery UI edits and added regression cases, before adding settleOutstandingWrites() to BackupCreate and ProjectExport. This was not an untouched run of b8d9af8. Exact full dirty-tree contents were not snapshotted.",
+    "precondition": "A real React Study title edit is scheduled; api.studyUpdate is held unresolved. Opening Settings unmounts the editor. Both file-capture actions must wait for the pending save."
+  },
+  "before": {
+    "command": "npm test -- tests/ui/portability.test.tsx -t 'waits for current Study writing before creating a' --maxWorkers=1",
+    "startUTC": "2026-11-20T23:05:37Z",
+    "exitCode": 1,
+    "passed": 0,
+    "failed": 2,
+    "skipped": 20,
+    "testNames": [
+      "Data and backup > waits for current Study writing before creating a backup file",
+      "Data and backup > waits for current Study writing before creating a project file"
+    ],
+    "observed": "backupCreate and projectExport each had already been called once while the Study save promise remained unresolved.",
+    "toolSessionId": 58960,
+    "completionChunkId": "7d027e",
+    "consoleExcerpt": "capture-settlement-before.console-excerpt.txt"
+  },
+  "correction": "Await settleOutstandingWrites() before native backupCreate/projectExport; also catch native save-dialog rejections within the action error boundary.",
+  "after": {
+    "command": "npm test -- tests/ui/portability.test.tsx --maxWorkers=1",
+    "startUTC": "2026-11-20T23:06:07Z",
+    "exitCode": 0,
+    "passed": 22,
+    "failed": 0,
+    "toolSessionId": 25586,
+    "completionChunkId": "211ada",
+    "expandedFollowup": {
+      "startUTC": "2026-11-20T23:06:55Z",
+      "passed": 26,
+      "failed": 0,
+      "notes": "Includes failed-writing and save-dialog-failure cases; targeted ESLint and typecheck also passed."
+    },
+    "authority": "Final exact-commit complete verification is recorded separately by the parent agent; these intermediate runs do not attest the final tree."
+  },
+  "claimLimitations": [
+    "This is implementation-time observed failing-before evidence, not a machine-archived full negative baseline.",
+    "Only the two targeted capture-settlement cases ran; twenty other cases were filtered out.",
+    "The baseline was a dirty intermediate branch state based on b8d9af8, not untouched b8d9af8.",
+    "No exact full working-tree hash or original standalone stdout file was retained.",
+    "The excerpt is explicitly transcript-derived and omits console decoration and npm update notices."
+  ]
+}

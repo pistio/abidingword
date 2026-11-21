@@ -48,7 +48,7 @@ export function ProjectView({ onDeleted, project, onProjectChanged, onOpenStudy,
     <div className="flex flex-col gap-8">
         <div>
           <p className="caps-label m-0 mb-2">{t("studies.projects.project")}</p>
-          <EditableTitle key={project.id} label={t("studies.projects.titleLabel")} value={project.title} onSave={rename} />
+          <EditableTitle saveKey={`project:${project.id}:title`} key={project.id} label={t("studies.projects.titleLabel")} value={project.title} onSave={rename} />
           <div className="-ml-2 mt-1 flex flex-wrap items-center gap-x-2 text-[0.9375rem] text-text-muted">
             <ProjectInfo onDeleted={onDeleted} project={project} onChanged={onProjectChanged} />
             <span className="px-2">{studyCountLabel(t, project.studyCount)}</span>

@@ -25,6 +25,7 @@ export interface AssistantHooks {
 }
 
 interface TeachingFieldProps {
+  saveKey: string;
   label: string;
   value: string;
   save: (value: string) => Promise<unknown>;
@@ -65,7 +66,7 @@ interface TeachingFieldProps {
  * person chooses "Use this", and they can undo that straight away.
  */
 export function TeachingField(props: TeachingFieldProps) {
-  const { label, value, save, part, pointId = null, blockId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
+  const { label, value, save, saveKey, part, pointId = null, blockId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
   const { t } = useTranslation();
   const generated = useId();
   const id = generated;
@@ -81,7 +82,7 @@ export function TeachingField(props: TeachingFieldProps) {
   const root = useRef<HTMLDivElement>(null);
   // One assistant panel at a time, over the workspace: this part's shows only while it owns it.
   const dock = useAssistDock();
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, saveKey, setText);
 
   // Fits the text area to its text; a title also refits when the pane's width changes.
   useAutosize(area as RefObject<HTMLTextAreaElement | null>, emphasis === "title" ? 1 : rows, text, placeholder);
@@ -92,6 +93,7 @@ export function TeachingField(props: TeachingFieldProps) {
 
   const change = useCallback(
     (next: string) => {
+      if (!root.current || root.current.closest("[inert]")) return;
       setText(next);
       schedule(next);
     },
@@ -137,7 +139,7 @@ export function TeachingField(props: TeachingFieldProps) {
    * it was made for has changed since asking, so nothing typed meanwhile is ever overwritten.
    */
   const apply = (suggestion: string, placement: "replace" | "start"): boolean => {
-    if (!action) return false;
+    if (!action || !root.current || root.current.closest("[inert]")) return false;
     const { selection, text: asked } = action.target;
     const current = selection ? text.slice(selection.start, selection.end) : text;
     if (current !== asked) return false;
@@ -166,6 +168,7 @@ export function TeachingField(props: TeachingFieldProps) {
   };
 
   const insertBelow = (option: string) => {
+    if (!root.current || root.current.closest("[inert]")) return;
     setUndo(text);
     change(text.trim() ? `${text.trimEnd()}\n\n${option.trim()}` : option.trim());
     flush();

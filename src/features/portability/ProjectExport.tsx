@@ -5,6 +5,7 @@ import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
+import { settleOutstandingWrites } from "@/hooks/SaveTracker";
 import type { ProjectExportReport } from "@/types/portability";
 import { countsLine, fileName } from "./format";
 
@@ -22,12 +23,13 @@ export function ProjectExport({ projectId, title, quiet = false }: { projectId: 
 
   const run = async () => {
     if (!projectId || busy) return;
+    setBusy(true);
     setError(null);
     setDone(null);
-    const path = await api.choosePortableSaveFile({ kind: "project", defaultName: `${fileName(title)}.awproject`, filterName: t("settings.data.projectFilter") });
-    if (!path) return;
-    setBusy(true);
     try {
+      const path = await api.choosePortableSaveFile({ kind: "project", defaultName: `${fileName(title)}.awproject`, filterName: t("settings.data.projectFilter") });
+      if (!path) return;
+      await settleOutstandingWrites();
       const [saved, report] = await api.projectExport({ projectId, path });
       setDone({ path: saved, report });
     } catch (e) {

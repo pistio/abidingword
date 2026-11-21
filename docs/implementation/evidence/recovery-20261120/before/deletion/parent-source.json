@@ -1,0 +1,16 @@
+{
+  "baselineCommit": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "productionClean": true,
+  "newTestOnly": true,
+  "files": {
+    "src/features/portability/Trash.tsx": "5fc17d5a26deef85dc956adb24701d4121e8478b97b37497ea3d5adcf7b430e9",
+    "src/features/teaching/TeachingInfo.tsx": "5e0407d1e9812376aa2991a6c1c06651a72f8531611538e339987b6c745eca76",
+    "src/hooks/SaveTracker.tsx": "13c130114bad98e9d435d7b6d37ccd79c05b890f5f803535c0b14b166bbd7da7",
+    "src/hooks/useAutosave.ts": "d1d40ec32760ec6df70c7a8e5557faf3dcf95c9dfc8b3d5cb5ecd4c2b2b08ad6",
+    "src/lib/databaseRestoreLock.ts": "efbf16e17cdb41939ff2df1d5995ebeab0df20d7026f5fd0d1826cfd220fa6ba",
+    "src/lib/guardedApi.ts": "2c208abd55a180bb31e2f8a84dae9cb0ff25e157a5368f95a6ba4ae879ece044",
+    "tests/ui/parent-delete-save-barrier.test.tsx": "6037e758f3a5d7affb1179e585d96aa66955ab27d4b2159ddc3ae7603dea536a"
+  },
+  "command": "npm test -- tests/ui/parent-delete-save-barrier.test.tsx --maxWorkers=1",
+  "priorSetupFailure": "Initial invocation did not copy test from correct cwd; no regression ran. Retained in setup-missing-test.log."
+}

@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, MoreHorizontal, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { toApiError } from "@/lib/api";
 import { useAutosize } from "@/hooks/useAutosize";
 import { useApi } from "@/lib/ApiContext";
 import type { BlockType, StudyBlock } from "@/types/domain";
@@ -63,6 +65,7 @@ export function BlockEditor(props: BlockEditorProps) {
   const [managing, setManaging] = useState(false);
   const manageId = useId();
   const toggle = useRef<HTMLButtonElement>(null);
+  const { root, deleting, runDeletion } = useSettledDelete();
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const area = useRef<HTMLTextAreaElement>(null);
 
@@ -70,18 +73,23 @@ export function BlockEditor(props: BlockEditorProps) {
     (content: string) => api.studyBlockUpdate({ id: block.id, content }),
     [api, block.id],
   );
-  const { schedule, flush } = useAutosave(save);
+  const current = useRef(text);
+  const { schedule, flush } = useAutosave(save, undefined, `study-block:${block.id}:content`, (value) => {
+    setText(value);
+    current.current = value;
+    onContent?.(block.id, value.trim().length > 0);
+  });
 
   // The text now, for Help (it changes only here).
-  const current = useRef(text);
   const change = useCallback(
     (next: string) => {
+      if (!root.current || root.current.closest("[inert]")) return;
       current.current = next;
       setText(next);
       onContent?.(block.id, next.trim().length > 0);
       schedule(next);
     },
-    [block.id, onContent, schedule],
+    [block.id, onContent, schedule, root],
   );
   useEffect(() => {
     if (!register) return;
@@ -93,6 +101,7 @@ export function BlockEditor(props: BlockEditorProps) {
         return current.current.slice(el.selectionStart, el.selectionEnd);
       },
       replace: (original, suggestion) => {
+        if (!root.current || root.current.closest("[inert]")) return false;
         const now = current.current;
         let next: string | null = null;
         if (now.trim() === original.trim()) next = suggestion;
@@ -106,7 +115,7 @@ export function BlockEditor(props: BlockEditorProps) {
       },
     });
     return () => register(block.id, null);
-  }, [register, block.id, change]);
+  }, [register, block.id, change, root]);
 
   const rows = block.blockType === "heading" ? 1 : 2;
   useAutosize(area, rows, text, placeholder);
@@ -123,11 +132,13 @@ export function BlockEditor(props: BlockEditorProps) {
       return;
     }
     try {
-      await api.studyBlockDelete(block.id);
-      onDeleted(block.id);
-    } catch {
+      await runDeletion(async () => {
+        await api.studyBlockDelete(block.id);
+        onDeleted(block.id);
+      });
+    } catch (error) {
       setConfirming(false);
-      setDeleteError(t("studies.blocks.deleteFailed"));
+      setDeleteError(toApiError(error).message || t("studies.blocks.deleteFailed"));
     }
   };
 
@@ -136,6 +147,9 @@ export function BlockEditor(props: BlockEditorProps) {
 
   return (
     <div
+      ref={root}
+      inert={deleting}
+      aria-busy={deleting || undefined}
       className="relative"
       onKeyDown={(e) => {
         if (e.key === "Escape" && managing) {

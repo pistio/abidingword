@@ -1,0 +1,24 @@
+   Compiling abiding-word v0.1.0 (/workspace/work/recovery-preservation-before/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 11.12s
+     Running tests/portability.rs (/workspace/abidingword/src-tauri/target/debug/deps/portability-755f7aacecb952bb)
+
+running 1 test
+test a_file_restore_failure_rolls_back_database_and_already_replaced_files ... FAILED
+
+failures:
+
+---- a_file_restore_failure_rolls_back_database_and_already_replaced_files stdout ----
+
+thread 'a_file_restore_failure_rolls_back_database_and_already_replaced_files' (13789) panicked at tests/portability.rs:1508:5:
+assertion `left == right` failed
+  left: ["study Abiding", "study Love one another", "part Abiding/Application", "part Abiding/Context", "part Abiding/Meaning", "part Abiding/Observations", "part Abiding/Text", "part Abiding/Theology", "part Love one another/Application", "part Love one another/Context", "part Love one another/Meaning", "part Love one another/Observations", "part Love one another/Text", "part Love one another/Theology", "note Fruit is the vine's, not the branch's. under The vine bears the branches.", "note The vine bears the branches. under -", "tag fruit", "passage John 15:1–11", "passage John 15:5", "relation Love one another -> Abiding", "step Abide in me/The true vine", "link The true vine -> The vine bears the branches.", "teaching passage The true vine JHN15", "material A vine at The true vine", "slide The true vine from The true vine"]
+ right: ["study Abiding", "study Love one another", "part Abiding/Application", "part Abiding/Context", "part Abiding/Meaning", "part Abiding/Observations", "part Abiding/Text", "part Abiding/Theology", "part Love one another/Application", "part Love one another/Context", "part Love one another/Meaning", "part Love one another/Observations", "part Love one another/Text", "part Love one another/Theology", "note Current author writing must survive a failed restore under -", "note Fruit is the vine's, not the branch's. under Current author writing must survive a failed restore", "tag fruit", "passage John 15:1–11", "passage John 15:5", "relation Love one another -> Abiding", "step Abide in me/The true vine", "link The true vine -> Current author writing must survive a failed restore", "teaching passage The true vine JHN15", "material A vine at The true vine", "slide The true vine from The true vine"]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    a_file_restore_failure_rolls_back_database_and_already_replaced_files
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.72s
+
+error: test failed, to rerun pass `--test portability`

@@ -1,0 +1,84 @@
+{
+  "platform": "Linux Chromium; actual React App with invented in-memory backend; no native Windows or SQLite acceptance",
+  "errors": [],
+  "pendingSave": {
+    "rootInert": true,
+    "focusedStatus": true,
+    "bodyChildren": [
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "SCRIPT",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": false,
+        "status": true
+      }
+    ],
+    "overlay": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 900
+    },
+    "writes": 1,
+    "deletes": 0
+  },
+  "pendingDelete": {
+    "rootInert": true,
+    "focusedStatus": true,
+    "bodyChildren": [
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "SCRIPT",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": false,
+        "status": true
+      },
+      {
+        "tag": "BUTTON",
+        "inert": true,
+        "status": false
+      }
+    ],
+    "overlay": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 900
+    },
+    "writes": 1,
+    "deletes": 1
+  },
+  "released": {
+    "rootInert": false,
+    "latePortalInert": false,
+    "focused": "<body>\n    <div id=\"root\"><div data-testid=\"app-shell\" class=\"fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text\"><a href=\"#pane-study\" class=\"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-10 focus:rounded-aw focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary\">Skip to study</a><header class=\"flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg px-4\"><div class=\"-ml-4 flex items-center\"><span class=\"inline-flex\" role=\"img\" aria-label=\"Abiding Word\"><img alt=\"\" height=\"44\" class=\"aw-on-light\" src=\"/src/design-system/assets/abid",
+    "error": "Abiding Word could not read or save your data. Your most recent change may not have been saved. Details are in the log file."
+  },
+  "passed": true
+}
