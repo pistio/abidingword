@@ -1,0 +1,3 @@
+dd6463ae66a28a92024533160ea651070315e47c05a922d0827f0a3b9152ee6a  src/features/studies/FindingNote.tsx
+65721dd70b06d568a3a1b7e0ca5ede50142cb79aebeb42346e6c83ae06db36c1  src/features/teaching/TeachingView.tsx
+bb87a630c7c5769a6d2efce4a8c45af9a74c53852736253ed849d0f4d6638aea  tests/ui/note-point-delete-save-barrier.test.tsx

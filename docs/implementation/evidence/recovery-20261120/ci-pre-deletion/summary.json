@@ -1,0 +1,376 @@
+{
+  "repository": "pistio/abidingword",
+  "headSha": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "implementationSourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+  "workflowRunId": 44841272562,
+  "url": "https://github.com/pistio/abidingword/actions/runs/44841272562",
+  "attempt": 1,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "success",
+  "createdAt": "2026-11-21T00:04:00Z",
+  "updatedAt": "2026-11-21T00:10:55Z",
+  "recordedUTC": "2026-11-21T00:12:17.519524+00:00",
+  "deliveryStatus": "Superseded pending deletion-barrier correction; this green CI run is not final owner-delivery acceptance.",
+  "laterFinding": "Independent post-push review reproduced deletion after a failed save leaving a detached draft retrying NotFound and blocking backup/export/recovery until reload. The root agent is correcting and testing that later finding separately. This run did not test that correction.",
+  "jobs": [
+    {
+      "id": 136649967524,
+      "name": "Rust",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-21T00:04:03Z",
+      "completed_at": "2026-11-21T00:10:54Z",
+      "html_url": "https://github.com/pistio/abidingword/actions/runs/44841272562/job/136649967524",
+      "runner_id": 1000001792,
+      "runner_name": "GitHub Actions 1000001792",
+      "runner_group_id": 0,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T00:04:03Z",
+          "completed_at": "2026-11-21T00:04:04Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T00:04:04Z",
+          "completed_at": "2026-11-21T00:04:08Z"
+        },
+        {
+          "name": "Install Tauri system libraries",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T00:04:08Z",
+          "completed_at": "2026-11-21T00:04:44Z"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T00:04:44Z",
+          "completed_at": "2026-11-21T00:04:47Z"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T00:04:47Z",
+          "completed_at": "2026-11-21T00:04:56Z"
+        },
+        {
+          "name": "Tool versions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T00:04:56Z",
+          "completed_at": "2026-11-21T00:04:56Z"
+        },
+        {
+          "name": "Placeholder for the built interface",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T00:04:56Z",
+          "completed_at": "2026-11-21T00:04:56Z"
+        },
+        {
+          "name": "Format",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T00:04:56Z",
+          "completed_at": "2026-11-21T00:05:00Z"
+        },
+        {
+          "name": "Clippy (warnings are errors)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T00:05:00Z",
+          "completed_at": "2026-11-21T00:05:35Z"
+        },
+        {
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T00:05:35Z",
+          "completed_at": "2026-11-21T00:10:52Z"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19,
+          "started_at": "2026-11-21T00:10:52Z",
+          "completed_at": "2026-11-21T00:10:52Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-21T00:10:52Z",
+          "completed_at": "2026-11-21T00:10:52Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-21T00:10:52Z",
+          "completed_at": "2026-11-21T00:10:52Z"
+        }
+      ]
+    },
+    {
+      "id": 136649968020,
+      "name": "Frontend",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-21T00:04:03Z",
+      "completed_at": "2026-11-21T00:09:14Z",
+      "html_url": "https://github.com/pistio/abidingword/actions/runs/44841272562/job/136649968020",
+      "runner_id": 1000001793,
+      "runner_name": "GitHub Actions 1000001793",
+      "runner_group_id": 0,
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-21T00:04:04Z",
+          "completed_at": "2026-11-21T00:04:06Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-21T00:04:06Z",
+          "completed_at": "2026-11-21T00:04:16Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-21T00:04:16Z",
+          "completed_at": "2026-11-21T00:04:26Z"
+        },
+        {
+          "name": "Tool versions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-21T00:04:26Z",
+          "completed_at": "2026-11-21T00:04:26Z"
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-21T00:04:26Z",
+          "completed_at": "2026-11-21T00:04:31Z"
+        },
+        {
+          "name": "Run npm run typecheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-21T00:04:31Z",
+          "completed_at": "2026-11-21T00:04:51Z"
+        },
+        {
+          "name": "Run npm run lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-21T00:04:51Z",
+          "completed_at": "2026-11-21T00:05:13Z"
+        },
+        {
+          "name": "Translations (npm run i18n:check)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-21T00:05:13Z",
+          "completed_at": "2026-11-21T00:05:14Z"
+        },
+        {
+          "name": "Bundled Scripture integrity, licences and installer attribution",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-21T00:05:14Z",
+          "completed_at": "2026-11-21T00:05:14Z"
+        },
+        {
+          "name": "No high-severity production npm vulnerabilities",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-21T00:05:14Z",
+          "completed_at": "2026-11-21T00:05:14Z"
+        },
+        {
+          "name": "Run npm test",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-21T00:05:14Z",
+          "completed_at": "2026-11-21T00:08:48Z"
+        },
+        {
+          "name": "Run npm run build",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-21T00:08:48Z",
+          "completed_at": "2026-11-21T00:09:11Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 23,
+          "started_at": "2026-11-21T00:09:11Z",
+          "completed_at": "2026-11-21T00:09:11Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 24,
+          "started_at": "2026-11-21T00:09:11Z",
+          "completed_at": "2026-11-21T00:09:11Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-11-21T00:09:11Z",
+          "completed_at": "2026-11-21T00:09:11Z"
+        }
+      ]
+    }
+  ],
+  "frontend": {
+    "actualTestFiles": 132,
+    "passedTests": 1427,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "unhandledErrors": 0,
+    "reactActWarnings": 799,
+    "productionBuild": "passed"
+  },
+  "rust": {
+    "toolchain": {
+      "rustc": "1.100.0 (0ef1bc386 2026-11-09)",
+      "cargo": "1.100.0 (3acc79c0c 2026-11-05)"
+    },
+    "format": "passed",
+    "clippy": "passed",
+    "tests": "passed",
+    "testTargets": 105,
+    "passedTests": 1174,
+    "failedTests": 0,
+    "ignoredTests": 9,
+    "ignoredTestNames": [
+      "document_units_dump",
+      "real_file_import_and_rebuild_report",
+      "write_examples",
+      "real_document_editions_report",
+      "bundled_number_index_cost",
+      "oshb_corpus_reference_correctness",
+      "real_editions_report",
+      "write_interface_fixture",
+      "a_whole_generated_annotated_bible_is_measured"
+    ],
+    "filteredTests": 0
+  },
+  "nativeBuilds": {
+    "runId": 44841272446,
+    "url": "https://github.com/pistio/abidingword/actions/runs/44841272446",
+    "headSha": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+    "conclusion": "skipped",
+    "jobs": [
+      {
+        "id": 136649968867,
+        "name": "Linux package",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-11-21T00:04:01Z",
+        "completed_at": "2026-11-21T00:04:01Z",
+        "html_url": "https://github.com/pistio/abidingword/actions/runs/44841272446/job/136649968867",
+        "runner_id": null,
+        "runner_name": null,
+        "runner_group_id": null,
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "steps": []
+      },
+      {
+        "id": 136650017849,
+        "name": "Windows package",
+        "status": "completed",
+        "conclusion": "skipped",
+        "started_at": "2026-11-21T00:04:08Z",
+        "completed_at": "2026-11-21T00:04:01Z",
+        "html_url": "https://github.com/pistio/abidingword/actions/runs/44841272446/job/136650017849",
+        "runner_id": null,
+        "runner_name": null,
+        "runner_group_id": null,
+        "labels": [
+          "windows-latest"
+        ],
+        "steps": []
+      }
+    ],
+    "windowsRunnerAllocated": false,
+    "evidence": "Both package jobs skipped with no steps and null runner identities. The windows-latest label is only the configured selector."
+  },
+  "logs": [
+    {
+      "job": "frontend",
+      "path": "work/recovery-verification/ci-pre-deletion-3424f799-frontend.log",
+      "sha256": "6a4d6120fa0d41d8a743829d024eb2e535ebc8dab3ae261ad3a5de47d1307ff0",
+      "bytes": 688029,
+      "transport": "GitHub connector decoded job log, retained as UTF-8 text"
+    },
+    {
+      "job": "rust",
+      "path": "work/recovery-verification/ci-pre-deletion-3424f799-rust.log",
+      "sha256": "5e0b63bff13d481848985ee22db50d4c6f9847561813d7e7f4b3f6de3278791f",
+      "bytes": 310296,
+      "transport": "GitHub connector decoded job log, retained as UTF-8 text"
+    }
+  ],
+  "metadataFiles": [
+    "work/recovery-verification/ci-pre-deletion-3424f799-run.json",
+    "work/recovery-verification/ci-pre-deletion-3424f799-jobs.json",
+    "work/recovery-verification/ci-pre-deletion-3424f799-native-run.json",
+    "work/recovery-verification/ci-pre-deletion-3424f799-native-jobs.json",
+    "work/recovery-verification/ci-pre-deletion-3424f799-monitor.json"
+  ],
+  "actionsTaken": "Read-only workflow/job/log queries and ignored local evidence writes only. No dispatch, retry, cancel, source edits or push."
+}

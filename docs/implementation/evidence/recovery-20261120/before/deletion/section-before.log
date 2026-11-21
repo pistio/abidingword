@@ -1,0 +1,40 @@
+
+> abiding-word@0.1.0 test
+> vitest run tests/ui/section-delete-save-barrier.test.tsx --maxWorkers=1
+
+
+ RUN  v4.1.11 /workspace/work/recovery-parent-delete-before
+
+ ❯ tests/ui/section-delete-save-barrier.test.tsx (1 test | 1 failed) 850ms
+   × prevents fresh section writing after settlement until native deletion finishes 847ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/ui/section-delete-save-barrier.test.tsx > prevents fresh section writing after settlement until native deletion finishes
+Error: expect(element).toHaveValue(Latest invented section writing)
+
+Expected the element to have value:
+  Latest invented section writing
+Received:
+  Latest invented section writing late section draft
+ ❯ tests/ui/section-delete-save-barrier.test.tsx:28:19
+     26|     await user.click(field);
+     27|     await user.keyboard(" late section draft{Escape}");
+     28|     expect(field).toHaveValue("Latest invented section writing");
+       |                   ^
+     29|     expect(dialog).toBeInTheDocument();
+     30|   } finally {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  00:28:17
+   Duration  4.73s (transform 2.33s, setup 1.15s, import 2.15s, tests 850ms, environment 417ms)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice

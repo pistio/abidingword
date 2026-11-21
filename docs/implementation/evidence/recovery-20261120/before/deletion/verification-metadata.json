@@ -1,0 +1,62 @@
+{
+  "baselineCommit": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "baselineProductionClean": true,
+  "baselineEnvironment": "Detached isolated production checkout; three newly copied regression files plus symlink to existing node_modules. No production edits.",
+  "baselineCases": {
+    "parent": 9,
+    "findingAndLegacyPoint": 6,
+    "section": 1,
+    "totalFailed": 16
+  },
+  "baselineLogs": [
+    "before.log",
+    "note-point-before.log",
+    "section-before.log"
+  ],
+  "baselineTestFiles": {
+    "section-delete-save-barrier.test.tsx": "c8236fd2424d00bc48fc23a6474ce69202d3e1978ea1e19a5e2357f2c45772cc",
+    "note-point-delete-save-barrier.test.tsx": "bb87a630c7c5769a6d2efce4a8c45af9a74c53852736253ed849d0f4d6638aea",
+    "parent-delete-save-barrier.test.tsx": "6037e758f3a5d7affb1179e585d96aa66955ab27d4b2159ddc3ae7603dea536a"
+  },
+  "baselineSectionSourceSha256": "b82c603ad82e11bca7ae1293a215faf230b9be8c7e51e13467e9c6d1c7bb2d69",
+  "correctedParentCases": 12,
+  "correctedFindingAndLegacyCases": 6,
+  "correctedSectionCases": 1,
+  "finalFocusedResult": "28 passed in four files: 19 deletion regressions plus 9 existing owner Study corrections; final-focus-tests.log",
+  "earlierFocusedResult": "111 passed in seven files before the final SectionEditor and next-frame focus cleanup; focused-final.log. Not an additional unique-test count.",
+  "correctedSourceBase": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "correctedSourceState": "Shared uncommitted implementation; production files below fingerprinted. Other sibling changes coexist in shared checkout; parent will commit and run final whole-repository checks.",
+  "correctedFilesSha256": {
+    "src/features/portability/Trash.tsx": "ff950c3d04b80bc294cbf4bcbc61972a6bd533fdbc2265308014909275077362",
+    "src/features/teaching/TeachingInfo.tsx": "89b59a47a0ff3f9c7bad82ca5f71fb88f3a98f6a0983d4443bd745349292e949",
+    "src/features/teaching/TeachingView.tsx": "eacc996de4d2e94f181af1728ccf3e3eb2ac89b665d36229bce2bdbff3c20b50",
+    "src/features/studies/FindingNote.tsx": "8d205c1e848cedfb90a54c19897259caa324921601557958dd7f63a9d8b78798",
+    "src/features/studies/SectionEditor.tsx": "7c478f8f823bdb1008a296aaf6198c01642a5c55f0283bf7ed6c0f942d586754",
+    "src/hooks/useSettledDelete.ts": "6b6447c4961ea6db1586ed108c30070cf2c1ce1b4f3611739b8fb3b67edb7f3b",
+    "src/lib/pauseWorkspaceInteraction.ts": "69a40aeae450e56540c16bbd1f6670ebf62335404fa921f658f342add8223c7f",
+    "tests/ui/parent-delete-save-barrier.test.tsx": "9717238b175ee8d4bf32385d19037e743a12b02b8f5ff183b7156a40ac459906",
+    "tests/ui/note-point-delete-save-barrier.test.tsx": "ec4c0ec908ecfe05a516a77ab3108ceba2338f2b05f471569272d32b05c9e6ed",
+    "tests/ui/section-delete-save-barrier.test.tsx": "c8236fd2424d00bc48fc23a6474ce69202d3e1978ea1e19a5e2357f2c45772cc",
+    "tests/screenshots/parent-deletion.mjs": "96eb78004c549e803604e141304128b31b8e66ffb242973c172e7b4fae5a7f15"
+  },
+  "browser": {
+    "script": "tests/screenshots/parent-deletion.mjs",
+    "result": "browser/results.json",
+    "scenario": "Real React App in Linux Chromium with invented memory backend; pending project title save, native-shaped deferred delete, failed delete release and successful retry. Physical keyboard/mouse input, Escape/outside click, late portal capture, inert and focus checked.",
+    "screenshots": [
+      "browser/pending-delete.png",
+      "browser/failure-released.png",
+      "browser/success-usable.png"
+    ],
+    "notNativeAcceptance": true
+  },
+  "limitations": [
+    "React tests use invented memory APIs and controlled deferred promises; no real SQLite or Windows execution in this evidence.",
+    "Project/Study parent regressions use their title writes; Teaching parent regression uses Teaching body. Native Study child block/section update does not validate tombstoned Study/project ancestry; no claim that every Study body update returns NotFound after parent trash.",
+    "Original parent negative baseline had nine tests. Three deletion rejection/inert/focus cases and late-portal assertions were added during correction and have no separate baseline execution.",
+    "Baseline note/point test had an unsupported TypeScript-only exact query option; runtime cases executed and failed meaningful assertions; option removed in corrected test. No claim baseline added tests passed typecheck.",
+    "setup-missing-test.log and browser setup/selector/error-fixture attempt directories are retained setup failures, not demonstrated production regressions.",
+    "browser-before-focus-correction passed its then-existing assertions but recorded focus on body after failure. Explicit focus assertion and guarded next-frame focus correction were added; final browser evidence returns focus to enabled Move to Trash.",
+    "Final typecheck/lint logs are separate from the test run; no paid Actions, native build, installer, deployment, merge or data migration performed by this agent."
+  ]
+}

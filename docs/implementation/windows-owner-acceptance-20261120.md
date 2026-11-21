@@ -1,8 +1,8 @@
 # Abiding Word — Windows acceptance of recovery and preserved writing
 
-**20 November 2026 · procedure prepared, not executed by this document.**
+**20 November 2026 procedure · continued 21 November · prepared, not executed by this document.**
 
-This worksheet targets the final `feature/daily-snapshot-recovery-20261120` implementation stacked on [PR #55](https://github.com/pistio/abidingword/pull/55), with [PR #54](https://github.com/pistio/abidingword/pull/54) inherited. **Implementation candidate: `e760fad122bee4b31301cb7cabdfa7c9d671e2d2`. All permitted local checks pass; see [verification record](daily-recovery-20261120-verification.json) and [PR #56](https://github.com/pistio/abidingword/pull/56) for exact pushed-head CI results.** No matching Windows executable is claimed to exist until its separate build record supplies its exact source SHA and SHA-256.
+This worksheet targets `feature/daily-snapshot-recovery-20261120`, stacked on [PR #55](https://github.com/pistio/abidingword/pull/55), with [PR #54](https://github.com/pistio/abidingword/pull/54) inherited. **Implementation candidate: `607e965d9c59a1dd93d23aaf95961944c11211a7`. All required local checks pass; see [verification record](daily-recovery-20261120-verification.json) and [PR #56](https://github.com/pistio/abidingword/pull/56) for exact pushed-head CI results.** No matching Windows executable is claimed until its separate build record supplies its source SHA and SHA-256.
 
 The later PR #55 record and owner instructions retain acceptance of **Settings → Sources → Edit details** in the `13b65b7` Windows candidate. [PR #54’s completed-build record](https://github.com/pistio/abidingword/pull/54#issuecomment-7043179084) identifies its successful one-attempt run `44758102948`, workflow `229a268f2fc803d4cc134eafd4500fb719afeb7a` and setup EXE SHA-256 `3fc34919f4544c4346d8280f18b2c96d1abb5b04e0e2c77e164919c5f9003109`; static artifact checks are distinct from owner observations. The earlier delivered `bcf4858` candidate and its [build evidence](source-coverage-windows-build-20261119-verification.json) remain historical. Neither old binary contains this recovery milestone. This worksheet does not authorise a build, installation, merge, release, signing, updater publication or NiPogi deployment.
 
@@ -45,6 +45,16 @@ Every row starts **NOT TESTED on the recovery candidate**. Record PASS / FAIL / 
 
 A valid daily-restore pass requires old data restored, current data retained in the verified safety copy, **zero imported-file changes**, and no late write after reload. A valid full-restore pass additionally requires file integrity from the full backup. Participant privacy must survive both routes. Safety-copy existence alone is insufficient: inspect its expected newer writing using read-only disposable test tooling.
 
+## Deletion and continued usability
+
+Use extra invented records within disposable profile A so the populated recovery fixture remains available. Any delayed/rejected operation is engineer-controlled and confined to that profile. These rows start NOT TESTED on Windows.
+
+| ID | Action | Required observation and evidence |
+|---|---|---|
+| R15 | Delete an item with pending/failed writing | For a Study paragraph, Q&A, structured entry and Teaching block, type distinctive text and confirm deletion before saving finishes. Removal waits and the editor refuses fresh input. A controlled failed save prevents deletion and retains the exact draft for retry. After saving and successful deletion, backup, project export and recovery preparation work without a missing-record retry loop. |
+| R16 | Delete a parent, note or section while operations are delayed | Use separate invented Project, Study, Teaching, finding, legacy Teaching point and section records. Try typing, Escape, outside clicks, shortcuts and another panel while saving/removal is pending; editing must remain paused. Separately Cancel before confirmation and verify no deletion. For parent Trash, reopen using the existing Trash route and check saved writing; respect each item type's existing deletion semantics. |
+| R17 | Recover from a rejected deletion | Inject a native-shaped deletion failure in the disposable profile. Interaction releases, the error is understandable and writing remains. Focus returns to the enabled initiating control when still present, without overriding a newer choice. Retry successfully, then verify writing, backup/export and recovery inspection remain usable. Record native focus/input observations; Linux Chromium does not pass this row. |
+
 ## Remaining combined Windows acceptance
 
 These inherited routes are implemented; the table does not create replacement functionality or reopen the narrow owner acceptances.
@@ -68,4 +78,4 @@ These inherited routes are implemented; the table does not create replacement fu
 
 Retain one metadata report with all PASS/FAIL/BLOCKED rows, exact executable/source identities, invented input hashes, before/after text/provenance, source-file hash inventories, safety-copy locations and native screenshots. Keep disposable databases/backups privately with the engineer for inspection; do not publish them indiscriminately merely because they were intended as test data. Exported participant files and log excerpts must still be inspected for accidental private content.
 
-Report automated evidence and native observations separately. Any failed save, unexpected data change, private marker in participant output, missing safety copy, unclear rollback, or resumed stale writer blocks acceptance. Unrun rows stay NOT TESTED. Finish at owner assessment; a complete worksheet does not itself authorise merge or public release.
+Report automated evidence and native observations separately. Any failed save, unexpected data change, private marker in participant output, missing safety copy, unclear rollback or resumed stale writer blocks acceptance. Deletion before required saving, fresh input during removal, an unresolved draft retry after deletion or an unreleased interaction pause also blocks acceptance. Unrun rows stay NOT TESTED. Finish at owner assessment; this worksheet does not authorise merge or public release.

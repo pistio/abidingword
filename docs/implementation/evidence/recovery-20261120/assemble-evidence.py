@@ -17,9 +17,10 @@ import shutil
 import subprocess
 
 
-SOURCE = "e760fad122bee4b31301cb7cabdfa7c9d671e2d2"
+SOURCE = "607e965d9c59a1dd93d23aaf95961944c11211a7"
 BASELINE = "b8d9af869c95395a44cc6d9a3867626ab83d9804"
 FIRST_SOURCE = "b5a0c8c800da83f45f475cbf3639897c4f4bf977"
+DELETION_BASELINE = "3424f799baf6758afd2d918a6fd08e396de83ff9"
 ROOT = Path(__file__).resolve().parents[2]
 WORK = ROOT / "work/recovery-verification"
 DEST = ROOT / "docs/implementation/evidence/recovery-20261120"
@@ -223,6 +224,11 @@ def main() -> None:
         require(browser_check.get(key) is True, f"Browser: {key} is not true")
     require(browser_check.get("exitCode") == 0 and bool(browser_check.get("startedUTC")),
             "Browser procedure is unfinished or failed")
+    if "scriptSha256" in browser_check:
+        require(digest(ROOT / "tests/screenshots/recovery-interface.mjs") == browser_check["scriptSha256"],
+                "Recovery browser script changed")
+    for name, expected_hash in browser_check.get("artifactsSha256", {}).items():
+        require(digest(ROOT / name) == expected_hash, f"Recovery browser artifact changed: {name}")
     browser_results_path = WORK / "final-browser/results.json"
     browser_results = read_json(browser_results_path)
     flows = browser_results.get("results", [])
@@ -239,6 +245,154 @@ def main() -> None:
             name = f"{lang}-480x640-1x-{kind}.png"
             add(WORK / "final-browser" / name, "browser/" + name)
     add(WORK / "final-browser/en-640x450-2x-full.png", "browser/en-640x450-2x-full.png")
+
+    # Exact-baseline deletion failures are separate from setup/selector mistakes.
+    delete_before = read_json(WORK / "delete-before/frontend.json")
+    delete_before_source = read_json(WORK / "delete-before/source.json")
+    require(delete_before_source.get("sourceHead") == DELETION_BASELINE
+            and delete_before_source.get("applicationDiff") == "",
+            "Block deletion baseline production identity is not clean/exact")
+    delete_before_counts = frontend_counts(delete_before)
+    require(delete_before_counts["reportedFailedTests"] == 8
+            and delete_before_counts["assertionStatuses"] == {"failed": 8},
+            "Expected eight actual block-deletion baseline failures")
+    parent_dir = WORK / "parent-deletion"
+    parent_meta = read_json(parent_dir / "verification-metadata.json")
+    parent_source = read_json(parent_dir / "before-source.json")
+    require(parent_meta.get("baselineCommit") == DELETION_BASELINE
+            and parent_meta.get("baselineProductionClean") is True
+            and parent_source.get("baselineCommit") == DELETION_BASELINE
+            and parent_source.get("productionClean") is True,
+            "Parent deletion baseline production identity is not clean/exact")
+    deletion_before_counts = {"blocks": 8}
+    for label, filename, expected_failed in (
+        ("parents", "before.log", 9),
+        ("findingsAndLegacyPoints", "note-point-before.log", 6),
+        ("section", "section-before.log", 1),
+    ):
+        content = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", (parent_dir / filename).read_text())
+        matches = re.findall(r"Tests\s+(\d+) failed \((\d+)\)", content)
+        require(matches and matches[-1] == (str(expected_failed), str(expected_failed)),
+                f"Wrong negative deletion regression count: {filename}")
+        deletion_before_counts[label] = expected_failed
+        add(parent_dir / filename, "before/deletion/" + filename)
+    require(sum(deletion_before_counts.values()) == 24, "Deletion baseline count must be 24")
+    for filename in ("frontend.json", "source.json", "stdout.log"):
+        add(WORK / "delete-before" / filename, "before/deletion/blocks-" + filename)
+        add(WORK / "delete-before/initial-harness-attempt" / filename,
+            "before/deletion/excluded-setup/initial-block-harness-" + filename)
+    add(parent_dir / "verification-metadata.json", "before/deletion/verification-metadata.json")
+    add(parent_dir / "before-source.json", "before/deletion/parent-source.json")
+    source_staging = WORK / "deletion-baseline-test-sources"
+    baseline_test_manifest = read_json(source_staging / "manifest.json")
+    require(baseline_test_manifest.get("baselineProductionCommit") == DELETION_BASELINE,
+            "Wrong baseline for retained deletion test bytes")
+    expected_test_sources = {"delete-save-barrier.test-source.txt": delete_before_source["testSha256"]}
+    expected_test_sources.update({name.removesuffix(".tsx") + "-source.txt": expected_hash
+                                  for name, expected_hash in parent_meta["baselineTestFiles"].items()})
+    initial_harness_source = read_json(WORK / "delete-before/initial-harness-attempt/source.json")
+    expected_test_sources["initial-block-harness.test-source.txt"] = initial_harness_source["testSha256"]
+    require({Path(item["staged"]).name for item in baseline_test_manifest["files"]}
+            == set(expected_test_sources), "Retained baseline test-source set is incomplete")
+    baseline_test_source_paths = []
+    for item in baseline_test_manifest["files"]:
+        name = Path(item["staged"]).name
+        path = source_staging / name
+        require(item["sha256"] == expected_test_sources[name] == digest(path),
+                f"Retained deletion baseline test bytes changed: {name}")
+        destination = ("before/deletion/excluded-setup/" if name.startswith("initial-")
+                       else "before/deletion/") + name
+        add(path, destination)
+        baseline_test_source_paths.append(destination)
+    add(source_staging / "manifest.json", "before/deletion/test-source-manifest.json")
+    note_point_source_hashes = source_staging / "note-point-before-source.sha256"
+    for line in note_point_source_hashes.read_text().splitlines():
+        expected_hash, name = line.split(maxsplit=1)
+        if name.startswith("tests/"):
+            actual_hash = expected_test_sources[Path(name).name.removesuffix(".tsx") + "-source.txt"]
+        else:
+            original = subprocess.check_output(["git", "show", f"{DELETION_BASELINE}:{name}"], cwd=ROOT)
+            actual_hash = hashlib.sha256(original).hexdigest()
+        require(actual_hash == expected_hash, f"Note/point baseline fingerprint mismatch: {name}")
+    add(note_point_source_hashes, "before/deletion/note-point-before-source.sha256")
+    add(parent_dir / "setup-missing-test.log", "before/deletion/excluded-setup/setup-missing-test.log")
+    for attempt_name in ("browser-setup-attempt", "browser-selector-attempt",
+                         "browser-error-fixture-attempt", "browser-localized-error-attempt"):
+        add(parent_dir / (attempt_name + ".log"), "before/deletion/excluded-setup/" + attempt_name + ".log")
+        add(parent_dir / attempt_name / "results.json", "before/deletion/excluded-setup/" + attempt_name + ".json")
+    focus_before = read_json(parent_dir / "browser-before-focus-correction/results.json")
+    require(focus_before.get("passed") is True
+            and focus_before.get("released", {}).get("focused", "").startswith("<body>"),
+            "Earlier Chromium focus observation is missing or misclassified")
+    add(parent_dir / "browser-before-focus-correction/results.json", "before/deletion/body-focus-observation.json")
+    add(parent_dir / "browser-before-focus-correction.log", "before/deletion/body-focus-observation.log")
+    deletion_test_names = (
+        "delete-save-barrier.test.tsx", "parent-delete-save-barrier.test.tsx",
+        "note-point-delete-save-barrier.test.tsx", "section-delete-save-barrier.test.tsx",
+    )
+    final_deletion_counts = {}
+    for name in deletion_test_names:
+        matching = [item for item in report["testResults"] if Path(item["name"]).name == name]
+        require(len(matching) == 1 and matching[0]["status"] == "passed",
+                f"Missing passing final deletion file: {name}")
+        assertions = matching[0]["assertionResults"]
+        require(assertions and all(item["status"] == "passed" for item in assertions),
+                f"Nonpassing final deletion assertions: {name}")
+        final_deletion_counts[name] = len(assertions)
+    # Counts are derived from the final report, not hardcoded total-suite figures.
+    require(sum(final_deletion_counts.values()) >= sum(deletion_before_counts.values()),
+            "Final deletion coverage is smaller than the demonstrated baseline")
+
+    parent_check_path = parent_dir / "final-browser-check.json"
+    parent_check = read_json(parent_check_path)
+    require(parent_check.get("sourceSha") == SOURCE, "Parent browser is not final source")
+    for key in ("cleanBefore", "cleanAfter", "headUnchanged"):
+        require(parent_check.get(key) is True, f"Parent browser: {key} is not true")
+    require(parent_check.get("exitCode") == 0 and bool(parent_check.get("startedUTC")),
+            "Parent deletion browser run is unfinished or failed")
+    require(bool(parent_check.get("finishedUTC")), "Parent deletion browser completion timestamp is missing")
+    require(digest(ROOT / "tests/screenshots/parent-deletion.mjs") == parent_check.get("scriptSha256"),
+            "Parent deletion browser script changed")
+    require(bool(parent_check.get("artifactsSha256")), "Parent deletion artifact hashes are missing")
+    for name, expected_hash in parent_check["artifactsSha256"].items():
+        require(digest(ROOT / name) == expected_hash, f"Parent deletion artifact changed: {name}")
+    parent_browser_path = parent_dir / "final-browser/results.json"
+    parent_browser = read_json(parent_browser_path)
+    require(parent_browser.get("passed") is True and parent_browser.get("errors") == [],
+            "Final parent deletion browser scenario failed")
+    require(parent_browser["pendingSave"]["rootInert"] is True
+            and parent_browser["pendingSave"]["deletes"] == 0
+            and parent_browser["pendingDelete"]["rootInert"] is True
+            and parent_browser["released"]["rootInert"] is False
+            and parent_browser["released"]["latePortalInert"] is False
+            and parent_browser["released"]["focused"].startswith("<button"),
+            "Parent deletion containment/release/focus evidence is incomplete")
+    add(parent_check_path, "parent-deletion/browser-check.json")
+    add(parent_browser_path, "parent-deletion/browser-results.json")
+    parent_final_log = ROOT / parent_check["log"] if "log" in parent_check else parent_dir / "final-browser.log"
+    if "logSha256" in parent_check:
+        require(digest(parent_final_log) == parent_check["logSha256"], "Parent browser log hash changed")
+    add(parent_final_log, "parent-deletion/browser.log")
+    for filename in ("pending-delete.png", "failure-released.png", "success-usable.png"):
+        add(parent_dir / "final-browser" / filename, "parent-deletion/" + filename)
+
+    pre_deletion_ci_path = WORK / "ci-pre-deletion-review.json"
+    pre_deletion_ci = read_json(pre_deletion_ci_path)
+    require(pre_deletion_ci.get("headSha") == DELETION_BASELINE
+            and pre_deletion_ci.get("workflowRunId") == 44841272562
+            and pre_deletion_ci.get("status") == "completed"
+            and pre_deletion_ci.get("conclusion") == "success",
+            "Missing green pre-deletion CI evidence")
+    add(pre_deletion_ci_path, "ci-pre-deletion/summary.json")
+    for log in pre_deletion_ci["logs"]:
+        path = ROOT / log["path"]
+        require(digest(path) == log["sha256"], "Pre-deletion CI log changed")
+        add(path, "ci-pre-deletion/" + path.name)
+    for name in pre_deletion_ci["metadataFiles"]:
+        path = ROOT / name
+        add(path, "ci-pre-deletion/" + path.name)
+    require(not git("diff", "--name-only", f"{DELETION_BASELINE}..{SOURCE}", "--", "src-tauri"),
+            "Native source changed since the pre-deletion Rust1.100 CI pass")
 
     additional_observations = sorted((WORK / "additional-before").glob("*"))
     for path in additional_observations:
@@ -313,7 +467,10 @@ def main() -> None:
         "implementationSourceSha": SOURCE,
         "commitPrivacyCorrection": metadata_correction,
         "firstGitHubCIFailure": ci_failure,
-        "ciLintCorrection": {"source": SOURCE, "cause": "Rust1.100 Clippy needlessly conditional Boolean after Windows cfg-elision", "change": "Equivalent per-platform symlink/reparse expressions; no path-validation behavior or migration change", "localRust": "1.99.1", "firstCIRust": "1.100.0", "finalCI": "Exact pushed-head result is recorded in PR56 after publication of evidence"},
+        "ciLintCorrection": {"source": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2", "cause": "Rust1.100 Clippy needlessly conditional Boolean after Windows cfg-elision", "change": "Equivalent per-platform symlink/reparse expressions; no path-validation behavior or migration change", "localRust": "1.99.1", "firstCIRust": "1.100.0", "finalCI": "Exact pushed-head result is recorded in PR56 after publication of evidence"},
+        "preDeletionGitHubCI": {"headSha": DELETION_BASELINE, "runId": 44841272562,
+                                "conclusion": "success", "summary": evidence_path + "ci-pre-deletion/summary.json",
+                                "meaning": "This green run predates the newly demonstrated deletion failures and does not certify the final implementation. Native source remains unchanged, but complete final local suites are rerun."},
         "branch": "feature/daily-snapshot-recovery-20261120",
         "baselineSourceSha": BASELINE,
         "draftPullRequest": "https://github.com/pistio/abidingword/pull/56",
@@ -336,6 +493,10 @@ def main() -> None:
                     "results": evidence_path + "browser-results.json",
                     "scope": "Real React UI with invented in-memory backend: availability, confirmation, keyboard cancel, pending containment, long paths, focus trap and reload request. Separate real SQLite tests establish database preservation.",
                     "notEstablished": ["Windows/WebView2", "actual Windows DPI", "screen-reader acceptance", "native file picker or Office rendering"]},
+        "deletionBrowser": {"sourceSha": SOURCE, "check": parent_check,
+                            "results": evidence_path + "parent-deletion/browser-results.json",
+                            "passedScenarios": 1, "platform": parent_browser["platform"],
+                            "scope": "Actual React application in Linux Chromium, invented backend: delayed saving and removal, physical input containment including a late portal, failed-delete release/focus and successful retry. No native Windows or SQLite acceptance."},
         "beforeEvidence": {
             "originalCI": {"url": "https://github.com/pistio/abidingword/actions/runs/44825652838",
                            "result": "failed", "frontendPassedAssertions": 1389, "frontendFiles": 129,
@@ -348,6 +509,19 @@ def main() -> None:
             "retentionBaselineCounts": native_counts(baseline_logs["dailyRetention"].read_text()),
             "rollbackBaselineCounts": native_counts(baseline_logs["fullBackupRollback"].read_text()),
             "materialsFailure": "Actual Teaching Q&A preview opened with Earlier question while the current save was pending.",
+            "deletion": {"baselineSourceSha": DELETION_BASELINE,
+                         "baselineProductionClean": True,
+                         "exactBaselineTestSources": [evidence_path + path for path in baseline_test_source_paths],
+                         "testSourceNote": "Exact baseline test bytes are hash-verified against original metadata and retained as .txt; no executable .tsx test files are added under docs. The initial harness text is separately excluded setup evidence.",
+                         "executedBaselineFailures": deletion_before_counts,
+                         "executedBaselineFailureTotal": sum(deletion_before_counts.values()),
+                         "finalPassingTestsByFile": final_deletion_counts,
+                         "finalPassingTestTotal": sum(final_deletion_counts.values()),
+                         "newCoverageNote": "Additional corrected-source cases are not counted as executed failing-before cases. Final counts are derived from actual complete-suite assertions.",
+                         "excludedSetupAttempts": "Initial block harness had six real early-delete failures and two incorrect Teaching selectors; only the subsequent eight-case clean baseline is counted. Missing-test and browser selector/error-fixture setup attempts are retained separately and excluded.",
+                         "focusObservation": "The earlier Chromium run passed its old assertions but recorded focus on body after failure. It is an observed focus defect, not a claimed failed automated baseline. Final procedure explicitly asserts return to enabled initiating control.",
+                         "baselineTestLimit": "The baseline note/point test included an unsupported TypeScript-only query option; runtime cases executed and failed meaningful assertions. The corrected test removes it; no baseline typecheck pass is claimed.",
+                         "scope": "Editable blocks, Q&A, entries, findings, sections, legacy Teaching points and Project/Study/Teaching deletion; controlled invented API failures, not native Windows evidence."},
             "finalPassingNativeRegressions": required_native,
             "finalFrontendRegressionFiles": [Path(item["name"]).name for item in report["testResults"]
                                               if any(part in item["name"] for part in
@@ -379,6 +553,7 @@ def main() -> None:
             "dailyRestore": "Database only; imported source/image/Bible file bytes unchanged. Current writing retained in verified safety database before replacement.",
             "fullRestore": "Verified database safety copy and tracked source-file undo operations; both rollback branches attempted on failure, retained-copy location and locked UI on incomplete rollback.",
             "writing": "Shared settlement drains saves and retains failed drafts across remounts. Successful restoration prevents subsequent API calls in the same webview until reload.",
+            "deletion": "Confirmed deletion settles saves before invalidating targets and freezes the affected editor/workspace until removal finishes. Save failure keeps writing and blocks deletion; removal failure releases the temporary pause and restores focus without overriding a newer focus choice. Later backup/export/recovery is not poisoned by a detached missing-record retry.",
             "integratedScenario": "Invented Study/Q&A, multiple linked and independent Teaching records, private leader text/Scripture and citations survive project transfer, full backup, daily restore and reopen. Generated native fixture exercises Materials, Markdown and DOCX privacy.",
             "withheldEvaluation": "Separate frozen recognition/Collection H lane was not accessed or integrated by this work.",
         },

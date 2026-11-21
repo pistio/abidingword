@@ -1,7 +1,7 @@
 {
   "milestone": "Recovery, writing preservation and publication readiness",
-  "assembledUTC": "2026-11-21T00:03:21.635794+00:00",
-  "implementationSourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+  "assembledUTC": "2026-11-21T00:43:38.083264+00:00",
+  "implementationSourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
   "commitPrivacyCorrection": {
     "reason": "GitHub GH007 rejected private commit email; preserve privacy protection using account no-reply identity",
     "baseline": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
@@ -422,6 +422,13 @@
     "firstCIRust": "1.100.0",
     "finalCI": "Exact pushed-head result is recorded in PR56 after publication of evidence"
   },
+  "preDeletionGitHubCI": {
+    "headSha": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+    "runId": 44841272562,
+    "conclusion": "success",
+    "summary": "evidence/recovery-20261120/ci-pre-deletion/summary.json",
+    "meaning": "This green run predates the newly demonstrated deletion failures and does not certify the final implementation. Native source remains unchanged, but complete final local suites are rerun."
+  },
   "branch": "feature/daily-snapshot-recovery-20261120",
   "baselineSourceSha": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
   "draftPullRequest": "https://github.com/pistio/abidingword/pull/56",
@@ -430,25 +437,25 @@
   "result": "All required local commands passed on the clean frozen implementation; native Windows acceptance remains pending.",
   "sourceChecks": {
     "frontend": {
-      "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
-      "startedUTC": "2026-11-20T23:53:11.471586+00:00",
-      "completedUTC": "2026-11-21T00:02:52.652948+00:00",
+      "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
+      "startedUTC": "2026-11-21T00:35:30.056383+00:00",
+      "completedUTC": "2026-11-21T00:43:33.766454+00:00",
       "cleanBefore": true,
       "cleanAfter": true,
       "sourceUnchanged": true,
       "headUnchanged": true
     },
     "native": {
-      "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
-      "startedUTC": "2026-11-20T23:53:11.471622+00:00",
-      "completedUTC": "2026-11-21T00:02:01.502244+00:00",
+      "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
+      "startedUTC": "2026-11-21T00:35:30.054760+00:00",
+      "completedUTC": "2026-11-21T00:42:37.823025+00:00",
       "cleanBefore": true,
       "cleanAfter": true,
       "sourceUnchanged": true,
       "headUnchanged": true
     }
   },
-  "sourceInputFileCount": 908,
+  "sourceInputFileCount": 915,
   "sourceProvenance": "evidence/recovery-20261120/source-provenance-final.json",
   "commands": [
     {
@@ -459,11 +466,11 @@
         "--cache",
         "/workspace/.npm"
       ],
-      "startedUTC": "2026-11-20T23:53:11.471609+00:00",
-      "durationSeconds": 10.42,
+      "startedUTC": "2026-11-21T00:35:30.056431+00:00",
+      "durationSeconds": 7.25,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-npm-ci.log",
-      "logSha256": "55457ae7fb781749bbda620c04d828c0e9fc19a688393dcd0e363d51a137bc13",
+      "logSha256": "2eee8ecbefed382fdfac9fa75ef3ced1b05c1b3d3a0ad6d244a58561240f76aa",
       "mode": "frontend"
     },
     {
@@ -473,8 +480,8 @@
         "run",
         "typecheck"
       ],
-      "startedUTC": "2026-11-20T23:53:21.908489+00:00",
-      "durationSeconds": 63.14,
+      "startedUTC": "2026-11-21T00:35:37.311721+00:00",
+      "durationSeconds": 32.15,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-typecheck.log",
       "logSha256": "2f2238cd78882d4bdbfba4105c717a22862372df1f5f34152efcf6bd6d2c256d",
@@ -487,8 +494,8 @@
         "run",
         "lint"
       ],
-      "startedUTC": "2026-11-20T23:54:25.050313+00:00",
-      "durationSeconds": 59.72,
+      "startedUTC": "2026-11-21T00:36:09.465850+00:00",
+      "durationSeconds": 39.73,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-eslint.log",
       "logSha256": "61c95a8a559be46afa5591e71ec3b8aac2867e882bf8fc9247934d5ce81a7b5d",
@@ -501,8 +508,8 @@
         "run",
         "i18n:check"
       ],
-      "startedUTC": "2026-11-20T23:55:24.767212+00:00",
-      "durationSeconds": 2.49,
+      "startedUTC": "2026-11-21T00:36:49.202908+00:00",
+      "durationSeconds": 1.88,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-i18n.log",
       "logSha256": "7e3af6f579e617d7910d003db31af32afb7735051a4b2191079018689fd502c1",
@@ -517,8 +524,8 @@
         "--",
         "--check"
       ],
-      "startedUTC": "2026-11-20T23:55:27.261868+00:00",
-      "durationSeconds": 2.19,
+      "startedUTC": "2026-11-21T00:36:51.080189+00:00",
+      "durationSeconds": 1.03,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-i18n-corpus.log",
       "logSha256": "7caca57b58fc3d81c41e1bc0f5e4f6451a659abd45089da2adf0defebb531b9a",
@@ -531,8 +538,8 @@
         "run",
         "release:resources"
       ],
-      "startedUTC": "2026-11-20T23:55:29.451650+00:00",
-      "durationSeconds": 0.44,
+      "startedUTC": "2026-11-21T00:36:52.112476+00:00",
+      "durationSeconds": 0.45,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-resources.log",
       "logSha256": "ee765641d2af77fad24eee753feb0979484a63c91e7ed9882c1a48679a410418",
@@ -549,8 +556,8 @@
         "/workspace/.npm",
         "--json"
       ],
-      "startedUTC": "2026-11-20T23:55:29.894043+00:00",
-      "durationSeconds": 0.53,
+      "startedUTC": "2026-11-21T00:36:52.568568+00:00",
+      "durationSeconds": 0.76,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-audit.log",
       "logSha256": "3c98c97323fbfaf3a70a2ed2c6324b254ec34cc6105dd3cc7707c5dfc94828c8",
@@ -567,11 +574,11 @@
         "--reporter=json",
         "--outputFile=work/recovery-verification/frontend-tests.json"
       ],
-      "startedUTC": "2026-11-20T23:55:30.429681+00:00",
-      "durationSeconds": 406.84,
+      "startedUTC": "2026-11-21T00:36:53.327309+00:00",
+      "durationSeconds": 369.38,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-frontend-tests.log",
-      "logSha256": "132793e340a2472efd96d39da60a2cb97d151dc019e76e100e8b08a541b9c81d",
+      "logSha256": "09c52484afc1559498586fd59746fb1281534d83d3342da286760f7385f6fba7",
       "mode": "frontend"
     },
     {
@@ -581,11 +588,11 @@
         "run",
         "build"
       ],
-      "startedUTC": "2026-11-21T00:02:17.271576+00:00",
-      "durationSeconds": 34.85,
+      "startedUTC": "2026-11-21T00:43:02.707998+00:00",
+      "durationSeconds": 31.0,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-frontend-build.log",
-      "logSha256": "85d5c265951663a99383f133bf9e52dff5e9a3e74d13b19037093def19161436",
+      "logSha256": "3f383d4ebdefff663d289e8d3ab64651cb733da14d08bd3f3964dcc8b4b7defd",
       "mode": "frontend"
     },
     {
@@ -599,8 +606,8 @@
         "--",
         "--check"
       ],
-      "startedUTC": "2026-11-20T23:53:11.471637+00:00",
-      "durationSeconds": 2.62,
+      "startedUTC": "2026-11-21T00:35:30.054784+00:00",
+      "durationSeconds": 2.46,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-rust-fmt.log",
       "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -620,11 +627,11 @@
         "-D",
         "warnings"
       ],
-      "startedUTC": "2026-11-20T23:53:14.096700+00:00",
-      "durationSeconds": 0.61,
+      "startedUTC": "2026-11-21T00:35:32.516710+00:00",
+      "durationSeconds": 1.09,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-rust-clippy.log",
-      "logSha256": "b4ded9b57004ea89353acec86b5d035fb4d45354b55339548bd1ea75df4b3868",
+      "logSha256": "11f1b3e2ae1c1c40ba5a70ce46244a9b6b7ccf20ae2bd91aaf5feda98b15db1e",
       "mode": "native"
     },
     {
@@ -638,33 +645,33 @@
         "--locked",
         "--no-fail-fast"
       ],
-      "startedUTC": "2026-11-20T23:53:14.705489+00:00",
-      "durationSeconds": 526.7,
+      "startedUTC": "2026-11-21T00:35:33.611055+00:00",
+      "durationSeconds": 424.13,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-rust-tests.log",
-      "logSha256": "a5afd22fbb979ef12a4c51834dfeb300293afb3161da02552158063be125383c",
+      "logSha256": "8e15c6487fda1b6d1f2ee1371d626416eea11180b1defc6e047eb4d7983bf03e",
       "mode": "native"
     }
   ],
   "frontend": {
-    "actualTestFiles": 132,
+    "actualTestFiles": 136,
     "fileStatuses": {
-      "passed": 132
+      "passed": 136
     },
-    "assertions": 1427,
+    "assertions": 1455,
     "assertionStatuses": {
-      "passed": 1427
+      "passed": 1455
     },
-    "reportedTotalTests": 1427,
-    "reportedPassedTests": 1427,
+    "reportedTotalTests": 1455,
+    "reportedPassedTests": 1455,
     "reportedFailedTests": 0,
     "reportedPendingTests": 0,
     "reportedTodoTests": 0,
-    "reportedDescribeSuites": 435,
+    "reportedDescribeSuites": 445,
     "suiteCountNote": "Vitest numTotalTestSuites includes describe groups; actualTestFiles counts testResults entries.",
     "unhandledErrors": 0,
     "unhandledEvidence": "Complete Vitest process exited zero; complete default-reporter log contains no unhandled-error report.",
-    "nonFatalReactActWarnings": 800,
+    "nonFatalReactActWarnings": 796,
     "startingCIReactActWarnings": 797,
     "warningNote": "Existing React test act warnings remain visible; they are not unhandled errors and were not suppressed. Full logs are retained."
   },
@@ -1635,14 +1642,42 @@
     ]
   },
   "browser": {
-    "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+    "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
     "check": {
-      "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+      "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
       "cleanBefore": true,
-      "startedUTC": "2026-11-20T23:53:47.213374+00:00",
+      "startedUTC": "2026-11-21T00:36:18.567819+00:00",
+      "command": [
+        "node",
+        "tests/screenshots/recovery-interface.mjs",
+        "work/recovery-verification/final-browser"
+      ],
+      "platform": "Linux Chromium with real React App and invented memory APIs; not native Windows/SQLite acceptance",
+      "scriptSha256": "d82215fa2b974ee92827d19e81ad0b3c22fcade103a0e2144f9deff4d4a879ae",
       "exitCode": 0,
+      "finishedUTC": "2026-11-21T00:37:54.488739+00:00",
+      "durationSeconds": 95.92,
       "headUnchanged": true,
-      "cleanAfter": true
+      "cleanAfter": true,
+      "log": "work/recovery-verification/final-browser.log",
+      "logSha256": "4f3f50c3f16cdb8ffec4623b5239db2696e058d20c73862298926fab3a50d631",
+      "artifactsSha256": {
+        "work/recovery-verification/final-browser/de-480x640-1x-daily.png": "83d7b4c7a23c9efabf6b54680bd13f8686c27a0ce207a2d1240c76774d0f609a",
+        "work/recovery-verification/final-browser/de-480x640-1x-full.png": "356a719b2ecec93337584d6483cd4a177663dac01d33c6f53d2b6c3994bd246e",
+        "work/recovery-verification/final-browser/en-480x640-1x-daily.png": "16e421263def61d223ebb2b25b3787174fc96bb8750559c7ad8f26855ced339a",
+        "work/recovery-verification/final-browser/en-480x640-1x-full.png": "3c48a50b27082d91c53bf1ea4e3adef72934e908c37601f300d75003d13c08a7",
+        "work/recovery-verification/final-browser/en-640x450-2x-daily.png": "c75166edca2d265c5872d55acdf4b8760f547562ba9b1a7606ef6b33b8d06423",
+        "work/recovery-verification/final-browser/en-640x450-2x-full.png": "5896cade83d4f3cb3177fc33cc3d5ec536e5cbde9af7e7b4cccc028b0cd23f77",
+        "work/recovery-verification/final-browser/es-480x640-1x-daily.png": "9444d798816f5c9ac32d1b08d06a7a714834e7bbf30fa0f78ccd06dc15174b8c",
+        "work/recovery-verification/final-browser/es-480x640-1x-full.png": "d3f4d695f1b33b62d5c5858ec7683f5f6ac16a8c892adb7b0e4148675a94349f",
+        "work/recovery-verification/final-browser/fr-480x640-1x-daily.png": "7424b642246343f1ceac7957d4bd376bb444a53a0ca0d234945fccf1aacc7154",
+        "work/recovery-verification/final-browser/fr-480x640-1x-full.png": "a98efb181bf41a97403061e035d26894a40409530836d5f11685375c51c7c35a",
+        "work/recovery-verification/final-browser/ko-480x640-1x-daily.png": "c75b9be1091d209e2444502eb9bc35daa9f83ab928c4eaa36d0df96ddc8930aa",
+        "work/recovery-verification/final-browser/ko-480x640-1x-full.png": "285a9bb0ab8152d75d05076ddc1e0ad6233dcf7583218ae4d575c851a1f50f3f",
+        "work/recovery-verification/final-browser/pt-480x640-1x-daily.png": "44e54bb5a872fc38b4a9e2538aed532905758cfc53290cda5c73a28f6d5d69e0",
+        "work/recovery-verification/final-browser/pt-480x640-1x-full.png": "e54c3eb52ba6e29b2db701f4e865a8f6b96f6f10380668364260a9ca4ce3341a",
+        "work/recovery-verification/final-browser/results.json": "71d9ffbb1234bd8fefe1cfab3186a6810e77086aef57e9698b4c7b3a62e24351"
+      }
     },
     "platform": "Linux Chromium; real React interface, invented in-memory backend; reduced viewport/DPR emulation, not native Windows acceptance",
     "passedFlows": 36,
@@ -1672,6 +1707,38 @@
       "screen-reader acceptance",
       "native file picker or Office rendering"
     ]
+  },
+  "deletionBrowser": {
+    "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
+    "check": {
+      "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
+      "cleanBefore": true,
+      "startedUTC": "2026-11-21T00:36:14.167182+00:00",
+      "command": [
+        "node",
+        "tests/screenshots/parent-deletion.mjs",
+        "work/recovery-verification/parent-deletion/final-browser"
+      ],
+      "platform": "Linux Chromium with real React App and invented memory APIs; not native Windows/SQLite acceptance",
+      "scriptSha256": "96eb78004c549e803604e141304128b31b8e66ffb242973c172e7b4fae5a7f15",
+      "exitCode": 0,
+      "finishedUTC": "2026-11-21T00:36:18.525112+00:00",
+      "durationSeconds": 4.36,
+      "headUnchanged": true,
+      "cleanAfter": true,
+      "log": "work/recovery-verification/parent-deletion/final-browser.log",
+      "logSha256": "21408e6326210d13486d589522cfef9a3fd83d73693a523a0eea3962bb8aef4c",
+      "artifactsSha256": {
+        "work/recovery-verification/parent-deletion/final-browser/failure-released.png": "7819e1cb46ccc5c2cd54c764c16f211bb14baea9bfcda00a8d87d7e679dce8e9",
+        "work/recovery-verification/parent-deletion/final-browser/pending-delete.png": "125608e36d3c58d6d63cc8c61ca6e776a9eac7189ada6808d654a3d3d445f7dd",
+        "work/recovery-verification/parent-deletion/final-browser/results.json": "21408e6326210d13486d589522cfef9a3fd83d73693a523a0eea3962bb8aef4c",
+        "work/recovery-verification/parent-deletion/final-browser/success-usable.png": "433090c48e517b5234a7a77ab9b1142c363620942dd92e2df83a3979fb3fb42e"
+      }
+    },
+    "results": "evidence/recovery-20261120/parent-deletion/browser-results.json",
+    "passedScenarios": 1,
+    "platform": "Linux Chromium; actual React App with invented in-memory backend; no native Windows or SQLite acceptance",
+    "scope": "Actual React application in Linux Chromium, invented backend: delayed saving and removal, physical input containment including a late portal, failed-delete release/focus and successful retry. No native Windows or SQLite acceptance."
   },
   "beforeEvidence": {
     "originalCI": {
@@ -1755,6 +1822,37 @@
       ]
     },
     "materialsFailure": "Actual Teaching Q&A preview opened with Earlier question while the current save was pending.",
+    "deletion": {
+      "baselineSourceSha": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+      "baselineProductionClean": true,
+      "exactBaselineTestSources": [
+        "evidence/recovery-20261120/before/deletion/delete-save-barrier.test-source.txt",
+        "evidence/recovery-20261120/before/deletion/section-delete-save-barrier.test-source.txt",
+        "evidence/recovery-20261120/before/deletion/note-point-delete-save-barrier.test-source.txt",
+        "evidence/recovery-20261120/before/deletion/parent-delete-save-barrier.test-source.txt",
+        "evidence/recovery-20261120/before/deletion/excluded-setup/initial-block-harness.test-source.txt"
+      ],
+      "testSourceNote": "Exact baseline test bytes are hash-verified against original metadata and retained as .txt; no executable .tsx test files are added under docs. The initial harness text is separately excluded setup evidence.",
+      "executedBaselineFailures": {
+        "blocks": 8,
+        "parents": 9,
+        "findingsAndLegacyPoints": 6,
+        "section": 1
+      },
+      "executedBaselineFailureTotal": 24,
+      "finalPassingTestsByFile": {
+        "delete-save-barrier.test.tsx": 9,
+        "parent-delete-save-barrier.test.tsx": 12,
+        "note-point-delete-save-barrier.test.tsx": 6,
+        "section-delete-save-barrier.test.tsx": 1
+      },
+      "finalPassingTestTotal": 28,
+      "newCoverageNote": "Additional corrected-source cases are not counted as executed failing-before cases. Final counts are derived from actual complete-suite assertions.",
+      "excludedSetupAttempts": "Initial block harness had six real early-delete failures and two incorrect Teaching selectors; only the subsequent eight-case clean baseline is counted. Missing-test and browser selector/error-fixture setup attempts are retained separately and excluded.",
+      "focusObservation": "The earlier Chromium run passed its old assertions but recorded focus on body after failure. It is an observed focus defect, not a claimed failed automated baseline. Final procedure explicitly asserts return to enabled initiating control.",
+      "baselineTestLimit": "The baseline note/point test included an unsupported TypeScript-only query option; runtime cases executed and failed meaningful assertions. The corrected test removes it; no baseline typecheck pass is claimed.",
+      "scope": "Editable blocks, Q&A, entries, findings, sections, legacy Teaching points and Project/Study/Teaching deletion; controlled invented API failures, not native Windows evidence."
+    },
     "finalPassingNativeRegressions": [
       "committed_wal_content_is_staged_and_restored_instead_of_stale_database_pages",
       "missing_writing_tables_and_forged_history_are_unavailable_before_replacement",
@@ -1857,6 +1955,9 @@
       "docs/implementation/evidence/recovery-20261120/browser/en-640x450-2x-full.png",
       "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-daily.png",
       "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-full.png",
+      "docs/implementation/evidence/recovery-20261120/ci-first-failure.json",
+      "docs/implementation/evidence/recovery-20261120/ci-first/ci-first-46d27d25-frontend.log",
+      "docs/implementation/evidence/recovery-20261120/ci-rust-first-failure.log",
       "docs/implementation/evidence/recovery-20261120/email-metadata-correction.json",
       "docs/implementation/evidence/recovery-20261120/final-audit.log",
       "docs/implementation/evidence/recovery-20261120/final-browser.log",
@@ -1897,6 +1998,7 @@
       "src-tauri/tests/portability.rs",
       "src/features/portability/DataSettings.tsx",
       "src/features/portability/ProjectExport.tsx",
+      "src/features/portability/Trash.tsx",
       "src/features/studies/BlockEditor.tsx",
       "src/features/studies/EditableTitle.tsx",
       "src/features/studies/FieldsEditor.tsx",
@@ -1907,9 +2009,11 @@
       "src/features/studies/StudyEditor.tsx",
       "src/features/teaching/BlockCanvas.tsx",
       "src/features/teaching/TeachingField.tsx",
+      "src/features/teaching/TeachingInfo.tsx",
       "src/features/teaching/TeachingView.tsx",
       "src/hooks/SaveTracker.tsx",
       "src/hooks/useAutosave.ts",
+      "src/hooks/useSettledDelete.ts",
       "src/i18n/locales/de/settings.json",
       "src/i18n/locales/en/settings.json",
       "src/i18n/locales/es/settings.json",
@@ -1920,14 +2024,20 @@
       "src/lib/autosaveState.ts",
       "src/lib/databaseRestoreLock.ts",
       "src/lib/guardedApi.ts",
+      "src/lib/pauseWorkspaceInteraction.ts",
       "tests/fixtures/recovery-preservation.json",
+      "tests/screenshots/parent-deletion.mjs",
       "tests/screenshots/recovery-interface.mjs",
       "tests/support/setup.ts",
+      "tests/ui/delete-save-barrier.test.tsx",
       "tests/ui/materials-save-barrier.test.tsx",
+      "tests/ui/note-point-delete-save-barrier.test.tsx",
+      "tests/ui/parent-delete-save-barrier.test.tsx",
       "tests/ui/portability.test.tsx",
       "tests/ui/recovery-field-creation.test.tsx",
       "tests/ui/recovery-preservation-materials.test.tsx",
-      "tests/ui/recovery-save-barrier.test.tsx"
+      "tests/ui/recovery-save-barrier.test.tsx",
+      "tests/ui/section-delete-save-barrier.test.tsx"
     ],
     "unchanged": [
       "migrations",
@@ -1939,6 +2049,7 @@
     "dailyRestore": "Database only; imported source/image/Bible file bytes unchanged. Current writing retained in verified safety database before replacement.",
     "fullRestore": "Verified database safety copy and tracked source-file undo operations; both rollback branches attempted on failure, retained-copy location and locked UI on incomplete rollback.",
     "writing": "Shared settlement drains saves and retains failed drafts across remounts. Successful restoration prevents subsequent API calls in the same webview until reload.",
+    "deletion": "Confirmed deletion settles saves before invalidating targets and freezes the affected editor/workspace until removal finishes. Save failure keeps writing and blocks deletion; removal failure releases the temporary pause and restores focus without overriding a newer focus choice. Later backup/export/recovery is not poisoned by a detached missing-record retry.",
     "integratedScenario": "Invented Study/Q&A, multiple linked and independent Teaching records, private leader text/Scripture and citations survive project transfer, full backup, daily restore and reopen. Generated native fixture exercises Materials, Markdown and DOCX privacy.",
     "withheldEvaluation": "Separate frozen recognition/Collection H lane was not accessed or integrated by this work."
   },
@@ -1965,8 +2076,8 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-npm-ci.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-npm-ci.log",
-      "sha256": "55457ae7fb781749bbda620c04d828c0e9fc19a688393dcd0e363d51a137bc13",
-      "bytes": 149
+      "sha256": "2eee8ecbefed382fdfac9fa75ef3ced1b05c1b3d3a0ad6d244a58561240f76aa",
+      "bytes": 148
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-typecheck.log",
@@ -2007,20 +2118,20 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-frontend-tests.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-frontend-tests.log",
-      "sha256": "132793e340a2472efd96d39da60a2cb97d151dc019e76e100e8b08a541b9c81d",
-      "bytes": 374481
+      "sha256": "09c52484afc1559498586fd59746fb1281534d83d3342da286760f7385f6fba7",
+      "bytes": 369750
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-frontend-build.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-frontend-build.log",
-      "sha256": "85d5c265951663a99383f133bf9e52dff5e9a3e74d13b19037093def19161436",
+      "sha256": "3f383d4ebdefff663d289e8d3ab64651cb733da14d08bd3f3964dcc8b4b7defd",
       "bytes": 9477
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/frontend-checks.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/frontend-checks.json",
-      "sha256": "93a0cffa0d9fbaf8e26a302d8dede0edd98c61e37ebc8687d3c15d625a114989",
-      "bytes": 104711
+      "sha256": "7dcccdf8a34f34c56e1f3f448258f48ad5a31196edfa9611b7700fac4fdc65a6",
+      "bytes": 105517
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-rust-fmt.log",
@@ -2031,25 +2142,25 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-rust-clippy.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-clippy.log",
-      "sha256": "b4ded9b57004ea89353acec86b5d035fb4d45354b55339548bd1ea75df4b3868",
+      "sha256": "11f1b3e2ae1c1c40ba5a70ce46244a9b6b7ccf20ae2bd91aaf5feda98b15db1e",
       "bytes": 60
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-rust-tests.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-tests.log",
-      "sha256": "a5afd22fbb979ef12a4c51834dfeb300293afb3161da02552158063be125383c",
-      "bytes": 111494
+      "sha256": "8e15c6487fda1b6d1f2ee1371d626416eea11180b1defc6e047eb4d7983bf03e",
+      "bytes": 111417
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/native-checks.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/native-checks.json",
-      "sha256": "2058d1ab49d3b33bfe762c68154845c1acf555b0d0bff924b984e19106038a0e",
-      "bytes": 102606
+      "sha256": "13e7129b03fe6efadf31e55d3c9dee69578caff16e0ea2207b96d18bbfd3e51e",
+      "bytes": 103415
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/source-provenance-final.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/source-provenance-final.json",
-      "sha256": "0c26c0b65ec7359f41f6dd5b31b2500adbd6bb1e01852f7e82745b3003b90ae2",
+      "sha256": "9841126f968f0ac0a4855d255615e5745f52712e0ad64669f90c532c92b6f0a0",
       "bytes": 5375
     },
     {
@@ -2085,14 +2196,14 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/frontend-tests.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/frontend-tests.json",
-      "sha256": "8089701ff54796e6ab79c35d8e2f0ece8e0c7df88e88bc2f546d613b5374fc17",
-      "bytes": 494528
+      "sha256": "3f3958e3940d32c4e06bd5220896c2b9718e691d0d630b357a86c8471355893f",
+      "bytes": 505931
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser-check.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/browser-check.json",
-      "sha256": "ddeface20baa1c9e9e242cbccadcbb1aedb30afbc98f0cf687639bbc6c033361",
-      "bytes": 201
+      "sha256": "d018c40eb154843df3d3322c6d40d942c173897e10f5087fe44183db680fa6b1",
+      "bytes": 2859
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser-results.json",
@@ -2127,14 +2238,272 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-full.png",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/ko-480x640-1x-full.png",
-      "sha256": "9fe0e7c23891725beb506f7516bb82e8d2e2ff76043168be6aa77018f3e7baab",
-      "bytes": 64114
+      "sha256": "285a9bb0ab8152d75d05076ddc1e0ad6233dcf7583218ae4d575c851a1f50f3f",
+      "bytes": 64118
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser/en-640x450-2x-full.png",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/en-640x450-2x-full.png",
-      "sha256": "80fadab8171062ae6c05400d4f30e59a74e600db8a2c1a6db1d585bb2ddbae63",
-      "bytes": 138175
+      "sha256": "5896cade83d4f3cb3177fc33cc3d5ec536e5cbde9af7e7b4cccc028b0cd23f77",
+      "bytes": 138173
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/before.log",
+      "sha256": "1d5bbb9d53d97a78646d604b1d1b82d9841b7b06ca0601e81e0c8d60cec716e0",
+      "bytes": 69076
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/note-point-before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/note-point-before.log",
+      "sha256": "40e73f0cac0eeed49646f4455500d337be30b99db4a8ed326e0947db30e3e7f6",
+      "bytes": 33897
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/section-before.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/section-before.log",
+      "sha256": "bf47598dacc8d1f52875d2c189584b310bedbf9e8bd07d53a02ef566d06bc32b",
+      "bytes": 1528
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/blocks-frontend.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/delete-before/frontend.json",
+      "sha256": "8b127b456db1484f811e061facb5f8d03caf59ad4f61019849ae8d2b1fadaa66",
+      "bytes": 9997
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/initial-block-harness-frontend.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/delete-before/initial-harness-attempt/frontend.json",
+      "sha256": "36862afc057071ad18b467f877014f11b8d528a9e51225ae4bb5c56422a7c8c8",
+      "bytes": 68761
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/blocks-source.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/delete-before/source.json",
+      "sha256": "f6d64b035836619a3daefb07376ec625e549031d9833e47eb7ee09d32035a730",
+      "bytes": 581
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/initial-block-harness-source.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/delete-before/initial-harness-attempt/source.json",
+      "sha256": "1b7ef303b53743b67bea1462ca0e48194008cbe916eac1c4c084803f2654e687",
+      "bytes": 395
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/blocks-stdout.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/delete-before/stdout.log",
+      "sha256": "6e1be0fd08a1955b03b7a472dd9fe61265b1857556eba911420ff0cd2bb2ee95",
+      "bytes": 495
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/initial-block-harness-stdout.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/delete-before/initial-harness-attempt/stdout.log",
+      "sha256": "6e1be0fd08a1955b03b7a472dd9fe61265b1857556eba911420ff0cd2bb2ee95",
+      "bytes": 495
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/verification-metadata.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/verification-metadata.json",
+      "sha256": "9b9ca3d88ae294fe10d242e53c22629e067ed40b3e8ff12a4ca480d533ac7654",
+      "bytes": 4934
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/parent-source.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/before-source.json",
+      "sha256": "5e76c38fc005c6ce388f810ccbbd947ae771bae308388371c8d8c826344cf01f",
+      "bytes": 1106
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/delete-save-barrier.test-source.txt",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/delete-save-barrier.test-source.txt",
+      "sha256": "51a4f0dc2289d2052c2cb4fc19b327501e385a3d2be8ef07f8cea8f540ee54e5",
+      "bytes": 8459
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/section-delete-save-barrier.test-source.txt",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/section-delete-save-barrier.test-source.txt",
+      "sha256": "c8236fd2424d00bc48fc23a6474ce69202d3e1978ea1e19a5e2357f2c45772cc",
+      "bytes": 2208
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/note-point-delete-save-barrier.test-source.txt",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/note-point-delete-save-barrier.test-source.txt",
+      "sha256": "bb87a630c7c5769a6d2efce4a8c45af9a74c53852736253ed849d0f4d6638aea",
+      "bytes": 5174
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/parent-delete-save-barrier.test-source.txt",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/parent-delete-save-barrier.test-source.txt",
+      "sha256": "6037e758f3a5d7affb1179e585d96aa66955ab27d4b2159ddc3ae7603dea536a",
+      "bytes": 7201
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/initial-block-harness.test-source.txt",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/initial-block-harness.test-source.txt",
+      "sha256": "a4a6be3d36459fed653d22fbc27e191778f9ffd2f34d5cdc7cb3e0e537eb655b",
+      "bytes": 8377
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/test-source-manifest.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/manifest.json",
+      "sha256": "aded76b6d5367835a24cf35cda2a631ca421f7ccbd7698e548919ff41940edbb",
+      "bytes": 2210
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/note-point-before-source.sha256",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/deletion-baseline-test-sources/note-point-before-source.sha256",
+      "sha256": "9d255036a83a15a0ad7307f07c89284cba69fd8f47d2ba855ed231d493e4bae2",
+      "bytes": 323
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/setup-missing-test.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/setup-missing-test.log",
+      "sha256": "c8cc23408b0d2591336194d0c83a50ffda0a3e00b011b9170e0f5c3c21a9a686",
+      "bytes": 542
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-setup-attempt.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-setup-attempt.log",
+      "sha256": "345d4d101be6277f60eaa5df5305904c5378daded669aed05eab5e3aa9676fd3",
+      "bytes": 433
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-setup-attempt.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-setup-attempt/results.json",
+      "sha256": "169b4b6fa73f6318b005b46468a4baf701e75b663375b9734d882b0aaf06ad9a",
+      "bytes": 338
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-selector-attempt.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-selector-attempt.log",
+      "sha256": "9bd75e5c9b8680057e9c3b2d97056b009ea2868304201e3c0d38164fe992d6e4",
+      "bytes": 474
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-selector-attempt.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-selector-attempt/results.json",
+      "sha256": "ed60c36fe723f215ac9979e1c0f4b077150c1eb3ccdcd06ab323806cad795e6b",
+      "bytes": 359
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-error-fixture-attempt.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-error-fixture-attempt.log",
+      "sha256": "619f7473614ad81a7ce4be1f7c045a3f8d1e00859c4c4b7ede5eb92b31a84459",
+      "bytes": 610
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-error-fixture-attempt.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-error-fixture-attempt/results.json",
+      "sha256": "f07fdffba171da2cb055b9aa58feaea557fccc8c44f912f58238b0c79e1b07ba",
+      "bytes": 1671
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-localized-error-attempt.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-localized-error-attempt.log",
+      "sha256": "619f7473614ad81a7ce4be1f7c045a3f8d1e00859c4c4b7ede5eb92b31a84459",
+      "bytes": 610
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/excluded-setup/browser-localized-error-attempt.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-localized-error-attempt/results.json",
+      "sha256": "f07fdffba171da2cb055b9aa58feaea557fccc8c44f912f58238b0c79e1b07ba",
+      "bytes": 1671
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/body-focus-observation.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-before-focus-correction/results.json",
+      "sha256": "2572049fdb7f15c912acaf6220e8c30be037f50523385b1bc0873a2b04524969",
+      "bytes": 2264
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/before/deletion/body-focus-observation.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/browser-before-focus-correction.log",
+      "sha256": "2572049fdb7f15c912acaf6220e8c30be037f50523385b1bc0873a2b04524969",
+      "bytes": 2264
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/parent-deletion/browser-check.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/final-browser-check.json",
+      "sha256": "d02f8a2678b1882f6283e8ee4780db9e23040e1d673618e64f29c8504cf07c2e",
+      "bytes": 1405
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/parent-deletion/browser-results.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/final-browser/results.json",
+      "sha256": "21408e6326210d13486d589522cfef9a3fd83d73693a523a0eea3962bb8aef4c",
+      "bytes": 1914
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/parent-deletion/browser.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/final-browser.log",
+      "sha256": "21408e6326210d13486d589522cfef9a3fd83d73693a523a0eea3962bb8aef4c",
+      "bytes": 1914
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/parent-deletion/pending-delete.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/final-browser/pending-delete.png",
+      "sha256": "125608e36d3c58d6d63cc8c61ca6e776a9eac7189ada6808d654a3d3d445f7dd",
+      "bytes": 102307
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/parent-deletion/failure-released.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/final-browser/failure-released.png",
+      "sha256": "7819e1cb46ccc5c2cd54c764c16f211bb14baea9bfcda00a8d87d7e679dce8e9",
+      "bytes": 119436
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/parent-deletion/success-usable.png",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/parent-deletion/final-browser/success-usable.png",
+      "sha256": "433090c48e517b5234a7a77ab9b1142c363620942dd92e2df83a3979fb3fb42e",
+      "bytes": 84413
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/summary.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-review.json",
+      "sha256": "e4d90e6443d637c67128df97fe8161356302ff57fe1e3dce39e60a687fce8ccf",
+      "bytes": 12527
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-frontend.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-frontend.log",
+      "sha256": "6a4d6120fa0d41d8a743829d024eb2e535ebc8dab3ae261ad3a5de47d1307ff0",
+      "bytes": 688029
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-rust.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-rust.log",
+      "sha256": "5e0b63bff13d481848985ee22db50d4c6f9847561813d7e7f4b3f6de3278791f",
+      "bytes": 310296
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-run.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-run.json",
+      "sha256": "9a176edf2110d48fa1dd3c475a792bee0d73d3b0d2127fb0a7724ff0071aa9c7",
+      "bytes": 13917
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-jobs.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-jobs.json",
+      "sha256": "922dd6845631d4b15a7a0c86012502f11e176a02dcaadf3744482a2b4af7fc2a",
+      "bytes": 8807
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-native-run.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-native-run.json",
+      "sha256": "eee7848cef76359d8676d47ee9c4b993455c7f8fca4e3a26034fcbe32a618300",
+      "bytes": 13939
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-native-jobs.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-native-jobs.json",
+      "sha256": "fa844800cc13575736a999f414b54e0bddb8e3ebf9e00fbd77e593c6c23e4bfd",
+      "bytes": 2092
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-pre-deletion/ci-pre-deletion-3424f799-monitor.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-pre-deletion-3424f799-monitor.json",
+      "sha256": "0baba67669fd686356068b6a1746165ca2cb78779e3cafb837ad6ff47eb0d1fb",
+      "bytes": 7200
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.console-excerpt.txt",
@@ -2235,8 +2604,8 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/assemble-evidence.py",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/assemble-evidence.py",
-      "sha256": "b39daecfab346dead347fb765f7376a42cc3594027f32966d9e5ff7413cb690b",
-      "bytes": 27017
+      "sha256": "0945d43f5f56791b7db09528b0bf1144dba50afcef706b1ed8d3cf807f009690",
+      "bytes": 41214
     }
   ]
 }

@@ -1,0 +1,41 @@
+{
+  "baselineProductionCommit": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "notes": "Exact test bytes retained as text so documentation does not introduce active TypeScript test files. The initial harness is excluded from demonstrated regression counts.",
+  "files": [
+    {
+      "source": "work/recovery-verification/delete-before/new-test.tsx",
+      "staged": "work/recovery-verification/deletion-baseline-test-sources/delete-save-barrier.test-source.txt",
+      "sha256": "51a4f0dc2289d2052c2cb4fc19b327501e385a3d2be8ef07f8cea8f540ee54e5",
+      "bytes": 8459,
+      "scope": "executed 8-case block baseline"
+    },
+    {
+      "source": "work/recovery-verification/parent-deletion/baseline-tests/section-delete-save-barrier.test.tsx",
+      "staged": "work/recovery-verification/deletion-baseline-test-sources/section-delete-save-barrier.test-source.txt",
+      "sha256": "c8236fd2424d00bc48fc23a6474ce69202d3e1978ea1e19a5e2357f2c45772cc",
+      "bytes": 2208,
+      "scope": "executed exact baseline"
+    },
+    {
+      "source": "work/recovery-verification/parent-deletion/baseline-tests/note-point-delete-save-barrier.test.tsx",
+      "staged": "work/recovery-verification/deletion-baseline-test-sources/note-point-delete-save-barrier.test-source.txt",
+      "sha256": "bb87a630c7c5769a6d2efce4a8c45af9a74c53852736253ed849d0f4d6638aea",
+      "bytes": 5174,
+      "scope": "executed exact baseline"
+    },
+    {
+      "source": "work/recovery-verification/parent-deletion/baseline-tests/parent-delete-save-barrier.test.tsx",
+      "staged": "work/recovery-verification/deletion-baseline-test-sources/parent-delete-save-barrier.test-source.txt",
+      "sha256": "6037e758f3a5d7affb1179e585d96aa66955ab27d4b2159ddc3ae7603dea536a",
+      "bytes": 7201,
+      "scope": "executed exact baseline"
+    },
+    {
+      "source": "work/recovery-verification/delete-before/initial-harness-attempt/new-test.tsx",
+      "staged": "work/recovery-verification/deletion-baseline-test-sources/initial-block-harness.test-source.txt",
+      "sha256": "a4a6be3d36459fed653d22fbc27e191778f9ffd2f34d5cdc7cb3e0e537eb655b",
+      "bytes": 8377,
+      "scope": "excluded setup attempt; two incorrect selectors"
+    }
+  ]
+}
