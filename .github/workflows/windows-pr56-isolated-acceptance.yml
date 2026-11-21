@@ -1,0 +1,148 @@
+# One owner-approved Windows acceptance build. No release or deployment.
+# The workflow is on a build-only branch; the application checkout is immutable.
+name: Windows PR56 isolated acceptance
+on:
+  push:
+    branches:
+      - build/pr56-windows-acceptance-20261121
+permissions:
+  contents: read
+jobs:
+  acceptance:
+    if: github.event.head_commit.message == 'Build approved PR56 Windows acceptance candidate'
+    runs-on: windows-2025
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      EXPECTED_SOURCE_SHA: 607e965d9c59a1dd93d23aaf95961944c11211a7
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
+      CARGO_INCREMENTAL: "0"
+      VITE_SELECTION_SPIKE: ""
+    steps:
+      - name: Preserve historical SQL bytes on checkout
+        run: git config --global core.autocrlf false
+
+      - name: Checkout exact tested application source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: 607e965d9c59a1dd93d23aaf95961944c11211a7
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.22.1
+
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: 1.100.0
+
+      - name: Confirm pinned clean source and historical migrations
+        run: |
+          if ((git rev-parse HEAD).Trim() -cne $env:EXPECTED_SOURCE_SHA) { throw 'Wrong application source SHA' }
+          node scripts/build-provenance.mjs --expected-sha "$env:EXPECTED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/source-provenance.json"
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned source/migrations did not validate' }
+          @'
+          import { createHash } from 'node:crypto';
+          import { readFileSync, readdirSync } from 'node:fs';
+          import { join } from 'node:path';
+          const proof = JSON.parse(readFileSync(join(process.env.RUNNER_TEMP, 'source-provenance.json'), 'utf8'));
+          const digest = createHash('sha256').update(JSON.stringify(proof.migrations)).digest('hex');
+          if (digest !== 'acb4707b448735285346834b3cab04caa61fe3696079b84a7e5d9c35b4cd4e13') {
+            throw new Error('Unexpected schema-27 migration contents');
+          }
+          const files = readdirSync('src-tauri/migrations').filter(s => s.endsWith('.sql')).sort();
+          if (JSON.stringify(files) !== JSON.stringify(proof.migrations.map(m => m.file).sort())) {
+            throw new Error('Migration catalogue/directory mismatch');
+          }
+          const cfg = JSON.parse(readFileSync('src-tauri/tauri.conf.json', 'utf8'));
+          if (cfg.identifier !== 'app.abidingword.desktop' ||
+              cfg.plugins?.updater || cfg.bundle?.createUpdaterArtifacts) {
+            throw new Error('Unexpected app identity or updater configuration');
+          }
+          if (cfg.bundle?.resources?.['../docs/release/THIRD-PARTY-NOTICES.md'] !== 'licenses/THIRD-PARTY-NOTICES.md') {
+            throw new Error('Resource attributions missing');
+          }
+          console.log('Schema 27 migration catalogue SHA-256:', digest);
+          '@ | node --input-type=module
+          if ($LASTEXITCODE -ne 0) { throw 'Release-input checks failed' }
+
+      - name: Create separate test installation identity
+        run: |
+          # Overlay changes package identity and window title only.
+          $overlay = @{
+            productName = 'Abiding Word PR56 Acceptance'
+            identifier = 'app.abidingword.pr56.acceptance'
+            app = @{
+              windows = @(@{
+                title = 'Abiding Word - PR56 Acceptance'
+                width = 1280
+                height = 800
+                minWidth = 640
+                minHeight = 520
+                center = $true
+                backgroundColor = '#f6f1e6'
+              })
+            }
+          } | ConvertTo-Json -Depth 8
+          $overlay | Set-Content "$env:RUNNER_TEMP/pr56-acceptance-overlay.json" -Encoding utf8
+          $actual = Get-Content "$env:RUNNER_TEMP/pr56-acceptance-overlay.json" -Raw | ConvertFrom-Json
+          if ($actual.identifier -cne 'app.abidingword.pr56.acceptance') { throw 'Test identity mismatch' }
+
+      - name: Record build environment
+        run: |
+          @(
+            "Application source SHA: $env:EXPECTED_SOURCE_SHA"
+            "Runner: $env:RUNNER_OS $env:RUNNER_ARCH"
+            "Windows image: $env:ImageOS $env:ImageVersion"
+            "Node: $(node --version)"
+            "npm: $(npm --version)"
+            "Rust: $(rustc --version)"
+            "Cargo: $(cargo --version)"
+            "Separate app identity: app.abidingword.pr56.acceptance"
+            "No updater, signing, publishing, release or deployment"
+          ) | Set-Content "$env:RUNNER_TEMP/build-environment.txt"
+
+      - name: Install pinned npm dependencies
+        run: npm ci
+
+      - name: Validate bundled Bible resources and notices
+        run: npm run release:resources
+
+      - name: Build unsigned isolated Windows NSIS installer
+        run: |
+          npx tauri build --bundles nsis --no-sign --ci --config "$env:RUNNER_TEMP/pr56-acceptance-overlay.json" -- --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Windows compilation/packaging failed' }
+
+      - name: Stage single installer and checksum
+        run: |
+          $installers = @(Get-ChildItem 'src-tauri/target/release/bundle/nsis/*-setup.exe' -File)
+          if ($installers.Count -ne 1 -or $installers[0].Length -eq 0) { throw 'Expected exactly one nonempty NSIS installer' }
+          New-Item -ItemType Directory -Path staged -Force | Out-Null
+          New-Item -ItemType Directory -Path staged-evidence -Force | Out-Null
+          $name = 'Abiding-Word-PR56-Acceptance-607e965d-x64-setup.exe'
+          Copy-Item -LiteralPath $installers[0].FullName -Destination "staged/$name"
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath "staged/$name").Hash.ToLowerInvariant()
+          "$hash  $name" | Set-Content "$env:RUNNER_TEMP/installer-sha256.txt"
+          Copy-Item "$env:RUNNER_TEMP/source-provenance.json" staged-evidence/
+          Copy-Item "$env:RUNNER_TEMP/pr56-acceptance-overlay.json" staged-evidence/
+          Copy-Item "$env:RUNNER_TEMP/build-environment.txt" staged-evidence/
+          Copy-Item "$env:RUNNER_TEMP/installer-sha256.txt" staged-evidence/
+          "Installer SHA-256: $hash"
+
+      - name: Upload Windows acceptance installer ZIP
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-PR56-Isolated-Windows-x64
+          path: staged/*.exe
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload checksums and build provenance
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-PR56-Isolated-Windows-Evidence
+          path: staged-evidence/*
+          if-no-files-found: error
+          retention-days: 14
