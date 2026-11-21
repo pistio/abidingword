@@ -1,0 +1,158 @@
+{
+  "edition": {
+    "key": "e2-ref-jol",
+    "files": [
+      "e2-ref-jol.md"
+    ],
+    "reference": "e2-ref-jol_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "JOL"
+    ]
+  },
+  "reference": "aw-reference-4402-e2-ref-jol_usfm.zip",
+  "totals": {
+    "code": "ALL",
+    "expected": 52,
+    "absent_in_edition": 0,
+    "detected": 52,
+    "usable": 47,
+    "unmapped": 5,
+    "chapters": 3,
+    "usable_chapters": 2,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 1,
+    "refused_other": 0,
+    "usable_exact": 47,
+    "usable_normalised": 0,
+    "usable_case_only": 0,
+    "usable_different": 0,
+    "usable_typography": 0,
+    "usable_extra_text": 0,
+    "usable_missing_text": 0,
+    "usable_wrong_reference": 0,
+    "usable_changed": 0,
+    "refused_exact": 5,
+    "refused_normalised": 0,
+    "refused_different": 0,
+    "usable_extra": 0,
+    "missing_in_usable_chapter": 0,
+    "verified": 47,
+    "verified_exact": 47,
+    "verified_normalised": 0,
+    "verified_different": 0,
+    "verified_typography": 0,
+    "verified_extra_text": 0,
+    "verified_missing_text": 0,
+    "verified_wrong_reference": 0,
+    "verified_changed": 0,
+    "verified_extra": 0,
+    "unverified_clean": 0,
+    "unverified_caught": 0,
+    "located": 47,
+    "location_checked": 47
+  },
+  "books": [
+    {
+      "code": "JOL",
+      "expected": 52,
+      "absent_in_edition": 0,
+      "detected": 52,
+      "usable": 47,
+      "unmapped": 5,
+      "chapters": 3,
+      "usable_chapters": 2,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 1,
+      "refused_other": 0,
+      "usable_exact": 47,
+      "usable_normalised": 0,
+      "usable_case_only": 0,
+      "usable_different": 0,
+      "usable_typography": 0,
+      "usable_extra_text": 0,
+      "usable_missing_text": 0,
+      "usable_wrong_reference": 0,
+      "usable_changed": 0,
+      "refused_exact": 5,
+      "refused_normalised": 0,
+      "refused_different": 0,
+      "usable_extra": 0,
+      "missing_in_usable_chapter": 0,
+      "verified": 47,
+      "verified_exact": 47,
+      "verified_normalised": 0,
+      "verified_different": 0,
+      "verified_typography": 0,
+      "verified_extra_text": 0,
+      "verified_missing_text": 0,
+      "verified_wrong_reference": 0,
+      "verified_changed": 0,
+      "verified_extra": 0,
+      "unverified_clean": 0,
+      "unverified_caught": 0,
+      "located": 47,
+      "location_checked": 47
+    }
+  ],
+  "books_not_found": [],
+  "issues": {
+    "Error bibleImport.chapterOutOfRange": 1,
+    "Error bibleImport.documentChapterShort": 1,
+    "Note bibleImport.documentLeftOut": 1,
+    "Warning bibleImport.documentChapterShort": 1
+  },
+  "refused_chapters": [
+    "JOL 3 (numbers)",
+    "JOL 4 (other)"
+  ],
+  "differences": [],
+  "extra_verses": [],
+  "verified_extra_verses": [],
+  "unverified_reasons": {},
+  "location_misses": [],
+  "apparatus": 1,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "Joel",
+      "JOL",
+      null
+    ]
+  ],
+  "errors": [
+    "Joel 4: Joel has 3 chapters in the standard numbering.",
+    "Joel 3 ends at verse 5; it usually has 21 verses. The verses after 5 were not found."
+  ],
+  "seconds": 0.146369599,
+  "peak_memory_mb": 19.83984375,
+  "read_seconds": 0.146208638,
+  "read_peak_memory_mb": 19.83984375,
+  "numbering": [
+    {
+      "code": "JOL",
+      "agreement": "withinReference",
+      "chaptersPrinted": 3,
+      "chaptersReference": 3,
+      "differences": [
+        {
+          "kind": "shorter",
+          "chapter": 2,
+          "printed": 27,
+          "reference": 32
+        },
+        {
+          "kind": "shorter",
+          "chapter": 3,
+          "printed": 5,
+          "reference": 21
+        }
+      ]
+    }
+  ]
+}

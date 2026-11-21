@@ -1,0 +1,30 @@
+{
+ "note": "SYNTHETIC fixture: what both inventories (Rust and Python) must read from tests/evaluation/inventory-fixture/ zipped in name order. Every verse is invented.",
+ "label_digest": "ca3ee7212a57e5b3d284c5188e668b7ef3ff3d0bd16d6d5568bc0e1499a97a3c",
+ "labels": 22,
+ "label_counts": {
+  "scorable": 7,
+  "outside_declared_scope": 0,
+  "verse_zero": 1,
+  "verse_label_unusual": 2,
+  "verse_duplicate": 2,
+  "verse_before_chapter": 1,
+  "chapter_zero": 1,
+  "chapter_label_unusual": 1,
+  "chapter_beyond_canon": 2,
+  "book_outside_canon": 2,
+  "book_code_unknown": 1,
+  "book_duplicate": 2,
+  "book_unidentified": 1
+ },
+ "declared_OBA_JOL_TOB": {
+  "scorable": 6,
+  "outside_declared_scope": 7
+ },
+ "scorable_ranges": [
+  "JOL 1:1-2",
+  "OBA 1:1-3",
+  "OBA 1:5",
+  "JUD 1:1"
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-before/repo/eval/e2-abs/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-before/documents/e2-abs",
+ "seal_commit": "4bc7464ed699a6a9844d23a9f986211928afff16",
+ "manifest_sha256": "9cc76afe43e21a3a93503738c6ff69c150e933c24c651d1b7bf6a6fa6ca88f67",
+ "checksums_sha256": "72cd23e82d0b8a572e8ffc7d24718b64d18777645e2eec55b7dbc75aadb49b1f",
+ "classes": {
+  "control": 0,
+  "exploratory": 0,
+  "mixed": 0,
+  "scored": 3
+ },
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}

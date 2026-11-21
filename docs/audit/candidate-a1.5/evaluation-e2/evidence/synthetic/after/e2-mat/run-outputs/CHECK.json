@@ -1,0 +1,165 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/repo/eval/e2-mat/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/documents/e2-mat",
+ "seal_commit": "1c6bf6a7ea17c68ac9ab16a363bb343635c8cf52",
+ "tools": {
+  "check-set.py": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "reference_inventory.py": "2b5bcb8d8e4bc9b9cb4b03e9d6ebe566b5f62e7fb8d253d103f26bf6cdd33447",
+  "usfm-books.tsv": "4925aa88f5ce46cb4de1d0ad18d27a1256bde3c63cb959b265a64a1269819248"
+ },
+ "protocol": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/rehearsal-protocol-e2-mat.json",
+ "protocol_sha256": "faaf91963a7b338e37aeeb7d236d124958bfb85d765d84cc2019aaeb937df227",
+ "manifest_sha256": "2f516ff81621c3e32039b393b4dd0474a645424c8349eaa8de596874256fcc37",
+ "checksums_sha256": "2ad54f9973126c34c49eb49b524775a79b72bc5764c3c54c6ffe150b7d6c2545",
+ "classes": {
+  "control": 0,
+  "exploratory": 0,
+  "mixed": 0,
+  "scored": 2
+ },
+ "composition": {
+  "scored": 2,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 2
+ },
+ "declared_composition": {
+  "scored": 2,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 2
+ },
+ "required_composition": {
+  "scored": 2,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 2
+ },
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "reference_inventories": {
+  "e2-mat-oba": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-OBA.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "OBA",
+     "verses": 21,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "d6f1ef847c03a06202a85618068fb33033ad4c49807341f3e673315b134f75e6",
+   "labels": 21,
+   "label_counts": {
+    "scorable": 21,
+    "outside_declared_scope": 0,
+    "verse_zero": 0,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "OBA 1:1-21"
+   ],
+   "outside_declared_books": []
+  },
+  "e2-mat-phm": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-PHM.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "PHM",
+     "verses": 25,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "48d4cb838dfedd37ba12d034b1ad7878e21ed5772b632a405b4f13fe5e151023",
+   "labels": 25,
+   "label_counts": {
+    "scorable": 25,
+    "outside_declared_scope": 0,
+    "verse_zero": 0,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "PHM 1:1-25"
+   ],
+   "outside_declared_books": []
+  }
+ },
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}

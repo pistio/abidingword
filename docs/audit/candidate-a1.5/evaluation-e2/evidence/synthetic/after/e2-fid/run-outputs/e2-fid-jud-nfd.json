@@ -1,0 +1,532 @@
+{
+  "evaluation_schema": "aw-eval-2",
+  "fidelity_rules": "aw-fidelity-2",
+  "inventory_rules": "aw-reference-inventory-1",
+  "edition": {
+    "key": "e2-fid-jud-nfd",
+    "files": [
+      "e2-fid-jud-nfd.md"
+    ],
+    "reference": "e2-fid-jud-nfd_usfm.zip",
+    "language": "grc",
+    "script": "Greek",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "JUD"
+    ],
+    "sealed": true
+  },
+  "reference": "e2-fid-jud-nfd_usfm.zip",
+  "book_selection": {
+    "rule": "manifest",
+    "books": [
+      "JUD"
+    ],
+    "unknown_codes": []
+  },
+  "reference_inventory": {
+    "rules": "aw-reference-inventory-1",
+    "members": [
+      {
+        "name": "41-JUD.usfm",
+        "role": "usfm",
+        "book": "JUD",
+        "verses": 25,
+        "verses_before_chapter": 0,
+        "utf8": true,
+        "nfc": true
+      }
+    ],
+    "problems": [],
+    "label_digest": "ec3af2d0a997edc959468bea1d8be4a432667cb2032a14209bb9dcbfba6dca03",
+    "labels": 25,
+    "printed_scorable": 25,
+    "absent_in_edition": 0,
+    "unsupported": {
+      "book_code_unknown": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_outside_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_unidentified": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_beyond_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_before_chapter": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      }
+    },
+    "printed_unsupported": 0,
+    "outside_declared_scope": {
+      "printed": 0,
+      "empty": 0,
+      "references": []
+    },
+    "scorable_by_book": {
+      "JUD": 25
+    },
+    "scorable_ranges": [
+      "JUD 1:1-25"
+    ],
+    "before_chapter_outside": 0
+  },
+  "importer_comparison": {
+    "error": null,
+    "agree": 25,
+    "only_importer": 0,
+    "only_inventory": 0,
+    "text_differs": 0,
+    "examples": [],
+    "issue_codes": {}
+  },
+  "accounting": {
+    "printed_scorable": 25,
+    "verified": 25,
+    "held": 0,
+    "refused": 0,
+    "not_found": 0,
+    "holds": true
+  },
+  "totals": {
+    "code": "ALL",
+    "expected": 25,
+    "absent_in_edition": 0,
+    "detected": 25,
+    "usable": 25,
+    "unmapped": 0,
+    "not_found": 0,
+    "refused": 0,
+    "chapters": 1,
+    "usable_chapters": 1,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 0,
+    "refused_other": 0,
+    "missing_in_usable_chapter": 0,
+    "verified": 25,
+    "verified_exact": 0,
+    "verified_canonical": 25,
+    "verified_layout": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "held": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused_faithful": 0,
+    "refused_mismatch": 0,
+    "located": 25,
+    "location_checked": 25
+  },
+  "books": [
+    {
+      "code": "JUD",
+      "expected": 25,
+      "absent_in_edition": 0,
+      "detected": 25,
+      "usable": 25,
+      "unmapped": 0,
+      "not_found": 0,
+      "refused": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "missing_in_usable_chapter": 0,
+      "verified": 25,
+      "verified_exact": 0,
+      "verified_canonical": 25,
+      "verified_layout": 0,
+      "verified_mismatch": 0,
+      "verified_mismatch_kinds": {},
+      "held": 0,
+      "held_faithful": 0,
+      "held_mismatch": 0,
+      "refused_faithful": 0,
+      "refused_mismatch": 0,
+      "located": 25,
+      "location_checked": 25
+    }
+  ],
+  "books_not_found": [],
+  "issues": {},
+  "refused_chapters": [],
+  "fidelity_records": [
+    {
+      "reference": "JUD 1:1",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ξένος ὑπέστρεψεν παρὰ τὴν πύλην μεσημβρίας, καὶ ἄρτον ἔκλασαν.",
+      "edition": "Ὁ ξένος ὑπέστρεψεν παρὰ τὴν πύλην μεσημβρίας, καὶ ἄρτον ἔκλασαν."
+    },
+    {
+      "reference": "JUD 1:2",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ δοῦλος εἰργάσατο παρὰ τὸν ποταμόν πρὸ τοῦ ὑετοῦ, καὶ οὐδὲν εἶπεν.",
+      "edition": "Ὁ δοῦλος εἰργάσατο παρὰ τὸν ποταμόν πρὸ τοῦ ὑετοῦ, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:3",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ πρεσβύτερος εἰργάσατο παρὰ τὴν ὁδόν πρὸ τοῦ ὑετοῦ, καὶ οὐδὲν εἶπεν.",
+      "edition": "Ὁ πρεσβύτερος εἰργάσατο παρὰ τὴν ὁδόν πρὸ τοῦ ὑετοῦ, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:4",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ δοῦλος ἀνέβλεψεν παρὰ τὴν πύλην ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν.",
+      "edition": "Ὁ δοῦλος ἀνέβλεψεν παρὰ τὴν πύλην ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν."
+    },
+    {
+      "reference": "JUD 1:5",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ δοῦλος ἐκάθισεν παρὰ τὸν ποταμόν ἐν τῇ ἑορτῇ, καὶ οὐδὲν εἶπεν.",
+      "edition": "Ὁ δοῦλος ἐκάθισεν παρὰ τὸν ποταμόν ἐν τῇ ἑορτῇ, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:6",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Οἱ νεανίσκοι ἐλάλησεν ἐγγὺς τοῦ φρέατος πρωΐ, καὶ οὐδὲν εἶπεν.",
+      "edition": "Οἱ νεανίσκοι ἐλάλησεν ἐγγὺς τοῦ φρέατος πρωΐ, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:7",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ἀγαπητός περιεπάτησεν ἐν τῇ κώμῃ πρὸ τοῦ ὑετοῦ, καὶ πάντα ἡσύχαζεν.",
+      "edition": "Ὁ ἀγαπητός περιεπάτησεν ἐν τῇ κώμῃ πρὸ τοῦ ὑετοῦ, καὶ πάντα ἡσύχαζεν."
+    },
+    {
+      "reference": "JUD 1:8",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ οἶκος ἐκάθισεν ὑπὸ τὴν ἐλαίαν πρὸ τοῦ ὑετοῦ, καὶ ἄρτον ἔκλασαν.",
+      "edition": "Ὁ οἶκος ἐκάθισεν ὑπὸ τὴν ἐλαίαν πρὸ τοῦ ὑετοῦ, καὶ ἄρτον ἔκλασαν."
+    },
+    {
+      "reference": "JUD 1:9",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Οἱ νεανίσκοι ἀνέβλεψεν ὑπὸ τὴν ἐλαίαν ὀψίας, καὶ οὐδὲν εἶπεν.",
+      "edition": "Οἱ νεανίσκοι ἀνέβλεψεν ὑπὸ τὴν ἐλαίαν ὀψίας, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:10",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Αἱ γυναῖκες ἤκουσεν παρὰ τὸν ποταμόν μεσημβρίας, καὶ ἡ ἡμέρα μακρὰ ἦν.",
+      "edition": "Αἱ γυναῖκες ἤκουσεν παρὰ τὸν ποταμόν μεσημβρίας, καὶ ἡ ἡμέρα μακρὰ ἦν."
+    },
+    {
+      "reference": "JUD 1:11",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ἀγαπητός εἰργάσατο παρὰ τὴν πύλην ὀψίας, καὶ ἄρτον ἔκλασαν.",
+      "edition": "Ὁ ἀγαπητός εἰργάσατο παρὰ τὴν πύλην ὀψίας, καὶ ἄρτον ἔκλασαν."
+    },
+    {
+      "reference": "JUD 1:12",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Οἱ ἀδελφοί ᾖσεν παρὰ τὴν πύλην ἐν τῇ ἑορτῇ, καὶ ἄρτον ἔκλασαν.",
+      "edition": "Οἱ ἀδελφοί ᾖσεν παρὰ τὴν πύλην ἐν τῇ ἑορτῇ, καὶ ἄρτον ἔκλασαν."
+    },
+    {
+      "reference": "JUD 1:13",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ποιμήν ἐκάθισεν παρὰ τὸν ποταμόν πρὸ τοῦ ὑετοῦ, καὶ ηὐχαρίστησεν.",
+      "edition": "Ὁ ποιμήν ἐκάθισεν παρὰ τὸν ποταμόν πρὸ τοῦ ὑετοῦ, καὶ ηὐχαρίστησεν."
+    },
+    {
+      "reference": "JUD 1:14",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ἡ ἐκκλησία ἐκάθισεν ἐπὶ τοῦ ὄρους μεσημβρίας, καὶ ἄρτον ἔκλασαν.",
+      "edition": "Ἡ ἐκκλησία ἐκάθισεν ἐπὶ τοῦ ὄρους μεσημβρίας, καὶ ἄρτον ἔκλασαν."
+    },
+    {
+      "reference": "JUD 1:15",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Οἱ ἀδελφοί ἔμεινεν ἐγγὺς τοῦ φρέατος μεσημβρίας, καὶ οὐδὲν εἶπεν.",
+      "edition": "Οἱ ἀδελφοί ἔμεινεν ἐγγὺς τοῦ φρέατος μεσημβρίας, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:16",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ἀγαπητός ᾖσεν παρὰ τὸν ποταμόν ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν.",
+      "edition": "Ὁ ἀγαπητός ᾖσεν παρὰ τὸν ποταμόν ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν."
+    },
+    {
+      "reference": "JUD 1:17",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ξένος ὑπέστρεψεν ἐν τῇ κώμῃ μεσημβρίας, καὶ ἡ ἡμέρα μακρὰ ἦν.",
+      "edition": "Ὁ ξένος ὑπέστρεψεν ἐν τῇ κώμῃ μεσημβρίας, καὶ ἡ ἡμέρα μακρὰ ἦν."
+    },
+    {
+      "reference": "JUD 1:18",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ποιμήν ἤκουσεν παρὰ τὴν πύλην ὀψίας, καὶ ἐχάρησαν.",
+      "edition": "Ὁ ποιμήν ἤκουσεν παρὰ τὴν πύλην ὀψίας, καὶ ἐχάρησαν."
+    },
+    {
+      "reference": "JUD 1:19",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ἡ μήτηρ ἀνέβλεψεν παρὰ τὸν ποταμόν ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν.",
+      "edition": "Ἡ μήτηρ ἀνέβλεψεν παρὰ τὸν ποταμόν ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν."
+    },
+    {
+      "reference": "JUD 1:20",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ ξένος ἐκάθισεν ὑπὸ τὴν ἐλαίαν πρωΐ, καὶ οὐδὲν εἶπεν.",
+      "edition": "Ὁ ξένος ἐκάθισεν ὑπὸ τὴν ἐλαίαν πρωΐ, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:21",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ πρεσβύτερος ἐλάλησεν παρὰ τὸν ποταμόν ὀψίας, καὶ οὐδὲν εἶπεν.",
+      "edition": "Ὁ πρεσβύτερος ἐλάλησεν παρὰ τὸν ποταμόν ὀψίας, καὶ οὐδὲν εἶπεν."
+    },
+    {
+      "reference": "JUD 1:22",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ δοῦλος ὑπέστρεψεν ἐγγὺς τοῦ φρέατος ἐν τῇ ἑορτῇ, καὶ ἐχάρησαν.",
+      "edition": "Ὁ δοῦλος ὑπέστρεψεν ἐγγὺς τοῦ φρέατος ἐν τῇ ἑορτῇ, καὶ ἐχάρησαν."
+    },
+    {
+      "reference": "JUD 1:23",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Ὁ πρεσβύτερος περιεπάτησεν ἐν τῷ ἀγρῷ μετὰ τὸν θερισμόν, καὶ πάντα ἡσύχαζεν.",
+      "edition": "Ὁ πρεσβύτερος περιεπάτησεν ἐν τῷ ἀγρῷ μετὰ τὸν θερισμόν, καὶ πάντα ἡσύχαζεν."
+    },
+    {
+      "reference": "JUD 1:24",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Αἱ γυναῖκες εἰργάσατο ἐν τῷ ἀγρῷ ἐν τῇ ἑορτῇ, καὶ ἡ ἡμέρα μακρὰ ἦν.",
+      "edition": "Αἱ γυναῖκες εἰργάσατο ἐν τῷ ἀγρῷ ἐν τῇ ἑορτῇ, καὶ ἡ ἡμέρα μακρὰ ἦν."
+    },
+    {
+      "reference": "JUD 1:25",
+      "status": "verified",
+      "unverified_reason": null,
+      "class": "canonical",
+      "kind": null,
+      "matched": null,
+      "page": null,
+      "found": "Αἱ γυναῖκες περιεπάτησεν ἐπὶ τοῦ ὄρους ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν.",
+      "edition": "Αἱ γυναῖκες περιεπάτησεν ἐπὶ τοῦ ὄρους ἐν τῇ ἑορτῇ, καὶ πάντα ἡσύχαζεν."
+    }
+  ],
+  "verified_references": [
+    "JUD 1:1",
+    "JUD 1:2",
+    "JUD 1:3",
+    "JUD 1:4",
+    "JUD 1:5",
+    "JUD 1:6",
+    "JUD 1:7",
+    "JUD 1:8",
+    "JUD 1:9",
+    "JUD 1:10",
+    "JUD 1:11",
+    "JUD 1:12",
+    "JUD 1:13",
+    "JUD 1:14",
+    "JUD 1:15",
+    "JUD 1:16",
+    "JUD 1:17",
+    "JUD 1:18",
+    "JUD 1:19",
+    "JUD 1:20",
+    "JUD 1:21",
+    "JUD 1:22",
+    "JUD 1:23",
+    "JUD 1:24",
+    "JUD 1:25"
+  ],
+  "verified_absent": [],
+  "verified_unvalidatable": [],
+  "verified_empty_in_both": 0,
+  "usable_absent": [],
+  "unverified_reasons": {},
+  "location_misses": [],
+  "apparatus": 0,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "Jude",
+      "JUD",
+      null
+    ]
+  ],
+  "errors": [],
+  "seconds": 0.085358524,
+  "peak_memory_mb": 20.0859375,
+  "read_seconds": 0.085225861,
+  "read_peak_memory_mb": 20.0859375,
+  "numbering": [
+    {
+      "code": "JUD",
+      "agreement": "withinReference",
+      "chaptersPrinted": 1,
+      "chaptersReference": 1,
+      "differences": []
+    }
+  ]
+}

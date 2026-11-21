@@ -1,0 +1,3 @@
+key	files	reference	language	script	format	layout	role	source and licence	books	sha256	generator	kind	class
+e2-map-jol	e2-map-jol.md	e2-map-jol_usfm.zip	en	Latin	md	synthetic	e2-probe	SYNTHETIC invented text, tests only	JOL	-	-	generated	scored
+e2-utf8-oba	e2-utf8-oba.md	e2-utf8-oba_usfm.zip	en	Latin	md	synthetic	e2-probe	SYNTHETIC invented text, tests only	OBA	-	-	generated	scored

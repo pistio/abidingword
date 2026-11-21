@@ -1,0 +1,4 @@
+key	publisher	edition	revision	retrieved_from	retrieved_utc	licence	document_sha256	reference_source	reference_method	identity_checked_by
+e2-abs-mal	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	63a3ace01ecb9203e1af0a887643784b63c1238006629a356be63246c6b8d46b	generated with the document	same generator	generator (synthetic)
+e2-abs-jud	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	0aa69cbbf7373d08be4db3ed055bd756da59ede2a0b11256db620081dd9cf743	generated with the document	same generator	generator (synthetic)
+e2-abs-rut	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	79f2f1f88eb8467d1f8f2d99848e8946e2a7cfbab284883155951fd9dfa37d82	generated with the document	same generator	generator (synthetic)

@@ -1,0 +1,6 @@
+key	files	reference	language	script	format	layout	role	source and licence	books	sha256	generator	kind	class
+e2-fid-rut	e2-fid-rut.md	e2-fid-rut_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	RUT	c4e719b184408e042c190bace93527638a2d35da4ae6ce47bd977e1960d428f4	make_e2_sets.py	generated	scored
+e2-fid-phm	e2-fid-phm.md	e2-fid-phm_usfm.zip	es	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	PHM	de96f392c0125e1143282b8148c3a7068c718fd91dcaab6e9f2baf89efb993d6	make_e2_sets.py	generated	scored
+e2-fid-3jn	e2-fid-3jn.md	e2-fid-3jn_usfm.zip	grc	Greek	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	3JN	26025511473cba76d94270138e416375b5d6d1bb21855e26b20c9100bcde7493	make_e2_sets.py	generated	scored
+e2-fid-oba-he	e2-fid-oba-he.md	e2-fid-oba-he_usfm.zip	he	Hebrew	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	OBA	3e0db2f414215e38958b5f7c0ec0f18bd586e86803b91958ece11677841ec612	make_e2_sets.py	generated	scored
+e2-fid-jud-nfd	e2-fid-jud-nfd.md	e2-fid-jud-nfd_usfm.zip	grc	Greek	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	JUD	70aa8d171cab4df7391d6b2b1693a42c2646f1f23635ec4a1b9426bc2a9b8443	make_e2_sets.py	generated	scored

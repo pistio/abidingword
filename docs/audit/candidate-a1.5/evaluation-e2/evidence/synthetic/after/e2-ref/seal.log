@@ -1,0 +1,454 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/repo/eval/e2-ref/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/documents/e2-ref",
+ "seal_commit": null,
+ "tools": {
+  "check-set.py": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "reference_inventory.py": "2b5bcb8d8e4bc9b9cb4b03e9d6ebe566b5f62e7fb8d253d103f26bf6cdd33447",
+  "usfm-books.tsv": "4925aa88f5ce46cb4de1d0ad18d27a1256bde3c63cb959b265a64a1269819248"
+ },
+ "protocol": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/rehearsal-protocol-e2-ref.json",
+ "protocol_sha256": "841310eb4e137440fd64f7ea020b0924c54e71c79d1cc07ad8ac87c406f3f5a0",
+ "manifest_sha256": "0883db73e2cc7b7cf4e20aaca2e31232a257f506b6c752bb959ce204d50ea274",
+ "checksums_sha256": "04a947bdcbe68488952d5713f7cf0c90aa730c2fd590299fee77094be9a2212f",
+ "classes": {
+  "control": 0,
+  "exploratory": 0,
+  "mixed": 0,
+  "scored": 6
+ },
+ "composition": {
+  "scored": 6,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 6
+ },
+ "declared_composition": {
+  "scored": 6,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 6
+ },
+ "required_composition": {
+  "scored": 6,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 6
+ },
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "reference_inventories": {
+  "e2-ref-exo0a": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-EXO.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "EXO",
+     "verses": 37,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "5a8f63cc87a685f6f4e78fbbc610854bb1d4dbbc18ccd0d0c2c5c90d0c179cad",
+   "labels": 37,
+   "label_counts": {
+    "scorable": 36,
+    "outside_declared_scope": 0,
+    "verse_zero": 1,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [
+     "EXO 16:0"
+    ],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "EXO 16:1-36"
+   ],
+   "outside_declared_books": []
+  },
+  "e2-ref-exo0b": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-EXO.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "EXO",
+     "verses": 37,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "5a8f63cc87a685f6f4e78fbbc610854bb1d4dbbc18ccd0d0c2c5c90d0c179cad",
+   "labels": 37,
+   "label_counts": {
+    "scorable": 36,
+    "outside_declared_scope": 0,
+    "verse_zero": 1,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [
+     "EXO 16:0"
+    ],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "EXO 16:1-36"
+   ],
+   "outside_declared_books": []
+  },
+  "e2-ref-exo0c": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-EXO.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "EXO",
+     "verses": 37,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "5a8f63cc87a685f6f4e78fbbc610854bb1d4dbbc18ccd0d0c2c5c90d0c179cad",
+   "labels": 37,
+   "label_counts": {
+    "scorable": 36,
+    "outside_declared_scope": 0,
+    "verse_zero": 1,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [
+     "EXO 16:0"
+    ],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "EXO 16:1-36"
+   ],
+   "outside_declared_books": []
+  },
+  "e2-ref-jol": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-JOL.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "JOL",
+     "verses": 73,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "08601c0c00aa0fb615867438fe7b7fc0c60a787770a5104ec6a8bf86f0816b0a",
+   "labels": 73,
+   "label_counts": {
+    "scorable": 52,
+    "outside_declared_scope": 0,
+    "verse_zero": 0,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 21,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [
+     "JOL 4:1",
+     "JOL 4:2",
+     "JOL 4:3",
+     "JOL 4:4",
+     "JOL 4:5",
+     "JOL 4:6",
+     "JOL 4:7",
+     "JOL 4:8",
+     "JOL 4:9",
+     "JOL 4:10",
+     "JOL 4:11",
+     "JOL 4:12",
+     "JOL 4:13",
+     "JOL 4:14",
+     "JOL 4:15",
+     "JOL 4:16",
+     "JOL 4:17",
+     "JOL 4:18",
+     "JOL 4:19",
+     "JOL 4:20",
+     "JOL 4:21"
+    ],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "JOL 1:1-20",
+    "JOL 2:1-27",
+    "JOL 3:1-5"
+   ],
+   "outside_declared_books": []
+  },
+  "e2-ref-tob": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-OBA.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "OBA",
+     "verses": 21,
+     "verses_before_chapter": 0
+    },
+    {
+     "name": "42-TOB.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "TOB",
+     "verses": 22,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "d8e53efba01181922538226125383e728f0d6142e91e6b8eb26857a7fb9e5048",
+   "labels": 43,
+   "label_counts": {
+    "scorable": 21,
+    "outside_declared_scope": 0,
+    "verse_zero": 0,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 22,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [
+     "TOB 1:1",
+     "TOB 1:2",
+     "TOB 1:3",
+     "TOB 1:4",
+     "TOB 1:5",
+     "TOB 1:6",
+     "TOB 1:7",
+     "TOB 1:8",
+     "TOB 1:9",
+     "TOB 1:10",
+     "TOB 1:11",
+     "TOB 1:12",
+     "TOB 1:13",
+     "TOB 1:14",
+     "TOB 1:15",
+     "TOB 1:16",
+     "TOB 1:17",
+     "TOB 1:18",
+     "TOB 1:19",
+     "TOB 1:20",
+     "TOB 1:21",
+     "TOB 1:22"
+    ],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "OBA 1:1-21"
+   ],
+   "outside_declared_books": []
+  },
+  "e2-ref-3jn": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-3JN.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "3JN",
+     "verses": 21,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "8b39c92b14dcee743758020485c1fac95565b960d76699fe8ebc0999cbc4224b",
+   "labels": 21,
+   "label_counts": {
+    "scorable": 13,
+    "outside_declared_scope": 0,
+    "verse_zero": 0,
+    "verse_label_unusual": 2,
+    "verse_duplicate": 2,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 4,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [],
+    "verse_label_unusual": [
+     "3JN 1:12a",
+     "3JN 1:201"
+    ],
+    "verse_duplicate": [
+     "3JN 1:7",
+     "3JN 1:7"
+    ],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [
+     "3JN 2:1",
+     "3JN 2:2",
+     "3JN 2:3",
+     "3JN 2:4"
+    ],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "3JN 1:1-6",
+    "3JN 1:8-11",
+    "3JN 1:13-15"
+   ],
+   "outside_declared_books": []
+  }
+ },
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "e2-ref-exo0a: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1",
+  "e2-ref-exo0b: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1",
+  "e2-ref-exo0c: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1",
+  "e2-ref-jol: reference content the recogniser cannot hold, counted as unsupported: chapter_beyond_canon 21",
+  "e2-ref-tob: reference content the recogniser cannot hold, counted as unsupported: book_outside_canon 22",
+  "e2-ref-3jn: reference content the recogniser cannot hold, counted as unsupported: verse_label_unusual 2, verse_duplicate 2, chapter_beyond_canon 4",
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}
+note: e2-ref-exo0a: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1
+note: e2-ref-exo0b: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1
+note: e2-ref-exo0c: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1
+note: e2-ref-jol: reference content the recogniser cannot hold, counted as unsupported: chapter_beyond_canon 21
+note: e2-ref-tob: reference content the recogniser cannot hold, counted as unsupported: book_outside_canon 22
+note: e2-ref-3jn: reference content the recogniser cannot hold, counted as unsupported: verse_label_unusual 2, verse_duplicate 2, chapter_beyond_canon 4
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+sealed 2026-11-21T17:24:40Z

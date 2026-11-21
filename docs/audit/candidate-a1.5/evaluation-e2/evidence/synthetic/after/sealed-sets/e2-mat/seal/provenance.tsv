@@ -1,0 +1,3 @@
+key	publisher	edition	revision	retrieved_from	retrieved_utc	licence	document_sha256	reference_source	reference_method	identity_checked_by
+e2-mat-oba	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	c375b4cc0f2af8891223a40940343155a4fe2856f15f53f22e92fdfa652dec66	generated with the document	same generator	generator (synthetic)
+e2-mat-phm	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	e88012eef0590d455c11c710044d32a21fdc2def021cd2bb4f713d872f7f3014	generated with the document	same generator	generator (synthetic)

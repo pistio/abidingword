@@ -1,0 +1,394 @@
+{
+ "mode": "diagnostic",
+ "overrides": {
+  "protocol": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/rehearsal-protocol-e2-mat.json"
+ },
+ "anchors": {
+  "run_record_commit": "fd201d690c914d8ff9178a355e5cb6e3e192d1c3",
+  "run_record_path": "eval/e2-mat/run",
+  "seal_commit": "1c6bf6a7ea17c68ac9ab16a363bb343635c8cf52",
+  "seal_path": "eval/e2-mat/seal",
+  "protocol": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/rehearsal-protocol-e2-mat.json",
+  "protocol_sha256": "faaf91963a7b338e37aeeb7d236d124958bfb85d765d84cc2019aaeb937df227",
+  "scorer_sha256": "f38d797a83c4ee878d1fa42094fda5226528c93c8f93bea21d7cc2b753957985",
+  "check_set_sha256": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "fidelity_sha256": "421a8dd29ba96f72f3d5fa6b939045011e4def86fdc7541c0aae51fabde4fa33",
+  "reference_inventory_sha256": "2b5bcb8d8e4bc9b9cb4b03e9d6ebe566b5f62e7fb8d253d103f26bf6cdd33447",
+  "tools_commit": "fd201d690c914d8ff9178a355e5cb6e3e192d1c3",
+  "tools_committed_and_unchanged": true
+ },
+ "rules": {
+  "evaluation_schema": "aw-eval-2",
+  "fidelity": "aw-fidelity-2",
+  "reference_inventory": "aw-reference-inventory-1"
+ },
+ "run": {
+  "started": "2026-11-21T17:24:40Z",
+  "seal_commit": "1c6bf6a7ea17c68ac9ab16a363bb343635c8cf52",
+  "manifest": "2f516ff81621c3e32039b393b4dd0474a645424c8349eaa8de596874256fcc37",
+  "checksums": "2ad54f9973126c34c49eb49b524775a79b72bc5764c3c54c6ffe150b7d6c2545",
+  "binary": "800fb43c9d09e85e7c7475702ff3332ebc45a3ce44a0204220f3d64756454473",
+  "runner": "93164464016db19bf4472a54cfcc7e7a76ef740e3d9c193466edb6713a70814b",
+  "check_set": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "inventory": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+  "protocol": "faaf91963a7b338e37aeeb7d236d124958bfb85d765d84cc2019aaeb937df227",
+  "limits": {
+   "timeout_seconds": 1800,
+   "memory_kb": 4194304
+  },
+  "host": "Linux 6.18.44-fc-v726 x86_64",
+  "ended": "2026-11-21T17:24:40Z"
+ },
+ "assessment": {
+  "verdict": "not a protocol run",
+  "run_validity": {
+   "anchored_and_intact": true,
+   "run_complete": true,
+   "every_document_has_a_record": true,
+   "seal_matches": true,
+   "frozen_binary": true,
+   "protocol_limits": true,
+   "canonical_inventory": true,
+   "run_under_this_protocol": true,
+   "composition_declared_and_matching": true,
+   "composition_required_by_protocol_and_met": true,
+   "check_report_is_e2": true,
+   "reports_trusted": true,
+   "scorer_committed": true
+  },
+  "integrity": {},
+  "criteria": {
+   "1_no_verified_text_mismatch": false,
+   "2_no_verified_reference_outside_or_unvalidatable": true,
+   "3_no_verified_reference_in_controls_or_outside_allowed": true,
+   "4_every_document_completed_or_refused_cleanly": true
+  },
+  "accuracy_claim": "3 verified verses with wrong text under the strict fidelity rule (changed 2, marks 1), 0 verified references outside the edition and 0 the edition cannot validate, among 46 verified verses of 2 completed scored documents (0 authentic). They print 46 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 93.5 % of scorable verses, 93.5 % of all printed verses. Exploratory documents are not part of this figure.",
+  "authentic_evidence": {
+   "documents": 0,
+   "printed_verses": 0,
+   "verified": 0,
+   "verified_faithful": 0,
+   "formats": [],
+   "languages": [],
+   "minimum": {
+    "documents": 8,
+    "reference_verses": 20000,
+    "formats": 2,
+    "languages": 4
+   },
+   "meets_minimum": false,
+   "coverage_percent": null
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "execution": {
+   "completed": 2
+  },
+  "failure_causes": {},
+  "scored": {
+   "documents": 2,
+   "printed": 46,
+   "printed_unsupported": 0,
+   "verified": 46,
+   "verified_exact": 43,
+   "verified_canonical": 0,
+   "verified_layout": 0,
+   "verified_faithful": 43,
+   "verified_mismatch": 3,
+   "verified_mismatch_material": 2,
+   "verified_absent": 0,
+   "verified_unvalidatable": 0,
+   "held_faithful": 0,
+   "held_mismatch": 0,
+   "refused": 0,
+   "not_found": 0,
+   "refused_chapters": 0,
+   "verified_mismatch_kinds": {
+    "changed": 2,
+    "marks": 1
+   },
+   "unsupported": {},
+   "coverage_percent": 93.5,
+   "coverage_percent_of_all_printed": 93.5,
+   "documents_in_manifest": 2,
+   "refused_whole": [],
+   "failed_to_run": []
+  },
+  "control": {
+   "documents": 0,
+   "completed": 0,
+   "verified": 0
+  },
+  "mixed": {
+   "documents": 0,
+   "completed": 0,
+   "verified_allowed": 0,
+   "verified_outside_allowed": 0
+  },
+  "exploratory": {
+   "documents": 0,
+   "completed": 0,
+   "note": "raw observations only; no matching reference, so nothing is judged"
+  },
+  "diagnostic_verdict": "fail",
+  "diagnostic_ignores": [
+   "scorer_committed"
+  ]
+ },
+ "groups": {
+  "format": {
+   "md": {
+    "documents": 2,
+    "printed": 46,
+    "printed_unsupported": 0,
+    "verified": 46,
+    "verified_exact": 43,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 43,
+    "verified_mismatch": 3,
+    "verified_mismatch_material": 2,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "changed": 2,
+     "marks": 1
+    },
+    "unsupported": {}
+   }
+  },
+  "language": {
+   "en": {
+    "documents": 1,
+    "printed": 21,
+    "printed_unsupported": 0,
+    "verified": 21,
+    "verified_exact": 19,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 19,
+    "verified_mismatch": 2,
+    "verified_mismatch_material": 2,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "changed": 2
+    },
+    "unsupported": {}
+   },
+   "es": {
+    "documents": 1,
+    "printed": 25,
+    "printed_unsupported": 0,
+    "verified": 25,
+    "verified_exact": 24,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 24,
+    "verified_mismatch": 1,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "marks": 1
+    },
+    "unsupported": {}
+   }
+  },
+  "script": {
+   "Latin": {
+    "documents": 2,
+    "printed": 46,
+    "printed_unsupported": 0,
+    "verified": 46,
+    "verified_exact": 43,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 43,
+    "verified_mismatch": 3,
+    "verified_mismatch_material": 2,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "changed": 2,
+     "marks": 1
+    },
+    "unsupported": {}
+   }
+  },
+  "kind": {
+   "generated": {
+    "documents": 2,
+    "printed": 46,
+    "printed_unsupported": 0,
+    "verified": 46,
+    "verified_exact": 43,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 43,
+    "verified_mismatch": 3,
+    "verified_mismatch_material": 2,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "changed": 2,
+     "marks": 1
+    },
+    "unsupported": {}
+   }
+  }
+ },
+ "documents": [
+  {
+   "key": "e2-mat-oba",
+   "files": "e2-mat-oba.md",
+   "reference": "e2-mat-oba_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 21,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 21,
+    "verified_exact": 19,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 19,
+    "verified_mismatch": 2,
+    "verified_mismatch_kinds": {
+     "changed": 2
+    },
+    "verified_mismatch_material": 2,
+    "verified_mismatch_references": [
+     {
+      "reference": "OBA 1:3",
+      "kind": "changed"
+     },
+     {
+      "reference": "OBA 1:5",
+      "kind": "changed"
+     }
+    ],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "manifest",
+    "importer_comparison": {
+     "agree": 21,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 20.203125,
+    "seconds": 0.092089321
+   },
+   "integrity": []
+  },
+  {
+   "key": "e2-mat-phm",
+   "files": "e2-mat-phm.md",
+   "reference": "e2-mat-phm_usfm.zip",
+   "language": "es",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 25,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 25,
+    "verified_exact": 24,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 24,
+    "verified_mismatch": 1,
+    "verified_mismatch_kinds": {
+     "marks": 1
+    },
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [
+     {
+      "reference": "PHM 1:2",
+      "kind": "marks"
+     }
+    ],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "manifest",
+    "importer_comparison": {
+     "agree": 25,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 20.3046875,
+    "seconds": 0.086181292
+   },
+   "integrity": []
+  }
+ ]
+}

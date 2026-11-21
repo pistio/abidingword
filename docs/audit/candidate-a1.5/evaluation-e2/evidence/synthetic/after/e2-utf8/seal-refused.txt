@@ -1,0 +1,1 @@
+refused: e2-utf8-oba: reference 41-OBA.usfm: not UTF-8 (read with replacement characters)

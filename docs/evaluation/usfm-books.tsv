@@ -1,0 +1,123 @@
+# USFM book identifiers the evaluation knows (candidate A1.5-E2), for the neutral
+# reference inventory (scripts/evaluation/reference_inventory.py). 'canon66' rows carry
+# the chapter count of the 66-book numbering the recogniser supports; every other
+# identifier is a book the recogniser cannot hold, counted as unsupported, never dropped.
+# src-tauri/tests/evaluation_rules.rs checks this table against scripture::canon.
+
+code	group	chapters	name
+GEN	canon66	50	Genesis
+EXO	canon66	40	Exodus
+LEV	canon66	27	Leviticus
+NUM	canon66	36	Numbers
+DEU	canon66	34	Deuteronomy
+JOS	canon66	24	Joshua
+JDG	canon66	21	Judges
+RUT	canon66	4	Ruth
+1SA	canon66	31	1 Samuel
+2SA	canon66	24	2 Samuel
+1KI	canon66	22	1 Kings
+2KI	canon66	25	2 Kings
+1CH	canon66	29	1 Chronicles
+2CH	canon66	36	2 Chronicles
+EZR	canon66	10	Ezra
+NEH	canon66	13	Nehemiah
+EST	canon66	10	Esther
+JOB	canon66	42	Job
+PSA	canon66	150	Psalms
+PRO	canon66	31	Proverbs
+ECC	canon66	12	Ecclesiastes
+SNG	canon66	8	Song of Songs
+ISA	canon66	66	Isaiah
+JER	canon66	52	Jeremiah
+LAM	canon66	5	Lamentations
+EZK	canon66	48	Ezekiel
+DAN	canon66	12	Daniel
+HOS	canon66	14	Hosea
+JOL	canon66	3	Joel
+AMO	canon66	9	Amos
+OBA	canon66	1	Obadiah
+JON	canon66	4	Jonah
+MIC	canon66	7	Micah
+NAM	canon66	3	Nahum
+HAB	canon66	3	Habakkuk
+ZEP	canon66	3	Zephaniah
+HAG	canon66	2	Haggai
+ZEC	canon66	14	Zechariah
+MAL	canon66	4	Malachi
+MAT	canon66	28	Matthew
+MRK	canon66	16	Mark
+LUK	canon66	24	Luke
+JHN	canon66	21	John
+ACT	canon66	28	Acts
+ROM	canon66	16	Romans
+1CO	canon66	16	1 Corinthians
+2CO	canon66	13	2 Corinthians
+GAL	canon66	6	Galatians
+EPH	canon66	6	Ephesians
+PHP	canon66	4	Philippians
+COL	canon66	4	Colossians
+1TH	canon66	5	1 Thessalonians
+2TH	canon66	3	2 Thessalonians
+1TI	canon66	6	1 Timothy
+2TI	canon66	4	2 Timothy
+TIT	canon66	3	Titus
+PHM	canon66	1	Philemon
+HEB	canon66	13	Hebrews
+JAS	canon66	5	James
+1PE	canon66	5	1 Peter
+2PE	canon66	3	2 Peter
+1JN	canon66	5	1 John
+2JN	canon66	1	2 John
+3JN	canon66	1	3 John
+JUD	canon66	1	Jude
+REV	canon66	22	Revelation
+FRT	peripheral	-	-
+BAK	peripheral	-	-
+OTH	peripheral	-	-
+INT	peripheral	-	-
+CNC	peripheral	-	-
+GLO	peripheral	-	-
+TDX	peripheral	-	-
+NDX	peripheral	-	-
+XXA	peripheral	-	-
+XXB	peripheral	-	-
+XXC	peripheral	-	-
+XXD	peripheral	-	-
+XXE	peripheral	-	-
+XXF	peripheral	-	-
+XXG	peripheral	-	-
+TOB	other-canon	-	-
+JDT	other-canon	-	-
+ESG	other-canon	-	-
+WIS	other-canon	-	-
+SIR	other-canon	-	-
+BAR	other-canon	-	-
+LJE	other-canon	-	-
+S3Y	other-canon	-	-
+SUS	other-canon	-	-
+BEL	other-canon	-	-
+1MA	other-canon	-	-
+2MA	other-canon	-	-
+3MA	other-canon	-	-
+4MA	other-canon	-	-
+1ES	other-canon	-	-
+2ES	other-canon	-	-
+MAN	other-canon	-	-
+PS2	other-canon	-	-
+ODA	other-canon	-	-
+PSS	other-canon	-	-
+EZA	other-canon	-	-
+5EZ	other-canon	-	-
+6EZ	other-canon	-	-
+DAG	other-canon	-	-
+PS3	other-canon	-	-
+2BA	other-canon	-	-
+LBA	other-canon	-	-
+JUB	other-canon	-	-
+ENO	other-canon	-	-
+1MQ	other-canon	-	-
+2MQ	other-canon	-	-
+3MQ	other-canon	-	-
+REP	other-canon	-	-
+4BA	other-canon	-	-
+LAO	other-canon	-	-

@@ -1,0 +1,49 @@
+{
+ "e2-ref-exo0a": {
+  "unsupported": {
+   "verse_zero": [
+    "EXO 16:0"
+   ]
+  },
+  "how": "verse 0 printed with its number"
+ },
+ "e2-ref-exo0b": {
+  "unsupported": {
+   "verse_zero": [
+    "EXO 16:0"
+   ]
+  },
+  "how": "verse 0 printed without a number"
+ },
+ "e2-ref-exo0c": {
+  "unsupported": {
+   "verse_zero": [
+    "EXO 16:0"
+   ]
+  },
+  "how": "verse 0 not printed"
+ },
+ "e2-ref-jol": {
+  "unsupported": {
+   "chapter_beyond_canon": "JOL 4 (21 verses)"
+  }
+ },
+ "e2-ref-tob": {
+  "unsupported": {
+   "book_outside_canon": "TOB 1 (22 verses)"
+  }
+ },
+ "e2-ref-3jn": {
+  "unsupported": {
+   "verse_label_unusual": [
+    "3JN 1:12a",
+    "3JN 1:201"
+   ],
+   "verse_duplicate": [
+    "3JN 1:7",
+    "3JN 1:7"
+   ],
+   "chapter_beyond_canon": "3JN 2 (4 verses)"
+  }
+ }
+}

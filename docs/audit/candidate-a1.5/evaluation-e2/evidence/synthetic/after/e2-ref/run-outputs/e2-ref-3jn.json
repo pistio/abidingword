@@ -1,0 +1,291 @@
+{
+  "evaluation_schema": "aw-eval-2",
+  "fidelity_rules": "aw-fidelity-2",
+  "inventory_rules": "aw-reference-inventory-1",
+  "edition": {
+    "key": "e2-ref-3jn",
+    "files": [
+      "e2-ref-3jn.md"
+    ],
+    "reference": "e2-ref-3jn_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "3JN"
+    ],
+    "sealed": true
+  },
+  "reference": "e2-ref-3jn_usfm.zip",
+  "book_selection": {
+    "rule": "manifest",
+    "books": [
+      "3JN"
+    ],
+    "unknown_codes": []
+  },
+  "reference_inventory": {
+    "rules": "aw-reference-inventory-1",
+    "members": [
+      {
+        "name": "41-3JN.usfm",
+        "role": "usfm",
+        "book": "3JN",
+        "verses": 21,
+        "verses_before_chapter": 0,
+        "utf8": true,
+        "nfc": true
+      }
+    ],
+    "problems": [],
+    "label_digest": "8b39c92b14dcee743758020485c1fac95565b960d76699fe8ebc0999cbc4224b",
+    "labels": 21,
+    "printed_scorable": 13,
+    "absent_in_edition": 0,
+    "unsupported": {
+      "book_code_unknown": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_outside_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_unidentified": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_beyond_canon": {
+        "printed": 4,
+        "empty": 0,
+        "references": [
+          "3JN 2:1",
+          "3JN 2:2",
+          "3JN 2:3",
+          "3JN 2:4"
+        ]
+      },
+      "chapter_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_before_chapter": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_duplicate": {
+        "printed": 2,
+        "empty": 0,
+        "references": [
+          "3JN 1:7",
+          "3JN 1:7"
+        ]
+      },
+      "verse_label_unusual": {
+        "printed": 2,
+        "empty": 0,
+        "references": [
+          "3JN 1:12a",
+          "3JN 1:201"
+        ]
+      },
+      "verse_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      }
+    },
+    "printed_unsupported": 8,
+    "outside_declared_scope": {
+      "printed": 0,
+      "empty": 0,
+      "references": []
+    },
+    "scorable_by_book": {
+      "3JN": 13
+    },
+    "scorable_ranges": [
+      "3JN 1:1-6",
+      "3JN 1:8-11",
+      "3JN 1:13-15"
+    ],
+    "before_chapter_outside": 0
+  },
+  "importer_comparison": {
+    "error": null,
+    "agree": 13,
+    "only_importer": 1,
+    "only_inventory": 0,
+    "text_differs": 0,
+    "examples": [
+      "3JN 1:7: only the importer"
+    ],
+    "issue_codes": {
+      "bibleImport.badVerseNumber": 2,
+      "bibleImport.chapterOutOfRange": 1,
+      "bibleImport.missingVerses": 1,
+      "bibleImport.verseTwice": 1
+    }
+  },
+  "accounting": {
+    "printed_scorable": 13,
+    "verified": 12,
+    "held": 1,
+    "refused": 0,
+    "not_found": 0,
+    "holds": true
+  },
+  "totals": {
+    "code": "ALL",
+    "expected": 13,
+    "absent_in_edition": 0,
+    "detected": 13,
+    "usable": 13,
+    "unmapped": 0,
+    "not_found": 0,
+    "refused": 0,
+    "chapters": 1,
+    "usable_chapters": 1,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 0,
+    "refused_other": 0,
+    "missing_in_usable_chapter": 0,
+    "verified": 12,
+    "verified_exact": 12,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "held": 1,
+    "held_faithful": 0,
+    "held_mismatch": 1,
+    "refused_faithful": 0,
+    "refused_mismatch": 0,
+    "located": 12,
+    "location_checked": 12
+  },
+  "books": [
+    {
+      "code": "3JN",
+      "expected": 13,
+      "absent_in_edition": 0,
+      "detected": 13,
+      "usable": 13,
+      "unmapped": 0,
+      "not_found": 0,
+      "refused": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "missing_in_usable_chapter": 0,
+      "verified": 12,
+      "verified_exact": 12,
+      "verified_canonical": 0,
+      "verified_layout": 0,
+      "verified_mismatch": 0,
+      "verified_mismatch_kinds": {},
+      "held": 1,
+      "held_faithful": 0,
+      "held_mismatch": 1,
+      "refused_faithful": 0,
+      "refused_mismatch": 0,
+      "located": 12,
+      "location_checked": 12
+    }
+  ],
+  "books_not_found": [],
+  "issues": {
+    "Error bibleImport.chapterOutOfRange": 1,
+    "Note bibleImport.documentLeftOut": 1,
+    "Warning bibleImport.missingVerses": 1
+  },
+  "refused_chapters": [
+    "3JN 2 (other)"
+  ],
+  "fidelity_records": [
+    {
+      "reference": "3JN 1:11",
+      "status": "held",
+      "unverified_reason": "boundary",
+      "class": "mismatch",
+      "kind": "extra",
+      "matched": null,
+      "page": null,
+      "found": "A servant spoke softly on the hillside before the rain, and gave thanks. 12a The women looked up near the well in the evening, and the wind was still.",
+      "edition": "A servant spoke softly on the hillside before the rain, and gave thanks."
+    }
+  ],
+  "verified_references": [
+    "3JN 1:1",
+    "3JN 1:2",
+    "3JN 1:3",
+    "3JN 1:4",
+    "3JN 1:5",
+    "3JN 1:6",
+    "3JN 1:7",
+    "3JN 1:8",
+    "3JN 1:9",
+    "3JN 1:10",
+    "3JN 1:13",
+    "3JN 1:14",
+    "3JN 1:15"
+  ],
+  "verified_absent": [],
+  "verified_unvalidatable": [
+    {
+      "reference": "3JN 1:7",
+      "reason": "verse_duplicate"
+    }
+  ],
+  "verified_empty_in_both": 0,
+  "usable_absent": [],
+  "unverified_reasons": {
+    "boundary": 1
+  },
+  "location_misses": [],
+  "apparatus": 1,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "3 John",
+      "3JN",
+      null
+    ]
+  ],
+  "errors": [
+    "3 John 2: 3 John has 1 chapters in the standard numbering."
+  ],
+  "seconds": 0.084576702,
+  "peak_memory_mb": 20.12109375,
+  "read_seconds": 0.084434346,
+  "read_peak_memory_mb": 20.12109375,
+  "numbering": [
+    {
+      "code": "3JN",
+      "agreement": "withinReference",
+      "chaptersPrinted": 1,
+      "chaptersReference": 1,
+      "differences": []
+    }
+  ]
+}

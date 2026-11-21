@@ -2,7 +2,7 @@
 """Checks a withheld evaluation set before it is sealed and before it is run.
 
     check-set.py <seal folder> <documents folder> [--seal-commit=SHA]
-                 [--inventory=FILE] [--report=FILE]
+                 [--inventory=FILE] [--protocol=FILE] [--report=FILE]
 
 The builder runs it (through seal-set.py) before sealing; the runner
 (`run-withheld-set.sh`) runs it with --seal-commit before reading anything.
@@ -16,7 +16,15 @@ nothing else) holds:
   manifest.tsv       14 columns: key, files, reference, language, script,
                      format, layout, role, source and licence, books, sha256,
                      generator, kind (authentic | generated),
-                     class (scored | control | mixed | exploratory)
+                     class (scored | control | mixed | exploratory).
+                     books (E2, C3): `all` or USFM codes (docs/evaluation/
+                     usfm-books.tsv), never empty; `-` only for a document
+                     with no reference. The harness never guesses books from
+                     a file name for a sealed set.
+  composition.tsv    (E2, C2) the declared totals: `measure<TAB>documents`,
+                     one row each for scored, control, mixed, exploratory,
+                     authentic and generated. They must be the manifest's,
+                     and the protocol's required composition when it has one
   checksums.sha256   every file of the documents folder, `sha256sum` format,
                      names relative to that folder
   provenance.tsv     one row per key (columns in PROVENANCE below)
@@ -28,6 +36,16 @@ nothing else) holds:
 
 The documents folder (outside Git) holds the documents and references only.
 
+References (E2, C4 and C5): each must be a .zip of USFM books (.usfm, .sfm),
+with nothing else but prose (.htm), or one .usfm/.sfm file; UTF-8; one \\id
+per file. A verse map, OSIS, MorphGNT or any other member is refused. Each
+scored or exploratory document's reference is read by the neutral inventory
+(reference_inventory.py) and the report lists, before any run, its complete
+coverage: every scorable verse key, every label in each unsupported class
+(verse 0, chapters above the 66-book counts, other books, unusual labels,
+duplicates) and every book outside the declared scope. The scorer compares
+the harness's own inventory with this one.
+
 Paths: every name in the manifest, checksums.sha256 and SEAL.txt must be a
 plain relative path (no absolute path, no '..', '.' or empty part, no
 backslash), and no file or folder in the seal or documents folder may be a
@@ -38,6 +56,7 @@ What this enforces, and what it cannot: see the safeguards section of the
 evaluation protocol.
 """
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -47,6 +66,13 @@ import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_DEFAULT = os.path.normpath(os.path.join(HERE, "..", ".."))
+# Beside this script (a builder's flat copy of the tools), else in the repository.
+PROTOCOL_DEFAULT = next((p for p in (os.path.join(HERE, "protocol-e2.json"),
+                                     os.path.join(REPO_DEFAULT, "docs", "evaluation", "protocol-e2.json"))
+                         if os.path.isfile(p)), os.path.join(REPO_DEFAULT, "docs", "evaluation", "protocol-e2.json"))
+_spec = importlib.util.spec_from_file_location("reference_inventory", os.path.join(HERE, "reference_inventory.py"))
+reference_inventory = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(reference_inventory)
 
 COLUMNS = ["key", "files", "reference", "language", "script", "format", "layout",
            "role", "source and licence", "books", "sha256", "generator", "kind", "class"]
@@ -56,7 +82,8 @@ PROVENANCE = ["key", "publisher", "edition", "revision", "retrieved_from", "retr
               "licence", "document_sha256", "reference_source", "reference_method",
               "identity_checked_by"]
 SEAL_FILES = ["manifest.tsv", "checksums.sha256", "provenance.tsv", "review-ledger.md",
-              "access-records.md"]
+              "access-records.md", "composition.tsv"]
+COMPOSITION = ["scored", "control", "mixed", "exploratory", "authentic", "generated"]
 LOCK = ".run-started"
 KEY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 HEX = re.compile(r"^[0-9a-f]{64}$")
@@ -327,6 +354,41 @@ def committed_seal(seal, commit):
     return errors, {"repo": repo, "commit": c, "seal_rel": rel_seal, "files": files, "sealed": sealed}
 
 
+def parse_composition(text, errors):
+    """{measure: documents} from composition.tsv; every measure once."""
+    lines = [l for l in text.splitlines() if l.strip() and not l.startswith("#")]
+    if not lines or lines[0].split("\t") != ["measure", "documents"]:
+        errors.append("composition.tsv header must be exactly: measure | documents")
+        return None
+    out = {}
+    for line in lines[1:]:
+        c = line.split("\t")
+        if len(c) != 2 or c[0].strip() not in COMPOSITION or not c[1].strip().isdigit():
+            errors.append(f"composition.tsv: '{line}' is not '<measure><TAB><number>' with a known measure")
+            continue
+        if c[0].strip() in out:
+            errors.append(f"composition.tsv: {c[0].strip()} twice")
+        out[c[0].strip()] = int(c[1])
+    for m in COMPOSITION:
+        if m not in out:
+            errors.append(f"composition.tsv must declare {m}")
+    return out
+
+
+def manifest_composition(rows):
+    out = {c: sum(r["class"] == c for r in rows) for c in ("scored", "control", "mixed", "exploratory")}
+    out.update({k: sum(r["kind"] == k for r in rows) for k in ("authentic", "generated")})
+    return out
+
+
+def load_protocol(path, errors):
+    try:
+        return json.load(open(path, encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        errors.append(f"protocol {path} unreadable: {e}")
+        return None
+
+
 def disclosed_keys(repo):
     keys = set()
     corpus = os.path.join(repo, "docs", "corpus")
@@ -341,9 +403,15 @@ def disclosed_keys(repo):
 
 # ---------------------------------------------------------------- the check
 
-def check(seal, docs, seal_commit=None, inventory=None):
+def check(seal, docs, seal_commit=None, inventory=None, protocol=None):
     errors, notes = [], []
     report = {"seal_folder": seal, "documents_folder": docs, "seal_commit": seal_commit}
+    protocol = protocol or PROTOCOL_DEFAULT
+    report["tools"] = {name: sha256(os.path.join(HERE, name)) for name in
+                       ("check-set.py", "reference_inventory.py")}
+    report["tools"]["usfm-books.tsv"] = sha256(reference_inventory.BOOKS_TSV)
+    report["protocol"] = protocol
+    report["protocol_sha256"] = sha256(protocol) if os.path.isfile(protocol) else None
 
     def stop():
         report.update(errors=errors, notes=notes, ok=False)
@@ -412,6 +480,43 @@ def check(seal, docs, seal_commit=None, inventory=None):
             errors.append(f"{k}: allowed/{k}.txt exists but the document is not mixed")
     rows = [r for r in rows if "file_list" in r]
     report["classes"] = {c: sum(r["class"] == c for r in rows) for c in sorted(CLASSES)}
+
+    # 2b. Books (C3): stated, never guessed from a file name.
+    known_books = reference_inventory.load_books()
+    for r in rows:
+        cell = r["books"]
+        if cell == "-":
+            if r["reference"] != "-":
+                errors.append(f"{r['key']}: books is '-' but the document has a reference; write 'all' or the books")
+            r["declared"] = None
+            continue
+        if not cell:
+            errors.append(f"{r['key']}: books is empty; write 'all' or the USFM codes of the books it holds")
+            continue
+        if cell == "all":
+            r["declared"] = None
+            continue
+        codes = [c.strip() for c in cell.split(",")]
+        bad = [c for c in codes if c not in known_books]
+        if bad:
+            errors.append(f"{r['key']}: books {', '.join(bad)} are not USFM book codes (docs/evaluation/usfm-books.tsv)")
+        r["declared"] = set(codes)
+
+    # 2c. Composition (C2): declared before the seal, the manifest's own, and
+    #     the protocol's when it requires one.
+    report["composition"] = manifest_composition(rows)
+    if "composition.tsv" in sealed:
+        declared = parse_composition(open(os.path.join(seal, "composition.tsv"), encoding="utf-8").read(), errors)
+        report["declared_composition"] = declared
+        if declared is not None and declared != report["composition"]:
+            errors.append(f"composition.tsv declares {declared}, but the manifest holds {report['composition']}")
+        proto = load_protocol(protocol, errors)
+        required = (proto or {}).get("required_composition")
+        report["required_composition"] = required
+        if required is not None and declared != required:
+            errors.append(f"the declared composition {declared} is not the protocol's required {required}")
+        if proto is not None and required is None:
+            notes.append("the protocol requires no composition yet: no run under it is a protocol run")
 
     # 3. Documents: every name a plain relative path inside the folder, every
     #    file listed, present and as checksummed; nothing else; no link.
@@ -495,6 +600,25 @@ def check(seal, docs, seal_commit=None, inventory=None):
                     if sha256_bytes(data) in known:
                         errors.append(f"{rel}: its {name} is byte-identical to a disclosed USFM book")
 
+    # 5b. References (C4, C5, B1, B2): sound USFM, and their complete
+    #     inventory, every unsupported class declared before any run.
+    report["reference_inventories"] = {}
+    for r in rows:
+        if r["reference"] == "-" or r["reference"] not in paths or "declared" not in r:
+            continue
+        inv = reference_inventory.read(paths[r["reference"]], r["declared"], known_books)
+        for problem in inv["problems"]:
+            errors.append(f"{r['key']}: reference {problem}")
+        report["reference_inventories"][r["key"]] = inv
+        unsupported = {k: len(v) for k, v in inv["unsupported_labels"].items() if v}
+        if inv["verses_before_chapter"]:
+            unsupported["verse_before_chapter"] = inv["verses_before_chapter"]
+        if unsupported:
+            notes.append(f"{r['key']}: reference content the recogniser cannot hold, counted as unsupported: "
+                         + ", ".join(f"{k} {n}" for k, n in unsupported.items()))
+        if not all(m.get("nfc", True) for m in inv["members"] if m["role"] == "usfm"):
+            notes.append(f"{r['key']}: the reference is not in Unicode NFC (compared under canonical equivalence)")
+
     # 6. Not a disclosed key (the harness would also run that edition's files).
     repo = repo_of(seal) if seal_commit else None
     repo = repo or (REPO_DEFAULT if os.path.isdir(os.path.join(REPO_DEFAULT, "docs", "corpus")) else None)
@@ -549,7 +673,7 @@ def main():
     opts = dict(a[2:].split("=", 1) for a in sys.argv[1:] if a.startswith("--") and "=" in a)
     if len(args) != 2:
         sys.exit(__doc__)
-    report = check(args[0], args[1], opts.get("seal-commit"), opts.get("inventory"))
+    report = check(args[0], args[1], opts.get("seal-commit"), opts.get("inventory"), opts.get("protocol"))
     text = json.dumps(report, ensure_ascii=False, indent=1)
     if opts.get("report"):
         open(opts["report"], "w", encoding="utf-8").write(text + "\n")

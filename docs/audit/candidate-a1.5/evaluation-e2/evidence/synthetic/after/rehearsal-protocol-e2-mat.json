@@ -1,0 +1,24 @@
+{
+ "name": "SYNTHETIC rehearsal of A1.5-E2 evaluation protocol",
+ "status": "candidate for independent review; approved for no withheld set; nothing sealed or run under it",
+ "recogniser_commit": "08c6faac8c92c6c791ec1e7bbbe997362fa1059f",
+ "evaluation_schema": "aw-eval-2",
+ "fidelity_rules": "aw-fidelity-2",
+ "inventory_rules": "aw-reference-inventory-1",
+ "harness_binary_sha256": "800fb43c9d09e85e7c7475702ff3332ebc45a3ce44a0204220f3d64756454473",
+ "limits": {
+  "timeout_seconds": 1800,
+  "memory_kb": 4194304
+ },
+ "inventory": "docs/evaluation/disclosed-documents.sha256",
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "required_composition": {
+  "scored": 2,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 2
+ },
+ "required_composition_note": "Must be set by the owner, before any seal, to the approved numbers of scored, control, mixed and exploratory documents and of authentic and generated ones. While it is null the scorer calls no run a protocol run."
+}

@@ -1,0 +1,145 @@
+{
+  "edition": {
+    "key": "e2-abs-jud",
+    "files": [
+      "e2-abs-jud.md"
+    ],
+    "reference": "e2-abs-jud_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "JUD"
+    ]
+  },
+  "reference": "aw-reference-4542-e2-abs-jud_usfm.zip",
+  "totals": {
+    "code": "ALL",
+    "expected": 25,
+    "absent_in_edition": 0,
+    "detected": 25,
+    "usable": 25,
+    "unmapped": 0,
+    "chapters": 1,
+    "usable_chapters": 1,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 0,
+    "refused_other": 0,
+    "usable_exact": 25,
+    "usable_normalised": 0,
+    "usable_case_only": 0,
+    "usable_different": 0,
+    "usable_typography": 0,
+    "usable_extra_text": 0,
+    "usable_missing_text": 0,
+    "usable_wrong_reference": 0,
+    "usable_changed": 0,
+    "refused_exact": 0,
+    "refused_normalised": 0,
+    "refused_different": 0,
+    "usable_extra": 1,
+    "missing_in_usable_chapter": 0,
+    "verified": 25,
+    "verified_exact": 25,
+    "verified_normalised": 0,
+    "verified_different": 0,
+    "verified_typography": 0,
+    "verified_extra_text": 0,
+    "verified_missing_text": 0,
+    "verified_wrong_reference": 0,
+    "verified_changed": 0,
+    "verified_extra": 1,
+    "unverified_clean": 0,
+    "unverified_caught": 0,
+    "located": 25,
+    "location_checked": 25
+  },
+  "books": [
+    {
+      "code": "JUD",
+      "expected": 25,
+      "absent_in_edition": 0,
+      "detected": 25,
+      "usable": 25,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "usable_exact": 25,
+      "usable_normalised": 0,
+      "usable_case_only": 0,
+      "usable_different": 0,
+      "usable_typography": 0,
+      "usable_extra_text": 0,
+      "usable_missing_text": 0,
+      "usable_wrong_reference": 0,
+      "usable_changed": 0,
+      "refused_exact": 0,
+      "refused_normalised": 0,
+      "refused_different": 0,
+      "usable_extra": 1,
+      "missing_in_usable_chapter": 0,
+      "verified": 25,
+      "verified_exact": 25,
+      "verified_normalised": 0,
+      "verified_different": 0,
+      "verified_typography": 0,
+      "verified_extra_text": 0,
+      "verified_missing_text": 0,
+      "verified_wrong_reference": 0,
+      "verified_changed": 0,
+      "verified_extra": 1,
+      "unverified_clean": 0,
+      "unverified_caught": 0,
+      "located": 25,
+      "location_checked": 25
+    }
+  ],
+  "books_not_found": [],
+  "issues": {},
+  "refused_chapters": [],
+  "differences": [],
+  "extra_verses": [
+    "JUD 1:26"
+  ],
+  "verified_extra_verses": [
+    "JUD 1:26"
+  ],
+  "unverified_reasons": {},
+  "location_misses": [],
+  "apparatus": 0,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "Jude",
+      "JUD",
+      null
+    ]
+  ],
+  "errors": [],
+  "seconds": 0.089721524,
+  "peak_memory_mb": 19.8671875,
+  "read_seconds": 0.089570832,
+  "read_peak_memory_mb": 19.8671875,
+  "numbering": [
+    {
+      "code": "JUD",
+      "agreement": "departs",
+      "chaptersPrinted": 1,
+      "chaptersReference": 1,
+      "differences": [
+        {
+          "kind": "longer",
+          "chapter": 1,
+          "printed": 26,
+          "reference": 25
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 //! Accuracy of Bibles read from documents, on a corpus of real editions
-//! (v0.24; corpus and accepted-verse audit v0.24.2). Not run by default.
+//! (v0.24; corpus and accepted-verse audit v0.24.2; evaluation rules E2 for
+//! the frozen A1.5 recogniser). Not run by default.
 //!
 //! The corpus is listed in `docs/corpus/editions.tsv`: each edition's files
 //! (PDF, EPUB, Word, Markdown, plain text; one or more), its language and
@@ -19,89 +20,59 @@
 //! `AW_INCLUDE_HIDDEN=1`.
 //!
 //! Each document is read exactly as a person's file would be: the recogniser
-//! never sees the USFM. Only afterwards is every verse compared with the
-//! publisher's text of the same edition, and classified:
+//! never sees the USFM. Only afterwards is the publisher's text read, and
+//! compared under the evaluation rules of candidate A1.5-E2
+//! (`docs/audit/candidate-a1.5/evaluation-e2/EVALUATION-FREEZE.md`):
 //!
-//! * **exact** — the same characters (outer whitespace aside);
-//! * **normalised** — equal once whitespace is collapsed and removed between
-//!   punctuation (a thin space printed between two quotation marks);
-//! * **different** — anything else: a genuine textual difference.
+//! * **the reference** is read by a neutral inventory (`eval_support/reference.rs`),
+//!   not through the app's importer: every published verse is kept with its
+//!   numbers as written, and what the 66-book canon cannot hold (verse 0,
+//!   chapters above its counts, other books, unusual labels, a number given
+//!   twice) is counted and listed as unsupported, never dropped;
+//! * **every verse is classed** by the strict fidelity rule
+//!   (`eval_support/fidelity.rs`): exact, canonically equivalent (NFC),
+//!   layout (white-space runs only) or mismatch. Every mismatch is wrong
+//!   text, whatever its kind (case, word boundary, punctuation, marks...);
+//! * **every verified reference** of the document is looked up in the
+//!   reference's complete inventory: one it does not have (a verse, a whole
+//!   chapter, a book), or one it cannot validate (a number it gives twice),
+//!   is listed.
 //!
-//! Accepted (usable) verses and refused ones are counted apart: the accuracy
-//! that matters is that of the verses the app would show.
+//! Each report states its rules (`evaluation_schema`, `fidelity_rules`,
+//! `inventory_rules`); the scorer refuses any other.
 
-use std::collections::{BTreeMap, BTreeSet, HashSet};
+// Shared with tests/evaluation_rules.rs, which tests every item.
+#[allow(dead_code)]
+#[path = "eval_support/fidelity.rs"]
+mod fidelity;
+#[allow(dead_code)]
+#[path = "eval_support/reference.rs"]
+mod reference;
+
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-use abiding_word_lib::scripture::canon;
+use abiding_word_lib::scripture::canon::{self, NON_CANONICAL_USFM_CODES};
 use abiding_word_lib::scripture::import::{self, ImportOrigin, Severity};
+use fidelity::Class;
+
+/// The report format the scorer requires (`scripts/evaluation/score-set.py`).
+const EVALUATION_SCHEMA: &str = "aw-eval-2";
 
 fn folder() -> Option<PathBuf> {
     std::env::var_os("AW_DOCUMENT_EDITIONS").map(PathBuf::from)
 }
 
-fn squash(text: &str) -> String {
-    text.split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
-/// The same text with every whitespace removed: letters, digits and
-/// punctuation in order.
-fn dense(text: &str) -> String {
-    text.chars().filter(|c| !c.is_whitespace()).collect()
-}
-
-/// Letters and digits only, in lower case: what is left when punctuation,
-/// typography (quotes, dashes, apostrophes), spacing and case are set aside.
+/// Letters and digits only, in lower case: used only to check that a
+/// verified verse's kept place in the document holds its opening words
+/// (the location check), never to judge its text.
 fn letters(text: &str) -> String {
     text.chars()
         .filter(|c| c.is_alphanumeric())
         .flat_map(char::to_lowercase)
         .collect()
-}
-
-/// What kind of difference a found verse has from the edition's own text
-/// (only for verses that differ beyond spacing and letter case):
-/// - `unicode`: canonically the same characters (Unicode NFC): the document
-///   encodes them differently (a CJK compatibility ideograph, 靈 U+F9B3,
-///   written as the unified one, U+9748), the words are the same;
-/// - `sign`: the same letters, with a note's sign the edition does not have
-///   left in the verse ("†ᾧ"): apparatus, counted with `extra`;
-/// - `typography`: the same letters and digits; punctuation or quotes differ;
-/// - `extra`: the edition's words and more (a heading, note, reference or
-///   another verse read into it: apparatus contamination);
-/// - `missing`: part of the edition's words only (the verse is cut short);
-/// - `wrong_reference`: the words of another verse of the book (a verse
-///   given the wrong number or chapter);
-/// - `changed`: anything else (the words themselves differ).
-fn difference_kind(want: &str, found: &str, book: &HashSet<String>) -> &'static str {
-    use unicode_normalization::UnicodeNormalization;
-    let nfc = |t: &str| {
-        t.split_whitespace()
-            .collect::<String>()
-            .nfc()
-            .collect::<String>()
-    };
-    let (w, f) = (letters(want), letters(found));
-    if nfc(want) == nfc(found) {
-        "unicode"
-    } else if w == f {
-        let signs = |t: &str| t.chars().filter(|c| "*†‡§¶".contains(*c)).count();
-        if signs(found) > signs(want) {
-            "sign"
-        } else {
-            "typography"
-        }
-    } else if !w.is_empty() && f.contains(&w) {
-        "extra"
-    } else if !f.is_empty() && w.contains(&f) {
-        "missing"
-    } else if book.contains(&f) {
-        "wrong_reference"
-    } else {
-        "changed"
-    }
 }
 
 /// One edition of the corpus (a row of `docs/corpus/editions.tsv`).
@@ -119,6 +90,9 @@ struct Edition {
     role: String,
     /// The books the document holds (None: the whole edition).
     books: Option<Vec<String>>,
+    /// From a sealed set's own manifest (`AW_CORPUS_MANIFEST`): its `books`
+    /// column is the only book selection; a file name never is (E2, C3).
+    sealed: bool,
 }
 
 /// The corpus manifests: the development and regression editions, and the
@@ -128,7 +102,7 @@ struct Edition {
 fn corpus() -> Vec<Edition> {
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../docs/corpus");
     let mut out = Vec::new();
-    for name in [
+    for (name, sealed) in [
         "editions.tsv",
         "withheld-b.tsv",
         "withheld-c.tsv",
@@ -140,10 +114,10 @@ fn corpus() -> Vec<Edition> {
         "withheld-g.tsv",
     ]
     .into_iter()
-    .map(|name| dir.join(name))
+    .map(|name| (dir.join(name), false))
     // AW_CORPUS_MANIFEST=<file> (Phase A1.5): one more manifest, from
     // anywhere: a sealed set's own, kept outside the repository.
-    .chain(std::env::var_os("AW_CORPUS_MANIFEST").map(PathBuf::from))
+    .chain(std::env::var_os("AW_CORPUS_MANIFEST").map(|m| (PathBuf::from(m), true)))
     {
         let Ok(text) = std::fs::read_to_string(&name) else {
             continue;
@@ -170,65 +144,56 @@ fn corpus() -> Vec<Edition> {
                 layout: cols[6].into(),
                 role: cols[7].into(),
                 books,
+                sealed,
             });
         }
     }
     out
 }
 
+/// Counts for one book of the reference (or all of them, `ALL`). Every
+/// scorable printed verse is in exactly one of `verified`, `held`,
+/// `refused` and `not_found` (`accounting`); its text in exactly one
+/// fidelity class.
 #[derive(Default, Clone, serde::Serialize)]
 struct BookAudit {
     code: String,
-    /// Verses with text in the edition's own USFM: what the edition prints.
+    /// Scorable verses with text in the reference: the scored denominator.
     expected: usize,
-    /// Verses the USFM numbers but leaves empty (omitted in this edition).
+    /// Scorable verses the reference numbers but leaves empty.
     absent_in_edition: usize,
+    /// Printed verses the document has a verse for.
     detected: usize,
+    /// Of those, in chapters the recogniser accepts.
     usable: usize,
+    /// Not found, or in a refused chapter.
     unmapped: usize,
+    not_found: usize,
+    /// Detected in a chapter the recogniser refused.
+    refused: usize,
     chapters: usize,
     usable_chapters: usize,
     refused_reading_order: usize,
     refused_verse_numbers: usize,
     refused_other: usize,
-    /// Among usable (accepted) verses.
-    usable_exact: usize,
-    usable_normalised: usize,
-    /// Of the normalised: letters in another case only (small capitals
-    /// printed as capitals: "LORD’S" for "LORD’s").
-    usable_case_only: usize,
-    usable_different: usize,
-    /// Of the genuine differences, by kind (see `difference_kind`).
-    usable_typography: usize,
-    usable_extra_text: usize,
-    usable_missing_text: usize,
-    usable_wrong_reference: usize,
-    usable_changed: usize,
-    /// Among refused verses (never shown).
-    refused_exact: usize,
-    refused_normalised: usize,
-    refused_different: usize,
-    /// Usable verses the edition does not have at all (a wrong number or
-    /// boundary): false positives.
-    usable_extra: usize,
     /// Verses missing from a chapter that is otherwise usable.
     missing_in_usable_chapter: usize,
-    /// Of the usable verses (structurally accepted), those whose text is
-    /// verified (v0.24.3): what the app uses as the Bible's text.
+    /// Usable verses whose text the app verifies: what it uses as Scripture.
     verified: usize,
     verified_exact: usize,
-    verified_normalised: usize,
-    verified_different: usize,
-    verified_typography: usize,
-    verified_extra_text: usize,
-    verified_missing_text: usize,
-    verified_wrong_reference: usize,
-    verified_changed: usize,
-    verified_extra: usize,
-    /// Usable verses held back as unverified: the text was in fact the
-    /// edition's (caution's cost) or was not (contamination caught).
-    unverified_clean: usize,
-    unverified_caught: usize,
+    verified_canonical: usize,
+    verified_layout: usize,
+    /// Verified verses whose text is wrong under the strict rule.
+    verified_mismatch: usize,
+    verified_mismatch_kinds: BTreeMap<String, usize>,
+    /// Usable verses held back as unverified ("recognised but uncertain"):
+    /// their text was in fact faithful (caution's cost) or not (caught).
+    held: usize,
+    held_faithful: usize,
+    held_mismatch: usize,
+    /// Verses in refused chapters, by their text.
+    refused_faithful: usize,
+    refused_mismatch: usize,
     /// Verified verses whose kept place in the document holds their words.
     located: usize,
     location_checked: usize,
@@ -241,68 +206,123 @@ impl BookAudit {
         self.detected += b.detected;
         self.usable += b.usable;
         self.unmapped += b.unmapped;
+        self.not_found += b.not_found;
+        self.refused += b.refused;
         self.chapters += b.chapters;
         self.usable_chapters += b.usable_chapters;
         self.refused_reading_order += b.refused_reading_order;
         self.refused_verse_numbers += b.refused_verse_numbers;
         self.refused_other += b.refused_other;
-        self.usable_exact += b.usable_exact;
-        self.usable_normalised += b.usable_normalised;
-        self.usable_case_only += b.usable_case_only;
-        self.usable_different += b.usable_different;
-        self.usable_typography += b.usable_typography;
-        self.usable_extra_text += b.usable_extra_text;
-        self.usable_missing_text += b.usable_missing_text;
-        self.usable_wrong_reference += b.usable_wrong_reference;
-        self.usable_changed += b.usable_changed;
-        self.refused_exact += b.refused_exact;
-        self.refused_normalised += b.refused_normalised;
-        self.refused_different += b.refused_different;
-        self.usable_extra += b.usable_extra;
         self.missing_in_usable_chapter += b.missing_in_usable_chapter;
         self.verified += b.verified;
         self.verified_exact += b.verified_exact;
-        self.verified_normalised += b.verified_normalised;
-        self.verified_different += b.verified_different;
-        self.verified_typography += b.verified_typography;
-        self.verified_extra_text += b.verified_extra_text;
-        self.verified_missing_text += b.verified_missing_text;
-        self.verified_wrong_reference += b.verified_wrong_reference;
-        self.verified_changed += b.verified_changed;
-        self.verified_extra += b.verified_extra;
-        self.unverified_clean += b.unverified_clean;
-        self.unverified_caught += b.unverified_caught;
+        self.verified_canonical += b.verified_canonical;
+        self.verified_layout += b.verified_layout;
+        self.verified_mismatch += b.verified_mismatch;
+        for (k, n) in &b.verified_mismatch_kinds {
+            *self.verified_mismatch_kinds.entry(k.clone()).or_default() += n;
+        }
+        self.held += b.held;
+        self.held_faithful += b.held_faithful;
+        self.held_mismatch += b.held_mismatch;
+        self.refused_faithful += b.refused_faithful;
+        self.refused_mismatch += b.refused_mismatch;
         self.located += b.located;
         self.location_checked += b.location_checked;
     }
 }
 
+/// A usable verse whose text is not byte-exact: both texts as they are, so
+/// that the scorer can class it again on its own.
 #[derive(serde::Serialize)]
-struct Difference {
+struct FidelityRecord {
     reference: String,
-    usable: bool,
-    verified: bool,
+    /// "verified" or "held".
+    status: &'static str,
     unverified_reason: Option<&'static str>,
-    kind: &'static str,
+    class: &'static str,
+    kind: Option<&'static str>,
+    /// For a material mismatch: another verse of the reference with these
+    /// words (any book, any status).
+    matched: Option<String>,
     page: Option<u32>,
     found: String,
     edition: String,
 }
 
+/// A verified reference the reference edition does not have, or cannot
+/// validate.
+#[derive(serde::Serialize)]
+struct AbsentReference {
+    reference: String,
+    reason: &'static str,
+}
+
+/// How the books the document is measured against were chosen.
+#[derive(serde::Serialize)]
+struct BookSelection {
+    /// "manifest" (the books column), "all", or "file name" (only for the
+    /// disclosed corpus's own manifests, never for a sealed set's).
+    rule: &'static str,
+    books: Option<Vec<String>>,
+    /// Codes in the books column that are no USFM book identifier.
+    unknown_codes: Vec<String>,
+}
+
+/// The app's own importer on the same reference, for comparison only: what
+/// it would have kept that the inventory scores differently. Never used to
+/// score.
+#[derive(Default, serde::Serialize)]
+struct ImporterComparison {
+    error: Option<String>,
+    agree: usize,
+    only_importer: usize,
+    only_inventory: usize,
+    text_differs: usize,
+    examples: Vec<String>,
+    issue_codes: BTreeMap<String, usize>,
+}
+
+#[derive(serde::Serialize)]
+struct Accounting {
+    printed_scorable: usize,
+    verified: usize,
+    held: usize,
+    refused: usize,
+    not_found: usize,
+    holds: bool,
+}
+
 #[derive(serde::Serialize)]
 struct EditionAudit {
+    evaluation_schema: &'static str,
+    fidelity_rules: &'static str,
+    inventory_rules: &'static str,
     edition: Edition,
     reference: String,
+    book_selection: BookSelection,
+    reference_inventory: reference::InventoryReport,
+    importer_comparison: ImporterComparison,
+    accounting: Accounting,
     totals: BookAudit,
     books: Vec<BookAudit>,
     /// Books of the edition of which no verse was found.
     books_not_found: Vec<String>,
     issues: BTreeMap<String, usize>,
     refused_chapters: Vec<String>,
-    differences: Vec<Difference>,
-    extra_verses: Vec<String>,
-    /// False positives among the verified verses.
-    verified_extra_verses: Vec<String>,
+    /// Every usable verse whose text is not byte-exact.
+    fidelity_records: Vec<FidelityRecord>,
+    /// Every verified verse of the document, in its own numbering.
+    verified_references: Vec<String>,
+    /// Verified references the edition does not have, with why.
+    verified_absent: Vec<AbsentReference>,
+    /// Verified references the edition has only ambiguously (a number given
+    /// twice, a book given twice): they cannot be validated.
+    verified_unvalidatable: Vec<AbsentReference>,
+    /// Verified verses numbered but empty both here and in the edition.
+    verified_empty_in_both: usize,
+    /// Usable but unverified verses the edition does not have (diagnostic).
+    usable_absent: Vec<String>,
     unverified_reasons: BTreeMap<String, usize>,
     location_misses: Vec<String>,
     apparatus: usize,
@@ -466,6 +486,7 @@ fn control(dir: &Path, edition: &Edition) -> Option<serde_json::Value> {
     let seconds = started.elapsed().as_secs_f64();
     let peak = peak_mb();
     let base = serde_json::json!({
+        "evaluation_schema": EVALUATION_SCHEMA,
         "key": edition.key, "control": true, "format": edition.format,
         "language": edition.language, "script": edition.script,
         "seconds": seconds, "peak_memory_mb": peak,
@@ -514,6 +535,98 @@ fn control(dir: &Path, edition: &Edition) -> Option<serde_json::Value> {
         edition.key, out["detected"], out["verified"]
     );
     Some(serde_json::Value::Object(out))
+}
+
+/// The books a document is measured against (E2, C3). A sealed set's
+/// manifest is the only source: `all`, or the codes listed. Only the
+/// disclosed corpus's own manifests keep the A1.5 rule of a one-book file
+/// name ("fraLSG_LUK.pdf"), and the report says when it was used.
+fn book_selection(edition: &Edition) -> BookSelection {
+    let known = |c: &str| canon::by_code(c).is_some() || NON_CANONICAL_USFM_CODES.contains(&c);
+    if let Some(codes) = &edition.books {
+        let books: Vec<String> = codes.iter().map(|c| c.to_ascii_uppercase()).collect();
+        let unknown_codes = books.iter().filter(|c| !known(c)).cloned().collect();
+        return BookSelection {
+            rule: "manifest",
+            books: Some(books),
+            unknown_codes,
+        };
+    }
+    if !edition.sealed {
+        if let Some(book) = edition
+            .files
+            .first()
+            .and_then(|f| f.rsplit_once('_'))
+            .and_then(|(_, rest)| rest.split('.').next())
+            .and_then(canon::by_code)
+        {
+            return BookSelection {
+                rule: "file name",
+                books: Some(vec![book.code.to_string()]),
+                unknown_codes: Vec::new(),
+            };
+        }
+    }
+    BookSelection {
+        rule: "all",
+        books: None,
+        unknown_codes: Vec::new(),
+    }
+}
+
+/// The app's importer on the same reference, compared with the inventory.
+fn importer_comparison(path: &Path, inventory: &reference::Inventory) -> ImporterComparison {
+    let mut out = ImporterComparison::default();
+    let staged = match import::stage(&[as_usfm_defines(path)], ImportOrigin::UserFiles) {
+        Ok(staged) => staged,
+        Err(e) => {
+            out.error = Some(format!("{e:?}"));
+            return out;
+        }
+    };
+    for issue in &staged.content.issues {
+        *out.issue_codes
+            .entry(issue.code.clone().unwrap_or_else(|| "-".into()))
+            .or_default() += 1;
+    }
+    let mut seen = BTreeSet::new();
+    for (ordinal, book) in &staged.content.books {
+        let code = canon::by_ordinal(*ordinal).map_or("?", |b| b.code);
+        for (chapter, c) in &book.chapters {
+            for (verse, text) in &c.verses {
+                let key = (*ordinal, *chapter, *verse);
+                seen.insert(key);
+                match inventory.text(key) {
+                    Some(t) if t == text => out.agree += 1,
+                    Some(_) => {
+                        out.text_differs += 1;
+                        if out.examples.len() < 20 {
+                            out.examples
+                                .push(format!("{code} {chapter}:{verse}: text differs"));
+                        }
+                    }
+                    None => {
+                        out.only_importer += 1;
+                        if out.examples.len() < 20 {
+                            out.examples
+                                .push(format!("{code} {chapter}:{verse}: only the importer"));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for key in inventory.scorable.keys() {
+        if !seen.contains(key) {
+            out.only_inventory += 1;
+            if out.examples.len() < 20 {
+                let code = canon::by_ordinal(key.0).map_or("?", |b| b.code);
+                out.examples
+                    .push(format!("{code} {}:{}: only the inventory", key.1, key.2));
+            }
+        }
+    }
+    out
 }
 
 fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
@@ -572,13 +685,26 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     };
     let seconds = started.elapsed().as_secs_f64();
     let peak_memory_mb = peak_mb();
-    // Only now is the publisher's text read, for the comparison.
-    let reference_file = as_usfm_defines(&reference_file);
-    let reference = import::stage(
-        std::slice::from_ref(&reference_file),
-        ImportOrigin::UserFiles,
-    )
-    .unwrap();
+    // Only now is the publisher's text read, for the comparison: by the
+    // neutral inventory, never through the importer (which is run beside it
+    // for comparison only).
+    let selection = book_selection(edition);
+    let declared: Option<BTreeSet<String>> = selection
+        .books
+        .as_ref()
+        .map(|b| b.iter().cloned().collect());
+    let inventory = reference::read(&reference_file, declared.as_ref());
+    let importer = importer_comparison(&reference_file, &inventory);
+    // Every verse of the reference by its letters (any book, any status): a
+    // found verse with another verse's words has the wrong reference.
+    let mut by_letters: HashMap<String, String> = HashMap::new();
+    for e in &inventory.entries {
+        let b = fidelity::base(&fidelity::nfc(&e.text));
+        if !b.is_empty() {
+            by_letters.entry(b).or_insert_with(|| e.label());
+        }
+    }
+
     let content = &staged.content;
     let numbering = abiding_word_lib::scripture::numbering::assess(content);
     let usable = content.usable_chapters().unwrap_or_default();
@@ -630,211 +756,194 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         }
     }
 
-    let mut books: Vec<BookAudit> = Vec::new();
-    let mut differences = Vec::new();
-    let mut extra_verses = Vec::new();
-    let mut verified_extra_verses = Vec::new();
+    // The reference side: every scorable verse, by book.
+    let mut by_book: BTreeMap<u8, BookAudit> = BTreeMap::new();
+    let mut chapters_seen: BTreeSet<(u8, u16)> = BTreeSet::new();
+    let mut records = Vec::new();
     let mut location_misses: Vec<String> = Vec::new();
-    let mut books_not_found = Vec::new();
-    let mut seen_books: BTreeSet<u8> = BTreeSet::new();
-    // A file of one book ("fraLSG_LUK.pdf") is measured against that book;
-    // a document holding some books (the manifest's `books`), against those.
-    let only_books: Option<BTreeSet<u8>> = match &edition.books {
-        Some(codes) => Some(
-            codes
-                .iter()
-                .filter_map(|c| canon::by_code(c))
-                .map(|b| b.ordinal)
-                .collect(),
-        ),
-        None => edition
-            .files
-            .first()
-            .and_then(|f| f.rsplit_once('_'))
-            .and_then(|(_, rest)| rest.split('.').next())
-            .and_then(canon::by_code)
-            .map(|b| BTreeSet::from([b.ordinal])),
-    };
-    for (ordinal, rbook) in &reference.content.books {
-        if only_books.as_ref().is_some_and(|o| !o.contains(ordinal)) {
-            continue;
-        }
-        seen_books.insert(*ordinal);
-        let book = canon::by_ordinal(*ordinal).unwrap();
-        let mut a = BookAudit {
+    for (&key, &index) in &inventory.scorable {
+        let (ordinal, chapter, verse) = key;
+        let book = canon::by_ordinal(ordinal).expect("a canon book");
+        let a = by_book.entry(ordinal).or_insert_with(|| BookAudit {
             code: book.code.to_string(),
             ..Default::default()
-        };
-        let found = content.books.get(ordinal);
-        // Every verse of the edition's book, by its letters: a found verse
-        // with another verse's words has the wrong reference.
-        let book_verses: HashSet<String> = rbook
-            .chapters
-            .values()
-            .flat_map(|c| c.verses.values())
-            .map(|t| letters(t))
-            .filter(|t| !t.is_empty())
-            .collect();
-        for (chapter, rch) in &rbook.chapters {
-            let fch = found.and_then(|b| b.chapters.get(chapter));
+        });
+        let fch = content
+            .books
+            .get(&ordinal)
+            .and_then(|b| b.chapters.get(&chapter));
+        let ok = usable.contains(&(ordinal, chapter));
+        if chapters_seen.insert((ordinal, chapter)) {
             if fch.is_some() {
                 a.chapters += 1;
             }
-            let ok = usable.contains(&(*ordinal, *chapter));
             if ok {
                 a.usable_chapters += 1;
-            } else if let Some(r) = refused.get(&(book.code.to_string(), *chapter)) {
+            } else if let Some(r) = refused.get(&(book.code.to_string(), chapter)) {
                 match *r {
                     "order" => a.refused_reading_order += 1,
                     "numbers" => a.refused_verse_numbers += 1,
                     _ => a.refused_other += 1,
                 }
             }
-            for (verse, want) in &rch.verses {
-                if want.trim().is_empty() {
-                    a.absent_in_edition += 1;
-                    continue;
+        }
+        let want = inventory.entries[index].text.as_str();
+        if want.trim().is_empty() {
+            a.absent_in_edition += 1;
+            continue;
+        }
+        a.expected += 1;
+        let Some(text) = fch.and_then(|c| c.verses.get(&verse)) else {
+            a.not_found += 1;
+            a.unmapped += 1;
+            if ok {
+                a.missing_in_usable_chapter += 1;
+            }
+            continue;
+        };
+        a.detected += 1;
+        let class = fidelity::classify(want, text);
+        if !ok {
+            a.refused += 1;
+            a.unmapped += 1;
+            if class.faithful() {
+                a.refused_faithful += 1;
+            } else {
+                a.refused_mismatch += 1;
+            }
+            continue;
+        }
+        a.usable += 1;
+        let unverified = stage.unverified.get(&key).copied();
+        let label = format!("{} {chapter}:{verse}", book.code);
+        let (kind, matched) = if class == Class::Mismatch {
+            let other = by_letters
+                .get(&fidelity::base(&fidelity::nfc(text)))
+                .filter(|l| **l != label)
+                .cloned();
+            (Some(fidelity::kind(want, text, other.is_some())), other)
+        } else {
+            (None, None)
+        };
+        if unverified.is_some() {
+            a.held += 1;
+            if class.faithful() {
+                a.held_faithful += 1;
+            } else {
+                a.held_mismatch += 1;
+            }
+        } else {
+            a.verified += 1;
+            match class {
+                Class::Exact => a.verified_exact += 1,
+                Class::Canonical => a.verified_canonical += 1,
+                Class::Layout => a.verified_layout += 1,
+                Class::Mismatch => {
+                    a.verified_mismatch += 1;
+                    *a.verified_mismatch_kinds
+                        .entry(kind.unwrap_or("changed").to_string())
+                        .or_default() += 1;
                 }
-                a.expected += 1;
-                let Some(text) = fch.and_then(|c| c.verses.get(verse)) else {
-                    a.unmapped += 1;
-                    if ok {
-                        a.missing_in_usable_chapter += 1;
-                    }
-                    continue;
-                };
-                a.detected += 1;
-                if ok {
-                    a.usable += 1;
+            }
+            if let Some(found_here) = located(key, text) {
+                a.location_checked += 1;
+                if found_here {
+                    a.located += 1;
+                } else if location_misses.len() < 20 {
+                    location_misses.push(format!(
+                        "{label} (page {:?}, segments {:?}–{:?}): «{}»",
+                        stage.origins.get(&key).and_then(|o| o.start.page),
+                        stage.origins.get(&key).and_then(|o| o.start.segment),
+                        stage.origins.get(&key).and_then(|o| o.end.segment),
+                        text.chars().take(60).collect::<String>()
+                    ));
+                }
+            }
+        }
+        if class != Class::Exact {
+            records.push(FidelityRecord {
+                reference: label,
+                status: if unverified.is_some() {
+                    "held"
                 } else {
-                    a.unmapped += 1;
-                }
-                let case_only = dense(want) != dense(text)
-                    && dense(want).to_lowercase() == dense(text).to_lowercase();
-                let class = if want.trim() == text.trim() {
-                    0
-                } else if squash(want) == squash(text) || dense(want) == dense(text) || case_only {
-                    1
-                } else {
-                    2
-                };
-                if ok && case_only {
-                    a.usable_case_only += 1;
-                }
-                match (ok, class) {
-                    (true, 0) => a.usable_exact += 1,
-                    (true, 1) => a.usable_normalised += 1,
-                    (true, _) => a.usable_different += 1,
-                    (false, 0) => a.refused_exact += 1,
-                    (false, 1) => a.refused_normalised += 1,
-                    (false, _) => a.refused_different += 1,
-                }
-                let kind = difference_kind(want, text, &book_verses);
+                    "verified"
+                },
+                unverified_reason: unverified,
+                class: class.as_str(),
+                kind,
+                matched,
+                page: origins.get(&key).copied().flatten(),
+                found: text.clone(),
+                edition: want.to_string(),
+            });
+        }
+    }
+
+    // The document side, in full: every verified reference is looked up in
+    // the reference's complete inventory.
+    let mut verified_references = Vec::new();
+    let mut verified_absent = Vec::new();
+    let mut verified_unvalidatable = Vec::new();
+    let mut usable_absent = Vec::new();
+    let mut verified_empty_in_both = 0usize;
+    let reference_books: BTreeSet<u8> = inventory.scorable.keys().map(|k| k.0).collect();
+    let reference_chapters: BTreeSet<(u8, u16)> =
+        inventory.scorable.keys().map(|k| (k.0, k.1)).collect();
+    for (ordinal, fbook) in &content.books {
+        let code = canon::by_ordinal(*ordinal).map_or("?", |b| b.code);
+        for (chapter, ch) in &fbook.chapters {
+            if !usable.contains(&(*ordinal, *chapter)) {
+                continue;
+            }
+            for (verse, text) in &ch.verses {
                 let key = (*ordinal, *chapter, *verse);
-                let unverified = stage.unverified.get(&key).copied();
-                let verified = ok && unverified.is_none();
-                let contaminated = class == 2 && !matches!(kind, "typography" | "unicode");
-                if ok && unverified.is_some() {
-                    if contaminated {
-                        a.unverified_caught += 1;
-                    } else {
-                        a.unverified_clean += 1;
-                    }
-                }
+                let verified = !stage.unverified.contains_key(&key);
+                let label = format!("{code} {chapter}:{verse}");
                 if verified {
-                    a.verified += 1;
-                    match class {
-                        0 => a.verified_exact += 1,
-                        1 => a.verified_normalised += 1,
-                        _ => {
-                            a.verified_different += 1;
-                            match kind {
-                                "typography" | "unicode" => a.verified_typography += 1,
-                                "extra" | "sign" => a.verified_extra_text += 1,
-                                "missing" => a.verified_missing_text += 1,
-                                "wrong_reference" => a.verified_wrong_reference += 1,
-                                _ => a.verified_changed += 1,
-                            }
-                        }
-                    }
-                    if let Some(found_here) = located(key, text) {
-                        a.location_checked += 1;
-                        if found_here {
-                            a.located += 1;
-                        } else if location_misses.len() < 20 {
-                            location_misses.push(format!(
-                                "{} {chapter}:{verse} (page {:?}, segments {:?}–{:?}): «{}»",
-                                book.code,
-                                stage.origins.get(&key).and_then(|o| o.start.page),
-                                stage.origins.get(&key).and_then(|o| o.start.segment),
-                                stage.origins.get(&key).and_then(|o| o.end.segment),
-                                text.chars().take(60).collect::<String>()
-                            ));
-                        }
-                    }
+                    verified_references.push(label.clone());
                 }
-                if ok && class == 2 {
-                    match kind {
-                        "typography" | "unicode" => a.usable_typography += 1,
-                        "extra" | "sign" => a.usable_extra_text += 1,
-                        "missing" => a.usable_missing_text += 1,
-                        "wrong_reference" => a.usable_wrong_reference += 1,
-                        _ => a.usable_changed += 1,
+                let why: Option<(&'static str, bool)> = match inventory.scorable.get(&key) {
+                    Some(&i) => {
+                        // Numbered but empty in the edition, given text here.
+                        let empty = inventory.entries[i].text.trim().is_empty();
+                        if empty && text.trim().is_empty() && verified {
+                            verified_empty_in_both += 1;
+                        }
+                        (empty && !text.trim().is_empty()).then_some(("empty_in_edition", false))
                     }
-                }
-                if class == 2 && (ok || differences.len() < 60) {
-                    differences.push(Difference {
-                        reference: format!("{} {chapter}:{verse}", book.code),
-                        usable: ok,
-                        verified,
-                        unverified_reason: unverified,
-                        kind,
-                        page: origins
-                            .get(&(*ordinal, *chapter, *verse))
-                            .copied()
-                            .flatten(),
-                        found: squash(text),
-                        edition: squash(want),
+                    None => Some(if let Some(why) = inventory.unscorable_keys.get(&key) {
+                        (*why, true)
+                    } else if inventory.outside_keys.contains(&key) {
+                        ("outside_declared_books", false)
+                    } else if !reference_books.contains(ordinal) {
+                        ("book_not_in_reference", false)
+                    } else if !reference_chapters.contains(&(*ordinal, *chapter)) {
+                        ("chapter_not_in_book", false)
+                    } else {
+                        ("verse_not_in_chapter", false)
+                    }),
+                };
+                let Some((reason, unvalidatable)) = why else {
+                    continue;
+                };
+                if !verified {
+                    usable_absent.push(format!("{label} ({reason})"));
+                } else if unvalidatable {
+                    verified_unvalidatable.push(AbsentReference {
+                        reference: label,
+                        reason,
+                    });
+                } else {
+                    verified_absent.push(AbsentReference {
+                        reference: label,
+                        reason,
                     });
                 }
             }
-            // Accepted verses the edition does not have.
-            if let (true, Some(fch)) = (ok, fch) {
-                for (verse, text) in &fch.verses {
-                    let present = rch.verses.get(verse).is_some_and(|w| !w.trim().is_empty());
-                    if !present && !text.trim().is_empty() {
-                        a.usable_extra += 1;
-                        extra_verses.push(format!("{} {chapter}:{verse}", book.code));
-                        if !stage.unverified.contains_key(&(*ordinal, *chapter, *verse)) {
-                            a.verified_extra += 1;
-                            verified_extra_verses.push(format!("{} {chapter}:{verse}", book.code));
-                        }
-                    }
-                }
-            }
-        }
-        if a.detected == 0 && a.expected > 0 {
-            books_not_found.push(book.code.to_string());
-        }
-        books.push(a);
-    }
-    // Accepted chapters of books the edition does not contain at all.
-    for (ordinal, fbook) in &content.books {
-        if seen_books.contains(ordinal) {
-            continue;
-        }
-        let code = canon::by_ordinal(*ordinal).map_or("?", |b| b.code);
-        for (chapter, ch) in &fbook.chapters {
-            if usable.contains(&(*ordinal, *chapter)) {
-                for verse in ch.verses.keys() {
-                    extra_verses.push(format!("{code} {chapter}:{verse}"));
-                    if !stage.unverified.contains_key(&(*ordinal, *chapter, *verse)) {
-                        verified_extra_verses.push(format!("{code} {chapter}:{verse}"));
-                    }
-                }
-            }
         }
     }
+
+    let books: Vec<BookAudit> = by_book.into_values().collect();
     let mut totals = BookAudit {
         code: "ALL".into(),
         ..Default::default()
@@ -842,8 +951,19 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
     for b in &books {
         totals.add(b);
     }
-    totals.usable_extra = extra_verses.len();
-    totals.verified_extra = verified_extra_verses.len();
+    let books_not_found = books
+        .iter()
+        .filter(|b| b.detected == 0 && b.expected > 0)
+        .map(|b| b.code.clone())
+        .collect();
+    let accounting = Accounting {
+        printed_scorable: totals.expected,
+        verified: totals.verified,
+        held: totals.held,
+        refused: totals.refused,
+        not_found: totals.not_found,
+        holds: totals.expected == totals.verified + totals.held + totals.refused + totals.not_found,
+    };
     let refused_chapters = refused
         .iter()
         .map(|((b, c), r)| format!("{b} {c} ({r})"))
@@ -866,22 +986,32 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         .map(|i| i.message.clone())
         .take(200)
         .collect();
-    extra_verses.truncate(200);
+    usable_absent.truncate(200);
     Some(EditionAudit {
+        evaluation_schema: EVALUATION_SCHEMA,
+        fidelity_rules: fidelity::RULES,
+        inventory_rules: reference::RULES,
         edition: edition.clone(),
         reference: reference_file
             .file_name()
             .unwrap()
             .to_string_lossy()
             .into_owned(),
+        book_selection: selection,
+        reference_inventory: inventory.report(),
+        importer_comparison: importer,
+        accounting,
         totals,
         books,
         books_not_found,
         issues,
         refused_chapters,
-        differences,
-        extra_verses,
-        verified_extra_verses,
+        fidelity_records: records,
+        verified_references,
+        verified_absent,
+        verified_unvalidatable,
+        verified_empty_in_both,
+        usable_absent,
         unverified_reasons,
         location_misses,
         apparatus: stage.apparatus.len(),
@@ -909,11 +1039,36 @@ fn markdown(a: &EditionAudit) -> String {
     let mut s = String::new();
     let t = &a.totals;
     let e = &a.edition;
+    let inv = &a.reference_inventory;
     let _ = writeln!(s, "# {} — {}\n", e.key, e.files.join(", "));
     let _ = writeln!(
         s,
-        "Language {} ({}), format {}, layout: {}. Compared with {} (same revision).\n",
-        e.language, e.script, e.format, e.layout, a.reference
+        "Language {} ({}), format {}, layout: {}. Compared with {} (same revision), rules {} / {} / {}.\n",
+        e.language,
+        e.script,
+        e.format,
+        e.layout,
+        a.reference,
+        a.evaluation_schema,
+        a.fidelity_rules,
+        a.inventory_rules
+    );
+    let _ = writeln!(
+        s,
+        "Books measured: {} ({}).{}\n",
+        a.book_selection
+            .books
+            .as_ref()
+            .map_or("all".into(), |b| b.join(", ")),
+        a.book_selection.rule,
+        if a.book_selection.unknown_codes.is_empty() {
+            String::new()
+        } else {
+            format!(
+                " **Unknown book codes:** {}.",
+                a.book_selection.unknown_codes.join(", ")
+            )
+        }
     );
     let _ = writeln!(
         s,
@@ -924,113 +1079,109 @@ fn markdown(a: &EditionAudit) -> String {
         a.peak_memory_mb
             .map_or("—".into(), |m| format!("{m:.0} MB"))
     );
-    let _ = writeln!(s, "| | Verses | Share |\n|---|---|---|");
+    if !inv.problems.is_empty() {
+        let _ = writeln!(
+            s,
+            "**Reference problems (not a sound USFM reference):** {}\n",
+            inv.problems.join("; ")
+        );
+    }
+    let _ = writeln!(s, "## The reference, in full\n");
+    let _ = writeln!(s, "| | Verses |\n|---|---:|");
+    let _ = writeln!(s, "| Labels read | {} |", inv.labels);
     let _ = writeln!(
         s,
-        "| Printed in the edition (its USFM) | {} | |",
-        t.expected
+        "| **Printed, scorable** | **{}** |",
+        inv.printed_scorable
     );
     let _ = writeln!(
         s,
-        "| Numbered but empty in the edition | {} | |",
-        t.absent_in_edition
+        "| Numbered but empty (absent in the edition) | {} |",
+        inv.absent_in_edition
     );
     let _ = writeln!(
         s,
-        "| Detected | {} | {} |",
-        t.detected,
-        pct(t.detected, t.expected)
+        "| **Printed, unsupported (counted, never scored)** | **{}** |",
+        inv.printed_unsupported
+    );
+    for (class, c) in &inv.unsupported {
+        if c.printed + c.empty > 0 {
+            let _ = writeln!(
+                s,
+                "| … {class}: {} printed, {} empty | {} |",
+                c.printed,
+                c.empty,
+                c.references
+                    .iter()
+                    .take(12)
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(", ")
+                    + if c.references.len() > 12 { ", …" } else { "" }
+            );
+        }
+    }
+    let _ = writeln!(
+        s,
+        "| Outside the declared books: {} printed, {} empty | {} |",
+        inv.outside_declared_scope.printed,
+        inv.outside_declared_scope.empty,
+        inv.outside_declared_scope.references.join(", ")
+    );
+    let _ = writeln!(s, "\n## The document against it\n");
+    let _ = writeln!(s, "| | Verses | Share of printed |\n|---|---:|---:|");
+    let _ = writeln!(s, "| Printed, scorable | {} | |", t.expected);
+    let _ = writeln!(
+        s,
+        "| **Verified: exact / canonical / layout** | **{} / {} / {}** | {} |",
+        t.verified_exact,
+        t.verified_canonical,
+        t.verified_layout,
+        pct(
+            t.verified_exact + t.verified_canonical + t.verified_layout,
+            t.expected
+        )
+    );
+    let kinds: Vec<String> = t
+        .verified_mismatch_kinds
+        .iter()
+        .map(|(k, n)| format!("{k} {n}"))
+        .collect();
+    let _ = writeln!(
+        s,
+        "| **Verified with wrong text (mismatch)** | **{}** | {} |",
+        t.verified_mismatch,
+        kinds.join(", ")
     );
     let _ = writeln!(
         s,
-        "| **Usable (accepted)** | **{}** | **{}** |",
-        t.usable,
-        pct(t.usable, t.expected)
+        "| Recognised but uncertain (held back): faithful / mismatch | {} / {} | |",
+        t.held_faithful, t.held_mismatch
     );
     let _ = writeln!(
         s,
-        "| Unmapped or refused | {} | {} |",
-        t.unmapped,
-        pct(t.unmapped, t.expected)
+        "| In refused chapters: faithful / mismatch | {} / {} | |",
+        t.refused_faithful, t.refused_mismatch
+    );
+    let _ = writeln!(s, "| Not found in the document | {} | |", t.not_found);
+    let _ = writeln!(
+        s,
+        "| Accounting (printed = verified + held + refused + not found) | {} | |",
+        if a.accounting.holds {
+            "holds"
+        } else {
+            "**BROKEN**"
+        }
     );
     let _ = writeln!(
         s,
-        "| Usable: exact | {} | {} |",
-        t.usable_exact,
-        pct(t.usable_exact, t.usable)
+        "| **Verified references the edition does not have** | **{}** | |",
+        a.verified_absent.len()
     );
     let _ = writeln!(
         s,
-        "| Usable: whitespace or typography only | {} | {} |",
-        t.usable_normalised,
-        pct(t.usable_normalised, t.usable)
-    );
-    let _ = writeln!(
-        s,
-        "| … of which letter case only (small capitals) | {} | |",
-        t.usable_case_only
-    );
-    let _ = writeln!(
-        s,
-        "| **Usable: genuine differences** | **{}** | |",
-        t.usable_different
-    );
-    let _ = writeln!(
-        s,
-        "| … punctuation, typography or Unicode encoding only | {} | |",
-        t.usable_typography
-    );
-    let _ = writeln!(
-        s,
-        "| … extra text read into the verse (heading, note, reference, a note's sign) | {} | |",
-        t.usable_extra_text
-    );
-    let _ = writeln!(s, "| … verse cut short | {} | |", t.usable_missing_text);
-    let _ = writeln!(
-        s,
-        "| … another verse's words (wrong reference) | {} | |",
-        t.usable_wrong_reference
-    );
-    let _ = writeln!(s, "| … words changed | {} | |", t.usable_changed);
-    let _ = writeln!(
-        s,
-        "| **Usable verses the edition does not have (false positives)** | **{}** | |",
-        t.usable_extra
-    );
-    let _ = writeln!(
-        s,
-        "| Missing from usable chapters | {} | |",
-        t.missing_in_usable_chapter
-    );
-    let _ = writeln!(
-        s,
-        "| **Text-verified (used as the Bible's text)** | **{}** | **{}** |",
-        t.verified,
-        pct(t.verified, t.expected)
-    );
-    let _ = writeln!(
-        s,
-        "| Verified: exact / whitespace or case only / different | {} / {} / {} | |",
-        t.verified_exact, t.verified_normalised, t.verified_different
-    );
-    let _ = writeln!(
-        s,
-        "| Verified differences: typography / extra (apparatus) / cut / wrong reference / changed | {} / {} / {} / {} / {} | |",
-        t.verified_typography,
-        t.verified_extra_text,
-        t.verified_missing_text,
-        t.verified_wrong_reference,
-        t.verified_changed
-    );
-    let _ = writeln!(
-        s,
-        "| **Verified verses the edition does not have** | **{}** | |",
-        t.verified_extra
-    );
-    let _ = writeln!(
-        s,
-        "| Held back as unverified: text was clean / contamination caught | {} / {} | |",
-        t.unverified_clean, t.unverified_caught
+        "| **Verified references the edition cannot validate** | **{}** | |",
+        a.verified_unvalidatable.len()
     );
     let _ = writeln!(
         s,
@@ -1054,38 +1205,41 @@ fn markdown(a: &EditionAudit) -> String {
     }
     let _ = writeln!(
         s,
-        "| Refused verses: exact / whitespace / different | {} / {} / {} | |",
-        t.refused_exact, t.refused_normalised, t.refused_different
-    );
-    let _ = writeln!(
-        s,
         "\nChapters: {} found, {} usable; refused for reading order {}, for verse numbers {}, other {}.\n",
         t.chapters, t.usable_chapters, t.refused_reading_order, t.refused_verse_numbers, t.refused_other
     );
     if !a.books_not_found.is_empty() {
         let _ = writeln!(s, "Books not found: {}.\n", a.books_not_found.join(", "));
     }
+    let ic = &a.importer_comparison;
+    let _ = writeln!(
+        s,
+        "The app's importer on the same reference (comparison only): {} agree, {} only in the importer, {} only in the inventory, {} with other text{}.\n",
+        ic.agree,
+        ic.only_importer,
+        ic.only_inventory,
+        ic.text_differs,
+        ic.error
+            .as_ref()
+            .map(|e| format!("; it refused the reference: {e}"))
+            .unwrap_or_default()
+    );
     let _ = writeln!(s, "## Per book\n");
     let _ = writeln!(
         s,
-        "| Book | Printed | Usable | Refused chapters (order / numbers / other) | Usable exact / ws / different | False positives | Missing in usable |\n|---|---|---|---|---|---|---|"
+        "| Book | Printed | Verified faithful | Verified mismatch | Held | Refused | Not found |\n|---|---:|---:|---:|---:|---:|---:|"
     );
     for b in &a.books {
         let _ = writeln!(
             s,
-            "| {} | {} | {} ({}) | {} / {} / {} | {} / {} / {} | {} | {} |",
+            "| {} | {} | {} | {} | {} | {} | {} |",
             b.code,
             b.expected,
-            b.usable,
-            pct(b.usable, b.expected),
-            b.refused_reading_order,
-            b.refused_verse_numbers,
-            b.refused_other,
-            b.usable_exact,
-            b.usable_normalised,
-            b.usable_different,
-            b.usable_extra,
-            b.missing_in_usable_chapter
+            b.verified_exact + b.verified_canonical + b.verified_layout,
+            b.verified_mismatch,
+            b.held,
+            b.refused,
+            b.not_found
         );
     }
     let _ = writeln!(s, "\n## Issues\n");
@@ -1110,8 +1264,21 @@ fn markdown(a: &EditionAudit) -> String {
     for e in &a.errors {
         let _ = writeln!(s, "- {e}");
     }
-    if !a.extra_verses.is_empty() {
-        let _ = writeln!(s, "\n## False positives\n\n{}", a.extra_verses.join(", "));
+    if !a.verified_absent.is_empty() || !a.verified_unvalidatable.is_empty() {
+        let _ = writeln!(
+            s,
+            "\n## Verified references the edition does not have or cannot validate\n"
+        );
+        for r in a.verified_absent.iter().chain(&a.verified_unvalidatable) {
+            let _ = writeln!(s, "- {} ({})", r.reference, r.reason);
+        }
+    }
+    if !a.usable_absent.is_empty() {
+        let _ = writeln!(
+            s,
+            "\n## Usable, unverified verses the edition does not have\n\n{}",
+            a.usable_absent.join(", ")
+        );
     }
     if !a.location_misses.is_empty() {
         let _ = writeln!(
@@ -1122,33 +1289,25 @@ fn markdown(a: &EditionAudit) -> String {
             let _ = writeln!(s, "- {m}");
         }
     }
-    if !a.verified_extra_verses.is_empty() {
+    let _ = writeln!(s, "\n## Usable verses whose text is not exact\n");
+    for d in &a.fidelity_records {
         let _ = writeln!(
             s,
-            "\n## False positives among verified verses\n\n{}",
-            a.verified_extra_verses.join(", ")
-        );
-    }
-    let _ = writeln!(s, "\n## Differences\n");
-    for d in &a.differences {
-        let _ = writeln!(
-            s,
-            "- {}{}{} [{}] (page {}): found «{}» — edition «{}»",
+            "- {} {}{} [{}{}] (page {}): found «{}» — edition «{}»",
             d.reference,
-            if d.verified {
-                " **verified**"
-            } else if d.usable {
-                " usable"
+            if d.status == "verified" {
+                "**verified**"
             } else {
-                ""
+                "held"
             },
             d.unverified_reason
                 .map(|r| format!(" (unverified: {r})"))
                 .unwrap_or_default(),
-            d.kind,
+            d.class,
+            d.kind.map(|k| format!(": {k}")).unwrap_or_default(),
             d.page.map_or("?".into(), |p| p.to_string()),
-            d.found,
-            d.edition
+            fidelity::runs(&d.found),
+            fidelity::runs(&d.edition)
         );
     }
     s
@@ -1158,28 +1317,22 @@ fn summary_row(a: &EditionAudit) -> String {
     let t = &a.totals;
     let e = &a.edition;
     format!(
-        "| {} | {} | {} | {} | {} | {} ({}) | {} ({}) | {} | {} | {} | {} / {} / {} / {} / {} | {} / {} | {} / {} | {} | {:.0} s | {} |",
+        "| {} | {} | {} | {} | {} | {} | {} | {} / {} / {} | {} | {} / {} | {} / {} | {} | {:.0} s | {} |",
         e.key,
         e.language,
         e.format,
         e.layout,
         t.expected,
-        t.usable,
-        pct(t.usable, t.expected),
+        a.reference_inventory.printed_unsupported,
         t.verified,
-        pct(t.verified, t.expected),
         t.verified_exact,
-        t.verified_normalised,
-        t.verified_different,
-        t.verified_typography,
-        t.verified_extra_text,
-        t.verified_missing_text,
-        t.verified_wrong_reference,
-        t.verified_changed,
-        t.usable_extra,
-        t.verified_extra,
-        t.unverified_clean,
-        t.unverified_caught,
+        t.verified_canonical,
+        t.verified_layout,
+        t.verified_mismatch,
+        a.verified_absent.len(),
+        a.verified_unvalidatable.len(),
+        t.held_faithful,
+        t.held_mismatch,
         pct(t.located, t.location_checked),
         a.seconds,
         a.peak_memory_mb
@@ -1244,7 +1397,7 @@ fn real_document_editions_report() {
         }
     }
     let table = format!(
-        "| Edition | Lang | Format | Layout | Printed | Detected (structure accepted) | Text-verified | Verified exact | WS / case only | Verified different | Typography / extra / cut / wrong ref. / changed (verified) | False pos. detected / verified | Unverified: clean / caught | Location | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
+        "| Edition | Lang | Format | Layout | Printed (scorable) | Printed (unsupported) | Verified | Exact / canonical / layout | Verified mismatch | Not in the edition / unvalidatable | Held: faithful / mismatch | Location | Time | Peak memory |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n{}\n",
         rows.join("\n")
     );
     eprintln!("{table}");

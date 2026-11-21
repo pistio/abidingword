@@ -1,0 +1,1 @@
+refused: e2-map-jol: reference VerseMap.xml: a verse map, which would renumber the reference; never read

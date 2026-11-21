@@ -1,0 +1,155 @@
+{
+  "edition": {
+    "key": "e2-ref-3jn",
+    "files": [
+      "e2-ref-3jn.md"
+    ],
+    "reference": "e2-ref-3jn_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "3JN"
+    ]
+  },
+  "reference": "aw-reference-4412-e2-ref-3jn_usfm.zip",
+  "totals": {
+    "code": "ALL",
+    "expected": 14,
+    "absent_in_edition": 0,
+    "detected": 14,
+    "usable": 14,
+    "unmapped": 0,
+    "chapters": 1,
+    "usable_chapters": 1,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 0,
+    "refused_other": 0,
+    "usable_exact": 13,
+    "usable_normalised": 0,
+    "usable_case_only": 0,
+    "usable_different": 1,
+    "usable_typography": 0,
+    "usable_extra_text": 1,
+    "usable_missing_text": 0,
+    "usable_wrong_reference": 0,
+    "usable_changed": 0,
+    "refused_exact": 0,
+    "refused_normalised": 0,
+    "refused_different": 0,
+    "usable_extra": 0,
+    "missing_in_usable_chapter": 0,
+    "verified": 13,
+    "verified_exact": 13,
+    "verified_normalised": 0,
+    "verified_different": 0,
+    "verified_typography": 0,
+    "verified_extra_text": 0,
+    "verified_missing_text": 0,
+    "verified_wrong_reference": 0,
+    "verified_changed": 0,
+    "verified_extra": 0,
+    "unverified_clean": 0,
+    "unverified_caught": 1,
+    "located": 13,
+    "location_checked": 13
+  },
+  "books": [
+    {
+      "code": "3JN",
+      "expected": 14,
+      "absent_in_edition": 0,
+      "detected": 14,
+      "usable": 14,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "usable_exact": 13,
+      "usable_normalised": 0,
+      "usable_case_only": 0,
+      "usable_different": 1,
+      "usable_typography": 0,
+      "usable_extra_text": 1,
+      "usable_missing_text": 0,
+      "usable_wrong_reference": 0,
+      "usable_changed": 0,
+      "refused_exact": 0,
+      "refused_normalised": 0,
+      "refused_different": 0,
+      "usable_extra": 0,
+      "missing_in_usable_chapter": 0,
+      "verified": 13,
+      "verified_exact": 13,
+      "verified_normalised": 0,
+      "verified_different": 0,
+      "verified_typography": 0,
+      "verified_extra_text": 0,
+      "verified_missing_text": 0,
+      "verified_wrong_reference": 0,
+      "verified_changed": 0,
+      "verified_extra": 0,
+      "unverified_clean": 0,
+      "unverified_caught": 1,
+      "located": 13,
+      "location_checked": 13
+    }
+  ],
+  "books_not_found": [],
+  "issues": {
+    "Error bibleImport.chapterOutOfRange": 1,
+    "Note bibleImport.documentLeftOut": 1,
+    "Warning bibleImport.missingVerses": 1
+  },
+  "refused_chapters": [
+    "3JN 2 (other)"
+  ],
+  "differences": [
+    {
+      "reference": "3JN 1:11",
+      "usable": true,
+      "verified": false,
+      "unverified_reason": "boundary",
+      "kind": "extra",
+      "page": null,
+      "found": "A servant spoke softly on the hillside before the rain, and gave thanks. 12a The women looked up near the well in the evening, and the wind was still.",
+      "edition": "A servant spoke softly on the hillside before the rain, and gave thanks."
+    }
+  ],
+  "extra_verses": [],
+  "verified_extra_verses": [],
+  "unverified_reasons": {
+    "boundary": 1
+  },
+  "location_misses": [],
+  "apparatus": 1,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "3 John",
+      "3JN",
+      null
+    ]
+  ],
+  "errors": [
+    "3 John 2: 3 John has 1 chapters in the standard numbering."
+  ],
+  "seconds": 0.088815775,
+  "peak_memory_mb": 20.046875,
+  "read_seconds": 0.088671333,
+  "read_peak_memory_mb": 20.046875,
+  "numbering": [
+    {
+      "code": "3JN",
+      "agreement": "withinReference",
+      "chaptersPrinted": 1,
+      "chaptersReference": 1,
+      "differences": []
+    }
+  ]
+}

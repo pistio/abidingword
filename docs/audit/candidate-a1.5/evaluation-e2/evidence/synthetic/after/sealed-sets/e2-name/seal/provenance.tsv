@@ -1,0 +1,2 @@
+key	publisher	edition	revision	retrieved_from	retrieved_utc	licence	document_sha256	reference_source	reference_method	identity_checked_by
+e2-name-gen	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	e744ddaf44cb64bd2fd7544fb47b4e1d3fe78b33e9ef21413d38ab344b15a837	generated with the document	same generator	generator (synthetic)

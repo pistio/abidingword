@@ -1,0 +1,8 @@
+done; run record committed: 34b825dbb91c2d755ed4d9df5b21b1e097b2a2d1 (eval/e2-ref/run/). Score with --run-record=<that commit>.
+note: e2-ref-exo0a: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1
+note: e2-ref-exo0b: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1
+note: e2-ref-exo0c: reference content the recogniser cannot hold, counted as unsupported: verse_zero 1
+note: e2-ref-jol: reference content the recogniser cannot hold, counted as unsupported: chapter_beyond_canon 21
+note: e2-ref-tob: reference content the recogniser cannot hold, counted as unsupported: book_outside_canon 22
+note: e2-ref-3jn: reference content the recogniser cannot hold, counted as unsupported: verse_label_unusual 2, verse_duplicate 2, chapter_beyond_canon 4
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit

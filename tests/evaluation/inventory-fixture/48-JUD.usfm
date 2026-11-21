@@ -1,0 +1,11 @@
+\id JUD SYNTHETIC inventory fixture, invented text
+\v 1 A verse before any chapter.
+\c 1
+\p
+\v 1 The stranger sat down.
+\c x
+\p
+\v 1 A chapter label that is not a number.
+\c 0
+\p
+\v 1 A chapter numbered zero.

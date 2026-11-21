@@ -1,0 +1,23 @@
+{
+ "e2-abs-mal": {
+  "verified_absent": [
+   "MAL 4:1",
+   "MAL 4:2",
+   "MAL 4:3",
+   "MAL 4:4",
+   "MAL 4:5",
+   "MAL 4:6"
+  ],
+  "reason": "chapter_not_in_book"
+ },
+ "e2-abs-jud": {
+  "verified_absent": [
+   "JUD 1:26"
+  ],
+  "reason": "verse_not_in_chapter"
+ },
+ "e2-abs-rut": {
+  "verified_absent": "RUT 1:1-22",
+  "reason": "book_not_in_reference"
+ }
+}

@@ -20,8 +20,9 @@ read will be reviewed before the collection is used.
 You receive only: this brief; `disclosed-editions.tsv` (editions that must
 not be used); `disclosed-documents.sha256` (fingerprints of files that must
 not be used); `check-set.py` and `seal-set.py` (check your folder, and seal
-it); and, if you make Word documents from USFM,
-`audit-derived-completeness.py`.
+it), with `reference_inventory.py`, `usfm-books.tsv` and `protocol-e2.json`,
+which they read and which you keep beside them; and, if you make Word
+documents from USFM, `audit-derived-completeness.py`.
 
 Do not open, search or ask for, by any means (web pages, `git`, APIs,
 search engines, other sessions): any software that reads Bibles from
@@ -86,13 +87,22 @@ Every document is one of:
 * **scored**: it has an exact matching reference: the same edition,
   revision, canon and versification, in USFM, zipped. Preferably the
   publisher's own source text of the same release. If you convert a
-  publisher's text to USFM, do not change a word; record the method.
+  publisher's text to USFM, do not change a word, a number or a book;
+  record the method. Keep every book, chapter and verse as the edition
+  numbers it, including verse 0, books outside the 66 and chapters the
+  usual numbering does not have: the check lists them and they are
+  counted, never dropped.
 * **exploratory**: no exact reference can be found or shown to match.
   Give the closest reference you have, or `-`.
 * **control**: no Scripture; reference `-`.
 * **mixed**: reference `-`, and `allowed/<key>.txt` listing every passage
   it quotes, one per line: `JHN 3:16`, `PSA 23:1-6`, or `PSA 23` for a
   whole chapter. Book codes are the usual three-character USFM codes.
+
+A reference is a `.zip` of USFM book files (`.usfm` or `.sfm`, UTF-8, one
+`\id` line each), with nothing else in it but prose such as `copr.htm`;
+or a single `.usfm` file. A verse map, OSIS, MorphGNT or any other file
+in it is refused: take it out.
 
 A document you make yourself from a reference (a Word file from USFM, say)
 is *generated*: record the program and settings. For a Word file made
@@ -107,7 +117,12 @@ A documents folder (the files only) and a seal folder:
 * `manifest.tsv`: the 14 columns `key, files, reference, language,
   script, format, layout, role, source and licence, books, sha256,
   generator, kind, class` (`kind`: authentic or generated; `role`: `set-h`;
-  `books`: the books the document holds, or `all`);
+  `books`: the USFM codes of the books the document holds, or `all`,
+  never empty; `-` only for a document with no reference);
+* `composition.tsv`: `measure<TAB>documents`, one line each for `scored`,
+  `control`, `mixed`, `exploratory`, `authentic` and `generated`: the
+  numbers you declare. They must be those of the manifest, and those the
+  protocol requires;
 * `checksums.sha256`: every file of the documents folder (`sha256sum`
   format, names relative to that folder);
 * `provenance.tsv`: `key, publisher, edition, revision, retrieved_from,

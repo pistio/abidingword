@@ -1,0 +1,4 @@
+done; run record committed: 8254b3d2eea90d0e63f18743c65466cbd07fa89a (eval/e2-fid/run/). Score with --run-record=<that commit>.
+note: e2-fid-phm: the reference is not in Unicode NFC (compared under canonical equivalence)
+note: e2-fid-3jn: the reference is not in Unicode NFC (compared under canonical equivalence)
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit

@@ -1,0 +1,6 @@
+key	publisher	edition	revision	retrieved_from	retrieved_utc	licence	document_sha256	reference_source	reference_method	identity_checked_by
+e2-fid-rut	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	c4e719b184408e042c190bace93527638a2d35da4ae6ce47bd977e1960d428f4	generated with the document	same generator	generator (synthetic)
+e2-fid-phm	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	de96f392c0125e1143282b8148c3a7068c718fd91dcaab6e9f2baf89efb993d6	generated with the document	same generator	generator (synthetic)
+e2-fid-3jn	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	26025511473cba76d94270138e416375b5d6d1bb21855e26b20c9100bcde7493	generated with the document	same generator	generator (synthetic)
+e2-fid-oba-he	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	3e0db2f414215e38958b5f7c0ec0f18bd586e86803b91958ece11677841ec612	generated with the document	same generator	generator (synthetic)
+e2-fid-jud-nfd	SYNTHETIC	E2 test edition	1	generated locally	2026-11-21T00:00:00Z	none (invented text)	70aa8d171cab4df7391d6b2b1693a42c2646f1f23635ec4a1b9426bc2a9b8443	generated with the document	same generator	generator (synthetic)

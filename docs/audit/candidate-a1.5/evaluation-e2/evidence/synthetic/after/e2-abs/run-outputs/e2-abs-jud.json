@@ -1,0 +1,269 @@
+{
+  "evaluation_schema": "aw-eval-2",
+  "fidelity_rules": "aw-fidelity-2",
+  "inventory_rules": "aw-reference-inventory-1",
+  "edition": {
+    "key": "e2-abs-jud",
+    "files": [
+      "e2-abs-jud.md"
+    ],
+    "reference": "e2-abs-jud_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "JUD"
+    ],
+    "sealed": true
+  },
+  "reference": "e2-abs-jud_usfm.zip",
+  "book_selection": {
+    "rule": "manifest",
+    "books": [
+      "JUD"
+    ],
+    "unknown_codes": []
+  },
+  "reference_inventory": {
+    "rules": "aw-reference-inventory-1",
+    "members": [
+      {
+        "name": "41-JUD.usfm",
+        "role": "usfm",
+        "book": "JUD",
+        "verses": 25,
+        "verses_before_chapter": 0,
+        "utf8": true,
+        "nfc": true
+      }
+    ],
+    "problems": [],
+    "label_digest": "ec3af2d0a997edc959468bea1d8be4a432667cb2032a14209bb9dcbfba6dca03",
+    "labels": 25,
+    "printed_scorable": 25,
+    "absent_in_edition": 0,
+    "unsupported": {
+      "book_code_unknown": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_outside_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_unidentified": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_beyond_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_before_chapter": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      }
+    },
+    "printed_unsupported": 0,
+    "outside_declared_scope": {
+      "printed": 0,
+      "empty": 0,
+      "references": []
+    },
+    "scorable_by_book": {
+      "JUD": 25
+    },
+    "scorable_ranges": [
+      "JUD 1:1-25"
+    ],
+    "before_chapter_outside": 0
+  },
+  "importer_comparison": {
+    "error": null,
+    "agree": 25,
+    "only_importer": 0,
+    "only_inventory": 0,
+    "text_differs": 0,
+    "examples": [],
+    "issue_codes": {}
+  },
+  "accounting": {
+    "printed_scorable": 25,
+    "verified": 25,
+    "held": 0,
+    "refused": 0,
+    "not_found": 0,
+    "holds": true
+  },
+  "totals": {
+    "code": "ALL",
+    "expected": 25,
+    "absent_in_edition": 0,
+    "detected": 25,
+    "usable": 25,
+    "unmapped": 0,
+    "not_found": 0,
+    "refused": 0,
+    "chapters": 1,
+    "usable_chapters": 1,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 0,
+    "refused_other": 0,
+    "missing_in_usable_chapter": 0,
+    "verified": 25,
+    "verified_exact": 25,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "held": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused_faithful": 0,
+    "refused_mismatch": 0,
+    "located": 25,
+    "location_checked": 25
+  },
+  "books": [
+    {
+      "code": "JUD",
+      "expected": 25,
+      "absent_in_edition": 0,
+      "detected": 25,
+      "usable": 25,
+      "unmapped": 0,
+      "not_found": 0,
+      "refused": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "missing_in_usable_chapter": 0,
+      "verified": 25,
+      "verified_exact": 25,
+      "verified_canonical": 0,
+      "verified_layout": 0,
+      "verified_mismatch": 0,
+      "verified_mismatch_kinds": {},
+      "held": 0,
+      "held_faithful": 0,
+      "held_mismatch": 0,
+      "refused_faithful": 0,
+      "refused_mismatch": 0,
+      "located": 25,
+      "location_checked": 25
+    }
+  ],
+  "books_not_found": [],
+  "issues": {},
+  "refused_chapters": [],
+  "fidelity_records": [],
+  "verified_references": [
+    "JUD 1:1",
+    "JUD 1:2",
+    "JUD 1:3",
+    "JUD 1:4",
+    "JUD 1:5",
+    "JUD 1:6",
+    "JUD 1:7",
+    "JUD 1:8",
+    "JUD 1:9",
+    "JUD 1:10",
+    "JUD 1:11",
+    "JUD 1:12",
+    "JUD 1:13",
+    "JUD 1:14",
+    "JUD 1:15",
+    "JUD 1:16",
+    "JUD 1:17",
+    "JUD 1:18",
+    "JUD 1:19",
+    "JUD 1:20",
+    "JUD 1:21",
+    "JUD 1:22",
+    "JUD 1:23",
+    "JUD 1:24",
+    "JUD 1:25",
+    "JUD 1:26"
+  ],
+  "verified_absent": [
+    {
+      "reference": "JUD 1:26",
+      "reason": "verse_not_in_chapter"
+    }
+  ],
+  "verified_unvalidatable": [],
+  "verified_empty_in_both": 0,
+  "usable_absent": [],
+  "unverified_reasons": {},
+  "location_misses": [],
+  "apparatus": 0,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "Jude",
+      "JUD",
+      null
+    ]
+  ],
+  "errors": [],
+  "seconds": 0.083935146,
+  "peak_memory_mb": 20.21484375,
+  "read_seconds": 0.083794209,
+  "read_peak_memory_mb": 20.21484375,
+  "numbering": [
+    {
+      "code": "JUD",
+      "agreement": "departs",
+      "chaptersPrinted": 1,
+      "chaptersReference": 1,
+      "differences": [
+        {
+          "kind": "longer",
+          "chapter": 1,
+          "printed": 26,
+          "reference": 25
+        }
+      ]
+    }
+  ]
+}

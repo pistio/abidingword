@@ -1,0 +1,18 @@
+started 2026-11-21T17:24:40Z
+seal_commit a3f6280944c2674bb458de7daac2d87ef7ebbfe6
+manifest 0883db73e2cc7b7cf4e20aaca2e31232a257f506b6c752bb959ce204d50ea274
+checksums 04a947bdcbe68488952d5713f7cf0c90aa730c2fd590299fee77094be9a2212f
+binary 800fb43c9d09e85e7c7475702ff3332ebc45a3ce44a0204220f3d64756454473
+runner 93164464016db19bf4472a54cfcc7e7a76ef740e3d9c193466edb6713a70814b
+check_set 541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed
+inventory a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8
+protocol 841310eb4e137440fd64f7ea020b0924c54e71c79d1cc07ad8ac87c406f3f5a0
+limits timeout_seconds 1800 memory_kb 4194304
+host Linux 6.18.44-fc-v726 x86_64
+e2-ref-exo0a exit 0 seconds 0
+e2-ref-exo0b exit 0 seconds 1
+e2-ref-exo0c exit 0 seconds 0
+e2-ref-jol exit 0 seconds 0
+e2-ref-tob exit 0 seconds 0
+e2-ref-3jn exit 0 seconds 0
+ended 2026-11-21T17:24:41Z

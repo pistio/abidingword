@@ -1,0 +1,117 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/repo/eval/e2-name/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/documents/e2-name",
+ "seal_commit": null,
+ "tools": {
+  "check-set.py": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "reference_inventory.py": "2b5bcb8d8e4bc9b9cb4b03e9d6ebe566b5f62e7fb8d253d103f26bf6cdd33447",
+  "usfm-books.tsv": "4925aa88f5ce46cb4de1d0ad18d27a1256bde3c63cb959b265a64a1269819248"
+ },
+ "protocol": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-after/rehearsal-protocol-e2-name.json",
+ "protocol_sha256": "25d77e439151e7235f15d45010aa30b8c52cf33d38399728fd530f98358cfb0e",
+ "manifest_sha256": "fab7b70b2cf55deaa77c3ae90d2041d6727c3e0235df9342ee0c91d0dc04e991",
+ "checksums_sha256": "07803882a304c43682ed4a9e8833de7068173b4225cd2ed067e5aab3b2ea86a9",
+ "classes": {
+  "control": 0,
+  "exploratory": 0,
+  "mixed": 0,
+  "scored": 1
+ },
+ "composition": {
+  "scored": 1,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 1
+ },
+ "declared_composition": {
+  "scored": 1,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 1
+ },
+ "required_composition": {
+  "scored": 1,
+  "control": 0,
+  "mixed": 0,
+  "exploratory": 0,
+  "authentic": 0,
+  "generated": 1
+ },
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "reference_inventories": {
+  "e2-name-gen": {
+   "rules": "aw-reference-inventory-1",
+   "members": [
+    {
+     "name": "41-RUT.usfm",
+     "role": "usfm",
+     "utf8": true,
+     "nfc": true,
+     "book": "RUT",
+     "verses": 22,
+     "verses_before_chapter": 0
+    }
+   ],
+   "problems": [],
+   "label_digest": "f7a02de48e229f3d254686333aeedf93cf081c4386a01525a5748799d083c5b0",
+   "labels": 22,
+   "label_counts": {
+    "scorable": 22,
+    "outside_declared_scope": 0,
+    "verse_zero": 0,
+    "verse_label_unusual": 0,
+    "verse_duplicate": 0,
+    "verse_before_chapter": 0,
+    "chapter_zero": 0,
+    "chapter_label_unusual": 0,
+    "chapter_beyond_canon": 0,
+    "book_outside_canon": 0,
+    "book_code_unknown": 0,
+    "book_duplicate": 0,
+    "book_unidentified": 0
+   },
+   "unsupported_labels": {
+    "verse_zero": [],
+    "verse_label_unusual": [],
+    "verse_duplicate": [],
+    "verse_before_chapter": [],
+    "chapter_zero": [],
+    "chapter_label_unusual": [],
+    "chapter_beyond_canon": [],
+    "book_outside_canon": [],
+    "book_code_unknown": [],
+    "book_duplicate": [],
+    "book_unidentified": []
+   },
+   "verses_before_chapter": 0,
+   "scorable_ranges": [
+    "RUT 1:1-22"
+   ],
+   "outside_declared_books": []
+  }
+ },
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+sealed 2026-11-21T17:24:42Z

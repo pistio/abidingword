@@ -1,0 +1,2 @@
+key	files	reference	language	script	format	layout	role	source and licence	books	sha256	generator	kind	class
+e2-name-gen	probe_gen.md	e2-name-gen_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	all	e744ddaf44cb64bd2fd7544fb47b4e1d3fe78b33e9ef21413d38ab344b15a837	make_e2_sets.py	generated	scored

@@ -31,10 +31,11 @@
 # is the anchor score-set.py requires (--run-record). The score is added to
 # the same folder later, in another commit.
 #
-# AW_RUN_TIMEOUT_SECONDS, AW_RUN_MEMORY_KB and AW_DISCLOSED_INVENTORY exist
-# for rehearsals on disclosed documents only. RUN.txt records the values
-# used, and score-set.py declares any run that departs from the protocol's
-# values not a protocol run.
+# AW_RUN_TIMEOUT_SECONDS, AW_RUN_MEMORY_KB, AW_DISCLOSED_INVENTORY and (E2)
+# AW_PROTOCOL exist for rehearsals only. RUN.txt records the values used
+# (the protocol by its SHA-256), and score-set.py declares any run that
+# departs from the committed protocol (docs/evaluation/protocol-e2.json) not
+# a protocol run.
 set -euo pipefail
 [ $# -eq 6 ] || { sed -n '2,30p' "$0" >&2; exit 2; }
 here=$(cd "$(dirname "$0")" && pwd)
@@ -42,6 +43,7 @@ seal=$(cd "$1" && pwd); seal_commit=$2; docs=$(cd "$3" && pwd); bin=$4; want_bin
 timeout_s=${AW_RUN_TIMEOUT_SECONDS:-1800}
 memory_kb=${AW_RUN_MEMORY_KB:-4194304}
 inventory=${AW_DISCLOSED_INVENTORY:-$here/../../docs/evaluation/disclosed-documents.sha256}
+protocol=${AW_PROTOCOL:-$here/../../docs/evaluation/protocol-e2.json}
 repo=$(git -C "$seal" rev-parse --show-toplevel) || { echo "refused: the seal folder is not in a Git repository" >&2; exit 2; }
 seal_rel=$(python3 -c 'import os,sys; print(os.path.relpath(os.path.realpath(sys.argv[1]), os.path.realpath(sys.argv[2])))' "$seal" "$repo")
 record_rel="$(dirname "$seal_rel")/run"
@@ -54,7 +56,7 @@ git -C "$repo" var GIT_COMMITTER_IDENT > /dev/null 2>&1 \
 check_report=$(mktemp)
 trap 'rm -f "$check_report"' EXIT
 python3 "$here/check-set.py" "$seal" "$docs" --seal-commit="$seal_commit" \
-  --inventory="$inventory" --report="$check_report" > /dev/null \
+  --inventory="$inventory" --protocol="$protocol" --report="$check_report" > /dev/null \
   || { echo "refused: the set failed its checks (above); nothing was read" >&2; exit 2; }
 
 # From here on the set counts as run, whatever happens next.
@@ -72,6 +74,7 @@ manifest="$seal/manifest.tsv"
   echo "runner $(sha256sum "$0" | cut -d' ' -f1)"
   echo "check_set $(sha256sum "$here/check-set.py" | cut -d' ' -f1)"
   echo "inventory $(sha256sum "$inventory" | cut -d' ' -f1)"
+  echo "protocol $(sha256sum "$protocol" | cut -d' ' -f1)"
   echo "limits timeout_seconds $timeout_s memory_kb $memory_kb"
   echo "host $(uname -srm)"
 } > "$out/RUN.txt"

@@ -1,0 +1,543 @@
+# The E2 tests (tests/evaluation/test_e2_rules.py) run against the A1.5 tools
+# (scripts/evaluation/* at 767e22678eb7fccae53625df2c9bc435c4a6cd53: check-set 01a13dde, seal-set e343202e,
+# runner 8515e92c, scorer 658de955), with AW_EVAL_TOOLS=<a copy of them>. Failing before.
+
+test_a_book_the_reference_lacks (test_e2_rules.NonexistentReferences.test_a_book_the_reference_lacks) ... FAIL
+test_a_number_the_edition_gives_twice_cannot_be_validated (test_e2_rules.NonexistentReferences.test_a_number_the_edition_gives_twice_cannot_be_validated) ... FAIL
+test_a_whole_extra_chapter_verified_fails_criterion_2 (test_e2_rules.NonexistentReferences.test_a_whole_extra_chapter_verified_fails_criterion_2) ... FAIL
+test_the_a15_blind_spot_is_found_by_the_scorer (test_e2_rules.NonexistentReferences.test_the_a15_blind_spot_is_found_by_the_scorer) ... FAIL
+test_a_harness_that_drops_verse_zero_is_not_trusted (test_e2_rules.ReferenceCompleteness.test_a_harness_that_drops_verse_zero_is_not_trusted) ... FAIL
+test_accounting_that_loses_verses_is_not_trusted (test_e2_rules.ReferenceCompleteness.test_accounting_that_loses_verses_is_not_trusted) ... FAIL
+test_unsupported_content_is_declared_before_the_run (test_e2_rules.ReferenceCompleteness.test_unsupported_content_is_declared_before_the_run) ... ERROR
+test_unsupported_content_is_in_the_score_and_its_denominator (test_e2_rules.ReferenceCompleteness.test_unsupported_content_is_in_the_score_and_its_denominator) ... FAIL
+test_unsupported_scripture_verified_as_another_verse_is_named (test_e2_rules.ReferenceCompleteness.test_unsupported_scripture_verified_as_another_verse_is_named) ... FAIL
+test_a_composition_that_is_not_the_manifests_is_refused (test_e2_rules.Safeguards.test_a_composition_that_is_not_the_manifests_is_refused) ... FAIL
+test_a_composition_the_protocol_does_not_require_is_refused (test_e2_rules.Safeguards.test_a_composition_the_protocol_does_not_require_is_refused) ... FAIL
+test_a_decomposed_reference_is_noted_and_compared_canonically (test_e2_rules.Safeguards.test_a_decomposed_reference_is_noted_and_compared_canonically) ... FAIL
+test_a_diagnostic_score_says_so (test_e2_rules.Safeguards.test_a_diagnostic_score_says_so) ... FAIL
+test_a_protocol_without_a_required_composition_runs_nothing_as_protocol (test_e2_rules.Safeguards.test_a_protocol_without_a_required_composition_runs_nothing_as_protocol) ... ERROR
+test_a_reference_that_is_not_utf8_is_refused (test_e2_rules.Safeguards.test_a_reference_that_is_not_utf8_is_refused) ... FAIL
+test_a_reference_with_a_verse_map_is_refused (test_e2_rules.Safeguards.test_a_reference_with_a_verse_map_is_refused) ... FAIL
+test_a_reference_with_another_file_is_refused (test_e2_rules.Safeguards.test_a_reference_with_another_file_is_refused) ... FAIL
+test_a_report_that_chose_books_by_file_name_is_not_trusted (test_e2_rules.Safeguards.test_a_report_that_chose_books_by_file_name_is_not_trusted) ... FAIL
+test_a_seal_without_a_composition_is_refused (test_e2_rules.Safeguards.test_a_seal_without_a_composition_is_refused) ... FAIL
+test_an_official_score_of_a_rehearsal_binary_is_not_a_protocol_run (test_e2_rules.Safeguards.test_an_official_score_of_a_rehearsal_binary_is_not_a_protocol_run) ... FAIL
+test_book_codes_must_be_usfm_codes (test_e2_rules.Safeguards.test_book_codes_must_be_usfm_codes) ... FAIL
+test_books_must_be_stated (test_e2_rules.Safeguards.test_books_must_be_stated) ... FAIL
+test_official_scoring_refuses_every_override (test_e2_rules.Safeguards.test_official_scoring_refuses_every_override) ... FAIL
+test_a_report_of_the_a15_harness_is_not_trusted (test_e2_rules.StrictFidelity.test_a_report_of_the_a15_harness_is_not_trusted) ... ERROR
+test_canonical_and_layout_text_is_faithful (test_e2_rules.StrictFidelity.test_canonical_and_layout_text_is_faithful) ... FAIL
+test_case_word_boundaries_punctuation_and_marks_are_wrong_text (test_e2_rules.StrictFidelity.test_case_word_boundaries_punctuation_and_marks_are_wrong_text) ... FAIL
+test_the_golden_vectors (test_e2_rules.StrictFidelity.test_the_golden_vectors) ... ok
+test_the_scorer_classes_every_record_again (test_e2_rules.StrictFidelity.test_the_scorer_classes_every_record_again) ... FAIL
+
+======================================================================
+ERROR: test_unsupported_content_is_declared_before_the_run (test_e2_rules.ReferenceCompleteness.test_unsupported_content_is_declared_before_the_run)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 185, in test_unsupported_content_is_declared_before_the_run
+    inv = json.loads(r.stdout)["reference_inventories"]["S1"]
+          ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyError: 'reference_inventories'
+
+======================================================================
+ERROR: test_a_protocol_without_a_required_composition_runs_nothing_as_protocol (test_e2_rules.Safeguards.test_a_protocol_without_a_required_composition_runs_nothing_as_protocol)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 326, in test_a_protocol_without_a_required_composition_runs_nothing_as_protocol
+    a = score["assessment"]
+        ~~~~~^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not subscriptable
+
+======================================================================
+ERROR: test_a_report_of_the_a15_harness_is_not_trusted (test_e2_rules.StrictFidelity.test_a_report_of_the_a15_harness_is_not_trusted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 167, in test_a_report_of_the_a15_harness_is_not_trusted
+    _, _, score = self.e2(OBA, lambda inv: old)
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 114, in e2
+    r, score = s.score(out)
+               ~~~~~~~^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 298, in score
+    assert score["mode"] == "diagnostic" and a["verdict"] == "not a protocol run", score["mode"]
+           ~~~~~^^^^^^^^
+KeyError: 'mode'
+
+======================================================================
+FAIL: test_a_book_the_reference_lacks (test_e2_rules.NonexistentReferences.test_a_book_the_reference_lacks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 260, in test_a_book_the_reference_lacks
+    _, _, score = self.e2(OBA, lambda inv: e2_report(inv, absent=absent))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_a_number_the_edition_gives_twice_cannot_be_validated (test_e2_rules.NonexistentReferences.test_a_number_the_edition_gives_twice_cannot_be_validated)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 266, in test_a_number_the_edition_gives_twice_cannot_be_validated
+    _, _, score = self.e2(ref, lambda inv: e2_report(inv, unvalidatable=[("OBA 1:3", "verse_duplicate")]))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_a_whole_extra_chapter_verified_fails_criterion_2 (test_e2_rules.NonexistentReferences.test_a_whole_extra_chapter_verified_fails_criterion_2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 243, in test_a_whole_extra_chapter_verified_fails_criterion_2
+    _, _, score = self.e2(MAL3, lambda inv: e2_report(inv, absent=absent))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_the_a15_blind_spot_is_found_by_the_scorer (test_e2_rules.NonexistentReferences.test_the_a15_blind_spot_is_found_by_the_scorer)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 252, in test_the_a15_blind_spot_is_found_by_the_scorer
+    _, _, score = self.e2(MAL3, lambda inv: e2_report(inv, extra_verified=MAL4))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_a_harness_that_drops_verse_zero_is_not_trusted (test_e2_rules.ReferenceCompleteness.test_a_harness_that_drops_verse_zero_is_not_trusted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 210, in test_a_harness_that_drops_verse_zero_is_not_trusted
+    _, _, score = self.e2(ODD, lambda inv: e2_report(inv, drop=drop))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_accounting_that_loses_verses_is_not_trusted (test_e2_rules.ReferenceCompleteness.test_accounting_that_loses_verses_is_not_trusted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 231, in test_accounting_that_loses_verses_is_not_trusted
+    _, _, score = self.e2(OBA, lambda inv: e2_report(inv, drop=lose))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_unsupported_content_is_in_the_score_and_its_denominator (test_e2_rules.ReferenceCompleteness.test_unsupported_content_is_in_the_score_and_its_denominator)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 195, in test_unsupported_content_is_in_the_score_and_its_denominator
+    _, _, score = self.e2(ODD, lambda inv: e2_report(inv))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_unsupported_scripture_verified_as_another_verse_is_named (test_e2_rules.ReferenceCompleteness.test_unsupported_scripture_verified_as_another_verse_is_named)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 222, in test_unsupported_scripture_verified_as_another_verse_is_named
+    _, _, score = self.e2(ODD, lambda inv: e2_report(inv, records, drop=misread))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_a_composition_that_is_not_the_manifests_is_refused (test_e2_rules.Safeguards.test_a_composition_that_is_not_the_manifests_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 315, in test_a_composition_that_is_not_the_manifests_is_refused
+    self.assertIn("composition.tsv declares", self.refused(s))
+                                              ~~~~~~~~~~~~^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: 8d3e04a1dd9c1c604151766b65e2444c64a21aa6 (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_a_composition_the_protocol_does_not_require_is_refused (test_e2_rules.Safeguards.test_a_composition_the_protocol_does_not_require_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 320, in test_a_composition_the_protocol_does_not_require_is_refused
+    self.assertIn("is not the protocol's required", self.refused(s))
+                                                    ~~~~~~~~~~~~^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: cfab87fbbafc7d3b70984623c204638536b4a7c1 (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_a_decomposed_reference_is_noted_and_compared_canonically (test_e2_rules.Safeguards.test_a_decomposed_reference_is_noted_and_compared_canonically)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 377, in test_a_decomposed_reference_is_noted_and_compared_canonically
+    self.assertIn("not in Unicode NFC", r.stderr)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'not in Unicode NFC' not found in 'note: no repository: disclosed keys not checked (the runner checks them)\nnote: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit\n'
+
+======================================================================
+FAIL: test_a_diagnostic_score_says_so (test_e2_rules.Safeguards.test_a_diagnostic_score_says_so)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 294, in test_a_diagnostic_score_says_so
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_a_reference_that_is_not_utf8_is_refused (test_e2_rules.Safeguards.test_a_reference_that_is_not_utf8_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 368, in test_a_reference_that_is_not_utf8_is_refused
+    self.assertIn("not UTF-8", self.refused(s))
+                               ~~~~~~~~~~~~^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: 8d3b8616ed1872231b7b26ab92f0d6b81efc4ef2 (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_a_reference_with_a_verse_map_is_refused (test_e2_rules.Safeguards.test_a_reference_with_a_verse_map_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 355, in test_a_reference_with_a_verse_map_is_refused
+    self.assertIn("a verse map, which would renumber the reference", self.refused(s))
+                                                                     ~~~~~~~~~~~~^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: e3fae3a2c1f5087486009059fe2f48eee562208d (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_a_reference_with_another_file_is_refused (test_e2_rules.Safeguards.test_a_reference_with_another_file_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 360, in test_a_reference_with_another_file_is_refused
+    err = self.refused(E2Set(self.tmp, ref, lambda inv: e2_report(inv)))
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: 55e136cc3e94f5d7d64bce936f7491482a74c2b8 (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_a_report_that_chose_books_by_file_name_is_not_trusted (test_e2_rules.Safeguards.test_a_report_that_chose_books_by_file_name_is_not_trusted)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 347, in test_a_report_that_chose_books_by_file_name_is_not_trusted
+    _, _, score = self.e2(OBA, lambda inv: e2_report(inv, drop=by_name))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_a_seal_without_a_composition_is_refused (test_e2_rules.Safeguards.test_a_seal_without_a_composition_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 333, in test_a_seal_without_a_composition_is_refused
+    self.assertIn("SEAL.txt must list composition.tsv", self.refused(self.good(tamper=remove)))
+                                                        ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: 5815dc132280a34d67ed049566831a12ce22538a (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_an_official_score_of_a_rehearsal_binary_is_not_a_protocol_run (test_e2_rules.Safeguards.test_an_official_score_of_a_rehearsal_binary_is_not_a_protocol_run)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 305, in test_an_official_score_of_a_rehearsal_binary_is_not_a_protocol_run
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_book_codes_must_be_usfm_codes (test_e2_rules.Safeguards.test_book_codes_must_be_usfm_codes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 342, in test_book_codes_must_be_usfm_codes
+    self.assertIn("OBADIAH are not USFM book codes", self.refused(s))
+                                                     ~~~~~~~~~~~~^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: b702e0b906ec6d13b0d2c23760ed0e416f4ce72d (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_books_must_be_stated (test_e2_rules.Safeguards.test_books_must_be_stated)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 338, in test_books_must_be_stated
+    self.assertIn("books is empty", self.refused(s))
+                                    ~~~~~~~~~~~~^^^
+  File "/home/user/abidingword/tests/evaluation/test_withheld_set_tools.py", line 342, in refused
+    self.assertEqual(r.returncode, 2, r.stdout + r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 0 != 2 : done; run record committed: 3ba4b8c50264fd6c82ed7c6ce6e40eca986c748b (eval/set-x/run/). Score with --run-record=<that commit>.
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+
+
+======================================================================
+FAIL: test_official_scoring_refuses_every_override (test_e2_rules.Safeguards.test_official_scoring_refuses_every_override)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 284, in test_official_scoring_refuses_every_override
+    self.assertEqual(r.returncode, 2, option)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 2 : --frozen-binary=75a0a9be3a43eb9849d1b22e0de0fc0b1453c848bd3686eb66f49e1b17c2c299
+
+======================================================================
+FAIL: test_canonical_and_layout_text_is_faithful (test_e2_rules.StrictFidelity.test_canonical_and_layout_text_is_faithful)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 148, in test_canonical_and_layout_text_is_faithful
+    _, _, score = self.e2(OBA, lambda inv: e2_report(inv, records))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_case_word_boundaries_punctuation_and_marks_are_wrong_text (test_e2_rules.StrictFidelity.test_case_word_boundaries_punctuation_and_marks_are_wrong_text)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 135, in test_case_word_boundaries_punctuation_and_marks_are_wrong_text
+    _, _, score = self.e2(OBA, lambda inv: e2_report(inv, records))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+======================================================================
+FAIL: test_the_scorer_classes_every_record_again (test_e2_rules.StrictFidelity.test_the_scorer_classes_every_record_again)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 157, in test_the_scorer_classes_every_record_again
+    _, _, score = self.e2(OBA, lambda inv: e2_report(inv, records))
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/abidingword/tests/evaluation/test_e2_rules.py", line 115, in e2
+    self.assertEqual(r.returncode, 0, r.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 487, in <module>
+    main()
+    ~~~~^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 459, in main
+    docs = [document(folder, files, r, run) for r in rows]
+            ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 247, in document
+    observed = observe_report(json.load(open(report, encoding="utf-8")))
+  File "<scratch>/old-tools/scripts/evaluation/score-set.py", line 198, in observe_report
+    wrong = [x for x in j["differences"]
+                        ~^^^^^^^^^^^^^^^
+KeyError: 'differences'
+
+
+----------------------------------------------------------------------
+Ran 28 tests in 19.536s
+
+FAILED (failures=24, errors=3)

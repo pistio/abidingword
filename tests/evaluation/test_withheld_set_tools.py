@@ -1,9 +1,17 @@
-"""Qualifies the withheld-set tools (Phase A1.5) on synthetic sets.
+"""Qualifies the withheld-set tools (Phase A1.5; evaluation rules E2) on
+synthetic sets.
 
 A fake harness stands in for the recogniser: for each document it writes
 the report it is told to write, then exits, sleeps, aborts or is killed as
 told. No Scripture, no corpus and no recogniser are needed, so every
 refusal of the runner and every way a document's run can end are shown.
+Every reference and report here is invented (SYNTHETIC).
+
+E2 (candidate A1.5-E2): the fake reports are in the E2 format
+(`aw-eval-2`); each set has a declared composition and a test protocol; the
+scorer is run in --diagnostic mode with that protocol, and `score()` checks
+that the official verdict is then always "not a protocol run" before it
+hands the tests the diagnostic verdict.
 
     python3 -m unittest discover -s tests/evaluation -p 'test_*.py'
 """
@@ -18,15 +26,23 @@ import tempfile
 import unittest
 import warnings
 import zipfile
+from collections import Counter
 
 warnings.simplefilter("ignore", ResourceWarning)
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
-TOOLS = os.path.join(ROOT, "scripts", "evaluation")
+# AW_EVAL_TOOLS: another copy of the tools (used once, to show which E2
+# tests fail on the A1.5 tools); the default is this repository's.
+TOOLS = os.environ.get("AW_EVAL_TOOLS", os.path.join(ROOT, "scripts", "evaluation"))
 RUNNER = os.path.join(TOOLS, "run-withheld-set.sh")
 CHECK = os.path.join(TOOLS, "check-set.py")
 SEAL = os.path.join(TOOLS, "seal-set.py")
 SCORE = os.path.join(TOOLS, "score-set.py")
+_spec = importlib.util.spec_from_file_location(
+    "reference_inventory", os.path.join(ROOT, "scripts", "evaluation", "reference_inventory.py"))
+reference_inventory = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(reference_inventory)
+PROTOCOL_LIMITS = {"timeout_seconds": 1800, "memory_kb": 4194304}
 
 FAKE = r'''#!/usr/bin/env python3
 import json, os, signal, sys, time
@@ -58,20 +74,83 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def report(printed, verified, wrong=(), typography=(), absent=(), clean=0, caught=0):
-    differences = [{"reference": r, "verified": True, "kind": "changed"} for r in wrong]
-    differences += [{"reference": r, "verified": True, "kind": "typography"} for r in typography]
-    differences += [{"reference": "GEN 1:1", "verified": False, "kind": "changed"}] * caught
-    return {"totals": {"expected": printed, "verified": verified, "unverified_clean": clean,
-                       "unverified_caught": caught},
-            "differences": differences, "verified_extra_verses": list(absent),
+# Invented texts for fidelity records: (edition, found).
+CHANGED = ("The weaver sang at midday.", "The potter worked at dawn.")
+TYPOGRAPHY = ("It's the elders' doing.", "Its the elders' doing.")
+CANONICAL = ("\u00e9l que espera", "e\u0301l que espera")
+
+
+def record(reference, status, edition_found, cls, kind):
+    return {"reference": reference, "status": status, "unverified_reason": None if status == "verified" else "x",
+            "class": cls, "kind": kind, "matched": None, "page": None,
+            "edition": edition_found[0], "found": edition_found[1]}
+
+
+def reference_usfm(keys, book="MAT"):
+    """An invented reference holding exactly `keys` (book, chapter, verse)."""
+    lines, chapter = [f"\\id {book} SYNTHETIC test reference, invented text"], None
+    for b, c, v in keys:
+        if c != chapter:
+            lines.append(f"\\c {c}")
+            chapter = c
+        lines.append(f"\\v {v} Invented verse {c}:{v}.")
+    return "\n".join(lines) + "\n"
+
+
+def report(printed, verified, wrong=(), typography=(), canonical=(), absent=(), clean=0, caught=0,
+           book="MAT"):
+    """An E2 report of a document whose reference prints `printed` verses
+    (MAT 1:1, 1:2, ... a hundred to a chapter) of which the first `verified`
+    are verified. `wrong` are verified with changed words, `typography` with
+    only an apostrophe dropped (wrong text under E2), `canonical` with only
+    canonically equivalent text (faithful). `absent`: verified references the
+    reference does not have."""
+    keys = [(book, 1 + i // 100, 1 + i % 100) for i in range(printed)]
+    label = lambda k: f"{k[0]} {k[1]}:{k[2]}"
+    held = [label(k) for k in keys[verified:verified + clean + caught]]
+    records = [record(r, "verified", CHANGED, "mismatch", "changed") for r in wrong]
+    records += [record(r, "verified", TYPOGRAPHY, "mismatch", "punctuation") for r in typography]
+    records += [record(r, "verified", CANONICAL, "canonical", None) for r in canonical]
+    records += [record(r, "held", CHANGED, "mismatch", "changed") for r in held[clean:]]
+    kinds = Counter(["changed"] * len(wrong) + ["punctuation"] * len(typography))
+    totals = {"expected": printed, "verified": verified,
+              "verified_exact": verified - len(wrong) - len(typography) - len(canonical),
+              "verified_canonical": len(canonical), "verified_layout": 0,
+              "verified_mismatch": len(wrong) + len(typography), "verified_mismatch_kinds": dict(kinds),
+              "held": clean + caught, "held_faithful": clean, "held_mismatch": caught, "refused": 0,
+              "not_found": printed - verified - clean - caught}
+    return {"evaluation_schema": "aw-eval-2", "fidelity_rules": "aw-fidelity-2",
+            "inventory_rules": "aw-reference-inventory-1", "totals": totals, "fidelity_records": records,
+            "verified_references": [label(k) for k in keys[:verified]] + list(absent),
+            "verified_absent": [{"reference": r, "reason": "verse_not_in_chapter"} for r in absent],
+            "verified_unvalidatable": [], "verified_empty_in_both": 0,
+            "book_selection": {"rule": "all", "books": None, "unknown_codes": []},
+            "importer_comparison": {"agree": printed, "only_importer": 0, "only_inventory": 0,
+                                    "text_differs": 0, "error": None},
+            "accounting": {"holds": True}, "reference_inventory": "AUTO",
             "refused_chapters": [], "books_not_found": [], "read_peak_memory_mb": 40.0,
-            "read_seconds": 0.1}
+            "read_seconds": 0.1, "_reference_usfm": reference_usfm(keys, book)}
+
+
+def harness_inventory(inv):
+    """The harness's inventory report, as the E2 harness writes it, for a
+    reference the Python inventory read (every verse printed)."""
+    counts, labels = inv["label_counts"], inv["unsupported_labels"]
+    unsupported = {k: {"printed": inv["verses_before_chapter"] if k == "verse_before_chapter" else len(labels[k]),
+                       "empty": 0, "references": labels[k]} for k in reference_inventory.UNSUPPORTED}
+    return {"rules": reference_inventory.RULES, "members": inv["members"], "problems": inv["problems"],
+            "label_digest": inv["label_digest"], "labels": inv["labels"],
+            "printed_scorable": counts["scorable"], "absent_in_edition": 0, "unsupported": unsupported,
+            "printed_unsupported": sum(c["printed"] for c in unsupported.values()),
+            "outside_declared_scope": {"printed": counts["outside_declared_scope"], "empty": 0,
+                                       "references": inv["outside_declared_books"]},
+            "scorable_by_book": {}, "scorable_ranges": inv["scorable_ranges"], "before_chapter_outside": 0}
 
 
 def control(references, refused=None):
-    c = {"control": True, "detected": len(references), "verified": len(references),
-         "verified_references": list(references), "peak_memory_mb": 20.0, "seconds": 0.1}
+    c = {"evaluation_schema": "aw-eval-2", "control": True, "detected": len(references),
+         "verified": len(references), "verified_references": list(references), "peak_memory_mb": 20.0,
+         "seconds": 0.1}
     if refused:
         c.update(refused_document=refused, verified=0, verified_references=[])
     return c
@@ -89,7 +168,7 @@ class SetFixture:
     harness and an inventory of 'disclosed' hashes."""
 
     def __init__(self, tmp, docs, allowed=None, disclosed=(), disclosed_keys=("ZZ-disclosed",),
-                 tamper=None):
+                 tamper=None, composition=None, required_composition="same"):
         self.tmp = tmp
         self.repo = os.path.join(tmp, "repo")
         self.seal = os.path.join(self.repo, "eval", "set-x", "seal")
@@ -114,22 +193,34 @@ class SetFixture:
             open(os.path.join(self.docs, name), "wb").write(content)
             sums[name] = sha(content)
             ref = "-"
+            behaviour = json.loads(json.dumps(d.get("behaviour", {})))
+            fake = behaviour.get("write", {}).get(".json")
+            usfm = fake.pop("_reference_usfm", None) if isinstance(fake, dict) else None
             if d.get("reference", d["class"] in ("scored", "exploratory")):
                 ref = f"{key}.usfm.zip"
-                data = d.get("reference_bytes", usfm_zip(f"\\id MAT\n\\c 1\n\\v 1 {key}\n"))
+                data = d.get("reference_bytes") or usfm_zip(usfm or f"\\id MAT\n\\c 1\n\\v 1 {key}\n")
                 open(os.path.join(self.docs, ref), "wb").write(data)
                 sums[ref] = sha(data)
+                if isinstance(fake, dict) and fake.get("reference_inventory") == "AUTO":
+                    declared = None if d.get("books", "all") == "all" else set(d["books"].split(","))
+                    fake["reference_inventory"] = harness_inventory(
+                        reference_inventory.read(os.path.join(self.docs, ref), declared))
             rows.append([key, name, ref, d.get("language", "en"), "Latin", d.get("format", "epub"), "-",
-                         "set-x", "test", "all", sums[name], "-", d.get("kind", "generated"), d["class"]])
+                         "set-x", "test", d.get("books", "all"), sums[name], "-", d.get("kind", "generated"),
+                         d["class"]])
             prov.append([key, "pub", "ed", "rev", "https://example.invalid/x", "2026-11-19T00:00:00Z",
                          "public domain", sums[name], "src" if ref != "-" else "-",
                          "method" if ref != "-" else "-", "reviewer"])
-            json.dump(d.get("behaviour", {}), open(os.path.join(self.behaviour, key + ".json"), "w"))
+            json.dump(behaviour, open(os.path.join(self.behaviour, key + ".json"), "w"))
         self.write("manifest.tsv", "\t".join(HEADER) + "\n" + "".join("\t".join(r) + "\n" for r in rows))
         self.write("checksums.sha256", "".join(f"{h}  {n}\n" for n, h in sorted(sums.items())))
         self.write("provenance.tsv", "\t".join(PROV) + "\n" + "".join("\t".join(r) + "\n" for r in prov))
         self.write("review-ledger.md", "signed\n")
         self.write("access-records.md", "records\n")
+        counts = {c: sum(r[13] == c for r in rows) for c in ("scored", "control", "mixed", "exploratory")}
+        counts.update({k: sum(r[12] == k for r in rows) for k in ("authentic", "generated")})
+        self.declared = dict(counts, **(composition or {}))
+        self.write("composition.tsv", "measure\tdocuments\n" + "".join(f"{k}\t{v}\n" for k, v in self.declared.items()))
         for key, lines in (allowed or {}).items():
             os.makedirs(os.path.join(self.seal, "allowed"), exist_ok=True)
             self.write(f"allowed/{key}.txt", "\n".join(lines) + "\n")
@@ -145,6 +236,13 @@ class SetFixture:
         open(self.fake, "w").write(FAKE)
         os.chmod(self.fake, 0o755)
         self.fake_sha = sha(open(self.fake, "rb").read())
+        # The test protocol: the fake harness, the protocol ceilings, the test
+        # inventory, and (unless told otherwise) the declared composition.
+        self.protocol = os.path.join(tmp, "protocol.json")
+        json.dump({"name": "test protocol", "harness_binary_sha256": self.fake_sha, "limits": PROTOCOL_LIMITS,
+                   "inventory": self.inventory, "inventory_sha256": sha(open(self.inventory, "rb").read()),
+                   "required_composition": self.declared if required_composition == "same" else required_composition},
+                  open(self.protocol, "w"))
 
     def git(self, *args):
         return subprocess.run(["git", "-C", self.repo, *args], check=True, capture_output=True, text=True).stdout
@@ -165,7 +263,8 @@ class SetFixture:
 
     def run(self, out=None, binsha=None, timeout=None, check=False):
         out = out or os.path.join(self.tmp, "out")
-        env = dict(os.environ, FAKE_BEHAVIOUR=self.behaviour, AW_DISCLOSED_INVENTORY=self.inventory)
+        env = dict(os.environ, FAKE_BEHAVIOUR=self.behaviour, AW_DISCLOSED_INVENTORY=self.inventory,
+                   AW_PROTOCOL=self.protocol)
         if timeout:
             env["AW_RUN_TIMEOUT_SECONDS"] = str(timeout)
         r = subprocess.run(["bash", RUNNER, self.seal, self.commit, self.docs, self.fake,
@@ -181,15 +280,24 @@ class SetFixture:
         if r.returncode != 0:
             raise AssertionError(r.stdout + r.stderr)
 
-    def score(self, out, run_record=None):
+    def score(self, out, run_record=None, official=False):
+        """Scores in --diagnostic mode with the test protocol (the fake
+        harness is not the protocol's binary). The official verdict of a
+        diagnostic score is always "not a protocol run"; that is checked
+        here, and the tests then read the diagnostic verdict as `verdict`."""
         js = os.path.join(self.tmp, "score.json")
         if os.path.exists(js):
             os.remove(js)
         record = [] if run_record == "" else [f"--run-record={run_record or self.record}"]
-        r = subprocess.run(["python3", SCORE, out, self.seal, f"--json={js}", *record,
-                            f"--frozen-binary={self.fake_sha}", f"--inventory={self.inventory}"],
+        mode = [] if official else ["--diagnostic", f"--protocol={self.protocol}", f"--inventory={self.inventory}"]
+        r = subprocess.run(["python3", SCORE, out, self.seal, f"--json={js}", *record, *mode],
                            capture_output=True, text=True)
-        return r, (json.load(open(js)) if r.returncode == 0 else None)
+        score = json.load(open(js)) if r.returncode == 0 else None
+        if score is not None and not official:
+            a = score["assessment"]
+            assert score["mode"] == "diagnostic" and a["verdict"] == "not a protocol run", score["mode"]
+            a["official_verdict"], a["verdict"] = a["verdict"], a["diagnostic_verdict"]
+        return r, score
 
     def rehash_outputs(self, out):
         """What someone would do to make altered outputs look consistent."""
@@ -204,7 +312,7 @@ class SetFixture:
 
 GOOD = [
     {"key": "S1", "class": "scored", "kind": "authentic", "format": "epub",
-     "behaviour": {"write": {".json": report(100, 90, typography=["MAT 1:3"], clean=8, caught=2)}}},
+     "behaviour": {"write": {".json": report(100, 90, canonical=["MAT 1:3"], clean=8, caught=2)}}},
     {"key": "S2", "class": "scored", "format": "pdf",
      "behaviour": {"write": {".rejected.md": "# S2 — not read\n\nThe app refused the document: badPdf\n"}}},
     {"key": "C1", "class": "control", "format": "docx", "behaviour": {"write": {".control.json": control([])}}},
@@ -298,7 +406,8 @@ class RunnerRefuses(Fixture):
         self.assertIn("byte-identical to a disclosed document", self.refused(s))
 
     def test_a_reference_holding_a_disclosed_usfm_book(self):
-        book = b"\\id MAT\n\\c 1\n\\v 1 S1\n"
+        # S1's reference (E2: generated from its report, 100 invented verses).
+        book = reference_usfm([("MAT", 1 + i // 100, 1 + i % 100) for i in range(100)]).encode()
         s = self.make(disclosed=[sha(book)])
         self.assertIn("byte-identical to a disclosed USFM book", self.refused(s))
 
@@ -363,18 +472,20 @@ class Execution(Fixture):
         # Only S1 counts: E1's 40 differing verses are not judged.
         self.assertEqual(a["scored"]["documents"], 1)
         self.assertEqual(a["scored"]["verified"], 90)
-        self.assertEqual(a["scored"]["verified_wrong"], 0)
-        self.assertEqual(a["scored"]["verified_typography"], 1)
+        self.assertEqual(a["scored"]["verified_mismatch"], 0)
+        self.assertEqual(a["scored"]["verified_canonical"], 1)  # E2: faithful, listed apart from exact
         self.assertIn("Exploratory documents are not part of this figure", a["accuracy_claim"])
         self.assertIn("not recognition coverage: 1 scored document(s) refused whole (S2)", a["accuracy_claim"])
         self.assertEqual(a["scored"]["refused_whole"], ["S2"])
         self.assertEqual(a["scored"]["documents_in_manifest"], 2)
         self.assertEqual(score["groups"]["format"], {"epub": {
-            "documents": 1, "printed": 100, "verified": 90, "verified_correct": 90, "verified_wrong": 0,
-            "verified_typography": 1, "verified_absent": 0, "refused_correct": 8, "caught": 2,
-            "refused_chapters": 0}})
+            "documents": 1, "printed": 100, "printed_unsupported": 0, "verified": 90, "verified_exact": 89,
+            "verified_canonical": 1, "verified_layout": 0, "verified_faithful": 90, "verified_mismatch": 0,
+            "verified_mismatch_material": 0, "verified_absent": 0, "verified_unvalidatable": 0,
+            "held_faithful": 8, "held_mismatch": 2, "refused": 0, "not_found": 0, "refused_chapters": 0,
+            "verified_mismatch_kinds": {}, "unsupported": {}}})
         e1 = next(d for d in score["documents"] if d["key"] == "E1")
-        self.assertEqual(e1["observed"]["verified_wrong"], 40)  # raw observation kept
+        self.assertEqual(e1["observed"]["verified_mismatch"], 40)  # raw observation kept
         m1 = next(d for d in score["documents"] if d["key"] == "M1")
         self.assertEqual(m1["outside_allowed"], [])
         self.assertEqual(sorted(m1["allowed_verified"]), ["JHN 3:16", "PSA 23:4"])
@@ -402,8 +513,8 @@ class Execution(Fixture):
         a = score["assessment"]
         self.assertEqual(a["verdict"], "fail")
         self.assertEqual(a["criteria"], {
-            "1_no_wrong_verified_text": False,
-            "2_no_verified_reference_outside_the_edition": False,
+            "1_no_verified_text_mismatch": False,
+            "2_no_verified_reference_outside_or_unvalidatable": False,
             "3_no_verified_reference_in_controls_or_outside_allowed": False,
             "4_every_document_completed_or_refused_cleanly": False})
         by = {d["key"]: d for d in score["documents"]}
@@ -514,7 +625,7 @@ class ScoringAnchors(Fixture):
         self.assertEqual(score["assessment"]["verdict"], "fail")
         p = os.path.join(out, "S1.json")
         value = json.load(open(p))
-        value["differences"] = []
+        value["fidelity_records"] = []
         json.dump(value, open(p, "w"))
         s.rehash_outputs(out)
         self.assertRefused(s, out, "OUTPUTS.sha256 in the run folder differs from the committed run record")
@@ -655,7 +766,7 @@ class Builder(Fixture):
         report = json.loads(r.stdout)
         self.assertEqual(report["classes"], {"control": 2, "exploratory": 1, "mixed": 1, "scored": 2})
         self.assertEqual(report["authentic_scored_evidence"]["documents"], 1)
-        self.assertEqual(report["authentic_scored_evidence"]["reference_verses"], 1)
+        self.assertEqual(report["authentic_scored_evidence"]["reference_verses"], 100)
         self.assertFalse(report["authentic_scored_evidence"]["meets_minimum"])
 
 
@@ -730,22 +841,24 @@ class AuthenticMinimum(unittest.TestCase):
     def doc(self, i, fmt, lang, printed):
         return {"key": f"A{i}", "class": "scored", "kind": "authentic", "format": fmt, "language": lang,
                 "execution": "completed", "exit": 0,
-                "observed": {"printed": printed, "verified": printed, "verified_correct": printed,
-                             "verified_wrong": 0, "verified_absent": 0}}
+                "observed": {"printed": printed, "verified": printed, "verified_faithful": printed,
+                             "verified_mismatch": 0, "verified_absent": 0}}
+
+    def assess(self, m, docs):
+        seal = {"manifest_sha256": None, "checksums_sha256": None, "composition": {}, "declared_composition": {}}
+        return m.assess(docs, {"fields": {}}, seal, {}, SCORE, "x", {"committed_and_unchanged": False}, {})
 
     def test_the_declared_minimum_is_met_or_the_limit_is_stated(self):
         m = self.load()
-        run = {"fields": {}}
-        seal = {"manifest_sha256": None, "checksums_sha256": None}
         enough = [self.doc(i, ["epub", "pdf"][i % 2], ["en", "de", "fr", "es"][i % 4], 2500) for i in range(8)]
-        a = m.assess(enough, run, seal, "x")
+        a = self.assess(m, enough)
         self.assertTrue(a["authentic_evidence"]["meets_minimum"])
         self.assertIsNone(a["qualification_limit"])
-        a = m.assess(enough[:7], run, seal, "x")
+        a = self.assess(m, enough[:7])
         self.assertFalse(a["authentic_evidence"]["meets_minimum"])
         self.assertIn("below the declared minimum", a["qualification_limit"])
         few_verses = [self.doc(i, ["epub", "pdf"][i % 2], ["en", "de", "fr", "es"][i % 4], 100) for i in range(8)]
-        self.assertFalse(m.assess(few_verses, run, seal, "x")["authentic_evidence"]["meets_minimum"])
+        self.assertFalse(self.assess(m, few_verses)["authentic_evidence"]["meets_minimum"])
 
 
 if __name__ == "__main__":

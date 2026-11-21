@@ -1,0 +1,3 @@
+| Edition | Lang | Format | Layout | Printed | Detected (structure accepted) | Text-verified | Verified exact | WS / case only | Verified different | Typography / extra / cut / wrong ref. / changed (verified) | False pos. detected / verified | Unverified: clean / caught | Location | Time | Peak memory |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| e2-mat-phm | es | md | synthetic | 25 | 25 (100.0 %) | 25 (100.0 %) | 24 | 0 | 1 | 0 / 0 / 0 / 0 / 1 | 0 / 0 | 0 / 0 | 100.0 % | 0 s | 20 MB |

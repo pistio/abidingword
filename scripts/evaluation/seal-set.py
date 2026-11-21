@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The builder's check before sealing, and the seal itself (Phase A1.5).
 
-    seal-set.py <seal folder> <documents folder> [--inventory=FILE] [--write]
+    seal-set.py <seal folder> <documents folder> [--inventory=FILE] [--protocol=FILE] [--write]
 
 Without --write: runs every check of check-set.py on the folder as it
 would be sealed now, and reports. The reviewer's ledger may still be
@@ -13,7 +13,9 @@ written (the UTC time and the SHA-256 of every other file). A folder that
 already has SEAL.txt is never sealed again.
 
 Exit 0 when the checks pass (and, with --write, SEAL.txt was written);
-otherwise 2. check-set.py is used unchanged.
+otherwise 2. check-set.py is used unchanged. --protocol (E2): the protocol
+whose required composition the set must meet (default: the committed
+docs/evaluation/protocol-e2.json).
 """
 import datetime
 import hashlib
@@ -69,7 +71,7 @@ def main():
                 open(p, "w", encoding="utf-8").write("(not written yet)\n")
         text = seal_text(trial, when)
         open(os.path.join(trial, "SEAL.txt"), "w", encoding="utf-8").write(text)
-        report = check_set.check(trial, docs, None, opts.get("inventory"))
+        report = check_set.check(trial, docs, None, opts.get("inventory"), opts.get("protocol"))
     report["seal_folder"] = seal
     report.setdefault("notes", []).extend(notes)
     print(json.dumps(report, ensure_ascii=False, indent=1))

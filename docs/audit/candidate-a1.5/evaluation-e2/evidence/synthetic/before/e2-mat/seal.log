@@ -1,0 +1,34 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-before/repo/eval/e2-mat/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/89906ae6-df0f-58f3-b66a-16822e94506a/scratchpad/final-before/documents/e2-mat",
+ "seal_commit": null,
+ "manifest_sha256": "2f516ff81621c3e32039b393b4dd0474a645424c8349eaa8de596874256fcc37",
+ "checksums_sha256": "2ad54f9973126c34c49eb49b524775a79b72bc5764c3c54c6ffe150b7d6c2545",
+ "classes": {
+  "control": 0,
+  "exploratory": 0,
+  "mixed": 0,
+  "scored": 2
+ },
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}
+note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit
+sealed 2026-11-21T17:24:33Z

@@ -1,0 +1,187 @@
+{
+ "anchors": {
+  "run_record_commit": "27b3c761add98c86b34fabce45ed7d8e9b61ca03",
+  "run_record_path": "eval/e2-map/run",
+  "seal_commit": "9829ce0cdc58f89682ab1c3db36627cd0cadea55",
+  "seal_path": "eval/e2-map/seal",
+  "scorer_sha256": "658de955cc4594b5893ba84518ccbdfc7673b95da280edc5056c09835fb9a9bf",
+  "check_set_sha256": "01a13dde21510ad9e9f3b9c301d971e87feffbacdcaee0449d6c2f9180c3411f"
+ },
+ "run": {
+  "started": "2026-11-21T17:24:37Z",
+  "seal_commit": "9829ce0cdc58f89682ab1c3db36627cd0cadea55",
+  "manifest": "69418f4b8969a9a4a8bdd2eff4e319c05f81a4e7d96d3a4eff86e3a00a9eca84",
+  "checksums": "0502f0fa6c6de17302e50dfa9d4d094270ff69a59fa15064cf3b4d4df607fada",
+  "binary": "e396328c20fef35ee12f62b880e554f676a93006ca5bc8054dc82d433f21ee43",
+  "runner": "8515e92c329370236f5aab0495b4e08c4f6a76f64f6e8d0abbd59584181385a9",
+  "check_set": "01a13dde21510ad9e9f3b9c301d971e87feffbacdcaee0449d6c2f9180c3411f",
+  "inventory": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+  "limits": {
+   "timeout_seconds": 1800,
+   "memory_kb": 4194304
+  },
+  "host": "Linux 6.18.44-fc-v726 x86_64",
+  "ended": "2026-11-21T17:24:37Z"
+ },
+ "assessment": {
+  "verdict": "pass",
+  "run_validity": {
+   "anchored_and_intact": true,
+   "run_complete": true,
+   "every_document_has_a_record": true,
+   "seal_matches": true,
+   "frozen_binary": true,
+   "protocol_limits": true,
+   "canonical_inventory": true
+  },
+  "criteria": {
+   "1_no_wrong_verified_text": true,
+   "2_no_verified_reference_outside_the_edition": true,
+   "3_no_verified_reference_in_controls_or_outside_allowed": true,
+   "4_every_document_completed_or_refused_cleanly": true
+  },
+  "accuracy_claim": "0 verified verses with wrong text and 0 verified references outside the edition, among 47 verified verses of 1 completed scored documents (0 authentic), which print 73 verses: coverage 64.4 % (verified correct / printed; no pass mark). Exploratory documents are not part of this figure.",
+  "authentic_evidence": {
+   "documents": 0,
+   "printed_verses": 0,
+   "verified": 0,
+   "verified_correct": 0,
+   "formats": [],
+   "languages": [],
+   "minimum": {
+    "documents": 8,
+    "reference_verses": 20000,
+    "formats": 2,
+    "languages": 4
+   },
+   "meets_minimum": false,
+   "coverage_percent": null
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "execution": {
+   "completed": 1
+  },
+  "failure_causes": {},
+  "scored": {
+   "documents": 1,
+   "printed": 73,
+   "verified": 47,
+   "verified_correct": 47,
+   "verified_wrong": 0,
+   "verified_typography": 0,
+   "verified_absent": 0,
+   "refused_correct": 0,
+   "caught": 0,
+   "refused_chapters": 2,
+   "coverage_percent": 64.4,
+   "documents_in_manifest": 1,
+   "refused_whole": [],
+   "failed_to_run": []
+  },
+  "control": {
+   "documents": 0,
+   "completed": 0,
+   "verified": 0
+  },
+  "mixed": {
+   "documents": 0,
+   "completed": 0,
+   "verified_allowed": 0,
+   "verified_outside_allowed": 0
+  },
+  "exploratory": {
+   "documents": 0,
+   "completed": 0,
+   "note": "raw observations only; no matching reference, so nothing is judged"
+  }
+ },
+ "groups": {
+  "format": {
+   "md": {
+    "documents": 1,
+    "printed": 73,
+    "verified": 47,
+    "verified_correct": 47,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 2
+   }
+  },
+  "language": {
+   "en": {
+    "documents": 1,
+    "printed": 73,
+    "verified": 47,
+    "verified_correct": 47,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 2
+   }
+  },
+  "script": {
+   "Latin": {
+    "documents": 1,
+    "printed": 73,
+    "verified": 47,
+    "verified_correct": 47,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 2
+   }
+  },
+  "kind": {
+   "generated": {
+    "documents": 1,
+    "printed": 73,
+    "verified": 47,
+    "verified_correct": 47,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 2
+   }
+  }
+ },
+ "documents": [
+  {
+   "key": "e2-map-jol",
+   "files": "e2-map-jol.md",
+   "reference": "e2-map-jol_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 73,
+    "verified": 47,
+    "verified_wrong": 0,
+    "verified_wrong_references": [],
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_correct": 47,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 2,
+    "books_not_found": 0,
+    "peak_memory_mb": 19.921875,
+    "seconds": 0.09831583
+   }
+  }
+ ]
+}

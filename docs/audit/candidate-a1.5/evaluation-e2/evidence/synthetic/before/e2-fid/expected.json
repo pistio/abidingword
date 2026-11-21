@@ -1,0 +1,41 @@
+{
+ "e2-fid-rut": {
+  "mismatch": {
+   "RUT 1:1": "punctuation",
+   "RUT 1:2": "punctuation",
+   "RUT 1:3": "punctuation",
+   "RUT 1:4": "punctuation",
+   "RUT 1:5": "punctuation",
+   "RUT 1:6": "word_boundary",
+   "RUT 1:7": "word_boundary",
+   "RUT 1:8": "case",
+   "RUT 1:9": "case",
+   "RUT 1:10": "punctuation",
+   "RUT 1:11": "punctuation",
+   "RUT 1:12": "punctuation"
+  }
+ },
+ "e2-fid-phm": {
+  "mismatch": {
+   "PHM 1:1": "word_boundary",
+   "PHM 1:2": "marks",
+   "PHM 1:3": "word_boundary"
+  }
+ },
+ "e2-fid-3jn": {
+  "mismatch": {
+   "3JN 1:1": "marks",
+   "3JN 1:2": "marks"
+  }
+ },
+ "e2-fid-oba-he": {
+  "mismatch": {
+   "OBA 1:3": "marks"
+  },
+  "note": "may be refused or unverified: right-to-left text"
+ },
+ "e2-fid-jud-nfd": {
+  "mismatch": {},
+  "faithful": "every verified verse (canonical)"
+ }
+}

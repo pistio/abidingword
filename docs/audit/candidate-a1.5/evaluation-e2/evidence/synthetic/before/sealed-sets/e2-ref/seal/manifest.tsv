@@ -1,0 +1,7 @@
+key	files	reference	language	script	format	layout	role	source and licence	books	sha256	generator	kind	class
+e2-ref-exo0a	e2-ref-exo0a.md	e2-ref-exo0a_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	EXO	051bac99746269a835bb89b291d15b36cf99b8649999d66ce5cdf7f0eaab5cc0	make_e2_sets.py	generated	scored
+e2-ref-exo0b	e2-ref-exo0b.md	e2-ref-exo0b_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	EXO	9931ac598008682971a955c3169529b93ec6e02b62cd6742f9f54cb74e63dba6	make_e2_sets.py	generated	scored
+e2-ref-exo0c	e2-ref-exo0c.md	e2-ref-exo0c_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	EXO	703349df3a394163044c053236bc22c1ebf4b664b230121ad899afa94d67bbaf	make_e2_sets.py	generated	scored
+e2-ref-jol	e2-ref-jol.md	e2-ref-jol_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	JOL	a78706197886de5e9c425ba26eacc6a8ac0835cb062e783857c26b6bd3a59df3	make_e2_sets.py	generated	scored
+e2-ref-tob	e2-ref-tob.md	e2-ref-tob_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	all	d513187880f9f4834fe2e3e6be00be60a8afea938c26b765a73fac15681f58be	make_e2_sets.py	generated	scored
+e2-ref-3jn	e2-ref-3jn.md	e2-ref-3jn_usfm.zip	en	Latin	md	synthetic	e2-regression	SYNTHETIC invented text, tests only	3JN	a2e41a412aba5bca478859b68d1fed7e99a5606873e1ba74a84f92b0e59dcfc3	make_e2_sets.py	generated	scored

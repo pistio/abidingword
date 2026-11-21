@@ -1,0 +1,227 @@
+{
+ "mode": "new",
+ "binary_sha256": "800fb43c9d09e85e7c7475702ff3332ebc45a3ce44a0204220f3d64756454473",
+ "sets": {
+  "e2-fid": {
+   "sealed": true,
+   "ran": true,
+   "scored": true,
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "fail",
+   "criteria": {
+    "1_no_verified_text_mismatch": false,
+    "2_no_verified_reference_outside_or_unvalidatable": true,
+    "3_no_verified_reference_in_controls_or_outside_allowed": true,
+    "4_every_document_completed_or_refused_cleanly": true
+   },
+   "scored_totals": {
+    "documents": 5,
+    "printed": 171,
+    "printed_unsupported": 0,
+    "verified": 171,
+    "verified_exact": 128,
+    "verified_canonical": 25,
+    "verified_layout": 0,
+    "verified_faithful": 153,
+    "verified_mismatch": 18,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "case": 2,
+     "marks": 4,
+     "punctuation": 8,
+     "word_boundary": 4
+    },
+    "unsupported": {},
+    "coverage_percent": 89.5,
+    "coverage_percent_of_all_printed": 89.5,
+    "documents_in_manifest": 5,
+    "refused_whole": [],
+    "failed_to_run": []
+   }
+  },
+  "e2-mat": {
+   "sealed": true,
+   "ran": true,
+   "scored": true,
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "fail",
+   "criteria": {
+    "1_no_verified_text_mismatch": false,
+    "2_no_verified_reference_outside_or_unvalidatable": true,
+    "3_no_verified_reference_in_controls_or_outside_allowed": true,
+    "4_every_document_completed_or_refused_cleanly": true
+   },
+   "scored_totals": {
+    "documents": 2,
+    "printed": 46,
+    "printed_unsupported": 0,
+    "verified": 46,
+    "verified_exact": 43,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 43,
+    "verified_mismatch": 3,
+    "verified_mismatch_material": 2,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "changed": 2,
+     "marks": 1
+    },
+    "unsupported": {},
+    "coverage_percent": 93.5,
+    "coverage_percent_of_all_printed": 93.5,
+    "documents_in_manifest": 2,
+    "refused_whole": [],
+    "failed_to_run": []
+   }
+  },
+  "e2-ref": {
+   "sealed": true,
+   "ran": true,
+   "scored": true,
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "fail",
+   "criteria": {
+    "1_no_verified_text_mismatch": true,
+    "2_no_verified_reference_outside_or_unvalidatable": false,
+    "3_no_verified_reference_in_controls_or_outside_allowed": true,
+    "4_every_document_completed_or_refused_cleanly": true
+   },
+   "scored_totals": {
+    "documents": 6,
+    "printed": 194,
+    "printed_unsupported": 54,
+    "verified": 188,
+    "verified_exact": 188,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 188,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 1,
+    "held_faithful": 0,
+    "held_mismatch": 1,
+    "refused": 5,
+    "not_found": 0,
+    "refused_chapters": 3,
+    "verified_mismatch_kinds": {},
+    "unsupported": {
+     "book_outside_canon": 22,
+     "chapter_beyond_canon": 25,
+     "verse_duplicate": 2,
+     "verse_label_unusual": 2,
+     "verse_zero": 3
+    },
+    "coverage_percent": 96.9,
+    "coverage_percent_of_all_printed": 75.8,
+    "documents_in_manifest": 6,
+    "refused_whole": [],
+    "failed_to_run": []
+   }
+  },
+  "e2-abs": {
+   "sealed": true,
+   "ran": true,
+   "scored": true,
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "fail",
+   "criteria": {
+    "1_no_verified_text_mismatch": true,
+    "2_no_verified_reference_outside_or_unvalidatable": false,
+    "3_no_verified_reference_in_controls_or_outside_allowed": true,
+    "4_every_document_completed_or_refused_cleanly": true
+   },
+   "scored_totals": {
+    "documents": 3,
+    "printed": 101,
+    "printed_unsupported": 0,
+    "verified": 95,
+    "verified_exact": 95,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 95,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 29,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 6,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {},
+    "unsupported": {},
+    "coverage_percent": 94.1,
+    "coverage_percent_of_all_printed": 94.1,
+    "documents_in_manifest": 3,
+    "refused_whole": [],
+    "failed_to_run": []
+   }
+  },
+  "e2-name": {
+   "sealed": true,
+   "ran": true,
+   "scored": true,
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "pass",
+   "criteria": {
+    "1_no_verified_text_mismatch": true,
+    "2_no_verified_reference_outside_or_unvalidatable": true,
+    "3_no_verified_reference_in_controls_or_outside_allowed": true,
+    "4_every_document_completed_or_refused_cleanly": true
+   },
+   "scored_totals": {
+    "documents": 1,
+    "printed": 22,
+    "printed_unsupported": 0,
+    "verified": 22,
+    "verified_exact": 22,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 22,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {},
+    "unsupported": {},
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "documents_in_manifest": 1,
+    "refused_whole": [],
+    "failed_to_run": []
+   }
+  },
+  "e2-map": {
+   "sealed": false,
+   "refusals": [
+    "refused: e2-map-jol: reference VerseMap.xml: a verse map, which would renumber the reference; never read"
+   ]
+  },
+  "e2-utf8": {
+   "sealed": false,
+   "refusals": [
+    "refused: e2-utf8-oba: reference 41-OBA.usfm: not UTF-8 (read with replacement characters)"
+   ]
+  }
+ }
+}

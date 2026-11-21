@@ -1,0 +1,274 @@
+{
+  "evaluation_schema": "aw-eval-2",
+  "fidelity_rules": "aw-fidelity-2",
+  "inventory_rules": "aw-reference-inventory-1",
+  "edition": {
+    "key": "e2-ref-exo0c",
+    "files": [
+      "e2-ref-exo0c.md"
+    ],
+    "reference": "e2-ref-exo0c_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "e2-regression",
+    "books": [
+      "EXO"
+    ],
+    "sealed": true
+  },
+  "reference": "e2-ref-exo0c_usfm.zip",
+  "book_selection": {
+    "rule": "manifest",
+    "books": [
+      "EXO"
+    ],
+    "unknown_codes": []
+  },
+  "reference_inventory": {
+    "rules": "aw-reference-inventory-1",
+    "members": [
+      {
+        "name": "41-EXO.usfm",
+        "role": "usfm",
+        "book": "EXO",
+        "verses": 37,
+        "verses_before_chapter": 0,
+        "utf8": true,
+        "nfc": true
+      }
+    ],
+    "problems": [],
+    "label_digest": "5a8f63cc87a685f6f4e78fbbc610854bb1d4dbbc18ccd0d0c2c5c90d0c179cad",
+    "labels": 37,
+    "printed_scorable": 36,
+    "absent_in_edition": 0,
+    "unsupported": {
+      "book_code_unknown": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_outside_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "book_unidentified": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_beyond_canon": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "chapter_zero": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_before_chapter": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_duplicate": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_label_unusual": {
+        "printed": 0,
+        "empty": 0,
+        "references": []
+      },
+      "verse_zero": {
+        "printed": 1,
+        "empty": 0,
+        "references": [
+          "EXO 16:0"
+        ]
+      }
+    },
+    "printed_unsupported": 1,
+    "outside_declared_scope": {
+      "printed": 0,
+      "empty": 0,
+      "references": []
+    },
+    "scorable_by_book": {
+      "EXO": 36
+    },
+    "scorable_ranges": [
+      "EXO 16:1-36"
+    ],
+    "before_chapter_outside": 0
+  },
+  "importer_comparison": {
+    "error": null,
+    "agree": 36,
+    "only_importer": 0,
+    "only_inventory": 0,
+    "text_differs": 0,
+    "examples": [],
+    "issue_codes": {
+      "bibleImport.badVerseNumber": 1,
+      "bibleImport.missingChapters": 1
+    }
+  },
+  "accounting": {
+    "printed_scorable": 36,
+    "verified": 36,
+    "held": 0,
+    "refused": 0,
+    "not_found": 0,
+    "holds": true
+  },
+  "totals": {
+    "code": "ALL",
+    "expected": 36,
+    "absent_in_edition": 0,
+    "detected": 36,
+    "usable": 36,
+    "unmapped": 0,
+    "not_found": 0,
+    "refused": 0,
+    "chapters": 1,
+    "usable_chapters": 1,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 0,
+    "refused_other": 0,
+    "missing_in_usable_chapter": 0,
+    "verified": 36,
+    "verified_exact": 36,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "held": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused_faithful": 0,
+    "refused_mismatch": 0,
+    "located": 36,
+    "location_checked": 36
+  },
+  "books": [
+    {
+      "code": "EXO",
+      "expected": 36,
+      "absent_in_edition": 0,
+      "detected": 36,
+      "usable": 36,
+      "unmapped": 0,
+      "not_found": 0,
+      "refused": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "missing_in_usable_chapter": 0,
+      "verified": 36,
+      "verified_exact": 36,
+      "verified_canonical": 0,
+      "verified_layout": 0,
+      "verified_mismatch": 0,
+      "verified_mismatch_kinds": {},
+      "held": 0,
+      "held_faithful": 0,
+      "held_mismatch": 0,
+      "refused_faithful": 0,
+      "refused_mismatch": 0,
+      "located": 36,
+      "location_checked": 36
+    }
+  ],
+  "books_not_found": [],
+  "issues": {
+    "Warning bibleImport.missingChapters": 1
+  },
+  "refused_chapters": [],
+  "fidelity_records": [],
+  "verified_references": [
+    "EXO 16:1",
+    "EXO 16:2",
+    "EXO 16:3",
+    "EXO 16:4",
+    "EXO 16:5",
+    "EXO 16:6",
+    "EXO 16:7",
+    "EXO 16:8",
+    "EXO 16:9",
+    "EXO 16:10",
+    "EXO 16:11",
+    "EXO 16:12",
+    "EXO 16:13",
+    "EXO 16:14",
+    "EXO 16:15",
+    "EXO 16:16",
+    "EXO 16:17",
+    "EXO 16:18",
+    "EXO 16:19",
+    "EXO 16:20",
+    "EXO 16:21",
+    "EXO 16:22",
+    "EXO 16:23",
+    "EXO 16:24",
+    "EXO 16:25",
+    "EXO 16:26",
+    "EXO 16:27",
+    "EXO 16:28",
+    "EXO 16:29",
+    "EXO 16:30",
+    "EXO 16:31",
+    "EXO 16:32",
+    "EXO 16:33",
+    "EXO 16:34",
+    "EXO 16:35",
+    "EXO 16:36"
+  ],
+  "verified_absent": [],
+  "verified_unvalidatable": [],
+  "verified_empty_in_both": 0,
+  "usable_absent": [],
+  "unverified_reasons": {},
+  "location_misses": [],
+  "apparatus": 0,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "Exodus",
+      "EXO",
+      null
+    ]
+  ],
+  "errors": [],
+  "seconds": 0.088436002,
+  "peak_memory_mb": 20.30078125,
+  "read_seconds": 0.088303985,
+  "read_peak_memory_mb": 20.30078125,
+  "numbering": [
+    {
+      "code": "EXO",
+      "agreement": "withinReference",
+      "chaptersPrinted": 16,
+      "chaptersReference": 40,
+      "differences": []
+    }
+  ]
+}
