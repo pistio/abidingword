@@ -1,6 +1,6 @@
 {
-  "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
-  "startedUTC": "2026-11-20T23:40:13.416173+00:00",
+  "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+  "startedUTC": "2026-11-20T23:53:11.471622+00:00",
   "mode": "native",
   "cleanBefore": true,
   "inputHashes": {
@@ -199,7 +199,7 @@
     "src-tauri/src/commands/templates.rs": "1ab25113b3b25a43d431dfc8e71fb859faa1d570ebf3575dbb98b9ec9428f606",
     "src-tauri/src/commands/workspaces.rs": "d39f6c1e521124eb56afa9251187ade7548a26c5a3f0717c816298510b9ea078",
     "src-tauri/src/db/annotations.rs": "c83a62b189abb8f21e689f591b4ddf4007ade88ab1a721cf7295cbd50c6df371",
-    "src-tauri/src/db/backup.rs": "48dfeccc6e4d45526c059bc620afa9a9d898bce65b5fd2e185abbb7925ce82b8",
+    "src-tauri/src/db/backup.rs": "d4f86cf991f5eee3f256d1342b543474b5ae948a0d685bf5408c0c5a151d53ab",
     "src-tauri/src/db/bible_documents.rs": "432f29dc4e9c007cd0482821f5a3b254dfd4650d4bc360f23bcb87db5f6be9bd",
     "src-tauri/src/db/bible_words.rs": "464fc54314615de903e2d19534213a8a26dc6d928b7df4f4cbe9a1bd3256ea47",
     "src-tauri/src/db/bibles.rs": "85ba010d5e9d25d54bb7905084bb77c49cd74c234ff68e61e1aeae2e82bc2cd0",
@@ -925,8 +925,8 @@
         "--",
         "--check"
       ],
-      "startedUTC": "2026-11-20T23:40:13.416195+00:00",
-      "durationSeconds": 2.37,
+      "startedUTC": "2026-11-20T23:53:11.471637+00:00",
+      "durationSeconds": 2.62,
       "exitCode": 0,
       "log": "work/recovery-verification/final-rust-fmt.log",
       "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -945,11 +945,11 @@
         "-D",
         "warnings"
       ],
-      "startedUTC": "2026-11-20T23:40:15.787026+00:00",
-      "durationSeconds": 0.73,
+      "startedUTC": "2026-11-20T23:53:14.096700+00:00",
+      "durationSeconds": 0.61,
       "exitCode": 0,
       "log": "work/recovery-verification/final-rust-clippy.log",
-      "logSha256": "bb76d746acf8827d33e2ea465a2a7e5fa1c6a4d49d77f76f98461f0764efb480"
+      "logSha256": "b4ded9b57004ea89353acec86b5d035fb4d45354b55339548bd1ea75df4b3868"
     },
     {
       "name": "rust-tests",
@@ -962,15 +962,15 @@
         "--locked",
         "--no-fail-fast"
       ],
-      "startedUTC": "2026-11-20T23:40:16.518743+00:00",
-      "durationSeconds": 422.62,
+      "startedUTC": "2026-11-20T23:53:14.705489+00:00",
+      "durationSeconds": 526.7,
       "exitCode": 0,
       "log": "work/recovery-verification/final-rust-tests.log",
-      "logSha256": "ad3bff538e2aa43530117b355b9953249bf787d0677a4c024f5702280d125f9f"
+      "logSha256": "a5afd22fbb979ef12a4c51834dfeb300293afb3161da02552158063be125383c"
     }
   ],
   "sourceUnchanged": true,
   "headUnchanged": true,
   "cleanAfter": true,
-  "completedUTC": "2026-11-20T23:47:19.235914+00:00"
+  "completedUTC": "2026-11-21T00:02:01.502244+00:00"
 }

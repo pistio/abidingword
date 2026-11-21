@@ -17,7 +17,7 @@ import shutil
 import subprocess
 
 
-SOURCE = "e8f52ff668fbc02880925809bedf0f0b8e26bf83"
+SOURCE = "e760fad122bee4b31301cb7cabdfa7c9d671e2d2"
 BASELINE = "b8d9af869c95395a44cc6d9a3867626ab83d9804"
 FIRST_SOURCE = "b5a0c8c800da83f45f475cbf3639897c4f4bf977"
 ROOT = Path(__file__).resolve().parents[2]
@@ -160,8 +160,16 @@ def main() -> None:
         require(digest(path) == migration["sha256"], f"Migration hash changed: {path}")
     add(provenance_path, provenance_path.name)
     metadata_correction = read_json(WORK / "email-metadata-correction.json")
-    require(metadata_correction["replacementImplementation"] == SOURCE and metadata_correction["sourceTreesUnchanged"] is True, "Invalid commit privacy correction")
+    require(metadata_correction["sourceTreesUnchanged"] is True and subprocess.run(["git", "merge-base", "--is-ancestor", metadata_correction["replacementImplementation"], SOURCE], cwd=ROOT).returncode == 0, "Invalid commit privacy correction")
     add(WORK / "email-metadata-correction.json", "email-metadata-correction.json")
+    ci_failure = read_json(WORK / "ci-first-failure.json")
+    require("44839514609" in json.dumps(ci_failure) and "failure" in json.dumps(ci_failure), "Missing first CI failure")
+    add(WORK / "ci-first-failure.json", "ci-first-failure.json")
+    ci_failure_log = WORK / "ci-first-46d27d25-rust.log"
+    require("needless_bool" in ci_failure_log.read_text(), "Missing Rust1.100 lint failure")
+    add(ci_failure_log, "ci-rust-first-failure.log")
+    for ci_log_name in ["ci-first-46d27d25-frontend.log"]:
+        add(WORK / ci_log_name, "ci-first/" + ci_log_name)
 
     report_path = WORK / "frontend-tests.json"
     report = read_json(report_path)
@@ -304,6 +312,8 @@ def main() -> None:
         "assembledUTC": datetime.now(timezone.utc).isoformat(),
         "implementationSourceSha": SOURCE,
         "commitPrivacyCorrection": metadata_correction,
+        "firstGitHubCIFailure": ci_failure,
+        "ciLintCorrection": {"source": SOURCE, "cause": "Rust1.100 Clippy needlessly conditional Boolean after Windows cfg-elision", "change": "Equivalent per-platform symlink/reparse expressions; no path-validation behavior or migration change", "localRust": "1.99.1", "firstCIRust": "1.100.0", "finalCI": "Exact pushed-head result is recorded in PR56 after publication of evidence"},
         "branch": "feature/daily-snapshot-recovery-20261120",
         "baselineSourceSha": BASELINE,
         "draftPullRequest": "https://github.com/pistio/abidingword/pull/56",

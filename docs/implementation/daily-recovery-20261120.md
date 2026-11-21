@@ -2,7 +2,7 @@
 
 **20 November 2026 · draft PR #56, stacked on PR #55 · native Windows acceptance pending.**
 
-This milestone finishes the daily recovery workflow and strengthens the surrounding authorship, full-backup and export paths. The working branch is `feature/daily-snapshot-recovery-20261120`; the fetched starting head was `b8d9af869c95395a44cc6d9a3867626ab83d9804`. Exact final source identity, commands, counts, CI and preserved failing-before evidence are in [the verification record](daily-recovery-20261120-verification.json). All required local checks pass on clean implementation `e8f52ff668fbc02880925809bedf0f0b8e26bf83`. The subsequent evidence commit changes documentation only; the exact pushed-head CI result is recorded in [PR #56](https://github.com/pistio/abidingword/pull/56).
+This milestone finishes the daily recovery workflow and strengthens the surrounding authorship, full-backup and export paths. The working branch is `feature/daily-snapshot-recovery-20261120`; the fetched starting head was `b8d9af869c95395a44cc6d9a3867626ab83d9804`. Exact final source identity, commands, counts, CI and preserved failing-before evidence are in [the verification record](daily-recovery-20261120-verification.json). All required local checks pass on clean implementation `e760fad122bee4b31301cb7cabdfa7c9d671e2d2`. The subsequent evidence commit changes documentation only; the exact pushed-head CI result is recorded in [PR #56](https://github.com/pistio/abidingword/pull/56).
 
 ## What was wrong and what changed
 
@@ -39,7 +39,9 @@ The interface browser procedure is `tests/screenshots/recovery-interface.mjs`, u
 
 Recovery copy and the guide are updated in English (British), German, Korean, French, Spanish and Brazilian Portuguese. Generated editorial reports were regenerated from their sources. [Individual language decisions](recovery-language-20261120.md) record before/after wording; AI review is not human native-speaker approval.
 
-The first push was refused by GitHub’s private-email protection. The unpublished commit metadata was replaced with the account’s no-reply identity, preserving every source tree exactly; all complete checks were then repeated on the replacement implementation above. The verification record retains the old/new identity mapping. No account privacy setting or remote history was changed.
+The first push was refused by GitHub’s private-email protection. The unpublished commit metadata was replaced with the account’s no-reply identity, preserving every source tree exactly; all complete checks were then repeated on that replacement; the later CI lint correction has its own final identity above. The verification record retains the old/new identity mapping. No account privacy setting or remote history was changed.
+
+The first ordinary GitHub CI run [44839514609](https://github.com/pistio/abidingword/actions/runs/44839514609) passed its 1,427 frontend tests and production build but stopped at Rust 1.100.0 Clippy before running Rust tests. Local Rust was 1.99.1. The newer `needless_bool` lint flagged the non-Windows expression after conditional compilation. A narrowly equivalent per-platform expression preserves symlink/reparse refusal; the complete local checks were repeated on the final implementation above. The failed CI log and exact outcomes are retained, and the corrective pushed-head CI result is recorded in PR #56.
 
 ## Final local verification
 

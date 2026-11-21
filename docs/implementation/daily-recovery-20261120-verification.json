@@ -1,7 +1,7 @@
 {
   "milestone": "Recovery, writing preservation and publication readiness",
-  "assembledUTC": "2026-11-20T23:48:44.051713+00:00",
-  "implementationSourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+  "assembledUTC": "2026-11-21T00:03:21.635794+00:00",
+  "implementationSourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
   "commitPrivacyCorrection": {
     "reason": "GitHub GH007 rejected private commit email; preserve privacy protection using account no-reply identity",
     "baseline": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
@@ -43,6 +43,385 @@
     ],
     "noRemoteHistoryRewritten": true
   },
+  "firstGitHubCIFailure": {
+    "repository": "pistio/abidingword",
+    "headSha": "46d27d25f8470822434cdcbea1284a290d94a920",
+    "implementationSourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+    "workflowRunId": 44839514609,
+    "url": "https://github.com/pistio/abidingword/actions/runs/44839514609",
+    "attempt": 1,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "createdAt": "2026-11-20T23:48:57Z",
+    "updatedAt": "2026-11-20T23:56:55Z",
+    "recordedUTC": "2026-11-20T23:58:09.178870+00:00",
+    "jobs": [
+      {
+        "id": 136644129474,
+        "name": "Frontend",
+        "status": "completed",
+        "conclusion": "success",
+        "started_at": "2026-11-20T23:48:59Z",
+        "completed_at": "2026-11-20T23:56:54Z",
+        "html_url": "https://github.com/pistio/abidingword/actions/runs/44839514609/job/136644129474",
+        "runner_id": 1000001790,
+        "runner_name": "GitHub Actions 1000001790",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-20T23:49:00Z",
+            "completed_at": "2026-11-20T23:49:01Z"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-20T23:49:01Z",
+            "completed_at": "2026-11-20T23:49:05Z"
+          },
+          {
+            "name": "Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-20T23:49:05Z",
+            "completed_at": "2026-11-20T23:49:06Z"
+          },
+          {
+            "name": "Tool versions",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-20T23:49:06Z",
+            "completed_at": "2026-11-20T23:49:06Z"
+          },
+          {
+            "name": "Run npm ci",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-20T23:49:06Z",
+            "completed_at": "2026-11-20T23:49:55Z"
+          },
+          {
+            "name": "Run npm run typecheck",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-20T23:49:55Z",
+            "completed_at": "2026-11-20T23:50:26Z"
+          },
+          {
+            "name": "Run npm run lint",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-20T23:50:26Z",
+            "completed_at": "2026-11-20T23:50:56Z"
+          },
+          {
+            "name": "Translations (npm run i18n:check)",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-20T23:50:56Z",
+            "completed_at": "2026-11-20T23:50:58Z"
+          },
+          {
+            "name": "Bundled Scripture integrity, licences and installer attribution",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9,
+            "started_at": "2026-11-20T23:50:58Z",
+            "completed_at": "2026-11-20T23:50:58Z"
+          },
+          {
+            "name": "No high-severity production npm vulnerabilities",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 10,
+            "started_at": "2026-11-20T23:50:58Z",
+            "completed_at": "2026-11-20T23:50:58Z"
+          },
+          {
+            "name": "Run npm test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 11,
+            "started_at": "2026-11-20T23:50:58Z",
+            "completed_at": "2026-11-20T23:56:17Z"
+          },
+          {
+            "name": "Run npm run build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 12,
+            "started_at": "2026-11-20T23:56:17Z",
+            "completed_at": "2026-11-20T23:56:49Z"
+          },
+          {
+            "name": "Post Run actions/setup-node@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 23,
+            "started_at": "2026-11-20T23:56:49Z",
+            "completed_at": "2026-11-20T23:56:52Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 24,
+            "started_at": "2026-11-20T23:56:52Z",
+            "completed_at": "2026-11-20T23:56:52Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 25,
+            "started_at": "2026-11-20T23:56:52Z",
+            "completed_at": "2026-11-20T23:56:53Z"
+          }
+        ]
+      },
+      {
+        "id": 136644129870,
+        "name": "Rust",
+        "status": "completed",
+        "conclusion": "failure",
+        "started_at": "2026-11-20T23:48:59Z",
+        "completed_at": "2026-11-20T23:50:05Z",
+        "html_url": "https://github.com/pistio/abidingword/actions/runs/44839514609/job/136644129870",
+        "runner_id": 1000001791,
+        "runner_name": "GitHub Actions 1000001791",
+        "labels": [
+          "ubuntu-latest"
+        ],
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1,
+            "started_at": "2026-11-20T23:49:00Z",
+            "completed_at": "2026-11-20T23:49:01Z"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2,
+            "started_at": "2026-11-20T23:49:01Z",
+            "completed_at": "2026-11-20T23:49:05Z"
+          },
+          {
+            "name": "Install Tauri system libraries",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3,
+            "started_at": "2026-11-20T23:49:05Z",
+            "completed_at": "2026-11-20T23:49:23Z"
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@stable",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4,
+            "started_at": "2026-11-20T23:49:23Z",
+            "completed_at": "2026-11-20T23:49:26Z"
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5,
+            "started_at": "2026-11-20T23:49:26Z",
+            "completed_at": "2026-11-20T23:49:34Z"
+          },
+          {
+            "name": "Tool versions",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6,
+            "started_at": "2026-11-20T23:49:34Z",
+            "completed_at": "2026-11-20T23:49:34Z"
+          },
+          {
+            "name": "Placeholder for the built interface",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7,
+            "started_at": "2026-11-20T23:49:34Z",
+            "completed_at": "2026-11-20T23:49:34Z"
+          },
+          {
+            "name": "Format",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8,
+            "started_at": "2026-11-20T23:49:34Z",
+            "completed_at": "2026-11-20T23:49:37Z"
+          },
+          {
+            "name": "Clippy (warnings are errors)",
+            "status": "completed",
+            "conclusion": "failure",
+            "number": 9,
+            "started_at": "2026-11-20T23:49:37Z",
+            "completed_at": "2026-11-20T23:50:03Z"
+          },
+          {
+            "name": "Tests",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 10,
+            "started_at": "2026-11-20T23:50:03Z",
+            "completed_at": "2026-11-20T23:50:03Z"
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 19,
+            "started_at": "2026-11-20T23:50:03Z",
+            "completed_at": "2026-11-20T23:50:03Z"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 20,
+            "started_at": "2026-11-20T23:50:03Z",
+            "completed_at": "2026-11-20T23:50:03Z"
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 21,
+            "started_at": "2026-11-20T23:50:03Z",
+            "completed_at": "2026-11-20T23:50:03Z"
+          }
+        ]
+      }
+    ],
+    "frontend": {
+      "status": "passed",
+      "actualTestFiles": 132,
+      "passedTests": 1427,
+      "failedTests": 0,
+      "skippedTests": 0,
+      "unhandledErrors": 0,
+      "reactActWarnings": 788,
+      "productionBuild": "passed",
+      "evidence": "Complete job succeeded; final test summary contains only passing files/tests and no unhandled-error report."
+    },
+    "rust": {
+      "status": "failed_before_tests",
+      "format": "passed",
+      "clippy": "failed",
+      "tests": "skipped",
+      "executedTests": 0,
+      "passedTests": 0,
+      "ignoredTests": 0,
+      "failure": {
+        "lint": "clippy::needless_bool",
+        "file": "src-tauri/src/db/backup.rs",
+        "line": 194,
+        "exitCode": 101,
+        "message": "Linux cfg removes the Windows branch, leaving if is_symlink { return true; } false; Rust1.100.0 reports a needless boolean guard under -D warnings."
+      },
+      "ciToolchain": {
+        "rustc": "1.100.0 (0ef1bc386 2026-11-09)",
+        "cargo": "1.100.0 (3acc79c0c 2026-11-05)"
+      },
+      "localToolchain": {
+        "rustc": "1.99.1 (58cf8f9c3 2026-10-13)",
+        "cargo": "1.99.1 (5f94df478 2026-08-27)"
+      },
+      "correctionReportedByRoot": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2; separate cfg expression blocks preserve symlink/reparse semantics. This failed run did not test that correction."
+    },
+    "nativeBuilds": {
+      "runId": 44839514592,
+      "url": "https://github.com/pistio/abidingword/actions/runs/44839514592",
+      "headSha": "46d27d25f8470822434cdcbea1284a290d94a920",
+      "conclusion": "skipped",
+      "jobs": [
+        {
+          "id": 136644130578,
+          "name": "Linux package",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-20T23:48:58Z",
+          "completed_at": "2026-11-20T23:48:57Z",
+          "html_url": "https://github.com/pistio/abidingword/actions/runs/44839514592/job/136644130578",
+          "runner_id": null,
+          "runner_name": null,
+          "labels": [
+            "ubuntu-latest"
+          ],
+          "steps": []
+        },
+        {
+          "id": 136644189808,
+          "name": "Windows package",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-20T23:49:07Z",
+          "completed_at": "2026-11-20T23:48:57Z",
+          "html_url": "https://github.com/pistio/abidingword/actions/runs/44839514592/job/136644189808",
+          "runner_id": null,
+          "runner_name": null,
+          "labels": [
+            "windows-latest"
+          ],
+          "steps": []
+        }
+      ],
+      "windowsRunnerAllocated": false,
+      "evidence": "Both Linux package and Windows package jobs completed skipped with zero steps and null runner identities; windows-latest is only the requested selector."
+    },
+    "logs": [
+      {
+        "job": "frontend",
+        "path": "work/recovery-verification/ci-first-46d27d25-frontend.log",
+        "sha256": "f5c94dabda1a2638ef8da31d61018349bffd36ced1a690cd3fc8dbc1c411de0f",
+        "bytes": 709655,
+        "transport": "GitHub connector decoded job log, retained as UTF-8 text"
+      },
+      {
+        "job": "rust",
+        "path": "work/recovery-verification/ci-first-46d27d25-rust.log",
+        "sha256": "9b0f3615e9c22400a6ff469e9fbc439c0d5f7bd6118b210afc956db2e7be6d82",
+        "bytes": 145592,
+        "transport": "GitHub connector decoded job log, retained as UTF-8 text"
+      }
+    ],
+    "metadataFiles": [
+      "work/recovery-verification/ci-first-46d27d25-run.json",
+      "work/recovery-verification/ci-first-46d27d25-jobs.json",
+      "work/recovery-verification/ci-first-46d27d25-native-run.json",
+      "work/recovery-verification/ci-first-46d27d25-native-jobs.json"
+    ],
+    "actionsTaken": "Only read-only GitHub run/job/log requests and ignored local evidence writes. No dispatch, retry, cancellation, source edits or push."
+  },
+  "ciLintCorrection": {
+    "source": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+    "cause": "Rust1.100 Clippy needlessly conditional Boolean after Windows cfg-elision",
+    "change": "Equivalent per-platform symlink/reparse expressions; no path-validation behavior or migration change",
+    "localRust": "1.99.1",
+    "firstCIRust": "1.100.0",
+    "finalCI": "Exact pushed-head result is recorded in PR56 after publication of evidence"
+  },
   "branch": "feature/daily-snapshot-recovery-20261120",
   "baselineSourceSha": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
   "draftPullRequest": "https://github.com/pistio/abidingword/pull/56",
@@ -51,18 +430,18 @@
   "result": "All required local commands passed on the clean frozen implementation; native Windows acceptance remains pending.",
   "sourceChecks": {
     "frontend": {
-      "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
-      "startedUTC": "2026-11-20T23:40:13.429108+00:00",
-      "completedUTC": "2026-11-20T23:48:13.035534+00:00",
+      "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+      "startedUTC": "2026-11-20T23:53:11.471586+00:00",
+      "completedUTC": "2026-11-21T00:02:52.652948+00:00",
       "cleanBefore": true,
       "cleanAfter": true,
       "sourceUnchanged": true,
       "headUnchanged": true
     },
     "native": {
-      "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
-      "startedUTC": "2026-11-20T23:40:13.416173+00:00",
-      "completedUTC": "2026-11-20T23:47:19.235914+00:00",
+      "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
+      "startedUTC": "2026-11-20T23:53:11.471622+00:00",
+      "completedUTC": "2026-11-21T00:02:01.502244+00:00",
       "cleanBefore": true,
       "cleanAfter": true,
       "sourceUnchanged": true,
@@ -80,11 +459,11 @@
         "--cache",
         "/workspace/.npm"
       ],
-      "startedUTC": "2026-11-20T23:40:13.429127+00:00",
-      "durationSeconds": 7.45,
+      "startedUTC": "2026-11-20T23:53:11.471609+00:00",
+      "durationSeconds": 10.42,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-npm-ci.log",
-      "logSha256": "2eee8ecbefed382fdfac9fa75ef3ced1b05c1b3d3a0ad6d244a58561240f76aa",
+      "logSha256": "55457ae7fb781749bbda620c04d828c0e9fc19a688393dcd0e363d51a137bc13",
       "mode": "frontend"
     },
     {
@@ -94,8 +473,8 @@
         "run",
         "typecheck"
       ],
-      "startedUTC": "2026-11-20T23:40:20.883255+00:00",
-      "durationSeconds": 32.6,
+      "startedUTC": "2026-11-20T23:53:21.908489+00:00",
+      "durationSeconds": 63.14,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-typecheck.log",
       "logSha256": "2f2238cd78882d4bdbfba4105c717a22862372df1f5f34152efcf6bd6d2c256d",
@@ -108,8 +487,8 @@
         "run",
         "lint"
       ],
-      "startedUTC": "2026-11-20T23:40:53.482433+00:00",
-      "durationSeconds": 45.62,
+      "startedUTC": "2026-11-20T23:54:25.050313+00:00",
+      "durationSeconds": 59.72,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-eslint.log",
       "logSha256": "61c95a8a559be46afa5591e71ec3b8aac2867e882bf8fc9247934d5ce81a7b5d",
@@ -122,8 +501,8 @@
         "run",
         "i18n:check"
       ],
-      "startedUTC": "2026-11-20T23:41:39.104113+00:00",
-      "durationSeconds": 1.4,
+      "startedUTC": "2026-11-20T23:55:24.767212+00:00",
+      "durationSeconds": 2.49,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-i18n.log",
       "logSha256": "7e3af6f579e617d7910d003db31af32afb7735051a4b2191079018689fd502c1",
@@ -138,8 +517,8 @@
         "--",
         "--check"
       ],
-      "startedUTC": "2026-11-20T23:41:40.507469+00:00",
-      "durationSeconds": 1.28,
+      "startedUTC": "2026-11-20T23:55:27.261868+00:00",
+      "durationSeconds": 2.19,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-i18n-corpus.log",
       "logSha256": "7caca57b58fc3d81c41e1bc0f5e4f6451a659abd45089da2adf0defebb531b9a",
@@ -152,8 +531,8 @@
         "run",
         "release:resources"
       ],
-      "startedUTC": "2026-11-20T23:41:41.792746+00:00",
-      "durationSeconds": 0.36,
+      "startedUTC": "2026-11-20T23:55:29.451650+00:00",
+      "durationSeconds": 0.44,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-resources.log",
       "logSha256": "ee765641d2af77fad24eee753feb0979484a63c91e7ed9882c1a48679a410418",
@@ -170,8 +549,8 @@
         "/workspace/.npm",
         "--json"
       ],
-      "startedUTC": "2026-11-20T23:41:42.157410+00:00",
-      "durationSeconds": 0.96,
+      "startedUTC": "2026-11-20T23:55:29.894043+00:00",
+      "durationSeconds": 0.53,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-audit.log",
       "logSha256": "3c98c97323fbfaf3a70a2ed2c6324b254ec34cc6105dd3cc7707c5dfc94828c8",
@@ -188,11 +567,11 @@
         "--reporter=json",
         "--outputFile=work/recovery-verification/frontend-tests.json"
       ],
-      "startedUTC": "2026-11-20T23:41:43.121007+00:00",
-      "durationSeconds": 358.25,
+      "startedUTC": "2026-11-20T23:55:30.429681+00:00",
+      "durationSeconds": 406.84,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-frontend-tests.log",
-      "logSha256": "6d96d78fc612a0c47cc8836784ca208271dc6c1f7b1311f1d5e1a12ff4024b73",
+      "logSha256": "132793e340a2472efd96d39da60a2cb97d151dc019e76e100e8b08a541b9c81d",
       "mode": "frontend"
     },
     {
@@ -202,11 +581,11 @@
         "run",
         "build"
       ],
-      "startedUTC": "2026-11-20T23:47:41.379467+00:00",
-      "durationSeconds": 31.6,
+      "startedUTC": "2026-11-21T00:02:17.271576+00:00",
+      "durationSeconds": 34.85,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-frontend-build.log",
-      "logSha256": "f625e1102a0cf31b6eb3d3b36d22fec0ff33c5cea2041d8358f4bb9a522ab1b2",
+      "logSha256": "85d5c265951663a99383f133bf9e52dff5e9a3e74d13b19037093def19161436",
       "mode": "frontend"
     },
     {
@@ -220,8 +599,8 @@
         "--",
         "--check"
       ],
-      "startedUTC": "2026-11-20T23:40:13.416195+00:00",
-      "durationSeconds": 2.37,
+      "startedUTC": "2026-11-20T23:53:11.471637+00:00",
+      "durationSeconds": 2.62,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-rust-fmt.log",
       "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -241,11 +620,11 @@
         "-D",
         "warnings"
       ],
-      "startedUTC": "2026-11-20T23:40:15.787026+00:00",
-      "durationSeconds": 0.73,
+      "startedUTC": "2026-11-20T23:53:14.096700+00:00",
+      "durationSeconds": 0.61,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-rust-clippy.log",
-      "logSha256": "bb76d746acf8827d33e2ea465a2a7e5fa1c6a4d49d77f76f98461f0764efb480",
+      "logSha256": "b4ded9b57004ea89353acec86b5d035fb4d45354b55339548bd1ea75df4b3868",
       "mode": "native"
     },
     {
@@ -259,11 +638,11 @@
         "--locked",
         "--no-fail-fast"
       ],
-      "startedUTC": "2026-11-20T23:40:16.518743+00:00",
-      "durationSeconds": 422.62,
+      "startedUTC": "2026-11-20T23:53:14.705489+00:00",
+      "durationSeconds": 526.7,
       "exitCode": 0,
       "log": "evidence/recovery-20261120/final-rust-tests.log",
-      "logSha256": "ad3bff538e2aa43530117b355b9953249bf787d0677a4c024f5702280d125f9f",
+      "logSha256": "a5afd22fbb979ef12a4c51834dfeb300293afb3161da02552158063be125383c",
       "mode": "native"
     }
   ],
@@ -1256,11 +1635,11 @@
     ]
   },
   "browser": {
-    "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+    "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
     "check": {
-      "sourceSha": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+      "sourceSha": "e760fad122bee4b31301cb7cabdfa7c9d671e2d2",
       "cleanBefore": true,
-      "startedUTC": "2026-11-20T23:40:53.801939+00:00",
+      "startedUTC": "2026-11-20T23:53:47.213374+00:00",
       "exitCode": 0,
       "headUnchanged": true,
       "cleanAfter": true
@@ -1459,7 +1838,51 @@
       "docs/i18n/native-polish-priority-v0.19.md",
       "docs/i18n/native-polish-review-v0.19.md",
       "docs/implementation/continuity-20261119.md",
+      "docs/implementation/daily-recovery-20261120-verification.json",
       "docs/implementation/daily-recovery-20261120.md",
+      "docs/implementation/evidence/recovery-20261120/assemble-evidence.py",
+      "docs/implementation/evidence/recovery-20261120/before/materials-barrier-before.log",
+      "docs/implementation/evidence/recovery-20261120/before/mock-import-after.json",
+      "docs/implementation/evidence/recovery-20261120/before/mock-import-before.json",
+      "docs/implementation/evidence/recovery-20261120/before/native-daily-before.log",
+      "docs/implementation/evidence/recovery-20261120/before/native-retention-before.log",
+      "docs/implementation/evidence/recovery-20261120/before/recovery-portability-before.log",
+      "docs/implementation/evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.console-excerpt.txt",
+      "docs/implementation/evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.metadata.json",
+      "docs/implementation/evidence/recovery-20261120/before/transcript-observations/fields-editor-transcript-observation.json",
+      "docs/implementation/evidence/recovery-20261120/browser-check.json",
+      "docs/implementation/evidence/recovery-20261120/browser-results.json",
+      "docs/implementation/evidence/recovery-20261120/browser/en-480x640-1x-daily.png",
+      "docs/implementation/evidence/recovery-20261120/browser/en-480x640-1x-full.png",
+      "docs/implementation/evidence/recovery-20261120/browser/en-640x450-2x-full.png",
+      "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-daily.png",
+      "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-full.png",
+      "docs/implementation/evidence/recovery-20261120/email-metadata-correction.json",
+      "docs/implementation/evidence/recovery-20261120/final-audit.log",
+      "docs/implementation/evidence/recovery-20261120/final-browser.log",
+      "docs/implementation/evidence/recovery-20261120/final-eslint.log",
+      "docs/implementation/evidence/recovery-20261120/final-frontend-build.log",
+      "docs/implementation/evidence/recovery-20261120/final-frontend-tests.log",
+      "docs/implementation/evidence/recovery-20261120/final-i18n-corpus.log",
+      "docs/implementation/evidence/recovery-20261120/final-i18n.log",
+      "docs/implementation/evidence/recovery-20261120/final-npm-ci.log",
+      "docs/implementation/evidence/recovery-20261120/final-resources.log",
+      "docs/implementation/evidence/recovery-20261120/final-rust-clippy.log",
+      "docs/implementation/evidence/recovery-20261120/final-rust-fmt.log",
+      "docs/implementation/evidence/recovery-20261120/final-rust-tests.log",
+      "docs/implementation/evidence/recovery-20261120/final-typecheck.log",
+      "docs/implementation/evidence/recovery-20261120/first-full-run/final-frontend-tests.log",
+      "docs/implementation/evidence/recovery-20261120/first-full-run/final-rust-tests.log",
+      "docs/implementation/evidence/recovery-20261120/first-full-run/frontend-checks.json",
+      "docs/implementation/evidence/recovery-20261120/first-full-run/frontend-tests.json",
+      "docs/implementation/evidence/recovery-20261120/first-full-run/native-checks.json",
+      "docs/implementation/evidence/recovery-20261120/frontend-checks.json",
+      "docs/implementation/evidence/recovery-20261120/frontend-tests.json",
+      "docs/implementation/evidence/recovery-20261120/native-checks.json",
+      "docs/implementation/evidence/recovery-20261120/native-environment.sh",
+      "docs/implementation/evidence/recovery-20261120/run-checks.py",
+      "docs/implementation/evidence/recovery-20261120/source-provenance-final.json",
+      "docs/implementation/evidence/recovery-20261120/starting-ci-warning-summary.json",
       "docs/implementation/publish-readiness-20261120.md",
       "docs/implementation/recovery-language-20261120.md",
       "docs/implementation/windows-owner-acceptance-20261120.md",
@@ -1542,8 +1965,8 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-npm-ci.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-npm-ci.log",
-      "sha256": "2eee8ecbefed382fdfac9fa75ef3ced1b05c1b3d3a0ad6d244a58561240f76aa",
-      "bytes": 148
+      "sha256": "55457ae7fb781749bbda620c04d828c0e9fc19a688393dcd0e363d51a137bc13",
+      "bytes": 149
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-typecheck.log",
@@ -1584,20 +2007,20 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-frontend-tests.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-frontend-tests.log",
-      "sha256": "6d96d78fc612a0c47cc8836784ca208271dc6c1f7b1311f1d5e1a12ff4024b73",
-      "bytes": 368992
+      "sha256": "132793e340a2472efd96d39da60a2cb97d151dc019e76e100e8b08a541b9c81d",
+      "bytes": 374481
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-frontend-build.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-frontend-build.log",
-      "sha256": "f625e1102a0cf31b6eb3d3b36d22fec0ff33c5cea2041d8358f4bb9a522ab1b2",
+      "sha256": "85d5c265951663a99383f133bf9e52dff5e9a3e74d13b19037093def19161436",
       "bytes": 9477
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/frontend-checks.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/frontend-checks.json",
-      "sha256": "2f18cd35731e6788bc15a078f9ab6104159496fdb350e33edd72dabe58ec9078",
-      "bytes": 104707
+      "sha256": "93a0cffa0d9fbaf8e26a302d8dede0edd98c61e37ebc8687d3c15d625a114989",
+      "bytes": 104711
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-rust-fmt.log",
@@ -1608,25 +2031,25 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-rust-clippy.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-clippy.log",
-      "sha256": "bb76d746acf8827d33e2ea465a2a7e5fa1c6a4d49d77f76f98461f0764efb480",
+      "sha256": "b4ded9b57004ea89353acec86b5d035fb4d45354b55339548bd1ea75df4b3868",
       "bytes": 60
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/final-rust-tests.log",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-rust-tests.log",
-      "sha256": "ad3bff538e2aa43530117b355b9953249bf787d0677a4c024f5702280d125f9f",
-      "bytes": 111417
+      "sha256": "a5afd22fbb979ef12a4c51834dfeb300293afb3161da02552158063be125383c",
+      "bytes": 111494
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/native-checks.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/native-checks.json",
-      "sha256": "298550eb2b3fc40263d2c945bedc48c94b030d640c81a821d556b8df6d864fbf",
-      "bytes": 102607
+      "sha256": "2058d1ab49d3b33bfe762c68154845c1acf555b0d0bff924b984e19106038a0e",
+      "bytes": 102606
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/source-provenance-final.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/source-provenance-final.json",
-      "sha256": "4cf3d2419d42de88e5115dc6d0515151291755c5d5e21574ed87c5800be0daf9",
+      "sha256": "0c26c0b65ec7359f41f6dd5b31b2500adbd6bb1e01852f7e82745b3003b90ae2",
       "bytes": 5375
     },
     {
@@ -1634,6 +2057,24 @@
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/email-metadata-correction.json",
       "sha256": "2dae32c041f2abd5a127bee6bee5e4eb91c3490f2991167046581a2cdd72fb1d",
       "bytes": 1652
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-first-failure.json",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-first-failure.json",
+      "sha256": "e905a15d76a0c69727901d4437a81f301cd1676e350249692efa9d4f618c8d94",
+      "bytes": 12313
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-rust-first-failure.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-first-46d27d25-rust.log",
+      "sha256": "9b0f3615e9c22400a6ff469e9fbc439c0d5f7bd6118b210afc956db2e7be6d82",
+      "bytes": 145592
+    },
+    {
+      "path": "docs/implementation/evidence/recovery-20261120/ci-first/ci-first-46d27d25-frontend.log",
+      "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/ci-first-46d27d25-frontend.log",
+      "sha256": "f5c94dabda1a2638ef8da31d61018349bffd36ced1a690cd3fc8dbc1c411de0f",
+      "bytes": 709655
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/starting-ci-warning-summary.json",
@@ -1644,13 +2085,13 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/frontend-tests.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/frontend-tests.json",
-      "sha256": "326b5d346391d6ed1eeb695cad32e591602b463da7ad4656752b50d029e95f9e",
-      "bytes": 494634
+      "sha256": "8089701ff54796e6ab79c35d8e2f0ece8e0c7df88e88bc2f546d613b5374fc17",
+      "bytes": 494528
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser-check.json",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/browser-check.json",
-      "sha256": "6749fb4cba1e4686fe41e8bf975634356de452032b7befd208e3a24869ea0d19",
+      "sha256": "ddeface20baa1c9e9e242cbccadcbb1aedb30afbc98f0cf687639bbc6c033361",
       "bytes": 201
     },
     {
@@ -1668,8 +2109,8 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser/en-480x640-1x-daily.png",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/en-480x640-1x-daily.png",
-      "sha256": "fa925e3c9dfdd074970a556db97c22f42b732aa8a36cf2111a04470c7ccb8e81",
-      "bytes": 60107
+      "sha256": "16e421263def61d223ebb2b25b3787174fc96bb8750559c7ad8f26855ced339a",
+      "bytes": 60119
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser/en-480x640-1x-full.png",
@@ -1686,14 +2127,14 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser/ko-480x640-1x-full.png",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/ko-480x640-1x-full.png",
-      "sha256": "bb36f81ae452f544d5b606af54695066e6fb2de4dff9be3d9b38a5e6b2753010",
-      "bytes": 64108
+      "sha256": "9fe0e7c23891725beb506f7516bb82e8d2e2ff76043168be6aa77018f3e7baab",
+      "bytes": 64114
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/browser/en-640x450-2x-full.png",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/final-browser/en-640x450-2x-full.png",
-      "sha256": "5896cade83d4f3cb3177fc33cc3d5ec536e5cbde9af7e7b4cccc028b0cd23f77",
-      "bytes": 138173
+      "sha256": "80fadab8171062ae6c05400d4f30e59a74e600db8a2c1a6db1d585bb2ddbae63",
+      "bytes": 138175
     },
     {
       "path": "docs/implementation/evidence/recovery-20261120/before/transcript-observations/capture-settlement-before.console-excerpt.txt",
@@ -1794,8 +2235,8 @@
     {
       "path": "docs/implementation/evidence/recovery-20261120/assemble-evidence.py",
       "sourcePath": "/workspace/work/daily-recovery/work/recovery-verification/assemble-evidence.py",
-      "sha256": "c198f1b7c70d97213656427d63a60c363dda989477fb439d06c83f29eb87a22e",
-      "bytes": 25941
+      "sha256": "b39daecfab346dead347fb765f7376a42cc3594027f32966d9e5ff7413cb690b",
+      "bytes": 27017
     }
   ]
 }

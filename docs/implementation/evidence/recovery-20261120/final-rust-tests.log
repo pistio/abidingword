@@ -1,18 +1,17 @@
-    Finished `test` profile [unoptimized] target(s) in 0.41s
+   Compiling abiding-word v0.1.0 (/workspace/work/daily-recovery/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 1m 01s
      Running unittests src/lib.rs (/workspace/abidingword/src-tauri/target/debug/deps/abiding_word_lib-5f37ca7c5de76bf8)
 
 running 259 tests
-test assistant::config::tests::image_capability_comes_from_the_service_not_the_model_name ... ok
-test assistant::config::tests::remote_unless_on_this_computer ... ok
-test assistant::config::tests::local_addresses_are_recognised ... ok
-test assistant::config::tests::every_cloud_service_has_an_address_and_needs_a_key ... ok
 test assistant::config::tests::bad_addresses_are_refused ... ok
+test assistant::config::tests::remote_unless_on_this_computer ... ok
 test assistant::context::tests::the_assistant_is_told_what_each_field_holds_as_the_canvas_names_it ... ok
 test assistant::images::tests::found_images_keep_licence_author_and_source ... ok
+test assistant::images::tests::generation_is_only_offered_where_set_up ... ok
 test assistant::images::tests::previews_come_only_from_wikimedia_and_must_be_images ... ok
 test assistant::images::tests::source_supplied_attribution_is_marked_and_kept_exact ... ok
-test assistant::images::tests::generation_is_only_offered_where_set_up ... ok
 test assistant::inquiry::display_tests::checked_point_preserves_display_provenance_without_rewriting_evidence ... ok
+test assistant::inquiry::display_tests::display_metadata_does_not_change_model_words_or_fingerprint ... ok
 test assistant::inquiry::prompts::tests::original_language_details_are_never_presented_as_material ... ok
 test assistant::inquiry::source::display_tests::locator_metadata_keeps_source_heading_and_printed_page_labels_exact ... ok
 test assistant::prompts::tests::a_free_request_is_answered_as_comments_within_the_rules ... ok
@@ -22,44 +21,46 @@ test assistant::provider::tests::answers_and_refusals_are_read ... ok
 test assistant::provider::tests::json_is_found_inside_prose_or_a_fence ... ok
 test assistant::provider::tests::the_key_travels_only_in_its_header ... ok
 test assistant::research::tests::every_service_is_read_the_same_way ... ok
-test assistant::inquiry::display_tests::display_metadata_does_not_change_model_words_or_fingerprint ... ok
 test assistant::research::tests::keys_travel_only_where_each_service_expects_them ... ok
 test assistant::research::tests::only_returned_addresses_survive_and_two_sites_make_it_checked ... ok
 test assistant::research::tests::search_results_are_read_and_unsafe_links_dropped ... ok
 test assistant::research::tests::sites_are_counted_once_per_organisation ... ok
 test assistant::research::tests::without_a_search_service_nothing_is_searched ... ok
 test commands::materials::tests::a_chosen_file_always_ends_in_md ... ok
-test commands::materials::tests::no_file_or_a_relative_one_is_refused ... ok
-test db::fts::tests::nothing_to_search_for ... ok
-test db::fts::tests::typographic_quotes_are_not_search_syntax ... ok
 test commands::materials::tests::never_replaces_a_file_the_save_dialog_did_not_ask_about ... ok
+test commands::materials::tests::no_file_or_a_relative_one_is_refused ... ok
+test commands::materials::tests::saves_the_text_exactly_and_refuses_a_runaway_one ... ok
+test db::fts::tests::nothing_to_search_for ... ok
 test db::fts::tests::straight_double_quotes_mark_an_exact_phrase ... ok
+test assistant::config::tests::every_cloud_service_has_an_address_and_needs_a_key ... ok
+test assistant::config::tests::local_addresses_are_recognised ... ok
+test assistant::config::tests::image_capability_comes_from_the_service_not_the_model_name ... ok
 test db::text_refresh::tests::a_reference_left_literal_matches_its_one_pass_decoding ... ok
 test db::text_refresh::tests::the_same_unicode_text_matches_and_spacing_may_differ ... ok
-test db::text_refresh::tests::different_text_in_any_script_never_matches ... ok
-test commands::materials::tests::saves_the_text_exactly_and_refuses_a_runaway_one ... ok
 test domain::validate::tests::blank_optional_text_becomes_none ... ok
 test domain::validate::tests::title_is_trimmed_and_required ... ok
 test domain::validate::tests::title_length_counts_characters_not_bytes ... ok
-test error::tests::payload_hides_technical_detail ... ok
-test error::tests::invalid_input_message_is_passed_through ... ok
 test error::tests::coded_messages_carry_code_and_params ... ok
+test error::tests::invalid_input_message_is_passed_through ... ok
+test error::tests::payload_hides_technical_detail ... ok
 test error::tests::payload_serialises_with_camel_case_kind ... ok
-test filesystem::tests::reports_a_filesystem_error_when_root_is_a_file ... ok
-test filesystem::tests::copies_sources_without_touching_the_originals ... ok
-test library::adapters::epub::tests::blocks_follow_headings_and_skip_scripts ... ok
-test library::adapters::epub::tests::character_references_decode_like_html_once ... ok
+test db::fts::tests::typographic_quotes_are_not_search_syntax ... ok
 test filesystem::tests::creates_every_subdirectory_and_is_idempotent ... ok
+test filesystem::tests::copies_sources_without_touching_the_originals ... ok
+test db::text_refresh::tests::different_text_in_any_script_never_matches ... ok
+test filesystem::tests::reports_a_filesystem_error_when_root_is_a_file ... ok
+test library::adapters::epub::tests::character_references_decode_like_html_once ... ok
+test library::adapters::epub::tests::blocks_follow_headings_and_skip_scripts ... ok
 test library::adapters::epub::tests::only_internal_targets_are_followed ... ok
 test library::adapters::epub::tests::paths_and_entities_resolve ... ok
 test library::adapters::epub_view::tests::declarations_keep_only_harmless_properties ... ok
 test library::adapters::epub_view::tests::values_with_resources_or_scripts_are_refused ... ok
-test library::adapters::epub_view::tests::sheets_lose_at_rules_and_odd_selectors ... ok
 test library::adapters::markdown::tests::keeps_heading_hierarchy_and_paragraph_order ... ok
 test library::adapters::pdf_layout::tests::a_centred_line_is_set_apart ... ok
+test library::adapters::epub_view::tests::sheets_lose_at_rules_and_odd_selectors ... ok
 test library::adapters::pdf_layout::tests::a_heading_at_the_top_of_one_column_stays_in_that_column ... ok
-test library::adapters::pdf_layout::tests::a_line_reaching_into_the_gutter_stays_in_its_column ... ok
 test library::adapters::pdf_layout::tests::a_line_crossing_the_gutter_beside_column_text_makes_the_page_uncertain ... ok
+test library::adapters::pdf_layout::tests::a_line_reaching_into_the_gutter_stays_in_its_column ... ok
 test library::adapters::pdf_layout::tests::a_narrow_column_of_numbers_is_not_a_column ... ok
 test library::adapters::pdf_layout::tests::a_raised_verse_number_stays_in_its_line_and_a_large_initial_opens_the_first ... ok
 test library::adapters::pdf_layout::tests::a_running_head_and_a_page_number_stand_apart ... ok
@@ -94,13 +95,13 @@ test library::find::tests::case_and_accents_are_ignored_and_the_original_text_is
 test library::find::tests::hangul_is_matched_by_whole_syllables ... ok
 test library::find::tests::matches_do_not_overlap_and_ranges_are_utf16 ... ok
 test library::find::tests::whitespace_runs_count_as_one_space ... ok
-test library::generated_contents::tests::a_heading_over_two_lines_is_one_entry_and_sentences_are_not_headings ... ok
 test library::adapters::pdf_layout::tests::a_line_with_a_wide_space_inside_it_makes_a_one_column_page_uncertain ... ok
-test library::generated_contents::tests::larger_type_is_a_heading_and_its_size_gives_the_level ... ok
-test library::generated_contents::tests::numbered_and_keyword_headings_need_space_above ... ok
+test library::generated_contents::tests::a_heading_over_two_lines_is_one_entry_and_sentences_are_not_headings ... ok
 test library::generated_contents::tests::noisy_or_flat_documents_get_no_contents ... ok
-test library::generated_contents::tests::sections_become_nested_contents_at_their_first_segment ... ok
+test library::generated_contents::tests::larger_type_is_a_heading_and_its_size_gives_the_level ... ok
 test library::generated_contents::tests::running_headers_footers_and_page_numbers_are_left_out ... ok
+test library::generated_contents::tests::sections_become_nested_contents_at_their_first_segment ... ok
+test library::generated_contents::tests::numbered_and_keyword_headings_need_space_above ... ok
 test db::migrations::schema_compatibility_tests::current_build_accepts_database_at_version_19 ... ok
 test library::passage_index::tests::language_labels_resolve_with_an_english_fallback ... ok
 test library::pdf_build::tests::time_limit_is_checked_before_any_next_stage_or_commit ... ok
@@ -122,27 +123,27 @@ test library::relevance::tests::reading_a_whole_chapter_still_ranks_the_broad_ra
 test library::relevance::tests::two_or_three_chapters_are_weaker_than_a_chapter ... ok
 test library::relevance::tests::within_a_class_nearer_and_narrower_comes_first ... ok
 test library::passage_index::tests::a_format_without_structure_has_no_section_links ... ok
-test library::passage_index::tests::explicit_references_are_found_in_any_language_and_shorthand_in_the_sources ... ok
 test library::sections::tests::a_heading_links_its_opening_segment_and_those_after_it ... ok
 test library::sections::tests::a_book_name_alone_names_no_passage ... ok
 test library::sections::tests::a_heading_with_a_flood_of_references_keeps_only_the_first_few ... ok
 test library::sections::tests::a_narrow_section_is_not_widened_by_the_heading_above ... ok
+test library::passage_index::tests::explicit_references_are_found_in_any_language_and_shorthand_in_the_sources ... ok
 test library::sections::tests::a_segment_without_a_path_ends_the_section ... ok
-test library::sections::tests::a_section_without_a_passage_belongs_to_the_nearest_ancestor_that_has_one ... ok
-test library::sections::tests::components_split_on_the_importers_separator_and_drop_blanks ... ok
 test library::sections::tests::body_references_never_change_a_sections_passage ... ok
+test library::sections::tests::components_split_on_the_importers_separator_and_drop_blanks ... ok
+test library::sections::tests::nested_headings_open_together_on_one_segment ... ok
 test library::sections::tests::only_structured_formats_derive_sections ... ok
 test library::sections::tests::origins_round_trip_through_their_stored_names ... ok
-test library::sections::tests::nested_headings_open_together_on_one_segment ... ok
 test library::sections::tests::a_sibling_section_does_not_inherit_the_previous_one ... ok
-test library::sections::tests::the_same_reference_twice_in_a_heading_is_one_link ... ok
+test library::sections::tests::a_section_without_a_passage_belongs_to_the_nearest_ancestor_that_has_one ... ok
+test library::sections::tests::unrelated_sections_and_unstructured_segments_get_nothing ... ok
 test materials::docx::tests::custom_style_names_are_escaped_without_changing_identifiers_or_builtin_names ... ok
-test library::sections::tests::several_references_in_one_heading_are_all_kept_separately ... ok
+test library::sections::tests::the_same_reference_twice_in_a_heading_is_one_link ... ok
 test materials::docx::tests::style_names_are_optional_and_never_reinterpreted_as_other_names ... ok
 test materials::docx::tests::text_is_escaped_and_control_characters_dropped ... ok
 test portability::backup::tests::places_stay_inside_sources ... ok
-test library::sections::tests::unrelated_sections_and_unstructured_segments_get_nothing ... ok
 test materials::docx::tests::rendered_package_localises_styles_without_changing_material_content ... ok
+test library::sections::tests::several_references_in_one_heading_are_all_kept_separately ... ok
 test portability::snapshots::tests::recovery_identifiers_are_strict_basenames_with_real_dates ... ok
 test portability::tests::entry_names_are_plain_relative_paths ... ok
 test presentation::document::tests::a_part_names_its_own_verses ... ok
@@ -162,9 +163,9 @@ test presentation::pptx_import::tests::theme_colour_changes_follow_office ... ok
 test presentation::template::tests::a_replacement_font_is_used_when_chosen ... ok
 test presentation::template::tests::broken_definitions_are_refused ... ok
 test presentation::template::tests::kinds_fall_back_to_custom_but_a_pause_stays_plain ... ok
-test presentation::font_catalog::tests::the_folders_of_this_computer_can_be_read ... ok
 test presentation::template_store::tests::an_image_is_kept_once_and_a_package_brings_it_back ... ok
 test presentation::text::tests::wraps_words_and_hangul ... ok
+test presentation::font_catalog::tests::the_folders_of_this_computer_can_be_read ... ok
 test scripture::aliases::tests::every_language_names_all_66_books ... ok
 test scripture::aliases::tests::no_accent_free_spelling_points_at_two_books_unless_the_exact_spelling_decides ... ok
 test scripture::aliases::tests::no_alias_points_at_two_books_within_a_language ... ok
@@ -238,8 +239,8 @@ test scripture::reference::tests::canonical_round_trips ... ok
 test scripture::reference::tests::display_forms_read_naturally ... ok
 test scripture::reference::tests::invalid_canonical_strings_are_rejected ... ok
 test scripture::reference::tests::verse_keys_order_the_whole_canon ... ok
-test scripture::aliases::tests::every_book_is_reachable_by_its_own_first_alias_in_every_language ... ok
 test scripture::structure::tests::a_wrapped_line_of_prose_is_never_a_title ... ok
+test scripture::aliases::tests::every_book_is_reachable_by_its_own_first_alias_in_every_language ... ok
 test scripture::structure::tests::greek_titles_in_their_traditional_shape ... ok
 test scripture::structure::tests::korean_prose_is_never_a_line_of_references ... ok
 test scripture::structure::tests::note_callers_are_taken_out_and_nothing_else ... ok
@@ -253,16 +254,16 @@ test scripture::usfm::tests::verses_before_a_chapter_are_counted_not_kept ... ok
 test scripture::usfm::tests::verses_continue_across_paragraph_and_poetry_markers ... ok
 test scripture::versification::tests::a_comment_quoting_an_entry_is_not_an_entry ... ok
 test scripture::versification::tests::reads_whole_verse_entries_and_skips_parts ... ok
-test scripture::versification::tests::refuses_a_map_that_is_partly_wrong ... ok
+test scripture::structure::tests::contents_entries_running_heads_and_note_lines_are_read_as_such ... ok
 test scripture::words::tests::escapes_repeats_and_unknown_names ... ok
 test scripture::words::tests::lexical_ids_are_every_value_and_part ... ok
 test scripture::words::tests::malformed_lists_are_refused_whole ... ok
 test scripture::words::tests::reads_named_and_default_attributes ... ok
-test scripture::structure::tests::contents_entries_running_heads_and_note_lines_are_read_as_such ... ok
-test portability::snapshots::tests::a_failed_post_restore_validation_rolls_back_real_sqlite_and_allows_writing ... ok
+test scripture::versification::tests::refuses_a_map_that_is_partly_wrong ... ok
 test portability::snapshots::tests::a_failed_rollback_reports_the_retained_readable_safety_copy ... ok
+test portability::snapshots::tests::a_failed_post_restore_validation_rolls_back_real_sqlite_and_allows_writing ... ok
 
-test result: ok. 259 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.93s
+test result: ok. 259 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.22s
 
      Running unittests src/main.rs (/workspace/abidingword/src-tauri/target/debug/deps/abiding_word-79bcfc95d4b0c942)
 
@@ -273,73 +274,73 @@ test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
      Running tests/a4_qa_transfer.rs (/workspace/abidingword/src-tauri/target/debug/deps/a4_qa_transfer-d08ce6582a87a249)
 
 running 8 tests
-test an_independent_teaching_has_no_study_to_copy_from ... ok
 test another_studys_note_or_a_deleted_item_is_refused_and_nothing_is_added ... ok
 test a_study_qa_block_keeps_question_and_answer_apart_and_derives_its_text ... ok
+test an_independent_teaching_has_no_study_to_copy_from ... ok
 test a_qa_teaching_block_is_participant_facing_by_default_and_a3_configs_still_load ... ok
 test chosen_study_items_become_leader_only_editable_copies_with_provenance ... ok
 test copies_are_snapshots_never_synchronised_and_keep_provenance_when_edited_or_duplicated ... ok
 test response_read_and_deferred_commit_failures_also_roll_back_the_whole_transfer ... ok
 test sql_failures_after_completed_copies_restore_every_persisted_row ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.93s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.27s
 
      Running tests/annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/annotations-7a978fadef3fe12c)
 
 running 9 tests
-test phrase_highlights_are_drawn_only_in_identical_wording ... ok
+test phrase_anchors_refuse_anything_that_does_not_match_the_text ... ok
 test phrase_marks_span_verses_within_one_chapter ... ok
 test a_verse_highlight_is_translation_independent ... ok
-test phrase_anchors_refuse_anything_that_does_not_match_the_text ... ok
+test phrase_highlights_are_drawn_only_in_identical_wording ... ok
 test refused_annotation_requests_carry_stable_codes ... ok
 test phrase_notes_keep_their_quote_in_every_translation ... ok
-test the_same_words_again_recolour_instead_of_duplicating ... ok
 test removing_and_adding_the_same_bible_again_restores_the_phrase ... ok
+test the_same_words_again_recolour_instead_of_duplicating ... ok
 test verse_highlights_have_colours_and_old_ones_are_amber ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.69s
 
      Running tests/assistant.rs (/workspace/abidingword/src-tauri/target/debug/deps/assistant-973f87bb79dd2ccf)
 
 running 17 tests
+test a_local_service_needs_no_key_and_says_it_stays_here ... ok
 test a_question_needs_the_persons_own_material_not_just_a_request ... ok
 test a_request_in_the_persons_words_is_answered_only_as_comments ... ok
 test a_suggestion_far_longer_than_the_text_is_not_offered ... ok
-test a_local_service_needs_no_key_and_says_it_stays_here ... ok
 test a_wording_suggestion_is_only_a_suggestion ... ok
 test illustrations_are_marked_as_invented ... ok
 test keys_are_never_in_the_database_or_the_settings_view ... ok
-test nothing_is_written_for_the_person_without_their_material ... ok
 test other_ways_to_say_it_stay_about_as_long_as_the_persons_words ... ok
-test comments_never_misquote_and_passages_are_recognised_not_added ... ok
 test real_stories_need_a_search_and_are_checked_against_it ... ok
+test nothing_is_written_for_the_person_without_their_material ... ok
 test the_answer_to_a_free_request_is_kept_short ... ok
-test the_teaching_title_is_always_listed_as_shared_and_quotes_are_bounded ... ok
+test comments_never_misquote_and_passages_are_recognised_not_added ... ok
 test the_preview_lists_what_is_shared_and_where_it_goes ... ok
 test the_request_carries_the_voice_rule_and_labelled_provenance_but_no_key ... ok
+test the_teaching_title_is_always_listed_as_shared_and_quotes_are_bounded ... ok
 test when_the_search_finds_nothing_no_story_is_made_up ... ok
 test without_a_key_or_when_off_nothing_is_sent ... ok
 
-test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.31s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.86s
 
      Running tests/assistant_blocks.rs (/workspace/abidingword/src-tauri/target/debug/deps/assistant_blocks-74886e907f6fe392)
 
 running 6 tests
-test a_block_from_another_teaching_is_not_accepted ... ok
-test block_writing_counts_as_the_persons_material_for_a_free_request ... ok
 test a_block_deleted_after_asking_is_refused_and_nothing_is_sent_or_applied ... ok
+test a_block_from_another_teaching_is_not_accepted ... ok
 test a3s_request_without_a_block_is_refused_with_an_actionable_message_not_not_found ... ok
-test korean_correction_of_a_block_reaches_deepseek_and_is_only_a_suggestion ... ok
+test block_writing_counts_as_the_persons_material_for_a_free_request ... ok
 test the_preview_names_the_block_and_sends_nothing ... ok
+test korean_correction_of_a_block_reaches_deepseek_and_is_only_a_suggestion ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.02s
 
      Running tests/bible_catalogue.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_catalogue-f1eb26c5e7eb3571)
 
 running 4 tests
+test one_altered_file_means_nothing_is_kept ... ok
 test a_missing_file_or_an_unlisted_host_is_refused ... ok
 test the_catalogue_lists_its_editions_with_sizes_and_licences ... ok
-test one_altered_file_means_nothing_is_kept ... ok
 test a_verified_download_is_kept_and_read_like_any_bible_file ... ok
 
 test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
@@ -348,82 +349,82 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 
 running 75 tests
 test a_chapter_cut_short_is_refused_and_a_few_verses_short_is_a_warning ... ok
-test a_book_that_begins_twice_is_refused ... ok
 test a_chapter_far_longer_than_usual_is_refused ... ok
-test a_cancelled_import_writes_nothing ... ok
 test a_chapter_number_alone_on_its_line_starts_that_chapter_even_after_a_short_chapter ... ok
-test a_contents_page_with_dot_leaders_is_not_read_as_headings ... ok
+test a_cancelled_import_writes_nothing ... ok
+test a_book_that_begins_twice_is_refused ... ok
 test a_dev42_database_upgrades_and_keeps_everything ... ok
-test a_book_name_wrapped_onto_its_own_line_stays_in_the_verse ... ok
+test a_contents_page_with_dot_leaders_is_not_read_as_headings ... ok
+test a_chapter_number_set_a_little_larger_in_its_line_does_not_make_it_a_heading ... ok
 test a_large_heading_between_verses_is_left_out ... ok
+test a_book_name_wrapped_onto_its_own_line_stays_in_the_verse ... ok
 test a_hyphen_at_a_line_s_end_is_kept_only_on_the_document_s_evidence ... ok
 test a_malformed_pdf_is_refused_with_a_message ... ok
-test a_chapter_number_set_a_little_larger_in_its_line_does_not_make_it_a_heading ... ok
+test a_large_number_starting_a_line_is_not_a_chapter_and_verse ... ok
 test a_note_sign_is_taken_out_only_where_a_note_names_its_verse ... ok
 test a_page_whose_reading_order_cannot_be_established_is_not_used ... ok
 test a_missing_verse_is_reported_and_its_neighbours_keep_their_text ... ok
-test a_large_number_starting_a_line_is_not_a_chapter_and_verse ... ok
 test a_page_dense_with_smaller_notes_is_not_read_as_scripture ... ok
 test a_psalm_number_alone_on_its_line_is_not_verse_text ... ok
 test a_psalm_title_before_verse_1_stays_its_title ... ok
 test a_psalm_whose_verse_1_has_no_number_is_refused_not_guessed ... ok
 test a_repeated_speaker_label_inside_a_verse_refuses_the_chapter ... ok
 test a_scanned_pdf_has_pages_but_no_text ... ok
-test a_preface_line_naming_a_passage_is_not_a_bible_line ... ok
-test a_place_marked_by_hand_is_found_by_passage_and_changes_nothing_else ... ok
-test a_short_second_column_drawn_across_is_read_in_order ... ok
 test a_scanned_pdf_can_be_added_to_read_page_by_page ... ok
+test a_preface_line_naming_a_passage_is_not_a_bible_line ... ok
+test a_short_second_column_drawn_across_is_read_in_order ... ok
 test a_sign_with_no_note_on_its_page_stays_in_the_text ... ok
 test a_stray_number_on_its_own_line_never_renumbers_a_chapter_silently ... ok
-test a_text_that_loses_its_numbers_is_refused_as_too_long ... ok
-test a_text_bible_is_staged_as_a_document_import_with_its_verses ... ok
-test a_title_over_two_lines_with_a_possessive_names_its_book ... ok
+test a_place_marked_by_hand_is_found_by_passage_and_changes_nothing_else ... ok
 test a_suspended_hyphen_at_a_line_end_is_kept ... ok
+test a_text_bible_is_staged_as_a_document_import_with_its_verses ... ok
+test a_text_that_loses_its_numbers_is_refused_as_too_long ... ok
+test a_title_over_two_lines_with_a_possessive_names_its_book ... ok
 test a_section_heading_naming_a_book_word_is_not_a_book ... ok
 test a_usfm_text_file_is_still_read_as_usfm ... ok
+test a_two_column_pdf_is_read_in_column_order_however_its_lines_are_drawn ... ok
 test a_word_broken_at_a_line_end_before_or_and_nor_is_joined ... ok
 test a_title_without_its_number_follows_the_book_before_it ... ok
-test a_two_column_pdf_is_read_in_column_order_however_its_lines_are_drawn ... ok
 test a_title_that_gives_a_second_name_names_its_own_book ... ok
-test an_editions_own_numbering_is_kept_as_written_and_reported ... ok
 test books_outside_the_66_are_named_and_left_out ... ok
-test added_as_a_document_it_has_no_verses_and_can_be_given_them_later ... ok
+test an_editions_own_numbering_is_kept_as_written_and_reported ... ok
 test added_by_verse_it_reads_as_any_bible_and_remembers_where_each_verse_was ... ok
+test added_as_a_document_it_has_no_verses_and_can_be_given_them_later ... ok
 test documents_and_bible_format_files_together_are_refused ... ok
+test corrections_in_the_review_read_the_documents_again ... ok
 test corrections_choose_or_leave_out_a_book ... ok
 test docx_with_headings_numbered_verses_and_footnotes ... ok
 test epub_with_book_and_chapter_headings ... ok
 test greek_book_title ... ok
-test corrections_in_the_review_read_the_documents_again ... ok
 test headings_and_notes_inside_chapters_are_left_out ... ok
-test every_verse_kept_is_exactly_the_documents_own_text_and_traces_back_to_it ... ok
 test hebrew_right_to_left_text_keeps_its_points ... ok
-test lines_named_by_the_older_vpl_codes ... ok
 test korean_headings_and_verses ... ok
+test every_verse_kept_is_exactly_the_documents_own_text_and_traces_back_to_it ... ok
 test line_references_name_chapter_and_verse ... ok
+test lines_named_by_the_older_vpl_codes ... ok
 test mark_9_44_a_cluster_of_note_signs_is_taken_out_when_the_notes_name_the_verse ... ok
-test lines_named_by_usfm_codes ... ok
-test chapter_headings_in_six_languages ... ok
 test notes_at_the_foot_of_a_column_are_not_read_between_the_columns ... ok
+test lines_named_by_usfm_codes ... ok
 test markdown_headings ... ok
+test chapter_headings_in_six_languages ... ok
 test numbers_inside_the_text_are_not_verse_numbers ... ok
-test printed_bible_layout_chapter_numbers_start_paragraphs ... ok
 test plain_text_with_headings_and_verse_lines ... ok
+test printed_bible_layout_chapter_numbers_start_paragraphs ... ok
 test pdf_with_a_text_layer_running_heads_and_a_verse_across_pages ... ok
 test selah_closing_a_psalm_stays_in_its_verse ... ok
-test text_read_across_two_columns_without_positions_is_still_refused ... ok
-test raised_letters_are_taken_out_only_where_the_notes_explain_them ... ok
 test styled_paragraphs_of_poetry_stay_in_their_verses ... ok
-test the_gospel_according_to_saint_mark_names_mark ... ok
+test raised_letters_are_taken_out_only_where_the_notes_explain_them ... ok
+test text_read_across_two_columns_without_positions_is_still_refused ... ok
 test text_before_any_book_is_left_out_and_reported ... ok
+test the_gospel_according_to_saint_mark_names_mark ... ok
+test two_equally_weak_places_for_one_verse_refuse_the_chapter ... ok
 test two_equal_places_for_one_verse_refuse_the_chapter ... ok
 test verse_numbers_without_any_book_give_no_verses ... ok
-test two_equally_weak_places_for_one_verse_refuse_the_chapter ... ok
-test verse_1_without_a_number_after_a_heading_is_reported ... ok
 test the_chapters_recognised_without_doubt_can_be_used_while_the_rest_stays_unverified ... ok
+test verse_1_without_a_number_after_a_heading_is_reported ... ok
 test verses_with_problems_are_never_saved_and_nothing_is_left_behind ... ok
 
-test result: ok. 75 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.60s
+test result: ok. 75 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.62s
 
      Running tests/bible_language.rs (/workspace/abidingword/src-tauri/target/debug/deps/bible_language-6ce5fd1b6f5374ae)
 
@@ -436,7 +437,7 @@ test a_tag_is_stored_normalised_a_name_is_refused_and_no_tag_stays_none ... ok
 test correcting_the_language_later_changes_only_the_language_and_reaches_typed_references ... ok
 test a_verse_beyond_the_canon_is_good_when_any_installed_bible_has_it ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.89s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.67s
 
      Running tests/capabilities.rs (/workspace/abidingword/src-tauri/target/debug/deps/capabilities-569935112c2dab11)
 
@@ -457,59 +458,59 @@ test a_citation_keeps_everything_where_its_source_is_missing_and_survives_every_
 test an_old_unrelated_dangling_row_here_does_not_block_an_import ... ok
 test a_backup_made_before_this_version_restores_and_keeps_its_citations ... ok
 test imported_twice_each_project_keeps_its_own_citation ... ok
-test adding_exactly_the_cited_file_to_the_library_reconnects_kept_citations ... ok
 test old_dangling_citation_rows_do_not_stop_the_upgrade ... ok
+test adding_exactly_the_cited_file_to_the_library_reconnects_kept_citations ... ok
 test the_database_will_not_hold_a_citation_that_names_nothing ... ok
 test exactly_the_same_file_reconnects_a_citation_and_a_similar_title_never_does ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.40s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.15s
 
      Running tests/combined_integration.rs (/workspace/abidingword/src-tauri/target/debug/deps/combined_integration-8073f7be07a720f0)
 
 running 1 test
 test existing_v25_teaching_and_structured_answers_survive_study_flow_startup ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
 
      Running tests/concordance.rs (/workspace/abidingword/src-tauri/target/debug/deps/concordance-a0194e9d3b5f2fe0)
 
 running 7 tests
-test european_accents_are_kept_and_case_is_folded ... ok
-test korean_greek_and_hebrew_follow_their_policies ... ok
 test empty_unknown_and_invalid_queries ... ok
+test korean_greek_and_hebrew_follow_their_policies ... ok
+test european_accents_are_kept_and_case_is_folded ... ok
+test words_are_whole_tokens_case_folded_and_counted_by_book ... ok
 test many_verses_are_listed_one_book_at_a_time ... ok
 test phrases_are_consecutive_and_differ_from_words ... ok
-test words_are_whole_tokens_case_folded_and_counted_by_book ... ok
 test a_whole_bible_answers_quickly ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.75s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.69s
 
      Running tests/contextual_references.rs (/workspace/abidingword/src-tauri/target/debug/deps/contextual_references-00869ce53fe41fee)
 
 running 31 tests
 test a_line_introducing_a_reference_is_not_a_heading_in_any_language ... ok
-test a_competing_passage_in_the_title_area_gives_no_main_passage ... ok
 test a_long_opening_paragraph_is_not_a_title_line ... ok
+test a_competing_passage_in_the_title_area_gives_no_main_passage ... ok
 test a_heading_line_suspends_the_heading_line_it_displaces_even_without_a_main_passage ... ok
 test a_new_section_without_context_resets_it ... ok
-test a_new_explicit_book_replaces_the_context ... ok
 test a_heading_naming_the_main_book_resumes_it ... ok
-test a_reference_in_the_body_never_establishes_a_main_passage ... ok
-test a_sermon_whose_title_area_names_one_passage_resolves_later_pages ... ok
-test a_pointer_line_does_not_govern_the_paragraphs_after_it ... ok
+test a_new_explicit_book_replaces_the_context ... ok
 test a_number_after_an_unknown_capitalised_name_is_left_alone ... ok
-test a_sermon_titled_with_its_passage_resolves_verse_shorthand ... ok
-test an_explicit_reference_establishes_context_for_a_reference_list ... ok
-test another_book_suspends_the_main_passage_until_it_is_named_again ... ok
-test context_from_an_earlier_paragraph_expires ... ok
-test english_uses_the_colon_only ... ok
+test a_reference_in_the_body_never_establishes_a_main_passage ... ok
+test a_pointer_line_does_not_govern_the_paragraphs_after_it ... ok
+test a_sermon_whose_title_area_names_one_passage_resolves_later_pages ... ok
 test a_source_without_sections_carries_context_only_briefly_and_never_across_pages ... ok
+test an_explicit_reference_establishes_context_for_a_reference_list ... ok
+test context_from_an_earlier_paragraph_expires ... ok
+test a_sermon_titled_with_its_passage_resolves_verse_shorthand ... ok
+test english_uses_the_colon_only ... ok
+test another_book_suspends_the_main_passage_until_it_is_named_again ... ok
 test only_sermons_and_lectures_have_a_main_passage ... ok
 test korean_uses_its_colon_and_unit_forms ... ok
-test german_uses_the_comma_and_lists_with_semicolons ... ok
 test the_heading_of_a_section_establishes_its_book ... ok
-test french_spanish_and_portuguese_use_their_comma_notation ... ok
+test german_uses_the_comma_and_lists_with_semicolons ... ok
 test suspension_in_german_and_korean ... ok
+test french_spanish_and_portuguese_use_their_comma_notation ... ok
 test times_decimals_years_and_numbers_never_become_verses ... ok
 test verse_shorthand_in_each_language ... ok
 test verse_shorthand_needs_one_chapter_in_view ... ok
@@ -519,7 +520,7 @@ test the_passage_index_stores_contextual_references_with_their_visible_text ... 
 test the_main_passage_is_still_weighed_against_other_books_and_section_headings ... ok
 test the_same_suspension_with_other_books_and_in_structured_sources ... ok
 
-test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.14s
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.47s
 
      Running tests/daily_snapshot_recovery.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshot_recovery-dd526e073ebdc385)
 
@@ -535,7 +536,7 @@ test symlink_snapshot_is_not_listed_or_opened ... ok
 test redirected_daily_cache_and_safety_directories_are_rejected_without_external_writes ... ok
 test missing_writing_tables_and_forged_history_are_unavailable_before_replacement ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.07s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.84s
 
      Running tests/daily_snapshots.rs (/workspace/abidingword/src-tauri/target/debug/deps/daily_snapshots-6bb2711a8be17c12)
 
@@ -547,21 +548,21 @@ test manual_database_names_are_neither_counted_as_today_nor_pruned ... ok
 test rapidly_created_safety_copies_have_distinct_names_and_preserve_each_version ... ok
 test retention_deletes_only_old_verified_managed_snapshots ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.14s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.82s
 
      Running tests/database.rs (/workspace/abidingword/src-tauri/target/debug/deps/database-bea44d27d3af72d0)
 
 running 8 tests
 test a_failing_migration_is_rolled_back_and_reported ... ok
-test database_file_is_created_inside_the_data_directory ... ok
+test migration_13_gives_existing_parts_and_own_templates_their_phases ... ok
 test new_migrations_apply_on_top_of_an_existing_database ... ok
 test a_database_from_a_newer_app_version_is_refused ... ok
 test migrations_create_the_full_schema_and_record_the_version ... ok
-test migration_13_gives_existing_parts_and_own_templates_their_phases ... ok
+test database_file_is_created_inside_the_data_directory ... ok
 test project_study_and_section_survive_a_restart ... ok
 test reopening_is_idempotent_and_keeps_one_default_workspace ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.07s
 
      Running tests/document_units_dump.rs (/workspace/abidingword/src-tauri/target/debug/deps/document_units_dump-7747c20631ad5334)
 
@@ -580,8 +581,8 @@ test damaged_parts_and_relationships_cost_only_what_they_carry ... ok
 test contents_follow_the_headings_hierarchy ... ok
 test every_place_the_structure_names_is_an_element_of_the_drawn_part ... ok
 test headings_paragraphs_and_text_styles ... ok
-test import_reads_text_headings_metadata_and_notes ... ok
 test links_lead_to_bookmarks_and_a_web_link_is_a_checked_external_target ... ok
+test import_reads_text_headings_metadata_and_notes ... ok
 test lists_keep_their_structure_numbering_and_restarts ... ok
 test only_explicit_http_and_https_addresses_become_external_links ... ok
 test paragraph_styles_stay_inside_the_page ... ok
@@ -594,81 +595,81 @@ test unknown_part_ids_are_refused ... ok
 test a_table_heavy_document_stays_bounded ... ok
 test a_long_document_is_split_into_parts_that_agree_with_the_text ... ok
 
-test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.59s
 
      Running tests/domain.rs (/workspace/abidingword/src-tauri/target/debug/deps/domain-e89204fca2d694d1)
 
 running 8 tests
-test builtin_templates_are_installed_once ... ok
-test a_new_study_gets_the_template_sections_in_order ... ok
-test blocks_can_be_added_edited_and_removed ... ok
 test deleted_blocks_are_kept_in_the_file_but_hidden ... ok
-test theme_setting_defaults_to_light_and_persists ... ok
-test studies_belong_to_their_project ... ok
+test blocks_can_be_added_edited_and_removed ... ok
+test a_new_study_gets_the_template_sections_in_order ... ok
+test builtin_templates_are_installed_once ... ok
 test invalid_input_and_missing_records_are_reported_clearly ... ok
+test studies_belong_to_their_project ... ok
+test theme_setting_defaults_to_light_and_persists ... ok
 test titles_can_be_updated_and_revisions_increase ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.96s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21s
 
      Running tests/epub_contents.rs (/workspace/abidingword/src-tauri/target/debug/deps/epub_contents-9562f517001702fc)
 
 running 11 tests
 test a_book_without_contents_imports_and_reads_normally ... ok
-test an_epub3_navigation_document_gives_the_contents ... ok
 test an_epub2_ncx_is_used_when_there_is_no_navigation_document ... ok
+test an_epub3_navigation_document_gives_the_contents ... ok
+test external_scripted_and_escaping_targets_are_ignored ... ok
 test contents_are_dropped_if_the_text_no_longer_matches_what_was_imported ... ok
 test known_fragments_resolve_exactly_and_unknown_fragments_never_become_chapter_starts ... ok
-test external_scripted_and_escaping_targets_are_ignored ... ok
 test the_managed_file_is_read_only_from_its_own_folder_and_within_a_limit ... ok
-test a_broken_navigation_document_gives_no_contents_and_the_book_still_imports ... ok
 test the_navigation_document_wins_over_the_ncx ... ok
 test nesting_is_kept_not_flattened ... ok
+test a_broken_navigation_document_gives_no_contents_and_the_book_still_imports ... ok
 test a_huge_or_deep_contents_is_bounded ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
 
      Running tests/epub_links.rs (/workspace/abidingword/src-tauri/target/debug/deps/epub_links-1ff3584b594e50bd)
 
 running 6 tests
+test a_link_across_nested_markup_covers_all_its_text ... ok
 test a_book_whose_text_changed_gives_no_links ... ok
 test a_footnote_marker_leads_to_the_note_and_the_note_back ... ok
-test ranges_count_utf16_units_and_survive_long_paragraphs ... ok
-test a_link_across_nested_markup_covers_all_its_text ... ok
-test links_to_other_documents_and_their_anchors_are_found ... ok
 test external_broken_and_unsafe_links_are_left_out ... ok
+test ranges_count_utf16_units_and_survive_long_paragraphs ... ok
+test links_to_other_documents_and_their_anchors_are_found ... ok
 
 test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
 
      Running tests/epub_view.rs (/workspace/abidingword/src-tauri/target/debug/deps/epub_view-e796aa1a29c99a8e)
 
 running 12 tests
-test a_stray_ampersand_never_loses_the_rest_of_the_chapter ... ok
 test a_book_s_web_links_follow_the_same_rule_as_a_document_s ... ok
-test dagger_and_other_references_decode_once_in_reading_and_original ... ok
-test links_lead_only_to_places_in_the_book ... ok
+test a_stray_ampersand_never_loses_the_rest_of_the_chapter ... ok
 test character_references_read_the_same_in_reading_and_original ... ok
 test nothing_in_a_book_can_run_load_or_navigate ... ok
 test rows_written_straight_inside_a_table_get_a_body ... ok
 test sloppy_markup_does_not_break_or_swallow_text ... ok
-test styles_are_cut_down_and_cannot_position_anything ... ok
 test only_documents_of_the_reading_order_can_be_asked_for ... ok
+test links_lead_only_to_places_in_the_book ... ok
+test dagger_and_other_references_decode_once_in_reading_and_original ... ok
 test structure_is_kept ... ok
+test styles_are_cut_down_and_cannot_position_anything ... ok
 test the_structure_matches_the_extracted_text ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
      Running tests/findings.rs (/workspace/abidingword/src-tauri/target/debug/deps/findings-a043d6094ad9e968)
 
 running 7 tests
-test finding_passages_survive_bible_removal_and_restart ... ok
 test findings_can_belong_to_a_section_or_the_whole_study ... ok
+test finding_passages_survive_bible_removal_and_restart ... ok
 test findings_can_be_reordered_and_tagged ... ok
 test every_finding_type_can_be_created_updated_and_deleted ... ok
 test findings_link_to_canonical_passages ... ok
 test study_search_covers_titles_sections_blocks_and_findings ... ok
 test findings_survive_a_restart ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.28s
 
      Running tests/generated_contents.rs (/workspace/abidingword/src-tauri/target/debug/deps/generated_contents-dc817850cf365818)
 
@@ -677,92 +678,92 @@ test a_pdf_of_uniform_text_gets_no_generated_contents ... ok
 test a_pdf_without_an_outline_gets_its_probable_headings_by_page ... ok
 test markdown_headings_become_generated_contents ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.33s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.77s
 
      Running tests/hardening.rs (/workspace/abidingword/src-tauri/target/debug/deps/hardening-797183035236b7b0)
 
 running 7 tests
 test a_file_that_is_not_a_database_is_refused_and_left_untouched ... ok
 test a_problem_reported_by_quick_check_blocks_migration ... ok
-test a_damaged_database_blocks_migration ... ok
-test the_user_message_for_damage_is_plain ... ok
 test a_failed_backup_blocks_the_migration ... ok
+test the_user_message_for_damage_is_plain ... ok
+test a_damaged_database_blocks_migration ... ok
 test pending_migrations_on_an_existing_database_create_a_readable_backup_first ... ok
 test a_new_database_and_a_current_database_get_no_backup ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
 
      Running tests/inquiry.rs (/workspace/abidingword/src-tauri/target/debug/deps/inquiry-f6bc24cdfd52a879)
 
 running 31 tests
-test a_crafted_assistant_name_in_imported_data_breaks_nothing ... ok
 test a_note_from_a_source_cites_the_checked_words ... ok
 test a_comparison_takes_two_or_three_different_passages ... ok
+test a_crafted_assistant_name_in_imported_data_breaks_nothing ... ok
 test a_kept_note_holds_the_accepted_words_and_who_helped ... ok
+test a_source_passage_is_named_from_stored_data_and_sent_alone ... ok
+test a_selection_that_is_not_the_stored_text_is_refused ... ok
 test a_reference_without_its_bible_text_is_no_evidence ... ok
 test a_reviewed_comparison_is_kept_as_one_note_citing_each_passage ... ok
-test a_selection_that_is_not_the_stored_text_is_refused ... ok
-test a_source_passage_is_named_from_stored_data_and_sent_alone ... ok
+test a_wording_proposal_is_shown_against_the_original_and_kept_in_bounds ... ok
 test a_source_without_text_is_explained ... ok
 test a_study_is_included_only_when_chosen ... ok
-test a_wording_proposal_is_shown_against_the_original_and_kept_in_bounds ... ok
 test agreement_needs_both_authors_words_and_the_verdict_follows_the_evidence ... ok
 test an_open_question_is_thought_through_with_the_note_in_focus ... ok
 test asking_is_refused_when_what_would_be_sent_has_changed ... ok
-test duplicating_a_study_keeps_who_helped_with_a_note ... ok
 test help_is_off_until_turned_on_and_needs_its_key ... ok
+test duplicating_a_study_keeps_who_helped_with_a_note ... ok
 test hostile_source_text_stays_material ... ok
-test hostile_writing_cannot_break_out_of_its_block ... ok
-test quotations_are_matched_loosely_but_only_as_whole_words_of_the_material ... ok
 test malformed_answers_are_refused_and_change_nothing ... ok
+test quotations_are_matched_loosely_but_only_as_whole_words_of_the_material ... ok
+test hostile_writing_cannot_break_out_of_its_block ... ok
 test only_the_selected_passages_are_compared ... ok
 test selected_words_are_sent_with_the_writing_they_are_in ... ok
 test quotations_are_checked_and_claims_without_them_become_inference ... ok
-test source_quotations_get_their_exact_place_in_the_stored_text ... ok
 test study_help_starts_from_the_text ... ok
+test source_quotations_get_their_exact_place_in_the_stored_text ... ok
+test the_whole_part_is_sent_as_it_is_on_screen ... ok
 test the_verdict_never_claims_more_agreement_than_the_checked_points ... ok
 test the_preview_lists_every_block_and_only_this_part_of_this_study ... ok
 test titles_in_the_setting_cannot_open_a_block_or_start_a_line ... ok
-test the_whole_part_is_sent_as_it_is_on_screen ... ok
 test two_passages_of_one_book_are_not_two_authors_when_other_books_are_compared ... ok
 test without_its_bible_the_reference_is_given_and_said_to_be_missing ... ok
 
-test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.53s
+test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.27s
 
      Running tests/library.rs (/workspace/abidingword/src-tauri/target/debug/deps/library-3696d337ea0afefb)
 
 running 18 tests
-test a_file_record_cannot_reach_outside_the_managed_folder ... ok
 test a_broken_or_unsupported_file_is_refused_plainly ... ok
+test a_file_record_cannot_reach_outside_the_managed_folder ... ok
 test a_missing_managed_file_is_reported_with_a_code_and_no_path ... ok
 test a_removed_source_or_file_cannot_be_opened ... ok
 test a_scanned_pdf_is_reported_not_imported ... ok
 test a_text_pdf_keeps_page_provenance ... ok
-test a_window_can_open_at_a_physical_page ... ok
-test an_epub_keeps_metadata_reading_order_and_chapters ... ok
 test a_pdf_source_offers_its_original_and_other_formats_do_not ... ok
+test an_epub_keeps_metadata_reading_order_and_chapters ... ok
+test a_window_can_open_at_a_physical_page ... ok
 test managed_paths_are_safe_whatever_the_file_is_called ... ok
-test a_docx_is_imported_with_headings_references_and_a_formatted_original ... ok
 test a_failed_import_leaves_nothing_behind ... ok
+test a_docx_is_imported_with_headings_references_and_a_formatted_original ... ok
 test findings_cite_segments_and_survive_restart_and_removal ... ok
 test markdown_and_text_notes_import_with_structure ... ok
 test scripture_references_in_sources_are_linked_and_found ... ok
-test search_pages_results_and_stays_consistent_after_removal ... ok
 test only_a_sources_own_active_file_is_read_and_only_in_bounded_ranges ... ok
 test the_same_file_is_recognised_as_a_duplicate ... ok
+test search_pages_results_and_stays_consistent_after_removal ... ok
 
-test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.07s
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.03s
 
      Running tests/library_batch.rs (/workspace/abidingword/src-tauri/target/debug/deps/library_batch-6f64eb9ef184849a)
 
 running 5 tests
 test a_job_is_refused_when_nothing_readable_is_found ... ok
-test after_a_crash_the_job_is_interrupted_and_continues_without_adding_twice ... ok
-test cancelling_stops_between_files_and_keeps_what_was_added ... ok
 test a_folder_is_read_reviewed_and_added_with_a_shared_collection_and_tags ... ok
 test a_file_changed_after_its_check_is_not_added_and_can_be_read_again ... ok
+test cancelling_stops_between_files_and_keeps_what_was_added ... ok
+test after_a_crash_the_job_is_interrupted_and_continues_without_adding_twice ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.66s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.32s
 
      Running tests/library_manage.rs (/workspace/abidingword/src-tauri/target/debug/deps/library_manage-9dffde66a3c4936e)
 
@@ -771,14 +772,14 @@ test a_bible_in_trash_leaves_the_translation_list_and_comes_back_whole ... ok
 test collection_text_search_pages_members_once_and_respects_archive_and_trash ... ok
 test collections_nest_hold_many_sources_and_refuse_cycles ... ok
 test details_can_be_edited_without_touching_the_text ... ok
-test only_trashed_sources_are_removed_for_good_and_a_refused_batch_removes_nothing ... ok
-test tags_are_shared_case_insensitively_and_applied_to_many_at_once ... ok
-test archive_trash_and_restore_move_a_source_between_lists_without_losing_anything ... ok
 test on_restart_expired_trash_and_leftover_folders_go_and_live_files_stay ... ok
+test only_trashed_sources_are_removed_for_good_and_a_refused_batch_removes_nothing ... ok
+test archive_trash_and_restore_move_a_source_between_lists_without_losing_anything ... ok
+test tags_are_shared_case_insensitively_and_applied_to_many_at_once ... ok
 test the_sources_list_filters_sorts_and_pages_a_large_library_quickly ... ok
 test trash_older_than_the_retention_period_is_found_for_removal ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.77s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.62s
 
      Running tests/macarthur_shape.rs (/workspace/abidingword/src-tauri/target/debug/deps/macarthur_shape-c168ddf580a35614)
 
@@ -789,39 +790,39 @@ test a_structure_built_before_a4_still_loads_and_asks_for_a_rebuild ... ok
 test review_export_for_the_browser_harness ... ok
 test german_abbreviation_and_english_passage_input_resolve_in_the_diagnostic ... ok
 test the_diagnostic_is_metadata_only ... ok
-test uniform_prose_without_headings_is_reported_as_no_section_not_guessed ... ok
 test results_and_diagnostic_are_deterministic ... ok
+test uniform_prose_without_headings_is_reported_as_no_section_not_guessed ... ok
 test acts_6_opens_the_book_section_not_front_matter_in_every_handbook_shape ... ok
 test the_running_head_never_becomes_a_section_and_the_margin_title_survives ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.26s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.90s
 
      Running tests/marks.rs (/workspace/abidingword/src-tauri/target/debug/deps/marks-2ee1e16a86581c78)
 
 running 9 tests
+test deleted_marks_are_never_listed ... ok
 test marks_come_in_scripture_order_whatever_the_order_they_were_made_in ... ok
 test a_kind_a_book_and_a_colour_each_narrow_the_list ... ok
 test marks_survive_closing_and_reopening_the_database ... ok
-test deleted_marks_are_never_listed ... ok
 test overlapping_highlights_are_listed_as_the_normalised_pieces ... ok
 test phrase_marks_keep_their_quote_and_say_whether_the_wording_fits ... ok
 test pages_are_bounded_and_say_whether_more_follow ... ok
 test searching_looks_in_note_text_only_and_ignores_case_in_any_script ... ok
 test unknown_choices_are_refused_and_a_damaged_colour_record_does_not_break_the_list ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.72s
 
      Running tests/material_docx.rs (/workspace/abidingword/src-tauri/target/debug/deps/material_docx-a302f70088411f97)
 
 running 9 tests
-test long_documents_and_other_scripts_come_through_whole ... ok
 test block_manuscript_heading_precedes_its_body_in_the_actual_docx ... ok
+test long_documents_and_other_scripts_come_through_whole ... ok
 test questions_keep_the_numbers_the_material_gives_them ... ok
 test nothing_for_the_leader_reaches_a_sheet_for_the_group ... ok
-test room_to_write_is_three_ruled_lines_and_the_page_and_language_are_the_persons ... ok
 test saving_writes_a_docx_where_asked_and_never_replaces_a_file_it_was_not_asked_about ... ok
-test scripture_is_set_apart_with_verse_numbers_and_says_what_is_lacking ... ok
+test room_to_write_is_three_ruled_lines_and_the_page_and_language_are_the_persons ... ok
 test a_document_holds_what_the_material_holds_in_its_order_and_nothing_more ... ok
+test scripture_is_set_apart_with_verse_numbers_and_says_what_is_lacking ... ok
 test every_document_is_a_word_package_with_its_parts_and_well_formed_xml ... ok
 
 test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
@@ -831,39 +832,39 @@ test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 running 5 tests
 test bridged_verses_are_there_and_a_passage_inside_a_bridge_starts_with_it ... ok
 test several_passages_keep_their_order_and_an_unknown_bible_is_refused ... ok
-test a_psalm_keeps_its_title_and_verses_beyond_the_canons_count_are_named ... ok
 test a_verse_the_bible_lacks_is_named_and_not_taken_from_another_bible ... ok
+test a_psalm_keeps_its_title_and_verses_beyond_the_canons_count_are_named ... ok
 test the_passage_comes_whole_and_in_order_from_the_chosen_bible ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.53s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 19.73s
 
      Running tests/migration_v024.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v024-5a74c2c7de4c870e)
 
 running 1 test
 test a_dev43_database_upgrades_to_v024_and_keeps_everything_in_use ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.81s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.44s
 
      Running tests/migration_v10.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v10-7de66742da3fa199)
 
 running 1 test
 test a_v9_database_is_backed_up_keeps_its_teachings_and_gains_presentations ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.56s
 
      Running tests/migration_v11.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v11-3e485b738640c72a)
 
 running 1 test
 test a_v10_database_is_backed_up_and_its_presentations_gain_an_empty_target_time ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.42s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
 
      Running tests/migration_v12.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v12-dbf6f68feb02c64b)
 
 running 1 test
 test a_v11_database_is_backed_up_and_its_presentations_keep_everything ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
 
      Running tests/migration_v14.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v14-43ad94a63016166e)
 
@@ -878,14 +879,14 @@ running 2 tests
 test if_the_backup_cannot_be_made_the_foundation_database_is_left_at_v1 ... ok
 test a_foundation_database_upgrades_with_a_backup_and_keeps_its_data ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
 
      Running tests/migration_v25.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v25-b75cae474662a16d)
 
 running 1 test
 test a_schema_24_teaching_is_kept_and_gains_no_blocks ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
 
      Running tests/migration_v26.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v26-e241a30fd0da3706)
 
@@ -894,7 +895,7 @@ test unresolved_ownership_is_rejected_instead_of_guessed ... ok
 test populated_parent_rebuild_preserves_all_columns_children_tombstones_and_ids ... ok
 test rebuild_failure_rolls_back_schema_data_history_and_restores_foreign_keys ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.05s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.93s
 
      Running tests/migration_v27.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v27-2dad11f2afae32b8)
 
@@ -902,7 +903,7 @@ running 2 tests
 test migration_failure_rolls_back_every_added_column_and_existing_rows ... ok
 test populated_v26_upgrades_additively_with_a_pre_migration_backup_and_immutable_history ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.47s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
 
      Running tests/migration_v3.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v3-a46050a8dbcd6834)
 
@@ -918,35 +919,35 @@ running 2 tests
 test a_failed_backup_leaves_the_studies_database_at_v3 ... ok
 test a_studies_database_upgrades_to_the_library_with_a_backup ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
 
      Running tests/migration_v5.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v5-7d5dcaba1709ea55)
 
 running 1 test
 test an_existing_library_is_backed_up_then_gains_its_section_links_without_reimporting ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.91s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.19s
 
      Running tests/migration_v6.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v6-0010010919937891)
 
 running 1 test
 test a_v5_database_is_backed_up_then_gains_source_annotations ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.71s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.36s
 
      Running tests/migration_v7.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v7-15baa6423a7abdd6)
 
 running 1 test
 test a_v6_database_is_backed_up_and_its_citations_read_as_before ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.17s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.31s
 
      Running tests/migration_v8.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v8-520e077666593a24)
 
 running 1 test
 test a_v7_database_is_backed_up_and_gains_empty_teaching_tables ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
 
      Running tests/migration_v9.rs (/workspace/abidingword/src-tauri/target/debug/deps/migration_v9-0339e656a05e25a4)
 
@@ -954,14 +955,14 @@ running 2 tests
 test a_lesson_starts_with_its_steps_and_each_step_can_say_its_kind ... ok
 test a_v8_database_is_backed_up_and_keeps_everything ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
 
      Running tests/milestone_a2_sections.rs (/workspace/abidingword/src-tauri/target/debug/deps/milestone_a2_sections-3738c0f3feb0b509)
 
 running 1 test
 test original_method_parts_restore_empty_in_order_without_losing_survivors_or_custom_parts ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
 
      Running tests/milestone_a3_home.rs (/workspace/abidingword/src-tauri/target/debug/deps/milestone_a3_home-c4e61cde3934e901)
 
@@ -970,22 +971,22 @@ test root_adopts_only_an_unambiguous_legacy_default_and_survives_language_change
 test concurrent_app_connections_create_one_root_container ... ok
 test moving_a_study_preserves_linked_and_trashed_teaching_provenance_and_backup_identity ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.66s
 
      Running tests/multilingual_references.rs (/workspace/abidingword/src-tauri/target/debug/deps/multilingual_references-3b5ea4ab83b1b6bd)
 
 running 9 tests
-test a_shared_abbreviation_is_settled_by_the_reference_or_the_sources_language_never_by_order ... ok
 test another_languages_book_name_needs_a_verse ... ok
-test a_heading_lines_context_does_not_leak ... ok
+test a_shared_abbreviation_is_settled_by_the_reference_or_the_sources_language_never_by_order ... ok
 test every_contested_abbreviation_follows_the_same_rule ... ok
 test every_form_is_found_alone_whatever_the_sources_language ... ok
 test ordinary_words_never_become_references_in_any_source ... ok
+test a_heading_lines_context_does_not_leak ... ok
 test the_whole_fixture_in_one_document_gives_the_same_index_in_every_language ... ok
 test a_multi_chapter_main_passage_resolves_chapter_and_verse_but_not_verse_alone ... ok
 test the_sermon_resolves_the_same_in_pdf_docx_and_epub ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.01s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s
 
      Running tests/original_language.rs (/workspace/abidingword/src-tauri/target/debug/deps/original_language-cae885be140596de)
 
@@ -997,12 +998,12 @@ test a_psalm_title_of_two_hebrew_verses_stays_a_title ... ok
 test a_single_hebrew_book_is_renumbered_too ... ok
 test a_verse_map_is_not_used_on_english_numbering_and_a_broken_one_is_not_used_at_all ... ok
 test an_installed_bible_gains_its_word_index_without_changing_its_text ... ok
-test an_oshb_book_reads_its_words_marks_and_numbers_without_inventing_lemmas ... ok
-test bible_words_number_variants_are_only_spellings_of_the_same_number ... ok
-test broken_or_foreign_xml_is_refused_and_never_half_read_silently ... ok
 test an_oshb_bible_is_searched_by_number_and_its_grammar_is_described_on_the_editions_word ... ok
-test files_of_another_format_than_the_one_read_are_named_as_left_out ... ok
+test bible_words_number_variants_are_only_spellings_of_the_same_number ... ok
+test an_oshb_book_reads_its_words_marks_and_numbers_without_inventing_lemmas ... ok
+test broken_or_foreign_xml_is_refused_and_never_half_read_silently ... ok
 test character_references_are_read_and_unknown_entities_refused ... ok
+test files_of_another_format_than_the_one_read_are_named_as_left_out ... ok
 test malformed_morphgnt_lines_are_counted_and_too_many_refuse_the_book ... ok
 test a_v17_database_keeps_its_words_and_stops_describing_on_a_fit_alone ... ok
 test notes_and_maps_are_size_limited_and_issues_are_severities_not_text ... ok
@@ -1014,7 +1015,7 @@ test a_fitting_scheme_is_described_only_on_the_editions_word_or_the_persons_choi
 test morphgnt_gives_dictionary_forms_and_grammar_described_as_morphgnt ... ok
 test lexical_numbers_alone_are_indexed_only_when_asked_and_found_in_any_spelling ... ok
 
-test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
 
      Running tests/passage_languages.rs (/workspace/abidingword/src-tauri/target/debug/deps/passage_languages-316032a9e9e501b8)
 
@@ -1031,31 +1032,31 @@ test the_interface_language_plays_no_part ... ok
 test the_language_chosen_at_commit_decides_not_the_preview ... ok
 test indexing_a_moderately_large_source_in_each_language_is_quick ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 33.99s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.91s
 
      Running tests/passage_sources.rs (/workspace/abidingword/src-tauri/target/debug/deps/passage_sources-28a6348a8faa702d)
 
 running 26 tests
-test a_chapter_request_does_not_treat_partial_sections_as_chapter_openings ... ok
 test a_heading_passage_applies_to_the_section_that_follows_it ... ok
-test a_commentary_section_is_one_place_not_one_card_per_paragraph ... ok
 test a_duplicate_is_still_refused_and_a_deliberate_copy_has_its_own_links ... ok
-test a_pdf_never_gets_invented_structure ... ok
+test a_commentary_section_is_one_place_not_one_card_per_paragraph ... ok
+test a_chapter_request_does_not_treat_partial_sections_as_chapter_openings ... ok
 test a_pdf_cross_reference_is_a_mention_with_its_exact_page_not_verified_commentary ... ok
-test a_place_that_only_shares_the_chapter_is_never_offered ... ok
+test a_pdf_never_gets_invented_structure ... ok
 test a_reference_in_the_body_never_changes_what_a_section_is_about ... ok
+test a_place_that_only_shares_the_chapter_is_never_offered ... ok
 test a_source_with_many_places_is_one_group_with_a_few_places_and_a_count ... ok
+test a_word_document_gets_section_links_from_its_headings ... ok
 test a_stored_path_naming_no_valid_passage_links_nothing_and_the_others_still_rebuild ... ok
 test acts_six_uses_its_indexed_section_and_keeps_incidental_mentions_out_of_navigation ... ok
-test a_word_document_gets_section_links_from_its_headings ... ok
-test an_explicit_reference_stays_linked_as_explicit ... ok
-test heading_text_with_the_importers_separator_still_derives_deterministically ... ok
 test an_archived_source_can_be_navigated_explicitly_without_rejoining_the_overview ... ok
+test heading_text_with_the_importers_separator_still_derives_deterministically ... ok
 test an_epub_gets_section_links_from_its_headings ... ok
-test nested_headings_inherit_from_the_nearest_passage_heading_only ... ok
+test an_explicit_reference_stays_linked_as_explicit ... ok
 test finding_citations_are_unaffected_by_rebuilding_the_links ... ok
 test inheritance_stops_at_a_sibling_section_and_unrelated_sections_get_none ... ok
 test only_a_containing_structural_range_is_a_destination_for_the_whole_request ... ok
+test nested_headings_inherit_from_the_nearest_passage_heading_only ... ok
 test passage_and_chapter_sections_outrank_neutral_exact_mentions ... ok
 test plain_text_has_explicit_references_only ... ok
 test rebuilding_gives_the_same_links_as_importing ... ok
@@ -1063,7 +1064,7 @@ test removed_sources_never_appear ... ok
 test several_references_in_one_heading_are_kept_separately ... ok
 test turning_pages_stays_fast_on_a_large_library ... ok
 
-test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.22s
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.30s
 
      Running tests/pdf_build_processing.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_build_processing-2e78a1aeffb686fe)
 
@@ -1073,23 +1074,23 @@ test duplicate_jobs_cancel_retry_and_failure_status_are_retained ... ok
 test failed_automatic_analysis_is_retained_until_an_explicit_retry ... ok
 test a_saved_empty_analysis_is_not_an_invisible_second_full_pdf_parse ... ok
 test reading_and_autosave_database_access_remain_available_during_pdf_work ... ok
-test unchanged_literal_roles_are_not_written_again ... ok
 test cancellation_and_sql_failure_during_reindex_restore_previous_structure_and_links ... ok
+test unchanged_literal_roles_are_not_written_again ... ok
 test automatic_contents_persist_the_same_structure_and_never_reparse_saved_results ... ok
 test four_hundred_pages_finish_with_measured_stages_and_keep_literal_provenance ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.16s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.75s
 
      Running tests/pdf_extraction_variants.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_extraction_variants-0b5499a9675658b4)
 
 running 5 tests
-test a_validated_contents_destination_without_any_text_is_page_only_and_not_an_indexed_heading ... ok
 test printed_roman_front_matter_and_restarted_decimal_labels_use_their_real_physical_pages ... ok
+test a_validated_contents_destination_without_any_text_is_page_only_and_not_an_indexed_heading ... ok
 test duplicate_printed_labels_never_choose_the_first_matching_page ... ok
 test body_relative_heading_detection_survives_different_font_families_and_scales ... ok
 test two_column_printed_contents_preserve_each_column_order_and_do_not_fake_indentation ... ok
 
-test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.19s
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.79s
 
      Running tests/pdf_outline_destinations.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_outline_destinations-df730708bd0985a8)
 
@@ -1097,20 +1098,20 @@ running 2 tests
 test a_page_only_bookmark_does_not_choose_between_parallel_column_headings ... ok
 test named_page_destinations_use_physical_pages_and_keep_original_text_alignment ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.39s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.69s
 
      Running tests/pdf_printed_contents.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_printed_contents-ef20bf03d4178450)
 
 running 7 tests
-test oversized_cover_type_does_not_hide_smaller_book_headings_without_a_toc ... ok
 test a_title_mismatch_without_a_corroborated_page_offset_never_guesses_a_book_destination ... ok
+test oversized_cover_type_does_not_hide_smaller_book_headings_without_a_toc ... ok
 test a_numbered_outline_inside_a_book_is_not_another_printed_page_toc ... ok
 test multilingual_contents_aliases_recover_real_destinations_when_old_analysis_is_rebuilt ... ok
-test repeated_overprinting_does_not_turn_a_real_book_opening_into_a_body_mention ... ok
 test printed_titles_use_corroborated_offsets_and_real_openings_even_when_drawn_titles_differ ... ok
+test repeated_overprinting_does_not_turn_a_real_book_opening_into_a_body_mention ... ok
 test rebuild_keeps_user_corrections_and_old_documents_default_to_no_printed_page_destinations ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.26s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.59s
 
      Running tests/pdf_structure.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_structure-f5eec0c134e15f53)
 
@@ -1122,12 +1123,12 @@ test clearing_a_user_mapping_is_not_silently_reinferred_and_reset_is_undoable ..
 test disabled_parent_does_not_resurrect_from_raw_outline_titles_and_removed_sources_drop_metadata ... ok
 test english_headings_map_but_orphan_numeric_titles_do_not_borrow_context_from_body_citations ... ok
 test import_index_result_and_reader_target_prefer_the_chapter_not_earlier_mentions ... ok
-test korean_unicode_book_chapter_and_verse_headings_keep_coordinates_in_a_multicolumn_pdf ... ok
 test layout_only_structure_keeps_evidence_and_uniform_prose_does_not_invent_a_section ... ok
 test corrections_reindex_atomically_keep_text_ids_and_survive_full_backup_restore ... ok
 test tagged_headings_roles_and_unaligned_tags_keep_their_own_evidence ... ok
+test korean_unicode_book_chapter_and_verse_headings_keep_coordinates_in_a_multicolumn_pdf ... ok
 
-test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.83s
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.97s
 
      Running tests/pdf_structure_real_file.rs (/workspace/abidingword/src-tauri/target/debug/deps/pdf_structure_real_file-b2b9bf7a9fc26eca)
 
@@ -1139,31 +1140,31 @@ test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; fini
      Running tests/phrase_highlights.rs (/workspace/abidingword/src-tauri/target/debug/deps/phrase_highlights-ec301461b3c4f5d1)
 
 running 23 tests
-test a_multi_verse_highlight_is_split_around_a_range_in_its_middle_verse ... ok
-test a_new_multi_verse_range_cuts_several_highlights ... ok
-test a_new_range_covering_an_old_one_replaces_it ... ok
 test a_failure_part_way_leaves_nothing_half_done ... ok
+test a_new_multi_verse_range_cuts_several_highlights ... ok
+test a_multi_verse_highlight_is_split_around_a_range_in_its_middle_verse ... ok
+test a_new_range_covering_an_old_one_replaces_it ... ok
+test a_new_range_over_several_colours_cuts_each ... ok
 test a_new_range_inside_an_old_one_splits_it_in_two ... ok
 test a_new_range_over_the_tail_trims_the_old_one ... ok
-test a_new_range_over_several_colours_cuts_each ... ok
 test a_new_range_over_the_head_trims_the_old_one ... ok
-test cuts_never_fall_inside_a_surrogate_pair ... ok
 test a_remainder_of_only_whitespace_is_dropped ... ok
 test highlights_that_do_not_meet_both_stay ... ok
 test deleted_highlights_are_ignored ... ok
 test highlights_that_meet_across_a_verse_boundary_merge_when_the_same_colour ... ok
+test cuts_never_fall_inside_a_surrogate_pair ... ok
 test notes_whole_verse_highlights_and_bookmarks_are_never_changed ... ok
 test old_conflicting_highlights_stay_readable_and_are_fixed_where_touched ... ok
-test only_highlights_on_the_same_wording_are_normalised ... ok
 test recolouring_a_phrase_highlight_follows_the_same_rules ... ok
-test remainders_keep_punctuation_and_whitespace_from_the_stored_text ... ok
+test only_highlights_on_the_same_wording_are_normalised ... ok
 test same_colour_highlights_that_overlap_become_one ... ok
-test the_same_words_in_another_colour_recolour_the_one_highlight ... ok
+test remainders_keep_punctuation_and_whitespace_from_the_stored_text ... ok
 test same_colour_highlights_that_touch_become_one ... ok
+test the_same_words_in_another_colour_recolour_the_one_highlight ... ok
 test the_same_words_in_the_same_colour_change_nothing ... ok
 test two_installs_of_the_same_wording_are_one_wording ... ok
 
-test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.92s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.09s
 
      Running tests/portability.rs (/workspace/abidingword/src-tauri/target/debug/deps/portability-755f7aacecb952bb)
 
@@ -1180,36 +1181,36 @@ test a_file_restore_failure_rolls_back_database_and_already_replaced_files ... o
 test a_project_moves_to_another_computer_whole_with_new_ids ... ok
 test a_genuine_historical_backup_still_upgrades_to_schema_27 ... ok
 test damaged_or_crafted_project_packages_are_refused_and_change_nothing ... ok
-test full_backup_restore_never_follows_source_symlinks ... ok
 test bible_words_stay_out_of_project_packages_and_come_back_with_a_backup ... ok
 test importing_never_overwrites_a_project_and_never_reuses_ids ... ok
+test full_backup_restore_never_follows_source_symlinks ... ok
 test project_data_is_data_only_and_malformed_references_roll_everything_back ... ok
 test legacy_study_owned_teaching_package_backfills_project_owner ... ok
 test imported_conflicting_roles_preserve_writing_slides_and_backup_restore ... ok
 test study_teaching_and_private_materials_survive_project_full_and_daily_recovery ... ok
 
-test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.12s
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.24s
 
      Running tests/pozetek.rs (/workspace/abidingword/src-tauri/target/debug/deps/pozetek-d049509052cca986)
 
 running 6 tests
-test a_new_study_has_the_parts_in_order_with_empty_answers ... ok
 test entries_are_validated ... ok
+test a_new_study_has_the_parts_in_order_with_empty_answers ... ok
 test a_customised_template_retains_fields_and_their_translation_source ... ok
+test the_snapshot_does_not_follow_a_changed_template_and_duplicates_keep_it ... ok
 test entries_status_and_text_survive_a_restart_and_deleting_keeps_neighbours ... ok
 test a_v9_database_upgrades_without_loss ... ok
-test the_snapshot_does_not_follow_a_changed_template_and_duplicates_keep_it ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.07s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.22s
 
      Running tests/pozetek_repair.rs (/workspace/abidingword/src-tauri/target/debug/deps/pozetek_repair-b27ca07a72f15433)
 
 running 3 tests
-test changed_added_writing_and_stale_preview_refuse_without_mutation ... ok
 test receipt_storage_failure_rolls_back_parts_order_and_revisions ... ok
+test changed_added_writing_and_stale_preview_refuse_without_mutation ... ok
 test canonical_method_and_existing_answers_survive_explicit_additive_repair_and_persistent_undo ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
 
      Running tests/presentations.rs (/workspace/abidingword/src-tauri/target/debug/deps/presentations-88b48d166d589605)
 
@@ -1220,38 +1221,38 @@ test a_proposal_follows_the_teaching_in_order_without_ai ... ok
 test a_passage_shown_for_a_moment_uses_the_scripture_layout_and_the_pages_reach_the_interface_as_json ... ok
 test a_chosen_replacement_font_is_used_alike_by_the_live_view_pdf_and_powerpoint ... ok
 test a_removed_part_of_the_teaching_is_reported_and_a_removed_teaching_takes_its_presentations ... ok
-test a_target_time_is_kept_with_the_presentation_and_can_be_removed ... ok
 test a_template_is_chosen_changed_and_dropped_without_touching_slides_or_teaching ... ok
+test a_target_time_is_kept_with_the_presentation_and_can_be_removed ... ok
 test a_template_places_text_in_its_boxes_and_says_what_does_not_fit ... ok
 test an_imported_design_in_the_pdf_has_its_page_size_and_footer ... ok
 test bible_study_questions_and_lesson_steps_get_their_own_slides ... ok
 test an_imported_design_lays_out_long_german_and_korean_scripture_the_same_way_every_time ... ok
 test live_marks_on_the_audience_screen_stay_small_and_on_the_slide ... ok
-test an_imported_design_goes_back_to_powerpoint_with_its_size_fonts_and_spacing ... ok
 test exports_work_without_any_system_font ... ok
+test an_imported_design_goes_back_to_powerpoint_with_its_size_fonts_and_spacing ... ok
 test items_are_added_reordered_left_out_and_checked ... ok
 test powerpoint_with_a_template_keeps_its_size_crop_transparency_fonts_and_boxes ... ok
 test markdown_has_the_slides_and_speaker_text_only_when_asked ... ok
 test scripture_is_quoted_from_an_installed_bible_and_missing_text_is_said ... ok
 test slides_follow_the_teaching_live_until_the_person_writes_their_own ... ok
 test speaker_text_never_reaches_the_audience ... ok
-test the_delivery_package_is_a_deterministic_self_contained_snapshot ... ok
-test write_examples ... ignored
 test the_pdf_with_a_template_has_its_page_size_pictures_and_transparency ... ok
+test write_examples ... ignored
+test the_delivery_package_is_a_deterministic_self_contained_snapshot ... ok
 test powerpoint_has_one_well_formed_slide_per_audience_slide ... ok
 test the_pdfs_have_a_page_per_slide_and_readable_text ... ok
 
-test result: ok. 25 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 3.95s
+test result: ok. 25 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 4.56s
 
      Running tests/reader_continuity.rs (/workspace/abidingword/src-tauri/target/debug/deps/reader_continuity-d5e3d687d286be3c)
 
 running 4 tests
+test invalid_places_never_replace_a_last_good_place ... ok
 test trashed_sources_do_not_reappear_and_permanent_removal_forgets_place ... ok
 test places_are_kept_per_source_and_updated_in_recent_order ... ok
-test invalid_places_never_replace_a_last_good_place ... ok
 test ordinary_backup_restore_preserves_reading_history_and_place ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
 
      Running tests/real_document_editions.rs (/workspace/abidingword/src-tauri/target/debug/deps/real_document_editions-2bbfcfc956b8f9a6)
 
@@ -1279,26 +1280,26 @@ test a_number_after_a_verse_abbreviation_or_in_a_book_name_is_no_verse ... ok
 test a_heading_over_two_lines_at_a_verse_s_end_leaves_it_unverified ... ok
 test a_raised_number_against_a_word_does_not_make_a_verified_boundary ... ok
 test a_styled_heading_after_an_ellipsis_is_not_verified_text ... ok
+test a_v022_database_upgrades_and_keeps_its_verse_origins_as_automatic ... ok
 test a_running_head_at_a_page_edge_is_furniture_whatever_its_wording ... ok
 test a_verb_that_is_also_an_abbreviation_still_ends_a_sentence ... ok
 test a_verse_ending_with_capitals_or_a_book_s_name_is_not_verified ... ok
-test a_v022_database_upgrades_and_keeps_its_verse_origins_as_automatic ... ok
-test a_verse_printed_only_in_the_apparatus_has_no_text ... ok
 test a_correction_the_recogniser_now_agrees_with_is_kept ... ok
-test a_verse_per_line_psalter_stays_a_bible_read_by_its_verses ... ok
+test a_verse_printed_only_in_the_apparatus_has_no_text ... ok
 test a_verse_whose_text_is_in_doubt_is_found_but_not_verified ... ok
+test a_verse_per_line_psalter_stays_a_bible_read_by_its_verses ... ok
 test headings_set_apart_are_kept_with_the_passage_they_stand_in ... ok
-test raised_verse_numbers_against_the_next_word_are_verse_numbers ... ok
 test corrections_that_fit_nothing_are_carried_to_the_bible_added_again ... ok
+test an_undone_correction_found_elsewhere_now_does_not_come_back ... ok
 test the_line_before_a_line_of_references_is_not_verified_text ... ok
+test raised_verse_numbers_against_the_next_word_are_verse_numbers ... ok
 test references_with_a_full_stop_or_comma_are_not_verified_text ... ok
 test the_verse_before_a_missing_number_is_not_verified ... ok
-test an_undone_correction_found_elsewhere_now_does_not_come_back ... ok
 test a_correction_survives_reading_again_and_conflicts_are_shown ... ok
 test unverified_verses_keep_their_place_but_never_become_the_bible_s_text ... ok
 test the_same_documents_added_again_keep_the_earlier_corrections ... ok
 
-test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.61s
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.16s
 
      Running tests/reference_dashes.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_dashes-b8526cab78614189)
 
@@ -1306,54 +1307,54 @@ running 9 tests
 test every_ordinary_dash_makes_a_range_with_or_without_spaces ... ok
 test a_dash_in_prose_does_not_become_a_reference ... ok
 test each_language_reads_its_own_notation_with_an_en_dash ... ok
-test ranges_across_chapters_and_of_chapters_read_with_an_en_dash ... ok
 test offsets_count_utf16_units_before_and_inside_the_range ... ok
+test ranges_across_chapters_and_of_chapters_read_with_an_en_dash ... ok
 test the_example_projects_references_read_as_written ... ok
 test impossible_ranges_are_still_refused ... ok
 test typed_references_read_every_dash_too ... ok
 test a_library_source_is_indexed_with_the_whole_range ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.07s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
 
      Running tests/reference_languages.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_languages-f80724f86faea027)
 
 running 34 tests
 test an_unknown_or_missing_language_is_read_as_english_and_never_merged ... ok
-test english_still_reads_a_capitalised_name_and_a_number_as_a_reference ... ok
 test english_keeps_its_behaviour ... ok
-test french_false_positives_are_avoided ... ok
-test each_parser_reads_only_its_own_language ... ok
+test english_still_reads_a_capitalised_name_and_a_number_as_a_reference ... ok
 test french_in_prose_and_headings ... ok
-test french_offsets_are_utf16_units ... ok
-test french_numbered_books ... ok
-test german_false_positives_are_avoided ... ok
+test french_false_positives_are_avoided ... ok
 test french_names_abbreviations_and_notation ... ok
+test french_offsets_are_utf16_units ... ok
+test german_false_positives_are_avoided ... ok
 test german_in_prose_and_headings ... ok
+test french_numbered_books ... ok
 test german_names_abbreviations_and_notation ... ok
-test german_offsets_are_utf16_units ... ok
 test german_numbered_books ... ok
 test german_mal_is_maleachi_only_with_a_capital_and_a_verse ... ok
-test korean_abbreviations ... ok
+test german_offsets_are_utf16_units ... ok
+test each_parser_reads_only_its_own_language ... ok
 test korean_in_prose_and_headings ... ok
+test korean_abbreviations ... ok
 test korean_offsets_are_utf16_units ... ok
 test korean_has_no_capital_letter_rule_but_does_not_guess ... ok
-test korean_names_and_notation ... ok
 test parsers_are_built_once_and_shared ... ok
 test korean_one_chapter_books ... ok
 test portuguese_false_positives_are_avoided ... ok
 test portuguese_in_prose_and_headings ... ok
-test portuguese_names_abbreviations_and_notation ... ok
+test korean_names_and_notation ... ok
 test portuguese_offsets_are_utf16_units ... ok
-test spanish_in_prose_and_headings ... ok
-test spanish_names_abbreviations_and_notation ... ok
 test portuguese_numbered_books ... ok
+test portuguese_names_abbreviations_and_notation ... ok
+test spanish_in_prose_and_headings ... ok
 test spanish_false_positives_are_avoided ... ok
+test spanish_offsets_are_utf16_units ... ok
+test spanish_names_abbreviations_and_notation ... ok
 test the_same_text_means_different_things_in_different_languages ... ok
 test spanish_numbered_books ... ok
-test spanish_offsets_are_utf16_units ... ok
 test a_whole_chapter_of_prose_stays_quick ... ok
 
-test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23s
 
      Running tests/reference_perf.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_perf-04758fde348b60b7)
 
@@ -1361,7 +1362,7 @@ running 2 tests
 test a_generated_pack_reads_a_source_in_its_own_language ... ok
 test building_and_using_each_parser ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.86s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.61s
 
      Running tests/reference_resolver.rs (/workspace/abidingword/src-tauri/target/debug/deps/reference_resolver-b883a56b3b27ffb0)
 
@@ -1370,49 +1371,49 @@ test a_bibles_language_comes_from_its_stored_tag_only ... ok
 test a_name_that_means_two_books_in_its_own_language_asks_which ... ok
 test a_genuinely_ambiguous_input_is_never_guessed ... ok
 test chapter_only_and_book_only_input ... ok
-test a_generated_pack_never_answers_what_a_reviewed_language_means_otherwise ... ok
 test a_bible_language_then_the_interface_then_the_common_reading_then_ask ... ok
+test a_generated_pack_never_answers_what_a_reviewed_language_means_otherwise ... ok
 test cross_language_collisions_follow_the_documented_policy ... ok
 test hostile_or_very_long_input_is_refused_quickly ... ok
 test invalid_and_unrecognised_input_says_why ... ok
 test every_major_script_reads_to_the_same_canonical_passage ... ok
-test full_names_abbreviations_ranges_numbered_books_and_separators ... ok
 test john_15_5_in_every_reviewed_language_whatever_the_interface_language ... ok
-test every_generated_pack_reads_each_of_its_books ... ok
-test the_hundred_languages_cover_the_scripts ... ok
+test full_names_abbreviations_ranges_numbered_books_and_separators ... ok
 test script_detection_and_native_digits ... ok
+test the_hundred_languages_cover_the_scripts ... ok
+test every_generated_pack_reads_each_of_its_books ... ok
 test the_interface_language_code_becomes_a_preference_not_a_gate ... ok
 test verses_are_validated_and_impossible_readings_do_not_compete ... ok
 test running_text_is_not_widened_by_the_generated_packs ... ok
 test the_interface_examples_read_as_written_and_french_takes_comma_or_colon ... ok
 test reading_typed_input_in_every_language_is_fast ... ok
 
-test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.62s
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.78s
 
      Running tests/references.rs (/workspace/abidingword/src-tauri/target/debug/deps/references-a75e815f2ca2b057)
 
 running 12 tests
 test a_bare_book_name_opens_its_first_chapter ... ok
+test detects_several_references_with_offsets ... ok
 test detects_one_reference ... ok
-test numbered_books_are_not_split_into_two_references ... ok
 test offsets_are_utf16_code_units ... ok
 test invalid_references_are_rejected_with_a_plain_message ... ok
-test one_chapter_books_read_a_single_number_as_a_verse ... ok
-test detects_several_references_with_offsets ... ok
+test numbered_books_are_not_split_into_two_references ... ok
 test ordinary_words_and_impossible_passages_are_not_references ... ok
-test common_english_forms_parse_to_canonical_references ... ok
 test punctuation_around_references ... ok
+test one_chapter_books_read_a_single_number_as_a_verse ... ok
 test ranges_across_chapters_and_whole_chapters ... ok
+test common_english_forms_parse_to_canonical_references ... ok
 test spelling_spacing_and_punctuation_variants ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
 
      Running tests/sample.rs (/workspace/abidingword/src-tauri/target/debug/deps/sample-f1c974f1e8f6bb28)
 
 running 1 test
 test the_example_project_is_added_once_and_is_ordinary_work ... ok
 
-test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
 
      Running tests/schema26_review.rs (/workspace/abidingword/src-tauri/target/debug/deps/schema26_review-a4bfcd12e6f239c2)
 
@@ -1420,33 +1421,33 @@ running 2 tests
 test archive_unlink_delete_restore_and_project_removal_retain_all_teaching_ids_until_owner_removal ... ok
 test on_disk_19_24_25_upgrade_keeps_answers_graph_history_and_one_backup_across_restarts ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.49s
 
      Running tests/scripture.rs (/workspace/abidingword/src-tauri/target/debug/deps/scripture-82fbcb5c87d008a8)
 
 running 19 tests
-test a_few_files_of_another_bible_among_many_are_refused_and_date_stamps_are_no_evidence ... ok
 test a_valid_fixture_imports_with_a_clear_preview ... ok
-test annotations_attach_to_canonical_passages ... ok
-test deuterocanonical_books_are_named_and_left_out_without_renumbering_anything ... ok
-test chapters_and_passages_are_read_in_canonical_order ... ok
-test a_failed_commit_leaves_nothing_behind ... ok
+test a_few_files_of_another_bible_among_many_are_refused_and_date_stamps_are_no_evidence ... ok
 test annotations_and_study_passages_survive_a_restart ... ok
+test deuterocanonical_books_are_named_and_left_out_without_renumbering_anything ... ok
+test a_failed_commit_leaves_nothing_behind ... ok
+test annotations_attach_to_canonical_passages ... ok
+test chapters_and_passages_are_read_in_canonical_order ... ok
 test files_naming_different_bibles_are_never_combined ... ok
-test duplicate_short_names_are_refused ... ok
 test removing_a_bible_keeps_studies_passages_and_notes ... ok
 test faulty_files_are_reported_in_plain_language_and_block_the_import ... ok
-test search_finds_words_and_phrases_with_filters ... ok
+test duplicate_short_names_are_refused ... ok
 test studies_link_to_passages_optionally ... ok
-test the_database_canon_matches_the_registry ... ok
+test search_finds_words_and_phrases_with_filters ... ok
 test switching_translation_keeps_the_same_canonical_passage ... ok
+test the_database_canon_matches_the_registry ... ok
 test unsupported_files_are_refused_clearly ... ok
 test the_korean_bible_has_the_verses_other_copies_lacked ... ok
 test the_bundled_world_english_bible_imports_cleanly ... ok
 test every_bundled_bible_is_recorded_and_imports_cleanly has been running for over 60 seconds
 test every_bundled_bible_is_recorded_and_imports_cleanly ... ok
 
-test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 72.80s
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 80.09s
 
      Running tests/source_annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_annotations-0c38ffc5c16cc244)
 
@@ -1454,39 +1455,39 @@ running 18 tests
 test a_highlight_found_again_never_overlaps_another_colour ... ok
 test a_lost_paragraph_is_found_again_only_with_its_context ... ok
 test a_page_of_a_pdf_without_text_can_be_bookmarked ... ok
-test a_selection_across_paragraphs_has_one_quote_joined_with_a_newline ... ok
-test a_highlight_is_anchored_in_the_stored_text_with_its_context ... ok
 test a_note_is_edited_and_a_highlight_recoloured_in_place ... ok
+test a_highlight_is_anchored_in_the_stored_text_with_its_context ... ok
 test a_place_whose_paragraph_went_falls_back_to_its_section ... ok
-test an_ambiguous_or_missing_quote_is_unresolved_never_guessed ... ok
+test a_selection_across_paragraphs_has_one_quote_joined_with_a_newline ... ok
+test a_selection_is_trimmed_of_space_at_its_ends ... ok
 test context_decides_between_repeats_elsewhere_in_the_source ... ok
 test an_annotation_follows_its_words_when_the_stored_text_changes ... ok
-test a_selection_is_trimmed_of_space_at_its_ends ... ok
+test an_ambiguous_or_missing_quote_is_unresolved_never_guessed ... ok
 test highlights_behave_like_a_highlighter_on_paper ... ok
+test rebuilding_the_passage_index_leaves_annotations_untouched ... ok
 test notes_and_bookmarks_on_a_place_need_no_selected_words ... ok
 test offsets_are_utf16_for_korean_and_characters_outside_the_bmp ... ok
-test rebuilding_the_passage_index_leaves_annotations_untouched ... ok
 test removing_a_source_removes_its_marks_but_keeps_them_in_the_file ... ok
-test the_marks_view_lists_source_marks_by_source_then_reading_order ... ok
 test what_each_kind_may_hold_is_checked ... ok
+test the_marks_view_lists_source_marks_by_source_then_reading_order ... ok
 
-test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.56s
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.36s
 
      Running tests/source_coverage.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_coverage-9e57ec9a77e65db9)
 
 running 10 tests
 test confirmed_whole_work_matches_without_any_invented_paragraph_page_or_reference ... ok
 test coverage_errors_are_atomic_and_unrelated_edits_preserve_malformed_legacy_data ... ok
+test focused_monograph_precedes_broad_book_intro_but_real_chapter_destination_still_leads ... ok
 test coverage_edits_preserve_stored_links_and_user_intent_survives_rebuild ... ok
 test automatic_scope_requires_metadata_and_real_structure_and_distinguishes_parent_from_competing_content ... ok
-test focused_monograph_precedes_broad_book_intro_but_real_chapter_destination_still_leads ... ok
 test incidental_mentions_do_not_promote_or_demote_equivalent_whole_source_coverage ... ok
-test manual_ranges_accept_interface_languages_preserve_other_metadata_and_match_only_their_scope ... ok
 test homonyms_multi_book_titles_publisher_noise_and_frequent_mentions_never_infer_coverage ... ok
-test localized_bibliographic_titles_corroborate_scope_without_accent_or_byte_boundary_loss ... ok
+test manual_ranges_accept_interface_languages_preserve_other_metadata_and_match_only_their_scope ... ok
 test source_coverage_uses_the_same_german_spelling_variants_for_books_and_passages ... ok
+test localized_bibliographic_titles_corroborate_scope_without_accent_or_byte_boundary_loss ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.83s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.43s
 
      Running tests/source_evidence_levels.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_evidence_levels-5558109e21f68e50)
 
@@ -1496,16 +1497,16 @@ test unsupported_or_ambiguous_traditions_remain_unmapped_and_keep_their_headings
 test toc_book_destination_descends_into_its_real_layout_chapter_before_body_mentions ... ok
 test printed_index_uses_actual_openings_in_the_editions_order_never_the_listing_page ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.82s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.61s
 
      Running tests/source_find.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_find-7414d02ae734c5e5)
 
 running 3 tests
-test an_unknown_source_is_an_error ... ok
 test many_occurrences_are_bounded_and_say_so ... ok
+test an_unknown_source_is_an_error ... ok
 test finds_every_occurrence_in_reading_order_with_exact_ranges ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.61s
 
      Running tests/source_heading_languages.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_heading_languages-78b810510af3b6ee)
 
@@ -1518,20 +1519,20 @@ test repeated_localized_units_keep_complete_bookless_ranges ... ok
 test exact_accents_and_word_boundaries_do_not_choose_a_different_book ... ok
 test every_installed_language_uses_its_available_book_dictionary_for_headings ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.51s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37s
 
      Running tests/source_locations.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_locations-2e27e14ff524cb67)
 
 running 7 tests
 test a_section_and_the_paragraphs_inside_it_are_still_one_place ... ok
 test a_source_with_only_same_chapter_mentions_has_no_places ... ok
-test a_wrong_source_or_passage_gives_nothing_and_no_error ... ok
 test expanding_returns_every_qualifying_place_and_starts_with_the_initial_three ... ok
+test a_wrong_source_or_passage_gives_nothing_and_no_error ... ok
 test places_the_relevance_model_excludes_are_not_brought_back ... ok
 test the_initial_group_still_shows_three_places_with_the_right_remainder ... ok
 test the_expanded_list_is_capped ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.96s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.36s
 
      Running tests/source_navigation.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_navigation-392600e29ae77d73)
 
@@ -1539,15 +1540,15 @@ running 10 tests
 test empty_spine_files_and_anchors_after_the_final_paragraph_do_not_borrow_another_opening ... ok
 test combined_pdf_heading_maps_both_books_without_arbitrary_relative_child_context ... ok
 test an_unanchored_printed_next_book_closes_previous_book_context_and_inheritance ... ok
-test epub_nav_and_ncx_use_actual_anchors_and_never_front_matter_mentions ... ok
 test old_epub_pre_heading_paths_are_corrected_without_changing_text_or_reference_identities ... ok
-test combined_book_openings_cover_both_books_without_borrowing_one_for_relative_chapters ... ok
+test epub_nav_and_ncx_use_actual_anchors_and_never_front_matter_mentions ... ok
 test existing_epub_upgrade_preserves_text_literal_and_manual_identities_without_reimport ... ok
+test combined_book_openings_cover_both_books_without_borrowing_one_for_relative_chapters ... ok
 test supplied_epub_combined_book_node_keeps_both_destinations_at_the_same_real_anchor ... ok
 test real_heading_hierarchies_descend_and_stop_at_the_deepest_containing_ancestor ... ok
 test targetless_or_ambiguous_book_entries_never_invent_a_book_opening ... ok
 
-test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.88s
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.28s
 
      Running tests/source_references.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_references-c38c9939849f1c78)
 
@@ -1561,25 +1562,25 @@ test drawn_text_links_a_bookless_reference_only_as_the_imported_text_resolved_it
 test a_pdf_sermon_s_main_passage_reaches_its_later_pages_at_import_and_on_rebuild ... ok
 test a_long_source_answers_quickly ... ok
 
-test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.14s
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.79s
 
      Running tests/source_relevance.rs (/workspace/abidingword/src-tauri/target/debug/deps/source_relevance-3c1ce1688ef0cd27)
 
 running 12 tests
+test a_citation_inside_a_relevant_section_remains_evidence_but_not_a_competing_destination ... ok
 test a_book_scale_ancestor_follows_narrow_structure_and_precedes_literal_only_sources ... ok
 test a_broad_structural_target_does_not_use_a_body_citation_to_raise_its_rank ... ok
-test a_citation_inside_a_relevant_section_remains_evidence_but_not_a_competing_destination ... ok
 test a_cross_reference_source_with_many_citations_is_one_entry_and_does_not_flood ... ok
-test a_demoted_citation_is_still_stored_with_its_provenance ... ok
 test a_neutral_exact_mention_stays_discoverable_above_the_cross_references ... ok
 test a_section_about_the_passage_beats_an_exact_cross_reference_from_another_passages_section ... ok
+test a_demoted_citation_is_still_stored_with_its_provenance ... ok
 test an_unrelated_book_is_excluded_and_the_order_is_stable ... ok
 test the_windows_examples_are_correct_references_with_the_wrong_relevance_not_parser_errors ... ok
 test for_john_15_5_precise_structure_then_broad_ancestors_lead_literal_references ... ok
 test the_other_queries_make_sense_too ... ok
 test the_source_language_changes_detection_never_the_relevance ... ok
 
-test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.25s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.30s
 
      Running tests/sources_to_study.rs (/workspace/abidingword/src-tauri/target/debug/deps/sources_to_study-9dc8b5ca8f7de186)
 
@@ -1587,47 +1588,47 @@ running 9 tests
 test a_place_on_a_pdf_page_and_pdf_words_are_kept_with_their_page ... ok
 test a_quote_across_paragraphs_and_in_korean_is_kept_exactly ... ok
 test a_citation_is_found_again_when_the_text_changes_and_never_guessed ... ok
-test a_mark_becomes_a_finding_and_the_finding_never_depends_on_it ... ok
 test a_finding_goes_into_the_chosen_part_and_bad_input_creates_nothing ... ok
-test duplicating_a_study_copies_quotes_places_and_snapshots ... ok
+test a_mark_becomes_a_finding_and_the_finding_never_depends_on_it ... ok
 test selected_words_become_a_finding_with_the_quote_kept_apart ... ok
-test removing_the_source_keeps_the_finding_quote_and_snapshot ... ok
+test duplicating_a_study_copies_quotes_places_and_snapshots ... ok
 test the_same_words_at_two_places_are_two_citations_but_the_same_place_is_one ... ok
+test removing_the_source_keeps_the_finding_quote_and_snapshot ... ok
 
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.42s
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.87s
 
      Running tests/studies.rs (/workspace/abidingword/src-tauri/target/debug/deps/studies-dcf9515c7edcdfe2)
 
 running 17 tests
 test a_part_keeps_its_key_and_phase_when_added_and_its_phase_can_change ... ok
-test a_study_can_start_with_a_primary_passage_or_none ... ok
-test a_study_copies_its_template_and_does_not_follow_later_changes ... ok
 test a_section_with_content_needs_confirmation_and_its_findings_are_kept ... ok
+test a_study_copies_its_template_and_does_not_follow_later_changes ... ok
+test a_study_can_start_with_a_primary_passage_or_none ... ok
 test a_study_has_at_most_one_primary_passage ... ok
 test a_template_of_ones_own_keeps_its_phases_and_never_two_parts_with_one_key ... ok
-test built_in_templates_say_where_every_part_belongs_and_studies_copy_it ... ok
 test blocks_support_quotations_and_questions_and_can_be_reordered ... ok
-test built_in_templates_start_small_and_offer_the_rest_later ... ok
-test metadata_status_and_details_update_and_list_filters_work ... ok
-test every_study_type_gets_its_scaffold_and_persists ... ok
+test built_in_templates_say_where_every_part_belongs_and_studies_copy_it ... ok
 test duplicating_copies_structure_by_default_and_content_on_request ... ok
+test every_study_type_gets_its_scaffold_and_persists ... ok
+test metadata_status_and_details_update_and_list_filters_work ... ok
+test built_in_templates_start_small_and_offer_the_rest_later ... ok
 test sections_can_be_added_renamed_reordered_and_removed ... ok
-test studies_can_be_related_in_both_directions ... ok
 test six_built_in_templates_exist_and_are_protected ... ok
-test user_templates_can_be_created_duplicated_edited_and_deleted ... ok
+test studies_can_be_related_in_both_directions ... ok
 test study_data_survives_a_restart ... ok
+test user_templates_can_be_created_duplicated_edited_and_deleted ... ok
 
-test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.37s
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.34s
 
      Running tests/study_flow.rs (/workspace/abidingword/src-tauri/target/debug/deps/study_flow-fdaf4a908ad3fd45)
 
 running 4 tests
 test block_command_payload_preserves_old_calls_and_accepts_atomic_provenance ... ok
-test evidence_create_is_atomic_and_rejects_invalid_metadata_before_writing ... ok
 test legacy_definitions_and_new_writing_templates_coexist_and_reject_ambiguous_blocks ... ok
+test evidence_create_is_atomic_and_rejects_invalid_metadata_before_writing ... ok
 test personal_blocks_and_evidence_survive_template_changes_restart_and_backup ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.97s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s
 
      Running tests/suggestion_quality.rs (/workspace/abidingword/src-tauri/target/debug/deps/suggestion_quality-0d437613122ad1e7)
 
@@ -1637,48 +1638,48 @@ test a_heading_that_starts_with_a_book_and_number_follows_the_parser_rules ... o
 test a_passage_with_no_direct_source_lists_nothing_and_an_unrelated_book_does_not_leak ... ok
 test a_later_part_of_the_chapter_offers_only_what_reaches_those_verses ... ok
 test a_complete_passage_section_leads_and_a_partial_subsection_is_not_a_destination ... ok
-test a_section_its_opening_mention_and_repeated_mentions_are_one_place ... ok
-test a_usable_section_suppresses_literal_choices_without_removing_their_distinct_records ... ok
-test a_source_with_fifty_mentions_shows_three_places_and_the_true_remainder ... ok
 test a_section_about_a_passage_outranks_a_neutral_mention_even_of_the_exact_verse ... ok
+test a_section_its_opening_mention_and_repeated_mentions_are_one_place ... ok
+test a_source_with_fifty_mentions_shows_three_places_and_the_true_remainder ... ok
+test a_usable_section_suppresses_literal_choices_without_removing_their_distinct_records ... ok
 test at_most_thirty_sources_are_listed_and_the_choice_is_stable ... ok
-test for_one_verse_the_best_sources_come_first_in_a_justified_order ... ok
-test for_a_whole_chapter_the_chapter_source_leads_and_each_source_appears_once ... ok
 test equal_input_always_gives_equal_output ... ok
-test one_chapter_books_and_psalms_use_their_canonical_chapters ... ok
+test for_a_whole_chapter_the_chapter_source_leads_and_each_source_appears_once ... ok
 test navigation_selects_one_complete_chapter_branch_and_retains_the_other_places ... ok
+test for_one_verse_the_best_sources_come_first_in_a_justified_order ... ok
 test partial_structural_overlap_is_not_a_destination_and_remains_usable_for_its_own_verses ... ok
+test one_chapter_books_and_psalms_use_their_canonical_chapters ... ok
 test range_relations_are_classified_for_the_pane ... ok
 test same_chapter_places_are_never_offered ... ok
 test the_place_cap_is_three_and_the_remainder_counts_real_places ... ok
 test the_source_language_changes_detection_never_the_ranking ... ok
 
-test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.67s
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.46s
 
      Running tests/teaching.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching-7fb79e08f767cc7f)
 
 running 6 tests
-test a_study_has_several_preparations_each_saved_and_deleted_on_its_own ... ok
-test points_keep_their_order_through_inserting_moving_and_removing ... ok
 test findings_are_linked_live_never_copied_and_never_owned ... ok
+test points_keep_their_order_through_inserting_moving_and_removing ... ok
 test kept_material_carries_an_honest_standing ... ok
-test scripture_is_named_in_the_teaching_without_touching_the_study ... ok
+test a_study_has_several_preparations_each_saved_and_deleted_on_its_own ... ok
 test the_schema_is_at_version_nine ... ok
+test scripture_is_named_in_the_teaching_without_touching_the_study ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
 
      Running tests/teaching_blocks.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching_blocks-2aeb1e717fd55b3a)
 
 running 7 tests
-test blocks_reorder_exactly_and_a_section_delete_keeps_what_was_written ... ok
-test a_block_teaching_dual_writes_roles_and_leaves_a_legacy_sermon_alone ... ok
 test deleting_a_private_section_keeps_lifted_children_private_and_legacy_sessions_unchanged ... ok
+test blocks_reorder_exactly_and_a_section_delete_keeps_what_was_written ... ok
 test conflicting_starting_roles_keep_all_writing_and_restore_never_steals_ownership ... ok
+test a_block_teaching_dual_writes_roles_and_leaves_a_legacy_sermon_alone ... ok
 test presentations_exclude_private_scripture_even_after_public_slides_were_saved ... ok
-test scripture_links_reject_unknown_cross_preparation_and_ineligible_blocks_without_writes ... ok
 test role_copies_keep_independent_live_slides_and_deletion_clears_the_mirror ... ok
+test scripture_links_reject_unknown_cross_preparation_and_ineligible_blocks_without_writes ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.18s
 
      Running tests/teaching_standalone.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching_standalone-4ef6bb02cc93ac29)
 
@@ -1690,61 +1691,61 @@ test study_delete_keeps_teaching_and_snapshots_including_trashed_sessions ... ok
 test standalone_snapshots_and_presentation_sources_move_and_restore ... ok
 test saved_citation_reopens_exact_library_words_after_study_deletion ... ok
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.90s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.06s
 
      Running tests/teaching_templates.rs (/workspace/abidingword/src-tauri/target/debug/deps/teaching_templates-c3820cbe598d371e)
 
 running 3 tests
+test a_template_is_refused_without_a_format_or_with_a_wrong_kind_or_too_many_steps ... ok
 test a_template_keeps_its_format_and_its_steps_in_order ... ok
 test editing_or_deleting_a_template_never_changes_a_teaching_made_from_it ... ok
-test a_template_is_refused_without_a_format_or_with_a_wrong_kind_or_too_many_steps ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s
 
      Running tests/template_assets.rs (/workspace/abidingword/src-tauri/target/debug/deps/template_assets-e8497ff25fbdb233)
 
 running 7 tests
 test an_asset_id_that_is_not_a_sha256_names_no_file ... ok
-test an_image_changed_in_staging_is_not_kept ... ok
 test an_import_that_fails_halfway_leaves_nothing_in_the_store ... ok
+test an_image_changed_in_staging_is_not_kept ... ok
 test the_same_image_twice_is_one_file_and_shared_images_are_never_deleted ... ok
 test two_saves_keeping_the_same_new_image_both_keep_it_even_if_one_fails ... ok
 test keeping_copies_exactly_the_templates_images_once ... ok
 test a_powerpoint_import_stages_its_images_and_cancelling_leaves_the_store_empty ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
 
      Running tests/template_catalogue.rs (/workspace/abidingword/src-tauri/target/debug/deps/template_catalogue-e0163b5a48a82973)
 
 running 4 tests
-test copying_a_completed_part_without_blocks_keeps_its_progress ... ok
 test entry_data_without_display_text_is_not_silently_deleted ... ok
+test copying_a_completed_part_without_blocks_keeps_its_progress ... ok
 test all_six_templates_create_empty_studies_with_stable_keys_and_types ... ok
 test character_and_book_workflows_survive_custom_templates_deletion_backup_and_restore ... ok
 
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.79s
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.86s
 
      Running tests/template_import.rs (/workspace/abidingword/src-tauri/target/debug/deps/template_import-2146999ca607500b)
 
 running 16 tests
 test a_file_that_is_not_a_presentation_is_refused ... ok
-test a_broken_design_never_reaches_powerpoint ... ok
 test accepting_lays_out_the_chosen_roles_and_keeps_only_used_images ... ok
+test a_broken_design_never_reaches_powerpoint ... ok
 test a_powerpoint_design_brings_its_size_colours_fonts_and_layouts ... ok
 test fonts_are_checked_against_this_computer_and_never_replaced_silently ... ok
-test keynote_size_quote_layout_svg_picture_and_embedded_fonts ... ok
 test google_slides_size_names_and_what_it_cannot_show ... ok
+test keynote_size_quote_layout_svg_picture_and_embedded_fonts ... ok
 test libreoffice_with_two_masters_dark_gradient_and_korean_footer ... ok
-test progress_counts_the_layouts_really_read ... ok
-test obvious_layouts_are_suggested_for_roles_and_the_rest_stays_unmapped ... ok
 test a_hostile_file_is_refused_not_a_crash ... ok
+test obvious_layouts_are_suggested_for_roles_and_the_rest_stays_unmapped ... ok
 test the_master_logo_in_a_group_and_the_footer_reach_every_layout_that_shows_them ... ok
-test write_interface_fixture ... ignored
 test the_scripture_layout_keeps_its_cropped_background_band_boxes_and_alignment ... ok
+test write_interface_fixture ... ignored
+test progress_counts_the_layouts_really_read ... ok
 test what_cannot_be_reproduced_is_reported_never_dropped_silently ... ok
 test every_corpus_file_gives_a_valid_template_and_the_same_result_twice ... ok
 
-test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.09s
+test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.13s
 
      Running tests/ten_step.rs (/workspace/abidingword/src-tauri/target/debug/deps/ten_step-7f9d94bc060afba9)
 
@@ -1753,7 +1754,7 @@ test a_customised_copy_retains_its_fields_and_reference_to_built_in_text ... ok
 test the_ten_steps_have_stable_fields_and_start_without_example_answers ... ok
 test text_entries_and_progress_remain_after_database_reopen ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s
 
      Running tests/text_refresh.rs (/workspace/abidingword/src-tauri/target/debug/deps/text_refresh-324ef285123d15b3)
 
@@ -1761,20 +1762,20 @@ running 2 tests
 test a_missing_file_is_left_as_it_was_and_tried_again ... ok
 test an_epub_imported_by_an_earlier_version_is_repaired_in_place_once ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.35s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.58s
 
      Running tests/windows_dev44_compatibility.rs (/workspace/abidingword/src-tauri/target/debug/deps/windows_dev44_compatibility-aa012bff88156cd7)
 
 running 7 tests
 test development_migrations_one_through_twenty_three_are_byte_identical ... ok
 test conflicting_main_v10_is_refused_without_relabeling_or_applying_any_migration ... ok
-test fresh_schema_contains_both_presentations_and_structured_templates ... ok
 test incomplete_history_is_not_falsely_marked_as_applied ... ok
+test fresh_schema_contains_both_presentations_and_structured_templates ... ok
 test unrecorded_structured_columns_stop_before_any_pending_migration ... ok
 test dev43_v19_objects_rows_history_and_backup_survive_upgrade_and_restart ... ok
 test full_app_backup_restores_template_fields_answers_phases_and_files ... ok
 
-test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.87s
 
      Running tests/windows_rollback.rs (/workspace/abidingword/src-tauri/target/debug/deps/windows_rollback-58bf8e87f8adaf72)
 
@@ -1783,7 +1784,7 @@ test a_newer_wal_file_left_beside_a_restored_copy_is_why_it_must_be_removed ... 
 test the_pre_migration_copy_includes_a_change_still_only_in_the_wal_file ... ok
 test a_dev41_database_upgrades_with_a_complete_backup_and_rolls_back_cleanly ... ok
 
-test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.63s
 
      Running tests/word_annotations.rs (/workspace/abidingword/src-tauri/target/debug/deps/word_annotations-99dc638ad1e7c157)
 
@@ -1806,7 +1807,7 @@ test bundled_strongs_only_bibles_are_reported_but_not_indexed ... ok
 test bundled_bibles_read_to_exactly_the_v020_text has been running for over 60 seconds
 test bundled_bibles_read_to_exactly_the_v020_text ... ok
 
-test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 115.59s
+test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 125.78s
 
    Doc-tests abiding_word_lib
 

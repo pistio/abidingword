@@ -114,7 +114,7 @@ dist/assets/index-C8vYCv2T.js                                           2,834.36
 - Using dynamic import() to code-split the application
 - Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-✓ built in 1.02s
+✓ built in 1.26s
 npm notice
 npm notice New major version of npm available! 11.9.0 -> 12.2.3
 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
