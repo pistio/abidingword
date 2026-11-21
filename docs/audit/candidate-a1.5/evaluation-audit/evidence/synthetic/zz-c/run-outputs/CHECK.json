@@ -1,0 +1,32 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/4568ef63-5136-583d-b764-3944c43b365a/scratchpad/audit-repo/docs/evaluation/zz-c/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/4568ef63-5136-583d-b764-3944c43b365a/scratchpad/audit-docs/zz-c",
+ "seal_commit": "c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3",
+ "manifest_sha256": "c7db9a0dc8132e4a72612f99d54849e2cdffb3bc3eefe57cf612dca4b2fc02dd",
+ "checksums_sha256": "4c0f3122a123067726ce3fb35acd6ae3d15d93e681477c84b0963ab316ded202",
+ "classes": {
+  "control": 1,
+  "exploratory": 0,
+  "mixed": 1,
+  "scored": 1
+ },
+ "inventory_sha256": "eb1013d3702e0509fc5d3bffc806af128b33bbd27c620bde89c28f7c6c441c8b",
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}

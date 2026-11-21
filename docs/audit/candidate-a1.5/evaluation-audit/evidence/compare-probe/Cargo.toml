@@ -1,0 +1,8 @@
+[package]
+name = "probe-compare"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+unicode-normalization = "=0.1.25"

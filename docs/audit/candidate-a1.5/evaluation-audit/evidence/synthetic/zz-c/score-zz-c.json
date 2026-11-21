@@ -1,0 +1,344 @@
+{
+ "anchors": {
+  "run_record_commit": "5d3d787daf425eb1acb482cb99cb35a1fe318253",
+  "run_record_path": "docs/evaluation/zz-c/run",
+  "seal_commit": "c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3",
+  "seal_path": "docs/evaluation/zz-c/seal",
+  "scorer_sha256": "658de955cc4594b5893ba84518ccbdfc7673b95da280edc5056c09835fb9a9bf",
+  "check_set_sha256": "01a13dde21510ad9e9f3b9c301d971e87feffbacdcaee0449d6c2f9180c3411f"
+ },
+ "run": {
+  "started": "2026-11-21T15:47:36Z",
+  "seal_commit": "c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3",
+  "manifest": "c7db9a0dc8132e4a72612f99d54849e2cdffb3bc3eefe57cf612dca4b2fc02dd",
+  "checksums": "4c0f3122a123067726ce3fb35acd6ae3d15d93e681477c84b0963ab316ded202",
+  "binary": "e396328c20fef35ee12f62b880e554f676a93006ca5bc8054dc82d433f21ee43",
+  "runner": "8515e92c329370236f5aab0495b4e08c4f6a76f64f6e8d0abbd59584181385a9",
+  "check_set": "01a13dde21510ad9e9f3b9c301d971e87feffbacdcaee0449d6c2f9180c3411f",
+  "inventory": "eb1013d3702e0509fc5d3bffc806af128b33bbd27c620bde89c28f7c6c441c8b",
+  "limits": {
+   "timeout_seconds": 1800,
+   "memory_kb": 4194304
+  },
+  "host": "Linux 6.18.44-fc-v726 x86_64",
+  "ended": "2026-11-21T15:47:37Z"
+ },
+ "assessment": {
+  "verdict": "fail",
+  "run_validity": {
+   "anchored_and_intact": true,
+   "run_complete": true,
+   "every_document_has_a_record": true,
+   "seal_matches": true,
+   "frozen_binary": true,
+   "protocol_limits": true,
+   "canonical_inventory": true
+  },
+  "criteria": {
+   "1_no_wrong_verified_text": true,
+   "2_no_verified_reference_outside_the_edition": true,
+   "3_no_verified_reference_in_controls_or_outside_allowed": false,
+   "4_every_document_completed_or_refused_cleanly": true
+  },
+  "accuracy_claim": "0 verified verses with wrong text and 0 verified references outside the edition, among 21 verified verses of 1 completed scored documents (0 authentic), which print 21 verses: coverage 100.0 % (verified correct / printed; no pass mark). Exploratory documents are not part of this figure.",
+  "authentic_evidence": {
+   "documents": 0,
+   "printed_verses": 0,
+   "verified": 0,
+   "verified_correct": 0,
+   "formats": [],
+   "languages": [],
+   "minimum": {
+    "documents": 8,
+    "reference_verses": 20000,
+    "formats": 2,
+    "languages": 4
+   },
+   "meets_minimum": false,
+   "coverage_percent": null
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "execution": {
+   "completed": 3
+  },
+  "failure_causes": {},
+  "scored": {
+   "documents": 1,
+   "printed": 21,
+   "verified": 21,
+   "verified_correct": 21,
+   "verified_wrong": 0,
+   "verified_typography": 0,
+   "verified_absent": 0,
+   "refused_correct": 0,
+   "caught": 0,
+   "refused_chapters": 0,
+   "coverage_percent": 100.0,
+   "documents_in_manifest": 1,
+   "refused_whole": [],
+   "failed_to_run": []
+  },
+  "control": {
+   "documents": 1,
+   "completed": 1,
+   "verified": 21
+  },
+  "mixed": {
+   "documents": 1,
+   "completed": 1,
+   "verified_allowed": 22,
+   "verified_outside_allowed": 23
+  },
+  "exploratory": {
+   "documents": 0,
+   "completed": 0,
+   "note": "raw observations only; no matching reference, so nothing is judged"
+  }
+ },
+ "groups": {
+  "format": {
+   "md": {
+    "documents": 1,
+    "printed": 21,
+    "verified": 21,
+    "verified_correct": 21,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 0
+   }
+  },
+  "language": {
+   "en": {
+    "documents": 1,
+    "printed": 21,
+    "verified": 21,
+    "verified_correct": 21,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 0
+   }
+  },
+  "script": {
+   "Latin": {
+    "documents": 1,
+    "printed": 21,
+    "verified": 21,
+    "verified_correct": 21,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 0
+   }
+  },
+  "kind": {
+   "generated": {
+    "documents": 1,
+    "printed": 21,
+    "verified": 21,
+    "verified_correct": 21,
+    "verified_wrong": 0,
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 0
+   }
+  }
+ },
+ "documents": [
+  {
+   "key": "zzaudit-c-oba",
+   "files": "zzaudit-c-oba.md",
+   "reference": "zzaudit-c-oba_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 1,
+   "execution": "completed",
+   "observed": {
+    "printed": 21,
+    "verified": 21,
+    "verified_wrong": 0,
+    "verified_wrong_references": [],
+    "verified_typography": 0,
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_correct": 21,
+    "refused_correct": 0,
+    "caught": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "peak_memory_mb": 20.26171875,
+    "seconds": 0.122812863
+   }
+  },
+  {
+   "key": "zzaudit-c-ctl",
+   "files": "zzaudit-c-ctl.md",
+   "reference": "-",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "control",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "detected": 21,
+    "verified": 21,
+    "verified_references": [
+     "OBA 1:1",
+     "OBA 1:2",
+     "OBA 1:3",
+     "OBA 1:4",
+     "OBA 1:5",
+     "OBA 1:6",
+     "OBA 1:7",
+     "OBA 1:8",
+     "OBA 1:9",
+     "OBA 1:10",
+     "OBA 1:11",
+     "OBA 1:12",
+     "OBA 1:13",
+     "OBA 1:14",
+     "OBA 1:15",
+     "OBA 1:16",
+     "OBA 1:17",
+     "OBA 1:18",
+     "OBA 1:19",
+     "OBA 1:20",
+     "OBA 1:21"
+    ],
+    "peak_memory_mb": 20.1015625,
+    "seconds": 0.111329643
+   }
+  },
+  {
+   "key": "zzaudit-c-mix",
+   "files": "zzaudit-c-mix.md",
+   "reference": "-",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "mixed",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "detected": 45,
+    "verified": 45,
+    "verified_references": [
+     "RUT 1:1",
+     "RUT 1:2",
+     "RUT 1:3",
+     "RUT 1:4",
+     "RUT 1:5",
+     "RUT 1:6",
+     "RUT 1:7",
+     "RUT 1:8",
+     "RUT 1:9",
+     "RUT 1:10",
+     "RUT 1:11",
+     "RUT 1:12",
+     "RUT 1:13",
+     "RUT 1:14",
+     "RUT 1:15",
+     "RUT 1:16",
+     "RUT 1:17",
+     "RUT 1:18",
+     "RUT 1:19",
+     "RUT 1:20",
+     "RUT 1:21",
+     "RUT 1:22",
+     "RUT 2:1",
+     "RUT 2:2",
+     "RUT 2:3",
+     "RUT 2:4",
+     "RUT 2:5",
+     "RUT 2:6",
+     "RUT 2:7",
+     "RUT 2:8",
+     "RUT 2:9",
+     "RUT 2:10",
+     "RUT 2:11",
+     "RUT 2:12",
+     "RUT 2:13",
+     "RUT 2:14",
+     "RUT 2:15",
+     "RUT 2:16",
+     "RUT 2:17",
+     "RUT 2:18",
+     "RUT 2:19",
+     "RUT 2:20",
+     "RUT 2:21",
+     "RUT 2:22",
+     "RUT 2:23"
+    ],
+    "peak_memory_mb": 20.20703125,
+    "seconds": 0.093632286
+   },
+   "allowed_verified": [
+    "RUT 1:1",
+    "RUT 1:2",
+    "RUT 1:3",
+    "RUT 1:4",
+    "RUT 1:5",
+    "RUT 1:6",
+    "RUT 1:7",
+    "RUT 1:8",
+    "RUT 1:9",
+    "RUT 1:10",
+    "RUT 1:11",
+    "RUT 1:12",
+    "RUT 1:13",
+    "RUT 1:14",
+    "RUT 1:15",
+    "RUT 1:16",
+    "RUT 1:17",
+    "RUT 1:18",
+    "RUT 1:19",
+    "RUT 1:20",
+    "RUT 1:21",
+    "RUT 1:22"
+   ],
+   "outside_allowed": [
+    "RUT 2:1",
+    "RUT 2:2",
+    "RUT 2:3",
+    "RUT 2:4",
+    "RUT 2:5",
+    "RUT 2:6",
+    "RUT 2:7",
+    "RUT 2:8",
+    "RUT 2:9",
+    "RUT 2:10",
+    "RUT 2:11",
+    "RUT 2:12",
+    "RUT 2:13",
+    "RUT 2:14",
+    "RUT 2:15",
+    "RUT 2:16",
+    "RUT 2:17",
+    "RUT 2:18",
+    "RUT 2:19",
+    "RUT 2:20",
+    "RUT 2:21",
+    "RUT 2:22",
+    "RUT 2:23"
+   ]
+  }
+ ]
+}

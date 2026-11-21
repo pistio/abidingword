@@ -1,0 +1,6 @@
+key	publisher	edition	revision	retrieved_from	retrieved_utc	licence	document_sha256	reference_source	reference_method	identity_checked_by
+zzaudit-a-rut	audit	synthetic	1	generated locally	2026-11-21T00:00:00Z	none (invented)	5b5f224535f7eebbc31518350d9b7932dc1d9510e701b7c558983702ef425f34	generated with the document	same generator	auditor
+zzaudit-a-phm	audit	synthetic	1	generated locally	2026-11-21T00:00:00Z	none (invented)	ae7a15721a64bf9a758fab177adc980c0a4a5feb4ab858685a2dcbebbf6b7904	generated with the document	same generator	auditor
+zzaudit-a-3jn	audit	synthetic	1	generated locally	2026-11-21T00:00:00Z	none (invented)	d8053952944520dcdb50f8a9747dbc35c40042910ea4ba10407ddb92de93c633	generated with the document	same generator	auditor
+zzaudit-a-ctl	audit	synthetic	1	generated locally	2026-11-21T00:00:00Z	none (invented)	beef9ee6201b94bc1bcea9552e82e9e420ae403ed7dd3168c3929140e191fae5	-	-	auditor
+zzaudit-a-mix	audit	synthetic	1	generated locally	2026-11-21T00:00:00Z	none (invented)	29ba6cd3ca576a5f6d13ae50778b6e441989481e70302a28561bf445e0936eec	-	-	auditor

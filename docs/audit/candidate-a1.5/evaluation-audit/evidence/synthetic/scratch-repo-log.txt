@@ -1,0 +1,67 @@
+5d3d787daf425eb1acb482cb99cb35a1fe318253 run record: docs/evaluation/zz-c/seal (seal c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3)
+c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3 seal: zz-c (synthetic audit set)
+d50ba35a437f801ebbe5bd21fd22556e9642edae run record: docs/evaluation/zz-b/seal (seal 8769c0a27c7cd4f4916dfe4f66d231cb522e6f44)
+c302487fbc01257d4e6658dcde21e80b6bf44354 run record: docs/evaluation/zz-a/seal (seal 8c3298102d9f8d154119c108ea33b613a76b5000)
+8769c0a27c7cd4f4916dfe4f66d231cb522e6f44 seal: zz-b (synthetic audit set)
+8c3298102d9f8d154119c108ea33b613a76b5000 seal: zz-a (synthetic audit set)
+d40bd3af9534d4e75f6885c542930842d4059095 pinned tools (copied byte for byte), canonical inventory, disclosed manifests
+
+--- 5d3d787 run record: docs/evaluation/zz-c/seal (seal c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3)
+ docs/evaluation/zz-c/run/CHECK.json     | 32 ++++++++++++++++++++++++++++++++
+ docs/evaluation/zz-c/run/OUTPUTS.sha256 | 11 +++++++++++
+ docs/evaluation/zz-c/run/RUN.txt        | 14 ++++++++++++++
+ 3 files changed, 57 insertions(+)
+--- c551ad6 seal: zz-c (synthetic audit set)
+ docs/evaluation/zz-c/seal/SEAL.txt                  | 7 +++++++
+ docs/evaluation/zz-c/seal/access-records.md         | 1 +
+ docs/evaluation/zz-c/seal/allowed/zzaudit-c-mix.txt | 2 ++
+ docs/evaluation/zz-c/seal/checksums.sha256          | 4 ++++
+ docs/evaluation/zz-c/seal/manifest.tsv              | 4 ++++
+ docs/evaluation/zz-c/seal/provenance.tsv            | 4 ++++
+ docs/evaluation/zz-c/seal/review-ledger.md          | 1 +
+ 7 files changed, 23 insertions(+)
+--- d50ba35 run record: docs/evaluation/zz-b/seal (seal 8769c0a27c7cd4f4916dfe4f66d231cb522e6f44)
+ docs/evaluation/zz-b/run/CHECK.json     | 32 ++++++++++++++++++
+ docs/evaluation/zz-b/run/OUTPUTS.sha256 | 57 +++++++++++++++++++++++++++++++++
+ docs/evaluation/zz-b/run/RUN.txt        | 25 +++++++++++++++
+ 3 files changed, 114 insertions(+)
+--- c302487 run record: docs/evaluation/zz-a/seal (seal 8c3298102d9f8d154119c108ea33b613a76b5000)
+ docs/evaluation/zz-a/run/CHECK.json     | 32 ++++++++++++++++++++++++++++++++
+ docs/evaluation/zz-a/run/OUTPUTS.sha256 | 19 +++++++++++++++++++
+ docs/evaluation/zz-a/run/RUN.txt        | 16 ++++++++++++++++
+ 3 files changed, 67 insertions(+)
+--- 8769c0a seal: zz-b (synthetic audit set)
+ docs/evaluation/zz-b/seal/SEAL.txt          |  6 ++++++
+ docs/evaluation/zz-b/seal/access-records.md |  1 +
+ docs/evaluation/zz-b/seal/checksums.sha256  | 28 ++++++++++++++++++++++++++++
+ docs/evaluation/zz-b/seal/manifest.tsv      | 15 +++++++++++++++
+ docs/evaluation/zz-b/seal/provenance.tsv    | 15 +++++++++++++++
+ docs/evaluation/zz-b/seal/review-ledger.md  |  1 +
+ 6 files changed, 66 insertions(+)
+--- 8c32981 seal: zz-a (synthetic audit set)
+ docs/evaluation/zz-a/seal/SEAL.txt                  | 7 +++++++
+ docs/evaluation/zz-a/seal/access-records.md         | 1 +
+ docs/evaluation/zz-a/seal/allowed/zzaudit-a-mix.txt | 1 +
+ docs/evaluation/zz-a/seal/checksums.sha256          | 8 ++++++++
+ docs/evaluation/zz-a/seal/manifest.tsv              | 6 ++++++
+ docs/evaluation/zz-a/seal/provenance.tsv            | 6 ++++++
+ docs/evaluation/zz-a/seal/review-ledger.md          | 1 +
+ 7 files changed, 30 insertions(+)
+--- d40bd3a pinned tools (copied byte for byte), canonical inventory, disclosed manifests
+ docs/corpus/derived-v2.tsv                 |    3 +
+ docs/corpus/editions.tsv                   |   47 +
+ docs/corpus/recon-bc.tsv                   |   23 +
+ docs/corpus/recon-d.tsv                    |    8 +
+ docs/corpus/sources.tsv                    |   71 +
+ docs/corpus/withheld-b.tsv                 |   12 +
+ docs/corpus/withheld-c.tsv                 |   12 +
+ docs/corpus/withheld-d.tsv                 |   13 +
+ docs/corpus/withheld-e.tsv                 |   13 +
+ docs/corpus/withheld-f.tsv                 |   14 +
+ docs/corpus/withheld-g.tsv                 |   15 +
+ docs/evaluation/disclosed-documents.sha256 | 7461 ++++++++++++++++++++++++++++
+ scripts/evaluation/check-set.py            |  565 +++
+ scripts/evaluation/run-withheld-set.sh     |  100 +
+ scripts/evaluation/score-set.py            |  487 ++
+ scripts/evaluation/seal-set.py             |   88 +
+ 16 files changed, 8932 insertions(+)

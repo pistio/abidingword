@@ -1,0 +1,32 @@
+{
+ "seal_folder": "/tmp/claude-0/-home-user-abidingword/4568ef63-5136-583d-b764-3944c43b365a/scratchpad/audit-repo/docs/evaluation/zz-a/seal",
+ "documents_folder": "/tmp/claude-0/-home-user-abidingword/4568ef63-5136-583d-b764-3944c43b365a/scratchpad/audit-docs/zz-a",
+ "seal_commit": "8c3298102d9f8d154119c108ea33b613a76b5000",
+ "manifest_sha256": "92634985258b204ecaafd0a0efa59a1eb6482c7b654665ca2102c261386d3928",
+ "checksums_sha256": "66c2c972dc35023e2c0fb793996e8aa4bbfa81456ef2761ff0bf76f8e1952eb4",
+ "classes": {
+  "control": 1,
+  "exploratory": 0,
+  "mixed": 1,
+  "scored": 3
+ },
+ "inventory_sha256": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+ "authentic_scored_evidence": {
+  "documents": 0,
+  "reference_verses": 0,
+  "formats": [],
+  "languages": [],
+  "minimum": {
+   "documents": 8,
+   "reference_verses": 20000,
+   "formats": 2,
+   "languages": 4
+  },
+  "meets_minimum": false
+ },
+ "errors": [],
+ "notes": [
+  "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+ ],
+ "ok": true
+}

@@ -1,0 +1,4 @@
+key	files	reference	language	script	format	layout	role	source and licence	books	sha256	generator	kind	class
+zzaudit-c-oba	zzaudit-c-oba.md	zzaudit-c-oba_usfm.zip	en	Latin	md	synthetic	withheld-audit	invented text, audit only	OBA	df3cc8bb43ab6c86ffe5018e8b6539692e064b3b4d207bf237ef5eaaa784037b	audit make_sets.py	generated	scored
+zzaudit-c-ctl	zzaudit-c-ctl.md	-	en	Latin	md	synthetic	withheld-audit	invented text, audit only	-	df3cc8bb43ab6c86ffe5018e8b6539692e064b3b4d207bf237ef5eaaa784037b	audit make_sets.py	generated	control
+zzaudit-c-mix	zzaudit-c-mix.md	-	en	Latin	md	synthetic	withheld-audit	invented text, audit only	RUT	3c49d8ce458b34a8a6bd5f793675a0f0898e8f72bc0ae9a9ccc86e1a4041caad	audit make_sets.py	generated	mixed

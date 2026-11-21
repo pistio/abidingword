@@ -1,0 +1,53 @@
+{"id":"T01","class":0,"kind":"-","harness":"verified_exact","scorer":"verified_correct","want":"Jesus wept.","found":"Jesus wept.","note":"identical"}
+{"id":"T02","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"Jesus  wept.","found":"Jesus wept.","note":"double space"}
+{"id":"T03","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"Then he said, \u{201C}Come.\u{201D}","found":"Then he said, \"Come.\"","note":"curly vs straight quotes"}
+{"id":"T04","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"que \u{00E9}lir\u{00E1}","found":"que\u{00E9}lir\u{00E1}","note":"owner case: reference 'que \u{00E9}lir\u{00E1}' (USFM delimiter rule) vs document 'que\u{00E9}lir\u{00E1}'"}
+{"id":"T05","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"que \u{00E9}l ir\u{00E1}","found":"que\u{00E9}lir\u{00E1}","note":"same, if the reference were read as 'que \u{00E9}l ir\u{00E1}'"}
+{"id":"M01","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"and he shall be set apart for me","found":"and he shall be set a part for me","note":"word boundary: apart / a part"}
+{"id":"M02","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"God is now here.","found":"God is nowhere.","note":"word boundary: now here / nowhere"}
+{"id":"M03","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"no por obras, si no por gracia","found":"no por obras, sino por gracia","note":"Spanish: si no (if not) / sino (but rather)"}
+{"id":"M04","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"the Spirit of God moved","found":"the spirit of God moved","note":"case: Spirit / spirit"}
+{"id":"M05","class":1,"kind":"-","harness":"verified_normalised","scorer":"verified_correct","want":"the LORD is my shepherd","found":"the Lord is my shepherd","note":"case: LORD (YHWH) / Lord (Adonai)"}
+{"id":"M06","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"It's the LORD's doing.","found":"Its the LORD's doing.","note":"apostrophe: It's / Its"}
+{"id":"M07","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"He'll come again.","found":"Hell come again.","note":"apostrophe: He'll / Hell"}
+{"id":"M08","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"We're his people.","found":"Were his people.","note":"apostrophe: We're / Were"}
+{"id":"M09","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"Truly I tell you, today you will be with me in paradise.","found":"Truly I tell you today, you will be with me in paradise.","note":"comma placement (Luke 23:43)"}
+{"id":"M10","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"You are the Christ.","found":"You are the Christ?","note":"statement / question"}
+{"id":"M11","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"[[Jesus wept.]]","found":"Jesus wept.","note":"text-critical brackets dropped"}
+{"id":"M12","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"the man \u{2014} not God \u{2014} said it","found":"the man not God said it","note":"dashes / parenthesis dropped"}
+{"id":"N01","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"el que cree","found":"e\u{0301}l que cree","note":"document NFD adds acute: el (the) -> \u{00E9}l (he)"}
+{"id":"N02","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"e\u{0301}l que cree","found":"el que cree","note":"reference NFD, document drops the acute: \u{00E9}l -> el"}
+{"id":"N03","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"\u{00E9}l que cree","found":"el que cree","note":"both NFC, document drops the acute: \u{00E9}l -> el"}
+{"id":"N04","class":2,"kind":"unicode","harness":"verified_typography","scorer":"verified_correct","want":"\u{00E9}l que cree","found":"e\u{0301}l que cree","note":"NFC vs NFD of the same text (canonically equal)"}
+{"id":"N05","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"\u{1F24} \u{03C3}\u{03BF}\u{03C6}\u{03AF}\u{03B1}","found":"\u{03B7}\u{0314}\u{0301} \u{03C3}\u{03BF}\u{03C6}\u{03AF}\u{03B1}","note":"Greek: reference NFC eta+smooth+acute (or), document NFD eta+rough+acute (fem. relative)"}
+{"id":"N06","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"\u{03B7}\u{0313}\u{0301} \u{03C3}\u{03BF}\u{03C6}\u{03AF}\u{03B1}","found":"\u{03B7}\u{0314}\u{0301} \u{03C3}\u{03BF}\u{03C6}\u{03AF}\u{03B1}","note":"Greek: both NFD, breathing differs (smooth / rough)"}
+{"id":"N07","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"\u{05D3}\u{05B8}\u{05D1}\u{05B8}\u{05E8}","found":"\u{05D3}\u{05B0}\u{05D1}\u{05B7}\u{05E8}","note":"Hebrew points differ (dabar vowels)"}
+{"id":"N08","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"\u{05D3}\u{05BC}\u{05B8}\u{05D1}\u{05B8}\u{05E8}","found":"\u{05D3}\u{05B8}\u{05D1}\u{05B8}\u{05E8}","note":"Hebrew dagesh dropped"}
+{"id":"N09","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"\u{05D1}\u{05BC}\u{05B0}\u{05E8}\u{05B5}\u{0596}\u{05D0}\u{05E9}\u{05B4}\u{05C1}\u{05D9}\u{05EA}","found":"\u{05D1}\u{05BC}\u{05B0}\u{05E8}\u{05B5}\u{05D0}\u{05E9}\u{05B4}\u{05C1}\u{05D9}\u{05EA}","note":"Hebrew cantillation mark dropped"}
+{"id":"N10","class":2,"kind":"unicode","harness":"verified_typography","scorer":"verified_correct","want":"\u{F9B3}","found":"\u{9748}","note":"CJK compatibility ideograph vs unified (harness's own example)"}
+{"id":"N11","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"el que cree","found":"e\u{00B4}l que cree","note":"document has a spacing acute (PDF artefact) on a plain letter"}
+{"id":"S01","class":2,"kind":"sign","harness":"verified_extra_text","scorer":"verified_wrong","want":"word","found":"word*","note":"note sign added in document"}
+{"id":"S02","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"word*","found":"word","note":"note sign absent in document"}
+{"id":"S03","class":2,"kind":"extra","harness":"verified_extra_text","scorer":"verified_wrong","want":"In the beginning God created","found":"In the beginning God created the heavens","note":"extra words"}
+{"id":"S04","class":2,"kind":"missing","harness":"verified_missing_text","scorer":"verified_wrong","want":"In the beginning God created the heavens","found":"In the beginning God created","note":"words missing"}
+{"id":"S05","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"forty days","found":"four days","note":"one word changed"}
+{"id":"S06","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"40 days","found":"4 days","note":"digit dropped"}
+{"id":"P01","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"\u{2014}","found":"","note":"punctuation-only placeholder vs empty text"}
+{"id":"P02","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"[ ]","found":"\u{2014}","note":"punctuation-only placeholder vs another one"}
+{"id":"P03","class":2,"kind":"typography","harness":"verified_typography","scorer":"verified_correct","want":"[Omitted]","found":"Omitted","note":"placeholder word, brackets dropped"}
+{"id":"P04","class":2,"kind":"changed","harness":"verified_changed","scorer":"verified_wrong","want":"\u{2014}","found":"Jesus wept.","note":"punctuation placeholder vs real text"}
+{"char":"U+0301","is_alphanumeric":false}
+{"char":"U+0313","is_alphanumeric":false}
+{"char":"U+0314","is_alphanumeric":false}
+{"char":"U+0342","is_alphanumeric":false}
+{"char":"U+0345","is_alphanumeric":true}
+{"char":"U+05B0","is_alphanumeric":true}
+{"char":"U+05B8","is_alphanumeric":true}
+{"char":"U+05BC","is_alphanumeric":true}
+{"char":"U+05C1","is_alphanumeric":true}
+{"char":"U+0596","is_alphanumeric":false}
+{"char":"U+05BE","is_alphanumeric":false}
+{"char":"U+064E","is_alphanumeric":true}
+{"char":"U+00B4","is_alphanumeric":false}
+{"char":"U+200C","is_alphanumeric":false}
+{"char":"U+00AD","is_alphanumeric":false}

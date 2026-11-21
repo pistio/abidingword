@@ -1,0 +1,14 @@
+started 2026-11-21T15:47:36Z
+seal_commit c551ad6b922d67aae9080e6ca3fd5526a5cdf3e3
+manifest c7db9a0dc8132e4a72612f99d54849e2cdffb3bc3eefe57cf612dca4b2fc02dd
+checksums 4c0f3122a123067726ce3fb35acd6ae3d15d93e681477c84b0963ab316ded202
+binary e396328c20fef35ee12f62b880e554f676a93006ca5bc8054dc82d433f21ee43
+runner 8515e92c329370236f5aab0495b4e08c4f6a76f64f6e8d0abbd59584181385a9
+check_set 01a13dde21510ad9e9f3b9c301d971e87feffbacdcaee0449d6c2f9180c3411f
+inventory eb1013d3702e0509fc5d3bffc806af128b33bbd27c620bde89c28f7c6c441c8b
+limits timeout_seconds 1800 memory_kb 4194304
+host Linux 6.18.44-fc-v726 x86_64
+zzaudit-c-oba exit 0 seconds 1
+zzaudit-c-ctl exit 0 seconds 0
+zzaudit-c-mix exit 0 seconds 0
+ended 2026-11-21T15:47:37Z

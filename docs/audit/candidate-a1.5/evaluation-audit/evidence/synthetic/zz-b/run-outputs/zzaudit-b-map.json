@@ -1,0 +1,209 @@
+{
+  "edition": {
+    "key": "zzaudit-b-map",
+    "files": [
+      "zzaudit-b-map.md"
+    ],
+    "reference": "zzaudit-b-map_usfm.zip",
+    "language": "en",
+    "script": "Latin",
+    "format": "md",
+    "layout": "synthetic",
+    "role": "withheld-audit",
+    "books": [
+      "JOL"
+    ]
+  },
+  "reference": "aw-reference-14185-zzaudit-b-map_usfm.zip",
+  "totals": {
+    "code": "ALL",
+    "expected": 73,
+    "absent_in_edition": 0,
+    "detected": 52,
+    "usable": 47,
+    "unmapped": 26,
+    "chapters": 3,
+    "usable_chapters": 2,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 1,
+    "refused_other": 0,
+    "usable_exact": 47,
+    "usable_normalised": 0,
+    "usable_case_only": 0,
+    "usable_different": 0,
+    "usable_typography": 0,
+    "usable_extra_text": 0,
+    "usable_missing_text": 0,
+    "usable_wrong_reference": 0,
+    "usable_changed": 0,
+    "refused_exact": 0,
+    "refused_normalised": 0,
+    "refused_different": 5,
+    "usable_extra": 0,
+    "missing_in_usable_chapter": 5,
+    "verified": 47,
+    "verified_exact": 47,
+    "verified_normalised": 0,
+    "verified_different": 0,
+    "verified_typography": 0,
+    "verified_extra_text": 0,
+    "verified_missing_text": 0,
+    "verified_wrong_reference": 0,
+    "verified_changed": 0,
+    "verified_extra": 0,
+    "unverified_clean": 0,
+    "unverified_caught": 0,
+    "located": 47,
+    "location_checked": 47
+  },
+  "books": [
+    {
+      "code": "JOL",
+      "expected": 73,
+      "absent_in_edition": 0,
+      "detected": 52,
+      "usable": 47,
+      "unmapped": 26,
+      "chapters": 3,
+      "usable_chapters": 2,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 1,
+      "refused_other": 0,
+      "usable_exact": 47,
+      "usable_normalised": 0,
+      "usable_case_only": 0,
+      "usable_different": 0,
+      "usable_typography": 0,
+      "usable_extra_text": 0,
+      "usable_missing_text": 0,
+      "usable_wrong_reference": 0,
+      "usable_changed": 0,
+      "refused_exact": 0,
+      "refused_normalised": 0,
+      "refused_different": 5,
+      "usable_extra": 0,
+      "missing_in_usable_chapter": 5,
+      "verified": 47,
+      "verified_exact": 47,
+      "verified_normalised": 0,
+      "verified_different": 0,
+      "verified_typography": 0,
+      "verified_extra_text": 0,
+      "verified_missing_text": 0,
+      "verified_wrong_reference": 0,
+      "verified_changed": 0,
+      "verified_extra": 0,
+      "unverified_clean": 0,
+      "unverified_caught": 0,
+      "located": 47,
+      "location_checked": 47
+    }
+  ],
+  "books_not_found": [],
+  "issues": {
+    "Error bibleImport.chapterOutOfRange": 1,
+    "Error bibleImport.documentChapterShort": 1,
+    "Note bibleImport.documentLeftOut": 1,
+    "Warning bibleImport.documentChapterShort": 1
+  },
+  "refused_chapters": [
+    "JOL 3 (numbers)",
+    "JOL 4 (other)"
+  ],
+  "differences": [
+    {
+      "reference": "JOL 3:1",
+      "usable": false,
+      "verified": false,
+      "unverified_reason": null,
+      "kind": "wrong_reference",
+      "page": null,
+      "found": "The household listened on the hillside before the rain, and the wind was still.",
+      "edition": "The household sat down under the olive tree at dawn, and the day was long."
+    },
+    {
+      "reference": "JOL 3:2",
+      "usable": false,
+      "verified": false,
+      "unverified_reason": null,
+      "kind": "wrong_reference",
+      "page": null,
+      "found": "The young men worked on the hillside at dawn, and bread was shared.",
+      "edition": "The elders kept watch near the well during the feast, and no one hurried."
+    },
+    {
+      "reference": "JOL 3:3",
+      "usable": false,
+      "verified": false,
+      "unverified_reason": null,
+      "kind": "wrong_reference",
+      "page": null,
+      "found": "The young men gathered barley at the market during the feast, and said nothing more.",
+      "edition": "A stranger waited near the well at midday, and the wind was still."
+    },
+    {
+      "reference": "JOL 3:4",
+      "usable": false,
+      "verified": false,
+      "unverified_reason": null,
+      "kind": "wrong_reference",
+      "page": null,
+      "found": "The reapers kept watch by the gate before the rain, and all was quiet.",
+      "edition": "The fisherman spoke softly at the market in the cool of the day, and bread was shared."
+    },
+    {
+      "reference": "JOL 3:5",
+      "usable": false,
+      "verified": false,
+      "unverified_reason": null,
+      "kind": "wrong_reference",
+      "page": null,
+      "found": "A servant sat down on the hillside in the evening, and the wind was still.",
+      "edition": "The weaver listened by the gate before the rain, and they were glad."
+    }
+  ],
+  "extra_verses": [],
+  "verified_extra_verses": [],
+  "unverified_reasons": {},
+  "location_misses": [],
+  "apparatus": 1,
+  "pages_uncertain": 0,
+  "pages": 0,
+  "found_books": [
+    [
+      "Joel",
+      "JOL",
+      null
+    ]
+  ],
+  "errors": [
+    "Joel 4: Joel has 3 chapters in the standard numbering.",
+    "Joel 3 ends at verse 5; it usually has 21 verses. The verses after 5 were not found."
+  ],
+  "seconds": 0.138452174,
+  "peak_memory_mb": 20.1640625,
+  "read_seconds": 0.138184191,
+  "read_peak_memory_mb": 20.1640625,
+  "numbering": [
+    {
+      "code": "JOL",
+      "agreement": "withinReference",
+      "chaptersPrinted": 3,
+      "chaptersReference": 3,
+      "differences": [
+        {
+          "kind": "shorter",
+          "chapter": 2,
+          "printed": 27,
+          "reference": 32
+        },
+        {
+          "kind": "shorter",
+          "chapter": 3,
+          "printed": 5,
+          "reference": 21
+        }
+      ]
+    }
+  ]
+}

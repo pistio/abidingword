@@ -1,0 +1,4 @@
+The rehearsal-style inventory used for set zz-c was not committed. It is
+`docs/evaluation/disclosed-documents.sha256` with its first line removed
+(`tail -n +2`), SHA-256 eb1013d3702e0509fc5d3bffc806af128b33bbd27c620bde89c28f7c6c441c8b.
+It was passed to the runner as AW_DISCLOSED_INVENTORY and to the scorer as --inventory.
