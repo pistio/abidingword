@@ -308,7 +308,7 @@
     "restoreInProgressHint": "Lass Abiding Word geöffnet, bis die Wiederherstellung abgeschlossen ist.",
     "restoreAlreadyRunning": "Eine Wiederherstellung läuft bereits. Warte, bis sie abgeschlossen ist.",
     "restoreReloadRequired": "Die Datenbank wurde wiederhergestellt. Lade Abiding Word neu, bevor du weiterarbeitest.",
-    "restoreSaveFailed": "Einige Änderungen konnten nicht gespeichert werden. Deine aktuellen Texte bleiben erhalten. Behebe den Speicherfehler, bevor du die Wiederherstellung erneut versuchst.",
+    "restoreSaveFailed": "Einige Änderungen konnten nicht gespeichert werden. Deine aktuellen Texte bleiben erhalten. Behebe den Speicherfehler und versuche es dann erneut.",
     "restoreNeedsAttention": "Wiederherstellung fehlgeschlagen",
     "restoreFailureReloadHint": "Deine vorherige Arbeit konnte nicht vollständig wiederhergestellt werden. Die Bearbeitung bleibt gesperrt. Bewahre die unten angegebene Sicherheitskopie auf und lade Abiding Word neu, bevor du versuchst weiterzuarbeiten."
   },

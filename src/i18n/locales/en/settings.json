@@ -308,7 +308,7 @@
     "restoreInProgressHint": "Keep Abiding Word open until recovery has finished.",
     "restoreAlreadyRunning": "A restore is already in progress. Wait for it to finish.",
     "restoreReloadRequired": "The database has been restored. Reload Abiding Word before continuing.",
-    "restoreSaveFailed": "Some changes could not be saved. Your current writing has been kept. Resolve the save error before trying to restore again.",
+    "restoreSaveFailed": "Some changes could not be saved. Your current writing has been kept. Resolve the save error, then try again.",
     "restoreNeedsAttention": "Recovery needs attention",
     "restoreFailureReloadHint": "Recovery could not fully restore your previous work. Editing remains paused. Keep the safety copy shown below, then reload Abiding Word before trying to continue."
   },

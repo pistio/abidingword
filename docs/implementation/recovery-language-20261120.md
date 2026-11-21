@@ -71,3 +71,28 @@ checks all six languages at narrow and reduced/scaled browser viewports, with
 long invented Windows paths. The parent visually inspected English and Korean
 completion captures. Exact final results are recorded in the milestone
 verification JSON; none of these checks claims human or native Windows approval.
+
+
+## Shared save barrier: action-neutral retry message
+
+The same failed-save protection also applies before backup creation, project
+export, Materials operations and confirmed deletion. The stable internal key
+`settings.data.restoreSaveFailed` is retained, but its final sentence now tells
+the person to resolve the save error and retry the requested action, without
+incorrectly calling every action a restoration. The preceding failed-save and
+retained-writing statements are unchanged.
+
+| Language | Previous final sentence | Revised final sentence |
+| --- | --- | --- |
+| EN | Resolve the save error before trying to restore again. | Resolve the save error, then try again. |
+| DE | Behebe den Speicherfehler, bevor du die Wiederherstellung erneut versuchst. | Behebe den Speicherfehler und versuche es dann erneut. |
+| KO | 저장 오류를 해결한 뒤 다시 복원해 주세요. | 저장 오류를 해결한 뒤 다시 시도해 주세요. |
+| FR | Résolvez le problème d’enregistrement avant de réessayer la restauration. | Résolvez le problème d’enregistrement, puis réessayez. |
+| ES | Resuelve el error al guardar antes de volver a intentar la restauración. | Resuelve el error al guardar y vuelve a intentarlo. |
+| pt-BR | Resolva o erro ao salvar antes de tentar restaurar novamente. | Resolva o erro ao salvar e tente novamente. |
+
+The change preserves each language’s register and does not alter saved writing,
+methodology, identifiers or any other message. The corpus is regenerated from
+the six source resources; the reports are not hand-edited.
+
+A second AI consistency review checked all six revised sentences against the shared save-settlement uses. Each now supports restore, capture and deletion without naming the wrong action; register and the retained-writing qualification remain consistent. This is not human native-speaker approval.

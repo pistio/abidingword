@@ -308,7 +308,7 @@
     "restoreInProgressHint": "복원이 끝날 때까지 Abiding Word를 열어 두세요.",
     "restoreAlreadyRunning": "이미 복원이 진행 중입니다. 완료될 때까지 기다려 주세요.",
     "restoreReloadRequired": "데이터베이스를 복원했습니다. 계속하려면 Abiding Word를 다시 불러오세요.",
-    "restoreSaveFailed": "일부 변경 사항을 저장하지 못했습니다. 현재 작성한 내용은 그대로 유지됩니다. 저장 오류를 해결한 뒤 다시 복원해 주세요.",
+    "restoreSaveFailed": "일부 변경 사항을 저장하지 못했습니다. 현재 작성한 내용은 그대로 유지됩니다. 저장 오류를 해결한 뒤 다시 시도해 주세요.",
     "restoreNeedsAttention": "복원 상태를 확인해 주세요",
     "restoreFailureReloadHint": "이전 작업을 완전히 복구하지 못해 편집이 중지된 상태입니다. 아래에 표시된 복구용 사본을 보관하고 Abiding Word를 다시 불러온 뒤 작업을 계속할 수 있는지 확인해 주세요."
   },

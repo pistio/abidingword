@@ -308,7 +308,7 @@
     "restoreInProgressHint": "Mantenha o Abiding Word aberto até que a restauração termine.",
     "restoreAlreadyRunning": "Uma restauração já está em andamento. Aguarde até que ela termine.",
     "restoreReloadRequired": "O banco de dados foi restaurado. Recarregue o Abiding Word antes de continuar.",
-    "restoreSaveFailed": "Não foi possível salvar algumas alterações. Seus textos atuais foram mantidos. Resolva o erro ao salvar antes de tentar restaurar novamente.",
+    "restoreSaveFailed": "Não foi possível salvar algumas alterações. Seus textos atuais foram mantidos. Resolva o erro ao salvar e tente novamente.",
     "restoreNeedsAttention": "Recuperação incompleta",
     "restoreFailureReloadHint": "Não foi possível recuperar completamente seu trabalho anterior. A edição permanece bloqueada. Guarde a cópia de segurança indicada abaixo e recarregue o Abiding Word antes de tentar continuar."
   },

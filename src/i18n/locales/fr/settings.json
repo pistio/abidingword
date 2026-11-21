@@ -308,7 +308,7 @@
     "restoreInProgressHint": "Gardez Abiding Word ouvert jusqu’à la fin de la restauration.",
     "restoreAlreadyRunning": "Une restauration est déjà en cours. Attendez qu’elle soit terminée.",
     "restoreReloadRequired": "La base de données a été restaurée. Rechargez Abiding Word avant de continuer.",
-    "restoreSaveFailed": "Certains changements n’ont pas pu être enregistrés. Vos textes actuels sont conservés. Résolvez le problème d’enregistrement avant de réessayer la restauration.",
+    "restoreSaveFailed": "Certains changements n’ont pas pu être enregistrés. Vos textes actuels sont conservés. Résolvez le problème d’enregistrement, puis réessayez.",
     "restoreNeedsAttention": "Récupération incomplète",
     "restoreFailureReloadHint": "Votre travail précédent n’a pas pu être entièrement rétabli. La modification reste désactivée. Conservez la copie de sécurité indiquée ci-dessous, puis rechargez Abiding Word avant d’essayer de continuer."
   },
