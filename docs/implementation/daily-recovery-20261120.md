@@ -46,7 +46,7 @@ The exact `3424f799baf6758afd2d918a6fd08e396de83ff9` baseline has **24 demonstra
 
 The final `tests/screenshots/parent-deletion.mjs` procedure passes on the exact implementation in Linux Chromium with invented state. It exercises delayed saving/removal, physical input, Escape/outside clicks, a late portal, failed-delete release and successful retry. An earlier run passed its then-existing assertions but recorded focus on the body; the final procedure explicitly asserts focus returns to the enabled Move to Trash button. This is browser evidence, not native Windows or SQLite acceptance.
 
-Recovery copy and the guide are updated in English (British), German, Korean, French, Spanish and Brazilian Portuguese. Generated editorial reports were regenerated from their sources. [Individual language decisions](recovery-language-20261120.md) record before/after wording; AI review is not human native-speaker approval.
+Recovery copy is updated in English (British), German, Korean, French, Spanish and Brazilian Portuguese. The English user guide is also updated, and generated editorial reports were regenerated from their sources. [Individual language decisions](recovery-language-20261120.md) record before/after wording; AI review is not human native-speaker approval.
 
 The first push was refused by GitHub’s private-email protection. The unpublished commit metadata was replaced with the account’s no-reply identity, preserving every source tree exactly; all complete checks were then repeated on that replacement; the later CI lint correction has its own final identity above. The verification record retains the old/new identity mapping. No account privacy setting or remote history was changed.
 
