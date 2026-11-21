@@ -5,6 +5,8 @@ import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
 import { settleOutstandingWrites } from "@/hooks/SaveTracker";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { referenceLabel } from "@/i18n/scripture";
@@ -392,8 +394,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const wholeButton = useRef<HTMLDivElement>(null);
-  // Points deleted in this session: a late save for one is not an error.
-  const deleted = useRef(new Set<string>());
+  const { runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
 
   const act = useCallback(
     async (run: () => Promise<TeachingPreparation>) => {
@@ -455,19 +456,27 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
       return next;
     });
   const savePoint = (pointId: string, field: keyof Omit<TeachingPoint, "id" | "position">) => (value: string) =>
-    deleted.current.has(pointId)
-      ? Promise.resolve()
-      : api.teachingPointUpdate({ id: pointId, [field]: value }).then(
-          (next) => {
-            setPrep(next);
-            return next;
-          },
-          (e: unknown) => {
-            // A save that arrives after its point was deleted is not an error.
-            if (deleted.current.has(pointId) && toApiError(e).kind === "notFound") return;
-            throw e;
-          },
-        );
+    api.teachingPointUpdate({ id: pointId, [field]: value }).then(next => {
+      setPrep(next);
+      return next;
+    });
+
+  const removePoint = async (point: TeachingPoint, index: number) => {
+    setError(null);
+    try {
+      let next = prep;
+      if (!await runDeletion(async () => { next = await api.teachingPointDelete(point.id); })) return;
+      setPrep(next);
+      setNotice(shape("removed"));
+      // Interaction is restored before removing the editor or moving focus.
+      const target = next.points[Math.max(0, index - 1)];
+      requestAnimationFrame(() =>
+        (target ? document.getElementById(`point-title-${target.id}`) : document.getElementById(`add-point-${prep.id}`))?.focus(),
+      );
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
 
   const addPoint = async (after: string | null, kind: StepKind | null = null) => {
     // A new step of a lesson is of the kind chosen ("Add a step ▸ Activity"), teaching when none was; it can be changed at once.
@@ -783,24 +792,7 @@ function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings,
                       name={name}
                       confirm={shape("deleteConfirm")}
                       hasContent={Boolean(point.title.trim() || point.explanation.trim() || point.application.trim() || point.illustration.trim())}
-                      onDelete={() => {
-                        deleted.current.add(point.id);
-                        void act(() => api.teachingPointDelete(point.id)).then((next) => {
-                          if (!next) {
-                            deleted.current.delete(point.id);
-                            return;
-                          }
-                          setNotice(shape("removed"));
-                          // Focus goes to the point before (else after) it, or to "Add a point".
-                          const target = next.points[Math.max(0, index - 1)];
-                          requestAnimationFrame(() =>
-                            (target
-                              ? document.getElementById(`point-title-${target.id}`)
-                              : document.getElementById(`add-point-${prep.id}`)
-                            )?.focus(),
-                          );
-                        });
-                      }}
+                      onDelete={() => void removePoint(point, index)}
                     />
                   </span>
                 </div>

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { EntryPart, StudyBlock, StudySection, TemplateField } from "@/types/domain";
@@ -152,6 +153,7 @@ function TextField({ section, field, onChange, onError, showHelp = true, soleOf 
 function EntriesField({ section, field, onChange, onError, showHelp = true }: FieldProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const { root, deleting, runDeletion } = useSettledDelete();
   const entries = section.blocks.filter((b) => b.fieldKey === field.key);
   const label = labelOf(section, field);
   const [newId, setNewId] = useState<string | null>(null);
@@ -171,10 +173,12 @@ function EntriesField({ section, field, onChange, onError, showHelp = true }: Fi
   const remove = async (block: StudyBlock) => {
     onError(null);
     try {
-      await api.studyBlockDelete(block.id);
-      onChange({ ...section, blocks: section.blocks.filter((b) => b.id !== block.id) });
-    } catch {
-      onError(t("studies.fields.removeFailed"));
+      await runDeletion(async () => {
+        await api.studyBlockDelete(block.id);
+        onChange({ ...section, blocks: section.blocks.filter((b) => b.id !== block.id) });
+      });
+    } catch (error) {
+      onError(toApiError(error).message || t("studies.fields.removeFailed"));
     }
   };
 
@@ -197,7 +201,7 @@ function EntriesField({ section, field, onChange, onError, showHelp = true }: Fi
   };
 
   return (
-    <div role="group" aria-labelledby={headingId} className="flex flex-col gap-2">
+    <div ref={root} inert={deleting} aria-busy={deleting || undefined} role="group" aria-labelledby={headingId} className="flex flex-col gap-2">
       <div>
         <h3 id={headingId} className="m-0 text-[1rem] font-medium text-text-strong">{label}</h3>
         {showHelp && <p className="m-0 text-[0.9375rem] text-text-muted">{field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}</p>}
@@ -273,6 +277,7 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
   }, [autoFocus]);
 
   const set = (key: string, value: string) => {
+    if (first.current?.closest("[inert]")) return;
     const next = { ...latest.current, [key]: value };
     latest.current = next;
     setValues(next);

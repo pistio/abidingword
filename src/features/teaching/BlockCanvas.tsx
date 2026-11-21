@@ -1,10 +1,11 @@
-import { useId, useRef, useState, type ReactNode } from "react";
+import { useCallback, useId, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, Copy, Info, Lock, MoreHorizontal, Plus, Trash2 } from "lucide-react";
 import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
 import { TEACHING_BLOCK_TYPES, type TeachingBlock, type TeachingPart, type TeachingPreparation } from "@/types/teaching";
 import { TeachingField, type AssistantHooks } from "./TeachingField";
 
@@ -56,6 +57,7 @@ export function BlockCanvas({
   const api = useApi();
   const id = useId();
   const [error, setError] = useState<string | null>(null);
+  const { root, deleting, runDeletion } = useSettledDelete();
   const blocks = prep.blocks ?? [];
   const act = async (run: () => Promise<TeachingPreparation>) => {
     setError(null);
@@ -65,6 +67,14 @@ export function BlockCanvas({
       setError(toApiError(e).message);
     }
   };
+  const remove = useCallback(async (blockId: string) => {
+    setError(null);
+    try {
+      await runDeletion(async () => { onChanged(await api.teachingBlockDelete(blockId)); });
+    } catch (error) {
+      setError(toApiError(error).message);
+    }
+  }, [api, onChanged, runDeletion]);
   const children = (parentId: string | null) => blocks.filter((b) => (b.parentId ?? null) === parentId).sort((a, b) => a.position - b.position);
   const move = (block: TeachingBlock, delta: -1 | 1) => {
     const siblings = children(block.parentId);
@@ -100,7 +110,7 @@ export function BlockCanvas({
       guidance,
       onMove: move,
       onDuplicate: () => void act(() => api.teachingBlockDuplicate(block.id)),
-      onDelete: () => void act(() => api.teachingBlockDelete(block.id)),
+      onDelete: () => void remove(block.id),
       onVisibility: (participantFacing: boolean) => void act(() => api.teachingBlockUpdate({ id: block.id, participantFacing })),
       onTitle: (title: string) => void act(() => api.teachingBlockUpdate({ id: block.id, title })),
     };
@@ -212,7 +222,7 @@ export function BlockCanvas({
 
   const top = children(null);
   return (
-    <div className="flex flex-col gap-6">
+    <div ref={root} inert={deleting} aria-busy={deleting || undefined} className="flex flex-col gap-6">
       {top.length === 0 && <p className="m-0 text-text-muted">{t("studies.teaching.blocks.empty")}</p>}
       {top.map((block) => renderBlock(block, null))}
       <AddBlock label={t("studies.teaching.blocks.add")} onAdd={(type) => add(type, null)} />

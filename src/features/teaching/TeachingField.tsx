@@ -93,6 +93,7 @@ export function TeachingField(props: TeachingFieldProps) {
 
   const change = useCallback(
     (next: string) => {
+      if (!root.current || root.current.closest("[inert]")) return;
       setText(next);
       schedule(next);
     },
@@ -138,7 +139,7 @@ export function TeachingField(props: TeachingFieldProps) {
    * it was made for has changed since asking, so nothing typed meanwhile is ever overwritten.
    */
   const apply = (suggestion: string, placement: "replace" | "start"): boolean => {
-    if (!action) return false;
+    if (!action || !root.current || root.current.closest("[inert]")) return false;
     const { selection, text: asked } = action.target;
     const current = selection ? text.slice(selection.start, selection.end) : text;
     if (current !== asked) return false;
@@ -167,6 +168,7 @@ export function TeachingField(props: TeachingFieldProps) {
   };
 
   const insertBelow = (option: string) => {
+    if (!root.current || root.current.closest("[inert]")) return;
     setUndo(text);
     change(text.trim() ? `${text.trimEnd()}\n\n${option.trim()}` : option.trim());
     flush();

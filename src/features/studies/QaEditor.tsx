@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, MoreHorizontal, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { StudyBlock } from "@/types/domain";
@@ -31,6 +32,7 @@ export function QaEditor({ block, number, isFirst, isLast, autoFocus, onMove, on
   const latest = useRef(pair);
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const { root, deleting, runDeletion } = useSettledDelete();
   const [error, setError] = useState<string | null>(null);
   const question = useRef<HTMLTextAreaElement>(null);
   const answer = useRef<HTMLTextAreaElement>(null);
@@ -62,6 +64,7 @@ export function QaEditor({ block, number, isFirst, isLast, autoFocus, onMove, on
     }
   }, [pair]);
   const set = (key: keyof QaPair, value: string) => {
+    if (!root.current || root.current.closest("[inert]")) return;
     const next = { ...latest.current, [key]: value };
     latest.current = next;
     setPair(next);
@@ -69,8 +72,10 @@ export function QaEditor({ block, number, isFirst, isLast, autoFocus, onMove, on
   };
   const remove = async () => {
     try {
-      await api.studyBlockDelete(block.id);
-      onDeleted(block.id);
+      await runDeletion(async () => {
+        await api.studyBlockDelete(block.id);
+        onDeleted(block.id);
+      });
     } catch (e) {
       setError(toApiError(e).message);
     }
@@ -79,7 +84,7 @@ export function QaEditor({ block, number, isFirst, isLast, autoFocus, onMove, on
   const empty = !pair.question.trim() && !pair.answer.trim();
   const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
   return (
-    <div role="group" aria-label={label} data-qa-block={block.id} className="flex flex-col gap-1 border-l-[3px] border-border pl-3">
+    <div ref={root} inert={deleting} aria-busy={deleting || undefined} role="group" aria-label={label} data-qa-block={block.id} className="flex flex-col gap-1 border-l-[3px] border-border pl-3">
       <div className="flex items-center gap-1">
         <label htmlFor={`${id}-q`} className="type-meta flex-1">{t("studies.qa.question")}</label>
         <button
