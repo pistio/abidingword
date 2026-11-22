@@ -1,0 +1,15 @@
+bsb-gen-md exit 0 seconds 0
+bsb-gen-docx exit 0 seconds 1
+bsb-gen-pdf exit 0 seconds 1
+webp-dan-md exit 0 seconds 0
+webp-dan-pdf exit 0 seconds 1
+sbl-mat-md exit 0 seconds 0
+sbl-mat-pdf exit 0 seconds 2
+lsg-eph-md exit 0 seconds 0
+lsg-eph-docx exit 0 seconds 0
+kor-rut-md exit 0 seconds 0
+kor-rut-pdf exit 0 seconds 0
+de-rut-md exit 0 seconds 0
+es-rut-md exit 0 seconds 0
+es-rut-docx exit 0 seconds 0
+byz-3jn-md exit 0 seconds 1

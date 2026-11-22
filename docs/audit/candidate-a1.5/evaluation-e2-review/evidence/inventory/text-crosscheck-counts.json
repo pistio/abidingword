@@ -1,0 +1,84 @@
+{
+ "deu1912_usfm.zip": {
+  "counts": {
+   "verses": 31102,
+   "identical": 31102
+  }
+ },
+ "deu1951_usfm.zip": {
+  "counts": {
+   "verses": 31102,
+   "identical": 31102
+  }
+ },
+ "deuelo_usfm.zip": {
+  "counts": {
+   "verses": 31102,
+   "identical": 31102
+  }
+ },
+ "engbsb_usfm.zip": {
+  "counts": {
+   "verses": 31086,
+   "identical": 30930,
+   "differ_mismatch": 156
+  }
+ },
+ "engwebp_usfm.zip": {
+  "counts": {
+   "verses": 31103,
+   "identical": 31089,
+   "differ_mismatch": 14
+  }
+ },
+ "fraLSG_usfm.zip": {
+  "counts": {
+   "verses": 31170,
+   "identical": 31168,
+   "differ_mismatch": 2
+  }
+ },
+ "grcbyz_usfm.zip": {
+  "counts": {
+   "verses": 7958,
+   "identical": 7958
+  }
+ },
+ "grcmt_usfm.zip": {
+  "counts": {
+   "verses": 7957,
+   "identical": 7957
+  }
+ },
+ "grcsbl_usfm.zip": {
+  "counts": {
+   "verses": 7939,
+   "identical": 7583,
+   "differ_mismatch": 356
+  }
+ },
+ "grctr_usfm.zip": {
+  "counts": {
+   "verses": 7957,
+   "identical": 7957
+  }
+ },
+ "kor1961_usfm.zip": {
+  "counts": {
+   "verses": 31081,
+   "identical": 31081
+  }
+ },
+ "porbr2018_usfm.zip": {
+  "counts": {
+   "verses": 31102,
+   "identical": 31102
+  }
+ },
+ "spaRV1909_usfm.zip": {
+  "counts": {
+   "verses": 31102,
+   "identical": 31102
+  }
+ }
+}

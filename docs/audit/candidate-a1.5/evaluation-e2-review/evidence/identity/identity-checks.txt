@@ -1,0 +1,64 @@
+# Identity checks, run by the independent reviewer on 2026-11-22T01:57:16Z
+## HEAD and branches
+40d5d5970953b0546ac77e827b6d7d9d8f7c08d8
+40d5d5970953b0546ac77e827b6d7d9d8f7c08d8
+## Commits
+40d5d5970953b0546ac77e827b6d7d9d8f7c08d8 docs: evaluation candidate A1.5-E2 record (identities, rules, evidence, checklist)
+97502d2c28873c790b2ed0b5cd225d9f178128b5 evaluation E2: strict fidelity, neutral reference inventory, full-set lookup, seal safeguards
+767e22678eb7fccae53625df2c9bc435c4a6cd53 audit: independent evaluation-system audit before the Collection H seal
+05b3e8b57eb74d02278b30d6b1e5cecc1134764f docs: owner decisions recorded; environment and set repository ready
+e2e9e62d7c6d20eeee3607e3ee2fac94133b0fca docs: Set H owner approval package; independent-environment check
+a11fd0ad282b19b90df35a20e987f42442be293b evaluation: refusals stated beside coverage; builder files name no project
+e73b5d3315bd1ccb7d899abe87928fda8441289c docs: anchored rescoring, fourth rehearsal, concrete independent setup
+5509668dc4eac288132200cbaee9b408c6a99ccf run record: docs/audit/candidate-a1.5/rehearsal/protocol-2/seal (seal 8f9dffa4ecc2cfc36db9286ab1fef018523a6c6d)
+8f9dffa4ecc2cfc36db9286ab1fef018523a6c6d rehearsal seal: protocol set, second rehearsal with the anchored tools (disclosed documents only)
+5717388aab0534c1456d0cf45e5cd6bec50190a0 evaluation: anchor scoring to the committed seal and run record; contain paths
+4dd9f8e12be1c531f55ba5121423a184a6ae97cb docs: Set H package after Codex's review; builder brief; seal-set; handover
+deeca378e76d8e38f977a8cb6c9669eda21a430b rehearsal run records: protocol, forced timeout, memory ceiling
+292b8253033a1281bafba03d7f89b83931a32256 rehearsal seal: memory-ceiling set (disclosed documents only)
+7d1bfa230677153c5aa5c1715d8c84f365085fff rehearsal seal: forced-failure set (disclosed documents only)
+ae3770967288ff107e6ea65cac64d7dae1848780 rehearsal seal: protocol set (disclosed documents only)
+f1d0d7f07d09113d47d7322082ee0734dd49ac7d evaluation: classes, execution assessment, committed seal, disclosed checks
+f50c541fe95acb62715e89dc1bd60886043b77e8 docs: A1.5 candidate freeze record
+f52729bde5d837a18aed534a97a524a9a366c0bd evaluation: runner refuses disclosed keys, records its own checksum; dry run
+b207f1789a79808824b1c2819c5806e47f462201 docs: A1.5 reviews, regression, known weaknesses, Set H package, handover
+08c6faac8c92c6c791ec1e7bbbe997362fa1059f recognition: per-book evidence of where printed numbering departs
+## Trees
+08c6faa src-tauri/src=8cb224c1e059edc3a7750f4c1ea1649603c0de95 root=be296f2570dcbcc251789b2b1e1bbe2c9e7c2798
+97502d2 src-tauri/src=8cb224c1e059edc3a7750f4c1ea1649603c0de95 root=f007002652808898a58fab3c7e0c683c4820e3fb
+40d5d59 src-tauri/src=8cb224c1e059edc3a7750f4c1ea1649603c0de95 root=2f8e213efab65f805fb51a18660608be6febd139
+## git diff --stat 08c6faa 97502d2 -- src-tauri/src src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/build.rs (empty = unchanged)
+(end)
+## git diff --stat 97502d2 40d5d59
+ .../evaluation-e2/EVALUATION-FREEZE.md             | 394 +++++++++++++++++++++
+ 1 file changed, 394 insertions(+)
+## sha256sum -c recogniser-source.sha256
+    166 OK
+## recogniser-source.sha256 covers exactly git ls-files src-tauri/src + Cargo.toml + Cargo.lock + build.rs
+0
+## sha256sum -c candidate-source.sha256 (A1.5)
+      1 FAILED
+    278 OK
+src-tauri/tests/real_document_editions.rs: FAILED
+## sha256sum -c evaluation-e2.sha256
+     33 OK
+## files changed 767e226..97502d2 (outside evaluation-e2/evidence) not listed in evaluation-e2.sha256
+docs/audit/candidate-a1.5/README.md
+docs/audit/candidate-a1.5/evaluation-e2/evaluation-e2.sha256
+docs/audit/candidate-a1.5/evaluation-e2/recogniser-source.sha256
+docs/evaluation/README.md
+## evidence/SHA256SUMS
+    513 OK
+## history untouched: git diff --stat 767e226 40d5d59 -- FREEZE.md candidate-source.sha256 SET-H-APPROVAL.md set-h-decision-package.md regression.md data rehearsal evaluation-audit reviews known-weaknesses.md docs/corpus
+(end)
+## protocol-e2.json sha256
+24e91c12e3c5f1e3e0698e4f594cdc107c803e0416f084eef6b20a4b9405aed4  docs/evaluation/protocol-e2.json
+## historical tool tests: test count and assertion count, 767e226 vs 97502d2
+767e226 tests=46 asserts=126
+97502d2 tests=46 asserts=126
+## removed assertion lines (each has a renamed replacement in the diff)
+-        self.assertEqual(a["scored"]["verified_wrong"], 0)
+-        self.assertEqual(a["scored"]["verified_typography"], 1)
+-        self.assertEqual(e1["observed"]["verified_wrong"], 40)  # raw observation kept
+-        self.assertEqual(report["authentic_scored_evidence"]["reference_verses"], 1)
+-        self.assertFalse(m.assess(few_verses, run, seal, "x")["authentic_evidence"]["meets_minimum"])

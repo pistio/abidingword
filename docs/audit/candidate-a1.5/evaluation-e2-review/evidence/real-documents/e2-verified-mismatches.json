@@ -1,0 +1,4036 @@
+{
+ "bsb-gen-docx": {
+  "verified": 1527,
+  "verified_mismatch": 8,
+  "rows": [
+   {
+    "reference": "GEN 3:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "your head, and you will strike his heel. ”",
+    "found_context": "your head, and you will strike his heel.”"
+   },
+   {
+    "reference": "GEN 12:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "f the earth will be blessed through you. ”",
+    "found_context": "f the earth will be blessed through you.”"
+   },
+   {
+    "reference": "GEN 12:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "I will give this land to your offspring. ” So Abram built an altar there to the ",
+    "found_context": "I will give this land to your offspring.” So Abram built an altar there to the L"
+   },
+   {
+    "reference": "GEN 16:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en to her: “You are the God who sees me, ” for she said, “Here I have seen the O",
+    "found_context": "en to her: “You are the God who sees me,” for she said, “Here I have seen the On"
+   },
+   {
+    "reference": "GEN 22:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "have not withheld your only son from me. ”",
+    "found_context": "have not withheld your only son from me.”"
+   },
+   {
+    "reference": "GEN 25:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ".” (That is why he was also called Edom. )",
+    "found_context": ".” (That is why he was also called Edom.)"
+   },
+   {
+    "reference": "GEN 32:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "face him, and perhaps he will accept me. ”",
+    "found_context": "face him, and perhaps he will accept me.”"
+   },
+   {
+    "reference": "GEN 35:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "acob. Instead, your name will be Israel. ” So God named him Israel.",
+    "found_context": "acob. Instead, your name will be Israel.” So God named him Israel."
+   }
+  ]
+ },
+ "bsb-gen-md": {
+  "verified": 1526,
+  "verified_mismatch": 8,
+  "rows": [
+   {
+    "reference": "GEN 3:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "your head, and you will strike his heel. ”",
+    "found_context": "your head, and you will strike his heel.”"
+   },
+   {
+    "reference": "GEN 12:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "f the earth will be blessed through you. ”",
+    "found_context": "f the earth will be blessed through you.”"
+   },
+   {
+    "reference": "GEN 12:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "I will give this land to your offspring. ” So Abram built an altar there to the ",
+    "found_context": "I will give this land to your offspring.” So Abram built an altar there to the L"
+   },
+   {
+    "reference": "GEN 16:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en to her: “You are the God who sees me, ” for she said, “Here I have seen the O",
+    "found_context": "en to her: “You are the God who sees me,” for she said, “Here I have seen the On"
+   },
+   {
+    "reference": "GEN 22:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "have not withheld your only son from me. ”",
+    "found_context": "have not withheld your only son from me.”"
+   },
+   {
+    "reference": "GEN 25:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ".” (That is why he was also called Edom. )",
+    "found_context": ".” (That is why he was also called Edom.)"
+   },
+   {
+    "reference": "GEN 32:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "face him, and perhaps he will accept me. ”",
+    "found_context": "face him, and perhaps he will accept me.”"
+   },
+   {
+    "reference": "GEN 35:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "acob. Instead, your name will be Israel. ” So God named him Israel.",
+    "found_context": "acob. Instead, your name will be Israel.” So God named him Israel."
+   }
+  ]
+ },
+ "bsb-gen-pdf": {
+  "verified": 1517,
+  "verified_mismatch": 15,
+  "rows": [
+   {
+    "reference": "GEN 3:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "your head, and you will strike his heel. ”",
+    "found_context": "your head, and you will strike his heel.”"
+   },
+   {
+    "reference": "GEN 8:19",
+    "kind": "word_boundary",
+    "cause": "document reading",
+    "edition_context": "e, every creeping thing, and every bird—everything that moves upon the earth—cam",
+    "found_context": "e, every creeping thing, and every bird— everything that moves upon the earth—ca"
+   },
+   {
+    "reference": "GEN 12:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "f the earth will be blessed through you. ”",
+    "found_context": "f the earth will be blessed through you.”"
+   },
+   {
+    "reference": "GEN 12:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "I will give this land to your offspring. ” So Abram built an altar there to the ",
+    "found_context": "I will give this land to your offspring.” So Abram built an altar there to the L"
+   },
+   {
+    "reference": "GEN 14:5",
+    "kind": "punctuation",
+    "cause": "document reading",
+    "edition_context": "the Zuzites in Ham, the Emites in Shaveh-kiriathaim,",
+    "found_context": "the Zuzites in Ham, the Emites in Shavehkiriathaim,"
+   },
+   {
+    "reference": "GEN 16:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en to her: “You are the God who sees me, ” for she said, “Here I have seen the O",
+    "found_context": "en to her: “You are the God who sees me,” for she said, “Here I have seen the On"
+   },
+   {
+    "reference": "GEN 18:25",
+    "kind": "word_boundary",
+    "cause": "document reading",
+    "edition_context": "Far be it from You to do such a thing—to kill the righteous with the wicked, s",
+    "found_context": "Far be it from You to do such a thing— to kill the righteous with the wicked, "
+   },
+   {
+    "reference": "GEN 18:27",
+    "kind": "word_boundary",
+    "cause": "document reading",
+    "edition_context": "at I have ventured to speak to the Lord—though I am but dust and ashes—",
+    "found_context": "at I have ventured to speak to the Lord— though I am but dust and ashes—"
+   },
+   {
+    "reference": "GEN 22:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "have not withheld your only son from me. ”",
+    "found_context": "have not withheld your only son from me.”"
+   },
+   {
+    "reference": "GEN 25:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ".” (That is why he was also called Edom. )",
+    "found_context": ".” (That is why he was also called Edom.)"
+   },
+   {
+    "reference": "GEN 32:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "face him, and perhaps he will accept me. ”",
+    "found_context": "face him, and perhaps he will accept me.”"
+   },
+   {
+    "reference": "GEN 35:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "acob. Instead, your name will be Israel. ” So God named him Israel.",
+    "found_context": "acob. Instead, your name will be Israel.” So God named him Israel."
+   },
+   {
+    "reference": "GEN 41:19",
+    "kind": "word_boundary",
+    "cause": "document reading",
+    "edition_context": "After them, seven other cows—sickly, ugly, and thin—came up. I have n",
+    "found_context": "After them, seven other cows— sickly, ugly, and thin—came up. I have "
+   },
+   {
+    "reference": "GEN 50:11",
+    "kind": "punctuation",
+    "cause": "document reading",
+    "edition_context": "e place across the Jordan is called Abel-mizraim.",
+    "found_context": "e place across the Jordan is called Abelmizraim."
+   },
+   {
+    "reference": "GEN 50:20",
+    "kind": "word_boundary",
+    "cause": "document reading",
+    "edition_context": ", in order to accomplish a day like this—to preserve the lives of many people.",
+    "found_context": ", in order to accomplish a day like this —to preserve the lives of many people."
+   }
+  ]
+ },
+ "byz-3jn-md": {
+  "verified": 15,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "de-rut-md": {
+  "verified": 85,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "es-rut-docx": {
+  "verified": 85,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "es-rut-md": {
+  "verified": 85,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "kor-rut-md": {
+  "verified": 85,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "kor-rut-pdf": {
+  "verified": 44,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "lsg-eph-docx": {
+  "verified": 155,
+  "verified_mismatch": 1,
+  "rows": [
+   {
+    "reference": "EPH 2:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "es, nous a rendus à la vie avec Christ ( c’est par grâce que vous êtes sauvés);",
+    "found_context": "es, nous a rendus à la vie avec Christ (c’est par grâce que vous êtes sauvés);"
+   }
+  ]
+ },
+ "lsg-eph-md": {
+  "verified": 155,
+  "verified_mismatch": 1,
+  "rows": [
+   {
+    "reference": "EPH 2:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "es, nous a rendus à la vie avec Christ ( c’est par grâce que vous êtes sauvés);",
+    "found_context": "es, nous a rendus à la vie avec Christ (c’est par grâce que vous êtes sauvés);"
+   }
+  ]
+ },
+ "sbl-mat-md": {
+  "verified": 1028,
+  "verified_mismatch": 38,
+  "rows": [
+   {
+    "reference": "MAT 4:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Καὶ περιῆγεν ⸂ἐν ὅλῃ τῇ Γαλιλαίᾳ , διδάσκων ἐν ταῖς συναγωγαῖς αὐτῶν καὶ",
+    "found_context": "Καὶ περιῆγεν ⸂ἐν ὅλῃ τῇ Γαλιλαίᾳ, διδάσκων ἐν ταῖς συναγωγαῖς αὐτῶν καὶ "
+   },
+   {
+    "reference": "MAT 5:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "υ ταχὺ ἕως ὅτου εἶ ⸂μετʼ αὐτοῦ ἐν τῇ ὁδῷ , μήποτέ σε παραδῷ ὁ ἀντίδικος τῷ κριτῇ",
+    "found_context": "υ ταχὺ ἕως ὅτου εἶ ⸂μετʼ αὐτοῦ ἐν τῇ ὁδῷ, μήποτέ σε παραδῷ ὁ ἀντίδικος τῷ κριτῇ,"
+   },
+   {
+    "reference": "MAT 5:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ .",
+    "found_context": " μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ."
+   },
+   {
+    "reference": "MAT 5:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αι μίαν τρίχα λευκὴν ⸂ποιῆσαι ἢ μέλαιναν .",
+    "found_context": "αι μίαν τρίχα λευκὴν ⸂ποιῆσαι ἢ μέλαιναν."
+   },
+   {
+    "reference": "MAT 6:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θαλμός. ἐὰν οὖν ⸂ᾖ ὁ ὀφθαλμός σου ἁπλοῦς , ὅλον τὸ σῶμά σου φωτεινὸν ἔσται·",
+    "found_context": "θαλμός. ἐὰν οὖν ⸂ᾖ ὁ ὀφθαλμός σου ἁπλοῦς, ὅλον τὸ σῶμά σου φωτεινὸν ἔσται·"
+   },
+   {
+    "reference": "MAT 7:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λε πρῶτον ⸂ἐκ τοῦ ὀφθαλμοῦ σοῦ τὴν δοκόν , καὶ τότε διαβλέψεις ἐκβαλεῖν τὸ κάρφο",
+    "found_context": "λε πρῶτον ⸂ἐκ τοῦ ὀφθαλμοῦ σοῦ τὴν δοκόν, καὶ τότε διαβλέψεις ἐκβαλεῖν τὸ κάρφος"
+   },
+   {
+    "reference": "MAT 9:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρσει, τέκνον· ⸀ἀφίενταί ⸂σου αἱ ἁμαρτίαι .",
+    "found_context": "ρσει, τέκνον· ⸀ἀφίενταί ⸂σου αἱ ἁμαρτίαι."
+   },
+   {
+    "reference": "MAT 10:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "σθενοῦντας θεραπεύετε, ⸂νεκροὺς ἐγείρετε , λεπροὺς καθαρίζετε, δαιμόνια ἐκβάλλετ",
+    "found_context": "σθενοῦντας θεραπεύετε, ⸂νεκροὺς ἐγείρετε, λεπροὺς καθαρίζετε, δαιμόνια ἐκβάλλετε"
+   },
+   {
+    "reference": "MAT 12:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιν; διὰ τοῦτο αὐτοὶ ⸂κριταὶ ἔσονται ὑμῶν .",
+    "found_context": "ιν; διὰ τοῦτο αὐτοὶ ⸂κριταὶ ἔσονται ὑμῶν."
+   },
+   {
+    "reference": "MAT 14:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὁ δὲ εἶπεν· Φέρετέ μοι ⸂ὧδε αὐτούς .",
+    "found_context": "ὁ δὲ εἶπεν· Φέρετέ μοι ⸂ὧδε αὐτούς."
+   },
+   {
+    "reference": "MAT 14:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τοὺς ὄχλους ἀνακλιθῆναι ἐπὶ ⸂τοῦ χόρτου , λαβὼν τοὺς πέντε ἄρτους καὶ τοὺς δύο ",
+    "found_context": " τοὺς ὄχλους ἀνακλιθῆναι ἐπὶ ⸂τοῦ χόρτου, λαβὼν τοὺς πέντε ἄρτους καὶ τοὺς δύο ἰ"
+   },
+   {
+    "reference": "MAT 14:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "δη ⸂σταδίους πολλοὺς ἀπὸ τῆς γῆς ἀπεῖχεν , βασανιζόμενον ὑπὸ τῶν κυμάτων, ἦν γὰρ",
+    "found_context": "δη ⸂σταδίους πολλοὺς ἀπὸ τῆς γῆς ἀπεῖχεν, βασανιζόμενον ὑπὸ τῶν κυμάτων, ἦν γὰρ "
+   },
+   {
+    "reference": "MAT 14:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πρὸς ⸀αὐτοὺς περιπατῶν ἐπὶ ⸂τὴν θάλασσαν .",
+    "found_context": "πρὸς ⸀αὐτοὺς περιπατῶν ἐπὶ ⸂τὴν θάλασσαν."
+   },
+   {
+    "reference": "MAT 15:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἑαυτῶν ⸂κωφούς, τυφλούς, χωλούς, κυλλούς , καὶ ἑτέρους πολλούς, καὶ ἔρριψαν αὐτο",
+    "found_context": "ἑαυτῶν ⸂κωφούς, τυφλούς, χωλούς, κυλλούς, καὶ ἑτέρους πολλούς, καὶ ἔρριψαν αὐτοὺ"
+   },
+   {
+    "reference": "MAT 15:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οῖς ⸀μαθηταῖς οἱ δὲ μαθηταὶ ⸂τοῖς ὄχλοις .",
+    "found_context": "οῖς ⸀μαθηταῖς οἱ δὲ μαθηταὶ ⸂τοῖς ὄχλοις."
+   },
+   {
+    "reference": "MAT 16:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "γε ὀπίσω μου, Σατανᾶ· σκάνδαλον ⸂εἶ ἐμοῦ , ὅτι οὐ φρονεῖς τὰ τοῦ θεοῦ ἀλλὰ τὰ τῶ",
+    "found_context": "γε ὀπίσω μου, Σατανᾶ· σκάνδαλον ⸂εἶ ἐμοῦ, ὅτι οὐ φρονεῖς τὰ τοῦ θεοῦ ἀλλὰ τὰ τῶν"
+   },
+   {
+    "reference": "MAT 17:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ ⸂Ἠλίᾳ μίαν .",
+    "found_context": " σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ ⸂Ἠλίᾳ μίαν."
+   },
+   {
+    "reference": "MAT 17:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἀγαπητός, ἐν ᾧ εὐδόκησα· ⸂ἀκούετε αὐτοῦ .",
+    "found_context": " ἀγαπητός, ἐν ᾧ εὐδόκησα· ⸂ἀκούετε αὐτοῦ."
+   },
+   {
+    "reference": "MAT 18:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν εἰσελθεῖν εἰς τὴν ζωὴν ⸂κυλλὸν ἢ χωλόν , ἢ δύο χεῖρας ἢ δύο πόδας ἔχοντα βληθῆ",
+    "found_context": "ν εἰσελθεῖν εἰς τὴν ζωὴν ⸂κυλλὸν ἢ χωλόν, ἢ δύο χεῖρας ἢ δύο πόδας ἔχοντα βληθῆν"
+   },
+   {
+    "reference": "MAT 18:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θύμησον ἐπʼ ⸀ἐμοί καὶ πάντα ⸂ἀποδώσω σοι .",
+    "found_context": "θύμησον ἐπʼ ⸀ἐμοί καὶ πάντα ⸂ἀποδώσω σοι."
+   },
+   {
+    "reference": "MAT 19:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ται ⸂καὶ ὁ ἀπολελυμένην γαμήσας μοιχᾶται .",
+    "found_context": "ται ⸂καὶ ὁ ἀπολελυμένην γαμήσας μοιχᾶται."
+   },
+   {
+    "reference": "MAT 19:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς · εἰ δὲ θέλεις ⸂εἰς τὴν ζωὴν εἰσελθεῖν , ⸀τήρησον τὰς ἐντολάς.",
+    "found_context": "ς · εἰ δὲ θέλεις ⸂εἰς τὴν ζωὴν εἰσελθεῖν, ⸀τήρησον τὰς ἐντολάς."
+   },
+   {
+    "reference": "MAT 19:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν ἢ πλούσιον ⸂εἰς τὴν βασιλείαν τοῦ θεοῦ .",
+    "found_context": "ν ἢ πλούσιον ⸂εἰς τὴν βασιλείαν τοῦ θεοῦ."
+   },
+   {
+    "reference": "MAT 19:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τέκνα ἢ ⸀ἀγροὺς ἕνεκεν τοῦ ⸂ὀνόματός μου , ⸀ἑκατονταπλασίονα λήμψεται καὶ ζωὴν α",
+    "found_context": "τέκνα ἢ ⸀ἀγροὺς ἕνεκεν τοῦ ⸂ὀνόματός μου, ⸀ἑκατονταπλασίονα λήμψεται καὶ ζωὴν αἰ"
+   },
+   {
+    "reference": "MAT 20:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ι· καὶ ἔλαβον ⸂τὸ ἀνὰ δηνάριον καὶ αὐτοί .",
+    "found_context": "ι· καὶ ἔλαβον ⸂τὸ ἀνὰ δηνάριον καὶ αὐτοί."
+   },
+   {
+    "reference": "MAT 20:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "· Κύριε, ἵνα ⸂ἀνοιγῶσιν οἱ ὀφθαλμοὶ ἡμῶν .",
+    "found_context": "· Κύριε, ἵνα ⸂ἀνοιγῶσιν οἱ ὀφθαλμοὶ ἡμῶν."
+   },
+   {
+    "reference": "MAT 21:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τες γὰρ ⸂ὡς προφήτην ἔχουσιν τὸν Ἰωάννην .",
+    "found_context": "τες γὰρ ⸂ὡς προφήτην ἔχουσιν τὸν Ἰωάννην."
+   },
+   {
+    "reference": "MAT 22:40",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς ὅλος ὁ νόμος ⸂κρέμαται καὶ οἱ προφῆται .",
+    "found_context": "ς ὅλος ὁ νόμος ⸂κρέμαται καὶ οἱ προφῆται."
+   },
+   {
+    "reference": "MAT 24:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ξελθὼν ὁ Ἰησοῦς ⸂ἀπὸ τοῦ ἱεροῦ ἐπορεύετο , καὶ προσῆλθον οἱ μαθηταὶ αὐτοῦ ἐπιδεῖ",
+    "found_context": "ξελθὼν ὁ Ἰησοῦς ⸂ἀπὸ τοῦ ἱεροῦ ἐπορεύετο, καὶ προσῆλθον οἱ μαθηταὶ αὐτοῦ ἐπιδεῖξ"
+   },
+   {
+    "reference": "MAT 24:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὕτως καὶ ὑμεῖς, ὅταν ἴδητε ⸂πάντα ταῦτα , γινώσκετε ὅτι ἐγγύς ἐστιν ἐπὶ θύραις.",
+    "found_context": "οὕτως καὶ ὑμεῖς, ὅταν ἴδητε ⸂πάντα ταῦτα, γινώσκετε ὅτι ἐγγύς ἐστιν ἐπὶ θύραις."
+   },
+   {
+    "reference": "MAT 24:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὐδὲ οἱ ἄγγελοι τῶν οὐρανῶν ⸂οὐδὲ ὁ υἱός , εἰ μὴ ὁ ⸀πατὴρ μόνος.",
+    "found_context": "οὐδὲ οἱ ἄγγελοι τῶν οὐρανῶν ⸂οὐδὲ ὁ υἱός, εἰ μὴ ὁ ⸀πατὴρ μόνος."
+   },
+   {
+    "reference": "MAT 24:48",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τῇ καρδίᾳ αὐτοῦ· Χρονίζει ⸂μου ὁ κύριος ,",
+    "found_context": " τῇ καρδίᾳ αὐτοῦ· Χρονίζει ⸂μου ὁ κύριος,"
+   },
+   {
+    "reference": "MAT 25:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "⸂ἐξ αὐτῶν ἦσαν ⸂μωραὶ καὶ πέντε φρόνιμοι .",
+    "found_context": "⸂ἐξ αὐτῶν ἦσαν ⸂μωραὶ καὶ πέντε φρόνιμοι."
+   },
+   {
+    "reference": "MAT 26:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ε αὐτοῦ ἕως οὗ ἀπελθὼν ⸂ἐκεῖ προσεύξωμαι .",
+    "found_context": "ε αὐτοῦ ἕως οὗ ἀπελθὼν ⸂ἐκεῖ προσεύξωμαι."
+   },
+   {
+    "reference": "MAT 26:59",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν κατὰ τοῦ Ἰησοῦ ὅπως ⸂αὐτὸν θανατώσωσιν ,",
+    "found_context": "ν κατὰ τοῦ Ἰησοῦ ὅπως ⸂αὐτὸν θανατώσωσιν,"
+   },
+   {
+    "reference": "MAT 27:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " αὐτὸν ⸂χλαμύδα κοκκίνην περιέθηκαν αὐτῷ ,",
+    "found_context": " αὐτὸν ⸂χλαμύδα κοκκίνην περιέθηκαν αὐτῷ,"
+   },
+   {
+    "reference": "MAT 27:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ολγοθᾶ, ὅ ἐστιν ⸂Κρανίου Τόπος λεγόμενος ,",
+    "found_context": "ολγοθᾶ, ὅ ἐστιν ⸂Κρανίου Τόπος λεγόμενος,"
+   },
+   {
+    "reference": "MAT 27:51",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αοῦ ἐσχίσθη ⸂ἀπʼ ἄνωθεν ἕως κάτω εἰς δύο , καὶ ἡ γῆ ἐσείσθη, καὶ αἱ πέτραι ἐσχίσ",
+    "found_context": "αοῦ ἐσχίσθη ⸂ἀπʼ ἄνωθεν ἕως κάτω εἰς δύο, καὶ ἡ γῆ ἐσείσθη, καὶ αἱ πέτραι ἐσχίσθ"
+   }
+  ]
+ },
+ "sbl-mat-pdf": {
+  "verified": 0,
+  "verified_mismatch": 0,
+  "rows": []
+ },
+ "webp-dan-md": {
+  "verified": 356,
+  "verified_mismatch": 1,
+  "rows": [
+   {
+    "reference": "DAN 3:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "of the fourth is like a son of the gods. ”",
+    "found_context": "of the fourth is like a son of the gods.”"
+   }
+  ]
+ },
+ "webp-dan-pdf": {
+  "verified": 177,
+  "verified_mismatch": 1,
+  "rows": [
+   {
+    "reference": "DAN 3:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "of the fourth is like a son of the gods. ”",
+    "found_context": "of the fourth is like a son of the gods.”"
+   }
+  ]
+ },
+ "full-engbsb": {
+  "verified": 30977,
+  "verified_mismatch": 154,
+  "rows": [
+   {
+    "reference": "GEN 3:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "your head, and you will strike his heel. ”",
+    "found_context": "your head, and you will strike his heel.”"
+   },
+   {
+    "reference": "GEN 12:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "f the earth will be blessed through you. ”",
+    "found_context": "f the earth will be blessed through you.”"
+   },
+   {
+    "reference": "GEN 12:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "I will give this land to your offspring. ” So Abram built an altar there to the ",
+    "found_context": "I will give this land to your offspring.” So Abram built an altar there to the L"
+   },
+   {
+    "reference": "GEN 16:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en to her: “You are the God who sees me, ” for she said, “Here I have seen the O",
+    "found_context": "en to her: “You are the God who sees me,” for she said, “Here I have seen the On"
+   },
+   {
+    "reference": "GEN 22:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "have not withheld your only son from me. ”",
+    "found_context": "have not withheld your only son from me.”"
+   },
+   {
+    "reference": "GEN 25:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ".” (That is why he was also called Edom. )",
+    "found_context": ".” (That is why he was also called Edom.)"
+   },
+   {
+    "reference": "GEN 32:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "face him, and perhaps he will accept me. ”",
+    "found_context": "face him, and perhaps he will accept me.”"
+   },
+   {
+    "reference": "GEN 35:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "acob. Instead, your name will be Israel. ” So God named him Israel.",
+    "found_context": "acob. Instead, your name will be Israel.” So God named him Israel."
+   },
+   {
+    "reference": "EXO 1:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "fight against us, and leave the country. ”",
+    "found_context": "fight against us, and leave the country.”"
+   },
+   {
+    "reference": "EXO 2:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "g to kill me as you killed the Egyptian? ” Then Moses was afraid and thought, “T",
+    "found_context": "g to kill me as you killed the Egyptian?” Then Moses was afraid and thought, “Th"
+   },
+   {
+    "reference": "EXO 4:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Moses, “Put your hand inside your cloak. ” So he put his hand inside his cloak, ",
+    "found_context": "Moses, “Put your hand inside your cloak.” So he put his hand inside his cloak, a"
+   },
+   {
+    "reference": "EXO 6:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "n to me, since I am unskilled in speech? ”",
+    "found_context": "n to me, since I am unskilled in speech?”"
+   },
+   {
+    "reference": "EXO 7:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " Pharaoh,’ and it will become a serpent. ”",
+    "found_context": " Pharaoh,’ and it will become a serpent.”"
+   },
+   {
+    "reference": "EXO 19:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ng blast may they approach the mountain. ”",
+    "found_context": "ng blast may they approach the mountain.”"
+   },
+   {
+    "reference": "LEV 14:57",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " law regarding skin diseases and mildew. ”",
+    "found_context": " law regarding skin diseases and mildew.”"
+   },
+   {
+    "reference": "NUM 14:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "lderness along the route to the Red Sea. ”",
+    "found_context": "lderness along the route to the Red Sea.”"
+   },
+   {
+    "reference": "NUM 21:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "will devote their cities to destruction. ”",
+    "found_context": "will devote their cities to destruction.”"
+   },
+   {
+    "reference": "NUM 21:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " far as Nophah, which reaches to Medeba. ”",
+    "found_context": " far as Nophah, which reaches to Medeba.”"
+   },
+   {
+    "reference": "DEU 1:40",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "lderness along the route to the Red Sea. ”",
+    "found_context": "lderness along the route to the Red Sea.”"
+   },
+   {
+    "reference": "JOS 5:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ircumcise the sons of Israel once again. ”",
+    "found_context": "ircumcise the sons of Israel once again.”"
+   },
+   {
+    "reference": "JOS 6:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ople will charge straight into the city. ”",
+    "found_context": "ople will charge straight into the city.”"
+   },
+   {
+    "reference": "JDG 9:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "y is coming by way of the Diviners’ Oak. ”",
+    "found_context": "y is coming by way of the Diviners’ Oak.”"
+   },
+   {
+    "reference": "JDG 16:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ve you eleven hundred shekels of silver. ”",
+    "found_context": "ve you eleven hundred shekels of silver.”"
+   },
+   {
+    "reference": "RUT 1:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "“Do not call me Naomi, ” she replied. “Call me Mara, because t",
+    "found_context": "“Do not call me Naomi,” she replied. “Call me Mara, because th"
+   },
+   {
+    "reference": "RUT 2:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ive. He is one of our kinsman-redeemers. ”",
+    "found_context": "ive. He is one of our kinsman-redeemers.”"
+   },
+   {
+    "reference": "RUT 3:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "over me, for you are a kinsman-redeemer. ”",
+    "found_context": "over me, for you are a kinsman-redeemer.”"
+   },
+   {
+    "reference": "1SA 2:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ce of the one she dedicated to the LORD. ” Then they would go home.",
+    "found_context": "ce of the one she dedicated to the LORD.” Then they would go home."
+   },
+   {
+    "reference": "2SA 5:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ame and blind who are despised by David. ” That is why it is said, “The blind an",
+    "found_context": "ame and blind who are despised by David.” That is why it is said, “The blind and"
+   },
+   {
+    "reference": "2SA 15:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "lem, I will worship the LORD in Hebron.’ ”",
+    "found_context": "lem, I will worship the LORD in Hebron.’”"
+   },
+   {
+    "reference": "2SA 15:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ow you loving devotion and faithfulness. ”",
+    "found_context": "ow you loving devotion and faithfulness.”"
+   },
+   {
+    "reference": "2SA 18:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "otect the young man Absalom for my sake. ’",
+    "found_context": "otect the young man Absalom for my sake.’"
+   },
+   {
+    "reference": "2SA 20:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "will find fortified cities and elude us. ”",
+    "found_context": "will find fortified cities and elude us.”"
+   },
+   {
+    "reference": "1KI 20:39",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "r you will weigh out a talent of silver. ’",
+    "found_context": "r you will weigh out a talent of silver.’"
+   },
+   {
+    "reference": "1KI 21:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ogs will lick up your blood—yes, yours!’ ”",
+    "found_context": "ogs will lick up your blood—yes, yours!’”"
+   },
+   {
+    "reference": "2KI 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "“He was a hairy man, ” they answered, “with a leather belt a",
+    "found_context": "“He was a hairy man,” they answered, “with a leather belt ar"
+   },
+   {
+    "reference": "2KI 2:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "r will it cause death or unfruitfulness. ’”",
+    "found_context": "r will it cause death or unfruitfulness.’”"
+   },
+   {
+    "reference": "2KI 3:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ed to pour water on the hands of Elijah. ”",
+    "found_context": "ed to pour water on the hands of Elijah.”"
+   },
+   {
+    "reference": "2KI 3:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "But now, bring me a harpist. ” And while the harpist played, the han",
+    "found_context": "But now, bring me a harpist.” And while the harpist played, the hand"
+   },
+   {
+    "reference": "2KI 9:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "o that no one can say: This is Jezebel.’ ”",
+    "found_context": "o that no one can say: This is Jezebel.’”"
+   },
+   {
+    "reference": "2CH 2:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " of wine, and 20,000 baths of olive oil. ”",
+    "found_context": " of wine, and 20,000 baths of olive oil.”"
+   },
+   {
+    "reference": "EST 4:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "inst the law. And if I perish, I perish! ”",
+    "found_context": "inst the law. And if I perish, I perish!”"
+   },
+   {
+    "reference": "JOB 19:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ce the root of the matter lies with him, ’",
+    "found_context": "ce the root of the matter lies with him,’"
+   },
+   {
+    "reference": "JOB 22:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " us as He traverses the vault of heaven. ’",
+    "found_context": " us as He traverses the vault of heaven.’"
+   },
+   {
+    "reference": "PSA 2:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ter; You will shatter them like pottery. ”",
+    "found_context": "ter; You will shatter them like pottery.”"
+   },
+   {
+    "reference": "PSA 132:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " a dwelling for the Mighty One of Jacob. ”",
+    "found_context": " a dwelling for the Mighty One of Jacob.”"
+   },
+   {
+    "reference": "ISA 3:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "the LORD will make their foreheads bare. ”",
+    "found_context": "the LORD will make their foreheads bare.”"
+   },
+   {
+    "reference": "ISA 5:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " a homer of seed only an ephah of grain. ”",
+    "found_context": " a homer of seed only an ephah of grain.”"
+   },
+   {
+    "reference": "ISA 6:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "th their hearts, and turn and be healed. ”",
+    "found_context": "th their hearts, and turn and be healed.”"
+   },
+   {
+    "reference": "ISA 8:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " it will not happen. For God is with us. ”",
+    "found_context": " it will not happen. For God is with us.”"
+   },
+   {
+    "reference": "ISA 29:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "gence of the intelligent will be hidden. ”",
+    "found_context": "gence of the intelligent will be hidden.”"
+   },
+   {
+    "reference": "ISA 37:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ay know that You alone, O LORD, are God. ”",
+    "found_context": "ay know that You alone, O LORD, are God.”"
+   },
+   {
+    "reference": "ISA 49:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "om the west, and from the land of Aswan. ”",
+    "found_context": "om the west, and from the land of Aswan.”"
+   },
+   {
+    "reference": "ISA 59:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "se in Jacob who turn from transgression, ” declares the LORD.",
+    "found_context": "se in Jacob who turn from transgression,” declares the LORD."
+   },
+   {
+    "reference": "JER 5:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "o let their own predictions befall them. ”",
+    "found_context": "o let their own predictions befall them.”"
+   },
+   {
+    "reference": "JER 31:32",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "y broke, though I was a husband to them, ” declares the LORD.",
+    "found_context": "y broke, though I was a husband to them,” declares the LORD."
+   },
+   {
+    "reference": "JER 48:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "es! Become like a juniper in the desert. ’",
+    "found_context": "es! Become like a juniper in the desert.’"
+   },
+   {
+    "reference": "JER 48:47",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "days I will restore Moab from captivity, ” declares the LORD. Here ends the judg",
+    "found_context": "days I will restore Moab from captivity,” declares the LORD. Here ends the judgm"
+   },
+   {
+    "reference": "JER 49:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ll restore the Ammonites from captivity, ” declares the LORD.",
+    "found_context": "ll restore the Ammonites from captivity,” declares the LORD."
+   },
+   {
+    "reference": "JER 49:39",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ays, I will restore Elam from captivity, ” declares the LORD.",
+    "found_context": "ays, I will restore Elam from captivity,” declares the LORD."
+   },
+   {
+    "reference": "EZK 2:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "“Son of man, ” He said to me, “stand up on your feet",
+    "found_context": "“Son of man,” He said to me, “stand up on your feet "
+   },
+   {
+    "reference": "EZK 20:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "o?’ (And to this day it is called Bamah. )",
+    "found_context": "o?’ (And to this day it is called Bamah.)"
+   },
+   {
+    "reference": "EZK 21:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "m I have assigned the right of judgment. ’",
+    "found_context": "m I have assigned the right of judgment.’"
+   },
+   {
+    "reference": "EZK 39:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "(Even the city will be named Hamonah. ) And so they will cleanse the land.",
+    "found_context": "(Even the city will be named Hamonah.) And so they will cleanse the land."
+   },
+   {
+    "reference": "EZK 40:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "y-five cubits long and five cubits deep. )",
+    "found_context": "y-five cubits long and five cubits deep.)"
+   },
+   {
+    "reference": "EZK 41:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "aid to me, “This is the Most Holy Place. ”",
+    "found_context": "aid to me, “This is the Most Holy Place.”"
+   },
+   {
+    "reference": "DAN 3:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "the fourth looks like a son of the gods! ”",
+    "found_context": "the fourth looks like a son of the gods!”"
+   },
+   {
+    "reference": "DAN 9:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "reed destruction is poured out upon him. ”",
+    "found_context": "reed destruction is poured out upon him.”"
+   },
+   {
+    "reference": "HOS 3:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "er gods and offer raisin cakes to idols. ”",
+    "found_context": "er gods and offer raisin cakes to idols.”"
+   },
+   {
+    "reference": "JOL 3:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "eir blood, which I have not yet avenged. ” For the LORD dwells in Zion.",
+    "found_context": "eir blood, which I have not yet avenged.” For the LORD dwells in Zion."
+   },
+   {
+    "reference": "AMO 4:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " and you will be cast out toward Harmon, ” declares the LORD.",
+    "found_context": " and you will be cast out toward Harmon,” declares the LORD."
+   },
+   {
+    "reference": "MIC 6:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " you will bear the scorn of the nations. ”",
+    "found_context": " you will bear the scorn of the nations.”"
+   },
+   {
+    "reference": "ZEC 1:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ry, but they have added to the calamity. ’",
+    "found_context": "ry, but they have added to the calamity.’"
+   },
+   {
+    "reference": "ZEC 5:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "“twenty cubits long and ten cubits wide. ”",
+    "found_context": "“twenty cubits long and ten cubits wide.”"
+   },
+   {
+    "reference": "ZEC 5:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ld a house for it in the land of Shinar, ” he told me. “And when it is ready, th",
+    "found_context": "ld a house for it in the land of Shinar,” he told me. “And when it is ready, the"
+   },
+   {
+    "reference": "ZEC 13:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " was purchased as a servant in my youth. ’",
+    "found_context": " was purchased as a servant in my youth.’"
+   },
+   {
+    "reference": "MAL 1:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "t his inheritance to the desert jackals. ”",
+    "found_context": "t his inheritance to the desert jackals.”"
+   },
+   {
+    "reference": "MAT 1:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "im Immanuel” (which means, “God with us” ).",
+    "found_context": "im Immanuel” (which means, “God with us”)."
+   },
+   {
+    "reference": "MAT 2:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ll be the shepherd of My people Israel.’ ”",
+    "found_context": "ll be the shepherd of My people Israel.’”"
+   },
+   {
+    "reference": "MAT 4:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " word that comes from the mouth of God.’ ”",
+    "found_context": " word that comes from the mouth of God.’”"
+   },
+   {
+    "reference": "MAT 4:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "l not strike Your foot against a stone.’ ”",
+    "found_context": "l not strike Your foot against a stone.’”"
+   },
+   {
+    "reference": "MAT 4:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " not put the Lord your God to the test.’ ”",
+    "found_context": " not put the Lord your God to the test.’”"
+   },
+   {
+    "reference": "MAT 4:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "p the Lord your God and serve Him only.’ ”",
+    "found_context": "p the Lord your God and serve Him only.’”"
+   },
+   {
+    "reference": "MAT 6:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ation, but deliver us from the evil one. ’",
+    "found_context": "ation, but deliver us from the evil one.’"
+   },
+   {
+    "reference": "MAT 9:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "come to call the righteous, but sinners. ”",
+    "found_context": "come to call the righteous, but sinners.”"
+   },
+   {
+    "reference": "MAT 11:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "who does not fall away on account of Me. ”",
+    "found_context": "who does not fall away on account of Me.”"
+   },
+   {
+    "reference": "MAT 15:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " teach as doctrine the precepts of men.’ ”",
+    "found_context": " teach as doctrine the precepts of men.’”"
+   },
+   {
+    "reference": "MAT 19:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "wife, and the two will become one flesh’ ?",
+    "found_context": "wife, and the two will become one flesh’?"
+   },
+   {
+    "reference": "MAT 19:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ertificate of divorce and send her away? ”",
+    "found_context": "ertificate of divorce and send her away?”"
+   },
+   {
+    "reference": "MAT 19:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "marries another woman, commits adultery. ”",
+    "found_context": "marries another woman, commits adultery.”"
+   },
+   {
+    "reference": "MAT 19:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "er, and love your neighbor as yourself.’ ”",
+    "found_context": "er, and love your neighbor as yourself.’”"
+   },
+   {
+    "reference": "MAT 21:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ut you are making it ‘a den of robbers.’ ”",
+    "found_context": "ut you are making it ‘a den of robbers.’”"
+   },
+   {
+    "reference": "MAT 21:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en and infants You have ordained praise’ ?”",
+    "found_context": "en and infants You have ordained praise’?”"
+   },
+   {
+    "reference": "MAT 21:31",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "did the will of his father?” “The first, ” they answered. Jesus said to them, “T",
+    "found_context": "did the will of his father?” “The first,” they answered. Jesus said to them, “Tr"
+   },
+   {
+    "reference": "MAT 21:42",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "e Lord, and it is marvelous in our eyes’ ?",
+    "found_context": "e Lord, and it is marvelous in our eyes’?"
+   },
+   {
+    "reference": "MAT 21:44",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "but he on whom it falls will be crushed. ”",
+    "found_context": "but he on whom it falls will be crushed.”"
+   },
+   {
+    "reference": "MAT 22:32",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " the God of Isaac, and the God of Jacob’ ? He is not the God of the dead, but of",
+    "found_context": " the God of Isaac, and the God of Jacob’? He is not the God of the dead, but of "
+   },
+   {
+    "reference": "MAT 23:39",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "s He who comes in the name of the Lord.’ ”",
+    "found_context": "s He who comes in the name of the Lord.’”"
+   },
+   {
+    "reference": "MAT 24:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "he powers of the heavens will be shaken. ’",
+    "found_context": "he powers of the heavens will be shaken.’"
+   },
+   {
+    "reference": "MAT 27:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "owd. “I am innocent of this man’s blood, ” he said. “You bear the responsibility",
+    "found_context": "owd. “I am innocent of this man’s blood,” he said. “You bear the responsibility."
+   },
+   {
+    "reference": "MRK 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "e will baptize you with the Holy Spirit. ”",
+    "found_context": "e will baptize you with the Holy Spirit.”"
+   },
+   {
+    "reference": "MRK 3:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "e saying, “He is possessed by Beelzebul, ” and, “By the prince of the demons He ",
+    "found_context": "e saying, “He is possessed by Beelzebul,” and, “By the prince of the demons He d"
+   },
+   {
+    "reference": "MRK 4:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "erwise they might turn and be forgiven.’ ”",
+    "found_context": "erwise they might turn and be forgiven.’”"
+   },
+   {
+    "reference": "MRK 4:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "he sickle, because the harvest has come. ”",
+    "found_context": "he sickle, because the harvest has come.”"
+   },
+   {
+    "reference": "MRK 7:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ent of God to keep the tradition of men. ”",
+    "found_context": "ent of God to keep the tradition of men.”"
+   },
+   {
+    "reference": "MRK 10:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "t others, honor your father and mother.’ ”",
+    "found_context": "t others, honor your father and mother.’”"
+   },
+   {
+    "reference": "MRK 10:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "reasure in heaven. Then come, follow Me. ”",
+    "found_context": "reasure in heaven. Then come, follow Me.”"
+   },
+   {
+    "reference": "MRK 11:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "d a house of prayer for all the nations’ ? But you have made it ‘a den of robber",
+    "found_context": "d a house of prayer for all the nations’? But you have made it ‘a den of robbers"
+   },
+   {
+    "reference": "MRK 12:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "e Lord, and it is marvelous in our eyes’ ?”",
+    "found_context": "e Lord, and it is marvelous in our eyes’?”"
+   },
+   {
+    "reference": "MRK 12:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " the God of Isaac, and the God of Jacob’ ?",
+    "found_context": " the God of Isaac, and the God of Jacob’?"
+   },
+   {
+    "reference": "LUK 1:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "re highly favored! The Lord is with you. ”",
+    "found_context": "re highly favored! The Lord is with you.”"
+   },
+   {
+    "reference": "LUK 1:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "For no word from God will ever fail. ”",
+    "found_context": "For no word from God will ever fail.”"
+   },
+   {
+    "reference": "LUK 2:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "n male shall be consecrated to the Lord” ),",
+    "found_context": "n male shall be consecrated to the Lord”),"
+   },
+   {
+    "reference": "LUK 4:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en: ‘Man shall not live on bread alone.’ ”",
+    "found_context": "en: ‘Man shall not live on bread alone.’”"
+   },
+   {
+    "reference": "LUK 4:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "p the Lord your God and serve Him only.’ ”",
+    "found_context": "p the Lord your God and serve Him only.’”"
+   },
+   {
+    "reference": "LUK 4:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "l not strike Your foot against a stone.’ ”",
+    "found_context": "l not strike Your foot against a stone.’”"
+   },
+   {
+    "reference": "LUK 4:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " not put the Lord your God to the test.’ ”",
+    "found_context": " not put the Lord your God to the test.’”"
+   },
+   {
+    "reference": "LUK 7:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "who does not fall away on account of Me. ”",
+    "found_context": "who does not fall away on account of Me.”"
+   },
+   {
+    "reference": "LUK 10:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "d’ and ‘Love your neighbor as yourself.’ ”",
+    "found_context": "d’ and ‘Love your neighbor as yourself.’”"
+   },
+   {
+    "reference": "LUK 11:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "nst us. And lead us not into temptation. ’”",
+    "found_context": "nst us. And lead us not into temptation.’”"
+   },
+   {
+    "reference": "LUK 12:53",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "d daughter-in-law against mother-in-law. ”",
+    "found_context": "d daughter-in-law against mother-in-law.”"
+   },
+   {
+    "reference": "LUK 12:59",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "until you have paid the very last penny. ”",
+    "found_context": "until you have paid the very last penny.”"
+   },
+   {
+    "reference": "LUK 13:35",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "s He who comes in the name of the Lord.’ ”",
+    "found_context": "s He who comes in the name of the Lord.’”"
+   },
+   {
+    "reference": "LUK 15:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " no longer worthy to be called your son. ’",
+    "found_context": " no longer worthy to be called your son.’"
+   },
+   {
+    "reference": "LUK 17:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "se and go; your faith has made you well! ”",
+    "found_context": "se and go; your faith has made you well!”"
+   },
+   {
+    "reference": "LUK 17:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ee, the kingdom of God is in your midst. ”",
+    "found_context": "ee, the kingdom of God is in your midst.”"
+   },
+   {
+    "reference": "LUK 18:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " witness, honor your father and mother.’ ”",
+    "found_context": " witness, honor your father and mother.’”"
+   },
+   {
+    "reference": "LUK 19:44",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ze the time of your visitation from God. ”",
+    "found_context": "ze the time of your visitation from God.”"
+   },
+   {
+    "reference": "LUK 19:46",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "But you have made it ‘a den of robbers.’ ”",
+    "found_context": "But you have made it ‘a den of robbers.’”"
+   },
+   {
+    "reference": "LUK 20:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ers rejected has become the cornerstone’ ?",
+    "found_context": "ers rejected has become the cornerstone’?"
+   },
+   {
+    "reference": "LUK 23:47",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "aying, “Surely this was a righteous man. ”",
+    "found_context": "aying, “Surely this was a righteous man.”"
+   },
+   {
+    "reference": "JHN 1:34",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "d testified that this is the Son of God. ”",
+    "found_context": "d testified that this is the Son of God.”"
+   },
+   {
+    "reference": "JHN 3:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " kingdom of God unless he is born again. ”",
+    "found_context": " kingdom of God unless he is born again.”"
+   },
+   {
+    "reference": "JHN 4:52",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " left him yesterday at the seventh hour. ”",
+    "found_context": " left him yesterday at the seventh hour.”"
+   },
+   {
+    "reference": "JHN 6:31",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "‘He gave them bread from heaven to eat.’ ”",
+    "found_context": "‘He gave them bread from heaven to eat.’”"
+   },
+   {
+    "reference": "JHN 6:69",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "d know that You are the Holy One of God. ”",
+    "found_context": "d know that You are the Holy One of God.”"
+   },
+   {
+    "reference": "JHN 7:42",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ethlehem, the village where David lived? ”",
+    "found_context": "ethlehem, the village where David lived?”"
+   },
+   {
+    "reference": "JHN 8:58",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "eclared, “before Abraham was born, I am! ”",
+    "found_context": "eclared, “before Abraham was born, I am!”"
+   },
+   {
+    "reference": "JHN 10:34",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " in your Law: ‘I have said you are gods’ ?",
+    "found_context": " in your Law: ‘I have said you are gods’?"
+   },
+   {
+    "reference": "JHN 14:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "w the way to the place where I am going. ”",
+    "found_context": "w the way to the place where I am going.”"
+   },
+   {
+    "reference": "JHN 16:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "en after a little while you will see Me. ”",
+    "found_context": "en after a little while you will see Me.”"
+   },
+   {
+    "reference": "ACT 1:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "u will be baptized with the Holy Spirit. ”",
+    "found_context": "u will be baptized with the Holy Spirit.”"
+   },
+   {
+    "reference": "ACT 3:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "sus Christ of Nazareth, get up and walk! ”",
+    "found_context": "sus Christ of Nazareth, get up and walk!”"
+   },
+   {
+    "reference": "ACT 3:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ompletely cut off from among his people. ’",
+    "found_context": "ompletely cut off from among his people.’"
+   },
+   {
+    "reference": "ACT 5:21",
+    "kind": "word_boundary",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "tes arrived, they convened the Sanhedrin —the full assembly of the elders of Isr",
+    "found_context": "tes arrived, they convened the Sanhedrin—the full assembly of the elders of Isra"
+   },
+   {
+    "reference": "ACT 10:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "n the tanner, whose house is by the sea. ”",
+    "found_context": "n the tanner, whose house is by the sea.”"
+   },
+   {
+    "reference": "ACT 13:41",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ever believe, even if someone told you.’ ”",
+    "found_context": "ever believe, even if someone told you.’”"
+   },
+   {
+    "reference": "ACT 13:47",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ing salvation to the ends of the earth.’ ”",
+    "found_context": "ing salvation to the ends of the earth.’”"
+   },
+   {
+    "reference": "ACT 23:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ak evil about the ruler of your people.’ ”",
+    "found_context": "ak evil about the ruler of your people.’”"
+   },
+   {
+    "reference": "ROM 11:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "t, and they are seeking my life as well” ?",
+    "found_context": "t, and they are seeking my life as well”?"
+   },
+   {
+    "reference": "HEB 1:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "My Son; today I have become Your Father” ? Or again: “I will be His Father, and ",
+    "found_context": "My Son; today I have become Your Father”? Or again: “I will be His Father, and H"
+   },
+   {
+    "reference": "HEB 1:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " Your enemies a footstool for Your feet” ?",
+    "found_context": " Your enemies a footstool for Your feet”?"
+   },
+   {
+    "reference": "REV 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "“I am the Alpha and the Omega, ” says the Lord God, who is and was and",
+    "found_context": "“I am the Alpha and the Omega,” says the Lord God, who is and was and "
+   },
+   {
+    "reference": "REV 7:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "l wipe away every tear from their eyes.’ ”",
+    "found_context": "l wipe away every tear from their eyes.’”"
+   },
+   {
+    "reference": "REV 22:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "eeps the words of prophecy in this book. ”",
+    "found_context": "eeps the words of prophecy in this book.”"
+   }
+  ]
+ },
+ "full-grcsbl": {
+  "verified": 7671,
+  "verified_mismatch": 335,
+  "rows": [
+   {
+    "reference": "MAT 4:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Καὶ περιῆγεν ⸂ἐν ὅλῃ τῇ Γαλιλαίᾳ , διδάσκων ἐν ταῖς συναγωγαῖς αὐτῶν καὶ",
+    "found_context": "Καὶ περιῆγεν ⸂ἐν ὅλῃ τῇ Γαλιλαίᾳ, διδάσκων ἐν ταῖς συναγωγαῖς αὐτῶν καὶ "
+   },
+   {
+    "reference": "MAT 5:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "υ ταχὺ ἕως ὅτου εἶ ⸂μετʼ αὐτοῦ ἐν τῇ ὁδῷ , μήποτέ σε παραδῷ ὁ ἀντίδικος τῷ κριτῇ",
+    "found_context": "υ ταχὺ ἕως ὅτου εἶ ⸂μετʼ αὐτοῦ ἐν τῇ ὁδῷ, μήποτέ σε παραδῷ ὁ ἀντίδικος τῷ κριτῇ,"
+   },
+   {
+    "reference": "MAT 5:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ .",
+    "found_context": " μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ."
+   },
+   {
+    "reference": "MAT 5:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αι μίαν τρίχα λευκὴν ⸂ποιῆσαι ἢ μέλαιναν .",
+    "found_context": "αι μίαν τρίχα λευκὴν ⸂ποιῆσαι ἢ μέλαιναν."
+   },
+   {
+    "reference": "MAT 6:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θαλμός. ἐὰν οὖν ⸂ᾖ ὁ ὀφθαλμός σου ἁπλοῦς , ὅλον τὸ σῶμά σου φωτεινὸν ἔσται·",
+    "found_context": "θαλμός. ἐὰν οὖν ⸂ᾖ ὁ ὀφθαλμός σου ἁπλοῦς, ὅλον τὸ σῶμά σου φωτεινὸν ἔσται·"
+   },
+   {
+    "reference": "MAT 7:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λε πρῶτον ⸂ἐκ τοῦ ὀφθαλμοῦ σοῦ τὴν δοκόν , καὶ τότε διαβλέψεις ἐκβαλεῖν τὸ κάρφο",
+    "found_context": "λε πρῶτον ⸂ἐκ τοῦ ὀφθαλμοῦ σοῦ τὴν δοκόν, καὶ τότε διαβλέψεις ἐκβαλεῖν τὸ κάρφος"
+   },
+   {
+    "reference": "MAT 9:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρσει, τέκνον· ⸀ἀφίενταί ⸂σου αἱ ἁμαρτίαι .",
+    "found_context": "ρσει, τέκνον· ⸀ἀφίενταί ⸂σου αἱ ἁμαρτίαι."
+   },
+   {
+    "reference": "MAT 10:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "σθενοῦντας θεραπεύετε, ⸂νεκροὺς ἐγείρετε , λεπροὺς καθαρίζετε, δαιμόνια ἐκβάλλετ",
+    "found_context": "σθενοῦντας θεραπεύετε, ⸂νεκροὺς ἐγείρετε, λεπροὺς καθαρίζετε, δαιμόνια ἐκβάλλετε"
+   },
+   {
+    "reference": "MAT 12:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιν; διὰ τοῦτο αὐτοὶ ⸂κριταὶ ἔσονται ὑμῶν .",
+    "found_context": "ιν; διὰ τοῦτο αὐτοὶ ⸂κριταὶ ἔσονται ὑμῶν."
+   },
+   {
+    "reference": "MAT 14:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὁ δὲ εἶπεν· Φέρετέ μοι ⸂ὧδε αὐτούς .",
+    "found_context": "ὁ δὲ εἶπεν· Φέρετέ μοι ⸂ὧδε αὐτούς."
+   },
+   {
+    "reference": "MAT 14:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τοὺς ὄχλους ἀνακλιθῆναι ἐπὶ ⸂τοῦ χόρτου , λαβὼν τοὺς πέντε ἄρτους καὶ τοὺς δύο ",
+    "found_context": " τοὺς ὄχλους ἀνακλιθῆναι ἐπὶ ⸂τοῦ χόρτου, λαβὼν τοὺς πέντε ἄρτους καὶ τοὺς δύο ἰ"
+   },
+   {
+    "reference": "MAT 14:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "δη ⸂σταδίους πολλοὺς ἀπὸ τῆς γῆς ἀπεῖχεν , βασανιζόμενον ὑπὸ τῶν κυμάτων, ἦν γὰρ",
+    "found_context": "δη ⸂σταδίους πολλοὺς ἀπὸ τῆς γῆς ἀπεῖχεν, βασανιζόμενον ὑπὸ τῶν κυμάτων, ἦν γὰρ "
+   },
+   {
+    "reference": "MAT 14:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πρὸς ⸀αὐτοὺς περιπατῶν ἐπὶ ⸂τὴν θάλασσαν .",
+    "found_context": "πρὸς ⸀αὐτοὺς περιπατῶν ἐπὶ ⸂τὴν θάλασσαν."
+   },
+   {
+    "reference": "MAT 15:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἑαυτῶν ⸂κωφούς, τυφλούς, χωλούς, κυλλούς , καὶ ἑτέρους πολλούς, καὶ ἔρριψαν αὐτο",
+    "found_context": "ἑαυτῶν ⸂κωφούς, τυφλούς, χωλούς, κυλλούς, καὶ ἑτέρους πολλούς, καὶ ἔρριψαν αὐτοὺ"
+   },
+   {
+    "reference": "MAT 15:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οῖς ⸀μαθηταῖς οἱ δὲ μαθηταὶ ⸂τοῖς ὄχλοις .",
+    "found_context": "οῖς ⸀μαθηταῖς οἱ δὲ μαθηταὶ ⸂τοῖς ὄχλοις."
+   },
+   {
+    "reference": "MAT 16:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "γε ὀπίσω μου, Σατανᾶ· σκάνδαλον ⸂εἶ ἐμοῦ , ὅτι οὐ φρονεῖς τὰ τοῦ θεοῦ ἀλλὰ τὰ τῶ",
+    "found_context": "γε ὀπίσω μου, Σατανᾶ· σκάνδαλον ⸂εἶ ἐμοῦ, ὅτι οὐ φρονεῖς τὰ τοῦ θεοῦ ἀλλὰ τὰ τῶν"
+   },
+   {
+    "reference": "MAT 17:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ ⸂Ἠλίᾳ μίαν .",
+    "found_context": " σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ ⸂Ἠλίᾳ μίαν."
+   },
+   {
+    "reference": "MAT 17:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἀγαπητός, ἐν ᾧ εὐδόκησα· ⸂ἀκούετε αὐτοῦ .",
+    "found_context": " ἀγαπητός, ἐν ᾧ εὐδόκησα· ⸂ἀκούετε αὐτοῦ."
+   },
+   {
+    "reference": "MAT 18:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν εἰσελθεῖν εἰς τὴν ζωὴν ⸂κυλλὸν ἢ χωλόν , ἢ δύο χεῖρας ἢ δύο πόδας ἔχοντα βληθῆ",
+    "found_context": "ν εἰσελθεῖν εἰς τὴν ζωὴν ⸂κυλλὸν ἢ χωλόν, ἢ δύο χεῖρας ἢ δύο πόδας ἔχοντα βληθῆν"
+   },
+   {
+    "reference": "MAT 18:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θύμησον ἐπʼ ⸀ἐμοί καὶ πάντα ⸂ἀποδώσω σοι .",
+    "found_context": "θύμησον ἐπʼ ⸀ἐμοί καὶ πάντα ⸂ἀποδώσω σοι."
+   },
+   {
+    "reference": "MAT 19:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ται ⸂καὶ ὁ ἀπολελυμένην γαμήσας μοιχᾶται .",
+    "found_context": "ται ⸂καὶ ὁ ἀπολελυμένην γαμήσας μοιχᾶται."
+   },
+   {
+    "reference": "MAT 19:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς · εἰ δὲ θέλεις ⸂εἰς τὴν ζωὴν εἰσελθεῖν , ⸀τήρησον τὰς ἐντολάς.",
+    "found_context": "ς · εἰ δὲ θέλεις ⸂εἰς τὴν ζωὴν εἰσελθεῖν, ⸀τήρησον τὰς ἐντολάς."
+   },
+   {
+    "reference": "MAT 19:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν ἢ πλούσιον ⸂εἰς τὴν βασιλείαν τοῦ θεοῦ .",
+    "found_context": "ν ἢ πλούσιον ⸂εἰς τὴν βασιλείαν τοῦ θεοῦ."
+   },
+   {
+    "reference": "MAT 19:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τέκνα ἢ ⸀ἀγροὺς ἕνεκεν τοῦ ⸂ὀνόματός μου , ⸀ἑκατονταπλασίονα λήμψεται καὶ ζωὴν α",
+    "found_context": "τέκνα ἢ ⸀ἀγροὺς ἕνεκεν τοῦ ⸂ὀνόματός μου, ⸀ἑκατονταπλασίονα λήμψεται καὶ ζωὴν αἰ"
+   },
+   {
+    "reference": "MAT 20:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ι· καὶ ἔλαβον ⸂τὸ ἀνὰ δηνάριον καὶ αὐτοί .",
+    "found_context": "ι· καὶ ἔλαβον ⸂τὸ ἀνὰ δηνάριον καὶ αὐτοί."
+   },
+   {
+    "reference": "MAT 20:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "· Κύριε, ἵνα ⸂ἀνοιγῶσιν οἱ ὀφθαλμοὶ ἡμῶν .",
+    "found_context": "· Κύριε, ἵνα ⸂ἀνοιγῶσιν οἱ ὀφθαλμοὶ ἡμῶν."
+   },
+   {
+    "reference": "MAT 21:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τες γὰρ ⸂ὡς προφήτην ἔχουσιν τὸν Ἰωάννην .",
+    "found_context": "τες γὰρ ⸂ὡς προφήτην ἔχουσιν τὸν Ἰωάννην."
+   },
+   {
+    "reference": "MAT 22:40",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς ὅλος ὁ νόμος ⸂κρέμαται καὶ οἱ προφῆται .",
+    "found_context": "ς ὅλος ὁ νόμος ⸂κρέμαται καὶ οἱ προφῆται."
+   },
+   {
+    "reference": "MAT 24:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ξελθὼν ὁ Ἰησοῦς ⸂ἀπὸ τοῦ ἱεροῦ ἐπορεύετο , καὶ προσῆλθον οἱ μαθηταὶ αὐτοῦ ἐπιδεῖ",
+    "found_context": "ξελθὼν ὁ Ἰησοῦς ⸂ἀπὸ τοῦ ἱεροῦ ἐπορεύετο, καὶ προσῆλθον οἱ μαθηταὶ αὐτοῦ ἐπιδεῖξ"
+   },
+   {
+    "reference": "MAT 24:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὕτως καὶ ὑμεῖς, ὅταν ἴδητε ⸂πάντα ταῦτα , γινώσκετε ὅτι ἐγγύς ἐστιν ἐπὶ θύραις.",
+    "found_context": "οὕτως καὶ ὑμεῖς, ὅταν ἴδητε ⸂πάντα ταῦτα, γινώσκετε ὅτι ἐγγύς ἐστιν ἐπὶ θύραις."
+   },
+   {
+    "reference": "MAT 24:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὐδὲ οἱ ἄγγελοι τῶν οὐρανῶν ⸂οὐδὲ ὁ υἱός , εἰ μὴ ὁ ⸀πατὴρ μόνος.",
+    "found_context": "οὐδὲ οἱ ἄγγελοι τῶν οὐρανῶν ⸂οὐδὲ ὁ υἱός, εἰ μὴ ὁ ⸀πατὴρ μόνος."
+   },
+   {
+    "reference": "MAT 24:48",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τῇ καρδίᾳ αὐτοῦ· Χρονίζει ⸂μου ὁ κύριος ,",
+    "found_context": " τῇ καρδίᾳ αὐτοῦ· Χρονίζει ⸂μου ὁ κύριος,"
+   },
+   {
+    "reference": "MAT 25:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "⸂ἐξ αὐτῶν ἦσαν ⸂μωραὶ καὶ πέντε φρόνιμοι .",
+    "found_context": "⸂ἐξ αὐτῶν ἦσαν ⸂μωραὶ καὶ πέντε φρόνιμοι."
+   },
+   {
+    "reference": "MAT 26:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ε αὐτοῦ ἕως οὗ ἀπελθὼν ⸂ἐκεῖ προσεύξωμαι .",
+    "found_context": "ε αὐτοῦ ἕως οὗ ἀπελθὼν ⸂ἐκεῖ προσεύξωμαι."
+   },
+   {
+    "reference": "MAT 26:59",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν κατὰ τοῦ Ἰησοῦ ὅπως ⸂αὐτὸν θανατώσωσιν ,",
+    "found_context": "ν κατὰ τοῦ Ἰησοῦ ὅπως ⸂αὐτὸν θανατώσωσιν,"
+   },
+   {
+    "reference": "MAT 27:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " αὐτὸν ⸂χλαμύδα κοκκίνην περιέθηκαν αὐτῷ ,",
+    "found_context": " αὐτὸν ⸂χλαμύδα κοκκίνην περιέθηκαν αὐτῷ,"
+   },
+   {
+    "reference": "MAT 27:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ολγοθᾶ, ὅ ἐστιν ⸂Κρανίου Τόπος λεγόμενος ,",
+    "found_context": "ολγοθᾶ, ὅ ἐστιν ⸂Κρανίου Τόπος λεγόμενος,"
+   },
+   {
+    "reference": "MAT 27:51",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αοῦ ἐσχίσθη ⸂ἀπʼ ἄνωθεν ἕως κάτω εἰς δύο , καὶ ἡ γῆ ἐσείσθη, καὶ αἱ πέτραι ἐσχίσ",
+    "found_context": "αοῦ ἐσχίσθη ⸂ἀπʼ ἄνωθεν ἕως κάτω εἰς δύο, καὶ ἡ γῆ ἐσείσθη, καὶ αἱ πέτραι ἐσχίσθ"
+   },
+   {
+    "reference": "MRK 1:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἐβαπτίσθη ⸂εἰς τὸν Ἰορδάνην ὑπὸ Ἰωάννου .",
+    "found_context": " ἐβαπτίσθη ⸂εἰς τὸν Ἰορδάνην ὑπὸ Ἰωάννου."
+   },
+   {
+    "reference": "MRK 1:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῖς σάββασιν ⸂ἐδίδασκεν εἰς τὴν συναγωγήν .",
+    "found_context": "ῖς σάββασιν ⸂ἐδίδασκεν εἰς τὴν συναγωγήν."
+   },
+   {
+    "reference": "MRK 1:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ λέγουσιν αὐτῷ ὅτι Πάντες ⸂ζητοῦσίν σε .",
+    "found_context": "αὶ λέγουσιν αὐτῷ ὅτι Πάντες ⸂ζητοῦσίν σε."
+   },
+   {
+    "reference": "MRK 2:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ τότε νηστεύσουσιν ἐν ⸂ἐκείνῃ τῇ ἡμέρᾳ .",
+    "found_context": "αὶ τότε νηστεύσουσιν ἐν ⸂ἐκείνῃ τῇ ἡμέρᾳ."
+   },
+   {
+    "reference": "MRK 2:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ούς, καὶ ὁ οἶνος ⸂ἀπόλλυται καὶ οἱ ἀσκοί . ἀλλὰ οἶνον νέον εἰς ἀσκοὺς ⸀καινούς",
+    "found_context": "ούς, καὶ ὁ οἶνος ⸂ἀπόλλυται καὶ οἱ ἀσκοί. ἀλλὰ οἶνον νέον εἰς ἀσκοὺς ⸀καινούς"
+   },
+   {
+    "reference": "MRK 2:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὓς οὐκ ἔξεστιν φαγεῖν εἰ μὴ ⸂τοὺς ἱερεῖς , καὶ ἔδωκεν καὶ τοῖς σὺν αὐτῷ οὖσιν;",
+    "found_context": "ὓς οὐκ ἔξεστιν φαγεῖν εἰ μὴ ⸂τοὺς ἱερεῖς, καὶ ἔδωκεν καὶ τοῖς σὺν αὐτῷ οὖσιν;"
+   },
+   {
+    "reference": "MRK 3:32",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ἐκάθητο ⸂περὶ αὐτὸν ὄχλος , ⸂καὶ λέγουσιν αὐτῷ· Ἰδοὺ ἡ μήτηρ σου ",
+    "found_context": "καὶ ἐκάθητο ⸂περὶ αὐτὸν ὄχλος, ⸂καὶ λέγουσιν αὐτῷ· Ἰδοὺ ἡ μήτηρ σου κ"
+   },
+   {
+    "reference": "MRK 4:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ερὶ αὐτὸν σὺν τοῖς δώδεκα ⸂τὰς παραβολάς .",
+    "found_context": "ερὶ αὐτὸν σὺν τοῖς δώδεκα ⸂τὰς παραβολάς."
+   },
+   {
+    "reference": "MRK 4:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρει τὸν λόγον τὸν ἐσπαρμένον ⸂εἰς αὐτούς .",
+    "found_context": "ρει τὸν λόγον τὸν ἐσπαρμένον ⸂εἰς αὐτούς."
+   },
+   {
+    "reference": "MRK 4:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ετο ἀπόκρυφον ἀλλʼ ἵνα ⸂ἔλθῃ εἰς φανερόν .",
+    "found_context": "ετο ἀπόκρυφον ἀλλʼ ἵνα ⸂ἔλθῃ εἰς φανερόν."
+   },
+   {
+    "reference": "MRK 4:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ γίνεται λαῖλαψ ⸂μεγάλη ἀνέμου , ⸂καὶ τὰ κύματα ἐπέβαλλεν εἰς τὸ πλοῖο",
+    "found_context": "καὶ γίνεται λαῖλαψ ⸂μεγάλη ἀνέμου, ⸂καὶ τὰ κύματα ἐπέβαλλεν εἰς τὸ πλοῖον"
+   },
+   {
+    "reference": "MRK 6:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "κ ἐδύνατο ἐκεῖ ⸂ποιῆσαι οὐδεμίαν δύναμιν , εἰ μὴ ὀλίγοις ἀρρώστοις ἐπιθεὶς τὰς χ",
+    "found_context": "κ ἐδύνατο ἐκεῖ ⸂ποιῆσαι οὐδεμίαν δύναμιν, εἰ μὴ ὀλίγοις ἀρρώστοις ἐπιθεὶς τὰς χε"
+   },
+   {
+    "reference": "MRK 6:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " Ἰωάννης ὁ βαπτίζων ⸂ἐγήγερται ἐκ νεκρῶν , καὶ διὰ τοῦτο ἐνεργοῦσιν αἱ δυνάμεις ",
+    "found_context": " Ἰωάννης ὁ βαπτίζων ⸂ἐγήγερται ἐκ νεκρῶν, καὶ διὰ τοῦτο ἐνεργοῦσιν αἱ δυνάμεις ἐ"
+   },
+   {
+    "reference": "MRK 6:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ κώμας ἀγοράσωσιν ἑαυτοῖς ⸂τί φάγωσιν .",
+    "found_context": "καὶ κώμας ἀγοράσωσιν ἑαυτοῖς ⸂τί φάγωσιν."
+   },
+   {
+    "reference": "MRK 7:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ων αὐτὸν οἱ μαθηταὶ αὐτοῦ ⸂τὴν παραβολήν .",
+    "found_context": "ων αὐτὸν οἱ μαθηταὶ αὐτοῦ ⸂τὴν παραβολήν."
+   },
+   {
+    "reference": "MRK 7:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ον τῶν τέκνων καὶ ⸂τοῖς κυναρίοις βαλεῖν .",
+    "found_context": "ον τῶν τέκνων καὶ ⸂τοῖς κυναρίοις βαλεῖν."
+   },
+   {
+    "reference": "MRK 7:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ήλυθεν ⸂ἐκ τῆς θυγατρός σου τὸ δαιμόνιον .",
+    "found_context": "ήλυθεν ⸂ἐκ τῆς θυγατρός σου τὸ δαιμόνιον."
+   },
+   {
+    "reference": "MRK 7:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὶ τὴν κλίνην καὶ τὸ δαιμόνιον ἐξεληλυθός .",
+    "found_context": "ὶ τὴν κλίνην καὶ τὸ δαιμόνιον ἐξεληλυθός."
+   },
+   {
+    "reference": "MRK 8:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "γήσας ⸀αὐτὰ εἶπεν ⸂καὶ ταῦτα παρατιθέναι .",
+    "found_context": "γήσας ⸀αὐτὰ εἶπεν ⸂καὶ ταῦτα παρατιθέναι."
+   },
+   {
+    "reference": "MRK 10:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " προσκολληθήσεται πρὸς τὴν γυναῖκα αὐτοῦ ,",
+    "found_context": " προσκολληθήσεται πρὸς τὴν γυναῖκα αὐτοῦ,"
+   },
+   {
+    "reference": "MRK 10:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ψηται · οἱ δὲ μαθηταὶ ⸂ἐπετίμησαν αὐτοῖς .",
+    "found_context": "ψηται · οἱ δὲ μαθηταὶ ⸂ἐπετίμησαν αὐτοῖς."
+   },
+   {
+    "reference": "MRK 10:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὰ ⸂κατευλόγει τιθεὶς τὰς χεῖρας ἐπʼ αὐτά .",
+    "found_context": "ὰ ⸂κατευλόγει τιθεὶς τὰς χεῖρας ἐπʼ αὐτά."
+   },
+   {
+    "reference": "MRK 10:46",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "⸀τυφλὸς ⸂προσαίτης ἐκάθητο παρὰ τὴν ὁδόν .",
+    "found_context": "⸀τυφλὸς ⸂προσαίτης ἐκάθητο παρὰ τὴν ὁδόν."
+   },
+   {
+    "reference": "MRK 10:49",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ στὰς ὁ Ἰησοῦς εἶπεν· ⸂Φωνήσατε αὐτόν . καὶ φωνοῦσι τὸν τυφλὸν λέγοντες αὐτῷ·",
+    "found_context": "καὶ στὰς ὁ Ἰησοῦς εἶπεν· ⸂Φωνήσατε αὐτόν. καὶ φωνοῦσι τὸν τυφλὸν λέγοντες αὐτῷ· "
+   },
+   {
+    "reference": "MRK 11:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρώπων ⸀ἐκάθισεν ⸂λύσατε αὐτὸν καὶ φέρετε .",
+    "found_context": "ρώπων ⸀ἐκάθισεν ⸂λύσατε αὐτὸν καὶ φέρετε."
+   },
+   {
+    "reference": "MRK 11:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἄλλοι δὲ στιβάδας ⸂κόψαντες ἐκ τῶν ἀγρῶν .",
+    "found_context": "ἄλλοι δὲ στιβάδας ⸂κόψαντες ἐκ τῶν ἀγρῶν."
+   },
+   {
+    "reference": "MRK 11:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἤκουσαν οἱ ⸂ἀρχιερεῖς καὶ οἱ γραμματεῖς , καὶ ἐζήτουν πῶς αὐτὸν ἀπολέσωσιν· ἐφο",
+    "found_context": " ἤκουσαν οἱ ⸂ἀρχιερεῖς καὶ οἱ γραμματεῖς, καὶ ἐζήτουν πῶς αὐτὸν ἀπολέσωσιν· ἐφοβ"
+   },
+   {
+    "reference": "MRK 11:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πιστεύῃ ὅτι ⸂ὃ λαλεῖ γίνεται, ἔσται αὐτῷ .",
+    "found_context": "πιστεύῃ ὅτι ⸂ὃ λαλεῖ γίνεται, ἔσται αὐτῷ."
+   },
+   {
+    "reference": "MRK 11:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μῖν, πάντα ὅσα ⸂προσεύχεσθε καὶ αἰτεῖσθε , πιστεύετε ὅτι ⸀ἐλάβετε καὶ ἔσται ὑμῖν",
+    "found_context": "μῖν, πάντα ὅσα ⸂προσεύχεσθε καὶ αἰτεῖσθε, πιστεύετε ὅτι ⸀ἐλάβετε καὶ ἔσται ὑμῖν."
+   },
+   {
+    "reference": "MRK 12:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αῖς ⸀λαλεῖν Ἀμπελῶνα ⸂ἄνθρωπος ἐφύτευσεν , καὶ περιέθηκεν φραγμὸν καὶ ὤρυξεν ὑπο",
+    "found_context": "αῖς ⸀λαλεῖν Ἀμπελῶνα ⸂ἄνθρωπος ἐφύτευσεν, καὶ περιέθηκεν φραγμὸν καὶ ὤρυξεν ὑπολ"
+   },
+   {
+    "reference": "MRK 12:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ", ⸂οὓς μὲν δέροντες οὓς δὲ ἀποκτέννοντες .",
+    "found_context": ", ⸂οὓς μὲν δέροντες οὓς δὲ ἀποκτέννοντες."
+   },
+   {
+    "reference": "MRK 12:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " καὶ καταλίπῃ γυναῖκα καὶ ⸂μὴ ἀφῇ τέκνον , ἵνα λάβῃ ὁ ἀδελφὸς αὐτοῦ τὴν ⸀γυναῖκα",
+    "found_context": " καὶ καταλίπῃ γυναῖκα καὶ ⸂μὴ ἀφῇ τέκνον, ἵνα λάβῃ ὁ ἀδελφὸς αὐτοῦ τὴν ⸀γυναῖκα "
+   },
+   {
+    "reference": "MRK 12:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μα· ⸀ἔσχατον πάντων ⸂καὶ ἡ γυνὴ ἀπέθανεν .",
+    "found_context": "μα· ⸀ἔσχατον πάντων ⸂καὶ ἡ γυνὴ ἀπέθανεν."
+   },
+   {
+    "reference": "MRK 12:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ούντων, ⸀ἰδὼν ὅτι καλῶς ⸂ἀπεκρίθη αὐτοῖς , ἐπηρώτησεν αὐτόν· Ποία ἐστὶν ⸂ἐντολὴ ",
+    "found_context": "ούντων, ⸀ἰδὼν ὅτι καλῶς ⸂ἀπεκρίθη αὐτοῖς, ἐπηρώτησεν αὐτόν· Ποία ἐστὶν ⸂ἐντολὴ π"
+   },
+   {
+    "reference": "MRK 13:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῖον ὅταν μέλλῃ ⸂ταῦτα συντελεῖσθαι πάντα .",
+    "found_context": "ῖον ὅταν μέλλῃ ⸂ταῦτα συντελεῖσθαι πάντα."
+   },
+   {
+    "reference": "MRK 13:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "στέρες ⸂ἔσονται ἐκ τοῦ οὐρανοῦ πίπτοντες , καὶ αἱ δυνάμεις αἱ ἐν τοῖς οὐρανοῖς σ",
+    "found_context": "στέρες ⸂ἔσονται ἐκ τοῦ οὐρανοῦ πίπτοντες, καὶ αἱ δυνάμεις αἱ ἐν τοῖς οὐρανοῖς σα"
+   },
+   {
+    "reference": "MRK 14:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τοὺς ἀρχιερεῖς ἵνα αὐτὸν ⸂παραδοῖ αὐτοῖς .",
+    "found_context": "τοὺς ἀρχιερεῖς ἵνα αὐτὸν ⸂παραδοῖ αὐτοῖς."
+   },
+   {
+    "reference": "MRK 14:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ". καὶ ἐζήτει πῶς ⸂αὐτὸν εὐκαίρως παραδοῖ .",
+    "found_context": ". καὶ ἐζήτει πῶς ⸂αὐτὸν εὐκαίρως παραδοῖ."
+   },
+   {
+    "reference": "MRK 14:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῆς διαθήκης τὸ ⸂ἐκχυννόμενον ὑπὲρ πολλῶν .",
+    "found_context": "ῆς διαθήκης τὸ ⸂ἐκχυννόμενον ὑπὲρ πολλῶν."
+   },
+   {
+    "reference": "MRK 14:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μένα, καὶ ⸂τὰ πρόβατα διασκορπισθήσονται .",
+    "found_context": "μένα, καὶ ⸂τὰ πρόβατα διασκορπισθήσονται."
+   },
+   {
+    "reference": "MRK 14:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἢ δὶς ἀλέκτορα φωνῆσαι τρίς ⸂με ἀπαρνήσῃ .",
+    "found_context": "ἢ δὶς ἀλέκτορα φωνῆσαι τρίς ⸂με ἀπαρνήσῃ."
+   },
+   {
+    "reference": "MRK 14:40",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "νοι καὶ οὐκ ᾔδεισαν τί ⸂ἀποκριθῶσιν αὐτῷ .",
+    "found_context": "νοι καὶ οὐκ ᾔδεισαν τί ⸂ἀποκριθῶσιν αὐτῷ."
+   },
+   {
+    "reference": "MRK 14:50",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ἀφέντες αὐτὸν ⸂ἔφυγον πάντες .",
+    "found_context": "καὶ ἀφέντες αὐτὸν ⸂ἔφυγον πάντες."
+   },
+   {
+    "reference": "MRK 14:61",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὁ δὲ ἐσιώπα καὶ ⸂οὐκ ἀπεκρίνατο οὐδέν . πάλιν ὁ ἀρχιερεὺς ἐπηρώτα αὐτὸν καὶ λ",
+    "found_context": "ὁ δὲ ἐσιώπα καὶ ⸂οὐκ ἀπεκρίνατο οὐδέν. πάλιν ὁ ἀρχιερεὺς ἐπηρώτα αὐτὸν καὶ λέ"
+   },
+   {
+    "reference": "MRK 14:68",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ω εἰς τὸ προαύλιον ⸂καὶ ἀλέκτωρ ἐφώνησεν .",
+    "found_context": "ω εἰς τὸ προαύλιον ⸂καὶ ἀλέκτωρ ἐφώνησεν."
+   },
+   {
+    "reference": "MRK 14:72",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν ἀλέκτορα ⸂φωνῆσαι δὶς τρίς με ἀπαρνήσῃ , καὶ ἐπιβαλὼν ἔκλαιεν.",
+    "found_context": "ν ἀλέκτορα ⸂φωνῆσαι δὶς τρίς με ἀπαρνήσῃ, καὶ ἐπιβαλὼν ἔκλαιεν."
+   },
+   {
+    "reference": "MRK 16:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὲ τοῖς πιστεύσασιν ⸂ταῦτα παρακολουθήσει , ἐν τῷ ὀνόματί μου δαιμόνια ἐκβαλοῦσιν",
+    "found_context": "ὲ τοῖς πιστεύσασιν ⸂ταῦτα παρακολουθήσει, ἐν τῷ ὀνόματί μου δαιμόνια ἐκβαλοῦσιν,"
+   },
+   {
+    "reference": "LUK 1:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αύμαζον ἐν τῷ χρονίζειν ⸂ἐν τῷ ναῷ αὐτόν .",
+    "found_context": "αύμαζον ἐν τῷ χρονίζειν ⸂ἐν τῷ ναῷ αὐτόν."
+   },
+   {
+    "reference": "LUK 1:41",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "υσεν ⸂τὸν ἀσπασμὸν τῆς Μαρίας ἡ Ἐλισάβετ , ἐσκίρτησεν τὸ βρέφος ἐν τῇ κοιλίᾳ αὐτ",
+    "found_context": "υσεν ⸂τὸν ἀσπασμὸν τῆς Μαρίας ἡ Ἐλισάβετ, ἐσκίρτησεν τὸ βρέφος ἐν τῇ κοιλίᾳ αὐτῆ"
+   },
+   {
+    "reference": "LUK 2:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "άψασθαι σὺν Μαριὰμ τῇ ⸂ἐμνηστευμένῃ αὐτῷ , οὔσῃ ἐγκύῳ.",
+    "found_context": "άψασθαι σὺν Μαριὰμ τῇ ⸂ἐμνηστευμένῃ αὐτῷ, οὔσῃ ἐγκύῳ."
+   },
+   {
+    "reference": "LUK 2:40",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ξανεν καὶ ἐκραταιοῦτο ⸂πληρούμενον σοφίᾳ , καὶ χάρις θεοῦ ἦν ἐπʼ αὐτό.",
+    "found_context": "ξανεν καὶ ἐκραταιοῦτο ⸂πληρούμενον σοφίᾳ, καὶ χάρις θεοῦ ἦν ἐπʼ αὐτό."
+   },
+   {
+    "reference": "LUK 3:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἦν Ἰησοῦς ⸂ἀρχόμενος ὡσεὶ ἐτῶν τριάκοντα , ὢν ⸂υἱός, ὡς ἐνομίζετο⸃, Ἰωσὴφ τοῦ Ἠλ",
+    "found_context": "ἦν Ἰησοῦς ⸂ἀρχόμενος ὡσεὶ ἐτῶν τριάκοντα, ὢν ⸂υἱός, ὡς ἐνομίζετο⸃, Ἰωσὴφ τοῦ Ἠλὶ"
+   },
+   {
+    "reference": "LUK 4:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ⸂ἐν τῷ Ἰσραὴλ ἐπὶ Ἐλισαίου τοῦ προφήτου , καὶ οὐδεὶς αὐτῶν ἐκαθαρίσθη, εἰ μὴ Να",
+    "found_context": " ⸂ἐν τῷ Ἰσραὴλ ἐπὶ Ἐλισαίου τοῦ προφήτου, καὶ οὐδεὶς αὐτῶν ἐκαθαρίσθη, εἰ μὴ Ναι"
+   },
+   {
+    "reference": "LUK 5:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": ", ἐπὶ δὲ τῷ ῥήματί σου χαλάσω ⸂τὰ δίκτυα .",
+    "found_context": ", ἐπὶ δὲ τῷ ῥήματί σου χαλάσω ⸂τὰ δίκτυα."
+   },
+   {
+    "reference": "LUK 6:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἐστιν ⸂τοῦ σαββάτου ὁ υἱὸς τοῦ ἀνθρώπου .",
+    "found_context": " ἐστιν ⸂τοῦ σαββάτου ὁ υἱὸς τοῦ ἀνθρώπου."
+   },
+   {
+    "reference": "LUK 6:42",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὸ ἐν τῷ ὀφθαλμῷ τοῦ ἀδελφοῦ σου ἐκβαλεῖν .",
+    "found_context": "ὸ ἐν τῷ ὀφθαλμῷ τοῦ ἀδελφοῦ σου ἐκβαλεῖν."
+   },
+   {
+    "reference": "LUK 6:44",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν σῦκα, οὐδὲ ἐκ βάτου ⸂σταφυλὴν τρυγῶσιν .",
+    "found_context": "ν σῦκα, οὐδὲ ἐκ βάτου ⸂σταφυλὴν τρυγῶσιν."
+   },
+   {
+    "reference": "LUK 6:48",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ι αὐτὴν ⸂διὰ τὸ καλῶς οἰκοδομῆσθαι αὐτήν .",
+    "found_context": "ι αὐτὴν ⸂διὰ τὸ καλῶς οἰκοδομῆσθαι αὐτήν."
+   },
+   {
+    "reference": "LUK 6:49",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οσέρηξεν ὁ ποταμός, καὶ ⸂εὐθὺς συνέπεσεν , καὶ ἐγένετο τὸ ῥῆγμα τῆς οἰκίας ἐκείν",
+    "found_context": "οσέρηξεν ὁ ποταμός, καὶ ⸂εὐθὺς συνέπεσεν, καὶ ἐγένετο τὸ ῥῆγμα τῆς οἰκίας ἐκείνη"
+   },
+   {
+    "reference": "LUK 7:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιστὴς ⸀μὴ ⸂ἐσθίων ἄρτον μήτε πίνων οἶνον , καὶ λέγετε· Δαιμόνιον ἔχει·",
+    "found_context": "ιστὴς ⸀μὴ ⸂ἐσθίων ἄρτον μήτε πίνων οἶνον, καὶ λέγετε· Δαιμόνιον ἔχει·"
+   },
+   {
+    "reference": "LUK 7:35",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ώθη ἡ σοφία ἀπὸ ⸂πάντων τῶν τέκνων αὐτῆς .",
+    "found_context": "ώθη ἡ σοφία ἀπὸ ⸂πάντων τῶν τέκνων αὐτῆς."
+   },
+   {
+    "reference": "LUK 7:46",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ας· αὕτη δὲ μύρῳ ἤλειψεν ⸂τοὺς πόδας μου .",
+    "found_context": "ας· αὕτη δὲ μύρῳ ἤλειψεν ⸂τοὺς πόδας μου."
+   },
+   {
+    "reference": "LUK 8:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " μαθηταὶ ⸀αὐτοῦ τίς ⸂αὕτη εἴη ἡ παραβολή .",
+    "found_context": " μαθηταὶ ⸀αὐτοῦ τίς ⸂αὕτη εἴη ἡ παραβολή."
+   },
+   {
+    "reference": "LUK 8:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "φοί σου ἑστήκασιν ἔξω ἰδεῖν ⸂σε θέλοντες .",
+    "found_context": "φοί σου ἑστήκασιν ἔξω ἰδεῖν ⸂σε θέλοντες."
+   },
+   {
+    "reference": "LUK 8:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "· ⸂καὶ χρόνῳ ἱκανῷ οὐκ ἐνεδύσατο ἱμάτιον , καὶ ἐν οἰκίᾳ οὐκ ἔμενεν ἀλλʼ ἐν τοῖς ",
+    "found_context": "· ⸂καὶ χρόνῳ ἱκανῷ οὐκ ἐνεδύσατο ἱμάτιον, καὶ ἐν οἰκίᾳ οὐκ ἔμενεν ἀλλʼ ἐν τοῖς μ"
+   },
+   {
+    "reference": "LUK 9:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λείαν τοῦ θεοῦ καὶ ἰᾶσθαι ⸂τοὺς ἀσθενεῖς ,",
+    "found_context": "λείαν τοῦ θεοῦ καὶ ἰᾶσθαι ⸂τοὺς ἀσθενεῖς,"
+   },
+   {
+    "reference": "LUK 9:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ατʼ ἰδίαν εἰς ⸂πόλιν καλουμένην Βηθσαϊδά .",
+    "found_context": "ατʼ ἰδίαν εἰς ⸂πόλιν καλουμένην Βηθσαϊδά."
+   },
+   {
+    "reference": "LUK 9:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὲ πρὸς αὐτούς· Δότε αὐτοῖς ⸂ὑμεῖς φαγεῖν . οἱ δὲ εἶπαν· Οὐκ εἰσὶν ἡμῖν πλεῖον ἢ ",
+    "found_context": "ὲ πρὸς αὐτούς· Δότε αὐτοῖς ⸂ὑμεῖς φαγεῖν. οἱ δὲ εἶπαν· Οὐκ εἰσὶν ἡμῖν πλεῖον ἢ ⸂"
+   },
+   {
+    "reference": "LUK 9:38",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὶ τὸν υἱόν μου, ὅτι μονογενής ⸂μοί ἐστιν ,",
+    "found_context": "ὶ τὸν υἱόν μου, ὅτι μονογενής ⸂μοί ἐστιν,"
+   },
+   {
+    "reference": "LUK 9:41",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "έξομαι ὑμῶν; προσάγαγε ⸂ὧδε τὸν υἱόν σου .",
+    "found_context": "έξομαι ὑμῶν; προσάγαγε ⸂ὧδε τὸν υἱόν σου."
+   },
+   {
+    "reference": "LUK 11:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ι αὐτῷ ἀναστὰς διὰ τὸ εἶναι ⸂φίλον αὐτοῦ , διά γε τὴν ἀναίδειαν αὐτοῦ ἐγερθεὶς δ",
+    "found_context": "ι αὐτῷ ἀναστὰς διὰ τὸ εἶναι ⸂φίλον αὐτοῦ, διά γε τὴν ἀναίδειαν αὐτοῦ ἐγερθεὶς δώ"
+   },
+   {
+    "reference": "LUK 11:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς σημεῖον ⸂ἐξ οὐρανοῦ ἐζήτουν παρʼ αὐτοῦ .",
+    "found_context": "ς σημεῖον ⸂ἐξ οὐρανοῦ ἐζήτουν παρʼ αὐτοῦ."
+   },
+   {
+    "reference": "LUK 11:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ι ⸂ἕτερα πνεύματα πονηρότερα ἑαυτοῦ ἑπτά , καὶ ⸀εἰσελθόντα κατοικεῖ ἐκεῖ, καὶ γί",
+    "found_context": "ι ⸂ἕτερα πνεύματα πονηρότερα ἑαυτοῦ ἑπτά, καὶ ⸀εἰσελθόντα κατοικεῖ ἐκεῖ, καὶ γίν"
+   },
+   {
+    "reference": "LUK 11:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἐγένετο ⸀Ἰωνᾶς ⸂τοῖς Νινευίταις σημεῖον , οὕτως ἔσται καὶ ὁ υἱὸς τοῦ ἀνθρώπου τ",
+    "found_context": " ἐγένετο ⸀Ἰωνᾶς ⸂τοῖς Νινευίταις σημεῖον, οὕτως ἔσται καὶ ὁ υἱὸς τοῦ ἀνθρώπου τῇ"
+   },
+   {
+    "reference": "LUK 12:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τοὺς μαθητὰς αὐτοῦ· Διὰ τοῦτο ⸂λέγω ὑμῖν , μὴ μεριμνᾶτε τῇ ⸀ψυχῇ τί φάγητε, μηδὲ",
+    "found_context": "τοὺς μαθητὰς αὐτοῦ· Διὰ τοῦτο ⸂λέγω ὑμῖν, μὴ μεριμνᾶτε τῇ ⸀ψυχῇ τί φάγητε, μηδὲ "
+   },
+   {
+    "reference": "LUK 12:53",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πὶ ⸀θυγατέρα καὶ θυγάτηρ ἐπὶ ⸂τὴν μητέρα , πενθερὰ ἐπὶ τὴν νύμφην αὐτῆς καὶ νύμφ",
+    "found_context": "πὶ ⸀θυγατέρα καὶ θυγάτηρ ἐπὶ ⸂τὴν μητέρα, πενθερὰ ἐπὶ τὴν νύμφην αὐτῆς καὶ νύμφη"
+   },
+   {
+    "reference": "LUK 13:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν τις ⸂πεφυτευμένην ἐν τῷ ἀμπελῶνι αὐτοῦ , καὶ ἦλθεν ζητῶν καρπὸν ἐν αὐτῇ καὶ οὐ",
+    "found_context": "ν τις ⸂πεφυτευμένην ἐν τῷ ἀμπελῶνι αὐτοῦ, καὶ ἦλθεν ζητῶν καρπὸν ἐν αὐτῇ καὶ οὐχ"
+   },
+   {
+    "reference": "LUK 14:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καλέσωσίν σε καὶ γένηται ⸂ἀνταπόδομά σοι .",
+    "found_context": "καλέσωσίν σε καὶ γένηται ⸂ἀνταπόδομά σοι."
+   },
+   {
+    "reference": "LUK 14:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἀλλʼ ὅταν ⸂δοχὴν ποιῇς , κάλει πτωχούς, ἀναπείρους, χωλούς, τυ",
+    "found_context": "ἀλλʼ ὅταν ⸂δοχὴν ποιῇς, κάλει πτωχούς, ἀναπείρους, χωλούς, τυφ"
+   },
+   {
+    "reference": "LUK 14:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ ἤρξαντο ἀπὸ μιᾶς ⸂πάντες παραιτεῖσθαι . ὁ πρῶτος εἶπεν αὐτῷ· Ἀγρὸν ἠγόρασα κα",
+    "found_context": "αὶ ἤρξαντο ἀπὸ μιᾶς ⸂πάντες παραιτεῖσθαι. ὁ πρῶτος εἶπεν αὐτῷ· Ἀγρὸν ἠγόρασα καὶ"
+   },
+   {
+    "reference": "LUK 14:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς ἀδελφάς, ἔτι ⸀τε καὶ τὴν ⸂ψυχὴν ἑαυτοῦ , οὐ δύναται ⸂εἶναί μου μαθητής .",
+    "found_context": "ς ἀδελφάς, ἔτι ⸀τε καὶ τὴν ⸂ψυχὴν ἑαυτοῦ, οὐ δύναται ⸂εἶναί μου μαθητής."
+   },
+   {
+    "reference": "LUK 15:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἦλθεν, ἔθυσας αὐτῷ τὸν ⸂σιτευτὸν μόσχον .",
+    "found_context": " ἦλθεν, ἔθυσας αὐτῷ τὸν ⸂σιτευτὸν μόσχον."
+   },
+   {
+    "reference": "LUK 16:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "εἶπεν δέ· Ἐρωτῶ ⸂σε οὖν , πάτερ, ἵνα πέμψῃς αὐτὸν εἰς τὸν οἶκον",
+    "found_context": "εἶπεν δέ· Ἐρωτῶ ⸂σε οὖν, πάτερ, ἵνα πέμψῃς αὐτὸν εἰς τὸν οἶκον "
+   },
+   {
+    "reference": "LUK 17:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "νδεκτόν ἐστιν τοῦ ⸂τὰ σκάνδαλα μὴ ἐλθεῖν , ⸂πλὴν οὐαὶ διʼ οὗ ἔρχεται·",
+    "found_context": "νδεκτόν ἐστιν τοῦ ⸂τὰ σκάνδαλα μὴ ἐλθεῖν, ⸂πλὴν οὐαὶ διʼ οὗ ἔρχεται·"
+   },
+   {
+    "reference": "LUK 17:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἢ ἵνα σκανδαλίσῃ ⸂τῶν μικρῶν τούτων ἕνα .",
+    "found_context": " ἢ ἵνα σκανδαλίσῃ ⸂τῶν μικρῶν τούτων ἕνα."
+   },
+   {
+    "reference": "LUK 17:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ι ὁ υἱὸς τοῦ ἀνθρώπου ⸂ἐν τῇ ἡμέρᾳ αὐτοῦ .",
+    "found_context": "ι ὁ υἱὸς τοῦ ἀνθρώπου ⸂ἐν τῇ ἡμέρᾳ αὐτοῦ."
+   },
+   {
+    "reference": "LUK 17:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῶμα, ἐκεῖ ⸂καὶ οἱ ἀετοὶ ἐπισυναχθήσονται .",
+    "found_context": "ῶμα, ἐκεῖ ⸂καὶ οἱ ἀετοὶ ἐπισυναχθήσονται."
+   },
+   {
+    "reference": "LUK 18:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὲ τοὺς ὀφθαλμοὺς ⸂ἐπᾶραι εἰς τὸν οὐρανόν , ἀλλʼ ⸀ἔτυπτε τὸ στῆθος ⸀αὐτοῦ λέγων· ",
+    "found_context": "ὲ τοὺς ὀφθαλμοὺς ⸂ἐπᾶραι εἰς τὸν οὐρανόν, ἀλλʼ ⸀ἔτυπτε τὸ στῆθος ⸀αὐτοῦ λέγων· Ὁ"
+   },
+   {
+    "reference": "LUK 18:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "παρὰ ἀνθρώποις δυνατὰ ⸂παρὰ τῷ θεῷ ἐστιν .",
+    "found_context": "παρὰ ἀνθρώποις δυνατὰ ⸂παρὰ τῷ θεῷ ἐστιν."
+   },
+   {
+    "reference": "LUK 19:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιον· Ἰδοὺ τὰ ⸀ἡμίσιά ⸂μου τῶν ὑπαρχόντων , κύριε, ⸂τοῖς πτωχοῖς δίδωμι , καὶ εἴ ",
+    "found_context": "ιον· Ἰδοὺ τὰ ⸀ἡμίσιά ⸂μου τῶν ὑπαρχόντων, κύριε, ⸂τοῖς πτωχοῖς δίδωμι, καὶ εἴ τι"
+   },
+   {
+    "reference": "LUK 19:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ζαν; κἀγὼ ἐλθὼν σὺν τόκῳ ἂν ⸂αὐτὸ ἔπραξα .",
+    "found_context": "ζαν; κἀγὼ ἐλθὼν σὺν τόκῳ ἂν ⸂αὐτὸ ἔπραξα."
+   },
+   {
+    "reference": "LUK 19:44",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ οὐκ ἀφήσουσιν ⸂λίθον ἐπὶ λίθον ἐν σοί , ἀνθʼ ὧν οὐκ ἔγνως τὸν καιρὸν τῆς ἐπισ",
+    "found_context": "αὶ οὐκ ἀφήσουσιν ⸂λίθον ἐπὶ λίθον ἐν σοί, ἀνθʼ ὧν οὐκ ἔγνως τὸν καιρὸν τῆς ἐπισκ"
+   },
+   {
+    "reference": "LUK 20:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἐν αὐτῇ τῇ ὥρᾳ, καὶ ἐφοβήθησαν ⸂τὸν λαόν , ἔγνωσαν γὰρ ὅτι πρὸς αὐτοὺς ⸂εἶπεν τὴ",
+    "found_context": "ἐν αὐτῇ τῇ ὥρᾳ, καὶ ἐφοβήθησαν ⸂τὸν λαόν, ἔγνωσαν γὰρ ὅτι πρὸς αὐτοὺς ⸂εἶπεν τὴν"
+   },
+   {
+    "reference": "LUK 20:32",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὕστερον ⸂καὶ ἡ γυνὴ ἀπέθανεν .",
+    "found_context": "ὕστερον ⸂καὶ ἡ γυνὴ ἀπέθανεν."
+   },
+   {
+    "reference": "LUK 21:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "χήραν πενιχρὰν βάλλουσαν ἐκεῖ ⸂λεπτὰ δύο ,",
+    "found_context": "χήραν πενιχρὰν βάλλουσαν ἐκεῖ ⸂λεπτὰ δύο,"
+   },
+   {
+    "reference": "LUK 21:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "νέων καὶ ⸂ἀδελφῶν καὶ συγγενῶν καὶ φίλων , καὶ θανατώσουσιν ἐξ ὑμῶν,",
+    "found_context": "νέων καὶ ⸂ἀδελφῶν καὶ συγγενῶν καὶ φίλων, καὶ θανατώσουσιν ἐξ ὑμῶν,"
+   },
+   {
+    "reference": "LUK 21:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ αἰχμαλωτισθήσονται εἰς ⸂τὰ ἔθνη πάντα , καὶ Ἰερουσαλὴμ ἔσται πατουμένη ὑπὸ ἐθ",
+    "found_context": "αὶ αἰχμαλωτισθήσονται εἰς ⸂τὰ ἔθνη πάντα, καὶ Ἰερουσαλὴμ ἔσται πατουμένη ὑπὸ ἐθν"
+   },
+   {
+    "reference": "LUK 21:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Ἦν δὲ τὰς ἡμέρας ⸂ἐν τῷ ἱερῷ διδάσκων , τὰς δὲ νύκτας ἐξερχόμενος ηὐλίζετο εἰ",
+    "found_context": "Ἦν δὲ τὰς ἡμέρας ⸂ἐν τῷ ἱερῷ διδάσκων, τὰς δὲ νύκτας ἐξερχόμενος ηὐλίζετο εἰς"
+   },
+   {
+    "reference": "LUK 22:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὶ στρατηγοῖς τὸ πῶς ⸂αὐτοῖς παραδῷ αὐτόν .",
+    "found_context": "ὶ στρατηγοῖς τὸ πῶς ⸂αὐτοῖς παραδῷ αὐτόν."
+   },
+   {
+    "reference": "LUK 22:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τοῦ παραδοῦναι αὐτὸν ⸂ἄτερ ὄχλου αὐτοῖς .",
+    "found_context": " τοῦ παραδοῦναι αὐτὸν ⸂ἄτερ ὄχλου αὐτοῖς."
+   },
+   {
+    "reference": "LUK 22:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οῦ ἀνθρώπου ⸂κατὰ τὸ ὡρισμένον πορεύεται , πλὴν οὐαὶ τῷ ἀνθρώπῳ ἐκείνῳ διʼ οὗ πα",
+    "found_context": "οῦ ἀνθρώπου ⸂κατὰ τὸ ὡρισμένον πορεύεται, πλὴν οὐαὶ τῷ ἀνθρώπῳ ἐκείνῳ διʼ οὗ παρ"
+   },
+   {
+    "reference": "LUK 22:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἐπὶ τῆς τραπέζης μου ⸂ἐν τῇ βασιλείᾳ μου , καὶ ⸀καθήσεσθε ἐπὶ θρόνων ⸂τὰς δώδεκα",
+    "found_context": "ἐπὶ τῆς τραπέζης μου ⸂ἐν τῇ βασιλείᾳ μου, καὶ ⸀καθήσεσθε ἐπὶ θρόνων ⸂τὰς δώδεκα "
+   },
+   {
+    "reference": "LUK 22:34",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν ἀλέκτωρ ⸀ἕως τρίς ⸂με ἀπαρνήσῃ εἰδέναι .",
+    "found_context": "ν ἀλέκτωρ ⸀ἕως τρίς ⸂με ἀπαρνήσῃ εἰδέναι."
+   },
+   {
+    "reference": "LUK 24:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἐπέστησαν αὐταῖς ἐν ⸂ἐσθῆτι ἀστραπτούσῃ .",
+    "found_context": " ἐπέστησαν αὐταῖς ἐν ⸂ἐσθῆτι ἀστραπτούσῃ."
+   },
+   {
+    "reference": "LUK 24:49",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πόλει ἕως οὗ ἐνδύσησθε ⸂ἐξ ὕψους δύναμιν .",
+    "found_context": "πόλει ἕως οὗ ἐνδύσησθε ⸂ἐξ ὕψους δύναμιν."
+   },
+   {
+    "reference": "JHN 2:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ατὰ τὸν καθαρισμὸν τῶν Ἰουδαίων κείμεναι , χωροῦσαι ἀνὰ μετρητὰς δύο ἢ τρεῖς.",
+    "found_context": "ατὰ τὸν καθαρισμὸν τῶν Ἰουδαίων κείμεναι, χωροῦσαι ἀνὰ μετρητὰς δύο ἢ τρεῖς."
+   },
+   {
+    "reference": "JHN 4:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ύμοις ἐστὶν ὁ τόπος ὅπου ⸂προσκυνεῖν δεῖ .",
+    "found_context": "ύμοις ἐστὶν ὁ τόπος ὅπου ⸂προσκυνεῖν δεῖ."
+   },
+   {
+    "reference": "JHN 4:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λέγει αὐτῇ ὁ Ἰησοῦς· ⸂Πίστευέ μοι, γύναι , ὅτι ἔρχεται ὥρα ὅτε οὔτε ἐν τῷ ὄρει τ",
+    "found_context": "λέγει αὐτῇ ὁ Ἰησοῦς· ⸂Πίστευέ μοι, γύναι, ὅτι ἔρχεται ὥρα ὅτε οὔτε ἐν τῷ ὄρει το"
+   },
+   {
+    "reference": "JHN 6:71",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "του οὗτος γὰρ ἔμελλεν ⸂παραδιδόναι αὐτόν , ⸀εἷς ἐκ τῶν δώδεκα.",
+    "found_context": "του οὗτος γὰρ ἔμελλεν ⸂παραδιδόναι αὐτόν, ⸀εἷς ἐκ τῶν δώδεκα."
+   },
+   {
+    "reference": "JHN 8:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μὲ ᾔδειτε, καὶ τὸν πατέρα μου ⸂ἂν ᾔδειτε .",
+    "found_context": "μὲ ᾔδειτε, καὶ τὸν πατέρα μου ⸂ἂν ᾔδειτε."
+   },
+   {
+    "reference": "JHN 8:44",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πʼ ἀρχῆς, καὶ ἐν τῇ ἀληθείᾳ ⸂οὐκ ἔστηκεν , ὅτι οὐκ ἔστιν ἀλήθεια ἐν αὐτῷ. ὅταν λ",
+    "found_context": "πʼ ἀρχῆς, καὶ ἐν τῇ ἀληθείᾳ ⸂οὐκ ἔστηκεν, ὅτι οὐκ ἔστιν ἀλήθεια ἐν αὐτῷ. ὅταν λα"
+   },
+   {
+    "reference": "JHN 9:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς· ⸂Οὐκ ἔστιν οὗτος παρὰ θεοῦ ὁ ἄνθρωπος , ὅτι τὸ σάββατον οὐ τηρεῖ. ⸀ἄλλοι ἔλεγ",
+    "found_context": "ς· ⸂Οὐκ ἔστιν οὗτος παρὰ θεοῦ ὁ ἄνθρωπος, ὅτι τὸ σάββατον οὐ τηρεῖ. ⸀ἄλλοι ἔλεγο"
+   },
+   {
+    "reference": "JHN 9:40",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τῶν Φαρισαίων ταῦτα οἱ ⸂μετʼ αὐτοῦ ὄντες , καὶ εἶπον αὐτῷ· Μὴ καὶ ἡμεῖς τυφλοί ἐ",
+    "found_context": "τῶν Φαρισαίων ταῦτα οἱ ⸂μετʼ αὐτοῦ ὄντες, καὶ εἶπον αὐτῷ· Μὴ καὶ ἡμεῖς τυφλοί ἐσ"
+   },
+   {
+    "reference": "JHN 10:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "γινώσκω τὰ ἐμὰ καὶ ⸂γινώσκουσί με τὰ ἐμά ,",
+    "found_context": "γινώσκω τὰ ἐμὰ καὶ ⸂γινώσκουσί με τὰ ἐμά,"
+   },
+   {
+    "reference": "JHN 10:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "κἀγὼ ⸂δίδωμι αὐτοῖς ζωὴν αἰώνιον , καὶ οὐ μὴ ἀπόλωνται εἰς τὸν αἰῶνα, κα",
+    "found_context": "κἀγὼ ⸂δίδωμι αὐτοῖς ζωὴν αἰώνιον, καὶ οὐ μὴ ἀπόλωνται εἰς τὸν αἰῶνα, καὶ"
+   },
+   {
+    "reference": "JHN 10:38",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τε ὅτι ἐν ἐμοὶ ὁ πατὴρ κἀγὼ ἐν ⸂τῷ πατρί .",
+    "found_context": "τε ὅτι ἐν ἐμοὶ ὁ πατὴρ κἀγὼ ἐν ⸂τῷ πατρί."
+   },
+   {
+    "reference": "JHN 10:42",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ⸂πολλοὶ ἐπίστευσαν εἰς αὐτὸν ἐκεῖ .",
+    "found_context": "καὶ ⸂πολλοὶ ἐπίστευσαν εἰς αὐτὸν ἐκεῖ."
+   },
+   {
+    "reference": "JHN 12:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ούδας ὁ Ἰσκαριώτης εἷς τῶν μαθητῶν αὐτοῦ , ὁ μέλλων αὐτὸν παραδιδόναι·",
+    "found_context": "ούδας ὁ Ἰσκαριώτης εἷς τῶν μαθητῶν αὐτοῦ, ὁ μέλλων αὐτὸν παραδιδόναι·"
+   },
+   {
+    "reference": "JHN 12:50",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὐτοῦ ζωὴ αἰώνιός ἐστιν. ἃ οὖν ⸂ἐγὼ λαλῶ , καθὼς εἴρηκέν μοι ὁ πατήρ, οὕτως λαλῶ",
+    "found_context": "αὐτοῦ ζωὴ αἰώνιός ἐστιν. ἃ οὖν ⸂ἐγὼ λαλῶ, καθὼς εἴρηκέν μοι ὁ πατήρ, οὕτως λαλῶ."
+   },
+   {
+    "reference": "JHN 13:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ἔλαβεν τὰ ἱμάτια αὐτοῦ ⸂καὶ ἀνέπεσεν , πάλιν εἶπεν αὐτοῖς· Γινώσκετε τί πεπο",
+    "found_context": "καὶ ἔλαβεν τὰ ἱμάτια αὐτοῦ ⸂καὶ ἀνέπεσεν, πάλιν εἶπεν αὐτοῖς· Γινώσκετε τί πεποί"
+   },
+   {
+    "reference": "JHN 13:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "βὼν οὖν τὸ ψωμίον ἐκεῖνος ⸂ἐξῆλθεν εὐθύς . ἦν δὲ νύξ.",
+    "found_context": "βὼν οὖν τὸ ψωμίον ἐκεῖνος ⸂ἐξῆλθεν εὐθύς. ἦν δὲ νύξ."
+   },
+   {
+    "reference": "JHN 13:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῦν ἀκολουθῆσαι, ⸂ἀκολουθήσεις δὲ ὕστερον .",
+    "found_context": "ῦν ἀκολουθῆσαι, ⸂ἀκολουθήσεις δὲ ὕστερον."
+   },
+   {
+    "reference": "JHN 14:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ ἐὰν πορευθῶ ⸀καὶ ἑτοιμάσω ⸂τόπον ὑμῖν , πάλιν ἔρχομαι καὶ παραλήμψομαι ὑμᾶς π",
+    "found_context": "αὶ ἐὰν πορευθῶ ⸀καὶ ἑτοιμάσω ⸂τόπον ὑμῖν, πάλιν ἔρχομαι καὶ παραλήμψομαι ὑμᾶς πρ"
+   },
+   {
+    "reference": "JHN 14:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ὅπου ἐγὼ ὑπάγω οἴδατε ⸂τὴν ὁδόν .",
+    "found_context": "καὶ ὅπου ἐγὼ ὑπάγω οἴδατε ⸂τὴν ὁδόν."
+   },
+   {
+    "reference": "JHN 15:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἠγάπησέν με ὁ πατήρ, κἀγὼ ⸂ὑμᾶς ἠγάπησα , μείνατε ἐν τῇ ἀγάπῃ τῇ ἐμῇ.",
+    "found_context": " ἠγάπησέν με ὁ πατήρ, κἀγὼ ⸂ὑμᾶς ἠγάπησα, μείνατε ἐν τῇ ἀγάπῃ τῇ ἐμῇ."
+   },
+   {
+    "reference": "JHN 16:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Ἔτι πολλὰ ἔχω ⸂ὑμῖν λέγειν , ἀλλʼ οὐ δύνασθε βαστάζειν ἄρτι·",
+    "found_context": "Ἔτι πολλὰ ἔχω ⸂ὑμῖν λέγειν, ἀλλʼ οὐ δύνασθε βαστάζειν ἄρτι·"
+   },
+   {
+    "reference": "JHN 16:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θείας, ὁδηγήσει ὑμᾶς ⸂ἐν τῇ ἀληθείᾳ πάσῃ , οὐ γὰρ λαλήσει ἀφʼ ἑαυτοῦ, ἀλλʼ ὅσα ⸀",
+    "found_context": "θείας, ὁδηγήσει ὑμᾶς ⸂ἐν τῇ ἀληθείᾳ πάσῃ, οὐ γὰρ λαλήσει ἀφʼ ἑαυτοῦ, ἀλλʼ ὅσα ⸀ἀ"
+   },
+   {
+    "reference": "JHN 16:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τὸν πατέρα ⸂δώσει ὑμῖν ἐν τῷ ὀνόματί μου .",
+    "found_context": "τὸν πατέρα ⸂δώσει ὑμῖν ἐν τῷ ὀνόματί μου."
+   },
+   {
+    "reference": "JHN 17:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " εἰσὶν καθὼς ἐγὼ ⸂οὐκ εἰμὶ ἐκ τοῦ κόσμου .",
+    "found_context": " εἰσὶν καθὼς ἐγὼ ⸂οὐκ εἰμὶ ἐκ τοῦ κόσμου."
+   },
+   {
+    "reference": "JHN 18:30",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " εἶπαν αὐτῷ· Εἰ μὴ ἦν οὗτος ⸂κακὸν ποιῶν , οὐκ ἄν σοι παρεδώκαμεν αὐτόν.",
+    "found_context": " εἶπαν αὐτῷ· Εἰ μὴ ἦν οὗτος ⸂κακὸν ποιῶν, οὐκ ἄν σοι παρεδώκαμεν αὐτόν."
+   },
+   {
+    "reference": "JHN 18:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἐμή, οἱ ὑπηρέται ⸂οἱ ἐμοὶ ἠγωνίζοντο ἄν , ἵνα μὴ παραδοθῶ τοῖς Ἰουδαίοις· νῦν δ",
+    "found_context": " ἐμή, οἱ ὑπηρέται ⸂οἱ ἐμοὶ ἠγωνίζοντο ἄν, ἵνα μὴ παραδοθῶ τοῖς Ἰουδαίοις· νῦν δὲ"
+   },
+   {
+    "reference": "JHN 19:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῶτε ὅτι ⸂οὐδεμίαν αἰτίαν εὑρίσκω ἐν αὐτῷ .",
+    "found_context": "ῶτε ὅτι ⸂οὐδεμίαν αἰτίαν εὑρίσκω ἐν αὐτῷ."
+   },
+   {
+    "reference": "JHN 19:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "κεῖνος εἶπεν Βασιλεὺς ⸂τῶν Ἰουδαίων εἰμί .",
+    "found_context": "κεῖνος εἶπεν Βασιλεὺς ⸂τῶν Ἰουδαίων εἰμί."
+   },
+   {
+    "reference": "JHN 20:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὲ εἱστήκει πρὸς ⸂τῷ μνημείῳ ἔξω κλαίουσα . ὡς οὖν ἔκλαιεν παρέκυψεν εἰς τὸ μνημε",
+    "found_context": "ὲ εἱστήκει πρὸς ⸂τῷ μνημείῳ ἔξω κλαίουσα. ὡς οὖν ἔκλαιεν παρέκυψεν εἰς τὸ μνημεῖ"
+   },
+   {
+    "reference": "JHN 21:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς ἔρχομαι, τί πρὸς σέ; σύ ⸂μοι ἀκολούθει .",
+    "found_context": "ς ἔρχομαι, τί πρὸς σέ; σύ ⸂μοι ἀκολούθει."
+   },
+   {
+    "reference": "JHN 21:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "δαμεν ὅτι ἀληθὴς ⸂αὐτοῦ ἡ μαρτυρία ἐστίν .",
+    "found_context": "δαμεν ὅτι ἀληθὴς ⸂αὐτοῦ ἡ μαρτυρία ἐστίν."
+   },
+   {
+    "reference": "ACT 1:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρειστήκεισαν αὐτοῖς ἐν ⸂ἐσθήσεσι λευκαῖς ,",
+    "found_context": "ρειστήκεισαν αὐτοῖς ἐν ⸂ἐσθήσεσι λευκαῖς,"
+   },
+   {
+    "reference": "ACT 2:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς τὸ πνεῦμα ἐδίδου ⸂ἀποφθέγγεσθαι αὐτοῖς .",
+    "found_context": "ς τὸ πνεῦμα ἐδίδου ⸂ἀποφθέγγεσθαι αὐτοῖς."
+   },
+   {
+    "reference": "ACT 2:36",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ριον ⸂αὐτὸν καὶ χριστὸν ⸂ἐποίησεν ὁ θεός , τοῦτον τὸν Ἰησοῦν ὃν ὑμεῖς ἐσταυρώσατ",
+    "found_context": "ριον ⸂αὐτὸν καὶ χριστὸν ⸂ἐποίησεν ὁ θεός, τοῦτον τὸν Ἰησοῦν ὃν ὑμεῖς ἐσταυρώσατε"
+   },
+   {
+    "reference": "ACT 2:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Ἀκούσαντες δὲ κατενύγησαν ⸂τὴν καρδίαν , εἶπόν τε πρὸς τὸν Πέτρον καὶ τοὺς λοι",
+    "found_context": "Ἀκούσαντες δὲ κατενύγησαν ⸂τὴν καρδίαν, εἶπόν τε πρὸς τὸν Πέτρον καὶ τοὺς λοιπ"
+   },
+   {
+    "reference": "ACT 2:38",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Πέτρος δὲ ⸂πρὸς αὐτούς· Μετανοήσατε , καὶ βαπτισθήτω ἕκαστος ὑμῶν ⸀ἐπὶ τῷ ὀ",
+    "found_context": "Πέτρος δὲ ⸂πρὸς αὐτούς· Μετανοήσατε, καὶ βαπτισθήτω ἕκαστος ὑμῶν ⸀ἐπὶ τῷ ὀν"
+   },
+   {
+    "reference": "ACT 2:47",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τοὺς σῳζομένους καθʼ ἡμέραν ⸂ἐπὶ τὸ αὐτό .",
+    "found_context": "τοὺς σῳζομένους καθʼ ἡμέραν ⸂ἐπὶ τὸ αὐτό."
+   },
+   {
+    "reference": "ACT 3:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τος τῶν ἁγίων ⸂ἀπʼ αἰῶνος αὐτοῦ προφητῶν .",
+    "found_context": "τος τῶν ἁγίων ⸂ἀπʼ αἰῶνος αὐτοῦ προφητῶν."
+   },
+   {
+    "reference": "ACT 4:31",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἐπλήσθησαν ἅπαντες ⸂τοῦ ἁγίου πνεύματος , καὶ ἐλάλουν τὸν λόγον τοῦ θεοῦ μετὰ π",
+    "found_context": " ἐπλήσθησαν ἅπαντες ⸂τοῦ ἁγίου πνεύματος, καὶ ἐλάλουν τὸν λόγον τοῦ θεοῦ μετὰ πα"
+   },
+   {
+    "reference": "ACT 4:33",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "όστολοι ⸂τῆς ἀναστάσεως τοῦ κυρίου Ἰησοῦ , χάρις τε μεγάλη ἦν ἐπὶ πάντας αὐτούς.",
+    "found_context": "όστολοι ⸂τῆς ἀναστάσεως τοῦ κυρίου Ἰησοῦ, χάρις τε μεγάλη ἦν ἐπὶ πάντας αὐτούς."
+   },
+   {
+    "reference": "ACT 5:42",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " καὶ εὐαγγελιζόμενοι ⸂τὸν χριστὸν Ἰησοῦν .",
+    "found_context": " καὶ εὐαγγελιζόμενοι ⸂τὸν χριστὸν Ἰησοῦν."
+   },
+   {
+    "reference": "ACT 7:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν ⸀δουλεύσουσιν κρινῶ ἐγώ, ⸂ὁ θεὸς εἶπεν , καὶ μετὰ ταῦτα ἐξελεύσονται καὶ λατρε",
+    "found_context": "ν ⸀δουλεύσουσιν κρινῶ ἐγώ, ⸂ὁ θεὸς εἶπεν, καὶ μετὰ ταῦτα ἐξελεύσονται καὶ λατρεύ"
+   },
+   {
+    "reference": "ACT 7:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " οὗ ἀνέστη βασιλεὺς ἕτερος ⸂ἐπʼ Αἴγυπτον , ὃς οὐκ ᾔδει τὸν Ἰωσήφ.",
+    "found_context": " οὗ ἀνέστη βασιλεὺς ἕτερος ⸂ἐπʼ Αἴγυπτον, ὃς οὐκ ᾔδει τὸν Ἰωσήφ."
+   },
+   {
+    "reference": "ACT 7:25",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιὰ χειρὸς αὐτοῦ δίδωσιν ⸂σωτηρίαν αὐτοῖς , οἱ δὲ οὐ συνῆκαν.",
+    "found_context": "ιὰ χειρὸς αὐτοῦ δίδωσιν ⸂σωτηρίαν αὐτοῖς, οἱ δὲ οὐ συνῆκαν."
+   },
+   {
+    "reference": "ACT 9:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ηνιστάς· οἱ δὲ ἐπεχείρουν ⸂ἀνελεῖν αὐτόν .",
+    "found_context": "ηνιστάς· οἱ δὲ ἐπεχείρουν ⸂ἀνελεῖν αὐτόν."
+   },
+   {
+    "reference": "ACT 9:31",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αρακλήσει τοῦ ἁγίου πνεύματος ἐπληθύνετο .",
+    "found_context": "αρακλήσει τοῦ ἁγίου πνεύματος ἐπληθύνετο."
+   },
+   {
+    "reference": "ACT 10:48",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "⸂ἐν τῷ ὀνόματι Ἰησοῦ Χριστοῦ βαπτισθῆναι . τότε ἠρώτησαν αὐτὸν ἐπιμεῖναι ἡμέρας ",
+    "found_context": "⸂ἐν τῷ ὀνόματι Ἰησοῦ Χριστοῦ βαπτισθῆναι. τότε ἠρώτησαν αὐτὸν ἐπιμεῖναι ἡμέρας τ"
+   },
+   {
+    "reference": "ACT 11:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιν ὁ θεὸς τὴν μετάνοιαν ⸂εἰς ζωὴν ἔδωκεν .",
+    "found_context": "ιν ὁ θεὸς τὴν μετάνοιαν ⸂εἰς ζωὴν ἔδωκεν."
+   },
+   {
+    "reference": "ACT 12:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιν. οἱ δὲ ἔλεγον· Ὁ ἄγγελός ⸂ἐστιν αὐτοῦ .",
+    "found_context": "ιν. οἱ δὲ ἔλεγον· Ὁ ἄγγελός ⸂ἐστιν αὐτοῦ."
+   },
+   {
+    "reference": "ACT 13:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "παρεγένοντο εἰς Ἀντιόχειαν ⸂τὴν Πισιδίαν , καὶ ⸀εἰσελθόντες εἰς τὴν συναγωγὴν τῇ",
+    "found_context": "παρεγένοντο εἰς Ἀντιόχειαν ⸂τὴν Πισιδίαν, καὶ ⸀εἰσελθόντες εἰς τὴν συναγωγὴν τῇ "
+   },
+   {
+    "reference": "ACT 13:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αγγελίαν ἤγαγεν τῷ Ἰσραὴλ ⸂σωτῆρα Ἰησοῦν ,",
+    "found_context": "αγγελίαν ἤγαγεν τῷ Ἰσραὴλ ⸂σωτῆρα Ἰησοῦν,"
+   },
+   {
+    "reference": "ACT 14:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "κἀκεῖ ⸂εὐαγγελιζόμενοι ἦσαν .",
+    "found_context": "κἀκεῖ ⸂εὐαγγελιζόμενοι ἦσαν."
+   },
+   {
+    "reference": "ACT 15:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αι ὑμῖν βάρος πλὴν ⸂τούτων τῶν ἐπάναγκες ,",
+    "found_context": "αι ὑμῖν βάρος πλὴν ⸂τούτων τῶν ἐπάναγκες,"
+   },
+   {
+    "reference": "ACT 16:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ὅραμα ⸀διὰ νυκτὸς ⸂τῷ Παύλῳ ὤφθη , ἀνὴρ ⸂Μακεδών τις ἦν ἑστὼς ⸀καὶ παρακ",
+    "found_context": "καὶ ὅραμα ⸀διὰ νυκτὸς ⸂τῷ Παύλῳ ὤφθη, ἀνὴρ ⸂Μακεδών τις ἦν ἑστὼς ⸀καὶ παρακα"
+   },
+   {
+    "reference": "ACT 16:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μοθρᾴκην, τῇ ⸀δὲ ἐπιούσῃ εἰς ⸂Νέαν Πόλιν ,",
+    "found_context": "μοθρᾴκην, τῇ ⸀δὲ ἐπιούσῃ εἰς ⸂Νέαν Πόλιν,"
+   },
+   {
+    "reference": "ACT 17:32",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αν Ἀκουσόμεθά σου ⸂περὶ τούτου καὶ πάλιν .",
+    "found_context": "αν Ἀκουσόμεθά σου ⸂περὶ τούτου καὶ πάλιν."
+   },
+   {
+    "reference": "ACT 18:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ⸀ἠργάζετο ἦσαν γὰρ σκηνοποιοὶ ⸂τῇ τέχνῃ .",
+    "found_context": " ⸀ἠργάζετο ἦσαν γὰρ σκηνοποιοὶ ⸂τῇ τέχνῃ."
+   },
+   {
+    "reference": "ACT 18:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ας, κειράμενος ⸂ἐν Κεγχρεαῖς τὴν κεφαλήν , εἶχεν γὰρ εὐχήν.",
+    "found_context": "ας, κειράμενος ⸂ἐν Κεγχρεαῖς τὴν κεφαλήν, εἶχεν γὰρ εὐχήν."
+   },
+   {
+    "reference": "ACT 18:26",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "έστερον αὐτῷ ἐξέθεντο τὴν ⸂ὁδὸν τοῦ θεοῦ .",
+    "found_context": "έστερον αὐτῷ ἐξέθεντο τὴν ⸂ὁδὸν τοῦ θεοῦ."
+   },
+   {
+    "reference": "ACT 19:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "χετο τοῖς τεχνίταις ⸂οὐκ ὀλίγην ἐργασίαν ,",
+    "found_context": "χετο τοῖς τεχνίταις ⸂οὐκ ὀλίγην ἐργασίαν,"
+   },
+   {
+    "reference": "ACT 20:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αγγεῖλαι ⸂πᾶσαν τὴν βουλὴν τοῦ θεοῦ ὑμῖν .",
+    "found_context": "αγγεῖλαι ⸂πᾶσαν τὴν βουλὴν τοῦ θεοῦ ὑμῖν."
+   },
+   {
+    "reference": "ACT 20:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "περιεποιήσατο διὰ τοῦ ⸂αἵματος τοῦ ἰδίου .",
+    "found_context": "περιεποιήσατο διὰ τοῦ ⸂αἵματος τοῦ ἰδίου."
+   },
+   {
+    "reference": "ACT 21:24",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὰ στοιχεῖς καὶ αὐτὸς ⸂φυλάσσων τὸν νόμον .",
+    "found_context": "ὰ στοιχεῖς καὶ αὐτὸς ⸂φυλάσσων τὸν νόμον."
+   },
+   {
+    "reference": "ACT 21:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὄχλον καὶ ἐπέβαλον ⸂ἐπʼ αὐτὸν τὰς χεῖρας ,",
+    "found_context": "ὄχλον καὶ ἐπέβαλον ⸂ἐπʼ αὐτὸν τὰς χεῖρας,"
+   },
+   {
+    "reference": "ACT 23:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "το στάσις τῶν Φαρισαίων ⸂καὶ Σαδδουκαίων , καὶ ἐσχίσθη τὸ πλῆθος.",
+    "found_context": "το στάσις τῶν Φαρισαίων ⸂καὶ Σαδδουκαίων, καὶ ἐσχίσθη τὸ πλῆθος."
+   },
+   {
+    "reference": "ACT 23:29",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὲ ἄξιον θανάτου ἢ δεσμῶν ⸂ἔχοντα ἔγκλημα .",
+    "found_context": "ὲ ἄξιον θανάτου ἢ δεσμῶν ⸂ἔχοντα ἔγκλημα."
+   },
+   {
+    "reference": "ACT 25:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ίθη τηρεῖσθαι τὸν Παῦλον ⸂εἰς Καισάρειαν , ἑαυτὸν δὲ μέλλειν ἐν τάχει ἐκπορεύεσθ",
+    "found_context": "ίθη τηρεῖσθαι τὸν Παῦλον ⸂εἰς Καισάρειαν, ἑαυτὸν δὲ μέλλειν ἐν τάχει ἐκπορεύεσθα"
+   },
+   {
+    "reference": "ACT 26:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιον ἐπὶ σοῦ μέλλων ⸂σήμερον ἀπολογεῖσθαι ,",
+    "found_context": "ιον ἐπὶ σοῦ μέλλων ⸂σήμερον ἀπολογεῖσθαι,"
+   },
+   {
+    "reference": "ACT 28:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ⸀μεταβαλόμενοι ἔλεγον ⸂αὐτὸν εἶναι θεόν .",
+    "found_context": " ⸀μεταβαλόμενοι ἔλεγον ⸂αὐτὸν εἶναι θεόν."
+   },
+   {
+    "reference": "ACT 28:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἀναγομένοις ἐπέθεντο τὰ πρὸς ⸂τὰς χρείας .",
+    "found_context": "ἀναγομένοις ἐπέθεντο τὰ πρὸς ⸂τὰς χρείας."
+   },
+   {
+    "reference": "ACT 28:28",
+    "kind": "extra",
+    "cause": "document reading",
+    "edition_context": "σωτήριον τοῦ θεοῦ· αὐτοὶ καὶ ⸀ἀκούσονται",
+    "found_context": "σωτήριον τοῦ θεοῦ· αὐτοὶ καὶ ⸀ἀκούσονται 30 ⸀Ἐνέμεινεν ⸀δὲ διετίαν ὅλην ἐν ἰδίῳ "
+   },
+   {
+    "reference": "ROM 1:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Παῦλος δοῦλος ⸂Χριστοῦ Ἰησοῦ , κλητὸς ἀπόστολος, ἀφωρισμένος εἰς εὐα",
+    "found_context": "Παῦλος δοῦλος ⸂Χριστοῦ Ἰησοῦ, κλητὸς ἀπόστολος, ἀφωρισμένος εἰς εὐαγ"
+   },
+   {
+    "reference": "ROM 2:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πειθομένοις δὲ τῇ ἀδικίᾳ ⸂ὀργὴ καὶ θυμός ,",
+    "found_context": "πειθομένοις δὲ τῇ ἀδικίᾳ ⸂ὀργὴ καὶ θυμός,"
+   },
+   {
+    "reference": "ROM 2:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ατὰ τὸ εὐαγγέλιόν μου διὰ ⸂Χριστοῦ Ἰησοῦ .",
+    "found_context": "ατὰ τὸ εὐαγγέλιόν μου διὰ ⸂Χριστοῦ Ἰησοῦ."
+   },
+   {
+    "reference": "ROM 8:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ατι θεοῦ ἄγονται, οὗτοι ⸂υἱοί εἰσιν θεοῦ .",
+    "found_context": "ατι θεοῦ ἄγονται, οὗτοι ⸂υἱοί εἰσιν θεοῦ."
+   },
+   {
+    "reference": "ROM 11:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὺ δὲ τῇ πίστει ἕστηκας. μὴ ⸂ὑψηλὰ φρόνει , ἀλλὰ φοβοῦ·",
+    "found_context": "ὺ δὲ τῇ πίστει ἕστηκας. μὴ ⸂ὑψηλὰ φρόνει, ἀλλὰ φοβοῦ·"
+   },
+   {
+    "reference": "ROM 11:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τας ⸀ἀποτομία, ἐπὶ δὲ σὲ ⸂χρηστότης θεοῦ , ἐὰν ⸀ἐπιμένῃς τῇ χρηστότητι, ἐπεὶ καὶ",
+    "found_context": "τας ⸀ἀποτομία, ἐπὶ δὲ σὲ ⸂χρηστότης θεοῦ, ἐὰν ⸀ἐπιμένῃς τῇ χρηστότητι, ἐπεὶ καὶ "
+   },
+   {
+    "reference": "ROM 12:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μῶν θυσίαν ζῶσαν ἁγίαν ⸂εὐάρεστον τῷ θεῷ , τὴν λογικὴν λατρείαν ὑμῶν·",
+    "found_context": "μῶν θυσίαν ζῶσαν ἁγίαν ⸂εὐάρεστον τῷ θεῷ, τὴν λογικὴν λατρείαν ὑμῶν·"
+   },
+   {
+    "reference": "ROM 13:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "εἰσὶν φόβος ⸂τῷ ἀγαθῷ ἔργῳ ἀλλὰ ⸂τῷ κακῷ . θέλεις δὲ μὴ φοβεῖσθαι τὴν ἐξουσίαν; ",
+    "found_context": "εἰσὶν φόβος ⸂τῷ ἀγαθῷ ἔργῳ ἀλλὰ ⸂τῷ κακῷ. θέλεις δὲ μὴ φοβεῖσθαι τὴν ἐξουσίαν; τ"
+   },
+   {
+    "reference": "ROM 15:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "φρονεῖν ἐν ἀλλήλοις κατὰ ⸂Χριστὸν Ἰησοῦν ,",
+    "found_context": "φρονεῖν ἐν ἀλλήλοις κατὰ ⸂Χριστὸν Ἰησοῦν,"
+   },
+   {
+    "reference": "ROM 15:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αι· ⸂Οἷς οὐκ ἀνηγγέλη περὶ αὐτοῦ ὄψονται , καὶ οἳ οὐκ ἀκηκόασιν συνήσουσιν.",
+    "found_context": "αι· ⸂Οἷς οὐκ ἀνηγγέλη περὶ αὐτοῦ ὄψονται, καὶ οἳ οὐκ ἀκηκόασιν συνήσουσιν."
+   },
+   {
+    "reference": "ROM 15:31",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "υσαλὴμ εὐπρόσδεκτος ⸂τοῖς ἁγίοις γένηται ,",
+    "found_context": "υσαλὴμ εὐπρόσδεκτος ⸂τοῖς ἁγίοις γένηται,"
+   },
+   {
+    "reference": "ROM 16:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "προστάτις πολλῶν ἐγενήθη καὶ ⸂ἐμοῦ αὐτοῦ .",
+    "found_context": "προστάτις πολλῶν ἐγενήθη καὶ ⸂ἐμοῦ αὐτοῦ."
+   },
+   {
+    "reference": "ROM 16:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " εἰς πάντας ἀφίκετο· ⸂ἐφʼ ὑμῖν οὖν χαίρω , θέλω δὲ ὑμᾶς ⸀σοφοὺς εἶναι εἰς τὸ ἀγα",
+    "found_context": " εἰς πάντας ἀφίκετο· ⸂ἐφʼ ὑμῖν οὖν χαίρω, θέλω δὲ ὑμᾶς ⸀σοφοὺς εἶναι εἰς τὸ ἀγαθ"
+   },
+   {
+    "reference": "ROM 16:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "άϊος ὁ ξένος μου καὶ ⸂ὅλης τῆς ἐκκλησίας . ἀσπάζεται ὑμᾶς Ἔραστος ὁ οἰκονόμος τῆ",
+    "found_context": "άϊος ὁ ξένος μου καὶ ⸂ὅλης τῆς ἐκκλησίας. ἀσπάζεται ὑμᾶς Ἔραστος ὁ οἰκονόμος τῆς"
+   },
+   {
+    "reference": "1CO 1:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ξατο ὁ θεός, ἵνα ⸂καταισχύνῃ τοὺς σοφούς , καὶ τὰ ἀσθενῆ τοῦ κόσμου ἐξελέξατο ὁ ",
+    "found_context": "ξατο ὁ θεός, ἵνα ⸂καταισχύνῃ τοὺς σοφούς, καὶ τὰ ἀσθενῆ τοῦ κόσμου ἐξελέξατο ὁ θ"
+   },
+   {
+    "reference": "1CO 6:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὔτε ⸂κλέπται οὔτε πλεονέκται , ⸀οὐ μέθυσοι, οὐ λοίδοροι, οὐχ ἅρπαγες",
+    "found_context": "οὔτε ⸂κλέπται οὔτε πλεονέκται, ⸀οὐ μέθυσοι, οὐ λοίδοροι, οὐχ ἅρπαγες "
+   },
+   {
+    "reference": "1CO 7:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Τοῖς δὲ λοιποῖς ⸂λέγω ἐγώ , οὐχ ὁ κύριος· εἴ τις ἀδελφὸς γυναῖκα ",
+    "found_context": "Τοῖς δὲ λοιποῖς ⸂λέγω ἐγώ, οὐχ ὁ κύριος· εἴ τις ἀδελφὸς γυναῖκα ἔ"
+   },
+   {
+    "reference": "1CO 7:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " οἰκεῖν μετʼ αὐτῆς, μὴ ἀφιέτω ⸂τὸν ἄνδρα .",
+    "found_context": " οἰκεῖν μετʼ αὐτῆς, μὴ ἀφιέτω ⸂τὸν ἄνδρα."
+   },
+   {
+    "reference": "1CO 7:37",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς, καὶ τοῦτο κέκρικεν ἐν τῇ ⸂ἰδίᾳ καρδίᾳ , ⸀τηρεῖν τὴν ἑαυτοῦ παρθένον, καλῶς ⸀π",
+    "found_context": "ς, καὶ τοῦτο κέκρικεν ἐν τῇ ⸂ἰδίᾳ καρδίᾳ, ⸀τηρεῖν τὴν ἑαυτοῦ παρθένον, καλῶς ⸀πο"
+   },
+   {
+    "reference": "1CO 8:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "εύομεν, οὔτε ἐὰν μὴ φάγωμεν, ὑστερούμεθα .",
+    "found_context": "εύομεν, οὔτε ἐὰν μὴ φάγωμεν, ὑστερούμεθα."
+   },
+   {
+    "reference": "1CO 9:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ολογία τοῖς ἐμὲ ἀνακρίνουσίν ⸂ἐστιν αὕτη .",
+    "found_context": "ολογία τοῖς ἐμὲ ἀνακρίνουσίν ⸂ἐστιν αὕτη."
+   },
+   {
+    "reference": "1CO 9:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ᾶν, καὶ ὁ ἀλοῶν ⸂ἐπʼ ἐλπίδι τοῦ μετέχειν .",
+    "found_context": "ᾶν, καὶ ὁ ἀλοῶν ⸂ἐπʼ ἐλπίδι τοῦ μετέχειν."
+   },
+   {
+    "reference": "1CO 9:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θανεῖν ἤ— τὸ καύχημά μου ⸂οὐδεὶς κενώσει .",
+    "found_context": "θανεῖν ἤ— τὸ καύχημά μου ⸂οὐδεὶς κενώσει."
+   },
+   {
+    "reference": "1CO 9:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μον ὡς ὑπὸ νόμον, ⸂μὴ ὢν αὐτὸς ὑπὸ νόμον , ἵνα τοὺς ὑπὸ νόμον κερδήσω·",
+    "found_context": "μον ὡς ὑπὸ νόμον, ⸂μὴ ὢν αὐτὸς ὑπὸ νόμον, ἵνα τοὺς ὑπὸ νόμον κερδήσω·"
+   },
+   {
+    "reference": "1CO 10:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὶ πάντες τὸ αὐτὸ ⸂πνευματικὸν ἔπιον πόμα , ἔπινον γὰρ ἐκ πνευματικῆς ἀκολουθούση",
+    "found_context": "ὶ πάντες τὸ αὐτὸ ⸂πνευματικὸν ἔπιον πόμα, ἔπινον γὰρ ἐκ πνευματικῆς ἀκολουθούσης"
+   },
+   {
+    "reference": "1CO 10:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ⸀θύουσιν δαιμονίοις ⸂καὶ οὐ θεῷ θύουσιν , οὐ θέλω δὲ ὑμᾶς κοινωνοὺς τῶν δαιμονί",
+    "found_context": " ⸀θύουσιν δαιμονίοις ⸂καὶ οὐ θεῷ θύουσιν, οὐ θέλω δὲ ὑμᾶς κοινωνοὺς τῶν δαιμονίω"
+   },
+   {
+    "reference": "1CO 12:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὰρ τὸ σῶμα ἕν ἐστιν καὶ μέλη ⸂πολλὰ ἔχει , πάντα δὲ τὰ μέλη τοῦ ⸀σώματος πολλὰ ὄ",
+    "found_context": "ὰρ τὸ σῶμα ἕν ἐστιν καὶ μέλη ⸂πολλὰ ἔχει, πάντα δὲ τὰ μέλη τοῦ ⸀σώματος πολλὰ ὄν"
+   },
+   {
+    "reference": "1CO 14:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἐπὶ τὸ αὐτὸ καὶ πάντες ⸂λαλῶσιν γλώσσαις , εἰσέλθωσιν δὲ ἰδιῶται ἢ ἄπιστοι, οὐκ ",
+    "found_context": "ἐπὶ τὸ αὐτὸ καὶ πάντες ⸂λαλῶσιν γλώσσαις, εἰσέλθωσιν δὲ ἰδιῶται ἢ ἄπιστοι, οὐκ ἐ"
+   },
+   {
+    "reference": "1CO 14:35",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὸν γάρ ἐστιν γυναικὶ ⸂λαλεῖν ἐν ἐκκλησίᾳ .",
+    "found_context": "ὸν γάρ ἐστιν γυναικὶ ⸂λαλεῖν ἐν ἐκκλησίᾳ."
+   },
+   {
+    "reference": "1CO 15:39",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λλη δὲ σὰρξ κτηνῶν, ἄλλη δὲ ⸂σὰρξ πτηνῶν , ἄλλη δὲ ⸀ἰχθύων",
+    "found_context": "λλη δὲ σὰρξ κτηνῶν, ἄλλη δὲ ⸂σὰρξ πτηνῶν, ἄλλη δὲ ⸀ἰχθύων"
+   },
+   {
+    "reference": "1CO 16:22",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιλεῖ τὸν ⸀κύριον ἤτω ἀνάθεμα. ⸂Μαράνα θά .",
+    "found_context": "ιλεῖ τὸν ⸀κύριον ἤτω ἀνάθεμα. ⸂Μαράνα θά."
+   },
+   {
+    "reference": "2CO 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " καθʼ ὑπερβολὴν ⸂ὑπὲρ δύναμιν ἐβαρήθημεν , ὥστε ἐξαπορηθῆναι ἡμᾶς καὶ τοῦ ζῆν·",
+    "found_context": " καθʼ ὑπερβολὴν ⸂ὑπὲρ δύναμιν ἐβαρήθημεν, ὥστε ἐξαπορηθῆναι ἡμᾶς καὶ τοῦ ζῆν·"
+   },
+   {
+    "reference": "2CO 1:15",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "σει ἐβουλόμην ⸂πρότερον πρὸς ὑμᾶς ἐλθεῖν , ἵνα δευτέραν ⸀χάριν ⸀σχῆτε",
+    "found_context": "σει ἐβουλόμην ⸂πρότερον πρὸς ὑμᾶς ἐλθεῖν, ἵνα δευτέραν ⸀χάριν ⸀σχῆτε"
+   },
+   {
+    "reference": "2CO 10:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὅτι Αἱ ⸂ἐπιστολαὶ μέν , φησίν, βαρεῖαι καὶ ἰσχυραί, ἡ δὲ παρο",
+    "found_context": "ὅτι Αἱ ⸂ἐπιστολαὶ μέν, φησίν, βαρεῖαι καὶ ἰσχυραί, ἡ δὲ παρου"
+   },
+   {
+    "reference": "2CO 11:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὃ λαλῶ οὐ ⸂κατὰ κύριον λαλῶ , ἀλλʼ ὡς ἐν ἀφροσύνῃ, ἐν ταύτῃ τῇ ὑποσ",
+    "found_context": "ὃ λαλῶ οὐ ⸂κατὰ κύριον λαλῶ, ἀλλʼ ὡς ἐν ἀφροσύνῃ, ἐν ταύτῃ τῇ ὑποστ"
+   },
+   {
+    "reference": "2CO 11:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς περισσοτέρως, ἐν πληγαῖς ὑπερβαλλόντως , ἐν θανάτοις πολλάκις·",
+    "found_context": "ς περισσοτέρως, ἐν πληγαῖς ὑπερβαλλόντως, ἐν θανάτοις πολλάκις·"
+   },
+   {
+    "reference": "2CO 12:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Καυχᾶσθαι ⸀δεῖ οὐ ⸂συμφέρον μέν , ἐλεύσομαι ⸀δὲ εἰς ὀπτασίας καὶ ἀποκαλ",
+    "found_context": "Καυχᾶσθαι ⸀δεῖ οὐ ⸂συμφέρον μέν, ἐλεύσομαι ⸀δὲ εἰς ὀπτασίας καὶ ἀποκαλύ"
+   },
+   {
+    "reference": "2CO 12:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ανᾶ ἵνα με κολαφίζῃ, ⸂ἵνα μὴ ὑπεραίρωμαι .",
+    "found_context": "ανᾶ ἵνα με κολαφίζῃ, ⸂ἵνα μὴ ὑπεραίρωμαι."
+   },
+   {
+    "reference": "2CO 13:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ατὰ τὴν ἐξουσίαν ἣν ⸂ὁ κύριος ἔδωκέν μοι , εἰς οἰκοδομὴν καὶ οὐκ εἰς καθαίρεσιν.",
+    "found_context": "ατὰ τὴν ἐξουσίαν ἣν ⸂ὁ κύριος ἔδωκέν μοι, εἰς οἰκοδομὴν καὶ οὐκ εἰς καθαίρεσιν."
+   },
+   {
+    "reference": "GAL 2:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ὑπάρχων ἐθνικῶς ⸂καὶ ⸀οὐκ Ἰουδαϊκῶς ζῇς , ⸀πῶς τὰ ἔθνη ἀναγκάζεις Ἰουδαΐζειν;",
+    "found_context": " ὑπάρχων ἐθνικῶς ⸂καὶ ⸀οὐκ Ἰουδαϊκῶς ζῇς, ⸀πῶς τὰ ἔθνη ἀναγκάζεις Ἰουδαΐζειν;"
+   },
+   {
+    "reference": "GAL 2:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " νόμου ἐὰν μὴ διὰ πίστεως ⸂Ἰησοῦ Χριστοῦ , καὶ ἡμεῖς εἰς Χριστὸν Ἰησοῦν ἐπιστεύσ",
+    "found_context": " νόμου ἐὰν μὴ διὰ πίστεως ⸂Ἰησοῦ Χριστοῦ, καὶ ἡμεῖς εἰς Χριστὸν Ἰησοῦν ἐπιστεύσα"
+   },
+   {
+    "reference": "GAL 3:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ογία τοῦ Ἀβραὰμ γένηται ἐν ⸂Χριστῷ Ἰησοῦ , ἵνα τὴν ἐπαγγελίαν τοῦ πνεύματος λάβω",
+    "found_context": "ογία τοῦ Ἀβραὰμ γένηται ἐν ⸂Χριστῷ Ἰησοῦ, ἵνα τὴν ἐπαγγελίαν τοῦ πνεύματος λάβωμ"
+   },
+   {
+    "reference": "GAL 4:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ός· εἰ δὲ υἱός, καὶ κληρονόμος ⸂διὰ θεοῦ .",
+    "found_context": "ός· εἰ δὲ υἱός, καὶ κληρονόμος ⸂διὰ θεοῦ."
+   },
+   {
+    "reference": "GAL 5:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " σαρκός, ταῦτα ⸀γὰρ ⸂ἀλλήλοις ἀντίκειται , ἵνα μὴ ἃ ⸀ἐὰν θέλητε ταῦτα ποιῆτε.",
+    "found_context": " σαρκός, ταῦτα ⸀γὰρ ⸂ἀλλήλοις ἀντίκειται, ἵνα μὴ ἃ ⸀ἐὰν θέλητε ταῦτα ποιῆτε."
+   },
+   {
+    "reference": "EPH 2:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ὄντος ἀκρογωνιαίου αὐτοῦ ⸂Χριστοῦ Ἰησοῦ ,",
+    "found_context": " ὄντος ἀκρογωνιαίου αὐτοῦ ⸂Χριστοῦ Ἰησοῦ,"
+   },
+   {
+    "reference": "EPH 3:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τὸ πλάτος καὶ μῆκος καὶ ⸂ὕψος καὶ βάθος ,",
+    "found_context": " τὸ πλάτος καὶ μῆκος καὶ ⸂ὕψος καὶ βάθος,"
+   },
+   {
+    "reference": "EPH 4:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ργαζόμενος ⸂ταῖς ἰδίαις χερσὶν τὸ ἀγαθόν , ἵνα ἔχῃ μεταδιδόναι τῷ χρείαν ἔχοντι.",
+    "found_context": "ργαζόμενος ⸂ταῖς ἰδίαις χερσὶν τὸ ἀγαθόν, ἵνα ἔχῃ μεταδιδόναι τῷ χρείαν ἔχοντι."
+   },
+   {
+    "reference": "EPH 5:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ μωρολογία ἢ εὐτραπελία, ⸂ἃ οὐκ ἀνῆκεν , ἀλλὰ μᾶλλον εὐχαριστία.",
+    "found_context": "αὶ μωρολογία ἢ εὐτραπελία, ⸂ἃ οὐκ ἀνῆκεν, ἀλλὰ μᾶλλον εὐχαριστία."
+   },
+   {
+    "reference": "PHP 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πάντας ὑμᾶς ἐν σπλάγχνοις ⸂Χριστοῦ Ἰησοῦ .",
+    "found_context": "πάντας ὑμᾶς ἐν σπλάγχνοις ⸂Χριστοῦ Ἰησοῦ."
+   },
+   {
+    "reference": "PHP 2:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τὰ ἑαυτῶν ζητοῦσιν, οὐ τὰ ⸂Ἰησοῦ Χριστοῦ .",
+    "found_context": "τὰ ἑαυτῶν ζητοῦσιν, οὐ τὰ ⸂Ἰησοῦ Χριστοῦ."
+   },
+   {
+    "reference": "PHP 2:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ήσιον ⸀θανάτῳ ἀλλὰ ὁ θεὸς ⸂ἠλέησεν αὐτόν , οὐκ αὐτὸν δὲ μόνον ἀλλὰ καὶ ἐμέ, ἵνα ",
+    "found_context": "ήσιον ⸀θανάτῳ ἀλλὰ ὁ θεὸς ⸂ἠλέησεν αὐτόν, οὐκ αὐτὸν δὲ μόνον ἀλλὰ καὶ ἐμέ, ἵνα μ"
+   },
+   {
+    "reference": "PHP 4:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ναὶ ἐρωτῶ καὶ σέ, ⸂γνήσιε σύζυγε , συλλαμβάνου αὐταῖς, αἵτινες ἐν τῷ εὐα",
+    "found_context": "ναὶ ἐρωτῶ καὶ σέ, ⸂γνήσιε σύζυγε, συλλαμβάνου αὐταῖς, αἵτινες ἐν τῷ εὐαγ"
+   },
+   {
+    "reference": "1TH 4:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καὶ ἀρέσκειν θεῷ, ⸂καθὼς καὶ περιπατεῖτε , ἵνα περισσεύητε μᾶλλον.",
+    "found_context": "καὶ ἀρέσκειν θεῷ, ⸂καθὼς καὶ περιπατεῖτε, ἵνα περισσεύητε μᾶλλον."
+   },
+   {
+    "reference": "2TH 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἐν ⸂φλογὶ πυρός , διδόντος ἐκδίκησιν τοῖς μὴ εἰδόσι θεὸ",
+    "found_context": "ἐν ⸂φλογὶ πυρός, διδόντος ἐκδίκησιν τοῖς μὴ εἰδόσι θεὸν"
+   },
+   {
+    "reference": "1TI 3:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " γράφω, ἐλπίζων ἐλθεῖν πρὸς σὲ ⸂ἐν τάχει ,",
+    "found_context": " γράφω, ἐλπίζων ἐλθεῖν πρὸς σὲ ⸂ἐν τάχει,"
+   },
+   {
+    "reference": "1TI 4:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ελφοῖς καλὸς ἔσῃ διάκονος ⸂Χριστοῦ Ἰησοῦ , ἐντρεφόμενος τοῖς λόγοις τῆς πίστεως ",
+    "found_context": "ελφοῖς καλὸς ἔσῃ διάκονος ⸂Χριστοῦ Ἰησοῦ, ἐντρεφόμενος τοῖς λόγοις τῆς πίστεως κ"
+   },
+   {
+    "reference": "2TI 1:10",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ιφανείας τοῦ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ , καταργήσαντος μὲν τὸν θάνατον φωτίσαν",
+    "found_context": "ιφανείας τοῦ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ, καταργήσαντος μὲν τὸν θάνατον φωτίσαντ"
+   },
+   {
+    "reference": "2TI 2:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θησον ὡς καλὸς στρατιώτης ⸂Χριστοῦ Ἰησοῦ .",
+    "found_context": "θησον ὡς καλὸς στρατιώτης ⸂Χριστοῦ Ἰησοῦ."
+   },
+   {
+    "reference": "2TI 4:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ομαι ἐνώπιον τοῦ θεοῦ καὶ ⸂Χριστοῦ Ἰησοῦ , τοῦ μέλλοντος κρίνειν ζῶντας καὶ νεκρ",
+    "found_context": "ομαι ἐνώπιον τοῦ θεοῦ καὶ ⸂Χριστοῦ Ἰησοῦ, τοῦ μέλλοντος κρίνειν ζῶντας καὶ νεκρο"
+   },
+   {
+    "reference": "TIT 2:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λου θεοῦ καὶ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ ,",
+    "found_context": "λου θεοῦ καὶ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ,"
+   },
+   {
+    "reference": "HEB 2:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " παιδία κεκοινώνηκεν ⸂αἵματος καὶ σαρκός , καὶ αὐτὸς παραπλησίως μετέσχεν τῶν αὐ",
+    "found_context": " παιδία κεκοινώνηκεν ⸂αἵματος καὶ σαρκός, καὶ αὐτὸς παραπλησίως μετέσχεν τῶν αὐτ"
+   },
+   {
+    "reference": "HEB 3:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μέτοχοι γὰρ ⸂τοῦ Χριστοῦ γεγόναμεν , ἐάνπερ τὴν ἀρχὴν τῆς ὑποστάσεως μέχρι",
+    "found_context": "μέτοχοι γὰρ ⸂τοῦ Χριστοῦ γεγόναμεν, ἐάνπερ τὴν ἀρχὴν τῆς ὑποστάσεως μέχρι "
+   },
+   {
+    "reference": "HEB 7:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ταμεληθήσεται, Σὺ ἱερεὺς εἰς τὸν ⸀αἰῶνα) ,",
+    "found_context": "ταμεληθήσεται, Σὺ ἱερεὺς εἰς τὸν ⸀αἰῶνα),"
+   },
+   {
+    "reference": "HEB 9:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "καταπέτασμα σκηνὴ ἡ λεγομένη ⸂Ἅγια Ἁγίων ,",
+    "found_context": "καταπέτασμα σκηνὴ ἡ λεγομένη ⸂Ἅγια Ἁγίων,"
+   },
+   {
+    "reference": "HEB 10:35",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ν ὑμῶν, ἥτις ἔχει ⸂μεγάλην μισθαποδοσίαν ,",
+    "found_context": "ν ὑμῶν, ἥτις ἔχει ⸂μεγάλην μισθαποδοσίαν,"
+   },
+   {
+    "reference": "HEB 11:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "υροῦντος ἐπὶ τοῖς δώροις αὐτοῦ ⸂τοῦ θεοῦ , καὶ διʼ αὐτῆς ἀποθανὼν ἔτι ⸀λαλεῖ",
+    "found_context": "υροῦντος ἐπὶ τοῖς δώροις αὐτοῦ ⸂τοῦ θεοῦ, καὶ διʼ αὐτῆς ἀποθανὼν ἔτι ⸀λαλεῖ"
+   },
+   {
+    "reference": "HEB 12:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ασι πάντες, ἄρα νόθοι ⸂καὶ οὐχ υἱοί ἐστε .",
+    "found_context": "ασι πάντες, ἄρα νόθοι ⸂καὶ οὐχ υἱοί ἐστε."
+   },
+   {
+    "reference": "HEB 12:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ᾳ πρωτοτόκων ⸂ἀπογεγραμμένων ἐν οὐρανοῖς , καὶ κριτῇ θεῷ πάντων, καὶ πνεύμασι δι",
+    "found_context": "ᾳ πρωτοτόκων ⸂ἀπογεγραμμένων ἐν οὐρανοῖς, καὶ κριτῇ θεῷ πάντων, καὶ πνεύμασι δικ"
+   },
+   {
+    "reference": "HEB 12:28",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αρέστως τῷ θεῷ μετὰ ⸂εὐλαβείας καὶ δέους ,",
+    "found_context": "αρέστως τῷ θεῷ μετὰ ⸂εὐλαβείας καὶ δέους,"
+   },
+   {
+    "reference": "JAS 1:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρ ἀνδρὸς δικαιοσύνην θεοῦ ⸂οὐκ ἐργάζεται .",
+    "found_context": "ρ ἀνδρὸς δικαιοσύνην θεοῦ ⸂οὐκ ἐργάζεται."
+   },
+   {
+    "reference": "JAS 2:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὕτως καὶ ἡ πίστις, ἐὰν μὴ ⸂ἔχῃ ἔργα , νεκρά ἐστιν καθʼ ἑαυτήν.",
+    "found_context": "οὕτως καὶ ἡ πίστις, ἐὰν μὴ ⸂ἔχῃ ἔργα, νεκρά ἐστιν καθʼ ἑαυτήν."
+   },
+   {
+    "reference": "JAS 3:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "σσα μικρὸν μέλος ἐστὶν καὶ ⸂μεγάλα αὐχεῖ . Ἰδοὺ ⸀ἡλίκον πῦρ ἡλίκην ὕλην ἀνάπτει·",
+    "found_context": "σσα μικρὸν μέλος ἐστὶν καὶ ⸂μεγάλα αὐχεῖ. Ἰδοὺ ⸀ἡλίκον πῦρ ἡλίκην ὕλην ἀνάπτει·"
+   },
+   {
+    "reference": "JAS 4:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "εἷς ⸀ἐστιν νομοθέτης ⸂καὶ κριτής , ὁ δυνάμενος σῶσαι καὶ ἀπολέσαι· σὺ δὲ",
+    "found_context": "εἷς ⸀ἐστιν νομοθέτης ⸂καὶ κριτής, ὁ δυνάμενος σῶσαι καὶ ἀπολέσαι· σὺ δὲ "
+   },
+   {
+    "reference": "1PE 2:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "σατε, ἵνα ἐν αὐτῷ αὐξηθῆτε ⸂εἰς σωτηρίαν ,",
+    "found_context": "σατε, ἵνα ἐν αὐτῷ αὐξηθῆτε ⸂εἰς σωτηρίαν,"
+   },
+   {
+    "reference": "1PE 2:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οφὴν ὑμῶν ⸂ἐν τοῖς ἔθνεσιν ἔχοντες καλήν , ἵνα, ἐν ᾧ καταλαλοῦσιν ὑμῶν ὡς κακοπο",
+    "found_context": "οφὴν ὑμῶν ⸂ἐν τοῖς ἔθνεσιν ἔχοντες καλήν, ἵνα, ἐν ᾧ καταλαλοῦσιν ὑμῶν ὡς κακοποι"
+   },
+   {
+    "reference": "1PE 2:16",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ίας τὴν ἐλευθερίαν, ἀλλʼ ὡς ⸂θεοῦ δοῦλοι .",
+    "found_context": "ίας τὴν ἐλευθερίαν, ἀλλʼ ὡς ⸂θεοῦ δοῦλοι."
+   },
+   {
+    "reference": "1PE 5:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ς μὴ ἀναγκαστῶς ἀλλὰ ἑκουσίως ⸂κατὰ θεόν , μηδὲ αἰσχροκερδῶς ἀλλὰ προθύμως,",
+    "found_context": "ς μὴ ἀναγκαστῶς ἀλλὰ ἑκουσίως ⸂κατὰ θεόν, μηδὲ αἰσχροκερδῶς ἀλλὰ προθύμως,"
+   },
+   {
+    "reference": "2PE 1:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τοῦ καλέσαντος ἡμᾶς ⸂ἰδίᾳ δόξῃ καὶ ἀρετῇ ,",
+    "found_context": "τοῦ καλέσαντος ἡμᾶς ⸂ἰδίᾳ δόξῃ καὶ ἀρετῇ,"
+   },
+   {
+    "reference": "2PE 1:17",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "· ⸂Ὁ υἱός μου ὁ ἀγαπητός μου οὗτός ἐστιν , εἰς ὃν ἐγὼ εὐδόκησα—",
+    "found_context": "· ⸂Ὁ υἱός μου ὁ ἀγαπητός μου οὗτός ἐστιν, εἰς ὃν ἐγὼ εὐδόκησα—"
+   },
+   {
+    "reference": "2PE 1:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "εχθεῖσαν σὺν αὐτῷ ὄντες ἐν τῷ ⸂ἁγίῳ ὄρει .",
+    "found_context": "εχθεῖσαν σὺν αὐτῷ ὄντες ἐν τῷ ⸂ἁγίῳ ὄρει."
+   },
+   {
+    "reference": "2PE 1:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θελήματι ἀνθρώπου ἠνέχθη ⸂προφητεία ποτέ , ἀλλὰ ὑπὸ πνεύματος ἁγίου φερόμενοι ἐλ",
+    "found_context": "θελήματι ἀνθρώπου ἠνέχθη ⸂προφητεία ποτέ, ἀλλὰ ὑπὸ πνεύματος ἁγίου φερόμενοι ἐλά"
+   },
+   {
+    "reference": "2PE 2:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ντες, ἐν τῇ φθορᾷ αὐτῶν ⸂καὶ φθαρήσονται ,",
+    "found_context": "ντες, ἐν τῇ φθορᾷ αὐτῶν ⸂καὶ φθαρήσονται,"
+   },
+   {
+    "reference": "1JN 1:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "λανῶμεν καὶ ἡ ἀλήθεια ⸂οὐκ ἔστιν ἐν ἡμῖν .",
+    "found_context": "λανῶμεν καὶ ἡ ἀλήθεια ⸂οὐκ ἔστιν ἐν ἡμῖν."
+   },
+   {
+    "reference": "1JN 2:19",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ʼ οὐκ ἦσαν ἐξ ἡμῶν· εἰ γὰρ ⸂ἐξ ἡμῶν ἦσαν , μεμενήκεισαν ἂν μεθʼ ἡμῶν· ἀλλʼ ἵνα φ",
+    "found_context": "ʼ οὐκ ἦσαν ἐξ ἡμῶν· εἰ γὰρ ⸂ἐξ ἡμῶν ἦσαν, μεμενήκεισαν ἂν μεθʼ ἡμῶν· ἀλλʼ ἵνα φα"
+   },
+   {
+    "reference": "1JN 2:23",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "⸂ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει .",
+    "found_context": "⸂ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει."
+   },
+   {
+    "reference": "1JN 2:27",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ρῖσμα ὃ ἐλάβετε ἀπʼ αὐτοῦ ⸂μένει ἐν ὑμῖν , καὶ οὐ χρείαν ἔχετε ἵνα τις διδάσκῃ ὑ",
+    "found_context": "ρῖσμα ὃ ἐλάβετε ἀπʼ αὐτοῦ ⸂μένει ἐν ὑμῖν, καὶ οὐ χρείαν ἔχετε ἵνα τις διδάσκῃ ὑμ"
+   },
+   {
+    "reference": "1JN 3:1",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ατὴρ ἵνα τέκνα θεοῦ κληθῶμεν, ⸂καὶ ἐσμέν . διὰ τοῦτο ὁ κόσμος οὐ γινώσκει ⸀ἡμᾶς ",
+    "found_context": "ατὴρ ἵνα τέκνα θεοῦ κληθῶμεν, ⸂καὶ ἐσμέν. διὰ τοῦτο ὁ κόσμος οὐ γινώσκει ⸀ἡμᾶς ὅ"
+   },
+   {
+    "reference": "1JN 3:21",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "πητοί, ἐὰν ἡ καρδία ⸂μὴ καταγινώσκῃ ἡμῶν , παρρησίαν ἔχομεν πρὸς τὸν θεόν,",
+    "found_context": "πητοί, ἐὰν ἡ καρδία ⸂μὴ καταγινώσκῃ ἡμῶν, παρρησίαν ἔχομεν πρὸς τὸν θεόν,"
+   },
+   {
+    "reference": "1JN 4:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ἀγάπη αὐτοῦ ⸂ἐν ἡμῖν τετελειωμένη ἐστιν .",
+    "found_context": " ἀγάπη αὐτοῦ ⸂ἐν ἡμῖν τετελειωμένη ἐστιν."
+   },
+   {
+    "reference": "1JN 5:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ία, ὅτι ζωὴν αἰώνιον ἔδωκεν ⸂ὁ θεὸς ἡμῖν , καὶ αὕτη ἡ ζωὴ ἐν τῷ υἱῷ αὐτοῦ ἐστιν.",
+    "found_context": "ία, ὅτι ζωὴν αἰώνιον ἔδωκεν ⸂ὁ θεὸς ἡμῖν, καὶ αὕτη ἡ ζωὴ ἐν τῷ υἱῷ αὐτοῦ ἐστιν."
+   },
+   {
+    "reference": "1JN 5:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "⸀ὑμῖν ἵνα εἰδῆτε ὅτι ζωὴν ⸂ἔχετε αἰώνιον , ⸂τοῖς πιστεύουσιν εἰς τὸ ὄνομα τοῦ υἱ",
+    "found_context": "⸀ὑμῖν ἵνα εἰδῆτε ὅτι ζωὴν ⸂ἔχετε αἰώνιον, ⸂τοῖς πιστεύουσιν εἰς τὸ ὄνομα τοῦ υἱο"
+   },
+   {
+    "reference": "2JN 1:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " τὰς ἐντολὰς αὐτοῦ· αὕτη ⸂ἡ ἐντολή ἐστιν , καθὼς ἠκούσατε ἀπʼ ἀρχῆς, ἵνα ἐν αὐτῇ",
+    "found_context": " τὰς ἐντολὰς αὐτοῦ· αὕτη ⸂ἡ ἐντολή ἐστιν, καθὼς ἠκούσατε ἀπʼ ἀρχῆς, ἵνα ἐν αὐτῇ "
+   },
+   {
+    "reference": "3JN 1:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Πολλὰ εἶχον ⸂γράψαι σοι , ἀλλʼ οὐ θέλω διὰ μέλανος καὶ καλάμου ",
+    "found_context": "Πολλὰ εἶχον ⸂γράψαι σοι, ἀλλʼ οὐ θέλω διὰ μέλανος καὶ καλάμου σ"
+   },
+   {
+    "reference": "3JN 1:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἐλπίζω δὲ εὐθέως ⸂σε ἰδεῖν , καὶ στόμα πρὸς στόμα λαλήσομεν.",
+    "found_context": "ἐλπίζω δὲ εὐθέως ⸂σε ἰδεῖν, καὶ στόμα πρὸς στόμα λαλήσομεν."
+   },
+   {
+    "reference": "JUD 1:20",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ομοῦντες ἑαυτοὺς τῇ ἁγιωτάτῃ ὑμῶν πίστει , ἐν πνεύματι ἁγίῳ προσευχόμενοι,",
+    "found_context": "ομοῦντες ἑαυτοὺς τῇ ἁγιωτάτῃ ὑμῶν πίστει, ἐν πνεύματι ἁγίῳ προσευχόμενοι,"
+   },
+   {
+    "reference": "REV 2:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "σας διὰ τὸ ὄνομά μου, καὶ ⸂οὐ κεκοπίακες .",
+    "found_context": "σας διὰ τὸ ὄνομά μου, καὶ ⸂οὐ κεκοπίακες."
+   },
+   {
+    "reference": "REV 3:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὶ στήρισον τὰ λοιπὰ ἃ ⸂ἔμελλον ἀποθανεῖν , οὐ γὰρ εὕρηκά σου ⸀τὰ ἔργα πεπληρωμέν",
+    "found_context": "ὶ στήρισον τὰ λοιπὰ ἃ ⸂ἔμελλον ἀποθανεῖν, οὐ γὰρ εὕρηκά σου ⸀τὰ ἔργα πεπληρωμένα"
+   },
+   {
+    "reference": "REV 4:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "θεν τοῦ θρόνου ⸂ὅμοιος ὁράσει σμαραγδίνῳ .",
+    "found_context": "θεν τοῦ θρόνου ⸂ὅμοιος ὁράσει σμαραγδίνῳ."
+   },
+   {
+    "reference": "REV 4:9",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "αὶ εὐχαριστίαν τῷ καθημένῳ ἐπὶ ⸂τῷ θρόνῳ , τῷ ζῶντι εἰς τοὺς αἰῶνας τῶν αἰώνων,",
+    "found_context": "αὶ εὐχαριστίαν τῷ καθημένῳ ἐπὶ ⸂τῷ θρόνῳ, τῷ ζῶντι εἰς τοὺς αἰῶνας τῶν αἰώνων,"
+   },
+   {
+    "reference": "REV 6:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ὶ ὅτε ἤνοιξεν τὴν ⸂σφραγῖδα τὴν δευτέραν , ἤκουσα τοῦ δευτέρου ζῴου λέγοντος· Ἔρ",
+    "found_context": "ὶ ὅτε ἤνοιξεν τὴν ⸂σφραγῖδα τὴν δευτέραν, ἤκουσα τοῦ δευτέρου ζῴου λέγοντος· Ἔρχ"
+   },
+   {
+    "reference": "REV 8:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τῶν καὶ ⸂ἡ ἡμέρα μὴ φάνῃ τὸ τρίτον αὐτῆς , καὶ ἡ νὺξ ὁμοίως.",
+    "found_context": "τῶν καὶ ⸂ἡ ἡμέρα μὴ φάνῃ τὸ τρίτον αὐτῆς, καὶ ἡ νὺξ ὁμοίως."
+   },
+   {
+    "reference": "REV 9:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οθανεῖν καὶ ⸀φεύγει ⸂ὁ θάνατος ἀπʼ αὐτῶν .",
+    "found_context": "οθανεῖν καὶ ⸀φεύγει ⸂ὁ θάνατος ἀπʼ αὐτῶν."
+   },
+   {
+    "reference": "REV 9:7",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " κεφαλὰς αὐτῶν ὡς στέφανοι ⸂ὅμοιοι χρυσῷ , καὶ τὰ πρόσωπα αὐτῶν ὡς πρόσωπα ἀνθρώ",
+    "found_context": " κεφαλὰς αὐτῶν ὡς στέφανοι ⸂ὅμοιοι χρυσῷ, καὶ τὰ πρόσωπα αὐτῶν ὡς πρόσωπα ἀνθρώπ"
+   },
+   {
+    "reference": "REV 11:6",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "χουσιν ⸂τὴν ἐξουσίαν κλεῖσαι τὸν οὐρανόν , ἵνα μὴ ὑετὸς βρέχῃ τὰς ἡμέρας τῆς προ",
+    "found_context": "χουσιν ⸂τὴν ἐξουσίαν κλεῖσαι τὸν οὐρανόν, ἵνα μὴ ὑετὸς βρέχῃ τὰς ἡμέρας τῆς προφ"
+   },
+   {
+    "reference": "REV 11:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ῦμα ζωῆς ἐκ τοῦ θεοῦ εἰσῆλθεν ⸂ἐν αὐτοῖς , καὶ ἔστησαν ἐπὶ τοὺς πόδας αὐτῶν, καὶ",
+    "found_context": "ῦμα ζωῆς ἐκ τοῦ θεοῦ εἰσῆλθεν ⸂ἐν αὐτοῖς, καὶ ἔστησαν ἐπὶ τοὺς πόδας αὐτῶν, καὶ "
+   },
+   {
+    "reference": "REV 11:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ομά σου, ⸂τοὺς μικροὺς καὶ τοὺς μεγάλους , καὶ διαφθεῖραι τοὺς διαφθείροντας τὴν",
+    "found_context": "ομά σου, ⸂τοὺς μικροὺς καὶ τοὺς μεγάλους, καὶ διαφθεῖραι τοὺς διαφθείροντας τὴν "
+   },
+   {
+    "reference": "REV 12:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "τῷ οὐρανῷ, καὶ ἰδοὺ δράκων ⸂μέγας πυρρός , ἔχων κεφαλὰς ἑπτὰ καὶ κέρατα δέκα καὶ",
+    "found_context": "τῷ οὐρανῷ, καὶ ἰδοὺ δράκων ⸂μέγας πυρρός, ἔχων κεφαλὰς ἑπτὰ καὶ κέρατα δέκα καὶ "
+   },
+   {
+    "reference": "REV 12:12",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ηνοῦντες. οὐαὶ ⸂τὴν γῆν καὶ τὴν θάλασσαν , ὅτι κατέβη ὁ διάβολος πρὸς ὑμᾶς, ἔχων",
+    "found_context": "ηνοῦντες. οὐαὶ ⸂τὴν γῆν καὶ τὴν θάλασσαν, ὅτι κατέβη ὁ διάβολος πρὸς ὑμᾶς, ἔχων "
+   },
+   {
+    "reference": "REV 13:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἔχει τὴν πληγὴν ⸂τῆς μαχαίρης καὶ ἔζησεν .",
+    "found_context": "ἔχει τὴν πληγὴν ⸂τῆς μαχαίρης καὶ ἔζησεν."
+   },
+   {
+    "reference": "REV 13:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " ὁ ἀριθμὸς ⸀αὐτοῦ ⸂ἑξακόσιοι ἑξήκοντα ἕξ .",
+    "found_context": " ὁ ἀριθμὸς ⸀αὐτοῦ ⸂ἑξακόσιοι ἑξήκοντα ἕξ."
+   },
+   {
+    "reference": "REV 16:8",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " αὐτῷ καυματίσαι ⸂τοὺς ἀνθρώπους ἐν πυρί .",
+    "found_context": " αὐτῷ καυματίσαι ⸂τοὺς ἀνθρώπους ἐν πυρί."
+   },
+   {
+    "reference": "REV 16:18",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "ἐγένοντο ἀστραπαὶ καὶ ⸂φωναὶ καὶ βρονταί , καὶ σεισμὸς ⸀ἐγένετο μέγας, οἷος οὐκ ",
+    "found_context": "ἐγένοντο ἀστραπαὶ καὶ ⸂φωναὶ καὶ βρονταί, καὶ σεισμὸς ⸀ἐγένετο μέγας, οἷος οὐκ ἐ"
+   },
+   {
+    "reference": "REV 17:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "οὗτοι μίαν ⸂γνώμην ἔχουσιν , καὶ τὴν δύναμιν ⸀καὶ ἐξουσίαν αὐτῶν τ",
+    "found_context": "οὗτοι μίαν ⸂γνώμην ἔχουσιν, καὶ τὴν δύναμιν ⸀καὶ ἐξουσίαν αὐτῶν τῷ"
+   },
+   {
+    "reference": "REV 18:4",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "έγουσαν· ⸀Ἐξέλθατε ⸂ὁ λαός μου, ἐξ αὐτῆς , ἵνα μὴ συγκοινωνήσητε ταῖς ἁμαρτίαις ",
+    "found_context": "έγουσαν· ⸀Ἐξέλθατε ⸂ὁ λαός μου, ἐξ αὐτῆς, ἵνα μὴ συγκοινωνήσητε ταῖς ἁμαρτίαις α"
+   },
+   {
+    "reference": "REV 18:13",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "μίδαλιν καὶ σῖτον καὶ ⸂κτήνη καὶ πρόβατα , καὶ ἵππων καὶ ῥεδῶν καὶ σωμάτων, καὶ ",
+    "found_context": "μίδαλιν καὶ σῖτον καὶ ⸂κτήνη καὶ πρόβατα, καὶ ἵππων καὶ ῥεδῶν καὶ σωμάτων, καὶ ψ"
+   },
+   {
+    "reference": "REV 18:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": " σοῦ, καὶ ⸀οὐκέτι ⸂οὐ μὴ αὐτὰ εὑρήσουσιν .",
+    "found_context": " σοῦ, καὶ ⸀οὐκέτι ⸂οὐ μὴ αὐτὰ εὑρήσουσιν."
+   },
+   {
+    "reference": "REV 20:2",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "κράτησεν τὸν δράκοντα, ⸂ὁ ὄφις ὁ ἀρχαῖος , ὅς ἐστιν Διάβολος καὶ ὁ ⸀Σατανᾶς καὶ ",
+    "found_context": "κράτησεν τὸν δράκοντα, ⸂ὁ ὄφις ὁ ἀρχαῖος, ὅς ἐστιν Διάβολος καὶ ὁ ⸀Σατανᾶς καὶ ἔ"
+   },
+   {
+    "reference": "REV 20:11",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "έγαν λευκὸν καὶ τὸν καθήμενον ⸂ἐπʼ αὐτοῦ , οὗ ἀπὸ ⸀τοῦ προσώπου ἔφυγεν ἡ γῆ καὶ ",
+    "found_context": "έγαν λευκὸν καὶ τὸν καθήμενον ⸂ἐπʼ αὐτοῦ, οὗ ἀπὸ ⸀τοῦ προσώπου ἔφυγεν ἡ γῆ καὶ ὁ"
+   },
+   {
+    "reference": "REV 21:3",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "νται, καὶ αὐτὸς ὁ θεὸς ⸂μετʼ αὐτῶν ἔσται ,",
+    "found_context": "νται, καὶ αὐτὸς ὁ θεὸς ⸂μετʼ αὐτῶν ἔσται,"
+   },
+   {
+    "reference": "REV 21:5",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "νος ἐπὶ τῷ θρόνῳ· Ἰδοὺ ⸂καινὰ ποιῶ πάντα . καὶ ⸀λέγει Γράψον, ὅτι οὗτοι οἱ λόγοι",
+    "found_context": "νος ἐπὶ τῷ θρόνῳ· Ἰδοὺ ⸂καινὰ ποιῶ πάντα. καὶ ⸀λέγει Γράψον, ὅτι οὗτοι οἱ λόγοι "
+   },
+   {
+    "reference": "REV 22:14",
+    "kind": "punctuation_spacing",
+    "cause": "reference reader (note replaced by a space)",
+    "edition_context": "Μακάριοι οἱ ⸂πλύνοντες τὰς στολὰς αὐτῶν , ἵνα ἔσται ἡ ἐξουσία αὐτῶν ἐπὶ τὸ ξύλο",
+    "found_context": "Μακάριοι οἱ ⸂πλύνοντες τὰς στολὰς αὐτῶν, ἵνα ἔσται ἡ ἐξουσία αὐτῶν ἐπὶ τὸ ξύλον"
+   }
+  ]
+ },
+ "full-kor1961": {
+  "verified": 31077,
+  "verified_mismatch": 0,
+  "rows": []
+ }
+}

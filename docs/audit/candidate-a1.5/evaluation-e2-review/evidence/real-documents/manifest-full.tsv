@@ -1,0 +1,4 @@
+key	files	reference	language	script	format	layout	role	source and licence	books	sha256	generator	kind	class
+full-engbsb	full-engbsb.md	full-engbsb_usfm.zip	en	Latin	md	review generated, whole edition	review	engbsb bundled eBible USFM	all	2153c588b347df8a918a2f7e88fc6b1b845e936709c493a7346c9b2ab4d3d159	review make_full_docs.py	generated	scored
+full-grcsbl	full-grcsbl.md	full-grcsbl_usfm.zip	grc	Greek	md	review generated, whole edition	review	grcsbl bundled eBible USFM	all	3acba7ce278867f7cbe1fb78c78f497214145174265de34069fc024b9379192a	review make_full_docs.py	generated	scored
+full-kor1961	full-kor1961.md	full-kor1961_usfm.zip	ko	Hangul	md	review generated, whole edition	review	kor1961 bundled eBible USFM	all	684474c8db3f47247f999fcd61618e360fb2269387f0ababac18a868e4a6e0b5	review make_full_docs.py	generated	scored

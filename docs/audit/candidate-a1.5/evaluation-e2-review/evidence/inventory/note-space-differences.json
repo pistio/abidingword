@@ -1,0 +1,3207 @@
+{
+ "engbsb": {
+  "differ": 156,
+  "kinds": {
+   "punctuation_spacing": 155,
+   "word_boundary": 1
+  },
+  "only_extra_spaces": 156,
+  "rows": [
+   {
+    "reference": "GEN 3:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "rush your head, and you will strike his heel. ”",
+    "independent_context": "rush your head, and you will strike his heel.”"
+   },
+   {
+    "reference": "GEN 12:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ies of the earth will be blessed through you. ”",
+    "independent_context": "ies of the earth will be blessed through you.”"
+   },
+   {
+    "reference": "GEN 12:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "id, “I will give this land to your offspring. ” So Abram built an altar there to the LORD,",
+    "independent_context": "id, “I will give this land to your offspring.” So Abram built an altar there to the LORD, "
+   },
+   {
+    "reference": "GEN 16:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " spoken to her: “You are the God who sees me, ” for she said, “Here I have seen the One wh",
+    "independent_context": " spoken to her: “You are the God who sees me,” for she said, “Here I have seen the One who"
+   },
+   {
+    "reference": "GEN 22:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " you have not withheld your only son from me. ”",
+    "independent_context": " you have not withheld your only son from me.”"
+   },
+   {
+    "reference": "GEN 25:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ished.” (That is why he was also called Edom. )",
+    "independent_context": "ished.” (That is why he was also called Edom.)"
+   },
+   {
+    "reference": "GEN 32:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " can face him, and perhaps he will accept me. ”",
+    "independent_context": " can face him, and perhaps he will accept me.”"
+   },
+   {
+    "reference": "GEN 35:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "led Jacob. Instead, your name will be Israel. ” So God named him Israel.",
+    "independent_context": "led Jacob. Instead, your name will be Israel.” So God named him Israel."
+   },
+   {
+    "reference": "EXO 1:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ies, fight against us, and leave the country. ”",
+    "independent_context": "ies, fight against us, and leave the country.”"
+   },
+   {
+    "reference": "EXO 2:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "anning to kill me as you killed the Egyptian? ” Then Moses was afraid and thought, “This t",
+    "independent_context": "anning to kill me as you killed the Egyptian?” Then Moses was afraid and thought, “This th"
+   },
+   {
+    "reference": "EXO 4:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "d to Moses, “Put your hand inside your cloak. ” So he put his hand inside his cloak, and w",
+    "independent_context": "d to Moses, “Put your hand inside your cloak.” So he put his hand inside his cloak, and wh"
+   },
+   {
+    "reference": "EXO 6:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "listen to me, since I am unskilled in speech? ”",
+    "independent_context": "listen to me, since I am unskilled in speech?”"
+   },
+   {
+    "reference": "EXO 7:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "efore Pharaoh,’ and it will become a serpent. ”",
+    "independent_context": "efore Pharaoh,’ and it will become a serpent.”"
+   },
+   {
+    "reference": "EXO 19:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " a long blast may they approach the mountain. ”",
+    "independent_context": " a long blast may they approach the mountain.”"
+   },
+   {
+    "reference": "LEV 14:57",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "s the law regarding skin diseases and mildew. ”",
+    "independent_context": "s the law regarding skin diseases and mildew.”"
+   },
+   {
+    "reference": "NUM 14:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "he wilderness along the route to the Red Sea. ”",
+    "independent_context": "he wilderness along the route to the Red Sea.”"
+   },
+   {
+    "reference": "NUM 21:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", we will devote their cities to destruction. ”",
+    "independent_context": ", we will devote their cities to destruction.”"
+   },
+   {
+    "reference": "NUM 21:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "em as far as Nophah, which reaches to Medeba. ”",
+    "independent_context": "em as far as Nophah, which reaches to Medeba.”"
+   },
+   {
+    "reference": "DEU 1:40",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "he wilderness along the route to the Red Sea. ”",
+    "independent_context": "he wilderness along the route to the Red Sea.”"
+   },
+   {
+    "reference": "JOS 5:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "and circumcise the sons of Israel once again. ”",
+    "independent_context": "and circumcise the sons of Israel once again.”"
+   },
+   {
+    "reference": "JOS 6:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ur people will charge straight into the city. ”",
+    "independent_context": "ur people will charge straight into the city.”"
+   },
+   {
+    "reference": "JDG 9:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ompany is coming by way of the Diviners’ Oak. ”",
+    "independent_context": "ompany is coming by way of the Diviners’ Oak.”"
+   },
+   {
+    "reference": "JDG 16:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ll give you eleven hundred shekels of silver. ”",
+    "independent_context": "ll give you eleven hundred shekels of silver.”"
+   },
+   {
+    "reference": "RUT 1:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "“Do not call me Naomi, ” she replied. “Call me Mara, because the Al",
+    "independent_context": "“Do not call me Naomi,” she replied. “Call me Mara, because the Alm"
+   },
+   {
+    "reference": "RUT 2:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "relative. He is one of our kinsman-redeemers. ”",
+    "independent_context": "relative. He is one of our kinsman-redeemers.”"
+   },
+   {
+    "reference": "RUT 3:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ment over me, for you are a kinsman-redeemer. ”",
+    "independent_context": "ment over me, for you are a kinsman-redeemer.”"
+   },
+   {
+    "reference": "1SA 2:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "n place of the one she dedicated to the LORD. ” Then they would go home.",
+    "independent_context": "n place of the one she dedicated to the LORD.” Then they would go home."
+   },
+   {
+    "reference": "2SA 5:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "the lame and blind who are despised by David. ” That is why it is said, “The blind and the",
+    "independent_context": "the lame and blind who are despised by David.” That is why it is said, “The blind and the "
+   },
+   {
+    "reference": "2SA 15:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "erusalem, I will worship the LORD in Hebron.’ ”",
+    "independent_context": "erusalem, I will worship the LORD in Hebron.’”"
+   },
+   {
+    "reference": "2SA 15:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "RD show you loving devotion and faithfulness. ”",
+    "independent_context": "RD show you loving devotion and faithfulness.”"
+   },
+   {
+    "reference": "2SA 18:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", ‘Protect the young man Absalom for my sake. ’",
+    "independent_context": ", ‘Protect the young man Absalom for my sake.’"
+   },
+   {
+    "reference": "2SA 20:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "r he will find fortified cities and elude us. ”",
+    "independent_context": "r he will find fortified cities and elude us.”"
+   },
+   {
+    "reference": "1KI 20:39",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "fe, or you will weigh out a talent of silver. ’",
+    "independent_context": "fe, or you will weigh out a talent of silver.’"
+   },
+   {
+    "reference": "1KI 21:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "the dogs will lick up your blood—yes, yours!’ ”",
+    "independent_context": "the dogs will lick up your blood—yes, yours!’”"
+   },
+   {
+    "reference": "2KI 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "“He was a hairy man, ” they answered, “with a leather belt around",
+    "independent_context": "“He was a hairy man,” they answered, “with a leather belt around "
+   },
+   {
+    "reference": "2KI 2:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "longer will it cause death or unfruitfulness. ’”",
+    "independent_context": "longer will it cause death or unfruitfulness.’”"
+   },
+   {
+    "reference": "2KI 3:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "He used to pour water on the hands of Elijah. ”",
+    "independent_context": "He used to pour water on the hands of Elijah.”"
+   },
+   {
+    "reference": "2KI 3:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "But now, bring me a harpist. ” And while the harpist played, the hand of ",
+    "independent_context": "But now, bring me a harpist.” And while the harpist played, the hand of t"
+   },
+   {
+    "reference": "2KI 9:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "el, so that no one can say: This is Jezebel.’ ”",
+    "independent_context": "el, so that no one can say: This is Jezebel.’”"
+   },
+   {
+    "reference": "2CH 2:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "baths of wine, and 20,000 baths of olive oil. ”",
+    "independent_context": "baths of wine, and 20,000 baths of olive oil.”"
+   },
+   {
+    "reference": "EST 4:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "s against the law. And if I perish, I perish! ”",
+    "independent_context": "s against the law. And if I perish, I perish!”"
+   },
+   {
+    "reference": "JOB 19:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", since the root of the matter lies with him, ’",
+    "independent_context": ", since the root of the matter lies with him,’"
+   },
+   {
+    "reference": "JOB 22:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "t see us as He traverses the vault of heaven. ’",
+    "independent_context": "t see us as He traverses the vault of heaven.’"
+   },
+   {
+    "reference": "PSA 2:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " scepter; You will shatter them like pottery. ”",
+    "independent_context": " scepter; You will shatter them like pottery.”"
+   },
+   {
+    "reference": "PSA 132:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "LORD, a dwelling for the Mighty One of Jacob. ”",
+    "independent_context": "LORD, a dwelling for the Mighty One of Jacob.”"
+   },
+   {
+    "reference": "ISA 3:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " and the LORD will make their foreheads bare. ”",
+    "independent_context": " and the LORD will make their foreheads bare.”"
+   },
+   {
+    "reference": "ISA 5:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", and a homer of seed only an ephah of grain. ”",
+    "independent_context": ", and a homer of seed only an ephah of grain.”"
+   },
+   {
+    "reference": "ISA 6:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "nd with their hearts, and turn and be healed. ”",
+    "independent_context": "nd with their hearts, and turn and be healed.”"
+   },
+   {
+    "reference": "ISA 8:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", but it will not happen. For God is with us. ”",
+    "independent_context": ", but it will not happen. For God is with us.”"
+   },
+   {
+    "reference": "ISA 29:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "telligence of the intelligent will be hidden. ”",
+    "independent_context": "telligence of the intelligent will be hidden.”"
+   },
+   {
+    "reference": "ISA 37:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "rth may know that You alone, O LORD, are God. ”",
+    "independent_context": "rth may know that You alone, O LORD, are God.”"
+   },
+   {
+    "reference": "ISA 49:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "nd from the west, and from the land of Aswan. ”",
+    "independent_context": "nd from the west, and from the land of Aswan.”"
+   },
+   {
+    "reference": "ISA 59:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "o those in Jacob who turn from transgression, ” declares the LORD.",
+    "independent_context": "o those in Jacob who turn from transgression,” declares the LORD."
+   },
+   {
+    "reference": "JER 5:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "em. So let their own predictions befall them. ”",
+    "independent_context": "em. So let their own predictions befall them.”"
+   },
+   {
+    "reference": "JER 31:32",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "t they broke, though I was a husband to them, ” declares the LORD.",
+    "independent_context": "t they broke, though I was a husband to them,” declares the LORD."
+   },
+   {
+    "reference": "JER 48:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "r lives! Become like a juniper in the desert. ’",
+    "independent_context": "r lives! Become like a juniper in the desert.’"
+   },
+   {
+    "reference": "JER 48:47",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "tter days I will restore Moab from captivity, ” declares the LORD. Here ends the judgment ",
+    "independent_context": "tter days I will restore Moab from captivity,” declares the LORD. Here ends the judgment o"
+   },
+   {
+    "reference": "JER 49:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " I will restore the Ammonites from captivity, ” declares the LORD.",
+    "independent_context": " I will restore the Ammonites from captivity,” declares the LORD."
+   },
+   {
+    "reference": "JER 49:39",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ast days, I will restore Elam from captivity, ” declares the LORD.",
+    "independent_context": "ast days, I will restore Elam from captivity,” declares the LORD."
+   },
+   {
+    "reference": "EZK 2:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "“Son of man, ” He said to me, “stand up on your feet and ",
+    "independent_context": "“Son of man,” He said to me, “stand up on your feet and I"
+   },
+   {
+    "reference": "EZK 20:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "you go?’ (And to this day it is called Bamah. )",
+    "independent_context": "you go?’ (And to this day it is called Bamah.)"
+   },
+   {
+    "reference": "EZK 21:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "o whom I have assigned the right of judgment. ’",
+    "independent_context": "o whom I have assigned the right of judgment.’"
+   },
+   {
+    "reference": "EZK 39:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "(Even the city will be named Hamonah. ) And so they will cleanse the land.",
+    "independent_context": "(Even the city will be named Hamonah.) And so they will cleanse the land."
+   },
+   {
+    "reference": "EZK 40:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "twenty-five cubits long and five cubits deep. )",
+    "independent_context": "twenty-five cubits long and five cubits deep.)"
+   },
+   {
+    "reference": "EZK 41:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " he said to me, “This is the Most Holy Place. ”",
+    "independent_context": " he said to me, “This is the Most Holy Place.”"
+   },
+   {
+    "reference": "EZK 48:35",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " name of the city will be: THE LORD IS THERE. ”",
+    "independent_context": " name of the city will be: THE LORD IS THERE.”"
+   },
+   {
+    "reference": "DAN 3:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "—and the fourth looks like a son of the gods! ”",
+    "independent_context": "—and the fourth looks like a son of the gods!”"
+   },
+   {
+    "reference": "DAN 9:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "e decreed destruction is poured out upon him. ”",
+    "independent_context": "e decreed destruction is poured out upon him.”"
+   },
+   {
+    "reference": "HOS 3:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "o other gods and offer raisin cakes to idols. ”",
+    "independent_context": "o other gods and offer raisin cakes to idols.”"
+   },
+   {
+    "reference": "JOL 3:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ge their blood, which I have not yet avenged. ” For the LORD dwells in Zion.",
+    "independent_context": "ge their blood, which I have not yet avenged.” For the LORD dwells in Zion."
+   },
+   {
+    "reference": "AMO 4:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " her, and you will be cast out toward Harmon, ” declares the LORD.",
+    "independent_context": " her, and you will be cast out toward Harmon,” declares the LORD."
+   },
+   {
+    "reference": "MIC 6:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "empt; you will bear the scorn of the nations. ”",
+    "independent_context": "empt; you will bear the scorn of the nations.”"
+   },
+   {
+    "reference": "ZEC 1:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "e angry, but they have added to the calamity. ’",
+    "independent_context": "e angry, but they have added to the calamity.’"
+   },
+   {
+    "reference": "ZEC 5:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ied, “twenty cubits long and ten cubits wide. ”",
+    "independent_context": "ied, “twenty cubits long and ten cubits wide.”"
+   },
+   {
+    "reference": "ZEC 5:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "o build a house for it in the land of Shinar, ” he told me. “And when it is ready, the bas",
+    "independent_context": "o build a house for it in the land of Shinar,” he told me. “And when it is ready, the bask"
+   },
+   {
+    "reference": "ZEC 13:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "for I was purchased as a servant in my youth. ’",
+    "independent_context": "for I was purchased as a servant in my youth.’"
+   },
+   {
+    "reference": "MAL 1:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "d left his inheritance to the desert jackals. ”",
+    "independent_context": "d left his inheritance to the desert jackals.”"
+   },
+   {
+    "reference": "MAT 1:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "all Him Immanuel” (which means, “God with us” ).",
+    "independent_context": "all Him Immanuel” (which means, “God with us”)."
+   },
+   {
+    "reference": "MAT 2:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ho will be the shepherd of My people Israel.’ ”",
+    "independent_context": "ho will be the shepherd of My people Israel.’”"
+   },
+   {
+    "reference": "MAT 4:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "every word that comes from the mouth of God.’ ”",
+    "independent_context": "every word that comes from the mouth of God.’”"
+   },
+   {
+    "reference": "MAT 4:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "u will not strike Your foot against a stone.’ ”",
+    "independent_context": "u will not strike Your foot against a stone.’”"
+   },
+   {
+    "reference": "MAT 4:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ": ‘Do not put the Lord your God to the test.’ ”",
+    "independent_context": ": ‘Do not put the Lord your God to the test.’”"
+   },
+   {
+    "reference": "MAT 4:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "orship the Lord your God and serve Him only.’ ”",
+    "independent_context": "orship the Lord your God and serve Him only.’”"
+   },
+   {
+    "reference": "MAT 6:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "temptation, but deliver us from the evil one. ’",
+    "independent_context": "temptation, but deliver us from the evil one.’"
+   },
+   {
+    "reference": "MAT 9:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " not come to call the righteous, but sinners. ”",
+    "independent_context": " not come to call the righteous, but sinners.”"
+   },
+   {
+    "reference": "MAT 11:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " one who does not fall away on account of Me. ”",
+    "independent_context": " one who does not fall away on account of Me.”"
+   },
+   {
+    "reference": "MAT 15:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " they teach as doctrine the precepts of men.’ ”",
+    "independent_context": " they teach as doctrine the precepts of men.’”"
+   },
+   {
+    "reference": "MAT 19:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " his wife, and the two will become one flesh’ ?",
+    "independent_context": " his wife, and the two will become one flesh’?"
+   },
+   {
+    "reference": "MAT 19:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "e a certificate of divorce and send her away? ”",
+    "independent_context": "e a certificate of divorce and send her away?”"
+   },
+   {
+    "reference": "MAT 19:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " and marries another woman, commits adultery. ”",
+    "independent_context": " and marries another woman, commits adultery.”"
+   },
+   {
+    "reference": "MAT 19:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " mother, and love your neighbor as yourself.’ ”",
+    "independent_context": " mother, and love your neighbor as yourself.’”"
+   },
+   {
+    "reference": "MAT 21:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "r.’ But you are making it ‘a den of robbers.’ ”",
+    "independent_context": "r.’ But you are making it ‘a den of robbers.’”"
+   },
+   {
+    "reference": "MAT 21:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "hildren and infants You have ordained praise’ ?”",
+    "independent_context": "hildren and infants You have ordained praise’?”"
+   },
+   {
+    "reference": "MAT 21:31",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " two did the will of his father?” “The first, ” they answered. Jesus said to them, “Truly ",
+    "independent_context": " two did the will of his father?” “The first,” they answered. Jesus said to them, “Truly I"
+   },
+   {
+    "reference": "MAT 21:42",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "om the Lord, and it is marvelous in our eyes’ ?",
+    "independent_context": "om the Lord, and it is marvelous in our eyes’?"
+   },
+   {
+    "reference": "MAT 21:44",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ces, but he on whom it falls will be crushed. ”",
+    "independent_context": "ces, but he on whom it falls will be crushed.”"
+   },
+   {
+    "reference": "MAT 22:32",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "aham, the God of Isaac, and the God of Jacob’ ? He is not the God of the dead, but of the ",
+    "independent_context": "aham, the God of Isaac, and the God of Jacob’? He is not the God of the dead, but of the l"
+   },
+   {
+    "reference": "MAT 23:39",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "sed is He who comes in the name of the Lord.’ ”",
+    "independent_context": "sed is He who comes in the name of the Lord.’”"
+   },
+   {
+    "reference": "MAT 24:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "and the powers of the heavens will be shaken. ’",
+    "independent_context": "and the powers of the heavens will be shaken.’"
+   },
+   {
+    "reference": "MAT 27:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "he crowd. “I am innocent of this man’s blood, ” he said. “You bear the responsibility.”",
+    "independent_context": "he crowd. “I am innocent of this man’s blood,” he said. “You bear the responsibility.”"
+   },
+   {
+    "reference": "MRK 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "but He will baptize you with the Holy Spirit. ”",
+    "independent_context": "but He will baptize you with the Holy Spirit.”"
+   },
+   {
+    "reference": "MRK 3:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "m were saying, “He is possessed by Beelzebul, ” and, “By the prince of the demons He drive",
+    "independent_context": "m were saying, “He is possessed by Beelzebul,” and, “By the prince of the demons He drives"
+   },
+   {
+    "reference": "MRK 4:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "; otherwise they might turn and be forgiven.’ ”",
+    "independent_context": "; otherwise they might turn and be forgiven.’”"
+   },
+   {
+    "reference": "MRK 4:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ngs the sickle, because the harvest has come. ”",
+    "independent_context": "ngs the sickle, because the harvest has come.”"
+   },
+   {
+    "reference": "MRK 7:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "mandment of God to keep the tradition of men. ”",
+    "independent_context": "mandment of God to keep the tradition of men.”"
+   },
+   {
+    "reference": "MRK 10:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " cheat others, honor your father and mother.’ ”",
+    "independent_context": " cheat others, honor your father and mother.’”"
+   },
+   {
+    "reference": "MRK 10:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ave treasure in heaven. Then come, follow Me. ”",
+    "independent_context": "ave treasure in heaven. Then come, follow Me.”"
+   },
+   {
+    "reference": "MRK 11:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "called a house of prayer for all the nations’ ? But you have made it ‘a den of robbers.’ ”",
+    "independent_context": "called a house of prayer for all the nations’? But you have made it ‘a den of robbers.’”"
+   },
+   {
+    "reference": "MRK 11:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " heaven will forgive your trespasses as well. ”",
+    "independent_context": " heaven will forgive your trespasses as well.”"
+   },
+   {
+    "reference": "MRK 12:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "om the Lord, and it is marvelous in our eyes’ ?”",
+    "independent_context": "om the Lord, and it is marvelous in our eyes’?”"
+   },
+   {
+    "reference": "MRK 12:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "aham, the God of Isaac, and the God of Jacob’ ?",
+    "independent_context": "aham, the God of Isaac, and the God of Jacob’?"
+   },
+   {
+    "reference": "LUK 1:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "who are highly favored! The Lord is with you. ”",
+    "independent_context": "who are highly favored! The Lord is with you.”"
+   },
+   {
+    "reference": "LUK 1:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "For no word from God will ever fail. ”",
+    "independent_context": "For no word from God will ever fail.”"
+   },
+   {
+    "reference": "LUK 2:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "stborn male shall be consecrated to the Lord” ),",
+    "independent_context": "stborn male shall be consecrated to the Lord”),"
+   },
+   {
+    "reference": "LUK 4:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "written: ‘Man shall not live on bread alone.’ ”",
+    "independent_context": "written: ‘Man shall not live on bread alone.’”"
+   },
+   {
+    "reference": "LUK 4:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "orship the Lord your God and serve Him only.’ ”",
+    "independent_context": "orship the Lord your God and serve Him only.’”"
+   },
+   {
+    "reference": "LUK 4:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "u will not strike Your foot against a stone.’ ”",
+    "independent_context": "u will not strike Your foot against a stone.’”"
+   },
+   {
+    "reference": "LUK 4:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", ‘Do not put the Lord your God to the test.’ ”",
+    "independent_context": ", ‘Do not put the Lord your God to the test.’”"
+   },
+   {
+    "reference": "LUK 7:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " one who does not fall away on account of Me. ”",
+    "independent_context": " one who does not fall away on account of Me.”"
+   },
+   {
+    "reference": "LUK 10:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "r mind’ and ‘Love your neighbor as yourself.’ ”",
+    "independent_context": "r mind’ and ‘Love your neighbor as yourself.’”"
+   },
+   {
+    "reference": "LUK 11:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " against us. And lead us not into temptation. ’”",
+    "independent_context": " against us. And lead us not into temptation.’”"
+   },
+   {
+    "reference": "LUK 12:53",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "aw and daughter-in-law against mother-in-law. ”",
+    "independent_context": "aw and daughter-in-law against mother-in-law.”"
+   },
+   {
+    "reference": "LUK 12:59",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " out until you have paid the very last penny. ”",
+    "independent_context": " out until you have paid the very last penny.”"
+   },
+   {
+    "reference": "LUK 13:35",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "sed is He who comes in the name of the Lord.’ ”",
+    "independent_context": "sed is He who comes in the name of the Lord.’”"
+   },
+   {
+    "reference": "LUK 15:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " I am no longer worthy to be called your son. ’",
+    "independent_context": " I am no longer worthy to be called your son.’"
+   },
+   {
+    "reference": "LUK 17:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", “Rise and go; your faith has made you well! ”",
+    "independent_context": ", “Rise and go; your faith has made you well!”"
+   },
+   {
+    "reference": "LUK 17:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "you see, the kingdom of God is in your midst. ”",
+    "independent_context": "you see, the kingdom of God is in your midst.”"
+   },
+   {
+    "reference": "LUK 18:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "false witness, honor your father and mother.’ ”",
+    "independent_context": "false witness, honor your father and mother.’”"
+   },
+   {
+    "reference": "LUK 19:44",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "cognize the time of your visitation from God. ”",
+    "independent_context": "cognize the time of your visitation from God.”"
+   },
+   {
+    "reference": "LUK 19:46",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "er.’ But you have made it ‘a den of robbers.’ ”",
+    "independent_context": "er.’ But you have made it ‘a den of robbers.’”"
+   },
+   {
+    "reference": "LUK 20:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "builders rejected has become the cornerstone’ ?",
+    "independent_context": "builders rejected has become the cornerstone’?"
+   },
+   {
+    "reference": "LUK 23:47",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "od, saying, “Surely this was a righteous man. ”",
+    "independent_context": "od, saying, “Surely this was a righteous man.”"
+   },
+   {
+    "reference": "JHN 1:34",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "en and testified that this is the Son of God. ”",
+    "independent_context": "en and testified that this is the Son of God.”"
+   },
+   {
+    "reference": "JHN 3:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "e the kingdom of God unless he is born again. ”",
+    "independent_context": "e the kingdom of God unless he is born again.”"
+   },
+   {
+    "reference": "JHN 4:52",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "fever left him yesterday at the seventh hour. ”",
+    "independent_context": "fever left him yesterday at the seventh hour.”"
+   },
+   {
+    "reference": "JHN 6:31",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ten: ‘He gave them bread from heaven to eat.’ ”",
+    "independent_context": "ten: ‘He gave them bread from heaven to eat.’”"
+   },
+   {
+    "reference": "JHN 6:69",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ve and know that You are the Holy One of God. ”",
+    "independent_context": "ve and know that You are the Holy One of God.”"
+   },
+   {
+    "reference": "JHN 7:42",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "rom Bethlehem, the village where David lived? ”",
+    "independent_context": "rom Bethlehem, the village where David lived?”"
+   },
+   {
+    "reference": "JHN 8:58",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "sus declared, “before Abraham was born, I am! ”",
+    "independent_context": "sus declared, “before Abraham was born, I am!”"
+   },
+   {
+    "reference": "JHN 10:34",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "itten in your Law: ‘I have said you are gods’ ?",
+    "independent_context": "itten in your Law: ‘I have said you are gods’?"
+   },
+   {
+    "reference": "JHN 14:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "u know the way to the place where I am going. ”",
+    "independent_context": "u know the way to the place where I am going.”"
+   },
+   {
+    "reference": "JHN 16:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "nd then after a little while you will see Me. ”",
+    "independent_context": "nd then after a little while you will see Me.”"
+   },
+   {
+    "reference": "ACT 1:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ys you will be baptized with the Holy Spirit. ”",
+    "independent_context": "ys you will be baptized with the Holy Spirit.”"
+   },
+   {
+    "reference": "ACT 3:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "of Jesus Christ of Nazareth, get up and walk! ”",
+    "independent_context": "of Jesus Christ of Nazareth, get up and walk!”"
+   },
+   {
+    "reference": "ACT 3:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " be completely cut off from among his people. ’",
+    "independent_context": " be completely cut off from among his people.’"
+   },
+   {
+    "reference": "ACT 5:21",
+    "kind_under_E2": "word_boundary",
+    "app_reader_context": "sociates arrived, they convened the Sanhedrin —the full assembly of the elders of Israel—a",
+    "independent_context": "sociates arrived, they convened the Sanhedrin—the full assembly of the elders of Israel—an"
+   },
+   {
+    "reference": "ACT 10:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " Simon the tanner, whose house is by the sea. ”",
+    "independent_context": " Simon the tanner, whose house is by the sea.”"
+   },
+   {
+    "reference": "ACT 13:41",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "uld never believe, even if someone told you.’ ”",
+    "independent_context": "uld never believe, even if someone told you.’”"
+   },
+   {
+    "reference": "ACT 13:47",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "to bring salvation to the ends of the earth.’ ”",
+    "independent_context": "to bring salvation to the ends of the earth.’”"
+   },
+   {
+    "reference": "ACT 23:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "t speak evil about the ruler of your people.’ ”",
+    "independent_context": "t speak evil about the ruler of your people.’”"
+   },
+   {
+    "reference": "ROM 11:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "e left, and they are seeking my life as well” ?",
+    "independent_context": "e left, and they are seeking my life as well”?"
+   },
+   {
+    "reference": "HEB 1:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " are My Son; today I have become Your Father” ? Or again: “I will be His Father, and He wi",
+    "independent_context": " are My Son; today I have become Your Father”? Or again: “I will be His Father, and He wil"
+   },
+   {
+    "reference": "HEB 1:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " make Your enemies a footstool for Your feet” ?",
+    "independent_context": " make Your enemies a footstool for Your feet”?"
+   },
+   {
+    "reference": "REV 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "“I am the Alpha and the Omega, ” says the Lord God, who is and was and is t",
+    "independent_context": "“I am the Alpha and the Omega,” says the Lord God, who is and was and is to"
+   },
+   {
+    "reference": "REV 7:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "d will wipe away every tear from their eyes.’ ”",
+    "independent_context": "d will wipe away every tear from their eyes.’”"
+   },
+   {
+    "reference": "REV 22:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "who keeps the words of prophecy in this book. ”",
+    "independent_context": "who keeps the words of prophecy in this book.”"
+   }
+  ]
+ },
+ "engwebp": {
+  "differ": 14,
+  "kinds": {
+   "punctuation_spacing": 14
+  },
+  "only_extra_spaces": 14,
+  "rows": [
+   {
+    "reference": "EXO 30:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "of the sanctuary (the shekel is twenty gerahs ); half a shekel for an offering to the LORD",
+    "independent_context": "of the sanctuary (the shekel is twenty gerahs); half a shekel for an offering to the LORD."
+   },
+   {
+    "reference": "NUM 3:47",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " shall take them (the shekel is twenty gerahs );",
+    "independent_context": " shall take them (the shekel is twenty gerahs);"
+   },
+   {
+    "reference": "JDG 13:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "k about my name, since it is incomprehensible ?”",
+    "independent_context": "k about my name, since it is incomprehensible?”"
+   },
+   {
+    "reference": "2SA 4:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " the king today of Saul and of his offspring. ”",
+    "independent_context": " the king today of Saul and of his offspring.”"
+   },
+   {
+    "reference": "2CH 20:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " of Ammon, and with them some of the Meunites , came against Jehoshaphat to battle.",
+    "independent_context": " of Ammon, and with them some of the Meunites, came against Jehoshaphat to battle."
+   },
+   {
+    "reference": "DAN 3:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ance of the fourth is like a son of the gods. ”",
+    "independent_context": "ance of the fourth is like a son of the gods.”"
+   },
+   {
+    "reference": "LUK 12:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "en’t five sparrows sold for two assaria coins ? Not one of them is forgotten by God.",
+    "independent_context": "en’t five sparrows sold for two assaria coins? Not one of them is forgotten by God."
+   },
+   {
+    "reference": "LUK 12:59",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "here until you have paid the very last penny. ”",
+    "independent_context": "here until you have paid the very last penny.”"
+   },
+   {
+    "reference": "LUK 14:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "per. For many are called, but few are chosen. ’”",
+    "independent_context": "per. For many are called, but few are chosen.’”"
+   },
+   {
+    "reference": "LUK 21:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "r many will come in my name, saying, ‘I am he ,’ and, ‘The time is at hand.’ Therefore don",
+    "independent_context": "r many will come in my name, saying, ‘I am he,’ and, ‘The time is at hand.’ Therefore don’"
+   },
+   {
+    "reference": "JHN 1:41",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "essiah!” (which is, being interpreted, Christ ).",
+    "independent_context": "essiah!” (which is, being interpreted, Christ)."
+   },
+   {
+    "reference": "JHN 8:58",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ou, before Abraham came into existence, I AM. ”",
+    "independent_context": "ou, before Abraham came into existence, I AM.”"
+   },
+   {
+    "reference": "GAL 3:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "is offspring. He doesn’t say, “To descendants ”, as of many, but as of one, “To your offsp",
+    "independent_context": "is offspring. He doesn’t say, “To descendants”, as of many, but as of one, “To your offspr"
+   },
+   {
+    "reference": "REV 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "“I am the Alpha and the Omega, ” says the Lord God, “who is and who was and",
+    "independent_context": "“I am the Alpha and the Omega,” says the Lord God, “who is and who was and "
+   }
+  ]
+ },
+ "fraLSG": {
+  "differ": 2,
+  "kinds": {
+   "punctuation_spacing": 2
+  },
+  "only_extra_spaces": 2,
+  "rows": [
+   {
+    "reference": "EPH 2:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ffenses, nous a rendus à la vie avec Christ ( c’est par grâce que vous êtes sauvés);",
+    "independent_context": "ffenses, nous a rendus à la vie avec Christ (c’est par grâce que vous êtes sauvés);"
+   },
+   {
+    "reference": "HEB 8:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "( lesquels célèbrent un culte, image et ombre ",
+    "independent_context": "(lesquels célèbrent un culte, image et ombre d"
+   }
+  ]
+ },
+ "grcsbl": {
+  "differ": 356,
+  "kinds": {
+   "punctuation_spacing": 356
+  },
+  "only_extra_spaces": 356,
+  "rows": [
+   {
+    "reference": "MAT 4:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Καὶ περιῆγεν ⸂ἐν ὅλῃ τῇ Γαλιλαίᾳ , διδάσκων ἐν ταῖς συναγωγαῖς αὐτῶν καὶ κηρύ",
+    "independent_context": "Καὶ περιῆγεν ⸂ἐν ὅλῃ τῇ Γαλιλαίᾳ, διδάσκων ἐν ταῖς συναγωγαῖς αὐτῶν καὶ κηρύσ"
+   },
+   {
+    "reference": "MAT 5:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "κῳ σου ταχὺ ἕως ὅτου εἶ ⸂μετʼ αὐτοῦ ἐν τῇ ὁδῷ , μήποτέ σε παραδῷ ὁ ἀντίδικος τῷ κριτῇ, καὶ",
+    "independent_context": "κῳ σου ταχὺ ἕως ὅτου εἶ ⸂μετʼ αὐτοῦ ἐν τῇ ὁδῷ, μήποτέ σε παραδῷ ὁ ἀντίδικος τῷ κριτῇ, καὶ "
+   },
+   {
+    "reference": "MAT 5:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "υ καὶ μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ .",
+    "independent_context": "υ καὶ μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ."
+   },
+   {
+    "reference": "MAT 5:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δύνασαι μίαν τρίχα λευκὴν ⸂ποιῆσαι ἢ μέλαιναν .",
+    "independent_context": "δύνασαι μίαν τρίχα λευκὴν ⸂ποιῆσαι ἢ μέλαιναν."
+   },
+   {
+    "reference": "MAT 6:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ὁ ὀφθαλμός. ἐὰν οὖν ⸂ᾖ ὁ ὀφθαλμός σου ἁπλοῦς , ὅλον τὸ σῶμά σου φωτεινὸν ἔσται·",
+    "independent_context": " ὁ ὀφθαλμός. ἐὰν οὖν ⸂ᾖ ὁ ὀφθαλμός σου ἁπλοῦς, ὅλον τὸ σῶμά σου φωτεινὸν ἔσται·"
+   },
+   {
+    "reference": "MAT 7:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἔκβαλε πρῶτον ⸂ἐκ τοῦ ὀφθαλμοῦ σοῦ τὴν δοκόν , καὶ τότε διαβλέψεις ἐκβαλεῖν τὸ κάρφος ἐκ ",
+    "independent_context": " ἔκβαλε πρῶτον ⸂ἐκ τοῦ ὀφθαλμοῦ σοῦ τὴν δοκόν, καὶ τότε διαβλέψεις ἐκβαλεῖν τὸ κάρφος ἐκ τ"
+   },
+   {
+    "reference": "MAT 9:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῷ· Θάρσει, τέκνον· ⸀ἀφίενταί ⸂σου αἱ ἁμαρτίαι .",
+    "independent_context": "ῷ· Θάρσει, τέκνον· ⸀ἀφίενταί ⸂σου αἱ ἁμαρτίαι."
+   },
+   {
+    "reference": "MAT 10:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀσθενοῦντας θεραπεύετε, ⸂νεκροὺς ἐγείρετε , λεπροὺς καθαρίζετε, δαιμόνια ἐκβάλλετε· δω",
+    "independent_context": "ἀσθενοῦντας θεραπεύετε, ⸂νεκροὺς ἐγείρετε, λεπροὺς καθαρίζετε, δαιμόνια ἐκβάλλετε· δωρ"
+   },
+   {
+    "reference": "MAT 12:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λλουσιν; διὰ τοῦτο αὐτοὶ ⸂κριταὶ ἔσονται ὑμῶν .",
+    "independent_context": "λλουσιν; διὰ τοῦτο αὐτοὶ ⸂κριταὶ ἔσονται ὑμῶν."
+   },
+   {
+    "reference": "MAT 14:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὁ δὲ εἶπεν· Φέρετέ μοι ⸂ὧδε αὐτούς .",
+    "independent_context": "ὁ δὲ εἶπεν· Φέρετέ μοι ⸂ὧδε αὐτούς."
+   },
+   {
+    "reference": "MAT 14:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εύσας τοὺς ὄχλους ἀνακλιθῆναι ἐπὶ ⸂τοῦ χόρτου , λαβὼν τοὺς πέντε ἄρτους καὶ τοὺς δύο ἰχθύα",
+    "independent_context": "εύσας τοὺς ὄχλους ἀνακλιθῆναι ἐπὶ ⸂τοῦ χόρτου, λαβὼν τοὺς πέντε ἄρτους καὶ τοὺς δύο ἰχθύας"
+   },
+   {
+    "reference": "MAT 14:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῖον ἤδη ⸂σταδίους πολλοὺς ἀπὸ τῆς γῆς ἀπεῖχεν , βασανιζόμενον ὑπὸ τῶν κυμάτων, ἦν γὰρ ἐναν",
+    "independent_context": "ῖον ἤδη ⸂σταδίους πολλοὺς ἀπὸ τῆς γῆς ἀπεῖχεν, βασανιζόμενον ὑπὸ τῶν κυμάτων, ἦν γὰρ ἐναντ"
+   },
+   {
+    "reference": "MAT 14:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λθεν πρὸς ⸀αὐτοὺς περιπατῶν ἐπὶ ⸂τὴν θάλασσαν .",
+    "independent_context": "λθεν πρὸς ⸀αὐτοὺς περιπατῶν ἐπὶ ⸂τὴν θάλασσαν."
+   },
+   {
+    "reference": "MAT 15:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μεθʼ ἑαυτῶν ⸂κωφούς, τυφλούς, χωλούς, κυλλούς , καὶ ἑτέρους πολλούς, καὶ ἔρριψαν αὐτοὺς πα",
+    "independent_context": "μεθʼ ἑαυτῶν ⸂κωφούς, τυφλούς, χωλούς, κυλλούς, καὶ ἑτέρους πολλούς, καὶ ἔρριψαν αὐτοὺς παρ"
+   },
+   {
+    "reference": "MAT 15:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δου τοῖς ⸀μαθηταῖς οἱ δὲ μαθηταὶ ⸂τοῖς ὄχλοις .",
+    "independent_context": "δου τοῖς ⸀μαθηταῖς οἱ δὲ μαθηταὶ ⸂τοῖς ὄχλοις."
+   },
+   {
+    "reference": "MAT 16:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "· Ὕπαγε ὀπίσω μου, Σατανᾶ· σκάνδαλον ⸂εἶ ἐμοῦ , ὅτι οὐ φρονεῖς τὰ τοῦ θεοῦ ἀλλὰ τὰ τῶν ἀνθ",
+    "independent_context": "· Ὕπαγε ὀπίσω μου, Σατανᾶ· σκάνδαλον ⸂εἶ ἐμοῦ, ὅτι οὐ φρονεῖς τὰ τοῦ θεοῦ ἀλλὰ τὰ τῶν ἀνθρ"
+   },
+   {
+    "reference": "MAT 17:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ηνάς, σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ ⸂Ἠλίᾳ μίαν .",
+    "independent_context": "ηνάς, σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ ⸂Ἠλίᾳ μίαν."
+   },
+   {
+    "reference": "MAT 17:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μου ὁ ἀγαπητός, ἐν ᾧ εὐδόκησα· ⸂ἀκούετε αὐτοῦ .",
+    "independent_context": "μου ὁ ἀγαπητός, ἐν ᾧ εὐδόκησα· ⸂ἀκούετε αὐτοῦ."
+   },
+   {
+    "reference": "MAT 18:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἐστιν εἰσελθεῖν εἰς τὴν ζωὴν ⸂κυλλὸν ἢ χωλόν , ἢ δύο χεῖρας ἢ δύο πόδας ἔχοντα βληθῆναι ε",
+    "independent_context": " ἐστιν εἰσελθεῖν εἰς τὴν ζωὴν ⸂κυλλὸν ἢ χωλόν, ἢ δύο χεῖρας ἢ δύο πόδας ἔχοντα βληθῆναι εἰ"
+   },
+   {
+    "reference": "MAT 18:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Μακροθύμησον ἐπʼ ⸀ἐμοί καὶ πάντα ⸂ἀποδώσω σοι .",
+    "independent_context": "Μακροθύμησον ἐπʼ ⸀ἐμοί καὶ πάντα ⸂ἀποδώσω σοι."
+   },
+   {
+    "reference": "MAT 19:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μοιχᾶται ⸂καὶ ὁ ἀπολελυμένην γαμήσας μοιχᾶται .",
+    "independent_context": "μοιχᾶται ⸂καὶ ὁ ἀπολελυμένην γαμήσας μοιχᾶται."
+   },
+   {
+    "reference": "MAT 19:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀγαθός · εἰ δὲ θέλεις ⸂εἰς τὴν ζωὴν εἰσελθεῖν , ⸀τήρησον τὰς ἐντολάς.",
+    "independent_context": "ἀγαθός · εἰ δὲ θέλεις ⸂εἰς τὴν ζωὴν εἰσελθεῖν, ⸀τήρησον τὰς ἐντολάς."
+   },
+   {
+    "reference": "MAT 19:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ελθεῖν ἢ πλούσιον ⸂εἰς τὴν βασιλείαν τοῦ θεοῦ .",
+    "independent_context": "ελθεῖν ἢ πλούσιον ⸂εἰς τὴν βασιλείαν τοῦ θεοῦ."
+   },
+   {
+    "reference": "MAT 19:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "κα ἢ τέκνα ἢ ⸀ἀγροὺς ἕνεκεν τοῦ ⸂ὀνόματός μου , ⸀ἑκατονταπλασίονα λήμψεται καὶ ζωὴν αἰώνιο",
+    "independent_context": "κα ἢ τέκνα ἢ ⸀ἀγροὺς ἕνεκεν τοῦ ⸂ὀνόματός μου, ⸀ἑκατονταπλασίονα λήμψεται καὶ ζωὴν αἰώνιον"
+   },
+   {
+    "reference": "MAT 20:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ψονται· καὶ ἔλαβον ⸂τὸ ἀνὰ δηνάριον καὶ αὐτοί .",
+    "independent_context": "ψονται· καὶ ἔλαβον ⸂τὸ ἀνὰ δηνάριον καὶ αὐτοί."
+   },
+   {
+    "reference": "MAT 20:33",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " αὐτῷ· Κύριε, ἵνα ⸂ἀνοιγῶσιν οἱ ὀφθαλμοὶ ἡμῶν .",
+    "independent_context": " αὐτῷ· Κύριε, ἵνα ⸂ἀνοιγῶσιν οἱ ὀφθαλμοὶ ἡμῶν."
+   },
+   {
+    "reference": "MAT 21:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", πάντες γὰρ ⸂ὡς προφήτην ἔχουσιν τὸν Ἰωάννην .",
+    "independent_context": ", πάντες γὰρ ⸂ὡς προφήτην ἔχουσιν τὸν Ἰωάννην."
+   },
+   {
+    "reference": "MAT 22:40",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τολαῖς ὅλος ὁ νόμος ⸂κρέμαται καὶ οἱ προφῆται .",
+    "independent_context": "τολαῖς ὅλος ὁ νόμος ⸂κρέμαται καὶ οἱ προφῆται."
+   },
+   {
+    "reference": "MAT 23:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ὅσα ⸀ἐὰν εἴπωσιν ὑμῖν ⸂ποιήσατε καὶ τηρεῖτε , κατὰ δὲ τὰ ἔργα αὐτῶν μὴ ποιεῖτε, λέγουσιν",
+    "independent_context": "ν ὅσα ⸀ἐὰν εἴπωσιν ὑμῖν ⸂ποιήσατε καὶ τηρεῖτε, κατὰ δὲ τὰ ἔργα αὐτῶν μὴ ποιεῖτε, λέγουσιν "
+   },
+   {
+    "reference": "MAT 23:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῶτον τὸ ἐντὸς τοῦ ποτηρίου ⸂καὶ τῆς παροψίδος , ἵνα γένηται καὶ τὸ ἐκτὸς ⸀αὐτοῦ καθαρόν.",
+    "independent_context": "ῶτον τὸ ἐντὸς τοῦ ποτηρίου ⸂καὶ τῆς παροψίδος, ἵνα γένηται καὶ τὸ ἐκτὸς ⸀αὐτοῦ καθαρόν."
+   },
+   {
+    "reference": "MAT 24:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Καὶ ἐξελθὼν ὁ Ἰησοῦς ⸂ἀπὸ τοῦ ἱεροῦ ἐπορεύετο , καὶ προσῆλθον οἱ μαθηταὶ αὐτοῦ ἐπιδεῖξαι α",
+    "independent_context": "Καὶ ἐξελθὼν ὁ Ἰησοῦς ⸂ἀπὸ τοῦ ἱεροῦ ἐπορεύετο, καὶ προσῆλθον οἱ μαθηταὶ αὐτοῦ ἐπιδεῖξαι αὐ"
+   },
+   {
+    "reference": "MAT 24:33",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οὕτως καὶ ὑμεῖς, ὅταν ἴδητε ⸂πάντα ταῦτα , γινώσκετε ὅτι ἐγγύς ἐστιν ἐπὶ θύραις.",
+    "independent_context": "οὕτως καὶ ὑμεῖς, ὅταν ἴδητε ⸂πάντα ταῦτα, γινώσκετε ὅτι ἐγγύς ἐστιν ἐπὶ θύραις."
+   },
+   {
+    "reference": "MAT 24:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δεν, οὐδὲ οἱ ἄγγελοι τῶν οὐρανῶν ⸂οὐδὲ ὁ υἱός , εἰ μὴ ὁ ⸀πατὴρ μόνος.",
+    "independent_context": "δεν, οὐδὲ οἱ ἄγγελοι τῶν οὐρανῶν ⸂οὐδὲ ὁ υἱός, εἰ μὴ ὁ ⸀πατὴρ μόνος."
+   },
+   {
+    "reference": "MAT 24:48",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ος ἐν τῇ καρδίᾳ αὐτοῦ· Χρονίζει ⸂μου ὁ κύριος ,",
+    "independent_context": "ος ἐν τῇ καρδίᾳ αὐτοῦ· Χρονίζει ⸂μου ὁ κύριος,"
+   },
+   {
+    "reference": "MAT 25:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ε δὲ ⸂ἐξ αὐτῶν ἦσαν ⸂μωραὶ καὶ πέντε φρόνιμοι .",
+    "independent_context": "ε δὲ ⸂ἐξ αὐτῶν ἦσαν ⸂μωραὶ καὶ πέντε φρόνιμοι."
+   },
+   {
+    "reference": "MAT 26:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "θίσατε αὐτοῦ ἕως οὗ ἀπελθὼν ⸂ἐκεῖ προσεύξωμαι .",
+    "independent_context": "θίσατε αὐτοῦ ἕως οὗ ἀπελθὼν ⸂ἐκεῖ προσεύξωμαι."
+   },
+   {
+    "reference": "MAT 26:59",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τυρίαν κατὰ τοῦ Ἰησοῦ ὅπως ⸂αὐτὸν θανατώσωσιν ,",
+    "independent_context": "τυρίαν κατὰ τοῦ Ἰησοῦ ὅπως ⸂αὐτὸν θανατώσωσιν,"
+   },
+   {
+    "reference": "MAT 27:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αντες αὐτὸν ⸂χλαμύδα κοκκίνην περιέθηκαν αὐτῷ ,",
+    "independent_context": "αντες αὐτὸν ⸂χλαμύδα κοκκίνην περιέθηκαν αὐτῷ,"
+   },
+   {
+    "reference": "MAT 27:33",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νον Γολγοθᾶ, ὅ ἐστιν ⸂Κρανίου Τόπος λεγόμενος ,",
+    "independent_context": "νον Γολγοθᾶ, ὅ ἐστιν ⸂Κρανίου Τόπος λεγόμενος,"
+   },
+   {
+    "reference": "MAT 27:51",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τοῦ ναοῦ ἐσχίσθη ⸂ἀπʼ ἄνωθεν ἕως κάτω εἰς δύο , καὶ ἡ γῆ ἐσείσθη, καὶ αἱ πέτραι ἐσχίσθησαν",
+    "independent_context": "τοῦ ναοῦ ἐσχίσθη ⸂ἀπʼ ἄνωθεν ἕως κάτω εἰς δύο, καὶ ἡ γῆ ἐσείσθη, καὶ αἱ πέτραι ἐσχίσθησαν,"
+   },
+   {
+    "reference": "MRK 1:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς καὶ ἐβαπτίσθη ⸂εἰς τὸν Ἰορδάνην ὑπὸ Ἰωάννου .",
+    "independent_context": "ς καὶ ἐβαπτίσθη ⸂εἰς τὸν Ἰορδάνην ὑπὸ Ἰωάννου."
+   },
+   {
+    "reference": "MRK 1:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὺς τοῖς σάββασιν ⸂ἐδίδασκεν εἰς τὴν συναγωγήν .",
+    "independent_context": "ὺς τοῖς σάββασιν ⸂ἐδίδασκεν εἰς τὴν συναγωγήν."
+   },
+   {
+    "reference": "MRK 1:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τὸν καὶ λέγουσιν αὐτῷ ὅτι Πάντες ⸂ζητοῦσίν σε .",
+    "independent_context": "τὸν καὶ λέγουσιν αὐτῷ ὅτι Πάντες ⸂ζητοῦσίν σε."
+   },
+   {
+    "reference": "MRK 2:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ος, καὶ τότε νηστεύσουσιν ἐν ⸂ἐκείνῃ τῇ ἡμέρᾳ .",
+    "independent_context": "ος, καὶ τότε νηστεύσουσιν ἐν ⸂ἐκείνῃ τῇ ἡμέρᾳ."
+   },
+   {
+    "reference": "MRK 2:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς ἀσκούς, καὶ ὁ οἶνος ⸂ἀπόλλυται καὶ οἱ ἀσκοί . ἀλλὰ οἶνον νέον εἰς ἀσκοὺς ⸀καινούς",
+    "independent_context": "ς ἀσκούς, καὶ ὁ οἶνος ⸂ἀπόλλυται καὶ οἱ ἀσκοί. ἀλλὰ οἶνον νέον εἰς ἀσκοὺς ⸀καινούς"
+   },
+   {
+    "reference": "MRK 2:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εν, οὓς οὐκ ἔξεστιν φαγεῖν εἰ μὴ ⸂τοὺς ἱερεῖς , καὶ ἔδωκεν καὶ τοῖς σὺν αὐτῷ οὖσιν;",
+    "independent_context": "εν, οὓς οὐκ ἔξεστιν φαγεῖν εἰ μὴ ⸂τοὺς ἱερεῖς, καὶ ἔδωκεν καὶ τοῖς σὺν αὐτῷ οὖσιν;"
+   },
+   {
+    "reference": "MRK 3:32",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἐκάθητο ⸂περὶ αὐτὸν ὄχλος , ⸂καὶ λέγουσιν αὐτῷ· Ἰδοὺ ἡ μήτηρ σου καὶ ο",
+    "independent_context": "καὶ ἐκάθητο ⸂περὶ αὐτὸν ὄχλος, ⸂καὶ λέγουσιν αὐτῷ· Ἰδοὺ ἡ μήτηρ σου καὶ οἱ"
+   },
+   {
+    "reference": "MRK 4:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " οἱ περὶ αὐτὸν σὺν τοῖς δώδεκα ⸂τὰς παραβολάς .",
+    "independent_context": " οἱ περὶ αὐτὸν σὺν τοῖς δώδεκα ⸂τὰς παραβολάς."
+   },
+   {
+    "reference": "MRK 4:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ αἴρει τὸν λόγον τὸν ἐσπαρμένον ⸂εἰς αὐτούς .",
+    "independent_context": "αὶ αἴρει τὸν λόγον τὸν ἐσπαρμένον ⸂εἰς αὐτούς."
+   },
+   {
+    "reference": "MRK 4:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἐγένετο ἀπόκρυφον ἀλλʼ ἵνα ⸂ἔλθῃ εἰς φανερόν .",
+    "independent_context": " ἐγένετο ἀπόκρυφον ἀλλʼ ἵνα ⸂ἔλθῃ εἰς φανερόν."
+   },
+   {
+    "reference": "MRK 4:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ γίνεται λαῖλαψ ⸂μεγάλη ἀνέμου , ⸂καὶ τὰ κύματα ἐπέβαλλεν εἰς τὸ πλοῖον, ὥσ",
+    "independent_context": "καὶ γίνεται λαῖλαψ ⸂μεγάλη ἀνέμου, ⸂καὶ τὰ κύματα ἐπέβαλλεν εἰς τὸ πλοῖον, ὥστ"
+   },
+   {
+    "reference": "MRK 6:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ οὐκ ἐδύνατο ἐκεῖ ⸂ποιῆσαι οὐδεμίαν δύναμιν , εἰ μὴ ὀλίγοις ἀρρώστοις ἐπιθεὶς τὰς χεῖρας",
+    "independent_context": "αὶ οὐκ ἐδύνατο ἐκεῖ ⸂ποιῆσαι οὐδεμίαν δύναμιν, εἰ μὴ ὀλίγοις ἀρρώστοις ἐπιθεὶς τὰς χεῖρας "
+   },
+   {
+    "reference": "MRK 6:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ὅτι Ἰωάννης ὁ βαπτίζων ⸂ἐγήγερται ἐκ νεκρῶν , καὶ διὰ τοῦτο ἐνεργοῦσιν αἱ δυνάμεις ἐν αὐ",
+    "independent_context": "ν ὅτι Ἰωάννης ὁ βαπτίζων ⸂ἐγήγερται ἐκ νεκρῶν, καὶ διὰ τοῦτο ἐνεργοῦσιν αἱ δυνάμεις ἐν αὐτ"
+   },
+   {
+    "reference": "MRK 6:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ροὺς καὶ κώμας ἀγοράσωσιν ἑαυτοῖς ⸂τί φάγωσιν .",
+    "independent_context": "ροὺς καὶ κώμας ἀγοράσωσιν ἑαυτοῖς ⸂τί φάγωσιν."
+   },
+   {
+    "reference": "MRK 7:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πηρώτων αὐτὸν οἱ μαθηταὶ αὐτοῦ ⸂τὴν παραβολήν .",
+    "independent_context": "πηρώτων αὐτὸν οἱ μαθηταὶ αὐτοῦ ⸂τὴν παραβολήν."
+   },
+   {
+    "reference": "MRK 7:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ἄρτον τῶν τέκνων καὶ ⸂τοῖς κυναρίοις βαλεῖν .",
+    "independent_context": "ν ἄρτον τῶν τέκνων καὶ ⸂τοῖς κυναρίοις βαλεῖν."
+   },
+   {
+    "reference": "MRK 7:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἐξελήλυθεν ⸂ἐκ τῆς θυγατρός σου τὸ δαιμόνιον .",
+    "independent_context": " ἐξελήλυθεν ⸂ἐκ τῆς θυγατρός σου τὸ δαιμόνιον."
+   },
+   {
+    "reference": "MRK 7:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ον ἐπὶ τὴν κλίνην καὶ τὸ δαιμόνιον ἐξεληλυθός .",
+    "independent_context": "ον ἐπὶ τὴν κλίνην καὶ τὸ δαιμόνιον ἐξεληλυθός."
+   },
+   {
+    "reference": "MRK 8:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " εὐλογήσας ⸀αὐτὰ εἶπεν ⸂καὶ ταῦτα παρατιθέναι .",
+    "independent_context": " εὐλογήσας ⸀αὐτὰ εἶπεν ⸂καὶ ταῦτα παρατιθέναι."
+   },
+   {
+    "reference": "MRK 9:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ἡμᾶς ὧδε εἶναι, καὶ ποιήσωμεν ⸂τρεῖς σκηνάς , σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ Ἠλίᾳ μίαν.",
+    "independent_context": "ν ἡμᾶς ὧδε εἶναι, καὶ ποιήσωμεν ⸂τρεῖς σκηνάς, σοὶ μίαν καὶ Μωϋσεῖ μίαν καὶ Ἠλίᾳ μίαν."
+   },
+   {
+    "reference": "MRK 9:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὐ γὰρ ᾔδει τί ⸀ἀποκριθῇ ⸂ἔκφοβοι γὰρ ἐγένοντο .",
+    "independent_context": "ὐ γὰρ ᾔδει τί ⸀ἀποκριθῇ ⸂ἔκφοβοι γὰρ ἐγένοντο."
+   },
+   {
+    "reference": "MRK 9:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς ἐστιν ὁ υἱός μου ὁ ἀγαπητός, ⸂ἀκούετε αὐτοῦ .",
+    "independent_context": "ς ἐστιν ὁ υἱός μου ὁ ἀγαπητός, ⸂ἀκούετε αὐτοῦ."
+   },
+   {
+    "reference": "MRK 9:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δένα εἶδον ⸂ἀλλὰ τὸν Ἰησοῦν μόνον μεθʼ ἑαυτῶν .",
+    "independent_context": "δένα εἶδον ⸂ἀλλὰ τὸν Ἰησοῦν μόνον μεθʼ ἑαυτῶν."
+   },
+   {
+    "reference": "MRK 9:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "είλατο αὐτοῖς ἵνα μηδενὶ ⸂ἃ εἶδον διηγήσωνται , εἰ μὴ ὅταν ὁ υἱὸς τοῦ ἀνθρώπου ἐκ νεκρῶν ἀ",
+    "independent_context": "είλατο αὐτοῖς ἵνα μηδενὶ ⸂ἃ εἶδον διηγήσωνται, εἰ μὴ ὅταν ὁ υἱὸς τοῦ ἀνθρώπου ἐκ νεκρῶν ἀν"
+   },
+   {
+    "reference": "MRK 9:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὐτοὺς καὶ γραμματεῖς συζητοῦντας ⸂πρὸς αὐτούς .",
+    "independent_context": "ὐτοὺς καὶ γραμματεῖς συζητοῦντας ⸂πρὸς αὐτούς."
+   },
+   {
+    "reference": "MRK 9:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὐθὺς πᾶς ὁ ὄχλος ⸂ἰδόντες αὐτὸν ἐξεθαμβήθησαν , καὶ προστρέχοντες ἠσπάζοντο αὐτόν.",
+    "independent_context": "ὐθὺς πᾶς ὁ ὄχλος ⸂ἰδόντες αὐτὸν ἐξεθαμβήθησαν, καὶ προστρέχοντες ἠσπάζοντο αὐτόν."
+   },
+   {
+    "reference": "MRK 9:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "θάρτῳ λέγων αὐτῷ· Τὸ ⸂ἄλαλον καὶ κωφὸν πνεῦμα , ἐγὼ ⸂ἐπιτάσσω σοι , ἔξελθε ἐξ αὐτοῦ καὶ μη",
+    "independent_context": "θάρτῳ λέγων αὐτῷ· Τὸ ⸂ἄλαλον καὶ κωφὸν πνεῦμα, ἐγὼ ⸂ἐπιτάσσω σοι, ἔξελθε ἐξ αὐτοῦ καὶ μηκέ"
+   },
+   {
+    "reference": "MRK 9:38",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ⸂καὶ ἐκωλύομεν αὐτόν, ὅτι οὐκ ἠκολούθει ἡμῖν .",
+    "independent_context": " ⸂καὶ ἐκωλύομεν αὐτόν, ὅτι οὐκ ἠκολούθει ἡμῖν."
+   },
+   {
+    "reference": "MRK 9:42",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "α τῶν μικρῶν ⸀τούτων τῶν πιστευόντων ⸂εἰς ἐμέ , καλόν ἐστιν αὐτῷ μᾶλλον εἰ περίκειται ⸂μύλ",
+    "independent_context": "α τῶν μικρῶν ⸀τούτων τῶν πιστευόντων ⸂εἰς ἐμέ, καλόν ἐστιν αὐτῷ μᾶλλον εἰ περίκειται ⸂μύλο"
+   },
+   {
+    "reference": "MRK 10:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ⸂καὶ προσκολληθήσεται πρὸς τὴν γυναῖκα αὐτοῦ ,",
+    "independent_context": " ⸂καὶ προσκολληθήσεται πρὸς τὴν γυναῖκα αὐτοῦ,"
+   },
+   {
+    "reference": "MRK 10:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τῶν ἅψηται · οἱ δὲ μαθηταὶ ⸂ἐπετίμησαν αὐτοῖς .",
+    "independent_context": "τῶν ἅψηται · οἱ δὲ μαθηταὶ ⸂ἐπετίμησαν αὐτοῖς."
+   },
+   {
+    "reference": "MRK 10:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς αὐτὰ ⸂κατευλόγει τιθεὶς τὰς χεῖρας ἐπʼ αὐτά .",
+    "independent_context": "ς αὐτὰ ⸂κατευλόγει τιθεὶς τὰς χεῖρας ἐπʼ αὐτά."
+   },
+   {
+    "reference": "MRK 10:46",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αῖος ⸀τυφλὸς ⸂προσαίτης ἐκάθητο παρὰ τὴν ὁδόν .",
+    "independent_context": "αῖος ⸀τυφλὸς ⸂προσαίτης ἐκάθητο παρὰ τὴν ὁδόν."
+   },
+   {
+    "reference": "MRK 10:49",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ στὰς ὁ Ἰησοῦς εἶπεν· ⸂Φωνήσατε αὐτόν . καὶ φωνοῦσι τὸν τυφλὸν λέγοντες αὐτῷ· Θάρσ",
+    "independent_context": "καὶ στὰς ὁ Ἰησοῦς εἶπεν· ⸂Φωνήσατε αὐτόν. καὶ φωνοῦσι τὸν τυφλὸν λέγοντες αὐτῷ· Θάρσε"
+   },
+   {
+    "reference": "MRK 11:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ω ἀνθρώπων ⸀ἐκάθισεν ⸂λύσατε αὐτὸν καὶ φέρετε .",
+    "independent_context": "ω ἀνθρώπων ⸀ἐκάθισεν ⸂λύσατε αὐτὸν καὶ φέρετε."
+   },
+   {
+    "reference": "MRK 11:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δόν, ἄλλοι δὲ στιβάδας ⸂κόψαντες ἐκ τῶν ἀγρῶν .",
+    "independent_context": "δόν, ἄλλοι δὲ στιβάδας ⸂κόψαντες ἐκ τῶν ἀγρῶν."
+   },
+   {
+    "reference": "MRK 11:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἤκουσαν οἱ ⸂ἀρχιερεῖς καὶ οἱ γραμματεῖς , καὶ ἐζήτουν πῶς αὐτὸν ἀπολέσωσιν· ἐφοβοῦντ",
+    "independent_context": "καὶ ἤκουσαν οἱ ⸂ἀρχιερεῖς καὶ οἱ γραμματεῖς, καὶ ἐζήτουν πῶς αὐτὸν ἀπολέσωσιν· ἐφοβοῦντο"
+   },
+   {
+    "reference": "MRK 11:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λλὰ ⸀πιστεύῃ ὅτι ⸂ὃ λαλεῖ γίνεται, ἔσται αὐτῷ .",
+    "independent_context": "λλὰ ⸀πιστεύῃ ὅτι ⸂ὃ λαλεῖ γίνεται, ἔσται αὐτῷ."
+   },
+   {
+    "reference": "MRK 11:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "έγω ὑμῖν, πάντα ὅσα ⸂προσεύχεσθε καὶ αἰτεῖσθε , πιστεύετε ὅτι ⸀ἐλάβετε καὶ ἔσται ὑμῖν.",
+    "independent_context": "έγω ὑμῖν, πάντα ὅσα ⸂προσεύχεσθε καὶ αἰτεῖσθε, πιστεύετε ὅτι ⸀ἐλάβετε καὶ ἔσται ὑμῖν."
+   },
+   {
+    "reference": "MRK 12:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ραβολαῖς ⸀λαλεῖν Ἀμπελῶνα ⸂ἄνθρωπος ἐφύτευσεν , καὶ περιέθηκεν φραγμὸν καὶ ὤρυξεν ὑπολήνιο",
+    "independent_context": "ραβολαῖς ⸀λαλεῖν Ἀμπελῶνα ⸂ἄνθρωπος ἐφύτευσεν, καὶ περιέθηκεν φραγμὸν καὶ ὤρυξεν ὑπολήνιον"
+   },
+   {
+    "reference": "MRK 12:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λλους, ⸂οὓς μὲν δέροντες οὓς δὲ ἀποκτέννοντες .",
+    "independent_context": "λλους, ⸂οὓς μὲν δέροντες οὓς δὲ ἀποκτέννοντες."
+   },
+   {
+    "reference": "MRK 12:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οθάνῃ καὶ καταλίπῃ γυναῖκα καὶ ⸂μὴ ἀφῇ τέκνον , ἵνα λάβῃ ὁ ἀδελφὸς αὐτοῦ τὴν ⸀γυναῖκα καὶ ",
+    "independent_context": "οθάνῃ καὶ καταλίπῃ γυναῖκα καὶ ⸂μὴ ἀφῇ τέκνον, ἵνα λάβῃ ὁ ἀδελφὸς αὐτοῦ τὴν ⸀γυναῖκα καὶ ἐ"
+   },
+   {
+    "reference": "MRK 12:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " σπέρμα· ⸀ἔσχατον πάντων ⸂καὶ ἡ γυνὴ ἀπέθανεν .",
+    "independent_context": " σπέρμα· ⸀ἔσχατον πάντων ⸂καὶ ἡ γυνὴ ἀπέθανεν."
+   },
+   {
+    "reference": "MRK 12:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "συζητούντων, ⸀ἰδὼν ὅτι καλῶς ⸂ἀπεκρίθη αὐτοῖς , ἐπηρώτησεν αὐτόν· Ποία ἐστὶν ⸂ἐντολὴ πρώτη",
+    "independent_context": "συζητούντων, ⸀ἰδὼν ὅτι καλῶς ⸂ἀπεκρίθη αὐτοῖς, ἐπηρώτησεν αὐτόν· Ποία ἐστὶν ⸂ἐντολὴ πρώτη "
+   },
+   {
+    "reference": "MRK 13:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " σημεῖον ὅταν μέλλῃ ⸂ταῦτα συντελεῖσθαι πάντα .",
+    "independent_context": " σημεῖον ὅταν μέλλῃ ⸂ταῦτα συντελεῖσθαι πάντα."
+   },
+   {
+    "reference": "MRK 13:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " οἱ ἀστέρες ⸂ἔσονται ἐκ τοῦ οὐρανοῦ πίπτοντες , καὶ αἱ δυνάμεις αἱ ἐν τοῖς οὐρανοῖς σαλευθ",
+    "independent_context": " οἱ ἀστέρες ⸂ἔσονται ἐκ τοῦ οὐρανοῦ πίπτοντες, καὶ αἱ δυνάμεις αἱ ἐν τοῖς οὐρανοῖς σαλευθή"
+   },
+   {
+    "reference": "MRK 14:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πρὸς τοὺς ἀρχιερεῖς ἵνα αὐτὸν ⸂παραδοῖ αὐτοῖς .",
+    "independent_context": "πρὸς τοὺς ἀρχιερεῖς ἵνα αὐτὸν ⸂παραδοῖ αὐτοῖς."
+   },
+   {
+    "reference": "MRK 14:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οῦναι. καὶ ἐζήτει πῶς ⸂αὐτὸν εὐκαίρως παραδοῖ .",
+    "independent_context": "οῦναι. καὶ ἐζήτει πῶς ⸂αὐτὸν εὐκαίρως παραδοῖ."
+   },
+   {
+    "reference": "MRK 14:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ου ⸀τῆς διαθήκης τὸ ⸂ἐκχυννόμενον ὑπὲρ πολλῶν .",
+    "independent_context": "ου ⸀τῆς διαθήκης τὸ ⸂ἐκχυννόμενον ὑπὲρ πολλῶν."
+   },
+   {
+    "reference": "MRK 14:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ποιμένα, καὶ ⸂τὰ πρόβατα διασκορπισθήσονται .",
+    "independent_context": "ν ποιμένα, καὶ ⸂τὰ πρόβατα διασκορπισθήσονται."
+   },
+   {
+    "reference": "MRK 14:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πρὶν ἢ δὶς ἀλέκτορα φωνῆσαι τρίς ⸂με ἀπαρνήσῃ .",
+    "independent_context": "πρὶν ἢ δὶς ἀλέκτορα φωνῆσαι τρίς ⸂με ἀπαρνήσῃ."
+   },
+   {
+    "reference": "MRK 14:40",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "υνόμενοι καὶ οὐκ ᾔδεισαν τί ⸂ἀποκριθῶσιν αὐτῷ .",
+    "independent_context": "υνόμενοι καὶ οὐκ ᾔδεισαν τί ⸂ἀποκριθῶσιν αὐτῷ."
+   },
+   {
+    "reference": "MRK 14:50",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἀφέντες αὐτὸν ⸂ἔφυγον πάντες .",
+    "independent_context": "καὶ ἀφέντες αὐτὸν ⸂ἔφυγον πάντες."
+   },
+   {
+    "reference": "MRK 14:61",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὁ δὲ ἐσιώπα καὶ ⸂οὐκ ἀπεκρίνατο οὐδέν . πάλιν ὁ ἀρχιερεὺς ἐπηρώτα αὐτὸν καὶ λέγει ",
+    "independent_context": "ὁ δὲ ἐσιώπα καὶ ⸂οὐκ ἀπεκρίνατο οὐδέν. πάλιν ὁ ἀρχιερεὺς ἐπηρώτα αὐτὸν καὶ λέγει α"
+   },
+   {
+    "reference": "MRK 14:68",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εν ἔξω εἰς τὸ προαύλιον ⸂καὶ ἀλέκτωρ ἐφώνησεν .",
+    "independent_context": "εν ἔξω εἰς τὸ προαύλιον ⸂καὶ ἀλέκτωρ ἐφώνησεν."
+   },
+   {
+    "reference": "MRK 14:72",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ι Πρὶν ἀλέκτορα ⸂φωνῆσαι δὶς τρίς με ἀπαρνήσῃ , καὶ ἐπιβαλὼν ἔκλαιεν.",
+    "independent_context": "ι Πρὶν ἀλέκτορα ⸂φωνῆσαι δὶς τρίς με ἀπαρνήσῃ, καὶ ἐπιβαλὼν ἔκλαιεν."
+   },
+   {
+    "reference": "MRK 15:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τὴν ἀπέλυεν αὐτοῖς ἕνα δέσμιον ⸂ὃν παρῃτοῦντο .",
+    "independent_context": "τὴν ἀπέλυεν αὐτοῖς ἕνα δέσμιον ⸂ὃν παρῃτοῦντο."
+   },
+   {
+    "reference": "MRK 15:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ορφύραν καὶ ἐνέδυσαν αὐτὸν τὰ ἱμάτια ⸂τὰ ἴδια . καὶ ἐξάγουσιν αὐτὸν ἵνα ⸀σταυρώσωσιν αὐτόν",
+    "independent_context": "ορφύραν καὶ ἐνέδυσαν αὐτὸν τὰ ἱμάτια ⸂τὰ ἴδια. καὶ ἐξάγουσιν αὐτὸν ἵνα ⸀σταυρώσωσιν αὐτόν."
+   },
+   {
+    "reference": "MRK 15:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ύων τὸν ναὸν καὶ ⸂οἰκοδομῶν ἐν τρισὶν ἡμέραις ,",
+    "independent_context": "ύων τὸν ναὸν καὶ ⸂οἰκοδομῶν ἐν τρισὶν ἡμέραις,"
+   },
+   {
+    "reference": "MRK 15:39",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εἶπεν· Ἀληθῶς ⸂οὗτος ὁ ἄνθρωπος υἱὸς ⸂θεοῦ ἦν .",
+    "independent_context": "εἶπεν· Ἀληθῶς ⸂οὗτος ὁ ἄνθρωπος υἱὸς ⸂θεοῦ ἦν."
+   },
+   {
+    "reference": "MRK 16:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εῖα δὲ τοῖς πιστεύσασιν ⸂ταῦτα παρακολουθήσει , ἐν τῷ ὀνόματί μου δαιμόνια ἐκβαλοῦσιν, γλώ",
+    "independent_context": "εῖα δὲ τοῖς πιστεύσασιν ⸂ταῦτα παρακολουθήσει, ἐν τῷ ὀνόματί μου δαιμόνια ἐκβαλοῦσιν, γλώσ"
+   },
+   {
+    "reference": "LUK 1:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ ἐθαύμαζον ἐν τῷ χρονίζειν ⸂ἐν τῷ ναῷ αὐτόν .",
+    "independent_context": "αὶ ἐθαύμαζον ἐν τῷ χρονίζειν ⸂ἐν τῷ ναῷ αὐτόν."
+   },
+   {
+    "reference": "LUK 1:41",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς ἤκουσεν ⸂τὸν ἀσπασμὸν τῆς Μαρίας ἡ Ἐλισάβετ , ἐσκίρτησεν τὸ βρέφος ἐν τῇ κοιλίᾳ αὐτῆς, κ",
+    "independent_context": "ς ἤκουσεν ⸂τὸν ἀσπασμὸν τῆς Μαρίας ἡ Ἐλισάβετ, ἐσκίρτησεν τὸ βρέφος ἐν τῇ κοιλίᾳ αὐτῆς, κα"
+   },
+   {
+    "reference": "LUK 2:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀπογράψασθαι σὺν Μαριὰμ τῇ ⸂ἐμνηστευμένῃ αὐτῷ , οὔσῃ ἐγκύῳ.",
+    "independent_context": "ἀπογράψασθαι σὺν Μαριὰμ τῇ ⸂ἐμνηστευμένῃ αὐτῷ, οὔσῃ ἐγκύῳ."
+   },
+   {
+    "reference": "LUK 2:40",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ον ηὔξανεν καὶ ἐκραταιοῦτο ⸂πληρούμενον σοφίᾳ , καὶ χάρις θεοῦ ἦν ἐπʼ αὐτό.",
+    "independent_context": "ον ηὔξανεν καὶ ἐκραταιοῦτο ⸂πληρούμενον σοφίᾳ, καὶ χάρις θεοῦ ἦν ἐπʼ αὐτό."
+   },
+   {
+    "reference": "LUK 3:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τὸς ⸀ἦν Ἰησοῦς ⸂ἀρχόμενος ὡσεὶ ἐτῶν τριάκοντα , ὢν ⸂υἱός, ὡς ἐνομίζετο⸃, Ἰωσὴφ τοῦ Ἠλὶ",
+    "independent_context": "τὸς ⸀ἦν Ἰησοῦς ⸂ἀρχόμενος ὡσεὶ ἐτῶν τριάκοντα, ὢν ⸂υἱός, ὡς ἐνομίζετο⸃, Ἰωσὴφ τοῦ Ἠλὶ"
+   },
+   {
+    "reference": "LUK 4:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἦσαν ⸂ἐν τῷ Ἰσραὴλ ἐπὶ Ἐλισαίου τοῦ προφήτου , καὶ οὐδεὶς αὐτῶν ἐκαθαρίσθη, εἰ μὴ Ναιμὰν ",
+    "independent_context": " ἦσαν ⸂ἐν τῷ Ἰσραὴλ ἐπὶ Ἐλισαίου τοῦ προφήτου, καὶ οὐδεὶς αὐτῶν ἐκαθαρίσθη, εἰ μὴ Ναιμὰν ὁ"
+   },
+   {
+    "reference": "LUK 5:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "βομεν, ἐπὶ δὲ τῷ ῥήματί σου χαλάσω ⸂τὰ δίκτυα .",
+    "independent_context": "βομεν, ἐπὶ δὲ τῷ ῥήματί σου χαλάσω ⸂τὰ δίκτυα."
+   },
+   {
+    "reference": "LUK 6:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ύριός ἐστιν ⸂τοῦ σαββάτου ὁ υἱὸς τοῦ ἀνθρώπου .",
+    "independent_context": "ύριός ἐστιν ⸂τοῦ σαββάτου ὁ υἱὸς τοῦ ἀνθρώπου."
+   },
+   {
+    "reference": "LUK 6:42",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "φος τὸ ἐν τῷ ὀφθαλμῷ τοῦ ἀδελφοῦ σου ἐκβαλεῖν .",
+    "independent_context": "φος τὸ ἐν τῷ ὀφθαλμῷ τοῦ ἀδελφοῦ σου ἐκβαλεῖν."
+   },
+   {
+    "reference": "LUK 6:44",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "γουσιν σῦκα, οὐδὲ ἐκ βάτου ⸂σταφυλὴν τρυγῶσιν .",
+    "independent_context": "γουσιν σῦκα, οὐδὲ ἐκ βάτου ⸂σταφυλὴν τρυγῶσιν."
+   },
+   {
+    "reference": "LUK 6:48",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λεῦσαι αὐτὴν ⸂διὰ τὸ καλῶς οἰκοδομῆσθαι αὐτήν .",
+    "independent_context": "λεῦσαι αὐτὴν ⸂διὰ τὸ καλῶς οἰκοδομῆσθαι αὐτήν."
+   },
+   {
+    "reference": "LUK 6:49",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ᾗ προσέρηξεν ὁ ποταμός, καὶ ⸂εὐθὺς συνέπεσεν , καὶ ἐγένετο τὸ ῥῆγμα τῆς οἰκίας ἐκείνης μέ",
+    "independent_context": " ᾗ προσέρηξεν ὁ ποταμός, καὶ ⸂εὐθὺς συνέπεσεν, καὶ ἐγένετο τὸ ῥῆγμα τῆς οἰκίας ἐκείνης μέγ"
+   },
+   {
+    "reference": "LUK 7:33",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " βαπτιστὴς ⸀μὴ ⸂ἐσθίων ἄρτον μήτε πίνων οἶνον , καὶ λέγετε· Δαιμόνιον ἔχει·",
+    "independent_context": " βαπτιστὴς ⸀μὴ ⸂ἐσθίων ἄρτον μήτε πίνων οἶνον, καὶ λέγετε· Δαιμόνιον ἔχει·"
+   },
+   {
+    "reference": "LUK 7:35",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δικαιώθη ἡ σοφία ἀπὸ ⸂πάντων τῶν τέκνων αὐτῆς .",
+    "independent_context": "δικαιώθη ἡ σοφία ἀπὸ ⸂πάντων τῶν τέκνων αὐτῆς."
+   },
+   {
+    "reference": "LUK 7:46",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἤλειψας· αὕτη δὲ μύρῳ ἤλειψεν ⸂τοὺς πόδας μου .",
+    "independent_context": "ἤλειψας· αὕτη δὲ μύρῳ ἤλειψεν ⸂τοὺς πόδας μου."
+   },
+   {
+    "reference": "LUK 8:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὸν οἱ μαθηταὶ ⸀αὐτοῦ τίς ⸂αὕτη εἴη ἡ παραβολή .",
+    "independent_context": "ὸν οἱ μαθηταὶ ⸀αὐτοῦ τίς ⸂αὕτη εἴη ἡ παραβολή."
+   },
+   {
+    "reference": "LUK 8:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἀδελφοί σου ἑστήκασιν ἔξω ἰδεῖν ⸂σε θέλοντες .",
+    "independent_context": " ἀδελφοί σου ἑστήκασιν ἔξω ἰδεῖν ⸂σε θέλοντες."
+   },
+   {
+    "reference": "LUK 8:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μόνια· ⸂καὶ χρόνῳ ἱκανῷ οὐκ ἐνεδύσατο ἱμάτιον , καὶ ἐν οἰκίᾳ οὐκ ἔμενεν ἀλλʼ ἐν τοῖς μνήμα",
+    "independent_context": "μόνια· ⸂καὶ χρόνῳ ἱκανῷ οὐκ ἐνεδύσατο ἱμάτιον, καὶ ἐν οἰκίᾳ οὐκ ἔμενεν ἀλλʼ ἐν τοῖς μνήμασ"
+   },
+   {
+    "reference": "LUK 9:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " βασιλείαν τοῦ θεοῦ καὶ ἰᾶσθαι ⸂τοὺς ἀσθενεῖς ,",
+    "independent_context": " βασιλείαν τοῦ θεοῦ καὶ ἰᾶσθαι ⸂τοὺς ἀσθενεῖς,"
+   },
+   {
+    "reference": "LUK 9:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "σεν κατʼ ἰδίαν εἰς ⸂πόλιν καλουμένην Βηθσαϊδά .",
+    "independent_context": "σεν κατʼ ἰδίαν εἰς ⸂πόλιν καλουμένην Βηθσαϊδά."
+   },
+   {
+    "reference": "LUK 9:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πεν δὲ πρὸς αὐτούς· Δότε αὐτοῖς ⸂ὑμεῖς φαγεῖν . οἱ δὲ εἶπαν· Οὐκ εἰσὶν ἡμῖν πλεῖον ἢ ⸂ἄρτο",
+    "independent_context": "πεν δὲ πρὸς αὐτούς· Δότε αὐτοῖς ⸂ὑμεῖς φαγεῖν. οἱ δὲ εἶπαν· Οὐκ εἰσὶν ἡμῖν πλεῖον ἢ ⸂ἄρτοι"
+   },
+   {
+    "reference": "LUK 9:38",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αι ἐπὶ τὸν υἱόν μου, ὅτι μονογενής ⸂μοί ἐστιν ,",
+    "independent_context": "αι ἐπὶ τὸν υἱόν μου, ὅτι μονογενής ⸂μοί ἐστιν,"
+   },
+   {
+    "reference": "LUK 9:41",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ ἀνέξομαι ὑμῶν; προσάγαγε ⸂ὧδε τὸν υἱόν σου .",
+    "independent_context": "αὶ ἀνέξομαι ὑμῶν; προσάγαγε ⸂ὧδε τὸν υἱόν σου."
+   },
+   {
+    "reference": "LUK 11:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " δώσει αὐτῷ ἀναστὰς διὰ τὸ εἶναι ⸂φίλον αὐτοῦ , διά γε τὴν ἀναίδειαν αὐτοῦ ἐγερθεὶς δώσει ",
+    "independent_context": " δώσει αὐτῷ ἀναστὰς διὰ τὸ εἶναι ⸂φίλον αὐτοῦ, διά γε τὴν ἀναίδειαν αὐτοῦ ἐγερθεὶς δώσει α"
+   },
+   {
+    "reference": "LUK 11:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ζοντες σημεῖον ⸂ἐξ οὐρανοῦ ἐζήτουν παρʼ αὐτοῦ .",
+    "independent_context": "ζοντες σημεῖον ⸂ἐξ οὐρανοῦ ἐζήτουν παρʼ αὐτοῦ."
+   },
+   {
+    "reference": "LUK 11:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μβάνει ⸂ἕτερα πνεύματα πονηρότερα ἑαυτοῦ ἑπτά , καὶ ⸀εἰσελθόντα κατοικεῖ ἐκεῖ, καὶ γίνεται",
+    "independent_context": "μβάνει ⸂ἕτερα πνεύματα πονηρότερα ἑαυτοῦ ἑπτά, καὶ ⸀εἰσελθόντα κατοικεῖ ἐκεῖ, καὶ γίνεται "
+   },
+   {
+    "reference": "LUK 11:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς γὰρ ἐγένετο ⸀Ἰωνᾶς ⸂τοῖς Νινευίταις σημεῖον , οὕτως ἔσται καὶ ὁ υἱὸς τοῦ ἀνθρώπου τῇ γεν",
+    "independent_context": "ς γὰρ ἐγένετο ⸀Ἰωνᾶς ⸂τοῖς Νινευίταις σημεῖον, οὕτως ἔσται καὶ ὁ υἱὸς τοῦ ἀνθρώπου τῇ γενε"
+   },
+   {
+    "reference": "LUK 12:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πρὸς τοὺς μαθητὰς αὐτοῦ· Διὰ τοῦτο ⸂λέγω ὑμῖν , μὴ μεριμνᾶτε τῇ ⸀ψυχῇ τί φάγητε, μηδὲ τῷ ⸀",
+    "independent_context": "πρὸς τοὺς μαθητὰς αὐτοῦ· Διὰ τοῦτο ⸂λέγω ὑμῖν, μὴ μεριμνᾶτε τῇ ⸀ψυχῇ τί φάγητε, μηδὲ τῷ ⸀σ"
+   },
+   {
+    "reference": "LUK 12:53",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ηρ ⸀ἐπὶ ⸀θυγατέρα καὶ θυγάτηρ ἐπὶ ⸂τὴν μητέρα , πενθερὰ ἐπὶ τὴν νύμφην αὐτῆς καὶ νύμφη ἐπὶ",
+    "independent_context": "ηρ ⸀ἐπὶ ⸀θυγατέρα καὶ θυγάτηρ ἐπὶ ⸂τὴν μητέρα, πενθερὰ ἐπὶ τὴν νύμφην αὐτῆς καὶ νύμφη ἐπὶ "
+   },
+   {
+    "reference": "LUK 13:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " εἶχέν τις ⸂πεφυτευμένην ἐν τῷ ἀμπελῶνι αὐτοῦ , καὶ ἦλθεν ζητῶν καρπὸν ἐν αὐτῇ καὶ οὐχ εὗρ",
+    "independent_context": " εἶχέν τις ⸂πεφυτευμένην ἐν τῷ ἀμπελῶνι αὐτοῦ, καὶ ἦλθεν ζητῶν καρπὸν ἐν αὐτῇ καὶ οὐχ εὗρε"
+   },
+   {
+    "reference": "LUK 14:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "⸂ἀντικαλέσωσίν σε καὶ γένηται ⸂ἀνταπόδομά σοι .",
+    "independent_context": "⸂ἀντικαλέσωσίν σε καὶ γένηται ⸂ἀνταπόδομά σοι."
+   },
+   {
+    "reference": "LUK 14:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀλλʼ ὅταν ⸂δοχὴν ποιῇς , κάλει πτωχούς, ἀναπείρους, χωλούς, τυφλούς",
+    "independent_context": "ἀλλʼ ὅταν ⸂δοχὴν ποιῇς, κάλει πτωχούς, ἀναπείρους, χωλούς, τυφλούς·"
+   },
+   {
+    "reference": "LUK 14:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἤρξαντο ἀπὸ μιᾶς ⸂πάντες παραιτεῖσθαι . ὁ πρῶτος εἶπεν αὐτῷ· Ἀγρὸν ἠγόρασα καὶ ἔχω",
+    "independent_context": "καὶ ἤρξαντο ἀπὸ μιᾶς ⸂πάντες παραιτεῖσθαι. ὁ πρῶτος εἶπεν αὐτῷ· Ἀγρὸν ἠγόρασα καὶ ἔχω "
+   },
+   {
+    "reference": "LUK 14:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ τὰς ἀδελφάς, ἔτι ⸀τε καὶ τὴν ⸂ψυχὴν ἑαυτοῦ , οὐ δύναται ⸂εἶναί μου μαθητής .",
+    "independent_context": "αὶ τὰς ἀδελφάς, ἔτι ⸀τε καὶ τὴν ⸂ψυχὴν ἑαυτοῦ, οὐ δύναται ⸂εἶναί μου μαθητής."
+   },
+   {
+    "reference": "LUK 15:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ορνῶν ἦλθεν, ἔθυσας αὐτῷ τὸν ⸂σιτευτὸν μόσχον .",
+    "independent_context": "ορνῶν ἦλθεν, ἔθυσας αὐτῷ τὸν ⸂σιτευτὸν μόσχον."
+   },
+   {
+    "reference": "LUK 16:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εἶπεν δέ· Ἐρωτῶ ⸂σε οὖν , πάτερ, ἵνα πέμψῃς αὐτὸν εἰς τὸν οἶκον τοῦ ",
+    "independent_context": "εἶπεν δέ· Ἐρωτῶ ⸂σε οὖν, πάτερ, ἵνα πέμψῃς αὐτὸν εἰς τὸν οἶκον τοῦ π"
+   },
+   {
+    "reference": "LUK 17:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῦ Ἀνένδεκτόν ἐστιν τοῦ ⸂τὰ σκάνδαλα μὴ ἐλθεῖν , ⸂πλὴν οὐαὶ διʼ οὗ ἔρχεται·",
+    "independent_context": "ῦ Ἀνένδεκτόν ἐστιν τοῦ ⸂τὰ σκάνδαλα μὴ ἐλθεῖν, ⸂πλὴν οὐαὶ διʼ οὗ ἔρχεται·"
+   },
+   {
+    "reference": "LUK 17:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ασσαν ἢ ἵνα σκανδαλίσῃ ⸂τῶν μικρῶν τούτων ἕνα .",
+    "independent_context": "ασσαν ἢ ἵνα σκανδαλίσῃ ⸂τῶν μικρῶν τούτων ἕνα."
+   },
+   {
+    "reference": "LUK 17:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἔσται ὁ υἱὸς τοῦ ἀνθρώπου ⸂ἐν τῇ ἡμέρᾳ αὐτοῦ .",
+    "independent_context": " ἔσται ὁ υἱὸς τοῦ ἀνθρώπου ⸂ἐν τῇ ἡμέρᾳ αὐτοῦ."
+   },
+   {
+    "reference": "LUK 17:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " τὸ σῶμα, ἐκεῖ ⸂καὶ οἱ ἀετοὶ ἐπισυναχθήσονται .",
+    "independent_context": " τὸ σῶμα, ἐκεῖ ⸂καὶ οἱ ἀετοὶ ἐπισυναχθήσονται."
+   },
+   {
+    "reference": "LUK 18:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν οὐδὲ τοὺς ὀφθαλμοὺς ⸂ἐπᾶραι εἰς τὸν οὐρανόν , ἀλλʼ ⸀ἔτυπτε τὸ στῆθος ⸀αὐτοῦ λέγων· Ὁ θεό",
+    "independent_context": "ν οὐδὲ τοὺς ὀφθαλμοὺς ⸂ἐπᾶραι εἰς τὸν οὐρανόν, ἀλλʼ ⸀ἔτυπτε τὸ στῆθος ⸀αὐτοῦ λέγων· Ὁ θεός"
+   },
+   {
+    "reference": "LUK 18:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νατα παρὰ ἀνθρώποις δυνατὰ ⸂παρὰ τῷ θεῷ ἐστιν .",
+    "independent_context": "νατα παρὰ ἀνθρώποις δυνατὰ ⸂παρὰ τῷ θεῷ ἐστιν."
+   },
+   {
+    "reference": "LUK 19:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν κύριον· Ἰδοὺ τὰ ⸀ἡμίσιά ⸂μου τῶν ὑπαρχόντων , κύριε, ⸂τοῖς πτωχοῖς δίδωμι , καὶ εἴ τινός",
+    "independent_context": "ν κύριον· Ἰδοὺ τὰ ⸀ἡμίσιά ⸂μου τῶν ὑπαρχόντων, κύριε, ⸂τοῖς πτωχοῖς δίδωμι, καὶ εἴ τινός τ"
+   },
+   {
+    "reference": "LUK 19:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τράπεζαν; κἀγὼ ἐλθὼν σὺν τόκῳ ἂν ⸂αὐτὸ ἔπραξα .",
+    "independent_context": "τράπεζαν; κἀγὼ ἐλθὼν σὺν τόκῳ ἂν ⸂αὐτὸ ἔπραξα."
+   },
+   {
+    "reference": "LUK 19:44",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οί, καὶ οὐκ ἀφήσουσιν ⸂λίθον ἐπὶ λίθον ἐν σοί , ἀνθʼ ὧν οὐκ ἔγνως τὸν καιρὸν τῆς ἐπισκοπῆς",
+    "independent_context": "οί, καὶ οὐκ ἀφήσουσιν ⸂λίθον ἐπὶ λίθον ἐν σοί, ἀνθʼ ὧν οὐκ ἔγνως τὸν καιρὸν τῆς ἐπισκοπῆς "
+   },
+   {
+    "reference": "LUK 20:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῖρας ἐν αὐτῇ τῇ ὥρᾳ, καὶ ἐφοβήθησαν ⸂τὸν λαόν , ἔγνωσαν γὰρ ὅτι πρὸς αὐτοὺς ⸂εἶπεν τὴν παρ",
+    "independent_context": "ῖρας ἐν αὐτῇ τῇ ὥρᾳ, καὶ ἐφοβήθησαν ⸂τὸν λαόν, ἔγνωσαν γὰρ ὅτι πρὸς αὐτοὺς ⸂εἶπεν τὴν παρα"
+   },
+   {
+    "reference": "LUK 20:32",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὕστερον ⸂καὶ ἡ γυνὴ ἀπέθανεν .",
+    "independent_context": "ὕστερον ⸂καὶ ἡ γυνὴ ἀπέθανεν."
+   },
+   {
+    "reference": "LUK 21:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τινα χήραν πενιχρὰν βάλλουσαν ἐκεῖ ⸂λεπτὰ δύο ,",
+    "independent_context": "τινα χήραν πενιχρὰν βάλλουσαν ἐκεῖ ⸂λεπτὰ δύο,"
+   },
+   {
+    "reference": "LUK 21:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πὸ γονέων καὶ ⸂ἀδελφῶν καὶ συγγενῶν καὶ φίλων , καὶ θανατώσουσιν ἐξ ὑμῶν,",
+    "independent_context": "πὸ γονέων καὶ ⸂ἀδελφῶν καὶ συγγενῶν καὶ φίλων, καὶ θανατώσουσιν ἐξ ὑμῶν,"
+   },
+   {
+    "reference": "LUK 21:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ρης καὶ αἰχμαλωτισθήσονται εἰς ⸂τὰ ἔθνη πάντα , καὶ Ἰερουσαλὴμ ἔσται πατουμένη ὑπὸ ἐθνῶν, ",
+    "independent_context": "ρης καὶ αἰχμαλωτισθήσονται εἰς ⸂τὰ ἔθνη πάντα, καὶ Ἰερουσαλὴμ ἔσται πατουμένη ὑπὸ ἐθνῶν, ἄ"
+   },
+   {
+    "reference": "LUK 21:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Ἦν δὲ τὰς ἡμέρας ⸂ἐν τῷ ἱερῷ διδάσκων , τὰς δὲ νύκτας ἐξερχόμενος ηὐλίζετο εἰς τὸ ",
+    "independent_context": "Ἦν δὲ τὰς ἡμέρας ⸂ἐν τῷ ἱερῷ διδάσκων, τὰς δὲ νύκτας ἐξερχόμενος ηὐλίζετο εἰς τὸ ὄ"
+   },
+   {
+    "reference": "LUK 22:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ιν καὶ στρατηγοῖς τὸ πῶς ⸂αὐτοῖς παραδῷ αὐτόν .",
+    "independent_context": "ιν καὶ στρατηγοῖς τὸ πῶς ⸂αὐτοῖς παραδῷ αὐτόν."
+   },
+   {
+    "reference": "LUK 22:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ιρίαν τοῦ παραδοῦναι αὐτὸν ⸂ἄτερ ὄχλου αὐτοῖς .",
+    "independent_context": "ιρίαν τοῦ παραδοῦναι αὐτὸν ⸂ἄτερ ὄχλου αὐτοῖς."
+   },
+   {
+    "reference": "LUK 22:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μὲν τοῦ ἀνθρώπου ⸂κατὰ τὸ ὡρισμένον πορεύεται , πλὴν οὐαὶ τῷ ἀνθρώπῳ ἐκείνῳ διʼ οὗ παραδίδ",
+    "independent_context": "μὲν τοῦ ἀνθρώπου ⸂κατὰ τὸ ὡρισμένον πορεύεται, πλὴν οὐαὶ τῷ ἀνθρώπῳ ἐκείνῳ διʼ οὗ παραδίδο"
+   },
+   {
+    "reference": "LUK 22:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νητε ἐπὶ τῆς τραπέζης μου ⸂ἐν τῇ βασιλείᾳ μου , καὶ ⸀καθήσεσθε ἐπὶ θρόνων ⸂τὰς δώδεκα φυλὰ",
+    "independent_context": "νητε ἐπὶ τῆς τραπέζης μου ⸂ἐν τῇ βασιλείᾳ μου, καὶ ⸀καθήσεσθε ἐπὶ θρόνων ⸂τὰς δώδεκα φυλὰς"
+   },
+   {
+    "reference": "LUK 22:34",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ήμερον ἀλέκτωρ ⸀ἕως τρίς ⸂με ἀπαρνήσῃ εἰδέναι .",
+    "independent_context": "ήμερον ἀλέκτωρ ⸀ἕως τρίς ⸂με ἀπαρνήσῃ εἰδέναι."
+   },
+   {
+    "reference": "LUK 23:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ἐν τῇ πόλει καὶ φόνον ⸂βληθεὶς ἐν τῇ φυλακῇ .",
+    "independent_context": "ν ἐν τῇ πόλει καὶ φόνον ⸂βληθεὶς ἐν τῇ φυλακῇ."
+   },
+   {
+    "reference": "LUK 23:45",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "⸂τοῦ ἡλίου ἐκλιπόντος , ἐσχίσθη ⸀δὲ τὸ καταπέτασμα τοῦ ναοῦ μέσον.",
+    "independent_context": "⸂τοῦ ἡλίου ἐκλιπόντος, ἐσχίσθη ⸀δὲ τὸ καταπέτασμα τοῦ ναοῦ μέσον."
+   },
+   {
+    "reference": "LUK 23:55",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νες ἦσαν συνεληλυθυῖαι ⸂ἐκ τῆς Γαλιλαίας αὐτῷ , ἐθεάσαντο τὸ μνημεῖον καὶ ὡς ἐτέθη τὸ σῶμα",
+    "independent_context": "νες ἦσαν συνεληλυθυῖαι ⸂ἐκ τῆς Γαλιλαίας αὐτῷ, ἐθεάσαντο τὸ μνημεῖον καὶ ὡς ἐτέθη τὸ σῶμα "
+   },
+   {
+    "reference": "LUK 24:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς δύο ἐπέστησαν αὐταῖς ἐν ⸂ἐσθῆτι ἀστραπτούσῃ .",
+    "independent_context": "ς δύο ἐπέστησαν αὐταῖς ἐν ⸂ἐσθῆτι ἀστραπτούσῃ."
+   },
+   {
+    "reference": "LUK 24:49",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " τῇ ⸀πόλει ἕως οὗ ἐνδύσησθε ⸂ἐξ ὕψους δύναμιν .",
+    "independent_context": " τῇ ⸀πόλει ἕως οὗ ἐνδύσησθε ⸂ἐξ ὕψους δύναμιν."
+   },
+   {
+    "reference": "JHN 2:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἓξ ⸂κατὰ τὸν καθαρισμὸν τῶν Ἰουδαίων κείμεναι , χωροῦσαι ἀνὰ μετρητὰς δύο ἢ τρεῖς.",
+    "independent_context": "ἓξ ⸂κατὰ τὸν καθαρισμὸν τῶν Ἰουδαίων κείμεναι, χωροῦσαι ἀνὰ μετρητὰς δύο ἢ τρεῖς."
+   },
+   {
+    "reference": "JHN 4:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ροσολύμοις ἐστὶν ὁ τόπος ὅπου ⸂προσκυνεῖν δεῖ .",
+    "independent_context": "ροσολύμοις ἐστὶν ὁ τόπος ὅπου ⸂προσκυνεῖν δεῖ."
+   },
+   {
+    "reference": "JHN 4:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λέγει αὐτῇ ὁ Ἰησοῦς· ⸂Πίστευέ μοι, γύναι , ὅτι ἔρχεται ὥρα ὅτε οὔτε ἐν τῷ ὄρει τούτῳ ",
+    "independent_context": "λέγει αὐτῇ ὁ Ἰησοῦς· ⸂Πίστευέ μοι, γύναι, ὅτι ἔρχεται ὥρα ὅτε οὔτε ἐν τῷ ὄρει τούτῳ ο"
+   },
+   {
+    "reference": "JHN 5:38",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ τὸν λόγον αὐτοῦ οὐκ ἔχετε ⸂ἐν ὑμῖν μένοντα , ὅτι ὃν ἀπέστειλεν ἐκεῖνος τούτῳ ὑμεῖς οὐ π",
+    "independent_context": "αὶ τὸν λόγον αὐτοῦ οὐκ ἔχετε ⸂ἐν ὑμῖν μένοντα, ὅτι ὃν ἀπέστειλεν ἐκεῖνος τούτῳ ὑμεῖς οὐ πι"
+   },
+   {
+    "reference": "JHN 6:71",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καριώτου οὗτος γὰρ ἔμελλεν ⸂παραδιδόναι αὐτόν , ⸀εἷς ἐκ τῶν δώδεκα.",
+    "independent_context": "καριώτου οὗτος γὰρ ἔμελλεν ⸂παραδιδόναι αὐτόν, ⸀εἷς ἐκ τῶν δώδεκα."
+   },
+   {
+    "reference": "JHN 8:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " εἰ ἐμὲ ᾔδειτε, καὶ τὸν πατέρα μου ⸂ἂν ᾔδειτε .",
+    "independent_context": " εἰ ἐμὲ ᾔδειτε, καὶ τὸν πατέρα μου ⸂ἂν ᾔδειτε."
+   },
+   {
+    "reference": "JHN 8:44",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ἦν ἀπʼ ἀρχῆς, καὶ ἐν τῇ ἀληθείᾳ ⸂οὐκ ἔστηκεν , ὅτι οὐκ ἔστιν ἀλήθεια ἐν αὐτῷ. ὅταν λαλῇ τ",
+    "independent_context": " ἦν ἀπʼ ἀρχῆς, καὶ ἐν τῇ ἀληθείᾳ ⸂οὐκ ἔστηκεν, ὅτι οὐκ ἔστιν ἀλήθεια ἐν αὐτῷ. ὅταν λαλῇ τὸ"
+   },
+   {
+    "reference": "JHN 9:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " τινές· ⸂Οὐκ ἔστιν οὗτος παρὰ θεοῦ ὁ ἄνθρωπος , ὅτι τὸ σάββατον οὐ τηρεῖ. ⸀ἄλλοι ἔλεγον· Π",
+    "independent_context": " τινές· ⸂Οὐκ ἔστιν οὗτος παρὰ θεοῦ ὁ ἄνθρωπος, ὅτι τὸ σάββατον οὐ τηρεῖ. ⸀ἄλλοι ἔλεγον· Πῶ"
+   },
+   {
+    "reference": "JHN 9:40",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ἐκ τῶν Φαρισαίων ταῦτα οἱ ⸂μετʼ αὐτοῦ ὄντες , καὶ εἶπον αὐτῷ· Μὴ καὶ ἡμεῖς τυφλοί ἐσμεν;",
+    "independent_context": "ν ἐκ τῶν Φαρισαίων ταῦτα οἱ ⸂μετʼ αὐτοῦ ὄντες, καὶ εἶπον αὐτῷ· Μὴ καὶ ἡμεῖς τυφλοί ἐσμεν;"
+   },
+   {
+    "reference": "JHN 10:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " καὶ γινώσκω τὰ ἐμὰ καὶ ⸂γινώσκουσί με τὰ ἐμά ,",
+    "independent_context": " καὶ γινώσκω τὰ ἐμὰ καὶ ⸂γινώσκουσί με τὰ ἐμά,"
+   },
+   {
+    "reference": "JHN 10:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "κἀγὼ ⸂δίδωμι αὐτοῖς ζωὴν αἰώνιον , καὶ οὐ μὴ ἀπόλωνται εἰς τὸν αἰῶνα, καὶ οὐχ",
+    "independent_context": "κἀγὼ ⸂δίδωμι αὐτοῖς ζωὴν αἰώνιον, καὶ οὐ μὴ ἀπόλωνται εἰς τὸν αἰῶνα, καὶ οὐχ "
+   },
+   {
+    "reference": "JHN 10:38",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νώσκητε ὅτι ἐν ἐμοὶ ὁ πατὴρ κἀγὼ ἐν ⸂τῷ πατρί .",
+    "independent_context": "νώσκητε ὅτι ἐν ἐμοὶ ὁ πατὴρ κἀγὼ ἐν ⸂τῷ πατρί."
+   },
+   {
+    "reference": "JHN 10:42",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ⸂πολλοὶ ἐπίστευσαν εἰς αὐτὸν ἐκεῖ .",
+    "independent_context": "καὶ ⸂πολλοὶ ἐπίστευσαν εἰς αὐτὸν ἐκεῖ."
+   },
+   {
+    "reference": "JHN 12:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δὲ ⸂Ἰούδας ὁ Ἰσκαριώτης εἷς τῶν μαθητῶν αὐτοῦ , ὁ μέλλων αὐτὸν παραδιδόναι·",
+    "independent_context": "δὲ ⸂Ἰούδας ὁ Ἰσκαριώτης εἷς τῶν μαθητῶν αὐτοῦ, ὁ μέλλων αὐτὸν παραδιδόναι·"
+   },
+   {
+    "reference": "JHN 12:50",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τολὴ αὐτοῦ ζωὴ αἰώνιός ἐστιν. ἃ οὖν ⸂ἐγὼ λαλῶ , καθὼς εἴρηκέν μοι ὁ πατήρ, οὕτως λαλῶ.",
+    "independent_context": "τολὴ αὐτοῦ ζωὴ αἰώνιός ἐστιν. ἃ οὖν ⸂ἐγὼ λαλῶ, καθὼς εἴρηκέν μοι ὁ πατήρ, οὕτως λαλῶ."
+   },
+   {
+    "reference": "JHN 13:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τῶν ⸀καὶ ἔλαβεν τὰ ἱμάτια αὐτοῦ ⸂καὶ ἀνέπεσεν , πάλιν εἶπεν αὐτοῖς· Γινώσκετε τί πεποίηκα ",
+    "independent_context": "τῶν ⸀καὶ ἔλαβεν τὰ ἱμάτια αὐτοῦ ⸂καὶ ἀνέπεσεν, πάλιν εἶπεν αὐτοῖς· Γινώσκετε τί πεποίηκα ὑ"
+   },
+   {
+    "reference": "JHN 13:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λαβὼν οὖν τὸ ψωμίον ἐκεῖνος ⸂ἐξῆλθεν εὐθύς . ἦν δὲ νύξ.",
+    "independent_context": "λαβὼν οὖν τὸ ψωμίον ἐκεῖνος ⸂ἐξῆλθεν εὐθύς. ἦν δὲ νύξ."
+   },
+   {
+    "reference": "JHN 13:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μοι νῦν ἀκολουθῆσαι, ⸂ἀκολουθήσεις δὲ ὕστερον .",
+    "independent_context": "μοι νῦν ἀκολουθῆσαι, ⸂ἀκολουθήσεις δὲ ὕστερον."
+   },
+   {
+    "reference": "JHN 14:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἐὰν πορευθῶ ⸀καὶ ἑτοιμάσω ⸂τόπον ὑμῖν , πάλιν ἔρχομαι καὶ παραλήμψομαι ὑμᾶς πρὸς ἐ",
+    "independent_context": "καὶ ἐὰν πορευθῶ ⸀καὶ ἑτοιμάσω ⸂τόπον ὑμῖν, πάλιν ἔρχομαι καὶ παραλήμψομαι ὑμᾶς πρὸς ἐμ"
+   },
+   {
+    "reference": "JHN 14:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ὅπου ἐγὼ ὑπάγω οἴδατε ⸂τὴν ὁδόν .",
+    "independent_context": "καὶ ὅπου ἐγὼ ὑπάγω οἴδατε ⸂τὴν ὁδόν."
+   },
+   {
+    "reference": "JHN 15:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καθὼς ἠγάπησέν με ὁ πατήρ, κἀγὼ ⸂ὑμᾶς ἠγάπησα , μείνατε ἐν τῇ ἀγάπῃ τῇ ἐμῇ.",
+    "independent_context": "καθὼς ἠγάπησέν με ὁ πατήρ, κἀγὼ ⸂ὑμᾶς ἠγάπησα, μείνατε ἐν τῇ ἀγάπῃ τῇ ἐμῇ."
+   },
+   {
+    "reference": "JHN 16:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Ἔτι πολλὰ ἔχω ⸂ὑμῖν λέγειν , ἀλλʼ οὐ δύνασθε βαστάζειν ἄρτι·",
+    "independent_context": "Ἔτι πολλὰ ἔχω ⸂ὑμῖν λέγειν, ἀλλʼ οὐ δύνασθε βαστάζειν ἄρτι·"
+   },
+   {
+    "reference": "JHN 16:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς ἀληθείας, ὁδηγήσει ὑμᾶς ⸂ἐν τῇ ἀληθείᾳ πάσῃ , οὐ γὰρ λαλήσει ἀφʼ ἑαυτοῦ, ἀλλʼ ὅσα ⸀ἀκούσ",
+    "independent_context": "ς ἀληθείας, ὁδηγήσει ὑμᾶς ⸂ἐν τῇ ἀληθείᾳ πάσῃ, οὐ γὰρ λαλήσει ἀφʼ ἑαυτοῦ, ἀλλʼ ὅσα ⸀ἀκούσε"
+   },
+   {
+    "reference": "JHN 16:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "σητε τὸν πατέρα ⸂δώσει ὑμῖν ἐν τῷ ὀνόματί μου .",
+    "independent_context": "σητε τὸν πατέρα ⸂δώσει ὑμῖν ἐν τῷ ὀνόματί μου."
+   },
+   {
+    "reference": "JHN 17:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "υ οὐκ εἰσὶν καθὼς ἐγὼ ⸂οὐκ εἰμὶ ἐκ τοῦ κόσμου .",
+    "independent_context": "υ οὐκ εἰσὶν καθὼς ἐγὼ ⸂οὐκ εἰμὶ ἐκ τοῦ κόσμου."
+   },
+   {
+    "reference": "JHN 18:30",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν καὶ εἶπαν αὐτῷ· Εἰ μὴ ἦν οὗτος ⸂κακὸν ποιῶν , οὐκ ἄν σοι παρεδώκαμεν αὐτόν.",
+    "independent_context": "ν καὶ εἶπαν αὐτῷ· Εἰ μὴ ἦν οὗτος ⸂κακὸν ποιῶν, οὐκ ἄν σοι παρεδώκαμεν αὐτόν."
+   },
+   {
+    "reference": "JHN 18:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εία ἡ ἐμή, οἱ ὑπηρέται ⸂οἱ ἐμοὶ ἠγωνίζοντο ἄν , ἵνα μὴ παραδοθῶ τοῖς Ἰουδαίοις· νῦν δὲ ἡ β",
+    "independent_context": "εία ἡ ἐμή, οἱ ὑπηρέται ⸂οἱ ἐμοὶ ἠγωνίζοντο ἄν, ἵνα μὴ παραδοθῶ τοῖς Ἰουδαίοις· νῦν δὲ ἡ βα"
+   },
+   {
+    "reference": "JHN 19:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "να γνῶτε ὅτι ⸂οὐδεμίαν αἰτίαν εὑρίσκω ἐν αὐτῷ .",
+    "independent_context": "να γνῶτε ὅτι ⸂οὐδεμίαν αἰτίαν εὑρίσκω ἐν αὐτῷ."
+   },
+   {
+    "reference": "JHN 19:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὅτι ἐκεῖνος εἶπεν Βασιλεὺς ⸂τῶν Ἰουδαίων εἰμί .",
+    "independent_context": "ὅτι ἐκεῖνος εἶπεν Βασιλεὺς ⸂τῶν Ἰουδαίων εἰμί."
+   },
+   {
+    "reference": "JHN 20:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ρία δὲ εἱστήκει πρὸς ⸂τῷ μνημείῳ ἔξω κλαίουσα . ὡς οὖν ἔκλαιεν παρέκυψεν εἰς τὸ μνημεῖον,",
+    "independent_context": "ρία δὲ εἱστήκει πρὸς ⸂τῷ μνημείῳ ἔξω κλαίουσα. ὡς οὖν ἔκλαιεν παρέκυψεν εἰς τὸ μνημεῖον,"
+   },
+   {
+    "reference": "JHN 21:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ιν ἕως ἔρχομαι, τί πρὸς σέ; σύ ⸂μοι ἀκολούθει .",
+    "independent_context": "ιν ἕως ἔρχομαι, τί πρὸς σέ; σύ ⸂μοι ἀκολούθει."
+   },
+   {
+    "reference": "JHN 21:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ οἴδαμεν ὅτι ἀληθὴς ⸂αὐτοῦ ἡ μαρτυρία ἐστίν .",
+    "independent_context": "αὶ οἴδαμεν ὅτι ἀληθὴς ⸂αὐτοῦ ἡ μαρτυρία ἐστίν."
+   },
+   {
+    "reference": "ACT 1:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ύο παρειστήκεισαν αὐτοῖς ἐν ⸂ἐσθήσεσι λευκαῖς ,",
+    "independent_context": "ύο παρειστήκεισαν αὐτοῖς ἐν ⸂ἐσθήσεσι λευκαῖς,"
+   },
+   {
+    "reference": "ACT 2:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " καθὼς τὸ πνεῦμα ἐδίδου ⸂ἀποφθέγγεσθαι αὐτοῖς .",
+    "independent_context": " καθὼς τὸ πνεῦμα ἐδίδου ⸂ἀποφθέγγεσθαι αὐτοῖς."
+   },
+   {
+    "reference": "ACT 2:36",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ κύριον ⸂αὐτὸν καὶ χριστὸν ⸂ἐποίησεν ὁ θεός , τοῦτον τὸν Ἰησοῦν ὃν ὑμεῖς ἐσταυρώσατε.",
+    "independent_context": "αὶ κύριον ⸂αὐτὸν καὶ χριστὸν ⸂ἐποίησεν ὁ θεός, τοῦτον τὸν Ἰησοῦν ὃν ὑμεῖς ἐσταυρώσατε."
+   },
+   {
+    "reference": "ACT 2:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Ἀκούσαντες δὲ κατενύγησαν ⸂τὴν καρδίαν , εἶπόν τε πρὸς τὸν Πέτρον καὶ τοὺς λοιποὺς ",
+    "independent_context": "Ἀκούσαντες δὲ κατενύγησαν ⸂τὴν καρδίαν, εἶπόν τε πρὸς τὸν Πέτρον καὶ τοὺς λοιποὺς ἀ"
+   },
+   {
+    "reference": "ACT 2:38",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Πέτρος δὲ ⸂πρὸς αὐτούς· Μετανοήσατε , καὶ βαπτισθήτω ἕκαστος ὑμῶν ⸀ἐπὶ τῷ ὀνόματ",
+    "independent_context": "Πέτρος δὲ ⸂πρὸς αὐτούς· Μετανοήσατε, καὶ βαπτισθήτω ἕκαστος ὑμῶν ⸀ἐπὶ τῷ ὀνόματι"
+   },
+   {
+    "reference": "ACT 2:47",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ίθει τοὺς σῳζομένους καθʼ ἡμέραν ⸂ἐπὶ τὸ αὐτό .",
+    "independent_context": "ίθει τοὺς σῳζομένους καθʼ ἡμέραν ⸂ἐπὶ τὸ αὐτό."
+   },
+   {
+    "reference": "ACT 3:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "στόματος τῶν ἁγίων ⸂ἀπʼ αἰῶνος αὐτοῦ προφητῶν .",
+    "independent_context": "στόματος τῶν ἁγίων ⸂ἀπʼ αἰῶνος αὐτοῦ προφητῶν."
+   },
+   {
+    "reference": "ACT 4:31",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", καὶ ἐπλήσθησαν ἅπαντες ⸂τοῦ ἁγίου πνεύματος , καὶ ἐλάλουν τὸν λόγον τοῦ θεοῦ μετὰ παρρησ",
+    "independent_context": ", καὶ ἐπλήσθησαν ἅπαντες ⸂τοῦ ἁγίου πνεύματος, καὶ ἐλάλουν τὸν λόγον τοῦ θεοῦ μετὰ παρρησί"
+   },
+   {
+    "reference": "ACT 4:33",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οἱ ἀπόστολοι ⸂τῆς ἀναστάσεως τοῦ κυρίου Ἰησοῦ , χάρις τε μεγάλη ἦν ἐπὶ πάντας αὐτούς.",
+    "independent_context": "οἱ ἀπόστολοι ⸂τῆς ἀναστάσεως τοῦ κυρίου Ἰησοῦ, χάρις τε μεγάλη ἦν ἐπὶ πάντας αὐτούς."
+   },
+   {
+    "reference": "ACT 5:42",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οντες καὶ εὐαγγελιζόμενοι ⸂τὸν χριστὸν Ἰησοῦν .",
+    "independent_context": "οντες καὶ εὐαγγελιζόμενοι ⸂τὸν χριστὸν Ἰησοῦν."
+   },
+   {
+    "reference": "ACT 7:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ᾧ ⸀ἐὰν ⸀δουλεύσουσιν κρινῶ ἐγώ, ⸂ὁ θεὸς εἶπεν , καὶ μετὰ ταῦτα ἐξελεύσονται καὶ λατρεύσουσ",
+    "independent_context": "ᾧ ⸀ἐὰν ⸀δουλεύσουσιν κρινῶ ἐγώ, ⸂ὁ θεὸς εἶπεν, καὶ μετὰ ταῦτα ἐξελεύσονται καὶ λατρεύσουσί"
+   },
+   {
+    "reference": "ACT 7:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἄχρι οὗ ἀνέστη βασιλεὺς ἕτερος ⸂ἐπʼ Αἴγυπτον , ὃς οὐκ ᾔδει τὸν Ἰωσήφ.",
+    "independent_context": "ἄχρι οὗ ἀνέστη βασιλεὺς ἕτερος ⸂ἐπʼ Αἴγυπτον, ὃς οὐκ ᾔδει τὸν Ἰωσήφ."
+   },
+   {
+    "reference": "ACT 7:25",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εὸς διὰ χειρὸς αὐτοῦ δίδωσιν ⸂σωτηρίαν αὐτοῖς , οἱ δὲ οὐ συνῆκαν.",
+    "independent_context": "εὸς διὰ χειρὸς αὐτοῦ δίδωσιν ⸂σωτηρίαν αὐτοῖς, οἱ δὲ οὐ συνῆκαν."
+   },
+   {
+    "reference": "ACT 9:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς Ἑλληνιστάς· οἱ δὲ ἐπεχείρουν ⸂ἀνελεῖν αὐτόν .",
+    "independent_context": "ς Ἑλληνιστάς· οἱ δὲ ἐπεχείρουν ⸂ἀνελεῖν αὐτόν."
+   },
+   {
+    "reference": "ACT 9:31",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " τῇ παρακλήσει τοῦ ἁγίου πνεύματος ἐπληθύνετο .",
+    "independent_context": " τῇ παρακλήσει τοῦ ἁγίου πνεύματος ἐπληθύνετο."
+   },
+   {
+    "reference": "ACT 10:48",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τοὺς ⸂ἐν τῷ ὀνόματι Ἰησοῦ Χριστοῦ βαπτισθῆναι . τότε ἠρώτησαν αὐτὸν ἐπιμεῖναι ἡμέρας τινάς",
+    "independent_context": "τοὺς ⸂ἐν τῷ ὀνόματι Ἰησοῦ Χριστοῦ βαπτισθῆναι. τότε ἠρώτησαν αὐτὸν ἐπιμεῖναι ἡμέρας τινάς."
+   },
+   {
+    "reference": "ACT 11:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἔθνεσιν ὁ θεὸς τὴν μετάνοιαν ⸂εἰς ζωὴν ἔδωκεν .",
+    "independent_context": "ἔθνεσιν ὁ θεὸς τὴν μετάνοιαν ⸂εἰς ζωὴν ἔδωκεν."
+   },
+   {
+    "reference": "ACT 12:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς ἔχειν. οἱ δὲ ἔλεγον· Ὁ ἄγγελός ⸂ἐστιν αὐτοῦ .",
+    "independent_context": "ς ἔχειν. οἱ δὲ ἔλεγον· Ὁ ἄγγελός ⸂ἐστιν αὐτοῦ."
+   },
+   {
+    "reference": "ACT 13:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ργης παρεγένοντο εἰς Ἀντιόχειαν ⸂τὴν Πισιδίαν , καὶ ⸀εἰσελθόντες εἰς τὴν συναγωγὴν τῇ ἡμέρ",
+    "independent_context": "ργης παρεγένοντο εἰς Ἀντιόχειαν ⸂τὴν Πισιδίαν, καὶ ⸀εἰσελθόντες εἰς τὴν συναγωγὴν τῇ ἡμέρᾳ"
+   },
+   {
+    "reference": "ACT 13:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τʼ ἐπαγγελίαν ἤγαγεν τῷ Ἰσραὴλ ⸂σωτῆρα Ἰησοῦν ,",
+    "independent_context": "τʼ ἐπαγγελίαν ἤγαγεν τῷ Ἰσραὴλ ⸂σωτῆρα Ἰησοῦν,"
+   },
+   {
+    "reference": "ACT 14:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "κἀκεῖ ⸂εὐαγγελιζόμενοι ἦσαν .",
+    "independent_context": "κἀκεῖ ⸂εὐαγγελιζόμενοι ἦσαν."
+   },
+   {
+    "reference": "ACT 15:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ίθεσθαι ὑμῖν βάρος πλὴν ⸂τούτων τῶν ἐπάναγκες ,",
+    "independent_context": "ίθεσθαι ὑμῖν βάρος πλὴν ⸂τούτων τῶν ἐπάναγκες,"
+   },
+   {
+    "reference": "ACT 15:33",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὸ τῶν ἀδελφῶν πρὸς τοὺς ⸂ἀποστείλαντας αὐτούς .",
+    "independent_context": "ὸ τῶν ἀδελφῶν πρὸς τοὺς ⸂ἀποστείλαντας αὐτούς."
+   },
+   {
+    "reference": "ACT 16:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ὅραμα ⸀διὰ νυκτὸς ⸂τῷ Παύλῳ ὤφθη , ἀνὴρ ⸂Μακεδών τις ἦν ἑστὼς ⸀καὶ παρακαλῶν ",
+    "independent_context": "καὶ ὅραμα ⸀διὰ νυκτὸς ⸂τῷ Παύλῳ ὤφθη, ἀνὴρ ⸂Μακεδών τις ἦν ἑστὼς ⸀καὶ παρακαλῶν α"
+   },
+   {
+    "reference": "ACT 16:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἰς Σαμοθρᾴκην, τῇ ⸀δὲ ἐπιούσῃ εἰς ⸂Νέαν Πόλιν ,",
+    "independent_context": "ἰς Σαμοθρᾴκην, τῇ ⸀δὲ ἐπιούσῃ εἰς ⸂Νέαν Πόλιν,"
+   },
+   {
+    "reference": "ACT 17:32",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὲ εἶπαν Ἀκουσόμεθά σου ⸂περὶ τούτου καὶ πάλιν .",
+    "independent_context": "ὲ εἶπαν Ἀκουσόμεθά σου ⸂περὶ τούτου καὶ πάλιν."
+   },
+   {
+    "reference": "ACT 18:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς καὶ ⸀ἠργάζετο ἦσαν γὰρ σκηνοποιοὶ ⸂τῇ τέχνῃ .",
+    "independent_context": "ς καὶ ⸀ἠργάζετο ἦσαν γὰρ σκηνοποιοὶ ⸂τῇ τέχνῃ."
+   },
+   {
+    "reference": "ACT 18:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " Ἀκύλας, κειράμενος ⸂ἐν Κεγχρεαῖς τὴν κεφαλήν , εἶχεν γὰρ εὐχήν.",
+    "independent_context": " Ἀκύλας, κειράμενος ⸂ἐν Κεγχρεαῖς τὴν κεφαλήν, εἶχεν γὰρ εὐχήν."
+   },
+   {
+    "reference": "ACT 18:26",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀκριβέστερον αὐτῷ ἐξέθεντο τὴν ⸂ὁδὸν τοῦ θεοῦ .",
+    "independent_context": "ἀκριβέστερον αὐτῷ ἐξέθεντο τὴν ⸂ὁδὸν τοῦ θεοῦ."
+   },
+   {
+    "reference": "ACT 19:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "παρείχετο τοῖς τεχνίταις ⸂οὐκ ὀλίγην ἐργασίαν ,",
+    "independent_context": "παρείχετο τοῖς τεχνίταις ⸂οὐκ ὀλίγην ἐργασίαν,"
+   },
+   {
+    "reference": "ACT 20:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μὴ ἀναγγεῖλαι ⸂πᾶσαν τὴν βουλὴν τοῦ θεοῦ ὑμῖν .",
+    "independent_context": "μὴ ἀναγγεῖλαι ⸂πᾶσαν τὴν βουλὴν τοῦ θεοῦ ὑμῖν."
+   },
+   {
+    "reference": "ACT 20:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῦ ἣν περιεποιήσατο διὰ τοῦ ⸂αἵματος τοῦ ἰδίου .",
+    "independent_context": "ῦ ἣν περιεποιήσατο διὰ τοῦ ⸂αἵματος τοῦ ἰδίου."
+   },
+   {
+    "reference": "ACT 21:24",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", ἀλλὰ στοιχεῖς καὶ αὐτὸς ⸂φυλάσσων τὸν νόμον .",
+    "independent_context": ", ἀλλὰ στοιχεῖς καὶ αὐτὸς ⸂φυλάσσων τὸν νόμον."
+   },
+   {
+    "reference": "ACT 21:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " τὸν ὄχλον καὶ ἐπέβαλον ⸂ἐπʼ αὐτὸν τὰς χεῖρας ,",
+    "independent_context": " τὸν ὄχλον καὶ ἐπέβαλον ⸂ἐπʼ αὐτὸν τὰς χεῖρας,"
+   },
+   {
+    "reference": "ACT 23:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἐγένετο στάσις τῶν Φαρισαίων ⸂καὶ Σαδδουκαίων , καὶ ἐσχίσθη τὸ πλῆθος.",
+    "independent_context": "ἐγένετο στάσις τῶν Φαρισαίων ⸂καὶ Σαδδουκαίων, καὶ ἐσχίσθη τὸ πλῆθος."
+   },
+   {
+    "reference": "ACT 23:29",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δὲ ⸀δὲ ἄξιον θανάτου ἢ δεσμῶν ⸂ἔχοντα ἔγκλημα .",
+    "independent_context": "δὲ ⸀δὲ ἄξιον θανάτου ἢ δεσμῶν ⸂ἔχοντα ἔγκλημα."
+   },
+   {
+    "reference": "ACT 24:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "⸂Ἀνεβάλετο δὲ αὐτοὺς ὁ Φῆλιξ , ἀκριβέστερον εἰδὼς τὰ περὶ τῆς ὁδοῦ, ⸀εἴπα",
+    "independent_context": "⸂Ἀνεβάλετο δὲ αὐτοὺς ὁ Φῆλιξ, ἀκριβέστερον εἰδὼς τὰ περὶ τῆς ὁδοῦ, ⸀εἴπας"
+   },
+   {
+    "reference": "ACT 25:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀπεκρίθη τηρεῖσθαι τὸν Παῦλον ⸂εἰς Καισάρειαν , ἑαυτὸν δὲ μέλλειν ἐν τάχει ἐκπορεύεσθαι·",
+    "independent_context": "ἀπεκρίθη τηρεῖσθαι τὸν Παῦλον ⸂εἰς Καισάρειαν, ἑαυτὸν δὲ μέλλειν ἐν τάχει ἐκπορεύεσθαι·"
+   },
+   {
+    "reference": "ACT 26:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μακάριον ἐπὶ σοῦ μέλλων ⸂σήμερον ἀπολογεῖσθαι ,",
+    "independent_context": "μακάριον ἐπὶ σοῦ μέλλων ⸂σήμερον ἀπολογεῖσθαι,"
+   },
+   {
+    "reference": "ACT 28:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ενον, ⸀μεταβαλόμενοι ἔλεγον ⸂αὐτὸν εἶναι θεόν .",
+    "independent_context": "ενον, ⸀μεταβαλόμενοι ἔλεγον ⸂αὐτὸν εἶναι θεόν."
+   },
+   {
+    "reference": "ACT 28:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " καὶ ἀναγομένοις ἐπέθεντο τὰ πρὸς ⸂τὰς χρείας .",
+    "independent_context": " καὶ ἀναγομένοις ἐπέθεντο τὰ πρὸς ⸂τὰς χρείας."
+   },
+   {
+    "reference": "ROM 1:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Παῦλος δοῦλος ⸂Χριστοῦ Ἰησοῦ , κλητὸς ἀπόστολος, ἀφωρισμένος εἰς εὐαγγέλι",
+    "independent_context": "Παῦλος δοῦλος ⸂Χριστοῦ Ἰησοῦ, κλητὸς ἀπόστολος, ἀφωρισμένος εἰς εὐαγγέλιο"
+   },
+   {
+    "reference": "ROM 2:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "θείᾳ πειθομένοις δὲ τῇ ἀδικίᾳ ⸂ὀργὴ καὶ θυμός ,",
+    "independent_context": "θείᾳ πειθομένοις δὲ τῇ ἀδικίᾳ ⸂ὀργὴ καὶ θυμός,"
+   },
+   {
+    "reference": "ROM 2:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πων κατὰ τὸ εὐαγγέλιόν μου διὰ ⸂Χριστοῦ Ἰησοῦ .",
+    "independent_context": "πων κατὰ τὸ εὐαγγέλιόν μου διὰ ⸂Χριστοῦ Ἰησοῦ."
+   },
+   {
+    "reference": "ROM 8:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πνεύματι θεοῦ ἄγονται, οὗτοι ⸂υἱοί εἰσιν θεοῦ .",
+    "independent_context": "πνεύματι θεοῦ ἄγονται, οὗτοι ⸂υἱοί εἰσιν θεοῦ."
+   },
+   {
+    "reference": "ROM 11:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αν, σὺ δὲ τῇ πίστει ἕστηκας. μὴ ⸂ὑψηλὰ φρόνει , ἀλλὰ φοβοῦ·",
+    "independent_context": "αν, σὺ δὲ τῇ πίστει ἕστηκας. μὴ ⸂ὑψηλὰ φρόνει, ἀλλὰ φοβοῦ·"
+   },
+   {
+    "reference": "ROM 11:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πεσόντας ⸀ἀποτομία, ἐπὶ δὲ σὲ ⸂χρηστότης θεοῦ , ἐὰν ⸀ἐπιμένῃς τῇ χρηστότητι, ἐπεὶ καὶ σὺ ἐ",
+    "independent_context": "πεσόντας ⸀ἀποτομία, ἐπὶ δὲ σὲ ⸂χρηστότης θεοῦ, ἐὰν ⸀ἐπιμένῃς τῇ χρηστότητι, ἐπεὶ καὶ σὺ ἐκ"
+   },
+   {
+    "reference": "ROM 12:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ατα ὑμῶν θυσίαν ζῶσαν ἁγίαν ⸂εὐάρεστον τῷ θεῷ , τὴν λογικὴν λατρείαν ὑμῶν·",
+    "independent_context": "ατα ὑμῶν θυσίαν ζῶσαν ἁγίαν ⸂εὐάρεστον τῷ θεῷ, τὴν λογικὴν λατρείαν ὑμῶν·"
+   },
+   {
+    "reference": "ROM 13:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " οὐκ εἰσὶν φόβος ⸂τῷ ἀγαθῷ ἔργῳ ἀλλὰ ⸂τῷ κακῷ . θέλεις δὲ μὴ φοβεῖσθαι τὴν ἐξουσίαν; τὸ ἀγ",
+    "independent_context": " οὐκ εἰσὶν φόβος ⸂τῷ ἀγαθῷ ἔργῳ ἀλλὰ ⸂τῷ κακῷ. θέλεις δὲ μὴ φοβεῖσθαι τὴν ἐξουσίαν; τὸ ἀγα"
+   },
+   {
+    "reference": "ROM 15:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὐτὸ φρονεῖν ἐν ἀλλήλοις κατὰ ⸂Χριστὸν Ἰησοῦν ,",
+    "independent_context": "αὐτὸ φρονεῖν ἐν ἀλλήλοις κατὰ ⸂Χριστὸν Ἰησοῦν,"
+   },
+   {
+    "reference": "ROM 15:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "γραπται· ⸂Οἷς οὐκ ἀνηγγέλη περὶ αὐτοῦ ὄψονται , καὶ οἳ οὐκ ἀκηκόασιν συνήσουσιν.",
+    "independent_context": "γραπται· ⸂Οἷς οὐκ ἀνηγγέλη περὶ αὐτοῦ ὄψονται, καὶ οἳ οὐκ ἀκηκόασιν συνήσουσιν."
+   },
+   {
+    "reference": "ROM 15:31",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " Ἰερουσαλὴμ εὐπρόσδεκτος ⸂τοῖς ἁγίοις γένηται ,",
+    "independent_context": " Ἰερουσαλὴμ εὐπρόσδεκτος ⸂τοῖς ἁγίοις γένηται,"
+   },
+   {
+    "reference": "ROM 16:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὐτὴ προστάτις πολλῶν ἐγενήθη καὶ ⸂ἐμοῦ αὐτοῦ .",
+    "independent_context": "αὐτὴ προστάτις πολλῶν ἐγενήθη καὶ ⸂ἐμοῦ αὐτοῦ."
+   },
+   {
+    "reference": "ROM 16:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πακοὴ εἰς πάντας ἀφίκετο· ⸂ἐφʼ ὑμῖν οὖν χαίρω , θέλω δὲ ὑμᾶς ⸀σοφοὺς εἶναι εἰς τὸ ἀγαθόν, ",
+    "independent_context": "πακοὴ εἰς πάντας ἀφίκετο· ⸂ἐφʼ ὑμῖν οὖν χαίρω, θέλω δὲ ὑμᾶς ⸀σοφοὺς εἶναι εἰς τὸ ἀγαθόν, ἀ"
+   },
+   {
+    "reference": "ROM 16:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μᾶς Γάϊος ὁ ξένος μου καὶ ⸂ὅλης τῆς ἐκκλησίας . ἀσπάζεται ὑμᾶς Ἔραστος ὁ οἰκονόμος τῆς πόλ",
+    "independent_context": "μᾶς Γάϊος ὁ ξένος μου καὶ ⸂ὅλης τῆς ἐκκλησίας. ἀσπάζεται ὑμᾶς Ἔραστος ὁ οἰκονόμος τῆς πόλε"
+   },
+   {
+    "reference": "1CO 1:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἐξελέξατο ὁ θεός, ἵνα ⸂καταισχύνῃ τοὺς σοφούς , καὶ τὰ ἀσθενῆ τοῦ κόσμου ἐξελέξατο ὁ θεός,",
+    "independent_context": "ἐξελέξατο ὁ θεός, ἵνα ⸂καταισχύνῃ τοὺς σοφούς, καὶ τὰ ἀσθενῆ τοῦ κόσμου ἐξελέξατο ὁ θεός, "
+   },
+   {
+    "reference": "1CO 6:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οὔτε ⸂κλέπται οὔτε πλεονέκται , ⸀οὐ μέθυσοι, οὐ λοίδοροι, οὐχ ἅρπαγες βασι",
+    "independent_context": "οὔτε ⸂κλέπται οὔτε πλεονέκται, ⸀οὐ μέθυσοι, οὐ λοίδοροι, οὐχ ἅρπαγες βασιλ"
+   },
+   {
+    "reference": "1CO 7:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Τοῖς δὲ λοιποῖς ⸂λέγω ἐγώ , οὐχ ὁ κύριος· εἴ τις ἀδελφὸς γυναῖκα ἔχει ",
+    "independent_context": "Τοῖς δὲ λοιποῖς ⸂λέγω ἐγώ, οὐχ ὁ κύριος· εἴ τις ἀδελφὸς γυναῖκα ἔχει ἄ"
+   },
+   {
+    "reference": "1CO 7:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δοκεῖ οἰκεῖν μετʼ αὐτῆς, μὴ ἀφιέτω ⸂τὸν ἄνδρα .",
+    "independent_context": "δοκεῖ οἰκεῖν μετʼ αὐτῆς, μὴ ἀφιέτω ⸂τὸν ἄνδρα."
+   },
+   {
+    "reference": "1CO 7:37",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ήματος, καὶ τοῦτο κέκρικεν ἐν τῇ ⸂ἰδίᾳ καρδίᾳ , ⸀τηρεῖν τὴν ἑαυτοῦ παρθένον, καλῶς ⸀ποιήσε",
+    "independent_context": "ήματος, καὶ τοῦτο κέκρικεν ἐν τῇ ⸂ἰδίᾳ καρδίᾳ, ⸀τηρεῖν τὴν ἑαυτοῦ παρθένον, καλῶς ⸀ποιήσει"
+   },
+   {
+    "reference": "1CO 8:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ερισσεύομεν, οὔτε ἐὰν μὴ φάγωμεν, ὑστερούμεθα .",
+    "independent_context": "ερισσεύομεν, οὔτε ἐὰν μὴ φάγωμεν, ὑστερούμεθα."
+   },
+   {
+    "reference": "1CO 9:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μὴ ἀπολογία τοῖς ἐμὲ ἀνακρίνουσίν ⸂ἐστιν αὕτη .",
+    "independent_context": "μὴ ἀπολογία τοῖς ἐμὲ ἀνακρίνουσίν ⸂ἐστιν αὕτη."
+   },
+   {
+    "reference": "1CO 9:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ροτριᾶν, καὶ ὁ ἀλοῶν ⸂ἐπʼ ἐλπίδι τοῦ μετέχειν .",
+    "independent_context": "ροτριᾶν, καὶ ὁ ἀλοῶν ⸂ἐπʼ ἐλπίδι τοῦ μετέχειν."
+   },
+   {
+    "reference": "1CO 9:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ἀποθανεῖν ἤ— τὸ καύχημά μου ⸂οὐδεὶς κενώσει .",
+    "independent_context": "ν ἀποθανεῖν ἤ— τὸ καύχημά μου ⸂οὐδεὶς κενώσει."
+   },
+   {
+    "reference": "1CO 9:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "πὸ νόμον ὡς ὑπὸ νόμον, ⸂μὴ ὢν αὐτὸς ὑπὸ νόμον , ἵνα τοὺς ὑπὸ νόμον κερδήσω·",
+    "independent_context": "πὸ νόμον ὡς ὑπὸ νόμον, ⸂μὴ ὢν αὐτὸς ὑπὸ νόμον, ἵνα τοὺς ὑπὸ νόμον κερδήσω·"
+   },
+   {
+    "reference": "1CO 10:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ πάντες τὸ αὐτὸ ⸂πνευματικὸν ἔπιον πόμα , ἔπινον γὰρ ἐκ πνευματικῆς ἀκολουθούσης πέτ",
+    "independent_context": "καὶ πάντες τὸ αὐτὸ ⸂πνευματικὸν ἔπιον πόμα, ἔπινον γὰρ ἐκ πνευματικῆς ἀκολουθούσης πέτρ"
+   },
+   {
+    "reference": "1CO 10:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὅτι ἃ ⸀θύουσιν δαιμονίοις ⸂καὶ οὐ θεῷ θύουσιν , οὐ θέλω δὲ ὑμᾶς κοινωνοὺς τῶν δαιμονίων γί",
+    "independent_context": "ὅτι ἃ ⸀θύουσιν δαιμονίοις ⸂καὶ οὐ θεῷ θύουσιν, οὐ θέλω δὲ ὑμᾶς κοινωνοὺς τῶν δαιμονίων γίν"
+   },
+   {
+    "reference": "1CO 12:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "περ γὰρ τὸ σῶμα ἕν ἐστιν καὶ μέλη ⸂πολλὰ ἔχει , πάντα δὲ τὰ μέλη τοῦ ⸀σώματος πολλὰ ὄντα ἕ",
+    "independent_context": "περ γὰρ τὸ σῶμα ἕν ἐστιν καὶ μέλη ⸂πολλὰ ἔχει, πάντα δὲ τὰ μέλη τοῦ ⸀σώματος πολλὰ ὄντα ἕν"
+   },
+   {
+    "reference": "1CO 14:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ὅλη ἐπὶ τὸ αὐτὸ καὶ πάντες ⸂λαλῶσιν γλώσσαις , εἰσέλθωσιν δὲ ἰδιῶται ἢ ἄπιστοι, οὐκ ἐροῦσ",
+    "independent_context": " ὅλη ἐπὶ τὸ αὐτὸ καὶ πάντες ⸂λαλῶσιν γλώσσαις, εἰσέλθωσιν δὲ ἰδιῶται ἢ ἄπιστοι, οὐκ ἐροῦσι"
+   },
+   {
+    "reference": "1CO 14:35",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αἰσχρὸν γάρ ἐστιν γυναικὶ ⸂λαλεῖν ἐν ἐκκλησίᾳ .",
+    "independent_context": "αἰσχρὸν γάρ ἐστιν γυναικὶ ⸂λαλεῖν ἐν ἐκκλησίᾳ."
+   },
+   {
+    "reference": "1CO 15:39",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ων, ἄλλη δὲ σὰρξ κτηνῶν, ἄλλη δὲ ⸂σὰρξ πτηνῶν , ἄλλη δὲ ⸀ἰχθύων",
+    "independent_context": "ων, ἄλλη δὲ σὰρξ κτηνῶν, ἄλλη δὲ ⸂σὰρξ πτηνῶν, ἄλλη δὲ ⸀ἰχθύων"
+   },
+   {
+    "reference": "1CO 16:22",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " οὐ φιλεῖ τὸν ⸀κύριον ἤτω ἀνάθεμα. ⸂Μαράνα θά .",
+    "independent_context": " οὐ φιλεῖ τὸν ⸀κύριον ἤτω ἀνάθεμα. ⸂Μαράνα θά."
+   },
+   {
+    "reference": "2CO 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", ὅτι καθʼ ὑπερβολὴν ⸂ὑπὲρ δύναμιν ἐβαρήθημεν , ὥστε ἐξαπορηθῆναι ἡμᾶς καὶ τοῦ ζῆν·",
+    "independent_context": ", ὅτι καθʼ ὑπερβολὴν ⸂ὑπὲρ δύναμιν ἐβαρήθημεν, ὥστε ἐξαπορηθῆναι ἡμᾶς καὶ τοῦ ζῆν·"
+   },
+   {
+    "reference": "2CO 1:15",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ποιθήσει ἐβουλόμην ⸂πρότερον πρὸς ὑμᾶς ἐλθεῖν , ἵνα δευτέραν ⸀χάριν ⸀σχῆτε",
+    "independent_context": "ποιθήσει ἐβουλόμην ⸂πρότερον πρὸς ὑμᾶς ἐλθεῖν, ἵνα δευτέραν ⸀χάριν ⸀σχῆτε"
+   },
+   {
+    "reference": "2CO 10:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὅτι Αἱ ⸂ἐπιστολαὶ μέν , φησίν, βαρεῖαι καὶ ἰσχυραί, ἡ δὲ παρουσία ",
+    "independent_context": "ὅτι Αἱ ⸂ἐπιστολαὶ μέν, φησίν, βαρεῖαι καὶ ἰσχυραί, ἡ δὲ παρουσία τ"
+   },
+   {
+    "reference": "2CO 11:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὃ λαλῶ οὐ ⸂κατὰ κύριον λαλῶ , ἀλλʼ ὡς ἐν ἀφροσύνῃ, ἐν ταύτῃ τῇ ὑποστάσει",
+    "independent_context": "ὃ λαλῶ οὐ ⸂κατὰ κύριον λαλῶ, ἀλλʼ ὡς ἐν ἀφροσύνῃ, ἐν ταύτῃ τῇ ὑποστάσει "
+   },
+   {
+    "reference": "2CO 11:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λακαῖς περισσοτέρως, ἐν πληγαῖς ὑπερβαλλόντως , ἐν θανάτοις πολλάκις·",
+    "independent_context": "λακαῖς περισσοτέρως, ἐν πληγαῖς ὑπερβαλλόντως, ἐν θανάτοις πολλάκις·"
+   },
+   {
+    "reference": "2CO 12:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Καυχᾶσθαι ⸀δεῖ οὐ ⸂συμφέρον μέν , ἐλεύσομαι ⸀δὲ εἰς ὀπτασίας καὶ ἀποκαλύψεις",
+    "independent_context": "Καυχᾶσθαι ⸀δεῖ οὐ ⸂συμφέρον μέν, ἐλεύσομαι ⸀δὲ εἰς ὀπτασίας καὶ ἀποκαλύψεις "
+   },
+   {
+    "reference": "2CO 12:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ⸀Σατανᾶ ἵνα με κολαφίζῃ, ⸂ἵνα μὴ ὑπεραίρωμαι .",
+    "independent_context": " ⸀Σατανᾶ ἵνα με κολαφίζῃ, ⸂ἵνα μὴ ὑπεραίρωμαι."
+   },
+   {
+    "reference": "2CO 13:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μαι κατὰ τὴν ἐξουσίαν ἣν ⸂ὁ κύριος ἔδωκέν μοι , εἰς οἰκοδομὴν καὶ οὐκ εἰς καθαίρεσιν.",
+    "independent_context": "μαι κατὰ τὴν ἐξουσίαν ἣν ⸂ὁ κύριος ἔδωκέν μοι, εἰς οἰκοδομὴν καὶ οὐκ εἰς καθαίρεσιν."
+   },
+   {
+    "reference": "GAL 2:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δαῖος ὑπάρχων ἐθνικῶς ⸂καὶ ⸀οὐκ Ἰουδαϊκῶς ζῇς , ⸀πῶς τὰ ἔθνη ἀναγκάζεις Ἰουδαΐζειν;",
+    "independent_context": "δαῖος ὑπάρχων ἐθνικῶς ⸂καὶ ⸀οὐκ Ἰουδαϊκῶς ζῇς, ⸀πῶς τὰ ἔθνη ἀναγκάζεις Ἰουδαΐζειν;"
+   },
+   {
+    "reference": "GAL 2:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἔργων νόμου ἐὰν μὴ διὰ πίστεως ⸂Ἰησοῦ Χριστοῦ , καὶ ἡμεῖς εἰς Χριστὸν Ἰησοῦν ἐπιστεύσαμεν,",
+    "independent_context": "ἔργων νόμου ἐὰν μὴ διὰ πίστεως ⸂Ἰησοῦ Χριστοῦ, καὶ ἡμεῖς εἰς Χριστὸν Ἰησοῦν ἐπιστεύσαμεν, "
+   },
+   {
+    "reference": "GAL 3:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἡ εὐλογία τοῦ Ἀβραὰμ γένηται ἐν ⸂Χριστῷ Ἰησοῦ , ἵνα τὴν ἐπαγγελίαν τοῦ πνεύματος λάβωμεν δ",
+    "independent_context": "ἡ εὐλογία τοῦ Ἀβραὰμ γένηται ἐν ⸂Χριστῷ Ἰησοῦ, ἵνα τὴν ἐπαγγελίαν τοῦ πνεύματος λάβωμεν δι"
+   },
+   {
+    "reference": "GAL 4:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "λὰ υἱός· εἰ δὲ υἱός, καὶ κληρονόμος ⸂διὰ θεοῦ .",
+    "independent_context": "λὰ υἱός· εἰ δὲ υἱός, καὶ κληρονόμος ⸂διὰ θεοῦ."
+   },
+   {
+    "reference": "GAL 5:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὰ τῆς σαρκός, ταῦτα ⸀γὰρ ⸂ἀλλήλοις ἀντίκειται , ἵνα μὴ ἃ ⸀ἐὰν θέλητε ταῦτα ποιῆτε.",
+    "independent_context": "ὰ τῆς σαρκός, ταῦτα ⸀γὰρ ⸂ἀλλήλοις ἀντίκειται, ἵνα μὴ ἃ ⸀ἐὰν θέλητε ταῦτα ποιῆτε."
+   },
+   {
+    "reference": "EPH 2:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ητῶν, ὄντος ἀκρογωνιαίου αὐτοῦ ⸂Χριστοῦ Ἰησοῦ ,",
+    "independent_context": "ητῶν, ὄντος ἀκρογωνιαίου αὐτοῦ ⸂Χριστοῦ Ἰησοῦ,"
+   },
+   {
+    "reference": "EPH 3:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ις τί τὸ πλάτος καὶ μῆκος καὶ ⸂ὕψος καὶ βάθος ,",
+    "independent_context": "ις τί τὸ πλάτος καὶ μῆκος καὶ ⸂ὕψος καὶ βάθος,"
+   },
+   {
+    "reference": "EPH 4:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "άτω ἐργαζόμενος ⸂ταῖς ἰδίαις χερσὶν τὸ ἀγαθόν , ἵνα ἔχῃ μεταδιδόναι τῷ χρείαν ἔχοντι.",
+    "independent_context": "άτω ἐργαζόμενος ⸂ταῖς ἰδίαις χερσὶν τὸ ἀγαθόν, ἵνα ἔχῃ μεταδιδόναι τῷ χρείαν ἔχοντι."
+   },
+   {
+    "reference": "EPH 5:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "της καὶ μωρολογία ἢ εὐτραπελία, ⸂ἃ οὐκ ἀνῆκεν , ἀλλὰ μᾶλλον εὐχαριστία.",
+    "independent_context": "της καὶ μωρολογία ἢ εὐτραπελία, ⸂ἃ οὐκ ἀνῆκεν, ἀλλὰ μᾶλλον εὐχαριστία."
+   },
+   {
+    "reference": "PHP 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ποθῶ πάντας ὑμᾶς ἐν σπλάγχνοις ⸂Χριστοῦ Ἰησοῦ .",
+    "independent_context": "ποθῶ πάντας ὑμᾶς ἐν σπλάγχνοις ⸂Χριστοῦ Ἰησοῦ."
+   },
+   {
+    "reference": "PHP 2:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " γὰρ τὰ ἑαυτῶν ζητοῦσιν, οὐ τὰ ⸂Ἰησοῦ Χριστοῦ .",
+    "independent_context": " γὰρ τὰ ἑαυτῶν ζητοῦσιν, οὐ τὰ ⸂Ἰησοῦ Χριστοῦ."
+   },
+   {
+    "reference": "PHP 2:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αραπλήσιον ⸀θανάτῳ ἀλλὰ ὁ θεὸς ⸂ἠλέησεν αὐτόν , οὐκ αὐτὸν δὲ μόνον ἀλλὰ καὶ ἐμέ, ἵνα μὴ λύ",
+    "independent_context": "αραπλήσιον ⸀θανάτῳ ἀλλὰ ὁ θεὸς ⸂ἠλέησεν αὐτόν, οὐκ αὐτὸν δὲ μόνον ἀλλὰ καὶ ἐμέ, ἵνα μὴ λύπ"
+   },
+   {
+    "reference": "PHP 4:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ναὶ ἐρωτῶ καὶ σέ, ⸂γνήσιε σύζυγε , συλλαμβάνου αὐταῖς, αἵτινες ἐν τῷ εὐαγγελί",
+    "independent_context": "ναὶ ἐρωτῶ καὶ σέ, ⸂γνήσιε σύζυγε, συλλαμβάνου αὐταῖς, αἵτινες ἐν τῷ εὐαγγελίῳ"
+   },
+   {
+    "reference": "1TH 4:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τεῖν καὶ ἀρέσκειν θεῷ, ⸂καθὼς καὶ περιπατεῖτε , ἵνα περισσεύητε μᾶλλον.",
+    "independent_context": "τεῖν καὶ ἀρέσκειν θεῷ, ⸂καθὼς καὶ περιπατεῖτε, ἵνα περισσεύητε μᾶλλον."
+   },
+   {
+    "reference": "2TH 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἐν ⸂φλογὶ πυρός , διδόντος ἐκδίκησιν τοῖς μὴ εἰδόσι θεὸν καὶ",
+    "independent_context": "ἐν ⸂φλογὶ πυρός, διδόντος ἐκδίκησιν τοῖς μὴ εἰδόσι θεὸν καὶ "
+   },
+   {
+    "reference": "1TI 3:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ά σοι γράφω, ἐλπίζων ἐλθεῖν πρὸς σὲ ⸂ἐν τάχει ,",
+    "independent_context": "ά σοι γράφω, ἐλπίζων ἐλθεῖν πρὸς σὲ ⸂ἐν τάχει,"
+   },
+   {
+    "reference": "1TI 4:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῖς ἀδελφοῖς καλὸς ἔσῃ διάκονος ⸂Χριστοῦ Ἰησοῦ , ἐντρεφόμενος τοῖς λόγοις τῆς πίστεως καὶ τ",
+    "independent_context": "ῖς ἀδελφοῖς καλὸς ἔσῃ διάκονος ⸂Χριστοῦ Ἰησοῦ, ἐντρεφόμενος τοῖς λόγοις τῆς πίστεως καὶ τῆ"
+   },
+   {
+    "reference": "2TI 1:10",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῆς ἐπιφανείας τοῦ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ , καταργήσαντος μὲν τὸν θάνατον φωτίσαντος δ",
+    "independent_context": "ῆς ἐπιφανείας τοῦ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ, καταργήσαντος μὲν τὸν θάνατον φωτίσαντος δὲ"
+   },
+   {
+    "reference": "2TI 2:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ακοπάθησον ὡς καλὸς στρατιώτης ⸂Χριστοῦ Ἰησοῦ .",
+    "independent_context": "ακοπάθησον ὡς καλὸς στρατιώτης ⸂Χριστοῦ Ἰησοῦ."
+   },
+   {
+    "reference": "2TI 4:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αρτύρομαι ἐνώπιον τοῦ θεοῦ καὶ ⸂Χριστοῦ Ἰησοῦ , τοῦ μέλλοντος κρίνειν ζῶντας καὶ νεκρούς, ",
+    "independent_context": "αρτύρομαι ἐνώπιον τοῦ θεοῦ καὶ ⸂Χριστοῦ Ἰησοῦ, τοῦ μέλλοντος κρίνειν ζῶντας καὶ νεκρούς, ⸀"
+   },
+   {
+    "reference": "TIT 2:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " μεγάλου θεοῦ καὶ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ ,",
+    "independent_context": " μεγάλου θεοῦ καὶ σωτῆρος ἡμῶν ⸂Ἰησοῦ Χριστοῦ,"
+   },
+   {
+    "reference": "HEB 2:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὖν τὰ παιδία κεκοινώνηκεν ⸂αἵματος καὶ σαρκός , καὶ αὐτὸς παραπλησίως μετέσχεν τῶν αὐτῶν, ",
+    "independent_context": "ὖν τὰ παιδία κεκοινώνηκεν ⸂αἵματος καὶ σαρκός, καὶ αὐτὸς παραπλησίως μετέσχεν τῶν αὐτῶν, ἵ"
+   },
+   {
+    "reference": "HEB 3:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μέτοχοι γὰρ ⸂τοῦ Χριστοῦ γεγόναμεν , ἐάνπερ τὴν ἀρχὴν τῆς ὑποστάσεως μέχρι τέλο",
+    "independent_context": "μέτοχοι γὰρ ⸂τοῦ Χριστοῦ γεγόναμεν, ἐάνπερ τὴν ἀρχὴν τῆς ὑποστάσεως μέχρι τέλου"
+   },
+   {
+    "reference": "HEB 7:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οὐ μεταμεληθήσεται, Σὺ ἱερεὺς εἰς τὸν ⸀αἰῶνα) ,",
+    "independent_context": "οὐ μεταμεληθήσεται, Σὺ ἱερεὺς εἰς τὸν ⸀αἰῶνα),"
+   },
+   {
+    "reference": "HEB 9:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ερον καταπέτασμα σκηνὴ ἡ λεγομένη ⸂Ἅγια Ἁγίων ,",
+    "independent_context": "ερον καταπέτασμα σκηνὴ ἡ λεγομένη ⸂Ἅγια Ἁγίων,"
+   },
+   {
+    "reference": "HEB 10:35",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ρησίαν ὑμῶν, ἥτις ἔχει ⸂μεγάλην μισθαποδοσίαν ,",
+    "independent_context": "ρησίαν ὑμῶν, ἥτις ἔχει ⸂μεγάλην μισθαποδοσίαν,"
+   },
+   {
+    "reference": "HEB 11:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " μαρτυροῦντος ἐπὶ τοῖς δώροις αὐτοῦ ⸂τοῦ θεοῦ , καὶ διʼ αὐτῆς ἀποθανὼν ἔτι ⸀λαλεῖ",
+    "independent_context": " μαρτυροῦντος ἐπὶ τοῖς δώροις αὐτοῦ ⸂τοῦ θεοῦ, καὶ διʼ αὐτῆς ἀποθανὼν ἔτι ⸀λαλεῖ"
+   },
+   {
+    "reference": "HEB 12:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "γεγόνασι πάντες, ἄρα νόθοι ⸂καὶ οὐχ υἱοί ἐστε .",
+    "independent_context": "γεγόνασι πάντες, ἄρα νόθοι ⸂καὶ οὐχ υἱοί ἐστε."
+   },
+   {
+    "reference": "HEB 12:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "κλησίᾳ πρωτοτόκων ⸂ἀπογεγραμμένων ἐν οὐρανοῖς , καὶ κριτῇ θεῷ πάντων, καὶ πνεύμασι δικαίων",
+    "independent_context": "κλησίᾳ πρωτοτόκων ⸂ἀπογεγραμμένων ἐν οὐρανοῖς, καὶ κριτῇ θεῷ πάντων, καὶ πνεύμασι δικαίων "
+   },
+   {
+    "reference": "HEB 12:28",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εν εὐαρέστως τῷ θεῷ μετὰ ⸂εὐλαβείας καὶ δέους ,",
+    "independent_context": "εν εὐαρέστως τῷ θεῷ μετὰ ⸂εὐλαβείας καὶ δέους,"
+   },
+   {
+    "reference": "JAS 1:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "γὴ γὰρ ἀνδρὸς δικαιοσύνην θεοῦ ⸂οὐκ ἐργάζεται .",
+    "independent_context": "γὴ γὰρ ἀνδρὸς δικαιοσύνην θεοῦ ⸂οὐκ ἐργάζεται."
+   },
+   {
+    "reference": "JAS 2:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οὕτως καὶ ἡ πίστις, ἐὰν μὴ ⸂ἔχῃ ἔργα , νεκρά ἐστιν καθʼ ἑαυτήν.",
+    "independent_context": "οὕτως καὶ ἡ πίστις, ἐὰν μὴ ⸂ἔχῃ ἔργα, νεκρά ἐστιν καθʼ ἑαυτήν."
+   },
+   {
+    "reference": "JAS 3:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἡ γλῶσσα μικρὸν μέλος ἐστὶν καὶ ⸂μεγάλα αὐχεῖ . Ἰδοὺ ⸀ἡλίκον πῦρ ἡλίκην ὕλην ἀνάπτει·",
+    "independent_context": "ἡ γλῶσσα μικρὸν μέλος ἐστὶν καὶ ⸂μεγάλα αὐχεῖ. Ἰδοὺ ⸀ἡλίκον πῦρ ἡλίκην ὕλην ἀνάπτει·"
+   },
+   {
+    "reference": "JAS 4:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "εἷς ⸀ἐστιν νομοθέτης ⸂καὶ κριτής , ὁ δυνάμενος σῶσαι καὶ ἀπολέσαι· σὺ δὲ τίς ",
+    "independent_context": "εἷς ⸀ἐστιν νομοθέτης ⸂καὶ κριτής, ὁ δυνάμενος σῶσαι καὶ ἀπολέσαι· σὺ δὲ τίς ε"
+   },
+   {
+    "reference": "1PE 2:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ιποθήσατε, ἵνα ἐν αὐτῷ αὐξηθῆτε ⸂εἰς σωτηρίαν ,",
+    "independent_context": "ιποθήσατε, ἵνα ἐν αὐτῷ αὐξηθῆτε ⸂εἰς σωτηρίαν,"
+   },
+   {
+    "reference": "1PE 2:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ναστροφὴν ὑμῶν ⸂ἐν τοῖς ἔθνεσιν ἔχοντες καλήν , ἵνα, ἐν ᾧ καταλαλοῦσιν ὑμῶν ὡς κακοποιῶν, ",
+    "independent_context": "ναστροφὴν ὑμῶν ⸂ἐν τοῖς ἔθνεσιν ἔχοντες καλήν, ἵνα, ἐν ᾧ καταλαλοῦσιν ὑμῶν ὡς κακοποιῶν, ἐ"
+   },
+   {
+    "reference": "1PE 2:16",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ς κακίας τὴν ἐλευθερίαν, ἀλλʼ ὡς ⸂θεοῦ δοῦλοι .",
+    "independent_context": "ς κακίας τὴν ἐλευθερίαν, ἀλλʼ ὡς ⸂θεοῦ δοῦλοι."
+   },
+   {
+    "reference": "1PE 5:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οῦντες μὴ ἀναγκαστῶς ἀλλὰ ἑκουσίως ⸂κατὰ θεόν , μηδὲ αἰσχροκερδῶς ἀλλὰ προθύμως,",
+    "independent_context": "οῦντες μὴ ἀναγκαστῶς ἀλλὰ ἑκουσίως ⸂κατὰ θεόν, μηδὲ αἰσχροκερδῶς ἀλλὰ προθύμως,"
+   },
+   {
+    "reference": "2PE 1:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "σεως τοῦ καλέσαντος ἡμᾶς ⸂ἰδίᾳ δόξῃ καὶ ἀρετῇ ,",
+    "independent_context": "σεως τοῦ καλέσαντος ἡμᾶς ⸂ἰδίᾳ δόξῃ καὶ ἀρετῇ,"
+   },
+   {
+    "reference": "2PE 1:17",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "δόξης· ⸂Ὁ υἱός μου ὁ ἀγαπητός μου οὗτός ἐστιν , εἰς ὃν ἐγὼ εὐδόκησα—",
+    "independent_context": "δόξης· ⸂Ὁ υἱός μου ὁ ἀγαπητός μου οὗτός ἐστιν, εἰς ὃν ἐγὼ εὐδόκησα—"
+   },
+   {
+    "reference": "2PE 1:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οῦ ἐνεχθεῖσαν σὺν αὐτῷ ὄντες ἐν τῷ ⸂ἁγίῳ ὄρει .",
+    "independent_context": "οῦ ἐνεχθεῖσαν σὺν αὐτῷ ὄντες ἐν τῷ ⸂ἁγίῳ ὄρει."
+   },
+   {
+    "reference": "2PE 1:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " γὰρ θελήματι ἀνθρώπου ἠνέχθη ⸂προφητεία ποτέ , ἀλλὰ ὑπὸ πνεύματος ἁγίου φερόμενοι ἐλάλησα",
+    "independent_context": " γὰρ θελήματι ἀνθρώπου ἠνέχθη ⸂προφητεία ποτέ, ἀλλὰ ὑπὸ πνεύματος ἁγίου φερόμενοι ἐλάλησαν"
+   },
+   {
+    "reference": "2PE 2:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "φημοῦντες, ἐν τῇ φθορᾷ αὐτῶν ⸂καὶ φθαρήσονται ,",
+    "independent_context": "φημοῦντες, ἐν τῇ φθορᾷ αὐτῶν ⸂καὶ φθαρήσονται,"
+   },
+   {
+    "reference": "1JN 1:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οὺς πλανῶμεν καὶ ἡ ἀλήθεια ⸂οὐκ ἔστιν ἐν ἡμῖν .",
+    "independent_context": "οὺς πλανῶμεν καὶ ἡ ἀλήθεια ⸂οὐκ ἔστιν ἐν ἡμῖν."
+   },
+   {
+    "reference": "1JN 2:19",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": ", ἀλλʼ οὐκ ἦσαν ἐξ ἡμῶν· εἰ γὰρ ⸂ἐξ ἡμῶν ἦσαν , μεμενήκεισαν ἂν μεθʼ ἡμῶν· ἀλλʼ ἵνα φανερω",
+    "independent_context": ", ἀλλʼ οὐκ ἦσαν ἐξ ἡμῶν· εἰ γὰρ ⸂ἐξ ἡμῶν ἦσαν, μεμενήκεισαν ἂν μεθʼ ἡμῶν· ἀλλʼ ἵνα φανερωθ"
+   },
+   {
+    "reference": "1JN 2:23",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "χει· ⸂ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει .",
+    "independent_context": "χει· ⸂ὁ ὁμολογῶν τὸν υἱὸν καὶ τὸν πατέρα ἔχει."
+   },
+   {
+    "reference": "1JN 2:27",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " τὸ χρῖσμα ὃ ἐλάβετε ἀπʼ αὐτοῦ ⸂μένει ἐν ὑμῖν , καὶ οὐ χρείαν ἔχετε ἵνα τις διδάσκῃ ὑμᾶς· ",
+    "independent_context": " τὸ χρῖσμα ὃ ἐλάβετε ἀπʼ αὐτοῦ ⸂μένει ἐν ὑμῖν, καὶ οὐ χρείαν ἔχετε ἵνα τις διδάσκῃ ὑμᾶς· ἀ"
+   },
+   {
+    "reference": "1JN 3:1",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ὁ πατὴρ ἵνα τέκνα θεοῦ κληθῶμεν, ⸂καὶ ἐσμέν . διὰ τοῦτο ὁ κόσμος οὐ γινώσκει ⸀ἡμᾶς ὅτι ο",
+    "independent_context": "ν ὁ πατὴρ ἵνα τέκνα θεοῦ κληθῶμεν, ⸂καὶ ἐσμέν. διὰ τοῦτο ὁ κόσμος οὐ γινώσκει ⸀ἡμᾶς ὅτι οὐ"
+   },
+   {
+    "reference": "1JN 3:21",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἀγαπητοί, ἐὰν ἡ καρδία ⸂μὴ καταγινώσκῃ ἡμῶν , παρρησίαν ἔχομεν πρὸς τὸν θεόν,",
+    "independent_context": "ἀγαπητοί, ἐὰν ἡ καρδία ⸂μὴ καταγινώσκῃ ἡμῶν, παρρησίαν ἔχομεν πρὸς τὸν θεόν,"
+   },
+   {
+    "reference": "1JN 4:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἡ ἀγάπη αὐτοῦ ⸂ἐν ἡμῖν τετελειωμένη ἐστιν .",
+    "independent_context": "καὶ ἡ ἀγάπη αὐτοῦ ⸂ἐν ἡμῖν τετελειωμένη ἐστιν."
+   },
+   {
+    "reference": "1JN 5:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αρτυρία, ὅτι ζωὴν αἰώνιον ἔδωκεν ⸂ὁ θεὸς ἡμῖν , καὶ αὕτη ἡ ζωὴ ἐν τῷ υἱῷ αὐτοῦ ἐστιν.",
+    "independent_context": "αρτυρία, ὅτι ζωὴν αἰώνιον ἔδωκεν ⸂ὁ θεὸς ἡμῖν, καὶ αὕτη ἡ ζωὴ ἐν τῷ υἱῷ αὐτοῦ ἐστιν."
+   },
+   {
+    "reference": "1JN 5:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ραψα ⸀ὑμῖν ἵνα εἰδῆτε ὅτι ζωὴν ⸂ἔχετε αἰώνιον , ⸂τοῖς πιστεύουσιν εἰς τὸ ὄνομα τοῦ υἱοῦ το",
+    "independent_context": "ραψα ⸀ὑμῖν ἵνα εἰδῆτε ὅτι ζωὴν ⸂ἔχετε αἰώνιον, ⸂τοῖς πιστεύουσιν εἰς τὸ ὄνομα τοῦ υἱοῦ τοῦ"
+   },
+   {
+    "reference": "2JN 1:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " κατὰ τὰς ἐντολὰς αὐτοῦ· αὕτη ⸂ἡ ἐντολή ἐστιν , καθὼς ἠκούσατε ἀπʼ ἀρχῆς, ἵνα ἐν αὐτῇ περι",
+    "independent_context": " κατὰ τὰς ἐντολὰς αὐτοῦ· αὕτη ⸂ἡ ἐντολή ἐστιν, καθὼς ἠκούσατε ἀπʼ ἀρχῆς, ἵνα ἐν αὐτῇ περιπ"
+   },
+   {
+    "reference": "3JN 1:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Πολλὰ εἶχον ⸂γράψαι σοι , ἀλλʼ οὐ θέλω διὰ μέλανος καὶ καλάμου σοι ⸀",
+    "independent_context": "Πολλὰ εἶχον ⸂γράψαι σοι, ἀλλʼ οὐ θέλω διὰ μέλανος καὶ καλάμου σοι ⸀γ"
+   },
+   {
+    "reference": "3JN 1:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἐλπίζω δὲ εὐθέως ⸂σε ἰδεῖν , καὶ στόμα πρὸς στόμα λαλήσομεν.",
+    "independent_context": "ἐλπίζω δὲ εὐθέως ⸂σε ἰδεῖν, καὶ στόμα πρὸς στόμα λαλήσομεν."
+   },
+   {
+    "reference": "JUD 1:20",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οικοδομοῦντες ἑαυτοὺς τῇ ἁγιωτάτῃ ὑμῶν πίστει , ἐν πνεύματι ἁγίῳ προσευχόμενοι,",
+    "independent_context": "οικοδομοῦντες ἑαυτοὺς τῇ ἁγιωτάτῃ ὑμῶν πίστει, ἐν πνεύματι ἁγίῳ προσευχόμενοι,"
+   },
+   {
+    "reference": "REV 2:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "βάστασας διὰ τὸ ὄνομά μου, καὶ ⸂οὐ κεκοπίακες .",
+    "independent_context": "βάστασας διὰ τὸ ὄνομά μου, καὶ ⸂οὐ κεκοπίακες."
+   },
+   {
+    "reference": "REV 3:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν, καὶ στήρισον τὰ λοιπὰ ἃ ⸂ἔμελλον ἀποθανεῖν , οὐ γὰρ εὕρηκά σου ⸀τὰ ἔργα πεπληρωμένα ἐνώ",
+    "independent_context": "ν, καὶ στήρισον τὰ λοιπὰ ἃ ⸂ἔμελλον ἀποθανεῖν, οὐ γὰρ εὕρηκά σου ⸀τὰ ἔργα πεπληρωμένα ἐνώπ"
+   },
+   {
+    "reference": "REV 4:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "κυκλόθεν τοῦ θρόνου ⸂ὅμοιος ὁράσει σμαραγδίνῳ .",
+    "independent_context": "κυκλόθεν τοῦ θρόνου ⸂ὅμοιος ὁράσει σμαραγδίνῳ."
+   },
+   {
+    "reference": "REV 4:9",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "μὴν καὶ εὐχαριστίαν τῷ καθημένῳ ἐπὶ ⸂τῷ θρόνῳ , τῷ ζῶντι εἰς τοὺς αἰῶνας τῶν αἰώνων,",
+    "independent_context": "μὴν καὶ εὐχαριστίαν τῷ καθημένῳ ἐπὶ ⸂τῷ θρόνῳ, τῷ ζῶντι εἰς τοὺς αἰῶνας τῶν αἰώνων,"
+   },
+   {
+    "reference": "REV 6:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Καὶ ὅτε ἤνοιξεν τὴν ⸂σφραγῖδα τὴν δευτέραν , ἤκουσα τοῦ δευτέρου ζῴου λέγοντος· Ἔρχου.",
+    "independent_context": "Καὶ ὅτε ἤνοιξεν τὴν ⸂σφραγῖδα τὴν δευτέραν, ἤκουσα τοῦ δευτέρου ζῴου λέγοντος· Ἔρχου."
+   },
+   {
+    "reference": "REV 8:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ον αὐτῶν καὶ ⸂ἡ ἡμέρα μὴ φάνῃ τὸ τρίτον αὐτῆς , καὶ ἡ νὺξ ὁμοίως.",
+    "independent_context": "ον αὐτῶν καὶ ⸂ἡ ἡμέρα μὴ φάνῃ τὸ τρίτον αὐτῆς, καὶ ἡ νὺξ ὁμοίως."
+   },
+   {
+    "reference": "REV 9:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ιν ἀποθανεῖν καὶ ⸀φεύγει ⸂ὁ θάνατος ἀπʼ αὐτῶν .",
+    "independent_context": "ιν ἀποθανεῖν καὶ ⸀φεύγει ⸂ὁ θάνατος ἀπʼ αὐτῶν."
+   },
+   {
+    "reference": "REV 9:7",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ὶ τὰς κεφαλὰς αὐτῶν ὡς στέφανοι ⸂ὅμοιοι χρυσῷ , καὶ τὰ πρόσωπα αὐτῶν ὡς πρόσωπα ἀνθρώπων,",
+    "independent_context": "ὶ τὰς κεφαλὰς αὐτῶν ὡς στέφανοι ⸂ὅμοιοι χρυσῷ, καὶ τὰ πρόσωπα αὐτῶν ὡς πρόσωπα ἀνθρώπων,"
+   },
+   {
+    "reference": "REV 11:6",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τοι ἔχουσιν ⸂τὴν ἐξουσίαν κλεῖσαι τὸν οὐρανόν , ἵνα μὴ ὑετὸς βρέχῃ τὰς ἡμέρας τῆς προφητεί",
+    "independent_context": "τοι ἔχουσιν ⸂τὴν ἐξουσίαν κλεῖσαι τὸν οὐρανόν, ἵνα μὴ ὑετὸς βρέχῃ τὰς ἡμέρας τῆς προφητεία"
+   },
+   {
+    "reference": "REV 11:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "υ πνεῦμα ζωῆς ἐκ τοῦ θεοῦ εἰσῆλθεν ⸂ἐν αὐτοῖς , καὶ ἔστησαν ἐπὶ τοὺς πόδας αὐτῶν, καὶ φόβο",
+    "independent_context": "υ πνεῦμα ζωῆς ἐκ τοῦ θεοῦ εἰσῆλθεν ⸂ἐν αὐτοῖς, καὶ ἔστησαν ἐπὶ τοὺς πόδας αὐτῶν, καὶ φόβος"
+   },
+   {
+    "reference": "REV 11:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "τὸ ὄνομά σου, ⸂τοὺς μικροὺς καὶ τοὺς μεγάλους , καὶ διαφθεῖραι τοὺς διαφθείροντας τὴν γῆν.",
+    "independent_context": "τὸ ὄνομά σου, ⸂τοὺς μικροὺς καὶ τοὺς μεγάλους, καὶ διαφθεῖραι τοὺς διαφθείροντας τὴν γῆν."
+   },
+   {
+    "reference": "REV 12:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ν ἐν τῷ οὐρανῷ, καὶ ἰδοὺ δράκων ⸂μέγας πυρρός , ἔχων κεφαλὰς ἑπτὰ καὶ κέρατα δέκα καὶ ἐπὶ ",
+    "independent_context": "ν ἐν τῷ οὐρανῷ, καὶ ἰδοὺ δράκων ⸂μέγας πυρρός, ἔχων κεφαλὰς ἑπτὰ καὶ κέρατα δέκα καὶ ἐπὶ τ"
+   },
+   {
+    "reference": "REV 12:12",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῖς σκηνοῦντες. οὐαὶ ⸂τὴν γῆν καὶ τὴν θάλασσαν , ὅτι κατέβη ὁ διάβολος πρὸς ὑμᾶς, ἔχων θυμὸ",
+    "independent_context": "ῖς σκηνοῦντες. οὐαὶ ⸂τὴν γῆν καὶ τὴν θάλασσαν, ὅτι κατέβη ὁ διάβολος πρὸς ὑμᾶς, ἔχων θυμὸν"
+   },
+   {
+    "reference": "REV 13:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": " ⸂ὃς ἔχει τὴν πληγὴν ⸂τῆς μαχαίρης καὶ ἔζησεν .",
+    "independent_context": " ⸂ὃς ἔχει τὴν πληγὴν ⸂τῆς μαχαίρης καὶ ἔζησεν."
+   },
+   {
+    "reference": "REV 13:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "· καὶ ὁ ἀριθμὸς ⸀αὐτοῦ ⸂ἑξακόσιοι ἑξήκοντα ἕξ .",
+    "independent_context": "· καὶ ὁ ἀριθμὸς ⸀αὐτοῦ ⸂ἑξακόσιοι ἑξήκοντα ἕξ."
+   },
+   {
+    "reference": "REV 16:8",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ἐδόθη αὐτῷ καυματίσαι ⸂τοὺς ἀνθρώπους ἐν πυρί .",
+    "independent_context": "ἐδόθη αὐτῷ καυματίσαι ⸂τοὺς ἀνθρώπους ἐν πυρί."
+   },
+   {
+    "reference": "REV 16:18",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἐγένοντο ἀστραπαὶ καὶ ⸂φωναὶ καὶ βρονταί , καὶ σεισμὸς ⸀ἐγένετο μέγας, οἷος οὐκ ἐγένε",
+    "independent_context": "καὶ ἐγένοντο ἀστραπαὶ καὶ ⸂φωναὶ καὶ βρονταί, καὶ σεισμὸς ⸀ἐγένετο μέγας, οἷος οὐκ ἐγένετ"
+   },
+   {
+    "reference": "REV 17:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "οὗτοι μίαν ⸂γνώμην ἔχουσιν , καὶ τὴν δύναμιν ⸀καὶ ἐξουσίαν αὐτῶν τῷ θηρ",
+    "independent_context": "οὗτοι μίαν ⸂γνώμην ἔχουσιν, καὶ τὴν δύναμιν ⸀καὶ ἐξουσίαν αὐτῶν τῷ θηρί"
+   },
+   {
+    "reference": "REV 18:4",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νοῦ λέγουσαν· ⸀Ἐξέλθατε ⸂ὁ λαός μου, ἐξ αὐτῆς , ἵνα μὴ συγκοινωνήσητε ταῖς ἁμαρτίαις αὐτῆς",
+    "independent_context": "νοῦ λέγουσαν· ⸀Ἐξέλθατε ⸂ὁ λαός μου, ἐξ αὐτῆς, ἵνα μὴ συγκοινωνήσητε ταῖς ἁμαρτίαις αὐτῆς,"
+   },
+   {
+    "reference": "REV 18:13",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αὶ σεμίδαλιν καὶ σῖτον καὶ ⸂κτήνη καὶ πρόβατα , καὶ ἵππων καὶ ῥεδῶν καὶ σωμάτων, καὶ ψυχὰς",
+    "independent_context": "αὶ σεμίδαλιν καὶ σῖτον καὶ ⸂κτήνη καὶ πρόβατα, καὶ ἵππων καὶ ῥεδῶν καὶ σωμάτων, καὶ ψυχὰς "
+   },
+   {
+    "reference": "REV 18:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ο ἀπὸ σοῦ, καὶ ⸀οὐκέτι ⸂οὐ μὴ αὐτὰ εὑρήσουσιν .",
+    "independent_context": "ο ἀπὸ σοῦ, καὶ ⸀οὐκέτι ⸂οὐ μὴ αὐτὰ εὑρήσουσιν."
+   },
+   {
+    "reference": "REV 20:2",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "καὶ ἐκράτησεν τὸν δράκοντα, ⸂ὁ ὄφις ὁ ἀρχαῖος , ὅς ἐστιν Διάβολος καὶ ὁ ⸀Σατανᾶς καὶ ἔδησε",
+    "independent_context": "καὶ ἐκράτησεν τὸν δράκοντα, ⸂ὁ ὄφις ὁ ἀρχαῖος, ὅς ἐστιν Διάβολος καὶ ὁ ⸀Σατανᾶς καὶ ἔδησεν"
+   },
+   {
+    "reference": "REV 20:11",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "νον μέγαν λευκὸν καὶ τὸν καθήμενον ⸂ἐπʼ αὐτοῦ , οὗ ἀπὸ ⸀τοῦ προσώπου ἔφυγεν ἡ γῆ καὶ ὁ οὐρ",
+    "independent_context": "νον μέγαν λευκὸν καὶ τὸν καθήμενον ⸂ἐπʼ αὐτοῦ, οὗ ἀπὸ ⸀τοῦ προσώπου ἔφυγεν ἡ γῆ καὶ ὁ οὐρα"
+   },
+   {
+    "reference": "REV 21:3",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "ῦ ἔσονται, καὶ αὐτὸς ὁ θεὸς ⸂μετʼ αὐτῶν ἔσται ,",
+    "independent_context": "ῦ ἔσονται, καὶ αὐτὸς ὁ θεὸς ⸂μετʼ αὐτῶν ἔσται,"
+   },
+   {
+    "reference": "REV 21:5",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "αθήμενος ἐπὶ τῷ θρόνῳ· Ἰδοὺ ⸂καινὰ ποιῶ πάντα . καὶ ⸀λέγει Γράψον, ὅτι οὗτοι οἱ λόγοι ⸂πισ",
+    "independent_context": "αθήμενος ἐπὶ τῷ θρόνῳ· Ἰδοὺ ⸂καινὰ ποιῶ πάντα. καὶ ⸀λέγει Γράψον, ὅτι οὗτοι οἱ λόγοι ⸂πιστ"
+   },
+   {
+    "reference": "REV 22:14",
+    "kind_under_E2": "punctuation_spacing",
+    "app_reader_context": "Μακάριοι οἱ ⸂πλύνοντες τὰς στολὰς αὐτῶν , ἵνα ἔσται ἡ ἐξουσία αὐτῶν ἐπὶ τὸ ξύλον τῆς",
+    "independent_context": "Μακάριοι οἱ ⸂πλύνοντες τὰς στολὰς αὐτῶν, ἵνα ἔσται ἡ ἐξουσία αὐτῶν ἐπὶ τὸ ξύλον τῆς "
+   }
+  ]
+ }
+}

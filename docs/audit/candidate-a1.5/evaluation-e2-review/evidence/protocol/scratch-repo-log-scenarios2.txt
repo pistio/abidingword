@@ -1,0 +1,16 @@
+b3fa3e527a63124de163e1c78c0c73b97b2b0375 run record: eval/q-fake-hideabsent/seal (seal abce3da8dee44bd84177bd8aa310562ed4a46d1d)
+abce3da8dee44bd84177bd8aa310562ed4a46d1d seal q-fake-hideabsent
+d2c674cd574804aec01956c794a7c495c9c4eafa run record: eval/q-fake-drop0/seal (seal 0022e0806913debdaf5dd94f7cbff54b4f75acd7)
+0022e0806913debdaf5dd94f7cbff54b4f75acd7 seal q-fake-drop0
+a2aaa49ab358c1b3b28fc915fa5ab3ebb3b0c45f run record: eval/q-fake-edition/seal (seal 264f0ba2042041a44ad018398074cf0d8e44b9a7)
+264f0ba2042041a44ad018398074cf0d8e44b9a7 seal q-fake-edition
+caf7c1b34451e21c1c401be3b544c213e8a92773 run record: eval/q-fake-omit/seal (seal e99686ff812ff642ca89073b53cb564cc50ceb1e)
+e99686ff812ff642ca89073b53cb564cc50ceb1e seal q-fake-omit
+5a768d3588597ac907231287a5bc4aa3e9b649e7 run record: eval/q-real-error/seal (seal d9289365a6b290b0b4937137396d0122d6c18a99)
+d9289365a6b290b0b4937137396d0122d6c18a99 seal q-real-error
+c1f8fa8e32d2fa66f507cc3ff3dac34d969ab821 run record: eval/q-emptyref/seal (seal a4643ebd0c82e3b91310556db7cf7ad8cbc2705c)
+a4643ebd0c82e3b91310556db7cf7ad8cbc2705c seal q-emptyref
+3bb35ddd4682dc60bf98ad9e94c40fab61252cb7 run record: eval/q-vacuous/seal (seal 4207ec8a124d97e65b6d4832efa22fc5b9a70ed7)
+4207ec8a124d97e65b6d4832efa22fc5b9a70ed7 seal q-vacuous
+d271acb2bd9081e254c3a7b61314310111542c30 REVIEW: simulated protocol revision with a required composition
+a8bcd9005c94b9bed67f138507a312a7d959991d E2 tools, byte-identical to the reviewed commit

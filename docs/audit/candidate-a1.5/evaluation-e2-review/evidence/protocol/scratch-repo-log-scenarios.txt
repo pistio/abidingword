@@ -1,0 +1,23 @@
+741d9c33ff6e29dc6c4a1746ed4f5e4995e0f6e6 REVIEW: scorer restored
+18c6f00975a07498308c85a1102aa321dea49a1f REVIEW: a modified scorer, committed
+0bd103d7eceddc69cfcb31c0a323905cdb792402 seal r-emptyzip
+dc47eef20ed02424d46a5e4dbb9a6075a3ebaff2 seal r-map2
+a53d36f0488a61f4e44f424e0c90c7a844f638a3 REVIEW: change the p2-clean run record after the run
+4e292f3e8adf1731bb1c6eeaa083bdd4786ba6b3 hand-made run record
+ec14e9d28e4234aa255ec8c7fd8e84829fede606 seal p2-handmade
+6f2d6f751e5c2e4bda1834f18657c1a7db9e06ba run record: eval/p2-otherbin/seal (seal 6298b4512850432309bcd7746909d0ac5f1e54d9)
+6298b4512850432309bcd7746909d0ac5f1e54d9 seal p2-otherbin
+2254ebf579f8ac40a8b2697ddbfca06e19d9c601 run record: eval/p2-name/seal (seal 26bf5ec8d4a1cc014687543dab72021922faa4f8)
+26bf5ec8d4a1cc014687543dab72021922faa4f8 seal p2-name
+091e1359b177d2fa5d41fb4f68bb0d1168448eec run record: eval/p2-shared/seal (seal 7d8797039c54aee60d0825d744438d26b9d5c68c)
+7d8797039c54aee60d0825d744438d26b9d5c68c seal p2-shared
+74b7a901209ee07880cb8c5c31cd21499b4e12eb run record: eval/p2-unsup/seal (seal feca43e5a1210870d172ff88b4bdeccf17dcedd4)
+feca43e5a1210870d172ff88b4bdeccf17dcedd4 seal p2-unsup
+74e4ccea5194bc2b41499ad01d9721232c350c15 run record: eval/p2-extra/seal (seal cd06766f64c7ff7309e43d2a39f1352ee3c84f25)
+cd06766f64c7ff7309e43d2a39f1352ee3c84f25 seal p2-extra
+d55466701bce70541e4978d40b3e93482d9bccbd run record: eval/p2-clean/seal (seal 3f424d52bd517d8f66851e26e362b208d8e30cd5)
+3f424d52bd517d8f66851e26e362b208d8e30cd5 seal p2-clean
+623cde37dc0ade69152938672fdbcdb2b28a3b08 REVIEW: simulated protocol revision with a required composition
+bc4570538d822bc9947b0b721766c602e8df4fa4 run record: eval/p1-clean/seal (seal 66a4becd188c1ff6d149cf263e6b6d9140572743)
+66a4becd188c1ff6d149cf263e6b6d9140572743 seal p1-clean
+3f5cc7b994912a745a26bb2e280a1f222c709126 E2 tools, byte-identical to the reviewed commit

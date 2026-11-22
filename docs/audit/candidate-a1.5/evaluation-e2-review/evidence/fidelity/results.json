@@ -1,0 +1,2387 @@
+[
+ {
+  "id": "EN01",
+  "what": "identical",
+  "expect": "faithful",
+  "python": [
+   "exact",
+   null
+  ],
+  "rust": [
+   "exact",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN02",
+  "what": "words joined: 'watch men'->'watchmen' reversed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN03",
+  "what": "words split",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN04",
+  "what": "case of one letter",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "case"
+  ],
+  "rust": [
+   "mismatch",
+   "case"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN05",
+  "what": "divine-name small caps vs title case",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "case"
+  ],
+  "rust": [
+   "mismatch",
+   "case"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN06",
+  "what": "possessive apostrophe dropped",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN07",
+  "what": "straight vs curly apostrophe",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN08",
+  "what": "comma moved",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN09",
+  "what": "full stop to question mark",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN10",
+  "what": "em dash vs en dash",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN11",
+  "what": "hyphen removed (word boundary)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN12",
+  "what": "double space",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN13",
+  "what": "NBSP for space",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN14",
+  "what": "tab and newline inside",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN15",
+  "what": "trailing and leading white space incl. U+3000",
+  "expect": "faithful",
+  "python": [
+   "exact",
+   null
+  ],
+  "rust": [
+   "exact",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN16",
+  "what": "inserted negation",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN17",
+  "what": "digit for number word",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN18",
+  "what": "one letter changed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN19",
+  "what": "note sign appended",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "sign"
+  ],
+  "rust": [
+   "mismatch",
+   "sign"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN20",
+  "what": "pilcrow prefix",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "sign"
+  ],
+  "rust": [
+   "mismatch",
+   "sign"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN21",
+  "what": "editorial brackets dropped",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN22",
+  "what": "verse number leaked at start",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "extra"
+  ],
+  "rust": [
+   "mismatch",
+   "extra"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN23",
+  "what": "next verse's opening leaked at end",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "extra"
+  ],
+  "rust": [
+   "mismatch",
+   "extra"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN24",
+  "what": "last clause missing",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "missing"
+  ],
+  "rust": [
+   "mismatch",
+   "missing"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN25",
+  "what": "citation appended",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "extra"
+  ],
+  "rust": [
+   "mismatch",
+   "extra"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN26",
+  "what": "footnote caller letter appended",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN27",
+  "what": "footnote caller plain letter",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN28",
+  "what": "U+2028 line separator inside",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN29",
+  "what": "U+0085 NEL inside",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN30",
+  "what": "dotless i",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN31",
+  "what": "Cyrillic homoglyph a",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "EN32",
+  "what": "Greek omicron homoglyph",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE01",
+  "what": "composed vs decomposed umlaut and eszett text",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE02",
+  "what": "umlaut lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE03",
+  "what": "umlaut as ue",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE04",
+  "what": "ß to ss",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE05",
+  "what": "capital sharp s",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE06",
+  "what": "noun capitalisation",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "case"
+  ],
+  "rust": [
+   "mismatch",
+   "case"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE07",
+  "what": "German quotes vs English quotes",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE08",
+  "what": "colon spacing removed (French-style)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation_spacing"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation_spacing"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "DE09",
+  "what": "combining diaeresis on wrong base",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES01",
+  "what": "identical NFD",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES02",
+  "what": "él -> el (composed)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES03",
+  "what": "él -> el, reference decomposed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES04",
+  "what": "ñ -> n",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES05",
+  "what": "inverted question mark dropped",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES06",
+  "what": "acute -> grave",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES07",
+  "what": "words merged 'que él irá' -> 'que élirá'",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES08",
+  "what": "ñ as n + U+0303 (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "ES09",
+  "what": "ñ as n + spacing tilde U+02DC",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO01",
+  "what": "Hangul syllables vs conjoining jamo (NFD)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO02",
+  "what": "compatibility jamo spelling",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO03",
+  "what": "word spacing removed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO04",
+  "what": "word spacing added",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO05",
+  "what": "one syllable changed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO06",
+  "what": "final consonant (batchim) changed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO07",
+  "what": "Hangul to Hanja",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO08",
+  "what": "CJK compatibility ideograph U+F914 vs U+6A02 (canonical singleton)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO09",
+  "what": "half-width Hangul (compatibility)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO10",
+  "what": "jamo mixing composed+decomposed per syllable",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO11",
+  "what": "old Hangul arae-a jamo sequence vs composed modern",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO12",
+  "what": "old Hangul arae-a vs modern a",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "KO13",
+  "what": "middle dot U+00B7 vs U+318D arae-a compat",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "missing"
+  ],
+  "rust": [
+   "mismatch",
+   "missing"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR01",
+  "what": "identical NFD",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR02",
+  "what": "smooth -> rough breathing (composed)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR03",
+  "what": "smooth -> rough breathing, reference NFD",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR04",
+  "what": "iota subscript lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR05",
+  "what": "iota adscript for subscript",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR06",
+  "what": "oxia U+1F79 vs tonos U+03CC (canonical singleton)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR07",
+  "what": "ano teleia U+0387 vs middle dot U+00B7 (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR08",
+  "what": "Greek question mark U+037E vs semicolon (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR09",
+  "what": "final sigma -> medial sigma",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR10",
+  "what": "grave -> acute",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR11",
+  "what": "diaeresis lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR12",
+  "what": "mark order breathing/accent swapped (decomposed)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR13",
+  "what": "koronis U+1FBD vs apostrophe",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR14",
+  "what": "ypogegrammeni spacing U+037A vs combining U+0345",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR15",
+  "what": "capitalised article",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "case"
+  ],
+  "rust": [
+   "mismatch",
+   "case"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR16",
+  "what": "accents stripped entirely",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR17",
+  "what": "combining tone marks U+0340/U+0341 vs U+0300/U+0301 (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR18",
+  "what": "dialytika-tonos U+0344 vs U+0308 U+0301 (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "GR19",
+  "what": "Greek beta symbol U+03D0 (compatibility)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE01",
+  "what": "identical NFD",
+  "expect": "faithful",
+  "python": [
+   "exact",
+   null
+  ],
+  "rust": [
+   "exact",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE02",
+  "what": "dagesh/vowel order permuted (canonical reorder)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE03",
+  "what": "pointed vs unpointed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE04",
+  "what": "shin dot -> sin dot",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE05",
+  "what": "cantillation lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE06",
+  "what": "cantillation changed",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE07",
+  "what": "maqaf vs hyphen",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE08",
+  "what": "sof pasuq vs colon",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE09",
+  "what": "final kaf vs kaf",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE10",
+  "what": "holam haser for vav U+05BA vs holam U+05B9",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE11",
+  "what": "meteg lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE12",
+  "what": "RLM inserted",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE13",
+  "what": "presentation form shin+shin dot U+FB2A (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE14",
+  "what": "presentation form yod+hiriq U+FB1D (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE15",
+  "what": "wide alef U+FB21 (compatibility)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE16",
+  "what": "paseq vs vertical bar",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE17",
+  "what": "qamats -> patah (one vowel)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "HE18",
+  "what": "unpointed identical, NBSP spacing",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR01",
+  "what": "identical NFD",
+  "expect": "faithful",
+  "python": [
+   "exact",
+   null
+  ],
+  "rust": [
+   "exact",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR02",
+  "what": "harakat lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR03",
+  "what": "shadda/fatha order permuted (canonical reorder)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR04",
+  "what": "presentation forms (compatibility)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR05",
+  "what": "tatweel inserted",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR06",
+  "what": "alef wasla vs plain alef",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR07",
+  "what": "alef-hamza composed vs alef + U+0654 (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR08",
+  "what": "Persian kaf vs Arabic kaf",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR09",
+  "what": "ZWNJ removed (Persian)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR10",
+  "what": "Arabic comma vs comma",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR11",
+  "what": "Arabic-Indic digit vs ASCII digit",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR12",
+  "what": "superscript alef lost",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR13",
+  "what": "madda composed vs decomposed (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "AR14",
+  "what": "Farsi yeh vs Arabic yeh",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN01",
+  "what": "fi ligature",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN02",
+  "what": "ff ligature",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN03",
+  "what": "full-width letters",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN04",
+  "what": "superscript two",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN05",
+  "what": "Roman numeral sign",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN06",
+  "what": "Kelvin sign (canonical singleton)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN07",
+  "what": "Ohm sign (canonical singleton)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN08",
+  "what": "Angstrom sign (canonical singleton)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN09",
+  "what": "micro sign (compatibility)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN10",
+  "what": "soft hyphen inside word",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN11",
+  "what": "ZWSP between words replacing space",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN12",
+  "what": "ZWSP added inside word",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN13",
+  "what": "ZWJ inside",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN14",
+  "what": "word joiner U+2060",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN15",
+  "what": "BOM at start",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN16",
+  "what": "BOM inside",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN17",
+  "what": "combining grapheme joiner",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN18",
+  "what": "variation selector",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN19",
+  "what": "Mongolian vowel separator (not White_Space)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "rust": [
+   "mismatch",
+   "word_boundary"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN20",
+  "what": "replacement character",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN21",
+  "what": "private-use character",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN22",
+  "what": "DZ digraph compatibility",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "compatibility"
+  ],
+  "rust": [
+   "mismatch",
+   "compatibility"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN23",
+  "what": "en quad U+2000 vs en space U+2002 inside (both White_Space)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN24",
+  "what": "narrow NBSP before colon vs none",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation_spacing"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation_spacing"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN25",
+  "what": "narrow NBSP before colon vs space",
+  "expect": "faithful",
+  "python": [
+   "layout",
+   null
+  ],
+  "rust": [
+   "layout",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN26",
+  "what": "LRM/RLM in Latin text",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "format_characters"
+  ],
+  "rust": [
+   "mismatch",
+   "format_characters"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN27",
+  "what": "ideographic full stop vs full stop",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN28",
+  "what": "combining acute on space vs spacing acute",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN29",
+  "what": "many stacked marks reordered with distinct classes (canonical)",
+  "expect": "faithful",
+  "python": [
+   "canonical",
+   null
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN30",
+  "what": "stacked marks same class reordered (not canonical)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "marks"
+  ],
+  "rust": [
+   "mismatch",
+   "marks"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN31",
+  "what": "Unicode 16 Kirat Rai composition (16D67 16D67 vs 16D68)",
+  "expect": "faithful",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": false,
+  "as_expected": false
+ },
+ {
+  "id": "UN32",
+  "what": "Unicode 16 Tulu-Tigalari composition (11382 113C9 vs 11383)",
+  "expect": "faithful",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "canonical",
+   null
+  ],
+  "agree": false,
+  "as_expected": false
+ },
+ {
+  "id": "UN33",
+  "what": "empty found against text",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "missing"
+  ],
+  "rust": [
+   "mismatch",
+   "missing"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN34",
+  "what": "only white space found",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "missing"
+  ],
+  "rust": [
+   "mismatch",
+   "missing"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN35",
+  "what": "edition empty, found has text",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN36",
+  "what": "edition only white space vs found empty",
+  "expect": "faithful",
+  "python": [
+   "exact",
+   null
+  ],
+  "rust": [
+   "exact",
+   null
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN37",
+  "what": "tilde (USFM no-break marker) left literal",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "UN38",
+  "what": "USFM optional break // left literal",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB01",
+  "what": "the whole next verse appended",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "extra"
+  ],
+  "rust": [
+   "mismatch",
+   "extra"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB02",
+  "what": "another verse's text (wrong reference)",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "wrong_reference"
+  ],
+  "rust": [
+   "mismatch",
+   "wrong_reference"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB03",
+  "what": "verse number inside text",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB04",
+  "what": "chapter:verse citation inside",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "changed"
+  ],
+  "rust": [
+   "mismatch",
+   "changed"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB05",
+  "what": "bridge text: two verses for one",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "extra"
+  ],
+  "rust": [
+   "mismatch",
+   "extra"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB06",
+  "what": "heading leaked into verse",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "extra"
+  ],
+  "rust": [
+   "mismatch",
+   "extra"
+  ],
+  "agree": true,
+  "as_expected": true
+ },
+ {
+  "id": "VB07",
+  "what": "only punctuation of a verse",
+  "expect": "wrong",
+  "python": [
+   "mismatch",
+   "punctuation"
+  ],
+  "rust": [
+   "mismatch",
+   "punctuation"
+  ],
+  "agree": true,
+  "as_expected": true
+ }
+]

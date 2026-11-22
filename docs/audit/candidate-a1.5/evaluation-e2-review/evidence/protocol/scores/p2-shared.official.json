@@ -1,0 +1,550 @@
+{
+ "mode": "official",
+ "overrides": {},
+ "anchors": {
+  "run_record_commit": "091e1359b177d2fa5d41fb4f68bb0d1168448eec",
+  "run_record_path": "eval/p2-shared/run",
+  "seal_commit": "7d8797039c54aee60d0825d744438d26b9d5c68c",
+  "seal_path": "eval/p2-shared/seal",
+  "protocol": "/tmp/claude-0/-home-user-abidingword/4afe4379-57c0-5d2d-a304-76967f2f72f5/scratchpad/review/protocol/work/repo/docs/evaluation/protocol-e2.json",
+  "protocol_sha256": "0d6baa862b43f280722b65e8772574b83b5e4a71ecc679dce419cfa748b1fd2d",
+  "scorer_sha256": "f38d797a83c4ee878d1fa42094fda5226528c93c8f93bea21d7cc2b753957985",
+  "check_set_sha256": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "fidelity_sha256": "421a8dd29ba96f72f3d5fa6b939045011e4def86fdc7541c0aae51fabde4fa33",
+  "reference_inventory_sha256": "2b5bcb8d8e4bc9b9cb4b03e9d6ebe566b5f62e7fb8d253d103f26bf6cdd33447",
+  "tools_commit": "091e1359b177d2fa5d41fb4f68bb0d1168448eec",
+  "tools_committed_and_unchanged": true
+ },
+ "rules": {
+  "evaluation_schema": "aw-eval-2",
+  "fidelity": "aw-fidelity-2",
+  "reference_inventory": "aw-reference-inventory-1"
+ },
+ "run": {
+  "started": "2026-11-22T01:49:21Z",
+  "seal_commit": "7d8797039c54aee60d0825d744438d26b9d5c68c",
+  "manifest": "c41a652eeec385b546beab725481378d648754317552f371cb5bd04d8d4b36c8",
+  "checksums": "b8c72f703e1a91c4d092977ca5ee2b15c493d59826f34b677e341649163ce21d",
+  "binary": "800fb43c9d09e85e7c7475702ff3332ebc45a3ce44a0204220f3d64756454473",
+  "runner": "93164464016db19bf4472a54cfcc7e7a76ef740e3d9c193466edb6713a70814b",
+  "check_set": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "inventory": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+  "protocol": "0d6baa862b43f280722b65e8772574b83b5e4a71ecc679dce419cfa748b1fd2d",
+  "limits": {
+   "timeout_seconds": 1800,
+   "memory_kb": 4194304
+  },
+  "host": "Linux 6.18.44-fc-v726 x86_64",
+  "ended": "2026-11-22T01:49:21Z"
+ },
+ "assessment": {
+  "verdict": "fail",
+  "run_validity": {
+   "anchored_and_intact": true,
+   "run_complete": true,
+   "every_document_has_a_record": true,
+   "seal_matches": true,
+   "frozen_binary": true,
+   "protocol_limits": true,
+   "canonical_inventory": true,
+   "run_under_this_protocol": true,
+   "composition_declared_and_matching": true,
+   "composition_required_by_protocol_and_met": true,
+   "check_report_is_e2": true,
+   "reports_trusted": true,
+   "scorer_committed": true
+  },
+  "integrity": {},
+  "criteria": {
+   "1_no_verified_text_mismatch": false,
+   "2_no_verified_reference_outside_or_unvalidatable": false,
+   "3_no_verified_reference_in_controls_or_outside_allowed": true,
+   "4_every_document_completed_or_refused_cleanly": true
+  },
+  "accuracy_claim": "6 verified verses with wrong text under the strict fidelity rule (missing 1, punctuation_spacing 5), 16 verified references outside the edition and 0 the edition cannot validate, among 58 verified verses of 4 completed scored documents (0 authentic). They print 58 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 89.7 % of scorable verses, 89.7 % of all printed verses. Exploratory documents are not part of this figure.",
+  "authentic_evidence": {
+   "documents": 0,
+   "printed_verses": 0,
+   "verified": 0,
+   "verified_faithful": 0,
+   "formats": [],
+   "languages": [],
+   "minimum": {
+    "documents": 8,
+    "reference_verses": 20000,
+    "formats": 2,
+    "languages": 4
+   },
+   "meets_minimum": false,
+   "coverage_percent": null
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "execution": {
+   "completed": 6
+  },
+  "failure_causes": {},
+  "scored": {
+   "documents": 4,
+   "printed": 58,
+   "printed_unsupported": 0,
+   "verified": 58,
+   "verified_exact": 52,
+   "verified_canonical": 0,
+   "verified_layout": 0,
+   "verified_faithful": 52,
+   "verified_mismatch": 6,
+   "verified_mismatch_material": 1,
+   "verified_absent": 16,
+   "verified_unvalidatable": 0,
+   "held_faithful": 0,
+   "held_mismatch": 0,
+   "refused": 0,
+   "not_found": 0,
+   "refused_chapters": 0,
+   "verified_mismatch_kinds": {
+    "missing": 1,
+    "punctuation_spacing": 5
+   },
+   "unsupported": {},
+   "coverage_percent": 89.7,
+   "coverage_percent_of_all_printed": 89.7,
+   "documents_in_manifest": 4,
+   "refused_whole": [],
+   "failed_to_run": []
+  },
+  "control": {
+   "documents": 1,
+   "completed": 1,
+   "verified": 0
+  },
+  "mixed": {
+   "documents": 1,
+   "completed": 1,
+   "verified_allowed": 0,
+   "verified_outside_allowed": 0
+  },
+  "exploratory": {
+   "documents": 0,
+   "completed": 0,
+   "note": "raw observations only; no matching reference, so nothing is judged"
+  }
+ },
+ "groups": {
+  "format": {
+   "md": {
+    "documents": 4,
+    "printed": 58,
+    "printed_unsupported": 0,
+    "verified": 58,
+    "verified_exact": 52,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 52,
+    "verified_mismatch": 6,
+    "verified_mismatch_material": 1,
+    "verified_absent": 16,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "missing": 1,
+     "punctuation_spacing": 5
+    },
+    "unsupported": {}
+   }
+  },
+  "language": {
+   "en": {
+    "documents": 4,
+    "printed": 58,
+    "printed_unsupported": 0,
+    "verified": 58,
+    "verified_exact": 52,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 52,
+    "verified_mismatch": 6,
+    "verified_mismatch_material": 1,
+    "verified_absent": 16,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "missing": 1,
+     "punctuation_spacing": 5
+    },
+    "unsupported": {}
+   }
+  },
+  "script": {
+   "Latin": {
+    "documents": 4,
+    "printed": 58,
+    "printed_unsupported": 0,
+    "verified": 58,
+    "verified_exact": 52,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 52,
+    "verified_mismatch": 6,
+    "verified_mismatch_material": 1,
+    "verified_absent": 16,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "missing": 1,
+     "punctuation_spacing": 5
+    },
+    "unsupported": {}
+   }
+  },
+  "kind": {
+   "generated": {
+    "documents": 4,
+    "printed": 58,
+    "printed_unsupported": 0,
+    "verified": 58,
+    "verified_exact": 52,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 52,
+    "verified_mismatch": 6,
+    "verified_mismatch_material": 1,
+    "verified_absent": 16,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {
+     "missing": 1,
+     "punctuation_spacing": 5
+    },
+    "unsupported": {}
+   }
+  }
+ },
+ "documents": [
+  {
+   "key": "s-notespace",
+   "files": "s-notespace.md",
+   "reference": "s-notespace_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 21,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 21,
+    "verified_exact": 16,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 16,
+    "verified_mismatch": 5,
+    "verified_mismatch_kinds": {
+     "punctuation_spacing": 5
+    },
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [
+     {
+      "reference": "OBA 1:4",
+      "kind": "punctuation_spacing"
+     },
+     {
+      "reference": "OBA 1:8",
+      "kind": "punctuation_spacing"
+     },
+     {
+      "reference": "OBA 1:12",
+      "kind": "punctuation_spacing"
+     },
+     {
+      "reference": "OBA 1:16",
+      "kind": "punctuation_spacing"
+     },
+     {
+      "reference": "OBA 1:20",
+      "kind": "punctuation_spacing"
+     }
+    ],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 21,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 20.0859375,
+    "seconds": 0.061249103
+   },
+   "integrity": []
+  },
+  {
+   "key": "s-unclosed-x",
+   "files": "s-unclosed-x.md",
+   "reference": "s-unclosed-x_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 10,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 10,
+    "verified_exact": 10,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 10,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 3,
+    "verified_absent_references": [
+     "2JN 1:4 (verse_not_in_chapter)",
+     "2JN 1:5 (verse_not_in_chapter)",
+     "2JN 1:6 (verse_not_in_chapter)"
+    ],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 10,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 20.03515625,
+    "seconds": 0.060251236
+   },
+   "integrity": []
+  },
+  {
+   "key": "s-unclosed-va",
+   "files": "s-unclosed-va.md",
+   "reference": "s-unclosed-va_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 2,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 13,
+    "outside_declared_books": [],
+    "verified": 2,
+    "verified_exact": 2,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 2,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 13,
+    "verified_absent_references": [
+     "3JN 1:3 (empty_in_edition)",
+     "3JN 1:4 (empty_in_edition)",
+     "3JN 1:5 (empty_in_edition)",
+     "3JN 1:6 (empty_in_edition)",
+     "3JN 1:7 (empty_in_edition)",
+     "3JN 1:8 (empty_in_edition)",
+     "3JN 1:9 (empty_in_edition)",
+     "3JN 1:10 (empty_in_edition)",
+     "3JN 1:11 (empty_in_edition)",
+     "3JN 1:12 (empty_in_edition)",
+     "3JN 1:13 (empty_in_edition)",
+     "3JN 1:14 (empty_in_edition)",
+     "3JN 1:15 (empty_in_edition)"
+    ],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 15,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 20.0546875,
+    "seconds": 0.061459272
+   },
+   "integrity": []
+  },
+  {
+   "key": "s-milestone",
+   "files": "s-milestone.md",
+   "reference": "s-milestone_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 25,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 25,
+    "verified_exact": 24,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 24,
+    "verified_mismatch": 1,
+    "verified_mismatch_kinds": {
+     "missing": 1
+    },
+    "verified_mismatch_material": 1,
+    "verified_mismatch_references": [
+     {
+      "reference": "JUD 1:2",
+      "kind": "missing"
+     }
+    ],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 25,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 20.0703125,
+    "seconds": 0.062835281
+   },
+   "integrity": []
+  },
+  {
+   "key": "s-ctl",
+   "files": "s-ctl.md",
+   "reference": "-",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "control",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "detected": 0,
+    "verified": 0,
+    "verified_references": [],
+    "integrity": [],
+    "peak_memory_mb": 18.3515625,
+    "seconds": 0.050157073
+   },
+   "integrity": []
+  },
+  {
+   "key": "s-mix",
+   "files": "s-mix.md",
+   "reference": "-",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "mixed",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "detected": 3,
+    "verified": 0,
+    "verified_references": [],
+    "integrity": [],
+    "peak_memory_mb": 19.97265625,
+    "seconds": 0.075926647
+   },
+   "integrity": [],
+   "allowed_verified": [],
+   "outside_allowed": []
+  }
+ ]
+}

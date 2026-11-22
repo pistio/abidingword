@@ -1,0 +1,275 @@
+{
+ "bsb-gen-md": {
+  "a15": {
+   "printed": 1533,
+   "verified": 1526,
+   "correct": 1526,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 8
+  },
+  "e2": {
+   "printed": 1533,
+   "verified": 1526,
+   "faithful": 1518,
+   "mismatch": 8,
+   "kinds": {
+    "punctuation_spacing": 8
+   }
+  }
+ },
+ "bsb-gen-docx": {
+  "a15": {
+   "printed": 1533,
+   "verified": 1527,
+   "correct": 1527,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 8
+  },
+  "e2": {
+   "printed": 1533,
+   "verified": 1527,
+   "faithful": 1519,
+   "mismatch": 8,
+   "kinds": {
+    "punctuation_spacing": 8
+   }
+  }
+ },
+ "bsb-gen-pdf": {
+  "a15": {
+   "printed": 1533,
+   "verified": 1517,
+   "correct": 1517,
+   "wrong": 0,
+   "typography": 2,
+   "normalised": 13
+  },
+  "e2": {
+   "printed": 1533,
+   "verified": 1517,
+   "faithful": 1502,
+   "mismatch": 15,
+   "kinds": {
+    "punctuation": 2,
+    "punctuation_spacing": 8,
+    "word_boundary": 5
+   }
+  }
+ },
+ "webp-dan-md": {
+  "a15": {
+   "printed": 357,
+   "verified": 356,
+   "correct": 356,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 1
+  },
+  "e2": {
+   "printed": 357,
+   "verified": 356,
+   "faithful": 355,
+   "mismatch": 1,
+   "kinds": {
+    "punctuation_spacing": 1
+   }
+  }
+ },
+ "webp-dan-pdf": {
+  "a15": {
+   "printed": 357,
+   "verified": 177,
+   "correct": 177,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 1
+  },
+  "e2": {
+   "printed": 357,
+   "verified": 177,
+   "faithful": 176,
+   "mismatch": 1,
+   "kinds": {
+    "punctuation_spacing": 1
+   }
+  }
+ },
+ "sbl-mat-md": {
+  "a15": {
+   "printed": 1068,
+   "verified": 1028,
+   "correct": 1028,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 38
+  },
+  "e2": {
+   "printed": 1068,
+   "verified": 1028,
+   "faithful": 990,
+   "mismatch": 38,
+   "kinds": {
+    "punctuation_spacing": 38
+   }
+  }
+ },
+ "sbl-mat-pdf": {
+  "a15": {
+   "printed": 1068,
+   "verified": 0,
+   "correct": 0,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 1068,
+   "verified": 0,
+   "faithful": 0,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ },
+ "lsg-eph-md": {
+  "a15": {
+   "printed": 155,
+   "verified": 155,
+   "correct": 155,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 1
+  },
+  "e2": {
+   "printed": 155,
+   "verified": 155,
+   "faithful": 154,
+   "mismatch": 1,
+   "kinds": {
+    "punctuation_spacing": 1
+   }
+  }
+ },
+ "lsg-eph-docx": {
+  "a15": {
+   "printed": 155,
+   "verified": 155,
+   "correct": 155,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 1
+  },
+  "e2": {
+   "printed": 155,
+   "verified": 155,
+   "faithful": 154,
+   "mismatch": 1,
+   "kinds": {
+    "punctuation_spacing": 1
+   }
+  }
+ },
+ "kor-rut-md": {
+  "a15": {
+   "printed": 85,
+   "verified": 85,
+   "correct": 85,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 85,
+   "verified": 85,
+   "faithful": 85,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ },
+ "kor-rut-pdf": {
+  "a15": {
+   "printed": 85,
+   "verified": 44,
+   "correct": 44,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 85,
+   "verified": 44,
+   "faithful": 44,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ },
+ "de-rut-md": {
+  "a15": {
+   "printed": 85,
+   "verified": 85,
+   "correct": 85,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 85,
+   "verified": 85,
+   "faithful": 85,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ },
+ "es-rut-md": {
+  "a15": {
+   "printed": 85,
+   "verified": 85,
+   "correct": 85,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 85,
+   "verified": 85,
+   "faithful": 85,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ },
+ "es-rut-docx": {
+  "a15": {
+   "printed": 85,
+   "verified": 85,
+   "correct": 85,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 85,
+   "verified": 85,
+   "faithful": 85,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ },
+ "byz-3jn-md": {
+  "a15": {
+   "printed": 15,
+   "verified": 15,
+   "correct": 15,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  },
+  "e2": {
+   "printed": 15,
+   "verified": 15,
+   "faithful": 15,
+   "mismatch": 0,
+   "kinds": {}
+  }
+ }
+}

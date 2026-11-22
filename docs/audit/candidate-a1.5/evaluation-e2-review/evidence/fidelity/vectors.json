@@ -1,0 +1,1274 @@
+[
+ {
+  "id": "EN01",
+  "what": "identical",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN02",
+  "what": "words joined: 'watch men'->'watchmen' reversed",
+  "edition": "The steward kept the lamps burning until the watch men came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN03",
+  "what": "words split",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning un til the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN04",
+  "what": "case of one letter",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The Steward kept the lamps burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN05",
+  "what": "divine-name small caps vs title case",
+  "edition": "Then the LORD spoke to the steward.",
+  "found": "Then the Lord spoke to the steward.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN06",
+  "what": "possessive apostrophe dropped",
+  "edition": "the steward's lamp",
+  "found": "the stewards lamp",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN07",
+  "what": "straight vs curly apostrophe",
+  "edition": "the steward’s lamp",
+  "found": "the steward's lamp",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN08",
+  "what": "comma moved",
+  "edition": "Truly, I say to you today you will see",
+  "found": "Truly I say to you, today you will see",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN09",
+  "what": "full stop to question mark",
+  "edition": "You are the steward.",
+  "found": "You are the steward?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN10",
+  "what": "em dash vs en dash",
+  "edition": "lamps—burning",
+  "found": "lamps–burning",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN11",
+  "what": "hyphen removed (word boundary)",
+  "edition": "burnt-offering",
+  "found": "burnt offering",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN12",
+  "what": "double space",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward  kept the lamps burning until the watchmen came home.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN13",
+  "what": "NBSP for space",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN14",
+  "what": "tab and newline inside",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward\t\nkept the lamps burning until the watchmen came home.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN15",
+  "what": "trailing and leading white space incl. U+3000",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "　 The steward kept the lamps burning until the watchmen came home. ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN16",
+  "what": "inserted negation",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward never kept the lamps burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN17",
+  "what": "digit for number word",
+  "edition": "forty lamps",
+  "found": "40 lamps",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN18",
+  "what": "one letter changed",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lambs burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN19",
+  "what": "note sign appended",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home.*",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN20",
+  "what": "pilcrow prefix",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "¶ The steward kept the lamps burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN21",
+  "what": "editorial brackets dropped",
+  "edition": "[the steward wept]",
+  "found": "the steward wept",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN22",
+  "what": "verse number leaked at start",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "14 The steward kept the lamps burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN23",
+  "what": "next verse's opening leaked at end",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home. 15 And the watchmen",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN24",
+  "what": "last clause missing",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN25",
+  "what": "citation appended",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home. (Lamps 3:4)",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN26",
+  "what": "footnote caller letter appended",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burningᵃ until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN27",
+  "what": "footnote caller plain letter",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burninga until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN28",
+  "what": "U+2028 line separator inside",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came home.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN29",
+  "what": "U+0085 NEL inside",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burninguntil the watchmen came home.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "EN30",
+  "what": "dotless i",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning untıl the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN31",
+  "what": "Cyrillic homoglyph a",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lаmps burning until the watchmen came home.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "EN32",
+  "what": "Greek omicron homoglyph",
+  "edition": "The steward kept the lamps burning until the watchmen came home.",
+  "found": "The steward kept the lamps burning until the watchmen came hοme.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE01",
+  "what": "composed vs decomposed umlaut and eszett text",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "DE02",
+  "what": "umlaut lost",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Huter sprach: Größer ist die Treue als das Brot.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE03",
+  "what": "umlaut as ue",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Hueter sprach: Größer ist die Treue als das Brot.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE04",
+  "what": "ß to ss",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Hüter sprach: Grösser ist die Treue als das Brot.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE05",
+  "what": "capital sharp s",
+  "edition": "UND DER HÜTER SPRACH: GRÖSSER IST DIE TREUE ALS DAS BROT.",
+  "found": "UND DER HÜTER SPRACH: GRÖẞER IST DIE TREUE ALS DAS BROT.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE06",
+  "what": "noun capitalisation",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Hüter sprach: Größer ist die treue als das Brot.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE07",
+  "what": "German quotes vs English quotes",
+  "edition": "„Wacht!“",
+  "found": "“Wacht!”",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE08",
+  "what": "colon spacing removed (French-style)",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Hüter sprach : Größer ist die Treue als das Brot.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "DE09",
+  "what": "combining diaeresis on wrong base",
+  "edition": "Und der Hüter sprach: Größer ist die Treue als das Brot.",
+  "found": "Und der Huter̈ sprach: Größer ist die Treue als das Brot.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES01",
+  "what": "identical NFD",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "ES02",
+  "what": "él -> el (composed)",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que el no irá con el niño a la mañana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES03",
+  "what": "él -> el, reference decomposed",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que el no irá con el niño a la mañana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES04",
+  "what": "ñ -> n",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que él no irá con el nino a la mañana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES05",
+  "what": "inverted question mark dropped",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "Quién dirá que él no irá con el niño a la mañana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES06",
+  "what": "acute -> grave",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirà que él no irà con el niño a la mañana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES07",
+  "what": "words merged 'que él irá' -> 'que élirá'",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que él noirá con el niño a la mañana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "ES08",
+  "what": "ñ as n + U+0303 (canonical)",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "ES09",
+  "what": "ñ as n + spacing tilde U+02DC",
+  "edition": "¿Quién dirá que él no irá con el niño a la mañana?",
+  "found": "¿Quién dirá que él no irá con el nin˜o a la man˜ana?",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO01",
+  "what": "Hangul syllables vs conjoining jamo (NFD)",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님이 빛을 보시니 좋았더라",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "KO02",
+  "what": "compatibility jamo spelling",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님이 ㅂㅣㅊ을 보시니 좋았더라",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO03",
+  "what": "word spacing removed",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님이빛을 보시니 좋았더라",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO04",
+  "what": "word spacing added",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님 이 빛을 보시니 좋았더라",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO05",
+  "what": "one syllable changed",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님이 빛을 보시니 좋았도다",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO06",
+  "what": "final consonant (batchim) changed",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님이 빗을 보시니 좋았더라",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO07",
+  "what": "Hangul to Hanja",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "上帝이 빛을 보시니 좋았더라",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO08",
+  "what": "CJK compatibility ideograph U+F914 vs U+6A02 (canonical singleton)",
+  "edition": "樂",
+  "found": "樂",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "KO09",
+  "what": "half-width Hangul (compatibility)",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "ﾾￂ나님이 빛을 보시니 좋았더라",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO10",
+  "what": "jamo mixing composed+decomposed per syllable",
+  "edition": "하나님이 빛을 보시니 좋았더라",
+  "found": "하나님이 빛을 보시니 좋았더라",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "KO11",
+  "what": "old Hangul arae-a jamo sequence vs composed modern",
+  "edition": "ᄒᆞ나님",
+  "found": "ᄒᆞ나님",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "KO12",
+  "what": "old Hangul arae-a vs modern a",
+  "edition": "ᄒᆞ나님",
+  "found": "하나님",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "KO13",
+  "what": "middle dot U+00B7 vs U+318D arae-a compat",
+  "edition": "ㆍ",
+  "found": "·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR01",
+  "what": "identical NFD",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "GR02",
+  "what": "smooth -> rough breathing (composed)",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἑν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR03",
+  "what": "smooth -> rough breathing, reference NFD",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἑν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR04",
+  "what": "iota subscript lost",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῆ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR05",
+  "what": "iota adscript for subscript",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῆι ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR06",
+  "what": "oxia U+1F79 vs tonos U+03CC (canonical singleton)",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "GR07",
+  "what": "ano teleia U+0387 vs middle dot U+00B7 (canonical)",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "GR08",
+  "what": "Greek question mark U+037E vs semicolon (canonical)",
+  "edition": "τίς ἐστιν;",
+  "found": "τίς ἐστιν;",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "GR09",
+  "what": "final sigma -> medial sigma",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῇ ἦν ὁ λόγοσ, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR10",
+  "what": "grave -> acute",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρός τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR11",
+  "what": "diaeresis lost",
+  "edition": "Ἠσαΐας",
+  "found": "Ἠσαιας",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR12",
+  "what": "mark order breathing/accent swapped (decomposed)",
+  "edition": "ἄ",
+  "found": "ά̓",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR13",
+  "what": "koronis U+1FBD vs apostrophe",
+  "edition": "κἀγώ",
+  "found": "κ᾽ἀγώ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR14",
+  "what": "ypogegrammeni spacing U+037A vs combining U+0345",
+  "edition": "ᾳ",
+  "found": "αͺ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR15",
+  "what": "capitalised article",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "ἐν ἀρχῇ ἦν Ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR16",
+  "what": "accents stripped entirely",
+  "edition": "ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν·",
+  "found": "εν αρχη ην ο λογος, και ο λογος ην προς τον θεον·",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "GR17",
+  "what": "combining tone marks U+0340/U+0341 vs U+0300/U+0301 (canonical)",
+  "edition": "ά",
+  "found": "ά",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "GR18",
+  "what": "dialytika-tonos U+0344 vs U+0308 U+0301 (canonical)",
+  "edition": "ΐ",
+  "found": "ΐ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "GR19",
+  "what": "Greek beta symbol U+03D0 (compatibility)",
+  "edition": "βίβλος",
+  "found": "ϐίβλος",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE01",
+  "what": "identical NFD",
+  "edition": "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+  "found": "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "HE02",
+  "what": "dagesh/vowel order permuted (canonical reorder)",
+  "edition": "בָּ",
+  "found": "בָּ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "HE03",
+  "what": "pointed vs unpointed",
+  "edition": "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+  "found": "בראשית ברא אלהים",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE04",
+  "what": "shin dot -> sin dot",
+  "edition": "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+  "found": "בְּרֵאשִׂית בָּרָא אֱלֹהִים",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE05",
+  "what": "cantillation lost",
+  "edition": "בָּרָ֣א",
+  "found": "בָּרָא",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE06",
+  "what": "cantillation changed",
+  "edition": "בָּרָ֣א",
+  "found": "בָּרָ֖א",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE07",
+  "what": "maqaf vs hyphen",
+  "edition": "אֶת־הַשָּׁמַיִם",
+  "found": "אֶת-הַשָּׁמַיִם",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE08",
+  "what": "sof pasuq vs colon",
+  "edition": "הָאָרֶץ׃",
+  "found": "הָאָרֶץ:",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE09",
+  "what": "final kaf vs kaf",
+  "edition": "מֶלֶךְ",
+  "found": "מֶלֶכְ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE10",
+  "what": "holam haser for vav U+05BA vs holam U+05B9",
+  "edition": "מִצְוֺת",
+  "found": "מִצְוֹת",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE11",
+  "what": "meteg lost",
+  "edition": "הָֽאָרֶץ",
+  "found": "הָאָרֶץ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE12",
+  "what": "RLM inserted",
+  "edition": "בְּרֵאשִׁית בָּרָא אֱלֹהִים",
+  "found": "בְּרֵאשִׁית‏ בָּרָא אֱלֹהִים",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE13",
+  "what": "presentation form shin+shin dot U+FB2A (canonical)",
+  "edition": "שׁ",
+  "found": "שׁ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "HE14",
+  "what": "presentation form yod+hiriq U+FB1D (canonical)",
+  "edition": "יִ",
+  "found": "יִ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "HE15",
+  "what": "wide alef U+FB21 (compatibility)",
+  "edition": "א",
+  "found": "ﬡ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE16",
+  "what": "paseq vs vertical bar",
+  "edition": "א ׀ ב",
+  "found": "א | ב",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE17",
+  "what": "qamats -> patah (one vowel)",
+  "edition": "בָּרָא",
+  "found": "בַּרָא",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "HE18",
+  "what": "unpointed identical, NBSP spacing",
+  "edition": "בראשית ברא",
+  "found": "בראשית ברא",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "AR01",
+  "what": "identical NFD",
+  "edition": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ",
+  "found": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "AR02",
+  "what": "harakat lost",
+  "edition": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ",
+  "found": "بسم ٱلله ٱلرحمن",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR03",
+  "what": "shadda/fatha order permuted (canonical reorder)",
+  "edition": "لَّ",
+  "found": "لَّ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "AR04",
+  "what": "presentation forms (compatibility)",
+  "edition": "سلام",
+  "found": "ﺳﻼﻡ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR05",
+  "what": "tatweel inserted",
+  "edition": "الله",
+  "found": "الـله",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR06",
+  "what": "alef wasla vs plain alef",
+  "edition": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ",
+  "found": "بِسْمِ اللَّهِ الرَّحْمَٰنِ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR07",
+  "what": "alef-hamza composed vs alef + U+0654 (canonical)",
+  "edition": "أ",
+  "found": "أ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "AR08",
+  "what": "Persian kaf vs Arabic kaf",
+  "edition": "کتاب",
+  "found": "كتاب",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR09",
+  "what": "ZWNJ removed (Persian)",
+  "edition": "می‌خواهم",
+  "found": "میخواهم",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR10",
+  "what": "Arabic comma vs comma",
+  "edition": "نعم، لا",
+  "found": "نعم, لا",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR11",
+  "what": "Arabic-Indic digit vs ASCII digit",
+  "edition": "٣",
+  "found": "3",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR12",
+  "what": "superscript alef lost",
+  "edition": "ٱلرَّحْمَٰنِ",
+  "found": "ٱلرَّحْمَنِ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "AR13",
+  "what": "madda composed vs decomposed (canonical)",
+  "edition": "آ",
+  "found": "آ",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "AR14",
+  "what": "Farsi yeh vs Arabic yeh",
+  "edition": "ی",
+  "found": "ي",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN01",
+  "what": "fi ligature",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the ﬁeld.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN02",
+  "what": "ff ligature",
+  "edition": "offering",
+  "found": "oﬀering",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN03",
+  "what": "full-width letters",
+  "edition": "LORD",
+  "found": "ＬＯＲＤ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN04",
+  "what": "superscript two",
+  "edition": "verse 2",
+  "found": "verse ²",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN05",
+  "what": "Roman numeral sign",
+  "edition": "II",
+  "found": "Ⅱ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN06",
+  "what": "Kelvin sign (canonical singleton)",
+  "edition": "King",
+  "found": "King",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN07",
+  "what": "Ohm sign (canonical singleton)",
+  "edition": "Ω",
+  "found": "Ω",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN08",
+  "what": "Angstrom sign (canonical singleton)",
+  "edition": "Å",
+  "found": "Å",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN09",
+  "what": "micro sign (compatibility)",
+  "edition": "μ",
+  "found": "µ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN10",
+  "what": "soft hyphen inside word",
+  "edition": "The shepherd found the field.",
+  "found": "The shep­herd found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN11",
+  "what": "ZWSP between words replacing space",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd​found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN12",
+  "what": "ZWSP added inside word",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the fi​eld.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN13",
+  "what": "ZWJ inside",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the fi‍eld.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN14",
+  "what": "word joiner U+2060",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd⁠ found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN15",
+  "what": "BOM at start",
+  "edition": "The shepherd found the field.",
+  "found": "﻿The shepherd found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN16",
+  "what": "BOM inside",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd﻿ found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN17",
+  "what": "combining grapheme joiner",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the fi͏eld.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN18",
+  "what": "variation selector",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the f️ield.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN19",
+  "what": "Mongolian vowel separator (not White_Space)",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd᠎found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN20",
+  "what": "replacement character",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the f�eld.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN21",
+  "what": "private-use character",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN22",
+  "what": "DZ digraph compatibility",
+  "edition": "DŽ",
+  "found": "Ǆ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN23",
+  "what": "en quad U+2000 vs en space U+2002 inside (both White_Space)",
+  "edition": "a b",
+  "found": "a b",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN24",
+  "what": "narrow NBSP before colon vs none",
+  "edition": "lui :",
+  "found": "lui:",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN25",
+  "what": "narrow NBSP before colon vs space",
+  "edition": "lui :",
+  "found": "lui :",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN26",
+  "what": "LRM/RLM in Latin text",
+  "edition": "The shepherd found the field.",
+  "found": "The shepherd‎ found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN27",
+  "what": "ideographic full stop vs full stop",
+  "edition": "主。",
+  "found": "主.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN28",
+  "what": "combining acute on space vs spacing acute",
+  "edition": "a ́b",
+  "found": "a ´b",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN29",
+  "what": "many stacked marks reordered with distinct classes (canonical)",
+  "edition": "á̖",
+  "found": "á̖",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN30",
+  "what": "stacked marks same class reordered (not canonical)",
+  "edition": "á̀",
+  "found": "à́",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN31",
+  "what": "Unicode 16 Kirat Rai composition (16D67 16D67 vs 16D68)",
+  "edition": "𖵨",
+  "found": "𖵨",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN32",
+  "what": "Unicode 16 Tulu-Tigalari composition (11382 113C9 vs 11383)",
+  "edition": "𑎃",
+  "found": "𑎃",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN33",
+  "what": "empty found against text",
+  "edition": "The shepherd found the field.",
+  "found": "",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN34",
+  "what": "only white space found",
+  "edition": "The shepherd found the field.",
+  "found": "   ",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN35",
+  "what": "edition empty, found has text",
+  "edition": "",
+  "found": "The shepherd found the field.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN36",
+  "what": "edition only white space vs found empty",
+  "edition": " ",
+  "found": "",
+  "expect": "faithful",
+  "matched": false
+ },
+ {
+  "id": "UN37",
+  "what": "tilde (USFM no-break marker) left literal",
+  "edition": "lui~:",
+  "found": "lui :",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "UN38",
+  "what": "USFM optional break // left literal",
+  "edition": "the field// was",
+  "found": "the field was",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "VB01",
+  "what": "the whole next verse appended",
+  "edition": "And the steward said to them, Watch.",
+  "found": "And the steward said to them, Watch. And they watched until morning.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "VB02",
+  "what": "another verse's text (wrong reference)",
+  "edition": "And the steward said to them, Watch.",
+  "found": "And they watched until morning.",
+  "expect": "wrong",
+  "matched": true
+ },
+ {
+  "id": "VB03",
+  "what": "verse number inside text",
+  "edition": "And the steward said to them, Watch.",
+  "found": "And the steward 2 said to them, Watch.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "VB04",
+  "what": "chapter:verse citation inside",
+  "edition": "as it is written in Lamps 3:4, Watch.",
+  "found": "as it is written, Watch.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "VB05",
+  "what": "bridge text: two verses for one",
+  "edition": "And the steward said to them, Watch.",
+  "found": "And the steward said to them, Watch. And the steward said to them, Watch.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "VB06",
+  "what": "heading leaked into verse",
+  "edition": "And the steward said to them, Watch.",
+  "found": "The Steward's Charge And the steward said to them, Watch.",
+  "expect": "wrong",
+  "matched": false
+ },
+ {
+  "id": "VB07",
+  "what": "only punctuation of a verse",
+  "edition": ".",
+  "found": "",
+  "expect": "wrong",
+  "matched": false
+ }
+]

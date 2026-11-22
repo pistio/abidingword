@@ -1,0 +1,92 @@
+{
+ "full-engbsb": {
+  "e2": {
+   "printed": 31086,
+   "verified": 30977,
+   "verified_faithful": 30823,
+   "verified_mismatch": 154,
+   "verified_mismatch_kinds": {
+    "punctuation_spacing": 153,
+    "word_boundary": 1
+   },
+   "verified_absent": 0,
+   "verified_unvalidatable": 0,
+   "held_faithful": 68,
+   "held_mismatch": 4,
+   "refused": 36,
+   "not_found": 1
+  },
+  "e2_integrity": [
+   "reference problems: keys.asc: not a USFM book (.usfm, .sfm) or prose (.htm); never read; dejavuserif.css: not a USFM book (.usfm, .sfm) or prose (.htm); never read"
+  ],
+  "e2_mismatch_from_note_space": 154,
+  "e2_mismatch_other": [],
+  "a15": {
+   "printed": 31086,
+   "verified": 30977,
+   "correct": 30977,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 154
+  }
+ },
+ "full-grcsbl": {
+  "e2": {
+   "printed": 7939,
+   "verified": 7671,
+   "verified_faithful": 7336,
+   "verified_mismatch": 335,
+   "verified_mismatch_kinds": {
+    "extra": 1,
+    "punctuation_spacing": 334
+   },
+   "verified_absent": 0,
+   "verified_unvalidatable": 0,
+   "held_faithful": 6,
+   "held_mismatch": 1,
+   "refused": 108,
+   "not_found": 153
+  },
+  "e2_integrity": [
+   "reference problems: keys.asc: not a USFM book (.usfm, .sfm) or prose (.htm); never read; gentiumplus.css: not a USFM book (.usfm, .sfm) or prose (.htm); never read"
+  ],
+  "e2_mismatch_from_note_space": 334,
+  "e2_mismatch_other": [
+   "ACT 28:28"
+  ],
+  "a15": {
+   "printed": 7939,
+   "verified": 7671,
+   "correct": 7670,
+   "wrong": 1,
+   "typography": 0,
+   "normalised": 334
+  }
+ },
+ "full-kor1961": {
+  "e2": {
+   "printed": 31081,
+   "verified": 31077,
+   "verified_faithful": 31077,
+   "verified_mismatch": 0,
+   "verified_mismatch_kinds": {},
+   "verified_absent": 0,
+   "verified_unvalidatable": 0,
+   "held_faithful": 4,
+   "held_mismatch": 0,
+   "refused": 0,
+   "not_found": 0
+  },
+  "e2_integrity": [],
+  "e2_mismatch_from_note_space": 0,
+  "e2_mismatch_other": [],
+  "a15": {
+   "printed": 31081,
+   "verified": 31077,
+   "correct": 31077,
+   "wrong": 0,
+   "typography": 0,
+   "normalised": 0
+  }
+ }
+}

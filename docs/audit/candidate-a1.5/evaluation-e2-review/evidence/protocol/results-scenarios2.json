@@ -1,0 +1,345 @@
+{
+ "Vacuous set (blank doc, Tobit only, prose only, a reference with no USFM)": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "pass",
+   "diagnostic_verdict": null,
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 3,
+    "printed": 47,
+    "printed_unsupported": 10,
+    "verified": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 0.0,
+    "coverage_percent_of_all_printed": 0.0,
+    "refused_whole": [
+     "v-blank"
+    ],
+    "unsupported": {
+     "book_outside_canon": 10
+    }
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 0 verified verses of 3 completed scored documents (0 authentic). They print 47 scorable verses and 10 verses the recogniser cannot hold (unsupported, by class: book_outside_canon 10). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 0.0 % of scorable verses, 0.0 % of all printed verses. Exploratory documents are not part of this figure. Not in the coverage figure, and not recognition coverage: 1 scored document(s) refused whole (v-blank) and 0 that failed to run, of 4 scored documents; no verse from them counts as verified."
+  }
+ },
+ "Empty reference zip (document prints Obadiah)": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "fail",
+   "diagnostic_verdict": null,
+   "failed_validity": [],
+   "criteria_failed": [
+    "2_no_verified_reference_outside_or_unvalidatable"
+   ],
+   "integrity": {},
+   "scored": {
+    "documents": 4,
+    "printed": 76,
+    "printed_unsupported": 0,
+    "verified": 76,
+    "verified_faithful": 76,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 21,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 21 verified references outside the edition and 0 the edition cannot validate, among 76 verified verses of 4 completed scored documents (0 authentic). They print 76 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  }
+ },
+ "Control: the same kind of set with one real wrong word, pinned binary": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "fail",
+   "diagnostic_verdict": null,
+   "failed_validity": [],
+   "criteria_failed": [
+    "1_no_verified_text_mismatch"
+   ],
+   "integrity": {},
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 96,
+    "verified_mismatch": 1,
+    "verified_mismatch_kinds": {
+     "changed": 1
+    },
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 99.0,
+    "coverage_percent_of_all_printed": 99.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "1 verified verses with wrong text under the strict fidelity rule (changed 1), 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 99.0 % of scorable verses, 99.0 % of all printed verses. Exploratory documents are not part of this figure."
+  }
+ },
+ "Fake harness that omits its one mismatch record and counts the verse exact": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": null,
+   "failed_validity": [
+    "frozen_binary",
+    "run_under_this_protocol"
+   ],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 97,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  },
+  "diagnostic": {
+   "mode": "diagnostic",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "pass",
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 97,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  }
+ },
+ "Fake harness that writes the found text as the edition text (record kept)": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": null,
+   "failed_validity": [
+    "frozen_binary",
+    "run_under_this_protocol",
+    "reports_trusted"
+   ],
+   "criteria_failed": [],
+   "integrity": {
+    "g-oba": [
+     "fidelity: 2 disagreement(s) between harness and scorer"
+    ]
+   },
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 96,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 99.0,
+    "coverage_percent_of_all_printed": 99.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 99.0 % of scorable verses, 99.0 % of all printed verses. Exploratory documents are not part of this figure."
+  },
+  "diagnostic": {
+   "mode": "diagnostic",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "not a protocol run",
+   "failed_validity": [
+    "reports_trusted"
+   ],
+   "criteria_failed": [],
+   "integrity": {
+    "g-oba": [
+     "fidelity: 2 disagreement(s) between harness and scorer"
+    ]
+   },
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 96,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 99.0,
+    "coverage_percent_of_all_printed": 99.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 99.0 % of scorable verses, 99.0 % of all printed verses. Exploratory documents are not part of this figure."
+  }
+ },
+ "Fake harness that drops a verse-zero label from its inventory": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": null,
+   "failed_validity": [
+    "frozen_binary",
+    "run_under_this_protocol",
+    "reports_trusted"
+   ],
+   "criteria_failed": [],
+   "integrity": {
+    "d-oba": [
+     "reference inventories differ: labels: check 22, harness 21; verse_zero: check 1, harness 0"
+    ]
+   },
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 97,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  },
+  "diagnostic": {
+   "mode": "diagnostic",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "not a protocol run",
+   "failed_validity": [
+    "reports_trusted"
+   ],
+   "criteria_failed": [],
+   "integrity": {
+    "d-oba": [
+     "reference inventories differ: labels: check 22, harness 21; verse_zero: check 1, harness 0"
+    ]
+   },
+   "scored": {
+    "documents": 4,
+    "printed": 97,
+    "printed_unsupported": 0,
+    "verified": 97,
+    "verified_faithful": 97,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 97 verified verses of 4 completed scored documents (0 authentic). They print 97 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  }
+ },
+ "Fake harness that hides a whole extra chapter (drops it from verified_references and verified_absent)": {
+  "sealed": true,
+  "seal_refusals": [],
+  "run_exit": 0,
+  "official": {
+   "mode": "official",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": null,
+   "failed_validity": [
+    "frozen_binary",
+    "run_under_this_protocol"
+   ],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 4,
+    "printed": 128,
+    "printed_unsupported": 0,
+    "verified": 128,
+    "verified_faithful": 128,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 128 verified verses of 4 completed scored documents (0 authentic). They print 128 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  },
+  "diagnostic": {
+   "mode": "diagnostic",
+   "verdict": "not a protocol run",
+   "diagnostic_verdict": "pass",
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 4,
+    "printed": 128,
+    "printed_unsupported": 0,
+    "verified": 128,
+    "verified_faithful": 128,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "coverage_percent": 100.0,
+    "coverage_percent_of_all_printed": 100.0,
+    "refused_whole": [],
+    "unsupported": {}
+   },
+   "claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 128 verified verses of 4 completed scored documents (0 authentic). They print 128 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure."
+  }
+ }
+}

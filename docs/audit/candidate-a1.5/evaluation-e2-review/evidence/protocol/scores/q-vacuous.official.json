@@ -1,0 +1,475 @@
+{
+ "mode": "official",
+ "overrides": {},
+ "anchors": {
+  "run_record_commit": "3bb35ddd4682dc60bf98ad9e94c40fab61252cb7",
+  "run_record_path": "eval/q-vacuous/run",
+  "seal_commit": "4207ec8a124d97e65b6d4832efa22fc5b9a70ed7",
+  "seal_path": "eval/q-vacuous/seal",
+  "protocol": "/tmp/claude-0/-home-user-abidingword/4afe4379-57c0-5d2d-a304-76967f2f72f5/scratchpad/review/protocol/work3/repo/docs/evaluation/protocol-e2.json",
+  "protocol_sha256": "0d6baa862b43f280722b65e8772574b83b5e4a71ecc679dce419cfa748b1fd2d",
+  "scorer_sha256": "f38d797a83c4ee878d1fa42094fda5226528c93c8f93bea21d7cc2b753957985",
+  "check_set_sha256": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "fidelity_sha256": "421a8dd29ba96f72f3d5fa6b939045011e4def86fdc7541c0aae51fabde4fa33",
+  "reference_inventory_sha256": "2b5bcb8d8e4bc9b9cb4b03e9d6ebe566b5f62e7fb8d253d103f26bf6cdd33447",
+  "tools_commit": "3bb35ddd4682dc60bf98ad9e94c40fab61252cb7",
+  "tools_committed_and_unchanged": true
+ },
+ "rules": {
+  "evaluation_schema": "aw-eval-2",
+  "fidelity": "aw-fidelity-2",
+  "reference_inventory": "aw-reference-inventory-1"
+ },
+ "run": {
+  "started": "2026-11-22T01:51:31Z",
+  "seal_commit": "4207ec8a124d97e65b6d4832efa22fc5b9a70ed7",
+  "manifest": "27bae65c6703b30fe06160ff6bd174977cc924fef73ca0a7a290a2f671325c53",
+  "checksums": "b85955ac288c23d3990a0246d7a3f6539ccd636f603f86a835c11b6e7c1c8d93",
+  "binary": "800fb43c9d09e85e7c7475702ff3332ebc45a3ce44a0204220f3d64756454473",
+  "runner": "93164464016db19bf4472a54cfcc7e7a76ef740e3d9c193466edb6713a70814b",
+  "check_set": "541e1f7c6627d7c0ccca0f7daac8d5c956e1c0537e539e2fdc046619b40427ed",
+  "inventory": "a9d83ac45d356997d2c965d1635cb6a4280b26a988625c668aaeb13d28aac2b8",
+  "protocol": "0d6baa862b43f280722b65e8772574b83b5e4a71ecc679dce419cfa748b1fd2d",
+  "limits": {
+   "timeout_seconds": 1800,
+   "memory_kb": 4194304
+  },
+  "host": "Linux 6.18.44-fc-v726 x86_64",
+  "ended": "2026-11-22T01:51:31Z"
+ },
+ "assessment": {
+  "verdict": "pass",
+  "run_validity": {
+   "anchored_and_intact": true,
+   "run_complete": true,
+   "every_document_has_a_record": true,
+   "seal_matches": true,
+   "frozen_binary": true,
+   "protocol_limits": true,
+   "canonical_inventory": true,
+   "run_under_this_protocol": true,
+   "composition_declared_and_matching": true,
+   "composition_required_by_protocol_and_met": true,
+   "check_report_is_e2": true,
+   "reports_trusted": true,
+   "scorer_committed": true
+  },
+  "integrity": {},
+  "criteria": {
+   "1_no_verified_text_mismatch": true,
+   "2_no_verified_reference_outside_or_unvalidatable": true,
+   "3_no_verified_reference_in_controls_or_outside_allowed": true,
+   "4_every_document_completed_or_refused_cleanly": true
+  },
+  "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 0 verified verses of 3 completed scored documents (0 authentic). They print 47 scorable verses and 10 verses the recogniser cannot hold (unsupported, by class: book_outside_canon 10). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 0.0 % of scorable verses, 0.0 % of all printed verses. Exploratory documents are not part of this figure. Not in the coverage figure, and not recognition coverage: 1 scored document(s) refused whole (v-blank) and 0 that failed to run, of 4 scored documents; no verse from them counts as verified.",
+  "authentic_evidence": {
+   "documents": 0,
+   "printed_verses": 0,
+   "verified": 0,
+   "verified_faithful": 0,
+   "formats": [],
+   "languages": [],
+   "minimum": {
+    "documents": 8,
+    "reference_verses": 20000,
+    "formats": 2,
+    "languages": 4
+   },
+   "meets_minimum": false,
+   "coverage_percent": null
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "execution": {
+   "refused": 1,
+   "completed": 5
+  },
+  "failure_causes": {},
+  "scored": {
+   "documents": 3,
+   "printed": 47,
+   "printed_unsupported": 10,
+   "verified": 0,
+   "verified_exact": 0,
+   "verified_canonical": 0,
+   "verified_layout": 0,
+   "verified_faithful": 0,
+   "verified_mismatch": 0,
+   "verified_mismatch_material": 0,
+   "verified_absent": 0,
+   "verified_unvalidatable": 0,
+   "held_faithful": 0,
+   "held_mismatch": 0,
+   "refused": 0,
+   "not_found": 47,
+   "refused_chapters": 0,
+   "verified_mismatch_kinds": {},
+   "unsupported": {
+    "book_outside_canon": 10
+   },
+   "coverage_percent": 0.0,
+   "coverage_percent_of_all_printed": 0.0,
+   "documents_in_manifest": 4,
+   "refused_whole": [
+    "v-blank"
+   ],
+   "failed_to_run": []
+  },
+  "control": {
+   "documents": 1,
+   "completed": 1,
+   "verified": 0
+  },
+  "mixed": {
+   "documents": 1,
+   "completed": 1,
+   "verified_allowed": 0,
+   "verified_outside_allowed": 0
+  },
+  "exploratory": {
+   "documents": 0,
+   "completed": 0,
+   "note": "raw observations only; no matching reference, so nothing is judged"
+  }
+ },
+ "groups": {
+  "format": {
+   "md": {
+    "documents": 3,
+    "printed": 47,
+    "printed_unsupported": 10,
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 47,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {},
+    "unsupported": {
+     "book_outside_canon": 10
+    }
+   }
+  },
+  "language": {
+   "en": {
+    "documents": 3,
+    "printed": 47,
+    "printed_unsupported": 10,
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 47,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {},
+    "unsupported": {
+     "book_outside_canon": 10
+    }
+   }
+  },
+  "script": {
+   "Latin": {
+    "documents": 3,
+    "printed": 47,
+    "printed_unsupported": 10,
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 47,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {},
+    "unsupported": {
+     "book_outside_canon": 10
+    }
+   }
+  },
+  "kind": {
+   "generated": {
+    "documents": 3,
+    "printed": 47,
+    "printed_unsupported": 10,
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_material": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 47,
+    "refused_chapters": 0,
+    "verified_mismatch_kinds": {},
+    "unsupported": {
+     "book_outside_canon": 10
+    }
+   }
+  }
+ },
+ "documents": [
+  {
+   "key": "v-blank",
+   "files": "v-blank.md",
+   "reference": "v-blank_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "refused",
+   "refusal": "Import(UserMessage { code: Some(\"bibleImport.documentEmpty\"), params: {\"fileName\": \"v-blank.md\"}, text: \"No text was found in “v-blank.md”.\" })"
+  },
+  {
+   "key": "v-tobit",
+   "files": "v-tobit.md",
+   "reference": "v-tobit_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 0,
+    "printed_unsupported": 10,
+    "unsupported": {
+     "book_outside_canon": 10
+    },
+    "unsupported_references": {
+     "book_outside_canon": [
+      "TOB 1:1",
+      "TOB 1:2",
+      "TOB 1:3",
+      "TOB 1:4",
+      "TOB 1:5",
+      "TOB 1:6",
+      "TOB 1:7",
+      "TOB 1:8",
+      "TOB 1:9",
+      "TOB 1:10"
+     ]
+    },
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 0,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": "Import(UserMessage { code: Some(\"bibleImport.noBooks\"), params: {}, text: \"No books of the Bible were found in these files.\" })"
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 14.40234375,
+    "seconds": 0.023882372
+   },
+   "integrity": []
+  },
+  {
+   "key": "v-prose",
+   "files": "v-prose.md",
+   "reference": "v-prose_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 47,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 47,
+    "refused_chapters": 0,
+    "books_not_found": 1,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 47,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": null
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 14.33984375,
+    "seconds": 0.02248343
+   },
+   "integrity": []
+  },
+  {
+   "key": "v-htm-only",
+   "files": "v-htm-only.md",
+   "reference": "v-htm-only_usfm.zip",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "scored",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "printed": 0,
+    "printed_unsupported": 0,
+    "unsupported": {},
+    "unsupported_references": {},
+    "absent_in_edition": 0,
+    "outside_declared_books": [],
+    "verified": 0,
+    "verified_exact": 0,
+    "verified_canonical": 0,
+    "verified_layout": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_mismatch_kinds": {},
+    "verified_mismatch_material": 0,
+    "verified_mismatch_references": [],
+    "verified_misidentified_unsupported": [],
+    "verified_absent": 0,
+    "verified_absent_references": [],
+    "verified_unvalidatable": 0,
+    "verified_unvalidatable_references": [],
+    "held_faithful": 0,
+    "held_mismatch": 0,
+    "refused": 0,
+    "not_found": 0,
+    "refused_chapters": 0,
+    "books_not_found": 0,
+    "book_selection": "all",
+    "importer_comparison": {
+     "agree": 0,
+     "only_importer": 0,
+     "only_inventory": 0,
+     "text_differs": 0,
+     "error": "UnsupportedFormat(UserMessage { code: Some(\"bibleImport.unknownFormat\"), params: {}, text: \"These files are not in a Bible format Abiding Word can read yet. It reads USFM Bibles (.usfm or .sfm files, or a .zip of them), the Open Scriptures Hebrew Bible's OSIS files and MorphGNT files.\" })"
+    },
+    "fidelity_disagreements": [],
+    "integrity": [],
+    "peak_memory_mb": 14.16015625,
+    "seconds": 0.022183999
+   },
+   "integrity": []
+  },
+  {
+   "key": "v-ctl",
+   "files": "v-ctl.md",
+   "reference": "-",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "control",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "detected": 0,
+    "verified": 0,
+    "verified_references": [],
+    "integrity": [],
+    "peak_memory_mb": 14.10546875,
+    "seconds": 0.022573723
+   },
+   "integrity": []
+  },
+  {
+   "key": "v-mix",
+   "files": "v-mix.md",
+   "reference": "-",
+   "language": "en",
+   "script": "Latin",
+   "format": "md",
+   "kind": "generated",
+   "class": "mixed",
+   "exit": 0,
+   "wall_seconds": 0,
+   "execution": "completed",
+   "observed": {
+    "detected": 3,
+    "verified": 0,
+    "verified_references": [],
+    "integrity": [],
+    "peak_memory_mb": 19.97265625,
+    "seconds": 0.062330289
+   },
+   "integrity": [],
+   "allowed_verified": [],
+   "outside_allowed": []
+  }
+ ]
+}
