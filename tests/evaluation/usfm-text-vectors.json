@@ -1,0 +1,987 @@
+{
+ "rules": "aw-usfm-text-1",
+ "note": "SYNTHETIC vectors (invented text; real shapes are named, not copied). Both readers must give exactly these verses and these problem codes.",
+ "vectors": [
+  {
+   "id": "note-before-closing-quote",
+   "what": "a footnote between a full stop and a closing quotation mark (engbsb GEN 3:15 shape)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 He said, “Strike the heel.\\f + \\fr 1:1 \\ft Or SYNTHETIC note\\f*” Then he left.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "He said, “Strike the heel.” Then he left."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "xref-before-parenthesis",
+   "what": "a cross-reference before a closing parenthesis (engwebp EXO 30:13 shape)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 (the coin is twenty grains\\x - \\xo 1:1 \\xt Invented 2:3\\x*); half a coin.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "(the coin is twenty grains); half a coin."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "xref-after-parenthesis",
+   "what": "a cross-reference after an opening parenthesis (fraLSG EPH 2:5 shape)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 avec le potier (\\x a \\xo 1.1 \\xt Inventé 2.3\\x*c’est par la roue que vous êtes formés);\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "avec le potier (c’est par la roue que vous êtes formés);"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "note-before-comma-greek",
+   "what": "a footnote before a comma in Greek (grcsbl MAT 4:23 shape)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 Καὶ περιῆγεν ἐν ὅλῃ τῇ χώρᾳ\\f + \\fr 1:1 \\ft χώρᾳ WH ] πόλει RP\\f*, διδάσκων.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "Καὶ περιῆγεν ἐν ὅλῃ τῇ χώρᾳ, διδάσκων."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "note-at-verse-start",
+   "what": "a cross-reference at the start of a verse",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\x - \\xo 1.1: \\xt Invented 1.1.\\x* Then the potter took clay.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "Then the potter took clay."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "note-between-words",
+   "what": "a note between two words, with its spaces kept as the source has them",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 the weaver \\f + \\ft SYNTHETIC\\f* sang\n\\v 2 the weaver\\f + \\ft SYNTHETIC\\f* sang\n\\v 3 the weaver\\f + \\ft SYNTHETIC\\f*sang\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "the weaver sang"
+    ],
+    [
+     "1",
+     "2",
+     "the weaver sang"
+    ],
+    [
+     "1",
+     "3",
+     "the weaversang"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "note-parts-and-nesting",
+   "what": "note parts closing one another implicitly, and a nested \\+nd inside a note",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 The kiln\\f + \\fr 1.1 \\fk The \\+nd Lord\\+nd*: \\ft See \\fq kiln; \\fqa oven.\\f* was hot.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "The kiln was hot."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "other-note-kinds",
+   "what": "endnote, extended footnote and extended cross-reference",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 One\\fe + \\ft end\\fe* two\\ef - \\ft study\\ef* three\\ex - \\xt Inv 1:1\\ex* four.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "One two three four."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "xref-unclosed-before-later-note",
+   "what": "an unclosed cross-reference before a later footnote (the review's 2JN case): refused, every verse kept",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a.\\x - \\xo 1:1 \\xt Invented\n\\v 2 b.\n\\v 3 c.\n\\v 4 d.\\f + \\ft n\\f*\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ],
+    [
+     "1",
+     "2",
+     "b."
+    ],
+    [
+     "1",
+     "3",
+     "c."
+    ],
+    [
+     "1",
+     "4",
+     "d."
+    ]
+   ],
+   "problems": [
+    "note_unclosed"
+   ]
+  },
+  {
+   "id": "note-closed-by-other-type",
+   "what": "a footnote closed by a cross-reference's end marker",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a\\f + \\ft n\\x* b.\n\\v 2 c.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a"
+    ],
+    [
+     "1",
+     "2",
+     "c."
+    ]
+   ],
+   "problems": [
+    "note_close_mismatch",
+    "note_unclosed"
+   ]
+  },
+  {
+   "id": "note-close-stray",
+   "what": "a footnote end with no footnote open",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a\\f* b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b."
+    ]
+   ],
+   "problems": [
+    "note_close_stray"
+   ]
+  },
+  {
+   "id": "note-nested",
+   "what": "a cross-reference inside a footnote",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a\\f + \\ft n \\x - \\xt Inv 1:1\\x*\\f* b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b."
+    ]
+   ],
+   "problems": [
+    "note_nested"
+   ]
+  },
+  {
+   "id": "va-unclosed",
+   "what": "an unclosed alternate verse number (the review's case): refused, the following verses kept",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\va 2\\va a.\n\\v 2 b.\n\\v 3 c.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     ""
+    ],
+    [
+     "1",
+     "2",
+     "b."
+    ],
+    [
+     "1",
+     "3",
+     "c."
+    ]
+   ],
+   "problems": [
+    "dropped_unclosed",
+    "span_nested_without_plus"
+   ]
+  },
+  {
+   "id": "fig-unclosed",
+   "what": "an unclosed figure",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a \\fig A picture|src=\"x.jpg\"\n\\v 2 b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a"
+    ],
+    [
+     "1",
+     "2",
+     "b."
+    ]
+   ],
+   "problems": [
+    "dropped_unclosed"
+   ]
+  },
+  {
+   "id": "char-unclosed-at-verse",
+   "what": "words of Jesus left open at the next verse",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\wj a\n\\v 2 b.\\wj*\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a"
+    ],
+    [
+     "1",
+     "2",
+     "b."
+    ]
+   ],
+   "problems": [
+    "char_unclosed",
+    "span_close_stray"
+   ]
+  },
+  {
+   "id": "char-close-mismatch",
+   "what": "a span closed by another span's end marker",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\add a\\nd* b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b."
+    ]
+   ],
+   "problems": [
+    "char_unclosed",
+    "span_close_mismatch"
+   ]
+  },
+  {
+   "id": "char-close-stray",
+   "what": "a span end with no span open",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a\\add* b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b."
+    ]
+   ],
+   "problems": [
+    "span_close_stray"
+   ]
+  },
+  {
+   "id": "char-nested-without-plus",
+   "what": "a span opened inside another without +",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\wj a \\add b\\add* c\\wj*\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b c"
+    ]
+   ],
+   "problems": [
+    "span_nested_without_plus"
+   ]
+  },
+  {
+   "id": "char-close-plus-mismatch",
+   "what": "a nested span \\+w closed by \\w*",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\wj a \\+w b\\w* c\\wj*\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b c"
+    ]
+   ],
+   "problems": [
+    "char_unclosed",
+    "span_close_mismatch"
+   ]
+  },
+  {
+   "id": "marker-unknown",
+   "what": "a marker that is not USFM 3",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a \\qqq b\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ],
+   "problems": [
+    "marker_unknown"
+   ]
+  },
+  {
+   "id": "marker-private",
+   "what": "a private \\z marker",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a \\zcolour red\\zcolour* b\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a red b"
+    ]
+   ],
+   "problems": [
+    "marker_private"
+   ]
+  },
+  {
+   "id": "backslash-not-marker",
+   "what": "a backslash that starts no marker",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a \\ b\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ],
+   "problems": [
+    "backslash_not_marker"
+   ]
+  },
+  {
+   "id": "bar-outside-span",
+   "what": "an attribute bar in verse text outside any span",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a | b\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ],
+   "problems": [
+    "bar_outside_span"
+   ]
+  },
+  {
+   "id": "attributes-interrupted",
+   "what": "a marker inside an attribute list (the space before it belongs to the list)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\w a|lemma=\"b\" \\+nd c\\+nd*\\w* d\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "ac d"
+    ]
+   ],
+   "problems": [
+    "attributes_interrupted"
+   ]
+  },
+  {
+   "id": "milestone-unterminated",
+   "what": "a milestone without its \\* (the review's p2-shared case)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\qt-s |who=\"SYNTHETIC\" Are you the potter?\\qt-e\\*\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "who=\"SYNTHETIC\" Are you the potter?"
+    ]
+   ],
+   "problems": [
+    "bar_outside_span",
+    "milestone_unterminated"
+   ]
+  },
+  {
+   "id": "milestone-unpaired",
+   "what": "a start milestone that never ends",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\qt-s\\*a.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ]
+   ],
+   "problems": [
+    "milestone_unpaired"
+   ]
+  },
+  {
+   "id": "text-after-chapter-number",
+   "what": "text after a chapter number",
+   "usfm": "\\id GEN SYNTHETIC\n\\c 1 Chapter One\n\\p\n\\v 1 a.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ]
+   ],
+   "problems": [
+    "text_after_chapter_number"
+   ]
+  },
+  {
+   "id": "text-outside-verse",
+   "what": "text in a chapter that belongs to no verse",
+   "usfm": "\\id GEN SYNTHETIC\n\\c 1\n\\p Stray words.\n\\v 1 a.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ]
+   ],
+   "problems": [
+    "text_outside_verse"
+   ]
+  },
+  {
+   "id": "control-character",
+   "what": "a control character in verse text",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a\u0001b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a\u0001b."
+    ]
+   ],
+   "problems": [
+    "control_character"
+   ]
+  },
+  {
+   "id": "sidebar-unclosed",
+   "what": "a sidebar never closed",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a.\n\\esb\n\\p Side text.\n\\v 2 b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ],
+    [
+     "1",
+     "2",
+     "b."
+    ]
+   ],
+   "problems": [
+    "sidebar_unclosed"
+   ]
+  },
+  {
+   "id": "id-repeated",
+   "what": "two books in one file",
+   "usfm": "\\id GEN SYNTHETIC\n\\c 1\n\\v 1 a.\n\\id EXO SYNTHETIC\n\\c 1\n\\v 1 b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ],
+    [
+     "1",
+     "1",
+     "b."
+    ]
+   ],
+   "problems": [
+    "id_repeated"
+   ]
+  },
+  {
+   "id": "verse-number-missing",
+   "what": "a verse marker without a number: kept, unlabelled, refused",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v \\w a\\w* b.\n\\v 2 c.\n",
+   "verses": [
+    [
+     "1",
+     "",
+     "a b."
+    ],
+    [
+     "1",
+     "2",
+     "c."
+    ]
+   ],
+   "problems": [
+    "verse_number_missing"
+   ]
+  },
+  {
+   "id": "chapter-number-missing",
+   "what": "a chapter marker without a number",
+   "usfm": "\\id GEN SYNTHETIC\n\\c\n\\p\n\\v 1 a.\n",
+   "verses": [
+    [
+     "",
+     "1",
+     "a."
+    ]
+   ],
+   "problems": [
+    "chapter_number_missing"
+   ]
+  },
+  {
+   "id": "verse-before-chapter",
+   "what": "a verse before any chapter: counted, not read",
+   "usfm": "\\id GEN SYNTHETIC\n\\p\n\\v 1 a.\n\\c 1\n\\v 1 b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "b."
+    ]
+   ],
+   "problems": [],
+   "before_chapter": 1
+  },
+  {
+   "id": "labels-as-written",
+   "what": "duplicated, unusual and bridged labels and a gap: each kept as written (the inventory classes them)",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 0 zero.\n\\v 1 one.\n\\v 3 three.\n\\v 3 three again.\n\\v 4-5 bridge.\n\\v 6–7 en dash bridge.\n\\v 12a part.\n\\v 201 high.\n",
+   "verses": [
+    [
+     "1",
+     "0",
+     "zero."
+    ],
+    [
+     "1",
+     "1",
+     "one."
+    ],
+    [
+     "1",
+     "3",
+     "three."
+    ],
+    [
+     "1",
+     "3",
+     "three again."
+    ],
+    [
+     "1",
+     "4-5",
+     "bridge."
+    ],
+    [
+     "1",
+     "6–7",
+     "en dash bridge."
+    ],
+    [
+     "1",
+     "12a",
+     "part."
+    ],
+    [
+     "1",
+     "201",
+     "high."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "chapter-without-paragraph",
+   "what": "a verse directly after a chapter marker",
+   "usfm": "\\id GEN SYNTHETIC\n\\c 1\n\\v 1 a.\n\\c 2\n\\v 1 b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ],
+    [
+     "2",
+     "1",
+     "b."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "poetry-lines",
+   "what": "poetry lines: one space at each line",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\q1\n\\v 1 The potter sang,\n\\q2 and the wheel turned.\n\\b\n\\q1 Then rest.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "The potter sang, and the wheel turned. Then rest."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "heading-inside-verse",
+   "what": "a heading between two parts of a verse, and a speaker",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a\n\\s1 SYNTHETIC heading\n\\sp Speaker\n\\p b\n\\v 2 c\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b"
+    ],
+    [
+     "1",
+     "2",
+     "c"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "title-and-verse-in-title",
+   "what": "a psalm title (not verse text), and a verse inside a title (verse text)",
+   "usfm": "\\id PSA SYNTHETIC\n\\c 3\n\\d A SYNTHETIC title.\n\\q1\n\\v 1 a.\n\\c 4\n\\d \\v 1 For the choir, SYNTHETIC.\n\\q1\n\\v 2 b.\n",
+   "verses": [
+    [
+     "3",
+     "1",
+     "a."
+    ],
+    [
+     "4",
+     "1",
+     "For the choir, SYNTHETIC."
+    ],
+    [
+     "4",
+     "2",
+     "b."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "acrostic-heading",
+   "what": "an acrostic heading is a heading",
+   "usfm": "\\id PSA SYNTHETIC\n\\c 119\n\\qa ALEPH\n\\q1\n\\v 1 a.\n\\qa BETH\n\\q1\n\\v 9 b.\n",
+   "verses": [
+    [
+     "119",
+     "1",
+     "a."
+    ],
+    [
+     "119",
+     "9",
+     "b."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "table-cells",
+   "what": "a table row: one space at each cell",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 Offerings:\n\\tr \\th1 Tribe \\th2 Gift\n\\tr \\tc1 Reuben \\tcr2 ten\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "Offerings: Tribe Gift Reuben ten"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "quotation-reference",
+   "what": "an inline quotation reference is not verse text",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a voice calling. \\rq Inv 40:3\\rq*\n\\v 2 b.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a voice calling."
+    ],
+    [
+     "1",
+     "2",
+     "b."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "alternate-numbers",
+   "what": "alternate and published numbers are kept beside the verse, never in its text",
+   "usfm": "\\id ESG SYNTHETIC\n\\c 54\n\\ca 53\\ca*\n\\cp A\n\\p\n\\v 1 \\va 3\\va* a.\n\\v 2 \\vp 2b\\vp* b.\n",
+   "verses": [
+    [
+     "54",
+     "1",
+     "a."
+    ],
+    [
+     "54",
+     "2",
+     "b."
+    ]
+   ],
+   "problems": [],
+   "chapters": [
+    {
+     "label": "54",
+     "alternate": "53",
+     "published": "A"
+    }
+   ]
+  },
+  {
+   "id": "tilde-and-break",
+   "what": "~ is a no-break space, // an optional break; a literal no-break space and a tab are kept or collapsed as written",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 ten~shekels // of silver, ” said\the.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "ten shekels of silver, ” said he."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "milestones",
+   "what": "milestones are not text",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\qt-s |who=\"SYNTHETIC\"\\*“Are you the potter?”\\qt-e\\* he asked.\\ts\\*\n\\v 2 \\zaln-s |x-strong=\"H1\"\\*\\w clay|strong=\"H1\"\\w*\\zaln-e\\* pots.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "“Are you the potter?” he asked."
+    ],
+    [
+     "1",
+     "2",
+     "clay pots."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "sidebar",
+   "what": "a sidebar is not verse text",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a.\n\\esb\n\\ms SYNTHETIC\n\\p Side text.\n\\esbe\n\\p b.\n\\v 2 c.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a. b."
+    ],
+    [
+     "1",
+     "2",
+     "c."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "attributes",
+   "what": "attribute lists, default attributes and ruby glosses are not text",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\w gracious|grace\\w* \\w kind|lemma=\"kind\" strong=\"H2617\"\\w* \\rb 陶工|とうこう\\rb*.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "gracious kind 陶工."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "nested-plus",
+   "what": "nested spans with + keep their text",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 \\wj “\\+w I|strong=\"G1\"\\+w* \\+nd am\\+nd*”\\wj*\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "“I am”"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "bom-and-crlf",
+   "what": "a byte-order mark and CRLF line ends",
+   "usfm": "﻿\\id GEN SYNTHETIC\r\n\\c 1\r\n\\p\r\n\\v 1 a\r\nb.\r\n\\v 2 c.\r\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a b."
+    ],
+    [
+     "1",
+     "2",
+     "c."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "introduction",
+   "what": "an introduction is not verse text",
+   "usfm": "\\id GEN SYNTHETIC\n\\imt1 Intro\n\\ip SYNTHETIC \\it intro\\it*.\n\\ie\n\\c 1\n\\p\n\\v 1 a.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-english",
+   "what": "English punctuation kept exactly: curly quotes, em dash, ellipsis, NBSP",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 “Here—now…” the clerk’s lamp.\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "“Here—now…” the clerk’s lamp."
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-german",
+   "what": "German, decomposed umlaut kept decomposed; ß; „“",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 „Der Müller sprach: Gruße.“\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "„Der Müller sprach: Gruße.“"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-korean",
+   "what": "Korean syllables and conjoining jamo kept as written",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 토기장이가 각 노래하니라\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "토기장이가 각 노래하니라"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-greek",
+   "what": "polytonic Greek, decomposed breathing kept, final sigma, ano teleia",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 ἐν ἀρχῇ λόγος· καὶ\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "ἐν ἀρχῇ λόγος· καὶ"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-hebrew",
+   "what": "pointed Hebrew with cantillation, maqaf and sof pasuq, right-to-left mark",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 בְּרֵאשִ֑ית עַל־הָאָֽרֶץ׃‏\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "בְּרֵאשִ֑ית עַל־הָאָֽרֶץ׃‏"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-arabic-persian",
+   "what": "Arabic harakat and a Persian zero-width non-joiner",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 فِي الْبَدْءِ می‌خواهم\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "فِي الْبَدْءِ می‌خواهم"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-french-spanish-portuguese",
+   "what": "French narrow no-break spaces, Spanish ¿¡ñ, Portuguese ã and a soft hyphen",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 « Où ? » ¿Mañana? ¡Sí! irmã pa­lavra\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "« Où ? » ¿Mañana? ¡Sí! irmã pa­lavra"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-latin-ligature",
+   "what": "Latin with a ligature and a combining macron kept as written",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 ædificāvit rōma\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "ædificāvit rōma"
+    ]
+   ],
+   "problems": []
+  },
+  {
+   "id": "unicode-format-characters",
+   "what": "zero-width joiner, word joiner and a byte-order mark inside text are kept",
+   "usfm": "\\id GEN SYNTHETIC vector, invented text\n\\c 1\n\\p\n\\v 1 a‍b⁠c﻿d\n",
+   "verses": [
+    [
+     "1",
+     "1",
+     "a‍b⁠c﻿d"
+    ]
+   ],
+   "problems": []
+  }
+ ]
+}

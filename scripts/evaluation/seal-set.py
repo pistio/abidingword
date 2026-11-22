@@ -15,7 +15,7 @@ already has SEAL.txt is never sealed again.
 Exit 0 when the checks pass (and, with --write, SEAL.txt was written);
 otherwise 2. check-set.py is used unchanged. --protocol (E2): the protocol
 whose required composition the set must meet (default: the committed
-docs/evaluation/protocol-e2.json).
+docs/evaluation/protocol-e3.json). Any other option is refused (E3).
 """
 import datetime
 import hashlib
@@ -44,12 +44,15 @@ def seal_text(folder, when):
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    opts = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
+    args, opts, flags, bad = check_set.parse_options(sys.argv[1:], ("inventory", "protocol"), ("write",))
+    if bad:
+        print(f"refused: unknown or repeated option(s) {', '.join(bad)}; options are --inventory=..., "
+              f"--protocol=... and --write", file=sys.stderr)
+        sys.exit(2)
     if len(args) != 2:
         sys.exit(__doc__)
     seal, docs = args
-    write = "write" in opts
+    write = "write" in flags
     if os.path.exists(os.path.join(seal, "SEAL.txt")):
         print("refused: SEAL.txt exists; a sealed set is never sealed again", file=sys.stderr)
         sys.exit(2)

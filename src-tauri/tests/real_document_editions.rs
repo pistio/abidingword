@@ -21,14 +21,18 @@
 //!
 //! Each document is read exactly as a person's file would be: the recogniser
 //! never sees the USFM. Only afterwards is the publisher's text read, and
-//! compared under the evaluation rules of candidate A1.5-E2
-//! (`docs/audit/candidate-a1.5/evaluation-e2/EVALUATION-FREEZE.md`):
+//! compared under the evaluation rules of candidate A1.5-E3
+//! (`docs/audit/candidate-a1.5/evaluation-e3/EVALUATION-CANDIDATE.md`):
 //!
-//! * **the reference** is read by a neutral inventory (`eval_support/reference.rs`),
-//!   not through the app's importer: every published verse is kept with its
-//!   numbers as written, and what the 66-book canon cannot hold (verse 0,
-//!   chapters above its counts, other books, unusual labels, a number given
-//!   twice) is counted and listed as unsupported, never dropped;
+//! * **the reference** is read by a neutral inventory (`eval_support/reference.rs`)
+//!   whose labels and text come from the evaluation's own USFM reader
+//!   (`eval_support/usfm_text.rs`), never from the app's importer or its
+//!   USFM reader: every published verse is kept with its numbers as written
+//!   and its exact text (notes removed without a space put in their place),
+//!   what the 66-book canon cannot hold (verse 0, chapters above its counts,
+//!   other books, unusual labels, a number covered twice) is counted and
+//!   listed as unsupported, never dropped, and each verse's text digest is
+//!   reported for the scorer to compare with the check's own reading;
 //! * **every verse is classed** by the strict fidelity rule
 //!   (`eval_support/fidelity.rs`): exact, canonically equivalent (NFC),
 //!   layout (white-space runs only) or mismatch. Every mismatch is wrong
@@ -41,13 +45,17 @@
 //! Each report states its rules (`evaluation_schema`, `fidelity_rules`,
 //! `inventory_rules`); the scorer refuses any other.
 
-// Shared with tests/evaluation_rules.rs, which tests every item.
+// Shared with tests/evaluation_rules.rs and tests/evaluation_references.rs,
+// which test every item.
 #[allow(dead_code)]
 #[path = "eval_support/fidelity.rs"]
 mod fidelity;
 #[allow(dead_code)]
 #[path = "eval_support/reference.rs"]
 mod reference;
+#[allow(dead_code)]
+#[path = "eval_support/usfm_text.rs"]
+mod usfm_text;
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Write as _;
@@ -59,7 +67,14 @@ use abiding_word_lib::scripture::import::{self, ImportOrigin, Severity};
 use fidelity::Class;
 
 /// The report format the scorer requires (`scripts/evaluation/score-set.py`).
-const EVALUATION_SCHEMA: &str = "aw-eval-2";
+const EVALUATION_SCHEMA: &str = "aw-eval-3";
+
+/// The Unicode version of this harness's normalisation (NFC), as
+/// "major.minor.update"; the scorer states its own beside it.
+fn unicode_version() -> String {
+    let (a, b, c) = unicode_normalization::UNICODE_VERSION;
+    format!("{a}.{b}.{c}")
+}
 
 fn folder() -> Option<PathBuf> {
     std::env::var_os("AW_DOCUMENT_EDITIONS").map(PathBuf::from)
@@ -298,6 +313,8 @@ struct EditionAudit {
     evaluation_schema: &'static str,
     fidelity_rules: &'static str,
     inventory_rules: &'static str,
+    reader_rules: &'static str,
+    unicode_version: String,
     edition: Edition,
     reference: String,
     book_selection: BookSelection,
@@ -316,8 +333,9 @@ struct EditionAudit {
     verified_references: Vec<String>,
     /// Verified references the edition does not have, with why.
     verified_absent: Vec<AbsentReference>,
-    /// Verified references the edition has only ambiguously (a number given
-    /// twice, a book given twice): they cannot be validated.
+    /// Verified references the edition has only ambiguously (a number covered
+    /// twice, a book given twice, a number inside a bridge): they cannot be
+    /// validated.
     verified_unvalidatable: Vec<AbsentReference>,
     /// Verified verses numbered but empty both here and in the edition.
     verified_empty_in_both: usize,
@@ -913,6 +931,8 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
                     }
                     None => Some(if let Some(why) = inventory.unscorable_keys.get(&key) {
                         (*why, true)
+                    } else if inventory.bridge_keys.contains(&key) {
+                        ("inside_bridge", true)
                     } else if inventory.outside_keys.contains(&key) {
                         ("outside_declared_books", false)
                     } else if !reference_books.contains(ordinal) {
@@ -991,6 +1011,8 @@ fn audit(dir: &Path, edition: &Edition) -> Option<EditionAudit> {
         evaluation_schema: EVALUATION_SCHEMA,
         fidelity_rules: fidelity::RULES,
         inventory_rules: reference::RULES,
+        reader_rules: usfm_text::RULES,
+        unicode_version: unicode_version(),
         edition: edition.clone(),
         reference: reference_file
             .file_name()
@@ -1043,7 +1065,7 @@ fn markdown(a: &EditionAudit) -> String {
     let _ = writeln!(s, "# {} — {}\n", e.key, e.files.join(", "));
     let _ = writeln!(
         s,
-        "Language {} ({}), format {}, layout: {}. Compared with {} (same revision), rules {} / {} / {}.\n",
+        "Language {} ({}), format {}, layout: {}. Compared with {} (same revision), rules {} / {} / {} / {} (Unicode {}).\n",
         e.language,
         e.script,
         e.format,
@@ -1051,7 +1073,9 @@ fn markdown(a: &EditionAudit) -> String {
         a.reference,
         a.evaluation_schema,
         a.fidelity_rules,
-        a.inventory_rules
+        a.inventory_rules,
+        a.reader_rules,
+        a.unicode_version
     );
     let _ = writeln!(
         s,

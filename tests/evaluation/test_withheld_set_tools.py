@@ -7,11 +7,17 @@ told. No Scripture, no corpus and no recogniser are needed, so every
 refusal of the runner and every way a document's run can end are shown.
 Every reference and report here is invented (SYNTHETIC).
 
-E2 (candidate A1.5-E2): the fake reports are in the E2 format
-(`aw-eval-2`); each set has a declared composition and a test protocol; the
-scorer is run in --diagnostic mode with that protocol, and `score()` checks
-that the official verdict is then always "not a protocol run" before it
-hands the tests the diagnostic verdict.
+E2 (candidate A1.5-E2): each set has a declared composition and a test
+protocol; the scorer is run in --diagnostic mode with that protocol, and
+`score()` checks that the official verdict is then always "not a protocol
+run" before it hands the tests the diagnostic verdict.
+
+E3 (candidate A1.5-E3): the fake reports are in the E3 format (`aw-eval-3`:
+the reference inventory carries every verse's text digest, read here by the
+check's own reader, so the fake harness agrees with the check by
+construction); every seal holds reference-sources.tsv; the test protocol
+approves the tools in use by SHA-256, states both Unicode versions, permits
+the run and sets the default evidence floor.
 
     python3 -m unittest discover -s tests/evaluation -p 'test_*.py'
 """
@@ -23,6 +29,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import unicodedata
 import unittest
 import warnings
 import zipfile
@@ -43,6 +50,32 @@ _spec = importlib.util.spec_from_file_location(
 reference_inventory = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(reference_inventory)
 PROTOCOL_LIMITS = {"timeout_seconds": 1800, "memory_kb": 4194304}
+# The tools an official assessment rests on (score-set.py's TOOL_FILES).
+TOOL_FILES = ["scripts/evaluation/score-set.py", "scripts/evaluation/check-set.py",
+              "scripts/evaluation/seal-set.py", "scripts/evaluation/run-withheld-set.sh",
+              "scripts/evaluation/fidelity.py", "scripts/evaluation/reference_inventory.py",
+              "scripts/evaluation/usfm_text.py", "docs/evaluation/usfm-books.tsv"]
+HARNESS_UNICODE = "17.0.0"
+SOURCES = ["key", "reference", "publisher_archive", "publisher_archive_sha256", "member", "member_sha256", "role"]
+
+
+def approved_tools():
+    """The SHA-256 of every tool in this checkout: what a test protocol approves."""
+    return {rel: hashlib.sha256(open(os.path.join(ROOT, rel), "rb").read()).hexdigest() for rel in TOOL_FILES}
+
+
+def test_protocol(fake_sha, inventory, composition, **changes):
+    """A test protocol: the fake harness, the protocol ceilings, the test
+    inventory, a required composition, and (E3) the tools in use approved,
+    both Unicode versions, the run permitted, the default evidence floor."""
+    p = {"name": "test protocol", "harness_binary_sha256": fake_sha, "limits": PROTOCOL_LIMITS,
+         "inventory": inventory, "inventory_sha256": hashlib.sha256(open(inventory, "rb").read()).hexdigest(),
+         "required_composition": composition, "evidence_rules": "aw-evidence-1",
+         "evidence_floor": {"minimum_verified_faithful": 1},
+         "unicode": {"harness_normalisation": HARNESS_UNICODE, "scorer_python": unicodedata.unidata_version},
+         "approved_tools": approved_tools(), "withheld_execution_permitted": True}
+    p.update(changes)
+    return p
 
 FAKE = r'''#!/usr/bin/env python3
 import json, os, signal, sys, time
@@ -119,8 +152,9 @@ def report(printed, verified, wrong=(), typography=(), canonical=(), absent=(), 
               "verified_mismatch": len(wrong) + len(typography), "verified_mismatch_kinds": dict(kinds),
               "held": clean + caught, "held_faithful": clean, "held_mismatch": caught, "refused": 0,
               "not_found": printed - verified - clean - caught}
-    return {"evaluation_schema": "aw-eval-2", "fidelity_rules": "aw-fidelity-2",
-            "inventory_rules": "aw-reference-inventory-1", "totals": totals, "fidelity_records": records,
+    return {"evaluation_schema": "aw-eval-3", "fidelity_rules": "aw-fidelity-2",
+            "inventory_rules": "aw-reference-inventory-2", "reader_rules": "aw-usfm-text-1",
+            "unicode_version": HARNESS_UNICODE, "totals": totals, "fidelity_records": records,
             "verified_references": [label(k) for k in keys[:verified]] + list(absent),
             "verified_absent": [{"reference": r, "reason": "verse_not_in_chapter"} for r in absent],
             "verified_unvalidatable": [], "verified_empty_in_both": 0,
@@ -133,22 +167,27 @@ def report(printed, verified, wrong=(), typography=(), canonical=(), absent=(), 
 
 
 def harness_inventory(inv):
-    """The harness's inventory report, as the E2 harness writes it, for a
-    reference the Python inventory read (every verse printed)."""
-    counts, labels = inv["label_counts"], inv["unsupported_labels"]
-    unsupported = {k: {"printed": inv["verses_before_chapter"] if k == "verse_before_chapter" else len(labels[k]),
-                       "empty": 0, "references": labels[k]} for k in reference_inventory.UNSUPPORTED}
-    return {"rules": reference_inventory.RULES, "members": inv["members"], "problems": inv["problems"],
-            "label_digest": inv["label_digest"], "labels": inv["labels"],
-            "printed_scorable": counts["scorable"], "absent_in_edition": 0, "unsupported": unsupported,
-            "printed_unsupported": sum(c["printed"] for c in unsupported.values()),
-            "outside_declared_scope": {"printed": counts["outside_declared_scope"], "empty": 0,
+    """The harness's inventory report, as the E3 harness writes it, for a
+    reference the Python inventory read: the same labels, statuses and
+    per-verse text digests (a fake harness that agrees with the check)."""
+    counts, printed, labels = inv["label_counts"], inv["printed_counts"], inv["unsupported_labels"]
+    unsupported = {k: {"printed": printed[k], "empty": counts[k] - printed[k], "references": labels[k]}
+                   for k in reference_inventory.UNSUPPORTED}
+    return {"rules": reference_inventory.RULES, "reader_rules": reference_inventory.usfm_text.RULES,
+            "members": inv["members"], "problems": inv["problems"],
+            "label_digest": inv["label_digest"], "text_digest": inv["text_digest"], "labels": inv["labels"],
+            "printed_scorable": inv["printed_scorable"], "absent_in_edition": inv["absent_in_edition"],
+            "unsupported": unsupported, "printed_unsupported": inv["printed_unsupported"],
+            "outside_declared_scope": {"printed": printed["outside_declared_scope"],
+                                       "empty": counts["outside_declared_scope"] - printed["outside_declared_scope"],
                                        "references": inv["outside_declared_books"]},
-            "scorable_by_book": {}, "scorable_ranges": inv["scorable_ranges"], "before_chapter_outside": 0}
+            "scorable_by_book": {}, "scorable_ranges": inv["scorable_ranges"],
+            "bridge_member_ranges": inv["bridge_member_ranges"], "before_chapter_outside": 0,
+            "verses": [list(v) for v in inv["verses"]]}
 
 
 def control(references, refused=None):
-    c = {"evaluation_schema": "aw-eval-2", "control": True, "detected": len(references),
+    c = {"evaluation_schema": "aw-eval-3", "control": True, "detected": len(references),
          "verified": len(references), "verified_references": list(references), "peak_memory_mb": 20.0,
          "seconds": 0.1}
     if refused:
@@ -168,7 +207,7 @@ class SetFixture:
     harness and an inventory of 'disclosed' hashes."""
 
     def __init__(self, tmp, docs, allowed=None, disclosed=(), disclosed_keys=("ZZ-disclosed",),
-                 tamper=None, composition=None, required_composition="same"):
+                 tamper=None, composition=None, required_composition="same", protocol_changes=None):
         self.tmp = tmp
         self.repo = os.path.join(tmp, "repo")
         self.seal = os.path.join(self.repo, "eval", "set-x", "seal")
@@ -185,7 +224,7 @@ class SetFixture:
             f.write("repo\n")
         self.git("add", "-A")
         self.git("commit", "-qm", "base")
-        rows, prov, sums = [], [], {}
+        rows, prov, sums, sources = [], [], {}, []
         for d in docs:
             key = d["key"]
             name = f"{key}.{d.get('format', 'epub')}"
@@ -201,6 +240,10 @@ class SetFixture:
                 data = d.get("reference_bytes") or usfm_zip(usfm or f"\\id MAT\n\\c 1\n\\v 1 {key}\n")
                 open(os.path.join(self.docs, ref), "wb").write(data)
                 sums[ref] = sha(data)
+                with zipfile.ZipFile(io.BytesIO(data)) as z:
+                    for info in z.infolist():
+                        sources.append([key, ref, "SYNTHETIC package", sha(data), info.filename,
+                                        sha(z.read(info)), "kept"])
                 if isinstance(fake, dict) and fake.get("reference_inventory") == "AUTO":
                     declared = None if d.get("books", "all") == "all" else set(d["books"].split(","))
                     fake["reference_inventory"] = harness_inventory(
@@ -221,6 +264,7 @@ class SetFixture:
         counts.update({k: sum(r[12] == k for r in rows) for k in ("authentic", "generated")})
         self.declared = dict(counts, **(composition or {}))
         self.write("composition.tsv", "measure\tdocuments\n" + "".join(f"{k}\t{v}\n" for k, v in self.declared.items()))
+        self.write("reference-sources.tsv", "\t".join(SOURCES) + "\n" + "".join("\t".join(r) + "\n" for r in sources))
         for key, lines in (allowed or {}).items():
             os.makedirs(os.path.join(self.seal, "allowed"), exist_ok=True)
             self.write(f"allowed/{key}.txt", "\n".join(lines) + "\n")
@@ -239,9 +283,9 @@ class SetFixture:
         # The test protocol: the fake harness, the protocol ceilings, the test
         # inventory, and (unless told otherwise) the declared composition.
         self.protocol = os.path.join(tmp, "protocol.json")
-        json.dump({"name": "test protocol", "harness_binary_sha256": self.fake_sha, "limits": PROTOCOL_LIMITS,
-                   "inventory": self.inventory, "inventory_sha256": sha(open(self.inventory, "rb").read()),
-                   "required_composition": self.declared if required_composition == "same" else required_composition},
+        json.dump(test_protocol(self.fake_sha, self.inventory,
+                                self.declared if required_composition == "same" else required_composition,
+                                **(protocol_changes or {})),
                   open(self.protocol, "w"))
 
     def git(self, *args):
@@ -297,6 +341,7 @@ class SetFixture:
             a = score["assessment"]
             assert score["mode"] == "diagnostic" and a["verdict"] == "not a protocol run", score["mode"]
             a["official_verdict"], a["verdict"] = a["verdict"], a["diagnostic_verdict"]
+            a["official_verdict_line"], a["verdict_line"] = a["verdict_line"], a["diagnostic_verdict_line"]
         return r, score
 
     def rehash_outputs(self, out):
@@ -354,7 +399,16 @@ class RunnerRefuses(Fixture):
         self.assertIn("exists", self.refused(s, out=os.path.join(self.tmp, "out")))
 
     def test_another_binary(self):
-        self.assertIn("is not the frozen", self.refused(self.make(), binsha="0" * 64))
+        # E3: an expected SHA-256 other than the protocol's own pin is refused first.
+        self.assertIn("is not the protocol's harness binary", self.refused(self.make(), binsha="0" * 64))
+
+    def test_another_binary_file_under_the_pinned_hash(self):
+        s = self.make()
+        other = os.path.join(self.tmp, "other-harness")
+        open(other, "w").write(FAKE + "\n# another build\n")
+        os.chmod(other, 0o755)
+        s.fake = other  # the expected SHA-256 stays the protocol's pin
+        self.assertIn("is not the frozen", self.refused(s))
 
     def test_a_seal_changed_after_its_commit(self):
         s = self.make()
@@ -482,7 +536,7 @@ class Execution(Fixture):
             "documents": 1, "printed": 100, "printed_unsupported": 0, "verified": 90, "verified_exact": 89,
             "verified_canonical": 1, "verified_layout": 0, "verified_faithful": 90, "verified_mismatch": 0,
             "verified_mismatch_material": 0, "verified_absent": 0, "verified_unvalidatable": 0,
-            "held_faithful": 8, "held_mismatch": 2, "refused": 0, "not_found": 0, "refused_chapters": 0,
+            "held": 10, "held_faithful": 8, "held_mismatch": 2, "refused": 0, "not_found": 0, "refused_chapters": 0,
             "verified_mismatch_kinds": {}, "unsupported": {}}})
         e1 = next(d for d in score["documents"] if d["key"] == "E1")
         self.assertEqual(e1["observed"]["verified_mismatch"], 40)  # raw observation kept

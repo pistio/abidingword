@@ -10,6 +10,9 @@
 mod fidelity;
 #[path = "eval_support/reference.rs"]
 mod reference;
+#[allow(dead_code)]
+#[path = "eval_support/usfm_text.rs"]
+mod usfm_text;
 
 use std::collections::BTreeSet;
 use std::io::Write;
@@ -318,4 +321,51 @@ fn the_book_table_matches_the_canon() {
         .map(|c| c.to_string())
         .collect();
     assert_eq!(other, non);
+}
+
+/// E3: a number covered twice (a bridge beside a verse it covers, two
+/// overlapping bridges) makes every label involved ambiguous; the numbers
+/// inside a sound bridge cannot be validated alone. SYNTHETIC text.
+#[test]
+fn bridges_that_overlap_are_ambiguous_and_their_inside_numbers_unvalidatable() {
+    let dir = std::env::temp_dir().join(format!("aw-e3-bridges-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("31-OBA.usfm");
+    std::fs::write(
+        &path,
+        "\\id OBA SYNTHETIC\n\\c 1\n\\p\n\\v 1 a.\n\\v 2-3 b.\n\\v 4-5 c.\n\\v 5 d.\n\\v 6-8 e.\n\\v 8-9 f.\n\\v 10 g.\n",
+    )
+    .unwrap();
+    let inv = reference::read(&path, None);
+    let status = |label: &str| {
+        inv.entries
+            .iter()
+            .find(|e| e.verse == label)
+            .map(|e| e.status.clone())
+            .unwrap()
+    };
+    assert!(matches!(status("2-3"), Status::Scorable { verse: 2, .. }));
+    for label in ["4-5", "5", "6-8", "8-9"] {
+        assert_eq!(
+            status(label),
+            Status::Unsupported("verse_duplicate"),
+            "{label}"
+        );
+    }
+    assert!(
+        inv.bridge_keys.contains(&(31, 1, 3)),
+        "3 is inside the bridge 2-3"
+    );
+    for n in 4..=9 {
+        assert_eq!(
+            inv.unscorable_keys.get(&(31, 1, n)),
+            Some(&"verse_duplicate"),
+            "{n}"
+        );
+    }
+    let report = inv.report();
+    assert_eq!(report.scorable_ranges, vec!["OBA 1:1-2", "OBA 1:10"]);
+    assert_eq!(report.bridge_member_ranges, vec!["OBA 1:3"]);
+    assert_eq!(report.unsupported["verse_duplicate"].printed, 4);
+    std::fs::remove_dir_all(&dir).unwrap();
 }

@@ -1,0 +1,12 @@
+{
+ "inputs": 50137,
+ "seeds": 137,
+ "mutated": 50000,
+ "agree": 50137,
+ "disagree": 0,
+ "with_problems": 38333,
+ "clean": 11804,
+ "silent_loss_rust": 0,
+ "silent_loss_python": 0,
+ "examples": []
+}

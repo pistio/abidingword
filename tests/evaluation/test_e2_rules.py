@@ -167,7 +167,7 @@ class StrictFidelity(E2Fixture):
         _, _, score = self.e2(OBA, lambda inv: old)
         a = score["assessment"]
         self.assertEqual(a["verdict"], "not a protocol run")
-        self.assertIn("not a report of the E2 harness", "; ".join(a["integrity"]["S1"]))
+        self.assertIn("not a report of the E3 harness", "; ".join(a["integrity"]["S1"]))
 
 
 ODD = zipped([("02-EXO.usfm", usfm("EXO", [(16, ["0"] + [str(v) for v in range(1, 37)])])),

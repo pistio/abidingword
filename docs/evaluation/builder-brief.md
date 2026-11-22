@@ -20,9 +20,9 @@ read will be reviewed before the collection is used.
 You receive only: this brief; `disclosed-editions.tsv` (editions that must
 not be used); `disclosed-documents.sha256` (fingerprints of files that must
 not be used); `check-set.py` and `seal-set.py` (check your folder, and seal
-it), with `reference_inventory.py`, `usfm-books.tsv` and `protocol-e2.json`,
-which they read and which you keep beside them; and, if you make Word
-documents from USFM, `audit-derived-completeness.py`.
+it), with `reference_inventory.py`, `usfm_text.py`, `usfm-books.tsv` and
+`protocol-e3.json`, which they read and which you keep beside them; and, if
+you make Word documents from USFM, `audit-derived-completeness.py`.
 
 Do not open, search or ask for, by any means (web pages, `git`, APIs,
 search engines, other sessions): any software that reads Bibles from
@@ -104,6 +104,31 @@ A reference is a `.zip` of USFM book files (`.usfm` or `.sfm`, UTF-8, one
 or a single `.usfm` file. A verse map, OSIS, MorphGNT or any other file
 in it is refused: take it out.
 
+**Keep the publisher's archive and make a USFM-only package from it.** A
+publisher's archive often holds other files (a signature `keys.asc`, a
+style sheet `*.css`): copy the USFM book files (and prose, if you like)
+**byte for byte** into a new `.zip`, change nothing in them, and record both
+in `reference-sources.tsv` (below): the publisher's archive and its
+SHA-256, each member you kept with its SHA-256, and each member you left
+out with its SHA-256. `check-set.py` checks the package against the kept
+rows.
+
+`check-set.py` also refuses a reference it cannot read without guessing:
+a footnote, cross reference or character span that is never closed or is
+closed by another marker, an alternate verse number left open, a
+milestone without its `\*`, a marker that is not standard USFM 3, text in
+a chapter outside any verse, a verse marker without a number, or verse
+text with a character its Unicode version does not know. Every refusal
+names the file, the line and the reason. Use another release, or another
+edition; never edit the publisher's text to make the check pass.
+
+A **scored** document's reference must print the books the document
+holds: `check-set.py` refuses a scored document whose reference prints no
+verse that can be scored (an empty package, prose only, only books outside
+the 66 such as Tobit, only empty verses), or a book in its `books` column
+that the reference does not print. Such a document can only be
+*exploratory*.
+
 A document you make yourself from a reference (a Word file from USFM, say)
 is *generated*: record the program and settings. For a Word file made
 from USFM, `audit-derived-completeness.py` must pass. For every scored
@@ -128,6 +153,11 @@ A documents folder (the files only) and a seal folder:
 * `provenance.tsv`: `key, publisher, edition, revision, retrieved_from,
   retrieved_utc, licence, document_sha256, reference_source,
   reference_method, identity_checked_by`;
+* `reference-sources.tsv`: `key, reference, publisher_archive,
+  publisher_archive_sha256, member, member_sha256, role` (`role`: `kept`
+  for each member of your package, `removed` for each member of the
+  publisher's archive you left out); a header only if no document has a
+  reference;
 * `allowed/<key>.txt` for each mixed document;
 * `access-records.md`: who you are (session or person), the environment,
   every URL visited, every file read;

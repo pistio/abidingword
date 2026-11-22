@@ -1,38 +1,43 @@
-//! A neutral inventory of a reference edition, rules
-//! `aw-reference-inventory-1` (evaluation candidate A1.5-E2).
+//! A neutral inventory of a reference edition, labels and text, rules
+//! `aw-reference-inventory-2` (evaluation candidate A1.5-E3).
 //!
-//! The A1.5 harness read the reference through the app's importer, which
-//! keeps only what the 66-book canon can hold and drops the rest with an
-//! error the harness discarded: verse 0, chapters above the canon's counts,
-//! books outside the 66, unusual labels, a second verse with the same
-//! number. A verse map in the archive renumbered it. None of that was ever
-//! counted or reported.
+//! E2's inventory (`aw-reference-inventory-1`) read the verse text with the
+//! app's USFM reader (`usfm::parse`), which the independent E2 review found
+//! inserting a space where a note was removed (528 verses of the bundled
+//! references) and losing verses after an unclosed note or alternate
+//! number. This inventory reads every USFM book file with the evaluation's
+//! own reader (`usfm_text.rs`, rules `aw-usfm-text-1`), which shares nothing
+//! with the app's importer, and gives each verse a status:
 //!
-//! This inventory reads every verse of every USFM book file exactly as
-//! published (`usfm::parse`: the same text the importer stores, with its
-//! numbers as written) and gives each one a status:
-//!
-//! * `scorable` — a book of the 66, a chapter within its count, a verse
-//!   1..=200 or a bridge `N-M` (stored on N, as the importer does), unique;
+//! * `scorable`: a book of the 66, a chapter within its count, a verse
+//!   1..=200 or a bridge `N-M` (stored on N, as the importer does), and no
+//!   verse number covered twice in its chapter;
 //! * one of the unsupported classes (`UNSUPPORTED`): kept, counted and
-//!   listed, never dropped;
+//!   listed, never dropped. A number covered twice (a verse given twice, or
+//!   a bridge overlapping another label) makes every label involved
+//!   `verse_duplicate`;
 //! * outside the declared scope (the manifest's `books`), listed apart.
 //!
-//! A verse map, or any member that is not a USFM book or prose (`.htm`), is
-//! never read and is reported as a problem; so is text that is not UTF-8.
-//! The labels in reading order are hashed (`label_digest`) so the scorer can
-//! compare them with the check's own Python reading of the same file
-//! (`scripts/evaluation/reference_inventory.py`).
+//! The numbers N+1..M of a sound bridge are kept apart (`bridge_keys`): a
+//! verified reference to one of them cannot be validated.
+//!
+//! Every verse is recorded with its text's SHA-256 (`verses`) and the
+//! records are hashed (`text_digest`), so the scorer can compare them, verse
+//! by verse, with the check's own Python reading of the same file
+//! (`scripts/evaluation/reference_inventory.py`). A reader problem, a verse
+//! map, any member that is not a USFM book or prose, or text that is not
+//! UTF-8 is a problem of the reference.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::path::Path;
 
 use abiding_word_lib::scripture::canon::{self, NON_CANONICAL_USFM_CODES};
 use abiding_word_lib::scripture::reference::MAX_VERSE;
-use abiding_word_lib::scripture::usfm;
 use sha2::{Digest, Sha256};
 
-pub const RULES: &str = "aw-reference-inventory-1";
+use super::usfm_text;
+
+pub const RULES: &str = "aw-reference-inventory-2";
 
 /// Every reason a published verse cannot be scored, in report order.
 pub const UNSUPPORTED: [&str; 11] = [
@@ -60,6 +65,16 @@ pub enum Status {
     OutsideScope,
 }
 
+impl Status {
+    pub fn name(&self) -> &'static str {
+        match self {
+            Status::Scorable { .. } => "scorable",
+            Status::Unsupported(class) => class,
+            Status::OutsideScope => "outside_declared_scope",
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Entry {
     pub file: String,
@@ -67,7 +82,11 @@ pub struct Entry {
     pub chapter: String,
     pub verse: String,
     pub text: String,
+    /// The line of the `\v` marker in its file.
+    pub line: usize,
     pub status: Status,
+    /// For a scorable label: the last verse number it covers.
+    last: u16,
 }
 
 impl Entry {
@@ -85,7 +104,7 @@ impl Entry {
     }
 
     pub fn printed(&self) -> bool {
-        !self.text.trim().is_empty()
+        !self.text.trim_matches([' ', '\t', '\n']).is_empty()
     }
 }
 
@@ -101,6 +120,7 @@ pub struct Member {
     pub name: String,
     /// "usfm", "prose" (read by nobody), or "refused".
     pub role: &'static str,
+    pub sha256: String,
     pub book: Option<String>,
     pub verses: usize,
     pub verses_before_chapter: usize,
@@ -113,9 +133,11 @@ pub struct Inventory {
     pub entries: Vec<Entry>,
     /// Scorable keys (printed or empty) and the entry each is.
     pub scorable: BTreeMap<(u8, u16, u16), usize>,
-    /// Keys in the canon's space that cannot be scored (a duplicate number,
-    /// a book given twice), with why.
+    /// Keys in the canon's space that cannot be scored (a number covered
+    /// twice, a book given twice), with why.
     pub unscorable_keys: BTreeMap<(u8, u16, u16), &'static str>,
+    /// Verse numbers N+1..M of a scorable bridge N-M.
+    pub bridge_keys: BTreeSet<(u8, u16, u16)>,
     /// Keys of canon books the reference holds outside the declared scope.
     pub outside_keys: BTreeSet<(u8, u16, u16)>,
     pub members: Vec<Member>,
@@ -129,12 +151,15 @@ pub struct Inventory {
 #[derive(Debug, Default, serde::Serialize)]
 pub struct InventoryReport {
     pub rules: &'static str,
+    pub reader_rules: &'static str,
     pub members: Vec<Member>,
-    /// Reasons the reference is not a sound USFM reference (a verse map, a
-    /// member of another kind, text that is not UTF-8). Any one of them
-    /// makes the run not a protocol run.
+    /// Reasons the reference is not a sound USFM reference (a reader
+    /// problem, a verse map, a member of another kind, text that is not
+    /// UTF-8). Any one of them makes the run not a protocol run.
     pub problems: Vec<String>,
     pub label_digest: String,
+    /// SHA-256 of `verses`, one tab-separated line per record.
+    pub text_digest: String,
     /// Every verse label read, in any status.
     pub labels: usize,
     /// Scorable verses with text: the scored denominator.
@@ -150,21 +175,27 @@ pub struct InventoryReport {
     /// Every scorable key (printed or empty), as compact ranges in canon
     /// order ("OBA 1:1-4"): compared with the check's own reading.
     pub scorable_ranges: Vec<String>,
+    /// The verse numbers inside scorable bridges, as compact ranges.
+    pub bridge_member_ranges: Vec<String>,
     /// Verses before any chapter in a book outside the declared scope
     /// (counted in `outside_declared_scope.printed`; they have no label).
     pub before_chapter_outside: usize,
+    /// Every verse in reading order: member, book, chapter, label, status,
+    /// line of `\v`, SHA-256 of the text.
+    pub verses: Vec<(String, String, String, String, &'static str, usize, String)>,
 }
 
-/// The verse key the importer would store a label under, or why not.
-fn verse_key(label: &str) -> Result<u16, &'static str> {
-    let (first, last) = match label.split_once(['-', '–']) {
+/// The verse numbers a label covers (first, last), or why it cannot be
+/// scored. A bridge is split at its first hyphen or en dash.
+fn verse_span(label: &str) -> Result<(u16, u16), &'static str> {
+    let (first, last) = match label.split_once(['-', '\u{2013}']) {
         Some((a, b)) => (a.parse::<u16>().ok(), Some(b.parse::<u16>().ok())),
         None => (label.parse::<u16>().ok(), None),
     };
     match (first, last) {
         (Some(0), _) => Err("verse_zero"),
-        (Some(v), None) if v <= MAX_VERSE => Ok(v),
-        (Some(v), Some(Some(w))) if v <= MAX_VERSE && w > v => Ok(v),
+        (Some(v), None) if v <= MAX_VERSE => Ok((v, v)),
+        (Some(v), Some(Some(w))) if v <= MAX_VERSE && w > v => Ok((v, w)),
         _ => Err("verse_label_unusual"),
     }
 }
@@ -173,17 +204,38 @@ fn usfm_code_known(code: &str) -> bool {
     canon::by_code(code).is_some() || NON_CANONICAL_USFM_CODES.contains(&code)
 }
 
-/// The reference's USFM text as the USFM standard defines it where the app's
-/// importer does not: an acrostic heading (`\qa`) is a heading (unchanged
-/// from the A1.5 harness's `as_usfm_defines`).
-fn as_usfm_defines(text: &str) -> String {
-    text.lines()
-        .map(|l| match l.strip_prefix("\\qa ") {
-            Some(rest) => format!("\\s1 {rest}"),
-            None => l.to_string(),
-        })
-        .collect::<Vec<_>>()
-        .join("\n")
+fn sha256_hex(bytes: &[u8]) -> String {
+    format!("{:x}", Sha256::digest(bytes))
+}
+
+/// Compact ranges of sorted keys: "OBA 1:1-4".
+fn ranges(keys: impl IntoIterator<Item = (u8, u16, u16)>) -> Vec<String> {
+    let code = |o: u8| canon::by_ordinal(o).map_or("?", |b| b.code);
+    let mut out = Vec::new();
+    let mut run: Option<(u8, u16, u16, u16)> = None;
+    let flush = |(o, c, first, last): (u8, u16, u16, u16), out: &mut Vec<String>| {
+        out.push(if first == last {
+            format!("{} {c}:{first}", code(o))
+        } else {
+            format!("{} {c}:{first}-{last}", code(o))
+        });
+    };
+    for (o, c, v) in keys {
+        run = match run {
+            Some((ro, rc, first, last)) if ro == o && rc == c && v == last + 1 => {
+                Some((ro, rc, first, v))
+            }
+            Some(previous) => {
+                flush(previous, &mut out);
+                Some((o, c, v, v))
+            }
+            None => Some((o, c, v, v)),
+        };
+    }
+    if let Some(previous) = run {
+        flush(previous, &mut out);
+    }
+    out
 }
 
 /// Reads `path` (a zip of USFM books, or one `.usfm`/`.sfm` file).
@@ -208,6 +260,7 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
         inv.members.push(Member {
             name: member.clone(),
             role: "usfm",
+            sha256: sha256_hex(&bytes),
             utf8,
             nfc: unicode_normalization::is_nfc(&text),
             ..Default::default()
@@ -244,6 +297,7 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
                         inv.members.push(Member {
                             name: member,
                             role: "prose",
+                            sha256: sha256_hex(&bytes),
                             ..Default::default()
                         });
                     } else {
@@ -257,6 +311,7 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
                         inv.members.push(Member {
                             name: member,
                             role: "refused",
+                            sha256: sha256_hex(&bytes),
                             ..Default::default()
                         });
                     }
@@ -279,14 +334,14 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
     let mut files_of: BTreeMap<u8, usize> = BTreeMap::new();
     let mut parsed = Vec::new();
     for (index, (member, text)) in texts.iter().enumerate() {
-        let ids = text.matches("\\id ").count() + text.matches("\\id\t").count();
-        if ids > 1 {
+        let book = usfm_text::read(text);
+        for p in &book.problems {
+            let at = p.line.map(|l| format!(" (line {l})")).unwrap_or_default();
             inv.problems
-                .push(format!("{member}: {ids} \\id lines; one book per file"));
+                .push(format!("{member}: {}{at}: {}", p.code, p.detail));
         }
-        let doc = usfm::parse(&as_usfm_defines(text));
-        if let Some(book) = doc.book_code.as_deref().and_then(canon::by_code) {
-            *files_of.entry(book.ordinal).or_default() += 1;
+        if let Some(b) = book.code.as_deref().and_then(canon::by_code) {
+            *files_of.entry(b.ordinal).or_default() += 1;
         }
         let m = inv
             .members
@@ -294,37 +349,39 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
             .filter(|m| m.role == "usfm")
             .nth(index)
             .expect("member");
-        m.book = doc.book_code.clone();
-        m.verses = doc.verses.len();
-        m.verses_before_chapter = doc.verses_outside_chapter;
-        parsed.push((member.clone(), doc));
+        m.book = book.code.clone();
+        m.verses = book.verses.len();
+        m.verses_before_chapter = book.verses_before_chapter;
+        parsed.push((member.clone(), book));
     }
-    for (member, doc) in parsed {
-        let code = doc.book_code.clone().unwrap_or_default();
-        let book = canon::by_code(&code);
-        for v in doc.verses {
+    for (member, book) in parsed {
+        let code = book.code.clone().unwrap_or_default();
+        let known = canon::by_code(&code);
+        for v in book.verses {
             digest.update(format!("{member}\t{code}\t{}\t{}\n", v.chapter, v.label).as_bytes());
             let in_scope = declared.is_none_or(|d| d.contains(&code));
+            let mut last = 0;
             let status = if code.is_empty() {
                 Status::Unsupported("book_unidentified")
             } else if !in_scope {
                 Status::OutsideScope
-            } else if let Some(book) = book {
-                if files_of.get(&book.ordinal).copied().unwrap_or(0) > 1 {
+            } else if let Some(b) = known {
+                if files_of.get(&b.ordinal).copied().unwrap_or(0) > 1 {
                     Status::Unsupported("book_duplicate")
                 } else {
                     match v.chapter.parse::<u16>() {
                         Err(_) => Status::Unsupported("chapter_label_unusual"),
                         Ok(0) => Status::Unsupported("chapter_zero"),
-                        Ok(c) if c > book.chapter_count => {
-                            Status::Unsupported("chapter_beyond_canon")
-                        }
-                        Ok(c) => match verse_key(&v.label) {
-                            Ok(n) => Status::Scorable {
-                                ordinal: book.ordinal,
-                                chapter: c,
-                                verse: n,
-                            },
+                        Ok(c) if c > b.chapter_count => Status::Unsupported("chapter_beyond_canon"),
+                        Ok(c) => match verse_span(&v.label) {
+                            Ok((first, end)) => {
+                                last = end;
+                                Status::Scorable {
+                                    ordinal: b.ordinal,
+                                    chapter: c,
+                                    verse: first,
+                                }
+                            }
                             Err(why) => Status::Unsupported(why),
                         },
                     }
@@ -340,23 +397,26 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
                 chapter: v.chapter,
                 verse: v.label,
                 text: v.text,
+                line: v.line,
                 status,
+                last,
             });
         }
-        if doc.verses_outside_chapter > 0 {
+        if book.verses_before_chapter > 0 {
             digest
-                .update(format!("{member}\t#before\t{}\n", doc.verses_outside_chapter).as_bytes());
+                .update(format!("{member}\t#before\t{}\n", book.verses_before_chapter).as_bytes());
             if code.is_empty() || declared.is_none_or(|d| d.contains(&code)) {
-                inv.before_chapter += doc.verses_outside_chapter;
+                inv.before_chapter += book.verses_before_chapter;
             } else {
-                inv.before_chapter_outside += doc.verses_outside_chapter;
+                inv.before_chapter_outside += book.verses_before_chapter;
             }
         }
     }
     inv.label_digest = format!("{:x}", digest.finalize());
 
-    // A number given twice: every occurrence is unscorable.
-    let mut seen: HashMap<(u8, u16, u16), usize> = HashMap::new();
+    // A verse number covered twice in a chapter: every label involved is
+    // ambiguous, and so is every number it covers.
+    let mut covered: HashMap<(u8, u16, u16), usize> = HashMap::new();
     for e in &inv.entries {
         if let Status::Scorable {
             ordinal,
@@ -364,7 +424,9 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
             verse,
         } = e.status
         {
-            *seen.entry((ordinal, chapter, verse)).or_default() += 1;
+            for n in verse..=e.last {
+                *covered.entry((ordinal, chapter, n)).or_default() += 1;
+            }
         }
     }
     for (i, e) in inv.entries.iter_mut().enumerate() {
@@ -374,31 +436,39 @@ pub fn read(path: &Path, declared: Option<&BTreeSet<String>>) -> Inventory {
                 chapter,
                 verse,
             } => {
-                let key = (ordinal, chapter, verse);
-                if seen[&key] > 1 {
+                let numbers = verse..=e.last;
+                if numbers.clone().any(|n| covered[&(ordinal, chapter, n)] > 1) {
                     e.status = Status::Unsupported("verse_duplicate");
-                    inv.unscorable_keys.insert(key, "verse_duplicate");
+                    for n in numbers {
+                        inv.unscorable_keys
+                            .insert((ordinal, chapter, n), "verse_duplicate");
+                    }
                 } else {
-                    inv.scorable.insert(key, i);
+                    inv.scorable.insert((ordinal, chapter, verse), i);
+                    for n in verse + 1..=e.last {
+                        inv.bridge_keys.insert((ordinal, chapter, n));
+                    }
                 }
             }
             Status::Unsupported("book_duplicate") => {
-                if let (Some(book), Ok(c), Ok(v)) = (
+                if let (Some(book), Ok(c), Ok((first, end))) = (
                     canon::by_code(&e.book),
                     e.chapter.parse::<u16>(),
-                    verse_key(&e.verse),
+                    verse_span(&e.verse),
                 ) {
-                    inv.unscorable_keys
-                        .insert((book.ordinal, c, v), "book_duplicate");
+                    for n in first..=end {
+                        inv.unscorable_keys
+                            .insert((book.ordinal, c, n), "book_duplicate");
+                    }
                 }
             }
             Status::OutsideScope => {
-                if let (Some(book), Ok(c), Ok(v)) = (
+                if let (Some(book), Ok(c), Ok((first, _))) = (
                     canon::by_code(&e.book),
                     e.chapter.parse::<u16>(),
-                    verse_key(&e.verse),
+                    verse_span(&e.verse),
                 ) {
-                    inv.outside_keys.insert((book.ordinal, c, v));
+                    inv.outside_keys.insert((book.ordinal, c, first));
                 }
             }
             _ => {}
@@ -417,41 +487,37 @@ impl Inventory {
     pub fn report(&self) -> InventoryReport {
         let mut r = InventoryReport {
             rules: RULES,
+            reader_rules: usfm_text::RULES,
             members: self.members.clone(),
             problems: self.problems.clone(),
             label_digest: self.label_digest.clone(),
             labels: self.entries.len(),
+            scorable_ranges: ranges(self.scorable.keys().copied()),
+            bridge_member_ranges: ranges(self.bridge_keys.iter().copied()),
             ..Default::default()
         };
         for class in UNSUPPORTED {
             r.unsupported.insert(class, ClassCount::default());
         }
-        let mut run: Option<(u8, u16, u16, u16)> = None;
-        let code = |o: u8| canon::by_ordinal(o).map_or("?", |b| b.code);
-        let flush = |run: (u8, u16, u16, u16), out: &mut Vec<String>| {
-            let (o, c, first, last) = run;
-            out.push(if first == last {
-                format!("{} {c}:{first}", code(o))
-            } else {
-                format!("{} {c}:{first}-{last}", code(o))
-            });
-        };
-        for &(o, c, v) in self.scorable.keys() {
-            run = match run {
-                Some((ro, rc, first, last)) if ro == o && rc == c && v == last + 1 => {
-                    Some((ro, rc, first, v))
-                }
-                Some(previous) => {
-                    flush(previous, &mut r.scorable_ranges);
-                    Some((o, c, v, v))
-                }
-                None => Some((o, c, v, v)),
-            };
-        }
-        if let Some(previous) = run {
-            flush(previous, &mut r.scorable_ranges);
-        }
+        let mut text_digest = Sha256::new();
         for e in &self.entries {
+            let record = (
+                e.file.clone(),
+                e.book.clone(),
+                e.chapter.clone(),
+                e.verse.clone(),
+                e.status.name(),
+                e.line,
+                usfm_text::text_sha256(&e.text),
+            );
+            text_digest.update(
+                format!(
+                    "{}\t{}\t{}\t{}\t{}\t{}\t{}\n",
+                    record.0, record.1, record.2, record.3, record.4, record.5, record.6
+                )
+                .as_bytes(),
+            );
+            r.verses.push(record);
             match &e.status {
                 Status::Scorable { .. } => {
                     if e.printed() {
@@ -484,6 +550,7 @@ impl Inventory {
                 }
             }
         }
+        r.text_digest = format!("{:x}", text_digest.finalize());
         // Verses before any chapter cannot be labelled: counted as printed.
         let before = r
             .unsupported

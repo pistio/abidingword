@@ -10,6 +10,8 @@ the owner's Set H decision. Everything here is on disclosed documents.
 | `FREEZE.md` | The new candidate: SHA, source checksums, toolchain, binary digests, results, limitations |
 | `evaluation-audit/` | The independent audit of the evaluation system (blockers B1–B3, finding F1, conditions C1–C5) |
 | **`evaluation-e2/`** | **Evaluation candidate A1.5-E2: the corrected evaluation tools for the same frozen recogniser, their rules, identities and before/after evidence. Not sealed, not run on any withheld set** |
+| `evaluation-e2-review/` | The independent review of E2: not ready (R1 reference text read by the app's reader; R2 a run verifying nothing passes; R3 owner decisions) |
+| **`evaluation-e3/`** | **Evaluation candidate A1.5-E3: E2 corrected after its review (the evaluation's own USFM text readers, compared verse by verse; no pass without evidence; tools pinned; a gate until the owner decides). Rules, identities, before/after evidence, owner decisions prepared, review checklist. Not sealed, not run on any withheld set** |
 | `auditor-qualification.md` | PR #52's mutation suite executed; the independent attack on the completeness auditor (33 escapes in version 1); version 2 and its results |
 | `reviews/security-review.md` | Independent review of resources, robustness and hostile input, with triage |
 | `reviews/canon-review.md` | Independent review of canon and versification, with triage |

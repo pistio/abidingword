@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
 """Scores one run of the harness on a sealed set, and assesses it
-(Phase A1.5; evaluation rules E2).
+(Phase A1.5; evaluation rules E3).
 
     score-set.py <run folder> <seal folder> --run-record=COMMIT [--json=OUT] [--md=OUT]
     score-set.py <run folder> <seal folder> --run-record=COMMIT --diagnostic
                  [--protocol=FILE] [--frozen-binary=SHA256] [--inventory=FILE] [--json=OUT] [--md=OUT]
 
+Any other option, or an option given twice, is refused (exit 2): an option
+is never silently ignored (E3).
+
 **Official assessment** takes no option that can change the protocol: the
-protocol is the committed docs/evaluation/protocol-e2.json beside this
+protocol is the committed docs/evaluation/protocol-e3.json beside this
 scorer (its frozen harness binary, ceilings, canonical inventory, required
-composition and rule versions), and the scorer, its rule modules and the
-protocol must be committed and unchanged. --protocol, --frozen-binary and
---inventory are refused without --diagnostic. With --diagnostic the score
-is labelled DIAGNOSTIC throughout: `mode` is "diagnostic", the overrides
-are recorded, the verdict is always "not a protocol run", and what the
-verdict would be under the overrides is `diagnostic_verdict`, for
-rehearsals and tests only (E2, C1).
+composition, evidence floor, Unicode versions, rule versions and approved
+tools), the scorer, its rule modules and the protocol must be committed and
+unchanged, and every tool must be the one the protocol approves by SHA-256
+(E3: a committed replacement is not an approved tool). --protocol,
+--frozen-binary and --inventory are refused without --diagnostic. With
+--diagnostic the score is labelled DIAGNOSTIC throughout: `mode` is
+"diagnostic", the overrides are recorded, the verdict is always "not a
+protocol run", and what the verdict would be under the overrides is
+`diagnostic_verdict`, for rehearsals and tests only (E2, C1).
+
+**Verdicts (E3, R2).** Safety and evidence are judged apart. The safety
+verdict is the research gate (criteria 1-4). The evidence verdict is the
+protocol's evidence floor: by default at least one verse verified with
+faithful text in a completed scored document. The verdict is "pass" only
+when both hold; "fail" when a criterion fails; "inconclusive" when the
+criteria hold but the evidence is below the floor (a run that verifies
+nothing can never pass); "not a protocol run" when the run is not one.
+Every verdict line states the verified (faithful and mismatch), printed
+scorable, unsupported, held, refused and missing (not found) counts.
 
 Writes nothing into the run folder. Before reading any output it checks
 two anchors, and refuses (exit 2) when either is missing or inconsistent:
@@ -36,7 +51,11 @@ two anchors, and refuses (exit 2) when either is missing or inconsistent:
 Three layers, kept apart:
 
 1. **Raw observations**, per document, exactly as the harness wrote them,
-   and checked again here (E2):
+   and checked again here (E2, E3):
+   * the reference's verse texts as the harness read them (its own Rust
+     reader) are compared, verse by verse, with the check's (the Python
+     reader, recorded before the run): any difference in a label, a status,
+     a line or a text digest makes the run not a protocol run (E3, R1);
    * every usable verse whose text is not byte-exact is classed again by
      this scorer's own implementation of the strict fidelity rule
      (fidelity.py): exact, canonical (NFC), layout (white-space runs) or
@@ -78,6 +97,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.normpath(os.path.join(HERE, "..", ".."))
@@ -94,13 +114,22 @@ check_set = _load("check_set", "check-set.py")
 fidelity = _load("fidelity", "fidelity.py")
 reference_inventory = check_set.reference_inventory
 
-PROTOCOL = os.path.join(REPO, "docs", "evaluation", "protocol-e2.json")
-EVALUATION_SCHEMA = "aw-eval-2"
-# The files an official assessment rests on: committed and unchanged.
-OFFICIAL_FILES = ["scripts/evaluation/score-set.py", "scripts/evaluation/check-set.py",
-                  "scripts/evaluation/fidelity.py", "scripts/evaluation/reference_inventory.py",
-                  "docs/evaluation/usfm-books.tsv", "docs/evaluation/protocol-e2.json"]
+PROTOCOL = os.path.join(REPO, "docs", "evaluation", "protocol-e3.json")
+EVALUATION_SCHEMA = "aw-eval-3"
+usfm_text = reference_inventory.usfm_text
+# The tools an official assessment rests on: committed, unchanged, and each
+# the one the protocol approves by SHA-256 (`approved_tools`).
+TOOL_FILES = ["scripts/evaluation/score-set.py", "scripts/evaluation/check-set.py",
+              "scripts/evaluation/seal-set.py", "scripts/evaluation/run-withheld-set.sh",
+              "scripts/evaluation/fidelity.py", "scripts/evaluation/reference_inventory.py",
+              "scripts/evaluation/usfm_text.py", "docs/evaluation/usfm-books.tsv"]
+OFFICIAL_FILES = TOOL_FILES + ["docs/evaluation/protocol-e3.json"]
+# RUN.txt's record of the tools the runner used, by field.
+RUN_TOOLS = {"runner": "scripts/evaluation/run-withheld-set.sh", "check_set": "scripts/evaluation/check-set.py",
+             "reference_inventory": "scripts/evaluation/reference_inventory.py",
+             "usfm_text": "scripts/evaluation/usfm_text.py"}
 OVERRIDES = ("protocol", "frozen-binary", "inventory")
+OPTIONS = ("run-record", "json", "md") + OVERRIDES
 SUM_LINE = re.compile(r"^([0-9a-f]{64}) [ *](.+)$")
 
 
@@ -240,14 +269,20 @@ def ref_key(text):
     return (m.group(1), int(m.group(2)), int(m.group(3))) if m else None
 
 
-def observe_report(j, check_inventory):
+def unassigned(text):
+    """Code points unassigned in this scorer's Unicode version."""
+    return sorted({f"U+{ord(c):04X}" for c in text if unicodedata.category(c) == "Cn"})
+
+
+def observe_report(j, check_inventory, check_verses=None):
     """The observations of a scored (or exploratory) document's report, and
-    every reason the scorer does not trust them (`integrity`)."""
+    every reason the scorer does not trust them (`integrity`).
+    `check_verses`: the check's per-verse reference records (E3)."""
     integrity = []
     for field, want in (("evaluation_schema", EVALUATION_SCHEMA), ("fidelity_rules", fidelity.RULES),
-                        ("inventory_rules", reference_inventory.RULES)):
+                        ("inventory_rules", reference_inventory.RULES), ("reader_rules", usfm_text.RULES)):
         if j.get(field) != want:
-            integrity.append(f"{field} is {j.get(field)!r}, not {want!r}: not a report of the E2 harness")
+            integrity.append(f"{field} is {j.get(field)!r}, not {want!r}: not a report of the E3 harness")
     if integrity:
         # Not an E2 report: nothing in it is read, nothing counted.
         empty = {k: 0 for k in SCORED_SUMS}
@@ -278,6 +313,12 @@ def observe_report(j, check_inventory):
         disagreements.append("verified exact is not verified minus the non-exact records")
     if disagreements:
         integrity.append(f"fidelity: {len(disagreements)} disagreement(s) between harness and scorer")
+    # A text beyond this scorer's Unicode version cannot be classed with
+    # certainty here: distrusted, never relied on (E3).
+    beyond = [r["reference"] for r in j["fidelity_records"] if unassigned(r["found"] + r["edition"])]
+    if beyond:
+        integrity.append(f"fidelity: {len(beyond)} record(s) hold code points unassigned in the scorer's Unicode "
+                         f"{unicodedata.unidata_version} ({', '.join(beyond[:5])})")
     # 2. Accounting: nothing leaves the denominator unexplained.
     acc = t["expected"] == t["verified"] + t["held"] + t["refused"] + t["not_found"]
     unsupported = inv["unsupported"]
@@ -307,7 +348,9 @@ def observe_report(j, check_inventory):
     if check_inventory is None:
         integrity.append("CHECK.json holds no inventory of this document's reference")
     else:
-        diffs = reference_inventory.compare(check_inventory, inv)
+        # E3 (R1): labels, statuses, lines and every verse's text digest, as
+        # the two independent readers read them.
+        diffs = reference_inventory.compare(check_inventory, inv, check_verses)
         if diffs:
             integrity.append("reference inventories differ: " + "; ".join(diffs))
         # 4. Every verified reference, looked up again in the check's keys.
@@ -351,6 +394,7 @@ def observe_report(j, check_inventory):
         "verified_unvalidatable": len(unvalidatable),
         "verified_unvalidatable_references": [f"{a['reference']} ({a['reason']})"
                                               for a in j["verified_unvalidatable"]],
+        "held": t["held"],
         "held_faithful": t["held_faithful"],
         "held_mismatch": t["held_mismatch"],
         "refused": t["refused"],
@@ -361,6 +405,7 @@ def observe_report(j, check_inventory):
         "importer_comparison": {k: j["importer_comparison"].get(k) for k in
                                 ("agree", "only_importer", "only_inventory", "text_differs", "error")},
         "fidelity_disagreements": disagreements[:50],
+        "unicode_version": j.get("unicode_version"),
         "integrity": integrity,
         "peak_memory_mb": j.get("read_peak_memory_mb"),
         "seconds": j.get("read_seconds"),
@@ -371,7 +416,7 @@ def observe_report(j, check_inventory):
 def observe_control(c):
     integrity = []
     if c.get("evaluation_schema") != EVALUATION_SCHEMA:
-        integrity.append(f"evaluation_schema is {c.get('evaluation_schema')!r}: not a report of the E2 harness")
+        integrity.append(f"evaluation_schema is {c.get('evaluation_schema')!r}: not a report of the E3 harness")
     return {
         "detected": c.get("detected", 0),
         "verified": c.get("verified", 0),
@@ -380,6 +425,28 @@ def observe_control(c):
         "peak_memory_mb": c.get("peak_memory_mb"),
         "seconds": c.get("seconds"),
     }, integrity
+
+
+def check_verses(folder, inv):
+    """The check's per-verse records of a reference, from the run folder
+    (covered by the committed OUTPUTS.sha256), and why they cannot be used:
+    the file must be the one CHECK.json names, with its SHA-256, and its
+    records must make CHECK.json's text digest."""
+    if not inv:
+        return None, None
+    name = inv.get("verses_file")
+    if not name:
+        return None, "CHECK.json holds no per-verse records of this reference (not an E3 check)"
+    problems = []
+    path = check_set.inside(folder, name, problems, "CHECK.json")
+    if path is None or not os.path.isfile(path):
+        return None, f"the check's per-verse records {name} are missing" + (f" ({problems[0]})" if problems else "")
+    if check_set.sha256(path) != inv.get("verses_file_sha256"):
+        return None, f"the check's per-verse records {name} are not the ones CHECK.json names"
+    verses = json.load(open(path, encoding="utf-8"))
+    if reference_inventory.text_digest(verses) != inv.get("text_digest"):
+        return None, f"the check's per-verse records {name} do not make its text digest"
+    return verses, None
 
 
 def document(folder, sealed_files, row, run, check):
@@ -394,8 +461,14 @@ def document(folder, sealed_files, row, run, check):
     log = open(log_path, encoding="utf-8", errors="replace").read()[-20000:] if os.path.exists(log_path) else ""
     observed, refusal, integrity = None, None, []
     if os.path.exists(report):
-        observed, integrity = observe_report(json.load(open(report, encoding="utf-8")),
-                                             check.get("reference_inventories", {}).get(key))
+        inv = check.get("reference_inventories", {}).get(key)
+        verses, why = check_verses(folder, inv)
+        observed, integrity = observe_report(json.load(open(report, encoding="utf-8")), inv, verses)
+        if why:
+            integrity.append(why)
+        if row["class"] == "scored" and not observed.get("printed"):
+            integrity.append("a scored document whose reference holds no printed scorable verse "
+                             "(the seal must refuse it)")
     elif os.path.exists(control):
         c = json.load(open(control, encoding="utf-8"))
         observed, integrity = observe_control(c)
@@ -433,7 +506,7 @@ def document(folder, sealed_files, row, run, check):
 
 SCORED_SUMS = ["printed", "printed_unsupported", "verified", "verified_exact", "verified_canonical",
                "verified_layout", "verified_faithful", "verified_mismatch", "verified_mismatch_material",
-               "verified_absent", "verified_unvalidatable", "held_faithful", "held_mismatch", "refused",
+               "verified_absent", "verified_unvalidatable", "held", "held_faithful", "held_mismatch", "refused",
                "not_found", "refused_chapters"]
 
 
@@ -464,27 +537,94 @@ def official_state():
             "files": files}
 
 
+EVIDENCE_MEASURES = ("minimum_verified_faithful", "minimum_documents_with_verified_faithful",
+                     "minimum_verified_faithful_share_of_printed_scorable", "maximum_scored_documents_refused_whole")
+
+
+def evidence_floor(protocol, scored, completed_scored, refused_whole):
+    """The protocol's evidence floor (aw-evidence-1) against a run: whether
+    the evidence suffices for the verdict pass, each measure with its floor,
+    its observed value and whether it is met, and every reason it does not
+    suffice. A protocol without a readable floor gives no pass."""
+    floor = protocol.get("evidence_floor")
+    measures, reasons = {}, []
+    base = floor.get("minimum_verified_faithful") if isinstance(floor, dict) else None
+    if not isinstance(base, int) or isinstance(base, bool) or base < 1:
+        return False, measures, ["the protocol defines no readable evidence floor (minimum_verified_faithful, "
+                                 "a whole number of at least 1): no verdict can be pass"]
+    unknown = sorted(set(floor) - set(EVIDENCE_MEASURES) - {"note"})
+    if unknown:
+        reasons.append(f"the evidence floor names measures this scorer does not know ({', '.join(unknown)}): "
+                       "no verdict can be pass")
+    faithful, printed = scored.get("verified_faithful", 0), scored.get("printed", 0)
+    observed = {
+        "minimum_verified_faithful": faithful,
+        "minimum_documents_with_verified_faithful":
+            sum(1 for d in completed_scored if (d["observed"].get("verified_faithful") or 0) > 0),
+        "minimum_verified_faithful_share_of_printed_scorable": round(faithful / printed, 6) if printed else 0.0,
+        "maximum_scored_documents_refused_whole": refused_whole,
+    }
+    for name in EVIDENCE_MEASURES:
+        want = floor.get(name)
+        if want is None:
+            continue
+        number = isinstance(want, (int, float)) and not isinstance(want, bool)
+        got = observed[name]
+        met = number and (got <= want if name.startswith("maximum") else got >= want)
+        measures[name] = {"floor": want, "observed": got, "met": bool(met)}
+        if not met:
+            reasons.append(f"{name.replace('_', ' ')}: {got} against the floor {want}" if number
+                           else f"{name.replace('_', ' ')}: the floor {want!r} is not a number")
+    return not reasons, measures, reasons
+
+
+def tools_state(protocol, official, fields):
+    """Whether the tools in use, and those RUN.txt says the runner used, are
+    the ones the protocol approves by SHA-256 (E3)."""
+    approved = protocol.get("approved_tools")
+    if not isinstance(approved, dict):
+        return False, False, {"approved_tools": "none in the protocol"}
+    detail = {rel: {"in_use": official["files"].get(rel), "approved": approved.get(rel),
+                    "match": approved.get(rel) is not None and official["files"].get(rel) == approved.get(rel)}
+              for rel in TOOL_FILES}
+    in_use = all(d["match"] for d in detail.values())
+    run_used = all(fields.get(field) is not None and fields.get(field) == approved.get(rel)
+                   for field, rel in RUN_TOOLS.items())
+    return in_use, run_used, detail
+
+
 def assess(docs, run, seal_report, protocol, protocol_path, inventory, official, check):
     f = run["fields"]
     completed = [d for d in docs if d["execution"] == "completed"]
     integrity = {d["key"]: d["integrity"] for d in completed if d.get("integrity")}
     required = protocol.get("required_composition")
+    tools_in_use, tools_run, tools_detail = tools_state(protocol, official, f)
+    unicode = protocol.get("unicode") if isinstance(protocol.get("unicode"), dict) else {}
+    report_unicode = sorted({str(d["observed"].get("unicode_version")) for d in completed
+                             if d.get("observed") and "unicode_version" in d["observed"]})
+    inventories = check.get("reference_inventories")
     validity = {
         "anchored_and_intact": True,  # checked before scoring; anything else is refused
         "run_complete": "ended" in f,
         "every_document_has_a_record": all(d["exit"] is not None for d in docs),
         "seal_matches": f.get("manifest") == seal_report["manifest_sha256"]
                         and f.get("checksums") == seal_report["checksums_sha256"],
-        "frozen_binary": f.get("binary") == protocol.get("harness_binary_sha256"),
+        "frozen_binary": f.get("binary") is not None and f.get("binary") == protocol.get("harness_binary_sha256"),
         "protocol_limits": f.get("limits") == protocol.get("limits"),
         "canonical_inventory": os.path.exists(inventory) and f.get("inventory") == check_set.sha256(inventory)
                                and f.get("inventory") == protocol.get("inventory_sha256"),
         "run_under_this_protocol": f.get("protocol") == check_set.sha256(protocol_path),
+        "protocol_permits_withheld_execution": protocol.get("withheld_execution_permitted") is True,
         "composition_declared_and_matching": seal_report.get("declared_composition") is not None
                                              and seal_report["declared_composition"] == seal_report["composition"],
         "composition_required_by_protocol_and_met": required is not None
                                                     and seal_report.get("declared_composition") == required,
-        "check_report_is_e2": check.get("reference_inventories") is not None,
+        "check_report_is_e3": isinstance(inventories, dict)
+                              and all(i.get("rules") == reference_inventory.RULES for i in inventories.values()),
+        "unicode_versions_as_protocol": unicodedata.unidata_version == unicode.get("scorer_python")
+                                        and all(u == unicode.get("harness_normalisation") for u in report_unicode),
+        "tools_are_the_approved_ones": tools_in_use,
+        "run_used_the_approved_tools": tools_run,
         "reports_trusted": not integrity,
         "scorer_committed": official["committed_and_unchanged"],
     }
@@ -506,8 +646,50 @@ def assess(docs, run, seal_report, protocol, protocol_path, inventory, official,
         "3_no_verified_reference_in_controls_or_outside_allowed": control_verified == 0 and mixed_outside == 0,
         "4_every_document_completed_or_refused_cleanly": not failures,
     }
-    valid = all(validity.values())
-    verdict = ("pass" if all(criteria.values()) else "fail") if valid else "not a protocol run"
+    not_read = [d for d in by_class["scored"] if d["execution"] != "completed"]
+    refused = [d["key"] for d in not_read if d["execution"] == "refused"]
+    failed = [d["key"] for d in not_read if d["execution"] == "failure"]
+    safety = "pass" if all(criteria.values()) else "fail"
+    sufficient, measures, shortfall = evidence_floor(protocol, scored, done("scored"), len(refused))
+    evidence_verdict = "sufficient" if sufficient else "insufficient"
+
+    def verdict_of(valid):
+        if not valid:
+            return "not a protocol run"
+        if safety == "fail":
+            return "fail"
+        return "pass" if sufficient else "inconclusive"
+    verdict = verdict_of(all(validity.values()))
+
+    printed = scored.get("printed", 0)
+    unsupported = scored.get("printed_unsupported", 0)
+    faithful = scored.get("verified_faithful", 0)
+    counts = {
+        "scored_documents": len(by_class["scored"]),
+        "completed": len(done("scored")),
+        "refused_whole": len(refused),
+        "failed_to_run": len(failed),
+        "printed_scorable": printed,
+        "printed_unsupported": unsupported,
+        "verified": scored.get("verified", 0),
+        "verified_faithful": faithful,
+        "verified_mismatch": scored.get("verified_mismatch", 0),
+        "verified_absent_or_unvalidatable": scored.get("verified_absent", 0) + scored.get("verified_unvalidatable", 0),
+        "held": scored.get("held_faithful", 0) + scored.get("held_mismatch", 0),
+        "refused_verses": scored.get("refused", 0),
+        "missing": scored.get("not_found", 0),
+        "documents_verifying_nothing": sorted(d["key"] for d in done("scored") if not d["observed"].get("verified")),
+    }
+
+    def line(v):
+        return (f"{v.upper()} (safety {safety}; evidence {evidence_verdict}): "
+                f"verified {counts['verified']} ({counts['verified_faithful']} faithful, "
+                f"{counts['verified_mismatch']} wrong text) of {counts['printed_scorable']} printed scorable verses; "
+                f"{counts['verified_absent_or_unvalidatable']} verified references the edition lacks or cannot validate; "
+                f"{counts['printed_unsupported']} printed unsupported (not scored); {counts['held']} held back; "
+                f"{counts['refused_verses']} in refused chapters; {counts['missing']} missing (not found); "
+                f"scored documents {counts['completed']} completed, {counts['refused_whole']} refused whole, "
+                f"{counts['failed_to_run']} failed to run, of {counts['scored_documents']}")
 
     auth = [d for d in done("scored") if d["kind"] == "authentic"]
     minimum = check_set.AUTHENTIC_MINIMUM
@@ -525,9 +707,6 @@ def assess(docs, run, seal_report, protocol, protocol_path, inventory, official,
         and evidence["printed_verses"] >= minimum["reference_verses"]
         and len(evidence["formats"]) >= minimum["formats"]
         and len(evidence["languages"]) >= minimum["languages"])
-    printed = scored.get("printed", 0)
-    unsupported = scored.get("printed_unsupported", 0)
-    faithful = scored.get("verified_faithful", 0)
     coverage = round(100.0 * faithful / printed, 1) if printed else None
     coverage_all = round(100.0 * faithful / (printed + unsupported), 1) if printed + unsupported else None
     evidence["coverage_percent"] = (round(100.0 * evidence["verified_faithful"] / evidence["printed_verses"], 1)
@@ -545,14 +724,14 @@ def assess(docs, run, seal_report, protocol, protocol_path, inventory, official,
              f"{coverage if coverage is not None else '-'} % of scorable verses, "
              f"{coverage_all if coverage_all is not None else '-'} % of all printed verses. "
              f"Exploratory documents are not part of this figure.")
-    not_read = [d for d in by_class["scored"] if d["execution"] != "completed"]
-    refused = [d["key"] for d in not_read if d["execution"] == "refused"]
-    failed = [d["key"] for d in not_read if d["execution"] == "failure"]
     if not_read:
         claim += (f" Not in the coverage figure, and not recognition coverage: {len(refused)} scored "
                   f"document(s) refused whole{' (' + ', '.join(refused) + ')' if refused else ''} and "
                   f"{len(failed)} that failed to run{' (' + ', '.join(failed) + ')' if failed else ''}, "
                   f"of {len(by_class['scored'])} scored documents; no verse from them counts as verified.")
+    if not sufficient:
+        claim += (" The evidence is below the protocol's evidence floor (" + "; ".join(shortfall) + "): "
+                  "the run cannot show that the recogniser works, whatever its safety.")
     limit = None
     if not evidence["meets_minimum"]:
         limit = (f"Scored authentic evidence ({evidence['documents']} documents, {evidence['printed_verses']} "
@@ -563,12 +742,20 @@ def assess(docs, run, seal_report, protocol, protocol_path, inventory, official,
                  f"no claim for authentic published files in general.")
     return {
         "verdict": verdict,
+        "verdict_line": line(verdict),
+        "safety_verdict": safety,
+        "evidence_verdict": evidence_verdict,
+        "evidence_floor": {"rules": protocol.get("evidence_rules"), "measures": measures, "shortfall": shortfall},
+        "counts": counts,
         "run_validity": validity,
         "integrity": integrity,
         "criteria": criteria,
         "accuracy_claim": claim,
         "authentic_evidence": evidence,
         "qualification_limit": limit,
+        "tools": tools_detail,
+        "unicode": {"scorer": unicodedata.unidata_version, "harness_reports": report_unicode,
+                    "protocol": unicode},
         "execution": dict(collections.Counter(d["execution"] for d in docs)),
         "failure_causes": dict(collections.Counter(d["cause"] for d in failures)),
         "scored": dict(scored, coverage_percent=coverage, coverage_percent_of_all_printed=coverage_all,
@@ -580,6 +767,8 @@ def assess(docs, run, seal_report, protocol, protocol_path, inventory, official,
                   "verified_outside_allowed": mixed_outside},
         "exploratory": {"documents": len(by_class["exploratory"]), "completed": len(done("exploratory")),
                         "note": "raw observations only; no matching reference, so nothing is judged"},
+        "_verdict_of": verdict_of,
+        "_line": line,
     }
 
 
@@ -594,11 +783,16 @@ def markdown(out):
     if out["mode"] == "diagnostic":
         L += ["# DIAGNOSTIC SCORE: not an official assessment", "",
               f"Overrides: {', '.join(f'{k}={v}' for k, v in out['overrides'].items()) or 'none'}. "
-              f"Under them the verdict would be **{a['diagnostic_verdict']}**.", ""]
+              f"Under them the verdict would be **{a['diagnostic_verdict']}**: {a['diagnostic_verdict_line']}.", ""]
     L += [f"## Verdict: **{a['verdict']}**", "",
+          f"**{a['verdict_line']}.**", "",
+          f"Safety (criteria 1-4): **{a['safety_verdict']}**. Evidence (the protocol's floor, "
+          f"{a['evidence_floor']['rules']}): **{a['evidence_verdict']}**"
+          + (f" ({'; '.join(a['evidence_floor']['shortfall'])})" if a['evidence_floor']['shortfall'] else "") + ".", "",
           f"Run record `{an['run_record_commit']}` ({an['run_record_path']}), seal `{an['seal_commit']}`, "
-          f"protocol `{an['protocol_sha256'][:16]}…`, scorer `{an['scorer_sha256'][:16]}…` "
-          f"(rules {EVALUATION_SCHEMA}, {fidelity.RULES}, {reference_inventory.RULES}).", "",
+          f"protocol `{an['protocol_sha256']}`, scorer `{an['scorer_sha256'][:16]}…` "
+          f"(rules {EVALUATION_SCHEMA}, {fidelity.RULES}, {reference_inventory.RULES}, {usfm_text.RULES}). "
+          f"{out['owner_check']}", "",
           a["accuracy_claim"], ""]
     if a["qualification_limit"]:
         L += ["**Qualification limit:** " + a["qualification_limit"], ""]
@@ -606,7 +800,12 @@ def markdown(out):
     if a["integrity"]:
         L += ["", "**Reports the scorer does not trust:**", ""]
         L += [f"- `{k}`: {'; '.join(v)}" for k, v in a["integrity"].items()]
-    L += ["", "| Criterion | Met |", "|---|---|"] + [f"| {k} | {yes(v)} |" for k, v in a["criteria"].items()]
+    L += ["", "| Criterion (safety) | Met |", "|---|---|"] + [f"| {k} | {yes(v)} |" for k, v in a["criteria"].items()]
+    L += ["", "| Evidence floor | Floor | Observed | Met |", "|---|---:|---:|---|"] + \
+         [f"| {k} | {m['floor']} | {m['observed']} | {yes(m['met'])} |" for k, m in a["evidence_floor"]["measures"].items()]
+    c = a["counts"]
+    L += ["", "| Counts (completed scored documents) | |", "|---|---:|"] + \
+         [f"| {k} | {', '.join(v) or 'none' if isinstance(v, list) else v} |" for k, v in c.items()]
     L += ["", "| Execution | Documents |", "|---|---:|"] + [f"| {k} | {v} |" for k, v in sorted(a["execution"].items())]
     L += [f"| failure: {k} | {v} |" for k, v in sorted(a["failure_causes"].items())]
     s = a["scored"]
@@ -620,14 +819,15 @@ def markdown(out):
           f"| mixed | {m['documents']} | {m['completed']} | {m['verified_allowed'] + m['verified_outside_allowed']} | {m['verified_outside_allowed']} |",
           f"| exploratory | {a['exploratory']['documents']} | {a['exploratory']['completed']} | raw, per document | not judged |"]
     for key, g in out["groups"].items():
-        L += ["", f"| Scored by {key} | Docs | Printed | Unsupported | Faithful | Mismatch | Absent | Unvalidatable | Held faithful | Held mismatch |",
-              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+        L += ["", f"| Scored by {key} | Docs | Printed | Unsupported | Verified | Faithful | Mismatch | Absent | Unvalidatable | Held faithful | Held mismatch | Refused | Missing |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
         for k, v in g.items():
             L.append(f"| {k} | {v['documents']} | {v.get('printed', 0)} | {v.get('printed_unsupported', 0)} | "
-                     f"{v.get('verified_faithful', 0)} | {v.get('verified_mismatch', 0)} | {v.get('verified_absent', 0)} | "
-                     f"{v.get('verified_unvalidatable', 0)} | {v.get('held_faithful', 0)} | {v.get('held_mismatch', 0)} |")
-    L += ["", "| Document | Class | Kind | Execution | Exit | Printed | Unsupported | Verified | Faithful | Mismatch | Absent | Unvalidatable | Outside allowed | Peak MB |",
-          "|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+                     f"{v.get('verified', 0)} | {v.get('verified_faithful', 0)} | {v.get('verified_mismatch', 0)} | "
+                     f"{v.get('verified_absent', 0)} | {v.get('verified_unvalidatable', 0)} | {v.get('held_faithful', 0)} | "
+                     f"{v.get('held_mismatch', 0)} | {v.get('refused', 0)} | {v.get('not_found', 0)} |")
+    L += ["", "| Document | Class | Kind | Execution | Exit | Printed | Unsupported | Verified | Faithful | Mismatch | Absent | Unvalidatable | Held | Refused | Missing | Outside allowed | Peak MB |",
+          "|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for d in out["documents"]:
         o = d.get("observed") or {}
         ex = d["execution"] + (f" ({d['cause']})" if d.get("cause") else "") + (" [diagnostic kept]" if d.get("diagnostic") else "")
@@ -637,6 +837,7 @@ def markdown(out):
                  f"{o.get('verified_mismatch', '') if judged else ''} | "
                  f"{o.get('verified_absent', '') if judged else ''} | "
                  f"{o.get('verified_unvalidatable', '') if judged else ''} | "
+                 f"{o.get('held', '')} | {o.get('refused', '')} | {o.get('not_found', '')} | "
                  f"{len(d['outside_allowed']) if 'outside_allowed' in d else ''} | "
                  f"{round(o['peak_memory_mb']) if o.get('peak_memory_mb') else ''} |")
     wrong = [(d["key"], x) for d in out["documents"] if d["class"] == "scored"
@@ -665,10 +866,12 @@ def markdown(out):
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    opts = dict(a[2:].split("=", 1) for a in sys.argv[1:] if a.startswith("--") and "=" in a)
-    flags = {a[2:] for a in sys.argv[1:] if a.startswith("--") and "=" not in a}
-    if len(args) != 2 or flags - {"diagnostic"}:
+    args, opts, flags, bad = check_set.parse_options(sys.argv[1:], OPTIONS, ("diagnostic",))
+    if bad:
+        print(f"refused: unknown or repeated option(s) {', '.join(bad)}; options are "
+              f"{', '.join('--' + o + '=...' for o in OPTIONS)} and --diagnostic", file=sys.stderr)
+        sys.exit(2)
+    if len(args) != 2:
         sys.exit(__doc__)
     diagnostic = "diagnostic" in flags
     overrides = {k: opts[k] for k in OVERRIDES if k in opts}
@@ -719,15 +922,16 @@ def main():
         groups[key] = {k: scored_totals(v) for k, v in sorted(g.items())}
     official = official_state()
     assessment = assess(docs, run, seal_report, protocol, protocol_path, inventory, official, check)
+    verdict_of, line = assessment.pop("_verdict_of"), assessment.pop("_line")
     if diagnostic:
         # What the verdict would be under the overrides. Whether this scorer
         # is itself committed is an official-assessment condition only.
         validity = {k: v for k, v in assessment["run_validity"].items() if k != "scorer_committed"}
-        criteria = assessment["criteria"]
-        assessment["diagnostic_verdict"] = (("pass" if all(criteria.values()) else "fail")
-                                            if all(validity.values()) else "not a protocol run")
+        assessment["diagnostic_verdict"] = verdict_of(all(validity.values()))
+        assessment["diagnostic_verdict_line"] = line(assessment["diagnostic_verdict"])
         assessment["diagnostic_ignores"] = ["scorer_committed"]
         assessment["verdict"] = "not a protocol run"
+        assessment["verdict_line"] = line("not a protocol run")
     out = {
         "mode": "diagnostic" if diagnostic else "official",
         "overrides": overrides,
@@ -738,10 +942,16 @@ def main():
                     "check_set_sha256": check_set.sha256(os.path.join(HERE, "check-set.py")),
                     "fidelity_sha256": check_set.sha256(os.path.join(HERE, "fidelity.py")),
                     "reference_inventory_sha256": check_set.sha256(os.path.join(HERE, "reference_inventory.py")),
+                    "usfm_text_sha256": check_set.sha256(os.path.join(HERE, "usfm_text.py")),
                     "tools_commit": official["commit"],
-                    "tools_committed_and_unchanged": official["committed_and_unchanged"]},
+                    "tools_committed_and_unchanged": official["committed_and_unchanged"],
+                    "tools_are_the_approved_ones": assessment["run_validity"]["tools_are_the_approved_ones"]},
+        "owner_check": (f"Before relying on this score, check with sha256sum that {os.path.relpath(protocol_path, REPO)} "
+                        f"is {check_set.sha256(protocol_path)} and that this is the protocol you approved; its "
+                        f"approved_tools then name every tool by SHA-256."),
         "rules": {"evaluation_schema": EVALUATION_SCHEMA, "fidelity": fidelity.RULES,
-                  "reference_inventory": reference_inventory.RULES},
+                  "reference_inventory": reference_inventory.RULES, "usfm_text": usfm_text.RULES,
+                  "evidence": protocol.get("evidence_rules")},
         "run": run["fields"],
         "assessment": assessment,
         "groups": groups,

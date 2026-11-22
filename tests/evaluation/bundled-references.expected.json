@@ -1,0 +1,123 @@
+{
+ "rules": "aw-usfm-text-1",
+ "note": "The 13 real references bundled in resources/scripture/, read by the evaluation's USFM text reader. text_digest: SHA-256 of one line per verse, in archive order: member, chapter, label, line of \\v, SHA-256 of the text, tab-separated. Both readers (Rust and Python) must reproduce every figure.",
+ "editions": {
+  "deu1912": {
+   "archive": "deu1912_usfm.zip",
+   "archive_sha256": "b6170cdaba249210fd9709d689b517b820afe98d70440e4864a56c7c681abe78",
+   "usfm_members": 66,
+   "verses": 31102,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "a1df096a560698a51325884f6be3e48c147b629754ee760bdbf9187cac285e8e"
+  },
+  "deu1951": {
+   "archive": "deu1951_usfm.zip",
+   "archive_sha256": "0c6c86ae1a4124101ba9c68be9d2be55c17467e2a78cdb23e531feb4aa37dce5",
+   "usfm_members": 66,
+   "verses": 31102,
+   "numbered_but_empty": 1,
+   "verses_before_chapter": 0,
+   "text_digest": "77b128d453ef0d15957f3b2a8aea0c8a14185cabd90d59e9e2b40e60e2522d10"
+  },
+  "deuelo": {
+   "archive": "deuelo_usfm.zip",
+   "archive_sha256": "0e3c181372347c7e3cd79fb747a592e79406381f29449041df4fb0948fd9240b",
+   "usfm_members": 66,
+   "verses": 31102,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "0c043221d64b03b0b955da52f98030348324e2a39339bc1330a0f119d6b0d70b"
+  },
+  "engbsb": {
+   "archive": "engbsb_usfm.zip",
+   "archive_sha256": "09cdf4340d239564d64b7a03bce5ddfc6ebddda5323c7a5bbee959653759b1f0",
+   "usfm_members": 66,
+   "verses": 31086,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "730f7cfcb34661c180138249be257b14328cbed64d9d3647c61f21f023703fd4"
+  },
+  "engwebp": {
+   "archive": "engwebp_usfm.zip",
+   "archive_sha256": "c725155aa8192b954e552a0b08aa75f8e7b85e6e56f1eb22efd6d30f5b4aa3cc",
+   "usfm_members": 68,
+   "verses": 31103,
+   "numbered_but_empty": 5,
+   "verses_before_chapter": 0,
+   "text_digest": "ff7f68f4490c94116131d8230c72c1707915134c044ee36aee39ce095288d229"
+  },
+  "fraLSG": {
+   "archive": "fraLSG_usfm.zip",
+   "archive_sha256": "fcf2a836549dd042c113b70e8844da0a46394a3188c87808580e811cfb0fc179",
+   "usfm_members": 66,
+   "verses": 31170,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "d41d2d5fbdf9562cfc943a02d63afe281a087549e3cf29922dfac27bc3125983"
+  },
+  "grcbyz": {
+   "archive": "grcbyz_usfm.zip",
+   "archive_sha256": "c1034fe50c7e30c5fe33201654b1e2a373da69ac9eab42a008ca85ee8b67f0b7",
+   "usfm_members": 32,
+   "verses": 7958,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "464a474381197e69df422048e32cbdbb5985391556fd9c42bdd472c272dc1c64"
+  },
+  "grcmt": {
+   "archive": "grcmt_usfm.zip",
+   "archive_sha256": "fa1a59e1545ee404b2b5306fd5e57e2b44617e3c88bd0da60d44c3bd9ae496d6",
+   "usfm_members": 28,
+   "verses": 7957,
+   "numbered_but_empty": 4,
+   "verses_before_chapter": 0,
+   "text_digest": "5b3892b5581dc878ec148753fdde5a9f85022bdf4bb7c324cef22ddcdf85afe9"
+  },
+  "grcsbl": {
+   "archive": "grcsbl_usfm.zip",
+   "archive_sha256": "6807ec1ccf114ced6d33024b448bd4e7825fd7837ecec6b43fe9cf9dcb9bcba0",
+   "usfm_members": 32,
+   "verses": 7939,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "fe125320175d6b85c46278cad8a22c98679a93d2fe866ec31c6f543d8f4a6474"
+  },
+  "grctr": {
+   "archive": "grctr_usfm.zip",
+   "archive_sha256": "3232412340f9c3bbe1d85330944306be326f6c7ce6e6aa117b379c4476ae6615",
+   "usfm_members": 28,
+   "verses": 7957,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "caaae382df482ac025cff7a1ed7e92e18fb37ec851604148f9d572b78d5eb9a8"
+  },
+  "kor1961": {
+   "archive": "kor1961_usfm.zip",
+   "archive_sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50",
+   "usfm_members": 66,
+   "verses": 31081,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "e1d5448889f1d93c0b44b9041c4625c5a66ba64d495eb162a3dba2dc242b5af2"
+  },
+  "porbr2018": {
+   "archive": "porbr2018_usfm.zip",
+   "archive_sha256": "adda51da837676b7bcc91a57c18578d86ec505baf951d5170adddb8389e5d163",
+   "usfm_members": 66,
+   "verses": 31102,
+   "numbered_but_empty": 0,
+   "verses_before_chapter": 0,
+   "text_digest": "67add5361f93b8b11c21b8a9efc63d3e0f567062108f06cc62784794407f70d3"
+  },
+  "spaRV1909": {
+   "archive": "spaRV1909_usfm.zip",
+   "archive_sha256": "488ca0d7f4e9ab974745b47eca305b876491339d6973bc3e5a23244bebea6b5c",
+   "usfm_members": 66,
+   "verses": 31102,
+   "numbered_but_empty": 18,
+   "verses_before_chapter": 0,
+   "text_digest": "bf6280a593a4da7cbce99b0962c78121e667963d1e999c9744e21d74afb1d6e7"
+  }
+ }
+}

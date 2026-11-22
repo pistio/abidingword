@@ -1,0 +1,342 @@
+{
+ "version": "e3",
+ "binary_sha256": "b4f51a62a51ef5085ca12900ba575ee04cc04f0b99f0fccf88db8890a141b63d",
+ "tools": "2d7987a9a026afa3c816dc2562dcbebb5eee175f",
+ "scenarios": {
+  "clean": {
+   "scenario": "clean",
+   "seal_exit": 0,
+   "seal_refusals": [],
+   "seal_notes": [
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "run_exit": 0,
+   "score_exit": 0,
+   "outcome": "scored",
+   "verdict": "pass",
+   "safety_verdict": "pass",
+   "evidence_verdict": "sufficient",
+   "verdict_line": "PASS (safety pass; evidence sufficient): verified 46 (46 faithful, 0 wrong text) of 46 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 2 completed, 0 refused whole, 0 failed to run, of 2",
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 2,
+    "printed": 46,
+    "printed_unsupported": 0,
+    "verified": 46,
+    "verified_faithful": 46,
+    "verified_mismatch": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "not_found": 0,
+    "coverage_percent": 100.0
+   },
+   "documents": {
+    "cl-oba": {
+     "execution": "completed",
+     "printed": 21,
+     "printed_unsupported": 0,
+     "verified": 21,
+     "verified_faithful": 21,
+     "verified_mismatch": 0,
+     "verified_mismatch_kinds": {},
+     "scorable_ranges": [
+      "OBA 1:1-21"
+     ]
+    },
+    "cl-jud": {
+     "execution": "completed",
+     "printed": 25,
+     "printed_unsupported": 0,
+     "verified": 25,
+     "verified_faithful": 25,
+     "verified_mismatch": 0,
+     "verified_mismatch_kinds": {},
+     "scorable_ranges": [
+      "JUD 1:1-25"
+     ]
+    },
+    "cl-ctl": {
+     "execution": "completed",
+     "printed": null,
+     "printed_unsupported": null,
+     "verified": 0,
+     "verified_faithful": null,
+     "verified_mismatch": null,
+     "verified_mismatch_kinds": null,
+     "scorable_ranges": null
+    }
+   },
+   "score_json": "<work>/lab-e3/clean.score.json",
+   "anchors": {
+    "scorer_sha256": "16a84231be46ee425ec10dc7114bdd7f80abc816633d58e568ba389dfc8bf9e1",
+    "protocol_sha256": "db0a77cd1ebe0fe71a7b2eb881c9c22a14dcb74ef197ae67a99a86476543c19e"
+   },
+   "probes": "faithful documents; the official path works end to end"
+  },
+  "notes": {
+   "scenario": "notes",
+   "seal_exit": 0,
+   "seal_refusals": [],
+   "seal_notes": [
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "run_exit": 0,
+   "score_exit": 0,
+   "outcome": "scored",
+   "verdict": "pass",
+   "safety_verdict": "pass",
+   "evidence_verdict": "sufficient",
+   "verdict_line": "PASS (safety pass; evidence sufficient): verified 45 (45 faithful, 0 wrong text) of 45 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 1,
+    "printed": 45,
+    "printed_unsupported": 0,
+    "verified": 45,
+    "verified_faithful": 45,
+    "verified_mismatch": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "not_found": 0,
+    "coverage_percent": 100.0
+   },
+   "documents": {
+    "nt-rut": {
+     "execution": "completed",
+     "printed": 45,
+     "printed_unsupported": 0,
+     "verified": 45,
+     "verified_faithful": 45,
+     "verified_mismatch": 0,
+     "verified_mismatch_kinds": {},
+     "scorable_ranges": [
+      "RUT 1:1-22",
+      "RUT 2:1-23"
+     ]
+    }
+   },
+   "score_json": "<work>/lab-e3/notes.score.json",
+   "anchors": {
+    "scorer_sha256": "16a84231be46ee425ec10dc7114bdd7f80abc816633d58e568ba389dfc8bf9e1",
+    "protocol_sha256": "8f717a1743a2eda6657c63edb159c8ac075b233f08a35209aaae033a0ba3fc38"
+   },
+   "probes": "R1: notes against punctuation; faithful documents (the edition's printed text)"
+  },
+  "malformed": {
+   "scenario": "malformed",
+   "seal_exit": 2,
+   "seal_refusals": [
+    "mf-2jn: reference 63-2JN.usfm: note_unclosed (line 8): \\x opened on line 8 is still open at \\v (line 9)",
+    "mf-hag: reference 37-HAG.usfm: span_nested_without_plus (line 9): \\va inside \\va",
+    "mf-hag: reference 37-HAG.usfm: dropped_unclosed (line 9): \\va opened on line 9 is still open at \\v (line 10)",
+    "mf-hag: reference 37-HAG.usfm: dropped_unclosed (line 9): \\va opened on line 9 is still open at \\v (line 10)"
+   ],
+   "seal_notes": [
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "outcome": "refused at the seal",
+   "probes": "R1: unclosed cross-reference and alternate number; a USFM 3 milestone"
+  },
+  "milestone": {
+   "scenario": "milestone",
+   "seal_exit": 0,
+   "seal_refusals": [],
+   "seal_notes": [
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "run_exit": 0,
+   "score_exit": 0,
+   "outcome": "scored",
+   "verdict": "pass",
+   "safety_verdict": "pass",
+   "evidence_verdict": "sufficient",
+   "verdict_line": "PASS (safety pass; evidence sufficient): verified 25 (25 faithful, 0 wrong text) of 25 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 1,
+    "printed": 25,
+    "printed_unsupported": 0,
+    "verified": 25,
+    "verified_faithful": 25,
+    "verified_mismatch": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "not_found": 0,
+    "coverage_percent": 100.0
+   },
+   "documents": {
+    "ms-phm": {
+     "execution": "completed",
+     "printed": 25,
+     "printed_unsupported": 0,
+     "verified": 25,
+     "verified_faithful": 25,
+     "verified_mismatch": 0,
+     "verified_mismatch_kinds": {},
+     "scorable_ranges": [
+      "PHM 1:1-25"
+     ]
+    }
+   },
+   "score_json": "<work>/lab-e3/milestone.score.json",
+   "anchors": {
+    "scorer_sha256": "16a84231be46ee425ec10dc7114bdd7f80abc816633d58e568ba389dfc8bf9e1",
+    "protocol_sha256": "8f717a1743a2eda6657c63edb159c8ac075b233f08a35209aaae033a0ba3fc38"
+   },
+   "probes": "R1: a USFM 3 milestone only (well formed)"
+  },
+  "vacuous": {
+   "scenario": "vacuous",
+   "seal_exit": 2,
+   "seal_refusals": [
+    "vq-tob: a scored document's reference holds no printed scorable verse (unsupported_only: 0 scorable, 0 numbered but empty, 10 unsupported); nothing in it could be verified. Use a reference that prints the document's books, or declare the document exploratory",
+    "vq-tob: declared book TOB: outside the 66-book canon: its verses can only be unsupported; a scored document's books must be printed in its reference",
+    "vq-nousfm: a scored document's reference holds no printed scorable verse (no_verses: 0 scorable, 0 numbered but empty, 0 unsupported); nothing in it could be verified. Use a reference that prints the document's books, or declare the document exploratory"
+   ],
+   "seal_notes": [
+    "vq-tob: reference content the recogniser cannot hold, counted as unsupported: book_outside_canon 10",
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "outcome": "refused at the seal",
+   "probes": "R2: nothing verifiable (blank, deuterocanon only, prose, reference without USFM)"
+  },
+  "zero": {
+   "scenario": "zero",
+   "seal_exit": 0,
+   "seal_refusals": [],
+   "seal_notes": [
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "run_exit": 0,
+   "score_exit": 0,
+   "outcome": "scored",
+   "verdict": "inconclusive",
+   "safety_verdict": "pass",
+   "evidence_verdict": "insufficient",
+   "verdict_line": "INCONCLUSIVE (safety pass; evidence insufficient): verified 0 (0 faithful, 0 wrong text) of 25 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 25 missing (not found); scored documents 1 completed, 1 refused whole, 0 failed to run, of 2",
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "scored": {
+    "documents": 1,
+    "printed": 25,
+    "printed_unsupported": 0,
+    "verified": 0,
+    "verified_faithful": 0,
+    "verified_mismatch": 0,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "not_found": 25,
+    "coverage_percent": 0.0
+   },
+   "documents": {
+    "zc-blank": {
+     "execution": "refused",
+     "printed": null,
+     "printed_unsupported": null,
+     "verified": null,
+     "verified_faithful": null,
+     "verified_mismatch": null,
+     "verified_mismatch_kinds": null,
+     "scorable_ranges": [
+      "OBA 1:1-21"
+     ]
+    },
+    "zc-prose": {
+     "execution": "completed",
+     "printed": 25,
+     "printed_unsupported": 0,
+     "verified": 0,
+     "verified_faithful": 0,
+     "verified_mismatch": 0,
+     "verified_mismatch_kinds": {},
+     "scorable_ranges": [
+      "JUD 1:1-25"
+     ]
+    }
+   },
+   "score_json": "<work>/lab-e3/zero.score.json",
+   "anchors": {
+    "scorer_sha256": "16a84231be46ee425ec10dc7114bdd7f80abc816633d58e568ba389dfc8bf9e1",
+    "protocol_sha256": "403e6138909d58edd6aeee4cd297e9f0882b82674ccde8fe5f3cef2b8026035e"
+   },
+   "probes": "R2: zero coverage, sound references"
+  },
+  "error": {
+   "scenario": "error",
+   "seal_exit": 0,
+   "seal_refusals": [],
+   "seal_notes": [
+    "scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "run_exit": 0,
+   "score_exit": 0,
+   "outcome": "scored",
+   "verdict": "fail",
+   "safety_verdict": "fail",
+   "evidence_verdict": "sufficient",
+   "verdict_line": "FAIL (safety fail; evidence sufficient): verified 21 (20 faithful, 1 wrong text) of 21 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "failed_validity": [],
+   "criteria_failed": [
+    "1_no_verified_text_mismatch"
+   ],
+   "integrity": {},
+   "scored": {
+    "documents": 1,
+    "printed": 21,
+    "printed_unsupported": 0,
+    "verified": 21,
+    "verified_faithful": 20,
+    "verified_mismatch": 1,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "not_found": 0,
+    "coverage_percent": 95.2
+   },
+   "documents": {
+    "er-oba": {
+     "execution": "completed",
+     "printed": 21,
+     "printed_unsupported": 0,
+     "verified": 21,
+     "verified_faithful": 20,
+     "verified_mismatch": 1,
+     "verified_mismatch_kinds": {
+      "changed": 1
+     },
+     "scorable_ranges": [
+      "OBA 1:1-21"
+     ]
+    }
+   },
+   "score_json": "<work>/lab-e3/error.score.json",
+   "anchors": {
+    "scorer_sha256": "16a84231be46ee425ec10dc7114bdd7f80abc816633d58e568ba389dfc8bf9e1",
+    "protocol_sha256": "8f717a1743a2eda6657c63edb159c8ac075b233f08a35209aaae033a0ba3fc38"
+   },
+   "probes": "a verified verse with a changed word"
+  }
+ },
+ "unknown_option": {
+  "exit": 2,
+  "verdict_line": null,
+  "stderr": [
+   "refused: unknown or repeated option(s) --Protocol=/nonexistent/other-protocol.json; options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+  ]
+ },
+ "modified_committed_scorer": {
+  "scenario": "error",
+  "exit": 0,
+  "verdict": "not a protocol run",
+  "failed_validity": [
+   "tools_are_the_approved_ones"
+  ],
+  "scorer_sha256": "d7eb65ad2a56d47102f4ee7f43c6d74b78a4baccbb374141581050102b07153d"
+ }
+}

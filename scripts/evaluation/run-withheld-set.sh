@@ -34,8 +34,14 @@
 # AW_RUN_TIMEOUT_SECONDS, AW_RUN_MEMORY_KB, AW_DISCLOSED_INVENTORY and (E2)
 # AW_PROTOCOL exist for rehearsals only. RUN.txt records the values used
 # (the protocol by its SHA-256), and score-set.py declares any run that
-# departs from the committed protocol (docs/evaluation/protocol-e2.json) not
+# departs from the committed protocol (docs/evaluation/protocol-e3.json) not
 # a protocol run.
+#
+# E3: it also refuses when the protocol does not permit a withheld run
+# (`withheld_execution_permitted`, false until the owner approves) and when
+# <expected binary sha256> is not the protocol's own pin; and it writes the
+# check's per-verse reference records (check-verses/) into the outputs, so
+# that the committed OUTPUTS.sha256 covers them.
 set -euo pipefail
 [ $# -eq 6 ] || { sed -n '2,30p' "$0" >&2; exit 2; }
 here=$(cd "$(dirname "$0")" && pwd)
@@ -43,20 +49,29 @@ seal=$(cd "$1" && pwd); seal_commit=$2; docs=$(cd "$3" && pwd); bin=$4; want_bin
 timeout_s=${AW_RUN_TIMEOUT_SECONDS:-1800}
 memory_kb=${AW_RUN_MEMORY_KB:-4194304}
 inventory=${AW_DISCLOSED_INVENTORY:-$here/../../docs/evaluation/disclosed-documents.sha256}
-protocol=${AW_PROTOCOL:-$here/../../docs/evaluation/protocol-e2.json}
+protocol=${AW_PROTOCOL:-$here/../../docs/evaluation/protocol-e3.json}
 repo=$(git -C "$seal" rev-parse --show-toplevel) || { echo "refused: the seal folder is not in a Git repository" >&2; exit 2; }
 seal_rel=$(python3 -c 'import os,sys; print(os.path.relpath(os.path.realpath(sys.argv[1]), os.path.realpath(sys.argv[2])))' "$seal" "$repo")
 record_rel="$(dirname "$seal_rel")/run"
 
 [ -e "$out" ] && { echo "refused: $out exists; a withheld set is run once" >&2; exit 2; }
+# The protocol's gate and pin (E3): read before anything else.
+gate=$(python3 -c 'import json,sys
+p = json.load(open(sys.argv[1], encoding="utf-8"))
+print("yes" if p.get("withheld_execution_permitted") is True else "no", p.get("harness_binary_sha256") or "-")' "$protocol") \
+  || { echo "refused: the protocol $protocol cannot be read" >&2; exit 2; }
+[ "${gate%% *}" = "yes" ] || { echo "refused: the protocol does not permit a withheld run (withheld_execution_permitted is not true; owner decisions pending)" >&2; exit 2; }
+[ "${gate#* }" = "$want_bin" ] || { echo "refused: $want_bin is not the protocol's harness binary (${gate#* })" >&2; exit 2; }
 got_bin=$(sha256sum "$bin" | cut -d' ' -f1)
 [ "$got_bin" = "$want_bin" ] || { echo "refused: binary $got_bin is not the frozen $want_bin" >&2; exit 2; }
 git -C "$repo" var GIT_COMMITTER_IDENT > /dev/null 2>&1 \
   || { echo "refused: Git cannot commit here (no committer identity); the run record could not be committed" >&2; exit 2; }
 check_report=$(mktemp)
-trap 'rm -f "$check_report"' EXIT
+check_verses=$(mktemp -d)/check-verses
+trap 'rm -rf "$check_report" "$(dirname "$check_verses")"' EXIT
 python3 "$here/check-set.py" "$seal" "$docs" --seal-commit="$seal_commit" \
-  --inventory="$inventory" --protocol="$protocol" --report="$check_report" > /dev/null \
+  --inventory="$inventory" --protocol="$protocol" --report="$check_report" \
+  --verses-out="$check_verses" > /dev/null \
   || { echo "refused: the set failed its checks (above); nothing was read" >&2; exit 2; }
 
 # From here on the set counts as run, whatever happens next.
@@ -64,6 +79,7 @@ python3 "$here/check-set.py" "$seal" "$docs" --seal-commit="$seal_commit" \
   || { echo "refused: $docs/.run-started exists; this set has been run" >&2; exit 2; }
 mkdir -p "$out"
 cp "$check_report" "$out/CHECK.json"
+[ -d "$check_verses" ] && cp -R "$check_verses" "$out/check-verses"
 manifest="$seal/manifest.tsv"
 {
   echo "started $(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -73,6 +89,8 @@ manifest="$seal/manifest.tsv"
   echo "binary $got_bin"
   echo "runner $(sha256sum "$0" | cut -d' ' -f1)"
   echo "check_set $(sha256sum "$here/check-set.py" | cut -d' ' -f1)"
+  echo "reference_inventory $(sha256sum "$here/reference_inventory.py" | cut -d' ' -f1)"
+  echo "usfm_text $(sha256sum "$here/usfm_text.py" | cut -d' ' -f1)"
   echo "inventory $(sha256sum "$inventory" | cut -d' ' -f1)"
   echo "protocol $(sha256sum "$protocol" | cut -d' ' -f1)"
   echo "limits timeout_seconds $timeout_s memory_kb $memory_kb"

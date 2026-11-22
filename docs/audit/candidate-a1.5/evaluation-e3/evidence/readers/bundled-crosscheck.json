@@ -1,0 +1,206 @@
+{
+ "editions": {
+  "deu1912": {
+   "archive_sha256": "b6170cdaba249210fd9709d689b517b820afe98d70440e4864a56c7c681abe78",
+   "verses": 31102,
+   "rust_equals_python": 31102,
+   "python_equals_review_extractor": 31102,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "deu1951": {
+   "archive_sha256": "0c6c86ae1a4124101ba9c68be9d2be55c17467e2a78cdb23e531feb4aa37dce5",
+   "verses": 31102,
+   "rust_equals_python": 31102,
+   "python_equals_review_extractor": 31102,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "deuelo": {
+   "archive_sha256": "0e3c181372347c7e3cd79fb747a592e79406381f29449041df4fb0948fd9240b",
+   "verses": 31102,
+   "rust_equals_python": 31102,
+   "python_equals_review_extractor": 31102,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "engbsb": {
+   "archive_sha256": "09cdf4340d239564d64b7a03bce5ddfc6ebddda5323c7a5bbee959653759b1f0",
+   "verses": 31086,
+   "rust_equals_python": 31086,
+   "python_equals_review_extractor": 31086,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "engwebp": {
+   "archive_sha256": "c725155aa8192b954e552a0b08aa75f8e7b85e6e56f1eb22efd6d30f5b4aa3cc",
+   "verses": 31103,
+   "rust_equals_python": 31103,
+   "python_equals_review_extractor": 31100,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": [
+    {
+     "reference": "JHN 5:11",
+     "e3": ", ‘Take up your mat and walk.’ ”",
+     "review_extractor": ", ‘Take up your mat and walk.’ ”",
+     "code_points": [
+      "U+00A0"
+     ]
+    },
+    {
+     "reference": "ACT 20:35",
+     "e3": "ssed to give than to receive.’ ”",
+     "review_extractor": "ssed to give than to receive.’ ”",
+     "code_points": [
+      "U+00A0"
+     ]
+    },
+    {
+     "reference": "ACT 22:21",
+     "e3": "ar from here to the Gentiles.’ ”",
+     "review_extractor": "ar from here to the Gentiles.’ ”",
+     "code_points": [
+      "U+00A0"
+     ]
+    }
+   ]
+  },
+  "fraLSG": {
+   "archive_sha256": "fcf2a836549dd042c113b70e8844da0a46394a3188c87808580e811cfb0fc179",
+   "verses": 31170,
+   "rust_equals_python": 31170,
+   "python_equals_review_extractor": 31170,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "grcbyz": {
+   "archive_sha256": "c1034fe50c7e30c5fe33201654b1e2a373da69ac9eab42a008ca85ee8b67f0b7",
+   "verses": 7958,
+   "rust_equals_python": 7958,
+   "python_equals_review_extractor": 7958,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "grcmt": {
+   "archive_sha256": "fa1a59e1545ee404b2b5306fd5e57e2b44617e3c88bd0da60d44c3bd9ae496d6",
+   "verses": 7957,
+   "rust_equals_python": 7957,
+   "python_equals_review_extractor": 7957,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "grcsbl": {
+   "archive_sha256": "6807ec1ccf114ced6d33024b448bd4e7825fd7837ecec6b43fe9cf9dcb9bcba0",
+   "verses": 7939,
+   "rust_equals_python": 7939,
+   "python_equals_review_extractor": 7939,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "grctr": {
+   "archive_sha256": "3232412340f9c3bbe1d85330944306be326f6c7ce6e6aa117b379c4476ae6615",
+   "verses": 7957,
+   "rust_equals_python": 7957,
+   "python_equals_review_extractor": 7957,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "kor1961": {
+   "archive_sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50",
+   "verses": 31081,
+   "rust_equals_python": 31081,
+   "python_equals_review_extractor": 31081,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  },
+  "porbr2018": {
+   "archive_sha256": "adda51da837676b7bcc91a57c18578d86ec505baf951d5170adddb8389e5d163",
+   "verses": 31102,
+   "rust_equals_python": 31102,
+   "python_equals_review_extractor": 31101,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": [
+    {
+     "reference": "ZEC 7:13",
+     "e3": "m quando eu clamei, assim tamb em quando",
+     "review_extractor": "m quando eu clamei, assim tamb em quando",
+     "code_points": [
+      "U+00A0"
+     ]
+    }
+   ]
+  },
+  "spaRV1909": {
+   "archive_sha256": "488ca0d7f4e9ab974745b47eca305b876491339d6973bc3e5a23244bebea6b5c",
+   "verses": 31102,
+   "rust_equals_python": 31102,
+   "python_equals_review_extractor": 31102,
+   "python_problems": 0,
+   "rust_label_sequence_differs": 0,
+   "review_extractor_label_sequence_differs": 0,
+   "differences_from_review_extractor": []
+  }
+ },
+ "review_528": {
+  "engbsb": {
+   "rows": 156,
+   "kinds_under_e2": {
+    "punctuation_spacing": 155,
+    "word_boundary": 1
+   },
+   "read_as_the_edition_prints_them": 156
+  },
+  "engwebp": {
+   "rows": 14,
+   "kinds_under_e2": {
+    "punctuation_spacing": 14
+   },
+   "read_as_the_edition_prints_them": 14
+  },
+  "fraLSG": {
+   "rows": 2,
+   "kinds_under_e2": {
+    "punctuation_spacing": 2
+   },
+   "read_as_the_edition_prints_them": 2
+  },
+  "grcsbl": {
+   "rows": 356,
+   "kinds_under_e2": {
+    "punctuation_spacing": 356
+   },
+   "read_as_the_edition_prints_them": 356
+  }
+ },
+ "totals": {
+  "verses": 311761,
+  "rust_equals_python": 311761,
+  "python_equals_review_extractor": 311757,
+  "python_problems": 0,
+  "review_528_resolved": 528
+ }
+}

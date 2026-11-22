@@ -2,7 +2,9 @@
 """Checks a withheld evaluation set before it is sealed and before it is run.
 
     check-set.py <seal folder> <documents folder> [--seal-commit=SHA]
-                 [--inventory=FILE] [--protocol=FILE] [--report=FILE]
+                 [--inventory=FILE] [--protocol=FILE] [--report=FILE] [--verses-out=DIR]
+
+Any other option is refused (exit 2), never ignored (E3).
 
 The builder runs it (through seal-set.py) before sealing; the runner
 (`run-withheld-set.sh`) runs it with --seal-commit before reading anything.
@@ -25,6 +27,15 @@ nothing else) holds:
                      one row each for scored, control, mixed, exploratory,
                      authentic and generated. They must be the manifest's,
                      and the protocol's required composition when it has one
+  reference-sources.tsv
+                     (E3) where each reference package comes from: key,
+                     reference, publisher_archive (name or URL),
+                     publisher_archive_sha256, member, member_sha256, role.
+                     One `kept` row per member of the package (its SHA-256
+                     must be the package member's), one `removed` row per
+                     member of the publisher's archive left out of it
+                     (keys.asc, *.css...). The publisher's archive hash is
+                     recorded apart from the package's own (checksums.sha256)
   checksums.sha256   every file of the documents folder, `sha256sum` format,
                      names relative to that folder
   provenance.tsv     one row per key (columns in PROVENANCE below)
@@ -40,11 +51,21 @@ References (E2, C4 and C5): each must be a .zip of USFM books (.usfm, .sfm),
 with nothing else but prose (.htm), or one .usfm/.sfm file; UTF-8; one \\id
 per file. A verse map, OSIS, MorphGNT or any other member is refused. Each
 scored or exploratory document's reference is read by the neutral inventory
-(reference_inventory.py) and the report lists, before any run, its complete
-coverage: every scorable verse key, every label in each unsupported class
-(verse 0, chapters above the 66-book counts, other books, unusual labels,
-duplicates) and every book outside the declared scope. The scorer compares
-the harness's own inventory with this one.
+(reference_inventory.py, with the check's own USFM text reader, E3) and the
+report lists, before any run, its complete coverage: every scorable verse
+key, every label in each unsupported class (verse 0, chapters above the
+66-book counts, other books, unusual labels, duplicates) and every book
+outside the declared scope, and the digest of every verse's text
+(--verses-out writes the per-verse records). The scorer compares the
+harness's own inventory and texts with this one, verse by verse.
+
+E3 refuses, besides: a reference the text reader cannot read unambiguously
+(an unclosed note or span, a mismatched end marker, an unknown marker...);
+verse text with a code point unassigned in this check's Unicode version; and
+(R2) a scored document whose reference holds no printed scorable verse in
+its declared books (an empty or prose-only package, only unsupported or
+empty verses), or a declared book the reference does not print. Each
+reference's evidence class is reported before the seal.
 
 Paths: every name in the manifest, checksums.sha256 and SEAL.txt must be a
 plain relative path (no absolute path, no '..', '.' or empty part, no
@@ -67,9 +88,9 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO_DEFAULT = os.path.normpath(os.path.join(HERE, "..", ".."))
 # Beside this script (a builder's flat copy of the tools), else in the repository.
-PROTOCOL_DEFAULT = next((p for p in (os.path.join(HERE, "protocol-e2.json"),
-                                     os.path.join(REPO_DEFAULT, "docs", "evaluation", "protocol-e2.json"))
-                         if os.path.isfile(p)), os.path.join(REPO_DEFAULT, "docs", "evaluation", "protocol-e2.json"))
+PROTOCOL_DEFAULT = next((p for p in (os.path.join(HERE, "protocol-e3.json"),
+                                     os.path.join(REPO_DEFAULT, "docs", "evaluation", "protocol-e3.json"))
+                         if os.path.isfile(p)), os.path.join(REPO_DEFAULT, "docs", "evaluation", "protocol-e3.json"))
 _spec = importlib.util.spec_from_file_location("reference_inventory", os.path.join(HERE, "reference_inventory.py"))
 reference_inventory = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(reference_inventory)
@@ -82,7 +103,9 @@ PROVENANCE = ["key", "publisher", "edition", "revision", "retrieved_from", "retr
               "licence", "document_sha256", "reference_source", "reference_method",
               "identity_checked_by"]
 SEAL_FILES = ["manifest.tsv", "checksums.sha256", "provenance.tsv", "review-ledger.md",
-              "access-records.md", "composition.tsv"]
+              "access-records.md", "composition.tsv", "reference-sources.tsv"]
+SOURCES = ["key", "reference", "publisher_archive", "publisher_archive_sha256", "member", "member_sha256", "role"]
+OPTIONS = ("seal-commit", "inventory", "protocol", "report", "verses-out")
 COMPOSITION = ["scored", "control", "mixed", "exploratory", "authentic", "generated"]
 LOCK = ".run-started"
 KEY = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
@@ -401,14 +424,109 @@ def disclosed_keys(repo):
     return keys
 
 
+def check_sources(seal, rows, paths, errors):
+    """reference-sources.tsv against the sealed packages: every member of a
+    package listed once as `kept` with its SHA-256, every `removed` member
+    absent from it, the publisher's archive hash given. Returns
+    {key: {"package_sha256", "publisher_archive", "publisher_archive_sha256", "kept", "removed"}}."""
+    lines = open(os.path.join(seal, "reference-sources.tsv"), encoding="utf-8").read().splitlines()
+    if not lines or lines[0].split("\t") != SOURCES:
+        errors.append(f"reference-sources.tsv header must be exactly: {' | '.join(SOURCES)}")
+        return {}
+    by_key = {}
+    for n, line in enumerate(lines[1:], 2):
+        if not line.strip() or line.startswith("#"):
+            continue
+        c = [x.strip() for x in line.split("\t")]
+        if len(c) != len(SOURCES):
+            errors.append(f"reference-sources.tsv line {n}: {len(c)} columns, {len(SOURCES)} required")
+            continue
+        row = dict(zip(SOURCES, c))
+        if row["role"] not in ("kept", "removed"):
+            errors.append(f"reference-sources.tsv line {n}: role '{row['role']}' is not kept or removed")
+        for h in ("publisher_archive_sha256", "member_sha256"):
+            if not HEX.match(row[h]):
+                errors.append(f"reference-sources.tsv line {n}: {h} is not a SHA-256")
+        by_key.setdefault(row["key"], []).append(row)
+    out = {}
+    for r in rows:
+        key, ref = r["key"], r["reference"]
+        listed = by_key.pop(key, [])
+        if ref == "-":
+            if listed:
+                errors.append(f"{key}: reference-sources.tsv lists a reference, but the document has none")
+            continue
+        if not listed:
+            errors.append(f"{key}: reference-sources.tsv has no row for its reference {ref}")
+            continue
+        if {x["reference"] for x in listed} != {ref}:
+            errors.append(f"{key}: reference-sources.tsv names another reference than the manifest's {ref}")
+        archives = {(x["publisher_archive"], x["publisher_archive_sha256"]) for x in listed}
+        if len(archives) != 1:
+            errors.append(f"{key}: reference-sources.tsv gives more than one publisher archive")
+        kept = {}
+        for x in listed:
+            if x["role"] == "kept":
+                if x["member"] in kept:
+                    errors.append(f"{key}: reference-sources.tsv lists {x['member']} twice")
+                kept[x["member"]] = x["member_sha256"]
+        removed = {x["member"]: x["member_sha256"] for x in listed if x["role"] == "removed"}
+        actual = {}
+        if ref in paths:
+            if zipfile.is_zipfile(paths[ref]):
+                with zipfile.ZipFile(paths[ref]) as z:
+                    for info in z.infolist():
+                        if not info.is_dir():
+                            actual[info.filename] = sha256_bytes(z.read(info))
+            else:
+                actual[os.path.basename(ref)] = sha256(paths[ref])
+        for m in sorted(set(actual) | set(kept)):
+            if m not in kept:
+                errors.append(f"{key}: package member {m} is not listed as kept in reference-sources.tsv")
+            elif m not in actual:
+                errors.append(f"{key}: reference-sources.tsv keeps {m}, which the package does not hold")
+            elif actual[m] != kept[m]:
+                errors.append(f"{key}: package member {m} is not the one reference-sources.tsv records")
+        for m in sorted(removed):
+            if m in actual:
+                errors.append(f"{key}: {m} is listed as removed but is in the package")
+        archive, archive_sha = next(iter(archives)) if archives else ("", "")
+        out[key] = {"package_sha256": sha256(paths[ref]) if ref in paths else None,
+                    "publisher_archive": archive, "publisher_archive_sha256": archive_sha,
+                    "kept": len(kept), "removed": sorted(removed)}
+    for key in sorted(by_key):
+        errors.append(f"reference-sources.tsv has rows for {key}, which the manifest does not list")
+    return out
+
+
 # ---------------------------------------------------------------- the check
 
-def check(seal, docs, seal_commit=None, inventory=None, protocol=None):
+def parse_options(argv, allowed, flags=()):
+    """(positional arguments, {option: value}, {flag}) of a command line, or
+    an error naming every option that is not one of `allowed` (`--name=VALUE`)
+    or `flags` (`--name`): an option is never silently ignored (E3)."""
+    args, opts, given, bad = [], {}, set(), []
+    for a in argv:
+        if not a.startswith("--"):
+            args.append(a)
+        elif "=" in a and a[2:].split("=", 1)[0] in allowed:
+            k, v = a[2:].split("=", 1)
+            if k in opts:
+                bad.append(f"{a} (given twice)")
+            opts[k] = v
+        elif "=" not in a and a[2:] in flags:
+            given.add(a[2:])
+        else:
+            bad.append(a)
+    return args, opts, given, bad
+
+
+def check(seal, docs, seal_commit=None, inventory=None, protocol=None, verses_out=None):
     errors, notes = [], []
     report = {"seal_folder": seal, "documents_folder": docs, "seal_commit": seal_commit}
     protocol = protocol or PROTOCOL_DEFAULT
     report["tools"] = {name: sha256(os.path.join(HERE, name)) for name in
-                       ("check-set.py", "reference_inventory.py")}
+                       ("check-set.py", "reference_inventory.py", "usfm_text.py")}
     report["tools"]["usfm-books.tsv"] = sha256(reference_inventory.BOOKS_TSV)
     report["protocol"] = protocol
     report["protocol_sha256"] = sha256(protocol) if os.path.isfile(protocol) else None
@@ -517,6 +635,9 @@ def check(seal, docs, seal_commit=None, inventory=None, protocol=None):
             errors.append(f"the declared composition {declared} is not the protocol's required {required}")
         if proto is not None and required is None:
             notes.append("the protocol requires no composition yet: no run under it is a protocol run")
+        if proto is not None and proto.get("withheld_execution_permitted") is not True:
+            notes.append("the protocol does not permit a withheld run yet (owner decisions pending): "
+                         "the runner refuses to run under it")
 
     # 3. Documents: every name a plain relative path inside the folder, every
     #    file listed, present and as checksummed; nothing else; no link.
@@ -600,16 +721,60 @@ def check(seal, docs, seal_commit=None, inventory=None, protocol=None):
                     if sha256_bytes(data) in known:
                         errors.append(f"{rel}: its {name} is byte-identical to a disclosed USFM book")
 
-    # 5b. References (C4, C5, B1, B2): sound USFM, and their complete
-    #     inventory, every unsupported class declared before any run.
+    # 5b. References (C4, C5, B1, B2; E3 R1, R2): sound USFM read by the
+    #     check's own text reader, their complete inventory with every
+    #     unsupported class and every verse's text digest declared before any
+    #     run, and evidence to score.
     report["reference_inventories"] = {}
+    report["reference_evidence"] = {}
     for r in rows:
         if r["reference"] == "-" or r["reference"] not in paths or "declared" not in r:
             continue
         inv = reference_inventory.read(paths[r["reference"]], r["declared"], known_books)
         for problem in inv["problems"]:
             errors.append(f"{r['key']}: reference {problem}")
+        for problem in inv["unicode_problems"]:
+            errors.append(f"{r['key']}: reference {problem}")
+        verses = inv.pop("verses")
+        if verses_out:
+            os.makedirs(verses_out, exist_ok=True)
+            out = os.path.join(verses_out, f"{r['key']}.verses.json")
+            with open(out, "w", encoding="utf-8") as f:
+                json.dump(verses, f, ensure_ascii=False)
+            inv["verses_file"] = f"{os.path.basename(os.path.normpath(verses_out))}/{r['key']}.verses.json"
+            inv["verses_file_sha256"] = sha256(out)
+        inv["verses_count"] = len(verses)
         report["reference_inventories"][r["key"]] = inv
+        evidence = {"class": r["class"], "evidence_class": inv["evidence_class"],
+                    "printed_scorable": inv["printed_scorable"], "absent_in_edition": inv["absent_in_edition"],
+                    "printed_unsupported": inv["printed_unsupported"],
+                    "printed_outside_declared_books": inv["printed_counts"]["outside_declared_scope"],
+                    "printed_scorable_by_book": inv["printed_scorable_by_book"], "declared_books_without_scorable": {}}
+        # Every declared book must be printed, scorably, in the reference.
+        for code in sorted(r["declared"] or ()):
+            if evidence["printed_scorable_by_book"].get(code):
+                continue
+            if known_books.get(code) is None:
+                why = "outside the 66-book canon: its verses can only be unsupported"
+            elif any(lbl.startswith(code + " ") for lbls in inv["unsupported_labels"].values() for lbl in lbls):
+                why = "only unsupported verses in the reference"
+            else:
+                why = "no printed verse in the reference"
+            evidence["declared_books_without_scorable"][code] = why
+        report["reference_evidence"][r["key"]] = evidence
+        if r["class"] == "scored":
+            if inv["evidence_class"] != "scorable":
+                errors.append(f"{r['key']}: a scored document's reference holds no printed scorable verse "
+                              f"({inv['evidence_class']}: {inv['printed_scorable']} scorable, "
+                              f"{inv['absent_in_edition']} numbered but empty, {inv['printed_unsupported']} unsupported); "
+                              f"nothing in it could be verified. Use a reference that prints the document's books, "
+                              f"or declare the document exploratory")
+            for code, why in evidence["declared_books_without_scorable"].items():
+                errors.append(f"{r['key']}: declared book {code}: {why}; a scored document's books must be "
+                              f"printed in its reference")
+        elif inv["evidence_class"] != "scorable":
+            notes.append(f"{r['key']} ({r['class']}): its reference holds no printed scorable verse "
+                         f"({inv['evidence_class']})")
         unsupported = {k: len(v) for k, v in inv["unsupported_labels"].items() if v}
         if inv["verses_before_chapter"]:
             unsupported["verse_before_chapter"] = inv["verses_before_chapter"]
@@ -618,6 +783,10 @@ def check(seal, docs, seal_commit=None, inventory=None, protocol=None):
                          + ", ".join(f"{k} {n}" for k, n in unsupported.items()))
         if not all(m.get("nfc", True) for m in inv["members"] if m["role"] == "usfm"):
             notes.append(f"{r['key']}: the reference is not in Unicode NFC (compared under canonical equivalence)")
+
+    # 5c. Reference provenance (E3): the publisher's archive recorded apart
+    #     from the USFM-only package sealed here, member by member.
+    report["reference_sources"] = check_sources(seal, rows, paths, errors) if "reference-sources.tsv" in sealed else {}
 
     # 6. Not a disclosed key (the harness would also run that edition's files).
     repo = repo_of(seal) if seal_commit else None
@@ -669,11 +838,15 @@ def check(seal, docs, seal_commit=None, inventory=None, protocol=None):
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    opts = dict(a[2:].split("=", 1) for a in sys.argv[1:] if a.startswith("--") and "=" in a)
+    args, opts, _, bad = parse_options(sys.argv[1:], OPTIONS)
+    if bad:
+        print(f"refused: unknown or repeated option(s) {', '.join(bad)}; options are "
+              f"{', '.join('--' + o + '=...' for o in OPTIONS)}", file=sys.stderr)
+        sys.exit(2)
     if len(args) != 2:
         sys.exit(__doc__)
-    report = check(args[0], args[1], opts.get("seal-commit"), opts.get("inventory"), opts.get("protocol"))
+    report = check(args[0], args[1], opts.get("seal-commit"), opts.get("inventory"), opts.get("protocol"),
+                   opts.get("verses-out"))
     text = json.dumps(report, ensure_ascii=False, indent=1)
     if opts.get("report"):
         open(opts["report"], "w", encoding="utf-8").write(text + "\n")
