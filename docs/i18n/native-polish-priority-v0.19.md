@@ -1111,11 +1111,11 @@ _No open linguistic questions._
 |  | `scripture.morph.voice.middleOrPassiveDeponent` | middle or passive deponent | mediales oder passives Deponens | 중간태 또는 수동태 이태동사 | déponent moyen ou passif | deponente medio o pasivo | deponente de voz média ou passiva |
 |  | `scripture.morph.voice.passive` | passive | Passiv | 수동태 | passif | voz pasiva | voz passiva |
 |  | `scripture.morph.voice.passiveDeponent` | passive deponent | passives Deponens | 수동태 이태동사 | déponent passif | deponente pasivo | deponente de voz passiva |
-|  | `scripture.reader.editionConfirmed` | Edition confirmed by you | Ausgabe von Ihnen bestätigt | 사용자가 판본을 확인함 | Édition confirmée par vous | Edición confirmada por ti | Edição confirmada por si |
+|  | `scripture.reader.editionConfirmed` | Edition confirmed by you | Ausgabe von dir bestätigt | 사용자가 판본을 확인함 | Édition confirmée par vous | Edición confirmada por ti | Edição confirmada por si |
 |  | `scripture.reader.editionProvisional` | Edition unconfirmed | Ausgabe nicht bestätigt | 판본 미확인 | Édition non confirmée | Edición sin confirmar | Edição por confirmar |
 | plural, {{count}} | `scripture.reader.marker.notes` | *one:* {{count}} note<br>*other:* {{count}} notes | *one:* {{count}} Notiz<br>*other:* {{count}} Notizen | *other:* 메모 {{count}}개 | *one:* {{count}} note<br>*many:* {{count}} de notes<br>*other:* {{count}} notes | *one:* {{count}} nota<br>*many:* {{count}} notas<br>*other:* {{count}} notas | *one:* {{count}} nota<br>*many:* {{count}} notas<br>*other:* {{count}} notas |
 |  | `scripture.reader.numberingUnmapped` | Parallel verse alignment is unavailable for this document edition. | Für diese Dokumentausgabe ist keine automatische Zuordnung paralleler Verse verfügbar. | 이 문서 판본에서는 절을 자동으로 대조할 수 없습니다. | L’alignement automatique des versets est indisponible pour cette édition. | La alineación automática de versículos no está disponible para esta edición. | O alinhamento automático de versículos não está disponível para esta edição. |
-|  | `scripture.reader.recognisedFromDocument` | Recognised from your document | In Ihrem Dokument erkannt | 내 문서에서 인식됨 | Reconnu dans votre document | Reconocido en tu documento | Reconhecido no seu documento |
+|  | `scripture.reader.recognisedFromDocument` | Recognised from your document | In deinem Dokument erkannt | 내 문서에서 인식됨 | Reconnu dans votre document | Reconocido en tu documento | Reconhecido no seu documento |
 |  | `scripture.reader.unchecked` | Found in this Bible’s document, but its text could not be checked, so it is not shown here. | Im Dokument dieser Bibel gefunden, aber sein Text ließ sich nicht prüfen; er wird hier nicht gezeigt. | 이 성경의 문서에서 찾았지만 본문을 확인할 수 없어 여기에는 보여 주지 않습니다. | Trouvé dans le document de cette Bible, mais son texte n’a pas pu être vérifié ; il n’est donc pas affiché ici. | Encontrado en el documento de esta Biblia, pero no se pudo comprobar su texto, así que no se muestra aquí. | Encontrado no documento desta Bíblia, mas não foi possível verificar seu texto, por isso não é mostrado aqui. |
 | {{page}} | `scripture.reader.uncheckedOnPage` | Found on page {{page}} of this Bible’s document, but its text could not be checked, so it is not shown here. | Auf Seite {{page}} im Dokument dieser Bibel gefunden, aber sein Text ließ sich nicht prüfen; er wird hier nicht gezeigt. | 이 성경 문서의 {{page}}쪽에서 찾았지만 본문을 확인할 수 없어 여기에는 보여 주지 않습니다. | Trouvé page {{page}} du document de cette Bible, mais son texte n’a pas pu être vérifié ; il n’est donc pas affiché ici. | Encontrado en la página {{page}} del documento de esta Biblia, pero no se pudo comprobar su texto, así que no se muestra aquí. | Encontrado na página {{page}} do documento desta Bíblia, mas não foi possível verificar seu texto, por isso não é mostrado aqui. |
 |  | `scripture.research.dictionary` | Dictionary form | Grundform | 원형 | Forme de dictionnaire | Forma de diccionario | Forma de dicionário |
@@ -2305,10 +2305,7 @@ _No open linguistic questions._
 
 ## 4. Automatic audit findings
 
-| Class | Finding | Key | Language | Text | Note |
-|---|---|---|---|---|---|
-| B | German capitalised Sie/Ihr (check: formal address, or 'they/it') | `scripture.reader.editionConfirmed` | de | Ausgabe von Ihnen bestätigt | Policy: informal du. |
-| B | German capitalised Sie/Ihr (check: formal address, or 'they/it') | `scripture.reader.recognisedFromDocument` | de | In Ihrem Dokument erkannt | Policy: informal du. |
+_No class A or B findings._
 
 **C — same spelling as English (262).** Cognates, names and accepted loanwords that are the same word in the language; listed so nothing is hidden.
 
