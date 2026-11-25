@@ -110,10 +110,17 @@ files); `npm run build` passes.
 
 **Fixed while verifying:** three native messages without translations
 (`documentChapterUnmarked`, `documentChapterUnread`,
-`documentSeptuagintNumbering`) now in six languages; two German strings
-used the formal address; the six-language review corpus regenerated; a
-Teaching passage with a withheld verse was shortened silently — the
-presentation now warns (`scripturePartial`, six languages).
+`documentSeptuagintNumbering`; translated in parallel by `f824d5a`, whose
+wording is kept); two German strings used the formal address; the
+six-language review corpus regenerated; a Teaching passage with a withheld
+verse was shortened silently — the presentation now warns
+(`scripturePartial`, six languages).
+
+**Windows acceptance workflow:** `.github/workflows/windows-scripture-acceptance.yml`
+runs only on a push to `build/pr61-windows-scripture-acceptance-20261125` with
+the approval commit message. Its `SOURCE_SHA` (`056333b`) predates these
+fixes; it should be re-pinned to the verified branch head when the owner
+approves a Windows build.
 
 **Not done, and required before acceptance (§4, §5):** the native Windows
 smoke test on a disposable profile with an installed build (needs the
