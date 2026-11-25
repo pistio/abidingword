@@ -258,9 +258,9 @@ describe("committed configuration", () => {
     };
 
     it("starts signed test-update publication only on explicit manual dispatch", () => {
-      const on = wf.slice(wf.indexOf("\\non:\\n"), wf.indexOf("\\npermissions:"));
+      const on = wf.slice(wf.indexOf("\non:\n"), wf.indexOf("\npermissions:"));
       expect(on).toContain("workflow_dispatch:");
-      expect(on).not.toMatch(/workflow_run:|pull_request:|\\n {2}push:/);
+      expect(on).not.toMatch(/workflow_run:|pull_request:|\n {2}push:/);
       expect(job("gate")).toContain("if: github.event_name == 'workflow_dispatch'");
     });
 
