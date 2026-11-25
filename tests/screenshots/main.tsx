@@ -1,3 +1,6 @@
+import { pdfStructureReviewFixture } from "../support/pdfStructureReviewFixture";
+import { homeReviewFixture } from "../support/homeReviewFixture";
+import { pdfReviewFixture } from "../support/pdfReviewFixture";
 // The documentation screenshot harness (see vite.config.ts and capture.mjs).
 // The real interface, an in-memory library written for the guide, and the
 // public-domain World English Bible. Nothing here ships with the app.
@@ -12,10 +15,14 @@ import "@fontsource/noto-serif/600.css";
 import "@/design-system/index.css";
 import i18n from "@/i18n";
 import { App } from "@/app/App";
-import type { VerseText } from "@/types/scripture";
-import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
+import type { EpubNode } from "@/types/library";
+import type { MorphDescribed, VerseText } from "@/types/scripture";
+import { createMemoryApi, type FixtureWord, type MemoryApi } from "../support/memoryApi";
+import { ApiError } from "@/lib/api";
 import { createMemoryUpdater } from "../support/memoryUpdater";
 import { minimalPdf } from "../support/minimalPdf";
+import { IMPORTED } from "../support/memoryTemplates";
+import { acceptImport } from "@/types/presentationTemplate";
 
 const params = new URLSearchParams(location.search);
 
@@ -36,6 +43,22 @@ async function seed(api: MemoryApi) {
   api.state.settings.scriptureTranslationId = web.id;
   api.state.settings.scripturePassage = params.get("passage") ?? "JHN.15";
   api.state.settings.theme = params.get("theme") === "dark" ? "dark" : "light";
+  // A projector beside the computer, for the audience-screen scenes.
+  if (params.get("screens") === "2")
+    api.state.presentation.screens = [
+      { index: 0, name: "Built-in", width: 1440, height: 900, primary: true },
+      { index: 1, name: "Projector", width: 1920, height: 1080, primary: false },
+    ];
+
+  // A church template imported from the PowerPoint corpus file, for the template scenes.
+  if (params.get("template") === "1")
+    await api.presentationTemplateCreate({
+      name: "Grace Church Sunday",
+      description: "",
+      definition: acceptImport(IMPORTED, IMPORTED.suggestions, IMPORTED.definition.fonts),
+      sourceFormat: "pptx",
+      sourceName: "Grace Church.pptx",
+    });
 
   // Collections and studies (sample content written for this guide).
   const workspaceId = api.state.workspace.id;
@@ -68,6 +91,14 @@ async function seed(api: MemoryApi) {
     "The word “remain” comes again and again in verses 4 to 10.",
     "The branch does not produce fruit by effort; it bears fruit because it stays joined to the vine.",
   );
+  // Writing further along the study (v0.18.6 review): enough that it scrolls and several phases hold work.
+  await write(
+    "Meaning",
+    "To remain is to keep living in what Jesus has already done and said: the disciples are clean already (verse 3).",
+    "Pruning is the Father’s care, not his anger. The branch that bears fruit is cut back so that it bears more.",
+  );
+  await write("Theology", "Union with Christ is the root of the Christian life. Fruit is the evidence of that life, never its price.");
+  await write("Application", "Where am I trying to produce fruit by effort instead of staying close to him?");
   const observations = vine.sections.find((s) => s.title === "Observations");
   const application = vine.sections.find((s) => s.title === "Application");
   const fruit = await api.findingCreate({
@@ -93,8 +124,48 @@ async function seed(api: MemoryApi) {
   await api.studyPassageAdd({ studyId: vine.study.id, reference: "GAL.5.22-GAL.5.23", role: "related" });
 
   await api.studyCreate({ projectId: john.id, title: "Abide (μένω) — word study", studyType: "word", templateKey: "word-study", primaryPassage: "JHN.15.4" });
-  await api.studyCreate({ projectId: john.id, title: "The Good Shepherd", studyType: "teaching", templateKey: "teaching-study", primaryPassage: "JHN.10.1-JHN.10.18" });
-  await api.studyCreate({ projectId: romans.id, title: "No condemnation", studyType: "passage", templateKey: "passage-study", primaryPassage: "ROM.8.1-ROM.8.11" });
+  const shepherd = await api.studyCreate({ projectId: john.id, title: "The Good Shepherd", studyType: "teaching", templateKey: "teaching-study", primaryPassage: "JHN.10.1-JHN.10.18" });
+  const condemnation = await api.studyCreate({ projectId: romans.id, title: "No condemnation", studyType: "passage", templateKey: "passage-study", primaryPassage: "ROM.8.1-ROM.8.11" });
+
+  // A group Bible study and a children's lesson, for the materials they become (v0.18.6). Sample writing.
+  const group = await api.teachingCreate({ studyId: condemnation.study.id, title: "Small group · No condemnation", kind: "bible_study" });
+  await api.teachingUpdate({
+    id: group.id,
+    centralMessage: "In Christ we are free from condemnation, and the Spirit gives us life.",
+    introduction: "Share a time you felt you had to earn someone’s approval.",
+    conclusion: "Pray in pairs for one area where you still live under condemnation.",
+  });
+  await api.teachingPassageAdd({ preparationId: group.id, reference: "ROM.8.1-ROM.8.11" });
+  const questions: [string, string, string, string][] = [
+    ["What does Paul say there is “now no” of, and for whom?", "Verse 1: no condemnation for those in Christ Jesus.", "Why does Paul say “now”? What has changed?", "Let several people answer before moving on."],
+    ["How does verse 3 explain what the law could not do?", "God sent his own Son; sin was condemned in his flesh.", "What does this say about God’s initiative?", ""],
+    ["Where do you notice yourself living by the flesh rather than by the Spirit?", "Honest answers; keep it personal, not abstract.", "", "Share first yourself to make it safe."],
+    ["What difference does verse 11 make to how you face this week?", "The Spirit who raised Jesus gives life to us.", "", ""],
+  ];
+  let after: string | undefined;
+  for (const [title, explanation, application, illustration] of questions) {
+    const next = await api.teachingPointCreate({ preparationId: group.id, title, afterPointId: after });
+    const added = next.points[next.points.length - 1]!;
+    await api.teachingPointUpdate({ id: added.id, explanation, application, illustration });
+    after = added.id;
+  }
+  const lesson = await api.teachingCreate({ studyId: shepherd.study.id, title: "The shepherd knows my name", kind: "children" });
+  await api.teachingUpdate({ id: lesson.id, centralMessage: "Jesus knows me and calls me by name." });
+  await api.teachingPassageAdd({ preparationId: lesson.id, reference: "JHN.10.3-JHN.10.4" });
+  const steps: { kind: "text" | "scripture" | "question" | "activity"; title: string; explanation: string; illustration?: string }[] = [
+    { kind: "text", title: "Welcome and name game", explanation: "Each child says their name and a favourite animal." },
+    { kind: "scripture", title: "The shepherd and his sheep", explanation: "Tell John 10:3–4 with a toy sheep." },
+    { kind: "question", title: "How does a sheep know its own shepherd?", explanation: "Listen for: by his voice." },
+    { kind: "activity", title: "Draw your shepherd and your sheep", explanation: "Each child draws a sheep with their own name on it.", illustration: "Paper, crayons" },
+    { kind: "text", title: "Thank you, Jesus, for knowing me", explanation: "A short prayer together." },
+  ];
+  let previous: string | undefined;
+  for (const step of steps) {
+    const next = await api.teachingPointCreate({ preparationId: lesson.id, title: step.title, kind: step.kind, afterPointId: previous });
+    const added = next.points[next.points.length - 1]!;
+    await api.teachingPointUpdate({ id: added.id, explanation: step.explanation, illustration: step.illustration ?? "" });
+    previous = added.id;
+  }
 
   // Marks on John 15.
   await api.annotationCreate({ reference: "JHN.15.5", kind: "highlight", color: "amber", translationId: web.id });
@@ -175,8 +246,10 @@ async function seed(api: MemoryApi) {
   await api.teachingFindingLink({ preparationId: sermon.id, pointId: remainPoint.id, findingId: fruit.id });
   await api.teachingFindingLink({ preparationId: sermon.id, pointId: remainPoint.id, findingId: resting.id });
   await api.teachingPointCreate({ preparationId: sermon.id, title: "The Father is glorified", afterPointId: remainPoint.id });
+  await api.teachingPassageAdd({ preparationId: sermon.id, reference: "JHN.15.1-JHN.15.8" });
+  await api.teachingUpdate({ id: sermon.id, conclusion: "Stay close to him this week: begin each day with his words." });
   // The assistant, turned on for the guide's pictures, with one prepared answer (no network in the harness).
-  api.state.teaching.assistant.config = { ...api.state.teaching.assistant.config, enabled: true, provider: "openai", model: "gpt-4.1" };
+  api.state.teaching.assistant.config = { ...api.state.teaching.assistant.config, enabled: true, provider: "openai", model: "gpt-6.1-sol" };
   api.state.teaching.assistant.keys.set("openai", "sample");
   api.state.teaching.assistant.replies.push({
     result: {
@@ -186,7 +259,7 @@ async function seed(api: MemoryApi) {
       changes: "Two small changes for flow: “as if” and “Yet” at the start of the third sentence. Your words and tone are kept.",
       placement: "replace",
     },
-    assistant: "OpenAI · gpt-4.1",
+    assistant: "OpenAI · gpt-6.1-sol",
     remote: true,
   });
   api.installFixtureSource({
@@ -259,6 +332,153 @@ async function seed(api: MemoryApi) {
   api.libraryOriginalRead = async (_id, offset, length) => handbook.slice(offset, offset + length);
 }
 
+/** One prepared answer for the v0.20 pictures (no network in the harness). */
+function prepareInquiry(api: MemoryApi, which: string) {
+  const assistant = "OpenAI · gpt-6.1-sol";
+  if (which === "error") {
+    api.state.inquiry.replies.push(new ApiError("assistant", i18n.t("errors.assistant.failed")));
+    return;
+  }
+  const segment = api.state.library.segments.find((x) => x.text.startsWith("Remaining is not anxious striving"));
+  const quote = "Remaining is not anxious striving";
+  const link = segment && {
+    sourceId: segment.sourceId,
+    title: "Notes on Abiding",
+    author: "Study group notes",
+    location: "The True Vine · paragraph 3",
+    start: { segmentId: segment.id, offset: 0 },
+    end: { segmentId: segment.id, offset: quote.length },
+    quote,
+  };
+  const label = "“Notes on Abiding” by Study group notes — The True Vine · paragraph 3";
+  if (which === "study") {
+    api.state.inquiry.replies.push({
+      result: {
+        type: "insight",
+        summary: "Your observation follows the passage closely; one link in the text could make it firmer.",
+        points: [
+          { kind: "text", text: "The passage itself ties fruit to remaining, not to effort.", about: null, aboutLabel: null, evidence: [{ block: "P1", kind: "scripture", label: "John 15:1–11 (WEB)", quote: "he who remains in me, and I in him, bears much fruit", source: null }], references: [], downgraded: false },
+          { kind: "writing", text: "Your note says “not from trying harder”; the text says what does produce fruit, but does not mention effort directly.", about: null, aboutLabel: null, evidence: [{ block: "N1", kind: "note", label: "Your note (observation)", quote: "not from trying harder", source: null }], references: [], downgraded: false },
+          { kind: "question", text: "How does verse 7 (“my words remain in you”) shape what remaining means?", about: null, aboutLabel: null, evidence: [], references: [], downgraded: false },
+          { kind: "knowledge", text: "Israel is pictured as a vine in the Old Testament; Jesus calls himself the true vine.", about: null, aboutLabel: null, evidence: [], references: [{ canonical: "ISA.5.1-ISA.5.7", display: "Isaiah 5:1–7", book: "ISA", startChapter: 5, startVerse: 1, endChapter: 5, endVerse: 7 }, { canonical: "PSA.80.8-PSA.80.16", display: "Psalm 80:8–16", book: "PSA", startChapter: 80, startVerse: 8, endChapter: 80, endVerse: 16 }], downgraded: false },
+        ],
+        verdict: null,
+        unverified: 0,
+        downgraded: 0,
+      },
+      assistant,
+      remote: true,
+    });
+  }
+  if (which === "source" && link) {
+    api.state.inquiry.replies.push({
+      result: {
+        type: "insight",
+        summary: "The author contrasts remaining with striving and grounds it in Romans 8:1.",
+        points: [
+          { kind: "source", text: "Remaining is described as the opposite of anxious effort.", about: null, aboutLabel: null, evidence: [{ block: "S1", kind: "source", label, quote, source: link }], references: [], downgraded: false },
+          { kind: "source", text: "The author appeals to Romans 8:1 for the absence of condemnation.", about: null, aboutLabel: null, evidence: [{ block: "S1", kind: "source", label, quote: "there is no condemnation for those who are in Christ", source: { ...link, start: { segmentId: link.start.segmentId, offset: segment!.text.indexOf("there is no") }, end: { segmentId: link.start.segmentId, offset: segment!.text.indexOf("there is no") + "there is no condemnation for those who are in Christ".length }, quote: "there is no condemnation for those who are in Christ" } }], references: [{ canonical: "ROM.8.1", display: "Romans 8:1", book: "ROM", startChapter: 8, startVerse: 1, endChapter: 8, endVerse: 1 }], downgraded: false },
+          { kind: "inference", text: "The author seems to assume that striving and anxiety go together; the passage does not argue this.", about: null, aboutLabel: null, evidence: [], references: [], downgraded: false },
+        ],
+        verdict: null,
+        unverified: 0,
+        downgraded: 0,
+      },
+      assistant,
+      remote: true,
+    });
+  }
+  if (which === "compare" && link) {
+    api.state.inquiry.replies.push({
+      result: {
+        type: "insight",
+        summary: "Both connect fruit with staying close to Jesus; only one speaks about effort.",
+        points: [
+          { kind: "position", text: "Remaining is not anxious striving.", about: "S1", aboutLabel: label, evidence: [{ block: "S1", kind: "source", label, quote, source: link }], references: [{ canonical: "ROM.8.1", display: "Romans 8:1", book: "ROM", startChapter: 8, startVerse: 1, endChapter: 8, endVerse: 1 }], downgraded: false },
+          { kind: "position", text: "We live by staying joined to him.", about: "S2", aboutLabel: "“Sermon outline: The True Vine” by Sample sermon — paragraph 3", evidence: [{ block: "S2", kind: "source", label: "“Sermon outline: The True Vine” by Sample sermon — paragraph 3", quote: "we live by staying joined to him", source: null }], references: [{ canonical: "JHN.15.5", display: "John 15:5", book: "JHN", startChapter: 15, startVerse: 5, endChapter: 15, endVerse: 5 }], downgraded: false },
+          { kind: "unsupported", text: "That effort plays no part at all is not said in either passage.", about: null, aboutLabel: null, evidence: [], references: [], downgraded: true },
+        ],
+        verdict: "partly",
+        unverified: 0,
+        downgraded: 1,
+      },
+      assistant,
+      remote: true,
+    });
+  }
+}
+
+/**
+ * Original-language research (v0.21): a CONSTRUCTED annotated sample, named
+ * as such — invented lines of real Hebrew words, not Bible text — with word
+ * annotations written for the screenshots. Codes follow the OSHB
+ * documentation's examples; nothing is an analysis of a real verse.
+ */
+function seedAnnotated(api: MemoryApi) {
+  const sample = api.installFixtureBible("SAMPLE", "sample");
+  Object.assign(sample, { name: "Constructed sample (not Bible text)", language: "Hebrew", languageCode: "hbo" });
+  const verb = (conjugation: string): MorphDescribed => ({
+    scheme: "oshb",
+    language: "hebrew",
+    segments: [{ partOfSpeech: "verb", features: [{ field: "stem", value: "qal" }, { field: "conjugation", value: conjugation }, { field: "person", value: "third" }, { field: "gender", value: "masculine" }, { field: "number", value: "singular" }] }],
+  });
+  const noun = (number: string, state = "absolute"): MorphDescribed => ({
+    scheme: "oshb",
+    language: "hebrew",
+    segments: [{ partOfSpeech: "noun", features: [{ field: "nounType", value: "common" }, { field: "gender", value: "masculine" }, { field: "number", value: number }, { field: "state", value: state }] }],
+  });
+  const lines: [string, string, FixtureWord[]][] = [
+    ["GEN.1.1", "בָּרָא אֱלֹהִים אוֹר", [
+      { surface: "בָּרָא", lemma: "בָּרָא", strong: "H1254a", morph: "HVqp3ms", described: verb("perfect") },
+      { surface: "אֱלֹהִים", lemma: "אֱלֹהִים", strong: "H430", morph: "HNcmpa", described: noun("plural") },
+      { surface: "אוֹר", lemma: "אוֹר", strong: "H216", morph: "HNcmsa", described: noun("singular") },
+    ]],
+    ["GEN.1.2", "וַיִּבְרָא אֱלֹהִים מַיִם", [
+      { surface: "וַיִּבְרָא", lemma: "בָּרָא", strong: "H1254a", morph: "HC/Vqw3ms" },
+      { surface: "אֱלֹהִים", lemma: "אֱלֹהִים", strong: "H430", morph: "HNcmpa", described: noun("plural") },
+    ]],
+    ["GEN.1.3", "בָּרָא אוֹר", [
+      { surface: "בָּרָא", lemma: "בָּרָא", strong: "H1254a", morph: "HVqp3ms", described: verb("perfect") },
+      { surface: "אוֹר", lemma: "אוֹר", strong: "H216", morph: "HNcmsa", described: noun("singular") },
+    ]],
+    ["GEN.1.4", "בָּרָא דָּבָר", [{ surface: "בָּרָא", lemma: "בָּרָא", strong: "H1254b", morph: "HVqp3ms", described: verb("perfect") }]],
+    ["GEN.1.5", "אֱלֹהִים בָּרָא", [
+      { surface: "אֱלֹהִים", lemma: "אֱלֹהִים", strong: "H430", morph: "HNcmpa", described: noun("plural") },
+      { surface: "בָּרָא", lemma: "בָּרָא", strong: "H1254a", morph: "HVqp3ms", described: verb("perfect") },
+    ]],
+  ];
+  for (const [verse, text, words] of lines) {
+    api.setVerseText(sample.id, verse, text);
+    api.installFixtureWords(sample.id, verse, words, "oshb");
+  }
+  return sample;
+}
+
+/** A constructed Greek sample (v0.22): lexical numbers and Robinson codes, or numbers only. */
+function seedGreek(api: MemoryApi, numbersOnly: boolean) {
+  const sample = api.installFixtureBible(numbersOnly ? "GRNUM" : "GRSAMPLE", "greek");
+  Object.assign(sample, { name: numbersOnly ? "Constructed numbers sample (not Bible text)" : "Constructed Greek sample (not Bible text)", language: "Greek", languageCode: "grc" });
+  const noun = (c: string): MorphDescribed => ({ scheme: "robinson", language: "greek", segments: [{ partOfSpeech: "noun", features: [{ field: "case", value: c }, { field: "number", value: "singular" }, { field: "gender", value: "masculine" }] }] });
+  const verb: MorphDescribed = { scheme: "robinson", language: "greek", segments: [{ partOfSpeech: "verb", features: [{ field: "tense", value: "imperfect" }, { field: "voice", value: "active" }, { field: "mood", value: "indicative" }, { field: "person", value: "third" }, { field: "number", value: "singular" }] }] };
+  const lines: [string, string, FixtureWord[]][] = [
+    ["JHN.1.1", "ὁ λόγος ἦν ἐν ἀρχῇ", [
+      { surface: "λόγος", strong: "G3056", morph: "N-NSM", described: noun("nominative") },
+      { surface: "ἦν", strong: "G1510", morph: "V-IAI-3S", described: verb },
+    ]],
+    ["JHN.1.2", "λόγον ἤκουσεν", [{ surface: "λόγον", strong: "G3056", morph: "N-ASM", described: noun("accusative") }]],
+    ["JHN.1.3", "περὶ τοῦ λόγου", [{ surface: "λόγου", strong: "G3056", morph: "N-GSM", described: noun("genitive") }]],
+  ];
+  for (const [verse, text, words] of lines) {
+    api.setVerseText(sample.id, verse, text);
+    api.installFixtureWords(sample.id, verse, numbersOnly ? words.map((w) => ({ surface: w.surface, strong: w.strong })) : words, numbersOnly ? "none" : "robinson");
+  }
+  api.state.settings.scriptureTranslationId = sample.id;
+  api.state.settings.scripturePassage = "JHN.1";
+  return sample;
+}
+
+const EMPTY_LEFT = { syntax: 0, conflict: 0, tooLong: 0, unbalanced: 0, overlapping: 0, outsideVerse: 0, empty: 0, tooMany: 0 };
+
 async function start() {
   const api = createMemoryApi({
     version: "0.5.0-dev.26",
@@ -267,8 +487,189 @@ async function start() {
     databasePath: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\database\\abiding-word.db",
     logDirectory: "C:\\Users\\You\\AppData\\Roaming\\Abiding Word\\logs",
   });
+  api.logError = async message => { console.error(message); };
+  const fixtureOriginalInfo = api.libraryOriginalInfo;
+  const fixtureOriginalRead = api.libraryOriginalRead;
   if (params.get("empty") !== "1") await seed(api);
+  if (params.get("viewportReview") === "1") {
+    // Entirely invented geometry content; never imported Scripture or owner data.
+    const bible = api.installFixtureBible("INVENTED", "viewport");
+    bible.name = "Invented geometry fixture — NOT Scripture";
+    api.state.text.set(bible.id, new Map([["JHN|15", Array.from({ length: 27 }, (_, i) => ({
+      canonical: `JHN.15.${i + 1}`, chapter: 15, verse: i + 1,
+      text: `INVENTED GEOMETRY ROW ${i + 1} — NOT SCRIPTURE. ${"Only test layout and scrolling. ".repeat(20)}`,
+    }))]]));
+    api.state.settings.scriptureTranslationId = bible.id;
+    api.state.settings.scripturePassage = "JHN.15";
+    api.installFixtureSource({ title: "INVENTED Viewport Source", format: "markdown", language: "English",
+      segments: Array.from({ length: 80 }, (_, i) => ({ text: `Invented paragraph ${i + 1}. ${"Geometry content only. ".repeat(30)}` })),
+      mentions: [{ segment: 0, reference: "JHN.15.1", matchedText: "John 15:1" }],
+    });
+  }
+  if (params.has("originalReview")) {
+    const kind = params.get("originalReview") === "docx" ? "docx" : "epub";
+    const texts = Array.from({ length: 70 }, (_, i) => `INVENTED formatted paragraph ${i + 1}. ${"Read this invented content to test scrolling and navigation. ".repeat(8)}`);
+    const source = api.installFixtureSource({ title: "INVENTED Original navigation", format: kind, language: "English",
+      formatted: { kind, structure: [{ id: "chapter", startSegment: 0, segmentCount: 70, anchors: Object.fromEntries(texts.map((_, i) => [`p${i}`, i])) }],
+        items: { chapter: { id: "chapter", css: "p { margin: 1em 0; }", root: {}, missingImages: 0,
+          nodes: texts.map<EpubNode>((text, i) => ({ t: "p", a: { id: `p${i}` }, c: [text,
+            ...(i === 40 ? [{ t: "a", a: { id: "noteref", role: "doc-noteref" }, l: { item: "chapter", id: "p65" }, c: ["Footnote 1"] }] : []),
+            ...(i === 65 ? [{ t: "a", a: { id: "backref", role: "doc-backlink" }, l: { item: "chapter", id: "p40" }, c: ["Return to passage"] }] : []),
+          ] })),
+        } } },
+      segments: texts.map((text, i) => ({ text, sectionPath: i >= 40 ? "Deep passage" : "Opening" })),
+      contents: [{ id: "opening", title: "Opening", target: { kind: "segment", position: 0 }, children: [] }, { id: "deep", title: "Deep passage", target: { kind: "segment", position: 40 }, children: [] }, { id: "notes", title: "Footnotes", target: { kind: "segment", position: 65 }, children: [] }],
+      generatedContents: [{ id: "opening", title: "Opening", target: { kind: "segment", position: 0 }, children: [] }, { id: "deep", title: "Deep passage", target: { kind: "segment", position: 40 }, children: [] }, { id: "notes", title: "Footnotes", target: { kind: "segment", position: 65 }, children: [] }],
+      mentions: [{ segment: 40, reference: "JHN.15.1", matchedText: "John 15:1" }],
+    });
+    const segment = (await api.sourceGetSegments({ sourceId: source.id, offset: 40, limit: 1 })).segments[0]!;
+    await api.sourceAnnotationCreate({ sourceId: source.id, kind: "highlight", color: "amber", start: { segmentId: segment.id, offset: 0 }, end: { segmentId: segment.id, offset: 31 }, quote: segment.text.slice(0, 31) });
+  }
+  // The example project (v0.19), added as the person would from Settings.
+  if (params.get("sample") === "1") await api.sampleProjectInstall();
+  // Study and research help (v0.20): the assistant off (the plain study), or prepared answers.
+  if (params.get("assistant") === "off") api.state.teaching.assistant.config = { ...api.state.teaching.assistant.config, enabled: false };
+  const inquiry = params.get("inquiry");
+  if (inquiry) prepareInquiry(api, inquiry);
+  if (params.get("words") === "1") {
+    const sample = seedAnnotated(api);
+    if (params.get("read") === "sample") {
+      api.state.settings.scriptureTranslationId = sample.id;
+      api.state.settings.scripturePassage = "GEN.1";
+    }
+    // A Word Study using the sample's lexical numbers.
+    const project = api.state.projects[0];
+    if (project) {
+      const study = await api.studyCreate({ projectId: project.id, title: "Creating (word study)", studyType: "word", templateKey: "word-study" });
+      await api.studyUpdate({ id: study.study.id, details: { lemma: "בָּרָא", lexicalId: "H1254a", translationId: sample.id } });
+    }
+  }
+  if (params.get("preview") === "words") {
+    api.state.nextChosenFiles = ["/home/you/Downloads/annotated_usfm.zip"];
+    api.state.nextPreviewWords = {
+      marked: 124, words: 121, verses: 15, withLemma: 121, withLexicalId: 119, withMorphology: 121, distinctLemmas: 63,
+      phrases: 0, parts: 6, morphAttribute: "x-morph", grammar: { scheme: "oshb", coded: 8, described: 8, stated: { file: "copr.htm", words: "Open Scriptures Hebrew Bible" } }, estimatedBytes: 0, otherAttributes: ["srcloc"],
+      leftOut: { syntax: 2, conflict: 1, tooLong: 0, unbalanced: 0, overlapping: 0, outsideVerse: 0, empty: 0, tooMany: 0 },
+      indexed: true, notIndexed: null,
+    };
+  }
+  // v0.22 scenes.
+  const greek = params.get("greek");
+  if (greek) seedGreek(api, greek === "numbers");
+  if (params.get("preview") === "robinson") {
+    api.state.nextChosenFiles = ["/home/you/Downloads/grcmt_usfm.zip"];
+    api.state.nextPreviewWords = {
+      marked: 140121, words: 140121, verses: 7957, withLemma: 0, withLexicalId: 140121, withMorphology: 140121, distinctLemmas: 0,
+      phrases: 0, parts: 0, morphAttribute: "x-morph", grammar: { scheme: "robinson", coded: 140121, described: 139870, stated: null }, estimatedBytes: 140121 * 51, otherAttributes: [],
+      leftOut: EMPTY_LEFT, indexed: true, notIndexed: null,
+    };
+  }
+  if (params.get("preview") === "strongs") {
+    api.state.nextChosenFiles = ["/home/you/Downloads/grcsbl_usfm.zip"];
+    api.state.nextPreviewWords = {
+      marked: 137554, words: 137554, verses: 7939, withLemma: 0, withLexicalId: 137554, withMorphology: 0, distinctLemmas: 0,
+      phrases: 0, parts: 0, morphAttribute: null, grammar: { scheme: null, coded: 0, described: 0, stated: null }, estimatedBytes: 137554 * 51, otherAttributes: [],
+      leftOut: EMPTY_LEFT, indexed: false, notIndexed: "strongOnly",
+    };
+  }
+  if (params.get("wordsPreview") === "strongs") {
+    api.state.nextWordsPreview = {
+      marked: 31102, words: 31102, verses: 31102, withLemma: 0, withLexicalId: 31102, withMorphology: 0, distinctLemmas: 0,
+      phrases: 0, parts: 0, morphAttribute: null, grammar: { scheme: null, coded: 0, described: 0, stated: null }, estimatedBytes: 31102 * 51, otherAttributes: [],
+      leftOut: EMPTY_LEFT, indexed: false, notIndexed: "strongOnly",
+    };
+  }
+  // v0.23: Bibles from documents. `bibleFiles` is what "Choose Bible files…" returns
+  // (e.g. "ruth.pdf", "psalms-unclear.epub", "old-scanned.pdf"); `documentBible`
+  // adds one read as a document (pdf, epub, markdown) and opens it in the pane.
+  const bibleFiles = params.get("bibleFiles");
+  if (bibleFiles) api.state.nextChosenFiles = bibleFiles.split(",").map((f) => `/home/you/Documents/${f}`);
+  const documentBible = params.get("documentBible");
+  if (documentBible) {
+    const ext = documentBible === "markdown" ? "md" : documentBible;
+    const name = params.get("documentName") ?? `invented-bible.${ext}`;
+    const preview = await api.bibleImportPreview({ paths: [`/home/you/Documents/${name}`] });
+    await api.bibleImportCommit({ previewId: preview.previewId, name: "Invented Bible (document)", shortName: "DOC", language: "English", languageCode: "en", asDocument: true });
+  }
+  if (params.get("a2Review") === "1") {
+    const method = await api.studyCreate({ projectId: api.state.projects[0]!.id, title: "POZETEK recovery review", templateId: api.state.templates.find(template => template.key === "pozetek-writing-study")!.id });
+    await api.studyBlockUpdate({ id: method.sections[0]!.blocks[0]!.id, content: "Invented research to retain while restoring the method." });
+    await api.studySectionDelete({ id: method.sections.find(section => section.key === "time")!.id, force: false });
+    const review = api.installFixtureSource(pdfReviewFixture());
+    const otherInfo = api.libraryOriginalInfo;
+    const otherRead = api.libraryOriginalRead;
+    api.libraryOriginalInfo = sourceId => sourceId === review.id ? fixtureOriginalInfo(sourceId) : otherInfo(sourceId);
+    api.libraryOriginalRead = (sourceId, offset, length) => sourceId === review.id ? fixtureOriginalRead(sourceId, offset, length) : otherRead(sourceId, offset, length);
+  }
+  // Synthetic structured EPUB for combined-pane A.1 layout review; no publisher text.
+  if (params.get("a1Review") === "1") {
+    api.installFixtureSource({
+      title: "Synthetic EPUB layout review", format: "epub", language: "English",
+      formatted: {
+        structure: [{ id: "review", startSegment: 0, segmentCount: 60, anchors: {} }],
+        items: { review: {
+          id: "review", css: "p { margin: 1em 0; }", root: {}, missingImages: 0,
+          nodes: Array.from({ length: 60 }, (_, index) => ({ t: "p", c: [`Invented reading paragraph ${index + 1}. ${"A paragraph for checking stable reading width and position. ".repeat(8)}`] })),
+        } },
+      },
+      segments: Array.from({ length: 60 }, (_, index) => ({
+        text: `Invented reading paragraph ${index + 1}. ${"A paragraph for checking stable reading width and position. ".repeat(8)}`,
+        sectionPath: `Section ${Math.floor(index / 10) + 1}`,
+      })),
+      contents: Array.from({ length: 6 }, (_, index) => ({
+        id: `review-section-${index}`, title: `Section ${index + 1}`,
+        target: { kind: "segment" as const, position: index * 10 }, children: [],
+      })),
+      mentions: [{ segment: 0, reference: "JHN.15.5", matchedText: "John 15:5" }],
+    });
+  }
+  if(params.get("a3PdfReview") === "1") {
+    const sourceId = await pdfStructureReviewFixture(api);
+    if (params.get("pdfProcessingReview") === "1") {
+      // Synthetic job-state adapter for browser/geometry review only. Actual
+      // processing/timing/persistence is exercised by pdf_build_processing.rs.
+      let cancelled = false;
+      const prior = api.libraryPdfStructureProgress;
+      api.libraryPdfStructureProgress = async id => id === sourceId ? {
+        status: cancelled ? "cancelled" : "running", stage: "pdf", done: 125, total: 400,
+        elapsedMs: 12000, timings: [{ stage: "file", milliseconds: 74 }],
+        headingCount: null, indexedLinks: null, errorCode: null, canCancel: !cancelled,
+      } : prior(id);
+      api.libraryPdfStructureCancel = async id => { if (id !== sourceId) return false; cancelled = true; return true; };
+    }
+
+    const otherInfo=api.libraryOriginalInfo, otherRead=api.libraryOriginalRead;
+    api.libraryOriginalInfo=id=>id===sourceId?fixtureOriginalInfo(id):otherInfo(id);
+    api.libraryOriginalRead=(id,offset,length)=>id===sourceId?fixtureOriginalRead(id,offset,length):otherRead(id,offset,length);
+  }
+  if (params.get("a3Review") === "1") await homeReviewFixture(api, params.get("a3Shape") === "owner");
+  // A.4.3 review: a POZETEK writing study whose project has another name, with some writing.
+  if (params.get("a4Editors") === "1") {
+    const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: params.get("viewportReview") === "1" ? "INVENTED Viewport Project" : "Organisatorisches Projekt" });
+    const template = api.state.templates.find((tpl) => tpl.key === "pozetek-writing-study")!;
+    const { study } = await api.studyCreate({ projectId: project.id, title: params.get("viewportReview") === "1" ? "INVENTED Viewport Study" : "Römer 8", templateId: template.id, primaryPassage: params.get("viewportReview") === "1" ? "JHN.15" : "ROM.8" });
+    const sections = await api.studySectionList(study.id);
+    const writing = params.get("viewportReview") === "1" ? Array.from({ length: 7 }, (_, i) => `INVENTED STUDY GEOMETRY ${i + 1}. ${"Writing stays intact during resizing. ".repeat(40)}`) : ["Paulus, die Gemeinde in Rom, der Geist, die Kinder Gottes.", "Rom; Brief aus Korinth, um 57 n. Chr."];
+    for (const [index, text] of writing.entries()) {
+      const block = sections[index]?.blocks[0];
+      if (block) await api.studyBlockUpdate({ id: block.id, content: text });
+    }
+  }
+  if (params.get("a4Editors") === "1" && params.get("pozetekLegacy") === "1") {
+    // Invented historical shape for repair preview screenshots, never owner data.
+    const study = api.state.studies.find(study => study.title === "Römer 8")!;
+    for (const [key, oldKey, title] of [["context", "theme", "Theme"], ["explanations", "understanding", "Understanding"], ["core", "consequences", "Consequences"]]) {
+      const part = api.state.sections.find(part => part.studyId === study.id && part.key === key)!;
+      part.key = oldKey!; part.title = title!;
+      const block = api.state.blocks.find(block => block.sectionId === part.id)!;
+      await api.studyBlockUpdate({ id: block.id, content: `Invented preserved ${oldKey} writing — 한글` });
+    }
+    const duplicate = await api.studySectionCreate({ studyId: study.id, title: "Zeit — eigene Notizen" });
+    api.state.sections.find(part => part.id === duplicate.id)!.key = "time";
+  }
   await i18n.changeLanguage(params.get("lang") ?? "en");
+  // All three panes even in a narrow window, as the owner works (review scenes, v0.18.5).
+  if (params.get("sourcesOpen") === "1") localStorage.setItem("abiding-word.layout.sourcesOpen", "true");
   // Wider side panes for close-ups (layout preferences live in browser storage).
   for (const pane of ["scriptureWidth", "sourcesWidth"]) {
     const width = params.get(pane);

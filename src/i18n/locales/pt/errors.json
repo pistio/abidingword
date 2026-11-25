@@ -15,7 +15,9 @@
     "titleRequired": "Dê um título, por favor.",
     "titleTooLong": "O título é longo demais. Use menos de {{max}} caracteres.",
     "textTooLong": "Este texto é longo demais. Use menos de {{max}} caracteres.",
-    "blockTooLong": "Este bloco é longo demais para ser salvo. Divida-o em vários blocos."
+    "blockTooLong": "Este bloco é longo demais para ser salvo. Divida-o em vários blocos.",
+    "entryInvalid": "Não foi possível salvar esta entrada.",
+    "unknownField": "Esta parte não contém esse campo."
   },
   "search": {
     "empty": "Digite uma palavra ou frase para pesquisar."
@@ -26,22 +28,33 @@
     "noFiles": "Escolha pelo menos um arquivo."
   },
   "reference": {
-    "empty": "Digite uma passagem, por exemplo “John 15” ou “Rom 8:1-17”.",
-    "notRecognised": "“{{text}}” não é uma passagem que o Abiding Word reconheça. Tente uma forma como “John 15” ou “Rom 8:1-17”.",
+    "empty": "Digite uma passagem, por exemplo “João 15” ou “Rm 8:1-17”.",
+    "notRecognised": "“{{text}}” não é uma passagem que o Abiding Word reconheça. Tente uma forma como “João 15” ou “Rm 8:1-17”.",
     "unknownBook": "Livro desconhecido: “{{text}}”.",
     "notABook": "“{{text}}” não é um livro da Bíblia.",
     "oneChapter": "{{book}} tem apenas um capítulo.",
     "chapterCount": "{{book}} tem {{count}} capítulos.",
+    "verseCount": "{{book}} {{chapter}} tem {{count}} versículos.",
+    "verseCountBook": "{{book}} tem {{count}} versículos.",
+    "chapterCountPsalms": "Os Salmos têm {{count}} salmos.",
+    "verseCountPsalm": "O salmo {{chapter}} tem {{count}} versículos.",
     "badVerse": "{{verse}} não é um número de versículo válido.",
     "endBeforeStart": "O fim da passagem vem antes do início.",
     "invalid": "“{{text}}” não é uma referência de passagem válida.",
-    "oneBook": "Uma passagem deve ficar dentro de um único livro."
+    "oneBook": "Uma passagem deve ficar dentro de um único livro.",
+    "ambiguous": "“{{text}}” pode significar {{options}}. Digite mais do nome do livro para escolher."
   },
   "bibles": {
     "hasProblems": "Esta Bíblia tem problemas que precisam ser resolvidos antes que possa ser adicionada.",
-    "shortNameTooLong": "Use menos de {{max}} caracteres no nome abreviado."
+    "shortNameTooLong": "Use menos de {{max}} caracteres no nome abreviado.",
+    "badLanguage": "“{{text}}” não é um idioma que o Abiding Word conheça.",
+    "alreadyVerses": "Esta Bíblia já pode ser lida por livro, capítulo e versículo.",
+    "locationPlace": "Escolha primeiro o local no documento.",
+    "locationPage": "Essa página não está no documento."
   },
   "bibleImport": {
+    "pdfWorkerFailed": "Não foi possível ler o texto do PDF dentro dos limites de extração.",
+    "cancelled": "Importação da Bíblia cancelada.",
     "noBookId": "O arquivo “{{fileName}}” não indica qual livro contém.",
     "unknownBook": "O arquivo “{{fileName}}” contém um livro que o Abiding Word não reconhece ({{code}}). Ele foi deixado de fora.",
     "bookTwice": "{{book}} aparece em mais de um arquivo.",
@@ -54,7 +67,7 @@
     "bridged": "{{book}} {{chapter}}:{{first}}–{{last}} estão combinados em um só versículo nesta tradução.",
     "verseTwice": "{{book}} {{chapter}}:{{verse}} aparece duas vezes.",
     "emptyVerse": "{{book}} {{chapter}}:{{verse}} não tem texto.",
-    "missingChapters": "{{book}}: {{found}} de {{count}} capítulos encontrados (faltam: {{list}}).",
+    "missingChapters": "{{book}}: capítulos encontrados: {{found}} de {{count}} (faltam: {{list}}).",
     "noVerses": "{{book}} {{chapter}}: nenhum versículo foi encontrado.",
     "missingVerses_one": "{{book}} {{chapter}}: versículo {{list}} não encontrado. A estrutura de versículos esperada difere deste texto.",
     "missingVerses_many": "{{book}} {{chapter}}: versículos {{list}} não encontrados. A estrutura de versículos esperada difere deste texto.",
@@ -62,14 +75,75 @@
     "listMore_one": "{{numbers}} e mais {{count}}",
     "listMore_many": "{{numbers}} e mais {{count}}",
     "listMore_other": "{{numbers}} e mais {{count}}",
-    "unknownFormat": "Estes arquivos não estão em um formato de Bíblia que o Abiding Word já consiga ler. No momento, ele lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles).",
-    "formatNotYet": "Arquivos {{format}} ainda não podem ser importados como Bíblia estruturada. No momento, o Abiding Word lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles).",
+    "unknownFormat": "Estes arquivos não estão em um formato de Bíblia que o Abiding Word já consiga ler. Ele lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles), os arquivos OSIS da Open Scriptures Hebrew Bible e arquivos MorphGNT.",
+    "formatNotYet": "Ainda não é possível importar {{format}} como Bíblia estruturada. O Abiding Word lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles), os arquivos OSIS da Open Scriptures Hebrew Bible e arquivos MorphGNT. Uma Bíblia também pode ser adicionada a partir de documentos PDF, EPUB, Word (.docx), Markdown ou de texto.",
     "noBooks": "Nenhum livro da Bíblia foi encontrado nestes arquivos.",
     "tooLarge": "Estes arquivos são grandes demais para serem uma única Bíblia.",
     "badZip": "O arquivo “{{fileName}}” não é um arquivo .zip legível.",
     "badZipPart": "Não foi possível ler parte de “{{fileName}}”.",
     "zipTooLarge": "Este arquivo compactado é grande demais para ser uma única Bíblia.",
-    "badZipEntry": "Não foi possível ler “{{fileName}}” dentro do arquivo compactado."
+    "badZipEntry": "Não foi possível ler “{{fileName}}” dentro do arquivo compactado.",
+    "badOsis": "Não foi possível ler o arquivo “{{fileName}}” por completo.",
+    "badLines_one": "{{book}}: não foi possível ler {{count}} linha de “{{fileName}}”.",
+    "badLines_many": "{{book}}: não foi possível ler {{count}} linhas de “{{fileName}}”.",
+    "badLines_other": "{{book}}: não foi possível ler {{count}} linhas de “{{fileName}}”.",
+    "verseMapApplied": "Este texto usa a numeração de versículos da Bíblia hebraica. Ela foi convertida para a numeração inglesa com a tabela de correspondência de versículos fornecida ({{moved}} versículos renumerados, {{joined}} unidos, {{titles}} títulos de salmos mantidos como títulos).",
+    "verseMapUnused": "A tabela de correspondência de versículos fornecida não foi usada: estes arquivos já seguem a numeração inglesa de versículos.",
+    "verseMapRefused": "Não foi possível ler por completo a tabela de correspondência de versículos “{{fileName}}”, por isso ela não foi usada.",
+    "hebrewNumbering": "Este texto parece usar a numeração de versículos da Bíblia hebraica (Joel tem quatro capítulos). Adicione aos arquivos escolhidos a tabela de correspondência de versículos que o acompanha (para a Open Scriptures Hebrew Bible: wlc/VerseMap.xml), e eles serão renumerados.",
+    "verseMapUnsplit": "Cada um destes versículos hebraicos contém partes de dois versículos ingleses, e estes arquivos não indicam onde um termina: {{places}}. Cada um fica inteiro com seu número hebraico, então também contém palavras do versículo inglês vizinho, e esse versículo fica incompleto ou falta.",
+    "verseMapConflict": "Em {{places}}, a marca de versículo do próprio texto e a tabela de correspondência de versículos não coincidem; a marca do texto foi seguida.",
+    "psalmTitlesInVerse": "Onde o texto hebraico escreve o título de um salmo como início do versículo 1, estes arquivos não indicam onde o título termina, então ele continua fazendo parte do versículo 1.",
+    "verseMapDivided_one": "{{count}} versículo hebraico foi dividido onde o próprio texto marca o início de um versículo inglês ({{titles}} das partes são títulos de salmos).",
+    "verseMapDivided_many": "{{count}} versículos hebraicos foram divididos onde o próprio texto marca o início de um versículo inglês ({{titles}} das partes são títulos de salmos).",
+    "verseMapDivided_other": "{{count}} versículos hebraicos foram divididos onde o próprio texto marca o início de um versículo inglês ({{titles}} das partes são títulos de salmos).",
+    "documentAmbiguous": "{{book}} {{chapter}}:{{verse}}: dois lugares do texto podem ser o início deste versículo.",
+    "documentBookTwice": "{{book}} começa duas vezes no texto.",
+    "documentChapterTwice": "{{book}} {{chapter}} aparece duas vezes no texto.",
+    "documentOrder": "{{book}} {{chapter}}:{{verse}} está fora de ordem no texto.",
+    "documentLongVerse": "{{book}} {{chapter}}:{{verse}} é muito mais longo que qualquer versículo: os versículos seguintes não foram encontrados.",
+    "documentChanged": "“{{fileName}}” foi alterado depois da revisão. Escolha os arquivos novamente.",
+    "documentChapterShort": "{{book}} {{chapter}} termina no versículo {{last}}; normalmente tem {{expected}} versículos. Os versículos depois do {{last}} não foram encontrados.",
+    "documentNoBook_one": "Foi encontrado {{count}} número de versículo sem nome de livro antes dele; ele foi deixado de fora.",
+    "documentNoBook_other": "Foram encontrados {{count}} números de versículo sem nome de livro antes deles; eles foram deixados de fora.",
+    "documentNoBook_many": "Foram encontrados {{count}} números de versículo sem nome de livro antes deles; eles foram deixados de fora.",
+    "documentUnnumbered_one": "Em {{count}} capítulo o versículo 1 não tem número próprio: o texto entre o título do capítulo e o versículo 2 foi tomado como versículo 1.",
+    "documentUnnumbered_other": "Em {{count}} capítulos o versículo 1 não tem número próprio: o texto entre o título do capítulo e o versículo 2 foi tomado como versículo 1.",
+    "documentUnnumbered_many": "Em {{count}} capítulos o versículo 1 não tem número próprio: o texto entre o título do capítulo e o versículo 2 foi tomado como versículo 1.",
+    "documentPsalmTitles_one": "{{count}} título de salmo foi mantido como título, antes do versículo 1.",
+    "documentPsalmTitles_other": "{{count}} títulos de salmos foram mantidos como títulos, antes do versículo 1.",
+    "documentPsalmTitles_many": "{{count}} títulos de salmos foram mantidos como títulos, antes do versículo 1.",
+    "documentPsalmTitle": "Salmo {{chapter}}: o versículo 1 não tem número, então o título não pode ser distinguido dele.",
+    "documentPageLines_one": "Foi deixado de fora {{count}} cabeçalho ou número de página repetido nas páginas.",
+    "documentPageLines_other": "Foram deixados de fora {{count}} cabeçalhos e números de página repetidos nas páginas.",
+    "documentPageLines_many": "Foram deixados de fora {{count}} cabeçalhos e números de página repetidos nas páginas.",
+    "documentLeftOut_one": "O texto que não pertence a nenhum versículo foi deixado de fora ({{count}} caractere: títulos, introduções, notas).",
+    "documentLeftOut_other": "O texto que não pertence a nenhum versículo foi deixado de fora ({{count}} caracteres: títulos, introduções, notas).",
+    "documentLeftOut_many": "O texto que não pertence a nenhum versículo foi deixado de fora ({{count}} caracteres: títulos, introduções, notas).",
+    "documentMixed": "Escolha os arquivos de uma Bíblia num formato bíblico (como USFM) ou documentos (PDF, EPUB, Word, Markdown ou texto), mas não os dois juntos.",
+    "documentFormats": "Os documentos de uma Bíblia devem ser todos do mesmo tipo (todos PDF, todos EPUB…).",
+    "documentTooMany": "Foram escolhidos documentos demais para uma única Bíblia.",
+    "documentFormat": "“{{fileName}}” não é um tipo de documento que o Abiding Word consiga ler como Bíblia.",
+    "documentEmpty": "Nenhum texto foi encontrado em “{{fileName}}”.",
+    "unknownBookCode": "Livro desconhecido.",
+    "documentSequence": "{{book}} {{chapter}}: o versículo {{verse}} aparece dentro de um versículo anterior (talvez duas colunas tenham sido lidas misturadas). Este capítulo não é usado.",
+    "additionalBook": "“{{fileName}}” contém {{book}}, que o Abiding Word ainda não consegue mostrar. Ele foi deixado de fora; os outros livros não são afetados.",
+    "differentEditions": "Estes arquivos dizem vir de Bíblias diferentes: {{list}}. Bíblias diferentes nunca são combinadas: adicione cada uma separadamente.",
+    "documentReadingOrder": "{{book}} {{chapter}}: não foi possível determinar a ordem de leitura da página {{page}} a partir do seu layout. Este capítulo não é usado.",
+    "documentChapterUnmarked": "{{book}}: Depois do capítulo {{chapter}}, os versículos recomeçam no 1 sem indicação de capítulo. O capítulo seguinte foi omitido.",
+    "documentChapterUnread": "{{book}}: O número no título de capítulo «{{line}}» é ilegível. O capítulo foi omitido.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: A numeração deste capítulo da Septuaginta difere da referência. O capítulo foi omitido.",
+    "documentChapterJump": "{{book}} {{chapter}}: o documento continua com este capítulo depois do capítulo {{previous}}; os capítulos intermediários não foram encontrados. Este capítulo não é usado.",
+    "documentRunningHead": "{{book}} {{chapter}}: a página {{page}} termina com o versículo {{found}}, mas o cabeçalho ({{head}}) indica {{named}}. Este capítulo não é usado.",
+    "documentLabel": "{{book}} {{chapter}}: a linha “{{line}}” fica entre duas frases de um versículo e se repete em outros lugares como linha própria (talvez o nome de quem fala ou um título). Este capítulo não é usado.",
+    "documentRaisedLetters": "{{book}} {{chapter}}: um versículo tem letras pequenas sobrescritas que nenhuma nota da página explica (talvez chamadas de referências). Este capítulo não é usado.",
+    "documentPagesUnread": "“{{fileName}}”: não foi possível ler por completo o texto da(s) página(s) {{pages}}. Faltam os versículos que elas contêm.",
+    "documentNumberInVerse": "{{book}} {{chapter}}: o versículo {{verse}} não foi encontrado, mas o número {{verse}} aparece no versículo anterior; os dois podem estar unidos. Este capítulo não é usado.",
+    "documentChapterLong": "{{book}} {{chapter}} vai até o versículo {{last}}; normalmente tem {{expected}} versículos. Talvez outro capítulo ou outro livro tenha sido lido nele. Este capítulo não é usado.",
+    "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
+    "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
+    "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
+    "documentAdditionalBook": "“{{heading}}” é {{book}}, que o Abiding Word ainda não pode mostrar. Seu texto foi deixado de fora; os outros livros não são afetados."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",
@@ -84,17 +158,50 @@
     "duplicate": "Este arquivo já está na sua biblioteca como “{{title}}”.",
     "originalUnsupported": "Esta fonte não tem visualização do original.",
     "originalMissing": "A cópia deste arquivo guardada pelo Abiding Word não foi encontrada.",
-    "originalUnavailable": "Não é possível abrir o original desta fonte."
+    "originalUnavailable": "Não é possível abrir o original desta fonte.",
+    "structure": {
+      "corrupt": "Não foi possível ler a estrutura PDF salva. O texto e o original permanecem intactos.",
+      "invalid": "Esta correção não corresponde mais à fonte. Abra o texto novamente e tente outra vez.",
+      "timeout": "A análise ultrapassou o limite de tempo e foi interrompida. Esta tentativa não salvou nenhuma alteração. Tente novamente ou salve um relatório de diagnóstico.",
+      "cancelled": "Análise cancelada. A estrutura e os vínculos anteriores não foram alterados. Você pode tentar novamente.",
+      "busy": "Já há uma análise em andamento. Aguarde ou cancele antes de tentar novamente.",
+      "limit": "O PDF excede os limites de análise suportados. Os metadados anteriores não mudaram.",
+      "failed": "A análise falhou. A estrutura e os vínculos anteriores foram preservados. Tente novamente ou salve um relatório de diagnóstico."
+    },
+    "nothingChosen": "Selecione pelo menos um item.",
+    "notInTrash": "Só é possível excluir permanentemente itens que estão na lixeira. Mova-os primeiro para a lixeira.",
+    "badYear": "O ano deve ser um número entre 0 e 3000.",
+    "collectionCycle": "Uma coleção não pode ser movida para dentro dela mesma nem de uma de suas subcoleções.",
+    "linkUnsupported": "Não é possível abrir esse tipo de link.",
+    "tooMany": "Você pode alterar no máximo {{count}} itens de uma vez.",
+    "badName": "Use um nome com 1 a {{max}} caracteres.",
+    "collectionExists": "Já existe aqui uma coleção chamada “{{name}}”.",
+    "tagExists": "Já existe uma etiqueta chamada “{{name}}”.",
+    "coverage": {
+      "invalidPassage": "Não foi possível identificar “{{passage}}” como livro ou passagem bíblica. Confira a referência antes de salvar.",
+      "tooMany": "Insira no máximo {{max}} referências de abrangência.",
+      "empty": "Insira ao menos um livro ou passagem bíblica para definir a abrangência.",
+      "metadataUnreadable": "Não foi possível ler os detalhes salvos da fonte com segurança. Nenhuma alteração foi salva."
+    },
+    "reader": {
+      "invalidSavedPlace": "Não foi possível guardar esta posição de leitura. A fonte não foi alterada."
+    }
   },
   "templates": {
     "noSections": "Um modelo precisa de pelo menos uma parte para começar.",
     "tooManySections": "Um modelo pode ter no máximo {{max}} partes.",
-    "builtinReadOnly": "Os modelos incluídos não podem ser alterados. Duplique-o para criar sua própria versão.",
+    "builtinReadOnly": "Os modelos incluídos não podem ser alterados. Use “Salvar como meu modelo” para criar sua própria versão.",
+    "duplicateKey": "Duas partes do modelo são a mesma parte. Remova uma delas.",
+    "invalidKey": "O identificador desta parte não é válido.",
     "unknownPart": "Esta parte do modelo não está mais disponível.",
-    "partAlreadyAdded": "Esta parte do modelo já foi adicionada ao estudo."
+    "partAlreadyAdded": "Esta parte do modelo já foi adicionada ao estudo.",
+    "tooManyBlocks": "Uma parte pode conter no máximo {{max}} blocos.",
+    "duplicateBlockKey": "Cada bloco precisa de um identificador único e não vazio."
   },
   "sections": {
-    "hasContent": "“{{title}}” ainda tem texto ou anotações."
+    "hasContent": "“{{title}}” ainda tem texto ou anotações.",
+    "duplicateKey": "Este estudo já tem essa parte.",
+    "repairChanged": "As partes mudaram. Confira novamente. Só é possível desfazer a adição se as partes adicionadas não tiverem sido alteradas; todo o texto é mantido."
   },
   "relations": {
     "self": "Um estudo não pode ser vinculado a si mesmo.",
@@ -105,7 +212,8 @@
     "otherStudySection": "Essa parte pertence a outro estudo.",
     "tooManyTags": "Uma anotação pode ter no máximo {{max}} etiquetas.",
     "tagTooLong": "A etiqueta “{{tag}}” é longa demais.",
-    "writeFirst": "Escreva primeiro algo para adicionar."
+    "writeFirst": "Escreva primeiro algo para adicionar.",
+    "assistantName": "Falta o nome do assistente."
   },
   "annotations": {
     "tooLong": "Esta nota é longa demais para ser salva.",
@@ -154,19 +262,112 @@
     "noImageSearch": "A busca de imagens está desligada. Você pode ligá-la em Configurações.",
     "noImageGeneration": "Criar imagens não está configurado, ou este serviço de IA não pode criar imagens. Você pode escolher um serviço para imagens em Configurações → Assistente de IA.",
     "imageFailed": "Desta vez não foi possível criar a imagem. Tente de novo.",
-    "keyStore": "Não foi possível guardar a chave no cofre de credenciais deste computador.",
+    "keyStore": "Não foi possível salvar a chave no cofre de senhas deste computador.",
     "badKey": "Isso não parece uma chave. Cole de novo.",
     "badAddress": "Digite um endereço que comece com http:// ou https://.",
     "badModel": "Esse nome de modelo é longo demais.",
     "noImageKey": "Criar imagens precisa da chave do serviço de imagens. Você pode adicioná-la em Configurações → Assistente de IA.",
-    "searchNoKey": "Este serviço de busca não usa chave."
+    "searchNoKey": "Este serviço de busca não usa chave.",
+    "staleTarget": "Esta parte mudou ou foi removida desde o pedido. Feche a ajuda, verifique o texto e peça de novo."
   },
   "teaching": {
+    "blockType": "Este tipo de bloco não pode ser usado nesta preparação.",
+    "blockParent": "Um bloco pode ficar em uma seção deste ensino.",
+    "blockRole": "Este bloco não pode ser associado a essa parte da preparação.",
+    "blockReference": "Escolha um bloco de texto bíblico existente nesta preparação.",
     "tooLong": "Esta parte do ensino é longa demais para salvar.",
     "otherPoint": "Esse ponto pertence a outro ensino.",
     "otherStudyFinding": "Essa anotação pertence a outro estudo.",
-    "badMaterial": "Este item não pode ser guardado.",
-    "notVerified": "Uma história só é guardada como verificada com duas fontes independentes.",
-    "imageGone": "Esta imagem não está mais disponível. Crie de novo."
+    "badMaterial": "Este item não pode ser salvo.",
+    "notVerified": "Uma história só pode ser salva como verificada quando é relatada por duas fontes independentes.",
+    "imageGone": "Esta imagem não está mais disponível. Crie de novo.",
+    "projectRequired": "Escolha um projeto para este ensino.",
+    "otherProject": "Escolha um estudo deste projeto.",
+    "badSnapshot": "Não foi possível ler esta anotação de estudo salva."
+  },
+  "presentation": {
+    "imageGone": "Esta imagem não está neste computador.",
+    "imageSaveFailed": "Não foi possível salvar a imagem. Verifique a conexão com a internet e tente de novo.",
+    "noFile": "Escolha onde salvar o arquivo.",
+    "fileExists": "Já existe um arquivo “{{name}}”. Escolha outro nome.",
+    "noSlides": "Esta apresentação não tem slides para exportar.",
+    "audienceFailed": "Não foi possível abrir a tela do público.",
+    "otherTeaching": "Essa parte pertence a outro ensino.",
+    "tooLong": "Este texto é longo demais para o slide.",
+    "tooMany": "Esta apresentação já tem todos os slides que pode ter.",
+    "targetTooLong": "O tempo previsto pode ser de no máximo dez horas.",
+    "templateNotPptx": "Este arquivo não é uma apresentação do PowerPoint (.pptx) que possa ser lida.",
+    "templateTooLarge": "Esta apresentação é grande demais para ser lida como modelo.",
+    "templateFileLarge": "Este arquivo é grande demais para ser lido como modelo.",
+    "templateInvalid": "Este modelo não pode ser usado: algo nele não é válido.",
+    "templateImage": "Este arquivo não é uma imagem PNG, JPEG, GIF ou WebP.",
+    "templateImageLarge": "Esta imagem é grande demais para um modelo.",
+    "templateImageGone": "Falta uma imagem deste modelo neste computador.",
+    "templatePackage": "Este arquivo não é um modelo do Abiding Word.",
+    "templateNewer": "Este modelo foi criado com uma versão mais nova do Abiding Word.",
+    "templateDescriptionLong": "Esta descrição é longa demais para ser salva.",
+    "tooManySlides": "Slides demais para mostrar de uma vez."
+  },
+  "material": {
+    "tooLong": "É longo demais para salvar em um só arquivo.",
+    "tooManyPassages": "Este material contém passagens demais para incluir todo o texto."
+  },
+  "teachingTemplates": {
+    "noKind": "Escolha para que serve o modelo.",
+    "tooManyPoints": "Um modelo pode começar com no máximo {{max}} pontos ou etapas."
+  },
+  "portability": {
+    "notPackage": "O Abiding Word não consegue ler este arquivo, ou ele está danificado.",
+    "tooLarge": "Este arquivo contém mais do que o Abiding Word lê de um só arquivo.",
+    "damaged": "Uma parte deste arquivo não corresponde à sua lista de conteúdo: ele está danificado ou foi alterado. Nada foi alterado aqui.",
+    "newer": "Este arquivo foi salvo com uma versão mais recente do Abiding Word ({{version}}). Atualize o Abiding Word primeiro.",
+    "notBackupDatabase": "O banco de dados desta cópia de segurança está danificado ou não é do Abiding Word. Nada foi alterado.",
+    "restoreFailed": "Não foi possível restaurar a cópia de segurança. O seu trabalho voltou a ficar como estava.",
+    "noFile": "Escolha um arquivo.",
+    "rollbackFailed": "Não foi possível restaurar a cópia de segurança, e o seu trabalho anterior não pôde ser recuperado automaticamente. Há uma cópia dele em {{path}}.",
+    "snapshotUnavailable": "Este ponto de recuperação está danificado ou é incompatível. Seu trabalho não foi alterado."
+  },
+  "inquiry": {
+    "notHere": "Este tipo de ajuda não está disponível aqui.",
+    "changed": "O que seria enviado mudou desde que você olhou. Confira de novo antes de pedir.",
+    "selectionChanged": "As palavras selecionadas não estão mais no texto. Selecione-as de novo.",
+    "selectWords": "Selecione primeiro as palavras que você quer entender.",
+    "chooseNote": "Escolha a pergunta que você anotou.",
+    "noPassage": "Escolha primeiro a passagem deste estudo bíblico: a ajuda parte do texto.",
+    "noBibleText": "O texto desta passagem não está instalado. Adicione uma Bíblia nas Configurações ou escolha uma para este estudo bíblico.",
+    "noSourceText": "Esta fonte não tem texto que possa ser lido aqui (por exemplo, um PDF digitalizado). O assistente só trabalha com o texto de uma fonte, então não pode ajudar com esta.",
+    "excerptTooLong": "Este trecho é longo demais para enviar de uma vez (no máximo {{max}} caracteres). Selecione um trecho menor.",
+    "chooseStudy": "Inclua um estudo bíblico para relacionar com este trecho.",
+    "compareCount": "Escolha dois ou três trechos para comparar.",
+    "compareSame": "O mesmo trecho foi escolhido duas vezes. Escolha trechos diferentes.",
+    "compareTooLong": "Juntos, estes trechos são longos demais para comparar de uma vez (no máximo {{max}} caracteres). Escolha trechos menores.",
+    "tooManyCitations": "Uma anotação pode citar no máximo três trechos."
+  },
+  "words": {
+    "unavailable": "Esta Bíblia não tem anotações de palavras (lemas ou gramática), por isso esta busca não está disponível. A concordância normal continua funcionando.",
+    "empty": "Digite um lema ou um número léxico para procurar.",
+    "grammarNotFit": "Estes códigos gramaticais não se encaixam nesse sistema, por isso aparecem como estão escritos.",
+    "textDiffers": "Os arquivos salvos já não correspondem exatamente ao texto desta Bíblia, por isso as informações sobre as palavras não podem ser adicionadas. Remova a Bíblia e adicione-a novamente para obtê-las.",
+    "noSource": "Os arquivos usados para adicionar esta Bíblia não estão mais salvos, por isso não é possível reler as informações sobre as palavras. Remova a Bíblia e adicione-a novamente para obtê-las.",
+    "nothingToIndex": "Estes arquivos não têm informações sobre as palavras que possam ser indexadas.",
+    "documentBible": "Não é possível adicionar informações sobre as palavras a uma Bíblia adicionada a partir de um documento."
+  },
+  "batch": {
+    "noFiles": "Nenhum arquivo que a biblioteca consiga ler foi encontrado ali.",
+    "tooMany": "No máximo {{max}} arquivos podem ser adicionados de uma vez.",
+    "cannotChoose": "Este arquivo não pode ser adicionado.",
+    "closed": "Esta importação terminou. Inicie uma nova para adicionar mais arquivos.",
+    "notRead": "Alguns arquivos ainda não foram lidos.",
+    "changed": "“{{fileName}}” mudou depois de verificado. Leia-o de novo."
+  },
+  "catalogue": {
+    "notVerified": "“{{fileName}}” não correspondia à cópia verificada, então nada foi salvo. Tente novamente mais tarde.",
+    "unreachable": "Não foi possível concluir o download. Verifique a conexão com a internet e tente novamente.",
+    "busy": "Já há um download em andamento. Aguarde até que termine."
+  },
+  "messageUnavailable": "Não foi possível concluir esta ação. Tente novamente.",
+  "importFormats": {
+    "webPage": "páginas da web",
+    "osisUsx": "OSIS e USX"
   }
 }

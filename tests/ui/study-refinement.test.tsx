@@ -1,7 +1,8 @@
 import { cleanup, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { openInfo, renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions, openStudyOptions } from "../support/studyActions";
 
 // Study workspace refinement (v0.10). All text is invented.
 
@@ -31,16 +32,21 @@ describe("the study header", () => {
     const { api } = await withStudy({ title: "John 15:1–11", primaryPassage: "JHN.15.1-JHN.15.11" });
     const { user } = await renderApp(api);
     await open(user, /John 15:1–11/);
+    await openStudyOptions(user);
     const passages = within(header()).getByRole("region", { name: "Passages" });
+    await openStudyOptions(user);
     expect(within(passages).queryByRole("button", { name: "John 15:1–11" })).not.toBeInTheDocument();
+    await openStudyOptions(user);
     expect(within(passages).getByRole("button", { name: "Open in Scripture" })).toBeInTheDocument();
-    expect(within(passages).getByRole("button", { name: "Related passage" })).toBeInTheDocument();
+    // Adding another passage is in Bible Study information (v0.19), not on the page.
+    expect(within(passages).queryByRole("button", { name: "Related passage" })).not.toBeInTheDocument();
   });
 
   it("treats a dash, spacing or case difference as the same", async () => {
     const { api } = await withStudy({ title: "john 15:1-11", primaryPassage: "JHN.15.1-JHN.15.11" });
     const { user } = await renderApp(api);
     await open(user, /john 15:1-11/i);
+    await openStudyOptions(user);
     expect(within(header()).queryByRole("button", { name: "John 15:1–11" })).not.toBeInTheDocument();
   });
 
@@ -48,7 +54,9 @@ describe("the study header", () => {
     const { api } = await withStudy({ title: "The True Vine", primaryPassage: "JHN.15.1-JHN.15.11" });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
+    await openStudyOptions(user);
     expect(within(header()).getByRole("button", { name: "John 15:1–11" })).toBeInTheDocument();
+    await openStudyOptions(user);
     expect(within(header()).queryByRole("button", { name: "Open in Scripture" })).not.toBeInTheDocument();
   });
 
@@ -58,7 +66,9 @@ describe("the study header", () => {
       api.state.settings.scripturePassage = shown;
       const { user } = await renderApp(api);
       await open(user, /John 15:1–11/);
+      await openStudyOptions(user);
       expect(within(header()).queryByRole("button", { name: "John 15:1–11" })).not.toBeInTheDocument();
+      await openStudyOptions(user);
       expect(within(header()).getByRole("button", { name: "Open in Scripture" })).toBeInTheDocument();
       document.body.innerHTML = "";
     }
@@ -71,31 +81,32 @@ describe("the study header", () => {
     await user.clear(title);
     await user.type(title, "The True Vine");
     await user.tab();
+    await openStudyOptions(user);
     expect(await within(header()).findByRole("button", { name: "John 15:1–11" })).toBeInTheDocument();
   });
 
-  it("does not show the kind of study in the header, only in Study details", async () => {
+  it("does not show the kind of study in the header, only in Bible Study information", async () => {
     const { api } = await withStudy({ title: "Righteousness", studyType: "word" });
     const { user } = await renderApp(api);
     await open(user, /Righteousness/);
     expect(within(header()).queryByText("Word Study")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Study details" }));
-    expect(within(screen.getByRole("region", { name: "Study details" })).getByText(/Type: Word Study/)).toBeInTheDocument();
+    await openStudyOptions(user);
+    const info = await openInfo(user, "Bible Study information");
+    expect(within(info).getByText(/Type: Word Study/)).toBeInTheDocument();
   });
 });
 
-describe("Study details", () => {
-  it("is grouped: about, passages, related studies and copy", async () => {
+describe("Bible Study information", () => {
+  it("holds the draft fields first, then passages, related studies and copy", async () => {
     const { api } = await withStudy({ title: "The True Vine", primaryPassage: "JHN.15.1-JHN.15.11" });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    await user.click(screen.getByRole("button", { name: "Study details" }));
-    const details = screen.getByRole("region", { name: "Study details" });
+    await openStudyOptions(user);
+    const details = await openInfo(user, "Bible Study information");
     const groups = within(details).getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
-    expect(groups).toEqual(["About this study", "Passages", "Related studies", "Copy"]);
-    const about = within(details).getByRole("group", { name: "About this study" });
-    expect(within(about).getByRole("combobox", { name: "Status" })).toBeInTheDocument();
-    expect(within(about).getByRole("textbox", { name: /Purpose/ })).toBeInTheDocument();
+    expect(groups).toEqual(["Passages", "Related studies", "Copy", "Danger zone"]);
+    expect(within(details).getByRole("combobox", { name: "Status" })).toBeInTheDocument();
+    expect(within(details).getByRole("textbox", { name: /Purpose/ })).toBeInTheDocument();
     expect(within(details).getByRole("group", { name: "Copy" })).toContainElement(within(details).getByRole("button", { name: /Duplicate/ }));
   });
 
@@ -103,10 +114,12 @@ describe("Study details", () => {
     const { api } = await withStudy({ title: "The True Vine", primaryPassage: "JHN.15.1-JHN.15.11" });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    await user.click(screen.getByRole("button", { name: "Study details" }));
-    const details = screen.getByRole("region", { name: "Study details" });
-    expect(details).not.toHaveTextContent(/Template/i);
-    expect(details).not.toHaveTextContent("Passage Study Template");
+    await openStudyOptions(user);
+    const details = await openInfo(user, "Bible Study information");
+    expect(details).not.toHaveTextContent(/Passage Study Template|From your template/i);
+    // The one mention of templates is the way to make one of the person's own (v0.18.7).
+    expect(details.textContent!.match(/template/gi)).toEqual(["template"]);
+    expect(within(details).getByRole("button", { name: "Save as my template" })).toBeInTheDocument();
   });
 
   it("says where a study came from only for the user's own template", async () => {
@@ -119,18 +132,22 @@ describe("Study details", () => {
     await api.studyCreate({ projectId: project.id, title: "Mine", templateId: own.id });
     const { user } = await renderApp(api);
     await open(user, /Mine/);
-    await user.click(screen.getByRole("button", { name: "Study details" }));
-    expect(screen.getByRole("region", { name: "Study details" })).toHaveTextContent("From your template: Wednesday Bible Study");
+    await openStudyOptions(user);
+    expect(await openInfo(user, "Bible Study information")).toHaveTextContent("From your template: Wednesday Bible Study");
   });
 
   it("closes with Escape and returns focus to its toggle", async () => {
     const { api } = await withStudy({ title: "The True Vine" });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    const toggle = screen.getByRole("button", { name: "Study details" });
+    await openStudyOptions(user);
+    const toggle = screen.getByRole("button", { name: "Bible Study information" });
     await user.click(toggle);
+    await openStudyOptions(user);
+    expect(await screen.findByRole("dialog", { name: "Bible Study information" })).toBeInTheDocument();
     await user.keyboard("{Escape}");
     await waitFor(() => expect(toggle).toHaveFocus());
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });
 
@@ -140,62 +157,40 @@ async function emptyStudy() {
   return withStudy({ title: "The True Vine", primaryPassage: "JHN.15.1-JHN.15.11" });
 }
 
-describe("Add, in each part of the study", () => {
-  it("has its own Add at the end of every part, and no Add for the whole study at the top", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    const parts = main().getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+describe("simple additions in each part", () => {
+  it("offers one direct writing action per part, and distinct Q&A and notes", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/);
+    const parts = main().getAllByRole("heading", { level: 2 }).map(h => h.textContent);
     expect(parts).toEqual(["Text", "Observations", "Context", "Meaning", "Theology", "Application"]);
-    for (const part of parts) expect(main().getByRole("button", { name: `Add to ${part}` })).toBeInTheDocument();
-    expect(main().queryByRole("button", { name: "Add" })).not.toBeInTheDocument();
-    expect(main().queryByText("Start your study")).not.toBeInTheDocument();
+    await openPartOptions(user);
+    for (const part of parts) {
+      expect(main().getByRole("button", { name: `Add text field to ${part}` })).toBeInTheDocument();
+      expect(main().getByRole("button", { name: `Note — ${part}` })).toBeInTheDocument();
+      expect(main().queryByRole("button", { name: `Add to ${part}` })).toBeNull();
+    }
   });
-
-  it("adds an observation where it was asked for, with no generic kind of thing to choose first", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    const choices = main().getByRole("group", { name: "Add to Context" });
-    expect(within(choices).getAllByRole("button").map((b) => b.textContent)).toEqual(["Writing", "Observation", "Question", "Interpretation", "Application", "More types"]);
-    await user.click(within(choices).getByRole("button", { name: "Observation" }));
-    const text = main().getByLabelText("New observation");
-    expect(text).toHaveFocus();
-    // added from a part, it goes in that part: no choice of place to make
-    expect(main().queryByRole("combobox", { name: /In/ })).not.toBeInTheDocument();
-    await user.type(text, "The disciples are already clean.");
-    await user.click(main().getByRole("button", { name: "Save" }));
+  it("adds an observation in its part from a single flat notes menu", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await user.click(screen.getByRole("menuitem", { name: "Observation" }));
+    const text = main().getByLabelText("New observation"); expect(text).toHaveFocus();
+    await user.type(text, "The disciples are already clean."); await user.click(main().getByRole("button", { name: "Save" }));
     const notes = await main().findByRole("list", { name: "Notes in Context" });
     expect(within(notes).getByDisplayValue("The disciples are already clean.")).toBeInTheDocument();
-    expect(api.state.findings[0]).toMatchObject({ findingType: "observation", sectionId: api.state.sections.find((s) => s.title === "Context")!.id });
+    expect(api.state.findings[0]).toMatchObject({ findingType: "observation", sectionId: api.state.sections.find(s => s.title === "Context")!.id });
   });
-
-  it("offers every kind under More types, and adds writing to the part it was asked in", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Add to Theology" }));
-    await user.click(main().getByRole("button", { name: "More types" }));
-    const choices = main().getByRole("group", { name: "Add to Theology" });
-    for (const kind of ["Quotation", "Doctrine", "Illustration", "Teaching idea", "Unresolved issue", "Conclusion"]) expect(within(choices).getByRole("button", { name: kind })).toBeInTheDocument();
-    await user.click(within(choices).getByRole("button", { name: "Writing" }));
-    const fields = await main().findAllByRole("textbox", { name: "Theology: paragraph" });
-    expect(fields).toHaveLength(2);
-    await waitFor(() => expect(fields[1]).toHaveFocus());
-    expect(api.state.blocks.filter((b) => b.blockType === "paragraph" && b.sectionId === api.state.sections.find((s) => s.title === "Theology")!.id)).toHaveLength(2);
+  it("keeps every distinct note kind and adds writing directly with focus", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    const notes = main().getByRole("button", { name: "Note — Theology" }); await user.click(notes);
+    for (const name of ["Quotation", "Doctrine", "Illustration", "Teaching idea", "Unresolved issue", "Conclusion"]) expect(screen.getByRole("menuitem", { name })).toBeInTheDocument();
+    await user.keyboard("{Escape}"); expect(notes).toHaveFocus();
+    await user.click(main().getByRole("button", { name: "Add text field to Theology" }));
+    const fields = await main().findAllByRole("textbox", { name: "Theology: paragraph" }); expect(fields).toHaveLength(2); await waitFor(() => expect(fields[1]).toHaveFocus());
   });
-
-  it("closes with Escape and returns focus to the part's Add", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    const add = main().getByRole("button", { name: "Add to Text" });
-    await user.click(add);
-    expect(add).toHaveAttribute("aria-expanded", "true");
-    await user.keyboard("{Escape}");
-    expect(main().queryByRole("group", { name: "Add to Text" })).not.toBeInTheDocument();
-    expect(add).toHaveFocus();
+  it("closes the notes menu with Escape and returns focus", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    const notes = main().getByRole("button", { name: "Note — Text" }); await user.click(notes); expect(notes).toHaveAttribute("aria-expanded", "true");
+    await user.keyboard("{Escape}"); expect(screen.queryByRole("menu")).toBeNull(); expect(notes).toHaveFocus();
   });
 });
 
@@ -204,8 +199,9 @@ describe("review fixes: writing notes in parts", () => {
     const { api } = await emptyStudy();
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    await user.click(main().getByRole("button", { name: "Observation" }));
+    await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await user.click(screen.getByRole("menuitem", { name: "Observation" }));
     expect(main().getByLabelText("New observation")).toHaveFocus();
     // Typing in another part re-renders the study; the cursor stays where it is.
     const theology = main().getByRole("textbox", { name: "Theology: paragraph" });
@@ -219,78 +215,77 @@ describe("review fixes: writing notes in parts", () => {
     const { api } = await emptyStudy();
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    await user.click(main().getByRole("button", { name: "Observation" }));
+    await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await user.click(screen.getByRole("menuitem", { name: "Observation" }));
     await user.type(main().getByLabelText("New observation"), "Half written");
-    await user.click(main().getByRole("button", { name: "Add to Application" }));
-    await user.click(within(main().getByRole("group", { name: "Add to Application" })).getByRole("button", { name: "Question" }));
+    await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Application" }));
+    await openPartOptions(user);
+    await user.click(screen.getByRole("menuitem", { name: "Question" }));
     // Two notes being written, each in its own part; nothing lost.
     expect(main().getByLabelText("New observation")).toHaveValue("Half written");
     expect(main().getByLabelText("New question")).toHaveFocus();
     // Add again where a note is open keeps the draft and goes back to it.
-    await user.click(main().getByRole("button", { name: "Add to Context" }));
-    await user.click(within(main().getByRole("group", { name: "Add to Context" })).getByRole("button", { name: "Question" }));
+    await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Context" }));
+    await openPartOptions(user);
+    await user.click(screen.getByRole("menuitem", { name: "Question" }));
     expect(main().getByLabelText("New observation")).toHaveValue("Half written");
     expect(main().getByLabelText("New observation")).toHaveFocus();
     await user.keyboard("{Control>}{Enter}{/Control}");
     await waitFor(() => expect(api.state.findings).toHaveLength(1));
-    await waitFor(() => expect(main().getByRole("button", { name: "Add to Context" })).toHaveFocus());
+    await openPartOptions(user);
+    await waitFor(() => expect(main().getByRole("button", { name: "Note — Context" })).toHaveFocus());
   });
 
-  it("moves the keyboard to the first further kind when More types is chosen", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Add to Meaning" }));
-    await user.click(main().getByRole("button", { name: "More types" }));
-    await waitFor(() => expect(main().getByRole("button", { name: "Quotation" })).toHaveFocus());
-    await user.keyboard("{Escape}");
-    expect(main().getByRole("button", { name: "Add to Meaning" })).toHaveFocus();
-  });
-});
+  it("moves through note kinds with the keyboard and returns to Notes", async () => {
+    const { api } = await emptyStudy(); const { user } = await renderApp(api); await open(user, /The True Vine/); await openPartOptions(user);
+    const notes = main().getByRole("button", { name: "Note — Meaning" }); await user.click(notes);
+    expect(screen.getByRole("menuitem", { name: "Observation" })).toHaveFocus();
+    await user.keyboard("{ArrowDown}"); expect(screen.getByRole("menuitem", { name: "Interpretation" })).toHaveFocus();
+    await user.keyboard("{Escape}"); expect(notes).toHaveFocus();
+  });});
 
-describe("folding parts away", () => {
-  it("folds a part to its heading, says how many notes it holds, and remembers it for this study", async () => {
+describe("focused study sections", () => {
+  it("shows one section with its notes in Step-by-step, and the complete document in Continuous writing", async () => {
     const { api, studyId } = await emptyStudy();
     const context = api.state.sections.find((s) => s.title === "Context")!;
     await api.findingCreate({ studyId, findingType: "question", content: "Which feast?", sectionId: context.id });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    const toggle = main().getByRole("button", { name: "Context" });
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-    await user.click(toggle);
-    expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(main().getByRole("textbox", { name: "Context: paragraph", hidden: true })).not.toBeVisible();
-    expect(within(main().getByRole("region", { name: "Context" })).getByText("1 note")).toBeInTheDocument();
+    await openStudyOptions(user);
+    await user.click(main().getByRole("button", { name: "Step-by-step" }));
+    const nav = within(main().getByRole("navigation", { name: "Study sections" }));
+    await user.selectOptions(nav.getByRole("combobox"), context.id);
+    expect(main().getByRole("region", { name: "Context" })).toBeVisible();
+    expect(main().queryByRole("region", { name: "Meaning" })).toBeNull();
+    expect(main().getByText("Which feast?")).toBeVisible();
+    await openStudyOptions(user);
+    await user.click(main().getByRole("button", { name: "Continuous writing" }));
+    expect(main().getByRole("region", { name: "Context" })).toBeVisible();
+    expect(main().getByRole("region", { name: "Meaning" })).toBeVisible();
+    expect(api.state.findings.find((finding) => finding.sectionId === context.id)?.content).toBe("Which feast?");
     cleanup();
-    // The app opens again where it was: in this study.
     await renderApp(api);
     await screen.findByRole("textbox", { name: "Study title" });
-    expect(main().getByRole("button", { name: "Context" })).toHaveAttribute("aria-expanded", "false");
-    expect(main().getByRole("button", { name: "Text" })).toHaveAttribute("aria-expanded", "true");
+    await openStudyOptions(user);
+    expect(main().getByRole("button", { name: "Continuous writing" })).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("folds and unfolds the whole study at once, so it reads as an outline", async () => {
+  it("adds a question in the focused section without changing the other sections", async () => {
     const { api } = await emptyStudy();
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Fold all" }));
-    for (const part of ["Text", "Observations", "Context", "Meaning", "Theology", "Application"]) expect(main().getByRole("button", { name: part })).toHaveAttribute("aria-expanded", "false");
-    await user.click(main().getByRole("button", { name: "Unfold all" }));
-    expect(main().getByRole("button", { name: "Meaning" })).toHaveAttribute("aria-expanded", "true");
-  });
-
-  it("opens a folded part again when something is added to it", async () => {
-    const { api } = await emptyStudy();
-    const { user } = await renderApp(api);
-    await open(user, /The True Vine/);
-    await user.click(main().getByRole("button", { name: "Meaning" }));
-    // Add stays reachable from the heading's part only when open; adding from Fold all + Unfold works too
-    await user.click(main().getByRole("button", { name: "Meaning" }));
-    await user.click(main().getByRole("button", { name: "Add to Meaning" }));
-    await user.click(main().getByRole("button", { name: "Question" }));
-    expect(main().getByRole("button", { name: "Meaning" })).toHaveAttribute("aria-expanded", "true");
+    await openStudyOptions(user);
+    await user.click(main().getByRole("button", { name: "Step-by-step" }));
+    const meaning = api.state.sections.find((s) => s.title === "Meaning")!;
+    await user.selectOptions(main().getByRole("combobox"), meaning.id);
+    await openPartOptions(user);
+    await user.click(main().getByRole("button", { name: "Note — Meaning" }));
+    await user.click(screen.getByRole("menuitem", { name: "Question" }));
     expect(main().getByLabelText("New question")).toBeVisible();
+    expect(main().queryByRole("region", { name: "Context" })).toBeNull();
   });
 });
 
@@ -304,6 +299,9 @@ describe("adding a part", () => {
     expect(within(suggested).getAllByRole("button").map((b) => b.textContent)).toEqual(["Structure", "Key Words", "Related Scripture", "Open Questions"]);
     await user.click(within(suggested).getByRole("button", { name: "Key Words" }));
     await main().findByRole("heading", { level: 2, name: "Key Words" });
+    await openPartOptions(user, "Key Words");
+    const hintToggle = within(main().getByRole("region", { name: "Key Words" })).getByRole("button", { name: "Hints" });
+    if (hintToggle.getAttribute("aria-pressed") !== "true") await user.click(hintToggle);
     expect(within(main().getByRole("region", { name: "Key Words" })).getByText(/Words that carry the passage/)).toBeInTheDocument();
     // what is there already is not suggested again
     await user.click(main().getByRole("button", { name: "Add a part" }));
@@ -517,6 +515,7 @@ describe("findings in sections", () => {
     for (const content of ["a", "b"]) await api.findingCreate({ studyId, findingType: "observation", content, sectionId: context.id });
     const { user } = await renderApp(api);
     await open(user, /The True Vine/);
+    await openStudyOptions(user);
     await user.selectOptions(main().getByRole("combobox", { name: "Show notes" }), "question");
     expect(within(main().getByRole("region", { name: "Meaning" })).getByRole("list", { name: "Notes in Meaning" })).toBeInTheDocument();
     expect(main().queryByRole("list", { name: "Notes in Context" })).not.toBeInTheDocument();
@@ -608,7 +607,8 @@ describe("related studies", () => {
     const { api, other } = await two();
     const { user } = await renderApp(api);
     await open(user, /Romans 8/);
-    await user.click(screen.getByRole("button", { name: "Study details" }));
+    await openStudyOptions(user);
+    await openInfo(user, "Bible Study information");
     await user.click(screen.getByRole("button", { name: "+ Link a related study" }));
     const form = screen.getByRole("group", { name: "Link a related study" });
     expect(within(form).getByLabelText("Related study")).toBeInTheDocument();
@@ -622,7 +622,8 @@ describe("related studies", () => {
     const { api } = await two();
     const { user } = await renderApp(api);
     await open(user, /Romans 8/);
-    await user.click(screen.getByRole("button", { name: "Study details" }));
+    await openStudyOptions(user);
+    await openInfo(user, "Bible Study information");
     await user.click(screen.getByRole("button", { name: "+ Link a related study" }));
     const form = screen.getByRole("group", { name: "Link a related study" });
     await user.click(within(form).getByRole("button", { name: "Describe the relationship" }));

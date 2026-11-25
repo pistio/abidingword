@@ -1,0 +1,2 @@
+# Released migration bytes and their recorded hashes must match on Windows too.
+src-tauri/migrations/*.sql text eol=lf

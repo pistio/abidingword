@@ -1,10 +1,16 @@
+import research0 from "../../../resources/templates/word-research-study.json";
+import research1 from "../../../resources/templates/topical-research-study.json";
+import research2 from "../../../resources/templates/character-research-study.json";
+import research3 from "../../../resources/templates/book-research-study.json";
 // Built-in study templates are application text, shown in the interface
 // language; what a study copied from one is the user's own text from then
 // on. The database keeps the English the templates were installed with, so
 // a section is shown translated only while it still has exactly that
 // English wording. Once the user renames it, their wording is shown as it
 // is. No stored text is ever rewritten (docs/i18n.md, "Built-in templates").
-import i18n from "i18next";
+import i18n, { type TFunction } from "i18next";
+import pozetekWriting from "../../../resources/templates/pozetek-writing-study.json";
+import tenStepWriting from "../../../resources/templates/ten-step-writing-study.json";
 import biblicalCharacter from "../../../resources/templates/biblical-character-study.json";
 import wholeBook from "../../../resources/templates/whole-book-study.json";
 import biblicalTheology from "../../../resources/templates/biblical-theology-study.json";
@@ -15,16 +21,34 @@ import systematicTheology from "../../../resources/templates/systematic-theology
 import teaching from "../../../resources/templates/teaching-study.json";
 import topical from "../../../resources/templates/topical-study.json";
 import word from "../../../resources/templates/word-study.json";
+import { inStudyCatalogue } from "./catalogue";
 import type { StudyTemplate, TemplateSection } from "@/types/studies";
 
 interface BuiltinDefinition {
   key: string;
   name: string;
   description?: string | null;
-  sections: { key: string; title: string; guidance?: string | null; optional?: boolean; retired?: boolean }[];
+  /** False: kept only for the studies made with it, never offered for a new one (e.g. the old teaching study). */
+  offered?: boolean;
+  formerSections?: BuiltinDefinition["sections"];
+  sections: {
+    key: string;
+    title: string;
+    guidance?: string | null;
+    optional?: boolean;
+    retired?: boolean;
+    phase?: string | null;
+    /**
+     * Earlier English wording of this part (v0.18.9): a study made before a
+     * baseline was refined still has it, and is still shown in the interface
+     * language. Refining a baseline adds the old wording here, never removes it.
+     */
+    formerTitles?: string[];
+    formerGuidance?: string[];
+  }[];
 }
 
-const BUILTIN: BuiltinDefinition[] = [passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching];
+const BUILTIN: BuiltinDefinition[] = [ passage, pozetek, tenStep, word, topical, biblicalCharacter, wholeBook, biblicalTheology, systematicTheology, teaching, pozetekWriting, tenStepWriting, research0, research1, research2, research3];
 const BY_KEY = new Map(BUILTIN.map((t) => [t.key, t]));
 
 /** The section title a study without a template starts with. */
@@ -34,11 +58,13 @@ function translate(key: string, fallback: string): string {
   return (i18n.t as (key: string, options: Record<string, unknown>) => string)(key, { defaultValue: fallback });
 }
 
-/** Finds the built-in section a stored section was copied from, by key and unchanged English. */
+/** Finds the built-in section a stored section was copied from, by key and unchanged English (now or before a refinement). */
 function builtinSection(key: string | null | undefined, field: "title" | "guidance", english: string, templateKey?: string) {
   if (!key) return null;
   for (const template of BUILTIN.filter((t) => !templateKey || t.key === templateKey)) {
-    const section = template.sections.find((s) => s.key === key && (s[field] ?? "") === english);
+    const section = [...template.sections, ...(template.formerSections ?? [])].find(
+      (s) => s.key === key && ((s[field] ?? "") === english || (field === "title" ? s.formerTitles : s.formerGuidance)?.includes(english)),
+    );
     if (section) return { template: template.key, section: section.key };
   }
   return null;
@@ -77,7 +103,7 @@ export function templateDescription(template: Pick<StudyTemplate, "key" | "descr
 
 /**
  * A built-in template's sections in the interface language, e.g. to make a
- * user's own copy in their language ("Duplicate and customise").
+ * user's own copy in their language ("Save as my template").
  */
 export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuiltin" | "sections">): TemplateSection[] {
   if (!template.isBuiltin || !BY_KEY.has(template.key)) return template.sections;
@@ -88,6 +114,7 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
       key: s.key ?? null,
       title: sectionTitle(s, template.key),
       guidance: sectionGuidance(s, template.key),
+      phase: s.phase ?? null,
       ...(s.optional ? { optional: true } : {}),
       ...(s.fields?.length ? {
         fields: s.fields,
@@ -95,6 +122,23 @@ export function localizedSections(template: Pick<StudyTemplate, "key" | "isBuilt
         fieldsSource: s.fieldsSource ?? template.key,
       } : {}),
     }));
+}
+
+/** Whether a built-in template is offered for new work (its resource file says so); a user's own always is. */
+export function isOffered(template: Pick<StudyTemplate, "key" | "isBuiltin">): boolean {
+  return inStudyCatalogue(template);
+}
+
+/**
+ * What a template starts a study with, from its own parts ("Starts with:
+ * Text · Observations · Context."), in the interface language. No template:
+ * the one part a study of its own shape starts with. Shared by every place
+ * a template is chosen, so a preview never says something the template
+ * does not (v0.18.8).
+ */
+export function studyStartSummary(t: TFunction, template: Pick<StudyTemplate, "sections"> | null): string {
+  const parts = template ? template.sections.filter((s) => !s.optional && !s.retired).map((section) => sectionTitle(section)) : [sectionTitle({ key: null, title: DEFAULT_SECTION })];
+  return t("studies.newStudy.startsWith", { parts: parts.join(t("common.listSeparator")) });
 }
 
 interface StructuredPart {

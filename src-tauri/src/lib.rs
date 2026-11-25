@@ -14,8 +14,16 @@ pub mod error;
 pub mod filesystem;
 pub mod integrations;
 pub mod library;
+pub mod materials;
+pub mod portability;
+pub mod presentation;
+pub mod sample;
 pub mod scripture;
 pub mod state;
+
+// Optional read-only main-window WebView2 geometry diagnostics.
+#[cfg(target_os = "windows")]
+mod window_sizing;
 
 use std::path::PathBuf;
 
@@ -32,13 +40,47 @@ const LOG_FILE_NAME: &str = "abiding-word";
 /// endpoint). The updater section is added only by the test-update workflow
 /// (docs/updates.md); without it the plugin is not even registered.
 pub fn updates_configured(app: &AppHandle) -> bool {
-    app.config().plugins.0.contains_key("updater")
+    option_env!("ABIDING_WORD_ACCEPTANCE_BUILD") != Some("scripture")
+        && app.config().plugins.0.contains_key("updater")
 }
 
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
+        // Closing the main window also closes a presentation's audience screen.
+        .on_window_event(|window, event| {
+            // Collect geometry only when the explicit diagnostic trace is enabled.
+            // Tauri continues to manage native window and WebView2 sizing.
+            #[cfg(target_os = "windows")]
+            if window.label() == "main" {
+                let focused = matches!(event, tauri::WindowEvent::Focused(true));
+                if focused
+                    || matches!(
+                        event,
+                        tauri::WindowEvent::Resized(_)
+                            | tauri::WindowEvent::ScaleFactorChanged { .. }
+                    )
+                {
+                    if let Some(main) = window.app_handle().get_webview_window("main") {
+                        window_sizing::schedule(main);
+                    }
+                }
+            }
+            if window.label() == "main"
+                && matches!(
+                    event,
+                    tauri::WindowEvent::CloseRequested { .. } | tauri::WindowEvent::Destroyed
+                )
+            {
+                if let Some(audience) = window
+                    .app_handle()
+                    .get_webview_window(commands::presentations::AUDIENCE_WINDOW)
+                {
+                    let _ = audience.close();
+                }
+            }
+        })
         .setup(|app| {
             if updates_configured(app.handle()) {
                 app.handle()
@@ -46,6 +88,52 @@ pub fn run() {
             }
             let state = start(app.handle());
             app.manage(state);
+            // Automatic daily SQLite snapshot on a worker: startup and
+            // writing remain usable even if the backup disk is full.
+            // This is database-only; a complete backup still uses .awbackup.
+            let backup_handle = app.handle().clone();
+            std::thread::spawn(move || {
+                // Keep making daily recovery points during a long, uninterrupted
+                // writing session, not just whenever the user restarts.
+                // The storage function is idempotent per UTC day.
+                let mut last_checked_day = None;
+                loop {
+                    let today = chrono::Utc::now().date_naive();
+                    if last_checked_day != Some(today) {
+                        let state = backup_handle.state::<AppState>();
+                        let Ok(core) = state.core() else {
+                            break;
+                        };
+                        match core.db.with_conn(|conn| {
+                            db::backup::daily_snapshot(conn, &core.dirs.daily_backups())
+                        }) {
+                            Ok(Some(path)) => {
+                                log::info!(
+                                    "verified automatic database snapshot {}",
+                                    path.display()
+                                );
+                                last_checked_day = Some(today);
+                            }
+                            Ok(None) => last_checked_day = Some(today),
+                            Err(error) => {
+                                // A full disk is not permission to stop editing.
+                                // Retry the safety snapshot at the next check.
+                                log::warn!("automatic database snapshot unavailable: {error}");
+                            }
+                        }
+                    }
+                    if backup_handle.get_webview_window("main").is_none() {
+                        break;
+                    }
+                    std::thread::sleep(std::time::Duration::from_secs(6 * 60 * 60));
+                }
+            });
+            // Schedule optional Windows measurements after start() installs logging.
+            // With tracing disabled, initialise() does not start a worker.
+            #[cfg(target_os = "windows")]
+            if let Some(main) = app.get_webview_window("main") {
+                window_sizing::initialise(&main);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -53,18 +141,36 @@ pub fn run() {
             commands::app::app_log_error,
             commands::workspaces::workspace_get_default,
             commands::projects::project_list,
+            commands::projects::project_root,
+            commands::projects::trash_list,
+            commands::projects::project_delete,
+            commands::projects::project_restore,
             commands::projects::project_get,
             commands::projects::project_create,
             commands::projects::project_update,
+            commands::portability::project_export,
+            commands::portability::project_package_inspect,
+            commands::portability::project_import,
+            commands::portability::backup_create,
+            commands::portability::backup_inspect,
+            commands::portability::backup_restore,
+            commands::portability::daily_snapshot_list,
+            commands::portability::daily_snapshot_restore,
+            commands::portability::sample_project_install,
             commands::studies::study_list,
+            commands::studies::study_delete,
+            commands::studies::study_restore,
             commands::studies::study_get,
             commands::studies::study_create,
             commands::studies::study_update,
+            commands::studies::study_move,
             commands::studies::study_duplicate,
             commands::studies::study_search,
             commands::sections::study_section_list,
             commands::sections::study_section_update,
             commands::sections::study_section_create,
+            commands::sections::study_section_restore_missing,
+            commands::sections::study_pozetek_repair,
             commands::sections::study_section_delete,
             commands::sections::study_section_reorder,
             commands::blocks::study_block_create,
@@ -88,6 +194,10 @@ pub fn run() {
             commands::templates::template_update,
             commands::templates::template_duplicate,
             commands::templates::template_delete,
+            commands::teaching_templates::teaching_template_list,
+            commands::teaching_templates::teaching_template_create,
+            commands::teaching_templates::teaching_template_update,
+            commands::teaching_templates::teaching_template_delete,
             commands::library::library_list,
             commands::library::library_languages,
             commands::library::library_get_source,
@@ -100,6 +210,14 @@ pub fn run() {
             commands::library::library_original_info,
             commands::library::library_original_read,
             commands::library::library_source_contents,
+            commands::library::library_pdf_structure,
+            commands::library::library_pdf_structure_build,
+            commands::library::library_pdf_structure_progress,
+            commands::library::library_pdf_structure_cancel,
+            commands::library::library_pdf_structure_diagnostic,
+            commands::library::library_pdf_structure_diagnostic_save,
+            commands::library::library_pdf_structure_correct,
+            commands::library::library_pdf_structure_undo,
             commands::library::library_generated_contents,
             commands::library::library_source_links,
             commands::library::library_epub_structure,
@@ -121,11 +239,16 @@ pub fn run() {
             commands::library::finding_source_list,
             commands::settings::settings_get,
             commands::settings::settings_update,
+            commands::settings::source_reader_positions,
+            commands::settings::source_reader_position_save,
             commands::scripture::scripture_books,
             commands::scripture::scripture_get_chapter,
             commands::scripture::scripture_get_passage,
             commands::scripture::scripture_search,
             commands::scripture::scripture_concordance,
+            commands::scripture::scripture_lemma_entries,
+            commands::scripture::scripture_lemma_search,
+            commands::scripture::scripture_verse_words,
             commands::scripture::scripture_reference_parse,
             commands::scripture::scripture_reference_detect,
             commands::bibles::bible_list,
@@ -134,7 +257,58 @@ pub fn run() {
             commands::bibles::bible_import_preview,
             commands::bibles::bible_import_commit,
             commands::bibles::bible_import_cancel,
+            commands::bibles::bible_import_correct,
+            commands::bible_documents::bible_documents,
+            commands::bible_documents::bible_document_info,
+            commands::bible_documents::bible_document_read,
+            commands::bible_documents::bible_document_structure,
+            commands::bible_documents::bible_document_item,
+            commands::bible_documents::bible_document_segments,
+            commands::bible_documents::bible_document_search,
+            commands::bible_documents::bible_verse_origin,
+            commands::bible_documents::bible_document_recognise,
+            commands::bible_documents::bible_document_add_verses,
+            commands::bible_documents::bible_document_locate,
+            commands::bible_documents::bible_location_add,
+            commands::bible_documents::bible_location_remove,
+            commands::bible_documents::bible_locations,
+            commands::bible_documents::bible_document_coverage,
             commands::bibles::bible_remove,
+            commands::library_batch::library_batch_scan,
+            commands::library_batch::library_batch_step,
+            commands::library_batch::library_batch_get,
+            commands::library_batch::library_batch_jobs,
+            commands::library_batch::library_batch_edit,
+            commands::library_batch::library_batch_shared,
+            commands::library_batch::library_batch_retry,
+            commands::library_batch::library_batch_import_step,
+            commands::library_batch::library_batch_cancel,
+            commands::library_batch::library_batch_discard,
+            commands::library_manage::library_manage_list,
+            commands::library_manage::library_set_state,
+            commands::library_manage::library_remove_permanently,
+            commands::library_manage::library_update_source,
+            commands::library_manage::library_collections,
+            commands::library_manage::library_collection_create,
+            commands::library_manage::library_collection_rename,
+            commands::library_manage::library_collection_move,
+            commands::library_manage::library_collection_remove,
+            commands::library_manage::library_collect,
+            commands::library_manage::library_tags,
+            commands::library_manage::library_tag_rename,
+            commands::library_manage::library_tag_remove,
+            commands::library_manage::library_retag,
+            commands::library_manage::bible_list_all,
+            commands::bibles::bible_catalogue_list,
+            commands::bibles::bible_catalogue_download,
+            commands::library_manage::bible_set_state,
+            commands::library_manage::bible_remove_permanently,
+            commands::bibles::bible_words_preview,
+            commands::bibles::bible_words_apply,
+            commands::bibles::bible_words_remove,
+            commands::bibles::bible_words_cancel,
+            commands::bibles::bible_set_language,
+            commands::bibles::bible_language_options,
             commands::annotations::annotation_list,
             commands::annotations::annotation_marks_list,
             commands::annotations::annotation_create,
@@ -152,6 +326,9 @@ pub fn run() {
             commands::study_passages::study_passage_remove,
             commands::study_passages::study_passage_set_role,
             commands::teaching::teaching_list,
+            commands::teaching::teaching_list_project,
+            commands::teaching::teaching_set_study,
+            commands::teaching::teaching_restore,
             commands::teaching::teaching_get,
             commands::teaching::teaching_create,
             commands::teaching::teaching_update,
@@ -160,6 +337,12 @@ pub fn run() {
             commands::teaching::teaching_point_update,
             commands::teaching::teaching_point_delete,
             commands::teaching::teaching_point_reorder,
+            commands::teaching::teaching_add_from_study,
+            commands::teaching::teaching_block_create,
+            commands::teaching::teaching_block_update,
+            commands::teaching::teaching_block_delete,
+            commands::teaching::teaching_block_reorder,
+            commands::teaching::teaching_block_duplicate,
             commands::teaching::teaching_finding_link,
             commands::teaching::teaching_finding_unlink,
             commands::teaching::teaching_passage_add,
@@ -167,6 +350,42 @@ pub fn run() {
             commands::teaching::teaching_material_keep,
             commands::teaching::teaching_material_remove,
             commands::teaching::teaching_image,
+            commands::presentation_templates::presentation_template_list,
+            commands::presentation_templates::presentation_template_get,
+            commands::presentation_templates::presentation_template_create,
+            commands::presentation_templates::presentation_template_update,
+            commands::presentation_templates::presentation_template_delete,
+            commands::presentation_templates::presentation_template_asset_add,
+            commands::presentation_templates::presentation_template_asset,
+            commands::presentation_templates::presentation_template_export,
+            commands::presentation_templates::presentation_template_import_package,
+            commands::presentation_templates::presentation_template_import_pptx,
+            commands::presentation_templates::presentation_template_preview,
+            commands::presentation_templates::presentation_fonts,
+            commands::presentations::presentation_list,
+            commands::presentations::presentation_get,
+            commands::presentations::presentation_create,
+            commands::presentations::presentation_update,
+            commands::presentations::presentation_delete,
+            commands::presentations::presentation_item_create,
+            commands::presentations::presentation_item_update,
+            commands::presentations::presentation_item_delete,
+            commands::presentations::presentation_item_reorder,
+            commands::presentations::presentation_document,
+            commands::presentations::presentation_audience,
+            commands::presentations::presentation_layout,
+            commands::presentations::presentation_image,
+            commands::presentations::presentation_image_save,
+            commands::presentations::presentation_export,
+            commands::materials::material_save_markdown,
+            commands::materials::material_scripture,
+            commands::materials::material_save_docx,
+            commands::presentations::presentation_screens,
+            commands::presentations::presentation_audience_open,
+            commands::presentations::presentation_audience_show,
+            commands::presentations::presentation_audience_state,
+            commands::presentations::presentation_audience_close,
+            commands::presentations::presentation_audience_key,
             commands::assistant::assistant_settings_get,
             commands::assistant::assistant_settings_set,
             commands::assistant::assistant_key_set,
@@ -174,6 +393,9 @@ pub fn run() {
             commands::assistant::assistant_search_test,
             commands::assistant::assistant_preview,
             commands::assistant::assistant_ask,
+            commands::assistant::inquiry_preview,
+            commands::assistant::inquiry_ask,
+            commands::assistant::inquiry_keep,
             commands::assistant::assistant_find_images,
             commands::assistant::assistant_image_preview,
             commands::assistant::assistant_generate_image,

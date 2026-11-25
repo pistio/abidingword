@@ -19,11 +19,15 @@ import type {
 } from "@/types/teaching";
 import { changes, wordDiff } from "./diff";
 import { assistLabel } from "./labels";
+import { inquiryAssistantLabel } from "@/features/ai/inquiryDisplay";
+import { imageAttribution } from "./imageAttribution";
 
 /** What the person asked for help with. */
 export interface AssistTarget {
   part: TeachingPart;
   pointId: string | null;
+  /** The block of a block teaching, when the text is a block's (A.4.4). */
+  blockId?: string | null;
   /** The part's name as shown, e.g. "Introduction". */
   label: string;
   /** The text worked on: the whole part, or the selected words. */
@@ -68,7 +72,7 @@ export function Pending({ message, onStop }: { message: string; onStop?: () => v
       <p className="m-0 min-w-0 flex-1 text-text-strong">
         <span aria-hidden="true">{message}</span>
         {slow && (
-          <span aria-hidden="true" className="block text-[0.875rem] text-text-muted">
+          <span aria-hidden="true" className="block type-meta">
             {t("studies.teaching.assist.slow")}
           </span>
         )}
@@ -143,6 +147,7 @@ export function AssistPanel(props: AssistPanelProps) {
       action,
       part: target.part,
       pointId: target.pointId,
+      blockId: target.blockId ?? null,
       text: target.text,
       selected: target.selection !== null,
       request,
@@ -179,19 +184,19 @@ export function AssistPanel(props: AssistPanelProps) {
   const askButton = useRef<HTMLButtonElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const placed = useRef(false);
-  // Focus starts where the person acts: the input when one is needed, else Ask once it can be used
-  // (or the title, when the assistant cannot help with this, so the reason is read next).
+  // Give the panel a keyboard starting point immediately. When the preview
+  // arrives, advance to Ask only if the person is still at that starting point.
   useEffect(() => {
-    if (placed.current) return;
-    if (first.current) {
-      placed.current = true;
-      first.current.focus({ preventScroll: true });
-    } else if (preview) {
-      placed.current = true;
+    const initial = first.current ?? titleRef.current;
+    placed.current = Boolean(first.current);
+    initial?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    if (placed.current || (!preview && !problem)) return;
+    placed.current = true;
+    if (preview && document.activeElement === titleRef.current) {
       askButton.current?.focus({ preventScroll: true });
-    } else if (problem) {
-      placed.current = true;
-      titleRef.current?.focus({ preventScroll: true });
     }
   }, [preview, problem]);
 
@@ -249,7 +254,7 @@ export function AssistPanel(props: AssistPanelProps) {
     }
   };
 
-  const field = "h-11 min-w-0 flex-1 basis-56 rounded-aw border border-border bg-bg px-3 text-[0.9375rem] placeholder:text-text-muted";
+  const field = "h-11 min-w-0 flex-1 basis-56 aw-input px-3 text-[0.9375rem] placeholder:text-text-muted";
   const requestLabel = NEEDS_REQUEST.has(action) || OPTIONAL_REQUEST.has(action) ? t(`studies.teaching.assist.request.${action as "question"}`) : null;
 
   return (
@@ -260,14 +265,14 @@ export function AssistPanel(props: AssistPanelProps) {
       className="flex flex-col gap-3 rounded-aw border border-border border-l-[4px] border-l-accent bg-bg-secondary px-4 py-3 font-ui text-[0.9375rem]"
     >
       <div className="flex items-start justify-between gap-2">
-        <h4 ref={titleRef} tabIndex={-1} id={`${id}-title`} className="m-0 text-[1rem] font-semibold text-text-strong">
+        <h4 ref={titleRef} tabIndex={-1} id={`${id}-title`} className="type-group m-0">
           {t("studies.teaching.assist.title", { action: assistLabel(t, action), part: target.label })}
         </h4>
         <button
           type="button"
           onClick={onClose}
           aria-label={t("studies.teaching.assist.close")}
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-bg hover:text-text-strong"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"
         >
           <X className="size-4" aria-hidden="true" />
         </button>
@@ -293,9 +298,9 @@ export function AssistPanel(props: AssistPanelProps) {
                 onChange={(e) => setRequest(e.target.value)}
                 aria-describedby={`${id}-request-hint`}
                 placeholder={t("studies.teaching.assist.freePlaceholder")}
-                className="w-full rounded-aw border border-border bg-bg px-3 py-2 text-[0.9375rem] placeholder:text-text-muted"
+                className="aw-input w-full px-3 py-2"
               />
-              <p id={`${id}-request-hint`} className="m-0 text-[0.875rem] text-text-muted">
+              <p id={`${id}-request-hint`} className="m-0 type-meta">
                 {t("studies.teaching.assist.freeHint")}
               </p>
             </div>
@@ -357,7 +362,7 @@ export function AssistPanel(props: AssistPanelProps) {
             <Button className="min-h-11" onClick={onClose}>
               {t("common.cancel")}
             </Button>
-            {!busy && <span className="text-[0.875rem] text-text-muted">{t("studies.teaching.assist.askHint")}</span>}
+            {!busy && <span className="type-meta">{t("studies.teaching.assist.askHint")}</span>}
           </div>
           {busy && <Pending message={action === "story" ? t("studies.teaching.assist.pending.story") : t("studies.teaching.assist.pending.ask")} onStop={stop} />}
         </>
@@ -390,7 +395,7 @@ export function AssistPanel(props: AssistPanelProps) {
             imagesNote={imagesNote}
             imageService={imageService}
           />
-          <p className="m-0 text-[0.8125rem] text-text-muted">{t("studies.teaching.assist.from", { assistant: reply.assistant })}</p>
+          <p className="m-0 type-meta">{t("studies.teaching.assist.from", { assistant: inquiryAssistantLabel(t, reply.assistant) })}</p>
           <div>
             <Button className="min-h-11" onClick={onClose}>
               {t("studies.teaching.assist.done")}
@@ -427,8 +432,8 @@ function Shared({ preview, target }: { preview: AssistPreview; target: AssistTar
     <div className="flex flex-col gap-1 rounded-aw bg-bg px-3 py-2">
       <p className="m-0 font-medium text-text-strong">
         {preview.remote
-          ? t("studies.teaching.assist.shared.remote", { assistant: preview.assistant })
-          : t("studies.teaching.assist.shared.local", { assistant: preview.assistant })}
+          ? t("studies.teaching.assist.shared.remote", { assistant: inquiryAssistantLabel(t, preview.assistant) })
+          : t("studies.teaching.assist.shared.local", { assistant: inquiryAssistantLabel(t, preview.assistant) })}
       </p>
       <ul className="m-0 list-disc pl-5 text-text">
         {items.map((item) => (
@@ -458,7 +463,7 @@ interface ResultProps {
 
 function Heading({ heading, children, icon }: { heading: ResultProps["heading"]; children: ReactNode; icon: ReactNode }) {
   return (
-    <h5 ref={heading} tabIndex={-1} className="m-0 flex items-center gap-2 text-[1rem] font-semibold text-text-strong">
+    <h5 ref={heading} tabIndex={-1} className="type-group m-0 flex items-center gap-2">
       {icon}
       {children}
     </h5>
@@ -528,16 +533,16 @@ function Result(props: ResultProps) {
             <li key={i} className="flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2">
               {c.excerpt && <q className="text-text-muted">{c.excerpt}</q>}
               <p className="m-0 text-text-strong">{c.comment}</p>
-              <p className="m-0 text-[0.8125rem] text-text-muted">{t(`studies.teaching.assist.basis.${c.basis}`)}</p>
+              <p className="m-0 type-meta">{t(`studies.teaching.assist.basis.${c.basis}`)}</p>
               {c.passages.length > 0 && (
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-[0.875rem] text-text-muted">{t("studies.teaching.assist.comments.suggested")}</span>
+                  <span className="type-meta">{t("studies.teaching.assist.comments.suggested")}</span>
                   {c.passages.map((p) => {
                     const name = referenceLabel(p);
                     const key = `${i}-${p.canonical}`;
                     return (
                       <span key={p.canonical} className="inline-flex flex-wrap items-center gap-1">
-                        <button type="button" onClick={() => goTo(p)} className="min-h-11 rounded-aw px-2 text-link underline underline-offset-2 hover:bg-bg-secondary">
+                        <button type="button" onClick={() => goTo(p)} className="min-h-11 rounded-aw px-2 text-link underline underline-offset-2 hover:bg-hover">
                           {name}
                         </button>
                         {added.has(key) ? (
@@ -547,7 +552,7 @@ function Result(props: ResultProps) {
                             type="button"
                             onClick={() => void onAddPassage(p).then(() => setAdded((prev) => new Set(prev).add(key)))}
                             aria-label={t("studies.teaching.assist.comments.addPassage", { passage: name })}
-                            className="min-h-11 rounded-aw border border-border px-2 text-[0.875rem] hover:bg-bg-secondary"
+                            className="min-h-11 rounded-aw border border-border px-2 text-[0.875rem] hover:bg-hover"
                           >
                             {t("studies.teaching.assist.comments.add")}
                           </button>
@@ -576,7 +581,7 @@ function Result(props: ResultProps) {
           {result.options.map((o, i) => (
             <li key={i} className="flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2">
               <p className="reading m-0 whitespace-pre-wrap text-text-strong">{o.text}</p>
-              {o.note && <p className="m-0 text-[0.875rem] text-text-muted">{o.note}</p>}
+              {o.note && <p className="m-0 type-meta">{o.note}</p>}
               <div className="flex flex-wrap gap-2">
                 {!invented && singleLine && (
                   <Button className="min-h-11" onClick={() => onApply(o.text, "replace")}>
@@ -629,7 +634,7 @@ function Result(props: ResultProps) {
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {result.stories.map((s, i) => (
             <li key={i} className="flex flex-col gap-1 rounded-aw border border-border-subtle bg-bg px-3 py-2">
-              <p className="m-0 font-semibold text-text-strong">{s.title}</p>
+              <p className="type-group m-0">{s.title}</p>
               <p className={`m-0 text-[0.875rem] font-medium ${s.standing === "verified" ? "text-text-strong" : "text-danger"}`}>
                 {s.standing === "verified" ? t("studies.teaching.standing.verified") : t("studies.teaching.standing.unverified")}
               </p>
@@ -673,14 +678,14 @@ export function Sources({ sources }: { sources: { title: string; url: string; si
   if (sources.length === 0) return null;
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-[0.8125rem] font-medium text-text-muted">{t("studies.teaching.assist.stories.sources")}</span>
+      <span className="type-meta font-medium">{t("studies.teaching.assist.stories.sources")}</span>
       <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
         {sources.map((s) => (
           <li key={s.url}>
             <button
               type="button"
               onClick={() => void api.openExternalLink(s.url)}
-              className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 text-left text-link underline underline-offset-2 hover:bg-bg-secondary"
+              className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 text-left text-link underline underline-offset-2 hover:bg-hover"
             >
               <ExternalLink className="size-3.5 shrink-0" aria-hidden="true" />
               <span>
@@ -745,7 +750,7 @@ function Visuals({ reply, heading, kept, onKeep, canFindImages, canGenerateImage
               <p className="m-0 text-text-strong">
                 <span className="font-medium">{t(`studies.teaching.assist.visuals.kind.${idea.kind}`)}:</span> {idea.description}
               </p>
-              <p className="m-0 text-[0.8125rem] text-text-muted">{t("studies.teaching.standing.suggestion")}</p>
+              <p className="m-0 type-meta">{t("studies.teaching.standing.suggestion")}</p>
               <div className="flex flex-wrap gap-2">
                 {canFindImages && (
                   <Button className="min-h-11 aria-disabled:cursor-not-allowed aria-disabled:opacity-60" aria-disabled={images === "loading"} onClick={() => void find(i, idea.searchTerms || idea.description)}>
@@ -780,9 +785,9 @@ function Visuals({ reply, heading, kept, onKeep, canFindImages, canGenerateImage
                   </Button>
                 )}
               </div>
-              {canGenerateImages && imageService && <p className="m-0 text-[0.8125rem] text-text-muted">{t("studies.teaching.assist.sendsTo", { service: imageService })}</p>}
+              {canGenerateImages && imageService && <p className="m-0 type-meta">{t("studies.teaching.assist.sendsTo", { service: imageService })}</p>}
               {!canGenerateImages && imagesNote && (
-                <p id={`no-make-${i}`} className="m-0 text-[0.8125rem] text-text-muted">
+                <p id={`no-make-${i}`} className="m-0 type-meta">
                   {t(`studies.teaching.assist.visuals.cannotMake.${imagesNote}`)}
                 </p>
               )}
@@ -799,13 +804,13 @@ function Visuals({ reply, heading, kept, onKeep, canFindImages, canGenerateImage
                           <ImageIcon className="size-6" aria-hidden="true" />
                         </span>
                       )}
-                      <span className="text-[0.8125rem] text-text">{image.title}</span>
-                      <span className="text-[0.8125rem] text-text-muted">{t("studies.teaching.standing.found", { licence: image.licence })}</span>
-                      {image.author && <span className="text-[0.8125rem] text-text-muted">{t("studies.teaching.assist.images.by", { author: image.author })}</span>}
+                      <span className="type-meta !text-text">{image.title}</span>
+                      <span className="type-meta">{t("studies.teaching.standing.found", { licence: image.licence })}</span>
+                      {image.author && <span className="type-meta">{t("studies.teaching.assist.images.by", { author: image.author })}</span>}
                       <button
                         type="button"
                         onClick={() => void api.openExternalLink(image.pageUrl)}
-                        className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 text-left text-[0.8125rem] text-link underline underline-offset-2"
+                        className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 text-left text-[0.875rem] text-link underline underline-offset-2"
                       >
                         <ExternalLink className="size-3.5" aria-hidden="true" />
                         {t("studies.teaching.assist.images.source")}
@@ -829,7 +834,7 @@ function Visuals({ reply, heading, kept, onKeep, canFindImages, canGenerateImage
                                 licence: image.licence,
                                 licenceUrl: image.licenceUrl,
                                 author: image.author,
-                                attribution: image.attribution,
+                                attribution: imageAttribution(t, image),
                               },
                             })
                           }
@@ -878,7 +883,7 @@ function Visuals({ reply, heading, kept, onKeep, canFindImages, canGenerateImage
           {error}
         </p>
       )}
-      <p className="m-0 flex items-center gap-1 text-[0.8125rem] text-text-muted">
+      <p className="m-0 flex items-center gap-1 type-meta">
         <BookOpen className="size-3.5" aria-hidden="true" />
         {t("studies.teaching.assist.images.nothingPlaced")}
       </p>

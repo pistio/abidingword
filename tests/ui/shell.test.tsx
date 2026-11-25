@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { render } from "@testing-library/react";
 import { App } from "@/app/App";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 describe("application shell", () => {
   it("shows the brand and the three workspace panes", async () => {
@@ -20,7 +20,7 @@ describe("application shell", () => {
     expect(within(scripture).getByText("No Bible has been added yet.")).toBeInTheDocument();
     expect(await within(study).findByRole("heading", { level: 1, name: "Studies" })).toBeInTheDocument();
     expect(await within(sources).findByText(/No sources yet/)).toBeInTheDocument();
-    expect(within(sources).getByRole("button", { name: "Add to library…" })).toBeEnabled();
+    expect(within(sources).getByRole("button", { name: "Add Sources…" })).toBeEnabled();
   });
 
   it("offers keyboard-operable pane dividers", async () => {

@@ -9,6 +9,14 @@ interface DialogProps {
   actions: ReactNode;
   /** Escape, the backdrop and Cancel all call this. */
   onClose: () => void;
+  /** A larger dialog that scrolls (a review or an editor), not a confirmation. */
+  wide?: boolean;
+  /** "alertdialog" for a confirmation that interrupts (v0.24). */
+  role?: "dialog" | "alertdialog";
+  /** The id of the text that says what is asked (read with the title). */
+  describedBy?: string;
+  /** Where focus goes when the dialog closes if the element that opened it is gone. */
+  returnFocus?: () => HTMLElement | null;
 }
 
 /**
@@ -17,13 +25,15 @@ interface DialogProps {
  * `autoFocus`), keeps Tab inside, closes on Escape, and gives focus back to
  * whatever had it before. The page behind is dimmed and cannot be used.
  */
-export function Dialog({ title, children, actions, onClose }: DialogProps) {
+export function Dialog({ title, children, actions, onClose, wide = false, role = "dialog", describedBy, returnFocus }: DialogProps) {
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
+  const returnFocusRef = useRef(returnFocus);
   useEffect(() => {
     onCloseRef.current = onClose;
-  }, [onClose]);
+    returnFocusRef.current = returnFocus;
+  }, [onClose, returnFocus]);
 
   useEffect(() => {
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -57,23 +67,27 @@ export function Dialog({ title, children, actions, onClose }: DialogProps) {
     document.addEventListener("keydown", onKey, true);
     return () => {
       document.removeEventListener("keydown", onKey, true);
-      opener?.focus();
+      if (opener?.isConnected) opener.focus();
+      else returnFocusRef.current?.()?.focus();
     };
   }, []);
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(22,39,31,0.45)] p-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--aw-backdrop)] p-4" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div
         ref={panel}
-        role="dialog"
+        role={role}
         aria-modal="true"
         aria-labelledby={titleId}
-        className="flex w-full max-w-md flex-col gap-4 rounded-aw border border-border bg-bg p-6 text-text shadow-xl"
+        aria-describedby={describedBy}
+        // One dialog look (v0.18.5): raised surface, a task title, the body, actions at the foot on the right
+        // (the primary one last); a confirmation is narrow, a review or an editor wide and scrolling.
+        className={`flex w-full flex-col gap-4 rounded-[var(--aw-radius-lg)] border border-border bg-raised p-6 text-text shadow-xl ${wide ? "max-h-[calc(100vh-2rem)] max-w-5xl overflow-y-auto" : "max-w-lg"}`}
       >
-        <h2 id={titleId} className="m-0 font-display text-[1.25rem] font-heading text-text-strong">
+        <h2 id={titleId} className="type-worktitle m-0">
           {title}
         </h2>
-        <div className="flex flex-col gap-2">{children}</div>
+        <div className="flex flex-col gap-3">{children}</div>
         <div data-dialog-actions className="flex flex-wrap justify-end gap-2 pt-2">
           {actions}
         </div>

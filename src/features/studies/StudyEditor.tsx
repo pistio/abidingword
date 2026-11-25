@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, ChevronDown, ChevronRight, ChevronsDownUp, ChevronsUpDown, Plus } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Plus } from "lucide-react";
 import { Notice } from "@/design-system/Notice";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useSaveTracker } from "@/hooks/SaveTracker";
@@ -12,15 +12,20 @@ import type { StudySection } from "@/types/domain";
 import { FINDING_TYPES, type FindingType } from "@/types/studies";
 import { Button } from "@/design-system/Button";
 import { EditableTitle } from "./EditableTitle";
-import { AddPart } from "./AddPart";
+import { AddPart, type NewPart } from "./AddPart";
 import { FindingList, FindingsPanel, KindFilter, QuickCapture } from "./FindingsPanel";
-import { RelatedStudies } from "./RelatedStudies";
+import { revealStudySection } from "./sectionNavigation";
 import { SectionEditor } from "./SectionEditor";
 import { sectionTitle } from "./builtinText";
 import { useStudyFocus } from "./StudyFocus";
-import { StudyDetailsPanel } from "./StudyDetails";
+import { StudyInfo } from "./StudyDetails";
 import { StudyPassages } from "./StudyPassages";
+import { hasJourney, namesRun, phaseRuns } from "./journey";
+import { NextStep, usePhaseName } from "./StudyJourney";
 import { lastView, rememberView, type StudyView } from "./studyView";
+import { qaData } from "./qa";
+import { PozetekRepair } from "./PozetekRepair";
+import { StudyQaExport } from "./StudyQaExport";
 import { TeachingView } from "@/features/teaching/TeachingView";
 
 interface StudyEditorProps {
@@ -37,18 +42,30 @@ interface StudyEditorProps {
 export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStudy, onRevealScripture }: StudyEditorProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const { settled } = useSaveTracker();
   const { goTo, setStudyPassage } = useScripture();
   const detail = useLoad(useCallback(() => api.studyGet(studyId), [api, studyId]));
   const findings = useLoad(useCallback(() => api.findingList(studyId), [api, studyId]));
   const templates = useLoad(useCallback(() => api.templateList(), [api]));
   const passages = useLoad(useCallback(() => api.studyPassageList(studyId), [api, studyId]));
   const relations = useLoad(useCallback(() => api.studyRelationList(studyId), [api, studyId]));
-  const detailsId = useId();
-  const [showDetails, setShowDetails] = useState(false);
+  // The Bible Teachings prepared from this study, for the way on at its end (v0.18.6).
+  const teachings = useLoad(useCallback(() => api.teachingList(studyId), [api, studyId]));
+  // Help with a part (v0.20) is offered only when the assistant is turned on.
+  const assistant = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
+  const helpOn = assistant.data?.config.enabled === true;
   // Notes being written, one per place: a part's id, or "" for the study's other notes, with the kind chosen.
   // Opening Add again where a note is already being written keeps that draft.
   const [capturing, setCapturingState] = useState<Readonly<Record<string, FindingType>>>({});
+  const noteButton = useRef<HTMLButtonElement>(null);
+  const captureFocusFrame = useRef<number | null>(null);
+  const cancelCaptureFocusReturn = useCallback(() => {
+    if (captureFocusFrame.current !== null) cancelAnimationFrame(captureFocusFrame.current);
+    captureFocusFrame.current = null;
+  }, []);
+  useEffect(() => cancelCaptureFocusReturn, [cancelCaptureFocusReturn, studyId]);
   const openCapture = (place: string, kind: FindingType) => {
+    cancelCaptureFocusReturn();
     if (capturing[place]) {
       document.querySelector<HTMLTextAreaElement>(`[data-capture="${place}"]`)?.focus();
       return;
@@ -56,38 +73,34 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     setCapturingState((c) => ({ ...c, [place]: kind }));
   };
   const closeCapture = (place: string) => {
+    const focused = document.activeElement;
+    const captureRoot = document.querySelector(`[data-capture="${place}"]`)?.closest("[role='group']");
+    const opener = place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-note] button") : noteButton.current;
+    const ownsFocus = captureRoot?.contains(focused) || focused === opener || focused === document.body;
+    cancelCaptureFocusReturn();
     setCapturingState(({ [place]: _closed, ...rest }) => rest);
-    // Back to the Add it was opened from.
-    requestAnimationFrame(() =>
-      (place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-add]") : noteButton.current)?.focus(),
-    );
+    if (!ownsFocus) return;
+    // Return to Note only while the closed capture still owns the keyboard.
+    // A new passage input, writing field or reopened draft takes precedence.
+    captureFocusFrame.current = requestAnimationFrame(() => {
+      captureFocusFrame.current = null;
+      const current = document.activeElement;
+      if (current && current !== document.body && current !== focused) return;
+      const target = place ? document.getElementById(`section-anchor-${place}`)?.querySelector<HTMLElement>("[data-part-note] button") : noteButton.current;
+      target?.focus({ preventScroll: true });
+    });
   };
-  const noteButton = useRef<HTMLButtonElement>(null);
-  // Parts folded away, remembered for this study on this computer (a convenience, never study data).
-  const [collapsed, setCollapsedState] = useState<ReadonlySet<string>>(() => new Set(readLocal<string[]>(collapsedKey(studyId), [])));
-  const setCollapsed = useCallback(
-    (next: ReadonlySet<string>) => {
-      setCollapsedState(next);
-      writeLocal(collapsedKey(studyId), [...next]);
-    },
-    [studyId],
-  );
-  const unfold = useCallback(
-    (sectionId: string) =>
-      setCollapsedState((current) => {
-        if (!current.has(sectionId)) return current;
-        const next = new Set([...current].filter((id) => id !== sectionId));
-        writeLocal(collapsedKey(studyId), [...next]);
-        return next;
-      }),
-    [studyId],
-  );
+  // A view preference only: both views edit the same stored sections and writing.
+  const [continuous, setContinuous] = useState(() => readLocal<boolean>(`study.continuous.${studyId}`, true));
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const unfold = useCallback((sectionId: string) => setActiveSection(sectionId), []);
   // What the user has typed but the saved copy may not hold yet (block id -> has writing).
   const [typed, setTyped] = useState<Record<string, boolean>>({});
   const onContent = useCallback((blockId: string, has: boolean) => setTyped((prev) => (prev[blockId] === has ? prev : { ...prev, [blockId]: has })), []);
+  const [removedEmptyPart, setRemovedEmptyPart] = useState<string | null>(null);
+  const [restoringParts, setRestoringParts] = useState(false);
   const [newSection, setNewSection] = useState<string | null>(null);
   // Where the user last worked, and a block just added there: the study's Add puts text blocks there.
-  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [newBlock, setNewBlock] = useState<string | null>(null);
   // The kind the findings are narrowed to, in the study's own notes and in every section.
   const [kindFilter, setKindFilter] = useState<FindingType | null>(null);
@@ -98,7 +111,11 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     setViewState(next);
     rememberView(studyId, next);
   };
-  const toggle = useRef<HTMLButtonElement>(null);
+  // Back from the teachings, the way on at the study's end names what was prepared there.
+  const reloadTeachings = teachings.reload;
+  useEffect(() => {
+    if (view === "study") reloadTeachings();
+  }, [view, reloadTeachings]);
   const article = useRef<HTMLElement>(null);
   const openedId = detail.data?.study.id;
 
@@ -173,7 +190,32 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     if (activeRef.current) unfold(activeRef.current);
   }, [added, studyId, reloadFindings, unfold]);
 
+  // The study's own fields saved from elsewhere (a word from the reader, v0.21).
+  const updated = focus.updatedStudy;
+  const seenUpdate = useRef(updated.n);
+  useEffect(() => {
+    if (updated.n === seenUpdate.current) return;
+    seenUpdate.current = updated.n;
+    const now = detailRef.current;
+    if (updated.study && now && updated.study.id === studyId) setDetail({ ...now, study: updated.study });
+  }, [updated, studyId, setDetail]);
+
   const sections = useMemo(() => detail.data?.sections ?? [], [detail.data]);
+  // The study's movement (v0.18.6): its parts in runs of one phase, where they stand.
+  const runs = useMemo(() => phaseRuns(sections), [sections]);
+  const journey = hasJourney(runs);
+  const phaseName = usePhaseName();
+  // A.4.3 (#25): the study's secondary controls are behind one quiet "…" (closed by default).
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const optionsToggle = useRef<HTMLButtonElement>(null);
+  const [exporting, setExporting] = useState(false);
+  // Where each phase begins: its first part, the phase's number and, where it adds something, its name.
+  const phaseStarts = new Map(
+    runs.map((run, index) => [
+      run.sections[0]!.id,
+      { index, first: index === 0, label: run.phase && namesRun(run, phaseName(run.phase), sectionTitle) ? phaseName(run.phase) : null },
+    ]),
+  );
   if (missing) return null;
   if (detail.error) return <Notice tone="error">{detail.error.message}</Notice>;
   if (!detail.data) return <p className="text-text-muted">{t("studies.editor.opening")}</p>;
@@ -181,12 +223,26 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
   const { study } = detail.data;
   const current = detail.data;
   // The template whose parts-for-later are offered: the one the study was made with, else the built-in for its kind.
-  const template =
-    (templates.data ?? []).find((tpl) => tpl.id === study.templateId) ?? (templates.data ?? []).find((tpl) => tpl.isBuiltin && tpl.studyType === study.studyType) ?? null;
+  // A study made from a template no longer there is offered nothing in its place (v0.18.7): its
+  // structure is its own, and a built-in template's parts would bring meanings it never had.
+  const template = study.templateId
+    ? ((templates.data ?? []).find((tpl) => tpl.id === study.templateId) ?? null)
+    : ((templates.data ?? []).find((tpl) => tpl.isBuiltin && tpl.studyType === study.studyType) ?? null);
   const expand = unfold;
-  const allCollapsed = sections.length > 0 && sections.every((sec) => collapsed.has(sec.id));
+  const focusedIndex = Math.max(0, sections.findIndex((section) => section.id === activeSection));
+  const focusedSection = sections[focusedIndex];
+  const focusSection = (id: string) => {
+    setActiveSection(id);
+    unfold(id);
+    requestAnimationFrame(() => {
+      revealStudySection(id);
+    });
+  };
   const updateSection = (section: StudySection) =>
-    detail.setData({ ...current, sections: sections.map((s) => (s.id === section.id ? section : s)) });
+    detail.setData(previous => {
+      const latest = previous ?? current;
+      return { ...latest, sections: latest.sections.map(part => part.id === section.id ? section : part) };
+    });
 
   const moveSection = async (sectionId: string, delta: -1 | 1) => {
     const ids = sections.map((s) => s.id);
@@ -203,15 +259,29 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
     }
   };
 
-  const addSection = async (part: { title: string; guidance?: string; templateSectionKey?: string }) => {
+  const addSection = async (part: NewPart) => {
     setError(null);
     try {
-      const created = await api.studySectionCreate({ studyId: study.id, ...part });
+      // A part the template keeps for later comes with its key and phase; one of the person's own with neither.
+      const created = await api.studySectionCreate({ studyId: study.id, title: part.title, guidance: part.guidance, templateSectionKey: part.templateSectionKey, key: part.key ?? null, phase: part.phase ?? null });
       setNewSection(created.id);
+      setActiveSection(created.id);
       detail.reload();
     } catch (e) {
       setError(toApiError(e).message);
     }
+  };
+
+  const restoreParts = async (keys?: string[]) => {
+    setRestoringParts(true);
+    try {
+      await settled();
+      const restored = await api.studySectionRestoreMissing(study.id, keys);
+      detail.setData(previous => ({ ...(previous ?? current), sections: restored }));
+      const first = restored.find(part => !sections.some(old => old.id === part.id));
+      if (first) { setActiveSection(first.id); setNewSection(first.id); }
+      setRemovedEmptyPart(null);
+    } finally { setRestoringParts(false); }
   };
 
   const sectionNotes = (sectionId: string) => {
@@ -240,6 +310,18 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
       setError(toApiError(e).message);
     }
   };
+  // A.4.4 (#27): an optional paired question and answer, where it was asked for.
+  const addQa = async (target: StudySection) => {
+    setError(null);
+    try {
+      const block = await api.studyBlockCreate({ sectionId: target.id, blockType: "question", data: qaData({ question: "", answer: "" }) });
+      expand(target.id);
+      setNewBlock(block.id);
+      updateSection({ ...target, blocks: [...target.blocks, block] });
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
   const capture = (section: StudySection) =>
     capturing[section.id] ? (
       <QuickCapture
@@ -259,17 +341,7 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
 
   return (
     <article ref={article} className="flex flex-col gap-3">
-      <header
-        id="study-overview"
-        className="scroll-mt-4 flex flex-col gap-1"
-        onKeyDown={(e) => {
-          if (e.key === "Escape" && showDetails) {
-            e.stopPropagation();
-            setShowDetails(false);
-            toggle.current?.focus();
-          }
-        }}
-      >
+      <header id="study-overview" className="scroll-mt-4 flex flex-col gap-1">
         <div className="flex items-start gap-1">
           {back && (
             <nav aria-label={t("studies.projects.breadcrumb")} className="-ml-3 shrink-0">
@@ -278,109 +350,152 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
                 onClick={back.onBack}
                 aria-label={back.label}
                 title={back.label}
-                className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary hover:text-text-strong"
+                className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"
               >
                 <ArrowLeft className="size-5" aria-hidden="true" />
               </button>
             </nav>
           )}
           <div className="min-w-0 flex-1">
-            <EditableTitle key={study.id} label={t("studies.editor.titleLabel")} value={study.title} onSave={rename} />
+            <EditableTitle saveKey={`study:${study.id}:title`} key={study.id} label={t("studies.editor.titleLabel")} value={study.title} onSave={rename} />
           </div>
+          {view === "study" && (
+            <button
+              ref={optionsToggle}
+              type="button"
+              aria-expanded={optionsOpen}
+              aria-controls="study-options"
+              aria-label={t("studies.editor.options")}
+              title={t("studies.editor.options")}
+              onClick={() => setOptionsOpen((v) => !v)}
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
+            >
+              <MoreHorizontal className="size-5" aria-hidden="true" />
+            </button>
+          )}
         </div>
-        {/* One quiet line under the title: the two ways of working, the passages, the details. */}
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.9375rem] text-text-muted">
-          <div role="group" aria-label={t("studies.view.label")} className="flex gap-0.5 rounded-aw border border-border-subtle p-0.5">
+        {/* A.4.3: the two tabs, and a save state that is quiet when all is well. */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.9375rem] text-text-muted">
+          <div role="group" aria-label={t("studies.view.label")} className="-ml-2 flex">
             {(["study", "teaching"] as const).map((v) => (
               <button
                 key={v}
                 type="button"
                 aria-pressed={view === v}
                 onClick={() => setView(v)}
-                className="min-h-11 rounded-aw px-3 text-[0.9375rem] font-medium text-text-strong hover:bg-bg-secondary aria-pressed:bg-primary aria-pressed:text-on-primary"
+                className="aw-tab"
               >
                 {t(`studies.view.${v}`)}
               </button>
             ))}
           </div>
-          <button
-            ref={toggle}
-            type="button"
-            aria-expanded={showDetails}
-            aria-controls={detailsId}
-            onClick={() => setShowDetails(!showDetails)}
-            className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 hover:text-text-strong"
-          >
-            {showDetails ? <ChevronDown className="size-4" aria-hidden="true" /> : <ChevronRight className="size-4" aria-hidden="true" />}
-            {t("studies.header.detailsToggle")}
-          </button>
-          <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />
-          {view === "study" && <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />}
-          {view === "study" && sections.length > 1 && (
-            <button
-              type="button"
-              onClick={() => setCollapsed(allCollapsed ? new Set() : new Set(sections.map((sec) => sec.id)))}
-              className="inline-flex min-h-11 items-center gap-1 rounded-aw px-1 hover:text-text-strong"
-            >
-              {allCollapsed ? <ChevronsUpDown className="size-4" aria-hidden="true" /> : <ChevronsDownUp className="size-4" aria-hidden="true" />}
-              {allCollapsed ? t("studies.parts.expandAll") : t("studies.parts.collapseAll")}
-            </button>
-          )}
           <SaveIndicator />
         </div>
-        <RelatedStudies relations={relations.data ?? []} onOpen={onOpenStudy} />
-        {showDetails && (
-          <StudyDetailsPanel
-            id={detailsId}
-            study={study}
-            findings={findings.data ?? []}
-            templates={templates.data ?? []}
-            passages={passages.data ?? []}
-            relations={relations.data ?? []}
-            reloadPassages={passages.reload}
-            reloadRelations={relations.reload}
-            onChanged={(s) => detail.setData({ ...current, study: s })}
-            onDuplicated={(id) => onOpenStudy({ id, projectId: study.projectId })}
-            onRevealScripture={onRevealScripture}
-          />
+        {view === "study" && optionsOpen && (
+          <div
+            id="study-options"
+            role="group"
+            aria-label={t("studies.editor.options")}
+            onKeyDown={(e) => { if (e.key === "Escape") { e.stopPropagation(); setOptionsOpen(false); optionsToggle.current?.focus(); } }}
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-aw border border-border-subtle bg-bg-secondary px-2 py-1 text-[0.9375rem] text-text-muted"
+          >
+            <StudyInfo
+              onDeleted={onMissing}
+              study={study}
+              sections={sections}
+              findings={findings.data ?? []}
+              templates={templates.data ?? []}
+              passages={passages.data ?? []}
+              relations={relations.data ?? []}
+              reloadPassages={passages.reload}
+              reloadRelations={relations.reload}
+              onChanged={(s) => detail.setData({ ...current, study: s })}
+              onDuplicated={(id) => onOpenStudy({ id, projectId: study.projectId })}
+              onOpenStudy={onOpenStudy}
+              onRevealScripture={onRevealScripture}
+            />
+            <StudyPassages studyId={study.id} title={study.title} passages={passages.data ?? []} reload={passages.reload} onReveal={onRevealScripture} />
+            <KindFilter findings={findings.data ?? []} filter={kindFilter} onFilter={setKindFilter} />
+            <Button variant="quiet" onClick={() => setExporting(true)}>{t("studies.qaExport.open")}</Button>
+            <div role="group" aria-label={t("studies.flow.mode")} className="flex flex-wrap gap-1">
+              {[true, false].map((mode) => <button key={String(mode)} type="button" className="aw-tab min-h-11" aria-pressed={continuous === mode} onClick={() => { setContinuous(mode); if (!mode && focusedSection) setActiveSection(focusedSection.id); writeLocal(`study.continuous.${studyId}`, mode); }}>{t(mode ? "studies.flow.continuous" : "studies.flow.outline")}</button>)}
+            </div>
+          </div>
+        )}
+        {/* A filter narrows the notes: say so while it is on, even with the options closed. */}
+        {view === "study" && kindFilter && !optionsOpen && (
+          <p className="type-meta m-0">{t("studies.editor.filterOn")} <button type="button" className="underline" onClick={() => setKindFilter(null)}>{t("studies.editor.filterClear")}</button></p>
         )}
       </header>
 
+      {exporting && <StudyQaExport title={study.title} sections={sections} templateKey={template?.key} onClose={() => setExporting(false)} />}
       {view === "teaching" ? (
-        <TeachingView studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
+        <TeachingView onOpenStudy={(target) => { if (target.id === study.id) setView("study"); else onOpenStudy(target); }} studyId={study.id} studyTitle={study.title} findings={findings.data ?? []} onRevealScripture={onRevealScripture} />
       ) : (
       <>
+      {!continuous && focusedSection && <nav data-study-steps aria-label={t("studies.flow.steps")} className="sticky top-0 z-10 grid grid-cols-2 items-stretch gap-2 border-b border-border-subtle bg-pane-work py-2">
+        <Button className="row-start-2 min-w-0" disabled={focusedIndex === 0} onClick={() => focusSection(sections[focusedIndex - 1]!.id)}>{t("studies.flow.previous")}</Button>
+        <label className="col-span-2 row-start-1 flex min-w-0 flex-col gap-1 text-[0.9375rem]">
+          <span>{t("studies.flow.step", { current: focusedIndex + 1, total: sections.length })}</span>
+          <select className="aw-input min-h-11 min-w-0 px-2" value={focusedSection.id} onChange={(event) => focusSection(event.target.value)}>
+            {sections.map((section) => <option key={section.id} value={section.id}>{sectionTitle(section, template?.key)}</option>)}
+          </select>
+        </label>
+        <Button className="row-start-2 min-w-0" disabled={focusedIndex === sections.length - 1} onClick={() => focusSection(sections[focusedIndex + 1]!.id)}>{t("studies.flow.next")}</Button>
+      </nav>}
+      {/* The parts stay siblings keyed by their own id, so moving one never rebuilds the others;
+          where a phase begins is marked on its first part (v0.18.6 review). */}
       {sections.map((section, index) => (
+        <div key={section.id} hidden={!continuous && section.id !== focusedSection?.id}>
         <SectionEditor
           templateKey={template?.key}
           key={section.id}
           section={section}
-          isFirst={index === 0}
-          isLast={index === sections.length - 1}
+          isFirst={section.id === sections[0]?.id}
+          isLast={section.id === sections[sections.length - 1]?.id}
           hasFindings={(findings.data ?? []).some((f) => f.sectionId === section.id)}
           notes={sectionNotes(section.id)}
           noteCount={(findings.data ?? []).filter((f) => f.sectionId === section.id).length}
           capture={capture(section)}
-          collapsed={collapsed.has(section.id)}
-          onCollapsedChange={(fold) => setCollapsed(fold ? new Set([...collapsed, section.id]) : new Set([...collapsed].filter((id) => id !== section.id)))}
+          collapsed={false}
+          onCollapsedChange={() => undefined}
+          writingView
           onAddWriting={() => void addWriting(section)}
+          onAddQa={() => void addQa(section)}
           onAddNote={(kind) => {
             expand(section.id);
             openCapture(section.id, kind);
           }}
           onChange={updateSection}
           onMove={(delta) => moveSection(section.id, delta)}
-          onDeleted={() => {
+          onDeleted={(wasEmpty) => {
+            if (wasEmpty && study.templateId && template?.isBuiltin && template.sections.some(part => part.key === section.key && !part.optional && !part.retired) && ["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key)) setRemovedEmptyPart(section.key);
+            const next = sections[index + 1] ?? sections[index - 1];
+            if (next) requestAnimationFrame(() => revealStudySection(next.id));
+            else requestAnimationFrame(() => document.getElementById("study-overview")?.querySelector<HTMLElement>("button, input, [tabindex]")?.focus());
             detail.reload();
             findings.reload();
           }}
           onRevealScripture={onRevealScripture}
           reveal={section.id === newSection}
+          active={section.id === activeSection}
+          phase={journey ? phaseStarts.get(section.id) : undefined}
           onActive={() => setActiveSection(section.id)}
+          help={
+            helpOn
+              ? {
+                  studyId: study.id,
+                  studyTitle: study.title,
+                  notes: (findings.data ?? []).filter((f) => f.sectionId === section.id),
+                  onKept: () => findings.reload(),
+                }
+              : undefined
+          }
           newBlockId={newBlock}
           typed={typed}
           onContent={onContent}
         />
+        </div>
       ))}
 
       <FindingsPanel
@@ -396,20 +511,22 @@ export function StudyEditor({ studyId, back, revealPrimary, onMissing, onOpenStu
 
       {/* The end of the study: another part, or a note that belongs to no part. */}
       <div className="flex flex-wrap items-start gap-2 border-t border-border-subtle pt-3">
-        <AddPart template={template} sections={sections} onAdd={addSection} />
+        {removedEmptyPart && <div role="status" className="basis-full type-meta">{t("studies.parts.restoreEmptyHint")} <Button disabled={restoringParts} onClick={() => void restoreParts([removedEmptyPart]).catch(error => setError(toApiError(error).message))}>{t("common.lifecycle.undo")}</Button></div>}
+        {template?.isBuiltin && template.key === "pozetek-writing-study" && <PozetekRepair studyId={study.id} hasOpenDrafts={Object.keys(capturing).length > 0} onChanged={parts => detail.setData(previous => ({ ...(previous ?? current), sections: parts }))} />}
+        <AddPart template={template} sections={sections} onAdd={addSection} onRestore={study.templateId ? restoreParts : undefined} />
         <Button ref={noteButton} variant="quiet" className="min-h-11" onClick={() => openCapture("", lastNoteKind(study.id))}>
           <Plus className="size-4" aria-hidden="true" />
           {t("studies.add.note")}
         </Button>
       </div>
+      <NextStep teachings={teachings.data ?? null} onOpenTeaching={() => setView("teaching")} />
+      {(template?.key === "ten-step-writing-study" || template?.key === "ten-step-exegesis" || sections.some((section) => section.fields?.template === "ten-step-writing-study" || section.fields?.template === "ten-step-exegesis")) && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
       </>
       )}
       {error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{error}</p>}
     </article>
   );
 }
-
-const collapsedKey = (studyId: string) => `study.collapsed.${studyId}`;
 
 /** The kind of note last written in this study (as the note form remembers it), else an observation. */
 function lastNoteKind(studyId: string): FindingType {
@@ -424,17 +541,27 @@ function lastNoteKind(studyId: string): FindingType {
 function SaveIndicator() {
   const { t } = useTranslation();
   const { status } = useSaveTracker();
-  // The "Saved" of one save is put away after a moment (the status object is new for each save).
+  // A.4.3: success stays quiet (a brief, muted "Saved"); saving and failure are plainly visible.
   const [expired, setExpired] = useState<unknown>(null);
   useEffect(() => {
     if (status.state !== "saved") return;
-    const timer = setTimeout(() => setExpired(status), 2000);
+    const timer = setTimeout(() => setExpired(status), 1500);
     return () => clearTimeout(timer);
   }, [status]);
   const text =
     status.state === "saving" ? t("common.saving") : status.state === "saved" && expired !== status ? t("studies.editor.saved") : status.state === "error" ? status.message : "";
   return (
-    <span role="status" className={status.state === "error" ? "text-danger" : ""}>
+    <span
+      role="status"
+      data-save-state={status.state}
+      className={
+        status.state === "error"
+          ? "ml-auto rounded-aw border border-danger/50 bg-danger/10 px-2 py-0.5 font-medium text-danger"
+          : status.state === "saving"
+            ? "ml-auto font-medium text-text-strong"
+            : "ml-auto text-text-muted"
+      }
+    >
       {text}
     </span>
   );

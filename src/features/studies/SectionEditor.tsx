@@ -1,20 +1,30 @@
-import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, ChevronRight, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronRight, Info, Lightbulb, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useSaveTracker } from "@/hooks/SaveTracker";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
+import type { Finding, FindingType } from "@/types/studies";
+import { revealStudySection } from "./sectionNavigation";
+import { BlockEditor, type BlockHandle } from "./BlockEditor";
 import { SECTION_STATUSES, type SectionStatus, type StudySection } from "@/types/domain";
-import type { FindingType } from "@/types/studies";
-import { BlockEditor } from "./BlockEditor";
 import { sectionGuidance, sectionTitle, structuredOptional } from "./builtinText";
 import { FieldsEditor } from "./FieldsEditor";
 import { PartAdd } from "./PartAdd";
+import { Dialog } from "@/design-system/Dialog";
+import { readLocal, writeLocal } from "@/lib/storage";
+import { QaEditor } from "./QaEditor";
+import { qaOf } from "./qa";
+import { StudyHelp } from "./StudyHelp";
 
 interface SectionEditorProps {
   section: StudySection;
   templateKey?: string;
+  /** A writing document or focused step: headings are not folding controls. */
+  writingView?: boolean;
   isFirst: boolean;
   isLast: boolean;
   /** Whether findings are assigned to this section. */
@@ -31,12 +41,18 @@ interface SectionEditorProps {
   /** Add, at the end of the part: more writing, or a note of a kind. */
   onAddWriting: () => void;
   onAddNote: (kind: FindingType) => void;
+  /** A.4.4 (#27): add a paired question and answer here. */
+  onAddQa?: () => void;
   onChange: (section: StudySection) => void;
   onMove: (delta: -1 | 1) => void;
-  onDeleted: () => void;
+  onDeleted: (wasEmpty: boolean) => void;
   onRevealScripture: () => void;
   /** A section just added: bring it into view and focus its heading. */
   reveal?: boolean;
+  /** The part the person is working in (v0.18.6): it stands out from the parts around it. */
+  active?: boolean;
+  /** This part begins a phase of the study's movement (v0.18.6): set apart, and named when that adds something. */
+  phase?: { index: number; first: boolean; label: string | null };
   /** The user is working in this section (focus entered it): the study's Add puts a text block here. */
   onActive: () => void;
   /** A block just added from the study's Add: focus it. */
@@ -44,26 +60,43 @@ interface SectionEditorProps {
   /** Blocks whose writing differs from the saved copy: id -> has content now. */
   typed: Record<string, boolean>;
   onContent: (blockId: string, hasContent: boolean) => void;
+  /** Help with this part (v0.20): only when the assistant is turned on. */
+  help?: { studyId: string; studyTitle: string; notes: Finding[]; onKept: (finding: Finding) => void };
 }
 
-const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong disabled:opacity-40";
+const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
 
 export function SectionEditor(props: SectionEditorProps) {
-  const { section, templateKey, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onChange, onMove, onDeleted, onRevealScripture, reveal = false, onActive, newBlockId, typed, onContent } = props;
+  const { section, templateKey, writingView = false, isFirst, isLast, hasFindings, notes, noteCount, capture, collapsed, onCollapsedChange, onAddWriting, onAddNote, onAddQa, onChange, onMove, onDeleted, onRevealScripture, reveal = false, active = false, phase, onActive, newBlockId, typed, onContent, help } = props;
   const { t } = useTranslation();
   const api = useApi();
-  const { track, settled } = useSaveTracker();
+  const { track } = useSaveTracker();
   const [renaming, setRenaming] = useState(false);
   const [managing, setManaging] = useState(false);
   const manageId = useId();
   useEffect(() => {
     if (!reveal) return;
-    const heading = document.getElementById(`section-${section.id}`);
-    heading?.scrollIntoView?.({ block: "start" });
-    heading?.focus({ preventScroll: true });
+    revealStudySection(section.id);
   }, [reveal, section.id]);
   const manageToggle = useRef<HTMLButtonElement>(null);
+  // Help (v0.20): what each block holds on screen, and where the person last worked.
+  const handles = useRef(new Map<string, BlockHandle>());
+  const register = useCallback((blockId: string, handle: BlockHandle | null) => {
+    if (handle) handles.current.set(blockId, handle);
+    else handles.current.delete(blockId);
+  }, []);
+  const [lastBlock, setLastBlock] = useState<string | null>(null);
+  const [helping, setHelping] = useState(false);
+  const helpButton = useRef<HTMLButtonElement>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const { deleting, runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
+  const deleteOpener = useRef<HTMLButtonElement>(null);
+  // A.4.3 (#25): the part's hints (guidance, goal, field help, example) are on request, never repeated chrome.
+  const hintKey = `study.part.hints.${section.id}`;
+  const [hintPreference, setHintPreference] = useState<boolean | null>(() => readLocal(hintKey, null));
+  const empty = !hasFindings && !section.blocks.some(block => typed[block.id] ?? Boolean(block.content.trim() || block.data));
+  const hints = hintPreference ?? empty;
+  const setHints = (value: boolean) => { setHintPreference(value); writeLocal(hintKey, value); };
   const [error, setError] = useState<string | null>(null);
   const headingId = `section-${section.id}`;
   const bodyId = `section-body-${section.id}`;
@@ -73,14 +106,20 @@ export function SectionEditor(props: SectionEditorProps) {
   const guidance = section.blocks.some((b) => typed[b.id] ?? b.content.trim().length > 0) ? null : sectionGuidance(section, origin);
 
   const structured = section.fields !== null;
+  const legacy = section.fields?.fields.some(field => field.kind === "text" || field.kind === "entries") ?? false;
+  const writing = section.fields?.fields.every((field) => field.kind === "writing") ?? false;
   const goal = structured ? structuredOptional(section, "goal") : null;
   const example = structured ? structuredOptional(section, "example") : null;
-  const exampleLabel = section.fields?.template === "ten-step-exegesis"
+  const exampleLabel = section.fields?.template?.startsWith("ten-step-")
     ? t("studies.fields.exampleMatthew")
     : t("studies.fields.example");
   const exampleId = useId();
   const [showExample, setShowExample] = useState(false);
   const free = structured ? section.blocks.filter((b) => b.fieldKey === null) : section.blocks;
+  // Guidance is kept (never lost); it is shown when the person asks for it.
+  const hintText = structured ? sectionGuidance(section, origin) : (guidance ?? sectionGuidance(section, origin));
+  const fieldHelp = structured && (section.fields?.fields ?? []).some((f) => (f.config?.guidance ?? "").trim() || f.kind === "writing" || f.kind === "text" || f.kind === "entries");
+  const hasHints = Boolean(hintText || goal || example || fieldHelp);
   const statusLabels: Record<SectionStatus, string> = {
     not_started: t("studies.fields.statusNotStarted"),
     in_progress: t("studies.fields.statusInProgress"),
@@ -88,7 +127,7 @@ export function SectionEditor(props: SectionEditorProps) {
   };
   const setStatus = async (status: SectionStatus) => {
     const saving = api.studySectionUpdate({ id: section.id, status });
-    track(saving);
+    track(saving, `section-status:${section.id}`);
     try {
       await saving;
       onChange({ ...section, status });
@@ -119,22 +158,29 @@ export function SectionEditor(props: SectionEditorProps) {
   // The database decides whether the section still has content: text
   // typed a moment ago may not be in this page's copy yet. Pending saves are
   // awaited first; a "conflict" answer means it has content, so ask.
-  const remove = async (force: boolean) => {
+  const remove = async () => {
+    if (deleting) return;
     setError(null);
     try {
-      await settled();
-      await api.studySectionDelete({ id: section.id, force });
-      onDeleted();
-    } catch (e) {
-      const error = toApiError(e);
-      if (!force && error.kind === "conflict") setConfirmingDelete(true);
-      else setError(error.message);
-    }
+      let wasEmpty = true;
+      const removed = await runDeletion(async () => {
+        try {
+          await api.studySectionDelete({ id: section.id, force: false });
+        } catch (e) {
+          if (toApiError(e).kind !== "conflict") throw e;
+          // The named modal already obtained consent. The core still checks
+          // freshly saved writing before deciding whether force is needed.
+          wasEmpty = false;
+          await api.studySectionDelete({ id: section.id, force: true });
+        }
+      });
+      if (removed) onDeleted(wasEmpty);
+    } catch (e) { setError(toApiError(e).message); }
   };
 
   const rename = async (title: string) => {
     const saving = api.studySectionUpdate({ id: section.id, title });
-    track(saving);
+    track(saving, `section-title:${section.id}`);
     try {
       const updated = await saving;
       onChange({ ...updated, blocks: section.blocks });
@@ -147,9 +193,17 @@ export function SectionEditor(props: SectionEditorProps) {
 
   return (
     <section
+      aria-busy={deleting}
       aria-labelledby={headingId}
       id={`section-anchor-${section.id}`}
-      className="scroll-mt-4 border-t border-border-subtle pt-3"
+      // The part being worked in carries the brass line of work in progress; a folded part's
+      // title is quieter than an open one's, so the shape reads even without colour (v0.18.6).
+      // A new phase begins with more space and a firmer rule than a new part within one.
+      className={`@container scroll-mt-14 border-t pt-3 ${phase && !phase.first ? "mt-3 border-border" : "border-border-subtle"} ${active && !collapsed ? "aw-part-active" : ""}`}
+      data-active={active && !collapsed ? "true" : undefined}
+      data-part-editing={renaming ? "true" : undefined}
+      data-phase-start={phase?.index}
+      data-phase={section.phase ?? undefined}
       onFocusCapture={onActive}
       onKeyDown={(e) => {
         if (e.key !== "Escape") return;
@@ -160,24 +214,25 @@ export function SectionEditor(props: SectionEditorProps) {
         }
       }}
     >
+      {/* A.4.3: no phase name above the part (no extra headers); the phase is in the part's options. */}
       {renaming ? (
         <RenameForm initial={title} onSubmit={rename} onCancel={() => setRenaming(false)} />
       ) : (
         <div className="flex items-center gap-2">
           {/* The heading folds the part away and opens it again. */}
-          <h2 id={headingId} tabIndex={-1} className="m-0 min-w-0 font-display text-[1.375rem] font-heading text-text-strong">
-            <button
+          <h2 id={headingId} tabIndex={-1} className={`type-section m-0 min-w-0 ${collapsed ? "!font-medium !text-text" : ""}`}>
+            {writingView ? <span className="block py-2">{title}</span> : <button
               type="button"
               aria-expanded={!collapsed}
               aria-controls={bodyId}
               onClick={() => onCollapsedChange(!collapsed)}
-              className="-ml-1 flex min-h-11 items-center gap-1.5 rounded-aw px-1 text-left hover:bg-bg-secondary"
+              className="-ml-1 flex min-h-11 items-center gap-1.5 rounded-aw px-1 text-left hover:bg-hover"
             >
               <ChevronRight className={`size-4 shrink-0 text-text-muted transition-transform ${collapsed ? "" : "rotate-90"}`} aria-hidden="true" />
               <span className="min-w-0 break-words">{title}</span>
-            </button>
+            </button>}
           </h2>
-          {collapsed && noteCount > 0 && <span className="shrink-0 text-[0.875rem] text-text-muted">{t("studies.findingCount", { count: noteCount })}</span>}
+          {collapsed && noteCount > 0 && <span className="type-meta shrink-0">{t("studies.findingCount", { count: noteCount })}</span>}
           <button
             ref={manageToggle}
             type="button"
@@ -186,14 +241,36 @@ export function SectionEditor(props: SectionEditorProps) {
             aria-label={t("studies.sections.options", { title })}
             title={t("studies.sections.optionsTooltip")}
             onClick={() => setManaging(!managing)}
-            className="ml-auto inline-flex size-11 shrink-0 items-center justify-center self-center rounded-aw text-text-muted hover:bg-bg-secondary hover:text-text-strong"
+            className="ml-auto inline-flex size-11 shrink-0 items-center justify-center self-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
           >
             <MoreHorizontal className="size-4" aria-hidden="true" />
           </button>
         </div>
       )}
       {managing && !renaming && (
-        <div id={manageId} role="group" aria-label={t("studies.sections.optionsGroup", { title })} className="mt-1 flex flex-wrap items-center gap-1">
+        <div id={manageId} role="group" aria-label={t("studies.sections.optionsGroup", { title })} className="mt-1 flex flex-wrap items-center gap-1 rounded-aw bg-bg-secondary px-1">
+          {hasHints && (
+            <button type="button" className={tool} aria-pressed={hints} onClick={() => setHints(!hints)}>
+              <Info className="size-4" aria-hidden="true" />
+              {t("studies.flow.guidance")}
+            </button>
+          )}
+          {help && (
+            <button
+              ref={helpButton}
+              type="button"
+              data-testid="part-help"
+              aria-expanded={helping}
+              aria-label={t("studies.inquiry.study.open", { part: title })}
+              title={t("studies.inquiry.study.tooltip")}
+              onClick={() => setHelping(!helping)}
+              className={tool}
+            >
+              <Lightbulb className="size-4" aria-hidden="true" />
+              {t("studies.inquiry.study.button")}
+            </button>
+          )}
+          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} onQa={onAddQa} />
           <button
             type="button"
             onClick={() => {
@@ -215,36 +292,13 @@ export function SectionEditor(props: SectionEditorProps) {
           <button
             type="button"
             className={`${tool} hover:text-danger`}
-            onClick={() => void remove(false)}
+            onClick={(event) => { deleteOpener.current = event.currentTarget; setConfirmingDelete(true); }}
             aria-label={t("studies.sections.delete", { title })}
           >
             <Trash2 className="size-4" aria-hidden="true" />
             {t("common.delete")}
           </button>
-        </div>
-      )}
-      {confirmingDelete && (
-        <div role="alertdialog" aria-label={t("studies.sections.confirmLabel", { title })} className="mt-2 flex flex-col gap-2 border-l-[3px] border-danger bg-bg-secondary px-4 py-3">
-          <p className="m-0">
-            {t(hasFindings ? "studies.sections.confirmWithFindings" : "studies.sections.confirm", { title })}
-          </p>
-          <div className="flex gap-2">
-            <Button variant="primary" onClick={() => remove(true)}>{t("studies.sections.deleteSection")}</Button>
-            <Button autoFocus onClick={() => setConfirmingDelete(false)}>{t("studies.keepIt")}</Button>
-          </div>
-        </div>
-      )}
-      <div id={bodyId} hidden={collapsed}>
-      {structured && (
-        <div className="mb-3 flex flex-col gap-2">
-          <p className="m-0 text-[1rem] font-medium text-text-strong">{sectionGuidance(section, origin)}</p>
-          {goal && (
-            <p className="m-0 text-[0.9375rem] text-text-muted">
-              <span className="font-medium">{t("studies.fields.goal")}: </span>
-              {goal}
-            </p>
-          )}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          {structured && !writing && (
             <label className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
               <span>{t("studies.fields.status", { title })}</span>
               <select
@@ -257,33 +311,89 @@ export function SectionEditor(props: SectionEditorProps) {
                 ))}
               </select>
             </label>
-            {example && (
-              <button
-                type="button"
-                aria-expanded={showExample}
-                aria-controls={exampleId}
-                onClick={() => setShowExample(!showExample)}
-                className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-link hover:bg-bg-secondary"
-              >
-                <ChevronRight className={`size-4 transition-transform ${showExample ? "rotate-90" : ""}`} aria-hidden="true" />
-                {exampleLabel}
-              </button>
-            )}
-          </div>
+          )}
+        </div>
+      )}
+      {confirmingDelete && (
+        <Dialog role="alertdialog" title={t("studies.sections.confirmLabel", { title })}
+          onClose={() => { if (!deleting) setConfirmingDelete(false); }} returnFocus={() => deleteOpener.current ?? manageToggle.current}
+          actions={<>
+            <Button autoFocus disabled={deleting} onClick={() => setConfirmingDelete(false)}>{t("studies.keepIt")}</Button>
+            <Button variant="danger" disabled={deleting} onClick={() => void remove()}>{t("studies.sections.deleteSection")}</Button>
+          </>}>
+          <p className="m-0">{t(hasFindings ? "studies.sections.confirmWithFindings" : "studies.sections.confirm", { title })}</p>
+          {error && <p role="alert">{error}</p>}
+        </Dialog>
+      )}
+      {help && helping && (
+        <div className="mt-2 mb-3">
+          <StudyHelp
+            studyId={help.studyId}
+            studyTitle={help.studyTitle}
+            section={section}
+            notes={help.notes}
+            handles={handles}
+            lastBlock={lastBlock}
+            onKept={help.onKept}
+            onClose={() => {
+              setHelping(false);
+              requestAnimationFrame(() => helpButton.current?.focus());
+            }}
+          />
+        </div>
+      )}
+      <div id={bodyId} hidden={collapsed}>
+      {hints && hasHints && (
+        <div data-part-hints className="mb-3 flex flex-col gap-2 border-l-[3px] border-border bg-bg-secondary px-4 py-3 text-[0.9375rem] text-text-muted">
+          <Button variant="quiet" className="self-end" onClick={() => setHints(false)}>{t("studies.flow.hideGuidance")}</Button>
+          {hintText && hintText.split("\n\n").map((paragraph, index) => <p key={index} className="m-0 whitespace-pre-line">{paragraph}</p>)}
+          {goal && (
+            <p className="m-0">
+              <span className="font-medium">{t("studies.fields.goal")}: </span>
+              {goal}
+            </p>
+          )}
           {example && (
-            <div id={exampleId} hidden={!showExample} className="border-l-[3px] border-border bg-bg-secondary px-4 py-3">
+            <button
+              type="button"
+              aria-expanded={showExample}
+              aria-controls={exampleId}
+              onClick={() => setShowExample(!showExample)}
+              className="inline-flex min-h-11 items-center gap-1 self-start rounded-aw px-2 text-[0.9375rem] text-link hover:bg-hover"
+            >
+              <ChevronRight className={`size-4 transition-transform ${showExample ? "rotate-90" : ""}`} aria-hidden="true" />
+              {exampleLabel}
+            </button>
+          )}
+          {example && (
+            <div id={exampleId} hidden={!showExample} className="border-l-[3px] border-border bg-bg px-4 py-3">
               <p className="m-0 mb-1 text-[0.875rem] text-text-muted">{t("studies.fields.exampleNote")}</p>
               <p className="m-0 reading">{example}</p>
             </div>
           )}
-          <FieldsEditor section={section} onChange={onChange} onError={setError} />
         </div>
       )}
-      {!structured && guidance && <p className="mb-2 mt-0 text-[0.9375rem] text-text-muted">{guidance}</p>}
+      {structured && (
+        <div className="mb-3 flex flex-col gap-2">
+          {legacy && <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.flow.legacyNote")}</p>}
+          {legacy ? <details open><summary className="cursor-pointer font-medium">{t("studies.flow.legacy")}</summary><FieldsEditor section={section} onChange={onChange} onError={setError} showHelp={hints} /></details> : <FieldsEditor section={section} onChange={onChange} onError={setError} showHelp={hints} partTitle={title} />}
+        </div>
+      )}
 
       {structured && free.length > 0 && <h3 className="m-0 mt-2 text-[1rem] font-medium text-text-strong">{t("studies.fields.otherWriting")}</h3>}
       <div className="flex flex-col gap-1">
-        {free.map((block, index) => (
+        {free.map((block, index) => qaOf(block.data) && block.blockType === "question" ? (
+          <QaEditor
+            key={block.id}
+            block={block}
+            number={free.slice(0, index + 1).filter((b) => b.blockType === "question" && qaOf(b.data)).length}
+            isFirst={index === 0}
+            isLast={index === free.length - 1}
+            autoFocus={block.id === newBlockId}
+            onMove={(delta) => moveBlock(block.id, delta)}
+            onDeleted={removeBlock}
+          />
+        ) : (
           <BlockEditor
             key={block.id}
             block={block}
@@ -296,17 +406,22 @@ export function SectionEditor(props: SectionEditorProps) {
             isFirst={index === 0}
             isLast={index === free.length - 1}
             onMove={(delta) => moveBlock(block.id, delta)}
+            register={register}
+            onFocused={setLastBlock}
           />
         ))}
       </div>
 
       {capture && <div className="mt-3">{capture}</div>}
       {notes && <div className="mt-3">{notes}</div>}
-      <div className="mt-1">
-        <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} />
+      {/* Only where there is nowhere to write yet: the way to begin (everything else is in the part's options). */}
+      {!structured && free.length === 0 && (
+        <div className="mt-1">
+          <PartAdd part={title} onWriting={onAddWriting} onNote={onAddNote} onQa={onAddQa} />
+        </div>
+      )}
       </div>
-      </div>
-      {error && (
+      {error && !confirmingDelete && (
         <p role="alert" className="m-0 mt-2 text-[0.9375rem] text-danger">
           {error}
         </p>
@@ -338,7 +453,7 @@ function RenameForm({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={(e) => e.key === "Escape" && onCancel()}
-        className="h-11 min-w-0 flex-1 rounded-aw border border-border bg-bg px-3 font-display text-[1.375rem] font-heading text-text-strong"
+        className="type-section h-11 min-w-0 flex-1 rounded-aw border border-border bg-field px-3"
       />
       <Button type="submit" variant="primary">
         {t("common.save")}

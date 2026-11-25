@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { PdfOutlineError } from "@/lib/pdfEngine";
 import { useApi } from "@/lib/ApiContext";
 import type { ContentsItem, Source } from "@/types/library";
@@ -17,6 +17,7 @@ export interface SourceContents {
   items: ContentsItem[];
   /** `items` were generated from the source's headings, not carried by the source. */
   generated: boolean;
+  generation: "running" | "failed" | null;
   /**
    * Offers contents found another way (the Original view's own open document
    * has just read the outline). Taken only if it adds something: over none,
@@ -27,10 +28,12 @@ export interface SourceContents {
 
 type Status = "loading" | "ready" | "failed";
 
-export function useSourceContents(source: Source | null | undefined): SourceContents {
+export function useSourceContents(source: Source | null | undefined, revision = 0): SourceContents {
   const api = useApi();
+  const authoritative = useRef(false);
   const engine = usePdfEngine();
-  const [found, setFound] = useState<{ id: string; status: Status; items: ContentsItem[]; generated?: boolean } | null>(null);
+  const [found, setFound] = useState<{ id: string; revision: number; status: Status; items: ContentsItem[]; generated?: boolean } | null>(null);
+  const [generation, setGeneration] = useState<{ id: string; revision: number; status: "running" | "failed" } | null>(null);
   const id = source?.id;
   // Where the source's own contents come from: a PDF's outline, an EPUB's navigation; other formats carry none.
   const kind = source?.originalView?.kind === "pdf" ? "pdf" : source?.format === "epub" ? "epub" : "none";
@@ -39,6 +42,7 @@ export function useSourceContents(source: Source | null | undefined): SourceCont
   useEffect(() => {
     if (!id) return;
     let active = true;
+    authoritative.current = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     // Whether a source has contents is a fact about the source, not about one
     // read having worked. "None" (a valid, empty answer) is final; a read that
@@ -48,26 +52,36 @@ export function useSourceContents(source: Source | null | undefined): SourceCont
     // No contents of its own: the core's generated contents, if the source has text to make them from.
     const generate = () => {
       if (!hasText) return;
+      setGeneration({ id, revision, status: "running" });
       api.libraryGeneratedContents(id).then(
-        (items) =>
-          active &&
-          items.length > 0 &&
-          setFound((current) => (current?.id === id && current.items.length > 0 ? current : { id, status: "ready", items, generated: true })),
-        (e) => void api.logError(`Generated contents could not be made: ${e instanceof Error ? e.message : String(e)}`).catch(() => undefined),
+        (items) => {
+          if (!active) return;
+          setGeneration(null);
+          if (items.length > 0) setFound((current) => (current?.id === id && current.revision === revision && current.items.length > 0 ? current : { id, revision, status: "ready", items, generated: true }));
+        },
+        () => {
+          if (!active) return;
+          setGeneration({ id, revision, status: "failed" });
+          void api.logError("Generated contents unavailable; inspect retained heading-analysis progress and retry explicitly.").catch(() => undefined);
+        },
       );
     };
     const attempt = (n: number) => {
       if (kind === "none") {
-        setFound((current) => (current?.id === id ? current : { id, status: "ready", items: EMPTY }));
+        setFound((current) => (current?.id === id && current.revision === revision ? current : { id, revision, status: "ready", items: EMPTY }));
         generate();
         return;
       }
-      const read = kind === "pdf" ? engine.outline(api, id) : api.librarySourceContents(id);
+      const read = kind === "pdf" ? api.libraryPdfStructure(id).then((structure) => {
+        const corrected=structure.status === "ready" && (structure.headings.length>0 || structure.corrections.length>0);
+        if (active) authoritative.current = corrected;
+        return corrected ? api.librarySourceContents(id) : engine.outline(api, id);
+      }) : api.librarySourceContents(id);
       read.then(
         (items) => {
           if (!active) return;
-          setFound((current) => (current?.id === id && current.status === "ready" && current.items.length > 0 ? current : { id, status: "ready", items }));
-          if (items.length === 0) generate();
+          setFound((current) => (!authoritative.current && current?.id === id && current.revision === revision && current.status === "ready" && current.items.length > 0 ? current : { id, revision, status: "ready", items }));
+          if (items.length === 0 && !authoritative.current) generate();
         },
         (e) => {
           if (!active) return;
@@ -79,7 +93,7 @@ export function useSourceContents(source: Source | null | undefined): SourceCont
           // The stage (PDF only) says where it went wrong; no document text is logged.
           const stage = e instanceof PdfOutlineError ? ` (at "${e.stage}")` : "";
           void api.logError(`Contents could not be read${stage}: ${e instanceof Error ? e.message : String(e)}`).catch(() => undefined);
-          setFound((current) => (current?.id === id && current.items.length > 0 ? current : { id, status: "failed", items: EMPTY }));
+          setFound((current) => (current?.id === id && current.revision === revision && current.items.length > 0 ? current : { id, revision, status: "failed", items: EMPTY }));
         },
       );
     };
@@ -88,18 +102,18 @@ export function useSourceContents(source: Source | null | undefined): SourceCont
       active = false;
       clearTimeout(timer);
     };
-  }, [api, engine, id, kind, hasText]);
+  }, [api, engine, id, kind, hasText, revision]);
 
   const adopt = useCallback(
     (items: ContentsItem[]) => {
-      if (!id || items.length === 0) return;
-      setFound((current) => (current?.id === id && current.items.length > 0 && !current.generated ? current : { id, status: "ready", items }));
+      if (!id || items.length === 0 || authoritative.current) return;
+      setFound((current) => (current?.id === id && current.revision === revision && current.items.length > 0 && !current.generated ? current : { id, revision, status: "ready", items }));
     },
-    [id],
+    [id, revision],
   );
 
-  const mine = found && found.id === id ? found : null;
-  return { items: mine?.items ?? EMPTY, generated: mine?.generated ?? false, adopt };
+  const mine = found && found.id === id && found.revision === revision ? found : null;
+  return { items: mine?.items ?? EMPTY, generated: mine?.generated ?? false, generation: generation && generation.id === id && generation.revision === revision ? generation.status : null, adopt };
 }
 
 const EMPTY: ContentsItem[] = [];

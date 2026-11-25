@@ -1,0 +1,52 @@
+import { afterEach, describe, expect, it } from "vitest";
+import i18n from "@/i18n";
+import themes from "../../resources/presentation/themes.json";
+import { exportLocale, fileName, palette, splitVerses, textWeight } from "@/features/presentation/labels";
+
+// Helpers of the presentation interface (v0.18).
+
+afterEach(async () => {
+  await i18n.changeLanguage("en");
+});
+
+describe("presentation helpers", () => {
+  it("make safe file names from the title", () => {
+    expect(fileName("Remain in the vine", "", "pptx")).toBe("Remain in the vine.pptx");
+    expect(fileName('John 15: "abide"/remain?', "speaker sheet", "pdf")).toBe("John 15 abide remain – speaker sheet.pdf");
+    expect(fileName("  \u0007  ", "", "md")).toBe("Presentation.md");
+  });
+
+  it("give the exports the words of the interface language", async () => {
+    await i18n.changeLanguage("de");
+    const locale = exportLocale(i18n.t);
+    expect(locale.language).toBe("de-DE");
+    expect(locale.bookNames.JHN).toBe("Johannes");
+    expect(Object.keys(locale.bookNames)).toHaveLength(66);
+    expect(locale.verseSeparator).toBe(",");
+    expect(locale.labels.speakerNotes).toBe("Notizen");
+    expect(locale.labels.standings.hypothetical).toBe("Erfundene Veranschaulichung");
+    await i18n.changeLanguage("ko");
+    expect(exportLocale(i18n.t).labels.slide).toBe("슬라이드");
+  });
+
+  it.each([
+    ["en", "en-GB"], ["de", "de-DE"], ["ko", "ko-KR"],
+    ["fr", "fr-FR"], ["es", "es-ES"], ["pt", "pt-BR"],
+  ])("sets %s exports to the interface proofing language %s", async (language, tag) => {
+    await i18n.changeLanguage(language);
+    expect(exportLocale(i18n.t).language).toBe(tag);
+  });
+
+  it("use the same three backgrounds as the exports", () => {
+    expect(Object.keys(themes)).toEqual(["light", "dark", "warm"]);
+    expect(palette("warm")).toEqual(themes.warm);
+  });
+
+  it("split a long passage shown to the audience like the core splits Scripture slides (Hangul counts double)", () => {
+    expect(textWeight("ab 나무")).toBe(7);
+    const v = (verse: number, text: string) => ({ verse, text });
+    expect(splitVerses([v(1, "a".repeat(300)), v(2, "a".repeat(250)), v(3, "a".repeat(100))]).map((g) => g.map((x) => x.verse))).toEqual([[1, 2], [3]]);
+    expect(splitVerses([v(1, "나".repeat(200)), v(2, "나".repeat(200))])).toHaveLength(2);
+    expect(fileName("가".repeat(90), "", "md")).toBe(`${"가".repeat(80)}.md`);
+  });
+});

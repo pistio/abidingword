@@ -16,6 +16,7 @@ pub mod config;
 pub mod context;
 pub mod http;
 pub mod images;
+pub mod inquiry;
 pub mod prompts;
 pub mod provider;
 pub mod research;
@@ -26,7 +27,6 @@ use serde::Serialize;
 use serde_json::Value;
 
 use crate::error::{AppError, AppResult, UserMessage};
-use crate::scripture::parser::ReferenceParser;
 use crate::scripture::reference::ScriptureRefDto;
 use config::{AssistantConfig, SearchKind};
 use context::{AssistAction, AssistInput, Context, SharedItem};
@@ -136,7 +136,7 @@ pub fn unlock(mut prepared: Prepared, secrets: &dyn SecretStore) -> AppResult<Pr
 #[serde(rename_all = "camelCase")]
 pub struct AssistPreview {
     pub remote: bool,
-    /// e.g. "OpenAI · gpt-4.1"
+    /// e.g. "OpenAI · gpt-6.1-sol"
     pub assistant: String,
     pub shared: Vec<SharedItem>,
     /// The story search also sends search words to the search service.
@@ -276,7 +276,6 @@ pub fn interpret(context: &Context, answer: &Value) -> AppResult<AssistResult> {
         | AssistAction::Theology
         | AssistAction::Passages
         | AssistAction::Free => {
-            let parser = ReferenceParser::english();
             // A free request gets shorter answers: comments and questions, not
             // passages long enough to stand in for the person's own writing.
             let (most, longest) = if action == AssistAction::Free {
@@ -314,7 +313,9 @@ pub fn interpret(context: &Context, answer: &Value) -> AppResult<AssistResult> {
                                 .flatten()
                                 .filter_map(|r| r.as_str())
                                 .take(5)
-                                .filter_map(|r| parser.parse(r).ok())
+                                .filter_map(|r| {
+                                    crate::scripture::resolve::resolve(r, Default::default()).ok()
+                                })
                                 .map(|r| r.to_dto())
                                 .collect();
                             Some(Comment {

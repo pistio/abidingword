@@ -30,8 +30,8 @@
 //! |---|---|
 //! | 0 | a manual link (not too broad) |
 //! | 1 | about, and exact or narrow: a section on John 15:1–11 for John 15:5 |
-//! | 2 | a neutral citation, exact or narrow |
-//! | 3 | about, but a whole chapter or only partly overlapping |
+//! | 2 | about, but a whole chapter or only partly overlapping |
+//! | 3 | a neutral citation, exact or narrow |
 //! | 4 | wider or neutral-but-broad: two or three chapters, a neutral chapter |
 //! | 5 | a cross-reference |
 //! | 6 | far too broad (four or more chapters), whatever the evidence |
@@ -240,9 +240,9 @@ fn class_of(evidence: Evidence, fit: Fit) -> u8 {
         (Evidence::Manual, Fit::Wide) => 4,
         (Evidence::Manual, _) => 0,
         (Evidence::About, Fit::Exact | Fit::Narrow) => 1,
-        (Evidence::About, Fit::Chapter | Fit::Overlap) => 3,
+        (Evidence::About, Fit::Chapter | Fit::Overlap) => 2,
         (Evidence::About, _) => 4,
-        (Evidence::Neutral, Fit::Exact | Fit::Narrow) => 2,
+        (Evidence::Neutral, Fit::Exact | Fit::Narrow) => 3,
         (Evidence::Neutral, _) => 4,
     }
 }
@@ -286,6 +286,14 @@ mod tests {
 
     fn rank_of(link: KeyRange, origin: LinkOrigin, context: Context) -> Rank {
         rank(JOHN_15_5, link, origin, context).unwrap()
+    }
+
+    #[test]
+    fn matching_chapter_heading_precedes_an_unqualified_literal_mention() {
+        assert!(
+            rank_of(chapter(15), LinkOrigin::Section, Context::Neutral)
+                < rank_of(JOHN_15_5, LinkOrigin::Explicit, Context::Neutral)
+        );
     }
 
     #[test]
@@ -402,11 +410,11 @@ mod tests {
     }
 
     #[test]
-    fn a_neutral_mention_beats_a_chapter_wide_section() {
+    fn a_chapter_wide_section_beats_a_neutral_mention() {
         let neutral = rank_of(JOHN_15_5, Explicit, Context::Neutral);
         let chapter_section = rank_of(chapter(15), Section, Context::Neutral);
-        assert!(neutral < chapter_section);
-        assert_eq!(chapter_section.class, 3);
+        assert!(chapter_section < neutral);
+        assert_eq!(chapter_section.class, 2);
     }
 
     #[test]
@@ -467,7 +475,7 @@ mod tests {
         let contained = rank(active, verses(15, 1, 20), Section, Context::Neutral).unwrap();
         let overlap = rank(active, verses(15, 8, 17), Section, Context::Neutral).unwrap();
         assert!(contained < overlap);
-        assert_eq!(overlap.class, 3);
+        assert_eq!(overlap.class, 2);
     }
 
     #[test]

@@ -1,7 +1,8 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { openPartOptions } from "../support/studyActions";
 
 async function seed() {
   const api = createMemoryApi();
@@ -28,7 +29,7 @@ describe("study selection and editing", () => {
   it("creates a study inside the open project", async () => {
     const { api, user } = await renderApp(await seed());
     await user.click(await screen.findByRole("button", { name: "New study" }));
-    await user.type(await screen.findByLabelText("What would you like to study?"), "Romans 12:1-2");
+    await user.type(await screen.findByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "Romans 12:1-2");
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Romans 12:1–2");
@@ -60,8 +61,8 @@ describe("study selection and editing", () => {
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /Romans 8:1–17/ }));
 
-    await user.click(await screen.findByRole("button", { name: "Add to Context" }));
-    await user.click(screen.getByRole("button", { name: "Writing" }));
+    await openPartOptions(user);
+    await user.click(await screen.findByRole("button", { name: "Add text field to Context" }));
     const fields = await screen.findAllByRole("textbox", { name: "Context: paragraph" });
     expect(fields).toHaveLength(2);
     await waitFor(() => expect(fields[1]).toHaveFocus());

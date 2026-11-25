@@ -1,6 +1,6 @@
 // TypeScript mirror of the native domain types (src-tauri/src/domain/mod.rs).
 // Keep both files in step when a field changes.
-import type { StudyDetails, StudyStatus, StudyType } from "./studies";
+import type { StudyDetails, StudyPhase, StudyStatus, StudyType } from "./studies";
 
 export interface Workspace {
   id: string;
@@ -48,6 +48,8 @@ export interface StudySection {
   key: string | null;
   title: string;
   guidance: string | null;
+  /** Where the part belongs in the study's movement, copied from its template (v0.18.7); null: none. */
+  phase: StudyPhase | null;
   position: number;
   /** How far the person has got with this part. */
   status: SectionStatus;
@@ -62,7 +64,7 @@ export interface StudySection {
 export const SECTION_STATUSES = ["not_started", "in_progress", "complete"] as const;
 export type SectionStatus = (typeof SECTION_STATUSES)[number];
 
-export type FieldKind = "text" | "entries";
+export type FieldKind = "text" | "entries" | "writing" | "guidance" | "heading" | "divider" | "passage" | "concordance" | "cross_references" | "word_lookup" | "search";
 export type PartKind = "line" | "text" | "choice";
 
 export interface EntryPart {
@@ -73,6 +75,8 @@ export interface EntryPart {
 }
 
 export interface TemplateField {
+  label?: string;
+  config?: Record<string, string>;
   key: string;
   kind: FieldKind;
   parts?: EntryPart[];
@@ -191,10 +195,24 @@ export interface UpdateStudySection {
   title?: string;
   /** "" clears it. */
   guidance?: string;
+  /** "" clears it. */
+  phase?: StudyPhase | "";
   status?: SectionStatus;
 }
 
+export interface CreateStudySection {
+  templateSectionKey?: string;
+  studyId: string;
+  title: string;
+  guidance?: string;
+  /** The template part it was added from, when it was one. */
+  key?: string | null;
+  phase?: StudyPhase | null;
+}
+
 export interface CreateStudyBlock {
+  /** Optional entry values or evidence provenance, committed with the content. */
+  data?: string;
   sectionId: string;
   blockType: BlockType;
   content?: string;

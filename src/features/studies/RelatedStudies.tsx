@@ -39,7 +39,7 @@ export function RelatedStudies({ relations, onOpen }: Props) {
 }
 
 /** Link this study to another, and take links away: for Study details. */
-export function RelationManager({ studyId, relations, reload }: { studyId: string; relations: StudyRelation[]; reload: () => void }) {
+export function RelationManager({ studyId, relations, reload, onOpen }: { studyId: string; relations: StudyRelation[]; reload: () => void; onOpen?: (study: StudyRelation["other"]) => void }) {
   const { t } = useTranslation();
   const api = useApi();
   const [adding, setAdding] = useState(false);
@@ -65,12 +65,18 @@ export function RelationManager({ studyId, relations, reload }: { studyId: strin
           {relations.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center gap-2">
               <span className="text-text-muted">{relationLabel(t, r.relationType, r.direction)}</span>
-              <span className="font-medium text-text-strong">{r.other.title}</span>
+              {onOpen ? (
+                <button type="button" onClick={() => onOpen(r.other)} className="min-h-11 font-medium text-link underline-offset-2 hover:underline">
+                  {r.other.title}
+                </button>
+              ) : (
+                <span className="font-medium text-text-strong">{r.other.title}</span>
+              )}
               <button
                 type="button"
                 onClick={() => void act(() => api.studyRelationDelete(r.id))}
                 aria-label={t("studies.relations.remove", { title: r.other.title })}
-                className="ml-auto inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg"
+                className="ml-auto inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
@@ -89,7 +95,7 @@ export function RelationManager({ studyId, relations, reload }: { studyId: strin
         />
       ) : (
         <div>
-          <Button variant="quiet" className="min-h-11 text-[0.9375rem] text-text-muted" onClick={() => setAdding(true)}>
+          <Button variant="quiet" className="min-h-11 text-[0.9375rem] !text-text-muted hover:!text-text-strong" onClick={() => setAdding(true)}>
             {t("studies.relations.add")}
           </Button>
         </div>
@@ -108,7 +114,7 @@ function AddRelation({ studyId, excluded, onAdd, onCancel }: { studyId: string; 
   const [type, setType] = useState<RelationType>("related");
   const [describing, setDescribing] = useState(false);
   const choices = (all.data ?? []).filter((s) => !excluded.has(s.id) && s.id !== studyId);
-  const field = "h-11 rounded-aw border border-border bg-bg px-2";
+  const field = "h-11 aw-input px-2";
   return (
     <div
       role="group"
@@ -142,7 +148,7 @@ function AddRelation({ studyId, excluded, onAdd, onCancel }: { studyId: string; 
         </label>
       ) : (
         <div>
-          <Button variant="quiet" className="min-h-11 text-text-muted" aria-expanded={false} onClick={() => setDescribing(true)}>
+          <Button variant="quiet" className="min-h-11 !text-text-muted hover:!text-text-strong" aria-expanded={false} onClick={() => setDescribing(true)}>
             {t("studies.relations.describe")}
           </Button>
         </div>

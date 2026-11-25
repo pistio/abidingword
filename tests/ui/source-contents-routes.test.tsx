@@ -1,9 +1,11 @@
+import { readerPageName } from "../support/readerActions";
 import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { ContentsItem } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // The same source must offer its own Contents however it was opened: from the
 // library list, or from a finding's citation (which also opens at a segment).
@@ -175,11 +177,11 @@ describe("opened at a citation, the source is still the whole source", () => {
     expect(within(reader).getByRole("button", { name: "Reading" })).toHaveAttribute("aria-pressed", "true");
 
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    await within(reader).findByRole("toolbar", { name: "Original document controls" });
+    await within(reader).findByRole("toolbar", { name: "Reader tools" });
     await waitFor(() => expect(contentsButton(reader)).not.toBeNull());
     await user.click(within(reader).getByRole("button", { name: "Contents" }));
     await user.click(within(reader).getByRole("button", { name: "Appendix" }));
-    expect(within(reader).getByRole("textbox", { name: "Page number" })).toHaveValue("4");
+    expect(within(reader).getByTestId("pdf-page-indicator")).toHaveAccessibleName(readerPageName("4"));
 
     await user.click(within(reader).getByRole("button", { name: "Reading" }));
     await waitFor(() => expect(contentsButton(reader)).not.toBeNull());
@@ -282,7 +284,7 @@ describe("a PDF's outline is read reliably, and failing is not the same as havin
     const reader = await within(sourcesPane()).findByRole("region", { name: "Notes on the Vine" });
     await waitFor(() => expect(engine.outlineReads.length).toBe(1)); // asked, and answered "none"
     await user.click(within(reader).getByRole("button", { name: "Original" }));
-    await within(reader).findByRole("toolbar", { name: "Original document controls" });
+    await within(reader).findByRole("toolbar", { name: "Reader tools" });
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(contentsButton(reader)).toBeNull();
     expect(engine.outlineReads.length).toBe(1); // "none" is final: no retries
@@ -322,11 +324,11 @@ describe("a PDF's outline is read reliably, and failing is not the same as havin
     await user.click(await within(findings).findByTitle("Open this source at the cited place"));
     const pane = await within(sourcesPane()).findByRole("region", { name: "Notes on the Vine" });
     await waitFor(() => expect(contentsButton(pane)).not.toBeNull());
-    await user.click(within(pane).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", pane);
     const full = await screen.findByRole("main");
     await waitFor(() => expect(contentsButton(full)).not.toBeNull());
     await user.click(within(full).getByRole("button", { name: "Original" }));
-    await within(full).findByRole("toolbar", { name: "Original document controls" });
+    await within(full).findByRole("toolbar", { name: "Reader tools" });
     expect(contentsButton(full)).not.toBeNull();
     await user.click(within(full).getByRole("button", { name: "Reading" }));
     expect(contentsButton(full)).not.toBeNull();

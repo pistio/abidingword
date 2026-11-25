@@ -1,7 +1,8 @@
-import { screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { act, screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 async function withProject(title = "John Sermon Series") {
   const api = createMemoryApi();
@@ -11,9 +12,10 @@ async function withProject(title = "John Sermon Series") {
   return { api, project };
 }
 
-// With a single project the Study pane starts on its studies: there is no project to open.
-async function openProject(_user: Awaited<ReturnType<typeof renderApp>>["user"], _title: string) {
-  await screen.findByRole("heading", { level: 1, name: "Studies" });
+// The fixture helper explicitly opens the named folder before editor checks.
+async function openProject(user: Awaited<ReturnType<typeof renderApp>>["user"], _title: string) {
+  await screen.findByRole("heading", { level: 1, name: _title });
+  if (!screen.queryByRole("form", { name: "New study" }) && !screen.queryByRole("list", { name: "Studies" })) await user.click(screen.getByRole("button", { name: "New study" }));
 }
 
 async function openStudy(api: MemoryApi, user: Awaited<ReturnType<typeof renderApp>>["user"], project: string, study: string) {
@@ -34,6 +36,25 @@ async function addNote(user: Awaited<ReturnType<typeof renderApp>>["user"]) {
 
 const detailsOf = (list: HTMLElement, name: RegExp) => within(list).getByRole("button", { name: new RegExp(`^Details for ${name.source}`) });
 
+/** A person can choose the next control before a scheduled focus return paints. */
+function deferredFrames() {
+  const pending = new Map<number, FrameRequestCallback>();
+  let sequence = 0;
+  const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+    pending.set(++sequence, callback);
+    return sequence;
+  });
+  const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((handle) => { pending.delete(handle); });
+  return {
+    flush: () => act(() => {
+      const callbacks = [...pending.values()];
+      pending.clear();
+      for (const callback of callbacks) callback(performance.now());
+    }),
+    restore: () => { pending.clear(); request.mockRestore(); cancel.mockRestore(); },
+  };
+}
+
 const sectionHeadings = () =>
   within(screen.getByRole("main", { name: "Study" }))
     .getAllByRole("heading", { level: 2 })
@@ -47,18 +68,19 @@ describe("creating studies", () => {
     await openProject(user, "John Sermon Series");
 
     await user.click(newStudy().getByRole("button", { name: "Word study" }));
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "Remain (μένω)");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "Remain (μένω)");
     expect(newStudy().queryByLabelText("Template")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Remain (μένω)");
-    // the kind of study is not in the everyday header; it is in Study details
+    // the kind of study is not in the everyday header; it is in Bible Study information
     expect(screen.queryByText("Word Study", { selector: "span" })).not.toBeInTheDocument();
     expect(sectionHeadings()).toEqual(["Word and question", "Occurrences and translations", "Range of meanings", "Passages in context", "Meaning and conclusion", "Application"]);
-    await user.click(screen.getByRole("button", { name: "Study details" }));
+    await openStudyOptions(user);
+    await user.click(screen.getByRole("button", { name: "Bible Study information" }));
     expect(screen.getByRole("group", { name: "Word Study details" })).toBeInTheDocument();
     expect(screen.getByText(/Type: Word Study/)).toBeInTheDocument();
-    expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === "word-study")!.id);
+    expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === "word-research-study")!.id);
     expect(api.state.passages).toHaveLength(0);
   });
 
@@ -66,15 +88,19 @@ describe("creating studies", () => {
     const { api } = await withProject();
     const { user } = await renderApp(api);
     await openProject(user, "John Sermon Series");
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "John 15:1-11");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "John 15:1-11");
     await user.click(screen.getByRole("button", { name: "Create study" }));
 
+    await openStudyOptions(user);
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("John 15:1–11");
-    expect(sectionHeadings()[0]).toBe("Persons");
+    expect(sectionHeadings()[0]).toBe("People");
+    await openStudyOptions(user);
     const passages = screen.getByRole("region", { name: "Passages" });
     expect(within(passages).queryByText("Primary")).not.toBeInTheDocument();
     // the title is the passage: it is not repeated beneath it, and there is still a way to open it
+    await openStudyOptions(user);
     expect(within(passages).queryByRole("button", { name: "John 15:1–11" })).not.toBeInTheDocument();
+    await openStudyOptions(user);
     expect(within(passages).getByRole("button", { name: "Open in Scripture" })).toBeInTheDocument();
   });
 
@@ -82,7 +108,7 @@ describe("creating studies", () => {
     const { api } = await withProject();
     const { user } = await renderApp(api);
     await openProject(user, "John Sermon Series");
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "Youth group");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "Youth group");
     await user.click(newStudy().getByRole("button", { name: "More options" }));
     await user.click(newStudy().getByRole("button", { name: "No template" }));
     await user.type(newStudy().getByLabelText(/^Title/), "Questions from the youth group");
@@ -132,8 +158,10 @@ describe("findings", () => {
     await waitFor(() => expect(api.state.findings.map((f) => f.findingType)).toEqual(["observation", "question"]));
     const list = screen.getByRole("list", { name: "Other notes" });
     expect(within(list).getByRole("textbox", { name: "Observation text" })).toHaveValue("Abide appears again and again.");
-    await user.click(screen.getByRole("button", { name: "Study details" }));
-    expect(screen.getByRole("region", { name: "Study details" })).toHaveTextContent("2 notes · 1 question");
+    await openStudyOptions(user);
+    await user.click(screen.getByRole("button", { name: "Bible Study information" }));
+    await openStudyOptions(user);
+    expect(await screen.findByRole("dialog", { name: "Bible Study information" })).toHaveTextContent("2 notes · 1 question");
   });
 
   it("edits, retypes, filters and deletes findings", async () => {
@@ -152,6 +180,7 @@ describe("findings", () => {
     await waitFor(() => expect(api.state.findings[0]!.content).toBe("First, revised"));
 
     // Kind and the rest are in each note's Details; a few notes need no filter.
+    await openStudyOptions(user);
     expect(screen.queryByLabelText("Show notes")).not.toBeInTheDocument();
     const question = within(list).getByRole("article", { name: /Question/ });
     expect(within(question).queryByLabelText("Kind of note")).not.toBeInTheDocument();
@@ -174,8 +203,10 @@ describe("findings", () => {
     await user.click(screen.getByRole("button", { name: "Back to workspace" }));
     const list = await screen.findByRole("list", { name: "Other notes" });
     expect(within(list).getAllByRole("article")).toHaveLength(6);
+    await openStudyOptions(user);
     await user.selectOptions(screen.getByLabelText("Show notes"), "question");
     expect(within(list).getAllByRole("article")).toHaveLength(1);
+    await openStudyOptions(user);
     await user.selectOptions(screen.getByLabelText("Show notes"), "");
     expect(within(list).getAllByRole("article")).toHaveLength(6);
   });
@@ -217,13 +248,65 @@ describe("findings", () => {
     await user.click(screen.getByRole("button", { name: "Options" }));
     expect(screen.getByLabelText("Link current passage (John 15:2)")).not.toBeChecked();
     await user.click(screen.getByLabelText("Link current passage (John 15:2)"));
-    await user.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(api.state.findings[0]?.passages[0]?.reference.canonical).toBe("JHN.15.2"));
+    const parseReference = vi.spyOn(api, "referenceParse");
+    const frames = deferredFrames();
+    try {
+      await user.click(screen.getByRole("button", { name: "Save" }));
+      await waitFor(() => expect(api.state.findings[0]?.passages[0]?.reference.canonical).toBe("JHN.15.2"));
+      const passage = within(scripture).getByLabelText("Go to passage") as HTMLInputElement;
+      await user.click(passage);
+      const focusedBeforeFrame = document.activeElement === passage;
+      frames.flush();
+      const focusedAfterFrame = document.activeElement === passage;
+      // Type into the chosen target without a second click that would conceal
+      // a late return to Note. Record the submitted text as well as navigation.
+      await user.keyboard("Psalm 23");
+      const typedPassage = passage.value;
+      await user.keyboard("{Enter}");
+      expect({
+        focusedBeforeFrame,
+        focusedAfterFrame,
+        typedPassage,
+        parsedInputs: parseReference.mock.calls.map(([text]) => text),
+        savedNote: api.state.findings[0]?.content,
+        savedReference: api.state.findings[0]?.passages[0]?.reference.canonical,
+      }).toEqual({
+        focusedBeforeFrame: true,
+        focusedAfterFrame: true,
+        typedPassage: "Psalm 23",
+        parsedInputs: ["Psalm 23"],
+        savedNote: "What does fruit mean here?",
+        savedReference: "JHN.15.2",
+      });
+      await within(scripture).findByRole("heading", { level: 2, name: "Psalm 23" });
+      await user.click(within(screen.getByRole("list", { name: "Other notes" })).getByRole("button", { name: "John 15:2" }));
+      expect(await within(scripture).findByRole("heading", { level: 2, name: "John 15" })).toBeInTheDocument();
+    } finally {
+      frames.restore();
+    }
+  });
 
-    await user.type(within(scripture).getByLabelText("Go to passage"), "Psalm 23{Enter}");
-    await within(scripture).findByRole("heading", { level: 2, name: "Psalm 23" });
-    await user.click(within(screen.getByRole("list", { name: "Other notes" })).getByRole("button", { name: "John 15:2" }));
-    expect(await within(scripture).findByRole("heading", { level: 2, name: "John 15" })).toBeInTheDocument();
+  it("keeps a reopened note draft focused when the previous note's close frame runs", async () => {
+    const { api, user } = await inStudy();
+    await addNote(user);
+    await user.type(screen.getByLabelText("New observation"), "Discard this draft.");
+    const frames = deferredFrames();
+    try {
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+      await addNote(user);
+      const draft = screen.getByLabelText("New observation");
+      expect(draft).toHaveFocus();
+      frames.flush();
+      expect(draft).toHaveFocus();
+      await user.keyboard("Keep this new draft.");
+      expect(draft).toHaveValue("Keep this new draft.");
+      expect(api.state.findings).toHaveLength(0);
+      await user.click(screen.getByRole("button", { name: "Cancel" }));
+      frames.flush();
+      expect(within(screen.getByRole("main", { name: "Study" })).getByRole("button", { name: "Note" })).toHaveFocus();
+    } finally {
+      frames.restore();
+    }
   });
 
   it("does not react to the old Alt shortcuts, and keeps Ctrl+Enter in the editor", async () => {
@@ -277,10 +360,11 @@ describe("templates", () => {
     // Six current methods are offered; legacy definitions remain installed.
     expect(within(templates).getAllByRole("listitem")).toHaveLength(6);
     expect(within(templates).queryByText("Teaching / Sermon Preparation")).not.toBeInTheDocument();
-    const formats = screen.getByRole("list", { name: "Bible Teaching formats" });
-    expect(within(formats).getByText(/Starts with: Welcome · Bible story · Question · Activity · Prayer/)).toBeInTheDocument();
+    const formats = screen.getByRole("list", { name: "Bible Teaching templates" });
+    expect(within(formats).getAllByRole("listitem")).toHaveLength(3);
+    expect(within(formats).getByText("Bible Lesson — Children / Youth")).toBeInTheDocument();
     const passage = within(templates).getByText("Biblical Character Study").closest("li")!;
-    await user.click(within(passage as HTMLElement).getByRole("button", { name: "Duplicate and customise" }));
+    await user.click(within(passage as HTMLElement).getByRole("button", { name: "Save Biblical Character Study as my template" }));
 
     expect(await screen.findByRole("heading", { level: 1, name: "Edit template" })).toBeInTheDocument();
     const name = screen.getByLabelText("Name");
@@ -288,7 +372,7 @@ describe("templates", () => {
     await user.type(name, "Short Character Study");
     const sections = screen.getByRole("list", { name: "Parts of the template" });
     // The copy has the parts a study starts with and those to add later, not the retired ones.
-    expect(within(sections).getAllByRole("listitem")).toHaveLength(8);
+    expect(Array.from(sections.children)).toHaveLength(8);
     expect(screen.getByRole("checkbox", { name: "Offer part 8 later instead of starting with it" })).toBeChecked();
     for (const title of ["Character and decisions", "God's work and the biblical evaluation", "Main findings", "Application", "Related figures and passages"]) {
       await user.click(within(sections).getByRole("button", { name: `Remove ${title}` }));
@@ -304,7 +388,7 @@ describe("templates", () => {
 
     await user.click(await screen.findByRole("button", { name: "Back to workspace" }));
     await openProject(user, "John Sermon Series");
-    await user.type(newStudy().getByLabelText("What would you like to study?"), "John 15");
+    await user.type(newStudy().getByRole("textbox", { name: /^(Bible passage|Word or expression|Topic|Biblical character|Book of the Bible|Biblical theme|Doctrine|Study subject)$/ }), "John 15");
     await user.click(newStudy().getByRole("button", { name: "My template" }));
     await user.selectOptions(newStudy().getByLabelText("Template"), mine.id);
     await user.click(screen.getByRole("button", { name: "Create study" }));
@@ -321,9 +405,9 @@ describe("related studies and search", () => {
     const { user } = await renderApp(api);
     await openStudy(api, user, "John Sermon Series", "Romans 8");
 
-    expect(screen.queryByRole("region", { name: "Related studies" })).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Study details" }));
-    await user.click(screen.getByRole("button", { name: "+ Link a related study" }));
+    await openStudyOptions(user);
+    await user.click(screen.getByRole("button", { name: "Bible Study information" }));
+    await user.click(await screen.findByRole("button", { name: "+ Link a related study" }));
     const form = screen.getByRole("group", { name: "Link a related study" });
     // ordinarily just choose the study; saying how they are related is one step further
     expect(within(form).queryByLabelText("Relationship")).not.toBeInTheDocument();
@@ -332,9 +416,10 @@ describe("related studies and search", () => {
     await user.selectOptions(within(form).getByLabelText("Related study"), api.state.studies[1]!.id);
     await user.click(within(form).getByRole("button", { name: "Link" }));
 
-    const related = await screen.findByRole("region", { name: "Related studies" });
+    await openStudyOptions(user);
+    const related = screen.getByRole("dialog", { name: "Bible Study information" });
     expect(await within(related).findByText("Continues")).toBeInTheDocument();
-    await user.click(within(related).getByRole("button", { name: "Galatians 4" }));
+    await user.click(await within(related).findByRole("button", { name: "Galatians 4" }));
     expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Galatians 4");
   });
 

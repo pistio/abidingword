@@ -2,7 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { createFakePdfEngine, textItem } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // The interactive Original PDF (v0.13): Scripture references on the page itself, pages
 // without text of their own, find marks, and the view remembered per source. All text is invented.
@@ -106,7 +106,7 @@ describe("the interactive Original PDF", () => {
     const { user } = await renderApp(api, { pdfEngine: engine });
     await openFromLibrary(user);
     await user.click(screen.getByRole("button", { name: "Original" }));
-    expect(await within(pageSheet(2)).findByRole("note")).toHaveTextContent("Native text unavailable on this page");
+    expect(await within(pageSheet(2)).findByRole("note")).toHaveTextContent("This page has no selectable text");
     await waitFor(() => expect(engine.textReads).toContain(3));
     expect(within(pageSheet(1)).queryByRole("note")).toBeNull();
     expect(within(pageSheet(3)).queryByRole("note")).toBeNull();

@@ -39,7 +39,7 @@ export function CreateForm({ label, placeholder, submitLabel, onCreate }: Create
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-2" noValidate>
-      <label htmlFor={id} className="text-[0.9375rem] font-medium text-text-strong">
+      <label htmlFor={id} className="type-subhead">
         {label}
       </label>
       <div className="flex flex-wrap gap-2">
@@ -50,7 +50,7 @@ export function CreateForm({ label, placeholder, submitLabel, onCreate }: Create
           placeholder={placeholder}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="h-10 min-w-0 flex-1 basis-64 rounded-aw border border-border bg-bg px-3 text-base placeholder:text-text-muted"
+          className="h-10 min-w-0 flex-1 basis-64 aw-input px-3 text-base placeholder:text-text-muted"
         />
         <Button type="submit" variant="primary" disabled={busy}>
           <Plus className="size-4" aria-hidden="true" />

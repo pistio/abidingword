@@ -1,8 +1,10 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useAutosize } from "@/hooks/useAutosize";
 
 interface EditableTitleProps {
+  saveKey: string;
   /** Accessible name, e.g. "Study title". */
   label: string;
   value: string;
@@ -13,7 +15,7 @@ interface EditableTitleProps {
  * A page heading the user can edit in place. Saves automatically; a blank
  * title is never saved and is restored when the field is left.
  */
-export function EditableTitle({ label, value, onSave }: EditableTitleProps) {
+export function EditableTitle({ label, value, onSave, saveKey }: EditableTitleProps) {
   const { t } = useTranslation();
   const [text, setText] = useState(value);
   const [saved, setSaved] = useState(value);
@@ -25,17 +27,12 @@ export function EditableTitle({ label, value, onSave }: EditableTitleProps) {
     },
     [onSave],
   );
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, saveKey, setText);
   const blank = !text.trim();
   const area = useRef<HTMLTextAreaElement>(null);
 
   // A long title wraps and stays whole; the field grows to fit it.
-  useLayoutEffect(() => {
-    const el = area.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [text]);
+  useAutosize(area, 1, text);
 
   return (
     <div>
@@ -61,7 +58,7 @@ export function EditableTitle({ label, value, onSave }: EditableTitleProps) {
             else flush();
           }}
           aria-invalid={blank || undefined}
-          className="block w-full resize-none overflow-hidden break-words rounded-aw border border-transparent border-b-border-subtle bg-transparent px-2 py-1 -mx-2 font-display text-[1.625rem] font-heading leading-tight text-text-strong hover:border-border-subtle focus:border-border"
+          className="block w-full resize-none overflow-hidden break-words rounded-aw border border-transparent border-b-border-subtle bg-transparent px-2 py-1 -mx-2 type-title hover:border-border-subtle focus:border-border"
         />
       </h1>
       {blank && (

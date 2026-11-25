@@ -26,6 +26,8 @@ pub struct FoundImage {
     pub author: Option<String>,
     /// Wording to show with the image where the licence asks for it.
     pub attribution: String,
+    /// True when the source supplied attribution wording that must stay exact.
+    pub attribution_provided: bool,
     /// The small picture itself, fetched by the core (the window loads no
     /// remote images).
     pub thumb_data: Option<String>,
@@ -150,7 +152,9 @@ pub fn parse_found(reply: &HttpReply) -> AppResult<Vec<FoundImage>> {
                     .trim_start_matches("File:")
                     .to_string()
             });
-            let attribution = field("Attribution").unwrap_or_else(|| match &author {
+            let supplied_attribution = field("Attribution");
+            let attribution_provided = supplied_attribution.is_some();
+            let attribution = supplied_attribution.unwrap_or_else(|| match &author {
                 Some(a) => format!("{a}, {licence}, via Wikimedia Commons"),
                 None => format!("{licence}, via Wikimedia Commons"),
             });
@@ -163,6 +167,7 @@ pub fn parse_found(reply: &HttpReply) -> AppResult<Vec<FoundImage>> {
                 licence_url,
                 author,
                 attribution,
+                attribution_provided,
                 thumb_data: None,
             })
         })
@@ -277,6 +282,7 @@ mod tests {
         };
         let found = parse_found(&reply).unwrap();
         assert_eq!(found.len(), 1, "an image without a licence is left out");
+        assert!(!found[0].attribution_provided);
         assert_eq!(found[0].title, "Vine.jpg");
         assert_eq!(found[0].licence, "CC BY-SA 4.0");
         assert_eq!(found[0].author.as_deref(), Some("Jane Doe"));
@@ -284,6 +290,18 @@ mod tests {
             found[0].attribution,
             "Jane Doe, CC BY-SA 4.0, via Wikimedia Commons"
         );
+    }
+
+    #[test]
+    fn source_supplied_attribution_is_marked_and_kept_exact() {
+        let credit = "Writer via Archive — CC BY 4.0 — Exact credit";
+        let reply = HttpReply { status: 200, body: serde_json::to_vec(&json!({"query":{"pages":{"1":{"title":"File:Image.jpg","imageinfo":[{
+            "url":"https://upload.wikimedia.org/image.jpg", "descriptionurl":"https://commons.wikimedia.org/wiki/File:Image.jpg",
+            "extmetadata":{"LicenseShortName":{"value":"CC BY 4.0"},"Attribution":{"value":credit}}
+        }]}}}})).unwrap() };
+        let found = parse_found(&reply).unwrap();
+        assert!(found[0].attribution_provided);
+        assert_eq!(found[0].attribution, credit);
     }
 
     #[test]

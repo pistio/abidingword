@@ -57,6 +57,14 @@ pub fn contents(bytes: &[u8], expected_segments: usize) -> Vec<ContentsItem> {
     }
 }
 
+/// Import and source navigation share the same single parse and anchor map.
+pub fn extract_with_contents(
+    bytes: &[u8],
+    file_name: &str,
+) -> AppResult<(ImportedDocument, Vec<ContentsItem>)> {
+    read_book(bytes, file_name, true).map(|book| (book.document, book.items))
+}
+
 /// The links inside the book's text that lead to another place in the same
 /// book: where the link is (segment position and the character range of its
 /// text, in UTF-16 units as the interface counts them) and the segment it
@@ -101,12 +109,8 @@ pub fn structure(bytes: &[u8], expected_segments: usize) -> Vec<super::epub_view
             anchors: doc
                 .anchors
                 .iter()
-                .map(|(name, at)| {
-                    (
-                        name.clone(),
-                        (*at).min(layout.total.saturating_sub(1)) as i64,
-                    )
-                })
+                .filter(|(_, at)| **at < doc.end)
+                .map(|(name, at)| (name.clone(), *at as i64))
                 .collect(),
         });
     }
@@ -143,19 +147,20 @@ pub(super) struct Layout {
 #[derive(Default)]
 struct DocLayout {
     first: usize,
+    end: usize,
     anchors: HashMap<String, usize>,
 }
 
 impl Layout {
-    /// The segment a (document, fragment) leads to: the anchor's own segment
-    /// if the fragment is known, else the document's first. None if the
-    /// document is not part of the reading order or the book has no text.
+    /// A supplied fragment must resolve to one actual anchor. A document-only
+    /// target may use its opening; a missing/ambiguous fragment may not.
     fn position(&self, path: &str, fragment: Option<&str>) -> Option<i64> {
         let doc = self.docs.get(path)?;
-        let at = fragment
-            .and_then(|f| doc.anchors.get(f).copied())
-            .unwrap_or(doc.first);
-        (self.total > 0).then(|| at.min(self.total - 1) as i64)
+        let at = match fragment {
+            Some(fragment) => *doc.anchors.get(fragment)?,
+            None => doc.first,
+        };
+        (doc.first <= at && at < doc.end).then_some(at as i64)
     }
 }
 
@@ -168,11 +173,64 @@ impl Layout {
             Some(f) => *doc.anchors.get(f)?,
             None => doc.first,
         };
-        (self.total > 0).then(|| at.min(self.total - 1) as i64)
+        (doc.first <= at && at < doc.end).then_some(at as i64)
     }
 }
 
 fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Book> {
+    read_book_with(bytes, file_name, want_contents, None)
+}
+
+/// The book as the structure-aware reading gives it (Phase A1): the text and
+/// segments are those of [`read_book`] (nothing is cut out), and the links
+/// the book shows to lead to notes are marked as callers in each segment's
+/// `marked` text for the verse recogniser. Also returns, for each spine
+/// document read, its archive path and the segments it gave.
+pub fn read_structural(
+    bytes: &[u8],
+    file_name: &str,
+    source: &super::epub_source::SourceBook,
+    roles: &super::epub_source::LinkRoles,
+) -> AppResult<(ImportedDocument, Vec<EntrySegments>)> {
+    let book = read_book_with(bytes, file_name, false, Some((source, roles)))?;
+    let layout = &book.layout;
+    let mut spans = Vec::with_capacity(layout.order.len());
+    for (index, (_, path)) in layout.order.iter().enumerate() {
+        let Some(doc) = layout.docs.get(path) else {
+            continue;
+        };
+        let end = layout
+            .order
+            .get(index + 1)
+            .and_then(|(_, next)| layout.docs.get(next))
+            .map_or(layout.total, |next| next.first);
+        spans.push((path.clone(), doc.first, end.saturating_sub(doc.first)));
+    }
+    Ok((book.document, spans))
+}
+
+/// A spine document's archive path, its first segment and how many
+/// segments it gave.
+pub type EntrySegments = (String, usize, usize);
+
+/// An internal link's (archive path, fragment), for `epub_source`.
+pub(super) fn internal_link_target(
+    dir: &str,
+    doc: &str,
+    href: &str,
+) -> Option<(String, Option<String>)> {
+    link_target(dir, doc, href)
+}
+
+fn read_book_with(
+    bytes: &[u8],
+    file_name: &str,
+    want_contents: bool,
+    roles: Option<(
+        &super::epub_source::SourceBook,
+        &super::epub_source::LinkRoles,
+    )>,
+) -> AppResult<Book> {
     let bad = |why: &str| {
         AppError::Import(
             UserMessage::new(
@@ -198,19 +256,56 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
         return Err(bad("no reading order"));
     }
 
+    // The classes the book's stylesheets set apart (bold, italic, centred,
+    // larger): evidence of headings where the book does not use h1–h6.
+    let mut emphasised = std::collections::HashSet::new();
+    // The classes the stylesheets float beside the text (structure-aware
+    // reading only).
+    let mut floated = std::collections::HashSet::new();
+    for item in package.manifest.values() {
+        if item.media_type == "text/css" {
+            let path = normalise(&format!("{base}{}", item.href));
+            if let Some(css) = read_entry(&mut archive, &path) {
+                emphasised.extend(emphasised_classes(&css));
+                if roles.is_some() {
+                    floated.extend(floated_classes(&css));
+                }
+            }
+        }
+    }
     let mut segments = Vec::new();
     let mut pending: Vec<PendingLink> = Vec::new();
     let mut layout = Layout::default();
     let mut chapters = 0u32;
+    // Each spine document once (Phase A1.5, independent review finding 2:
+    // a spine naming one document a million times read it a million
+    // times), as the structure-aware reader does.
+    let mut read_paths = std::collections::HashSet::new();
+    let mut spine_bytes = 0usize;
     for idref in &package.spine {
         let Some(item) = package.manifest.get(idref) else {
             continue;
         };
         let path = normalise(&format!("{base}{}", item.href));
+        if !read_paths.insert(path.clone()) {
+            continue;
+        }
         let Some(xhtml) = read_entry(&mut archive, &path) else {
             continue;
         };
-        let (blocks, anchors) = blocks(&xhtml);
+        spine_bytes += xhtml.len();
+        if spine_bytes > MAX_SPINE_BYTES {
+            return Err(bad("larger than any Bible"));
+        }
+        let (blocks, anchors) = match roles {
+            Some((source, roles)) => blocks_with(
+                &xhtml,
+                Some((roles, path.as_str())),
+                &roles.note_target_ids(source, &path),
+                &floated,
+            ),
+            None => blocks(&xhtml),
+        };
         let chapter = blocks
             .iter()
             .find(|b| b.heading_level.is_some())
@@ -220,6 +315,7 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
         }
         let mut doc = DocLayout {
             first: segments.len(),
+            end: segments.len(),
             anchors: HashMap::new(),
         };
         // Segments emitted before each block, to place anchors among them.
@@ -240,7 +336,13 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
             let section_path = (!names.is_empty()).then(|| names.join(" › "));
             let heading = headings.iter().rev().flatten().next().cloned();
             let mut cursor = 0usize;
-            for part in split_long(&block.text, MAX_SEGMENT) {
+            let parts = split_long(&block.text, MAX_SEGMENT);
+            let mut marked = block
+                .marked
+                .as_deref()
+                .and_then(|m| super::split_like(m, &parts))
+                .map(Vec::into_iter);
+            for part in parts {
                 // Where this segment sits in the block, to place the block's links in it.
                 let at = block.text[cursor..]
                     .find(part.as_str())
@@ -263,21 +365,32 @@ fn read_book(bytes: &[u8], file_name: &str, want_contents: bool) -> AppResult<Bo
                     }
                 }
                 segments.push(NewSegment {
+                    marked: marked.as_mut().and_then(Iterator::next),
                     text: part,
                     chapter: chapter.clone(),
                     heading: heading.clone(),
-                    section_path: section_path.clone().or_else(|| chapter.clone()),
+                    // A later heading never gives earlier front matter a
+                    // structural opening, even within the same spine file.
+                    section_path: section_path.clone(),
                     paragraph_index: Some(paragraph),
+                    note: block.note,
+                    styled: block.classes.iter().any(|c| emphasised.contains(c)),
                     ..Default::default()
                 });
                 paragraph += 1;
             }
         }
         before.push(segments.len());
+        doc.end = segments.len();
+        let mut ambiguous = std::collections::HashSet::new();
         for (id, block_index) in anchors {
             let at = before.get(block_index).copied().unwrap_or(segments.len());
+            if doc.anchors.get(&id).is_some_and(|previous| *previous != at) {
+                ambiguous.insert(id.clone());
+            }
             doc.anchors.entry(id).or_insert(at);
         }
+        doc.anchors.retain(|id, _| !ambiguous.contains(id));
         layout.order.push((idref.clone(), path.clone()));
         layout.docs.entry(path).or_insert(doc);
     }
@@ -339,13 +452,28 @@ pub(super) fn read_entry(
     name: &str,
 ) -> Option<String> {
     let mut entry = archive.by_name(name).ok()?;
-    if entry.size() > MAX_ENTRY_BYTES {
+    let declared = entry.size();
+    if declared > MAX_ENTRY_BYTES {
         return None;
     }
-    let mut text = String::new();
-    entry.read_to_string(&mut text).ok()?;
-    Some(text)
+    // Never more than the entry says it holds: a compressed entry can lie
+    // about its size and inflate without end (Phase A1.5, independent
+    // review finding 1).
+    let mut bytes = Vec::new();
+    (&mut entry)
+        .take(declared + 1)
+        .read_to_end(&mut bytes)
+        .ok()?;
+    if bytes.len() as u64 > declared {
+        return None;
+    }
+    String::from_utf8(bytes).ok()
 }
+
+/// The most text of spine documents one book may inflate to (Phase A1.5):
+/// the largest Bible of the corpus holds 15 MB. Beyond it the book is
+/// refused, never read in part.
+pub(super) const MAX_SPINE_BYTES: usize = 120 * 1024 * 1024;
 
 /// Resolves "OEBPS/text/../images/a.xhtml" style paths inside the archive.
 pub(super) fn normalise(path: &str) -> String {
@@ -517,7 +645,15 @@ pub(super) fn percent_decode(value: &str) -> String {
 
 struct Block {
     text: String,
+    /// The text with note callers and superscripts marked for the verse
+    /// recogniser (`NewSegment::marked`), when it has any (v0.24.4).
+    marked: Option<String>,
+    /// Inside the document's notes (`epub:type="footnote"`, a footnotes
+    /// section): never verse text.
+    note: bool,
     heading_level: Option<usize>,
+    /// The class names of the element the block is (`class="s"`).
+    classes: Vec<String>,
     /// Links in the text, as character ranges of `text`.
     links: Vec<RawLink>,
 }
@@ -539,14 +675,44 @@ struct OpenLink {
 #[derive(Default)]
 struct Acc {
     text: String,
+    /// `text` with note callers and superscripts marked (v0.24.4).
+    marked: String,
+    any_marked: bool,
     chars: usize,
     pending_space: bool,
     links: Vec<RawLink>,
     open: Option<OpenLink>,
 }
 
+/// How a piece of inline text is marked for the verse recogniser.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Mark {
+    Plain,
+    /// `<sup>`: digits as superscript digits, a short lowercase label as a
+    /// raised label.
+    Superscript,
+    /// A link the document declares a note's caller (`epub:type="noteref"`).
+    NoteRef,
+}
+
 impl Acc {
     fn push_str(&mut self, piece: &str) {
+        self.push_marked(piece, Mark::Plain);
+    }
+
+    fn push_marked(&mut self, piece: &str, mark: Mark) {
+        use super::pdf_layout::{superscript, NOTE_CLOSE, NOTE_OPEN, RAISED_CLOSE, RAISED_OPEN};
+        let trimmed = piece.trim();
+        let short_label =
+            (1..=3).contains(&trimmed.chars().count()) && trimmed.chars().all(char::is_lowercase);
+        let digits = !trimmed.is_empty() && trimmed.chars().all(|c| c.is_ascii_digit());
+        let (open, close) = match mark {
+            Mark::NoteRef if !trimmed.is_empty() => (Some(NOTE_OPEN), Some(NOTE_CLOSE)),
+            Mark::Superscript if short_label => (Some(RAISED_OPEN), Some(RAISED_CLOSE)),
+            _ => (None, None),
+        };
+        let raise_digits = mark == Mark::Superscript && digits;
+        let mut opened = false;
         for ch in piece.chars() {
             if ch.is_whitespace() {
                 self.pending_space = true;
@@ -554,14 +720,33 @@ impl Acc {
             }
             if self.pending_space && self.chars > 0 {
                 self.text.push(' ');
+                self.marked.push(' ');
                 self.chars += 1;
             }
             self.pending_space = false;
             if let Some(open) = self.open.as_mut() {
                 open.start.get_or_insert(self.chars);
             }
+            if !opened {
+                if let Some(o) = open {
+                    self.marked.push(o);
+                    self.any_marked = true;
+                }
+                opened = true;
+            }
             self.text.push(ch);
+            if raise_digits {
+                self.marked.push_str(&superscript(&ch.to_string()));
+                self.any_marked = true;
+            } else {
+                self.marked.push(ch);
+            }
             self.chars += 1;
+        }
+        if opened {
+            if let Some(c) = close {
+                self.marked.push(c);
+            }
         }
     }
 
@@ -583,13 +768,16 @@ impl Acc {
     }
 
     /// The finished block's text and links. A link still open carries on into the next block.
-    fn take(&mut self) -> (String, Vec<RawLink>) {
+    fn take(&mut self) -> (String, Option<String>, Vec<RawLink>) {
         let carry = self.open.as_ref().map(|o| o.href.clone());
         self.close_link();
+        let marked = std::mem::take(&mut self.marked);
         let out = (
             std::mem::take(&mut self.text),
+            self.any_marked.then_some(marked),
             std::mem::take(&mut self.links),
         );
+        self.any_marked = false;
         self.chars = 0;
         self.pending_space = false;
         self.open = carry.map(|href| OpenLink { href, start: None });
@@ -601,77 +789,410 @@ impl Acc {
 /// blockquote, dd, dt, pre, and text directly in div/section). Tolerant of
 /// imperfect markup; character references are decoded by [`unescape`].
 fn blocks(xhtml: &str) -> (Vec<Block>, Vec<(String, usize)>) {
+    blocks_with(xhtml, None, &Default::default(), &Default::default())
+}
+
+/// [`blocks`], with the roles of the document's links decided by where they
+/// lead (Phase A1, `epub_source::classify_links`): a link that leads to a
+/// note is marked as a note's caller whatever its text, and the document's
+/// own declaration (`epub:type="noteref"`) no longer decides alone. `None`
+/// reads exactly as [`blocks`] always has.
+fn blocks_with(
+    xhtml: &str,
+    roles: Option<(&super::epub_source::LinkRoles, &str)>,
+    note_targets: &std::collections::HashSet<String>,
+    floated: &std::collections::HashSet<String>,
+) -> (Vec<Block>, Vec<(String, usize)>) {
     let mut reader = tolerant_reader(xhtml);
+    // The block being read holds an element a note's caller leads to: it is
+    // a note (Phase A1), whatever its markup says.
+    let mut target_note = false;
+    // Every `<a href>` start tag, in document order (as `epub_source` counts).
+    let mut link_ordinal = 0usize;
     let mut out = Vec::new();
     // Elements with an id, and the index of the block they begin in or at.
     let mut anchors: Vec<(String, usize)> = Vec::new();
     let mut acc = Acc::default();
     let mut heading: Option<usize> = None;
     let mut skip_depth = 0usize;
-    let flush = |out: &mut Vec<Block>, acc: &mut Acc, heading: Option<usize>| {
-        let (text, links) = acc.take();
+    let mut classes: Vec<String> = Vec::new();
+    // Inline marks (v0.24.4): `<sup>` depth, and whether the open link is
+    // a declared note caller. Block marks: the elements that hold the
+    // document's notes, by depth.
+    let mut sup_depth = 0usize;
+    let mut noteref = false;
+    let mut depth = 0usize;
+    let mut note_depths: Vec<usize> = Vec::new();
+    let flush = |out: &mut Vec<Block>,
+                 acc: &mut Acc,
+                 heading: Option<usize>,
+                 classes: &[String],
+                 note: bool,
+                 target_note: &mut bool| {
+        let (text, marked, links) = acc.take();
         if !text.is_empty() {
+            let note = note || std::mem::take(target_note);
             out.push(Block {
                 text,
+                marked,
+                note,
                 heading_level: heading,
+                classes: classes.to_vec(),
                 links,
             });
         }
     };
+    let class_of = |e: &quick_xml::events::BytesStart| -> Vec<String> {
+        attr_value(e, "class")
+            .map(|c| c.split_whitespace().map(str::to_string).collect())
+            .unwrap_or_default()
+    };
     loop {
         match reader.read_event() {
             Ok(Event::Start(e)) => {
+                depth += 1;
                 let name = local_name(e.name().as_ref()).to_ascii_lowercase();
+                let in_notes = !note_depths.is_empty();
+                // A block the book's stylesheet floats beside the text (a
+                // margin note, a sidebar): out of the text's flow, kept as
+                // apparatus (Phase A1). Inline elements (a drop numeral) are
+                // not blocks and stay in the text.
+                let floated_block = !floated.is_empty()
+                    && matches!(
+                        name.as_str(),
+                        "div" | "p" | "aside" | "section" | "blockquote" | "table"
+                    )
+                    && attr_value(&e, "class")
+                        .is_some_and(|c| c.split_whitespace().any(|c| floated.contains(c)));
+                if notes_element(&e) || floated_block {
+                    note_depths.push(depth);
+                }
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth += 1,
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading);
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
                         heading = Some((name.as_bytes()[1] - b'0') as usize);
+                        classes = class_of(&e);
                     }
-                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr" => {
-                        flush(&mut out, &mut acc, heading);
+                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr"
+                    | "aside" => {
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
+                        classes = class_of(&e);
                     }
-                    "a" if skip_depth == 0 => {
-                        if let Some(href) = attr_value(&e, "href") {
-                            acc.open_link(href);
+                    "a" => {
+                        let href = attr_value(&e, "href");
+                        let ordinal = href.as_ref().map(|_| {
+                            link_ordinal += 1;
+                            link_ordinal - 1
+                        });
+                        if skip_depth == 0 {
+                            if let Some(href) = href {
+                                acc.open_link(href);
+                            }
+                            noteref = match (roles, ordinal) {
+                                (Some((roles, path)), Some(ordinal)) => matches!(
+                                    roles.role(path, ordinal),
+                                    Some(
+                                        super::epub_source::LinkRole::NoteCaller
+                                            | super::epub_source::LinkRole::Conflict
+                                    )
+                                ),
+                                (Some(_), None) => false,
+                                (None, _) => noteref_element(&e),
+                            };
                         }
                     }
+                    "sup" => sup_depth += 1,
                     _ => {}
                 }
                 note_anchor(&e, out.len(), &mut anchors);
+                if !note_targets.is_empty() && is_note_target(&e, note_targets) {
+                    target_note = true;
+                }
             }
             Ok(Event::End(e)) => {
                 let name = local_name(e.name().as_ref()).to_ascii_lowercase();
+                let in_notes = !note_depths.is_empty();
                 match name.as_str() {
                     "script" | "style" | "head" => skip_depth = skip_depth.saturating_sub(1),
                     "h1" | "h2" | "h3" | "h4" | "h5" | "h6" => {
-                        flush(&mut out, &mut acc, heading);
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
                         heading = None;
+                        classes.clear();
                     }
-                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr" => {
-                        flush(&mut out, &mut acc, heading);
+                    "p" | "li" | "blockquote" | "dd" | "dt" | "pre" | "div" | "section" | "tr"
+                    | "aside" => {
+                        flush(
+                            &mut out,
+                            &mut acc,
+                            heading,
+                            &classes,
+                            in_notes,
+                            &mut target_note,
+                        );
+                        classes.clear();
                     }
-                    "a" => acc.close_link(),
+                    "a" => {
+                        acc.close_link();
+                        noteref = false;
+                    }
+                    "sup" => sup_depth = sup_depth.saturating_sub(1),
                     _ => {}
                 }
+                if note_depths.last() == Some(&depth) {
+                    note_depths.pop();
+                }
+                depth = depth.saturating_sub(1);
             }
             Ok(Event::Empty(e)) if local_name(e.name().as_ref()).eq_ignore_ascii_case("br") => {
                 acc.push_str(" ")
             }
-            Ok(Event::Empty(e)) => note_anchor(&e, out.len(), &mut anchors),
-            // Entities arrive separately (GeneralRef), so text is used as is.
-            Ok(Event::Text(t)) if skip_depth == 0 => acc.push_str(&t),
-            Ok(Event::CData(t)) if skip_depth == 0 => acc.push_str(&t),
-            Ok(Event::GeneralRef(r)) if skip_depth == 0 => {
-                acc.push_str(&unescape(&format!("&{};", &*r)))
+            Ok(Event::Empty(e)) => {
+                note_anchor(&e, out.len(), &mut anchors);
+                if !note_targets.is_empty() && is_note_target(&e, note_targets) {
+                    target_note = true;
+                }
             }
+            // Entities arrive separately (GeneralRef), so text is used as is.
+            Ok(Event::Text(t)) if skip_depth == 0 => {
+                acc.push_marked(&super::neutralise_marks(&t), mark_of(noteref, sup_depth))
+            }
+            Ok(Event::CData(t)) if skip_depth == 0 => {
+                acc.push_marked(&super::neutralise_marks(&t), mark_of(noteref, sup_depth))
+            }
+            Ok(Event::GeneralRef(r)) if skip_depth == 0 => acc.push_marked(
+                &super::neutralise_marks(&unescape(&format!("&{};", &*r))),
+                mark_of(noteref, sup_depth),
+            ),
             Ok(Event::Eof) => break,
-            Err(_) => break,
+            // The document ends here in error (Phase A1.5, independent
+            // review finding 11): what was being read is cut. A mark no
+            // verse is verified with goes where the text stops, so the verse
+            // cut short is withheld, never verified short.
+            Err(_) => {
+                acc.push_marked("\u{FFFD}", mark_of(false, 0));
+                break;
+            }
             _ => {}
         }
     }
-    flush(&mut out, &mut acc, heading);
+    flush(
+        &mut out,
+        &mut acc,
+        heading,
+        &classes,
+        !note_depths.is_empty(),
+        &mut target_note,
+    );
     (out, anchors)
+}
+
+fn is_note_target(
+    e: &quick_xml::events::BytesStart,
+    targets: &std::collections::HashSet<String>,
+) -> bool {
+    e.attributes().flatten().any(|a| {
+        let key = local_name(a.key.as_ref());
+        (key == "id" || (key == "name" && local_name(e.name().as_ref()) == "a"))
+            && targets.contains(&percent_decode(&a.value))
+    })
+}
+
+fn mark_of(noteref: bool, sup_depth: usize) -> Mark {
+    if noteref {
+        Mark::NoteRef
+    } else if sup_depth > 0 {
+        Mark::Superscript
+    } else {
+        Mark::Plain
+    }
+}
+
+/// The `epub:type` and `role` values of an element, lower-cased, with its
+/// classes.
+fn semantic_values(e: &quick_xml::events::BytesStart) -> Vec<String> {
+    let mut out = Vec::new();
+    for a in e.attributes().flatten() {
+        let key = local_name(a.key.as_ref()).to_ascii_lowercase();
+        if key == "type" || key == "role" || key == "class" {
+            let value = a.value.to_ascii_lowercase();
+            out.extend(value.split_whitespace().map(str::to_string));
+        }
+    }
+    out
+}
+
+/// Whether a link is one the document declares a note's caller
+/// (`epub:type="noteref"`, `role="doc-noteref"`, pandoc's `footnote-ref`).
+fn noteref_element(e: &quick_xml::events::BytesStart) -> bool {
+    semantic_values(e).iter().any(|v| {
+        matches!(
+            v.as_str(),
+            "noteref" | "doc-noteref" | "footnote-ref" | "footnoteref"
+        )
+    })
+}
+
+/// Whether an element holds the document's notes (`epub:type="footnote"`,
+/// `"footnotes"`, `"endnote(s)"`, `"rearnote(s)"`, `role="doc-footnote"`,
+/// `"doc-endnotes"`, pandoc's `class="footnotes"`).
+fn notes_element(e: &quick_xml::events::BytesStart) -> bool {
+    semantic_values(e).iter().any(|v| {
+        matches!(
+            v.as_str(),
+            "footnote"
+                | "footnotes"
+                | "endnote"
+                | "endnotes"
+                | "rearnote"
+                | "rearnotes"
+                | "doc-footnote"
+                | "doc-endnote"
+                | "doc-endnotes"
+                | "doc-footnotes"
+        )
+    })
+}
+
+/// The classes a book's stylesheets set apart: bold, italic, centred or
+/// larger than the text (`.s {font-weight:bold; text-align:center}`). Simple
+/// class selectors only ("`.s`", "`div.s`", "`html[dir=ltr] .q`"); anything
+/// the reader cannot follow simply sets nothing apart.
+pub(super) fn emphasised_classes(css: &str) -> std::collections::HashSet<String> {
+    let mut out = std::collections::HashSet::new();
+    let mut text = String::with_capacity(css.len());
+    // Comments out.
+    let mut rest = css;
+    while let Some(start) = rest.find("/*") {
+        text.push_str(&rest[..start]);
+        rest = rest[start + 2..]
+            .find("*/")
+            .map_or("", |end| &rest[start + 2 + end + 2..]);
+    }
+    text.push_str(rest);
+    for rule in text.split('}') {
+        let Some((selectors, declarations)) = rule.split_once('{') else {
+            continue;
+        };
+        let declarations = declarations.to_ascii_lowercase();
+        let value = |property: &str| -> Option<String> {
+            declarations.split(';').find_map(|d| {
+                let (k, v) = d.split_once(':')?;
+                (k.trim() == property).then(|| v.trim().to_string())
+            })
+        };
+        let bold = value("font-weight").is_some_and(|v| {
+            v.starts_with("bold")
+                || v.starts_with('6')
+                || v.starts_with('7')
+                || v.starts_with('8')
+                || v.starts_with('9')
+        });
+        let italic = value("font-style")
+            .is_some_and(|v| v.starts_with("italic") || v.starts_with("oblique"));
+        let centred = value("text-align").is_some_and(|v| v.starts_with("center"));
+        let larger = value("font-size").is_some_and(|v| {
+            let number: String = v
+                .chars()
+                .take_while(|c| c.is_ascii_digit() || *c == '.')
+                .collect();
+            let n: f64 = number.parse().unwrap_or(0.0);
+            (v.ends_with("em") && n > 1.05)
+                || (v.ends_with('%') && n > 105.0)
+                || v.starts_with("larger")
+        });
+        if !(bold || italic || centred || larger) {
+            continue;
+        }
+        for selector in selectors.split(',') {
+            let last = selector.split_whitespace().last().unwrap_or("");
+            // "div.s", ".s", ".s:first-child" → "s".
+            if let Some((_, class)) = last.rsplit_once('.') {
+                let class: String = class
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_')
+                    .collect();
+                if !class.is_empty() {
+                    out.insert(class);
+                }
+            }
+        }
+    }
+    out
+}
+
+/// The classes a book's stylesheets float beside the text or take out of
+/// its flow (`float: left|right`, `position: absolute|fixed`), simple class
+/// selectors only, as [`emphasised_classes`] reads them.
+pub(super) fn floated_classes(css: &str) -> std::collections::HashSet<String> {
+    let mut out = std::collections::HashSet::new();
+    let mut text = String::with_capacity(css.len());
+    let mut rest = css;
+    while let Some(start) = rest.find("/*") {
+        text.push_str(&rest[..start]);
+        rest = rest[start + 2..]
+            .find("*/")
+            .map_or("", |end| &rest[start + 2 + end + 2..]);
+    }
+    text.push_str(rest);
+    for rule in text.split('}') {
+        let Some((selectors, declarations)) = rule.split_once('{') else {
+            continue;
+        };
+        let declarations = declarations.to_ascii_lowercase();
+        let value = |property: &str| -> Option<String> {
+            declarations.split(';').find_map(|d| {
+                let (k, v) = d.split_once(':')?;
+                (k.trim() == property).then(|| v.trim().to_string())
+            })
+        };
+        let out_of_flow = value("float")
+            .is_some_and(|v| v.starts_with("left") || v.starts_with("right"))
+            || value("position")
+                .is_some_and(|v| v.starts_with("absolute") || v.starts_with("fixed"));
+        if !out_of_flow {
+            continue;
+        }
+        for selector in selectors.split(',') {
+            let last = selector.split_whitespace().last().unwrap_or("");
+            // Only a selector of the class alone or on an element (".m",
+            // "div.m"), never one of its descendants or states.
+            if last.contains(':') || last.contains('[') {
+                continue;
+            }
+            if let Some((_, class)) = last.rsplit_once('.') {
+                let class: String = class
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || *c == '-' || *c == '_')
+                    .collect();
+                if !class.is_empty() {
+                    out.insert(class);
+                }
+            }
+        }
+    }
+    out
 }
 
 fn note_anchor(
@@ -913,9 +1434,14 @@ pub(super) fn internal_target(dir: &str, href: &str) -> Option<(String, Option<S
 }
 
 pub(super) fn attr_value(e: &quick_xml::events::BytesStart, key: &str) -> Option<String> {
+    // Names compared as the structure-aware reader compares them, in any
+    // case and with repeated attributes tolerated, so that the two readers
+    // count the same links (Phase A1.5, independent review finding 10: an
+    // `<a HREF=…>` shifted every later link's role).
     e.attributes()
+        .with_checks(false)
         .flatten()
-        .find(|a| local_name(a.key.as_ref()) == key)
+        .find(|a| local_name(a.key.as_ref()).eq_ignore_ascii_case(key))
         .map(|a| a.value.to_string())
 }
 
@@ -1044,7 +1570,76 @@ fn parse_ncx(xml: &str) -> Vec<RawItem> {
 
 #[cfg(test)]
 mod tests {
+
+    #[test]
+    fn an_entry_that_inflates_beyond_its_declared_size_is_not_read() {
+        // Phase A1.5 (independent review finding 1): the size an archive
+        // declares for an entry is not trusted; reading stops one byte past
+        // it. The entry below says it holds 10 bytes and holds 100 000.
+        use std::io::Write as _;
+        let mut bytes = Vec::new();
+        {
+            let mut zip = zip::ZipWriter::new(std::io::Cursor::new(&mut bytes));
+            let deflated = zip::write::SimpleFileOptions::default()
+                .compression_method(zip::CompressionMethod::Deflated);
+            zip.start_file("a.xhtml", deflated).unwrap();
+            zip.write_all(&vec![b'a'; 100_000]).unwrap();
+            zip.finish().unwrap();
+        }
+        let honest = bytes.clone();
+        // The uncompressed size: 22 bytes into the local header, 24 into
+        // the central directory's.
+        let patch = |bytes: &mut Vec<u8>, signature: [u8; 4], at: usize| {
+            let start = bytes
+                .windows(4)
+                .position(|w| w == signature)
+                .expect("a header");
+            bytes[start + at..start + at + 4].copy_from_slice(&10u32.to_le_bytes());
+        };
+        patch(&mut bytes, [0x50, 0x4b, 0x03, 0x04], 22);
+        patch(&mut bytes, [0x50, 0x4b, 0x01, 0x02], 24);
+        let mut archive = zip::ZipArchive::new(Cursor::new(bytes.as_slice())).unwrap();
+        assert_eq!(read_entry(&mut archive, "a.xhtml"), None);
+        // The control: the same entry, honest about its size, is read.
+        let mut archive = zip::ZipArchive::new(Cursor::new(honest.as_slice())).unwrap();
+        assert_eq!(
+            read_entry(&mut archive, "a.xhtml").map(|t| t.len()),
+            Some(100_000)
+        );
+    }
     use super::*;
+
+    #[test]
+    fn note_callers_and_footnote_sections_are_marked() {
+        use super::super::pdf_layout::{NOTE_CLOSE, NOTE_OPEN};
+        let (found, _) = blocks(
+            "<html><body><p><strong>1</strong> Au commencement, Dieu\
+             <a href=\"#fn1\" class=\"footnote-ref\" id=\"fnref1\" epub:type=\"noteref\">1</a> cr\u{e9}a \
+             les cieux.</p><p>A verse with <sup>2</sup> raised and a note<sup>a</sup> letter.</p>\
+             <section class=\"footnotes\"><ol><li id=\"fn1\"><p>Ou \u{ab} dieux \u{bb}.</p></li></ol>\
+             </section><aside epub:type=\"footnote\"><p>Another note.</p></aside>\
+             <p>Text after the notes.</p></body></html>",
+        );
+        assert_eq!(
+            found[0].text,
+            "1 Au commencement, Dieu1 cr\u{e9}a les cieux."
+        );
+        assert_eq!(
+            found[0].marked.as_deref(),
+            Some(
+                format!("1 Au commencement, Dieu{NOTE_OPEN}1{NOTE_CLOSE} cr\u{e9}a les cieux.")
+                    .as_str()
+            )
+        );
+        assert!(!found[0].note);
+        assert_eq!(
+            found[1].marked.as_deref(),
+            Some("A verse with \u{b2} raised and a note\u{e000}a\u{e001} letter.")
+        );
+        assert!(found[2].note && found[2].text == "Ou \u{ab} dieux \u{bb}.");
+        assert!(found[3].note && found[3].text == "Another note.");
+        assert!(!found[4].note && found[4].marked.is_none());
+    }
 
     #[test]
     fn blocks_follow_headings_and_skip_scripts() {

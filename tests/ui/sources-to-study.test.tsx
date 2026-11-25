@@ -1,8 +1,9 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // From Sources to Study (v0.15): what is read in a source is added to the open Study as a
 // finding, with the source's words and where they are kept as its citation. All text is invented.
@@ -44,7 +45,7 @@ async function openStudy(user: User, title: string) {
 }
 
 async function openSource(user: User) {
-  await user.click(await within(sourcesPane()).findByRole("button", { name: /The True Vine/ }));
+  await user.click(await within(sourcesPane()).findByRole("button", { name: /^The True Vine/ }));
   const reader = await within(sourcesPane()).findByRole("region", { name: "The True Vine" });
   await within(reader).findByText(/Abide in me/);
   return reader;
@@ -156,7 +157,12 @@ describe("selected text → Study", () => {
     await user.click(within(await within(reader).findByRole("group", { name: "Mark the selected text" })).getByRole("button", { name: "Add to Study" }));
     await user.click(within(await panel()).getByRole("button", { name: "Cancel" }));
     await waitFor(() => expect(screen.queryByRole("region", { name: /^Add to Study/ })).toBeNull());
+    // Closing restores paragraph focus on the next animation frame. Select only
+    // after that focus handoff, which can otherwise clear the new DOM Range.
+    await waitFor(() => expect(paragraph(reader, "Abide in me")).toHaveFocus());
+    expect(findingsOf(api, studyIds[0]!)).toHaveLength(0);
     await select(paragraph(reader, "Abide in me"), "Abide");
+    expect(document.getSelection()?.toString()).toBe("Abide");
     await user.click(within(await within(reader).findByRole("group", { name: "Mark the selected text" })).getByRole("button", { name: "Add to Study" }));
     await panel();
     await user.keyboard("{Escape}");
@@ -273,7 +279,7 @@ describe("source marks → Study", () => {
     const { user } = await renderApp(api);
     await openStudy(user, "Abiding");
     const reader = await openSource(user);
-    await user.click(within(reader).getByRole("button", { name: "Marks" }));
+    await readerAction(user, "Marks", reader);
     const list = await screen.findByRole("region", { name: "Marks in The True Vine" });
     const row = within(list).getByText("Glory is the goal.").closest("li")!;
     await user.click(within(row).getByRole("button", { name: "More actions" }));
@@ -339,7 +345,7 @@ describe("copying a quotation with its citation", () => {
     const segment = api.state.library.segments.find((x) => x.text === "Bleibt in mir.")!;
     await api.sourceAnnotationCreate({ sourceId: segment.sourceId, kind: "highlight", color: "amber", start: { segmentId: segment.id, offset: 0 }, end: { segmentId: segment.id, offset: 13 }, quote: "Bleibt in mir" });
     const { user } = await renderApp(api);
-    await user.click(await within(screen.getByRole("complementary", { name: "Quellen" })).findByRole("button", { name: /Anonyme Predigt/ }));
+    await user.click(await within(screen.getByRole("complementary", { name: "Quellen" })).findByRole("button", { name: /^Anonyme Predigt/ }));
     const reader = await within(screen.getByRole("complementary", { name: "Quellen" })).findByRole("region", { name: "Anonyme Predigt" });
     await user.click(await within(reader).findByRole("button", { name: "1 Anmerkung hier: Markierung" }));
     const marks = await within(reader).findByRole("region", { name: "Anmerkungen hier" });
@@ -398,9 +404,29 @@ describe("a source-backed finding in the Study", () => {
     expect(within(studyPane()).queryByLabelText("Quoted from the source")).toBeNull();
   });
 
+  it("shows a citation whose source is not on this computer as kept, with its words, and nothing to open (v0.19.1)", async () => {
+    const { api } = await withFinding("Fruit needs the vine.");
+    // As a project imported from another computer: the citation stands on what it said.
+    const finding = api.state.findings.find((f) => f.sources.length > 0)!;
+    finding.sources[0] = { ...finding.sources[0]!, sourceId: null, segmentId: null, annotationId: null, removed: true, unavailable: true };
+    const locate = vi.spyOn(api, "findingSourceLocate");
+    const { user } = await renderApp(api);
+    await openStudy(user, "Abiding");
+    const study = studyPane();
+    expect(within(study).getByLabelText("Quoted from the source")).toHaveTextContent("bear fruit by itself");
+    expect(within(study).getByText("(not on this computer)")).toBeInTheDocument();
+    expect(within(study).getByText("Source not available on this computer. The citation has been kept.")).toHaveClass("sr-only");
+    expect(within(study).queryByText("(removed from library)")).toBeNull();
+    expect(within(study).queryByRole("button", { name: "J. Example, The True Vine, The Vine" })).toBeNull();
+    expect(locate).not.toHaveBeenCalled();
+    await user.click(within(study).getByRole("button", { name: "Copy quotation with citation" }));
+    await waitFor(async () => expect(await navigator.clipboard.readText()).toBe("“bear fruit by itself”\n— J. Example, The True Vine, The Vine"));
+  });
+
   it("keeps the finding, its quote and citation when the source is removed, and offers no way to open it", async () => {
     const { api, branch } = await withFinding("Fruit needs the vine.");
-    await api.libraryRemoveSource(branch.sourceId);
+    await api.librarySetState([branch.sourceId], "trashed");
+    await api.libraryRemovePermanently([branch.sourceId]);
     const { user } = await renderApp(api);
     await openStudy(user, "Abiding");
     const study = studyPane();

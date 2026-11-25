@@ -1,0 +1,18 @@
+---- indexing_a_moderately_large_source_in_each_language_is_quick stdout ----
+en: 5000 segments, 10000 references found; stage 1.84303135s, commit 779.550272ms
+de: 5000 segments, 10000 references found; stage 1.957719659s, commit 2.006003965s
+ko: 5000 segments, 10000 references found; stage 856.230145ms, commit 1.749959516s
+fr: 5000 segments, 10000 references found; stage 2.737128138s, commit 3.583849423s
+es: 5000 segments, 10000 references found; stage 5.044030236s, commit 6.281684997s
+
+thread 'indexing_a_moderately_large_source_in_each_language_is_quick' (82385) panicked at tests/passage_languages.rs:725:13:
+Español: 5.044030236s + 6.281684997s
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    indexing_a_moderately_large_source_in_each_language_is_quick
+
+test result: FAILED. 10 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.17s
+
+error: test failed, to rerun pass `--test passage_languages`

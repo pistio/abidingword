@@ -9,11 +9,15 @@
     "about": "À propos de cette installation",
     "planned": "Dans les prochaines versions",
     "assistant": "Assistant IA",
-    "updates": "Mises à jour"
+    "updates": "Mises à jour",
+    "data": "Données et sauvegarde",
+    "sources": "Sources"
   },
   "language": {
     "label": "Langue de l’interface",
-    "hint": "Change la langue des menus, des boutons et des messages. Vos études, notes, votre bibliothèque et les textes bibliques restent inchangés."
+    "hint": "Change la langue des menus, des boutons et des messages. Vos études, vos notes, votre bibliothèque et les textes bibliques restent inchangés.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Changer de langue"
   },
   "theme": {
     "legend": "Thème",
@@ -35,7 +39,7 @@
     "logFiles": "Fichiers journaux",
     "schema": "Schéma de la base de données",
     "schemaVersion": "Version {{version}}",
-    "backup": "Toutes vos études sont enregistrées dans le dossier de données de cet ordinateur. Pour les sauvegarder, copiez ce dossier entier pendant qu’Abiding Word est fermé."
+    "backup": "Tout votre travail est enregistré dans le dossier de données de cet ordinateur. Pour en garder une copie, utilisez « Tout sauvegarder… » dans Données et sauvegarde."
   },
   "planned": {
     "sync": "Synchronisation",
@@ -57,7 +61,12 @@
       "xai": "xAI (Grok)",
       "perplexity": "Perplexity",
       "deepseek": "DeepSeek",
-      "qwen": "Qwen (Alibaba Cloud)"
+      "qwen": "Qwen (Alibaba Cloud)",
+      "mistral": "Mistral (Mistral, Codestral)",
+      "cohere": "Cohere (Command)",
+      "moonshot": "Moonshot AI (Kimi)",
+      "zai": "Z.ai (GLM)",
+      "minimax": "MiniMax"
     },
     "remote": "Quand vous demandez de l’aide, le texte choisi est envoyé par Internet à ce service.",
     "local": "Fonctionne sur cet ordinateur : votre texte ne le quitte pas.",
@@ -90,7 +99,7 @@
     "findImages": "Trouver des images libres sur Wikimedia Commons (seuls les mots de recherche sont envoyés)",
     "generateImages": "Autoriser la création d’images (toujours marquées comme créées par l’assistant)",
     "perspective": "Comment l’IA doit-elle aborder les questions théologiques ?",
-    "perspectiveHint": "Facultatif. Il ne s’agit pas de votre parcours : si c’est utile, écrivez seulement une courte perspective théologique ou d’Église (p. ex. « protestant réformé »). L’IA en tient compte pour les questions théologiques débattues, et mentionne quand même les autres interprétations sérieuses. Laissé vide, aucune tradition n’est supposée.",
+    "perspectiveHint": "Facultatif. Il ne s’agit pas de votre parcours : si c’est utile, indiquez simplement votre perspective théologique ou votre tradition d’Église (p. ex. « protestant réformé »). L’IA en tient compte pour les questions théologiques débattues, et mentionne quand même les autres interprétations sérieuses. Si vous laissez ce champ vide, aucune tradition n’est supposée.",
     "save": "Enregistrer",
     "saved": "Enregistré.",
     "test": "Vérifier la connexion",
@@ -114,7 +123,7 @@
       "title": "Comment obtenir une clé ?",
       "whatA": "Une clé est un long code fourni par {{service}}. Elle permet à Abiding Word d’utiliser votre compte. Traitez-la comme un mot de passe.",
       "open": "Ouvrir la page des clés de {{service}}",
-      "costA": "La plupart des services facturent un peu ce que vous utilisez et peuvent demander un moyen de paiement ou un crédit prépayé avant que la clé fonctionne. Cela se règle sur leur site, pas dans Abiding Word.",
+      "costA": "La plupart des services facturent une petite somme selon votre utilisation et peuvent demander un moyen de paiement ou un crédit prépayé avant que la clé fonctionne. Cela se règle sur leur site, pas dans Abiding Word.",
       "step1": "Ouvrez la page de {{service}} ci-dessous.",
       "step2": "Connectez-vous, ou créez un compte si vous n’en avez pas.",
       "step3": "Créez une nouvelle clé (elle peut s’appeler « clé API »).",
@@ -122,7 +131,8 @@
       "step5": "Revenez dans Abiding Word.",
       "step6": "Collez-la dans le champ « Clé » ci-dessus.",
       "step7": "Appuyez sur « Garder la clé ».",
-      "step8": "Appuyez sur « Vérifier la connexion »."
+      "step8": "Appuyez sur « Vérifier la connexion ».",
+      "prices": "Ouvrir la grille tarifaire de {{service}}"
     },
     "modelHintEmpty": "Saisissez le nom du modèle tel que {{service}} l’affiche.",
     "advanced": "Avancé",
@@ -146,7 +156,7 @@
     "modelsLink": "Voir les modèles actuels de {{service}}",
     "modelsLocal": "Voir les modèles à télécharger pour {{service}}",
     "searchAdvanced": "Autres (avancé)",
-    "imagesHelp": "Trouver des images cherche des images sous licence libre sur Wikimedia Commons ; seuls vos mots de recherche sont envoyés. Créer des images demande à un service d’images IA d’en dessiner une, toujours indiquée comme faite par l’assistant. Tous les services d’IA ne savent pas créer d’images.",
+    "imagesHelp": "La recherche d’images interroge Wikimedia Commons pour trouver des images sous licence libre ; seuls vos mots de recherche sont envoyés. La création d’images demande à un service d’images IA d’en dessiner une, toujours indiquée comme créée par l’assistant. Tous les services d’IA ne savent pas créer d’images.",
     "imageService": "Créer les images avec",
     "imageServices": {
       "same": "Le même service d’IA (s’il le peut)",
@@ -158,8 +168,8 @@
       "unknown": "Abiding Word ne peut pas savoir si {{service}} peut créer des images avec votre compte. Vous pouvez essayer ; en cas d’échec, choisissez OpenAI pour les images."
     },
     "imageKey": "Clé OpenAI pour les images",
-    "imageKeyMissing": "Aucune clé OpenAI pour les images n’est encore gardée : collez-la ci-dessous et appuyez sur « Garder la clé ».",
-    "imagesLeave": "Les descriptions d’images sont envoyées à OpenAI par Internet, même si votre service d’écriture ne l’est pas.",
+    "imageKeyMissing": "Aucune clé OpenAI pour les images n’est encore conservée : collez-la ci-dessous et appuyez sur « Garder la clé ».",
+    "imagesLeave": "Les descriptions d’images sont envoyées à OpenAI par Internet, même si votre service d’écriture fonctionne sur cet ordinateur.",
     "searchShort": {
       "brave": "recherche web générale et simple",
       "tavily": "recherche conçue pour les assistants IA",
@@ -171,7 +181,7 @@
     "searchRecommended": "Recommandés",
     "searchWhat": {
       "brave": "Brave Search est un moteur de recherche web indépendant. Son service pour les programmes (la « Search API ») renvoie des résultats web ordinaires avec un court extrait.",
-      "tavily": "Tavily est un service de recherche conçu pour les assistants IA. Il renvoie des pages web avec un extrait lisible de chacune, ce qui aide l’Assistant IA à montrer ce que dit une page.",
+      "tavily": "Tavily est un service de recherche conçu pour les assistants IA. Il renvoie des pages web avec un extrait lisible de chacune, ce qui aide l’assistant IA à montrer ce que dit une page.",
       "exa": "Exa cherche selon le sens et pas seulement selon les mots. Il renvoie des pages avec les passages qui correspondent le mieux à votre demande.",
       "searxng": "SearXNG est un programme de recherche libre que certaines personnes font tourner sur leur propre serveur. Il vous faut l’adresse d’un serveur SearXNG qui accepte les recherches venant de programmes (résultats « JSON »). Si cela ne vous dit rien, choisissez plutôt un des services recommandés.",
       "serpapi": "SerpApi fournit aux programmes les résultats de recherche de Google. C’est un service payant avec un petit quota gratuit, destiné plutôt aux personnes qui l’utilisent déjà."
@@ -179,7 +189,7 @@
     "searchSetup": {
       "title": "Comment configurer {{service}} ?",
       "step1": "Ouvrez la page de {{service}} ci-dessous et connectez-vous, ou créez un compte.",
-      "step2": "Créez-y une clé (elle peut s’appeler « API key ») et copiez-la.",
+      "step2": "Créez-y une clé (elle peut s’appeler « clé API ») et copiez-la.",
       "step3": "Collez-la dans le champ de la clé de recherche et appuyez sur « Garder la clé ».",
       "step4": "Appuyez sur « Vérifier la recherche ».",
       "open": "Ouvrir la page de {{service}}",
@@ -192,7 +202,8 @@
     "searchWhy": {
       "noKey": "Pour vérifier la recherche, collez d’abord sa clé et choisissez « Garder la clé ».",
       "noAddress": "Pour vérifier la recherche, saisissez d’abord l’adresse SearXNG."
-    }
+    },
+    "pricesLink": "Voir les tarifs de {{service}}"
   },
   "jumpTo": "Aller à une section",
   "summary": {
@@ -206,20 +217,115 @@
     "templates": "Structures de départ pour l’étude et l’enseignement",
     "assistantOff": "Désactivé",
     "assistantOn": "Activé · {{service}}",
-    "about": "Version {{version}} · où sont vos données"
+    "about": "Version {{version}} · où sont vos données",
+    "data": "Exporter, importer et sauvegarder votre travail",
+    "sources": "Vos livres et notes : trouver, organiser, archiver"
   },
   "help": {
     "about": "En savoir plus : {{topic}}"
   },
   "background": {
     "legend": "Fond",
-    "help": "Des fonds calmes et peu éblouissants, pensés pour lire et écrire longtemps. Le texte reste bien lisible sur chacun. Ils s’appliquent au thème clair.",
-    "lightOnly": "Les fonds s’appliquent au thème clair.",
+    "help": "Des fonds calmes et peu éblouissants, pensés pour lire et écrire longtemps. Le texte reste bien lisible sur chacun. Chaque fond existe en version claire et sombre, selon le thème choisi.",
     "parchment": "Parchemin",
     "cream": "Crème",
     "sage": "Sauge",
     "stone": "Pierre",
     "mist": "Brume",
     "clear": "Neutre"
+  },
+  "data": {
+    "projects": "Projets",
+    "projectsHint": "Un fichier de projet contient les études bibliques et les enseignements bibliques d’un projet, avec leurs notes, leurs supports et leurs présentations. Les livres de la bibliothèque, les textes bibliques et les modèles pour l’église restent sur cet ordinateur : le fichier indique seulement ceux qu’il utilise.",
+    "exportLabel": "Projet à exporter",
+    "export": "Exporter le projet…",
+    "import": "Importer un projet…",
+    "projectFilter": "Projet Abiding Word",
+    "backupFilter": "Sauvegarde Abiding Word",
+    "openProject": "Choisir le fichier de projet à importer",
+    "openBackup": "Choisir la sauvegarde à restaurer",
+    "exported": "« {{title}} » a été enregistré dans {{path}}.",
+    "namedOnly": "Indiqués dans le fichier mais non inclus, car ils restent sur cet ordinateur :",
+    "missingSources": "Bibliothèque",
+    "missingTemplates": "Modèles pour l’église",
+    "missingBibles": "Traductions de la Bible",
+    "missingImages": "Images absentes du fichier : {{n}}",
+    "missingHeading": "Absents de cet ordinateur",
+    "missingHint": "Le projet les utilise, mais cet ordinateur ne les a pas. Les notes gardent leurs références : titre, auteur, mots cités et page sont conservés, avec la mention « absente de cet ordinateur ». Une présentation utilise à la place la présentation visuelle standard, sans texte biblique.",
+    "importPreview": "Projet à importer",
+    "savedOn": "Enregistré le {{date}} avec Abiding Word {{version}}",
+    "importAs": "Il sera ajouté comme nouveau projet, « {{title}} ». Rien n’est remplacé sur cet ordinateur.",
+    "importConfirm": "Importer",
+    "imported": "« {{title}} » a été ajouté. Vous le trouverez dans Projets.",
+    "leftOut": "Parties du fichier illisibles, non reprises : {{n}}",
+    "backup": "Sauvegarde",
+    "backupHint": "Une sauvegarde contient tout : tous les projets, les fichiers de votre bibliothèque, les traductions de la Bible que vous avez ajoutées, les modèles et les paramètres. C’est une copie privée pour vous, pas pour la partager : elle peut contenir des livres et des Bibles dont la licence n’autorise pas la diffusion. Les clés API ne sont jamais incluses ; après une restauration sur un autre ordinateur, saisissez-les à nouveau.",
+    "backupCreate": "Tout sauvegarder…",
+    "backedUp": "La sauvegarde a été enregistrée dans {{path}} ({{size}} Mo).",
+    "restore": "Restaurer une sauvegarde…",
+    "restorePreview": "Sauvegarde à restaurer",
+    "restoreWarning": "La restauration remplace votre travail et vos paramètres actuels par le contenu de cette sauvegarde. Abiding Word crée d’abord une copie de sécurité de votre base de données actuelle et la vérifie. Les fichiers de la bibliothèque qui diffèrent sont conservés à part. Après la restauration, rechargez Abiding Word avant de continuer.",
+    "restoreConfirm": "Tout remplacer par cette sauvegarde",
+    "restored": "La sauvegarde a été restaurée.",
+    "safetyCopy": "Une copie de sécurité de votre base de données précédente est conservée dans {{path}}.",
+    "setAside": "Fichiers de la bibliothèque conservés à côté de cette copie : {{n}}",
+    "restoredContinue": "Recharger Abiding Word",
+    "working": "En cours…",
+    "workingLong": "Avec une grande bibliothèque, cela peut prendre un moment.",
+    "size": "{{size}} Mo",
+    "count": {
+      "studies": "Études bibliques : {{n}}",
+      "teachings": "Enseignements bibliques : {{n}}",
+      "presentations": "Présentations : {{n}}",
+      "notes": "Notes : {{n}}",
+      "images": "Images : {{n}}",
+      "projects": "Projets : {{n}}",
+      "sources": "Bibliothèque : {{n}}",
+      "bibles": "Traductions ajoutées : {{n}}"
+    },
+    "sample": "Projet d’exemple",
+    "sampleHint": "« Example: Abiding in Christ — John 15:1–11 » montre une étude biblique et comment elle devient une prédication, une étude biblique en groupe et une leçon interactive. Son contenu est en anglais. Il n’est ajouté que si vous le demandez, fonctionne sans Internet et vous appartient : vous pouvez le modifier ou le supprimer.",
+    "sampleAdd": "Ajouter le projet d’exemple",
+    "sampleAdded": "« {{title}} » a été ajouté. Vous le trouverez dans Projets.",
+    "sampleThere": "« {{title}} » est déjà là : rien n’a été ajouté.",
+    "citationsKept": "Références conservées dont le livre n’est pas sur cet ordinateur : {{n}}",
+    "citationsReconnected": "Références reliées au même livre de votre bibliothèque : {{n}}",
+    "dailyTitle": "Points de récupération automatiques",
+    "dailyHint": "Abiding Word crée des copies quotidiennes de la base de données pendant son utilisation et conserve jusqu’à sept copies vérifiées. Elles contiennent vos écrits et les paramètres de la base, mais aucun fichier source importé, fichier biblique ou image. Pour une sauvegarde complète, utilisez « Tout sauvegarder… ».",
+    "dailyShow": "Afficher les points de récupération",
+    "dailyRefresh": "Actualiser les points de récupération",
+    "dailyEmpty": "Aucun point de récupération automatique pour le moment.",
+    "dailyWhen": "{{date}} · {{size}} Mo · base de données v{{version}}",
+    "dailyReady": "Disponible",
+    "dailyUnavailable": "Indisponible : fichier endommagé ou version incompatible",
+    "dailyChoose": "Examiner la restauration…",
+    "dailyPreview": "Point de récupération à restaurer",
+    "dailyWarning": "Restaurer ce point remplace les écrits et les paramètres de votre base de données actuelle. Les fichiers sources importés, les fichiers bibliques et les images restent inchangés. Les fichiers manquants ne sont pas récupérés : d’anciennes citations peuvent donc renvoyer à des fichiers que vous n’avez plus. Abiding Word crée d’abord une copie de sécurité vérifiée de votre base actuelle. Pour récupérer aussi les fichiers, utilisez « Restaurer une sauvegarde… ».",
+    "dailyConfirm": "Restaurer cette copie de la base",
+    "dailyRestored": "La base de données a été restaurée. Les fichiers importés sont inchangés.",
+    "restoreReloadHint": "Rechargez Abiding Word avant de continuer. La modification reste désactivée jusqu’au chargement du travail restauré.",
+    "restoreInProgress": "Enregistrement du travail en cours et restauration…",
+    "restoreInProgressHint": "Gardez Abiding Word ouvert jusqu’à la fin de la restauration.",
+    "restoreAlreadyRunning": "Une restauration est déjà en cours. Attendez qu’elle soit terminée.",
+    "restoreReloadRequired": "La base de données a été restaurée. Rechargez Abiding Word avant de continuer.",
+    "restoreSaveFailed": "Certains changements n’ont pas pu être enregistrés. Vos textes actuels sont conservés. Résolvez le problème d’enregistrement, puis réessayez.",
+    "restoreNeedsAttention": "Récupération incomplète",
+    "restoreFailureReloadHint": "Votre travail précédent n’a pas pu être entièrement rétabli. La modification reste désactivée. Conservez la copie de sécurité indiquée ci-dessous, puis rechargez Abiding Word avant d’essayer de continuer."
+  },
+  "trash": {
+    "danger": "Zone de danger",
+    "title": "Corbeille",
+    "move": "Mettre à la corbeille",
+    "restore": "Restaurer",
+    "permanent": "Supprimer définitivement",
+    "confirm": "Mettre « {{title}} » à la corbeille ?",
+    "permanentConfirm": "Supprimer définitivement « {{title}} » ? Cette action est irréversible.",
+    "typeTitle": "Saisissez le titre exact pour confirmer",
+    "empty": "La corbeille est vide.",
+    "hint": "Restaurez un projet pour retrouver son contenu. Les études supprimées séparément apparaissent après la restauration de leur projet.",
+    "studyHint": "L’étude et ses recherches peuvent être restaurées dans Paramètres → Données et sauvegarde → Corbeille. Les enseignements liés restent dans leur projet avec leurs notes et citations sauvegardées, mais le lien est retiré. La restauration ne le rétablit pas automatiquement.",
+    "projectHint": "Le projet, ses études et ses enseignements sont masqués ensemble et peuvent être restaurés. La suppression définitive retire tout le contenu associé.",
+    "actions": "Actions pour « {{title}} »",
+    "moved": "« {{title}} » a été mis à la corbeille."
   }
 }

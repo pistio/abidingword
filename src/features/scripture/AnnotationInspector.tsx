@@ -24,7 +24,7 @@ interface AnnotationInspectorProps {
 
 const base =
   "inline-flex min-h-10 items-center gap-1.5 rounded-aw border border-border bg-bg px-3 font-ui text-[0.9375rem] " +
-  "text-text-strong hover:bg-bg-secondary aria-pressed:border-accent aria-pressed:bg-note";
+  "text-text-strong hover:bg-hover aria-pressed:border-accent aria-pressed:bg-note";
 
 /**
  * Everything to do with the marks on one verse, in a panel at the foot of the
@@ -131,12 +131,12 @@ export function AnnotationInspector({ id, canonical, verse, annotations, layout,
       aria-labelledby={`${id}-title`}
       data-layout={layout}
       onKeyDown={onKeyDown}
-      className={`flex min-w-0 flex-col gap-3 overflow-y-auto rounded-aw border border-t-[4px] border-border border-t-accent bg-bg-secondary px-4 py-3 font-ui text-[0.9375rem] shadow-[0_-6px_20px_rgba(0,0,0,0.18)] ${
+      className={`flex min-w-0 flex-col gap-3 overflow-y-auto aw-action-panel px-4 py-3 font-ui text-[0.9375rem] ${
         sheet ? "max-h-[55vh]" : "max-h-[45vh]"
       }`}
     >
       <div className="flex items-center justify-between gap-2">
-        <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="m-0 text-[1rem] font-semibold text-text-strong">
+        <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="type-group m-0">
           {t("scripture.verseTools.toolsFor", { verse })}
         </h3>
         <button type="button" onClick={onClose} aria-label={t("common.close")} title={t("common.close")} className={`${base} min-h-10 min-w-10 justify-center px-2`}>
@@ -183,7 +183,7 @@ export function AnnotationInspector({ id, canonical, verse, annotations, layout,
               rows={3}
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
-              className="reading w-full min-w-0 rounded-aw border-2 border-border bg-bg px-3 py-2 text-[1rem]"
+              className="aw-writing w-full min-w-0"
             />
           </label>
           <div className="flex flex-wrap gap-2">
@@ -360,7 +360,7 @@ function SavedNote({ note, onChanged, onRemoved }: { note: Annotation; onChanged
             rows={3}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="reading w-full min-w-0 rounded-aw border-2 border-border bg-bg px-3 py-2 text-[1rem]"
+            className="aw-writing w-full min-w-0"
           />
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={() => void save()} className="min-h-10 rounded-aw bg-primary px-3 text-on-primary hover:bg-primary-hover">
@@ -375,7 +375,7 @@ function SavedNote({ note, onChanged, onRemoved }: { note: Annotation; onChanged
         <>
           {note.anchor && <q className="reading m-0 mb-1 block break-words text-[0.9375rem] text-text-muted">{note.anchor.quote}</q>}
           <p className="reading m-0 whitespace-pre-wrap break-words text-[1rem]">{note.content}</p>
-          <p className="m-0 mt-1 flex flex-wrap items-center gap-x-2 text-[0.875rem] text-text-muted">
+          <p className="m-0 mt-1 flex flex-wrap items-center gap-x-2 type-meta">
             <span>
               {t("scripture.verseTools.on", { passage: referenceLabel(note.reference) })}
               {note.anchor && !note.anchor.shown && (

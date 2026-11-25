@@ -9,21 +9,25 @@
     "about": "Acerca de esta instalación",
     "planned": "En próximas versiones",
     "assistant": "Asistente de IA",
-    "updates": "Actualizaciones"
+    "updates": "Actualizaciones",
+    "data": "Datos y copia de seguridad",
+    "sources": "Fuentes"
   },
   "language": {
     "label": "Idioma de la interfaz",
-    "hint": "Cambia el idioma de los menús, botones y mensajes. Tus estudios, notas, biblioteca y textos bíblicos no cambian."
+    "hint": "Cambia el idioma de los menús, botones y mensajes. Tus estudios, notas, biblioteca y textos bíblicos no cambian.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Cambiar idioma"
   },
   "theme": {
     "legend": "Tema",
     "light": "Claro",
     "dark": "Oscuro",
-    "system": "Igual que mi equipo"
+    "system": "Igual que mi ordenador"
   },
   "layout": {
     "title": "Disposición del espacio de trabajo",
-    "description": "Devuelve los paneles a su orden habitual (Biblia, Estudio, Fuentes) y a su ancho habitual, y los muestra u oculta como en el primer inicio. Solo cambia la disposición en este equipo; tus estudios y tu biblioteca no se ven afectados.",
+    "description": "Devuelve los paneles a su orden habitual (Biblia, Estudio, Fuentes) y a su ancho habitual, y los muestra u oculta como en el primer inicio. Solo cambia la disposición en este ordenador; tus estudios y tu biblioteca no se ven afectados.",
     "reset": "Restablecer disposición",
     "done": "Disposición restablecida."
   },
@@ -35,7 +39,7 @@
     "logFiles": "Archivos de registro",
     "schema": "Esquema de la base de datos",
     "schemaVersion": "Versión {{version}}",
-    "backup": "Todos tus estudios se guardan en la carpeta de datos de este equipo. Para hacer una copia de seguridad, copia esa carpeta completa con Abiding Word cerrado."
+    "backup": "Todo tu trabajo se guarda en la carpeta de datos de este ordenador. Para tener una copia, usa «Hacer copia de seguridad de todo…» en Datos y copia de seguridad."
   },
   "planned": {
     "sync": "Sincronización",
@@ -57,7 +61,12 @@
       "xai": "xAI (Grok)",
       "perplexity": "Perplexity",
       "deepseek": "DeepSeek",
-      "qwen": "Qwen (Alibaba Cloud)"
+      "qwen": "Qwen (Alibaba Cloud)",
+      "mistral": "Mistral (Mistral, Codestral)",
+      "cohere": "Cohere (Command)",
+      "moonshot": "Moonshot AI (Kimi)",
+      "zai": "Z.ai (GLM)",
+      "minimax": "MiniMax"
     },
     "remote": "Cuando pides ayuda, el texto elegido se envía por internet a este servicio.",
     "local": "Funciona en este ordenador: tu texto no sale de él.",
@@ -122,7 +131,8 @@
       "step5": "Vuelve a Abiding Word.",
       "step6": "Pégala en el campo «Clave» de arriba.",
       "step7": "Pulsa «Guardar clave».",
-      "step8": "Pulsa «Comprobar la conexión»."
+      "step8": "Pulsa «Comprobar la conexión».",
+      "prices": "Abrir la lista de precios de {{service}}"
     },
     "modelHintEmpty": "Escribe el nombre del modelo tal como lo muestra {{service}}.",
     "advanced": "Avanzado",
@@ -171,7 +181,7 @@
     "searchRecommended": "Recomendados",
     "searchWhat": {
       "brave": "Brave Search es un buscador web independiente. Su servicio para programas (la «Search API») devuelve resultados web normales con un breve extracto.",
-      "tavily": "Tavily es un servicio de búsqueda pensado para asistentes de IA. Devuelve páginas web con un extracto legible de cada una, lo que ayuda al Asistente de IA a señalar lo que dice una página.",
+      "tavily": "Tavily es un servicio de búsqueda pensado para asistentes de IA. Devuelve páginas web con un extracto legible de cada una, lo que ayuda al asistente de IA a señalar lo que dice una página.",
       "exa": "Exa busca por significado y no solo por palabras. Devuelve páginas con los pasajes que mejor responden a lo que pediste.",
       "searxng": "SearXNG es un programa de búsqueda abierto que algunas personas ejecutan en su propio servidor. Necesitas la dirección de un servidor SearXNG que permita búsquedas desde programas (resultados «JSON»). Si esto no te dice nada, elige mejor uno de los servicios recomendados.",
       "serpapi": "SerpApi ofrece a los programas los resultados de búsqueda de Google. Es un servicio de pago con una pequeña cuota gratuita, pensado para quien ya lo usa."
@@ -179,7 +189,7 @@
     "searchSetup": {
       "title": "¿Cómo configuro {{service}}?",
       "step1": "Abre la página de {{service}} de abajo e inicia sesión o crea una cuenta.",
-      "step2": "Crea allí una clave (puede llamarse «API key») y cópiala.",
+      "step2": "Crea allí una clave (puede llamarse «clave de API») y cópiala.",
       "step3": "Pégala en el campo de la clave de búsqueda y pulsa «Guardar clave».",
       "step4": "Pulsa «Comprobar búsqueda».",
       "open": "Abrir la página de {{service}}",
@@ -192,7 +202,8 @@
     "searchWhy": {
       "noKey": "Para comprobar la búsqueda, pega primero su clave y elige «Guardar clave».",
       "noAddress": "Para comprobar la búsqueda, escribe primero la dirección de SearXNG."
-    }
+    },
+    "pricesLink": "Ver los precios de {{service}}"
   },
   "jumpTo": "Ir a una sección",
   "summary": {
@@ -206,20 +217,115 @@
     "templates": "Estructuras de partida para el estudio y la enseñanza",
     "assistantOff": "Desactivado",
     "assistantOn": "Activado · {{service}}",
-    "about": "Versión {{version}} · dónde están tus datos"
+    "about": "Versión {{version}} · dónde están tus datos",
+    "data": "Exportar, importar y hacer copia de seguridad de tu trabajo",
+    "sources": "Tus libros y notas: buscar, organizar, archivar"
   },
   "help": {
     "about": "Más información: {{topic}}"
   },
   "background": {
     "legend": "Fondo",
-    "help": "Fondos tranquilos y con poco brillo, pensados para leer y escribir durante mucho tiempo. El texto se lee bien en todos. Se aplican al tema claro.",
-    "lightOnly": "Los fondos se aplican al tema claro.",
+    "help": "Fondos tranquilos y con poco brillo, pensados para leer y escribir durante mucho tiempo. El texto se lee bien en todos. Cada uno tiene una versión clara y una oscura, que sigue al tema.",
     "parchment": "Pergamino",
     "cream": "Crema",
     "sage": "Salvia",
     "stone": "Piedra",
     "mist": "Niebla",
     "clear": "Neutro"
+  },
+  "data": {
+    "projects": "Proyectos",
+    "projectsHint": "Un archivo de proyecto contiene los estudios bíblicos y las enseñanzas bíblicas de un proyecto, con sus apuntes, materiales y presentaciones. Los libros de la biblioteca, los textos bíblicos y las plantillas para la iglesia se quedan en este ordenador: el archivo solo nombra los que usa.",
+    "exportLabel": "Proyecto que exportar",
+    "export": "Exportar proyecto…",
+    "import": "Importar proyecto…",
+    "projectFilter": "Proyecto de Abiding Word",
+    "backupFilter": "Copia de seguridad de Abiding Word",
+    "openProject": "Elige el archivo de proyecto que importar",
+    "openBackup": "Elige la copia de seguridad que restaurar",
+    "exported": "«{{title}}» se guardó en {{path}}.",
+    "namedOnly": "Nombrados en el archivo pero no incluidos, porque se quedan en este ordenador:",
+    "missingSources": "Biblioteca",
+    "missingTemplates": "Plantillas para la iglesia",
+    "missingBibles": "Traducciones de la Biblia",
+    "missingImages": "Imágenes que no están en el archivo: {{n}}",
+    "missingHeading": "No están en este ordenador",
+    "missingHint": "El proyecto los usa, pero este ordenador no los tiene. Los apuntes conservan sus referencias: el título, el autor, las palabras citadas y la página se mantienen, marcados como «no está en este ordenador». Una presentación usa en su lugar el diseño estándar y ningún texto bíblico.",
+    "importPreview": "Proyecto que importar",
+    "savedOn": "Guardado el {{date}} con Abiding Word {{version}}",
+    "importAs": "Se añadirá como un proyecto nuevo, «{{title}}». No se reemplaza nada de este ordenador.",
+    "importConfirm": "Importar",
+    "imported": "Se añadió «{{title}}». Lo encontrarás en Proyectos.",
+    "leftOut": "Partes del archivo que no se pudieron leer y se omitieron: {{n}}",
+    "backup": "Copia de seguridad",
+    "backupHint": "Una copia de seguridad contiene todo: todos los proyectos, los archivos de tu biblioteca, las traducciones de la Biblia que añadiste, las plantillas y la configuración. Es una copia privada para ti, no para compartir: puede contener libros y Biblias cuya licencia no permite pasarlos a otros. Las claves de API nunca se incluyen; después de restaurar en otro ordenador, vuelve a introducirlas.",
+    "backupCreate": "Hacer copia de seguridad de todo…",
+    "backedUp": "La copia de seguridad se guardó en {{path}} ({{size}} MB).",
+    "restore": "Restaurar desde una copia de seguridad…",
+    "restorePreview": "Copia de seguridad que restaurar",
+    "restoreWarning": "La restauración sustituye tu trabajo y tu configuración actuales por el contenido de esta copia de seguridad. Abiding Word primero guarda y verifica una copia de tu base de datos actual. Los archivos de la biblioteca que sean distintos se guardan por separado. Después de restaurar, vuelve a cargar Abiding Word antes de continuar.",
+    "restoreConfirm": "Reemplazar todo con esta copia de seguridad",
+    "restored": "La copia de seguridad se restauró.",
+    "safetyCopy": "Se conserva una copia de seguridad de tu base de datos anterior en {{path}}.",
+    "setAside": "Archivos de la biblioteca apartados junto a esa copia: {{n}}",
+    "restoredContinue": "Recargar Abiding Word",
+    "working": "En curso…",
+    "workingLong": "Con una biblioteca grande, puede tardar un rato.",
+    "size": "{{size}} MB",
+    "count": {
+      "studies": "Estudios bíblicos: {{n}}",
+      "teachings": "Enseñanzas bíblicas: {{n}}",
+      "presentations": "Presentaciones: {{n}}",
+      "notes": "Apuntes: {{n}}",
+      "images": "Imágenes: {{n}}",
+      "projects": "Proyectos: {{n}}",
+      "sources": "Biblioteca: {{n}}",
+      "bibles": "Traducciones añadidas: {{n}}"
+    },
+    "sample": "Proyecto de ejemplo",
+    "sampleHint": "«Example: Abiding in Christ — John 15:1–11» muestra un estudio bíblico y cómo se convierte en un mensaje, un estudio bíblico en grupo y una lección interactiva. Su contenido está en inglés. Solo se añade si lo pides, funciona sin internet y es tuyo: puedes cambiarlo o eliminarlo.",
+    "sampleAdd": "Añadir el proyecto de ejemplo",
+    "sampleAdded": "Se añadió «{{title}}». Lo encontrarás en Proyectos.",
+    "sampleThere": "«{{title}}» ya está aquí, así que no se añadió nada.",
+    "citationsKept": "Referencias conservadas cuyo libro no está en este ordenador: {{n}}",
+    "citationsReconnected": "Referencias vinculadas al mismo libro de tu biblioteca: {{n}}",
+    "dailyTitle": "Puntos de recuperación automáticos",
+    "dailyHint": "Abiding Word crea copias diarias de la base de datos mientras está abierto y conserva hasta siete copias verificadas. Contienen tus escritos y la configuración de la base de datos, pero no los archivos de fuentes importadas, los archivos bíblicos ni las imágenes. Para una copia completa, usa «Hacer copia de seguridad de todo…».",
+    "dailyShow": "Mostrar puntos de recuperación",
+    "dailyRefresh": "Actualizar puntos de recuperación",
+    "dailyEmpty": "Todavía no hay puntos de recuperación automáticos.",
+    "dailyWhen": "{{date}} · {{size}} MB · base de datos v{{version}}",
+    "dailyReady": "Disponible",
+    "dailyUnavailable": "No disponible: archivo dañado o versión incompatible",
+    "dailyChoose": "Revisar restauración…",
+    "dailyPreview": "Punto de recuperación que restaurar",
+    "dailyWarning": "Restaurar este punto sustituye los escritos y la configuración de tu base de datos actual. Los archivos de fuentes importadas, los archivos bíblicos y las imágenes no cambian. Los archivos que faltan no se recuperan, por lo que las citas antiguas pueden referirse a archivos que ya no tienes. Abiding Word crea antes una copia verificada de tu base de datos actual. Para recuperar también los archivos, usa «Restaurar desde una copia de seguridad…».",
+    "dailyConfirm": "Restaurar esta copia de la base",
+    "dailyRestored": "Se restauró la base de datos. Los archivos importados no cambiaron.",
+    "restoreReloadHint": "Vuelve a cargar Abiding Word antes de continuar. La edición permanece bloqueada hasta que se haya cargado el trabajo restaurado.",
+    "restoreInProgress": "Guardando el trabajo actual y restaurando…",
+    "restoreInProgressHint": "Mantén Abiding Word abierto hasta que termine la restauración.",
+    "restoreAlreadyRunning": "Ya hay una restauración en curso. Espera a que termine.",
+    "restoreReloadRequired": "Se ha restaurado la base de datos. Vuelve a cargar Abiding Word antes de continuar.",
+    "restoreSaveFailed": "No se pudieron guardar algunos cambios. Tus textos actuales se conservan. Resuelve el error al guardar y vuelve a intentarlo.",
+    "restoreNeedsAttention": "La recuperación no se ha completado",
+    "restoreFailureReloadHint": "No se pudo recuperar por completo tu trabajo anterior. La edición permanece bloqueada. Conserva la copia de seguridad indicada a continuación y vuelve a cargar Abiding Word antes de intentar continuar."
+  },
+  "trash": {
+    "danger": "Zona de peligro",
+    "title": "Papelera",
+    "move": "Mover a la papelera",
+    "restore": "Restaurar",
+    "permanent": "Eliminar permanentemente",
+    "confirm": "¿Mover «{{title}}» a la papelera?",
+    "permanentConfirm": "¿Eliminar «{{title}}» permanentemente? No se puede deshacer.",
+    "typeTitle": "Escribe el título exacto para confirmar",
+    "empty": "La papelera está vacía.",
+    "hint": "Restaura un proyecto para recuperar su contenido. Los estudios eliminados por separado aparecen después de restaurar su proyecto.",
+    "studyHint": "El estudio y su investigación se pueden restaurar en Configuración → Datos y copia de seguridad → Papelera. La enseñanza vinculada permanece en su proyecto con apuntes y citas guardados, pero se desvincula. La restauración no restablece el vínculo automáticamente.",
+    "projectHint": "El proyecto, sus estudios y su enseñanza se ocultan juntos y se pueden restaurar. La eliminación permanente borra todo el contenido dependiente.",
+    "actions": "Acciones para «{{title}}»",
+    "moved": "«{{title}}» se movió a la papelera."
   }
 }

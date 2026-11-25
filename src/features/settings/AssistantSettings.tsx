@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useId, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Plus, Tag } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { HelpTip } from "@/design-system/HelpTip";
 import { useLoad } from "@/hooks/useLoad";
@@ -19,21 +19,29 @@ interface Service {
   /** The service's own, current list of its models. Model names change often, so
    * Abiding Word links to the official list rather than keeping one itself. */
   modelsPage?: string;
+  /** The service's own price list (when it is another page than the models list). */
+  pricesPage?: string;
   /** The official download page (programs on this computer). */
   download?: string;
 }
 
 /** What the setup needs to know about each service. No service is preferred. Official pages only. */
 const SERVICES: Record<ProviderKind, Service> = {
-  openai: { name: "OpenAI", model: "gpt-4.1", keyPage: "https://platform.openai.com/api-keys", modelsPage: "https://platform.openai.com/docs/models" },
-  anthropic: { name: "Anthropic", model: "claude-sonnet-5-5", keyPage: "https://console.anthropic.com/settings/keys", modelsPage: "https://docs.anthropic.com/en/docs/about-claude/models" },
-  google: { name: "Google", model: "gemini-2.5-flash", keyPage: "https://aistudio.google.com/apikey", modelsPage: "https://ai.google.dev/gemini-api/docs/models" },
-  xai: { name: "xAI", model: "grok-4", keyPage: "https://console.x.ai", modelsPage: "https://docs.x.ai/docs/models" },
-  perplexity: { name: "Perplexity", model: "sonar-pro", keyPage: "https://www.perplexity.ai/settings/api", modelsPage: "https://docs.perplexity.ai/getting-started/models" },
-  deepseek: { name: "DeepSeek", model: "deepseek-chat", keyPage: "https://platform.deepseek.com/api_keys", modelsPage: "https://api-docs.deepseek.com/quick_start/pricing" },
-  qwen: { name: "Alibaba Cloud", model: "qwen-plus", keyPage: "https://www.alibabacloud.com/help/en/model-studio/get-api-key", modelsPage: "https://www.alibabacloud.com/help/en/model-studio/models" },
+  openai: { name: "OpenAI", model: "gpt-6.1-sol", keyPage: "https://platform.openai.com/api-keys", modelsPage: "https://developers.openai.com/api/docs/models", pricesPage: "https://developers.openai.com/api/docs/pricing" },
+  anthropic: { name: "Anthropic", model: "claude-sonnet-5-5", keyPage: "https://console.anthropic.com/settings/keys", modelsPage: "https://platform.claude.com/docs/en/models/overview", pricesPage: "https://platform.claude.com/docs/en/about-claude/pricing" },
+  google: { name: "Google", model: "gemini-3.8-flash", keyPage: "https://aistudio.google.com/apikey", modelsPage: "https://ai.google.dev/gemini-api/docs/models", pricesPage: "https://ai.google.dev/gemini-api/docs/pricing" },
+  xai: { name: "xAI", model: "grok-4.7", keyPage: "https://console.x.ai", modelsPage: "https://docs.x.ai/developers/models", pricesPage: "https://docs.x.ai/developers/pricing" },
+  perplexity: { name: "Perplexity", model: "sonar-pro", keyPage: "https://www.perplexity.ai/settings/api", modelsPage: "https://docs.perplexity.ai", pricesPage: "https://docs.perplexity.ai/docs/getting-started/pricing" },
+  mistral: { name: "Mistral AI", model: "mistral-large-latest", keyPage: "https://console.mistral.ai/api-keys", modelsPage: "https://docs.mistral.ai/models/model-selection-guide", pricesPage: "https://docs.mistral.ai/inference/pricing" },
+  cohere: { name: "Cohere", model: "command-a-plus-05-2026", keyPage: "https://dashboard.cohere.com/api-keys", modelsPage: "https://docs.cohere.com/docs/models", pricesPage: "https://cohere.com/pricing" },
+  // One official page holds both the models and their prices.
+  deepseek: { name: "DeepSeek", model: "deepseek-flash", keyPage: "https://platform.deepseek.com/api_keys", modelsPage: "https://api-docs.deepseek.com/quick_start/pricing" },
+  qwen: { name: "Alibaba Cloud", model: "qwen-plus", keyPage: "https://www.alibabacloud.com/help/en/model-studio/get-api-key", modelsPage: "https://www.alibabacloud.com/help/en/model-studio/models", pricesPage: "https://www.alibabacloud.com/help/en/model-studio/model-pricing" },
+  moonshot: { name: "Moonshot AI", model: "kimi-k3", keyPage: "https://platform.moonshot.ai/console/api-keys", modelsPage: "https://platform.moonshot.ai" },
+  zai: { name: "Z.ai", model: "glm-5.3", keyPage: "https://z.ai/manage-apikey/apikey-list", modelsPage: "https://z.ai/model-api", pricesPage: "https://docs.z.ai/guides/overview/pricing" },
+  minimax: { name: "MiniMax", model: "MiniMax-M2.7", keyPage: "https://platform.minimax.io/user-center/basic-information/interface-key", modelsPage: "https://platform.minimax.io/docs/guides/models-intro", pricesPage: "https://platform.minimax.io/docs/guides/pricing-paygo" },
   // Programs on this computer: their own lists of models to download, not a cloud catalogue.
-  ollama: { name: "Ollama", model: "llama3.1", download: "https://ollama.com/download", modelsPage: "https://ollama.com/library" },
+  ollama: { name: "Ollama", model: "gemma4", download: "https://ollama.com/download", modelsPage: "https://ollama.com/library" },
   lmstudio: { name: "LM Studio", model: "", download: "https://lmstudio.ai", modelsPage: "https://lmstudio.ai/models" },
   // Another compatible service: Abiding Word cannot know its models, so no link is invented.
   openai_compatible: { name: "", model: "" },
@@ -60,7 +68,7 @@ const KEY_STEPS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 /** The choices, grouped as a person thinks of them: on the internet, on this computer, anything else. */
 const GROUPS = [
-  { name: "internet", kinds: ["anthropic", "deepseek", "google", "openai", "perplexity", "qwen", "xai"] },
+  { name: "internet", kinds: ["anthropic", "cohere", "deepseek", "google", "minimax", "mistral", "moonshot", "openai", "perplexity", "qwen", "xai", "zai"] },
   { name: "local", kinds: ["ollama", "lmstudio"] },
   { name: "other", kinds: ["openai_compatible"] },
 ] as const satisfies readonly { name: string; kinds: readonly ProviderKind[] }[];
@@ -245,9 +253,9 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
     }
   };
 
-  const field = "h-11 w-full max-w-md rounded-aw border border-border bg-bg px-3 text-[0.9375rem] placeholder:text-text-muted";
-  const labelText = "text-[0.9375rem] font-semibold text-text-strong";
-  const hint = "m-0 max-w-prose text-[0.875rem] text-text-muted";
+  const field = "aw-input h-11 w-full max-w-md px-3";
+  const labelText = "type-subhead";
+  const hint = "m-0 max-w-prose type-meta";
   const about = (topic: string) => t("settings.help.about", { topic });
   const imageProvider: ProviderKind = config.imageService === "openai" ? "openai" : provider;
   // The capability shown is the core's for the saved set-up; for an unsaved choice it is worked out the same way.
@@ -354,7 +362,7 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                   {t("settings.assistant.keySave")}
                 </Button>
                 {keyShown && (
-                  <Button className="min-h-11" disabled={busy !== null} onClick={() => void run(() => api.assistantKeySet("provider", ""), t("settings.assistant.keyRemoved"))}>
+                  <Button variant="quiet" className="min-h-11 !text-text-muted hover:!text-danger" disabled={busy !== null} onClick={() => void run(() => api.assistantKeySet("provider", ""), t("settings.assistant.keyRemoved"))}>
                     {t("settings.assistant.keyRemove")}
                   </Button>
                 )}
@@ -371,6 +379,9 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                     ))}
                   </ol>
                   <p className="m-0 text-text-muted">{t("settings.assistant.keyHelp.costA", { service: label })}</p>
+                  {(service.pricesPage ?? service.modelsPage) && (
+                    <OfficialLink url={(service.pricesPage ?? service.modelsPage)!} text={t("settings.assistant.keyHelp.prices", { service: label })} />
+                  )}
                 </Help>
               )}
             </Step>
@@ -389,9 +400,20 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                   aria-label={t(service.download ? "settings.assistant.modelsLocal" : "settings.assistant.modelsLink", { service: label })}
                   title={t(service.download ? "settings.assistant.modelsLocal" : "settings.assistant.modelsLink", { service: label })}
                   onClick={() => void api.openExternalLink(service.modelsPage!).catch(() => undefined)}
-                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary hover:text-text-strong"
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"
                 >
                   <ExternalLink className="size-4" aria-hidden="true" />
+                </button>
+              )}
+              {service.pricesPage && (
+                <button
+                  type="button"
+                  aria-label={t("settings.assistant.pricesLink", { service: label })}
+                  title={t("settings.assistant.pricesLink", { service: label })}
+                  onClick={() => void api.openExternalLink(service.pricesPage!).catch(() => undefined)}
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"
+                >
+                  <Tag className="size-4" aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -425,7 +447,7 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
           )}
 
           <div className="flex flex-col gap-4 border-t border-border-subtle pt-4">
-            <h3 className="m-0 text-[1rem] font-semibold text-text-strong">{t("settings.assistant.extras")}</h3>
+            <h3 className="type-group m-0">{t("settings.assistant.extras")}</h3>
 
             <div role="group" aria-labelledby={`${id}-search-label`} className="flex flex-col gap-2">
               <div className="mb-1 flex items-center gap-1">
@@ -505,7 +527,7 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                         {t("settings.assistant.keySave")}
                       </Button>
                       {searchKeyShown && (
-                        <Button className="min-h-11" disabled={busy !== null} onClick={() => {
+                        <Button variant="quiet" className="min-h-11 !text-text-muted hover:!text-danger" disabled={busy !== null} onClick={() => {
                             setBusy("save");
                             setSearchCheck(null);
                             api
@@ -523,7 +545,7 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                   )}
                   {search === "searxng" && (
                     <label className="flex flex-col gap-1">
-                      <span className="text-[0.9375rem] text-text-strong">{t("settings.assistant.searchAddress")}</span>
+                      <span className="type-subhead">{t("settings.assistant.searchAddress")}</span>
                       <input value={config.searchUrl} onChange={(e) => set("searchUrl", e.target.value)} placeholder={URL_START} className={field} />
                     </label>
                   )}
@@ -617,10 +639,10 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                 rows={2}
                 value={config.perspective}
                 onChange={(e) => set("perspective", e.target.value)}
-                className="w-full max-w-xl rounded-aw border border-border bg-bg px-3 py-2 text-[0.9375rem]"
+                className="aw-input w-full max-w-xl px-3 py-2"
               />
               <div role="group" aria-label={t("settings.assistant.perspectiveExamples")} className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[0.8125rem] text-text-muted">{t("settings.assistant.perspectiveExamples")}</span>
+                <span className="type-meta">{t("settings.assistant.perspectiveExamples")}</span>
                 {PERSPECTIVE_EXAMPLES.map((example) => {
                   const text = t(`settings.assistant.perspectiveExample.${example}`);
                   return (
@@ -628,8 +650,10 @@ function Form({ initial, onStatus }: { initial: Settings; onStatus?: (settings: 
                       key={example}
                       type="button"
                       onClick={() => set("perspective", config.perspective.trim() ? `${config.perspective.trim()} ${text}` : text)}
-                      className="min-h-8 rounded-full border border-border-subtle px-2.5 text-[0.8125rem] text-text hover:bg-bg-secondary"
+                      // An example adds its words to the field (it is not a choice that stays selected).
+                      className="aw-choice min-h-8 px-2.5 text-[0.875rem]"
                     >
+                      <Plus className="size-3.5 shrink-0" aria-hidden="true" />
                       {text}
                     </button>
                   );
@@ -663,7 +687,7 @@ function Step({ title, htmlFor, help, children }: { title: string; htmlFor: stri
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-1">
-        <label htmlFor={htmlFor} className="text-[0.9375rem] font-semibold text-text-strong">
+        <label htmlFor={htmlFor} className="type-subhead">
           {title}
         </label>
         {help}
@@ -692,7 +716,7 @@ function OfficialLink({ url, text }: { url: string; text: string }) {
         <ExternalLink className="size-4" aria-hidden="true" />
         {text}
       </Button>
-      <code className="break-all text-[0.8125rem] text-text-muted">{url}</code>
+      <code className="type-meta break-all">{url}</code>
     </span>
   );
 }

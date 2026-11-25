@@ -99,7 +99,7 @@ pub struct Token {
     pub form: String,
 }
 
-fn is_token_char(c: char) -> bool {
+pub fn is_token_char(c: char) -> bool {
     c.is_alphanumeric() || is_combining_mark(c)
 }
 
@@ -240,7 +240,7 @@ pub fn search(conn: &Connection, input: &ConcordanceQuery) -> AppResult<Concorda
         let phrase = format!("\"{}\"", wanted.join(" ").replace('"', ""));
         let mut stmt = conn.prepare(
             "SELECT t.verse_id, t.text FROM bible_verse_search s
-             JOIN bible_verse_texts t ON t.id = s.rowid
+             JOIN scripture_verse_texts t ON t.id = s.rowid
              WHERE bible_verse_search MATCH ?1 AND t.translation_id = ?2
              ORDER BY t.verse_id",
         )?;
@@ -250,7 +250,7 @@ pub fn search(conn: &Connection, input: &ConcordanceQuery) -> AppResult<Concorda
         rows.collect::<Result<_, _>>()?
     } else {
         let mut stmt = conn.prepare(
-            "SELECT verse_id, text FROM bible_verse_texts WHERE translation_id = ?1 ORDER BY verse_id",
+            "SELECT verse_id, text FROM scripture_verse_texts WHERE translation_id = ?1 ORDER BY verse_id",
         )?;
         let rows = stmt.query_map([&input.translation_id], |r| Ok((r.get(0)?, r.get(1)?)))?;
         rows.collect::<Result<_, _>>()?

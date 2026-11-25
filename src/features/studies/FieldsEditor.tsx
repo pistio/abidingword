@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { EntryPart, StudyBlock, StudySection, TemplateField } from "@/types/domain";
+import { ResearchBlock } from "./ResearchBlock";
 import { structuredText } from "./builtinText";
 
 const input =
@@ -31,6 +33,10 @@ interface FieldsEditorProps {
   section: StudySection;
   onChange: (section: StudySection) => void;
   onError: (message: string | null) => void;
+  /** A.4.3: each field's help text is shown on request (the part's Hints). */
+  showHelp?: boolean;
+  /** The part's title: a part with one writing field needs no second label above it. */
+  partTitle?: string;
 }
 
 /**
@@ -39,16 +45,17 @@ interface FieldsEditorProps {
  * study block that says which field it answers; the field definitions are
  * the part's own snapshot. Writing without a field stays below.
  */
-export function FieldsEditor({ section, onChange, onError }: FieldsEditorProps) {
+export function FieldsEditor({ section, onChange, onError, showHelp = true, partTitle }: FieldsEditorProps) {
   const fields = section.fields?.fields ?? [];
+  const single = fields.length === 1 && fields[0]?.kind === "writing";
   return (
     <div className="flex flex-col gap-5">
       {fields.map((field) =>
-        field.kind === "text" ? (
-          <TextField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
-        ) : (
-          <EntriesField key={field.key} section={section} field={field} onChange={onChange} onError={onError} />
-        ),
+        field.kind === "text" || field.kind === "writing" ? (
+          <TextField key={field.key} section={section} field={field} onChange={onChange} onError={onError} showHelp={showHelp} soleOf={single ? partTitle : undefined} />
+        ) : field.kind === "entries" ? (
+          <EntriesField key={field.key} section={section} field={field} onChange={onChange} onError={onError} showHelp={showHelp} />
+        ) : <ResearchBlock key={field.key} section={section} field={field} onChange={onChange} onError={onError} />,
       )}
     </div>
   );
@@ -59,13 +66,16 @@ interface FieldProps {
   field: TemplateField;
   onChange: (section: StudySection) => void;
   onError: (message: string | null) => void;
+  showHelp?: boolean;
+  /** The part's title when this is its only writing field: the label is then for screen readers only. */
+  soleOf?: string;
 }
 
 function labelOf(section: StudySection, field: TemplateField) {
-  return structuredText(section, `fields.${field.key}.label`, field.key);
+  return field.label ?? structuredText(section, `fields.${field.key}.label`, field.key);
 }
 
-function TextField({ section, field, onChange, onError }: FieldProps) {
+function TextField({ section, field, onChange, onError, showHelp = true, soleOf }: FieldProps) {
   const api = useApi();
   const block = section.blocks.find((b) => b.fieldKey === field.key);
   const id = useId();
@@ -74,66 +84,76 @@ function TextField({ section, field, onChange, onError }: FieldProps) {
   const blockId = useRef<string | null>(block?.id ?? null);
   const creating = useRef<Promise<string> | null>(null);
 
-  // A field without its block (an older copy) gets one when the first text is written.
+  // A missing historical field gets a block on first writing. A previous
+  // editor mount may have finished creating it while this one was waiting in
+  // the shared save lane, so look again before creating a duplicate.
   const ensure = useCallback(async () => {
     if (blockId.current) return blockId.current;
-    creating.current ??= api
-      .studyBlockCreate({ sectionId: section.id, blockType: "paragraph", fieldKey: field.key })
-      .then((created) => {
-        blockId.current = created.id;
-        onChange({ ...section, blocks: [...section.blocks, created] });
-        return created.id;
-      });
+    creating.current ??= (async () => {
+      const current = (await api.studySectionList(section.studyId)).find(part => part.id === section.id);
+      const existing = current?.blocks.find(candidate => candidate.fieldKey === field.key);
+      const found = existing ?? await api.studyBlockCreate({ sectionId: section.id, blockType: "paragraph", fieldKey: field.key });
+      blockId.current = found.id;
+      return found.id;
+    })().catch((error: unknown) => {
+      // A failed first creation must remain retryable with the retained text.
+      creating.current = null;
+      throw error;
+    });
     return creating.current;
-  }, [api, field.key, onChange, section]);
+  }, [api, field.key, section.id, section.studyId]);
 
   const save = useCallback(
     async (content: string) => {
       try {
-        await api.studyBlockUpdate({ id: await ensure(), content });
+        const saved = await api.studyBlockUpdate({ id: await ensure(), content });
+        const current = (await api.studySectionList(section.studyId)).find(part => part.id === section.id);
+        if (current) onChange(current);
+        else onChange({ ...section, blocks: section.blocks.map(block => block.id === saved.id ? saved : block) });
+        onError(null);
       } catch (e) {
         onError(toApiError(e).message);
+        // A.4.3: the save indicator must say the save failed, never "Saved".
+        throw e;
       }
     },
-    [api, ensure, onError],
+    [api, ensure, onError, onChange, section],
   );
-  const { schedule, flush } = useAutosave(save);
-  const area = useRef<HTMLTextAreaElement>(null);
-  useEffect(() => {
-    const el = area.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.max(el.scrollHeight, 72)}px`;
-  }, [text]);
-
+  const { schedule, flush } = useAutosave(save, undefined, `section:${section.id}:field:${field.key}`, setText);
+  const help = field.config?.guidance ?? (soleOf ? "" : structuredText(section, `fields.${field.key}.help`, ""));
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-[1rem] font-medium text-text-strong">
-        {labelOf(section, field)}
+      {/* A.4.3: a part's only writing field is labelled by the part (no repeated "Your answer" above it). */}
+      <label htmlFor={id} className={soleOf ? "sr-only" : "text-[1rem] font-medium text-text-strong"}>
+        {soleOf ? `${soleOf} — ${labelOf(section, field)}` : labelOf(section, field)}
       </label>
-      <p id={helpId} className="m-0 text-[0.9375rem] text-text-muted">
-        {structuredText(section, `fields.${field.key}.help`, "")}
-      </p>
+      {showHelp && help && (
+        <p id={helpId} className="m-0 text-[0.9375rem] text-text-muted">
+          {help}
+        </p>
+      )}
       <textarea
         id={id}
-        ref={area}
-        rows={3}
+        rows={field.kind === "writing" ? 5 : 3}
         value={text}
-        aria-describedby={helpId}
+        aria-describedby={showHelp && help ? helpId : undefined}
         onChange={(e) => {
           setText(e.target.value);
           schedule(e.target.value);
         }}
         onBlur={flush}
-        className={`${input} resize-none overflow-hidden`}
+        className={field.kind === "writing"
+          ? "block w-full resize-y overflow-auto rounded-aw border border-transparent bg-field px-3 py-3 text-[1.0625rem] leading-relaxed text-text reading placeholder:text-text-muted hover:border-border-subtle focus:border-border-strong"
+          : `${input} resize-y overflow-auto`}
       />
     </div>
   );
 }
 
-function EntriesField({ section, field, onChange, onError }: FieldProps) {
+function EntriesField({ section, field, onChange, onError, showHelp = true }: FieldProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const { root, deleting, runDeletion } = useSettledDelete();
   const entries = section.blocks.filter((b) => b.fieldKey === field.key);
   const label = labelOf(section, field);
   const [newId, setNewId] = useState<string | null>(null);
@@ -153,10 +173,12 @@ function EntriesField({ section, field, onChange, onError }: FieldProps) {
   const remove = async (block: StudyBlock) => {
     onError(null);
     try {
-      await api.studyBlockDelete(block.id);
-      onChange({ ...section, blocks: section.blocks.filter((b) => b.id !== block.id) });
-    } catch {
-      onError(t("studies.fields.removeFailed"));
+      await runDeletion(async () => {
+        await api.studyBlockDelete(block.id);
+        onChange({ ...section, blocks: section.blocks.filter((b) => b.id !== block.id) });
+      });
+    } catch (error) {
+      onError(toApiError(error).message || t("studies.fields.removeFailed"));
     }
   };
 
@@ -179,10 +201,10 @@ function EntriesField({ section, field, onChange, onError }: FieldProps) {
   };
 
   return (
-    <div role="group" aria-labelledby={headingId} className="flex flex-col gap-2">
+    <div ref={root} inert={deleting} aria-busy={deleting || undefined} role="group" aria-labelledby={headingId} className="flex flex-col gap-2">
       <div>
         <h3 id={headingId} className="m-0 text-[1rem] font-medium text-text-strong">{label}</h3>
-        <p className="m-0 text-[0.9375rem] text-text-muted">{structuredText(section, `fields.${field.key}.help`, "")}</p>
+        {showHelp && <p className="m-0 text-[0.9375rem] text-text-muted">{field.config?.guidance ?? structuredText(section, `fields.${field.key}.help`, "")}</p>}
       </div>
       {entries.length === 0 && <p className="m-0 text-[0.9375rem] text-text-muted">{t("studies.fields.noEntries")}</p>}
       {entries.map((block, index) => (
@@ -239,17 +261,23 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
         await api.studyBlockUpdate({ id: block.id, content: joined(field, parsed), data: json });
       } catch (e) {
         onError(toApiError(e).message);
+        throw e;
       }
     },
     [api, block.id, field, onError],
   );
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `study-block:${block.id}:entry`, (value) => {
+    const recovered = parseValues(value);
+    latest.current = recovered;
+    setValues(recovered);
+  });
 
   useEffect(() => {
     if (autoFocus) first.current?.focus();
   }, [autoFocus]);
 
   const set = (key: string, value: string) => {
+    if (first.current?.closest("[inert]")) return;
     const next = { ...latest.current, [key]: value };
     latest.current = next;
     setValues(next);
@@ -257,7 +285,7 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
   };
   const empty = (field.parts ?? []).every((p) => !(values[p.key] ?? "").trim());
   const tool =
-    "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong disabled:opacity-40";
+    "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
   const params = { field: label, number };
 
   return (
@@ -283,7 +311,7 @@ function Entry({ section, field, block, number, isFirst, isLast, autoFocus, onRe
       {confirming && (
         <div role="alertdialog" aria-label={t("studies.fields.confirmRemove")} className="flex flex-wrap items-center gap-2 border-l-[3px] border-danger bg-bg-secondary px-3 py-2">
           <span>{t("studies.fields.confirmRemove")}</span>
-          <Button variant="primary" onClick={onRemove}>{t("common.delete")}</Button>
+          <Button variant="danger" onClick={onRemove}>{t("common.delete")}</Button>
           <Button autoFocus onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
         </div>
       )}

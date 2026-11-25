@@ -1,0 +1,329 @@
+{
+  "platform": "Linux Chromium; synthetic native failure and generated PDF; empty installed Scripture fixture; not Windows or actual MacArthur acceptance",
+  "results": [
+    {
+      "language": "en",
+      "width": 900,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scenes": [
+        "source",
+        "missing-Scripture-text",
+        "timeout"
+      ],
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    }
+  ]
+}

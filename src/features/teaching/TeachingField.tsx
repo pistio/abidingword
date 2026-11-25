@@ -1,7 +1,8 @@
-import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useId, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import { Undo2 } from "lucide-react";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useAutosize } from "@/hooks/useAutosize";
 import type { ScriptureRef } from "@/types/scripture";
 import type { AssistAction, KeepTeachingMaterial, TeachingPart } from "@/types/teaching";
 import { DetectedReferences } from "@/features/studies/DetectedReferences";
@@ -24,11 +25,14 @@ export interface AssistantHooks {
 }
 
 interface TeachingFieldProps {
+  saveKey: string;
   label: string;
   value: string;
   save: (value: string) => Promise<unknown>;
   part: TeachingPart;
   pointId?: string | null;
+  /** A.4.4 (#19): the block this field writes, in a block teaching (help is asked about it, not about a point). */
+  blockId?: string | null;
   multiline?: boolean;
   rows?: number;
   placeholder?: string;
@@ -37,10 +41,22 @@ interface TeachingFieldProps {
   assistant: AssistantHooks | null;
   onRevealScripture?: () => void;
   autoFocus?: boolean;
-  /** For headings of points: a larger, plainer field. */
-  emphasis?: boolean;
+  /**
+   * A title written by the person, on one line under its own label (shown to
+   * assistive technology only): "title" for the open teaching's name, true
+   * for the title of a point or question.
+   */
+  emphasis?: boolean | "title";
+  /**
+   * How the label reads (v0.18.4): "section" for a part of the whole teaching
+   * (Central message, Introduction), "field" for a field inside a point or the
+   * teaching's details.
+   */
+  level?: "section" | "field";
   /** A stable id for the field, so focus can be moved to it. */
   fieldId?: string;
+  /** The label is said by a heading next to the field (v0.19: notes for oneself): read out only. */
+  labelHidden?: boolean;
 }
 
 /**
@@ -50,7 +66,7 @@ interface TeachingFieldProps {
  * person chooses "Use this", and they can undo that straight away.
  */
 export function TeachingField(props: TeachingFieldProps) {
-  const { label, value, save, part, pointId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, fieldId } = props;
+  const { label, value, save, saveKey, part, pointId = null, blockId = null, multiline = true, rows = 3, placeholder, hint, assistant, onRevealScripture, autoFocus, emphasis, level = "section", fieldId, labelHidden = false } = props;
   const { t } = useTranslation();
   const generated = useId();
   const id = generated;
@@ -66,14 +82,10 @@ export function TeachingField(props: TeachingFieldProps) {
   const root = useRef<HTMLDivElement>(null);
   // One assistant panel at a time, over the workspace: this part's shows only while it owns it.
   const dock = useAssistDock();
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, saveKey, setText);
 
-  useLayoutEffect(() => {
-    const el = area.current;
-    if (!el || !(el instanceof HTMLTextAreaElement)) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [text]);
+  // Fits the text area to its text; a title also refits when the pane's width changes.
+  useAutosize(area as RefObject<HTMLTextAreaElement | null>, emphasis === "title" ? 1 : rows, text, placeholder);
 
   useLayoutEffect(() => {
     if (autoFocus) area.current?.focus();
@@ -81,6 +93,7 @@ export function TeachingField(props: TeachingFieldProps) {
 
   const change = useCallback(
     (next: string) => {
+      if (!root.current || root.current.closest("[inert]")) return;
       setText(next);
       schedule(next);
     },
@@ -101,6 +114,7 @@ export function TeachingField(props: TeachingFieldProps) {
       target: {
         part,
         pointId,
+        blockId,
         label,
         text: selected ? text.slice(start, end) : text,
         selection: selected ? { start, end } : null,
@@ -125,7 +139,7 @@ export function TeachingField(props: TeachingFieldProps) {
    * it was made for has changed since asking, so nothing typed meanwhile is ever overwritten.
    */
   const apply = (suggestion: string, placement: "replace" | "start"): boolean => {
-    if (!action) return false;
+    if (!action || !root.current || root.current.closest("[inert]")) return false;
     const { selection, text: asked } = action.target;
     const current = selection ? text.slice(selection.start, selection.end) : text;
     if (current !== asked) return false;
@@ -154,6 +168,7 @@ export function TeachingField(props: TeachingFieldProps) {
   };
 
   const insertBelow = (option: string) => {
+    if (!root.current || root.current.closest("[inert]")) return;
     setUndo(text);
     change(text.trim() ? `${text.trimEnd()}\n\n${option.trim()}` : option.trim());
     flush();
@@ -161,48 +176,63 @@ export function TeachingField(props: TeachingFieldProps) {
     close(true);
   };
 
+  // Titles are a line to write on; other fields a soft fill (no outline until hovered or in use).
   const field = emphasis
-    ? "block w-full rounded-aw border border-border-subtle bg-transparent px-3 py-2 font-display text-[1.25rem] font-heading text-text-strong placeholder:text-text-muted placeholder:font-ui placeholder:text-[1rem] hover:border-border focus:border-border"
-    : "reading block w-full resize-none overflow-hidden rounded-aw border border-border-subtle bg-bg px-3 py-2 text-text placeholder:text-text-muted hover:border-border focus:border-border";
+    ? `block w-full rounded-aw border border-transparent border-b-border-subtle bg-transparent px-2 -mx-2 text-text-strong placeholder:text-text-muted placeholder:font-ui placeholder:text-[1rem] placeholder:font-normal hover:border-border-subtle focus:border-border ${
+        emphasis === "title" ? "type-worktitle" : "reading font-semibold"
+      }`
+    : "reading block w-full resize-none overflow-hidden rounded-aw border border-transparent bg-field px-3 py-2 text-text placeholder:text-text-muted hover:border-border-subtle focus:border-border";
 
   return (
-    <div ref={root} className="flex flex-col gap-1">
+    <div ref={root} className="flex min-w-0 w-full flex-col gap-1">
       {emphasis ? (
         <label htmlFor={fid} className="sr-only">
           {label}
         </label>
       ) : (
         <div className="flex flex-wrap items-end justify-between gap-x-2">
-          <label htmlFor={fid} className="text-[0.9375rem] font-semibold text-text-strong">
+          <label htmlFor={fid} className={labelHidden ? "sr-only" : level === "section" ? "type-section" : "type-subhead"}>
             {label}
           </label>
           {assistant && <AssistMenu part={part} partLabel={label} onChoose={choose} imagesNote={assistant.imagesNote} />}
         </div>
       )}
       {hint && (
-        <p id={`${id}-hint`} className="m-0 text-[0.875rem] text-text-muted">
+        <p id={`${id}-hint`} className="type-meta m-0">
           {hint}
         </p>
       )}
-      {multiline ? (
+      {multiline || emphasis === "title" ? (
         <textarea
           id={fid}
           ref={(el) => {
             area.current = el;
           }}
-          rows={rows}
+          rows={emphasis === "title" ? 1 : rows}
           value={text}
           placeholder={placeholder}
           aria-describedby={hint ? `${id}-hint` : undefined}
+          // The teaching's title wraps in a narrow pane instead of being cut off, but stays one line of text.
+          onKeyDown={
+            emphasis === "title"
+              ? (e) => {
+                  // Not while an input method is composing (Korean): its Enter commits the syllable.
+                  if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                    e.preventDefault();
+                    flush();
+                  }
+                }
+              : undefined
+          }
           onChange={(e) => {
             setUndo(null);
-            change(e.target.value);
+            change(emphasis === "title" ? e.target.value.replace(/[\r\n]+/g, " ") : e.target.value);
           }}
           onBlur={flush}
-          className={field}
+          className={emphasis === "title" ? `${field} resize-none overflow-hidden py-0.5` : `${field}`}
         />
       ) : (
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 flex-col items-stretch gap-1">
           <input
             id={fid}
             ref={(el) => {
@@ -234,7 +264,7 @@ export function TeachingField(props: TeachingFieldProps) {
               setNotice(t("studies.teaching.assist.undone"));
               area.current?.focus();
             }}
-            className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-text-strong underline underline-offset-2 hover:bg-bg-secondary"
+            className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-text-strong underline underline-offset-2 hover:bg-hover"
           >
             <Undo2 className="size-4" aria-hidden="true" />
             {t("studies.teaching.assist.undo")}

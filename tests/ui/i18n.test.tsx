@@ -3,13 +3,13 @@ import { describe, expect, it, vi } from "vitest";
 import i18n, { setLanguage } from "@/i18n";
 import { LANGUAGES, detectLanguage, initialLanguage, normaliseLanguage } from "@/i18n/languages";
 import { localizeError, localizeMessage } from "@/i18n/messages";
-import { referenceLabel } from "@/i18n/scripture";
+import { bookName, referenceLabel } from "@/i18n/scripture";
 import { resetLayoutPrefs } from "@/layouts/layoutPrefs";
 import { toApiError } from "@/lib/api";
 import { refFromCanonical } from "@/lib/scripture";
 import { BOOKS } from "../support/scriptureFixture";
 import { createMemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 import studiesDe from "@/i18n/locales/de/studies.json";
 import appDe from "@/i18n/locales/de/app.json";
 import settingsDe from "@/i18n/locales/de/settings.json";
@@ -100,6 +100,11 @@ describe("translation behaviour", () => {
     expect(referenceLabel(ref("JUD.1.3"))).toBe("Jude 3");
     await i18n.changeLanguage("de");
     expect(referenceLabel(ref("JHN.15.1-JHN.15.11"))).toBe("Johannes 15,1–11");
+    // v0.24: the books of Moses are shown as "1. Mose (Genesis)"; a passage keeps the short name.
+    expect(bookName("GEN")).toBe("1. Mose (Genesis)");
+    expect(bookName("DEU")).toBe("5. Mose (Deuteronomium)");
+    expect(referenceLabel(ref("GEN.1.1"))).toBe("1. Mose 1,1");
+    expect(referenceLabel(ref("LEV.19.18"))).toBe("3. Mose 19,18");
     await i18n.changeLanguage("ko");
     expect(referenceLabel(ref("JHN.15.7"))).toBe("요한복음 15:7");
     await i18n.changeLanguage("pt");

@@ -46,3 +46,25 @@ pub fn study_search(
 ) -> CommandResult<Vec<StudySearchHit>> {
     state.db(|conn| study_search::search(conn, &query))
 }
+
+#[tauri::command(async)]
+pub fn study_delete(
+    state: State<'_, AppState>,
+    id: String,
+    permanent: Option<bool>,
+) -> CommandResult<()> {
+    state.db(|c| studies::delete(c, &id, permanent.unwrap_or(false)))
+}
+#[tauri::command(async)]
+pub fn study_restore(state: State<'_, AppState>, id: String) -> CommandResult<Study> {
+    state.db(|c| studies::restore(c, &id))
+}
+
+#[tauri::command(async)]
+pub fn study_move(
+    state: State<'_, AppState>,
+    id: String,
+    project_id: String,
+) -> CommandResult<Study> {
+    state.db(|conn| studies::move_to(conn, &id, &project_id))
+}

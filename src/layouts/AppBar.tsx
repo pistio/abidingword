@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { PanelLeft, PanelRight, Search, Settings } from "lucide-react";
+import { PanelLeft, PanelRight, Search, Settings, Globe } from "lucide-react";
 import { BrandLockup } from "@/design-system/BrandLockup";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 
@@ -14,6 +14,7 @@ interface AppBarProps {
   onToggleScripture: () => void;
   onToggleSources: () => void;
   onOpenSettings: () => void;
+  onOpenLanguage: () => void;
   /** Called when a Scripture search starts, so the Scripture pane can be shown. */
   onSearch: () => void;
   onSearchStudies: (query: string) => void;
@@ -21,8 +22,8 @@ interface AppBarProps {
 }
 
 const iconButton =
-  "inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-bg-secondary " +
-  "aria-pressed:bg-bg-secondary disabled:opacity-50";
+  "inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover " +
+  "aria-pressed:bg-selected aria-pressed:shadow-[inset_0_-2px_0_var(--aw-text-strong)] disabled:opacity-50";
 
 type Scope = "scripture" | "studies" | "library";
 
@@ -60,7 +61,7 @@ export function AppBar(props: AppBarProps) {
             value={scope}
             onChange={(e) => setScope(e.target.value as Scope)}
             disabled={!scopeEnabled}
-            className="h-10 rounded-aw border border-border bg-bg-secondary px-2 text-[0.9375rem] text-text-strong"
+            className="h-10 aw-input px-2 text-[0.9375rem] text-text-strong"
           >
             <option value="scripture">{t("app.search.scope.scripture")}</option>
             <option value="studies">{t("app.search.scope.studies")}</option>
@@ -80,7 +81,7 @@ export function AppBar(props: AppBarProps) {
                   ? t("app.search.placeholder.noBible")
                   : t(`app.search.placeholder.${scope}`)
               }
-              className="h-10 w-60 rounded-aw border border-border bg-bg-secondary pl-9 pr-3 text-[0.9375rem] text-text placeholder:text-text-muted disabled:cursor-not-allowed disabled:border-border-subtle"
+              className="h-10 w-60 aw-input pl-9 pr-3 text-[0.9375rem] text-text placeholder:text-text-muted disabled:cursor-not-allowed disabled:border-border-subtle"
             />
           </span>
         </form>
@@ -105,6 +106,9 @@ export function AppBar(props: AppBarProps) {
           onClick={props.onToggleSources}
         >
           <SideIcon side={props.sourcesSide} />
+        </button>
+        <button type="button" className={iconButton} aria-label={t("settings.language.action")} title={t("settings.language.find")} onClick={props.onOpenLanguage}>
+          <Globe className="size-5" aria-hidden="true" />
         </button>
         <button
           type="button"

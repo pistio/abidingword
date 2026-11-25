@@ -5,6 +5,8 @@ import { Button } from "@/design-system/Button";
 import { FindingSources } from "@/features/library/FindingSources";
 import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 import { referenceLabel } from "@/i18n/scripture";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
@@ -37,17 +39,27 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
   const [tags, setTags] = useState(finding.tags.join(", "));
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { deleting, runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
   const label = findingLabel(t, finding.findingType);
   const type = findingInline(t, finding.findingType);
 
   const save = useCallback((content: string) => api.findingUpdate({ id: finding.id, content }), [api, finding.id]);
-  const { schedule, flush } = useAutosave(save);
+  const { schedule, flush } = useAutosave(save, undefined, `finding:${finding.id}:content`, setText);
 
   const act = async (action: () => Promise<unknown>) => {
     setError(null);
     try {
       await action();
       onChanged();
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
+
+  const remove = async () => {
+    setError(null);
+    try {
+      if (await runDeletion(() => api.findingDelete(finding.id))) onChanged();
     } catch (e) {
       setError(toApiError(e).message);
     }
@@ -67,14 +79,15 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
   const linked = currentPassage && finding.passages.some((p) => p.reference.canonical === currentPassage.canonical);
   const excerpt = finding.content.slice(0, 60);
 
-  const field = "h-11 min-w-0 max-w-full rounded-aw border border-border bg-bg px-2";
-  const quiet = "inline-flex min-h-11 items-center rounded-aw px-2 text-text-muted hover:bg-bg-secondary hover:text-text-strong disabled:opacity-40";
+  const field = "h-11 min-w-0 max-w-full aw-input px-2";
+  const quiet = "inline-flex min-h-11 items-center rounded-aw px-2 text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
 
   return (
     <li>
       <article
+        aria-busy={deleting}
         aria-label={t("studies.findings.itemLabel", { type: label, excerpt })}
-        className="flex flex-col gap-1 border-l-[3px] border-border py-1 pl-4"
+        className="flex flex-col gap-1 border-l-2 border-border py-1 pl-4"
         onKeyDown={(e) => {
           if (e.key === "Escape" && open) {
             e.stopPropagation();
@@ -84,7 +97,7 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
         }}
       >
         {/* Its kind, as a quiet label: the part it is in is the heading it sits under. */}
-        <p className="m-0 text-[0.9375rem] font-medium text-text-muted">{label}</p>
+        <p className="type-meta m-0 font-medium">{label}</p>
 
         <textarea
           aria-label={t("studies.findings.text", { type: label })}
@@ -108,12 +121,17 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
                   goTo(p.reference);
                   onRevealScripture();
                 }}
-                className="min-h-11 rounded-aw border border-border px-2 font-medium text-link hover:bg-bg-secondary"
+                className="-ml-2 min-h-11 rounded-aw px-2 font-medium text-link hover:bg-hover"
               >
                 {referenceLabel(p.reference)}
               </button>
             ))}
           </div>
+        )}
+        {finding.assistedBy && (
+          <p className="m-0 type-meta" data-testid="assisted-by">
+            {t("studies.inquiry.assistedBy", { assistant: finding.assistedBy })}
+          </p>
         )}
         <FindingSources
           finding={finding}
@@ -194,7 +212,7 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
                   type="button"
                   onClick={() => act(() => api.findingUnlinkPassage(p.id))}
                   aria-label={t("studies.findings.unlink", { passage: referenceLabel(p.reference) })}
-                  className="inline-flex min-h-11 items-center gap-1 rounded-aw border border-border px-2 text-text-muted hover:bg-bg"
+                  className="inline-flex min-h-11 items-center gap-1 rounded-aw border border-border px-2 text-text-muted hover:bg-hover"
                 >
                   {referenceLabel(p.reference)}
                   <X className="size-3.5" aria-hidden="true" />
@@ -225,7 +243,8 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
               <button
                 type="button"
                 className={`${quiet} ml-auto gap-1 hover:text-danger`}
-                onClick={() => (text.trim() ? setConfirming(true) : act(() => api.findingDelete(finding.id)))}
+                disabled={deleting}
+                onClick={() => (text.trim() ? setConfirming(true) : void remove())}
                 aria-label={t("studies.findings.delete", { type })}
               >
                 <Trash2 className="size-4" aria-hidden="true" />
@@ -238,8 +257,8 @@ export function FindingNote({ finding, sections, order, group, canMove, onChange
         {confirming && (
           <div role="alertdialog" aria-label={t("studies.findings.confirmDelete", { type })} className="flex flex-wrap items-center gap-2 text-[0.9375rem]">
             <span>{t("studies.findings.confirmDelete", { type })}</span>
-            <Button variant="primary" onClick={() => act(() => api.findingDelete(finding.id))}>{t("common.delete")}</Button>
-            <Button autoFocus onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
+            <Button variant="danger" disabled={deleting} onClick={() => void remove()}>{t("common.delete")}</Button>
+            <Button autoFocus disabled={deleting} onClick={() => setConfirming(false)}>{t("common.keep")}</Button>
           </div>
         )}
         {error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{error}</p>}

@@ -1,0 +1,2 @@
+Compiling abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+    Finished `dev` profile [unoptimized] target(s) in 27.38s

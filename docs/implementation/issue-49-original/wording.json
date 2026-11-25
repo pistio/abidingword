@@ -1,0 +1,27 @@
+{
+  "approval": "Explicit owner request: People, not Persons, in the two POZETEK headings and descriptions",
+  "file": "src/i18n/locales/en/studies.json",
+  "decisions": [
+    {
+      "key": "builtin.templates.pozetek-study.description",
+      "before": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+      "after": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application."
+    },
+    {
+      "key": "builtin.templates.pozetek-study.sections.persons.title",
+      "before": "Persons",
+      "after": "People"
+    },
+    {
+      "key": "builtin.templates.pozetek-writing-study.description",
+      "before": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+      "after": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application."
+    },
+    {
+      "key": "builtin.templates.pozetek-writing-study.sections.persons.title",
+      "before": "Persons",
+      "after": "People"
+    }
+  ],
+  "internalIdentifiersChanged": false
+}

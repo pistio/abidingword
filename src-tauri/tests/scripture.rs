@@ -39,6 +39,9 @@ fn meta(preview_id: &str, name: &str, short_name: &str) -> CommitImport {
         publisher: None,
         copyright_notice: None,
         license_type: None,
+        words: Default::default(),
+        as_document: false,
+        confirm_edition: false,
     }
 }
 
@@ -131,6 +134,154 @@ fn the_database_canon_matches_the_registry() {
 // --- import ----------------------------------------------------------------
 
 #[test]
+fn files_naming_different_bibles_are_never_combined() {
+    // v0.24: two editions chosen together are refused, each named; files
+    // that name no Bible, or the same one, are one Bible as chosen.
+    let temp = tempfile::tempdir().unwrap();
+    let write = |name: &str, body: &str| {
+        let path = temp.path().join(name);
+        std::fs::write(&path, body).unwrap();
+        path
+    };
+    let web = write(
+        "43-JHN.usfm",
+        "\\id JHN 43-JHN-web.sfm World English Bible\n\\h John\n\\c 1\n\\v 1 Invented one.\n",
+    );
+    let web2 = write(
+        "45-ROM.usfm",
+        "\\id ROM - World English Bible\n\\h Romans\n\\c 1\n\\v 1 Invented two.\n",
+    );
+    let kjv = write(
+        "45-ROM-kjv.usfm",
+        "\\id ROM King James Version\n\\h Romans\n\\c 1\n\\v 1 Invented three.\n",
+    );
+    let plain = write("66-REV.usfm", "\\id REV\n\\c 1\n\\v 1 Invented four.\n");
+    let kjv2 = write(
+        "46-1CO-kjv.usfm",
+        "\\id 1CO King James Version\n\\h 1 Corinthians\n\\c 1\n\\v 1 Invented five.\n",
+    );
+    let web3 = write(
+        "46-1CO.usfm",
+        "\\id 1CO World English Bible\n\\c 1\n\\v 1 Invented six.\n",
+    );
+
+    let same = import::stage(&[web.clone(), web2.clone(), plain], ImportOrigin::UserFiles).unwrap();
+    let preview = same.preview(Default::default());
+    assert!(preview.can_import, "{:?}", preview.issues);
+
+    // One file of another Bible is no evidence on its own; two are.
+    let mixed = import::stage(&[web, web3, kjv, kjv2], ImportOrigin::UserFiles).unwrap();
+    let preview = mixed.preview(Default::default());
+    assert!(!preview.can_import);
+    let issue = preview
+        .issues
+        .iter()
+        .find(|i| i.code.as_deref() == Some("bibleImport.differentEditions"))
+        .expect("refused");
+    assert!(
+        issue.params["list"].contains("world english bible"),
+        "{}",
+        issue.params["list"]
+    );
+    assert!(
+        issue.params["list"].contains("king james version"),
+        "{}",
+        issue.params["list"]
+    );
+}
+
+#[test]
+fn a_few_files_of_another_bible_among_many_are_refused_and_date_stamps_are_no_evidence() {
+    // v0.24 review: below a quarter of the files, two of another Bible are
+    // still another Bible; a time stamp on the `\id` line names none.
+    let temp = tempfile::tempdir().unwrap();
+    let books = [
+        "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA",
+    ];
+    let mut web = Vec::new();
+    for (i, code) in books.iter().enumerate() {
+        let path = temp.path().join(format!("{i:02}-{code}.usfm"));
+        let stamp = if i % 2 == 0 {
+            "Wed Mar 3 2021 10:15 GMT"
+        } else {
+            "Fri Oct 1 2021 08:00 UTC"
+        };
+        std::fs::write(
+            &path,
+            format!("\\id {code} World English Bible {stamp}\n\\c 1\n\\v 1 Invented.\n"),
+        )
+        .unwrap();
+        web.push(path);
+    }
+    let same = import::stage(&web, ImportOrigin::UserFiles).unwrap();
+    let preview = same.preview(Default::default());
+    assert!(preview.can_import, "{:?}", preview.issues);
+
+    let mut mixed = web.clone();
+    for code in ["MAT", "MRK"] {
+        let path = temp.path().join(format!("{code}-kjv.usfm"));
+        std::fs::write(
+            &path,
+            format!("\\id {code} King James Version\n\\c 1\n\\v 1 Invented.\n"),
+        )
+        .unwrap();
+        mixed.push(path);
+    }
+    let preview = import::stage(&mixed, ImportOrigin::UserFiles)
+        .unwrap()
+        .preview(Default::default());
+    assert!(!preview.can_import);
+    let issue = preview
+        .issues
+        .iter()
+        .find(|i| i.code.as_deref() == Some("bibleImport.differentEditions"))
+        .expect("refused");
+    assert!(
+        issue.params["list"].contains("king james version"),
+        "{}",
+        issue.params["list"]
+    );
+}
+
+#[test]
+fn deuterocanonical_books_are_named_and_left_out_without_renumbering_anything() {
+    // v0.24: a Bible's Tobit and Greek Esther are named, not "unknown"; the
+    // 66 books import as before, with their own references.
+    let temp = tempfile::tempdir().unwrap();
+    let mut files = fixture_files("usfm-a");
+    for (name, body) in [
+        ("67-TOB.usfm", "\\id TOB\n\\c 1\n\\v 1 Invented words.\n"),
+        ("69-ESG.usfm", "\\id ESG\n\\c 1\n\\v 1 Invented words.\n"),
+    ] {
+        let path = temp.path().join(name);
+        std::fs::write(&path, body).unwrap();
+        files.push(path);
+    }
+    let staged = import::stage(&files, ImportOrigin::UserFiles).unwrap();
+    let preview = staged.preview(Default::default());
+    assert!(preview.can_import, "{:?}", preview.issues);
+    let books: Vec<_> = preview.books.iter().map(|b| b.code).collect();
+    assert_eq!(books, vec!["PSA", "JHN", "ROM"]);
+    let named: Vec<_> = preview
+        .issues
+        .iter()
+        .filter(|i| i.code.as_deref() == Some("bibleImport.additionalBook"))
+        .map(|i| (i.severity, i.params["book"].clone()))
+        .collect();
+    assert_eq!(
+        named,
+        vec![
+            (Severity::Note, "Tobit".to_string()),
+            (Severity::Note, "Esther (Greek)".to_string())
+        ]
+    );
+    assert!(preview
+        .issues
+        .iter()
+        .all(|i| i.code.as_deref() != Some("bibleImport.unknownBook")));
+}
+
+#[test]
 fn a_valid_fixture_imports_with_a_clear_preview() {
     let staged = import::stage(&fixture_files("usfm-a"), ImportOrigin::UserFiles).unwrap();
     let preview = staged.preview(Default::default());
@@ -200,18 +351,24 @@ fn faulty_files_are_reported_in_plain_language_and_block_the_import() {
 #[test]
 fn unsupported_files_are_refused_clearly() {
     let temp = tempfile::tempdir().unwrap();
-    let pdf = temp.path().join("bible.pdf");
-    std::fs::write(&pdf, b"%PDF-1.7").unwrap();
-    match import::stage(&[pdf], ImportOrigin::UserFiles) {
-        Err(AppError::UnsupportedFormat(message)) => assert!(message.contains("PDF")),
+    // Since v0.23 PDF, EPUB, DOCX, Markdown and text are Bible documents
+    // (tests/bible_documents.rs); other document formats are refused by name.
+    let rtf = temp.path().join("bible.rtf");
+    std::fs::write(&rtf, b"{\\rtf1 In the beginning}").unwrap();
+    match import::stage(&[rtf], ImportOrigin::UserFiles) {
+        Err(AppError::UnsupportedFormat(message)) => assert!(message.contains("Word")),
         other => panic!("{:?}", other.err()),
     }
+    // A damaged PDF is refused with a message, never staged.
+    let pdf = temp.path().join("bible.pdf");
+    std::fs::write(&pdf, b"%PDF-1.7").unwrap();
+    assert!(import::stage(&[pdf], ImportOrigin::UserFiles).is_err());
+    // A text file without USFM markers is a document, with no verses found.
     let text = temp.path().join("notes.txt");
     std::fs::write(&text, b"Just some notes.").unwrap();
-    assert!(matches!(
-        import::stage(&[text], ImportOrigin::UserFiles),
-        Err(AppError::UnsupportedFormat(_))
-    ));
+    let staged = import::stage(&[text], ImportOrigin::UserFiles).unwrap();
+    assert!(staged.documents.is_some());
+    assert!(staged.content.books.is_empty());
 }
 
 #[test]
@@ -702,10 +859,16 @@ fn every_bundled_bible_is_recorded_and_imports_cleanly() {
             .filter(|i| i.severity == Severity::Error)
             .collect();
         assert!(errors.is_empty(), "{}: {errors:#?}", bible.id);
-        assert_eq!(preview.book_count, 66, "{}", bible.id);
-        assert_eq!(preview.chapter_count, 1189, "{}", bible.id);
+        assert_eq!(preview.book_count, usize::from(bible.books), "{}", bible.id);
+        let (chapters, verses) = if bible.books == 27 {
+            // The New Testament (v0.24: Greek editions).
+            (260, 7_900..7_970)
+        } else {
+            (1189, 30_900..31_250)
+        };
+        assert_eq!(preview.chapter_count, chapters, "{}", bible.id);
         assert!(
-            (30_900..31_250).contains(&preview.verse_count),
+            verses.contains(&preview.verse_count),
             "{}: {}",
             bible.id,
             preview.verse_count

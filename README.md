@@ -87,13 +87,30 @@ Bibles too.
 </td>
 <td valign="top">
 
-### 🔒 Yours, and private
-No account, no cloud and no internet needed. Nothing is guessed: every link
-points to something that is really there. An optional assistant (off until you
-turn it on) comments on and polishes what *you* write; it never writes your
-teaching, and it shows where everything comes from.
+### 🔒 Local-first, under your control
+Core Bible study and writing work offline without an account. Sources, citations
+and personal writing remain on your computer. An optional assistant, web search
+or updater **may contact outside services when you enable or use it**; Abiding
+Word shows the destination and context before assistant requests. Uncertain
+reference locations remain unresolved rather than receiving invented pages.
+Take a project to another computer as one file, or back up everything from
+**Settings → Data and backup**. Backups containing copyrighted books or private
+writing are for your own use, not public sharing.
 
 <img src="docs/guide/images/workspace-dark.png" alt="The workspace in the dark theme" width="360">
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top">
+
+### 📽️ Present what you teach
+Slides made from your Bible Teaching that keep following it, a Presenter View
+for your phone, tablet or computer, the slides on a second screen, and
+PowerPoint, PDF or a phone speaker sheet to take along. Your notes are never
+shown to the audience, and it all works without the internet.
+
+<img src="docs/guide/images/presenter-desktop.png" alt="The Presenter View: all slides, the current and next slide, and the speaker's notes" width="600">
 
 </td>
 </tr>
@@ -101,14 +118,15 @@ teaching, and it shows where everything comes from.
 
 ## Get started
 
-1. **Download** the newest Windows test version from the
-   [download page](https://github.com/jc-universe87/abidingword-updates/releases)
-   (the file ending in `_x64-setup.exe`) and install it.
-2. **Add a Bible:** click **Add a Bible…** and choose one of the free Bibles
-   that come with it: the Berean Standard Bible or World English Bible
-   (English), Luther 1912, Schlachter 1951 or Elberfelder 1905 (Deutsch),
-   개역한글 (한국어), Louis Segond (Français), Reina-Valera (Español) or
-   Bíblia Livre (Português).
+1. **During private testing**, use the version provided for that specific
+   acceptance round. The separate signed [development/test update channel](https://github.com/jc-universe87/abidingword-updates/releases)
+   is **not a public stable release**; unsigned owner-acceptance builds do not
+   include the updater. Extract the ZIP, verify its reported checksum and run
+   the contained Windows x64 installer only when you trust its source.
+2. **Add a Bible:** click **Add a Bible…**. The application includes nine
+   complete editions in English, German, Korean, French, Spanish and Portuguese,
+   and four Greek New Testament editions; each has a source and rights notice.
+   You choose which to add to your own workspace.
 3. **Start your first study:** type a passage such as `John 15:1-11` and click
    **Create study**.
 
@@ -116,18 +134,24 @@ teaching, and it shows where everything comes from.
 step by step, with pictures.
 
 > [!NOTE]
-> Abiding Word is a **test version** and is still being built. It updates
-> itself when a new test version is ready. Your work is kept safely on your
-> computer (see [Backups](docs/guide/08-settings-updates-backups.md#backups)).
+> Abiding Word is **not yet a public stable release**. The code contains
+> significant Study, Teaching, presentation, export and backup functionality,
+> but native Windows acceptance and the release-rights/signing review are still
+> required. Test-channel builds may update; isolated acceptance installers do
+> not. Your writing is local, and you should maintain full private
+> [backups](docs/guide/08-settings-updates-backups.md#backups).
 
-## What's ready, and what's coming
+## What's implemented and what's still under review
 
-| | |
+| Status | Capabilities |
 |---|---|
-| ✅ **Ready** | Bible reading, with nine free Bibles included (English, German, Korean, French, Spanish, Portuguese) · highlights, notes and bookmarks · studies with templates, sections and study notes · projects · your own library (PDF, EPUB, Word, Markdown, text) · books matched to the passage you read · clickable Bible references in six languages, in the text and on PDF pages · find a word inside a book · contents made from a book's headings · marking your own books (highlights, notes, bookmarks) · concordance · search across Bible, studies and library · light and dark themes · six interface languages · automatic test updates |
-| ✅ **Also ready** | Bringing what you read into your study: add selected words, highlights and notes to a study with their source, open the book again at those words, and copy a quotation with its citation |
-| 🛠️ **Next** (being tested) | Preparing to teach: sermons, group studies and lessons written by you from your study, each with its own shape (main points, questions for a group, lesson steps such as a Bible reading, a question or an activity), using your notes and passages · an optional assistant that checks and polishes your wording, comments on your structure and theology, finds real stories with their sources and freely licensed images, and never writes for you · a simpler study: a few parts, each with its own Add for writing or an observation, a question… |
-| 🌱 **Later** | Handouts and exports · dictionary forms and grammar for Greek and Hebrew words · reading scanned books and recordings · drawing on books with a pen · sharing and syncing between your own devices |
+| **Implemented and exercised in tests** | Bible reading and per-verse/word notes; source library with PDF, EPUB, Word and text; backed-up projects and structured studies; user-authored Teaching, Q&A, selected Study → Teaching snapshots, material generation, presentation and export; six interface languages; optional AI assistance, disabled by default. |
+| **Windows owner acceptance underway** | Complex-source navigation and multiple real PDFs, Study → Teaching → export in real Office/PDF software, leader/participant privacy, Korean DeepSeek live provider, different scaling/display settings, long-session save/reopen and full backup/restore. The existing user has confirmed **Settings → Sources → Edit details** and their supplied handbook fix, not blanket acceptance. |
+| **Built in the draft release-preparation branch** | Recent-source continuity after application restart and rolling verified daily database-only safety snapshots. Both require CI and Windows acceptance before inclusion in an installer. Full `.awbackup` archives still protect original source files. |
+| **Research / not shipped in this installer** | Claude's independent A1.5 Scripture-document recognition evaluation. Source-derived Bible text requires edition/provenance safety before it can be treated as verified Scripture. |
+| **Later** | Scanned-page OCR, pen/stylus, device sync, collaborative publication, optional mobile editor and marketplace. |
+
+For the current release go/no-go gates, see the [publication-readiness plan](docs/implementation/publish-readiness-20261120.md). No installer should be announced as a public stable release until those gates and the owner's distribution decision are complete.
 
 ## Documentation
 
@@ -146,12 +170,19 @@ Abiding Word is independently developed and maintained. If it is useful to you, 
   <a href="https://ko-fi.com/pistio"><img src="https://img.shields.io/badge/Ko--fi-Buy%20a%20coffee-0E2D5B?logo=kofi&logoColor=white" alt="Support via Ko-fi"></a>
 </p>
 
-## Name and brand
+## Name, brand and bundled content rights
 
 The Abiding Word name, logomark and brand assets are not covered by any
 software licence in this repository. The fonts (Inter, Noto Serif) are SIL
-Open Font License families. The included Bibles are in the public domain,
-except the Schlachter 1951 and the Bíblia Livre (Creative Commons Attribution 4.0)
-and 성경전서 개역한글판 (copyright expired; the Korean Bible Society asks that it
-be kept unaltered and attributed); each one's source
-and licence are recorded in [`resources/scripture/`](resources/scripture/README.md).
+Open Font License families. The thirteen bundled Bible archives include public-
+domain editions, three editions under CC BY 4.0 (Schlachter 1951, Bíblia Livre
+and the SBL Greek New Testament), and 성경전서 개역한글판 (1961), whose economic
+copyright the Korean Bible Society says has expired, subject to attribution and
+integrity rights. Each edition's exact provenance and licence evidence is in
+[`resources/scripture/`](resources/scripture/README.md).
+
+Bundled editions, including the four Greek New Testaments, have individual
+source records; [distribution notices and third-party attribution](docs/release/THIRD-PARTY-NOTICES.md)
+are part of the release review. **No software licence has yet been selected for
+Abiding Word's own code or brand.** An open-source or commercial distribution
+model requires an explicit owner choice.

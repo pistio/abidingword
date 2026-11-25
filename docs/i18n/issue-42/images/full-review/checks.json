@@ -1,0 +1,1157 @@
+{
+  "platform": "Linux Chromium; invented empty profile; 900px at 150% device scale /1440px at100%; not actual Windows, native OS dialog chrome or actual-file acceptance",
+  "results": [
+    {
+      "language": "en",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scale": 1,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scale": 1,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scale": 1,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scale": 1,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scale": 1,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "width": 1440,
+      "scale": 1,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scale": 1,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scale": 1,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scale": 1,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scale": 1,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scale": 1,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "width": 1440,
+      "scale": 1,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scale": 1,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scale": 1,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scale": 1,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scale": 1,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scale": 1,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "width": 1440,
+      "scale": 1,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scale": 1,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scale": 1,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scale": 1,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scale": 1,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scale": 1,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "width": 1440,
+      "scale": 1,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scale": 1,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scale": 1,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scale": 1,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scale": 1,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scale": 1,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "width": 1440,
+      "scale": 1,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 900,
+      "scale": 1.5,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scale": 1,
+      "scene": "study",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scale": 1,
+      "scene": "delete",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scale": 1,
+      "scene": "teaching",
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scale": 1,
+      "scene": "settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scale": 1,
+      "scene": "ai-settings",
+      "geometry": [],
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "width": 1440,
+      "scale": 1,
+      "scene": "backup-settings",
+      "geometry": [],
+      "pageErrors": []
+    }
+  ]
+}

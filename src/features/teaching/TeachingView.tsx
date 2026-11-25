@@ -1,45 +1,64 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowUp, ChevronRight, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, FileDown, FolderOpen, MessageCircleQuestion, MoreHorizontal, PencilLine, Plus, Presentation, ScrollText, Trash2 } from "lucide-react";
+import { ActionMenu } from "@/design-system/ActionMenu";
 import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
+import { settleOutstandingWrites } from "@/hooks/SaveTracker";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { pauseWorkspaceInteraction } from "@/lib/pauseWorkspaceInteraction";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import { referenceLabel } from "@/i18n/scripture";
+import { useScripture } from "@/features/scripture/ScriptureContext";
 import type { Finding } from "@/types/studies";
-import { STEP_KINDS, TEACHING_KINDS, type ImageCapability, type ProviderKind, type StepKind, type TeachingKind, type TeachingPoint, type TeachingPreparation } from "@/types/teaching";
+import { STEP_KINDS, type ImageCapability, type ProviderKind, type StepKind, type TeachingPoint, type TeachingPreparation } from "@/types/teaching";
 import { AssistMenu } from "./AssistMenu";
 import { AssistPanel } from "./AssistPanel";
 import { FloatingPanel, AssistDockProvider, useAssistDock } from "./FloatingPanel";
-import { STARTING_STEPS, assistLabel, canvasShape, pointFields, showsFrame, startingStepTitle, stepFieldLabel, teachingKindLabel, type ShapeText } from "./labels";
+import { assistLabel, canvasShape, pointFields, shapeText, showsFrame, stepFieldLabel, teachingKindLabel, type ShapeText } from "./labels";
+import { TeachingInfo } from "./TeachingInfo";
+import { BlockCanvas, CanvasViewChoice, type CanvasView } from "./BlockCanvas";
+import { AddFromStudy } from "./AddFromStudy";
+import { BUILTIN_BLOCK_TEMPLATES, blockTemplateGroup, blocksFromBuiltin, usesBlocks } from "./teachingTemplates";
 import { TeachingField, type AssistantHooks } from "./TeachingField";
 import { TeachingLinks } from "./TeachingLinks";
+import { PresentationView } from "@/features/presentation/PresentationView";
+import { ExportDialog } from "@/features/presentation/ExportDialog";
+import { MaterialView } from "@/features/materials/MaterialView";
+import { outputHint, outputName, outputsFor, type OutputKind } from "@/features/materials/derive";
+import type { PresentationDocument } from "@/types/presentation";
 
 interface TeachingViewProps {
-  studyId: string;
-  studyTitle: string;
-  findings: Finding[];
+  startNew?: boolean;
+  initialTeachingId?: string;
+  projectId?: string;
+  studyId?: string;
+  studyTitle?: string;
+  findings?: Finding[];
+  onOpenStudy?: (study: { id: string; projectId: string }) => void;
   onRevealScripture: () => void;
 }
 
 /**
- * The Teaching view of a study (v0.16): one or more teaching preparations —
- * a sermon, a group study, a lesson — written by the person from what they
- * found. Nothing is filled in for them; every field may stay empty.
+ * Shared editor for project Teaching and the legacy Study entry. An optional
+ * Study can provide findings; every Teaching remains owned by its project.
  */
-export function TeachingView({ studyId, studyTitle, findings, onRevealScripture }: TeachingViewProps) {
+export function TeachingView({ onOpenStudy, projectId, startNew = false, studyId, studyTitle = "", findings = [], onRevealScripture, initialTeachingId }: TeachingViewProps) {
   const { t } = useTranslation();
   const api = useApi();
-  const list = useLoad(useCallback(() => api.teachingList(studyId), [api, studyId]));
+  const list = useLoad(useCallback(() => projectId ? api.teachingListProject(projectId).then(rows => rows.filter(row => !row.studyId)) : api.teachingList(studyId!), [api, projectId, studyId]));
   const settings = useLoad(useCallback(() => api.assistantSettingsGet(), [api]));
-  const [chosen, setChosen] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
-  // A teaching just created opens with its details, so they can be filled in; later visits start folded.
-  const [fresh, setFresh] = useState<string | null>(null);
+  // A.4.3: the open teaching's options stay open while switching teachings (keyboard stays on the picker).
+  const [teachingOptionsOpen, setTeachingOptionsOpen] = useState(false);
+  const [chosen, setChosen] = useState<string | null>(initialTeachingId ?? null);
+  const [creating, setCreating] = useState(startNew && !projectId);
   const id = useId();
   // After a new teaching is put away or one is deleted, the keyboard goes back to "Prepare another".
   const anotherButton = useRef<HTMLButtonElement>(null);
   const focusAnother = useRef(false);
+  // Choosing another teaching draws its picker anew once it has loaded: the keyboard goes back to it then.
+  const focusWhich = useRef(false);
   useEffect(() => {
     if (!focusAnother.current || !anotherButton.current) return;
     anotherButton.current.focus();
@@ -47,7 +66,7 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
   });
 
   const preparations = list.data ?? [];
-  const currentId = chosen && preparations.some((p) => p.id === chosen) ? chosen : (preparations[0]?.id ?? null);
+  const currentId = chosen && preparations.some((p) => p.id === chosen) ? chosen : (projectId ? null : (preparations[0]?.id ?? null));
 
   if (list.error) return <p role="alert" className="m-0 text-danger">{list.error.message}</p>;
   if (!list.data) return <p className="m-0 text-text-muted">{t("studies.teaching.loading")}</p>;
@@ -55,19 +74,26 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
   const created = (prep: TeachingPreparation) => {
     setCreating(false);
     setChosen(prep.id);
-    setFresh(prep.id);
     list.reload();
   };
 
-  if (preparations.length === 0 || creating) {
+  if (projectId && !currentId && !creating) {
+    return <section className="flex flex-col gap-4" aria-label={t("studies.teaching.workspace.title")}>
+      <h1 className="type-title m-0">{t("studies.teaching.workspace.title")}</h1>
+      <p className="m-0 text-text-muted">{t("studies.teaching.workspace.intro")}</p>
+      {preparations.length ? <ul aria-label={t("studies.teaching.workspace.sessions")} className="m-0 list-none space-y-2 p-0">{preparations.map(p => <li key={p.id}><Button onClick={() => setChosen(p.id)}>{p.title}</Button></li>)}</ul> : <p className="m-0 text-text-muted">{t("studies.teaching.workspace.empty")}</p>}
+    </section>;
+  }
+  if ((!projectId && preparations.length === 0) || creating) {
     return (
       <NewTeaching
+        projectId={projectId}
         studyId={studyId}
         studyTitle={studyTitle}
         first={preparations.length === 0}
         onCreated={created}
         onCancel={
-          preparations.length > 0
+          preparations.length > 0 || projectId
             ? () => {
                 setCreating(false);
                 focusAnother.current = true;
@@ -78,44 +104,65 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
     );
   }
 
+  // One study can lead to several teachings: the way to another is always at hand, with the
+  // choice between them once there is more than one. Quiet, in the open teaching's details line.
+  const switcher = (
+    <span className="flex min-w-0 max-w-full flex-wrap items-center gap-x-2">
+      {projectId && <Button variant="quiet" onClick={() => setChosen(null)}>{t("studies.teaching.workspace.back")}</Button>}
+      {preparations.length > 1 && (
+        <>
+          <label htmlFor={`${id}-which`} className="type-meta">
+            {t("studies.teaching.which")}
+          </label>
+          <select
+            id={`${id}-which`}
+            ref={(el) => {
+              if (el && focusWhich.current) {
+                focusWhich.current = false;
+                el.focus();
+              }
+            }}
+            value={currentId ?? ""}
+            onChange={(e) => {
+              focusWhich.current = true;
+              setChosen(e.target.value);
+            }}
+            className="h-11 min-w-0 max-w-full rounded-aw border border-border-subtle bg-field px-2 text-[0.9375rem]"
+          >
+            {preparations.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.kind ? `${p.title} · ${teachingKindLabel(t, p.kind)}` : p.title}
+              </option>
+            ))}
+          </select>
+        </>
+      )}
+      {!projectId && <button
+        // Drawn with the open teaching (once it has loaded): focus that was waiting for it lands here.
+        ref={(el) => {
+          anotherButton.current = el;
+          if (el && focusAnother.current) {
+            focusAnother.current = false;
+            el.focus();
+          }
+        }}
+        type="button"
+        onClick={() => setCreating(true)}
+        className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] font-medium text-link hover:bg-hover"
+      >
+        <Plus className="size-4" aria-hidden="true" />
+        {t("studies.teaching.newTeaching")}
+      </button>}
+    </span>
+  );
+
   return (
     <div className="flex flex-col gap-3">
-      {/* One study can lead to several teachings: the way to another is always in sight, with the
-          choice between them once there is more than one. */}
-      <div className="flex flex-wrap items-center gap-2">
-        {preparations.length > 1 && (
-          <>
-            <label htmlFor={`${id}-which`} className="text-[0.9375rem] text-text-muted">
-              {t("studies.teaching.which")}
-            </label>
-            <select
-              id={`${id}-which`}
-              value={currentId ?? ""}
-              onChange={(e) => setChosen(e.target.value)}
-              className="h-11 min-w-0 max-w-full rounded-aw border border-border bg-bg px-2 text-[0.9375rem]"
-            >
-              {preparations.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.kind ? `${p.title} · ${teachingKindLabel(t, p.kind)}` : p.title}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
-        <button
-          ref={anotherButton}
-          type="button"
-          onClick={() => setCreating(true)}
-          className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] font-medium text-link hover:bg-bg-secondary"
-        >
-          <Plus className="size-4" aria-hidden="true" />
-          {t("studies.teaching.another")}
-        </button>
-      </div>
       {currentId && (
         <AssistDockProvider key={currentId}>
         <TeachingEditor
           key={currentId}
+          onOpenStudy={onOpenStudy}
           preparationId={currentId}
           findings={findings}
           assistant={settings.data?.config.enabled ? settings.data : null}
@@ -127,7 +174,9 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
             list.reload();
           }}
           onRevealScripture={onRevealScripture}
-          startOpen={fresh === currentId}
+          switcher={switcher}
+          optionsOpen={teachingOptionsOpen}
+          onOptionsOpen={setTeachingOptionsOpen}
         />
         </AssistDockProvider>
       )}
@@ -136,13 +185,15 @@ export function TeachingView({ studyId, studyTitle, findings, onRevealScripture 
 }
 
 function NewTeaching({
+  projectId,
   studyId,
   studyTitle,
   first,
   onCreated,
   onCancel,
 }: {
-  studyId: string;
+  projectId?: string;
+  studyId?: string;
   studyTitle: string;
   first: boolean;
   onCreated: (prep: TeachingPreparation) => void;
@@ -154,13 +205,23 @@ function NewTeaching({
   const heading = useRef<HTMLHeadingElement>(null);
   // Asked for from a teaching already there: the keyboard moves to the new form (the first one needs no move).
   useEffect(() => {
-    if (!first) heading.current?.focus();
-  }, [first]);
-  const [kind, setKind] = useState<TeachingKind>("sermon");
+    heading.current?.focus();
+  }, []);
+  // Three built-in block templates, a blank one, then any template of the person's own.
+  // A version-1 template still starts the earlier editor. Nothing links a teaching to its template afterwards.
+  const mine = useLoad(useCallback(() => api.teachingTemplateList(), [api]));
+  const studies = useLoad(useCallback(() => projectId ? api.studyList({ projectId }) : Promise.resolve([]), [api, projectId]));
+  const [linkedStudy, setLinkedStudy] = useState(studyId ?? "");
+  const [chosen, setChosen] = useState("sermon-talk");
   const [title, setTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const suggested = `${teachingKindLabel(t, kind)} · ${studyTitle}`;
+  const personal = mine.data ?? [];
+  const builtin = BUILTIN_BLOCK_TEMPLATES.find((b) => b.key === chosen);
+  const own = personal.find((m) => m.id === chosen);
+  const i18nKey = blockTemplateGroup(chosen);
+  const choiceName = own ? own.name : t(`studies.teaching.builtin.${i18nKey}.name`);
+  const suggested = `${builtin ? teachingKindLabel(t, builtin.legacyKind) : choiceName}${studyTitle ? ` · ${studyTitle}` : ""}`;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -168,16 +229,22 @@ function NewTeaching({
     setBusy(true);
     setError(null);
     try {
-      // A lesson starts with its steps, named in the person's language; the others start empty.
-      const points = (STARTING_STEPS[kind] ?? []).map((step) => ({ title: startingStepTitle(t, kind, step.key), kind: step.kind }));
-      onCreated(await api.teachingCreate({ studyId, title: title.trim() || suggested, kind, points }));
+      const name = title.trim() || suggested;
+      if (builtin) {
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: builtin.legacyKind, templateKey: builtin.key, templateVersion: 2, blocks: blocksFromBuiltin(t, builtin) }));
+      } else if (own && (own.version ?? 1) >= 2) {
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: own.kind, templateKey: own.id, templateVersion: 2, blocks: own.blocks ?? [] }));
+      } else if (chosen === "blank") {
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: "other", templateKey: "blank", templateVersion: 2, blocks: [] }));
+      } else if (own) {
+        onCreated(await api.teachingCreate({ projectId, studyId: linkedStudy || null, title: name, kind: own.kind, points: own.points.map((p) => ({ title: p.title, kind: p.kind ?? null })) }));
+      }
     } catch (err) {
       setError(toApiError(err).message);
     } finally {
       setBusy(false);
     }
   };
-
   return (
     <form
       onSubmit={submit}
@@ -190,38 +257,61 @@ function NewTeaching({
       aria-labelledby={`${id}-title`}
       className="flex flex-col gap-4 rounded-aw border border-border-subtle bg-bg-secondary px-5 py-4"
     >
-      <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="m-0 font-display text-[1.375rem] font-heading text-text-strong">
-        {first ? t("studies.teaching.empty.title") : t("studies.teaching.another")}
+      <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="type-worktitle m-0">
+        {first && !projectId ? t("studies.teaching.empty.title") : t("studies.teaching.newTeaching")}
       </h3>
-      {first && <p className="m-0 max-w-prose text-text">{t("studies.teaching.empty.text")}</p>}
-      <fieldset className="m-0 flex flex-col gap-2 border-0 p-0">
-        <legend className="mb-1 text-[0.9375rem] font-semibold text-text-strong">{t("studies.teaching.kindLabel")}</legend>
-        <div className="flex flex-wrap gap-2">
-          {TEACHING_KINDS.map((k) => (
-            <label key={k} className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-border px-4 text-[0.9375rem] has-[:checked]:border-primary has-[:checked]:bg-primary has-[:checked]:text-on-primary">
-              <input type="radio" name={`${id}-kind`} value={k} checked={kind === k} onChange={() => setKind(k)} className="sr-only" aria-describedby={`${id}-format`} />
-              {teachingKindLabel(t, k)}
-            </label>
-          ))}
+      {first && <p className="m-0 max-w-prose text-text">{t(projectId ? "studies.teaching.workspace.intro" : "studies.teaching.empty.text")}</p>}
+      {projectId && <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={linkedStudy} onChange={e => setLinkedStudy(e.target.value)}><option value="">{t("studies.teaching.workspace.independent")}</option>{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}</select></label>}
+      {projectId && studies.error && <p role="alert">{studies.error.message}</p>}
+      <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
+        <legend className="type-subhead mb-1">{t("studies.teaching.formatLegend")}</legend>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr))] gap-2">
+          {BUILTIN_BLOCK_TEMPLATES.map((template) => {
+            const group = blockTemplateGroup(template.key);
+            return (
+              <label key={template.key} className="aw-choice aw-choice-card cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
+                <input
+                  type="radio"
+                  name={`${id}-format`}
+                  value={template.key}
+                  aria-label={t(`studies.teaching.builtin.${group}.name`)}
+                  aria-describedby={`${id}-${template.key}-hint`}
+                  checked={chosen === template.key}
+                  onChange={() => setChosen(template.key)}
+                  className="sr-only"
+                />
+                <span className="font-medium text-text-strong">{t(`studies.teaching.builtin.${group}.name`)}</span>
+                <span id={`${id}-${template.key}-hint`} className="text-[0.875rem] text-text-muted">{t(`studies.teaching.builtin.${group}.hint`)}</span>
+              </label>
+            );
+          })}
+          <label className="aw-choice aw-choice-card cursor-pointer flex-col items-start gap-1 px-4 py-3 text-left">
+            <input type="radio" name={`${id}-format`} value="blank" aria-label={t("studies.teaching.builtin.blank.name")} checked={chosen === "blank"} onChange={() => setChosen("blank")} className="sr-only" />
+            <span className="font-medium text-text-strong">{t("studies.teaching.builtin.blank.name")}</span>
+            <span className="text-[0.875rem] text-text-muted">{t("studies.teaching.builtin.blank.hint")}</span>
+          </label>
         </div>
-        {/* What the chosen kind gives to work in: the shape of its main canvas. */}
-        <p id={`${id}-format`} className="m-0 text-[0.9375rem] text-text">
-          {t(`studies.teaching.format.${canvasShape(kind)}`)}
-          {STARTING_STEPS[kind] && (
-            <span className="text-text-muted">
-              {" "}
-              {t("studies.teaching.startsWith", { steps: STARTING_STEPS[kind]!.map((step) => startingStepTitle(t, kind, step.key)).join(t("common.listSeparator")) })}
-            </span>
-          )}
-        </p>
+        {personal.length > 0 && (
+          <div role="radiogroup" aria-label={t("studies.teaching.templates.startFrom")} className="flex flex-wrap items-center gap-2">
+            <span aria-hidden="true" className="type-meta">{t("studies.teaching.templates.startFrom")}</span>
+            {personal.map((template) => (
+              <label key={template.id} className="aw-choice aw-choice-card min-h-11 cursor-pointer gap-2 px-4">
+                <input type="radio" name={`${id}-start`} checked={chosen === template.id} onChange={() => setChosen(template.id)} className="sr-only" />
+                {template.name}
+              </label>
+            ))}
+          </div>
+        )}
+        {mine.error && <p role="alert" className="m-0 text-[0.9375rem] text-danger">{t("studies.teaching.templates.loadFailed")}</p>}
+        <p className="m-0 text-[0.9375rem] text-text">{choiceName}</p>
       </fieldset>
       <label className="flex flex-col gap-1">
-        <span className="text-[0.9375rem] font-semibold text-text-strong">{t("studies.teaching.titleLabel")}</span>
+        <span className="type-subhead">{t("studies.teaching.titleLabel")}</span>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder={suggested}
-          className="h-11 rounded-aw border border-border bg-bg px-3 text-[1rem] placeholder:text-text-muted"
+          className="h-11 rounded-aw border border-border bg-field px-3 text-[1rem] placeholder:text-text-muted"
         />
       </label>
       {error && (
@@ -253,33 +343,58 @@ interface EditorProps {
   } | null;
   onRenamed: () => void;
   onDeleted: () => void;
+  onOpenStudy?: (study: { id: string; projectId: string }) => void;
   onRevealScripture: () => void;
-  /** Just created: "About this teaching" starts open. */
-  startOpen: boolean;
+  /** The way to another teaching of this study (and the choice between them). */
+  switcher: ReactNode;
+  /** A.4.3: whether the teaching's options are open; kept while switching teachings, so the keyboard stays on the picker. */
+  optionsOpen: boolean;
+  onOptionsOpen: (open: boolean) => void;
 }
 
-function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDeleted, onRevealScripture, startOpen }: EditorProps) {
+function TeachingEditor({ onOpenStudy, preparationId, findings: initialFindings, assistant, onRenamed, onDeleted, onRevealScripture, switcher, optionsOpen, onOptionsOpen: setOptionsOpen }: EditorProps) {
+  // A.4.3 (#25): the teaching's secondary controls behind one quiet "…"; writing continuously by default.
+  const optionsToggle = useRef<HTMLButtonElement>(null);
+  const [canvasView, setCanvasView] = useState<CanvasView>("continuous");
+  // A.4.4 (#27): copying chosen findings, writing and Q&A from the Bible Study.
+  const [fromStudy, setFromStudy] = useState(false);
+  const [fromStudyDone, setFromStudyDone] = useState<string | null>(null);
   const { t } = useTranslation();
   const api = useApi();
+  const { goTo } = useScripture();
   const loaded = useLoad(useCallback(() => api.teachingGet(preparationId), [api, preparationId]));
   // The preparation as last returned by the core (links, points, kept material). Each field keeps
   // its own text while the person types, so a reload never overwrites what is being written.
   const prep = loaded.data ?? null;
-  const setPrep = loaded.setData;
+  const linkedStudyId = prep?.studyId;
+  const studyNotes = useLoad(useCallback(() => linkedStudyId ? api.findingList(linkedStudyId) : Promise.resolve([]), [api, linkedStudyId]));
+  const findings = (studyNotes.data ?? initialFindings).filter(f => f.studyId === prep?.studyId);
+  const storePrep = loaded.setData;
+  const setPrep = useCallback((next: TeachingPreparation) => {
+    // Independent saves and link changes can return out of order.
+    storePrep(current => current && current.revision > next.revision ? current : next);
+  }, [storePrep]);
   const [newPoint, setNewPoint] = useState<string | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  // "About this teaching" (kind, audience, purpose, what it uses) stays folded away unless wanted:
-  // open only right after the teaching was created, so its details can be filled in.
-  const [aboutOpen, setAboutOpen] = useState(startOpen);
+  // Notes for oneself (v0.19): the person's own writing, folded away after the teaching unless opened.
+  const [notesOpen, setNotesOpen] = useState(false);
+  // What the teaching becomes (Materials, v0.18.4; more of them in v0.18.6): each is shown in the
+  // teaching's place, made from it; the presentation keeps its own editor.
+  const [delivering, setDelivering] = useState(false);
+  const [material, setMaterial] = useState<Exclude<OutputKind, "presentation"> | null>(null);
+  const [preparingOutput, setPreparingOutput] = useState(false);
+  const outputPending = useRef(false);
+  const outputRequest = useRef(0);
+  useEffect(() => () => { outputRequest.current += 1; }, [preparationId]);
+  // The presentation already made, if any: it can be saved as a file straight from Materials.
+  const presentations = useLoad(useCallback(() => api.presentationList(preparationId), [api, preparationId]));
+  const [exporting, setExporting] = useState<PresentationDocument | null>(null);
   const dock = useAssistDock();
   const [wholeRequest, setWholeRequest] = useState(0);
   const [wholeAction, setWholeAction] = useState<"structure" | "restructure" | "free" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const wholeButton = useRef<HTMLDivElement>(null);
-  const addButton = useRef<HTMLButtonElement>(null);
-  // Points deleted in this session: a late save for one is not an error.
-  const deleted = useRef(new Set<string>());
+  const { runDeletion } = useSettledDelete(pauseWorkspaceInteraction);
 
   const act = useCallback(
     async (run: () => Promise<TeachingPreparation>) => {
@@ -331,7 +446,7 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
 
   // The main canvas follows the kind: points for a sermon, questions for a Bible study, steps for a lesson.
   const shapeName = canvasShape(prep.kind);
-  const shape = (key: ShapeText, options?: Record<string, unknown>) => t(`studies.teaching.shape.${shapeName}.${key}`, options ?? {});
+  const shape = (key: ShapeText, options?: Record<string, unknown>) => shapeText(t, prep.kind, key, options);
 
   // Each save returns the preparation as stored: kept, so names (a point's title in its labels) stay current.
   // Fields keep their own text, so this never overwrites what is being typed.
@@ -341,29 +456,37 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
       return next;
     });
   const savePoint = (pointId: string, field: keyof Omit<TeachingPoint, "id" | "position">) => (value: string) =>
-    deleted.current.has(pointId)
-      ? Promise.resolve()
-      : api.teachingPointUpdate({ id: pointId, [field]: value }).then(
-          (next) => {
-            setPrep(next);
-            return next;
-          },
-          (e: unknown) => {
-            // A save that arrives after its point was deleted is not an error.
-            if (deleted.current.has(pointId) && toApiError(e).kind === "notFound") return;
-            throw e;
-          },
-        );
+    api.teachingPointUpdate({ id: pointId, [field]: value }).then(next => {
+      setPrep(next);
+      return next;
+    });
 
-  const addPoint = async (after: string | null) => {
-    // A new step of a lesson starts as teaching; its kind can be changed at once.
-    const next = await act(() => api.teachingPointCreate({ preparationId: prep.id, afterPointId: after, kind: shapeName === "steps" ? "text" : null }));
+  const removePoint = async (point: TeachingPoint, index: number) => {
+    setError(null);
+    try {
+      let next = prep;
+      if (!await runDeletion(async () => { next = await api.teachingPointDelete(point.id); })) return;
+      setPrep(next);
+      setNotice(shape("removed"));
+      // Interaction is restored before removing the editor or moving focus.
+      const target = next.points[Math.max(0, index - 1)];
+      requestAnimationFrame(() =>
+        (target ? document.getElementById(`point-title-${target.id}`) : document.getElementById(`add-point-${prep.id}`))?.focus(),
+      );
+    } catch (e) {
+      setError(toApiError(e).message);
+    }
+  };
+
+  const addPoint = async (after: string | null, kind: StepKind | null = null) => {
+    // A new step of a lesson is of the kind chosen ("Add a step ▸ Activity"), teaching when none was; it can be changed at once.
+    const next = await act(() => api.teachingPointCreate({ preparationId: prep.id, afterPointId: after, kind: shapeName === "steps" ? (kind ?? "text") : null }));
     if (next) {
       const ids = new Set(prep.points.map((p) => p.id));
       const fresh = next.points.find((p) => !ids.has(p.id));
       if (fresh) setNewPoint(fresh.id);
       setNotice(shape("added"));
-    }
+    } else requestAnimationFrame(() => document.getElementById(`add-point-${prep.id}`)?.focus());
   };
   const movePoint = async (index: number, delta: -1 | 1) => {
     const ids = prep.points.map((p) => p.id);
@@ -376,120 +499,196 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
       requestAnimationFrame(() => document.getElementById(`point-move-${ids[target]}-${delta < 0 ? "up" : "down"}`)?.focus());
     }
   };
-  const remove = async () => {
+  // The teaching's own passages (not a point's): its Bible text, shown with the teaching as context.
+  const wholePassages = prep.passages.filter((p) => p.pointId === null && !p.blockId);
+
+  // A material/presentation is a snapshot of committed author writing. Flush
+  // debounce drafts and await every save before reading it; opening a preview
+  // must never unmount pending fields and expose an export of older wording.
+  const prepareOutput = async (open: () => void | Promise<void>) => {
+    if (outputPending.current) return;
+    outputPending.current = true;
+    const request = ++outputRequest.current;
+    setPreparingOutput(true);
+    setError(null);
     try {
-      await api.teachingDelete(prep.id);
-      onDeleted();
+      await settleOutstandingWrites();
+      const current = await api.teachingGet(prep.id);
+      if (request !== outputRequest.current) return;
+      setPrep(current);
+      await open();
     } catch (e) {
-      setError(toApiError(e).message);
+      if (request === outputRequest.current) setError(toApiError(e).message);
+    } finally {
+      if (request === outputRequest.current) {
+        outputPending.current = false;
+        setPreparingOutput(false);
+      }
     }
   };
 
-  const firstPassage = prep.passages.find((p) => p.pointId === null);
-  const aboutSummary = [
-    prep.kind ? teachingKindLabel(t, prep.kind) : "",
-    prep.audience?.trim() ? t("studies.teaching.aboutFor", { audience: prep.audience.trim() }) : "",
-    firstPassage ? referenceLabel(firstPassage.reference) : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
-  const toggleAbout = () => {
-    // A delete question left open is withdrawn with the section, so focus is never left in a hidden place.
-    if (aboutOpen) setConfirmDelete(false);
-    setAboutOpen(!aboutOpen);
+  const backToTeaching = () => {
+    setDelivering(false);
+    setMaterial(null);
+    presentations.reload();
+    requestAnimationFrame(() => document.getElementById(`materials-${prep.id}`)?.focus());
   };
+  if (delivering) {
+    return <PresentationView preparation={prep} labels={{ introduction: shape("introduction"), conclusion: shape("conclusion") }} onBack={backToTeaching} />;
+  }
+  if (material) return <MaterialView kind={material} preparation={prep} onBack={backToTeaching} />;
 
-  const kindField = (
-    <label className="flex flex-wrap items-center gap-2 text-[0.9375rem]">
-      <span className="text-text-muted">{t("studies.teaching.kindLabel")}</span>
-      <select
-        value={prep.kind ?? ""}
-        onChange={(e) => void act(() => api.teachingUpdate({ id: prep.id, kind: e.target.value as TeachingKind | "" }))}
-        className="h-11 rounded-aw border border-border bg-bg px-2"
-      >
-        <option value="">{t("studies.teaching.kindNone")}</option>
-        {TEACHING_KINDS.map((k) => (
-          <option key={k} value={k}>
-            {teachingKindLabel(t, k)}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
+  // Materials (v0.18.6): what can be prepared from this teaching, for its kind; then, once slides
+  // exist, the presentation's files. A material and the file it is saved as are kept apart.
+  const ICONS: Record<OutputKind, ReactNode> = {
+    presentation: <Presentation className="size-4 shrink-0 self-start mt-1" aria-hidden="true" />,
+    manuscript: <ScrollText className="size-4 shrink-0 self-start mt-1" aria-hidden="true" />,
+    questions: <MessageCircleQuestion className="size-4 shrink-0 self-start mt-1" aria-hidden="true" />,
+    worksheet: <PencilLine className="size-4 shrink-0 self-start mt-1" aria-hidden="true" />,
+  };
+  const madePresentations = presentations.data ?? [];
+  const materialActions = [
+    ...outputsFor(prep.kind).map((kind) => ({
+      label: outputName(t, kind, prep.kind),
+      description: outputHint(t, kind, prep.kind),
+      icon: ICONS[kind],
+      disabled: preparingOutput,
+      onSelect: () => void prepareOutput(() => { if (kind === "presentation") setDelivering(true); else setMaterial(kind); }),
+    })),
+    ...(madePresentations.length > 0
+      ? [
+          {
+            label: t("studies.materials.menu.exportPresentation"),
+            description:
+              madePresentations.length > 1
+                ? t("studies.materials.menu.exportHintNamed", { title: madePresentations[0]!.title })
+                : t("studies.materials.menu.exportHint"),
+            icon: <FileDown className="size-4 shrink-0 self-start mt-1" aria-hidden="true" />,
+            group: t("studies.materials.menu.files"),
+            disabled: preparingOutput,
+            onSelect: () => void prepareOutput(async () => {
+              const request = outputRequest.current;
+              const doc = await api.presentationDocument(madePresentations[0]!.id);
+              if (request === outputRequest.current) setExporting(doc);
+            }),
+          },
+        ]
+      : []),
+  ];
 
   return (
-    <article aria-label={prep.title} className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <TeachingField
-          key={`title-${prep.id}`}
-          label={t("studies.teaching.titleLabel")}
-          value={prep.title}
-          save={(value) =>
-            value.trim()
-              ? save("title")(value).then((next) => {
-                  onRenamed();
-                  return next;
-                })
-              : Promise.resolve()
-          }
-          part="pointTitle"
-          multiline={false}
-          emphasis
-          assistant={null}
+    <>
+    {preparingOutput && <p role="status" className="type-meta m-0">{t("common.saving")}</p>}
+    <article aria-label={prep.title} aria-busy={preparingOutput} inert={preparingOutput} className="flex flex-col gap-5">
+      {exporting && (
+        <ExportDialog
+          doc={exporting}
+          onClose={() => {
+            setExporting(null);
+            requestAnimationFrame(() => document.getElementById(`materials-${prep.id}`)?.focus());
+          }}
         />
-        <button
-          type="button"
-          aria-expanded={aboutOpen}
-          aria-controls={`about-${prep.id}`}
-          onClick={toggleAbout}
-          className="inline-flex min-h-11 flex-wrap items-center gap-x-2 self-start rounded-aw px-2 text-left text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong"
-        >
-          <ChevronRight className={`size-4 shrink-0 transition-transform ${aboutOpen ? "rotate-90" : ""}`} aria-hidden="true" />
-          <span className="font-medium text-text-strong">{t("studies.teaching.about")}</span>
-          <span>{aboutSummary || t("studies.teaching.aboutEmpty")}</span>
-        </button>
-      </header>
-
-      <section
-        id={`about-${prep.id}`}
-        aria-labelledby={`about-title-${prep.id}`}
-        hidden={!aboutOpen}
-        className="flex flex-col gap-4 rounded-aw border border-border-subtle px-4 py-3"
-      >
-        <h3 id={`about-title-${prep.id}`} className="sr-only">
-          {t("studies.teaching.about")}
-        </h3>
-        {kindField}
-        <TeachingField key={`audience-${prep.id}`} label={t("studies.teaching.audience")} value={prep.audience ?? ""} save={save("audience")} part="audience" multiline={false} placeholder={t("studies.teaching.audiencePlaceholder")} assistant={hooks} />
-        <TeachingField key={`purpose-${prep.id}`} label={t("studies.teaching.purpose")} value={prep.purpose ?? ""} save={save("purpose")} part="purpose" multiline={false} placeholder={t("studies.teaching.purposePlaceholder")} assistant={hooks} />
-        <TeachingLinks preparation={prep} pointId={null} scope={t("studies.teaching.links.wholeScope")} studyFindings={findings} onChanged={setPrep} onRevealScripture={onRevealScripture} />
-        <div className="flex flex-wrap items-center gap-2">
-          {confirmDelete ? (
-            <span className="flex flex-wrap items-center gap-2 rounded-aw border border-border bg-bg px-2 py-1 text-[0.9375rem]">
-              <span>{t("studies.teaching.deleteConfirm")}</span>
-              <button type="button" onClick={() => void remove()} className="min-h-11 rounded px-2 font-medium text-danger hover:bg-bg-secondary">
-                {t("common.delete")}
-              </button>
-              <button type="button" autoFocus onClick={() => setConfirmDelete(false)} className="min-h-11 rounded px-2 hover:bg-bg-secondary">
-                {t("common.keep")}
-              </button>
-            </span>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setConfirmDelete(true)}
-              className="inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-danger"
-            >
-              <Trash2 className="size-4" aria-hidden="true" />
-              {t("studies.teaching.delete")}
-            </button>
-          )}
+      )}
+      {/* A.4.3: the session's title and one quiet "…"; everything else is on request. */}
+      <header className="flex flex-col gap-1">
+        <div className="flex items-start gap-1">
+          <div className="min-w-0 flex-1 pt-1">
+            <TeachingField
+              saveKey={`teaching:${prep.id}:title`} key={`title-${prep.id}`}
+              label={t("studies.teaching.titleLabel")}
+              value={prep.title}
+              save={(value) =>
+                value.trim()
+                  ? save("title")(value).then((next) => {
+                      onRenamed();
+                      return next;
+                    })
+                  : Promise.resolve()
+              }
+              part="pointTitle"
+              multiline={false}
+              emphasis="title"
+              assistant={null}
+            />
+          </div>
+          {/* What the teaching becomes stays one quiet icon away (named "Materials" for everyone). */}
+          <ActionMenu
+            label={t("studies.teaching.materials.open")}
+            buttonId={`materials-${prep.id}`}
+            className="mt-1 shrink-0"
+            trigger={
+              <span className="inline-flex items-center gap-1 text-text-muted" title={t("studies.teaching.materials.open")}>
+                <FolderOpen className="size-5" aria-hidden="true" />
+                <span className="sr-only">{t("studies.teaching.materials.open")}</span>
+              </span>
+            }
+            actions={materialActions}
+          />
+          <button
+            ref={optionsToggle}
+            type="button"
+            aria-expanded={optionsOpen}
+            aria-controls={`teaching-options-${prep.id}`}
+            aria-label={t("studies.teaching.options")}
+            title={t("studies.teaching.options")}
+            onClick={() => setOptionsOpen(!optionsOpen)}
+            className="mt-1 inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong aria-expanded:bg-selected"
+          >
+            <MoreHorizontal className="size-5" aria-hidden="true" />
+          </button>
         </div>
-      </section>
+        {optionsOpen && (
+          <div
+            id={`teaching-options-${prep.id}`}
+            role="group"
+            aria-label={t("studies.teaching.options")}
+            onKeyDown={(e) => { if (e.key === "Escape") { e.stopPropagation(); setOptionsOpen(false); optionsToggle.current?.focus(); } }}
+            className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-aw border border-border-subtle bg-bg-secondary px-2 py-1"
+          >
+            <StudyLink onOpenStudy={onOpenStudy} key={prep.studyId ?? "independent"} preparation={prep} onChanged={setPrep} />
+            <TeachingInfo prep={prep} findings={findings} onChanged={setPrep} onDeleted={onDeleted} onRevealScripture={onRevealScripture} />
+            {switcher}
+            {wholePassages.length > 0 && (
+              <span className="flex flex-wrap items-center gap-x-1">
+                <span className="type-meta">{t("studies.teaching.passagesLine")}</span>
+                {wholePassages.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => {
+                      goTo(p.reference);
+                      onRevealScripture();
+                    }}
+                    className="inline-flex min-h-11 items-center rounded-aw px-2 text-[0.9375rem] font-medium text-link hover:bg-hover"
+                  >
+                    {referenceLabel(p.reference)}
+                  </button>
+                ))}
+              </span>
+            )}
+            {usesBlocks(prep) && <CanvasViewChoice view={canvasView} onView={setCanvasView} />}
+            {usesBlocks(prep) && prep.studyId && (
+              <Button variant="quiet" onClick={() => { setFromStudyDone(null); setFromStudy(true); }}>{t("studies.teaching.fromStudy.open")}</Button>
+            )}
+          </div>
+        )}
+        {fromStudyDone && <p role="status" className="type-meta m-0">{fromStudyDone}</p>}
+      </header>
+      {fromStudy && prep.studyId && (
+        <AddFromStudy
+          prep={prep}
+          onClose={() => setFromStudy(false)}
+          onAdded={(next) => { setPrep(next); setFromStudy(false); setFromStudyDone(t("studies.teaching.fromStudy.added")); }}
+        />
+      )}
 
+      {usesBlocks(prep) ? (
+        <BlockCanvas prep={prep} findings={findings} assistant={hooks} onChanged={setPrep} onRevealScripture={onRevealScripture} view={canvasView} />
+      ) : (
+      <>
       {/* What it says on a line of its own; what it is for waits in the empty field. */}
       <TeachingField
-        key={`message-${prep.id}`}
+        saveKey={`teaching:${prep.id}:centralMessage`} key={`message-${prep.id}`}
         label={shape("message")}
         placeholder={shape("messageHint")}
         value={prep.centralMessage ?? ""}
@@ -501,12 +700,12 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
       />
 
       {showsFrame(shapeName, "introduction", prep.introduction) && (
-        <TeachingField key={`intro-${prep.id}`} label={shape("introduction")} value={prep.introduction} save={save("introduction")} part="introduction" assistant={hooks} onRevealScripture={onRevealScripture} />
+        <TeachingField saveKey={`teaching:${prep.id}:introduction`} key={`intro-${prep.id}`} label={shape("introduction")} value={prep.introduction} save={save("introduction")} part="introduction" assistant={hooks} onRevealScripture={onRevealScripture} />
       )}
 
       <section aria-labelledby={`points-${prep.id}`} className="flex flex-col gap-4">
         <div ref={wholeButton} className="flex flex-wrap items-center justify-between gap-2">
-          <h3 id={`points-${prep.id}`} className="m-0 font-display text-[1.25rem] font-heading text-text-strong">
+          <h3 id={`points-${prep.id}`} className="type-section m-0">
             {shape("title")}
           </h3>
           {hooks && (
@@ -549,9 +748,9 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
           {prep.points.map((point, index) => {
             const name = point.title.trim() || shape("untitled", { number: index + 1 });
             return (
-              <li key={point.id} aria-label={shape("label", { number: index + 1, title: name })} className="flex flex-col gap-3 border-l-[3px] border-accent pl-4">
+              <li key={point.id} aria-label={shape("label", { number: index + 1, title: name })} className="flex flex-col gap-3 border-l-2 border-border pl-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-ui text-[0.875rem] font-semibold text-text-muted">{shape("number", { number: index + 1 })}</span>
+                  <span className="type-meta font-medium">{shape("number", { number: index + 1 })}</span>
                   {/* A step of a lesson says what kind of step it is; its fields follow. */}
                   {shapeName === "steps" && (
                     <select
@@ -575,7 +774,7 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
                       disabled={index === 0}
                       onClick={() => void movePoint(index, -1)}
                       aria-label={t("studies.teaching.points.moveUp", { point: name })}
-                      className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary disabled:opacity-40"
+                      className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover disabled:opacity-40"
                     >
                       <ArrowUp className="size-4" aria-hidden="true" />
                     </button>
@@ -585,7 +784,7 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
                       disabled={index === prep.points.length - 1}
                       onClick={() => void movePoint(index, 1)}
                       aria-label={t("studies.teaching.points.moveDown", { point: name })}
-                      className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary disabled:opacity-40"
+                      className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover disabled:opacity-40"
                     >
                       <ArrowDown className="size-4" aria-hidden="true" />
                     </button>
@@ -593,29 +792,12 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
                       name={name}
                       confirm={shape("deleteConfirm")}
                       hasContent={Boolean(point.title.trim() || point.explanation.trim() || point.application.trim() || point.illustration.trim())}
-                      onDelete={() => {
-                        deleted.current.add(point.id);
-                        void act(() => api.teachingPointDelete(point.id)).then((next) => {
-                          if (!next) {
-                            deleted.current.delete(point.id);
-                            return;
-                          }
-                          setNotice(shape("removed"));
-                          // Focus goes to the point before (else after) it, or to "Add a point".
-                          const target = next.points[Math.max(0, index - 1)];
-                          requestAnimationFrame(() =>
-                            (target
-                              ? document.getElementById(`point-title-${target.id}`)
-                              : addButton.current
-                            )?.focus(),
-                          );
-                        });
-                      }}
+                      onDelete={() => void removePoint(point, index)}
                     />
                   </span>
                 </div>
                 <TeachingField
-                  key={`ptitle-${point.id}`}
+                  saveKey={`teaching-point:${point.id}:title`} key={`ptitle-${point.id}`}
                   label={shape("titleLabel", { number: index + 1 })}
                   value={point.title}
                   save={savePoint(point.id, "title")}
@@ -633,7 +815,8 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
                   const part = field === "explanation" ? "pointExplanation" : field === "application" ? "pointApplication" : "pointIllustration";
                   return (
                     <TeachingField
-                      key={`p${field}-${point.id}`}
+                      saveKey={`teaching-point:${point.id}:${field}`} key={`p${field}-${point.id}`}
+                      level="field"
                       label={stepLabel ?? shape(field)}
                       value={point[field]}
                       save={savePoint(point.id, field)}
@@ -651,17 +834,59 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
           })}
         </ol>
         <div>
-          <Button ref={addButton} className="min-h-11" onClick={() => void addPoint(prep.points[prep.points.length - 1]?.id ?? null)}>
-            <Plus className="size-4" aria-hidden="true" />
-            {shape("add")}
-          </Button>
+          {shapeName === "steps" ? (
+            // A step is added as the kind of step it is: teaching, Bible reading, question, activity or picture.
+            <ActionMenu
+              label={t("studies.teaching.addStepMenu")}
+              buttonId={`add-point-${prep.id}`}
+              align="start"
+              trigger={
+                <>
+                  <Plus className="size-4" aria-hidden="true" />
+                  {shape("add")}
+                  <ChevronDown className="size-4 text-text-muted" aria-hidden="true" />
+                </>
+              }
+              actions={STEP_KINDS.map((kind) => ({
+                label: t(`studies.teaching.stepKind.${kind}`),
+                onSelect: () => void addPoint(prep.points[prep.points.length - 1]?.id ?? null, kind),
+              }))}
+            />
+          ) : (
+            <Button id={`add-point-${prep.id}`} className="min-h-11" onClick={() => void addPoint(prep.points[prep.points.length - 1]?.id ?? null)}>
+              <Plus className="size-4" aria-hidden="true" />
+              {shape("add")}
+            </Button>
+          )}
         </div>
       </section>
 
       {showsFrame(shapeName, "conclusion", prep.conclusion) && (
-        <TeachingField key={`concl-${prep.id}`} label={shape("conclusion")} value={prep.conclusion} save={save("conclusion")} part="conclusion" assistant={hooks} onRevealScripture={onRevealScripture} />
+        <TeachingField saveKey={`teaching:${prep.id}:conclusion`} key={`concl-${prep.id}`} label={shape("conclusion")} value={prep.conclusion} save={save("conclusion")} part="conclusion" assistant={hooks} onRevealScripture={onRevealScripture} />
       )}
-      <TeachingField key={`notes-${prep.id}`} label={t("studies.teaching.notes")} placeholder={t("studies.teaching.notesHint")} value={prep.notes} save={save("notes")} part="notes" rows={2} assistant={hooks} />
+      {/* Notes for oneself (v0.19): real writing, but not the teaching others receive; after it,
+          folded away and quieter, and never on the Materials for listeners or a group. */}
+      <section aria-labelledby={`notes-${prep.id}`} className="rounded-aw bg-bg-secondary px-3 py-1">
+        <h3 id={`notes-${prep.id}`} className="m-0">
+          <button
+            type="button"
+            aria-expanded={notesOpen}
+            aria-controls={`notes-body-${prep.id}`}
+            onClick={() => setNotesOpen(!notesOpen)}
+            className="-mx-2 inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] font-medium text-text-muted hover:text-text-strong"
+          >
+            <ChevronRight className={`size-4 shrink-0 transition-transform ${notesOpen ? "rotate-90" : ""}`} aria-hidden="true" />
+            {t("studies.teaching.notes")}
+            {!notesOpen && prep.notes.trim() && <span className="font-normal">{t("common.labelSeparator")}{t("studies.teaching.notesHasText")}</span>}
+          </button>
+        </h3>
+        <div id={`notes-body-${prep.id}`} hidden={!notesOpen} className="flex flex-col gap-2 pb-3">
+          <p className="m-0 text-[0.875rem] text-text-muted">{t("studies.teaching.notesPrivate")}</p>
+          <TeachingField saveKey={`teaching:${prep.id}:notes`} key={`notes-${prep.id}`} label={t("studies.teaching.notes")} placeholder={t("studies.teaching.notesHint")} value={prep.notes} save={save("notes")} part="notes" rows={3} assistant={hooks} labelHidden />
+        </div>
+      </section>
+      </>
+      )}
 
       {error && (
         <p role="alert" className="m-0 text-danger">
@@ -672,6 +897,7 @@ function TeachingEditor({ preparationId, findings, assistant, onRenamed, onDelet
         {notice}
       </p>
     </article>
+    </>
   );
 }
 
@@ -680,12 +906,12 @@ function DeletePoint({ name, confirm, hasContent, onDelete }: { name: string; co
   const [confirming, setConfirming] = useState(false);
   if (confirming)
     return (
-      <span className="flex flex-wrap items-center gap-1 rounded-aw border border-border bg-bg px-2 text-[0.9375rem]">
+      <span className="flex flex-wrap items-center gap-1 rounded-aw border-l-[3px] border-danger bg-hover px-2 text-[0.9375rem]">
         <span>{confirm}</span>
-        <button type="button" onClick={onDelete} className="min-h-11 rounded px-2 font-medium text-danger hover:bg-bg-secondary">
+        <Button variant="danger" className="min-h-11" onClick={onDelete}>
           {t("common.delete")}
-        </button>
-        <button type="button" autoFocus onClick={() => setConfirming(false)} className="min-h-11 rounded px-2 hover:bg-bg-secondary">
+        </Button>
+        <button type="button" autoFocus onClick={() => setConfirming(false)} className="min-h-11 rounded px-2 hover:bg-hover">
           {t("common.keep")}
         </button>
       </span>
@@ -695,9 +921,31 @@ function DeletePoint({ name, confirm, hasContent, onDelete }: { name: string; co
       type="button"
       onClick={() => (hasContent ? setConfirming(true) : onDelete())}
       aria-label={t("studies.teaching.points.delete", { point: name })}
-      className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary hover:text-danger"
+      className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-danger"
     >
       <Trash2 className="size-4" aria-hidden="true" />
     </button>
   );
+}
+
+function StudyLink({ preparation, onChanged, onOpenStudy }: { onOpenStudy?: (study: { id: string; projectId: string }) => void; preparation: TeachingPreparation; onChanged: (p: TeachingPreparation) => void }) {
+  const { t } = useTranslation(); const api = useApi();
+  const projectId = preparation.projectId;
+  const studies = useLoad(useCallback(() => api.studyList({ projectId }), [api, projectId]));
+  const [choice, setChoice] = useState(preparation.studyId ?? "");
+  const [error, setError] = useState<string | null>(null); const [busy, setBusy] = useState(false);
+  return <section className="min-w-0 basis-full rounded-aw border border-border-subtle px-3 py-2">
+    <details>
+    <summary className="cursor-pointer text-[0.9375rem] font-medium"><span>{t(preparation.studyId ? "studies.teaching.workspace.basedOn" : "studies.teaching.workspace.linkStudy")} {preparation.studyId ? (studies.data?.find((study) => study.id === preparation.studyId)?.title ?? t("studies.view.study")) : t("studies.teaching.workspace.independent")}</span>{preparation.studyId && <span className="ml-2 inline-flex items-center gap-1 type-meta"><PencilLine className="size-3" aria-hidden="true" />{t("common.edit")}</span>}</summary>
+    <div className="flex flex-col gap-2 pt-2">
+    <label className="flex flex-col gap-1"><span>{t("studies.teaching.workspace.study")}</span><select className="aw-input h-11 px-2" value={choice} disabled={busy || !studies.data} onChange={e => setChoice(e.target.value)}>
+      <option value="">{t("studies.teaching.workspace.independent")}</option>{!studies.data && preparation.studyId && <option value={preparation.studyId}>{t("studies.view.study")}</option>}{(studies.data ?? []).map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+    </select></label>
+    <p className="m-0 text-text-muted">{t("studies.teaching.workspace.keepNotes")}</p>
+    <Button disabled={busy || choice === (preparation.studyId ?? "")} onClick={async () => { setBusy(true); setError(null); try { onChanged(await api.teachingSetStudy(preparation.id, choice || null)); } catch (e) { setError(toApiError(e).message); } finally { setBusy(false); } }}>{t("studies.teaching.workspace.saveLink")}</Button>
+    {(error || studies.error) && <p role="alert">{error ?? studies.error?.message}</p>}
+    </div>
+    </details>
+    {preparation.studyId && onOpenStudy && <Button variant="quiet" onClick={() => onOpenStudy({ id: preparation.studyId!, projectId })}>{t("studies.teaching.workspace.openStudy")}</Button>}
+  </section>;
 }

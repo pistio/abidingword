@@ -1,0 +1,90 @@
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { ApiError } from "@/lib/api";
+import { settleOutstandingWrites } from "@/hooks/SaveTracker";
+import { createMemoryApi } from "../support/memoryApi";
+import { renderAppInProject } from "../support/render";
+
+type Kind = "finding" | "legacy Teaching point";
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>(done => { resolve = done; });
+  return { promise, resolve };
+}
+
+async function fixture(kind: Kind, save: () => Promise<void>, remove: () => Promise<void> = async () => undefined) {
+  const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Invented folder" });
+  const { study } = await api.studyCreate({ projectId: project.id, title: "Invented Study" });
+  if (kind === "finding") await api.findingCreate({ studyId: study.id, findingType: "question", content: "Invented question" });
+  else {
+    const prep = await api.teachingCreate({ studyId: study.id, title: "Legacy Teaching", kind: "sermon" });
+    const next = await api.teachingPointCreate({ preparationId: prep.id });
+    await api.teachingPointUpdate({ id: next.points[0]!.id, title: "Invented point" });
+  }
+  const updateFinding = api.findingUpdate, updatePoint = api.teachingPointUpdate;
+  const write = kind === "finding"
+    ? vi.spyOn(api, "findingUpdate").mockImplementation(async input => { await save(); return updateFinding(input); })
+    : vi.spyOn(api, "teachingPointUpdate").mockImplementation(async input => { await save(); return updatePoint(input); });
+  const deleteFinding = api.findingDelete, deletePoint = api.teachingPointDelete;
+  const deletion = kind === "finding"
+    ? vi.spyOn(api, "findingDelete").mockImplementation(async id => { await remove(); return deleteFinding(id); })
+    : vi.spyOn(api, "teachingPointDelete").mockImplementation(async id => { await remove(); return deletePoint(id); });
+  const { user } = await renderAppInProject(api);
+  await user.click(await screen.findByRole("button", { name: /Invented Study/ }));
+  if (kind !== "finding") await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
+  const field = await screen.findByRole("textbox", { name: kind === "finding" ? "Question text" : "Title of point 1" });
+  fireEvent.change(field, { target: { value: "Latest invented writing" } });
+  if (kind === "finding") {
+    const article = field.closest("article")!;
+    await user.click(within(article).getByRole("button", { name: /^Details for question/ }));
+    await user.click(within(article).getByRole("button", { name: "Delete question" }));
+  } else await user.click(screen.getByRole("button", { name: /Delete “/ }));
+  await waitFor(() => expect(write).toHaveBeenCalled());
+  return { api, user, field, write, deletion, confirm: () => user.click(screen.getByRole("button", { name: "Delete", exact: true })) };
+}
+
+describe("notes and legacy points settle before deletion", () => {
+  it.each(["finding", "legacy Teaching point"] as const)("settles pending %s writing before removal", async kind => {
+    const pending = deferred();
+    const view = await fixture(kind, () => pending.promise);
+    try {
+      await view.confirm();
+      expect(view.deletion).not.toHaveBeenCalled();
+    } finally {
+      await act(async () => { pending.resolve(); await pending.promise; });
+    }
+    await waitFor(() => expect(view.field).not.toBeInTheDocument());
+    await expect(settleOutstandingWrites()).resolves.toBeUndefined();
+  });
+
+  it.each(["finding", "legacy Teaching point"] as const)("retains a %s with unsaved writing and permits editing after the failed removal", async kind => {
+    let fail = true;
+    const view = await fixture(kind, async () => { if (fail) throw new ApiError("filesystem", "Invented save failure"); });
+    await view.confirm();
+    expect(await screen.findByRole("alert")).toHaveTextContent(/could not be saved/);
+    expect(view.deletion).not.toHaveBeenCalled();
+    expect(view.field).toHaveValue("Latest invented writing");
+    fail = false;
+    await view.user.click(view.field);
+    await view.user.type(view.field, " remains editable");
+    await act(async () => { await settleOutstandingWrites(); });
+    expect(view.field).toHaveValue("Latest invented writing remains editable");
+  });
+
+  it.each(["finding", "legacy Teaching point"] as const)("refuses new %s writing after settlement while removal is pending", async kind => {
+    const removing = deferred();
+    const view = await fixture(kind, async () => undefined, () => removing.promise);
+    await view.confirm();
+    await waitFor(() => expect(view.deletion).toHaveBeenCalledTimes(1));
+    try {
+      await view.user.click(view.field);
+      await view.user.keyboard("late draft");
+      expect(view.field).toHaveValue("Latest invented writing");
+    } finally {
+      await act(async () => { removing.resolve(); await removing.promise; });
+    }
+    await waitFor(() => expect(view.field).not.toBeInTheDocument());
+    await expect(settleOutstandingWrites()).resolves.toBeUndefined();
+  });
+});

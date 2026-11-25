@@ -1,0 +1,54 @@
+name: Windows Scripture recognition acceptance
+
+# The draft branch can carry this file without running it. Push to the build
+# branch with the approval commit message only after explicit owner approval.
+on:
+  push:
+    branches:
+      - build/pr61-windows-scripture-acceptance-20261125
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    if: github.event_name == 'push' && github.event.head_commit.message == 'Build approved PR61 Windows Scripture acceptance candidate'
+    runs-on: windows-2025
+    timeout-minutes: 90
+    env:
+      SOURCE_SHA: 056333b68e74360225aea6b05cfe896c6ae83220
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
+      CARGO_INCREMENTAL: "0"
+      VITE_SELECTION_SPIKE: ""
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Preserve pinned SQL bytes
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.22.1
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: 1.100.0
+          targets: x86_64-pc-windows-msvc
+      - name: Build and attest the unsigned acceptance installer
+        run: |
+          ./scripts/windows/Build-ScriptureAcceptance.ps1 -Approved -SourceSha $env:SOURCE_SHA -OutputDirectory "$env:RUNNER_TEMP/scripture-acceptance"
+      - name: Store the installer and smoke-test inputs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Abiding-Word-Scripture-Acceptance-${{ env.SOURCE_SHA }}-Windows-x64
+          path: |
+            ${{ runner.temp }}/scripture-acceptance/*-setup.exe
+            ${{ runner.temp }}/scripture-acceptance/*.json
+            ${{ runner.temp }}/scripture-acceptance/*.txt
+            ${{ runner.temp }}/scripture-acceptance/*.mjs
+            ${{ runner.temp }}/scripture-acceptance/ScriptureAcceptance.md
+          if-no-files-found: error
+          retention-days: 14

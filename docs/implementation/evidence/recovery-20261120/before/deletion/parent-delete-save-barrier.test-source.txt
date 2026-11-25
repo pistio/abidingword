@@ -1,0 +1,115 @@
+import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { ApiError } from "@/lib/api";
+import { guardApiDuringDatabaseRestore } from "@/lib/guardedApi";
+import { databaseRestoreActive } from "@/lib/databaseRestoreLock";
+import { runDatabaseRestore, settleOutstandingWrites } from "@/hooks/SaveTracker";
+import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
+import { openInfo, renderAppInProject } from "../support/render";
+import { openStudyOptions, openTeachingOptions } from "../support/studyActions";
+
+type Kind = "project" | "study" | "teaching";
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>(done => { resolve = done; });
+  return { promise, resolve };
+}
+
+async function fixture(kind: Kind, save: () => Promise<void>, remove: () => Promise<void> = async () => undefined) {
+  const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Disposable folder" });
+  const { study } = await api.studyCreate({ projectId: project.id, title: "Disposable Study" });
+  if (kind === "teaching") await api.teachingCreate({ studyId: study.id, title: "Disposable Teaching", templateVersion: 2, blocks: [{ blockType: "writing", title: "Main part" }] });
+  const saveProject = api.projectUpdate, saveStudy = api.studyUpdate, saveTeaching = api.teachingBlockUpdate;
+  const write = kind === "project"
+    ? vi.spyOn(api, "projectUpdate").mockImplementation(async input => { await save(); return saveProject(input); })
+    : kind === "study"
+      ? vi.spyOn(api, "studyUpdate").mockImplementation(async input => { await save(); return saveStudy(input); })
+      : vi.spyOn(api, "teachingBlockUpdate").mockImplementation(async input => { await save(); return saveTeaching(input); });
+  const deleteProject = api.projectDelete, deleteStudy = api.studyDelete, deleteTeaching = api.teachingDelete;
+  const deletion = kind === "project"
+    ? vi.spyOn(api, "projectDelete").mockImplementation(async (...args) => { await remove(); return deleteProject(...args); })
+    : kind === "study"
+      ? vi.spyOn(api, "studyDelete").mockImplementation(async (...args) => { await remove(); return deleteStudy(...args); })
+      : vi.spyOn(api, "teachingDelete").mockImplementation(async (...args) => { await remove(); return deleteTeaching(...args); });
+  const { user } = await renderAppInProject(api);
+  if (kind !== "project") await user.click(await screen.findByRole("button", { name: /Disposable Study/ }));
+  if (kind === "teaching") {
+    await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
+    await screen.findByRole("article", { name: "Disposable Teaching" });
+  }
+  const field = await screen.findByRole("textbox", { name: kind === "project" ? "Project title" : kind === "study" ? "Study title" : "Main part" });
+  fireEvent.change(field, { target: { value: "Latest invented writing" } });
+  if (kind === "study") await openStudyOptions(user);
+  if (kind === "teaching") await openTeachingOptions(user);
+  const info = await openInfo(user, kind === "project" ? "Project information" : kind === "study" ? "Bible Study information" : "Bible Teaching information");
+  // Opening the information panel blurs/flushes the actual author field.
+  await waitFor(() => expect(write).toHaveBeenCalled());
+  await user.click(within(info).getByRole("button", { name: kind === "teaching" ? "Delete this teaching" : "Move to Trash" }));
+  const confirm = kind === "teaching"
+    ? within(info).getByRole("group", { name: /Delete this teaching\?/ })
+    : within(info).getByRole("alertdialog");
+  return { api, user, field, info, write, deletion, confirm: () => user.click(within(confirm).getByRole("button", { name: kind === "teaching" ? "Delete" : "Move to Trash" })) };
+}
+
+async function capturesRemainUsable(api: MemoryApi) {
+  await expect(settleOutstandingWrites()).resolves.toBeUndefined();
+  const guarded = guardApiDuringDatabaseRestore(api);
+  const surviving = await guarded.projectCreate({ workspaceId: api.state.workspace.id, title: "Surviving invented work" });
+  await expect(guarded.projectExport({ projectId: surviving.id, path: "/invented/after-delete.awproject" })).resolves.toBeDefined();
+  await expect(guarded.backupCreate("/invented/after-delete.awbackup")).resolves.toBeDefined();
+  const id = "abiding-word-v27-2026-11-21T00-00-00.000Z.db";
+  api.state.portability.dailySnapshots = [{ id, createdAt: "2026-11-21T00:00:00Z", schemaVersion: 27, bytes: 500_000, usable: true }];
+  await expect(runDatabaseRestore(() => guarded.dailySnapshotRestore(id))).resolves.toMatchObject({ filesUnchanged: true });
+}
+
+describe("parent deletion and current author writing", () => {
+  it.each(["project", "study", "teaching"] as const)("settles %s writing before confirmed deletion and keeps later captures usable", async kind => {
+    const saving = deferred();
+    const view = await fixture(kind, () => saving.promise);
+    try {
+      await view.confirm();
+      expect(view.deletion).not.toHaveBeenCalled();
+    } finally {
+      await act(async () => { saving.resolve(); await saving.promise; });
+    }
+    await waitFor(() => expect(view.info).not.toBeInTheDocument());
+    expect(view.deletion).toHaveBeenCalledTimes(1);
+    await capturesRemainUsable(view.api);
+  });
+
+  it.each(["project", "study", "teaching"] as const)("retains %s and its visible draft when saving fails before deletion", async kind => {
+    let fail = true;
+    const view = await fixture(kind, async () => { if (fail) throw new ApiError("filesystem", "Invented full disk"); });
+    await view.confirm();
+    expect(await within(view.info).findByRole("alert")).toHaveTextContent(/could not be saved/);
+    expect(view.deletion).not.toHaveBeenCalled();
+    expect(view.field).toHaveValue("Latest invented writing");
+    expect(databaseRestoreActive()).toBe(false);
+    // A failed removal leaves the same author control usable, without reload.
+    fail = false;
+    await view.user.click(view.field);
+    await view.user.type(view.field, " remains editable");
+    await act(async () => { await settleOutstandingWrites(); });
+    expect(view.field).toHaveValue("Latest invented writing remains editable");
+  });
+
+  it.each(["project", "study", "teaching"] as const)("freezes %s typing and panel dismissal until a settled deletion completes", async kind => {
+    const removing = deferred();
+    const view = await fixture(kind, async () => undefined, () => removing.promise);
+    await view.confirm();
+    await waitFor(() => expect(view.deletion).toHaveBeenCalledTimes(1));
+    try {
+      const writes = view.write.mock.calls.length;
+      await view.user.click(view.field);
+      await view.user.keyboard("late input{Escape}");
+      expect(view.field).toHaveValue("Latest invented writing");
+      expect(view.info).toBeInTheDocument();
+      expect(view.write).toHaveBeenCalledTimes(writes);
+    } finally {
+      await act(async () => { removing.resolve(); await removing.promise; });
+    }
+    await waitFor(() => expect(view.info).not.toBeInTheDocument());
+    await capturesRemainUsable(view.api);
+  });
+});

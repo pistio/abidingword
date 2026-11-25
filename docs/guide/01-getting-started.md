@@ -76,14 +76,96 @@ These Bibles come with Abiding Word. All of them are free for everyone to use:
 | **Louis Segond 1910** | Français | Public domain |
 | **Reina-Valera 1909** | Español | Public domain |
 | **Bíblia Livre** | Português | Creative Commons (free, with credit to its translators) |
+| **SBL Greek New Testament** (SBLGNT) | Ελληνικά (Koine Greek) | Creative Commons (free, with credit to the SBL and Logos) |
+| **Robinson–Pierpont 2018** (RP2018) | Ελληνικά (Koine Greek) | Public domain |
+| **Textus Receptus** (Boyd 2022) | Ελληνικά (Koine Greek) | Public domain |
+| **1904 Patriarchal Greek New Testament** | Ελληνικά (Koine Greek) | Public domain |
+
+The four Greek editions hold the New Testament only (27 of the 66 books).
+They carry a lexical number for every word, and Robinson–Pierpont also its
+grammar; its Greek is printed without accents, as in its source.
+
+### Available to download
+
+Under **Available to download** are two study editions too large to include:
+the **Open Scriptures Hebrew Bible** (Hebrew Old Testament with a lexical
+number and grammar for every word, 28.6 MB) and **MorphGNT** (Greek New
+Testament with every word's dictionary form and grammar, 8.9 MB).
+**Download…** first tells you how many files and how large; Abiding Word then
+checks every file against its verified copy and keeps nothing that differs.
+You review the Bible as usual before it is added, and afterwards it works
+without an internet connection.
 
 You can add as many as you like and switch between them at any time.
 
 > [!TIP]
 > **Have another Bible?** If you have a Bible file of your own (in the common
-> "USFM" format, often a `.zip` download), click **Choose Bible files…**.
+> "USFM" format, often a `.zip` download — or, for Hebrew and Greek study, the
+> Open Scriptures Hebrew Bible's files or MorphGNT's), click **Choose Bible
+> files…**.
 > Abiding Word checks every book, chapter and verse, explains anything unusual
 > in plain words, and only then adds it. Your original file is never changed.
+>
+> Choose the Bible's **Language** there too. If the files say which language
+> they are in (some downloads include a small information file), it is filled
+> in for you; otherwise pick it from the list, or choose *Another language…*
+> and type its name. Abiding Word never guesses it from the file's name. The
+> language helps it read abbreviations you type, such as *Jn 3:5*, the way
+> this Bible means them; you can change it later in Settings.
+>
+> If the Bible's edition marks its words with **dictionary forms, lexical
+> numbers or grammar** (common in Hebrew and Greek study editions), the review
+> shows it under **Original-language research**: what each word has, how many
+> could not be read, and the two choices that are yours — a search by lexical
+> number when that is all the edition gives, and describing grammar codes with
+> a scheme they fit when the edition does not name it. Both are unticked until
+> you tick them. They are then used for
+> [lemma and number search](07-concordance.md#searching-by-lemma-annotated-bibles).
+> If the markup cannot be read reliably, nothing of it is added, and the text
+> of the Bible is never affected. A Bible added earlier can gain its word
+> information later, without being added again: **Settings → Bible texts →
+> Details → Word information**.
+
+### A Bible in a PDF, EPUB or Word document
+
+**Choose Bible files…** also takes a Bible you have as an ordinary document:
+**PDF**, **EPUB**, **Word** (`.docx`), **Markdown** (`.md`) or **text**
+(`.txt`). A Bible in several files (one per book, for example) can be chosen
+all at once, as long as they are all of the same kind; they are read in the
+order of their names (`2-Exodus` before `10-Joshua`).
+
+Before anything is added, Abiding Word reads the document and tells you what
+it found, in plain words:
+
+- what kind of document it is and how many pages or chapters it has, and
+  whether its text can be read (a PDF of **scanned pages** has none);
+- how many **books, chapters and verses** it could recognise, and where it
+  was unsure — a heading that names no book, a chapter with a verse missing,
+  two places where the same verse could begin;
+- what it **left out** because it belongs to no verse (an introduction,
+  footnotes, page numbers and headers repeated on every page).
+
+Then you choose how to add it:
+
+- **By book, chapter and verse** — offered only when the verses were
+  recognised without problems. The Bible is then read like any other: go to
+  a passage, search, use the concordance, compare. Each verse remembers where
+  in the document it came from.
+- **As a document to read** — always possible. You read it as it is (the PDF
+  page by page, the EPUB or Word document with its formatting), search its
+  text and keep your place, but it has no verse navigation. You can ask it to
+  **Look for verses…** later, without adding it again.
+
+If a heading names no book (for example *The Book of Praises*), pick the book
+from the list next to it and the document is read again with your choice.
+Abiding Word never takes a book from a file's name or a table of contents,
+and it never moves or makes up verse text: anything it is unsure of is shown
+to you, not guessed.
+
+Name, short name, language and licence can be changed before you add it.
+**Cancel** adds nothing. Your file is copied into Abiding Word's own folder
+and never changed; nothing leaves your computer. Scanned pages are not turned
+into text (there is no OCR): such a Bible can be read page by page only.
 
 ## A tour of the screen
 

@@ -1,4 +1,6 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+import { useAnchoredPopover } from "./useAnchoredPopover";
+import { Fragment, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { MoreHorizontal } from "lucide-react";
 
 export interface MenuAction {
@@ -6,6 +8,12 @@ export interface MenuAction {
   /** Told the menu's button, where focus can go back to afterwards. */
   onSelect: (opener: HTMLButtonElement | null) => void;
   icon?: ReactNode;
+  /** A line under the label saying what the action makes or does. */
+  description?: string;
+  /** Actions of another kind further down (v0.18.6): a quiet rule and this name above the first of them. */
+  group?: string;
+  /** Shown but not available now (A.4.2): announced as unavailable, does nothing. */
+  disabled?: boolean;
 }
 
 /**
@@ -14,11 +22,31 @@ export interface MenuAction {
  * first item, arrow keys move, Escape closes it and gives focus back to the
  * button, Tab leaves it. The menu is part of the page flow, never a modal.
  */
-export function ActionMenu({ label, actions, className = "" }: { label: string; actions: MenuAction[]; className?: string }) {
+export function ActionMenu({
+  label,
+  actions,
+  className = "",
+  trigger,
+  buttonId,
+  align = "end",
+  portal = false,
+}: {
+  label: string;
+  actions: MenuAction[];
+  className?: string;
+  /** Visible content of the button (a word and an icon); without it the button is a quiet "⋯". */
+  trigger?: ReactNode;
+  buttonId?: string;
+  /** Which edge of the button the menu lines up with: its end (the default, for a menu at the end of a row) or its start. */
+  align?: "start" | "end";
+  portal?: boolean;
+}) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLDivElement>(null);
+  const position = useAnchoredPopover(button, open && portal);
+  const layer = (content: ReactNode) => portal ? createPortal(content, document.body) : content;
 
   useEffect(() => {
     if (!open) return;
@@ -46,18 +74,24 @@ export function ActionMenu({ label, actions, className = "" }: { label: string; 
     <span data-aw-skip="" className={`relative inline-flex select-none ${className}`}>
       <button
         ref={button}
+        id={buttonId}
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? id : undefined}
-        aria-label={label}
-        title={label}
+        // A visible word names the button itself; the "⋯" needs a name.
+        aria-label={trigger ? undefined : label}
+        title={trigger ? undefined : label}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary hover:text-text-strong"
+        className={
+          trigger
+            ? "inline-flex min-h-11 items-center gap-1.5 rounded-aw px-2 text-[0.9375rem] font-medium text-text-strong hover:bg-hover"
+            : "inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"
+        }
       >
-        <MoreHorizontal className="size-4" aria-hidden="true" />
+        {trigger ?? <MoreHorizontal className="size-4" aria-hidden="true" />}
       </button>
-      {open && (
+      {open && layer(
         <div
           id={id}
           ref={menu}
@@ -78,22 +112,49 @@ export function ActionMenu({ label, actions, className = "" }: { label: string; 
               setOpen(false);
             }
           }}
-          className="absolute right-0 top-full z-30 mt-1 flex min-w-max flex-col rounded-aw border border-border bg-bg p-1 font-ui shadow-md"
+          style={portal ? position : undefined}
+          className={`aw-popover ${portal ? "" : "absolute"} ${portal ? "" : align === "start" ? "left-0" : "right-0"} ${portal ? "" : "top-full mt-1 min-w-max"} z-30 flex flex-col p-1 font-ui`}
         >
-          {actions.map((action) => (
+          {actions.map((action, index) => (
+            <Fragment key={action.label}>
+            {index > 0 && action.group !== actions[index - 1]!.group && (
+              <>
+                <div role="separator" className="mx-2 my-1 h-px bg-border-subtle" />
+                {action.group && (
+                  <p aria-hidden="true" className="caps-label m-0 px-3 pb-0.5 pt-1 text-text-muted">
+                    {action.group}
+                  </p>
+                )}
+              </>
+            )}
             <button
-              key={action.label}
               type="button"
               role="menuitem"
+              // The item is named by its label; the line under it describes it.
+              aria-describedby={action.description ? `${id}-d${index}` : undefined}
+              aria-disabled={action.disabled || undefined}
               onClick={() => {
+                if (action.disabled) return;
                 setOpen(false);
                 action.onSelect(button.current);
               }}
-              className="flex min-h-11 items-center gap-2 whitespace-nowrap rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-bg-secondary focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
+              className={`flex min-h-11 items-center gap-2 rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-hover aria-disabled:cursor-not-allowed aria-disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary ${
+                action.description ? "max-w-80 py-1.5" : portal ? "whitespace-normal" : "whitespace-nowrap"
+              }`}
             >
               {action.icon}
-              {action.label}
+              {action.description ? (
+                <span className="flex flex-col">
+                  <span>{action.label}</span>
+                  <span id={`${id}-d${index}`} aria-hidden="true" className="type-meta">
+                    {action.description}
+                  </span>
+                </span>
+              ) : (
+                action.label
+              )}
             </button>
+            </Fragment>
           ))}
         </div>
       )}

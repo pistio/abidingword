@@ -64,6 +64,7 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
   const { t } = useTranslation();
   const heading = useRef<HTMLHeadingElement>(null);
   const root = useRef<HTMLElement>(null);
+  const scroller = useRef<HTMLDivElement>(null);
   // Unfolded entries: at first only the way to the current one.
   const [open, setOpen] = useState<Set<string>>(() => new Set(ancestorsOf(items, currentId)));
   const all = branches(items);
@@ -81,8 +82,14 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
   useEffect(() => {
     const current = root.current?.querySelector<HTMLElement>("[aria-current='location']");
     const target = current ?? heading.current;
-    target?.focus({ preventScroll: !current });
-    current?.scrollIntoView?.({ block: "center" });
+    target?.focus({ preventScroll: true });
+    // Scroll only the Contents list, never the reader or the workspace.
+    const viewport = scroller.current;
+    if (current && viewport) {
+      const entry = current.getBoundingClientRect();
+      const bounds = viewport.getBoundingClientRect();
+      viewport.scrollTop += entry.top - bounds.top - (viewport.clientHeight - entry.height) / 2;
+    }
   }, []);
 
   const place = layout === "sheet" ? "absolute inset-0" : "absolute inset-y-0 left-0 w-80 max-w-[85%] border-r border-border shadow-lg";
@@ -102,7 +109,7 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
       className={`${place} z-20 flex min-h-0 flex-col bg-bg font-ui`}
     >
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border-subtle px-3 py-1.5">
-        <h3 ref={heading} tabIndex={-1} className="m-0 font-display text-[1.0625rem] font-heading text-text-strong">
+        <h3 ref={heading} tabIndex={-1} className="type-group m-0">
           {generated ? t("library.contents.generated") : t("library.contents.title")}
         </h3>
         <div className="flex shrink-0 items-center">
@@ -117,8 +124,8 @@ export function ContentsPanel({ id, title, items, generated = false, currentId, 
           </Button>
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
-        {generated && items.length > 0 && <p className="m-0 px-2 pb-2 text-[0.875rem] text-text-muted">{t("library.contents.generatedNote")}</p>}
+      <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2 py-2">
+        {generated && items.length > 0 && <p className="m-0 px-2 pb-2 type-meta">{t("library.contents.generatedNote")}</p>}
         {items.length === 0 ? (
           <p className="m-0 px-2 py-3 text-text-muted">{t("library.contents.none")}</p>
         ) : (
@@ -175,7 +182,7 @@ function ItemList({ items, depth, currentId, open, holdsCurrent, onToggle, onSel
                   aria-label={t(expanded ? "library.contents.collapse" : "library.contents.expand", { title: item.title })}
                   title={t(expanded ? "library.contents.collapse" : "library.contents.expand", { title: item.title })}
                   onClick={() => onToggle(item.id)}
-                  className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
+                  className="mt-1 flex size-7 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary"
                 >
                   {expanded ? <ChevronDown className="size-4" aria-hidden="true" /> : <ChevronRight className="size-4" aria-hidden="true" />}
                 </button>
@@ -186,8 +193,9 @@ function ItemList({ items, depth, currentId, open, holdsCurrent, onToggle, onSel
                 <button
                   type="button"
                   aria-current={current ? "location" : undefined}
+                  data-selected={marked || undefined}
                   onClick={() => onSelect(item)}
-                  className={`${row} hover:bg-bg-secondary ${marked ? "bg-bg-secondary font-semibold text-text-strong" : "text-text"}`}
+                  className={`${row} aw-row ${marked ? "font-medium" : "text-text"}`}
                 >
                   <span aria-hidden="true" className="w-3 shrink-0">{marked ? "▸" : ""}</span>
                   {label}

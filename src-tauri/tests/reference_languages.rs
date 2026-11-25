@@ -104,6 +104,27 @@ fn german_numbered_books() {
     assert_eq!(canon(De, "1. Mose 1,1"), ["GEN.1.1"]);
     assert_eq!(canon(De, "2. Mose 20,1-17"), ["EXO.20.1-EXO.20.17"]);
     assert_eq!(canon(De, "5 Mose 6,4"), ["DEU.6.4"]);
+    // v0.24: the books are shown as "1. Mose (Genesis)"; the Greek-derived
+    // names and their abbreviations are still found.
+    assert_eq!(canon(De, "3. Mose 19,18"), ["LEV.19.18"]);
+    assert_eq!(canon(De, "4 Mo 6,24"), ["NUM.6.24"]);
+    assert_eq!(canon(De, "Genesis 1,1 und Gen 2,7"), ["GEN.1.1", "GEN.2.7"]);
+    assert_eq!(
+        canon(De, "Exodus 3,14 und Ex 20,2"),
+        ["EXO.3.14", "EXO.20.2"]
+    );
+    assert_eq!(
+        canon(De, "Levitikus 19,18 und Lev 19,2"),
+        ["LEV.19.18", "LEV.19.2"]
+    );
+    assert_eq!(
+        canon(De, "Numeri 6,24 und Num 6,25"),
+        ["NUM.6.24", "NUM.6.25"]
+    );
+    assert_eq!(
+        canon(De, "Deuteronomium 6,4 und Dtn 6,5"),
+        ["DEU.6.4", "DEU.6.5"]
+    );
     // Johannes and 1. Johannes are different books
     assert_eq!(canon(De, "Joh 1,1 und 1. Joh 1,1"), ["JHN.1.1", "1JN.1.1"]);
 }
@@ -593,7 +614,7 @@ fn the_same_text_means_different_things_in_different_languages() {
 
 #[test]
 fn an_unknown_or_missing_language_is_read_as_english_and_never_merged() {
-    for label in [None, Some(""), Some("Italiano"), Some("xx")] {
+    for label in [None, Some(""), Some("Latina"), Some("xx")] {
         let resolved = ReferenceLanguage::resolve(label);
         assert!(resolved.fallback, "{label:?}");
         let parser = ReferenceParser::for_language(resolved.language);
@@ -608,7 +629,7 @@ fn an_unknown_or_missing_language_is_read_as_english_and_never_merged() {
 
 #[test]
 fn parsers_are_built_once_and_shared() {
-    for language in ReferenceLanguage::ALL {
+    for language in ReferenceLanguage::REVIEWED {
         let a = ReferenceParser::for_language(language) as *const ReferenceParser;
         let b = ReferenceParser::for_language(language) as *const ReferenceParser;
         assert_eq!(a, b, "{language:?}");

@@ -1,7 +1,8 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // All library text here is invented for the tests.
 const SERMON: SourceFixture = {
@@ -161,6 +162,7 @@ describe("marking a source in Reading", () => {
 
 describe("marking a place without selecting words", () => {
   it("bookmarks the place the reader is at, and removes it again (one button, pressed state)", async () => {
+    pinReaderActions(["find", "contents", "bookmark", "note", "marks"]);
     const { api, user } = await openReader();
     const header = screen.getByTestId("reader-header");
     const add = within(header).getByRole("button", { name: "Bookmark this place" });
@@ -175,6 +177,7 @@ describe("marking a place without selecting words", () => {
   });
 
   it("adds a note on a paragraph from the keyboard, with focus returned afterwards", async () => {
+    pinReaderActions(["find", "contents", "bookmark", "note", "marks"]);
     const { api, user } = await openReader();
     const button = within(screen.getByTestId("reader-header")).getByRole("button", { name: "Add note here" });
     button.focus();
@@ -200,7 +203,7 @@ describe("marking a place without selecting words", () => {
 
   it("highlights a whole paragraph without a mouse selection", async () => {
     const { api, user } = await openReader();
-    await user.click(within(screen.getByTestId("reader-header")).getByRole("button", { name: "Add note here" }));
+    await readerAction(user, "Add note here", screen.getByTestId("reader-header"));
     const bar = await strip();
     await user.click(within(bar).getByRole("button", { name: "Highlight this paragraph" }));
     await user.click(within(bar).getByRole("button", { name: "Blue" }));
@@ -234,6 +237,7 @@ describe("the source's marks beside its text", () => {
     api.state.settings.scripturePassage = "PSA.23";
     api.installFixtureSource(SERMON);
     await seedMarks(api);
+    pinReaderActions(["find", "contents", "marks"]);
     const { user } = await renderApp(api);
     await user.click(await within(screen.getByRole("complementary", { name: "Sources" })).findByRole("button", { name: "Open library" }));
     await user.click((await within(await screen.findByRole("main")).findAllByRole("button", { name: /The True Vine/ }))[0]!);
@@ -269,7 +273,7 @@ describe("the source's marks beside its text", () => {
     await within(screen.getByTestId("reader-body")).findByText(/Abide in me/);
     // Never drawn in the text.
     expect(screen.getByTestId("reader-body").querySelector("[data-source-note]")).toBeNull();
-    await user.click(within(screen.getByTestId("reader-header")).getByRole("button", { name: "Marks" }));
+    await readerAction(user, "Marks", screen.getByTestId("reader-header"));
     const panel = await screen.findByRole("region", { name: "Marks in The True Vine" });
     expect(within(panel).getByText("This place can no longer be found in the text.")).toBeInTheDocument();
     expect(within(panel).getByText(/much fruit/)).toBeInTheDocument();
@@ -314,7 +318,7 @@ describe("source marks in the Marks view", () => {
 });
 
 describe("removing a source with marks", () => {
-  it("says how many marks go with it before it is removed", async () => {
+  it("says its marks are kept, hidden, while it is in Trash", async () => {
     const api = createMemoryApi();
     api.installFixtureBible("FXA", "alpha");
     api.state.settings.scripturePassage = "PSA.23";
@@ -322,11 +326,13 @@ describe("removing a source with marks", () => {
     await seedMarks(api);
     const { user } = await renderApp(api);
     await user.click(await within(screen.getByRole("complementary", { name: "Sources" })).findByRole("button", { name: "Open library" }));
-    await user.click(await within(await screen.findByRole("main")).findByRole("button", { name: "Remove The True Vine" }));
-    const dialog = await screen.findByRole("alertdialog", { name: "Remove The True Vine?" });
-    expect(await within(dialog).findByText("Your 2 marks in it (highlights, notes and bookmarks) are removed with it.")).toBeInTheDocument();
-    await user.click(within(dialog).getByRole("button", { name: "Remove from library" }));
-    await waitFor(() => expect(live(api)).toHaveLength(0));
+    await user.click(await within(await screen.findByRole("main")).findByRole("button", { name: "Move The True Vine to Trash" }));
+    const dialog = await screen.findByRole("alertdialog", { name: "Move “The True Vine” to Trash?" });
+    expect(await within(dialog).findByText("Its 2 marks (highlights, notes and bookmarks) are hidden while it is in Trash.")).toBeInTheDocument();
+    await user.click(within(dialog).getByRole("button", { name: "Move to Trash" }));
+    await waitFor(() => expect(api.state.manage.states.get(api.state.library.sources[0]!.id)?.state).toBe("trashed"));
+    // Kept, to come back with the source.
+    expect(live(api)).toHaveLength(2);
   });
 });
 

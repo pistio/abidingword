@@ -1,0 +1,8 @@
+Compiling abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 5.72s
+     Running tests/milestone_a2_sections.rs (src-tauri/target/debug/deps/milestone_a2_sections-3738c0f3feb0b509)
+
+running 1 test
+test original_method_parts_restore_empty_in_order_without_losing_survivors_or_custom_parts ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s

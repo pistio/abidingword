@@ -480,7 +480,7 @@ fn md(heading: &str, paragraphs: &[&str]) -> String {
 }
 
 #[test]
-fn a_section_about_the_passage_outranks_a_neutral_exact_mention_which_outranks_a_whole_chapter() {
+fn passage_and_chapter_sections_outrank_neutral_exact_mentions() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let broad = add(
@@ -512,8 +512,8 @@ fn a_section_about_the_passage_outranks_a_neutral_exact_mention_which_outranks_a
             order,
             [
                 (section, MatchKind::Contained),
-                (exact, MatchKind::Exact),
-                (broad, MatchKind::Contained)
+                (broad, MatchKind::Contained),
+                (exact, MatchKind::Exact)
             ]
         );
         Ok(())
@@ -521,7 +521,7 @@ fn a_section_about_the_passage_outranks_a_neutral_exact_mention_which_outranks_a
 }
 
 #[test]
-fn an_overlapping_range_ranks_after_a_containing_one_and_a_chapter_only_range_is_not_offered() {
+fn only_a_containing_structural_range_is_a_destination_for_the_whole_request() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let same_chapter = add(
@@ -557,17 +557,16 @@ fn an_overlapping_range_ranks_after_a_containing_one_and_a_chapter_only_range_is
             .iter()
             .map(|g| (g.source_id.clone(), g.locations[0].match_kind))
             .collect();
-        // active 15:5–12: 15:1–20 contains it; 15:8–14 overlaps it; 15:16–17 shares only the
-        // chapter, which is not enough to suggest anything; Romans is not shown either.
+        // A heading for 15:8–14 covers only part of 15:5–12. Without a broader
+        // parent or a literal mention, that source supplies no destination.
         assert!(order
             .iter()
-            .all(|(id, _)| *id != other_book && *id != same_chapter));
+            .all(|(id, _)| *id != other_book && *id != same_chapter && *id != overlap));
+        assert_eq!(order, [(contained, MatchKind::Contained)]);
         assert_eq!(
-            order,
-            [
-                (contained, MatchKind::Contained),
-                (overlap, MatchKind::Overlap)
-            ]
+            links(conn, &segment(conn, &overlap, "Friends and fruit")),
+            [("section", "JHN.15.8-JHN.15.14".into())],
+            "the partial section remains indexed for requests it actually contains"
         );
         Ok(())
     });
@@ -720,7 +719,7 @@ fn removed_sources_never_appear() {
 }
 
 #[test]
-fn a_chapter_view_lists_the_sources_that_speak_to_any_part_of_it() {
+fn a_chapter_request_does_not_treat_partial_sections_as_chapter_openings() {
     let temp = tempfile::tempdir().unwrap();
     with_db(|conn| {
         let id = add(
@@ -731,15 +730,19 @@ fn a_chapter_view_lists_the_sources_that_speak_to_any_part_of_it() {
             "Commentary",
         );
         let found = library::passage_sources(conn, &reference("JHN.15"))?;
-        assert_eq!(found.len(), 1);
-        // both sections of the chapter, nothing for Romans
-        let passages: Vec<_> = found[0]
-            .locations
-            .iter()
-            .map(|l| l.reference.canonical.as_str())
-            .collect();
-        assert_eq!(passages, ["JHN.15.1-JHN.15.11", "JHN.15.12-JHN.15.17"]);
-        assert_eq!(found[0].source_id, id);
+        assert!(
+            found.is_empty(),
+            "neither subsection contains the whole chapter"
+        );
+        for (query, expected) in [
+            ("JHN.15.5", "JHN.15.1-JHN.15.11"),
+            ("JHN.15.14", "JHN.15.12-JHN.15.17"),
+        ] {
+            let places = library::passage_source_locations(conn, &reference(query), &id)?;
+            assert_eq!(places.len(), 1);
+            assert_eq!(places[0].reference.canonical, expected);
+            assert_eq!(places[0].origin, LinkOrigin::Section);
+        }
         Ok(())
     });
 }
@@ -1025,6 +1028,114 @@ fn turning_pages_stays_fast_on_a_large_library() {
             per_query < std::time::Duration::from_millis(100),
             "{per_query:?} per query"
         );
+        Ok(())
+    });
+}
+
+#[test]
+fn acts_six_uses_its_indexed_section_and_keeps_incidental_mentions_out_of_navigation() {
+    let temp = tempfile::tempdir().unwrap();
+    with_db(|conn| {
+        let bytes = "# Überblick\n\nEin beiläufiger Verweis: Apostelgeschichte 6,3.\n\n# Apostelgeschichte 6\n\nErfundene Erläuterung zum ausgewählten Kapitel.\n\n# Apostelgeschichte 7\n\nEin anderes Kapitel.\n";
+        let staged = import::stage(&write(temp.path(), "acts.md", bytes.as_bytes())).unwrap();
+        let source = abiding_word_lib::db::new_id();
+        library::commit_import(
+            conn,
+            &source,
+            &staged,
+            &CommitSourceImport {
+                preview_id: staged.id.clone(),
+                title: "Synthetic German Acts overview".into(),
+                language: Some("de".into()),
+                ..Default::default()
+            },
+            &library::managed_relative_path(&source, &staged),
+        )?;
+        let groups = library::passage_sources(conn, &reference("ACT.6.3"))?;
+        let work = groups
+            .iter()
+            .find(|group| group.source_id == source)
+            .unwrap();
+        let best = &work.locations[0];
+        assert_eq!(best.origin, LinkOrigin::Section);
+        assert_eq!(
+            best.segment_id,
+            segment(conn, &source, "Erfundene Erläuterung")
+        );
+        assert_eq!(work.locations.len(), 1);
+        assert_eq!(work.more_locations, 0);
+        assert!(
+            links(conn, &segment(conn, &source, "Ein beiläufiger Verweis"))
+                .contains(&("explicit", "ACT.6.3".into())),
+            "literal evidence is preserved even though a real section is the destination"
+        );
+        assert!(!work
+            .locations
+            .iter()
+            .any(|place| place.segment_id == segment(conn, &source, "Ein anderes Kapitel")));
+        Ok(())
+    });
+}
+
+#[test]
+fn an_archived_source_can_be_navigated_explicitly_without_rejoining_the_overview() {
+    use abiding_word_lib::db::library_manage::{self, ItemState};
+    let temp = tempfile::tempdir().unwrap();
+    with_db(|conn| {
+        let id = add(
+            conn,
+            temp.path(),
+            "archived.md",
+            COMMENTARY.as_bytes(),
+            "Kept commentary",
+        );
+        let query = reference("JHN.15.5");
+        let before = library::passage_source_locations(conn, &query, &id)?;
+        assert_eq!(before.len(), 1);
+        library_manage::set_source_state(conn, std::slice::from_ref(&id), ItemState::Archived)?;
+        assert!(library::passage_sources(conn, &query)?.is_empty());
+        let archived = library::passage_source_locations(conn, &query, &id)?;
+        assert_eq!(archived.len(), 1);
+        assert_eq!(archived[0].segment_id, before[0].segment_id);
+        assert_eq!(archived[0].origin, LinkOrigin::Section);
+        library_manage::set_source_state(conn, std::slice::from_ref(&id), ItemState::Trashed)?;
+        assert!(library::passage_sources(conn, &query)?.is_empty());
+        assert!(library::passage_source_locations(conn, &query, &id)?.is_empty());
+        Ok(())
+    });
+}
+
+#[test]
+fn a_pdf_cross_reference_is_a_mention_with_its_exact_page_not_verified_commentary() {
+    let temp = tempfile::tempdir().unwrap();
+    with_db(|conn| {
+        let bytes = fixtures::pdf(&[
+            &["Acts 7 - invented notes", "A literal cross-reference: Acts 6:3. This does not establish direct discussion."],
+            &["Acts 6 - invented chapter notes", "An independently written fixture mentions Acts 6:1-7 and Acts 7:1."],
+            &["Acts 7:1 - a separate page", "This page must never be offered merely because it is adjacent."],
+        ], Some("Invented Acts source - not MacArthur"), Some("Fixture author"));
+        let source = add(conn, temp.path(), "acts.pdf", &bytes, "Invented Acts PDF");
+        let groups = library::passage_sources(conn, &reference("ACT.6.3"))?;
+        let work = groups
+            .iter()
+            .find(|group| group.source_id == source)
+            .unwrap();
+        assert!(work
+            .locations
+            .iter()
+            .all(|place| place.origin == LinkOrigin::Explicit));
+        for place in &work.locations {
+            let (page, owner): (i64, String) = conn.query_row(
+                "SELECT page_number,source_id FROM source_segments WHERE id=?1",
+                [&place.segment_id],
+                |row| Ok((row.get(0)?, row.get(1)?)),
+            )?;
+            assert_eq!(owner, source);
+            assert!((1..=2).contains(&page));
+            assert_eq!(place.reference.book, "ACT");
+            assert_eq!(place.reference.start_chapter, 6);
+        }
+        assert_eq!(library::get(conn, &source)?.title, "Invented Acts PDF");
         Ok(())
     });
 }

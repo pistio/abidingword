@@ -1,0 +1,1795 @@
+{
+  "file": "engwebp_book.pdf",
+  "edition": "engwebp",
+  "reference": "engwebp_usfm.zip (same revision as the PDF)",
+  "totals": {
+    "code": "ALL",
+    "expected": 31103,
+    "detected": 31098,
+    "usable": 30782,
+    "unmapped": 321,
+    "chapters": 1189,
+    "usable_chapters": 1179,
+    "refused_reading_order": 0,
+    "refused_verse_numbers": 1,
+    "refused_other": 9,
+    "exact": 30185,
+    "normalised": 864,
+    "different": 49,
+    "usable_different": 0
+  },
+  "books": [
+    {
+      "code": "GEN",
+      "expected": 1533,
+      "detected": 1533,
+      "usable": 1533,
+      "unmapped": 0,
+      "chapters": 50,
+      "usable_chapters": 50,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1514,
+      "normalised": 19,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "EXO",
+      "expected": 1213,
+      "detected": 1213,
+      "usable": 1213,
+      "unmapped": 0,
+      "chapters": 40,
+      "usable_chapters": 40,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1175,
+      "normalised": 38,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "LEV",
+      "expected": 859,
+      "detected": 859,
+      "usable": 859,
+      "unmapped": 0,
+      "chapters": 27,
+      "usable_chapters": 27,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 671,
+      "normalised": 188,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "NUM",
+      "expected": 1288,
+      "detected": 1288,
+      "usable": 1288,
+      "unmapped": 0,
+      "chapters": 36,
+      "usable_chapters": 36,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1232,
+      "normalised": 56,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "DEU",
+      "expected": 959,
+      "detected": 959,
+      "usable": 959,
+      "unmapped": 0,
+      "chapters": 34,
+      "usable_chapters": 34,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 953,
+      "normalised": 6,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JOS",
+      "expected": 658,
+      "detected": 658,
+      "usable": 658,
+      "unmapped": 0,
+      "chapters": 24,
+      "usable_chapters": 24,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 643,
+      "normalised": 15,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JDG",
+      "expected": 618,
+      "detected": 618,
+      "usable": 618,
+      "unmapped": 0,
+      "chapters": 21,
+      "usable_chapters": 21,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 605,
+      "normalised": 13,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "RUT",
+      "expected": 85,
+      "detected": 85,
+      "usable": 85,
+      "unmapped": 0,
+      "chapters": 4,
+      "usable_chapters": 4,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 83,
+      "normalised": 2,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1SA",
+      "expected": 810,
+      "detected": 810,
+      "usable": 810,
+      "unmapped": 0,
+      "chapters": 31,
+      "usable_chapters": 31,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 794,
+      "normalised": 16,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2SA",
+      "expected": 695,
+      "detected": 695,
+      "usable": 695,
+      "unmapped": 0,
+      "chapters": 24,
+      "usable_chapters": 24,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 676,
+      "normalised": 19,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1KI",
+      "expected": 816,
+      "detected": 816,
+      "usable": 816,
+      "unmapped": 0,
+      "chapters": 22,
+      "usable_chapters": 22,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 783,
+      "normalised": 33,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2KI",
+      "expected": 719,
+      "detected": 719,
+      "usable": 719,
+      "unmapped": 0,
+      "chapters": 25,
+      "usable_chapters": 25,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 684,
+      "normalised": 35,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1CH",
+      "expected": 942,
+      "detected": 942,
+      "usable": 942,
+      "unmapped": 0,
+      "chapters": 29,
+      "usable_chapters": 29,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 937,
+      "normalised": 5,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2CH",
+      "expected": 822,
+      "detected": 822,
+      "usable": 822,
+      "unmapped": 0,
+      "chapters": 36,
+      "usable_chapters": 36,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 807,
+      "normalised": 15,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "EZR",
+      "expected": 280,
+      "detected": 280,
+      "usable": 280,
+      "unmapped": 0,
+      "chapters": 10,
+      "usable_chapters": 10,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 279,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "NEH",
+      "expected": 406,
+      "detected": 406,
+      "usable": 406,
+      "unmapped": 0,
+      "chapters": 13,
+      "usable_chapters": 13,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 406,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "EST",
+      "expected": 167,
+      "detected": 167,
+      "usable": 167,
+      "unmapped": 0,
+      "chapters": 10,
+      "usable_chapters": 10,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 166,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JOB",
+      "expected": 1070,
+      "detected": 1070,
+      "usable": 1070,
+      "unmapped": 0,
+      "chapters": 42,
+      "usable_chapters": 42,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1066,
+      "normalised": 4,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "PSA",
+      "expected": 2461,
+      "detected": 2461,
+      "usable": 2285,
+      "unmapped": 176,
+      "chapters": 150,
+      "usable_chapters": 149,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 1,
+      "exact": 2438,
+      "normalised": 2,
+      "different": 21,
+      "usable_different": 0
+    },
+    {
+      "code": "PRO",
+      "expected": 915,
+      "detected": 915,
+      "usable": 915,
+      "unmapped": 0,
+      "chapters": 31,
+      "usable_chapters": 31,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 915,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "ECC",
+      "expected": 222,
+      "detected": 222,
+      "usable": 222,
+      "unmapped": 0,
+      "chapters": 12,
+      "usable_chapters": 12,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 222,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "SNG",
+      "expected": 117,
+      "detected": 117,
+      "usable": 11,
+      "unmapped": 106,
+      "chapters": 8,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 7,
+      "exact": 90,
+      "normalised": 0,
+      "different": 27,
+      "usable_different": 0
+    },
+    {
+      "code": "ISA",
+      "expected": 1292,
+      "detected": 1292,
+      "usable": 1292,
+      "unmapped": 0,
+      "chapters": 66,
+      "usable_chapters": 66,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1269,
+      "normalised": 23,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JER",
+      "expected": 1364,
+      "detected": 1364,
+      "usable": 1364,
+      "unmapped": 0,
+      "chapters": 52,
+      "usable_chapters": 52,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1277,
+      "normalised": 87,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "LAM",
+      "expected": 154,
+      "detected": 154,
+      "usable": 154,
+      "unmapped": 0,
+      "chapters": 5,
+      "usable_chapters": 5,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 154,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "EZK",
+      "expected": 1273,
+      "detected": 1273,
+      "usable": 1273,
+      "unmapped": 0,
+      "chapters": 48,
+      "usable_chapters": 48,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1087,
+      "normalised": 186,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "DAN",
+      "expected": 357,
+      "detected": 357,
+      "usable": 357,
+      "unmapped": 0,
+      "chapters": 12,
+      "usable_chapters": 12,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 353,
+      "normalised": 4,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "HOS",
+      "expected": 197,
+      "detected": 197,
+      "usable": 197,
+      "unmapped": 0,
+      "chapters": 14,
+      "usable_chapters": 14,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 196,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JOL",
+      "expected": 73,
+      "detected": 73,
+      "usable": 73,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 72,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "AMO",
+      "expected": 146,
+      "detected": 146,
+      "usable": 146,
+      "unmapped": 0,
+      "chapters": 9,
+      "usable_chapters": 9,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 143,
+      "normalised": 3,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "OBA",
+      "expected": 21,
+      "detected": 21,
+      "usable": 21,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 21,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JON",
+      "expected": 48,
+      "detected": 48,
+      "usable": 48,
+      "unmapped": 0,
+      "chapters": 4,
+      "usable_chapters": 4,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 48,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "MIC",
+      "expected": 105,
+      "detected": 105,
+      "usable": 105,
+      "unmapped": 0,
+      "chapters": 7,
+      "usable_chapters": 7,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 104,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "NAM",
+      "expected": 47,
+      "detected": 47,
+      "usable": 47,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 47,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "HAB",
+      "expected": 56,
+      "detected": 56,
+      "usable": 56,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 56,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "ZEP",
+      "expected": 53,
+      "detected": 53,
+      "usable": 53,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 53,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "HAG",
+      "expected": 38,
+      "detected": 38,
+      "usable": 38,
+      "unmapped": 0,
+      "chapters": 2,
+      "usable_chapters": 2,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 34,
+      "normalised": 4,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "ZEC",
+      "expected": 211,
+      "detected": 211,
+      "usable": 211,
+      "unmapped": 0,
+      "chapters": 14,
+      "usable_chapters": 14,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 200,
+      "normalised": 11,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "MAL",
+      "expected": 55,
+      "detected": 55,
+      "usable": 55,
+      "unmapped": 0,
+      "chapters": 4,
+      "usable_chapters": 4,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 55,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "MAT",
+      "expected": 1071,
+      "detected": 1071,
+      "usable": 1071,
+      "unmapped": 0,
+      "chapters": 28,
+      "usable_chapters": 28,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1055,
+      "normalised": 16,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "MRK",
+      "expected": 678,
+      "detected": 678,
+      "usable": 678,
+      "unmapped": 0,
+      "chapters": 16,
+      "usable_chapters": 16,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 668,
+      "normalised": 10,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "LUK",
+      "expected": 1151,
+      "detected": 1150,
+      "usable": 1150,
+      "unmapped": 1,
+      "chapters": 24,
+      "usable_chapters": 24,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 1123,
+      "normalised": 27,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JHN",
+      "expected": 879,
+      "detected": 879,
+      "usable": 879,
+      "unmapped": 0,
+      "chapters": 21,
+      "usable_chapters": 21,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 873,
+      "normalised": 6,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "ACT",
+      "expected": 1007,
+      "detected": 1004,
+      "usable": 1004,
+      "unmapped": 3,
+      "chapters": 28,
+      "usable_chapters": 28,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 998,
+      "normalised": 6,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "ROM",
+      "expected": 434,
+      "detected": 433,
+      "usable": 433,
+      "unmapped": 1,
+      "chapters": 16,
+      "usable_chapters": 16,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 431,
+      "normalised": 2,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1CO",
+      "expected": 437,
+      "detected": 437,
+      "usable": 437,
+      "unmapped": 0,
+      "chapters": 16,
+      "usable_chapters": 16,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 437,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2CO",
+      "expected": 257,
+      "detected": 257,
+      "usable": 257,
+      "unmapped": 0,
+      "chapters": 13,
+      "usable_chapters": 13,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 256,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "GAL",
+      "expected": 149,
+      "detected": 149,
+      "usable": 149,
+      "unmapped": 0,
+      "chapters": 6,
+      "usable_chapters": 6,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 148,
+      "normalised": 1,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "EPH",
+      "expected": 155,
+      "detected": 155,
+      "usable": 155,
+      "unmapped": 0,
+      "chapters": 6,
+      "usable_chapters": 6,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 155,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "PHP",
+      "expected": 104,
+      "detected": 104,
+      "usable": 104,
+      "unmapped": 0,
+      "chapters": 4,
+      "usable_chapters": 4,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 104,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "COL",
+      "expected": 95,
+      "detected": 95,
+      "usable": 95,
+      "unmapped": 0,
+      "chapters": 4,
+      "usable_chapters": 4,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 95,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1TH",
+      "expected": 89,
+      "detected": 89,
+      "usable": 89,
+      "unmapped": 0,
+      "chapters": 5,
+      "usable_chapters": 5,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 89,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2TH",
+      "expected": 47,
+      "detected": 47,
+      "usable": 47,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 47,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1TI",
+      "expected": 113,
+      "detected": 113,
+      "usable": 113,
+      "unmapped": 0,
+      "chapters": 6,
+      "usable_chapters": 6,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 113,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2TI",
+      "expected": 83,
+      "detected": 83,
+      "usable": 83,
+      "unmapped": 0,
+      "chapters": 4,
+      "usable_chapters": 4,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 83,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "TIT",
+      "expected": 46,
+      "detected": 46,
+      "usable": 46,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 46,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "PHM",
+      "expected": 25,
+      "detected": 25,
+      "usable": 25,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 25,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "HEB",
+      "expected": 303,
+      "detected": 303,
+      "usable": 303,
+      "unmapped": 0,
+      "chapters": 13,
+      "usable_chapters": 13,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 300,
+      "normalised": 3,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JAS",
+      "expected": 108,
+      "detected": 108,
+      "usable": 108,
+      "unmapped": 0,
+      "chapters": 5,
+      "usable_chapters": 5,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 108,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1PE",
+      "expected": 105,
+      "detected": 105,
+      "usable": 105,
+      "unmapped": 0,
+      "chapters": 5,
+      "usable_chapters": 5,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 105,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2PE",
+      "expected": 61,
+      "detected": 61,
+      "usable": 61,
+      "unmapped": 0,
+      "chapters": 3,
+      "usable_chapters": 3,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 61,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "1JN",
+      "expected": 105,
+      "detected": 105,
+      "usable": 105,
+      "unmapped": 0,
+      "chapters": 5,
+      "usable_chapters": 5,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 105,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "2JN",
+      "expected": 13,
+      "detected": 13,
+      "usable": 13,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 13,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "3JN",
+      "expected": 14,
+      "detected": 14,
+      "usable": 14,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 14,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "JUD",
+      "expected": 25,
+      "detected": 25,
+      "usable": 25,
+      "unmapped": 0,
+      "chapters": 1,
+      "usable_chapters": 1,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 0,
+      "refused_other": 0,
+      "exact": 25,
+      "normalised": 0,
+      "different": 0,
+      "usable_different": 0
+    },
+    {
+      "code": "REV",
+      "expected": 404,
+      "detected": 404,
+      "usable": 370,
+      "unmapped": 34,
+      "chapters": 22,
+      "usable_chapters": 20,
+      "refused_reading_order": 0,
+      "refused_verse_numbers": 1,
+      "refused_other": 1,
+      "exact": 400,
+      "normalised": 3,
+      "different": 1,
+      "usable_different": 0
+    }
+  ],
+  "issues": {
+    "Error bibleImport.documentChapterTwice": 1,
+    "Error bibleImport.documentLabel": 8,
+    "Error bibleImport.documentLongVerse": 1,
+    "Note bibleImport.documentFootnotes": 1,
+    "Note bibleImport.documentLeftOut": 1,
+    "Note bibleImport.documentPageLines": 1,
+    "Note bibleImport.documentPsalmTitles": 1,
+    "Warning bibleImport.documentChapterShort": 3,
+    "Warning bibleImport.documentNoBook": 1,
+    "Warning bibleImport.emptyVerse": 18,
+    "Warning bibleImport.missingVerses": 4
+  },
+  "refused_chapters": [
+    "PSA 119 (other)",
+    "REV 8 (other)",
+    "REV 22 (numbers)",
+    "SNG 1 (other)",
+    "SNG 2 (other)",
+    "SNG 4 (other)",
+    "SNG 5 (other)",
+    "SNG 6 (other)",
+    "SNG 7 (other)",
+    "SNG 8 (other)"
+  ],
+  "differences": [
+    {
+      "reference": "PSA 119:8",
+      "usable": false,
+      "page": 531,
+      "found": "I will observe your statutes. Don’t utterly forsake me. BETH",
+      "edition": "I will observe your statutes. Don’t utterly forsake me."
+    },
+    {
+      "reference": "PSA 119:16",
+      "usable": false,
+      "page": 531,
+      "found": "I will delight myself in your statutes. I will not forget your word. GIMEL",
+      "edition": "I will delight myself in your statutes. I will not forget your word."
+    },
+    {
+      "reference": "PSA 119:24",
+      "usable": false,
+      "page": 531,
+      "found": "Indeed your statutes are my delight, and my counselors. DALETH",
+      "edition": "Indeed your statutes are my delight, and my counselors."
+    },
+    {
+      "reference": "PSA 119:32",
+      "usable": false,
+      "page": 531,
+      "found": "I run in the path of your commandments, for you have set my heart free. HE",
+      "edition": "I run in the path of your commandments, for you have set my heart free."
+    },
+    {
+      "reference": "PSA 119:40",
+      "usable": false,
+      "page": 531,
+      "found": "Behold, I long for your precepts! Revive me in your righteousness. VAV",
+      "edition": "Behold, I long for your precepts! Revive me in your righteousness."
+    },
+    {
+      "reference": "PSA 119:48",
+      "usable": false,
+      "page": 532,
+      "found": "I reach out my hands for your commandments, which I love. I will meditate on your statutes. ZAYIN",
+      "edition": "I reach out my hands for your commandments, which I love. I will meditate on your statutes."
+    },
+    {
+      "reference": "PSA 119:56",
+      "usable": false,
+      "page": 532,
+      "found": "This is my way, that I keep your precepts. HETH",
+      "edition": "This is my way, that I keep your precepts."
+    },
+    {
+      "reference": "PSA 119:64",
+      "usable": false,
+      "page": 532,
+      "found": "The earth is full of your loving kindness, LORD. Teach me your statutes. TETH",
+      "edition": "The earth is full of your loving kindness, LORD. Teach me your statutes."
+    },
+    {
+      "reference": "PSA 119:72",
+      "usable": false,
+      "page": 532,
+      "found": "The law of your mouth is better to me than thousands of pieces of gold and silver. YODH",
+      "edition": "The law of your mouth is better to me than thousands of pieces of gold and silver."
+    },
+    {
+      "reference": "PSA 119:80",
+      "usable": false,
+      "page": 532,
+      "found": "Let my heart be blameless toward your decrees, that I may not be disappointed. KAPF",
+      "edition": "Let my heart be blameless toward your decrees, that I may not be disappointed."
+    },
+    {
+      "reference": "PSA 119:88",
+      "usable": false,
+      "page": 533,
+      "found": "Preserve my life according to your loving kindness, so I will obey the statutes of your mouth. LAMEDH",
+      "edition": "Preserve my life according to your loving kindness, so I will obey the statutes of your mouth."
+    },
+    {
+      "reference": "PSA 119:96",
+      "usable": false,
+      "page": 533,
+      "found": "I have seen a limit to all perfection, but your commands are boundless. MEM",
+      "edition": "I have seen a limit to all perfection, but your commands are boundless."
+    },
+    {
+      "reference": "PSA 119:104",
+      "usable": false,
+      "page": 533,
+      "found": "Through your precepts, I get understanding; therefore I hate every false way. NUN",
+      "edition": "Through your precepts, I get understanding; therefore I hate every false way."
+    },
+    {
+      "reference": "PSA 119:112",
+      "usable": false,
+      "page": 533,
+      "found": "I have set my heart to perform your statutes forever, even to the end. SAMEKH",
+      "edition": "I have set my heart to perform your statutes forever, even to the end."
+    },
+    {
+      "reference": "PSA 119:120",
+      "usable": false,
+      "page": 533,
+      "found": "My flesh trembles for fear of you. I am afraid of your judgments. AYIN",
+      "edition": "My flesh trembles for fear of you. I am afraid of your judgments."
+    },
+    {
+      "reference": "PSA 119:128",
+      "usable": false,
+      "page": 533,
+      "found": "Therefore I consider all of your precepts to be right. I hate every false way. PE",
+      "edition": "Therefore I consider all of your precepts to be right. I hate every false way."
+    },
+    {
+      "reference": "PSA 119:136",
+      "usable": false,
+      "page": 534,
+      "found": "Streams of tears run down my eyes, because they don’t observe your law. TZADHE",
+      "edition": "Streams of tears run down my eyes, because they don’t observe your law."
+    },
+    {
+      "reference": "PSA 119:144",
+      "usable": false,
+      "page": 534,
+      "found": "Your testimonies are righteous forever. Give me understanding, that I may live. QOPH",
+      "edition": "Your testimonies are righteous forever. Give me understanding, that I may live."
+    },
+    {
+      "reference": "PSA 119:152",
+      "usable": false,
+      "page": 534,
+      "found": "Of old I have known from your testimonies, that you have founded them forever. RESH",
+      "edition": "Of old I have known from your testimonies, that you have founded them forever."
+    },
+    {
+      "reference": "PSA 119:160",
+      "usable": false,
+      "page": 534,
+      "found": "All of your words are truth. Every one of your righteous ordinances endures forever. SIN AND SHIN",
+      "edition": "All of your words are truth. Every one of your righteous ordinances endures forever."
+    },
+    {
+      "reference": "PSA 119:168",
+      "usable": false,
+      "page": 534,
+      "found": "I have obeyed your precepts and your testimonies, for all my ways are before you. TAV",
+      "edition": "I have obeyed your precepts and your testimonies, for all my ways are before you."
+    },
+    {
+      "reference": "SNG 1:1",
+      "usable": false,
+      "page": 576,
+      "found": "The Song of songs, which is Solomon’s. Beloved",
+      "edition": "The Song of songs, which is Solomon’s."
+    },
+    {
+      "reference": "SNG 1:4",
+      "usable": false,
+      "page": 576,
+      "found": "Take me away with you. Let’s hurry. The king has brought me into his rooms. Friends We will be glad and rejoice in you. We will praise your love more than wine! Beloved They are right to love you.",
+      "edition": "Take me away with you. Let’s hurry. The king has brought me into his rooms. We will be glad and rejoice in you. We will praise your love more than wine! They are right to love you."
+    },
+    {
+      "reference": "SNG 1:7",
+      "usable": false,
+      "page": 576,
+      "found": "Tell me, you whom my soul loves, where you graze your flock, where you rest them at noon; for why should I be as one who is veiled beside the flocks of your companions? Lover",
+      "edition": "Tell me, you whom my soul loves, where you graze your flock, where you rest them at noon; for why should I be as one who is veiled beside the flocks of your companions?"
+    },
+    {
+      "reference": "SNG 1:10",
+      "usable": false,
+      "page": 576,
+      "found": "Your cheeks are beautiful with earrings, your neck with strings of jewels. Friends",
+      "edition": "Your cheeks are beautiful with earrings, your neck with strings of jewels."
+    },
+    {
+      "reference": "SNG 1:11",
+      "usable": false,
+      "page": 576,
+      "found": "We will make you earrings of gold, with studs of silver. Beloved",
+      "edition": "We will make you earrings of gold, with studs of silver."
+    },
+    {
+      "reference": "SNG 1:14",
+      "usable": false,
+      "page": 576,
+      "found": "My beloved is to me a cluster of henna blossoms from the vineyards of En Gedi. Lover",
+      "edition": "My beloved is to me a cluster of henna blossoms from the vineyards of En Gedi."
+    },
+    {
+      "reference": "SNG 1:15",
+      "usable": false,
+      "page": 576,
+      "found": "Behold, you are beautiful, my love. Behold, you are beautiful. Your eyes are like doves. Beloved",
+      "edition": "Behold, you are beautiful, my love. Behold, you are beautiful. Your eyes are like doves."
+    },
+    {
+      "reference": "SNG 1:16",
+      "usable": false,
+      "page": 576,
+      "found": "Behold, you are beautiful, my beloved, yes, pleasant; and our couch is verdant. Lover",
+      "edition": "Behold, you are beautiful, my beloved, yes, pleasant; and our couch is verdant."
+    },
+    {
+      "reference": "SNG 2:1",
+      "usable": false,
+      "page": 576,
+      "found": "I am a rose of Sharon, a lily of the valleys. Lover",
+      "edition": "I am a rose of Sharon, a lily of the valleys."
+    },
+    {
+      "reference": "SNG 2:2",
+      "usable": false,
+      "page": 576,
+      "found": "As a lily among thorns, so is my love among the daughters. Beloved",
+      "edition": "As a lily among thorns, so is my love among the daughters."
+    },
+    {
+      "reference": "SNG 2:13",
+      "usable": false,
+      "page": 576,
+      "found": "The fig tree ripens her green figs. The vines are in blossom. They give out their fragrance. Arise, my love, my beautiful one, and come away.” Lover",
+      "edition": "The fig tree ripens her green figs. The vines are in blossom. They give out their fragrance. Arise, my love, my beautiful one, and come away.”"
+    },
+    {
+      "reference": "SNG 2:15",
+      "usable": false,
+      "page": 577,
+      "found": "Catch for us the foxes, the little foxes that plunder the vineyards; for our vineyards are in blossom. Beloved",
+      "edition": "Catch for us the foxes, the little foxes that plunder the vineyards; for our vineyards are in blossom."
+    },
+    {
+      "reference": "SNG 4:15",
+      "usable": false,
+      "page": 578,
+      "found": "a fountain of gardens, a well of living waters, flowing streams from Lebanon. Beloved",
+      "edition": "a fountain of gardens, a well of living waters, flowing streams from Lebanon."
+    },
+    {
+      "reference": "SNG 5:1",
+      "usable": false,
+      "page": 578,
+      "found": "I have come into my garden, my sister, my bride. I have gathered my myrrh with my spice; I have eaten my honeycomb with my honey; I have drunk my wine with my milk. Friends Eat, friends! Drink, yes, drink abundantly, beloved. Beloved",
+      "edition": "I have come into my garden, my sister, my bride. I have gathered my myrrh with my spice; I have eaten my honeycomb with my honey; I have drunk my wine with my milk. Eat, friends! Drink, yes, drink abundantly, beloved."
+    },
+    {
+      "reference": "SNG 5:8",
+      "usable": false,
+      "page": 578,
+      "found": "I adjure you, daughters of Jerusalem, If you find my beloved, that you tell him that I am faint with love. Friends",
+      "edition": "I adjure you, daughters of Jerusalem, If you find my beloved, that you tell him that I am faint with love."
+    },
+    {
+      "reference": "SNG 5:9",
+      "usable": false,
+      "page": 578,
+      "found": "How is your beloved better than another beloved, you fairest among women? How is your beloved better than another beloved, that you do so adjure us? Beloved",
+      "edition": "How is your beloved better than another beloved, you fairest among women? How is your beloved better than another beloved, that you do so adjure us?"
+    },
+    {
+      "reference": "SNG 6:1",
+      "usable": false,
+      "page": 578,
+      "found": "Where has your beloved gone, you fairest among women? Where has your beloved turned, that we may seek him with you? Beloved",
+      "edition": "Where has your beloved gone, you fairest among women? Where has your beloved turned, that we may seek him with you?"
+    },
+    {
+      "reference": "SNG 6:3",
+      "usable": false,
+      "page": 578,
+      "found": "I am my beloved’s, and my beloved is mine. He browses among the lilies. Lover",
+      "edition": "I am my beloved’s, and my beloved is mine. He browses among the lilies."
+    },
+    {
+      "reference": "SNG 6:12",
+      "usable": false,
+      "page": 579,
+      "found": "Without realizing it, my desire set me with my royal people’s chariots. Friends",
+      "edition": "Without realizing it, my desire set me with my royal people’s chariots."
+    },
+    {
+      "reference": "SNG 6:13",
+      "usable": false,
+      "page": 579,
+      "found": "Return, return, Shulammite! Return, return, that we may gaze at you. Lover Why do you desire to gaze at the Shulammite, as at the dance of Mahanaim?",
+      "edition": "Return, return, Shulammite! Return, return, that we may gaze at you. Why do you desire to gaze at the Shulammite, as at the dance of Mahanaim?"
+    },
+    {
+      "reference": "SNG 7:9",
+      "usable": false,
+      "page": 579,
+      "found": "Your mouth is like the best wine, that goes down smoothly for my beloved, gliding through the lips of those who are asleep. Beloved",
+      "edition": "Your mouth is like the best wine, that goes down smoothly for my beloved, gliding through the lips of those who are asleep."
+    },
+    {
+      "reference": "SNG 8:4",
+      "usable": false,
+      "page": 579,
+      "found": "I adjure you, daughters of Jerusalem, that you not stir up, nor awaken love, until it so desires. Friends",
+      "edition": "I adjure you, daughters of Jerusalem, that you not stir up, nor awaken love, until it so desires."
+    },
+    {
+      "reference": "SNG 8:5",
+      "usable": false,
+      "page": 579,
+      "found": "Who is this who comes up from the wilderness, leaning on her beloved? Beloved Under the apple tree I awakened you. There your mother conceived you. There she was in labor and bore you.",
+      "edition": "Who is this who comes up from the wilderness, leaning on her beloved? Under the apple tree I awakened you. There your mother conceived you. There she was in labor and bore you."
+    },
+    {
+      "reference": "SNG 8:7",
+      "usable": false,
+      "page": 580,
+      "found": "Many waters can’t quench love, neither can floods drown it. If a man would give all the wealth of his house for love, he would be utterly scorned. Brothers",
+      "edition": "Many waters can’t quench love, neither can floods drown it. If a man would give all the wealth of his house for love, he would be utterly scorned."
+    },
+    {
+      "reference": "SNG 8:9",
+      "usable": false,
+      "page": 580,
+      "found": "If she is a wall, we will build on her a turret of silver. If she is a door, we will enclose her with boards of cedar. Beloved",
+      "edition": "If she is a wall, we will build on her a turret of silver. If she is a door, we will enclose her with boards of cedar."
+    },
+    {
+      "reference": "SNG 8:12",
+      "usable": false,
+      "page": 580,
+      "found": "My own vineyard is before me. The thousand are for you, Solomon, two hundred for those who tend its fruit. Lover",
+      "edition": "My own vineyard is before me. The thousand are for you, Solomon, two hundred for those who tend its fruit."
+    },
+    {
+      "reference": "SNG 8:13",
+      "usable": false,
+      "page": 580,
+      "found": "You who dwell in the gardens, with friends in attendance, let me hear your voice! Beloved",
+      "edition": "You who dwell in the gardens, with friends in attendance, let me hear your voice!"
+    },
+    {
+      "reference": "REV 22:21",
+      "usable": false,
+      "page": 1060,
+      "found": "The grace of the Lord Jesus Christ be with all the saints. Amen. Glossary Abaddon 1058 Glossary crucify The following words used in the World English Bible (WEB) are not very common, either because they refer to ancient weights, measures, or money, or because they are in some way unique to the Bible. Abaddon Abaddon is Hebrew for destruction. Abba Abba is a Chaldee word for father, used in a respectful, affectionate, and familiar way, like papa, dad, or daddy. Often used in prayer to refer to our Father in Heaven. adultery Adultery is having sexual intercourse with someone besides your own husband or wife. In the Bible, the only legitimate sexual intercourse is between a man and a woman who are married to each other. alpha Alpha is the first letter of the Greek alphabet. It is sometimes used to mean the beginning or the first. amen Amen means “So be it” or “I believe it is certainly so.” angel “Angel” literally means “messenger” or “envoy,” and is usually used to refer to spiritual beings who normally are invisible to us, but can also appear as exceedingly strong creatures or as humans. Apollyon Apollyon is Greek for destroyer. apostle “Apostle” means a delegate, messenger, or one sent forth with orders. This term is applied in the New Testament in both a general sense connected with a ministry of establishing and strengthening church fellowships, as well as in a specific sense to “The 12 Apostles of the Lamb” (Revelation 21:14). The former category applies to a specific ministry that continues in the Church (Ephesians 4:11-13) and which includes many more than 12 people, while the latter refers to the apostles named in Matthew 10:2-4, except with Judas Iscariot replaced by Matthias (Acts 1:26). Armageddon See Har-magedon. assarion An assarion is a small Roman copper coin worth one tenth of a drachma, or about an hour’s wages for an agricultural laborer. aureus An aureus is a Roman gold coin, worth 25 silver denarii. An aureus weighed from 115 to 126.3 grains (7.45 to 8.18 grams). baptize Baptize means to immerse in, or wash with something, usually water. Baptism in the Holy Spirit, fire, the Body of Christ, and suffering are also mentioned in the New Testament, along with baptism in water. Baptism is not just to cleanse the body, but as an outward sign of an inward spiritual cleansing and commitment. Baptism is a sign of repentance, as practiced by John the Baptizer, and of faith in Jesus Christ, as practiced by Jesus’ disciples. bath A bath is a liquid measure of about",
+      "edition": "The grace of the Lord Jesus Christ be with all the saints. Amen."
+    }
+  ],
+  "pages_uncertain": 0,
+  "pages": 1065,
+  "found_books": [
+    [
+      "Genesis",
+      "GEN",
+      7
+    ],
+    [
+      "Exodus",
+      "EXO",
+      54
+    ],
+    [
+      "Leviticus",
+      "LEV",
+      93
+    ],
+    [
+      "Numbers",
+      "NUM",
+      122
+    ],
+    [
+      "Deuteronomy",
+      "DEU",
+      162
+    ],
+    [
+      "Joshua",
+      "JOS",
+      196
+    ],
+    [
+      "Judges",
+      "JDG",
+      219
+    ],
+    [
+      "Ruth",
+      "RUT",
+      242
+    ],
+    [
+      "The First Book of Samuel",
+      "1SA",
+      246
+    ],
+    [
+      "The Second Book of Samuel",
+      "2SA",
+      276
+    ],
+    [
+      "The First Book of Kings",
+      "1KI",
+      301
+    ],
+    [
+      "The Second Book of Kings",
+      "2KI",
+      330
+    ],
+    [
+      "The First Book of Chronicles",
+      "1CH",
+      357
+    ],
+    [
+      "The Second Book of Chronicles",
+      "2CH",
+      384
+    ],
+    [
+      "Ezra",
+      "EZR",
+      416
+    ],
+    [
+      "Nehemiah",
+      "NEH",
+      426
+    ],
+    [
+      "Esther",
+      "EST",
+      440
+    ],
+    [
+      "Job",
+      "JOB",
+      447
+    ],
+    [
+      "The Psalms",
+      "PSA",
+      475
+    ],
+    [
+      "The Proverbs",
+      "PRO",
+      545
+    ],
+    [
+      "Ecclesiastes",
+      "ECC",
+      569
+    ],
+    [
+      "The Song of Solomon",
+      "SNG",
+      576
+    ],
+    [
+      "Isaiah",
+      "ISA",
+      581
+    ],
+    [
+      "Jeremiah",
+      "JER",
+      634
+    ],
+    [
+      "Lamentations",
+      "LAM",
+      690
+    ],
+    [
+      "Ezekiel",
+      "EZK",
+      696
+    ],
+    [
+      "Daniel",
+      "DAN",
+      743
+    ],
+    [
+      "Hosea",
+      "HOS",
+      758
+    ],
+    [
+      "Joel",
+      "JOL",
+      767
+    ],
+    [
+      "Amos",
+      "AMO",
+      771
+    ],
+    [
+      "Obadiah",
+      "OBA",
+      778
+    ],
+    [
+      "Jonah",
+      "JON",
+      779
+    ],
+    [
+      "Micah",
+      "MIC",
+      781
+    ],
+    [
+      "Nahum",
+      "NAM",
+      786
+    ],
+    [
+      "Habakkuk",
+      "HAB",
+      788
+    ],
+    [
+      "Zephaniah",
+      "ZEP",
+      791
+    ],
+    [
+      "Haggai",
+      "HAG",
+      793
+    ],
+    [
+      "Zechariah",
+      "ZEC",
+      795
+    ],
+    [
+      "Malachi",
+      "MAL",
+      803
+    ],
+    [
+      "Matthew",
+      "MAT",
+      806
+    ],
+    [
+      "Mark",
+      "MRK",
+      839
+    ],
+    [
+      "Luke",
+      "LUK",
+      859
+    ],
+    [
+      "John",
+      "JHN",
+      893
+    ],
+    [
+      "The Acts of the Apostles",
+      "ACT",
+      919
+    ],
+    [
+      "Romans",
+      "ROM",
+      951
+    ],
+    [
+      "Paul’s First Letter to the Corinthians",
+      "1CO",
+      965
+    ],
+    [
+      "Paul’s Second Letter to the Corinthians",
+      "2CO",
+      978
+    ],
+    [
+      "Galatians",
+      "GAL",
+      987
+    ],
+    [
+      "Ephesians",
+      "EPH",
+      992
+    ],
+    [
+      "Philippians",
+      "PHP",
+      997
+    ],
+    [
+      "Colossians",
+      "COL",
+      1000
+    ],
+    [
+      "Paul’s First Letter to the Thessalonians",
+      "1TH",
+      1003
+    ],
+    [
+      "Paul’s Second Letter to the Thessalonians",
+      "2TH",
+      1006
+    ],
+    [
+      "Paul’s First Letter to Timothy",
+      "1TI",
+      1008
+    ],
+    [
+      "Paul’s Second Letter to Timothy",
+      "2TI",
+      1012
+    ],
+    [
+      "Paul’s Letter to Titus",
+      "TIT",
+      1015
+    ],
+    [
+      "Paul’s Letter to Philemon",
+      "PHM",
+      1017
+    ],
+    [
+      "The Letter to the Hebrews",
+      "HEB",
+      1018
+    ],
+    [
+      "The Letter from James",
+      "JAS",
+      1028
+    ],
+    [
+      "Peter’s First Letter",
+      "1PE",
+      1032
+    ],
+    [
+      "Peter’s Second Letter",
+      "2PE",
+      1036
+    ],
+    [
+      "John’s First Letter",
+      "1JN",
+      1039
+    ],
+    [
+      "John’s Second Letter",
+      "2JN",
+      1043
+    ],
+    [
+      "John’s Third Letter",
+      "3JN",
+      1044
+    ],
+    [
+      "The Letter from Jude",
+      "JUD",
+      1045
+    ],
+    [
+      "The Revelation to John",
+      "REV",
+      1046
+    ]
+  ],
+  "errors": [
+    "Psalms 119: the line “BETH” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 1: the line “Beloved” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 2: the line “Lover” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 4: the line “Beloved” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 5: the line “Friends” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 6: the line “Beloved” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 7: the line “Beloved” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Song of Songs 8: the line “Friends” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "Revelation 8 appears twice in the text.",
+    "Revelation 22:21 is far longer than any verse: the verses after it were not found."
+  ]
+}

@@ -1,10 +1,16 @@
 use tauri::State;
 
 use super::CommandResult;
+use crate::db::bible_words::{
+    self, LemmaEntry, LemmaLookup, LemmaQuery, LemmaResult, VerseWord, VerseWordsQuery,
+};
 use crate::db::bibles;
 use crate::scripture::concordance::{self, ConcordanceQuery, ConcordanceResult};
-use crate::scripture::parser::{DetectedReference, ReferenceParser};
+use crate::scripture::language::ReferenceLanguage;
+use crate::scripture::parser::DetectedReference;
+use crate::scripture::recognise::Recogniser;
 use crate::scripture::reference::{ScriptureRef, ScriptureRefDto};
+use crate::scripture::resolve;
 use crate::scripture::{
     self, BookInfo, ChapterText, GetChapter, GetPassage, PassageText, SearchResults,
     SearchScripture,
@@ -53,13 +59,80 @@ pub fn scripture_concordance(
     state.db(|conn| concordance::search(conn, &input))
 }
 
+/// The lemma entries a typed lemma or lexical number names in one annotated
+/// Bible (v0.21).
 #[tauri::command(async)]
-pub fn scripture_reference_parse(text: String) -> CommandResult<ScriptureRefDto> {
-    Ok(ReferenceParser::english().parse(&text)?.to_dto())
+pub fn scripture_lemma_entries(
+    state: State<'_, AppState>,
+    input: LemmaLookup,
+) -> CommandResult<Vec<LemmaEntry>> {
+    state.db(|conn| bible_words::entries(conn, &input))
 }
 
+/// Where a lemma or lexical number occurs in one annotated Bible (v0.21).
 #[tauri::command(async)]
-pub fn scripture_reference_detect(text: String) -> Vec<DetectedReference> {
+pub fn scripture_lemma_search(
+    state: State<'_, AppState>,
+    input: LemmaQuery,
+) -> CommandResult<LemmaResult> {
+    state.db(|conn| bible_words::search(conn, &input))
+}
+
+/// The annotated words of one verse (v0.21).
+#[tauri::command(async)]
+pub fn scripture_verse_words(
+    state: State<'_, AppState>,
+    input: VerseWordsQuery,
+) -> CommandResult<Vec<VerseWord>> {
+    state.db(|conn| bible_words::verse_words(conn, &input))
+}
+
+/// A typed reference in any of the 100 reference languages
+/// (`scripture::resolve`). The context: `translation_id`, the Bible the
+/// person is reading — its stored language tag decides first, and a Bible
+/// without one (or an unknown id) is simply no signal; then `language`, the
+/// interface language. Neither is a gate.
+#[tauri::command(async)]
+pub fn scripture_reference_parse(
+    state: State<'_, AppState>,
+    text: String,
+    language: Option<String>,
+    translation_id: Option<String>,
+) -> CommandResult<ScriptureRefDto> {
+    let interface = resolve::preferred(language.as_deref());
+    let id = translation_id.filter(|id| !id.is_empty());
+    // The language of the Bible being read, and every installed Bible's own
+    // verses beyond the canon (v0.18.3).
+    let read = state.db(|conn| {
+        let bible = id.as_deref().and_then(|id| bible_language(conn, id));
+        Ok(resolve::resolve_with(
+            &text,
+            resolve::Context::new(bible, interface),
+            &|book, chapter, verse| bibles::any_has_verse(conn, book, chapter, verse),
+        ))
+    });
+    // A database that cannot be read now is no signal, never a failed parse.
+    if let Ok(result) = read {
+        return Ok(result?.to_dto());
+    }
+    Ok(resolve::resolve(&text, resolve::Context::new(None, interface))?.to_dto())
+}
+
+/// The reference language of a Bible from its stored language tag only.
+fn bible_language(conn: &rusqlite::Connection, id: &str) -> Option<ReferenceLanguage> {
+    let translation = bibles::get(conn, id).ok()?;
+    resolve::language_of_tag(translation.language_code.as_deref())
+}
+
+/// The explicit references in a text, read as a source in `language` — the
+/// language of the text when the caller knows it (never the interface
+/// language); English without one, as before.
+#[tauri::command(async)]
+pub fn scripture_reference_detect(
+    text: String,
+    language: Option<String>,
+) -> Vec<DetectedReference> {
     let text: String = text.chars().take(MAX_DETECT_CHARS).collect();
-    ReferenceParser::english().detect(&text)
+    let source = resolve::preferred(language.as_deref()).unwrap_or(ReferenceLanguage::En);
+    Recogniser::for_source(source).detect(&text)
 }

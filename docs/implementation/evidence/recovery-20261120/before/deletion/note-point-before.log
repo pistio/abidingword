@@ -1,0 +1,726 @@
+
+> abiding-word@0.1.0 test
+> vitest run tests/ui/note-point-delete-save-barrier.test.tsx --maxWorkers=1
+
+
+ RUN  v4.1.11 /workspace/work/recovery-parent-delete-before
+
+ ❯ tests/ui/note-point-delete-save-barrier.test.tsx (6 tests | 6 failed) 15301ms
+     × settles pending finding writing before removal 1274ms
+     × settles pending legacy Teaching point writing before removal 833ms
+     × retains a finding with unsaved writing and permits editing after the failed removal 5763ms
+     × retains a legacy Teaching point with unsaved writing and permits editing after the failed removal 5834ms
+     × refuses new finding writing after settlement while removal is pending 773ms
+     × refuses new legacy Teaching point writing after settlement while removal is pending 821ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/ui/note-point-delete-save-barrier.test.tsx > notes and legacy points settle before deletion > settles pending finding writing before removal
+AssertionError: expected "findingDelete" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st findingDelete call:
+
+    Array [
+      "00000000-0000-4000-8000-000000000016",
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/ui/note-point-delete-save-barrier.test.tsx:53:33
+     51|     try {
+     52|       await view.confirm();
+     53|       expect(view.deletion).not.toHaveBeenCalled();
+       |                                 ^
+     54|     } finally {
+     55|       await act(async () => { pending.resolve(); await pending.promise…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  tests/ui/note-point-delete-save-barrier.test.tsx > notes and legacy points settle before deletion > settles pending legacy Teaching point writing before removal
+AssertionError: expected "teachingPointDelete" to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st teachingPointDelete call:
+
+    Array [
+      "00000000-0000-4000-8000-000000000034",
+    ]
+
+
+Number of calls: 1
+
+ ❯ tests/ui/note-point-delete-save-barrier.test.tsx:53:33
+     51|     try {
+     52|       await view.confirm();
+     53|       expect(view.deletion).not.toHaveBeenCalled();
+       |                                 ^
+     54|     } finally {
+     55|       await act(async () => { pending.resolve(); await pending.promise…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  tests/ui/note-point-delete-save-barrier.test.tsx > notes and legacy points settle before deletion > retains a finding with unsaved writing and permits editing after the failed removal
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text"[39m
+      [33mdata-testid[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-10 focus:rounded-aw focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"[39m
+        [33mhref[39m=[32m"#pane-study"[39m
+      [36m>[39m
+        [0mSkip to study[0m
+      [36m</a>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg px-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"-ml-4 flex items-center"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Abiding Word"[39m
+            [33mclass[39m=[32m"inline-flex"[39m
+            [33mrole[39m=[32m"img"[39m
+          [36m>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-light"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-dark"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color-on-dark.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ml-auto flex items-center gap-1"[39m
+        [36m>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"mr-2 hidden items-center gap-1 md:flex"[39m
+            [33mrole[39m=[32m"search"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"sr-only"[39m
+              [33mfor[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [0mSearch in[0m
+            [36m</label>[39m
+            [36m<select[39m
+              [33mclass[39m=[32m"h-10 aw-input px-2 text-[0.9375rem] text-text-strong"[39m
+              [33mid[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"scripture"[39m
+              [36m>[39m
+                [0mScripture[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"studies"[39m
+              [36m>[39m
+                [0mStudies[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"library"[39m
+              [36m>[39m
+                [0mLibrary[0m
+              [36m</option>[39m
+            [36m</select>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"relative flex items-center"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"sr-only"[39m
+                [33mfor[39m=[32m"app-search"[39m
+              [36m>[39m
+                [0mSearch Scripture[0m
+              [36m</label>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-search pointer-events-none absolute left-3 size-4 text-text-muted"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"11"[39m
+                  [33mcy[39m=[32m"11"[39m
+                  [33mr[39m=[32m"8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"h-10 w-60 aw-input pl-9 pr-3 text-[0.9375rem] text-text placeholder:text-text-muted disabled:cursor-not-allowed disabled:border-border-subtle"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mid[39m=[32m"app-search"[39m
+                [33mplaceholder[39m=[32m"Add a Bible first"[39m
+                [33mtype[39m=[32m"search"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</span>[39m
+          [36m</form>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Scripture pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow-[inset_0_-2px_0_var(--aw-text-strong)] disabled:opacity-50"[39m
+            [33mtitle[39m=[32m"Show Scripture pane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-panel-left lucide-sidebar size-5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3v18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Sources pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text"[39m
+      [33mdata-testid[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-10 focus:rounded-aw focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"[39m
+        [33mhref[39m=[32m"#pane-study"[39m
+      [36m>[39m
+        [0mSkip to study[0m
+      [36m</a>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg px-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"-ml-4 flex items-center"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Abiding Word"[39m
+            [33mclass[39m=[32m"inline-flex"[39m
+            [33mrole[39m=[32m"img"[39m
+          [36m>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-light"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-dark"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color-on-dark.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ml-auto flex items-center gap-1"[39m
+        [36m>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"mr-2 hidden items-center gap-1 md:flex"[39m
+            [33mrole[39m=[32m"search"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"sr-only"[39m
+              [33mfor[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [0mSearch in[0m
+            [36m</label>[39m
+            [36m<select[39m
+              [33mclass[39m=[32m"h-10 aw-input px-2 text-[0.9375rem] text-text-strong"[39m
+              [33mid[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"scripture"[39m
+              [36m>[39m
+                [0mScripture[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"studies"[39m
+              [36m>[39m
+                [0mStudies[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"library"[39m
+              [36m>[39m
+                [0mLibrary[0m
+              [36m</option>[39m
+            [36m</select>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"relative flex items-center"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"sr-only"[39m
+                [33mfor[39m=[32m"app-search"[39m
+              [36m>[39m
+                [0mSearch Scripture[0m
+              [36m</label>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-search pointer-events-none absolute left-3 size-4 text-text-muted"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"11"[39m
+                  [33mcy[39m=[32m"11"[39m
+                  [33mr[39m=[32m"8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"h-10 w-60 aw-input pl-9 pr-3 text-[0.9375rem] text-text placeholder:text-text-muted disabled:cursor-not-allowed disabled:border-border-subtle"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mid[39m=[32m"app-search"[39m
+                [33mplaceholder[39m=[32m"Add a Bible first"[39m
+                [33mtype[39m=[32m"search"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</span>[39m
+          [36m</form>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Scripture pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow-[inset_0_-2px_0_var(--aw-text-strong)] disabled:opacity-50"[39m
+            [33mtitle[39m=[32m"Show Scripture pane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-panel-left lucide-sidebar size-5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3v18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Sources pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow...
+ ❯ waitForWrapper ../daily-recovery/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../daily-recovery/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/ui/note-point-delete-save-barrier.test.tsx:65:25
+     63|     const view = await fixture(kind, async () => { if (fail) throw new…
+     64|     await view.confirm();
+     65|     expect(await screen.findByRole("alert")).toHaveTextContent(/could …
+       |                         ^
+     66|     expect(view.deletion).not.toHaveBeenCalled();
+     67|     expect(view.field).toHaveValue("Latest invented writing");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  tests/ui/note-point-delete-save-barrier.test.tsx > notes and legacy points settle before deletion > retains a legacy Teaching point with unsaved writing and permits editing after the failed removal
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text"[39m
+      [33mdata-testid[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-10 focus:rounded-aw focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"[39m
+        [33mhref[39m=[32m"#pane-study"[39m
+      [36m>[39m
+        [0mSkip to study[0m
+      [36m</a>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg px-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"-ml-4 flex items-center"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Abiding Word"[39m
+            [33mclass[39m=[32m"inline-flex"[39m
+            [33mrole[39m=[32m"img"[39m
+          [36m>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-light"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-dark"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color-on-dark.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ml-auto flex items-center gap-1"[39m
+        [36m>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"mr-2 hidden items-center gap-1 md:flex"[39m
+            [33mrole[39m=[32m"search"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"sr-only"[39m
+              [33mfor[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [0mSearch in[0m
+            [36m</label>[39m
+            [36m<select[39m
+              [33mclass[39m=[32m"h-10 aw-input px-2 text-[0.9375rem] text-text-strong"[39m
+              [33mid[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"scripture"[39m
+              [36m>[39m
+                [0mScripture[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"studies"[39m
+              [36m>[39m
+                [0mStudies[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"library"[39m
+              [36m>[39m
+                [0mLibrary[0m
+              [36m</option>[39m
+            [36m</select>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"relative flex items-center"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"sr-only"[39m
+                [33mfor[39m=[32m"app-search"[39m
+              [36m>[39m
+                [0mSearch Scripture[0m
+              [36m</label>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-search pointer-events-none absolute left-3 size-4 text-text-muted"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"11"[39m
+                  [33mcy[39m=[32m"11"[39m
+                  [33mr[39m=[32m"8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"h-10 w-60 aw-input pl-9 pr-3 text-[0.9375rem] text-text placeholder:text-text-muted disabled:cursor-not-allowed disabled:border-border-subtle"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mid[39m=[32m"app-search"[39m
+                [33mplaceholder[39m=[32m"Add a Bible first"[39m
+                [33mtype[39m=[32m"search"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</span>[39m
+          [36m</form>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Scripture pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow-[inset_0_-2px_0_var(--aw-text-strong)] disabled:opacity-50"[39m
+            [33mtitle[39m=[32m"Show Scripture pane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-panel-left lucide-sidebar size-5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3v18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Sources pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed inset-0 flex min-h-0 flex-col overflow-hidden bg-bg text-text"[39m
+      [33mdata-testid[39m=[32m"app-shell"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-2 focus:z-10 focus:rounded-aw focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"[39m
+        [33mhref[39m=[32m"#pane-study"[39m
+      [36m>[39m
+        [0mSkip to study[0m
+      [36m</a>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"flex h-14 shrink-0 items-center gap-3 border-b border-border bg-bg px-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"-ml-4 flex items-center"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33maria-label[39m=[32m"Abiding Word"[39m
+            [33mclass[39m=[32m"inline-flex"[39m
+            [33mrole[39m=[32m"img"[39m
+          [36m>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-light"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+            [36m<img[39m
+              [33malt[39m=[32m""[39m
+              [33mclass[39m=[32m"aw-on-dark"[39m
+              [33mheight[39m=[32m"44"[39m
+              [33msrc[39m=[32m"/src/design-system/assets/abiding-word-horizontal-compact-color-on-dark.svg"[39m
+              [33mstyle[39m=[32m"height: 44px;"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"ml-auto flex items-center gap-1"[39m
+        [36m>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"mr-2 hidden items-center gap-1 md:flex"[39m
+            [33mrole[39m=[32m"search"[39m
+          [36m>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"sr-only"[39m
+              [33mfor[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [0mSearch in[0m
+            [36m</label>[39m
+            [36m<select[39m
+              [33mclass[39m=[32m"h-10 aw-input px-2 text-[0.9375rem] text-text-strong"[39m
+              [33mid[39m=[32m"app-search-scope"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"scripture"[39m
+              [36m>[39m
+                [0mScripture[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"studies"[39m
+              [36m>[39m
+                [0mStudies[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"library"[39m
+              [36m>[39m
+                [0mLibrary[0m
+              [36m</option>[39m
+            [36m</select>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"relative flex items-center"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"sr-only"[39m
+                [33mfor[39m=[32m"app-search"[39m
+              [36m>[39m
+                [0mSearch Scripture[0m
+              [36m</label>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-search pointer-events-none absolute left-3 size-4 text-text-muted"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"11"[39m
+                  [33mcy[39m=[32m"11"[39m
+                  [33mr[39m=[32m"8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"h-10 w-60 aw-input pl-9 pr-3 text-[0.9375rem] text-text placeholder:text-text-muted disabled:cursor-not-allowed disabled:border-border-subtle"[39m
+                [33mdisabled[39m=[32m""[39m
+                [33mid[39m=[32m"app-search"[39m
+                [33mplaceholder[39m=[32m"Add a Bible first"[39m
+                [33mtype[39m=[32m"search"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</span>[39m
+          [36m</form>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Scripture pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow-[inset_0_-2px_0_var(--aw-text-strong)] disabled:opacity-50"[39m
+            [33mtitle[39m=[32m"Show Scripture pane"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-panel-left lucide-sidebar size-5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3v18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"Show Sources pane"[39m
+            [33maria-pressed[39m=[32m"true"[39m
+            [33mclass[39m=[32m"inline-flex size-10 items-center justify-center rounded-aw text-text-strong hover:bg-hover aria-pressed:bg-selected aria-pressed:shadow...
+ ❯ waitForWrapper ../daily-recovery/node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ ../daily-recovery/node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ tests/ui/note-point-delete-save-barrier.test.tsx:65:25
+     63|     const view = await fixture(kind, async () => { if (fail) throw new…
+     64|     await view.confirm();
+     65|     expect(await screen.findByRole("alert")).toHaveTextContent(/could …
+       |                         ^
+     66|     expect(view.deletion).not.toHaveBeenCalled();
+     67|     expect(view.field).toHaveValue("Latest invented writing");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  tests/ui/note-point-delete-save-barrier.test.tsx > notes and legacy points settle before deletion > refuses new finding writing after settlement while removal is pending
+ FAIL  tests/ui/note-point-delete-save-barrier.test.tsx > notes and legacy points settle before deletion > refuses new legacy Teaching point writing after settlement while removal is pending
+Error: expect(element).toHaveValue(Latest invented writing)
+
+Expected the element to have value:
+  Latest invented writing
+Received:
+  Latest invented writinglate draft
+ ❯ tests/ui/note-point-delete-save-barrier.test.tsx:83:26
+     81|       await view.user.click(view.field);
+     82|       await view.user.keyboard("late draft");
+     83|       expect(view.field).toHaveValue("Latest invented writing");
+       |                          ^
+     84|     } finally {
+     85|       await act(async () => { removing.resolve(); await removing.promi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  6 failed (6)
+   Start at  00:21:33
+   Duration  19.72s (transform 2.57s, setup 1.37s, import 2.41s, tests 15.30s, environment 438ms)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice

@@ -1,0 +1,25 @@
+{
+  "sourceSha": "607e965d9c59a1dd93d23aaf95961944c11211a7",
+  "cleanBefore": true,
+  "startedUTC": "2026-11-21T00:36:14.167182+00:00",
+  "command": [
+    "node",
+    "tests/screenshots/parent-deletion.mjs",
+    "work/recovery-verification/parent-deletion/final-browser"
+  ],
+  "platform": "Linux Chromium with real React App and invented memory APIs; not native Windows/SQLite acceptance",
+  "scriptSha256": "96eb78004c549e803604e141304128b31b8e66ffb242973c172e7b4fae5a7f15",
+  "exitCode": 0,
+  "finishedUTC": "2026-11-21T00:36:18.525112+00:00",
+  "durationSeconds": 4.36,
+  "headUnchanged": true,
+  "cleanAfter": true,
+  "log": "work/recovery-verification/parent-deletion/final-browser.log",
+  "logSha256": "21408e6326210d13486d589522cfef9a3fd83d73693a523a0eea3962bb8aef4c",
+  "artifactsSha256": {
+    "work/recovery-verification/parent-deletion/final-browser/failure-released.png": "7819e1cb46ccc5c2cd54c764c16f211bb14baea9bfcda00a8d87d7e679dce8e9",
+    "work/recovery-verification/parent-deletion/final-browser/pending-delete.png": "125608e36d3c58d6d63cc8c61ca6e776a9eac7189ada6808d654a3d3d445f7dd",
+    "work/recovery-verification/parent-deletion/final-browser/results.json": "21408e6326210d13486d589522cfef9a3fd83d73693a523a0eea3962bb8aef4c",
+    "work/recovery-verification/parent-deletion/final-browser/success-usable.png": "433090c48e517b5234a7a77ab9b1142c363620942dd92e2df83a3979fb3fb42e"
+  }
+}

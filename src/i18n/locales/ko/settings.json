@@ -5,15 +5,19 @@
     "appearance": "화면",
     "language": "언어",
     "bibleTexts": "성경 번역본",
-    "templates": "성경공부 틀",
-    "about": "이 설치 정보",
+    "templates": "공부·가르침 틀",
+    "about": "설치 정보",
     "planned": "향후 버전에서 제공 예정",
     "assistant": "AI 도우미",
-    "updates": "업데이트"
+    "updates": "업데이트",
+    "data": "데이터와 백업",
+    "sources": "자료"
   },
   "language": {
     "label": "화면 언어",
-    "hint": "메뉴, 버튼, 메시지의 언어를 바꿉니다. 성경공부, 메모, 자료실, 성경 본문은 그대로 유지됩니다."
+    "hint": "메뉴, 버튼, 메시지의 언어를 바꿉니다. 성경공부, 메모, 자료실, 성경 본문은 그대로 유지됩니다.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "언어 변경"
   },
   "theme": {
     "legend": "테마",
@@ -35,7 +39,7 @@
     "logFiles": "로그 파일",
     "schema": "데이터베이스 스키마",
     "schemaVersion": "버전 {{version}}",
-    "backup": "모든 성경공부는 이 컴퓨터의 데이터 폴더에 저장됩니다. 백업하려면 Abiding Word를 닫은 상태에서 폴더 전체를 복사하세요."
+    "backup": "모든 작업은 이 컴퓨터의 데이터 폴더에 저장됩니다. 사본을 만들려면 데이터와 백업에서 ‘모두 백업…’을 사용하세요."
   },
   "planned": {
     "sync": "동기화",
@@ -57,7 +61,12 @@
       "xai": "xAI (Grok)",
       "perplexity": "Perplexity",
       "deepseek": "DeepSeek",
-      "qwen": "Qwen (Alibaba Cloud)"
+      "qwen": "Qwen (Alibaba Cloud)",
+      "mistral": "Mistral (Mistral, Codestral)",
+      "cohere": "Cohere (Command)",
+      "moonshot": "Moonshot AI (Kimi)",
+      "zai": "Z.ai (GLM)",
+      "minimax": "MiniMax"
     },
     "remote": "도움을 요청하면 고르신 글이 인터넷으로 이 서비스에 전송됩니다.",
     "local": "이 컴퓨터에서 실행되므로 글이 밖으로 나가지 않습니다.",
@@ -114,7 +123,7 @@
       "title": "키는 어떻게 받나요?",
       "whatA": "키는 {{service}}에서 받는 긴 코드입니다. Abiding Word가 그곳의 내 계정을 쓸 수 있게 해 줍니다. 비밀번호처럼 다루세요.",
       "open": "{{service}} 키 페이지 열기",
-      "costA": "대부분의 서비스는 사용한 만큼 조금 요금을 받으며, 키가 작동하기 전에 결제 정보나 선불 충전을 요구할 수 있습니다. 결제는 Abiding Word가 아니라 그 웹사이트에서 합니다.",
+      "costA": "대부분의 서비스는 사용량에 따라 요금을 청구하며, 키를 사용하려면 결제 정보를 입력하거나 미리 충전해야 할 수 있습니다. 결제는 Abiding Word가 아니라 해당 웹사이트에서 합니다.",
       "step1": "아래에서 {{service}} 페이지를 여세요.",
       "step2": "로그인하세요. 계정이 없으면 새로 만드세요.",
       "step3": "새 키를 만드세요(‘API 키’라고 불릴 수 있습니다).",
@@ -122,7 +131,8 @@
       "step5": "Abiding Word로 돌아오세요.",
       "step6": "위의 ‘키’ 칸에 붙여 넣으세요.",
       "step7": "‘키 저장’을 누르세요.",
-      "step8": "‘연결 확인’을 누르세요."
+      "step8": "‘연결 확인’을 누르세요.",
+      "prices": "{{service}} 가격표 열기"
     },
     "modelHintEmpty": "{{service}}에 표시된 그대로 모델 이름을 적으세요.",
     "advanced": "고급",
@@ -159,7 +169,7 @@
     },
     "imageKey": "이미지용 OpenAI 키",
     "imageKeyMissing": "아직 이미지용 OpenAI 키가 없습니다. 아래에 붙여 넣고 ‘키 저장’을 누르세요.",
-    "imagesLeave": "글쓰기 서비스와 달리, 이미지 설명은 인터넷으로 OpenAI에 전송됩니다.",
+    "imagesLeave": "글쓰기 도우미가 이 컴퓨터에서 실행되더라도 이미지 설명은 인터넷으로 OpenAI에 전송됩니다.",
     "searchShort": {
       "brave": "간단한 일반 웹 검색",
       "tavily": "AI 도우미를 위해 만든 검색",
@@ -179,7 +189,7 @@
     "searchSetup": {
       "title": "{{service}}는 어떻게 설정하나요?",
       "step1": "아래의 {{service}} 페이지를 열고 로그인하거나 계정을 만드세요.",
-      "step2": "그곳에서 키(“API key”라고 부를 수 있음)를 만들고 복사하세요.",
+      "step2": "그곳에서 키(‘API 키’라고 불릴 수 있습니다)를 만들고 복사하세요.",
       "step3": "검색 키 칸에 붙여 넣고 ‘키 저장’을 누르세요.",
       "step4": "‘검색 확인’을 누르세요.",
       "open": "{{service}} 페이지 열기",
@@ -192,7 +202,8 @@
     "searchWhy": {
       "noKey": "검색을 확인하려면 먼저 키를 붙여 넣고 ‘키 저장’을 누르세요.",
       "noAddress": "검색을 확인하려면 먼저 SearXNG 주소를 입력하세요."
-    }
+    },
+    "pricesLink": "{{service}} 가격 보기"
   },
   "jumpTo": "항목으로 이동",
   "summary": {
@@ -206,20 +217,115 @@
     "templates": "성경공부와 가르침의 시작 구성",
     "assistantOff": "꺼짐",
     "assistantOn": "켜짐 · {{service}}",
-    "about": "버전 {{version}} · 데이터 저장 위치"
+    "about": "버전 {{version}} · 데이터 저장 위치",
+    "data": "작업 내보내기, 가져오기, 백업",
+    "sources": "책과 메모: 찾기, 정리, 보관"
   },
   "help": {
     "about": "자세히: {{topic}}"
   },
   "background": {
     "legend": "배경",
-    "help": "눈부심이 적은 차분한 배경으로, 오래 읽고 쓰기에 알맞습니다. 어느 배경에서도 글자가 잘 보입니다. 밝은 테마에 적용됩니다.",
-    "lightOnly": "배경은 밝은 테마에 적용됩니다.",
+    "help": "눈부심이 적은 차분한 배경으로, 오래 읽고 쓰기에 알맞습니다. 어느 배경에서도 글자가 잘 보입니다. 배경마다 밝은 버전과 어두운 버전이 있어 테마를 따라갑니다.",
     "parchment": "양피지",
     "cream": "크림",
     "sage": "세이지",
     "stone": "돌빛",
     "mist": "안개",
     "clear": "무채색"
+  },
+  "data": {
+    "projects": "성경공부 모음",
+    "projectsHint": "성경공부 모음 파일에는 한 모음의 성경공부와 성경 가르침이 기록, 가르침 자료, 프레젠테이션과 함께 담깁니다. 자료실의 책, 성경 본문, 교회 서식은 이 컴퓨터에 그대로 있고, 파일에는 사용한 항목의 이름만 들어갑니다.",
+    "exportLabel": "내보낼 성경공부 모음",
+    "export": "성경공부 모음 내보내기…",
+    "import": "성경공부 모음 가져오기…",
+    "projectFilter": "Abiding Word 성경공부 모음",
+    "backupFilter": "Abiding Word 백업",
+    "openProject": "가져올 성경공부 모음 파일 선택",
+    "openBackup": "복원할 백업 선택",
+    "exported": "‘{{title}}’을(를) {{path}}에 저장했습니다.",
+    "namedOnly": "이 컴퓨터에 남아 있으므로 파일에 이름만 있고 포함되지 않은 항목:",
+    "missingSources": "자료실",
+    "missingTemplates": "교회 서식",
+    "missingBibles": "성경 번역본",
+    "missingImages": "파일에 없는 이미지: {{n}}",
+    "missingHeading": "이 컴퓨터에 없는 항목",
+    "missingHint": "이 성경공부 모음은 아래 항목을 사용하지만 이 컴퓨터에는 없습니다. 기록의 출처는 그대로 남습니다. 제목, 저자, 인용한 문장, 쪽수가 보존되며 ‘이 컴퓨터에 없음’으로 표시됩니다. 프레젠테이션은 기본 디자인을 사용하며 성경 본문을 표시하지 않습니다.",
+    "importPreview": "가져올 성경공부 모음",
+    "savedOn": "{{date}}에 Abiding Word {{version}}(으)로 저장됨",
+    "importAs": "새 성경공부 모음 ‘{{title}}’(으)로 추가됩니다. 이 컴퓨터에 있는 것은 아무것도 바뀌지 않습니다.",
+    "importConfirm": "가져오기",
+    "imported": "‘{{title}}’을(를) 추가했습니다. 성경공부 모음 목록에서 볼 수 있습니다.",
+    "leftOut": "읽을 수 없어 빠진 파일의 일부: {{n}}",
+    "backup": "백업",
+    "backupHint": "백업에는 모든 것이 담깁니다. 모든 성경공부 모음, 자료실 파일, 추가한 성경 번역본, 틀, 설정이 포함됩니다. 다른 사람과 나누기 위한 것이 아니라 본인만을 위한 사본입니다. 저작권상 다른 사람에게 줄 수 없는 책과 성경이 들어 있을 수 있습니다. API 키는 포함되지 않으므로 다른 컴퓨터에서 복원한 뒤 다시 입력하세요.",
+    "backupCreate": "모두 백업…",
+    "backedUp": "백업을 {{path}}에 저장했습니다({{size}}MB).",
+    "restore": "백업에서 복원…",
+    "restorePreview": "복원할 백업",
+    "restoreWarning": "복원하면 현재 작업과 설정이 이 백업의 내용으로 바뀝니다. Abiding Word는 먼저 현재 데이터베이스의 복구용 사본을 만들고 검증합니다. 내용이 다른 자료실 파일은 따로 보관합니다. 복원 후 계속하려면 Abiding Word를 다시 불러오세요.",
+    "restoreConfirm": "모두 이 백업으로 바꾸기",
+    "restored": "백업을 복원했습니다.",
+    "safetyCopy": "이전 데이터베이스의 복구용 사본은 {{path}}에 보관되어 있습니다.",
+    "setAside": "그 사본 옆에 따로 보관한 자료실 파일: {{n}}",
+    "restoredContinue": "Abiding Word 다시 불러오기",
+    "working": "진행 중…",
+    "workingLong": "자료실이 크면 시간이 걸릴 수 있습니다.",
+    "size": "{{size}}MB",
+    "count": {
+      "studies": "성경공부: {{n}}",
+      "teachings": "성경 가르침: {{n}}",
+      "presentations": "프레젠테이션: {{n}}",
+      "notes": "기록: {{n}}",
+      "images": "이미지: {{n}}",
+      "projects": "성경공부 모음: {{n}}",
+      "sources": "자료실: {{n}}",
+      "bibles": "추가한 성경 번역본: {{n}}"
+    },
+    "sample": "예시 성경공부 모음",
+    "sampleHint": "‘Example: Abiding in Christ — John 15:1–11’은 성경공부 하나와, 그것이 설교, 소그룹 성경공부, 참여형 공과로 이어지는 과정을 보여 줍니다. 내용은 영어로 되어 있습니다. 요청할 때만 추가되고 인터넷 없이도 사용할 수 있으며, 자유롭게 고치거나 삭제할 수 있습니다.",
+    "sampleAdd": "예시 성경공부 모음 추가",
+    "sampleAdded": "‘{{title}}’을(를) 추가했습니다. 성경공부 모음 목록에서 볼 수 있습니다.",
+    "sampleThere": "‘{{title}}’이(가) 이미 있어 아무것도 추가하지 않았습니다.",
+    "citationsKept": "책이 이 컴퓨터에 없지만 보존된 출처: {{n}}",
+    "citationsReconnected": "자료실에 있는 같은 책과 연결된 출처: {{n}}",
+    "dailyTitle": "자동 복원 지점",
+    "dailyHint": "Abiding Word는 실행 중에 일일 데이터베이스 사본을 만들고 검증된 사본을 최대 7개 보관합니다. 작성한 글과 데이터베이스 설정은 포함되지만 가져온 자료 파일, 성경 파일, 이미지는 포함되지 않습니다. 전체 백업은 ‘모두 백업…’으로 만들어 주세요.",
+    "dailyShow": "복원 지점 보기",
+    "dailyRefresh": "복원 지점 새로고침",
+    "dailyEmpty": "아직 자동 복원 지점이 없습니다.",
+    "dailyWhen": "{{date}} · {{size}}MB · 데이터베이스 버전 {{version}}",
+    "dailyReady": "복원 가능",
+    "dailyUnavailable": "복원 불가: 손상되었거나 호환되지 않는 버전",
+    "dailyChoose": "복원 검토…",
+    "dailyPreview": "복원할 지점 확인",
+    "dailyWarning": "이 지점을 복원하면 현재 데이터베이스의 글과 설정이 해당 시점의 내용으로 바뀝니다. 가져온 자료 파일, 성경 파일, 이미지는 변경되지 않으며 없어진 파일은 복구되지 않습니다. 따라서 과거 출처가 더 이상 없는 파일을 가리킬 수 있습니다. Abiding Word는 먼저 현재 데이터베이스의 복구용 사본을 만들고 검증합니다. 파일도 함께 복원하려면 ‘백업에서 복원…’을 이용하세요.",
+    "dailyConfirm": "이 데이터베이스 사본 복원",
+    "dailyRestored": "데이터베이스를 복원했습니다. 가져온 파일은 변경되지 않았습니다.",
+    "restoreReloadHint": "계속하려면 Abiding Word를 다시 불러오세요. 복원된 작업을 불러올 때까지 편집할 수 없습니다.",
+    "restoreInProgress": "현재 작업을 저장하고 복원하는 중…",
+    "restoreInProgressHint": "복원이 끝날 때까지 Abiding Word를 열어 두세요.",
+    "restoreAlreadyRunning": "이미 복원이 진행 중입니다. 완료될 때까지 기다려 주세요.",
+    "restoreReloadRequired": "데이터베이스를 복원했습니다. 계속하려면 Abiding Word를 다시 불러오세요.",
+    "restoreSaveFailed": "일부 변경 사항을 저장하지 못했습니다. 현재 작성한 내용은 그대로 유지됩니다. 저장 오류를 해결한 뒤 다시 시도해 주세요.",
+    "restoreNeedsAttention": "복원 상태를 확인해 주세요",
+    "restoreFailureReloadHint": "이전 작업을 완전히 복구하지 못해 편집이 중지된 상태입니다. 아래에 표시된 복구용 사본을 보관하고 Abiding Word를 다시 불러온 뒤 작업을 계속할 수 있는지 확인해 주세요."
+  },
+  "trash": {
+    "danger": "주의 영역",
+    "title": "휴지통",
+    "move": "휴지통으로 이동",
+    "restore": "복원",
+    "permanent": "영구 삭제",
+    "confirm": "“{{title}}”을(를) 휴지통으로 이동할까요?",
+    "permanentConfirm": "“{{title}}”을(를) 영구 삭제할까요? 되돌릴 수 없습니다.",
+    "typeTitle": "확인하려면 정확한 제목을 입력하세요",
+    "empty": "휴지통이 비어 있습니다.",
+    "hint": "성경공부 모음을 복원하면 내용도 복원됩니다. 개별 삭제된 성경공부는 성경공부 모음 복원 후 표시됩니다.",
+    "studyHint": "성경공부와 자료는 설정 → 데이터와 백업 → 휴지통에서 복원할 수 있습니다. 연결된 가르침은 저장된 기록과 인용을 유지하며 성경공부 모음에 남지만 연결은 해제됩니다. 복원해도 자동으로 다시 연결되지 않습니다.",
+    "projectHint": "성경공부 모음과 성경공부 및 가르침은 함께 숨겨지며 복원할 수 있습니다. 영구 삭제하면 관련 내용이 모두 제거됩니다.",
+    "actions": "“{{title}}” 작업",
+    "moved": "“{{title}}”을(를) 휴지통으로 옮겼습니다."
   }
 }

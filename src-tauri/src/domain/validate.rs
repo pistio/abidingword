@@ -62,6 +62,26 @@ pub fn block_content(value: &str) -> AppResult<()> {
     Ok(())
 }
 
+/// The stable key of a template part or starting step (v0.18.7): at most 64
+/// lowercase letters, digits and hyphens ("key-words", "own-k3x9"). Empty
+/// means none.
+pub fn part_key(key: Option<&str>) -> AppResult<Option<String>> {
+    match key.map(str::trim).filter(|k| !k.is_empty()) {
+        None => Ok(None),
+        Some(k)
+            if k.len() <= 64
+                && k.bytes()
+                    .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-') =>
+        {
+            Ok(Some(k.to_owned()))
+        }
+        Some(other) => Err(AppError::InvalidInput(
+            UserMessage::new("templates.invalidKey", "This part's key is not valid.")
+                .with("value", other),
+        )),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

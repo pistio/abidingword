@@ -1,10 +1,11 @@
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import i18n from "@/i18n";
 import { ApiError } from "@/lib/api";
 import type { AssistReply } from "@/types/teaching";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { openTeachingOptions } from "../support/studyActions";
 
 // Teaching Preparation (v0.16): written by the person; the assistant only
 // suggests, and nothing changes without an explicit choice. All text is invented.
@@ -33,19 +34,24 @@ async function openTeaching(user: User) {
   await user.click(within(studyPane()).getByRole("button", { name: "Bible Teaching" }));
 }
 
-async function startSermon(user: User) {
+/** Opens a sermon written in the earlier editor, so these tests keep covering that canvas. */
+async function startSermon(user: User, api: MemoryApi) {
+  const studyId = api.state.studies[0]!.id;
+  if (!api.state.teaching.preparations.some((p) => p.title === "Sermon · Abiding")) {
+    await api.teachingCreate({ studyId, title: "Sermon · Abiding", kind: "sermon" });
+  }
   await openTeaching(user);
-  await user.click(await within(studyPane()).findByRole("button", { name: "Start" }));
   return within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
 }
 
 const field = (scope: HTMLElement, name: string | RegExp) => within(scope).getByRole("textbox", { name });
 
-/** Opens "About this teaching" (kind, audience, purpose, what the whole teaching uses). */
+/** Opens Bible Teaching information (v0.19: kind, audience, purpose, what the whole teaching uses) and returns the panel. */
 async function openAbout(user: User, article: HTMLElement) {
-  const toggle = within(article).getByRole("button", { name: /^About this teaching/ });
+  await openTeachingOptions(user);
+  const toggle = within(article).getByRole("button", { name: "Bible Teaching information" });
   if (toggle.getAttribute("aria-expanded") !== "true") await user.click(toggle);
-  return within(article).getByRole("region", { name: "About this teaching" });
+  return screen.findByRole("dialog", { name: "Bible Teaching information" });
 }
 
 /** Waits for the debounced save of every field. */
@@ -101,29 +107,90 @@ describe("teaching preparation", () => {
     await openTeaching(user);
     expect(await within(studyPane()).findByRole("heading", { name: "Prepare a teaching from this study" })).toBeInTheDocument();
     expect(api.state.teaching.preparations).toHaveLength(0);
+    await user.click(within(studyPane()).getByRole("radio", { name: "Sermon / Talk" }));
     await user.click(within(studyPane()).getByRole("button", { name: "Start" }));
     const article = await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
     expect(prep(api)).toMatchObject({ studyId, title: "Sermon · Abiding", kind: "sermon", centralMessage: null, introduction: "" });
-    // Nothing is filled in.
-    expect(field(article, "Central message")).toHaveValue("");
-    expect(within(article).getByText(/No points yet/)).toBeInTheDocument();
+    // The sermon template starts with introduction, main part and conclusion. Nothing is filled in.
+    expect(field(article, "Introduction")).toHaveValue("");
+    expect(field(article, "Main part")).toHaveValue("");
+    expect(field(article, "Conclusion")).toHaveValue("");
 
-    // Just created: the details are open once, to be filled in.
-    expect(within(article).getByRole("button", { name: /^About this teaching/ })).toHaveAttribute("aria-expanded", "true");
-    await openAbout(user, article);
-    await user.type(field(article, "Who it is for"), "Families");
-    await user.type(field(article, "Central message"), "Fruit comes from abiding.");
+    // Its information is out of the way (v0.19), opened only when asked for, and saved with Save.
+    expect(screen.queryByRole("dialog")).toBeNull();
+    const info = await openAbout(user, article);
+    await user.type(within(info).getByRole("textbox", { name: "Who it is for" }), "Families");
+    await user.click(within(info).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     await user.type(field(article, "Introduction"), "Have you ever pruned a rose?");
     await settle();
-    expect(prep(api)).toMatchObject({ audience: "Families", centralMessage: "Fruit comes from abiding.", introduction: "Have you ever pruned a rose?" });
+    expect(prep(api)).toMatchObject({ audience: "Families", introduction: "Have you ever pruned a rose?" });
     // With the assistant off there is no assistant anywhere.
     expect(within(article).queryByRole("button", { name: /^AI Help with/ })).toBeNull();
+  });
+
+  it("keeps fresh Teaching writing focused and saves its exact payload after information Save", async () => {
+    const { api } = await setup();
+    const { user } = await renderApp(api);
+    await openTeaching(user);
+    await user.click(within(studyPane()).getByRole("radio", { name: "Sermon / Talk" }));
+    await user.click(within(studyPane()).getByRole("button", { name: "Start" }));
+    const article = await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
+    const introduction = field(article, "Introduction") as HTMLTextAreaElement;
+    const introductionId = prep(api).blocks!.find((block) => block.role === "introduction")!.id;
+    const saveWriting = vi.spyOn(api, "teachingBlockUpdate");
+    const saveInformation = vi.spyOn(api, "teachingUpdate");
+    const info = await openAbout(user, article);
+    await user.type(within(info).getByRole("textbox", { name: "Who it is for" }), "Families");
+    const pending = new Map<number, FrameRequestCallback>();
+    let sequence = 0;
+    const request = vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      pending.set(++sequence, callback);
+      return sequence;
+    });
+    const cancel = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((handle) => { pending.delete(handle); });
+    try {
+      await user.click(within(info).getByRole("button", { name: "Save" }));
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+      await user.click(introduction);
+      const focusedBeforeFrame = document.activeElement === introduction;
+      act(() => {
+        const callbacks = [...pending.values()];
+        pending.clear();
+        for (const callback of callbacks) callback(performance.now());
+      });
+      const focusedAfterFrame = document.activeElement === introduction;
+      const text = "Have you ever pruned a rose?";
+      await user.keyboard(text);
+      await act(async () => { fireEvent.blur(introduction); });
+      expect({
+        focusedBeforeFrame,
+        focusedAfterFrame,
+        visibleWriting: introduction.value,
+        savedWriting: prep(api).introduction,
+        writingPayloads: saveWriting.mock.calls.map(([input]) => ({ id: input.id, body: input.body })),
+        savedAudience: prep(api).audience,
+        informationSaves: saveInformation.mock.calls.length,
+      }).toEqual({
+        focusedBeforeFrame: true,
+        focusedAfterFrame: true,
+        visibleWriting: text,
+        savedWriting: text,
+        writingPayloads: [{ id: introductionId, body: text }],
+        savedAudience: "Families",
+        informationSaves: 1,
+      });
+    } finally {
+      pending.clear();
+      request.mockRestore();
+      cancel.mockRestore();
+    }
   });
 
   it("adds, orders and removes main points from the keyboard", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.click(within(article).getByRole("button", { name: "Add a point" }));
     await waitFor(() => expect(field(article, "Title of point 1")).toHaveFocus());
     await user.keyboard("The vine");
@@ -136,7 +203,7 @@ describe("teaching preparation", () => {
     within(article).getByRole("button", { name: "Move “The branches” up" }).focus();
     await user.keyboard("{Enter}");
     await waitFor(() => expect(prep(api).points.map((p) => p.title)).toEqual(["The branches", "The vine"]));
-    expect(within(article).getByText("Point moved to place 1.")).toBeInTheDocument();
+    expect(within(article).getByText("Point moved to position 1.")).toBeInTheDocument();
     await waitFor(() => expect(within(article).getByRole("button", { name: "Move “The branches” up" })).toHaveFocus());
 
     // A point with writing asks first; Keep is the safe default.
@@ -149,7 +216,7 @@ describe("teaching preparation", () => {
   it("uses study findings as live links and never takes them from the study", async () => {
     const { api, findingId } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     const about = await openAbout(user, article);
     await user.click(within(about).getByRole("button", { name: "Use something from your study" }));
     await user.selectOptions(within(about).getByRole("combobox", { name: "From your study" }), findingId);
@@ -162,18 +229,17 @@ describe("teaching preparation", () => {
     await api.findingUpdate({ id: findingId, content: "Branches stay." });
     await user.click(within(studyPane()).getByRole("button", { name: "Bible Study" }));
     await user.click(within(studyPane()).getByRole("button", { name: "Bible Teaching" }));
-    expect(await within(studyPane()).findByText("Branches stay.")).toBeInTheDocument();
-
-    await openAbout(user, within(studyPane()).getByRole("article", { name: "Sermon · Abiding" }));
-    await user.click(within(studyPane()).getByRole("button", { name: "Stop using this here" }));
-    await waitFor(() => expect(within(studyPane()).queryByText("Branches stay.")).toBeNull());
+    const again = await openAbout(user, await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" }));
+    expect(await within(again).findByText("Branches stay.")).toBeInTheDocument();
+    await user.click(within(again).getByRole("button", { name: "Stop using this here" }));
+    await waitFor(() => expect(within(again).queryByText("Branches stay.")).toBeNull());
     expect(api.state.findings.map((f) => f.content)).toEqual(["Branches stay."]);
   });
 
   it("names Scripture in the teaching without adding it to the study", async () => {
     const { api, studyId } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     const about = await openAbout(user, article);
     await user.click(within(about).getByRole("button", { name: "Add a passage" }));
     await user.type(within(about).getByRole("textbox", { name: "Passage for the whole teaching" }), "Galatians 5:22-23{Enter}");
@@ -187,22 +253,22 @@ describe("teaching preparation", () => {
     const studyId = api.state.studies[0]!.id;
     const studyBefore = JSON.stringify({ study: api.state.studies, findings: api.state.findings, passages: await api.studyPassageList(studyId) });
     const { user } = await renderApp(api);
-    const sermon = await startSermon(user);
+    const sermon = await startSermon(user, api);
     await user.type(field(sermon, "Introduction"), "Have you pruned a rose?");
     await settle();
-    // "About this teaching" folded away: the way to another teaching is still in sight, with no picker yet.
-    const about = within(sermon).getByRole("button", { name: /^About this teaching/ });
-    if (about.getAttribute("aria-expanded") === "true") await user.click(about);
+    // The way to another teaching is in sight next to the open one, with no picker yet.
+    await openTeachingOptions(user);
     expect(within(studyPane()).queryByRole("combobox", { name: "Teaching:" })).toBeNull();
-    const another = within(studyPane()).getByRole("button", { name: "Prepare another Bible Teaching" });
+    await openTeachingOptions(user);
+    const another = within(studyPane()).getByRole("button", { name: "New Teaching" });
     expect(another).toBeVisible();
 
     // By keyboard: the form opens with the focus on it, the kind is chosen as for the first teaching.
     another.focus();
     await user.keyboard("{Enter}");
-    const form = await within(studyPane()).findByRole("form", { name: "Prepare another Bible Teaching" });
-    expect(within(form).getByRole("heading", { name: "Prepare another Bible Teaching" })).toHaveFocus();
-    await user.click(within(form).getByRole("radio", { name: "Group Bible study" }));
+    const form = await within(studyPane()).findByRole("form", { name: "New Teaching" });
+    expect(within(form).getByRole("heading", { name: "New Teaching" })).toHaveFocus();
+    await user.click(within(form).getByRole("radio", { name: "Group Bible Study — Observation, Understanding, Application" }));
     await user.click(within(form).getByRole("button", { name: "Start" }));
     await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
 
@@ -211,21 +277,29 @@ describe("teaching preparation", () => {
     expect(preps.map((p) => [p.kind, p.studyId])).toEqual([["sermon", studyId], ["bible_study", studyId]]);
     expect(preps[0]!.introduction).toBe("Have you pruned a rose?");
     expect(preps[1]!.introduction).toBe("");
+    await openTeachingOptions(user);
     const which = within(studyPane()).getByRole("combobox", { name: "Teaching:" });
     expect(within(which).getAllByRole("option").map((o) => o.textContent)).toEqual(["Sermon · Abiding · Sermon", "Group Bible study · Abiding · Group Bible study"]);
-    expect(within(studyPane()).getByRole("button", { name: "Prepare another Bible Teaching" })).toBeVisible();
+    await openTeachingOptions(user);
+    expect(within(studyPane()).getByRole("button", { name: "New Teaching" })).toBeVisible();
 
-    // Switch both ways.
+    // Switch both ways. The picker sits in the open teaching's details line (v0.18.4), so it is drawn
+    // anew with each teaching; the keyboard stays on it.
+    await openTeachingOptions(user);
+    const picker = () => within(studyPane()).getByRole("combobox", { name: "Teaching:" });
     await user.selectOptions(which, preps[0]!.id);
     expect(field(await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" }), "Introduction")).toHaveValue("Have you pruned a rose?");
-    await user.selectOptions(which, preps[1]!.id);
+    await waitFor(() => expect(picker()).toHaveFocus());
+    await user.selectOptions(picker(), preps[1]!.id);
     await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
 
     // Cancelling another new teaching changes nothing and returns to the button.
-    await user.click(within(studyPane()).getByRole("button", { name: "Prepare another Bible Teaching" }));
+    await openTeachingOptions(user);
+    await user.click(within(studyPane()).getByRole("button", { name: "New Teaching" }));
     await user.click(within(studyPane()).getByRole("button", { name: "Cancel" }));
     expect(api.state.teaching.preparations).toHaveLength(2);
-    await waitFor(() => expect(within(studyPane()).getByRole("button", { name: "Prepare another Bible Teaching" })).toHaveFocus());
+    await openTeachingOptions(user);
+    await waitFor(() => expect(within(studyPane()).getByRole("button", { name: "New Teaching" })).toHaveFocus());
 
     // Deleting one leaves the other, and the study as it was.
     const group = await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
@@ -234,22 +308,25 @@ describe("teaching preparation", () => {
     await user.click(within(groupAbout).getByRole("button", { name: "Delete" }));
     await waitFor(() => expect(api.state.teaching.preparations.map((p) => p.kind)).toEqual(["sermon"]));
     expect(await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" })).toBeInTheDocument();
+    await openTeachingOptions(user);
     expect(within(studyPane()).queryByRole("combobox", { name: "Teaching:" })).toBeNull();
-    await waitFor(() => expect(within(studyPane()).getByRole("button", { name: "Prepare another Bible Teaching" })).toHaveFocus());
+    await openTeachingOptions(user);
+    await waitFor(() => expect(within(studyPane()).getByRole("button", { name: "New Teaching" })).toHaveFocus());
     expect(JSON.stringify({ study: api.state.studies, findings: api.state.findings, passages: await api.studyPassageList(studyId) })).toBe(studyBefore);
   });
 
   it("after the only teaching is deleted, offers the first-teaching form again without moving focus later", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const sermon = await startSermon(user);
+    const sermon = await startSermon(user, api);
     const about = await openAbout(user, sermon);
     await user.click(within(about).getByRole("button", { name: "Delete this teaching" }));
     await user.click(within(about).getByRole("button", { name: "Delete" }));
     const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
     await user.click(within(form).getByRole("button", { name: "Start" }));
     await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
-    expect(within(studyPane()).getByRole("button", { name: "Prepare another Bible Teaching" })).not.toHaveFocus();
+    await openTeachingOptions(user);
+    expect(within(studyPane()).getByRole("button", { name: "New Teaching" })).not.toHaveFocus();
   });
 
   it("shows the teaching in Korean with natural teaching words", async () => {
@@ -261,9 +338,9 @@ describe("teaching preparation", () => {
     await user.click(within(await screen.findByRole("list", { name: "성경공부" })).getByRole("button", { name: /Abiding/ }));
     await user.click(await screen.findByRole("button", { name: "성경 가르침" }));
     await user.click(await screen.findByRole("button", { name: "시작하기" }));
-    expect(await screen.findByRole("heading", { name: "대지" })).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: "핵심 메시지" })).toBeInTheDocument();
-    expect(screen.getByRole("textbox", { name: "서론" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "본론" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "도입" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "마무리" })).toBeInTheDocument();
   });
 });
 
@@ -279,14 +356,14 @@ describe("the assistant", () => {
   it("says what will be shared, asks only when told, and changes nothing until the person chooses", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We dont produce fruit by trying harder.");
     await settle();
     api.state.teaching.assistant.replies.push(proposal("We don't produce fruit by trying harder."));
 
     const panel = await helpWith(user, article, "Introduction", "Check grammar and spelling");
     expect(await within(panel).findByText("To help, this will be sent to OpenAI · test-model:")).toBeInTheDocument();
-    expect(within(panel).getByText("your Introduction")).toBeInTheDocument();
+    expect(within(panel).getByText("your text in Introduction")).toBeInTheDocument();
     expect(within(panel).getByText("Scripture: John 15:1–8")).toBeInTheDocument();
     expect(api.state.teaching.assistant.asked).toHaveLength(0);
 
@@ -316,7 +393,7 @@ describe("the assistant", () => {
   it("closes on Escape or Cancel with nothing changed, and gives focus back to its AI Help button", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Central message"), "Fruit comes from abiding.");
     await settle();
     api.state.teaching.assistant.replies.push(proposal("Fruit grows from abiding in Christ."));
@@ -336,7 +413,7 @@ describe("the assistant", () => {
   it("works on only the selected words when some are selected", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "First sentence stays. Second sentance changes.");
     await settle();
     const area = field(article, "Introduction") as HTMLTextAreaElement;
@@ -354,7 +431,7 @@ describe("the assistant", () => {
   it("will not write a part that is still empty", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     const panel = await helpWith(user, article, "Conclusion", "Ideas for an illustration");
     expect(await within(panel).findByRole("alert")).toHaveTextContent("Write something here first. The assistant helps with what you have written.");
     expect(within(panel).getByRole("button", { name: "Ask" })).toBeDisabled();
@@ -364,7 +441,7 @@ describe("the assistant", () => {
   it("shows comments with their basis, and adds a suggested passage only when asked", async () => {
     const { api, studyId } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We stay, and he bears fruit.");
     await settle();
     const gal = (await api.referenceParse("Galatians 5:22-23"));
@@ -394,7 +471,7 @@ describe("the assistant", () => {
   it("marks illustration ideas as invented and keeps one only on request", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.click(within(article).getByRole("button", { name: "Add a point" }));
     await user.keyboard("Stay connected");
     await user.type(field(article, "Explanation"), "A branch cut off withers.");
@@ -421,7 +498,7 @@ describe("the assistant", () => {
   it("finds real stories only with a search service, and shows how far each is checked", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     let panel = await helpWith(user, article, "Introduction", "Find a real story…");
     await user.type(within(panel).getByRole("textbox", { name: "What kind of real story are you looking for?" }), "forgiveness after conflict");
     expect(await within(panel).findByRole("alert")).toHaveTextContent(/Real stories can only be found and checked with a search service/);
@@ -468,7 +545,7 @@ describe("the assistant", () => {
       },
     ];
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Jesus is the vine; we are the branches.");
     await settle();
     api.state.teaching.assistant.replies.push({
@@ -494,7 +571,7 @@ describe("the assistant", () => {
   it("is never offered while it is turned off, and says so plainly if asked for anyway", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     expect(within(article).queryByRole("button", { name: /^AI Help with/ })).toBeNull();
     // The core refuses too.
     await expect(api.assistantAsk({ preparationId: prep(api).id, action: "grammar", part: "introduction", text: "x" })).rejects.toBeInstanceOf(ApiError);
@@ -554,7 +631,7 @@ describe("assistant settings", () => {
     const region = await openSettingsSection(user, "AI Assistant");
     await user.click(await within(region).findByRole("checkbox", { name: "Use the AI Assistant" }));
     // The default service gets its suggested model without choosing it again.
-    expect(within(region).getByRole("textbox", { name: "Model" })).toHaveValue("gpt-4.1");
+    expect(within(region).getByRole("textbox", { name: "Model" })).toHaveValue("gpt-6.1-sol");
 
     // Enter in the key field keeps the key (it does not just save the form).
     await user.type(within(region).getByLabelText("Key"), "sk-openai{Enter}");
@@ -587,11 +664,15 @@ describe("assistant settings", () => {
     // Grouped by where it runs, not ranked by vendor.
     expect(within(service).getAllByRole("group").map((g) => g.getAttribute("label"))).toEqual(["On the internet", "On this computer", "Other"]);
 
-    for (const [kind, model] of [["xai", "grok-4"], ["perplexity", "sonar-pro"], ["deepseek", "deepseek-chat"], ["qwen", "qwen-plus"]] as const) {
+    for (const [kind, model] of [["xai", "grok-4.7"], ["perplexity", "sonar-pro"], ["deepseek", "deepseek-flash"], ["qwen", "qwen-plus"], ["google", "gemini-3.8-flash"], ["mistral", "mistral-large-latest"], ["cohere", "command-a-plus-05-2026"], ["moonshot", "kimi-k3"], ["zai", "glm-5.3"], ["minimax", "MiniMax-M2.7"]] as const) {
       await user.selectOptions(service, kind);
       expect(within(region).getByRole("textbox", { name: "Model" })).toHaveValue(model);
       expect(within(region).getByLabelText("Key")).toBeInTheDocument();
     }
+    // On this computer: a suggested model to download, and no key.
+    await user.selectOptions(service, "ollama");
+    expect(within(region).getByRole("textbox", { name: "Model" })).toHaveValue("gemma4");
+    expect(within(region).queryByLabelText("Key")).toBeNull();
 
     // "How do I get a key?": short answers and the service's own page.
     await user.selectOptions(service, "deepseek");
@@ -678,25 +759,40 @@ describe("assistant settings", () => {
     await waitFor(() => expect(api.state.teaching.assistant.config.perspective).toBe("Lutheran"));
   });
 
-  it("links each cloud service's own current model list, and invents none for another service", async () => {
+  it("links each cloud service's own current model list and price list, and invents none for another service", async () => {
     const { user, api } = await renderApp(createMemoryApi());
     const region = await openSettingsSection(user, "AI Assistant");
     await user.click(await within(region).findByRole("checkbox", { name: "Use the AI Assistant" }));
     const service = within(region).getByRole("combobox", { name: "Service" });
-    const expected: [string, string, string][] = [
-      ["openai", "OpenAI", "https://platform.openai.com/docs/models"],
-      ["anthropic", "Anthropic", "https://docs.anthropic.com/en/docs/about-claude/models"],
-      ["google", "Google", "https://ai.google.dev/gemini-api/docs/models"],
-      ["xai", "xAI", "https://docs.x.ai/docs/models"],
-      ["perplexity", "Perplexity", "https://docs.perplexity.ai/getting-started/models"],
-      ["deepseek", "DeepSeek", "https://api-docs.deepseek.com/quick_start/pricing"],
-      ["qwen", "Alibaba Cloud", "https://www.alibabacloud.com/help/en/model-studio/models"],
+    // Every service on the internet, alphabetically, with its official models and prices pages.
+    const internet = within(service).getByRole("group", { name: "On the internet" });
+    expect(within(internet).getAllByRole("option").map((o) => o.getAttribute("value"))).toEqual(["anthropic", "cohere", "deepseek", "google", "minimax", "mistral", "moonshot", "openai", "perplexity", "qwen", "xai", "zai"]);
+    const expected: [string, string, string, string | null][] = [
+      ["openai", "OpenAI", "https://developers.openai.com/api/docs/models", "https://developers.openai.com/api/docs/pricing"],
+      ["anthropic", "Anthropic", "https://platform.claude.com/docs/en/models/overview", "https://platform.claude.com/docs/en/about-claude/pricing"],
+      ["google", "Google", "https://ai.google.dev/gemini-api/docs/models", "https://ai.google.dev/gemini-api/docs/pricing"],
+      ["xai", "xAI", "https://docs.x.ai/developers/models", "https://docs.x.ai/developers/pricing"],
+      ["perplexity", "Perplexity", "https://docs.perplexity.ai", "https://docs.perplexity.ai/docs/getting-started/pricing"],
+      ["mistral", "Mistral AI", "https://docs.mistral.ai/models/model-selection-guide", "https://docs.mistral.ai/inference/pricing"],
+      ["cohere", "Cohere", "https://docs.cohere.com/docs/models", "https://cohere.com/pricing"],
+      // One page with both models and prices: one link.
+      ["deepseek", "DeepSeek", "https://api-docs.deepseek.com/quick_start/pricing", null],
+      ["qwen", "Alibaba Cloud", "https://www.alibabacloud.com/help/en/model-studio/models", "https://www.alibabacloud.com/help/en/model-studio/model-pricing"],
+      ["moonshot", "Moonshot AI", "https://platform.moonshot.ai", null],
+      ["zai", "Z.ai", "https://z.ai/model-api", "https://docs.z.ai/guides/overview/pricing"],
+      ["minimax", "MiniMax", "https://platform.minimax.io/docs/guides/models-intro", "https://platform.minimax.io/docs/guides/pricing-paygo"],
     ];
-    for (const [kind, name, url] of expected) {
+    for (const [kind, name, models, prices] of expected) {
       await user.selectOptions(service, kind);
       expect(within(region).getByRole("textbox", { name: "Model" })).not.toHaveValue("");
       await user.click(within(region).getByRole("button", { name: `See ${name}’s current models` }));
-      expect(api.state.library.openedLinks.at(-1)).toBe(url);
+      expect(api.state.library.openedLinks.at(-1)).toBe(models);
+      if (prices) {
+        await user.click(within(region).getByRole("button", { name: `See ${name}’s prices` }));
+        expect(api.state.library.openedLinks.at(-1)).toBe(prices);
+      } else {
+        expect(within(region).queryByRole("button", { name: `See ${name}’s prices` })).toBeNull();
+      }
     }
     // Programs on this computer: their own lists of models to download.
     await user.selectOptions(service, "ollama");
@@ -704,7 +800,7 @@ describe("assistant settings", () => {
     expect(api.state.library.openedLinks.at(-1)).toBe("https://ollama.com/library");
     // Another compatible service: no list is made up.
     await user.selectOptions(service, "openai_compatible");
-    expect(within(region).queryByRole("button", { name: /current models|models you can download/ })).toBeNull();
+    expect(within(region).queryByRole("button", { name: /current models|models you can download|prices/ })).toBeNull();
     // The model stays editable.
     const model = within(region).getByRole("textbox", { name: "Model" });
     await user.type(model, "my-own-model");
@@ -837,16 +933,22 @@ describe("review fixes: applying a suggestion safely", () => {
   it("never overwrites what was typed after asking", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We dont stay.");
     await settle();
     api.state.teaching.assistant.replies.push(proposal("We don't stay."));
     const panel = await helpWith(user, article, "Introduction", "Check grammar and spelling");
     await ask(user, panel);
-    await within(panel).findByRole("heading", { name: "Suggested wording" });
+    const heading = await within(panel).findByRole("heading", { name: "Suggested wording" });
+    // The answer moves focus on the next animation frame. Finish that focus
+    // handoff before returning to the field, so it cannot intercept typing.
+    await waitFor(() => expect(heading).toHaveFocus());
     // The person keeps writing while the suggestion is shown.
-    await user.click(field(article, "Introduction"));
+    const introduction = field(article, "Introduction");
+    await user.click(introduction);
+    expect(introduction).toHaveFocus();
     await user.keyboard("{End} And we bear fruit.");
+    expect(introduction).toHaveValue("We dont stay. And we bear fruit.");
     await user.click(within(panel).getByRole("button", { name: "Use this wording" }));
     expect(await within(panel).findByRole("alert")).toHaveTextContent("Your text changed after you asked, so this suggestion was not used.");
     expect(field(article, "Introduction")).toHaveValue("We dont stay. And we bear fruit.");
@@ -855,7 +957,7 @@ describe("review fixes: applying a suggestion safely", () => {
   it("keeps the selection's line breaks, and puts a transition before the selected words", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     const area = field(article, "Introduction") as HTMLTextAreaElement;
     fireEvent.change(area, { target: { value: "First paragraph.\n\nSecond paragrph.\n\nThird paragraph." } });
     await settle();
@@ -880,29 +982,31 @@ describe("review fixes: applying a suggestion safely", () => {
   it("replaces a one-line part instead of adding lines to it", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
-    await openAbout(user, article);
-    await user.type(field(article, "Purpose"), "To abide");
+    const article = await startSermon(user, api);
+    // A point's title is a one-line part (the audience and purpose are information, v0.19).
+    await user.click(within(article).getByRole("button", { name: "Add a point" }));
+    await waitFor(() => expect(field(article, "Title of point 1")).toHaveFocus());
+    await user.keyboard("To abide");
     await settle();
     api.state.teaching.assistant.replies.push({
       result: { type: "options", standing: "suggestion", options: [{ text: "That we\nremain in Christ", note: "" }] },
       assistant: "OpenAI · test-model",
       remote: true,
     });
-    const panel = await helpWith(user, article, "Purpose", "Other ways to say this");
+    const panel = await helpWith(user, article, "Title of point 1", "Other ways to say this");
     await ask(user, panel);
     expect(await within(panel).findByRole("button", { name: "Use this" })).toBeInTheDocument();
     expect(within(panel).queryByRole("button", { name: "Add below my text" })).toBeNull();
     await user.click(within(panel).getByRole("button", { name: "Use this" }));
-    await waitFor(() => expect(field(article, "Purpose")).toHaveValue("That we remain in Christ"));
+    await waitFor(() => expect(field(article, "Title of point 1")).toHaveValue("That we remain in Christ"));
     await settle();
-    expect(prep(api).purpose).toBe("That we remain in Christ");
+    expect(prep(api).points[0]!.title).toBe("That we remain in Christ");
   });
 
   it("offers nothing to add for the whole teaching's order, only to read", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     for (const title of ["The vine", "The branches"]) {
       await user.click(within(article).getByRole("button", { name: "Add a point" }));
       await user.keyboard(title);
@@ -922,7 +1026,7 @@ describe("review fixes: applying a suggestion safely", () => {
   it("moves focus to the previous point after deleting one", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     for (const title of ["The vine", "The branches"]) {
       await user.click(within(article).getByRole("button", { name: "Add a point" }));
       await user.keyboard(title);
@@ -952,7 +1056,7 @@ describe("the help menu", () => {
   it("offers a few plain categories, each with its own short list, and something else in the person's words", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.click(within(article).getByRole("button", { name: "AI Help with Introduction" }));
     const menu = await within(article).findByRole("menu", { name: "AI Help with Introduction" });
     const items = within(menu).getAllByRole("menuitem").map((i) => i.textContent);
@@ -965,7 +1069,7 @@ describe("the help menu", () => {
   it("moves through both levels with the keyboard, and Escape goes back a level, then closes", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     const help = within(article).getByRole("button", { name: "AI Help with Introduction" });
     help.focus();
     await user.keyboard("{Enter}");
@@ -993,7 +1097,7 @@ describe("the help menu", () => {
   it("answers a request in the person's own words with comments only, never wording to put in", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     api.state.teaching.assistant.replies.push({
       result: { type: "comments", summary: "I can help you shape your own introduction.", comments: [{ excerpt: "", comment: "Which picture from John 15 would you start with?", basis: "reasoning", passages: [] }] },
       assistant: "OpenAI · test-model",
@@ -1029,7 +1133,7 @@ describe("long assistant actions", () => {
   it("says at once that it is asking, asks only once, and can stop waiting", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We dont stay.");
     await settle();
     api.state.teaching.assistant.replies.push(proposal("We don't stay."));
@@ -1047,7 +1151,7 @@ describe("long assistant actions", () => {
 
     await user.click(within(panel).getByRole("button", { name: "Stop waiting" }));
     expect(within(panel).queryByTestId("pending")).toBeNull();
-    expect(within(panel).getByText(/^Stopped waiting. Nothing was changed./)).toHaveTextContent(/may count toward your use/);
+    expect(within(panel).getByText(/^Stopped waiting. Nothing was changed./)).toHaveTextContent(/may count towards your usage/);
     await act(async () => release());
     // The late answer is ignored.
     expect(within(panel).queryByRole("heading", { name: "Suggested wording" })).toBeNull();
@@ -1057,7 +1161,7 @@ describe("long assistant actions", () => {
   it("says when a request failed or timed out, and lets the person try again", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We dont stay.");
     await settle();
     api.state.teaching.assistant.replies.push(new ApiError("assistant", "The assistant service did not answer in time. Please try again."));
@@ -1072,7 +1176,7 @@ describe("long assistant actions", () => {
     const { api } = await setup({ assistant: true });
     await api.assistantSettingsSet({ ...api.state.teaching.assistant.config, search: "searxng", searchUrl: "https://search.example" });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Forgiveness after a conflict.");
     await settle();
     api.state.teaching.assistant.replies.push({ result: { type: "stories", stories: [] }, assistant: "OpenAI · test-model", remote: true });
@@ -1089,7 +1193,7 @@ describe("long assistant actions", () => {
     const { api } = await setup({ assistant: true });
     await api.assistantSettingsSet({ ...api.state.teaching.assistant.config, generateImages: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Jesus is the vine; we are the branches.");
     await settle();
     api.state.teaching.assistant.replies.push({
@@ -1125,38 +1229,55 @@ describe("the teaching canvas", () => {
   it("puts the writing first and keeps the details folded away until wanted", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    await startSermon(user);
+    await startSermon(user, api);
     // Visited again later: the details start folded, and the writing comes first.
     await user.click(within(studyPane()).getByRole("button", { name: "Bible Study" }));
     await user.click(within(studyPane()).getByRole("button", { name: "Bible Teaching" }));
     const article = await within(studyPane()).findByRole("article", { name: "Sermon · Abiding" });
-    const about = within(article).getByRole("button", { name: /^About this teaching/ });
+    await openTeachingOptions(user);
+    const about = within(article).getByRole("button", { name: "Bible Teaching information" });
     expect(about).toHaveAttribute("aria-expanded", "false");
-    expect(within(article).queryByRole("textbox", { name: "Who it is for" })).toBeNull();
-    expect(within(article).queryByRole("button", { name: "Delete this teaching" })).toBeNull();
-    // The main parts are there at once, in order.
+    expect(screen.queryByRole("textbox", { name: "Who it is for" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Delete this teaching" })).toBeNull();
+    // The main parts are there at once, in order; notes for oneself are folded away after them.
     const boxes = within(article).getAllByRole("textbox").map((b) => (b as HTMLInputElement).labels?.[0]?.textContent ?? "");
-    expect(boxes).toEqual(["Title", "Central message", "Introduction", "Conclusion", "Notes for yourself"]);
+    expect(boxes).toEqual(["Title", "Central message", "Introduction", "Conclusion"]);
+    expect(within(article).getByRole("button", { name: "Notes for yourself" })).toHaveAttribute("aria-expanded", "false");
+    // The information is a draft: closing it without Save keeps nothing.
     await user.click(about);
-    expect(await within(article).findByRole("textbox", { name: "Who it is for" })).toBeVisible();
-    // The summary says what is set.
-    await user.type(field(article, "Who it is for"), "families");
-    await settle();
-    expect(within(article).getByRole("button", { name: /^About this teaching/ })).toHaveTextContent("Sermon · for families");
+    await openTeachingOptions(user);
+    const info = await screen.findByRole("dialog", { name: "Bible Teaching information" });
+    await user.type(within(info).getByRole("textbox", { name: "Who it is for" }), "families");
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(prep(api).audience).toBeNull();
+    expect(within(studyPane()).getByText("Unsaved changes were discarded.")).toBeInTheDocument();
+    // With Save it is kept.
+    const again = await openAbout(user, article);
+    expect(within(again).getByRole("textbox", { name: "Who it is for" })).toHaveValue("");
+    await user.type(within(again).getByRole("textbox", { name: "Who it is for" }), "families");
+    await user.click(within(again).getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(prep(api).audience).toBe("families"));
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("names the main parts after the kind: questions for a Bible study, steps for a lesson", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     expect(within(article).getByRole("heading", { name: "Main points" })).toBeInTheDocument();
-    await openAbout(user, article);
-    await user.selectOptions(within(article).getByRole("combobox", { name: "Kind of teaching" }), "bible_study");
+    const setKind = async (kind: string) => {
+      const info = await openAbout(user, article);
+      await user.selectOptions(within(info).getByRole("combobox", { name: "Kind of teaching" }), kind);
+      await user.click(within(info).getByRole("button", { name: "Save" }));
+      await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    };
+    await setKind("bible_study");
     expect(await within(article).findByRole("heading", { name: "Questions and answers" })).toBeInTheDocument();
     await user.click(within(article).getByRole("button", { name: "Add a question" }));
     expect(await within(article).findByRole("textbox", { name: "Where it may lead" })).toBeInTheDocument();
     expect(within(article).getByRole("textbox", { name: "Follow-up questions" })).toBeInTheDocument();
-    await user.selectOptions(within(article).getByRole("combobox", { name: "Kind of teaching" }), "lesson");
+    await setKind("lesson");
     expect(await within(article).findByRole("heading", { name: "Lesson plan" })).toBeInTheDocument();
     expect(within(article).getByRole("textbox", { name: "What you will say or do" })).toBeInTheDocument();
     // The same point, only named differently: nothing was lost.
@@ -1165,14 +1286,20 @@ describe("the teaching canvas", () => {
 
   it("starts a children's lesson with its steps, each of a kind, and shows the fields each kind needs", async () => {
     const { api } = await setup();
+    await api.teachingCreate({
+      studyId: api.state.studies[0]!.id,
+      title: "Children · Abiding",
+      kind: "children",
+      points: [
+        { title: "Welcome", kind: "text" },
+        { title: "Bible story", kind: "scripture" },
+        { title: "Question", kind: "question" },
+        { title: "Activity", kind: "activity" },
+        { title: "Prayer", kind: "text" },
+      ],
+    });
     const { user } = await renderApp(api);
     await openTeaching(user);
-    const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
-    await user.click(within(form).getByRole("radio", { name: "Children" }));
-    // The kind says what it gives to work in, and what it starts with.
-    expect(within(form).getByText(/A lesson in steps: teaching, Bible reading, questions, activities and pictures/)).toBeInTheDocument();
-    expect(within(form).getByText("Starts with: Welcome · Bible story · Question · Activity · Prayer.")).toBeInTheDocument();
-    await user.click(within(form).getByRole("button", { name: "Start" }));
     const article = await within(studyPane()).findByRole("article", { name: "Children · Abiding" });
     expect(prep(api).points.map((p) => [p.title, p.kind])).toEqual([
       ["Welcome", "text"],
@@ -1202,8 +1329,9 @@ describe("the teaching canvas", () => {
     await waitFor(() => expect(prep(api).points[0]!.kind).toBe("image"));
     const first = within(article).getAllByRole("listitem", { name: /^Step \d/ })[0]!;
     expect(within(first).getByRole("textbox", { name: "What it shows, and when you show it" })).toHaveValue("Hello everyone.");
-    // A new step starts as teaching.
+    // A new step is added as a kind of step (v0.18.7): here, teaching.
     await user.click(within(article).getByRole("button", { name: "Add a step" }));
+    await user.click(within(article).getByRole("menuitem", { name: "Teaching" }));
     await waitFor(() => expect(prep(api).points).toHaveLength(6));
     expect(prep(api).points[5]!.kind).toBe("text");
   });
@@ -1211,11 +1339,12 @@ describe("the teaching canvas", () => {
   it("keeps writing visible in a field the kind does not use, and an introduction written before", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Have you pruned a rose?");
     await settle();
-    await openAbout(user, article);
-    await user.selectOptions(within(article).getByRole("combobox", { name: "Kind of teaching" }), "children");
+    const info = await openAbout(user, article);
+    await user.selectOptions(within(info).getByRole("combobox", { name: "Kind of teaching" }), "lesson");
+    await user.click(within(info).getByRole("button", { name: "Save" }));
     // A lesson has no separate introduction, but what was written there is never hidden.
     expect(await within(article).findByRole("textbox", { name: "Opening" })).toHaveValue("Have you pruned a rose?");
     expect(within(article).queryByRole("textbox", { name: "Ending" })).toBeNull();
@@ -1224,12 +1353,8 @@ describe("the teaching canvas", () => {
   it("gives a group Bible study an opening, questions with follow-ups, and a closing", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
+    await api.teachingCreate({ studyId: api.state.studies[0]!.id, title: "Group Bible study · Abiding", kind: "bible_study" });
     await openTeaching(user);
-    const form = await within(studyPane()).findByRole("form", { name: "Prepare a teaching from this study" });
-    await user.click(within(form).getByRole("radio", { name: "Group Bible study" }));
-    expect(within(form).getByText(/Questions for the group, each with where it may lead/)).toBeInTheDocument();
-    expect(within(form).queryByText(/^Starts with/)).toBeNull();
-    await user.click(within(form).getByRole("button", { name: "Start" }));
     const article = await within(studyPane()).findByRole("article", { name: "Group Bible study · Abiding" });
     expect(field(article, "Opening")).toBeInTheDocument();
     expect(field(article, "Closing")).toBeInTheDocument();
@@ -1245,7 +1370,7 @@ describe("the teaching canvas", () => {
   it("works fully without the assistant", async () => {
     const { api } = await setup();
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Abide.");
     await settle();
     expect(prep(api).introduction).toBe("Abide.");
@@ -1258,9 +1383,13 @@ describe("the floating AI panel", () => {
   it("opens over the workspace without moving the teaching, as a non-modal dialog tied to its part", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We dont stay.");
     await settle();
+    const preview = api.assistantPreview;
+    let releasePreview!: () => void;
+    const ready = new Promise<void>((resolve) => { releasePreview = resolve; });
+    api.assistantPreview = async (input) => { await ready; return preview(input); };
     const panel = await helpWith(user, article, "Introduction", "Check grammar and spelling");
     // Not inside the teaching: the text does not move.
     expect(article).not.toContainElement(panel);
@@ -1268,8 +1397,13 @@ describe("the floating AI panel", () => {
     expect(floating).toHaveAttribute("aria-modal", "false");
     expect(floating).toContainElement(panel);
     // The teaching stays usable while it is open.
-    await user.type(field(article, "Conclusion"), "Abide.");
-    expect(field(article, "Conclusion")).toHaveValue("Abide.");
+    const conclusion = field(article, "Conclusion");
+    await user.type(conclusion, "Ab");
+    releasePreview();
+    await waitFor(() => expect(within(panel).getByRole("button", { name: /^Ask/ })).toBeEnabled());
+    expect(conclusion).toHaveFocus();
+    await user.keyboard("ide.");
+    expect(conclusion).toHaveValue("Abide.");
     expect(screen.getByTestId("assist-panel")).toBeInTheDocument();
     // The panel keeps the part it was opened for.
     expect(within(panel).getByRole("heading", { level: 4 })).toHaveTextContent("Check grammar and spelling · Introduction");
@@ -1278,7 +1412,7 @@ describe("the floating AI panel", () => {
   it("minimises to a small chip and opens again with its request kept, by keyboard too", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     const panel = await helpWith(user, article, "Introduction", "Ask for something else…");
     await user.type(within(panel).getByRole("textbox", { name: "What would you like help with?" }), "Is this too long?");
     await user.click(screen.getByRole("button", { name: "Minimise" }));
@@ -1296,7 +1430,7 @@ describe("the floating AI panel", () => {
   it("shows one panel at a time: asking about another part moves it there", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "One.");
     await user.type(field(article, "Conclusion"), "Two.");
     await settle();
@@ -1312,7 +1446,7 @@ describe("the floating AI panel", () => {
     await api.assistantSettingsSet({ ...api.state.teaching.assistant.config, provider: "anthropic", generateImages: true });
     await api.assistantKeySet("provider", "sk-ant");
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Jesus is the vine.");
     await settle();
     // The menu says so beside the picture ideas.
@@ -1339,7 +1473,7 @@ describe("review fixes: the floating panel and images", () => {
   it("never applies an earlier answer to a later selection: a new request starts a new panel", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Alpha one. Beta two.");
     await settle();
     const area = field(article, "Introduction") as HTMLTextAreaElement;
@@ -1359,7 +1493,7 @@ describe("review fixes: the floating panel and images", () => {
   it("opens again from minimised when a new request is chosen", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await helpWith(user, article, "Introduction", "Ask for something else…");
     await user.click(screen.getByRole("button", { name: "Minimise" }));
     expect(screen.getByTestId("assist-panel")).not.toBeVisible();
@@ -1371,7 +1505,7 @@ describe("review fixes: the floating panel and images", () => {
   it("can be moved with the arrow keys and minimised with Escape on its top bar", async () => {
     const { api } = await setup({ assistant: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await helpWith(user, article, "Introduction", "Ask for something else…");
     const floating = screen.getByTestId("assist-floating");
     const move = within(floating).getByRole("button", { name: "Move the panel (arrow keys)" });
@@ -1388,7 +1522,7 @@ describe("review fixes: the floating panel and images", () => {
     const { api } = await setup({ assistant: true });
     await api.assistantSettingsSet({ ...api.state.teaching.assistant.config, generateImages: true });
     const { user } = await renderApp(api);
-    const article = await startSermon(user);
+    const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "Jesus is the vine.");
     await settle();
     api.state.teaching.assistant.replies.push({

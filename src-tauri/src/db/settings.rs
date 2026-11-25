@@ -31,7 +31,10 @@ pub fn update(conn: &Connection, input: &UpdateSettings) -> AppResult<AppSetting
     match input.scripture_translation_id.as_deref() {
         Some("") => clear(conn, SCRIPTURE_TRANSLATION)?,
         Some(id) => {
-            crate::db::bibles::get(conn, id)?;
+            // Not one in Trash or archived (v0.24).
+            if crate::db::bibles::get(conn, id)?.state != "active" {
+                return Err(crate::error::AppError::not_found("Bible", id));
+            }
             write(conn, SCRIPTURE_TRANSLATION, &id)?;
         }
         None => {}

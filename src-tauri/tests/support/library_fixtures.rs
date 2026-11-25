@@ -82,7 +82,7 @@ pub fn pdf_styled(pages: &[Vec<(i64, i64, String)>]) -> Vec<u8> {
                 Operation::new("BT", vec![]),
                 Operation::new("Tf", vec!["F1".into(), (*size).into()]),
                 Operation::new("Td", vec![72.into(), (*y).into()]),
-                Operation::new("Tj", vec![Object::string_literal(text.as_str())]),
+                Operation::new("Tj", vec![Object::string_literal(win_ansi(text))]),
                 Operation::new("ET", vec![]),
             ]);
         }
@@ -260,4 +260,88 @@ pub fn docx_raw(document: &str, rels: &str, files: &[(&str, &[u8])]) -> Vec<u8> 
         zip.finish().unwrap();
     }
     cursor.into_inner()
+}
+
+/// A PDF whose lines are placed at given positions, written in the order
+/// given (v0.24: two-column pages, in column order or line by line across
+/// the columns): `(x, y, text)`, measured from the bottom left of an A4 page.
+pub fn pdf_placed(pages: &[Vec<(i64, i64, String)>]) -> Vec<u8> {
+    let sized: Vec<Vec<(f64, f64, f64, String)>> = pages
+        .iter()
+        .map(|lines| {
+            lines
+                .iter()
+                .map(|(x, y, t)| (*x as f64, *y as f64, 9.0, t.clone()))
+                .collect()
+        })
+        .collect();
+    pdf_sized(&sized)
+}
+
+/// Text in the PDF's WinAnsiEncoding (Windows-1252): the characters these
+/// fixtures use; anything else becomes "?".
+fn win_ansi(text: &str) -> Vec<u8> {
+    text.chars()
+        .map(|c| match c {
+            '€' => 0x80,
+            '‚' => 0x82,
+            '„' => 0x84,
+            '…' => 0x85,
+            '†' => 0x86,
+            '‡' => 0x87,
+            '‰' => 0x89,
+            '‘' => 0x91,
+            '’' => 0x92,
+            '“' => 0x93,
+            '”' => 0x94,
+            '•' => 0x95,
+            '–' => 0x96,
+            '—' => 0x97,
+            c if (c as u32) < 0x80 || ((c as u32) >= 0xA0 && (c as u32) <= 0xFF) => c as u32 as u8,
+            _ => b'?',
+        })
+        .collect()
+}
+
+/// A PDF whose pages draw each `(x, y, size, text)` in the order given (the
+/// drawing order, not necessarily the reading order), in Helvetica.
+pub fn pdf_sized(pages: &[Vec<(f64, f64, f64, String)>]) -> Vec<u8> {
+    let mut doc = Document::with_version("1.5");
+    let pages_id = doc.new_object_id();
+    let font_id = doc.add_object(dictionary! {
+        "Type" => "Font", "Subtype" => "Type1", "BaseFont" => "Helvetica", "Encoding" => "WinAnsiEncoding",
+    });
+    let resources_id = doc.add_object(dictionary! { "Font" => dictionary! { "F1" => font_id } });
+    let mut kids = Vec::new();
+    for lines in pages {
+        let mut operations = Vec::new();
+        for (x, y, size, text) in lines {
+            operations.extend([
+                Operation::new("BT", vec![]),
+                Operation::new("Tf", vec!["F1".into(), (*size).into()]),
+                Operation::new("Td", vec![(*x).into(), (*y).into()]),
+                Operation::new("Tj", vec![Object::string_literal(win_ansi(text))]),
+                Operation::new("ET", vec![]),
+            ]);
+        }
+        let content = Content { operations };
+        let content_id = doc.add_object(Stream::new(dictionary! {}, content.encode().unwrap()));
+        let page_id = doc.add_object(dictionary! {
+            "Type" => "Page", "Parent" => pages_id, "Contents" => content_id,
+            "MediaBox" => vec![0.into(), 0.into(), 595.into(), 842.into()],
+        });
+        kids.push(Object::Reference(page_id));
+    }
+    let count = kids.len() as i64;
+    doc.objects.insert(
+        pages_id,
+        Object::Dictionary(dictionary! {
+            "Type" => "Pages", "Kids" => kids, "Count" => count, "Resources" => resources_id,
+        }),
+    );
+    let catalog_id = doc.add_object(dictionary! { "Type" => "Catalog", "Pages" => pages_id });
+    doc.trailer.set("Root", catalog_id);
+    let mut bytes = Vec::new();
+    doc.save_to(&mut bytes).unwrap();
+    bytes
 }

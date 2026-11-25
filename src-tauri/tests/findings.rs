@@ -245,6 +245,9 @@ fn finding_passages_survive_bible_removal_and_restart() {
                     publisher: None,
                     copyright_notice: None,
                     license_type: None,
+                    words: Default::default(),
+                    as_document: false,
+                    confirm_edition: false,
                 },
                 &SourceRecord {
                     origin: "managed_copy",
@@ -405,6 +408,7 @@ fn study_search_covers_titles_sections_blocks_and_findings() {
             &UpdateStudyBlock {
                 id: vine_sections[2].blocks[0].id.clone(),
                 content: Some("Spoken on the way to Gethsemane.".into()),
+
                 data: None,
             },
         )?;
@@ -491,6 +495,7 @@ fn study_search_covers_titles_sections_blocks_and_findings() {
             &UpdateStudyBlock {
                 id: vine_sections[2].blocks[0].id.clone(),
                 content: Some("Now about the garden.".into()),
+
                 data: None,
             },
         )?;

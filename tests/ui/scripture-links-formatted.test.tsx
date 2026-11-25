@@ -4,7 +4,7 @@ import { pageTexts } from "@/features/library/formatted/epubDocument";
 import type { EpubElement, EpubItem, EpubNode } from "@/types/library";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 // Scripture links in the formatted (Original) view of EPUB and Word sources (v0.11). Invented text.
 

@@ -24,6 +24,7 @@ pub struct Core {
 }
 
 pub struct AppState {
+    pub pdf_structure_jobs: crate::library::pdf_build::Jobs,
     startup: Result<Core, ErrorPayload>,
     log_dir: Option<PathBuf>,
     /// Where bundled resources (e.g. included Bibles) are installed.
@@ -31,6 +32,10 @@ pub struct AppState {
     /// The Bible import waiting on the verification screen, if any. Only
     /// one at a time; starting another replaces it.
     pending_import: Mutex<Option<StagedImport>>,
+    pub bible_import_job: Mutex<Option<(String, std::sync::Arc<std::sync::atomic::AtomicBool>)>>,
+    /// An installed Bible's files read again for its words (v0.22), apart
+    /// from an import preview so neither replaces the other.
+    pending_words: Mutex<Option<StagedImport>>,
     /// The library import waiting on its preview screen, if any.
     pending_source: Mutex<Option<StagedSource>>,
     /// Where API keys are kept (the operating system's credential store).
@@ -40,6 +45,9 @@ pub struct AppState {
     /// Images just generated, not (yet) kept: (file name, PNG). Only the
     /// last few; nothing is written to disk unless the person keeps one.
     generated: Mutex<VecDeque<(String, Vec<u8>)>>,
+    /// What the audience screen shows now (v0.18), for a screen that opens
+    /// or reloads in the middle of a presentation.
+    audience: Mutex<Option<crate::presentation::AudienceState>>,
 }
 
 /// How many generated, not yet kept images are held in memory.
@@ -58,27 +66,44 @@ impl AppState {
             let db = Database::open(&path, &dirs.pre_migration_backups())?;
             // Imported EPUBs read again where extraction has improved (once per
             // improvement). Derived text never stops the app from opening.
+            // Images staged for templates that were never saved (an import or
+            // design left open or cancelled): nothing can be using them now.
+            crate::presentation::template_store::TemplateStore::from(dirs.presentation_templates())
+                .clear_staging();
             let sources = dirs.sources();
             if let Err(error) =
                 db.with_conn(|conn| text_refresh::ensure_extracted_text(conn, &sources))
             {
                 log::warn!("imported EPUB text could not be refreshed: {error}");
             }
-            Ok(Core { dirs, db })
+            let core = Core { dirs, db };
+            // What has been in Trash longer than the retention period (v0.24).
+            crate::commands::library_manage::empty_expired_trash(&core);
+            // A batch import stopped by a crash or a closed app (v0.24).
+            match core.db.with_conn(crate::db::import_jobs::mark_interrupted) {
+                Ok(0) => {}
+                Ok(n) => log::info!("{n} import job(s) were interrupted and can be continued"),
+                Err(error) => log::warn!("import jobs could not be checked: {error}"),
+            }
+            Ok(core)
         });
         match &core {
             Ok(_) => log::info!("startup complete"),
             Err(e) => log::error!("startup failed: {e}"),
         }
         Self {
+            pdf_structure_jobs: Default::default(),
             startup: core.map_err(ErrorPayload::from),
             log_dir,
             resource_dir,
             pending_import: Mutex::new(None),
+            bible_import_job: Mutex::new(None),
+            pending_words: Mutex::new(None),
             pending_source: Mutex::new(None),
             secrets: Box::new(OsStore),
             transport: OnceLock::new(),
             generated: Mutex::new(VecDeque::new()),
+            audience: Mutex::new(None),
         }
     }
 
@@ -132,6 +157,42 @@ impl AppState {
             .map(|(_, png)| png))
     }
 
+    pub fn set_audience(
+        &self,
+        value: Option<crate::presentation::AudienceState>,
+    ) -> Result<(), ErrorPayload> {
+        *self
+            .audience
+            .lock()
+            .map_err(|_| AppError::Unexpected("audience lock poisoned".into()))? = value;
+        Ok(())
+    }
+
+    /// Keeps `value` unless a newer change of the same presentation is kept
+    /// already (changes can be handled out of order). Says whether it was kept.
+    pub fn set_audience_if_newer(
+        &self,
+        value: crate::presentation::AudienceState,
+    ) -> Result<bool, ErrorPayload> {
+        let mut current = self
+            .audience
+            .lock()
+            .map_err(|_| AppError::Unexpected("audience lock poisoned".into()))?;
+        if !value.replaces(current.as_ref()) {
+            return Ok(false);
+        }
+        *current = Some(value);
+        Ok(true)
+    }
+
+    pub fn audience(&self) -> Result<Option<crate::presentation::AudienceState>, ErrorPayload> {
+        Ok(self
+            .audience
+            .lock()
+            .map_err(|_| AppError::Unexpected("audience lock poisoned".into()))?
+            .clone())
+    }
+
     pub fn core(&self) -> Result<&Core, ErrorPayload> {
         self.startup.as_ref().map_err(Clone::clone)
     }
@@ -157,6 +218,12 @@ impl AppState {
         self.pending_import
             .lock()
             .map_err(|_| AppError::Unexpected("import staging lock poisoned".into()).into())
+    }
+
+    pub fn pending_words(&self) -> Result<MutexGuard<'_, Option<StagedImport>>, ErrorPayload> {
+        self.pending_words
+            .lock()
+            .map_err(|_| AppError::Unexpected("word staging lock poisoned".into()).into())
     }
 
     pub fn pending_source(&self) -> Result<MutexGuard<'_, Option<StagedSource>>, ErrorPayload> {

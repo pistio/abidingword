@@ -1,6 +1,7 @@
+import { formatLocale } from "@/i18n/format";
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { AlertTriangle, ArrowLeft, Check, CircleX } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Check, CircleX, ExternalLink } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { Dialog } from "@/design-system/Dialog";
 import { Notice } from "@/design-system/Notice";
@@ -10,8 +11,10 @@ import { useApi } from "@/lib/ApiContext";
 import { formatNumber } from "@/i18n/format";
 import { localizeMessage } from "@/i18n/messages";
 import { bookName } from "@/i18n/scripture";
-import type { BibleTranslation, BundledBibleInfo, ImportIssue, ImportPreview } from "@/types/scripture";
+import type { BibleTranslation, BundledBibleInfo, CatalogueEntry, DocumentFileInfo, DocumentPreview, ImportIssue, ImportPreview, UnverifiedReason, WordChoice } from "@/types/scripture";
+import { NO_CHOICE, WordResearch, hasWordResearch } from "./WordResearch";
 import { useScripture } from "./ScriptureContext";
+import { LanguageChoice, type LanguageValue } from "./LanguageChoice";
 
 type Step =
   | { kind: "choose" }
@@ -30,16 +33,57 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<Step>({ kind: "choose" });
   const [error, setError] = useState<string | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
+  const activeImport = useRef<string | null>(null);
+  const [processing, setProcessing] = useState<{ done: number; total: number } | null>(null);
   useEffect(() => heading.current?.focus(), [step.kind]);
 
   const preview = async (request: { bundled?: string; paths?: string[] }) => {
     setError(null);
+    const jobId = crypto.randomUUID();
+    activeImport.current = jobId;
+    setProcessing({ done: 0, total: request.paths?.length ?? 0 });
     setStep({ kind: "checking" });
+    let stop: (() => void) | undefined;
     try {
-      setStep({ kind: "review", preview: await api.bibleImportPreview(request) });
+      stop = await api.onBibleImportProgress?.((p) => {
+        if (activeImport.current === p.id) setProcessing({ done: p.done, total: p.total });
+      });
+      if (activeImport.current !== jobId) return;
+      const reviewed = await api.bibleImportPreview({ ...request, jobId });
+      if (activeImport.current === jobId) {
+        setStep({ kind: "review", preview: reviewed });
+      } else {
+        void api.bibleImportCancel(reviewed.previewId).catch(() => undefined);
+      }
+    } catch (e) {
+      if (activeImport.current === jobId) {
+        setError(toApiError(e).message);
+        setStep({ kind: "choose" });
+      }
+    } finally {
+      stop?.();
+      if (activeImport.current === jobId) {
+        activeImport.current = null;
+        setProcessing(null);
+      }
+    }
+  };
+
+  // Available Bibles to download (v0.24): checked file by file, then the same review.
+  const [downloading, setDownloading] = useState<{ done: number; total: number } | null>(null);
+  const download = async (id: string) => {
+    setError(null);
+    setStep({ kind: "checking" });
+    setDownloading({ done: 0, total: 0 });
+    const stop = await api.onCatalogueProgress((p) => p.id === id && setDownloading({ done: p.done, total: p.total }));
+    try {
+      setStep({ kind: "review", preview: await api.bibleCatalogueDownload(id) });
     } catch (e) {
       setError(toApiError(e).message);
       setStep({ kind: "choose" });
+    } finally {
+      stop();
+      setDownloading(null);
     }
   };
 
@@ -54,6 +98,14 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   };
 
   const cancel = () => {
+    const jobId = activeImport.current;
+    if (jobId) {
+      activeImport.current = null;
+      setProcessing(null);
+      void api.bibleImportCancel(jobId).catch(() => undefined);
+      setStep({ kind: "choose" });
+      return;
+    }
     if (step.kind === "review") void api.bibleImportCancel(step.preview.previewId).catch(() => undefined);
     onClose();
   };
@@ -69,7 +121,7 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
     <div
       className="h-full overflow-y-auto bg-bg"
       onKeyDown={(e) => {
-        if (e.key === "Escape" && !e.defaultPrevented && step.kind !== "checking" && !(e.target as HTMLElement).closest("input, textarea, select")) {
+        if (e.key === "Escape" && !e.defaultPrevented && (step.kind !== "checking" || processing !== null) && !(e.target as HTMLElement).closest("input, textarea, select")) {
           e.preventDefault();
           cancel();
         }
@@ -77,27 +129,43 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
     >
       <div className="mx-auto flex max-w-[46rem] flex-col gap-8 px-8 pb-24 pt-8">
         <div className="flex flex-col items-start gap-4">
-          <Button variant="quiet" onClick={cancel} disabled={step.kind === "checking"}>
+          <Button variant="quiet" onClick={cancel} disabled={step.kind === "checking" && !processing}>
             <ArrowLeft className="size-4" aria-hidden="true" />
             {step.kind === "done" ? t("common.back") : t("common.cancel")}
           </Button>
-          <h1 id="add-bible-title" ref={heading} tabIndex={-1} className="m-0 font-display text-[1.875rem] font-heading text-text-strong">
+          <h1 id="add-bible-title" ref={heading} tabIndex={-1} className="type-title m-0">
             {title}
           </h1>
         </div>
 
         {error && <Notice tone="error">{error}</Notice>}
 
-        {step.kind === "choose" && <ChooseStep onBundled={(id) => preview({ bundled: id })} onFiles={chooseFiles} />}
+        {step.kind === "choose" && <ChooseStep onBundled={(id) => preview({ bundled: id })} onFiles={chooseFiles} onDownload={download} />}
         {step.kind === "checking" && (
           <p role="status" className="m-0 text-text-muted">
-            {t("scripture.addBible.checking")}
+            {downloading
+              ? downloading.total === 0
+                ? t("scripture.addBible.available.starting")
+                : downloading.done < downloading.total
+                  ? t("scripture.addBible.available.progress", { done: formatNumber(downloading.done), total: formatNumber(downloading.total) })
+                  : t("scripture.addBible.checking")
+              : processing && processing.total > 0
+                ? t("scripture.addBible.document.progress", { done: formatNumber(processing.done), total: formatNumber(processing.total) })
+                : t("scripture.addBible.checking")}
           </p>
         )}
         {step.kind === "review" && (
           <ReviewStep
             preview={step.preview}
             onCancel={cancel}
+            onCorrect={async (books) => {
+              setError(null);
+              try {
+                setStep({ kind: "review", preview: await api.bibleImportCorrect(step.preview.previewId, books) });
+              } catch (e) {
+                setError(toApiError(e).message);
+              }
+            }}
             onAdd={async (details) => {
               setError(null);
               try {
@@ -113,12 +181,16 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
         {step.kind === "done" && (
           <div className="flex flex-col items-start gap-4">
             <p className="reading m-0">
-              <Trans
-                i18nKey="scripture.addBible.done"
-                count={step.bible.bookCount}
-                values={{ name: step.bible.name, verses: formatNumber(step.bible.verseCount) }}
-                components={{ strong: <strong /> }}
-              />
+              {step.bible.kind === "document" ? (
+                <Trans i18nKey="scripture.addBible.doneDocument" values={{ name: step.bible.name }} components={{ strong: <strong /> }} />
+              ) : (
+                <Trans
+                  i18nKey="scripture.addBible.done"
+                  count={step.bible.bookCount}
+                  values={{ name: step.bible.name, verses: formatNumber(step.bible.verseCount) }}
+                  components={{ strong: <strong /> }}
+                />
+              )}
             </p>
             <Button
               variant="primary"
@@ -136,7 +208,7 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   );
 }
 
-function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; onFiles: () => void }) {
+function ChooseStep({ onBundled, onFiles, onDownload }: { onBundled: (id: string) => void; onFiles: () => void; onDownload: (id: string) => void }) {
   const { t, i18n } = useTranslation();
   const api = useApi();
   const selectId = useId();
@@ -161,7 +233,7 @@ function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; o
     <div className="flex flex-col gap-8">
       {chosen && (
         <section className="flex flex-col items-start gap-3 border-t border-border-subtle pt-6">
-          <h2 className="m-0 text-[1.125rem] font-semibold text-text-strong">{t("scripture.addBible.included")}</h2>
+          <h2 className="type-section m-0">{t("scripture.addBible.included")}</h2>
           <label htmlFor={selectId} className="font-medium">
             {t("scripture.addBible.chooseLabel")}
           </label>
@@ -170,7 +242,7 @@ function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; o
               id={selectId}
               value={chosen.id}
               onChange={(e) => setChosenId(e.target.value)}
-              className="h-10 min-w-0 flex-1 rounded-aw border border-border bg-bg px-3"
+              className="h-10 min-w-0 flex-1 aw-input px-3"
             >
               {groups.map((group) => (
                 <optgroup key={group.code} label={group.name}>
@@ -210,20 +282,137 @@ function ChooseStep({ onBundled, onFiles }: { onBundled: (id: string) => void; o
                 <strong>{chosen.name}</strong> ({chosen.shortName})
               </p>
               <p className="m-0">{t("scripture.addBible.confirmLanguage", { language: chosen.language })}</p>
+              {chosen.books < 66 && <p className="m-0">{t("scripture.addBible.partialBooks", { count: chosen.books })}</p>}
               <p className="m-0">{t("scripture.addBible.licence", { licence: chosen.licenseType })}</p>
               <p className="m-0 text-text-muted">{t("scripture.addBible.confirmBody")}</p>
             </Dialog>
           )}
         </section>
       )}
+      <CatalogueSection onDownload={onDownload} />
       <section className="flex flex-col items-start gap-2 border-t border-border-subtle pt-6">
-        <h2 className="m-0 text-[1.125rem] font-semibold text-text-strong">{t("scripture.addBible.ownTitle")}</h2>
+        <h2 className="type-section m-0">{t("scripture.addBible.ownTitle")}</h2>
         <p className="m-0 text-text-muted">
           {t("scripture.addBible.ownBody")}
         </p>
         <Button onClick={onFiles}>{t("scripture.addBible.chooseFiles")}</Button>
+        <OriginalLanguageGuide />
       </section>
     </div>
+  );
+}
+
+/**
+ * Available Bibles to download (v0.24): each listed with what it contains, its
+ * licence and its size. Nothing is fetched until the person confirms; every
+ * file is then checked against its verified copy, and the Bible goes through
+ * the usual review before anything is added. Once added it works offline.
+ */
+function CatalogueSection({ onDownload }: { onDownload: (id: string) => void }) {
+  const { t } = useTranslation();
+  const api = useApi();
+  const list = useLoad(useCallback(() => api.bibleCatalogueList(), [api]));
+  const [confirming, setConfirming] = useState<CatalogueEntry | null>(null);
+  const entries = list.data ?? [];
+  if (entries.length === 0) return null;
+  const size = (bytes: number) => t("scripture.addBible.available.size", { size: formatNumber(Math.round(bytes / 100_000) / 10) });
+  const contains = (entry: CatalogueEntry) =>
+    entry.contains.map((c) => t(`scripture.addBible.available.contains.${c as "lemma" | "strong" | "morph"}`)).join(t("common.listSeparator"));
+  return (
+    <section className="flex flex-col items-start gap-3 border-t border-border-subtle pt-6">
+      <h2 className="type-section m-0">{t("scripture.addBible.available.title")}</h2>
+      <p className="m-0 text-text-muted">{t("scripture.addBible.available.intro")}</p>
+      <ul aria-label={t("scripture.addBible.available.title")} className="m-0 flex w-full list-none flex-col gap-3 p-0">
+        {entries.map((entry) => (
+          <li key={entry.id} className="flex flex-col gap-1 rounded-aw border border-border-subtle p-3">
+            <span className="font-medium text-text-strong">
+              {entry.name} ({entry.shortName})
+            </span>
+            <span className="text-[0.9375rem]">{[entry.language, entry.books < 66 && t("scripture.addBible.available.partial", { count: entry.books }), contains(entry)].filter(Boolean).join(t("common.listSeparator"))}</span>
+            <span className="text-[0.9375rem] text-text-muted">{[entry.licenseType, size(entry.size)].join(t("common.listSeparator"))}</span>
+            <span>
+              {entry.installed ? (
+                <span className="type-meta">{t("scripture.addBible.available.added")}</span>
+              ) : (
+                <Button onClick={() => setConfirming(entry)}>{t("scripture.addBible.available.download", { name: entry.shortName })}</Button>
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {confirming && (
+        <Dialog
+          title={t("scripture.addBible.available.confirmTitle", { name: confirming.name })}
+          onClose={() => setConfirming(null)}
+          actions={
+            <>
+              <Button onClick={() => setConfirming(null)}>{t("common.cancel")}</Button>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  const id = confirming.id;
+                  setConfirming(null);
+                  onDownload(id);
+                }}
+              >
+                {t("scripture.addBible.available.confirm", { size: size(confirming.size) })}
+              </Button>
+            </>
+          }
+        >
+          <p className="m-0">{t("scripture.addBible.available.confirmBody", { count: confirming.files, files: formatNumber(confirming.files), size: size(confirming.size) })}</p>
+          <p className="m-0">{t("scripture.addBible.licence", { licence: confirming.licenseType })}</p>
+          <details className="text-[0.9375rem]">
+            <summary className="cursor-pointer">{t("scripture.addBible.available.technical")}</summary>
+            <p className="m-0 mt-2 break-words text-text-muted">{confirming.copyrightNotice}</p>
+            <p className="m-0 text-text-muted">{confirming.version}</p>
+          </details>
+          <p className="m-0 text-text-muted">{t("scripture.addBible.available.offline")}</p>
+        </Dialog>
+      )}
+    </section>
+  );
+}
+
+/**
+ * Where Hebrew and Greek editions with word information can be found (v0.22):
+ * links to the publishers, opened in the browser. Some of them are also
+ * included or offered as verified downloads above (v0.24).
+ */
+const EDITIONS = [
+  { key: "oshb", url: "https://github.com/openscriptures/morphhb" },
+  { key: "wlc", url: "https://ebible.org/Scriptures/details.php?id=hboWLC" },
+  { key: "morphgnt", url: "https://github.com/morphgnt/sblgnt" },
+  { key: "rp", url: "https://ebible.org/Scriptures/details.php?id=grcmt" },
+  { key: "sbl", url: "https://ebible.org/Scriptures/details.php?id=grcsbl" },
+] as const;
+
+function OriginalLanguageGuide() {
+  const { t } = useTranslation();
+  const api = useApi();
+  return (
+    <details className="w-full text-[0.9375rem]">
+      <summary className="cursor-pointer text-text-strong">{t("scripture.addBible.guide.title")}</summary>
+      <div className="mt-3 flex flex-col gap-3">
+        <p className="m-0 text-text-muted">{t("scripture.addBible.guide.intro")}</p>
+        <ul className="m-0 flex list-none flex-col gap-3 p-0">
+          {EDITIONS.map((edition) => (
+            <li key={edition.key} className="flex flex-col gap-0.5">
+              <span className="font-medium text-text-strong">{t(`scripture.addBible.guide.${edition.key}.name`)}</span>
+              <span>{t(`scripture.addBible.guide.${edition.key}.gives`)}</span>
+              <span className="text-text-muted">{t(`scripture.addBible.guide.${edition.key}.how`)}</span>
+              <span>
+                <Button variant="quiet" onClick={() => void api.openExternalLink(edition.url)}>
+                  <ExternalLink className="size-3.5" aria-hidden="true" />
+                  {t("scripture.addBible.guide.open", { host: new URL(edition.url).host })}
+                </Button>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <p className="m-0 text-text-muted">{t("scripture.addBible.guide.note")}</p>
+      </div>
+    </details>
   );
 }
 
@@ -235,31 +424,48 @@ interface Details {
   publisher?: string;
   copyrightNotice?: string;
   licenseType?: string;
+  words?: WordChoice;
+  asDocument?: boolean;
+  confirmEdition?: boolean;
 }
 
-function ReviewStep({ preview, onCancel, onAdd }: { preview: ImportPreview; onCancel: () => void; onAdd: (d: Details) => Promise<void> }) {
+export type Correction = { index: number; book: string | null };
+
+function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPreview; onCancel: () => void; onAdd: (d: Details) => Promise<void>; onCorrect: (books: Correction[]) => Promise<void> }) {
   const { t } = useTranslation();
   const id = useId();
   const s = preview.suggested;
   const [name, setName] = useState(s.name);
   const [shortName, setShortName] = useState(s.shortName);
-  const [language, setLanguage] = useState(s.language);
+  // Chosen only from the files' own metadata (or the bundled list); otherwise
+  // left for the person. A tag without a name is named by LanguageChoice.
+  const [language, setLanguage] = useState<LanguageValue | null>(() => (s.languageCode ? { code: s.languageCode, name: s.language } : null));
   const [busy, setBusy] = useState(false);
+  const [words, setWords] = useState<WordChoice>(NO_CHOICE);
+  const doc = preview.document ?? null;
+  // A Bible from documents is added by its verses when they can be used, else as a document.
+  const [byVerse, setByVerse] = useState(true);
+  const [confirmEdition, setConfirmEdition] = useState(false);
+  const asDocument = !!doc && (!doc.versesUsable || !byVerse);
+  const [notice, setNotice] = useState(s.copyrightNotice ?? s.licenseType ?? "");
   const errors = preview.issues.filter((i) => i.severity === "error");
   const warnings = preview.issues.filter((i) => i.severity === "warning");
   const notes = preview.issues.filter((i) => i.severity === "note");
-  const complete = name.trim() && shortName.trim() && language.trim();
+  const complete = name.trim() && shortName.trim() && language !== null && language.name.trim();
 
   const add = async () => {
     setBusy(true);
     await onAdd({
       name,
       shortName,
-      language,
-      languageCode: s.languageCode || undefined,
+      language: language?.name.trim() ?? "",
+      languageCode: language?.code ?? undefined,
       publisher: s.publisher ?? undefined,
-      copyrightNotice: s.copyrightNotice ?? undefined,
-      licenseType: s.licenseType ?? undefined,
+      copyrightNotice: doc ? notice.trim() || undefined : (s.copyrightNotice ?? undefined),
+      licenseType: doc ? undefined : (s.licenseType ?? undefined),
+      words,
+      asDocument: doc ? asDocument : undefined,
+      confirmEdition: doc ? confirmEdition : undefined,
     });
     setBusy(false);
   };
@@ -269,39 +475,89 @@ function ReviewStep({ preview, onCancel, onAdd }: { preview: ImportPreview; onCa
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_10rem]">
         <Field id={`${id}-name`} label={t("scripture.addBible.field.name")} value={name} onChange={setName} />
         <Field id={`${id}-short`} label={t("scripture.addBible.field.shortName")} value={shortName} onChange={setShortName} hint={t("scripture.addBible.field.shortNameHint")} />
-        <Field id={`${id}-lang`} label={t("scripture.addBible.field.language")} value={language} onChange={setLanguage} />
+        <div className="sm:col-span-2">
+          <LanguageChoice id={`${id}-lang`} label={t("scripture.addBible.field.language")} value={language} onChange={setLanguage} />
+        </div>
       </div>
 
-      <section aria-label={t("scripture.addBible.found")} className="flex flex-col gap-1">
-        <p className="reading m-0">{t("scripture.addBible.booksDetected", { count: preview.bookCount })}</p>
-        <p className="reading m-0">{t("scripture.addBible.chaptersDetected", { count: preview.chapterCount, number: formatNumber(preview.chapterCount) })}</p>
-        <p className="reading m-0">{t("scripture.addBible.versesDetected", { count: preview.verseCount, number: formatNumber(preview.verseCount) })}</p>
-        {s.licenseType && <p className="m-0 mt-2 text-[0.9375rem] text-text-muted">{t("scripture.addBible.licence", { licence: s.licenseType })}</p>}
-      </section>
+      {doc && (
+        <div className="-mt-4 flex flex-col gap-1">
+          <label htmlFor={`${id}-notice`} className="type-subhead">
+            {t("scripture.addBible.document.licenceField")}
+          </label>
+          <input id={`${id}-notice`} value={notice} onChange={(e) => setNotice(e.target.value)} className="h-10 aw-input px-3 text-base" aria-describedby={`${id}-notice-hint`} />
+          <span id={`${id}-notice-hint`} className="type-meta">
+            {t("scripture.addBible.document.licenceHint")}
+          </span>
+        </div>
+      )}
 
-      <ul aria-label={t("scripture.addBible.books")} className="m-0 grid list-none grid-cols-1 gap-x-6 p-0 sm:grid-cols-2">
-        {preview.books.map((book) => (
-          <li key={book.code} className="flex items-center justify-between gap-3 border-b border-border-subtle py-1.5">
-            <span>{bookName(book.code, book.name)}</span>
-            <BookStatus status={book.status} />
-          </li>
-        ))}
-      </ul>
+      {doc && <DocumentFiles preview={doc} />}
+
+      {(!doc || preview.verseCount > 0) && (
+        <section aria-label={t("scripture.addBible.found")} className="flex flex-col gap-1">
+          <p className="reading m-0">{t("scripture.addBible.booksDetected", { count: preview.bookCount })}</p>
+          <p className="reading m-0">{t("scripture.addBible.chaptersDetected", { count: preview.chapterCount, number: formatNumber(preview.chapterCount) })}</p>
+          <p className="reading m-0">{t("scripture.addBible.versesDetected", { count: preview.verseCount, number: formatNumber(preview.verseCount) })}</p>
+          {!doc && s.licenseType && <p className="m-0 mt-2 text-[0.9375rem] text-text-muted">{t("scripture.addBible.licence", { licence: s.licenseType })}</p>}
+        </section>
+      )}
+
+      {doc && preview.verseCount > 0 && <Readiness preview={preview} />}
+
+      {doc && <SavedCorrections preview={doc} />}
+
+      {doc && <DocumentChoice preview={doc} byVerse={byVerse} onByVerse={setByVerse} />}
+
+      {doc && (
+        <label className="flex items-start gap-2">
+          <input type="checkbox" checked={confirmEdition} onChange={(e) => setConfirmEdition(e.target.checked)} />
+          <span>{t("scripture.addBible.document.confirmEdition")}</span>
+        </label>
+      )}
+
+      {doc && !asDocument && <Verification preview={doc} />}
+
+      {doc && <RecognitionSamples preview={doc} />}
+
+      {doc ? (
+        <p className="m-0 text-[0.9375rem] text-text-muted">{t("scripture.addBible.document.noWords")}</p>
+      ) : (
+        hasWordResearch(preview.words) && <WordResearch report={preview.words} choice={words} onChoice={setWords} atImport />
+      )}
+
+      {doc ? (
+        doc.books.length > 0 && <FoundBooks preview={doc} onCorrect={onCorrect} />
+      ) : (
+        <ul aria-label={t("scripture.addBible.books")} className="m-0 grid list-none grid-cols-1 gap-x-6 p-0 sm:grid-cols-2">
+          {preview.books.map((book) => (
+            <li key={book.code} className="flex items-center justify-between gap-3 border-b border-border-subtle py-1.5">
+              <span>{bookName(book.code, book.name)}</span>
+              <BookStatus status={book.status} />
+            </li>
+          ))}
+        </ul>
+      )}
 
       {errors.length > 0 && (
-        <IssueGroup title={t("scripture.addBible.problems", { count: errors.length })} issues={errors} open />
+        <IssueGroup title={t("scripture.addBible.problems", { count: errors.length })} issues={errors} open={!doc} />
       )}
       {warnings.length > 0 && <IssueGroup title={t("scripture.addBible.warnings", { count: warnings.length })} issues={warnings} />}
       {notes.length > 0 && <IssueGroup title={t("scripture.addBible.notes", { count: notes.length })} issues={notes} />}
+      {doc && doc.leftOut.length > 0 && <LeftOut preview={doc} />}
       {preview.skippedFiles.length > 0 && (
-        <p className="m-0 text-[0.9375rem] text-text-muted">
-          {t("scripture.addBible.skipped", { count: preview.skippedFiles.length })}
-        </p>
+        <details className="text-[0.9375rem] text-text-muted">
+          <summary className="cursor-pointer">{t("scripture.addBible.skipped", { count: preview.skippedFiles.length })}</summary>
+          <p className="m-0 mt-1 break-all">
+            <span className="sr-only">{t("scripture.addBible.skippedNames")}: </span>
+            {preview.skippedFiles.join(", ")}
+          </p>
+        </details>
       )}
 
       <div className="flex flex-wrap gap-3 border-t border-border-subtle pt-6">
         <Button variant="primary" onClick={add} disabled={!preview.canImport || !complete || busy}>
-          {busy ? t("scripture.addBible.adding") : t("scripture.addBible.add")}
+          {busy ? t("scripture.addBible.adding") : asDocument ? t("scripture.addBible.document.addDocument") : t("scripture.addBible.add")}
         </Button>
         <Button onClick={onCancel}>{t("common.cancel")}</Button>
       </div>
@@ -312,13 +568,13 @@ function ReviewStep({ preview, onCancel, onAdd }: { preview: ImportPreview; onCa
 function Field(props: { id: string; label: string; value: string; onChange: (v: string) => void; hint?: string }) {
   return (
     <label htmlFor={props.id} className="flex flex-col gap-1">
-      <span className="text-[0.9375rem] font-medium text-text-strong">{props.label}</span>
+      <span className="type-subhead">{props.label}</span>
       <input
         id={props.id}
         value={props.value}
         placeholder={props.hint}
         onChange={(e) => props.onChange(e.target.value)}
-        className="h-10 rounded-aw border border-border bg-bg px-3 text-base placeholder:text-text-muted"
+        className="h-10 aw-input px-3 text-base placeholder:text-text-muted"
       />
     </label>
   );
@@ -333,22 +589,287 @@ function BookStatus({ status }: { status: "ok" | "warning" | "error" }) {
   };
   const [icon, label] = map[status];
   return (
-    <span className="inline-flex items-center gap-1.5 text-[0.875rem] text-text-muted" title={label}>
+    <span className="inline-flex items-center gap-1.5 type-meta" title={label}>
       {icon}
       <span className="sr-only">{label}</span>
     </span>
   );
 }
 
-function IssueGroup({ title, issues, open }: { title: string; issues: ImportIssue[]; open?: boolean }) {
+export function IssueGroup({ title, issues, open }: { title: string; issues: ImportIssue[]; open?: boolean }) {
   return (
     <details open={open} className="border-l-[3px] border-border pl-4">
-      <summary className="cursor-pointer font-semibold text-text-strong">{title}</summary>
+      <summary className="type-subhead cursor-pointer">{title}</summary>
       <ul className="m-0 mt-2 flex list-none flex-col gap-1.5 p-0 text-[0.9375rem]">
         {issues.map((issue, index) => (
           <li key={index}>{localizeMessage(issue.code, issue.params, issue.message)}</li>
         ))}
       </ul>
+    </details>
+  );
+}
+
+/** What each chosen document holds, in plain words (v0.23). */
+function DocumentFiles({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  const kind = (file: DocumentFileInfo) => {
+    if (file.format === "pdf") {
+      const pages = file.pages ?? 0;
+      return file.scanned
+        ? t("scripture.addBible.document.file.pdfScanned", { count: pages, formatted: formatNumber(pages) })
+        : t("scripture.addBible.document.file.pdfText", { count: pages, formatted: formatNumber(pages) });
+    }
+    return t(`scripture.addBible.document.file.${file.format}`);
+  };
+  return (
+    <section className="flex flex-col gap-2">
+      <h2 className="type-section m-0">{t("scripture.addBible.document.filesTitle")}</h2>
+      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+        {preview.files.map((file) => (
+          <li key={file.name} className="flex flex-col gap-0.5 border-b border-border-subtle pb-2">
+            <span className="break-all font-medium text-text-strong">{file.name}</span>
+            <span className="text-[0.9375rem]">{kind(file)}</span>
+            <span className="type-meta">{file.keepsLayout ? t("scripture.addBible.document.layoutKept") : t("scripture.addBible.document.layoutText")}</span>
+            {file.notes > 0 && <span className="type-meta">{t("scripture.addBible.document.notes", { count: file.notes, formatted: formatNumber(file.notes) })}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** By book, chapter and verse, or as a document to read: the one choice the person makes (v0.23). */
+/**
+ * In a sentence or two (v0.24.2): which books can be used by their verses as
+ * they are, and how many chapters need checking ("Genesis and Exodus are
+ * ready to use. 3 chapters need checking."). The details stay in the lists
+ * below.
+ */
+export function Readiness({ preview }: { preview: ImportPreview }) {
+  const { t } = useTranslation();
+  const held = new Set(
+    preview.issues
+      .filter((i) => i.severity === "error" && i.book !== null && i.chapter !== null)
+      .map((i) => `${i.book}:${i.chapter}`),
+  );
+  const heldBooks = new Set([...held].map((k) => k.split(":")[0]));
+  const ready = preview.books.filter((b) => b.verses > 0 && b.status !== "error" && !heldBooks.has(b.code));
+  let first: string;
+  if (ready.length === 0) {
+    first = t("scripture.addBible.document.ready.none");
+  } else if (ready.length <= 3) {
+    const names = ready.map((b) => bookName(b.code, b.name));
+    const books = new Intl.ListFormat(formatLocale(), { type: "conjunction" }).format(names);
+    first = t("scripture.addBible.document.ready.some", { books, count: ready.length });
+  } else {
+    first = t("scripture.addBible.document.ready.many", { count: ready.length });
+  }
+  return (
+    <p className="reading m-0" data-testid="readiness">
+      {first}
+      {held.size > 0 && <> {t("scripture.addBible.document.ready.check", { count: held.size })}</>}
+    </p>
+  );
+}
+
+function DocumentChoice({ preview, byVerse, onByVerse }: { preview: DocumentPreview; byVerse: boolean; onByVerse: (v: boolean) => void }) {
+  const { t } = useTranslation();
+  const name = useId();
+  const scanned = preview.textChars === 0;
+  if (!preview.versesUsable) {
+    const message = scanned
+      ? t("scripture.addBible.document.scannedOnly")
+      : preview.books.some((b) => b.verses > 0)
+        ? t("scripture.addBible.document.unusable")
+        : t("scripture.addBible.document.noneFound");
+    return <Notice>{message}</Notice>;
+  }
+  const isPdf = preview.files.some((f) => f.format === "pdf");
+  return (
+    <fieldset className="m-0 flex flex-col gap-3 border-0 p-0">
+      <legend className="type-subhead mb-1">{t("scripture.addBible.document.modeLabel")}</legend>
+      <p className="m-0 text-[0.9375rem]">{t("scripture.addBible.document.usable")}</p>
+      {[true, false].map((verses) => (
+        <label key={String(verses)} className="flex items-start gap-2">
+          <input type="radio" name={name} className="mt-1" checked={byVerse === verses} onChange={() => onByVerse(verses)} />
+          <span className="flex flex-col">
+            <span className="font-medium">{verses ? t("scripture.addBible.document.mode.verses") : t("scripture.addBible.document.mode.document")}</span>
+            <span className="text-[0.9375rem] text-text-muted">{verses ? t("scripture.addBible.document.mode.versesHint") : t("scripture.addBible.document.mode.documentHint")}</span>
+          </span>
+        </label>
+      ))}
+      {isPdf && byVerse && <p className="m-0 type-meta">{t("scripture.addBible.document.pdfLimit")}</p>}
+    </fieldset>
+  );
+}
+
+/**
+ * Verses found whose text could not be checked (v0.24.3): where their
+ * place is known but their exact words are in doubt. Said plainly, with why,
+ * so that "found" is never mistaken for "checked".
+ */
+export function RecognitionSamples({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  const samples = preview.recognitionSamples ?? [];
+  if (samples.length === 0) return null;
+  return (
+    <details>
+      <summary className="cursor-pointer">{t("scripture.addBible.document.evidenceSamples")}</summary>
+      <ul className="space-y-2">
+        {samples.map((sample) => (
+          <li key={sample.reference}>
+            <strong>{sample.reference}</strong>
+            <p className="m-0 type-meta break-all">
+              {sample.fileName}
+              {sample.entryPath && <> · {sample.entryPath}</>}
+              {sample.place.page != null && <> · {t("scripture.document.passages.showPage", { page: formatNumber(sample.place.page) })}</>}
+              {sample.place.segment != null && <> · {t("scripture.addBible.document.sourceSegment", { number: formatNumber(sample.place.segment + 1) })}</>}
+            </p>
+            {sample.spans.length > 0 && (
+              <p className="m-0 type-meta">{t("scripture.addBible.document.byteRanges", { ranges: sample.spans.map((span) => `${span.byteStart}–${span.byteEnd}`).join(", ") })}</p>
+            )}
+            {sample.reason ? (
+              <p className="m-0 type-meta">{t(`scripture.addBible.document.unverifiedReason.${sample.reason}`, { count: 1, formatted: formatNumber(1) })}</p>
+            ) : sample.text && <p className="reading m-0">{sample.text}</p>}
+            {sample.exclusions.length > 0 && (
+              <p className="m-0 type-meta">{t("scripture.addBible.document.sourceExclusions", { text: sample.exclusions.map((exclusion) => exclusion.text).join(", ") })}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+      {preview.numbering?.some((book) => book.agreement === "departs") && (
+        <p className="m-0 type-meta">{t("scripture.reader.numberingUnmapped")}</p>
+      )}
+    </details>
+  );
+}
+
+export function Verification({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  if (preview.unverifiedVerses === 0) return null;
+  const reasons = Object.entries(preview.unverifiedReasons).filter(([, n]) => (n ?? 0) > 0) as [UnverifiedReason, number][];
+  return (
+    <section className="flex flex-col gap-1" data-testid="verification">
+      <Notice>{t("scripture.addBible.document.unverified", { count: preview.unverifiedVerses, formatted: formatNumber(preview.unverifiedVerses) })}</Notice>
+      <details className="border-l-[3px] border-border pl-4 text-[0.9375rem]">
+        <summary className="cursor-pointer">{t("scripture.addBible.document.unverifiedWhy")}</summary>
+        <ul className="m-0 mt-1 flex list-disc flex-col gap-0.5 pl-5">
+          {reasons.map(([reason, n]) => (
+            <li key={reason}>{t(`scripture.addBible.document.unverifiedReason.${reason}`, { count: n, formatted: formatNumber(n) })}</li>
+          ))}
+        </ul>
+      </details>
+    </section>
+  );
+}
+
+/**
+ * The person's corrections kept from an earlier reading (v0.24.3), and how
+ * each fits now. Nothing is decided for the person: a correction that no
+ * longer fits, or fits a changed document, is shown to be checked.
+ */
+export function SavedCorrections({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  if (preview.saved.length === 0) return null;
+  const attention = preview.saved.some((c) => c.status !== "applied" && c.status !== "earlier");
+  const book = (code: string | null) => (code ? bookName(code) : t("scripture.addBible.document.leaveOut"));
+  return (
+    <details open={attention} className="border-l-[3px] border-border pl-4" data-testid="saved-corrections">
+      <summary className="type-subhead cursor-pointer">{t("scripture.addBible.document.saved.title", { count: preview.saved.length, formatted: formatNumber(preview.saved.length) })}</summary>
+      <ul className="m-0 mt-2 flex list-none flex-col gap-2 p-0 text-[0.9375rem]">
+        {preview.saved.map((c, i) => (
+          <li key={i} className="flex flex-col">
+            <span className="font-medium">{t("scripture.addBible.document.saved.choice", { heading: c.heading, book: book(c.chosen) })}</span>
+            <span className={c.status === "applied" || c.status === "earlier" ? "type-meta" : "text-warning"}>
+              {t(`scripture.addBible.document.saved.${c.status}`, { book: book(c.detectedNow) })}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+/**
+ * The books found, each at its heading in the document (v0.23). A heading read
+ * as the wrong book, or naming none, is corrected here; the documents are then
+ * read again. Folded unless something needs attention.
+ */
+export function FoundBooks({ preview, onCorrect }: { preview: DocumentPreview; onCorrect: (books: Correction[]) => Promise<void> }) {
+  const { t } = useTranslation();
+  const { books: canon } = useScripture();
+  const [busy, setBusy] = useState(false);
+  const attention = !preview.versesUsable && preview.books.some((b) => (b.detected === null && b.outside === null) || b.verses > 0);
+  const choose = async (index: number, value: string) => {
+    const corrections: Correction[] = preview.books
+      .filter((b) => b.index !== index && (b.leftOut || b.book !== b.detected))
+      .map((b) => ({ index: b.index, book: b.leftOut ? null : b.book }));
+    corrections.push({ index, book: value === "" ? null : value });
+    setBusy(true);
+    await onCorrect(corrections);
+    setBusy(false);
+  };
+  return (
+    <details open={attention} className="border-l-[3px] border-border pl-4">
+      <summary className="type-subhead cursor-pointer">{t("scripture.addBible.document.booksTitle", { count: preview.books.length, formatted: formatNumber(preview.books.length) })}</summary>
+      <div className="mt-2 flex flex-col gap-3">
+        <p className="m-0 text-[0.9375rem] text-text-muted">{t("scripture.addBible.document.booksIntro")}</p>
+        {busy && (
+          <p role="status" className="m-0 text-[0.9375rem]">
+            {t("scripture.addBible.document.correcting")}
+          </p>
+        )}
+        <ul className="m-0 flex list-none flex-col gap-3 p-0">
+          {preview.books.map((book) => (
+            <li key={book.index} className="flex flex-col gap-1">
+              <label className="flex flex-col gap-1">
+                <span className="break-words text-[0.9375rem] font-medium">{t("scripture.addBible.document.bookChoice", { heading: book.heading })}</span>
+                <select
+                  value={book.leftOut ? "" : (book.book ?? "-")}
+                  disabled={busy}
+                  onChange={(e) => void choose(book.index, e.target.value)}
+                  className="h-9 max-w-80 aw-input px-2"
+                >
+                  {book.book === null && !book.leftOut && <option value="-">{t("scripture.addBible.document.notRecognised")}</option>}
+                  <option value="">{t("scripture.addBible.document.leaveOut")}</option>
+                  {canon.map((b) => (
+                    <option key={b.code} value={b.code}>
+                      {bookName(b.code, b.name)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {!book.leftOut && book.book && (
+                <span className="type-meta">{t("scripture.addBible.document.bookCounts", { chapters: formatNumber(book.chapters), verses: formatNumber(book.verses) })}</span>
+              )}
+              {book.corrected && <span className="type-meta">{t("scripture.addBible.document.yourCorrection")}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  );
+}
+
+/** Text that belongs to no verse, with examples and where they are (v0.23). */
+export function LeftOut({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  return (
+    <details className="border-l-[3px] border-border pl-4 text-[0.9375rem]">
+      <summary className="type-subhead cursor-pointer">{t("scripture.addBible.document.leftOutTitle", { formatted: formatNumber(preview.stats.leftOutChars) })}</summary>
+      <div className="mt-2 flex flex-col gap-2">
+        <p className="m-0 text-text-muted">{t("scripture.addBible.document.leftOutIntro")}</p>
+        <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+          {preview.leftOut.map((item, index) => (
+            <li key={index} className="flex flex-col">
+              <span className="type-meta">
+                {[t(`scripture.addBible.document.reason.${item.reason}`), item.place.page !== null ? t("scripture.document.page", { page: formatNumber(item.place.page) }) : null].filter(Boolean).join(t("common.listSeparator"))}
+              </span>
+              <span className="break-words">{item.sample}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
     </details>
   );
 }

@@ -5,7 +5,39 @@
 //! nothing in an imported file name can reach outside that folder, and each
 //! source has its own folder, so names never collide.
 
+use crate::error::{AppError, AppResult, UserMessage};
 use sha2::{Digest, Sha256};
+use std::{fs, io::Read, path::Path};
+
+/// Commit the bytes reviewed, even if a synchronised input changes after its
+/// preview. The caller owns a new managed folder and removes it on any error.
+pub fn copy_verified(from: &Path, to: &Path, expected: &str, file_name: &str) -> AppResult<()> {
+    fs::copy(from, to).map_err(|e| AppError::filesystem(from, e))?;
+    let mut file = fs::File::open(to).map_err(|e| AppError::filesystem(to, e))?;
+    let mut hash = Sha256::new();
+    let mut buffer = [0u8; 64 * 1024];
+    loop {
+        let n = file
+            .read(&mut buffer)
+            .map_err(|e| AppError::filesystem(to, e))?;
+        if n == 0 {
+            break;
+        }
+        hash.update(&buffer[..n]);
+    }
+    if format!("{:x}", hash.finalize()) != expected {
+        drop(file);
+        let _ = fs::remove_file(to);
+        return Err(AppError::Import(
+            UserMessage::new(
+                "batch.changed",
+                format!("“{file_name}” changed after it was checked. Read it again."),
+            )
+            .with("fileName", file_name),
+        ));
+    }
+    Ok(())
+}
 
 /// SHA-256 of the file content, lower-case hex.
 pub fn content_hash(bytes: &[u8]) -> String {

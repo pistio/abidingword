@@ -1,0 +1,120 @@
+{
+  "dateUTC": "2026-11-12",
+  "requestedReviewCommit": "d9e4ce21bad16f26af6c4164c69641c8b25716bf",
+  "continuedFrom": "4f2ff35b61a327b37dc81b6a17f1027bc53f68b6",
+  "environment": "Linux; no Windows executor attached",
+  "checks": [
+    {
+      "name": "rustfmt",
+      "command": "cargo fmt --manifest-path src-tauri/Cargo.toml -- --check",
+      "result": "pass"
+    },
+    {
+      "name": "linux-clippy",
+      "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings",
+      "result": "pass"
+    },
+    {
+      "name": "rust-tests",
+      "command": "cargo test --manifest-path src-tauri/Cargo.toml --locked",
+      "result": "1107 passed; 0 failed; 8 existing ignored"
+    },
+    {
+      "name": "windows-cross-check",
+      "command": "cargo check --manifest-path src-tauri/Cargo.toml --target x86_64-pc-windows-gnu --all-targets --locked",
+      "result": "pass; not linked or run on Windows"
+    },
+    {
+      "name": "windows-cross-clippy",
+      "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --target x86_64-pc-windows-gnu --all-targets --locked -- -D warnings",
+      "result": "pass; not Windows runtime validation"
+    },
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "result": "pass"
+    },
+    {
+      "name": "eslint",
+      "command": "npm run lint",
+      "result": "pass"
+    },
+    {
+      "name": "i18n",
+      "command": "npm run i18n:check",
+      "result": "pass; 6 languages, 9 areas, 4046 English keys, 137 components"
+    },
+    {
+      "name": "build",
+      "command": "npm run build",
+      "result": "pass; existing chunk-size warning"
+    },
+    {
+      "name": "browser-initial",
+      "command": "PLAYWRIGHT_MODULE=/workspace/browser-tools/node_modules/playwright node tests/screenshots/viewport-resize-contract.mjs (original script before edits)",
+      "result": "10 passed; DOM-only"
+    },
+    {
+      "name": "browser-expanded",
+      "command": "PLAYWRIGHT_MODULE=/workspace/browser-tools/node_modules/playwright node tests/screenshots/viewport-resize-contract.mjs",
+      "result": "40 passed; DOM-only; Chromium on Linux; DPR emulated"
+    },
+    {
+      "name": "collector",
+      "command": "PowerShell parser + Add-Type C# compilation, PowerShell 7.5.4 on Linux",
+      "result": "pass; no Win32 calls executed"
+    },
+    {
+      "name": "runner-syntax",
+      "command": "node --check scripts/windows/Test-WebviewViewport.mjs; node --check scripts/windows/viewport-evidence.mjs",
+      "result": "pass"
+    },
+    {
+      "name": "native-preflight",
+      "command": "node scripts/windows/Test-WebviewViewport.mjs --mode observe",
+      "result": "expected refusal on Linux; native execution unavailable"
+    },
+    {
+      "name": "frontend-tests",
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=work/issue-49/frontend-final.json",
+      "result": "1297 passed; 0 failed; 121 test files",
+      "successful": true
+    }
+  ],
+  "nativeWindows": {
+    "executed": false,
+    "measurements": [],
+    "beforeAfterEvidence": null,
+    "initial800HeightHypothesis": "unresolved",
+    "acceptance": "BLOCKED; issue not fixed; native runner integration unvalidated"
+  },
+  "preservation": {
+    "migrationFiles": 27,
+    "migrationCatalogueSHA256": "f1dbfdb065d280d7c8f0f4962d023c59b3ad3306b4f74c32151a82461ccad5bd",
+    "digestMethod": "sorted relative path + NUL + file bytes + NUL",
+    "unchanged": "Migrations, recogniser, production Study/Teaching/layout, translation/Scripture resources, lockfiles, permissions, workflows and updater"
+  },
+  "prohibitedActions": {
+    "paidActionsStarted": false,
+    "installerCreated": false,
+    "merged": false,
+    "released": false,
+    "deployed": false
+  },
+  "resolvedSetupIssues": [
+    "Installed extracted Linux system dependencies and a workspace-local Rust toolchain.",
+    "Windows GNU resource preprocessing needed the extracted MinGW gcc alias; final check/Clippy pass.",
+    "Collector C# reference assemblies and Linux PowerShell workspace XDG paths corrected; final static compile passes.",
+    "Expanded browser fixture initially linked ROM8 instead of invented John15; test fixture corrected, all 40 final cases pass."
+  ],
+  "evidenceCaution": "Browser screenshots, policy tests and cross compilation are not Windows WebView2 acceptance.",
+  "toolchain": {
+    "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "chromium": "154.0.8037.57 Debian 13",
+    "playwright": "1.65.0",
+    "powershellStaticCheck": "7.5.4 Linux"
+  },
+  "logNote": "Committed text logs have trailing whitespace and redundant final blank lines removed; test outcomes unchanged."
+}

@@ -7,7 +7,6 @@
 
 use std::fs;
 use std::path::PathBuf;
-use std::sync::{Mutex, OnceLock};
 
 use tauri::State;
 
@@ -16,7 +15,7 @@ use crate::db::{findings, library};
 use crate::domain::Finding;
 use crate::error::{AppError, ErrorPayload, UserMessage};
 use crate::filesystem;
-use crate::library::{adapters, contents, generated_contents, import, original};
+use crate::library::{adapters, contents, import, original};
 use crate::library::{
     AddFindingSource, CitationPlace, CommitSourceImport, CreateFindingFromSource, FindingCitation,
     GetSegments, LibraryResults, ListSources, PassageLocation, PassageMention, PassageSourceGroup,
@@ -50,7 +49,20 @@ pub fn library_languages(state: State<'_, AppState>) -> CommandResult<Vec<String
 
 #[tauri::command(async)]
 pub fn library_get_source(state: State<'_, AppState>, id: String) -> CommandResult<Source> {
-    state.db(|conn| library::get(conn, &id))
+    let mut source = state.db(|conn| library::get(conn, &id))?;
+    // A file row can outlive the managed copy. The reader says so, and no path leaves the core.
+    if let Ok(core) = state.core() {
+        source.file_present = match core
+            .db
+            .with_conn(|conn| library::original_record(conn, &id))
+        {
+            Ok((relative, _)) => {
+                original::verified_path(&core.dirs.sources(), &id, &relative).is_ok()
+            }
+            Err(_) => false,
+        };
+    }
+    Ok(source)
 }
 
 /// Reads and checks one chosen file; nothing is saved yet.
@@ -116,6 +128,19 @@ pub fn library_import_commit(
                 "This import has expired. Please choose the file again.",
             ))
         })?;
+    let source = add_staged(core, staged, &input)?;
+    *pending = None;
+    Ok(source)
+}
+
+/// Copies a read file into the library and saves its source in one step (one
+/// file at a time, also for batch imports). On any failure nothing is kept,
+/// not even the copied file.
+pub fn add_staged(
+    core: &crate::state::Core,
+    staged: &import::StagedSource,
+    input: &CommitSourceImport,
+) -> Result<Source, ErrorPayload> {
     if let Some(problem) = staged.problem() {
         return Err(AppError::Import(problem).into());
     }
@@ -128,7 +153,12 @@ pub fn library_import_commit(
         .unwrap_or_else(|| core.dirs.sources());
     let copied = (|| {
         fs::create_dir_all(&folder).map_err(|e| AppError::filesystem(&folder, e))?;
-        fs::copy(&staged.path, &target).map_err(|e| AppError::filesystem(&staged.path, e))?;
+        crate::library::files::copy_verified(
+            &staged.path,
+            &target,
+            &staged.hash,
+            &staged.file_name,
+        )?;
         Ok::<_, AppError>(())
     })();
     if let Err(error) = copied {
@@ -137,12 +167,9 @@ pub fn library_import_commit(
     }
     match core
         .db
-        .with_conn(|conn| library::commit_import(conn, &source_id, staged, &input, &relative))
+        .with_conn(|conn| library::commit_import(conn, &source_id, staged, input, &relative))
     {
-        Ok(source) => {
-            *pending = None;
-            Ok(source)
-        }
+        Ok(source) => Ok(source),
         Err(error) => {
             filesystem::remove_managed(&folder);
             Err(ErrorPayload::from(error))
@@ -159,21 +186,12 @@ pub fn library_import_cancel(state: State<'_, AppState>, preview_id: String) -> 
     Ok(())
 }
 
-/// Removes a source's text and Abiding Word's copy of the file. Findings
-/// that cite it keep a record of the citation.
+/// Deletes a source permanently (v0.24: only from Trash): its text and
+/// Abiding Word's copy of the file. Findings that cite it keep a record of
+/// the citation.
 #[tauri::command(async)]
 pub fn library_remove_source(state: State<'_, AppState>, id: String) -> CommandResult<()> {
-    let core = state.core()?;
-    let file = core.db.with_conn(|conn| library::remove(conn, &id))?;
-    if let Some(relative) = file {
-        if let Some(folder) = core.dirs.sources().join(relative).parent() {
-            // Only ever the source's own folder inside sources/.
-            if folder.starts_with(core.dirs.sources()) && folder.ends_with(&id) {
-                filesystem::remove_managed(folder);
-            }
-        }
-    }
-    Ok(())
+    super::library_manage::library_remove_permanently(state, vec![id]).map(|_| ())
 }
 
 #[tauri::command(async)]
@@ -380,76 +398,74 @@ pub fn library_source_contents(
     let Some((relative, format)) = record else {
         return Ok(Vec::new());
     };
+    if format == "pdf" {
+        return Ok(core
+            .db
+            .with_conn(|conn| crate::db::pdf_structures::contents(conn, &id))?);
+    }
     // A DOCX carries no contents of its own; its headings are generated contents.
     if format != "epub" {
         return Ok(Vec::new());
     }
     let bytes = original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-    let expected = usize::try_from(source.segment_count).unwrap_or(0);
-    Ok(adapters::epub::contents(&bytes, expected))
+    let (document, items) = adapters::epub::extract_with_contents(&bytes, "book.epub")?;
+    let hash = crate::library::files::content_hash(&bytes);
+    if document.segments.len() != usize::try_from(source.segment_count).unwrap_or(0)
+        || !core.db.with_conn(|conn| {
+            library::refresh_contents_links(conn, &id, &hash, &document, &items)
+        })?
+    {
+        return Ok(Vec::new());
+    }
+    Ok(items)
 }
 
 /// Contents made from the source's own structure, for a source that carries
 /// none (v0.13): a DOCX's Word headings, an EPUB's or Markdown file's
 /// headings, a PDF's probable headings (see `library::generated_contents`).
 /// The interface shows them as generated. Empty when nothing is clear enough.
-#[tauri::command(async)]
-pub fn library_generated_contents(
-    state: State<'_, AppState>,
+#[tauri::command]
+pub async fn library_generated_contents(
+    app: tauri::AppHandle,
     id: String,
 ) -> CommandResult<Vec<contents::ContentsItem>> {
-    let core = state.core()?;
-    let (source, record) = core.db.with_conn(|conn| {
-        let source = library::get(conn, &id)?;
-        let record = library::original_record(conn, &id).ok();
-        Ok((source, record))
-    })?;
-    match record {
-        Some((relative, format)) if format == "docx" => {
-            let bytes =
-                original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-            let expected = usize::try_from(source.segment_count).unwrap_or(0);
-            Ok(adapters::docx::contents(&bytes, expected))
-        }
-        Some((relative, format)) if format == "pdf" => {
-            if let Some(found) = generated_cache_get(&id) {
-                return Ok(found);
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let core = state.core()?;
+        let (source, record) = core.db.with_conn(|conn| {
+            let source = library::get(conn, &id)?;
+            let record = library::original_record(conn, &id).ok();
+            Ok((source, record))
+        })?;
+        match record {
+            Some((_, format)) if format == "pdf" => crate::library::pdf_build::ensure_contents(
+                &core.db,
+                &core.dirs.sources(),
+                &id,
+                &state.pdf_structure_jobs,
+            )
+            .map_err(ErrorPayload::from),
+            Some((relative, format)) if format == "docx" => {
+                let bytes = original::read_managed(
+                    &core.dirs.sources(),
+                    &id,
+                    &relative,
+                    MAX_CONTENTS_FILE,
+                )?;
+                Ok(adapters::docx::contents(
+                    &bytes,
+                    usize::try_from(source.segment_count).unwrap_or(0),
+                ))
             }
-            let bytes =
-                original::read_managed(&core.dirs.sources(), &id, &relative, MAX_CONTENTS_FILE)?;
-            let found = generated_contents::from_pdf(&bytes);
-            generated_cache_put(&id, &found);
-            Ok(found)
+            _ => core
+                .db
+                .with_conn(|conn| library::generated_contents(conn, &id))
+                .map_err(ErrorPayload::from),
         }
-        _ => Ok(core
-            .db
-            .with_conn(|conn| library::generated_contents(conn, &id))?),
-    }
-}
-
-/// Generated PDF contents already worked out this session (reading a whole
-/// PDF again for each opening would be slow), a few sources at most.
-type GeneratedCache = Mutex<Vec<(String, Vec<contents::ContentsItem>)>>;
-
-fn generated_cache() -> &'static GeneratedCache {
-    static CACHE: OnceLock<GeneratedCache> = OnceLock::new();
-    CACHE.get_or_init(|| Mutex::new(Vec::new()))
-}
-const GENERATED_CACHE_SOURCES: usize = 8;
-
-fn generated_cache_get(id: &str) -> Option<Vec<contents::ContentsItem>> {
-    let cache = generated_cache().lock().ok()?;
-    cache.iter().find(|(k, _)| k == id).map(|(_, v)| v.clone())
-}
-
-fn generated_cache_put(id: &str, items: &[contents::ContentsItem]) {
-    if let Ok(mut cache) = generated_cache().lock() {
-        cache.retain(|(k, _)| k != id);
-        cache.push((id.to_string(), items.to_vec()));
-        if cache.len() > GENERATED_CACHE_SOURCES {
-            cache.remove(0);
-        }
-    }
+    })
+    .await
+    .map_err(|_| ErrorPayload::from(AppError::Unexpected("Contents worker unavailable".into())))?
 }
 
 /// The links inside an EPUB's text that lead elsewhere in the same book (see
@@ -569,3 +585,136 @@ fn managed_bytes(
 
 /// The largest EPUB read for its contents (matches what import accepts).
 const MAX_CONTENTS_FILE: u64 = 200 * 1024 * 1024;
+
+#[tauri::command(async)]
+pub fn library_pdf_structure(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.db(|conn| crate::db::pdf_structures::view(conn, &id))
+}
+
+/// Display and save use the same worker and the same captured query/reader state.
+#[tauri::command]
+pub async fn library_pdf_structure_diagnostic(
+    app: tauri::AppHandle,
+    id: String,
+    passage: Option<String>,
+    observed: Option<crate::db::pdf_diagnostic::ReaderObserved>,
+) -> CommandResult<crate::db::pdf_diagnostic::Diagnostic> {
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let mut report = state.db(|conn| {
+            crate::db::pdf_diagnostic::diagnostic_with(conn, &id, passage.as_deref(), observed)
+        })?;
+        report.processing = state.pdf_structure_jobs.get(&id).map(|j| j.snapshot());
+        Ok(report)
+    })
+    .await
+    .map_err(|_| {
+        ErrorPayload::from(AppError::Unexpected(
+            "PDF diagnostic worker unavailable".into(),
+        ))
+    })?
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct SavedPdfDiagnostic {
+    path: String,
+    report: crate::db::pdf_diagnostic::Diagnostic,
+}
+
+#[tauri::command]
+pub async fn library_pdf_structure_diagnostic_save(
+    app: tauri::AppHandle,
+    id: String,
+    passage: Option<String>,
+    observed: Option<crate::db::pdf_diagnostic::ReaderObserved>,
+    path: String,
+) -> CommandResult<SavedPdfDiagnostic> {
+    let report = library_pdf_structure_diagnostic(app, id, passage, observed).await?;
+    tauri::async_runtime::spawn_blocking(move || {
+        let bytes = serde_json::to_vec_pretty(&report)
+            .map_err(|_| AppError::Unexpected("PDF diagnostic serialization failed".into()))?;
+        let target = crate::commands::materials::chosen_path(&path, &["json"])?;
+        crate::commands::materials::refuse_unasked(&path, &target)?;
+        crate::commands::presentations::write_atomically(&target, &bytes)?;
+        Ok(SavedPdfDiagnostic {
+            path: target.to_string_lossy().into_owned(),
+            report,
+        })
+    })
+    .await
+    .map_err(|_| {
+        ErrorPayload::from(AppError::Unexpected(
+            "PDF diagnostic save worker unavailable".into(),
+        ))
+    })?
+}
+
+/// CPU/file work is explicitly off the IPC executor; progress is retained in
+/// AppState so closing/reopening the panel cannot hide a failed operation.
+#[tauri::command]
+pub async fn library_pdf_structure_build(
+    app: tauri::AppHandle,
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.core()?;
+    let job = state.pdf_structure_jobs.start(&id)?;
+    tauri::async_runtime::spawn_blocking(move || {
+        use tauri::Manager;
+        let state = app.state::<AppState>();
+        let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let core = state.core().map_err(|_| AppError::Unexpected("PDF analysis unavailable".into()))?;
+            crate::library::pdf_build::rebuild(&core.db, &core.dirs.sources(), &id, &job)
+        })).unwrap_or_else(|_| Err(AppError::Unexpected("PDF analysis worker stopped".into())));
+        job.finish(&result);
+        result.map_err(|error| {
+            let code = match error {
+                AppError::InvalidInput(ref m) | AppError::Import(ref m) => m.code.unwrap_or("library.structure.failed"),
+                _ => "library.structure.failed",
+            };
+            ErrorPayload::from(AppError::InvalidInput(UserMessage::new(code,
+                "Heading analysis stopped. Reopen Chapters and headings for its stage and retry. Previous metadata remains available.")))
+        })
+    }).await.map_err(|_| ErrorPayload::from(AppError::Unexpected("PDF worker unavailable".into())))?
+}
+
+#[tauri::command(async)]
+pub fn library_pdf_structure_progress(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<Option<crate::library::pdf_build::Progress>> {
+    state.core()?;
+    Ok(state.pdf_structure_jobs.get(&id).map(|j| j.snapshot()))
+}
+
+#[tauri::command(async)]
+pub fn library_pdf_structure_cancel(state: State<'_, AppState>, id: String) -> CommandResult<bool> {
+    state.core()?;
+    Ok(state
+        .pdf_structure_jobs
+        .get(&id)
+        .is_some_and(|j| j.cancel()))
+}
+#[tauri::command(async)]
+pub fn library_pdf_structure_correct(
+    state: State<'_, AppState>,
+    id: String,
+    hash: String,
+    correction: crate::library::pdf_structure::Correction,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.db(|conn| crate::db::pdf_structures::correct(conn, &id, &hash, correction))
+}
+#[tauri::command(async)]
+pub fn library_pdf_structure_undo(
+    state: State<'_, AppState>,
+    id: String,
+    hash: String,
+    reset: bool,
+) -> CommandResult<crate::db::pdf_structures::View> {
+    state.db(|conn| crate::db::pdf_structures::undo(conn, &id, &hash, reset))
+}

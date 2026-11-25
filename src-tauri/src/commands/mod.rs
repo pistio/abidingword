@@ -11,10 +11,17 @@
 pub mod annotations;
 pub mod app;
 pub mod assistant;
+pub mod bible_documents;
 pub mod bibles;
 pub mod blocks;
 pub mod findings;
 pub mod library;
+pub mod library_batch;
+pub mod library_manage;
+pub mod materials;
+pub mod portability;
+pub mod presentation_templates;
+pub mod presentations;
 pub mod projects;
 pub mod relations;
 pub mod scripture;
@@ -24,6 +31,7 @@ pub mod source_annotations;
 pub mod studies;
 pub mod study_passages;
 pub mod teaching;
+pub mod teaching_templates;
 pub mod templates;
 pub mod workspaces;
 

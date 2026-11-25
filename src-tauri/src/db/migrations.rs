@@ -73,8 +73,98 @@ pub const MIGRATIONS: &[Migration] = &[
     },
     Migration {
         version: 10,
+        name: "presentations",
+        sql: include_str!("../../migrations/0010_presentations.sql"),
+    },
+    Migration {
+        version: 11,
+        name: "presentation_target",
+        sql: include_str!("../../migrations/0011_presentation_target.sql"),
+    },
+    Migration {
+        version: 12,
+        name: "presentation_templates",
+        sql: include_str!("../../migrations/0012_presentation_templates.sql"),
+    },
+    Migration {
+        version: 13,
+        name: "study_phases",
+        sql: include_str!("../../migrations/0013_study_phases.sql"),
+    },
+    Migration {
+        version: 14,
+        name: "teaching_templates",
+        sql: include_str!("../../migrations/0014_teaching_templates.sql"),
+    },
+    Migration {
+        version: 15,
+        name: "verse_bridges",
+        sql: include_str!("../../migrations/0015_verse_bridges.sql"),
+    },
+    Migration {
+        version: 16,
+        name: "unresolved_citations",
+        sql: include_str!("../../migrations/0016_unresolved_citations.sql"),
+    },
+    Migration {
+        version: 17,
+        name: "word_annotations",
+        sql: include_str!("../../migrations/0017_word_annotations.sql"),
+    },
+    Migration {
+        version: 18,
+        name: "grammar_provenance",
+        sql: include_str!("../../migrations/0018_grammar_provenance.sql"),
+    },
+    Migration {
+        version: 19,
+        name: "bible_documents",
+        sql: include_str!("../../migrations/0019_bible_documents.sql"),
+    },
+    Migration {
+        version: 20,
+        name: "library_organisation",
+        sql: include_str!("../../migrations/0020_library_organisation.sql"),
+    },
+    Migration {
+        version: 21,
+        name: "bible_passage_locations",
+        sql: include_str!("../../migrations/0021_bible_passage_locations.sql"),
+    },
+    Migration {
+        version: 22,
+        name: "import_jobs",
+        sql: include_str!("../../migrations/0022_import_jobs.sql"),
+    },
+    Migration {
+        version: 23,
+        name: "recognition_corrections",
+        sql: include_str!("../../migrations/0023_recognition_corrections.sql"),
+    },
+    Migration {
+        version: 24,
         name: "section_status_and_fields",
-        sql: include_str!("../../migrations/0010_section_status_and_fields.sql"),
+        sql: include_str!("../../migrations/0024_section_status_and_fields.sql"),
+    },
+    Migration {
+        version: 25,
+        name: "teaching_blocks",
+        sql: include_str!("../../migrations/0025_teaching_blocks.sql"),
+    },
+    Migration {
+        version: 26,
+        name: "project_teaching",
+        sql: include_str!("../../migrations/0026_project_teaching.sql"),
+    },
+    Migration {
+        version: 27,
+        name: "pdf_structure",
+        sql: include_str!("../../migrations/0027_pdf_structure.sql"),
+    },
+    Migration {
+        version: 28,
+        name: "recognition_provenance",
+        sql: include_str!("../../migrations/0028_recognition_provenance.sql"),
     },
 ];
 
@@ -109,6 +199,7 @@ pub fn upgrade(
     integrity::check(conn)?;
     ensure_versions_table(conn)?;
     let from_version = current_version(conn)?;
+    validate_history(conn, migrations)?;
     let pending = migrations
         .iter()
         .filter(|m| m.version > from_version)
@@ -163,6 +254,7 @@ pub fn run_with(conn: &mut Connection, migrations: &[Migration]) -> AppResult<Mi
         });
     }
 
+    validate_history(conn, migrations)?;
     let mut applied = Vec::new();
     for migration in migrations.iter().filter(|m| m.version > from_version) {
         apply(conn, migration).map_err(|e| AppError::Migration {
@@ -193,7 +285,67 @@ pub fn current_version(conn: &Connection) -> AppResult<i64> {
     )?)
 }
 
+/// Read-only preflight, also used before accepting a backup or configuring WAL.
+pub fn validate_existing_history(conn: &Connection) -> AppResult<()> {
+    let exists: bool = conn.query_row("SELECT EXISTS (SELECT 1 FROM sqlite_schema WHERE type = 'table' AND name = 'schema_versions')", [], |r| r.get(0))?;
+    if !exists {
+        return Ok(());
+    }
+    let current = current_version(conn)?;
+    let latest = MIGRATIONS.last().map_or(0, |m| m.version);
+    if current > latest {
+        return Err(AppError::Migration { version: current, name: "unknown".into(), message: format!("database schema version {current} is newer than this app supports ({latest}); refusing to open it") });
+    }
+    validate_history(conn, MIGRATIONS)
+}
+
+/// A version number alone is not a lineage: migration 10 shipped with two
+/// incompatible meanings. Validate every recorded row before doing any upgrade.
+fn validate_history(conn: &Connection, migrations: &[Migration]) -> AppResult<()> {
+    let mut stmt = conn.prepare("SELECT version, name FROM schema_versions ORDER BY version")?;
+    let recorded = stmt
+        .query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?)))?
+        .collect::<Result<Vec<_>, _>>()?;
+    let current = recorded.last().map_or(0, |(v, _)| *v);
+    let expected: Vec<_> = migrations.iter().filter(|m| m.version <= current).collect();
+    if recorded.len() != expected.len()
+        || recorded
+            .iter()
+            .zip(expected)
+            .any(|((version, name), m)| *version != m.version || name != m.name)
+    {
+        return Err(AppError::Migration { version: current, name: "incompatible_history".into(),
+            message: "This database has a different migration history. No migrations were applied. Keep the database and its backups; a reviewed lineage-specific repair is required.".into() });
+    }
+    // A copied/relabelled history does not authorise overwriting columns from
+    // another lineage. Report the collision before even earlier pending work.
+    if current > 0
+        && current < 24
+        && migrations
+            .iter()
+            .any(|m| m.version == 24 && m.name == "section_status_and_fields")
+    {
+        for (table, column) in [
+            ("study_sections", "status"),
+            ("study_sections", "fields"),
+            ("study_blocks", "field_key"),
+        ] {
+            let mut stmt = conn.prepare(&format!("PRAGMA table_info({table})"))?;
+            let columns = stmt
+                .query_map([], |r| r.get::<_, String>(1))?
+                .collect::<Result<Vec<_>, _>>()?;
+            if columns.iter().any(|name| name == column) {
+                return Err(AppError::Migration { version: current, name: "incompatible_schema".into(), message: format!("Unexpected existing column {table}.{column} before migration 24. No migrations were applied; a reviewed schema-specific repair is required.") });
+            }
+        }
+    }
+    Ok(())
+}
+
 fn apply(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
+    if migration.version == 26 && migration.name == "project_teaching" {
+        return rebuild_teaching(conn, migration);
+    }
     let tx = conn.transaction()?;
     tx.execute_batch(migration.sql)?;
     tx.execute(
@@ -201,6 +353,97 @@ fn apply(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
         params![migration.version, migration.name, now()],
     )?;
     tx.commit()
+}
+
+/// SQLite parent rebuilds must disable cascading FK actions before BEGIN.
+/// Every old column/row is checked inside the exclusive transaction, followed
+/// by foreign_key_check and the history row. Dropping tx rolls everything back.
+fn rebuild_teaching(conn: &mut Connection, migration: &Migration) -> rusqlite::Result<()> {
+    use rusqlite::{types::Value, TransactionBehavior};
+    if !conn.is_autocommit() {
+        return Err(rusqlite::Error::InvalidQuery);
+    }
+    conn.pragma_update(None, "foreign_keys", false)?;
+    let result = (|| {
+        if conn.pragma_query_value(None, "foreign_keys", |r| r.get::<_, bool>(0))? {
+            return Err(rusqlite::Error::InvalidQuery);
+        }
+        let tx = conn.transaction_with_behavior(TransactionBehavior::Exclusive)?;
+        let mut before = Vec::new();
+        for table in [
+            "teaching_preparations",
+            "teaching_points",
+            "teaching_blocks",
+            "teaching_passages",
+            "teaching_finding_links",
+            "teaching_materials",
+            "presentations",
+            "presentation_items",
+        ] {
+            let mut info = tx.prepare(&format!("PRAGMA table_info({table})"))?;
+            let names = info
+                .query_map([], |r| r.get::<_, String>(1))?
+                .collect::<Result<Vec<_>, _>>()?;
+            let select = format!(
+                "SELECT {} FROM {table} ORDER BY rowid",
+                names
+                    .iter()
+                    .map(|n| format!("\"{n}\""))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+            let mut stmt = tx.prepare(&select)?;
+            let rows = stmt
+                .query_map([], |r| {
+                    (0..names.len())
+                        .map(|i| r.get::<_, Value>(i))
+                        .collect::<Result<Vec<_>, _>>()
+                })?
+                .collect::<Result<Vec<_>, _>>()?;
+            before.push((select, names.len(), rows));
+        }
+        tx.execute_batch(migration.sql)?;
+        for (select, len, expected) in before {
+            let mut stmt = tx.prepare(&select)?;
+            let rows = stmt
+                .query_map([], |r| {
+                    (0..len)
+                        .map(|i| r.get::<_, Value>(i))
+                        .collect::<Result<Vec<_>, _>>()
+                })?
+                .collect::<Result<Vec<_>, _>>()?;
+            if rows != expected {
+                return Err(rusqlite::Error::SqliteFailure(
+                    rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_CONSTRAINT),
+                    Some("Teaching rebuild changed existing records".into()),
+                ));
+            }
+        }
+        super::teaching::initialise_finding_snapshots(&tx).map_err(|e| {
+            rusqlite::Error::SqliteFailure(
+                rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_CONSTRAINT),
+                Some(e.to_string()),
+            )
+        })?;
+        let invalid = tx.prepare("PRAGMA foreign_key_check")?.exists([])?;
+        if invalid {
+            return Err(rusqlite::Error::SqliteFailure(
+                rusqlite::ffi::Error::new(rusqlite::ffi::SQLITE_CONSTRAINT_FOREIGNKEY),
+                Some("Teaching rebuild failed foreign-key integrity check".into()),
+            ));
+        }
+        tx.execute(
+            "INSERT INTO schema_versions (version,name,applied_at) VALUES (?1,?2,?3)",
+            params![migration.version, migration.name, now()],
+        )?;
+        tx.commit()
+    })();
+    // The transaction has committed or dropped before restoring enforcement.
+    conn.pragma_update(None, "foreign_keys", true)?;
+    if !conn.pragma_query_value(None, "foreign_keys", |r| r.get::<_, bool>(0))? {
+        return Err(rusqlite::Error::InvalidQuery);
+    }
+    result
 }
 
 fn check_order(migrations: &[Migration]) -> AppResult<()> {
@@ -213,5 +456,34 @@ fn check_order(migrations: &[Migration]) -> AppResult<()> {
         Err(AppError::Unexpected(
             "migration list is not in strictly increasing version order".into(),
         ))
+    }
+}
+
+#[cfg(test)]
+mod schema_compatibility_tests {
+    use super::*;
+
+    #[test]
+    fn current_build_accepts_database_at_version_19() {
+        // The user's dev.43 installation already created schema 19.
+        // Never ship a newer Windows installer with a truncated catalogue.
+        assert!(MIGRATIONS.last().is_some_and(|m| m.version >= 19));
+        assert_eq!(MIGRATIONS[18].version, 19);
+        assert_eq!(MIGRATIONS[18].name, "bible_documents");
+
+        let mut conn = Connection::open_in_memory().expect("SQLite");
+        let historical = &MIGRATIONS[..19];
+        let initial = run_with(&mut conn, historical).expect("create version-19 database");
+        assert_eq!(initial.to_version, 19);
+
+        let upgrade = run_with(&mut conn, MIGRATIONS)
+            .expect("current build must accept and upgrade version-19 data");
+        assert_eq!(upgrade.from_version, 19);
+        assert_eq!(upgrade.to_version, MIGRATIONS.last().unwrap().version);
+        assert_eq!(current_version(&conn).unwrap(), upgrade.to_version);
+
+        let reopened =
+            run_with(&mut conn, MIGRATIONS).expect("reopening upgraded database must be safe");
+        assert!(reopened.applied.is_empty());
     }
 }

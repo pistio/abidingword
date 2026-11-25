@@ -8,15 +8,33 @@ pub mod aliases;
 pub mod annotation_data;
 pub mod bundled;
 pub mod canon;
+pub mod canons;
+pub mod catalogue;
 pub mod concordance;
+pub mod data_packs;
+pub mod documents;
+pub mod grammar;
+pub mod greek;
 pub mod import;
 pub mod language;
+pub mod morphgnt;
+pub mod morphology;
+pub mod numbering;
+pub mod oshb;
 pub mod packs;
 pub mod parser;
+pub mod pdf_worker;
 pub mod phrase_ranges;
+pub mod provenance;
 pub mod recognise;
 pub mod reference;
+pub mod resolve;
+pub mod structural;
+pub mod structure;
 pub mod usfm;
+pub mod verse_counts;
+pub mod versification;
+pub mod words;
 
 use serde::{Deserialize, Serialize};
 
@@ -69,6 +87,49 @@ pub struct BibleTranslation {
     pub verse_count: i64,
     pub created_at: String,
     pub updated_at: String,
+    /// "active", "archived" or "trashed" (v0.24).
+    pub state: String,
+    pub state_changed_at: Option<String>,
+    /// The Bible's word annotations (v0.21), when it has indexed ones.
+    pub words: Option<WordAnnotations>,
+    pub edition_confirmed: Option<bool>,
+    pub document_recognised: bool,
+}
+
+/// What a Bible's word annotations hold (v0.21): which research features it supports.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct WordAnnotations {
+    pub word_count: i64,
+    pub verse_count: i64,
+    pub lemmas: bool,
+    pub lexical_ids: bool,
+    pub morphology: bool,
+    /// The scheme codes are described with ("oshb", "robinson", "morphgnt"),
+    /// or "raw" (shown as written) or "none" (no codes).
+    pub morph_scheme: String,
+    pub morph_attribute: Option<String>,
+    pub source_format: String,
+    /// Why the codes are described (v0.22): "edition" (the edition names the
+    /// scheme) or "person" (chosen at import); absent when they are not.
+    #[serde(default)]
+    pub grammar_basis: Option<String>,
+    /// Where the edition names the scheme.
+    #[serde(default)]
+    pub grammar_evidence: Option<grammar::Statement>,
+}
+
+/// What the person chose for a Bible's words when adding it (v0.22).
+#[derive(Debug, Clone, Default, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct WordChoice {
+    /// Index words that carry only lexical numbers (Strong's-only editions).
+    #[serde(default)]
+    pub numbers: bool,
+    /// Describe the grammar codes with this documented scheme, which they
+    /// fit, though the edition does not name it.
+    #[serde(default)]
+    pub grammar: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -80,6 +141,8 @@ pub struct BundledBibleInfo {
     pub language: &'static str,
     pub language_code: &'static str,
     pub license_type: &'static str,
+    /// How many of the 66 books it holds (27: a New Testament only).
+    pub books: u8,
     pub installed: bool,
 }
 
@@ -102,6 +165,21 @@ pub struct ChapterText {
     pub chapter_count: u16,
     pub superscription: Option<String>,
     pub verses: Vec<VerseText>,
+    /// Verses of a Bible read from documents that were found in its
+    /// documents but whose text could not be verified (v0.24.3): shown as
+    /// such, never with text taken from elsewhere.
+    pub unchecked: Vec<UncheckedVerse>,
+}
+
+/// A verse found in a document whose text could not be verified (v0.24.3).
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UncheckedVerse {
+    pub document_id: String,
+    pub segment: Option<i64>,
+    pub verse: u16,
+    pub page: Option<i64>,
+    pub reason: String,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -157,6 +235,8 @@ pub struct SearchResults {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ImportRequest {
+    #[serde(default)]
+    pub job_id: Option<String>,
     /// Files chosen by the user…
     #[serde(default)]
     pub paths: Vec<String>,
@@ -180,6 +260,15 @@ pub struct CommitImport {
     pub copyright_notice: Option<String>,
     #[serde(default)]
     pub license_type: Option<String>,
+    /// What to do with the Bible's words (v0.22).
+    #[serde(default)]
+    pub words: WordChoice,
+    /// A Bible read from documents (v0.23) is added to read as a document,
+    /// even when verses were found in it.
+    #[serde(default)]
+    pub as_document: bool,
+    #[serde(default)]
+    pub confirm_edition: bool,
 }
 
 pub const ANNOTATION_KINDS: [&str; 3] = ["note", "highlight", "bookmark"];

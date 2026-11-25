@@ -17,6 +17,8 @@ interface LinksProps {
   preparation: TeachingPreparation;
   /** null: the teaching as a whole. */
   pointId: string | null;
+  /** When set, passages belong to this block rather than to a point. */
+  blockId?: string | null;
   /** Where this is, for labels: "this point" / the point's name. */
   scope: string;
   studyFindings: Finding[];
@@ -25,14 +27,14 @@ interface LinksProps {
 }
 
 /**
- * What is used in a point (or the whole teaching): study findings (live links:
- * they stay the study's and show as they are now), Scripture passages, and
+ * What is used in a point (or the whole teaching): live Study findings or saved
+ * notes retained after unlinking, Scripture passages, and
  * what the person kept from the assistant, each with its standing.
  */
-export function TeachingLinks({ preparation, pointId, scope, studyFindings, onChanged, onRevealScripture }: LinksProps) {
+export function TeachingLinks({ preparation, pointId, blockId = null, scope, studyFindings, onChanged, onRevealScripture }: LinksProps) {
   const { t } = useTranslation();
   const api = useApi();
-  const { goTo } = useScripture();
+  const { goTo, translation } = useScripture();
   const id = useId();
   const [picking, setPicking] = useState(false);
   const [choice, setChoice] = useState("");
@@ -40,8 +42,8 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
   const [reference, setReference] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const links = preparation.findings.filter((l) => l.pointId === pointId);
-  const passages = preparation.passages.filter((p) => p.pointId === pointId);
+  const links = preparation.findings.filter((l) => !l.presentationOnly && l.pointId === pointId);
+  const passages = preparation.passages.filter((p) => (blockId ? p.blockId === blockId : p.pointId === pointId && !p.blockId));
   const materials = preparation.materials.filter((m) => m.pointId === pointId);
   const available = studyFindings.filter((f) => !links.some((l) => l.finding.id === f.id));
 
@@ -56,12 +58,12 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
     }
   };
 
-  const quiet = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong";
+  const quiet = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong";
 
   return (
     <div className="flex flex-col gap-2">
       {(passages.length > 0 || links.length > 0 || materials.length > 0) && (
-        <h5 className="m-0 text-[0.875rem] font-semibold text-text-muted">{t("studies.teaching.links.used", { scope })}</h5>
+        <h5 className="type-meta m-0 font-medium">{t("studies.teaching.links.used", { scope })}</h5>
       )}
       {passages.length > 0 && (
         <ul aria-label={t("studies.teaching.links.passages", { scope })} className="m-0 flex list-none flex-wrap gap-2 p-0">
@@ -75,7 +77,7 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
                     goTo(p.reference);
                     onRevealScripture();
                   }}
-                  className="inline-flex min-h-11 items-center gap-1 px-3 text-[0.9375rem] font-medium text-link hover:bg-bg-secondary"
+                  className="inline-flex min-h-11 items-center gap-1 px-3 text-[0.9375rem] font-medium text-link hover:bg-hover"
                 >
                   <BookOpen className="size-4" aria-hidden="true" />
                   {name}
@@ -84,7 +86,7 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
                   type="button"
                   onClick={() => void act(() => api.teachingPassageRemove(p.id))}
                   aria-label={t("studies.teaching.links.removePassage", { passage: name })}
-                  className="inline-flex size-11 items-center justify-center text-text-muted hover:bg-bg-secondary"
+                  className="inline-flex size-11 items-center justify-center text-text-muted hover:bg-hover"
                 >
                   <X className="size-4" aria-hidden="true" />
                 </button>
@@ -99,15 +101,15 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
             <li key={link.id} className="flex flex-col gap-1 border-l-[3px] border-border pl-3">
               <div className="flex items-start justify-between gap-2">
                 <p className="reading m-0 whitespace-pre-wrap text-text">
-                  <span className="mr-1 font-ui text-[0.8125rem] font-semibold uppercase tracking-wide text-text-muted">{findingLabel(t, link.finding.findingType)}</span>
-                  {link.finding.content}
+                  <span className="type-meta mr-1 font-medium">{findingLabel(t, link.finding.findingType)}</span>
+                  {link.snapshot && <span className="type-meta mr-1">{t("studies.teaching.workspace.savedNote")}</span>}{link.finding.content}
                 </p>
                 <button
                   type="button"
                   onClick={() => void act(() => api.teachingFindingUnlink(link.id))}
                   aria-label={t("studies.teaching.links.removeFinding")}
                   title={t("studies.teaching.links.removeFindingHint")}
-                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary"
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover"
                 >
                   <X className="size-4" aria-hidden="true" />
                 </button>
@@ -122,14 +124,14 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
                         goTo(p.reference);
                         onRevealScripture();
                       }}
-                      className="min-h-11 rounded-aw px-2 text-[0.875rem] text-link underline underline-offset-2 hover:bg-bg-secondary"
+                      className="min-h-11 rounded-aw px-2 text-[0.875rem] text-link underline underline-offset-2 hover:bg-hover"
                     >
                       {referenceLabel(p.reference)}
                     </button>
                   ))}
                 </div>
               )}
-              <FindingSources finding={link.finding} canAdd={false} onChanged={() => void act(() => api.teachingGet(preparation.id))} />
+              <FindingSources finding={link.finding} canAdd={false} canRemove={!link.snapshot} onChanged={() => void act(() => api.teachingGet(preparation.id))} />
             </li>
           ))}
         </ul>
@@ -184,7 +186,7 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
             autoFocus
             value={choice}
             onChange={(e) => setChoice(e.target.value)}
-            className="h-11 min-w-0 max-w-full flex-1 basis-60 rounded-aw border border-border bg-bg px-2 text-[0.9375rem]"
+            className="h-11 min-w-0 max-w-full flex-1 basis-60 aw-input px-2 text-[0.9375rem]"
           >
             <option value="">{t("studies.teaching.links.pick")}</option>
             {available.map((f) => (
@@ -199,14 +201,14 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
           <Button className="min-h-11" onClick={() => setPicking(false)}>
             {t("common.cancel")}
           </Button>
-          <p className="m-0 basis-full text-[0.875rem] text-text-muted">{t("studies.teaching.links.findingNote")}</p>
+          <p className="m-0 basis-full type-meta">{t("studies.teaching.links.findingNote")}</p>
         </form>
       )}
       {adding && (
         <form
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
-            void act(async () => api.teachingPassageAdd({ preparationId: preparation.id, pointId, reference: (await api.referenceParse(reference)).canonical })).then((ok) => {
+            void act(async () => api.teachingPassageAdd({ preparationId: preparation.id, pointId, blockId, reference: (await api.referenceParse(reference, translation?.id)).canonical })).then((ok) => {
               if (ok) {
                 setReference("");
                 setAdding(false);
@@ -231,7 +233,7 @@ export function TeachingLinks({ preparation, pointId, scope, studyFindings, onCh
             value={reference}
             onChange={(e) => setReference(e.target.value)}
             placeholder={t("studies.passages.placeholder")}
-            className="h-11 min-w-0 flex-1 basis-48 rounded-aw border border-border bg-bg px-3 text-[0.9375rem] placeholder:text-text-muted"
+            className="h-11 min-w-0 flex-1 basis-48 aw-input px-3 text-[0.9375rem] placeholder:text-text-muted"
           />
           <Button type="submit" variant="primary" className="min-h-11">
             {t("common.add")}
@@ -275,19 +277,19 @@ function Material({ material, onRemove }: { material: TeachingMaterial; onRemove
     <li className="flex flex-col gap-1 rounded-aw border border-dashed border-border bg-bg-secondary px-3 py-2">
       <div className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-0.5">
-          <span className="text-[0.8125rem] font-semibold uppercase tracking-wide text-text-muted">{t(`studies.teaching.material.${material.kind}`)}</span>
+          <span className="type-meta font-medium">{t(`studies.teaching.material.${material.kind}`)}</span>
           <span className={`text-[0.875rem] font-medium ${tone}`}>{standingLabel(t, material.standing, image?.licence)}</span>
         </div>
         <button
           type="button"
           onClick={onRemove}
           aria-label={t("studies.teaching.material.remove")}
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-bg"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-aw text-text-muted hover:bg-hover"
         >
           <X className="size-4" aria-hidden="true" />
         </button>
       </div>
-      {material.title && <p className="m-0 font-semibold text-text-strong">{material.title}</p>}
+      {material.title && <p className="type-subhead m-0">{material.title}</p>}
       {image &&
         (preview ? (
           <img src={preview} alt={material.title || material.content} className="w-full max-w-xs rounded-aw border border-border-subtle" />
@@ -297,10 +299,10 @@ function Material({ material, onRemove }: { material: TeachingMaterial; onRemove
           </span>
         ))}
       {material.content && <p className="m-0 whitespace-pre-wrap text-text">{material.content}</p>}
-      {image?.attribution && <p className="m-0 text-[0.8125rem] text-text-muted">{image.attribution}</p>}
+      {image?.attribution && <p className="type-meta m-0">{image.attribution}</p>}
       {image?.pageUrl && <Sources sources={[{ title: t("studies.teaching.assist.images.source"), url: image.pageUrl, site: "commons.wikimedia.org" }]} />}
       <Sources sources={material.sources} />
-      {material.assistant && <p className="m-0 text-[0.8125rem] text-text-muted">{t("studies.teaching.assist.from", { assistant: material.assistant })}</p>}
+      {material.assistant && <p className="type-meta m-0">{t("studies.teaching.assist.from", { assistant: material.assistant })}</p>}
     </li>
   );
 }

@@ -1,0 +1,756 @@
+{
+  "date": "2026-11-18",
+  "classification": "Linux Rust verification; not Windows compilation or installed-application acceptance",
+  "applicationSourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+  "testedCheckoutSha": "0021c18a7b754b487b5ca9e1e189f6d4a7c50db7",
+  "sourceRelationship": "Verification ran at local checkout 0021c18a7b754b487b5ca9e1e189f6d4a7c50db7, which adds only two documentation files to local candidate ba354bac94e66b02ea7d2f17da008f48b52a4bd2. The published candidate 539b54d65c2cecf010cd1573b8bd51c91ac640bd has the identical complete Git tree f06b161d5017d105980ce9c94dc4337e58e6ee53 as that local candidate; only commit metadata differs. Application, diagnostic and test files are identical.",
+  "environment": {
+    "os": "Debian 13 Linux x86_64 cloud workspace",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "developmentLibraries": {
+      "gtk+-3.0": "3.24.49",
+      "webkit2gtk-4.1": "2.54.0",
+      "javascriptcoregtk-4.1": "2.54.0",
+      "libsoup-3.0": "3.6.5",
+      "openssl": "3.5.7",
+      "librsvg-2.0": "2.60.0"
+    },
+    "setup": "Owner-authorised task-local Rust and Debian development dependencies; no Windows or NiPogi setup",
+    "executionSettings": {
+      "CARGO_BUILD_JOBS": "2",
+      "RUST_TEST_THREADS": "2",
+      "CARGO_PROFILE_DEV_DEBUG": "0",
+      "CARGO_PROFILE_TEST_DEBUG": "0"
+    }
+  },
+  "formatting": {
+    "command": [
+      "cargo",
+      "fmt",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--",
+      "--check"
+    ],
+    "exitCode": 0
+  },
+  "clippy": {
+    "command": [
+      "cargo",
+      "clippy",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--all-targets",
+      "--locked",
+      "--",
+      "-D",
+      "warnings"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 145.4,
+    "checkoutSha": "0021c18a7b754b487b5ca9e1e189f6d4a7c50db7"
+  },
+  "tests": {
+    "command": [
+      "cargo",
+      "test",
+      "--manifest-path",
+      "src-tauri/Cargo.toml",
+      "--locked"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 523.7,
+    "checkoutSha": "0021c18a7b754b487b5ca9e1e189f6d4a7c50db7"
+  },
+  "totals": {
+    "passed": 1103,
+    "failed": 0,
+    "ignored": 8
+  },
+  "resultGroups": 95,
+  "resultDetails": [
+    {
+      "target": "unittests src/lib.rs",
+      "result": "ok",
+      "passed": 255,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "unittests src/main.rs",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/a4_qa_transfer.rs",
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/annotations.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/assistant.rs",
+      "result": "ok",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/assistant_blocks.rs",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/bible_catalogue.rs",
+      "result": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/bible_documents.rs",
+      "result": "ok",
+      "passed": 75,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/bible_language.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/capabilities.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/citations.rs",
+      "result": "ok",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/combined_integration.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/concordance.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/contextual_references.rs",
+      "result": "ok",
+      "passed": 31,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/database.rs",
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/document_units_dump.rs",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "target": "tests/docx_view.rs",
+      "result": "ok",
+      "passed": 20,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/domain.rs",
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/epub_contents.rs",
+      "result": "ok",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/epub_links.rs",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/epub_view.rs",
+      "result": "ok",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/findings.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/generated_contents.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/hardening.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/inquiry.rs",
+      "result": "ok",
+      "passed": 31,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/library.rs",
+      "result": "ok",
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/library_batch.rs",
+      "result": "ok",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/library_manage.rs",
+      "result": "ok",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/macarthur_shape.rs",
+      "result": "ok",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/marks.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/material_docx.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/material_scripture.rs",
+      "result": "ok",
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v024.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v10.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v11.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v12.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v14.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v2.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v25.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v26.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v27.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v3.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v4.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v5.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v6.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v7.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v8.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/migration_v9.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/milestone_a2_sections.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/milestone_a3_home.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/multilingual_references.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/original_language.rs",
+      "result": "ok",
+      "passed": 23,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/passage_languages.rs",
+      "result": "ok",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/passage_sources.rs",
+      "result": "ok",
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/pdf_build_processing.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/pdf_structure.rs",
+      "result": "ok",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/phrase_highlights.rs",
+      "result": "ok",
+      "passed": 23,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/portability.rs",
+      "result": "ok",
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/pozetek.rs",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/pozetek_repair.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/presentations.rs",
+      "result": "ok",
+      "passed": 25,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "target": "tests/real_document_editions.rs",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "target": "tests/real_editions.rs",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 3
+    },
+    {
+      "target": "tests/recognition_integrity.rs",
+      "result": "ok",
+      "passed": 25,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/reference_dashes.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/reference_languages.rs",
+      "result": "ok",
+      "passed": 34,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/reference_perf.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/reference_resolver.rs",
+      "result": "ok",
+      "passed": 20,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/references.rs",
+      "result": "ok",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/sample.rs",
+      "result": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/schema26_review.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/scripture.rs",
+      "result": "ok",
+      "passed": 19,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/source_annotations.rs",
+      "result": "ok",
+      "passed": 18,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/source_evidence_levels.rs",
+      "result": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/source_find.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/source_locations.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/source_references.rs",
+      "result": "ok",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/source_relevance.rs",
+      "result": "ok",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/sources_to_study.rs",
+      "result": "ok",
+      "passed": 9,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/studies.rs",
+      "result": "ok",
+      "passed": 17,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/study_flow.rs",
+      "result": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/suggestion_quality.rs",
+      "result": "ok",
+      "passed": 20,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/teaching.rs",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/teaching_blocks.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/teaching_standalone.rs",
+      "result": "ok",
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/teaching_templates.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/template_assets.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/template_catalogue.rs",
+      "result": "ok",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/template_import.rs",
+      "result": "ok",
+      "passed": 15,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "target": "tests/ten_step.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/text_refresh.rs",
+      "result": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/windows_dev44_compatibility.rs",
+      "result": "ok",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/windows_rollback.rs",
+      "result": "ok",
+      "passed": 3,
+      "failed": 0,
+      "ignored": 0
+    },
+    {
+      "target": "tests/word_annotations.rs",
+      "result": "ok",
+      "passed": 15,
+      "failed": 0,
+      "ignored": 1
+    },
+    {
+      "target": "Doc-tests abiding_word_lib",
+      "result": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  ],
+  "ignoredTests": [
+    "document_units_dump",
+    "write_examples",
+    "real_document_editions_report",
+    "bundled_number_index_cost",
+    "oshb_corpus_reference_correctness",
+    "real_editions_report",
+    "write_interface_fixture",
+    "a_whole_generated_annotated_bible_is_measured"
+  ],
+  "countChangeFromAcceptedSource": "Four obsolete native resize-policy tests were removed with that intervention. The earlier 1107/8 count becomes 1103/8; no additional test is ignored.",
+  "rawLogSha256": {
+    "rust-clippy.log": "0aeea5b8cb1bb64aa5471ccd70ac19d4b585663ccc00fdbf7ed53f93c267f2ad",
+    "rust-tests.log": "5b9fec91223e5984c5a0aa52913e08acd7f865a2f3b5e93b8ab8fee236c46525"
+  },
+  "localApplicationSourceSha": "ba354bac94e66b02ea7d2f17da008f48b52a4bd2",
+  "publishedApplicationTreeSha": "f06b161d5017d105980ce9c94dc4337e58e6ee53",
+  "testedCheckoutIsLocal": true
+}

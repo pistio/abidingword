@@ -20,7 +20,7 @@ tauri-plugin-dialog = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # "bundled" compiles SQLite into the app, so users need nothing installed.
-rusqlite = { version = "0.37", features = ["bundled"] }
+rusqlite = { version = "0.37", features = ["bundled", "backup"] }
 uuid = { version = "1", features = ["v4"] }
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 thiserror = "2"
@@ -46,9 +46,22 @@ reqwest = { version = "0.13", default-features = false, features = ["json", "rus
 rustls = { version = "0.23", default-features = false, features = ["ring"] }
 # API keys live in the operating system's credential store, never in the database.
 keyring = { version = "3", features = ["windows-native", "apple-native", "linux-native"] }
+# Presentation exports (v0.18): PDF streams, PNG images in PDFs and the
+# computer's own TrueType fonts (all already used by other dependencies).
+flate2 = "1"
+png = "0.18"
+ttf-parser = "0.25"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security", "Win32_System_JobObjects", "Win32_System_Threading"] }
 
 [dev-dependencies]
 tempfile = "3"
+# The mock runtime, to check each window's command permissions (v0.18.3).
+tauri = { version = "2", features = ["test"] }
 
 [profile.release]
 codegen-units = 1

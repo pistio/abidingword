@@ -20,7 +20,18 @@ export interface BookInfo {
   chapterCount: number;
 }
 
+/** A language a Bible can be marked as (one of the 100 reference languages, or Latin). */
+export interface BibleLanguageOption {
+  code: string;
+  /** English name. */
+  name: string;
+  /** The name in the language itself, when known. */
+  native: string | null;
+}
+
 export interface BibleTranslation {
+  editionConfirmed?: boolean | null;
+  documentRecognised?: boolean;
   id: string;
   name: string;
   shortName: string;
@@ -42,6 +53,54 @@ export interface BibleTranslation {
   verseCount: number;
   createdAt: string;
   updatedAt: string;
+  /** "active", "archived" or "trashed" (v0.24). */
+  state: "active" | "archived" | "trashed";
+  stateChangedAt: string | null;
+  /** Word annotations from the Bible's own markup (v0.21); absent when it has none. */
+  words?: WordAnnotations | null;
+}
+
+/** What a Bible's own word markup gives (v0.21). */
+export interface WordAnnotations {
+  wordCount: number;
+  verseCount: number;
+  lemmas: boolean;
+  lexicalIds: boolean;
+  morphology: boolean;
+  /** A documented scheme (described), "raw" (shown as written) or "none". */
+  morphScheme: MorphScheme;
+  morphAttribute: string | null;
+  sourceFormat: string;
+  /** Why the codes are described (v0.22): the edition names the scheme, or the person chose it. */
+  grammarBasis?: "edition" | "person" | null;
+  /** Where the edition names it. */
+  grammarEvidence?: GrammarStatement | null;
+}
+
+/** The documented grammar-code schemes Abiding Word can describe (v0.22). */
+export type GrammarScheme = "oshb" | "robinson" | "morphgnt";
+export type MorphScheme = GrammarScheme | "raw" | "none";
+
+/** Where an edition names its grammar scheme: the file and the words found. */
+export interface GrammarStatement {
+  file: string;
+  words: string;
+}
+
+/** Which scheme a Bible's codes fit, and whether the edition says so (v0.22). */
+export interface GrammarFinding {
+  scheme: GrammarScheme | null;
+  coded: number;
+  described: number;
+  stated: GrammarStatement | null;
+}
+
+/** What the person chose for a Bible's words when adding it (v0.22). */
+export interface WordChoice {
+  /** Index words that carry only lexical numbers. */
+  numbers?: boolean;
+  /** Describe the codes with this scheme, which they fit. */
+  grammar?: GrammarScheme | null;
 }
 
 export interface BundledBibleInfo {
@@ -52,7 +111,36 @@ export interface BundledBibleInfo {
   /** e.g. "de": the interface language's Bibles are offered first. */
   languageCode: string;
   licenseType: string;
+  /** How many of the 66 books it holds (27: a New Testament only, v0.24). */
+  books: number;
   installed: boolean;
+}
+
+/** A Bible that can be downloaded and checked against its verified copy (v0.24). */
+export interface CatalogueEntry {
+  id: string;
+  name: string;
+  shortName: string;
+  language: string;
+  languageCode: string;
+  publisher: string;
+  licenseType: string;
+  copyrightNotice: string;
+  /** How many of the 66 books it holds. */
+  books: number;
+  /** Word information it carries: "lemma", "strong", "morph". */
+  contains: string[];
+  version: string;
+  /** Bytes to download. */
+  size: number;
+  files: number;
+  installed: boolean;
+}
+
+export interface CatalogueProgress {
+  id: string;
+  done: number;
+  total: number;
 }
 
 export interface VerseText {
@@ -70,6 +158,8 @@ export interface ChapterText {
   chapterCount: number;
   superscription: string | null;
   verses: VerseText[];
+  /** Verses found in a Bible's documents whose text could not be checked (v0.24.3): shown as such, never with text. */
+  unchecked: { verse: number; page: number | null; reason: UnverifiedReason; documentId?: string; segment?: number | null }[];
 }
 
 export interface PassageText {
@@ -133,6 +223,82 @@ export interface ConcordanceResult {
   hitsComplete: boolean;
 }
 
+/** A lemma with the lexical identifiers given with it (homographs are separate entries). */
+export interface LemmaEntry {
+  lemma: string | null;
+  strong: string | null;
+  occurrences: number;
+  forms: string[];
+  /** The lexical number the typed text matched, as stored ("H0430" for "H430"; v0.22). */
+  matchedId?: string | null;
+}
+
+export interface LemmaLookup {
+  translationId: string;
+  text: string;
+}
+
+export type LemmaSelection =
+  | { kind: "entry"; lemma: string | null; strong: string | null }
+  | { kind: "lemma"; lemma: string }
+  | { kind: "lexicalId"; id: string };
+
+export interface LemmaQuery {
+  translationId: string;
+  selection: LemmaSelection;
+  /** Only words with one of these morphology codes, exactly as written. */
+  morph?: string[];
+  book?: string;
+}
+
+/** A grammatical property; `field` and `value` are keys the interface translates. */
+export interface MorphFeature {
+  field: string;
+  value: string;
+}
+
+export interface MorphSegment {
+  partOfSpeech: string;
+  features: MorphFeature[];
+}
+
+export interface MorphDescribed {
+  scheme: GrammarScheme;
+  language: "hebrew" | "aramaic" | "greek";
+  segments: MorphSegment[];
+}
+
+export interface LemmaResult {
+  selection: LemmaSelection;
+  translationId: string;
+  occurrences: number;
+  verses: number;
+  books: ConcordanceBook[];
+  hits: ConcordanceHit[];
+  hitsComplete: boolean;
+  forms: { form: string; count: number }[];
+  morphology: { code: string; count: number; described: MorphDescribed | null }[];
+  withoutMorphology: number;
+  morphScheme: MorphScheme;
+  morphAttribute: string | null;
+}
+
+/** One annotated word of a verse. */
+export interface VerseWord {
+  position: number;
+  /** UTF-16 offsets into the verse text, end exclusive. */
+  start: number;
+  end: number;
+  surface: string;
+  shape: "word" | "phrase" | "part";
+  lemma: string | null;
+  strong: string | null;
+  lexicalIds: string[];
+  morph: string | null;
+  described: MorphDescribed | null;
+  entryOccurrences: number;
+}
+
 export interface DetectedReference {
   text: string;
   /** UTF-16 offsets, as JavaScript string indexes. */
@@ -183,9 +349,293 @@ export interface ImportPreview {
   issues: ImportIssue[];
   skippedFiles: string[];
   canImport: boolean;
+  /** What the Bible's word markup gives (v0.21). */
+  words?: WordReport;
+  /** For documents (PDF, EPUB, Word, Markdown, text; v0.23): what was found in them. */
+  document?: DocumentPreview | null;
+}
+
+/** Where something is in a Bible's documents (v0.23). */
+export interface DocumentPlace {
+  /** Which document (0 = the first). */
+  document: number;
+  page: number | null;
+  /** The paragraph (segment position) it lies in. */
+  segment: number | null;
+}
+
+/** A book heading found in a document, as the review lists it (v0.23). */
+export interface FoundBook {
+  index: number;
+  heading: string;
+  /** The book the heading names, if it names one. */
+  detected: string | null;
+  /** The book used (detected or chosen); null when none or left out. */
+  book: string | null;
+  leftOut: boolean;
+  /** A book outside the 66 ("TOB", "1MA", "ESG"): named, its text left out (v0.24.2). */
+  outside: string | null;
+  chapters: number;
+  verses: number;
+  place: DocumentPlace;
+  /** The book used is the person's choice, not what was found (v0.24.3). */
+  corrected: boolean;
+}
+
+/** Why a verse found in a document is not used as text (v0.24.3). */
+export type UnverifiedReason = "possibleHeading" | "reference" | "noteSign" | "unnumbered" | "length" | "psalmTitle" | "boundary";
+
+/** How a correction kept from before fits the documents read now (v0.24.3). */
+export interface SavedCorrection {
+  heading: string;
+  page: number | null;
+  /** The book chosen; null: left out. */
+  chosen: string | null;
+  /** What the heading is read as now; null: no book. */
+  detectedNow: string | null;
+  index: number | null;
+  status: "applied" | "earlier" | "documentChanged" | "detectionChanged" | "notFound";
+}
+
+/** Text left out of the verses (v0.23). */
+export interface LeftOutText {
+  sample: string;
+  chars: number;
+  place: DocumentPlace;
+  reason: "heading" | "beforeVerses" | "noBook" | "notes" | "leftOutBook" | "crossReference" | "noteOnly" | "subscription";
+}
+
+export interface DocumentStats {
+  pageLines: number;
+  headings: number;
+  leftOutChars: number;
+  psalmTitles: number;
+  unnumberedFirst: number;
+  numberedChapters: number;
+}
+
+export interface DocumentFileInfo {
+  name: string;
+  format: "pdf" | "epub" | "docx" | "markdown" | "text";
+  pages: number | null;
+  textChars: number;
+  /** No text layer (scanned pages): readable page by page only. */
+  scanned: boolean;
+  /** Its layout is kept and shown (PDF pages, EPUB and Word formatting). */
+  keepsLayout: boolean;
+  notes: number;
+}
+
+export interface RecognitionSpan {
+  byteStart: number;
+  byteEnd: number;
+}
+
+export interface RecognitionExclusion {
+  text: string;
+  range: RecognitionSpan;
+}
+
+export interface RecognitionSample {
+  reference: string;
+  fileName: string;
+  place: DocumentPlace;
+  text: string | null;
+  reason: UnverifiedReason | null;
+  entryPath: string | null;
+  spans: RecognitionSpan[];
+  exclusions: RecognitionExclusion[];
+}
+
+export interface DocumentPreview {
+  recognitionSamples?: RecognitionSample[];
+  numbering?: { code: string; agreement: "withinReference" | "departs" }[];
+  files: DocumentFileInfo[];
+  books: FoundBook[];
+  leftOut: LeftOutText[];
+  stats: DocumentStats;
+  /** Verses were found and nothing contradicts itself. */
+  versesUsable: boolean;
+  textChars: number;
+  /** Where some chapters are doubtful (v0.24): the verses of the others, usable on their own. */
+  partialVerses: number;
+  partialChapters: number;
+  /** Chapters held back because of a doubt. */
+  heldChapters: number;
+  /** Verses found whose text could not be checked (v0.24.3): kept as places in the document, never used as text. */
+  unverifiedVerses: number;
+  unverifiedReasons: Partial<Record<UnverifiedReason, number>>;
+  /** Pieces of notes, headings and other apparatus set apart and kept. */
+  apparatus: number;
+  /** The person's corrections kept from before, and how each fits now. */
+  saved: SavedCorrection[];
+}
+
+/** One of the documents a Bible was added from (v0.23). */
+export interface BibleDocument {
+  id: string;
+  position: number;
+  format: DocumentFileInfo["format"];
+  /** The file's name as the person had it. */
+  name: string;
+  pageCount: number | null;
+  extractionStatus: "digital_text" | "extracted_text" | "ocr_required";
+  segmentCount: number;
+  /** How the original is shown: its layout ("pdf", "epub", "docx"), or its text (null). */
+  view: "pdf" | "epub" | "docx" | null;
+}
+
+export interface DocumentSegment {
+  position: number;
+  text: string;
+  pageNumber: number | null;
+  sectionPath: string | null;
+}
+
+export interface DocumentWindow {
+  total: number;
+  offset: number;
+  segments: DocumentSegment[];
+}
+
+export interface DocumentHit {
+  documentId: string;
+  position: number;
+  pageNumber: number | null;
+  sectionPath: string | null;
+  text: string;
+}
+
+/** Where a verse of a Bible added from documents came from (v0.23). */
+export interface VerseOrigin {
+  entryPath?: string | null;
+  entrySha256?: string | null;
+  sourceSha256?: string | null;
+  provenance?: { spans: RecognitionSpan[] | null } | null;
+  exclusions?: RecognitionExclusion[] | null;
+  documentId: string;
+  documentName: string;
+  firstSegment: number | null;
+  lastSegment: number | null;
+  firstPage: number | null;
+  lastPage: number | null;
+  /** "corrected": found under the person's correction of the book (v0.24.3). */
+  basis: "automatic" | "corrected";
+  firstOffset: number | null;
+}
+
+/** A verse found in a document whose text could not be checked (v0.24.3): its place only. */
+export interface VersePlace {
+  reference: string;
+  documentId: string;
+  documentName: string;
+  firstSegment: number | null;
+  firstPage: number | null;
+  firstOffset: number | null;
+  basis: "automatic" | "corrected";
+  reason: UnverifiedReason;
+}
+
+/** A place marked by the person in a document Bible (v0.24): a passage and where it is. */
+export interface MarkedPlace {
+  id: string;
+  /** Canonical, e.g. "LUK.19.1-LUK.19.10". */
+  reference: string;
+  documentId: string;
+  documentName: string;
+  page: number | null;
+  segment: number | null;
+  item: string | null;
+  quote: string | null;
+  createdAt: string;
+}
+
+/** A passage in a document Bible (v0.24): its verses where established, and the places marked. */
+export interface DocumentPassage {
+  reference: string;
+  verses: VerseText[];
+  /** Every verse of the passage has its text. */
+  complete: boolean;
+  origin: VerseOrigin | null;
+  locations: MarkedPlace[];
+  /** Verses of the passage found in the document whose text could not be checked (v0.24.3). */
+  places: VersePlace[];
+  /** Notes, headings and cross-references set apart from these verses, kept with their places (v0.24.3). */
+  apparatus: ApparatusPiece[];
+}
+
+/** A piece of a document's apparatus kept beside its verses (v0.24.3). */
+export interface ApparatusPiece {
+  kind: "footnote" | "crossReference" | "heading" | "subscription" | "notes";
+  text: string;
+  documentId: string;
+  page: number | null;
+  segment: number | null;
+  reference: string | null;
+}
+
+export interface DocumentCoverage {
+  verses: number;
+  books: { book: string; chapters: number; of: number }[];
+  marked: number;
+  /** Verses found whose text could not be checked: places only (v0.24.3). */
+  unverified: number;
+  /** Verses found under a book the person chose (v0.24.3). */
+  corrected: number;
+}
+
+export interface AddLocation {
+  translationId: string;
+  reference: string;
+  documentId: string;
+  page?: number | null;
+  segment?: number | null;
+  item?: string | null;
+  quote?: string | null;
+}
+
+/** The import preview's summary of word annotations (v0.21). */
+export interface WordReport {
+  marked: number;
+  words: number;
+  verses: number;
+  withLemma: number;
+  withLexicalId: number;
+  withMorphology: number;
+  distinctLemmas: number;
+  phrases: number;
+  parts: number;
+  morphAttribute: string | null;
+  /** Which documented scheme the codes fit, and whether the edition says so (v0.22). */
+  grammar: GrammarFinding;
+  otherAttributes: string[];
+  leftOut: {
+    syntax: number;
+    conflict: number;
+    tooLong: number;
+    unbalanced: number;
+    overlapping: number;
+    outsideVerse: number;
+    empty: number;
+    tooMany: number;
+  };
+  indexed: boolean;
+  notIndexed: "strongOnly" | "unreliable" | "unreadable" | "tooLarge" | null;
+  /** About how much the word index takes on disk (bytes). */
+  estimatedBytes: number;
+}
+
+/** Reading an installed Bible's kept files again for its words (v0.22). */
+export interface WordsPreview {
+  previewId: string;
+  translationId: string;
+  format: string;
+  words: WordReport;
+  current: WordAnnotations | null;
 }
 
 export interface ImportRequest {
+  jobId?: string;
   paths?: string[];
   bundled?: string;
 }
@@ -199,6 +649,11 @@ export interface CommitImport {
   publisher?: string;
   copyrightNotice?: string;
   licenseType?: string;
+  /** What to do with the Bible's words (v0.22). */
+  words?: WordChoice;
+  /** A Bible from documents is added to read as a document, even with verses found (v0.23). */
+  asDocument?: boolean;
+  confirmEdition?: boolean;
 }
 
 export type AnnotationKind = "note" | "highlight" | "bookmark";
@@ -289,4 +744,21 @@ export interface MarksPage {
   marks: Annotation[];
   offset: number;
   hasMore: boolean;
+}
+
+/** The text of a material's passages from one Bible (v0.18.8): only that Bible, with what it lacks named. */
+export interface MaterialPassage {
+  canonical: string;
+  /** In order; a bridge ("25–27") is one verse with its last; a psalm's title comes on its first verse. */
+  verses: (VerseText & { bridgeEnd?: number; title?: string })[];
+  /** "chapter:verse" of each verse the Bible has no text for. */
+  missing: string[];
+}
+
+export interface MaterialScripture {
+  translationId: string;
+  name: string;
+  shortName: string;
+  copyrightNotice: string | null;
+  passages: MaterialPassage[];
 }

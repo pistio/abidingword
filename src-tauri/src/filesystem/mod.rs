@@ -11,7 +11,8 @@
 //! ├── cache/      disposable, can be deleted at any time
 //! ├── sync/       sync state (later phase)
 //! ├── backups/
-//! │   └── pre-migration/  automatic copies made before a schema upgrade
+//! │   ├── pre-migration/  automatic copies made before a schema upgrade
+//! │   └── pre-restore/    copies made before a backup was restored
 //! ├── exports/
 //! └── logs/       diagnostic log files
 //! ```
@@ -77,6 +78,21 @@ impl DataDirs {
         self.root.join("backups").join("pre-migration")
     }
 
+    /// Automatic, database-only safety copies, distinct from a full .awbackup.
+    pub fn daily_backups(&self) -> PathBuf {
+        self.root.join("backups").join("daily")
+    }
+
+    /// Copies of the database made just before a backup was restored (v0.19).
+    pub fn pre_restore_backups(&self) -> PathBuf {
+        self.root.join("backups").join("pre-restore")
+    }
+
+    /// Disposable working space (unpacking a package, for one).
+    pub fn cache(&self) -> PathBuf {
+        self.root.join("cache")
+    }
+
     pub fn logs(&self) -> PathBuf {
         self.root.join("logs")
     }
@@ -85,6 +101,17 @@ impl DataDirs {
     /// (v0.16), under names the app chose.
     pub fn teaching_images(&self) -> PathBuf {
         self.root.join("sources").join("teaching-images")
+    }
+
+    /// Copies of found images saved for presenting offline (v0.18), named
+    /// by their address.
+    pub fn presentation_images(&self) -> PathBuf {
+        self.root.join("sources").join("presentation-images")
+    }
+
+    /// Church presentation templates' images (v0.18.1), named by their SHA-256.
+    pub fn presentation_templates(&self) -> PathBuf {
+        self.root.join("sources").join("presentation-templates")
     }
 }
 

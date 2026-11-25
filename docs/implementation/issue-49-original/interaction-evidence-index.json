@@ -1,0 +1,102 @@
+{
+  "baselineSource": "624ef9f357bcc956275e70bbd8ae371f1eba89f9",
+  "platform": "Linux Chromium, actual React components with memory API formatted fixtures. DPR is emulated, not Windows OS scaling.",
+  "before": {
+    "cases": 2,
+    "passed": 0,
+    "failure": "Reading \u2192 Original scrolls shell206px, workspace56..1009 becomes-150..803; actual header and reader toolbar disappear",
+    "directory": "before"
+  },
+  "noStudyNegativeReproduction": {
+    "steps": 11,
+    "shellScrollTop": 0,
+    "directory": "no-study-before",
+    "note": "Same unpatched source and formatted EPUB, without opening populated Study. No shared gap."
+  },
+  "after": {
+    "cases": 8,
+    "stepsPerCase": 12,
+    "snapshots": 96,
+    "passed": 8,
+    "formats": [
+      "epub",
+      "docx"
+    ],
+    "casesDimensions": [
+      [
+        1920,
+        1009,
+        1
+      ],
+      [
+        1440,
+        800,
+        1
+      ],
+      [
+        1440,
+        800,
+        1.5
+      ],
+      [
+        1440,
+        800,
+        2
+      ]
+    ],
+    "actions": [
+      "Reading deep nonzero position",
+      "Original deep fragment",
+      "keyboard footnote Enter",
+      "keyboard backlink Enter",
+      "Back",
+      "Forward",
+      "Contents footnotes",
+      "Contents passage",
+      "highlight reveal",
+      "Reading return passage41",
+      "Original return passage41",
+      "Tab through toolbar and reader to footnote"
+    ],
+    "directory": "after",
+    "retainedScreenshots": [
+      "docx-1440-800-1-keyboard-tab.png",
+      "docx-1440-800-1-original-deep.png",
+      "docx-1440-800-1.5-keyboard-tab.png",
+      "docx-1440-800-1.5-original-deep.png",
+      "docx-1440-800-2-keyboard-tab.png",
+      "docx-1440-800-2-original-deep.png",
+      "docx-1920-1009-1-keyboard-tab.png",
+      "docx-1920-1009-1-original-deep.png",
+      "epub-1440-800-1-keyboard-tab.png",
+      "epub-1440-800-1-original-deep.png",
+      "epub-1440-800-1.5-keyboard-tab.png",
+      "epub-1440-800-1.5-original-deep.png",
+      "epub-1440-800-2-keyboard-tab.png",
+      "epub-1440-800-2-original-deep.png",
+      "epub-1920-1009-1-contents-footnotes.png",
+      "epub-1920-1009-1-contents-passage.png",
+      "epub-1920-1009-1-highlight-reveal.png",
+      "epub-1920-1009-1-history-back.png",
+      "epub-1920-1009-1-history-forward.png",
+      "epub-1920-1009-1-keyboard-backlink.png",
+      "epub-1920-1009-1-keyboard-footnote.png",
+      "epub-1920-1009-1-keyboard-tab.png",
+      "epub-1920-1009-1-original-deep.png",
+      "epub-1920-1009-1-original-return.png",
+      "epub-1920-1009-1-reading-deep.png",
+      "epub-1920-1009-1-reading-return.png"
+    ]
+  },
+  "sourceSha256": {
+    "src/features/library/formatted/EpubViewer.tsx": "59d4d5851426636fa80aa3b4d97d8aefb964896419648fac0a617e7a92036329",
+    "src/lib/scrollInViewport.ts": "c8eabbfd087bd83124d3f567e7dc5f5d9c74f87a449144813194bf796b45a8d5",
+    "tests/screenshots/main.tsx": "ba79a95c832b92a4007a640ca6cad9da5fc1bf51f8be3d939519e632aef36729",
+    "tests/screenshots/original-workspace-flow.mjs": "ec6363bf1025ec05f884037ebb5acb9713bc714c6d7afc37b1e568e5f7768b6e",
+    "tests/screenshots/original-workspace.mjs": "458a135b4312092c2b90902fdf6e51050331121499ca8a4dd4a696e8641bb88f"
+  },
+  "runnerDefaultsAfterCapture": {
+    "note": "After matrix capture, runner defaults changed only: write to work/original-workspace to preserve historical evidence; resolve playwright via PLAYWRIGHT_MODULE or installed package instead of a workspace-specific default. Interaction and assertions unchanged.",
+    "finalRunnerSHA256": "0f1985f69fb0848e2299adde9bf5678aa75b00d9b9ba6c6106f7f175cede62b9"
+  }
+}

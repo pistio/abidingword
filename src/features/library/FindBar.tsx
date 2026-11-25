@@ -167,9 +167,9 @@ export function FindBar({ find, focusKey, onType, onSubmit, onStep, onClose }: F
         aria-label={t("library.find.label")}
         placeholder={t("library.find.placeholder")}
         maxLength={200}
-        className="min-h-9 min-w-0 flex-1 basis-40 rounded-aw border border-border bg-bg px-2 font-ui text-[0.9375rem] text-text"
+        className="aw-input min-h-9 flex-1 basis-40 px-2"
       />
-      <span role="status" aria-live="polite" className="min-w-[6rem] font-ui text-[0.875rem] text-text-muted">
+      <span role="status" aria-live="polite" className="min-w-[6rem] font-ui type-meta">
         {status}
       </span>
       <div className="flex shrink-0 items-center">

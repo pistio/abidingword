@@ -80,3 +80,106 @@ pub fn update(conn: &Connection, input: &UpdateProject) -> AppResult<Project> {
     )?;
     get(conn, &input.id)
 }
+
+pub fn delete(conn: &Connection, id: &str, permanent: bool) -> AppResult<()> {
+    let exists: bool = conn.query_row(
+        "SELECT EXISTS(SELECT 1 FROM projects WHERE id=?1)",
+        [id],
+        |r| r.get(0),
+    )?;
+    if !exists {
+        return Err(AppError::not_found("project", id));
+    }
+    let tx = conn.unchecked_transaction()?;
+    if permanent {
+        tx.execute("DELETE FROM projects WHERE id=?1", [id])?;
+    } else {
+        tx.execute("UPDATE projects SET deleted_at=?2,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NULL",params![id,now()])?;
+    }
+    tx.commit()?;
+    Ok(())
+}
+pub fn restore(conn: &Connection, id: &str) -> AppResult<Project> {
+    conn.execute("UPDATE projects SET deleted_at=NULL,updated_at=?2,revision=revision+1 WHERE id=?1 AND deleted_at IS NOT NULL",params![id,now()])?;
+    get(conn, id)
+}
+
+/// Deleted containers and individually deleted studies. Children of a trashed
+/// project stay with that project and become available when it is restored.
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TrashEntry {
+    pub id: String,
+    pub title: String,
+    pub kind: String,
+    pub deleted_at: String,
+}
+
+pub fn trash_list(conn: &Connection, workspace_id: &str) -> AppResult<Vec<TrashEntry>> {
+    let mut stmt = conn.prepare(
+        "SELECT id,title,'project',deleted_at FROM projects
+         WHERE workspace_id=?1 AND deleted_at IS NOT NULL
+         UNION ALL
+         SELECT s.id,s.title,'study',s.deleted_at FROM studies s
+         JOIN projects p ON p.id=s.project_id
+         WHERE p.workspace_id=?1 AND p.deleted_at IS NULL AND s.deleted_at IS NOT NULL
+         ORDER BY 4 DESC, 1",
+    )?;
+    let rows = stmt.query_map([workspace_id], |r| {
+        Ok(TrashEntry {
+            id: r.get(0)?,
+            title: r.get(1)?,
+            kind: r.get(2)?,
+            deleted_at: r.get(3)?,
+        })
+    })?;
+    Ok(rows.collect::<Result<_, _>>()?)
+}
+
+/// Stable root ownership in the existing backed-up settings table. Existing
+/// default containers are adopted only when their legacy identity is unambiguous.
+pub fn root(conn: &Connection, workspace_id: &str, title: &str) -> AppResult<Project> {
+    workspaces::get(conn, workspace_id)?;
+    let key = format!("studies.rootProject.{workspace_id}");
+    let cached = |connection: &Connection| -> AppResult<Option<Project>> {
+        Ok(crate::db::settings::read::<String>(connection, &key)?
+            .and_then(|id| get(connection, &id).ok())
+            .filter(|project| project.workspace_id == workspace_id))
+    };
+    if let Some(project) = cached(conn)? {
+        return Ok(project);
+    }
+    // Serialise initialisation across app connections, then recheck the marker.
+    let tx = rusqlite::Transaction::new_unchecked(conn, rusqlite::TransactionBehavior::Immediate)?;
+    if let Some(project) = cached(&tx)? {
+        tx.commit()?;
+        return Ok(project);
+    }
+    let defaults = [
+        "My studies",
+        "Meine Bibelstudien",
+        "내 성경공부",
+        "Mes études",
+        "Mis estudios",
+        "Meus estudos",
+    ];
+    let candidates: Vec<_> = list(&tx, workspace_id)?
+        .into_iter()
+        .filter(|p| p.description.is_none() && defaults.contains(&p.title.as_str()))
+        .collect();
+    let project = if candidates.len() == 1 {
+        candidates.into_iter().next().unwrap()
+    } else {
+        create(
+            &tx,
+            &CreateProject {
+                workspace_id: workspace_id.into(),
+                title: title.into(),
+                description: None,
+            },
+        )?
+    };
+    crate::db::settings::write(&tx, &key, &project.id)?;
+    tx.commit()?;
+    Ok(project)
+}

@@ -8,6 +8,8 @@
 export interface SourceLocation {
   /** A physical page (PDF), when the place is known by one. */
   page: number | null;
+  /** An exact PDF section inside an unchanged stored paragraph. */
+  headingId?: string;
   /** How far down that page (0 = top, 1 = bottom); only meaningful with `page` in the original view. */
   fraction: number;
   /** The segment of the extracted text at the top of the view (Reading), when known. */

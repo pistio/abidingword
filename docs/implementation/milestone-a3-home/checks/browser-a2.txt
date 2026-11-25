@@ -1,0 +1,1 @@
+A.2 complete workspace checks passed: 640/900/1100/1440, DPR 1/1.25/1.5/2; real invented PDF, EPUB, Contents, splitter and exact reopens.

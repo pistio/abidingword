@@ -3,7 +3,7 @@
     "templates": {
       "biblical-theology-study": {
         "name": "Biblical Theology Study",
-        "description": "A theme traced along the storyline of Scripture from promise to fulfilment.",
+        "description": "A theme traced through the unfolding story of Scripture.",
         "sections": {
           "theme": {
             "title": "Theme",
@@ -27,7 +27,7 @@
           },
           "fulfilment": {
             "title": "Fulfilment / Consummation",
-            "guidance": "Its fulfilment in Christ and its final completion."
+            "guidance": "Where and how the theme reaches its fulfilment or completion."
           },
           "synthesis": {
             "title": "Synthesis",
@@ -45,7 +45,7 @@
       },
       "passage-study": {
         "name": "Passage Study",
-        "description": "A careful study of one passage, moving from the text itself to teaching it.",
+        "description": "A careful study of one passage, from the text itself to what it means for faith and life.",
         "sections": {
           "text": {
             "title": "Text",
@@ -197,13 +197,21 @@
             "title": "Relevant Scripture",
             "guidance": "Gather representative passages, including those that qualify or appear to challenge an initial view. Note why each is relevant."
           },
-          "passage-study": {
-            "title": "Examine the passages",
-            "guidance": "Read each text in its literary, historical and covenantal context. Distinguish direct teaching, narrative description, inference and application."
+          "biblical-context": {
+            "title": "Biblical Context",
+            "guidance": "Where and how the topic arises across the Bible."
           },
           "main-themes": {
             "title": "Compare and group findings",
             "guidance": "Group the passages by their actual teaching, noting agreements, differences, development and remaining questions."
+          },
+          "difficult-passages": {
+            "title": "Difficult or balancing texts",
+            "guidance": "Examine apparently conflicting passages without ignoring their context or forcing a superficial harmonisation."
+          },
+          "theology": {
+            "title": "Theology",
+            "guidance": "How the passages fit together into coherent teaching."
           },
           "conclusions": {
             "title": "Biblical conclusions",
@@ -213,9 +221,9 @@
             "title": "Application",
             "guidance": "Identify concrete implications for belief, worship, relationships and action, grounded in the conclusions."
           },
-          "difficult-passages": {
-            "title": "Difficult or balancing texts",
-            "guidance": "Examine apparently conflicting passages without ignoring their context or forcing a superficial harmonisation."
+          "passage-study": {
+            "title": "Examine the passages",
+            "guidance": "Read each text in its literary, historical and covenantal context. Distinguish direct teaching, narrative description, inference and application."
           },
           "biblical-theology": {
             "title": "Place in the whole Bible",
@@ -235,6 +243,10 @@
             "title": "Occurrences and translations",
             "guidance": "Find representative occurrences of this lemma and note how translators render it. Distinguish the lemma from inflected forms and other words with similar translations."
           },
+          "immediate-contexts": {
+            "title": "Immediate Contexts",
+            "guidance": "How each important use is shaped by its sentence and paragraph."
+          },
           "semantic-range": {
             "title": "Range of meanings",
             "guidance": "Describe possible meanings from contextual evidence. Do not derive meaning solely from etymology or import every possible sense into one occurrence."
@@ -242,6 +254,10 @@
           "key-passages": {
             "title": "Passages in context",
             "guidance": "Read each significant occurrence in its sentence, paragraph, genre and historical setting. Record which sense best fits and why."
+          },
+          "theological-significance": {
+            "title": "Biblical-theological connections",
+            "guidance": "Compare related biblical teaching while keeping each passage's own meaning distinct."
           },
           "conclusions": {
             "title": "Meaning and conclusion",
@@ -254,19 +270,15 @@
           "grammar": {
             "title": "Grammar and syntax",
             "guidance": "Where helpful, examine grammatical form, syntax and discourse function. Use reputable linguistic tools; original-language expertise is optional."
-          },
-          "theological-significance": {
-            "title": "Biblical-theological connections",
-            "guidance": "Compare related biblical teaching while keeping each passage's own meaning distinct."
           }
         }
       },
       "pozetek-study": {
         "name": "Guided Passage Study",
-        "description": "A guided study of any passage: observation (Persons, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "description": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
         "sections": {
           "persons": {
-            "title": "Persons",
+            "title": "People",
             "guidance": "Who appears in the text, who speaks, who acts, and to whom is the message addressed?",
             "goal": "Get to know everyone involved before interpreting anything. Record only what the text itself says.",
             "example": "Hosea proclaims God’s word to Israel/Ephraim; the focus is God’s relationship with his people. Egypt and Assyria belong to the historical background that is addressed.",
@@ -475,7 +487,7 @@
           "application": {
             "title": "Personal application",
             "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above.",
-            "goal": "Respond to the text in a way that stays tied to what it says. This is a closing step of its own, not another letter of POZETEK.",
+            "goal": "Respond to the text in a way that stays tied to what it says. Personal application is a separate closing step after observation and interpretation.",
             "example": "God’s love for his people rests in his nature, not in Israel’s faithfulness. Even though Israel turns away, God shows compassion in the midst of judgment. That challenges us to recognise our own substitute securities and to trust God anew. Love received should also shape how we treat people who do not return love and care (cf. 1 John 4:8, 19).",
             "fields": {
               "truth": {
@@ -886,6 +898,630 @@
             "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit."
           }
         }
+      },
+      "pozetek-writing-study": {
+        "name": "Guided Passage Study",
+        "description": "A guided study of any passage: observation (People, Place, Time, Events, Text context), interpretation (Explanations), the central message (Core), and then a separate personal application.",
+        "sections": {
+          "persons": {
+            "title": "People",
+            "guidance": "Who wrote the text? Who is it addressed to? Who speaks, acts or appears in it?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "place": {
+            "title": "Place",
+            "guidance": "Where does it take place? Which geographical or cultural circumstances matter?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "time": {
+            "title": "Time",
+            "guidance": "When does it happen? Which historical circumstances matter?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "events": {
+            "title": "Events",
+            "guidance": "What happens in the text? How does the action or argument develop?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "theme": {
+            "title": "Theme",
+            "guidance": "What is the passage about, and what does it say about that subject?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "understanding": {
+            "title": "Understanding",
+            "guidance": "Explain the meaning in context. Distinguish observations, interpretation and questions still open.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "consequences": {
+            "title": "Consequences",
+            "guidance": "What follows for faith, love and life? Let application follow the meaning of the passage.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "context": {
+            "title": "Text context",
+            "guidance": "How does the passage connect with its surroundings, the book and the rest of Scripture?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "explanations": {
+            "title": "Explanations",
+            "guidance": "Which terms, statements or questions of interpretation need clarifying?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "core": {
+            "title": "Core",
+            "guidance": "Subject — What is the passage about?\nIdentify the topic, person or relationship at its centre. Name the subject in a few words, without yet stating what the text says about it.\n\nStatement — What does the text say about it?\nExamine what the passage says about this subject. Summarise its main statements and how they relate to one another.\n\nTheme — What is the central message?\nCombine the subject and statement into one concise sentence that expresses the message of the whole passage.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "application": {
+            "title": "Personal application",
+            "guidance": "What does the truth you found mean for you? Keep it apart from the observation and interpretation above. Respond to the text in a way that stays tied to what it says. Personal application is a separate closing step after observation and interpretation. Which truth of the text stays valid for every reader? Where does this truth challenge, comfort or correct your own thinking and life? What will you do: believe, repent, trust, obey, pray, love? Make it specific. What differs between the original situation and today? What must not be carried over directly?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
+      },
+      "ten-step-writing-study": {
+        "name": "Ten-Step Bible Study",
+        "description": "A thorough passage study following the ten interpretive steps presented by Helge Stadelmann and Thomas Richter. Guidance and the optional Matthew 8:18–27 example are independently written.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Become familiar with the text",
+            "guidance": "Read the whole passage several times, including in more than one translation. Identify its initial movement and record questions without answering them prematurely. First impressions and unresolved questions, not a finished interpretation. What seems to be the passage's main concern on an initial reading? What scenes, changes or lines of thought are visible?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "Matthew 8:18–27 contains two encounters about following Jesus, followed by the calming of the storm. Initial questions include the cost of discipleship, the command to let the dead bury their dead, the disciples’ little faith, and the identity of the one who commands wind and sea."
+          },
+          "step-02-text": {
+            "title": "2 — Establish the textual basis",
+            "guidance": "Compare translations and relevant textual notes. Distinguish decisions about rendering the text from differences among manuscripts; document uncertainty rather than inventing certainty. A documented basis for reading this text, with important translation questions marked. Note actual wording differences and whether they matter. Record only variants supported by a trustworthy textual source.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "In Matthew 8:24, translations describe a violent storm or disturbance on the lake. The Greek wording emphasises its intensity. Its precise force must be weighed in context, not expanded into events the passage does not report."
+          },
+          "step-03-situation": {
+            "title": "3 — Clarify the original communication situation",
+            "guidance": "Ask who wrote to whom, when, where, and why. Research historical and cultural details that actually help explain this passage; distinguish evidence from inference. The relevant historical setting, not a collection of unrelated background facts. What can reasonably be established about writer and readers? Distinguish the setting of the reported event from the time of writing.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "Matthew presents Jesus as the promised Messiah. The events occur during his ministry in Galilee. Following a teacher then meant more than attending lessons; Jesus calls people to follow him personally and without treating comfort as the highest good."
+          },
+          "step-04-context": {
+            "title": "4 — Understand the context",
+            "guidance": "Trace the passage's boundaries and its place in the surrounding verses, the book, parallel accounts, and the Bible as a whole. Let the nearest context guide distant comparisons. Explain how the passage contributes to its book and how its limits were chosen. Where does this unit begin and end? What indicates the boundaries? What comes directly before and after?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "After the Sermon on the Mount (Matthew 5–7), Matthew 8 portrays Jesus' authority through healings. Two calls to discipleship precede the boat scene: in 8:23 the disciples follow Jesus into the boat. The episodes can also be studied separately."
+          },
+          "step-05-genre": {
+            "title": "5 — Examine the type of text",
+            "guidance": "Identify the literary genre, form, and significant techniques such as contrast, repetition, dialogue, or parallelism. Explain how they convey the message, without imposing a pattern. An interpretation shaped by the way this passage communicates. Is it narrative, poetry, prophecy, letter, law, parable or another genre? What kind of narrative, speech or argument is it?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "Matthew 8:18–22 contains two short dialogues centred on Jesus' replies; verses 23–27 form a miracle narrative. The disciples fear while Jesus sleeps; the fierce storm gives way to calm; helpless people face Jesus' authority."
+          },
+          "step-06-language": {
+            "title": "6 — Examine words and sentences",
+            "guidance": "Study important terms, sentence connections, contrasts, and actions in context. Use original-language tools carefully; a dictionary entry by itself does not establish meaning. Explain significant wording and relationships within the passage. Determine meaning from use in this sentence and context. Look for contrasts, reasons, conditions, actions and their objects.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "In Matthew 8:20, animals have resting places but the Son of Man has nowhere to lay his head: the contrast challenges expectations of secure comfort. In 8:21–22, the issue is the priority of Jesus' call. The father's circumstances cannot be established with certainty from these verses."
+          },
+          "step-07-flow": {
+            "title": "7 — Trace the train of thought",
+            "guidance": "Return to the complete passage. Observe who speaks and acts, how clauses or scenes connect, and where the argument changes. Draft a text diagram and a justified outline. A clear outline drawn from the text, not imposed on it. How does each part lead into the next? Give each segment a short, text-supported heading.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "One possible outline of Matthew 8:18–27: vv. 18–20, the cost of following Jesus; vv. 21–22, the priority of his call; vv. 23–25, disciples follow him into danger; vv. 26–27, Jesus reveals his authority over wind and sea."
+          },
+          "step-08-theology": {
+            "title": "8 — Clarify theological questions",
+            "guidance": "Investigate theological questions first in the passage, then in its immediate and wider biblical context. Scripture interprets Scripture; keep unresolved questions visible. Interpret theological claims in a way that is faithful to this text and the whole Bible. Give evidence, a reasoned answer and a clear status. Explain their contribution, not merely their similarity.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "Matthew 8:22 raises the question of honouring parents: Jesus affirms that duty elsewhere (Matthew 15:4–6), so his words cannot abolish it universally. The storm narrative invites comparison with God's rule over the sea (Psalm 89:10; 107:23–30), sharpening the question of Jesus' identity."
+          },
+          "step-09-message": {
+            "title": "9 — Formulate the central message",
+            "guidance": "Distinguish the subject (what the text is about), the statement (what it says about that), and the theme (a clear sentence expressing both). Test the theme against the whole passage. A brief and defensible statement of the passage's central message. Name the topic without yet making the text's claim. Summarise the passage's claim about this subject.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "Subject: following Jesus in view of his demands and authority. Statement: Jesus calls for priority over security and other obligations; his followers may trust his authority even in danger. Theme: Following Jesus requires wholehearted commitment and trust in the Lord whose authority is greater than the dangers his disciples face."
+          },
+          "step-10-application": {
+            "title": "10 — Understand and apply the meaning today",
+            "guidance": "Move from original meaning to responsible present-day application. Consider what differs after Christ's death, resurrection, and the outpouring of the Holy Spirit. Form a concrete response without equating every historical detail with today. A faithful, concrete response grounded in the text and attentive to its original setting. Which truth applies beyond the original situation? Consider covenant and redemptive-historical differences as well as culture.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            },
+            "example": "Matthew 8 calls readers to examine where comfort or security outranks trust in Christ. The disciples' circumstances during Jesus' earthly ministry cannot simply be reproduced today, but his claim on discipleship remains. Confidence rests in Christ's authority, not in the absence of difficulty."
+          }
+        }
+      },
+      "word-research-study": {
+        "name": "Biblical Word Study",
+        "description": "Investigate a biblical word in its original language and contexts without assuming one meaning in every occurrence.",
+        "sections": {
+          "word": {
+            "title": "Word and question",
+            "guidance": "Identify the Hebrew or Greek lemma, spelling and the particular passage or question. A translated English word may represent several different original words.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "occurrences": {
+            "title": "Occurrences and translations",
+            "guidance": "Find representative occurrences of this lemma and note how translators render it. Distinguish the lemma from inflected forms and other words with similar translations.",
+            "fields": {
+              "word-lookup": {
+                "label": "Word lookup",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "concordance": {
+                "label": "Concordance",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "semantic-range": {
+            "title": "Range of meanings",
+            "guidance": "Describe possible meanings from contextual evidence. Do not derive meaning solely from etymology or import every possible sense into one occurrence.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Passages in context",
+            "guidance": "Read each significant occurrence in its sentence, paragraph, genre and historical setting. Record which sense best fits and why.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Meaning and conclusion",
+            "guidance": "Explain what the word means in the passage under study, citing textual evidence. State uncertainties and avoid making the word carry more theology than the passage supports.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "What follows for belief and life from the passage's teaching, rather than from a dictionary definition alone?",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "grammar": {
+            "title": "Grammar and syntax",
+            "guidance": "Where helpful, examine grammatical form, syntax and discourse function. Use reputable linguistic tools; original-language expertise is optional.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "theological-significance": {
+            "title": "Biblical-theological connections",
+            "guidance": "Compare related biblical teaching while keeping each passage's own meaning distinct.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
+      },
+      "topical-research-study": {
+        "name": "Topical Bible Study",
+        "description": "Answer a focused biblical question by interpreting relevant passages in context before drawing conclusions.",
+        "sections": {
+          "topic": {
+            "title": "Topic and questions",
+            "guidance": "State the topic, its boundaries and the questions the study should answer. Avoid starting with a conclusion.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Relevant Scripture",
+            "guidance": "Gather representative passages, including those that qualify or appear to challenge an initial view. Note why each is relevant.",
+            "fields": {
+              "search": {
+                "label": "Concept or person search",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "cross-references": {
+                "label": "Cross-references",
+                "help": "Enter related passages separated by semicolons. These are your cross-references, not automatically inferred connections."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "passage-study": {
+            "title": "Examine the passages",
+            "guidance": "Read each text in its literary, historical and covenantal context. Distinguish direct teaching, narrative description, inference and application.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "main-themes": {
+            "title": "Compare and group findings",
+            "guidance": "Group the passages by their actual teaching, noting agreements, differences, development and remaining questions.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Biblical conclusions",
+            "guidance": "Answer the opening questions with references. Distinguish what Scripture clearly teaches from reasonable inference and unresolved issues.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "Identify concrete implications for belief, worship, relationships and action, grounded in the conclusions.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "difficult-passages": {
+            "title": "Difficult or balancing texts",
+            "guidance": "Examine apparently conflicting passages without ignoring their context or forcing a superficial harmonisation.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "biblical-theology": {
+            "title": "Place in the whole Bible",
+            "guidance": "Where relevant, consider how the teaching unfolds through the covenants and relates to Christ and the gospel without imposing a connection.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
+      },
+      "character-research-study": {
+        "name": "Biblical Character Study",
+        "description": "Study a biblical person's life and character through the relevant passages.",
+        "sections": {
+          "person": {
+            "title": "Person and passages",
+            "guidance": "Identify the person, name variants, and principal biblical references. Distinguish this person from others with the same name.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "setting": {
+            "title": "Historical and biblical setting",
+            "guidance": "Locate the person in the biblical story, including their family, relationships, responsibilities and circumstances. Mark disputed dates or identifications as uncertain.",
+            "fields": {
+              "search": {
+                "label": "Concept or person search",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "cross-references": {
+                "label": "Cross-references",
+                "help": "Enter related passages separated by semicolons. These are your cross-references, not automatically inferred connections."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "life": {
+            "title": "Life, words and actions",
+            "guidance": "Trace key events chronologically where possible. Record what the text actually says, with references; do not assume the narrative gives a complete biography.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "character": {
+            "title": "Character and decisions",
+            "guidance": "Examine actions, words, strengths, weaknesses and recurring patterns. Distinguish the narrator's explicit evaluation from your own inference about motives.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "god": {
+            "title": "God's work and the biblical evaluation",
+            "guidance": "How does God act in this person's life, and how does Scripture evaluate their choices? Consider the person's place in the wider biblical story without treating every detail as exemplary.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "conclusion": {
+            "title": "Main findings",
+            "guidance": "Summarise the person's significance with supporting passages, including uncertainties and tensions.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "What does Scripture teach through this life about faith, obedience, sin, grace and relationships? Apply the text rather than imitating every recorded action.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "comparisons": {
+            "title": "Related figures and passages",
+            "guidance": "Compare relevant people or passages only where the connections illuminate the text.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
+      },
+      "book-research-study": {
+        "name": "Whole-Book Bible Study",
+        "description": "Read an entire biblical book, trace its structure and message, and apply its teaching.",
+        "sections": {
+          "reading": {
+            "title": "Read the whole book",
+            "guidance": "Read the book through, preferably more than once and in more than one translation. Note first impressions, recurring words, tone, genre and questions before consulting commentaries.",
+            "fields": {
+              "passage": {
+                "label": "Passage",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "setting": {
+            "title": "Author, audience and setting",
+            "guidance": "Investigate authorship, recipients, historical and geographical context, occasion and purpose. Separate statements in the book from scholarly proposals and unresolved questions.",
+            "fields": {
+              "search": {
+                "label": "Concept or person search",
+                "help": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block."
+              },
+              "cross-references": {
+                "label": "Cross-references",
+                "help": "Enter related passages separated by semicolons. These are your cross-references, not automatically inferred connections."
+              },
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "overview": {
+            "title": "Overview and central concerns",
+            "guidance": "Record main people, events, themes, key verses and the book's broad movement. Avoid treating every recurring word as the main theme.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "outline": {
+            "title": "Structure and content",
+            "guidance": "Divide the book into natural literary units with passage references and brief headings. Explain how each section contributes to the whole.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "argument": {
+            "title": "Message and development",
+            "guidance": "Trace the narrative or argument across sections, attending to genre, contrasts, promises, commands and how the conclusion relates to the opening.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "synthesis": {
+            "title": "Central message",
+            "guidance": "State the book's subject, what it teaches about that subject, and its overall message, supported by the text.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "application": {
+            "title": "Application",
+            "guidance": "Consider implications for belief, worship and life that follow from the book's message and its place in the whole Bible.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          },
+          "further": {
+            "title": "Further study",
+            "guidance": "List difficult passages, historical questions, relevant cross-references and sources to revisit.",
+            "fields": {
+              "answer": {
+                "label": "Your answer",
+                "help": "Write in your own words. Your observations and conclusions can grow here."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notes",
@@ -1005,7 +1641,7 @@
     "noTemplate": "No template (one Notes part)",
     "yourTemplate": "{{name}} (yours)",
     "optional": "(optional)",
-    "passagePlaceholder": "e.g. John 15:1-11",
+    "passagePlaceholder": "e.g. John 5:1–18 or Romans 8",
     "create": "Create study",
     "formLabel": "New study",
     "studyAs": "Study approach",
@@ -1023,7 +1659,7 @@
     "approach": {
       "passage": "Passage study",
       "word": "Word study",
-      "topical": "Topic",
+      "topical": "Topical study",
       "teaching": "Teaching preparation",
       "biblical_theology": "Biblical theology",
       "systematic_theology": "Systematic theology",
@@ -1031,6 +1667,17 @@
       "mine": "My template",
       "character": "Biblical Character Study",
       "book": "Whole-Book Study"
+    },
+    "startsWith": "Starts with: {{parts}}.",
+    "subjectLabel": {
+      "passage": "Bible passage",
+      "word": "Word or expression",
+      "topical": "Topic",
+      "character": "Biblical character",
+      "book": "Book of the Bible",
+      "biblical_theology": "Biblical theme",
+      "systematic_theology": "Doctrine",
+      "custom": "Study subject"
     }
   },
   "list": {
@@ -1064,7 +1711,7 @@
     "duplicatePrompt": "Make a copy of “{{title}}” in this project:",
     "structureOnly": "Structure only",
     "structureAndContent": "Structure and content",
-    "duplicateHelp": "Structure only copies the parts. With content, your writing, notes and passages are copied too. Notes on Scripture are never duplicated; they belong to the verses.",
+    "duplicateHelp": "“Structure only” copies the parts. “Structure and content” also copies your writing, notes and passages. Notes on Scripture are never duplicated; they belong to the verses.",
     "purpose": "Purpose",
     "purposePlaceholder": "What are you trying to understand or prepare?",
     "details": "{{type}} details",
@@ -1091,14 +1738,27 @@
       },
       "translation": {
         "label": "Bible"
+      },
+      "lexicalId": {
+        "label": "Lexical number",
+        "hint": "e.g. G1343"
       }
     },
-    "detailsToggle": "Study details",
     "typeLine": "Type: {{type}}",
     "fromTemplate": "From your template: {{name}}",
     "groupAbout": "About this study",
     "groupCopy": "Copy",
-    "findOccurrences": "Find occurrences"
+    "findOccurrences": "Find occurrences",
+    "saveAsTemplate": "Save as my template",
+    "saveAsTemplateGroup": "Save this study’s structure as a template",
+    "templateName": "Name of the template",
+    "saveAsTemplateKeeps_one": "The template keeps this study’s part: its heading, guidance and place in the outline. Your writing, notes, passages and details stay in this study.",
+    "saveAsTemplateKeeps_other": "The template keeps this study’s {{count}} parts: their headings, guidance and places in the outline, in this order. Your writing, notes, passages and details stay in this study.",
+    "saveTemplate": "Save template",
+    "savedAsTemplate": "Saved as your template “{{name}}”. You can use it for a new study, and change it in Settings → Templates.",
+    "saveAsTemplateTooMany": "A template needs at least one part and can have at most {{max}}. Change this study’s parts first, or make the template in Settings → Templates.",
+    "findLemma": "Find this lemma",
+    "lemmaUnavailable": "The chosen Bible has no word annotations, so lemma search is not available for it."
   },
   "editor": {
     "opening": "Opening study…",
@@ -1106,7 +1766,10 @@
     "newSectionTitle": "New part",
     "allSaved": "All changes saved.",
     "saved": "Saved",
-    "backTo": "Back to {{place}}"
+    "backTo": "Back to {{place}}",
+    "options": "Study options",
+    "filterOn": "Notes are filtered.",
+    "filterClear": "Show all"
   },
   "sections": {
     "rename": "Rename part {{title}}",
@@ -1222,7 +1885,6 @@
     "sectionCount_one": "{{count}} part",
     "sectionCount_other": "{{count}} parts",
     "builtIn": "Built-in",
-    "duplicateCustomise": "Duplicate and customise",
     "edit": "Edit {{name}}",
     "duplicate": "Duplicate {{name}}",
     "delete": "Delete {{name}}",
@@ -1230,7 +1892,8 @@
     "confirm": "Delete the template “{{name}}”? Studies already made from it are not affected.",
     "deleteTemplate": "Delete template",
     "new": "New template…",
-    "teachingListLabel": "Bible Teaching formats"
+    "saveAsMine": "Save as my template",
+    "saveAsMineLabel": "Save {{name}} as my template"
   },
   "templateEditor": {
     "opening": "Opening template…",
@@ -1258,7 +1921,9 @@
     "toggle": "Add",
     "note": "Note",
     "to": "Add to {{part}}",
-    "writing": "Writing"
+    "writing": "Writing",
+    "textField": "Add text field",
+    "textTo": "Add text field to {{part}}"
   },
   "home": {
     "title": "Studies",
@@ -1286,13 +1951,12 @@
   "teaching": {
     "loading": "Opening the teaching…",
     "which": "Teaching:",
-    "another": "Prepare another Bible Teaching",
     "empty": {
       "title": "Prepare a teaching from this study",
       "text": "A sermon, a group Bible study or a lesson, written by you. You can use what you noted in this study: your notes and passages stay where they are and are simply used here. Nothing is filled in for you, and every part may stay empty."
     },
     "kindLabel": "Kind of teaching",
-    "kindNone": "Not said",
+    "kindNone": "Not specified",
     "kind": {
       "sermon": "Sermon",
       "bible_study": "Group Bible study",
@@ -1306,7 +1970,6 @@
     "start": "Start",
     "delete": "Delete this teaching",
     "deleteConfirm": "Delete this teaching? Your study, with its notes and passages, stays as it is.",
-    "about": "About this teaching",
     "audience": "Who it is for",
     "audiencePlaceholder": "e.g. the whole church, a youth group",
     "purpose": "Purpose",
@@ -1395,7 +2058,7 @@
       "shared": {
         "remote": "To help, this will be sent to {{assistant}}:",
         "local": "This stays on this computer ({{assistant}}). It will see:",
-        "text": "your {{part}}",
+        "text": "your text in {{part}}",
         "selection": "the words you selected",
         "request": "what you asked for",
         "teaching": "the teaching’s title and kind, and its audience, purpose and central message where written",
@@ -1498,7 +2161,7 @@
       "freeHint": "The assistant sees this part and what it needs from this teaching and study. It answers with comments and questions; it does not write your teaching for you.",
       "slow": "This is taking longer than usual. You can keep waiting or stop.",
       "stop": "Stop waiting",
-      "stopped": "Stopped waiting. Nothing was changed. The service may still finish the request, and it may count toward your use.",
+      "stopped": "Stopped waiting. Nothing was changed. The service may still finish the request, and it may count towards your usage.",
       "pending": {
         "ask": "Asking the assistant…",
         "story": "Looking for sources… This can take a little while.",
@@ -1527,12 +2190,26 @@
         "illustration": "Illustration or example",
         "added": "Point added.",
         "removed": "Point removed.",
-        "moved": "Point moved to place {{position}}.",
+        "moved": "Point moved to position {{position}}.",
         "deleteConfirm": "Delete this point and what you wrote in it? Anything from your study used here stays in the study.",
         "message": "Central message",
         "messageHint": "The one thing you most want people to take away",
         "introduction": "Introduction",
         "conclusion": "Conclusion"
+      },
+      "generalPoints": {
+        "title": "Main points",
+        "none": "No points yet. Add as many as you need, in any shape: a movement of a story, a question, a theme or a few verses.",
+        "add": "Add a point",
+        "number": "Point {{number}}",
+        "label": "Point {{number}}: {{title}}",
+        "untitled": "Point {{number}}",
+        "titleLabel": "Title of point {{number}}",
+        "titlePlaceholder": "What this point says",
+        "added": "Point added.",
+        "removed": "Point removed.",
+        "moved": "Point moved to position {{position}}.",
+        "deleteConfirm": "Delete this point and what you wrote in it? Anything from your study used here stays in the study."
       },
       "questions": {
         "title": "Questions and answers",
@@ -1548,7 +2225,7 @@
         "illustration": "Notes for leading the conversation",
         "added": "Question added.",
         "removed": "Question removed.",
-        "moved": "Question moved to place {{position}}.",
+        "moved": "Question moved to position {{position}}.",
         "deleteConfirm": "Delete this question and what you wrote with it? Anything from your study used here stays in the study.",
         "message": "What the group should discover",
         "messageHint": "The one thing the conversation should lead to",
@@ -1569,7 +2246,7 @@
         "illustration": "Activity, material or example",
         "added": "Step added.",
         "removed": "Step removed.",
-        "moved": "Step moved to place {{position}}.",
+        "moved": "Step moved to position {{position}}.",
         "deleteConfirm": "Delete this step and what you wrote in it? Anything from your study used here stays in the study.",
         "message": "The one thing to remember",
         "messageHint": "In a few words they could repeat afterwards",
@@ -1577,10 +2254,9 @@
         "conclusion": "Ending"
       }
     },
-    "aboutEmpty": "Kind, who it is for, purpose, passages",
-    "aboutFor": "for {{audience}}",
     "format": {
       "points": "Main points with explanation, application and illustration, between an introduction and a conclusion.",
+      "generalPoints": "Main points with explanation, application and illustration, between an introduction and a conclusion.",
       "questions": "Questions for the group, each with where it may lead and follow-up questions.",
       "steps": "A lesson in steps: teaching, Bible reading, questions, activities and pictures, in the order they happen."
     },
@@ -1601,7 +2277,7 @@
     },
     "stepKindLabel": "Kind of step: {{step}}",
     "stepKind": {
-      "none": "Kind not said",
+      "none": "Kind not specified",
       "text": "Teaching",
       "scripture": "Bible reading",
       "question": "Question",
@@ -1626,14 +2302,527 @@
       "image": {
         "explanation": "What it shows, and when you show it"
       }
+    },
+    "materials": {
+      "open": "Materials"
+    },
+    "templates": {
+      "listLabel": "Bible Teaching templates",
+      "intro": "A Bible Teaching template is what a new teaching starts with: its format, and the points, questions or steps it begins with. A teaching takes a copy when it is made, so changing or deleting a template never changes a teaching.",
+      "saveAsMine": "Save as my template",
+      "saveAsMineLabel": "Save {{name}} as my template",
+      "edit": "Edit {{name}}",
+      "duplicate": "Duplicate {{name}}",
+      "delete": "Delete {{name}}",
+      "confirmLabel": "Delete {{name}}?",
+      "confirm": "Delete the template “{{name}}”? Bible Teachings already made from it are not affected.",
+      "new": "New Bible Teaching template…",
+      "newTitle": "New Bible Teaching template",
+      "editTitle": "Edit Bible Teaching template",
+      "format": "Format",
+      "pointsList": "What the template starts with",
+      "pointsHint": "Leave a title empty to name it in each teaching.",
+      "none": "Nothing yet: a teaching made with this template starts empty.",
+      "untitled": "untitled",
+      "loadFailed": "Your templates can’t be shown just now. The built-in ones are here.",
+      "startFrom": "Start from",
+      "builtinChoice": "{{format}} (built-in)"
+    },
+    "saveTemplate": {
+      "action": "Save as my template",
+      "group": "Save this teaching’s structure as a template",
+      "name": "Name of the template",
+      "keeps": {
+        "points": "The template keeps the format and as many main points as this teaching has, in order. The points start without titles.",
+        "generalPoints": "The template keeps the format and as many main points as this teaching has, in order. The points start without titles.",
+        "questions": "The template keeps the format and as many questions as this teaching has. The questions start empty.",
+        "steps": "The template keeps the format and the steps in order, each with its title and kind.",
+        "blocks": "The template keeps the format and the sections and blocks this teaching starts with, in order. Nothing written in the blocks comes with it."
+      },
+      "notKept": "Nothing you wrote comes with it: not the audience, purpose, message, introduction, conclusion or notes; nothing written under a point, question or step; no passages, kept material or notes from your study.",
+      "saved": "Saved as your template “{{name}}”. You can choose it for your next Bible Teaching, and change it in Settings → Templates.",
+      "tooMany": "A template can start with at most {{max}} points, questions or steps, and this teaching has more. Make the template in Settings → Templates instead.",
+      "tooManyBlocks": "A template can start with at most {{max}} blocks, and this teaching has more. Make the template in Settings → Templates instead."
+    },
+    "addStepMenu": "Kind of step to add",
+    "newTeaching": "New Teaching",
+    "formatLegend": "What would you like to prepare?",
+    "formats": {
+      "message": {
+        "name": "Sermon / Talk",
+        "hint": "A sermon, talk or devotion: a central message, an introduction, main points and a conclusion."
+      },
+      "group": {
+        "name": "Bible Study",
+        "hint": "Led by discussion: an opening, the Bible text, questions and answers, and a closing."
+      },
+      "lesson": {
+        "name": "Bible Teaching",
+        "hint": "For children, youth or adults: steps such as Bible reading, explanation, questions, an activity or a picture."
+      }
+    },
+    "messageKind": "Kind of message",
+    "passagesLine": "Bible text",
+    "notesHasText": "has notes",
+    "notesPrivate": "Only for you: never part of the Materials for your listeners or group.",
+    "blocks": {
+      "add": "Add a block",
+      "addIn": "Add a block in {{section}}",
+      "guidance": "Guidance",
+      "placeholder": "Write here…",
+      "leaderOnly": "For you as the leader. It is left out of handouts and slides unless you mark it for participants.",
+      "participant": "Show this to participants",
+      "settings": "This block",
+      "empty": "This teaching is empty. Add a section or a writing area when you are ready.",
+      "viewLabel": "How you write",
+      "viewContinuous": "Continuous",
+      "viewOutline": "Outline",
+      "headingLabel": "Heading",
+      "templateHeading": "Blocks",
+      "templateHint": "Add, reorder, duplicate and rename the sections and blocks a new teaching starts with. What you write in a teaching is not kept in the template.",
+      "titleOf": "Heading of {{name}}",
+      "typeOf": "Kind of block: {{name}}",
+      "section": "In section",
+      "sectionOf": "Section for {{name}}",
+      "noSection": "No section",
+      "moveUp": "Move “{{name}}” up",
+      "moveDown": "Move “{{name}}” down",
+      "duplicate": "Duplicate “{{name}}”",
+      "remove": "Remove “{{name}}”",
+      "types": {
+        "section": "Section",
+        "writing": "Writing",
+        "scripture": "Bible passage",
+        "teaching_notes": "Leader notes",
+        "discussion_questions": "Discussion questions",
+        "explanation": "Explanation",
+        "illustration": "Illustration or example",
+        "activity": "Group activity",
+        "application": "Application and reflection",
+        "objectives": "Learning objectives",
+        "time": "Time",
+        "presentation_notes": "Presentation notes",
+        "handout": "Handout",
+        "outline_point": "Outline point",
+        "qa": "Question and answer"
+      },
+      "options": "Options for {{name}}",
+      "leaderBadge": "Leader only",
+      "confirmDelete": "Delete “{{name}}” and its writing?"
+    },
+    "builtin": {
+      "eva": {
+        "name": "Group Bible Study — Observation, Understanding, Application",
+        "hint": "For a group: observe the passage, understand it, then ask what follows.",
+        "blocks": {
+          "erkennen": {
+            "title": "Observation",
+            "guidance": "What does the passage actually say, and what can the group discover for themselves? Optional Campus Connect 3×3 prompts: read it together, listen as it is read again, retell it in your own words."
+          },
+          "verstehen": {
+            "title": "Comprehension",
+            "guidance": "Meaning in the literary, historical and biblical context, and the central message. Optional Campus Connect 3×3 prompts: what became important, what this says about God and about people, how the context helps."
+          },
+          "anwenden": {
+            "title": "Application",
+            "guidance": "What follows for faith, understanding, decisions, behaviour and relationships. Optional Campus Connect 3×3 prompts: what changes in how we think and live, what we will do, whom this could encourage."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Sermon / Talk",
+        "hint": "Introduction, the main part, and a conclusion. Write it straight through, or add outline points.",
+        "blocks": {
+          "introduction": {
+            "title": "Introduction",
+            "guidance": "Introduce the participants to the topic."
+          },
+          "main": {
+            "title": "Main part",
+            "guidance": "Explore the meaning of the text and its connection with life."
+          },
+          "conclusion": {
+            "title": "Conclusion",
+            "guidance": "Summarise the main points and lead into practical application."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Bible Lesson — Children / Youth",
+        "hint": "One lesson for children or young people. Age changes how you tell it, not what the passage means.",
+        "blocks": {
+          "prepare": {
+            "title": "Preparation",
+            "guidance": "Optional: note the age you are preparing for, how long you have, and what you hope they take away. Age changes how you tell the story, not what the passage means. Add time or learning-objective blocks only if you want them."
+          },
+          "story": {
+            "title": "Story",
+            "guidance": "Tell the passage in a way that fits the age. The meaning stays the one the text has."
+          },
+          "explain": {
+            "title": "Explanation",
+            "guidance": "Say what the passage means, in words they can follow. Do not replace the text’s meaning with a simpler idea."
+          },
+          "questions": {
+            "title": "Questions",
+            "guidance": "Questions the group hears, and your own notes about answers to listen for. Those notes stay with you."
+          },
+          "activity": {
+            "title": "Activity",
+            "guidance": "Something they do with what they have heard."
+          },
+          "reflect": {
+            "title": "Reflection",
+            "guidance": "What they can take into faith, choices and relationships."
+          }
+        }
+      },
+      "blank": {
+        "name": "Blank template",
+        "hint": "No sections yet. Add the ones this teaching needs."
+      }
+    },
+    "workspace": {
+      "title": "Teaching",
+      "intro": "Prepare a teaching here, with or without a Bible Study.",
+      "sessions": "Teaching sessions",
+      "empty": "No teaching sessions yet.",
+      "back": "Back to Teaching list",
+      "study": "Bible Study (optional)",
+      "independent": "Independent teaching",
+      "keepNotes": "Keep previously used notes and their sources as saved copies when changing or removing the study link. Future study edits will not change those copies.",
+      "saveLink": "Save study link",
+      "savedNote": "Saved study note",
+      "project": "Back to project",
+      "basedOn": "Based on: Bible Study —",
+      "linkStudy": "Link to Bible Study",
+      "openStudy": "Open linked Study",
+      "standalone": "Standalone Teaching"
+    },
+    "options": "Teaching options",
+    "fromStudy": {
+      "open": "Add from Bible Study…",
+      "title": "Add from Bible Study",
+      "help": "Choose what to copy into this teaching. You can edit each copy, and it records where it came from. Copies start as leader-only content and do not update when the study changes.",
+      "add": "Add selected",
+      "none": "This Bible Study has nothing to add yet.",
+      "added": "Added from the Bible Study, for the leader only. Share each part when it is ready.",
+      "provenance": "From the Bible Study: {{label}}",
+      "quotation": "Quotation from the Bible Study · {{citation}}",
+      "item": "an item",
+      "quote": "Quotation",
+      "groups": {
+        "writing": "Writing",
+        "qa": "Questions and answers",
+        "finding": "Notes",
+        "citation": "Quotations",
+        "passage": "Passages"
+      }
     }
   },
   "parts": {
     "add": "Add a part",
     "suggested": "Parts you might add",
     "own": "Your own heading",
-    "collapseAll": "Fold all",
-    "expandAll": "Unfold all"
+    "collapseAll": "Collapse all",
+    "expandAll": "Expand all",
+    "restoreMissing": "Restore missing sections",
+    "restoreAll": "Restore all missing sections",
+    "restoreOne": "Restore “{{title}}”",
+    "restoreEmptyHint": "Restores empty template sections and the original method order. Custom sections and surviving writing are kept. This does not recover previously deleted writing."
+  },
+  "journey": {
+    "label": "Study outline",
+    "phase": {
+      "text": "Text",
+      "understanding": "Understanding",
+      "theology": "Theology",
+      "application": "Application",
+      "audience": "Audience",
+      "teaching": "Teaching"
+    },
+    "next": {
+      "ready": "When you are ready, this study can become a Bible Teaching: a sermon, a group Bible study or a lesson.",
+      "prepare": "Prepare a Bible Teaching",
+      "existing": "Prepared from this study: {{title}}",
+      "existingMany": "{{count}} Bible Teachings prepared from this study",
+      "open": "Open the Bible Teaching"
+    },
+    "goTo": "Go to {{phase}}"
+  },
+  "materials": {
+    "kinds": {
+      "presentation": {
+        "points": {
+          "name": "Presentation",
+          "hint": "Slides for the screen, made from this teaching"
+        },
+        "questions": {
+          "name": "Presentation",
+          "hint": "Slides for the screen, made from this teaching"
+        },
+        "steps": {
+          "name": "Presentation",
+          "hint": "Slides for the screen, made from this teaching"
+        }
+      },
+      "manuscript": {
+        "points": {
+          "name": "Manuscript",
+          "hint": "The teaching as one readable text, to preach or speak from"
+        },
+        "questions": {
+          "name": "Leader’s guide",
+          "hint": "The questions and notes on where each may lead, to help you lead the group"
+        },
+        "steps": {
+          "name": "Teacher’s guide",
+          "hint": "The lesson step by step, with what you will say and do"
+        }
+      },
+      "questions": {
+        "points": {
+          "name": "Question sheet",
+          "hint": "The questions for the group, with room to write"
+        },
+        "questions": {
+          "name": "Question sheet",
+          "hint": "The questions for the group, with room to write"
+        },
+        "steps": {
+          "name": "Question sheet",
+          "hint": "The questions for the group, with room to write"
+        }
+      },
+      "worksheet": {
+        "points": {
+          "name": "Listening notes",
+          "hint": "A sheet to follow along and write on while listening"
+        },
+        "questions": {
+          "name": "Worksheet",
+          "hint": "Questions and activities with room to write or draw"
+        },
+        "steps": {
+          "name": "Worksheet",
+          "hint": "Questions and activities with room to write or draw"
+        }
+      }
+    },
+    "questions": {
+      "leaderNotice": "Leader’s version: with notes for leading. Not for handing out.",
+      "unworded": "Notes for a question not yet written"
+    },
+    "worksheet": {
+      "ownNotes": "My notes"
+    },
+    "view": {
+      "back": "Back to the teaching",
+      "from": "Put together from your teaching “{{title}}”: change the teaching, and this changes with it.",
+      "empty": "Nothing here yet. What you write in the teaching appears here.",
+      "preview": "Preview: {{name}}",
+      "options": "What it includes"
+    },
+    "option": {
+      "includeNotes": "My notes for myself",
+      "leader": "Leader’s version, with notes for leading",
+      "includeFrame": "“{{opening}}” and “{{closing}}”",
+      "writingSpace": "Room to write",
+      "includePassage": "Include Bible passage ({{bible}})",
+      "includePassageNone": "Include Bible passage (choose a Bible in the Scripture pane first)",
+      "answers": "With the answers (shared questions only)"
+    },
+    "action": {
+      "print": "Print or save as PDF…",
+      "markdown": "Save as a text file…",
+      "copy": "Copy the text",
+      "filterName": "Text file (Markdown)",
+      "docx": "Save as a Word document…",
+      "docxFilterName": "Word document (.docx)"
+    },
+    "status": {
+      "copied": "Copied. You can paste it into a document or an email.",
+      "copyFailed": "It could not be copied. Save it as a file instead.",
+      "saved": "Saved: {{path}}",
+      "printFailed": "Printing is not available here. Save it as a text file instead."
+    },
+    "menu": {
+      "files": "Presentation files",
+      "exportPresentation": "Save the presentation as a file…",
+      "exportHint": "PowerPoint, PDF slides, a speaker sheet for a phone, Markdown or a delivery package",
+      "exportHintNamed": "“{{title}}”: PowerPoint, PDF slides, a speaker sheet for a phone, Markdown or a delivery package"
+    },
+    "scripture": {
+      "reading": "Reading the passage…",
+      "failed": "The passage could not be read. {{reason}} The reference stays on the material, and it cannot be printed or saved until the passage is read or the choice is turned off.",
+      "none": "{{bible}} has no text for this passage. Only the reference is shown.",
+      "missing_one": "{{bible}} has no text for verse {{verses}}; it is left out, not taken from another Bible.",
+      "missing_other": "{{bible}} has no text for verses {{verses}}; they are left out, not taken from another Bible.",
+      "from": "Bible text: {{name}}."
+    },
+    "wordStyles": {
+      "label": "Field label",
+      "writingLine": "Writing line",
+      "writingLineLast": "Writing line (last)"
+    }
+  },
+  "phase": {
+    "label": "Outline",
+    "none": "Not in the outline",
+    "ofPart": "Where {{title}} belongs in the study outline",
+    "ofTemplatePart": "Where part {{number}} belongs in the study outline"
+  },
+  "info": {
+    "study": "Bible Study information",
+    "teaching": "Bible Teaching information",
+    "project": "Project information",
+    "projectDescription": "Description",
+    "projectDescriptionHint": "What this project is for, in a sentence or two"
+  },
+  "inquiry": {
+    "ready": "The help is ready.",
+    "failed": "The assistant could not help this time.",
+    "stopped": "Stopped waiting. Nothing was changed.",
+    "close": "Close the help",
+    "standing": "This is help to think with, kept apart from your writing. Nothing in your Bible Study changes unless you accept it.",
+    "kindLabel": "What kind of help?",
+    "requestRequired": "Your question",
+    "requestOptional": "Anything in particular? (optional)",
+    "ask": "Ask",
+    "askHint": "Nothing is sent before you ask.",
+    "pending": "Waiting for the answer…",
+    "from": "From {{assistant}} · not saved",
+    "again": "Ask something else",
+    "done": "Done",
+    "heading": "Help",
+    "compareHeading": "Comparison",
+    "none": "The assistant had nothing to add.",
+    "unverified_one": "{{count}} quotation in the answer was not found in what was sent, so it was left out.",
+    "unverified_other": "{{count}} quotations in the answer were not found in what was sent, so they were left out.",
+    "downgradedCount_one": "{{count}} point is shown as the assistant’s own reasoning, because the words it relied on were missing.",
+    "downgradedCount_other": "{{count}} points are shown as the assistant’s own reasoning, because the words they relied on were missing.",
+    "downgraded": "Shown as the assistant’s reasoning: the words it relied on were not in what was sent.",
+    "references": "Passages the assistant suggests looking up:",
+    "openSource": "Open in the source",
+    "shared": {
+      "remote": "To help, this will be sent to {{assistant}}, outside this computer:",
+      "local": "This stays on this computer ({{assistant}}). It will see:",
+      "count_one": "{{count}} piece, each shown word for word (open it to read it):",
+      "count_other": "{{count}} pieces, each shown word for word (open one to read it):",
+      "sourceText": "Words from your library are included.",
+      "noSourceText": "No words from your library are included.",
+      "noSearch": "Nothing is searched on the web."
+    },
+    "block": {
+      "scripture": "Bible text",
+      "writing": "Your writing",
+      "note": "Your note",
+      "quote": "Quotation in your note",
+      "source": "Library source",
+      "request": "Your question"
+    },
+    "evidence": {
+      "scripture": "Bible text",
+      "writing": "Your writing",
+      "note": "Your note",
+      "quote": "Quotation in your note",
+      "source": "Source",
+      "request": "Your question"
+    },
+    "group": {
+      "text": "Understand the text",
+      "thinking": "Check my thinking",
+      "source": "Read this source",
+      "compare": "Compare",
+      "wording": "Wording",
+      "own": "In your own words"
+    },
+    "action": {
+      "understand": "What does the text say?",
+      "context": "Literary and historical context",
+      "expression": "What do the selected words mean here?",
+      "related": "Related passages",
+      "readings": "How do Christians read this differently?",
+      "follows": "Does my conclusion follow from the text?",
+      "overlooked": "What might I have overlooked?",
+      "assumptions": "What am I assuming?",
+      "questions": "Questions to study further",
+      "unresolved": "Think through my open question",
+      "clarify": "Clearer wording",
+      "grammar": "Grammar and spelling",
+      "free": "Ask your own question",
+      "summary": "What does the author say here?",
+      "argument": "How does the argument develop?",
+      "source_assumptions": "What does the author assume?",
+      "source_passages": "Which Scripture does the author use, and how?",
+      "conclusion": "Does the conclusion follow from the reasons?",
+      "investigate": "What should I check further?",
+      "relate_study": "How does this relate to my Bible Study?",
+      "compare": "Compare the selected passages"
+    },
+    "kind": {
+      "text": "In the Bible text",
+      "source": "The author says",
+      "writing": "About your writing",
+      "interpretation": "Interpretation",
+      "inference": "The assistant’s reasoning",
+      "knowledge": "Background knowledge — please check",
+      "question": "Question",
+      "uncertain": "Not settled",
+      "position": "Position",
+      "agreement": "They agree",
+      "disagreement": "They disagree",
+      "assumption": "Assumption",
+      "unsupported": "Not supported by the passages"
+    },
+    "verdict": {
+      "agree": "The authors agree on this.",
+      "disagree": "The authors disagree.",
+      "partly": "The authors partly agree.",
+      "insufficient": "The selected passages do not say enough to compare."
+    },
+    "proposal": {
+      "heading": "Suggested wording",
+      "notYet": "Your text has not been changed.",
+      "same": "The assistant suggests no change.",
+      "changes": "What changed: {{changes}}",
+      "use": "Use this wording",
+      "used": "The new wording is in your text and will be saved.",
+      "changedMeanwhile": "Your text has changed since you asked, so nothing was replaced. Ask again to get a suggestion for the text as it is now.",
+      "removed": "removed:",
+      "added": "added:"
+    },
+    "keep": {
+      "open": "Add to Bible Study…",
+      "point": "Add this point as a note",
+      "all": "Add this help as one note…",
+      "comparison": "Keep this comparison as a note…",
+      "explain": "It becomes a note in “{{study}}”, in your words: change anything before adding it.",
+      "wording": "The note",
+      "kind": "Kind of note",
+      "cites": "Cite the source passages it rests on",
+      "marked": "The note will say that {{assistant}} helped.",
+      "add": "Add as note",
+      "done": "Added to your Bible Study as a note.",
+      "doneIn": "Added to “{{study}}” as a note."
+    },
+    "assistedBy": "Written with help from {{assistant}}",
+    "study": {
+      "button": "Help",
+      "open": "Help with “{{part}}”",
+      "tooltip": "Ask the AI Assistant about this part. Nothing is sent until you ask.",
+      "title": "Help with “{{part}}”",
+      "focus": "Look at",
+      "part": "All your writing in this part",
+      "block": "Your writing: “{{start}}”",
+      "selection": "The words you selected: “{{words}}”",
+      "note": "Your note ({{kind}}): “{{start}}”"
+    },
+    "location": {
+      "pages": "pp. {{first}}–{{last}}",
+      "paragraph": "paragraph {{number}}",
+      "paragraphs": "paragraphs {{first}}–{{last}}"
+    }
   },
   "fields": {
     "example": "Example: Hosea 11",
@@ -1656,5 +2845,107 @@
     "moveEntryUp": "Move entry {{number}} of {{field}} up",
     "moveEntryDown": "Move entry {{number}} of {{field}} down",
     "otherWriting": "Other notes"
+  },
+  "flow": {
+    "answer": "Your answer",
+    "guidance": "Hints",
+    "legacy": "Earlier structured answers",
+    "legacyNote": "These answers are kept in their original fields. Nothing has been combined or replaced.",
+    "continuous": "Continuous writing",
+    "outline": "Step-by-step",
+    "mode": "Writing mode",
+    "steps": "Study sections",
+    "previous": "Previous section",
+    "next": "Next section",
+    "step": "Section {{current}} of {{total}}",
+    "tenStepAttribution": "Method: Helge Stadelmann and Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). The guidance here is independently written; it does not reproduce the authors’ text.",
+    "hideGuidance": "Hide hints"
+  },
+  "builder": {
+    "title": "Template blocks",
+    "label": "Block title",
+    "guidance": "Optional guidance",
+    "query": "Search text or passage",
+    "editionDefault": "Default Bible edition (optional)",
+    "up": "Move up",
+    "down": "Move down",
+    "duplicate": "Duplicate block",
+    "kind": "Block type",
+    "add": "Add block",
+    "edition": "Bible edition",
+    "chooseEdition": "Choose an installed edition",
+    "editionMismatch": "The returned edition does not match the selected edition.",
+    "crossReferenceNote": "Enter related passages separated by semicolons. These are your cross-references, not automatically inferred connections.",
+    "evidenceNote": "Results are source evidence. A text match alone does not establish a meaning or a connection. Keep your conclusions in a writing block.",
+    "run": "Look up",
+    "incomplete": "Results are incomplete. Narrow the search in the Bible tools to see more.",
+    "empty": "No results. This edition may not provide the requested annotations.",
+    "keep": "Keep as evidence",
+    "evidence": "Kept source evidence",
+    "kinds": {
+      "writing": "Writing",
+      "guidance": "Guidance",
+      "heading": "Heading",
+      "divider": "Divider",
+      "passage": "Passage",
+      "concordance": "Concordance",
+      "cross_references": "Cross-references",
+      "word_lookup": "Word lookup",
+      "search": "Concept or person search",
+      "text": "Earlier text field",
+      "entries": "Earlier structured entries"
+    },
+    "passageNote": "Only the verses available in the selected edition are shown and cited. The requested passage may contain missing verses."
+  },
+  "files": {
+    "newProject": "New project",
+    "folder": "Project folder",
+    "actions": "File actions",
+    "name": "Name",
+    "rename": "Rename",
+    "move": "Move",
+    "moveTitle": "Move “{{title}}”",
+    "destination": "Destination",
+    "moveHint": "Linked Teaching moves with the Study. Research, citations and saved materials stay intact.",
+    "legacy": "Legacy standalone Teaching",
+    "legacyHint": "Manage historical Teaching that is not linked to a Bible Study. Nothing is attached automatically. New Teaching begins within a Study.",
+    "noLegacy": "No legacy standalone Teaching."
+  },
+  "qa": {
+    "add": "Question and answer",
+    "label": "Question and answer {{number}}",
+    "question": "Question",
+    "answer": "Answer",
+    "options": "Options for {{label}}",
+    "moveUp": "Move {{label}} up",
+    "moveDown": "Move {{label}} down",
+    "confirmDelete": "Delete {{label}} with its question and answer?"
+  },
+  "qaExport": {
+    "open": "Export questions…",
+    "title": "Export questions",
+    "help": "Choose what to include. Only the writing in the study’s parts is exported; your separate notes are never included.",
+    "mode": "What to export",
+    "modes": {
+      "questions": "Questions only",
+      "answers": "Questions and answers",
+      "full": "Whole study"
+    },
+    "save": "Save as Markdown…",
+    "fileType": "Markdown",
+    "saved": "Saved to {{path}}",
+    "empty": "There is nothing to export for this choice yet."
+  },
+  "repair": {
+    "review": "Review study parts",
+    "undo": "Undo study repair",
+    "apply": "Add missing parts and order",
+    "explain": "The original seven parts appear first. Missing parts are added empty. Every existing part, including Theme, Understanding, Consequences and duplicate parts, keeps its name, writing, notes and links and follows in its existing relative order when outside the seven-part sequence.",
+    "keep": "Keep existing part",
+    "add": "Add empty part",
+    "duplicates": "Multiple parts share a key: {{parts}}. They remain separate; no content is merged.",
+    "safety": "A persistent Undo receipt restores the previous order and removes only unchanged, empty parts added by this repair. If an added part has changed, Undo refuses and keeps all writing. Back up your profile before repairing important work.",
+    "undoFirst": "Undo the previous repair before applying another.",
+    "finishDrafts": "Finish or close open notes and part-name edits before undoing the repair."
   }
 }

@@ -41,7 +41,7 @@ export function MarksMarker({ marks, open, controls, onToggle }: { marks: Source
       aria-label={label}
       title={label}
       onClick={(e) => onToggle(e.currentTarget)}
-      className="-my-1.5 ml-1 inline-flex size-8 select-none items-center justify-center rounded align-middle text-accent hover:bg-bg-secondary"
+      className="-my-1.5 ml-1 inline-flex size-8 select-none items-center justify-center rounded align-middle text-accent hover:bg-hover"
     >
       <Icon className="size-3.5" aria-hidden="true" />
     </button>
@@ -86,7 +86,7 @@ export function MarksInspector({ id, marks, onChanged, onClose, onAddToStudy, on
       className="flex select-none flex-col gap-3 rounded-aw border border-border border-l-[3px] border-l-accent bg-bg-secondary px-4 py-3 font-ui text-[0.9375rem]"
     >
       <div className="flex items-center justify-between gap-2">
-        <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="m-0 text-[0.9375rem] font-semibold text-text-strong">
+        <h3 id={`${id}-title`} ref={heading} tabIndex={-1} className="type-group m-0">
           {t("library.marks.here")}
         </h3>
         <Button variant="quiet" aria-label={t("common.close")} title={t("common.close")} onClick={onClose}>
@@ -137,7 +137,7 @@ function MarkItem({ mark, onChanged, onAddToStudy, onCopy }: { mark: SourceAnnot
 
   return (
     <div className="flex flex-col gap-2" onKeyDown={leaveStep}>
-      <p className="m-0 flex items-center gap-2 font-semibold text-text-strong">
+      <p className="type-group m-0 flex items-center gap-2">
         <Icon className="size-4 text-accent" aria-hidden="true" />
         {t(`library.marks.kind.${mark.kind}`)}
         {mark.color && (
@@ -158,7 +158,7 @@ function MarkItem({ mark, onChanged, onAddToStudy, onCopy }: { mark: SourceAnnot
         <div className="flex flex-col gap-2">
           <label className="flex flex-col gap-1">
             <span className="sr-only">{t("library.marks.noteField")}</span>
-            <textarea autoFocus rows={3} value={text} onChange={(e) => setText(e.target.value)} className="reading select-text rounded-aw border-2 border-border bg-bg px-3 py-2 text-[1rem]" />
+            <textarea autoFocus rows={3} value={text} onChange={(e) => setText(e.target.value)} className="aw-writing select-text" />
           </label>
           <div className="flex flex-wrap gap-2">
             <Button variant="primary" disabled={busy || !text.trim()} onClick={() => void run(() => api.sourceAnnotationUpdate({ id: mark.id, content: text.trim() }))}>

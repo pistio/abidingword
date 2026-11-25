@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, ChevronRight, Globe } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import { HelpTip } from "@/design-system/HelpTip";
 import { toApiError } from "@/lib/api";
@@ -10,11 +10,14 @@ import type { AppInfo, Theme } from "@/types/domain";
 import type { AssistantSettings as AssistantStatus } from "@/types/teaching";
 import { AssistantSettings } from "./AssistantSettings";
 import { BibleTexts } from "./BibleTexts";
+import { SourcesSettings } from "./SourcesSettings";
+import { DataSettings } from "@/features/portability/DataSettings";
 import { StudyTemplates } from "./StudyTemplates";
 import { UpdateSettings } from "@/features/updates/UpdateSettings";
 import { useUpdates, type UpdateState } from "@/features/updates/UpdatesContext";
 import { LanguageChoice } from "./LanguageChoice";
-import { BACKGROUNDS, useTheme, type Background } from "./ThemeContext";
+import { APP_PALETTES } from "@/design-system/palettes";
+import { BACKGROUNDS, useTheme } from "./ThemeContext";
 
 const THEMES = ["light", "dark", "system"] as const satisfies readonly Theme[];
 
@@ -25,9 +28,11 @@ export const SETTINGS_SECTIONS = [
   "updates",
   "appearance",
   "bible-texts",
+  "sources",
   "study-templates",
   "language",
   "assistant",
+  "data",
   "about-this-installation",
   "coming-in-later-versions",
 ] as const;
@@ -37,9 +42,11 @@ const TITLE_KEY = {
   updates: "settings.sections.updates",
   appearance: "settings.sections.appearance",
   "bible-texts": "settings.sections.bibleTexts",
+  sources: "settings.sections.sources",
   "study-templates": "settings.sections.templates",
   language: "settings.sections.language",
   assistant: "settings.sections.assistant",
+  data: "settings.sections.data",
   "about-this-installation": "settings.sections.about",
   "coming-in-later-versions": "settings.sections.planned",
 } as const satisfies Record<SectionName, string>;
@@ -59,6 +66,10 @@ interface SettingsViewProps {
   onEditTemplate: (templateId: string | null) => void;
   /** Changes when the template editor closes, so the list shows what was saved. */
   templatesVersion?: number;
+  onEditTeachingTemplate: (templateId: string | null) => void;
+  teachingTemplatesVersion?: number;
+  /** Open this section on arrival (Library → Settings → Sources). */
+  initialSection?: SectionName | null;
 }
 
 /**
@@ -66,7 +77,7 @@ interface SettingsViewProps {
  * where things stand, opened only when wanted. The header with "Back" and a
  * jump list stays at the top while the page scrolls.
  */
-export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditTemplate, templatesVersion = 0 }: SettingsViewProps) {
+export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditTemplate, templatesVersion = 0, onEditTeachingTemplate, teachingTemplatesVersion = 0, initialSection = null }: SettingsViewProps) {
   const { t, i18n } = useTranslation();
   const { theme, background } = useTheme();
   const updates = useUpdates();
@@ -75,9 +86,11 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
   const toggles = useRef(new Map<SectionName, HTMLButtonElement>());
   useEffect(() => heading.current?.focus(), []);
 
-  const [open, setOpen] = useState<ReadonlySet<SectionName>>(
-    () => new Set(readLocal<string[]>(OPEN_KEY, []).filter((n): n is SectionName => (SETTINGS_SECTIONS as readonly string[]).includes(n))),
-  );
+  const [open, setOpen] = useState<ReadonlySet<SectionName>>(() => {
+    const stored = new Set(readLocal<string[]>(OPEN_KEY, []).filter((n): n is SectionName => (SETTINGS_SECTIONS as readonly string[]).includes(n)));
+    if (initialSection) stored.add(initialSection);
+    return stored;
+  });
   // Closed by the person while an update needed them: stays closed for that state only.
   const [updatesClosedFor, setUpdatesClosedFor] = useState<string | null>(null);
   const updateKey = updates.state.kind === "available" || updates.state.kind === "installing" ? `${updates.state.kind}:${updates.state.update.version}` : updates.state.kind;
@@ -94,6 +107,18 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
       return next;
     });
   };
+
+  // A direct visit opens that section (its state starts open) and moves focus there.
+  useEffect(() => {
+    if (!initialSection) return;
+    const name = initialSection;
+    writeLocal(OPEN_KEY, [...new Set([...readLocal<string[]>(OPEN_KEY, []), name])]);
+    requestAnimationFrame(() => {
+      const toggle = toggles.current.get(name);
+      toggle?.closest("section")?.scrollIntoView?.({ block: "start" });
+      toggle?.focus({ preventScroll: true });
+    });
+  }, [initialSection]);
 
   /** From the jump list: open the section, bring it into view and move focus to it. */
   const jump = (name: SectionName) => {
@@ -113,6 +138,8 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
         return theme === "dark" ? t("settings.theme.dark") : `${t(`settings.theme.${theme}`)} · ${t(`settings.background.${background}`)}`;
       case "bible-texts":
         return t("settings.summary.bibleTexts");
+      case "sources":
+        return t("settings.summary.sources");
       case "study-templates":
         return t("settings.summary.templates");
       case "language":
@@ -122,6 +149,8 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
         return assistant.config.enabled
           ? t("settings.summary.assistantOn", { service: t(`settings.assistant.providers.${assistant.config.provider}`) })
           : t("settings.summary.assistantOff");
+      case "data":
+        return t("settings.summary.data");
       case "about-this-installation":
         return t("settings.summary.about", { version: info.version });
       case "coming-in-later-versions":
@@ -142,12 +171,16 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
         );
       case "bible-texts":
         return <BibleTexts onAddBible={onAddBible} />;
+      case "sources":
+        return <SourcesSettings />;
       case "study-templates":
-        return <StudyTemplates onEdit={onEditTemplate} version={templatesVersion} />;
+        return <StudyTemplates onEdit={onEditTemplate} version={templatesVersion} onEditTeaching={onEditTeachingTemplate} teachingVersion={teachingTemplatesVersion} />;
       case "language":
         return <LanguageChoice />;
       case "assistant":
         return <AssistantSettings onStatus={setAssistant} />;
+      case "data":
+        return <DataSettings />;
       case "about-this-installation":
         return <About info={info} />;
       case "coming-in-later-versions":
@@ -155,7 +188,7 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
           <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {PLANNED.map((item) => (
               <li key={item} className="flex items-center gap-1 border-l-[3px] border-border pl-4">
-                <span className="font-semibold text-text-strong">{t(`settings.planned.${item}`)}</span>
+                <span className="font-medium text-text-strong">{t(`settings.planned.${item}`)}</span>
                 <HelpTip name={t("settings.help.about", { topic: t(`settings.planned.${item}`) })}>{t(`settings.planned.${item}Text`)}</HelpTip>
               </li>
             ))}
@@ -186,7 +219,7 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
               id="settings-title"
               ref={heading}
               tabIndex={-1}
-              className="m-0 font-display text-[1.5rem] font-heading text-text-strong"
+              className="type-title m-0"
             >
               {t("settings.title")}
             </h1>
@@ -201,9 +234,9 @@ export function SettingsView({ info, onClose, onResetLayout, onAddBible, onEditT
                       e.preventDefault();
                       jump(name);
                     }}
-                    className="inline-flex min-h-9 items-center rounded-aw px-2.5 text-[0.875rem] text-text-muted no-underline hover:bg-bg-secondary hover:text-text-strong"
+                    className="inline-flex min-h-9 items-center rounded-aw px-2.5 type-meta no-underline hover:bg-hover hover:text-text-strong"
                   >
-                    {t(TITLE_KEY[name])}
+                    {name === "language" && <Globe className="mr-1 size-4" aria-hidden="true" />}{t(TITLE_KEY[name])}
                   </a>
                 </li>
               ))}
@@ -274,7 +307,14 @@ function Section({ name, title, summary, open, onToggle, toggleRef, children }: 
   const id = `settings-${name}`;
   const summaryId = `${id}-summary`;
   return (
-    <section id={`settings-section-${name}`} aria-labelledby={id} className="scroll-mt-32 border-b border-border-subtle">
+    // An open section sits on a quiet shaded ground (v0.19), so where it
+    // ends is clear without another line; closed ones stay a plain list.
+    <section
+      id={`settings-section-${name}`}
+      aria-labelledby={id}
+      data-open={open || undefined}
+      className={`-mx-3 scroll-mt-32 border-b px-3 ${open ? "my-1 rounded-[var(--aw-radius-lg)] border-transparent bg-bg-secondary" : "border-border-subtle"}`}
+    >
       <h2 aria-labelledby={id} className="m-0">
         <button
           ref={toggleRef}
@@ -284,14 +324,15 @@ function Section({ name, title, summary, open, onToggle, toggleRef, children }: 
           aria-labelledby={id}
           aria-describedby={summary ? summaryId : undefined}
           onClick={() => onToggle(!open)}
-          className="flex min-h-14 w-full flex-wrap items-center gap-x-3 gap-y-0.5 rounded-aw py-3 text-left hover:bg-bg-secondary"
+          className="flex min-h-14 w-full flex-wrap items-center gap-x-3 gap-y-0.5 rounded-aw py-3 text-left hover:bg-hover"
         >
           <ChevronRight className={`size-5 shrink-0 text-text-muted transition-transform ${open ? "rotate-90" : ""}`} aria-hidden="true" />
-          <span id={id} className="font-display text-[1.25rem] font-heading text-text-strong">
+          {/* One quiet level for every section (v0.18.5): the names read as a list, not a wall of titles. */}
+          <span id={id} className="type-section">
             {title}
           </span>
           {summary && (
-            <span id={summaryId} className="ml-auto min-w-0 text-[0.9375rem] text-text-muted">
+            <span id={summaryId} className="type-meta ml-auto min-w-0">
               {summary}
             </span>
           )}
@@ -371,19 +412,9 @@ function LayoutReset({ onReset }: { onReset: () => void }) {
   );
 }
 
-/** What each background looks like, for its swatch (the same colours as tokens.css). */
-const SWATCH: Record<Background, { bg: string; edge: string }> = {
-  parchment: { bg: "#f6f1e6", edge: "#ede6d8" },
-  cream: { bg: "#faf7ef", edge: "#f1ece0" },
-  sage: { bg: "#eef1e9", edge: "#e3e8dc" },
-  stone: { bg: "#efece7", edge: "#e5e1da" },
-  mist: { bg: "#eef1f3", edge: "#e3e7ea" },
-  clear: { bg: "#fbfbf9", edge: "#f1f1ee" },
-};
-
 function ThemeChoice() {
   const { t } = useTranslation();
-  const { theme, setTheme, background, setBackground } = useTheme();
+  const { theme, resolved, setTheme, background, setBackground } = useTheme();
   const [error, setError] = useState<string | null>(null);
 
   const choose = async (next: Theme) => {
@@ -394,8 +425,6 @@ function ThemeChoice() {
       setError(toApiError(e).message);
     }
   };
-  // Dark now (chosen, or following a dark computer setting): backgrounds apply to the light theme only.
-  const darkOnly = theme === "dark" || (theme === "system" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   return (
     <div className="flex flex-col gap-4">
@@ -443,14 +472,13 @@ function ThemeChoice() {
               />
               <span
                 aria-hidden="true"
-                style={{ background: `linear-gradient(135deg, ${SWATCH[option].bg} 55%, ${SWATCH[option].edge} 55%)` }}
+                style={{ background: `linear-gradient(135deg, ${APP_PALETTES[resolved][option].background} 55%, ${APP_PALETTES[resolved][option].secondary} 55%)` }}
                 className="block size-10 rounded-full border border-border shadow-sm peer-checked:ring-2 peer-checked:ring-[var(--aw-primary)] peer-checked:ring-offset-2 peer-checked:ring-offset-[var(--aw-bg)] peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-[var(--aw-focus-ring)]"
               />
               <span className="text-text">{t(`settings.background.${option}`)}</span>
             </label>
           ))}
         </div>
-        {darkOnly && <p className="m-0 mt-2 text-[0.875rem] text-text-muted">{t("settings.background.lightOnly")}</p>}
       </div>
     </div>
   );

@@ -66,10 +66,14 @@ fn prep(conn: &Connection, study: &str, title: &str) -> AppResult<String> {
     Ok(teaching::create(
         conn,
         &CreateTeaching {
+            project_id: None,
             study_id: study.into(),
             title: title.into(),
             kind: Some("sermon".into()),
             points: Vec::new(),
+            template_key: None,
+            template_version: None,
+            blocks: Vec::new(),
         },
     )?
     .id)
@@ -93,10 +97,14 @@ fn a_study_has_several_preparations_each_saved_and_deleted_on_its_own() {
         let group = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: study.clone(),
                 title: "  Small group  ".into(),
                 kind: None,
                 points: Vec::new(),
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         )?;
         assert_eq!(group.title, "Small group");
@@ -156,10 +164,14 @@ fn a_study_has_several_preparations_each_saved_and_deleted_on_its_own() {
             code(teaching::create(
                 conn,
                 &CreateTeaching {
+                    project_id: None,
                     study_id: study.clone(),
                     title: "   ".into(),
                     kind: None,
                     points: Vec::new(),
+                    template_key: None,
+                    template_version: None,
+                    blocks: Vec::new(),
                 },
             )),
             "validation.titleRequired"
@@ -363,6 +375,7 @@ fn scripture_is_named_in_the_teaching_without_touching_the_study() {
                     preparation_id: id.clone(),
                     point_id,
                     reference: reference.into(),
+                    block_id: None,
                 },
             )
         };

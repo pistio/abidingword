@@ -1,37 +1,8 @@
-# Publishes a SIGNED Windows Development/Test update that installed test builds
-# of Abiding Word offer to their users (docs/updates.md). Ordinary installers
-# are still made by native-builds.yml. This is never a stable release.
-#
-# Started in exactly two ways:
-#   1. AUTOMATICALLY, when the normal "CI" workflow has completed
-#      SUCCESSFULLY for a push to `main`. The commit published is the exact
-#      commit CI passed on (github.event.workflow_run.head_sha), and only
-#      while it is still the newest commit on `main`.
-#   2. BY HAND (Actions → Publish Windows test update → Run workflow), for
-#      recovery or a retry. Unchanged.
-# Never by a pull request, a feature branch, or a failed/cancelled CI run.
-#
-# Why `workflow_run` is safe here: GitHub runs a workflow_run workflow from
-# the DEFAULT branch's copy of this file, with the default branch's secrets
-# access, and the triggering CI run's data is only ever read as plain text.
-# Pull-request code is never checked out by this workflow: the guards below
-# accept only a push-event CI run on `main` of this repository (a fork's pull
-# request, even from a branch named "main", is event=pull_request), and the
-# checkout is pinned to that commit's SHA.
-#
-# Three jobs, so that signing secrets never reach the job that compiles this
-# repository's code:
-#   gate     – no secrets. Decides what (if anything) to publish.
-#   build    – no secrets. Builds the NSIS installer with the updater section
-#              added by scripts/updater.mjs.
-#   publish  – signs the finished installer with `tauri signer sign` (the
-#              only step that sees the signing key), writes latest.json and
-#              publishes both to the updates repository named in
-#              src-tauri/updater/test-channel.json (the only step that sees
-#              the updates token).
-# The `publish` job runs in the GitHub Environment "windows-test-updates",
-# which holds the secrets and must allow the `main` branch (Settings →
-# Environments). A failure here never affects CI or the code on `main`.
+# MANUAL ONLY: publish a signed Windows development/test update solely after
+# explicit owner dispatch and approval. No CI completion, push to main, tags
+# or PR events may publish updates or access signing secrets.
+# Compiling and signing remain separate jobs with their existing provenance,
+# version, publication and repository-secret guards (docs/updates.md).
 name: Publish Windows test update
 
 on:
@@ -45,16 +16,12 @@ on:
         description: "Short release notes shown with the update (optional)"
         required: false
         default: ""
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
-    branches: [main]
 
 permissions:
   contents: read
 
 env:
-  # The base of automatic builds (X.Y.Z-dev.N). It is raised automatically to
+  # The base of manually approved builds (X.Y.Z-dev.N). It can be raised to
   # the base of the already published test build when that is newer.
   DEFAULT_BASE_VERSION: "0.5.0"
 
@@ -67,14 +34,8 @@ jobs:
   gate:
     name: Decide what to publish (no secrets)
     runs-on: ubuntu-latest
-    # Defence in depth: the trigger already filters to `main`.
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' &&
-       github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.event == 'push' &&
-       github.event.workflow_run.head_branch == 'main' &&
-       github.event.workflow_run.head_repository.full_name == github.repository)
+    # Explicit manual publication only; this job must never run after CI.
+    if: github.event_name == 'workflow_dispatch'
     outputs:
       sha: ${{ steps.decide.outputs.sha }}
       proceed: ${{ steps.decide.outputs.proceed }}
@@ -128,6 +89,17 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+      - name: Verify Windows source and migration catalogue
+        shell: pwsh
+        env:
+          EXPECTED_SOURCE_SHA: ${{ needs.gate.outputs.sha }}
+        run: node scripts/build-provenance.mjs --expected-sha "$env:EXPECTED_SOURCE_SHA" --require-clean --out "$env:RUNNER_TEMP/build-provenance.json"
+      - name: Retain Windows source evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-source-provenance
+          path: ${{ runner.temp }}/build-provenance.json
+          retention-days: 14
       - name: Choose the version
         id: version
         shell: bash

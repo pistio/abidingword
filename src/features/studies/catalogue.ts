@@ -2,8 +2,8 @@ import type { StudyTemplate } from "@/types/studies";
 
 /** New-study catalogue only. Legacy definitions remain installed for saved studies. */
 export const STUDY_TEMPLATE_KEYS = [
-  "pozetek-study", "ten-step-exegesis", "biblical-character-study",
-  "word-study", "whole-book-study", "topical-study",
+  "pozetek-writing-study", "ten-step-writing-study", "character-research-study",
+  "word-research-study", "book-research-study", "topical-research-study",
 ] as const;
 
 export function inStudyCatalogue(template: Pick<StudyTemplate, "isBuiltin" | "key">): boolean {

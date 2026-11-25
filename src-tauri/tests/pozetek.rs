@@ -110,6 +110,9 @@ fn a_customised_template_retains_fields_and_their_translation_source() {
                 title: "Place".into(),
                 guidance: None,
                 template_section_key: Some("place".into()),
+
+                key: None,
+                phase: None,
             },
         )?;
         assert_eq!(place.key.as_deref(), Some("place"));
@@ -123,6 +126,9 @@ fn a_customised_template_retains_fields_and_their_translation_source() {
                     title: "Not allowed".into(),
                     guidance: None,
                     template_section_key: Some(invalid_key.into()),
+
+                    key: None,
+                    phase: None,
                 },
             );
             assert!(matches!(rejected, Err(AppError::InvalidInput(_))));
@@ -407,7 +413,7 @@ fn a_v9_database_upgrades_without_loss() {
     database_v9(&path);
     let db = Database::open(&path, &temp.path().join("bk")).unwrap();
     db.with_conn(|conn| {
-        assert_eq!(migrations::current_version(conn)?, 10);
+        assert_eq!(migrations::current_version(conn)?, 28);
         let detail = studies::get_detail(conn, "s")?;
         let section = &detail.sections[0];
         assert_eq!(section.status, SectionStatus::NotStarted);
@@ -452,7 +458,7 @@ fn a_v9_database_upgrades_without_loss() {
     let restored = Database::open(&restored_path, &temp.path().join("restored-backups")).unwrap();
     restored
         .with_conn(|conn| {
-            assert_eq!(migrations::current_version(conn)?, 10);
+            assert_eq!(migrations::current_version(conn)?, 28);
             assert_eq!(
                 studies::get_detail(conn, "s")?.sections[0].blocks[0].content,
                 "Old text"

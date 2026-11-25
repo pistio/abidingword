@@ -1,6 +1,13 @@
+import { qaOf, qaText } from "@/features/studies/qa";
+import research0 from "../../resources/templates/word-research-study.json";
+import research1 from "../../resources/templates/topical-research-study.json";
+import research2 from "../../resources/templates/character-research-study.json";
+import research3 from "../../resources/templates/book-research-study.json";
 // An in-memory implementation of the native API for interface tests.
 // It mirrors the behaviour the Rust layer guarantees (validation messages,
 // template sections, soft delete), not its storage.
+import pozetekWriting from "../../resources/templates/pozetek-writing-study.json";
+import tenStepWriting from "../../resources/templates/ten-step-writing-study.json";
 import biblicalTheology from "../../resources/templates/biblical-theology-study.json";
 import characterStudy from "../../resources/templates/biblical-character-study.json";
 import bookStudy from "../../resources/templates/whole-book-study.json";
@@ -11,7 +18,8 @@ import systematicTheology from "../../resources/templates/systematic-theology-st
 import teachingStudy from "../../resources/templates/teaching-study.json";
 import topicalStudy from "../../resources/templates/topical-study.json";
 import wordStudy from "../../resources/templates/word-study.json";
-import { ApiError, type Api } from "@/lib/api";
+import i18n from "i18next";
+import { ApiError, type Api, type SavedReaderPosition } from "@/lib/api";
 import type {
   AppInfo,
   AppSettings,
@@ -26,13 +34,26 @@ import type {
   AnchorInput,
   Annotation,
   AnnotationAnchor,
+  BibleDocument,
   BibleTranslation,
+  CatalogueProgress,
+  DocumentFileInfo,
+  DocumentSegment,
   ImportPreview,
+  MarkedPlace,
+  LemmaResult,
+  MorphDescribed,
+  MorphScheme,
   ScriptureRef,
+  VerseWord,
   StudyPassage,
   VerseText,
+  WordChoice,
+  WordReport,
+  ChapterText,
 } from "@/types/scripture";
 import { contains, refFromCanonical } from "@/lib/scripture";
+import { minimalPdf } from "./minimalPdf";
 import type {
   ContentsItem,
   EpubItem,
@@ -51,6 +72,13 @@ import type {
   CitationPlace,
   CreateFindingFromSource,
   TextPoint,
+  ItemState,
+  ManagedSource,
+  ManagePage,
+  ManageQuery,
+  SourceCollection,
+  ImportJob,
+  ImportJobItem,
 } from "@/types/library";
 import type {
   Finding,
@@ -58,12 +86,16 @@ import type {
   StudySearchHit,
   StudySummary,
   StudyTemplate,
+  TemplateSection,
   StudyType,
 } from "@/types/studies";
 
-import { newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
+import { detachMemoryFindings, assistantFacts, newTeachingState, teachingApi, type TeachingState } from "./memoryTeaching";
+import { inquiryApi, newInquiryState, type InquiryState } from "./memoryInquiry";
+import { newPresentationState, presentationApi, type PresentationState } from "./memoryPresentation";
+import { newPortabilityState, portabilityApi, type PortabilityState } from "./memoryPortability";
 
-const BUILTIN_TEMPLATES = [passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy];
+const BUILTIN_TEMPLATES = [ passageStudy, pozetekStudy, tenStepExegesis, wordStudy, topicalStudy, characterStudy, bookStudy, biblicalTheology, systematicTheology, teachingStudy, pozetekWriting, tenStepWriting, research0, research1, research2, research3];
 import { BOOKS, FIXTURE_VERSE_COUNT, fixtureChapters } from "./scriptureFixture";
 
 const now = () => new Date().toISOString();
@@ -91,17 +123,56 @@ export interface MemoryApi extends Api {
     sections: StudySection[];
     blocks: StudyBlock[];
     settings: AppSettings;
+    /** Durable source positions, retained when this mock app is remounted. */
+    readerPositions: SavedReaderPosition[];
     bibles: BibleTranslation[];
     /** translation id → "BOOK|chapter" → verses */
     text: Map<string, Map<string, VerseText[]>>;
+    /** translation id → canonical verse → annotated words (v0.21). */
+    words: Map<string, Map<string, VerseWord[]>>;
     annotations: Annotation[];
     passages: StudyPassage[];
     /** What the next "choose files" dialog returns (null = cancelled). */
     nextChosenFiles: string[] | null;
+    /** Available Bibles (v0.24): progress listeners, and whether the next download fails its check. */
+    catalogueProgress: Set<(p: CatalogueProgress) => void>;
+    catalogueFails: boolean;
+    /** The word annotations the next Bible import preview reports (v0.21). */
+    nextPreviewWords: WordReport | null;
+    /** What the person chose for the words of the last Bible added (v0.22). */
+    lastCommitWords: WordChoice | null;
+    /** What reading an installed Bible's files again finds next (v0.22; null: they are not kept). */
+    nextWordsPreview: WordReport | null;
+    pendingWords: { id: string; bibleId: string; report: WordReport } | null;
     findings: Finding[];
     relations: { id: string; from: string; to: string; relationType: StudyRelation["relationType"]; createdAt: string }[];
     templates: StudyTemplate[];
-    pendingPreview: { id: string; bundled: boolean } | null;
+    pendingPreview: { id: string; bundled: boolean; document?: { paths: string[]; preview: ImportPreview } } | null;
+    /** Bibles kept as documents (v0.23): their files, text and (for a PDF) bytes. */
+    bibleDocuments: Map<string, { documents: BibleDocument[]; segments: Map<string, DocumentSegment[]>; bytes: Map<string, Uint8Array> }>;
+    /** What looking for verses in a document Bible finds next (v0.23); null: as when it was added. */
+    nextRecognition: ImportPreview | null;
+    /** Places marked by hand in document Bibles (v0.24), by Bible. */
+    places: Map<string, MarkedPlace[]>;
+    /** Verses found but unchecked, by "translation|book|chapter" (v0.24.3). */
+    unchecked: Map<string, ChapterText["unchecked"]>;
+    /** Looking after the library (v0.24): each source's state, collections and tags. */
+    /** Batch imports (v0.24): what the dialogs return, and the jobs. */
+    batch: {
+      nextFiles: string[] | null;
+      /** A folder: its path and the files found in it (with subfolders: paths containing "/sub/"). */
+      nextFolder: { path: string; files: string[] } | null;
+      jobs: Map<string, ImportJob>;
+      /** Paths whose content changes after being read (the import step fails). */
+      changed: Set<string>;
+    };
+    manage: {
+      states: Map<string, { state: ItemState; changedAt: string | null }>;
+      collections: SourceCollection[];
+      members: Map<string, Set<string>>;
+      tags: { id: string; name: string }[];
+      tagged: Map<string, Set<string>>;
+    };
     library: {
       /** Removed sources stay (deleted: true) as citation tombstones. */
       sources: (Source & { deleted: boolean })[];
@@ -120,23 +191,45 @@ export interface MemoryApi extends Api {
     };
     /** Teaching preparations and the scripted assistant (v0.16). */
     teaching: TeachingState;
+    /** Study and research help (v0.20), scripted by the test. */
+    inquiry: InquiryState;
+    /** Presentations, exports and the audience screen (v0.18). */
+    presentation: PresentationState;
+    /** Project packages and backups (v0.19). */
+    portability: PortabilityState;
   };
   /** Installs a fixture Bible directly (test setup). */
   installFixtureBible(shortName: string, wording: string): BibleTranslation;
   /** Sets one verse's text in an installed fixture Bible (test setup). */
   setVerseText(bibleId: string, canonical: string, text: string): void;
+  /**
+   * Annotates words of a verse in an installed fixture Bible (test setup,
+   * v0.21): each word is found in the verse text in order.
+   */
+  installFixtureWords(bibleId: string, canonical: string, words: FixtureWord[], scheme?: MorphScheme): void;
   /** Adds a source to the library directly (test setup). */
   installFixtureSource(fixture: SourceFixture): Source;
 }
 
+/** An annotated word for a fixture Bible (constructed test data). */
+export interface FixtureWord {
+  surface: string;
+  lemma?: string;
+  strong?: string;
+  morph?: string;
+  described?: MorphDescribed;
+}
+
 /** Invented library content for tests. */
 export interface SourceFixture {
+  /** Optional real invented bytes for browser PDF.js checks. */
+  originalPdf?: Uint8Array;
   title: string;
   author?: string;
   format?: Source["format"];
   sourceType?: Source["sourceType"];
   language?: string;
-  segments: { text: string; pageNumber?: number; sectionPath?: string }[];
+  segments: { text: string; pageNumber?: number; sectionPath?: string; presentation?: import("@/types/library").PdfPresentation }[];
   /** Scripture mentions: segment index, canonical reference, text as written. */
   mentions?: { segment: number; reference: string; matchedText: string }[];
   /**
@@ -153,6 +246,8 @@ export interface SourceFixture {
   links?: SourceLink[];
   /** A formatted view (an EPUB's documents or a DOCX's parts, by id); a source without it has no Original view. */
   formatted?: { kind?: "epub" | "docx"; structure: EpubStructureItem[]; items: Record<string, EpubItem> };
+  /** When false, the reader says Abiding Word's copy of the file is missing. */
+  filePresent?: boolean;
 }
 
 /**
@@ -186,12 +281,28 @@ const ALIASES: Record<string, string> = {
   john: "JHN", jn: "JHN", romans: "ROM", rom: "ROM", psalm: "PSA", psalms: "PSA", ps: "PSA",
   genesis: "GEN", "1 cor": "1CO", "1 corinthians": "1CO",
   galatians: "GAL", gal: "GAL", ephesians: "EPH", eph: "EPH",
+  // A few other-language names, as the shared resolver reads them in any interface language.
+  johannes: "JHN", joh: "JHN", jean: "JHN", juan: "JHN", "joão": "JHN", "요한복음": "JHN",
 };
 
-/** A deliberately small stand-in for the native English parser. */
-function parseForTests(text: string): ScriptureRef {
-  const match = /^\s*([1-3]?\s?[a-z]+)\s+(\d+)(?::(\d+)(?:-(\d+))?)?\s*$/i.exec(text);
-  const book = match ? ALIASES[(match[1] ?? "").toLowerCase()] : undefined;
+/**
+ * "Jn" as the shared resolver reads it (scripture::resolve): Jonah in
+ * Portuguese, John in English, French and Spanish; the Bible's language
+ * decides first, then the interface language, then the common reading (John).
+ */
+const JN_BY_LANGUAGE: Record<string, string> = { pt: "JON", en: "JHN", fr: "JHN", es: "JHN" };
+
+/** A deliberately small stand-in for the native resolver. `languages`: the Bible's, then the interface's. */
+function parseForTests(text: string, languages: (string | null | undefined)[] = []): ScriptureRef {
+  // Ranges with any ordinary dash, spaced or not, as the core reads them
+  // (src-tauri/src/scripture/parser.rs; tests/reference_dashes.rs).
+  const match = /^\s*([1-3]?\s?[\p{L}]+)\s*(\d+)(?:[:,](\d+)(?:\s*[-\u2010-\u2014]\s*(\d+)(?::(\d+))?)?)?\s*$/iu.exec(
+    text.replace(/(\d+)장\s*(\d+)절/, "$1:$2"),
+  );
+  const written = (match?.[1] ?? "").toLowerCase();
+  const decider = languages.map((l) => l?.split(/[-_]/)[0]).find((l) => l && JN_BY_LANGUAGE[l]);
+  // Neither language decides: the common reading (John in three of the four).
+  const book = written === "jn" ? (decider ? JN_BY_LANGUAGE[decider] : "JHN") : match ? ALIASES[written] : undefined;
   const info = book ? bookByCode.get(book) : undefined;
   const chapter = Number(match?.[2]);
   if (!match || !book || !info || chapter < 1 || chapter > info.chapterCount) {
@@ -200,10 +311,13 @@ function parseForTests(text: string): ScriptureRef {
       `“${text.trim()}” is not a passage I recognise. Try a form like “John 15” or “Rom 8:1-17”.`,
     );
   }
-  const [v1, v2] = [match[3], match[4]];
+  const [v1, n2, v2] = [match[3], match[4], match[5]];
+  // "15:1-11" ends at verse 11; "15:1-16:4" at chapter 16, verse 4.
   const canonical = v1
-    ? v2
-      ? `${book}.${chapter}.${v1}-${book}.${chapter}.${v2}`
+    ? n2
+      ? v2
+        ? `${book}.${chapter}.${v1}-${book}.${n2}.${v2}`
+        : `${book}.${chapter}.${v1}-${book}.${chapter}.${n2}`
       : `${book}.${chapter}.${v1}`
     : `${book}.${chapter}`;
   const ref = refFromCanonical(canonical, bookByCode);
@@ -214,6 +328,11 @@ function parseForTests(text: string): ScriptureRef {
 // Concordance, as the core does it (src-tauri/src/scripture/concordance.rs).
 const GREEK = /[\u0370-\u03FF\u1F00-\u1FFF]/;
 const HEBREW = /[\u0590-\u05FF\uFB1D-\uFB4F]/;
+/** The core's lemma folding (concordance::normalize): no marks, lower case, final sigma. */
+function lemmaFold(text: string): string {
+  return text.normalize("NFD").replace(/\p{M}/gu, "").replace(/\u2060|\u200C|\u200D|\u00AD/g, "").toLowerCase().replace(/ς/g, "σ").normalize("NFC");
+}
+
 function concordanceForm(token: string): string {
   const lower = token.normalize("NFC").toLowerCase();
   if (GREEK.test(lower)) return lower.normalize("NFD").replace(/\p{M}/gu, "").replace(/ς/g, "σ").normalize("NFC");
@@ -295,8 +414,23 @@ function classOf(origin: "explicit" | "section" | "manual", context: Context, fi
   if (origin === "explicit" && context === "elsewhere") return 5;
   const about = origin === "section" || context === "about";
   if (origin === "manual") return fit === "wide" ? 4 : 0;
-  if (about) return fit === "exact" || fit === "narrow" ? 1 : fit === "chapter" || fit === "overlap" ? 3 : 4;
-  return fit === "exact" || fit === "narrow" ? 2 : 4;
+  if (about) return fit === "exact" || fit === "narrow" ? 1 : fit === "chapter" || fit === "overlap" ? 2 : 4;
+  return fit === "exact" || fit === "narrow" ? 3 : 4;
+}
+
+/** Whether a Bible's codes are described: a documented scheme (v0.22). */
+function described(scheme: string | undefined): boolean {
+  return scheme === "oshb" || scheme === "robinson" || scheme === "morphgnt";
+}
+
+/** As the core's `number_variants`: case, leading zeros, a missing H/G prefix, the space before a homograph letter. */
+function sameNumber(stored: string, typed: string): boolean {
+  const parse = (value: string) => /^([HG])?0*(\d{1,5})([A-Z]?)$/.exec(value.replace(/\s+/g, "").toUpperCase());
+  if (stored.toLowerCase() === typed.trim().toLowerCase()) return true;
+  const a = parse(stored);
+  const b = parse(typed.trim());
+  if (!a || !b) return false;
+  return a[2] === b[2] && a[3] === b[3] && (b[1] === undefined || a[1] === b[1]);
 }
 
 export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
@@ -319,16 +453,33 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     sections: [],
     blocks: [],
     settings: { theme: "light", scriptureTranslationId: null, scripturePassage: null },
+    readerPositions: [],
     bibles: [],
     text: new Map(),
+    words: new Map(),
     annotations: [],
     passages: [],
     nextChosenFiles: null,
+    catalogueProgress: new Set(),
+    catalogueFails: false,
+    nextPreviewWords: null,
+    lastCommitWords: null,
+    nextWordsPreview: null,
+    pendingWords: null,
     pendingPreview: null,
+    bibleDocuments: new Map(),
+    nextRecognition: null,
+    batch: { nextFiles: null, nextFolder: null, jobs: new Map(), changed: new Set() },
+    manage: { states: new Map(), collections: [], members: new Map(), tags: [], tagged: new Map() },
+    places: new Map(),
+    unchecked: new Map(),
     library: { sources: [], segments: [], mentions: [], links: [], nextChosenFile: null, openedLinks: [], openLinkFails: false, pending: null, annotations: [] },
     findings: [],
     relations: [],
     teaching: newTeachingState(),
+    inquiry: newInquiryState(),
+    presentation: newPresentationState(),
+    portability: newPortabilityState(),
     templates: BUILTIN_TEMPLATES.map((t) => ({
       id: `tpl-${t.key}`,
       key: t.key,
@@ -336,7 +487,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       description: t.description,
       studyType: t.studyType as StudyType,
       isBuiltin: true,
-      sections: t.sections,
+      sections: t.sections as TemplateSection[],
       createdAt: stamp,
       updatedAt: stamp,
       revision: 1,
@@ -347,15 +498,19 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     const study = state.studies.find((s) => s.id === studyId);
     if (study) study.updatedAt = now();
   };
-  const addSection = (studyId: string, section: { key?: string | null; title: string; guidance?: string | null }, position: number, fields: SectionFields | null = null) => {
+  const requireDistinctKeys = (sections: TemplateSection[]) => {
+    const keys = sections.map((sec) => sec.key?.trim()).filter(Boolean);
+    if (new Set(keys).size !== keys.length) throw new ApiError("invalidInput", "Two parts of the template are the same part. Remove one of them.");
+  };
+  const addSection = (studyId: string, section: Pick<TemplateSection, "key" | "title" | "guidance" | "phase">, position: number, fields: SectionFields | null = null) => {
     const t = now();
     const sectionId = id();
     state.sections.push({
       id: sectionId, studyId, key: section.key ?? null, title: section.title, guidance: section.guidance ?? null,
-      position, status: "not_started", fields, blocks: [], createdAt: t, updatedAt: t, revision: 1,
+      phase: section.phase ?? null, position, status: "not_started", fields, blocks: [], createdAt: t, updatedAt: t, revision: 1,
     });
     // As the core: a part with fields starts with one empty block per single-text field, otherwise one paragraph.
-    const starts = fields ? fields.fields.filter((f) => f.kind === "text").map((f) => f.key) : [null];
+    const starts = fields ? fields.fields.filter((f) => (f.kind === "text" || f.kind === "writing")).map((f) => f.key) : [null];
     starts.forEach((fieldKey, index) =>
       state.blocks.push({ id: id(), sectionId, blockType: "paragraph", position: index, content: "", fieldKey, data: null, createdAt: t, updatedAt: t, revision: 1 }),
     );
@@ -378,6 +533,16 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       throw new ApiError("conflict", "Built-in templates can’t be changed. Duplicate it to make your own version.");
     }
     return template;
+  };
+
+  /** Every annotated word of a Bible, or the core's refusal when it has none. */
+  const annotatedWords = (translationId: string): VerseWord[] => {
+    const bible = state.bibles.find((b) => b.id === translationId);
+    if (!bible) throw new ApiError("notFound", "This Bible could not be found.");
+    if (!bible.words) {
+      throw new ApiError("invalidInput", "This Bible has no word annotations (lemmas or grammar), so this search is not available for it. The ordinary concordance still works.", "words.unavailable");
+    }
+    return [...(state.words.get(translationId)?.values() ?? [])].flat();
   };
 
   const addBible = (fields: Partial<BibleTranslation> & { shortName: string; name: string }, wording: string) => {
@@ -403,6 +568,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       verseCount: FIXTURE_VERSE_COUNT,
       createdAt: t,
       updatedAt: t,
+      state: "active",
+      stateChangedAt: null,
       ...fields,
     };
     state.bibles.push(bible);
@@ -443,6 +610,120 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     canImport: !broken,
   });
 
+  // --- Bibles from documents (v0.23), as the core reports them -----------------
+  const DOCUMENT_EXTENSIONS: Record<string, DocumentFileInfo["format"]> = { pdf: "pdf", epub: "epub", docx: "docx", md: "markdown", markdown: "markdown", txt: "text" };
+  const isDocumentChoice = (paths: string[]) =>
+    paths.some((p) => /\.(pdf|epub|docx|md|markdown)$/i.test(p)) || (paths.length > 0 && paths.every((p) => /document.*\.txt$/i.test(p)));
+  const FOUND = [
+    { code: "PSA", heading: "Psalms", chapters: 1, verses: 2 },
+    { code: "JHN", heading: "John", chapters: 3, verses: 10 },
+    { code: "ROM", heading: "Romans", chapters: 1, verses: 3 },
+  ];
+  /** A document import's preview: usable verses by default; "scanned" has no text; "unclear" needs a correction. */
+  const documentPreview = (paths: string[], corrected: Map<number, string | null> = new Map()): ImportPreview => {
+    const name = (p: string) => p.split(/[\\/]/).pop() ?? p;
+    const format = DOCUMENT_EXTENSIONS[(paths[0] ?? "").split(".").pop()?.toLowerCase() ?? ""] ?? "text";
+    const scanned = paths.some((p) => /scanned/i.test(p));
+    const unclear = paths.some((p) => /unclear/i.test(p));
+    const books = scanned
+      ? []
+      : FOUND.map((f, index) => {
+          const detected = unclear && index === 0 ? null : f.code;
+          const choice = corrected.has(index) ? corrected.get(index)! : detected;
+          const leftOut = corrected.has(index) && corrected.get(index) === null;
+          return {
+            index,
+            heading: unclear && index === 0 ? "The Book of Praises" : f.heading,
+            detected,
+            book: leftOut ? null : choice,
+            leftOut,
+            outside: null,
+            chapters: choice ? f.chapters : 0,
+            verses: choice ? f.verses : 0,
+            place: { document: 0, page: format === "pdf" ? index + 1 : null, segment: index * 4 },
+            corrected: corrected.has(index) && corrected.get(index) !== detected,
+          };
+        });
+    const kept = books.filter((b) => b.book !== null);
+    const verseCount = kept.reduce((n, b) => n + b.verses, 0);
+    const usable = verseCount > 0 && !kept.some((b) => b.detected === null && !corrected.has(b.index)) && books.every((b) => b.book !== null || b.leftOut);
+    return {
+      previewId: id(),
+      format,
+      bundled: false,
+      suggested: { name: name(paths[0] ?? "").replace(/\.[^.]+$/, ""), shortName: "", language: "", languageCode: "", publisher: null, copyrightNotice: null, licenseType: null },
+      bookCount: kept.length,
+      chapterCount: kept.reduce((n, b) => n + b.chapters, 0),
+      verseCount,
+      books: kept.map((b) => ({ code: b.book!, name: b.heading, chapters: b.chapters, verses: b.verses, status: "ok" as const })),
+      issues: usable
+        ? [{ severity: "note" as const, book: null, chapter: null, message: "Text that belongs to no verse was left out (120 characters: headings, introductions, notes).", code: "bibleImport.documentLeftOut", params: { count: "120" } }]
+        : scanned
+          ? []
+          : [{ severity: "warning" as const, book: null, chapter: null, message: "2 verse numbers were found where no book name comes before them; they were left out.", code: "bibleImport.documentNoBook", params: { count: "2" } }],
+      skippedFiles: [],
+      canImport: true,
+      document: {
+        files: paths.map((p) => ({ name: name(p), format, pages: format === "pdf" ? 5 : null, textChars: scanned ? 0 : 4200, scanned, keepsLayout: format === "pdf" || format === "epub" || format === "docx", notes: format === "docx" ? 1 : 0 })),
+        books,
+        leftOut: scanned ? [] : [{ sample: "An invented introduction to this edition.", chars: 120, place: { document: 0, page: format === "pdf" ? 1 : null, segment: 0 }, reason: "noBook" as const }],
+        stats: { pageLines: format === "pdf" ? 10 : 0, headings: 1, leftOutChars: scanned ? 0 : 120, psalmTitles: 0, unnumberedFirst: 0, numberedChapters: 0 },
+        versesUsable: usable,
+        textChars: scanned ? 0 : 4200,
+        // An unclear heading holds back its own chapters only (v0.24).
+        partialVerses: usable || scanned ? 0 : books.filter((b) => b.book !== null).reduce((n, b) => n + b.verses, 0),
+        partialChapters: usable || scanned ? 0 : books.filter((b) => b.book !== null).reduce((n, b) => n + b.chapters, 0),
+        heldChapters: usable || scanned ? 0 : FOUND.filter((_, i) => books[i]?.book === null).reduce((n, f) => n + f.chapters, 0),
+        unverifiedVerses: 0,
+        unverifiedReasons: {},
+        apparatus: scanned ? 0 : 3,
+        saved: [],
+      },
+    };
+  };
+  /** The kept documents of a Bible added from `paths`: invented text, one page per book. */
+  const keepDocuments = (bibleId: string, paths: string[], format: DocumentFileInfo["format"], scanned: boolean) => {
+    const documents: BibleDocument[] = [];
+    const segments = new Map<string, DocumentSegment[]>();
+    const bytes = new Map<string, Uint8Array>();
+    paths.forEach((path, position) => {
+      const docId = id();
+      const lines: DocumentSegment[] = scanned
+        ? []
+        : FOUND.flatMap((f, page) => [
+            { position: 0, text: f.heading, pageNumber: format === "pdf" ? page + 1 : null, sectionPath: format === "pdf" ? null : f.heading },
+            ...Array.from({ length: 3 }, (_, v) => ({ position: 0, text: `${v + 1} Invented words of ${f.heading} for the document reader.`, pageNumber: format === "pdf" ? page + 1 : null, sectionPath: format === "pdf" ? null : f.heading })),
+          ]).map((segment, n) => ({ ...segment, position: n }));
+      segments.set(docId, lines);
+      if (format === "pdf") {
+        const pages = scanned
+          ? [[], [], []]
+          : FOUND.map((_, page) => lines.filter((l) => l.pageNumber === page + 1).map((l, i) => ({ size: i === 0 ? 18 : 12, y: 760 - i * 28, text: l.text })));
+        bytes.set(docId, minimalPdf(pages));
+      }
+      documents.push({
+        id: docId,
+        position,
+        format,
+        name: path.split(/[\\/]/).pop() ?? path,
+        pageCount: format === "pdf" ? (scanned ? 3 : FOUND.length) : null,
+        extractionStatus: scanned ? "ocr_required" : format === "pdf" ? "extracted_text" : "digital_text",
+        segmentCount: lines.length,
+        view: format === "pdf" || format === "epub" || format === "docx" ? format : null,
+      });
+    });
+    state.bibleDocuments.set(bibleId, { documents, segments, bytes });
+  };
+  const keptDocument = (documentId: string) => {
+    for (const kept of state.bibleDocuments.values()) {
+      const document = kept.documents.find((d) => d.id === documentId);
+      if (document) return { kept, document };
+    }
+    throw new ApiError("notFound", "This Bible document could not be found.");
+  };
+
+  const deletedStudies = new Map<string, Study>();
+  const deletedProjects = new Map<string, Project>();
   const find = <T extends { id: string }>(list: T[], key: string, entity: string): T => {
     const item = list.find((x) => x.id === key);
     if (!item) throw new ApiError("notFound", `This ${entity} could not be found. It may have been deleted.`);
@@ -502,7 +783,10 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       .filter((s) => s.studyId === studyId)
       .sort((a, b) => a.position - b.position)
       .map((s) => ({ ...s, blocks: state.blocks.filter((b) => b.sectionId === s.id) }));
-  const detail = (studyId: string) => ({ study: find(state.studies, studyId, "study"), sections: sectionsOf(studyId) });
+  const detail = (studyId: string) => {
+    const study = find(state.studies, studyId, "study"); find(state.projects, study.projectId, "project");
+    return {study, sections:sectionsOf(studyId)};
+  };
 
   const library = state.library;
   const liveSource = (sourceId: string) => {
@@ -516,6 +800,90 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
   const generatedOf = new Map<string, ContentsItem[]>();
   const linksOf = new Map<string, SourceLink[]>();
   const formattedOf = new Map<string, NonNullable<SourceFixture["formatted"]>>();
+  const manage = state.manage;
+  const stateOf = (sourceId: string): ItemState => manage.states.get(sourceId)?.state ?? "active";
+  const liveOrNull = (sourceId: string) => state.library.sources.find((x) => x.id === sourceId && !x.deleted) ?? null;
+  const removeSources = (ids: string[]): number => {
+    ids.forEach((sourceId) => {
+      liveSource(sourceId);
+      if (stateOf(sourceId) !== "trashed") throw new ApiError("conflict", "Only items in Trash can be deleted permanently. Move them to Trash first.", "library.notInTrash");
+    });
+    for (const sourceId of ids) {
+      const library = state.library;
+      const source = liveSource(sourceId);
+      source.deleted = true;
+      library.segments = library.segments.filter((x) => x.sourceId !== sourceId);
+      library.mentions = library.mentions.filter((m) => m.sourceId !== sourceId);
+      library.links = library.links.filter((l) => l.sourceId !== sourceId);
+      for (const a of library.annotations) if (a.sourceId === sourceId) a.deleted = true;
+      for (const f of state.findings) {
+        for (const c of f.sources) if (c.sourceId === sourceId) Object.assign(c, { removed: true, segmentId: null });
+      }
+      manage.members.forEach((set) => set.delete(sourceId));
+      manage.tagged.forEach((set) => set.delete(sourceId));
+    }
+    return ids.length;
+  };
+  const removeBibles = (ids: string[]): number => {
+    for (const bibleId of ids) {
+      const bible = state.bibles.find((b) => b.id === bibleId);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      if (bible.state !== "trashed") throw new ApiError("conflict", "Only items in Trash can be deleted permanently. Move them to Trash first.", "library.notInTrash");
+    }
+    for (const bibleId of ids) {
+      state.bibles = state.bibles.filter((b) => b.id !== bibleId);
+      state.text.delete(bibleId);
+      for (const a of state.annotations) if (a.translationId === bibleId) a.translationId = null;
+    }
+    return ids.length;
+  };
+  const manageList = (query: ManageQuery): ManagePage => {
+    const live = state.library.sources.filter((x) => !x.deleted);
+    const needle = query.text?.trim().toLowerCase();
+    const items: ManagedSource[] = live
+      .filter((x) => (query.state ? stateOf(x.id) === query.state : stateOf(x.id) !== "trashed"))
+      .filter((x) => !needle || [x.title, x.author, x.originalFilename].some((part) => (part ?? "").toLowerCase().includes(needle)))
+      .filter((x) => !query.sourceType || x.sourceType === query.sourceType)
+      .filter((x) => !query.language || x.language === query.language)
+      .filter((x) => !query.format || x.format === query.format)
+      .filter((x) => !query.collectionId || manage.members.get(query.collectionId)?.has(x.id))
+      .filter((x) => !query.tagId || manage.tagged.get(query.tagId)?.has(x.id))
+      .filter((x) => !query.withoutText || x.extractionStatus === "ocr_required")
+      .map((x) => ({
+        id: x.id, title: x.title, author: x.author, sourceType: x.sourceType, format: x.format, language: x.language,
+        publicationYear: x.publicationYear, createdAt: x.createdAt, state: stateOf(x.id), stateChangedAt: manage.states.get(x.id)?.changedAt ?? null,
+        extractionStatus: x.extractionStatus, pageCount: x.pageCount, originalFilename: x.originalFilename,
+        duplicates: live.filter((o) => o.id !== x.id && o.contentHash && o.contentHash === x.contentHash).length,
+        tags: manage.tags.filter((tag) => manage.tagged.get(tag.id)?.has(x.id)).map(({ id: tagId, name }) => ({ id: tagId, name })),
+        collections: manage.collections.filter((c) => manage.members.get(c.id)?.has(x.id)).map((c) => c.id),
+      }))
+      .filter((x) => !query.duplicates || x.duplicates > 0);
+    const key = (x: ManagedSource): string =>
+      ({ title: x.title, author: x.author ?? "", category: x.sourceType, added: x.createdAt, language: x.language ?? "", state: x.state })[query.sort ?? "added"];
+    items.sort((a, b) => key(a).localeCompare(key(b)) || a.id.localeCompare(b.id));
+    if (query.descending ?? (query.sort ?? "added") === "added") items.reverse();
+    const offset = query.offset ?? 0;
+    const count = (wanted: ItemState) => live.filter((x) => stateOf(x.id) === wanted).length;
+    return { total: items.length, offset, items: items.slice(offset, offset + (query.limit ?? 100)), active: count("active"), archived: count("archived"), trashed: count("trashed") };
+  };
+
+  // Batch imports (v0.24): the same content is the same title without "copy".
+  const batchHash = (path: string) => `hash-${fixtureForPath(path).title.replace(/\s*copy$/i, "")}`;
+  const batchJob = (jobId: string) => {
+    const job = state.batch.jobs.get(jobId);
+    if (!job) throw new ApiError("notFound", "import not found");
+    return job;
+  };
+  const batchView = (job: ImportJob): ImportJob => {
+    const count = (s: ImportJobItem["status"]) => job.items.filter((i) => i.status === s).length;
+    return structuredClone({
+      ...job,
+      counts: {
+        total: job.items.length, waiting: count("waiting"), ready: count("ready"), duplicate: count("duplicate"), problem: count("problem"),
+        imported: count("imported"), failed: count("failed"), toAdd: job.items.filter((i) => i.chosen && (i.status === "ready" || i.status === "duplicate")).length,
+      },
+    });
+  };
   const addSource = (fixture: SourceFixture, extra: Partial<Source> = {}): Source => {
     const t = now();
     const sourceId = id();
@@ -523,7 +891,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     const segmentIds = fixture.segments.map((seg, position) => {
       const segment = {
         id: id(), sourceId, position, text: seg.text, pageNumber: seg.pageNumber ?? null, pageLabel: null,
-        chapter: null, heading: null, sectionPath: seg.sectionPath ?? null, paragraphIndex: 0, locator: "",
+        chapter: null, heading: null, sectionPath: seg.sectionPath ?? null, paragraphIndex: 0, locator: "", presentation: seg.presentation,
       };
       segment.locator = locator(segment);
       library.segments.push(segment);
@@ -554,6 +922,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       pageCount: format === "pdf" ? Math.max(0, ...pages) : null,
       originalView: format === "pdf" ? { kind: "pdf" } : fixture.formatted ? { kind: fixture.formatted.kind ?? "epub" } : null, segmentCount: fixture.segments.length,
       passageCount: fixture.mentions?.length ?? 0, contentHash: `hash-${fixture.title}`, createdAt: t, updatedAt: t,
+      state: "active", collectionNames: [], tagNames: [], filePresent: fixture.filePresent !== false,
       deleted: false, ...extra,
     };
     library.sources.push(source);
@@ -561,6 +930,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     if (fixture.generatedContents) generatedOf.set(sourceId, fixture.generatedContents);
     if (fixture.links) linksOf.set(sourceId, fixture.links);
     if (fixture.formatted) formattedOf.set(sourceId, fixture.formatted);
+    if (fixture.originalPdf) originalPdfOf.set(sourceId, fixture.originalPdf);
     return source;
   };
   const toSummary = (s: Source): SourceSummary => ({
@@ -568,6 +938,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
   });
   const segmentsOf = (sourceId: string) => library.segments.filter((x) => x.sourceId === sourceId).sort((a, b) => a.position - b.position);
   // Stands in for a PDF file (the tests' viewer is a fake engine; nothing parses these bytes).
+  const pozetekReceipts = new Map<string, { before: string[]; after: string[]; added: StudySection[] }>();
+  const originalPdfOf = new Map<string, Uint8Array>();
   const originalBytes = new TextEncoder().encode("%PDF-1.4 synthetic test file");
   const window = (sourceId: string, offset: number, limit: number, target: string | null) => {
     const all = segmentsOf(sourceId);
@@ -581,7 +953,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
   const citationFor = (findingId: string, segmentId: string): FindingCitation => {
     const segment = find(library.segments, segmentId, "passage");
     const source = liveSource(segment.sourceId);
-    return { id: id(), findingId, sourceId: source.id, segmentId, title: source.title, author: source.author, locator: segment.locator, removed: false, quote: null, section: segment.sectionPath, annotationId: null };
+    return { id: id(), findingId, sourceId: source.id, segmentId, title: source.title, author: source.author, locator: segment.locator, removed: false,
+        unavailable: false, quote: null, section: segment.sectionPath, annotationId: null };
   };
   // Where each v0.15 citation was (the core keeps this as its anchor), for opening it again.
   const citationPlaces = new Map<string, { words: CitationPlace["words"]; segmentId: string | null; page: number | null; fraction: number | null }>();
@@ -599,6 +972,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         ...library.mentions.map((m) => ({ sourceId: m.sourceId, segmentId: m.segmentId, origin: "explicit" as const, reference: m.reference, matchedText: m.matchedText, heading: null as string | null })),
         ...library.links.filter((l) => l.origin === "section").map((l) => ({ sourceId: l.sourceId, segmentId: l.segmentId, origin: "section" as const, reference: l.reference, matchedText: l.matchedText, heading: l.heading as string | null })),
       ];
+      // Archived and trashed sources are not offered (v0.24).
+      places.splice(0, places.length, ...places.filter((p) => stateOf(p.sourceId) === "active"));
       const sectionLinksOf = (segmentId: string) => library.links.filter((l) => l.segmentId === segmentId);
       const openerOf = (p: Place) => (p.origin === "section" ? p.segmentId : (sectionLinksOf(p.segmentId).at(-1)?.openerSegmentId ?? p.segmentId));
       const scored = places.flatMap((p) => {
@@ -651,14 +1026,52 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         .sort((a, b) => order(a.kept[0]!, b.kept[0]!) || Number(b.about) - Number(a.about) || a.group.sourceTitle.localeCompare(b.group.sourceTitle))
         .slice(0, 30);
   };
+  const rootProjects = new Map<string, string>();
   const api: MemoryApi = {
+    ...presentationApi(state.presentation, { id, now, api: () => api }),
+    ...portabilityApi(state.portability, {
+      projects: () => state.projects,
+      createProject: async (title, description) => {
+        const project = await api.projectCreate({ workspaceId: state.workspace.id, title, description: description ?? undefined });
+        return project;
+      },
+      counts: (projectId) => {
+        const studies = state.studies.filter((s) => s.projectId === projectId);
+        const ids = new Set(studies.map((s) => s.id));
+        return {
+          studies: studies.length,
+          teachings: state.teaching.preparations.filter((p) => p.projectId === projectId).length,
+          notes: state.findings.filter((f) => ids.has(f.studyId)).length,
+        };
+      },
+      api: () => api,
+    }),
     ...teachingApi(state.teaching, {
       id,
       now,
       findings: () => state.findings,
-      studyExists: (studyId) => void find(state.studies, studyId, "study"),
+      studyExists: (studyId) => { const study = find(state.studies, studyId, "study"); find(state.projects, study.projectId, "project"); },
+      studyProject: (studyId) => find(state.studies, studyId, "study").projectId,
+      projectExists: (projectId) => void find(state.projects, projectId, "project"),
+      copyCitation: (original, saved) => { const place = citationPlaces.get(original); if (place) citationPlaces.set(saved, structuredClone(place)); },
+      presentationFindings: (id) => state.presentation.presentations.filter(p => p.preparationId === id).flatMap(p => p.items.filter(i => i.source?.kind === "finding").map(i => i.source!.id)),
       studyPassages: () => state.passages,
+      studyBlocks: () => state.blocks.map((b) => ({ ...b, studyId: state.sections.find((s) => s.id === b.sectionId)?.studyId ?? "", sectionTitle: state.sections.find((s) => s.id === b.sectionId)?.title ?? "" })),
       ref: (canonical) => refFromCanonical(canonical, bookByCode),
+    }),
+    ...inquiryApi(state.inquiry, {
+      config: () => state.teaching.assistant.config,
+      label: () => assistantFacts(state.teaching).label,
+      remote: () => assistantFacts(state.teaching).remote,
+      hasKey: () => assistantFacts(state.teaching).hasKey,
+      study: (studyId) => find(state.studies, studyId, "study"),
+      sections: () => state.sections,
+      blocks: () => state.blocks,
+      findings: () => state.findings,
+      passages: () => state.passages,
+      source: (sourceId) => liveSource(sourceId),
+      segments: (sourceId) => library.segments.filter((x) => x.sourceId === sourceId).sort((a, b) => a.position - b.position),
+      api: () => api,
     }),
     libraryLocationsCalls: [],
     concordanceCalls: [],
@@ -667,12 +1080,25 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     appInfo: async () => state.info,
     logError: async () => undefined,
     workspaceGetDefault: async () => state.workspace,
+    trashList: async (workspaceId) => [
+      ...[...deletedProjects.values()].filter(p => p.workspaceId === workspaceId).map(p => ({ id: p.id, title: p.title, kind: "project" as const, deletedAt: p.updatedAt })),
+      ...[...deletedStudies.values()].filter(s => state.projects.some(p => p.id === s.projectId && p.workspaceId === workspaceId)).map(s => ({ id: s.id, title: s.title, kind: "study" as const, deletedAt: s.updatedAt })),
+    ],
     projectList: async (workspaceId) =>
       state.projects
         .filter((p) => p.workspaceId === workspaceId)
         .map(withCount)
         .sort((a, b) => a.title.localeCompare(b.title)),
     projectGet: async (key) => withCount(find(state.projects, key, "project")),
+    projectRoot: async (workspaceId, title) => {
+      const key = `root:${workspaceId}`;
+      const saved = rootProjects.get(key);
+      if (saved && state.projects.some(p => p.id === saved)) return { ...state.projects.find(p => p.id === saved)! };
+      const defaults = ["My studies", "Meine Bibelstudien", "내 성경공부", "Mes études", "Mis estudios", "Meus estudos"];
+      const candidates = state.projects.filter(p => p.workspaceId === workspaceId && !p.description && defaults.includes(p.title));
+      const project = candidates.length === 1 ? candidates[0]! : await api.projectCreate({ workspaceId, title });
+      rootProjects.set(key, project.id); return project;
+    },
     projectCreate: async (input) => {
       const t = now();
       const project: Project = {
@@ -688,15 +1114,62 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       state.projects.push(project);
       return project;
     },
+    projectDelete: async (projectId, permanent = false) => {
+      const project = state.projects.find(p => p.id === projectId) ?? deletedProjects.get(projectId);
+      if (!project) throw new ApiError("notFound", "Project not found.");
+      if (!permanent && !state.projects.some(p => p.id === projectId)) return;
+      if (permanent) {
+        const studyIds = new Set(state.studies.filter(s => s.projectId === projectId).map(s => s.id));
+        for (const [id, study] of deletedStudies) if (study.projectId === projectId) studyIds.add(id);
+        const teachingIds = new Set([...state.teaching.preparations, ...state.teaching.deletedPreparations.values()].filter(p => p.projectId === projectId).map(p => p.id));
+        state.teaching.preparations = state.teaching.preparations.filter(p => p.projectId !== projectId);
+        for (const id of teachingIds) state.teaching.deletedPreparations.delete(id);
+        state.presentation.presentations = state.presentation.presentations.filter(p => !teachingIds.has(p.preparationId));
+        for (const id of studyIds) { if (state.studies.some(s => s.id === id) || deletedStudies.has(id)) await api.studyDelete(id, true); }
+        deletedProjects.delete(projectId);
+      } else { project.revision++; project.updatedAt = now(); deletedProjects.set(projectId, project); }
+      state.projects = state.projects.filter(p => p.id !== projectId);
+    },
+    projectRestore: async (projectId) => {
+      const project = deletedProjects.get(projectId);
+      if (project) { deletedProjects.delete(projectId); project.revision++; project.updatedAt = now(); state.projects.push(project); }
+      return withCount(find(state.projects, projectId, "project"));
+    },
+    studyDelete: async (studyId, permanent = false) => {
+      const study = state.studies.find(s => s.id === studyId) ?? deletedStudies.get(studyId);
+      if (!study) throw new ApiError("notFound", "Study not found.");
+      if (!permanent && !state.studies.some(s => s.id === studyId)) return;
+      for (const p of state.teaching.preparations) if (p.studyId === studyId) await api.teachingSetStudy(p.id, null);
+      for (const p of state.teaching.deletedPreparations.values()) if (p.studyId === studyId) {
+        const sourceIds = state.presentation.presentations.filter(pres => pres.preparationId === p.id).flatMap(pres => pres.items.filter(i => i.source?.kind === "finding").map(i => i.source!.id));
+        detachMemoryFindings(p, state.findings, sourceIds, id, (original, saved) => { const place = citationPlaces.get(original); if (place) citationPlaces.set(saved, structuredClone(place)); }); p.studyId = null; p.revision++; p.updatedAt = now();
+      }
+      if (permanent) {
+        const sections = new Set(state.sections.filter(s => s.studyId === studyId).map(s => s.id));
+        state.blocks = state.blocks.filter(b => !sections.has(b.sectionId));
+        state.sections = state.sections.filter(s => s.studyId !== studyId);
+        state.findings = state.findings.filter(f => f.studyId !== studyId);
+        state.passages = state.passages.filter(p => p.studyId !== studyId);
+        deletedStudies.delete(studyId);
+      } else { study.revision++; study.updatedAt = now(); deletedStudies.set(studyId, study); }
+      state.studies = state.studies.filter(s => s.id !== studyId);
+    },
+    studyRestore: async (studyId) => {
+      const study = deletedStudies.get(studyId);
+      if (study) { find(state.projects, study.projectId, "project"); deletedStudies.delete(studyId); study.revision++; study.updatedAt = now(); state.studies.push(study); }
+      return detail(studyId).study;
+    },
     projectUpdate: async (input) => {
       const project = find(state.projects, input.id, "project");
       if (input.title !== undefined) project.title = requireTitle(input.title, "project");
+      // As the core does: an empty description clears it.
+      if (input.description !== undefined) project.description = input.description.trim() ? input.description : null;
       project.revision += 1;
       return withCount(project);
     },
     studyList: async ({ projectId, studyType, status }) =>
       state.studies
-        .filter((st) => (!projectId || st.projectId === projectId) && (!studyType || st.studyType === studyType) && (!status || st.status === status))
+        .filter((st) => state.projects.some(p => p.id === st.projectId) && (!projectId || st.projectId === projectId) && (!studyType || st.studyType === studyType) && (!status || st.status === status))
         .map(summary),
     studyGet: async (key) => detail(key),
     studyCreate: async (input) => {
@@ -723,6 +1196,15 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       });
       if (primary) state.passages.push({ id: id(), studyId: study.id, reference: primary, role: "primary", createdAt: t });
       return detail(study.id);
+    },
+    studyMove: async (studyId, projectId) => {
+      const study = find(state.studies, studyId, "study");
+      const from = find(state.projects, study.projectId, "project");
+      const target = find(state.projects, projectId, "project");
+      if (from.workspaceId !== target.workspaceId) throw new Error("Project not found");
+      study.projectId = projectId;
+      for (const prep of [...state.teaching.preparations, ...state.teaching.deletedPreparations.values()]) if (prep.studyId === studyId) prep.projectId = projectId;
+      return { ...study };
     },
     studyUpdate: async (input) => {
       const study = find(state.studies, input.id, "study");
@@ -780,10 +1262,70 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       const section = find(state.sections, input.id, "section");
       if (input.title !== undefined) section.title = requireTitle(input.title, "section");
       if (input.guidance !== undefined) section.guidance = input.guidance || null;
+      if (input.phase !== undefined) section.phase = input.phase || null;
       if (input.status) section.status = input.status;
       return { ...section, blocks: state.blocks.filter((b) => b.sectionId === section.id) };
     },
-    studySectionCreate: async ({ studyId, title, guidance, templateSectionKey }) => {
+    studyPozetekRepair: async (studyId, action, expectedIds) => {
+      const current = sectionsOf(studyId);
+      const ids = current.map(s => s.id);
+      const saved = pozetekReceipts.get(studyId);
+      const conflict = () => new ApiError("conflict", "The parts changed. Review them again. All writing is kept.");
+      if (action === "apply") {
+        if (saved || JSON.stringify(ids) !== JSON.stringify(expectedIds)) throw conflict();
+        await api.studySectionRestoreMissing(studyId);
+        const parts = sectionsOf(studyId);
+        const keys = ["persons", "place", "time", "events", "context", "explanations", "core"];
+        const ordered = keys.map(key => parts.find(s => s.key === key)!).filter(Boolean);
+        ordered.push(...parts.filter(s => !ordered.some(o => o.id === s.id)));
+        const after = ordered.map(s => s.id);
+        if (JSON.stringify(ids) !== JSON.stringify(after)) {
+          await api.studySectionReorder({ parentId: studyId, ids: after });
+          pozetekReceipts.set(studyId, { before: ids, after, added: structuredClone(sectionsOf(studyId).filter(s => !ids.includes(s.id))) });
+        }
+      } else if (action === "undo") {
+        if (!saved || JSON.stringify(saved.after) !== JSON.stringify(ids)) throw conflict();
+        for (const original of saved.added) if (JSON.stringify(current.find(s => s.id === original.id)) !== JSON.stringify(original)) throw conflict();
+        for (const original of saved.added) await api.studySectionDelete({ id: original.id, force: false });
+        await api.studySectionReorder({ parentId: studyId, ids: saved.before });
+        pozetekReceipts.delete(studyId);
+      }
+      return { sections: sectionsOf(studyId), canUndo: pozetekReceipts.has(studyId) };
+    },
+    studySectionRestoreMissing: async (studyId, keys) => {
+      const study = find(state.studies, studyId, "study");
+      const template = state.templates.find(template => template.id === study.templateId);
+      if (!template?.isBuiltin || !["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key)) throw new ApiError("invalidInput", "This template part is no longer available.");
+      const original = template.sections.filter(part => !part.optional && !part.retired);
+      if (keys?.some(key => !original.some(part => part.key === key))) throw new ApiError("invalidInput", "This template part is no longer available.");
+      const current = state.sections.filter(section => section.studyId === studyId).sort((a,b) => a.position-b.position);
+      let added = false;
+      for (const part of original) {
+        if (!part.key || (keys && !keys.includes(part.key)) || current.some(section => section.key === part.key)) continue;
+        const section = await api.studySectionCreate({ studyId, title: part.title, guidance: part.guidance ?? undefined, key: part.key, phase: part.phase });
+        if (part.fields?.length) {
+          const fields = { template: part.fieldsSource ?? template.key, version: part.fieldsVersion ?? 0, fields: structuredClone(part.fields) };
+          section.fields = fields;
+          find(state.sections, section.id, "section").fields = fields;
+          state.blocks = state.blocks.filter(block => block.sectionId !== section.id);
+          for (const field of part.fields.filter(field => field.kind === "writing" || field.kind === "text")) {
+            const block = await api.studyBlockCreate({ sectionId: section.id, blockType: "paragraph", fieldKey: field.key });
+            void block;
+          }
+        }
+        current.push(section); added = true;
+      }
+      if (added) {
+        const order = new Map(original.map((part,index) => [part.key,index]));
+        const method = current.filter(part => order.has(part.key)).sort((a,b) => order.get(a.key)! - order.get(b.key)!);
+        let cursor = 0;
+        await api.studySectionReorder({ parentId: studyId, ids: current.map(part => order.has(part.key) ? method[cursor++]!.id : part.id) });
+      }
+      return (await api.studyGet(studyId)).sections;
+    },
+    studySectionCreate: async ({ studyId, title, guidance, templateSectionKey, key, phase }) => {
+      if (key?.trim() && !/^[a-z0-9-]{1,64}$/.test(key.trim())) throw new ApiError("invalidInput", "This part's key is not valid.");
+      if (key?.trim() && sectionsOf(studyId).some((sec) => sec.key === key.trim())) throw new ApiError("conflict", "This study already has that part.");
       const study = find(state.studies, studyId, "study");
       if (templateSectionKey && sectionsOf(studyId).some((section) => section.key === templateSectionKey)) {
         throw new ApiError("invalidInput", "This template part is already in the study.");
@@ -798,7 +1340,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         : null;
       const sectionId = addSection(
         studyId,
-        { key: fromTemplate?.key, title: requireTitle(title, "section"), guidance },
+        { key: fromTemplate?.key ?? key, phase: phase ?? fromTemplate?.phase, title: requireTitle(title, "section"), guidance },
         sectionsOf(studyId).length,
         fields,
       );
@@ -911,6 +1453,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     templateList: async () => [...state.templates],
     templateCreate: async (input) => {
       if (!input.sections.some((sec) => !sec.optional)) throw new ApiError("invalidInput", "A template needs at least one part to start with.");
+      requireDistinctKeys(input.sections);
       const t = now();
       const template: StudyTemplate = {
         id: id(), key: `user-${counter}`, name: requireTitle(input.name, "template"), description: input.description ?? null,
@@ -923,6 +1466,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     },
     templateUpdate: async (input) => {
       const template = userTemplate(input.id);
+      requireDistinctKeys(input.sections);
       template.name = requireTitle(input.name, "template");
       template.description = input.description ?? null;
       template.studyType = input.studyType;
@@ -946,15 +1490,26 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     },
     studyBlockCreate: async (input) => {
       find(state.sections, input.sectionId, "section");
+      let qaContent: string | null = null;
+      if (input.data !== undefined) {
+        const data: unknown = JSON.parse(input.data);
+        if (!data || typeof data !== "object" || Array.isArray(data) || !Object.values(data).every(value => typeof value === "string")) throw new Error("Invalid entry data");
+        // As the native core (A.4.4): Q&A data only on a free question block; its text is derived.
+        if (!input.fieldKey) {
+          const pair = qaOf(input.data);
+          if (input.blockType !== "question" || !pair) throw new Error("Invalid entry data");
+          qaContent = qaText(pair);
+        }
+      }
       const t = now();
       const block: StudyBlock = {
         id: id(),
         sectionId: input.sectionId,
         blockType: input.blockType,
         position: state.blocks.filter((b) => b.sectionId === input.sectionId).length,
-        content: input.content ?? "",
+        content: qaContent ?? input.content ?? "",
         fieldKey: input.fieldKey ?? null,
-        data: null,
+        data: input.data ?? null,
         createdAt: t,
         updatedAt: t,
         revision: 1,
@@ -965,13 +1520,26 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     studyBlockUpdate: async (input) => {
       const block = find(state.blocks, input.id, "block");
       if (input.content !== undefined) block.content = input.content;
-      if (input.data !== undefined) block.data = input.data;
+      if (input.data !== undefined) {
+        if (!block.fieldKey) {
+          const pair = qaOf(input.data);
+          if (block.blockType !== "question" || !pair) throw new Error("Invalid entry data");
+          block.content = qaText(pair);
+        }
+        block.data = input.data;
+      }
       block.revision += 1;
       return { ...block };
     },
     studyBlockDelete: async (key) => {
       find(state.blocks, key, "block");
       state.blocks = state.blocks.filter((b) => b.id !== key);
+    },
+    sourceReaderPositions: async () => state.readerPositions.map((row) => structuredClone(row)),
+    sourceReaderPositionSave: async ({ sourceId, position }) => {
+      const source = state.library.sources.find((row) => row.id === sourceId && !row.deleted);
+      if (!source || state.manage.states.get(sourceId)?.state === "trashed") throw new ApiError("notFound", "Source not available");
+      state.readerPositions = [{ sourceId, position: structuredClone(position) }, ...state.readerPositions.filter((row) => row.sourceId !== sourceId)].slice(0, 60);
     },
     settingsGet: async () => ({ ...state.settings }),
     settingsUpdate: async (input) => {
@@ -996,7 +1564,24 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         chapterCount: info.chapterCount,
         superscription: book === "PSA" && chapter === 23 ? "Fixture psalm title." : null,
         verses: text.get(`${book}|${chapter}`) ?? [],
+        unchecked: state.unchecked.get(`${translationId}|${book}|${chapter}`) ?? [],
       };
+    },
+    // As the core (db::bibles::material_passages): only the chosen Bible; a verse it lacks is named.
+    materialScripture: async ({ translationId, references }) => {
+      const bible = state.bibles.find((b) => b.id === translationId);
+      if (!bible) throw new ApiError("notFound", "This Bible is no longer installed.");
+      const passages = await Promise.all(
+        references.map(async (canonical) => {
+          const { reference, verses } = await api.scriptureGetPassage({ translationId, reference: canonical });
+          const missing: string[] = [];
+          if (reference.startVerse !== null && reference.endVerse !== null && reference.startChapter === reference.endChapter) {
+            for (let v = reference.startVerse; v <= reference.endVerse; v++) if (!verses.some((x) => x.chapter === reference.startChapter && x.verse === v)) missing.push(`${reference.startChapter}:${v}`);
+          }
+          return { canonical, verses, missing };
+        }),
+      );
+      return { translationId, name: bible.name, shortName: bible.shortName, copyrightNotice: bible.copyrightNotice ?? null, passages };
     },
     scriptureGetPassage: async ({ translationId, reference }) => {
       const ref = refFromCanonical(reference, bookByCode);
@@ -1053,10 +1638,96 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         hitsComplete: Boolean(book) || found.length <= 200,
       };
     },
-    referenceParse: async (text) => parseForTests(text),
+    scriptureLemmaEntries: async ({ translationId, text }) => {
+      const all = annotatedWords(translationId);
+      const typed = text.trim();
+      if (!typed) throw new ApiError("invalidInput", "Type a lemma or a lexical number to look for.");
+      const fold = lemmaFold(typed);
+      const byLemma = (w: VerseWord) => w.lemma === typed || (w.lemma && lemmaFold(w.lemma) === fold);
+      // As the core: a lexical number in any spelling of the same number (v0.22).
+      const matched = (w: VerseWord) => (byLemma(w) ? null : w.lexicalIds.find((id) => sameNumber(id, typed)) ?? null);
+      const found = all.filter((w) => byLemma(w) || matched(w) !== null);
+      const entries = new Map<string, { lemma: string | null; strong: string | null; forms: Map<string, number>; occurrences: number; matchedId: string | null }>();
+      for (const w of found) {
+        const key = `${w.lemma}|${w.strong}`;
+        const e = entries.get(key) ?? { lemma: w.lemma, strong: w.strong, forms: new Map(), occurrences: 0, matchedId: matched(w) };
+        e.occurrences += 1;
+        e.forms.set(w.surface, (e.forms.get(w.surface) ?? 0) + 1);
+        entries.set(key, e);
+      }
+      return [...entries.values()]
+        .sort((a, b) => b.occurrences - a.occurrences || String(a.lemma).localeCompare(String(b.lemma)) || String(a.strong).localeCompare(String(b.strong)))
+        .map((e) => ({ lemma: e.lemma, strong: e.strong, occurrences: e.occurrences, matchedId: e.matchedId, forms: [...e.forms.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5).map(([f]) => f) }));
+    },
+    scriptureLemmaSearch: async ({ translationId, selection, morph = [], book }) => {
+      const bible = state.bibles.find((b) => b.id === translationId);
+      annotatedWords(translationId);
+      const verses = [...(state.words.get(translationId)?.entries() ?? [])];
+      const selected = (w: VerseWord) =>
+        selection.kind === "entry" ? w.lemma === selection.lemma && w.strong === selection.strong
+          : selection.kind === "lemma" ? w.lemma === selection.lemma
+            : w.lexicalIds.some((id) => id.toLowerCase() === selection.id.trim().toLowerCase());
+      const order = (canonical: string) => {
+        const r = refFromCanonical(canonical, bookByCode);
+        return r ? (bookByCode.get(r.book)?.ordinal ?? 0) * 1e6 + r.startChapter * 1e3 + (r.startVerse ?? 0) : 0;
+      };
+      verses.sort((a, b) => order(a[0]) - order(b[0]));
+      const forms = new Map<string, number>();
+      const codes = new Map<string, { count: number; described: MorphDescribed | null }>();
+      let withoutMorphology = 0;
+      const kept: { canonical: string; words: VerseWord[] }[] = [];
+      for (const [canonical, words] of verses) {
+        const mine = words.filter(selected);
+        for (const w of mine) {
+          forms.set(w.surface, (forms.get(w.surface) ?? 0) + 1);
+          if (w.morph) codes.set(w.morph, { count: (codes.get(w.morph)?.count ?? 0) + 1, described: w.described });
+          else withoutMorphology += 1;
+        }
+        const filtered = mine.filter((w) => morph.length === 0 || (w.morph !== null && morph.includes(w.morph)));
+        if (filtered.length) kept.push({ canonical, words: filtered });
+      }
+      const books = new Map<string, { verses: number; occurrences: number }>();
+      for (const k of kept) {
+        const code = k.canonical.split(".")[0] ?? "";
+        const b = books.get(code) ?? { verses: 0, occurrences: 0 };
+        books.set(code, { verses: b.verses + 1, occurrences: b.occurrences + k.words.length });
+      }
+      const listed = book ? kept.filter((k) => k.canonical.startsWith(`${book}.`)) : kept.length <= 200 ? kept : [];
+      const hits = listed.flatMap((k) => {
+        const [code, chapter] = k.canonical.split(".");
+        const text = state.text.get(translationId)?.get(`${code}|${Number(chapter)}`)?.find((v) => v.canonical === k.canonical)?.text;
+        const reference = refFromCanonical(k.canonical, bookByCode);
+        return text && reference ? [{ reference, text, matches: k.words.map((w) => [w.start, w.end] as [number, number]) }] : [];
+      });
+      const result: LemmaResult = {
+        selection, translationId,
+        occurrences: kept.reduce((n, k) => n + k.words.length, 0),
+        verses: kept.length,
+        books: [...books.entries()].map(([code, c]) => ({ code, name: bookByCode.get(code)?.name ?? code, ...c })),
+        hits,
+        hitsComplete: Boolean(book) || kept.length <= 200,
+        forms: [...forms.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([form, count]) => ({ form, count })),
+        morphology: [...codes.entries()].sort((a, b) => b[1].count - a[1].count || a[0].localeCompare(b[0])).map(([code, c]) => ({ code, count: c.count, described: described(bible?.words?.morphScheme) ? c.described : null })),
+        withoutMorphology,
+        morphScheme: bible?.words?.morphScheme ?? "none",
+        morphAttribute: bible?.words?.morphAttribute ?? null,
+      };
+      return result;
+    },
+    scriptureVerseWords: async ({ translationId, verse }) => {
+      const all = annotatedWords(translationId);
+      const scheme = state.bibles.find((b) => b.id === translationId)?.words?.morphScheme;
+      return (state.words.get(translationId)?.get(verse) ?? []).map((w) => ({
+        ...w,
+        described: described(scheme) ? w.described : null,
+        entryOccurrences: all.filter((o) => o.lemma === w.lemma && o.strong === w.strong).length,
+      }));
+    },
+    referenceParse: async (text, translationId) =>
+      parseForTests(text, [state.bibles.find((b) => b.id === translationId)?.languageCode, i18n.language]),
     referenceDetect: async (text) => {
       const found = [];
-      for (const match of text.matchAll(/\b(?:John|Romans|Rom|Psalm|Ps) \d+(?::\d+(?:-\d+)?)?/g)) {
+      for (const match of text.matchAll(/\b(?:John|Romans|Rom|Psalm|Ps) \d+(?::\d+(?:\s*[-\u2010-\u2014]\s*\d+(?::\d+)?)?)?/g)) {
         try {
           found.push({ text: match[0], start: match.index, end: match.index + match[0].length, reference: parseForTests(match[0]) });
         } catch {
@@ -1066,7 +1737,22 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       return found;
     },
 
-    bibleList: async () => [...state.bibles].sort((a, b) => a.name.localeCompare(b.name)),
+    bibleList: async () => state.bibles.filter((b) => b.state === "active").sort((a, b) => a.name.localeCompare(b.name)),
+    bibleListAll: async () => [...state.bibles].sort((a, b) => a.name.localeCompare(b.name)),
+    bibleSetState: async (ids, to) => {
+      const found = ids.map((bibleId) => state.bibles.find((b) => b.id === bibleId));
+      if (found.some((b) => !b)) throw new ApiError("notFound", "Bible not found");
+      let changed = 0;
+      for (const bible of found as BibleTranslation[]) {
+        if (bible.state === to) continue;
+        bible.state = to;
+        bible.stateChangedAt = now();
+        if (to !== "active" && state.settings.scriptureTranslationId === bible.id) state.settings = { ...state.settings, scriptureTranslationId: null };
+        changed++;
+      }
+      return changed;
+    },
+    bibleRemovePermanently: async (ids) => removeBibles(ids),
     // As the core lists them (src-tauri/src/scripture/bundled.rs).
     bibleBundledList: async () =>
       [
@@ -1079,24 +1765,92 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         { id: "fraLSG", name: "Louis Segond 1910", shortName: "LSG", language: "Français", languageCode: "fr", licenseType: "Public Domain" },
         { id: "spaRV1909", name: "Santa Biblia — Reina Valera 1909", shortName: "RV1909", language: "Español", languageCode: "es", licenseType: "Public Domain" },
         { id: "porbr2018", name: "Bíblia Livre", shortName: "BLIVRE", language: "Português", languageCode: "pt", licenseType: "CC BY 4.0" },
-      ].map((b) => ({ ...b, installed: state.bibles.some((i) => i.isBuiltin && i.shortName === b.shortName) })),
+        { id: "grcsbl", name: "SBL Greek New Testament", shortName: "SBLGNT", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "CC BY 4.0", books: 27 },
+        { id: "grcmt", name: "Robinson–Pierpont Byzantine Textform 2018", shortName: "RP2018", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "Public Domain", books: 27 },
+        { id: "grctr", name: "Textus Receptus (Boyd 2022)", shortName: "TR", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "Public Domain", books: 27 },
+        { id: "grcbyz", name: "1904 Patriarchal Greek New Testament", shortName: "PT1904", language: "Ελληνικά (Koine Greek)", languageCode: "grc", licenseType: "Public Domain", books: 27 },
+      ].map((b) => ({ books: 66, ...b, installed: state.bibles.some((i) => i.isBuiltin && i.shortName === b.shortName) })),
+    // Available Bibles to download (v0.24), as resources/scripture/catalogue.json lists them.
+    bibleCatalogueList: async () =>
+      [
+        { id: "oshb", name: "Open Scriptures Hebrew Bible (Westminster Leningrad Codex)", shortName: "OSHB", language: "עברית (Biblical Hebrew)", languageCode: "hbo", publisher: "Open Scriptures Hebrew Bible Project", licenseType: "Public Domain text; CC BY 4.0 word data", copyrightNotice: "Westminster Leningrad Codex: Public Domain. Lemma and morphology data: CC BY 4.0.", books: 39, contains: ["strong", "morph"], version: "morphhb 3d15126", size: 28634502, files: 40 },
+        { id: "morphgnt", name: "MorphGNT: SBLGNT Edition", shortName: "MorphGNT", language: "Ελληνικά (Koine Greek)", languageCode: "grc", publisher: "James K. Tauber (MorphGNT)", licenseType: "CC BY 4.0 text; CC BY-SA 3.0 word data", copyrightNotice: "SBLGNT (CC BY 4.0); MorphGNT parsing (CC BY-SA 3.0).", books: 27, contains: ["lemma", "morph"], version: "morphgnt/sblgnt aaed91e", size: 8936874, files: 27 },
+      ].map((entry) => ({ ...entry, installed: state.bibles.some((b) => b.shortName.toLowerCase() === entry.shortName.toLowerCase()) })),
+    bibleCatalogueDownload: async (catalogueId) => {
+      const entry = (await api.bibleCatalogueList()).find((e) => e.id === catalogueId);
+      if (!entry) throw new ApiError("notFound", "Bible not found");
+      for (let done = 1; done <= 3; done++) state.catalogueProgress.forEach((h) => h({ id: catalogueId, done, total: 3 }));
+      if (state.catalogueFails) throw new ApiError("importFailed", "“Gen.xml” did not match the verified copy, so nothing was kept. Try again later.", "catalogue.notVerified");
+      const preview = await api.bibleImportPreview({ paths: [`/downloads/${catalogueId}/files.usfm`] });
+      const suggested = { ...preview.suggested, name: entry.name, shortName: entry.shortName, language: entry.language, languageCode: entry.languageCode, publisher: entry.publisher, copyrightNotice: entry.copyrightNotice, licenseType: entry.licenseType };
+      if (state.pendingPreview) state.pendingPreview = { ...state.pendingPreview };
+      return { ...preview, suggested };
+    },
+    onCatalogueProgress: async (handler) => {
+      state.catalogueProgress.add(handler);
+      return () => void state.catalogueProgress.delete(handler);
+    },
     chooseBibleFiles: async () => state.nextChosenFiles,
     bibleImportPreview: async ({ bundled, paths }) => {
-      if (paths?.some((p) => p.endsWith(".pdf"))) {
-        throw new ApiError("unsupportedFormat", "PDF files can’t be imported as a structured Bible yet.");
+      if (paths && isDocumentChoice(paths)) {
+        if (paths.some((p) => /\.(usfm|sfm|zip)$/i.test(p))) {
+          throw new ApiError("invalidInput", "Choose either the files of a Bible in a Bible format (such as USFM) or documents, not both together.", "bibleImport.documentMixed");
+        }
+        const result = documentPreview(paths);
+        state.pendingPreview = { id: result.previewId, bundled: false, document: { paths, preview: result } };
+        return result;
+      }
+      if (paths?.some((p) => /\.(rtf|odt|doc)$/i.test(p))) {
+        throw new ApiError("unsupportedFormat", "Word files can’t be imported as a structured Bible yet.");
       }
       const result = preview(!!bundled, !!paths?.some((p) => p.includes("broken")));
+      // As the core reads a DBL metadata.xml or Paratext Settings.xml beside the USFM.
+      const tagged = paths?.map((p) => /with-metadata-([a-z-]+)\./i.exec(p)?.[1]).find(Boolean);
+      if (tagged) result.suggested = { ...result.suggested, languageCode: tagged };
+      if (state.nextPreviewWords) result.words = state.nextPreviewWords;
+      // As the core: another publisher's XML beside the Bible's files is set aside and named (v0.22.1).
+      result.skippedFiles = (paths ?? []).filter((p) => p.endsWith(".xml") && !/versemap\.xml$/i.test(p)).map((p) => p.split("/").pop() ?? p);
       state.pendingPreview = { id: result.previewId, bundled: !!bundled };
       return result;
     },
     bibleImportCommit: async (input) => {
       if (state.pendingPreview?.id !== input.previewId) throw new ApiError("invalidInput", "This import has expired.");
+      const pendingDocument = state.pendingPreview.document;
+      if (pendingDocument) {
+        const { paths, preview: found } = pendingDocument;
+        const asDocument = !!input.asDocument || !found.document?.versesUsable;
+        const format = found.document!.files[0]!.format;
+        const bible = addBible(
+          {
+            name: input.name,
+            shortName: input.shortName,
+            language: input.language,
+            languageCode: input.languageCode ?? null,
+            copyrightNotice: input.copyrightNotice ?? null,
+            kind: asDocument ? "document" : "structured",
+            importStatus: asDocument ? "document_only" : "ready",
+            sourceType: format,
+            editionConfirmed: !!input.confirmEdition,
+            documentRecognised: true,
+            originalFileName: paths.map((p) => p.split(/[\\/]/).pop()).join(", "),
+            bookCount: asDocument ? 0 : found.bookCount,
+            verseCount: asDocument ? 0 : found.verseCount,
+          },
+          "document",
+        );
+        if (asDocument) state.text.set(bible.id, new Map());
+        keepDocuments(bible.id, paths, format, !!found.document?.files[0]?.scanned);
+        state.pendingPreview = null;
+        return bible;
+      }
       const bundled = state.pendingPreview.bundled;
       const bible = addBible(
         {
           name: input.name,
           shortName: input.shortName,
           language: input.language,
+          // As the core: only a tag the person (or the files' metadata) gave.
+          languageCode: input.languageCode ?? null,
           isBuiltin: bundled,
           sourceOrigin: bundled ? "bundled" : "managed_copy",
           licenseType: input.licenseType ?? null,
@@ -1104,15 +1858,220 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         bundled ? "included" : "imported",
       );
       state.pendingPreview = null;
+      state.lastCommitWords = input.words ?? null;
       return bible;
     },
     bibleImportCancel: async () => {
       state.pendingPreview = null;
     },
+    bibleImportCorrect: async (previewId, books) => {
+      const pending = state.pendingPreview;
+      if (pending?.id !== previewId || !pending.document) throw new ApiError("invalidInput", "This import has expired.");
+      const result = documentPreview(pending.document.paths, new Map(books.map((b) => [b.index, b.book])));
+      result.previewId = previewId;
+      pending.document.preview = result;
+      return result;
+    },
+    bibleDocuments: async (translationId) => state.bibleDocuments.get(translationId)?.documents ?? [],
+    bibleDocumentInfo: async (documentId) => {
+      const { kept, document } = keptDocument(documentId);
+      const bytes = kept.bytes.get(document.id);
+      if (!bytes) throw new ApiError("invalidInput", "This source has no original view.");
+      return { kind: "pdf", sizeBytes: bytes.length };
+    },
+    bibleDocumentRead: async (documentId, offset, length) => {
+      const { kept, document } = keptDocument(documentId);
+      return (kept.bytes.get(document.id) ?? new Uint8Array()).slice(offset, offset + length);
+    },
+    bibleDocumentStructure: async (documentId) => {
+      const { kept, document } = keptDocument(documentId);
+      const count = kept.segments.get(document.id)?.length ?? 0;
+      return [{ id: "part-1", startSegment: 0, segmentCount: count, anchors: {} }];
+    },
+    bibleDocumentItem: async (documentId, _kind, item) => {
+      const { kept, document } = keptDocument(documentId);
+      if (item !== "part-1") throw new ApiError("invalidInput", "The original of this source can’t be opened.");
+      const lines = kept.segments.get(document.id) ?? [];
+      return {
+        id: item,
+        css: "",
+        nodes: lines.map((l, i) => ({ tag: i % 4 === 0 ? "h2" : "p", attrs: { "data-segment": String(l.position) }, children: [l.text] })),
+      } as unknown as EpubItem;
+    },
+    bibleDocumentSegments: async ({ documentId, offset = 0, limit = 200, aroundPage }) => {
+      const { kept, document } = keptDocument(documentId);
+      const all = kept.segments.get(document.id) ?? [];
+      const from = aroundPage !== undefined ? Math.max(0, all.findIndex((s) => (s.pageNumber ?? 0) >= aroundPage)) : offset;
+      return { total: all.length, offset: from, segments: all.slice(from, from + limit) };
+    },
+    bibleDocumentSearch: async (translationId, query) => {
+      const kept = state.bibleDocuments.get(translationId);
+      if (!query.trim()) throw new ApiError("invalidInput", "Type a word or phrase to search for.", "search.empty");
+      const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+      return (kept?.documents ?? []).flatMap((d) =>
+        (kept!.segments.get(d.id) ?? [])
+          .filter((s) => words.every((w) => s.text.toLowerCase().includes(w)))
+          .map((s) => ({ documentId: d.id, position: s.position, pageNumber: s.pageNumber, sectionPath: s.sectionPath, text: s.text })),
+      );
+    },
+    bibleVerseOrigin: async (translationId, book, _chapter, verse) => {
+      const kept = state.bibleDocuments.get(translationId);
+      const bible = state.bibles.find((b) => b.id === translationId);
+      if (!kept || bible?.kind !== "structured") return null;
+      const page = FOUND.findIndex((f) => f.code === book);
+      return { documentId: kept.documents[0]!.id, documentName: kept.documents[0]!.name, firstSegment: page * 4 + verse, lastSegment: page * 4 + verse, firstPage: kept.documents[0]!.format === "pdf" ? page + 1 : null, lastPage: kept.documents[0]!.format === "pdf" ? page + 1 : null, basis: "automatic" as const, firstOffset: 0 };
+    },
+    bibleDocumentRecognise: async (translationId) => {
+      const bible = state.bibles.find((b) => b.id === translationId);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      if (bible.kind !== "document") throw new ApiError("invalidInput", "This Bible can already be read by book, chapter and verse.", "bibles.alreadyVerses");
+      const paths = (state.bibleDocuments.get(translationId)?.documents ?? []).map((d) => d.name);
+      const result = state.nextRecognition ?? documentPreview(paths);
+      state.pendingPreview = { id: result.previewId, bundled: false, document: { paths, preview: { ...result, suggested: { ...result.suggested, name: bible.name } } } };
+      return result;
+    },
+    bibleDocumentAddVerses: async (previewId, partial, confirmEdition) => {
+      const pending = state.pendingPreview;
+      if (pending?.id !== previewId || !pending.document) throw new ApiError("invalidInput", "This import has expired.");
+      const found = pending.document.preview;
+      const whole = !!found.document?.versesUsable;
+      if (!whole && !(partial && (found.document?.partialVerses ?? 0) > 0)) throw new ApiError("invalidInput", "This Bible has problems that must be resolved before it can be added.", "bibles.hasProblems");
+      const bible = state.bibles.find((b) => [...state.bibleDocuments.entries()].some(([id, kept]) => id === b.id && kept.documents.map((d) => d.name).join("|") === pending.document!.paths.join("|")) && b.kind === "document");
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      const chapters = fixtureChapters("document");
+      // Held back: the unclear book (Psalms in the fixture).
+      if (!whole) for (const key of [...chapters.keys()]) if (key.startsWith("PSA|")) chapters.delete(key);
+      if (whole) {
+        bible.kind = "structured";
+        bible.importStatus = "ready";
+        bible.bookCount = found.bookCount;
+      }
+      bible.editionConfirmed ||= !!confirmEdition;
+      bible.documentRecognised = true;
+      bible.verseCount = [...chapters.values()].reduce((n, v) => n + v.length, 0);
+      state.text.set(bible.id, chapters);
+      state.pendingPreview = null;
+      return { ...bible };
+    },
+    bibleDocumentLocate: async (translationId, reference) => {
+      const range = refFromCanonical(reference, bookByCode);
+      if (!range) throw new ApiError("invalidInput", "Not a passage.");
+      const chapters = state.text.get(translationId) ?? new Map<string, VerseText[]>();
+      const verses: VerseText[] = [];
+      for (let c = range.startChapter; c <= range.endChapter; c++) {
+        for (const v of chapters.get(`${range.book}|${c}`) ?? []) {
+          if (c === range.startChapter && range.startVerse && v.verse < range.startVerse) continue;
+          if (c === range.endChapter && range.endVerse && v.verse > range.endVerse) continue;
+          verses.push(v);
+        }
+      }
+      const wanted = range.startVerse && range.endVerse && range.startChapter === range.endChapter ? range.endVerse - range.startVerse + 1 : null;
+      const complete = verses.length > 0 && (wanted === null || verses.length === wanted);
+      const doc = state.bibleDocuments.get(translationId)?.documents[0];
+      const locations = (state.places.get(translationId) ?? []).filter((p) => {
+        const r = refFromCanonical(p.reference, bookByCode);
+        return r && overlaps(r, range);
+      });
+      return {
+        reference,
+        verses,
+        complete,
+        origin: verses.length > 0 && doc ? { documentId: doc.id, documentName: doc.name, firstSegment: 0, lastSegment: 0, firstPage: doc.format === "pdf" ? 2 : null, lastPage: null, basis: "automatic" as const, firstOffset: 0 } : null,
+        locations,
+        places: [],
+        apparatus: [],
+      };
+    },
+    bibleLocationAdd: async (input) => {
+      const doc = state.bibleDocuments.get(input.translationId)?.documents.find((d) => d.id === input.documentId);
+      if (!doc) throw new ApiError("notFound", "document not found");
+      if (input.page == null && input.segment == null && input.item == null) throw new ApiError("invalidInput", "Choose the place in the document first.", "bibles.locationPlace");
+      if (input.page != null && doc.pageCount !== null && (input.page < 1 || input.page > doc.pageCount)) throw new ApiError("invalidInput", "That page is not in the document.", "bibles.locationPage");
+      const place: MarkedPlace = {
+        id: id(), reference: input.reference, documentId: doc.id, documentName: doc.name,
+        page: input.page ?? null, segment: input.segment ?? null, item: input.item ?? null, quote: input.quote ?? null, createdAt: now(),
+      };
+      state.places.set(input.translationId, [...(state.places.get(input.translationId) ?? []), place]);
+      return { ...place };
+    },
+    bibleLocationRemove: async (placeId) => {
+      for (const [key, list] of state.places) state.places.set(key, list.filter((p) => p.id !== placeId));
+    },
+    bibleLocations: async (translationId) => [...(state.places.get(translationId) ?? [])],
+    bibleDocumentCoverage: async (translationId) => {
+      const chapters = state.text.get(translationId) ?? new Map<string, VerseText[]>();
+      const byBook = new Map<string, number>();
+      for (const key of chapters.keys()) byBook.set(key.split("|")[0]!, (byBook.get(key.split("|")[0]!) ?? 0) + 1);
+      return {
+        verses: [...chapters.values()].reduce((n, v) => n + v.length, 0),
+        books: [...byBook].map(([book, n]) => ({ book, chapters: n, of: bookByCode.get(book)?.chapterCount ?? n })),
+        marked: (state.places.get(translationId) ?? []).length,
+        unverified: 0,
+        corrected: 0,
+      };
+    },
+    // As the core (scripture::data_packs): a few of the 100, enough for tests.
+    bibleLanguageOptions: async () => [
+      { code: "en", name: "English", native: "English" },
+      { code: "de", name: "German", native: "Deutsch" },
+      { code: "ko", name: "Korean", native: "한국어" },
+      { code: "pt", name: "Portuguese", native: "português" },
+      { code: "it", name: "Italian", native: "italiano" },
+    ],
+    bibleSetLanguage: async ({ id: bibleId, language, languageCode }) => {
+      const bible = state.bibles.find((b) => b.id === bibleId);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      if (!language.trim()) throw new ApiError("invalidInput", "A language is needed.");
+      if (languageCode !== null && !/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/i.test(languageCode.trim())) {
+        throw new ApiError("invalidInput", `“${languageCode}” is not a language this app knows.`);
+      }
+      bible.language = language.trim();
+      bible.languageCode = languageCode?.trim() || null;
+      return { ...bible };
+    },
+    bibleWordsPreview: async (bibleId) => {
+      const bible = state.bibles.find((b) => b.id === bibleId);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      const report = state.nextWordsPreview;
+      if (!report) throw new ApiError("invalidInput", "The files this Bible was added from are no longer kept, so its words cannot be read again. Remove the Bible and add it again to get them.");
+      state.pendingWords = { id: `words-${bibleId}`, bibleId, report };
+      return { previewId: state.pendingWords.id, translationId: bibleId, format: "usfm", words: report, current: bible.words ?? null };
+    },
+    bibleWordsApply: async (previewId, choice) => {
+      const pending = state.pendingWords;
+      const bible = state.bibles.find((b) => b.id === pending?.bibleId);
+      if (!pending || pending.id !== previewId || !bible) throw new ApiError("invalidInput", "This import has expired. Please choose the files again.");
+      const r = pending.report;
+      const stated = r.grammar.scheme && r.grammar.stated ? r.grammar.scheme : null;
+      if (choice.grammar && choice.grammar !== r.grammar.scheme) throw new ApiError("invalidInput", "These grammar codes do not fit that scheme, so they are shown as written.");
+      const scheme = stated ?? (choice.grammar ? r.grammar.scheme : null);
+      bible.words = {
+        wordCount: r.words,
+        verseCount: r.verses,
+        lemmas: r.withLemma > 0,
+        lexicalIds: r.withLexicalId > 0,
+        morphology: r.withMorphology > 0,
+        morphScheme: scheme ?? (r.withMorphology > 0 ? "raw" : "none"),
+        morphAttribute: r.morphAttribute,
+        sourceFormat: "usfm",
+        grammarBasis: stated ? "edition" : scheme ? "person" : null,
+        grammarEvidence: stated ? r.grammar.stated : null,
+      };
+      state.pendingWords = null;
+      return { ...bible };
+    },
+    bibleWordsCancel: async (previewId) => {
+      if (state.pendingWords?.id === previewId) state.pendingWords = null;
+    },
+    bibleWordsRemove: async (bibleId) => {
+      const bible = state.bibles.find((b) => b.id === bibleId);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      bible.words = null;
+      state.words.delete(bibleId);
+      return { ...bible };
+    },
     bibleRemove: async (bibleId) => {
-      state.bibles = state.bibles.filter((b) => b.id !== bibleId);
-      state.text.delete(bibleId);
-      for (const a of state.annotations) if (a.translationId === bibleId) a.translationId = null;
+      removeBibles([bibleId]);
     },
 
     annotationList: async (reference, translationId) => {
@@ -1225,17 +2184,184 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       if (existing) existing.text = text;
       else chapters.set(key, [...list, { canonical, chapter: Number(chapter), verse: Number(verse), text }].sort((a, b) => a.verse - b.verse));
     },
+    installFixtureWords: (bibleId, canonical, words, scheme = "raw") => {
+      const bible = state.bibles.find((b) => b.id === bibleId);
+      const [book, chapter] = canonical.split(".");
+      const verse = state.text.get(bibleId)?.get(`${book}|${Number(chapter)}`)?.find((v) => v.canonical === canonical);
+      if (!bible || !verse) throw new Error(`No fixture verse ${canonical} in ${bibleId}`);
+      let from = 0;
+      const placed: VerseWord[] = words.map((w, position) => {
+        const start = verse.text.indexOf(w.surface, from);
+        if (start < 0) throw new Error(`“${w.surface}” is not in ${canonical}`);
+        from = start + w.surface.length;
+        const lexicalIds = [...new Set((w.strong ?? "").split(/[,:]/).map((p) => p.trim()).filter(Boolean))];
+        return {
+          position, start, end: from, surface: w.surface, shape: "word",
+          lemma: w.lemma ?? null, strong: w.strong ?? null, lexicalIds, morph: w.morph ?? null,
+          described: w.described ?? null, entryOccurrences: 0,
+        };
+      });
+      const verses = state.words.get(bibleId) ?? new Map<string, VerseWord[]>();
+      verses.set(canonical, placed);
+      state.words.set(bibleId, verses);
+      const all = [...verses.values()].flat();
+      bible.words = {
+        wordCount: all.length,
+        verseCount: verses.size,
+        lemmas: all.some((w) => w.lemma),
+        lexicalIds: all.some((w) => w.strong),
+        morphology: all.some((w) => w.morph),
+        morphScheme: all.some((w) => w.morph) ? scheme : "none",
+        morphAttribute: all.some((w) => w.morph) ? "x-morph" : null,
+        sourceFormat: "usfm",
+      };
+    },
     installFixtureSource: (fixture) => addSource(fixture),
 
     libraryList: async ({ sourceType, language }) =>
       library.sources
-        .filter((s) => !s.deleted && (!sourceType || s.sourceType === sourceType) && (!language || s.language === language))
+        .filter((s) => !s.deleted && stateOf(s.id) === "active" && (!sourceType || s.sourceType === sourceType) && (!language || s.language === language))
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id))
         .map(toSummary),
     libraryLanguages: async () =>
       [...new Set(library.sources.filter((s) => !s.deleted && s.language).map((s) => s.language as string))].sort(),
-    libraryGetSource: async (sourceId) => ({ ...liveSource(sourceId) }),
+    libraryGetSource: async (sourceId) => {
+      const source = liveSource(sourceId);
+      const collectionNames = manage.collections
+        .filter((c) => manage.members.get(c.id)?.has(sourceId))
+        .map((c) => c.name)
+        .sort((a, b) => a.localeCompare(b));
+      const tagNames = manage.tags
+        .filter((tag) => manage.tagged.get(tag.id)?.has(sourceId))
+        .map((tag) => tag.name)
+        .sort((a, b) => a.localeCompare(b));
+      return { ...source, state: stateOf(sourceId), collectionNames, tagNames, filePresent: source.filePresent !== false };
+    },
     chooseSourceFile: async () => library.nextChosenFile,
+    chooseSourceFiles: async () => state.batch.nextFiles,
+    chooseSourceFolder: async () => state.batch.nextFolder?.path ?? null,
+    libraryBatchScan: async (paths, recursive) => {
+      const found: string[] = [];
+      for (const p of paths) {
+        const folder = state.batch.nextFolder?.path === p ? state.batch.nextFolder : null;
+        if (folder) found.push(...folder.files.filter((f) => recursive || !f.slice(folder.path.length + 1).includes("/")));
+        else found.push(p);
+      }
+      const readable = found.filter((f) => /\.(pdf|epub|docx|md|markdown|txt)$/i.test(f));
+      if (readable.length === 0) throw new ApiError("invalidInput", "No files the library can read were found there.", "batch.noFiles");
+      const job: ImportJob = {
+        id: id(), state: "review", collectionId: null, tags: [], unsupportedCount: found.length - readable.length, overLimitCount: 0, createdAt: now(),
+        counts: { total: 0, waiting: 0, ready: 0, duplicate: 0, problem: 0, imported: 0, failed: 0, toAdd: 0 },
+        items: readable.map((path, position) => ({
+          id: id(), position, path, fileName: path.split("/").pop() ?? path, size: 1000, status: "waiting", chosen: true, format: null, title: null, author: null, language: null,
+          sourceType: null, typeEvidence: null, pageCount: null, duplicateOf: null, duplicateTitle: null, problemCode: null, problem: null, problemParams: null, sourceId: null,
+        })),
+      };
+      state.batch.jobs.set(job.id, job);
+      return batchView(job);
+    },
+    libraryBatchStep: async (jobId) => {
+      const job = batchJob(jobId);
+      const item = job.items.find((i) => i.status === "waiting");
+      if (item) {
+        const fixture = fixtureForPath(item.path);
+        const hash = batchHash(item.path);
+        item.format = fixture.format ?? "pdf";
+        item.title = fixture.title;
+        item.author = fixture.author ?? null;
+        item.language = fixture.language ?? null;
+        const evidence = /commentary/i.test(item.fileName) ? "commentary" : null;
+        item.sourceType = evidence ? "commentary" : item.format === "pdf" || item.format === "epub" ? "book" : item.format === "docx" ? "document" : "notes";
+        item.typeEvidence = evidence ? "fileName" : "fileType";
+        if (fixture.segments.length === 0) {
+          Object.assign(item, { status: "problem", chosen: false, problemCode: "library.scannedPdf", problem: "This PDF appears to contain scanned pages. OCR support is not available yet, so its text cannot be added." });
+        } else {
+          const inLibrary = library.sources.find((s) => !s.deleted && s.contentHash === hash);
+          const earlier = job.items.find((i) => i !== item && i.status !== "waiting" && batchHash(i.path) === hash);
+          const dup = inLibrary ? { id: inLibrary.id, title: inLibrary.title } : earlier ? { id: null, title: earlier.title ?? earlier.fileName } : null;
+          Object.assign(item, { status: dup ? "duplicate" : "ready", chosen: !dup, duplicateOf: dup?.id ?? null, duplicateTitle: dup?.title ?? null, problemCode: null, problem: null });
+        }
+      }
+      return batchView(job);
+    },
+    libraryBatchGet: async (jobId) => batchView(batchJob(jobId)),
+    libraryBatchJobs: async () => [...state.batch.jobs.values()].filter((j) => ["review", "importing", "interrupted"].includes(j.state)).map(batchView),
+    libraryBatchEdit: async (jobId, edit) => {
+      const job = batchJob(jobId);
+      if (job.state === "finished" || job.state === "cancelled") throw new ApiError("conflict", "This import has ended. Start a new one to add more files.", "batch.closed");
+      const item = job.items.find((i) => i.id === edit.id);
+      if (!item) throw new ApiError("notFound", "item not found");
+      if (edit.chosen && !["ready", "duplicate"].includes(item.status)) throw new ApiError("invalidInput", "This file cannot be added.", "batch.cannotChoose");
+      if (edit.title !== undefined) item.title = requireTitle(edit.title, "source");
+      if (edit.author !== undefined) item.author = edit.author.trim() || null;
+      if (edit.language !== undefined) item.language = edit.language.trim() || null;
+      if (edit.sourceType !== undefined) Object.assign(item, { sourceType: edit.sourceType, typeEvidence: "person" });
+      if (edit.chosen !== undefined) item.chosen = edit.chosen;
+      return { ...item };
+    },
+    libraryBatchShared: async (jobId, shared) => {
+      const job = batchJob(jobId);
+      let collectionId = shared.collectionId;
+      if (shared.newCollection?.trim()) {
+        const created: SourceCollection = { id: id(), parentId: shared.collectionId, name: shared.newCollection.trim(), count: 0 };
+        manage.collections.push(created);
+        collectionId = created.id;
+      }
+      job.collectionId = collectionId;
+      job.tags = shared.tags.map((t) => t.trim()).filter(Boolean);
+      return batchView(job);
+    },
+    libraryBatchRetry: async (jobId, itemIds) => {
+      const job = batchJob(jobId);
+      for (const item of job.items) {
+        if (itemIds.includes(item.id) && (item.status === "problem" || item.status === "failed")) {
+          Object.assign(item, { status: "waiting", chosen: true, problemCode: null, problem: null });
+          state.batch.changed.delete(item.path);
+        }
+      }
+      if (job.state === "finished") job.state = "review";
+      return batchView(job);
+    },
+    libraryBatchImportStep: async (jobId) => {
+      const job = batchJob(jobId);
+      if (job.state === "finished" || job.state === "cancelled") return batchView(job);
+      const item = job.items.find((i) => i.chosen && (i.status === "ready" || i.status === "duplicate"));
+      if (!item) {
+        job.state = "finished";
+        return batchView(job);
+      }
+      job.state = "importing";
+      if (state.batch.changed.has(item.path)) {
+        Object.assign(item, { status: "failed", chosen: false, problemCode: "batch.changed", problem: `“${item.fileName}” changed after it was checked. Read it again.`, problemParams: { fileName: item.fileName } });
+        return batchView(job);
+      }
+      const source = addSource(
+        { ...fixtureForPath(item.path), title: item.title ?? item.fileName, author: item.author ?? undefined, language: item.language ?? undefined, sourceType: item.sourceType ?? undefined },
+        { licenceStatus: "unknown", originalFilename: item.fileName, contentHash: batchHash(item.path) },
+      );
+      if (job.collectionId) {
+        const members = manage.members.get(job.collectionId) ?? new Set<string>();
+        members.add(source.id);
+        manage.members.set(job.collectionId, members);
+      }
+      for (const name of job.tags) {
+        let tag = manage.tags.find((x) => x.name.toLowerCase() === name.toLowerCase());
+        if (!tag) manage.tags.push((tag = { id: id(), name }));
+        const set = manage.tagged.get(tag.id) ?? new Set<string>();
+        set.add(source.id);
+        manage.tagged.set(tag.id, set);
+      }
+      Object.assign(item, { status: "imported", sourceId: source.id });
+      return batchView(job);
+    },
+    libraryBatchCancel: async (jobId) => {
+      const job = batchJob(jobId);
+      job.state = "cancelled";
+      return batchView(job);
+    },
+    libraryBatchDiscard: async (jobId) => {
+      state.batch.jobs.delete(jobId);
+    },
     libraryImportPreview: async (path) => {
       if (!/\.(pdf|epub|docx|md|markdown|txt)$/i.test(path)) {
         throw new ApiError("unsupportedFormat", "This kind of file can’t be added to the library. Supported: PDF, EPUB, Word (.docx), Markdown (.md) and text (.txt).");
@@ -1277,24 +2403,109 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       library.pending = null;
     },
     libraryRemoveSource: async (sourceId) => {
-      const source = liveSource(sourceId);
-      source.deleted = true;
-      library.segments = library.segments.filter((x) => x.sourceId !== sourceId);
-      library.mentions = library.mentions.filter((m) => m.sourceId !== sourceId);
-      library.links = library.links.filter((l) => l.sourceId !== sourceId);
-      for (const a of library.annotations) if (a.sourceId === sourceId) a.deleted = true;
-      for (const f of state.findings) {
-        for (const c of f.sources) if (c.sourceId === sourceId) Object.assign(c, { removed: true, segmentId: null });
-      }
+      removeSources([sourceId]);
     },
-    librarySearch: async ({ query, offset = 0 }) => {
+    libraryManageList: async (query) => manageList(query),
+    librarySetState: async (ids, to) => {
+      ids.forEach((sourceId) => liveSource(sourceId));
+      let changed = 0;
+      for (const sourceId of ids) {
+        if (stateOf(sourceId) === to) continue;
+        manage.states.set(sourceId, { state: to, changedAt: now() });
+        changed++;
+      }
+      return changed;
+    },
+    libraryRemovePermanently: async (ids) => removeSources(ids),
+    libraryUpdateSource: async (input) => {
+      const source = liveSource(input.id);
+      const title = requireTitle(input.title, "source");
+      Object.assign(source, { ...input, title, updatedAt: now() });
+      return { ...source };
+    },
+    libraryCollections: async () =>
+      manage.collections.map((c) => ({ ...c, count: [...(manage.members.get(c.id) ?? [])].filter((x) => liveOrNull(x) && stateOf(x) !== "trashed").length })),
+    libraryCollectionCreate: async (name, parentId) => {
+      const trimmed = name.trim();
+      if (!trimmed) throw new ApiError("invalidInput", "A collection needs a name.", "library.badName");
+      if (manage.collections.some((c) => c.parentId === parentId && c.name.toLowerCase() === trimmed.toLowerCase())) {
+        throw new ApiError("conflict", `There is already a collection called “${trimmed}” here.`, "library.collectionExists");
+      }
+      const made = { id: id(), parentId, name: trimmed, count: 0 };
+      manage.collections.push(made);
+      return { ...made };
+    },
+    libraryCollectionRename: async (collectionId, name) => {
+      find(manage.collections, collectionId, "collection").name = name.trim();
+    },
+    libraryCollectionMove: async (collectionId, parentId) => {
+      let at: string | null = parentId;
+      while (at) {
+        if (at === collectionId) throw new ApiError("invalidInput", "A collection cannot be moved into itself or into one of its own collections.", "library.collectionCycle");
+        at = manage.collections.find((c) => c.id === at)?.parentId ?? null;
+      }
+      find(manage.collections, collectionId, "collection").parentId = parentId;
+    },
+    libraryCollectionRemove: async (collectionId) => {
+      const gone = new Set([collectionId]);
+      let grew = true;
+      while (grew) {
+        grew = false;
+        for (const c of manage.collections) {
+          if (c.parentId && gone.has(c.parentId) && !gone.has(c.id)) {
+            gone.add(c.id);
+            grew = true;
+          }
+        }
+      }
+      manage.collections = manage.collections.filter((c) => !gone.has(c.id));
+      gone.forEach((g) => manage.members.delete(g));
+    },
+    libraryCollect: async (collectionId, ids, add) => {
+      find(manage.collections, collectionId, "collection");
+      const members = manage.members.get(collectionId) ?? new Set<string>();
+      ids.forEach((x) => (add ? members.add(x) : members.delete(x)));
+      manage.members.set(collectionId, members);
+      return ids.length;
+    },
+    libraryTags: async () =>
+      [...manage.tags]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((tag) => ({ ...tag, count: [...(manage.tagged.get(tag.id) ?? [])].filter((x) => liveOrNull(x) && stateOf(x) !== "trashed").length })),
+    libraryTagRename: async (tagId, name) => {
+      find(manage.tags, tagId, "tag").name = name.trim();
+    },
+    libraryTagRemove: async (tagId) => {
+      manage.tags = manage.tags.filter((tag) => tag.id !== tagId);
+      manage.tagged.delete(tagId);
+    },
+    libraryRetag: async (ids, add, remove) => {
+      for (const name of add) {
+        let tag = manage.tags.find((x) => x.name.toLowerCase() === name.trim().toLowerCase());
+        if (!tag) manage.tags.push((tag = { id: id(), name: name.trim() }));
+        const set = manage.tagged.get(tag.id) ?? new Set<string>();
+        ids.forEach((x) => set.add(x));
+        manage.tagged.set(tag.id, set);
+      }
+      for (const tagId of remove) ids.forEach((x) => manage.tagged.get(tagId)?.delete(x));
+    },
+    librarySearch: async ({ query, offset = 0, sourceType, language, state, collectionId }) => {
       const words = query.toLowerCase().replace(/["“”]/g, "").split(/\s+/).filter(Boolean);
-      const matches = library.segments.filter((x) => words.every((w) => x.text.toLowerCase().includes(w)));
+      const matches = library.segments.filter((x) => {
+        const source = library.sources.find((s) => s.id === x.sourceId && !s.deleted);
+        if (!source) return false;
+        const current = stateOf(source.id);
+        if (current === "trashed" || (state && current !== state)) return false;
+        if (collectionId && !manage.members.get(collectionId)?.has(source.id)) return false;
+        if (sourceType && source.sourceType !== sourceType) return false;
+        if (language && source.language !== language) return false;
+        return words.every((w) => x.text.toLowerCase().includes(w));
+      });
       const hits: LibraryHit[] = matches.slice(offset, offset + 50).map((x) => {
         const source = liveSource(x.sourceId);
         let snippet = x.text;
         for (const w of words) snippet = snippet.replace(new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "i"), "\u0002$1\u0003");
-        return { sourceId: source.id, sourceTitle: source.title, author: source.author, segmentId: x.id, position: x.position, pageNumber: x.pageNumber, locator: x.locator, snippet };
+        return { sourceId: source.id, sourceTitle: source.title, author: source.author, segmentId: x.id, position: x.position, pageNumber: x.pageNumber, locator: x.locator, snippet, archived: stateOf(source.id) === "archived" };
       });
       return { hits, offset, hasMore: matches.length > offset + 50 };
     },
@@ -1312,6 +2523,23 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       }
       return window(sourceId, offset, limit, null);
     },
+    libraryPdfStructure: async (sourceId) => ({sourceId,fileHash:null,status:"missing",complete:false,tagged:false,unalignedTags:0,uncertainPages:0,headings:[],corrections:[],canUndo:false}),
+    libraryPdfStructureProgress: async () => null,
+    libraryPdfStructureCancel: async () => false,
+    libraryPdfStructureBuild: async () => {throw new Error("No PDF file in the memory library");},
+    libraryPdfStructureCorrect: async () => {throw new Error("No PDF structure in the memory library");},
+    libraryPdfStructureUndo: async () => {throw new Error("No PDF structure in the memory library");},
+    libraryPdfStructureDiagnostic: async (sourceId, passage, observed) => ({
+      schema: "abidingword.pdf-structure-diagnostic/1", appVersion: "memory", generatedAt: new Date(0).toISOString(),
+      privacy: "Metadata only.",
+      source: { id: sourceId, fileSha256: null, fileSizeBytes: null, language: null, indexLanguage: "En", segmentCount: 0, pagesWithText: 0 },
+      structure: { status: "none", analysis: null, currentAnalysis: 2, rebuildRecommended: true, pageCount: null, headingCount: 0, listingPages: [], corrections: 0, byScope: {}, byBasis: {} },
+      headings: [],
+      query: passage ? { input: passage, canonical: null, verdict: "No place in this source shares a verse with the passage.", candidates: [], readerTarget: null } : null,
+      readerObserved: observed,
+    }),
+    chooseDiagnosticFile: async () => null,
+    libraryPdfStructureDiagnosticSave: async () => {throw new Error("No PDF structure in the memory library");},
     librarySourceContents: async (sourceId) => {
       liveSource(sourceId);
       return contentsOf.get(sourceId) ?? [];
@@ -1421,11 +2649,11 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
     libraryOriginalInfo: async (sourceId) => {
       const source = liveSource(sourceId);
       if (!source.originalView) throw new ApiError("invalidInput", "This source has no original view.");
-      return { kind: "pdf", sizeBytes: originalBytes.length };
+      return { kind: "pdf", sizeBytes: (originalPdfOf.get(sourceId) ?? originalBytes).length };
     },
     libraryOriginalRead: async (sourceId, offset, length) => {
       liveSource(sourceId);
-      return originalBytes.slice(offset, offset + length);
+      return (originalPdfOf.get(sourceId) ?? originalBytes).slice(offset, offset + length);
     },
     sourceGetPassages: async (sourceId) => library.mentions.filter((m) => m.sourceId === sourceId).map(mention),
     // Mirrors db::library::passage_sources and library/relevance.rs: rank = (class, origin, fit,
@@ -1648,7 +2876,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       };
       const citation: FindingCitation = {
         id: id(), findingId: finding.id, sourceId: source.id, segmentId: placeOut.segmentId, title: source.title, author: source.author,
-        locator: locator || null, removed: false, quote, section: section || null, annotationId: input.annotationId ?? null,
+        locator: locator || null, removed: false,
+        unavailable: false, quote, section: section || null, annotationId: input.annotationId ?? null,
       };
       citationPlaces.set(citation.id, placeOut);
       finding.sources.push(citation);
@@ -1657,14 +2886,15 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       return { ...finding, sources: [...finding.sources] };
     },
     findingSourceLocate: async (citationId) => {
-      const finding = state.findings.find((f) => f.sources.some((c) => c.id === citationId));
+      const finding = state.findings.find((f) => f.sources.some((c) => c.id === citationId)) ?? state.teaching.preparations.flatMap(p => p.links.flatMap(l => l.saved ? [l.saved] : [])).find(f => f.sources.some(c => c.id === citationId));
       const citation = finding?.sources.find((c) => c.id === citationId);
       if (!citation) throw new ApiError("notFound", "This citation could not be found.");
-      if (citation.removed || library.sources.find((x) => x.id === citation.sourceId)?.deleted) return null;
+      if (citation.removed || citation.sourceId === null || library.sources.find((x) => x.id === citation.sourceId)?.deleted) return null;
+      const sourceId = citation.sourceId;
       const known = citationPlaces.get(citationId);
       const live = (segmentId: string | null) => (segmentId && library.segments.some((x) => x.id === segmentId) ? segmentId : null);
-      if (!known) return { sourceId: citation.sourceId, segmentId: live(citation.segmentId), words: null, page: null, fraction: null };
-      return { sourceId: citation.sourceId, segmentId: live(known.segmentId), words: live(known.segmentId) ? known.words : null, page: known.page, fraction: known.fraction };
+      if (!known) return { sourceId, segmentId: live(citation.segmentId), words: null, page: null, fraction: null };
+      return { sourceId, segmentId: live(known.segmentId), words: live(known.segmentId) ? known.words : null, page: known.page, fraction: known.fraction };
     },
     findingSourceRemove: async (citationId) => {
       const finding = state.findings.find((f) => f.sources.some((c) => c.id === citationId));

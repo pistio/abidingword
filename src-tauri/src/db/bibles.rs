@@ -7,6 +7,7 @@
 //! the removed wording keep their passage and lose only the translation link.
 
 use rusqlite::{params, Connection, OptionalExtension, Row};
+use serde::Serialize;
 
 use crate::db::{new_id, now};
 use crate::domain::validate;
@@ -21,12 +22,25 @@ use crate::scripture::{
 
 const COLUMNS: &str = "id, name, short_name, language, language_code, publisher, \
     copyright_notice, license_type, kind, source_type, source_origin, source_path, \
-    original_file_name, import_status, is_builtin, book_count, verse_count, created_at, updated_at";
+    original_file_name, import_status, is_builtin, book_count, verse_count, created_at, updated_at, \
+    state, state_changed_at, \
+    (SELECT json_object('wordCount', a.word_count, 'verseCount', a.verse_count, \
+        'lemmas', json(CASE WHEN a.lemma_count > 0 THEN 'true' ELSE 'false' END), \
+        'lexicalIds', json(CASE WHEN a.strong_count > 0 THEN 'true' ELSE 'false' END), \
+        'morphology', json(CASE WHEN a.morph_count > 0 THEN 'true' ELSE 'false' END), \
+        'morphScheme', COALESCE(a.grammar_scheme, a.morph_scheme), \
+        'morphAttribute', a.morph_attribute, 'sourceFormat', a.source_format, \
+        'grammarBasis', a.grammar_basis, 'grammarEvidence', json(a.grammar_evidence)) \
+     FROM bible_word_annotations a WHERE a.translation_id = bible_translations.id), \
+    (SELECT e.confirmed_by_person FROM bible_recognition_editions e WHERE e.translation_id = bible_translations.id)";
 
 const SHORT_NAME_MAX_CHARS: usize = 20;
 const SEARCH_LIMIT: usize = 200;
 
 fn from_row(row: &Row) -> rusqlite::Result<BibleTranslation> {
+    let source_type: String = row.get(9)?;
+    let confirmed: Option<bool> = row.get(22)?;
+    let document = crate::scripture::documents::is_document_format(&source_type);
     Ok(BibleTranslation {
         id: row.get(0)?,
         name: row.get(1)?,
@@ -36,8 +50,14 @@ fn from_row(row: &Row) -> rusqlite::Result<BibleTranslation> {
         publisher: row.get(5)?,
         copyright_notice: row.get(6)?,
         license_type: row.get(7)?,
-        kind: row.get(8)?,
-        source_type: row.get(9)?,
+        kind: if document && confirmed.is_none() {
+            "document".into()
+        } else {
+            row.get(8)?
+        },
+        edition_confirmed: document.then_some(confirmed.unwrap_or(false)),
+        document_recognised: confirmed.is_some(),
+        source_type,
         source_origin: row.get(10)?,
         source_path: row.get(11)?,
         original_file_name: row.get(12)?,
@@ -47,10 +67,26 @@ fn from_row(row: &Row) -> rusqlite::Result<BibleTranslation> {
         verse_count: row.get(16)?,
         created_at: row.get(17)?,
         updated_at: row.get(18)?,
+        state: row.get(19)?,
+        state_changed_at: row.get(20)?,
+        words: row
+            .get::<_, Option<String>>(21)?
+            .and_then(|json| serde_json::from_str(&json).ok()),
     })
 }
 
+/// The Bibles read and chosen from (v0.24: not archived or in Trash).
 pub fn list(conn: &Connection) -> AppResult<Vec<BibleTranslation>> {
+    let mut stmt = conn.prepare(&format!(
+        "SELECT {COLUMNS} FROM bible_translations WHERE state = 'active'
+         ORDER BY name COLLATE NOCASE, short_name"
+    ))?;
+    let rows = stmt.query_map([], from_row)?;
+    Ok(rows.collect::<Result<_, _>>()?)
+}
+
+/// Every Bible, archived and trashed ones included (Settings, v0.24).
+pub fn list_all(conn: &Connection) -> AppResult<Vec<BibleTranslation>> {
     let mut stmt = conn.prepare(&format!(
         "SELECT {COLUMNS} FROM bible_translations ORDER BY name COLLATE NOCASE, short_name"
     ))?;
@@ -105,6 +141,41 @@ pub fn commit_import(
             "This Bible has problems that must be resolved before it can be added.",
         )));
     }
+    let checked = check_details(conn, meta)?;
+    let now = now();
+    let tx = conn.unchecked_transaction()?;
+    insert_translation(
+        &tx,
+        id,
+        &checked,
+        meta,
+        source,
+        Shape::Structured(content),
+        &now,
+    )?;
+    insert_verses(&tx, id, content)?;
+    crate::db::bible_words::insert(&tx, id, content, source.format, &meta.words, &now)?;
+    tx.commit()?;
+    log::info!(
+        "Bible added: {} ({} books, {} verses)",
+        checked.short_name,
+        content.books.len(),
+        content.verse_count()
+    );
+    get(conn, id)
+}
+
+/// The details of a Bible about to be added, checked.
+pub struct CheckedDetails {
+    pub name: String,
+    pub short_name: String,
+    pub language: String,
+    pub language_code: Option<String>,
+}
+
+/// Checks the name, short name and language the person gave, and that the
+/// short name is free.
+pub fn check_details(conn: &Connection, meta: &CommitImport) -> AppResult<CheckedDetails> {
     let name = validate::title(&meta.name, "Bible")?;
     let short_name = validate::title(&meta.short_name, "Bible's short name")?;
     if short_name.chars().count() > SHORT_NAME_MAX_CHARS {
@@ -117,6 +188,7 @@ pub fn commit_import(
         ));
     }
     let language = validate::title(&meta.language, "language")?;
+    let language_code = language_tag(meta.language_code.as_deref())?;
     let taken: bool = conn.query_row(
         "SELECT EXISTS (SELECT 1 FROM bible_translations WHERE short_name = ?1 COLLATE NOCASE)",
         [&short_name],
@@ -125,87 +197,165 @@ pub fn commit_import(
     if taken {
         return Err(AppError::DuplicateTranslation(short_name));
     }
+    Ok(CheckedDetails {
+        name,
+        short_name,
+        language,
+        language_code,
+    })
+}
+
+/// What kind of Bible a translation row describes.
+pub enum Shape<'a> {
+    /// Readable by passage: its verses follow.
+    Structured(&'a StagedContent),
+    /// Read as a document only (v0.23): no verses.
+    Document,
+}
+
+/// Inserts the translation's own row.
+pub fn insert_translation(
+    tx: &Connection,
+    id: &str,
+    checked: &CheckedDetails,
+    meta: &CommitImport,
+    source: &SourceRecord,
+    shape: Shape,
+    now: &str,
+) -> AppResult<()> {
     let optional = |v: &Option<String>| {
         v.as_deref()
             .map(str::trim)
             .filter(|s| !s.is_empty())
             .map(String::from)
     };
-
-    let now = now();
-    let tx = conn.unchecked_transaction()?;
+    let (kind, status, books, verses) = match shape {
+        Shape::Structured(content) => (
+            "structured",
+            "ready",
+            content.books.len() as i64,
+            content.verse_count() as i64,
+        ),
+        Shape::Document => ("document", "document_only", 0, 0),
+    };
     tx.execute(
         "INSERT INTO bible_translations
              (id, name, short_name, language, language_code, publisher, copyright_notice,
               license_type, kind, source_type, source_origin, source_path, original_file_name,
               import_status, is_builtin, book_count, verse_count, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, 'structured', ?9, ?10, ?11, ?12, 'ready',
-                 ?13, ?14, ?15, ?16, ?16)",
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14,
+                 ?15, ?16, ?17, ?18, ?18)",
         params![
             id,
-            name,
-            short_name,
-            language,
-            optional(&meta.language_code),
+            checked.name,
+            checked.short_name,
+            checked.language,
+            checked.language_code,
             optional(&meta.publisher),
             optional(&meta.copyright_notice),
             optional(&meta.license_type),
+            kind,
             source.format,
             source.origin,
             source.path,
             source.original_file_name,
+            status,
             source.is_builtin,
-            content.books.len() as i64,
-            content.verse_count() as i64,
+            books,
+            verses,
             now
         ],
     )?;
-    {
-        let mut add_verse = tx.prepare(
-            "INSERT OR IGNORE INTO bible_verses (id, book_id, chapter, verse) VALUES (?1, ?2, ?3, ?4)",
-        )?;
-        let mut add_text = tx.prepare(
-            "INSERT INTO bible_verse_texts (translation_id, verse_id, text) VALUES (?1, ?2, ?3)",
-        )?;
-        let mut add_title = tx.prepare(
-            "INSERT INTO bible_superscriptions (translation_id, book_id, chapter, text)
-             VALUES (?1, ?2, ?3, ?4)",
-        )?;
-        for (ordinal, book) in &content.books {
-            for (chapter, text) in &book.chapters {
-                for (verse, words) in &text.verses {
-                    let key = verse_key(*ordinal, *chapter, *verse);
-                    add_verse.execute(params![key, ordinal, chapter, verse])?;
-                    add_text.execute(params![id, key, words])?;
+    Ok(())
+}
+
+/// Inserts a structured Bible's verses and Psalm titles.
+pub fn insert_verses(tx: &Connection, id: &str, content: &StagedContent) -> AppResult<()> {
+    insert_verses_where(tx, id, content, |_, _| true)
+}
+
+/// Inserts the verses of the chapters `keep` accepts (v0.24: a document
+/// Bible's chapters recognised without doubt).
+pub fn insert_verses_where(
+    tx: &Connection,
+    id: &str,
+    content: &StagedContent,
+    keep: impl Fn(u8, u16) -> bool,
+) -> AppResult<()> {
+    insert_verses_matching(tx, id, content, |o, c, _| keep(o, c))
+}
+
+/// Inserts the verses `keep` accepts (v0.24.3: of a document Bible, those
+/// whose text is verified); a chapter's superscription with any of them.
+pub fn insert_verses_matching(
+    tx: &Connection,
+    id: &str,
+    content: &StagedContent,
+    keep: impl Fn(u8, u16, u16) -> bool,
+) -> AppResult<()> {
+    let mut add_verse = tx.prepare(
+        "INSERT OR IGNORE INTO bible_verses (id, book_id, chapter, verse) VALUES (?1, ?2, ?3, ?4)",
+    )?;
+    let mut add_text = tx.prepare(
+        "INSERT INTO bible_verse_texts (translation_id, verse_id, text, bridge_end)
+         VALUES (?1, ?2, ?3, ?4)",
+    )?;
+    let mut add_title = tx.prepare(
+        "INSERT INTO bible_superscriptions (translation_id, book_id, chapter, text)
+         VALUES (?1, ?2, ?3, ?4)",
+    )?;
+    for (ordinal, book) in &content.books {
+        for (chapter, text) in &book.chapters {
+            let mut any = false;
+            for (verse, words) in &text.verses {
+                if !keep(*ordinal, *chapter, *verse) {
+                    continue;
                 }
-                if let Some(title) = &text.superscription {
-                    add_title.execute(params![id, ordinal, chapter, title])?;
-                }
+                any = true;
+                let key = verse_key(*ordinal, *chapter, *verse);
+                add_verse.execute(params![key, ordinal, chapter, verse])?;
+                add_text.execute(params![id, key, words, text.bridges.get(verse)])?;
+            }
+            if !any {
+                continue;
+            }
+            if let Some(title) = &text.superscription {
+                add_title.execute(params![id, ordinal, chapter, title])?;
             }
         }
     }
-    tx.commit()?;
-    log::info!(
-        "Bible added: {short_name} ({} books, {} verses)",
-        content.books.len(),
-        content.verse_count()
-    );
-    get(conn, id)
+    Ok(())
 }
 
 /// Removes a translation's own data. Returns what was removed so the caller
 /// can delete Abiding Word's managed copy of the source files.
 pub fn remove(conn: &Connection, id: &str) -> AppResult<BibleTranslation> {
-    let translation = get(conn, id)?;
     let tx = conn.unchecked_transaction()?;
+    let translation = remove_in(&tx, id)?;
+    tx.commit()?;
+    log::info!("Bible removed: {}", translation.short_name);
+    Ok(translation)
+}
+
+/// Removes a Bible inside a transaction the caller commits (v0.24: several
+/// at once are removed together or not at all).
+pub fn remove_in(tx: &rusqlite::Transaction, id: &str) -> AppResult<BibleTranslation> {
+    let translation = get(tx, id)?;
+    // Its word index first, in bulk (v0.21): left to the cascade, each entry
+    // removed would look up its words one by one.
+    crate::db::bible_words::remove(tx, id)?;
+    // A document Bible's text and its search entries (v0.23), explicitly.
+    tx.execute(
+        "DELETE FROM bible_document_segments
+         WHERE document_id IN (SELECT id FROM bible_documents WHERE translation_id = ?1)",
+        [id],
+    )?;
     tx.execute("DELETE FROM bible_translations WHERE id = ?1", [id])?;
     // Forget it as the active translation.
     tx.execute(
         "DELETE FROM settings WHERE key = 'scripture.translation' AND value = ?1",
         [serde_json::to_string(id).unwrap_or_default()],
     )?;
-    tx.commit()?;
-    log::info!("Bible removed: {}", translation.short_name);
     Ok(translation)
 }
 
@@ -217,7 +367,7 @@ fn verses_between(
 ) -> AppResult<Vec<VerseText>> {
     let mut stmt = conn.prepare(
         "SELECT v.book_id, v.chapter, v.verse, t.text
-         FROM bible_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+         FROM scripture_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
          WHERE t.translation_id = ?1 AND t.verse_id BETWEEN ?2 AND ?3
          ORDER BY t.verse_id",
     )?;
@@ -243,6 +393,58 @@ fn verses_between(
     Ok(verses)
 }
 
+/// A language tag as stored: well formed and normalised, or none. A value that
+/// is not a tag (a name, a typo) is refused rather than stored.
+fn language_tag(value: Option<&str>) -> AppResult<Option<String>> {
+    match value.map(str::trim).filter(|v| !v.is_empty()) {
+        None => Ok(None),
+        Some(v) => crate::scripture::language::normalise_tag(v)
+            .map(Some)
+            .ok_or_else(|| {
+                AppError::InvalidInput(
+                    UserMessage::new(
+                        "bibles.badLanguage",
+                        format!("“{v}” is not a language this app knows."),
+                    )
+                    .with("text", v),
+                )
+            }),
+    }
+}
+
+/// Changes the language of an installed Bible: its name as shown and its
+/// tag (which typed references use first). Text, verses and references are
+/// untouched.
+pub fn set_language(
+    conn: &Connection,
+    id: &str,
+    language: &str,
+    language_code: Option<&str>,
+) -> AppResult<BibleTranslation> {
+    get(conn, id)?;
+    let language = validate::title(language, "language")?;
+    let language_code = language_tag(language_code)?;
+    conn.execute(
+        "UPDATE bible_translations SET language = ?2, language_code = ?3, updated_at = ?4 WHERE id = ?1",
+        params![id, language, language_code, now()],
+    )?;
+    get(conn, id)
+}
+
+/// Whether any installed Bible has this verse (by its own numbering): a
+/// Bible that counts Psalm titles as verses (Ps 51:21) makes that citation
+/// good whichever Bible is being read. Asked only for a verse beyond the
+/// canon's count, so the scan is rare.
+pub fn any_has_verse(conn: &Connection, book: &canon::Book, chapter: u16, verse: u16) -> bool {
+    let verse_id = verse_key(book.ordinal, chapter, verse);
+    conn.query_row(
+        "SELECT 1 FROM scripture_verse_texts WHERE verse_id = ?1 LIMIT 1",
+        [verse_id],
+        |_| Ok(()),
+    )
+    .is_ok()
+}
+
 pub fn chapter(
     conn: &Connection,
     translation_id: &str,
@@ -262,12 +464,31 @@ pub fn chapter(
     let reference = ScriptureRef::chapter(book, chapter)?;
     let superscription = conn
         .query_row(
-            "SELECT text FROM bible_superscriptions
+            "SELECT text FROM scripture_superscriptions
              WHERE translation_id = ?1 AND book_id = ?2 AND chapter = ?3",
             params![translation_id, book.ordinal, chapter],
             |r| r.get(0),
         )
         .optional()?;
+    let mut stmt = conn.prepare(
+        "SELECT verse_id, first_page, reason, document_id, first_segment FROM bible_verse_places
+         WHERE translation_id = ?1 AND verse_id BETWEEN ?2 AND ?3 ORDER BY verse_id",
+    )?;
+    let unchecked = stmt
+        .query_map(
+            params![translation_id, reference.start_key(), reference.end_key()],
+            |r| {
+                let key: i64 = r.get(0)?;
+                Ok(crate::scripture::UncheckedVerse {
+                    verse: crate::scripture::reference::split_key(key).2,
+                    page: r.get(1)?,
+                    reason: r.get(2)?,
+                    document_id: r.get(3)?,
+                    segment: r.get(4)?,
+                })
+            },
+        )?
+        .collect::<Result<Vec<_>, _>>()?;
     Ok(ChapterText {
         translation_id: translation_id.to_string(),
         book: book.code,
@@ -275,6 +496,7 @@ pub fn chapter(
         chapter,
         chapter_count: book.chapter_count,
         superscription,
+        unchecked,
         verses: verses_between(
             conn,
             translation_id,
@@ -333,9 +555,10 @@ pub fn search(conn: &Connection, input: &SearchScripture) -> AppResult<SearchRes
     let mut stmt = conn.prepare(
         "SELECT t.verse_id, t.translation_id, tr.short_name, t.text
          FROM bible_verse_search s
-         JOIN bible_verse_texts t ON t.id = s.rowid
+         JOIN scripture_verse_texts t ON t.id = s.rowid
          JOIN bible_translations tr ON tr.id = t.translation_id
          WHERE bible_verse_search MATCH ?1
+           AND tr.state = 'active'
            AND (?2 IS NULL OR t.translation_id = ?2)
            AND (?3 IS NULL OR t.verse_id BETWEEN ?3 AND ?4)
          ORDER BY t.verse_id, tr.short_name
@@ -379,4 +602,158 @@ pub fn search(conn: &Connection, input: &SearchScripture) -> AppResult<SearchRes
 
 pub fn new_translation_id() -> String {
     new_id()
+}
+
+/// A verse of a material's passage: its text, and for a bridge ("25–27")
+/// the last verse it covers.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct MaterialVerse {
+    pub canonical: String,
+    pub chapter: u16,
+    pub verse: u16,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub bridge_end: Option<u16>,
+    /// A psalm's title (or a like line before verse 1), on the chapter's
+    /// first verse when the passage takes the chapter from its beginning.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
+    pub text: String,
+}
+
+/// One passage of a material, as the chosen Bible has it (v0.18.8).
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct MaterialPassage {
+    /// The reference as the teaching names it (canonical form).
+    pub canonical: String,
+    pub verses: Vec<MaterialVerse>,
+    /// Verses the passage covers that this Bible has no text for, as
+    /// "chapter:verse", in order; the material says so and keeps the
+    /// reference, and never takes them from another Bible.
+    pub missing: Vec<String>,
+}
+
+/// The passages of a material, all from one Bible, with what the person may
+/// want to say about where the text comes from.
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct MaterialScripture {
+    pub translation_id: String,
+    pub name: String,
+    pub short_name: String,
+    pub copyright_notice: Option<String>,
+    pub passages: Vec<MaterialPassage>,
+}
+
+/// The text of each passage from the one Bible chosen, checked against the
+/// canon's verse counts so that a verse the Bible lacks is named instead of
+/// silently left out. Verses a translation combines into one ("25–27") count
+/// as there, and a passage that starts inside such a bridge starts with it.
+/// A verse beyond the canon's count is read too, when the Bible has it
+/// (versifications differ). Nothing is fetched, filled in, or taken from
+/// another Bible; the text stays on this computer.
+pub fn material_passages(
+    conn: &Connection,
+    translation_id: &str,
+    references: &[ScriptureRef],
+) -> AppResult<MaterialScripture> {
+    let bible = get(conn, translation_id)?;
+    let mut read = conn.prepare(
+        "SELECT v.chapter, v.verse, t.text, t.bridge_end
+         FROM scripture_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+         WHERE t.translation_id = ?1 AND t.verse_id BETWEEN ?2 AND ?3
+         ORDER BY t.verse_id",
+    )?;
+    let mut passages = Vec::with_capacity(references.len());
+    for reference in references {
+        let ordinal = reference.book.ordinal;
+        let code = reference.book.code;
+        let mut from = reference.start_key();
+        // A passage that begins inside a bridge begins with the bridge's verse.
+        if let Some(start) = reference.start.verse {
+            let bridged: Option<i64> = conn
+                .query_row(
+                    "SELECT t.verse_id FROM scripture_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+                     WHERE t.translation_id = ?1 AND v.book_id = ?2 AND v.chapter = ?3
+                       AND v.verse < ?4 AND t.bridge_end >= ?4
+                     ORDER BY v.verse DESC LIMIT 1",
+                    params![translation_id, ordinal, reference.start.chapter, start],
+                    |r| r.get(0),
+                )
+                .optional()?;
+            if let Some(key) = bridged {
+                from = key;
+            }
+        }
+        let verses = read
+            .query_map(params![translation_id, from, reference.end_key()], |r| {
+                let chapter: u16 = r.get(0)?;
+                let verse: u16 = r.get(1)?;
+                Ok(MaterialVerse {
+                    canonical: format!("{code}.{chapter}.{verse}"),
+                    chapter,
+                    verse,
+                    bridge_end: r.get(3)?,
+                    title: None,
+                    text: r.get(2)?,
+                })
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        let mut verses = verses;
+        // A chapter taken from its beginning keeps its title (Psalm titles), as the reader shows it.
+        for v in verses.iter_mut() {
+            let from_start = v.verse == 1
+                && (v.chapter > reference.start.chapter
+                    || reference.start.verse.is_none_or(|s| s <= 1));
+            if from_start {
+                v.title = conn
+                    .query_row(
+                        "SELECT text FROM scripture_superscriptions
+                         WHERE translation_id = ?1 AND book_id = ?2 AND chapter = ?3",
+                        params![translation_id, ordinal, v.chapter],
+                        |r| r.get(0),
+                    )
+                    .optional()?;
+            }
+        }
+        let mut have: std::collections::HashSet<(u16, u16)> = std::collections::HashSet::new();
+        for v in &verses {
+            for n in v.verse..=v.bridge_end.unwrap_or(v.verse).max(v.verse) {
+                have.insert((v.chapter, n));
+            }
+        }
+        let mut missing = Vec::new();
+        for chapter in reference.start.chapter..=reference.end.chapter {
+            let canon_last = canon::verse_count(reference.book, chapter).unwrap_or(0);
+            let first = if chapter == reference.start.chapter {
+                reference.start.verse.unwrap_or(1)
+            } else {
+                1
+            };
+            // A verse named beyond the canon's count is expected too: some Bibles number further.
+            let end = if chapter == reference.end.chapter {
+                reference.end.verse.unwrap_or(canon_last)
+            } else {
+                canon_last
+            };
+            for verse in first..=end {
+                if !have.contains(&(chapter, verse)) {
+                    missing.push(format!("{chapter}:{verse}"));
+                }
+            }
+        }
+        passages.push(MaterialPassage {
+            canonical: reference.canonical(),
+            verses,
+            missing,
+        });
+    }
+    Ok(MaterialScripture {
+        translation_id: bible.id,
+        name: bible.name,
+        short_name: bible.short_name,
+        copyright_notice: bible.copyright_notice,
+        passages,
+    })
 }

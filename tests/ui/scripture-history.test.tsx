@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { canGoBack, canGoForward, goBack, goForward, HISTORY_LIMIT, startHistory, visit } from "@/features/scripture/scriptureHistory";
 import type { ScriptureRef } from "@/types/scripture";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 // Scripture Back / Forward and "Back to {main passage}" (v0.11). All text is invented.
 
@@ -138,6 +139,7 @@ describe("Back to the Study's primary passage", () => {
     const { user } = await renderApp(api);
     await user.click(await screen.findByRole("button", { name: /The True Vine/ }));
     expect(await within(pane()).findByText(/showing John 15:1–11/)).toBeInTheDocument();
+    await openStudyOptions(user);
     expect(backToMain("John 15:1–11")).not.toBeInTheDocument();
 
     await go(user, "Rom 6");
@@ -151,8 +153,10 @@ describe("Back to the Study's primary passage", () => {
     expect(await heading()).toHaveTextContent("Ephesians 2");
 
     // the direct return is a single move, and the place left stays reachable by Back
+    await openStudyOptions(user);
     await user.click(backToMain("John 15:1–11")!);
     expect(await within(pane()).findByText(/showing John 15:1–11/)).toBeInTheDocument();
+    await openStudyOptions(user);
     expect(backToMain("John 15:1–11")).not.toBeInTheDocument();
     await user.click(backButton());
     expect(await heading()).toHaveTextContent("Ephesians 2");
@@ -172,12 +176,13 @@ describe("Back to the Study's primary passage", () => {
     await go(user, "Gal 2");
     expect(await within(pane()).findByRole("button", { name: "Back to John 15:1–11" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Back to Studies" }));
+    await user.click(screen.getByRole("button", { name: "Back to Series" }));
     await waitFor(() => expect(within(pane()).queryByRole("button", { name: /^Back to / })).not.toBeInTheDocument());
     await user.click(await screen.findByRole("button", { name: /Life in the Spirit/ }));
     await within(pane()).findByText(/showing Romans 8:1–4/);
     await go(user, "Gal 2");
     expect(await within(pane()).findByRole("button", { name: "Back to Romans 8:1–4" })).toBeInTheDocument();
+    await openStudyOptions(user);
     expect(backToMain("John 15:1–11")).not.toBeInTheDocument();
   });
 });

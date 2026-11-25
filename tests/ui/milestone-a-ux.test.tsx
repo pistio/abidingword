@@ -1,0 +1,169 @@
+import { readerPageName } from "../support/readerActions";
+import { act, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, expect, it } from "vitest";
+import i18n from "@/i18n";
+import { derive } from "@/features/materials/derive";
+import { createFakePdfEngine } from "../support/fakePdfEngine";
+import { createMemoryApi } from "../support/memoryApi";
+import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
+import { openTeachingOptions, openBlockOptions } from "../support/studyActions";
+
+const sources = () => within(screen.getByRole("complementary", { name: "Sources" }));
+afterEach(async () => { window.localStorage.clear(); await act(async () => { await i18n.changeLanguage("en"); }); });
+
+it.each([false, true])("offers a complete folder import from Add to library, recursive=%s", async (recursive) => {
+  const api = createMemoryApi();
+  api.state.batch.nextFolder = { path: "/synthetic", files: ["/synthetic/first.md", "/synthetic/nested/second.md"] };
+  const { user } = await renderApp(api);
+  await user.click(await sources().findByRole("button", { name: "Add Sources…" }));
+  const dialog = within(screen.getByRole("dialog", { name: "Add Sources" }));
+  if (!recursive) await user.click(dialog.getByRole("checkbox", { name: "Include files in subfolders" }));
+  await user.click(dialog.getByRole("button", { name: "Choose a folder…" }));
+  await dialog.findByRole("list", { name: "Files found" });
+  expect(dialog.queryByText("second.md") !== null).toBe(recursive);
+  await user.click(dialog.getByRole("button", { name: recursive ? "Add 2 sources" : "Add 1 source" }));
+  await dialog.findByText(recursive ? "2 sources were added." : "1 source was added.");
+  await user.click(dialog.getByRole("button", { name: "Close" }));
+  expect(await sources().findByRole("button", { name: "Open library" })).toBeInTheDocument();
+  expect(api.state.library.sources).toHaveLength(recursive ? 2 : 1);
+});
+
+it("offers multiple individual files without visiting Settings", async () => {
+  const api = createMemoryApi();
+  api.state.batch.nextFiles = ["/synthetic/first.md", "/synthetic/second.md"];
+  const { user } = await renderApp(api);
+  await user.click(await sources().findByRole("button", { name: "Add Sources…" }));
+  const dialog = within(screen.getByRole("dialog", { name: "Add Sources" }));
+  await user.click(dialog.getByRole("button", { name: "Choose files…" }));
+  expect(await dialog.findByText("first.md")).toBeInTheDocument();
+  expect(dialog.getByText("second.md")).toBeInTheDocument();
+  expect(api.state.library.sources).toHaveLength(0); // review before importing
+});
+
+it("uses physical PDF pages in both modes, keeps printed labels separate, and records jumps in history", async () => {
+  const api = createMemoryApi();
+  const source = api.installFixtureSource({ title: "Page fixture", format: "pdf", segments: [1, 2, 3].map(pageNumber => ({ text: `Synthetic page ${pageNumber}`, pageNumber })) });
+  api.state.library.segments.find(segment => segment.sourceId === source.id && segment.pageNumber === 2)!.pageLabel = "iv";
+  const engine = createFakePdfEngine({ pages: 3 });
+  const { user } = await renderApp(api, { pdfEngine: engine });
+  await user.click(await sources().findByRole("button", { name: "Page fixture" }));
+  // A.4.2: Reading has a compact "2 / 3" indicator; Original keeps the viewer's own page control.
+  const nav = () => within(screen.getByRole("navigation", { name: "PDF page navigation" }));
+  const indicator = () => screen.getByTestId("pdf-page-indicator");
+  const original = () => screen.getByTestId("pdf-page-indicator");
+  expect(nav().getByRole("button", { name: "Previous PDF page" })).toBeDisabled();
+  await user.click(nav().getByRole("button", { name: "Next PDF page" }));
+  expect(indicator()).toHaveTextContent("2 / 3");
+  expect(indicator()).toHaveAccessibleName(/PDF page 2 of 3 Printed page label: iv/);
+  expect(screen.queryByText(/PDF pages count from the start/)).toBeNull(); // explained in the jump form only
+  await user.click(screen.getByRole("button", { name: "Original" }));
+  await waitFor(() => expect(original()).toHaveAccessibleName(readerPageName("2")));
+  expect(screen.getAllByTestId("pdf-page-indicator")).toHaveLength(1); // shared in both views
+  await user.click(screen.getByRole("button", { name: "Next PDF page" }));
+  await waitFor(() => expect(original()).toHaveAccessibleName(readerPageName("3")));
+  expect(screen.getByRole("button", { name: "Next PDF page" })).toBeDisabled();
+  await user.click(screen.getByRole("button", { name: "Reading" }));
+  await waitFor(() => expect(indicator()).toHaveTextContent("3 / 3"));
+  await user.click(indicator());
+  const jump = screen.getByRole("dialog", { name: "Go to page" });
+  expect(jump).toHaveTextContent(/PDF pages count from the start/);
+  const input = within(jump).getByRole("spinbutton", { name: "PDF page" });
+  expect(input).toHaveFocus();
+  await user.clear(input); await user.type(input, "99");
+  await user.click(within(jump).getByRole("button", { name: "Go to page" }));
+  expect(within(jump).getByRole("alert")).toHaveTextContent("Enter a page from 1 to 3.");
+  expect(indicator()).toHaveTextContent("3 / 3");
+  await user.clear(input); await user.type(input, "1{Enter}");
+  expect(screen.queryByRole("dialog", { name: "Go to page" })).toBeNull();
+  await waitFor(() => expect(indicator()).toHaveTextContent("1 / 3"));
+  expect(indicator()).toHaveFocus();
+  await readerAction(user, i18n.t("library.history.back"));
+  await waitFor(() => expect(indicator()).toHaveTextContent("3 / 3"));
+  await readerAction(user, i18n.t("library.history.forward"));
+  await waitFor(() => expect(indicator()).toHaveTextContent("1 / 3"));
+  expect(api.state.library.segments.find(segment => segment.pageNumber === 2)?.pageLabel).toBe("iv");
+});
+
+it("shows actual opening history instead of presenting import order as recently opened", async () => {
+  const api = createMemoryApi();
+  for (const title of ["First imported", "Second imported"]) api.installFixtureSource({ title, format: "text", segments: [{ text: title }] });
+  const { user } = await renderApp(api);
+  expect(sources().queryByRole("heading", { name: "Recently opened" })).toBeNull();
+  await user.click(await sources().findByRole("button", { name: "First imported" }));
+  await user.click(await sources().findByRole("button", { name: "Back to Sources" }));
+  expect(await sources().findByRole("heading", { name: "Recently opened" })).toBeInTheDocument();
+  expect(sources().getByRole("button", { name: "First imported" })).toBeInTheDocument();
+  expect(within(sources().getByRole("list", { name: "Recently opened" })).queryByRole("button", { name: "Second imported" })).toBeNull();
+});
+
+it.each(["en", "de", "ko", "fr", "es", "pt"])("labels the passage, attributes Ten-Step and avoids a non-German EVA acronym in %s", async (language) => {
+  await act(async () => { await i18n.changeLanguage(language); });
+  const api = createMemoryApi(); const { user } = await renderApp(api);
+  await user.click(await screen.findByRole("button", { name: i18n.t("studies.newStudy.formLabel") }));
+  const label = i18n.t("studies.newStudy.subjectLabel.passage");
+  expect(await screen.findByRole("textbox", { name: label })).toHaveAttribute("placeholder", i18n.t("studies.newStudy.passagePlaceholder"));
+  for (const type of ["word", "topical", "character", "book"] as const) {
+    await user.click(screen.getByRole("button", { name: i18n.t(`studies.newStudy.approach.${type}`) }));
+    expect(screen.getByRole("textbox", { name: i18n.t(`studies.newStudy.subjectLabel.${type}`) })).toBeVisible();
+  }
+  await user.click(screen.getByRole("button", { name: i18n.t("studies.newStudy.approach.passage") }));
+  const method = await screen.findByRole("combobox", { name: i18n.t("studies.newStudy.template") });
+  await waitFor(() => expect(within(method).getAllByRole("option").length).toBeGreaterThan(1));
+  await user.selectOptions(method, "ten-step-writing-study");
+  expect(screen.getByText(/Helge Stadelmann.*Thomas Richter.*2024/)).toBeInTheDocument();
+  if (language === "de") expect(i18n.t("studies.teaching.builtin.eva.name")).toContain("EVA");
+  else expect(i18n.t("studies.teaching.builtin.eva.name")).not.toContain("EVA");
+});
+
+it("exposes visibility beside the writing while participant exports still omit private content", async () => {
+  const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Teaching test" });
+  await api.studyCreate({ projectId: project.id, title: "Privacy study" });
+  const { user } = await renderApp(api);
+  await user.click(await screen.findByRole("button", { name: /Privacy study/ }));
+  await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
+  await user.click(await screen.findByRole("button", { name: "Start" }));
+  const editor = await screen.findByRole("article", { name: /Privacy study/ });
+  const main = within(editor).getByRole("textbox", { name: "Main part" });
+  await user.type(main, "PRIVATE_SENTINEL");
+  // A.4.3: a section with one block is one unit; its visibility is in the section's options.
+  const block = main.closest("section") ?? main.closest('[role="group"]');
+  expect(block).not.toBeNull();
+  await openBlockOptions(user);
+  const visibility = within(block as HTMLElement).getByRole("checkbox", { name: "Show this to participants" });
+  expect(visibility).toBeVisible();
+  if ((visibility as HTMLInputElement).checked) await user.click(visibility);
+  await waitFor(() => expect(api.state.teaching.preparations[0]!.blocks!.some(b => b.body === "PRIVATE_SENTINEL" && !b.participantFacing)).toBe(true));
+  expect(api.state.teaching.preparations[0]!.studyId).toBe(api.state.studies[0]!.id);
+  await openTeachingOptions(user);
+  expect(within(editor).getByText("Based on: Bible Study — Privacy study")).toBeVisible();
+  expect(within(editor).getByRole("button", { name: "Open linked Study" })).toBeVisible();
+  const prep = await api.teachingGet(api.state.teaching.preparations[0]!.id);
+  expect(JSON.stringify(derive(i18n.t.bind(i18n), "worksheet", prep))).not.toContain("PRIVATE_SENTINEL");
+  await user.click(within(editor).getByRole("button", { name: "Open linked Study" }));
+  expect(await screen.findByRole("textbox", { name: "Study title" })).toHaveValue("Privacy study");
+});
+
+it("never labels a linked Teaching as independent while the Study list is loading", async () => {
+  const api = createMemoryApi();
+  const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Linked preparation" });
+  const { study } = await api.studyCreate({ projectId: project.id, title: "Retained study" });
+  const teaching = await api.teachingCreate({ projectId: project.id, studyId: study.id, title: "Linked teaching" });
+  const known = await api.studyList({ projectId: project.id });
+  const { user } = await renderApp(api);
+  await user.click(await screen.findByRole("button", { name: /Retained study/ }));
+  let release!: (value: typeof known) => void;
+  const delayed = new Promise<typeof known>((resolve) => { release = resolve; });
+  api.studyList = () => delayed;
+  await user.click(await screen.findByRole("button", { name: "Bible Teaching" }));
+  const editor = await screen.findByRole("article", { name: teaching.title });
+  await openTeachingOptions(user);
+  expect(within(editor).getByText("Based on: Bible Study — Bible Study")).toBeVisible();
+  await openTeachingOptions(user);
+  expect(within(editor).queryByText("Based on: Bible Study — Independent teaching")).toBeNull();
+  await act(async () => release(known));
+  await openTeachingOptions(user);
+  expect(await within(editor).findByText("Based on: Bible Study — Retained study")).toBeVisible();
+  expect((await api.teachingGet(teaching.id)).studyId).toBe(study.id);
+});

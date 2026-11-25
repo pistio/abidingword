@@ -1,0 +1,37 @@
+{
+  "platform": "Linux Chromium; invented profile; not Windows acceptance",
+  "results": [
+    {
+      "before": true,
+      "width": 1440,
+      "rows": 10
+    },
+    {
+      "before": false,
+      "width": 1440,
+      "legacy": false,
+      "rows": 5,
+      "initialHeight": 164.125,
+      "resizedHeight": 248,
+      "pageErrors": []
+    },
+    {
+      "before": false,
+      "width": 900,
+      "legacy": false,
+      "rows": 5,
+      "initialHeight": 164.125,
+      "resizedHeight": 248,
+      "pageErrors": []
+    },
+    {
+      "before": false,
+      "width": 1440,
+      "legacy": true,
+      "rows": 5,
+      "initialHeight": 164.125,
+      "resizedHeight": 248,
+      "pageErrors": []
+    }
+  ]
+}

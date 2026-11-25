@@ -53,7 +53,7 @@ const ROWS: &[Row] = &[
     ("NAM", &["nahúm", "nah"]),
     ("HAB", &["habacuc", "hab"]),
     ("ZEP", &["sofonías", "sof"]),
-    ("HAG", &["hageo", "hag"]),
+    ("HAG", &["hageo", "ageo", "hag"]),
     ("ZEC", &["zacarías", "zac"]),
     ("MAL", &["malaquías"]),
     ("MAT", &["mateo", "mt"]),

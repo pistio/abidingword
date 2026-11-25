@@ -1,7 +1,8 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { openStudyOptions } from "../support/studyActions";
 
 function withBible(passage = "JHN.15") {
   const api = createMemoryApi();
@@ -19,6 +20,21 @@ describe("Scripture pane", () => {
     expect(await heading()).toHaveTextContent("John 15");
     expect(within(pane()).getByText("Fixture alpha JHN 15:1 about the vine.")).toBeInTheDocument();
     expect(within(pane()).getByRole("combobox", { name: "Translation" })).toHaveDisplayValue("FXA");
+  });
+
+  it("shows a verse found in its document but not checked as such, never with text (v0.24.3)", async () => {
+    const api = createMemoryApi();
+    const bible = api.installFixtureBible("FXA", "alpha");
+    api.state.settings.scripturePassage = "JHN.15";
+    // Its verse 3 was found but not checked: no text, a place.
+    const chapter = api.state.text.get(bible.id)!;
+    chapter.set("JHN|15", (chapter.get("JHN|15") ?? []).filter((v) => v.verse !== 3));
+    api.state.unchecked.set(`${bible.id}|JHN|15`, [{ verse: 3, page: 412, reason: "possibleHeading" }]);
+    await renderApp(api);
+    expect(await heading()).toHaveTextContent("John 15");
+    expect(await within(pane()).findByTestId("unchecked-verse")).toHaveTextContent(
+      "3Found on page 412 of this Bible’s document, but its text could not be checked, so it is not shown here.",
+    );
   });
 
   it("moves by chapter and by book", async () => {
@@ -112,9 +128,11 @@ describe("Scripture pane", () => {
     const { user } = await renderApp(api);
     await heading();
     await user.click(await screen.findByRole("button", { name: /The True Vine/ }));
+    await openStudyOptions(user);
     await user.click(await screen.findByRole("button", { name: "Add passage" }));
     await user.type(screen.getByLabelText("Passage to add"), "John 15:1-11{Enter}");
 
+    await openStudyOptions(user);
     const link = await screen.findByRole("button", { name: "John 15:1–11" });
     expect(api.state.passages.map((p) => p.reference.canonical)).toEqual(["JHN.15.1-JHN.15.11"]);
     await user.click(link);

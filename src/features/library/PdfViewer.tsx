@@ -24,12 +24,17 @@ const GAP = 12;
 const RESIZE_SETTLE_MS = 120;
 const PADDING = 16;
 
-type Zoom = { kind: "fit-width" } | { kind: "fit-page" } | { kind: "percent"; value: number };
+export type Zoom = { kind: "fit-width" } | { kind: "fit-page" } | { kind: "percent"; value: number };
+
+export interface PdfControlState { page: number; total: number; percent: number; fit: Zoom["kind"]; zoom: Zoom }
+export interface PdfControls { zoomBy: (direction: 1 | -1) => void; fitWidth: () => void; fitPage: () => void }
 
 interface PdfViewerProps {
   sourceId: string;
   /** Physical page to open at (1-based). */
   initialPage: number;
+  /** Fraction down the initial page (0–1), when resuming a reading session. */
+  initialFraction?: number;
   /** Told whenever the page in view changes, so Reading can return to it. */
   onPageChange: (page: number) => void;
   /** The outline, read from this viewer's own open document (a second chance for Contents, with no second opening). */
@@ -58,6 +63,12 @@ interface PdfViewerProps {
   markActions?: MarkActions;
   /** Filled with a way to turn a text selection on a page into an anchor in the stored text (or null). */
   selectionRef?: React.MutableRefObject<((selection: Selection) => SourceSelection | null) | null>;
+  /** A.4.2: false when the reader's own toolbar already has the page controls (no duplicate row). */
+  pageControls?: boolean;
+  /** The Source reader owns the one header; this viewer then renders no toolbar. */
+  initialZoom?: Zoom;
+  controlsRef?: React.MutableRefObject<PdfControls | null>;
+  onControlsState?: (state: PdfControlState | null) => void;
 }
 
 /** A drawn page's text layer, with the stored paragraphs placed on it: how a selection there is read. */
@@ -83,14 +94,14 @@ export interface PdfFind {
  * inspect the source; search, citations and Scripture links stay with the
  * extracted text.
  */
-export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef }: PdfViewerProps) {
+export function PdfViewer({ sourceId, initialPage, initialFraction = 0, onPageChange, jumpTo, onOutline, onLink, locationRef, onOpenInBible, find, marks, onMarksChanged, markActions, selectionRef, pageControls = true, controlsRef, onControlsState, initialZoom }: PdfViewerProps) {
   const { t } = useTranslation();
   const api = useApi();
   const engine = usePdfEngine();
   const [doc, setDoc] = useState<PdfDocument | null>(null);
   const [failed, setFailed] = useState(false);
   const [sizes, setSizes] = useState<Record<number, PdfPageSize>>({});
-  const [zoom, setZoom] = useState<Zoom>({ kind: "fit-width" });
+  const [zoom, setZoom] = useState<Zoom>(initialZoom ?? { kind: "fit-width" });
   const [page, setPage] = useState(Math.max(1, initialPage));
   const [draft, setDraft] = useState<string | null>(null);
   const [box, setBox] = useState({ width: 0, height: 0 });
@@ -300,8 +311,8 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
   useEffect(() => {
     if (!doc || !sizes[1] || placed.current) return;
     placed.current = true;
-    requestAnimationFrame(() => goTo(initialPage));
-  }, [doc, sizes, initialPage, goTo]);
+    requestAnimationFrame(() => goTo(initialPage, initialFraction));
+  }, [doc, sizes, initialPage, initialFraction, goTo]);
 
   useEffect(() => {
     onPageChange(page);
@@ -330,7 +341,7 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
 
   // Zooming keeps the document point at the centre of the view where it was.
   const centre = useRef<{ x: number; y: number } | null>(null);
-  const changeZoom = (next: Zoom) => {
+  const changeZoom = useCallback((next: Zoom) => {
     const el = scroller.current;
     if (el && el.scrollWidth > 0 && el.scrollHeight > 0) {
       centre.current = {
@@ -339,7 +350,7 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
       };
     }
     setZoom(next);
-  };
+  }, []);
   useLayoutEffect(() => {
     const el = scroller.current;
     const kept = centre.current;
@@ -375,12 +386,18 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
     window.addEventListener("mouseup", stop);
   };
 
-  const zoomBy = (direction: 1 | -1) => {
+  const zoomBy = useCallback((direction: 1 | -1) => {
     const now = currentPercent;
     const next =
       direction === 1 ? ZOOM_STEPS.find((s) => s > now + 1) ?? ZOOM_STEPS[ZOOM_STEPS.length - 1]! : [...ZOOM_STEPS].reverse().find((s) => s < now - 1) ?? ZOOM_STEPS[0]!;
     changeZoom({ kind: "percent", value: next });
-  };
+  }, [currentPercent, changeZoom]);
+
+  useEffect(() => {
+    if (controlsRef) controlsRef.current = { zoomBy, fitWidth: () => changeZoom({kind:"fit-width"}), fitPage: () => changeZoom({kind:"fit-page"}) };
+    onControlsState?.(failed ? null : {page,total,percent:currentPercent,fit:zoom.kind,zoom});
+  }, [controlsRef,onControlsState,page,total,currentPercent,zoom,zoomBy,changeZoom,failed]);
+  useEffect(() => () => { if (controlsRef) controlsRef.current = null; onControlsState?.(null); }, [controlsRef,onControlsState]);
 
   const pages = useMemo(() => Array.from({ length: total }, (_, i) => i + 1), [total]);
 
@@ -399,13 +416,13 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col" data-testid="pdf-viewer">
-      <div
+    <div className="flex min-h-0 min-w-0 max-w-full flex-1 flex-col overflow-hidden" data-testid="pdf-viewer">
+      {!controlsRef && <div
         role="toolbar"
         aria-label={t("library.original.toolbar")}
         className="@container flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 border-b border-border-subtle bg-bg px-3 py-1.5 font-ui text-[0.9375rem]"
       >
-        <div className="flex items-center gap-1">
+        {pageControls && <div className="flex items-center gap-1">
           <Button variant="quiet" aria-label={t("library.original.previousPage")} title={t("library.original.previousPage")} disabled={!total || page <= 1} onClick={() => goTo(page - 1)}>
             <ChevronLeft className="size-4" aria-hidden="true" />
           </Button>
@@ -422,7 +439,7 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
               if (e.key === "Enter") commitDraft();
               if (e.key === "Escape") setDraft(null);
             }}
-            className="h-9 w-14 rounded-aw border border-border bg-bg px-2 text-center"
+            className="aw-input h-9 min-h-9 w-14 px-2 text-center"
           />
           <span aria-hidden="true">{total ? t("library.original.pageTotal", { total: formatNumber(total) }) : ""}</span>
           <span role="status" className="sr-only">
@@ -431,7 +448,7 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
           <Button variant="quiet" aria-label={t("library.original.nextPage")} title={t("library.original.nextPage")} disabled={!total || page >= total} onClick={() => goTo(page + 1)}>
             <ChevronRight className="size-4" aria-hidden="true" />
           </Button>
-        </div>
+        </div>}
         <div className="flex items-center gap-1">
           <Button variant="quiet" aria-label={t("library.original.zoomOut")} title={t("library.original.zoomOut")} disabled={!total} onClick={() => zoomBy(-1)}>
             <ZoomOut className="size-4" aria-hidden="true" />
@@ -449,7 +466,7 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
             <Maximize2 className="size-4" aria-hidden="true" /> <span className="@max-md:sr-only">{t("library.original.fitPage")}</span>
           </Button>
         </div>
-      </div>
+      </div>}
 
       <div
         ref={scroller}
@@ -458,7 +475,7 @@ export function PdfViewer({ sourceId, initialPage, onPageChange, jumpTo, onOutli
         tabIndex={0}
         onScroll={onScroll}
         onMouseDown={onMouseDown}
-        className="relative min-h-0 flex-1 overflow-auto bg-bg-secondary data-[panning=true]:cursor-grabbing data-[panning=true]:select-none"
+        className="relative min-h-0 min-w-0 max-w-full flex-1 overflow-auto bg-bg-secondary data-[panning=true]:cursor-grabbing data-[panning=true]:select-none"
       >
         {!doc && <p className="m-0 p-6 text-text-muted">{t("library.original.loading")}</p>}
         {/* The canvas is at least as wide as the view and as wide as its widest
@@ -519,9 +536,9 @@ const PDF_MARK_CLASS = "pointer-events-none absolute mix-blend-multiply opacity-
 const PDF_REFERENCE_CLASSES: ScriptureReferenceClasses = {
   wrap: "relative block h-full w-full",
   trigger:
-    "block h-full w-full cursor-pointer rounded-[2px] border-0 border-b-2 border-dotted border-[#2563eb] bg-transparent p-0 text-transparent hover:bg-[rgba(37,99,235,0.14)] focus-visible:bg-[rgba(37,99,235,0.14)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#2563eb] aria-expanded:bg-[rgba(37,99,235,0.18)]",
+    "block h-full w-full cursor-pointer rounded-[2px] border-0 border-b-2 border-dotted border-[#762e32] bg-transparent p-0 text-transparent hover:bg-[rgba(118,46,50,0.14)] focus-visible:bg-[rgba(118,46,50,0.14)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#9a6b27] aria-expanded:bg-[rgba(118,46,50,0.18)]",
   menu: "absolute left-0 top-full z-30 mt-1 flex min-w-max flex-col rounded-aw border border-border bg-surface p-1 font-ui text-text shadow-md",
-  item: "min-h-10 whitespace-nowrap rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-bg-secondary focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary",
+  item: "min-h-10 whitespace-nowrap rounded-[4px] px-3 text-left text-[0.9375rem] text-text-strong hover:bg-hover focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary",
 };
 
 const boxStyle = (box: PdfBox): React.CSSProperties => ({
@@ -700,7 +717,7 @@ function PageView({ doc, n, size, scale, onSize, onFailed, onFollow, detect, onO
       role="group"
       aria-label={t("library.original.pageLabel", { page: formatNumber(n) })}
       data-rendered={near || undefined}
-      className="relative shrink-0 bg-white text-black shadow-md"
+      className="aw-paper relative shrink-0 bg-white text-black shadow-md"
       style={{ width: size.width * scale, height: size.height * scale, marginTop: GAP, marginBottom: GAP }}
     >
       {near && <canvas ref={canvas} className="block" />}
@@ -715,7 +732,7 @@ function PageView({ doc, n, size, scale, onSize, onFailed, onFollow, detect, onO
             aria-label={t("library.links.follow")}
             title={t("library.links.follow")}
             onClick={() => onFollow(link.dest)}
-            className="absolute cursor-pointer rounded-[2px] bg-transparent hover:bg-[rgba(37,99,235,0.14)] focus-visible:bg-[rgba(37,99,235,0.14)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#2563eb]"
+            className="absolute cursor-pointer rounded-[2px] bg-transparent hover:bg-[rgba(118,46,50,0.14)] focus-visible:bg-[rgba(118,46,50,0.14)] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#9a6b27]"
             style={{
               left: `${(link.x / layer.page.width) * 100}%`,
               top: `${(link.y / layer.page.height) * 100}%`,
@@ -731,7 +748,7 @@ function PageView({ doc, n, size, scale, onSize, onFailed, onFollow, detect, onO
               key={`m${mark.id}-${i}`}
               data-pdf-mark={mark.color ?? "note"}
               aria-hidden="true"
-              className={`${PDF_MARK_CLASS} ${mark.color ? PHRASE_CLASS[mark.color as keyof typeof PHRASE_CLASS] : "border-b-2 border-dotted border-[#b45309]"}`}
+              className={`${PDF_MARK_CLASS} ${mark.color ? PHRASE_CLASS[mark.color as keyof typeof PHRASE_CLASS] : "border-b-2 border-dotted border-[#9a6b27]"}`}
               style={boxStyle(box)}
             />
           )),
@@ -772,7 +789,7 @@ function PageView({ doc, n, size, scale, onSize, onFailed, onFollow, detect, onO
             ref={i === 0 ? findMark : undefined}
             data-pdf-find
             aria-hidden="true"
-            className="pointer-events-none absolute rounded-[2px] bg-[rgba(250,204,21,0.45)] outline outline-2 outline-[#b45309]"
+            className="pointer-events-none absolute rounded-[2px] bg-[rgba(250,204,21,0.45)] outline outline-2 outline-[#9a6b27]"
             style={boxStyle(box)}
           />
         ))}
@@ -787,7 +804,7 @@ function PageView({ doc, n, size, scale, onSize, onFailed, onFollow, detect, onO
               </div>
             ) : (
               // A reference broken over two lines: the rest of it is underlined too, and acted on through its first part.
-              <div key={`r${reference.start}-${i}`} aria-hidden="true" className="pointer-events-none absolute border-b-2 border-dotted border-[#2563eb]" style={boxStyle(box)} />
+              <div key={`r${reference.start}-${i}`} aria-hidden="true" className="pointer-events-none absolute border-b-2 border-dotted border-[#762e32]" style={boxStyle(box)} />
             ),
           ),
         )}

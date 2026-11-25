@@ -1,0 +1,11 @@
+> abiding-word@0.1.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v4.1.11 /workspace/abidingword
+
+
+ Test Files  105 passed (105)
+      Tests  1177 passed (1177)
+   Start at  00:01:16
+   Duration  310.07s (transform 9.30s, setup 41.21s, import 52.37s, tests 463.65s, environment 43.92s)

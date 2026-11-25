@@ -16,7 +16,9 @@ use crate::domain::{
 };
 use crate::error::{AppError, AppResult, UserMessage};
 use crate::library::annotations::CitationAnchor;
-use crate::library::{AddFindingSource, CitationPlace, CreateFindingFromSource, FindingCitation};
+use crate::library::{
+    AddFindingSource, CitationPlace, CitedPassage, CreateFindingFromSource, FindingCitation,
+};
 use crate::scripture::reference::ScriptureRef;
 
 const CONTENT_MAX_CHARS: usize = 50_000;
@@ -24,7 +26,9 @@ const TAG_MAX_CHARS: usize = 40;
 const MAX_TAGS: usize = 20;
 
 const COLUMNS: &str = "id, study_id, section_id, kind, content, sort_order, parent_id, \
-                       created_at, updated_at, revision";
+                       created_at, updated_at, revision, \
+                       CASE WHEN json_valid(data) THEN CASE WHEN json_type(data, '$.assistedBy') = 'text' \
+                       THEN substr(json_extract(data, '$.assistedBy'), 1, 200) END END";
 
 fn from_row(row: &Row) -> rusqlite::Result<Finding> {
     let kind: String = row.get(3)?;
@@ -41,6 +45,7 @@ fn from_row(row: &Row) -> rusqlite::Result<Finding> {
         passages: Vec::new(),
         tags: Vec::new(),
         sources: Vec::new(),
+        assisted_by: row.get(10)?,
         created_at: row.get(7)?,
         updated_at: row.get(8)?,
         revision: row.get(9)?,
@@ -92,7 +97,7 @@ fn citations_for(conn: &Connection, finding_id: &str) -> AppResult<Vec<FindingCi
         "SELECT c.id, c.finding_id, c.source_id, c.source_segment_id,
                 COALESCE(s.title, c.cited_title, 'Removed source'), COALESCE(s.author, c.cited_author),
                 c.locator, s.id IS NULL OR s.deleted_at IS NOT NULL,
-                c.quote, c.cited_section, c.annotation_id
+                c.quote, c.cited_section, c.annotation_id, c.source_id IS NULL
          FROM finding_sources c LEFT JOIN sources s ON s.id = c.source_id
          WHERE c.finding_id = ?1 AND c.deleted_at IS NULL
          ORDER BY c.created_at, c.rowid",
@@ -110,6 +115,7 @@ fn citations_for(conn: &Connection, finding_id: &str) -> AppResult<Vec<FindingCi
             quote: r.get(8)?,
             section: r.get(9)?,
             annotation_id: r.get(10)?,
+            unavailable: r.get(11)?,
         })
     })?;
     Ok(rows.collect::<Result<_, _>>()?)
@@ -179,8 +185,9 @@ fn insert_citation(
     conn.execute(
         "INSERT INTO finding_sources (id, finding_id, source_id, source_segment_id, locator,
              cited_title, cited_author, quote, cited_section, anchor, annotation_id,
-             created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?12)",
+             created_at, updated_at, cited_source_id, cited_content_hash)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?12, ?3,
+                 (SELECT content_hash FROM sources WHERE id = ?3))",
         params![
             new_id(),
             finding_id,
@@ -308,11 +315,89 @@ pub fn create_from_source(
         passages: Vec::new(),
         tags: Vec::new(),
         sources: Vec::new(),
+        assisted_by: None,
         created_at: now.clone(),
         updated_at: now.clone(),
         revision: 1,
     };
     add_cited(&tx, &finding, &cited, &now)?;
+    studies::touch(&tx, &input.study_id, &now)?;
+    tx.commit()?;
+    get(conn, &id)
+}
+
+/// A note the person accepted from the assistant (v0.20): their (possibly
+/// edited) words, the assistant's name, and a citation of each source
+/// passage it rests on, each checked against the source's stored text now.
+/// One transaction: the note is there with all its citations, or not at all.
+pub fn create_assisted(
+    conn: &Connection,
+    input: &CreateFinding,
+    assisted_by: &str,
+    cited: &[CitedPassage],
+) -> AppResult<Finding> {
+    studies::get(conn, &input.study_id)?;
+    let content = input
+        .content
+        .as_deref()
+        .unwrap_or_default()
+        .trim()
+        .to_string();
+    if content.is_empty() {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "findings.writeFirst",
+            "Write something to add first.",
+        )));
+    }
+    check_content(&content)?;
+    let section_id = input.section_id.as_deref().filter(|s| !s.is_empty());
+    if let Some(section) = section_id {
+        check_section(conn, &input.study_id, section)?;
+    }
+    let assisted_by = assisted_by.trim();
+    if assisted_by.is_empty() || assisted_by.chars().count() > 200 {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "findings.assistantName",
+            "The assistant's name is missing.",
+        )));
+    }
+    let cited = cited
+        .iter()
+        .map(|c| source_annotations::cite(conn, c))
+        .collect::<AppResult<Vec<_>>>()?;
+    let position: i64 = conn.query_row(
+        "SELECT COALESCE(MAX(sort_order), -1) + 1 FROM findings WHERE study_id = ?1 AND deleted_at IS NULL",
+        [&input.study_id],
+        |r| r.get(0),
+    )?;
+    let id = new_id();
+    let now = now();
+    let data = serde_json::json!({ "assistedBy": assisted_by }).to_string();
+    let tx = conn.unchecked_transaction()?;
+    tx.execute(
+        "INSERT INTO findings (id, study_id, section_id, kind, content, data, sort_order, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)",
+        params![id, input.study_id, section_id, input.finding_type.as_str(), content, data, position, now],
+    )?;
+    let finding = Finding {
+        id: id.clone(),
+        study_id: input.study_id.clone(),
+        section_id: section_id.map(str::to_string),
+        finding_type: input.finding_type,
+        content,
+        sort_order: position,
+        parent_id: None,
+        passages: Vec::new(),
+        tags: Vec::new(),
+        sources: Vec::new(),
+        assisted_by: Some(assisted_by.to_string()),
+        created_at: now.clone(),
+        updated_at: now.clone(),
+        revision: 1,
+    };
+    for c in &cited {
+        add_cited(&tx, &finding, c, &now)?;
+    }
     studies::touch(&tx, &input.study_id, &now)?;
     tx.commit()?;
     get(conn, &id)
@@ -328,7 +413,7 @@ pub fn locate_source(conn: &Connection, citation_id: &str) -> AppResult<Option<C
             [citation_id],
             |r| {
                 Ok((
-                    r.get::<_, String>(0)?,
+                    r.get::<_, Option<String>>(0)?,
                     r.get::<_, Option<String>>(1)?,
                     r.get::<_, Option<String>>(2)?,
                     r.get::<_, Option<String>>(3)?,
@@ -336,9 +421,15 @@ pub fn locate_source(conn: &Connection, citation_id: &str) -> AppResult<Option<C
                 ))
             },
         )
-        .optional()?
-        .ok_or_else(|| AppError::not_found("citation", citation_id))?;
+        .optional()?;
+    let Some(row) = row else {
+        return crate::db::teaching::locate_saved_citation(conn, citation_id);
+    };
     let (source_id, segment_id, quote, section, anchor) = row;
+    // Not on this computer: there is nothing to open.
+    let Some(source_id) = source_id else {
+        return Ok(None);
+    };
     let anchor = CitationAnchor::read(anchor.as_deref());
     source_annotations::locate_citation(
         conn,
@@ -664,9 +755,9 @@ pub(crate) fn copy_all(
             .as_deref()
             .and_then(|s| sections.get(s).copied());
         conn.execute(
-            "INSERT INTO findings (id, study_id, section_id, kind, content, sort_order, created_at, updated_at)
-             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)",
-            params![id, to_study, section, finding.finding_type.as_str(), finding.content, finding.sort_order, now],
+            "INSERT INTO findings (id, study_id, section_id, kind, content, data, sort_order, created_at, updated_at)
+             SELECT ?1, ?2, ?3, ?4, ?5, data, ?6, ?7, ?7 FROM findings WHERE id = ?8",
+            params![id, to_study, section, finding.finding_type.as_str(), finding.content, finding.sort_order, now, finding.id],
         )?;
         for passage in &finding.passages {
             insert_passage(
@@ -694,9 +785,10 @@ pub(crate) fn copy_all(
             conn.execute(
                 "INSERT INTO finding_sources (id, finding_id, source_id, source_segment_id, locator,
                      cited_title, cited_author, quote, cited_section, anchor, annotation_id,
-                     created_at, updated_at)
+                     created_at, updated_at, cited_source_id, cited_content_hash)
                  SELECT ?1, ?2, source_id, source_segment_id, locator, cited_title, cited_author,
-                        quote, cited_section, anchor, annotation_id, ?3, ?3
+                        quote, cited_section, anchor, annotation_id, ?3, ?3, cited_source_id,
+                        cited_content_hash
                  FROM finding_sources WHERE id = ?4",
                 params![new_id(), id, now, citation],
             )?;

@@ -3,10 +3,10 @@
   "back": "Zurück",
   "cancel": "Abbrechen",
   "save": "Speichern",
-  "saving": "Wird gespeichert …",
+  "saving": "Wird gespeichert…",
   "saved": "Gespeichert",
   "delete": "Löschen",
-  "deleteEllipsis": "Löschen …",
+  "deleteEllipsis": "Löschen…",
   "edit": "Bearbeiten",
   "remove": "Entfernen",
   "close": "Schließen",
@@ -15,16 +15,46 @@
   "rename": "Umbenennen",
   "duplicate": "Duplizieren",
   "search": "Suchen",
-  "searching": "Suche läuft …",
+  "searching": "Suche läuft…",
   "showMore": "Mehr anzeigen",
   "showEarlier": "Früheres anzeigen",
   "moveUp": "Nach oben",
   "moveDown": "Nach unten",
-  "loading": "Wird geladen …",
+  "loading": "Wird geladen…",
   "notAvailable": "Nicht verfügbar",
   "unknown": "Unbekannt",
   "clear": "Leeren",
   "keep": "Behalten",
   "tryAgain": "Erneut versuchen",
-  "listSeparator": " · "
+  "listSeparator": " · ",
+  "labelSeparator": ": ",
+  "info": {
+    "button": "Angaben",
+    "discarded": "Nicht gespeicherte Änderungen wurden verworfen.",
+    "unsaved": "Noch nicht gespeichert",
+    "changedElsewhere": "Das wurde inzwischen an anderer Stelle geändert. Brich ab und öffne es erneut, um den aktuellen Stand zu sehen."
+  },
+  "confirm": {
+    "typeCount_one": "Gib zur Bestätigung {{value}} ein (die Anzahl der Einträge).",
+    "typeCount_other": "Gib zur Bestätigung {{value}} ein (die Anzahl der Einträge)."
+  },
+  "lifecycle": {
+    "archive": "Archivieren",
+    "moveToTrash": "In den Papierkorb",
+    "moveToTrashEllipsis": "In den Papierkorb…",
+    "restore": "Wiederherstellen",
+    "deletePermanently": "Endgültig löschen",
+    "emptyTrash": "Alles im Papierkorb löschen…",
+    "trashedOn": "Am {{date}} in den Papierkorb verschoben",
+    "cannotUndo": "Das kann nicht rückgängig gemacht werden.",
+    "undo": "Rückgängig",
+    "undone": "Rückgängig gemacht.",
+    "state": {
+      "active": "In Gebrauch",
+      "archived": "Archiviert",
+      "trashed": "Im Papierkorb"
+    },
+    "trashText_one": "Einträge im Papierkorb bleiben {{count}} Tag erhalten und werden dann endgültig gelöscht. Bis dahin kannst du sie wiederherstellen.",
+    "trashText_other": "Einträge im Papierkorb bleiben {{count}} Tage erhalten und werden dann endgültig gelöscht. Bis dahin kannst du sie wiederherstellen."
+  }
 }

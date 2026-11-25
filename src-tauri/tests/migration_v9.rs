@@ -121,6 +121,7 @@ fn a_lesson_starts_with_its_steps_and_each_step_can_say_its_kind() {
         let lesson = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: "s-1".into(),
                 title: "Kids' church".into(),
                 kind: Some("children".into()),
@@ -129,6 +130,9 @@ fn a_lesson_starts_with_its_steps_and_each_step_can_say_its_kind() {
                     step("The vine", "scripture"),
                     step("Draw a vine", "activity"),
                 ],
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         )?;
         let kinds: Vec<_> = lesson
@@ -193,12 +197,16 @@ fn a_lesson_starts_with_its_steps_and_each_step_can_say_its_kind() {
         let too_many = teaching::create(
             conn,
             &CreateTeaching {
+                project_id: None,
                 study_id: "s-1".into(),
                 title: "Long".into(),
                 kind: Some("lesson".into()),
                 points: (0..21)
                     .map(|n| step(&format!("Step {n}"), "text"))
                     .collect(),
+                template_key: None,
+                template_version: None,
+                blocks: Vec::new(),
             },
         );
         assert!(matches!(too_many, Err(AppError::InvalidInput(_))));

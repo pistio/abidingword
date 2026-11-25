@@ -51,7 +51,7 @@ const ROWS: &[Row] = &[
     ("LAM", &["lamentações", "lm"]),
     ("EZK", &["ezequiel", "ez"]),
     ("DAN", &["daniel", "dn"]),
-    ("HOS", &["oseias"]),
+    ("HOS", &["oseias", "oséias", "oseías"]),
     ("JOL", &["joel", "jl"]),
     ("AMO", &["amós", "am"]),
     ("OBA", &["obadias", "ob"]),
@@ -89,7 +89,7 @@ const ROWS: &[Row] = &[
     ("2JN", &["joão", "jo"]),
     ("3JN", &["joão", "jo"]),
     ("JUD", &["judas", "jd"]),
-    ("REV", &["apocalipse", "apoc"]),
+    ("REV", &["apocalipse", "apoc", "revelação"]),
 ];
 
 pub fn dictionary() -> AliasDictionary {

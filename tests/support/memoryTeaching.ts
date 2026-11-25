@@ -1,6 +1,7 @@
+import { qaOf } from "@/features/studies/qa";
 // In-memory Teaching Preparation and assistant (v0.16) for interface tests.
 // Mirrors the core's rules (db/teaching.rs, assistant/): findings are linked
-// live and never copied; Scripture is named without touching the study;
+// live while linked, saved with provenance on unlink; Scripture is named without touching the study;
 // kept material has an honest standing; the assistant never changes text,
 // refuses to write without the person's material, and is scripted by the test.
 import { ApiError, type Api } from "@/lib/api";
@@ -15,18 +16,26 @@ import type {
   FoundImage,
   KeepTeachingMaterial,
   SharedItem,
+  TeachingBlock,
   TeachingMaterial,
   TeachingPreparation,
+  TeachingTemplate,
+  TeachingTemplateBlock,
+  TeachingTemplateInput,
 } from "@/types/teaching";
+import { STEP_KINDS, TEACHING_KINDS } from "@/types/teaching";
 
 interface StoredPrep extends Omit<TeachingPreparation, "findings" | "passages" | "materials"> {
-  links: { id: string; pointId: string | null; findingId: string }[];
-  passages: { id: string; pointId: string | null; reference: ScriptureRef }[];
+  links: { id: string; pointId: string | null; findingId: string | null; saved?: Finding; presentationOnly?: boolean }[];
+  passages: { id: string; pointId: string | null; blockId?: string | null; reference: ScriptureRef }[];
   materials: TeachingMaterial[];
 }
 
 export interface TeachingState {
   preparations: StoredPrep[];
+  deletedPreparations: Map<string, StoredPrep>;
+  /** The person's own Bible Teaching templates (v0.18.7). */
+  templates: TeachingTemplate[];
   assistant: {
     config: AssistantConfig;
     /** provider kind, or "search:<kind>" → key (never returned). */
@@ -65,6 +74,8 @@ export function defaultAssistantConfig(): AssistantConfig {
 export function newTeachingState(): TeachingState {
   return {
     preparations: [],
+    deletedPreparations: new Map(),
+    templates: [],
     assistant: {
       config: defaultAssistantConfig(),
       keys: new Map(),
@@ -86,12 +97,24 @@ interface Helpers {
   now: () => string;
   findings: () => Finding[];
   studyExists: (studyId: string) => void;
+  studyProject: (studyId: string) => string;
+  projectExists: (projectId: string) => void;
+  presentationFindings: (id: string) => string[];
+  copyCitation: (original: string, saved: string) => void;
   studyPassages: () => StudyPassage[];
+  studyBlocks: () => Array<{ id: string; studyId: string; sectionTitle: string; blockType: string; content: string; data: string | null }>;
   ref: (canonical: string) => ScriptureRef | null;
 }
 
 type TeachingApi = Pick<
   Api,
+  | "teachingTemplateList"
+  | "teachingTemplateCreate"
+  | "teachingTemplateUpdate"
+  | "teachingTemplateDelete"
+  | "teachingListProject"
+  | "teachingSetStudy"
+  | "teachingRestore"
   | "teachingList"
   | "teachingGet"
   | "teachingCreate"
@@ -101,6 +124,12 @@ type TeachingApi = Pick<
   | "teachingPointUpdate"
   | "teachingPointDelete"
   | "teachingPointReorder"
+  | "teachingBlockCreate"
+  | "teachingAddFromStudy"
+  | "teachingBlockUpdate"
+  | "teachingBlockDelete"
+  | "teachingBlockReorder"
+  | "teachingBlockDuplicate"
   | "teachingFindingLink"
   | "teachingFindingUnlink"
   | "teachingPassageAdd"
@@ -121,7 +150,7 @@ type TeachingApi = Pick<
 >;
 
 const SEARCH_NEEDS_KEY = new Set(["brave", "tavily", "exa", "serpapi"]);
-const NEEDS_KEY = new Set(["openai", "anthropic", "google", "xai", "perplexity", "deepseek", "qwen"]);
+const NEEDS_KEY = new Set(["openai", "anthropic", "google", "xai", "perplexity", "deepseek", "qwen", "mistral", "cohere", "moonshot", "zai", "minimax"]);
 const LABELS: Record<string, string> = {
   openai: "OpenAI",
   anthropic: "Anthropic",
@@ -130,6 +159,11 @@ const LABELS: Record<string, string> = {
   perplexity: "Perplexity",
   deepseek: "DeepSeek",
   qwen: "Qwen",
+  mistral: "Mistral",
+  cohere: "Cohere",
+  moonshot: "Moonshot AI (Kimi)",
+  zai: "Z.ai (GLM)",
+  minimax: "MiniMax",
   ollama: "Ollama",
   lmstudio: "LM Studio",
   openai_compatible: "Other compatible service",
@@ -142,10 +176,98 @@ const imageCapability = (c: AssistantConfig) => {
   return p === "openai" ? "supported" : p === "openai_compatible" ? "unknown" : "unsupported";
 };
 
+function remoteOf(c: AssistantConfig): boolean {
+  const base = c.baseUrl || { openai: "https://api.openai.com/v1", anthropic: "https://api.anthropic.com/v1", google: "https://g", xai: "https://api.x.ai/v1", perplexity: "https://api.perplexity.ai", deepseek: "https://api.deepseek.com/v1", qwen: "https://q", mistral: "https://api.mistral.ai/v1", cohere: "https://api.cohere.ai/compatibility/v1", moonshot: "https://api.moonshot.ai/v1", zai: "https://api.z.ai/api/paas/v4", minimax: "https://api.minimax.io/v1", ollama: "http://localhost:11434/v1", lmstudio: "http://localhost:1234/v1", openai_compatible: "" }[c.provider];
+  return !base || !isLocalAddress(base);
+}
+
+/** Who would answer, as the core names it, whether text leaves the computer, and whether its key is kept. */
+export function assistantFacts(state: TeachingState) {
+  const c = state.assistant.config;
+  return {
+    label: c.model ? `${LABELS[c.provider]} · ${c.model}` : LABELS[c.provider]!,
+    remote: remoteOf(c),
+    hasKey: !NEEDS_KEY.has(c.provider) || state.assistant.keys.has(c.provider),
+  };
+}
+
+const PRIVATE = new Set(["teaching_notes", "presentation_notes", "writing", "explanation", "illustration", "application", "activity", "objectives", "time"]);
+
+function makeBlock(h: { id: () => string }, block: TeachingTemplateBlock & { body?: string }): TeachingBlock {
+  const facing = block.participantFacing ?? !PRIVATE.has(block.blockType);
+  return {
+    id: h.id(),
+    parentId: null,
+    position: 0,
+    blockType: block.blockType,
+    blockKey: block.key ?? null,
+    title: block.title ?? "",
+    body: block.body ?? "",
+    participantFacing: facing,
+    role: block.role ?? null,
+    guidanceKey: block.guidanceKey ?? null,
+    pointId: null,
+  };
+}
+
+function materialise(h: { id: () => string }, blocks: TeachingTemplateBlock[]) {
+  const made = blocks.map((block) => makeBlock(h, block));
+  const byKey = new Map(blocks.map((block, index) => [block.key, made[index]!]));
+  const points: StoredPoint[] = [];
+  blocks.forEach((block, index) => {
+    const row = made[index]!;
+    row.parentId = block.parentKey ? (byKey.get(block.parentKey)?.id ?? null) : null;
+    if (block.blockType === "outline_point") {
+      const point = { id: h.id(), position: points.length, kind: null, title: row.title, explanation: row.body, application: "", illustration: "" };
+      points.push(point);
+      row.pointId = point.id;
+    }
+  });
+  return { blocks: made, points };
+}
+
+function applyRoles(p: { introduction: string; conclusion: string; notes: string; centralMessage: string | null; blocks?: TeachingBlock[] }) {
+  if (!(p.blocks?.length)) return;
+  p.introduction = ""; p.conclusion = ""; p.notes = ""; p.centralMessage = null;
+  const claimed = new Set<string>();
+  for (const block of p.blocks ?? []) {
+    if (block.role && ["introduction", "conclusion", "central_message", "notes"].includes(block.role)) {
+      if (claimed.has(block.role)) block.role = null;
+      else claimed.add(block.role);
+    }
+    if (block.role === "introduction") p.introduction = block.body;
+    if (block.role === "conclusion") p.conclusion = block.body;
+    if (block.role === "notes") p.notes = block.body;
+    if (block.role === "central_message") p.centralMessage = block.body || null;
+  }
+}
+
+type StoredPoint = { id: string; position: number; kind: null; title: string; explanation: string; application: string; illustration: string };
+
+export function detachMemoryFindings(p: StoredPrep, findings: Finding[], presentationIds: string[], id: () => string, copyCitation: (original: string, saved: string) => void) {
+  const copy = (finding: Finding) => {
+    const saved = structuredClone(finding);
+    for (const citation of saved.sources) { const original = citation.id; citation.id = id(); copyCitation(original, citation.id); }
+    return saved;
+  };
+  for (const source of presentationIds) {
+    if (p.links.some(l => l.findingId === source || l.saved?.id === source)) continue;
+    const finding = findings.find(f => f.id === source);
+    if (finding) p.links.push({id:id(), pointId:null, findingId:null, saved:copy(finding), presentationOnly:true});
+  }
+  for (const link of p.links) {
+    const finding = findings.find(f => f.id === link.findingId);
+    if (finding) link.saved = copy(finding);
+    link.findingId = null;
+  }
+}
+
 export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
+  const trash = state.deletedPreparations;
   const prep = (prepId: string): StoredPrep => {
     const p = state.preparations.find((x) => x.id === prepId);
     if (!p) throw new ApiError("notFound", "This teaching preparation could not be found. It may have been deleted.");
+    h.projectExists(p.projectId);
     return p;
   };
   const owner = (pointId: string): StoredPrep => {
@@ -163,15 +285,12 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
     return {
       ...p,
       points,
-      findings: p.links.filter((l) => live.has(l.findingId)).map((l) => ({ id: l.id, pointId: l.pointId, finding: { ...live.get(l.findingId)! } })),
+      findings: p.links.filter((l) => l.findingId ? live.has(l.findingId) : !!l.saved).map((l) => ({ id: l.id, pointId: l.pointId, finding: structuredClone(l.findingId ? live.get(l.findingId)! : l.saved!), snapshot: !l.findingId, presentationOnly: l.presentationOnly ?? false })),
       passages: p.passages.map((x) => ({ ...x })),
       materials: p.materials.map((x) => ({ ...x })),
     };
   };
-  const remote = (c: AssistantConfig) => {
-    const base = c.baseUrl || { openai: "https://api.openai.com/v1", anthropic: "https://api.anthropic.com/v1", google: "https://g", xai: "https://api.x.ai/v1", perplexity: "https://api.perplexity.ai", deepseek: "https://api.deepseek.com/v1", qwen: "https://q", ollama: "http://localhost:11434/v1", lmstudio: "http://localhost:1234/v1", openai_compatible: "" }[c.provider];
-    return !base || !isLocalAddress(base);
-  };
+  const remote = remoteOf;
   const settings = (): AssistantSettings => {
     const c = state.assistant.config;
     return {
@@ -197,6 +316,11 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       throw new ApiError("assistant", "The assistant needs its key. You can add it in Settings.");
     const p = prep(input.preparationId);
     const text = input.text.trim();
+    // As the native core (A.4.4, #19): a point's part needs its point; a block teaching's writing names its block.
+    const pointPart = ["pointTitle", "pointExplanation", "pointApplication", "pointIllustration"].includes(input.part);
+    const blockKnown = input.blockId ? (p.blocks ?? []).some((b) => b.id === input.blockId) : false;
+    if ((input.blockId && !blockKnown) || (input.pointId && !p.points.some((x) => x.id === input.pointId)) || (pointPart && !input.pointId && !input.blockId))
+      throw new ApiError("assistant", "This part has changed or was removed since you asked. Close the help, check the text and ask again.", "assistant.staleTarget");
     if (input.action === "structure" || input.action === "restructure") {
       if (p.points.filter((x) => x.title.trim() || x.explanation.trim()).length < 2)
         throw new ApiError("assistant", "Write at least two points first. The assistant comments on the structure you have.");
@@ -212,24 +336,93 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
     return p;
   };
 
+  // As the core (db/teaching_templates.rs): a format, at most 20 points, known step kinds; structure only.
+  const checkedTemplate = (input: TeachingTemplateInput) => {
+    const name = input.name.trim();
+    if (!name) throw new ApiError("invalidInput", "Please give the template a name.");
+    if (!TEACHING_KINDS.includes(input.kind)) throw new ApiError("invalidInput", "Choose what the template is for.");
+    if (input.points.length > 20) throw new ApiError("invalidInput", "A template can start with at most 20 points or steps.");
+    for (const point of input.points)
+      if (point.kind && point.kind !== "audio" && !(STEP_KINDS as readonly string[]).includes(point.kind)) throw new ApiError("invalidInput", `“${point.kind}” is not a valid kind of step.`);
+    const version = input.version ?? ((input.blocks?.length ?? 0) > 0 ? 2 : 1);
+    return {
+      name,
+      description: input.description?.trim() || null,
+      kind: input.kind,
+      points: version >= 2 ? [] : input.points.map((point) => ({ ...(point.key ? { key: point.key } : {}), title: point.title.trim(), ...(point.kind ? { kind: point.kind } : {}) })),
+      ...(version >= 2 ? { version: 2, blocks: input.blocks ?? [] } : {}),
+    };
+  };
+  const template = (id: string) => {
+    const found = state.templates.find((x) => x.id === id);
+    if (!found) throw new ApiError("notFound", "This template no longer exists.");
+    return found;
+  };
+
   return {
+    teachingTemplateList: async () => [...state.templates].sort((a, b) => a.name.localeCompare(b.name)).map((x) => structuredClone(x)),
+    teachingTemplateCreate: async (input) => {
+      const t = h.now();
+      const created: TeachingTemplate = { id: h.id(), ...checkedTemplate(input), createdAt: t, updatedAt: t, revision: 1 };
+      state.templates.push(created);
+      return structuredClone(created);
+    },
+    teachingTemplateUpdate: async (input) => {
+      const found = template(input.id);
+      Object.assign(found, checkedTemplate(input), { updatedAt: h.now(), revision: found.revision + 1 });
+      return structuredClone(found);
+    },
+    teachingTemplateDelete: async (id) => {
+      template(id);
+      state.templates = state.templates.filter((x) => x.id !== id);
+    },
     teachingList: async (studyId) => {
       h.studyExists(studyId);
-      return state.preparations.filter((p) => p.studyId === studyId).map((p) => ({ id: p.id, studyId, title: p.title, kind: p.kind, updatedAt: p.updatedAt }));
+      return state.preparations.filter((p) => p.studyId === studyId).map((p) => ({ id: p.id, projectId: p.projectId, studyId, title: p.title, kind: p.kind, updatedAt: p.updatedAt }));
     },
     teachingGet: async (prepId) => view(prep(prepId)),
-    teachingCreate: async ({ studyId, title, kind, points = [] }) => {
-      h.studyExists(studyId);
+    teachingListProject: async (projectId) => {
+      h.projectExists(projectId);
+      return state.preparations.filter(p => p.projectId === projectId).map(p => ({ id: p.id, projectId, studyId: p.studyId, title: p.title, kind: p.kind, updatedAt: p.updatedAt }));
+    },
+    teachingSetStudy: async (id, studyId) => {
+      const p = prep(id);
+      if (studyId && h.studyProject(studyId) !== p.projectId) throw new ApiError("invalidInput", "Choose a study in this project.");
+      if (p.studyId === studyId) return view(p);
+      detachMemoryFindings(p, h.findings(), h.presentationFindings(id), h.id, h.copyCitation);
+
+      p.studyId = studyId;
+      touch(p); return view(p);
+    },
+    teachingRestore: async (id) => {
+      const p = trash.get(id);
+      if (!p) return view(prep(id));
+      h.projectExists(p.projectId); trash.delete(id); state.preparations.push(p); touch(p); return view(p);
+    },
+    teachingCreate: async ({ projectId, studyId, title, kind, points = [], templateKey, templateVersion, blocks = [] }) => {
+      if (studyId) h.studyExists(studyId);
+      const owner = projectId ?? (studyId ? h.studyProject(studyId) : null);
+      if (!owner) throw new ApiError("invalidInput", "Choose a project for this teaching.");
+      h.projectExists(owner);
+      if (studyId && h.studyProject(studyId) !== owner) throw new ApiError("invalidInput", "Choose a study in this project.");
       const name = title.trim();
       if (!name) throw new ApiError("invalidInput", "Please give the teaching a title.");
       const t = h.now();
+      const made = materialise(h, blocks);
       const p: StoredPrep = {
-        id: h.id(), studyId, title: name, kind: kind ?? null, audience: null, purpose: null, centralMessage: null,
+        id: h.id(), projectId: owner, studyId: studyId || null, title: name, kind: kind ?? null, audience: null, purpose: null, centralMessage: null,
         introduction: "", conclusion: "", notes: "",
-        points: points.map((x) => ({ id: h.id(), position: 0, kind: x.kind ?? null, title: x.title.trim(), explanation: "", application: "", illustration: "" })),
+        points: [
+          ...points.map((x) => ({ id: h.id(), position: 0, kind: x.kind ?? null, title: x.title.trim(), explanation: "", application: "", illustration: "" })),
+          ...made.points,
+        ],
         links: [], passages: [], materials: [],
+        templateKey: templateKey ?? null,
+        templateVersion: templateVersion ?? (blocks.length ? 2 : null),
+        blocks: made.blocks,
         createdAt: t, updatedAt: t, revision: 1,
       };
+      applyRoles(p);
       state.preparations.push(p);
       return view(p);
     },
@@ -248,11 +441,18 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
         const value = input[key];
         if (value !== undefined) p[key] = value;
       }
+      const roleOf: Record<string, string> = { introduction: "introduction", conclusion: "conclusion", notes: "notes", centralMessage: "central_message" };
+      for (const [field, role] of Object.entries(roleOf)) {
+        const value = input[field as keyof typeof input];
+        if (typeof value === "string") {
+          for (const block of p.blocks ?? []) if (block.role === role) block.body = value;
+        }
+      }
       touch(p);
       return view(p);
     },
     teachingDelete: async (prepId) => {
-      prep(prepId);
+      const p = prep(prepId); touch(p); trash.set(prepId,p);
       state.preparations = state.preparations.filter((p) => p.id !== prepId);
     },
     teachingPointCreate: async ({ preparationId, title, kind, afterPointId }) => {
@@ -283,6 +483,142 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       touch(p);
       return view(p);
     },
+    teachingAddFromStudy: async ({ preparationId, parentId, items }) => {
+      const p = prep(preparationId);
+      if (!p.studyId) throw new ApiError("invalidInput", "Link this teaching to a Bible Study first.", "teaching.noStudy");
+      if (!items.length) throw new ApiError("invalidInput", "Choose what to add from the Bible Study.", "teaching.fromStudyCount");
+      const changed = () => new ApiError("invalidInput", "Part of the Bible Study changed or was removed. Open Add from Bible Study again.", "teaching.fromStudyChanged");
+      const copies = items.map((item) => {
+        const origin = { studyId: p.studyId!, kind: item.kind, itemId: item.id, label: item.label, copiedAt: h.now(), citation: null as string | null };
+        if (item.kind === "writing" || item.kind === "qa") {
+          const block = h.studyBlocks().find((b) => b.id === item.id && b.studyId === p.studyId);
+          if (!block) throw changed();
+          if (item.kind === "qa") {
+            const pair = qaOf(block.data);
+            if (!pair) throw changed();
+            return { blockType: "qa", title: pair.question, body: pair.answer, origin };
+          }
+          return { blockType: "writing", title: block.sectionTitle, body: block.content, origin };
+        }
+        if (item.kind === "finding") {
+          const finding = h.findings().find((f) => f.id === item.id && f.studyId === p.studyId);
+          if (!finding) throw changed();
+          return { blockType: "writing", title: item.label, body: finding.content, origin };
+        }
+        if (item.kind === "citation") {
+          const cited = h.findings().filter((f) => f.studyId === p.studyId).flatMap((f) => f.sources).find((c) => c.id === item.id);
+          if (!cited?.quote) throw changed();
+          const citation = [cited.title, cited.author, cited.locator].filter((x): x is string => !!x && !!x.trim()).join(", ");
+          return { blockType: "writing", title: item.label, body: `„${cited.quote.trim()}“ — ${citation}`, origin: { ...origin, citation } };
+        }
+        if (item.kind === "passage") {
+          const passage = h.studyPassages().find((x) => x.id === item.id && x.studyId === p.studyId);
+          if (!passage) throw changed();
+          return { blockType: "scripture", title: item.label, body: "", origin, reference: passage.reference };
+        }
+        throw changed();
+      });
+      let after: string | null = null;
+      for (const copy of copies) {
+        const block = makeBlock(h, { blockType: copy.blockType, title: copy.title, body: copy.body, parentKey: null, participantFacing: false, role: null, guidanceKey: null });
+        block.parentId = parentId ?? null;
+        block.origin = copy.origin;
+        const next = [...(p.blocks ?? [])];
+        const index = after ? next.findIndex((b) => b.id === after) + 1 : next.length;
+        next.splice(index, 0, block);
+        p.blocks = next;
+        if ("reference" in copy && copy.reference) p.passages.push({ id: h.id(), reference: copy.reference, pointId: null, blockId: block.id, position: p.passages.length } as never);
+        after = block.id;
+      }
+      p.templateVersion = p.templateVersion ?? 2;
+      touch(p);
+      return view(p);
+    },
+    teachingBlockCreate: async ({ preparationId, parentId, afterBlockId, blockType, title, body, participantFacing, role, guidanceKey }) => {
+      const p = prep(preparationId);
+      if ((p.templateVersion ?? 0) < 2 && !p.blocks?.length) throw new ApiError("invalidInput", "That is not a kind of block this teaching can hold.");
+      if (role && ["introduction", "conclusion", "central_message", "notes"].includes(role) && p.blocks?.some((b) => b.role === role)) throw new ApiError("invalidInput", "That block cannot be tied to that part of the teaching.");
+      const block = makeBlock(h, { blockType, title: title ?? "", body: body ?? "", parentKey: null, participantFacing, role, guidanceKey });
+      block.parentId = parentId ?? null;
+      const siblings = (p.blocks ?? []).filter((b) => (b.parentId ?? null) === (parentId ?? null));
+      const at = afterBlockId ? siblings.findIndex((b) => b.id === afterBlockId) + 1 : siblings.length;
+      const next = [...(p.blocks ?? [])];
+      const index = next.findIndex((b) => b.id === (siblings[Math.max(0, at - 1)]?.id ?? ""));
+      next.splice(index >= 0 ? index + 1 : next.length, 0, block);
+      if (blockType === "outline_point") {
+        const point = { id: h.id(), position: p.points.length, kind: null, title: block.title, explanation: block.body, application: "", illustration: "" };
+        p.points.push(point);
+        block.pointId = point.id;
+      }
+      p.blocks = next;
+      p.templateVersion = p.templateVersion ?? 2;
+      applyRoles(p);
+      touch(p);
+      return view(p);
+    },
+    teachingBlockUpdate: async (input) => {
+      const p = state.preparations.find((x) => (x.blocks ?? []).some((b) => b.id === input.id));
+      if (!p) throw new ApiError("notFound", "This block could not be found.");
+      const block = p.blocks!.find((b) => b.id === input.id)!;
+      if (input.role && ["introduction", "conclusion", "central_message", "notes"].includes(input.role) && p.blocks?.some((b) => b.id !== block.id && b.role === input.role)) throw new ApiError("invalidInput", "That block cannot be tied to that part of the teaching.");
+      if (input.title !== undefined) block.title = input.title;
+      if (input.body !== undefined) block.body = input.body;
+      if (input.blockType !== undefined) block.blockType = input.blockType;
+      if (input.participantFacing !== undefined) block.participantFacing = input.participantFacing;
+      if (input.role !== undefined) block.role = input.role || null;
+      if (input.guidanceKey !== undefined) block.guidanceKey = input.guidanceKey || null;
+      if (input.parentId !== undefined) block.parentId = input.parentId || null;
+      if (block.pointId) {
+        const point = p.points.find((pt) => pt.id === block.pointId);
+        if (point) {
+          point.title = block.title;
+          point.explanation = block.body;
+        }
+      }
+      applyRoles(p);
+      touch(p);
+      return view(p);
+    },
+    teachingBlockDelete: async (id) => {
+      const p = state.preparations.find((x) => (x.blocks ?? []).some((b) => b.id === id));
+      if (!p) throw new ApiError("notFound", "This block could not be found.");
+      const block = p.blocks!.find((b) => b.id === id)!;
+      p.blocks = p.blocks!.filter((b) => b.id !== id).map((b) => (b.parentId === id ? { ...b, parentId: block.parentId, participantFacing: b.participantFacing && block.participantFacing } : b));
+      if (block.pointId) p.points = p.points.filter((pt) => pt.id !== block.pointId);
+      p.passages = p.passages.filter((passage) => passage.blockId !== id);
+      if (block.role === "introduction") p.introduction = "";
+      if (block.role === "conclusion") p.conclusion = "";
+      if (block.role === "central_message") p.centralMessage = null;
+      if (block.role === "notes") p.notes = "";
+      applyRoles(p);
+      touch(p);
+      return view(p);
+    },
+    teachingBlockReorder: async ({ preparationId, parentId, ids }) => {
+      const p = prep(preparationId);
+      const parent = parentId ?? null;
+      const siblings = (p.blocks ?? []).filter((b) => (b.parentId ?? null) === parent).map((b) => b.id).sort();
+      if (JSON.stringify([...ids].sort()) !== JSON.stringify(siblings)) throw new ApiError("invalidInput", "The blocks have changed since this page was shown. Please try again.");
+      const rank = new Map(ids.map((bid, index) => [bid, index]));
+      p.blocks = [...(p.blocks ?? [])].sort((a, b) => (rank.get(a.id) ?? 0) - (rank.get(b.id) ?? 0));
+      touch(p);
+      return view(p);
+    },
+    teachingBlockDuplicate: async (id) => {
+      const p = state.preparations.find((x) => (x.blocks ?? []).some((b) => b.id === id));
+      if (!p) throw new ApiError("notFound", "This block could not be found.");
+      const block = p.blocks!.find((b) => b.id === id)!;
+      const copy = { ...block, id: h.id(), role: null, pointId: null as string | null };
+      if (block.blockType === "outline_point") {
+        const point = { id: h.id(), position: p.points.length, kind: null, title: copy.title, explanation: copy.body, application: "", illustration: "" };
+        p.points.push(point);
+        copy.pointId = point.id;
+      }
+      const at = p.blocks!.findIndex((b) => b.id === id);
+      p.blocks = [...p.blocks!.slice(0, at + 1), copy, ...p.blocks!.slice(at + 1)];
+      touch(p);
+      return view(p);
+    },
     teachingPointReorder: async ({ parentId, ids }) => {
       const p = prep(parentId);
       const current = p.points.map((x) => x.id).sort();
@@ -309,12 +645,16 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       touch(p);
       return view(p);
     },
-    teachingPassageAdd: async ({ preparationId, pointId, reference }) => {
+    teachingPassageAdd: async ({ preparationId, pointId, blockId, reference }) => {
       const p = prep(preparationId);
+      if (blockId) {
+        const block = p.blocks?.find((b) => b.id === blockId);
+        if (pointId || !block || block.blockType !== "scripture") throw new ApiError("invalidInput", "That block cannot be used here.");
+      }
       const ref = h.ref(reference);
       if (!ref) throw new ApiError("invalidReference", "Invalid reference.");
       const where = pointId ?? null;
-      if (!p.passages.some((x) => x.pointId === where && x.reference.canonical === ref.canonical)) p.passages.push({ id: h.id(), pointId: where, reference: ref });
+      if (!p.passages.some((x) => x.pointId === where && (x.blockId ?? null) === (blockId ?? null) && x.reference.canonical === ref.canonical)) p.passages.push({ id: h.id(), pointId: where, blockId: blockId ?? null, reference: ref });
       touch(p);
       return view(p);
     },
@@ -383,7 +723,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       if (p.centralMessage || p.audience || p.purpose) shared.push({ kind: "teaching", label: p.title, reference: null });
       const primary = h.studyPassages().find((x) => x.studyId === p.studyId && x.role === "primary");
       if (primary) shared.push({ kind: "passage", label: primary.reference.display, reference: primary.reference });
-      const linked = p.links.filter((l) => l.pointId === null || l.pointId === input.pointId).length;
+      const linked = p.links.filter((l) => !l.presentationOnly && (l.pointId === null || l.pointId === input.pointId)).length;
       if (linked) shared.push({ kind: "finding", label: String(linked), reference: null });
       return { remote: remote(state.assistant.config), assistant: label(), shared, searches: input.action === "story" };
     },
@@ -410,7 +750,7 @@ export function teachingApi(state: TeachingState, h: Helpers): TeachingApi {
       state.assistant.generated.push(description);
       if (state.assistant.hold) await state.assistant.hold;
       const file = `${h.id().replace(/[^0-9a-f-]/g, "")}.png`;
-      return { file, dataUrl: "data:image/png;base64,iVBORw0KGgo=", assistant: `${LABELS[state.assistant.config.provider]} · gpt-image-1` };
+      return { file, dataUrl: "data:image/png;base64,iVBORw0KGgo=", assistant: `${LABELS[state.assistant.config.provider]} · gpt-image-2.5-flare` };
     },
   };
 }

@@ -5,7 +5,8 @@ import { placeOfPosition, positionOfPlace } from "@/features/library/formatted/e
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { FORMATTED_BOOK, PIXEL } from "../support/epubFixture";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // The formatted ("Original") view of an EPUB: what it shows, how it moves,
 // and what it will not do. Everything here is invented.
@@ -46,6 +47,8 @@ afterEach(() => {
 });
 
 const sourcesPane = () => screen.getByRole("complementary", { name: "Sources" });
+// These tests are about in-source history, so its two buttons are pinned to the toolbar (A.4.2).
+beforeEach(() => pinReaderActions(["find", "contents", "history"]));
 const back = (root: HTMLElement) => within(root).getByRole("button", { name: "Back to the previous place" });
 const forward = (root: HTMLElement) => within(root).getByRole("button", { name: "Forward to the next place" });
 
@@ -58,7 +61,7 @@ function setup(fixtures: SourceFixture[] = [FORMATTED_BOOK]) {
 
 async function openPane(api: MemoryApi, engine: ReturnType<typeof createFakePdfEngine>, title = "A Formatted Book", width = 1440) {
   const { user } = await renderApp(api, { pdfEngine: engine, width });
-  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(title) }));
+  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(`^${title}`) }));
   const reader = await within(sourcesPane()).findByRole("region", { name: title });
   return { user, reader };
 }
@@ -75,7 +78,7 @@ async function page(reader: HTMLElement): Promise<HTMLElement> {
   return host.shadowRoot!.querySelector<HTMLElement>(".aw-doc")!;
 }
 
-const part = (reader: HTMLElement) => within(reader).getByRole("status").textContent;
+const part = (reader: HTMLElement) => within(within(reader).getByRole("toolbar", { name: "Original document controls" })).getByRole("status").textContent;
 
 describe("the Original view of an EPUB", () => {
   it("is offered next to Reading, and Reading is unchanged", async () => {
@@ -160,7 +163,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine);
     await original(user, reader);
-    await user.click(within(reader).getByRole("button", { name: "Contents" }));
+    await user.click(await within(reader).findByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: /^Chapter Two/ }));
     await waitFor(() => expect(part(reader)).toBe("Part 2 of 3"));
     expect(within(await page(reader)).getByRole("heading", { name: "Chapter Two" })).toBeInTheDocument();
@@ -209,7 +212,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine);
     await original(user, reader);
-    await user.click(within(reader).getByRole("button", { name: "Contents" }));
+    await user.click(await within(reader).findByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: /^Chapter Two/ }));
     await waitFor(() => expect(part(reader)).toBe("Part 2 of 3"));
     await user.click(within(await page(reader)).getByRole("link", { name: "the marker" }));
@@ -302,7 +305,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
   it("keeps the place when switching: Reading's text on top is where Original opens, and back again", async () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine);
-    await user.click(within(reader).getByRole("button", { name: "Contents" }));
+    await user.click(await within(reader).findByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: /^Chapter Two/ }));
     await waitFor(() => expect(readingTop).toBe(4));
     await original(user, reader);
@@ -319,7 +322,7 @@ describe("Contents, links and Back / Forward in the Original view", () => {
     const doc = within(await original(user, reader));
     await user.click(doc.getByText("1"));
     await waitFor(() => expect(part(reader)).toBe("Part 3 of 3"));
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     const full = await screen.findByRole("main");
     await within(full).findByTestId("epub-page");
     expect(part(full)).toBe("Part 3 of 3");
@@ -352,7 +355,8 @@ describe("Contents, links and Back / Forward in the Original view", () => {
     const doc = within(await original(user, reader));
     await user.click(doc.getByText("1"));
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
-    await user.click(await within(sourcesPane()).findByRole("button", { name: /Another Book/ }));
+    await user.click(within(sourcesPane()).getByText("Other sources"));
+    await user.click(await within(sourcesPane()).findByRole("button", { name: /^Another Book/ }));
     const next = await within(sourcesPane()).findByRole("region", { name: "Another Book" });
     expect(back(next)).toBeDisabled();
   });

@@ -1,0 +1,8 @@
+{
+  "sourceHead": "3424f799baf6758afd2d918a6fd08e396de83ff9",
+  "applicationDiff": "",
+  "newTestFile": "tests/ui/delete-save-barrier.test.tsx",
+  "testSha256": "51a4f0dc2289d2052c2cb4fc19b327501e385a3d2be8ef07f8cea8f540ee54e5",
+  "command": "npm test -- tests/ui/delete-save-barrier.test.tsx --maxWorkers=2 --reporter=json --outputFile=work/recovery-verification/delete-before/frontend.json",
+  "initialHarnessAttempt": "initial-harness-attempt retains six real early-delete failures and two incorrect Teaching button selector failures; those two are not defect reproductions."
+}

@@ -4,13 +4,17 @@
 
 pub mod adapters;
 pub mod annotations;
+pub mod batch;
 pub mod contents;
+pub mod coverage;
 pub mod files;
 pub mod find;
 pub mod generated_contents;
 pub mod import;
 pub mod original;
 pub mod passage_index;
+pub mod pdf_build;
+pub mod pdf_structure;
 pub mod relevance;
 pub mod sections;
 
@@ -42,6 +46,7 @@ macro_rules! text_enum {
 
 text_enum!(SourceType, "source type" {
     Book => "book",
+    Commentary => "commentary",
     Article => "article",
     Notes => "notes",
     Sermon => "sermon",
@@ -96,6 +101,18 @@ pub struct Source {
     pub content_hash: Option<String>,
     pub created_at: String,
     pub updated_at: String,
+    /// "active", "archived" or "trashed".
+    pub state: String,
+    /// Names of the collections this source belongs to.
+    pub collection_names: Vec<String>,
+    /// Names of the tags on this source.
+    pub tag_names: Vec<String>,
+    /// Whether a primary file row exists. The get-source command sets this
+    /// false when that managed file is not on disk.
+    pub file_present: bool,
+    /// Relevance of the whole work; never a segment/page destination.
+    pub coverage: Vec<coverage::SourceCoverage>,
+    pub coverage_mode: coverage::CoverageMode,
 }
 
 /// One row of the library list.
@@ -119,7 +136,7 @@ pub struct ListSources {
 }
 
 /// A segment with its provenance, for the reader.
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SourceSegment {
     pub id: String,
@@ -132,6 +149,8 @@ pub struct SourceSegment {
     pub section_path: Option<String>,
     pub paragraph_index: Option<i64>,
     pub locator: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub presentation: Option<pdf_structure::Presentation>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -150,7 +169,7 @@ pub struct GetSegments {
     pub limit: Option<i64>,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SegmentWindow {
     pub source_id: String,
@@ -168,6 +187,18 @@ pub struct SearchLibrary {
     pub query: String,
     #[serde(default)]
     pub offset: Option<i64>,
+    /// Limit hits to one source type. Empty: every type.
+    #[serde(default)]
+    pub source_type: Option<SourceType>,
+    /// Limit hits to one stored language. Empty: every language.
+    #[serde(default)]
+    pub language: Option<String>,
+    /// "active" or "archived". Empty: both, and never Trash.
+    #[serde(default)]
+    pub state: Option<String>,
+    /// Restrict text results to members of this collection, without duplicating hits.
+    #[serde(default)]
+    pub collection_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -182,6 +213,8 @@ pub struct LibraryHit {
     pub locator: String,
     /// Matches wrapped in U+0002 … U+0003.
     pub snippet: String,
+    /// The source is archived (v0.24): still searchable, out of the lists.
+    pub archived: bool,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -272,6 +305,9 @@ pub struct PassageLocation {
     /// The reference as written in the source (the heading, for a section).
     pub matched_text: String,
     pub section_heading: Option<String>,
+    pub structure_node_id: Option<String>,
+    pub structure_scope: Option<String>,
+    pub structure_basis: Option<String>,
 }
 
 /// A source with the places in it that fit the passage being read, best first.
@@ -285,6 +321,9 @@ pub struct PassageSourceGroup {
     pub locations: Vec<PassageLocation>,
     /// How many further places the source has.
     pub more_locations: i64,
+    /// Matching whole-work scopes, separate from navigable locations.
+    /// A recommended work may have no precise location at all.
+    pub coverage: Vec<coverage::SourceCoverage>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -343,20 +382,26 @@ pub struct CommitSourceImport {
 }
 
 /// A finding's citation of a library source.
-#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct FindingCitation {
     pub id: String,
     pub finding_id: String,
-    pub source_id: String,
+    /// None when the cited source is not on this computer (a project
+    /// imported from elsewhere, v0.19): the citation stands on its snapshot.
+    pub source_id: Option<String>,
     /// None once the source has been removed from the library.
     pub segment_id: Option<String>,
     pub title: String,
     pub author: Option<String>,
     /// e.g. "p. 152", "Chapter 3 › Grace".
     pub locator: Option<String>,
-    /// The source was removed; the citation remains as a record.
+    /// The source cannot be opened (removed, or not on this computer); the
+    /// citation remains as a record.
     pub removed: bool,
+    /// The source is not on this computer at all (v0.19): it was cited where
+    /// the project was made. Title, author, words and place are kept.
+    pub unavailable: bool,
     /// What the source said: the cited words, as they were (v0.15).
     pub quote: Option<String>,
     /// The section path at the time, e.g. "Chapter 3 › Grace" (v0.15).

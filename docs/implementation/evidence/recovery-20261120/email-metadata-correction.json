@@ -1,0 +1,41 @@
+{
+  "reason": "GitHub GH007 rejected private commit email; preserve privacy protection using account no-reply identity",
+  "baseline": "b8d9af869c95395a44cc6d9a3867626ab83d9804",
+  "oldImplementation": "5dd3776e09aea3e11aadc2d3471d3351346675bf",
+  "replacementImplementation": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+  "unpublishedOldEvidenceCommit": "d4a64b53ec8ef244db05482cb35e593a6c897381",
+  "sourceTreesUnchanged": true,
+  "commits": [
+    {
+      "oldCommit": "6cf808a92377b39e2828f5f62d6dc12ec992d84a",
+      "replacementCommit": "0b982497005d222dd2d1e004308c3cda7ff6c6e4",
+      "tree": "a85b85affaaadab908405e49d2dc7419fdb2859c",
+      "treeUnchanged": true
+    },
+    {
+      "oldCommit": "0d07e805ae641b701bf193748e151608051a5376",
+      "replacementCommit": "d051133a10197e12a79588e1f6c091654edb3f30",
+      "tree": "e75f4eec179b072b5a28c3dd7f21b50d3d6c3bf6",
+      "treeUnchanged": true
+    },
+    {
+      "oldCommit": "b5a0c8c800da83f45f475cbf3639897c4f4bf977",
+      "replacementCommit": "01f89a4c4dd36271d460011e67d42a1822b3e245",
+      "tree": "8d68990309d0512748fd7af44f0e953cf5a24f06",
+      "treeUnchanged": true
+    },
+    {
+      "oldCommit": "a2ea1bee83d4678fb0ad54a6b437c60fa5ab7419",
+      "replacementCommit": "582f3459327e91244bdc5ede0f18eddf0bf5ce79",
+      "tree": "70d6a61ec2985a206998e4e5afe1b78fd348ec9e",
+      "treeUnchanged": true
+    },
+    {
+      "oldCommit": "5dd3776e09aea3e11aadc2d3471d3351346675bf",
+      "replacementCommit": "e8f52ff668fbc02880925809bedf0f0b8e26bf83",
+      "tree": "34fd1a1a06f8eb645427e1de4e39ef0d5a459a1d",
+      "treeUnchanged": true
+    }
+  ],
+  "noRemoteHistoryRewritten": true
+}

@@ -1,11 +1,20 @@
+import type { PdfBuildProgress, PdfStructureView, PdfCorrection, PdfDiagnostic, ReaderObserved } from "@/types/library";
+import type { ReaderPosition } from "@/features/library/SourceReader";
+export interface SavedReaderPosition { sourceId: string; position: ReaderPosition }
 // The frontend's only door to the native core. Components use the `Api`
 // interface through `useApi()`, never `invoke` directly, so tests can supply
 // an in-memory implementation.
+import type { MaterialDocument } from "@/features/materials/derive";
+import i18n from "i18next";
 import { localizeError } from "@/i18n/messages";
 import { invoke } from "@tauri-apps/api/core";
-import { open } from "@tauri-apps/plugin-dialog";
+import { listen } from "@tauri-apps/api/event";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { safeExternalUrl } from "./externalLink";
+import type { InquiryInput, InquiryPreview, InquiryReply, KeepInsight } from "@/types/inquiry";
+import type { ImportItemEdit, ImportJob, ImportJobItem, ItemState, ManagePage, ManageQuery, SourceCollection, SourceTag, UpdateSource } from "@/types/library";
+import type { BackupPreview, BackupReport, DailySnapshot, DailySnapshotRestore, ProjectExportReport, ProjectImportReport, ProjectPackagePreview, RestoreReport, SampleReport } from "@/types/portability";
 import type {
   AppInfo,
   AppSettings,
@@ -23,34 +32,44 @@ import type {
   UpdateSettings,
   UpdateStudy,
   UpdateStudyBlock,
+  CreateStudySection,
   UpdateStudySection,
   Workspace,
 } from "@/types/domain";
 import type {
+  BibleLanguageOption,
   AnchorInput,
   Annotation,
   AnnotationAnchor,
   BibleTranslation,
   BookInfo,
   BundledBibleInfo,
+  CatalogueEntry,
+  CatalogueProgress,
   ChapterText,
   CommitImport,
   ConcordanceQuery,
   ConcordanceResult,
+  LemmaEntry,
+  LemmaLookup,
+  LemmaQuery,
+  LemmaResult,
+  VerseWord,
   CreateAnnotation,
   MarksPage,
   MarksQuery,
   HighlightColor,
   DetectedReference,
   ImportPreview,
+  WordChoice,
+  WordsPreview,
   ImportRequest,
   PassageText,
   ScriptureRef,
   SearchResults,
   SearchScripture,
   StudyPassage,
-  UpdateAnnotation,
-} from "@/types/scripture";
+  UpdateAnnotation, MaterialScripture, BibleDocument, DocumentWindow, DocumentHit, VerseOrigin, DocumentPassage, MarkedPlace, DocumentCoverage, AddLocation } from "@/types/scripture";
 import type {
   CreateFinding,
   Finding,
@@ -77,6 +96,9 @@ import type {
   StepKind,
   TeachingKind,
   TeachingPreparation,
+  TeachingTemplate,
+  TeachingTemplateBlock,
+  TeachingTemplateInput,
   TeachingSummary,
   UpdateTeaching,
   UpdateTeachingPoint,
@@ -110,24 +132,90 @@ import type {
   CreateFindingFromSource,
   CitationPlace,
 } from "@/types/library";
+import type {
+  AudienceDocument,
+  AudienceSlide,
+  AudienceState,
+  CreatePresentationItem,
+  ExportFormat,
+  ExportLocale,
+  ExportOptions,
+  ExportResult,
+  ItemKind,
+  Presentation,
+  PresentationDocument,
+  PresentationSummary,
+  PresentationTheme,
+  Screen,
+  UpdatePresentationItem,
+} from "@/types/presentation";
+import type {
+  ImportedTemplate,
+  ImportProgress,
+  InstalledFont,
+  Page,
+  PresentationTemplate,
+  PresentationTemplateSummary,
+  TemplateAsset,
+  TemplateDefinition,
+  TemplateSource,
+} from "@/types/presentationTemplate";
+
+/** Transient export presentation only; never stored with teaching or user text. */
+export interface MaterialDocxFormat {
+  language?: string;
+  paper?: "a4" | "letter";
+  styleNames?: Partial<Record<"reference" | "notice" | "label" | "message" | "question" | "scripture" | "note" | "line" | "lineLast", string>>;
+}
 
 export interface Api {
   appInfo(): Promise<AppInfo>;
   logError(message: string): Promise<void>;
   workspaceGetDefault(): Promise<Workspace>;
+  trashList(workspaceId: string): Promise<{ id: string; title: string; kind: "project" | "study"; deletedAt: string }[]>;
+  projectRoot(workspaceId: string, title: string): Promise<Project>;
   projectList(workspaceId: string): Promise<Project[]>;
   projectGet(id: string): Promise<Project>;
   projectCreate(input: CreateProject): Promise<Project>;
   projectUpdate(input: UpdateProject): Promise<Project>;
+  projectDelete(id: string, permanent?: boolean): Promise<void>;
+  projectRestore(id: string): Promise<Project>;
+  /** Saves one project as a package (.awproject) where the save dialog said; where it went. */
+  projectExport(input: { projectId: string; path: string }): Promise<[string, ProjectExportReport]>;
+  /** What a project package holds and what it refers to that is not here; nothing changes. */
+  projectPackageInspect(path: string): Promise<ProjectPackagePreview>;
+  /** Adds a package's project as a new project; never replaces one. */
+  projectImport(path: string): Promise<ProjectImportReport>;
+  /** Saves everything as one backup (.awbackup); where it went. */
+  backupCreate(path: string): Promise<[string, BackupReport]>;
+  /** What a backup holds; nothing changes. */
+  backupInspect(path: string): Promise<BackupPreview>;
+  /** Replaces everything with a backup, after a safety copy. */
+  backupRestore(path: string): Promise<RestoreReport>;
+  /** Lists verified automatic database-only recovery points; no imported files. */
+  dailySnapshotList(): Promise<DailySnapshot[]>;
+  /** Restore only the SQLite database after explicit confirmation in Settings. */
+  dailySnapshotRestore(id: string): Promise<DailySnapshotRestore>;
+  /** Adds the example project when asked; finds it instead when it is already there. */
+  sampleProjectInstall(): Promise<SampleReport>;
+  /** The system's open dialog for a project package or a backup; null when cancelled. */
+  choosePortableFile(input: { kind: "project" | "backup"; title: string; filterName: string }): Promise<string | null>;
+  /** The system's save dialog for a project package or a backup; null when cancelled. */
+  choosePortableSaveFile(input: { kind: "project" | "backup"; defaultName: string; filterName: string }): Promise<string | null>;
   studyList(filter: ListStudies): Promise<StudySummary[]>;
+  studyDelete(id: string, permanent?: boolean): Promise<void>;
+  studyRestore(id: string): Promise<Study>;
   studyDuplicate(input: { studyId: string; includeContent: boolean }): Promise<StudyDetail>;
   studySearch(query: string): Promise<StudySearchHit[]>;
   studyGet(id: string): Promise<StudyDetail>;
   studyCreate(input: CreateStudy): Promise<StudyDetail>;
+  studyMove(id: string, projectId: string): Promise<Study>;
   studyUpdate(input: UpdateStudy): Promise<Study>;
   studySectionList(studyId: string): Promise<StudySection[]>;
   studySectionUpdate(input: UpdateStudySection): Promise<StudySection>;
-  studySectionCreate(input: { studyId: string; title: string; guidance?: string; templateSectionKey?: string }): Promise<StudySection>;
+  studyPozetekRepair(studyId: string, action: "preview" | "apply" | "undo", expectedIds?: string[]): Promise<{ sections: StudySection[]; canUndo: boolean }>;
+  studySectionRestoreMissing(studyId: string, keys?: string[]): Promise<StudySection[]>;
+  studySectionCreate(input: CreateStudySection): Promise<StudySection>;
   studySectionDelete(input: { id: string; force: boolean }): Promise<void>;
   studySectionReorder(input: Reorder): Promise<StudySection[]>;
   studyBlockReorder(input: Reorder): Promise<StudyBlock[]>;
@@ -159,13 +247,72 @@ export interface Api {
   libraryImportPreview(path: string): Promise<SourceImportPreview>;
   libraryImportCommit(input: CommitSourceImport): Promise<Source>;
   libraryImportCancel(previewId: string): Promise<void>;
+  /** Adding many sources at once (v0.24). The system's dialog for several files; null when cancelled. */
+  chooseSourceFiles(): Promise<string[] | null>;
+  /** The system's dialog for a folder; null when cancelled. */
+  chooseSourceFolder(): Promise<string | null>;
+  /** Lists the readable files among the chosen files and folders, as a new import job. */
+  libraryBatchScan(paths: string[], recursive: boolean): Promise<ImportJob>;
+  /** Reads and checks the next waiting file of a job. */
+  libraryBatchStep(jobId: string): Promise<ImportJob>;
+  libraryBatchGet(jobId: string): Promise<ImportJob>;
+  /** Jobs still open (in review, adding, or interrupted). */
+  libraryBatchJobs(): Promise<ImportJob[]>;
+  libraryBatchEdit(jobId: string, edit: ImportItemEdit): Promise<ImportJobItem>;
+  /** The collection (existing or new) and tags every added source gets. */
+  libraryBatchShared(jobId: string, shared: { collectionId: string | null; newCollection: string | null; tags: string[] }): Promise<ImportJob>;
+  libraryBatchRetry(jobId: string, itemIds: string[]): Promise<ImportJob>;
+  /** Adds the next chosen file; the job is finished when none is left. */
+  libraryBatchImportStep(jobId: string): Promise<ImportJob>;
+  /** Stops the job; what was added stays. */
+  libraryBatchCancel(jobId: string): Promise<ImportJob>;
+  /** Forgets the job (its added sources stay). */
+  libraryBatchDiscard(jobId: string): Promise<void>;
   libraryRemoveSource(id: string): Promise<void>;
-  librarySearch(input: { query: string; offset?: number }): Promise<LibraryResults>;
+  /** Looking after the library (v0.24): one page of the Sources list in Settings. */
+  libraryManageList(query: ManageQuery): Promise<ManagePage>;
+  /** Archive, move to Trash or restore sources. */
+  librarySetState(ids: string[], to: ItemState): Promise<number>;
+  /** Deletes sources that are in Trash, for good. */
+  libraryRemovePermanently(ids: string[]): Promise<number>;
+  libraryUpdateSource(input: UpdateSource): Promise<Source>;
+  libraryCollections(): Promise<SourceCollection[]>;
+  libraryCollectionCreate(name: string, parentId: string | null): Promise<SourceCollection>;
+  libraryCollectionRename(id: string, name: string): Promise<void>;
+  libraryCollectionMove(id: string, parentId: string | null): Promise<void>;
+  libraryCollectionRemove(id: string): Promise<void>;
+  libraryCollect(collectionId: string, ids: string[], add: boolean): Promise<number>;
+  libraryTags(): Promise<SourceTag[]>;
+  libraryTagRename(id: string, name: string): Promise<void>;
+  libraryTagRemove(id: string): Promise<void>;
+  /** Adds tags (by name, created if new) and takes others (by id) off. */
+  libraryRetag(ids: string[], add: string[], remove: string[]): Promise<void>;
+  librarySearch(input: {
+    query: string;
+    offset?: number;
+    sourceType?: SourceType;
+    language?: string;
+    /** "active" or "archived". Omit for both, and never Trash. */
+    state?: "active" | "archived";
+    collectionId?: string;
+  }): Promise<LibraryResults>;
   libraryOpenSegment(segmentId: string): Promise<SegmentWindow>;
   sourceGetSegments(input: { sourceId: string; offset?: number; limit?: number; aroundPage?: number }): Promise<SegmentWindow>;
   /** Size and kind of a source's original file, found by source id only. */
   /** The contents an EPUB carries (or the headings of a DOCX), as segment targets (a PDF's outline comes from the PDF engine). */
   librarySourceContents(id: string): Promise<ContentsItem[]>;
+  libraryPdfStructure(id: string): Promise<PdfStructureView>;
+  libraryPdfStructureBuild(id: string): Promise<PdfStructureView>;
+  libraryPdfStructureProgress(id: string): Promise<PdfBuildProgress | null>;
+  libraryPdfStructureCancel(id: string): Promise<boolean>;
+  libraryPdfStructureCorrect(id: string, hash: string, correction: PdfCorrection): Promise<PdfStructureView>;
+  libraryPdfStructureUndo(id: string, hash: string, reset: boolean): Promise<PdfStructureView>;
+  /** A.4.1: the metadata-only structure/targeting report of a PDF Source. */
+  libraryPdfStructureDiagnostic(id: string, passage: string | null, observed: ReaderObserved | null): Promise<PdfDiagnostic>;
+  /** Asks where to save that report (.json); null when cancelled. */
+  chooseDiagnosticFile(defaultName: string, filterName: string): Promise<string | null>;
+  /** Saves a native-generated report atomically and returns that exact report for display. */
+  libraryPdfStructureDiagnosticSave(id: string, passage: string | null, observed: ReaderObserved | null, path: string): Promise<{ path: string; report: PdfDiagnostic }>;
   /** Contents made from the source's own headings, for a source that carries none (shown as generated). */
   libraryGeneratedContents(id: string): Promise<ContentsItem[]>;
   /** The links in an EPUB's text that lead elsewhere in the same book (none for other formats). */
@@ -218,25 +365,112 @@ export interface Api {
 
   /** Teaching Preparation (v0.16): what a study leads to, written by the person. */
   teachingList(studyId: string): Promise<TeachingSummary[]>;
+  teachingListProject(projectId: string): Promise<TeachingSummary[]>;
+  teachingSetStudy(id: string, studyId: string | null): Promise<TeachingPreparation>;
+  teachingRestore(id: string): Promise<TeachingPreparation>;
   teachingGet(id: string): Promise<TeachingPreparation>;
   /** `points`: the steps or points it starts with (a format's starting structure), in the person's language. */
-  teachingCreate(input: { studyId: string; title: string; kind?: TeachingKind | null; points?: { title: string; kind?: StepKind | null }[] }): Promise<TeachingPreparation>;
+  /** The person's own Bible Teaching templates (v0.18.7); the built-in ones are in the interface. */
+  teachingTemplateList(): Promise<TeachingTemplate[]>;
+  teachingTemplateCreate(input: TeachingTemplateInput): Promise<TeachingTemplate>;
+  teachingTemplateUpdate(input: TeachingTemplateInput & { id: string }): Promise<TeachingTemplate>;
+  teachingTemplateDelete(id: string): Promise<void>;
+  teachingCreate(input: { projectId?: string; studyId?: string | null; title: string; kind?: TeachingKind | null; points?: { title: string; kind?: StepKind | null }[]; templateKey?: string | null; templateVersion?: number | null; blocks?: TeachingTemplateBlock[] }): Promise<TeachingPreparation>;
   teachingUpdate(input: UpdateTeaching): Promise<TeachingPreparation>;
   teachingDelete(id: string): Promise<void>;
   teachingPointCreate(input: { preparationId: string; title?: string; kind?: StepKind | null; afterPointId?: string | null }): Promise<TeachingPreparation>;
   teachingPointUpdate(input: UpdateTeachingPoint): Promise<TeachingPreparation>;
   teachingPointDelete(id: string): Promise<TeachingPreparation>;
   teachingPointReorder(input: Reorder): Promise<TeachingPreparation>;
+  teachingBlockCreate(input: { preparationId: string; parentId?: string | null; afterBlockId?: string | null; blockType: string; title?: string; body?: string; participantFacing?: boolean | null; role?: string | null; guidanceKey?: string | null }): Promise<TeachingPreparation>;
+  teachingBlockUpdate(input: { id: string; title?: string; body?: string; blockType?: string; participantFacing?: boolean; role?: string; guidanceKey?: string; parentId?: string }): Promise<TeachingPreparation>;
+  teachingBlockDelete(id: string): Promise<TeachingPreparation>;
+  teachingBlockReorder(input: { preparationId: string; parentId?: string | null; ids: string[] }): Promise<TeachingPreparation>;
+  teachingBlockDuplicate(id: string): Promise<TeachingPreparation>;
+  /** A.4.4 (#27): copies chosen items of the teaching's Bible Study into it (leader-only snapshots with provenance). */
+  teachingAddFromStudy(input: { preparationId: string; parentId?: string | null; items: import("@/types/teaching").StudyItemRef[] }): Promise<TeachingPreparation>;
   /** Uses a study finding here (a live link; the finding stays the study's). */
   teachingFindingLink(input: { preparationId: string; pointId?: string | null; findingId: string }): Promise<TeachingPreparation>;
   teachingFindingUnlink(linkId: string): Promise<TeachingPreparation>;
-  teachingPassageAdd(input: { preparationId: string; pointId?: string | null; reference: string }): Promise<TeachingPreparation>;
+  teachingPassageAdd(input: { preparationId: string; pointId?: string | null; blockId?: string | null; reference: string }): Promise<TeachingPreparation>;
   teachingPassageRemove(id: string): Promise<TeachingPreparation>;
   /** Keeps something from the assistant, with its standing and sources. */
   teachingMaterialKeep(input: KeepTeachingMaterial): Promise<TeachingPreparation>;
   teachingMaterialRemove(id: string): Promise<TeachingPreparation>;
   /** A kept generated image, as a data: address. */
   teachingImage(file: string): Promise<string>;
+
+  // Presentation & Delivery (v0.18): the teaching stays the source of truth.
+  presentationList(preparationId: string): Promise<PresentationSummary[]>;
+  presentationGet(id: string): Promise<Presentation>;
+  /** A first presentation proposed from the teaching by fixed rules (no AI). */
+  presentationCreate(input: { preparationId: string; title?: string | null; propose: boolean; labels: { introduction: string; conclusion: string } }): Promise<Presentation>;
+  /** `templateId: ""` goes back to the built-in background. */
+  presentationUpdate(input: { id: string; title?: string; theme?: PresentationTheme; translationId?: string; targetMinutes?: number; templateId?: string }): Promise<Presentation>;
+  presentationDelete(id: string): Promise<void>;
+  presentationItemCreate(input: CreatePresentationItem): Promise<Presentation>;
+  presentationItemUpdate(input: UpdatePresentationItem): Promise<Presentation>;
+  presentationItemDelete(id: string): Promise<Presentation>;
+  presentationItemReorder(input: Reorder): Promise<Presentation>;
+  /** The slides as they are now (speaker and audience content). */
+  presentationDocument(id: string): Promise<PresentationDocument>;
+  /** Audience content only, for the audience screen. */
+  presentationAudience(id: string): Promise<AudienceDocument>;
+  presentationImage(id: string, assetId: string): Promise<string>;
+  /** Saves a copy of a found image on this computer (Wikimedia only), on request. */
+  presentationImageSave(input: { presentationId: string; assetId: string }): Promise<void>;
+  /** The system's save dialog; null when cancelled. It asks before replacing a file. */
+  choosePresentationFile(input: { defaultName: string; format: ExportFormat; filterName: string }): Promise<string | null>;
+  presentationExport(input: { id: string; format: ExportFormat; path: string; options: ExportOptions }): Promise<ExportResult>;
+  /** Teaching materials (v0.18.6): where to save one, chosen in the system's save dialog (null: cancelled). */
+  chooseMaterialFile(input: { defaultName: string; filterName: string; extension?: "md" | "docx" }): Promise<string | null>;
+  /** Writes a material, as Markdown, to the chosen file; returns where it went. */
+  materialSaveMarkdown(input: { path: string; text: string }): Promise<string>;
+  /** Writes a material, as a Word document (.docx), to the chosen file (v0.18.8); returns where it went. */
+  materialSaveDocx(input: { path: string; document: MaterialDocument; format?: MaterialDocxFormat }): Promise<string>;
+  /** The text of a material's passages from the chosen Bible only (v0.18.8). */
+  materialScripture(input: { translationId: string; references: string[] }): Promise<MaterialScripture>;
+  /** The displays connected; empty where a second window cannot be opened. */
+  presentationScreens(): Promise<Screen[]>;
+  presentationAudienceOpen(input: { presentationId: string; screen: number | null; title: string; state: AudienceState }): Promise<void>;
+  presentationAudienceShow(state: AudienceState): Promise<void>;
+  presentationAudienceState(): Promise<AudienceState | null>;
+  presentationAudienceClose(): Promise<void>;
+  /** On the audience screen: what to show, as the presenter moves. */
+  onAudienceState(handler: (state: AudienceState) => void): Promise<() => void>;
+  /** On the main window: the audience screen was closed. */
+  onAudienceClosed(handler: () => void): Promise<() => void>;
+  /** On the audience screen: hands a key (a clicker) to the Presenter View. */
+  presentationAudienceKey(key: string): Promise<void>;
+  /** On the main window: a key pressed on the audience screen. */
+  onAudienceKey(handler: (key: string) => void): Promise<() => void>;
+  /** Audience pages in the presentation's template, worked out as PowerPoint and PDF work them out. */
+  presentationLayout(input: { id: string; slides: { kind: ItemKind; audience: AudienceSlide }[]; locale: ExportLocale }): Promise<Page[]>;
+
+  // Church presentation templates (v0.18.1)
+  presentationTemplateList(): Promise<PresentationTemplateSummary[]>;
+  presentationTemplateGet(id: string): Promise<PresentationTemplate>;
+  presentationTemplateCreate(input: { name: string; description: string; definition: TemplateDefinition; sourceFormat: TemplateSource; sourceName?: string | null; report?: unknown }): Promise<PresentationTemplate>;
+  presentationTemplateUpdate(input: { id: string; name?: string; description?: string; definition?: TemplateDefinition }): Promise<PresentationTemplate>;
+  /** Removes a template; presentations using it go back to their built-in background. */
+  presentationTemplateDelete(id: string): Promise<void>;
+  /** Keeps an image (logo, background) the person chose. */
+  presentationTemplateAssetAdd(path: string): Promise<TemplateAsset>;
+  /** A kept template image as a data: address. */
+  presentationTemplateAsset(asset: TemplateAsset): Promise<string>;
+  presentationTemplateExport(input: { id: string; path: string }): Promise<void>;
+  presentationTemplateImportPackage(path: string): Promise<PresentationTemplate>;
+  /** Reads a PowerPoint file's design for review; nothing is saved yet. */
+  presentationTemplateImportPptx(path: string): Promise<ImportedTemplate>;
+  onTemplateImportProgress(handler: (progress: ImportProgress) => void): Promise<() => void>;
+  /** Sample slides laid out in a design not saved yet (import review, designer). */
+  presentationTemplatePreview(input: { definition: TemplateDefinition; slides: { kind: ItemKind; audience: AudienceSlide }[]; locale: ExportLocale }): Promise<Page[]>;
+  /** The fonts installed on this computer. */
+  presentationFonts(): Promise<InstalledFont[]>;
+  /** The system's open dialog for a template file; null when cancelled. */
+  chooseTemplateFile(input: { kind: "pptx" | "package" | "image"; title: string; filterName: string }): Promise<string | null>;
+  /** The system's save dialog for a template package; null when cancelled. */
+  chooseTemplateSaveFile(input: { defaultName: string; filterName: string }): Promise<string | null>;
 
   /** The assistant's set-up (never a key, only whether one is kept). */
   assistantSettingsGet(): Promise<AssistantSettings>;
@@ -250,6 +484,12 @@ export interface Api {
   assistantPreview(input: AssistInput): Promise<AssistPreview>;
   /** Asks the assistant. The answer is a suggestion; nothing is changed. */
   assistantAsk(input: AssistInput): Promise<AssistReply>;
+  /** Study and research help (v0.20): exactly what would be sent, before anything is. */
+  inquiryPreview(input: InquiryInput): Promise<InquiryPreview>;
+  /** Asks, only if what would be sent still has the preview's fingerprint. Changes nothing. */
+  inquiryAsk(input: InquiryInput, fingerprint: string): Promise<InquiryReply>;
+  /** Keeps help the person accepted as a note in their study. */
+  inquiryKeep(input: KeepInsight): Promise<Finding>;
   assistantFindImages(terms: string): Promise<FoundImage[]>;
   /** The preview of a kept found image (fetched by the core from Wikimedia only). */
   assistantImagePreview(url: string): Promise<string | null>;
@@ -260,6 +500,9 @@ export interface Api {
   studyBlockDelete(id: string): Promise<void>;
   settingsGet(): Promise<AppSettings>;
   settingsUpdate(input: UpdateSettings): Promise<AppSettings>;
+  /** Per-source reading locations and history, stored in the backed-up SQLite settings. */
+  sourceReaderPositions(): Promise<SavedReaderPosition[]>;
+  sourceReaderPositionSave(input: SavedReaderPosition): Promise<void>;
 
   scriptureBooks(): Promise<BookInfo[]>;
   scriptureGetChapter(input: { translationId: string; book: string; chapter: number }): Promise<ChapterText>;
@@ -267,17 +510,73 @@ export interface Api {
   scriptureSearch(input: SearchScripture): Promise<SearchResults>;
   /** Where a word or phrase occurs in one translation (v0.12). */
   scriptureConcordance(input: ConcordanceQuery): Promise<ConcordanceResult>;
-  referenceParse(text: string): Promise<ScriptureRef>;
+  /** Lemma entries a typed lemma or lexical number names (v0.21). */
+  scriptureLemmaEntries(input: LemmaLookup): Promise<LemmaEntry[]>;
+  /** Where a lemma or lexical number occurs, from the Bible's own annotations (v0.21). */
+  scriptureLemmaSearch(input: LemmaQuery): Promise<LemmaResult>;
+  /** The annotated words of one verse (v0.21). */
+  scriptureVerseWords(input: { translationId: string; verse: string }): Promise<VerseWord[]>;
+  /**
+   * A typed passage in any of the 100 reference languages ("Johannes 15,5",
+   * "요한복음 15장 5절"). `translationId` is the Bible the person is reading:
+   * its stored language decides an ambiguous abbreviation first, then the
+   * interface language (scripture::resolve).
+   */
+  referenceParse(text: string, translationId?: string | null): Promise<ScriptureRef>;
   referenceDetect(text: string): Promise<DetectedReference[]>;
 
   bibleList(): Promise<BibleTranslation[]>;
   bibleBundledList(): Promise<BundledBibleInfo[]>;
   /** Opens the system file dialog; null when the user cancels. */
   chooseBibleFiles(): Promise<string[] | null>;
+  /** Available Bibles to download (v0.24): editions checked file by file against a verified copy. */
+  bibleCatalogueList(): Promise<CatalogueEntry[]>;
+  /** Downloads and verifies one, then reads it for the review screen; nothing is added yet. */
+  bibleCatalogueDownload(id: string): Promise<ImportPreview>;
+  onBibleImportProgress?(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
+  onCatalogueProgress(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
   bibleImportPreview(input: ImportRequest): Promise<ImportPreview>;
   bibleImportCommit(input: CommitImport): Promise<BibleTranslation>;
   bibleImportCancel(previewId: string): Promise<void>;
+  /** Reads previewed documents again with the person's book corrections (v0.23). */
+  bibleImportCorrect(previewId: string, books: { index: number; book: string | null }[]): Promise<ImportPreview>;
+  /** The documents a Bible was added from (v0.23). */
+  bibleDocuments(translationId: string): Promise<BibleDocument[]>;
+  bibleDocumentInfo(documentId: string): Promise<OriginalInfo>;
+  bibleDocumentRead(documentId: string, offset: number, length: number): Promise<Uint8Array>;
+  bibleDocumentStructure(documentId: string, kind: "epub" | "docx"): Promise<EpubStructureItem[]>;
+  bibleDocumentItem(documentId: string, kind: "epub" | "docx", item: string): Promise<EpubItem>;
+  bibleDocumentSegments(input: { documentId: string; offset?: number; limit?: number; aroundPage?: number }): Promise<DocumentWindow>;
+  bibleDocumentSearch(translationId: string, query: string): Promise<DocumentHit[]>;
+  bibleVerseOrigin(translationId: string, book: string, chapter: number, verse: number): Promise<VerseOrigin | null>;
+  /** Reads a document Bible's kept files again for verses (no new import). */
+  bibleDocumentRecognise(translationId: string, jobId?: string): Promise<ImportPreview>;
+  /** With `partial` (v0.24), only the chapters recognised without doubt are used. */
+  bibleDocumentAddVerses(previewId: string, partial?: boolean, confirmEdition?: boolean): Promise<BibleTranslation>;
+  /** A passage in a Bible kept as a document (v0.24). */
+  bibleDocumentLocate(translationId: string, reference: string): Promise<DocumentPassage>;
+  bibleLocationAdd(input: AddLocation): Promise<MarkedPlace>;
+  bibleLocationRemove(id: string): Promise<void>;
+  bibleLocations(translationId: string): Promise<MarkedPlace[]>;
+  bibleDocumentCoverage(translationId: string): Promise<DocumentCoverage>;
   bibleRemove(id: string): Promise<void>;
+  /** Every Bible, archived and trashed ones too (v0.24, Settings). */
+  bibleListAll(): Promise<BibleTranslation[]>;
+  bibleSetState(ids: string[], to: ItemState): Promise<number>;
+  /** Deletes Bibles that are in Trash, for good. */
+  bibleRemovePermanently(ids: string[]): Promise<number>;
+  /** Reads an installed Bible's kept files again for its words; nothing is saved (v0.22). */
+  bibleWordsPreview(id: string): Promise<WordsPreview>;
+  /** Saves that word index, replacing the old one. */
+  bibleWordsApply(previewId: string, words: WordChoice): Promise<BibleTranslation>;
+  /** Removes a Bible's word index; its text stays. */
+  bibleWordsRemove(id: string): Promise<BibleTranslation>;
+  /** Drops a word preview that was not saved. */
+  bibleWordsCancel(previewId: string): Promise<void>;
+  /** The languages a Bible can be marked as. */
+  bibleLanguageOptions(): Promise<BibleLanguageOption[]>;
+  /** Corrects a Bible's language: its name as shown, and its tag (null: none). */
+  bibleSetLanguage(input: { id: string; language: string; languageCode: string | null }): Promise<BibleTranslation>;
 
   /** With a translation, phrase anchors report whether its wording matches. */
   annotationList(reference: string, translationId?: string): Promise<Annotation[]>;
@@ -298,11 +597,14 @@ export interface Api {
 /** An error with a message that is safe to show to the user. */
 export class ApiError extends Error {
   readonly kind: ErrorKind;
+  /** The core's message key (e.g. "inquiry.changed"), when it gave one. */
+  readonly code?: string;
 
-  constructor(kind: ErrorKind, message: string) {
+  constructor(kind: ErrorKind, message: string, code?: string) {
     super(message);
     this.name = "ApiError";
     this.kind = kind;
+    this.code = code;
   }
 }
 
@@ -320,7 +622,7 @@ export function toApiError(error: unknown): ApiError {
     typeof error.message === "string"
   ) {
     const payload = error as ErrorPayload;
-    return new ApiError(payload.kind, localizeError(payload.kind, payload.message, payload.code, payload.params));
+    return new ApiError(payload.kind, localizeError(payload.kind, payload.message, payload.code, payload.params), payload.code ?? undefined);
   }
   return new ApiError("unexpected", localizeError("unexpected", ""));
 }
@@ -333,22 +635,48 @@ async function call<T>(command: string, args?: Record<string, unknown>): Promise
   }
 }
 
+/** The file kinds of a project package and a backup. */
+export const PORTABLE_EXTENSION = { project: "awproject", backup: "awbackup" } as const;
+
 export const tauriApi: Api = {
   appInfo: () => call("app_info"),
   logError: (message) => call("app_log_error", { message }),
   workspaceGetDefault: () => call("workspace_get_default"),
+  trashList: (workspaceId) => call("trash_list", { workspaceId }),
+  projectRoot: (workspaceId, title) => call("project_root", { workspaceId, title }),
   projectList: (workspaceId) => call("project_list", { workspaceId }),
   projectGet: (id) => call("project_get", { id }),
   projectCreate: (input) => call("project_create", { input }),
   projectUpdate: (input) => call("project_update", { input }),
+  projectDelete: (id, permanent) => call("project_delete", { id, permanent }),
+  projectRestore: (id) => call("project_restore", { id }),
+  projectExport: ({ projectId, path }) => call("project_export", { projectId, path }),
+  projectPackageInspect: (path) => call("project_package_inspect", { path }),
+  projectImport: (path) => call("project_import", { path }),
+  backupCreate: (path) => call("backup_create", { path }),
+  backupInspect: (path) => call("backup_inspect", { path }),
+  backupRestore: (path) => call("backup_restore", { path }),
+  dailySnapshotList: () => call("daily_snapshot_list"),
+  dailySnapshotRestore: (id) => call("daily_snapshot_restore", { id }),
+  sampleProjectInstall: () => call("sample_project_install"),
+  choosePortableFile: async ({ kind, title, filterName }) => {
+    const chosen = await open({ multiple: false, directory: false, title, filters: [{ name: filterName, extensions: [PORTABLE_EXTENSION[kind]] }] });
+    return typeof chosen === "string" ? chosen : null;
+  },
+  choosePortableSaveFile: async ({ kind, defaultName, filterName }) => save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: [PORTABLE_EXTENSION[kind]] }] }),
   studyList: (input) => call("study_list", { input }),
   studyDuplicate: (input) => call("study_duplicate", { input }),
+  studyDelete: (id, permanent) => call("study_delete", { id, permanent }),
+  studyRestore: (id) => call("study_restore", { id }),
   studySearch: (query) => call("study_search", { query }),
   studyGet: (id) => call("study_get", { id }),
   studyCreate: (input) => call("study_create", { input }),
+  studyMove: (id, projectId) => call("study_move", { id, projectId }),
   studyUpdate: (input) => call("study_update", { input }),
   studySectionList: (studyId) => call("study_section_list", { studyId }),
   studySectionUpdate: (input) => call("study_section_update", { input }),
+  studyPozetekRepair: (studyId, action, expectedIds) => call("study_pozetek_repair", { studyId, action, expectedIds }),
+  studySectionRestoreMissing: (studyId, keys) => call("study_section_restore_missing", { studyId, keys }),
   studySectionCreate: (input) => call("study_section_create", { input }),
   studySectionDelete: (input) => call("study_section_delete", { input }),
   studySectionReorder: (input) => call("study_section_reorder", { input }),
@@ -380,9 +708,9 @@ export const tauriApi: Api = {
     const chosen = await open({
       multiple: false,
       directory: false,
-      title: "Choose a file to add to your library",
+      title: i18n.t("library.fileDialog.source"),
       filters: [
-        { name: "Books and notes (PDF, EPUB, Word, Markdown, text)", extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] },
+        { name: i18n.t("library.fileDialog.sourceTypes"), extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] },
       ],
     });
     return typeof chosen === "string" ? chosen : null;
@@ -390,11 +718,58 @@ export const tauriApi: Api = {
   libraryImportPreview: (path) => call("library_import_preview", { path }),
   libraryImportCommit: (input) => call("library_import_commit", { input }),
   libraryImportCancel: (previewId) => call("library_import_cancel", { previewId }),
+  chooseSourceFiles: async () => {
+    const chosen = await open({
+      multiple: true,
+      directory: false,
+      title: i18n.t("library.fileDialog.sources"),
+      filters: [{ name: i18n.t("library.fileDialog.sourceTypes"), extensions: ["pdf", "epub", "docx", "md", "markdown", "txt"] }],
+    });
+    if (chosen === null) return null;
+    return Array.isArray(chosen) ? chosen : [chosen];
+  },
+  chooseSourceFolder: async () => {
+    const chosen = await open({ multiple: false, directory: true, title: i18n.t("library.fileDialog.folder") });
+    return typeof chosen === "string" ? chosen : null;
+  },
+  libraryBatchScan: (paths, recursive) => call("library_batch_scan", { paths, recursive }),
+  libraryBatchStep: (jobId) => call("library_batch_step", { jobId }),
+  libraryBatchGet: (jobId) => call("library_batch_get", { jobId }),
+  libraryBatchJobs: () => call("library_batch_jobs"),
+  libraryBatchEdit: (jobId, edit) => call("library_batch_edit", { jobId, edit }),
+  libraryBatchShared: (jobId, shared) => call("library_batch_shared", { jobId, ...shared }),
+  libraryBatchRetry: (jobId, itemIds) => call("library_batch_retry", { jobId, itemIds }),
+  libraryBatchImportStep: (jobId) => call("library_batch_import_step", { jobId }),
+  libraryBatchCancel: (jobId) => call("library_batch_cancel", { jobId }),
+  libraryBatchDiscard: (jobId) => call("library_batch_discard", { jobId }),
   libraryRemoveSource: (id) => call("library_remove_source", { id }),
+  libraryManageList: (query) => call("library_manage_list", { query }),
+  librarySetState: (ids, to) => call("library_set_state", { ids, to }),
+  libraryRemovePermanently: (ids) => call("library_remove_permanently", { ids }),
+  libraryUpdateSource: (input) => call("library_update_source", { input }),
+  libraryCollections: () => call("library_collections"),
+  libraryCollectionCreate: (name, parentId) => call("library_collection_create", { name, parentId }),
+  libraryCollectionRename: (id, name) => call("library_collection_rename", { id, name }),
+  libraryCollectionMove: (id, parentId) => call("library_collection_move", { id, parentId }),
+  libraryCollectionRemove: (id) => call("library_collection_remove", { id }),
+  libraryCollect: (collectionId, ids, add) => call("library_collect", { collectionId, ids, add }),
+  libraryTags: () => call("library_tags"),
+  libraryTagRename: (id, name) => call("library_tag_rename", { id, name }),
+  libraryTagRemove: (id) => call("library_tag_remove", { id }),
+  libraryRetag: (ids, add, remove) => call("library_retag", { ids, add, remove }),
   librarySearch: (input) => call("library_search", { input }),
   libraryOpenSegment: (segmentId) => call("library_open_segment", { segmentId }),
   sourceGetSegments: (input) => call("source_get_segments", { input }),
   librarySourceContents: (id) => call("library_source_contents", { id }),
+  libraryPdfStructure: (id) => call("library_pdf_structure", { id }),
+  libraryPdfStructureBuild: (id) => call("library_pdf_structure_build", { id }),
+  libraryPdfStructureProgress: (id) => call("library_pdf_structure_progress", { id }),
+  libraryPdfStructureCancel: (id) => call("library_pdf_structure_cancel", { id }),
+  libraryPdfStructureCorrect: (id, hash, correction) => call("library_pdf_structure_correct", { id, hash, correction }),
+  libraryPdfStructureUndo: (id, hash, reset) => call("library_pdf_structure_undo", { id, hash, reset }),
+  libraryPdfStructureDiagnostic: (id, passage, observed) => call("library_pdf_structure_diagnostic", { id, passage, observed }),
+  chooseDiagnosticFile: async (defaultName, filterName) => save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: ["json"] }] }),
+  libraryPdfStructureDiagnosticSave: (id, passage, observed, path) => call("library_pdf_structure_diagnostic_save", { id, passage, observed, path }),
   libraryGeneratedContents: (id) => call("library_generated_contents", { id }),
   librarySourceLinks: (id) => call("library_source_links", { id }),
   librarySourceReferences: (id) => call("library_source_references", { id }),
@@ -404,7 +779,7 @@ export const tauriApi: Api = {
   libraryEpubItem: (id, item) => call("library_epub_item", { id, item }),
   openExternalLink: async (url) => {
     const safe = safeExternalUrl(url);
-    if (!safe) throw new ApiError("invalidInput", "This kind of link is not opened.");
+    if (!safe) throw new ApiError("invalidInput", i18n.t("errors.library.linkUnsupported"), "library.linkUnsupported");
     await openUrl(safe);
   },
   libraryDocxStructure: (id) => call("library_docx_structure", { id }),
@@ -427,7 +802,14 @@ export const tauriApi: Api = {
   findingCreateFromSource: (input) => call("finding_create_from_source", { input }),
   findingSourceLocate: (citationId) => call("finding_source_locate", { citationId }),
   teachingList: (studyId) => call("teaching_list", { studyId }),
+  teachingListProject: (projectId) => call("teaching_list_project", { projectId }),
+  teachingSetStudy: (id, studyId) => call("teaching_set_study", { id, studyId }),
+  teachingRestore: (id) => call("teaching_restore", { id }),
   teachingGet: (id) => call("teaching_get", { id }),
+  teachingTemplateList: () => call("teaching_template_list"),
+  teachingTemplateCreate: (input) => call("teaching_template_create", { input }),
+  teachingTemplateUpdate: (input) => call("teaching_template_update", { input }),
+  teachingTemplateDelete: (id) => call("teaching_template_delete", { id }),
   teachingCreate: (input) => call("teaching_create", { input }),
   teachingUpdate: (input) => call("teaching_update", { input }),
   teachingDelete: (id) => call("teaching_delete", { id }),
@@ -435,6 +817,12 @@ export const tauriApi: Api = {
   teachingPointUpdate: (input) => call("teaching_point_update", { input }),
   teachingPointDelete: (id) => call("teaching_point_delete", { id }),
   teachingPointReorder: (input) => call("teaching_point_reorder", { input }),
+  teachingBlockCreate: (input) => call("teaching_block_create", { input }),
+  teachingBlockUpdate: (input) => call("teaching_block_update", { input }),
+  teachingBlockDelete: (id) => call("teaching_block_delete", { id }),
+  teachingBlockReorder: (input) => call("teaching_block_reorder", { input }),
+  teachingBlockDuplicate: (id) => call("teaching_block_duplicate", { id }),
+  teachingAddFromStudy: (input) => call("teaching_add_from_study", { input }),
   teachingFindingLink: (input) => call("teaching_finding_link", { input }),
   teachingFindingUnlink: (id) => call("teaching_finding_unlink", { id }),
   teachingPassageAdd: (input) => call("teaching_passage_add", { input }),
@@ -442,6 +830,57 @@ export const tauriApi: Api = {
   teachingMaterialKeep: (input) => call("teaching_material_keep", { input }),
   teachingMaterialRemove: (id) => call("teaching_material_remove", { id }),
   teachingImage: (file) => call("teaching_image", { file }),
+  presentationList: (preparationId) => call("presentation_list", { preparationId }),
+  presentationGet: (id) => call("presentation_get", { id }),
+  presentationCreate: (input) => call("presentation_create", { input }),
+  presentationUpdate: (input) => call("presentation_update", { input }),
+  presentationDelete: (id) => call("presentation_delete", { id }),
+  presentationItemCreate: (input) => call("presentation_item_create", { input }),
+  presentationItemUpdate: (input) => call("presentation_item_update", { input }),
+  presentationItemDelete: (id) => call("presentation_item_delete", { id }),
+  presentationItemReorder: (input) => call("presentation_item_reorder", { input }),
+  presentationDocument: (id) => call("presentation_document", { id }),
+  presentationAudience: (id) => call("presentation_audience", { id }),
+  presentationImage: (id, assetId) => call("presentation_image", { id, assetId }),
+  presentationImageSave: (input) => call("presentation_image_save", { input }),
+  choosePresentationFile: async ({ defaultName, format, filterName }) => {
+    const extension = { pptx: "pptx", pdf: "pdf", speaker_pdf: "pdf", markdown: "md", package: "json" }[format];
+    return save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: [extension] }] });
+  },
+  presentationExport: (input) => call("presentation_export", { input }),
+  chooseMaterialFile: async ({ defaultName, filterName, extension = "md" }) => save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: [extension] }] }),
+  materialSaveMarkdown: (input) => call("material_save_markdown", { input }),
+  materialScripture: (input) => call("material_scripture", { input }),
+  materialSaveDocx: (input) => call("material_save_docx", { input }),
+  presentationScreens: () => call("presentation_screens"),
+  presentationAudienceOpen: (input) => call("presentation_audience_open", { input }),
+  presentationAudienceShow: (state) => call("presentation_audience_show", { input: state }),
+  presentationAudienceState: () => call("presentation_audience_state"),
+  presentationAudienceClose: () => call("presentation_audience_close"),
+  onAudienceState: (handler) => listen<AudienceState>("presentation-audience", (event) => handler(event.payload)),
+  onAudienceClosed: (handler) => listen("presentation-audience-closed", () => handler()),
+  presentationAudienceKey: (key) => call("presentation_audience_key", { key }),
+  onAudienceKey: (handler) => listen<string>("presentation-audience-key", (event) => handler(event.payload)),
+  presentationLayout: (input) => call("presentation_layout", { input }),
+  presentationTemplateList: () => call("presentation_template_list"),
+  presentationTemplateGet: (id) => call("presentation_template_get", { id }),
+  presentationTemplateCreate: (input) => call("presentation_template_create", { input }),
+  presentationTemplateUpdate: (input) => call("presentation_template_update", { input }),
+  presentationTemplateDelete: (id) => call("presentation_template_delete", { id }),
+  presentationTemplateAssetAdd: (path) => call("presentation_template_asset_add", { path }),
+  presentationTemplateAsset: (asset) => call("presentation_template_asset", { asset }),
+  presentationTemplateExport: (input) => call("presentation_template_export", { input }),
+  presentationTemplateImportPackage: (path) => call("presentation_template_import_package", { path }),
+  presentationTemplateImportPptx: (path) => call("presentation_template_import_pptx", { path }),
+  onTemplateImportProgress: (handler) => listen<ImportProgress>("presentation-template-import-progress", (event) => handler(event.payload)),
+  presentationTemplatePreview: (input) => call("presentation_template_preview", { input }),
+  presentationFonts: () => call("presentation_fonts"),
+  chooseTemplateFile: async ({ kind, title, filterName }) => {
+    const extensions = { pptx: ["pptx"], package: ["awtemplate"], image: ["png", "jpg", "jpeg", "gif", "webp"] }[kind];
+    const chosen = await open({ multiple: false, directory: false, title, filters: [{ name: filterName, extensions }] });
+    return typeof chosen === "string" ? chosen : null;
+  },
+  chooseTemplateSaveFile: async ({ defaultName, filterName }) => save({ defaultPath: defaultName, filters: [{ name: filterName, extensions: ["awtemplate"] }] }),
   assistantSettingsGet: () => call("assistant_settings_get"),
   assistantSettingsSet: (config) => call("assistant_settings_set", { config }),
   assistantKeySet: (which, key) => call("assistant_key_set", { which, key }),
@@ -449,6 +888,9 @@ export const tauriApi: Api = {
   assistantSearchTest: () => call("assistant_search_test"),
   assistantPreview: (input) => call("assistant_preview", { input }),
   assistantAsk: (input) => call("assistant_ask", { input }),
+  inquiryPreview: (input) => call("inquiry_preview", { input }),
+  inquiryAsk: (input, fingerprint) => call("inquiry_ask", { input, fingerprint }),
+  inquiryKeep: (input) => call("inquiry_keep", { input }),
   assistantFindImages: (terms) => call("assistant_find_images", { terms }),
   assistantImagePreview: (url) => call("assistant_image_preview", { url }),
   assistantGenerateImage: (description) => call("assistant_generate_image", { description }),
@@ -458,25 +900,39 @@ export const tauriApi: Api = {
   studyBlockDelete: (id) => call("study_block_delete", { id }),
   settingsGet: () => call("settings_get"),
   settingsUpdate: (input) => call("settings_update", { input }),
+  sourceReaderPositions: () => call("source_reader_positions"),
+  sourceReaderPositionSave: (input) => call("source_reader_position_save", { input }),
 
   scriptureBooks: () => call("scripture_books"),
   scriptureGetChapter: (input) => call("scripture_get_chapter", { input }),
   scriptureGetPassage: (input) => call("scripture_get_passage", { input }),
   scriptureSearch: (input) => call("scripture_search", { input }),
   scriptureConcordance: (input) => call("scripture_concordance", { input }),
-  referenceParse: (text) => call("scripture_reference_parse", { text }),
+  scriptureLemmaEntries: (input) => call("scripture_lemma_entries", { input }),
+  scriptureLemmaSearch: (input) => call("scripture_lemma_search", { input }),
+  scriptureVerseWords: (input) => call("scripture_verse_words", { input }),
+  // One reader for typed passages in any of the 100 reference languages; the
+  // Bible being read, then the interface language, settle a genuine tie.
+  referenceParse: (text, translationId) => call("scripture_reference_parse", { text, language: i18n.language, translationId: translationId ?? null }),
+  // Detection reads text whose language is unknown: the interface language is
+  // not the language of a study note, so it is read as before (English first).
   referenceDetect: (text) => call("scripture_reference_detect", { text }),
 
   bibleList: () => call("bible_list"),
   bibleBundledList: () => call("bible_bundled_list"),
+  bibleCatalogueList: () => call("bible_catalogue_list"),
+  bibleCatalogueDownload: (id) => call("bible_catalogue_download", { id }),
+  onBibleImportProgress: (handler) => listen<CatalogueProgress>("bible-import-progress", (event) => handler(event.payload)),
+  onCatalogueProgress: (handler) => listen<CatalogueProgress>("bible-catalogue-progress", (event) => handler(event.payload)),
   chooseBibleFiles: async () => {
     const chosen = await open({
       multiple: true,
       directory: false,
-      title: "Choose a Bible to add",
+      title: i18n.t("library.fileDialog.bible"),
       filters: [
-        { name: "Bible files (USFM or .zip)", extensions: ["zip", "usfm", "sfm", "ptx", "txt"] },
-        { name: "All files", extensions: ["*"] },
+        // metadata.xml / Settings.xml chosen alongside name the language (v0.18.3).
+        { name: i18n.t("library.fileDialog.bibleTypes"), extensions: ["zip", "usfm", "sfm", "ptx", "txt", "xml", "pdf", "epub", "docx", "md", "markdown"] },
+        { name: i18n.t("library.fileDialog.allFiles"), extensions: ["*"] },
       ],
     });
     if (chosen === null) return null;
@@ -485,7 +941,34 @@ export const tauriApi: Api = {
   bibleImportPreview: (input) => call("bible_import_preview", { input }),
   bibleImportCommit: (input) => call("bible_import_commit", { input }),
   bibleImportCancel: (previewId) => call("bible_import_cancel", { previewId }),
+  bibleImportCorrect: (previewId, books) => call("bible_import_correct", { previewId, books }),
+  bibleDocuments: (translationId) => call("bible_documents", { translationId }),
+  bibleDocumentInfo: (documentId) => call("bible_document_info", { documentId }),
+  bibleDocumentRead: async (documentId, offset, length) =>
+    new Uint8Array(await call<ArrayBuffer>("bible_document_read", { documentId, offset, length })),
+  bibleDocumentStructure: (documentId, kind) => call("bible_document_structure", { documentId, kind }),
+  bibleDocumentItem: (documentId, kind, item) => call("bible_document_item", { documentId, kind, item }),
+  bibleDocumentSegments: (input) =>
+    call("bible_document_segments", { documentId: input.documentId, offset: input.offset ?? null, limit: input.limit ?? null, aroundPage: input.aroundPage ?? null }),
+  bibleDocumentSearch: (translationId, query) => call("bible_document_search", { translationId, query }),
+  bibleVerseOrigin: (translationId, book, chapter, verse) => call("bible_verse_origin", { translationId, book, chapter, verse }),
+  bibleDocumentRecognise: (translationId, jobId) => call("bible_document_recognise", { translationId, jobId }),
+  bibleDocumentAddVerses: (previewId, partial, confirmEdition) => call("bible_document_add_verses", { previewId, partial: partial ?? false, confirmEdition }),
+  bibleDocumentLocate: (translationId, reference) => call("bible_document_locate", { translationId, reference }),
+  bibleLocationAdd: (input) => call("bible_location_add", { input }),
+  bibleLocationRemove: (id) => call("bible_location_remove", { id }),
+  bibleLocations: (translationId) => call("bible_locations", { translationId }),
+  bibleDocumentCoverage: (translationId) => call("bible_document_coverage", { translationId }),
   bibleRemove: (id) => call("bible_remove", { id }),
+  bibleListAll: () => call("bible_list_all"),
+  bibleSetState: (ids, to) => call("bible_set_state", { ids, to }),
+  bibleRemovePermanently: (ids) => call("bible_remove_permanently", { ids }),
+  bibleWordsPreview: (id) => call("bible_words_preview", { id }),
+  bibleWordsApply: (previewId, words) => call("bible_words_apply", { previewId, words }),
+  bibleWordsRemove: (id) => call("bible_words_remove", { id }),
+  bibleWordsCancel: (previewId) => call("bible_words_cancel", { previewId }),
+  bibleLanguageOptions: () => call("bible_language_options"),
+  bibleSetLanguage: ({ id, language, languageCode }) => call("bible_set_language", { id, language, languageCode }),
 
   annotationList: (reference, translationId) => call("annotation_list", { reference, translationId }),
   annotationMarksList: (query) => call("annotation_marks_list", { query }),

@@ -1,0 +1,323 @@
+[
+ {
+  "name": "recovery-participant-questions",
+  "participant": true,
+  "document": {
+   "kind": "questions",
+   "title": "Recovery teaching",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Recovery teaching"
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PUBLIC SCRIPTURE fixture text."
+      }
+     ],
+     "attribution": "Invented test text, not a Bible translation"
+    },
+    {
+     "type": "question",
+     "number": 1,
+     "text": "PUBLIC QUESTION: What does the invented branch need?"
+    },
+    {
+     "type": "space",
+     "style": "lines"
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
+  "name": "recovery-participant-answers",
+  "participant": true,
+  "document": {
+   "kind": "questions",
+   "title": "Recovery teaching",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Recovery teaching"
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PUBLIC SCRIPTURE fixture text."
+      }
+     ],
+     "attribution": "Invented test text, not a Bible translation"
+    },
+    {
+     "type": "question",
+     "number": 1,
+     "text": "PUBLIC QUESTION: What does the invented branch need?"
+    },
+    {
+     "type": "field",
+     "label": "Answer",
+     "text": "PUBLIC ANSWER: The invented vine sustains it."
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
+  "name": "recovery-participant-worksheet",
+  "participant": true,
+  "document": {
+   "kind": "worksheet",
+   "title": "Recovery teaching",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Recovery teaching"
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PUBLIC SCRIPTURE fixture text."
+      }
+     ],
+     "attribution": "Invented test text, not a Bible translation"
+    },
+    {
+     "type": "question",
+     "number": 1,
+     "text": "PUBLIC QUESTION: What does the invented branch need?"
+    },
+    {
+     "type": "space",
+     "style": "lines"
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
+  "name": "recovery-leader",
+  "participant": false,
+  "document": {
+   "kind": "questions",
+   "title": "Recovery teaching",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Recovery teaching"
+    },
+    {
+     "type": "notice",
+     "text": "Leader’s version: with notes for leading. Not for handing out."
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1 · John 15:2"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PUBLIC SCRIPTURE fixture text."
+      }
+     ]
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:2 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 2,
+       "number": "2",
+       "text": "PRIVATE SCRIPTURE fixture text."
+      }
+     ],
+     "attribution": "Invented test text, not a Bible translation"
+    },
+    {
+     "type": "field",
+     "label": "Writing",
+     "text": "PUBLIC MANUSCRIPT: Words prepared by the author."
+    },
+    {
+     "type": "field",
+     "label": "Leader notes",
+     "text": "PRIVATE LEADER: Pause and check the invented clock."
+    },
+    {
+     "type": "question",
+     "number": 1,
+     "text": "PUBLIC QUESTION: What does the invented branch need?"
+    },
+    {
+     "type": "field",
+     "label": "Answer",
+     "text": "PUBLIC ANSWER: The invented vine sustains it."
+    },
+    {
+     "type": "field",
+     "label": "Text",
+     "text": "AUTHOR WRITING: preserved observation — 한글"
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
+  "name": "recovery-manuscript",
+  "participant": false,
+  "document": {
+   "kind": "manuscript",
+   "title": "Recovery teaching",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Recovery teaching"
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PUBLIC SCRIPTURE fixture text."
+      }
+     ],
+     "attribution": "Invented test text, not a Bible translation"
+    },
+    {
+     "type": "text",
+     "text": "PUBLIC MANUSCRIPT: Words prepared by the author."
+    },
+    {
+     "type": "heading",
+     "text": "Public reading"
+    },
+    {
+     "type": "field",
+     "label": "Question",
+     "text": "PUBLIC QUESTION: What does the invented branch need?"
+    },
+    {
+     "type": "field",
+     "label": "Answer",
+     "text": "PUBLIC ANSWER: The invented vine sustains it."
+    }
+   ],
+   "empty": false
+  }
+ },
+ {
+  "name": "recovery-private-manuscript",
+  "participant": false,
+  "document": {
+   "kind": "manuscript",
+   "title": "Recovery teaching",
+   "blocks": [
+    {
+     "type": "title",
+     "text": "Recovery teaching"
+    },
+    {
+     "type": "passages",
+     "text": "John 15:1 · John 15:2"
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:1 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 1,
+       "number": "1",
+       "text": "PUBLIC SCRIPTURE fixture text."
+      }
+     ]
+    },
+    {
+     "type": "scripture",
+     "label": "John 15:2 · FX",
+     "verses": [
+      {
+       "chapter": 15,
+       "verse": 2,
+       "number": "2",
+       "text": "PRIVATE SCRIPTURE fixture text."
+      }
+     ],
+     "attribution": "Invented test text, not a Bible translation"
+    },
+    {
+     "type": "text",
+     "text": "PUBLIC MANUSCRIPT: Words prepared by the author."
+    },
+    {
+     "type": "text",
+     "text": "PRIVATE LEADER: Pause and check the invented clock."
+    },
+    {
+     "type": "heading",
+     "text": "Public reading"
+    },
+    {
+     "type": "heading",
+     "text": "PRIVATE reading"
+    },
+    {
+     "type": "field",
+     "label": "Question",
+     "text": "PUBLIC QUESTION: What does the invented branch need?"
+    },
+    {
+     "type": "field",
+     "label": "Answer",
+     "text": "PUBLIC ANSWER: The invented vine sustains it."
+    },
+    {
+     "type": "text",
+     "text": "AUTHOR WRITING: preserved observation — 한글"
+    }
+   ],
+   "empty": false
+  }
+ }
+]

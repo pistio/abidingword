@@ -1,7 +1,11 @@
-import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowUp, MoreHorizontal, Trash2 } from "lucide-react";
+import { Button } from "@/design-system/Button";
 import { useAutosave } from "@/hooks/useAutosave";
+import { useSettledDelete } from "@/hooks/useSettledDelete";
+import { toApiError } from "@/lib/api";
+import { useAutosize } from "@/hooks/useAutosize";
 import { useApi } from "@/lib/ApiContext";
 import type { BlockType, StudyBlock } from "@/types/domain";
 import { DetectedReferences } from "./DetectedReferences";
@@ -10,10 +14,24 @@ import { blockInline } from "./labels";
 const STYLES: Record<BlockType, string> = {
   paragraph: "reading",
   note: "reading border-l-[3px] border-accent bg-note text-[1rem]",
-  heading: "font-display text-[1.375rem] font-heading leading-snug text-text-strong",
+  heading: "font-display text-[1.25rem] font-heading leading-snug text-text-strong",
   quotation: "reading italic border-l-[3px] border-border pl-4",
   question: "reading border-l-[3px] border-link",
 };
+
+/** What the part's Help sees of a block (v0.20): its text now, and replacing words the person accepted. */
+export interface BlockHandle {
+  /** The text as it is on screen (it may not be saved yet). */
+  text(): string;
+  /** The words selected in it, or "". */
+  selected(): string;
+  /**
+   * Puts accepted wording in place of `original` (the whole text, or words
+   * that occur in it exactly once) and saves as typing does. False, changing
+   * nothing, when `original` is no longer there as it was.
+   */
+  replace(original: string, suggestion: string): boolean;
+}
 
 interface BlockEditorProps {
   block: StudyBlock;
@@ -28,6 +46,10 @@ interface BlockEditorProps {
   autoFocus?: boolean;
   /** Tells the page whether this block has writing in it right now (before it is saved). */
   onContent?: (blockId: string, hasContent: boolean) => void;
+  /** Lets the part's Help read the block and put accepted wording in (v0.20). */
+  register?: (blockId: string, handle: BlockHandle | null) => void;
+  /** The person is working in this block. */
+  onFocused?: (blockId: string) => void;
 }
 
 /**
@@ -35,7 +57,7 @@ interface BlockEditorProps {
  * saves itself. Deliberately not a rich-text editor in v0.1.
  */
 export function BlockEditor(props: BlockEditorProps) {
-  const { block, sectionTitle, placeholder, onDeleted, onRevealScripture, isFirst, isLast, onMove, autoFocus = false, onContent } = props;
+  const { block, sectionTitle, placeholder, onDeleted, onRevealScripture, isFirst, isLast, onMove, autoFocus = false, onContent, register, onFocused } = props;
   const { t } = useTranslation();
   const api = useApi();
   const [text, setText] = useState(block.content);
@@ -43,6 +65,7 @@ export function BlockEditor(props: BlockEditorProps) {
   const [managing, setManaging] = useState(false);
   const manageId = useId();
   const toggle = useRef<HTMLButtonElement>(null);
+  const { root, deleting, runDeletion } = useSettledDelete();
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const area = useRef<HTMLTextAreaElement>(null);
 
@@ -50,14 +73,52 @@ export function BlockEditor(props: BlockEditorProps) {
     (content: string) => api.studyBlockUpdate({ id: block.id, content }),
     [api, block.id],
   );
-  const { schedule, flush } = useAutosave(save);
+  const current = useRef(text);
+  const { schedule, flush } = useAutosave(save, undefined, `study-block:${block.id}:content`, (value) => {
+    setText(value);
+    current.current = value;
+    onContent?.(block.id, value.trim().length > 0);
+  });
 
-  useLayoutEffect(() => {
-    const el = area.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
-  }, [text]);
+  // The text now, for Help (it changes only here).
+  const change = useCallback(
+    (next: string) => {
+      if (!root.current || root.current.closest("[inert]")) return;
+      current.current = next;
+      setText(next);
+      onContent?.(block.id, next.trim().length > 0);
+      schedule(next);
+    },
+    [block.id, onContent, schedule, root],
+  );
+  useEffect(() => {
+    if (!register) return;
+    register(block.id, {
+      text: () => current.current,
+      selected: () => {
+        const el = area.current;
+        if (!el || el.selectionStart === el.selectionEnd) return "";
+        return current.current.slice(el.selectionStart, el.selectionEnd);
+      },
+      replace: (original, suggestion) => {
+        if (!root.current || root.current.closest("[inert]")) return false;
+        const now = current.current;
+        let next: string | null = null;
+        if (now.trim() === original.trim()) next = suggestion;
+        else {
+          const at = now.indexOf(original);
+          if (original && at >= 0 && now.indexOf(original, at + 1) < 0) next = now.slice(0, at) + suggestion + now.slice(at + original.length);
+        }
+        if (next === null) return false;
+        change(next);
+        return true;
+      },
+    });
+    return () => register(block.id, null);
+  }, [register, block.id, change, root]);
+
+  const rows = block.blockType === "heading" ? 1 : 2;
+  useAutosize(area, rows, text, placeholder);
 
   useLayoutEffect(() => {
     if (autoFocus) area.current?.focus();
@@ -71,19 +132,24 @@ export function BlockEditor(props: BlockEditorProps) {
       return;
     }
     try {
-      await api.studyBlockDelete(block.id);
-      onDeleted(block.id);
-    } catch {
+      await runDeletion(async () => {
+        await api.studyBlockDelete(block.id);
+        onDeleted(block.id);
+      });
+    } catch (error) {
       setConfirming(false);
-      setDeleteError(t("studies.blocks.deleteFailed"));
+      setDeleteError(toApiError(error).message || t("studies.blocks.deleteFailed"));
     }
   };
 
-  const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong disabled:opacity-40";
+  const tool = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong disabled:opacity-40";
   const single = isFirst && isLast;
 
   return (
     <div
+      ref={root}
+      inert={deleting}
+      aria-busy={deleting || undefined}
       className="relative"
       onKeyDown={(e) => {
         if (e.key === "Escape" && managing) {
@@ -95,15 +161,12 @@ export function BlockEditor(props: BlockEditorProps) {
     >
       <textarea
         ref={area}
-        rows={block.blockType === "heading" ? 1 : 2}
+        rows={rows}
         value={text}
         placeholder={placeholder}
         aria-label={t("studies.blocks.fieldLabel", { section: sectionTitle, type })}
-        onChange={(e) => {
-          setText(e.target.value);
-          onContent?.(block.id, e.target.value.trim().length > 0);
-          schedule(e.target.value);
-        }}
+        onChange={(e) => change(e.target.value)}
+        onFocus={() => onFocused?.(block.id)}
         onBlur={flush}
         className={`block w-full resize-none overflow-hidden rounded-aw border border-transparent border-b-border-subtle bg-transparent px-3 py-2 pr-14 text-text placeholder:text-text-muted hover:border-border-subtle focus:border-border ${STYLES[block.blockType]}`}
       />
@@ -115,7 +178,7 @@ export function BlockEditor(props: BlockEditorProps) {
         aria-label={t("studies.blocks.options", { type, section: sectionTitle })}
         title={t("studies.blocks.optionsTooltip")}
         onClick={() => setManaging(!managing)}
-        className="absolute right-1 top-0 inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg-secondary hover:text-text-strong"
+        className="absolute right-1 top-0 inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover hover:text-text-strong"
       >
         <MoreHorizontal className="size-4" aria-hidden="true" />
       </button>
@@ -132,13 +195,13 @@ export function BlockEditor(props: BlockEditorProps) {
             </>
           )}
           {confirming ? (
-            <span className="flex flex-wrap items-center gap-1 rounded-aw border border-border bg-bg px-2 py-1 text-[0.9375rem]">
+            <span className="flex flex-wrap items-center gap-1 rounded-aw border-l-[3px] border-danger bg-hover px-2 py-1 text-[0.9375rem]">
               <span>{t("studies.blocks.confirmDelete", { type })}</span>
-              <button type="button" onClick={remove} className="min-h-11 rounded px-2 font-medium text-danger hover:bg-bg-secondary">
+              <Button variant="danger" className="min-h-11" onClick={remove}>
                 {t("common.delete")}
-              </button>
+              </Button>
               {/* Focus lands on the safe choice when the question appears. */}
-              <button type="button" autoFocus onClick={() => setConfirming(false)} className="min-h-11 rounded px-2 hover:bg-bg-secondary">
+              <button type="button" autoFocus onClick={() => setConfirming(false)} className="min-h-11 rounded px-2 hover:bg-hover">
                 {t("common.keep")}
               </button>
             </span>

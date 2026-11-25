@@ -1,0 +1,306 @@
+{
+  "common.info.button": [
+    "Informações",
+    "Use the full natural Portuguese label rather than the unexplained abbreviation in the information control."
+  ],
+  "errors.sections.repairChanged": [
+    "As partes mudaram. Confira novamente. Só é possível desfazer a adição se as partes adicionadas não tiverem sido alteradas; todo o texto é mantido.",
+    "Clarify the Undo condition and match Desfazer; the original omits articles and reads like a literal technical fragment."
+  ],
+  "errors.teaching.blockParent": [
+    "Um bloco pode ficar em uma seção deste ensino.",
+    "Brazilian seção and em uma; use established ensino rather than ambiguous preparação."
+  ],
+  "errors.teaching.badMaterial": [
+    "Este item não pode ser salvo.",
+    "Match the Salvar operation with Brazilian usage."
+  ],
+  "errors.teaching.notVerified": [
+    "Uma história só pode ser salva como verificada quando é relatada por duas fontes independentes.",
+    "Preserve the two independent reports requirement explicitly, rather than merely possession of two sources."
+  ],
+  "errors.teaching.projectRequired": [
+    "Escolha um projeto para este ensino.",
+    "Use the established você imperative, not the European/tú form Escolhe."
+  ],
+  "errors.teaching.otherProject": [
+    "Escolha um estudo deste projeto.",
+    "Use the established você imperative consistently."
+  ],
+  "errors.teaching.badSnapshot": [
+    "Não foi possível ler esta anotação de estudo salva.",
+    "Match the established study Anotação and saved-copy operation."
+  ],
+  "errors.words.textDiffers": [
+    "Os arquivos salvos já não correspondem exatamente ao texto desta Bíblia, por isso as informações sobre as palavras não podem ser adicionadas. Remova a Bíblia e adicione-a novamente para obtê-las.",
+    "Remove the unnatural dão o texto and distinguish lexical information from adding Scripture words."
+  ],
+  "errors.words.noSource": [
+    "Os arquivos usados para adicionar esta Bíblia não estão mais salvos, por isso não é possível reler as informações sobre as palavras. Remova a Bíblia e adicione-a novamente para obtê-las.",
+    "Use direct Brazilian syntax and identify lexical information rather than seeming to reread Bible words."
+  ],
+  "errors.catalogue.notVerified": [
+    "“{{fileName}}” não correspondia à cópia verificada, então nada foi salvo. Tente novamente mais tarde.",
+    "Match saving terminology while retaining failed verification and no-change assurance."
+  ],
+  "library.passage.bookSection": [
+    "Seção do livro {{passage}} (mais ampla)",
+    "Correct European Secção to Brazilian Seção; keep broad-book evidence distinction."
+  ],
+  "library.contents.title": [
+    "Sumário",
+    "Contents here is document navigation, conventionally Sumário in Brazilian Portuguese."
+  ],
+  "library.contents.show": [
+    "Mostrar sumário",
+    "Match the document-navigation heading Sumário."
+  ],
+  "library.contents.close": [
+    "Fechar sumário",
+    "Match the document-navigation heading Sumário."
+  ],
+  "library.contents.for": [
+    "Sumário de {{title}}",
+    "Identify the navigation tree rather than the document body content."
+  ],
+  "library.contents.none": [
+    "Nenhum sumário disponível",
+    "An absent contents tree is not an absence of document content."
+  ],
+  "library.marks.panels": [
+    "Sumário ou marcas",
+    "Match the adjacent document-navigation tab Sumário."
+  ],
+  "library.pageNav.invalid": [
+    "Digite uma página de 1 a {{total}}.",
+    "Digite is the established natural Brazilian input instruction."
+  ],
+  "library.toolbar.customiseHelp": [
+    "Escolha quais ações aparecem como ícones neste dispositivo. As outras ficam no menu “…”; Voltar, Leitura/Original e o indicador de página aparecem sempre.",
+    "Use natural quais and Brazilian quotation style while preserving fixed controls."
+  ],
+  "library.toolbar.reset": [
+    "Restaurar padrão",
+    "Replace European Repor predefinição with the standard Brazilian reset label."
+  ],
+  "library.toolbar.items.contents": [
+    "Sumário",
+    "Match document-navigation terminology."
+  ],
+  "library.toolbar.items.history": [
+    "Voltar e avançar nesta fonte",
+    "Use familiar navigation actions rather than literal directions."
+  ],
+  "library.structure.processing.stages.native": [
+    "Ler sumário e tags incorporados",
+    "The embedded outline is a Sumário, not bookmarks; retain PDF tags as distinct technical structure."
+  ],
+  "library.structure.basis.tagged": [
+    "Tags de estrutura do PDF",
+    "Supply the missing preposition for natural Brazilian technical phrasing."
+  ],
+  "scripture.addBible.document.unverifiedReason.unnumbered_one": [
+    "Em {{formatted}} capítulo, o versículo 1 não tem número; não está claro onde ele termina.",
+    "Use natural Brazilian uncertainty wording; retain the unnumbered verse boundary warning."
+  ],
+  "scripture.addBible.document.unverifiedReason.unnumbered_other": [
+    "Em {{formatted}} capítulos, o versículo 1 não tem número; não está claro onde ele termina.",
+    "Use natural Brazilian uncertainty wording; retain the unnumbered verse boundary warning."
+  ],
+  "scripture.addBible.document.unverifiedReason.unnumbered_many": [
+    "Em {{formatted}} capítulos, o versículo 1 não tem número; não está claro onde ele termina.",
+    "Use natural Brazilian uncertainty wording; retain the unnumbered verse boundary warning."
+  ],
+  "scripture.addBible.document.unverifiedReason.boundary_one": [
+    "Em {{formatted}} versículo, não está claro onde começa ou termina.",
+    "Avoid the English calque não é certo; retain uncertainty about both boundaries."
+  ],
+  "scripture.addBible.document.unverifiedReason.boundary_other": [
+    "Em {{formatted}} versículos, não está claro onde começam ou terminam.",
+    "Avoid the English calque não é certo; retain uncertainty about both boundaries."
+  ],
+  "scripture.addBible.document.unverifiedReason.boundary_many": [
+    "Em {{formatted}} versículos, não está claro onde começam ou terminam.",
+    "Avoid the English calque não é certo; retain uncertainty about both boundaries."
+  ],
+  "scripture.document.passages.placeReason.unnumbered": [
+    "Não está claro onde termina.",
+    "Use natural concise uncertainty wording."
+  ],
+  "scripture.document.passages.placeReason.boundary": [
+    "Não está claro onde começa ou termina.",
+    "Use natural concise uncertainty wording; retain both boundary limitations."
+  ],
+  "scripture.morph.voice.middleDeponent": [
+    "deponente de voz média",
+    "Independent second review corrected grammatical deponente (not depoente, a witness) and made the voice explicit; original source category is unchanged."
+  ],
+  "scripture.morph.voice.passiveDeponent": [
+    "deponente de voz passiva",
+    "Independent second review corrected grammatical deponente (not depoente, a witness) and made the voice explicit; original source category is unchanged."
+  ],
+  "scripture.morph.voice.middleOrPassiveDeponent": [
+    "deponente de voz média ou passiva",
+    "Independent second review corrected grammatical deponente (not depoente, a witness) and made the voice explicit; original source category is unchanged."
+  ],
+  "scripture.addBible.document.noWords": [
+    "Informações sobre as palavras (formas de dicionário, gramática, números léxicos): nenhuma. Documentos comuns não as trazem, e nenhuma é inventada a partir do texto.",
+    "Use natural sobre as palavras and the established números léxicos; preserve the no-invention assurance."
+  ],
+  "scripture.bibles.field.words": [
+    "Informações sobre as palavras",
+    "Replace the literal informações de palavras with natural Brazilian phrasing."
+  ],
+  "scripture.bibles.words.check": [
+    "Procurar informações sobre as palavras…",
+    "Use natural Brazilian phrasing for word metadata."
+  ],
+  "scripture.bibles.words.recheck": [
+    "Ler novamente as informações sobre as palavras…",
+    "Use natural Brazilian phrasing for word metadata."
+  ],
+  "scripture.bibles.words.nothing": [
+    "Estes arquivos não têm informações sobre as palavras que possam ser indexadas.",
+    "Use natural Brazilian phrasing for word metadata."
+  ],
+  "scripture.bibles.words.confirmRemove": [
+    "Remover o índice de palavras de {{name}}? O texto, as suas notas e a concordância normal são mantidos. Você pode ler as informações sobre as palavras novamente mais tarde.",
+    "Improve the metadata phrase without weakening removal safeguards."
+  ],
+  "scripture.bibles.wordsDocument": [
+    "Nenhuma: documentos não trazem informações sobre as palavras.",
+    "Use natural Brazilian phrasing for word metadata."
+  ],
+  "scripture.addBible.available.intro": [
+    "Edições livres nas línguas originais, com informações sobre cada palavra. O Abiding Word só baixa uma quando você pede, confere cada arquivo com a cópia verificada e não salva nada que seja diferente.",
+    "Match save terminology and preserve verification refusal."
+  ],
+  "settings.assistant.imagesLeave": [
+    "As descrições de imagens são enviadas à OpenAI pela internet, mesmo que seu assistente de escrita funcione neste computador.",
+    "Clarify that local writing does not make image generation local; the original ends with an incomplete predicate."
+  ],
+  "settings.trash.studyHint": [
+    "O estudo e sua pesquisa podem ser restaurados em Configurações → Dados e cópia de segurança → Lixeira. O ensino vinculado permanece no projeto com anotações e citações salvas, mas perde o vínculo. A restauração não refaz o vínculo automaticamente.",
+    "Match the actual section name and established Anotação; retain the non-restoration of the link."
+  ],
+  "studies.builtin.templates.biblical-theology-study.description": [
+    "Um tema acompanhado ao longo da história narrada nas Escrituras.",
+    "Remove the dangling literal que se desdobra while preserving tracing a theme through the Scriptural narrative."
+  ],
+  "studies.fromSource.placeholder": [
+    "Que conclusões você tira deste trecho?",
+    "Replace the literal take from this place with a natural question about the selected source excerpt."
+  ],
+  "studies.fromSource.placeholderRequired": [
+    "Escreva suas conclusões sobre este trecho…",
+    "Avoid physical-place wording for the source excerpt."
+  ],
+  "studies.teaching.format.questions": [
+    "Perguntas para o grupo, cada uma com possíveis rumos para a conversa e perguntas de continuação.",
+    "Remove the ungrammatical com aonde while preserving the discussion path and follow-up questions."
+  ],
+  "studies.teaching.blocks.confirmDelete": [
+    "Excluir “{{name}}” e seu texto?",
+    "Match the established destructive action Excluir and Brazilian quotation marks."
+  ],
+  "studies.teaching.fromStudy.added": [
+    "Adicionado do estudo bíblico, só para quem conduz. Compartilhe cada parte quando estiver pronta.",
+    "Use established Brazilian Compartilhar while retaining the leader-only default."
+  ],
+  "studies.materials.option.answers": [
+    "Com as respostas (só perguntas compartilhadas)",
+    "Match Brazilian sharing terminology; keep the restriction to shared questions."
+  ],
+  "studies.teaching.builtin.sermonTalk.blocks.main.guidance": [
+    "Explore o significado do texto e sua relação com a vida.",
+    "Genuine grammatical correction only: singular você imperative, consistent with Apresente and Resuma; teaching meaning unchanged."
+  ],
+  "studies.qa.confirmDelete": [
+    "Excluir {{label}}, incluindo a pergunta e a resposta?",
+    "Match Excluir and make explicit that both fields are deleted."
+  ],
+  "studies.qaExport.saved": [
+    "Salvo em {{path}}",
+    "Match the Salvar export action."
+  ],
+  "studies.repair.review": [
+    "Revisar partes do POZETEK",
+    "Use the established Brazilian revisar action for the structural review."
+  ],
+  "studies.repair.undo": [
+    "Desfazer reparo do POZETEK",
+    "Match Desfazer and use natural Brazilian reparo for structural repair."
+  ],
+  "studies.repair.apply": [
+    "Adicionar partes ausentes e ordenar",
+    "Replace European em falta with Brazilian ausentes; retain add-and-order operation."
+  ],
+  "studies.repair.explain": [
+    "As sete partes originais aparecem primeiro. As partes ausentes são adicionadas vazias. Todas as partes existentes, incluindo Tema, Compreensão, Consequências e partes duplicadas, mantêm seus nomes, textos, anotações e vínculos. As partes fora dessa sequência mantêm sua ordem relativa atual.",
+    "Correct agreement and Brazilian terminology without changing the seven-part method or preservation guarantees."
+  ],
+  "studies.repair.duplicates": [
+    "Várias partes usam a mesma chave: {{parts}}. Elas permanecem separadas; nenhum conteúdo é combinado.",
+    "Replace European partilham and technical fundido with direct Brazilian phrasing; retain no-merge promise."
+  ],
+  "studies.repair.safety": [
+    "Um registro salvo permite restaurar a ordem anterior e remover apenas as partes vazias e inalteradas adicionadas por este reparo. Se uma parte adicionada tiver sido alterada, não será possível desfazer o reparo, e todo o texto será mantido. Faça uma cópia do perfil antes de reparar um trabalho importante.",
+    "Use Brazilian registro/restaurar/Desfazer and state the exact Undo precondition clearly; retain profile-copy warning."
+  ],
+  "studies.repair.undoFirst": [
+    "Desfaça o reparo anterior antes de aplicar outro.",
+    "Match the Desfazer action with the você imperative."
+  ],
+  "studies.repair.finishDrafts": [
+    "Conclua ou feche as anotações abertas e termine de editar os nomes das partes antes de desfazer o reparo.",
+    "Remove the awkward close-the-editing construction and match Brazilian Anotação/Desfazer."
+  ],
+  "presentation.templates.codes.growsWithText": [
+    "Uma caixa que cresce com o texto mantém o tamanho (há um aviso para textos longos)",
+    "Replace the unnatural passive texto longo é avisado with a clear warning description."
+  ],
+  "presentation.templates.codes.shapedPicture": [
+    "Imagens com recorte em formas",
+    "Use a natural concise description of shaped picture crops."
+  ],
+  "errors.words.nothingToIndex": [
+    "Estes arquivos não têm informações sobre as palavras que possam ser indexadas.",
+    "Use natural sobre as palavras consistently for word metadata, without changing what can be indexed."
+  ],
+  "errors.words.documentBible": [
+    "Não é possível adicionar informações sobre as palavras a uma Bíblia adicionada a partir de um documento.",
+    "Use natural sobre as palavras consistently; retain the document-Bible limitation."
+  ],
+  "library.structure.status": [
+    "Seções: {{count}}",
+    "Use a count label that is natural at one or many sections without changing the count or adding a plural branch."
+  ],
+  "library.structure.diagnostic.file": [
+    "SHA-256 do arquivo: {{hash}} · Páginas: {{pages}} · Títulos: {{headings}}",
+    "Use metric labels so singular counts do not generate 1 páginas or 1 títulos; preserve the exact diagnostic values."
+  ],
+  "library.structure.processing.success": [
+    "Títulos salvos: {{count}}; vínculos de estrutura indexados: {{links}}.",
+    "Use result labels to avoid singular-count agreement errors for either independent count."
+  ],
+  "scripture.research.dictionaryValue": [
+    "Palavras: {{words}} · formas diferentes: {{distinct}}",
+    "Use metric labels so either count can be one without a plural-grammar error."
+  ],
+  "scripture.research.grammarValue": [
+    "Palavras com código gramatical: {{words}}",
+    "Use a natural count label instead of 1 palavras."
+  ],
+  "scripture.research.numberValue": [
+    "Palavras: {{words}}",
+    "Use a natural count label instead of 1 palavras."
+  ],
+  "errors.bibleImport.missingChapters": [
+    "{{book}}: capítulos encontrados: {{found}} de {{count}} (faltam: {{list}}).",
+    "Use a chapter-count label that also works for one-chapter books, preserving all missing-chapter evidence."
+  ],
+  "errors.bibleImport.formatNotYet": [
+    "Ainda não é possível importar {{format}} como Bíblia estruturada. O Abiding Word lê Bíblias USFM (arquivos .usfm ou .sfm, ou um .zip com eles), os arquivos OSIS da Open Scriptures Hebrew Bible e arquivos MorphGNT. Uma Bíblia também pode ser adicionada a partir de documentos PDF, EPUB, Word (.docx), Markdown ou de texto.",
+    "Allow natural insertion of either páginas da web or OSIS e USX without a noun/gender clash; preserve supported formats and document alternatives."
+  ]
+}

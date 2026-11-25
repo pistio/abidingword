@@ -114,8 +114,41 @@ fn validated_data(data: &str) -> AppResult<()> {
     }
 }
 
+/// A.4.4 (#27): the text of a question-and-answer block, from its data
+/// `{"kind":"qa","question":…,"answer":…}`; anything else is refused.
+fn qa_content(block_type: crate::domain::BlockType, data: &str) -> AppResult<String> {
+    let invalid = || {
+        AppError::InvalidInput(crate::error::UserMessage::new(
+            "validation.entryInvalid",
+            "This entry could not be saved.",
+        ))
+    };
+    if block_type != crate::domain::BlockType::Question {
+        return Err(invalid());
+    }
+    validated_data(data)?;
+    let (question, answer) = crate::domain::qa_of(Some(data)).ok_or_else(invalid)?;
+    let text = [question.trim(), answer.trim()]
+        .into_iter()
+        .filter(|t| !t.is_empty())
+        .collect::<Vec<_>>()
+        .join("\n\n");
+    validate::block_content(&text)?;
+    Ok(text)
+}
+
 /// Appends a block to the end of a section.
 pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlock> {
+    create_with_data(conn, input, None)
+}
+
+/// Evidence and its provenance are one transaction: a failed save leaves no
+/// empty quotation behind, and never reports a quotation without its source.
+pub fn create_with_data(
+    conn: &Connection,
+    input: &CreateStudyBlock,
+    data: Option<&str>,
+) -> AppResult<StudyBlock> {
     let content = input.content.as_deref().unwrap_or("");
     validate::block_content(content)?;
     let section = sections::get(conn, &input.section_id)?;
@@ -132,7 +165,19 @@ pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlo
             )));
         }
     }
-    let position: i64 = conn.query_row(
+    let qa_text;
+    let mut content = content;
+    if let Some(data) = data {
+        if field_key.is_none() {
+            // A.4.4 (#27): a free question block may be a paired question and answer.
+            qa_text = qa_content(input.block_type, data)?;
+            content = &qa_text;
+        } else {
+            validated_data(data)?;
+        }
+    }
+    let tx = conn.unchecked_transaction()?;
+    let position: i64 = tx.query_row(
         "SELECT COALESCE(MAX(position), -1) + 1 FROM study_blocks
          WHERE section_id = ?1 AND deleted_at IS NULL",
         [&section.id],
@@ -140,17 +185,19 @@ pub fn create(conn: &Connection, input: &CreateStudyBlock) -> AppResult<StudyBlo
     )?;
     let now = now();
     let id = insert_answer(
-        conn,
+        &tx,
         &section.id,
         input.block_type,
         position,
         content,
         field_key,
-        None,
+        data,
         &now,
     )?;
-    studies::touch(conn, &section.study_id, &now)?;
-    get(conn, &id)
+    studies::touch(&tx, &section.study_id, &now)?;
+    let block = get(&tx, &id)?;
+    tx.commit()?;
+    Ok(block)
 }
 
 pub fn update(conn: &Connection, input: &UpdateStudyBlock) -> AppResult<StudyBlock> {
@@ -158,17 +205,21 @@ pub fn update(conn: &Connection, input: &UpdateStudyBlock) -> AppResult<StudyBlo
     if input.content.is_none() && input.data.is_none() {
         return Ok(current);
     }
-    let content = input.content.as_ref().unwrap_or(&current.content);
-    validate::block_content(content)?;
+    let mut content = input
+        .content
+        .clone()
+        .unwrap_or_else(|| current.content.clone());
+    validate::block_content(&content)?;
     if let Some(data) = &input.data {
         if current.field_key.is_none() {
-            return Err(AppError::InvalidInput(crate::error::UserMessage::new(
-                "validation.entryInvalid",
-                "This entry could not be saved.",
-            )));
+            // A.4.4 (#27): the question and answer are kept apart in data; the
+            // text (for search, export and older builds) is derived from them.
+            content = qa_content(current.block_type, data)?;
+        } else {
+            validated_data(data)?;
         }
-        validated_data(data)?;
     }
+    let content = &content;
     let data = input.data.as_ref().or(current.data.as_ref());
     let now = now();
     conn.execute(

@@ -57,6 +57,58 @@ languages disagree, and how numbers without a book name (*15,4* or *15:4*,
 > a verse, like *Mal 4,3*. That is why, in the picture above, *"mal sehen"* is
 > not underlined.
 
+## Typing a passage in any language
+
+Wherever you type a passage — the Bible's **Go to passage**, a study's
+passages, a teaching's passages, a presentation and the Presenter View's
+**Bible passage** — you can write it in any of **100 languages**, in the
+alphabet of that language, whatever language Abiding Word itself is in:
+
+| You type | Opens |
+|---|---|
+| John 15:5 · Joh 15,5 · Johannes 15,5 | John 15:5 |
+| Jean 15,5 · Juan 15:5 · João 15:5 · Giovanni 15,5 | John 15:5 |
+| 요한복음 15장 5절 · 约翰福音 15:5 · 約翰福音15章5節 · ヨハネによる福音書 15:5 | John 15:5 |
+| Иоанна 15:5 · Κατά Ιωάννην 15,5 · يوحنا ١٥:٥ · יוחנן 15:5 · यूहन्ना १५:५ | John 15:5 |
+| 1 Kor 13,4-7 · 1 Corinthians 13:4-7 · 哥林多前书 13:4-7 | 1 Corinthians 13:4–7 |
+
+Numbers may be written with the digits of the language (١٥, १५, ১৫, ๑๕ …),
+chapter and verse with `:`, `,` or `.`, and a book name alone opens its first
+chapter.
+
+**When an abbreviation means different books in different languages**,
+Abiding Word decides in this order:
+
+1. **The language of the Bible you are reading** (in a presentation, the
+   presentation's Bible). It is the language the Bible is marked with —
+   chosen when it was added, and changeable in Settings → Bible texts →
+   Details — never guessed from its name. A Bible without a language is
+   simply skipped here.
+2. **The language Abiding Word is in.**
+3. **The common reading:** when the other languages agree (or most of the
+   hand-checked ones do), that passage.
+4. **Otherwise it asks** instead of guessing.
+
+**A verse that does not exist never counts.** Jonah 3 has 10 verses, so
+*Jn 3:16* can only be John 3:16 — even with a Portuguese Bible, where *Jn* is
+Jonah. *Jn 3:5* exists in both books, so there the order above decides: a
+Portuguese Bible opens Jonah 3:5, an English one John 3:5. Typing a verse
+that is not there says so plainly: *Jonah 3:16* → “Jonah 3 has 10 verses.”,
+*Psalm 119:177* → “Psalm 119 has 176 verses.” Some Bibles number a few
+verses differently (the French Louis Segond counts Exodus 7 to verse 29); a
+verse that any Bible you have installed has is always accepted.
+
+*Hb 3:5* is Habakkuk in English and Hebrews in Portuguese, and with a German
+Bible and German interface nothing settles it, so it asks: *“Hb 3:5” could
+mean Habakkuk 3:5 / Hebrews 3:5*. English is not a hidden tie-breaker. Names
+you would mean otherwise are never taken from another language: *Sam 3:5* is
+not read as some language's Psalms, and *Jud 3:5* says Jude has one chapter.
+
+The 100 languages are listed in the technical notes
+([reference language packs](../reference-language-packs.md)). Underlined
+references inside your books are read more carefully than what you type: a
+book is read in the six languages below plus its own language.
+
 ## References without a book name
 
 Sermons and commentaries often name the book once and then write only the

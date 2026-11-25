@@ -19,31 +19,44 @@ sermon, a group study, a lesson) is **Bible Teaching**: see
 
 1. Click **New study** (or use the form you see on the start page).
 2. Type what you want to study: a passage (`John 15:1-11`), a word (`abide`) or
-   a topic (`prayer`), a biblical person (`Ruth`) or a whole book (`Philippians`).
+   a topic (`prayer`).
 3. Choose the kind of study:
 
    | Kind | Starts with |
    |---|---|
-   | **Passage study** | Choose **Guided Passage Study** or **Ten-Step Bible Study** in the Template list |
-   | **Biblical Character Study** | Person and passages · Setting · Life, words and actions · Character and decisions · God's work · Main findings · Application |
-   | **Word study** | Word and question · Occurrences and translations · Range of meanings · Passages in context · Meaning and conclusion · Application |
-   | **Whole-Book Study** | Read the whole book · Setting · Overview · Structure · Message and development · Central message · Application |
-   | **Topic** | Topic and questions · Relevant Scripture · Examine the passages · Compare and group findings · Biblical conclusions · Application |
+   | **Passage study** | Text · Observations · Context · Meaning · Theology · Application |
+   | **Word study** | Word · Occurrences · Range of Meaning · Key Passages · Conclusions |
+   | **Topic** | Question / Topic · Key Passages · Main Themes · Conclusions · Application |
    | **Teaching preparation** | A passage study, opened straight on its **Bible Teaching** side, ready to choose a sermon, group study or lesson |
 
-   **More options** offers no template and a title of your own. Saved personal
-   templates remain available under **My template**, including older kinds.
+   Under **More options** you find more kinds (biblical theology, systematic
+   theology, no template, your own templates) and a title of your own.
 4. Click **Create study**.
 
-Each kind starts from a **template** with headed parts and short guidance.
-The two passage methods also have labelled answer fields and progress for each
-part. Their examples (Hosea 11 and Matthew 8:18–27) stay collapsed until opened
-and are never copied into your answers. The guided method is named **POZETEK**
-only in German.
+Each kind starts from a small **template**: a few headed parts, each with a
+short hint until you write in it. A line under the choices says what it
+starts with (*Starts with: Text · Observations · …*). The built-in templates
+are only a starting point: **Save as my template** in **Settings →
+Templates** gives you your own copy to change as you like. Parts you may want later (for a passage
+study: *Structure, Key Words, Related Scripture, Open Questions*) are offered
+when you click **Add a part** at the end of the study.
 
-Parts you may want later are offered under **Add a part**. A Character Study
-can add *Related figures and passages*; a Book Study can add *Further study*.
-Existing studies keep their original parts and writing.
+When a later version words a built-in template more plainly (Word study's
+*Semantic Range* became *Range of Meaning* in v0.18.9), the parts of studies
+you already made are shown in the new wording, in your language. A heading
+or hint you wrote yourself is never changed.
+
+Each part can say where it belongs in the study's **outline** (*Text,
+Understanding, Theology, Application, Audience, Teaching*). The template says
+so to start with. You can change it in the part's options (**⋯ → Outline**),
+or choose *Not in the outline*. A part you add with your own heading belongs
+to no phase. It simply sits after the part before it.
+
+To use a study's shape again, open the study's **Info** and click **Save as my
+template**. The template keeps the parts, their headings and hints, their
+order and their places in the outline. Your writing, notes and passages stay
+in the study. Your template is then offered under *More options* when you
+start a study, and can be changed in **Settings → Templates**.
 
 ## Projects: keeping studies together
 
@@ -70,13 +83,21 @@ From top to bottom:
 | **←** beside the title | Back to the project or the list of studies |
 | **Title** | Click it to rename the study |
 | **Bible Study / Bible Teaching** | The study itself, or the teachings you prepare from it. A study opens again on the side you last used. |
-| **Study details** | The study's purpose, its status (*active, paused, completed, archived*), a short overview, which passage is the main one, related studies, and **Duplicate…** |
+| **Info** | *Bible Study information* opens over the study: its status (*active, paused, completed, archived*), its purpose and overview, its passages and related studies, **Duplicate…** and **Save as my template**. Status, purpose and overview are a draft: **Save** writes them; **Cancel**, **Esc**, ✕ or a click outside closes the panel and nothing is written. The study itself stays exactly as it was underneath. |
 | **Passage buttons** | The main passage and related passages. Click one to open it on the left. **+ Related passage** adds another. |
+| **The study outline** | One quiet line: *Text · Understanding · Theology · Application · Audience · Teaching* (the steps your kind of study has). It stays at the top while you scroll, marks where you are, and takes you to a step with one click. It is only a way to find your place: you can work on any part at any time. |
 | **Fold all / Unfold all** | Folds every part to its heading, so the study reads as an outline, and opens them again |
 | **The parts** | *Text, Observations, Context…* Write straight into them. Click a part's heading to fold it away (it then says how many notes it holds). The **…** button beside it renames, moves or deletes the part. |
 | **+ Add** at the end of each part | More writing, or a note of a kind: **Observation**, **Question**, **Interpretation**, **Application**, and under **More types** *Quotation, Doctrine, Illustration, Teaching idea, Unresolved issue, Conclusion* |
 | **Other notes** | Notes that belong to no particular part, after the last part |
 | **Add a part** · **Note** | At the very end: a new part (suggested ones, or your own heading), or a note for the whole study |
+| **Prepare a Bible Teaching** | At the very end, when you are ready: the way on to a sermon, a group Bible study or a lesson. Once you have prepared one, it is named there and opens with one click. |
+
+The parts are grouped by where they belong in the study: first the text and
+what you see in it, then what it means, what it teaches about God, how to live
+it, the people it is for, and teaching it. The part you are working in has a
+thin brass line beside it. Your own parts stay where you put them, with the
+part before them.
 
 Everything is **saved automatically** as you type.
 

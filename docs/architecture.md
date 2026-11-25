@@ -150,6 +150,13 @@ Mobile may later be used for:
 - AI interaction
 - lightweight editing
 
+**Window permissions (v0.18.3).** Each window may call only the app
+commands it needs: the build declares every registered command to Tauri, and
+`src-tauri/permissions/windows.toml` grants the main window the commands its
+interface calls and the presentation's audience screen five read-only ones.
+Inventory, rationale and tests:
+[`correctness-hardening-v0.18.3.md`](correctness-hardening-v0.18.3.md) §3.
+
 ### Why Tauri
 
 Preferred over Electron because:
@@ -390,6 +397,14 @@ Matthew 1 — 25 verses detected ✓
 PDF parsing should be treated as lower-confidence because PDFs encode presentation rather than semantics.
 
 EPUB should be preferred when available because it often retains structural markup.
+
+**Word annotations (v0.21, migration 0017).** A USFM import also reads each
+`\w …|lemma="…" strong="…" x-morph="…"\w*` and places the word by UTF-16
+offsets in the stored verse text (the text itself is unchanged). The words
+are stored per translation (`bible_word_annotations` → `bible_lemma_entries`,
+`bible_entry_ids`, `bible_words`, all removed with the translation), only
+when the markup is reliable and gives lemmas or grammar. Details:
+[original-language-v0.21.md](original-language-v0.21.md).
 
 ---
 
@@ -945,6 +960,10 @@ Abiding Word should use a provider abstraction.
 > Embedding, transcription and OCR providers are not built. Presets after the
 > v0.16 refinement: OpenAI, Anthropic, Google, xAI, Perplexity, DeepSeek,
 > Qwen, Ollama, LM Studio and any other compatible service; none is preferred.
+> Added later (all chat completions, international endpoints): Mistral,
+> Cohere (compatibility endpoint), Moonshot AI (Kimi), Z.ai (GLM) and
+> MiniMax. Settings link each service's official models list and price list
+> (`SERVICES` in `AssistantSettings.tsx`).
 > Presentation is a future output of a teaching (export, or audience and
 > presenter screens), not a third workspace view. Image creation has its own
 > service and capability (§18.4): writing and images can use different
@@ -1126,6 +1145,28 @@ This encodes the product principle:
 
 > Love God by understanding Scripture carefully.  
 > Love your neighbour by teaching it appropriately.
+
+**Delivery (v0.18).** A teaching is delivered through presentations: an
+output layer, never a third workspace and never a second copy of the
+teaching. A presentation's items name the teaching parts they show and follow
+them live; one `PresentationDocument` is built from them and every output is
+rendered from it (Presenter View and audience screen, PowerPoint, PDF slides
+and speaker sheet, Markdown, a self-contained delivery package for later
+offline/mobile delivery). The audience screen gets a separate audience-only
+type with no speaker fields. The audience screen is a second Tauri window
+(first use of multi-window, §1 of the backlog), with a one-window path. See
+[`presentation-delivery-v0.18.md`](presentation-delivery-v0.18.md).
+
+**Church templates (v0.18.1).** A presentation may choose a church template
+(`presentation_templates`, migration 0012): a design only — page size,
+colours, fonts, pictures and a layout per kind of slide — never content.
+The audience page is laid out once in the core (`presentation/layout.rs`)
+and that page feeds PowerPoint, PDF and the interface (which asks the core
+for pages instead of laying them out itself), so all outputs share one
+geometry. Template pictures are content-addressed in the managed data
+folder. PowerPoint designs are imported by a reader that reports what it
+cannot reproduce. See
+[`presentation-templates-v0.18.1.md`](presentation-templates-v0.18.1.md).
 
 ---
 

@@ -6,12 +6,12 @@ import { Button } from "@/design-system/Button";
 import { useLoad } from "@/hooks/useLoad";
 import { referenceLabel } from "@/i18n/scripture";
 import { toApiError } from "@/lib/api";
+import { useScripture } from "@/features/scripture/ScriptureContext";
 import { useApi } from "@/lib/ApiContext";
 import type { StudyType } from "@/types/studies";
+import { templateName, studyStartSummary } from "./builtinText";
 import { inStudyCatalogue } from "./catalogue";
-import { templateName } from "./builtinText";
 import { isPassageCentred } from "./labels";
-import { openInTeaching } from "./studyView";
 
 /** An example of what to type, for the kind of study. */
 function placeholderFor(t: TFunction, type: StudyType): string {
@@ -35,22 +35,16 @@ function placeholderFor(t: TFunction, type: StudyType): string {
   }
 }
 
-/**
- * How the user chooses to begin: a built-in kind of study, one of their own
- * templates, or preparing a teaching. A teaching is prepared from a study of
- * its passage (Bible Teaching is derived from Bible Study): "teaching" makes
- * a passage study and opens its Bible Teaching side.
- */
-type Approach = StudyType | "mine";
+/** Begin with Bible Study; Teaching is an optional next step within the study. */
+type Approach = Exclude<StudyType, "teaching"> | "mine";
 
 /** Offered straight away; the rest are under "More options". */
-const COMMON: StudyType[] = ["passage", "character", "word", "book", "topical", "teaching"];
-const MORE: StudyType[] = ["custom"];
+const COMMON: Approach[] = ["passage", "character", "word", "book", "topical"];
+const MORE: Approach[] = ["custom"];
 
-const field = "h-10 min-w-0 rounded-aw border border-border bg-bg px-3 text-base placeholder:text-text-muted";
-const pill =
-  "min-h-11 rounded-full border border-border px-3 font-ui text-[0.9375rem] text-text-strong hover:bg-bg-secondary " +
-  "aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-on-primary";
+const field = "h-10 min-w-0 aw-input px-3 text-base placeholder:text-text-muted";
+// The kind of study is an option among several: the shared choice chip (v0.18.5).
+const pill = "aw-choice min-h-11";
 
 interface NewStudyFormProps {
   /** The project to create in, or a way to find (or make) it when the user has not chosen one. */
@@ -72,12 +66,13 @@ interface NewStudyFormProps {
 export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false }: NewStudyFormProps) {
   const { t } = useTranslation();
   const api = useApi();
+  const { translation } = useScripture();
   const id = useId();
   const templates = useLoad(useCallback(() => api.templateList(), [api]));
   const [subject, setSubject] = useState("");
   const [approach, setApproach] = useState<Approach>("passage");
   const [customTitle, setCustomTitle] = useState("");
-  const [passageMethod, setPassageMethod] = useState("pozetek-study");
+  const [passageMethod, setPassageMethod] = useState("pozetek-writing-study");
   const [mine, setMine] = useState<string | null>(null);
   const [more, setMore] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -87,13 +82,13 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
   const own = list.filter((template) => !template.isBuiltin);
   const chosenOwn = own.find((template) => template.id === (mine ?? own[0]?.id));
   // A study of one's own template is the kind of study that template is for.
-  const type: StudyType = approach === "mine" ? (chosenOwn?.studyType ?? "custom") : approach === "teaching" ? "passage" : approach;
+  const type: StudyType = approach === "mine" ? (chosenOwn?.studyType ?? "custom") : approach;
   const aboutAPassage = isPassageCentred(type);
   const passageTemplates = list.filter((template) => template.isBuiltin && template.studyType === "passage" && inStudyCatalogue(template));
   const selected = approach === "passage"
     ? passageTemplates.find((template) => template.key === passageMethod)
     : list.find((template) => template.isBuiltin && template.studyType === type &&
-        (approach === "teaching" ? template.key === "passage-study" : inStudyCatalogue(template)));
+        inStudyCatalogue(template));
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -109,7 +104,7 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
       let primary: string | undefined;
       let derived = text;
       if (aboutAPassage) {
-        const ref = await api.referenceParse(text);
+        const ref = await api.referenceParse(text, translation?.id);
         primary = ref.canonical;
         const label = referenceLabel(ref);
         derived = label;
@@ -131,7 +126,6 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
       });
       setSubject("");
       setCustomTitle("");
-      if (approach === "teaching") openInTeaching(detail.study.id);
       onCreated({ id: detail.study.id, projectId: detail.study.projectId });
     } catch (e) {
       setError(toApiError(e).message);
@@ -155,14 +149,22 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
   );
   const placeholder = placeholderFor(t, type);
 
+  // Said only once the templates are known, so it never names a part a study will not have.
+  const startsWith = templates.data
+    ? studyStartSummary(t, approach === "custom" ? null : approach === "mine" ? (chosenOwn ?? null) : (selected ?? null))
+    : undefined;
+
   return (
     <form onSubmit={submit} onKeyDown={onKeyDown} className="flex flex-col gap-4" noValidate aria-label={t("studies.newStudy.formLabel")}>
       <div className="flex flex-col gap-2">
-        <h2 id={`${id}-heading`} className="m-0 font-display text-[1.375rem] font-heading text-text-strong">
+        <h2 id={`${id}-heading`} className="type-worktitle m-0">
           {t("studies.newStudy.heading")}
         </h2>
+        <label className="text-[0.9375rem] font-medium" htmlFor={`${id}-subject`}>{t(`studies.newStudy.subjectLabel.${aboutAPassage || type === "teaching" ? "passage" : type}`)}</label>
         <input
-          aria-labelledby={`${id}-heading`}
+          id={`${id}-subject`}
+          aria-label={t(`studies.newStudy.subjectLabel.${aboutAPassage || type === "teaching" ? "passage" : type}`)}
+          aria-describedby={`${id}-heading`}
           autoFocus={autoFocus}
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
@@ -171,12 +173,16 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
         />
       </div>
 
-      <div role="group" aria-label={t("studies.newStudy.studyAs")} className="flex flex-wrap gap-2">
+      <div role="group" aria-label={t("studies.newStudy.studyAs")} aria-describedby={`${id}-starts`} className="flex flex-wrap gap-2">
         {COMMON.map(choice)}
         {more && MORE.map(choice)}
         {own.length > 0 && choice("mine")}
       </div>
 
+      {/* What this way in starts with, from the template's own parts (v0.18.8). */}
+      <p id={`${id}-starts`} className="type-meta m-0 min-h-5 line-clamp-2" title={startsWith}>
+        {startsWith}
+      </p>
       {approach === "passage" && passageTemplates.length > 0 && (
         <label className="flex flex-col gap-1">
           <span className="text-[0.9375rem] font-medium text-text-strong">{t("studies.newStudy.template")}</span>
@@ -188,9 +194,11 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
         </label>
       )}
 
+      {approach === "passage" && passageMethod === "ten-step-writing-study" && <p className="type-meta m-0">{t("studies.flow.tenStepAttribution")}</p>}
+
       {approach === "mine" && own.length > 0 && (
         <label className="flex flex-col gap-1">
-          <span className="text-[0.9375rem] font-medium text-text-strong">{t("studies.newStudy.template")}</span>
+          <span className="type-subhead">{t("studies.newStudy.template")}</span>
           <select value={chosenOwn?.id ?? ""} onChange={(e) => setMine(e.target.value)} className={field}>
             {own.map((template) => (
               <option key={template.id} value={template.id}>{template.name}</option>
@@ -212,7 +220,7 @@ export function NewStudyForm({ projectId, onCreated, onCancel, autoFocus = false
         </button>
         {more && (
           <label id={`${id}-more`} className="flex flex-col gap-1">
-            <span className="text-[0.9375rem] font-medium text-text-strong">
+            <span className="type-subhead">
               {t("studies.newStudy.title")} <span className="font-normal text-text-muted">{t("studies.newStudy.optional")}</span>
             </span>
             <input value={customTitle} onChange={(e) => setCustomTitle(e.target.value)} className={field} />

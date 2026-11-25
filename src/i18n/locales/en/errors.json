@@ -15,7 +15,9 @@
     "titleRequired": "Please give it a title.",
     "titleTooLong": "The title is too long. Please keep it under {{max}} characters.",
     "textTooLong": "This text is too long. Please keep it under {{max}} characters.",
-    "blockTooLong": "This block is too long to save. Please split it into several blocks."
+    "blockTooLong": "This block is too long to save. Please split it into several blocks.",
+    "entryInvalid": "This entry could not be saved.",
+    "unknownField": "This part does not contain that field."
   },
   "search": {
     "empty": "Type a word or phrase to search for."
@@ -32,16 +34,27 @@
     "notABook": "“{{text}}” is not a book of the Bible.",
     "oneChapter": "{{book}} has only one chapter.",
     "chapterCount": "{{book}} has {{count}} chapters.",
+    "verseCount": "{{book}} {{chapter}} has {{count}} verses.",
+    "verseCountBook": "{{book}} has {{count}} verses.",
+    "chapterCountPsalms": "Psalms has {{count}} psalms.",
+    "verseCountPsalm": "Psalm {{chapter}} has {{count}} verses.",
     "badVerse": "Verse {{verse}} is not a valid verse number.",
     "endBeforeStart": "The end of the passage comes before its start.",
     "invalid": "“{{text}}” is not a valid passage reference.",
-    "oneBook": "A passage must stay within one book."
+    "oneBook": "A passage must stay within one book.",
+    "ambiguous": "“{{text}}” could mean {{options}}. Type more of the book’s name to choose."
   },
   "bibles": {
     "hasProblems": "This Bible has problems that must be resolved before it can be added.",
-    "shortNameTooLong": "Please keep the short name under {{max}} characters."
+    "shortNameTooLong": "Please keep the short name under {{max}} characters.",
+    "badLanguage": "“{{text}}” is not a language Abiding Word recognises.",
+    "alreadyVerses": "This Bible can already be read by book, chapter and verse.",
+    "locationPlace": "Choose the place in the document first.",
+    "locationPage": "That page is not in the document."
   },
   "bibleImport": {
+    "pdfWorkerFailed": "The PDF text could not be read within the extraction limits.",
+    "cancelled": "Bible import cancelled.",
     "noBookId": "The file “{{fileName}}” does not say which book it contains.",
     "unknownBook": "The file “{{fileName}}” contains a book Abiding Word does not recognise ({{code}}). It was left out.",
     "bookTwice": "{{book}} appears in more than one file.",
@@ -59,14 +72,67 @@
     "missingVerses_other": "{{book}} {{chapter}}: verses {{list}} not found. The expected verse structure differs from this text.",
     "listMore_one": "{{numbers}} and {{count}} more",
     "listMore_other": "{{numbers}} and {{count}} more",
-    "unknownFormat": "These files are not in a Bible format Abiding Word can read yet. It currently reads USFM Bibles (.usfm or .sfm files, or a .zip of them).",
-    "formatNotYet": "{{format}} files can’t be imported as a structured Bible yet. Abiding Word currently reads USFM Bibles (.usfm or .sfm files, or a .zip of them).",
+    "unknownFormat": "These files are not in a Bible format Abiding Word can read yet. It reads USFM Bibles (.usfm or .sfm files, or a .zip of them), the Open Scriptures Hebrew Bible’s OSIS files and MorphGNT files.",
+    "formatNotYet": "{{format}} files can’t be imported as a structured Bible yet. Abiding Word reads USFM Bibles (.usfm or .sfm files, or a .zip of them), the Open Scriptures Hebrew Bible’s OSIS files and MorphGNT files. A Bible can also be added from PDF, EPUB, Word (.docx), Markdown or text documents.",
     "noBooks": "No books of the Bible were found in these files.",
     "tooLarge": "These files are too large to be a single Bible.",
     "badZip": "The file “{{fileName}}” is not a readable .zip archive.",
     "badZipPart": "Part of “{{fileName}}” could not be read.",
     "zipTooLarge": "This archive is too large to be a single Bible.",
-    "badZipEntry": "“{{fileName}}” inside the archive could not be read."
+    "badZipEntry": "“{{fileName}}” inside the archive could not be read.",
+    "badOsis": "The file “{{fileName}}” could not be read completely.",
+    "badLines_one": "{{book}}: {{count}} line of “{{fileName}}” could not be read.",
+    "badLines_other": "{{book}}: {{count}} lines of “{{fileName}}” could not be read.",
+    "verseMapApplied": "This text uses the Hebrew Bible’s verse numbers. They were changed to the English numbering with the verse map supplied ({{moved}} verses renumbered, {{joined}} joined, {{titles}} Psalm titles kept as titles).",
+    "verseMapUnused": "The verse map supplied was not used: these files already follow the English verse numbers.",
+    "verseMapRefused": "The verse map “{{fileName}}” could not be read completely, so it was not used.",
+    "hebrewNumbering": "This text seems to use the Hebrew Bible’s verse numbers (Joel has four chapters). Add the verse map that comes with it (for the Open Scriptures Hebrew Bible: wlc/VerseMap.xml) to the files chosen, and they will be renumbered.",
+    "verseMapUnsplit": "These Hebrew verses each hold parts of two English verses, and these files do not mark where one ends: {{places}}. Each is kept whole under its Hebrew number, so it also holds words of the neighbouring English verse, and that verse is incomplete or missing.",
+    "verseMapConflict": "At {{places}} the text’s own verse mark and the verse map disagree; the text’s mark was followed.",
+    "psalmTitlesInVerse": "Where the Hebrew text writes a Psalm’s title as the start of verse 1, these files do not mark where the title ends, so it stays part of verse 1.",
+    "verseMapDivided_one": "{{count}} Hebrew verse was divided where the text itself marks the start of an English verse ({{titles}} of the parts are Psalm titles).",
+    "verseMapDivided_other": "{{count}} Hebrew verses were divided where the text itself marks the start of an English verse ({{titles}} of the parts are Psalm titles).",
+    "documentAmbiguous": "{{book}} {{chapter}}:{{verse}}: two places in the text could be where this verse begins.",
+    "documentBookTwice": "{{book}} begins twice in the text.",
+    "documentChapterTwice": "{{book}} {{chapter}} appears twice in the text.",
+    "documentOrder": "{{book}} {{chapter}}:{{verse}} is out of order in the text.",
+    "documentLongVerse": "{{book}} {{chapter}}:{{verse}} is far longer than any verse: the verses after it were not found.",
+    "documentChanged": "“{{fileName}}” was changed after it was reviewed. Choose the files again.",
+    "documentChapterShort": "{{book}} {{chapter}} ends at verse {{last}}; it usually has {{expected}} verses. The verses after {{last}} were not found.",
+    "documentNoBook_one": "{{count}} verse number was found where no book name comes before it; it was left out.",
+    "documentNoBook_other": "{{count}} verse numbers were found where no book name comes before them; they were left out.",
+    "documentUnnumbered_one": "In {{count}} chapter verse 1 has no number of its own: the text between the chapter’s heading and verse 2 was taken as verse 1.",
+    "documentUnnumbered_other": "In {{count}} chapters verse 1 has no number of its own: the text between the chapter’s heading and verse 2 was taken as verse 1.",
+    "documentPsalmTitles_one": "{{count}} Psalm title was kept as a title, before verse 1.",
+    "documentPsalmTitles_other": "{{count}} Psalm titles were kept as titles, before verse 1.",
+    "documentPsalmTitle": "Psalm {{chapter}}: verse 1 has no number, so it cannot be distinguished from the psalm’s title.",
+    "documentPageLines_one": "{{count}} page header or page number repeated across the pages was left out.",
+    "documentPageLines_other": "{{count}} page headers and page numbers repeated across the pages were left out.",
+    "documentLeftOut_one": "Text that belongs to no verse was left out ({{count}} character: headings, introductions, notes).",
+    "documentLeftOut_other": "Text that belongs to no verse was left out ({{count}} characters: headings, introductions, notes).",
+    "documentMixed": "Choose either the files of a Bible in a Bible format (such as USFM) or documents (PDF, EPUB, Word, Markdown or text), not both together.",
+    "documentFormats": "The documents of one Bible must all be of the same kind (all PDF, all EPUB …).",
+    "documentTooMany": "Too many documents were chosen to be one Bible.",
+    "documentFormat": "“{{fileName}}” is not a kind of document Abiding Word can read as a Bible.",
+    "documentEmpty": "No text was found in “{{fileName}}”.",
+    "unknownBookCode": "Unknown book.",
+    "documentSequence": "{{book}} {{chapter}}: verse {{verse}} appears inside an earlier verse (perhaps two columns were read across each other). This chapter is not used.",
+    "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected.",
+    "differentEditions": "These files say they come from different Bibles: {{list}}. Different Bibles are never combined: add each one on its own.",
+    "documentReadingOrder": "{{book}} {{chapter}}: page {{page}} is laid out in a way whose reading order could not be established. This chapter is not used.",
+    "documentChapterUnmarked": "{{book}}: Verse numbers start again at 1 after chapter {{chapter}} without a chapter marker. The following chapter was left out.",
+    "documentChapterUnread": "{{book}}: The number in the chapter heading “{{line}}” could not be read. The chapter was left out.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: This Septuagint chapter uses different numbering from the reference. The chapter was left out.",
+    "documentChapterJump": "{{book}} {{chapter}}: the document goes on with this chapter after chapter {{previous}}; the chapters between were not found. This chapter is not used.",
+    "documentRunningHead": "{{book}} {{chapter}}: page {{page}} ends with verse {{found}}, but its running head ({{head}}) says {{named}}. This chapter is not used.",
+    "documentLabel": "{{book}} {{chapter}}: the line “{{line}}” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
+    "documentRaisedLetters": "{{book}} {{chapter}}: a verse has small raised letters that no note on the page explains (perhaps cross-reference letters). This chapter is not used.",
+    "documentPagesUnread": "“{{fileName}}”: the text on these pages could not be read in full: {{pages}}. Verses on them are missing.",
+    "documentNumberInVerse": "{{book}} {{chapter}}: verse {{verse}} was not found, but the number {{verse}} stands in the verse before it; the two may run together. This chapter is not used.",
+    "documentChapterLong": "{{book}} {{chapter}} goes on to verse {{last}}; it usually has {{expected}} verses. Another chapter or book may have been read into it. This chapter is not used.",
+    "documentFootnotes_one": "{{count}} line of footnotes was left out.",
+    "documentFootnotes_other": "{{count}} lines of footnotes were left out.",
+    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",
@@ -81,17 +147,50 @@
     "duplicate": "This file is already in your library as “{{title}}”.",
     "originalUnsupported": "This source has no original view.",
     "originalMissing": "Abiding Word’s copy of this file can’t be found.",
-    "originalUnavailable": "The original of this source can’t be opened."
+    "originalUnavailable": "The original of this source can’t be opened.",
+    "structure": {
+      "corrupt": "The saved PDF structure could not be read. Source text and the original file are unchanged.",
+      "invalid": "This correction no longer matches the source. Reopen its text and try again.",
+      "timeout": "The analysis took too long and was stopped. This attempt saved no changes. Try again or save a diagnostic report.",
+      "cancelled": "Analysis cancelled. Previous structure and links are unchanged. You can retry.",
+      "busy": "An analysis is already running. Wait or cancel it before retrying.",
+      "limit": "The PDF exceeds the supported analysis limits. Previous metadata is unchanged.",
+      "failed": "Analysis failed. Your previous structure and links remain available. Retry, or save a diagnostic report."
+    },
+    "nothingChosen": "Choose at least one item.",
+    "notInTrash": "Only items in Trash can be deleted permanently. Move them to Trash first.",
+    "badYear": "The year must be a number between 0 and 3000.",
+    "collectionCycle": "A collection cannot be moved into itself or one of its subcollections.",
+    "linkUnsupported": "This type of link cannot be opened.",
+    "tooMany": "At most {{count}} items can be changed at once.",
+    "badName": "Use a name between 1 and {{max}} characters long.",
+    "collectionExists": "A collection called “{{name}}” already exists here.",
+    "tagExists": "A tag called “{{name}}” already exists.",
+    "coverage": {
+      "invalidPassage": "“{{passage}}” could not be identified as a Bible book or passage. Check the reference before saving.",
+      "tooMany": "Enter up to {{max}} coverage references.",
+      "empty": "Enter at least one Bible book or passage to set coverage.",
+      "metadataUnreadable": "The saved source details could not be read safely. No changes were saved."
+    },
+    "reader": {
+      "invalidSavedPlace": "This reading place could not be saved. The source was not changed."
+    }
   },
   "templates": {
     "noSections": "A template needs at least one part to start with.",
     "tooManySections": "A template can have at most {{max}} parts.",
-    "builtinReadOnly": "Built-in templates can’t be changed. Duplicate it to make your own version.",
+    "builtinReadOnly": "Built-in templates can’t be changed. Use “Save as my template” to make your own version.",
+    "duplicateKey": "This template contains the same part twice. Remove one copy.",
+    "invalidKey": "This part’s key is not valid.",
     "unknownPart": "This template part is no longer available.",
-    "partAlreadyAdded": "This template part is already in the study."
+    "partAlreadyAdded": "This template part is already in the study.",
+    "tooManyBlocks": "A part can have at most {{max}} blocks.",
+    "duplicateBlockKey": "Each block needs a different, non-empty key."
   },
   "sections": {
-    "hasContent": "“{{title}}” still has writing or notes in it."
+    "hasContent": "“{{title}}” still has writing or notes in it.",
+    "duplicateKey": "This study already has that part.",
+    "repairChanged": "The parts have changed. Review them again. Undo only works if the added parts are unchanged; all writing is kept."
   },
   "relations": {
     "self": "A study can’t be linked to itself.",
@@ -102,7 +201,8 @@
     "otherStudySection": "That part belongs to another study.",
     "tooManyTags": "A note can have at most {{max}} tags.",
     "tagTooLong": "The tag “{{tag}}” is too long.",
-    "writeFirst": "Write something to add first."
+    "writeFirst": "Write something to add first.",
+    "assistantName": "The assistant’s name is missing."
   },
   "annotations": {
     "tooLong": "This note is too long to save.",
@@ -119,7 +219,7 @@
   "sourceAnnotations": {
     "noWords": "Select some words of the source first.",
     "textChanged": "The selected words do not match the text of this source.",
-    "tooMuchText": "So much text cannot be marked at once.",
+    "tooMuchText": "That is too much text to mark at once.",
     "placeGone": "This place is no longer in the source.",
     "noPlace": "Choose a place in the source first.",
     "bookmarkPlace": "A bookmark marks a place, not words.",
@@ -130,10 +230,10 @@
     "off": "The AI Assistant is turned off. You can turn it on in Settings → AI Assistant.",
     "notSetUp": "The AI Assistant is not set up yet. You can set it up in Settings → AI Assistant.",
     "noModel": "Choose which model to use in Settings.",
-    "noKey": "The AI Assistant needs its key. You can add it in Settings → AI Assistant.",
+    "noKey": "The AI Assistant needs an API key. You can add it in Settings → AI Assistant.",
     "keyRefused": "The assistant service did not accept the key. Check it in Settings.",
     "modelMissing": "The AI service does not know that model. Check the model name in Settings → AI Assistant (the ↗ beside Model shows the current models).",
-    "busy": "The assistant service is busy or the account’s limit is reached. Please try again later.",
+    "busy": "The assistant service is busy or your account’s limit has been reached. Please try again later.",
     "failed": "The assistant service could not answer this time. Please try again.",
     "badReply": "The assistant’s answer could not be used. Nothing was changed. Please try again.",
     "unreachable": "The assistant could not be reached. Check the internet connection or the address in Settings.",
@@ -151,19 +251,112 @@
     "noImageSearch": "Finding images is turned off. You can turn it on in Settings.",
     "noImageGeneration": "Making images is not set up, or this AI service cannot make images. You can choose a service for images in Settings → AI Assistant.",
     "imageFailed": "The image could not be made this time. Please try again.",
-    "keyStore": "The key could not be kept in this computer’s credential store.",
+    "keyStore": "The key could not be kept in this computer’s password store.",
     "badKey": "That does not look like a key. Please paste it again.",
     "badAddress": "Please enter a web address beginning with http:// or https://.",
     "badModel": "That model name is too long.",
     "noImageKey": "Making images needs the image service’s key. You can add it in Settings → AI Assistant.",
-    "searchNoKey": "This search service does not use a key."
+    "searchNoKey": "This search service does not use a key.",
+    "staleTarget": "This part has changed or was removed since you asked. Close the help, check the text and ask again."
   },
   "teaching": {
+    "blockType": "That is not a kind of block this teaching can hold.",
+    "blockParent": "A block can sit in a section of this teaching.",
+    "blockRole": "That block cannot be tied to that part of the teaching.",
+    "blockReference": "Choose a live Scripture block in this teaching.",
     "tooLong": "This part of the teaching is too long to save.",
     "otherPoint": "That point belongs to another teaching.",
     "otherStudyFinding": "That note belongs to another study.",
     "badMaterial": "This item cannot be kept.",
-    "notVerified": "A story is only kept as checked with two independent sources.",
-    "imageGone": "This image is no longer available. Please make it again."
+    "notVerified": "A story can be kept as checked only when two independent sources report it.",
+    "imageGone": "This image is no longer available. Please make it again.",
+    "projectRequired": "Choose a project for this teaching.",
+    "otherProject": "Choose a study in this project.",
+    "badSnapshot": "This saved study note cannot be read."
+  },
+  "presentation": {
+    "imageGone": "This image is not available on this computer.",
+    "imageSaveFailed": "The image could not be saved. Check the internet connection and try again.",
+    "noFile": "Please choose where to save the file.",
+    "fileExists": "A file named “{{name}}” already exists. Please choose another name.",
+    "noSlides": "This presentation has no slides to export.",
+    "audienceFailed": "The audience screen could not be opened.",
+    "otherTeaching": "That part belongs to another teaching.",
+    "tooLong": "This text is too long for the slide.",
+    "tooMany": "This presentation has reached its slide limit.",
+    "targetTooLong": "The target time cannot exceed ten hours.",
+    "templateNotPptx": "This file is not a PowerPoint presentation (.pptx) that can be read.",
+    "templateTooLarge": "This presentation is too large to read as a template.",
+    "templateFileLarge": "This file is too large to read as a template.",
+    "templateInvalid": "This template cannot be used: something in it is not valid.",
+    "templateImage": "This file is not a PNG, JPEG, GIF or WebP image.",
+    "templateImageLarge": "This image is too large for a template.",
+    "templateImageGone": "An image used by this template is missing from this computer.",
+    "templatePackage": "This file is not an Abiding Word template.",
+    "templateNewer": "This template was made by a newer version of Abiding Word.",
+    "templateDescriptionLong": "This description is too long to save.",
+    "tooManySlides": "Too many slides to show at once."
+  },
+  "material": {
+    "tooLong": "This is too long to save as one file.",
+    "tooManyPassages": "This material contains too many passages to include their text."
+  },
+  "teachingTemplates": {
+    "noKind": "Choose what the template is for.",
+    "tooManyPoints": "A template can start with at most {{max}} points or steps."
+  },
+  "portability": {
+    "notPackage": "Abiding Word cannot read this file, or it is damaged.",
+    "tooLarge": "This file contains more data than Abiding Word can read from a single file.",
+    "damaged": "Part of this file does not match its list of contents: it is damaged or was changed. Nothing was changed here.",
+    "newer": "This file was saved by a newer version of Abiding Word ({{version}}). Please update Abiding Word first.",
+    "notBackupDatabase": "The database in this backup is damaged or is not an Abiding Word database. Nothing was changed.",
+    "restoreFailed": "The backup could not be restored. Your work was put back as it was.",
+    "noFile": "Please choose a file.",
+    "rollbackFailed": "The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {{path}}.",
+    "snapshotUnavailable": "This recovery point is damaged or incompatible. Your work was not changed."
+  },
+  "inquiry": {
+    "notHere": "This kind of help is not available here.",
+    "changed": "What would be sent has changed since you looked. Please look at it again before asking.",
+    "selectionChanged": "The selected words are no longer in the text. Select them again.",
+    "selectWords": "Select the words you would like to understand first.",
+    "chooseNote": "Choose the question you recorded.",
+    "noPassage": "Choose the passage of this Bible Study first: the help starts from the text.",
+    "noBibleText": "The text of this passage is not installed. Add a Bible in Settings, or choose one for this Bible Study.",
+    "noSourceText": "This source has no text that can be read here (for example, a scanned PDF). The assistant works only from a source’s text, so it cannot help with this one.",
+    "excerptTooLong": "This passage is too long to send at once (at most {{max}} characters). Select a shorter passage.",
+    "chooseStudy": "Include a Bible Study to relate this passage to.",
+    "compareCount": "Choose two or three passages to compare.",
+    "compareSame": "The same passage was chosen twice. Choose different passages to compare.",
+    "compareTooLong": "Together these passages are too long to compare at once (at most {{max}} characters). Choose shorter passages.",
+    "tooManyCitations": "A note can cite at most three passages."
+  },
+  "words": {
+    "unavailable": "This Bible has no word annotations (lemmas or grammar), so this search is not available for it. The ordinary concordance still works.",
+    "empty": "Type a lemma or a lexical number to look for.",
+    "grammarNotFit": "These grammar codes do not fit that scheme, so they are shown as written.",
+    "textDiffers": "The saved files no longer match this Bible’s text exactly, so its word information cannot be added. Remove the Bible and add it again to restore that information.",
+    "noSource": "The files used to add this Bible are no longer saved, so its word information cannot be read again. Remove the Bible and add it again to restore that information.",
+    "nothingToIndex": "These files have no word information that can be indexed.",
+    "documentBible": "A Bible added from a document has no word information to add."
+  },
+  "batch": {
+    "noFiles": "No files the library can read were found there.",
+    "tooMany": "At most {{max}} files can be added at once.",
+    "cannotChoose": "This file cannot be added.",
+    "closed": "This import has ended. Start a new one to add more files.",
+    "notRead": "Some files have not been read yet.",
+    "changed": "“{{fileName}}” changed after it was checked. Read it again."
+  },
+  "catalogue": {
+    "notVerified": "“{{fileName}}” did not match the verified copy, so nothing was kept. Try again later.",
+    "unreachable": "The download could not be completed. Check the internet connection and try again.",
+    "busy": "A download is already under way. Wait for it to finish."
+  },
+  "messageUnavailable": "This action could not be completed. Please try again.",
+  "importFormats": {
+    "webPage": "Web page",
+    "osisUsx": "OSIS and USX"
   }
 }

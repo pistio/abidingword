@@ -56,6 +56,20 @@ text_enum!(
     }
 );
 
+text_enum!(
+    /// Where a part of a Bible Study belongs in its movement (v0.18.7): semantic
+    /// guidance for grouping parts, never a required set of sections. A part may
+    /// have none.
+    StudyPhase, "study phase" {
+        Text => "text",
+        Understanding => "understanding",
+        Theology => "theology",
+        Application => "application",
+        Audience => "audience",
+        Teaching => "teaching",
+    }
+);
+
 text_enum!(StudyStatus, "study status" {
     Active => "active",
     Paused => "paused",
@@ -154,6 +168,12 @@ pub struct CreateStudySection {
     pub title: String,
     #[serde(default)]
     pub guidance: Option<String>,
+    /// The built-in part this is (a part the template offers for later), if any.
+    #[serde(default)]
+    pub key: Option<String>,
+    /// Where it belongs in the study's movement, if anywhere.
+    #[serde(default)]
+    pub phase: Option<StudyPhase>,
     /// When adding an optional template part, retain its key and fields.
     #[serde(default)]
     pub template_section_key: Option<String>,
@@ -202,6 +222,9 @@ pub struct Finding {
     pub tags: Vec<String>,
     /// Library sources this finding cites (with provenance snapshots).
     pub sources: Vec<crate::library::FindingCitation>,
+    /// The assistant that helped write it (v0.20), as it was named when the
+    /// person accepted the note; none for the person's own notes.
+    pub assisted_by: Option<String>,
     pub created_at: String,
     pub updated_at: String,
     pub revision: i64,

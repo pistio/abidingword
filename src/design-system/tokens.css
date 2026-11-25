@@ -89,6 +89,9 @@
   --aw-mark-page: var(--aw-forest);
   --aw-mark-colon: var(--aw-burgundy);
   --aw-mark-chevron: var(--aw-brass);
+  /* Brass, a shade deeper: at least 3:1 for the focus ring on every light
+     background and side pane (the brand brass falls just short on some). */
+  --aw-focus-ring: #9a6b27;
   color-scheme: light;
 }
 
@@ -97,6 +100,7 @@
   --aw-mark-page: var(--aw-ivory);
   --aw-mark-colon: var(--aw-ivory);
   --aw-mark-chevron: var(--aw-brass);
+  --aw-focus-ring: var(--aw-brass);
   color-scheme: dark;
 }
 
@@ -122,11 +126,17 @@
 }
 
 /*
- * Backgrounds for the light theme (Settings → Appearance), for long reading
- * and writing: low glare, no saturated colour. "parchment" is the brand's
- * own ivory (the tokens above). Text stays Charcoal and Forest on all of them
- * (contrast at least 11:1 for body text and 5:1 for muted text on the
- * secondary colour; tests/ui/appearance.test.tsx checks it).
+ * Backgrounds (Settings → Appearance), for long reading and writing: low
+ * glare, no saturated colour. Six families, each with a light and a dark
+ * variant; the choice is one of six, and the variant follows the effective
+ * theme (Light, Dark, or the computer's setting as it changes). "parchment"
+ * is the brand's own ivory and, in the dark, the brand's own Forest (the
+ * tokens above). Light: text stays Charcoal and Forest. Dark: text stays
+ * the brand's soft ivory on deep, calm tones — never pure black. Both: at
+ * least 11:1 for body text on the page (9:1 on cards and panes), 5:1 for
+ * muted text on the panes, 4.5:1 for links and errors, 3:1 for the focus
+ * ring on page and panes; borders are decorative (lighter or darker than
+ * the surfaces they edge, not 3:1), as before. tests/ui/appearance-themes.test.tsx checks all twelve.
  */
 [data-theme="light"][data-paper="cream"] {
   --aw-bg: #faf7ef;
@@ -166,4 +176,148 @@
   --aw-surface: #fbfbf9;
   --aw-border: #d5d5d0;
   --aw-border-subtle: #e7e7e3;
+}
+
+[data-theme="dark"][data-paper="cream"] {
+  --aw-bg: #1e1b16;
+  --aw-bg-secondary: #28241e;
+  --aw-surface: #28241e;
+  --aw-border: #4a4339;
+  --aw-border-subtle: #332e27;
+}
+
+[data-theme="dark"][data-paper="sage"] {
+  --aw-bg: #1a201c;
+  --aw-bg-secondary: #232a25;
+  --aw-surface: #232a25;
+  --aw-border: #414c44;
+  --aw-border-subtle: #2d352f;
+}
+
+[data-theme="dark"][data-paper="stone"] {
+  --aw-bg: #1d1c1a;
+  --aw-bg-secondary: #272523;
+  --aw-surface: #272523;
+  --aw-border: #47443f;
+  --aw-border-subtle: #32302c;
+}
+
+[data-theme="dark"][data-paper="mist"] {
+  --aw-bg: #181d22;
+  --aw-bg-secondary: #21272d;
+  --aw-surface: #21272d;
+  --aw-border: #3e4852;
+  --aw-border-subtle: #2b3239;
+}
+
+[data-theme="dark"][data-paper="clear"] {
+  --aw-bg: #1b1b1b;
+  --aw-bg-secondary: #252525;
+  --aw-surface: #252525;
+  --aw-border: #454545;
+  --aw-border-subtle: #303030;
+}
+
+/*
+ * Workspace panes (v0.18.4): the Study or Teaching being worked on is the
+ * person's current work and has the most contrast with its text; Scripture
+ * sits one step closer to the middle, Sources two. In Light the work pane is
+ * the brightest surface; in Dark it is the deepest (the page), each supporting
+ * pane a step lighter. `field` is the soft fill of text fields in the work pane:
+ * the Scripture step, one back from the work in either theme, so a field reads
+ * as a place to write without an outline. tests/ui/appearance-themes.test.tsx
+ * checks the order, the size of each step and the contrast of all twelve.
+ */
+:root {
+  --aw-pane-work: #fcfbf8;
+  --aw-pane-scripture: var(--aw-bg);
+  --aw-pane-sources: var(--aw-bg-secondary);
+  --aw-field: var(--aw-pane-scripture);
+}
+
+[data-theme="dark"] {
+  --aw-pane-work: var(--aw-bg);
+  --aw-pane-scripture: #1a2e24;
+  --aw-pane-sources: var(--aw-bg-secondary);
+}
+
+[data-theme="light"][data-paper="cream"] {
+  --aw-pane-work: #fefdfa;
+}
+
+[data-theme="light"][data-paper="sage"] {
+  --aw-pane-work: #fafbf8;
+}
+
+[data-theme="light"][data-paper="stone"] {
+  --aw-pane-work: #faf9f8;
+}
+
+[data-theme="light"][data-paper="mist"] {
+  --aw-pane-work: #fafbfb;
+}
+
+/* Clear is already near white: its work pane is white and Scripture steps back instead. */
+[data-theme="light"][data-paper="clear"] {
+  --aw-pane-work: #ffffff;
+  --aw-pane-scripture: #f6f6f4;
+}
+
+[data-theme="dark"][data-paper="cream"] {
+  --aw-pane-scripture: #23201a;
+}
+
+[data-theme="dark"][data-paper="sage"] {
+  --aw-pane-scripture: #1e2520;
+}
+
+[data-theme="dark"][data-paper="stone"] {
+  --aw-pane-scripture: #22201e;
+}
+
+[data-theme="dark"][data-paper="mist"] {
+  --aw-pane-scripture: #1c2228;
+}
+
+[data-theme="dark"][data-paper="clear"] {
+  --aw-pane-scripture: #202020;
+}
+
+/*
+ * Interaction and status (v0.18.5), the same on every surface:
+ *  - hover / selected: a tint of the strong text colour, so they show on any
+ *    pane, card or dialog in all twelve palettes (a fixed surface colour as a
+ *    hover disappears on a surface of that colour);
+ *  - raised: dialogs, menus and popovers — the work surface in Light, one step
+ *    lighter than the page in Dark (raised things come forward);
+ *  - backdrop: behind a modal dialog or sheet;
+ *  - success / warning: status text (danger is above), each at least 4.5:1
+ *    on every pane and on raised surfaces (tests/ui/appearance-themes.test.tsx).
+ */
+:root {
+  --aw-hover: color-mix(in srgb, var(--aw-text-strong) 6%, transparent);
+  --aw-selected: color-mix(in srgb, var(--aw-text-strong) 10%, transparent);
+  --aw-raised: var(--aw-pane-work);
+  --aw-backdrop: rgba(22, 39, 31, 0.42);
+  --aw-success: #2e5e3f;
+  --aw-warning: #7a4f0f;
+}
+
+[data-theme="dark"] {
+  --aw-hover: color-mix(in srgb, var(--aw-text-strong) 8%, transparent);
+  --aw-selected: color-mix(in srgb, var(--aw-text-strong) 13%, transparent);
+  --aw-raised: var(--aw-bg-secondary);
+  --aw-backdrop: rgba(0, 0, 0, 0.55);
+  --aw-success: #9fd3ad;
+  --aw-warning: #e6bd74;
+}
+
+/* A page that is always paper-white (a PDF page): its highlights keep their
+   light colours in either theme, as they would on paper. */
+.aw-paper {
+  --aw-hl-amber: #f0d78c;
+  --aw-hl-green: #bcd9b0;
+  --aw-hl-blue: #b9d1e8;
+  --aw-hl-rose: #ecc0c4;
+  --aw-hl-grey: #d3d0c8;
 }

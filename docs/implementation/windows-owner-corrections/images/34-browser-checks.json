@@ -1,0 +1,214 @@
+{
+  "platform": "Linux Chromium; actual PDF.js, invented Source; not WebView2 acceptance",
+  "results": [
+    {
+      "before": true,
+      "width": 900,
+      "toolbars": 2,
+      "platform": "Chromium"
+    },
+    {
+      "physicalWidth": 640,
+      "scale": 1,
+      "cssWidth": 640,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 640,
+          "scrollWidth": 640
+        },
+        {
+          "id": "pane-study",
+          "x": 0,
+          "width": 640,
+          "scrollWidth": 640
+        },
+        {
+          "id": "pane-sources",
+          "x": 0,
+          "width": 640,
+          "scrollWidth": 640
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "physicalWidth": 900,
+      "scale": 1,
+      "cssWidth": 900,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 265,
+          "scrollWidth": 265
+        },
+        {
+          "id": "pane-study",
+          "x": 265.84375,
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "x": 626.859375,
+          "width": 273,
+          "scrollWidth": 273
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "physicalWidth": 1100,
+      "scale": 1,
+      "cssWidth": 1100,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "x": 301,
+          "width": 478,
+          "scrollWidth": 478
+        },
+        {
+          "id": "pane-sources",
+          "x": 780,
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "physicalWidth": 1440,
+      "scale": 1,
+      "cssWidth": 1440,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 300,
+          "scrollWidth": 300
+        },
+        {
+          "id": "pane-study",
+          "x": 301,
+          "width": 818,
+          "scrollWidth": 818
+        },
+        {
+          "id": "pane-sources",
+          "x": 1120,
+          "width": 320,
+          "scrollWidth": 320
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "physicalWidth": 1100,
+      "scale": 1.25,
+      "cssWidth": 880,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 256,
+          "scrollWidth": 256
+        },
+        {
+          "id": "pane-study",
+          "x": 257.28125,
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "x": 618.296875,
+          "width": 262,
+          "scrollWidth": 262
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "physicalWidth": 1440,
+      "scale": 1.5,
+      "cssWidth": 960,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 291,
+          "scrollWidth": 291
+        },
+        {
+          "id": "pane-study",
+          "x": 291.5625,
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "id": "pane-sources",
+          "x": 652.578125,
+          "width": 307,
+          "scrollWidth": 307
+        }
+      ],
+      "pageErrors": []
+    },
+    {
+      "physicalWidth": 1440,
+      "scale": 2,
+      "cssWidth": 720,
+      "headerHeight": 49,
+      "toolbars": 1,
+      "zoomRestored": 400,
+      "geometry": [
+        {
+          "id": "pane-scripture",
+          "x": 0,
+          "width": 720,
+          "scrollWidth": 720
+        },
+        {
+          "id": "pane-study",
+          "x": 0,
+          "width": 720,
+          "scrollWidth": 720
+        },
+        {
+          "id": "pane-sources",
+          "x": 0,
+          "width": 720,
+          "scrollWidth": 720
+        }
+      ],
+      "pageErrors": []
+    }
+  ]
+}

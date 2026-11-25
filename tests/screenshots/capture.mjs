@@ -7,20 +7,48 @@
 // Needs Playwright with a Chromium (`npm i --no-save playwright` once, or set
 // PLAYWRIGHT_MODULE to an installed copy, and CHROMIUM_PATH if its browser is
 // elsewhere). Images are written to docs/guide/images/.
+//
+// Review captures (v0.18.5): the same scenes under other conditions, written
+// elsewhere with a suffix, never over the guide's images:
+//   SCREENSHOT_OUT=<dir>   where to write (default docs/guide/images/)
+//   REVIEW_THEME=dark      add theme=dark to every scene
+//   REVIEW_LANG=de|ko      interface language (scenes with translated names only)
+//   REVIEW_WIDTH=980       viewport width (heights stay the scene's)
+//   REVIEW_SUFFIX=-dark-980 appended to each file name
+// tests/screenshots/review.mjs runs the review set.
 import { createRequire } from "node:module";
 import { mkdirSync } from "node:fs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE ?? "playwright");
 const BASE = process.env.SCREENSHOT_URL ?? "http://localhost:1430/tests/screenshots/index.html";
-const OUT = new URL("../../docs/guide/images/", import.meta.url).pathname;
+const OUT = process.env.SCREENSHOT_OUT ? `${process.env.SCREENSHOT_OUT.replace(/\/$/, "")}/` : new URL("../../docs/guide/images/", import.meta.url).pathname;
+const REVIEW = {
+  theme: process.env.REVIEW_THEME ?? "",
+  lang: process.env.REVIEW_LANG ?? "",
+  width: Number(process.env.REVIEW_WIDTH) || 0,
+  suffix: process.env.REVIEW_SUFFIX ?? "",
+};
+/** Interface words the review scenes click, in the review language. */
+const WORDS = {
+  en: { teaching: "Bible Teaching", settings: "Settings", library: "Open library", sources: "Sources", scripture: "Scripture", materials: "Materials" },
+  de: { teaching: "Bibellehre", settings: "Einstellungen", library: "Bibliothek öffnen", sources: "Quellen", scripture: "Bibel", materials: "Unterlagen" },
+  ko: { teaching: "성경 가르침", settings: "설정", library: "자료실 열기", sources: "자료", scripture: "성경", materials: "가르침 자료" },
+};
+const word = (key) => (WORDS[REVIEW.lang] ?? WORDS.en)[key];
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 
 /** Opens the app with the sample library; `query` adds harness options (theme, lang, passage). */
 async function open(query = "", { width = 1440, height = 900, scale = 1 } = {}) {
-  const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: scale });
+  const extra = [
+    REVIEW.theme && !/theme=/.test(query) ? `theme=${REVIEW.theme}` : "",
+    REVIEW.lang ? `lang=${REVIEW.lang}` : "",
+    REVIEW.width ? "sourcesOpen=1" : "",
+  ].filter(Boolean);
+  query = [query, ...extra].filter(Boolean).join("&");
+  const page = await browser.newPage({ viewport: { width: REVIEW.width || width, height }, deviceScaleFactor: scale });
   await page.goto(`${BASE}${query ? `?${query}` : ""}`);
   await page.getByRole("main").first().waitFor();
   await page.waitForTimeout(800);
@@ -28,11 +56,12 @@ async function open(query = "", { width = 1440, height = 900, scale = 1 } = {}) 
 }
 const shot = async (page, name, target) => {
   await page.waitForTimeout(500);
-  await (target ?? page).screenshot({ path: `${OUT}${name}.png`, animations: "disabled" });
-  console.log(`  ${name}.png`);
+  await page.mouse.move(1, 1);
+  await (target ?? page).screenshot({ path: `${OUT}${name}${REVIEW.suffix}.png`, animations: "disabled" });
+  console.log(`  ${name}${REVIEW.suffix}.png`);
 };
-const scripture = (page) => page.getByRole("complementary", { name: "Scripture" });
-const sources = (page) => page.getByRole("complementary", { name: "Sources" });
+const scripture = (page) => page.getByRole("complementary", { name: word("scripture"), exact: true });
+const sources = (page) => page.getByRole("complementary", { name: word("sources"), exact: true });
 const openStudy = async (page, title = "Abiding in the Vine") => {
   await page.getByRole("main").getByRole("button", { name: new RegExp(`^${title}`) }).first().click();
   await page.waitForTimeout(700);
@@ -42,13 +71,210 @@ const openSource = async (page, title) => {
   await page.waitForTimeout(700);
 };
 
+/** A study's Bible Teaching, then the material at that place in its Materials menu. */
+const openMaterial = async (title, index) => {
+  const page = await open("", { height: H });
+  await openStudy(page, title);
+  await page.getByRole("main").getByRole("button", { name: word("teaching"), exact: true }).click();
+  await page.waitForTimeout(800);
+  await page.getByRole("main").getByRole("button", { name: word("materials"), exact: true }).click();
+  await page.getByRole("menuitem").nth(index).click();
+  await page.waitForTimeout(700);
+  return page;
+};
+
 const openTeaching = async (page) => {
   await openStudy(page);
-  await page.getByRole("main").getByRole("button", { name: "Bible Teaching", exact: true }).click();
+  await page.getByRole("main").getByRole("button", { name: word("teaching"), exact: true }).click();
   await page.waitForTimeout(800);
 };
 
+/** The sermon's presentation (v0.18): made from the teaching, as a person would. */
+const openPresentation = async (page) => {
+  await openTeaching(page);
+  const main = page.getByRole("main");
+  await main.getByRole("button", { name: "Materials", exact: true }).click();
+  await page.getByRole("menuitem", { name: /^Presentation/ }).click();
+  await main.getByRole("button", { name: "Make slides from the teaching" }).click();
+  await main.getByRole("list", { name: "Slides" }).waitFor();
+  await page.waitForTimeout(900);
+  return main;
+};
+const startPresenting = async (page, { target } = {}) => {
+  const main = await openPresentation(page);
+  if (target) {
+    await main.getByText("Name, design, Bible and target time").click();
+    await main.getByRole("combobox", { name: /Target time/ }).selectOption(String(target));
+    await page.waitForTimeout(500);
+  }
+  await main.getByRole("button", { name: "Start Presenter View" }).click();
+  await page.waitForTimeout(600);
+  // On to the first point, where the speaker has a manuscript.
+  for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
+  await page.waitForTimeout(600);
+};
+
+/** The presentation in the sample church template (v0.18.1). */
+const withTemplate = async (page) => {
+  const main = await openPresentation(page);
+  await main.getByText("Name, design, Bible and target time").click();
+  await main.getByRole("combobox", { name: "Design" }).selectOption({ label: "Grace Church Sunday" });
+  await page.waitForTimeout(900);
+  return main;
+};
+
 const scenes = {
+  async "presentation-template"() {
+    const page = await open("template=1", { width: 1440, height: 1100 });
+    const main = await withTemplate(page);
+    await main.getByRole("listitem", { name: /^Slide 5:/ }).scrollIntoViewIfNeeded();
+    await shot(page, "presentation-template", main);
+    await page.close();
+  },
+  async "presenter-template"() {
+    const page = await open("template=1", { width: 1440, height: 900 });
+    const main = await withTemplate(page);
+    await main.getByRole("button", { name: "Start Presenter View" }).click();
+    await page.waitForTimeout(600);
+    for (let i = 0; i < 4; i++) await page.keyboard.press("ArrowRight");
+    await page.waitForTimeout(900);
+    await shot(page, "presenter-template");
+    await page.close();
+  },
+  async "template-import"() {
+    const page = await open("", { width: 1440, height: 2400 });
+    const main = await openPresentation(page);
+    await main.getByText("Name, design, Bible and target time").click();
+    await main.getByRole("button", { name: "Manage templates…" }).click();
+    await page.getByRole("dialog", { name: "Church templates" }).getByRole("button", { name: "Import from PowerPoint…" }).click();
+    const review = page.getByRole("dialog", { name: "Check the imported design" });
+    await review.waitFor();
+    await page.waitForTimeout(1200);
+    await shot(page, "template-import", review);
+    await page.close();
+  },
+  async "template-designer"() {
+    const page = await open("", { width: 1440, height: 1600 });
+    const main = await openPresentation(page);
+    await main.getByText("Name, design, Bible and target time").click();
+    await main.getByRole("button", { name: "Manage templates…" }).click();
+    await page.getByRole("dialog", { name: "Church templates" }).getByRole("button", { name: "New template" }).click();
+    const designer = page.getByRole("dialog", { name: "New church template" });
+    await designer.getByRole("textbox", { name: "Name of the template" }).fill("Youth night");
+    await designer.getByRole("combobox", { name: "Kind of slide" }).selectOption("scripture");
+    await designer.getByRole("checkbox", { name: "Own layout for this kind" }).check();
+    await designer.getByRole("textbox", { name: "Footer text (optional)" }).fill("Grace Church · Youth night");
+    await page.waitForTimeout(900);
+    await shot(page, "template-designer", designer);
+    await page.close();
+  },
+  async presentation() {
+    const page = await open("", { width: 1440, height: 1400 });
+    const main = await openPresentation(page);
+    await main.getByRole("listitem", { name: /^Slide 5:/ }).getByRole("button", { name: /Jesus is the true vine/ }).click();
+    await shot(page, "presentation", main);
+    await page.close();
+  },
+  async "presenter-desktop"() {
+    const page = await open("", { width: 1366, height: 768 });
+    await startPresenting(page, { target: 30 });
+    await shot(page, "presenter-desktop");
+    await page.close();
+  },
+  async "presenter-tablet"() {
+    const page = await open("", { width: 900, height: 1180 });
+    await startPresenting(page);
+    await shot(page, "presenter-tablet");
+    await page.close();
+  },
+  async "presenter-phone"() {
+    const page = await open("", { width: 390, height: 844, scale: 2 });
+    await startPresenting(page);
+    await shot(page, "presenter-phone");
+    await page.close();
+  },
+  async "presenter-view-panel"() {
+    const page = await open("", { width: 1366, height: 768 });
+    await startPresenting(page);
+    await page.getByRole("dialog", { name: /Presenter View/ }).getByRole("button", { name: "View", exact: true }).click();
+    await shot(page, "presenter-view-panel");
+    await page.close();
+  },
+  async "presenter-overview"() {
+    const page = await open("", { width: 1366, height: 768 });
+    await startPresenting(page);
+    await page.getByRole("dialog", { name: /Presenter View/ }).getByRole("button", { name: "Overview", exact: true }).click();
+    await page.waitForTimeout(500);
+    await shot(page, "presenter-overview");
+    await page.close();
+  },
+  async "presenter-layout-notes"() {
+    const page = await open("", { width: 1366, height: 768 });
+    await startPresenting(page);
+    const view = page.getByRole("dialog", { name: /Presenter View/ });
+    await view.getByRole("button", { name: "View", exact: true }).click();
+    await view.getByText("Larger notes", { exact: true }).click();
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(400);
+    await shot(page, "presenter-layout-notes");
+    await page.close();
+  },
+  async "presenter-pointer"() {
+    const page = await open("screens=2", { width: 1366, height: 768 });
+    await startPresenting(page);
+    const view = page.getByRole("dialog", { name: /Presenter View/ });
+    await view.getByRole("button", { name: "Audience screen", exact: true }).click();
+    await view.getByRole("button", { name: /Show on screen 2/ }).click();
+    await page.waitForTimeout(400);
+    await view.getByRole("button", { name: "Highlighter" }).click();
+    const box = await page.locator("[data-draw-layer]").boundingBox();
+    await page.mouse.move(box.x + box.width * 0.1, box.y + box.height * 0.3);
+    await page.mouse.down();
+    for (let i = 1; i <= 20; i++) await page.mouse.move(box.x + box.width * (0.1 + i * 0.03), box.y + box.height * 0.3, { steps: 2 });
+    await page.mouse.up();
+    await view.getByRole("button", { name: "Pointer" }).click();
+    await page.mouse.move(box.x + box.width * 0.55, box.y + box.height * 0.55, { steps: 4 });
+    await page.waitForTimeout(400);
+    await shot(page, "presenter-pointer");
+    await page.close();
+  },
+  async "presenter-audience-panel"() {
+    const page = await open("", { width: 1366, height: 768 });
+    await startPresenting(page);
+    await page.getByRole("dialog", { name: /Presenter View/ }).getByRole("button", { name: "Audience screen", exact: true }).click();
+    await page.waitForTimeout(400);
+    await shot(page, "presenter-audience-panel");
+    await page.close();
+  },
+  async "presenter-scripture"() {
+    const page = await open("", { width: 1440, height: 900 });
+    await startPresenting(page);
+    const view = page.getByRole("dialog", { name: /Presenter View/ });
+    await view.getByRole("button", { name: "Bible passage", exact: true }).click();
+    await view.getByRole("group", { name: "Passages in this presentation" }).getByRole("button", { name: "Psalm 80:8–16" }).click();
+    await page.waitForTimeout(500);
+    await shot(page, "presenter-scripture");
+    await page.close();
+  },
+  async "presentation-audience"() {
+    const page = await open("", { width: 1280, height: 720 });
+    await startPresenting(page);
+    await page.keyboard.press("ArrowRight");
+    const view = page.getByRole("dialog", { name: /Presenter View/ });
+    await view.getByRole("button", { name: "Audience screen", exact: true }).click();
+    await view.getByRole("button", { name: "Show in this window" }).click();
+    await page.mouse.move(10, 10);
+    await shot(page, "presentation-audience");
+    await page.close();
+  },
+  async "presentation-export"() {
+    const page = await open("", { width: 1440, height: 900 });
+    const main = await openPresentation(page);
+    await main.getByRole("button", { name: "Export…" }).click();
+    await page.waitForTimeout(400);
+    await shot(page, "presentation-export", page.getByRole("dialog", { name: "Export the presentation" }));
+    await page.close();
+  },
   async teaching() {
     const page = await open("", { width: 1440, height: 1500 });
     await openTeaching(page);
@@ -461,6 +687,157 @@ Object.assign(scenes, {
     const page = await open("sourcesWidth=440", { width: 1600, height: 1000 });
     await openStudy(page);
     await shot(page, "sources", sources(page));
+    await page.close();
+  },
+});
+
+// Review scenes (v0.18.5): whole windows at the review width, theme and
+// language (see the header), for the visual-system review; never the guide's.
+const H = 860;
+Object.assign(scenes, {
+  async "r-workspace"() {
+    const page = await open("", { height: H });
+    await openStudy(page);
+    await shot(page, "r-workspace");
+    await page.close();
+  },
+  // A long Bible Study partway down, working in one part (v0.18.6): where am I, what is around it?
+  async "r-study-deep"() {
+    const page = await open("", { height: H });
+    await openStudy(page);
+    const writing = page.getByRole("main").getByText(/Union with Christ|Die Einheit|그리스도와의/).first();
+    await writing.click();
+    await page.evaluate(() => {
+      const root = document.querySelector("main [data-scroll-root]");
+      const theology = [...document.querySelectorAll("main section")].find((s) => s.textContent?.includes("Union with Christ"));
+      if (root && theology) root.scrollTop += theology.getBoundingClientRect().top - root.getBoundingClientRect().top - 220;
+    });
+    await page.waitForTimeout(500);
+    await shot(page, "r-study-deep");
+    await page.close();
+  },
+  // Materials (v0.18.6): the menu, then each material as it opens (the sermon, a group study, a lesson).
+  async "r-materials"() {
+    const page = await open("", { height: H });
+    await openTeaching(page);
+    await page.getByRole("main").getByRole("button", { name: word("materials"), exact: true }).click();
+    await page.waitForTimeout(400);
+    await shot(page, "r-materials");
+    await page.close();
+  },
+  async "r-manuscript"() {
+    const page = await openMaterial("Abiding in the Vine", 1);
+    await shot(page, "r-manuscript");
+    await page.close();
+  },
+  async "r-question-sheet"() {
+    const page = await openMaterial("No condemnation", 2);
+    await shot(page, "r-question-sheet");
+    await page.close();
+  },
+  async "r-question-leader"() {
+    const page = await openMaterial("No condemnation", 2);
+    await page.getByRole("main").getByRole("checkbox").first().check();
+    await page.waitForTimeout(300);
+    await shot(page, "r-question-leader");
+    await page.close();
+  },
+  async "r-worksheet"() {
+    const page = await openMaterial("The Good Shepherd", 2);
+    await shot(page, "r-worksheet");
+    await page.close();
+  },
+  async "r-teaching"() {
+    const page = await open("", { height: H });
+    await openTeaching(page);
+    await shot(page, "r-teaching");
+    await page.close();
+  },
+  async "r-library"() {
+    const page = await open("", { height: H });
+    await sources(page).getByRole("button", { name: word("library") }).click();
+    await page.waitForTimeout(800);
+    await shot(page, "r-library");
+    await page.close();
+  },
+  async "r-reader"() {
+    const page = await open("", { height: H });
+    await sources(page).getByRole("button", { name: word("library") }).click();
+    await page.getByRole("button", { name: /^Notes on Abiding/ }).first().click();
+    await page.waitForTimeout(900);
+    await shot(page, "r-reader");
+    await page.close();
+  },
+  async "r-reader-pdf"() {
+    const page = await open("", { height: H });
+    await sources(page).getByRole("button", { name: word("library") }).click();
+    await page.getByRole("button", { name: /^A Short Guide to Bible Study/ }).first().click();
+    await page.getByRole("button", { name: "Original" }).click();
+    await page.locator("[data-pdf-reference] button").first().waitFor();
+    await page.waitForTimeout(900);
+    await shot(page, "r-reader-pdf");
+    await page.close();
+  },
+  async "r-settings"() {
+    const page = await open("", { height: H });
+    await page.getByRole("button", { name: word("settings") }).click();
+    await page.waitForTimeout(700);
+    await shot(page, "r-settings");
+    await page.close();
+  },
+  async "r-settings-assistant"() {
+    const page = await open("", { height: 1400 });
+    await page.getByRole("button", { name: "Settings" }).click();
+    const section = page.getByRole("region", { name: "AI Assistant" });
+    await section.getByRole("button", { name: "AI Assistant" }).click();
+    await page.waitForTimeout(500);
+    await section.scrollIntoViewIfNeeded();
+    await shot(page, "r-settings-assistant");
+    await page.close();
+  },
+  async "r-presentation"() {
+    const page = await open("", { height: H });
+    const main = await openPresentation(page);
+    await main.getByRole("listitem", { name: /^Slide 5:/ }).getByRole("button", { name: /Jesus is the true vine/ }).click();
+    await page.waitForTimeout(500);
+    await shot(page, "r-presentation");
+    await page.close();
+  },
+  async "r-presenter"() {
+    const page = await open("", { height: H });
+    await startPresenting(page, { target: 30 });
+    await shot(page, "r-presenter");
+    await page.close();
+  },
+  async "r-template-import"() {
+    const page = await open("", { height: H });
+    const main = await openPresentation(page);
+    await main.getByText("Name, design, Bible and target time").click();
+    await main.getByRole("button", { name: "Manage templates…" }).click();
+    await page.getByRole("dialog", { name: "Church templates" }).getByRole("button", { name: "Import from PowerPoint…" }).click();
+    await page.getByRole("dialog", { name: "Check the imported design" }).waitFor();
+    await page.waitForTimeout(1200);
+    await shot(page, "r-template-import");
+    await page.close();
+  },
+  async "r-template-designer"() {
+    const page = await open("", { height: H });
+    const main = await openPresentation(page);
+    await main.getByText("Name, design, Bible and target time").click();
+    await main.getByRole("button", { name: "Manage templates…" }).click();
+    await page.getByRole("dialog", { name: "Church templates" }).getByRole("button", { name: "New template" }).click();
+    const designer = page.getByRole("dialog", { name: "New church template" });
+    await designer.getByRole("textbox", { name: "Name of the template" }).fill("Youth night");
+    await page.waitForTimeout(900);
+    await shot(page, "r-template-designer");
+    await page.close();
+  },
+  async "r-dialog"() {
+    const page = await open("", { height: H });
+    const main = await openPresentation(page);
+    await main.getByRole("button", { name: "Export…" }).click();
+    await page.waitForTimeout(500);
+    await shot(page, "r-dialog");
     await page.close();
   },
 });

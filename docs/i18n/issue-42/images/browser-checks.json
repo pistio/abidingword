@@ -1,0 +1,89 @@
+{
+  "platform": "Linux Chromium; synthetic failure; not Windows WebView2 or actual-file acceptance",
+  "results": [
+    {
+      "language": "en",
+      "before": true,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "en",
+      "before": false,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "before": true,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "de",
+      "before": false,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "before": true,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "ko",
+      "before": false,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "before": true,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "fr",
+      "before": false,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "before": true,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "es",
+      "before": false,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "before": true,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    },
+    {
+      "language": "pt",
+      "before": false,
+      "width": 900,
+      "scenario": "synthetic native timeout with legacy empty metadata",
+      "pageErrors": []
+    }
+  ]
+}

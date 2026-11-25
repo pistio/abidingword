@@ -4,9 +4,9 @@ use super::CommandResult;
 use crate::assistant::images;
 use crate::db::teaching;
 use crate::domain::{
-    AddTeachingPassage, CreateTeaching, CreateTeachingPoint, KeepTeachingMaterial,
-    LinkTeachingFinding, Reorder, TeachingPreparation, TeachingSummary, UpdateTeaching,
-    UpdateTeachingPoint,
+    AddTeachingPassage, CreateTeaching, CreateTeachingBlock, CreateTeachingPoint,
+    KeepTeachingMaterial, LinkTeachingFinding, Reorder, ReorderTeachingBlocks, TeachingPreparation,
+    TeachingSummary, UpdateTeaching, UpdateTeachingBlock, UpdateTeachingPoint,
 };
 use crate::error::{AppError, UserMessage};
 use crate::state::AppState;
@@ -67,6 +67,56 @@ pub fn teaching_point_delete(
     id: String,
 ) -> CommandResult<TeachingPreparation> {
     state.db(|conn| teaching::delete_point(conn, &id))
+}
+
+/// A.4.4 (#27): copies chosen items of the teaching's Bible Study into it as
+/// editable, leader-only blocks with provenance (no live link, no overwrite).
+#[tauri::command(async)]
+pub fn teaching_add_from_study(
+    state: State<'_, AppState>,
+    input: crate::domain::teaching::AddFromStudy,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::add_from_study(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_create(
+    state: State<'_, AppState>,
+    input: CreateTeachingBlock,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::create(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_update(
+    state: State<'_, AppState>,
+    input: UpdateTeachingBlock,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::update(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_delete(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::delete(conn, &id))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_reorder(
+    state: State<'_, AppState>,
+    input: ReorderTeachingBlocks,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::reorder(conn, &input))
+}
+
+#[tauri::command(async)]
+pub fn teaching_block_duplicate(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|conn| crate::db::teaching_blocks::duplicate(conn, &id))
 }
 
 #[tauri::command(async)]
@@ -169,4 +219,27 @@ pub fn teaching_image(state: State<'_, AppState>, file: String) -> CommandResult
     let path = state.core()?.dirs.teaching_images().join(&file);
     let png = std::fs::read(&path).map_err(|_| gone())?;
     Ok(images::data_url(&png))
+}
+
+#[tauri::command(async)]
+pub fn teaching_list_project(
+    state: State<'_, AppState>,
+    project_id: String,
+) -> CommandResult<Vec<TeachingSummary>> {
+    state.db(|c| teaching::list_project(c, &project_id))
+}
+#[tauri::command(async)]
+pub fn teaching_set_study(
+    state: State<'_, AppState>,
+    id: String,
+    study_id: Option<String>,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|c| teaching::set_study(c, &id, study_id.as_deref()))
+}
+#[tauri::command(async)]
+pub fn teaching_restore(
+    state: State<'_, AppState>,
+    id: String,
+) -> CommandResult<TeachingPreparation> {
+    state.db(|c| teaching::restore(c, &id))
 }

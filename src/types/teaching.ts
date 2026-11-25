@@ -9,7 +9,8 @@ export type TeachingKind = (typeof TEACHING_KINDS)[number];
 
 export interface TeachingSummary {
   id: string;
-  studyId: string;
+  projectId: string;
+  studyId: string | null;
   title: string;
   kind: TeachingKind | null;
   updatedAt: string;
@@ -31,6 +32,8 @@ export interface TeachingPoint {
 }
 
 export interface TeachingFindingLink {
+  snapshot?: boolean;
+  presentationOnly?: boolean;
   id: string;
   /** null: used for the teaching as a whole. */
   pointId: string | null;
@@ -41,6 +44,8 @@ export interface TeachingFindingLink {
 export interface TeachingPassage {
   id: string;
   pointId: string | null;
+  /** The block this passage belongs to, when it is not the whole teaching or a point. */
+  blockId?: string | null;
   reference: ScriptureRef;
 }
 
@@ -83,7 +88,8 @@ export interface TeachingMaterial {
 
 export interface TeachingPreparation {
   id: string;
-  studyId: string;
+  projectId: string;
+  studyId: string | null;
   title: string;
   kind: TeachingKind | null;
   audience: string | null;
@@ -96,9 +102,74 @@ export interface TeachingPreparation {
   findings: TeachingFindingLink[];
   passages: TeachingPassage[];
   materials: TeachingMaterial[];
+  /** Set when this teaching was started from a block template. Absent: the earlier editor. */
+  templateKey?: string | null;
+  /** 2: the block editor. Absent: the editor this teaching was written in. */
+  templateVersion?: number | null;
+  blocks?: TeachingBlock[];
   createdAt: string;
   updatedAt: string;
   revision: number;
+}
+
+/** Kinds of block a teaching template can hold. */
+export const TEACHING_BLOCK_TYPES = [
+  "section",
+  "writing",
+  "scripture",
+  "teaching_notes",
+  "discussion_questions",
+  "explanation",
+  "illustration",
+  "activity",
+  "application",
+  "objectives",
+  "time",
+  "presentation_notes",
+  "handout",
+  "outline_point",
+  "qa",
+] as const;
+export type TeachingBlockType = (typeof TEACHING_BLOCK_TYPES)[number];
+
+/** True when a new block of this kind is for participants unless the person says otherwise. */
+export function blockParticipantDefault(blockType: string): boolean {
+  return blockType === "discussion_questions" || blockType === "handout" || blockType === "section" || blockType === "scripture" || blockType === "outline_point" || blockType === "qa";
+}
+
+export interface TeachingBlock {
+  id: string;
+  parentId: string | null;
+  position: number;
+  blockType: string;
+  blockKey: string | null;
+  title: string;
+  body: string;
+  participantFacing: boolean;
+  role: string | null;
+  guidanceKey: string | null;
+  pointId: string | null;
+  /** A.4.4 (#27): where an editable copy came from (its Bible Study); never a live link. */
+  origin?: BlockOrigin | null;
+}
+
+/** A.4.4 (#27): the provenance of a block copied from the teaching's Bible Study. */
+export interface BlockOrigin {
+  studyId: string;
+  /** writing, qa, finding, citation, passage. */
+  kind: string;
+  itemId: string;
+  label: string;
+  copiedAt: string;
+  citation?: string | null;
+}
+
+/** An item of the teaching's Bible Study chosen in "Add from Bible Study". */
+export interface StudyItemRef {
+  kind: "writing" | "qa" | "finding" | "citation" | "passage";
+  id: string;
+  /** The interface's name for it; its text is read from the study. */
+  label: string;
 }
 
 /** Fields left out are unchanged; "" clears an optional one. */
@@ -141,7 +212,7 @@ export interface KeepTeachingMaterial {
 // ---------------------------------------------------------------------------
 
 /** Services on the internet, then on this computer, then any other compatible one (as the core lists them). */
-export const PROVIDER_KINDS = ["openai", "anthropic", "google", "xai", "perplexity", "deepseek", "qwen", "ollama", "lmstudio", "openai_compatible"] as const;
+export const PROVIDER_KINDS = ["openai", "anthropic", "google", "xai", "perplexity", "deepseek", "qwen", "mistral", "cohere", "moonshot", "zai", "minimax", "ollama", "lmstudio", "openai_compatible"] as const;
 export type ProviderKind = (typeof PROVIDER_KINDS)[number];
 export const IMAGE_SERVICES = ["same", "openai"] as const;
 export type ImageService = (typeof IMAGE_SERVICES)[number];
@@ -206,6 +277,8 @@ export interface AssistInput {
   action: AssistAction;
   part: TeachingPart;
   pointId?: string | null;
+  /** A.4.4 (#19): the block of a block teaching the text belongs to. */
+  blockId?: string | null;
   /** Exactly the person's text being worked on (the part, or the selected words). */
   text: string;
   selected?: boolean;
@@ -272,6 +345,8 @@ export interface FoundImage {
   licenceUrl: string | null;
   author: string | null;
   attribution: string;
+  /** True for exact attribution supplied by the image source; false for an app-generated credit. */
+  attributionProvided?: boolean;
   /** The small picture, fetched by the core (the window loads no remote images). */
   thumbData: string | null;
 }
@@ -280,4 +355,52 @@ export interface GeneratedImage {
   file: string;
   dataUrl: string;
   assistant: string;
+}
+
+/**
+ * A Bible Teaching template (v0.18.7): a format and the points, questions or
+ * steps a new teaching starts with. Structure only. The built-in ones are
+ * application text (resources/teaching-templates.json); the person's own are
+ * kept by the core. A teaching copies its template when it is made and is
+ * never linked to it afterwards.
+ */
+export interface TeachingTemplatePoint {
+  /** The built-in starting step it came from: shown in the interface language while its title is unchanged. */
+  key?: string | null;
+  /** May be empty: a point to be named in the teaching. */
+  title: string;
+  kind?: StepKind | null;
+}
+
+export interface TeachingTemplateBlock {
+  key?: string | null;
+  parentKey?: string | null;
+  blockType: string;
+  title: string;
+  participantFacing?: boolean | null;
+  role?: string | null;
+  guidanceKey?: string | null;
+}
+
+export interface TeachingTemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  kind: TeachingKind;
+  points: TeachingTemplatePoint[];
+  /** 2: a block template. Absent: a points template. */
+  version?: number;
+  blocks?: TeachingTemplateBlock[];
+  createdAt: string;
+  updatedAt: string;
+  revision: number;
+}
+
+export interface TeachingTemplateInput {
+  name: string;
+  description?: string | null;
+  kind: TeachingKind;
+  points: TeachingTemplatePoint[];
+  version?: number;
+  blocks?: TeachingTemplateBlock[];
 }

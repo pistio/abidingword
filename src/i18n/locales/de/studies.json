@@ -3,11 +3,11 @@
     "templates": {
       "biblical-theology-study": {
         "name": "Biblisch-theologisches Studium",
-        "description": "Ein Thema, verfolgt entlang der Gesamterzählung der Schrift – von der Verheißung bis zur Erfüllung.",
+        "description": "Ein Thema, das sich durch die Geschichte der Bibel entfaltet.",
         "sections": {
           "theme": {
             "title": "Thema",
-            "guidance": "Das Thema, das verfolgt wird, und warum es wichtig ist."
+            "guidance": "Welches Thema du verfolgst und warum es wichtig ist."
           },
           "old-testament": {
             "title": "Altes Testament",
@@ -27,7 +27,7 @@
           },
           "fulfilment": {
             "title": "Erfüllung / Vollendung",
-            "guidance": "Seine Erfüllung in Christus und seine endgültige Vollendung."
+            "guidance": "Wo und wie das Thema seine Erfüllung oder Vollendung findet."
           },
           "synthesis": {
             "title": "Synthese",
@@ -44,8 +44,8 @@
         }
       },
       "passage-study": {
-        "name": "Bibelstellenstudium",
-        "description": "Ein sorgfältiges Studium einer Bibelstelle – vom Text selbst bis zu seiner Vermittlung.",
+        "name": "Bibeltextstudium",
+        "description": "Ein sorgfältiges Studium einer Bibelstelle – vom Text selbst bis zu dem, was er für Glauben und Leben bedeutet.",
         "sections": {
           "text": {
             "title": "Text",
@@ -65,7 +65,7 @@
           },
           "exegesis": {
             "title": "Exegese",
-            "guidance": "Was bedeutete der Text für seine ursprüngliche Leserschaft? Schlüsselwörter, Grammatik, schwierige Wendungen."
+            "guidance": "Was bedeutete der Text für seine ersten Leser? Schlüsselwörter, Grammatik, schwierige Wendungen."
           },
           "theology": {
             "title": "Theologie",
@@ -153,7 +153,7 @@
           },
           "exegesis": {
             "title": "Exegese",
-            "guidance": "Was der Text für seine ursprüngliche Leserschaft bedeutete."
+            "guidance": "Was der Text für seine ersten Leser bedeutete."
           },
           "theology": {
             "title": "Theologie",
@@ -197,13 +197,21 @@
             "title": "Relevante Bibelstellen",
             "guidance": "Sammle aussagekräftige Bibelstellen, auch solche, die eine erste Annahme einschränken oder infrage stellen. Halte fest, warum jede Stelle wichtig ist."
           },
-          "passage-study": {
-            "title": "Bibelstellen untersuchen",
-            "guidance": "Lies jeden Text in seinem literarischen, geschichtlichen und heilsgeschichtlichen Zusammenhang. Unterscheide ausdrückliche Lehre, erzählte Ereignisse, Schlussfolgerungen und Anwendung."
+          "biblical-context": {
+            "title": "Biblischer Kontext",
+            "guidance": "Wo und wie das Thema in der Bibel vorkommt."
           },
           "main-themes": {
             "title": "Erkenntnisse vergleichen und ordnen",
             "guidance": "Ordne die Bibelstellen nach ihrer tatsächlichen Aussage. Beachte Übereinstimmungen, Unterschiede, Entwicklungen und offene Fragen."
+          },
+          "difficult-passages": {
+            "title": "Schwierige oder ergänzende Texte",
+            "guidance": "Untersuche scheinbar widersprüchliche Stellen, ohne ihren Zusammenhang zu übergehen oder vorschnell alles gleichzusetzen."
+          },
+          "theology": {
+            "title": "Theologie",
+            "guidance": "Wie sich die Bibelstellen zu einer stimmigen Lehre zusammenfügen."
           },
           "conclusions": {
             "title": "Biblische Schlussfolgerungen",
@@ -213,9 +221,9 @@
             "title": "Anwendung",
             "guidance": "Leite konkrete Folgen für Glauben, Anbetung, Beziehungen und Handeln aus den Ergebnissen ab."
           },
-          "difficult-passages": {
-            "title": "Schwierige oder ergänzende Texte",
-            "guidance": "Untersuche scheinbar widersprüchliche Stellen, ohne ihren Zusammenhang zu übergehen oder vorschnell alles gleichzusetzen."
+          "passage-study": {
+            "title": "Bibelstellen untersuchen",
+            "guidance": "Lies jeden Text in seinem literarischen, geschichtlichen und heilsgeschichtlichen Zusammenhang. Unterscheide ausdrückliche Lehre, erzählte Ereignisse, Schlussfolgerungen und Anwendung."
           },
           "biblical-theology": {
             "title": "Einordnung in die ganze Bibel",
@@ -235,13 +243,21 @@
             "title": "Vorkommen und Übersetzungen",
             "guidance": "Suche aussagekräftige Vorkommen dieses Grundworts und vergleiche die Übersetzungen. Unterscheide das Grundwort von seinen gebeugten Formen und anderen Wörtern mit ähnlicher Übersetzung."
           },
+          "immediate-contexts": {
+            "title": "Unmittelbarer Kontext",
+            "guidance": "Wie jede wichtige Verwendung von ihrem Satz und Absatz geprägt ist."
+          },
           "semantic-range": {
-            "title": "Bedeutungsspektrum",
+            "title": "Bedeutungen",
             "guidance": "Beschreibe mögliche Bedeutungen anhand des Zusammenhangs. Leite die Bedeutung nicht allein aus der Wortherkunft ab und übertrage nicht alle möglichen Bedeutungen auf eine einzelne Stelle."
           },
           "key-passages": {
             "title": "Bibelstellen im Zusammenhang",
             "guidance": "Lies jedes wichtige Vorkommen im Satz-, Abschnitts-, Gattungs- und geschichtlichen Zusammenhang. Halte fest, welche Bedeutung am besten passt und warum."
+          },
+          "theological-significance": {
+            "title": "Biblisch-theologische Bezüge",
+            "guidance": "Vergleiche verwandte biblische Aussagen, ohne die jeweilige Bedeutung der einzelnen Texte zu verwischen."
           },
           "conclusions": {
             "title": "Bedeutung und Ergebnis",
@@ -254,10 +270,6 @@
           "grammar": {
             "title": "Grammatik und Satzbau",
             "guidance": "Untersuche bei Bedarf Wortform, Satzbau und Funktion im Gedankengang. Nutze zuverlässige sprachwissenschaftliche Hilfsmittel; Kenntnisse der Ursprachen sind keine Voraussetzung."
-          },
-          "theological-significance": {
-            "title": "Biblisch-theologische Bezüge",
-            "guidance": "Vergleiche verwandte biblische Aussagen, ohne die jeweilige Bedeutung der einzelnen Texte zu verwischen."
           }
         }
       },
@@ -886,13 +898,637 @@
             "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung."
           }
         }
+      },
+      "pozetek-writing-study": {
+        "name": "POZETEK",
+        "description": "Eine geführte Untersuchung für jede Bibelstelle: Beobachtung (Personen, Ort, Zeit, Ereignisse, Textzusammenhang), Auslegung (Erklärungen), zentrale Aussage (Kern) und danach eine eigene persönliche Anwendung.",
+        "sections": {
+          "persons": {
+            "title": "P — Personen",
+            "guidance": "Wer hat den Text geschrieben? An wen richtet er sich? Wer spricht, handelt oder kommt vor?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "place": {
+            "title": "O — Ort",
+            "guidance": "Wo spielt das Geschehen? Welche geografischen oder kulturellen Umstände sind wichtig?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "time": {
+            "title": "Z — Zeit",
+            "guidance": "Wann geschieht das? Welche geschichtlichen Umstände sind wichtig?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "events": {
+            "title": "E — Ereignisse",
+            "guidance": "Was geschieht im Text? Wie entwickelt sich die Handlung oder der Gedankengang?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "theme": {
+            "title": "Thema",
+            "guidance": "Wovon handelt der Text, und was sagt er darüber aus?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "understanding": {
+            "title": "Erkenntnisse",
+            "guidance": "Erkläre die Bedeutung im Zusammenhang. Unterscheide Beobachtung, Auslegung und offene Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "consequences": {
+            "title": "Konsequenzen",
+            "guidance": "Was folgt daraus für Glauben, Liebe und Leben? Leite die Anwendung aus der Bedeutung des Textes ab.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "context": {
+            "title": "T — Textzusammenhang",
+            "guidance": "Wie hängt der Abschnitt mit seinem Umfeld, dem Buch und der übrigen Schrift zusammen?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "explanations": {
+            "title": "E — Erklärungen",
+            "guidance": "Welche Begriffe, Aussagen oder Auslegungsfragen müssen geklärt werden?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "core": {
+            "title": "K — Kern",
+            "guidance": "Textgegenstand — Worum geht es?\nErkenne, welches Thema, welche Person oder welche Beziehung im Mittelpunkt steht. Benenne den Gegenstand in wenigen Worten, noch ohne die Aussage des Textes vorwegzunehmen.\n\nTextaussage — Was sagt der Text darüber?\nUntersuche, was der Abschnitt über diesen Gegenstand aussagt. Fasse die wesentlichen Aussagen und ihren Zusammenhang zusammen.\n\nTextthema — Was ist die zentrale Botschaft?\nVerbinde Textgegenstand und Textaussage zu einem prägnanten Satz, der die Aussage des gesamten Abschnitts wiedergibt.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Persönliche Anwendung",
+            "guidance": "Was bedeutet die erkannte Wahrheit für dich? Getrennt halten von Beobachtung und Auslegung oben. Auf den Text so antworten, dass die Anwendung an seiner Aussage gebunden bleibt. Ein eigener Abschluss, kein weiterer Buchstabe von POZETEK. Welche Wahrheit des Textes bleibt für alle Leser gültig? Wo fordert, tröstet oder korrigiert diese Wahrheit das eigene Denken und Leben? Was wird konkret geschehen: Glaube, Umkehr, Vertrauen, Gehorsam, Gebet, Liebe? So konkret wie möglich. Was unterscheidet die damalige von der heutigen Lage? Was darf nicht unmittelbar übertragen werden?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "ten-step-writing-study": {
+        "name": "Die Zehn-Schritte-Methode",
+        "description": "Eine gründliche Auslegung nach den zehn Schritten von Helge Stadelmann und Thomas Richter. Erläuterungen und das aufklappbare Beispiel zu Mt 8,18–27 sind eigenständig formuliert.",
+        "sections": {
+          "step-01-familiarity": {
+            "title": "1 — Mit dem Text vertraut werden",
+            "guidance": "Den Abschnitt mehrfach und in verschiedenen Übersetzungen lesen. Verlauf und erste Fragen wahrnehmen, ohne vorschnelle Antworten zu geben. Erste Beobachtungen und offene Fragen, noch keine fertige Auslegung. Was scheint die Hauptaussage zu sein? Welche Szenen und Übergänge sind erkennbar?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8,18–27 enthält zwei Gespräche zur Nachfolge und danach die Sturmstillung. Erste Fragen betreffen den Preis der Nachfolge, das Begraben der Toten, Kleinglauben und Jesu Vollmacht."
+          },
+          "step-02-text": {
+            "title": "2 — Die Textgrundlage feststellen",
+            "guidance": "Übersetzungen und Textanmerkungen vergleichen. Zwischen Übersetzungsentscheidungen und Handschriftenvarianten unterscheiden. Eine begründete Textgrundlage mit benannten Unsicherheiten. Wortlaut und Bedeutung vergleichen. Nur belegte Varianten festhalten.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8,24 berichtet von einem heftigen Sturm auf dem See. Das griechische Wort betont die Intensität; zusätzliche Ereignisse, die nicht im Text stehen, dürfen daraus nicht abgeleitet werden."
+          },
+          "step-03-situation": {
+            "title": "3 — Die ursprüngliche Kommunikationssituation klären",
+            "guidance": "Wer schrieb wem, wann, wo und warum? Den relevanten historischen und kulturellen Hintergrund untersuchen; Belege von Vermutungen trennen. Der geschichtliche Rahmen, der für diesen Abschnitt nötig ist. Was ist über Verfasser und Leser bekannt? Handlungszeit und Entstehungszeit unterscheiden.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Matthäus zeigt Jesus als den verheißenen Messias. Das Geschehen liegt in Galiläa. Nachfolge bedeutete mehr als Unterricht: Jesus ruft Menschen, ihm persönlich zu folgen."
+          },
+          "step-04-context": {
+            "title": "4 — Den Zusammenhang erfassen",
+            "guidance": "Grenzen und Zusammenhang des Abschnitts im Kapitel, Buch und in der ganzen Bibel untersuchen. Die unmittelbare Umgebung hat Vorrang. Die Rolle des Textes im Buch und seine begründeten Grenzen. Wo beginnt und endet die Einheit? Was steht davor und danach?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Auf die Bergpredigt (Mt 5–7) folgen Berichte über Jesu Vollmacht. Mt 8,23 verbindet den Ruf zur Nachfolge mit dem Boot: Die Jünger folgen Jesus. Die Episoden können auch einzeln ausgelegt werden."
+          },
+          "step-05-genre": {
+            "title": "5 — Die Textart untersuchen",
+            "guidance": "Gattung, Textform und sprachliche Mittel wie Kontrast, Wiederholung und Gespräch erkennen. Dem Text keine künstliche Gliederung aufzwingen. Verstehen, wie die Form die Botschaft vermittelt. Erzählung, Gedicht, Prophetie, Brief oder anderes? Welche Form innerhalb der Gattung?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8,18–22 sind kurze Gespräche, Mt 8,23–27 ein Wunderbericht. Jesu Ruhe steht der Angst der Jünger gegenüber; dem Sturm folgt Stille; menschlicher Hilflosigkeit begegnet Jesu Vollmacht."
+          },
+          "step-06-language": {
+            "title": "6 — Wörter und Sätze untersuchen",
+            "guidance": "Wichtige Begriffe und Satzverbindungen in ihrem unmittelbaren Zusammenhang untersuchen. Ein Wörterbucheintrag allein beweist noch keine Bedeutung. Begriffe und Gedankengänge nachvollziehbar erklären. Bedeutung im Zusammenhang prüfen. Gegensätze, Gründe und Bedingungen markieren.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8,20 stellt die Ruheplätze der Tiere Jesu fehlender Ruhestätte gegenüber. Mt 8,21–22 betont den Vorrang seines Rufes; der genaue Zustand des Vaters lässt sich aus dem Text nicht sicher bestimmen."
+          },
+          "step-07-flow": {
+            "title": "7 — Den Gedankengang entfalten",
+            "guidance": "Den gesamten Abschnitt erneut betrachten und die Abfolge von Reden, Handlungen und Wendepunkten erfassen. Ein Textschaubild und eine Gliederung entwickeln. Eine Gliederung, die aus dem Text hervorgeht. Wie entwickelt sich die Aussage? Verse und Überschriften begründet zuordnen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8,18–20: Kosten der Nachfolge; V. 21–22: Vorrang von Jesu Ruf; V. 23–25: Nachfolge in Gefahr; V. 26–27: Jesu Vollmacht über Wind und See."
+          },
+          "step-08-theology": {
+            "title": "8 — Theologische Fragen klären",
+            "guidance": "Lehrfragen erst im Abschnitt und dann im gesamtbiblischen Zeugnis prüfen. Die Schrift erklärt die Schrift; offene Fragen dürfen offen bleiben. Textgemäße und schriftgemäße Antworten. Belege und begründete Antwort festhalten. Den Beitrag der Stelle erklären.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8,22 ist im Licht von Jesu Bekräftigung des Elterngebotes (Mt 15,4–6) zu verstehen. Die Sturmstillung erinnert an Gottes Herrschaft über das Meer (Ps 89,10; 107,23–30) und stellt die Frage nach Jesu Identität."
+          },
+          "step-09-message": {
+            "title": "9 — Die zentrale Aussage formulieren",
+            "guidance": "Textgegenstand, Textaussage und Textthema klar unterscheiden. Das Thema an allen Teilen des Abschnitts überprüfen. Eine präzise, überprüfbare Hauptaussage. Das Thema in wenigen Worten benennen. Die Aussage über den Gegenstand festhalten.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Textgegenstand: Nachfolge Jesu angesichts seiner Ansprüche und Vollmacht. Textaussage: Jesus fordert Vorrang vor Sicherheiten und Vertrauen auch in Gefahr. Textthema: Nachfolge verlangt Hingabe und Vertrauen auf den Herrn, dessen Vollmacht größer ist als jede Gefahr."
+          },
+          "step-10-application": {
+            "title": "10 — Die Bedeutung für heute erkennen und anwenden",
+            "guidance": "Die ursprüngliche Bedeutung auf heute beziehen, ohne die Unterschiede nach Tod, Auferstehung Jesu und Ausgießung des Heiligen Geistes zu übergehen. Eine treue, konkrete und begrenzte Anwendung. Was gilt über die damalige Situation hinaus? Heilsgeschichtliche und kulturelle Unterschiede benennen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            },
+            "example": "Mt 8 fordert zur Prüfung auf, ob Sicherheit und Bequemlichkeit vor Vertrauen auf Christus stehen. Die damalige Situation der Jünger lässt sich nicht einfach wiederholen. Jesu Anspruch auf Nachfolge bleibt, und Zuversicht gründet in seiner Vollmacht."
+          }
+        }
+      },
+      "word-research-study": {
+        "name": "Biblische Wortstudie",
+        "description": "Ein biblisches Wort in seiner Ursprungssprache und seinen Zusammenhängen untersuchen, ohne überall dieselbe Bedeutung vorauszusetzen.",
+        "sections": {
+          "word": {
+            "title": "Wort und Fragestellung",
+            "guidance": "Bestimme das hebräische oder griechische Grundwort, seine Schreibweise und die betreffende Bibelstelle oder Frage. Ein deutsches Übersetzungswort kann mehrere unterschiedliche Grundwörter wiedergeben.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "occurrences": {
+            "title": "Vorkommen und Übersetzungen",
+            "guidance": "Suche aussagekräftige Vorkommen dieses Grundworts und vergleiche die Übersetzungen. Unterscheide das Grundwort von seinen gebeugten Formen und anderen Wörtern mit ähnlicher Übersetzung.",
+            "fields": {
+              "word-lookup": {
+                "label": "Wort nachschlagen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "concordance": {
+                "label": "Konkordanz",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "semantic-range": {
+            "title": "Bedeutungen",
+            "guidance": "Beschreibe mögliche Bedeutungen anhand des Zusammenhangs. Leite die Bedeutung nicht allein aus der Wortherkunft ab und übertrage nicht alle möglichen Bedeutungen auf eine einzelne Stelle.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Bibelstellen im Zusammenhang",
+            "guidance": "Lies jedes wichtige Vorkommen im Satz-, Abschnitts-, Gattungs- und geschichtlichen Zusammenhang. Halte fest, welche Bedeutung am besten passt und warum.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Bedeutung und Ergebnis",
+            "guidance": "Erkläre anhand des Textes, was das Wort in der untersuchten Stelle bedeutet. Benenne Unsicherheiten und leite aus dem Wort nicht mehr Theologie ab, als der Text trägt.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Welche Folgen für Glauben und Leben ergeben sich aus der Aussage des Textes, nicht nur aus einer Wörterbuchdefinition?",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "grammar": {
+            "title": "Grammatik und Satzbau",
+            "guidance": "Untersuche bei Bedarf Wortform, Satzbau und Funktion im Gedankengang. Nutze zuverlässige sprachwissenschaftliche Hilfsmittel; Kenntnisse der Ursprachen sind keine Voraussetzung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "theological-significance": {
+            "title": "Biblisch-theologische Bezüge",
+            "guidance": "Vergleiche verwandte biblische Aussagen, ohne die jeweilige Bedeutung der einzelnen Texte zu verwischen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "topical-research-study": {
+        "name": "Thematische Bibelstudie",
+        "description": "Eine konkrete biblische Frage beantworten, indem relevante Texte zuerst in ihrem Zusammenhang ausgelegt werden.",
+        "sections": {
+          "topic": {
+            "title": "Thema und Fragen",
+            "guidance": "Formuliere das Thema, seine Grenzen und die Fragen, die beantwortet werden sollen. Beginne nicht mit einem fertigen Ergebnis.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "key-passages": {
+            "title": "Relevante Bibelstellen",
+            "guidance": "Sammle aussagekräftige Bibelstellen, auch solche, die eine erste Annahme einschränken oder infrage stellen. Halte fest, warum jede Stelle wichtig ist.",
+            "fields": {
+              "search": {
+                "label": "Begriff oder Person suchen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "passage-study": {
+            "title": "Bibelstellen untersuchen",
+            "guidance": "Lies jeden Text in seinem literarischen, geschichtlichen und heilsgeschichtlichen Zusammenhang. Unterscheide ausdrückliche Lehre, erzählte Ereignisse, Schlussfolgerungen und Anwendung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "main-themes": {
+            "title": "Erkenntnisse vergleichen und ordnen",
+            "guidance": "Ordne die Bibelstellen nach ihrer tatsächlichen Aussage. Beachte Übereinstimmungen, Unterschiede, Entwicklungen und offene Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "conclusions": {
+            "title": "Biblische Schlussfolgerungen",
+            "guidance": "Beantworte die Ausgangsfragen mit Bibelstellen. Unterscheide klare Aussagen der Schrift von begründeten Schlussfolgerungen und ungeklärten Fragen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Leite konkrete Folgen für Glauben, Anbetung, Beziehungen und Handeln aus den Ergebnissen ab.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "difficult-passages": {
+            "title": "Schwierige oder ergänzende Texte",
+            "guidance": "Untersuche scheinbar widersprüchliche Stellen, ohne ihren Zusammenhang zu übergehen oder vorschnell alles gleichzusetzen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "biblical-theology": {
+            "title": "Einordnung in die ganze Bibel",
+            "guidance": "Berücksichtige gegebenenfalls, wie sich die Lehre im Verlauf der Bündnisse entfaltet und auf Christus und das Evangelium bezieht, ohne einen Bezug zu erzwingen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "character-research-study": {
+        "name": "Biblische Personenstudie",
+        "description": "Leben und Charakter einer biblischen Person anhand der einschlägigen Bibeltexte untersuchen.",
+        "sections": {
+          "person": {
+            "title": "Person und Bibelstellen",
+            "guidance": "Bestimme die Person, mögliche Namensvarianten und die wichtigsten Bibelstellen. Unterscheide sie von anderen Personen gleichen Namens.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "setting": {
+            "title": "Geschichtlicher und biblischer Hintergrund",
+            "guidance": "Ordne die Person in die biblische Geschichte ein: Familie, Beziehungen, Aufgaben und Lebensumstände. Kennzeichne umstrittene Datierungen oder Zuordnungen als unsicher.",
+            "fields": {
+              "search": {
+                "label": "Begriff oder Person suchen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "life": {
+            "title": "Leben, Worte und Taten",
+            "guidance": "Verfolge wichtige Ereignisse möglichst in zeitlicher Reihenfolge. Halte mit Bibelstellen fest, was der Text tatsächlich berichtet; er bietet keine lückenlose Biografie.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "character": {
+            "title": "Charakter und Entscheidungen",
+            "guidance": "Untersuche Taten, Worte, Stärken, Schwächen und wiederkehrende Verhaltensweisen. Unterscheide das ausdrückliche Urteil des Textes von Vermutungen über Motive.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "god": {
+            "title": "Gottes Wirken und die biblische Beurteilung",
+            "guidance": "Wie handelt Gott im Leben dieser Person, und wie beurteilt die Schrift ihre Entscheidungen? Beachte ihre Bedeutung im biblischen Gesamtzusammenhang, ohne jedes Verhalten zum Vorbild zu erklären.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "conclusion": {
+            "title": "Wichtigste Erkenntnisse",
+            "guidance": "Fasse die Bedeutung der Person anhand der Bibeltexte zusammen. Halte auch Unsicherheiten und Spannungen fest.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Was lehrt die Schrift durch dieses Leben über Glauben, Gehorsam, Sünde, Gnade und Beziehungen? Wende die Aussage des Textes an, statt jede Handlung nachzuahmen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "comparisons": {
+            "title": "Verwandte Personen und Bibelstellen",
+            "guidance": "Vergleiche andere Personen oder Bibelstellen nur, wenn der Zusammenhang den Text wirklich erhellt.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
+      },
+      "book-research-study": {
+        "name": "Studium eines Bibelbuchs",
+        "description": "Ein ganzes Bibelbuch lesen, seinen Aufbau und seine Botschaft erschließen und die Lehre anwenden.",
+        "sections": {
+          "reading": {
+            "title": "Das ganze Buch lesen",
+            "guidance": "Lies das ganze Buch, möglichst mehrmals und in verschiedenen Übersetzungen. Notiere erste Eindrücke, wiederkehrende Begriffe, Tonfall, Textgattung und Fragen, bevor du Kommentare hinzuziehst.",
+            "fields": {
+              "passage": {
+                "label": "Bibelstelle",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "setting": {
+            "title": "Verfasser, Adressaten und Hintergrund",
+            "guidance": "Untersuche Verfasser, Adressaten, geschichtlichen und geografischen Hintergrund, Anlass und Absicht. Unterscheide Aussagen des Buches von Forschungshypothesen und offenen Fragen.",
+            "fields": {
+              "search": {
+                "label": "Begriff oder Person suchen",
+                "help": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest."
+              },
+              "cross-references": {
+                "label": "Querverweise",
+                "help": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen."
+              },
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "overview": {
+            "title": "Überblick und zentrale Anliegen",
+            "guidance": "Halte wichtige Personen, Ereignisse, Themen, Schlüsselverse und den groben Verlauf fest. Nicht jedes häufige Wort ist automatisch das Hauptthema.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "outline": {
+            "title": "Aufbau und Inhalt",
+            "guidance": "Gliedere das Buch anhand erkennbarer Textabschnitte mit Bibelstellen und kurzen Überschriften. Erkläre den Beitrag jedes Abschnitts zum Ganzen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "argument": {
+            "title": "Botschaft und Gedankengang",
+            "guidance": "Verfolge Erzählverlauf oder Gedankengang. Achte auf Textgattung, Gegensätze, Verheißungen, Gebote und den Bezug des Schlusses zum Anfang.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "synthesis": {
+            "title": "Kernaussage",
+            "guidance": "Formuliere den Gegenstand des Buches, seine Aussage darüber und die übergreifende Botschaft. Begründe dies am Text.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "application": {
+            "title": "Anwendung",
+            "guidance": "Überlege, welche Folgerungen für Glauben, Anbetung und Leben aus der Botschaft des Buches und seinem Platz in der ganzen Schrift entstehen.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          },
+          "further": {
+            "title": "Weiterführende Fragen",
+            "guidance": "Notiere schwierige Stellen, geschichtliche Fragen, weiterführende Bibelstellen und Quellen für eine spätere Untersuchung.",
+            "fields": {
+              "answer": {
+                "label": "Deine Antwort",
+                "help": "Schreibe in deinen eigenen Worten. Hier ist Platz für deine Beobachtungen und Schlussfolgerungen."
+              }
+            }
+          }
+        }
       }
     },
     "defaultSection": "Notizen",
     "copyTitle": "{{title}} (Kopie)"
   },
   "studyType": {
-    "passage": "Bibelstellenstudium",
+    "passage": "Bibeltextstudium",
     "word": "Wortstudium",
     "topical": "Themenstudium",
     "biblical_theology": "Biblisch-theologisches Studium",
@@ -968,9 +1604,9 @@
     },
     "incoming": {
       "related": "Verwandt mit",
-      "continues": "Wird fortgesetzt durch",
+      "continues": "Fortgesetzt durch",
       "contrasts": "Steht im Gegensatz zu",
-      "supports": "Wird gestützt durch",
+      "supports": "Gestützt durch",
       "custom": "Verknüpft mit"
     }
   },
@@ -983,18 +1619,18 @@
   "findingCount_other": "{{count}} Notizen",
   "projects": {
     "title": "Projekte",
-    "intro": "Ein Projekt fasst zusammengehörige Bibelstudien zusammen: eine Predigtreihe, einen Bibelkurs oder eine Lehre.",
+    "intro": "Ein Projekt fasst zusammengehörige Bibelstudien zusammen: eine Predigtreihe, einen Bibelkurs oder ein Lehrthema.",
     "newLabel": "Neues Projekt",
     "newPlaceholder": "z. B. Predigtreihe zum Römerbrief",
     "create": "Projekt erstellen",
-    "loading": "Projekte werden geladen …",
+    "loading": "Projekte werden geladen…",
     "empty": "Noch keine Projekte. Erstelle oben dein erstes Projekt.",
     "listLabel": "Projekte",
     "allStudies": "Alle Bibelstudien",
     "project": "Projekt",
     "titleLabel": "Projekttitel",
     "studies": "Bibelstudien",
-    "opening": "Projekt wird geöffnet …",
+    "opening": "Projekt wird geöffnet…",
     "breadcrumb": "Navigationspfad",
     "defaultTitle": "Meine Bibelstudien"
   },
@@ -1005,9 +1641,9 @@
     "noTemplate": "Keine Vorlage (ein Teil „Notizen“)",
     "yourTemplate": "{{name}} (eigene)",
     "optional": "(optional)",
-    "passagePlaceholder": "z. B. John 15:1-11",
+    "passagePlaceholder": "z. B. Johannes 5,1–18 oder Römer 8",
     "create": "Bibelstudium erstellen",
-    "formLabel": "Neues Studium",
+    "formLabel": "Neues Bibelstudium",
     "studyAs": "Art des Studiums",
     "subjectRequired": "Gib ein, was du studieren möchtest.",
     "more": "Weitere Optionen",
@@ -1021,16 +1657,27 @@
       "book": "z. B. der Philipperbrief"
     },
     "approach": {
-      "passage": "Textstudium",
+      "passage": "Bibeltextstudium",
       "word": "Wortstudium",
-      "topical": "Thema",
-      "teaching": "Lehrvorbereitung",
+      "topical": "Themenstudium",
+      "teaching": "Lehre",
       "biblical_theology": "Biblische Theologie",
       "systematic_theology": "Systematische Theologie",
       "custom": "Keine Vorlage",
       "mine": "Meine Vorlage",
       "character": "Biblische Personenstudie",
       "book": "Bibelbuchstudium"
+    },
+    "startsWith": "Beginnt mit: {{parts}}.",
+    "subjectLabel": {
+      "passage": "Bibelstelle",
+      "word": "Wort oder Ausdruck",
+      "topical": "Thema",
+      "character": "Biblische Person",
+      "book": "Biblisches Buch",
+      "biblical_theology": "Biblisches Thema",
+      "systematic_theology": "Lehrthema",
+      "custom": "Gegenstand des Studiums"
     }
   },
   "list": {
@@ -1041,7 +1688,7 @@
     "allTypes": "Alle Arten",
     "status": "Status",
     "anyStatus": "Jeder Status",
-    "loading": "Bibelstudien werden geladen …",
+    "loading": "Bibelstudien werden geladen…",
     "noMatch": "Keine Bibelstudien entsprechen diesen Filtern.",
     "empty": "Hier gibt es noch keine Bibelstudien.",
     "listLabel": "Bibelstudien",
@@ -1053,7 +1700,7 @@
   "header": {
     "status": "Status",
     "changed": "Geändert am {{date}}",
-    "duplicate": "Duplizieren …",
+    "duplicate": "Duplizieren…",
     "overview": "Überblick",
     "noFindings": "Noch keine Notizen",
     "questionCount_one": "{{count}} Frage",
@@ -1064,7 +1711,7 @@
     "duplicatePrompt": "Eine Kopie von „{{title}}“ in diesem Projekt anlegen:",
     "structureOnly": "Nur Struktur",
     "structureAndContent": "Struktur und Inhalt",
-    "duplicateHelp": "„Nur Struktur“ kopiert die Teile. Mit Inhalt werden auch deine Texte, Notizen und Bibelstellen kopiert. Notizen in der Bibel werden nie dupliziert; sie gehören zu den Versen.",
+    "duplicateHelp": "„Nur Struktur“ kopiert die Teile. „Struktur und Inhalt“ kopiert auch deine Texte, Notizen und Bibelstellen. Notizen in der Bibel werden nie mitkopiert; sie gehören zu den Versen.",
     "purpose": "Ziel",
     "purposePlaceholder": "Was möchtest du verstehen oder vorbereiten?",
     "details": "Angaben – {{type}}",
@@ -1091,22 +1738,38 @@
       },
       "translation": {
         "label": "Bibel"
+      },
+      "lexicalId": {
+        "label": "Lexikalische Nummer",
+        "hint": "z. B. G1343"
       }
     },
-    "detailsToggle": "Studiendetails",
     "typeLine": "Art: {{type}}",
     "fromTemplate": "Aus deiner Vorlage: {{name}}",
     "groupAbout": "Über dieses Bibelstudium",
     "groupCopy": "Kopieren",
-    "findOccurrences": "Vorkommen finden"
+    "findOccurrences": "Vorkommen finden",
+    "saveAsTemplate": "Als eigene Vorlage speichern",
+    "saveAsTemplateGroup": "Den Aufbau dieses Bibelstudiums als Vorlage speichern",
+    "templateName": "Name der Vorlage",
+    "saveAsTemplateKeeps_one": "Die Vorlage übernimmt den Teil dieses Bibelstudiums: seine Überschrift, seinen Hinweis und seinen Platz in der Gliederung. Deine Texte, Notizen, Bibelstellen und Angaben bleiben in diesem Bibelstudium.",
+    "saveAsTemplateKeeps_other": "Die Vorlage übernimmt die {{count}} Teile dieses Bibelstudiums: ihre Überschriften, Hinweise und Plätze in der Gliederung, in dieser Reihenfolge. Deine Texte, Notizen, Bibelstellen und Angaben bleiben in diesem Bibelstudium.",
+    "saveTemplate": "Vorlage speichern",
+    "savedAsTemplate": "Als deine Vorlage „{{name}}“ gespeichert. Du kannst sie für ein neues Bibelstudium verwenden und unter Einstellungen → Vorlagen ändern.",
+    "saveAsTemplateTooMany": "Eine Vorlage braucht mindestens einen Teil und kann höchstens {{max}} haben. Ändere zuerst die Teile dieses Bibelstudiums oder erstelle die Vorlage unter Einstellungen → Vorlagen.",
+    "findLemma": "Dieses Lemma finden",
+    "lemmaUnavailable": "Die gewählte Bibel hat keine Wortangaben, daher gibt es für sie keine Lemma-Suche."
   },
   "editor": {
-    "opening": "Bibelstudium wird geöffnet …",
+    "opening": "Bibelstudium wird geöffnet…",
     "titleLabel": "Titel des Bibelstudiums",
     "newSectionTitle": "Neuer Teil",
     "allSaved": "Alle Änderungen gespeichert.",
     "saved": "Gespeichert",
-    "backTo": "Zurück zu {{place}}"
+    "backTo": "Zurück zu {{place}}",
+    "options": "Optionen für dieses Bibelstudium",
+    "filterOn": "Notizen sind gefiltert.",
+    "filterClear": "Alle zeigen"
   },
   "sections": {
     "rename": "Teil „{{title}}“ umbenennen",
@@ -1119,9 +1782,9 @@
     "confirmWithFindings": "„{{title}}“ mit dem darin geschriebenen Text löschen? Seine Notizen bleiben im Bibelstudium, unter „Weitere Notizen“.",
     "deleteSection": "Teil löschen",
     "titleLabel": "Überschrift des Teils",
-    "options": "Optionen für Teil {{title}}",
+    "options": "Optionen für Teil „{{title}}“",
     "optionsTooltip": "Optionen für diesen Teil",
-    "optionsGroup": "Optionen für Teil {{title}}"
+    "optionsGroup": "Optionen für Teil „{{title}}“"
   },
   "blocks": {
     "fieldLabel": "{{section}}: {{type}}",
@@ -1131,7 +1794,7 @@
     "moveDown": "{{type}} in „{{section}}“ nach unten verschieben",
     "delete": "{{type}} in „{{section}}“ löschen",
     "deleteTooltip": "{{type}} löschen",
-    "placeholder": "Hier schreiben …",
+    "placeholder": "Hier schreiben…",
     "passagesMentioned": "Erwähnte Bibelstellen:",
     "options": "Optionen für {{type}} in „{{section}}“",
     "optionsGroup": "Optionen für {{type}} in „{{section}}“",
@@ -1165,7 +1828,7 @@
     "tags": "Schlagwörter",
     "tagsPlaceholder": "z. B. Bund, Predigt",
     "confirmDelete": "{{type}} löschen?",
-    "writePlaceholder": "Hier schreiben …",
+    "writePlaceholder": "Hier schreiben…",
     "details": "Details",
     "detailsFor": "Details zu {{type}}: {{excerpt}}",
     "kindGroup": "Art der Notiz",
@@ -1184,9 +1847,9 @@
     "addFirst": "Füge die Bibelstelle hinzu, um die es in diesem Bibelstudium geht",
     "add": "Bibelstelle hinzufügen",
     "linkCurrent": "Aktuelle Bibelstelle verknüpfen ({{passage}})",
-    "inputLabel": "Hinzuzufügende Bibelstelle",
-    "placeholder": "z. B. John 15:1-11",
-    "addRelated": "Verwandter Text",
+    "inputLabel": "Neue Bibelstelle",
+    "placeholder": "z. B. Johannes 15,1-11",
+    "addRelated": "Weitere Bibelstelle",
     "openPrimary": "In der Bibel öffnen"
   },
   "relations": {
@@ -1196,14 +1859,14 @@
     "addGroup": "Verwandtes Bibelstudium verknüpfen",
     "relation": "Beziehung",
     "target": "Verwandtes Bibelstudium",
-    "choose": "Bibelstudium auswählen …",
+    "choose": "Bibelstudium auswählen…",
     "option": "{{title}} ({{project}})",
     "link": "Verknüpfen",
     "describe": "Beziehung beschreiben"
   },
   "search": {
     "heading": "Bibelstudien mit „{{query}}“",
-    "searching": "Deine Bibelstudien werden durchsucht …",
+    "searching": "Deine Bibelstudien werden durchsucht…",
     "none": "In deinen Bibelstudien wurde nichts gefunden.",
     "count_one": "{{count}} Treffer.",
     "count_other": "{{count}} Treffer.",
@@ -1217,23 +1880,23 @@
     }
   },
   "templates": {
-    "intro": "Eine Vorlage ist eine Startstruktur: die Teile, mit denen ein neues Bibelstudium beginnt, oder die Form einer Lehreinheit. Änderungen an einer Vorlage verändern nie Bibelstudien, die bereits damit erstellt wurden.",
+    "intro": "Eine Vorlage ist ein Grundgerüst: die Teile, mit denen ein neues Bibelstudium beginnt, oder die Form einer Bibellehre. Wenn du eine Vorlage änderst, bleiben Bibelstudien, die du schon damit erstellt hast, unverändert.",
     "listLabel": "Vorlagen für Bibelstudien",
     "sectionCount_one": "{{count}} Teil",
     "sectionCount_other": "{{count}} Teile",
     "builtIn": "Mitgeliefert",
-    "duplicateCustomise": "Duplizieren und anpassen",
     "edit": "{{name}} bearbeiten",
     "duplicate": "{{name}} duplizieren",
     "delete": "{{name}} löschen",
     "confirmLabel": "{{name}} löschen?",
     "confirm": "Die Vorlage „{{name}}“ löschen? Bibelstudien, die bereits damit erstellt wurden, bleiben unverändert.",
     "deleteTemplate": "Vorlage löschen",
-    "new": "Neue Vorlage …",
-    "teachingListLabel": "Formen der Bibellehre"
+    "new": "Neue Vorlage…",
+    "saveAsMine": "Als eigene Vorlage speichern",
+    "saveAsMineLabel": "„{{name}}“ als eigene Vorlage speichern"
   },
   "templateEditor": {
-    "opening": "Vorlage wird geöffnet …",
+    "opening": "Vorlage wird geöffnet…",
     "back": "Zurück zu den Einstellungen",
     "editTitle": "Vorlage bearbeiten",
     "newTitle": "Neue Vorlage",
@@ -1258,7 +1921,9 @@
     "toggle": "Hinzufügen",
     "note": "Notiz",
     "to": "Zu {{part}} hinzufügen",
-    "writing": "Text"
+    "writing": "Text",
+    "textField": "Textfeld hinzufügen",
+    "textTo": "Textfeld zu {{part}} hinzufügen"
   },
   "home": {
     "title": "Bibelstudien",
@@ -1269,14 +1934,14 @@
     "label": "Zum Bibelstudium hinzufügen",
     "title": "Zum Bibelstudium hinzufügen: {{study}}",
     "chooseStudy": "Bibelstudium",
-    "otherStudy": "Anderes Bibelstudium …",
-    "noStudies": "Es gibt noch kein Bibelstudium. Beginne eines im Bereich „Bibelstudium“ und füge dies dann hinzu.",
-    "yourNote": "Deine Notiz (freiwillig)",
+    "otherStudy": "Anderes Bibelstudium…",
+    "noStudies": "Es gibt noch kein Bibelstudium. Lege im Bereich „Bibelstudium“ eines an und füge das hier dann hinzu.",
+    "yourNote": "Deine Notiz (optional)",
     "placeholder": "Was nimmst du daraus mit?",
-    "placeholderRequired": "Schreib, was du von dieser Stelle mitnimmst …",
+    "placeholderRequired": "Schreib, was du von dieser Stelle mitnimmst…",
     "save": "Hinzufügen",
     "added": "Zu {{study}} · {{part}} hinzugefügt.",
-    "loading": "Deine Bibelstudien werden geladen …"
+    "loading": "Deine Bibelstudien werden geladen…"
   },
   "view": {
     "label": "Anzeigen",
@@ -1284,18 +1949,17 @@
     "teaching": "Bibellehre"
   },
   "teaching": {
-    "loading": "Die Vorbereitung wird geöffnet …",
-    "which": "Vorbereitung:",
-    "another": "Weitere Bibellehre vorbereiten",
+    "loading": "Bibellehre wird geöffnet…",
+    "which": "Bibellehre:",
     "empty": {
-      "title": "Aus diesem Bibelstudium eine Predigt oder Lehre vorbereiten",
-      "text": "Eine Predigt, ein Gruppenabend oder eine Lektion, von dir geschrieben. Du kannst verwenden, was du in diesem Bibelstudium notiert hast: deine Notizen und Bibelstellen bleiben, wo sie sind, und werden hier nur verwendet. Nichts wird für dich ausgefüllt, und jeder Teil darf leer bleiben."
+      "title": "Aus diesem Bibelstudium eine Bibellehre vorbereiten",
+      "text": "Eine Predigt, ein Bibelgespräch in der Gruppe oder eine Lektion, von dir geschrieben. Du kannst verwenden, was du in diesem Bibelstudium notiert hast: deine Notizen und Bibelstellen bleiben, wo sie sind, und werden hier nur verwendet. Nichts wird für dich ausgefüllt, und jeder Teil darf leer bleiben."
     },
     "kindLabel": "Art",
     "kindNone": "Keine Angabe",
     "kind": {
       "sermon": "Predigt",
-      "bible_study": "Bibelgesprächskreis",
+      "bible_study": "Hauskreis",
       "youth": "Jugend",
       "children": "Kinder",
       "lesson": "Lektion",
@@ -1304,44 +1968,43 @@
     },
     "titleLabel": "Titel",
     "start": "Beginnen",
-    "delete": "Diese Vorbereitung löschen",
-    "deleteConfirm": "Diese Vorbereitung löschen? Das Bibelstudium mit seinen Notizen und Bibelstellen bleibt unverändert.",
-    "about": "Über diese Bibellehre",
+    "delete": "Diese Bibellehre löschen",
+    "deleteConfirm": "Diese Bibellehre löschen? Das Bibelstudium mit seinen Notizen und Bibelstellen bleibt unverändert.",
     "audience": "Für wen",
     "audiencePlaceholder": "z. B. die ganze Gemeinde, eine Jugendgruppe",
     "purpose": "Ziel",
-    "purposePlaceholder": "Was diese Predigt oder Lehre bewirken soll",
+    "purposePlaceholder": "Was diese Bibellehre bewirken soll",
     "notes": "Notizen für dich selbst",
-    "notesHint": "Erinnerungen beim Halten; nicht Teil dessen, was du sagst.",
+    "notesHint": "Merkhilfen für dich beim Lehren – nicht Teil dessen, was du sagst.",
     "points": {
-      "whole": "deine ganze Bibellehre",
-      "moveUp": "„{{point}}“ nach oben",
-      "moveDown": "„{{point}}“ nach unten",
+      "whole": "Ganze Bibellehre",
+      "moveUp": "„{{point}}“ nach oben verschieben",
+      "moveDown": "„{{point}}“ nach unten verschieben",
       "delete": "„{{point}}“ löschen"
     },
     "links": {
       "used": "Verwendet in {{scope}}",
-      "wholeScope": "der ganzen Vorbereitung",
+      "wholeScope": "der ganzen Bibellehre",
       "passages": "Bibelstellen in {{scope}}",
       "findings": "Aus deinem Bibelstudium, in {{scope}}",
-      "materials": "Vom Assistenten übernommen in {{scope}}",
+      "materials": "Vom Assistenten übernommen, in {{scope}}",
       "useFinding": "Etwas aus deinem Bibelstudium verwenden",
       "chooseFinding": "Aus deinem Bibelstudium",
-      "pick": "Auswählen …",
+      "pick": "Auswählen…",
       "empty": "(leer)",
       "findingNote": "Es bleibt in deinem Bibelstudium. Änderst du es dort, ändert es sich auch hier.",
       "removeFinding": "Hier nicht mehr verwenden",
       "removeFindingHint": "Es bleibt in deinem Bibelstudium.",
       "addPassage": "Bibelstelle hinzufügen",
-      "passageLabel": "Bibelstelle für {{scope}}",
-      "removePassage": "{{passage}} aus dieser Vorbereitung entfernen"
+      "passageLabel": "Bibelstelle in {{scope}}",
+      "removePassage": "{{passage}} aus dieser Bibellehre entfernen"
     },
     "material": {
       "story": "Wahre Begebenheit",
       "illustration": "Idee zur Veranschaulichung",
       "image": "Bild",
       "visual": "Idee für ein Bild",
-      "remove": "Aus dieser Vorbereitung entfernen"
+      "remove": "Aus dieser Bibellehre entfernen"
     },
     "standing": {
       "verified": "Quellen gefunden: Zwei unabhängige Websites in den Suchergebnissen berichten davon. Die Qualität der Quellen ist unterschiedlich – lies sie, bevor du es verwendest.",
@@ -1361,31 +2024,31 @@
         "natural": "Natürlicher klingen lassen",
         "repetition": "Wiederholungen entfernen",
         "spoken": "Leichter vorzutragen",
-        "audience": "Für eine Zielgruppe anpassen …",
-        "translate": "Übersetzen …",
+        "audience": "Für eine Zielgruppe anpassen…",
+        "translate": "Übersetzen…",
         "transition": "Hilfe bei einem Übergang",
         "review": "Meinen Text durchsehen",
-        "structure": "Zum Aufbau Rückmeldung geben",
+        "structure": "Rückmeldung zum Aufbau",
         "application": "Folgt die Anwendung aus dem Text?",
         "theology": "Theologie und Bibeltext prüfen",
         "passages": "Bibelstellen zum Nachschlagen vorschlagen",
         "phrasing": "Andere Formulierungen",
-        "question": "Hilfe bei einer Gesprächsfrage …",
+        "question": "Hilfe bei einer Gesprächsfrage…",
         "restructure": "Wie könnte ich ordnen, was ich habe?",
         "illustration": "Ideen zur Veranschaulichung",
-        "story": "Eine wahre Begebenheit finden …",
+        "story": "Eine wahre Begebenheit finden…",
         "visual": "Ein Bild vorschlagen",
-        "free": "Etwas anderes fragen …"
+        "free": "Etwas anderes fragen…"
       },
       "title": "{{action}} · {{part}}",
       "close": "Assistent schließen",
       "selectionOnly": "Nur die markierten Wörter.",
       "request": {
-        "question": "Was soll die Frage bewusst machen?",
-        "story": "Welche Art wahre Begebenheit suchst du?",
-        "transition": "Was soll er verbinden? (optional)",
+        "question": "Worauf soll die Frage aufmerksam machen?",
+        "story": "Was für eine wahre Begebenheit suchst du?",
+        "transition": "Was soll der Übergang verbinden? (optional)",
         "phrasing": "Was möchtest du sagen? (optional)",
-        "visual": "Was soll das Bild erklären helfen? (optional)",
+        "visual": "Was soll das Bild verständlich machen? (optional)",
         "free": "Wobei möchtest du Hilfe?"
       },
       "audienceLabel": "Für wen?",
@@ -1393,18 +2056,18 @@
       "languageLabel": "In welche Sprache?",
       "languagePlaceholder": "z. B. Koreanisch",
       "shared": {
-        "remote": "Zum Helfen wird dies an {{assistant}} gesendet:",
-        "local": "Dies bleibt auf diesem Computer ({{assistant}}). Gesehen wird:",
-        "text": "Deinen Teil „{{part}}“",
-        "selection": "die markierten Wörter",
+        "remote": "Damit {{assistant}} helfen kann, wird Folgendes gesendet:",
+        "local": "Dies bleibt auf diesem Computer ({{assistant}}). Der Assistent sieht Folgendes:",
+        "text": "Dein Text zu {{part}}",
+        "selection": "Die markierten Wörter",
         "request": "Deine Bitte",
-        "teaching": "Titel und Art der Vorbereitung sowie Zielgruppe, Ziel und Kernbotschaft, soweit geschrieben",
-        "nearby_one": "ein weiterer Teil dieser Vorbereitung (damit dein Stil erhalten bleibt)",
-        "nearby_other": "{{count}} weitere Teile dieser Vorbereitung (damit dein Stil erhalten bleibt)",
+        "teaching": "Titel und Art der Bibellehre sowie Zielgruppe, Ziel und Kernbotschaft, soweit vorhanden",
+        "nearby_one": "Ein weiterer Teil dieser Bibellehre (damit dein Stil erhalten bleibt)",
+        "nearby_other": "{{count}} weitere Teile dieser Bibellehre (damit dein Stil erhalten bleibt)",
         "passages": "Bibeltext: {{passages}}",
-        "findings_one": "eine Notiz aus deinem Bibelstudium",
+        "findings_one": "Eine Notiz aus deinem Bibelstudium",
         "findings_other": "{{count}} Notizen aus deinem Bibelstudium",
-        "quotes_one": "ein Zitat aus einem Buch deiner Bibliothek, mit Quelle",
+        "quotes_one": "Ein Zitat aus einem Buch deiner Bibliothek, mit Quelle",
         "quotes_other": "{{count}} Zitate aus Büchern deiner Bibliothek, mit Quellen",
         "searches": "Suchbegriffe aus deiner Bitte (sie können deine Worte enthalten) gehen außerdem an deinen Suchdienst."
       },
@@ -1412,11 +2075,11 @@
       "askHint": "Strg+Eingabe fragt, Esc schließt. Vorher wird nichts gesendet.",
       "ready": "Vorschlag bereit.",
       "failed": "Der Assistent konnte diesmal nicht helfen.",
-      "kept": "In dieser Vorbereitung aufbewahrt.",
+      "kept": "In dieser Bibellehre aufbewahrt.",
       "keptLabel": "Aufbewahrt",
       "from": "Von {{assistant}}",
       "done": "Fertig",
-      "applied": "Wie gewählt geändert.",
+      "applied": "Geändert, wie du es gewählt hast.",
       "undo": "Rückgängig",
       "undone": "Dein vorheriger Text ist wieder da.",
       "proposal": {
@@ -1435,13 +2098,13 @@
         "none": "Nichts hinzuzufügen.",
         "suggested": "Zum Nachschlagen:",
         "add": "Hinzufügen",
-        "addPassage": "{{passage}} zu dieser Vorbereitung hinzufügen"
+        "addPassage": "{{passage}} zu dieser Bibellehre hinzufügen"
       },
       "basis": {
         "scripture": "Laut Assistent mit Bezug auf den Bibeltext",
         "study": "Laut Assistent mit Bezug auf dein Bibelstudium",
         "source": "Laut Assistent mit Bezug auf ein Buch deiner Bibliothek",
-        "reasoning": "Eigene Überlegung des Assistenten, zum selbst Abwägen"
+        "reasoning": "Eigene Überlegung des Assistenten – wäge sie selbst ab"
       },
       "options": {
         "heading": "Vorschläge",
@@ -1455,7 +2118,7 @@
         "heading": "Gefundene wahre Begebenheiten",
         "none": "In den Suchergebnissen ließ sich keine wahre Begebenheit finden und prüfen. Es wurde nichts erfunden.",
         "checkNote": "Nur mit den Kurzfassungen der Suchergebnisse abgeglichen. Öffne die Quellen und lies die ganze Geschichte, bevor du sie verwendest.",
-        "keep": "In dieser Vorbereitung aufbewahren",
+        "keep": "In dieser Bibellehre aufbewahren",
         "sources": "Quellen"
       },
       "visuals": {
@@ -1469,9 +2132,9 @@
         "make": "Bild erstellen",
         "keepIdea": "Idee aufbewahren",
         "cannotMake": {
-          "off": "Bilder erstellen ist ausgeschaltet (Einstellungen → KI-Assistent). Frei lizenzierte Bilder finden geht trotzdem.",
-          "unsupported": "Dieser KI-Dienst kann keine Bilder erstellen. In den Einstellungen → KI-Assistent kannst du OpenAI für Bilder wählen. Frei lizenzierte Bilder finden geht trotzdem.",
-          "noKey": "Bilder erstellen braucht den OpenAI-Schlüssel für Bilder (Einstellungen → KI-Assistent). Frei lizenzierte Bilder finden geht trotzdem."
+          "off": "Das Erstellen von Bildern ist ausgeschaltet (Einstellungen → KI-Assistent). Frei lizenzierte Bilder kannst du weiterhin finden.",
+          "unsupported": "Dieser KI-Dienst kann keine Bilder erstellen. In den Einstellungen → KI-Assistent kannst du OpenAI für Bilder wählen. Frei lizenzierte Bilder kannst du weiterhin finden.",
+          "noKey": "Zum Erstellen von Bildern brauchst du den OpenAI-Schlüssel für Bilder (Einstellungen → KI-Assistent). Frei lizenzierte Bilder kannst du weiterhin finden."
         }
       },
       "images": {
@@ -1482,9 +2145,9 @@
         "keep": "Bild aufbewahren",
         "keepLabel": "Bild „{{title}}“ aufbewahren",
         "generatedAlt": "Vom Assistenten erstellte Zeichnung: {{description}}",
-        "nothingPlaced": "Nichts kommt in deine Vorbereitung, solange du es nicht aufbewahrst."
+        "nothingPlaced": "Nichts kommt in deine Bibellehre, solange du es nicht aufbewahrst."
       },
-      "changedMeanwhile": "Dein Text hat sich nach der Frage geändert; der Vorschlag wurde daher nicht übernommen. Bitte frag erneut.",
+      "changedMeanwhile": "Dein Text hat sich geändert, nachdem du gefragt hast; deshalb wurde der Vorschlag nicht übernommen. Bitte frag noch einmal.",
       "menuIntro": "Was würde dir helfen?",
       "allHelp": "Alle Hilfen",
       "category": {
@@ -1500,22 +2163,22 @@
       "stop": "Nicht mehr warten",
       "stopped": "Warten beendet. Nichts wurde geändert. Der Dienst kann die Anfrage trotzdem zu Ende bearbeiten, und sie kann zu deiner Nutzung zählen.",
       "pending": {
-        "ask": "Der Assistent wird gefragt …",
-        "story": "Quellen werden gesucht … Das kann eine Weile dauern.",
-        "findImages": "Passende Bilder werden gesucht …",
-        "makeImage": "Ein Bild wird erstellt … Das kann eine Weile dauern."
+        "ask": "Der Assistent wird gefragt…",
+        "story": "Quellen werden gesucht… Das kann eine Weile dauern.",
+        "findImages": "Passende Bilder werden gesucht…",
+        "makeImage": "Ein Bild wird erstellt… Das kann eine Weile dauern."
       },
       "menuTitle": "Hilfe vom KI-Assistenten",
       "minimise": "Minimieren",
       "restore": "KI-Assistent wieder öffnen",
       "panelLabel": "KI-Assistent: {{label}}",
-      "move": "Fenster verschieben (Pfeiltasten)",
+      "move": "Bereich verschieben (Pfeiltasten)",
       "sendsTo": "Beim Erstellen eines Bildes wird die Beschreibung dieser Idee über das Internet an {{service}} gesendet."
     },
     "shape": {
       "points": {
         "title": "Hauptpunkte",
-        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: ein Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
+        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: einen Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
         "add": "Punkt hinzufügen",
         "number": "Punkt {{number}}",
         "label": "Punkt {{number}}: {{title}}",
@@ -1534,6 +2197,20 @@
         "introduction": "Einleitung",
         "conclusion": "Schluss"
       },
+      "generalPoints": {
+        "title": "Hauptpunkte",
+        "none": "Noch keine Punkte. Füge so viele hinzu, wie du brauchst, in jeder Form: einen Abschnitt einer Geschichte, eine Frage, ein Thema oder einige Verse.",
+        "add": "Punkt hinzufügen",
+        "number": "Punkt {{number}}",
+        "label": "Punkt {{number}}: {{title}}",
+        "untitled": "Punkt {{number}}",
+        "titleLabel": "Titel von Punkt {{number}}",
+        "titlePlaceholder": "Was dieser Punkt sagt",
+        "added": "Punkt hinzugefügt.",
+        "removed": "Punkt entfernt.",
+        "moved": "Punkt an Stelle {{position}} verschoben.",
+        "deleteConfirm": "Diesen Punkt mit deinem Text löschen? Verwendete Notizen bleiben im Bibelstudium."
+      },
       "questions": {
         "title": "Fragen und Antworten",
         "none": "Noch keine Fragen. Füge die Fragen hinzu, über die ihr sprechen wollt, jeweils mit dem, was der Bibeltext zeigt.",
@@ -1543,7 +2220,7 @@
         "untitled": "Frage {{number}}",
         "titleLabel": "Frage {{number}}",
         "titlePlaceholder": "Die Frage, die du stellen wirst",
-        "explanation": "Wohin das Gespräch führen kann",
+        "explanation": "Möglicher Gesprächsverlauf",
         "application": "Weiterführende Fragen",
         "illustration": "Hinweise für die Gesprächsleitung",
         "added": "Frage hinzugefügt.",
@@ -1551,13 +2228,13 @@
         "moved": "Frage an Stelle {{position}} verschoben.",
         "deleteConfirm": "Diese Frage mit deinem Text löschen? Verwendete Notizen bleiben im Bibelstudium.",
         "message": "Was die Gruppe entdecken soll",
-        "messageHint": "Das eine, wohin das Gespräch führen soll",
+        "messageHint": "Worauf das Gespräch vor allem hinauslaufen soll",
         "introduction": "Einstieg",
         "conclusion": "Abschluss"
       },
       "steps": {
         "title": "Ablauf",
-        "none": "Noch keine Schritte. Füge die Teile der Stunde in ihrer Reihenfolge hinzu: Begrüßung, Geschichte, Aktion, Gebet …",
+        "none": "Noch keine Schritte. Füge die Teile der Stunde in ihrer Reihenfolge hinzu: Begrüßung, Geschichte, Aktion, Gebet…",
         "add": "Schritt hinzufügen",
         "number": "Schritt {{number}}",
         "label": "Schritt {{number}}: {{title}}",
@@ -1572,16 +2249,15 @@
         "moved": "Schritt an Stelle {{position}} verschoben.",
         "deleteConfirm": "Diesen Schritt mit deinem Text löschen? Verwendete Notizen bleiben im Bibelstudium.",
         "message": "Das eine, was sie behalten sollen",
-        "messageHint": "In wenigen Worten, die sie hinterher nachsagen können",
+        "messageHint": "In wenigen Worten, die sie danach wiederholen können",
         "introduction": "Einstieg",
         "conclusion": "Abschluss"
       }
     },
-    "aboutEmpty": "Art, für wen, Ziel, Bibelstellen",
-    "aboutFor": "für {{audience}}",
     "format": {
       "points": "Hauptpunkte mit Erklärung, Anwendung und Beispiel, zwischen Einleitung und Schluss.",
-      "questions": "Fragen für die Gruppe, jeweils mit der Richtung, in die das Gespräch führen kann, und weiterführenden Fragen.",
+      "generalPoints": "Hauptpunkte mit Erklärung, Anwendung und Beispiel, zwischen Einleitung und Schluss.",
+      "questions": "Fragen für die Gruppe, jeweils mit möglichem Gesprächsverlauf und weiterführenden Fragen.",
       "steps": "Eine Einheit in Schritten: Erzählen, Bibellesen, Fragen, Aktionen und Bilder, in der Reihenfolge des Ablaufs."
     },
     "startsWith": "Beginnt mit: {{steps}}.",
@@ -1626,6 +2302,222 @@
       "image": {
         "explanation": "Was es zeigt und wann du es zeigst"
       }
+    },
+    "materials": {
+      "open": "Unterlagen"
+    },
+    "templates": {
+      "listLabel": "Vorlagen für Bibellehren",
+      "intro": "Eine Vorlage für Bibellehren legt fest, womit eine neue Bibellehre beginnt: ihre Form und die ersten Punkte, Fragen oder Schritte. Jede Bibellehre bekommt beim Erstellen eine eigene Kopie. Wenn du eine Vorlage änderst oder löschst, bleiben bestehende Bibellehren deshalb unverändert.",
+      "saveAsMine": "Als eigene Vorlage speichern",
+      "saveAsMineLabel": "„{{name}}“ als eigene Vorlage speichern",
+      "edit": "„{{name}}“ bearbeiten",
+      "duplicate": "„{{name}}“ duplizieren",
+      "delete": "„{{name}}“ löschen",
+      "confirmLabel": "„{{name}}“ löschen?",
+      "confirm": "Die Vorlage „{{name}}“ löschen? Bibellehren, die bereits damit erstellt wurden, bleiben, wie sie sind.",
+      "new": "Neue Vorlage für Bibellehren…",
+      "newTitle": "Neue Vorlage für Bibellehren",
+      "editTitle": "Vorlage für Bibellehren bearbeiten",
+      "format": "Form",
+      "pointsList": "Womit die Vorlage beginnt",
+      "pointsHint": "Lass einen Titel leer, wenn du ihn in jeder Bibellehre selbst vergeben willst.",
+      "none": "Noch nichts: Eine Bibellehre mit dieser Vorlage beginnt leer.",
+      "untitled": "ohne Titel",
+      "loadFailed": "Deine Vorlagen können gerade nicht angezeigt werden. Die mitgelieferten stehen trotzdem zur Verfügung.",
+      "startFrom": "Beginnen mit",
+      "builtinChoice": "{{format}} (mitgeliefert)"
+    },
+    "saveTemplate": {
+      "action": "Als eigene Vorlage speichern",
+      "group": "Den Aufbau dieser Bibellehre als Vorlage speichern",
+      "name": "Name der Vorlage",
+      "keeps": {
+        "points": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
+        "generalPoints": "Die Vorlage übernimmt die Form und so viele Hauptpunkte, wie diese Bibellehre hat, in ihrer Reihenfolge. Die Punkte beginnen ohne Titel.",
+        "questions": "Die Vorlage übernimmt die Form und so viele Fragen, wie diese Bibellehre hat. Die Fragen beginnen leer.",
+        "steps": "Die Vorlage übernimmt die Form und die Schritte in ihrer Reihenfolge, jeden mit Titel und Art.",
+        "blocks": "Die Vorlage übernimmt die Form und die Abschnitte und Blöcke, mit denen diese Bibellehre beginnt, in ihrer Reihenfolge. Was in den Blöcken steht, kommt nicht mit."
+      },
+      "notKept": "Nichts von dem, was du geschrieben hast, kommt mit: nicht Zielgruppe, Ziel, Botschaft, Einleitung, Schluss oder Notizen; nichts, was unter einem Punkt, einer Frage oder einem Schritt steht; keine Bibelstellen, kein aufbewahrtes Material und keine Notizen aus deinem Bibelstudium.",
+      "saved": "Als deine Vorlage „{{name}}“ gespeichert. Du kannst sie für deine nächste Bibellehre wählen und unter Einstellungen → Vorlagen ändern.",
+      "tooMany": "Eine Vorlage kann mit höchstens {{max}} Punkten, Fragen oder Schritten beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen.",
+      "tooManyBlocks": "Eine Vorlage kann mit höchstens {{max}} Blöcken beginnen, und diese Bibellehre hat mehr. Erstelle die Vorlage stattdessen unter Einstellungen → Vorlagen."
+    },
+    "addStepMenu": "Art des neuen Schritts",
+    "newTeaching": "Neue Bibellehre",
+    "formatLegend": "Was möchtest du vorbereiten?",
+    "formats": {
+      "message": {
+        "name": "Predigt / Vortrag",
+        "hint": "Eine Predigt, ein Vortrag oder eine Andacht: Kernbotschaft, Einleitung, Hauptpunkte und Schluss."
+      },
+      "group": {
+        "name": "Bibelstudium",
+        "hint": "Vom Gespräch getragen: Einstieg, Bibeltext, Fragen und Antworten und ein Abschluss."
+      },
+      "lesson": {
+        "name": "Bibelunterricht",
+        "hint": "Für Kinder, Jugendliche oder Erwachsene: Schritte wie Bibellesen, Erklärung, Fragen, eine Aktion oder ein Bild."
+      }
+    },
+    "messageKind": "Art der Botschaft",
+    "passagesLine": "Bibeltext",
+    "notesHasText": "enthält Notizen",
+    "notesPrivate": "Nur für dich: nie Teil der Unterlagen für Zuhörer oder Gruppe.",
+    "blocks": {
+      "add": "Block hinzufügen",
+      "addIn": "Block in {{section}} hinzufügen",
+      "guidance": "Hilfen",
+      "placeholder": "Hier schreiben…",
+      "leaderOnly": "Nur für dich als Leitung. Es erscheint nicht auf Blättern oder Folien, außer du gibst es für die Teilnehmenden frei.",
+      "participant": "Den Teilnehmenden zeigen",
+      "settings": "Dieser Block",
+      "empty": "Diese Bibellehre ist noch leer. Füge einen Abschnitt oder ein Schreibfeld hinzu, wenn du so weit bist.",
+      "viewLabel": "Schreibansicht",
+      "viewContinuous": "Fortlaufend",
+      "viewOutline": "Gliederung",
+      "headingLabel": "Überschrift",
+      "templateHeading": "Blöcke",
+      "templateHint": "Abschnitte und Blöcke hinzufügen, umordnen, duplizieren und umbenennen. Was du in einer Bibellehre schreibst, bleibt nicht in der Vorlage.",
+      "titleOf": "Überschrift von {{name}}",
+      "typeOf": "Art des Blocks: {{name}}",
+      "section": "Im Abschnitt",
+      "sectionOf": "Abschnitt für {{name}}",
+      "noSection": "Kein Abschnitt",
+      "moveUp": "„{{name}}“ nach oben",
+      "moveDown": "„{{name}}“ nach unten",
+      "duplicate": "„{{name}}“ duplizieren",
+      "remove": "„{{name}}“ entfernen",
+      "types": {
+        "section": "Abschnitt",
+        "writing": "Schreibfeld",
+        "scripture": "Bibelstelle",
+        "teaching_notes": "Notizen für die Leitung",
+        "discussion_questions": "Gesprächsfragen",
+        "explanation": "Erklärung",
+        "illustration": "Beispiel",
+        "activity": "Gruppenaktion",
+        "application": "Anwendung und Besinnung",
+        "objectives": "Lernziele",
+        "time": "Zeit",
+        "presentation_notes": "Notizen zur Präsentation",
+        "handout": "Arbeitsblatt",
+        "outline_point": "Gliederungspunkt",
+        "qa": "Frage und Antwort"
+      },
+      "options": "Optionen für {{name}}",
+      "leaderBadge": "Nur für die Leitung",
+      "confirmDelete": "„{{name}}“ mit seinem Text löschen?"
+    },
+    "builtin": {
+      "eva": {
+        "name": "Bibelstudium in der Gruppe — EVA",
+        "hint": "Für eine Gruppe: den Text wahrnehmen, ihn verstehen, dann fragen, was daraus folgt.",
+        "blocks": {
+          "erkennen": {
+            "title": "Erkennen",
+            "guidance": "Was sagt die Stelle wirklich, und was kann die Gruppe selbst entdecken? Mögliche Campus Connect 3×3-Hilfen: gemeinsam lesen, noch einmal nur hören, mit eigenen Worten nacherzählen."
+          },
+          "verstehen": {
+            "title": "Verstehen",
+            "guidance": "Die Bedeutung im literarischen, historischen und biblischen Zusammenhang und die Mitte der Stelle. Mögliche Campus Connect 3×3-Hilfen: was wichtig wurde, was der Text über Gott und über Menschen sagt, wie der Zusammenhang hilft."
+          },
+          "anwenden": {
+            "title": "Anwenden",
+            "guidance": "Was folgt für Glauben, Verstehen, Entscheidungen, Verhalten und Beziehungen. Mögliche Campus Connect 3×3-Hilfen: was sich im Denken und Leben ändert, was wir tun wollen, wen das ermutigen könnte."
+          }
+        }
+      },
+      "sermonTalk": {
+        "name": "Predigt oder Vortrag",
+        "hint": "Einleitung, Hauptteil und Schluss. Durchgehend schreiben oder Gliederungspunkte ergänzen.",
+        "blocks": {
+          "introduction": {
+            "title": "Einleitung",
+            "guidance": "Führe die Teilnehmer in das Thema ein."
+          },
+          "main": {
+            "title": "Hauptteil",
+            "guidance": "Erarbeite die Bedeutung des Textes und seinen Bezug zum Leben."
+          },
+          "conclusion": {
+            "title": "Schluss",
+            "guidance": "Fasse das Wichtigste zusammen und leite zur praktischen Anwendung über."
+          }
+        }
+      },
+      "bibleLesson": {
+        "name": "Bibelstunde — Kinder und Jugendliche",
+        "hint": "Eine Stunde für Kinder oder Jugendliche. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes.",
+        "blocks": {
+          "prepare": {
+            "title": "Vorbereitung",
+            "guidance": "Wahlweise: das Alter, die Zeit und was sie mitnehmen sollen. Das Alter ändert die Erzählweise, nicht die Bedeutung des Textes. Zeit- oder Lernzielblöcke fügst du nur hinzu, wenn du sie brauchst."
+          },
+          "story": {
+            "title": "Erzählung",
+            "guidance": "Erzähle die Stelle altersgerecht und verständlich. Die Bedeutung bleibt die des Textes."
+          },
+          "explain": {
+            "title": "Erklärung",
+            "guidance": "Sag, was die Stelle bedeutet, in Worten, denen sie folgen können. Ersetze die Bedeutung nicht durch eine einfachere Idee."
+          },
+          "questions": {
+            "title": "Fragen",
+            "guidance": "Fragen, die die Gruppe hört, und deine Notizen zu Antworten, auf die du achtest. Die Notizen bleiben bei dir."
+          },
+          "activity": {
+            "title": "Aktion",
+            "guidance": "Etwas, das sie mit dem Gehörten tun."
+          },
+          "reflect": {
+            "title": "Besinnung",
+            "guidance": "Was sie in Glauben, Entscheidungen und Beziehungen mitnehmen können."
+          }
+        }
+      },
+      "blank": {
+        "name": "Leere Vorlage",
+        "hint": "Noch keine Abschnitte. Füge hinzu, was diese Bibellehre braucht."
+      }
+    },
+    "workspace": {
+      "title": "Bibellehre",
+      "intro": "Bereite hier eine Bibellehre vor – mit oder ohne Bibelstudium.",
+      "sessions": "Lehreinheiten",
+      "empty": "Noch keine Bibellehre.",
+      "back": "Zurück zur Übersicht der Bibellehren",
+      "study": "Bibelstudium (wahlweise)",
+      "independent": "Eigenständige Bibellehre",
+      "keepNotes": "Wenn du die Verknüpfung änderst oder aufhebst, bleiben bereits verwendete Notizen mit ihren Quellen als Kopien erhalten. Spätere Änderungen im Bibelstudium ändern diese Kopien nicht.",
+      "saveLink": "Verknüpfung speichern",
+      "savedNote": "Gespeicherte Notiz aus dem Bibelstudium",
+      "project": "Zurück zum Projekt",
+      "basedOn": "Grundlage: Bibelstudium —",
+      "linkStudy": "Mit Bibelstudium verknüpfen",
+      "openStudy": "Verknüpftes Bibelstudium öffnen",
+      "standalone": "Eigenständige Bibellehre"
+    },
+    "options": "Optionen für diese Bibellehre",
+    "fromStudy": {
+      "open": "Aus dem Bibelstudium übernehmen…",
+      "title": "Aus dem Bibelstudium übernehmen",
+      "help": "Wähle, was in diese Bibellehre kopiert wird. Jede Kopie kannst du bearbeiten; sie nennt ihre Herkunft, ist zunächst nur für die Leitung und wird nie mit dem Bibelstudium abgeglichen.",
+      "add": "Auswahl übernehmen",
+      "none": "Dieses Bibelstudium hat noch nichts zum Übernehmen.",
+      "added": "Aus dem Bibelstudium übernommen, nur für die Leitung. Gib jeden Teil frei, wenn er fertig ist.",
+      "provenance": "Aus dem Bibelstudium: {{label}}",
+      "quotation": "Zitat aus dem Bibelstudium · {{citation}}",
+      "item": "ein Eintrag",
+      "quote": "Zitat",
+      "groups": {
+        "writing": "Text",
+        "qa": "Fragen und Antworten",
+        "finding": "Notizen",
+        "citation": "Zitate",
+        "passage": "Bibelstellen"
+      }
     }
   },
   "parts": {
@@ -1633,12 +2525,309 @@
     "suggested": "Teile, die du hinzufügen kannst",
     "own": "Eigene Überschrift",
     "collapseAll": "Alle zuklappen",
-    "expandAll": "Alle aufklappen"
+    "expandAll": "Alle aufklappen",
+    "restoreMissing": "Fehlende Abschnitte wiederherstellen",
+    "restoreAll": "Alle fehlenden Abschnitte wiederherstellen",
+    "restoreOne": "„{{title}}“ wiederherstellen",
+    "restoreEmptyHint": "Stellt leere Vorlagenabschnitte und die ursprüngliche Reihenfolge der Methode wieder her. Eigene Abschnitte und vorhandene Texte bleiben erhalten. Bereits gelöschte Texte werden dadurch nicht wiederhergestellt."
+  },
+  "journey": {
+    "label": "Gliederung des Bibelstudiums",
+    "phase": {
+      "text": "Text",
+      "understanding": "Verstehen",
+      "theology": "Theologie",
+      "application": "Anwendung",
+      "audience": "Zuhörerschaft",
+      "teaching": "Vermittlung"
+    },
+    "next": {
+      "ready": "Wenn du so weit bist, kann aus diesem Bibelstudium eine Bibellehre werden: eine Predigt, ein Hauskreis-Bibelgespräch oder eine Lektion.",
+      "prepare": "Bibellehre vorbereiten",
+      "existing": "Aus diesem Bibelstudium vorbereitet: {{title}}",
+      "existingMany": "{{count}} Bibellehren aus diesem Bibelstudium",
+      "open": "Bibellehre öffnen"
+    },
+    "goTo": "Zu „{{phase}}“ springen"
+  },
+  "materials": {
+    "kinds": {
+      "presentation": {
+        "points": {
+          "name": "Präsentation",
+          "hint": "Folien für die Leinwand, aus dieser Bibellehre erstellt"
+        },
+        "questions": {
+          "name": "Präsentation",
+          "hint": "Folien für die Leinwand, aus dieser Bibellehre erstellt"
+        },
+        "steps": {
+          "name": "Präsentation",
+          "hint": "Folien für die Leinwand, aus dieser Bibellehre erstellt"
+        }
+      },
+      "manuscript": {
+        "points": {
+          "name": "Manuskript",
+          "hint": "Deine Bibellehre als zusammenhängender Text zum Predigen oder Vortragen"
+        },
+        "questions": {
+          "name": "Gesprächsleitfaden",
+          "hint": "Die Fragen mit dem möglichen Gesprächsverlauf – zum Leiten der Gruppe"
+        },
+        "steps": {
+          "name": "Stundenablauf",
+          "hint": "Die Lektion Schritt für Schritt, mit dem, was du sagst und tust"
+        }
+      },
+      "questions": {
+        "points": {
+          "name": "Fragenblatt",
+          "hint": "Die Fragen für die Gruppe, mit Platz zum Schreiben"
+        },
+        "questions": {
+          "name": "Fragenblatt",
+          "hint": "Die Fragen für die Gruppe, mit Platz zum Schreiben"
+        },
+        "steps": {
+          "name": "Fragenblatt",
+          "hint": "Die Fragen für die Gruppe, mit Platz zum Schreiben"
+        }
+      },
+      "worksheet": {
+        "points": {
+          "name": "Mitschreibblatt",
+          "hint": "Ein Blatt zum Mitlesen und Mitschreiben beim Zuhören"
+        },
+        "questions": {
+          "name": "Arbeitsblatt",
+          "hint": "Fragen und Aktivitäten mit Platz zum Schreiben oder Malen"
+        },
+        "steps": {
+          "name": "Arbeitsblatt",
+          "hint": "Fragen und Aktivitäten mit Platz zum Schreiben oder Malen"
+        }
+      }
+    },
+    "questions": {
+      "leaderNotice": "Version für die Leitung: mit Hinweisen zum Leiten. Nicht zum Austeilen.",
+      "unworded": "Notizen zu einer Frage, die noch nicht formuliert ist"
+    },
+    "worksheet": {
+      "ownNotes": "Meine Notizen"
+    },
+    "view": {
+      "back": "Zurück zur Bibellehre",
+      "from": "Aus deiner Bibellehre „{{title}}“ zusammengestellt: Was du dort änderst, ändert sich hier mit.",
+      "empty": "Hier steht noch nichts. Was du in der Bibellehre schreibst, erscheint hier.",
+      "preview": "Vorschau: {{name}}",
+      "options": "Was enthalten ist"
+    },
+    "option": {
+      "includeNotes": "Meine Notizen für mich",
+      "leader": "Version für die Leitung, mit Hinweisen zum Leiten",
+      "includeFrame": "„{{opening}}“ und „{{closing}}“",
+      "writingSpace": "Platz zum Schreiben",
+      "includePassage": "Bibeltext einfügen ({{bible}})",
+      "includePassageNone": "Bibeltext einfügen (wähle zuerst eine Bibel im Bereich „Bibel“)",
+      "answers": "Mit den Antworten (nur freigegebene Fragen)"
+    },
+    "action": {
+      "print": "Drucken oder als PDF speichern…",
+      "markdown": "Als Textdatei speichern…",
+      "copy": "Text kopieren",
+      "filterName": "Textdatei (Markdown)",
+      "docx": "Als Word-Dokument speichern…",
+      "docxFilterName": "Word-Dokument (.docx)"
+    },
+    "status": {
+      "copied": "Kopiert. Du kannst es in ein Dokument oder eine E-Mail einfügen.",
+      "copyFailed": "Kopieren hat nicht geklappt. Speichere es stattdessen als Datei.",
+      "saved": "Gespeichert: {{path}}",
+      "printFailed": "Drucken ist hier nicht möglich. Speichere es stattdessen als Textdatei."
+    },
+    "menu": {
+      "files": "Präsentationsdateien",
+      "exportPresentation": "Präsentation als Datei speichern…",
+      "exportHint": "PowerPoint, PDF mit Folien, Sprechzettel fürs Handy, Markdown oder Vortragspaket",
+      "exportHintNamed": "„{{title}}“: PowerPoint, PDF mit Folien, Sprechzettel fürs Handy, Markdown oder Vortragspaket"
+    },
+    "scripture": {
+      "reading": "Bibeltext wird gelesen…",
+      "failed": "Der Bibeltext konnte nicht gelesen werden. {{reason}} Die Bibelstelle bleibt in der Unterlage. Drucken oder speichern kannst du sie erst, wenn der Text gelesen ist oder du die Option ausschaltest.",
+      "none": "{{bible}} hat keinen Text für diese Stelle. Nur die Bibelstelle wird gezeigt.",
+      "missing_one": "{{bible}} hat keinen Text für Vers {{verses}}; er fehlt hier und wird nicht aus einer anderen Bibel genommen.",
+      "missing_other": "{{bible}} hat keinen Text für die Verse {{verses}}; sie fehlen hier und werden nicht aus einer anderen Bibel genommen.",
+      "from": "Bibeltext: {{name}}."
+    },
+    "wordStyles": {
+      "label": "Feldbezeichnung",
+      "writingLine": "Schreiblinie",
+      "writingLineLast": "Schreiblinie (letzte)"
+    }
+  },
+  "phase": {
+    "label": "Gliederung",
+    "none": "Nicht in der Gliederung",
+    "ofPart": "Wo „{{title}}“ in der Gliederung des Bibelstudiums steht",
+    "ofTemplatePart": "Wo Teil {{number}} in der Gliederung des Bibelstudiums steht"
+  },
+  "info": {
+    "study": "Angaben zum Bibelstudium",
+    "teaching": "Angaben zur Bibellehre",
+    "project": "Projektinformationen",
+    "projectDescription": "Beschreibung",
+    "projectDescriptionHint": "Wofür dieses Projekt da ist, in ein, zwei Sätzen"
+  },
+  "inquiry": {
+    "ready": "Die Hilfe ist da.",
+    "failed": "Die Hilfe konnte nicht gegeben werden.",
+    "stopped": "Warten beendet. Nichts wurde geändert.",
+    "close": "Hilfe schließen",
+    "standing": "Das ist Hilfe zum Nachdenken, getrennt von deinem Text. In deinem Bibelstudium ändert sich nichts, solange du es nicht übernimmst.",
+    "kindLabel": "Welche Hilfe?",
+    "requestRequired": "Deine Frage",
+    "requestOptional": "Etwas Bestimmtes? (optional)",
+    "ask": "Fragen",
+    "askHint": "Vor dem Fragen wird nichts gesendet.",
+    "pending": "Warte auf die Antwort…",
+    "from": "Von {{assistant}} · nicht gespeichert",
+    "again": "Etwas anderes fragen",
+    "done": "Fertig",
+    "heading": "Hilfe",
+    "compareHeading": "Vergleich",
+    "none": "Der Assistent hatte nichts hinzuzufügen.",
+    "unverified_one": "{{count}} Zitat in der Antwort stand nicht im Gesendeten und wurde weggelassen.",
+    "unverified_other": "{{count}} Zitate in der Antwort standen nicht im Gesendeten und wurden weggelassen.",
+    "downgradedCount_one": "{{count}} Punkt wird als eigene Überlegung des Assistenten gezeigt, weil die Worte fehlten, auf die er sich stützte.",
+    "downgradedCount_other": "{{count}} Punkte werden als eigene Überlegungen des Assistenten gezeigt, weil die Worte fehlten, auf die sie sich stützten.",
+    "downgraded": "Als Überlegung des Assistenten gezeigt: Die Worte, auf die er sich stützte, standen nicht im Gesendeten.",
+    "references": "Stellen, die der Assistent zum Nachschlagen vorschlägt:",
+    "openSource": "In der Quelle öffnen",
+    "shared": {
+      "remote": "Damit {{assistant}} helfen kann, wird Folgendes gesendet (es verlässt diesen Computer):",
+      "local": "Dies bleibt auf diesem Computer ({{assistant}}). Der Assistent sieht Folgendes:",
+      "count_one": "{{count}} Teil, jeweils Wort für Wort (zum Lesen öffnen):",
+      "count_other": "{{count}} Teile, jeweils Wort für Wort (zum Lesen öffnen):",
+      "sourceText": "Worte aus deiner Bibliothek sind dabei.",
+      "noSourceText": "Keine Worte aus deiner Bibliothek sind dabei.",
+      "noSearch": "Im Web wird nichts gesucht."
+    },
+    "block": {
+      "scripture": "Bibeltext",
+      "writing": "Dein Text",
+      "note": "Deine Notiz",
+      "quote": "Zitat in deiner Notiz",
+      "source": "Quelle aus der Bibliothek",
+      "request": "Deine Frage"
+    },
+    "evidence": {
+      "scripture": "Bibeltext",
+      "writing": "Dein Text",
+      "note": "Deine Notiz",
+      "quote": "Zitat in deiner Notiz",
+      "source": "Quelle",
+      "request": "Deine Frage"
+    },
+    "group": {
+      "text": "Den Text verstehen",
+      "thinking": "Mein Denken prüfen",
+      "source": "Diese Quelle lesen",
+      "compare": "Vergleichen",
+      "wording": "Formulierung",
+      "own": "In eigenen Worten"
+    },
+    "action": {
+      "understand": "Was sagt der Text?",
+      "context": "Literarischer und historischer Zusammenhang",
+      "expression": "Was bedeuten die markierten Worte hier?",
+      "related": "Verwandte Bibelstellen",
+      "readings": "Wie lesen Christen das unterschiedlich?",
+      "follows": "Folgt mein Schluss aus dem Text?",
+      "overlooked": "Was habe ich vielleicht übersehen?",
+      "assumptions": "Was setze ich voraus?",
+      "questions": "Fragen zum Weiterstudieren",
+      "unresolved": "Meine offene Frage durchdenken",
+      "clarify": "Klarer formulieren",
+      "grammar": "Grammatik und Rechtschreibung",
+      "free": "Eigene Frage stellen",
+      "summary": "Was sagt der Autor hier?",
+      "argument": "Wie verläuft die Argumentation?",
+      "source_assumptions": "Was setzt der Autor voraus?",
+      "source_passages": "Welche Bibelstellen verwendet der Autor, und wie?",
+      "conclusion": "Folgt der Schluss aus den Gründen?",
+      "investigate": "Was sollte ich weiter prüfen?",
+      "relate_study": "Was hat das mit meinem Bibelstudium zu tun?",
+      "compare": "Die ausgewählten Abschnitte vergleichen"
+    },
+    "kind": {
+      "text": "Im Bibeltext",
+      "source": "Der Autor sagt",
+      "writing": "Zu deinem Text",
+      "interpretation": "Auslegung",
+      "inference": "Überlegung des Assistenten",
+      "knowledge": "Hintergrundwissen – bitte prüfen",
+      "question": "Frage",
+      "uncertain": "Nicht geklärt",
+      "position": "Position",
+      "agreement": "Übereinstimmung",
+      "disagreement": "Widerspruch",
+      "assumption": "Voraussetzung",
+      "unsupported": "Von den Abschnitten nicht gestützt"
+    },
+    "verdict": {
+      "agree": "Die Autoren stimmen darin überein.",
+      "disagree": "Die Autoren widersprechen sich.",
+      "partly": "Die Autoren stimmen teilweise überein.",
+      "insufficient": "Die ausgewählten Abschnitte sagen nicht genug für einen Vergleich."
+    },
+    "proposal": {
+      "heading": "Vorgeschlagene Formulierung",
+      "notYet": "Dein Text wurde nicht geändert.",
+      "same": "Der Assistent schlägt keine Änderung vor.",
+      "changes": "Was sich ändert: {{changes}}",
+      "use": "Diese Formulierung übernehmen",
+      "used": "Die neue Formulierung steht in deinem Text und wird gespeichert.",
+      "changedMeanwhile": "Dein Text hat sich seit der Frage geändert, deshalb wurde nichts ersetzt. Frag noch einmal, um einen Vorschlag für den jetzigen Text zu bekommen.",
+      "removed": "entfernt:",
+      "added": "hinzugefügt:"
+    },
+    "keep": {
+      "open": "Zum Bibelstudium hinzufügen…",
+      "point": "Diesen Punkt als Notiz hinzufügen",
+      "all": "Diese Hilfe als eine Notiz hinzufügen…",
+      "comparison": "Diesen Vergleich als Notiz behalten…",
+      "explain": "Es wird eine Notiz in „{{study}}“, in deinen Worten: Ändere vor dem Hinzufügen, was du möchtest.",
+      "wording": "Die Notiz",
+      "kind": "Art der Notiz",
+      "cites": "Die Quellen angeben, auf die sie sich stützt",
+      "marked": "Die Notiz vermerkt, dass {{assistant}} geholfen hat.",
+      "add": "Als Notiz hinzufügen",
+      "done": "Als Notiz zu deinem Bibelstudium hinzugefügt.",
+      "doneIn": "Als Notiz zu „{{study}}“ hinzugefügt."
+    },
+    "assistedBy": "Mit Hilfe von {{assistant}} geschrieben",
+    "study": {
+      "button": "Hilfe",
+      "open": "Hilfe zu „{{part}}“",
+      "tooltip": "Den KI-Assistenten zu diesem Teil fragen. Bis du fragst, wird nichts gesendet.",
+      "title": "Hilfe zu „{{part}}“",
+      "focus": "Worauf schauen?",
+      "part": "Dein ganzer Text in diesem Teil",
+      "block": "Dein Text: „{{start}}“",
+      "selection": "Die markierten Worte: „{{words}}“",
+      "note": "Deine Notiz ({{kind}}): „{{start}}“"
+    },
+    "location": {
+      "pages": "S. {{first}}–{{last}}",
+      "paragraph": "Absatz {{number}}",
+      "paragraphs": "Absätze {{first}}–{{last}}"
+    }
   },
   "fields": {
     "example": "Beispiel: Hosea 11",
     "exampleMatthew": "Beispiel: Matthäus 8,18–27",
-    "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deiner Studie und wird nie als deine Antwort gespeichert.",
+    "exampleNote": "Nur ein Beispiel. Es gehört nicht zu deinem Bibelstudium und wird nie als deine Antwort gespeichert.",
     "goal": "Ziel",
     "status": "Bearbeitungsstand von „{{title}}“",
     "statusNotStarted": "Nicht begonnen",
@@ -1656,5 +2845,107 @@
     "moveEntryUp": "Eintrag {{number}} von {{field}} nach oben",
     "moveEntryDown": "Eintrag {{number}} von {{field}} nach unten",
     "otherWriting": "Weitere Notizen"
+  },
+  "flow": {
+    "answer": "Deine Antwort",
+    "guidance": "Hinweise",
+    "legacy": "Bisherige strukturierte Antworten",
+    "legacyNote": "Diese Antworten bleiben in ihren ursprünglichen Feldern. Nichts wurde zusammengefügt oder ersetzt.",
+    "continuous": "Fortlaufend schreiben",
+    "outline": "Schritt für Schritt",
+    "mode": "Schreibansicht",
+    "steps": "Abschnitte des Studiums",
+    "previous": "Vorheriger Abschnitt",
+    "next": "Nächster Abschnitt",
+    "step": "Abschnitt {{current}} von {{total}}",
+    "tenStepAttribution": "Methode: Helge Stadelmann und Thomas Richter, Bibelauslegung praktisch. In zehn Schritten den Text verstehen (2024). Die Hinweise hier sind eigenständig formuliert und geben nicht den Originaltext der Autoren wieder.",
+    "hideGuidance": "Hinweise ausblenden"
+  },
+  "builder": {
+    "title": "Vorlagenbausteine",
+    "label": "Titel des Bausteins",
+    "guidance": "Optionale Hinweise",
+    "query": "Suchtext oder Bibelstelle",
+    "editionDefault": "Voreingestellte Bibelausgabe (optional)",
+    "up": "Nach oben",
+    "down": "Nach unten",
+    "duplicate": "Baustein duplizieren",
+    "kind": "Art des Bausteins",
+    "add": "Baustein hinzufügen",
+    "edition": "Bibelausgabe",
+    "chooseEdition": "Installierte Ausgabe auswählen",
+    "editionMismatch": "Die gelieferte Ausgabe entspricht nicht der ausgewählten Ausgabe.",
+    "crossReferenceNote": "Trage verwandte Bibelstellen ein, getrennt durch Semikola. Diese Querverweise stammen von dir; Zusammenhänge werden nicht automatisch erschlossen.",
+    "evidenceNote": "Ergebnisse sind Quellenbelege. Ein Texttreffer allein belegt noch keine Bedeutung oder Verbindung. Halte deine Schlussfolgerungen in einem Schreibbaustein fest.",
+    "run": "Nachschlagen",
+    "incomplete": "Die Ergebnisse sind unvollständig. Grenze die Suche in den Bibelwerkzeugen weiter ein.",
+    "empty": "Keine Ergebnisse. Möglicherweise enthält diese Ausgabe die benötigten Wortangaben nicht.",
+    "keep": "Als Beleg übernehmen",
+    "evidence": "Übernommene Quellenbelege",
+    "kinds": {
+      "writing": "Schreiben",
+      "guidance": "Hinweise",
+      "heading": "Überschrift",
+      "divider": "Trennlinie",
+      "passage": "Bibelstelle",
+      "concordance": "Konkordanz",
+      "cross_references": "Querverweise",
+      "word_lookup": "Wort nachschlagen",
+      "search": "Begriff oder Person suchen",
+      "text": "Bisheriges Textfeld",
+      "entries": "Bisherige strukturierte Einträge"
+    },
+    "passageNote": "Angezeigt und zitiert werden nur die Verse, die in der gewählten Ausgabe verfügbar sind. In der angefragten Bibelstelle können Verse fehlen."
+  },
+  "files": {
+    "newProject": "Neues Projekt",
+    "folder": "Projektordner",
+    "actions": "Dateiaktionen",
+    "name": "Name",
+    "rename": "Umbenennen",
+    "move": "Verschieben",
+    "moveTitle": "„{{title}}“ verschieben",
+    "destination": "Ziel",
+    "moveHint": "Verknüpfte Lehre wird mit dem Bibelstudium verschoben. Recherche, Zitate und gespeicherte Materialien bleiben erhalten.",
+    "legacy": "Frühere eigenständige Lehre",
+    "legacyHint": "Verwalte frühere Lehre ohne verknüpftes Bibelstudium. Nichts wird automatisch zugeordnet. Neue Lehre beginnt in einem Bibelstudium.",
+    "noLegacy": "Keine frühere eigenständige Lehre."
+  },
+  "qa": {
+    "add": "Frage und Antwort",
+    "label": "Frage und Antwort {{number}}",
+    "question": "Frage",
+    "answer": "Antwort",
+    "options": "Optionen für {{label}}",
+    "moveUp": "{{label}} nach oben",
+    "moveDown": "{{label}} nach unten",
+    "confirmDelete": "{{label}} mit Frage und Antwort löschen?"
+  },
+  "qaExport": {
+    "open": "Fragen exportieren…",
+    "title": "Fragen exportieren",
+    "help": "Wähle, was enthalten sein soll. Exportiert wird nur der Text in den Teilen des Bibelstudiums; deine separaten Notizen nie.",
+    "mode": "Was exportiert wird",
+    "modes": {
+      "questions": "Nur Fragen",
+      "answers": "Fragen und Antworten",
+      "full": "Ganzes Bibelstudium"
+    },
+    "save": "Als Markdown speichern…",
+    "fileType": "Markdown",
+    "saved": "Gespeichert unter {{path}}",
+    "empty": "Für diese Auswahl gibt es noch nichts zu exportieren."
+  },
+  "repair": {
+    "review": "POZETEK-Teile prüfen",
+    "undo": "POZETEK-Reparatur rückgängig",
+    "apply": "Fehlende Teile ergänzen und ordnen",
+    "explain": "Die ursprünglichen sieben Teile stehen zuerst. Fehlende Teile werden leer ergänzt. Alle vorhandenen Teile, auch Thema, Erkenntnisse, Konsequenzen und doppelte Teile, behalten Namen, Texte, Notizen und Verknüpfungen. Teile außerhalb dieser sieben folgen in ihrer bisherigen relativen Reihenfolge.",
+    "keep": "Vorhandenen Teil behalten",
+    "add": "Leeren Teil ergänzen",
+    "duplicates": "Mehrere Teile haben denselben Schlüssel: {{parts}}. Sie bleiben getrennt; Texte werden nicht zusammengeführt.",
+    "safety": "Eine gespeicherte Rückgängig-Funktion stellt die frühere Reihenfolge wieder her und entfernt nur unveränderte, leere Teile dieser Reparatur. Wurde ein ergänzter Teil verändert, bleibt alles erhalten und Rückgängig wird abgelehnt. Vor wichtigen Reparaturen das Profil sichern.",
+    "undoFirst": "Die vorige Reparatur zuerst rückgängig machen.",
+    "finishDrafts": "Offene Notizen und Änderungen an Teilnamen zuerst abschließen oder schließen, bevor die Reparatur rückgängig gemacht wird."
   }
 }

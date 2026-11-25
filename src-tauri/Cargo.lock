@@ -8,10 +8,13 @@ version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
  "chrono",
+ "flate2",
  "keyring",
+ "libc",
  "log",
  "lopdf",
  "pdf-extract",
+ "png 0.18.1",
  "pulldown-cmark",
  "quick-xml",
  "regex",
@@ -29,9 +32,11 @@ dependencies = [
  "tauri-plugin-updater",
  "tempfile",
  "thiserror 2.0.21",
+ "ttf-parser",
  "unicode-normalization",
  "url",
  "uuid",
+ "windows-sys 0.61.2",
  "zip 2.4.2",
 ]
 

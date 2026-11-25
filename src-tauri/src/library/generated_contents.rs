@@ -179,6 +179,25 @@ fn bucket(size: f64) -> i64 {
     (size * 2.0).round() as i64
 }
 
+/// Some producers overprint a bold/shadow heading at the same coordinates.
+/// Recognise exact repetition for shape checks only; original drawn/stored
+/// text is preserved, including when adjacent title lines are joined.
+pub(crate) fn heading_shape(text: &str) -> &str {
+    for copies in 2..=4 {
+        if text.len() % copies != 0 {
+            continue;
+        }
+        let length = text.len() / copies;
+        let Some(part) = text.get(..length) else {
+            continue;
+        };
+        if part.chars().filter(|c| c.is_alphabetic()).count() >= 2 && part.repeat(copies) == text {
+            return part;
+        }
+    }
+    text
+}
+
 /// The probable headings among a PDF's lines: (level, page, title), in order.
 pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
     if lines.is_empty() || pages == 0 {
@@ -196,18 +215,49 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
             .collect::<Vec<_>>()
             .join(" ")
     };
-    let mut seen: HashMap<String, HashSet<u32>> = HashMap::new();
+    let mut seen: HashMap<String, (HashSet<u32>, Vec<f64>)> = HashMap::new();
+    let mut exact: HashMap<String, HashSet<u32>> = HashMap::new();
     for l in lines.iter().filter(|l| margin(l)) {
-        seen.entry(key(&l.text)).or_default().insert(l.page);
+        let entry = seen.entry(key(&l.text)).or_default();
+        entry.0.insert(l.page);
+        entry.1.push(l.size);
+        exact
+            .entry(l.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .or_default()
+            .insert(l.page);
     }
-    let running: HashSet<String> = seen
+    // A.4.1: numbers are ignored only for furniture no larger than the text
+    // (so "Kapitel 6" / "Kapitel 7" headings near the top of a page are not
+    // running heads), and a margin line set clearly larger than its running
+    // text (a chapter-opening title) is not furniture.
+    let mut all_weight: HashMap<i64, usize> = HashMap::new();
+    for l in lines {
+        *all_weight.entry(bucket(l.size)).or_default() += l.text.chars().count();
+    }
+    let text_size = all_weight
+        .iter()
+        .max_by_key(|(b, w)| (**w, -**b))
+        .map_or(0.0, |(b, _)| *b as f64 / 2.0);
+    let running: HashMap<String, f64> = seen
         .into_iter()
-        .filter(|(_, p)| p.len() >= 3)
-        .map(|(k, _)| k)
+        .filter(|(_, (p, _))| p.len() >= 3)
+        .map(|(k, (_, mut sizes))| {
+            sizes.sort_by(f64::total_cmp);
+            (k, sizes[sizes.len() / 2])
+        })
         .collect();
+    let is_running = |l: &Line| -> bool {
+        let Some(usual) = running.get(&key(&l.text)) else {
+            return false;
+        };
+        let repeated = exact
+            .get(&l.text.split_whitespace().collect::<Vec<_>>().join(" "))
+            .is_some_and(|p| p.len() >= 3);
+        (repeated || *usual <= text_size * 1.1) && l.size <= usual * 1.2
+    };
     let kept: Vec<&Line> = lines
         .iter()
-        .filter(|l| !(margin(l) && (is_folio(&l.text) || running.contains(&key(&l.text)))))
+        .filter(|l| !(margin(l) && (is_folio(&l.text) || is_running(l))))
         .collect();
 
     // The body size: the size most characters are set in.
@@ -227,7 +277,7 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
     }
 
     let is_candidate = |l: &Line| -> bool {
-        let text = l.text.trim();
+        let text = heading_shape(l.text.trim());
         let chars = text.chars().count();
         let letters = text.chars().filter(|c| c.is_alphabetic()).count();
         let words = text.split_whitespace().count();
@@ -271,8 +321,10 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
         }
     }
 
-    // Levels by size: the largest heading size is level 1. Sizes below the
-    // third are left out (too close to the text to trust).
+    // Levels by size: the largest heading size is level 1. The body-relative
+    // candidate checks already establish prominence. Large cover/title-page
+    // type must not discard genuine smaller headings elsewhere in the book;
+    // cap their displayed depth instead of dropping the fourth size onward.
     let mut sizes: Vec<i64> = found.iter().map(|(_, s, _)| bucket(*s)).collect();
     sizes.sort_unstable_by(|a, b| b.cmp(a));
     sizes.dedup();
@@ -280,7 +332,7 @@ pub fn headings(lines: &[Line], pages: u32) -> Vec<(usize, u32, String)> {
         .into_iter()
         .filter_map(|(page, size, title)| {
             let rank = sizes.iter().position(|s| *s == bucket(size))?;
-            (rank < MAX_LEVELS).then(|| (rank + 1, page, title))
+            Some((rank.min(MAX_LEVELS - 1) + 1, page, title))
         })
         .collect();
 

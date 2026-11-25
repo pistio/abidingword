@@ -2,6 +2,8 @@
 // carry a stable code and values; they are shown in the interface language
 // here. The core's English text is the fallback (docs/i18n.md).
 import i18n from "i18next";
+import { parseCanonical } from "@/lib/scripture";
+import { bookName, referenceLabel } from "./scripture";
 
 export type MessageParams = Record<string, string>;
 
@@ -18,11 +20,48 @@ function translate(key: string, values: Record<string, unknown>): string {
  * interface language (`book`); a number list (`numbers`, `listed`, `more`)
  * becomes one `list` text, and `listed` is the count when none is given.
  */
-function values(params: MessageParams): Record<string, unknown> {
+function values(params: MessageParams, code: string): Record<string, unknown> {
   const result: Record<string, unknown> = { ...params };
   if (params.bookCode) result.book = translate(`books.name.${params.bookCode}`, { defaultValue: params.bookCode });
+  // These are native-generated diagnostic enums, never imported text or names
+  // of the user's sources. Keep additional-book identities separate from the
+  // 66-book reference registry; this changes warning labels only.
+  if ((code === "bibleImport.additionalBook" || code === "bibleImport.documentAdditionalBook")
+    && params.book && params.code && IMPORT_BOOK_CODES.has(params.code)) {
+    result.book = translate(`scripture.importBookNames.${params.code}`, { defaultValue: params.book });
+  }
+  if (code === "bibleImport.formatNotYet" && params.format) {
+    const formatKey = IMPORT_FORMAT_KEYS.get(params.format);
+    if (formatKey) result.format = translate(`errors.importFormats.${formatKey}`, {});
+  }
   for (const name of ["count", "max", "found", "listed", "more", "chapter", "verse", "first", "last"]) {
     if (params[name] !== undefined && /^\d+$/.test(params[name])) result[name] = Number(params[name]);
+  }
+  // An ambiguous typed passage: its options in the interface language.
+  if (params.canonicals) {
+    result.options = params.canonicals
+      .split(";")
+      .map((canonical) => {
+        const parsed = parseCanonical(canonical);
+        return parsed ? referenceLabel({ ...parsed, canonical, display: canonical }) : canonical;
+      })
+      .join(" / ");
+  } else if (params.books && params.options !== undefined) {
+    result.options = params.books
+      .split(",")
+      .map((code) => bookName(code))
+      .join(" / ");
+  }
+  // Verses as canonical references ("ISA.63.19;PSA.13.6"), named in the interface language (v0.22.1).
+  if (params.places) {
+    result.places = params.places
+      .split(";")
+      .map((canonical) => {
+        const parsed = parseCanonical(canonical);
+        return parsed ? referenceLabel({ ...parsed, canonical, display: canonical }) : canonical;
+      })
+      // Not ", ": a comma separates chapter and verse in several languages ("18,34").
+      .join("; ");
   }
   if (params.numbers !== undefined) {
     const more = Number(params.more ?? 0);
@@ -34,13 +73,33 @@ function values(params: MessageParams): Record<string, unknown> {
 
 /** A coded message in the interface language, or `fallback` if the code is unknown. */
 export function localizeMessage(code: string | null | undefined, params: MessageParams | undefined, fallback: string): string {
-  if (!code || !i18n.exists(`errors.${code}`)) return fallback;
-  return translate(`errors.${code}`, values(params ?? {}));
+  if (!code) return fallback;
+  const prepared = values(params ?? {}, code);
+  if (!i18n.exists(`errors.${code}`, { count: typeof prepared.count === "number" ? prepared.count : undefined })) return fallback;
+  // The Psalms are counted in psalms, not chapters ("시편 119편", "Psalm 119").
+  const psalms = params?.bookCode === "PSA" ? PSALM_WORDING[code] : undefined;
+  return translate(`errors.${psalms ?? code}`, prepared);
 }
+
+const IMPORT_BOOK_CODES = new Set([
+  "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL",
+  "1MA", "2MA", "3MA", "4MA", "1ES", "MAN", "PS2", "DAG", "2ES",
+]);
+const IMPORT_FORMAT_KEYS = new Map([
+  ["Web page", "webPage"],
+  ["OSIS and USX", "osisUsx"],
+]);
+
+const PSALM_WORDING: Record<string, string> = {
+  "reference.chapterCount": "reference.chapterCountPsalms",
+  "reference.verseCount": "reference.verseCountPsalm",
+};
 
 /** An error from the core, in the interface language. */
 export function localizeError(kind: string, message: string, code?: string | null, params?: MessageParams): string {
-  if (code) return localizeMessage(code, params, message);
+  const localised = code ? localizeMessage(code, params, "") : "";
+  if (localised) return localised;
   if (FIXED_KINDS.includes(kind)) return translate(`errors.kind.${kind}`, {});
+  if (code) return translate("errors.messageUnavailable", {});
   return message;
 }

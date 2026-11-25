@@ -6,22 +6,34 @@
 
 pub mod annotations;
 pub mod backup;
+pub mod bible_documents;
+pub mod bible_words;
 pub mod bibles;
 pub mod blocks;
 pub mod findings;
 pub mod fts;
+pub mod import_jobs;
 pub mod integrity;
 pub mod library;
+pub mod library_manage;
 pub mod migrations;
+pub mod pdf_diagnostic;
+pub mod pdf_structures;
+pub mod presentation_templates;
+pub mod presentations;
 pub mod projects;
+pub mod reader_positions;
 pub mod relations;
 pub mod sections;
 pub mod settings;
 pub mod source_annotations;
+pub mod source_coverage;
 pub mod studies;
 pub mod study_passages;
 pub mod study_search;
 pub mod teaching;
+pub mod teaching_blocks;
+pub mod teaching_templates;
 pub mod templates;
 pub mod text_refresh;
 pub mod workspaces;
@@ -60,6 +72,7 @@ impl Database {
     ) -> AppResult<Self> {
         // Integrity first: even setting the journal mode writes to the file.
         integrity::check(&conn)?;
+        migrations::validate_existing_history(&conn)?;
         configure(&conn)?;
         let report = migrations::upgrade(&mut conn, migrations::MIGRATIONS, backup_dir)?;
         log::info!(
@@ -94,6 +107,33 @@ impl Database {
             .map_err(|_| AppError::Unexpected("database connection lock poisoned".into()))?;
         f(&conn)
     }
+
+    /// Runs `f` with exclusive, mutable access to the connection (restoring
+    /// a backup into it, migrating it).
+    pub fn with_conn_mut<T>(
+        &self,
+        f: impl FnOnce(&mut Connection) -> AppResult<T>,
+    ) -> AppResult<T> {
+        let mut conn = self
+            .conn
+            .lock()
+            .map_err(|_| AppError::Unexpected("database connection lock poisoned".into()))?;
+        f(&mut conn)
+    }
+}
+
+/// After the whole database was replaced (a restored backup): the same
+/// checks and steps as when the app starts.
+pub(crate) fn reinitialise(conn: &mut Connection, backup_dir: Option<&Path>) -> AppResult<()> {
+    integrity::check(conn)?;
+    configure(conn)?;
+    migrations::upgrade(conn, migrations::MIGRATIONS, backup_dir)?;
+    workspaces::ensure_default(conn)?;
+    templates::ensure_builtin(conn)?;
+    if let Err(error) = library::ensure_passage_index(conn) {
+        log::warn!("passage links could not be brought up to date: {error}");
+    }
+    Ok(())
 }
 
 fn configure(conn: &Connection) -> AppResult<()> {
@@ -138,3 +178,5 @@ pub(crate) fn check_same_members(
     }
     Ok(())
 }
+
+pub mod pozetek_repair;

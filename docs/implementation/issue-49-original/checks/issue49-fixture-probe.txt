@@ -1,0 +1,9 @@
+   Compiling abiding-word v0.1.0 (/workspace/abidingword/src-tauri)
+    Finished `test` profile [unoptimized] target(s) in 2.87s
+     Running tests/issue49_fixture_probe.rs (src-tauri/target/debug/deps/issue49_fixture_probe-2803a1c4177948ad)
+
+running 1 test
+70 real imported segments; p40 and p65 match; 3 contents entries; 2 internal links
+test invented_native_original_fixture_imports_with_exact_navigation_targets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s

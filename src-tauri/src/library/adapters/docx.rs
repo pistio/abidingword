@@ -172,6 +172,9 @@ pub(super) struct Fmt {
     pub strike: bool,
     pub sup: bool,
     pub sub: bool,
+    /// Lifted off the baseline by a position (`w:position` above 0), as
+    /// LibreOffice writes a superscript it was given as raised text.
+    pub raised: bool,
     pub caps: bool,
     pub small_caps: bool,
     pub highlight: bool,
@@ -196,6 +199,8 @@ struct RProps {
     hidden: Option<bool>,
     /// 1 superscript, -1 subscript, 0 baseline.
     vert: Option<i8>,
+    /// `w:position`, half-points (positive: raised).
+    position: Option<i32>,
     size: Option<u32>,
     /// Empty: automatic.
     color: Option<String>,
@@ -208,8 +213,8 @@ impl RProps {
             ($($f:ident),*) => { $( if o.$f.is_some() { self.$f = o.$f.clone(); } )* };
         }
         take!(
-            bold, italic, underline, strike, caps, small_caps, highlight, mono, hidden, vert, size,
-            color
+            bold, italic, underline, strike, caps, small_caps, highlight, mono, hidden, vert,
+            position, size, color
         );
     }
 
@@ -221,6 +226,7 @@ impl RProps {
             strike: self.strike.unwrap_or(false),
             sup: self.vert == Some(1),
             sub: self.vert == Some(-1),
+            raised: self.position.is_some_and(|p| p > 0),
             caps: self.caps.unwrap_or(false),
             small_caps: self.small_caps.unwrap_or(false),
             highlight: self.highlight.unwrap_or(false),
@@ -346,6 +352,13 @@ pub(super) struct Para {
     pub segment: usize,
     /// The element id it carries, when it has one.
     pub id: Option<String>,
+    /// Set apart from running text by its look: centred, or bold or italic
+    /// throughout (a section heading made without a heading style).
+    pub styled: bool,
+    /// The plain text with digits set as superscripts written as superscript
+    /// digits ("Kain,⁵Und"), when it has any (v0.24.3): a verse number set
+    /// against the next word shows itself by its look only.
+    pub marked: Option<String>,
     // Parsing only: the pending list reference, resolved by the layout.
     num: Option<(i64, usize)>,
 }
@@ -583,6 +596,7 @@ fn parse_rpr(reader: &mut Reader<&[u8]>) -> RProps {
                     })
                 }
                 "w:sz" => p.size = attr(&e, "w:val").and_then(|v| v.parse().ok()),
+                "w:position" => p.position = attr(&e, "w:val").and_then(|v| v.parse().ok()),
                 "w:color" => {
                     p.color = Some(match attr(&e, "w:val") {
                         Some(v) if is_hex(&v) => v.to_ascii_lowercase(),
@@ -1398,7 +1412,7 @@ fn parse_run(
             },
             Ok(Event::Text(t)) => {
                 if in_text {
-                    text.push_str(&t);
+                    text.push_str(&super::neutralise_marks(&t));
                 } else if in_instr {
                     if let Some(f) = fields.last_mut() {
                         if !f.result {
@@ -1408,7 +1422,7 @@ fn parse_run(
                 }
             }
             Ok(Event::GeneralRef(r)) if in_text => {
-                text.push_str(&unescape(&format!("&{};", &*r)));
+                text.push_str(&super::neutralise_marks(&unescape(&format!("&{};", &*r))));
             }
             Ok(Event::End(e)) => match e.name().as_ref() {
                 "w:t" => in_text = false,
@@ -1564,6 +1578,149 @@ fn kind_of(ctx: &Ctx, style: &str) -> Kind {
     }
 }
 
+/// A digit run as a verse number is written (`3`, `12`, `1-2`).
+fn number_run(t: &str) -> bool {
+    let t = t.trim();
+    !t.is_empty()
+        && t.chars().filter(char::is_ascii_digit).count() <= 6
+        && t.chars()
+            .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–'))
+}
+
+/// The plain text with raised digits, and digits in a number format
+/// (`number_formats`), written as superscript digits, and raised small
+/// letters marked; None when there are none.
+fn marked_text(inlines: &[Inline], number_format: &dyn Fn(&Fmt) -> bool) -> Option<String> {
+    let mut raised = String::new();
+    let mut any_raised = false;
+    for i in inlines {
+        match i {
+            Inline::Text(t, f)
+                if ((f.sup || f.raised)
+                    && !t.trim().is_empty()
+                    && t.trim()
+                        .chars()
+                        .all(|c| c.is_ascii_digit() || matches!(c, '-' | '–')))
+                    || (number_format(f) && number_run(t)) =>
+            {
+                any_raised = true;
+                raised.push_str(&super::pdf_layout::superscript(t));
+            }
+            // Raised small letters (a note's caller, "Cristoᵃ"): marked as
+            // the PDF reader marks them, for the recogniser to take out
+            // where a note explains them (v0.24.3).
+            Inline::Text(t, f)
+                if (f.sup || f.raised)
+                    && (1..=3).contains(&t.trim().chars().count())
+                    && t.trim().chars().all(char::is_lowercase) =>
+            {
+                any_raised = true;
+                raised.push(super::pdf_layout::RAISED_OPEN);
+                raised.push_str(t.trim());
+                raised.push(super::pdf_layout::RAISED_CLOSE);
+            }
+            Inline::Text(t, _) => raised.push_str(t),
+            Inline::Br => raised.push(' '),
+            _ => {}
+        }
+    }
+    any_raised.then(|| raised.split_whitespace().collect::<Vec<_>>().join(" "))
+}
+
+/// The character formats a document sets its verse numbers in without
+/// raising them (Phase A1.3): a bold small "7" in a style of its own
+/// (`spav1602p-lodocx`'s "Num"). A format counts when at least 20 runs of
+/// digits alone are set in it, no run with a letter, and it is smaller than
+/// the body's text: measured in the document, never assumed. Formats
+/// already raised are marked anyway.
+fn number_formats(blocks: &[Block]) -> Vec<Fmt> {
+    fn walk<'b>(blocks: &'b [Block], counts: &mut Vec<(&'b Fmt, usize, usize)>) {
+        for b in blocks {
+            match b {
+                Block::Para(p) => {
+                    for i in &p.inlines {
+                        let Inline::Text(t, f) = i else { continue };
+                        if f.sup || f.raised || *f == Fmt::default() {
+                            continue;
+                        }
+                        let digits = number_run(t);
+                        let letters = t.chars().any(char::is_alphabetic);
+                        if !digits && !letters {
+                            continue;
+                        }
+                        match counts.iter_mut().find(|(g, _, _)| *g == f) {
+                            Some((_, d, l)) => {
+                                *d += usize::from(digits);
+                                *l += usize::from(letters);
+                            }
+                            None => counts.push((f, usize::from(digits), usize::from(letters))),
+                        }
+                    }
+                }
+                Block::Table(t) => {
+                    for row in &t.rows {
+                        for cell in &row.cells {
+                            walk(&cell.blocks, counts);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    let mut counts = Vec::new();
+    walk(blocks, &mut counts);
+    // The body's size: the most common size of runs with letters (None:
+    // none is written, the document's default).
+    let mut sizes: Vec<(Option<u32>, usize)> = Vec::new();
+    for &(f, _, letters) in &counts {
+        match sizes.iter_mut().find(|(s, _)| *s == f.size) {
+            Some((_, n)) => *n += letters,
+            None => sizes.push((f.size, letters)),
+        }
+    }
+    let body = sizes
+        .iter()
+        .filter(|(_, n)| *n > 0)
+        .max_by_key(|(_, n)| *n)
+        .and_then(|(s, _)| *s);
+    // Smaller than the body (half-points): a drop numeral starting a
+    // chapter is digits alone in a format of its own too, but large
+    // (`deu1951-rpydocxdrop`: bold, 31 pt, lowered), and is no verse number.
+    let small = |f: &Fmt| match (f.size, body) {
+        (Some(s), Some(b)) => s < b,
+        (Some(s), None) => s <= 18,
+        (None, _) => false,
+    };
+    counts
+        .into_iter()
+        .filter(|&(f, digits, letters)| digits >= 20 && letters == 0 && small(f))
+        .map(|(f, _, _)| f.clone())
+        .collect()
+}
+
+/// Marks again the paragraphs that hold digits in a number format.
+fn mark_number_formats(blocks: &mut [Block], formats: &[Fmt]) {
+    for b in blocks {
+        match b {
+            Block::Para(p) => {
+                let holds = p.inlines.iter().any(
+                    |i| matches!(i, Inline::Text(t, f) if number_run(t) && formats.contains(f)),
+                );
+                if holds {
+                    p.marked = marked_text(&p.inlines, &|f| formats.contains(f));
+                }
+            }
+            Block::Table(t) => {
+                for row in &mut t.rows {
+                    for cell in &mut row.cells {
+                        mark_number_formats(&mut cell.blocks, formats);
+                    }
+                }
+            }
+        }
+    }
+}
+
 fn build_para(
     ctx: &Ctx,
     direct: PProps,
@@ -1589,6 +1746,7 @@ fn build_para(
         }
     }
     let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
+    let marked = marked_text(&inlines, &|_| false);
 
     // The paragraph's own look: alignment, indentation, spacing, kept inside the page.
     let mut css = Vec::new();
@@ -1635,7 +1793,20 @@ fn build_para(
         && text.is_empty()
         && !inlines.iter().any(|i| matches!(i, Inline::Image(_)));
     let section_break = props.section.as_deref().is_some_and(|t| t != "continuous");
+    let runs: Vec<&Fmt> = inlines
+        .iter()
+        .filter_map(|i| match i {
+            Inline::Text(t, f) if !t.trim().is_empty() => Some(f),
+            _ => None,
+        })
+        .collect();
+    let styled = !runs.is_empty()
+        && (props.jc.as_deref() == Some("center")
+            || runs.iter().all(|f| f.bold)
+            || runs.iter().all(|f| f.italic));
     Para {
+        styled,
+        marked,
         heading,
         kind,
         css: css.join(";"),
@@ -1706,6 +1877,20 @@ pub(super) fn read_docx(bytes: &[u8], file_name: &str) -> AppResult<Docx> {
         .unwrap_or_else(|| "word/document.xml".to_string());
     let document_xml =
         read_entry(&mut archive, &document_path).ok_or_else(|| bad(file_name, "no document"))?;
+    // A body that is not well-formed XML is refused whole (Phase A1.5,
+    // independent review finding 11): read as far as its first error, it
+    // looked complete, and a paragraph cut there could verify short.
+    {
+        let mut reader = Reader::from_str(&document_xml);
+        reader.config_mut().check_end_names = false;
+        loop {
+            match reader.read_event() {
+                Ok(Event::Eof) => break,
+                Err(_) => return Err(bad(file_name, "damaged document part")),
+                _ => {}
+            }
+        }
+    }
     let dir = document_path
         .rsplit_once('/')
         .map(|(d, _)| format!("{d}/"))
@@ -1782,6 +1967,10 @@ pub(super) fn read_docx(bytes: &[u8], file_name: &str) -> AppResult<Docx> {
             match reader.read_event() {
                 Ok(Event::Start(e)) if name_of(&e) == "w:body" => {
                     parse_blocks(&mut reader, &mut ctx, "w:body", 0, &mut blocks);
+                    let formats = number_formats(&blocks);
+                    if !formats.is_empty() {
+                        mark_number_formats(&mut blocks, &formats);
+                    }
                     break;
                 }
                 Ok(Event::Eof) | Err(_) => break,
@@ -2027,13 +2216,22 @@ impl Layout<'_> {
         let id = format!("p{at}");
         self.marks.push((id.clone(), at, top, None));
         p.id = Some(id);
-        for part in split_long(&p.text, MAX_SEGMENT) {
+        let parts = split_long(&p.text, MAX_SEGMENT);
+        let mut marked = p
+            .marked
+            .as_deref()
+            .and_then(|m| super::split_like(m, &parts))
+            .map(Vec::into_iter);
+        for part in parts {
             self.segments.push(NewSegment {
+                marked: marked.as_mut().and_then(Iterator::next),
                 text: part,
                 chapter: chapter.clone(),
                 heading: heading.clone(),
                 section_path: section_path.clone().or_else(|| chapter.clone()),
                 paragraph_index: Some(self.paragraph),
+                note: self.in_notes,
+                styled: p.styled,
                 ..Default::default()
             });
             self.paragraph += 1;

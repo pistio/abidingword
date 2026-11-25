@@ -1,17 +1,28 @@
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { toApiError } from "@/lib/api";
 import { Plus } from "lucide-react";
 import { Button } from "@/design-system/Button";
 import type { StudySection } from "@/types/domain";
-import type { StudyTemplate } from "@/types/studies";
+import type { StudyPhase, StudyTemplate } from "@/types/studies";
 import { sectionGuidance, sectionTitle } from "./builtinText";
+
+/** A part to add: its heading and, for one the template keeps for later, its key and phase. */
+export interface NewPart {
+  title: string;
+  guidance?: string;
+  templateSectionKey?: string;
+  key?: string | null;
+  phase?: StudyPhase | null;
+}
 
 interface AddPartProps {
   /** The template the study was made with (or the built-in one for its kind): its parts to add later are suggested. */
   template: StudyTemplate | null;
   /** The study's parts now: a suggestion already there is not offered again. */
   sections: StudySection[];
-  onAdd: (part: { title: string; guidance?: string; templateSectionKey?: string }) => Promise<void>;
+  onAdd: (part: NewPart) => Promise<void>;
+  onRestore?: (keys?: string[]) => Promise<void>;
 }
 
 /**
@@ -19,7 +30,7 @@ interface AddPartProps {
  * (such as "Key Words"), or one with the person's own heading. The new part
  * is the person's own text, in their language, from then on.
  */
-export function AddPart({ template, sections, onAdd }: AddPartProps) {
+export function AddPart({ template, sections, onAdd, onRestore }: AddPartProps) {
   const { t } = useTranslation();
   const id = useId();
   const toggle = useRef<HTMLButtonElement>(null);
@@ -30,7 +41,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
   const present = new Set(sections.flatMap((s) => [s.key ?? "", sectionTitle(s, template?.key).toLocaleLowerCase()]));
   const suggestions = (template?.sections ?? [])
     .filter((s) => s.optional && !s.retired)
-    .map((s) => ({ key: s.key ?? "", title: sectionTitle(s, template?.key), guidance: sectionGuidance(s, template?.key) ?? undefined, templateSectionKey: s.key ?? undefined }))
+    .map((s) => ({ key: s.key ?? "", title: sectionTitle(s, template?.key), guidance: sectionGuidance(s, template?.key) ?? undefined, templateSectionKey: s.key ?? undefined, phase: s.phase ?? null }))
     .filter((s) => (!s.key || !present.has(s.key)) && !present.has(s.title.toLocaleLowerCase()));
 
   const close = () => {
@@ -38,7 +49,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
     setTitle("");
     toggle.current?.focus();
   };
-  const add = async (part: { title: string; guidance?: string; templateSectionKey?: string }) => {
+  const add = async (part: NewPart) => {
     if (busy || !part.title.trim()) return;
     setBusy(true);
     try {
@@ -60,6 +71,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
         }
       }}
     >
+      {template && onRestore && <RestoreMissingSections template={template} sections={sections} onRestore={onRestore} />}
       <Button ref={toggle} variant="quiet" className="min-h-11 self-start" aria-expanded={open} aria-controls={open ? id : undefined} onClick={() => (open ? close() : setOpen(true))}>
         <Plus className="size-4" aria-hidden="true" />
         {t("studies.parts.add")}
@@ -79,7 +91,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
                     const source = template?.isBuiltin ? template.sections.find((part) => part.key === s.key) : null;
                     void add(source ? { ...s, title: source.title, guidance: source.guidance ?? undefined } : s);
                   }}
-                  className="min-h-11 rounded-full border border-border px-4 text-[0.9375rem] text-text-strong hover:bg-bg-secondary"
+                  className="min-h-11 rounded-full border border-border px-4 text-[0.9375rem] text-text-strong hover:bg-hover"
                 >
                   {s.title}
                 </button>
@@ -102,7 +114,7 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t("studies.parts.own")}
-              className="h-11 min-w-0 flex-1 basis-48 rounded-aw border border-border bg-bg px-3 text-[0.9375rem] placeholder:text-text-muted"
+              className="h-11 min-w-0 flex-1 basis-48 aw-input px-3 text-[0.9375rem] placeholder:text-text-muted"
             />
             <Button type="submit" variant="primary" className="min-h-11" disabled={busy || !title.trim()}>
               {t("common.add")}
@@ -115,4 +127,29 @@ export function AddPart({ template, sections, onAdd }: AddPartProps) {
       )}
     </div>
   );
+}
+
+
+function RestoreMissingSections({ template, sections, onRestore }: { template: StudyTemplate; sections: StudySection[]; onRestore: (keys?: string[]) => Promise<void> }) {
+  const { t } = useTranslation();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const supported = template.isBuiltin && ["pozetek-study", "pozetek-writing-study", "ten-step-exegesis", "ten-step-writing-study"].includes(template.key);
+  const present = new Set(sections.map(section => section.key));
+  const missing = supported ? template.sections.filter(part => !part.optional && !part.retired && part.key && !present.has(part.key)) : [];
+  if (!missing.length) return null;
+  const restore = async (keys?: string[]) => {
+    if (busy) return;
+    setBusy(true); setError(null);
+    try { await onRestore(keys); } catch (e) { setError(toApiError(e).message); } finally { setBusy(false); }
+  };
+  return <details className="max-w-full rounded-aw border border-border-subtle p-3">
+    <summary className="min-h-11 cursor-pointer font-medium">{t("studies.parts.restoreMissing")}</summary>
+    <p className="type-meta">{t("studies.parts.restoreEmptyHint")}</p>
+    <div className="flex flex-wrap gap-2">
+      <Button disabled={busy} onClick={() => void restore()}>{t("studies.parts.restoreAll")}</Button>
+      {missing.map(part => <Button key={part.key} disabled={busy} onClick={() => void restore([part.key!])}>{t("studies.parts.restoreOne", { title: sectionTitle(part, template.key) })}</Button>)}
+    </div>
+    {error && <p role="alert">{error}</p>}
+  </details>;
 }

@@ -1,0 +1,211 @@
+{
+  "completedUTC": "2026-11-18T23:01:43.853766+00:00",
+  "classification": "Synthetic Linux PowerShell helper and parser checks; not Windows binary, installer or native application acceptance",
+  "powershellVersion": "7.5.4",
+  "runtimeVerification": {
+    "version": "7.5.4",
+    "file": "powershell-7.5.4-linux-x64.tar.gz",
+    "bytes": 75396784,
+    "sha256": "1fd7983fe56ca9e6233f126925edb24bf6b6b33e356b69996d925c4db94e2fef",
+    "releaseApi": "https://api.github.com/repos/PowerShell/PowerShell/releases/tags/v7.5.4",
+    "checksumUrl": "https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/hashes.sha256",
+    "archiveUrl": "https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-linux-x64.tar.gz",
+    "checksumFileSha256": "c1013e31e30ccb8c68366fe6a6e4cea50f4ddd12ff115078019e4d1d71d58f00",
+    "verifiedBeforeExecution": true
+  },
+  "repositoryHead": "0021c18a7b754b487b5ca9e1e189f6d4a7c50db7",
+  "helperSha256": "1fdbed8a15e4aab2268d959e2268d08794e177856d6dee46ef265eef0acbb2d4",
+  "workflowSha256": "dcf0a088dcee5b39a5c419b80a4d2ed8795d68a340e50b8afc05d21407a8b4c8",
+  "parseResults": [
+    {
+      "name": "new diagnostic staging helper",
+      "errors": []
+    },
+    {
+      "name": "native geometry collector",
+      "errors": []
+    },
+    {
+      "name": "pinned NSIS preparation",
+      "errors": []
+    },
+    {
+      "name": "pinned NSIS probe",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Reject unpinned source selection",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Preserve historical SQL bytes on Windows checkout",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Verify exact source and historical migrations before compilation",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Record build environment",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Install pinned frontend and Tauri CLI dependencies",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Acquire and validate NSIS dependencies before application compilation",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Prove pinned Tauri uses cached NSIS without GitHub tool downloads",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Compile unsigned application without packaging",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Preserve diagnostic executable and configured resources",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Package existing unsigned executable with cached NSIS",
+      "errors": []
+    },
+    {
+      "name": "workflow acceptance: Stage installer and checksum",
+      "errors": []
+    }
+  ],
+  "parseInputs": [
+    {
+      "name": "new diagnostic staging helper",
+      "path": "scripts/windows/Save-DiagnosticExecutable.ps1",
+      "sha256": "1fdbed8a15e4aab2268d959e2268d08794e177856d6dee46ef265eef0acbb2d4",
+      "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd"
+    },
+    {
+      "name": "native geometry collector",
+      "path": "scripts/windows/Measure-WebviewGeometry.ps1",
+      "sha256": "06a18c919110bbb8ffd785a1a5f28668ec08b492e20e2cb7d927bc70e87d5b21",
+      "sourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd"
+    },
+    {
+      "name": "pinned NSIS preparation",
+      "path": "scripts/windows/Prepare-Nsis.ps1",
+      "sha256": "297d8e323b4fd8cdd0209f82db8afc98eca36e8872320f40a09edefcace1276c",
+      "sourceSha": "4bddc038d190cf42fd475b7c504430e96c014769"
+    },
+    {
+      "name": "pinned NSIS probe",
+      "path": "scripts/windows/Test-NsisCache.ps1",
+      "sha256": "c5cdc30f1fb398559a45e5629d9650422b4462dfea4083c0ff179a28c7d066ec",
+      "sourceSha": "4bddc038d190cf42fd475b7c504430e96c014769"
+    },
+    {
+      "name": "workflow acceptance: Reject unpinned source selection",
+      "sha256": "32528c98b7ecfac3475e132897a400ad9b31e3a5dae4962ef77cd1974e50d722",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Preserve historical SQL bytes on Windows checkout",
+      "sha256": "d5c1b4607053182b8a13b312966644d0440f281fad1d41dbe4bc706fcccac6c6",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Verify exact source and historical migrations before compilation",
+      "sha256": "a009777dfe871f55530e594fd27dc4b0cb808535e2730165fc285858ca03f94f",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Record build environment",
+      "sha256": "37b90df30bbac75360fc9e41cf68d8e2d9b4524158e1338114d2e578d4211d68",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Install pinned frontend and Tauri CLI dependencies",
+      "sha256": "9db3f780def6105eee3cc930de4d0982607760820fddaa3facdd3813ccb40628",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Acquire and validate NSIS dependencies before application compilation",
+      "sha256": "31b7b0416585008cd82ff65167342853a1f2d19f6cc44439092bb87de23cfc3c",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Prove pinned Tauri uses cached NSIS without GitHub tool downloads",
+      "sha256": "a69cffddf49e588deb883c9abb70d038a063a65d00d9a6eb2291ef5a3fc1c3a8",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Compile unsigned application without packaging",
+      "sha256": "488d0381e5300f63723ad802e8f2f44f8d2a3eabdfc984c57c153d14cacd918e",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Preserve diagnostic executable and configured resources",
+      "sha256": "7778d4f73c4ce8a7573da0dc4b57bffa3dfb71e77b56f6866231458a51fc26b1",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Package existing unsigned executable with cached NSIS",
+      "sha256": "f25cbe8664bdea87c36ff9163c1c0f204eba9c248004dee896b542a94f7b40ef",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    },
+    {
+      "name": "workflow acceptance: Stage installer and checksum",
+      "sha256": "124ce36cd3a4874af7ca3036c6674accc8562f671ad7bc6dc72d53c298df32c4",
+      "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+      "sourceIdentity": "working-tree workflow identified by workflowSha256"
+    }
+  ],
+  "syntheticTests": [
+    {
+      "name": "Correct expected SHA accepted and recorded in notice and manifest",
+      "passed": true
+    },
+    {
+      "name": "All five staged files have accurate byte counts and SHA-256 values",
+      "passed": true
+    },
+    {
+      "name": "Complete status and available=true output reflect the invented fixture",
+      "passed": true
+    },
+    {
+      "name": "Wrong full SHA rejected before destination creation",
+      "passed": true
+    },
+    {
+      "name": "Malformed SHA rejected before destination creation",
+      "passed": true
+    }
+  ],
+  "syntheticFixtureCommit": "dd71895a3d618abcaef0f6d96d705487afa73f39",
+  "sourceEdits": false,
+  "windowsExecution": false,
+  "installerExecution": false,
+  "actionRuns": false,
+  "workflowPath": "docs/implementation/issue-49-original/installer-workflow.yml.in",
+  "workflowSyntaxRevalidatedUTC": "2026-11-18T23:16:08.845356+00:00",
+  "workflowValidationNote": "Reparsed all 11 PowerShell run blocks from the current working-tree template after all six application-source pins changed to the published candidate SHA. This does not claim the workflow is committed at the original helper-test repositoryHead. The original four helper parser checks, five synthetic staging checks and original repositoryHead metadata are retained; the unchanged helper was not functionally rerun.",
+  "workflowValidatedAs": "Current working-tree workflow template; no commit identity assigned to this workflow content by this validation",
+  "workflowWorkingTreeStatusAtValidation": "M docs/implementation/issue-49-original/installer-workflow.yml.in",
+  "workflowExpectedSourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+  "workflowSourcePinOccurrences": 6,
+  "rawReportSha256": "4cb15a263ab13e9ae01546988c0748455b2e8b194449fe2d9a5417e32b384910",
+  "repositoryHeadIsLocal": true,
+  "applicationSourceSha": "539b54d65c2cecf010cd1573b8bd51c91ac640bd",
+  "applicationTreeSha": "f06b161d5017d105980ce9c94dc4337e58e6ee53"
+}

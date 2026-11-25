@@ -222,11 +222,16 @@ describe("committed configuration", () => {
     expect(read("src-tauri/updater/test-channel.json")).not.toMatch(/secret key|PRIVATE/i);
   });
 
-  it("grants the window only the permissions it needs (updater, the open dialog, and opening http(s) links), and no wider CSP", () => {
+  it("grants the main window only the permissions it needs (its own commands, updater, the open and save dialogs, and opening http(s) links), and no wider CSP", () => {
     const capability = JSON.parse(read("src-tauri/capabilities/default.json"));
+    expect(capability.windows).toEqual(["main"]);
     expect(capability.permissions).toEqual([
+      // The app's own commands the main window may call (v0.18.3, permissions/windows.toml).
+      "main-window",
       "core:default",
       "dialog:allow-open",
+      // Choosing where a presentation export is saved (v0.18).
+      "dialog:allow-save",
       "updater:default",
       // A clicked web link opens in the default browser: only http and https, and no other opener permission.
       { identifier: "opener:allow-open-url", allow: [{ url: "https://*" }, { url: "http://*" }] },
@@ -234,6 +239,13 @@ describe("committed configuration", () => {
     const csp: string = JSON.parse(read("src-tauri/tauri.conf.json")).app.security.csp;
     expect(csp).toContain("connect-src ipc: http://ipc.localhost");
     expect(csp).not.toMatch(/https?:\/\/(?!ipc\.localhost)/);
+  });
+
+  it("gives the audience screen's window nothing but its five read commands and listening for the slide to show", () => {
+    const capability = JSON.parse(read("src-tauri/capabilities/audience.json"));
+    expect(capability.windows).toEqual(["audience"]);
+    // No emit, no window control, no dialogs (v0.18.3).
+    expect(capability.permissions).toEqual(["audience-window", "core:event:allow-listen", "core:event:allow-unlisten"]);
   });
 
   describe("the publish workflow", () => {
@@ -245,25 +257,16 @@ describe("committed configuration", () => {
       return next === -1 ? wf.slice(start) : wf.slice(start, start + 1 + next);
     };
 
-    it("starts only by hand or after CI succeeded on a push to main", () => {
+    it("starts signed test-update publication only on explicit manual dispatch", () => {
       const on = wf.slice(wf.indexOf("\non:\n"), wf.indexOf("\npermissions:"));
       expect(on).toContain("workflow_dispatch:");
-      expect(on).toMatch(/workflow_run:\s+workflows: \["CI"\]\s+types: \[completed\]\s+branches: \[main\]/);
-      expect(on).not.toMatch(/\bpull_request/);
-      expect(on).not.toMatch(/\n {2}push:/);
-      const gate = job("gate");
-      for (const guard of [
-        "github.event.workflow_run.conclusion == 'success'",
-        "github.event.workflow_run.event == 'push'",
-        "github.event.workflow_run.head_branch == 'main'",
-        "github.event.workflow_run.head_repository.full_name == github.repository",
-      ]) {
-        expect(gate).toContain(guard);
-      }
+      expect(on).not.toMatch(/workflow_run:|pull_request:|\n {2}push:/);
+      expect(job("gate")).toContain("if: github.event_name == 'workflow_dispatch'");
     });
 
-    it("publishes the exact commit CI passed on, only while it is still the newest on main", () => {
-      expect(job("gate")).toContain("CI_SHA: ${{ github.event.workflow_run.head_sha }}");
+    it("publishes only an explicitly dispatched source commit, retaining main freshness checks", () => {
+      expect(job("gate")).toContain("DISPATCH_SHA: ${{ github.sha }}");
+      expect(job("gate")).toContain('echo "sha=$DISPATCH_SHA"');
       expect(job("gate")).toContain('commits/main" --jq .sha');
       for (const name of ["build", "publish"]) {
         expect(job(name)).toContain("ref: ${{ needs.gate.outputs.sha }}");

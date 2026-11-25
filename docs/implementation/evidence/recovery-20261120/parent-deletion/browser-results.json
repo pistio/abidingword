@@ -1,0 +1,84 @@
+{
+  "platform": "Linux Chromium; actual React App with invented in-memory backend; no native Windows or SQLite acceptance",
+  "errors": [],
+  "pendingSave": {
+    "rootInert": true,
+    "focusedStatus": true,
+    "bodyChildren": [
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "SCRIPT",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": false,
+        "status": true
+      }
+    ],
+    "overlay": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 900
+    },
+    "writes": 1,
+    "deletes": 0
+  },
+  "pendingDelete": {
+    "rootInert": true,
+    "focusedStatus": true,
+    "bodyChildren": [
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "SCRIPT",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": true,
+        "status": false
+      },
+      {
+        "tag": "DIV",
+        "inert": false,
+        "status": true
+      },
+      {
+        "tag": "BUTTON",
+        "inert": true,
+        "status": false
+      }
+    ],
+    "overlay": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 900
+    },
+    "writes": 1,
+    "deletes": 1
+  },
+  "released": {
+    "rootInert": false,
+    "latePortalInert": false,
+    "focused": "<button type=\"button\" class=\"inline-flex min-h-10 items-center justify-center gap-2 rounded-aw px-4 text-[0.9375rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 border border-danger/50 text-danger hover:bg-danger/10 \">Move to Trash</button>",
+    "error": "Abiding Word could not read or save your data. Your most recent change may not have been saved. Details are in the log file."
+  },
+  "passed": true
+}

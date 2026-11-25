@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { createFakePdfEngine } from "../support/fakePdfEngine";
 import { FORMATTED_BOOK } from "../support/epubFixture";
 import { createMemoryApi, type MemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // Marks in the formatted Original of an EPUB or DOCX (v0.14): one mark, made in Reading, drawn on
 // the published page too, only where its stored words are found exactly there. All text is invented.
@@ -24,7 +25,7 @@ async function markWords(api: MemoryApi, paragraph: string, words: string, kind:
 async function openOriginal(api: MemoryApi) {
   const { user } = await renderApp(api, { pdfEngine: createFakePdfEngine({ pages: 1 }), width: 1440 });
   const sources = screen.getByRole("complementary", { name: "Sources" });
-  await user.click(await within(sources).findByRole("button", { name: /A Formatted Book/ }));
+  await user.click(await within(sources).findByRole("button", { name: /^A Formatted Book/ }));
   const reader = await within(sources).findByRole("region", { name: "A Formatted Book" });
   await user.click(within(reader).getByRole("button", { name: "Original" }));
   const host = await within(reader).findByTestId("epub-page");
@@ -75,7 +76,7 @@ describe("marks in the formatted Original", () => {
       shown.push(this);
     };
     try {
-      await user.click(within(reader).getByRole("button", { name: "Marks" }));
+      await readerAction(user, "Marks", reader);
       const panel = await screen.findByRole("region", { name: "Marks in A Formatted Book" });
       await user.click(within(panel).getAllByRole("button").find((b) => b.closest("li"))!);
       await waitFor(() => expect(shown.at(-1)).toBe(page().querySelector("mark[data-mark='green']")));
@@ -98,7 +99,7 @@ describe("marks in a formatted DOCX", () => {
     await api.sourceAnnotationCreate({ sourceId: segment.sourceId, kind: "highlight", color: "rose", start: { segmentId: segment.id, offset: at }, end: { segmentId: segment.id, offset: at + words.length }, quote: words });
     const { user } = await renderApp(api, { pdfEngine: createFakePdfEngine({ pages: 1 }), width: 1440 });
     const sources = screen.getByRole("complementary", { name: "Sources" });
-    await user.click(await within(sources).findByRole("button", { name: /A Formatted Document/ }));
+    await user.click(await within(sources).findByRole("button", { name: /^A Formatted Document/ }));
     const reader = await within(sources).findByRole("region", { name: "A Formatted Document" });
     await user.click(within(reader).getByRole("button", { name: "Original" }));
     const host = await within(reader).findByTestId("epub-page");

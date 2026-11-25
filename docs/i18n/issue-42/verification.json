@@ -1,0 +1,189 @@
+{
+  "recordedAt": "2026-11-08T22:23:53.963004+00:00",
+  "reviewType": "Complete individual AI language review and separate consistency passes; no human native-speaker approval or Windows acceptance",
+  "baseline": "64dadc0d1bb263362aa384951612e9395d705725",
+  "stackBase": "38c785be723f4ff4ca7ba8c885aeabff3a89df7a",
+  "applicationImplementationCommit": "6ffed07de160b5168faf740cd4e1642ec5c29cf2",
+  "finalTestCommit": "4ea5d2998008a4fecb5bf434a0846264d7d5e8e0",
+  "applicationSourceChangedAfterFreeze": false,
+  "coverage": {
+    "logicalEnglishStrings": 4045,
+    "englishLeaves": 4186,
+    "allLocaleLeaves": 25396,
+    "existingLeafEdits": 564,
+    "addedLeafLabels": 180,
+    "namespacesPerLanguage": 9,
+    "languages": [
+      "en-GB",
+      "de",
+      "ko",
+      "fr",
+      "es",
+      "pt-BR"
+    ],
+    "sourceFiles": 377,
+    "nativeCodes": 216,
+    "missingNativeCodeTranslations": 0,
+    "individualLedgerCheck": "passed"
+  },
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run lint",
+      "result": "passed"
+    },
+    {
+      "command": "npm run i18n:check",
+      "result": "passed",
+      "details": "6 languages × 9 areas; all consistent"
+    },
+    {
+      "command": "npm run i18n:corpus",
+      "result": "passed",
+      "details": "Generated corpus current; heuristic flags adjudicated in individual ledgers, not approval verdicts"
+    },
+    {
+      "command": "node scripts/test-editorial-review.mjs",
+      "result": "passed",
+      "details": "Every current leaf has unique exact before/after decision, context and reason"
+    },
+    {
+      "command": "python3 scripts/test-editorial-contract.py",
+      "result": "passed"
+    },
+    {
+      "command": "python3 scripts/test-pdf-index-query.py",
+      "result": "passed",
+      "vmSteps": 45200,
+      "links": 4112
+    },
+    {
+      "command": "npm test -- --maxWorkers=2 --reporter=json --outputFile=/workspace/work/frontend-acceptance.json",
+      "result": "passed",
+      "passed": 1289,
+      "failed": 0,
+      "pending": 0,
+      "files": 120,
+      "artifact": "verification/frontend-results.json"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed",
+      "warning": "Existing Vite large-chunk warning; no build failure"
+    },
+    {
+      "command": "cargo fmt --manifest-path src-tauri/Cargo.toml -- --check",
+      "result": "passed"
+    },
+    {
+      "command": "cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --locked -- -D warnings",
+      "result": "passed"
+    },
+    {
+      "command": "cargo test --manifest-path src-tauri/Cargo.toml --locked",
+      "result": "passed",
+      "passed": 1103,
+      "failed": 0,
+      "ignored": 8,
+      "testBinariesAndDocTests": 95,
+      "artifact": "verification/rust-tests.log"
+    },
+    {
+      "command": "cargo build --manifest-path src-tauri/Cargo.toml --release --locked",
+      "result": "passed",
+      "duration": "6m10s",
+      "platform": "Linux native optimized compilation only; no installer/publication"
+    },
+    {
+      "command": "Playwright editorial-full.mjs + editorial-sources.mjs",
+      "result": "passed",
+      "editorSettingsCases": 72,
+      "sourceScriptureTimeoutCases": 12,
+      "screenshots": 96,
+      "widths": [
+        900,
+        1440
+      ],
+      "narrowDeviceScale": 1.5,
+      "pageErrors": 0,
+      "sampledHorizontalOverflow": 0,
+      "platform": "Linux Chromium; synthetic profile/generated PDF, not Windows or actual owner PDF"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "preservation": {
+    "historicalMigrationFiles": 27,
+    "migrationPathContentSha256": "f1dbfdb065d280d7c8f0f4962d023c59b3ad3306b4f74c32151a82461ccad5bd",
+    "migrationDigestAlgorithm": "SHA256 of each sorted tracked migration path, NUL, exact bytes, NUL",
+    "schema": 27,
+    "reserved0028Changed": false,
+    "resourcesChanged": false,
+    "recogniserOrImportersChanged": false,
+    "workflowsOrNSISChanged": false,
+    "acceptedTenStepChanged": false,
+    "mainBibleNamesChanged": false,
+    "storedWritingOrOwnerMaterialsChanged": false
+  },
+  "environment": {
+    "node": "v24.19.0",
+    "rust": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "nativeLibraries": "Official Debian Trixie development packages extracted workspace-locally; existing runtime library links; no privileged installation",
+    "nativeTestProfileDebug": 0,
+    "xdg": "Workspace-local XDG_DATA_HOME/XDG_CONFIG_HOME/XDG_CACHE_HOME for read-only-home Tauri mock tests"
+  },
+  "earlierAttemptsAndResolutions": [
+    {
+      "attempt": "Initial evolving frontend source run",
+      "result": "1234/1252 passed; 18 failures",
+      "resolution": "Reviewed-copy assertions and regenerated corpus/material fixture updated; later complete runs supersede it."
+    },
+    {
+      "attempt": "First combined 1279-test run",
+      "result": "1274 passed; 5 failures",
+      "resolution": "Two copy/settling expectations and three async editor/focus timing cases traced. No application behavior relaxed."
+    },
+    {
+      "attempt": "1289-test combined rerun",
+      "result": "1288 passed; one stale-write test failed",
+      "resolution": "Test awaited result-heading existence but not scheduled focus handoff; now proves actual edit before checking rejection. Final entire suite1289/1289 green."
+    },
+    {
+      "attempt": "Native environment preparation",
+      "result": "Initially no Cargo or Linux development pkg-config metadata; first mock-capability run tried read-only home",
+      "resolution": "Workspace Rust toolchain/development libraries and workspace XDG dirs; final fmt/Clippy/full tests/release all green."
+    },
+    {
+      "attempt": "Browser capture while locale files still edited",
+      "result": "HMR navigation interrupted an editor capture",
+      "resolution": "Frozen editor websocket capture rerun; final72+12 cases and96 screenshots pass."
+    }
+  ],
+  "ownerAssessmentQuestions": [
+    "Two protected French Ten-Step syntax occurrences retained and separately proposed",
+    "Sample quotation and anonymous attribution provenance",
+    "Scope of local-installation explanatory privacy wording after custom Address",
+    "Unavailable primary unpublished owner workshop/guide; existing accepted content retained"
+  ],
+  "remainingAcceptanceGaps": [
+    "Qualified human native proofreading",
+    "Actual Windows WebView2, high-DPI, OS dialog chrome and screen-reader operation",
+    "Real MacArthur400-page processing/persistence and explicit Apg6 navigation",
+    "Live DeepSeek Korean response and actual external Office/projector acceptance"
+  ],
+  "prohibitedActionsPerformed": {
+    "paidGitHubActions": false,
+    "windowsInstaller": false,
+    "merge": false,
+    "releasePublication": false,
+    "deployment": false,
+    "updater": false,
+    "liveAIRequest": false
+  },
+  "githubWorkflowGuard": "codex branch push does not match CI/native-build branch filters; draft PR base is codex/owner-followup-35-33; all new commits carry[skip ci]. No workflow dispatch used."
+}

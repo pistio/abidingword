@@ -17,6 +17,10 @@
     "nextChapter": "Next chapter"
   },
   "reader": {
+    "recognisedFromDocument": "Recognised from your document",
+    "editionConfirmed": "Edition confirmed by you",
+    "editionProvisional": "Edition unconfirmed",
+    "numberingUnmapped": "Parallel verse alignment is unavailable for this document edition.",
     "opening": "Opening {{passage}}…",
     "showing": "showing {{passage}}",
     "noText": "{{name}} has no text for {{passage}}.",
@@ -34,7 +38,9 @@
       "notes_one": "{{count}} note",
       "notes_other": "{{count}} notes",
       "highlightedColor": "highlighted {{color}}"
-    }
+    },
+    "unchecked": "Found in this Bible’s document, but its text could not be checked, so it is not shown here.",
+    "uncheckedOnPage": "Found on page {{page}} of this Bible’s document, but its text could not be checked, so it is not shown here."
   },
   "verseTools": {
     "toolsFor": "Tools for verse {{verse}}",
@@ -54,7 +60,7 @@
   "search": {
     "title": "Search",
     "backToReading": "Back to reading",
-    "queryLabel": "Words or “exact phrase”",
+    "queryLabel": "Words or \"exact phrase\"",
     "submit": "Search",
     "onlyNamed": "Only {{name}}",
     "onlyCurrent": "Only this translation",
@@ -77,8 +83,8 @@
       "done": "Bible added"
     },
     "checking": "Reading and checking every book, chapter and verse. This can take a few seconds.",
-    "done_one": "<strong>{{name}}</strong> is ready to read, with {{count}} book and {{verses}} verses.",
-    "done_other": "<strong>{{name}}</strong> is ready to read, with {{count}} books and {{verses}} verses.",
+    "done_one": "<strong>{{name}}</strong> is ready to read. Books: {{count}} · Verses: {{verses}}.",
+    "done_other": "<strong>{{name}}</strong> is ready to read. Books: {{count}} · Verses: {{verses}}.",
     "readNow": "Read it now",
     "included": "Included with Abiding Word",
     "chooseLabel": "Choose a Bible",
@@ -88,7 +94,7 @@
     "confirmBody": "Next, Abiding Word checks every book, chapter and verse and shows you what it found. Nothing is added until you confirm.",
     "confirmContinue": "Continue",
     "ownTitle": "A Bible you own",
-    "ownBody": "Choose a Bible in USFM format: a .zip download, or its .usfm files. Abiding Word keeps its own copy and never changes your file.",
+    "ownBody": "Choose a Bible as a document (PDF, EPUB, Word, Markdown or plain text) or in a Bible format: USFM (a .zip download, or its .usfm files), the Open Scriptures Hebrew Bible’s OSIS files, or MorphGNT files. Abiding Word keeps its own copy and never changes your files.",
     "chooseFiles": "Choose Bible files…",
     "field": {
       "name": "Name",
@@ -116,10 +122,178 @@
     "warnings_other": "{{count}} warnings — worth reviewing",
     "notes_one": "{{count}} note",
     "notes_other": "{{count}} notes",
-    "skipped_one": "{{count}} file was left out because it is not one of the 66 books (for example an introduction or glossary).",
-    "skipped_other": "{{count}} files were left out because they are not one of the 66 books (for example an introduction or glossary).",
+    "skipped_one": "{{count}} file was left out: Abiding Word found no book of the Bible in it that it can read (for example an introduction, a glossary or a file in another format).",
+    "skipped_other": "{{count}} files were left out: Abiding Word found no book of the Bible in them that it can read (for example an introduction, a glossary or a file in another format).",
+    "skippedNames": "Files left out",
     "adding": "Adding…",
-    "add": "Add this Bible"
+    "add": "Add this Bible",
+    "words": {
+      "leftOut_one": "{{formatted}} annotated word could not be read and is left out.",
+      "leftOut_other": "{{formatted}} annotated words could not be read and are left out.",
+      "not": {
+        "unreliable_one": "The word annotations could not be read reliably ({{left}} of {{formatted}} could not be read), so none are added. The text is not affected.",
+        "unreliable_other": "The word annotations could not be read reliably ({{left}} of {{formatted}} could not be read), so none are added. The text is not affected.",
+        "unreadable_one": "The word annotations could not be read, so none are added. The text is not affected.",
+        "unreadable_other": "The word annotations could not be read, so none are added. The text is not affected.",
+        "tooLarge_one": "There are more word annotations than any Bible has, so none are added. The text is not affected.",
+        "tooLarge_other": "There are more word annotations than any Bible has, so none are added. The text is not affected."
+      }
+    },
+    "guide": {
+      "title": "Hebrew and Greek editions for original-language research",
+      "intro": "Some editions give each word its dictionary form, its grammar or a lexical number. Some are included or offered as verified downloads above; others can be downloaded from their publishers and then chosen here.",
+      "open": "Open {{host}}",
+      "note": "Check each edition’s licence on its page before sharing anything made from it. If an edition uses the Hebrew Bible’s verse numbers, choose its verse map together with its files (for the Open Scriptures Hebrew Bible: wlc/VerseMap.xml).",
+      "oshb": {
+        "name": "Open Scriptures Hebrew Bible (Hebrew Old Testament)",
+        "gives": "Written word, lexical number and grammar for every word. No dictionary forms.",
+        "how": "Download the repository as a .zip, then choose the .xml files in its wlc folder, including VerseMap.xml. Text: public domain; lexical numbers and grammar: CC BY 4.0."
+      },
+      "wlc": {
+        "name": "Westminster Leningrad Codex (Hebrew Old Testament, eBible.org)",
+        "gives": "Written word and lexical numbers. Grammar only on a few words.",
+        "how": "Download the USFM .zip and choose it together with VerseMap.xml from the Open Scriptures Hebrew Bible. Text: public domain; lexical numbers and grammar: CC BY-SA 3.0."
+      },
+      "morphgnt": {
+        "name": "MorphGNT: SBL Greek New Testament",
+        "gives": "Written word, dictionary form and grammar for every word. No lexical numbers.",
+        "how": "Download the repository as a .zip and choose the .txt files (one per book). Dictionary forms and grammar: CC BY-SA 3.0; the SBLGNT text has its own licence, shown on the page."
+      },
+      "rp": {
+        "name": "Robinson–Pierpont Byzantine Greek New Testament (eBible.org)",
+        "gives": "Written word, lexical number and grammar for every word. No dictionary forms.",
+        "how": "Download the USFM .zip and choose it. Public domain."
+      },
+      "sbl": {
+        "name": "SBL Greek New Testament (eBible.org)",
+        "gives": "Written word and lexical numbers only.",
+        "how": "Download the USFM .zip and choose it. CC BY 4.0."
+      }
+    },
+    "document": {
+      "evidenceSamples": "Source evidence samples",
+      "sourceSegment": "Source paragraph {{number}}",
+      "byteRanges": "Entry byte ranges: {{ranges}}",
+      "sourceExclusions": "Source exclusions: {{text}}",
+      "confirmEdition": "I confirm the edition identified above.",
+      "progress": "Documents read: {{done}} of {{total}}",
+      "filesTitle": "What the files hold",
+      "file": {
+        "pdfText_one": "PDF, {{formatted}} page, its text can be read",
+        "pdfText_other": "PDF, {{formatted}} pages, their text can be read",
+        "pdfScanned_one": "PDF, {{formatted}} scanned page: no text to read or search",
+        "pdfScanned_other": "PDF, {{formatted}} scanned pages: no text to read or search",
+        "epub": "EPUB book",
+        "docx": "Word document",
+        "markdown": "Markdown text",
+        "text": "Plain text"
+      },
+      "layoutKept": "Its original layout stays available for reading.",
+      "layoutText": "It is shown as its text.",
+      "notes_one": "{{formatted}} footnote is kept apart from the text.",
+      "notes_other": "{{formatted}} footnotes are kept apart from the text.",
+      "usable": "Books, chapters and verses were recognised. It can be read by book, chapter and verse like any other Bible.",
+      "unusable": "Some places are unclear (listed below), so its verses can’t be used as they are. You can correct the books found, or add it to read as a document.",
+      "noneFound": "No book, chapter and verse structure was recognised. It can be added to read as a document.",
+      "scannedOnly": "There is no text to look for verses in. It can be added to read page by page.",
+      "modeLabel": "How to add it",
+      "mode": {
+        "verses": "By book, chapter and verse",
+        "versesHint": "Going to a passage, search, the concordance and references from your studies work as with any Bible. The document stays available too.",
+        "document": "As a document to read",
+        "documentHint": "You read it as it is and can search its text. Verse tools are not available, and references from your studies open in another Bible."
+      },
+      "noWords": "Word information (dictionary forms, grammar, lexical numbers): none. Ordinary documents don’t carry it, and none is made up from the text.",
+      "booksTitle_one": "Check the book found ({{formatted}})",
+      "booksTitle_other": "Check the books found ({{formatted}})",
+      "booksIntro": "Each book begins at a heading in the document. If a heading was identified as the wrong book, or no book was identified, choose the right one — or leave that part out.",
+      "bookChoice": "Book for “{{heading}}”",
+      "notRecognised": "Not recognised — choose a book",
+      "leaveOut": "Leave out",
+      "bookCounts": "Chapters: {{chapters}} · Verses: {{verses}}",
+      "correcting": "Reading the documents again…",
+      "leftOutTitle": "Text left out of the verses ({{formatted}} characters)",
+      "leftOutIntro": "Headings, introductions and notes are not Scripture text. They stay in the document, but they are not part of any verse. Examples:",
+      "reason": {
+        "heading": "Heading",
+        "beforeVerses": "Before the first verse",
+        "noBook": "Before any book",
+        "notes": "Notes",
+        "leftOutBook": "In a part left out",
+        "crossReference": "Cross-reference",
+        "noteOnly": "Only in a note",
+        "subscription": "Closing words of a book"
+      },
+      "pdfLimit": "In a PDF, a heading printed between two verses can’t always be told apart from the verse before it. Check a few passages after adding it.",
+      "licenceField": "Copyright or licence (optional)",
+      "licenceHint": "As the document states it, for your own reference.",
+      "addDocument": "Add to read as a document",
+      "ready": {
+        "none": "No book can be used by its verses yet.",
+        "some_one": "{{books}} is ready to use.",
+        "some_other": "{{books}} are ready to use.",
+        "many_one": "{{count}} book is ready to use.",
+        "many_other": "{{count}} books are ready to use.",
+        "check_one": "{{count}} chapter needs checking.",
+        "check_other": "{{count}} chapters need checking."
+      },
+      "unverified_one": "{{formatted}} verse was found, but its text could not be checked. It is not used as Bible text: it stays in the document and is shown as found but not checked.",
+      "unverified_other": "{{formatted}} verses were found, but their text could not be checked. They are not used as Bible text: they stay in the document and are shown as found but not checked.",
+      "unverifiedWhy": "Why the text could not be checked",
+      "unverifiedReason": {
+        "possibleHeading_one": "{{formatted}} verse contains a line that could be a heading or a label.",
+        "possibleHeading_other": "{{formatted}} verses contain a line that could be a heading or a label.",
+        "reference_one": "{{formatted}} verse contains a Bible reference, perhaps a page header or a cross-reference.",
+        "reference_other": "{{formatted}} verses contain a Bible reference, perhaps a page header or a cross-reference.",
+        "noteSign_one": "{{formatted}} verse contains a note sign that no note explains.",
+        "noteSign_other": "{{formatted}} verses contain a note sign that no note explains.",
+        "unnumbered_one": "In {{formatted}} chapter, verse 1 has no number, so where it ends is not certain.",
+        "unnumbered_other": "In {{formatted}} chapters, verse 1 has no number, so where it ends is not certain.",
+        "length_one": "{{formatted}} verse is far longer than the others in its chapter.",
+        "length_other": "{{formatted}} verses are far longer than the others in their chapters.",
+        "psalmTitle_one": "{{formatted}} psalm’s verse 1 may include the psalm’s title.",
+        "psalmTitle_other": "{{formatted}} psalms’ verse 1 may include the psalm’s title.",
+        "boundary_one": "In {{formatted}} verse, where it begins or ends is not certain.",
+        "boundary_other": "In {{formatted}} verses, where they begin or end is not certain."
+      },
+      "yourCorrection": "Your correction",
+      "saved": {
+        "title_one": "{{formatted}} earlier correction",
+        "title_other": "{{formatted}} earlier corrections",
+        "choice": "“{{heading}}” → {{book}}",
+        "applied": "Applied.",
+        "earlier": "Applied: you made it when you added these documents before.",
+        "documentChanged": "The document has changed since you made this correction. It was applied: please check it.",
+        "detectionChanged": "Abiding Word now reads this heading as {{book}}. Your choice was kept: please check it.",
+        "notFound": "This heading was not found again, so nothing was changed. Your correction is kept."
+      }
+    },
+    "doneDocument": "<strong>{{name}}</strong> was added to read as a document.",
+    "available": {
+      "title": "Available to download",
+      "intro": "Free editions in the original languages, with information about each word. Abiding Word downloads one only when you ask, checks every file against its verified copy, and keeps nothing that differs.",
+      "size": "{{size}} MB",
+      "contains": {
+        "lemma": "dictionary forms",
+        "strong": "lexical numbers",
+        "morph": "grammar"
+      },
+      "added": "Added",
+      "download": "Download {{name}}…",
+      "confirmTitle": "Download {{name}}?",
+      "confirm": "Download ({{size}})",
+      "confirmBody": "{{files}} files ({{size}}) are downloaded from GitHub and each is checked against its verified copy. Then you review the Bible as usual; nothing is added before you confirm.",
+      "technical": "Licence and version",
+      "offline": "Once added, it works without an internet connection.",
+      "progress": "Downloading and checking file {{done}} of {{total}}…",
+      "starting": "Downloading…",
+      "partial_one": "{{count}} of the 66 books",
+      "partial_other": "{{count}} of the 66 books",
+      "confirmBody_one": "{{files}} file ({{size}}) is downloaded from GitHub and checked against its verified copy. Then you review the Bible as usual; nothing is added before you confirm.",
+      "confirmBody_other": "{{files}} files ({{size}}) are downloaded from GitHub and each is checked against its verified copy. Then you review the Bible as usual; nothing is added before you confirm."
+    },
+    "partialBooks_one": "{{count}} of the 66 books",
+    "partialBooks_other": "{{count}} of the 66 books"
   },
   "bibles": {
     "empty": "No Bible has been added yet.",
@@ -131,7 +305,8 @@
     },
     "status": {
       "ready": "Ready",
-      "notStructured": "Not yet structured"
+      "notStructured": "Not yet structured",
+      "document": "Read as a document"
     },
     "details": "Details",
     "hideDetails": "Hide details",
@@ -143,13 +318,62 @@
       "licence": "Licence",
       "notice": "Notice",
       "from": "From",
-      "added": "Added"
+      "added": "Added",
+      "language": "Language",
+      "words": "Word information"
     },
-    "contents_one": "{{count}} book, {{verses}} verses",
-    "contents_other": "{{count}} books, {{verses}} verses",
+    "contents_one": "Books: {{count}} · Verses: {{verses}}",
+    "contents_other": "Books: {{count}} · Verses: {{verses}}",
     "confirmRemove": "Remove <strong>{{name}}</strong>? Its text will be deleted from Abiding Word. Your studies, passage links and notes are kept.",
-    "confirmRemoveManaged": "Remove <strong>{{name}}</strong>? Its text will be deleted from Abiding Word, together with Abiding Word's copy of the file (your original file is not touched). Your studies, passage links and notes are kept.",
-    "keep": "Keep it"
+    "confirmRemoveManaged": "Remove <strong>{{name}}</strong>? Its text will be deleted from Abiding Word, together with Abiding Word’s copy of the file (your original file is not touched). Your studies, passage links and notes are kept.",
+    "keep": "Keep it",
+    "changeLanguage": "Change language",
+    "saveLanguage": "Save language",
+    "languageNotSet": "not set",
+    "words": {
+      "indexed_one": "Word index: {{formatted}} word.",
+      "indexed_other": "Word index: {{formatted}} words.",
+      "none": "No word index.",
+      "grammarRaw": "Grammar codes shown as written.",
+      "grammarStated": "Grammar described as {{scheme}}, as the edition says.",
+      "grammarChosen": "Grammar described as {{scheme}}, as you chose.",
+      "evidence": "Stated in {{file}}: “{{words}}”.",
+      "check": "Look for word information…",
+      "recheck": "Read word information again…",
+      "checking": "Reading the files…",
+      "nothing": "These files have no word information that can be indexed.",
+      "replaces": "Saving replaces the current word index. The Bible’s text stays exactly as it is.",
+      "save": "Save word index",
+      "removeEllipsis": "Remove word index…",
+      "remove": "Remove word index",
+      "confirmRemove": "Remove the word index of {{name}}? Its text, your notes and the ordinary concordance stay. You can read the word information again later."
+    },
+    "contentsDocument_one": "A document to read ({{formatted}} file); no verses",
+    "contentsDocument_other": "A document to read ({{formatted}} files); no verses",
+    "wordsDocument": "None: documents carry no word information.",
+    "lifecycle": {
+      "menu": "More for {{name}}",
+      "archiveHint": "Out of the translation list; kept and can be brought back any time.",
+      "archived": "{{name}} was archived.",
+      "restored": "{{name}} is back in your translations.",
+      "trashed": "{{name}} was moved to Trash.",
+      "archivedText": "Archived Bibles are not offered for reading. Your notes on their verses stay.",
+      "trashQuestion": "Move {{name}} to Trash?",
+      "keptText": "Your notes, highlights and the passages in your studies belong to the verses, not to one Bible: they stay. Your own files are never touched.",
+      "deleteQuestion": "Delete {{name}} permanently?",
+      "deleteText": "Its text and Abiding Word’s copy of its files are deleted. To read it again you would have to add it again.",
+      "deleteTextMany": "Their text and Abiding Word’s copies of their files are deleted. To read them again you would have to add them again.",
+      "deleted_one": "{{formatted}} Bible was deleted permanently.",
+      "deleted_other": "{{formatted}} Bibles were deleted permanently.",
+      "archivedTitle_one": "Archived ({{formatted}})",
+      "archivedTitle_other": "Archived ({{formatted}})",
+      "trashTitle_one": "Trash ({{formatted}})",
+      "trashTitle_other": "Trash ({{formatted}})",
+      "trashText_one": "It leaves your translations and can be restored from Trash for {{count}} day; after that it is deleted for good.",
+      "trashText_other": "It leaves your translations and can be restored from Trash for {{count}} days; after that it is deleted for good.",
+      "deleteManyQuestion_one": "Delete {{formatted}} Bible permanently?",
+      "deleteManyQuestion_other": "Delete {{formatted}} Bibles permanently?"
+    }
   },
   "colors": {
     "label": "Highlight colour",
@@ -226,7 +450,9 @@
     "modeLabel": "Look for",
     "mode": {
       "word": "Word",
-      "phrase": "Phrase"
+      "phrase": "Phrase",
+      "lemma": "Lemma",
+      "number": "Lexical number"
     },
     "bible": "Bible",
     "find": "Find",
@@ -239,6 +465,366 @@
     "none": "“{{query}}” does not occur in this Bible.",
     "books": "Books",
     "bookCount": "{{book}} ({{formatted}})",
-    "open": "Open {{passage}} in the Bible"
+    "open": "Open {{passage}} in the Bible",
+    "lemmaLabel": "Lemma or lexical number",
+    "lemmaHint": "Uses this Bible’s own word annotations: the dictionary form (lemma), lexical numbers and grammar codes its edition gives each word. Nothing is looked up elsewhere.",
+    "lemmaUnavailable": "This Bible has no word annotations, so it cannot be searched by lemma. Word and phrase search work as before.",
+    "entries": "Entries for “{{text}}”",
+    "entriesHint": "One dictionary form can represent different words, distinguished by their lexical numbers. Choose one.",
+    "entryCount_one": "{{formatted}} time",
+    "entryCount_other": "{{formatted}} times",
+    "noEntry": "“{{text}}” is not a lemma or lexical number in this Bible’s annotations.",
+    "noLemma": "(no lemma)",
+    "lexicalNumber": "Lexical number {{id}}",
+    "forms": "Written forms",
+    "grammar": "Grammar",
+    "grammarChosen_one": "({{formatted}} chosen)",
+    "grammarChosen_other": "({{formatted}} chosen)",
+    "grammarDescribed": "Described with the Open Scriptures Hebrew Bible morphology table; the code is shown as written. Tick codes to see only those words.",
+    "grammarRaw": "Grammar codes as this Bible writes them. Abiding Word does not describe this scheme in words. Tick codes to see only those words.",
+    "withoutGrammar_one": "{{formatted}} without a grammar code",
+    "withoutGrammar_other": "{{formatted}} without a grammar code",
+    "allGrammar": "Show all forms",
+    "noneLemma": "No occurrences in this Bible.",
+    "noneWithGrammar": "No occurrences with the chosen grammar.",
+    "numberLabel": "Lexical number",
+    "numberHint": "Uses the lexical numbers this Bible’s edition gives each word (for example Strong’s numbers: H430, G3056). A lexical number points to an entry in a numbered lexicon; it is not a definition, and two Bibles may number the same word differently.",
+    "allWithNumber": "All words with lexical number {{id}}"
+  },
+  "language": {
+    "choose": "Choose a language",
+    "other": "Another language…",
+    "otherName": "Name of the language",
+    "hint": "Abiding Word uses it to read abbreviations you type (such as “Jn 3:5”) the way this Bible does."
+  },
+  "words": {
+    "details": "Word details",
+    "fromMarkup": "From this Bible’s own word annotations. Nothing is looked up elsewhere.",
+    "lemma": "Lemma",
+    "grammar": "Grammar",
+    "grammarRaw": "code as written:",
+    "shape": {
+      "phrase": "Marked together as one unit.",
+      "part": "Part of a written word."
+    },
+    "entryCount_one": "This entry occurs {{formatted}} time in this Bible.",
+    "entryCount_other": "This entry occurs {{formatted}} times in this Bible.",
+    "findLemma": "Find this lemma",
+    "findNumber": "Find this lexical number",
+    "studyWord": "Study this word",
+    "openWordStudy": "Open a Word Study to use this word in it.",
+    "usedInStudy": "Added to “{{title}}”.",
+    "replaceLemma": "“{{title}}” studies “{{before}}”. Study “{{after}}” instead?",
+    "replace": "Replace",
+    "more_one": "{{formatted}} more annotated word is not listed. Select fewer words to see it.",
+    "more_other": "{{formatted}} more annotated words are not listed. Select fewer words to see them."
+  },
+  "morph": {
+    "pos": {
+      "adjective": "adjective",
+      "conjunction": "conjunction",
+      "adverb": "adverb",
+      "noun": "noun",
+      "pronoun": "pronoun",
+      "preposition": "preposition",
+      "suffix": "suffix",
+      "particle": "particle",
+      "verb": "verb",
+      "interjection": "interjection",
+      "article": "article",
+      "relativePronoun": "relative pronoun",
+      "reciprocalPronoun": "reciprocal pronoun",
+      "demonstrativePronoun": "demonstrative pronoun",
+      "correlativePronoun": "correlative pronoun",
+      "interrogativePronoun": "interrogative pronoun",
+      "indefinitePronoun": "indefinite pronoun",
+      "correlativeOrInterrogativePronoun": "correlative or interrogative pronoun",
+      "reflexivePronoun": "reflexive pronoun",
+      "possessivePronoun": "possessive pronoun",
+      "personalPronoun": "personal pronoun",
+      "interrogativeOrIndefinitePronoun": "interrogative or indefinite pronoun",
+      "conditional": "conditional",
+      "transliterated": "transliterated word"
+    },
+    "person": {
+      "first": "1st person",
+      "second": "2nd person",
+      "third": "3rd person"
+    },
+    "gender": {
+      "both": "masculine or feminine",
+      "common": "common gender",
+      "feminine": "feminine",
+      "masculine": "masculine",
+      "neuter": "neuter"
+    },
+    "number": {
+      "dual": "dual",
+      "plural": "plural",
+      "singular": "singular"
+    },
+    "state": {
+      "absolute": "absolute state",
+      "construct": "construct state",
+      "determined": "determined state"
+    },
+    "adjectiveType": {
+      "adjective": "adjective",
+      "cardinal": "cardinal number",
+      "gentilic": "gentilic",
+      "ordinal": "ordinal number",
+      "numeral": "numeral"
+    },
+    "nounType": {
+      "common": "common noun",
+      "gentilic": "gentilic",
+      "properName": "proper name",
+      "letter": "letter"
+    },
+    "pronounType": {
+      "demonstrative": "demonstrative",
+      "indefinite": "indefinite",
+      "interrogative": "interrogative",
+      "personal": "personal",
+      "relative": "relative"
+    },
+    "prepositionType": {
+      "definiteArticle": "with the article"
+    },
+    "suffixType": {
+      "directionalHe": "directional he",
+      "paragogicHe": "paragogic he",
+      "paragogicNun": "paragogic nun",
+      "pronominal": "pronominal"
+    },
+    "particleType": {
+      "affirmation": "affirmation",
+      "definiteArticle": "definite article",
+      "exhortation": "exhortation",
+      "interrogative": "interrogative",
+      "interjection": "interjection",
+      "demonstrative": "demonstrative",
+      "negative": "negative",
+      "directObject": "direct object marker",
+      "relative": "relative"
+    },
+    "conjugation": {
+      "perfect": "perfect",
+      "sequentialPerfect": "sequential perfect",
+      "imperfect": "imperfect",
+      "sequentialImperfect": "sequential imperfect",
+      "cohortative": "cohortative",
+      "jussive": "jussive",
+      "imperative": "imperative",
+      "participleActive": "active participle",
+      "participlePassive": "passive participle",
+      "infinitiveAbsolute": "infinitive absolute",
+      "infinitiveConstruct": "infinitive construct"
+    },
+    "language": {
+      "hebrew": "Hebrew",
+      "aramaic": "Aramaic",
+      "greek": "Greek"
+    },
+    "case": {
+      "nominative": "nominative",
+      "vocative": "vocative",
+      "genitive": "genitive",
+      "dative": "dative",
+      "accusative": "accusative"
+    },
+    "tense": {
+      "present": "present",
+      "imperfect": "imperfect",
+      "future": "future",
+      "aorist": "aorist",
+      "perfect": "perfect",
+      "pluperfect": "pluperfect"
+    },
+    "form": {
+      "second": "second form"
+    },
+    "voice": {
+      "active": "active",
+      "middle": "middle",
+      "passive": "passive",
+      "middleOrPassive": "middle or passive",
+      "middleDeponent": "middle deponent",
+      "passiveDeponent": "passive deponent",
+      "middleOrPassiveDeponent": "middle or passive deponent"
+    },
+    "mood": {
+      "indicative": "indicative",
+      "subjunctive": "subjunctive",
+      "optative": "optative",
+      "imperative": "imperative",
+      "infinitive": "infinitive",
+      "participle": "participle"
+    },
+    "degree": {
+      "comparative": "comparative",
+      "superlative": "superlative"
+    },
+    "suffix": {
+      "abbreviated": "abbreviated",
+      "interrogative": "interrogative",
+      "negative": "negative",
+      "crasis": "crasis",
+      "attic": "Attic form"
+    },
+    "transliteration": {
+      "aramaic": "from Aramaic",
+      "hebrew": "from Hebrew"
+    },
+    "declension": {
+      "indeclinable": "indeclinable"
+    }
+  },
+  "research": {
+    "title": "Original-language research",
+    "intro": "The word information included in this edition, as stated in its files. Nothing is looked up elsewhere.",
+    "written": "Written word",
+    "writtenValue_one": "Words: {{formatted}} · Verses: {{verses}}",
+    "writtenValue_other": "Words: {{formatted}} · Verses: {{verses}}",
+    "dictionary": "Dictionary form",
+    "dictionaryValue": "Words: {{words}} · Different forms: {{distinct}}",
+    "grammar": "Grammar",
+    "grammarValue": "Words with a grammar code: {{words}}",
+    "number": "Lexical number",
+    "numberValue": "Words: {{words}}",
+    "notIncluded": "not included",
+    "grammarStated": "Grammar codes are described in words: the edition says it uses {{scheme}} (“{{words}}”, in {{file}}).",
+    "grammarChoose": "Describe the grammar codes as {{scheme}}",
+    "grammarFit": "{{described}} of {{coded}} codes fit this scheme, but the edition does not say it uses it. Leave this unticked to see the codes as written.",
+    "grammarRaw": "Grammar codes are shown as written: their scheme is not one Abiding Word can describe.",
+    "numbersChoose": "Add a search by lexical number",
+    "numbersHelp": "This edition gives lexical numbers (such as Strong’s numbers) but no dictionary forms. A lexical number points to an entry in a numbered lexicon; it is not a definition. Takes about {{size}} MB.",
+    "numbersLater": "You can add or remove it later in Settings → Bible texts."
+  },
+  "grammar": {
+    "scheme": {
+      "oshb": "the Open Scriptures Hebrew Bible’s morphology",
+      "robinson": "Robinson’s Greek parsing codes",
+      "morphgnt": "MorphGNT’s parsing codes"
+    }
+  },
+  "document": {
+    "kind": "Read as a document",
+    "group": "Read as documents",
+    "back": "Back to {{name}}",
+    "whatSummary": "What can I do with this Bible?",
+    "what": "This Bible is read as the document it came from. You can read it and search its text, but it has no book, chapter and verse structure: references from your studies open in a Bible read by passage, and the concordance, verse marks and word details are not available for it.",
+    "findVersesHint": "Abiding Word can read the document again and look for its books, chapters and verses. You check what it finds before anything changes.",
+    "findVerses": "Look for verses…",
+    "noTextAtAll": "This document has no text that can be read (for example, scanned pages), so it can’t be searched and its verses can’t be found.",
+    "part": "Part",
+    "viewLabel": "How to show the document",
+    "view": {
+      "original": "Original",
+      "text": "Text"
+    },
+    "scanned": "These pages are scanned images without text. You can read them page by page; searching and finding verses need text, which this file does not have. Abiding Word does not read text from images.",
+    "searchLabel": "Search in this Bible’s text",
+    "searchPlaceholder": "Words in this Bible",
+    "search": "Search",
+    "found_one": "{{formatted}} place found",
+    "found_other": "{{formatted}} places found",
+    "closeResults": "Close the results",
+    "page": "Page {{page}}",
+    "unreadable": "This document’s formatting can’t be shown. Its text can still be read under “Text”.",
+    "noText": "This document has no text that can be shown.",
+    "earlier": "Earlier text",
+    "later": "More text",
+    "recognise": {
+      "title": "Look for verses in {{name}}",
+      "reading": "Reading the document…",
+      "use": "Use these verses",
+      "keep": "Keep it as a document",
+      "done": "{{name}} can now be read by book, chapter and verse.",
+      "partialDone": "The verses found can now be looked up by passage in {{name}}. The rest of the document stays readable as it is.",
+      "usePartial_one": "Use the {{formatted}} verse found without doubt",
+      "usePartial_other": "Use the {{formatted}} verses found without doubt",
+      "partial_one": "{{formatted}} chapter has problems and is held back. The others can now be found by passage. The document stays unchanged, and you can still read the held-back chapter in it.",
+      "partial_other": "{{formatted}} chapters have problems and are held back. The others can now be found by passage. The document stays unchanged, and you can still read the held-back chapters in it."
+    },
+    "passages": {
+      "none": "No passages can be found in this document yet: look for verses, or mark where a passage is.",
+      "partOf": "{{book}} ({{chapters}} of {{of}} chapters)",
+      "goLabel": "Passage to find in this document",
+      "goPlaceholder": "e.g. John 3:16",
+      "go": "Find",
+      "panel": "{{passage}} in this document",
+      "close": "Close the passage",
+      "restUnknown": "Only part of this passage has been found in the document so far. The rest is not shown.",
+      "showPage": "Show it on page {{page}}",
+      "show": "Show it in the document",
+      "markedTitle": "Places marked by hand",
+      "unknown": "Where {{passage}} is in this document has not been identified yet.",
+      "markHere": "Mark where it is",
+      "readIn": "Read it in {{name}}",
+      "onPage": "page {{page}}",
+      "inText": "in the text",
+      "markedPlace": "{{passage}}, {{where}}",
+      "unmark": "Remove the mark for {{passage}}",
+      "unmarkShort": "Remove",
+      "mark": "Mark a passage here",
+      "markTitle": "Mark where a passage is",
+      "markWhere": "The place: {{where}} in {{name}}.",
+      "markNoPlace": "Go to the page, or click the paragraph where the passage is, then mark it.",
+      "markQuote": "Kept with it as a check: “{{quote}}”",
+      "markPassage": "Passage at this place",
+      "markHint": "Only the place is recorded. The document, your notes and their references stay as they are.",
+      "markSave": "Save the mark",
+      "verified_one": "{{formatted}} verse can be found by passage: {{books}}",
+      "verified_other": "{{formatted}} verses can be found by passage: {{books}}",
+      "marked_one": "{{formatted}} place marked by hand",
+      "marked_other": "{{formatted}} places marked by hand",
+      "unverified_one": "{{formatted}} verse found, text not checked",
+      "unverified_other": "{{formatted}} verses found, text not checked",
+      "placesIntro_one": "Found in the document, but its text could not be checked:",
+      "placesIntro_other": "Found in the document, but their text could not be checked:",
+      "placesTitle": "Places found, text not checked",
+      "foundPlace": "{{passage}} {{where}}",
+      "placeReason": {
+        "possibleHeading": "It may contain a heading or a label.",
+        "reference": "It contains a Bible reference.",
+        "noteSign": "It contains a note sign.",
+        "unnumbered": "Its end is not certain.",
+        "length": "It is far longer than the verses around it.",
+        "psalmTitle": "It may include the psalm’s title.",
+        "boundary": "Where it begins or ends is not certain."
+      },
+      "apparatusTitle_one": "{{formatted}} note or heading set apart here",
+      "apparatusTitle_other": "{{formatted}} notes and headings set apart here",
+      "apparatusIntro": "These belong to the document, not to the verses. They are shown as the document has them.",
+      "apparatusKind": {
+        "footnote": "Note",
+        "crossReference": "Cross-reference",
+        "heading": "Heading",
+        "subscription": "Closing words",
+        "notes": "Notes"
+      }
+    }
+  },
+  "importBookNames": {
+    "TOB": "Tobit",
+    "JDT": "Judith",
+    "ESG": "Esther (Greek)",
+    "WIS": "Wisdom of Solomon",
+    "SIR": "Sirach",
+    "BAR": "Baruch",
+    "LJE": "Letter of Jeremiah",
+    "S3Y": "Song of the Three Young Men",
+    "SUS": "Susanna",
+    "BEL": "Bel and the Dragon",
+    "1MA": "1 Maccabees",
+    "2MA": "2 Maccabees",
+    "3MA": "3 Maccabees",
+    "4MA": "4 Maccabees",
+    "1ES": "1 Esdras (Greek)",
+    "MAN": "Prayer of Manasseh",
+    "PS2": "Psalm 151",
+    "DAG": "Daniel (Greek)",
+    "2ES": "2 Esdras (Latin)"
   }
 }

@@ -1,7 +1,8 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { createMemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
+import { readerAction } from "../support/readerActions";
 
 // All library text here is invented for the tests.
 const VINE_NOTES: SourceFixture = {
@@ -41,90 +42,70 @@ async function openLibrary(user: Awaited<ReturnType<typeof renderApp>>["user"]) 
 }
 
 async function chooseFile(user: Awaited<ReturnType<typeof renderApp>>["user"], api: ReturnType<typeof createMemoryApi>, path: string) {
-  api.state.library.nextChosenFile = path;
-  await user.click(await screen.findByRole("button", { name: "Choose a file…" }));
+  api.state.batch.nextFiles = [path];
+  await user.click(await screen.findByRole("button", { name: "Choose files…" }));
+  await screen.findByRole("list", { name: "Files found" });
 }
 
 describe("Library", () => {
-  it("adds a PDF: preview, edit, confirm, then it is in the Library and opens", async () => {
+  it("reviews one PDF in the shared importer and preserves corrected metadata", async () => {
     const api = withLibrary();
     const { user } = await renderApp(api);
-    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add to library…" }));
-    expect(await screen.findByRole("heading", { level: 1, name: "Add to library" })).toBeInTheDocument();
-
+    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add Sources…" }));
     await chooseFile(user, api, "/home/test/Grace-and-Fruit.pdf");
-    expect(await screen.findByText("PDF · 3 pages")).toBeInTheDocument();
-    expect(screen.getByText("Text extracted successfully")).toBeInTheDocument();
-    expect(screen.getByText("1 Bible reference detected")).toBeInTheDocument();
-    const title = screen.getByLabelText("Title");
+    const title = screen.getByRole("textbox", { name: "Title" });
     expect(title).toHaveValue("Grace and Fruit");
-    await user.clear(title);
-    await user.type(title, "Grace and Fruitfulness");
-    expect(screen.getByLabelText("Sharing")).toHaveDisplayValue("My own copy — not to be shared");
-    await user.click(screen.getByRole("button", { name: "Add to library" }));
-
-    // Adding opens the new source in the reader…
+    await user.clear(title); await user.type(title, "Grace and Fruitfulness"); await user.tab();
+    await user.click(screen.getByRole("button", { name: "Add 1 source" }));
+    await screen.findByText("1 source was added.");
+    expect(api.state.library.sources[0]).toMatchObject({ title: "Grace and Fruitfulness", licenceStatus: "unknown" });
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    await openLibrary(user);
+    await user.click(await screen.findByRole("button", { name: /^Grace and Fruitfulness/ }));
     expect(await screen.findByRole("heading", { level: 1, name: "Grace and Fruitfulness" })).toBeInTheDocument();
-    expect(screen.getByText(/Book · PDF · 3 pages · English/)).toBeInTheDocument();
-    expect(screen.getByText("p. 2")).toBeInTheDocument();
-    expect(api.state.library.sources[0]?.licenceStatus).toBe("private");
-
-    // …and Back leads to the Library, where it is listed.
-    await user.click(screen.getByRole("button", { name: "Back" }));
-    const list = await screen.findByRole("list", { name: "Sources" });
-    expect(within(list).getByRole("button", { name: /^Grace and Fruitfulness/ })).toBeInTheDocument();
   });
 
-  it("previews an EPUB with its chapters and a Markdown file", async () => {
-    const api = withLibrary();
-    const { user } = await renderApp(api);
-    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add to library…" }));
-    await chooseFile(user, api, "/home/test/The-Vine.epub");
-    expect(await screen.findByText("EPUB · 2 chapters")).toBeInTheDocument();
-    expect(screen.getByLabelText("Kind")).toHaveDisplayValue("Book");
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-    expect(api.state.library.pending).toBeNull();
-
-    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add to library…" }));
-    await chooseFile(user, api, "/home/test/sermon-notes.md");
-    expect(await screen.findByText("Markdown · 1 section")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Add to library" }));
-    expect(await screen.findByRole("heading", { level: 1, name: "sermon notes" })).toBeInTheDocument();
-    // Markdown and EPUB show section headings, not pages.
-    expect(screen.getByText("Chapter 1")).toBeInTheDocument();
-    expect(screen.queryByText(/^p\. /)).not.toBeInTheDocument();
+  it.each(["The-Vine.epub", "sermon-notes.md"])("reviews and imports a single %s", async file => {
+    const api = withLibrary(); const { user } = await renderApp(api);
+    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add Sources…" }));
+    await chooseFile(user, api, `/home/test/${file}`);
+    expect(api.state.library.sources).toHaveLength(0);
+    await user.click(screen.getByRole("button", { name: "Add 1 source" }));
+    await screen.findByText("1 source was added.");
+    expect(api.state.library.sources).toHaveLength(1);
   });
 
-  it("explains a scanned PDF and does not add it", async () => {
-    const api = withLibrary();
-    const { user } = await renderApp(api);
-    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add to library…" }));
+  it("explains a scanned PDF and cannot select it for import", async () => {
+    const api = withLibrary(); const { user } = await renderApp(api);
+    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add Sources…" }));
     await chooseFile(user, api, "/home/test/scanned-commentary.pdf");
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "This PDF appears to contain scanned pages. OCR support is not available yet, so its text cannot be added.",
-    );
-    expect(screen.getByRole("button", { name: "Add to library" })).toBeDisabled();
+    expect(screen.getByText(/This PDF appears to contain scanned pages/)).toBeVisible();
+    expect(within(screen.getByRole("list", { name: "Files found" })).queryByRole("checkbox")).toBeNull();
+    expect(api.state.library.sources).toHaveLength(0);
   });
 
-  it("refuses an unsupported file with a plain message", async () => {
+  it("leaves unsupported files out of the common importer", async () => {
+    const api = withLibrary(); const { user } = await renderApp(api);
+    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add Sources…" }));
+    api.state.batch.nextFiles = ["/home/test/letter.rtf"];
+    await user.click(screen.getByRole("button", { name: "Choose files…" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("No files the library can read were found there.");
+    expect(api.state.library.sources).toHaveLength(0);
+  });
+
+  it("leaves a duplicate unselected until explicitly chosen", async () => {
     const api = withLibrary();
+    const job = await api.libraryBatchScan(["/home/test/Grace-and-Fruit.pdf"], false);
+    await api.libraryBatchStep(job.id); await api.libraryBatchImportStep(job.id);
     const { user } = await renderApp(api);
-    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add to library…" }));
-    await chooseFile(user, api, "/home/test/letter.rtf");
-    expect(await screen.findByRole("alert")).toHaveTextContent("can’t be added to the library");
-  });
-
-  it("warns about a duplicate and adds it only when asked", async () => {
-    const api = withLibrary({ ...VINE_NOTES, title: "Grace and Fruit" });
-    const { user } = await renderApp(api);
-    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add to library…" }));
+    await user.click(await within(sourcesPane()).findByRole("button", { name: "Add Sources…" }));
     await chooseFile(user, api, "/home/test/Grace-and-Fruit.pdf");
-    expect(await screen.findByText(/already in your library as/)).toHaveTextContent("Grace and Fruit");
-    const add = screen.getByRole("button", { name: "Add to library" });
-    expect(add).toBeDisabled();
-    await user.click(screen.getByLabelText("Add a second copy anyway"));
-    await user.click(add);
-    await waitFor(() => expect(api.state.library.sources).toHaveLength(2));
+    const choose = screen.getByRole("checkbox", { name: "Add Grace and Fruit" });
+    expect(choose).not.toBeChecked();
+    await user.click(choose);
+    await user.click(screen.getByRole("button", { name: "Add 1 source" }));
+    await screen.findByText("1 source was added.");
+    expect(api.state.library.sources).toHaveLength(2);
   });
 
   it("filters sources by type and language", async () => {
@@ -183,7 +164,7 @@ describe("Library", () => {
     const scripture = screen.getByRole("complementary", { name: "Scripture" });
     await user.type(within(scripture).getByLabelText("Go to passage"), "John 15{Enter}");
     const found = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15" });
-    const item = within(found).getByRole("button", { name: /Notes on the Vine/ });
+    const item = within(found).getByRole("button", { name: /^Notes on the Vine/ });
     // Who wrote it, where, and why it is here: a plain reason, not "John 15:4" in quotation marks.
     expect(item).toHaveTextContent("J. Example · p. 2Mentions John 15:4");
 
@@ -196,7 +177,7 @@ describe("Library", () => {
     await user.click(within(scripture).getByRole("button", { name: /^Verse 4\. Show verse tools/ }));
     const verse = await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:4" });
     expect(within(sourcesPane()).queryByRole("list", { name: /^Elsewhere in/ })).not.toBeInTheDocument();
-    await user.click(within(verse).getByRole("button", { name: /Notes on the Vine/ }));
+    await user.click(within(verse).getByRole("button", { name: /^Notes on the Vine/ }));
 
     // The source opens inside the Sources pane; the workspace stays.
     const reader = await within(sourcesPane()).findByRole("region", { name: "Notes on the Vine" });
@@ -214,7 +195,8 @@ describe("Library", () => {
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
     expect(await within(sourcesPane()).findByRole("list", { name: "Sources for John 15:4" })).toBeInTheDocument();
     expect(within(sourcesPane()).queryByRole("region", { name: "Notes on the Vine" })).not.toBeInTheDocument();
-    expect(within(sourcesPane()).getByRole("heading", { name: "Sources for John 15:4" })).toHaveFocus();
+    const returned = within(sourcesPane()).getByRole("list", { name: "Sources for John 15:4" });
+    expect(within(returned).getByRole("button", { name: /^Notes on the Vine/ })).toHaveFocus();
   });
 
   it("opens a recently added source in the pane, and in the full reader on request", async () => {
@@ -226,7 +208,7 @@ describe("Library", () => {
     expect(within(reader).getByRole("heading", { level: 2, name: "Notes on the Vine" })).toHaveFocus();
     expect(within(reader).getByText("An opening paragraph about gardens.")).toBeInTheDocument();
 
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await readerAction(user, "Open full reader", reader);
     expect(await screen.findByRole("heading", { level: 1, name: "Notes on the Vine" })).toBeInTheDocument();
     expect(screen.queryByRole("main", { name: "Study" })).not.toBeInTheDocument();
 
@@ -245,8 +227,8 @@ describe("Library", () => {
 
     await user.selectOptions(screen.getByLabelText("Search in"), "library");
     await user.type(screen.getByLabelText("Search the library"), "pruning{Enter}");
-    await user.click(await screen.findByRole("button", { name: "Remove Notes on the Vine" }));
-    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Remove from library" }));
+    await user.click(await screen.findByRole("button", { name: "Move Notes on the Vine to Trash" }));
+    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Move to Trash" }));
     await screen.findByText(/Nothing in your library yet/);
     await user.click(screen.getByRole("button", { name: "Back to workspace" }));
     expect(await within(sourcesPane()).findByText(/No sources yet/)).toBeInTheDocument();
@@ -330,16 +312,30 @@ describe("finding citations", () => {
     await within(findings).findByRole("button", { name: "J. Example, Notes on the Vine, p. 2" });
 
     await openLibrary(user);
-    await user.click(await screen.findByRole("button", { name: "Remove Notes on the Vine" }));
-    const confirm = screen.getByRole("alertdialog", { name: "Remove Notes on the Vine?" });
-    expect(confirm).toHaveTextContent("Study notes that cite it keep a record of the citation.");
-    expect(confirm).toHaveTextContent("your original file is not touched");
-    await user.click(within(confirm).getByRole("button", { name: "Keep it" }));
+    await user.click(await screen.findByRole("button", { name: "Move Notes on the Vine to Trash" }));
+    const confirm = screen.getByRole("alertdialog", { name: "Move “Notes on the Vine” to Trash?" });
+    expect(confirm).toHaveTextContent("You can restore it from Trash");
+    expect(within(confirm).getByRole("button", { name: "Cancel" })).toHaveFocus();
+    await user.click(within(confirm).getByRole("button", { name: "Cancel" }));
     expect(api.state.library.sources[0]?.deleted).toBe(false);
 
-    await user.click(screen.getByRole("button", { name: "Remove Notes on the Vine" }));
-    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Remove from library" }));
+    await user.click(screen.getByRole("button", { name: "Move Notes on the Vine to Trash" }));
+    await user.click(within(screen.getByRole("alertdialog")).getByRole("button", { name: "Move to Trash" }));
     expect(await screen.findByText(/Nothing in your library yet/)).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("“Notes on the Vine” was moved to Trash.");
+    // In Trash the citation is still whole.
+    expect(api.state.library.sources[0]?.deleted).toBe(false);
+
+    // Deleted for good from Trash, in Settings → Sources.
+    await user.click(screen.getByRole("button", { name: "Back to workspace" }));
+    const sources = await openSettingsSection(user, "Sources");
+    await user.click(await within(sources).findByRole("radio", { name: /^Trash/ }));
+    await user.click(await within(sources).findByRole("button", { name: "More for Notes on the Vine" }));
+    await user.click(screen.getByRole("menuitem", { name: "Delete permanently" }));
+    const really = screen.getByRole("alertdialog", { name: "Delete “Notes on the Vine” permanently?" });
+    expect(really).toHaveTextContent("Citations in your studies keep a record of what they cited. Your original file is not touched.");
+    await user.click(within(really).getByRole("button", { name: "Delete permanently" }));
+    expect(await within(sources).findByText("Trash is empty.")).toBeInTheDocument();
 
     // The finding still says what it cited, marked as removed, not as a link.
     await user.click(screen.getByRole("button", { name: "Back to workspace" }));

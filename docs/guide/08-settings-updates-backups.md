@@ -18,7 +18,7 @@ the others stay as they are. The row of names at the top jumps straight to a
 section and opens it. Abiding Word remembers which sections you left open.
 
 The sections, in order: **Updates**, **Appearance**, **Bible texts**,
-**Templates**, **Language**, **AI Assistant**, **About this installation**
+**Templates**, **Language**, **AI Assistant**, **Data and backup**, **About this installation**
 and **Coming in later versions**.
 
 > [!TIP]
@@ -67,11 +67,15 @@ exists. If there is one, a slim notice appears under the app bar:
 </p>
 
 - **Theme:** *Light*, *Dark*, or *Match my computer* (follows your Windows
-  setting).
+  setting, and changes with it while Abiding Word is open — for example when
+  Windows switches to dark in the evening).
 - **Background:** six calm, low-glare backgrounds for long reading and
-  writing (*Parchment*, *Cream*, *Sage*, *Stone*, *Mist*, *Neutral*). Text
-  stays easy to read on each. They apply to the light theme, and the choice
-  is remembered on this computer.
+  writing (*Parchment*, *Cream*, *Sage*, *Stone*, *Mist*, *Neutral*). Each
+  has a light and a dark version: you choose one of the six, and it follows
+  the theme. *Sage* in the dark theme is a dark, quiet sage; *Parchment* in
+  the dark is Abiding Word's own deep green. Text stays easy to read on all
+  twelve, and nothing is pure black. The choice is remembered on this
+  computer.
 
 <p align="center">
   <img src="images/workspace-dark.png" alt="The workspace in the dark theme" width="900">
@@ -89,25 +93,54 @@ order and size. Your studies and library are not touched.
 - **Add a Bible…** adds one of the free Bibles included with Abiding Word
   (English, German, Korean, French, Spanish, Portuguese) or a Bible file you own (see
   [Getting started](01-getting-started.md#add-a-bible)).
-- **Details** shows a Bible's publisher, licence and contents.
-- **Remove…** removes a Bible. Your notes and highlights are kept with their
-  verses.
+- **Details** shows a Bible's language, publisher, licence and contents.
+  **Change language** corrects the language (for example a Bible you added
+  before choosing it was possible): pick it from the list and click **Save
+  language**. Only the language changes — the Bible's text, your notes and
+  your links stay as they are — and passages you type use it at once.
+- A Bible added from a PDF, EPUB or Word document shows **Read as a
+  document** until its verses are recognised; **Details** says how many files
+  it has. Such a Bible has no word information.
+- The **⋯** menu beside a Bible offers **Archive** (kept, but out of the
+  translation menu) and **Move to Trash…**; both can be undone, and the
+  **Archived** and **Trash** groups below the list offer **Restore**. From
+  Trash, **Delete permanently** removes the Bible's text (after 30 days this
+  happens by itself). Your notes and highlights are always kept with their
+  verses. Deleting a Bible added from documents also deletes Abiding Word's
+  copies of them (your own files are not touched).
+
+## Sources
+
+Your books and documents: find, sort, correct their details, organise them in
+collections and tags, archive them, and restore or delete them from Trash.
+See [Looking after your library](05-library.md#looking-after-your-library-settings--sources).
 
 ## Templates
 
 A template is a reusable **starting structure**. Settings shows two kinds:
 
-- **Bible Study** templates: Guided Passage Study (POZETEK in German),
-  Ten-Step Bible Study, Biblical Character Study, Word Study, Whole-Book Study
-  and Topical Study, plus your saved personal templates. The built-in ones can't be changed, but you can **duplicate and customise** one:
-  rename parts, add hints, change the order, remove parts, and tick
-  **Add later** for a part you want offered under *Add a part* rather than
-  made at once.
-- **Bible Teaching** formats: what each kind of teaching gives you to work in
-  (main points for a sermon, questions for a group study, steps for a lesson)
-  and the steps a lesson starts with.
+- **Bible Study** templates: the parts a new study starts with (a passage
+  study: *Text, Observations, Context, Meaning, Theology, Application*). The
+  built-in ones can't be changed, but **Save as my template** makes your own
+  copy. In your own you can rename parts, add hints, change the order with
+  ▲ ▼, remove parts, tick **Add later** for a part you want offered under
+  *Add a part* rather than made at once, and choose where each part belongs
+  in the study **outline** (*Text, Understanding, Theology, Application,
+  Audience, Teaching*, or *Not in the outline*). Use as few or as many as you
+  like, in any order.
+- **Bible Teaching** templates: what a new teaching starts with, its kind and
+  its points, questions or steps. There is one built-in template for each
+  kind of teaching, which can't be changed. **Save as my template** beside one
+  makes your own copy, and **New Bible Teaching template…** starts one from
+  nothing. In your own you choose the kind, add, name, order and remove
+  points or steps, and give each step its kind.
 
-Changing a template never changes a study already made from it.
+Your own templates have **Edit**, **Duplicate** and **Delete…**. You use a
+template when you begin a study or a teaching. Changing or deleting a
+template never changes a study or teaching already made from it.
+
+These are not the **church templates** of a presentation (its colours, fonts
+and logo). Those are under *Church templates* in the presentation.
 
 ## Language
 
@@ -133,10 +166,11 @@ choose a service and check the connection.*
 Once it is on, set it up from top to bottom:
 
 1. **Service.** Choose one.
-   - *On the internet:* Anthropic (Claude), DeepSeek, Google Gemini,
-     OpenAI (ChatGPT), Perplexity, Qwen (Alibaba Cloud) or xAI (Grok). Your
-     text is sent to that company when you ask, and you need a **key** from
-     it.
+   - *On the internet:* Anthropic (Claude), Cohere (Command), DeepSeek,
+     Google Gemini, MiniMax, Mistral (Mistral, Codestral), Moonshot AI
+     (Kimi), OpenAI (ChatGPT), Perplexity, Qwen (Alibaba Cloud), xAI (Grok)
+     or Z.ai (GLM). Your text is sent to that company when you ask, and you
+     need a **key** from it.
    - *On this computer:* **Ollama** or **LM Studio**. Free programs that run
      an AI model on your own computer: no key, no account, and your text never
      leaves the computer. **How do I set up …?** explains it and opens the
@@ -149,12 +183,15 @@ Once it is on, set it up from top to bottom:
    (it may be called an *API key*), copy it, come back, paste it into **Key**,
    press **Keep key**, then **Check the connection**. Most services charge a
    little for what you use and may ask for payment details or prepaid credit
-   first; that is arranged on their website. The key is kept in your
+   first; that is arranged on their website. **Open … price list** (in the
+   same help) shows what the company charges. The key is kept in your
    computer's own password store (on Windows: the *Credential Manager*), never
    in your studies, and is not shown again.
 3. **Model.** A suggested model is filled in (*Suggested model. You can
    change it.*). Model names change often: the **↗** button beside the field
-   opens the company's own, current list of models. For Ollama and LM Studio
+   opens the company's own, current list of models, and the **price tag**
+   button its current prices (DeepSeek and Moonshot AI show both on one page,
+   so they have only the **↗** button). For Ollama and LM Studio
    it opens their list of models to download. For another compatible service
    there is no such list.
 4. **Check the connection.** If it cannot be used yet, the reason is written
@@ -202,12 +239,103 @@ server, or for Ollama or LM Studio running on another computer.
 Click **Save** for the extras. (Turning the assistant on or off, choosing a
 service, keeping a key and checking the connection save by themselves.)
 
+## Data and backup
+
+Project transfers, full backups and automatic recovery points have separate actions.
+
+**Export project…** saves one project as a file (`.awproject`): its Bible
+Studies and Bible Teachings, with their notes, Materials and presentations.
+Choose the project in the list, or use **Export project…** in a project's
+**Info**. Library books, Bible texts and church templates stay on this
+computer: the file only names the ones it uses.
+
+**Import project…** reads such a file and first shows what it holds, and
+what it uses that this computer does not have. **Import** then adds it as a
+**new project**: nothing here is ever replaced. If you already have a project
+with the same name, the new one is called, for example, *John (2)*. A note
+that cites a library book this computer does not have keeps its citation
+(title, author, the quoted words and the page), marked *(not on this
+computer)*. When you add exactly that book file to your library, the
+citation can be opened again.
+
+**Back up everything…** saves one file (`.awbackup`) with all your work: all
+projects, your library files, the Bibles you added, templates and settings.
+It is a **private copy for you**, not for sharing: it can hold books and
+Bibles you may not pass on. **API keys are never included**; enter them
+again after restoring on another computer.
+
+**Restore from backup…** shows what the backup holds and asks before
+replacing anything. Read the warning carefully: the backup will replace your
+current work and settings. **Cancel** leaves your work and files unchanged.
+Only **Replace everything with this backup** starts the restore:
+
+1. Editing pauses while Abiding Word saves pending writing and waits for
+   saves already in progress. If a save fails, restoration stops; resolve the
+   save error before trying again.
+2. The whole backup is checked. A damaged or changed backup is refused before
+   your database is replaced.
+3. A verified safety copy of your current database is kept in the data
+   folder’s **backups/pre-restore** subfolder.
+4. The backup’s database and imported files are restored. Library files that
+   differ are kept separately next to the safety copy.
+
+Keep Abiding Word open while it is restoring. If restoration fails, Abiding
+Word attempts to put your previous work back. If that cannot be completed,
+the error gives the retained safety-copy location; keep that copy for recovery.
+Editing stays paused when the previous state could not be restored. Reload
+Abiding Word before trying to continue, and retain the safety copy if startup
+reports another problem.
+
+After a successful restore, the completion message shows the safety-copy
+location. Choose **Reload Abiding Word** to load the restored work. Editing
+stays paused until this reload so that an old open editor cannot overwrite
+the restored database. This applies to both full backups and the database-only
+recovery points described below.
+
+### Automatic recovery points
+
+Abiding Word makes a daily database copy while it is running and keeps up to
+seven verified copies in **backups/daily**. These contain your Bible Studies,
+Bible Teachings, notes, citations, database settings and reading places. They
+**do not contain imported source files, Bible files or images**. Keep using
+**Back up everything…** for a complete private `.awbackup`.
+
+1. Open **Settings → Data and backup → Automatic recovery points** and choose
+   **Show recovery points**. Each entry shows its date, size and database
+   version. Damaged or incompatible copies are labelled **Unavailable** and
+   cannot be selected. **Refresh recovery points** checks the list again.
+2. Choose **Review restore…** beside an available copy. Read the replacement
+   warning. **Cancel** is the safe way back: selecting or reviewing a point
+   does not replace the database.
+3. Choose **Restore this database copy** only when you want that older work
+   to replace your current database. The same save checks apply as for a full
+   restore. Abiding Word saves and verifies your current database in
+   **backups/pre-restore** before replacing it.
+4. Keep the safety-copy location shown after restoration, then choose
+   **Reload Abiding Word**. Check the restored writing after the reload.
+
+A daily restore never changes imported files. If an older citation refers to
+a file removed later, the citation remains but the file is still missing.
+Use **Restore from backup…** with a full `.awbackup` when you also need the
+original files. Daily recovery points must use the current database version;
+older database versions require a compatible full backup.
+
+Recovery runs locally. It does not send your writing or backup files to an
+online service. The recovery controls can be reached with **Tab** and activated
+with **Enter** or **Space**. On a narrow window, scroll the recovery panel to
+reach the warning and actions; the completion message also scrolls when needed.
+
+**Add the example project** adds *Example: Abiding in Christ — John
+15:1–11*: a Bible Study and how it becomes a message, a group Bible study and
+an interactive lesson (in English). It is added only when you ask, works
+without internet, and is yours to change or delete. Asking again while it is
+there adds nothing.
+
 ## About this installation
 
-This shows the version and the **folder where your work is kept**. You need
-it for backups.
+This shows the version and the **folder where your work is kept**.
 
-## Backups
+## Backups by hand
 
 Your studies, notes, library and Bibles all live in **one folder**:
 
@@ -215,19 +343,22 @@ Your studies, notes, library and Bibles all live in **one folder**:
 C:\Users\<your name>\AppData\Roaming\Abiding Word
 ```
 
-**To make a backup:**
-
-1. **Close Abiding Word.**
-2. Copy the whole **Abiding Word** folder to a USB stick, an external drive
-   or a cloud folder of your choice.
-
-**To restore it**, close Abiding Word and copy the folder back to the same
-place.
+**Back up everything…** (above) is the easiest way to keep a copy. You can
+also copy the folder yourself: **close Abiding Word first**, then copy the
+whole **Abiding Word** folder to a USB stick, an external drive or a cloud
+folder. To restore it, close Abiding Word and copy the folder back.
 
 > [!TIP]
-> Abiding Word also protects you automatically. Before an update changes how
-> your data is stored, it saves a copy in the folder's **backups** subfolder.
-> If anything goes wrong, nothing is changed and you are told in plain words.
+> Automatic recovery copies are made while Abiding Word is running, including
+> when it stays open for several days. The daily boundary uses UTC. A full
+> disk or an unreadable snapshot produces a warning in the log; it does not
+> overwrite your work. Damaged copies are kept for investigation, and a fresh
+> verified copy is attempted. Only older valid automatic snapshots are rotated;
+> manual backups and unrelated files are retained.
+>
+> Before an update changes how data is stored, Abiding Word also saves a copy
+> in the data folder’s **backups** subfolder. These database copies do not
+> replace a full `.awbackup` of your writing and imported files.
 
 > [!TIP]
 > To find the folder quickly, press **Windows key + R**, type `%APPDATA%`,

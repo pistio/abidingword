@@ -31,6 +31,12 @@ const BUILTIN: &[&str] = &[
     include_str!("../../../resources/templates/biblical-theology-study.json"),
     include_str!("../../../resources/templates/systematic-theology-study.json"),
     include_str!("../../../resources/templates/teaching-study.json"),
+    include_str!("../../../resources/templates/pozetek-writing-study.json"),
+    include_str!("../../../resources/templates/ten-step-writing-study.json"),
+    include_str!("../../../resources/templates/word-research-study.json"),
+    include_str!("../../../resources/templates/topical-research-study.json"),
+    include_str!("../../../resources/templates/character-research-study.json"),
+    include_str!("../../../resources/templates/book-research-study.json"),
 ];
 
 #[derive(serde::Serialize, serde::Deserialize)]
@@ -191,12 +197,59 @@ fn validated(input: &TemplateInput) -> AppResult<(String, Option<String>, Vec<Te
             .with("max", MAX_SECTIONS),
         ));
     }
+    // A key says which part a study already has; two parts of one template never share one.
+    let mut keys = std::collections::HashSet::new();
+    if let Some(key) = input
+        .sections
+        .iter()
+        .filter_map(|s| s.key.as_deref().map(str::trim).filter(|k| !k.is_empty()))
+        .find(|k| !keys.insert(*k))
+    {
+        return Err(AppError::InvalidInput(
+            UserMessage::new(
+                "templates.duplicateKey",
+                "Two parts of the template are the same part. Remove one of them.",
+            )
+            .with("key", key),
+        ));
+    }
+    // Block keys identify persisted answers. Never accept ambiguous or empty identities.
+    for section in &input.sections {
+        let mut field_keys = std::collections::HashSet::new();
+        if section.fields.len() > 40 {
+            return Err(AppError::InvalidInput(
+                UserMessage::new(
+                    "templates.tooManyBlocks",
+                    "A part can have at most 40 blocks.",
+                )
+                .with("max", 40),
+            ));
+        }
+        for field in &section.fields {
+            // Legacy field identities were arbitrary strings; do not normalise or restrict them.
+            if field.key.is_empty() || !field_keys.insert(&field.key) {
+                return Err(AppError::InvalidInput(
+                    UserMessage::new(
+                        "templates.duplicateBlockKey",
+                        "Blocks need distinct, nonempty keys.",
+                    )
+                    .with("key", &field.key),
+                ));
+            }
+            if let Some(label) = &field.label {
+                validate::title(label, "block")?;
+            }
+            for value in field.config.values() {
+                validate::optional_text(Some(value), DESCRIPTION_MAX_CHARS, "guidance")?;
+            }
+        }
+    }
     let sections = input
         .sections
         .iter()
         .map(|s| {
             Ok(TemplateSection {
-                key: s.key.clone().filter(|k| !k.trim().is_empty()),
+                key: validate::part_key(s.key.as_deref())?,
                 title: validate::title(&s.title, "section")?,
                 guidance: validate::optional_text(
                     s.guidance.as_deref(),
@@ -206,6 +259,7 @@ fn validated(input: &TemplateInput) -> AppResult<(String, Option<String>, Vec<Te
                 // A person's own template may hold parts to add later; retiring is for built-ins.
                 optional: s.optional,
                 retired: false,
+                phase: s.phase,
                 // A customised copy retains its structured fields. The
                 // definitions are copied into each new study, not linked.
                 fields: s.fields.clone(),
@@ -242,7 +296,7 @@ fn require_user_template(conn: &Connection, id: &str) -> AppResult<StudyTemplate
     if template.is_builtin {
         return Err(AppError::Conflict(UserMessage::new(
             "templates.builtinReadOnly",
-            "Built-in templates can’t be changed. Duplicate it to make your own version.",
+            "Built-in templates can’t be changed. Use “Save as my template” to make your own version.",
         )));
     }
     Ok(template)

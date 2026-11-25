@@ -3,7 +3,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { createMemoryUpdater } from "../support/memoryUpdater";
-import { openSettingsSection, renderApp } from "../support/render";
+import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 
 vi.mock("@/features/updates/timing", () => ({ STARTUP_CHECK_DELAY_MS: 0 }));
 

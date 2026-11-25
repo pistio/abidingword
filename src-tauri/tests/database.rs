@@ -15,9 +15,26 @@ const EXPECTED_TABLES: &[&str] = &[
     "annotations",
     "bible_books",
     "bible_chapters",
+    "bible_document_apparatus",
+    "bible_document_search",
+    "bible_document_search_config",
+    "bible_document_search_data",
+    "bible_document_search_docsize",
+    "bible_document_search_idx",
+    "bible_document_segments",
+    "bible_documents",
+    "bible_entry_ids",
+    "bible_lemma_entries",
+    "bible_passage_locations",
+    "bible_recognition_book_numbering",
+    "bible_recognition_corrections",
+    "bible_recognition_editions",
+    "bible_recognition_runs",
+    "bible_recognition_verse_evidence",
     "bible_superscriptions",
     "bible_translations",
-    // Full-text search table and the shadow tables SQLite keeps for it.
+    "bible_verse_origins",
+    "bible_verse_places",
     "bible_verse_search",
     "bible_verse_search_config",
     "bible_verse_search_data",
@@ -25,28 +42,38 @@ const EXPECTED_TABLES: &[&str] = &[
     "bible_verse_search_idx",
     "bible_verse_texts",
     "bible_verses",
+    "bible_word_annotations",
+    "bible_words",
     "finding_sources",
     "finding_tags",
     "findings",
-    // Library search table (external content) and its shadow tables.
+    "import_job_items",
+    "import_jobs",
     "library_search",
     "library_search_config",
     "library_search_data",
     "library_search_docsize",
     "library_search_idx",
     "passage_references",
+    "presentation_items",
+    "presentation_templates",
+    "presentations",
     "projects",
     "schema_versions",
     "settings",
     "source_annotations",
+    "source_collection_items",
+    "source_collections",
     "source_files",
     "source_passages",
+    "source_pdf_structures",
     "source_segments",
+    "source_tag_items",
+    "source_tags",
     "sources",
     "studies",
     "study_blocks",
     "study_relations",
-    // Study search table, its shadow tables, and the stable id map.
     "study_search",
     "study_search_config",
     "study_search_content",
@@ -56,11 +83,13 @@ const EXPECTED_TABLES: &[&str] = &[
     "study_search_items",
     "study_sections",
     "study_templates",
+    "teaching_blocks",
     "teaching_finding_links",
     "teaching_materials",
     "teaching_passages",
     "teaching_points",
     "teaching_preparations",
+    "teaching_templates",
     "workspaces",
 ];
 
@@ -250,4 +279,110 @@ fn new_migrations_apply_on_top_of_an_existing_database() {
     assert_eq!(report.from_version, 1);
     assert_eq!(report.to_version, 2);
     assert_eq!(report.applied, vec![2]);
+}
+
+/// v0.18.7: a study's parts are given the phase v0.18.6 showed for them, by
+/// key and kind of study; a part of the person's own stays without one, and
+/// the person's own templates gain the same phases in the same order.
+#[test]
+fn migration_13_gives_existing_parts_and_own_templates_their_phases() {
+    let mut conn = Connection::open_in_memory().unwrap();
+    let before: Vec<_> = MIGRATIONS
+        .iter()
+        .filter(|m| m.version < 13)
+        .map(|m| Migration {
+            version: m.version,
+            name: m.name,
+            sql: m.sql,
+        })
+        .collect();
+    migrations::run_with(&mut conn, &before).unwrap();
+    conn.execute_batch(
+        "INSERT INTO workspaces (id, name, is_default, created_at, updated_at) VALUES ('w', 'W', 1, 't', 't');
+         INSERT INTO projects (id, workspace_id, title, created_at, updated_at) VALUES ('p', 'w', 'P', 't', 't');
+         INSERT INTO studies (id, project_id, title, study_type, created_at, updated_at) VALUES
+             ('passage', 'p', 'A', 'passage', 't', 't'),
+             ('doctrine', 'p', 'B', 'systematic_theology', 't', 't'),
+             ('prep', 'p', 'C', 'teaching', 't', 't');
+         INSERT INTO study_sections (id, study_id, key, title, position, created_at, updated_at) VALUES
+             ('a1', 'passage', 'text', 'Text', 0, 't', 't'),
+             ('a2', 'passage', NULL, 'My questions', 1, 't', 't'),
+             ('a3', 'passage', 'structure', 'Shape', 2, 't', 't'),
+             ('a4', 'passage', 'conclusions', 'Conclusions', 3, 't', 't'),
+             ('a5', 'passage', 'something-else', 'Other', 4, 't', 't'),
+             ('b1', 'doctrine', 'conclusions', 'Conclusions', 0, 't', 't'),
+             ('c1', 'prep', 'structure', 'Structure', 0, 't', 't'),
+             ('c2', 'prep', 'theology', 'Theology', 1, 't', 't');
+         INSERT INTO study_templates (id, key, name, is_builtin, study_type, definition, created_at, updated_at) VALUES
+             ('mine', 'user-mine', 'Mine', 0, 'teaching',
+              '{\"sections\":[{\"key\":\"text\",\"title\":\"Text\"},{\"title\":\"Hymns\",\"guidance\":\"g\"},{\"key\":\"audience\",\"title\":\"Who\",\"optional\":true}]}',
+              't', 't'),
+             -- Damaged rows never stop the upgrade, and are left as they are.
+             ('broken', 'user-broken', 'Broken', 0, 'custom', 'not json', 't', 't'),
+             ('odd', 'user-odd', 'Odd', 0, 'custom', '{\"sections\":[\"loose\",3,{\"key\":\"theology\",\"title\":\"T\"}]}', 't', 't'),
+             ('empty', 'user-empty', 'Empty', 0, 'custom', '{\"sections\":[]}', 't', 't');",
+    )
+    .unwrap();
+
+    migrations::run(&mut conn).unwrap();
+
+    let phase = |id: &str| -> Option<String> {
+        conn.query_row(
+            "SELECT phase FROM study_sections WHERE id = ?1",
+            [id],
+            |r| r.get(0),
+        )
+        .unwrap()
+    };
+    assert_eq!(phase("a1").as_deref(), Some("text"));
+    assert_eq!(phase("a2"), None);
+    assert_eq!(phase("a3").as_deref(), Some("text"));
+    assert_eq!(phase("a4").as_deref(), Some("understanding"));
+    assert_eq!(phase("a5"), None);
+    assert_eq!(phase("b1").as_deref(), Some("theology"));
+    assert_eq!(phase("c1").as_deref(), Some("teaching"));
+    assert_eq!(phase("c2").as_deref(), Some("theology"));
+    // Nothing else of a part changes.
+    let title: String = conn
+        .query_row(
+            "SELECT title FROM study_sections WHERE id = 'a3'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(title, "Shape");
+
+    let definition: String = conn
+        .query_row(
+            "SELECT definition FROM study_templates WHERE id = 'mine'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    let parsed: serde_json::Value = serde_json::from_str(&definition).unwrap();
+    assert_eq!(
+        parsed,
+        serde_json::json!({"sections": [
+            {"key": "text", "title": "Text", "phase": "text"},
+            {"title": "Hymns", "guidance": "g"},
+            {"key": "audience", "title": "Who", "optional": true, "phase": "teaching"},
+        ]})
+    );
+    let stored = |id: &str| -> String {
+        conn.query_row(
+            "SELECT definition FROM study_templates WHERE id = ?1",
+            [id],
+            |r| r.get(0),
+        )
+        .unwrap()
+    };
+    assert_eq!(stored("broken"), "not json");
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&stored("odd")).unwrap(),
+        serde_json::json!({"sections": ["loose", 3, {"key": "theology", "title": "T", "phase": "theology"}]})
+    );
+    assert_eq!(
+        serde_json::from_str::<serde_json::Value>(&stored("empty")).unwrap(),
+        serde_json::json!({"sections": []})
+    );
 }

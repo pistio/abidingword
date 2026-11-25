@@ -16,6 +16,8 @@ interface FindingSourcesProps {
   finding: Finding;
   /** Offer "Add source" (a finding's details are open); its sources always show. */
   canAdd?: boolean;
+  /** Saved Teaching provenance is read-only; its whole saved note can be removed. */
+  canRemove?: boolean;
   onChanged: () => void;
   /**
    * Quotation findings only: puts the cited passage's text into the finding.
@@ -25,7 +27,7 @@ interface FindingSourcesProps {
 }
 
 /** A finding's library citations, and "Add source" to cite a passage. */
-export function FindingSources({ finding, canAdd = true, onChanged, onQuote }: FindingSourcesProps) {
+export function FindingSources({ finding, canAdd = true, canRemove = true, onChanged, onQuote }: FindingSourcesProps) {
   const { t } = useTranslation();
   const api = useApi();
   const { openSource } = useLibraryNav();
@@ -86,15 +88,17 @@ export function FindingSources({ finding, canAdd = true, onChanged, onQuote }: F
         {finding.sources.map((c) => (
           <span key={c.id} className="inline-flex max-w-full items-center rounded-aw border border-border">
             {c.removed ? (
-              <span className="px-2 py-1 text-text-muted">
+              // Kept as a record: removed from the library, or (a project made elsewhere) never here.
+              <span className="px-2 py-1 text-text-muted" title={c.unavailable ? t("library.citations.unavailableTitle") : undefined}>
                 <BookOpen className="mr-1 inline size-3.5" aria-hidden="true" />
-                {citationText(t, c)} <em>{t("library.citations.removed")}</em>
+                {citationText(t, c)} <em>{c.unavailable ? t("library.citations.unavailable") : t("library.citations.removed")}</em>
+                {c.unavailable && <span className="sr-only"> {t("library.citations.unavailableTitle")}</span>}
               </span>
             ) : (
               <button
                 type="button"
                 onClick={() => void open(c)}
-                className="min-h-8 truncate px-2 text-left font-medium text-link hover:bg-bg-secondary"
+                className="min-h-8 truncate px-2 text-left font-medium text-link hover:bg-hover"
                 title={t("library.citations.openTitle")}
               >
                 <BookOpen className="mr-1 inline size-3.5" aria-hidden="true" />
@@ -107,19 +111,19 @@ export function FindingSources({ finding, canAdd = true, onChanged, onQuote }: F
                 onClick={() => void copy(c)}
                 aria-label={t("library.copy.action")}
                 title={t("library.copy.action")}
-                className="inline-flex size-11 shrink-0 items-center justify-center border-l border-border text-text-muted hover:bg-bg-secondary"
+                className="inline-flex size-11 shrink-0 items-center justify-center border-l border-border text-text-muted hover:bg-hover"
               >
                 <Copy className="size-3.5" aria-hidden="true" />
               </button>
             )}
-            <button
+            {canRemove && <button
               type="button"
               onClick={() => remove(c.id)}
               aria-label={t("library.citations.removeLabel", { citation: citationText(t, c) })}
-              className="inline-flex size-8 shrink-0 items-center justify-center border-l border-border text-text-muted hover:bg-bg-secondary"
+              className="inline-flex size-8 shrink-0 items-center justify-center border-l border-border text-text-muted hover:bg-hover"
             >
               <X className="size-3.5" aria-hidden="true" />
-            </button>
+            </button>}
           </span>
         ))}
         {!picking && canAdd && (
@@ -193,7 +197,7 @@ function SourcePicker({ finding, onQuote, onDone }: { finding: Finding; onQuote?
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={t("library.citations.searchPlaceholder")}
-          className="h-9 min-w-0 flex-1 rounded-aw border border-border bg-bg px-2"
+          className="h-9 min-w-0 flex-1 aw-input px-2"
         />
         <Button type="submit">{t("common.search")}</Button>
         <Button variant="quiet" onClick={() => onDone(false)}>{t("common.cancel")}</Button>
@@ -210,10 +214,15 @@ function SourcePicker({ finding, onQuote, onDone }: { finding: Finding; onQuote?
         <ul aria-label={t("library.citations.listLabel")} className="m-0 flex max-h-72 list-none flex-col overflow-y-auto p-0">
           {hits.map((hit) => (
             <li key={hit.segmentId} className="border-t border-border-subtle">
-              <button type="button" onClick={() => cite(hit)} className="flex w-full flex-col items-start gap-0.5 px-1 py-2 text-left hover:bg-bg">
-                <span className="font-semibold text-text-strong">
+              <button type="button" onClick={() => cite(hit)} className="flex w-full flex-col items-start gap-0.5 px-1 py-2 text-left hover:bg-hover">
+                <span className="font-medium text-text-strong">
                   {t("library.citations.cite", { citation: citationText(t, { author: hit.author, title: hit.sourceTitle, locator: hit.locator }) })}
                 </span>
+                {hit.archived && (
+                  <span className="rounded-full border border-border-subtle px-2 py-0.5 text-[0.8125rem] text-text-muted">
+                    {t("common.lifecycle.state.archived")}
+                  </span>
+                )}
                 <span className="reading">{highlighted(hit.snippet)}</span>
               </button>
             </li>

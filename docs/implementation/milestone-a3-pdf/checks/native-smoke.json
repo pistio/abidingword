@@ -1,0 +1,20 @@
+{
+  "profile": "disposable copy of Stage 1 synthetic smoke profile; upgraded by the real DB service and seeded by the actual PDF import regression",
+  "schema": 27,
+  "integrity": "ok",
+  "foreign_key_violations": 0,
+  "sources": 1,
+  "pdf_structures": 1,
+  "root_markers": 1,
+  "managed_pdf_sha256": "375ec26156d8aac46da33bc69d3611526827d7c1a2d31a40c4e3c5db150eee82",
+  "pre_migration_backups": [
+    "backups/pre-migration/abiding-word-v26-2026-11-01T03-05-48.632Z.db"
+  ],
+  "native_ui": [
+    "real Tauri main-window structure GET succeeded",
+    "section Acts 6 opened in Reading",
+    "real native PDF.js Original opened at physical page 2 with printed label 101"
+  ],
+  "platform": "Linux Xvfb/WebKitGTK, not Windows",
+  "shutdown": "intentional Ctrl-C after screenshots"
+}

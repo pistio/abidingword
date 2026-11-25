@@ -6,12 +6,12 @@ use crate::db::{blocks, new_id, now, studies, templates};
 use crate::domain::validate::{self, DESCRIPTION_MAX_CHARS};
 use crate::domain::{
     BlockType, CreateStudySection, DeleteStudySection, FieldKind, Reorder, SectionFields,
-    SectionStatus, StudySection, UpdateStudySection,
+    SectionStatus, StudyPhase, StudySection, UpdateStudySection,
 };
 use crate::error::{AppError, AppResult, UserMessage};
 
 const COLUMNS: &str =
-    "id, study_id, key, title, guidance, position, created_at, updated_at, revision, status, fields";
+    "id, study_id, key, title, guidance, position, created_at, updated_at, revision, status, fields, phase";
 
 fn from_row(row: &Row) -> rusqlite::Result<StudySection> {
     let conversion = |index: usize, e: AppError| {
@@ -34,6 +34,9 @@ fn from_row(row: &Row) -> rusqlite::Result<StudySection> {
         position: row.get(5)?,
         status: status.parse().map_err(|e| conversion(9, e))?,
         fields,
+        phase: row
+            .get::<_, Option<String>>(11)?
+            .and_then(|p| StudyPhase::parse(&p).ok()),
         blocks: Vec::new(),
         created_at: row.get(6)?,
         updated_at: row.get(7)?,
@@ -78,15 +81,21 @@ pub fn get(conn: &Connection, id: &str) -> AppResult<StudySection> {
     Ok(section)
 }
 
+/// Existing phase-aware section API, also used by project import.
+pub(crate) struct NewSection<'a> {
+    pub key: Option<&'a str>,
+    pub title: &'a str,
+    pub guidance: Option<&'a str>,
+    pub phase: Option<StudyPhase>,
+}
+
 /// Inserts a part with an optional snapshot of structured fields. The part
 /// starts without blocks: see [`seed_blocks`].
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn insert_structured(
     conn: &Connection,
     study_id: &str,
-    key: Option<&str>,
-    title: &str,
-    guidance: Option<&str>,
+    section: NewSection,
     position: i64,
     fields: Option<&SectionFields>,
     now: &str,
@@ -97,9 +106,19 @@ pub(crate) fn insert_structured(
         .transpose()?;
     conn.execute(
         "INSERT INTO study_sections
-             (id, study_id, key, title, guidance, position, fields, created_at, updated_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?8)",
-        params![id, study_id, key, title, guidance, position, fields, now],
+             (id, study_id, key, title, guidance, position, fields, phase, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)",
+        params![
+            id,
+            study_id,
+            section.key,
+            section.title,
+            section.guidance,
+            position,
+            fields,
+            section.phase.map(StudyPhase::as_str),
+            now
+        ],
     )?;
     Ok(id)
 }
@@ -120,7 +139,7 @@ pub(crate) fn seed_blocks(
     for (position, field) in snapshot
         .fields
         .iter()
-        .filter(|f| f.kind == FieldKind::Text)
+        .filter(|f| matches!(f.kind, FieldKind::Text | FieldKind::Writing))
         .enumerate()
     {
         blocks::insert_answer(
@@ -178,7 +197,7 @@ pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudyS
             version: part.fields_version,
             fields: part.fields,
         });
-        Some((key.clone(), snapshot))
+        Some((key.clone(), snapshot, part.phase))
     } else {
         None
     };
@@ -190,26 +209,41 @@ pub fn create(conn: &Connection, input: &CreateStudySection) -> AppResult<StudyS
     )?;
     let now = now();
     let tx = conn.unchecked_transaction()?;
+    let key = validate::part_key(input.key.as_deref())?;
+    let key = template_part
+        .as_ref()
+        .map(|(key, _, _)| key.as_str())
+        .or(key.as_deref());
+    if let Some(key) = key {
+        if list(&tx, &input.study_id)?
+            .iter()
+            .any(|s| s.key.as_deref() == Some(key))
+        {
+            return Err(AppError::Conflict(UserMessage::new(
+                "sections.duplicateKey",
+                "This study already has that part.",
+            )));
+        }
+    }
+    let fields = template_part
+        .as_ref()
+        .and_then(|(_, fields, _)| fields.as_ref());
     let id = insert_structured(
         &tx,
         &input.study_id,
-        template_part.as_ref().map(|(key, _)| key.as_str()),
-        &title,
-        guidance.as_deref(),
+        NewSection {
+            key,
+            title: &title,
+            guidance: guidance.as_deref(),
+            phase: input
+                .phase
+                .or(template_part.as_ref().and_then(|(_, _, phase)| *phase)),
+        },
         position,
-        template_part
-            .as_ref()
-            .and_then(|(_, fields)| fields.as_ref()),
+        fields,
         &now,
     )?;
-    seed_blocks(
-        &tx,
-        &id,
-        template_part
-            .as_ref()
-            .and_then(|(_, fields)| fields.as_ref()),
-        &now,
-    )?;
+    seed_blocks(&tx, &id, fields, &now)?;
     studies::touch(&tx, &input.study_id, &now)?;
     tx.commit()?;
     get(conn, &id)
@@ -307,14 +341,136 @@ pub fn update(conn: &Connection, input: &UpdateStudySection) -> AppResult<StudyS
         Some(text) => validate::optional_text(Some(text), DESCRIPTION_MAX_CHARS, "guidance")?,
         None => current.guidance,
     };
+    let phase = match input.phase.as_deref() {
+        Some("") => None,
+        Some(value) => Some(StudyPhase::parse(value)?),
+        None => current.phase,
+    };
     let status: SectionStatus = input.status.unwrap_or(current.status);
     let now = now();
     conn.execute(
-        "UPDATE study_sections SET title = ?2, guidance = ?3, status = ?4, updated_at = ?5,
+        "UPDATE study_sections SET title = ?2, guidance = ?3, status = ?4, phase = ?5, updated_at = ?6,
              revision = revision + 1
          WHERE id = ?1",
-        params![input.id, title, guidance, status.as_str(), now],
+        params![input.id, title, guidance, status.as_str(), phase.map(StudyPhase::as_str), now],
     )?;
     studies::touch(conn, &current.study_id, &now)?;
     get(conn, &input.id)
+}
+
+/// Recreate empty original method parts, never revive deleted user content.
+/// Resolve every definition from the study's built-in template, not caller text.
+pub fn restore_missing(
+    conn: &Connection,
+    study_id: &str,
+    keys: Option<&[String]>,
+) -> AppResult<Vec<StudySection>> {
+    let study = studies::get(conn, study_id)?;
+    let template = templates::get(conn, study.template_id.as_deref().unwrap_or(""))?;
+    if !template.is_builtin
+        || !matches!(
+            template.key.as_str(),
+            "pozetek-study"
+                | "pozetek-writing-study"
+                | "ten-step-exegesis"
+                | "ten-step-writing-study"
+        )
+    {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "templates.unknownPart",
+            "This template part is no longer available.",
+        )));
+    }
+    let original: Vec<_> = template
+        .sections
+        .iter()
+        .filter(|part| !part.optional && !part.retired)
+        .collect();
+    if keys.is_some_and(|keys| {
+        keys.iter()
+            .any(|key| !original.iter().any(|part| part.key.as_ref() == Some(key)))
+    }) {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "templates.unknownPart",
+            "This template part is no longer available.",
+        )));
+    }
+    let tx = conn.unchecked_transaction()?;
+    let mut current = list(&tx, study_id)?;
+    let at = now();
+    let mut added = false;
+    for part in &original {
+        let Some(key) = part.key.as_deref() else {
+            continue;
+        };
+        if keys.is_some_and(|keys| !keys.iter().any(|value| value == key))
+            || current
+                .iter()
+                .any(|section| section.key.as_deref() == Some(key))
+        {
+            continue;
+        }
+        let fields = (!part.fields.is_empty()).then(|| SectionFields {
+            template: part
+                .fields_source
+                .clone()
+                .unwrap_or_else(|| template.key.clone()),
+            version: part.fields_version,
+            fields: part.fields.clone(),
+        });
+        let id = insert_structured(
+            &tx,
+            study_id,
+            NewSection {
+                key: Some(key),
+                title: &part.title,
+                guidance: part.guidance.as_deref(),
+                phase: part.phase,
+            },
+            current.len() as i64,
+            fields.as_ref(),
+            &at,
+        )?;
+        seed_blocks(&tx, &id, fields.as_ref(), &at)?;
+        current.push(get(&tx, &id)?);
+        added = true;
+    }
+    if added {
+        // Restore methodological sequence in original-part slots. Custom parts
+        // keep their slots and relative order; all surviving content keeps IDs.
+        let order: HashMap<_, _> = original
+            .iter()
+            .enumerate()
+            .filter_map(|(index, part)| part.key.as_deref().map(|key| (key, index)))
+            .collect();
+        let mut method: Vec<_> = current
+            .iter()
+            .filter(|section| {
+                section
+                    .key
+                    .as_deref()
+                    .is_some_and(|key| order.contains_key(key))
+            })
+            .collect();
+        method.sort_by_key(|section| order[section.key.as_deref().unwrap()]);
+        let mut method = method.into_iter();
+        for (position, section) in current.iter().enumerate() {
+            let section = if section
+                .key
+                .as_deref()
+                .is_some_and(|key| order.contains_key(key))
+            {
+                method.next().unwrap()
+            } else {
+                section
+            };
+            tx.execute(
+                "UPDATE study_sections SET position=?2 WHERE id=?1",
+                params![section.id, position as i64],
+            )?;
+        }
+        studies::touch(&tx, study_id, &at)?;
+    }
+    tx.commit()?;
+    list(conn, study_id)
 }

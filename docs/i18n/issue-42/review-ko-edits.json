@@ -1,0 +1,278 @@
+[
+  {
+    "key": "app.updates.help",
+    "before": "Abiding Word는 가끔, 또는 요청할 때만 확인합니다. 작업에 인터넷 연결이 필요 없고, 성경공부에는 영향이 없습니다.",
+    "after": "Abiding Word는 가끔 또는 직접 요청할 때만 업데이트를 확인합니다. 인터넷 연결 없이도 작업할 수 있으며, 성경공부에는 영향이 없습니다.",
+    "reason": "Remove the dangling 가끔/or coordination; keep occasional/on-request checks, offline work and unaffected studies."
+  },
+  {
+    "key": "errors.kind.integrity",
+    "before": "성경공부 데이터가 손상된 것으로 보여, Abiding Word가 변경하기 전에 작업을 멈췄습니다. 파일은 수정되지 않았습니다. 자세한 내용은 로그 파일에 있습니다.",
+    "after": "성경공부 데이터가 손상된 것으로 보여 Abiding Word가 데이터를 변경하기 전에 작업을 멈췄습니다. 파일은 수정되지 않았습니다. 자세한 내용은 로그 파일에 있습니다.",
+    "reason": "Give 변경하기 an explicit object and remove an unnatural comma; preserve the no-modification assurance."
+  },
+  {
+    "key": "errors.templates.partAlreadyAdded",
+    "before": "이 공부 틀의 항목은 이미 성경 공부에 추가되어 있습니다.",
+    "after": "이 공부 틀의 항목은 이미 성경공부에 추가되어 있습니다.",
+    "reason": "Use the approved product term 성경공부."
+  },
+  {
+    "key": "library.filter.archiveHelp",
+    "before": "사용 중인 자료는 공부 옆에 나타납니다. 보관된 자료는 자료실에 남고, 설정에서 복원할 때까지 자료 창에는 나오지 않습니다.",
+    "after": "사용 중인 자료는 성경공부 옆에 나타납니다. 보관된 자료는 자료실에 남고, 설정에서 복원할 때까지 자료 창에는 나오지 않습니다.",
+    "reason": "Name the Study pane consistently without altering archive visibility."
+  },
+  {
+    "key": "library.pane.noRecent",
+    "before": "이번 사용 중에 연 자료가 여기에 표시됩니다.",
+    "after": "이번에 앱을 연 뒤에 읽은 자료가 여기에 표시됩니다.",
+    "reason": "Replace the literal 이번 사용 중에 with a natural description of the current session."
+  },
+  {
+    "key": "library.passage.bookSection",
+    "before": "책 단위 부분 {{passage}}(더 넓음)",
+    "after": "책 단위 구간 {{passage}}(더 넓은 범위)",
+    "reason": "Make the broader scope explicit and use the structure panel’s 구간 wording."
+  },
+  {
+    "key": "library.structure.processing.background",
+    "before": "이 창을 닫고 계속 읽거나 쓸 수 있습니다. 취소는 다음 안전한 처리 경계에서 적용되며 최종 저장 중에는 취소할 수 없습니다.",
+    "after": "이 창을 닫고 계속 읽거나 쓸 수 있습니다. 취소 요청은 현재 작업을 안전하게 멈출 수 있는 시점에 적용되며, 최종 저장 중에는 취소할 수 없습니다.",
+    "reason": "Replace processing-boundary jargon with a natural explanation while preserving deferred cancellation and the commit restriction."
+  },
+  {
+    "key": "library.structure.processing.missing",
+    "before": "저장된 제목 분석이 없습니다. 구조 만들기를 선택하세요. 분석 전에 일반 진단 보고서를 저장할 수도 있습니다.",
+    "after": "저장된 제목 분석이 없습니다. ‘구조 분석’을 선택하세요. 분석 전에 일반 진단 보고서를 저장할 수도 있습니다.",
+    "reason": "Match the actual 구조 분석 button instead of the nonexistent 구조 만들기 action."
+  },
+  {
+    "key": "library.fileDialog.sources",
+    "before": "자료실에 추가할 파일들 선택",
+    "after": "자료실에 추가할 파일 선택",
+    "reason": "Korean 파일 already permits multiple files; remove the unnecessary 들 suffix in the picker caption."
+  },
+  {
+    "key": "scripture.addBible.words.not.tooLarge_other",
+    "before": "어떤 성경보다도 단어 주석이 많아 하나도 넣지 않습니다. 본문은 그대로입니다.",
+    "after": "성경 한 권에 들어갈 수 있는 범위보다 단어 주석이 많아 하나도 넣지 않습니다. 본문은 그대로입니다.",
+    "reason": "Express the sanity limit naturally instead of the odd comparison with any Bible; preserve exclusion and unchanged text."
+  },
+  {
+    "key": "scripture.addBible.guide.intro",
+    "before": "일부 판본은 각 단어에 사전형, 문법, 어휘 번호를 제공합니다. 일부는 위에 포함되어 있거나 검증된 내려받기로 제공되며, 나머지는 발행처에서 내려받은 뒤 여기서 고를 수 있습니다.",
+    "after": "일부 판본은 각 단어에 원형, 문법, 사전 번호를 제공합니다. 일부는 위에 포함되어 있거나 검증된 내려받기로 제공되며, 나머지는 발행처에서 내려받은 뒤 여기서 고를 수 있습니다.",
+    "reason": "Use the same 원형 and 사전 번호 terms as the actual word-information controls."
+  },
+  {
+    "key": "scripture.addBible.document.noWords",
+    "before": "단어 정보(사전형, 문법, 사전 번호): 없음. 일반 문서에는 이런 정보가 없으며, 텍스트에서 지어내지 않습니다.",
+    "after": "단어 정보(원형, 문법, 사전 번호): 없음. 일반 문서에는 이런 정보가 없으며, 텍스트에서 지어내지 않습니다.",
+    "reason": "Match the 원형 word-information label; keep the no-invented-data warning."
+  },
+  {
+    "key": "scripture.addBible.available.contains.lemma",
+    "before": "사전형",
+    "after": "원형",
+    "reason": "Match the 원형 search and word-detail label."
+  },
+  {
+    "key": "scripture.addBible.available.contains.strong",
+    "before": "어휘 번호",
+    "after": "사전 번호",
+    "reason": "Match the 사전 번호 label used for lexical-number searches."
+  },
+  {
+    "key": "settings.assistant.keyHelp.costA",
+    "before": "대부분의 서비스는 사용한 만큼 조금 요금을 받으며, 키가 작동하기 전에 결제 정보나 선불 충전을 요구할 수 있습니다. 결제는 Abiding Word가 아니라 그 웹사이트에서 합니다.",
+    "after": "대부분의 서비스는 사용량에 따라 요금을 청구하며, 키를 사용하려면 결제 정보를 입력하거나 미리 충전해야 할 수 있습니다. 결제는 Abiding Word가 아니라 해당 웹사이트에서 합니다.",
+    "reason": "Replace the unnatural 조금 요금을 받으며 and key-works calque with ordinary Korean billing language; retain possible prepayment."
+  },
+  {
+    "key": "settings.trash.studyHint",
+    "before": "성경공부와 자료는 설정 → 데이터 및 백업 → 휴지통에서 복원할 수 있습니다. 연결된 가르침은 저장된 메모와 인용을 유지하며 성경공부 모음에 남지만 연결은 해제됩니다. 복원해도 자동으로 다시 연결되지 않습니다.",
+    "after": "성경공부와 자료는 설정 → 데이터와 백업 → 휴지통에서 복원할 수 있습니다. 연결된 가르침은 저장된 기록과 인용을 유지하며 성경공부 모음에 남지만 연결은 해제됩니다. 복원해도 자동으로 다시 연결되지 않습니다.",
+    "reason": "Match the exact 데이터와 백업 settings label and use 기록 for retained Study findings; preserve unlinking and restoration semantics."
+  },
+  {
+    "key": "presentation.source.point",
+    "before": "성경 가르침 {{number}}번째 부분",
+    "after": "성경 가르침의 {{number}}번째 부분",
+    "reason": "Add the missing possessive particle in the slide provenance label."
+  },
+  {
+    "key": "studies.builtin.templates.topical-study.name",
+    "before": "주제별 성경 공부",
+    "after": "주제별 성경공부",
+    "reason": "Use the approved 성경공부 product term in the template name."
+  },
+  {
+    "key": "studies.builtin.templates.topical-research-study.name",
+    "before": "주제별 성경 공부",
+    "after": "주제별 성경공부",
+    "reason": "Match the corresponding template and Study type name."
+  },
+  {
+    "key": "studies.builtin.templates.passage-study.sections.related-scripture.guidance",
+    "before": "이 본문을 설명하거나, 되울리거나, 성취하는 다른 구절들.",
+    "after": "이 본문을 설명하거나, 그 내용을 떠올리게 하거나, 성취하는 다른 구절들.",
+    "reason": "Replace the unnatural 되울리다 calque with idiomatic wording for echo/allusion; retain the existing explain/echo/fulfil distinctions."
+  },
+  {
+    "key": "studies.builtin.templates.word-research-study.sections.occurrences.fields.concordance.label",
+    "before": "성구 사전",
+    "after": "용례 찾기",
+    "reason": "Match the established concordance tool name; this is a live search tool, not a dictionary."
+  },
+  {
+    "key": "studies.editor.options",
+    "before": "성경 공부 옵션",
+    "after": "성경공부 옵션",
+    "reason": "Use the approved 성경공부 product term in the accessible menu name."
+  },
+  {
+    "key": "studies.editor.filterOn",
+    "before": "메모가 필터링되어 있습니다.",
+    "after": "기록에 필터가 적용되어 있습니다.",
+    "reason": "The code filters findings, whose approved Korean name is 기록; reserve 메모 for annotations."
+  },
+  {
+    "key": "studies.templates.intro",
+    "before": "공부 틀은 시작하는 구성입니다. 새 성경공부가 시작할 때의 부분들, 또는 가르침의 모양을 정합니다. 공부 틀을 바꿔도 이미 그 틀로 만든 성경공부는 바뀌지 않습니다.",
+    "after": "공부·가르침 틀은 새 성경공부나 가르침을 시작할 때의 구성을 정합니다. 틀을 바꿔도 이미 그 틀로 만든 성경공부는 바뀌지 않습니다.",
+    "reason": "Describe a starting structure naturally and include both template kinds shown in Settings; preserve existing-instance independence."
+  },
+  {
+    "key": "studies.teaching.saveTemplate.keeps.points",
+    "before": "가르침 틀에는 형식과 이 가르침의 대지 개수가 순서대로 담깁니다. 대지는 제목 없이 시작합니다.",
+    "after": "가르침 틀에는 형식과 대지의 수·순서가 담깁니다. 대지는 제목 없이 시작합니다.",
+    "reason": "Avoid saying a count is stored in order; preserve the number/order distinction and untitled points."
+  },
+  {
+    "key": "studies.teaching.saveTemplate.keeps.generalPoints",
+    "before": "가르침 틀에는 형식과 이 가르침의 주요 내용 개수가 순서대로 담깁니다. 주요 내용은 제목 없이 시작합니다.",
+    "after": "가르침 틀에는 형식과 주요 내용의 수·순서가 담깁니다. 주요 내용은 제목 없이 시작합니다.",
+    "reason": "Avoid saying a count is stored in order; preserve shape-specific 주요 내용 wording."
+  },
+  {
+    "key": "studies.teaching.builtin.bibleLesson.hint",
+    "before": "어린이와 청소년을 위한 하나의 시간입니다. 나이는 전달 방식을 바꾸지, 본문의 뜻을 바꾸지 않습니다.",
+    "after": "어린이와 청소년을 위한 성경 수업입니다. 나이에 따라 전달 방식은 달라지지만, 본문의 뜻은 바뀌지 않습니다.",
+    "reason": "Replace 하나의 시간 and the literal contrast construction with natural Korean; retain the exact age/meaning distinction."
+  },
+  {
+    "key": "studies.teaching.builtin.bibleLesson.blocks.explain.guidance",
+    "before": "본문의 뜻을 그들이 따라올 말로 말합니다. 더 쉬운 다른 뜻으로 바꾸지 않습니다.",
+    "after": "이해할 수 있는 말로 본문의 뜻을 설명합니다. 더 쉬운 다른 뜻으로 바꾸지 않습니다.",
+    "reason": "Replace 따라올 말로 말합니다 with natural Korean explanation wording; preserve the ban on changing the text’s meaning."
+  },
+  {
+    "key": "studies.teaching.builtin.bibleLesson.blocks.questions.guidance",
+    "before": "모둠이 듣는 질문과, 들을 대답에 대한 인도자의 메모. 메모는 인도자에게 남습니다.",
+    "after": "모임에서 나눌 질문과, 어떤 답에 귀 기울일지 적는 인도자 메모입니다. 메모는 인도자만 봅니다.",
+    "reason": "Replace the awkward group-hears/questions and listen-for-answers calques; retain leader-only notes."
+  },
+  {
+    "key": "studies.teaching.fromStudy.open",
+    "before": "성경 공부에서 가져오기…",
+    "after": "성경공부에서 가져오기…",
+    "reason": "Use the approved 성경공부 product term in the action label."
+  },
+  {
+    "key": "studies.teaching.fromStudy.title",
+    "before": "성경 공부에서 가져오기",
+    "after": "성경공부에서 가져오기",
+    "reason": "Match the action and Study title."
+  },
+  {
+    "key": "studies.teaching.fromStudy.help",
+    "before": "이 가르침에 복사할 내용을 고르세요. 복사본은 자유롭게 고칠 수 있고 출처가 표시되며, 처음에는 인도자 전용이고 성경 공부와 자동으로 맞춰지지 않습니다.",
+    "after": "이 가르침에 복사할 내용을 고르세요. 복사본은 자유롭게 고칠 수 있고 출처가 표시되며, 처음에는 인도자 전용이고 성경공부의 변경 내용이 자동으로 반영되지 않습니다.",
+    "reason": "Use approved terminology and replace 자동으로 맞춰지다 with a precise no-live-sync explanation; preserve initial privacy."
+  },
+  {
+    "key": "studies.teaching.fromStudy.none",
+    "before": "이 성경 공부에는 아직 가져올 내용이 없습니다.",
+    "after": "이 성경공부에는 아직 가져올 내용이 없습니다.",
+    "reason": "Use the approved 성경공부 product term."
+  },
+  {
+    "key": "studies.teaching.fromStudy.added",
+    "before": "성경 공부에서 인도자 전용으로 가져왔습니다. 준비되면 각 부분을 공유하세요.",
+    "after": "성경공부에서 인도자 전용으로 가져왔습니다. 준비되면 각 부분을 공유하세요.",
+    "reason": "Use the approved 성경공부 term; retain leader-only default and deliberate sharing."
+  },
+  {
+    "key": "studies.teaching.fromStudy.provenance",
+    "before": "성경 공부에서: {{label}}",
+    "after": "성경공부에서: {{label}}",
+    "reason": "Use the same Study name in generated provenance."
+  },
+  {
+    "key": "studies.teaching.fromStudy.quotation",
+    "before": "성경 공부의 인용 · {{citation}}",
+    "after": "성경공부의 인용 · {{citation}}",
+    "reason": "Use the same Study name in generated citation attribution."
+  },
+  {
+    "key": "studies.teaching.fromStudy.groups.finding",
+    "before": "메모",
+    "after": "기록",
+    "reason": "These are Study findings, not verse/source annotations; use the approved 기록 distinction."
+  },
+  {
+    "key": "studies.inquiry.action.unresolved",
+    "before": "열린 질문 함께 생각하기",
+    "after": "남은 질문 함께 생각하기",
+    "reason": "Replace the literal 열린 질문 with an idiomatic label for unresolved questions."
+  },
+  {
+    "key": "studies.inquiry.proposal.used",
+    "before": "새 표현을 글에 넣었고 저장됩니다.",
+    "after": "새 표현을 글에 넣었습니다. 변경 내용이 저장됩니다.",
+    "reason": "Repair the awkward tense/coordination while retaining that saving follows the insertion."
+  },
+  {
+    "key": "studies.builder.guidance",
+    "before": "선택 안내",
+    "after": "안내(선택 사항)",
+    "reason": "Optional guidance means an optional field, not guidance about choosing something."
+  },
+  {
+    "key": "studies.builder.kinds.concordance",
+    "before": "성구 사전",
+    "after": "용례 찾기",
+    "reason": "Match the live concordance tool and template field, avoiding dictionary terminology."
+  },
+  {
+    "key": "studies.qaExport.help",
+    "before": "포함할 내용을 고르세요. 성경 공부 각 부분에 쓴 내용만 내보내며, 따로 적은 메모는 포함하지 않습니다.",
+    "after": "포함할 내용을 고르세요. 성경공부 각 부분에 쓴 내용만 내보내며, 따로 적은 기록은 포함하지 않습니다.",
+    "reason": "Use approved Study/finding terms and preserve the explicit exclusion of separate notes."
+  },
+  {
+    "key": "studies.qaExport.modes.full",
+    "before": "성경 공부 전체",
+    "after": "성경공부 전체",
+    "reason": "Use the approved 성경공부 term in the export choice."
+  },
+  {
+    "key": "studies.repair.explain",
+    "before": "원래 일곱 부분이 먼저 배치됩니다. 누락된 부분은 빈 상태로 추가됩니다. 주제, 이해, 결과와 중복 부분을 포함한 모든 기존 부분은 이름, 글, 메모와 연결을 유지합니다. 일곱 부분에 속하지 않는 부분은 기존 상대적 순서대로 뒤에 놓입니다.",
+    "after": "원래 일곱 부분이 먼저 배치됩니다. 누락된 부분은 빈 상태로 추가됩니다. 주제, 이해, 결과와 중복 부분을 포함한 모든 기존 부분은 이름, 글, 기록과 연결을 유지합니다. 일곱 부분에 속하지 않는 부분은 기존 상대적 순서대로 뒤에 놓입니다.",
+    "reason": "The repair preserves Study findings (기록), not verse/source annotations (메모); retain all seven-part/order/content-preservation semantics."
+  },
+  {
+    "key": "studies.repair.finishDrafts",
+    "before": "복구를 취소하기 전에 열린 메모와 부분 이름 편집을 완료하거나 닫으세요.",
+    "after": "복구를 취소하기 전에 열려 있는 기록과 부분 이름의 편집을 완료하거나 닫으세요.",
+    "reason": "The open data-capture editors are Study finding drafts; use 기록 and natural editing wording without weakening the undo gate."
+  },
+  {
+    "key": "settings.assistant.imagesLeave",
+    "before": "글쓰기 서비스와 달리, 이미지 설명은 인터넷으로 OpenAI에 전송됩니다.",
+    "after": "글쓰기 도우미가 이 컴퓨터에서 실행되더라도 이미지 설명은 인터넷으로 OpenAI에 전송됩니다.",
+    "reason": "Second AI consistency reviewer requested an explicit local-writing contrast: image descriptions still go to OpenAI even when writing runs on this computer; preserve the remote-image consent boundary."
+  }
+]

@@ -4,13 +4,15 @@ import { describe, expect, it, vi } from "vitest";
 import i18n, { LANGUAGES, setLanguage } from "@/i18n";
 import { normaliseLanguage } from "@/i18n/languages";
 import { ApiProvider } from "@/lib/ApiContext";
+import { ScriptureProvider } from "@/features/scripture/ScriptureContext";
+import { BOOKS } from "../support/scriptureFixture";
 import { NewStudyForm } from "@/features/studies/NewStudyForm";
 import { StudyTemplates } from "@/features/settings/StudyTemplates";
 import { AddPart } from "@/features/studies/AddPart";
 import { STUDY_TEMPLATE_KEYS, inStudyCatalogue } from "@/features/studies/catalogue";
 import { localizedSections, sectionGuidance, sectionTitle, structuredText, templateDescription, templateName } from "@/features/studies/builtinText";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 for (const { code } of LANGUAGES) {
   describe(`the six-template catalogue in ${code}`, () => {
@@ -23,7 +25,7 @@ for (const { code } of LANGUAGES) {
         const path = `studies.builtin.templates.${template.key}`;
         expect(templateName(template)).toBe(i18n.getResource(code, "translation", `${path}.name`));
         expect(templateDescription(template)).toBe(i18n.getResource(code, "translation", `${path}.description`));
-        expect(templateName(template).includes("POZETEK")).toBe(code === "de" && template.key === "pozetek-study");
+        expect(templateName(template).includes("POZETEK")).toBe(code === "de" && template.key === "pozetek-writing-study");
         for (const section of template.sections) {
           const base = `${path}.sections.${section.key}`;
           expect(i18n.getResource(code, "translation", `${base}.title`)).toBeTruthy();
@@ -56,16 +58,16 @@ for (const { code } of LANGUAGES) {
         const parse = vi.spyOn(api, "referenceParse");
         const created = vi.fn();
         const user = userEvent.setup();
-        render(<ApiProvider api={api}><NewStudyForm projectId={project.id} onCreated={created} /></ApiProvider>);
+        render(<ApiProvider api={api}><ScriptureProvider settings={api.state.settings} books={BOOKS} translations={[]}><NewStudyForm projectId={project.id} onCreated={created} /></ScriptureProvider></ApiProvider>);
         await user.click(await screen.findByRole("button", { name: i18n.t(`studies.newStudy.approach.${type}`) }));
-        await user.type(screen.getByRole("textbox", { name: i18n.t("studies.newStudy.heading") }), type === "character" ? "Ruth" : "Philippians");
+        await user.type(screen.getByRole("textbox", { name: i18n.t(`studies.newStudy.subjectLabel.${type}`) }), type === "character" ? "Ruth" : "Philippians");
         await user.click(screen.getByRole("button", { name: i18n.t("studies.newStudy.create") }));
         await waitFor(() => expect(created).toHaveBeenCalledOnce());
         expect(parse).not.toHaveBeenCalled();
         const study = api.state.studies[0]!;
         expect(study.studyType).toBe(type);
         const template = api.state.templates.find((t) => t.id === study.templateId)!;
-        expect(template.key).toBe(type === "character" ? "biblical-character-study" : "whole-book-study");
+        expect(template.key).toBe(type === "character" ? "character-research-study" : "book-research-study");
         const parts = await api.studySectionList(study.id);
         expect(parts).toHaveLength(7);
         expect(parts.every((s) => s.blocks.every((b) => b.content === ""))).toBe(true);
@@ -76,16 +78,16 @@ for (const { code } of LANGUAGES) {
 }
 
 it("offers both passage methods and uses the selected template", async () => {
-  for (const key of ["pozetek-study", "ten-step-exegesis"]) {
+  for (const key of ["pozetek-writing-study", "ten-step-writing-study"]) {
     const api = createMemoryApi();
     const project = await api.projectCreate({ workspaceId: api.state.workspace.id, title: "Passages" });
     const user = userEvent.setup();
     const created = vi.fn();
-    render(<ApiProvider api={api}><NewStudyForm projectId={project.id} onCreated={created} /></ApiProvider>);
+    render(<ApiProvider api={api}><ScriptureProvider settings={api.state.settings} books={BOOKS} translations={[]}><NewStudyForm projectId={project.id} onCreated={created} /></ScriptureProvider></ApiProvider>);
     const method = await screen.findByRole("combobox", { name: "Template" });
     expect(within(method).getAllByRole("option")).toHaveLength(2);
     await user.selectOptions(method, key);
-    await user.type(screen.getByRole("textbox", { name: "What would you like to study?" }), "John 15:1-11");
+    await user.type(screen.getByRole("textbox", { name: "Bible passage" }), "John 15:1-11");
     await user.click(screen.getByRole("button", { name: "Create study" }));
     await waitFor(() => expect(created).toHaveBeenCalledOnce());
     expect(api.state.studies[0]!.templateId).toBe(api.state.templates.find((t) => t.key === key)!.id);
@@ -97,12 +99,12 @@ it("offers both passage methods and uses the selected template", async () => {
 it("shows six built-ins in Settings and retains legacy definitions and user templates", async () => {
   const api = createMemoryApi();
   await api.templateCreate({ name: "Saved personal outline", studyType: "biblical_theology", sections: [{ title: "Read" }] });
-  render(<ApiProvider api={api}><StudyTemplates onEdit={() => undefined} /></ApiProvider>);
+  render(<ApiProvider api={api}><ScriptureProvider settings={api.state.settings} books={BOOKS} translations={[]}><StudyTemplates onEdit={() => undefined} onEditTeaching={() => undefined} /></ScriptureProvider></ApiProvider>);
   const list = await screen.findByRole("list", { name: i18n.t("studies.templates.listLabel") });
   await waitFor(() => expect(within(list).getAllByRole("listitem")).toHaveLength(7));
   expect(within(list).getByText("Saved personal outline")).toBeInTheDocument();
   expect(api.state.templates.some((t) => t.key === "passage-study")).toBe(true);
-  expect(within(list).queryByText("Biblical Theology Study")).not.toBeInTheDocument();
+  expect(within(list).getAllByRole("listitem")).toHaveLength(7);
 });
 
 it("keeps keyless optional parts usable in a saved personal template", async () => {

@@ -1,6 +1,7 @@
 //! Catalogue workflows and preservation across copies, backups and reopening.
 use abiding_word_lib::db::{
-    backup, blocks, projects, sections, studies, study_search, templates, workspaces, Database,
+    backup, blocks, migrations, projects, sections, studies, study_search, templates, workspaces,
+    Database,
 };
 use abiding_word_lib::domain::{
     CreateProject, CreateStudy, CreateStudySection, DuplicateStudy, ListStudies, SectionStatus,
@@ -161,6 +162,9 @@ fn character_and_book_workflows_survive_custom_templates_deletion_backup_and_res
                         title: optional.title.clone(),
                         guidance: optional.guidance.clone(),
                         template_section_key: optional.key.clone(),
+
+                        key: None,
+                        phase: None,
                     },
                 )?;
                 assert_eq!(added.key, optional.key);
@@ -171,6 +175,9 @@ fn character_and_book_workflows_survive_custom_templates_deletion_backup_and_res
                         title: optional.title.clone(),
                         guidance: None,
                         template_section_key: optional.key.clone(),
+
+                        key: None,
+                        phase: None,
                     }
                 )
                 .is_err());
@@ -216,7 +223,11 @@ fn character_and_book_workflows_survive_custom_templates_deletion_backup_and_res
                 assert_eq!(saved.sections.len(), 8);
                 ids.push(detail.study.id);
             }
-            let path = backup::pre_migration(conn, &temp.path().join("snapshot"), 10)?;
+            let path = backup::pre_migration(
+                conn,
+                &temp.path().join("snapshot"),
+                migrations::current_version(conn)?,
+            )?;
             Ok((ids, path))
         })
         .unwrap();

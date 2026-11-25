@@ -94,7 +94,7 @@ export function FindingsPanel({ studyId, findings, sections, filter, capturing, 
 
   return (
     <section id="study-findings" aria-labelledby={`${id}-title`} className="scroll-mt-4 flex flex-col gap-3 border-t border-border-subtle pt-4">
-      <h2 id={`${id}-title`} className="m-0 font-display text-[1.25rem] font-heading text-text-strong">
+      <h2 id={`${id}-title`} className="type-section m-0">
         {t("studies.findings.heading")}
       </h2>
 
@@ -138,7 +138,7 @@ export function KindFilter({ findings, filter, onFilter }: { findings: Finding[]
       <select
         value={filter && counts.has(filter) ? filter : ""}
         onChange={(e) => onFilter((e.target.value || null) as FindingType | null)}
-        className="h-11 max-w-full rounded-aw border border-border bg-bg px-2 text-text-strong"
+        className="h-11 max-w-full aw-input px-2 text-text-strong"
       >
         <option value="">{t("studies.findings.all", { count: findings.length })}</option>
         {FINDING_TYPES.filter((type) => counts.has(type)).map((type) => (
@@ -254,10 +254,9 @@ export const QuickCapture = forwardRef<HTMLTextAreaElement, QuickCaptureProps>(f
     requestAnimationFrame(() => document.getElementById(`${id}-kind-${next}`)?.focus());
   };
 
-  const pill =
-    "min-h-11 rounded-full border border-border px-4 font-ui text-[0.9375rem] text-text-strong hover:bg-bg " +
-    "aria-checked:border-primary aria-checked:bg-primary aria-checked:text-on-primary";
-  const field = "h-11 min-w-0 max-w-full rounded-aw border border-border bg-bg px-2";
+  // The kind of note is an option among several: the shared choice chip (v0.18.5).
+  const pill = "aw-choice min-h-11 px-4";
+  const field = "h-11 min-w-0 max-w-full aw-input px-2";
 
   return (
     <div role="group" aria-label={t("studies.findings.addGroup")} className="@container flex flex-col gap-3 border-l-[3px] border-accent bg-bg-secondary px-4 py-3" onKeyDown={keys}>
@@ -271,7 +270,7 @@ export const QuickCapture = forwardRef<HTMLTextAreaElement, QuickCaptureProps>(f
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={t("studies.findings.writePlaceholder")}
-        className="reading rounded-aw border border-border bg-bg px-3 py-2 text-[1rem] placeholder:text-text-muted"
+        className="aw-writing"
       />
       <div role="radiogroup" aria-label={t("studies.findings.kindGroup")} className="flex flex-wrap items-center gap-2" onKeyDown={arrows}>
         {kinds.map((option) => (

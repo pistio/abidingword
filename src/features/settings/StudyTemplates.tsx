@@ -5,19 +5,28 @@ import { HelpTip } from "@/design-system/HelpTip";
 import { useLoad } from "@/hooks/useLoad";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
-import { localizedSections, templateDescription, templateName } from "@/features/studies/builtinText";
+import { localizedSections, studyStartSummary, templateDescription, templateName } from "@/features/studies/builtinText";
 import { inStudyCatalogue } from "@/features/studies/catalogue";
 import { studyTypeLabel } from "@/features/studies/labels";
-import { startsWith, type StudyTemplate } from "@/types/studies";
-import { TEACHING_KINDS } from "@/types/teaching";
-import { STARTING_STEPS, canvasShape, startingStepTitle, teachingKindLabel } from "@/features/teaching/labels";
+import type { StudyTemplate } from "@/types/studies";
+import { TeachingTemplates } from "./TeachingTemplates";
 
 /**
  * Settings → Templates: reusable starting structures, for a Bible study
- * (its parts; built-in and the person's own) and for a Bible teaching (each
- * format's shape, and the steps a lesson starts with).
+ * (its parts; built-in and the person's own) and for a Bible teaching (its
+ * format and what it starts with; built-in and the person's own, v0.18.7).
  */
-export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: string | null) => void; version?: number }) {
+export function StudyTemplates({
+  onEdit,
+  onEditTeaching,
+  version = 0,
+  teachingVersion = 0,
+}: {
+  onEdit: (templateId: string | null) => void;
+  onEditTeaching: (templateId: string | null) => void;
+  version?: number;
+  teachingVersion?: number;
+}) {
   const { t } = useTranslation();
   const api = useApi();
   // Reloaded when the template editor (over Settings) closes: `version` changes then.
@@ -36,7 +45,7 @@ export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: s
     }
   };
 
-  // A built-in template becomes the user's own copy in the interface language.
+  // "Save as my template": a built-in template becomes the person's own copy, in their language, to change.
   const customise = async (template: StudyTemplate) => {
     const copy = await api.templateCreate({
       name: t("studies.builtin.copyTitle", { title: templateName(template) }),
@@ -67,22 +76,20 @@ export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: s
     return (
       <li key={template.id} className="flex flex-col gap-2 border-b border-border-subtle py-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div>
-            <p className="m-0 font-semibold text-text-strong">{name}</p>
+          <div className="min-w-0 flex-1 basis-64">
+            <p className="type-item m-0">{name}</p>
             <p className="m-0 text-[0.9375rem] text-text-muted">
-              {[
-                studyTypeLabel(t, template.studyType),
-                t("studies.templates.sectionCount", { count: template.sections.filter(startsWith).length }),
-                template.isBuiltin && t("studies.templates.builtIn"),
-              ]
-                .filter(Boolean)
-                .join(t("common.listSeparator"))}
+              {[studyTypeLabel(t, template.studyType), template.isBuiltin && t("studies.templates.builtIn")].filter(Boolean).join(t("common.listSeparator"))}
+            </p>
+            {/* What it starts with, from its own parts (v0.18.8). */}
+            <p className="m-0 line-clamp-2 text-[0.9375rem] text-text-muted" title={studyStartSummary(t, template)}>
+              {studyStartSummary(t, template)}
             </p>
           </div>
           <div className="flex gap-2">
             {template.isBuiltin ? (
-              <Button variant="quiet" onClick={() => act(() => customise(template))}>
-                {t("studies.templates.duplicateCustomise")}
+              <Button variant="quiet" onClick={() => act(() => customise(template))} aria-label={t("studies.templates.saveAsMineLabel", { name })}>
+                {t("studies.templates.saveAsMine")}
               </Button>
             ) : (
               <>
@@ -92,7 +99,7 @@ export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: s
                 <Button variant="quiet" onClick={() => act(() => duplicate(template))} aria-label={t("studies.templates.duplicate", { name })}>
                   {t("common.duplicate")}
                 </Button>
-                <Button variant="quiet" onClick={() => setConfirming(template.id)} aria-label={t("studies.templates.delete", { name })}>
+                <Button id={`delete-${template.id}`} variant="quiet" onClick={() => setConfirming(template.id)} aria-label={t("studies.templates.delete", { name })}>
                   {t("common.deleteEllipsis")}
                 </Button>
               </>
@@ -100,20 +107,21 @@ export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: s
           </div>
         </div>
         {confirming === template.id && (
-          <div role="alertdialog" aria-label={t("studies.templates.confirmLabel", { name })} className="flex flex-wrap items-center gap-2 border-l-[3px] border-danger bg-bg-secondary px-4 py-3">
+          <div role="alertdialog" aria-label={t("studies.templates.confirmLabel", { name })} className="flex flex-wrap items-center gap-2 border-l-[3px] border-danger bg-hover px-4 py-3">
             <span>{t("studies.templates.confirm", { name })}</span>
-            <Button variant="primary" onClick={() => act(async () => { await api.templateDelete(template.id); setConfirming(null); })}>
+            <Button variant="danger" onClick={() => act(async () => { await api.templateDelete(template.id); setConfirming(null); focusSoon("study-template-new"); })}>
               {t("studies.templates.deleteTemplate")}
             </Button>
-            <Button autoFocus onClick={() => setConfirming(null)}>{t("studies.keepIt")}</Button>
+            <Button autoFocus onClick={() => { setConfirming(null); focusSoon(`delete-${template.id}`); }}>{t("studies.keepIt")}</Button>
           </div>
         )}
       </li>
     );
   };
 
+  // A built-in template no longer offered (its file says "offered": false) is kept for old studies only.
   const list = (templates.data ?? []).filter(inStudyCatalogue);
-  const heading = "m-0 text-[1rem] font-semibold text-text-strong";
+  const heading = "type-group m-0";
   return (
     <div className="flex flex-col gap-5">
       <section aria-labelledby="templates-study" className="flex flex-col gap-3">
@@ -125,25 +133,16 @@ export function StudyTemplates({ onEdit, version = 0 }: { onEdit: (templateId: s
           {list.map(row)}
         </ul>
         <div>
-          <Button onClick={() => onEdit(null)}>{t("studies.templates.new")}</Button>
+          <Button id="study-template-new" onClick={() => onEdit(null)}>{t("studies.templates.new")}</Button>
         </div>
         {error && <p role="alert" className="m-0 text-danger">{error}</p>}
       </section>
-      <section aria-labelledby="templates-teaching" className="flex flex-col gap-3">
-        <h3 id="templates-teaching" className={heading}>{t("studies.view.teaching")}</h3>
-        <ul aria-label={t("studies.templates.teachingListLabel")} className="m-0 list-none border-t border-border-subtle p-0">
-          {TEACHING_KINDS.map((kind) => (
-            <li key={kind} className="flex flex-col gap-0.5 border-b border-border-subtle py-3">
-              <p className="m-0 font-semibold text-text-strong">{teachingKindLabel(t, kind)}</p>
-              <p className="m-0 text-[0.9375rem] text-text-muted">
-                {t(`studies.teaching.format.${canvasShape(kind)}`)}
-                {STARTING_STEPS[kind] &&
-                  ` ${t("studies.teaching.startsWith", { steps: STARTING_STEPS[kind]!.map((step) => startingStepTitle(t, kind, step.key)).join(t("common.listSeparator")) })}`}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <TeachingTemplates onEdit={onEditTeaching} version={teachingVersion} />
     </div>
   );
+}
+
+/** Moves focus once the row it leaves has gone (a deleted template, a closed confirmation). */
+function focusSoon(id: string) {
+  requestAnimationFrame(() => document.getElementById(id)?.focus());
 }

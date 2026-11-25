@@ -1,0 +1,16 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.fill: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('textbox', { name: 'Project title', exact: true })[22m
+
+    at /workspace/work/daily-recovery/tests/screenshots/parent-deletion.mjs:46:15 {
+  log: [
+    "  - waiting for getByRole('textbox', { name: 'Project title', exact: true })"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.19.0

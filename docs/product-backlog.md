@@ -47,9 +47,18 @@ normal local notation, so that nobody has to learn Abiding Word syntax.
 
 **Status (v0.9):** source-language-aware detection is implemented for English,
 German, Korean, French, Spanish and Portuguese (see
-[`passage-aware-sources-v0.9.md`](passage-aware-sources-v0.9.md)). Remaining:
-Greek and Hebrew forms, tolerance of looser natural phrasing, and use of the
-interface language for typed input.
+[`passage-aware-sources-v0.9.md`](passage-aware-sources-v0.9.md)).
+
+**Status (v0.18.2–v0.18.3):** typed references are read in 100 languages by
+one shared resolver, decided by the Bible's language, then the interface
+language, then the common reading, otherwise asking; verses are checked
+against the canon; imported Bibles carry a language
+([`reference-language-packs.md`](reference-language-packs.md),
+[`correctness-hardening-v0.18.3.md`](correctness-hardening-v0.18.3.md)).
+Remaining: Biblical Greek and Hebrew book names beyond the generated packs,
+looser natural phrasing, verse-count checks in running text (they would need
+per-Bible versification), and language metadata from other download
+formats.
 
 ### Passage-aware sources: what remains after the first v0.9 checkpoint
 
@@ -72,15 +81,19 @@ placed with PDF.js's own text layer, never guessed. Still open: references in
 right-to-left or vertical PDF text; references split across formatting in
 formatted pages; further actions (Add as related passage, Copy reference).
 
-### Concordance — surface forms shipped in v0.12 (accepted); lemma and morphology open
+### Concordance — surface forms (v0.12), lemma and grammar from annotated editions (v0.21)
 
-See [`concordance-v0.12.md`](concordance-v0.12.md): Word and Phrase occurrences
-in one Bible, by book, with per-script normalisation (Latin accents kept,
-Greek accents and Hebrew points ignored), opened in Scripture with Back, and
-**Find occurrences** from a word study. **Not built:** lemma or morphology
-search, Strong's or other lexical identifiers, lexicons, interlinear, OSIS /
-USX import, comparison across translations. These need an importer that keeps
-token data (the USFM importer drops `\w` attributes today).
+See [`concordance-v0.12.md`](concordance-v0.12.md) and
+[`original-language-v0.21.md`](original-language-v0.21.md). v0.21 reads USFM
+`\w` word annotations (lemma, `strong`, `x-morph`), searches by lemma or
+lexical number with homographs apart, filters by grammar code (described for
+OSHB only), and adds word details in the reader and a lexical number in Word
+Studies. **Not built:** USX/OSIS word data, descriptions of Greek morphology
+schemes (Robinson, unfoldingWord, MorphGNT — documentation to be verified
+first), lexicons and glosses (licensing), interlinear and cross-edition
+alignment, indexing Strong's-only translations, re-indexing Bibles added
+before v0.21 without adding them again, and an "every word with this number"
+choice in the concordance itself.
 
 ### From the user's own materials to templates
 
@@ -169,6 +182,11 @@ placement, and awareness of monitors being connected or removed.
 Until then: avoid making pane components depend on there being exactly one
 window or one React tree where that is easy to avoid.
 
+*v0.18 note:* the presentation's audience screen is the first second window
+(label `audience`, its own minimal capability, state relayed by the core with
+events and kept in the core for a reopened window). Detachable panes can
+reuse that pattern.
+
 ## 2. AI: the human is the primary author
 
 AI in Abiding Word is an **assistant to human study and teaching.** The user
@@ -206,26 +224,56 @@ more provider presets with plain key help, a two-level Help menu with a
 free-text request answered only as comments, visible progress for long
 operations, and a Teaching view where the writing comes first.
 
-**Still open:** the assistant in the Study itself (findings, sections) and in
-the Library (summarising a source with provenance); research modes beyond one
-teaching ("my library only", "compare these three commentaries"); a record of
-accepted assistant wording; a persistent Linux key store; search through an AI
-service's own search tool; copying teaching preparations with a study and
-finding them in study search.
+**Built in v0.20** ([research-assistant-v0.20.md](research-assistant-v0.20.md)):
+help in a Bible Study part, with a selected source passage, and comparing two
+or three chosen passages; a fingerprinted preview of exactly what is sent;
+checked quotations with source places from stored text; honest verdicts;
+notes kept only as accepted and marked with the assistant's name.
 
-### Presentation (future; not a peer of Bible Study / Bible Teaching)
+**Still open:** help with a whole chapter or source (beyond selected words);
+"my library only" research across sources; wording help for notes; a record
+of accepted assistant wording; a persistent Linux key store; search through
+an AI service's own search tool; copying teaching preparations with a study
+and finding them in study search.
+
+### Presentation — foundation built in v0.18
 
 Presentation is an **output of a teaching**, not a third view beside Bible
-Study and Bible Teaching. Two paths, both later:
+Study and Bible Teaching. **Built in v0.18** (see
+[`presentation-delivery-v0.18.md`](presentation-delivery-v0.18.md)): both
+paths on one pipeline — **A.** PowerPoint, PDF slides, a phone speaker sheet,
+Markdown and a delivery package; **B.** presenting directly with one
+responsive Presenter View and an audience screen in a second window (or this
+window), Scripture shown on request, notes never shown to the audience.
 
-- **A. Export or create a presentation** (PowerPoint or slides) from a
-  teaching's parts, Scripture and kept images.
-- **B. Present directly:** an audience screen (Scripture, images, key
-  sentences) and a presenter screen (manuscript, notes, current and next,
-  navigation), built on the multi-window work (§1).
+Still open:
 
-Keep the teaching model ordered and id-stable, and keep media out of the
-manuscript text, so neither path needs a migration of what people wrote.
+- a **mobile reader** for delivery packages (the package and the phone layout
+  of the Presenter View are its base), and controlling the desktop Presenter
+  View from a phone;
+- importing a delivery package on another desktop;
+- PowerPoint export of WebP images; OpenType (CFF) fonts in PDFs;
+- presentation slides in Study search (drag-and-drop ordering was built in
+  v0.18.1);
+- church templates (built in v0.18.1, see
+  [`presentation-templates-v0.18.1.md`](presentation-templates-v0.18.1.md)):
+  still open are reading OpenDocument (.odp) designs directly, importing
+  from Google Drive without a PowerPoint download, drawing gradients,
+  shadows and non-rectangular shapes instead of reporting them, and a
+  per-slide choice of layout;
+- the transport for a phone remote (pairing on the local network): the
+  commands it will send are defined (`PresenterCommand`, see §23 of the v0.18
+  record).
+
+Deliberately **not** planned unless real use asks for them (the v0.18 Pareto
+pass kept only Overview, a blank audience screen, pointer/highlighter, one
+target time, three layouts, Bible passage to the audience, clicker keys and
+audience-screen recovery): audience Q&A, live captions, recording and
+narration, a rehearsal AI coach, complex animations and a transition library,
+automatic kiosk mode, a free-form slide designer (v0.18.1's designer places
+three boxes per kind of slide, nothing more), editing slide masters,
+collaborative live editing, a custom shortcut editor, more pen colours,
+shapes and text boxes.
 
 ### Image providers (next step after v0.16)
 
@@ -244,7 +292,93 @@ with a kind (teaching, Bible reading, question, activity, picture; audio
 reserved), starting steps for lessons, one Templates section for Study and
 Teaching, and "finding" dropped as a user-facing word.
 
-**Still open:** user-defined Bible Teaching templates (own formats and
-starting steps); audio steps and a step-level media attachment; an
-"Add a step ▸ kind" menu; moving notes between parts by dragging; the
-assistant inside Bible Study.
+**Since v0.18.7** (see [`user-templates-v0.18.7.md`](user-templates-v0.18.7.md)):
+Bible Teaching templates of the person's own (a format and the points,
+questions or steps a teaching starts with, each step with its kind), the
+built-in ones one per format; "Save as my template" from a teaching; and
+"Add a step ▸ kind".
+
+**Since v0.18.8:** the baselines are reviewed and kept as data
+(`resources/templates/*.json`, `resources/teaching-templates.json`) for the
+owner's later refinement; "Starts with" previews from each template's own
+parts; a new teaching chooses its format first and offers only the person's
+templates for that format.
+
+**Since v0.18.9** (see [`baseline-language-prep-v0.18.9.md`](baseline-language-prep-v0.18.9.md)):
+the baselines refined lightly (Word study's *Range of Meaning*, guidance
+that no longer promises what the app doesn't do, descriptions that don't
+presume an outcome), with former wording kept so old studies stay
+translated; Teaching baselines reviewed and kept.
+
+**Since v0.18.10** (see [`native-polish-v0.18.10.md`](native-polish-v0.18.10.md)):
+the six-language native polish; a few questions remain in
+[`i18n/native-polish-priority-v0.18.10.md`](i18n/native-polish-priority-v0.18.10.md),
+among them kind-specific labels for the shared points canvas (Korean 대지).
+
+**Still open:** the owner's final spot review of the polished languages;
+further refinement of the built-in baselines by the owner; audio steps and a step-level media attachment; moving notes
+between parts by dragging; the assistant inside Bible Study; a file to share
+Study and Teaching templates (`.awstructure`, designed and deferred, never
+`.awtemplate`); refining the built-in Teaching baselines
+(`resources/teaching-templates.json`, the owner's call).
+### More Materials for a Bible Teaching
+
+**Since v0.18.4** (see [`workspace-hierarchy-v0.18.4.md`](workspace-hierarchy-v0.18.4.md)):
+a teaching's outputs are gathered under one quiet **Materials** menu
+(*Unterlagen*, *가르침 자료*, *Supports*, *Materiales*, *Materiais*); the
+presentation is its only item so far.
+
+**Since v0.18.6** (see [`study-flow-materials-v0.18.6.md`](study-flow-materials-v0.18.6.md)):
+a manuscript (a leader's guide for a group study, a teacher's guide for a
+lesson), a question sheet with a separate leader's version, and a worksheet
+(listening notes for a sermon), each put together from the teaching by fixed
+rules, previewed at once, printed or saved as PDF, saved as Markdown or copied;
+the presentation's files are reachable from Materials too.
+
+**Since v0.18.8** (see [`baselines-materials-v0.18.8.md`](baselines-materials-v0.18.8.md)):
+the passage's text on a material, from the Bible chosen in the Scripture
+pane only, with any verse it lacks named; a Word (.docx) file written by the
+core from the same material model as the preview, print and Markdown.
+
+**Still open:** remembering material choices; paragraphs and Psalm titles in
+passage text; editable wording that belongs only to a material (deferred
+on purpose: one source of truth); assistant help on materials (explicit and
+bounded, as elsewhere); a printable PDF written by the core rather than the
+system's print dialog (needed on macOS, whose web view has no print); more
+materials (an announcement slide, a prayer sheet). Also: regenerating the
+guide's screenshots.
+
+### Study journey
+
+**Since v0.18.6:** a Bible Study's parts are grouped into its movement
+(text, understanding, theology, application, audience, teaching) with a quiet
+outline that marks where one is, and an optional way on to a Bible Teaching.
+
+**Since v0.18.7** (see [`user-templates-v0.18.7.md`](user-templates-v0.18.7.md)):
+each part carries its phase from its template (built-in or the person's own),
+the person can change it, and the outline follows the study's own structure;
+a part without one never acquires a meaning; "Save as my template" from a
+study keeps its structure only.
+
+**Still open:** folding a whole phase at once, if owners ask for it.
+
+### Desktop visual system
+
+**Since v0.18.5** (see [`desktop-visual-system-v0.18.5.md`](desktop-visual-system-v0.18.5.md)):
+Library, Source Reader, Settings, the presentation editor, Presenter View,
+church templates and dialogs use the workspace's type levels, surfaces,
+fields, actions and selected states; one hover and one selected tint; status
+colours tested on every pane in all 12 palettes.
+
+**Still open:** the owner's visual pass on Windows (see the screenshot
+package); regenerating the guide's screenshots under the new system; the
+remaining exceptions listed in §12 of the v0.18.5 record.
+
+### Moving work between computers — project files and backups built in v0.19
+
+Project files (`.awproject`) and full backups (`.awbackup`) with restore are
+in Settings › Data and backup ([portability.md](portability.md)). Open:
+choosing what a project file carries (library books whose licence allows
+it), a partial restore (one project from a backup), and sync between a
+person's own devices.
+

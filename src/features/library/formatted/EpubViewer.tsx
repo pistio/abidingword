@@ -5,6 +5,7 @@ import { Button } from "@/design-system/Button";
 import { Notice } from "@/design-system/Notice";
 import { formatNumber } from "@/i18n/format";
 import { useApi } from "@/lib/ApiContext";
+import { scrollInViewport } from "@/lib/scrollInViewport";
 import type { EpubItem, EpubStructureItem, SourceAnnotation } from "@/types/library";
 import { placeSegments, storedToPage, type PageSegment } from "@/lib/pdfTextMatch";
 import type { DetectedReference, ScriptureRef } from "@/types/scripture";
@@ -25,6 +26,8 @@ interface EpubViewerProps {
   jumpTo?: (EpubPlace & { nonce: number }) | null;
   /** A link in the page was followed. */
   onLink: (target: EpubLinkTarget, from: EpubPlace) => void;
+  /** The reader explicitly chose Previous/Next part, superseding pending navigation. */
+  onNavigate?: () => void;
   /** A link to the web was clicked: open it outside the app. Not history, not a jump. Absent: web links are plain text. */
   onExternal?: (url: string) => void;
   /** Filled with a way to ask where the view is now, for the reader's history. */
@@ -56,7 +59,7 @@ async function readParagraphs(read: (offset: number, limit: number) => Promise<P
  * extracted text. Scripture references in the page's text are found by the core,
  * in the source's language, one page at a time, and drawn as "Open in Bible".
  */
-export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, onLink, onExternal, locationRef, onOpenInBible, marks, revealMark }: EpubViewerProps) {
+export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, onLink, onNavigate, onExternal, locationRef, onOpenInBible, marks, revealMark }: EpubViewerProps) {
   const { t } = useTranslation();
   const api = useApi();
   const scroller = useRef<HTMLDivElement>(null);
@@ -229,7 +232,7 @@ export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, 
     const { fragment, offset } = request.place;
     const target = fragment !== null ? shadow.getElementById(fragment) : null;
     if (target) {
-      target.scrollIntoView?.({ block: "start" });
+      scrollInViewport(view, target, "start");
       const gap = target.getBoundingClientRect().top - view.getBoundingClientRect().top;
       view.scrollTop += gap - offset;
     } else {
@@ -262,9 +265,10 @@ export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, 
     // After the jump that goes with it has put the page in place (the effect above).
     if (!revealMark || revealed.current === revealMark.nonce || applied.current !== request.nonce) return;
     const spot = root.current?.querySelector<HTMLElement>(`mark[data-mark-id="${revealMark.id.replace(/["\\]/g, "")}"]`);
-    if (!spot) return;
+    const view = scroller.current;
+    if (!view || !spot) return;
     revealed.current = revealMark.nonce;
-    spot.scrollIntoView?.({ block: "center" });
+    scrollInViewport(view, spot, "center");
   });
 
   // Where the view is, on request: the last element with an id at or above the top of the view, and how far it is from it.
@@ -292,6 +296,7 @@ export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, 
 
   const index = Math.max(0, structure.findIndex((s) => s.id === (current?.id ?? wantedItem)));
   const go = (to: number) => {
+    onNavigate?.();
     const target = structure[to];
     if (!target) return;
     focusArrival.current = false;
@@ -351,7 +356,7 @@ export function EpubViewer({ sourceId, kind = "epub", structure, start, jumpTo, 
         {current && (
           <>
             {current.missingImages > 0 && (
-              <p className="m-0 mx-auto max-w-[46rem] px-6 pt-3 text-[0.875rem] text-text-muted">{t("library.formatted.missingImages", { count: current.missingImages })}</p>
+              <p className="m-0 mx-auto max-w-[46rem] px-6 pt-3 type-meta">{t("library.formatted.missingImages", { count: current.missingImages })}</p>
             )}
             <EpubDocument key={current.id} item={current} onLink={follow} onExternal={onExternal ? external : undefined} tableLabel={t("library.formatted.table")} onRoot={onRoot}
               onDrawn={onDrawn}

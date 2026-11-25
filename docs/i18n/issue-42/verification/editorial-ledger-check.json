@@ -1,0 +1,67 @@
+{
+  "baseline": "64dadc0d1bb263362aa384951612e9395d705725",
+  "review": "AI individual editorial ledgers; no human native-speaker approval",
+  "results": [
+    {
+      "language": "en",
+      "leaves": 4186,
+      "states": {
+        "retain": 3624,
+        "protected-retain": 455,
+        "edit": 70,
+        "owner-question-retained": 7,
+        "add": 30
+      }
+    },
+    {
+      "language": "de",
+      "leaves": 4186,
+      "states": {
+        "retain": 3794,
+        "protected-retain": 287,
+        "edit": 75,
+        "add": 30
+      }
+    },
+    {
+      "language": "ko",
+      "leaves": 4046,
+      "states": {
+        "retain": 3514,
+        "edit": 46,
+        "protected-retain": 456,
+        "add": 30
+      }
+    },
+    {
+      "language": "fr",
+      "leaves": 4326,
+      "states": {
+        "retain": 3845,
+        "edit": 196,
+        "protected": 283,
+        "owner-question": 2
+      }
+    },
+    {
+      "language": "es",
+      "leaves": 4326,
+      "states": {
+        "retain": 3862,
+        "edit": 131,
+        "protected-retain": 303,
+        "add": 30
+      }
+    },
+    {
+      "language": "pt",
+      "leaves": 4326,
+      "states": {
+        "retain": 3762,
+        "protected-retain": 458,
+        "edit": 76,
+        "add": 30
+      }
+    }
+  ]
+}

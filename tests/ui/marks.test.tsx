@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import i18n from "@/i18n";
 import type { MemoryApi } from "../support/memoryApi";
 import { createMemoryApi } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 const V1 = "Fixture alpha JHN 15:1 about the vine.";
 
@@ -220,7 +220,7 @@ describe("what each mark says", () => {
     await waitFor(() => expect(document.querySelector('[data-verse-text="JHN.15.1"]')).not.toBeNull());
     await user.click(screen.getByRole("button", { name: "Anmerkungen" }));
     expect(await screen.findByText("Johannes 15,4")).toBeInTheDocument();
-    expect(screen.getByText("Genesis 1,1")).toBeInTheDocument();
+    expect(screen.getByText("1. Mose 1,1")).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/JHN\.|GEN\./);
   });
 

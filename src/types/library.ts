@@ -1,13 +1,22 @@
 // TypeScript mirror of the native library types (src-tauri/src/library).
 import type { HighlightColor, ScriptureRef } from "./scripture";
 
-export const SOURCE_TYPES = ["book", "article", "notes", "sermon", "lecture", "document"] as const;
+export const SOURCE_TYPES = ["book", "commentary", "article", "notes", "sermon", "lecture", "document"] as const;
 export type SourceType = (typeof SOURCE_TYPES)[number];
 
 export const LICENCE_STATUSES = ["private", "distributable", "unknown"] as const;
 export type LicenceStatus = (typeof LICENCE_STATUSES)[number];
 
 export type SourceFormat = "pdf" | "epub" | "docx" | "markdown" | "text";
+
+export type SourceCoverageMode = "automatic" | "manual" | "none";
+
+/** What a whole source covers; this never supplies a page or paragraph target. */
+export interface SourceCoverage {
+  reference: ScriptureRef;
+  scope: "book" | "chapter" | "passage";
+  basis: "manual" | "metadata";
+}
 
 /** Which in-app viewer shows a source's original file (the format decides). */
 export interface OriginalView {
@@ -46,6 +55,17 @@ export interface Source {
   contentHash: string | null;
   createdAt: string;
   updatedAt: string;
+  /** "active", "archived" or "trashed". */
+  state: ItemState;
+  /** Names of the collections this source belongs to. */
+  collectionNames: string[];
+  /** Names of the tags on this source. */
+  tagNames: string[];
+  /** Whether Abiding Word's copy of the file is on this computer. */
+  filePresent: boolean;
+  /** Effective whole-source relevance, separate from indexed reading locations. */
+  coverage?: SourceCoverage[];
+  coverageMode?: SourceCoverageMode;
 }
 
 export interface SourceSummary {
@@ -69,6 +89,7 @@ export interface SourceSegment {
   sectionPath: string | null;
   paragraphIndex: number | null;
   locator: string;
+  presentation?: PdfPresentation;
 }
 
 export interface SegmentWindow {
@@ -89,6 +110,8 @@ export interface LibraryHit {
   locator: string;
   /** Matches wrapped in U+0002 … U+0003. */
   snippet: string;
+  /** The source is archived (v0.24): found by search, not in the lists. */
+  archived: boolean;
 }
 
 export interface LibraryResults {
@@ -125,6 +148,9 @@ export interface PassageLocation {
   /** The reference as written in the source (the heading, for a section). */
   matchedText: string;
   sectionHeading: string | null;
+  structureNodeId?: string | null;
+  structureScope?: string | null;
+  structureBasis?: string | null;
 }
 
 /** A source with the places in it that fit the passage being read, best first. */
@@ -135,6 +161,8 @@ export interface PassageSourceGroup {
   locations: PassageLocation[];
   /** How many further places the source has. */
   moreLocations: number;
+  /** Whole-source ranges overlapping the requested passage; locations may be empty. */
+  coverage?: SourceCoverage[];
 }
 
 /** Why one segment is linked to Scripture (what it mentions; the section it opens or lies within). */
@@ -183,12 +211,16 @@ export interface CommitSourceImport {
 export interface FindingCitation {
   id: string;
   findingId: string;
-  sourceId: string;
+  /** Null when the cited source is not on this computer (a project made elsewhere, v0.19.1). */
+  sourceId: string | null;
   segmentId: string | null;
   title: string;
   author: string | null;
   locator: string | null;
+  /** The source cannot be opened: removed from the library, or not on this computer. */
   removed: boolean;
+  /** The source is not on this computer at all; title, author, words and place are kept (v0.19.1). */
+  unavailable: boolean;
   /** What the source said: the cited words, as they were (v0.15). */
   quote: string | null;
   /** The section path at the time, e.g. "Chapter 3 › Grace" (v0.15). */
@@ -410,4 +442,223 @@ export interface MarkedSource {
   sourceId: string;
   title: string;
   count: number;
+}
+
+// --- Looking after the library (v0.24) ---------------------------------------
+
+/** Active (as always), archived (kept, searchable, out of the lists) or in Trash (recoverable for a while). */
+export type ItemState = "active" | "archived" | "trashed";
+
+export const TRASH_RETENTION_DAYS = 30;
+
+export type ManageSort = "title" | "author" | "category" | "added" | "language" | "state";
+
+export interface ManageQuery {
+  text?: string | null;
+  sourceType?: SourceType | null;
+  language?: string | null;
+  format?: string | null;
+  /** Leave empty for active and archived together. */
+  state?: ItemState | null;
+  collectionId?: string | null;
+  tagId?: string | null;
+  withoutText?: boolean;
+  duplicates?: boolean;
+  sort?: ManageSort;
+  descending?: boolean;
+  offset?: number;
+  limit?: number;
+}
+
+export interface TagRef {
+  id: string;
+  name: string;
+}
+
+export interface ManagedSource {
+  id: string;
+  title: string;
+  author: string | null;
+  sourceType: SourceType;
+  format: string | null;
+  language: string | null;
+  publicationYear: number | null;
+  createdAt: string;
+  state: ItemState;
+  stateChangedAt: string | null;
+  extractionStatus: string | null;
+  pageCount: number | null;
+  originalFilename: string | null;
+  /** Other sources with the same file. */
+  duplicates: number;
+  tags: TagRef[];
+  collections: string[];
+}
+
+export interface ManagePage {
+  total: number;
+  offset: number;
+  items: ManagedSource[];
+  active: number;
+  archived: number;
+  trashed: number;
+}
+
+export interface SourceCollection {
+  id: string;
+  parentId: string | null;
+  name: string;
+  count: number;
+}
+
+export interface SourceTag {
+  id: string;
+  name: string;
+  count: number;
+}
+
+export interface UpdateSource {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  author: string | null;
+  publisher: string | null;
+  edition: string | null;
+  publicationYear: number | null;
+  isbn: string | null;
+  doi: string | null;
+  language: string | null;
+  sourceType: SourceType;
+  licenceStatus: LicenceStatus;
+  licence: string | null;
+  notes: string | null;
+  /** Omitted when coverage was not edited. Native validation is atomic with the other details. */
+  coverage?: { mode: SourceCoverageMode; passages?: string[] };
+}
+
+/** Adding many sources at once (v0.24): one file of an import job. */
+export interface ImportJobItem {
+  id: string;
+  position: number;
+  path: string;
+  fileName: string;
+  size: number;
+  /** waiting (not read yet), ready, duplicate, problem, imported, failed. */
+  status: "waiting" | "ready" | "duplicate" | "problem" | "imported" | "failed";
+  /** To be added (the person's choice; duplicates start unchosen). */
+  chosen: boolean;
+  format: string | null;
+  title: string | null;
+  author: string | null;
+  language: string | null;
+  sourceType: SourceType | null;
+  /** Why the category was proposed: title, fileName, folder, fileType or person. */
+  typeEvidence: string | null;
+  pageCount: number | null;
+  duplicateOf: string | null;
+  duplicateTitle: string | null;
+  problemCode: string | null;
+  problem: string | null;
+  problemParams: Record<string, string> | null;
+  sourceId: string | null;
+}
+
+export interface ImportJobCounts {
+  total: number;
+  waiting: number;
+  ready: number;
+  duplicate: number;
+  problem: number;
+  imported: number;
+  failed: number;
+  toAdd: number;
+}
+
+export interface ImportJob {
+  id: string;
+  /** review, importing, interrupted, finished, cancelled. */
+  state: "review" | "importing" | "interrupted" | "finished" | "cancelled";
+  collectionId: string | null;
+  tags: string[];
+  unsupportedCount: number;
+  overLimitCount: number;
+  createdAt: string;
+  counts: ImportJobCounts;
+  items: ImportJobItem[];
+}
+
+export interface ImportItemEdit {
+  id: string;
+  title?: string;
+  author?: string;
+  language?: string;
+  sourceType?: SourceType;
+  chosen?: boolean;
+}
+
+
+export interface PdfAnchor {
+  page: number; pageWidth: number; pageHeight: number; x0: number; x1: number;
+  baseline: number; size: number; firstChar: number; column: number;
+  byteStart: number; byteEnd: number; originalText: string;
+}
+export interface PdfHeading {
+  id: string; title: string; level: number; parents: string[]; basis: string;
+  anchor: PdfAnchor; segmentPosition: number; start: number; end: number;
+  disabled: boolean; mapping: string | null; mappingScope: string | null;
+}
+export interface PdfResolvedHeading extends PdfHeading {
+  path: string; canonical: string | null; scope: string; endPosition: number;
+  /** A genuine combined-book heading maps each named book to the same physical anchor. */
+  additionalCanonicals?: string[];
+}
+export interface PdfPresentation {
+  role: string; basis: string; uncertain: boolean; printedLabel: string | null;
+  anchors: PdfAnchor[]; headings: PdfHeading[]; sectionPath: string | null;
+  runs: {start:number;end:number;role:string}[];
+}
+export interface PdfCorrection {
+  id: string; position: number; title: string; level: number; mapping: string | null;
+  disabled: boolean; anchorId: string; start: number; end: number; scope: string | null;
+}
+export interface PdfBuildProgress {
+  status: "running" | "succeeded" | "empty" | "cancelled" | "failed";
+  stage: "file" | "segments" | "pdf" | "alignment" | "native" | "headings" | "store" | "index" | "indexRead" | "indexRoles" | "indexed" | "commit";
+  done: number; total: number; elapsedMs: number;
+  timings: { stage: string; milliseconds: number }[];
+  headingCount: number | null; indexedLinks: number | null;
+  errorCode: string | null; canCancel: boolean;
+}
+
+export interface PdfStructureView {
+  sourceId: string; fileHash: string | null; status: "ready" | "missing";
+  complete: boolean; tagged: boolean; unalignedTags: number; uncertainPages: number;
+  headings: PdfResolvedHeading[]; corrections: PdfCorrection[]; canUndo: boolean;
+  /** Analysis rules the stored structure was built with (0 = before A.4.1). */
+  analysis?: number;
+  /** Built with earlier rules: Rebuild structure applies the current ones. */
+  rebuildRecommended?: boolean;
+}
+
+/** What the Reader showed when a structure diagnostic was made (A.4.1). */
+export interface ReaderObserved {
+  mode?: string | null; physicalPage?: number | null; printedPage?: string | null;
+  openedSegmentId?: string | null; openedStructureNodeId?: string | null;
+  focusedHeadingId?: string | null; variant?: string | null;
+}
+export interface PdfDiagnosticCandidate {
+  evidenceTier?: number; rank: number; class: number; origin: string; evidence: string; scope: string | null;
+  basis: string | null; role: string | null; structureNodeId: string | null;
+  segmentPosition: number; physicalPage: number | null; printedPage: string | null;
+  passage: string; matched: string;
+}
+/** A local, metadata-only report of a PDF Source's structure and targeting (A.4.1). */
+export interface PdfDiagnostic {
+  schema: string; appVersion: string; generatedAt: string; privacy: string;
+  source: { id: string; fileSha256: string | null; fileSizeBytes: number | null; language: string | null; indexLanguage: string; segmentCount: number; pagesWithText: number };
+  structure: { status: string; analysis: number | null; currentAnalysis: number; rebuildRecommended: boolean; pageCount: number | null; headingCount: number; listingPages: number[]; corrections: number; byScope: Record<string, number>; byBasis: Record<string, number> };
+  headings: unknown[];
+  query: null | { input: string; canonical: string | null; verdict: string; candidates: PdfDiagnosticCandidate[];
+    readerTarget: null | { segmentId: string; segmentPosition: number; structureNodeId: string | null; physicalPage: number | null; printedPage: string | null } };
+  readerObserved: ReaderObserved | null;
 }

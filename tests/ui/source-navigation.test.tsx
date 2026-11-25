@@ -1,9 +1,11 @@
+import { readerPageName } from "../support/readerActions";
 import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ContentsItem, SourceLink } from "@/types/library";
 import { createFakePdfEngine, type FakePdfEngine } from "../support/fakePdfEngine";
 import { createMemoryApi, type MemoryApi, type SourceFixture } from "../support/memoryApi";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
+import { pinReaderActions, readerAction } from "../support/readerActions";
 
 // Link-following, footnotes and Back / Forward in the source reader. Every
 // document and every word here is invented for the tests.
@@ -50,6 +52,8 @@ const LONG: SourceFixture = {
 };
 
 const sourcesPane = () => screen.getByRole("complementary", { name: "Sources" });
+// These tests are about in-source history, so its two buttons are pinned to the toolbar (A.4.2).
+beforeEach(() => pinReaderActions(["find", "contents", "history"]));
 const back = (root: HTMLElement) => within(root).getByRole("button", { name: "Back to the previous place" });
 const forward = (root: HTMLElement) => within(root).getByRole("button", { name: "Forward to the next place" });
 
@@ -95,7 +99,7 @@ function setup(fixtures: SourceFixture[] = [PDF, EPUB, LONG]) {
 
 async function openPane(api: MemoryApi, engine: FakePdfEngine, title: string, width = 1440) {
   const { user } = await renderApp(api, { pdfEngine: engine, width });
-  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(title) }));
+  await user.click(await within(sourcesPane()).findByRole("button", { name: new RegExp(`^${title}`) }));
   const reader = await within(sourcesPane()).findByRole("region", { name: title });
   return { user, reader };
 }
@@ -106,7 +110,7 @@ async function original(user: User, reader: HTMLElement) {
   await within(reader).findAllByRole("button", { name: "Go to the linked place" });
 }
 
-const pageBox = (root: HTMLElement) => within(root).getByRole("textbox", { name: "Page number" });
+const pageBox = (root: HTMLElement) => within(root).getByTestId("pdf-page-indicator");
 const links = (root: HTMLElement) => within(root).getAllByRole("button", { name: "Go to the linked place" });
 
 describe("PDF internal links", () => {
@@ -114,22 +118,22 @@ describe("PDF internal links", () => {
     const { api, engine } = setup();
     const { user, reader } = await openPane(api, engine, "Notes on the Vine");
     await original(user, reader);
-    expect(pageBox(reader)).toHaveValue("1");
+    expect(pageBox(reader)).toHaveAccessibleName(readerPageName("1"));
     expect(back(reader)).toBeDisabled();
     expect(forward(reader)).toBeDisabled();
 
     await user.click(links(reader)[0]!);
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
     expect(back(reader)).toBeEnabled();
     expect(forward(reader)).toBeDisabled();
 
     await user.click(back(reader));
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("1"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("1")));
     expect(back(reader)).toBeDisabled();
     expect(forward(reader)).toBeEnabled();
 
     await user.click(forward(reader));
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
     expect(forward(reader)).toBeDisabled();
   });
 
@@ -138,19 +142,19 @@ describe("PDF internal links", () => {
     const { user, reader } = await openPane(api, engine, "Notes on the Vine");
     await original(user, reader);
     await user.click(links(reader)[1]!); // cross reference: page 3
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("3"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("3")));
     await user.click(within(reader).getByRole("button", { name: "Contents" }));
     await user.click(await screen.findByRole("button", { name: "Chapter 5" })); // contents: page 5
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
 
     for (const expected of ["3", "1"]) {
       await user.click(back(reader));
-      await waitFor(() => expect(pageBox(reader)).toHaveValue(expected));
+      await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName(expected)));
     }
     expect(back(reader)).toBeDisabled();
     for (const expected of ["3", "5"]) {
       await user.click(forward(reader));
-      await waitFor(() => expect(pageBox(reader)).toHaveValue(expected));
+      await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName(expected)));
     }
     expect(forward(reader)).toBeDisabled();
   });
@@ -160,14 +164,14 @@ describe("PDF internal links", () => {
     const { user, reader } = await openPane(api, engine, "Notes on the Vine");
     await original(user, reader);
     await user.click(links(reader)[0]!);
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
     await user.click(back(reader));
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("1"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("1")));
     await user.click(links(reader)[1]!);
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("3"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("3")));
     expect(forward(reader)).toBeDisabled();
     await user.click(back(reader));
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("1"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("1")));
   });
 
   it("leaves the reader where it is for a link that leads nowhere, and notes it without any text", async () => {
@@ -177,7 +181,7 @@ describe("PDF internal links", () => {
     await original(user, reader);
     await user.click(links(reader)[2]!);
     await waitFor(() => expect(log).toHaveBeenCalled());
-    expect(pageBox(reader)).toHaveValue("1");
+    expect(pageBox(reader)).toHaveAccessibleName(readerPageName("1"));
     expect(back(reader)).toBeDisabled();
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     expect(String(log.mock.calls[0]![0])).not.toMatch(/Text of page/);
@@ -192,8 +196,8 @@ describe("PDF internal links", () => {
     // 60/600, 80/800, 120/600, 16/800 of the page.
     expect(place()).toEqual({ left: "10%", top: "10%", width: "20%", height: "2%" });
     expect(marker.closest("[data-page]")).toHaveAttribute("data-page", "1");
-    await user.click(within(reader).getByRole("button", { name: "Zoom in" }));
-    await user.click(within(reader).getByRole("button", { name: "Zoom in" }));
+    await readerAction(user, "Zoom in");
+    await readerAction(user, "Zoom in");
     expect(place()).toEqual({ left: "10%", top: "10%", width: "20%", height: "2%" });
     // Panning moves the scroller, never the link: it is inside the page.
     const scroller = within(reader).getByRole("region", { name: "Original document" });
@@ -211,10 +215,10 @@ describe("PDF internal links", () => {
     await original(user, reader);
     links(reader)[0]!.focus();
     await user.keyboard("{Enter}");
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
     back(reader).focus();
     await user.keyboard(" ");
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("1"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("1")));
   });
 
   it("does not record the switch between Reading and Original as a jump", async () => {
@@ -232,13 +236,13 @@ describe("PDF internal links", () => {
     const { user, reader } = await openPane(api, engine, "Notes on the Vine");
     await original(user, reader);
     await user.click(links(reader)[0]!);
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
-    await user.click(within(reader).getByRole("button", { name: "Open full reader" }));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
+    await readerAction(user, "Open full reader", reader);
     const full = await screen.findByRole("main");
     await within(full).findByTestId("pdf-viewer");
     expect(back(full)).toBeEnabled();
     await user.click(back(full));
-    await waitFor(() => expect(pageBox(full)).toHaveValue("1"));
+    await waitFor(() => expect(pageBox(full)).toHaveAccessibleName(readerPageName("1")));
     expect(forward(full)).toBeEnabled();
   });
 
@@ -247,9 +251,10 @@ describe("PDF internal links", () => {
     const { user, reader } = await openPane(api, engine, "Notes on the Vine");
     await original(user, reader);
     await user.click(links(reader)[0]!);
-    await waitFor(() => expect(pageBox(reader)).toHaveValue("5"));
+    await waitFor(() => expect(pageBox(reader)).toHaveAccessibleName(readerPageName("5")));
     await user.click(within(reader).getByRole("button", { name: "Back to Sources" }));
-    await user.click(await within(sourcesPane()).findByRole("button", { name: /A Synthetic Commentary/ }));
+    await user.click(within(sourcesPane()).getByText("Other sources"));
+    await user.click(await within(sourcesPane()).findByRole("button", { name: /^A Synthetic Commentary/ }));
     const next = await within(sourcesPane()).findByRole("region", { name: "A Synthetic Commentary" });
     expect(back(next)).toBeDisabled();
     expect(forward(next)).toBeDisabled();

@@ -3,10 +3,12 @@
 //! Everything here is serialised to the frontend with camelCase field names.
 //! The TypeScript mirror lives in `src/types/domain.ts`; keep the two in step.
 
+pub mod presentation;
 pub mod studies;
 pub mod teaching;
 pub mod validate;
 
+pub use presentation::*;
 pub use studies::*;
 pub use teaching::*;
 
@@ -78,6 +80,9 @@ pub struct StudySection {
     pub key: Option<String>,
     pub title: String,
     pub guidance: Option<String>,
+    /// Where the part belongs in the study's movement (v0.18.7); none for a
+    /// part the person did not place.
+    pub phase: Option<StudyPhase>,
     pub position: i64,
     /// How far the person has got with this part.
     pub status: SectionStatus,
@@ -201,6 +206,10 @@ pub struct TemplateSection {
     /// its title and guidance in the interface language.
     #[serde(default, skip_serializing_if = "is_false")]
     pub retired: bool,
+    /// Where the part belongs in the study's movement (v0.18.7); the template is
+    /// authoritative, and a part may have none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub phase: Option<StudyPhase>,
     /// Structured answer fields. A study copies them as a snapshot when it
     /// is created; customised copies of built-ins retain their fields.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -218,6 +227,15 @@ pub struct TemplateSection {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum FieldKind {
+    Guidance,
+    Heading,
+    Divider,
+    Passage,
+    Concordance,
+    CrossReferences,
+    WordLookup,
+    Search,
+    Writing,
     Text,
     Entries,
 }
@@ -247,6 +265,10 @@ pub struct EntryPart {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TemplateField {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub config: std::collections::BTreeMap<String, String>,
     pub key: String,
     pub kind: FieldKind,
     /// For entries: the parts of one entry, in order.
@@ -407,6 +429,9 @@ pub struct UpdateStudySection {
     /// An empty string clears it.
     #[serde(default)]
     pub guidance: Option<String>,
+    /// A phase ("text", "understanding"…); an empty string clears it.
+    #[serde(default)]
+    pub phase: Option<String>,
     #[serde(default)]
     pub status: Option<SectionStatus>,
 }
@@ -421,6 +446,18 @@ pub struct CreateStudyBlock {
     /// The field of the part's snapshot the block answers.
     #[serde(default)]
     pub field_key: Option<String>,
+}
+
+/// Command payload accepts provenance in the same write as the quotation.
+/// Flattening keeps every historical create payload valid without changing
+/// internal callers that only need a plain writing block.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateStudyBlockRequest {
+    #[serde(flatten)]
+    pub block: CreateStudyBlock,
+    #[serde(default)]
+    pub data: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -464,4 +501,25 @@ pub struct UpdateTemplate {
     pub id: String,
     #[serde(flatten)]
     pub template: TemplateInput,
+}
+
+/// A.4.4 (#27): a Study "question" block that is a paired question and answer
+/// keeps them in its JSON data: `{"kind":"qa","question":…,"answer":…}`. Older
+/// builds read it as an ordinary question block whose text holds both.
+pub fn qa_of(data: Option<&str>) -> Option<(String, String)> {
+    let value: serde_json::Value = serde_json::from_str(data?).ok()?;
+    (value.get("kind")?.as_str()? == "qa").then(|| {
+        (
+            value
+                .get("question")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string(),
+            value
+                .get("answer")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_string(),
+        )
+    })
 }

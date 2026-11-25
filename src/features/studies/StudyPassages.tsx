@@ -20,18 +20,70 @@ interface PassagesProps {
 
 /**
  * What the study is about, as a quiet line under its title: the passage
- * (and any related ones) as links that open it in Scripture, and one small
- * action to add another. Which is primary, and taking one away, are not
- * decisions for the everyday view: see [`PassageManager`] in Study details.
+ * (and any related ones) as links that open it in Scripture. Adding,
+ * choosing the primary one and taking one away are in Bible Study
+ * information (v0.19); only a study without any passage offers "Add
+ * passage" here, so it has an obvious first step.
  */
 export function StudyPassages({ studyId, title = "", passages, reload, onReveal }: PassagesProps & { onReveal: () => void }) {
   const { t } = useTranslation();
+  const { goTo } = useScripture();
+  const primary = passages.find((p) => p.role === "primary");
+  // The title already says it: no second "John 15:1–11" beneath "John 15:1–11". This looks only at the
+  // study itself, never at what Scripture happens to show, so the pane reads the same wherever it sits.
+  const titled = primary !== undefined && titleIsPassage(title, referenceLabel(primary.reference));
+  const shown = passages.filter((p) => !(titled && p.id === primary?.id));
+  const quiet = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong";
+
+  return (
+    <section aria-label={t("studies.passages.label")} className="flex flex-wrap items-center gap-2">
+      {titled && primary && (
+        <button
+          type="button"
+          onClick={() => {
+            goTo(primary.reference);
+            onReveal();
+          }}
+          className={quiet}
+        >
+          {t("studies.passages.openPrimary")}
+        </button>
+      )}
+      {shown.map((passage) => (
+        <button
+          key={passage.id}
+          type="button"
+          onClick={() => {
+            goTo(passage.reference);
+            onReveal();
+          }}
+          title={t("studies.passages.open")}
+          // Passages are links, not boxes; the primary one (of several) sits on a soft fill.
+          className={`inline-flex min-h-11 items-center rounded-aw px-2 text-[0.9375rem] font-medium text-link hover:bg-hover ${
+            passage.id === primary?.id && passages.length > 1 ? "bg-selected" : ""
+          }`}
+        >
+          {passage.id === primary?.id && passages.length > 1 && <span className="sr-only">{t("studies.passages.primary")}: </span>}
+          {referenceLabel(passage.reference)}
+        </button>
+      ))}
+      {passages.length === 0 && <AddPassage studyId={studyId} passages={passages} reload={reload} />}
+    </section>
+  );
+}
+
+/** "Add passage" and its form: typed, or the one Scripture shows. Shown only while being used. */
+export function AddPassage({ studyId, passages, reload }: { studyId: string; passages: StudyPassage[]; reload: () => void }) {
+  const { t } = useTranslation();
   const api = useApi();
-  const { goTo, currentPassage } = useScripture();
+  const { currentPassage, translation } = useScripture();
   const id = useId();
   const [adding, setAdding] = useState(false);
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const hasPassages = passages.length > 0;
+  const linked = currentPassage && passages.some((p) => p.reference.canonical === currentPassage.canonical);
+  const quiet = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-hover hover:text-text-strong";
 
   const add = async (reference: () => Promise<string>) => {
     setError(null);
@@ -45,59 +97,21 @@ export function StudyPassages({ studyId, title = "", passages, reload, onReveal 
     }
   };
 
-  const primary = passages.find((p) => p.role === "primary");
-  // The title already says it: no second "John 15:1–11" beneath "John 15:1–11". This looks only at the
-  // study itself, never at what Scripture happens to show, so the pane reads the same wherever it sits.
-  const titled = primary !== undefined && titleIsPassage(title, referenceLabel(primary.reference));
-  const shown = passages.filter((p) => !(titled && p.id === primary?.id));
-  const linked = currentPassage && passages.some((p) => p.reference.canonical === currentPassage.canonical);
-  const quiet = "inline-flex min-h-11 items-center gap-1 rounded-aw px-2 text-[0.9375rem] text-text-muted hover:bg-bg-secondary hover:text-text-strong";
-
   return (
-    // Sits in the line under the study's title; adding a passage takes the whole width.
-    <section aria-label={t("studies.passages.label")} className={`flex flex-col gap-2 ${adding || error ? "basis-full" : ""}`}>
-      <div className="flex flex-wrap items-center gap-2">
-        {titled && primary && (
-          <button
-            type="button"
-            onClick={() => {
-              goTo(primary.reference);
-              onReveal();
-            }}
-            className={quiet}
-          >
-            {t("studies.passages.openPrimary")}
-          </button>
-        )}
-        {shown.map((passage) => (
-          <button
-            key={passage.id}
-            type="button"
-            onClick={() => {
-              goTo(passage.reference);
-              onReveal();
-            }}
-            title={t("studies.passages.open")}
-            className={`inline-flex min-h-11 items-center rounded-aw border px-2.5 text-[0.9375rem] text-link hover:bg-bg-secondary ${
-              passage.id === primary?.id && passages.length > 1 ? "border-border bg-bg-secondary font-semibold" : "border-border-subtle font-medium"
-            }`}
-          >
-            {passage.id === primary?.id && passages.length > 1 && <span className="sr-only">{t("studies.passages.primary")}: </span>}
-            {referenceLabel(passage.reference)}
-          </button>
-        ))}
-        {!adding && (
+    <div className={`flex flex-col gap-2 ${adding || error ? "basis-full" : ""}`}>
+      {!adding && (
+        <div>
           <button type="button" onClick={() => setAdding(true)} className={quiet}>
             <Plus className="size-4" aria-hidden="true" />
-            {passages.length === 0 ? t("studies.passages.add") : t("studies.passages.addRelated")}
+            {hasPassages ? t("studies.passages.addRelated") : t("studies.passages.add")}
           </button>
-        )}
-      </div>
+        </div>
+      )}
       {adding && (
         <form
           onSubmit={(e: FormEvent) => {
             e.preventDefault();
-            void add(async () => (await api.referenceParse(text)).canonical);
+            void add(async () => (await api.referenceParse(text, translation?.id)).canonical);
           }}
           onKeyDown={(e) => {
             if (e.key === "Escape") {
@@ -116,7 +130,7 @@ export function StudyPassages({ studyId, title = "", passages, reload, onReveal 
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder={t("studies.passages.placeholder")}
-              className="h-11 min-w-0 flex-1 basis-48 rounded-aw border border-border bg-bg px-3 text-[0.9375rem] placeholder:text-text-muted"
+              className="h-11 min-w-0 flex-1 basis-48 aw-input px-3 text-[0.9375rem] placeholder:text-text-muted"
             />
             <button type="submit" className="h-11 rounded-aw bg-primary px-3 text-[0.9375rem] font-medium text-on-primary hover:bg-primary-hover">
               {t("common.add")}
@@ -138,7 +152,7 @@ export function StudyPassages({ studyId, title = "", passages, reload, onReveal 
           {error}
         </p>
       )}
-    </section>
+    </div>
   );
 }
 
@@ -178,7 +192,7 @@ export function PassageManager({ passages, reload }: Omit<PassagesProps, "studyI
                   type="button"
                   onClick={() => void act(() => api.studyPassageSetRole({ id: passage.id, role: "primary" }))}
                   aria-label={t("studies.passages.makePrimaryLabel", { passage: label })}
-                  className="min-h-11 rounded-aw px-2 text-text-strong underline underline-offset-2 hover:bg-bg"
+                  className="min-h-11 rounded-aw px-2 text-text-strong underline underline-offset-2 hover:bg-hover"
                 >
                   {t("studies.passages.makePrimary")}
                 </button>
@@ -187,7 +201,7 @@ export function PassageManager({ passages, reload }: Omit<PassagesProps, "studyI
                 type="button"
                 onClick={() => void act(() => api.studyPassageRemove(passage.id))}
                 aria-label={t("studies.passages.remove", { passage: label })}
-                className="ml-auto inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-bg"
+                className="ml-auto inline-flex size-11 items-center justify-center rounded-aw text-text-muted hover:bg-hover"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>

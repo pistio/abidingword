@@ -9,11 +9,15 @@
     "about": "About this installation",
     "planned": "Coming in later versions",
     "assistant": "AI Assistant",
-    "updates": "Updates"
+    "updates": "Updates",
+    "data": "Data and backup",
+    "sources": "Sources"
   },
   "language": {
     "label": "Interface language",
-    "hint": "Changes the language of menus, buttons and messages. Your studies, notes, library and Bible texts stay as they are."
+    "hint": "Changes the language of menus, buttons and messages. Your studies, notes, library and Bible texts stay as they are.",
+    "find": "English · Deutsch · 한국어 · Français · Español · Português",
+    "action": "Change language"
   },
   "theme": {
     "legend": "Theme",
@@ -35,7 +39,7 @@
     "logFiles": "Log files",
     "schema": "Database schema",
     "schemaVersion": "Version {{version}}",
-    "backup": "All your studies are stored in the data folder on this computer. To back them up, copy that whole folder while Abiding Word is closed."
+    "backup": "All your work is stored in the data folder on this computer. To keep a copy, use “Back up everything…” under Data and backup."
   },
   "planned": {
     "sync": "Sync",
@@ -57,12 +61,17 @@
       "xai": "xAI (Grok)",
       "perplexity": "Perplexity",
       "deepseek": "DeepSeek",
-      "qwen": "Qwen (Alibaba Cloud)"
+      "qwen": "Qwen (Alibaba Cloud)",
+      "mistral": "Mistral (Mistral, Codestral)",
+      "cohere": "Cohere (Command)",
+      "moonshot": "Moonshot AI (Kimi)",
+      "zai": "Z.ai (GLM)",
+      "minimax": "MiniMax"
     },
     "remote": "When you ask for help, the text you chose is sent over the internet to this service.",
     "local": "Runs on this computer: your text does not leave it.",
     "model": "Model",
-    "modelPlaceholder": "The model's name",
+    "modelPlaceholder": "The model’s name",
     "modelHint": "Model names change often. The suggested model is a starting point; the ↗ button beside the field opens the service’s current list.",
     "address": "Address of the service",
     "addressPlaceholder": "The service’s usual address",
@@ -90,7 +99,7 @@
     "findImages": "Find freely licensed images on Wikimedia Commons (only search words are sent)",
     "generateImages": "Allow making images (always marked as made by the assistant)",
     "perspective": "How should the AI approach theological questions?",
-    "perspectiveHint": "Optional. This does not ask about your life: if it helps, write only a short theological or church perspective (e.g. “Reformed evangelical”). The AI uses it when it comments on disputed theological questions, and still mentions other serious interpretations. Left blank, no tradition is assumed.",
+    "perspectiveHint": "Optional. This does not ask about your life: if it helps, write only a short theological or church perspective (e.g. “Reformed evangelical”). The AI uses it when it comments on disputed theological questions, and still mentions other serious interpretations. If left blank, no tradition is assumed.",
     "save": "Save",
     "saved": "Saved.",
     "test": "Check the connection",
@@ -122,7 +131,8 @@
       "step5": "Come back to Abiding Word.",
       "step6": "Paste it into the Key field above.",
       "step7": "Press Keep key.",
-      "step8": "Press Check the connection."
+      "step8": "Press Check the connection.",
+      "prices": "Open {{service}}’s price list"
     },
     "modelHintEmpty": "Type the model’s name as {{service}} shows it.",
     "advanced": "Advanced",
@@ -159,7 +169,7 @@
     },
     "imageKey": "OpenAI key for images",
     "imageKeyMissing": "No OpenAI key for images is kept yet: paste it below and press Keep key.",
-    "imagesLeave": "Image descriptions are sent to OpenAI over the internet, even though your writing service is not.",
+    "imagesLeave": "Image descriptions are sent to OpenAI over the internet, even though your writing assistant runs on this computer.",
     "searchShort": {
       "brave": "simple general web search",
       "tavily": "search designed for AI assistants",
@@ -192,7 +202,8 @@
     "searchWhy": {
       "noKey": "To check the search, first paste its key and choose Keep key.",
       "noAddress": "To check the search, first enter the SearXNG address."
-    }
+    },
+    "pricesLink": "See {{service}}’s prices"
   },
   "jumpTo": "Go to a section",
   "summary": {
@@ -206,20 +217,115 @@
     "templates": "Starting structures for Bible Study and Bible Teaching",
     "assistantOff": "Off",
     "assistantOn": "On · {{service}}",
-    "about": "Version {{version}} · where your data is kept"
+    "about": "Version {{version}} · where your data is kept",
+    "data": "Export, import and back up your work",
+    "sources": "Your books and notes: find, organise, archive"
   },
   "help": {
     "about": "More about: {{topic}}"
   },
   "background": {
     "legend": "Background",
-    "help": "Calm backgrounds with little glare, made for long reading and writing. Text keeps good contrast on each. They apply to the light theme.",
-    "lightOnly": "Backgrounds apply to the light theme.",
+    "help": "Calm backgrounds with little glare, made for long reading and writing. Text keeps good contrast on each. Each has a light and a dark version, which follows the theme.",
     "parchment": "Parchment",
     "cream": "Cream",
     "sage": "Sage",
     "stone": "Stone",
     "mist": "Mist",
     "clear": "Neutral"
+  },
+  "data": {
+    "projects": "Projects",
+    "projectsHint": "A project file holds one project’s Bible Studies and Bible Teachings, with their notes, Materials and presentations. Library books, Bible texts and church templates stay on this computer: the file only names the ones it uses.",
+    "exportLabel": "Project to export",
+    "export": "Export project…",
+    "import": "Import project…",
+    "projectFilter": "Abiding Word project",
+    "backupFilter": "Abiding Word backup",
+    "openProject": "Choose a project file to import",
+    "openBackup": "Choose a backup to restore",
+    "exported": "“{{title}}” was saved to {{path}}.",
+    "namedOnly": "Named in the file but not included, because they stay on this computer:",
+    "missingSources": "Library",
+    "missingTemplates": "Church templates",
+    "missingBibles": "Bibles",
+    "missingImages": "Images not in the file: {{n}}",
+    "missingHeading": "Not on this computer",
+    "missingHint": "The project uses these, but this computer does not have them. Notes keep their citations: title, author, quoted words and page stay, marked as not on this computer. A presentation uses the standard design and no Bible text instead.",
+    "importPreview": "Project to import",
+    "savedOn": "Saved on {{date}} with Abiding Word {{version}}",
+    "importAs": "It will be added as a new project, “{{title}}”. Nothing on this computer is replaced.",
+    "importConfirm": "Import",
+    "imported": "“{{title}}” was added. You’ll find it under Projects.",
+    "leftOut": "Parts of the file that could not be read and were left out: {{n}}",
+    "backup": "Backup",
+    "backupHint": "A backup holds everything: all projects, your library files, the Bibles you added, templates and settings. It is a private copy for you, not for sharing: it can hold books and Bibles whose licences do not allow passing them on. API keys are never included; after restoring on another computer, enter them again.",
+    "backupCreate": "Back up everything…",
+    "backedUp": "The backup was saved to {{path}} ({{size}} MB).",
+    "restore": "Restore from backup…",
+    "restorePreview": "Backup to restore",
+    "restoreWarning": "Restoring replaces your current work and settings with this backup’s contents. Abiding Word first saves and checks a safety copy of your current database. Library files that differ are kept separately. After restoring, reload Abiding Word before continuing.",
+    "restoreConfirm": "Replace everything with this backup",
+    "restored": "The backup was restored.",
+    "safetyCopy": "A safety copy of your previous database is kept at {{path}}.",
+    "setAside": "Library files set aside next to that copy: {{n}}",
+    "restoredContinue": "Reload Abiding Word",
+    "working": "Working…",
+    "workingLong": "This can take a while with a large library.",
+    "size": "{{size}} MB",
+    "count": {
+      "studies": "Bible Studies: {{n}}",
+      "teachings": "Bible Teachings: {{n}}",
+      "presentations": "Presentations: {{n}}",
+      "notes": "Notes: {{n}}",
+      "images": "Images: {{n}}",
+      "projects": "Projects: {{n}}",
+      "sources": "Library: {{n}}",
+      "bibles": "Bibles added: {{n}}"
+    },
+    "sample": "Example project",
+    "sampleHint": "“Example: Abiding in Christ — John 15:1–11” shows a Bible Study and how it becomes a message, a group Bible study and an interactive lesson. Its content is in English. It is added only when you ask, works without internet, and is yours to change or delete.",
+    "sampleAdd": "Add the example project",
+    "sampleAdded": "“{{title}}” was added. You’ll find it under Projects.",
+    "sampleThere": "“{{title}}” is already here, so nothing was added.",
+    "citationsKept": "Citations kept whose library book is not on this computer: {{n}}",
+    "citationsReconnected": "Citations linked to the same book in your library: {{n}}",
+    "dailyTitle": "Automatic recovery points",
+    "dailyHint": "Abiding Word creates daily database copies while it is running and keeps up to seven verified copies. They contain your writing and database settings, but no imported source files, Bible files or images. Use “Back up everything…” for a complete backup.",
+    "dailyShow": "Show recovery points",
+    "dailyRefresh": "Refresh recovery points",
+    "dailyEmpty": "No automatic recovery points are available yet.",
+    "dailyWhen": "{{date}} · {{size}} MB · database v{{version}}",
+    "dailyReady": "Available",
+    "dailyUnavailable": "Unavailable: damaged or incompatible version",
+    "dailyChoose": "Review restore…",
+    "dailyPreview": "Recovery point to restore",
+    "dailyWarning": "Restoring this point replaces the writing and settings in your current database. Imported source files, Bible files and images stay unchanged; missing files are not recovered, so older citations may refer to files you no longer have. Abiding Word first makes a verified safety copy of your current database. To recover the files too, use “Restore from backup…”.",
+    "dailyConfirm": "Restore this database copy",
+    "dailyRestored": "The database was restored. Imported files were unchanged.",
+    "restoreReloadHint": "Reload Abiding Word before continuing. Editing stays paused until the restored work has been loaded.",
+    "restoreInProgress": "Saving current work and restoring…",
+    "restoreInProgressHint": "Keep Abiding Word open until recovery has finished.",
+    "restoreAlreadyRunning": "A restore is already in progress. Wait for it to finish.",
+    "restoreReloadRequired": "The database has been restored. Reload Abiding Word before continuing.",
+    "restoreSaveFailed": "Some changes could not be saved. Your current writing has been kept. Resolve the save error, then try again.",
+    "restoreNeedsAttention": "Recovery needs attention",
+    "restoreFailureReloadHint": "Recovery could not fully restore your previous work. Editing remains paused. Keep the safety copy shown below, then reload Abiding Word before trying to continue."
+  },
+  "trash": {
+    "danger": "Danger zone",
+    "title": "Trash",
+    "move": "Move to Trash",
+    "restore": "Restore",
+    "permanent": "Delete permanently",
+    "confirm": "Move “{{title}}” to Trash?",
+    "permanentConfirm": "Permanently delete “{{title}}”? This cannot be undone.",
+    "typeTitle": "Type the exact title to confirm",
+    "empty": "Trash is empty.",
+    "hint": "Restore a Project to recover its contents. Individually trashed Studies appear after their Project is restored.",
+    "studyHint": "The Study and its research can be restored in Settings → Data and backup → Trash. Linked Teaching stays in its Project with saved notes and citations, but is unlinked. Restoration does not automatically relink it.",
+    "projectHint": "The Project and its Studies and Teaching are hidden together and can be restored from Trash. Permanent deletion removes the entire dependent content.",
+    "actions": "Actions for “{{title}}”",
+    "moved": "“{{title}}” moved to Trash."
   }
 }

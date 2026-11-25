@@ -1,0 +1,106 @@
+[
+  {
+    "file": "src-tauri/migrations/0001_initial_schema.sql",
+    "sha256": "a0631bbc74b12b9900074ce4aaeb3437a0bec8c1814ec0848bf3379de2bbdcc6"
+  },
+  {
+    "file": "src-tauri/migrations/0002_scripture.sql",
+    "sha256": "7aa670dfddfeb164c579d6a2d2dbda8c59cff26bf121aee614746d439c8ec9e7"
+  },
+  {
+    "file": "src-tauri/migrations/0003_studies.sql",
+    "sha256": "edbf84bb0d15f379a0e46e836f4082f4f9627332cbdb6378ffee67006d909ac5"
+  },
+  {
+    "file": "src-tauri/migrations/0004_library.sql",
+    "sha256": "6a69101c45e35ddfd9492728f282f2cae7bd0ad3e7851523ac8fc37e03c34f49"
+  },
+  {
+    "file": "src-tauri/migrations/0005_passage_sections.sql",
+    "sha256": "4c2988058e5db2729a8ccd71abf4cbc750ca6805283e7e46f8f70db435e33819"
+  },
+  {
+    "file": "src-tauri/migrations/0006_source_annotations.sql",
+    "sha256": "d037f4a9f1afc755541a4245f439d649e4b979a3f70ab679e9a18c2ce21bcb87"
+  },
+  {
+    "file": "src-tauri/migrations/0007_finding_source_quotes.sql",
+    "sha256": "2e643740eb7662b5af982e178d3d3af672ce0c93659a9ff766278219b4d1fede"
+  },
+  {
+    "file": "src-tauri/migrations/0008_teaching_preparations.sql",
+    "sha256": "24358f2726358ab84c2be6edb381962d44d664686e212fb68ad3b5fb0cc19181"
+  },
+  {
+    "file": "src-tauri/migrations/0009_teaching_step_kinds.sql",
+    "sha256": "30b51c5269c4df0c041e54fdb7697ec48f99fad5723b1c3e907fcfad93cff26f"
+  },
+  {
+    "file": "src-tauri/migrations/0010_presentations.sql",
+    "sha256": "75a1d3100aed2daa2c61db1f0632c780a1b1dccdacae9b48f0cf77f4b7092c3e"
+  },
+  {
+    "file": "src-tauri/migrations/0011_presentation_target.sql",
+    "sha256": "cad7c6dbaa04546d6bb359948912511afc08679f6e196ee631162a616df0920e"
+  },
+  {
+    "file": "src-tauri/migrations/0012_presentation_templates.sql",
+    "sha256": "4897e69f1772ecc4739d8b48b68cc67339c2fbf891d5bc7431ac503bd98ad600"
+  },
+  {
+    "file": "src-tauri/migrations/0013_study_phases.sql",
+    "sha256": "b21b8d7376bcefffd7af7c1612faae3e75b380f551d71be4a469646ed92d5752"
+  },
+  {
+    "file": "src-tauri/migrations/0014_teaching_templates.sql",
+    "sha256": "c2bb3d53a9534dc935bf92685a5ce89f1138955c108c6dd7d930c8b4a28a7f2f"
+  },
+  {
+    "file": "src-tauri/migrations/0015_verse_bridges.sql",
+    "sha256": "6fe4b7bf54c5e7bc24cf3dc5d162618868abe9ec65dbb381f735db503a1ebf5c"
+  },
+  {
+    "file": "src-tauri/migrations/0016_unresolved_citations.sql",
+    "sha256": "9d8fc7cdbec5c5c7ce1b7c05e412d6396695d106d05e8e36f61cf4cf7424846a"
+  },
+  {
+    "file": "src-tauri/migrations/0017_word_annotations.sql",
+    "sha256": "0328b622162d1849e110c0e1d872ef678bb97dc41fd7b4fc68dfd317ef408f20"
+  },
+  {
+    "file": "src-tauri/migrations/0018_grammar_provenance.sql",
+    "sha256": "360fa1b64e04d6577414af653b2a75ae5e3e5e2167e37ac73341592734f2a0e2"
+  },
+  {
+    "file": "src-tauri/migrations/0019_bible_documents.sql",
+    "sha256": "9c5f902a99211c4c02e6789908639eb75542bbeab2a379092247728bcafe13d4"
+  },
+  {
+    "file": "src-tauri/migrations/0020_library_organisation.sql",
+    "sha256": "3c3b94a6448ffb8449a90161126cb8ea838cd5d53948ea62dabb656655dcc71c"
+  },
+  {
+    "file": "src-tauri/migrations/0021_bible_passage_locations.sql",
+    "sha256": "58408192a7f7a8ee5570dff1b22c3a3227516cd1feb7bfe3f6f1d0d29d518cf1"
+  },
+  {
+    "file": "src-tauri/migrations/0022_import_jobs.sql",
+    "sha256": "b77b53f8186ba795f8acdec482eac93250edf90e2ad140dd073fe175d3220521"
+  },
+  {
+    "file": "src-tauri/migrations/0023_recognition_corrections.sql",
+    "sha256": "beb1121b087d028b657c464ff65a351475cc307fe2b08430112ed608790c334a"
+  },
+  {
+    "file": "src-tauri/migrations/0024_section_status_and_fields.sql",
+    "sha256": "7b8c3b31856ae40d2b6ad5c764515066066a20c0dc4dfac20ba5e62384a53252"
+  },
+  {
+    "file": "src-tauri/migrations/0025_teaching_blocks.sql",
+    "sha256": "68fd35adfff4af4d57ad5687249fd26442a72f470d6dbec54bb10caca6d29e36"
+  },
+  {
+    "file": "src-tauri/migrations/0026_project_teaching.sql",
+    "sha256": "cbcef5c4d83a571230b6001d3ebc6d9f4060709f1aae148bc2ea4456598ef95c"
+  }
+]

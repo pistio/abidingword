@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { STARTUP_CHECK_DELAY_MS } from "@/features/updates/timing";
 import { createMemoryApi } from "../support/memoryApi";
 import { createMemoryUpdater } from "../support/memoryUpdater";
-import { renderApp } from "../support/render";
+import { renderAppInProject as renderApp } from "../support/render";
 
 describe("update check timing", () => {
   it("does not look for updates while the app is starting", async () => {

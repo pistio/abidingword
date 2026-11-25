@@ -1,0 +1,6 @@
+{
+  "platform": "Linux Chromium; actual React App with invented in-memory backend; no native Windows or SQLite acceptance",
+  "errors": [],
+  "passed": false,
+  "error": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('textbox', { name: 'Project title', exact: true })\u001b[22m\n"
+}
