@@ -378,6 +378,31 @@ fn part(field: &str, value: &str) -> Option<ManuscriptPart> {
     })
 }
 
+/// Whether a passage taken from a Bible read from documents leaves out
+/// verses the document holds but whose text was not verified, or whole
+/// chapters of the passage: the slide then shows fewer verses than the
+/// reference names, and the person preparing it is told (issue #60). Bibles
+/// read from USFM and the like are not affected.
+fn withheld_in_passage(
+    conn: &Connection,
+    bible: &BibleTranslation,
+    reference: &ScriptureRef,
+    verses: &[crate::scripture::VerseText],
+) -> AppResult<bool> {
+    if bible.edition_confirmed.is_none() {
+        return Ok(false);
+    }
+    let places: i64 = conn.query_row(
+        "SELECT COUNT(*) FROM bible_verse_places
+         WHERE translation_id = ?1 AND verse_id BETWEEN ?2 AND ?3",
+        rusqlite::params![bible.id, reference.start_key(), reference.end_key()],
+        |r| r.get(0),
+    )?;
+    Ok(places > 0
+        || (reference.start.chapter..=reference.end.chapter)
+            .any(|chapter| !verses.iter().any(|v| v.chapter == chapter)))
+}
+
 impl Builder<'_> {
     fn warn(&mut self, slide_id: Option<&str>, code: &str) {
         self.warnings.push(DocWarning {
@@ -699,6 +724,10 @@ impl Builder<'_> {
             };
             if verses.is_empty() {
                 self.warn(Some(&item.id), "scriptureUnavailable");
+            } else if let Some(bible) = self.bible {
+                if withheld_in_passage(self.conn, bible, &reference, &verses)? {
+                    self.warn(Some(&item.id), "scripturePartial");
+                }
             }
             if let Some(bible) = self.bible {
                 citations.push(Citation {

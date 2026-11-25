@@ -140,7 +140,10 @@
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
     "documentFootnotes_many": "{{count}} de lignes de notes en bas de page ont été laissées de côté.",
-    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés."
+    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés.",
+    "documentChapterUnmarked": "{{book}} : après le chapitre {{chapter}}, les numéros de verset recommencent à 1 sans titre ni numéro de chapitre. Ce chapitre n’est pas utilisé.",
+    "documentChapterUnread": "{{book}} : le numéro du titre de chapitre « {{line}} » n’a pas pu être lu. Ce chapitre n’est pas utilisé.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}} : ce document est une Septante, qui numérote ce chapitre autrement que la numérotation de la Bible hébraïque qu’utilise Abiding Word. Ce chapitre n’est pas utilisé."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",

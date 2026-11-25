@@ -129,7 +129,10 @@
     "documentChapterLong": "{{book}} {{chapter}} goes on to verse {{last}}; it usually has {{expected}} verses. Another chapter or book may have been read into it. This chapter is not used.",
     "documentFootnotes_one": "{{count}} line of footnotes was left out.",
     "documentFootnotes_other": "{{count}} lines of footnotes were left out.",
-    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected."
+    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected.",
+    "documentChapterUnmarked": "{{book}}: after chapter {{chapter}}, the verse numbers start again at 1 with no chapter heading or number. That chapter is not used.",
+    "documentChapterUnread": "{{book}}: the chapter heading “{{line}}” has a number that could not be read. That chapter is not used.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: this document is a Septuagint, which numbers this chapter differently from the Hebrew Bible numbering Abiding Word uses. This chapter is not used."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",

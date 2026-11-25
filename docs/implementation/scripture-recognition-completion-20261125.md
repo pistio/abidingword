@@ -1,5 +1,5 @@
 # Scripture recognition — product completion milestone
-**Date:** 25 November 2026. **Status:** WORK IN PROGRESS, not implemented or accepted on this branch.  
+**Date:** 25 November 2026. **Status:** integrated and verified on Linux (§6); **Windows acceptance not yet done** — not accepted, not releasable.  
 **Owner objective:** *Use Abiding Word to study Scripture, retain reliable notes and produce faithful Teaching.* This milestone is delivered only when Scripture recognition works in the **Windows application**, not when an evaluation report passes.
 
 **Implementation issue:** [#60](https://github.com/pistio/abidingword/issues/60). **Product importer defect:** [#59](https://github.com/pistio/abidingword/issues/59). **Separate restore P0:** [#57](https://github.com/pistio/abidingword/issues/57).
@@ -63,3 +63,63 @@ Progress reports must start with **which user journey is now usable and demonstr
 Do not merge or sign/publish/updater-install without owner approval. Do not use owner real documents, live profiles, private Collection H or paid CI. Codex/engineering works here; Claude continues only its already-running independent E3 review.
 
 **The finish line is a Bible that can be imported, cited and used safely in a real Windows Abiding Word study session.**
+
+## 6. Verification record (25 November 2026, branch head after `3ced47d`)
+
+**Usable and demonstrably tested (Linux, automated):** an invented EPUB, DOCX
+and text-layer PDF Bible of Ruth is each previewed, corrected and gated again,
+committed into a real profile, reopened after a cold restart, read by
+chapter, searched, cited in a Study note, taught, presented and exported —
+and its one withheld verse never becomes Scripture
+(`src-tauri/tests/recognition_journey.rs`):
+
+| Step | Observed, in all three formats |
+|---|---|
+| Preview | Ruth 1:1 verified; 1:2 withheld (`boundary`); the preview does not show 1:2's words |
+| Correction | the book heading corrected: a new gated pass (generation +1); 1:2 still withheld |
+| Commit | the kept copy byte-identical to the original and to the recorded SHA-256; one run, 84 verified evidence rows, 1:2 `unverified` with its reason, no Scripture text stored for it; edition confirmed only when the person confirmed it (EPUB yes, DOCX/PDF no) |
+| Provenance | EPUB: entry path, byte spans, the linked note recorded as an exclusion; PDF: page; DOCX: paragraph; 1:2 inspectable at its source and findable in the document |
+| Reopen, read | chapter 1 shows 21 verses and 1:2 as an unchecked place |
+| Search, concordance | the verified word found; the withheld word never |
+| Passage (Study, Teaching, assistant) | Ruth 1:1–3 gives 1 and 3 only |
+| Study citation | a phrase note on 1:1's words saved and shown; an anchor in 1:2 refused |
+| Teaching, presentation | slides show 1 and 3; the person preparing it is warned (`scripturePartial`, new) |
+| Exports | Markdown, PowerPoint and PDF without the withheld words; Markdown and PowerPoint with the verified ones; Materials passages the same |
+| Original file | unchanged |
+
+Also: an image-only PDF yields no verse (OCR required) and is unchanged; the
+PDF is read in the separate worker process (the app executable), as in the
+app.
+
+**Schema 27 → 28 and backups** (same file): a schema-27 profile holding a
+document Bible (rows as the latest pre-0028 code stores them), a note on it
+and its kept EPUB is opened: one pre-migration safety copy, which is the
+exact v27 database; schema 28; **no row of any Bible table or of the notes
+changed**; foreign keys sound; the Bible stays a document, edition
+unconfirmed, and its words are kept out of Scripture until read again, while
+the source stays searchable. Reading its kept file again restores the
+verses with evidence (1:2 withheld) and keeps the note. A daily snapshot
+carries every evidence row; after the Bible is removed, restoring the
+snapshot brings them back.
+
+**Checks at the branch head:** `cargo fmt -- --check` clean; `cargo clippy
+--all-targets --locked -- -D warnings` clean; `cargo test --locked` (CI
+settings) **1 199 passed, 0 failed, 9 ignored** (106 groups); `npm run
+typecheck`, `lint`, `i18n:check` pass; `npm test` **1 455 passed** (136
+files); `npm run build` passes.
+
+**Fixed while verifying:** three native messages without translations
+(`documentChapterUnmarked`, `documentChapterUnread`,
+`documentSeptuagintNumbering`) now in six languages; two German strings
+used the formal address; the six-language review corpus regenerated; a
+Teaching passage with a withheld verse was shortened silently — the
+presentation now warns (`scripturePartial`, six languages).
+
+**Not done, and required before acceptance (§4, §5):** the native Windows
+smoke test on a disposable profile with an installed build (needs the
+owner's authorisation for a Windows build); PDF worker memory/time limits
+and cancellation on Windows (the Job Object path is compiled only there);
+React-level checks of the import screen's progress, cancellation and focus
+beyond the existing UI tests; reconciliation with issues #57 and #59. CI
+was not run on this branch (it does not target `main` or a CI branch).
+

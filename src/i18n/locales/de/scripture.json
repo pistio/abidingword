@@ -17,8 +17,8 @@
     "nextChapter": "Nächstes Kapitel"
   },
   "reader": {
-    "recognisedFromDocument": "In Ihrem Dokument erkannt",
-    "editionConfirmed": "Ausgabe von Ihnen bestätigt",
+    "recognisedFromDocument": "In deinem Dokument erkannt",
+    "editionConfirmed": "Ausgabe von dir bestätigt",
     "editionProvisional": "Ausgabe nicht bestätigt",
     "numberingUnmapped": "Für diese Dokumentausgabe ist keine automatische Zuordnung paralleler Verse verfügbar.",
     "opening": "{{passage}} wird geöffnet…",

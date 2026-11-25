@@ -140,7 +140,10 @@
     "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
     "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
     "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
-    "documentAdditionalBook": "“{{heading}}” é {{book}}, que o Abiding Word ainda não pode mostrar. Seu texto foi deixado de fora; os outros livros não são afetados."
+    "documentAdditionalBook": "“{{heading}}” é {{book}}, que o Abiding Word ainda não pode mostrar. Seu texto foi deixado de fora; os outros livros não são afetados.",
+    "documentChapterUnmarked": "{{book}}: depois do capítulo {{chapter}}, os números dos versículos recomeçam em 1 sem título nem número de capítulo. Esse capítulo não é usado.",
+    "documentChapterUnread": "{{book}}: não foi possível ler o número do título de capítulo “{{line}}”. Esse capítulo não é usado.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: este documento é uma Septuaginta, que numera este capítulo de forma diferente da numeração da Bíblia hebraica usada pelo Abiding Word. Este capítulo não é usado."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",

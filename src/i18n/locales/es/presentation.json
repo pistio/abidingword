@@ -116,6 +116,7 @@
   "warnings": {
     "noBible": "Todavía no hay ninguna Biblia instalada: las diapositivas de pasajes solo muestran la referencia. Añade una Biblia en Configuración.",
     "scriptureUnavailable": "El texto de este pasaje no está en la Biblia elegida.",
+    "scripturePartial": "Algunos versículos de este pasaje no se muestran: no se pudo verificar su texto en el documento de esta Biblia.",
     "imageUnavailable": "Esta imagen no está en este ordenador.",
     "sourceMissing": "Esta parte se eliminó de la enseñanza.",
     "longText": "Mucho texto para una diapositiva: se mostrará más pequeño."

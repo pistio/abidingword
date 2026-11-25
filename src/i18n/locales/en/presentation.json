@@ -113,6 +113,7 @@
   "warnings": {
     "noBible": "No Bible is installed yet: Scripture slides show only the reference. Add a Bible in Settings.",
     "scriptureUnavailable": "The text of this passage is not in the chosen Bible.",
+    "scripturePartial": "Some verses of this passage are not shown: their text in this Bible’s document could not be verified.",
     "imageUnavailable": "This image is not on this computer.",
     "sourceMissing": "This part was removed from the teaching.",
     "longText": "A lot of text for one slide: it will be set smaller."
