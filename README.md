@@ -161,6 +161,15 @@ For the current release go/no-go gates, see the [publication-readiness plan](doc
 | 🛠️ **Developers and contributors** | **[Developer guide](docs/developers.md)**: building, testing, releasing, and how the code is organised |
 | 🗂️ **Project history** | **[Documentation map](docs/README.md)**: the design and the technical record of each version |
 
+## Support independent development
+
+Abiding Word is independently developed and maintained. If it is useful to you, you can support ongoing work with a voluntary contribution. Sponsorship does not change the project's licence or grant access to features.
+
+<p>
+  <a href="https://github.com/sponsors/pistio"><img src="https://img.shields.io/badge/GitHub%20Sponsors-Support-0E2D5B?logo=githubsponsors&logoColor=white" alt="Support via GitHub Sponsors"></a>
+  <a href="https://ko-fi.com/pistio"><img src="https://img.shields.io/badge/Ko--fi-Buy%20a%20coffee-0E2D5B?logo=kofi&logoColor=white" alt="Support via Ko-fi"></a>
+</p>
+
 ## Name, brand and bundled content rights
 
 The Abiding Word name, logomark and brand assets are not covered by any
