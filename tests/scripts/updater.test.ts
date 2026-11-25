@@ -257,25 +257,16 @@ describe("committed configuration", () => {
       return next === -1 ? wf.slice(start) : wf.slice(start, start + 1 + next);
     };
 
-    it("starts only by hand or after CI succeeded on a push to main", () => {
-      const on = wf.slice(wf.indexOf("\non:\n"), wf.indexOf("\npermissions:"));
+    it("starts signed test-update publication only on explicit manual dispatch", () => {
+      const on = wf.slice(wf.indexOf("\\non:\\n"), wf.indexOf("\\npermissions:"));
       expect(on).toContain("workflow_dispatch:");
-      expect(on).toMatch(/workflow_run:\s+workflows: \["CI"\]\s+types: \[completed\]\s+branches: \[main\]/);
-      expect(on).not.toMatch(/\bpull_request/);
-      expect(on).not.toMatch(/\n {2}push:/);
-      const gate = job("gate");
-      for (const guard of [
-        "github.event.workflow_run.conclusion == 'success'",
-        "github.event.workflow_run.event == 'push'",
-        "github.event.workflow_run.head_branch == 'main'",
-        "github.event.workflow_run.head_repository.full_name == github.repository",
-      ]) {
-        expect(gate).toContain(guard);
-      }
+      expect(on).not.toMatch(/workflow_run:|pull_request:|\\n {2}push:/);
+      expect(job("gate")).toContain("if: github.event_name == 'workflow_dispatch'");
     });
 
-    it("publishes the exact commit CI passed on, only while it is still the newest on main", () => {
-      expect(job("gate")).toContain("CI_SHA: ${{ github.event.workflow_run.head_sha }}");
+    it("publishes only an explicitly dispatched source commit, retaining main freshness checks", () => {
+      expect(job("gate")).toContain("DISPATCH_SHA: ${{ github.sha }}");
+      expect(job("gate")).toContain('echo "sha=$DISPATCH_SHA"');
       expect(job("gate")).toContain('commits/main" --jq .sha');
       for (const name of ["build", "publish"]) {
         expect(job(name)).toContain("ref: ${{ needs.gate.outputs.sha }}");
