@@ -1386,6 +1386,10 @@ describe("the floating AI panel", () => {
     const article = await startSermon(user, api);
     await user.type(field(article, "Introduction"), "We dont stay.");
     await settle();
+    const preview = api.assistantPreview;
+    let releasePreview!: () => void;
+    const ready = new Promise<void>((resolve) => { releasePreview = resolve; });
+    api.assistantPreview = async (input) => { await ready; return preview(input); };
     const panel = await helpWith(user, article, "Introduction", "Check grammar and spelling");
     // Not inside the teaching: the text does not move.
     expect(article).not.toContainElement(panel);
@@ -1393,8 +1397,13 @@ describe("the floating AI panel", () => {
     expect(floating).toHaveAttribute("aria-modal", "false");
     expect(floating).toContainElement(panel);
     // The teaching stays usable while it is open.
-    await user.type(field(article, "Conclusion"), "Abide.");
-    expect(field(article, "Conclusion")).toHaveValue("Abide.");
+    const conclusion = field(article, "Conclusion");
+    await user.type(conclusion, "Ab");
+    releasePreview();
+    await waitFor(() => expect(within(panel).getByRole("button", { name: /^Ask/ })).toBeEnabled());
+    expect(conclusion).toHaveFocus();
+    await user.keyboard("ide.");
+    expect(conclusion).toHaveValue("Abide.");
     expect(screen.getByTestId("assist-panel")).toBeInTheDocument();
     // The panel keeps the part it was opened for.
     expect(within(panel).getByRole("heading", { level: 4 })).toHaveTextContent("Check grammar and spelling · Introduction");

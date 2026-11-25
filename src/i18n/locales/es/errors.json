@@ -130,6 +130,9 @@
     "additionalBook": "«{{fileName}}» contiene {{book}}, que Abiding Word todavía no puede mostrar. Se dejó fuera; los demás libros no se ven afectados.",
     "differentEditions": "Estos archivos dicen venir de Biblias distintas: {{list}}. Las Biblias distintas nunca se combinan: añade cada una por separado.",
     "documentReadingOrder": "{{book}} {{chapter}}: no se pudo determinar el orden de lectura de la página {{page}} a partir de su diseño. Este capítulo no se usa.",
+    "documentChapterUnmarked": "{{book}}: La numeración de versículos vuelve a empezar en 1 después del capítulo {{chapter}} sin indicación de capítulo. Se omitió el capítulo siguiente.",
+    "documentChapterUnread": "{{book}}: El número del encabezado «{{line}}» es ilegible. Se omitió el capítulo.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: Este capítulo de la Septuaginta tiene una numeración distinta de la referencia. Se omitió el capítulo.",
     "documentChapterJump": "{{book}} {{chapter}}: el documento continúa con este capítulo después del capítulo {{previous}}; no se encontraron los capítulos intermedios. Este capítulo no se usa.",
     "documentRunningHead": "{{book}} {{chapter}}: la página {{page}} termina con el versículo {{found}}, pero su encabezado ({{head}}) indica {{named}}. Este capítulo no se usa.",
     "documentLabel": "{{book}} {{chapter}}: la línea «{{line}}» está entre dos oraciones de un versículo y se repite en otros lugares como línea propia (quizá el nombre de quien habla o un título). Este capítulo no se usa.",
@@ -140,10 +143,7 @@
     "documentFootnotes_one": "Se omitió {{count}} línea de notas al pie de las páginas.",
     "documentFootnotes_other": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
     "documentFootnotes_many": "Se omitieron {{count}} líneas de notas al pie de las páginas.",
-    "documentAdditionalBook": "«{{heading}}» es {{book}}, que Abiding Word todavía no puede mostrar. Su texto se dejó fuera; los demás libros no se ven afectados.",
-    "documentChapterUnmarked": "{{book}}: después del capítulo {{chapter}}, los números de versículo vuelven a empezar en 1 sin título ni número de capítulo. Ese capítulo no se usa.",
-    "documentChapterUnread": "{{book}}: no se pudo leer el número del título de capítulo «{{line}}». Ese capítulo no se usa.",
-    "documentSeptuagintNumbering": "{{book}} {{chapter}}: este documento es una Septuaginta, que numera este capítulo de otra forma que la numeración de la Biblia hebrea que usa Abiding Word. Este capítulo no se usa."
+    "documentAdditionalBook": "«{{heading}}» es {{book}}, que Abiding Word todavía no puede mostrar. Su texto se dejó fuera; los demás libros no se ven afectados."
   },
   "library": {
     "notUtf8": "«{{fileName}}» no está guardado como texto UTF-8, así que no se pudo leer.",

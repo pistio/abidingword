@@ -130,6 +130,9 @@
     "additionalBook": "« {{fileName}} » contient {{book}}, qu’Abiding Word ne peut pas encore afficher. Ce livre a été laissé de côté ; les autres livres ne sont pas concernés.",
     "differentEditions": "Ces fichiers indiquent venir de Bibles différentes : {{list}}. Des Bibles différentes ne sont jamais combinées : ajoutez chacune séparément.",
     "documentReadingOrder": "{{book}} {{chapter}} : l’ordre de lecture de la page {{page}} n’a pas pu être établi d’après sa mise en page. Ce chapitre n’est pas utilisé.",
+    "documentChapterUnmarked": "{{book}} : Après le chapitre {{chapter}}, les versets reprennent à 1 sans indication de chapitre. Le chapitre suivant a été écarté.",
+    "documentChapterUnread": "{{book}} : Le numéro dans le titre de chapitre « {{line}} » est illisible. Le chapitre a été écarté.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}} : La numérotation de ce chapitre de la Septante diffère de celle de référence. Le chapitre a été écarté.",
     "documentChapterJump": "{{book}} {{chapter}} : le document continue avec ce chapitre après le chapitre {{previous}} ; les chapitres intermédiaires n’ont pas été trouvés. Ce chapitre n’est pas utilisé.",
     "documentRunningHead": "{{book}} {{chapter}} : la page {{page}} se termine par le verset {{found}}, mais son titre courant ({{head}}) indique {{named}}. Ce chapitre n’est pas utilisé.",
     "documentLabel": "{{book}} {{chapter}} : la ligne « {{line}} » se trouve entre deux phrases d’un verset et revient ailleurs comme ligne à part (peut-être le nom de celui qui parle ou un intertitre). Ce chapitre n’est pas utilisé.",
@@ -140,10 +143,7 @@
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
     "documentFootnotes_many": "{{count}} de lignes de notes en bas de page ont été laissées de côté.",
-    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés.",
-    "documentChapterUnmarked": "{{book}} : après le chapitre {{chapter}}, les numéros de verset recommencent à 1 sans titre ni numéro de chapitre. Ce chapitre n’est pas utilisé.",
-    "documentChapterUnread": "{{book}} : le numéro du titre de chapitre « {{line}} » n’a pas pu être lu. Ce chapitre n’est pas utilisé.",
-    "documentSeptuagintNumbering": "{{book}} {{chapter}} : ce document est une Septante, qui numérote ce chapitre autrement que la numérotation de la Bible hébraïque qu’utilise Abiding Word. Ce chapitre n’est pas utilisé."
+    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",

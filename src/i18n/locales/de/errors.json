@@ -120,6 +120,9 @@
     "additionalBook": "„{{fileName}}“ enthält {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Es wurde ausgelassen; die übrigen Bücher sind nicht betroffen.",
     "differentEditions": "Diese Dateien stammen nach eigener Angabe aus verschiedenen Bibeln: {{list}}. Verschiedene Bibeln werden nie zusammengeführt: Füge jede einzeln hinzu.",
     "documentReadingOrder": "{{book}} {{chapter}}: Bei Seite {{page}} ließ sich die Lesereihenfolge aus dem Seitenaufbau nicht sicher bestimmen. Dieses Kapitel wird nicht verwendet.",
+    "documentChapterUnmarked": "{{book}}: Nach Kapitel {{chapter}} beginnen die Versnummern ohne Kapitelangabe wieder bei 1. Das folgende Kapitel wurde ausgelassen.",
+    "documentChapterUnread": "{{book}}: Die Nummer in der Kapitelüberschrift „{{line}}“ war unlesbar. Das Kapitel wurde ausgelassen.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: Dieses Kapitel der Septuaginta folgt einer anderen Nummerierung als die Referenz. Das Kapitel wurde ausgelassen.",
     "documentChapterJump": "{{book}} {{chapter}}: Das Dokument fährt nach Kapitel {{previous}} mit diesem Kapitel fort; die Kapitel dazwischen wurden nicht gefunden. Dieses Kapitel wird nicht verwendet.",
     "documentRunningHead": "{{book}} {{chapter}}: Seite {{page}} endet mit Vers {{found}}, ihr Kolumnentitel ({{head}}) nennt aber {{named}}. Dieses Kapitel wird nicht verwendet.",
     "documentLabel": "{{book}} {{chapter}}: Die Zeile „{{line}}“ steht zwischen zwei Sätzen eines Verses und kommt anderswo als eigene Zeile wieder vor (vielleicht der Name eines Sprechers oder eine Überschrift). Dieses Kapitel wird nicht verwendet.",
@@ -129,10 +132,7 @@
     "documentChapterLong": "{{book}} {{chapter}} reicht bis Vers {{last}}; das Kapitel hat üblicherweise {{expected}} Verse. Vielleicht wurde ein anderes Kapitel oder Buch hineingelesen. Dieses Kapitel wird nicht verwendet.",
     "documentFootnotes_one": "{{count}} Zeile mit Fußnoten unten auf den Seiten wurde ausgelassen.",
     "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen.",
-    "documentAdditionalBook": "„{{heading}}“ ist {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Sein Text wurde ausgelassen; die anderen Bücher sind davon nicht betroffen.",
-    "documentChapterUnmarked": "{{book}}: Nach Kapitel {{chapter}} beginnen die Versnummern wieder bei 1, ohne Kapitelüberschrift oder Kapitelnummer. Dieses Kapitel wird nicht verwendet.",
-    "documentChapterUnread": "{{book}}: Die Nummer in der Kapitelüberschrift „{{line}}“ konnte nicht gelesen werden. Dieses Kapitel wird nicht verwendet.",
-    "documentSeptuagintNumbering": "{{book}} {{chapter}}: Dieses Dokument ist eine Septuaginta; sie zählt dieses Kapitel anders als die hebräische Zählung, die Abiding Word verwendet. Dieses Kapitel wird nicht verwendet."
+    "documentAdditionalBook": "„{{heading}}“ ist {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Sein Text wurde ausgelassen; die anderen Bücher sind davon nicht betroffen."
   },
   "library": {
     "notUtf8": "„{{fileName}}“ ist nicht als UTF-8-Text gespeichert und konnte daher nicht gelesen werden.",

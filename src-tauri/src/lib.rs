@@ -40,7 +40,8 @@ const LOG_FILE_NAME: &str = "abiding-word";
 /// endpoint). The updater section is added only by the test-update workflow
 /// (docs/updates.md); without it the plugin is not even registered.
 pub fn updates_configured(app: &AppHandle) -> bool {
-    app.config().plugins.0.contains_key("updater")
+    option_env!("ABIDING_WORD_ACCEPTANCE_BUILD") != Some("scripture")
+        && app.config().plugins.0.contains_key("updater")
 }
 
 pub fn run() {

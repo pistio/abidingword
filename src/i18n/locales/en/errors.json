@@ -120,6 +120,9 @@
     "additionalBook": "“{{fileName}}” holds {{book}}, which Abiding Word cannot show yet. It was left out; the other books are not affected.",
     "differentEditions": "These files say they come from different Bibles: {{list}}. Different Bibles are never combined: add each one on its own.",
     "documentReadingOrder": "{{book}} {{chapter}}: page {{page}} is laid out in a way whose reading order could not be established. This chapter is not used.",
+    "documentChapterUnmarked": "{{book}}: Verse numbers start again at 1 after chapter {{chapter}} without a chapter marker. The following chapter was left out.",
+    "documentChapterUnread": "{{book}}: The number in the chapter heading “{{line}}” could not be read. The chapter was left out.",
+    "documentSeptuagintNumbering": "{{book}} {{chapter}}: This Septuagint chapter uses different numbering from the reference. The chapter was left out.",
     "documentChapterJump": "{{book}} {{chapter}}: the document goes on with this chapter after chapter {{previous}}; the chapters between were not found. This chapter is not used.",
     "documentRunningHead": "{{book}} {{chapter}}: page {{page}} ends with verse {{found}}, but its running head ({{head}}) says {{named}}. This chapter is not used.",
     "documentLabel": "{{book}} {{chapter}}: the line “{{line}}” stands between two sentences of a verse and is repeated as a line of its own elsewhere (perhaps a speaker’s name or a heading). This chapter is not used.",
@@ -129,10 +132,7 @@
     "documentChapterLong": "{{book}} {{chapter}} goes on to verse {{last}}; it usually has {{expected}} verses. Another chapter or book may have been read into it. This chapter is not used.",
     "documentFootnotes_one": "{{count}} line of footnotes was left out.",
     "documentFootnotes_other": "{{count}} lines of footnotes were left out.",
-    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected.",
-    "documentChapterUnmarked": "{{book}}: after chapter {{chapter}}, the verse numbers start again at 1 with no chapter heading or number. That chapter is not used.",
-    "documentChapterUnread": "{{book}}: the chapter heading “{{line}}” has a number that could not be read. That chapter is not used.",
-    "documentSeptuagintNumbering": "{{book}} {{chapter}}: this document is a Septuagint, which numbers this chapter differently from the Hebrew Bible numbering Abiding Word uses. This chapter is not used."
+    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",
