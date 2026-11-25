@@ -12,7 +12,7 @@ function crc32(bytes) {
   }
   return (crc ^ 0xffffffff) >>> 0;
 }
-function storedZip(entries) {
+export function storedZip(entries) {
   const local = [], directory = [];let offset = 0;
   for (const [path, text] of entries) {
     const name = Buffer.from(path), data = Buffer.from(text), crc = crc32(data);

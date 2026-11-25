@@ -184,19 +184,19 @@ export function AssistPanel(props: AssistPanelProps) {
   const askButton = useRef<HTMLButtonElement | null>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const placed = useRef(false);
-  // Focus starts where the person acts: the input when one is needed, else Ask once it can be used
-  // (or the title, when the assistant cannot help with this, so the reason is read next).
+  // Give the panel a keyboard starting point immediately. When the preview
+  // arrives, advance to Ask only if the person is still at that starting point.
   useEffect(() => {
-    if (placed.current) return;
-    if (first.current) {
-      placed.current = true;
-      first.current.focus({ preventScroll: true });
-    } else if (preview) {
-      placed.current = true;
+    const initial = first.current ?? titleRef.current;
+    placed.current = Boolean(first.current);
+    initial?.focus({ preventScroll: true });
+  }, []);
+
+  useEffect(() => {
+    if (placed.current || (!preview && !problem)) return;
+    placed.current = true;
+    if (preview && document.activeElement === titleRef.current) {
       askButton.current?.focus({ preventScroll: true });
-    } else if (problem) {
-      placed.current = true;
-      titleRef.current?.focus({ preventScroll: true });
     }
   }, [preview, problem]);
 
