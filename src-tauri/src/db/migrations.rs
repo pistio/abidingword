@@ -161,6 +161,11 @@ pub const MIGRATIONS: &[Migration] = &[
         name: "pdf_structure",
         sql: include_str!("../../migrations/0027_pdf_structure.sql"),
     },
+    Migration {
+        version: 28,
+        name: "recognition_provenance",
+        sql: include_str!("../../migrations/0028_recognition_provenance.sql"),
+    },
 ];
 
 #[derive(Debug, Clone, PartialEq, Eq)]
