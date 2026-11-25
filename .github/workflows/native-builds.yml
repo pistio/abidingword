@@ -1,8 +1,6 @@
-# Unsigned Windows and Linux test installers, uploaded as workflow
-# artifacts (not GitHub Releases). Runs when started by hand (Actions →
-# Native builds → Run workflow), on pushes to main and on tags, and on a
-# feature/fix/chore branch push whose commit message contains
-# "[native-build]".
+# Unsigned Windows and Linux test installers; GitHub Actions artifacts only.
+# MANUAL ONLY: no automatic native build from main, tags or branch pushes.
+# Owner approval is required for each separate installer run.
 name: Native builds
 
 on:
@@ -12,9 +10,6 @@ on:
         description: Include the v0.5 selection-check panel (VITE_SELECTION_SPIKE=1)
         type: boolean
         default: false
-  push:
-    branches: [main, "feature/**", "fix/**", "chore/**"]
-    tags: ["*"]
 
 permissions:
   contents: read
@@ -26,10 +21,7 @@ env:
 jobs:
   windows:
     name: Windows package
-    if: >-
-      github.event_name != 'push' || github.ref == 'refs/heads/main' ||
-      startsWith(github.ref, 'refs/tags/') ||
-      contains(github.event.head_commit.message, '[native-build]')
+    if: github.event_name == 'workflow_dispatch'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -69,10 +61,7 @@ jobs:
 
   linux:
     name: Linux package
-    if: >-
-      github.event_name != 'push' || github.ref == 'refs/heads/main' ||
-      startsWith(github.ref, 'refs/tags/') ||
-      contains(github.event.head_commit.message, '[native-build]')
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
