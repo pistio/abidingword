@@ -19,13 +19,17 @@ pub mod import;
 pub mod language;
 pub mod morphgnt;
 pub mod morphology;
+pub mod numbering;
 pub mod oshb;
 pub mod packs;
 pub mod parser;
+pub mod pdf_worker;
 pub mod phrase_ranges;
+pub mod provenance;
 pub mod recognise;
 pub mod reference;
 pub mod resolve;
+pub mod structural;
 pub mod structure;
 pub mod usfm;
 pub mod verse_counts;
@@ -88,6 +92,8 @@ pub struct BibleTranslation {
     pub state_changed_at: Option<String>,
     /// The Bible's word annotations (v0.21), when it has indexed ones.
     pub words: Option<WordAnnotations>,
+    pub edition_confirmed: Option<bool>,
+    pub document_recognised: bool,
 }
 
 /// What a Bible's word annotations hold (v0.21): which research features it supports.
@@ -169,6 +175,8 @@ pub struct ChapterText {
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct UncheckedVerse {
+    pub document_id: String,
+    pub segment: Option<i64>,
     pub verse: u16,
     pub page: Option<i64>,
     pub reason: String,
@@ -227,6 +235,8 @@ pub struct SearchResults {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ImportRequest {
+    #[serde(default)]
+    pub job_id: Option<String>,
     /// Files chosen by the user…
     #[serde(default)]
     pub paths: Vec<String>,
@@ -257,6 +267,8 @@ pub struct CommitImport {
     /// even when verses were found in it.
     #[serde(default)]
     pub as_document: bool,
+    #[serde(default)]
+    pub confirm_edition: bool,
 }
 
 pub const ANNOTATION_KINDS: [&str; 3] = ["note", "highlight", "bookmark"];

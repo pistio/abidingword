@@ -53,6 +53,8 @@
     "locationPage": "Cette page ne figure pas dans le document."
   },
   "bibleImport": {
+    "pdfWorkerFailed": "Le texte du PDF n’a pas pu être lu dans les limites d’extraction.",
+    "cancelled": "Importation de la Bible annulée.",
     "noBookId": "Le fichier « {{fileName}} » n’indique pas quel livre il contient.",
     "unknownBook": "Le fichier « {{fileName}} » contient un livre qu’Abiding Word ne reconnaît pas ({{code}}). Il a été laissé de côté.",
     "bookTwice": "{{book}} apparaît dans plusieurs fichiers.",

@@ -53,6 +53,8 @@
     "locationPage": "That page is not in the document."
   },
   "bibleImport": {
+    "pdfWorkerFailed": "The PDF text could not be read within the extraction limits.",
+    "cancelled": "Bible import cancelled.",
     "noBookId": "The file “{{fileName}}” does not say which book it contains.",
     "unknownBook": "The file “{{fileName}}” contains a book Abiding Word does not recognise ({{code}}). It was left out.",
     "bookTwice": "{{book}} appears in more than one file.",

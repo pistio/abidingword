@@ -13,8 +13,8 @@ it("attests the exact local source and complete compatible migration catalogue",
     expect(run.status, run.stderr).toBe(0);
     const proof = JSON.parse(readFileSync(out, "utf8"));
     expect(proof.commit).toBe(commit);
-    expect(proof.schemaVersion).toBe(27);
-    expect(proof.migrations.map((m: { version: number }) => m.version)).toEqual(Array.from({ length: 27 }, (_, i) => i + 1));
+    expect(proof.schemaVersion).toBe(28);
+    expect(proof.migrations.map((m: { version: number }) => m.version)).toEqual(Array.from({ length: 28 }, (_, i) => i + 1));
     expect(proof.migrations[9].file).toBe("0010_presentations.sql");
     expect(proof.migrations[23].file).toBe("0024_section_status_and_fields.sql");
     expect(proof.migrations[24].file).toBe("0025_teaching_blocks.sql");

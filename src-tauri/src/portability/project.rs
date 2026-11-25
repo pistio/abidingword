@@ -58,6 +58,19 @@ pub struct External {
     /// citation to exactly this file when this computer has it.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub content_hash: Option<String>,
+    /// Document-edition identity and standing at export.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recognition: Option<RecognitionDependency>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct RecognitionDependency {
+    pub manifest_sha256: String,
+    pub recogniser_commit: String,
+    pub evidence_sha256: String,
+    pub confirmed_by_person: bool,
+    pub confirmed_at: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq, Eq)]
@@ -573,6 +586,7 @@ fn externals(conn: &Connection, project_id: &str) -> AppResult<Externals> {
                 } else {
                     None
                 },
+                recognition: None,
             })
         })?;
         Ok(rows.collect::<Result<_, _>>()?)
@@ -612,12 +626,43 @@ fn externals(conn: &Connection, project_id: &str) -> AppResult<Externals> {
                         id: id.into(),
                         name: name.into(),
                         content_hash: c["cited_content_hash"].as_str().map(String::from),
+                        recognition: None,
                     });
                 }
             }
         }
     }
     sources.sort_by(|a, b| a.name.cmp(&b.name).then(a.id.cmp(&b.id)));
+    let mut bibles = list(format!(
+        "SELECT b.id, b.name FROM bible_translations b
+         WHERE b.id IN (
+             SELECT p.translation_id FROM presentations p WHERE p.id IN ({})
+             UNION
+             SELECT CASE WHEN json_valid(s.details) THEN json_extract(s.details, '$.translationId') END
+             FROM studies s WHERE s.id IN ({S})
+         ) ORDER BY b.name",
+        presentations()
+    ))?;
+    for bible in &mut bibles {
+        let current = conn.query_row(
+            "SELECT r.document_manifest_sha256, r.recogniser_commit, e.confirmed_by_person, e.confirmed_at
+             FROM bible_recognition_editions e JOIN bible_recognition_runs r ON r.id = e.current_run_id
+             WHERE e.translation_id = ?1",
+            [&bible.id],
+            |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?)),
+        ).optional()?;
+        if let Some((manifest_sha256, recogniser_commit, confirmed_by_person, confirmed_at)) =
+            current
+        {
+            bible.recognition = Some(RecognitionDependency {
+                manifest_sha256,
+                recogniser_commit,
+                evidence_sha256: evidence_hash(conn, &bible.id)?,
+                confirmed_by_person,
+                confirmed_at,
+            });
+        }
+    }
     Ok(Externals {
         sources,
         presentation_templates: list(format!(
@@ -625,11 +670,7 @@ fn externals(conn: &Connection, project_id: &str) -> AppResult<Externals> {
              WHERE p.id IN ({}) ORDER BY t.name",
             presentations()
         ))?,
-        bibles: list(format!(
-            "SELECT DISTINCT b.id, b.name FROM presentations p JOIN bible_translations b ON b.id = p.translation_id
-             WHERE p.id IN ({}) ORDER BY b.name",
-            presentations()
-        ))?,
+        bibles,
     })
 }
 
@@ -704,6 +745,61 @@ fn exists(conn: &Connection, sql: &str, id: &str) -> AppResult<bool> {
     Ok(conn.query_row(sql, [id], |_| Ok(())).optional()?.is_some())
 }
 
+fn evidence_hash(conn: &Connection, translation: &str) -> AppResult<String> {
+    use sha2::{Digest, Sha256};
+    let mut digest = Sha256::new();
+    let mut stmt = conn.prepare(
+        "SELECT json_array(e.verse_id, e.source_sha256, e.entry_path, e.entry_sha256,
+                          e.recognition_state, e.reason, e.provenance_json, e.excluded_json)
+         FROM bible_recognition_verse_evidence e
+         JOIN bible_recognition_editions d ON d.translation_id = e.translation_id
+                                             AND d.current_run_id = e.run_id
+         WHERE e.translation_id = ?1 ORDER BY e.verse_id",
+    )?;
+    for row in stmt.query_map([translation], |row| row.get::<_, String>(0))? {
+        digest.update(row?.as_bytes());
+        digest.update(b"\n");
+    }
+    Ok(format!("{:x}", digest.finalize()))
+}
+
+fn local_bible(conn: &Connection, bible: &External) -> AppResult<Option<String>> {
+    let Some(recognition) = &bible.recognition else {
+        return Ok(conn
+            .query_row(
+                "SELECT id FROM bible_translations WHERE id = ?1",
+                [&bible.id],
+                |row| row.get(0),
+            )
+            .optional()?);
+    };
+    // Match the original bytes and the result of the reader's corrections.
+    // A package's edition confirmation never changes the local choice.
+    let mut stmt = conn.prepare(
+        "SELECT e.translation_id FROM bible_recognition_editions e
+         JOIN bible_recognition_runs r ON r.id = e.current_run_id
+         JOIN bible_translations b ON b.id = e.translation_id
+         WHERE r.document_manifest_sha256 = ?1 AND r.recogniser_commit = ?2
+           AND b.state = 'active' AND b.verse_count > 0
+         ORDER BY (e.translation_id = ?3) DESC, e.translation_id",
+    )?;
+    let rows = stmt.query_map(
+        params![
+            recognition.manifest_sha256,
+            recognition.recogniser_commit,
+            bible.id
+        ],
+        |row| row.get::<_, String>(0),
+    )?;
+    for row in rows {
+        let id = row?;
+        if evidence_hash(conn, &id)? == recognition.evidence_sha256 {
+            return Ok(Some(id));
+        }
+    }
+    Ok(None)
+}
+
 fn missing(conn: &Connection, opened: &Opened) -> AppResult<Missing> {
     let absent = |items: &[External], sql: &str| -> AppResult<Vec<String>> {
         let mut out = Vec::new();
@@ -743,16 +839,19 @@ fn missing(conn: &Connection, opened: &Opened) -> AppResult<Missing> {
                 .any(|p| p.path == format!("{IMAGES}{f}"))
         })
         .count() as u32;
+    let mut bibles = Vec::new();
+    for bible in &external.bibles {
+        if local_bible(conn, bible)?.is_none() {
+            bibles.push(bible.name.clone());
+        }
+    }
     Ok(Missing {
         sources,
         presentation_templates: absent(
             &external.presentation_templates,
             "SELECT 1 FROM presentation_templates WHERE id = ?1 AND deleted_at IS NULL",
         )?,
-        bibles: absent(
-            &external.bibles,
-            "SELECT 1 FROM bible_translations WHERE id = ?1",
-        )?,
+        bibles,
         images,
     })
 }
@@ -819,6 +918,7 @@ struct Import<'c> {
     source_names: HashMap<String, String>,
     citations_kept: u32,
     citations_reconnected: u32,
+    bible_ids: HashMap<String, Option<String>>,
 }
 
 impl<'c> Import<'c> {
@@ -944,6 +1044,13 @@ pub fn import(
     // References already broken here (rows left over from long ago) are not
     // this import's: only new ones count below.
     let broken_before = broken_references(&tx)?;
+    let bible_ids = opened
+        .manifest
+        .external
+        .bibles
+        .iter()
+        .map(|bible| Ok((bible.id.clone(), local_bible(&tx, bible)?)))
+        .collect::<AppResult<_>>()?;
     let mut job = Import {
         conn: &tx,
         ids: HashMap::new(),
@@ -958,6 +1065,7 @@ pub fn import(
             .collect(),
         citations_kept: 0,
         citations_reconnected: 0,
+        bible_ids,
     };
     let legacy_teaching = opened.manifest.schema_version < 26;
     let data = &mut opened.data;
@@ -1430,6 +1538,19 @@ fn external_refs(
         }
         "studies" => {
             json_column(row, "details")?;
+            if let Some(mut details) =
+                text(row, "details").and_then(|value| serde_json::from_str::<Json>(value).ok())
+            {
+                if let Some(local) = details["translationId"]
+                    .as_str()
+                    .and_then(|id| job.bible_ids.get(id))
+                {
+                    details["translationId"] = local
+                        .as_ref()
+                        .map_or(Json::Null, |id| Json::String(id.clone()));
+                    row.insert("details".into(), Json::String(details.to_string()));
+                }
+            }
             let template =
                 text(row, "template_id").and_then(|old| templates.get(old).cloned().flatten());
             row.insert(
@@ -1504,13 +1625,21 @@ fn external_refs(
             )? {
                 row.insert("template_id".into(), Json::Null);
             }
-            if !here(
-                job,
-                "SELECT 1 FROM bible_translations WHERE id = ?1",
-                row,
-                "translation_id",
-            )? {
-                row.insert("translation_id".into(), Json::Null);
+            if let Some(old_id) = text(row, "translation_id") {
+                if let Some(local) = job.bible_ids.get(old_id) {
+                    row.insert(
+                        "translation_id".into(),
+                        local
+                            .as_ref()
+                            .map_or(Json::Null, |id| Json::String(id.clone())),
+                    );
+                } else if !exists(
+                    job.conn,
+                    "SELECT 1 FROM bible_translations WHERE id = ?1",
+                    old_id,
+                )? {
+                    row.insert("translation_id".into(), Json::Null);
+                }
             }
         }
         "presentation_items" => {

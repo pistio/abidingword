@@ -1830,6 +1830,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
             kind: asDocument ? "document" : "structured",
             importStatus: asDocument ? "document_only" : "ready",
             sourceType: format,
+            editionConfirmed: !!input.confirmEdition,
+            documentRecognised: true,
             originalFileName: paths.map((p) => p.split(/[\\/]/).pop()).join(", "),
             bookCount: asDocument ? 0 : found.bookCount,
             verseCount: asDocument ? 0 : found.verseCount,
@@ -1928,7 +1930,7 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       state.pendingPreview = { id: result.previewId, bundled: false, document: { paths, preview: { ...result, suggested: { ...result.suggested, name: bible.name } } } };
       return result;
     },
-    bibleDocumentAddVerses: async (previewId, partial) => {
+    bibleDocumentAddVerses: async (previewId, partial, confirmEdition) => {
       const pending = state.pendingPreview;
       if (pending?.id !== previewId || !pending.document) throw new ApiError("invalidInput", "This import has expired.");
       const found = pending.document.preview;
@@ -1944,6 +1946,8 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
         bible.importStatus = "ready";
         bible.bookCount = found.bookCount;
       }
+      bible.editionConfirmed ||= !!confirmEdition;
+      bible.documentRecognised = true;
       bible.verseCount = [...chapters.values()].reduce((n, v) => n + v.length, 0);
       state.text.set(bible.id, chapters);
       state.pendingPreview = null;

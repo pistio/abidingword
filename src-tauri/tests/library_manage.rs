@@ -287,6 +287,7 @@ fn fixture_bible(conn: &Connection, short: &str) -> AppResult<String> {
             license_type: None,
             words: Default::default(),
             as_document: false,
+            confirm_edition: false,
         },
         &SourceRecord {
             origin: "managed_copy",

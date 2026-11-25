@@ -1503,6 +1503,7 @@ pub struct StagedImport {
 /// and verses found in them (`scripture::structure`). The verses themselves
 /// are the import's `content`.
 pub struct DocumentStage {
+    pub recognition: Option<DocumentRecognition>,
     pub files: Vec<documents::DocumentFile>,
     /// The language the documents were read in (from their metadata).
     pub language: Option<String>,
@@ -1522,6 +1523,14 @@ pub struct DocumentStage {
     /// The ids of kept corrections applied to a heading of this reading:
     /// replaced by what is in force when the reading is kept.
     pub matched: Vec<String>,
+}
+
+/// The source evidence from the same bytes that supplied the staged units.
+pub struct DocumentRecognition {
+    sources: std::collections::HashMap<u16, super::structural::StructuralSource>,
+    pub report: super::structural::StructuralReport,
+    pub numbering: Vec<super::numbering::BookNumbering>,
+    pub generation: u32,
 }
 
 /// A correction the person made to how a Bible's documents were read, as
@@ -1569,7 +1578,33 @@ impl DocumentStage {
     /// Whether a verse found can be used as the Bible's text: in a chapter
     /// recognised without doubt (`usable`) and with its text verified.
     pub fn verified(&self, usable: Option<&BTreeSet<(u8, u16)>>, key: (u8, u16, u16)) -> bool {
-        usable.is_none_or(|u| u.contains(&(key.0, key.1))) && !self.unverified.contains_key(&key)
+        usable.is_none_or(|u| u.contains(&(key.0, key.1)))
+            && !self.unverified.contains_key(&key)
+            && (self.recognition.is_none() || self.origins.contains_key(&key))
+    }
+
+    pub fn verified_count(
+        &self,
+        content: &StagedContent,
+        usable: Option<&BTreeSet<(u8, u16)>>,
+    ) -> usize {
+        content
+            .books
+            .iter()
+            .map(|(&book, staged)| {
+                staged
+                    .chapters
+                    .iter()
+                    .map(|(&chapter, staged)| {
+                        staged
+                            .verses
+                            .keys()
+                            .filter(|&&verse| self.verified(usable, (book, chapter, verse)))
+                            .count()
+                    })
+                    .sum::<usize>()
+            })
+            .sum()
     }
 
     fn units(&self) -> Vec<documents::Unit> {
@@ -1650,6 +1685,15 @@ pub fn metadata_language(files: &[SourceText]) -> Option<String> {
 
 /// Reads the given files, detects the format and stages the content.
 pub fn stage(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<StagedImport> {
+    stage_with_progress(paths, origin, &|_, _| {}, &|| false)
+}
+
+pub fn stage_with_progress(
+    paths: &[PathBuf],
+    origin: ImportOrigin,
+    progress: &dyn Fn(usize, usize),
+    cancelled: &dyn Fn() -> bool,
+) -> AppResult<StagedImport> {
     if paths.is_empty() {
         return Err(AppError::InvalidInput(UserMessage::new(
             "import.noFiles",
@@ -1657,7 +1701,7 @@ pub fn stage(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<StagedImport>
         )));
     }
     if is_document_choice(paths)? {
-        return stage_documents(paths, origin);
+        return stage_document_recognition(paths, origin, progress, cancelled);
     }
     let (texts, set_aside) = read_sources(paths)?;
     let language_tag = metadata_language(&texts);
@@ -1827,9 +1871,79 @@ fn natural_key(name: &str) -> Vec<(String, u64)> {
     out
 }
 
+/// Product document import, retaining EPUB sources for every correction.
+pub fn stage_document_recognition(
+    paths: &[PathBuf],
+    origin: ImportOrigin,
+    progress: &dyn Fn(usize, usize),
+    cancelled: &dyn Fn() -> bool,
+) -> AppResult<StagedImport> {
+    stage_document_recognition_read(paths, origin, progress, cancelled, &|path, index| {
+        super::pdf_worker::read(path, index, cancelled)
+    })
+}
+
+pub fn stage_document_recognition_read(
+    paths: &[PathBuf],
+    origin: ImportOrigin,
+    progress: &dyn Fn(usize, usize),
+    cancelled: &dyn Fn() -> bool,
+    read_pdf: &dyn Fn(&Path, u16) -> AppResult<documents::DocumentFile>,
+) -> AppResult<StagedImport> {
+    let sources = std::cell::RefCell::new(std::collections::HashMap::new());
+    let mut staged = stage_documents_read(paths, origin, &|path, index| {
+        if cancelled() {
+            return Err(super::pdf_worker::cancelled());
+        }
+        progress(usize::from(index), paths.len());
+        let (file, source) = if extension_of(path) == "pdf" {
+            (read_pdf(path, index)?, None)
+        } else {
+            super::structural::read(path, index)?
+        };
+        progress(usize::from(index) + 1, paths.len());
+        if let Some(source) = source {
+            sources.borrow_mut().insert(index, source);
+        }
+        Ok(file)
+    })?;
+    if let Some(stage) = &mut staged.documents {
+        stage.recognition = Some(DocumentRecognition {
+            sources: sources.into_inner(),
+            report: Default::default(),
+            numbering: Vec::new(),
+            generation: 0,
+        });
+    }
+    staged.verify_documents();
+    if cancelled() {
+        return Err(super::pdf_worker::cancelled());
+    }
+    Ok(staged)
+}
+
 /// Reads documents as a Bible (v0.23): each through the library's adapter,
 /// then all of them for books, chapters and verses. Nothing is kept yet.
 pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<StagedImport> {
+    stage_documents_read(paths, origin, &documents::read)
+}
+
+/// [`stage_documents`], with each document read by `read` (Phase A1: the
+/// structure-aware reading of `scripture::structural` reads EPUBs its own
+/// way; every other step is the same).
+pub fn stage_documents_read(
+    paths: &[PathBuf],
+    origin: ImportOrigin,
+    read: &dyn Fn(&std::path::Path, u16) -> AppResult<documents::DocumentFile>,
+) -> AppResult<StagedImport> {
+    // (Phase A1.5, independent review finding 15: an empty list panicked
+    // below, at `files[0]`.)
+    if paths.is_empty() {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "import.noFiles",
+            "Choose at least one file.",
+        )));
+    }
     if paths.len() > documents::MAX_FILES {
         return Err(AppError::Import(UserMessage::new(
             "bibleImport.documentTooMany",
@@ -1850,7 +1964,7 @@ pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<Sta
                 "These files are too large to be a single Bible.",
             )));
         }
-        files.push(documents::read(path, index as u16)?);
+        files.push(read(path, index as u16)?);
     }
     let formats: BTreeSet<&str> = files.iter().map(|f| f.format).collect();
     if formats.len() > 1 {
@@ -1870,6 +1984,7 @@ pub fn stage_documents(paths: &[PathBuf], origin: ImportOrigin) -> AppResult<Sta
         .then(|| stated.into_iter().next())
         .flatten();
     let mut stage = DocumentStage {
+        recognition: None,
         files,
         language: language.clone(),
         corrections: structure::Corrections::default(),
@@ -1950,6 +2065,36 @@ fn recognise(stage: &mut DocumentStage) -> StagedContent {
 }
 
 impl StagedImport {
+    fn verify_documents(&mut self) {
+        let Some(mut recognition) = self
+            .documents
+            .as_mut()
+            .and_then(|stage| stage.recognition.take())
+        else {
+            return;
+        };
+        recognition.report = super::structural::gate(self, &recognition.sources);
+        recognition.numbering = super::numbering::assess(&self.content);
+        recognition.generation += 1;
+        if let Some(stage) = &mut self.documents {
+            // An EPUB that fell back to the ordinary reader has no structural
+            // evidence. Keep its places without promoting the fallback text.
+            for (key, origin) in &stage.origins {
+                if stage
+                    .files
+                    .get(usize::from(origin.start.document))
+                    .is_some_and(|file| {
+                        file.extension == "epub"
+                            && !recognition.sources.contains_key(&origin.start.document)
+                    })
+                {
+                    stage.unverified.insert(*key, "boundary");
+                }
+            }
+            stage.recognition = Some(recognition);
+        }
+    }
+
     /// Applies corrections kept from before (v0.24.3): each is matched to a
     /// heading found now, by its document, its wording and its place (and,
     /// when the document changed, by its wording alone if that is found only
@@ -2048,6 +2193,7 @@ impl StagedImport {
         stage.corrections = corrections;
         stage.saved = states;
         self.content = recognise(stage);
+        self.verify_documents();
         Ok(())
     }
 
@@ -2107,6 +2253,7 @@ impl StagedImport {
         });
         stage.corrections = corrections;
         self.content = recognise(stage);
+        self.verify_documents();
         Ok(())
     }
 }
@@ -2394,10 +2541,25 @@ pub struct ImportPreview {
     pub document: Option<DocumentPreview>,
 }
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RecognitionSample {
+    reference: String,
+    file_name: String,
+    place: documents::Place,
+    text: Option<String>,
+    reason: Option<&'static str>,
+    entry_path: Option<String>,
+    spans: Vec<super::provenance::SourceRange>,
+    exclusions: Vec<super::provenance::ExcludedRange>,
+}
+
 /// What the review shows of a Bible read from documents (v0.23).
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DocumentPreview {
+    pub recognition_samples: Vec<RecognitionSample>,
+    pub numbering: Vec<super::numbering::BookNumbering>,
     pub files: Vec<DocumentFileInfo>,
     /// The book headings found, with what was read under each.
     pub books: Vec<structure::FoundBook>,
@@ -2491,6 +2653,63 @@ impl StagedImport {
         (all, uncertain)
     }
 
+    fn recognition_samples(&self, stage: &DocumentStage) -> Vec<RecognitionSample> {
+        let Some(recognition) = &stage.recognition else {
+            return Vec::new();
+        };
+        let usable = self.content.usable_chapters().unwrap_or_default();
+        let sample = |(&reference, origin): (&(u8, u16, u16), &structure::Origin)| {
+            let (ordinal, chapter, verse) = reference;
+            let book = canon::by_ordinal(ordinal)?;
+            let file = stage.files.get(usize::from(origin.start.document))?;
+            let source = recognition
+                .report
+                .provenance
+                .get(&format!("{} {chapter}:{verse}", book.code));
+            let reason = stage
+                .unverified
+                .get(&reference)
+                .copied()
+                .or_else(|| (!stage.verified(Some(&usable), reference)).then_some("boundary"));
+            let text = reason
+                .is_none()
+                .then(|| {
+                    self.content
+                        .books
+                        .get(&ordinal)?
+                        .chapters
+                        .get(&chapter)?
+                        .verses
+                        .get(&verse)
+                        .cloned()
+                })
+                .flatten();
+            Some(RecognitionSample {
+                reference: format!("{} {chapter}:{verse}", book.code),
+                file_name: file.file_name.clone(),
+                place: origin.start,
+                text,
+                reason,
+                entry_path: source.map(|p| p.file.entry.clone()),
+                spans: source.map_or_else(Vec::new, |p| p.spans.clone()),
+                exclusions: source.map_or_else(Vec::new, |p| p.excluded.clone()),
+            })
+        };
+        let withheld = stage
+            .origins
+            .iter()
+            .filter(|(key, _)| !stage.verified(Some(&usable), **key));
+        let verified = stage
+            .origins
+            .iter()
+            .filter(|(key, _)| stage.verified(Some(&usable), **key));
+        verified
+            .filter_map(sample)
+            .take(10)
+            .chain(withheld.filter_map(sample).take(10))
+            .collect()
+    }
+
     pub fn preview(&self, mut suggested: SuggestedMetadata) -> ImportPreview {
         // What the files themselves state (v0.22), when nothing better is known.
         if let Some(name) = &self.content.hints.name {
@@ -2547,6 +2766,11 @@ impl StagedImport {
             can_import: self.documents.is_some() || !self.content.has_errors(),
             words: self.content.words.report.clone(),
             document: self.documents.as_ref().map(|stage| DocumentPreview {
+                recognition_samples: self.recognition_samples(stage),
+                numbering: stage
+                    .recognition
+                    .as_ref()
+                    .map_or_else(Vec::new, |r| r.numbering.clone()),
                 files: stage
                     .files
                     .iter()
@@ -2564,10 +2788,12 @@ impl StagedImport {
                 books: stage.books.clone(),
                 left_out: stage.left_out.clone(),
                 stats: stage.stats.clone(),
-                verses_usable: self.content.verse_count() > 0 && !self.content.has_errors(),
+                verses_usable: stage.verified_count(&self.content, None) > 0
+                    && !self.content.has_errors(),
                 text_chars: stage.files.iter().map(|f| f.text_chars()).sum(),
                 partial_verses: if self.content.has_errors() {
-                    self.content.usable_verse_count()
+                    let usable = self.content.usable_chapters().unwrap_or_default();
+                    stage.verified_count(&self.content, Some(&usable))
                 } else {
                     0
                 },

@@ -21,7 +21,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, AppResult, UserMessage};
 use crate::library::adapters::{
@@ -56,7 +56,7 @@ pub fn is_document_format(format: &str) -> bool {
 }
 
 /// One piece of text the verse recogniser reads, with where it is.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Unit {
     pub text: String,
     /// A heading of the document's own structure (EPUB, DOCX, Markdown).
@@ -84,6 +84,15 @@ pub struct Unit {
     /// A PDF line set in the middle of its column (v0.24.3): with a gap
     /// above it, a heading even in the body's own type.
     pub centred: bool,
+    /// A PDF line two in five of whose letters are drawn with another width
+    /// (Phase A1.3, `pdf_layout::Line::partly_styled`): perhaps another
+    /// face. It only ever withholds verification.
+    pub partly_styled: bool,
+    /// A PDF line of text in smaller type than the page's body (Phase A1.3):
+    /// a psalm's or a book's closing title set smaller (`engasv`'s "For the
+    /// Chief Musician, …" after Habakkuk 3:19). It only ever withholds
+    /// verification.
+    pub small: bool,
     /// The column of its PDF page it stands in (0 = the left or only one).
     pub column: u8,
     /// A PDF line of running text with clear space above it, below another
@@ -99,7 +108,7 @@ pub struct Unit {
 }
 
 /// Where a unit is in the original document.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Place {
     /// Which of the Bible's documents (0 = the first).
@@ -115,12 +124,14 @@ pub struct Place {
 }
 
 /// A document read and ready to be kept.
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct DocumentFile {
     /// The file as chosen (copied on commit).
+    #[serde(skip)]
     pub path: PathBuf,
     pub file_name: String,
     /// "pdf", "epub", "docx", "markdown" or "text".
+    #[serde(skip)]
     pub format: &'static str,
     pub extension: String,
     pub size: u64,
@@ -139,6 +150,30 @@ pub struct DocumentFile {
 }
 
 impl DocumentFile {
+    /// Refuse to commit evidence if the saved bytes differ from the preview.
+    pub fn verify_source(&self, path: &Path) -> AppResult<()> {
+        use sha2::{Digest, Sha256};
+        use std::io::Read;
+        let input = fs::File::open(path).map_err(|error| AppError::filesystem(path, error))?;
+        let mut input = input.take(self.size + 1);
+        let mut hash = Sha256::new();
+        let size = std::io::copy(&mut input, &mut hash)
+            .map_err(|error| AppError::filesystem(path, error))?;
+        if size != self.size || format!("{:x}", hash.finalize()) != self.hash {
+            return Err(AppError::Import(
+                UserMessage::new(
+                    "bibleImport.documentChanged",
+                    format!(
+                        "“{}” was changed after it was reviewed. Choose the files again.",
+                        self.file_name
+                    ),
+                )
+                .with("fileName", &self.file_name),
+            ));
+        }
+        Ok(())
+    }
+
     /// Characters of readable text.
     pub fn text_chars(&self) -> usize {
         self.segments.iter().map(|s| s.text.chars().count()).sum()
@@ -274,6 +309,8 @@ pub fn read_bytes(
                             unit.styled = line.styled;
                             unit.edge = matches!(line.role, LineRole::Head | LineRole::Foot);
                             unit.centred = line.centred;
+                            unit.partly_styled = line.partly_styled;
+                            unit.small = line.role == LineRole::Text && line.size <= 0.96 * body;
                             unit.column = line.column;
                             unit.short = widths.get(&line.column).is_some_and(|(a, b)| {
                                 b - a > 0.0 && line.x1 - line.x0 < 0.7 * (b - a)
@@ -502,6 +539,8 @@ fn line_units(
             styled: false,
             edge: false,
             centred: false,
+            partly_styled: false,
+            small: false,
             column: 0,
             gap_before: false,
             short: false,
@@ -523,11 +562,22 @@ fn line_units(
 fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
     use crate::library::adapters::epub;
     let links = epub::links(bytes, segments.len());
+    clear_navigation(&links, segments);
+    cut_label_links(&links, segments);
+}
+
+/// A passage that is nothing but links to other places (a list of the
+/// book's chapters, "1 Samuel" leading to the book's index) is the book's
+/// navigation, not its text: emptied for reading verses.
+pub(crate) fn clear_navigation(
+    links: &[crate::library::contents::SourceLink],
+    segments: &mut [NewSegment],
+) {
     // A passage that is nothing but links to other places (a list of the
     // book's chapters, "1 Samuel" leading to the book's index) is the
     // book's navigation, not its text.
     let mut linked: std::collections::BTreeMap<usize, usize> = Default::default();
-    for link in &links {
+    for link in links {
         if let Ok(at) = usize::try_from(link.position) {
             *linked.entry(at).or_default() += link.end.saturating_sub(link.start);
         }
@@ -541,9 +591,14 @@ fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
             }
         }
     }
+}
+
+/// The baseline's note links (before Phase A1): a short link of letters or
+/// signs is cut out of the passage's text, by its label alone.
+fn cut_label_links(links: &[crate::library::contents::SourceLink], segments: &mut [NewSegment]) {
     let mut cuts: std::collections::BTreeMap<usize, Vec<(usize, usize)>> = Default::default();
     let mut notes: std::collections::BTreeSet<usize> = Default::default();
-    for link in &links {
+    for link in links {
         let (Ok(at), Ok(target)) = (usize::try_from(link.position), usize::try_from(link.target))
         else {
             continue;
@@ -601,7 +656,7 @@ fn take_out_note_links(bytes: &[u8], segments: &mut [NewSegment]) {
     }
 }
 
-fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize) {
+pub(crate) fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize) {
     let mut out = Vec::new();
     let mut notes = 0usize;
     let mut previous: Vec<&str> = Vec::new();
@@ -626,6 +681,8 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                 styled: false,
                 edge: false,
                 centred: false,
+                partly_styled: false,
+                small: false,
                 column: 0,
                 gap_before: false,
                 short: false,
@@ -658,6 +715,8 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
                     styled: false,
                     edge: false,
                     centred: false,
+                    partly_styled: false,
+                    small: false,
                     column: 0,
                     gap_before: false,
                     short: false,
@@ -679,6 +738,8 @@ fn structured_units(segments: &[NewSegment], document: u16) -> (Vec<Unit>, usize
             styled: segment.styled,
             edge: false,
             centred: false,
+            partly_styled: false,
+            small: false,
             column: 0,
             gap_before: false,
             short: false,

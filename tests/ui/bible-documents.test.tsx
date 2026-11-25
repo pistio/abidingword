@@ -43,11 +43,15 @@ describe("Bibles from documents", () => {
     expect(screen.getByText(/Word information \(dictionary forms, grammar, lexical numbers\): none/)).toBeInTheDocument();
     await fillDetails(user, "INV");
     await user.type(screen.getByLabelText("Copyright or licence (optional)"), "Invented for tests");
+    const confirm = screen.getByRole("checkbox", { name: "I confirm the edition identified above." });
+    expect(confirm).not.toBeChecked();
+    await user.click(confirm);
     await user.click(screen.getByRole("button", { name: "Add this Bible" }));
     expect(await screen.findByText(/is ready to read/)).toBeInTheDocument();
     const bible = api.state.bibles.find((b) => b.shortName === "INV")!;
     expect(bible.kind).toBe("structured");
     expect(bible.copyrightNotice).toBe("Invented for tests");
+    expect(bible.editionConfirmed).toBe(true);
     expect(api.state.bibleDocuments.get(bible.id)?.documents).toHaveLength(1);
   });
 

@@ -7,7 +7,7 @@ import { formatNumber } from "@/i18n/format";
 import { toApiError } from "@/lib/api";
 import { useApi } from "@/lib/ApiContext";
 import type { BibleTranslation, ImportPreview } from "@/types/scripture";
-import { FoundBooks, IssueGroup, LeftOut, Readiness, SavedCorrections, Verification } from "./AddBibleView";
+import { FoundBooks, IssueGroup, LeftOut, Readiness, RecognitionSamples, SavedCorrections, Verification } from "./AddBibleView";
 import { useScripture } from "./ScriptureContext";
 
 /**
@@ -23,20 +23,33 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [confirmEdition, setConfirmEdition] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [done, setDone] = useState<"whole" | "partial" | null>(null);
 
   useEffect(() => {
     let active = true;
-    api.bibleDocumentRecognise(bible.id).then(
-      (p) => {
-        // Closed while reading: what was read is not kept waiting.
-        if (active) setPreview(p);
-        else void api.bibleImportCancel(p.previewId).catch(() => undefined);
-      },
-      (e) => active && setError(toApiError(e).message),
-    );
+    const jobId = crypto.randomUUID();
+    let stop: (() => void) | undefined;
+    const recognise = async () => {
+      try {
+        stop = await api.onBibleImportProgress?.((p) => {
+          if (active && jobId === p.id) setProgress({ done: p.done, total: p.total });
+        });
+        if (!active) return;
+        const reviewed = await api.bibleDocumentRecognise(bible.id, jobId);
+        if (active) setPreview(reviewed);
+        else void api.bibleImportCancel(reviewed.previewId).catch(() => undefined);
+      } catch (e) {
+        if (active) setError(toApiError(e).message);
+      } finally {
+        stop?.();
+      }
+    };
+    void recognise();
     return () => {
       active = false;
+      void api.bibleImportCancel(jobId).catch(() => undefined);
     };
   }, [api, bible.id]);
 
@@ -52,7 +65,7 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
     setBusy(true);
     setError(null);
     try {
-      await api.bibleDocumentAddVerses(preview.previewId, partial);
+      await api.bibleDocumentAddVerses(preview.previewId, partial, confirmEdition);
       setDone(partial ? "partial" : "whole");
       await reloadTranslations();
       setTranslation(bible.id);
@@ -101,7 +114,9 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
       ) : !preview ? (
         !error && (
           <p role="status" className="m-0 text-text-muted">
-            {t("scripture.document.recognise.reading")}
+            {progress && progress.total > 0
+              ? t("scripture.addBible.document.progress", { done: formatNumber(progress.done), total: formatNumber(progress.total) })
+              : t("scripture.document.recognise.reading")}
           </p>
         )
       ) : (
@@ -122,6 +137,13 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
           )}
           {preview.verseCount > 0 && <Readiness preview={preview} />}
           {doc && <Verification preview={doc} />}
+          {doc && <RecognitionSamples preview={doc} />}
+          {doc && !bible.editionConfirmed && (
+            <label className="flex items-start gap-2">
+              <input type="checkbox" checked={confirmEdition} onChange={(e) => setConfirmEdition(e.target.checked)} />
+              <span>{t("scripture.addBible.document.confirmEdition")}</span>
+            </label>
+          )}
           {doc && <SavedCorrections preview={doc} />}
           {doc && doc.books.length > 0 && (
             <FoundBooks

@@ -10,7 +10,7 @@
 
 use std::path::PathBuf;
 
-use tauri::State;
+use tauri::{State, Window};
 
 use super::CommandResult;
 use crate::db::bible_documents::{self, BibleDocument, DocumentHit, DocumentWindow, VerseOrigin};
@@ -36,10 +36,7 @@ pub fn bible_documents(
 
 /// The managed copy of a document, checked: its Bible id and its path
 /// relative to `sources/`.
-fn managed(
-    state: &State<'_, AppState>,
-    document_id: &str,
-) -> CommandResult<(String, String, String)> {
+fn managed(state: &AppState, document_id: &str) -> CommandResult<(String, String, String)> {
     let core = state.core()?;
     let record = core
         .db
@@ -192,10 +189,23 @@ pub fn bible_verse_origin(
 
 /// Reads a document Bible's kept files again for books, chapters and verses
 /// (no new import, nothing saved): the same review as when it was added.
-#[tauri::command(async)]
-pub fn bible_document_recognise(
-    state: State<'_, AppState>,
+#[tauri::command]
+pub async fn bible_document_recognise(
+    window: Window,
     translation_id: String,
+    job_id: Option<String>,
+) -> CommandResult<ImportPreview> {
+    super::bibles::run_preview(window, move |state, window| {
+        read_kept_document(state, window, translation_id, job_id)
+    })
+    .await
+}
+
+fn read_kept_document(
+    state: &AppState,
+    window: &Window,
+    translation_id: String,
+    job_id: Option<String>,
 ) -> CommandResult<ImportPreview> {
     let core = state.core()?;
     let translation = core
@@ -213,7 +223,7 @@ pub fn bible_document_recognise(
         .with_conn(|conn| bible_documents::list(conn, &translation_id))?;
     let mut paths: Vec<PathBuf> = Vec::new();
     for document in &documents {
-        let (_, relative, _) = managed(&state, &document.id)?;
+        let (_, relative, _) = managed(state, &document.id)?;
         // The kept file, checked as every managed file is.
         paths.push(original::verified_path(
             &core.dirs.sources(),
@@ -221,24 +231,25 @@ pub fn bible_document_recognise(
             &relative,
         )?);
     }
-    let mut staged = import::stage_documents(
-        &paths,
-        ImportOrigin::Existing {
-            translation_id: translation_id.clone(),
-        },
-    )?;
-    // The person's corrections kept for this Bible (v0.24.3), each applied
-    // where it still fits; how each fits is shown.
-    let saved = core
-        .db
-        .with_conn(|conn| bible_documents::corrections(conn, &translation_id))?;
-    staged.apply_saved(saved, false)?;
-    let preview = staged.preview(SuggestedMetadata {
-        name: translation.name.clone(),
-        ..SuggestedMetadata::default()
-    });
-    *state.pending_import()? = Some(staged);
-    Ok(preview)
+    let suggested = SuggestedMetadata {
+        name: translation.name,
+        ..Default::default()
+    };
+    super::bibles::preview_job(state, window, job_id, suggested, |progress, cancelled| {
+        let mut staged = import::stage_document_recognition(
+            &paths,
+            ImportOrigin::Existing {
+                translation_id: translation_id.clone(),
+            },
+            progress,
+            cancelled,
+        )?;
+        let saved = core
+            .db
+            .with_conn(|conn| bible_documents::corrections(conn, &translation_id))?;
+        staged.apply_saved(saved, false)?;
+        Ok(staged)
+    })
 }
 
 /// Gives a document Bible the verses previewed by [`bible_document_recognise`].
@@ -247,6 +258,7 @@ pub fn bible_document_add_verses(
     state: State<'_, AppState>,
     preview_id: String,
     partial: Option<bool>,
+    confirm_edition: Option<bool>,
 ) -> CommandResult<BibleTranslation> {
     let core = state.core()?;
     let mut pending = state.pending_import()?;
@@ -268,13 +280,17 @@ pub fn bible_document_add_verses(
         ))
         .into());
     };
+    for file in &stage.files {
+        file.verify_source(&file.path)?;
+    }
     let translation = core.db.with_conn(|conn| {
-        bible_documents::add_verses(
+        bible_documents::add_verses_with_confirmation(
             conn,
             translation_id,
             &staged.content,
             stage,
             partial.unwrap_or(false),
+            confirm_edition.unwrap_or(false),
         )
     })?;
     *pending = None;

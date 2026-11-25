@@ -40,7 +40,7 @@ pub const MAX_CHARS: usize = 40_000_000;
 const MAX_SPANS: usize = 50_000;
 
 /// How a page's reading order was established.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PageOrder {
     /// No text on the page.
     Empty,
@@ -129,12 +129,24 @@ pub struct Line {
     /// as much, whatever it ends with (v0.24.3; `styled` leaves out a centred
     /// line that ends as a sentence does, as a poem's line may).
     pub centred: bool,
+    /// Two in five of its compared letters or more drawn with another width
+    /// (Phase A1.3): perhaps another face. Weaker than `styled`.
+    pub partly_styled: bool,
 }
 
 /// Around raised small letters in [`Line::marked`] (private-use characters,
 /// never in a document's text).
 pub const RAISED_OPEN: char = '\u{E000}';
 pub const RAISED_CLOSE: char = '\u{E001}';
+/// A note's caller the document itself declares as one (an EPUB
+/// `epub:type="noteref"` link): the text between the marks is a note's
+/// reference, never verse text (v0.24.4).
+pub const NOTE_OPEN: char = '\u{E002}';
+pub const NOTE_CLOSE: char = '\u{E003}';
+/// Before raised digits that stand in the margin, left of the column's text
+/// ("³ eat of the fruit …", the verse beginning somewhere in the line): a
+/// verse number whose place in the line is not known (v0.24.4).
+pub const MARGIN: char = '\u{E004}';
 
 /// One or two lower-case letters set smaller and raised above the line's
 /// baseline: a note's or cross-reference's letter.
@@ -168,6 +180,34 @@ fn raised_digits(s: &Span, main: &Span) -> bool {
         && s.size < 0.85 * main.size
         && main.y - s.y > 0.2 * main.size
         && main.y - s.y < 0.8 * main.size
+}
+
+/// A note's letter and the next verse's number drawn as one small raised
+/// run ("d 16", "a2"): one or two lower-case letters, perhaps a space, then
+/// a verse number. Its parts, when each alone would be raised: the letters,
+/// the white space between, the digits (Phase A1.5; `engbsb-rwpdf2col` sets
+/// 344 verse numbers so, and they were read as plain numbers).
+fn raised_letters_then_digits<'a>(s: &'a Span, main: &Span) -> Option<(&'a str, &'a str, &'a str)> {
+    let t = s.text.as_str();
+    let letters_end = t.find(|c: char| !(c.is_alphabetic() && c.is_lowercase()))?;
+    let (letters, rest) = t.split_at(letters_end);
+    let gap_end = rest.find(|c: char| !c.is_whitespace())?;
+    let (gap, digits) = rest.split_at(gap_end);
+    if !(1..=2).contains(&letters.chars().count()) || digits != digits.trim_end() {
+        return None;
+    }
+    // Each part by the test it would meet alone, at the run's own size and
+    // baseline: smaller than the line's text and lifted off its baseline.
+    let part = |text: &str| Span {
+        text: text.to_string(),
+        ..s.clone()
+    };
+    let lift = main.y - s.y;
+    (s.size < 0.85 * main.size
+        && lift > 0.2 * main.size
+        && raised_letters(&part(letters), main)
+        && raised_digits(&part(digits), main))
+    .then_some((letters, gap, digits))
 }
 
 /// Digits written as superscript digits ("12" → "¹²"); other characters as
@@ -436,6 +476,7 @@ impl pdf_extract::OutputDev for Collector {
         font_size: f64,
         char: &str,
     ) -> Result<(), pdf_extract::OutputError> {
+        let char: &str = &super::neutralise_marks(char);
         if self.chars >= MAX_CHARS {
             self.skipped += char.chars().count();
             if self.truncated_from.is_none() {
@@ -562,8 +603,11 @@ fn spans_cut(glyphs: &[Glyph], cut: Option<f64>) -> Vec<Span> {
         let blank = g.text.trim().is_empty();
         let continues = current.as_ref().is_some_and(|(span, next)| {
             let ratio = f64::from(g.size) / span.size;
+            // (A span is text of one size: a bold verse number at 8.5 pt
+            // followed by its verse at 10 pt is two spans, so that the line's
+            // size is its text's, not its number's, v0.24.4.)
             (f64::from(g.y) - span.y).abs() <= 0.15 * span.size.max(f64::from(g.size))
-                && (0.8..=1.25).contains(&ratio)
+                && (0.93..=1.07).contains(&ratio)
                 && f64::from(g.x) >= *next - 0.6 * span.size
                 && f64::from(g.x) - *next <= 0.9 * span.size
                 && cut.is_none_or(|x| {
@@ -711,8 +755,25 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
     }
     let mut out = Vec::new();
     let mut previous: Option<(f64, f64)> = None; // baseline, size
-    for mut group in groups {
+    for group in groups.iter_mut() {
         group.sort_by(|a, b| a.x0.partial_cmp(&b.x0).unwrap_or(Ordering::Equal));
+    }
+    // The left edge of the column's text: where lines that do not begin
+    // with digits begin (v0.24.4). Digits ending well before it are set in
+    // the margin.
+    let body_left = groups
+        .iter()
+        .filter_map(|g| g.first())
+        .filter(|s| {
+            !s.text
+                .trim()
+                .chars()
+                .next()
+                .is_some_and(|c| c.is_ascii_digit())
+        })
+        .map(|s| s.x0)
+        .fold(f64::INFINITY, f64::min);
+    for group in groups {
         let y = main_baseline(&group);
         // The line's size is its main text's (most characters), not that of
         // a larger chapter number or initial beside it.
@@ -734,7 +795,7 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
         let mut any_raised = false;
         let mut end: Option<(f64, f64)> = None;
         let main = main_span(&group);
-        for s in &group {
+        for (k, s) in group.iter().enumerate() {
             if let Some((x1, sz)) = end {
                 if s.x0 - x1 > 0.18 * sz.min(s.size) && !text.ends_with(' ') {
                     text.push(' ');
@@ -742,14 +803,38 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
                 }
             }
             text.push_str(&s.text);
+            // The line's first span, digits alone, ending left of the
+            // column's text: a verse number in the margin.
+            let in_margin = k == 0
+                && body_left.is_finite()
+                && s.x1 < body_left - 0.3 * s.size
+                && s.text.trim().chars().all(|c| c.is_ascii_digit())
+                && !s.text.trim().is_empty()
+                && group
+                    .get(1)
+                    .is_some_and(|n| n.x0 >= body_left - 0.3 * s.size);
             if main.is_some_and(|m| raised_letters(s, m)) {
                 any_raised = true;
                 marked.push(RAISED_OPEN);
                 marked.push_str(&s.text);
                 marked.push(RAISED_CLOSE);
+            } else if in_margin {
+                any_raised = true;
+                marked.push(MARGIN);
+                marked.push_str(&superscript(&s.text));
             } else if main.is_some_and(|m| !std::ptr::eq(*s, m) && raised_digits(s, m)) {
                 any_raised = true;
                 marked.push_str(&superscript(&s.text));
+            } else if let Some((letters, gap, digits)) = main
+                .filter(|m| !std::ptr::eq(*s, *m))
+                .and_then(|m| raised_letters_then_digits(s, m))
+            {
+                any_raised = true;
+                marked.push(RAISED_OPEN);
+                marked.push_str(letters);
+                marked.push(RAISED_CLOSE);
+                marked.push_str(gap);
+                marked.push_str(&superscript(digits));
             } else {
                 marked.push_str(&s.text);
             }
@@ -767,6 +852,15 @@ fn lines_of(spans: &[&Span], body: f64, column: u8, block: &mut u32) -> Vec<Line
             first_char: group.iter().map(|s| s.first_char).min().unwrap_or(0),
             role: LineRole::Text,
             centred: false,
+            // (Phase A1.3) Two in five or more: a face whose letters mostly
+            // share the body's widths (LibreOffice's Liberation Serif bold:
+            // "a" wider, "e" the same) reaches no more. Used only to withhold
+            // verification, never to set a line aside.
+            partly_styled: {
+                let compared: u32 = group.iter().map(|s| s.compared).sum();
+                let styled: u32 = group.iter().map(|s| s.styled).sum();
+                compared >= 6 && styled * 100 >= compared * 40
+            },
             styled: {
                 let compared: u32 = group.iter().map(|s| s.compared).sum();
                 let styled: u32 = group.iter().map(|s| s.styled).sum();
@@ -1140,8 +1234,37 @@ fn split(
     // Which column a span belongs to. A span reaching into the gutter (but
     // not across it) belongs to the column it starts or ends in; none is
     // ever left out.
+    // (A span wholly inside the gutter with letters in it — "Selah" set
+    // flush right at the left column's edge, on a page of short poetry lines
+    // that leave the gutter wide — ends before the right column's text
+    // begins, as no line of the right column does: it is the left column's,
+    // v0.24.6. Figures alone, a verse number in the margin, keep the rule
+    // below.)
+    // (The right column's own left edge — the gutter may be measured up to
+    // such a word itself: the leftmost place where a fifth or more of the
+    // right side's spans begin, within a point. With three columns the
+    // right side holds two; their nearer edge is the one.)
+    let right_edge = {
+        let mut starts: Vec<f64> = spans
+            .iter()
+            .filter(|s| s.x0 >= gutter.to - 1e-6)
+            .map(|s| s.x0)
+            .collect();
+        starts.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
+        let needed = (starts.len() / 5).max(3);
+        starts
+            .iter()
+            .find(|&&x| starts.iter().filter(|&&y| (y - x).abs() <= 1.0).count() >= needed)
+            .copied()
+            .unwrap_or(gutter.to)
+    };
+    let inside_gutter_words = |s: &Span| {
+        s.x0 >= gutter.from - 1e-6
+            && s.x1 <= right_edge - 0.25 * body
+            && s.text.chars().filter(|c| c.is_alphabetic()).count() >= 2
+    };
     let on_left = |s: &Span| {
-        if s.x1 <= middle {
+        if s.x1 <= middle || inside_gutter_words(s) {
             true
         } else if s.x0 >= middle {
             false
@@ -1322,7 +1445,17 @@ fn peel(spans: &mut Vec<&Span>, body: f64, height: f64, top: bool) -> Vec<Span> 
 /// Taken out of `spans` and returned, so they are never read between the
 /// columns (a note at the foot of the left column before the right column).
 fn notes<'a>(spans: &mut Vec<&'a Span>, body: f64) -> Vec<&'a Span> {
-    let is_body = |s: &Span| (s.size - body).abs() <= 0.1 * body && s.text.chars().count() > 2;
+    // Text, not a page number or a sign: more than two characters, or two
+    // letters (a Korean line's last syllables, "더라", v0.24.5).
+    // (Or one syllable of a script that writes whole syllables, Korean or
+    // Chinese: "서", "니" — never a note's letter.)
+    let syllable = |c: char| matches!(c, '\u{AC00}'..='\u{D7AF}' | '\u{1100}'..='\u{11FF}' | '\u{3130}'..='\u{318F}' | '\u{4E00}'..='\u{9FFF}');
+    let wordy = |s: &Span| {
+        s.text.chars().count() > 2
+            || s.text.chars().filter(|c| c.is_alphabetic()).count() >= 2
+            || s.text.chars().any(syllable)
+    };
+    let is_body = |s: &Span| (s.size - body).abs() <= 0.1 * body && wordy(s);
     let Some(body_bottom) = spans
         .iter()
         .filter(|s| is_body(s))
@@ -1337,7 +1470,7 @@ fn notes<'a>(spans: &mut Vec<&'a Span>, body: f64) -> Vec<&'a Span> {
     if below.is_empty()
         || below
             .iter()
-            .any(|&i| spans[i].size > 0.9 * body && spans[i].text.chars().count() > 2)
+            .any(|&i| spans[i].size > 0.9 * body && wordy(spans[i]))
     {
         return Vec::new();
     }
@@ -1379,6 +1512,7 @@ fn drawing_order(glyphs: &[Glyph], width: f64) -> Vec<Line> {
                 marked: None,
                 styled: false,
                 centred: false,
+                partly_styled: false,
             });
         }
         text.clear();
@@ -1596,6 +1730,7 @@ fn right_to_left_lines(glyphs: &[Glyph], width: f64) -> Option<Vec<Line>> {
             marked: None,
             styled: false,
             centred: false,
+            partly_styled: false,
         });
     }
     (gutters < 3 || gutters * 4 <= row_count).then_some(lines)
@@ -2190,6 +2325,65 @@ mod tests {
     }
 
     #[test]
+    fn a_word_flush_right_in_the_gutter_stays_with_the_left_column() {
+        // Short poetry lines on the left leave a wide gutter; "Selah" set
+        // flush right at the left column's edge lies inside it, past its
+        // middle. It is the left column's (it ends before the right
+        // column's text begins), read after the left line before it.
+        let mut glyphs = Vec::new();
+        for i in 0..10 {
+            let y = 100.0 + 14.0 * i as f64;
+            glyphs.extend(g(&format!("short {i} line"), 40.0, y, 10.0));
+            glyphs.extend(g(&format!("right column line {i} words"), 260.0, y, 10.0));
+        }
+        glyphs.extend(g("Selah", 200.0, 100.0 + 14.0 * 3.0 + 7.0, 10.0));
+        let p = page(glyphs);
+        let t = texts(&p);
+        let selah = t.iter().position(|l| l == "Selah").unwrap();
+        let first_right = t.iter().position(|l| l.starts_with("right")).unwrap();
+        assert!(selah < first_right, "{t:?}");
+        assert_eq!(t[selah - 1], "short 3 line", "{t:?}");
+    }
+
+    #[test]
+    fn three_columns_stay_three_columns_with_short_lines_in_the_middle() {
+        // Short lines in the middle column must never be taken for words
+        // flush right in the first gutter (the right side of that gutter
+        // holds two columns).
+        let mut glyphs = Vec::new();
+        for i in 0..10 {
+            let y = 100.0 + 14.0 * i as f64;
+            glyphs.extend(g(&format!("first column line {i}"), 40.0, y, 10.0));
+            let middle = if i % 2 == 0 {
+                format!("mid {i}")
+            } else {
+                format!("middle column line {i}")
+            };
+            glyphs.extend(g(&middle, 230.0, y, 10.0));
+            glyphs.extend(g(&format!("third column line {i}"), 420.0, y, 10.0));
+        }
+        let p = page(glyphs);
+        let t = texts(&p);
+        assert_eq!(t.len(), 30, "{t:?}");
+        assert!(t[..10].iter().all(|l| l.starts_with("first")), "{t:?}");
+        assert!(t[10..20].iter().all(|l| l.starts_with("mid")), "{t:?}");
+        assert!(t[20..].iter().all(|l| l.starts_with("third")), "{t:?}");
+    }
+
+    #[test]
+    fn a_short_line_of_body_text_at_the_foot_is_text_not_a_note() {
+        // A Korean verse's last syllables alone on the column's last line
+        // ("더라", "서"), in the body's size: text, never a note.
+        for tail in ["더라", "서"] {
+            let mut glyphs = two_columns(10, 20.0);
+            glyphs.extend(g(tail, 190.0, 100.0 + 14.0 * 10.0 + 4.0, 10.0));
+            let p = page(glyphs);
+            let last = p.lines.iter().find(|l| l.text == tail).unwrap();
+            assert_ne!(last.role, LineRole::Note, "{tail}");
+        }
+    }
+
+    #[test]
     fn raised_small_letters_are_marked_for_the_recogniser() {
         let mut glyphs = g("Lot, qui voyageait", 40.0, 100.0, 12.0);
         glyphs.extend(g("c", 150.0, 96.0, 7.0));
@@ -2201,6 +2395,35 @@ mod tests {
             line.marked.as_deref(),
             Some(format!("Lot, qui voyageait {RAISED_OPEN}c{RAISED_CLOSE}Et la contrée").as_str())
         );
+    }
+
+    #[test]
+    fn a_raised_note_letter_run_together_with_a_raised_verse_number_is_marked_as_both() {
+        // "… cubits high.ᵈ ¹⁶You are to make …": the note's letter and the
+        // next verse's number, both small and raised, drawn as one run
+        // ("d 16"). Each is what it is; the number is a raised verse number
+        // (engbsb-rwpdf2col, Phase A1.5).
+        let mut glyphs = g("and thirty cubits high.", 40.0, 100.0, 12.0);
+        glyphs.extend(g("d 16", 172.0, 96.0, 7.0));
+        glyphs.extend(g("You are to make a roof", 190.0, 100.0, 12.0));
+        let p = page(glyphs);
+        let line = &p.lines[0];
+        assert!(line.text.contains("high.d 16"), "{:?}", line.text);
+        let marked = line.marked.as_deref().expect("something raised");
+        assert_eq!(
+            marked,
+            line.text.replace(
+                "d 16",
+                &format!("{RAISED_OPEN}d{RAISED_CLOSE} \u{b9}\u{2076}")
+            )
+        );
+        // The control: the same run on the baseline in the body's size is
+        // words and a number, nothing raised.
+        let mut glyphs = g("and thirty cubits high.", 40.0, 100.0, 12.0);
+        glyphs.extend(g("d 16", 172.0, 100.0, 12.0));
+        glyphs.extend(g("You are to make a roof", 200.0, 100.0, 12.0));
+        let p = page(glyphs);
+        assert!(p.lines[0].marked.is_none(), "{:?}", p.lines[0].marked);
     }
 
     #[test]
@@ -2220,6 +2443,30 @@ mod tests {
         let p = page(glyphs);
         assert_eq!(p.order, PageOrder::Single);
         assert_eq!(p.lines[0].text, "1 the words of verse 1 in a psalm");
+    }
+
+    #[test]
+    fn digits_in_the_margin_are_marked_as_margin_numbers() {
+        // "3" ends well left of where the lines' text begins: a verse
+        // number in the margin, not a number in the line.
+        let mut glyphs = g(
+            "Now the serpent was more subtil than any",
+            60.0,
+            100.0,
+            12.0,
+        );
+        glyphs.extend(g("3", 40.0, 118.0, 8.0));
+        glyphs.extend(g(
+            "eat of the fruit of the trees of the garden",
+            60.0,
+            120.0,
+            12.0,
+        ));
+        glyphs.extend(g("touch it, lest ye die.", 60.0, 140.0, 12.0));
+        let p = page(glyphs);
+        let marked = p.lines[1].marked.as_deref().unwrap();
+        assert!(marked.starts_with(&format!("{MARGIN}\u{b3}")), "{marked:?}");
+        assert!(p.lines[0].marked.is_none());
     }
 
     #[test]

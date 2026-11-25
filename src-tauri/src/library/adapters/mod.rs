@@ -11,6 +11,7 @@
 pub mod docx;
 pub mod docx_view;
 pub mod epub;
+pub mod epub_source;
 pub mod epub_view;
 mod html_entities;
 pub mod markdown;
@@ -21,7 +22,7 @@ pub mod text;
 use crate::error::AppResult;
 
 /// Where an extracted text layer came from (`source_files.extraction_status`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum ExtractionStatus {
     /// Born-digital text (EPUB, Markdown, plain text).
     DigitalText,
@@ -42,7 +43,7 @@ impl ExtractionStatus {
 }
 
 /// Metadata an adapter could read from the file itself.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct FoundMetadata {
     pub title: Option<String>,
     pub author: Option<String>,
@@ -53,7 +54,7 @@ pub struct FoundMetadata {
 }
 
 /// One piece of text with its location in the original.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct NewSegment {
     pub text: String,
     pub page_number: Option<u32>,
@@ -203,6 +204,38 @@ pub fn split_long(paragraph: &str, max: usize) -> Vec<String> {
     parts
 }
 
+/// A document's own text with the code points the readers use as marks
+/// (`pdf_layout::RAISED_OPEN` … `MARGIN`, U+E000–U+E004) made U+FFFD, so
+/// that a document cannot write a mark (Phase A1.5, independent review
+/// finding 7: a literal U+E002 … U+E003 made the words between vanish from
+/// a verse). The recogniser never verifies a verse holding U+FFFD.
+pub fn neutralise_marks(text: &str) -> std::borrow::Cow<'_, str> {
+    if text.chars().any(|c| ('\u{E000}'..='\u{E004}').contains(&c)) {
+        std::borrow::Cow::Owned(
+            text.chars()
+                .map(|c| {
+                    if ('\u{E000}'..='\u{E004}').contains(&c) {
+                        '\u{FFFD}'
+                    } else {
+                        c
+                    }
+                })
+                .collect(),
+        )
+    } else {
+        std::borrow::Cow::Borrowed(text)
+    }
+}
+
+/// One character of a document's own text, as [`neutralise_marks`] makes it.
+pub fn neutral_char(c: char) -> char {
+    if ('\u{E000}'..='\u{E004}').contains(&c) {
+        '\u{FFFD}'
+    } else {
+        c
+    }
+}
+
 /// A second version of a paragraph cut where [`split_long`] cut the first
 /// (`parts`), character for character: the two must have the same
 /// characters in the same places (a marked text, `NewSegment::marked`).
@@ -211,7 +244,16 @@ pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
     // (The marks around raised letters, `pdf_layout::RAISED_OPEN` and
     // `RAISED_CLOSE`, stand in the marked text only: they are not counted,
     // and a part keeps the mark that closes its last letters.)
-    let mark = |c: char| c == pdf_layout::RAISED_OPEN || c == pdf_layout::RAISED_CLOSE;
+    let mark = |c: char| {
+        matches!(
+            c,
+            pdf_layout::RAISED_OPEN
+                | pdf_layout::RAISED_CLOSE
+                | pdf_layout::NOTE_OPEN
+                | pdf_layout::NOTE_CLOSE
+                | pdf_layout::MARGIN
+        )
+    };
     let chars: Vec<char> = other.chars().collect();
     let mut at = 0usize;
     let mut out = Vec::with_capacity(parts.len());
@@ -229,7 +271,10 @@ pub fn split_like(other: &str, parts: &[String]) -> Option<Vec<String>> {
             }
             at += 1;
         }
-        if chars.get(at) == Some(&pdf_layout::RAISED_CLOSE) {
+        if matches!(
+            chars.get(at),
+            Some(&pdf_layout::RAISED_CLOSE) | Some(&pdf_layout::NOTE_CLOSE)
+        ) {
             at += 1;
         }
         out.push(chars[start..at].iter().collect());

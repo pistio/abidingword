@@ -198,6 +198,7 @@ fn install_bible(conn: &Connection) -> AppResult<String> {
             license_type: None,
             words: Default::default(),
             as_document: false,
+            confirm_edition: false,
         },
         &SourceRecord {
             origin: "managed_copy",

@@ -234,7 +234,7 @@ pub fn check_same_text(
     content: &StagedContent,
 ) -> AppResult<()> {
     let mut stmt =
-        conn.prepare("SELECT verse_id, text FROM bible_verse_texts WHERE translation_id = ?1")?;
+        conn.prepare("SELECT verse_id, text FROM scripture_verse_texts WHERE translation_id = ?1")?;
     let stored: HashMap<i64, String> = stmt
         .query_map([translation_id], |r| Ok((r.get(0)?, r.get(1)?)))?
         .collect::<Result<_, _>>()?;
@@ -720,7 +720,7 @@ pub fn search(conn: &Connection, input: &LemmaQuery) -> AppResult<LemmaResult> {
         None => (Vec::new(), false),
     };
     let mut text_of = conn.prepare_cached(
-        "SELECT text FROM bible_verse_texts WHERE translation_id = ?1 AND verse_id = ?2",
+        "SELECT text FROM scripture_verse_texts WHERE translation_id = ?1 AND verse_id = ?2",
     )?;
     let mut hits = Vec::with_capacity(listed.len());
     for (verse, matches) in listed {

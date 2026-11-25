@@ -1,6 +1,9 @@
 import { Fragment, useCallback, useEffect, useId, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Bookmark, Highlighter, Layers, StickyNote } from "lucide-react";
+import { Button } from "@/design-system/Button";
+import { toApiError } from "@/lib/api";
+import { openingWords, type DocumentTarget } from "./DocumentPassages";
 import { Notice } from "@/design-system/Notice";
 import { useLoad } from "@/hooks/useLoad";
 import { useApi } from "@/lib/ApiContext";
@@ -8,7 +11,7 @@ import { PHRASE_CLASS, VERSE_CLASS, highlightPaint, phraseSegments, verseMarks }
 import { contains } from "@/lib/scripture";
 import { formatNumber } from "@/i18n/format";
 import { referenceLabel } from "@/i18n/scripture";
-import type { Annotation, BibleTranslation, ScriptureRef, VerseText } from "@/types/scripture";
+import type { Annotation, BibleTranslation, ScriptureRef, UnverifiedReason, VerseOrigin, VerseText } from "@/types/scripture";
 import { SelectionToolbar } from "./SelectionToolbar";
 import { SELECTION_SPIKE, SelectionSpike } from "./SelectionSpike";
 import { useScripture } from "./ScriptureContext";
@@ -21,7 +24,10 @@ function chapterOf(book: string, chapter: number): ScriptureRef {
 }
 
 /** One chapter of one translation, with the user's annotations. */
-export function ChapterReader({ translation }: { translation: BibleTranslation }) {
+export function ChapterReader({ translation, onOriginal }: {
+  translation: BibleTranslation;
+  onOriginal?: (target: DocumentTarget, evidence?: VerseOrigin) => void;
+}) {
   const { t } = useTranslation();
   const api = useApi();
   const { location, selection, navigationId, selectedVerse, selectVerse, bookByCode } = useScripture();
@@ -46,6 +52,7 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
   // or translation on screen is no longer that one, so it is never stale.
   // Any navigation (even within this chapter) starts afresh: nothing stays open for a verse the reader has left.
   const scope = `${translation.id}:${book}.${chapter}:${navigationId}`;
+  const [sourceError, setSourceError] = useState<string | null>(null);
   const [opened, setOpened] = useState<{ verse: string; opener: HTMLElement | null; scope: string } | null>(null);
   // Moving to another chapter or translation drops it for good (it must not
   // come back if the reader returns to the same place).
@@ -97,6 +104,20 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
     keepVerseVisible(canonical);
   };
 
+  const showOriginal = async (verse: number, quote?: string, fallback?: DocumentTarget) => {
+    setSourceError(null);
+    try {
+      const origin = await api.bibleVerseOrigin(translation.id, book, chapter, verse);
+      if (origin) {
+        onOriginal?.({ documentId: origin.documentId, page: origin.firstPage, position: origin.firstSegment, quote }, origin);
+      } else if (fallback) {
+        onOriginal?.(fallback);
+      }
+    } catch (error) {
+      setSourceError(toApiError(error).message);
+    }
+  };
+
   if (text.error) return <Notice tone="error">{text.error.message}</Notice>;
   const chapterCount = bookByCode.get(book)?.chapterCount;
   if (!text.data) {
@@ -123,8 +144,18 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
             </>
           ) : null}
         </p>
+        {translation.editionConfirmed != null && (
+          <p className="type-meta m-0 mt-0.5">
+            {translation.documentRecognised && <>{t("scripture.reader.recognisedFromDocument")}{t("common.listSeparator")}</>}
+            {t(translation.editionConfirmed ? "scripture.reader.editionConfirmed" : "scripture.reader.editionProvisional")}
+          </p>
+        )}
+        {translation.editionConfirmed != null && (
+          <p className="type-meta m-0 mt-0.5">{t("scripture.reader.numberingUnmapped")}</p>
+        )}
       </header>
 
+      {sourceError && <Notice tone="error">{sourceError}</Notice>}
       {data.verses.length === 0 && data.unchecked.length === 0 ? (
         <p className="text-text-muted">
           {t("scripture.reader.noText", { name: translation.name, passage })}
@@ -135,7 +166,9 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
           {data.unchecked
             .filter((u) => !data.verses.some((v) => v.verse < u.verse))
             .map((u) => (
-              <Unchecked key={`u${u.verse}`} verse={u.verse} page={u.page} />
+              <Unchecked key={`u${u.verse}`} verse={u.verse} page={u.page} reason={u.reason} onOriginal={u.documentId && onOriginal
+                ? () => void showOriginal(u.verse, undefined, { documentId: u.documentId!, page: u.page, position: u.segment ?? null })
+                : undefined} />
             ))}
           {data.verses.map((verse, n) => (
             <Fragment key={verse.canonical}>
@@ -148,11 +181,18 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
                 inspectorId={inspectorId}
                 onToggleInspector={(opener) => toggleInspector(verse.canonical, opener)}
               />
+              {inspector?.verse === verse.canonical && translation.documentRecognised && onOriginal && (
+                <Button className="self-start" variant="quiet" onClick={() => void showOriginal(verse.verse, openingWords(verse.text))}>
+                  {t("scripture.document.passages.show")}
+                </Button>
+              )}
               {/* Verses found in the document but not checked (v0.24.3), in their place. */}
               {data.unchecked
                 .filter((u) => u.verse > verse.verse && (data.verses[n + 1]?.verse ?? Infinity) > u.verse)
                 .map((u) => (
-                  <Unchecked key={`u${u.verse}`} verse={u.verse} page={u.page} />
+                  <Unchecked key={`u${u.verse}`} verse={u.verse} page={u.page} reason={u.reason} onOriginal={u.documentId && onOriginal
+                ? () => void showOriginal(u.verse, undefined, { documentId: u.documentId!, page: u.page, position: u.segment ?? null })
+                : undefined} />
                 ))}
             </Fragment>
           ))}
@@ -184,12 +224,23 @@ export function ChapterReader({ translation }: { translation: BibleTranslation }
  * A verse found in the Bible's document whose text could not be checked
  * (v0.24.3): said plainly, with where it is, never shown with text.
  */
-function Unchecked({ verse, page }: { verse: number; page: number | null }) {
+function Unchecked({ verse, page, reason, onOriginal }: {
+  verse: number;
+  page: number | null;
+  reason: UnverifiedReason;
+  onOriginal?: () => void;
+}) {
   const { t } = useTranslation();
   return (
     <p className="m-0 text-[0.9375rem] text-text-muted" data-testid="unchecked-verse">
       <sup className="mr-1">{verse}</sup>
       {page !== null ? t("scripture.reader.uncheckedOnPage", { page: formatNumber(page) }) : t("scripture.reader.unchecked")}
+      {onOriginal && (
+        <>
+          {" "}{t(`scripture.addBible.document.unverifiedReason.${reason}`, { count: 1, formatted: formatNumber(1) })}
+          <Button variant="quiet" onClick={onOriginal}>{t("scripture.document.passages.show")}</Button>
+        </>
+      )}
     </p>
   );
 }

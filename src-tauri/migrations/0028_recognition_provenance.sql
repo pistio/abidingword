@@ -128,3 +128,21 @@ WHEN NOT EXISTS (SELECT 1 FROM bible_documents
 BEGIN
     SELECT RAISE(ABORT, 'recognition evidence does not match saved source');
 END;
+-- Keep older document rows for source recovery and preserve their reference
+-- keys. Scripture consumers require evidence from the edition's current run.
+CREATE VIEW scripture_verse_texts AS
+SELECT t.* FROM bible_verse_texts t
+JOIN bible_translations b ON b.id = t.translation_id
+WHERE b.source_type NOT IN ('pdf', 'epub', 'docx', 'markdown', 'text')
+   OR EXISTS (
+       SELECT 1 FROM bible_recognition_verse_evidence e
+       JOIN bible_recognition_editions edition
+         ON edition.translation_id = e.translation_id AND edition.current_run_id = e.run_id
+       WHERE e.translation_id = t.translation_id AND e.verse_id = t.verse_id
+         AND e.recognition_state = 'verifiedFromDocument'
+   );
+
+CREATE VIEW scripture_superscriptions AS
+SELECT s.* FROM bible_superscriptions s
+JOIN bible_translations b ON b.id = s.translation_id
+WHERE b.source_type NOT IN ('pdf', 'epub', 'docx', 'markdown', 'text');

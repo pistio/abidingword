@@ -33,16 +33,39 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<Step>({ kind: "choose" });
   const [error, setError] = useState<string | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
+  const activeImport = useRef<string | null>(null);
+  const [processing, setProcessing] = useState<{ done: number; total: number } | null>(null);
   useEffect(() => heading.current?.focus(), [step.kind]);
 
   const preview = async (request: { bundled?: string; paths?: string[] }) => {
     setError(null);
+    const jobId = crypto.randomUUID();
+    activeImport.current = jobId;
+    setProcessing({ done: 0, total: request.paths?.length ?? 0 });
     setStep({ kind: "checking" });
+    let stop: (() => void) | undefined;
     try {
-      setStep({ kind: "review", preview: await api.bibleImportPreview(request) });
+      stop = await api.onBibleImportProgress?.((p) => {
+        if (activeImport.current === p.id) setProcessing({ done: p.done, total: p.total });
+      });
+      if (activeImport.current !== jobId) return;
+      const reviewed = await api.bibleImportPreview({ ...request, jobId });
+      if (activeImport.current === jobId) {
+        setStep({ kind: "review", preview: reviewed });
+      } else {
+        void api.bibleImportCancel(reviewed.previewId).catch(() => undefined);
+      }
     } catch (e) {
-      setError(toApiError(e).message);
-      setStep({ kind: "choose" });
+      if (activeImport.current === jobId) {
+        setError(toApiError(e).message);
+        setStep({ kind: "choose" });
+      }
+    } finally {
+      stop?.();
+      if (activeImport.current === jobId) {
+        activeImport.current = null;
+        setProcessing(null);
+      }
     }
   };
 
@@ -75,6 +98,14 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   };
 
   const cancel = () => {
+    const jobId = activeImport.current;
+    if (jobId) {
+      activeImport.current = null;
+      setProcessing(null);
+      void api.bibleImportCancel(jobId).catch(() => undefined);
+      setStep({ kind: "choose" });
+      return;
+    }
     if (step.kind === "review") void api.bibleImportCancel(step.preview.previewId).catch(() => undefined);
     onClose();
   };
@@ -90,7 +121,7 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
     <div
       className="h-full overflow-y-auto bg-bg"
       onKeyDown={(e) => {
-        if (e.key === "Escape" && !e.defaultPrevented && step.kind !== "checking" && !(e.target as HTMLElement).closest("input, textarea, select")) {
+        if (e.key === "Escape" && !e.defaultPrevented && (step.kind !== "checking" || processing !== null) && !(e.target as HTMLElement).closest("input, textarea, select")) {
           e.preventDefault();
           cancel();
         }
@@ -98,7 +129,7 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
     >
       <div className="mx-auto flex max-w-[46rem] flex-col gap-8 px-8 pb-24 pt-8">
         <div className="flex flex-col items-start gap-4">
-          <Button variant="quiet" onClick={cancel} disabled={step.kind === "checking"}>
+          <Button variant="quiet" onClick={cancel} disabled={step.kind === "checking" && !processing}>
             <ArrowLeft className="size-4" aria-hidden="true" />
             {step.kind === "done" ? t("common.back") : t("common.cancel")}
           </Button>
@@ -118,7 +149,9 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
                 : downloading.done < downloading.total
                   ? t("scripture.addBible.available.progress", { done: formatNumber(downloading.done), total: formatNumber(downloading.total) })
                   : t("scripture.addBible.checking")
-              : t("scripture.addBible.checking")}
+              : processing && processing.total > 0
+                ? t("scripture.addBible.document.progress", { done: formatNumber(processing.done), total: formatNumber(processing.total) })
+                : t("scripture.addBible.checking")}
           </p>
         )}
         {step.kind === "review" && (
@@ -393,6 +426,7 @@ interface Details {
   licenseType?: string;
   words?: WordChoice;
   asDocument?: boolean;
+  confirmEdition?: boolean;
 }
 
 export type Correction = { index: number; book: string | null };
@@ -411,6 +445,7 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
   const doc = preview.document ?? null;
   // A Bible from documents is added by its verses when they can be used, else as a document.
   const [byVerse, setByVerse] = useState(true);
+  const [confirmEdition, setConfirmEdition] = useState(false);
   const asDocument = !!doc && (!doc.versesUsable || !byVerse);
   const [notice, setNotice] = useState(s.copyrightNotice ?? s.licenseType ?? "");
   const errors = preview.issues.filter((i) => i.severity === "error");
@@ -430,6 +465,7 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
       licenseType: doc ? undefined : (s.licenseType ?? undefined),
       words,
       asDocument: doc ? asDocument : undefined,
+      confirmEdition: doc ? confirmEdition : undefined,
     });
     setBusy(false);
   };
@@ -473,7 +509,16 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
 
       {doc && <DocumentChoice preview={doc} byVerse={byVerse} onByVerse={setByVerse} />}
 
+      {doc && (
+        <label className="flex items-start gap-2">
+          <input type="checkbox" checked={confirmEdition} onChange={(e) => setConfirmEdition(e.target.checked)} />
+          <span>{t("scripture.addBible.document.confirmEdition")}</span>
+        </label>
+      )}
+
       {doc && !asDocument && <Verification preview={doc} />}
+
+      {doc && <RecognitionSamples preview={doc} />}
 
       {doc ? (
         <p className="m-0 text-[0.9375rem] text-text-muted">{t("scripture.addBible.document.noWords")}</p>
@@ -663,6 +708,42 @@ function DocumentChoice({ preview, byVerse, onByVerse }: { preview: DocumentPrev
  * place is known but their exact words are in doubt. Said plainly, with why,
  * so that "found" is never mistaken for "checked".
  */
+export function RecognitionSamples({ preview }: { preview: DocumentPreview }) {
+  const { t } = useTranslation();
+  const samples = preview.recognitionSamples ?? [];
+  if (samples.length === 0) return null;
+  return (
+    <details>
+      <summary className="cursor-pointer">{t("scripture.addBible.document.evidenceSamples")}</summary>
+      <ul className="space-y-2">
+        {samples.map((sample) => (
+          <li key={sample.reference}>
+            <strong>{sample.reference}</strong>
+            <p className="m-0 type-meta break-all">
+              {sample.fileName}
+              {sample.entryPath && <> · {sample.entryPath}</>}
+              {sample.place.page != null && <> · {t("scripture.document.passages.showPage", { page: formatNumber(sample.place.page) })}</>}
+              {sample.place.segment != null && <> · {t("scripture.addBible.document.sourceSegment", { number: formatNumber(sample.place.segment + 1) })}</>}
+            </p>
+            {sample.spans.length > 0 && (
+              <p className="m-0 type-meta">{t("scripture.addBible.document.byteRanges", { ranges: sample.spans.map((span) => `${span.byteStart}–${span.byteEnd}`).join(", ") })}</p>
+            )}
+            {sample.reason ? (
+              <p className="m-0 type-meta">{t(`scripture.addBible.document.unverifiedReason.${sample.reason}`, { count: 1, formatted: formatNumber(1) })}</p>
+            ) : sample.text && <p className="reading m-0">{sample.text}</p>}
+            {sample.exclusions.length > 0 && (
+              <p className="m-0 type-meta">{t("scripture.addBible.document.sourceExclusions", { text: sample.exclusions.map((exclusion) => exclusion.text).join(", ") })}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+      {preview.numbering?.some((book) => book.agreement === "departs") && (
+        <p className="m-0 type-meta">{t("scripture.reader.numberingUnmapped")}</p>
+      )}
+    </details>
+  );
+}
+
 export function Verification({ preview }: { preview: DocumentPreview }) {
   const { t } = useTranslation();
   if (preview.unverifiedVerses === 0) return null;

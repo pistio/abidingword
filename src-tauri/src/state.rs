@@ -32,6 +32,7 @@ pub struct AppState {
     /// The Bible import waiting on the verification screen, if any. Only
     /// one at a time; starting another replaces it.
     pending_import: Mutex<Option<StagedImport>>,
+    pub bible_import_job: Mutex<Option<(String, std::sync::Arc<std::sync::atomic::AtomicBool>)>>,
     /// An installed Bible's files read again for its words (v0.22), apart
     /// from an import preview so neither replaces the other.
     pending_words: Mutex<Option<StagedImport>>,
@@ -96,6 +97,7 @@ impl AppState {
             log_dir,
             resource_dir,
             pending_import: Mutex::new(None),
+            bible_import_job: Mutex::new(None),
             pending_words: Mutex::new(None),
             pending_source: Mutex::new(None),
             secrets: Box::new(OsStore),

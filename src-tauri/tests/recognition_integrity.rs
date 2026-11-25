@@ -43,6 +43,8 @@ fn line(text: &str, page: u32) -> Unit {
         styled: false,
         edge: false,
         centred: false,
+        partly_styled: false,
+        small: false,
         column: 0,
         gap_before: false,
         short: false,
@@ -289,6 +291,7 @@ fn details(staged: &StagedImport) -> CommitImport {
         license_type: None,
         words: Default::default(),
         as_document: false,
+        confirm_edition: false,
     }
 }
 

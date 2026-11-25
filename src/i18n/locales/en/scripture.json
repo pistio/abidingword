@@ -17,6 +17,10 @@
     "nextChapter": "Next chapter"
   },
   "reader": {
+    "recognisedFromDocument": "Recognised from your document",
+    "editionConfirmed": "Edition confirmed by you",
+    "editionProvisional": "Edition unconfirmed",
+    "numberingUnmapped": "Parallel verse alignment is unavailable for this document edition.",
     "opening": "Opening {{passage}}…",
     "showing": "showing {{passage}}",
     "noText": "{{name}} has no text for {{passage}}.",
@@ -167,6 +171,12 @@
       }
     },
     "document": {
+      "evidenceSamples": "Source evidence samples",
+      "sourceSegment": "Source paragraph {{number}}",
+      "byteRanges": "Entry byte ranges: {{ranges}}",
+      "sourceExclusions": "Source exclusions: {{text}}",
+      "confirmEdition": "I confirm the edition identified above.",
+      "progress": "Documents read: {{done}} of {{total}}",
       "filesTitle": "What the files hold",
       "file": {
         "pdfText_one": "PDF, {{formatted}} page, its text can be read",

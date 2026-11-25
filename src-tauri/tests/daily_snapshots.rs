@@ -3,7 +3,7 @@
 use std::fs;
 use std::path::Path;
 
-use abiding_word_lib::db::{backup, Database};
+use abiding_word_lib::db::{backup, migrations, Database};
 use abiding_word_lib::filesystem::DataDirs;
 use rusqlite::{Connection, OpenFlags};
 
@@ -130,11 +130,12 @@ fn manual_database_names_are_neither_counted_as_today_nor_pruned() {
         .with_conn(|conn| backup::daily_snapshot(conn, &daily))
         .unwrap()
         .unwrap();
+    let version = db.with_conn(migrations::current_version).unwrap();
     let today = chrono::Utc::now().format("%Y-%m-%d");
     let names = [
-        "abiding-word-v27-000-personal-copy.db".to_string(),
-        "abiding-word-v027-2020-01-01T00-00-00.000Z.db".to_string(),
-        format!("abiding-word-v27-{today}T-my-personal-copy.db"),
+        format!("abiding-word-v{version}-000-personal-copy.db"),
+        format!("abiding-word-v0{version}-2020-01-01T00-00-00.000Z.db"),
+        format!("abiding-word-v{version}-{today}T-my-personal-copy.db"),
     ];
     for name in &names {
         fs::copy(&current, daily.join(name)).unwrap();
@@ -155,7 +156,7 @@ fn manual_database_names_are_neither_counted_as_today_nor_pruned() {
         fs::copy(
             &current,
             daily.join(format!(
-                "abiding-word-v27-2020-01-{day:02}T00-00-00.000Z.db"
+                "abiding-word-v{version}-2020-01-{day:02}T00-00-00.000Z.db"
             )),
         )
         .unwrap();
@@ -183,7 +184,11 @@ fn rapidly_created_safety_copies_have_distinct_names_and_preserve_each_version()
                     "UPDATE settings SET value=?1 WHERE key='test.sentence'",
                     [index.to_string()],
                 )?;
-                backup::pre_migration(conn, &dirs.pre_restore_backups(), 27)
+                backup::pre_migration(
+                    conn,
+                    &dirs.pre_restore_backups(),
+                    migrations::current_version(conn)?,
+                )
             })
             .unwrap();
         assert_eq!(get_note(&path), index.to_string());

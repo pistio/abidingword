@@ -30,6 +30,8 @@ export interface BibleLanguageOption {
 }
 
 export interface BibleTranslation {
+  editionConfirmed?: boolean | null;
+  documentRecognised?: boolean;
   id: string;
   name: string;
   shortName: string;
@@ -157,7 +159,7 @@ export interface ChapterText {
   superscription: string | null;
   verses: VerseText[];
   /** Verses found in a Bible's documents whose text could not be checked (v0.24.3): shown as such, never with text. */
-  unchecked: { verse: number; page: number | null; reason: UnverifiedReason }[];
+  unchecked: { verse: number; page: number | null; reason: UnverifiedReason; documentId?: string; segment?: number | null }[];
 }
 
 export interface PassageText {
@@ -424,7 +426,30 @@ export interface DocumentFileInfo {
   notes: number;
 }
 
+export interface RecognitionSpan {
+  byteStart: number;
+  byteEnd: number;
+}
+
+export interface RecognitionExclusion {
+  text: string;
+  range: RecognitionSpan;
+}
+
+export interface RecognitionSample {
+  reference: string;
+  fileName: string;
+  place: DocumentPlace;
+  text: string | null;
+  reason: UnverifiedReason | null;
+  entryPath: string | null;
+  spans: RecognitionSpan[];
+  exclusions: RecognitionExclusion[];
+}
+
 export interface DocumentPreview {
+  recognitionSamples?: RecognitionSample[];
+  numbering?: { code: string; agreement: "withinReference" | "departs" }[];
   files: DocumentFileInfo[];
   books: FoundBook[];
   leftOut: LeftOutText[];
@@ -483,6 +508,11 @@ export interface DocumentHit {
 
 /** Where a verse of a Bible added from documents came from (v0.23). */
 export interface VerseOrigin {
+  entryPath?: string | null;
+  entrySha256?: string | null;
+  sourceSha256?: string | null;
+  provenance?: { spans: RecognitionSpan[] | null } | null;
+  exclusions?: RecognitionExclusion[] | null;
   documentId: string;
   documentName: string;
   firstSegment: number | null;
@@ -605,6 +635,7 @@ export interface WordsPreview {
 }
 
 export interface ImportRequest {
+  jobId?: string;
   paths?: string[];
   bundled?: string;
 }
@@ -622,6 +653,7 @@ export interface CommitImport {
   words?: WordChoice;
   /** A Bible from documents is added to read as a document, even with verses found (v0.23). */
   asDocument?: boolean;
+  confirmEdition?: boolean;
 }
 
 export type AnnotationKind = "note" | "highlight" | "bookmark";

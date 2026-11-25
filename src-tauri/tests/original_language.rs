@@ -53,6 +53,7 @@ fn commit(
             license_type: None,
             words,
             as_document: false,
+            confirm_edition: false,
         },
         &SourceRecord {
             origin: "managed_copy",

@@ -533,6 +533,7 @@ export interface Api {
   bibleCatalogueList(): Promise<CatalogueEntry[]>;
   /** Downloads and verifies one, then reads it for the review screen; nothing is added yet. */
   bibleCatalogueDownload(id: string): Promise<ImportPreview>;
+  onBibleImportProgress?(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
   onCatalogueProgress(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
   bibleImportPreview(input: ImportRequest): Promise<ImportPreview>;
   bibleImportCommit(input: CommitImport): Promise<BibleTranslation>;
@@ -549,9 +550,9 @@ export interface Api {
   bibleDocumentSearch(translationId: string, query: string): Promise<DocumentHit[]>;
   bibleVerseOrigin(translationId: string, book: string, chapter: number, verse: number): Promise<VerseOrigin | null>;
   /** Reads a document Bible's kept files again for verses (no new import). */
-  bibleDocumentRecognise(translationId: string): Promise<ImportPreview>;
+  bibleDocumentRecognise(translationId: string, jobId?: string): Promise<ImportPreview>;
   /** With `partial` (v0.24), only the chapters recognised without doubt are used. */
-  bibleDocumentAddVerses(previewId: string, partial?: boolean): Promise<BibleTranslation>;
+  bibleDocumentAddVerses(previewId: string, partial?: boolean, confirmEdition?: boolean): Promise<BibleTranslation>;
   /** A passage in a Bible kept as a document (v0.24). */
   bibleDocumentLocate(translationId: string, reference: string): Promise<DocumentPassage>;
   bibleLocationAdd(input: AddLocation): Promise<MarkedPlace>;
@@ -921,6 +922,7 @@ export const tauriApi: Api = {
   bibleBundledList: () => call("bible_bundled_list"),
   bibleCatalogueList: () => call("bible_catalogue_list"),
   bibleCatalogueDownload: (id) => call("bible_catalogue_download", { id }),
+  onBibleImportProgress: (handler) => listen<CatalogueProgress>("bible-import-progress", (event) => handler(event.payload)),
   onCatalogueProgress: (handler) => listen<CatalogueProgress>("bible-catalogue-progress", (event) => handler(event.payload)),
   chooseBibleFiles: async () => {
     const chosen = await open({
@@ -950,8 +952,8 @@ export const tauriApi: Api = {
     call("bible_document_segments", { documentId: input.documentId, offset: input.offset ?? null, limit: input.limit ?? null, aroundPage: input.aroundPage ?? null }),
   bibleDocumentSearch: (translationId, query) => call("bible_document_search", { translationId, query }),
   bibleVerseOrigin: (translationId, book, chapter, verse) => call("bible_verse_origin", { translationId, book, chapter, verse }),
-  bibleDocumentRecognise: (translationId) => call("bible_document_recognise", { translationId }),
-  bibleDocumentAddVerses: (previewId, partial) => call("bible_document_add_verses", { previewId, partial: partial ?? false }),
+  bibleDocumentRecognise: (translationId, jobId) => call("bible_document_recognise", { translationId, jobId }),
+  bibleDocumentAddVerses: (previewId, partial, confirmEdition) => call("bible_document_add_verses", { previewId, partial: partial ?? false, confirmEdition }),
   bibleDocumentLocate: (translationId, reference) => call("bible_document_locate", { translationId, reference }),
   bibleLocationAdd: (input) => call("bible_location_add", { input }),
   bibleLocationRemove: (id) => call("bible_location_remove", { id }),

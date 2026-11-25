@@ -13,7 +13,7 @@ import { ApiProvider, useApi } from "@/lib/ApiContext";
 import type { PdfPlace } from "@/lib/pdfEngine";
 import { readLocal, writeLocal } from "@/lib/storage";
 import type { EpubStructureItem } from "@/types/library";
-import type { BibleDocument, BibleTranslation, DocumentHit, DocumentSegment } from "@/types/scripture";
+import type { BibleDocument, BibleTranslation, DocumentHit, DocumentSegment, VerseOrigin } from "@/types/scripture";
 import { documentApi } from "./documentApi";
 import { CoverageLine, GoToPassage, MarkPassage, PassagePanel, type DocumentHere, type DocumentTarget } from "./DocumentPassages";
 import { useScripture } from "./ScriptureContext";
@@ -35,19 +35,27 @@ const progressKey = (documentId: string) => `bibleDocument.${documentId}`;
  * marked by hand; anything else is said to be not yet identified. Nothing
  * here changes the Bible read by passage.
  */
-export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTranslation; onFindVerses: () => void }) {
+export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget, evidence }: {
+  bible: BibleTranslation;
+  onFindVerses?: () => void;
+  onBack?: () => void;
+  initialTarget?: DocumentTarget;
+  evidence?: VerseOrigin | null;
+}) {
   const { t } = useTranslation();
   const api = useApi();
   const { translation, openDocumentBible, documentPassage } = useScripture();
   const documents = useLoad(useCallback(() => api.bibleDocuments(bible.id), [api, bible.id]));
-  const [chosen, setChosen] = useState(0);
+  const [chosenId, setChosenId] = useState(initialTarget?.documentId ?? null);
   const list = documents.data ?? [];
-  const document = list[Math.min(chosen, Math.max(0, list.length - 1))] ?? null;
+  const document = list.find((item) => item.id === chosenId) ?? list[0] ?? null;
   const hasText = list.some((d) => d.segmentCount > 0);
   const scanned = document?.extractionStatus === "ocr_required";
-  const [view, setView] = useState<"original" | "text">("original");
+  const [view, setView] = useState<"original" | "text">(initialTarget && initialTarget.page == null ? "text" : "original");
   const shown: "original" | "text" = !document?.view ? "text" : scanned ? "original" : view;
-  const [jump, setJump] = useState<{ document: string; position: number; page: number | null; nonce: number; quote?: string } | null>(null);
+  const [jump, setJump] = useState<{ document: string; position: number; page: number | null; nonce: number; quote?: string } | null>(
+    initialTarget ? { document: initialTarget.documentId, position: initialTarget.position ?? 0, page: initialTarget.page, nonce: 1, quote: initialTarget.quote } : null,
+  );
   const selectId = useId();
   // The passage looked for here (v0.24): asked for from anywhere in the app, or typed here.
   const [passage, setPassage] = useState<ScriptureRef | null>(documentPassage?.reference ?? null);
@@ -64,7 +72,7 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
   }, []);
   const show = (target: DocumentTarget) => {
     const index = list.findIndex((d) => d.id === target.documentId);
-    if (index >= 0) setChosen(index);
+    if (index >= 0) setChosenId(target.documentId);
     if (target.page === null && view === "original" && list[index]?.view === "pdf") setView("text");
     setJump({ document: target.documentId, position: target.position ?? 0, page: target.page, nonce: Date.now(), quote: target.quote });
   };
@@ -76,26 +84,44 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
           <div className="min-w-0">
             <h2 className="type-item m-0">{bible.name}</h2>
             <p className="m-0 type-meta">{t("scripture.document.kind")}</p>
+            {bible.editionConfirmed != null && (
+              <p className="m-0 type-meta">
+                {t(bible.editionConfirmed ? "scripture.reader.editionConfirmed" : "scripture.reader.editionProvisional")}
+              </p>
+            )}
           </div>
-          {translation && (
-            <Button variant="quiet" onClick={() => openDocumentBible(null)}>
+          {(onBack || translation) && (
+            <Button variant="quiet" onClick={onBack ?? (() => openDocumentBible(null))}>
               <ArrowLeft className="size-4" aria-hidden="true" />
-              {t("scripture.document.back", { name: translation.shortName })}
+              {t("scripture.document.back", { name: translation?.shortName ?? bible.shortName })}
             </Button>
           )}
         </div>
+        {evidence?.sourceSha256 && (
+          <details className="text-[0.9375rem]">
+            <summary className="cursor-pointer">{t("scripture.addBible.document.evidenceSamples")}</summary>
+            <p className="m-0 break-all">{evidence.documentName} · {evidence.sourceSha256}</p>
+            {evidence.entryPath && <p className="m-0 break-all">{evidence.entryPath} · {evidence.entrySha256}</p>}
+            {evidence.provenance?.spans?.length ? (
+              <p className="m-0">{t("scripture.addBible.document.byteRanges", { ranges: evidence.provenance.spans.map((span) => `${span.byteStart}–${span.byteEnd}`).join(", ") })}</p>
+            ) : null}
+            {evidence.exclusions?.length ? (
+              <p className="m-0">{t("scripture.addBible.document.sourceExclusions", { text: evidence.exclusions.map((item) => item.text).join(", ") })}</p>
+            ) : null}
+          </details>
+        )}
         <details className="text-[0.9375rem]">
           <summary className="cursor-pointer text-text-muted">{t("scripture.document.whatSummary")}</summary>
           <div className="mt-2 flex flex-col gap-2">
             <p className="m-0">{t("scripture.document.what")}</p>
-            {hasText ? (
+            {hasText && onFindVerses ? (
               <div className="flex flex-col items-start gap-1">
                 <p className="m-0 text-text-muted">{t("scripture.document.findVersesHint")}</p>
                 <Button onClick={onFindVerses}>{t("scripture.document.findVerses")}</Button>
               </div>
-            ) : (
+            ) : !hasText ? (
               <p className="m-0 text-text-muted">{t("scripture.document.noTextAtAll")}</p>
-            )}
+            ) : null}
           </div>
         </details>
         <CoverageLine bible={bible} version={version} />
@@ -106,9 +132,9 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
         {list.length > 1 && (
           <label htmlFor={selectId} className="flex flex-col gap-1 text-[0.9375rem]">
             <span className="font-medium">{t("scripture.document.part")}</span>
-            <select id={selectId} value={chosen} onChange={(e) => setChosen(Number(e.target.value))} className="h-9 aw-input px-2">
-              {list.map((d, i) => (
-                <option key={d.id} value={i}>
+            <select id={selectId} value={document?.id ?? ""} onChange={(e) => setChosenId(e.target.value)} className="h-9 aw-input px-2">
+              {list.map((d) => (
+                <option key={d.id} value={d.id}>
                   {d.name}
                 </option>
               ))}
@@ -121,7 +147,7 @@ export function DocumentBibleReader({ bible, onFindVerses }: { bible: BibleTrans
             documents={list}
             onOpen={(hit) => {
               const index = list.findIndex((d) => d.id === hit.documentId);
-              if (index >= 0) setChosen(index);
+              if (index >= 0) setChosenId(hit.documentId);
               setJump({ document: hit.documentId, position: hit.position, page: hit.pageNumber, nonce: Date.now() });
             }}
           />

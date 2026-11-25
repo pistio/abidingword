@@ -37,7 +37,7 @@ pub fn commit(
     kept: &[KeptFile],
     as_verses: bool,
 ) -> AppResult<BibleTranslation> {
-    if as_verses && (content.has_errors() || content.verse_count() == 0) {
+    if as_verses && (content.has_errors() || stage.verified_count(content, None) == 0) {
         return Err(AppError::Import(UserMessage::new(
             "bibles.hasProblems",
             "This Bible has problems that must be resolved before it can be added.",
@@ -68,6 +68,16 @@ pub fn commit(
         store_verses(&tx, id, content, stage, kept, None)?;
         update_counts(&tx, id, true)?;
     }
+    let usable = content.usable_chapters().unwrap_or_default();
+    store_recognition(
+        &tx,
+        id,
+        stage,
+        kept,
+        Some(&usable),
+        meta.confirm_edition,
+        &now,
+    )?;
     tx.commit()?;
     log::info!(
         "Bible added from {} document(s): {} ({})",
@@ -80,6 +90,122 @@ pub fn commit(
         }
     );
     bibles::get(conn, id)
+}
+
+/// Persist evidence from the current pass in the same transaction as its text.
+fn store_recognition(
+    tx: &Connection,
+    id: &str,
+    stage: &DocumentStage,
+    kept: &[KeptFile],
+    usable: Option<&std::collections::BTreeSet<(u8, u16)>>,
+    confirm: bool,
+    now: &str,
+) -> AppResult<()> {
+    let Some(recognition) = &stage.recognition else {
+        return Ok(());
+    };
+    let manifest: String = stage.files.iter().map(|file| file.hash.as_str()).collect();
+    let manifest = crate::library::files::content_hash(manifest.as_bytes());
+    let run = crate::db::new_id();
+    tx.execute(
+        "INSERT INTO bible_recognition_runs
+            (id, translation_id, recogniser_commit, document_manifest_sha256, gate_generation, completed_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+        params![run, id, "08c6faac8c92c6c791ec1e7bbbe997362fa1059f", manifest, recognition.generation, now],
+    )?;
+    tx.execute(
+        "INSERT INTO bible_recognition_editions
+            (translation_id, current_run_id, confirmed_by_person, confirmed_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5)
+         ON CONFLICT(translation_id) DO UPDATE SET
+            current_run_id = excluded.current_run_id,
+            confirmed_by_person = CASE WHEN excluded.confirmed_by_person THEN 1 ELSE confirmed_by_person END,
+            confirmed_at = COALESCE(excluded.confirmed_at, confirmed_at),
+            updated_at = excluded.updated_at",
+        params![id, run, confirm, confirm.then_some(now), now],
+    )?;
+    let provenance: std::collections::BTreeMap<_, _> = recognition
+        .report
+        .provenance
+        .values()
+        .map(|p| (p.reference, p))
+        .collect();
+    let json = |result: Result<String, serde_json::Error>| {
+        result.map_err(|error| AppError::Unexpected(error.to_string()))
+    };
+    let mut add_key = tx.prepare(
+        "INSERT OR IGNORE INTO bible_verses (id, book_id, chapter, verse) VALUES (?1, ?2, ?3, ?4)",
+    )?;
+    let mut add_evidence = tx.prepare(
+        "INSERT INTO bible_recognition_verse_evidence
+            (translation_id, verse_id, document_id, run_id, source_sha256, entry_path,
+             entry_sha256, recognition_state, reason, provenance_json, excluded_json)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
+    )?;
+    for (&reference, origin) in &stage.origins {
+        let (book, chapter, verse) = reference;
+        let Some((file, document)) = stage
+            .files
+            .get(usize::from(origin.start.document))
+            .zip(kept.get(usize::from(origin.start.document)))
+        else {
+            return Err(AppError::Unexpected("recognition source is missing".into()));
+        };
+        let detail = provenance.get(&reference).filter(|p| {
+            p.file.document == origin.start.document && p.file.file_sha256 == file.hash
+        });
+        let reason = stage.unverified.get(&reference).copied().or_else(|| {
+            usable
+                .filter(|chapters| !chapters.contains(&(book, chapter)))
+                .map(|_| "boundary")
+        });
+        let key = verse_key(book, chapter, verse);
+        add_key.execute(params![key, book, chapter, verse])?;
+        let place = json(serde_json::to_string(&serde_json::json!({
+            "start": origin.start,
+            "end": origin.end,
+            "spans": detail.map(|p| &p.spans),
+            "traceStatus": detail.map(|p| p.status),
+            "idCheck": detail.map(|p| p.id_check),
+        })))?;
+        let excluded = json(serde_json::to_string(
+            detail.map_or(&[][..], |p| p.excluded.as_slice()),
+        ))?;
+        add_evidence.execute(params![
+            id,
+            key,
+            document.id,
+            run,
+            file.hash,
+            detail.map(|p| &p.file.entry),
+            detail.map(|p| &p.file.entry_sha256),
+            if reason.is_some() {
+                "unverified"
+            } else {
+                "verifiedFromDocument"
+            },
+            reason,
+            place,
+            excluded,
+        ])?;
+    }
+    for book in &recognition.numbering {
+        if let Some(canon) = crate::scripture::canon::by_code(book.code) {
+            let agreement = match book.agreement {
+                crate::scripture::numbering::Agreement::WithinReference => "withinReference",
+                crate::scripture::numbering::Agreement::Departs => "departs",
+            };
+            let details = json(serde_json::to_string(book))?;
+            tx.execute(
+                "INSERT INTO bible_recognition_book_numbering
+                    (translation_id, book_id, run_id, agreement, details_json)
+                 VALUES (?1, ?2, ?3, ?4, ?5)",
+                params![id, canon.ordinal, run, agreement, details],
+            )?;
+        }
+    }
+    Ok(())
 }
 
 fn insert_documents(
@@ -167,9 +293,6 @@ fn store_verses(
         "INSERT OR IGNORE INTO bible_verses (id, book_id, chapter, verse) VALUES (?1, ?2, ?3, ?4)",
     )?;
     for (&(ordinal, chapter, verse), origin) in &stage.origins {
-        if !in_chapter(ordinal, chapter) {
-            continue;
-        }
         let Some(document) = kept.get(usize::from(origin.start.document)) else {
             continue;
         };
@@ -192,7 +315,12 @@ fn store_verses(
             origin.start.offset,
             basis
         ];
-        match stage.unverified.get(&(ordinal, chapter, verse)) {
+        let reason = stage
+            .unverified
+            .get(&(ordinal, chapter, verse))
+            .copied()
+            .or_else(|| (!in_chapter(ordinal, chapter)).then_some("boundary"));
+        match reason {
             None => {
                 add_origin.execute(place)?;
             }
@@ -459,6 +587,17 @@ pub fn add_verses(
     stage: &DocumentStage,
     partial: bool,
 ) -> AppResult<BibleTranslation> {
+    add_verses_with_confirmation(conn, id, content, stage, partial, false)
+}
+
+pub fn add_verses_with_confirmation(
+    conn: &Connection,
+    id: &str,
+    content: &StagedContent,
+    stage: &DocumentStage,
+    partial: bool,
+    confirm_edition: bool,
+) -> AppResult<BibleTranslation> {
     let translation = bibles::get(conn, id)?;
     if translation.kind != "document" {
         return Err(AppError::InvalidInput(UserMessage::new(
@@ -466,12 +605,12 @@ pub fn add_verses(
             "This Bible can already be read by book, chapter and verse.",
         )));
     }
-    let sound = !content.has_errors() && content.verse_count() > 0;
+    let sound = !content.has_errors() && stage.verified_count(content, None) > 0;
     let usable = if sound {
         None
     } else if partial {
         match content.usable_chapters() {
-            Some(chapters) if !chapters.is_empty() => Some(chapters),
+            Some(chapters) if stage.verified_count(content, Some(&chapters)) > 0 => Some(chapters),
             _ => return Err(problems()),
         }
     } else {
@@ -499,6 +638,8 @@ pub fn add_verses(
         "bible_verse_places",
         "bible_verse_texts",
         "bible_superscriptions",
+        "bible_recognition_verse_evidence",
+        "bible_recognition_book_numbering",
     ] {
         tx.execute(
             &format!("DELETE FROM {table} WHERE translation_id = ?1"),
@@ -508,6 +649,15 @@ pub fn add_verses(
     store_verses(&tx, id, content, stage, &kept, usable.as_ref())?;
     insert_apparatus(&tx, id, stage, &kept)?;
     save_corrections(&tx, id, stage, &stage_corrections(stage), &now())?;
+    store_recognition(
+        &tx,
+        id,
+        stage,
+        &kept,
+        usable.as_ref(),
+        confirm_edition,
+        &now(),
+    )?;
     let (_, verses) = update_counts(&tx, id, whole)?;
     tx.commit()?;
     log::info!(
@@ -710,6 +860,11 @@ pub struct VerseOrigin {
     pub basis: String,
     /// Where in its first paragraph the verse begins (characters).
     pub first_offset: Option<i64>,
+    pub entry_path: Option<String>,
+    pub entry_sha256: Option<String>,
+    pub source_sha256: Option<String>,
+    pub provenance: Option<serde_json::Value>,
+    pub exclusions: Option<serde_json::Value>,
 }
 
 pub fn origin(
@@ -720,8 +875,19 @@ pub fn origin(
     Ok(conn
         .query_row(
             "SELECT o.document_id, d.original_file_name, o.first_segment, o.last_segment,
-                    o.first_page, o.last_page, o.basis, o.first_offset
-             FROM bible_verse_origins o JOIN bible_documents d ON d.id = o.document_id
+                    o.first_page, o.last_page, o.basis, o.first_offset,
+                    e.entry_path, e.entry_sha256, e.source_sha256, e.provenance_json, e.excluded_json
+             FROM (
+                SELECT translation_id, verse_id, document_id, first_segment, last_segment,
+                       first_page, last_page, basis, first_offset FROM bible_verse_origins
+                 WHERE translation_id = ?1 AND verse_id = ?2
+                UNION ALL
+                SELECT translation_id, verse_id, document_id, first_segment, last_segment,
+                       first_page, last_page, basis, first_offset FROM bible_verse_places
+                 WHERE translation_id = ?1 AND verse_id = ?2
+             ) o JOIN bible_documents d ON d.id = o.document_id
+             LEFT JOIN bible_recognition_verse_evidence e
+               ON e.translation_id = o.translation_id AND e.verse_id = o.verse_id
              WHERE o.translation_id = ?1 AND o.verse_id = ?2",
             params![translation_id, verse_id],
             |r| {
@@ -734,6 +900,11 @@ pub fn origin(
                     last_page: r.get(5)?,
                     basis: r.get(6)?,
                     first_offset: r.get(7)?,
+                    entry_path: r.get(8)?,
+                    entry_sha256: r.get(9)?,
+                    source_sha256: r.get(10)?,
+                    provenance: r.get::<_, Option<String>>(11)?.and_then(|s| serde_json::from_str(&s).ok()),
+                    exclusions: r.get::<_, Option<String>>(12)?.and_then(|s| serde_json::from_str(&s).ok()),
                 })
             },
         )
@@ -1118,12 +1289,12 @@ pub struct BookCoverage {
 
 pub fn coverage(conn: &Connection, translation_id: &str) -> AppResult<Coverage> {
     let verses: i64 = conn.query_row(
-        "SELECT COUNT(*) FROM bible_verse_texts WHERE translation_id = ?1",
+        "SELECT COUNT(*) FROM scripture_verse_texts WHERE translation_id = ?1",
         [translation_id],
         |r| r.get(0),
     )?;
     let mut stmt = conn.prepare(
-        "SELECT v.book_id, COUNT(DISTINCT v.chapter) FROM bible_verse_texts t
+        "SELECT v.book_id, COUNT(DISTINCT v.chapter) FROM scripture_verse_texts t
          JOIN bible_verses v ON v.id = t.verse_id
          WHERE t.translation_id = ?1 GROUP BY v.book_id ORDER BY v.book_id",
     )?;

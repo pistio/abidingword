@@ -53,6 +53,8 @@
     "locationPage": "Diese Seite gibt es im Dokument nicht."
   },
   "bibleImport": {
+    "pdfWorkerFailed": "Der PDF-Text konnte innerhalb der Verarbeitungsgrenzen nicht gelesen werden.",
+    "cancelled": "Bibelimport abgebrochen.",
     "noBookId": "Die Datei „{{fileName}}“ gibt nicht an, welches Buch sie enthält.",
     "unknownBook": "Die Datei „{{fileName}}“ enthält ein Buch, das Abiding Word nicht erkennt ({{code}}). Es wurde ausgelassen.",
     "bookTwice": "{{book}} kommt in mehr als einer Datei vor.",

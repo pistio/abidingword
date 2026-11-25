@@ -10,6 +10,7 @@ dependencies = [
  "chrono",
  "flate2",
  "keyring",
+ "libc",
  "log",
  "lopdf",
  "pdf-extract",
@@ -35,6 +36,7 @@ dependencies = [
  "unicode-normalization",
  "url",
  "uuid",
+ "windows-sys 0.61.2",
  "zip 2.4.2",
 ]
 

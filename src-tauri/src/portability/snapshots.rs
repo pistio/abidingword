@@ -280,9 +280,10 @@ mod tests {
             Ok(())
         })
         .unwrap();
-        let stage = staged_copy(&original, &dirs.cache(), 27).unwrap();
+        let version = db.with_conn(migrations::current_version).unwrap();
+        let stage = staged_copy(&original, &dirs.cache(), version).unwrap();
         db.with_conn_mut(|conn| {
-            let safety = backup::pre_migration(conn, &dirs.pre_restore_backups(), 27)?;
+            let safety = backup::pre_migration(conn, &dirs.pre_restore_backups(), version)?;
             let mut attempts = 0;
             let error = restore_staged(conn, &stage.0, &safety, |restored| {
                 attempts += 1;

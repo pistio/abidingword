@@ -31,12 +31,16 @@ const COLUMNS: &str = "id, name, short_name, language, language_code, publisher,
         'morphScheme', COALESCE(a.grammar_scheme, a.morph_scheme), \
         'morphAttribute', a.morph_attribute, 'sourceFormat', a.source_format, \
         'grammarBasis', a.grammar_basis, 'grammarEvidence', json(a.grammar_evidence)) \
-     FROM bible_word_annotations a WHERE a.translation_id = bible_translations.id)";
+     FROM bible_word_annotations a WHERE a.translation_id = bible_translations.id), \
+    (SELECT e.confirmed_by_person FROM bible_recognition_editions e WHERE e.translation_id = bible_translations.id)";
 
 const SHORT_NAME_MAX_CHARS: usize = 20;
 const SEARCH_LIMIT: usize = 200;
 
 fn from_row(row: &Row) -> rusqlite::Result<BibleTranslation> {
+    let source_type: String = row.get(9)?;
+    let confirmed: Option<bool> = row.get(22)?;
+    let document = crate::scripture::documents::is_document_format(&source_type);
     Ok(BibleTranslation {
         id: row.get(0)?,
         name: row.get(1)?,
@@ -46,8 +50,14 @@ fn from_row(row: &Row) -> rusqlite::Result<BibleTranslation> {
         publisher: row.get(5)?,
         copyright_notice: row.get(6)?,
         license_type: row.get(7)?,
-        kind: row.get(8)?,
-        source_type: row.get(9)?,
+        kind: if document && confirmed.is_none() {
+            "document".into()
+        } else {
+            row.get(8)?
+        },
+        edition_confirmed: document.then_some(confirmed.unwrap_or(false)),
+        document_recognised: confirmed.is_some(),
+        source_type,
         source_origin: row.get(10)?,
         source_path: row.get(11)?,
         original_file_name: row.get(12)?,
@@ -357,7 +367,7 @@ fn verses_between(
 ) -> AppResult<Vec<VerseText>> {
     let mut stmt = conn.prepare(
         "SELECT v.book_id, v.chapter, v.verse, t.text
-         FROM bible_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+         FROM scripture_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
          WHERE t.translation_id = ?1 AND t.verse_id BETWEEN ?2 AND ?3
          ORDER BY t.verse_id",
     )?;
@@ -428,7 +438,7 @@ pub fn set_language(
 pub fn any_has_verse(conn: &Connection, book: &canon::Book, chapter: u16, verse: u16) -> bool {
     let verse_id = verse_key(book.ordinal, chapter, verse);
     conn.query_row(
-        "SELECT 1 FROM bible_verse_texts WHERE verse_id = ?1 LIMIT 1",
+        "SELECT 1 FROM scripture_verse_texts WHERE verse_id = ?1 LIMIT 1",
         [verse_id],
         |_| Ok(()),
     )
@@ -454,14 +464,14 @@ pub fn chapter(
     let reference = ScriptureRef::chapter(book, chapter)?;
     let superscription = conn
         .query_row(
-            "SELECT text FROM bible_superscriptions
+            "SELECT text FROM scripture_superscriptions
              WHERE translation_id = ?1 AND book_id = ?2 AND chapter = ?3",
             params![translation_id, book.ordinal, chapter],
             |r| r.get(0),
         )
         .optional()?;
     let mut stmt = conn.prepare(
-        "SELECT verse_id, first_page, reason FROM bible_verse_places
+        "SELECT verse_id, first_page, reason, document_id, first_segment FROM bible_verse_places
          WHERE translation_id = ?1 AND verse_id BETWEEN ?2 AND ?3 ORDER BY verse_id",
     )?;
     let unchecked = stmt
@@ -473,6 +483,8 @@ pub fn chapter(
                     verse: crate::scripture::reference::split_key(key).2,
                     page: r.get(1)?,
                     reason: r.get(2)?,
+                    document_id: r.get(3)?,
+                    segment: r.get(4)?,
                 })
             },
         )?
@@ -543,7 +555,7 @@ pub fn search(conn: &Connection, input: &SearchScripture) -> AppResult<SearchRes
     let mut stmt = conn.prepare(
         "SELECT t.verse_id, t.translation_id, tr.short_name, t.text
          FROM bible_verse_search s
-         JOIN bible_verse_texts t ON t.id = s.rowid
+         JOIN scripture_verse_texts t ON t.id = s.rowid
          JOIN bible_translations tr ON tr.id = t.translation_id
          WHERE bible_verse_search MATCH ?1
            AND tr.state = 'active'
@@ -649,7 +661,7 @@ pub fn material_passages(
     let bible = get(conn, translation_id)?;
     let mut read = conn.prepare(
         "SELECT v.chapter, v.verse, t.text, t.bridge_end
-         FROM bible_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+         FROM scripture_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
          WHERE t.translation_id = ?1 AND t.verse_id BETWEEN ?2 AND ?3
          ORDER BY t.verse_id",
     )?;
@@ -662,7 +674,7 @@ pub fn material_passages(
         if let Some(start) = reference.start.verse {
             let bridged: Option<i64> = conn
                 .query_row(
-                    "SELECT t.verse_id FROM bible_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
+                    "SELECT t.verse_id FROM scripture_verse_texts t JOIN bible_verses v ON v.id = t.verse_id
                      WHERE t.translation_id = ?1 AND v.book_id = ?2 AND v.chapter = ?3
                        AND v.verse < ?4 AND t.bridge_end >= ?4
                      ORDER BY v.verse DESC LIMIT 1",
@@ -697,7 +709,7 @@ pub fn material_passages(
             if from_start {
                 v.title = conn
                     .query_row(
-                        "SELECT text FROM bible_superscriptions
+                        "SELECT text FROM scripture_superscriptions
                          WHERE translation_id = ?1 AND book_id = ?2 AND chapter = ?3",
                         params![translation_id, ordinal, v.chapter],
                         |r| r.get(0),

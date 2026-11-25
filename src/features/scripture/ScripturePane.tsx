@@ -12,13 +12,15 @@ import { useScripture } from "./ScriptureContext";
 import { SearchResultsView } from "./SearchResultsView";
 import { DocumentBibleReader } from "./DocumentBibleReader";
 import { FindVerses } from "./FindVerses";
-import type { BibleTranslation } from "@/types/scripture";
+import type { DocumentTarget } from "./DocumentPassages";
+import type { BibleTranslation, VerseOrigin } from "@/types/scripture";
 
 /** The Scripture pane: a local passage reader over installed translations. */
 export function ScripturePane({ onAddBible }: { onAddBible: () => void }) {
   const { openSource } = useLibraryNav();
   const { t } = useTranslation();
   const { translations, translation, setTranslation, search, goTo, navigationId, concordanceRequest, documentBibles, documentBible } = useScripture();
+  const [original, setOriginal] = useState<{ bible: BibleTranslation; target: DocumentTarget; evidence?: VerseOrigin } | null>(null);
   const [findingVerses, setFindingVerses] = useState<BibleTranslation | null>(null);
   // Bible is the default; Marks is a second view of the same pane. The Bible
   // stays mounted underneath, so coming back finds the reading place, the open
@@ -56,7 +58,7 @@ export function ScripturePane({ onAddBible }: { onAddBible: () => void }) {
             <span className="sr-only">{t("scripture.translation")}</span>
             <select
               value={documentBible?.id ?? translation?.id}
-              onChange={(e) => setTranslation(e.target.value)}
+              onChange={(e) => { setOriginal(null); setTranslation(e.target.value); }}
               className="h-9 max-w-40 aw-input px-2 text-[0.9375rem]"
             >
               {translations.map((bible) => (
@@ -74,7 +76,15 @@ export function ScripturePane({ onAddBible }: { onAddBible: () => void }) {
         )}
       </PaneHeader>
       {findingVerses && <FindVerses bible={findingVerses} onClose={() => setFindingVerses(null)} />}
-      {documentBible ? (
+      {original && original.bible.id === translation?.id ? (
+        <DocumentBibleReader
+          key={original.target.documentId}
+          bible={original.bible}
+          initialTarget={original.target}
+          evidence={original.evidence}
+          onBack={() => setOriginal(null)}
+        />
+      ) : documentBible ? (
         <DocumentBibleReader key={documentBible.id} bible={documentBible} onFindVerses={() => setFindingVerses(documentBible)} />
       ) : (
       <div ref={scroller} data-scroll-root className="min-h-0 flex-1 overflow-y-auto">
@@ -115,7 +125,7 @@ export function ScripturePane({ onAddBible }: { onAddBible: () => void }) {
                 <ScriptureHistoryBar />
                 <PassageNav />
                 <div className="border-t border-border-subtle pt-5">
-                  <ChapterReader translation={translation} />
+                  <ChapterReader translation={translation} onOriginal={(target, evidence) => setOriginal({ bible: translation, target, evidence })} />
                 </div>
               </div>
               {/* Kept while elsewhere, so the occurrences found are still there on coming back. */}

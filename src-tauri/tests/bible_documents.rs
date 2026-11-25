@@ -974,6 +974,270 @@ fn epub_with_book_and_chapter_headings() {
 }
 
 #[test]
+fn structural_epub_corrections_keep_the_refusal_through_reopen_and_search() {
+    let mut bodies = Vec::new();
+    let names = ["c1.xhtml", "c2.xhtml", "c3.xhtml", "c4.xhtml"];
+    for (chapter, count) in [(1u16, 22u16), (2, 23), (3, 18), (4, 22)] {
+        let mut body = String::new();
+        if chapter == 1 {
+            body.push_str("<h1>Ruth</h1>");
+        }
+        body.push_str(&format!("<h2>Chapter {chapter}</h2>"));
+        for verse in 1..=count {
+            let text = match (chapter, verse) {
+                (1, 1) => {
+                    r##"Invented crocus<a epub:type="noteref" href="#note-a">[a]</a> grows beside the river."##
+                }
+                (1, 2) => "Invented hellebore grows beside the river.",
+                _ => "These invented words were written for this fixture.",
+            };
+            let id = if chapter == 1 && verse == 2 {
+                " id=\"Ruth1-9\""
+            } else {
+                ""
+            };
+            body.push_str(&format!("<p{id}><sup class=\"v\">{verse}</sup>{text}</p>"));
+        }
+        if chapter == 1 {
+            body.push_str(
+                r##"<aside epub:type="footnote" id="note-a"><p>An invented footnote.</p></aside>"##,
+            );
+        }
+        bodies.push(body);
+    }
+    let chapters: Vec<_> = names
+        .iter()
+        .zip(&bodies)
+        .map(|(name, body)| fixtures::EpubChapter {
+            file: name,
+            xhtml_body: body,
+        })
+        .collect();
+    let bytes = fixtures::epub("<dc:language>en</dc:language>", &chapters, &[0, 1, 2, 3]);
+    let temp = tempfile::tempdir().unwrap();
+    let path = write(temp.path(), "джерело-성경.epub", &bytes);
+    let restage = || import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    let mut staged = restage();
+    let initial = staged.documents.as_ref().unwrap();
+    let heading = initial
+        .books
+        .iter()
+        .find(|book| book.book == Some("RUT"))
+        .unwrap();
+    assert_eq!(initial.unverified.get(&(8, 1, 2)), Some(&"boundary"));
+    assert!(initial
+        .recognition
+        .as_ref()
+        .unwrap()
+        .report
+        .gated
+        .contains_key("RUT 1:2"));
+    assert!(initial.verified(None, (8, 1, 1)));
+    staged
+        .correct(&[(heading.index, Some("RUT".into()))])
+        .unwrap();
+    let corrected = staged.documents.as_ref().unwrap();
+    assert!(corrected
+        .recognition
+        .as_ref()
+        .unwrap()
+        .report
+        .gated
+        .contains_key("RUT 1:2"));
+    assert_eq!(corrected.recognition.as_ref().unwrap().generation, 2);
+    let profile =
+        abiding_word_lib::filesystem::DataDirs::ensure(temp.path().join("profile")).unwrap();
+    let sqlite = profile.database_file();
+    let backups = profile.pre_migration_backups();
+    let db = Database::open(&sqlite, &backups).unwrap();
+    let id = db
+        .with_conn(|conn| add(conn, &staged, "GATED", false))
+        .unwrap();
+    let managed = profile.bible_sources(&id);
+    std::fs::create_dir_all(&managed).unwrap();
+    std::fs::copy(&path, managed.join("1.epub")).unwrap();
+    drop(db);
+    let saved = Database::open(&sqlite, &backups).unwrap();
+    saved
+        .with_conn(|conn| {
+            let mut reopened = restage();
+            let stage = reopened.documents.as_ref().unwrap();
+            let heading = stage
+                .books
+                .iter()
+                .find(|book| book.book == Some("RUT"))
+                .unwrap();
+            let correction = import::SavedCorrection {
+                id: String::new(),
+                document_position: heading.place.document,
+                document_sha256: stage.files[0].hash.clone(),
+                heading: heading.heading.clone(),
+                page: heading.place.page,
+                segment: heading.place.segment,
+                detected_book: heading.detected.map(str::to_owned),
+                chosen_book: Some("RUT".into()),
+            };
+            kept_documents::save_corrections(
+                conn,
+                &id,
+                stage,
+                &[correction],
+                &abiding_word_lib::db::now(),
+            )?;
+            let corrections = kept_documents::corrections(conn, &id)?;
+            assert_eq!(corrections.len(), 1);
+            reopened.apply_saved(corrections, false)?;
+            let recognised = reopened.documents.as_ref().unwrap();
+            assert_eq!(recognised.recognition.as_ref().unwrap().generation, 2);
+            assert!(recognised
+                .recognition
+                .as_ref()
+                .unwrap()
+                .report
+                .gated
+                .contains_key("RUT 1:2"));
+            assert!(!recognised.verified(None, (8, 1, 2)));
+
+            assert_eq!(bibles::get(conn, &id)?.edition_confirmed, Some(false));
+            let text = bibles::chapter(conn, &id, "RUT", 1)?;
+            assert_eq!(
+                text.verses[0].text,
+                "Invented crocus grows beside the river."
+            );
+            assert!(!text.verses.iter().any(|v| v.verse == 2));
+            assert_eq!(text.unchecked[0].verse, 2);
+            let origin = kept_documents::origin(conn, &id, 8_001_001)?.unwrap();
+            assert!(origin.entry_path.as_deref().unwrap().ends_with("c1.xhtml"));
+            assert_eq!(origin.exclusions.as_ref().unwrap()[0]["text"], "[a]");
+            assert!(origin.provenance.unwrap()["spans"]
+                .as_array()
+                .is_some_and(|spans| !spans.is_empty()));
+            for (query, expected) in [("crocus", 1), ("hellebore", 0)] {
+                let result = bibles::search(
+                    conn,
+                    &abiding_word_lib::scripture::SearchScripture {
+                        query: query.into(),
+                        translation_id: Some(id.clone()),
+                        book: Some("RUT".into()),
+                    },
+                )?;
+                assert_eq!(result.hits.len(), expected);
+            }
+            let refs = abiding_word_lib::scripture::reference::ScriptureRef::from_canonical(
+                "RUT.1.1-RUT.1.2",
+            )
+            .unwrap();
+            let material = bibles::material_passages(conn, &id, &[refs])?;
+            assert_eq!(material.passages[0].verses.len(), 1);
+            assert_eq!(material.passages[0].missing, ["1:2"]);
+            Ok(())
+        })
+        .unwrap();
+    let project_path = temp.path().join("recognition.awproject");
+    let study_id = saved
+        .with_conn(|conn| {
+            use abiding_word_lib::db::{projects, studies, workspaces};
+            use abiding_word_lib::domain::{CreateProject, CreateStudy, StudyDetails, UpdateStudy};
+            let project = projects::create(
+                conn,
+                &CreateProject {
+                    workspace_id: workspaces::get_default(conn)?.id,
+                    title: "Invented document study".into(),
+                    description: None,
+                },
+            )?;
+            let study = studies::create(
+                conn,
+                &CreateStudy {
+                    project_id: project.id.clone(),
+                    title: "Ruth’s source words".into(),
+                    primary_passage: Some("RUT.1.1".into()),
+                    ..Default::default()
+                },
+            )?;
+            studies::update(
+                conn,
+                &UpdateStudy {
+                    id: study.study.id.clone(),
+                    details: Some(StudyDetails {
+                        translation_id: Some(id.clone()),
+                        ..Default::default()
+                    }),
+                    ..Default::default()
+                },
+            )?;
+            let exported = abiding_word_lib::portability::project::export(
+                conn,
+                &project.id,
+                &profile.teaching_images(),
+                &project_path,
+            )?;
+            let dependency = exported.external.bibles[0].recognition.as_ref().unwrap();
+            assert!(!dependency.confirmed_by_person);
+            assert_eq!(dependency.evidence_sha256.len(), 64);
+            Ok(study.study.id)
+        })
+        .unwrap();
+    let package = temp.path().join("recognition.awbackup");
+    abiding_word_lib::portability::backup::create(&saved, &profile, &package).unwrap();
+    let fresh =
+        abiding_word_lib::filesystem::DataDirs::ensure(temp.path().join("restored")).unwrap();
+    let restored = Database::open(&fresh.database_file(), &fresh.pre_migration_backups()).unwrap();
+    abiding_word_lib::portability::backup::restore(&restored, &fresh, &package).unwrap();
+    restored
+        .with_conn(|conn| {
+            assert_eq!(bibles::get(conn, &id)?.edition_confirmed, Some(false));
+            assert_eq!(bibles::chapter(conn, &id, "RUT", 1)?.unchecked[0].verse, 2);
+            assert!(kept_documents::origin(conn, &id, 8_001_001)?
+                .unwrap()
+                .entry_sha256
+                .is_some());
+            Ok(())
+        })
+        .unwrap();
+    restored
+        .with_conn(|conn| {
+            use abiding_word_lib::db::{studies, study_passages};
+            use abiding_word_lib::portability::project;
+            let cited = study_passages::primary(conn, &study_id)?.unwrap();
+            assert_eq!(cited.reference.canonical, "RUT.1.1");
+            let imported = project::import(
+                conn,
+                &project_path,
+                &fresh.teaching_images(),
+                &fresh.cache(),
+            )?;
+            assert!(imported.missing.bibles.is_empty());
+            let imported_study: String = conn.query_row(
+                "SELECT id FROM studies WHERE project_id = ?1",
+                [&imported.project_id],
+                |row| row.get(0),
+            )?;
+            assert_eq!(
+                studies::get(conn, &imported_study)?
+                    .details
+                    .translation_id
+                    .as_deref(),
+                Some(id.as_str())
+            );
+            assert_eq!(
+                study_passages::primary(conn, &imported_study)?
+                    .unwrap()
+                    .reference
+                    .canonical,
+                "RUT.1.1"
+            );
+            Ok(())
+        })
+        .unwrap();
+    assert_eq!(
+        std::fs::read(fresh.bible_sources(&id).join("1.epub")).unwrap(),
+        bytes
+    );
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+}
+
+#[test]
 fn docx_with_headings_numbered_verses_and_footnotes() {
     let heading = |level: u8, text: &str| {
         format!(
@@ -1011,6 +1275,32 @@ fn docx_with_headings_numbered_verses_and_footnotes() {
     let r = recognise(&file);
     assert_whole_ruth(&r);
     assert!(!verse(&r, "RUT", 4, 22).unwrap().contains("footnote"));
+
+    let temp = tempfile::tempdir().unwrap();
+    let path = write(temp.path(), "룻기-документ.docx", &bytes);
+    let staged = import::stage(std::slice::from_ref(&path), ImportOrigin::UserFiles).unwrap();
+    let db_path = temp.path().join("docx.sqlite");
+    let backups = temp.path().join("backups");
+    let id = {
+        let db = Database::open(&db_path, &backups).unwrap();
+        db.with_conn(|conn| add(conn, &staged, "DOCX", false))
+            .unwrap()
+    };
+    let db = Database::open(&db_path, &backups).unwrap();
+    db.with_conn(|conn| {
+        let chapter = bibles::chapter(conn, &id, "RUT", 1)?;
+        assert_eq!(chapter.verses[1].text, words("Ruth", 1, 2));
+        let evidence = kept_documents::origin(conn, &id, 8_001_002)?.unwrap();
+        assert_eq!(
+            evidence.source_sha256.as_deref(),
+            Some(staged.documents.as_ref().unwrap().files[0].hash.as_str())
+        );
+        assert!(evidence.first_segment.is_some());
+        assert!(evidence.entry_path.is_none());
+        Ok(())
+    })
+    .unwrap();
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
 }
 
 // --- adding a Bible from documents: the import, the database, removal -----------------
@@ -1042,6 +1332,7 @@ fn details(staged: &StagedImport, short: &str, as_document: bool) -> CommitImpor
         license_type: None,
         words: Default::default(),
         as_document,
+        confirm_edition: false,
     }
 }
 
@@ -1129,12 +1420,53 @@ fn documents_and_bible_format_files_together_are_refused() {
     assert!(format!("{error:?}").contains("documentMixed"));
 }
 
+fn stage_pdf(paths: &[PathBuf]) -> abiding_word_lib::error::AppResult<StagedImport> {
+    use abiding_word_lib::scripture::pdf_worker;
+    import::stage_document_recognition_read(
+        paths,
+        ImportOrigin::UserFiles,
+        &|_, _| {},
+        &|| false,
+        &|path, position| {
+            pdf_worker::read_with_executable(
+                Path::new(env!("CARGO_BIN_EXE_abiding-word")),
+                path,
+                position,
+                &|| false,
+            )
+        },
+    )
+}
+
+#[test]
+#[cfg(any(target_os = "linux", windows))]
+fn bible_pdf_worker_cancels_without_changing_the_original() {
+    use std::cell::Cell;
+    let temp = tempfile::tempdir().unwrap();
+    let bytes = ruth_pdf();
+    let path = write(temp.path(), "룻기.pdf", &bytes);
+    let polls = Cell::new(0);
+    let cancelled = || {
+        polls.set(polls.get() + 1);
+        polls.get() > 1
+    };
+    let error = abiding_word_lib::scripture::pdf_worker::read_with_executable(
+        Path::new(env!("CARGO_BIN_EXE_abiding-word")),
+        &path,
+        0,
+        &cancelled,
+    )
+    .unwrap_err();
+    assert!(format!("{error:?}").contains("bibleImport.cancelled"));
+    assert_eq!(std::fs::read(path).unwrap(), bytes);
+}
+
 #[test]
 fn added_by_verse_it_reads_as_any_bible_and_remembers_where_each_verse_was() {
     let db = Database::open_in_memory().unwrap();
     let temp = tempfile::tempdir().unwrap();
     let path = write(temp.path(), "ruth.pdf", &ruth_pdf());
-    let staged = import::stage(&[path], ImportOrigin::UserFiles).unwrap();
+    let staged = stage_pdf(&[path]).unwrap();
     db.with_conn(|conn| {
         let id = add(conn, &staged, "RUTHPDF", false).unwrap();
         let translation = bibles::get(conn, &id).unwrap();
@@ -1203,11 +1535,13 @@ fn added_as_a_document_it_has_no_verses_and_can_be_given_them_later() {
             .unwrap()
             .is_empty());
         // Later: read again for verses, without adding it again.
-        let again = import::stage_documents(
+        let again = import::stage_document_recognition(
             std::slice::from_ref(&path),
             ImportOrigin::Existing {
                 translation_id: id.clone(),
             },
+            &|_, _| {},
+            &|| false,
         )
         .unwrap();
         let translation = kept_documents::add_verses(
@@ -1274,7 +1608,7 @@ fn a_cancelled_import_writes_nothing() {
     let before = db
         .with_conn(|conn| Ok(count(conn, "SELECT COUNT(*) FROM bible_translations")))
         .unwrap();
-    let staged = import::stage(&[path], ImportOrigin::UserFiles).unwrap();
+    let staged = stage_pdf(&[path]).unwrap();
     drop(staged);
     db.with_conn(|conn| {
         assert_eq!(
@@ -1300,7 +1634,7 @@ fn a_scanned_pdf_can_be_added_to_read_page_by_page() {
         "scan.pdf",
         &fixtures::pdf(&[&[], &[], &[], &[]], Some("Scan"), None),
     );
-    let staged = import::stage(&[path], ImportOrigin::UserFiles).unwrap();
+    let staged = stage_pdf(&[path]).unwrap();
     let preview = staged.preview(Default::default());
     let document = preview.document.unwrap();
     assert!(document.files[0].scanned);
@@ -1386,6 +1720,70 @@ fn a_dev42_database_upgrades_and_keeps_everything() {
         Ok(())
     })
     .unwrap();
+}
+
+#[test]
+fn schema_27_document_bible_remains_available_at_its_source_after_upgrade() {
+    let tmp = tempfile::tempdir().unwrap();
+    let sqlite = tmp.path().join("v27.sqlite");
+    let backups = tmp.path().join("safety");
+    {
+        let mut conn = Connection::open(&sqlite).unwrap();
+        migrations::run_with(&mut conn, &MIGRATIONS[..27]).unwrap();
+        conn.execute_batch(
+            "INSERT INTO bible_translations
+                (id, name, short_name, language, kind, source_type, source_origin,
+                 import_status, book_count, verse_count, created_at, updated_at)
+             VALUES ('legacy', 'Invented old document', 'LEG', 'English',
+                     'structured', 'epub', 'managed_copy', 'ready', 1, 1, 'T', 'T');
+             INSERT INTO bible_verses (id, book_id, chapter, verse) VALUES (8001001, 8, 1, 1);
+             INSERT INTO bible_verse_texts (translation_id, verse_id, text)
+                 VALUES ('legacy', 8001001, 'Previously stored source words.');
+             INSERT INTO bible_documents
+                (id, translation_id, position, format, file_name, original_file_name,
+                 sha256, size_bytes, extraction_status, created_at)
+             VALUES ('original', 'legacy', 0, 'epub', '1.epub', 'invented.epub',
+                     'old-hash', 100, 'digital_text', 'T');",
+        )
+        .unwrap();
+    }
+    let db = Database::open(&sqlite, &backups).unwrap();
+    db.with_conn(|conn| {
+        let bible = bibles::get(conn, "legacy")?;
+        assert_eq!(bible.kind, "document");
+        assert_eq!(bible.edition_confirmed, Some(false));
+        assert_eq!(kept_documents::list(conn, "legacy")?[0].id, "original");
+        assert!(bibles::chapter(conn, "legacy", "RUT", 1)?.verses.is_empty());
+        assert_eq!(
+            count(
+                conn,
+                "SELECT COUNT(*) FROM bible_verse_texts WHERE translation_id='legacy'"
+            ),
+            1
+        );
+        assert_eq!(
+            count(conn, "SELECT COUNT(*) FROM bible_recognition_editions"),
+            0
+        );
+        Ok(())
+    })
+    .unwrap();
+    let copy = std::fs::read_dir(&backups)
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    let old =
+        Connection::open_with_flags(copy, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY).unwrap();
+    assert_eq!(migrations::current_version(&old).unwrap(), 27);
+    assert_eq!(
+        count(
+            &old,
+            "SELECT COUNT(*) FROM bible_verse_texts WHERE translation_id='legacy'"
+        ),
+        1
+    );
 }
 
 // --- Independent review (v0.23): words wrapped onto their own line, weak
@@ -1592,7 +1990,7 @@ fn a_place_marked_by_hand_is_found_by_passage_and_changes_nothing_else() {
         // A scanned PDF Bible: no text, only pages.
         let bytes = fixtures::pdf(&[&[], &[], &[]], Some("Scanned"), None);
         let path = write(temp.path(), "scanned.pdf", &bytes);
-        let staged = import::stage(&[path], ImportOrigin::UserFiles).unwrap();
+        let staged = stage_pdf(&[path]).unwrap();
         let id = add(conn, &staged, "SCAN", true)?;
         let other = as_document(
             conn,

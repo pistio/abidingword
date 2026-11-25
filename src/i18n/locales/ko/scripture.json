@@ -17,6 +17,10 @@
     "nextChapter": "다음 장"
   },
   "reader": {
+    "recognisedFromDocument": "내 문서에서 인식됨",
+    "editionConfirmed": "사용자가 판본을 확인함",
+    "editionProvisional": "판본 미확인",
+    "numberingUnmapped": "이 문서 판본에서는 절을 자동으로 대조할 수 없습니다.",
     "opening": "{{passage}} 여는 중…",
     "showing": "{{passage}} 표시 중",
     "noText": "{{name}}에는 {{passage}} 본문이 없습니다.",
@@ -152,6 +156,12 @@
       }
     },
     "document": {
+      "evidenceSamples": "원문 근거 예시",
+      "sourceSegment": "원문 문단 {{number}}",
+      "byteRanges": "항목의 바이트 범위: {{ranges}}",
+      "sourceExclusions": "원문 제외 항목: {{text}}",
+      "confirmEdition": "위에 표시된 판본을 확인합니다.",
+      "progress": "읽은 문서: {{total}}개 중 {{done}}개",
       "filesTitle": "파일 내용",
       "file": {
         "pdfText_other": "PDF, {{formatted}}쪽, 텍스트를 읽을 수 있음",

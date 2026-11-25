@@ -54,7 +54,7 @@ fn populated_v26_upgrades_additively_with_a_pre_migration_backup_and_immutable_h
         expected[0][0][version_column]=Value::Integer(abiding_word_lib::library::sections::INDEX_VERSION);
         assert_eq!(&after[..3],&expected);
         let actual:Vec<(i64,String,String)>=c.prepare("SELECT version,name,applied_at FROM schema_versions WHERE version<=26 ORDER BY version")?.query_map([],|r|Ok((r.get(0)?,r.get(1)?,r.get(2)?)))?.collect::<Result<_,_>>()?;
-        assert_eq!(actual,history);assert_eq!(migrations::current_version(c)?,27);
+        assert_eq!(actual,history);assert_eq!(migrations::current_version(c)?,28);
         assert_eq!(c.query_row("SELECT count(*) FROM source_pdf_structures",[],|r|r.get::<_,i64>(0))?,0);
         assert_eq!(c.query_row("SELECT origin FROM source_passages WHERE id='link'",[],|r|r.get::<_,String>(0))?,"manual");
         assert!(!c.prepare("PRAGMA foreign_key_check")?.exists([])?);Ok(())

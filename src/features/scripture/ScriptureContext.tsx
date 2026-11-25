@@ -118,7 +118,9 @@ export function ScriptureProvider({ settings, books, translations: initial, chil
   const translations = useMemo(() => allTranslations.filter((t) => t.kind !== "document"), [allTranslations]);
   const documentBibles = useMemo(() => allTranslations.filter((t) => t.kind === "document"), [allTranslations]);
   const [translationId, setTranslationId] = useState<string | null>(settings.scriptureTranslationId);
-  const [documentId, setDocumentId] = useState<string | null>(null);
+  const [documentId, setDocumentId] = useState<string | null>(() =>
+    initial.find((bible) => bible.id === settings.scriptureTranslationId && bible.kind === "document")?.id ?? null,
+  );
   const documentRef = useRef<string | null>(null);
   useEffect(() => {
     documentRef.current = documentId;
@@ -176,15 +178,25 @@ export function ScriptureProvider({ settings, books, translations: initial, chil
   // document opens in the pane without changing which Bible passages are read in.
   const setTranslation = useCallback(
     (id: string) => {
-      if (allRef.current.find((t) => t.id === id)?.kind === "document") {
+      const next = allRef.current.find((t) => t.id === id);
+      if (next?.kind === "document") {
         setDocumentId(id);
         return;
       }
       setDocumentId(null);
       setTranslationId(id);
-      persist({ scriptureTranslationId: id });
+      if (translation?.id !== id && (next?.editionConfirmed != null || translation?.editionConfirmed != null)) {
+        // Printed verse numbers belong to the source edition. A translation switch
+        // can open the chapter without carrying its previous verse selection.
+        setSelection(null);
+        setSelectedVerse(null);
+        setNavigationId((n) => n + 1);
+        persist({ scriptureTranslationId: id, scripturePassage: `${location.book}.${location.chapter}` });
+      } else {
+        persist({ scriptureTranslationId: id });
+      }
     },
-    [persist],
+    [location, persist, translation],
   );
 
   // Shows a passage; how it is recorded in the history is the caller's business.

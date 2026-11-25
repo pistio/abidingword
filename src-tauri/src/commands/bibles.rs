@@ -6,9 +6,13 @@
 //! are never modified, moved or deleted. Bundled Bibles are read from the
 //! app's resources and have no copy.
 
+use std::io::Read;
 use std::path::PathBuf;
 
-use tauri::State;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
+
+use tauri::{Emitter, Manager, State, Window};
 
 use super::CommandResult;
 use crate::db::bibles::{self, SourceRecord};
@@ -61,9 +65,29 @@ fn bundled_resource_name(file: &str) -> String {
 
 /// Reads and checks the chosen files (or a bundled Bible) and returns what
 /// the verification screen shows. Nothing is saved yet.
-#[tauri::command(async)]
-pub fn bible_import_preview(
-    state: State<'_, AppState>,
+#[tauri::command]
+pub async fn bible_import_preview(
+    window: Window,
+    input: ImportRequest,
+) -> CommandResult<ImportPreview> {
+    run_preview(window, move |state, window| {
+        read_import(state, window, input)
+    })
+    .await
+}
+
+pub(super) async fn run_preview(
+    window: Window,
+    read: impl FnOnce(&AppState, &Window) -> CommandResult<ImportPreview> + Send + 'static,
+) -> CommandResult<ImportPreview> {
+    tauri::async_runtime::spawn_blocking(move || read(&window.state::<AppState>(), &window))
+        .await
+        .map_err(|_| AppError::Unexpected("Bible import task stopped".into()))?
+}
+
+fn read_import(
+    state: &AppState,
+    window: &Window,
     input: ImportRequest,
 ) -> CommandResult<ImportPreview> {
     state.core()?;
@@ -94,28 +118,78 @@ pub fn bible_import_preview(
             (paths, ImportOrigin::UserFiles, SuggestedMetadata::default())
         }
     };
-    let mut staged = import::stage(&paths, origin)?;
-    // Documents added before as another Bible (v0.24.3): the corrections the
-    // person made then are applied again, and shown as such.
-    if let Some(stage) = staged.documents.as_ref() {
-        let hashes: Vec<String> = stage.files.iter().map(|f| f.hash.clone()).collect();
-        let core = state.core()?;
-        let saved = core.db.with_conn(|conn| {
-            crate::db::bible_documents::corrections_for_documents(conn, &hashes)
-        })?;
-        staged.apply_saved(saved, true)?;
-    }
-    let suggested = SuggestedMetadata {
-        name: if suggested.name.is_empty() {
-            staged.suggested_name.clone()
-        } else {
-            suggested.name
+    preview_job(
+        state,
+        window,
+        input.job_id,
+        suggested,
+        |progress, cancelled| {
+            let mut staged = import::stage_with_progress(&paths, origin, progress, cancelled)?;
+            // Corrections from another import of the same documents are offered again.
+            if let Some(stage) = staged.documents.as_ref() {
+                let hashes: Vec<String> = stage.files.iter().map(|f| f.hash.clone()).collect();
+                let core = state.core()?;
+                let saved = core.db.with_conn(|conn| {
+                    crate::db::bible_documents::corrections_for_documents(conn, &hashes)
+                })?;
+                staged.apply_saved(saved, true)?;
+            }
+            Ok(staged)
         },
-        ..suggested
-    };
-    let preview = staged.preview(suggested);
-    *state.pending_import()? = Some(staged);
-    Ok(preview)
+    )
+}
+
+pub(super) fn preview_job(
+    state: &AppState,
+    window: &Window,
+    job_id: Option<String>,
+    mut suggested: SuggestedMetadata,
+    read: impl FnOnce(&dyn Fn(usize, usize), &dyn Fn() -> bool) -> CommandResult<import::StagedImport>,
+) -> CommandResult<ImportPreview> {
+    let job_id = job_id.unwrap_or_else(crate::db::new_id);
+    let cancelled = Arc::new(AtomicBool::new(false));
+    {
+        let mut job = state.bible_import_job.lock().map_err(import_job_error)?;
+        if let Some((_, previous)) = job.replace((job_id.clone(), cancelled.clone())) {
+            previous.store(true, Ordering::Relaxed);
+        }
+    }
+    let result = (|| -> CommandResult<ImportPreview> {
+        let mut staged = read(
+            &|done, total| {
+                let _ = window.emit(
+                    "bible-import-progress",
+                    serde_json::json!({
+                        "id": job_id, "done": done, "total": total,
+                    }),
+                );
+            },
+            &|| cancelled.load(Ordering::Relaxed),
+        )?;
+        staged.id.clone_from(&job_id);
+        if suggested.name.is_empty() {
+            suggested.name.clone_from(&staged.suggested_name);
+        }
+        let preview = staged.preview(suggested);
+        let mut pending = state.pending_import()?;
+        if cancelled.load(Ordering::Relaxed) {
+            return Err(crate::scripture::pdf_worker::cancelled().into());
+        }
+        *pending = Some(staged);
+        Ok(preview)
+    })();
+    let mut job = state.bible_import_job.lock().map_err(import_job_error)?;
+    if job
+        .as_ref()
+        .is_some_and(|(_, current)| Arc::ptr_eq(current, &cancelled))
+    {
+        *job = None;
+    }
+    result
+}
+
+fn import_job_error<T>(_: std::sync::PoisonError<T>) -> ErrorPayload {
+    AppError::Unexpected("Bible import job lock poisoned".into()).into()
 }
 
 /// Saves the previewed Bible. On any failure nothing is saved and the
@@ -229,22 +303,17 @@ fn commit_documents(
         for (index, file) in stage.files.iter().enumerate() {
             let name = format!("{}.{}", index + 1, file.extension);
             let target = dir.join(&name);
-            std::fs::copy(&file.path, &target).map_err(|e| AppError::filesystem(&file.path, e))?;
-            // The copy must be the file that was reviewed: one changed since
-            // would no longer match the verses and text found in it.
-            let bytes = std::fs::read(&target).map_err(|e| AppError::filesystem(&target, e))?;
-            if crate::library::files::content_hash(&bytes) != file.hash {
-                return Err(AppError::Import(
-                    UserMessage::new(
-                        "bibleImport.documentChanged",
-                        format!(
-                            "“{}” was changed after it was reviewed. Choose the files again.",
-                            file.file_name
-                        ),
-                    )
-                    .with("fileName", &file.file_name),
-                ));
-            }
+            let source = std::fs::File::open(&file.path)
+                .map_err(|error| AppError::filesystem(&file.path, error))?;
+            let mut destination = std::fs::File::create_new(&target)
+                .map_err(|error| AppError::filesystem(&target, error))?;
+            std::io::copy(&mut source.take(file.size + 1), &mut destination)
+                .map_err(|error| AppError::filesystem(&target, error))?;
+            destination
+                .sync_all()
+                .map_err(|error| AppError::filesystem(&target, error))?;
+            drop(destination);
+            file.verify_source(&target)?;
             kept.push(crate::db::bible_documents::KeptFile {
                 id: crate::db::new_id(),
                 file_name: name,
@@ -339,6 +408,15 @@ pub fn bible_import_correct(
 
 #[tauri::command(async)]
 pub fn bible_import_cancel(state: State<'_, AppState>, preview_id: String) -> CommandResult<()> {
+    if let Some((_, cancelled)) = state
+        .bible_import_job
+        .lock()
+        .map_err(import_job_error)?
+        .as_ref()
+        .filter(|(id, _)| id == &preview_id)
+    {
+        cancelled.store(true, Ordering::Relaxed);
+    }
     let mut pending = state.pending_import()?;
     if pending.as_ref().is_some_and(|s| s.id == preview_id) {
         *pending = None;

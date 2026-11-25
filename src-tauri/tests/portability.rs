@@ -1271,6 +1271,7 @@ fn annotated_bible(conn: &Connection, dir: &Path) -> String {
             license_type: None,
             words: Default::default(),
             as_document: false,
+            confirm_edition: false,
         },
         &SourceRecord {
             origin: "managed_copy",
@@ -1649,7 +1650,7 @@ fn study_teaching_and_private_materials_survive_project_full_and_daily_recovery(
         let independent = teaching::create(c, &CreateTeaching { project_id: Some(made.project.clone()), title: "Independent recovery session".into(), template_version: Some(2), blocks: vec![NewTeachingBlock { block_type: "teaching_notes".into(), body: "PRIVATE INDEPENDENT: Never lose this separate session.".into(), participant_facing: Some(false), ..Default::default() }], ..Default::default() })?;
         let staged = bible_import::stage(std::slice::from_ref(&scripture_file), bible_import::ImportOrigin::UserFiles)?;
         let bible = bibles::new_translation_id();
-        bibles::commit_import(c, &bible, &staged.content, &CommitImport { preview_id: staged.id, name: "Invented recovery Scripture fixture".into(), short_name: "FX".into(), language: "English".into(), language_code: Some("en".into()), publisher: None, copyright_notice: Some("Invented test text, not a Bible translation".into()), license_type: None, words: Default::default(), as_document: false }, &bibles::SourceRecord { origin: "managed_copy", path: Some("sources/invented.usfm".into()), original_file_name: Some("invented.usfm".into()), format: "usfm", is_builtin: false })?;
+        bibles::commit_import(c, &bible, &staged.content, &CommitImport { preview_id: staged.id, name: "Invented recovery Scripture fixture".into(), short_name: "FX".into(), language: "English".into(), language_code: Some("en".into()), publisher: None, copyright_notice: Some("Invented test text, not a Bible translation".into()), license_type: None, words: Default::default(), as_document: false, confirm_edition: false }, &bibles::SourceRecord { origin: "managed_copy", path: Some("sources/invented.usfm".into()), original_file_name: Some("invented.usfm".into()), format: "usfm", is_builtin: false })?;
         let scripture = bibles::material_passages(c, &bible, &[ScriptureRef::from_canonical("JHN.15.1").unwrap(), ScriptureRef::from_canonical("JHN.15.2").unwrap()])?;
         let place: reader_positions::ReaderPosition = serde_json::from_value(serde_json::json!({"mode":"original","page":12,"history":{"entries":[{"page":11,"fraction":0.5,"position":null,"offset":20.0,"item":null,"fragment":null,"itemOffset":0.0},{"page":12,"fraction":0.7,"position":null,"offset":40.0,"item":null,"fragment":null,"itemOffset":0.0}],"index":1}})).unwrap();
         reader_positions::save(c, "lib-1", &place)?;
@@ -1676,7 +1677,7 @@ fn study_teaching_and_private_materials_survive_project_full_and_daily_recovery(
         assert_eq!(teaching::get(c, &independent)?, expected.3);
         assert_eq!(reader_positions::list(c)?, expected.4);
         assert!(!c.prepare("PRAGMA foreign_key_check")?.exists([])?);
-        assert_eq!(migrations::current_version(c)?, 27);
+        assert_eq!(migrations::current_version(c)?, 28);
         Ok(())
     };
     let files: Vec<_> = [
@@ -1943,7 +1944,7 @@ fn a_backup_with_an_added_destructive_trigger_is_refused_before_replacement() {
 }
 
 #[test]
-fn a_genuine_historical_backup_still_upgrades_to_schema_27() {
+fn a_genuine_historical_backup_still_upgrades_to_current_schema() {
     let out = tempfile::tempdir().unwrap();
     let old_path = out.path().join("schema14.db");
     let mut historical = Connection::open(&old_path).unwrap();
@@ -1968,7 +1969,7 @@ fn a_genuine_historical_backup_still_upgrades_to_schema_27() {
     backup::restore(&live.db, &live.dirs, &package).unwrap();
     live.db
         .with_conn(|c| {
-            assert_eq!(migrations::current_version(c)?, 27);
+            assert_eq!(migrations::current_version(c)?, 28);
             assert_eq!(
                 c.query_row(
                     "SELECT title FROM projects WHERE id='old-project'",
@@ -1989,7 +1990,7 @@ fn a_genuine_historical_backup_still_upgrades_to_schema_27() {
     .unwrap();
     reopened
         .with_conn(|c| {
-            assert_eq!(migrations::current_version(c)?, 27);
+            assert_eq!(migrations::current_version(c)?, 28);
             Ok(())
         })
         .unwrap();

@@ -114,7 +114,7 @@ try {
   report.stage='app-info';
   const info=await page.evaluate(()=>window.__TAURI_INTERNALS__.invoke('app_info'));
   assert.equal(resolve(info.dataDirectory).toLowerCase(), profile.toLowerCase(), 'App is not using the disposable profile; stop before seeding.');
-  assert.equal(info.updatesEnabled,false,'Require a plain build without updater.');assert.equal(info.schemaVersion,27);
+  assert.equal(info.updatesEnabled,false,'Require a plain build without updater.');assert.equal(info.schemaVersion,28);
   report.stage='seed-disposable-profile';
   const seeded=await page.evaluate(async({bibleFile,sourceFile,mark,sourceTitle,scenario})=>{
     const invoke=window.__TAURI_INTERNALS__.invoke;

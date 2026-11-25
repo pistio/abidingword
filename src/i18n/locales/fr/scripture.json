@@ -17,6 +17,10 @@
     "nextChapter": "Chapitre suivant"
   },
   "reader": {
+    "recognisedFromDocument": "Reconnu dans votre document",
+    "editionConfirmed": "Édition confirmée par vous",
+    "editionProvisional": "Édition non confirmée",
+    "numberingUnmapped": "L’alignement automatique des versets est indisponible pour cette édition.",
     "opening": "Ouverture de {{passage}}…",
     "showing": "affichage de {{passage}}",
     "noText": "{{name}} ne contient pas de texte pour {{passage}}.",
@@ -182,6 +186,12 @@
       }
     },
     "document": {
+      "evidenceSamples": "Exemples de preuves dans la source",
+      "sourceSegment": "Paragraphe source {{number}}",
+      "byteRanges": "Plages d’octets de l’entrée : {{ranges}}",
+      "sourceExclusions": "Éléments exclus de la source : {{text}}",
+      "confirmEdition": "Je confirme l’édition indiquée ci-dessus.",
+      "progress": "Documents lus : {{done}} sur {{total}}",
       "filesTitle": "Ce que contiennent les fichiers",
       "file": {
         "pdfText_one": "PDF, {{formatted}} page, son texte est lisible",

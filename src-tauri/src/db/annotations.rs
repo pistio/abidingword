@@ -126,7 +126,7 @@ fn verse_texts(
     to_key: i64,
 ) -> AppResult<Vec<(i64, String)>> {
     let mut stmt = conn.prepare_cached(
-        "SELECT verse_id, text FROM bible_verse_texts
+        "SELECT verse_id, text FROM scripture_verse_texts
          WHERE translation_id = ?1 AND verse_id BETWEEN ?2 AND ?3
          ORDER BY verse_id",
     )?;

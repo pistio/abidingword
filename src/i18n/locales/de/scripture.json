@@ -17,6 +17,10 @@
     "nextChapter": "Nächstes Kapitel"
   },
   "reader": {
+    "recognisedFromDocument": "In Ihrem Dokument erkannt",
+    "editionConfirmed": "Ausgabe von Ihnen bestätigt",
+    "editionProvisional": "Ausgabe nicht bestätigt",
+    "numberingUnmapped": "Für diese Dokumentausgabe ist keine automatische Zuordnung paralleler Verse verfügbar.",
     "opening": "{{passage}} wird geöffnet…",
     "showing": "zeigt {{passage}}",
     "noText": "{{name}} enthält keinen Text für {{passage}}.",
@@ -167,6 +171,12 @@
       }
     },
     "document": {
+      "evidenceSamples": "Beispiele für Quellenbelege",
+      "sourceSegment": "Quellabsatz {{number}}",
+      "byteRanges": "Bytebereiche im Eintrag: {{ranges}}",
+      "sourceExclusions": "Ausgelassene Quellenelemente: {{text}}",
+      "confirmEdition": "Ich bestätige die oben angegebene Ausgabe.",
+      "progress": "Gelesene Dokumente: {{done}} von {{total}}",
       "filesTitle": "Was die Dateien enthalten",
       "file": {
         "pdfText_one": "PDF, {{formatted}} Seite, ihr Text ist lesbar",

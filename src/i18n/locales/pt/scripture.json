@@ -17,6 +17,10 @@
     "nextChapter": "Próximo capítulo"
   },
   "reader": {
+    "recognisedFromDocument": "Reconhecido no seu documento",
+    "editionConfirmed": "Edição confirmada por si",
+    "editionProvisional": "Edição por confirmar",
+    "numberingUnmapped": "O alinhamento automático de versículos não está disponível para esta edição.",
     "opening": "Abrindo {{passage}}…",
     "showing": "mostrando {{passage}}",
     "noText": "{{name}} não tem texto para {{passage}}.",
@@ -182,6 +186,12 @@
       }
     },
     "document": {
+      "evidenceSamples": "Amostras de evidência da fonte",
+      "sourceSegment": "Parágrafo de origem {{number}}",
+      "byteRanges": "Intervalos de bytes da entrada: {{ranges}}",
+      "sourceExclusions": "Elementos excluídos da fonte: {{text}}",
+      "confirmEdition": "Confirmo a edição indicada acima.",
+      "progress": "Documentos lidos: {{done}} de {{total}}",
       "filesTitle": "O que os arquivos contêm",
       "file": {
         "pdfText_one": "PDF, {{formatted}} página, o texto pode ser lido",
