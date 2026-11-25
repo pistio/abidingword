@@ -1,0 +1,60 @@
+{
+ "rv-engbsb": {
+  "printed_scorable": 31086,
+  "verified": 30977,
+  "verified_exact": 30977,
+  "verified_canonical": 0,
+  "verified_layout": 0,
+  "verified_mismatch": 0,
+  "held": 72,
+  "refused": 36,
+  "not_found": 1,
+  "scorer_integrity_issues": [],
+  "scorer_mismatches": 0,
+  "mismatches": [],
+  "reference_verses_third_reading_same": 31086,
+  "reference_verses_third_reading_differ": 0,
+  "importer_comparison": {
+   "agree": 30930,
+   "only_importer": 0,
+   "only_inventory": 0,
+   "text_differs": 156,
+   "error": null
+  },
+  "unicode_version": "17.0.0",
+  "reference_problems": []
+ },
+ "rv-grcsbl": {
+  "printed_scorable": 7939,
+  "verified": 7671,
+  "verified_exact": 7670,
+  "verified_canonical": 0,
+  "verified_layout": 0,
+  "verified_mismatch": 1,
+  "held": 7,
+  "refused": 108,
+  "not_found": 153,
+  "scorer_integrity_issues": [],
+  "scorer_mismatches": 1,
+  "mismatches": [
+   {
+    "reference": "ACT 28:28",
+    "kind": "extra",
+    "cause": "document reading (recogniser)",
+    "edition": "γνωστὸν οὖν ⸂ἔστω ὑμῖν ὅτι τοῖς ἔθνεσιν ἀπεστάλη ⸀τοῦτο τὸ σωτήριον τοῦ θεοῦ· αὐτοὶ καὶ ⸀ἀκούσονται",
+    "found": "γνωστὸν οὖν ⸂ἔστω ὑμῖν ὅτι τοῖς ἔθνεσιν ἀπεστάλη ⸀τοῦτο τὸ σωτήριον τοῦ θεοῦ· αὐτοὶ καὶ ⸀ἀκούσονται 30 ⸀Ἐνέμεινεν ⸀δὲ διετίαν ὅλην ἐν ἰδίῳ μισθώματι, καὶ ἀπεδέχετο πάντας τοὺς εἰσπορευομένους πρὸς αὐτόν, 31 κηρύσσων τὴν βασιλείαν τοῦ θεοῦ καὶ διδάσκων τὰ περὶ τοῦ κυρίου Ἰησοῦ Χριστοῦ μετὰ πάσης παρρησίας ἀκωλύτως. ‘/book’"
+   }
+  ],
+  "reference_verses_third_reading_same": 7939,
+  "reference_verses_third_reading_differ": 0,
+  "importer_comparison": {
+   "agree": 7583,
+   "only_importer": 0,
+   "only_inventory": 0,
+   "text_differs": 356,
+   "error": null
+  },
+  "unicode_version": "17.0.0",
+  "reference_problems": []
+ }
+}

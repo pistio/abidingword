@@ -1,0 +1,60 @@
+# Identity checks (independent review of A1.5-E3), 2026-11-25T19:34:08Z
+## commits
+9640aea303c625c137c5cdbe1f4b8cc9738951fe
+816e643fc3122f69d41710781575abe480922a09
+08c6faac8c92c6c791ec1e7bbbe997362fa1059f
+7772d0b06bcf766d7f3f5154fe76566396a6d444
+HEAD 9640aea303c625c137c5cdbe1f4b8cc9738951fe
+tree 816e643 2b982f0c25378628196559e60404d92c19d4fe18
+## parent chain
+9640aea303c625c137c5cdbe1f4b8cc9738951fe 816e643fc3122f69d41710781575abe480922a09 docs: evaluation candidate A1.5-E3 record (identities, evidence, checks, checklist)
+816e643fc3122f69d41710781575abe480922a09 7772d0b06bcf766d7f3f5154fe76566396a6d444 evaluation E3: own USFM text readers, evidence-sufficient verdicts, pinned tools
+7772d0b06bcf766d7f3f5154fe76566396a6d444 40d5d5970953b0546ac77e827b6d7d9d8f7c08d8 review: independent A1.5-E2 evaluation review (not ready)
+40d5d5970953b0546ac77e827b6d7d9d8f7c08d8 97502d2c28873c790b2ed0b5cd225d9f178128b5 docs: evaluation candidate A1.5-E2 record (identities, rules, evidence, checklist)
+## recogniser: git diff --stat 08c6faa 816e643 -- src-tauri/src src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/build.rs (empty = unchanged)
+(end)
+## recogniser at HEAD too: git diff --stat 08c6faa HEAD -- src-tauri/src src-tauri/Cargo.toml src-tauri/Cargo.lock src-tauri/build.rs
+(end)
+src-tauri/src tree in 08c6faa: 8cb224c1e059edc3a7750f4c1ea1649603c0de95
+src-tauri/src tree in 816e643: 8cb224c1e059edc3a7750f4c1ea1649603c0de95
+src-tauri/src tree in 9640aea: 8cb224c1e059edc3a7750f4c1ea1649603c0de95
+## what 9640aea adds beyond 816e643
+ .../evaluation-e3/EVALUATION-CANDIDATE.md          | 365 +++++++++++++++++++++
+ .../evaluation-e3/evaluation-e3.sha256             |  59 ++++
+ .../evaluation-e3/evidence/SHA256SUMS              |  12 +
+ .../evidence/checks/checks-summary.md              |  31 ++
+ .../evaluation-e3/recogniser-source.sha256         | 166 ++++++++++
+ 5 files changed, 633 insertions(+)
+## recogniser-source.sha256
+OK 166 lines
+## evaluation-e3.sha256
+OK 59 lines
+## evidence/SHA256SUMS
+OK 12 lines
+## E2 review evidence SHA256SUMS
+OK 56 lines
+## protocol-e3.json
+43f0468941af9ac04149318ea885f1a49c1f298d97a951132b12ea1e31a41937  docs/evaluation/protocol-e3.json
+## approved_tools vs files
+MATCH scripts/evaluation/score-set.py 16a84231be46ee425ec10dc7114bdd7f80abc816633d58e568ba389dfc8bf9e1
+MATCH scripts/evaluation/check-set.py 8059b0910d5c2e6036b2975dedbbdd07ab448efc538684e6430365eca110814a
+MATCH scripts/evaluation/seal-set.py 7e49b1b1abcf308c7411b86c38a7277da3d9eb31d44d9d1268f35b135b3839da
+MATCH scripts/evaluation/run-withheld-set.sh 0930fd5cecd551609fdc67f81872289996333f68a0bfc5959d89f6eed9c5dd33
+MATCH scripts/evaluation/fidelity.py 421a8dd29ba96f72f3d5fa6b939045011e4def86fdc7541c0aae51fabde4fa33
+MATCH scripts/evaluation/reference_inventory.py 40221f22d83b82cae3daddeadedd7b4dff5bbd4a01103ab0333251523f90a5c8
+MATCH scripts/evaluation/usfm_text.py 6f733a37cb3a719462e6f9f3ba387ac8c55a30889a9cbfdf7d625fdc993d73fe
+MATCH docs/evaluation/usfm-books.tsv 4925aa88f5ce46cb4de1d0ad18d27a1256bde3c63cb959b265a64a1269819248
+MATCH src-tauri/tests/real_document_editions.rs 15939f5de631926768b6c6ddf74c1a63ea6dd49d4eb0897aaa6e240d7b7ccc54
+MATCH src-tauri/tests/eval_support/fidelity.rs 92b1a0a8df61aaeb25e7b6f03cbd1a74137d95510a9412752e45e5d11c45c90a
+MATCH src-tauri/tests/eval_support/reference.rs 25da0cfdf802c98a1328b0606b848d88a2b5f644bafd5c4e2ae20583e3dc95fa
+MATCH src-tauri/tests/eval_support/usfm_text.rs f468a4b50823739ea22abb71ba9cc8a48d4a17a53911ac7d778fc7b1b4787929
+gate withheld_execution_permitted = False ; required_composition = None
+evidence_floor = {'minimum_verified_faithful': 1, 'minimum_documents_with_verified_faithful': None, 'minimum_verified_faithful_share_of_printed_scorable': None, 'maximum_scored_documents_refused_whole': None}
+## history files unchanged 7772d0b..HEAD
+(end)
+## existing tests changed by E3 (stat)
+ src-tauri/tests/evaluation_rules.rs         |  50 +++++++++++++
+ src-tauri/tests/real_document_editions.rs   |  50 +++++++++----
+ tests/evaluation/test_e2_rules.py           |   2 +-
+ tests/evaluation/test_withheld_set_tools.py | 106 +++++++++++++++++++++-------
+ 4 files changed, 168 insertions(+), 40 deletions(-)

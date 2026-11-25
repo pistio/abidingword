@@ -1,0 +1,193 @@
+[
+ {
+  "case": "committed default, 0 faithful",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "minimum verified faithful: 0 against the floor 1"
+  ]
+ },
+ {
+  "case": "committed default, 1 faithful of 31146",
+  "sufficient": true,
+  "reviewer_expects": true,
+  "as_expected": true,
+  "reasons": []
+ },
+ {
+  "case": "no evidence_floor key",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "evidence_floor not an object",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "minimum 0",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "minimum -1",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "minimum as string",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "minimum as float 1.0",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "minimum true",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "minimum missing, others set",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the protocol defines no readable evidence floor (minimum_verified_faithful, a whole number of at least 1): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "unknown measure",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "the evidence floor names measures this scorer does not know (minimum_verified_faithfull): no verdict can be pass"
+  ]
+ },
+ {
+  "case": "documents floor 2, one document",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "minimum documents with verified faithful: 1 against the floor 2"
+  ]
+ },
+ {
+  "case": "documents floor 2, two documents",
+  "sufficient": true,
+  "reviewer_expects": true,
+  "as_expected": true,
+  "reasons": []
+ },
+ {
+  "case": "share 0.5 met",
+  "sufficient": true,
+  "reviewer_expects": true,
+  "as_expected": true,
+  "reasons": []
+ },
+ {
+  "case": "share 0.5 unmet",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "minimum verified faithful share of printed scorable: 0.4 against the floor 0.5"
+  ]
+ },
+ {
+  "case": "share as string",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "minimum verified faithful share of printed scorable: the floor '0.5' is not a number"
+  ]
+ },
+ {
+  "case": "share NaN",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "minimum verified faithful share of printed scorable: 0.5 against the floor nan"
+  ]
+ },
+ {
+  "case": "refused-whole max 0, one refused",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "maximum scored documents refused whole: 1 against the floor 0"
+  ]
+ },
+ {
+  "case": "refused-whole max NaN",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "maximum scored documents refused whole: 0 against the floor nan"
+  ]
+ },
+ {
+  "case": "refused-whole max -inf",
+  "sufficient": false,
+  "reviewer_expects": false,
+  "as_expected": true,
+  "reasons": [
+   "maximum scored documents refused whole: 0 against the floor -inf"
+  ]
+ },
+ {
+  "case": "note key only extra",
+  "sufficient": true,
+  "reviewer_expects": true,
+  "as_expected": true,
+  "reasons": []
+ },
+ {
+  "case": "repeated flag --write",
+  "refused": false,
+  "note": "a repeated flag is accepted (harmless: idempotent)"
+ },
+ {
+  "case": "repeated flag --diagnostic",
+  "refused": false,
+  "note": "a repeated flag is accepted (harmless: idempotent)"
+ }
+]

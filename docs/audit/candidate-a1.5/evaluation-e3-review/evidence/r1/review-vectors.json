@@ -1,0 +1,1330 @@
+[
+ {
+  "name": "note-before-closing-quote",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 his heel.\\f + \\fr 1:1 \\ft Or offspring.\\f*”\n\\v 2 Next.\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "his heel.”"
+    ],
+    [
+     "1",
+     "2",
+     "Next."
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-spaces-both-sides",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 word \\f + \\ft x\\f* next\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "word next"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-inside-word",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 wo\\f + \\ft x\\f*rd\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "word"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-space-before-only",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 word \\f + \\ft x\\f*, next\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "word , next"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "xref-after-open-paren",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 (\\x - \\xo 1:1 \\xt Gen 1:1\\x*c’est dit)\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "(c’est dit)"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "xref-full-parts",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 gerahs\\x - \\xo 1:1: \\xk k \\xq q \\xt Exod 30:13; \\xta also \\xt Lev 27:25\\x*);\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "gerahs);"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "endnote",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 alpha\\fe + \\fr 1:1 \\ft end note\\fe* beta\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "alpha beta"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "extended-notes",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 alpha\\ef - \\fr 1:1 \\ft study\\ef* beta\\ex - \\xo 1:1 \\xt Ruth 1:2\\ex*.\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "alpha beta."
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-parts-fq-fqa-fk-fv-fp",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\fr 1:1 \\fk key: \\fq quote \\fqa alt \\fv 2\\fv* \\fp para \\ft t\\f* b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-nested-plus-spans",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\ft see \\+it this\\+it* and \\+xt Ruth 1:1|link-href=\"RUT 1:1\"\\+xt*\\f* b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-with-bar",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\ft x|y\\f* b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-at-verse-start",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\f + \\ft x\\f*Alpha beta.\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "Alpha beta."
+    ]
+   ]
+  }
+ },
+ {
+  "name": "note-then-combining-mark",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 cafe\\f + \\ft x\\f*́ au lait\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "café au lait"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "two-notes-adjacent",
+  "group": "notes",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a.\\f + \\ft x\\f*\\x - \\xt y\\x*” b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a.” b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "nested-plus-span",
+  "group": "spans",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\add added \\+nd Lord\\+nd*\\add* text\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "added Lord text"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "wj-kept",
+  "group": "spans",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 He said, \\wj “Come.”\\wj*\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "He said, “Come.”"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "span-closed-by-other-marker",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\add text\\nd*\n\\v 2 Two.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2"
+   ],
+   "keep": {
+    "1:2": "Two."
+   }
+  }
+ },
+ {
+  "name": "span-unclosed-until-next-verse",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\add text\n\\v 2 Two.\n\\v 3 Three.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2",
+    "3"
+   ],
+   "keep": {
+    "1:2": "Two.",
+    "1:3": "Three."
+   }
+  }
+ },
+ {
+  "name": "span-nested-without-plus",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\add a \\nd b\\nd*\\add*\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "note-closed-by-other-type",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\ft x\\x* b\n\\v 2 Two.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2"
+   ],
+   "keep": {
+    "1:2": "Two."
+   }
+  }
+ },
+ {
+  "name": "xref-unclosed-before-later-note",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\x - \\xt y b\n\\v 2 c\\f + \\ft z\\f* d\n\\v 3 Three.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2",
+    "3"
+   ],
+   "keep": {
+    "1:3": "Three."
+   }
+  }
+ },
+ {
+  "name": "verse-inside-note",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\ft x \\v 2 Two.\\f*\n\\v 3 Three.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2",
+    "3"
+   ],
+   "keep": {
+    "1:3": "Three."
+   }
+  }
+ },
+ {
+  "name": "note-inside-note",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\ft x\\x - \\xt y\\x*\\f* b\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "wj-across-poetry-line",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\q1\n\\v 1 \\wj Come\n\\q2 and see.\\wj*\n\\v 2 Two.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2"
+   ],
+   "keep": {
+    "1:2": "Two."
+   }
+  }
+ },
+ {
+  "name": "plus-span-unclosed-inside-note",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f + \\ft \\+it x\\f* b\n\\v 2 Two.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2"
+   ],
+   "keep": {
+    "1:2": "Two."
+   }
+  }
+ },
+ {
+  "name": "stray-end-markers",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f* b\\add* c\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "nbsp-kept",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a b c d　e\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b c d　e"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "tilde-is-nbsp",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a~b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "double-slash-nothing",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a//b c // d\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "ab c d"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "tabs-newlines-collapse",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\t\tb\n\n\nc  \n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b c"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "crlf",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\r\n\\p\r\n\\v 1 a\r\nb\r\n\\v 2 c\r\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ],
+    [
+     "1",
+     "2",
+     "c"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "marker-two-spaces",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 the \\nd  Lord\\nd*  said\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "the Lord said"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "verse-number-newline",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1\nalpha\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "alpha"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "end-marker-takes-no-space",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\nd Lord\\nd* said\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "Lord said"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "glued-span",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 word\\nd Lord\\nd*s\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "wordLords"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "invisible-format-kept",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a‍b‌c­d⁠e﻿f\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a‍b‌c­d⁠e﻿f"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "bom-at-start",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n﻿\\c 1\n\\p\n\\v 1 a\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "paragraph-boundary-one-space",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\q1\n\\v 1 line one,\n\\q2 line two.\n\\b\n\\m and more\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "line one, line two. and more"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "table-header-before-first-verse",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\tr \\th1 Tribe \\thr2 Number\n\\tr \\tc1 \\v 1 Judah \\tcr2 74,600\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ],
+   "keep": {
+    "1:1": "Judah 74,600"
+   }
+  }
+ },
+ {
+  "name": "table-cells",
+  "group": "whitespace",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 The tribes:\n\\tr \\th1 Tribe \\thr2 Number\n\\tr \\tc1 Judah \\tcr2 74,600\n\\p\n\\v 2 b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "The tribes: Tribe Number Judah 74,600"
+    ],
+    [
+     "1",
+     "2",
+     "b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "poetry-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\q1\n\\v 1 line one,\\q2\\*line two\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "note-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\f\\*b\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "char-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\nd\\* b\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "chapter-as-milestone-merges-without-duplicates",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\v 2 b\n\\c |n=\"2\"\\*\n\\p\n\\v 3 c\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "quote-milestone",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 He said, \\qt-s |who=\"A\"\\*“Go.”\\qt-e\\*\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "He said, “Go.”"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "ts-standalone",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\ts\\* b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "alignment-milestones",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\zaln-s |x-strong=\"H1\" x-occurrence=\"1\"\\*\\w In|x-occurrence=\"1\"\\w*\\zaln-e\\* \\zaln-s |x-strong=\"H2\"\\*\\w the|x-occurrence=\"1\"\\w*\\zaln-e\\* beginning\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "In the beginning"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "milestone-unterminated",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\qt-s |who=\"A\" b\n\\v 2 Two.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2"
+   ],
+   "keep": {
+    "1:2": "Two."
+   }
+  }
+ },
+ {
+  "name": "milestone-unpaired",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\qt-s\\* b\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "w-attributes",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\w gracious|lemma=\"grace\" strong=\"G5485\"\\w* and \\w kind|kind\\w*\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "gracious and kind"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "ruby",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\rb 神|かみ\\rb*は\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "神は"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "jmp",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 see \\jmp here|link-href=\"#x\"\\jmp*.\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "see here."
+    ]
+   ]
+  }
+ },
+ {
+  "name": "fig-dropped",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\fig A field|src=\"f.jpg\" size=\"col\" ref=\"1:1\"\\fig* b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "fig-usfm2-pipes",
+  "group": "milestones",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\fig A field|f.jpg|col|||A field|1:1\\fig* b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "attributes-interrupted",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\w a|lemma=\"x\\nd y\\nd*\"\\w*\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "bar-outside-span",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a | b\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "bridge",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1-2 a\n\\v 3 b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1-2",
+     "a"
+    ],
+    [
+     "1",
+     "3",
+     "b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "alternate-verse",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 3 \\va 4\\va* text\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "3",
+     "text"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "published-verse",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 5 \\vp 5a\\vp* text\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "5",
+     "text"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "alternate-chapter",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 2\n\\ca 3\\ca*\n\\p\n\\v 1 a\n",
+  "expect": {
+   "ok": [
+    [
+     "2",
+     "1",
+     "a"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "published-chapter",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 2\n\\cp B\n\\p\n\\v 1 a\n",
+  "expect": {
+   "ok": [
+    [
+     "2",
+     "1",
+     "a"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "chapter-label",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\cl Psalm 1\n\\d For the leader.\n\\q1\n\\v 1 Blessed\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "Blessed"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "va-unclosed",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 \\va 2 a\n\\v 2 Two.\n\\c 2\n\\p\n\\v 1 Next chapter.\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1",
+    "2",
+    "1"
+   ],
+   "keep": {
+    "1:2": "Two.",
+    "2:1": "Next chapter."
+   }
+  }
+ },
+ {
+  "name": "rq-dropped",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 as written \\rq Isa 1:1\\rq*\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "as written"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "label-as-written",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 01 a\n\\v 2a b\n\\v 3,4 c\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "01",
+     "a"
+    ],
+    [
+     "1",
+     "2a",
+     "b"
+    ],
+    [
+     "1",
+     "3,4",
+     "c"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "duplicate-verse-kept",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 2 a\n\\v 2 b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "2",
+     "a"
+    ],
+    [
+     "1",
+     "2",
+     "b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "title-numbered-as-verse",
+  "group": "numbering",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 3\n\\d \\v 1 A psalm of David.\n\\q1\n\\v 2 Lord, how many.\n",
+  "expect": {
+   "ok": [
+    [
+     "3",
+     "1",
+     "A psalm of David."
+    ],
+    [
+     "3",
+     "2",
+     "Lord, how many."
+    ]
+   ]
+  }
+ },
+ {
+  "name": "verse-number-missing",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v \\add a\\add*\n\\v 2 b\n",
+  "expect": {
+   "refuse": true,
+   "keep": {
+    "1:2": "b"
+   }
+  }
+ },
+ {
+  "name": "chapter-number-missing",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c\n\\p\n\\v 1 a\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "unknown-marker",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\foo b\\foo* c\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "private-marker",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\zfoo b\\zfoo* c\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "lone-backslash",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\ b\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "text-before-first-verse",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p Some words.\n\\v 1 a\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "two-id-lines",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\id RUT again\n\\c 1\n\\p\n\\v 1 b\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "control-character",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\u0007b\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "verse-close-stray-milestone-end",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 3\\* a\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "sidebar-unclosed",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\esb\n\\p sidebar text\n\\v 2 b\n",
+  "expect": {
+   "refuse": true,
+   "keep": {
+    "1:2": "b"
+   }
+  }
+ },
+ {
+  "name": "sidebar-closed",
+  "group": "structure",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\esb\n\\ms Box\n\\p sidebar text\n\\esbe\n\\p\n\\v 2 b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a"
+    ],
+    [
+     "1",
+     "2",
+     "b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "verse-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\v\\* 2 b\n\\v 3 c\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "plus-v",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a \\+v 2 b\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "v-without-space-number",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v1 a\n\\v 2 b\n",
+  "expect": {
+   "refuse": true,
+   "keep": {
+    "1:2": "b"
+   }
+  }
+ },
+ {
+  "name": "chapter-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\v 2 b\n\\c \\* 2\n\\p\n\\v 1 c\n\\v 2 d\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "paragraph-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\\p\\*b\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "id-as-milestone",
+  "group": "malformed",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\id\\* XYZ\n\\c 1\n\\p\n\\v 1 a\n",
+  "expect": {
+   "refuse": true
+  }
+ },
+ {
+  "name": "german-nfd",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 Größe Freude, über alles.\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "Größe Freude, über alles."
+    ]
+   ]
+  }
+ },
+ {
+  "name": "korean-syllables-and-jamo",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 태초에 한늘\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "태초에 한늘"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "greek-polytonic-nfd",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 Ἐν ἀρχῇ ἦν ὁ λόγος·\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "Ἐν ἀρχῇ ἦν ὁ λόγος·"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "hebrew-cantillation-rlm-maqaf",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 בְּרֵאשִ֑ית בָּרָ֣א־אֱלֹהִ֑ים‏׃\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "בְּרֵאשִ֑ית בָּרָ֣א־אֱלֹהִ֑ים‏׃"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "arabic-persian-zwnj",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 می‌خواهم فی البَدءِ\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "می‌خواهم فی البَدءِ"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "other-scripts",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 ܐܒܘܢ በመጀመሪያ आदि 太初有道 ในปฐมกาล\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "ܐܒܘܢ በመጀመሪያ आदि 太初有道 ในปฐมกาล"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "astral-and-compat",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 𝐀 ﬁ Ω Å 𐌰\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "𝐀 ﬁ Ω Å 𐌰"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "unicode-line-separators",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a b c\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b c"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "c1-control-nel",
+  "group": "unicode",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 ab\n",
+  "expect": {
+   "refuse": true,
+   "labels": [
+    "1"
+   ]
+  }
+ },
+ {
+  "name": "book-code-lower-case",
+  "group": "identity",
+  "usfm": "\\id rut invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "verses-before-chapter",
+  "group": "identity",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\p\n\\v 1 stray\n\\c 1\n\\p\n\\v 1 a\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a"
+    ]
+   ],
+   "before": 1
+  }
+ },
+ {
+  "name": "chapter-repeated",
+  "group": "identity",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\c 1\n\\p\n\\v 1 b\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a"
+    ],
+    [
+     "1",
+     "1",
+     "b"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "heading-mid-verse",
+  "group": "identity",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a\n\\s Heading\n\\p\nb\n\\v 2 c\n",
+  "expect": {
+   "ok": [
+    [
+     "1",
+     "1",
+     "a b"
+    ],
+    [
+     "1",
+     "2",
+     "c"
+    ]
+   ]
+  }
+ },
+ {
+  "name": "verse-label-nbsp-glued",
+  "group": "identity",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 1\n\\p\n\\v 1 a b\n",
+  "expect": {
+   "choice": "a no-break space after the number joins it to the label"
+  }
+ },
+ {
+  "name": "psalm-title-after-verse-number",
+  "group": "identity",
+  "usfm": "\\id RUT invented review text\n\\h Test\n\\mt1 Test\n\\c 3\n\\v 1 \\d A psalm of David.\n\\q1 Lord, how many.\n",
+  "expect": {
+   "choice": "a \\d title after \\v: is the title verse text?"
+  }
+ }
+]

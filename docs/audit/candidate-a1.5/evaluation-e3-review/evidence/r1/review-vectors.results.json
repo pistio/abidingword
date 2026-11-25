@@ -1,0 +1,4524 @@
+{
+ "summary": {
+  "vectors": 99,
+  "python_meets": 90,
+  "rust_meets": 90,
+  "readers_identical": 99,
+  "choices": 2,
+  "unmet": [
+   "poetry-as-milestone",
+   "note-as-milestone",
+   "char-as-milestone",
+   "chapter-as-milestone-merges-without-duplicates",
+   "chapter-as-milestone",
+   "paragraph-as-milestone",
+   "id-as-milestone"
+  ],
+  "readers_differ": []
+ },
+ "results": [
+  {
+   "name": "note-before-closing-quote",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "his heel.”"
+     ],
+     [
+      "1",
+      "2",
+      "Next."
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "his heel.”"
+     ],
+     [
+      "1",
+      "2",
+      "Next."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "his heel.”"
+     ],
+     [
+      "1",
+      "2",
+      "Next."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-spaces-both-sides",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "word next"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "word next"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "word next"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-inside-word",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "word"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "word"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "word"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-space-before-only",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "word , next"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "word , next"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "word , next"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "xref-after-open-paren",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "(c’est dit)"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "(c’est dit)"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "(c’est dit)"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "xref-full-parts",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "gerahs);"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "gerahs);"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "gerahs);"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "endnote",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "alpha beta"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "alpha beta"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "alpha beta"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "extended-notes",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "alpha beta."
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "alpha beta."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "alpha beta."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-parts-fq-fqa-fk-fv-fp",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-nested-plus-spans",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-with-bar",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-at-verse-start",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "Alpha beta."
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Alpha beta."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Alpha beta."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-then-combining-mark",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "café au lait"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "café au lait"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "café au lait"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "two-notes-adjacent",
+   "group": "notes",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a.” b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a.” b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a.” b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "nested-plus-span",
+   "group": "spans",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "added Lord text"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "added Lord text"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "added Lord text"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "wj-kept",
+   "group": "spans",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "He said, “Come.”"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "He said, “Come.”"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "He said, “Come.”"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "span-closed-by-other-marker",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2"
+    ],
+    "keep": {
+     "1:2": "Two."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "text"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "span_close_mismatch",
+     "char_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "text"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "span_close_mismatch",
+     "char_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "span-unclosed-until-next-verse",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2",
+     "3"
+    ],
+    "keep": {
+     "1:2": "Two.",
+     "1:3": "Three."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "text"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ],
+     [
+      "1",
+      "3",
+      "Three."
+     ]
+    ],
+    "problems": [
+     "char_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "text"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ],
+     [
+      "1",
+      "3",
+      "Three."
+     ]
+    ],
+    "problems": [
+     "char_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "span-nested-without-plus",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "span_nested_without_plus"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "span_nested_without_plus"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-closed-by-other-type",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2"
+    ],
+    "keep": {
+     "1:2": "Two."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "note_close_mismatch",
+     "note_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "note_close_mismatch",
+     "note_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "xref-unclosed-before-later-note",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2",
+     "3"
+    ],
+    "keep": {
+     "1:3": "Three."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "c d"
+     ],
+     [
+      "1",
+      "3",
+      "Three."
+     ]
+    ],
+    "problems": [
+     "note_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "c d"
+     ],
+     [
+      "1",
+      "3",
+      "Three."
+     ]
+    ],
+    "problems": [
+     "note_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verse-inside-note",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2",
+     "3"
+    ],
+    "keep": {
+     "1:3": "Three."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ],
+     [
+      "1",
+      "3",
+      "Three."
+     ]
+    ],
+    "problems": [
+     "note_unclosed",
+     "note_close_stray"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ],
+     [
+      "1",
+      "3",
+      "Three."
+     ]
+    ],
+    "problems": [
+     "note_unclosed",
+     "note_close_stray"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "note-inside-note",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "note_nested"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "note_nested"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "wj-across-poetry-line",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2"
+    ],
+    "keep": {
+     "1:2": "Two."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Come and see."
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "char_unclosed",
+     "span_close_stray"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Come and see."
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "char_unclosed",
+     "span_close_stray"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "plus-span-unclosed-inside-note",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2"
+    ],
+    "keep": {
+     "1:2": "Two."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "note_close_mismatch",
+     "char_unclosed",
+     "note_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "note_close_mismatch",
+     "char_unclosed",
+     "note_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "stray-end-markers",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": [
+     "note_close_stray",
+     "span_close_stray"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": [
+     "note_close_stray",
+     "span_close_stray"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "nbsp-kept",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b c d　e"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c d　e"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c d　e"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "tilde-is-nbsp",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "double-slash-nothing",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "ab c d"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab c d"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab c d"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "tabs-newlines-collapse",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "crlf",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ],
+     [
+      "1",
+      "2",
+      "c"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ],
+     [
+      "1",
+      "2",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ],
+     [
+      "1",
+      "2",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "marker-two-spaces",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "the Lord said"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "the Lord said"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "the Lord said"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verse-number-newline",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "alpha"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "alpha"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "alpha"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "end-marker-takes-no-space",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "Lord said"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Lord said"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Lord said"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "glued-span",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "wordLords"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "wordLords"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "wordLords"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "invisible-format-kept",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a‍b‌c­d⁠e﻿f"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a‍b‌c­d⁠e﻿f"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a‍b‌c­d⁠e﻿f"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "bom-at-start",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "paragraph-boundary-one-space",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "line one, line two. and more"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "line one, line two. and more"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "line one, line two. and more"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "table-header-before-first-verse",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ],
+    "keep": {
+     "1:1": "Judah 74,600"
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Judah 74,600"
+     ]
+    ],
+    "problems": [
+     "text_outside_verse",
+     "text_outside_verse"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Judah 74,600"
+     ]
+    ],
+    "problems": [
+     "text_outside_verse",
+     "text_outside_verse"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "table-cells",
+   "group": "whitespace",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "The tribes: Tribe Number Judah 74,600"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "The tribes: Tribe Number Judah 74,600"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "The tribes: Tribe Number Judah 74,600"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "poetry-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "line one,line two"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "line one,line two"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'line one,line two']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'line one,line two']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "note-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'ab']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'ab']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "char-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a b']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a b']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "chapter-as-milestone-merges-without-duplicates",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ],
+     [
+      "1",
+      "3",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ],
+     [
+      "1",
+      "3",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a'], ['1', '2', 'b'], ['1', '3', 'c']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a'], ['1', '2', 'b'], ['1', '3', 'c']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "quote-milestone",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "He said, “Go.”"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "He said, “Go.”"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "He said, “Go.”"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "ts-standalone",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "alignment-milestones",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "In the beginning"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "In the beginning"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "In the beginning"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "milestone-unterminated",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2"
+    ],
+    "keep": {
+     "1:2": "Two."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a who=\"A\" b"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "milestone_unterminated",
+     "milestone_unpaired",
+     "bar_outside_span"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a who=\"A\" b"
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ]
+    ],
+    "problems": [
+     "milestone_unterminated",
+     "bar_outside_span",
+     "milestone_unpaired"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "milestone-unpaired",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "milestone_unpaired"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "milestone_unpaired"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "w-attributes",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "gracious and kind"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "gracious and kind"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "gracious and kind"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "ruby",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "神は"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "神は"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "神は"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "jmp",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "see here."
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "see here."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "see here."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "fig-dropped",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "fig-usfm2-pipes",
+   "group": "milestones",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "attributes-interrupted",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ay"
+     ]
+    ],
+    "problems": [
+     "attributes_interrupted",
+     "span_nested_without_plus"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ay"
+     ]
+    ],
+    "problems": [
+     "attributes_interrupted",
+     "span_nested_without_plus"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "bar-outside-span",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "bar_outside_span"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "bar_outside_span"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "bridge",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1-2",
+      "a"
+     ],
+     [
+      "1",
+      "3",
+      "b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1-2",
+      "a"
+     ],
+     [
+      "1",
+      "3",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1-2",
+      "a"
+     ],
+     [
+      "1",
+      "3",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "alternate-verse",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "3",
+      "text"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "3",
+      "text"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "3",
+      "text"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "published-verse",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "5",
+      "text"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "5",
+      "text"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "5",
+      "text"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "alternate-chapter",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "2",
+      "1",
+      "a"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "2",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "2",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "published-chapter",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "2",
+      "1",
+      "a"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "2",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "2",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "chapter-label",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "Blessed"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Blessed"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Blessed"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "va-unclosed",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1",
+     "2",
+     "1"
+    ],
+    "keep": {
+     "1:2": "Two.",
+     "2:1": "Next chapter."
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ],
+     [
+      "2",
+      "1",
+      "Next chapter."
+     ]
+    ],
+    "problems": [
+     "dropped_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "Two."
+     ],
+     [
+      "2",
+      "1",
+      "Next chapter."
+     ]
+    ],
+    "problems": [
+     "dropped_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "rq-dropped",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "as written"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "as written"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "as written"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "label-as-written",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "01",
+      "a"
+     ],
+     [
+      "1",
+      "2a",
+      "b"
+     ],
+     [
+      "1",
+      "3,4",
+      "c"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "01",
+      "a"
+     ],
+     [
+      "1",
+      "2a",
+      "b"
+     ],
+     [
+      "1",
+      "3,4",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "01",
+      "a"
+     ],
+     [
+      "1",
+      "2a",
+      "b"
+     ],
+     [
+      "1",
+      "3,4",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "duplicate-verse-kept",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "2",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "2",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "2",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "title-numbered-as-verse",
+   "group": "numbering",
+   "expect": {
+    "ok": [
+     [
+      "3",
+      "1",
+      "A psalm of David."
+     ],
+     [
+      "3",
+      "2",
+      "Lord, how many."
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "3",
+      "1",
+      "A psalm of David."
+     ],
+     [
+      "3",
+      "2",
+      "Lord, how many."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "3",
+      "1",
+      "A psalm of David."
+     ],
+     [
+      "3",
+      "2",
+      "Lord, how many."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verse-number-missing",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "keep": {
+     "1:2": "b"
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": [
+     "verse_number_missing"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": [
+     "verse_number_missing"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "chapter-number-missing",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": [
+     "chapter_number_missing"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": [
+     "chapter_number_missing"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "unknown-marker",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": [
+     "marker_unknown",
+     "marker_unknown"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": [
+     "marker_unknown",
+     "marker_unknown"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "private-marker",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": [
+     "marker_private",
+     "marker_private"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": [
+     "marker_private",
+     "marker_private"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "lone-backslash",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "backslash_not_marker"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ]
+    ],
+    "problems": [
+     "backslash_not_marker"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "text-before-first-verse",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": [
+     "text_outside_verse"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": [
+     "text_outside_verse"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "two-id-lines",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "1",
+      "b"
+     ]
+    ],
+    "problems": [
+     "id_repeated"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "1",
+      "b"
+     ]
+    ],
+    "problems": [
+     "id_repeated"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "control-character",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a\u0007b"
+     ]
+    ],
+    "problems": [
+     "control_character"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a\u0007b"
+     ]
+    ],
+    "problems": [
+     "control_character"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verse-close-stray-milestone-end",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "3",
+      "a"
+     ]
+    ],
+    "problems": [
+     "milestone_close_stray"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "3",
+      "a"
+     ]
+    ],
+    "problems": [
+     "milestone_close_stray"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "sidebar-unclosed",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "keep": {
+     "1:2": "b"
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": [
+     "sidebar_unclosed"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": [
+     "sidebar_unclosed"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "sidebar-closed",
+   "group": "structure",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verse-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a 2 b"
+     ],
+     [
+      "1",
+      "3",
+      "c"
+     ]
+    ],
+    "problems": [
+     "verse_markers_unaccounted"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a 2 b"
+     ],
+     [
+      "1",
+      "3",
+      "c"
+     ]
+    ],
+    "problems": [
+     "verse_markers_unaccounted"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "plus-v",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a 2 b"
+     ]
+    ],
+    "problems": [
+     "marker_unknown"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a 2 b"
+     ]
+    ],
+    "problems": [
+     "marker_unknown"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "v-without-space-number",
+   "group": "malformed",
+   "expect": {
+    "refuse": true,
+    "keep": {
+     "1:2": "b"
+    }
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": [
+     "marker_unknown",
+     "text_outside_verse"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "2",
+      "b"
+     ]
+    ],
+    "problems": [
+     "marker_unknown",
+     "text_outside_verse"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "chapter-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b 2"
+     ],
+     [
+      "1",
+      "1",
+      "c"
+     ],
+     [
+      "1",
+      "2",
+      "d"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "2",
+      "b 2"
+     ],
+     [
+      "1",
+      "1",
+      "c"
+     ],
+     [
+      "1",
+      "2",
+      "d"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a'], ['1', '2', 'b 2'], ['1', '1', 'c'], ['1', '2', 'd']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a'], ['1', '2', 'b 2'], ['1', '1', 'c'], ['1', '2', 'd']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "paragraph-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'ab']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'ab']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "id-as-milestone",
+   "group": "malformed",
+   "expect": {
+    "refuse": true
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a']]"
+   ],
+   "rust_unmet": [
+    "NOT refused: read without any problem [['1', '1', 'a']]"
+   ],
+   "verdict": "UNMET"
+  },
+  {
+   "name": "german-nfd",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "Größe Freude, über alles."
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Größe Freude, über alles."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Größe Freude, über alles."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "korean-syllables-and-jamo",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "태초에 한늘"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "태초에 한늘"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "태초에 한늘"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "greek-polytonic-nfd",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "Ἐν ἀρχῇ ἦν ὁ λόγος·"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Ἐν ἀρχῇ ἦν ὁ λόγος·"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "Ἐν ἀρχῇ ἦν ὁ λόγος·"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "hebrew-cantillation-rlm-maqaf",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "בְּרֵאשִ֑ית בָּרָ֣א־אֱלֹהִ֑ים‏׃"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "בְּרֵאשִ֑ית בָּרָ֣א־אֱלֹהִ֑ים‏׃"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "בְּרֵאשִ֑ית בָּרָ֣א־אֱלֹהִ֑ים‏׃"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "arabic-persian-zwnj",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "می‌خواهم فی البَدءِ"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "می‌خواهم فی البَدءِ"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "می‌خواهم فی البَدءِ"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "other-scripts",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "ܐܒܘܢ በመጀመሪያ आदि 太初有道 ในปฐมกาล"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ܐܒܘܢ በመጀመሪያ आदि 太初有道 ในปฐมกาล"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ܐܒܘܢ በመጀመሪያ आदि 太初有道 ในปฐมกาล"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "astral-and-compat",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "𝐀 ﬁ Ω Å 𐌰"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "𝐀 ﬁ Ω Å 𐌰"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "𝐀 ﬁ Ω Å 𐌰"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "unicode-line-separators",
+   "group": "unicode",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b c"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "c1-control-nel",
+   "group": "unicode",
+   "expect": {
+    "refuse": true,
+    "labels": [
+     "1"
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab"
+     ]
+    ],
+    "problems": [
+     "control_character"
+    ]
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "ab"
+     ]
+    ],
+    "problems": [
+     "control_character"
+    ]
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "book-code-lower-case",
+   "group": "identity",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verses-before-chapter",
+   "group": "identity",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "before": 1
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "chapter-repeated",
+   "group": "identity",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "1",
+      "b"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "1",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a"
+     ],
+     [
+      "1",
+      "1",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "heading-mid-verse",
+   "group": "identity",
+   "expect": {
+    "ok": [
+     [
+      "1",
+      "1",
+      "a b"
+     ],
+     [
+      "1",
+      "2",
+      "c"
+     ]
+    ]
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ],
+     [
+      "1",
+      "2",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1",
+      "a b"
+     ],
+     [
+      "1",
+      "2",
+      "c"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "python_unmet": [],
+   "rust_unmet": [],
+   "verdict": "meets"
+  },
+  {
+   "name": "verse-label-nbsp-glued",
+   "group": "identity",
+   "expect": {
+    "choice": "a no-break space after the number joins it to the label"
+   },
+   "python": {
+    "verses": [
+     [
+      "1",
+      "1 a",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "1",
+      "1 a",
+      "b"
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "verdict": "choice (judged in the report)"
+  },
+  {
+   "name": "psalm-title-after-verse-number",
+   "group": "identity",
+   "expect": {
+    "choice": "a \\d title after \\v: is the title verse text?"
+   },
+   "python": {
+    "verses": [
+     [
+      "3",
+      "1",
+      "Lord, how many."
+     ]
+    ],
+    "problems": []
+   },
+   "rust": {
+    "verses": [
+     [
+      "3",
+      "1",
+      "Lord, how many."
+     ]
+    ],
+    "problems": []
+   },
+   "readers_identical": true,
+   "book": [
+    "RUT",
+    "RUT"
+   ],
+   "verdict": "choice (judged in the report)"
+  }
+ ]
+}

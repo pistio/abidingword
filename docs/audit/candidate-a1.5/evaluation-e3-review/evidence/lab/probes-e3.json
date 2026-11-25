@@ -1,0 +1,558 @@
+{
+ "baseline": {
+  "clean": "pass",
+  "wrong": "fail"
+ },
+ "options": {
+  "score --Protocol=x": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --Protocol=/x.json; options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+   ]
+  },
+  "score --json twice": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --json=/tmp/b.json (given twice); options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+   ]
+  },
+  "score --run-record twice": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --run-record=fc0252f53e2957ad5834b800264ac6ec940c31fa (given twice); options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+   ]
+  },
+  "score --diagnostic=yes": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --diagnostic=yes; options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+   ]
+  },
+  "score --protocol without --diagnostic": {
+   "exit": 2,
+   "stderr": [
+    "refused: --protocol change(s) what a protocol run is; an official assessment takes none. Use --diagnostic for a rehearsal or test score."
+   ]
+  },
+  "score --json (no value)": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --json; options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+   ]
+  },
+  "score extra positional": {
+   "exit": 1,
+   "stderr": [
+    "Scores one run of the harness on a sealed set, and assesses it"
+   ]
+  },
+  "score bare --": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --; options are --run-record=..., --json=..., --md=..., --protocol=..., --frozen-binary=..., --inventory=... and --diagnostic"
+   ]
+  },
+  "check --Inventory=x": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --Inventory=/x; options are --seal-commit=..., --inventory=..., --protocol=..., --report=..., --verses-out=..."
+   ]
+  },
+  "check --report twice": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --report=/tmp/b (given twice); options are --seal-commit=..., --inventory=..., --protocol=..., --report=..., --verses-out=..."
+   ]
+  },
+  "seal --write twice": {
+   "exit": 2,
+   "stderr": [
+    "refused: SEAL.txt exists; a sealed set is never sealed again"
+   ]
+  },
+  "seal --writ": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --writ; options are --inventory=..., --protocol=... and --write"
+   ]
+  },
+  "seal --protocol=x --protocol=y": {
+   "exit": 2,
+   "stderr": [
+    "refused: unknown or repeated option(s) --protocol=/y (given twice); options are --inventory=..., --protocol=... and --write"
+   ]
+  }
+ },
+ "output_changed_after_run": {
+  "exit": 2,
+  "stderr": [
+   "refused: pc-rut.json changed after the run"
+  ]
+ },
+ "scorer_python312": {
+  "exit": 0,
+  "verdict": "not a protocol run",
+  "failed_validity": [
+   "unicode_versions_as_protocol"
+  ]
+ },
+ "modified_scorer_committed": {
+  "exit": 0,
+  "verdict": "not a protocol run",
+  "verdict_line": "NOT A PROTOCOL RUN (safety pass; evidence sufficient): verified 85 (84 faithful, 1 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+  "safety": "pass",
+  "evidence": "sufficient",
+  "shortfall": [],
+  "failed_validity": [
+   "tools_are_the_approved_ones"
+  ],
+  "criteria_failed": [],
+  "integrity": {},
+  "counts": {
+   "scored_documents": 1,
+   "completed": 1,
+   "refused_whole": 0,
+   "failed_to_run": 0,
+   "printed_scorable": 85,
+   "printed_unsupported": 0,
+   "verified": 85,
+   "verified_faithful": 84,
+   "verified_mismatch": 1,
+   "verified_absent_or_unvalidatable": 0,
+   "held": 0,
+   "refused_verses": 0,
+   "missing": 0,
+   "documents_verifying_nothing": []
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "accuracy_claim": "1 verified verses with wrong text under the strict fidelity rule (changed 1), 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 98.8 % of scorable verses, 98.8 % of all printed verses. Exploratory documents are not part of this figure.",
+  "diagnostic": null,
+  "diagnostic_line": null,
+  "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+  "documents": {
+   "pw-rut": {
+    "execution": "completed",
+    "printed": 85,
+    "verified": 85,
+    "verified_faithful": 84,
+    "verified_mismatch": 1,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "printed_unsupported": 0
+   }
+  }
+ },
+ "modified_scorer_and_protocol_committed": {
+  "exit": 0,
+  "verdict": "not a protocol run",
+  "verdict_line": "NOT A PROTOCOL RUN (safety pass; evidence sufficient): verified 85 (84 faithful, 1 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+  "safety": "pass",
+  "evidence": "sufficient",
+  "shortfall": [],
+  "failed_validity": [
+   "run_under_this_protocol"
+  ],
+  "criteria_failed": [],
+  "integrity": {},
+  "counts": {
+   "scored_documents": 1,
+   "completed": 1,
+   "refused_whole": 0,
+   "failed_to_run": 0,
+   "printed_scorable": 85,
+   "printed_unsupported": 0,
+   "verified": 85,
+   "verified_faithful": 84,
+   "verified_mismatch": 1,
+   "verified_absent_or_unvalidatable": 0,
+   "held": 0,
+   "refused_verses": 0,
+   "missing": 0,
+   "documents_verifying_nothing": []
+  },
+  "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+  "accuracy_claim": "1 verified verses with wrong text under the strict fidelity rule (changed 1), 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 98.8 % of scorable verses, 98.8 % of all printed verses. Exploratory documents are not part of this figure.",
+  "diagnostic": null,
+  "diagnostic_line": null,
+  "protocol_sha256": "cd1bf7185696b533b10863364de79cbabdea162d4e242601bd0e3763ae1cec6d",
+  "documents": {
+   "pw-rut": {
+    "execution": "completed",
+    "printed": 85,
+    "verified": 85,
+    "verified_faithful": 84,
+    "verified_mismatch": 1,
+    "verified_absent": 0,
+    "verified_unvalidatable": 0,
+    "printed_unsupported": 0
+   }
+  },
+  "note": "the run was made under the earlier protocol file, so run_under_this_protocol is expected to fail too"
+ },
+ "substitute_scorer_and_protocol_before_run": {
+  "scenario": "substitute",
+  "composition": {
+   "scored": 1,
+   "control": 0,
+   "mixed": 0,
+   "exploratory": 0,
+   "authentic": 0,
+   "generated": 1
+  },
+  "outcome": "scored",
+  "score": {
+   "exit": 0,
+   "verdict": "pass",
+   "verdict_line": "PASS (safety pass; evidence sufficient): verified 85 (84 faithful, 1 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "safety": "pass",
+   "evidence": "sufficient",
+   "shortfall": [],
+   "failed_validity": [],
+   "criteria_failed": [],
+   "integrity": {},
+   "counts": {
+    "scored_documents": 1,
+    "completed": 1,
+    "refused_whole": 0,
+    "failed_to_run": 0,
+    "printed_scorable": 85,
+    "printed_unsupported": 0,
+    "verified": 85,
+    "verified_faithful": 84,
+    "verified_mismatch": 1,
+    "verified_absent_or_unvalidatable": 0,
+    "held": 0,
+    "refused_verses": 0,
+    "missing": 0,
+    "documents_verifying_nothing": []
+   },
+   "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+   "accuracy_claim": "1 verified verses with wrong text under the strict fidelity rule (changed 1), 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 98.8 % of scorable verses, 98.8 % of all printed verses. Exploratory documents are not part of this figure.",
+   "diagnostic": null,
+   "diagnostic_line": null,
+   "protocol_sha256": "cd1bf7185696b533b10863364de79cbabdea162d4e242601bd0e3763ae1cec6d",
+   "documents": {
+    "ps-rut": {
+     "execution": "completed",
+     "printed": 85,
+     "verified": 85,
+     "verified_faithful": 84,
+     "verified_mismatch": 1,
+     "verified_absent": 0,
+     "verified_unvalidatable": 0,
+     "printed_unsupported": 0
+    }
+   }
+  },
+  "committed_protocol_sha256": "43f0468941af9ac04149318ea885f1a49c1f298d97a951132b12ea1e31a41937"
+ },
+ "modified_reader_committed": {
+  "scenario": "modreader",
+  "composition": {
+   "scored": 1,
+   "control": 0,
+   "mixed": 0,
+   "exploratory": 0,
+   "authentic": 0,
+   "generated": 1
+  },
+  "outcome": "scored",
+  "score": {
+   "exit": 0,
+   "verdict": "not a protocol run",
+   "verdict_line": "NOT A PROTOCOL RUN (safety pass; evidence sufficient): verified 85 (85 faithful, 0 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "safety": "pass",
+   "evidence": "sufficient",
+   "shortfall": [],
+   "failed_validity": [
+    "run_used_the_approved_tools",
+    "tools_are_the_approved_ones"
+   ],
+   "criteria_failed": [],
+   "integrity": {},
+   "counts": {
+    "scored_documents": 1,
+    "completed": 1,
+    "refused_whole": 0,
+    "failed_to_run": 0,
+    "printed_scorable": 85,
+    "printed_unsupported": 0,
+    "verified": 85,
+    "verified_faithful": 85,
+    "verified_mismatch": 0,
+    "verified_absent_or_unvalidatable": 0,
+    "held": 0,
+    "refused_verses": 0,
+    "missing": 0,
+    "documents_verifying_nothing": []
+   },
+   "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+   "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure.",
+   "diagnostic": null,
+   "diagnostic_line": null,
+   "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+   "documents": {
+    "pm-rut": {
+     "execution": "completed",
+     "printed": 85,
+     "verified": 85,
+     "verified_faithful": 85,
+     "verified_mismatch": 0,
+     "verified_absent": 0,
+     "verified_unvalidatable": 0,
+     "printed_unsupported": 0
+    }
+   }
+  }
+ },
+ "gate": {
+  "committed_shut": {
+   "runner_exit": 2,
+   "stderr": [
+    "refused: the protocol does not permit a withheld run (withheld_execution_permitted is not true; owner decisions pending)"
+   ]
+  },
+  "AW_PROTOCOL_open_copy": {
+   "runner_exit": 0,
+   "stderr": [
+    "note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "documents_were_run": true,
+   "score": {
+    "exit": 0,
+    "verdict": "not a protocol run",
+    "verdict_line": "NOT A PROTOCOL RUN (safety pass; evidence sufficient): verified 85 (85 faithful, 0 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+    "safety": "pass",
+    "evidence": "sufficient",
+    "shortfall": [],
+    "failed_validity": [
+     "protocol_permits_withheld_execution",
+     "run_under_this_protocol"
+    ],
+    "criteria_failed": [],
+    "integrity": {},
+    "counts": {
+     "scored_documents": 1,
+     "completed": 1,
+     "refused_whole": 0,
+     "failed_to_run": 0,
+     "printed_scorable": 85,
+     "printed_unsupported": 0,
+     "verified": 85,
+     "verified_faithful": 85,
+     "verified_mismatch": 0,
+     "verified_absent_or_unvalidatable": 0,
+     "held": 0,
+     "refused_verses": 0,
+     "missing": 0,
+     "documents_verifying_nothing": []
+    },
+    "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+    "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure.",
+    "diagnostic": null,
+    "diagnostic_line": null,
+    "protocol_sha256": "51025a2e9252d1359a35908f6363e51b82dd9f0ad77d5fc32c30e4f326468947",
+    "documents": {
+     "pg-rut": {
+      "execution": "completed",
+      "printed": 85,
+      "verified": 85,
+      "verified_faithful": 85,
+      "verified_mismatch": 0,
+      "verified_absent": 0,
+      "verified_unvalidatable": 0,
+      "printed_unsupported": 0
+     }
+    }
+   }
+  }
+ },
+ "other_binary": {
+  "own_hash": {
+   "exit": 2,
+   "stderr": [
+    "refused: 8cab9ddd24332ef21056e5b3d25bfeebead65b5444358e888387515bbf55affb is not the protocol's harness binary (b4f51a62a51ef5085ca12900ba575ee04cc04f0b99f0fccf88db8890a141b63d)"
+   ]
+  },
+  "pinned_hash_claimed": {
+   "exit": 2,
+   "stderr": [
+    "refused: binary 8cab9ddd24332ef21056e5b3d25bfeebead65b5444358e888387515bbf55affb is not the frozen b4f51a62a51ef5085ca12900ba575ee04cc04f0b99f0fccf88db8890a141b63d"
+   ]
+  },
+  "AW_PROTOCOL_pinning_it": {
+   "exit": 0,
+   "stderr": [
+    "note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+   ],
+   "score": {
+    "exit": 0,
+    "verdict": "not a protocol run",
+    "verdict_line": "NOT A PROTOCOL RUN (safety pass; evidence sufficient): verified 85 (85 faithful, 0 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+    "safety": "pass",
+    "evidence": "sufficient",
+    "shortfall": [],
+    "failed_validity": [
+     "frozen_binary",
+     "run_under_this_protocol"
+    ],
+    "criteria_failed": [],
+    "integrity": {},
+    "counts": {
+     "scored_documents": 1,
+     "completed": 1,
+     "refused_whole": 0,
+     "failed_to_run": 0,
+     "printed_scorable": 85,
+     "printed_unsupported": 0,
+     "verified": 85,
+     "verified_faithful": 85,
+     "verified_mismatch": 0,
+     "verified_absent_or_unvalidatable": 0,
+     "held": 0,
+     "refused_verses": 0,
+     "missing": 0,
+     "documents_verifying_nothing": []
+    },
+    "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+    "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure.",
+    "diagnostic": null,
+    "diagnostic_line": null,
+    "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+    "documents": {
+     "po-rut": {
+      "execution": "completed",
+      "printed": 85,
+      "verified": 85,
+      "verified_faithful": 85,
+      "verified_mismatch": 0,
+      "verified_absent": 0,
+      "verified_unvalidatable": 0,
+      "printed_unsupported": 0
+     }
+    }
+   }
+  }
+ },
+ "fake_harness_changed_verse_digest": {
+  "runner_exit": 0,
+  "stderr": [
+   "note: scored authentic evidence is below the declared minimum: the result will carry the stated qualification limit"
+  ],
+  "score": {
+   "exit": 0,
+   "verdict": "not a protocol run",
+   "verdict_line": "NOT A PROTOCOL RUN (safety pass; evidence sufficient): verified 85 (85 faithful, 0 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "safety": "pass",
+   "evidence": "sufficient",
+   "shortfall": [],
+   "failed_validity": [
+    "reports_trusted"
+   ],
+   "criteria_failed": [],
+   "integrity": {
+    "pf-rut": [
+     "reference inventories differ: 1 verse(s) read differently (label, status, line or text): RUT 1:4"
+    ]
+   },
+   "counts": {
+    "scored_documents": 1,
+    "completed": 1,
+    "refused_whole": 0,
+    "failed_to_run": 0,
+    "printed_scorable": 85,
+    "printed_unsupported": 0,
+    "verified": 85,
+    "verified_faithful": 85,
+    "verified_mismatch": 0,
+    "verified_absent_or_unvalidatable": 0,
+    "held": 0,
+    "refused_verses": 0,
+    "missing": 0,
+    "documents_verifying_nothing": []
+   },
+   "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+   "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure.",
+   "diagnostic": null,
+   "diagnostic_line": null,
+   "protocol_sha256": "e27df9d8859dfe30d26525a45bdb9db7ac9d2010f8a06838e75c431c8a3dedc1",
+   "documents": {
+    "pf-rut": {
+     "execution": "completed",
+     "printed": 85,
+     "verified": 85,
+     "verified_faithful": 85,
+     "verified_mismatch": 0,
+     "verified_absent": 0,
+     "verified_unvalidatable": 0,
+     "printed_unsupported": 0
+    }
+   }
+  }
+ },
+ "unicode16_in_document": {
+  "scenario": "unicode16-doc",
+  "composition": {
+   "scored": 1,
+   "control": 0,
+   "mixed": 0,
+   "exploratory": 0,
+   "authentic": 0,
+   "generated": 1
+  },
+  "outcome": "scored",
+  "score": {
+   "exit": 0,
+   "verdict": "not a protocol run",
+   "verdict_line": "NOT A PROTOCOL RUN (safety fail; evidence sufficient): verified 85 (84 faithful, 1 wrong text) of 85 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+   "safety": "fail",
+   "evidence": "sufficient",
+   "shortfall": [],
+   "failed_validity": [
+    "reports_trusted"
+   ],
+   "criteria_failed": [
+    "1_no_verified_text_mismatch"
+   ],
+   "integrity": {
+    "pu-rut": [
+     "fidelity: 1 disagreement(s) between harness and scorer",
+     "fidelity: 1 record(s) hold code points unassigned in the scorer's Unicode 15.1.0 (RUT 1:2)"
+    ]
+   },
+   "counts": {
+    "scored_documents": 1,
+    "completed": 1,
+    "refused_whole": 0,
+    "failed_to_run": 0,
+    "printed_scorable": 85,
+    "printed_unsupported": 0,
+    "verified": 85,
+    "verified_faithful": 84,
+    "verified_mismatch": 1,
+    "verified_absent_or_unvalidatable": 0,
+    "held": 0,
+    "refused_verses": 0,
+    "missing": 0,
+    "documents_verifying_nothing": []
+   },
+   "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+   "accuracy_claim": "1 verified verses with wrong text under the strict fidelity rule (punctuation 1), 0 verified references outside the edition and 0 the edition cannot validate, among 85 verified verses of 1 completed scored documents (0 authentic). They print 85 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 98.8 % of scorable verses, 98.8 % of all printed verses. Exploratory documents are not part of this figure.",
+   "diagnostic": null,
+   "diagnostic_line": null,
+   "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+   "documents": {
+    "pu-rut": {
+     "execution": "completed",
+     "printed": 85,
+     "verified": 85,
+     "verified_faithful": 84,
+     "verified_mismatch": 1,
+     "verified_absent": 0,
+     "verified_unvalidatable": 0,
+     "printed_unsupported": 0
+    }
+   }
+  }
+ }
+}

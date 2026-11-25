@@ -1,0 +1,53 @@
+{
+ "rv-engbsb": {
+  "schema": "aw-eval-2",
+  "verified": 30977,
+  "verified_mismatch": 154,
+  "causes": {
+   "reference reader (E2: app reader)": 154
+  },
+  "examples": [
+   {
+    "reference": "GEN 3:15",
+    "edition_E2": "ed. He will crush your head, and you will strike his heel. ”",
+    "document": "eed. He will crush your head, and you will strike his heel.”"
+   },
+   {
+    "reference": "GEN 12:3",
+    "edition_E2": "all the families of the earth will be blessed through you. ”",
+    "document": " all the families of the earth will be blessed through you.”"
+   },
+   {
+    "reference": "GEN 12:7",
+    "edition_E2": "m built an altar there to the LORD, who had appeared to him.",
+    "document": "m built an altar there to the LORD, who had appeared to him."
+   }
+  ]
+ },
+ "rv-grcsbl": {
+  "schema": "aw-eval-2",
+  "verified": 7671,
+  "verified_mismatch": 335,
+  "causes": {
+   "reference reader (E2: app reader)": 334,
+   "document reading (recogniser)": 1
+  },
+  "examples": [
+   {
+    "reference": "MAT 4:23",
+    "edition_E2": "είας καὶ θεραπεύων πᾶσαν νόσον καὶ πᾶσαν μαλακίαν ἐν τῷ λαῷ.",
+    "document": "είας καὶ θεραπεύων πᾶσαν νόσον καὶ πᾶσαν μαλακίαν ἐν τῷ λαῷ."
+   },
+   {
+    "reference": "MAT 5:25",
+    "edition_E2": "τῷ κριτῇ, καὶ ὁ ⸀κριτὴς τῷ ὑπηρέτῃ, καὶ εἰς φυλακὴν βληθήσῃ·",
+    "document": "τῷ κριτῇ, καὶ ὁ ⸀κριτὴς τῷ ὑπηρέτῃ, καὶ εἰς φυλακὴν βληθήσῃ·"
+   },
+   {
+    "reference": "MAT 5:30",
+    "edition_E2": " τῶν μελῶν σου καὶ μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ .",
+    "document": "ν τῶν μελῶν σου καὶ μὴ ὅλον τὸ σῶμά σου ⸂εἰς γέενναν ἀπέλθῃ."
+   }
+  ]
+ }
+}

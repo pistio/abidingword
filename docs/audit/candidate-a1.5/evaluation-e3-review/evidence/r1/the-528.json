@@ -1,0 +1,27 @@
+{
+ "checked": 528,
+ "property_ok": 528,
+ "context_ok": 528,
+ "reviewer_same": 528,
+ "rust_same": 528,
+ "failures": [],
+ "by_edition": {
+  "engbsb": {
+   "rows": 156,
+   "ok": 156
+  },
+  "engwebp": {
+   "rows": 14,
+   "ok": 14
+  },
+  "fraLSG": {
+   "rows": 2,
+   "ok": 2
+  },
+  "grcsbl": {
+   "rows": 356,
+   "ok": 356
+  }
+ },
+ "notes_examined": 856
+}

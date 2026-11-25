@@ -1,0 +1,158 @@
+{
+ "editions": {
+  "deu1912": {
+   "zip_sha256": "b6170cdaba249210fd9709d689b517b820afe98d70440e4864a56c7c681abe78",
+   "verses": 31102,
+   "same_text": 31102,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31102,
+   "rust_differ": 0
+  },
+  "deu1951": {
+   "zip_sha256": "0c6c86ae1a4124101ba9c68be9d2be55c17467e2a78cdb23e531feb4aa37dce5",
+   "verses": 31102,
+   "same_text": 31102,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31102,
+   "rust_differ": 0
+  },
+  "deuelo": {
+   "zip_sha256": "0e3c181372347c7e3cd79fb747a592e79406381f29449041df4fb0948fd9240b",
+   "verses": 31102,
+   "same_text": 31102,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31102,
+   "rust_differ": 0
+  },
+  "engbsb": {
+   "zip_sha256": "09cdf4340d239564d64b7a03bce5ddfc6ebddda5323c7a5bbee959653759b1f0",
+   "verses": 31086,
+   "same_text": 31086,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31086,
+   "rust_differ": 0
+  },
+  "engwebp": {
+   "zip_sha256": "c725155aa8192b954e552a0b08aa75f8e7b85e6e56f1eb22efd6d30f5b4aa3cc",
+   "verses": 31103,
+   "same_text": 31103,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31103,
+   "rust_differ": 0
+  },
+  "fraLSG": {
+   "zip_sha256": "fcf2a836549dd042c113b70e8844da0a46394a3188c87808580e811cfb0fc179",
+   "verses": 31170,
+   "same_text": 31170,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31170,
+   "rust_differ": 0
+  },
+  "grcbyz": {
+   "zip_sha256": "c1034fe50c7e30c5fe33201654b1e2a373da69ac9eab42a008ca85ee8b67f0b7",
+   "verses": 7958,
+   "same_text": 7958,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 7958,
+   "rust_differ": 0
+  },
+  "grcmt": {
+   "zip_sha256": "fa1a59e1545ee404b2b5306fd5e57e2b44617e3c88bd0da60d44c3bd9ae496d6",
+   "verses": 7957,
+   "same_text": 7957,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 7957,
+   "rust_differ": 0
+  },
+  "grcsbl": {
+   "zip_sha256": "6807ec1ccf114ced6d33024b448bd4e7825fd7837ecec6b43fe9cf9dcb9bcba0",
+   "verses": 7939,
+   "same_text": 7939,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 7939,
+   "rust_differ": 0
+  },
+  "grctr": {
+   "zip_sha256": "3232412340f9c3bbe1d85330944306be326f6c7ce6e6aa117b379c4476ae6615",
+   "verses": 7957,
+   "same_text": 7957,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 7957,
+   "rust_differ": 0
+  },
+  "kor1961": {
+   "zip_sha256": "025eb4dc52fb62996da0b4e85a45b9567144b7fe686dee7908f2b1c7a2f5fc50",
+   "verses": 31081,
+   "same_text": 31081,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31081,
+   "rust_differ": 0
+  },
+  "porbr2018": {
+   "zip_sha256": "adda51da837676b7bcc91a57c18578d86ec505baf951d5170adddb8389e5d163",
+   "verses": 31102,
+   "same_text": 31102,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31102,
+   "rust_differ": 0
+  },
+  "spaRV1909": {
+   "zip_sha256": "488ca0d7f4e9ab974745b47eca305b876491339d6973bc3e5a23244bebea6b5c",
+   "verses": 31102,
+   "same_text": 31102,
+   "differ": 0,
+   "label_mismatch": 0,
+   "e3_problems": 0,
+   "reviewer_trouble": 0,
+   "rust_same": 31102,
+   "rust_differ": 0
+  }
+ },
+ "differences": [],
+ "totals": {
+  "verses": 311761,
+  "same_text": 311761,
+  "differ": 0,
+  "label_mismatch": 0,
+  "e3_problems": 0,
+  "reviewer_trouble": 0,
+  "rust_same": 311761,
+  "rust_differ": 0
+ }
+}

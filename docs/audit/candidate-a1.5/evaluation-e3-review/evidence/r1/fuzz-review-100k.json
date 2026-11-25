@@ -1,0 +1,1286 @@
+{
+ "count": 100000,
+ "seed": 7,
+ "rust_python_identical": 100000,
+ "e3_clean": 19864,
+ "e3_refused": 80136,
+ "e3_clean_silent_loss": 0,
+ "e3_clean_reviewer_same": 18773,
+ "e3_clean_reviewer_differs": 0,
+ "e3_clean_reviewer_trouble": 1091,
+ "examples": {
+  "rust_python": [],
+  "silent_loss": [],
+  "reviewer_differs": [],
+  "reviewer_trouble": [
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 Größe\t\n\\q1 \n\\qa Aleph\nἀρχῇ \n—\t“Go” \n\\c \\*  \\v 2 \n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "Größe"
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 ”  \\f + \\fr 1:1 \\ft ;  בְּרֵאשִ֑ית‏ \\f* \\v 2 “Go”  ; Größe \\f a \\ft a|b\\f*(c’est  \\c \\* 태초 ἀρχῇ\nمی‌خواهم\t; \n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "”"
+     ],
+     [
+      "1",
+      "2",
+      "“Go” ; Größe (c’est 태초 ἀρχῇ می‌خواهم ;"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \\c \\* \\x - \\fq )\t\\fqa — \\x*\\x + \\ft see \\+it בְּרֵאשִ֑ית‏ \\+it*\\x*p//q \nἀρχῇ Größe\tx~y  \\fe - \\fq ,  \\fqa ἀρχῇ\n\\fe*\n\\v 2 ,\tword\tἀρχῇ\theel. — \nLord’s \\bd , ἀρχῇ \\bd*\\add “Go” — Größe  \\+w می‌خواهم\\+w*\\add*\n\\v 3 \\ex - \\xo 1:1 \\xt Ruth 1:1\\ex*\n\\c 2\n\\s1 Head\n\\p\n\\v 1 ) (c’est  ;\t太初 \\k Größe  ἀρχῇ \n”\t\\k*\n\\v 19 \n\\v 2  \\v 3 \\add (c’est \\+w “Go”\\+w*\\add*בְּרֵאשִ֑ית‏ \nLord’s\n\n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "pq ἀρχῇ Größe x y"
+     ],
+     [
+      "1",
+      "2",
+      ", word ἀρχῇ heel. — Lord’s , ἀρχῇ “Go” — Größe می‌خواهم"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ") (c’est ; 太初 Größe ἀρχῇ ”"
+     ],
+     [
+      "2",
+      "19",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      "(c’est “Go”בְּרֵאשִ֑ית‏ Lord’s"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 \n\\v 2 \\p\\*\n\\sp Speaker\n \\v 2 x~y ,\t\n\\v 3 ἀρχῇ a b \n\\v 4 \n\\v 1 \n\\v 2 \\fe a \\xo 1:1 \\xt Ruth 1:8\\fe*Lord’s\n)  می‌خواهم  Größe\nLord’s\t \\v 5 \n\\v 01 \n\\v 1  \\v 6 heel.\nἀρχῇ 태초 \n",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "x y ,"
+     ],
+     [
+      "1",
+      "3",
+      "ἀρχῇ a b"
+     ],
+     [
+      "1",
+      "4",
+      ""
+     ],
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "Lord’s ) می‌خواهم Größe Lord’s"
+     ],
+     [
+      "1",
+      "5",
+      ""
+     ],
+     [
+      "1",
+      "01",
+      ""
+     ],
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "6",
+      "heel. ἀρχῇ 태초"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 ” ”\t; \n(c’est heel. , (c’est \n\\p\\*word  , x~y\n, \\v 2 Lord’s ,  ; בְּרֵאשִ֑ית‏\t \\v 3 \\fig cap|src=\"a.jpg\"\\fig*\n\\v 4a \\x - \\fq Größe\t\\fqa p//q \\x*\\qs (c’est \n\\qs*\n",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "” ” ; (c’est heel. , (c’est word , x y ,"
+     ],
+     [
+      "1",
+      "2",
+      "Lord’s , ; בְּרֵאשִ֑ית‏"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "4a",
+      "(c’est"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 \\bd 태초\nheel. ,  \\+add heel.\\+add*\\bd*\\fe a \\fq heel.\t\\fqa Lord’s\n\\fe*\n\\v 4a \n\\v 2 word  (c’est\n태초\nword\t\n\\v 26 \\v 3 \n\\v 17 “Go” a b  \\sc x~y\t(c’est \\sc*\n\\q1 \n\\v 3 \\v 4 , \n\\v 7 \n\\v 5 \\p\\*\\v 6  \\c 2\n\\ca 3\\ca*\n\\p\n\\v 1 \n\\v 3 \n\\qa Aleph\n) می‌خواهم ) \n\n\\v 1  \\v 2 \n\\s1 Heading here\nἀρχῇ \n\\v 3 \n\\d Title words\nGröße 太初\tLord’s \\v 4 בְּרֵאשִ֑ית‏ \np//q  word  \\p\\*\\ts\\*\n\\v 12 \n\\v 5 \\x - \\xo 1:1 \\xt Ruth 1:8\\x*\\f - \\ft a|b\\f* \\c 3\n\\s1 Head\n\\p\n\\v 1 \n\\v 1 \\ts\\*\\tl (c’est — \\tl*\n\\v 0 \\rq Isa 1:1\\rq*\n\\v 2 \\v 3 \\x + \\ft a|b\\x*, \nLord’s Größe\t)  \n\\v 0 می‌خواهم  \\v 4 \\ef a \\fq —  \\fqa word \\ef*\\fig cap|src=\"a.jpg\"\\fig*\\wj Lord’s\n\\wj*\\p\\*\\v 5 \\it word  a b\t𝐀 \\it*\\f - \\fq x~y \\fqa , \\f*",
+    "trouble": [
+     "\\p written as a milestone",
+     "\\p written as a milestone",
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "태초 heel. , heel."
+     ],
+     [
+      "1",
+      "4a",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "word (c’est 태초 word"
+     ],
+     [
+      "1",
+      "26",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "17",
+      "“Go” a b x y (c’est"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      ","
+     ],
+     [
+      "1",
+      "7",
+      ""
+     ],
+     [
+      "1",
+      "5",
+      ""
+     ],
+     [
+      "1",
+      "6",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "4",
+      "בְּרֵאשִ֑ית‏ pq word"
+     ],
+     [
+      "2",
+      "12",
+      ""
+     ],
+     [
+      "2",
+      "5",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      "(c’est —"
+     ],
+     [
+      "3",
+      "0",
+      ""
+     ],
+     [
+      "3",
+      "2",
+      ""
+     ],
+     [
+      "3",
+      "3",
+      ", Lord’s Größe )"
+     ],
+     [
+      "3",
+      "0",
+      "می‌خواهم"
+     ],
+     [
+      "3",
+      "4",
+      "Lord’s"
+     ],
+     [
+      "3",
+      "5",
+      "word a b 𝐀"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \n\\c 2\n\\s1 Head\n\\p\n\\v 1 word\tp//q\n태초 a b \\c \\* \n\\v 4 \n\\v 2 word “Go” p//q \n\\v 4a \n\\v 01 \\it a b \nمی‌خواهم \\it*\n\\v 3 \\bd می‌خواهم word\np//q \\bd*\\v 4 \\c 3\n\\ca 4\\ca*\n\\p\n\\v 1 ” \nheel. \n\\v 01 \\x - \\ft a|b\\x*\\v 2 \n\\v 01 \n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      "word pq 태초 a b"
+     ],
+     [
+      "2",
+      "4",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      "word “Go” pq"
+     ],
+     [
+      "2",
+      "4a",
+      ""
+     ],
+     [
+      "2",
+      "01",
+      "a b می‌خواهم"
+     ],
+     [
+      "2",
+      "3",
+      "می‌خواهم word pq"
+     ],
+     [
+      "2",
+      "4",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      "” heel."
+     ],
+     [
+      "3",
+      "01",
+      ""
+     ],
+     [
+      "3",
+      "2",
+      ""
+     ],
+     [
+      "3",
+      "01",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 می‌خواهم\nGröße \na b\ta b 𝐀 \n\\v 1 heel.\t\n\\v 2 — \n\\v 3 \\c \\* p//q  a b בְּרֵאשִ֑ית‏ Lord’s ἀρχῇ  𝐀  \\k می‌خواهم\t\\k*\n\\li1 \n\\v 4 \n\\v 01 \\wj heel. (c’est \\wj*\\ex - \\ft see \\+it —\n\\+it*\\ex*",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "می‌خواهم Größe a b a b 𝐀"
+     ],
+     [
+      "1",
+      "1",
+      "heel."
+     ],
+     [
+      "1",
+      "2",
+      "—"
+     ],
+     [
+      "1",
+      "3",
+      "pq a b בְּרֵאשִ֑ית‏ Lord’s ἀρχῇ 𝐀 می‌خواهم"
+     ],
+     [
+      "1",
+      "4",
+      ""
+     ],
+     [
+      "1",
+      "01",
+      "heel. (c’est"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \n\\v 18 \\it p//q ,\tLord’s \n\\it* \\v 2  \\v 3 \n\\v 4 “Go”\theel.  ἀρχῇ \n\\v 1  \\v 5 \\p\\*\\k ;\tGröße  word \\k* \\v 6 \n\\v 01 \\w , p//q  x~y|x-occurrence=\"1\"\\w*; \nLord’s \n\n",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "18",
+      "pq , Lord’s"
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      "“Go” heel. ἀρχῇ"
+     ],
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "5",
+      "; Größe word"
+     ],
+     [
+      "1",
+      "6",
+      ""
+     ],
+     [
+      "1",
+      "01",
+      ", pq x y; Lord’s"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 \n\\v 2 \n\\q1 \n\\c 2\n\\p\n\\v 1 Lord’s 太初  heel.\nheel. \n; \n\\v 2 \n\\c 3\n\\p\n\\v 1 ”  \\v 2 p//q  — می‌خواهم\n\\bd Größe\tLord’s\t\\bd* \\v 3 \\c \\* \\ef a \\fr 1:1 \\ft ) x~y \n\\ef*태초\nἀρχῇ \n\n\\nb \\nd 𝐀\t(c’est\n“Go” \\nd* \\v 4 p//q  \\qs می‌خواهم word 태초\t\\+add )\\+add*\\qs* \\v 5 \n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      "Lord’s 太初 heel. heel. ;"
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      "”"
+     ],
+     [
+      "3",
+      "2",
+      "pq — می‌خواهم Größe Lord’s"
+     ],
+     [
+      "3",
+      "3",
+      "태초 ἀρχῇ 𝐀 (c’est “Go”"
+     ],
+     [
+      "3",
+      "4",
+      "pq می‌خواهم word 태초 )"
+     ],
+     [
+      "3",
+      "5",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\s1 Head\n\\p\n\\v 1 heel.\t, ;  ἀρχῇ\n“Go”  \\qs Größe בְּרֵאשִ֑ית‏ \\qs* \\v 2 \n\\p\n— 𝐀\n(c’est בְּרֵאשִ֑ית‏  \\v 3 \\v 4 𝐀\t— \n𝐀\t\n\\v 1 \n\\v 2 בְּרֵאשִ֑ית‏  Lord’s\n) p//q 𝐀\t \\v 5 \n\\s1 Heading here\n\n\\c 2\n\\ca 3\\ca*\n\\p\n\\v 1 \\x a \\xo 1:1 \\xt Ruth 1:7\\x*\\v 2 x~y \nGröße  p//q x~y \n\\v 0 \\bd 太初\n太初\n\\bd*\n\\v 0 \n\\v 2 \n\\v 3 \\sc 𝐀 \nword  p//q \\sc*\n\\c 3\n\\s1 Head\n\\p\n\\v 1  \\v 2 \\p\\*\\nd ,  — בְּרֵאשִ֑ית‏\t\\+add 태초\\+add*\\nd*𝐀 太初 \n태초  ἀρχῇ\n\n\\v 2 \n\\r (Ruth 1:1)\n\n\\v 3 \n",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "heel. , ; ἀρχῇ “Go” Größe בְּרֵאשִ֑ית‏"
+     ],
+     [
+      "1",
+      "2",
+      "— 𝐀 (c’est בְּרֵאשִ֑ית‏"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      "𝐀 — 𝐀"
+     ],
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "בְּרֵאשִ֑ית‏ Lord’s ) pq 𝐀"
+     ],
+     [
+      "1",
+      "5",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      "x y Größe pq x y"
+     ],
+     [
+      "2",
+      "0",
+      "太初 太初"
+     ],
+     [
+      "2",
+      "0",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      "𝐀 word pq"
+     ],
+     [
+      "3",
+      "1",
+      ""
+     ],
+     [
+      "3",
+      "2",
+      ", — בְּרֵאשִ֑ית‏ 태초𝐀 太初 태초 ἀρχῇ"
+     ],
+     [
+      "3",
+      "2",
+      ""
+     ],
+     [
+      "3",
+      "3",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \\c \\*  \\v 2 \n\\s1 Heading here\n\\ex + \\xo 1:1 \\xt Ruth 1:3\\ex*a b\n\\v 3 \\v 4 \n\\v 2 \n\\li1 \n\\v 01 \n\\v 5 ἀρχῇ Größe  \n\\pi1 𝐀 , \n\\qs می‌خواهم \n\\qs*בְּרֵאשִ֑ית‏ בְּרֵאשִ֑ית‏ p//q \n\\v 6  ",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "01",
+      ""
+     ],
+     [
+      "1",
+      "5",
+      "ἀρχῇ Größe 𝐀 , می‌خواهم בְּרֵאשִ֑ית‏ בְּרֵאשִ֑ית‏ pq"
+     ],
+     [
+      "1",
+      "6",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\s1 Head\n\\p\n\\v 1 \\fe + \\xo 1:1 \\xt Ruth 1:5\\fe*p//q  \\tl x~y “Go”\n\\tl*\n\\c 2\n\\p\n\\v 1 \n\\q1 \n\\v 2 “Go” “Go” \n;  ἀρχῇ word\n\n\\v 4a \n\\v 3 p//q\tGröße  \\qs —\n태초\tבְּרֵאשִ֑ית‏ \\qs* \\v 4 ; \n\n\\pi1 \n\\m “Go” 태초\np//q 𝐀  \n\\v 0  \\c 3\n\\s1 Head\n\\p\n\\v 1 ; \nLord’s\n태초  —\n—\n𝐀 \\it Größe \n)  \\it*\\v 2 \\c \\* \\v 3 \n\\v 4a  ",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "pq x y “Go”"
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      "“Go” “Go” ; ἀρχῇ word"
+     ],
+     [
+      "2",
+      "4a",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      "pq Größe — 태초 בְּרֵאשִ֑ית‏"
+     ],
+     [
+      "2",
+      "4",
+      "; “Go” 태초 pq 𝐀"
+     ],
+     [
+      "2",
+      "0",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      "; Lord’s 태초 — — 𝐀 Größe )"
+     ],
+     [
+      "3",
+      "2",
+      ""
+     ],
+     [
+      "3",
+      "3",
+      ""
+     ],
+     [
+      "3",
+      "4a",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 \n\\v 1 \n\\v 4a \\fe a \\fq 太初\n\\fqa a b \\fe*\\ef - \\xo 1:1 \\xt Ruth 1:6\\ef*\n\\v 2 \\v 2 太初 \n태초\n\n\\li1 \n\\v 3 \\v 3 \\f + \\xo 1:1 \\xt Ruth 1:4\\f*— \\fe + \\ft see \\+it ἀρχῇ \\+it*\\fe* \\c 2\n\\p\n\\v 1 \\c \\* \n\\v 2 \n\\c 3\n\\s1 Head\n\\p\n\\v 1 \n\\v 2 x~y 𝐀 word בְּרֵאשִ֑ית‏\n\n\\v 16 \n\\v 3 \\vp 1a\\vp* \n\\v 01 \n\\s1 Heading here\n\n\\v 4 \n\\li1 p//q  太初 \n\\vp 1a\\vp* \n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "4a",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "太初 태초"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      "—"
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      ""
+     ],
+     [
+      "3",
+      "2",
+      "x y 𝐀 word בְּרֵאשִ֑ית‏"
+     ],
+     [
+      "3",
+      "16",
+      ""
+     ],
+     [
+      "3",
+      "3",
+      ""
+     ],
+     [
+      "3",
+      "01",
+      ""
+     ],
+     [
+      "3",
+      "4",
+      "pq 太初"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\s1 Head\n\\p\n\\v 1 Lord’s x~y \\v 2 \\sc Lord’s , \\+add 태초\\+add*\\sc*\\p\\*\n\\v 0  \\v 3 \\nd ; \nבְּרֵאשִ֑ית‏\t\\nd*\n\\v 0 \n\\v 4 𝐀 p//q \na b \n\\v 5 \\x - \\fq Lord’s \n\\fqa word \\x*Größe , ;\nx~y\n\n\\li1 \n",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "Lord’s x y"
+     ],
+     [
+      "1",
+      "2",
+      "Lord’s , 태초"
+     ],
+     [
+      "1",
+      "0",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      "; בְּרֵאשִ֑ית‏"
+     ],
+     [
+      "1",
+      "0",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      "𝐀 pq a b"
+     ],
+     [
+      "1",
+      "5",
+      "Größe , ; x y"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\s1 Head\n\\p\n\\v 1 \n\\v 2 \n\\pi1 \\v 3 \n\\pi1 \\*\\v 4 Lord’s \nLord’s\t,  , p//q\n\\w “Go”  “Go” ) \n\\w*\\v 5 ,\n\n\\c 2\n\\p\n\\v 1 ",
+    "trouble": [
+     "\\pi1 written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      "Lord’s Lord’s , , pq “Go” “Go” )"
+     ],
+     [
+      "1",
+      "5",
+      ","
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \\w می‌خواهم  \\w*\n\\d Title words\nword ; \n\\sc ; \\sc*\n\\v 6 \n\\c 2\n\\s1 Head\n\\p\n\\v 1 \\fe - \\xo 1:1 \\xt Ruth 1:6\\fe*Größe  𝐀 \\wj בְּרֵאשִ֑ית‏  𝐀  \\wj*\\it ,\nx~y \\+add “Go”\\+add*\\it*\n\\v 2 \\p\\*\\nd בְּרֵאשִ֑ית‏\tבְּרֵאשִ֑ית‏  \\nd*\\sc בְּרֵאשִ֑ית‏ ,  \\sc*\\it —\n\\it*\n\\v 3 \n\\v 4 \\f - \\ft a|b\\f*\\fe - \\fr 1:1 \\ft p//q a b \\fe*\\v 5 \\v 6 \\c 3\n\\p\n\\v 1 בְּרֵאשִ֑ית‏ \n— \\tl p//q 太初  ἀρχῇ \\+w (c’est\\+w*\\tl* ",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "می‌خواهم"
+     ],
+     [
+      "1",
+      "6",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      "Größe 𝐀 בְּרֵאשִ֑ית‏ 𝐀 , x y “Go”"
+     ],
+     [
+      "2",
+      "2",
+      "בְּרֵאשִ֑ית‏ בְּרֵאשִ֑ית‏ בְּרֵאשִ֑ית‏ , —"
+     ],
+     [
+      "2",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "4",
+      ""
+     ],
+     [
+      "2",
+      "5",
+      ""
+     ],
+     [
+      "2",
+      "6",
+      ""
+     ],
+     [
+      "3",
+      "1",
+      "בְּרֵאשִ֑ית‏ — pq 太初 ἀρχῇ (c’est"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\s1 Head\n\\p\n\\v 1 (c’est Größe  ;\na b \\c \\* \n\\q1 태초  ” heel.  태초  )   \\v 2 \n\\v 0 \\sc می‌خواهم\t” \n\\sc*\\it ” 𝐀\ta b \\it*\\v 3 \\add Größe\t\\add*\n\\v 2 太初 \nἀρχῇ 𝐀\n\n\\v 0  ",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "(c’est Größe ; a b 태초 ” heel. 태초 )"
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "0",
+      "می‌خواهم ” ” 𝐀 a b"
+     ],
+     [
+      "1",
+      "3",
+      "Größe"
+     ],
+     [
+      "1",
+      "2",
+      "太初 ἀρχῇ 𝐀"
+     ],
+     [
+      "1",
+      "0",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \\ts\\*\\rq Isa 1:1\\rq*\n\\v 2 \n\\d Title words\n太初 \np//q  \n\\v 2 ) \n,\tבְּרֵאשִ֑ית‏  p//q\theel.  בְּרֵאשִ֑ית‏\np//q\n \\v 3 می‌خواهم \nword  a b \n, (c’est \n\\ex + \\fr 1:2 \\ft 태초 ἀρχῇ \n\\ex*\n\\q1 \n\\v 0 \\v 4 \n\\q2 \\fe a \\xo 1:1 \\xt Ruth 1:8\\fe*\\qs ἀρχῇ\tword  Lord’s  \\qs*“Go” x~y \n\n\\v 5 \\v ἀρχῇ  ,\nGröße\t, \\ef - \\ft see \\+it , \n\\+it*\\ef*\\c 2\n\\p\n\\v 1 \n\\v 3 \n\\v 2 בְּרֵאשִ֑ית‏ (c’est می‌خواهم ,\t\\c \\* \\vp 1a\\vp* \\wj )\n“Go” 𝐀 \n\\wj*\\c 3\n\\ca 4\\ca*\n\\p\n\\v 1 太初 ;\n— ἀρχῇ  \n",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ") , בְּרֵאשִ֑ית‏ pq heel. בְּרֵאשִ֑ית‏ pq"
+     ],
+     [
+      "1",
+      "3",
+      "می‌خواهم word a b , (c’est"
+     ],
+     [
+      "1",
+      "0",
+      ""
+     ],
+     [
+      "1",
+      "4",
+      "ἀρχῇ word Lord’s “Go” x y"
+     ],
+     [
+      "1",
+      "5",
+      ""
+     ],
+     [
+      "1",
+      "ἀρχῇ",
+      ", Größe ,"
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      "בְּרֵאשִ֑ית‏ (c’est می‌خواهم , ) “Go” 𝐀"
+     ],
+     [
+      "3",
+      "1",
+      "太初 ; — ἀρχῇ"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 \\v 2 \n\\v 0 \\tl 太初 \\+w می‌خواهم\\+w*\\tl*\n\\v 3 \n\\v 0 \\x + \\fq heel. \\fqa p//q\n\\x*\\p\\*\n\\v 3 \\fe - \\fr 1:3 \\ft heel.  “Go” \n\\fe* \\c 2\n\\s1 Head\n\\p\n\\v 1 \\qs 𝐀 \\qs* ",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "0",
+      "太初 می‌خواهم"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "0",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      "𝐀"
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \n\\v 3 \n\\v 0 太初 می‌خواهم \n𝐀\n\n\\c 2\n\\ca 3\\ca*\n\\p\n\\v 1 \\v 2 \\p\\*",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "0",
+      "太初 می‌خواهم 𝐀"
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 x~y\n”  x~y\n\\p\\*\\ef - \\fr 1:8 \\ft Lord’s \na b \n\\ef*\n\\v 2 ",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "x y ” x y"
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\ca 2\\ca*\n\\p\n\\v 1 “Go”  p//q (c’est \nGröße  ἀρχῇ\nLord’s heel.\n\n\\v 3  \\v 2 \n\\v 2 \n\\c 2\n\\ca 3\\ca*\n\\p\n\\v 1 \n\\s1 Heading here\n\n\\v 2 ,  word\n\\v 2 \n\\b\n\\*\n\\v 1 \\v 3 \\fe + \\ft a|b\\fe*\n\\v 2-3 \n\\v 1 \\ex a \\xo 1:1 \\xt Ruth 1:6\\ex*",
+    "trouble": [
+     "\\b written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      "“Go” pq (c’est Größe ἀρχῇ Lord’s heel."
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "2",
+      ", word"
+     ],
+     [
+      "2",
+      "2",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ],
+     [
+      "2",
+      "3",
+      ""
+     ],
+     [
+      "2",
+      "2-3",
+      ""
+     ],
+     [
+      "2",
+      "1",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\s1 Head\n\\p\n\\v 1 \\p\\*\n\\v 2 ἀρχῇ  \\fig cap|src=\"a.jpg\"\\fig*\n\\ms Part\n\\v 2 \\rq Isa 1:1\\rq*태초 ” \n\\f a \\xo 1:1 \\xt Ruth 1:7\\f*\n\\v 3 \n\\v 13  ",
+    "trouble": [
+     "\\p written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "2",
+      "ἀρχῇ"
+     ],
+     [
+      "1",
+      "2",
+      "태초 ”"
+     ],
+     [
+      "1",
+      "3",
+      ""
+     ],
+     [
+      "1",
+      "13",
+      ""
+     ]
+    ]
+   },
+   {
+    "usfm": "\\id RUT fuzz, invented\n\\h Fuzz\n\\c 1\n\\p\n\\v 1 \\c \\* \n\\v 4a — \nἀρχῇ בְּרֵאשִ֑ית‏\t,\nἀρχῇ  ",
+    "trouble": [
+     "\\c written as a milestone"
+    ],
+    "e3": [
+     [
+      "1",
+      "1",
+      ""
+     ],
+     [
+      "1",
+      "4a",
+      "— ἀρχῇ בְּרֵאשִ֑ית‏ , ἀρχῇ"
+     ]
+    ]
+   }
+  ]
+ },
+ "reviewer_trouble_kinds": {
+  "\\<marker> written as a milestone": 1066,
+  "bar outside a span": 27,
+  "unknown marker \\esb": 2,
+  "unknown marker \\esbe": 2
+ }
+}

@@ -1,0 +1,209 @@
+{
+ "version": "e3",
+ "binary_sha256": "b4f51a62a51ef5085ca12900ba575ee04cc04f0b99f0fccf88db8890a141b63d",
+ "scenarios": {
+  "notes-against-punctuation": {
+   "scenario": "notes",
+   "composition": {
+    "scored": 1,
+    "control": 0,
+    "mixed": 0,
+    "exploratory": 0,
+    "authentic": 0,
+    "generated": 1
+   },
+   "outcome": "scored",
+   "score": {
+    "exit": 0,
+    "verdict": "pass",
+    "verdict_line": "PASS (safety pass; evidence sufficient): verified 21 (21 faithful, 0 wrong text) of 21 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+    "safety": "pass",
+    "evidence": "sufficient",
+    "shortfall": [],
+    "failed_validity": [],
+    "criteria_failed": [],
+    "integrity": {},
+    "counts": {
+     "scored_documents": 1,
+     "completed": 1,
+     "refused_whole": 0,
+     "failed_to_run": 0,
+     "printed_scorable": 21,
+     "printed_unsupported": 0,
+     "verified": 21,
+     "verified_faithful": 21,
+     "verified_mismatch": 0,
+     "verified_absent_or_unvalidatable": 0,
+     "held": 0,
+     "refused_verses": 0,
+     "missing": 0,
+     "documents_verifying_nothing": []
+    },
+    "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+    "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 21 verified verses of 1 completed scored documents (0 authentic). They print 21 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure.",
+    "diagnostic": null,
+    "diagnostic_line": null,
+    "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+    "documents": {
+     "rg-oba": {
+      "execution": "completed",
+      "printed": 21,
+      "verified": 21,
+      "verified_faithful": 21,
+      "verified_mismatch": 0,
+      "verified_absent": 0,
+      "verified_unvalidatable": 0,
+      "printed_unsupported": 0
+     }
+    }
+   }
+  },
+  "unclosed-xref": {
+   "scenario": "unclosed",
+   "composition": {
+    "scored": 1,
+    "control": 0,
+    "mixed": 0,
+    "exploratory": 0,
+    "authentic": 0,
+    "generated": 1
+   },
+   "outcome": "refused at the seal",
+   "refusals": [
+    "refused: rg-jud: reference 65-JUD.usfm: note_unclosed (line 8): \\x opened on line 8 is still open at \\v (line 9)"
+   ]
+  },
+  "milestone": {
+   "scenario": "milestone",
+   "composition": {
+    "scored": 1,
+    "control": 0,
+    "mixed": 0,
+    "exploratory": 0,
+    "authentic": 0,
+    "generated": 1
+   },
+   "outcome": "scored",
+   "score": {
+    "exit": 0,
+    "verdict": "pass",
+    "verdict_line": "PASS (safety pass; evidence sufficient): verified 25 (25 faithful, 0 wrong text) of 25 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 0 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+    "safety": "pass",
+    "evidence": "sufficient",
+    "shortfall": [],
+    "failed_validity": [],
+    "criteria_failed": [],
+    "integrity": {},
+    "counts": {
+     "scored_documents": 1,
+     "completed": 1,
+     "refused_whole": 0,
+     "failed_to_run": 0,
+     "printed_scorable": 25,
+     "printed_unsupported": 0,
+     "verified": 25,
+     "verified_faithful": 25,
+     "verified_mismatch": 0,
+     "verified_absent_or_unvalidatable": 0,
+     "held": 0,
+     "refused_verses": 0,
+     "missing": 0,
+     "documents_verifying_nothing": []
+    },
+    "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+    "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 25 verified verses of 1 completed scored documents (0 authentic). They print 25 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 100.0 % of scorable verses, 100.0 % of all printed verses. Exploratory documents are not part of this figure.",
+    "diagnostic": null,
+    "diagnostic_line": null,
+    "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+    "documents": {
+     "rg-phm": {
+      "execution": "completed",
+      "printed": 25,
+      "verified": 25,
+      "verified_faithful": 25,
+      "verified_mismatch": 0,
+      "verified_absent": 0,
+      "verified_unvalidatable": 0,
+      "printed_unsupported": 0
+     }
+    }
+   }
+  },
+  "vacuous": {
+   "scenario": "vacuous",
+   "composition": {
+    "scored": 2,
+    "control": 0,
+    "mixed": 0,
+    "exploratory": 0,
+    "authentic": 0,
+    "generated": 2
+   },
+   "outcome": "refused at the seal",
+   "refusals": [
+    "refused: rg-v1: a scored document's reference holds no printed scorable verse (no_verses: 0 scorable, 0 numbered but empty, 0 unsupported); nothing in it could be verified. Use a reference that prints the document's books, or declare the document exploratory",
+    "refused: rg-v2: a scored document's reference holds no printed scorable verse (unsupported_only: 0 scorable, 0 numbered but empty, 2 unsupported); nothing in it could be verified. Use a reference that prints the document's books, or declare the document exploratory"
+   ]
+  },
+  "zero-coverage": {
+   "scenario": "zero",
+   "composition": {
+    "scored": 1,
+    "control": 0,
+    "mixed": 0,
+    "exploratory": 0,
+    "authentic": 0,
+    "generated": 1
+   },
+   "outcome": "scored",
+   "score": {
+    "exit": 0,
+    "verdict": "inconclusive",
+    "verdict_line": "INCONCLUSIVE (safety pass; evidence insufficient): verified 0 (0 faithful, 0 wrong text) of 15 printed scorable verses; 0 verified references the edition lacks or cannot validate; 0 printed unsupported (not scored); 0 held back; 0 in refused chapters; 15 missing (not found); scored documents 1 completed, 0 refused whole, 0 failed to run, of 1",
+    "safety": "pass",
+    "evidence": "insufficient",
+    "shortfall": [
+     "minimum verified faithful: 0 against the floor 1"
+    ],
+    "failed_validity": [],
+    "criteria_failed": [],
+    "integrity": {},
+    "counts": {
+     "scored_documents": 1,
+     "completed": 1,
+     "refused_whole": 0,
+     "failed_to_run": 0,
+     "printed_scorable": 15,
+     "printed_unsupported": 0,
+     "verified": 0,
+     "verified_faithful": 0,
+     "verified_mismatch": 0,
+     "verified_absent_or_unvalidatable": 0,
+     "held": 0,
+     "refused_verses": 0,
+     "missing": 15,
+     "documents_verifying_nothing": [
+      "rg-z"
+     ]
+    },
+    "qualification_limit": "Scored authentic evidence (0 documents, 0 printed verses, formats none, languages none) is below the declared minimum (8 documents, 20000 verses, 2 formats, 4 languages). The result qualifies the candidate for the generated documents and for the authentic documents listed only; it makes no claim for authentic published files in general.",
+    "accuracy_claim": "0 verified verses with wrong text under the strict fidelity rule, 0 verified references outside the edition and 0 the edition cannot validate, among 0 verified verses of 1 completed scored documents (0 authentic). They print 15 scorable verses and 0 verses the recogniser cannot hold (unsupported, by class: none). Faithful coverage (exact, canonical or layout, verified / printed; no pass mark): 0.0 % of scorable verses, 0.0 % of all printed verses. Exploratory documents are not part of this figure. The evidence is below the protocol's evidence floor (minimum verified faithful: 0 against the floor 1): the run cannot show that the recogniser works, whatever its safety.",
+    "diagnostic": null,
+    "diagnostic_line": null,
+    "protocol_sha256": "92f5e5698e23c3d2b45c8d7907d704a312dbefaaf9227a0f42bf557fc4a26e49",
+    "documents": {
+     "rg-z": {
+      "execution": "completed",
+      "printed": 15,
+      "verified": 0,
+      "verified_faithful": 0,
+      "verified_mismatch": 0,
+      "verified_absent": 0,
+      "verified_unvalidatable": 0,
+      "printed_unsupported": 0
+     }
+    }
+   }
+  }
+ }
+}
