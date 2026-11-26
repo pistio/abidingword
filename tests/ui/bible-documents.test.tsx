@@ -122,10 +122,11 @@ describe("Bibles from documents", () => {
     // The results do not consume 45% of the original reading pane by default.
     const details = within(pane).getByTestId("original-passage-details");
     expect(details).not.toHaveAttribute("open");
-    expect(within(details).getByText("Ruth 1 in this document")).toBeInTheDocument();
-    await user.click(within(details).getByText("Ruth 1 in this document"));
+    const summary = details.querySelector("summary");
+    expect(summary).toHaveTextContent("Ruth 1 in this document");
+    await user.click(summary!);
     expect(details).toHaveAttribute("open");
-    expect(within(details).getByText("Where it begins or ends is not certain.")).toBeInTheDocument();
+    expect(await within(details).findByText("Where it begins or ends is not certain.")).toBeInTheDocument();
   });
 
   it("searching Scripture while a document is read shows the verses found in the Bible read by passage", async () => {
