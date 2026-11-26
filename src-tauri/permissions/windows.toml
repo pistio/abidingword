@@ -136,6 +136,7 @@ permissions = [
   "allow-scripture-reference-parse",
   "allow-scripture-reference-detect",
   "allow-bible-list",
+  "allow-bible-update-details",
   "allow-bible-bundled-list",
   "allow-bible-import-preview",
   "allow-bible-import-commit",
