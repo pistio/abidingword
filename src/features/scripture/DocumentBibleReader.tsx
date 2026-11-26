@@ -8,6 +8,7 @@ import { EpubViewer } from "@/features/library/formatted/EpubViewer";
 import { placeOfPosition, type EpubPlace } from "@/features/library/formatted/epubLocation";
 import { useLoad } from "@/hooks/useLoad";
 import { formatNumber } from "@/i18n/format";
+import { referenceLabel } from "@/i18n/scripture";
 import { toApiError } from "@/lib/api";
 import { ApiProvider, useApi } from "@/lib/ApiContext";
 import type { PdfPlace } from "@/lib/pdfEngine";
@@ -15,7 +16,7 @@ import { readLocal, writeLocal } from "@/lib/storage";
 import type { EpubStructureItem } from "@/types/library";
 import type { BibleDocument, BibleTranslation, DocumentHit, DocumentSegment, VerseOrigin } from "@/types/scripture";
 import { documentApi } from "./documentApi";
-import { CoverageLine, GoToPassage, MarkPassage, PassagePanel, type DocumentHere, type DocumentTarget } from "./DocumentPassages";
+import { CoverageLine, GoToPassage, MarkPassage, PassagePanel, openingWords, type DocumentHere, type DocumentTarget } from "./DocumentPassages";
 import { useScripture } from "./ScriptureContext";
 import type { ScriptureRef } from "@/types/scripture";
 
@@ -66,6 +67,13 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
   }
   const [marking, setMarking] = useState(false);
   const [version, setVersion] = useState(0);
+  // A passage lookup can finish after the person changes the view or searches again.
+  // Never let an older lookup steal the formatted reader's position.
+  const passageLookup = useRef(0);
+  const originalIsActive = useRef(shown === "original");
+  useEffect(() => {
+    originalIsActive.current = shown === "original";
+  }, [shown]);
   const here = useRef<() => DocumentHere | null>(() => null);
   const register = useCallback((fn: () => DocumentHere | null) => {
     here.current = fn;
@@ -76,6 +84,52 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
     if (target.page === null && view === "original" && list[index]?.view === "pdf") setView("text");
     setJump({ document: target.documentId, position: target.position ?? 0, page: target.page, nonce: Date.now(), quote: target.quote });
   };
+
+  // Find from Original means go to its grounded source place. The detailed
+  // recognised-verse list is optional, not a second reader occupying the page.
+  const findPassage = (reference: ScriptureRef) => {
+    const request = ++passageLookup.current;
+    setPassage(reference);
+    setMarking(false);
+    if (shown !== "original") return;
+    void api.bibleDocumentLocate(bible.id, reference.canonical).then((found) => {
+      if (passageLookup.current !== request || !originalIsActive.current) return;
+      const origin = found.origin;
+      if (origin && (origin.firstPage !== null || origin.firstSegment !== null)) {
+        show({
+          documentId: origin.documentId, page: origin.firstPage, position: origin.firstSegment,
+          quote: found.verses[0] ? openingWords(found.verses[0].text) : undefined,
+        });
+        return;
+      }
+      const marked = found.locations.find((item) => item.page !== null || item.segment !== null);
+      if (marked) {
+        show({ documentId: marked.documentId, page: marked.page, position: marked.segment });
+        return;
+      }
+      // An unchecked verse still has a real location in the source, but never
+      // becomes verified Scripture merely because the reader navigates to it.
+      const unchecked = found.places.find((item) => item.firstPage !== null || item.firstSegment !== null);
+      if (unchecked) {
+        show({ documentId: unchecked.documentId, page: unchecked.firstPage, position: unchecked.firstSegment });
+      }
+      // With no grounded place, preserve the present document position.
+      // Expanding the passage details shows the explicit not-found/error state.
+    }).catch(() => {
+      // PassagePanel displays lookup errors when expanded; never guess a place.
+    });
+  };
+  const passagePanel = passage ? (
+    <PassagePanel
+      bible={bible}
+      reference={passage}
+      version={version}
+      onShow={show}
+      onClose={() => { passageLookup.current++; setPassage(null); }}
+      onMark={() => setMarking(true)}
+      onChanged={() => setVersion((v) => v + 1)}
+    />
+  ) : null;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -125,10 +179,7 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
           </div>
         </details>
         <CoverageLine bible={bible} version={version} />
-        <GoToPassage bible={bible} onGo={(ref) => {
-            setPassage(ref);
-            setMarking(false);
-          }} />
+        <GoToPassage bible={bible} onGo={findPassage} />
         {list.length > 1 && (
           <label htmlFor={selectId} className="flex flex-col gap-1 text-[0.9375rem]">
             <span className="font-medium">{t("scripture.document.part")}</span>
@@ -183,18 +234,15 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
             setVersion((v) => v + 1);
           }}
         />
-      ) : (
-        passage && (
-          <PassagePanel
-            bible={bible}
-            reference={passage}
-            version={version}
-            onShow={show}
-            onClose={() => setPassage(null)}
-            onMark={() => setMarking(true)}
-            onChanged={() => setVersion((v) => v + 1)}
-          />
-        )
+      ) : passage && (
+        shown === "original" ? (
+          <details key={passage.canonical} className="shrink-0 border-b border-border-subtle bg-bg" data-testid="original-passage-details">
+            <summary className="cursor-pointer px-5 py-2 type-subhead">
+              {t("scripture.document.passages.panel", { passage: referenceLabel(passage) })}
+            </summary>
+            <div className="max-h-56 overflow-y-auto">{passagePanel}</div>
+          </details>
+        ) : passagePanel
       )}
       {document &&
         (shown === "text" ? (

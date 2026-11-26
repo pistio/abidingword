@@ -1,5 +1,5 @@
 import { screen, waitFor, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createMemoryApi } from "../support/memoryApi";
 import { openSettingsSection, renderAppInProject as renderApp } from "../support/render";
 import { openPartOptions } from "../support/studyActions";
@@ -89,6 +89,45 @@ describe("Bibles from documents", () => {
     await user.type(within(pane).getByRole("searchbox", { name: "Search in this Bible’s text" }), "Romans");
     await user.click(within(pane).getByRole("button", { name: "Search" }));
     expect(await within(pane).findByText("4 places found")).toBeInTheDocument();
+  });
+
+  it("keeps the formatted Original readable while finding a passage and jumping to a grounded unchecked verse", async () => {
+    const api = createMemoryApi();
+    api.installFixtureBible("WEB", "web");
+    const preview = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.epub"] });
+    const bible = await api.bibleImportCommit({
+      previewId: preview.previewId, name: "Invented Ruth EPUB", shortName: "EPB",
+      language: "English", asDocument: true,
+    });
+    const document = api.state.bibleDocuments.get(bible.id)!.documents[0]!;
+    // The place is real in the source even though its words are NOT verified Bible text.
+    const locate = vi.spyOn(api, "bibleDocumentLocate").mockImplementation(async (_, reference) => ({
+      reference, verses: [], complete: false, origin: null, locations: [],
+      places: [{
+        reference: "RUT.1.2", documentId: document.id, documentName: document.name,
+        firstPage: null, firstSegment: 8, firstOffset: null, basis: "automatic",
+        reason: "boundary",
+      }],
+      apparatus: [],
+    }));
+    const { user } = await renderApp(api);
+    const pane = screen.getByRole("complementary", { name: "Scripture" });
+    await user.selectOptions(within(pane).getByRole("combobox", { name: "Translation" }), "EPB");
+    const original = await within(pane).findByRole("button", { name: "Original" });
+    expect(original).toHaveAttribute("aria-pressed", "true");
+    await user.type(within(pane).getByPlaceholderText("e.g. John 3:16"), "Ruth 1");
+    await user.click(within(pane).getByRole("button", { name: "Find" }));
+    await waitFor(() => expect(locate).toHaveBeenCalledWith(bible.id, "RUT.1"));
+    expect(original).toHaveAttribute("aria-pressed", "true");
+    expect(within(pane).getByTestId("epub-viewer")).toBeInTheDocument();
+    // The results do not consume 45% of the original reading pane by default.
+    const details = within(pane).getByTestId("original-passage-details");
+    expect(details).not.toHaveAttribute("open");
+    const summary = details.querySelector("summary");
+    expect(summary).toHaveTextContent("Ruth 1 in this document");
+    await user.click(summary!);
+    expect(details).toHaveAttribute("open");
+    expect(await within(details).findByText("Where it begins or ends is not certain.")).toBeInTheDocument();
   });
 
   it("searching Scripture while a document is read shows the verses found in the Bible read by passage", async () => {

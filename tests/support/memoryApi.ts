@@ -278,7 +278,7 @@ function fixtureForPath(path: string): SourceFixture {
 const bookByCode = new Map(BOOKS.map((b) => [b.code, b]));
 
 const ALIASES: Record<string, string> = {
-  john: "JHN", jn: "JHN", romans: "ROM", rom: "ROM", psalm: "PSA", psalms: "PSA", ps: "PSA",
+  john: "JHN", jn: "JHN", romans: "ROM", rom: "ROM", psalm: "PSA", psalms: "PSA", ps: "PSA", ruth: "RUT",
   genesis: "GEN", "1 cor": "1CO", "1 corinthians": "1CO",
   galatians: "GAL", gal: "GAL", ephesians: "EPH", eph: "EPH",
   // A few other-language names, as the shared resolver reads them in any interface language.
