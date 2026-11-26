@@ -93,6 +93,7 @@ describe("Bibles from documents", () => {
 
   it("keeps the formatted Original readable while finding a passage and jumping to a grounded unchecked verse", async () => {
     const api = createMemoryApi();
+    api.installFixtureBible("WEB", "web");
     const preview = await api.bibleImportPreview({ paths: ["/home/you/Documents/invented.epub"] });
     const bible = await api.bibleImportCommit({
       previewId: preview.previewId, name: "Invented Ruth EPUB", shortName: "EPB",
