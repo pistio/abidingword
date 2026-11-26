@@ -71,7 +71,9 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
   // Never let an older lookup steal the formatted reader's position.
   const passageLookup = useRef(0);
   const originalIsActive = useRef(shown === "original");
-  originalIsActive.current = shown === "original";
+  useEffect(() => {
+    originalIsActive.current = shown === "original";
+  }, [shown]);
   const here = useRef<() => DocumentHere | null>(() => null);
   const register = useCallback((fn: () => DocumentHere | null) => {
     here.current = fn;
