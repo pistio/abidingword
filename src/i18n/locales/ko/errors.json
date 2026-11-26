@@ -45,6 +45,7 @@
     "ambiguous": "“{{text}}”은(는) {{options}} 중 하나일 수 있습니다. 책 이름을 더 입력해 골라 주세요."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "기본 제공 성경의 출판사와 저작권 표시는 수정할 수 없습니다.",
     "hasProblems": "이 성경에는 추가하기 전에 해결해야 할 문제가 있습니다.",
     "shortNameTooLong": "약칭은 {{max}}자 이내로 입력해 주세요.",
     "badLanguage": "“{{text}}”은(는) Abiding Word가 아는 언어가 아닙니다.",

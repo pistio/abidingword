@@ -45,6 +45,7 @@
     "ambiguous": "“{{text}}” pode significar {{options}}. Digite mais do nome do livro para escolher."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "A editora e o aviso de direitos autorais de uma Bíblia incluída não podem ser alterados.",
     "hasProblems": "Esta Bíblia tem problemas que precisam ser resolvidos antes que possa ser adicionada.",
     "shortNameTooLong": "Use menos de {{max}} caracteres no nome abreviado.",
     "badLanguage": "“{{text}}” não é um idioma que o Abiding Word conheça.",

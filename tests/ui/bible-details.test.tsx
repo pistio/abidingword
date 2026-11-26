@@ -83,7 +83,7 @@ describe("Bible import details and editing", () => {
     await user.type(within(editor).getByRole("textbox", { name: "Name" }), "Updated label");
     await user.click(within(editor).getByRole("button", { name: "Save details" }));
     await waitFor(() => expect(api.state.bibles.find((b) => b.id === first.id)?.name).toBe("Updated label"));
-    expect(within(section).getByRole("status")).toHaveTextContent("Bible details saved");
+    expect(within(section).getByText("Bible details saved.")).toBeInTheDocument();
   });
 
   it("reports an import error separately from missing metadata instead of requiring edition confirmation", async () => {

@@ -434,7 +434,10 @@ pub fn set_language(
 /// Corrects display and user-supplied metadata of an installed Bible in one
 /// atomic SQLite statement. Never edits its source, rights identifier, text,
 /// verse evidence, edition confirmation, search index or canonical citations.
-pub fn update_details(conn: &Connection, input: &UpdateBibleDetails) -> AppResult<BibleTranslation> {
+pub fn update_details(
+    conn: &Connection,
+    input: &UpdateBibleDetails,
+) -> AppResult<BibleTranslation> {
     let before = get(conn, &input.id)?;
     let name = validate::title(&input.name, "Bible")?;
     let short_name = validate::title(&input.short_name, "Bible's short name")?;
@@ -443,13 +446,15 @@ pub fn update_details(conn: &Connection, input: &UpdateBibleDetails) -> AppResul
             UserMessage::new(
                 "bibles.shortNameTooLong",
                 format!("Please keep the short name under {SHORT_NAME_MAX_CHARS} characters."),
-            ).with("max", SHORT_NAME_MAX_CHARS),
+            )
+            .with("max", SHORT_NAME_MAX_CHARS),
         ));
     }
     let language = validate::title(&input.language, "language")?;
     let language_code = language_tag(input.language_code.as_deref())?;
     let publisher = validate::optional_text(input.publisher.as_deref(), 200, "publisher")?;
-    let notice = validate::optional_text(input.copyright_notice.as_deref(), 2_000, "copyright notice")?;
+    let notice =
+        validate::optional_text(input.copyright_notice.as_deref(), 2_000, "copyright notice")?;
     // Bundled Bible source attributions are part of its verified licence record.
     if before.source_origin == "bundled"
         && (publisher != before.publisher || notice != before.copyright_notice)
@@ -471,7 +476,16 @@ pub fn update_details(conn: &Connection, input: &UpdateBibleDetails) -> AppResul
         "UPDATE bible_translations SET name = ?2, short_name = ?3,
           language = ?4, language_code = ?5, publisher = ?6,
           copyright_notice = ?7, updated_at = ?8 WHERE id = ?1",
-        params![input.id, name, short_name, language, language_code, publisher, notice, now()],
+        params![
+            input.id,
+            name,
+            short_name,
+            language,
+            language_code,
+            publisher,
+            notice,
+            now()
+        ],
     )?;
     get(conn, &input.id)
 }

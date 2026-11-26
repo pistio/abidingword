@@ -95,15 +95,15 @@ Decided in v0.18.10. The rest of the corpus follows these.
 | Spanish | pasaje (185), Pasaje (33), (none of these) (52) |
 | Portuguese | passagem (116), Passagem (20), (none of these) (134) |
 
-**source** — 157 strings use it in English.
+**source** — 158 strings use it in English.
 
 | Language | Renderings (strings) |
 |---|---|
-| German | Quelle (151), (none of these) (6) |
-| Korean | 자료 (136), 출처 (16), (none of these) (5) |
-| French | source (130), Source (22), (none of these) (5) |
-| Spanish | fuente (134), Fuente (18), (none of these) (5) |
-| Portuguese | fonte (135), Fonte (17), (none of these) (5) |
+| German | Quelle (152), (none of these) (6) |
+| Korean | 자료 (136), 출처 (16), (none of these) (6) |
+| French | source (131), Source (22), (none of these) (5) |
+| Spanish | fuente (134), Fuente (18), (none of these) (6) |
+| Portuguese | fonte (136), Fonte (17), (none of these) (5) |
 
 ## 2. Questions left
 

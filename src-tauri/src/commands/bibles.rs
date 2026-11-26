@@ -22,7 +22,8 @@ use crate::scripture::bundled::{self, BUNDLED};
 use crate::scripture::catalogue;
 use crate::scripture::import::{self, ImportOrigin, ImportPreview, SuggestedMetadata, WordReport};
 use crate::scripture::{
-    BibleTranslation, BundledBibleInfo, CommitImport, ImportRequest, UpdateBibleDetails, WordAnnotations, WordChoice,
+    BibleTranslation, BundledBibleInfo, CommitImport, ImportRequest, UpdateBibleDetails,
+    WordAnnotations, WordChoice,
 };
 use crate::state::AppState;
 
@@ -455,7 +456,9 @@ pub fn bible_update_details(
     input: UpdateBibleDetails,
 ) -> CommandResult<BibleTranslation> {
     let core = state.core()?;
-    Ok(core.db.with_conn(|conn| bibles::update_details(conn, &input))?)
+    Ok(core
+        .db
+        .with_conn(|conn| bibles::update_details(conn, &input))?)
 }
 
 /// One language a Bible can be marked as: the 100 reference languages.

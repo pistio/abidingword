@@ -43,7 +43,10 @@ fn edits_metadata_without_altering_source_identity_edition_or_verse_state() {
         assert_eq!(after.language, "Deutsch");
         assert_eq!(after.language_code.as_deref(), Some("de"));
         assert_eq!(after.publisher.as_deref(), Some("Corrected publisher"));
-        assert_eq!(after.copyright_notice.as_deref(), Some("Corrected reference note"));
+        assert_eq!(
+            after.copyright_notice.as_deref(),
+            Some("Corrected reference note")
+        );
         assert_eq!(after.source_type, before.source_type);
         assert_eq!(after.source_origin, before.source_origin);
         assert_eq!(after.source_path, before.source_path);
@@ -58,7 +61,8 @@ fn edits_metadata_without_altering_source_identity_edition_or_verse_state() {
         assert_eq!(after.created_at, before.created_at);
         assert_eq!(bibles::get(conn, "doc")?, after);
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 #[test]
@@ -71,19 +75,32 @@ fn duplicate_short_name_and_validation_fail_without_partial_edits() {
         let duplicated = bibles::update_details(conn, &input("doc1", "web"));
         assert!(matches!(duplicated, Err(AppError::DuplicateTranslation(_))));
         let mut invalid = input("doc1", "X".repeat(21).as_str());
-        assert!(matches!(bibles::update_details(conn, &invalid), Err(AppError::InvalidInput(_))));
+        assert!(matches!(
+            bibles::update_details(conn, &invalid),
+            Err(AppError::InvalidInput(_))
+        ));
         invalid = input("doc1", "IRD");
         invalid.name = " ".into();
-        assert!(matches!(bibles::update_details(conn, &invalid), Err(AppError::InvalidInput(_))));
+        assert!(matches!(
+            bibles::update_details(conn, &invalid),
+            Err(AppError::InvalidInput(_))
+        ));
         invalid = input("doc1", "IRD");
         invalid.language_code = Some("no valid tag!".into());
-        assert!(matches!(bibles::update_details(conn, &invalid), Err(AppError::InvalidInput(_))));
+        assert!(matches!(
+            bibles::update_details(conn, &invalid),
+            Err(AppError::InvalidInput(_))
+        ));
         invalid = input("doc1", "IRD");
         invalid.copyright_notice = Some("n".repeat(2_001));
-        assert!(matches!(bibles::update_details(conn, &invalid), Err(AppError::InvalidInput(_))));
+        assert!(matches!(
+            bibles::update_details(conn, &invalid),
+            Err(AppError::InvalidInput(_))
+        ));
         assert_eq!(bibles::get(conn, "doc1")?, unchanged);
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }
 
 #[test]
@@ -93,7 +110,10 @@ fn bundled_source_attribution_is_immutable_even_when_display_name_changes() {
         seed(conn, "included", "INC", "bundled")?;
         let prior = bibles::get(conn, "included")?;
         let mut edit = input("included", "NEW");
-        assert!(matches!(bibles::update_details(conn, &edit), Err(AppError::InvalidInput(_))));
+        assert!(matches!(
+            bibles::update_details(conn, &edit),
+            Err(AppError::InvalidInput(_))
+        ));
         assert_eq!(bibles::get(conn, "included")?, prior);
         edit.publisher = prior.publisher.clone();
         edit.copyright_notice = prior.copyright_notice.clone();
@@ -102,5 +122,6 @@ fn bundled_source_attribution_is_immutable_even_when_display_name_changes() {
         assert_eq!(updated.publisher, prior.publisher);
         assert_eq!(updated.copyright_notice, prior.copyright_notice);
         Ok(())
-    }).unwrap();
+    })
+    .unwrap();
 }

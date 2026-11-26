@@ -45,6 +45,7 @@
     "ambiguous": "« {{text}} » peut désigner {{options}}. Tapez une plus grande partie du nom du livre pour préciser."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "L’éditeur et la mention de droit d’auteur d’une Bible incluse ne peuvent pas être modifiés.",
     "hasProblems": "Cette Bible présente des problèmes qui doivent être résolus avant qu’elle puisse être ajoutée.",
     "shortNameTooLong": "Veuillez ne pas dépasser {{max}} caractères pour le nom court.",
     "badLanguage": "« {{text}} » n’est pas une langue connue d’Abiding Word.",
