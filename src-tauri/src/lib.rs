@@ -253,6 +253,7 @@ pub fn run() {
             commands::scripture::scripture_reference_detect,
             commands::bibles::bible_list,
             commands::bibles::bible_get,
+            commands::bibles::bible_update_details,
             commands::bibles::bible_bundled_list,
             commands::bibles::bible_import_preview,
             commands::bibles::bible_import_commit,

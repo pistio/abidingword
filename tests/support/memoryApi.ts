@@ -2029,6 +2029,31 @@ export function createMemoryApi(overrides: Partial<AppInfo> = {}): MemoryApi {
       bible.languageCode = languageCode?.trim() || null;
       return { ...bible };
     },
+    bibleUpdateDetails: async (input) => {
+      const bible = state.bibles.find((item) => item.id === input.id);
+      if (!bible) throw new ApiError("notFound", "Bible not found");
+      const name = input.name.trim(), short = input.shortName.trim(), language = input.language.trim();
+      if (!name || !short || !language) throw new ApiError("invalidInput", "Name, short name and language are required.");
+      if (name.length > 200 || short.length > 20 || language.length > 200) throw new ApiError("invalidInput", "A Bible detail is too long.");
+      if (state.bibles.some((item) => item.id !== bible.id && item.shortName.toLowerCase() === short.toLowerCase())) {
+        throw new ApiError("duplicateTranslation", "This short name already belongs to a Bible.");
+      }
+      if (input.languageCode !== null && !/^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/i.test(input.languageCode.trim())) {
+        throw new ApiError("invalidInput", "The language tag is not recognised.");
+      }
+      if ((input.publisher?.trim().length ?? 0) > 200 || (input.copyrightNotice?.trim().length ?? 0) > 2000) {
+        throw new ApiError("invalidInput", "A Bible detail is too long.");
+      }
+      const publisher = input.publisher?.trim() || null, copyrightNotice = input.copyrightNotice?.trim() || null;
+      if (bible.sourceOrigin === "bundled" && (publisher !== bible.publisher || copyrightNotice !== bible.copyrightNotice)) {
+        throw new ApiError("invalidInput", "Included Bible source attribution cannot be changed.");
+      }
+      Object.assign(bible, {
+        name, shortName: short, language, languageCode: input.languageCode?.trim() || null,
+        publisher, copyrightNotice, updatedAt: now(),
+      });
+      return { ...bible };
+    },
     bibleWordsPreview: async (bibleId) => {
       const bible = state.bibles.find((b) => b.id === bibleId);
       if (!bible) throw new ApiError("notFound", "Bible not found");

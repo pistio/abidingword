@@ -79,6 +79,9 @@
     "failed": "La recherche n’a pas pu aboutir."
   },
   "addBible": {
+    "requiredFields": "Avant d’ajouter cette Bible, renseignez : {{fields}}.",
+    "notReadyToAdd": "Ces fichiers ne peuvent pas encore être ajoutés. Consultez les problèmes ci-dessus ; corrigez la source ou choisissez la lecture comme document si elle est disponible.",
+    "editionOptional": "La confirmation de l’édition est facultative. Elle ne vérifie pas le texte des versets incertains.",
     "title": {
       "choose": "Ajouter une Bible",
       "checking": "Vérification de la Bible…",
@@ -330,6 +333,12 @@
     "partialBooks_many": "{{count}} des 66 livres"
   },
   "bibles": {
+    "editDetails": "Modifier les informations",
+    "saveDetails": "Enregistrer les informations",
+    "detailsSaved": "Informations de la Bible enregistrées.",
+    "detailsOnly": "Seules les informations affichées sont modifiées. Les fichiers originaux, le texte biblique, la confirmation de l’édition, la licence et les preuves de reconnaissance restent inchangés.",
+    "attributionFixed": "L’éditeur et la mention de droit d’auteur d’une Bible incluse ne peuvent pas être modifiés.",
+    "requiredDetails": "Le nom, le nom abrégé et la langue sont obligatoires.",
     "empty": "Aucune Bible n’a encore été ajoutée.",
     "installed": "Bibles installées",
     "addBible": "Ajouter une Bible…",

@@ -76,6 +76,9 @@
     "failed": "Die Suche konnte nicht abgeschlossen werden."
   },
   "addBible": {
+    "requiredFields": "Bitte vor dem Hinzufügen ergänzen: {{fields}}.",
+    "notReadyToAdd": "Diese Dateien können noch nicht hinzugefügt werden. Prüfe die Probleme oben; korrigiere die Quelle oder wähle, falls verfügbar, das Lesen als Dokument.",
+    "editionOptional": "Die Bestätigung der Bibelausgabe ist freiwillig. Unsicherer Bibeltext wird dadurch nicht geprüft.",
     "title": {
       "choose": "Bibel hinzufügen",
       "checking": "Bibel wird geprüft…",
@@ -296,6 +299,12 @@
     "partialBooks_other": "{{count}} der 66 Bücher"
   },
   "bibles": {
+    "editDetails": "Angaben bearbeiten",
+    "saveDetails": "Angaben speichern",
+    "detailsSaved": "Bibelangaben gespeichert.",
+    "detailsOnly": "Nur die angezeigten Angaben werden geändert. Originaldateien, Bibeltext, Ausgabenbestätigung, Lizenz und Erkennungsnachweise bleiben unverändert.",
+    "attributionFixed": "Verlag und Urheberrechtshinweis einer mitgelieferten Bibel können nicht bearbeitet werden.",
+    "requiredDetails": "Name, Kurzname und Sprache sind erforderlich.",
     "empty": "Es wurde noch keine Bibel hinzugefügt.",
     "installed": "Installierte Bibeln",
     "addBible": "Bibel hinzufügen…",

@@ -73,6 +73,9 @@
     "failed": "검색을 완료하지 못했습니다."
   },
   "addBible": {
+    "requiredFields": "이 성경을 추가하려면 다음 항목을 입력하세요: {{fields}}.",
+    "notReadyToAdd": "이 파일은 아직 추가할 수 없습니다. 위의 문제를 확인하고 원본을 수정하거나, 가능하면 문서로 읽기를 선택하세요.",
+    "editionOptional": "판본 확인은 선택 사항입니다. 확인하더라도 불확실한 성경 구절이 검증되는 것은 아닙니다.",
     "title": {
       "choose": "성경 추가",
       "checking": "성경을 확인하는 중…",
@@ -262,6 +265,12 @@
     "partialBooks_other": "66권 중 {{count}}권"
   },
   "bibles": {
+    "editDetails": "성경 정보 수정",
+    "saveDetails": "정보 저장",
+    "detailsSaved": "성경 정보를 저장했습니다.",
+    "detailsOnly": "표시되는 정보만 수정합니다. 원본 파일, 성경 본문, 판본 확인 여부, 라이선스 및 인식 근거는 변경되지 않습니다.",
+    "attributionFixed": "기본 제공 성경의 출판사와 저작권 표시는 수정할 수 없습니다.",
+    "requiredDetails": "이름, 약칭, 언어를 모두 입력해야 합니다.",
     "empty": "아직 추가된 성경이 없습니다.",
     "installed": "설치된 성경",
     "addBible": "성경 추가…",

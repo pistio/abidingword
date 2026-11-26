@@ -17,7 +17,7 @@ use crate::scripture::import::StagedContent;
 use crate::scripture::reference::{split_key, verse_key, ScriptureRef};
 use crate::scripture::{
     BibleTranslation, ChapterText, CommitImport, PassageText, SearchHit, SearchResults,
-    SearchScripture, VerseText,
+    SearchScripture, UpdateBibleDetails, VerseText,
 };
 
 const COLUMNS: &str = "id, name, short_name, language, language_code, publisher, \
@@ -429,6 +429,51 @@ pub fn set_language(
         params![id, language, language_code, now()],
     )?;
     get(conn, id)
+}
+
+/// Corrects display and user-supplied metadata of an installed Bible in one
+/// atomic SQLite statement. Never edits its source, rights identifier, text,
+/// verse evidence, edition confirmation, search index or canonical citations.
+pub fn update_details(conn: &Connection, input: &UpdateBibleDetails) -> AppResult<BibleTranslation> {
+    let before = get(conn, &input.id)?;
+    let name = validate::title(&input.name, "Bible")?;
+    let short_name = validate::title(&input.short_name, "Bible's short name")?;
+    if short_name.chars().count() > SHORT_NAME_MAX_CHARS {
+        return Err(AppError::InvalidInput(
+            UserMessage::new(
+                "bibles.shortNameTooLong",
+                format!("Please keep the short name under {SHORT_NAME_MAX_CHARS} characters."),
+            ).with("max", SHORT_NAME_MAX_CHARS),
+        ));
+    }
+    let language = validate::title(&input.language, "language")?;
+    let language_code = language_tag(input.language_code.as_deref())?;
+    let publisher = validate::optional_text(input.publisher.as_deref(), 200, "publisher")?;
+    let notice = validate::optional_text(input.copyright_notice.as_deref(), 2_000, "copyright notice")?;
+    // Bundled Bible source attributions are part of its verified licence record.
+    if before.source_origin == "bundled"
+        && (publisher != before.publisher || notice != before.copyright_notice)
+    {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "bibles.sourceAttributionReadOnly",
+            "The publisher and copyright notice of an included Bible cannot be changed.",
+        )));
+    }
+    let taken: bool = conn.query_row(
+        "SELECT EXISTS (SELECT 1 FROM bible_translations WHERE short_name = ?1 COLLATE NOCASE AND id <> ?2)",
+        params![short_name, input.id],
+        |row| row.get(0),
+    )?;
+    if taken {
+        return Err(AppError::DuplicateTranslation(short_name));
+    }
+    conn.execute(
+        "UPDATE bible_translations SET name = ?2, short_name = ?3,
+          language = ?4, language_code = ?5, publisher = ?6,
+          copyright_notice = ?7, updated_at = ?8 WHERE id = ?1",
+        params![input.id, name, short_name, language, language_code, publisher, notice, now()],
+    )?;
+    get(conn, &input.id)
 }
 
 /// Whether any installed Bible has this verse (by its own numbering): a

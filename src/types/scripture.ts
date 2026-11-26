@@ -640,6 +640,17 @@ export interface ImportRequest {
   bundled?: string;
 }
 
+/** The owner's editable display metadata; does not alter a Bible's source or verse evidence. */
+export interface UpdateBibleDetails {
+  id: string;
+  name: string;
+  shortName: string;
+  language: string;
+  languageCode: string | null;
+  publisher: string | null;
+  copyrightNotice: string | null;
+}
+
 export interface CommitImport {
   previewId: string;
   name: string;
