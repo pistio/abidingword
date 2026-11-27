@@ -1,6 +1,6 @@
 # Abiding Word — productive-use completion record
 
-**27 November 2026. Status: implementation combined and local checks passed; source CI and native Windows owner acceptance are separate gates.** This record describes the candidate for personal use. It does not claim an accepted Windows release.
+**27 November 2026. Status: combined implementation merged and source CI passed; the first Windows gate stopped on a test assertion before packaging.** This record describes the candidate for personal use. It does not claim an accepted Windows release.
 
 ## Goal and completion boundary
 
@@ -56,17 +56,46 @@ Issue [#57](https://github.com/pistio/abidingword/issues/57) now has a sealed, d
 | Production frontend build | **PASS** |
 | Complete native suite / Clippy | **PASS: 1,229 passed / 0 failed / 10 ignored**; Clippy clean with warnings denied |
 | Actual-crate bundled word check, 13 editions | **PASS**, including source text and word offsets (15 tests; one existing measurement ignored) |
-| Four Windows-native PDF cases | Actual Windows module and test bodies cross-type-checked; Windows execution **NOT RUN** |
-| Source CI | See the candidate pull request Checks tab for the exact head and current CI result |
+| Four Windows-native PDF cases | First Windows run: **3 passed / 1 failed**, plus ignored helper; test-only correction prepared below, native recheck pending |
+| Source CI | PR #68 and exact merged main **PASS**; see the test-correction PR Checks for its own result |
 | Installed Windows acceptance | **NOT RUN** on this new candidate |
 
 These are separate receipts. Linux tests and browser interface tests do not establish Windows process limits, installed WebView behavior or Microsoft Word output.
 
+## First Windows attempt and test correction
+
+The owner approved PR #68 and one unsigned Windows acceptance build. PR #68
+merged as `0e9fd58c453048446499d3ee8b2805272ac6bc2e`; [main CI
+45962436733](https://github.com/pistio/abidingword/actions/runs/45962436733)
+passed for that exact merge. [Windows run
+45962494865](https://github.com/pistio/abidingword/actions/runs/45962494865),
+attempt 1, checked out the approved `db3228f6c67af28d9d88dfea4e71064c229a9e49`
+source and stopped before integration tests or installer packaging. No artifact
+was produced.
+
+The native restore suite passed **10 / 0 failed / 1 ignored**; three additional
+Linux restore cases are Unix-only. PDF memory-limit refusal, cancellation and
+deadline/reaping passed. The fourth PDF case failed because it required an
+unsuccessful process exit status after closing the Job Object. Its existing
+bounded wait had already observed prompt termination; the unsupported exit-code
+assertion caused the failure.
+
+The correction changes **only that test's tail**. It keeps the permission pipe
+open without sending a byte, establishes that the child is still alive, closes
+the job and requires exit through the existing five-second `try_wait` loop.
+The child cannot finish its fixture naturally while waiting for permission.
+If job closure fails to terminate it, the bounded wait still fails and the
+fixture destructor kills and reaps it. No production limits or worker behavior
+change. [Microsoft's contract](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information)
+guarantees termination on last-handle close, not a nonzero exit code;
+[Rust's `try_wait`](https://doc.rust-lang.org/std/process/struct.Child.html#method.try_wait)
+leaves stdin open. The corrected case still needs native Windows execution.
+
 ## Remaining path to personal-use acceptance
 
-The previously installed `056333b` candidate is historical. Its build approval was consumed by that run; **no new Windows build has started**. The new launcher and future-build native checks are prepared. [ScriptureAcceptance.md](../../scripts/windows/ScriptureAcceptance.md) specifies executable hashes, an isolated disposable profile and the observations to retain.
+The previously installed `056333b` candidate is historical. The approved `db3228f6` Windows attempt has now failed before packaging, as recorded above. The test correction and newly pinned retry workflow are prepared; **no replacement Windows build has started**. [ScriptureAcceptance.md](../../scripts/windows/ScriptureAcceptance.md) specifies executable hashes, an isolated disposable profile and the observations to retain.
 
-1. Finish the source review and CI, obtain approval for the concrete combined candidate and one new Windows build, then retain installer/executable hashes. The earlier consolidation approval was completed by PR #63; it does not authorize every future merge.
+1. Review the bounded test correction and its source CI, obtain approval for its concrete merge and one replacement unsigned Windows build, then retain installer/executable hashes. PR #68's merge and the first Windows attempt have already been completed; do not ask to repeat those completed actions.
 2. Run the four native PDF cases and the installed import exercise: EPUB, DOCX and text-layer PDF; progress/cancellation; image-only refusal; heading corrections; provisional edition status; and continued withholding of uncertain verses. Check the separate-copy workflow preserves the earlier Bible.
 3. Reopen through the hash-checking launcher. Verify saved editions, original locations and status, then complete Study → Teaching → Materials using the invented project. Inspect Presenter warnings and actual Word/Markdown participant outputs for verified Scripture and absence of private leader material.
 4. Complete the disposable recovery/reopen observations and retain source hashes, smoke receipts and screenshots. Record failures or skipped observations explicitly. **Windows acceptance PASS is entered only after the owner observes this coherent workflow on the pinned candidate.** Then promote that passed source to the normal Windows application with a durable working profile; the temporary acceptance profile is not the destination for everyday Study work.

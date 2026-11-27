@@ -357,12 +357,14 @@ mod windows {
             assert_eq!(limits.BasicLimitInformation.LimitFlags & required, required);
             assert_eq!(limits.BasicLimitInformation.ActiveProcessLimit, 1);
             assert_eq!(limits.ProcessMemoryLimit, MEMORY_LIMIT);
-            permit(&mut child.0);
-            drop(job);
+            // Keep stdin open without sending permission, so the fixture cannot
+            // finish naturally. Job closure does not promise a particular exit code.
             assert!(
-                !wait(&mut child.0).success(),
-                "closing the job must kill its worker"
+                child.0.try_wait().unwrap().is_none(),
+                "worker must still be alive before closing the job"
             );
+            drop(job);
+            let _ = wait(&mut child.0);
         }
 
         #[test]
