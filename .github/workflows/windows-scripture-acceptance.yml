@@ -16,7 +16,7 @@ jobs:
     runs-on: windows-2025
     timeout-minutes: 90
     env:
-      SOURCE_SHA: b38b33a42df1027ce7eed293d6c758b492741501
+      SOURCE_SHA: db3228f6c67af28d9d88dfea4e71064c229a9e49
       CARGO_PROFILE_RELEASE_DEBUG: "0"
       CARGO_INCREMENTAL: "0"
       VITE_SELECTION_SPIKE: ""

@@ -17,7 +17,7 @@ The immediate finish line is one dependable Windows session from importing a Bib
 | Bible metadata work | [PR #67](https://github.com/pistio/abidingword/pull/67), head `1a498b8c394ad83d170be829ff645357b2b111e0` |
 | Late Claude work | `b12bc9f13aa7fbebb41694de847cba495957fd4f` |
 | Combined implementation | `fd2b1bec285b5122362c3cf95fc42c1ae6d3a486` |
-| Installer source pin | Set by the prepared workflow after the product identity is committed; includes all application changes and native test/launcher scripts |
+| Installer source pin | `db3228f6c67af28d9d88dfea4e71064c229a9e49` — all application changes and the native test/launcher scripts |
 | Source review and CI | Candidate pull request for `completion/windows-productive-use-20261126`; its Checks tab records the exact tested head |
 
 The product recognition run identity advances with this implementation. Frozen recogniser `08c6faac8c92c6c791ec1e7bbbe997362fa1059f`, E3 and Collection H remain untouched. Historical runs must retain their original identities and results. **Collection H cannot attest a byte-identical current product after the new guard.** Product verification and the independent evaluation remain separate, as required by the [recognition completion milestone](scripture-recognition-completion-20261125.md).
