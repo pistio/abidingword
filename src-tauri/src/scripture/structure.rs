@@ -7491,6 +7491,20 @@ impl Reader<'_> {
         if strong && m.unit_start && !m.raised && m.end.is_none() && m.value != expect {
             self.doubt_boundary();
         }
+        // A missing number inside a paragraph is not necessarily followed by
+        // punctuation (SBLGNT Acts 28 omits 29). If later consecutive labels
+        // corroborate a forward jump, appending all of their text to the open
+        // verse would assert a boundary the source has not established. Keep
+        // the combined source place inspectable, but never verify its text.
+        // This is a product safety refusal, not a guessed verse split.
+        if !strong
+            && m.end.is_none()
+            && m.value > expect
+            && canon::verse_count(book, chapter).is_some_and(|count| m.value <= count)
+            && self.count_goes_on(at, m.value)
+        {
+            self.doubt_boundary();
+        }
         // Anything else is a number in the text.
         false
     }

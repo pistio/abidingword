@@ -22,7 +22,8 @@ use crate::scripture::bundled::{self, BUNDLED};
 use crate::scripture::catalogue;
 use crate::scripture::import::{self, ImportOrigin, ImportPreview, SuggestedMetadata, WordReport};
 use crate::scripture::{
-    BibleTranslation, BundledBibleInfo, CommitImport, ImportRequest, WordAnnotations, WordChoice,
+    BibleTranslation, BundledBibleInfo, CommitImport, ImportRequest, UpdateBibleDetails,
+    WordAnnotations, WordChoice,
 };
 use crate::state::AppState;
 
@@ -76,13 +77,92 @@ pub async fn bible_import_preview(
     .await
 }
 
-pub(super) async fn run_preview(
+pub(super) async fn run_preview<T: Send + 'static>(
     window: Window,
-    read: impl FnOnce(&AppState, &Window) -> CommandResult<ImportPreview> + Send + 'static,
-) -> CommandResult<ImportPreview> {
+    read: impl FnOnce(&AppState, &Window) -> CommandResult<T> + Send + 'static,
+) -> CommandResult<T> {
     tauri::async_runtime::spawn_blocking(move || read(&window.state::<AppState>(), &window))
         .await
         .map_err(|_| AppError::Unexpected("Bible import task stopped".into()))?
+}
+
+/// A review of an installed USFM Bible against its kept source. Any accepted
+/// correction is committed through the normal new-ID import, never in place.
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BibleTextCopyPreview {
+    pub preview: ImportPreview,
+    pub translation_id: String,
+    pub original_name: String,
+    #[serde(flatten)]
+    pub comparison: bibles::TextComparison,
+}
+
+fn copy_unavailable() -> ErrorPayload {
+    AppError::InvalidInput(UserMessage::new(
+        "bibleImport.copyUnavailable",
+        "This Bible cannot be checked for a corrected copy. Its kept USFM source is unavailable or could not be read as USFM. The installed Bible and its notes are unchanged.",
+    ))
+    .into()
+}
+
+#[tauri::command]
+pub async fn bible_text_copy_preview(
+    window: Window,
+    id: String,
+    job_id: Option<String>,
+) -> CommandResult<BibleTextCopyPreview> {
+    run_preview(window, move |state, window| {
+        let core = state.core()?;
+        let (translation, short_name) = core.db.with_conn(|conn| {
+            let translation = bibles::get(conn, &id)?;
+            let short_name = bibles::copy_short_name(conn, &translation.short_name)?;
+            Ok((translation, short_name))
+        })?;
+        if translation.source_type != "usfm" {
+            return Err(copy_unavailable());
+        }
+        let paths = kept_files(state, &translation).map_err(|_| copy_unavailable())?;
+        let origin = if translation.source_origin == "bundled" {
+            let bible = BUNDLED
+                .iter()
+                .find(|b| {
+                    translation.source_path.as_deref()
+                        == Some(bundled_resource_name(b.resource).as_str())
+                })
+                .ok_or_else(copy_unavailable)?;
+            ImportOrigin::Bundled { id: bible.id }
+        } else {
+            ImportOrigin::UserFiles
+        };
+        let suggested = SuggestedMetadata {
+            name: translation.name.clone(),
+            short_name,
+            language: translation.language.clone(),
+            language_code: translation.language_code.clone().unwrap_or_default(),
+            publisher: translation.publisher.clone(),
+            copyright_notice: translation.copyright_notice.clone(),
+            license_type: translation.license_type.clone(),
+        };
+        let mut comparison = bibles::TextComparison::default();
+        let preview = preview_job(state, window, job_id, suggested, |progress, cancelled| {
+            let staged = import::stage_with_progress(&paths, origin, progress, cancelled)?;
+            if staged.format != "usfm" || staged.documents.is_some() {
+                return Err(copy_unavailable());
+            }
+            comparison = core
+                .db
+                .with_conn(|conn| bibles::compare_source_text(conn, &id, &staged.content))?;
+            Ok(staged)
+        })?;
+        Ok(BibleTextCopyPreview {
+            preview,
+            translation_id: id,
+            original_name: translation.name,
+            comparison,
+        })
+    })
+    .await
 }
 
 fn read_import(
@@ -445,6 +525,19 @@ pub fn bible_set_language(
     Ok(core
         .db
         .with_conn(|conn| bibles::set_language(conn, &id, &language, language_code.as_deref()))?)
+}
+
+/// Edits the user's descriptive Bible metadata without touching any source,
+/// text, recognition evidence, licence type or edition-confirmation state.
+#[tauri::command(async)]
+pub fn bible_update_details(
+    state: State<'_, AppState>,
+    input: UpdateBibleDetails,
+) -> CommandResult<BibleTranslation> {
+    let core = state.core()?;
+    Ok(core
+        .db
+        .with_conn(|conn| bibles::update_details(conn, &input))?)
 }
 
 /// One language a Bible can be marked as: the 100 reference languages.

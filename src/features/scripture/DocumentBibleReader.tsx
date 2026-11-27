@@ -51,6 +51,10 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
   const list = documents.data ?? [];
   const document = list.find((item) => item.id === chosenId) ?? list[0] ?? null;
   const hasText = list.some((d) => d.segmentCount > 0);
+  // Earlier document imports keep their saved rows, but the core withholds
+  // them until a new recognition run supplies source evidence. Make that
+  // deliberate next step visible; never change the Bible's standing here.
+  const needsVerseCheck = bible.kind === "document" && bible.documentRecognised === false && bible.verseCount > 0;
   const scanned = document?.extractionStatus === "ocr_required";
   const [view, setView] = useState<"original" | "text">(initialTarget && initialTarget.page == null ? "text" : "original");
   const shown: "original" | "text" = !document?.view ? "text" : scanned ? "original" : view;
@@ -164,11 +168,19 @@ export function DocumentBibleReader({ bible, onFindVerses, onBack, initialTarget
             ) : null}
           </details>
         )}
+        {needsVerseCheck && (
+          <Notice>
+            <p className="m-0">{t("scripture.document.recheckRequired")}</p>
+            {hasText && onFindVerses && (
+              <Button className="mt-2" onClick={onFindVerses}>{t("scripture.document.findVerses")}</Button>
+            )}
+          </Notice>
+        )}
         <details className="text-[0.9375rem]">
           <summary className="cursor-pointer text-text-muted">{t("scripture.document.whatSummary")}</summary>
           <div className="mt-2 flex flex-col gap-2">
             <p className="m-0">{t("scripture.document.what")}</p>
-            {hasText && onFindVerses ? (
+            {hasText && onFindVerses && !needsVerseCheck ? (
               <div className="flex flex-col items-start gap-1">
                 <p className="m-0 text-text-muted">{t("scripture.document.findVersesHint")}</p>
                 <Button onClick={onFindVerses}>{t("scripture.document.findVerses")}</Button>

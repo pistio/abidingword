@@ -153,6 +153,42 @@ impl BibleImportAdapter for UsfmAdapter {
                 continue;
             }
             let mut content = StagedBook::default();
+            if !doc.malformed_markup.is_empty() {
+                log::warn!(
+                    "USFM import refused {}: {}",
+                    file.name,
+                    doc.malformed_markup.join("; ")
+                );
+                staged.issue(
+                    Severity::Error,
+                    Some(book),
+                    None,
+                    UserMessage::new(
+                        "bibleImport.malformedUsfm",
+                        format!(
+                            "“{}” contains incomplete or inconsistent text markup. This book is not used because its text cannot be checked. The original file is unchanged.",
+                            file.name
+                        ),
+                    )
+                    .with("fileName", &file.name),
+                );
+            }
+            if doc.superscriptions_left_out > 0 {
+                staged.issue(
+                    Severity::Warning,
+                    Some(book),
+                    None,
+                    UserMessage::new(
+                        "bibleImport.superscriptionUnusable",
+                        format!(
+                            "“{}”: {} Psalm titles contain unreadable control characters and were left out. Verse text and the original file are unchanged.",
+                            file.name, doc.superscriptions_left_out
+                        ),
+                    )
+                    .with("fileName", &file.name)
+                    .with("count", doc.superscriptions_left_out),
+                );
+            }
             if doc.verses_outside_chapter > 0 {
                 staged.issue(
                     Severity::Error,

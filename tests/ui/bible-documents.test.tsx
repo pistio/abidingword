@@ -217,6 +217,45 @@ describe("Bibles from documents", () => {
     );
   });
 
+  it("offers an explicit recheck for saved verses without evidence, and cancelling preserves the earlier Bible", async () => {
+    const api = createMemoryApi();
+    api.installFixtureBible("WEB", "web");
+    const preview = await api.bibleImportPreview({ paths: ["/home/you/Documents/earlier.epub"] });
+    const imported = await api.bibleImportCommit({
+      previewId: preview.previewId, name: "Earlier Bible", shortName: "OLD", language: "English",
+    });
+    const bible = api.state.bibles.find((item) => item.id === imported.id)!;
+    // The native schema-28 reader returns this conservative state for an
+    // earlier document Bible: old rows are kept, but are not verified text.
+    bible.kind = "document";
+    bible.documentRecognised = false;
+    bible.editionConfirmed = false;
+    vi.spyOn(api, "bibleDocumentCoverage").mockResolvedValue({
+      verses: 0, books: [], marked: 0, unverified: 0, corrected: 0,
+    });
+    const recognise = vi.spyOn(api, "bibleDocumentRecognise");
+    const apply = vi.spyOn(api, "bibleDocumentAddVerses");
+    const before = structuredClone(bible);
+    const keptText = structuredClone(api.state.text.get(bible.id));
+    const keptDocuments = structuredClone(api.state.bibleDocuments.get(bible.id));
+    const { user } = await renderApp(api);
+    const pane = screen.getByRole("complementary", { name: "Scripture" });
+    await user.selectOptions(within(pane).getByRole("combobox", { name: "Translation" }), "OLD");
+    expect(await within(pane).findByText(/The saved verses in this Bible need to be checked/)).toBeVisible();
+    expect(within(pane).getByText("What can I do with this Bible?").closest("details")).not.toHaveAttribute("open");
+    expect(recognise).not.toHaveBeenCalled();
+    await user.click(await within(pane).findByRole("button", { name: "Look for verses…" }));
+    const dialog = await screen.findByRole("dialog", { name: "Look for verses in Earlier Bible" });
+    expect(await within(dialog).findByRole("checkbox", { name: "I confirm the edition identified above." })).toHaveAccessibleDescription(/Edition confirmation is optional/);
+    expect(within(dialog).getByRole("checkbox")).not.toBeChecked();
+    await user.click(within(dialog).getByRole("button", { name: "Keep it as a document" }));
+    expect(apply).not.toHaveBeenCalled();
+    expect(api.state.bibles.find((item) => item.id === bible.id)).toEqual(before);
+    expect(api.state.text.get(bible.id)).toEqual(keptText);
+    expect(api.state.bibleDocuments.get(bible.id)).toEqual(keptDocuments);
+    expect(within(pane).getByText(/The saved verses in this Bible need to be checked/)).toBeVisible();
+  });
+
   it("keeps found from checked: unverified verses and earlier corrections are shown, never hidden (v0.24.3)", async () => {
     const api = createMemoryApi();
     api.installFixtureBible("WEB", "web");
@@ -230,6 +269,8 @@ describe("Bibles from documents", () => {
         books: again.document!.books.map((b, i) => (i === 0 ? { ...b, corrected: true } : b)),
         unverifiedVerses: 3,
         unverifiedReasons: { possibleHeading: 2, reference: 1 },
+        stats: { ...again.document!.stats, leftOutChars: 1 },
+        leftOut: [{ reason: "noteCaller", sample: "†", chars: 1, place: { document: 0, page: 2, segment: 1 } }],
         saved: [
           { heading: "The Book of Praises", page: 1, chosen: "PSA", detectedNow: null, index: 0, status: "applied" },
           { heading: "Letters", page: 4, chosen: "ROM", detectedNow: null, index: null, status: "notFound" },
@@ -253,6 +294,9 @@ describe("Bibles from documents", () => {
     expect(within(saved).getByText("“Letters” → Romans")).toBeInTheDocument();
     expect(within(saved).getByText("This heading was not found again, so nothing was changed. Your correction is kept.")).toBeInTheDocument();
     expect(within(dialog).getAllByText("Your correction").length).toBeGreaterThan(0);
+    await user.click(within(dialog).getByText("Text left out of the verses (1 characters)"));
+    expect(within(dialog).getByText("Footnote reference marker · Page 2")).toBeVisible();
+    expect(within(dialog).queryByText(/scripture\.addBible\.document\.reason\.noteCaller/)).not.toBeInTheDocument();
   });
 
   it("Settings says what a document Bible is and offers no word information", async () => {

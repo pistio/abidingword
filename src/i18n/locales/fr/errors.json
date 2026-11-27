@@ -45,6 +45,7 @@
     "ambiguous": "« {{text}} » peut désigner {{options}}. Tapez une plus grande partie du nom du livre pour préciser."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "L’éditeur et la mention de droit d’auteur d’une Bible incluse ne peuvent pas être modifiés.",
     "hasProblems": "Cette Bible présente des problèmes qui doivent être résolus avant qu’elle puisse être ajoutée.",
     "shortNameTooLong": "Veuillez ne pas dépasser {{max}} caractères pour le nom court.",
     "badLanguage": "« {{text}} » n’est pas une langue connue d’Abiding Word.",
@@ -143,7 +144,10 @@
     "documentFootnotes_one": "{{count}} ligne de notes en bas de page a été laissée de côté.",
     "documentFootnotes_other": "{{count}} lignes de notes en bas de page ont été laissées de côté.",
     "documentFootnotes_many": "{{count}} de lignes de notes en bas de page ont été laissées de côté.",
-    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés."
+    "documentAdditionalBook": "« {{heading}} » est {{book}}, qu’Abiding Word ne peut pas encore afficher. Son texte a été laissé de côté ; les autres livres ne sont pas concernés.",
+    "malformedUsfm": "« {{fileName}} » contient des balises de texte incomplètes ou incohérentes. Ce livre n’est pas utilisé, car son texte ne peut pas être vérifié. Le fichier d’origine reste inchangé.",
+    "superscriptionUnusable": "« {{fileName}} » : les titres de psaumes contenant des caractères de contrôle illisibles ont été omis ({{count}}). Le texte des versets et le fichier d’origine restent inchangés.",
+    "copyUnavailable": "Cette Bible ne peut pas être vérifiée en vue d’une copie corrigée. Sa source USFM conservée est indisponible ou n’a pas pu être lue au format USFM. La Bible installée et ses notes restent inchangées."
   },
   "library": {
     "notUtf8": "« {{fileName}} » n’est pas enregistré en texte UTF-8 ; il n’a donc pas pu être lu.",
@@ -325,7 +329,8 @@
     "restoreFailed": "La sauvegarde n’a pas pu être restaurée. Votre travail a été remis tel qu’il était.",
     "noFile": "Veuillez choisir un fichier.",
     "rollbackFailed": "La sauvegarde n’a pas pu être restaurée, et votre travail précédent n’a pas pu être remis automatiquement. Une copie en est conservée dans {{path}}.",
-    "snapshotUnavailable": "Ce point de récupération est endommagé ou incompatible. Votre travail n’a pas été modifié."
+    "snapshotUnavailable": "Ce point de récupération est endommagé ou incompatible. Votre travail n’a pas été modifié.",
+    "recoveryRequired": "Une opération de sauvegarde doit être récupérée avant de pouvoir continuer. Fermez Abiding Word et ouvrez-le à nouveau. Si ce message réapparaît, conservez les fichiers de récupération à l’emplacement {{path}} et demandez de l’aide."
   },
   "inquiry": {
     "notHere": "Ce type d’aide n’est pas disponible ici.",

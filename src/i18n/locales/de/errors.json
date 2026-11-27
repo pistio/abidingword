@@ -45,6 +45,7 @@
     "ambiguous": "„{{text}}“ kann {{options}} bedeuten. Tippe mehr vom Buchnamen, um zu wählen."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "Verlag und Urheberrechtshinweis einer mitgelieferten Bibel können nicht geändert werden.",
     "hasProblems": "Diese Bibel hat Probleme, die behoben werden müssen, bevor sie hinzugefügt werden kann.",
     "shortNameTooLong": "Bitte verwende für den Kurznamen weniger als {{max}} Zeichen.",
     "badLanguage": "„{{text}}“ ist keine Sprache, die Abiding Word kennt.",
@@ -132,7 +133,10 @@
     "documentChapterLong": "{{book}} {{chapter}} reicht bis Vers {{last}}; das Kapitel hat üblicherweise {{expected}} Verse. Vielleicht wurde ein anderes Kapitel oder Buch hineingelesen. Dieses Kapitel wird nicht verwendet.",
     "documentFootnotes_one": "{{count}} Zeile mit Fußnoten unten auf den Seiten wurde ausgelassen.",
     "documentFootnotes_other": "{{count}} Zeilen mit Fußnoten unten auf den Seiten wurden ausgelassen.",
-    "documentAdditionalBook": "„{{heading}}“ ist {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Sein Text wurde ausgelassen; die anderen Bücher sind davon nicht betroffen."
+    "documentAdditionalBook": "„{{heading}}“ ist {{book}}; dieses Buch kann Abiding Word noch nicht anzeigen. Sein Text wurde ausgelassen; die anderen Bücher sind davon nicht betroffen.",
+    "malformedUsfm": "„{{fileName}}“ enthält unvollständige oder widersprüchliche Textauszeichnungen. Dieses Buch wird nicht verwendet, weil sich sein Text nicht sicher prüfen lässt. Die Originaldatei bleibt unverändert.",
+    "superscriptionUnusable": "„{{fileName}}“: Psalmüberschriften mit nicht lesbaren Steuerzeichen wurden ausgelassen ({{count}}). Der Verstext und die Originaldatei bleiben unverändert.",
+    "copyUnavailable": "Diese Bibel kann nicht auf eine korrigierte Kopie geprüft werden. Ihre gespeicherte USFM-Quelle ist nicht verfügbar oder konnte nicht als USFM gelesen werden. Die installierte Bibel und ihre Notizen bleiben unverändert."
   },
   "library": {
     "notUtf8": "„{{fileName}}“ ist nicht als UTF-8-Text gespeichert und konnte daher nicht gelesen werden.",
@@ -314,7 +318,8 @@
     "restoreFailed": "Die Sicherung konnte nicht wiederhergestellt werden. Deine Arbeit wurde auf den vorherigen Stand zurückgesetzt.",
     "noFile": "Bitte wähle eine Datei aus.",
     "rollbackFailed": "Die Sicherung konnte nicht wiederhergestellt werden, und deine vorherige Arbeit konnte nicht automatisch zurückgeholt werden. Eine Kopie davon liegt unter {{path}}.",
-    "snapshotUnavailable": "Dieser Wiederherstellungspunkt ist beschädigt oder nicht kompatibel. Deine Arbeit wurde nicht verändert."
+    "snapshotUnavailable": "Dieser Wiederherstellungspunkt ist beschädigt oder nicht kompatibel. Deine Arbeit wurde nicht verändert.",
+    "recoveryRequired": "Ein Sicherungsvorgang muss wiederhergestellt werden, bevor du fortfahren kannst. Schließe Abiding Word und öffne es erneut. Wenn diese Meldung wieder erscheint, bewahre die Wiederherstellungsdateien unter {{path}} auf und bitte um Hilfe."
   },
   "inquiry": {
     "notHere": "Diese Art Hilfe gibt es hier nicht.",

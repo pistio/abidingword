@@ -158,7 +158,7 @@ export interface ImageAsset {
   sha256: string | null;
 }
 
-export type WarningCode = "scriptureUnavailable" | "imageUnavailable" | "sourceMissing" | "longText" | "noBible";
+export type WarningCode = "scriptureUnavailable" | "scripturePartial" | "imageUnavailable" | "sourceMissing" | "longText" | "noBible";
 
 export interface PresentationDocument {
   format: string;

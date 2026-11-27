@@ -44,11 +44,13 @@ export function LanguageChoice({
   label,
   value,
   onChange,
+  required = false,
 }: {
   id: string;
   label: string;
   value: LanguageValue | null;
   onChange: (value: LanguageValue | null) => void;
+  required?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const api = useApi();
@@ -126,6 +128,7 @@ export function LanguageChoice({
         id={id}
         value={selected}
         onChange={(e) => choose(e.target.value)}
+        required={required}
         aria-describedby={`${id}-hint`}
         className="h-10 aw-input px-2 text-base"
       >

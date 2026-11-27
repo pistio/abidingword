@@ -79,6 +79,9 @@
     "failed": "La recherche n’a pas pu aboutir."
   },
   "addBible": {
+    "requiredFields": "Avant d’ajouter cette Bible, renseignez : {{fields}}.",
+    "notReadyToAdd": "Ces fichiers ne peuvent pas encore être ajoutés. Consultez les problèmes ci-dessus ; corrigez la source ou choisissez la lecture comme document si elle est disponible.",
+    "editionOptional": "La confirmation de l’édition est facultative. Elle ne vérifie pas le texte des versets incertains.",
     "title": {
       "choose": "Ajouter une Bible",
       "checking": "Vérification de la Bible…",
@@ -241,7 +244,8 @@
         "leftOutBook": "Dans une partie laissée de côté",
         "crossReference": "Renvoi",
         "noteOnly": "Seulement dans une note",
-        "subscription": "Mots de conclusion d’un livre"
+        "subscription": "Mots de conclusion d’un livre",
+        "noteCaller": "Appel de note"
       },
       "pdfLimit": "Dans un PDF, un titre imprimé entre deux versets ne peut pas toujours être distingué du verset qui le précède. Vérifiez quelques passages après l’ajout.",
       "licenceField": "Droits d’auteur ou licence (facultatif)",
@@ -330,6 +334,12 @@
     "partialBooks_many": "{{count}} des 66 livres"
   },
   "bibles": {
+    "editDetails": "Modifier les informations",
+    "saveDetails": "Enregistrer les informations",
+    "detailsSaved": "Informations de la Bible enregistrées.",
+    "detailsOnly": "Seules les informations affichées sont modifiées. Les fichiers originaux, le texte biblique, la confirmation de l’édition, la licence et les preuves de reconnaissance restent inchangés.",
+    "attributionFixed": "L’éditeur et la mention de droit d’auteur d’une Bible incluse ne peuvent pas être modifiés.",
+    "requiredDetails": "Le nom, le nom abrégé et la langue sont obligatoires.",
     "empty": "Aucune Bible n’a encore été ajoutée.",
     "installed": "Bibles installées",
     "addBible": "Ajouter une Bible…",
@@ -415,6 +425,21 @@
       "deleteManyQuestion_one": "Supprimer définitivement {{formatted}} Bible ?",
       "deleteManyQuestion_other": "Supprimer définitivement {{formatted}} Bibles ?",
       "deleteManyQuestion_many": "Supprimer définitivement {{formatted}} de Bibles ?"
+    },
+    "textCopy": {
+      "check": "Vérifier le texte enregistré…",
+      "hint": "Les Bibles ajoutées avec une version antérieure peuvent contenir des espaces incorrects ou des titres dans le texte des versets. Vérifiez les fichiers enregistrés avant d’ajouter une copie corrigée.",
+      "title": "Vérifier {{name}}",
+      "explanation": "Comparez le texte lu dans les fichiers enregistrés avec la Bible installée. Examinez les différences et les éventuels problèmes avant d’ajouter une copie distincte.",
+      "differences": "Différences avec la Bible installée",
+      "changedVerses": "Versets dont le texte diffère",
+      "addedVerses": "Versets supplémentaires",
+      "removedVerses": "Versets absents de la nouvelle copie",
+      "changedSuperscriptions": "Titres de chapitre dont le texte diffère",
+      "kept": "L’ajout d’une nouvelle copie conserve « {{name}} » ainsi que toutes les notes et citations qui s’y rapportent. Elles restent liées à la Bible précédente. Sélectionnez la nouvelle copie pour utiliser son texte.",
+      "unchanged": "Le texte biblique et les titres de chapitre correspondent aux fichiers enregistrés. Aucune nouvelle copie n’est nécessaire.",
+      "add": "Ajouter comme Bible distincte",
+      "added": "{{name}} ({{shortName}}) a été ajoutée comme Bible distincte. Votre Bible précédente, vos notes et vos citations sont conservées."
     }
   },
   "colors": {
@@ -863,7 +888,8 @@
         "subscription": "Mots de conclusion",
         "notes": "Notes"
       }
-    }
+    },
+    "recheckRequired": "Les versets enregistrés de cette Bible doivent être vérifiés à nouveau dans le document avant de pouvoir servir de texte biblique. Votre document et vos notes sont conservés."
   },
   "importBookNames": {
     "TOB": "Tobie",

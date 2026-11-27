@@ -45,6 +45,7 @@
     "ambiguous": "“{{text}}” could mean {{options}}. Type more of the book’s name to choose."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "The publisher and copyright notice of an included Bible cannot be changed.",
     "hasProblems": "This Bible has problems that must be resolved before it can be added.",
     "shortNameTooLong": "Please keep the short name under {{max}} characters.",
     "badLanguage": "“{{text}}” is not a language Abiding Word recognises.",
@@ -132,7 +133,10 @@
     "documentChapterLong": "{{book}} {{chapter}} goes on to verse {{last}}; it usually has {{expected}} verses. Another chapter or book may have been read into it. This chapter is not used.",
     "documentFootnotes_one": "{{count}} line of footnotes was left out.",
     "documentFootnotes_other": "{{count}} lines of footnotes were left out.",
-    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected."
+    "documentAdditionalBook": "“{{heading}}” is {{book}}, which Abiding Word cannot show yet. Its text was left out; the other books are not affected.",
+    "malformedUsfm": "“{{fileName}}” contains incomplete or inconsistent text markup. This book is not used because its text cannot be checked. The original file is unchanged.",
+    "superscriptionUnusable": "“{{fileName}}”: Psalm titles with unreadable control characters were left out ({{count}}). Verse text and the original file are unchanged.",
+    "copyUnavailable": "This Bible cannot be checked for a corrected copy. Its kept USFM source is unavailable or could not be read as USFM. The installed Bible and its notes are unchanged."
   },
   "library": {
     "notUtf8": "“{{fileName}}” is not saved as UTF-8 text, so it could not be read.",
@@ -314,7 +318,8 @@
     "restoreFailed": "The backup could not be restored. Your work was put back as it was.",
     "noFile": "Please choose a file.",
     "rollbackFailed": "The backup could not be restored, and your earlier work could not be put back automatically. A copy of it is kept at {{path}}.",
-    "snapshotUnavailable": "This recovery point is damaged or incompatible. Your work was not changed."
+    "snapshotUnavailable": "This recovery point is damaged or incompatible. Your work was not changed.",
+    "recoveryRequired": "A backup operation needs recovery before you can continue. Close Abiding Word and open it again. If this message returns, keep the recovery files at {{path}} and ask for help."
   },
   "inquiry": {
     "notHere": "This kind of help is not available here.",

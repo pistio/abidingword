@@ -12,6 +12,8 @@ import { TRASH_RETENTION_DAYS, type ItemState } from "@/types/library";
 import { NO_CHOICE, WordResearch, hasWordResearch, willIndex } from "@/features/scripture/WordResearch";
 import { formatDate, formatNumber } from "@/i18n/format";
 import { LanguageChoice, type LanguageValue } from "@/features/scripture/LanguageChoice";
+import { BibleDetailsEditor } from "@/features/scripture/BibleDetailsEditor";
+import { BibleTextCopy } from "./BibleTextCopy";
 
 /** Settings → Bible Texts: what is installed, details, add, archive, Trash. */
 export function BibleTexts({ onAddBible }: { onAddBible: () => void }) {
@@ -61,6 +63,7 @@ export function BibleTexts({ onAddBible }: { onAddBible: () => void }) {
               bible={bible}
               onArchive={() => move([bible], "archived", t("scripture.bibles.lifecycle.archived", { name: bible.name }), "active")}
               onTrash={() => setAsking({ action: "trash", bibles: [bible] })}
+              onUpdated={refresh}
             />
           ))}
         </ul>
@@ -189,13 +192,16 @@ function KeptRow({ bible, since, children }: { bible: BibleTranslation; since?: 
   );
 }
 
-function BibleRow({ bible, onArchive, onTrash }: { bible: BibleTranslation; onArchive: () => void; onTrash: () => void }) {
+function BibleRow({ bible, onArchive, onTrash, onUpdated }: { bible: BibleTranslation; onArchive: () => void; onTrash: () => void; onUpdated: () => Promise<void> }) {
   const { t } = useTranslation();
   const source = bible.sourceOrigin === "bundled" ? t("scripture.bibles.source.bundled") : t("scripture.bibles.source.imported");
   const document = bible.kind === "document";
   const status = document ? t("scripture.bibles.status.document") : bible.importStatus === "ready" ? t("scripture.bibles.status.ready") : t("scripture.bibles.status.notStructured");
   const files = bible.originalFileName ? bible.originalFileName.split(", ").length : 1;
   const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [detailsSaved, setDetailsSaved] = useState(false);
+  const [checkingText, setCheckingText] = useState(false);
 
   return (
     <li className="flex flex-col gap-2 border-b border-border-subtle py-4">
@@ -209,8 +215,11 @@ function BibleRow({ bible, onArchive, onTrash }: { bible: BibleTranslation; onAr
           </p>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="quiet" aria-expanded={open} onClick={() => setOpen(!open)}>
+          <Button variant="quiet" aria-expanded={open} onClick={() => { setOpen(!open); setEditing(false); }}>
             {open ? t("scripture.bibles.hideDetails") : t("scripture.bibles.details")}
+          </Button>
+          <Button variant="quiet" onClick={() => { setEditing(!editing); setOpen(false); setDetailsSaved(false); }}>
+            {t("scripture.bibles.editDetails")}
           </Button>
           <ActionMenu
             label={t("scripture.bibles.lifecycle.menu", { name: bible.name })}
@@ -222,6 +231,26 @@ function BibleRow({ bible, onArchive, onTrash }: { bible: BibleTranslation; onAr
         </div>
       </div>
 
+      {detailsSaved && <p role="status" className="m-0 type-meta">{t("scripture.bibles.detailsSaved")}</p>}
+      {bible.sourceType === "usfm" && (
+        <div className="flex flex-col items-start gap-1">
+          <p className="m-0 type-meta">{t("scripture.bibles.textCopy.hint")}</p>
+          <Button variant="quiet" onClick={() => setCheckingText(true)}>{t("scripture.bibles.textCopy.check")}</Button>
+        </div>
+      )}
+      {checkingText && <BibleTextCopy bible={bible} onClose={() => setCheckingText(false)} onUpdated={onUpdated} />}
+      {editing && (
+        <BibleDetailsEditor
+          bible={bible}
+          onCancel={() => setEditing(false)}
+          onSaved={async () => {
+            await onUpdated();
+            setEditing(false);
+            setOpen(true);
+            setDetailsSaved(true);
+          }}
+        />
+      )}
       {open && (
         <dl className="m-0 grid grid-cols-1 gap-x-6 gap-y-1 text-[0.9375rem] sm:grid-cols-[10rem_1fr]">
           <dt className="font-medium text-text-strong">{t("scripture.bibles.field.language")}</dt>

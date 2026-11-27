@@ -113,6 +113,7 @@
   "warnings": {
     "noBible": "Noch keine Bibel installiert: Bibelstellen-Folien zeigen nur die Stellenangabe. Füge in den Einstellungen eine Bibel hinzu.",
     "scriptureUnavailable": "Der Text dieser Bibelstelle ist in der gewählten Bibel nicht vorhanden.",
+    "scripturePartial": "Einige Verse dieser Bibelstelle werden nicht gezeigt: Ihr Text im Dokument dieser Bibel konnte nicht überprüft werden.",
     "imageUnavailable": "Dieses Bild ist nicht auf diesem Computer.",
     "sourceMissing": "Dieser Teil wurde aus der Bibellehre entfernt.",
     "longText": "Viel Text für eine Folie: Er wird kleiner gesetzt."

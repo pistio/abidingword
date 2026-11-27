@@ -49,6 +49,7 @@ use crate::error::{AppError, AppResult, UserMessage};
 pub struct Database {
     conn: Mutex<Connection>,
     path: Option<PathBuf>,
+    recovery_blocked: Mutex<Option<UserMessage>>,
 }
 
 impl Database {
@@ -92,11 +93,34 @@ impl Database {
         Ok(Self {
             conn: Mutex::new(conn),
             path,
+            recovery_blocked: Mutex::new(None),
         })
     }
 
     pub fn path(&self) -> Option<&Path> {
         self.path.as_deref()
+    }
+
+    /// Refuse all queued/future DB work after an incomplete full restore.
+    /// The connection lock is checked first by callers so already-queued
+    /// autosaves cannot slip past the flag set while restoration holds it.
+    pub(crate) fn block_after_restore_failure(&self, message: UserMessage) {
+        *self
+            .recovery_blocked
+            .lock()
+            .unwrap_or_else(|e| e.into_inner()) = Some(message);
+    }
+
+    fn check_restore_recovery(&self) -> AppResult<()> {
+        if let Some(message) = self
+            .recovery_blocked
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .clone()
+        {
+            return Err(AppError::Import(message));
+        }
+        Ok(())
     }
 
     /// Runs `f` with exclusive access to the connection.
@@ -105,6 +129,7 @@ impl Database {
             .conn
             .lock()
             .map_err(|_| AppError::Unexpected("database connection lock poisoned".into()))?;
+        self.check_restore_recovery()?;
         f(&conn)
     }
 
@@ -118,6 +143,7 @@ impl Database {
             .conn
             .lock()
             .map_err(|_| AppError::Unexpected("database connection lock poisoned".into()))?;
+        self.check_restore_recovery()?;
         f(&mut conn)
     }
 }

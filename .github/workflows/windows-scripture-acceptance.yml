@@ -1,22 +1,22 @@
-name: Windows Scripture recognition acceptance
+name: Windows productive-use acceptance
 
 # The draft branch can carry this file without running it. Push to the build
 # branch with the approval commit message only after explicit owner approval.
 on:
   push:
     branches:
-      - build/pr61-windows-scripture-acceptance-20261125
+      - build/aw9-windows-acceptance-20261127
 
 permissions:
   contents: read
 
 jobs:
   acceptance:
-    if: github.event_name == 'push' && github.event.head_commit.message == 'Build approved PR61 Windows Scripture acceptance candidate'
+    if: github.event_name == 'push' && github.event.head_commit.message == 'Build approved Abiding Word 9 Windows acceptance candidate'
     runs-on: windows-2025
     timeout-minutes: 90
     env:
-      SOURCE_SHA: 056333b68e74360225aea6b05cfe896c6ae83220
+      SOURCE_SHA: b38b33a42df1027ce7eed293d6c758b492741501
       CARGO_PROFILE_RELEASE_DEBUG: "0"
       CARGO_INCREMENTAL: "0"
       VITE_SELECTION_SPIKE: ""

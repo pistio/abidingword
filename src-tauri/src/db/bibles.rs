@@ -6,6 +6,8 @@
 //! translation-independent annotations are untouched; annotations tied to
 //! the removed wording keep their passage and lose only the translation link.
 
+use std::collections::{BTreeMap, BTreeSet};
+
 use rusqlite::{params, Connection, OptionalExtension, Row};
 use serde::Serialize;
 
@@ -17,7 +19,7 @@ use crate::scripture::import::StagedContent;
 use crate::scripture::reference::{split_key, verse_key, ScriptureRef};
 use crate::scripture::{
     BibleTranslation, ChapterText, CommitImport, PassageText, SearchHit, SearchResults,
-    SearchScripture, VerseText,
+    SearchScripture, UpdateBibleDetails, VerseText,
 };
 
 const COLUMNS: &str = "id, name, short_name, language, language_code, publisher, \
@@ -114,6 +116,94 @@ pub fn find_builtin(conn: &Connection, resource: &str) -> AppResult<Option<Bible
             from_row,
         )
         .optional()?)
+}
+
+/// An exact comparison with a newly read source. The installed edition is
+/// never rewritten: wording-dependent notes and citations keep their IDs.
+#[derive(Debug, Default, Clone, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TextComparison {
+    pub changed_verses: usize,
+    pub added_verses: usize,
+    pub removed_verses: usize,
+    pub changed_superscriptions: usize,
+}
+
+pub fn compare_source_text(
+    conn: &Connection,
+    id: &str,
+    content: &StagedContent,
+) -> AppResult<TextComparison> {
+    get(conn, id)?;
+    let mut stmt = conn.prepare(
+        "SELECT verse_id, text, bridge_end FROM bible_verse_texts WHERE translation_id = ?1",
+    )?;
+    let rows = stmt.query_map([id], |row| {
+        Ok((
+            row.get::<_, i64>(0)?,
+            (row.get::<_, String>(1)?, row.get::<_, Option<u16>>(2)?),
+        ))
+    })?;
+    let mut old = rows.collect::<Result<BTreeMap<_, _>, _>>()?;
+    let mut stmt = conn.prepare(
+        "SELECT book_id, chapter, text FROM bible_superscriptions WHERE translation_id = ?1",
+    )?;
+    let rows = stmt.query_map([id], |row| {
+        Ok((
+            (row.get::<_, u8>(0)?, row.get::<_, u16>(1)?),
+            row.get::<_, String>(2)?,
+        ))
+    })?;
+    let mut titles = rows.collect::<Result<BTreeMap<_, _>, _>>()?;
+    let mut result = TextComparison::default();
+    for (book_id, book) in &content.books {
+        for (chapter, text) in &book.chapters {
+            for (verse, words) in &text.verses {
+                match old.remove(&verse_key(*book_id, *chapter, *verse)) {
+                    Some((previous, bridge)) => {
+                        if previous != *words || bridge != text.bridges.get(verse).copied() {
+                            result.changed_verses += 1;
+                        }
+                    }
+                    None => result.added_verses += 1,
+                }
+            }
+            // Only titles with a stored verse are committed by insert_verses.
+            if !text.verses.is_empty() {
+                let previous = titles.remove(&(*book_id, *chapter));
+                if previous.as_ref() != text.superscription.as_ref() {
+                    result.changed_superscriptions += 1;
+                }
+            }
+        }
+    }
+    result.removed_verses = old.len();
+    result.changed_superscriptions += titles.len();
+    Ok(result)
+}
+
+/// A distinct, valid suggested short name for an explicitly added copy.
+/// Commit still checks uniqueness, including changes made after preview.
+pub fn copy_short_name(conn: &Connection, original: &str) -> AppResult<String> {
+    let mut stmt = conn.prepare("SELECT short_name FROM bible_translations")?;
+    let rows = stmt.query_map([], |row| row.get::<_, String>(0))?;
+    let taken: BTreeSet<String> = rows
+        .collect::<Result<Vec<_>, _>>()?
+        .into_iter()
+        .map(|name| name.to_ascii_lowercase())
+        .collect();
+    for number in 2..=taken.len() + 2 {
+        let suffix = format!("-{number}");
+        let base: String = original
+            .chars()
+            .take(SHORT_NAME_MAX_CHARS.saturating_sub(suffix.len()))
+            .collect();
+        let candidate = format!("{}{suffix}", base.trim_end());
+        if !taken.contains(&candidate.to_ascii_lowercase()) {
+            return Ok(candidate);
+        }
+    }
+    Err(AppError::Unexpected("No available Bible short name".into()))
 }
 
 /// Where a committed translation's source lives.
@@ -429,6 +519,65 @@ pub fn set_language(
         params![id, language, language_code, now()],
     )?;
     get(conn, id)
+}
+
+/// Corrects display and user-supplied metadata of an installed Bible in one
+/// atomic SQLite statement. Never edits its source, rights identifier, text,
+/// verse evidence, edition confirmation, search index or canonical citations.
+pub fn update_details(
+    conn: &Connection,
+    input: &UpdateBibleDetails,
+) -> AppResult<BibleTranslation> {
+    let before = get(conn, &input.id)?;
+    let name = validate::title(&input.name, "Bible")?;
+    let short_name = validate::title(&input.short_name, "Bible's short name")?;
+    if short_name.chars().count() > SHORT_NAME_MAX_CHARS {
+        return Err(AppError::InvalidInput(
+            UserMessage::new(
+                "bibles.shortNameTooLong",
+                format!("Please keep the short name under {SHORT_NAME_MAX_CHARS} characters."),
+            )
+            .with("max", SHORT_NAME_MAX_CHARS),
+        ));
+    }
+    let language = validate::title(&input.language, "language")?;
+    let language_code = language_tag(input.language_code.as_deref())?;
+    let publisher = validate::optional_text(input.publisher.as_deref(), 200, "publisher")?;
+    let notice =
+        validate::optional_text(input.copyright_notice.as_deref(), 2_000, "copyright notice")?;
+    // Bundled Bible source attributions are part of its verified licence record.
+    if before.source_origin == "bundled"
+        && (publisher != before.publisher || notice != before.copyright_notice)
+    {
+        return Err(AppError::InvalidInput(UserMessage::new(
+            "bibles.sourceAttributionReadOnly",
+            "The publisher and copyright notice of an included Bible cannot be changed.",
+        )));
+    }
+    let taken: bool = conn.query_row(
+        "SELECT EXISTS (SELECT 1 FROM bible_translations WHERE short_name = ?1 COLLATE NOCASE AND id <> ?2)",
+        params![short_name, input.id],
+        |row| row.get(0),
+    )?;
+    if taken {
+        return Err(AppError::DuplicateTranslation(short_name));
+    }
+    conn.execute(
+        "UPDATE bible_translations SET name = ?2, short_name = ?3,
+          language = ?4, language_code = ?5, publisher = ?6,
+          copyright_notice = ?7, updated_at = ?8 WHERE id = ?1",
+        params![
+            input.id,
+            name,
+            short_name,
+            language,
+            language_code,
+            publisher,
+            notice,
+            now()
+        ],
+    )?;
+    get(conn, &input.id)
 }
 
 /// Whether any installed Bible has this verse (by its own numbering): a

@@ -19,6 +19,7 @@
 
 pub mod backup;
 pub mod project;
+pub(crate) mod restore_journal;
 pub mod snapshots;
 
 use std::fs;
@@ -405,13 +406,6 @@ impl Drop for Staging {
     fn drop(&mut self) {
         crate::filesystem::remove_managed(&self.0);
     }
-}
-
-/// A UTC timestamp usable in file names on every system (no colons).
-pub(crate) fn file_stamp() -> String {
-    chrono::Utc::now()
-        .format("%Y-%m-%dT%H-%M-%S%.3fZ")
-        .to_string()
 }
 
 #[cfg(test)]

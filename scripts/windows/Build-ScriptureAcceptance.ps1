@@ -14,6 +14,8 @@ $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 if (Test-Path -LiteralPath $OutputDirectory) { throw 'Use a new output directory.' }
 $priorMode = $env:ABIDING_WORD_ACCEPTANCE_BUILD
 $priorTarget = $env:CARGO_TARGET_DIR
+$priorDevDebug = $env:CARGO_PROFILE_DEV_DEBUG
+$priorTestDebug = $env:CARGO_PROFILE_TEST_DEBUG
 Push-Location (Join-Path $PSScriptRoot '../..')
 try {
     $null = New-Item -ItemType Directory -Path $OutputDirectory
@@ -49,8 +51,8 @@ try {
             windows = @{ nsis = @{ installMode = 'currentUser' } }
         }
     } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $overlay -Encoding utf8NoBOM
-    $env:ABIDING_WORD_ACCEPTANCE_BUILD = 'scripture'
     $env:CARGO_TARGET_DIR = Join-Path $OutputDirectory 'cargo-target'
+    $env:ABIDING_WORD_ACCEPTANCE_BUILD = $null
     @(
         "Source: $SourceSha"
         "Workflow: $env:GITHUB_WORKFLOW_SHA"
@@ -63,6 +65,20 @@ try {
     ) | Set-Content (Join-Path $OutputDirectory 'build-environment.txt')
     npm ci
     npm run release:resources
+    npm run build
+    # Exercise the native Windows code before packaging this exact source.
+    # These checks run only as part of the separately approved build above.
+    $env:CARGO_PROFILE_DEV_DEBUG = '0'
+    $env:CARGO_PROFILE_TEST_DEBUG = '0'
+    Push-Location 'src-tauri'
+    try {
+        cargo test --locked --lib portability::restore_journal::tests -- --nocapture 2>&1 | Tee-Object -FilePath (Join-Path $OutputDirectory 'windows-restore-tests.txt')
+        cargo test --locked --lib scripture::pdf_worker -- --nocapture 2>&1 | Tee-Object -FilePath (Join-Path $OutputDirectory 'windows-pdf-worker-tests.txt')
+        cargo test --locked --test recognition_journey --test bible_text_copy --test bible_import_fidelity --test usfm_fidelity --test word_annotations --test portability --test daily_snapshot_recovery 2>&1 | Tee-Object -FilePath (Join-Path $OutputDirectory 'windows-journey-tests.txt')
+    } finally {
+        Pop-Location
+    }
+    $env:ABIDING_WORD_ACCEPTANCE_BUILD = 'scripture'
     npx --no-install tauri build --target x86_64-pc-windows-msvc --bundles nsis --config $overlay --no-sign --ci -- --locked
     $built = Join-Path $env:CARGO_TARGET_DIR 'x86_64-pc-windows-msvc/release'
     $installers = @(Get-ChildItem (Join-Path $built 'bundle/nsis/*-setup.exe') -File)
@@ -82,12 +98,15 @@ try {
         identifier = 'app.abidingword.scripture.acceptance'
         architecture = 'x86_64-pc-windows-msvc'
         updater = $false
+        nativeTestLogs = @('windows-restore-tests.txt', 'windows-pdf-worker-tests.txt', 'windows-journey-tests.txt')
     } | ConvertTo-Json | Set-Content (Join-Path $OutputDirectory 'acceptance-build.json')
-    foreach ($name in @('Test-ScriptureAcceptance.mjs', 'scripture-acceptance-fixtures.mjs', 'original-epub-fixture.mjs', 'ScriptureAcceptance.md')) {
+    foreach ($name in @('Launch-ScriptureAcceptance.mjs', 'Test-ScriptureAcceptance.mjs', 'scripture-acceptance-fixtures.mjs', 'original-epub-fixture.mjs', 'ScriptureAcceptance.md')) {
         Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination $OutputDirectory
     }
 } finally {
     $env:ABIDING_WORD_ACCEPTANCE_BUILD = $priorMode
     $env:CARGO_TARGET_DIR = $priorTarget
+    $env:CARGO_PROFILE_DEV_DEBUG = $priorDevDebug
+    $env:CARGO_PROFILE_TEST_DEBUG = $priorTestDebug
     Pop-Location
 }
