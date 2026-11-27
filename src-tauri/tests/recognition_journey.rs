@@ -350,7 +350,7 @@ fn journey(j: &Journey) -> serde_json::Value {
                 recogniser_commit,
                 kept_documents::PRODUCT_RECOGNISER_COMMIT
             );
-            assert_eq!(recogniser_commit, "418efd8c30c683631d3db1e088f8aa7d9eefb30b");
+            assert_eq!(recogniser_commit, "fd2b1bec285b5122362c3cf95fc42c1ae6d3a486");
             assert_ne!(recogniser_commit, "08c6faac8c92c6c791ec1e7bbbe997362fa1059f");
             let origin = kept_documents::origin(conn, &id, 8_001_001)?.unwrap();
             assert_eq!(origin.source_sha256.as_deref(), Some(source_sha.as_str()));

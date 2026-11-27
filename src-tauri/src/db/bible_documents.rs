@@ -22,7 +22,7 @@ use crate::scripture::{BibleTranslation, CommitImport};
 /// candidate; new runs must not claim that candidate's identity. Keep this pin
 /// on the actual implementation commit when product recognition changes.
 /// Existing run records retain the identity of the pass that produced them.
-pub const PRODUCT_RECOGNISER_COMMIT: &str = "418efd8c30c683631d3db1e088f8aa7d9eefb30b";
+pub const PRODUCT_RECOGNISER_COMMIT: &str = "fd2b1bec285b5122362c3cf95fc42c1ae6d3a486";
 
 /// A kept document file: its row id and its managed copy's name.
 pub struct KeptFile {
