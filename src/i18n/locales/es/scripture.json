@@ -79,6 +79,9 @@
     "failed": "No se pudo completar la búsqueda."
   },
   "addBible": {
+    "requiredFields": "Antes de añadir esta Biblia, completa: {{fields}}.",
+    "notReadyToAdd": "Estos archivos todavía no se pueden añadir. Revisa los problemas anteriores; corrige el origen o elige leer como documento si esa opción está disponible.",
+    "editionOptional": "Confirmar la edición es opcional. No verifica el texto de los versículos inciertos.",
     "title": {
       "choose": "Añadir una Biblia",
       "checking": "Revisando la Biblia…",
@@ -241,7 +244,8 @@
         "leftOutBook": "En una parte dejada fuera",
         "crossReference": "Referencia cruzada",
         "noteOnly": "Solo en una nota",
-        "subscription": "Palabras finales de un libro"
+        "subscription": "Palabras finales de un libro",
+        "noteCaller": "Llamada de nota"
       },
       "pdfLimit": "En un PDF, un título impreso entre dos versículos no siempre se puede distinguir del versículo anterior. Revisa algunos pasajes después de añadirla.",
       "licenceField": "Derechos de autor o licencia (opcional)",
@@ -330,6 +334,12 @@
     "partialBooks_many": "{{count}} de los 66 libros"
   },
   "bibles": {
+    "editDetails": "Editar datos",
+    "saveDetails": "Guardar datos",
+    "detailsSaved": "Datos de la Biblia guardados.",
+    "detailsOnly": "Solo se modifican los datos que se muestran. Los archivos originales, el texto bíblico, la confirmación de la edición, la licencia y las pruebas de reconocimiento no cambian.",
+    "attributionFixed": "No se pueden modificar la editorial ni el aviso de derechos de autor de una Biblia incluida.",
+    "requiredDetails": "Se necesitan el nombre, el nombre corto y el idioma.",
     "empty": "Todavía no se ha añadido ninguna Biblia.",
     "installed": "Biblias instaladas",
     "addBible": "Añadir una Biblia…",
@@ -415,6 +425,21 @@
       "deleteManyQuestion_one": "¿Eliminar definitivamente {{formatted}} Biblia?",
       "deleteManyQuestion_other": "¿Eliminar definitivamente {{formatted}} Biblias?",
       "deleteManyQuestion_many": "¿Eliminar definitivamente {{formatted}} Biblias?"
+    },
+    "textCopy": {
+      "check": "Comprobar el texto guardado…",
+      "hint": "Las Biblias añadidas con una versión anterior pueden contener espacios incorrectos o encabezados dentro del texto de los versículos. Comprueba los archivos guardados antes de añadir una copia corregida.",
+      "title": "Comprobar {{name}}",
+      "explanation": "Compara el texto leído de los archivos guardados con la Biblia instalada. Revisa las diferencias y los posibles problemas antes de añadir una copia independiente.",
+      "differences": "Diferencias respecto a la Biblia instalada",
+      "changedVerses": "Versículos con texto diferente",
+      "addedVerses": "Versículos adicionales",
+      "removedVerses": "Versículos no incluidos en la nueva copia",
+      "changedSuperscriptions": "Títulos de capítulo con texto diferente",
+      "kept": "Al añadir una nueva copia se conservan «{{name}}» y todas las notas y citas que se refieren a ella. Siguen vinculadas a la Biblia anterior. Selecciona la nueva copia cuando quieras usar su texto.",
+      "unchanged": "El texto bíblico y los títulos de capítulo coinciden con los archivos guardados. No hace falta una nueva copia.",
+      "add": "Añadir como Biblia independiente",
+      "added": "Se ha añadido {{name}} ({{shortName}}) como Biblia independiente. Tu Biblia anterior, tus notas y tus citas se conservan."
     }
   },
   "colors": {
@@ -863,7 +888,8 @@
         "subscription": "Palabras finales",
         "notes": "Notas"
       }
-    }
+    },
+    "recheckRequired": "Antes de usar los versículos guardados de esta Biblia como texto bíblico, hay que volver a comprobarlos en el documento. El documento y tus notas se conservan."
   },
   "importBookNames": {
     "TOB": "Tobías",

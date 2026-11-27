@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/design-system/Button";
 import { Dialog } from "@/design-system/Dialog";
@@ -24,6 +24,7 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmEdition, setConfirmEdition] = useState(false);
+  const editionHint = useId();
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [done, setDone] = useState<"whole" | "partial" | null>(null);
 
@@ -139,10 +140,13 @@ export function FindVerses({ bible, onClose }: { bible: BibleTranslation; onClos
           {doc && <Verification preview={doc} />}
           {doc && <RecognitionSamples preview={doc} />}
           {doc && !bible.editionConfirmed && (
-            <label className="flex items-start gap-2">
-              <input type="checkbox" checked={confirmEdition} onChange={(e) => setConfirmEdition(e.target.checked)} />
-              <span>{t("scripture.addBible.document.confirmEdition")}</span>
-            </label>
+            <div className="flex flex-col gap-1">
+              <label className="flex items-start gap-2">
+                <input type="checkbox" checked={confirmEdition} onChange={(e) => setConfirmEdition(e.target.checked)} aria-describedby={editionHint} />
+                <span>{t("scripture.addBible.document.confirmEdition")}</span>
+              </label>
+              <p id={editionHint} className="m-0 text-[0.9375rem] text-text-muted">{t("scripture.addBible.editionOptional")}</p>
+            </div>
           )}
           {doc && <SavedCorrections preview={doc} />}
           {doc && doc.books.length > 0 && (

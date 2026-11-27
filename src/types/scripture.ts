@@ -355,6 +355,17 @@ export interface ImportPreview {
   document?: DocumentPreview | null;
 }
 
+/** A saved USFM Bible compared with a fresh reading of its kept source files. */
+export interface BibleTextCopyPreview {
+  preview: ImportPreview;
+  translationId: string;
+  originalName: string;
+  changedVerses: number;
+  addedVerses: number;
+  removedVerses: number;
+  changedSuperscriptions: number;
+}
+
 /** Where something is in a Bible's documents (v0.23). */
 export interface DocumentPlace {
   /** Which document (0 = the first). */
@@ -402,7 +413,7 @@ export interface LeftOutText {
   sample: string;
   chars: number;
   place: DocumentPlace;
-  reason: "heading" | "beforeVerses" | "noBook" | "notes" | "leftOutBook" | "crossReference" | "noteOnly" | "subscription";
+  reason: "heading" | "beforeVerses" | "noBook" | "notes" | "leftOutBook" | "crossReference" | "noteOnly" | "noteCaller" | "subscription";
 }
 
 export interface DocumentStats {
@@ -638,6 +649,17 @@ export interface ImportRequest {
   jobId?: string;
   paths?: string[];
   bundled?: string;
+}
+
+/** The owner's editable display metadata; does not alter a Bible's source or verse evidence. */
+export interface UpdateBibleDetails {
+  id: string;
+  name: string;
+  shortName: string;
+  language: string;
+  languageCode: string | null;
+  publisher: string | null;
+  copyrightNotice: string | null;
 }
 
 export interface CommitImport {

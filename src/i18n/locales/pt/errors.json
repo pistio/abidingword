@@ -45,6 +45,7 @@
     "ambiguous": "“{{text}}” pode significar {{options}}. Digite mais do nome do livro para escolher."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "A editora e o aviso de direitos autorais de uma Bíblia incluída não podem ser alterados.",
     "hasProblems": "Esta Bíblia tem problemas que precisam ser resolvidos antes que possa ser adicionada.",
     "shortNameTooLong": "Use menos de {{max}} caracteres no nome abreviado.",
     "badLanguage": "“{{text}}” não é um idioma que o Abiding Word conheça.",
@@ -143,7 +144,10 @@
     "documentFootnotes_one": "{{count}} linha de notas de rodapé foi deixada de fora.",
     "documentFootnotes_other": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
     "documentFootnotes_many": "{{count}} linhas de notas de rodapé foram deixadas de fora.",
-    "documentAdditionalBook": "“{{heading}}” é {{book}}, que o Abiding Word ainda não pode mostrar. Seu texto foi deixado de fora; os outros livros não são afetados."
+    "documentAdditionalBook": "“{{heading}}” é {{book}}, que o Abiding Word ainda não pode mostrar. Seu texto foi deixado de fora; os outros livros não são afetados.",
+    "malformedUsfm": "“{{fileName}}” contém marcações de texto incompletas ou incoerentes. Este livro não é usado porque não é possível verificar o texto. O arquivo original não é alterado.",
+    "superscriptionUnusable": "“{{fileName}}”: foram omitidos os títulos de salmos com caracteres de controle ilegíveis ({{count}}). O texto dos versículos e o arquivo original não são alterados.",
+    "copyUnavailable": "Não é possível conferir esta Bíblia para criar uma cópia corrigida. A fonte USFM preservada está indisponível ou não pôde ser lida como USFM. A Bíblia instalada e suas anotações permanecem inalteradas."
   },
   "library": {
     "notUtf8": "“{{fileName}}” não está salvo como texto UTF-8, por isso não pôde ser lido.",
@@ -325,7 +329,8 @@
     "restoreFailed": "Não foi possível restaurar a cópia de segurança. O seu trabalho voltou a ficar como estava.",
     "noFile": "Escolha um arquivo.",
     "rollbackFailed": "Não foi possível restaurar a cópia de segurança, e o seu trabalho anterior não pôde ser recuperado automaticamente. Há uma cópia dele em {{path}}.",
-    "snapshotUnavailable": "Este ponto de recuperação está danificado ou é incompatível. Seu trabalho não foi alterado."
+    "snapshotUnavailable": "Este ponto de recuperação está danificado ou é incompatível. Seu trabalho não foi alterado.",
+    "recoveryRequired": "Uma operação de backup precisa ser recuperada antes de continuar. Feche o Abiding Word e abra-o novamente. Se esta mensagem aparecer de novo, guarde os arquivos de recuperação em {{path}} e peça ajuda."
   },
   "inquiry": {
     "notHere": "Este tipo de ajuda não está disponível aqui.",

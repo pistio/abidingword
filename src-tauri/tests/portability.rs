@@ -1452,7 +1452,7 @@ fn legacy_study_owned_teaching_package_backfills_project_owner() {
 }
 
 #[test]
-fn a_file_restore_failure_rolls_back_database_and_already_replaced_files() {
+fn conflicting_restore_targets_are_rejected_without_changing_work() {
     let out = tempfile::tempdir().unwrap();
     let archived = folder();
     archived
@@ -1469,8 +1469,9 @@ fn a_file_restore_failure_rolls_back_database_and_already_replaced_files() {
         .unwrap();
     }
     let good = backup_to(&archived, out.path());
-    // Every archive entry/hash is valid, but its destinations conflict. The
-    // failure occurs after first.txt has been replaced and second.txt added.
+    // Every archive entry/hash is valid, but a file and its child cannot both
+    // be destinations. Journal preparation now rejects this before mutation.
+    // Real interrupted/error-after-move cases live in restore_journal_tests.
     let broken = out.path().join("conflicting-files.awbackup");
     rewrite(
         &good,

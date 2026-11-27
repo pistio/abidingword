@@ -10,9 +10,9 @@
 //! Word-level markup (v0.21): `\w …\w*` and nested `\+w …\+w*` are
 //! removed from the text as before, and each marked word is also reported
 //! with its raw attribute list and its exact place in the verse text as
-//! stored (UTF-16 offsets, after white space is collapsed). The text itself is
-//! exactly what v0.20 read (a test compares it with that reader). Attributes
-//! are only located here; `scripture::words` reads them.
+//! stored (UTF-16 offsets, after white space is collapsed). The text itself
+//! follows the source's note adjacency; the old reader inserted a space for
+//! every note. Attributes are only located here; `scripture::words` reads them.
 //!
 //! Paragraph and poetry line breaks are flattened to spaces in v0.2.
 //! Validation (does the book exist, are verses duplicated…) happens later,
@@ -21,6 +21,9 @@
 use std::sync::OnceLock;
 
 use regex::Regex;
+
+#[path = "usfm/markup.rs"]
+mod markup;
 
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct UsfmDocument {
@@ -34,6 +37,12 @@ pub struct UsfmDocument {
     pub unknown_markers: Vec<String>,
     /// Word markup that could not be read safely (v0.21).
     pub word_problems: WordProblems,
+    /// Broken text-bearing markup. The adapter refuses this book; later
+    /// verse markers are still accounted for, never swallowed by recovery.
+    pub malformed_markup: Vec<String>,
+    /// Titles with non-layout control characters, omitted rather than used
+    /// as publishable superscriptions. Verse text is unaffected.
+    pub superscriptions_left_out: usize,
 }
 
 /// Word markup that could not be tied to words of a verse (v0.21). Every
@@ -132,12 +141,10 @@ enum Target {
 const OPEN: char = '\u{FDD0}';
 const CLOSE: char = '\u{FDD1}';
 
-fn regexes() -> &'static (Regex, Regex, Regex) {
-    static RE: OnceLock<(Regex, Regex, Regex)> = OnceLock::new();
+fn regexes() -> &'static (Regex, Regex) {
+    static RE: OnceLock<(Regex, Regex)> = OnceLock::new();
     RE.get_or_init(|| {
         (
-            // Footnotes, endnotes and cross-references, with their content.
-            Regex::new(r"(?s)\\(f|fe|ef|x|ex)\s.*?\\(f|fe|ef|x|ex)\*").unwrap(),
             // Attributes: `\w word|strong="G1"\w*` keeps only `word`. A
             // backslash inside the list escapes the next character (`\"`,
             // `\\`, `\|`) unless it begins a marker.
@@ -169,7 +176,6 @@ fn is_paragraph(name: &str) -> bool {
             | "q"
             | "qr"
             | "qc"
-            | "qa"
             | "qm"
             | "qd"
             | "lh"
@@ -205,6 +211,7 @@ fn is_skipped_paragraph(name: &str) -> bool {
             | "cl"
             | "cp"
             | "cd"
+            | "qa"
             | "rem"
             | "sts"
             | "restore"
@@ -300,9 +307,9 @@ impl Reading {
 }
 
 pub fn parse(source: &str) -> UsfmDocument {
-    let (notes, attribute_list, marker) = regexes();
-    let without_notes = notes.replace_all(source, " ");
+    let (attribute_list, marker) = regexes();
     let mut doc = UsfmDocument::default();
+    let without_notes = markup::prepare(source, &mut doc.malformed_markup);
     // Each `\w` attribute list is set aside and a placeholder left in its place.
     let readable = !source.contains(OPEN) && !source.contains(CLOSE);
     doc.word_problems.unreadable = !readable;
@@ -329,7 +336,11 @@ pub fn parse(source: &str) -> UsfmDocument {
         |doc: &mut UsfmDocument, chapter: &Option<String>, text: &mut String| {
             let text_now = collapse(text);
             if let (Some(c), false) = (chapter, text_now.is_empty()) {
-                doc.superscriptions.push((c.clone(), text_now));
+                if text_now.chars().any(char::is_control) {
+                    doc.superscriptions_left_out += 1;
+                } else {
+                    doc.superscriptions.push((c.clone(), text_now));
+                }
             }
             text.clear();
         };
@@ -356,12 +367,13 @@ pub fn parse(source: &str) -> UsfmDocument {
                     text
                 };
                 if let Some(kind) = expect.take() {
-                    let trimmed = text.trim_start();
-                    let (first, rest) = trimmed
-                        .split_once(char::is_whitespace)
-                        .unwrap_or((trimmed, ""));
+                    let trimmed = text.trim_start_matches(is_usfm_space);
+                    let (first, rest) = trimmed.split_once(is_usfm_space).unwrap_or((trimmed, ""));
                     match kind {
                         "id" => {
+                            if doc.book_code.is_some() {
+                                markup::problem(&mut doc.malformed_markup, "id_repeated", "id");
+                            }
                             doc.book_code = Some(first.to_ascii_uppercase());
                             text = "";
                         }
@@ -393,21 +405,54 @@ pub fn parse(source: &str) -> UsfmDocument {
                 match target {
                     Target::Verse => {
                         if let Some(verse) = reading.current.as_mut() {
-                            verse.text.push_str(text);
+                            if text.contains('|') {
+                                markup::problem(
+                                    &mut doc.malformed_markup,
+                                    "unread_attributes",
+                                    "|",
+                                );
+                            }
+                            verse
+                                .text
+                                .push_str(&text.replace('~', "\u{00a0}").replace("//", ""));
                         }
                     }
-                    Target::Superscription => superscription.push_str(text),
+                    Target::Superscription => {
+                        superscription.push_str(&text.replace('~', "\u{00a0}").replace("//", ""));
+                    }
                     Target::Nothing => {}
                 }
             }
             Some((name, closing)) => {
+                // A missing alternate-number/figure end never suppresses the
+                // next verse, chapter or paragraph. Its book is refused.
+                if !closing
+                    && (matches!(name.as_str(), "id" | "c" | "v" | "d")
+                        || is_paragraph(&name)
+                        || is_skipped_paragraph(&name))
+                    && !skip_depth.is_empty()
+                {
+                    for skipped in skip_depth.drain(..) {
+                        markup::problem(&mut doc.malformed_markup, "span_unclosed", &skipped);
+                    }
+                }
                 if is_skipped_character(&name) {
                     if closing {
                         if skip_depth.last() == Some(&name) {
                             skip_depth.pop();
+                        } else {
+                            markup::problem(
+                                &mut doc.malformed_markup,
+                                "span_close_mismatch",
+                                &name,
+                            );
                         }
                     } else {
-                        skip_depth.push(name);
+                        if skip_depth.len() < 64 {
+                            skip_depth.push(name);
+                        } else {
+                            markup::problem(&mut doc.malformed_markup, "span_nesting_limit", &name);
+                        }
                     }
                     continue;
                 }
@@ -495,6 +540,16 @@ pub fn parse(source: &str) -> UsfmDocument {
     }
     reading.finish(&mut doc, &attributes);
     finish_superscription(&mut doc, &chapter, &mut superscription);
+    for skipped in skip_depth {
+        markup::problem(&mut doc.malformed_markup, "span_unclosed", &skipped);
+    }
+    if doc
+        .verses
+        .iter()
+        .any(|verse| verse.text.chars().any(char::is_control))
+    {
+        markup::problem(&mut doc.malformed_markup, "control_in_verse", "v");
+    }
     doc
 }
 
@@ -561,7 +616,7 @@ fn place_words(
     let mut started = false;
     let mut pending = false;
     for (i, c) in raw.char_indices() {
-        if c.is_whitespace() {
+        if is_usfm_space(c) {
             pending = started;
             for slot in &mut map[i..i + c.len_utf8()] {
                 *slot = out_len;
@@ -618,7 +673,7 @@ fn place_words(
         let aligned = lo < hi && tokens[lo].start == start && tokens[hi - 1].end == end;
         let shape = if !aligned {
             WordShape::Part
-        } else if surface.contains(' ') {
+        } else if surface.chars().any(char::is_whitespace) {
             WordShape::Phrase
         } else {
             // One written word, joiners included.
@@ -665,8 +720,15 @@ fn place_words(
     (text, kept)
 }
 
+fn is_usfm_space(c: char) -> bool {
+    matches!(c, ' ' | '\t' | '\n' | '\r')
+}
+
 fn collapse(text: &str) -> String {
-    text.split_whitespace().collect::<Vec<_>>().join(" ")
+    text.split(is_usfm_space)
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 #[cfg(test)]

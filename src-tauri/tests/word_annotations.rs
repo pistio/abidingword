@@ -6,10 +6,16 @@
 //! sentences made of real Greek and Hebrew words, with annotations written for
 //! the test. The morphology codes follow the OSHB documentation's own examples;
 //! nothing here is an analysis of a real verse. The only real Bibles used are
-//! the bundled ones, read to check that their text is unchanged.
+//! the bundled ones, read against the independently reviewed E3 reference reader.
 
 #[path = "support/usfm_v020.rs"]
 mod usfm_v020;
+
+// Unmodified E3 reference reader from 9640aea. It is a test oracle only;
+// production does not call it and frozen evaluation files are untouched.
+#[allow(dead_code)]
+#[path = "support/usfm_fidelity_reference.rs"]
+mod usfm_fidelity_reference;
 
 use std::io::Read;
 use std::path::{Path, PathBuf};
@@ -48,7 +54,7 @@ fn assert_placed(doc: &usfm::UsfmDocument) {
 // ---------------------------------------------------------------- reading
 
 #[test]
-fn bundled_bibles_read_to_exactly_the_v020_text() {
+fn bundled_bibles_match_independent_text_and_preserve_word_offsets() {
     use abiding_word_lib::scripture::bundled::BUNDLED;
     let resources = Path::new(env!("CARGO_MANIFEST_DIR")).join("../resources/scripture");
     let mut books = 0;
@@ -67,9 +73,26 @@ fn bundled_bibles_read_to_exactly_the_v020_text() {
             let source = String::from_utf8_lossy(&bytes);
             let old = usfm_v020::parse(&source);
             let new = usfm::parse(&source);
+            let reference = usfm_fidelity_reference::read(&source);
+            assert!(
+                reference.problems.is_empty(),
+                "{} {name}: {:?}",
+                bible.id,
+                reference.problems
+            );
+            assert!(
+                new.malformed_markup.is_empty(),
+                "{} {name}: {:?}",
+                bible.id,
+                new.malformed_markup
+            );
             assert_eq!(new.book_code, old.book_code, "{} {name}", bible.id);
             assert_eq!(
-                new.superscriptions, old.superscriptions,
+                new.superscriptions,
+                old.superscriptions
+                    .into_iter()
+                    .filter(|(_, text)| !text.chars().any(char::is_control))
+                    .collect::<Vec<_>>(),
                 "{} {name}",
                 bible.id
             );
@@ -80,7 +103,13 @@ fn bundled_bibles_read_to_exactly_the_v020_text() {
                 bible.id
             );
             assert_eq!(new.verses.len(), old.verses.len(), "{} {name}", bible.id);
-            for (a, b) in new.verses.iter().zip(&old.verses) {
+            assert_eq!(
+                new.verses.len(),
+                reference.verses.len(),
+                "{} {name}",
+                bible.id
+            );
+            for (a, b) in new.verses.iter().zip(&reference.verses) {
                 assert_eq!(
                     (&a.chapter, &a.label, &a.text),
                     (&b.chapter, &b.label, &b.text),

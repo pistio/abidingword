@@ -42,6 +42,7 @@ import type {
   Annotation,
   AnnotationAnchor,
   BibleTranslation,
+  BibleTextCopyPreview,
   BookInfo,
   BundledBibleInfo,
   CatalogueEntry,
@@ -536,6 +537,8 @@ export interface Api {
   onBibleImportProgress?(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
   onCatalogueProgress(handler: (progress: CatalogueProgress) => void): Promise<() => void>;
   bibleImportPreview(input: ImportRequest): Promise<ImportPreview>;
+  /** Compares kept USFM with the installed edition; accepting adds a separate copy. */
+  bibleTextCopyPreview(id: string, jobId?: string): Promise<BibleTextCopyPreview>;
   bibleImportCommit(input: CommitImport): Promise<BibleTranslation>;
   bibleImportCancel(previewId: string): Promise<void>;
   /** Reads previewed documents again with the person's book corrections (v0.23). */
@@ -577,6 +580,8 @@ export interface Api {
   bibleLanguageOptions(): Promise<BibleLanguageOption[]>;
   /** Corrects a Bible's language: its name as shown, and its tag (null: none). */
   bibleSetLanguage(input: { id: string; language: string; languageCode: string | null }): Promise<BibleTranslation>;
+  /** Atomically edits labels and user metadata; Scripture content, sources and edition status stay unchanged. */
+  bibleUpdateDetails(input: import("@/types/scripture").UpdateBibleDetails): Promise<BibleTranslation>;
 
   /** With a translation, phrase anchors report whether its wording matches. */
   annotationList(reference: string, translationId?: string): Promise<Annotation[]>;
@@ -939,6 +944,7 @@ export const tauriApi: Api = {
     return Array.isArray(chosen) ? chosen : [chosen];
   },
   bibleImportPreview: (input) => call("bible_import_preview", { input }),
+  bibleTextCopyPreview: (id, jobId) => call("bible_text_copy_preview", { id, jobId }),
   bibleImportCommit: (input) => call("bible_import_commit", { input }),
   bibleImportCancel: (previewId) => call("bible_import_cancel", { previewId }),
   bibleImportCorrect: (previewId, books) => call("bible_import_correct", { previewId, books }),
@@ -969,6 +975,7 @@ export const tauriApi: Api = {
   bibleWordsCancel: (previewId) => call("bible_words_cancel", { previewId }),
   bibleLanguageOptions: () => call("bible_language_options"),
   bibleSetLanguage: ({ id, language, languageCode }) => call("bible_set_language", { id, language, languageCode }),
+  bibleUpdateDetails: (input) => call("bible_update_details", { input }),
 
   annotationList: (reference, translationId) => call("annotation_list", { reference, translationId }),
   annotationMarksList: (query) => call("annotation_marks_list", { query }),

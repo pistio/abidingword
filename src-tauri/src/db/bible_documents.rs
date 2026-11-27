@@ -17,6 +17,13 @@ use crate::scripture::import::{DocumentStage, SavedCorrection, StagedContent};
 use crate::scripture::reference::verse_key;
 use crate::scripture::{BibleTranslation, CommitImport};
 
+/// Source commit for the product recogniser, including the conservative
+/// missing-verse boundary guard. It differs from the frozen A1.5 research
+/// candidate; new runs must not claim that candidate's identity. Keep this pin
+/// on the actual implementation commit when product recognition changes.
+/// Existing run records retain the identity of the pass that produced them.
+pub const PRODUCT_RECOGNISER_COMMIT: &str = "fd2b1bec285b5122362c3cf95fc42c1ae6d3a486";
+
 /// A kept document file: its row id and its managed copy's name.
 pub struct KeptFile {
     pub id: String,
@@ -112,7 +119,7 @@ fn store_recognition(
         "INSERT INTO bible_recognition_runs
             (id, translation_id, recogniser_commit, document_manifest_sha256, gate_generation, completed_at)
          VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-        params![run, id, "08c6faac8c92c6c791ec1e7bbbe997362fa1059f", manifest, recognition.generation, now],
+        params![run, id, PRODUCT_RECOGNISER_COMMIT, manifest, recognition.generation, now],
     )?;
     tx.execute(
         "INSERT INTO bible_recognition_editions

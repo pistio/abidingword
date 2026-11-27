@@ -96,6 +96,20 @@ pub struct BibleTranslation {
     pub document_recognised: bool,
 }
 
+/// Editable display metadata for an installed Bible. No Scripture or source
+/// fields can be changed through this operation.
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateBibleDetails {
+    pub id: String,
+    pub name: String,
+    pub short_name: String,
+    pub language: String,
+    pub language_code: Option<String>,
+    pub publisher: Option<String>,
+    pub copyright_notice: Option<String>,
+}
+
 /// What a Bible's word annotations hold (v0.21): which research features it supports.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]

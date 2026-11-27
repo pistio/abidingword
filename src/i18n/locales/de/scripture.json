@@ -76,6 +76,9 @@
     "failed": "Die Suche konnte nicht abgeschlossen werden."
   },
   "addBible": {
+    "requiredFields": "Bitte vor dem Hinzufügen ergänzen: {{fields}}.",
+    "notReadyToAdd": "Diese Dateien können noch nicht hinzugefügt werden. Prüfe die Probleme oben; korrigiere die Quelle oder wähle, falls verfügbar, das Lesen als Dokument.",
+    "editionOptional": "Die Bestätigung der Bibelausgabe ist freiwillig. Unsicherer Bibeltext wird dadurch nicht geprüft.",
     "title": {
       "choose": "Bibel hinzufügen",
       "checking": "Bibel wird geprüft…",
@@ -222,7 +225,8 @@
         "leftOutBook": "In einem weggelassenen Teil",
         "crossReference": "Querverweis",
         "noteOnly": "Nur in einer Anmerkung",
-        "subscription": "Schlussworte eines Buches"
+        "subscription": "Schlussworte eines Buches",
+        "noteCaller": "Fußnotenzeichen"
       },
       "pdfLimit": "In einem PDF lässt sich eine zwischen zwei Versen gedruckte Überschrift nicht immer vom Vers davor unterscheiden. Prüfe nach dem Hinzufügen einige Stellen.",
       "licenceField": "Urheberrecht oder Lizenz (optional)",
@@ -296,6 +300,12 @@
     "partialBooks_other": "{{count}} der 66 Bücher"
   },
   "bibles": {
+    "editDetails": "Angaben bearbeiten",
+    "saveDetails": "Angaben speichern",
+    "detailsSaved": "Bibelangaben gespeichert.",
+    "detailsOnly": "Nur die angezeigten Angaben werden geändert. Originaldateien, Bibeltext, Ausgabenbestätigung, Lizenz und Erkennungsnachweise bleiben unverändert.",
+    "attributionFixed": "Verlag und Urheberrechtshinweis einer mitgelieferten Bibel können nicht bearbeitet werden.",
+    "requiredDetails": "Name, Kurzname und Sprache sind erforderlich.",
     "empty": "Es wurde noch keine Bibel hinzugefügt.",
     "installed": "Installierte Bibeln",
     "addBible": "Bibel hinzufügen…",
@@ -373,6 +383,21 @@
       "trashText_other": "Sie verschwindet aus deinen Übersetzungen und kann {{count}} Tage lang aus dem Papierkorb wiederhergestellt werden; danach wird sie endgültig gelöscht.",
       "deleteManyQuestion_one": "{{formatted}} Bibel endgültig löschen?",
       "deleteManyQuestion_other": "{{formatted}} Bibeln endgültig löschen?"
+    },
+    "textCopy": {
+      "check": "Gespeicherten Text prüfen…",
+      "hint": "Der Verstext von Bibeln, die mit einer früheren Version hinzugefügt wurden, kann fehlerhafte Leerzeichen oder Überschriften enthalten. Prüfe die gespeicherten Dateien, bevor du eine korrigierte Kopie hinzufügst.",
+      "title": "{{name}} prüfen",
+      "explanation": "Vergleiche den aus den gespeicherten Dateien gelesenen Text mit der installierten Bibel. Prüfe die Unterschiede und mögliche Probleme, bevor du eine separate Kopie hinzufügst.",
+      "differences": "Unterschiede zur installierten Bibel",
+      "changedVerses": "Verse mit abweichendem Text",
+      "addedVerses": "Zusätzliche Verse",
+      "removedVerses": "In der neuen Kopie nicht enthaltene Verse",
+      "changedSuperscriptions": "Kapitelüberschriften mit abweichendem Text",
+      "kept": "Wenn du eine neue Kopie hinzufügst, bleiben „{{name}}“ und alle zugehörigen Notizen und Zitate erhalten. Sie bleiben mit der bisherigen Bibel verknüpft. Wähle die neue Kopie aus, wenn du ihren Text verwenden möchtest.",
+      "unchanged": "Bibeltext und Kapitelüberschriften stimmen mit den gespeicherten Dateien überein. Eine neue Kopie ist nicht nötig.",
+      "add": "Als separate Bibel hinzufügen",
+      "added": "{{name}} ({{shortName}}) wurde als separate Bibel hinzugefügt. Deine bisherige Bibel, Notizen und Zitate bleiben erhalten."
     }
   },
   "colors": {
@@ -804,7 +829,8 @@
         "subscription": "Schlussworte",
         "notes": "Anmerkungen"
       }
-    }
+    },
+    "recheckRequired": "Die gespeicherten Verse dieser Bibel müssen erneut mit dem Dokument abgeglichen werden, bevor du sie als Bibeltext verwenden kannst. Dein Dokument und deine Notizen bleiben erhalten."
   },
   "importBookNames": {
     "TOB": "Tobit",

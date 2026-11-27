@@ -79,6 +79,9 @@
     "failed": "Não foi possível concluir a pesquisa."
   },
   "addBible": {
+    "requiredFields": "Antes de adicionar esta Bíblia, preencha: {{fields}}.",
+    "notReadyToAdd": "Esses arquivos ainda não podem ser adicionados. Veja os problemas acima; corrija a fonte ou escolha a leitura como documento, se disponível.",
+    "editionOptional": "A confirmação da edição é opcional. Ela não verifica o texto dos versículos incertos.",
     "title": {
       "choose": "Adicionar uma Bíblia",
       "checking": "Verificando a Bíblia…",
@@ -241,7 +244,8 @@
         "leftOutBook": "Numa parte deixada de fora",
         "crossReference": "Referência cruzada",
         "noteOnly": "Só em uma nota",
-        "subscription": "Palavras finais de um livro"
+        "subscription": "Palavras finais de um livro",
+        "noteCaller": "Chamada de nota"
       },
       "pdfLimit": "Num PDF, um título impresso entre dois versículos nem sempre pode ser distinguido do versículo anterior. Verifique algumas passagens depois de adicioná-la.",
       "licenceField": "Direitos autorais ou licença (opcional)",
@@ -330,6 +334,12 @@
     "partialBooks_many": "{{count}} dos 66 livros"
   },
   "bibles": {
+    "editDetails": "Editar detalhes",
+    "saveDetails": "Salvar detalhes",
+    "detailsSaved": "Detalhes da Bíblia salvos.",
+    "detailsOnly": "Apenas os detalhes exibidos são alterados. Os arquivos originais, o texto bíblico, a confirmação da edição, a licença e as evidências do reconhecimento não são alterados.",
+    "attributionFixed": "A editora e o aviso de direitos autorais de uma Bíblia incluída não podem ser alterados.",
+    "requiredDetails": "Nome, nome curto e idioma são obrigatórios.",
     "empty": "Nenhuma Bíblia foi adicionada ainda.",
     "installed": "Bíblias instaladas",
     "addBible": "Adicionar uma Bíblia…",
@@ -415,6 +425,21 @@
       "deleteManyQuestion_one": "Excluir definitivamente {{formatted}} Bíblia?",
       "deleteManyQuestion_other": "Excluir definitivamente {{formatted}} Bíblias?",
       "deleteManyQuestion_many": "Excluir definitivamente {{formatted}} Bíblias?"
+    },
+    "textCopy": {
+      "check": "Conferir o texto salvo…",
+      "hint": "Bíblias adicionadas com uma versão anterior podem conter espaços incorretos ou títulos no texto dos versículos. Confira os arquivos salvos antes de adicionar uma cópia corrigida.",
+      "title": "Conferir {{name}}",
+      "explanation": "Compare o texto lido dos arquivos salvos com a Bíblia instalada. Confira as diferenças e os possíveis problemas antes de adicionar uma cópia separada.",
+      "differences": "Diferenças em relação à Bíblia instalada",
+      "changedVerses": "Versículos com texto diferente",
+      "addedVerses": "Versículos adicionais",
+      "removedVerses": "Versículos não incluídos na nova cópia",
+      "changedSuperscriptions": "Títulos de capítulo com texto diferente",
+      "kept": "Adicionar uma nova cópia preserva “{{name}}” e todas as anotações e citações que se referem a ela. Elas continuam vinculadas à Bíblia anterior. Selecione a nova cópia quando quiser usar o texto dela.",
+      "unchanged": "O texto bíblico e os títulos de capítulo correspondem aos arquivos salvos. Não é necessária uma nova cópia.",
+      "add": "Adicionar como Bíblia separada",
+      "added": "{{name}} ({{shortName}}) foi adicionada como Bíblia separada. Sua Bíblia anterior, suas anotações e citações são preservadas."
     }
   },
   "colors": {
@@ -863,7 +888,8 @@
         "subscription": "Palavras finais",
         "notes": "Notas"
       }
-    }
+    },
+    "recheckRequired": "Os versículos salvos desta Bíblia precisam ser conferidos novamente no documento antes de serem usados como texto bíblico. Seu documento e suas anotações continuam preservados."
   },
   "importBookNames": {
     "TOB": "Tobias",

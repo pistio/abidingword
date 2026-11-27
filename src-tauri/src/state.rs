@@ -61,6 +61,9 @@ impl AppState {
         resource_dir: Option<PathBuf>,
     ) -> Self {
         let core = dirs.and_then(|dirs| {
+            // Finish an interrupted complete restore before opening SQLite,
+            // migrations, source refresh, cleanup, or background snapshots.
+            crate::portability::restore_journal::recover_before_open(&dirs)?;
             let path = dirs.database_file();
             log::info!("database file: {}", path.display());
             let db = Database::open(&path, &dirs.pre_migration_backups())?;

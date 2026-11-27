@@ -15,6 +15,7 @@ import type { BibleTranslation, BundledBibleInfo, CatalogueEntry, DocumentFileIn
 import { NO_CHOICE, WordResearch, hasWordResearch } from "./WordResearch";
 import { useScripture } from "./ScriptureContext";
 import { LanguageChoice, type LanguageValue } from "./LanguageChoice";
+import { BibleDetailsEditor } from "./BibleDetailsEditor";
 
 type Step =
   | { kind: "choose" }
@@ -31,6 +32,8 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
   const api = useApi();
   const { reloadTranslations, setTranslation } = useScripture();
   const [step, setStep] = useState<Step>({ kind: "choose" });
+  const [editingDone, setEditingDone] = useState(false);
+  const [detailsSaved, setDetailsSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const activeImport = useRef<string | null>(null);
@@ -171,6 +174,8 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
               try {
                 const bible = await api.bibleImportCommit({ previewId: step.preview.previewId, ...details });
                 await reloadTranslations();
+                setEditingDone(false);
+                setDetailsSaved(false);
                 setStep({ kind: "done", bible });
               } catch (e) {
                 setError(toApiError(e).message);
@@ -201,6 +206,22 @@ export function AddBibleView({ onClose }: { onClose: () => void }) {
             >
               {t("scripture.addBible.readNow")}
             </Button>
+            <Button variant="secondary" onClick={() => { setEditingDone(!editingDone); setDetailsSaved(false); }}>
+              {t("scripture.bibles.editDetails")}
+            </Button>
+            {detailsSaved && <p role="status" className="m-0 text-text-muted">{t("scripture.bibles.detailsSaved")}</p>}
+            {editingDone && (
+              <BibleDetailsEditor
+                bible={step.bible}
+                onCancel={() => setEditingDone(false)}
+                onSaved={async (updated) => {
+                  await reloadTranslations();
+                  setStep({ kind: "done", bible: updated });
+                  setEditingDone(false);
+                  setDetailsSaved(true);
+                }}
+              />
+            )}
           </div>
         )}
       </div>
@@ -431,7 +452,7 @@ interface Details {
 
 export type Correction = { index: number; book: string | null };
 
-function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPreview; onCancel: () => void; onAdd: (d: Details) => Promise<void>; onCorrect: (books: Correction[]) => Promise<void> }) {
+export function ReviewStep({ preview, onCancel, onAdd, onCorrect, addLabel, hideCancel = false }: { preview: ImportPreview; onCancel: () => void; onAdd: (d: Details) => Promise<void>; onCorrect: (books: Correction[]) => Promise<void>; addLabel?: string; hideCancel?: boolean }) {
   const { t } = useTranslation();
   const id = useId();
   const s = preview.suggested;
@@ -451,7 +472,12 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
   const errors = preview.issues.filter((i) => i.severity === "error");
   const warnings = preview.issues.filter((i) => i.severity === "warning");
   const notes = preview.issues.filter((i) => i.severity === "note");
-  const complete = name.trim() && shortName.trim() && language !== null && language.name.trim();
+  const missing = [
+    !name.trim() ? t("scripture.addBible.field.name") : null,
+    !shortName.trim() ? t("scripture.addBible.field.shortName") : null,
+    !language?.name.trim() ? t("scripture.addBible.field.language") : null,
+  ].filter((item): item is string => item !== null);
+  const complete = missing.length === 0;
 
   const add = async () => {
     setBusy(true);
@@ -476,7 +502,7 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
         <Field id={`${id}-name`} label={t("scripture.addBible.field.name")} value={name} onChange={setName} />
         <Field id={`${id}-short`} label={t("scripture.addBible.field.shortName")} value={shortName} onChange={setShortName} hint={t("scripture.addBible.field.shortNameHint")} />
         <div className="sm:col-span-2">
-          <LanguageChoice id={`${id}-lang`} label={t("scripture.addBible.field.language")} value={language} onChange={setLanguage} />
+          <LanguageChoice id={`${id}-lang`} label={t("scripture.addBible.field.language")} value={language} onChange={setLanguage} required />
         </div>
       </div>
 
@@ -555,11 +581,24 @@ function ReviewStep({ preview, onCancel, onAdd, onCorrect }: { preview: ImportPr
         </details>
       )}
 
-      <div className="flex flex-wrap gap-3 border-t border-border-subtle pt-6">
-        <Button variant="primary" onClick={add} disabled={!preview.canImport || !complete || busy}>
-          {busy ? t("scripture.addBible.adding") : asDocument ? t("scripture.addBible.document.addDocument") : t("scripture.addBible.add")}
+      <div className="flex flex-col gap-3 border-t border-border-subtle pt-6">
+        {(!complete || !preview.canImport) && (
+          <div id={`${id}-requirements`} role="status" className="flex flex-col gap-1 rounded-aw border border-border p-3 text-[0.9375rem]">
+            {missing.length > 0 && (
+              <p className="m-0">{t("scripture.addBible.requiredFields", { fields: missing.join(t("common.listSeparator")) })}</p>
+            )}
+            {!preview.canImport && (
+              <p className="m-0">{t("scripture.addBible.notReadyToAdd")}</p>
+            )}
+            <p className="m-0 text-text-muted">{t("scripture.addBible.editionOptional")}</p>
+          </div>
+        )}
+        <div className="flex flex-wrap gap-3">
+        <Button variant="primary" onClick={add} aria-describedby={(!complete || !preview.canImport) ? `${id}-requirements` : undefined} disabled={!preview.canImport || !complete || busy}>
+          {busy ? t("scripture.addBible.adding") : addLabel ?? (asDocument ? t("scripture.addBible.document.addDocument") : t("scripture.addBible.add"))}
         </Button>
-        <Button onClick={onCancel}>{t("common.cancel")}</Button>
+        {!hideCancel && <Button onClick={onCancel} disabled={busy}>{t("common.cancel")}</Button>}
+        </div>
       </div>
     </div>
   );
@@ -574,6 +613,7 @@ function Field(props: { id: string; label: string; value: string; onChange: (v: 
         value={props.value}
         placeholder={props.hint}
         onChange={(e) => props.onChange(e.target.value)}
+        required
         className="h-10 aw-input px-3 text-base placeholder:text-text-muted"
       />
     </label>

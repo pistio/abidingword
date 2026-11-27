@@ -76,6 +76,9 @@
     "failed": "The search could not be completed."
   },
   "addBible": {
+    "requiredFields": "Before adding this Bible, complete: {{fields}}.",
+    "notReadyToAdd": "These files cannot be added yet. Review the problems above; correct the source or choose document-only reading if it is available.",
+    "editionOptional": "Edition confirmation is optional. It does not verify uncertain Scripture text.",
     "title": {
       "choose": "Add a Bible",
       "checking": "Checking the Bible…",
@@ -222,7 +225,8 @@
         "leftOutBook": "In a part left out",
         "crossReference": "Cross-reference",
         "noteOnly": "Only in a note",
-        "subscription": "Closing words of a book"
+        "subscription": "Closing words of a book",
+        "noteCaller": "Footnote reference marker"
       },
       "pdfLimit": "In a PDF, a heading printed between two verses can’t always be told apart from the verse before it. Check a few passages after adding it.",
       "licenceField": "Copyright or licence (optional)",
@@ -296,6 +300,12 @@
     "partialBooks_other": "{{count}} of the 66 books"
   },
   "bibles": {
+    "editDetails": "Edit details",
+    "saveDetails": "Save details",
+    "detailsSaved": "Bible details saved.",
+    "detailsOnly": "Only displayed details are edited. Original files, Bible text, edition confirmation, licence and recognition evidence remain unchanged.",
+    "attributionFixed": "The publisher and copyright notice supplied with an included Bible cannot be edited.",
+    "requiredDetails": "Name, short name and language are required.",
     "empty": "No Bible has been added yet.",
     "installed": "Installed Bibles",
     "addBible": "Add a Bible…",
@@ -373,6 +383,21 @@
       "trashText_other": "It leaves your translations and can be restored from Trash for {{count}} days; after that it is deleted for good.",
       "deleteManyQuestion_one": "Delete {{formatted}} Bible permanently?",
       "deleteManyQuestion_other": "Delete {{formatted}} Bibles permanently?"
+    },
+    "textCopy": {
+      "check": "Check saved text…",
+      "hint": "Bibles added with an earlier version may have incorrect spacing or headings in their verse text. Check the saved files before adding a corrected copy.",
+      "title": "Check {{name}}",
+      "explanation": "Compare the text read from the saved files with the installed Bible. Review the differences and any problems before adding a separate copy.",
+      "differences": "Differences from the installed Bible",
+      "changedVerses": "Verses with different text",
+      "addedVerses": "Additional verses",
+      "removedVerses": "Verses not included in the new copy",
+      "changedSuperscriptions": "Chapter titles with different text",
+      "kept": "Adding a new copy keeps “{{name}}” and all notes and citations that refer to it. They stay linked to the earlier Bible. Choose the new copy when you want to use its text.",
+      "unchanged": "The Bible text and chapter titles match the saved files. No new copy is needed.",
+      "add": "Add as a separate Bible",
+      "added": "Added {{name}} ({{shortName}}) as a separate Bible. Your earlier Bible, notes and citations are kept."
     }
   },
   "colors": {
@@ -804,7 +829,8 @@
         "subscription": "Closing words",
         "notes": "Notes"
       }
-    }
+    },
+    "recheckRequired": "The saved verses in this Bible need to be checked against the document again before you can use them as Bible text. Your document and notes are still kept."
   },
   "importBookNames": {
     "TOB": "Tobit",

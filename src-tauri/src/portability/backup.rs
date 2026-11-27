@@ -12,16 +12,19 @@
 //! operating system's credential store, never in the database or the data
 //! folder. Nor does it hold the cache, logs, earlier backups or exports.
 //!
-//! Restoring replaces the database with the backup's, after:
+//! Restoring replaces the managed files and database with the backup's, after:
 //!
 //! 1. reading the whole backup and checking every part against its manifest;
 //! 2. checking the backup's database on its own (integrity, version);
 //! 3. a verified safety copy of the current database in `backups/pre-restore/`.
 //!
-//! The restored database then goes through the same steps as at every start
-//! (integrity, migrations, default records). If any of that fails, the
-//! safety copy is put back. Files are added to `sources/`; a file there that
-//! differs from the backup's is moved next to the safety copy, never deleted.
+//! 4. a durable, checksummed undo journal, before the first live mutation.
+//!
+//! Source files are installed first, with differing originals retained beside
+//! the safety copy. The restored database then goes through the same startup
+//! checks. Failure rolls both back. After process interruption, startup recovers
+//! the journal before opening/migrating SQLite; a damaged journal or incomplete
+//! recovery blocks editing and exports instead of exposing a mixed state.
 
 use std::fs;
 use std::io;
@@ -30,9 +33,7 @@ use std::path::{Component, Path, PathBuf};
 use rusqlite::{Connection, OpenFlags};
 use serde::{Deserialize, Serialize};
 
-use super::{
-    file_stamp, invalid, not_a_package, sha256, Limits, PackageFile, Reader, Staging, Writer,
-};
+use super::{invalid, not_a_package, Limits, PackageFile, Reader, Staging, Writer};
 use crate::db::{backup as db_backup, integrity, migrations, Database};
 use crate::error::{AppError, AppResult, UserMessage};
 use crate::filesystem::DataDirs;
@@ -246,7 +247,7 @@ fn snapshot_into(conn: &Connection, path: &Path) -> AppResult<()> {
 
 /// Opens a database copy read-only and checks it: intact, an Abiding Word
 /// database, and at most `newest` in schema version.
-fn open_checked(path: &Path, newest: i64) -> AppResult<Connection> {
+pub(super) fn open_checked(path: &Path, newest: i64) -> AppResult<Connection> {
     let conn = Connection::open_with_flags(path, OpenFlags::SQLITE_OPEN_READ_ONLY)
         .map_err(|_| not_an_app_database())?;
     integrity::check(&conn).map_err(|_| not_an_app_database())?;
@@ -366,122 +367,122 @@ pub fn restore(db: &Database, dirs: &DataDirs, path: &Path) -> AppResult<Restore
         check_target(&dirs.root().join(&place.to))?;
     }
 
-    // One lock spans the verified safety copy, database replacement, file
-    // replacement and any rollback. A write cannot slip between safety copy
-    // and replacement, nor observe a restored database with half-restored files.
+    // One lock spans journal preparation, source/database replacement and
+    // rollback. Queued database work is refused if recovery cannot complete.
     db.with_conn_mut(|conn| {
+        use super::restore_journal::{self as journal, Input, Stamp, Transaction};
+        if journal::pending(dirs) {
+            let message = journal::recovery_message(dirs);
+            db.block_after_restore_failure(message.clone());
+            return Err(AppError::Import(message));
+        }
         migrations::validate_existing_history(conn)?;
-        let safety = db_backup::pre_migration(
-            conn,
-            &dirs.pre_restore_backups(),
-            migrations::current_version(conn)?,
-        )?;
+        let version = migrations::current_version(conn)?;
+        let safety = db_backup::pre_migration(conn, &dirs.pre_restore_backups(), version)?;
         log::info!("safety copy before restoring: {}", safety.display());
-        let aside = dirs
-            .pre_restore_backups()
-            .join(format!("files-{}-{}", file_stamp(), crate::db::new_id()));
-        let mut changed = Vec::new();
+        let inputs: Vec<_> = manifest
+            .places
+            .iter()
+            .map(|place| {
+                let file = reader
+                    .files
+                    .iter()
+                    .find(|file| file.path == place.entry)
+                    .expect("the package reader validated every entry");
+                Input {
+                    target: place.to.clone(),
+                    staged: staging.path().join(&place.entry),
+                    stamp: Stamp {
+                        size: file.size,
+                        sha256: file.sha256.clone(),
+                    },
+                }
+            })
+            .collect();
+        let transaction = match Transaction::prepare(dirs, &safety, version, &inputs) {
+            Ok(transaction) => transaction,
+            Err(error) => {
+                log::error!("full-backup restore preparation failed: {error}");
+                if journal::pending(dirs) {
+                    let message = journal::recovery_message(dirs);
+                    db.block_after_restore_failure(message.clone());
+                    return Err(AppError::Import(message));
+                }
+                return Err(AppError::Import(UserMessage::new(
+                    "portability.restoreFailed",
+                    "The backup could not be restored. Your work was put back as it was.",
+                )));
+            }
+        };
         let restored: AppResult<RestoreReport> = (|| {
+            // Files first; any interruption is covered by the already-durable
+            // journal. The database is never exposed with partial source files.
+            transaction.install_files(dirs)?;
+            conn.execute_batch("PRAGMA synchronous=FULL;")?;
             conn.restore(
                 rusqlite::MAIN_DB,
                 &staged_db,
                 None::<fn(rusqlite::backup::Progress)>,
             )?;
+            journal::checkpoint("database-restored")?;
             crate::db::reinitialise(conn, Some(&dirs.pre_migration_backups()))?;
-            // Legacy citation exceptions are allowed only before their existing
-            // migration. The database we expose after restore must be strict.
             db_backup::validate_schema(conn, migrations::current_version(conn)?)?;
-            let counts = counts(conn, manifest.places.len() as u32)?;
-            let mut set_aside = 0;
-            for place in &manifest.places {
-                let from = staging.path().join(&place.entry);
-                let target = dirs.root().join(&place.to);
-                check_target(&target)?;
-                let previous = if target.is_file() {
-                    let bytes = fs::read(&target)
-                        .map_err(|e| AppError::filesystem(&target, e))?;
-                    let listed = reader.files.iter().find(|f| f.path == place.entry);
-                    if listed.is_some_and(|l| {
-                        l.size == bytes.len() as u64 && l.sha256 == sha256(&bytes)
-                    }) {
-                        continue;
-                    }
-                    let moved = aside.join(&place.to);
-                    db_backup::ensure_directory(moved.parent().expect("managed file parent"))?;
-                    fs::rename(&target, &moved)
-                        .map_err(|e| AppError::filesystem(&target, e))?;
-                    set_aside += 1;
-                    Some(moved)
-                } else {
-                    None
-                };
-                // Record the undo before creating/copying: a disk-full copy
-                // may have produced only part of the file before failing.
-                changed.push(FileChange {
-                    target: target.clone(),
-                    previous,
-                    created: false,
-                });
-                db_backup::ensure_directory(target.parent().expect("managed file parent"))?;
-                let mut output = fs::OpenOptions::new()
-                    .write(true)
-                    .create_new(true)
-                    .open(&target)
-                    .map_err(|e| AppError::filesystem(&target, e))?;
-                changed.last_mut().expect("recorded file change").created = true;
-                let mut input = fs::File::open(&from)
-                    .map_err(|e| AppError::filesystem(&from, e))?;
-                io::copy(&mut input, &mut output)
-                    .and_then(|_| output.sync_all())
-                    .map_err(|e| AppError::filesystem(&target, e))?;
-            }
-            Ok(RestoreReport {
-                counts,
+            journal::checkpoint("database-reinitialised")?;
+            let report = RestoreReport {
+                counts: counts(conn, manifest.places.len() as u32)?,
                 safety_copy: safety.display().to_string(),
-                files_added: changed.len() as u32,
-                files_set_aside: set_aside,
-            })
+                files_added: transaction.files_added(),
+                files_set_aside: transaction.files_set_aside(),
+            };
+            journal::flush_database(conn, db.path())?;
+            journal::checkpoint("database-flushed")?;
+            transaction.mark_done(true)?;
+            transaction.finish(dirs)?;
+            Ok(report)
         })();
         match restored {
             Ok(report) => Ok(report),
             Err(error) => {
-                log::error!("restoring the backup failed, putting the safety copy back: {error}");
-                let files_back = undo_files(&changed);
-                let database_back = conn
-                    .restore(
-                        rusqlite::MAIN_DB,
-                        &safety,
-                        None::<fn(rusqlite::backup::Progress)>,
-                    )
-                    .map_err(AppError::from)
-                    .and_then(|_| crate::db::reinitialise(conn, None));
-                if files_back.is_ok() && database_back.is_ok() {
+                log::error!("complete backup restore interrupted: {error}");
+                // Once the durable commit exists, never undo a completed
+                // restore. Startup will finish retaining its recovery files.
+                let rolled_back = if transaction.has_outcome() {
+                    false
+                } else {
+                    let rollback = (|| {
+                        transaction.undo_files(dirs)?;
+                        conn.restore(
+                            rusqlite::MAIN_DB,
+                            &safety,
+                            None::<fn(rusqlite::backup::Progress)>,
+                        )?;
+                        crate::db::reinitialise(conn, None)?;
+                        db_backup::validate_schema(conn, migrations::current_version(conn)?)?;
+                        journal::flush_database(conn, db.path())?;
+                        journal::checkpoint("database-rolled-back")?;
+                        transaction.mark_done(false)?;
+                        transaction.finish(dirs)
+                    })();
+                    if let Err(error) = &rollback {
+                        log::error!("restore rollback incomplete: {error}");
+                    }
+                    rollback.is_ok()
+                };
+                if rolled_back {
                     Err(AppError::Import(UserMessage::new(
                         "portability.restoreFailed",
                         "The backup could not be restored. Your work was put back as it was.",
                     )))
                 } else {
-                    log::error!("rollback incomplete: database={database_back:?}, files={files_back:?}; safety database: {}; retained files: {}", safety.display(), aside.display());
-                    Err(AppError::Import(
-                        UserMessage::new(
-                            "portability.rollbackFailed",
-                            format!(
-                                "The backup could not be restored, and your earlier work could not be put back automatically. Safety copies are kept at {}.",
-                                dirs.pre_restore_backups().display()
-                            ),
-                        )
-                        .with("path", dirs.pre_restore_backups().display()),
-                    ))
+                    // Do not let stale autosaves, exports or snapshots use the
+                    // half-restored connection. Startup recovery runs first.
+                    let message = journal::recovery_message(dirs);
+                    db.block_after_restore_failure(message.clone());
+                    Err(AppError::Import(message))
                 }
             }
         }
     })
-}
-
-struct FileChange {
-    target: PathBuf,
-    previous: Option<PathBuf>,
-    created: bool,
 }
 
 fn check_target(target: &Path) -> AppResult<()> {
@@ -509,31 +510,6 @@ fn check_target(target: &Path) -> AppResult<()> {
         Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(()),
         Err(error) => Err(AppError::filesystem(target, error)),
     }
-}
-
-fn undo_files(changed: &[FileChange]) -> AppResult<()> {
-    let mut failure = None;
-    for item in changed.iter().rev() {
-        let result = (|| {
-            db_backup::check_directory(item.target.parent().expect("managed file parent"))?;
-            if item.created {
-                fs::remove_file(&item.target).map_err(|e| AppError::filesystem(&item.target, e))?;
-            }
-            if let Some(previous) = &item.previous {
-                fs::rename(previous, &item.target)
-                    .map_err(|e| AppError::filesystem(previous, e))?;
-            }
-            Ok(())
-        })();
-        if let Err(error) = result {
-            log::error!(
-                "could not undo restored file {}: {error}",
-                item.target.display()
-            );
-            failure = Some(error);
-        }
-    }
-    failure.map_or(Ok(()), Err)
 }
 
 #[cfg(test)]

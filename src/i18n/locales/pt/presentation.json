@@ -116,6 +116,7 @@
   "warnings": {
     "noBible": "Ainda não há nenhuma Bíblia instalada: os slides de passagens mostram só a referência. Adicione uma Bíblia nas Configurações.",
     "scriptureUnavailable": "O texto desta passagem não está na Bíblia escolhida.",
+    "scripturePartial": "Alguns versículos desta passagem não são mostrados: o texto deles no documento desta Bíblia não pôde ser verificado.",
     "imageUnavailable": "Esta imagem não está neste computador.",
     "sourceMissing": "Esta parte foi removida do ensino.",
     "longText": "Muito texto para um slide: ele será mostrado menor."

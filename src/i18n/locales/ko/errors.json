@@ -45,6 +45,7 @@
     "ambiguous": "“{{text}}”은(는) {{options}} 중 하나일 수 있습니다. 책 이름을 더 입력해 골라 주세요."
   },
   "bibles": {
+    "sourceAttributionReadOnly": "기본 제공 성경의 출판사와 저작권 표시는 수정할 수 없습니다.",
     "hasProblems": "이 성경에는 추가하기 전에 해결해야 할 문제가 있습니다.",
     "shortNameTooLong": "약칭은 {{max}}자 이내로 입력해 주세요.",
     "badLanguage": "“{{text}}”은(는) Abiding Word가 아는 언어가 아닙니다.",
@@ -121,7 +122,10 @@
     "documentNumberInVerse": "{{book}} {{chapter}}장: {{verse}}절을 찾지 못했지만 숫자 {{verse}}가 앞 절 안에 있습니다. 두 절이 이어져 있을 수 있습니다. 이 장은 사용하지 않습니다.",
     "documentChapterLong": "{{book}} {{chapter}}장이 {{last}}절까지 이어집니다. 이 장은 보통 {{expected}}절까지 있습니다. 다른 장이나 책이 함께 읽혔을 수 있습니다. 이 장은 사용하지 않습니다.",
     "documentFootnotes_other": "쪽 아래의 각주 {{count}}줄은 제외했습니다.",
-    "documentAdditionalBook": "“{{heading}}”은(는) {{book}}입니다. Abiding Word는 아직 이 책을 보여 줄 수 없습니다. 이 책의 본문은 제외했으며, 다른 책에는 영향이 없습니다."
+    "documentAdditionalBook": "“{{heading}}”은(는) {{book}}입니다. Abiding Word는 아직 이 책을 보여 줄 수 없습니다. 이 책의 본문은 제외했으며, 다른 책에는 영향이 없습니다.",
+    "malformedUsfm": "“{{fileName}}”에 불완전하거나 서로 맞지 않는 본문 표시가 있습니다. 본문을 확인할 수 없어 이 책은 사용하지 않습니다. 원본 파일은 변경되지 않습니다.",
+    "superscriptionUnusable": "“{{fileName}}”: 읽을 수 없는 제어 문자가 포함된 시편 표제 {{count}}개를 제외했습니다. 절 본문과 원본 파일은 변경되지 않습니다.",
+    "copyUnavailable": "이 성경은 수정된 사본을 만들기 위한 확인을 할 수 없습니다. 보관된 USFM 원본을 사용할 수 없거나 USFM으로 읽지 못했습니다. 설치된 성경과 메모는 변경되지 않았습니다."
   },
   "library": {
     "notUtf8": "“{{fileName}}”은(는) UTF-8 텍스트로 저장되어 있지 않아 읽을 수 없습니다.",
@@ -303,7 +307,8 @@
     "restoreFailed": "백업을 복원하지 못했습니다. 작업은 원래 상태로 되돌려 두었습니다.",
     "noFile": "파일을 선택하세요.",
     "rollbackFailed": "백업을 복원하지 못했고, 이전 작업도 자동으로 되돌리지 못했습니다. 이전 작업의 사본은 {{path}}에 보관되어 있습니다.",
-    "snapshotUnavailable": "이 복원 지점은 손상되었거나 현재 버전과 호환되지 않습니다. 작업 내용은 변경되지 않았습니다."
+    "snapshotUnavailable": "이 복원 지점은 손상되었거나 현재 버전과 호환되지 않습니다. 작업 내용은 변경되지 않았습니다.",
+    "recoveryRequired": "계속하려면 먼저 백업 작업을 복구해야 합니다. Abiding Word를 닫았다가 다시 여세요. 이 메시지가 다시 나타나면 {{path}}에 있는 복구 파일을 보관하고 도움을 요청하세요."
   },
   "inquiry": {
     "notHere": "여기서는 이런 도움을 받을 수 없습니다.",
