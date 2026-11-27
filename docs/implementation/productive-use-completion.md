@@ -12,20 +12,20 @@ The immediate finish line is one dependable Windows session from importing a Bib
 
 | Item | Recorded identity |
 |---|---|
-| Working branch | `completion/windows-productive-use-20261126` |
+| Working branch | `fix/windows-job-close-test-20261127` |
 | Application base | Main `14c64267e5beb9e399a7c8684934548681df6c5e` |
 | Bible metadata work | [PR #67](https://github.com/pistio/abidingword/pull/67), head `1a498b8c394ad83d170be829ff645357b2b111e0` |
 | Late Claude work | `b12bc9f13aa7fbebb41694de847cba495957fd4f` |
 | Combined implementation | `fd2b1bec285b5122362c3cf95fc42c1ae6d3a486` |
-| Installer source pin | `db3228f6c67af28d9d88dfea4e71064c229a9e49` — all application changes and the native test/launcher scripts |
-| Source review and CI | Candidate pull request for `completion/windows-productive-use-20261126`; its Checks tab records the exact tested head |
+| Installer source pin | `e61424a9ab56208a08f6153c1b037cb3cf99345a` — unchanged application code with the corrected Windows test and native test/launcher scripts |
+| Source review and CI | Test-correction pull request for `fix/windows-job-close-test-20261127`; its Checks tab records the exact tested head |
 
 The product recognition run identity advances with this implementation. Frozen recogniser `08c6faac8c92c6c791ec1e7bbbe997362fa1059f`, E3 and Collection H remain untouched. Historical runs must retain their original identities and results. **Collection H cannot attest a byte-identical current product after the new guard.** Product verification and the independent evaluation remain separate, as required by the [recognition completion milestone](scripture-recognition-completion-20261125.md).
 
 The following metadata-only commit updates the workflow pin and this record.
 Its application sources are identical to the installer pin. The workflow
 remains inactive until an explicitly approved push to
-`build/aw9-windows-acceptance-20261127` with the approval commit message;
+`build/aw9-windows-acceptance-retry-20261127` with the approval commit message;
 neither this candidate branch nor a main merge starts Windows packaging.
 
 ## What this candidate completes
